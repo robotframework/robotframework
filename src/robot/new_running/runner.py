@@ -18,11 +18,13 @@ from robot.result.executionresult import Result  # ---------- ii -----------
 from robot.running.namespace import Namespace
 from robot.variables import GLOBAL_VARIABLES
 from robot.running.context import EXECUTION_CONTEXTS
-from robot.running.keywords import Keywords
+from robot.running.keywords import Keywords, Keyword
 from robot.running.fixture import Setup, Teardown
 from robot.running.userkeyword import UserLibrary
-from robot.errors import ExecutionFailed
+from robot.errors import ExecutionFailed, DataError
 from robot import utils
+
+from .failures import TestFailures
 
 
 class Runner(SuiteVisitor):
@@ -78,26 +80,48 @@ class Runner(SuiteVisitor):
                                           doc=self._resolve_setting(test.doc),
                                           tags=test.tags,
                                           starttime=utils.get_timestamp())
-        setup = self._setup(test.keywords.setup)
         keywords = Keywords(test.keywords.normal)
-        teardown = self._teardown(test.keywords.teardown)
         result.timeout = test.timeout   # TODO: Cleaner implementation to ...
         result.status = 'RUNNING'       # ... activate timeouts
         self._context.start_test(result)
         if test.timeout:
             test.timeout.replace_variables(self._variables)  # FIXME: Should not change model state!!
             test.timeout.start()
-        setup.run(self._context)
+        failures = TestFailures()
+        self._run_test_setup(test.keywords.setup, failures)
         try:
-            keywords.run(self._context)
+            if failures.run_allowed:
+                keywords.run(self._context)
         except ExecutionFailed, err:
-            result.message = unicode(err)
-            result.status = 'FAIL'
-        else:
-            result.status = 'PASS'
-        teardown.run(self._context)
+            failures.test_failure = unicode(err)
+        self._run_test_teardown(test.keywords.teardown, failures)
+        result.message = failures.message
+        result.status = 'FAIL' if failures else 'PASS'
         result.endtime = utils.get_timestamp()
         self._context.end_test(result)
+
+    def _run_test_setup(self, setup, failures):
+        failure = self._run_setup_or_teardown(setup, 'setup')
+        if failure is not None:
+            failures.setup_failure = failure
+
+    def _run_test_teardown(self, teardown, failures):
+        failure = self._run_setup_or_teardown(teardown, 'teardown')
+        if failure is not None:
+            failures.teardown_failure = failure
+
+    def _run_setup_or_teardown(self, data, type):
+        if not data:
+            return None
+        try:
+            name = self._variables.replace_string(data.name)
+        except DataError, err:
+            return unicode(err)
+        kw = Keyword(name, data.args, type=type)
+        try:
+            kw.run(self._context)
+        except ExecutionFailed, err:
+            return unicode(err)
 
     def _setup(self, setup):
         if not setup:

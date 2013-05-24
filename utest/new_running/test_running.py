@@ -1,13 +1,22 @@
 import unittest
 from StringIO import StringIO
+from os.path import abspath, dirname, normpath, join
 
 from robot.utils.asserts import assert_equals
-from robot.new_running import TestSuite
+from robot.new_running import TestSuite, TestSuiteBuilder
+
+
+CURDIR = dirname(abspath(__file__))
+DATADIR = normpath(join(CURDIR, '..', '..', 'atest', 'testdata', 'misc'))
 
 
 def run(suite):
     result = suite.run(output='NONE', stdout=StringIO(), stderr=StringIO())
     return result.suite
+
+
+def build_and_run(path):
+    return run(TestSuiteBuilder().build(join(DATADIR, path)))
 
 
 def assert_suite(suite, name, status, tests=1):
@@ -89,3 +98,24 @@ class TestRunning(unittest.TestCase):
         assert_suite(result, 'Suite', 'FAIL', tests=2)
         assert_test(result.tests[0], 'T1', 'FAIL', msg='Error message')
         assert_test(result.tests[1], 'T2', 'FAIL', ('added tag',), 'Error')
+
+
+class TestSetupAndTeardown(unittest.TestCase):
+
+    def setUp(self):
+        self.tests = build_and_run('setups_and_teardowns.txt').tests
+
+    def test_passing_setup_and_teardown(self):
+        assert_test(self.tests[0], 'Test with setup and teardown', 'PASS')
+
+    def test_failing_setup(self):
+        assert_test(self.tests[1], 'Test with failing setup', 'FAIL',
+                    msg='Setup failed:\nTest Setup')
+
+    def test_failing_teardown(self):
+        assert_test(self.tests[2], 'Test with failing teardown', 'FAIL',
+                    msg='Teardown failed:\nTest Teardown')
+
+    def test_failing_test_with_failing_teardown(self):
+        assert_test(self.tests[3], 'Failing test with failing teardown', 'FAIL',
+                    msg='Keyword\n\nAlso teardown failed:\nTest Teardown')
