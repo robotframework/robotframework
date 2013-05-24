@@ -17,7 +17,6 @@ from __future__ import with_statement
 from robot.errors import DataError
 from robot.utils import ET, ETSource, get_error_message
 
-from .suiteteardownfailed import SuiteTeardownFailureHandler
 from .xmlelementhandlers import XmlElementHandler
 from .executionresult import Result, CombinedResult
 
@@ -65,7 +64,7 @@ class ExecutionResultBuilder(object):
         handler = XmlElementHandler(result)
         with self._source as source:
             self._parse(source, handler.start, handler.end)
-        SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
+        result.handle_suite_teardown_failures()
         return result
 
     def _parse(self, source, start, end):
