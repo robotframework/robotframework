@@ -165,7 +165,11 @@ class Import(object):
 
     @property
     def directory(self):
-        return os.path.dirname(self.source) if self.source else None
+        if not self.source:
+            return None
+        if os.path.isdir(self.source):
+            return self.source
+        return os.path.dirname(self.source)
 
     # TODO: Error reporting doesn't belong here
     def report_invalid_syntax(self, message, level='ERROR'):
