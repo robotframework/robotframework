@@ -511,7 +511,7 @@ approaches can naturally be used together.
    All executed test cases get tags set with this option in addition
    to tags they got elsewhere.
 
-`Set Tags`:name:, `Remove Tags`:name: and `Fail`:name: keywords
+`Set Tags`:name:, `Remove Tags`:name:, `Fail`:name: and `Pass Execution`:name: keywords
    These `BuiltIn keywords`_ can be used to manipulate tags dynamically
    during the test execution.
 

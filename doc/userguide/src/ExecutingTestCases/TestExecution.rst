@@ -124,6 +124,34 @@ the :opt:`--runmode` option.
 
 __ `Randomizing execution order`_
 
+Pass Execution
+''''''''''''''
+
+From Robot Framework 2.8 onwards, it is possible to stop test 
+execution before all keywords in a test case have executed by
+utilizing `BuiltIn keyword`_ :name:`Pass Execution`. This 
+keyword stops the execution of the test case and marks the 
+test case as passed. This mechanism is intended for the 
+rare case when you want to skip long-taking test cases but do
+not want them to be marked as failed. The keyword always 
+requires a message to be written in the log and report.
+
+:name:`Pass Execution` can be used anywhere. If used in a 
+setup, :name:`Pass Execution` will skip following keywords in 
+the setup but does continue with the actual test case. Likewise, 
+if used in teardowns, the keyword does not pass the test
+case if the actual test case has failed. :name:`Pass Execution` 
+will also take into account possible earlier `continuable failures`__ 
+and does not mark test as passed if such have occurred.
+
+:name:`Pass Execution` can modify the tags of the current 
+test case by passing them after the message. See keyword 
+documentation in `BuiltIn library`__ to find out, how 
+changing tags work.
+
+__ `Continue on failure`_
+__ `Builtin keyword`_ 
+
 Continue on failure
 ~~~~~~~~~~~~~~~~~~~
 
