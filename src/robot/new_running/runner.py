@@ -19,12 +19,11 @@ from robot.running.namespace import Namespace
 from robot.variables import GLOBAL_VARIABLES
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.keywords import Keywords, Keyword
-from robot.running.fixture import Setup, Teardown
 from robot.running.userkeyword import UserLibrary
 from robot.errors import ExecutionFailed, DataError
 from robot import utils
 
-from .failures import TestFailures
+from .failures import ExecutionStatus
 
 
 class Runner(SuiteVisitor):
@@ -33,6 +32,7 @@ class Runner(SuiteVisitor):
         self.result = None
         self._output = output
         self._suite = None
+        self._suite_status = None
 
     @property
     def _context(self):
@@ -61,19 +61,24 @@ class Runner(SuiteVisitor):
             self.result = Result(root_suite=result)
         else:
             self._suite.suites.append(result)
+        self._suite_status = ExecutionStatus(self._suite_status)
         self._suite = result
         self._output.start_suite(self._suite)
-        self._setup(suite.keywords.setup).run(self._context)
+        self._run_setup(suite.keywords.setup, self._suite_status)
 
     def _resolve_setting(self, value):
         value = self._variables.replace_string(value, ignore_errors=True)
         return utils.unescape(value)
 
     def end_suite(self, suite):
-        self._teardown(suite.keywords.teardown).run(self._context)
+        failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
+        if failure:
+            self._suite.suite_teardown_failed(unicode(failure))
         self._suite.endtime = utils.get_timestamp()
+        self._suite.message = self._suite_status.message
         self._context.end_suite(self._suite)
         self._suite = self._suite.parent
+        self._suite_status = self._suite_status.parent_status
 
     def visit_test(self, test):
         result = self._suite.tests.create(name=test.name,
@@ -87,28 +92,29 @@ class Runner(SuiteVisitor):
         if test.timeout:
             test.timeout.replace_variables(self._variables)  # FIXME: Should not change model state!!
             test.timeout.start()
-        failures = TestFailures()
-        self._run_test_setup(test.keywords.setup, failures)
+        status = ExecutionStatus(self._suite_status)
+        if not status.failures:
+            self._run_setup(test.keywords.setup, status)
         try:
-            if failures.run_allowed:
+            if not status.failures:
                 keywords.run(self._context)
         except ExecutionFailed, err:
-            failures.test_failure = unicode(err)
-        self._run_test_teardown(test.keywords.teardown, failures)
-        result.message = failures.message
-        result.status = 'FAIL' if failures else 'PASS'
+            status.test_failed(err)
+        if status.teardown_allowed:
+            self._run_teardown(test.keywords.teardown, status)
+        result.message = status.message
+        result.status = 'FAIL' if status.failures else 'PASS'
         result.endtime = utils.get_timestamp()
         self._context.end_test(result)
 
-    def _run_test_setup(self, setup, failures):
+    def _run_setup(self, setup, failures):
         failure = self._run_setup_or_teardown(setup, 'setup')
-        if failure is not None:
-            failures.setup_failure = failure
+        failures.setup_executed(failure)
 
-    def _run_test_teardown(self, teardown, failures):
+    def _run_teardown(self, teardown, failures):
         failure = self._run_setup_or_teardown(teardown, 'teardown')
-        if failure is not None:
-            failures.teardown_failure = failure
+        failures.teardown_executed(failure)
+        return failure
 
     def _run_setup_or_teardown(self, data, type):
         if not data:
@@ -116,23 +122,9 @@ class Runner(SuiteVisitor):
         try:
             name = self._variables.replace_string(data.name)
         except DataError, err:
-            return unicode(err)
+            return err
         kw = Keyword(name, data.args, type=type)
         try:
             kw.run(self._context)
         except ExecutionFailed, err:
-            return unicode(err)
-
-    def _setup(self, setup):
-        if not setup:
-            return Setup('', ())
-        setup = Setup(setup.name, setup.args)
-        setup.replace_variables(self._variables, [])
-        return setup
-
-    def _teardown(self, teardown):
-        if not teardown:
-            return Teardown('', ())
-        teardown = Teardown(teardown.name, teardown.args)
-        teardown.replace_variables(self._variables, [])
-        return teardown
+            return err

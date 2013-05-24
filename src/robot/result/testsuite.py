@@ -21,6 +21,8 @@ from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
 from .keywordremover import KeywordRemover
 from .keyword import Keyword
+from .suiteteardownfailed import (SuiteTeardownFailureHandler,
+                                  SuiteTeardownFailed)
 from .testcase import TestCase
 
 
@@ -80,6 +82,12 @@ class TestSuite(model.TestSuite):
 
     def configure(self, **options):
         self.visit(SuiteConfigurer(**options))
+
+    def handle_suite_teardown_failures(self):
+        self.visit(SuiteTeardownFailureHandler())
+
+    def suite_teardown_failed(self, message):
+        self.visit(SuiteTeardownFailed(message))
 
     # TODO: Remove compatibility code below when new run is integrated
     def get_full_message(self):

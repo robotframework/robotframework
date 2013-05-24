@@ -32,7 +32,7 @@ class Result(object):
         self.source = source
         self.suite = root_suite or TestSuite()
         self.errors = errors or ExecutionErrors()
-        self.generator = None
+        self.generated_by_robot = True
         self._status_rc = True
         self._stat_config = {}
 
@@ -61,6 +61,10 @@ class Result(object):
         # avoids cyclic import
         from robot.reporting.outputwriter import OutputWriter
         self.visit(OutputWriter(path or self.source))
+
+    def handle_suite_teardown_failures(self):
+        if self.generated_by_robot:
+            self.suite.handle_suite_teardown_failures()
 
 
 class CombinedResult(Result):
