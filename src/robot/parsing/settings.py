@@ -135,9 +135,19 @@ class Template(Setting):
 
 class Fixture(Setting):
 
+    # `keyword`, `is_comment` and `assign` make the API compatible with Step.
+
+    @property
+    def keyword(self):
+        return self.name
+
+    def is_comment(self):
+        return False
+
     def _set_initial_value(self):
         self.name = None
         self.args = []
+        self.assign = ()
 
     def _populate(self, value):
         if not self.name:

@@ -40,8 +40,8 @@ class TestSuiteBuilder(object):
                           metadata=self._get_metadata(data.setting_table))
         for import_data in data.setting_table.imports:
             self._create_import(suite, import_data)
-        self._create_fixture(suite, data.setting_table.suite_setup, 'setup')
-        self._create_fixture(suite, data.setting_table.suite_teardown, 'teardown')
+        self._create_step(suite, data.setting_table.suite_setup, 'setup')
+        self._create_step(suite, data.setting_table.suite_teardown, 'teardown')
         for var_data in data.variable_table.variables:
             self._create_variable(suite, var_data)
         for uk_data in data.keyword_table.keywords:
@@ -68,10 +68,10 @@ class TestSuiteBuilder(object):
                                   tags=values.tags.value,
                                   timeout=TestTimeout(values.timeout.value,
                                                       values.timeout.message))
-        self._create_fixture(test, values.setup, 'setup')
+        self._create_step(test, values.setup, 'setup')
         for step_data in data.steps:
             self._create_step(test, step_data)
-        self._create_fixture(test, values.teardown, 'teardown')
+        self._create_step(test, values.teardown, 'teardown')
 
     def _create_user_keyword(self, suite, data):
         # TODO: Tests and uks have inconsistent timeout types
@@ -92,27 +92,20 @@ class TestSuiteBuilder(object):
             value = data.value
         suite.variables.create(name=data.name, value=value)
 
-    def _create_fixture(self, parent, data, fixture_type):
-        if data:
-            parent.keywords.create(type=fixture_type,
-                                   name=data.name,
-                                   args=tuple(data.args))
-
-    def _create_step(self, parent, data):
-        if not data.is_for_loop():
-            self._create_normal_step(parent, data)
-        else:
+    def _create_step(self, parent, data, type='kw'):
+        if not data or data.is_comment():
+            return
+        if data.is_for_loop():
             self._create_for_loop(parent, data)
-
-    def _create_normal_step(self, parent, data):
-        if not data.is_comment():
+        else:
             parent.keywords.create(name=data.keyword,
                                    args=tuple(data.args),
-                                   assign=tuple(data.assign))
+                                   assign=tuple(data.assign),
+                                   type=type)
 
     def _create_for_loop(self, parent, data):
         loop = parent.keywords.append(ForLoop(vars=data.vars,
                                               items=data.items,
                                               range=data.range))
         for step in data.steps:
-            self._create_normal_step(loop, step)
+            self._create_step(loop, step)
