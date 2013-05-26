@@ -38,5 +38,4 @@ class TestValues(object):
         self.teardown = test.teardown or defaults.teardown
         self.timeout = test.timeout or defaults.timeout
         self.template = test.template or defaults.template
-        # TODO: Handle 'NONE' template (and other NONE values)
         self.tags = (test.tags or defaults.default_tags) + defaults.force_tags

@@ -6,65 +6,68 @@ from robot.new_running import TestSuite, TestSuiteBuilder
 
 
 CURDIR = dirname(abspath(__file__))
-DATADIR = normpath(join(CURDIR, '..', '..', 'atest', 'testdata', 'misc'))
+DATADIR = join(CURDIR, '..', '..', 'atest', 'testdata', 'misc')
+
+
+def build(*paths):
+    paths = [normpath(join(DATADIR, p)) for p in paths]
+    suite = TestSuiteBuilder().build(*paths)
+    assert_true(isinstance(suite, TestSuite))
+    assert_equals(suite.source, paths[0] if len(paths) == 1 else '')
+    return suite
+
+
+def assert_keyword(kw, assign=(), name='', args=(), type='kw'):
+    assert_equals(kw.name, name)
+    assert_equals(kw.args, args)
+    assert_equals(kw.assign, assign)
+    assert_equals(kw.type, type)
 
 
 class TestBuilding(unittest.TestCase):
 
-    def _build(self, *paths):
-        paths = [join(DATADIR, p) for p in paths]
-        suite = TestSuiteBuilder().build(*paths)
-        assert_true(isinstance(suite, TestSuite))
-        assert_equals(suite.source, paths[0] if len(paths) == 1 else '')
-        return suite
-
     def test_suite_data(self):
-        suite = self._build('pass_and_fail.txt')
+        suite = build('pass_and_fail.txt')
         assert_equals(suite.name, 'Pass And Fail')
         assert_equals(suite.doc, 'Some tests here')
         assert_equals(suite.metadata, {})
 
     def test_imports(self):
-        imp = self._build('dummy_lib_test.txt').imports[0]
+        imp = build('dummy_lib_test.txt').imports[0]
         assert_equals(imp.type, 'Library')
         assert_equals(imp.name, 'DummyLib')
         assert_equals(imp.args, ())
 
     def test_variables(self):
-        variables = self._build('pass_and_fail.txt').variables
+        variables = build('pass_and_fail.txt').variables
         assert_equals(variables[0].name, '${LEVEL1}')
         assert_equals(variables[0].value, 'INFO')
         assert_equals(variables[1].name, '${LEVEL2}')
         assert_equals(variables[1].value, 'DEBUG')
 
     def test_user_keywords(self):
-        uk = self._build('pass_and_fail.txt').user_keywords[0]
+        uk = build('pass_and_fail.txt').user_keywords[0]
         assert_equals(uk.name, 'My Keyword')
         assert_equals(uk.args, ('${who}',))
 
     def test_test_data(self):
-        test = self._build('pass_and_fail.txt').tests[1]
+        test = build('pass_and_fail.txt').tests[1]
         assert_equals(test.name, 'Fail')
         assert_equals(test.doc, 'FAIL Expected failure')
         assert_equals(list(test.tags), ['fail', 'force'])
         assert_true(not test.timeout)
+        assert_equals(test.continue_on_failure, False)
 
     def test_test_keywords(self):
-        kw = self._build('pass_and_fail.txt').tests[0].keywords[0]
-        assert_equals(kw.name, 'My Keyword')
-        assert_equals(kw.args, ('Pass',))
-        assert_equals(kw.assign, ())
-        assert_equals(kw.type, kw.KEYWORD_TYPE)
+        kw = build('pass_and_fail.txt').tests[0].keywords[0]
+        assert_keyword(kw, (), 'My Keyword', ('Pass',))
 
     def test_assign(self):
-        kw = self._build('unicode.txt').tests[1].keywords[0]
-        assert_equals(kw.assign, ('${msg} =',))
-        assert_equals(kw.name, 'Evaluate')
-        assert_equals(kw.args, (r"u'Fran\\xe7ais'",))
-        assert_equals(kw.type, kw.KEYWORD_TYPE)
+        kw = build('unicode.txt').tests[1].keywords[0]
+        assert_keyword(kw, ('${msg} =',), 'Evaluate', (r"u'Fran\\xe7ais'",))
 
     def test_directory_suite(self):
-        suite = self._build('suites')
+        suite = build('suites')
         assert_equals(suite.name, 'Suites')
         assert_equals(suite.suites[1].name, 'Subsuites')
         assert_equals(suite.suites[-1].name, 'Tsuite3')
@@ -73,26 +76,27 @@ class TestBuilding(unittest.TestCase):
         assert_equals(suite.suites[1].suites[1].tests[0].id, 's1-s2-s2-t1')
 
     def test_multiple_inputs(self):
-        suite = self._build('pass_and_fail.txt', 'normal.txt')
+        suite = build('pass_and_fail.txt', 'normal.txt')
         assert_equals(suite.name, 'Pass And Fail & Normal')
         assert_equals(suite.suites[0].name, 'Pass And Fail')
         assert_equals(suite.suites[1].name, 'Normal')
         assert_equals(suite.suites[1].tests[1].id, 's1-s2-t2')
 
     def test_suite_setup_and_teardown(self):
-        suite = self._build('setups_and_teardowns.txt')
-        assert_equals(suite.keywords.setup.name, '${SUITE SETUP}')
-        assert_equals(suite.keywords.teardown.name, '${SUITE TEARDOWN}')
+        kws = build('setups_and_teardowns.txt').keywords
+        assert_keyword(kws.setup, name='${SUITE SETUP}', type='setup')
+        assert_keyword(kws.teardown, name='${SUITE TEARDOWN}', type='teardown')
 
     def test_test_setup_and_teardown(self):
-        test = self._build('setups_and_teardowns.txt').tests[0]
-        assert_equals(test.keywords.setup.name, 'Test Setup')
-        assert_equals(test.keywords.teardown.name, 'Test Teardown')
-        assert_equals([kw.name for kw in test.keywords],
+        kws = build('setups_and_teardowns.txt').tests[0].keywords
+        assert_keyword(kws.setup, name='Test Setup', type='setup')
+        assert_keyword(kws.teardown, name='Test Teardown', type='teardown')
+        assert_equals([kw.name for kw in kws],
                       ['Test Setup', 'Keyword', 'Test Teardown'])
+        assert_equals([kw.name for kw in kws.normal], ['Keyword'])
 
     def test_test_timeout(self):
-        tests = self._build('timeouts.txt').tests
+        tests = build('timeouts.txt').tests
         assert_equals(tests[0].timeout.string, '1min 42s')
         assert_equals(tests[0].timeout.message, '')
         assert_equals(tests[1].timeout.string, '1d2h')
@@ -102,6 +106,28 @@ class TestBuilding(unittest.TestCase):
 
     def test_keyword_timeout(self):
         # TODO: Tests and uks have inconsistent timeout types.
-        kw = self._build('timeouts.txt').user_keywords[0]
+        kw = build('timeouts.txt').user_keywords[0]
         assert_equals(kw.timeout.value, '42')
         assert_equals(kw.timeout.message, 'My message')
+
+
+class TestTemplates(unittest.TestCase):
+
+    def test_from_setting_table(self):
+        test = build('../running/test_template.txt').tests[0]
+        assert_keyword(test.keywords[0], (), 'Should Be Equal',('Fail', 'Fail'))
+        assert_equals(test.continue_on_failure, True)
+
+    def test_from_test_case(self):
+        test = build('../running/test_template.txt').tests[3]
+        kws = test.keywords
+        assert_keyword(kws[0], (), 'Should Not Be Equal', ('Same', 'Same'))
+        assert_keyword(kws[1], (), 'Should Not Be Equal', ('42', '43'))
+        assert_keyword(kws[2], (), 'Should Not Be Equal', ('Something', 'Different'))
+        assert_equals(test.continue_on_failure, True)
+
+    def test_no_variable_assign(self):
+        test = build('../running/test_template.txt').tests[8]
+        assert_keyword(test.keywords[0], (), 'Expect Exactly Three Args',
+                       ('${SAME VARIABLE}', 'Variable content', '${VARIABLE}'))
+        assert_equals(test.continue_on_failure, True)

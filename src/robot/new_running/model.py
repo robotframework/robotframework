@@ -39,6 +39,10 @@ class Keyword(model.Keyword):
     def keyword(self):
         return self.name
 
+    # TODO: Remove compatibility
+    def apply_template(self, template):
+        return self
+
 
 class ForLoop(Keyword):
     keyword_class = Keyword
@@ -62,10 +66,18 @@ class ForLoop(Keyword):
     def steps(self):
         return self.keywords
 
+    # TODO: Remove compatibility
+    def apply_template(self, template):
+        return self
+
 
 class TestCase(model.TestCase):
-    __slots__ = []
+    __slots__ = ['continue_on_failure']
     keyword_class = Keyword
+
+    def __init__(self, continue_on_failure=False, **kwargs):
+        model.TestCase.__init__(self, **kwargs)
+        self.continue_on_failure = continue_on_failure
 
 
 class TestSuite(model.TestSuite):
@@ -74,8 +86,8 @@ class TestSuite(model.TestSuite):
     keyword_class = Keyword
     status = 'RUNNING'   # TODO: Remove compatibility
 
-    def __init__(self, *args, **kwargs):
-        model.TestSuite.__init__(self, *args, **kwargs)
+    def __init__(self, **kwargs):
+        model.TestSuite.__init__(self, **kwargs)
         self.imports = []
         self.user_keywords = []
         self.variables = []

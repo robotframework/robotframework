@@ -66,11 +66,12 @@ class TestSuiteBuilder(object):
         test = suite.tests.create(name=data.name,
                                   doc=unicode(data.doc),
                                   tags=values.tags.value,
+                                  continue_on_failure=bool(values.template),
                                   timeout=TestTimeout(values.timeout.value,
                                                       values.timeout.message))
         self._create_step(test, values.setup, 'setup')
         for step_data in data.steps:
-            self._create_step(test, step_data)
+            self._create_step(test, step_data, template=values.template.value)
         self._create_step(test, values.teardown, 'teardown')
 
     def _create_user_keyword(self, suite, data):
@@ -92,20 +93,23 @@ class TestSuiteBuilder(object):
             value = data.value
         suite.variables.create(name=data.name, value=value)
 
-    def _create_step(self, parent, data, type='kw'):
+    def _create_step(self, parent, data, type='kw', template=None):
         if not data or data.is_comment():
             return
         if data.is_for_loop():
-            self._create_for_loop(parent, data)
+            self._create_for_loop(parent, data, template)
+        elif template and template.upper() != 'NONE':
+            parent.keywords.create(name=template,
+                                   args=tuple(data.as_list(include_comment=False)))
         else:
             parent.keywords.create(name=data.keyword,
                                    args=tuple(data.args),
                                    assign=tuple(data.assign),
                                    type=type)
 
-    def _create_for_loop(self, parent, data):
+    def _create_for_loop(self, parent, data, template):
         loop = parent.keywords.append(ForLoop(vars=data.vars,
                                               items=data.items,
                                               range=data.range))
         for step in data.steps:
-            self._create_step(loop, step)
+            self._create_step(loop, step, template=template)

@@ -10,10 +10,16 @@ Test Using Normal Keyword Is Not Possible With Template
 Test Default Template
     Check Test Case  ${TESTNAME}
 
+Test Continue On Failure
+    Check Test Case  ${TESTNAME}
+
 Test Overriding Default Template In Test
     Check Test Case  ${TESTNAME}
 
-Test Overriding Default Template In Test With Empty
+Test Overriding Default Template In Test With Empty Value
+    Check Test Case  ${TESTNAME}
+
+Test Overriding Default Template In Test With NONE Value
     Check Test Case  ${TESTNAME}
 
 Test Template With Variables

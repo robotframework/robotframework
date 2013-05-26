@@ -85,7 +85,7 @@ class Runner(SuiteVisitor):
                                           doc=self._resolve_setting(test.doc),
                                           tags=test.tags,
                                           starttime=utils.get_timestamp())
-        keywords = Keywords(test.keywords.normal)
+        keywords = Keywords(test.keywords.normal, test.continue_on_failure)
         result.timeout = test.timeout   # TODO: Cleaner implementation to ...
         result.status = 'RUNNING'       # ... activate timeouts
         self._context.start_test(result)

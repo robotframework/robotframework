@@ -11,21 +11,32 @@ Test Using Normal Keyword Is Not Possible With Template
   Fail  Fail
 
 Test Default Template
-  [Documentation]  FAIL Several failures occurred:\n\n1) Something != Different\n\n2) 42 != 43
+  [Documentation]  FAIL Something != Different
   Same  Same
+  42  42
   Something  Different
+
+Test Continue On Failure
+  [Documentation]  FAIL Several failures occurred:\n\n1) 42 != 43\n\n2) Something != Different
+  Same  Same
   42  43
+  Something  Different
 
 Test Overriding Default Template In Test
   [Documentation]  FAIL Same == Same
   [Template]  Should Not Be Equal
   Same  Same
-  Something  Different
   42  43
+  Something  Different
 
-Test Overriding Default Template In Test With Empty
+Test Overriding Default Template In Test With Empty Value
   [documentation]  FAIL This should be executed as normal keyword
   [Template]
+  Fail  This should be executed as normal keyword
+
+Test Overriding Default Template In Test With NONE Value
+  [documentation]  FAIL This should be executed as normal keyword
+  [Template]    NoNe
   Fail  This should be executed as normal keyword
 
 Test Template With Variables
