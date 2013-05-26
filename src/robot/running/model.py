@@ -182,7 +182,7 @@ class RunnableTestSuite(BaseTestSuite):
             normname = utils.normalize(test.name)
             if normname in executed_tests:
                 LOGGER.warn("Multiple test cases with name '%s' executed in "
-                            "test suite '%s'"% (test.name, self.longname))
+                            "test suite '%s'."% (test.name, self.longname))
             executed_tests.append(normname)
             test.run(context, errors)
             context.set_prev_test_variables(test)
