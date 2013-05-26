@@ -53,7 +53,8 @@ class TestSuiteBuilder(object):
         return suite
 
     def _get_metadata(self, settings):
-        return dict((meta.name, meta.value) for meta in settings.metadata)
+        # Must return as a list to preserve ordering
+        return [(meta.name, meta.value) for meta in settings.metadata]
 
     def _create_import(self, suite, data):
         suite.imports.create(type=data.type,

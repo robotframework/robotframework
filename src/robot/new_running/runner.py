@@ -54,7 +54,9 @@ class Runner(SuiteVisitor):
         variables.resolve_delayed()
         result = TestSuite(name=suite.name,
                            doc=self._resolve_setting(suite.doc),
-                           metadata=suite.metadata,
+                           metadata=[(self._resolve_setting(n),
+                                      self._resolve_setting(v))
+                                     for n, v in suite.metadata.items()],
                            source=suite.source,
                            starttime=utils.get_timestamp())
         if not self.result:
@@ -69,8 +71,7 @@ class Runner(SuiteVisitor):
         self._run_setup(suite.keywords.setup, self._suite_status)
 
     def _resolve_setting(self, value):
-        value = self._variables.replace_string(value, ignore_errors=True)
-        return utils.unescape(value)
+        return self._variables.replace_string(value, ignore_errors=True)
 
     def end_suite(self, suite):
         failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
