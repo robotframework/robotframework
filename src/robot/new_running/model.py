@@ -149,14 +149,18 @@ class Variable(object):
 
 
 class UserKeyword(object):
+    # TODO: Teardown should be handled as a keyword like with tests and suites.
+    # Cannot easily do it until running user keywords is "modernized".
 
-    def __init__(self, name, args=(), doc='', return_=None, timeout=None):
+    def __init__(self, name, args=(), doc='', return_=None, timeout=None,
+                 teardown=None):
         self.name = name
         self.args = args
         self.doc = doc
         self.return_ = return_ or ()
         self.teardown = None
         self.timeout = timeout
+        self.teardown = teardown
         self.keywords = []
 
     @setter

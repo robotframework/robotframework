@@ -77,11 +77,13 @@ class TestSuiteBuilder(object):
 
     def _create_user_keyword(self, suite, data):
         # TODO: Tests and uks have inconsistent timeout types
+        # and also teardowns are handled totally differently.
         uk = suite.user_keywords.create(name=data.name,
                                         args=tuple(data.args),
                                         doc=unicode(data.doc),
                                         return_=tuple(data.return_),
-                                        timeout=data.timeout)
+                                        timeout=data.timeout,
+                                        teardown=data.teardown)
         for step_data in data.steps:
             self._create_step(uk, step_data)
 
