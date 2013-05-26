@@ -18,8 +18,11 @@ from .tags import TagPatterns
 class Criticality(object):
 
     def __init__(self, critical_tags=None, non_critical_tags=None):
-        self.critical_tags = TagPatterns(critical_tags)
-        self.non_critical_tags = TagPatterns(non_critical_tags)
+        self.critical_tags = self._get_tag_patterns(critical_tags)
+        self.non_critical_tags = self._get_tag_patterns(non_critical_tags)
+
+    def _get_tag_patterns(self, tags):
+        return TagPatterns(tags) if not isinstance(tags, TagPatterns) else tags
 
     def tag_is_critical(self, tag):
         return self.critical_tags.match(tag)
@@ -38,4 +41,3 @@ class Criticality(object):
     # TODO: Remove compatibility with old Statistics
     is_critical = tag_is_critical
     is_non_critical = tag_is_non_critical
-
