@@ -125,6 +125,8 @@ class Runner(SuiteVisitor):
             name = self._variables.replace_string(data.name)
         except DataError, err:
             return err
+        if name.upper() == 'NONE':
+            return None
         kw = Keyword(name, data.args, type=type)
         try:
             kw.run(self._context)
