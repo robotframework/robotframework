@@ -214,7 +214,7 @@ class ArgumentHandler(_Handler):
     tag = 'arg'
 
     def end(self, elem, result):
-        result.args.append(elem.text or '')
+        result.args += (elem.text or '',)
 
 
 class ErrorsHandler(_Handler):

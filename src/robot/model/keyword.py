@@ -29,11 +29,11 @@ class Keyword(ModelObject):
     keyword_class = None
     message_class = Message
 
-    def __init__(self, name='', doc='', args=None, type='kw', timeout=None):
+    def __init__(self, name='', doc='', args=(), type='kw', timeout=None):
         self.parent = None
         self.name = name
         self.doc = doc
-        self.args = args or []
+        self.args = args
         self.type = type
         self.timeout = timeout
         self.messages = []

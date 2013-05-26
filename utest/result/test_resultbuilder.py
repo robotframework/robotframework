@@ -56,21 +56,22 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
     def test_keyword_is_built(self):
         assert_equals(self._keyword.name, 'BuiltIn.Log')
         assert_equals(self._keyword.doc, 'Logs the given message with the given level.')
-        assert_equals(self._keyword.timeout, None)
-        assert_equals(self._keyword.args, ['Test 1'])
+        assert_equals(self._keyword.args, ('Test 1',))
         assert_equals(self._keyword.status, 'PASS')
         assert_equals(self._keyword.starttime, '20111024 13:41:20.926')
         assert_equals(self._keyword.endtime, '20111024 13:41:20.928')
+        assert_equals(self._keyword.timeout, None)
         assert_equals(len(self._keyword.keywords), 0)
         assert_equals(len(self._keyword.messages), 1)
 
     def test_user_keyword_is_built(self):
         assert_equals(self._user_keyword.name, 'logs on trace')
         assert_equals(self._user_keyword.doc, '')
-        assert_equals(self._user_keyword.args, [])
+        assert_equals(self._user_keyword.args, ())
         assert_equals(self._user_keyword.status, 'PASS')
         assert_equals(self._user_keyword.starttime, '20111024 13:41:20.930')
         assert_equals(self._user_keyword.endtime, '20111024 13:41:20.933')
+        assert_equals(self._user_keyword.timeout, None)
         assert_equals(len(self._user_keyword.messages), 0)
         assert_equals(len(self._user_keyword.keywords), 1)
 

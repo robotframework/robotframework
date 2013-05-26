@@ -21,7 +21,7 @@ class Keyword(model.Keyword):
     __slots__ = ['status', 'starttime', 'endtime', 'message']
     message_class = Message
 
-    def __init__(self, name='', doc='', args=None, type='kw', timeout='',
+    def __init__(self, name='', doc='', args=(), type='kw', timeout='',
                  status='FAIL', starttime=None, endtime=None):
         """Results of a single keyword.
 
