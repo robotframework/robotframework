@@ -33,6 +33,7 @@ class Runner(SuiteVisitor):
         self._output = output
         self._suite = None
         self._suite_status = None
+        self._executed_tests = None
 
     @property
     def _context(self):
@@ -69,6 +70,7 @@ class Runner(SuiteVisitor):
         self._suite = result
         self._output.start_suite(self._suite)
         self._run_setup(suite.keywords.setup, self._suite_status)
+        self._executed_tests = utils.NormalizedDict(ignore='_')
 
     def _resolve_setting(self, value):
         return self._variables.replace_string(value, ignore_errors=True)
@@ -84,9 +86,14 @@ class Runner(SuiteVisitor):
         self._suite_status = self._suite_status.parent_status
 
     def visit_test(self, test):
+        if test.name in self._executed_tests:
+            self._output.warn("Multiple test cases with name '%s' executed in "
+                              "test suite '%s'."% (test.name, self._suite.longname))
+        self._executed_tests[test.name] = True
         result = self._suite.tests.create(name=test.name,
                                           doc=self._resolve_setting(test.doc),
-                                          tags=test.tags,
+                                          tags=[self._resolve_setting(t)
+                                                for t in test.tags],
                                           starttime=utils.get_timestamp())
         keywords = Keywords(test.keywords.normal, test.continue_on_failure)
         result.timeout = test.timeout   # TODO: Cleaner implementation to ...
