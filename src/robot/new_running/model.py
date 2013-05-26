@@ -104,6 +104,11 @@ class TestSuite(model.TestSuite):
     def variables(self, variables):
         return model.ItemList(Variable, items=variables)
 
+    def configure(self, randomize_suites=False, randomize_tests=False,
+                  **options):
+        model.TestSuite.configure(self, **options)
+        self.randomize(randomize_suites, randomize_tests)
+
     def randomize(self, suites=True, tests=True):
         self.visit(Randomizer(suites, tests))
 

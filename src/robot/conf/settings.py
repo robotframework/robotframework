@@ -109,7 +109,7 @@ class _BaseSettings(object):
             return [self._process_tag_stat_combine(v) for v in value]
         if name == 'TagStatLink':
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
-        if name == 'RemoveKeywords':
+        if name in ['RemoveKeywords', 'RunMode']:
             return [v.upper() for v in value]
         return value
 
@@ -332,8 +332,18 @@ class RobotSettings(_BaseSettings):
             'include_tests': self['TestNames'],
             'empty_suite_ok': self['RunEmptySuite'],
             'critical': self['Critical'],
-            'non_critical': self['NonCritical']
+            'non_critical': self['NonCritical'],
+            'randomize_suites': self.randomize_suites,
+            'randomize_tests': self.randomize_tests
         }
+
+    @property
+    def randomize_suites(self):
+        return any(mode in ('RANDOM:SUITE', 'RANDOM:ALL') for mode in self['RunMode'])
+
+    @property
+    def randomize_tests(self):
+        return any(mode in ('RANDOM:TEST', 'RANDOM:ALL') for mode in self['RunMode'])
 
 
 class RebotSettings(_BaseSettings):
