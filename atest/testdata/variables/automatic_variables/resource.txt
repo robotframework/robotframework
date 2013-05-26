@@ -1,3 +1,6 @@
+*** Settings ***
+Library    Collections
+
 *** Keyword ***
 Check Variables In Suite Setup
     [Arguments]    ${name}    ${doc}    ${meta}    @{prev_test}
@@ -5,7 +8,7 @@ Check Variables In Suite Setup
     Check Previous Test Variables    @{prev_test}
     Should Be Equal    ${SUITE_NAME}    ${name}
     Should Be Equal    ${SUITE_DOCUMENTATION}    ${doc}
-    Should Be True    ${SUITE METADATA} == ${meta}
+    Suite Metadata Should Be Correct    ${meta}
     Variable Should Not Exist    $SUITE_STATUS
     Variable Should Not Exist    $SUITE_MESSAGE
 
@@ -40,3 +43,7 @@ Check Test Tags
     Log Many    @{expected}
     Should Be Equal    ${expected}    ${TEST TAGS}
 
+Suite Metadata Should Be Correct
+    [Arguments]    ${expected}
+    ${expected} =    Evaluate    ${expected}
+    Dictionaries Should Be Equal    ${SUITE METADATA}    ${expected}

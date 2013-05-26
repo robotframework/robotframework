@@ -52,15 +52,16 @@ Suite Documentation
     Should Be Equal    ${SUITE_DOCUMENTATION}    This is suite documentation.
 
 Suite Metadata
-    [Setup]    Should Be True    ${SUITE METADATA} == ${EXP_SUITE_META}
-    Should Be True    ${SUITE METADATA} == ${EXP_SUITE_META}
-    [Teardown]    Should Be True    ${SUITE METADATA} == ${EXP_SUITE_META}
+    [Setup]    Suite Metadata Should Be Correct    ${EXP_SUITE_META}
+    Suite Metadata Should Be Correct    ${EXP_SUITE_META}
+    [Teardown]    Suite Metadata Should Be Correct    ${EXP_SUITE_META}
 
 Modifying ${SUITE METADATA} does not affect actual metadata suite has
     [Documentation]    The variable is changed but not "real" metadata
     Set To Dictionary    ${SUITE METADATA}    Meta1    not really set
     Set To Dictionary    ${SUITE METADATA}    NotSet    not really set
-    Should Be True    ${SUITE METADATA} == {'MeTa1': 'not really set', 'meta2': 'value', 'NotSet': 'not really set'}
+    Suite Metadata Should Be Correct
+    ...    {'MeTa1': 'not really set', 'meta2': 'value', 'NotSet': 'not really set'}
 
 Suite Status And Suite Message Are Not Visible In Tests
     Variable Should Not Exist    $SUITE_STATUS
