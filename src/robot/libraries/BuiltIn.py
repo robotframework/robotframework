@@ -812,27 +812,47 @@ class _Verify:
         return msg
 
     def pass_execution(self, message, *tags):
-        """Skips the rest of the current test execution with status PASS.
+        """Skips rest of the current test, setup, or teardown with PASS status.
 
-        The message is specified using the `msg` argument. It is possible to
-        use HTML in the given message by prefixing the message with `*HTML*`.
+        This keyword can be used anywhere in the test data, but the place where
+        used affects the behavior:
 
-        It is possible to modify tags of the current test case by passing tags
-        after the message. Tags starting with a hyphen (e.g. `-regression`) are
-        removed and others added. Tags are modified using `Set Tags` and
-        `Remove Tags` internally, and the semantics setting and removing them
-        are the same as with these keywords.
+        - When used in any setup or teardown (suite, test or keyword), passes
+          that setup or teardown. Possible keyword teardowns of the started
+          keywords are executed. Does not affect execution or statuses
+          otherwise.
+        - When used in a test outside setup or teardown, passes that particular
+          test case. Possible test and keyword teardowns are executed.
 
-        If this keyword is used outside a test teardown, the message is
-        overridden by possible failure message. Failures in teardown
-        are always shown in addition to this message.
+        Possible continuable failures before this keyword is used, as well as
+        failures in executed teardowns, will fail the execution.
+
+        It is mandatory to give a message explaining why execution was passed.
+        By default the message is considered plain text, but starting it with
+        `*HTML*` allows using HTML formatting.
+
+        It is also possible to modify test tags passing tags after the message
+        similarly as with `Fail` keyword. Tags starting with a hyphen
+        (e.g. `-regression`) are removed and others added. Tags are modified
+        using `Set Tags` and `Remove Tags` internally, and the semantics
+        setting and removing them are the same as with these keywords.
 
         Examples:
-        | Pass Execution | Skip rest of the test   | | | # Passes the current test case with the given message. |
-        | Pass Execution | *HTML*<b>Skip rest of the test</b> | | | # Passes the current test case using HTML in the message. |
-        | Pass Execution | No need to go further | case-ok | | # Fails and adds 'case-ok' tag. |
-        | Pass Execution | Deprecated | -regression | | # Removes tag 'regression'. |
-        | Pass Execution | My message | tag    | -t*  | # Removes all tags starting with 't' except the newly added 'tag'. |
+        | Pass Execution | All features available in this version tested. |
+        | Pass Execution | Deprecated test. | deprecated | -regression    |
+
+        This keyword is typically wrapped to some other keyword, such as
+        `Run Keyword If`, to pass based on a condition. The most common case
+        can be handled also with `Pass Execution If`:
+
+        | Run Keyword If    | ${rc} < 0 | Pass Execution | Negative values are cool. |
+        | Pass Execution If | ${rc} < 0 | Negative values are cool. |
+
+        Passing execution in the middle of a test, setup or teardown should be
+        used with care. In the worst case it leads to tests that skip all the
+        parts that could actually uncover problems in the tested application.
+        In cases where execution cannot continue do to external factors,
+        it is often safer to fail the test case and make it non-critical.
 
         New in Robot Framework 2.8.
         """
@@ -845,14 +865,12 @@ class _Verify:
         raise PassExecution(message)
 
     def pass_execution_if(self, condition, message, *tags):
-        """Skips rest of the test with status PASS if the `condition` is true.
+        """Conditionally skips rest of the current test, setup, or teardown with PASS status.
 
-        A wrapper for `Pass Execution` to skip the rest of test execution
-        and make test PASS, based on the given condition.
-
-        The given `condition` is evaluated similarly as with `Should Be
-        True` keyword, and `message` and `*tags` have same semantics as with
-        `Pass Execution`.
+        A wrapper for `Pass Execution` to skip rest of the current test,
+        setup or teardown based the given `condition`. The condition is
+        evaluated similarly as with `Should Be True` keyword, and `message`
+        and `*tags` have same semantics as with `Pass Execution`.
 
         Example:
         | :FOR | ${var}            | IN                     | @{VALUES}               |
