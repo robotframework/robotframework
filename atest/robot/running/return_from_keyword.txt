@@ -55,22 +55,6 @@ Return From Keyword If
 Return From Keyword If does not evaluate bogus arguments if condition is untrue
     Check Test Case    ${TESTNAME}
 
-Logs Info Without Return Values
+Logs Info
     ${tc} =  Check Test Case    Without Return Value
     Should Be Equal As Strings  ${tc.kws[0].kws[0].msgs[0]}  Returning from keyword
-
-Logs Info With Single Return Value
-    ${tc} =  Check Test Case    With Single Return Value
-    Should Be Equal As Strings  ${tc.kws[0].kws[0].msgs[0]}  Returning from keyword with: something to return
-
-Logs Info With Multiple Return Values
-    ${tc} =  Check Test Case    With Multiple Return Values
-    Should Be Equal As Strings  ${tc.kws[0].kws[0].msgs[0]}  Returning from keyword with: something, to, return
-
-Logs Info With Variable
-    ${tc} =  Check Test Case    With Variable
-    Should Be Equal As Strings  ${tc.kws[0].kws[0].msgs[0]}  Returning from keyword with: \${arg}
-
-Logs Info With List Variable
-    ${tc} =  Check Test Case    With List Variable
-    Should Be Equal As Strings  ${tc.kws[0].kws[0].msgs[0]}  Returning from keyword with: 0, \@{list}

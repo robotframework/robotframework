@@ -1740,11 +1740,7 @@ class _Control:
         accomplished directly with `Return From Keyword If`. Both of these
         keywords are new in Robot Framework 2.8.
         """
-        log_message = 'Returning from keyword'
-        if return_values:
-            log_values = ', '.join(value for value in return_values)
-            log_message = '%s with: %s' % (log_message, log_values)
-        self.log(log_message)
+        self.log('Returning from keyword')
         raise ReturnFromKeyword(return_values)
 
     @run_keyword_variant(resolve=1)
