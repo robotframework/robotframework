@@ -46,7 +46,7 @@ def _verify_attrs(method_name, attrs, names):
             OUTFILE.write('PASSED | %s: %s\n' % (name, value))
         else:
             OUTFILE.write('FAILED | %s: %r, Expected: %s, Actual: %s\n'
-                          % (name, value, type(value), exp_type))
+                          % (name, value, exp_type, type(value)))
 
 def close():
     OUTFILE.close()
