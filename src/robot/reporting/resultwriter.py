@@ -75,7 +75,7 @@ class Results(object):
         self._data_sources = data_sources \
             if not isinstance(data_sources, basestring) else [data_sources]
         self._settings = settings
-        if len(data_sources) == 1 and isinstance(data_sources[0], Result):
+        if data_sources and len(data_sources) == 1 and isinstance(data_sources[0], Result):
             self._result = data_sources[0]
             self.return_code = self._result.return_code
         else:
