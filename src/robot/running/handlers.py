@@ -354,7 +354,7 @@ class _XTimesHandler(_RunKeywordHandler):
 
     def run(self, context, args):
         resolved_times = context.namespace.variables.replace_string(self.name)
-        _RunnableHandler.run(self, context, (resolved_times,) + args)
+        _RunnableHandler.run(self, context, (resolved_times,) + tuple(args))
 
     @property
     def longname(self):
