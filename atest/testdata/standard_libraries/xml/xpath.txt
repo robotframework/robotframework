@@ -5,7 +5,7 @@ Documentation    Tests ET's XPATH support documented at
 ...              expressions with non-ASCII characters require ET 1.3
 ...              (i.e. interpreter version 2.7) or newer.
 Resource         resource.txt
-Suite Setup      Add Etree Version to Suite Documentation
+Suite Setup      Add Etree Version to Suite Metadata
 Test Template    Get element by xpath
 
 
@@ -94,6 +94,6 @@ Get element by xpath
     Should Be Equal    ${element.tag}    ${tag}
     Run Keyword If    '''${text}''' != 'IGNORE'    Should Be Equal    ${element.text}    ${text}
 
-Add Etree Version to Suite Documentation
+Add Etree Version to Suite Metadata
     ${version}=    Get Etree Version
     Set Suite Metadata    ET Version    ${version}
