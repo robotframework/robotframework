@@ -1785,6 +1785,8 @@ class _Control:
         New in Robot Framework 2.8.
         """
         if self._is_true(condition):
+            message = self._variables.replace_string(message)
+            tags = [self._variables.replace_string(tag) for tag in tags]
             self.pass_execution(message, *tags)
 
 

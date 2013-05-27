@@ -133,6 +133,12 @@ Should not pass execution if condition false
 Should not resolve variables if condition false
     Check Test Case    ${TESTNAME}
 
+Should fail if non-existing variable if condition true
+    Check Test Case    ${TESTNAME}
+
+With multiple variables
+    Check Test Tags    ${TESTNAME}    force1    force2    my tag
+
 Should only pass successful suite setup if test case fails
     Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup.txt
     Check Test Case    ${TESTNAME}
