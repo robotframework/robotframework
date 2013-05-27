@@ -370,9 +370,8 @@ class RobotFramework(Application):
         suite.run(output)
         LOGGER.info("Tests execution ended. Statistics:\n%s" % suite.get_stat_message())
         output.close(suite)
-        if settings.is_rebot_needed():
-            output, settings = settings.get_rebot_datasource_and_settings()
-            ResultWriter(output).write_results(settings)
+        if settings.log or settings.report or settings.xunit:
+            ResultWriter(settings.output).write_results(settings.get_rebot_settings())
         return suite.return_code
 
     def new_main(self, datasources, **options):
@@ -384,9 +383,9 @@ class RobotFramework(Application):
         result.configure(status_rc=settings.status_rc)
         LOGGER.info("Tests execution ended. Statistics:\n%s"
                     % result.suite.statistics.message)
-        if settings.is_rebot_needed():
-            output, settings = settings.get_rebot_datasource_and_settings()
-            ResultWriter(output).write_results(settings)
+        if settings.log or settings.report or settings.xunit:
+            writer = ResultWriter(settings.output if settings.log else result)
+            writer.write_results(settings.get_rebot_settings())
         return result.return_code
 
     def validate(self, options, arguments):

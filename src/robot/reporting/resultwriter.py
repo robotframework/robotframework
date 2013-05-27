@@ -15,6 +15,7 @@
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.result import ExecutionResult
+from robot.result.executionresult import Result
 from robot.utils import unic
 
 from .jsmodelbuilders import JsModelBuilder
@@ -74,9 +75,13 @@ class Results(object):
         self._data_sources = data_sources \
             if not isinstance(data_sources, basestring) else [data_sources]
         self._settings = settings
-        self._result = None
+        if len(data_sources) == 1 and isinstance(data_sources[0], Result):
+            self._result = data_sources[0]
+            self.return_code = self._result.return_code
+        else:
+            self._result = None
+            self.return_code = -1
         self._js_result = None
-        self.return_code = -1
 
     @property
     def result(self):

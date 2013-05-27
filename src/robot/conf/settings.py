@@ -293,11 +293,7 @@ class RobotSettings(_BaseSettings):
                        'MonitorMarkers': ('monitormarkers', 'AUTO'),
                        'DebugFile'     : ('debugfile', 'NONE')}
 
-    def is_rebot_needed(self):
-        return not ('NONE' == self['Log'] == self['Report'] == self['XUnitFile'])
-
-    def get_rebot_datasource_and_settings(self):
-        datasource = self['Output']
+    def get_rebot_settings(self):
         settings = RebotSettings(log=False)
         settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
@@ -309,7 +305,7 @@ class RobotSettings(_BaseSettings):
         settings._opts['Output'] = 'NONE'
         settings._opts['LogLevel'] = 'TRACE'
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
-        return datasource, settings
+        return settings
 
     def _outputfile_disabled(self, type_, name):
         if name == 'NONE':
