@@ -93,6 +93,10 @@ class TestTags(unittest.TestCase):
         assert_equal(str(Tags(['y', "X'X"])), "[X'X, y]")
         assert_equal(str(Tags([u'\xe4', 'a'])), '[a, \xc3\xa4]')
 
+    def test_repr(self):
+        for tags in ([], ['y', "X'X"], [u'\xe4', 'a']):
+            assert_equal(repr(Tags(tags)), repr(sorted(tags)))
+
     def test__add__list(self):
         tags = Tags(['xx', 'yy'])
         new_tags = tags + ['zz', 'ee', 'XX']

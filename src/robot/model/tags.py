@@ -48,6 +48,9 @@ class Tags(object):
     def __unicode__(self):
         return u'[%s]' % ', '.join(self)
 
+    def __repr__(self):
+        return repr(self._tags)
+
     def __str__(self):
         return unicode(self).encode('UTF-8')
 
