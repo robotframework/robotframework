@@ -27,6 +27,14 @@ class TestReporting(unittest.TestCase):
         rc = ResultWriter().write_results(settings, results)
         assert_equals(rc, -1)
 
+    def test_generating_from_existing_result(self):
+        report = ClosableOutput('report.html')
+        settings = StubSettings(report=report)
+        result = Result()
+        result.suite.name = 'mysuite'
+        ResultWriter(result).write_results(settings)
+        assert_true('mysuite' in report.value)
+
     def test_only_output(self):
         output = ClosableOutput('output.xml')
         self._write_results(output=output)
