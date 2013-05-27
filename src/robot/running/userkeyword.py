@@ -17,7 +17,8 @@ import re
 
 from robot.common import BaseLibrary, UserErrorHandler
 from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
-                          ReturnFromKeyword, UserKeywordExecutionFailed)
+                          PassExecution, ReturnFromKeyword,
+                          UserKeywordExecutionFailed)
 from robot.variables import is_list_var, VariableSplitter
 from robot.output import LOGGER
 from robot import utils
@@ -223,8 +224,7 @@ class UserKeywordHandler(object):
         context.start_keyword_teardown(error)
         error = teardown.run(context)
         context.end_keyword_teardown()
-        if isinstance(error, ExecutionPassed) \
-                and not isinstance(error, ReturnFromKeyword):
+        if isinstance(error, PassExecution):
             return None
         return error
 

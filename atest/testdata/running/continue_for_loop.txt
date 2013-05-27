@@ -54,6 +54,12 @@ Continue For Loop In Test Teardown
 Continue For Loop In Keyword Teardown
     Continue For Loop In Keyword Teardown
 
+Invalid Continue For Loop In User Keyword Teardown
+    [Documentation]    FAIL Keyword teardown failed:
+    ...                Invalid 'Continue For Loop' usage.
+    :FOR    ${var}    IN    one   two
+    \     Invalid Continue For Loop In User Keyword Teardown
+
 Continue For Loop If True
     :FOR    ${var}    IN    one    two
     \    Continue For Loop If     1 == 1
@@ -102,3 +108,7 @@ With Keyword For Loop Calling Keyword With Continue For Loop
 Continue For Loop In Keyword Teardown
     No Operation
     [Teardown]    With Loop
+
+Invalid Continue For Loop In User Keyword Teardown
+    No Operation
+    [Teardown]    Continue For Loop

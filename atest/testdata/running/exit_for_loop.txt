@@ -60,6 +60,12 @@ Exit For Loop In Test Teardown
 Exit For Loop In Keyword Teardown
     Exit For Loop In Keyword Teardown
 
+Invalid Exit For Loop In User Keyword Teardown
+    [Documentation]    FAIL Keyword teardown failed:
+    ...                Invalid 'Exit For Loop' usage.
+    :FOR    ${var}    IN    one   two
+    \     Invalid Exit For Loop In User Keyword Teardown
+
 Exit For Loop If True
     :FOR    ${var}    IN    one    two
     \    Exit For Loop If     1 == 1
@@ -107,3 +113,8 @@ With Keyword For Loop Calling Keyword With Exit For Loop
 Exit For Loop In Keyword Teardown
     No Operation
     [Teardown]    With Loop
+
+Invalid Exit For Loop In User Keyword Teardown
+    No Operation
+    [Teardown]    Exit For Loop
+
