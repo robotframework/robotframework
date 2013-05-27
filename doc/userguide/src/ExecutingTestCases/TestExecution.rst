@@ -28,8 +28,8 @@ tests they are executed one-by-one, and if it has suites they are
 executed recursively in depth-first order. When an individual test
 case is executed, the keywords it contains are run in a
 sequence. Normally the execution of the current test ends if any
-of the keywords fails, but it is also possible to 
-`continue after failures`__. The exact `execution order`_ and how 
+of the keywords fails, but it is also possible to
+`continue after failures`__. The exact `execution order`_ and how
 possible `setups and teardowns`_ affect the execution are discussed
 in the following sections.
 
@@ -41,10 +41,12 @@ __ `Continue on failure`_
 Setups and teardowns
 ''''''''''''''''''''
 
-Setups and teardowns can be defined on `test case`__ and `test suite`__ level.
+Setups and teardowns can be used on `test suite`__, `test case`__ and
+`user keyword`__ levels.
 
 __ `Test setup and teardown`_
 __ `Suite setup and teardown`_
+__ `User keyword teardown`_
 
 Suite setup
 ```````````
@@ -52,9 +54,8 @@ Suite setup
 If a test suite has a setup, it is executed before its tests and child
 suites. If the suite setup passes, test execution continues
 normally. If it fails, all the test cases the suite and its child
-suites are marked failed with a message :msg:`Setup of the parent
-suite failed.`. The tests and possible suite setups and teardowns in
-the child test suites are not executed.
+suites contain are marked failed. The tests and possible suite setups
+and teardowns in the child test suites are not executed.
 
 Suite setups are often used for setting up the test environment.
 Because tests are not run if the suite setup fails, it is easy to use
@@ -90,11 +91,19 @@ Test teardown
 
 Possible test teardown is executed after the test case has been
 executed. It is executed regardless of the test status and also
-if the setup of the test has failed.
+if test setup has failed.
 
 Similarly as suite teardown, test teardowns are used mainly for
 cleanup activities. Also they are executed fully even if some of their
 keywords fail.
+
+Keyword teardown
+````````````````
+
+`User keywords`_ cannot have setups, but they can have teardowns that work
+exactly like other teardowns. Keyword teardowns are run after the keyword is
+executed otherwise, regardless the status, and they are executed fully even
+if some of their keywords fail.
 
 Execution order
 '''''''''''''''
@@ -124,33 +133,43 @@ the :opt:`--runmode` option.
 
 __ `Randomizing execution order`_
 
-Pass Execution
-''''''''''''''
+Passing execution
+'''''''''''''''''
 
-From Robot Framework 2.8 onwards, it is possible to stop test 
-execution before all keywords in a test case have executed by
-utilizing `BuiltIn keyword`_ :name:`Pass Execution`. This 
-keyword stops the execution of the test case and marks the 
-test case as passed. This mechanism is intended for the 
-rare case when you want to skip long-taking test cases but do
-not want them to be marked as failed. The keyword always 
-requires a message to be written in the log and report.
+Typically test cases, setups and teardowns are considered passed if
+all keywords they contain are executed and none of them fail. From
+Robot Framework 2.8 onwards, it is also possible to use `BuiltIn keywords`_
+:name:`Pass Execution` and :name:`Pass Execution If` to stop execution with
+PASS status and skip the remaining keywords.
 
-:name:`Pass Execution` can be used anywhere. If used in a 
-setup, :name:`Pass Execution` will skip following keywords in 
-the setup but does continue with the actual test case. Likewise, 
-if used in teardowns, the keyword does not pass the test
-case if the actual test case has failed. :name:`Pass Execution` 
-will also take into account possible earlier `continuable failures`__ 
-and does not mark test as passed if such have occurred.
+How :name:`Pass Execution` and :name:`Pass Execution If` behave
+in different situations is explained below:
 
-:name:`Pass Execution` can modify the tags of the current 
-test case by passing them after the message. See keyword 
-documentation in `BuiltIn library`__ to find out, how 
-changing tags work.
+- When used in any `setup or teardown`__ (suite, test or keyword), these
+  keywords pass that setup or teardown. Possible teardowns of the started
+  keywords are executed. Test execution or statuses are not affected otherwise.
 
+- When used in a test case outside setup or teardown, the keywords pass that
+  particular test case. Possible test and keyword teardowns are executed.
+
+- Possible `continuable failures`__ that occur before these keyword are used,
+  as well as failures in teardowns executed afterwards, will fail the execution.
+
+- It is mandatory to give an explanation message
+  why execution was interrupted, and it is also possible to
+  modify test case tags. For more details, and usage examples, see the
+  `documentation of these keywords`__.
+
+Passing execution in the middle of a test, setup or teardown should be
+used with care. In the worst case it leads to tests that skip all the
+parts that could actually uncover problems in the tested application.
+In cases where execution cannot continue do to external factors,
+it is often safer to fail the test case and make it `non-critical`__.
+
+__ `Setups and teardowns`_
 __ `Continue on failure`_
-__ `Builtin keyword`_ 
+__ `BuiltIn`_
+__ `Setting criticality`_
 
 Continue on failure
 ~~~~~~~~~~~~~~~~~~~
@@ -229,7 +248,7 @@ Stopping test execution gracefully
 Sometimes there is a need to stop the test execution before all the tests
 have finished, but so that logs and reports are created. Different ways how
 to accomplish this are explained below. In all these cases the remaining
-test cases are marked failed. 
+test cases are marked failed.
 
 .. Note:: Most of these features are new in Robot Framework 2.5. Only
           the `ExitOnFailure mode`_ is supported in earlier versions.
@@ -269,7 +288,7 @@ __ `Stopping test execution`_
 '''''''''''''''''''''''''
 
 If option :opt:`--runmode` is used with value :opt:`ExitOnFailure`
-(case-insensitive), the execution of tests stops immediately if 
+(case-insensitive), the execution of tests stops immediately if
 a `critical test`_ fails and the remaining tests are marked as failed.
 
 Handling teardowns

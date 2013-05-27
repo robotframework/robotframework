@@ -71,7 +71,7 @@ this section.
    Specifies `user keyword return values`_.
 
 `[Teardown]`:opt:
-   Specify `keyword teardown`_. Available from Robot Framework 2.6 onwards.
+   Specify `user keyword teardown`_. Available from Robot Framework 2.6 onwards.
 
 `[Timeout]`:opt:
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
@@ -637,8 +637,8 @@ demonstrates returning conditionally inside a `for loop`_.
 .. note:: Both :name:`Return From Keyword` and :name:`Return From Keyword If`
           are available since Robot Framework 2.8.
 
-Keyword teardown
-~~~~~~~~~~~~~~~~
+User keyword teardown
+~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.6, also user keywords may have a teardown.
 It is defined using :opt:`[Teardown]` setting.
