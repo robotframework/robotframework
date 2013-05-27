@@ -17,10 +17,11 @@ With single return value
     Should Be Equal    ${ret}    something to return
 
 With multiple return values
-    ${r1}    ${r2}    ${r3}=     With Multiple Return Values
+    ${r1}    ${r2}    ${r3}    ${r4}=     With Multiple Return Values
     Should Be Equal     ${r1}     something
-    Should Be Equal     ${r2}     to
-    Should Be Equal     ${r3}     return
+    Should Be Equal     ${r2}     ${true}
+    Should Be Equal     ${r3}     100
+    Should Be Equal     ${r4}     \\
 
 With variable
     ${ret}=    With variable    foo
@@ -101,7 +102,7 @@ With Single Return Value
     [Return]     Should not ${evaluate}
 
 With Multiple Return Values
-    Return From Keyword     something     to      return
+    Return From Keyword     something     ${true}     100    \\
     Fail    Should have returned before this
     [Return]     Should    not    ${evaluate}
 
