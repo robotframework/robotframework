@@ -120,6 +120,14 @@ and can be configured to generate test history based on this file.
 XUnit output files are not created unless the command line option
 :opt:`--xunitfile (-x)` is used explicitly.
 
+Note that because xunit output does not have the concept of non-critical tests,
+the xunit output will mark all tests either passed or failed, with no
+distinction between critical and non-critical tests.
+
+Since Robot Framework 2.8 there is also option :opt:`--xunitskipnoncritical`
+which will cause robot to mark non-critical tests as skipped. The message
+of the skipped-element has the test status.
+
 Debug file
 ''''''''''
 
