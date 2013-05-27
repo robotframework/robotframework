@@ -21,7 +21,7 @@ class TestCase(model.TestCase):
     __slots__ = ['status', 'message', 'starttime', 'endtime']
     keyword_class = Keyword
 
-    def __init__(self, name='', doc='', tags=None, timeout='', status='FAIL',
+    def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
                  message='', starttime=None, endtime=None):
         """Results of a single test case.
 
