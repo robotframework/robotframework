@@ -151,23 +151,30 @@ With library calling Pass Execution keyword
 
 Should pass execution if condition true
     [Documentation]    PASS message
-    :FOR    ${var}    IN    one    two
-    \    Pass Execution If     1 == 1    message    tag1    tag2
-    \    Fail    this should not execute
-    Should BE Equal    ${var}    one
+    Pass Execution If     1 == 1    message    tag1    tag2
+    Fail    this should not execute
 
 Should not pass execution if condition false
     [Documentation]   FAIL this should execute
-    :FOR    ${var}    IN    one    two
-    \    Pass Execution If     1 == 2    message    tag1    tag2
-    \    Fail    this should execute
-    Should BE Equal    ${var}    two
+    Pass Execution If     ${False}    message    tag1    tag2
+    Fail    this should execute
 
 Should not resolve variables if condition false
     [Documentation]   FAIL this should execute
-    :FOR    ${var}    IN    one
-    \    Pass Execution If     1 == 2    message    ${not_exists}
-    \    Fail    this should execute
+    Pass Execution If     ${False}    message    ${not_exists}
+    Fail    this should execute
+
+Should fail if non-existing variable if condition true
+    [Documentation]    FAIL Non-existing variable '${not exist}'.
+    Pass Execution If    ${True}    my message    ${not exist}
+    Fail    this should not execute
+
+With multiple variables
+    [Documentation]    PASS my message
+    ${tag}=    Set Variable    my tag
+    ${msg}=    Set Variable    my message
+    Pass Execution If    ${True}    ${msg}    ${tag}
+    Fail    this should not execute
 
 
 *** Keywords ***
