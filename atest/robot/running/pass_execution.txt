@@ -130,6 +130,9 @@ Should pass execution if condition true
 Should not pass execution if condition false
     Check Test Case    ${TESTNAME}
 
+Should not resolve variables if condition false
+    Check Test Case    ${TESTNAME}
+
 Should only pass successful suite setup if test case fails
     Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup.txt
     Check Test Case    ${TESTNAME}

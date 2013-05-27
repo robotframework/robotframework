@@ -163,6 +163,12 @@ Should not pass execution if condition false
     \    Fail    this should execute
     Should BE Equal    ${var}    two
 
+Should not resolve variables if condition false
+    [Documentation]   FAIL this should execute
+    :FOR    ${var}    IN    one
+    \    Pass Execution If     1 == 2    message    ${not_exists}
+    \    Fail    this should execute
+
 
 *** Keywords ***
 
