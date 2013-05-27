@@ -96,3 +96,6 @@ class TestSuite(model.TestSuite):
     @property
     def critical(self):
         return self.criticality
+
+    def get_stat_message(self):
+        return self.statistics.message

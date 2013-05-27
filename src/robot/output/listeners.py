@@ -17,6 +17,7 @@ import os.path
 
 from robot import utils
 from robot.errors import DataError
+from robot.model import Tags
 
 from .loggerhelper import AbstractLoggerProxy
 from .logger import LOGGER
@@ -102,11 +103,12 @@ class Listeners(object):
         self._running_test = True
         for li in self._listeners:
             if li.version == 1:
-                li.call_method(li.start_test, test.name, test.doc, test.tags)
+                li.call_method(li.start_test, test.name, test.doc,
+                               list(test.tags))
             else:
                 attrs = self._get_start_attrs(test, 'tags')
                 attrs['critical'] = 'yes' if test.critical else 'no'
-                attrs['template'] = test.template or ''
+                attrs['template'] = getattr(test, 'template', None) or ''  # TODO: Doesn't work correctly with new run
                 li.call_method(li.start_test, test.name, attrs)
 
     def end_test(self, test):
@@ -117,7 +119,7 @@ class Listeners(object):
             else:
                 attrs = self._get_end_attrs(test, 'tags')
                 attrs['critical'] = 'yes' if test.critical else 'no'
-                attrs['template'] = test.template or ''
+                attrs['template'] = getattr(test, 'template', None) or ''  # TODO: Doesn't work correctly with new run
                 li.call_method(li.end_test, test.name, attrs)
 
     def start_keyword(self, kw):
@@ -200,7 +202,7 @@ class Listeners(object):
     def _take_copy_of_mutable_value(self, value):
         if isinstance(value, (dict, utils.NormalizedDict)):
             return dict(value)
-        if isinstance(value, list):
+        if isinstance(value, (list, tuple, Tags)):
             return list(value)
         return value
 
