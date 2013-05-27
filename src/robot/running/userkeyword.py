@@ -181,14 +181,14 @@ class UserKeywordHandler(object):
         error = return_ = pass_ = None
         try:
             self.keywords.run(context)
-        except ReturnFromKeyword, ret:
-            return_ = ret
-            error = ret.earlier_failures
-        except ExecutionPassed, exc:
-            pass_ = exc
-            error = exc.earlier_failures
-        except ExecutionFailed, exc:
-            error = exc
+        except ReturnFromKeyword, exception:
+            return_ = exception
+            error = exception.earlier_failures
+        except ExecutionPassed, exception:
+            pass_ = exception
+            error = exception.earlier_failures
+        except ExecutionFailed, exception:
+            error = exception
         td_error = self._run_teardown(context, error)
         if error or td_error:
             error = UserKeywordExecutionFailed(error, td_error)

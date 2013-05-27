@@ -49,13 +49,13 @@ class Keywords(object):
         for kw in self._keywords:
             try:
                 kw.run(context)
-            except ExecutionPassed, exp:
-                exp.set_earlier_failures(errors)
-                raise exp
-            except ExecutionFailed, err:
-                errors.extend(err.get_errors())
-                if not err.can_continue(context.teardown, self._templated,
-                                        context.dry_run):
+            except ExecutionPassed, exception:
+                exception.set_earlier_failures(errors)
+                raise exception
+            except ExecutionFailed, exception:
+                errors.extend(exception.get_errors())
+                if not exception.can_continue(context.teardown, self._templated,
+                                              context.dry_run):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -204,18 +204,18 @@ class ForLoop(BaseKeyword):
         items, iteration_steps = self._get_items_and_iteration_steps(context)
         for i in iteration_steps:
             values = items[i:i+len(self.vars)]
-            err = self._run_one_round(context, self.vars, values)
-            if err:
-                if isinstance(err, ExitForLoop):
+            exception = self._run_one_round(context, self.vars, values)
+            if exception:
+                if isinstance(exception, ExitForLoop):
                     break
-                if isinstance(err, ContinueForLoop):
+                if isinstance(exception, ContinueForLoop):
                     continue
-                if isinstance(err, ExecutionPassed):
-                    err.set_earlier_failures(errors)
-                    raise err
-                errors.extend(err.get_errors())
-                if not err.can_continue(context.teardown, self._templated,
-                                        context.dry_run):
+                if isinstance(exception, ExecutionPassed):
+                    exception.set_earlier_failures(errors)
+                    raise exception
+                errors.extend(exception.get_errors())
+                if not exception.can_continue(context.teardown, self._templated,
+                                              context.dry_run):
                     break
         if errors:
             raise ExecutionFailures(errors)
