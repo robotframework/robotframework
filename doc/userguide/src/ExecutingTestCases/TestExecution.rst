@@ -28,8 +28,8 @@ tests they are executed one-by-one, and if it has suites they are
 executed recursively in depth-first order. When an individual test
 case is executed, the keywords it contains are run in a
 sequence. Normally the execution of the current test ends if any
-of the keywords fails, but it is also possible to 
-`continue after failures`__. The exact `execution order`_ and how 
+of the keywords fails, but it is also possible to
+`continue after failures`__. The exact `execution order`_ and how
 possible `setups and teardowns`_ affect the execution are discussed
 in the following sections.
 
@@ -41,10 +41,12 @@ __ `Continue on failure`_
 Setups and teardowns
 ''''''''''''''''''''
 
-Setups and teardowns can be defined on `test case`__ and `test suite`__ level.
+Setups and teardowns can be used on `test suite`__, `test case`__ and
+`user keyword`__ levels.
 
 __ `Test setup and teardown`_
 __ `Suite setup and teardown`_
+__ `User keyword teardown`_
 
 Suite setup
 ```````````
@@ -52,9 +54,8 @@ Suite setup
 If a test suite has a setup, it is executed before its tests and child
 suites. If the suite setup passes, test execution continues
 normally. If it fails, all the test cases the suite and its child
-suites are marked failed with a message :msg:`Setup of the parent
-suite failed.`. The tests and possible suite setups and teardowns in
-the child test suites are not executed.
+suites contain are marked failed. The tests and possible suite setups
+and teardowns in the child test suites are not executed.
 
 Suite setups are often used for setting up the test environment.
 Because tests are not run if the suite setup fails, it is easy to use
@@ -90,11 +91,19 @@ Test teardown
 
 Possible test teardown is executed after the test case has been
 executed. It is executed regardless of the test status and also
-if the setup of the test has failed.
+if test setup has failed.
 
 Similarly as suite teardown, test teardowns are used mainly for
 cleanup activities. Also they are executed fully even if some of their
 keywords fail.
+
+Keyword teardown
+````````````````
+
+`User keywords`_ cannot have setups, but they can have teardowns that work
+exactly like other teardowns. Keyword teardowns are run after the keyword is
+executed otherwise, regardless the status, and they are executed fully even
+if some of their keywords fail.
 
 Execution order
 '''''''''''''''
@@ -229,7 +238,7 @@ Stopping test execution gracefully
 Sometimes there is a need to stop the test execution before all the tests
 have finished, but so that logs and reports are created. Different ways how
 to accomplish this are explained below. In all these cases the remaining
-test cases are marked failed. 
+test cases are marked failed.
 
 .. Note:: Most of these features are new in Robot Framework 2.5. Only
           the `ExitOnFailure mode`_ is supported in earlier versions.
@@ -269,7 +278,7 @@ __ `Stopping test execution`_
 '''''''''''''''''''''''''
 
 If option :opt:`--runmode` is used with value :opt:`ExitOnFailure`
-(case-insensitive), the execution of tests stops immediately if 
+(case-insensitive), the execution of tests stops immediately if
 a `critical test`_ fails and the remaining tests are marked as failed.
 
 Handling teardowns

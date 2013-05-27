@@ -793,11 +793,13 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    | ${SUITE MESSAGE}       | The full message of the current test suite, including | `Suite     |
    |                        | statistics.                                           | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
-   | ${KEYWORD STATUS}      | The status of the current keyword, either PASS or     | `Keyword   |
-   |                        | FAIL. New in Robot Framework 2.7                      | teardown`_ |
+   | ${KEYWORD STATUS}      | The status of the current keyword, either PASS or     | `User      |
+   |                        | FAIL. New in Robot Framework 2.7                      | keyword    |
+   |                        |                                                       | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
-   | ${KEYWORD MESSAGE}     | The possible error message of the current keyword.    | `Keyword   |
-   |                        | New in Robot Framework 2.7                            | teardown`_ |
+   | ${KEYWORD MESSAGE}     | The possible error message of the current keyword.    | `User      |
+   |                        | New in Robot Framework 2.7.                           | keyword    |
+   |                        |                                                       | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
    | ${LOG LEVEL}           | Current `log level`_. New in Robot Framework 2.8.     | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
