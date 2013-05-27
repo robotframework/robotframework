@@ -4,12 +4,12 @@ Suite Teardown    My TD
 
 *** Test Case ***
 Test 1
-    [Documentation]    FAIL Setup of the parent suite failed:
+    [Documentation]    FAIL Parent suite setup failed:
     ...    No keyword with name 'Non-Existing Keyword' found.
     Fail    This is not executed
 
 Test 2
-    [Documentation]    FAIL Setup of the parent suite failed:
+    [Documentation]    FAIL Parent suite setup failed:
     ...    No keyword with name 'Non-Existing Keyword' found.
     Fail    This is not executed
 

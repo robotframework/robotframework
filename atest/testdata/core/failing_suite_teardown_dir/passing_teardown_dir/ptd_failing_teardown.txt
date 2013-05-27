@@ -4,10 +4,10 @@ Suite Teardown    Fail    Leaf suite failed
 *** Test Case ***
 PTD FTD Passing
     [Documentation]    FAIL
-    ...    Teardown of the parent suite failed:
+    ...    Parent suite teardown failed:
     ...    Leaf suite failed
     ...
-    ...    Also teardown of the parent suite failed:
+    ...    Also parent suite teardown failed:
     ...    Failure in top level suite teardown
     No Operation
 
@@ -15,9 +15,9 @@ PTD FTD Failing
     [Documentation]    FAIL
     ...    Test failed
     ...
-    ...    Also teardown of the parent suite failed:
+    ...    Also parent suite teardown failed:
     ...    Leaf suite failed
     ...
-    ...    Also teardown of the parent suite failed:
+    ...    Also parent suite teardown failed:
     ...    Failure in top level suite teardown
     Fail    Test failed

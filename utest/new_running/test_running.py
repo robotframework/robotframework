@@ -140,15 +140,12 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
         assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
                     msg='Parent suite setup failed:\nAssertionError')
 
-    # TODO: Messages are inconsistent because suite teardown messages in
-    # tests come from old SuiteTeardownFailed. Change when new run integrated!
-
     def test_failing_teardown(self):
         suite = run(self.suite, variable='SUITE TEARDOWN:Fail')
         assert_suite(suite, 'Setups And Teardowns', 'FAIL',
                      'Suite teardown failed:\nAssertionError', 4)
         assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
-                    msg='Teardown of the parent suite failed:\nAssertionError')
+                    msg='Parent suite teardown failed:\nAssertionError')
 
     def test_failing_test_with_failing_teardown(self):
         suite = run(self.suite, variable=['SUITE SETUP:Fail', 'SUITE TEARDOWN:Fail'])
@@ -157,7 +154,7 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
                      'Also suite teardown failed:\nAssertionError', 4)
         assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
                     msg='Parent suite setup failed:\nAssertionError\n\n'
-                        'Also teardown of the parent suite failed:\nAssertionError')
+                        'Also parent suite teardown failed:\nAssertionError')
 
     def test_nested_setups_and_teardowns(self):
         root = TestSuite(name='Root')
@@ -171,8 +168,8 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
                      'Also suite teardown failed:\nAssertionError', 4)
         assert_test(suite.suites[0].tests[0], 'Test with setup and teardown', 'FAIL',
                     msg='Parent suite setup failed:\nAssertionError\n\n'
-                        'Also teardown of the parent suite failed:\nAssertionError\n\n'
-                        'Also teardown of the parent suite failed:\nTop level')
+                        'Also parent suite teardown failed:\nAssertionError\n\n'
+                        'Also parent suite teardown failed:\nTop level')
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ Suite Teardown  Run All Suite Teardown Related Run Keyword Variants
 *** Test Cases ***
 Suite Teardown Related Run Keyword Variants
     [Documentation]  FAIL
-    ...    Teardown of the parent suite failed:
+    ...    Parent suite teardown failed:
     ...    Several failures occurred:
     ...
     ...    1) Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 0.

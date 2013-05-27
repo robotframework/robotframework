@@ -127,7 +127,6 @@ Failing Higher Level Suite Teardown
     ...    Suite teardown failed:\nFailure in suite teardown\n\n${2 FAIL MSG}
     ...    FTD FTD Passing    FTD FTD Failing
 
-
 Failing Higher Level Suite Setup
     Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup
     Check Suite Status    ${SUITE}    FAIL

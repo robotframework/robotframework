@@ -31,8 +31,8 @@ class SuiteTeardownFailureHandler(SuiteVisitor):
 
 
 class SuiteTeardownFailed(SuiteVisitor):
-    _normal_msg = 'Teardown of the parent suite failed:\n'
-    _also_msg = '\n\nAlso teardown of the parent suite failed:\n'
+    _normal_msg = 'Parent suite teardown failed:\n'
+    _also_msg = '\n\nAlso parent suite teardown failed:\n'
 
     def __init__(self, error):
         self._normal_msg += error

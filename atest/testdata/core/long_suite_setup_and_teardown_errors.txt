@@ -8,9 +8,9 @@ ${CUT}            \\[ Message content over the limit has been removed\\. \\]
 *** Test Cases ***
 Test
     [Documentation]    FAIL REGEXP:
-    ...    Setup of the parent suite failed:
+    ...    Parent suite setup failed:
     ...    (setup\\n){20} {4}${CUT}\\n(setup\\n){20}
-    ...    Also teardown of the parent suite failed:
+    ...    Also parent suite teardown failed:
     ...    (teardown\\n){20} {4}${CUT}\\n(teardown\\n){19}teardown
     No Operation
 

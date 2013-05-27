@@ -7,7 +7,7 @@ Library              Exceptions
 ${HEADER}                 Several failures occurred:
 ${EXC}                    ContinuableApocalypseException
 ${ERROR}                  ${EXC}: Can be continued
-${TEARDOWN ERROR}         Also teardown of the parent suite failed:\nContinuableApocalypseException: Can be continued
+${TEARDOWN ERROR}         Also parent suite teardown failed:\nContinuableApocalypseException: Can be continued
 ${ERROR WITH TEARDOWN}    ${ERROR}\n\n${TEARDOWN ERROR}
 
 

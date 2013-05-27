@@ -5,6 +5,6 @@ Suite Teardown  Log  Tearing down 1
 
 *** Test Cases ***
 Test That Should Not Be Run 1
-    [Documentation]  FAIL  Setup of the parent suite failed:
+    [Documentation]  FAIL  Parent suite setup failed:
     ...    FatalCatastrophyException
     Fail  This should not be executed

@@ -74,7 +74,7 @@ Fatal Error In Teardown
 *** Keywords ***
 Set Suite Teardown Failed Variable
     ${SUITE TEARDOWN FAILED} =    Catenate    SEPARATOR=\n
-    ...    Also teardown of the parent suite failed:
+    ...    Also parent suite teardown failed:
     ...    Several failures occurred:
     ...    ${EMPTY}
     ...    1) Suite Message 1

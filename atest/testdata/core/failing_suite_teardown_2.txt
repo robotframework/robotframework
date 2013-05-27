@@ -3,11 +3,11 @@ Suite Setup       Log    Suite setup executed
 Suite Teardown    Fail    Expected failure
 
 *** Variables ***
-${ALSO}           \n\nAlso teardown of the parent suite failed:\nExpected failure
+${ALSO}           \n\nAlso parent suite teardown failed:\nExpected failure
 
 *** Test Case ***
 Test Passes
-    [Documentation]    FAIL Teardown of the parent suite failed:\nExpected failure
+    [Documentation]    FAIL Parent suite teardown failed:\nExpected failure
     Log    This is executed normally
     My Keyword
 

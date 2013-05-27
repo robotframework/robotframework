@@ -9,8 +9,8 @@ ${PASSING}   Passing
 ${FAILING}   Failing
 @{KEYWORDS}  ${NOOP}  ${PASSING}  Log Variables
 ${ERRORS}    Several failures occurred:\n\n1) Expected error message\n\n2) AssertionError
-${TD ERR}    Teardown of the parent suite failed:\n${ERRORS}
-${ATD ERR}   \n\nAlso teardown of the parent suite failed:\n${ERRORS}
+${TD ERR}    Parent suite teardown failed:\n${ERRORS}
+${ATD ERR}   \n\nAlso parent suite teardown failed:\n${ERRORS}
 
 
 

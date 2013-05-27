@@ -2,7 +2,7 @@
 Suite Teardown    Recursion With Run Keyword
 
 *** Variables ***
-${PTD FAILED}        \n\nAlso teardown of the parent suite failed:\nMaximum limit of started keywords exceeded.
+${PTD FAILED}        \n\nAlso parent suite teardown failed:\nMaximum limit of started keywords exceeded.
 ${LIMIT EXCEEDED}    Maximum limit of started keywords exceeded.${PTD FAILED}
 
 

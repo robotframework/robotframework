@@ -5,7 +5,7 @@ Default Tags      tag1    tag2
 
 *** Test Case ***
 Test 1
-    [Documentation]    FAIL Teardown of the parent suite failed:
+    [Documentation]    FAIL Parent suite teardown failed:
     ...    Several failures occurred:
     ...
     ...    1) first
@@ -15,7 +15,7 @@ Test 1
     My Keyword
 
 Test 2
-    [Documentation]    FAIL Teardown of the parent suite failed:
+    [Documentation]    FAIL Parent suite teardown failed:
     ...    Several failures occurred:
     ...
     ...    1) first

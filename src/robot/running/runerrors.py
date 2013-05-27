@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from robot.errors import PassExecution
 
 
@@ -19,7 +20,7 @@ class SuiteRunErrors(object):
                               'option is in use')
     _exit_on_fatal_error = 'Test execution is stopped due to a fatal error'
     _parent_init_error_prefix = 'Initialization of the parent suite failed:\n'
-    _parent_setup_error_prefix = 'Setup of the parent suite failed:\n'
+    _parent_setup_error_prefix = 'Parent suite setup failed:\n'
     _init_error_prefix = 'Suite initialization failed:\n'
     _setup_error_prefix = 'Suite setup failed:\n'
 
