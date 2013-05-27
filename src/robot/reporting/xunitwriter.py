@@ -78,8 +78,14 @@ class XUnitFileWriter(ResultVisitor):
 
     def _skip_test(self, test):
         self._writer.start('skipped', newline=False)
-        self._writer.content('PASS' if test.passed else 'FAIL')
+        self._writer.content(self._get_test_skip_message(test))
         self._writer.end('skipped')
+
+    def _get_test_skip_message(self, test):
+        msg = 'PASS' if test.passed else 'FAIL'
+        if test.message:
+            msg += ': %s' % test.message
+        return msg
 
     def _time_as_seconds(self, millis):
         return str(int(round(millis, -3) / 1000))

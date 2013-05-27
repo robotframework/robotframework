@@ -56,7 +56,7 @@ Skipping non-critical tests
     ${root} =    Get XUnit Node  .
     Stats Should Be    ${root}    2    0    1
     ${skipped} =  Get XUnit Node  testcase/skipped
-    Should be equal  ${skipped.text}  FAIL
+    Should be equal  ${skipped.text}  FAIL: Expected failure
 
 Skipping all tests
     Run tests   --XUnitFile xunit.xml --log NONE --report NONE --noncritical force --xunitskip  ${PASS AND FAIL}
@@ -64,7 +64,7 @@ Skipping all tests
     Stats Should Be    ${root}    2    0    2
     ${skipped} =  Get XUnit Nodes  testcase/skipped
     Should be equal  ${skipped[0].text}  PASS
-    Should be equal  ${skipped[1].text}  FAIL
+    Should be equal  ${skipped[1].text}  FAIL: Expected failure
     Length Should Be    ${skipped}    2
 
 *** Keywords ***

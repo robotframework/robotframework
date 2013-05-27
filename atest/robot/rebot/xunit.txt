@@ -43,7 +43,7 @@ XUnit skip non-criticals
     Element Attribute Should Be    ${root}    failures    4
     Element Attribute Should Be    ${root}    skip    10
     ${skipped} =  Get Elements  ${root}  xpath=testcase/skipped
-    Should Be Equal    ${skipped[0].text}    FAIL
+    Should Be Equal    ${skipped[0].text}    FAIL: Expected
     Should Be Equal    ${skipped[1].text}    PASS
     Length Should Be    ${skipped}    10
 
