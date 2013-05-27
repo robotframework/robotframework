@@ -1639,7 +1639,7 @@ class _Control:
 
         New in Robot Framework 2.8.
         """
-        self.log("Continuing for loop from the next iteration")
+        self.log("Continuing for loop from the next iteration.")
         raise ContinueForLoop()
 
     def continue_for_loop_if(self, condition):
@@ -1675,7 +1675,7 @@ class _Control:
 
         New in Robot Framework 2.5.2.
         """
-        self.log("Exiting for loop")
+        self.log("Exiting for loop altogether.")
         raise ExitForLoop()
 
     def exit_for_loop_if(self, condition):
@@ -1740,7 +1740,7 @@ class _Control:
         accomplished directly with `Return From Keyword If`. Both of these
         keywords are new in Robot Framework 2.8.
         """
-        self.log('Returning from keyword')
+        self.log('Returning from the enclosing user keyword.')
         raise ReturnFromKeyword(return_values)
 
     @run_keyword_variant(resolve=1)

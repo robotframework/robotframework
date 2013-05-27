@@ -32,7 +32,7 @@ Exit For Loop In User Keyword Without For Loop Should Fail
 Exit For Loop Keyword Should Log Info
     ${tc} =    Check Test Case    Simple Exit For Loop
     Should Be Equal    ${tc.kws[0].kws[0].kws[0].name}    BuiltIn.Exit For Loop
-    Should Be Equal As Strings   ${tc.kws[0].kws[0].kws[0].msgs[0]}   Exiting for loop    INFO
+    Check Log Message   ${tc.kws[0].kws[0].kws[0].msgs[0]}   Exiting for loop altogether.
 
 Custom Exception with ROBOT_EXIT_FOR_LOOP Works But Is Deprecated
     ${msg} =    Catenate
