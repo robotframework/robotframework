@@ -16,6 +16,7 @@ from robot.model import SuiteVisitor
 from robot.result.testsuite import TestSuite     # TODO: expose in __init__?
 from robot.result.executionresult import Result  # ---------- ii -----------
 from robot.running.namespace import Namespace
+from robot.running.timeouts import TestTimeout
 from robot.variables import GLOBAL_VARIABLES
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.keywords import Keywords, Keyword
@@ -94,14 +95,11 @@ class Runner(SuiteVisitor):
                                           doc=self._resolve_setting(test.doc),
                                           tags=[self._resolve_setting(t)
                                                 for t in test.tags],
-                                          starttime=utils.get_timestamp())
+                                          starttime=utils.get_timestamp(),
+                                          timeout=self._get_timeout(test),
+                                          status='RUNNING')
         keywords = Keywords(test.keywords.normal, test.continue_on_failure)
-        result.timeout = test.timeout   # TODO: Cleaner implementation to ...
-        result.status = 'RUNNING'       # ... activate timeouts
         self._context.start_test(result)
-        if test.timeout:
-            test.timeout.replace_variables(self._variables)  # FIXME: Should not change model state!!
-            test.timeout.start()
         status = ExecutionStatus(self._suite_status, test=True)
         if not status.failures:
             self._run_setup(test.keywords.setup, status)
@@ -118,6 +116,14 @@ class Runner(SuiteVisitor):
         result.message = status.message
         result.endtime = utils.get_timestamp()
         self._context.end_test(result)
+
+    def _get_timeout(self, test):
+        if not test.timeout:
+            return None
+        timeout = TestTimeout(test.timeout.value, test.timeout.message,
+                              self._variables)
+        timeout.start()
+        return timeout
 
     def _run_setup(self, setup, failures):
         failure = self._run_setup_or_teardown(setup, 'setup')

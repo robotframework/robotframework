@@ -79,6 +79,11 @@ class TestCase(model.TestCase):
         model.TestCase.__init__(self, **kwargs)
         self.continue_on_failure = continue_on_failure
 
+    @setter
+    def timeout(self, timeout):
+        return Timeout(*timeout) if timeout else None
+
+
 
 class TestSuite(model.TestSuite):
     __slots__ = []
@@ -146,6 +151,16 @@ class Variable(object):
         # TODO: check name and value
         self.name = name
         self.value = value
+
+
+class Timeout(object):
+
+    def __init__(self, value, message=None):
+        self.value = value
+        self.message = message
+
+    def __str__(self):
+        return self.value
 
 
 class UserKeyword(object):

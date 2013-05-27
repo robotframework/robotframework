@@ -97,11 +97,11 @@ class TestBuilding(unittest.TestCase):
 
     def test_test_timeout(self):
         tests = build('timeouts.txt').tests
-        assert_equals(tests[0].timeout.string, '1min 42s')
+        assert_equals(tests[0].timeout.value, '1min 42s')
         assert_equals(tests[0].timeout.message, '')
-        assert_equals(tests[1].timeout.string, '1d2h')
+        assert_equals(tests[1].timeout.value, '1d2h')
         assert_equals(tests[1].timeout.message, 'The message')
-        assert_equals(tests[2].timeout.string, '${100}')
+        assert_equals(tests[2].timeout.value, '${100}')
         assert_equals(tests[2].timeout.message, '')
 
     def test_keyword_timeout(self):

@@ -14,7 +14,6 @@
 
 from robot.new_running.defaults import TestDefaults
 from robot.parsing import TestData
-from robot.running.timeouts import TestTimeout
 
 from .model import TestSuite, ForLoop
 
@@ -68,12 +67,14 @@ class TestSuiteBuilder(object):
                                   doc=unicode(data.doc),
                                   tags=values.tags.value,
                                   continue_on_failure=bool(values.template),
-                                  timeout=TestTimeout(values.timeout.value,
-                                                      values.timeout.message))
+                                  timeout=self._get_timeout(values.timeout))
         self._create_step(test, values.setup, 'setup')
         for step_data in data.steps:
             self._create_step(test, step_data, template=values.template.value)
         self._create_step(test, values.teardown, 'teardown')
+
+    def _get_timeout(self, timeout):
+        return (timeout.value, timeout.message) if timeout else None
 
     def _create_user_keyword(self, suite, data):
         # TODO: Tests and uks have inconsistent timeout types
