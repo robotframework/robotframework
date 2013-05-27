@@ -127,6 +127,10 @@ class BaseTestSuite(_TestAndSuiteHelper):
             count += suite.get_test_count()
         return count
 
+    @property
+    def test_count(self):
+        return self.get_test_count()
+
     def get_full_message(self):
         """Returns suite's message including statistics message"""
         stat_msg = self.get_stat_message()

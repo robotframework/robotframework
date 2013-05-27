@@ -83,7 +83,7 @@ class Listeners(object):
                 attrs = self._get_start_attrs(suite, 'metadata')
                 attrs.update({'tests' : [t.name for t in suite.tests],
                               'suites': [s.name for s in suite.suites],
-                              'totaltests': suite.get_test_count(),
+                              'totaltests': suite.test_count,
                               'source': suite.source or ''})
                 li.call_method(li.start_suite, suite.name, attrs)
 
