@@ -3,7 +3,7 @@ Documentation  NO RIDE because it removes empty [Return]
 
 *** Test Cases ***
     [Documentation]  FAIL  Test case name cannot be empty.
-    No Operation
+    Fail  Should not be executed
 
 User Keyword Without Name
     [Documentation]  FAIL  Keyword name cannot be empty.
@@ -15,8 +15,8 @@ Empty Test Case
 
 Empty Test Case With Setup And Teardown
     [Documentation]  FAIL Test case contains no keywords.
-    [Setup]  No Operation
-    [Teardown]  No Operation
+    [Setup]  Fail  Should not be executed
+    [Teardown]  Fail  Should not be executed
 
 Empty User Keyword
     [Documentation]  FAIL User keyword 'Empty UK' contains no keywords.
@@ -46,7 +46,7 @@ Non-Empty UK Using Empty UK
 *** Keywords ***
     [Documentation]  This keyword has no name
     [Arguments]  ${arg}=urg
-    Log   ${arg}
+    Fail   Should not be executed
 
 Empty UK
 
