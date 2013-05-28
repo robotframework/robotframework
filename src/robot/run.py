@@ -229,6 +229,11 @@ Options
     --runemptysuite       Executes tests also if the top level test suite is
                           empty. Useful e.g. with --include/--exclude when it
                           is not an error that no test matches the condition.
+    --dryrun              Verifies test data and runs tests so that library
+                          keywords are not executed.
+    --exitonfailure       Stops test execution if a critical test fails.
+    --skipteardownonexit  Causes teardowns to be skipped if test execution is
+                          stopped prematurely.
     --runmode mode *      Possible values are `Random:Test`, `Random:Suite`,
                           `Random:All`, `ExitOnFailure`, `SkipTeardownOnExit`,
                           and `DryRun` (case-insensitive). First three change
