@@ -331,10 +331,11 @@ class Process(object):
         return result
 
     def terminate_process(self, handle=None, kill=False):
-        """This keyword terminates process using either
-        [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
-        `kill()` or `terminate()`, which can be selected using `kill` argument
-        (by default `terminate()` is used).
+        """This keyword terminates process using either kill or terminate method.
+
+        See [http://docs.python.org/2.7/library/subprocess.html|subprocess]
+        module's `kill()` or `terminate()`, which can be selected using `kill`
+        argument (by default `terminate()` is used).
 
         Argument `handle` is optional, if `None` then the active process is
         used.
