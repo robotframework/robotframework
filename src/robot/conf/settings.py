@@ -281,17 +281,20 @@ class _BaseSettings(object):
 
 
 class RobotSettings(_BaseSettings):
-    _extra_cli_opts = {'Output'        : ('output', 'output.xml'),
-                       'LogLevel'      : ('loglevel', 'INFO'),
-                       'RunMode'       : ('runmode', []),
-                       'RunEmptySuite' : ('runemptysuite', False),
-                       'WarnOnSkipped' : ('warnonskippedfiles', False),
-                       'Variables'     : ('variable', []),
-                       'VariableFiles' : ('variablefile', []),
-                       'Listeners'     : ('listener', []),
-                       'MonitorWidth'  : ('monitorwidth', 78),
-                       'MonitorMarkers': ('monitormarkers', 'AUTO'),
-                       'DebugFile'     : ('debugfile', 'NONE')}
+    _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
+                       'LogLevel'           : ('loglevel', 'INFO'),
+                       'DryRun'             : ('dryrun', False),
+                       'ExitOnFailure'      : ('exitonfailure', False),
+                       'SkipTearDownOnExit' : ('skipteardownonexit', False),
+                       'RunMode'            : ('runmode', []),
+                       'RunEmptySuite'      : ('runemptysuite', False),
+                       'WarnOnSkipped'      : ('warnonskippedfiles', False),
+                       'Variables'          : ('variable', []),
+                       'VariableFiles'      : ('variablefile', []),
+                       'Listeners'          : ('listener', []),
+                       'MonitorWidth'       : ('monitorwidth', 78),
+                       'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
+                       'DebugFile'          : ('debugfile', 'NONE')}
 
     def get_rebot_settings(self):
         settings = RebotSettings(log=False)
@@ -343,7 +346,11 @@ class RobotSettings(_BaseSettings):
 
     @property
     def dry_run(self):
-        return any(mode == 'DRYRUN' for mode in self['RunMode'])
+        return self['DryRun'] or any(mode == 'DRYRUN' for mode in self['RunMode'])
+
+    @property
+    def exit_on_failure(self):
+        return self['ExitOnFailure'] or any(mode == 'EXITONFAILURE' for mode in self['RunMode'])
 
 
 class RebotSettings(_BaseSettings):
