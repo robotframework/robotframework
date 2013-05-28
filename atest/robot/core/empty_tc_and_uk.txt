@@ -5,6 +5,12 @@ Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
+Test Case Without Name
+    Check Test Case  ${EMPTY}
+
+User Keyword Without Name
+    Check Test Case  ${TESTNAME}
+
 Empty Test Case
     Check Test Case  ${TESTNAME}
 
@@ -14,10 +20,10 @@ Empty Test Case With Setup And Teardown
 Empty User Keyword
     Check Test Case  ${TESTNAME}
 
-User Keyword With [Return]
+User Keyword With Only Non-Empty [Return] Works
     Check Test Case  ${TESTNAME}
 
-User Keyword With Empty [Return]
+User Keyword With Empty [Return] Does Not Work
     Check Test Case  ${TESTNAME}
 
 Empty User Keyword With Other Settings Than [Return]
@@ -28,10 +34,3 @@ Non-Empty And Empty User Keyword
 
 Non-Empty UK Using Empty UK
     Check Test Case  ${TESTNAME}
-
-Test Case Without Name Specified
-    Check Test Case  \
-
-User Keyword Without Name Specified
-    Check Test Case  Using User Keyword That Has No Name
-

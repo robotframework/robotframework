@@ -1,48 +1,47 @@
 *** Settings ***
 Documentation  NO RIDE because it removes empty [Return]
 
-
 *** Test Cases ***
-    Log  This test case has no name
-    [Documentation]  FAIL  Test case name is required.
+    [Documentation]  FAIL  Test case name cannot be empty.
+    No Operation
+
+User Keyword Without Name
+    [Documentation]  FAIL  Keyword name cannot be empty.
+    \  argh
+    Fail  Should not be executed
 
 Empty Test Case
-    [Documentation]  FAIL Test case contains no keywords
+    [Documentation]  FAIL Test case contains no keywords.
 
 Empty Test Case With Setup And Teardown
-    [Documentation]  FAIL Test case contains no keywords
-    [Setup]  Noop
-    [Teardown]  Noop
+    [Documentation]  FAIL Test case contains no keywords.
+    [Setup]  No Operation
+    [Teardown]  No Operation
 
 Empty User Keyword
-    [Documentation]  FAIL User keyword 'Empty UK' contains no keywords
+    [Documentation]  FAIL User keyword 'Empty UK' contains no keywords.
     Empty UK
 
-User Keyword With [Return]
+User Keyword With Only Non-Empty [Return] Works
     UK With Return
 
-User Keyword With Empty [Return]
-    [Documentation]  FAIL User keyword 'UK With Empty Return' contains no keywords
+User Keyword With Empty [Return] Does Not Work
+    [Documentation]  FAIL User keyword 'UK With Empty Return' contains no keywords.
     UK With Empty Return
 
 Empty User Keyword With Other Settings Than [Return]
-    [Documentation]  FAIL User keyword 'Empty UK With Settings' contains no keywords
+    [Documentation]  FAIL User keyword 'Empty UK With Settings' contains no keywords.
     Empty UK With Settings  argument
 
 Non-Empty And Empty User Keyword
-    [Documentation]  FAIL User keyword 'Empty UK' contains no keywords
+    [Documentation]  FAIL User keyword 'Empty UK' contains no keywords.
     UK
     Empty Uk
     Fail  We should not be here
 
 Non-Empty UK Using Empty UK
-    [Documentation]  FAIL User keyword 'Empty UK' contains no keywords
+    [Documentation]  FAIL User keyword 'Empty UK' contains no keywords.
     Non Empty UK Using Empty UK
-
-Using User Keyword That Has No Name
-    [Documentation]  FAIL  Keyword name cannot be empty.
-    \  argh
-    ${x}
 
 *** Keywords ***
     [Documentation]  This keyword has no name

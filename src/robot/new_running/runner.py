@@ -102,6 +102,10 @@ class Runner(SuiteVisitor):
         keywords = Keywords(test.keywords.normal, test.continue_on_failure)
         self._context.start_test(result)
         status = ExecutionStatus(self._suite_status, test=True)
+        if not test.name:
+            status.test_failed('Test case name cannot be empty.')
+        if not keywords:
+            status.test_failed('Test case contains no keywords.')
         self._run_setup(test.keywords.setup, status)
         try:
             if not status.failures:
