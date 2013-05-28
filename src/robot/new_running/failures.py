@@ -57,9 +57,6 @@ class ExecutionStatus(object):
         return 'FAIL' if self.failures else 'PASS'
 
 
-# TODO: Messages below are not identical to old run messages!!
-# Remember to also update messages in SuiteTeardownFailureHandler
-
 class TestMessage(object):
     setup_failed = 'Setup failed:\n%s'
     teardown_failed = 'Teardown failed:\n%s'
@@ -97,3 +94,8 @@ class ParentMessage(SuiteMessage):
     setup_failed = 'Parent suite setup failed:\n%s'
     teardown_failed = 'Parent suite teardown failed:\n%s'
     also_teardown_failed = '%s\n\nAlso parent suite teardown failed:\n%s'
+
+    def __init__(self, status):
+        while status.parent_status and status.parent_status.failures:
+            status = status.parent_status
+        SuiteMessage.__init__(self, status)

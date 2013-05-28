@@ -90,7 +90,7 @@ class Runner(SuiteVisitor):
     def visit_test(self, test):
         if test.name in self._executed_tests:
             self._output.warn("Multiple test cases with name '%s' executed in "
-                              "test suite '%s'."% (test.name, self._suite.longname))
+                              "test suite '%s'." % (test.name, self._suite.longname))
         self._executed_tests[test.name] = True
         result = self._suite.tests.create(name=test.name,
                                           doc=self._resolve_setting(test.doc),
@@ -102,8 +102,7 @@ class Runner(SuiteVisitor):
         keywords = Keywords(test.keywords.normal, test.continue_on_failure)
         self._context.start_test(result)
         status = ExecutionStatus(self._suite_status, test=True)
-        if not status.failures:
-            self._run_setup(test.keywords.setup, status)
+        self._run_setup(test.keywords.setup, status)
         try:
             if not status.failures:
                 keywords.run(self._context)
@@ -126,14 +125,16 @@ class Runner(SuiteVisitor):
         timeout.start()
         return timeout
 
-    def _run_setup(self, setup, failures):
-        failure = self._run_setup_or_teardown(setup, 'setup')
-        failures.setup_executed(failure)
+    def _run_setup(self, setup, status):
+        if not status.failures:
+            failure = self._run_setup_or_teardown(setup, 'setup')
+            status.setup_executed(failure)
 
-    def _run_teardown(self, teardown, failures):
-        failure = self._run_setup_or_teardown(teardown, 'teardown')
-        failures.teardown_executed(failure)
-        return failure
+    def _run_teardown(self, teardown, status):
+        if status.teardown_allowed:
+            failure = self._run_setup_or_teardown(teardown, 'teardown')
+            status.teardown_executed(failure)
+            return failure
 
     def _run_setup_or_teardown(self, data, type):
         if not data:
