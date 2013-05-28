@@ -139,6 +139,15 @@ Should fail if non-existing variable if condition true
 With multiple variables
     Check Test Tags    ${TESTNAME}    force1    force2    my tag
 
+With continuable failure in test setup
+    Check Test Case    ${TESTNAME}
+
+With continuable failure in test teardown
+    Check Test Case    ${TESTNAME}
+
+With continuable failure in keyword teardown
+    Check Test Case    ${TESTNAME}
+
 Should only pass successful suite setup if test case fails
     Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup.txt
     Check Test Case    ${TESTNAME}
