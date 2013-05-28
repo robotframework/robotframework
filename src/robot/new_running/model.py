@@ -134,7 +134,7 @@ class TestSuite(model.TestSuite):
                                        stderr=settings['StdErr'])
         init_global_variables(settings)
         output = Output(settings)
-        runner = Runner(output)
+        runner = Runner(output, settings)
         self.visit(runner)
         output.close(runner.result.suite)
         return runner.result

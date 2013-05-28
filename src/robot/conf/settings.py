@@ -341,6 +341,10 @@ class RobotSettings(_BaseSettings):
     def randomize_tests(self):
         return any(mode in ('RANDOM:TEST', 'RANDOM:ALL') for mode in self['RunMode'])
 
+    @property
+    def dry_run(self):
+        return any(mode == 'DRYRUN' for mode in self['RunMode'])
+
 
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'            : ('output', 'NONE'),

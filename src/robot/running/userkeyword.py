@@ -155,7 +155,7 @@ class UserKeywordHandler(object):
     def _resolve_dry_run_args(self, arguments):
         ArgumentValidator(self.arguments).validate_dry_run(arguments)
         missing_args = len(self.arguments.positional) - len(arguments)
-        return arguments + [None] * missing_args
+        return tuple(arguments) + (None,) * missing_args
 
     def _normal_run(self, context, variables, arguments):
         arguments = self._resolve_arguments(arguments, variables)

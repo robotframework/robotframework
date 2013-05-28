@@ -29,9 +29,10 @@ from .failures import ExecutionStatus
 
 class Runner(SuiteVisitor):
 
-    def __init__(self, output):
+    def __init__(self, output, settings):
         self.result = None
         self._output = output
+        self._settings = settings
         self._suite = None
         self._suite_status = None
         self._executed_tests = None
@@ -51,7 +52,7 @@ class Runner(SuiteVisitor):
                        self._context.namespace.variables if self._context else None,
                        UserLibrary(suite.user_keywords),
                        variables)
-        EXECUTION_CONTEXTS.start_suite(ns, self._output, False)
+        EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
         ns.handle_imports()
         variables.resolve_delayed()
         result = TestSuite(name=suite.name,
