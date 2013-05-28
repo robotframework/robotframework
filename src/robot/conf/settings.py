@@ -57,22 +57,21 @@ class _BaseSettings(object):
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
     _output_opts = ['Output', 'Log', 'Report', 'DebugFile', 'XUnitFile']
 
-    # TODO: Is log used? Accept options as **kws instead/in addition?
-    def __init__(self, options=None, log=True):
+    # TODO: Accept options as **kwargs instead/in addition?
+    def __init__(self, options=None):
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
         self._cli_opts.update(self._extra_cli_opts)
-        self._process_cli_opts(options or {}, log)
-        if log: LOGGER.info('Settings:\n%s' % unicode(self))
+        self._process_cli_opts(options or {})
 
-    def _process_cli_opts(self, opts, log):
+    def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             value = opts.get(cli_name, default)
             if value in [None, []]:
                 value = default
             elif default == [] and isinstance(value, basestring):
                 value = [value]
-            self[name] = self._process_value(name, value, log)
+            self[name] = self._process_value(name, value)
         self['TestNames'] += self['RunFailed']
 
     def __setitem__(self, name, value):
@@ -80,7 +79,7 @@ class _BaseSettings(object):
             raise KeyError("Non-existing settings '%s'" % name)
         self._opts[name] = value
 
-    def _process_value(self, name, value, log):
+    def _process_value(self, name, value):
         if name == 'RunFailed':
             return gather_failed_tests(value)
         if name == 'LogLevel':
@@ -294,7 +293,7 @@ class RobotSettings(_BaseSettings):
                        'DebugFile'     : ('debugfile', 'NONE')}
 
     def get_rebot_settings(self):
-        settings = RebotSettings(log=False)
+        settings = RebotSettings()
         settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
             del(settings._opts[name])

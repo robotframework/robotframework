@@ -378,10 +378,11 @@ class RobotFramework(Application):
         from robot.new_running import TestSuiteBuilder
         settings = RobotSettings(options)
         LOGGER.register_console_logger(width=settings['MonitorWidth'],
-                               colors=settings['MonitorColors'],
-                               markers=settings['MonitorMarkers'],
-                               stdout=settings['StdOut'],
-                               stderr=settings['StdErr'])
+                                       colors=settings['MonitorColors'],
+                                       markers=settings['MonitorMarkers'],
+                                       stdout=settings['StdOut'],
+                                       stderr=settings['StdErr'])
+        LOGGER.info(unicode(settings))
         suite = TestSuiteBuilder().build(*datasources)
         suite.configure(**settings.suite_config)
         result = suite.run(settings)
