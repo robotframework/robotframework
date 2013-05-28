@@ -112,21 +112,32 @@ name is :path:`report.html`.
 
 XUnit compatible result file
 ''''''''''''''''''''''''''''
-XUnit result files contain the test run summary in XUnit compatible XML format.
-This file can be used as input for tools that process XUnit data. For example,
-Hudson continuous integration server has built-in support for this output format
-and can be configured to generate test history based on this file.
+
+XUnit result files contain the test execution summary in xUnit__ compatible
+XML format. These files can thus be used as an input for external tools that
+understand xUnit reports. For example, Jenkins continuous integration server
+has an `xUnit plugin`__ that can generate statistics based on xUnit compatible
+results.
+
+.. tip:: Jenkins also has a separate `Robot Framework plugin`__.
 
 XUnit output files are not created unless the command line option
-:opt:`--xunitfile (-x)` is used explicitly.
+:opt:`--xunitfile (-x)` is used explicitly. This option requires a path to
+the generated xUnit file, relatively to the `output directory`_, as a value.
 
-Note that because xunit output does not have the concept of non-critical tests,
-the xunit output will mark all tests either passed or failed, with no
-distinction between critical and non-critical tests.
+Because xUnit reports do not have the concept of `non-critical tests`__,
+all tests in an xUnit report will be marked either passed or failed, with no
+distinction between critical and non-critical tests. If this is a problem,
+:opt:`--xunitskipnoncritical` option can be used to mark non-critical tests
+as skipped. Skipped tests will get a message containing the actual status and
+possible message of the test case in a format like :msg:`FAIL: Error message`.
 
-Since Robot Framework 2.8 there is also option :opt:`--xunitskipnoncritical`
-which will cause robot to mark non-critical tests as skipped. The message
-of the skipped-element has the test status.
+.. note:: :opt:`--xunitskipnoncritical` is a new option in Robot Framework 2.8.
+
+__ http://en.wikipedia.org/wiki/XUnit
+__ https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin
+__ https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
+__ `Setting criticality`_
 
 Debug file
 ''''''''''
