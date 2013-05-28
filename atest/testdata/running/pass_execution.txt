@@ -176,6 +176,28 @@ With multiple variables
     Pass Execution If    ${True}    ${msg}    ${tag}
     Fail    this should not execute
 
+With continuable failure in test setup
+    [Documentation]    FAIL Setup failed:\nmy message
+    [Setup]    Keyword with continuable failure    my message
+    Fail    should not execute
+
+With continuable failure in test teardown
+    [Documentation]    FAIL
+    ...    hello
+    ...
+    ...    Also teardown failed:
+    ...    my message
+    Fail    hello
+    [Teardown]    Keyword with continuable failure    my message
+
+With continuable failure in keyword teardown
+    [Documentation]    FAIL
+    ...    kw fails
+    ...
+    ...    Also keyword teardown failed:
+    ...    teardown fails
+    Keyword with continuable failure in keyword teardown
+
 
 *** Keywords ***
 
@@ -200,3 +222,6 @@ Keyword with continuable failure
     Pass Execution    message
     Fail    Should not go here
 
+Keyword with continuable failure in keyword teardown
+    Keyword with continuable failure    kw fails
+    [Teardown]    Keyword with continuable failure    teardown fails

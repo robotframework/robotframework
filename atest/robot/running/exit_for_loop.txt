@@ -47,6 +47,9 @@ Exit For Loop In Test Teardown
 Exit For Loop In Keyword Teardown
     Test And All Keywords Should Have Passed
 
+Invalid Exit For Loop In User Keyword Teardown
+    Check Test Case    ${TESTNAME}
+
 Exit For Loop If True
     Check Test Case    ${TESTNAME}
 

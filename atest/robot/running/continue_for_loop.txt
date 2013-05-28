@@ -37,6 +37,9 @@ Continue For Loop In Test Teardown
 Continue For Loop In Keyword Teardown
     Test And All Keywords Should Have Passed
 
+Invalid Continue For Loop In User Keyword Teardown
+    Check Test Case    ${TESTNAME}
+
 Continue For Loop If True
     Check Test Case    ${TESTNAME}
 
