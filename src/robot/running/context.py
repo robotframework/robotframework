@@ -101,14 +101,8 @@ class _ExecutionContext(object):
         self.namespace.end_suite()
         EXECUTION_CONTEXTS.end_suite()
 
-    def output_file_changed(self, filename):
-        self._set_global_variable('${OUTPUT_FILE}', filename)
-
     def replace_vars_from_setting(self, name, value, errors):
         return self.namespace.variables.replace_meta(name, value, errors)
-
-    def log_file_changed(self, filename):
-        self._set_global_variable('${LOG_FILE}', filename)
 
     def set_prev_test_variables(self, test):
         self._set_prev_test_variables(self.get_current_vars(), test.name,
