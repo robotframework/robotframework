@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
+
 from robot.model import SuiteVisitor
 from robot.result.testsuite import TestSuite     # TODO: expose in __init__?
 from robot.result.executionresult import Result  # ---------- ii -----------
@@ -78,6 +80,9 @@ class Runner(SuiteVisitor):
         return self._variables.replace_string(value, ignore_errors=True)
 
     def end_suite(self, suite):
+        self._suite.message = self._suite_status.message
+        self._context.report_suite_status(self._suite.status,
+                                          self._suite.full_message)
         with self._context.in_suite_teardown:
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
@@ -116,6 +121,7 @@ class Runner(SuiteVisitor):
         result.status = status.status
         result.message = status.message
         if status.teardown_allowed:
+            self._context.set_test_status_before_teardown(status.message, status.status)  # TODO: This is fugly
             self._run_teardown(test.keywords.teardown, status)
         result.status = status.status
         result.message = status.message
