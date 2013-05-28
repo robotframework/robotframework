@@ -85,8 +85,8 @@ Setting Environment With Multiple Values Using Dictionary
 
 Unsupported Arguments Should Cause Error
     ${setenv}=    Create Dictionary           sp  spessu
-    Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shell=True   genv=${setenv}
-    Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shellx=True
+    Run Keyword And Expect Error  'genv' is not supported by this keyword.    Run Process    python -c "import os; print os.environ;"    shell=True   genv=${setenv}
+    Run Keyword And Expect Error  'shellx' is not supported by this keyword.    Run Process    python -c "import os; print os.environ;"    shellx=True
 
 Escaping equals sign
     ${result}=    Run Process    python    -c    print 'stderr\=bar.buu'    shell=True

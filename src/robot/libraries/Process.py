@@ -18,11 +18,11 @@ import signal
 import subprocess
 import sys
 import tempfile
-from robot.errors import UnrecognizedParameterError
 
 from robot.utils import ConnectionCache
 from robot.version import get_version
 from robot.api import logger
+
 
 class Process(object):
     """Robot Framework test library for running processes.
@@ -195,8 +195,7 @@ class Process(object):
     | | `Process Should Be Stopped` | ${handle2} |
     | | [Teardown] | `Terminate All Processes` | kill=True |
     """
-
-    ROBOT_LIBRARY_SCOPE='GLOBAL'
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self):
@@ -205,7 +204,7 @@ class Process(object):
         self._tempdir = tempfile.mkdtemp(suffix="processlib")
 
     def run_process(self, command, *arguments, **configuration):
-        """This keyword runs a process and waits for it to terminate.
+        """Runs a process and waits for it to terminate.
 
         The `command` is a child program which is started in a new process,
         `arguments` are arguments for the `command` and `configuration` are
@@ -224,7 +223,7 @@ class Process(object):
             self._started_processes.switch(active_process_index)
 
     def start_process(self, command, *arguments, **configuration):
-        """This keyword starts a new process.
+        """Starts a new process.
 
         The `command` is a child program which is started in a new process,
         `arguments` are arguments for the `command` and `configuration` are
@@ -276,7 +275,7 @@ class Process(object):
         return cmd
 
     def process_is_running(self, handle=None):
-        """This keyword checks if process with `handle` is running or not.
+        """Checks if process with `handle` is running or not.
 
         Argument `handle` is optional, if `None` then the active process is used.
 
@@ -286,9 +285,9 @@ class Process(object):
         return self._process(handle).poll() is None
 
     def process_should_be_running(self, handle=None):
-        """Assertion keyword, which expects that process with `handle` is
-        running. Argument `handle` is optional, if `None` then the active
-        process is used.
+        """This keyword expects that process with `handle` is running.
+        Argument `handle` is optional, if `None` then the active process
+        is used.
 
         Check is done using `Process Is Running` keyword.
 
@@ -298,8 +297,8 @@ class Process(object):
             raise AssertionError('Process is not running')
 
     def process_should_be_stopped(self, handle=None):
-        """Assertion keyword, which expects that process with `handle` is
-        stopped. Argument `handle` is optional, if `None` then the active
+        """This keyword expects that process with `handle` is stopped.
+        Argument `handle` is optional, if `None` then the active
         process is used.
 
         Check is done using `Process Is Running` keyword.
@@ -310,7 +309,7 @@ class Process(object):
             raise AssertionError('Process is running')
 
     def wait_for_process(self, handle=None):
-        """This waits for process with `handle` to terminate.
+        """Waits for process with `handle` to terminate.
 
         Argument `handle` is optional, if `None` then the active process is
         used.
@@ -349,7 +348,7 @@ class Process(object):
         process = self._process(handle)
 
         # This should be enough to check if we are dealing with <2.6 Python
-        if not hasattr(process,'kill'):
+        if not hasattr(process, 'kill'):
             self._terminate_process(process)
             return
         try:
@@ -432,14 +431,13 @@ class Process(object):
 
     def _process(self, handle):
         if handle:
-            process,_ = self._started_processes.get_connection(handle)
+            process, _ = self._started_processes.get_connection(handle)
         else:
             process = self._started_processes.current
         return process
 
 
 class ExecutionResult(object):
-
     _stdout = _stderr = None
 
     def __init__(self, stdout_path, stderr_path, exit_code=None):
@@ -450,14 +448,14 @@ class ExecutionResult(object):
     @property
     def stdout(self):
         if self._stdout is None:
-            with open(self.stdout_path,'r') as f:
+            with open(self.stdout_path, 'r') as f:
                 self._stdout = f.read()
         return self._stdout
 
     @property
     def stderr(self):
         if self._stderr is None:
-            with open(self.stderr_path,'r') as f:
+            with open(self.stderr_path, 'r') as f:
                 self._stderr = f.read()
         return self._stderr
 
@@ -469,7 +467,6 @@ exit_code   : %d""" % (self.stdout_path, self.stderr_path, self.exit_code)
 
 
 class ProcessConfig(object):
-
     FILE_INDEX = 0
 
     def __init__(self, tempdir,
@@ -496,7 +493,7 @@ class ProcessConfig(object):
     def _get_stderr(self, stderr, stdout):
         if stderr:
             if stderr == 'STDOUT' or stderr == stdout:
-               return self.stdout_stream
+                return self.stdout_stream
         return self._new_stream(stderr, 'stderr')
 
     def _get_temp_file(self, suffix):
@@ -511,18 +508,18 @@ class ProcessConfig(object):
 
     def _construct_env(self, rest):
         new_env = dict()
-        for key,val in rest.iteritems():
+        for key, val in rest.iteritems():
             key = key.encode('utf-8')
             if key == "env":
                 self.env = dict()
-                for k,v in val.iteritems():
+                for k, v in val.iteritems():
                     k = k.encode('utf-8')
                     v = v.encode('utf-8')
                     self.env[k] = v
             elif "env:" == key[:4]:
                 new_env[key[4:]] = val.encode('utf-8')
             else:
-                raise UnrecognizedParameterError("'%s' is not supported by this keyword." % key )
+                raise RuntimeError("'%s' is not supported by this keyword." % key)
         if not self.env:
             return dict(new_env.items() + os.environ.copy().items())
         return dict(self._must_env_values().items() + self.env.items())
