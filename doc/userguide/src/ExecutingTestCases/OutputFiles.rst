@@ -115,8 +115,8 @@ XUnit compatible result file
 
 XUnit result files contain the test execution summary in xUnit__ compatible
 XML format. These files can thus be used as an input for external tools that
-understand xUnit reports. For example, Jenkins continuous integration server
-has an `xUnit plugin`__ that can generate statistics based on xUnit compatible
+understand xUnit reports. For example, Jenkins__ continuous integration server
+supports generating statistics based on xUnit compatible
 results.
 
 .. tip:: Jenkins also has a separate `Robot Framework plugin`__.
@@ -135,7 +135,7 @@ possible message of the test case in a format like :msg:`FAIL: Error message`.
 .. note:: :opt:`--xunitskipnoncritical` is a new option in Robot Framework 2.8.
 
 __ http://en.wikipedia.org/wiki/XUnit
-__ https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin
+__ http://jenkins-ci.org
 __ https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
 __ `Setting criticality`_
 
