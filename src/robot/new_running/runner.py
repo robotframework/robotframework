@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
+
 from robot.model import SuiteVisitor
 from robot.result.testsuite import TestSuite     # TODO: expose in __init__?
 from robot.result.executionresult import Result  # ---------- ii -----------
