@@ -68,8 +68,8 @@ class Runner(SuiteVisitor):
             self.result = Result(root_suite=result)
         else:
             self._suite.suites.append(result)
-        self._suite_status = ExecutionStatus(self._suite_status)
         self._suite = result
+        self._suite_status = ExecutionStatus(self._suite_status)
         self._output.start_suite(self._suite)
         self._run_setup(suite.keywords.setup, self._suite_status)
         self._executed_tests = utils.NormalizedDict(ignore='_')
@@ -78,9 +78,10 @@ class Runner(SuiteVisitor):
         return self._variables.replace_string(value, ignore_errors=True)
 
     def end_suite(self, suite):
-        failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
-        if failure:
-            self._suite.suite_teardown_failed(unicode(failure))
+        with self._context.in_suite_teardown:
+            failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
+            if failure:
+                self._suite.suite_teardown_failed(unicode(failure))
         self._suite.endtime = utils.get_timestamp()
         self._suite.message = self._suite_status.message
         self._context.end_suite(self._suite)

@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
+
+from contextlib import contextmanager
+
 from robot.errors import DataError
 from robot.variables import GLOBAL_VARIABLES
 
@@ -55,23 +59,35 @@ class _ExecutionContext(object):
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
-        self._in_teardown = 0
+        self._in_suite_teardown = False
+        self._in_keyword_teardown = 0
         self._started_keywords = 0
+
+    # TODO: Clean-up needed here ....
+
+    @property
+    @contextmanager
+    def in_suite_teardown(self):
+        self._in_suite_teardown = True
+        try:
+            yield
+        finally:
+            self._in_suite_teardown = False
 
     @property
     def teardown(self):
-        if self._in_teardown:
+        if self._in_suite_teardown or self._in_keyword_teardown:
             return True
-        test_or_suite = self.namespace.test or self.namespace.suite
-        return test_or_suite.status != 'RUNNING'
+        test = self.namespace.test
+        return test and test.status != 'RUNNING'
 
     def start_keyword_teardown(self, error):
         self.namespace.variables['${KEYWORD_STATUS}'] = 'FAIL' if error else 'PASS'
         self.namespace.variables['${KEYWORD_MESSAGE}'] = unicode(error or '')
-        self._in_teardown += 1
+        self._in_keyword_teardown += 1
 
     def end_keyword_teardown(self):
-        self._in_teardown -= 1
+        self._in_keyword_teardown -= 1
 
     def get_current_vars(self):
         return self.namespace.variables
