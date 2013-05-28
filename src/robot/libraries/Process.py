@@ -418,7 +418,7 @@ class Process(object):
         return self._process(handle)
 
     def switch_process(self, handle):
-        """This keyword switches active process into process with `handle`.
+        """Switches active process into process with `handle`.
 
         Examples:
 
