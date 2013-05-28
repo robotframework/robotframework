@@ -95,8 +95,10 @@ class _ExecutionContext(object):
     def end_test(self, test):
         self.output.end_test(test)
         self.namespace.end_test()
+        self.set_prev_test_variables(test)
 
     def end_suite(self, suite):
+        self.copy_prev_test_vars_to_global()
         self.output.end_suite(suite)
         self.namespace.end_suite()
         EXECUTION_CONTEXTS.end_suite()
