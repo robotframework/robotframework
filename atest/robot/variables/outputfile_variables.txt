@@ -1,6 +1,5 @@
 *** Settings ***
 Documentation   Tests for automatic variables \${OUTPUT_FILE}, \${LOG_FILE} and \${REPORT_FILE}
-Suite Setup
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
@@ -23,7 +22,6 @@ Default value of outputfile Variables Other than ${OUTPUTDIR} and ${OUTPUTFILE} 
 *** Keywords ***
 Outputfile Variables Should Contain Correct Paths
     [Arguments]  ${test}  @{files}
-    @{indices} =  Evaluate  [ i for i in range(len(@{files})) ]
-    : FOR  ${i}  IN  @{indices}
+    : FOR  ${i}  IN RANGE  len(@{files})
     \  Check Log Message  ${test.kws[0].msgs[${i}]}  @{files}[${i}]
 

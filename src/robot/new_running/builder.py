@@ -46,8 +46,8 @@ class TestSuiteBuilder(object):
                           metadata=self._get_metadata(data.setting_table))
         for import_data in data.setting_table.imports:
             self._create_import(suite, import_data)
-        self._create_step(suite, data.setting_table.suite_setup, 'setup')
-        self._create_step(suite, data.setting_table.suite_teardown, 'teardown')
+        self._create_setup(suite, data.setting_table.suite_setup)
+        self._create_teardown(suite, data.setting_table.suite_teardown)
         for var_data in data.variable_table.variables:
             self._create_variable(suite, var_data)
         for uk_data in data.keyword_table.keywords:
@@ -75,10 +75,10 @@ class TestSuiteBuilder(object):
                                   tags=values.tags.value,
                                   continue_on_failure=bool(values.template),
                                   timeout=self._get_timeout(values.timeout))
-        self._create_step(test, values.setup, 'setup')
+        self._create_setup(test, values.setup)
         for step_data in data.steps:
-            self._create_step(test, step_data, template=values.template.value)
-        self._create_step(test, values.teardown, 'teardown')
+            self._create_step(test, step_data, template=values.template)
+        self._create_teardown(test, values.teardown)
 
     def _get_timeout(self, timeout):
         return (timeout.value, timeout.message) if timeout else None
@@ -104,19 +104,27 @@ class TestSuiteBuilder(object):
             value = data.value
         suite.variables.create(name=data.name, value=value)
 
-    def _create_step(self, parent, data, type='kw', template=None):
+    def _create_setup(self, parent, data):
+        if data.is_active():
+            self._create_step(parent, data, kw_type='setup')
+
+    def _create_teardown(self, parent, data):
+        if data.is_active():
+            self._create_step(parent, data, kw_type='teardown')
+
+    def _create_step(self, parent, data, template=None, kw_type='kw'):
         if not data or data.is_comment():
             return
         if data.is_for_loop():
             self._create_for_loop(parent, data, template)
-        elif template and template.upper() != 'NONE':
-            parent.keywords.create(name=template,
+        elif template and template.is_active():
+            parent.keywords.create(name=unicode(template),
                                    args=tuple(data.as_list(include_comment=False)))
         else:
             parent.keywords.create(name=data.keyword,
                                    args=tuple(data.args),
                                    assign=tuple(data.assign),
-                                   type=type)
+                                   type=kw_type)
 
     def _create_for_loop(self, parent, data, template):
         loop = parent.keywords.append(ForLoop(vars=data.vars,

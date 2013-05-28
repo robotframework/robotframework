@@ -80,6 +80,9 @@ class Setting(object):
     def __iter__(self):
         return iter(self.value)
 
+    def __unicode__(self):
+        return unicode(self.value or '')
+
 
 class StringValueJoiner(object):
 
@@ -111,9 +114,6 @@ class Documentation(Setting):
     def _data_as_list(self):
         return [self.setting_name, self.value]
 
-    def __unicode__(self):
-        return self.value
-
 
 class Template(Setting):
 
@@ -125,6 +125,9 @@ class Template(Setting):
 
     def is_set(self):
         return self.value is not None
+
+    def is_active(self):
+        return self.value and self.value.upper() != 'NONE'
 
     def _data_as_list(self):
         ret = [self.setting_name]
@@ -139,7 +142,7 @@ class Fixture(Setting):
 
     @property
     def keyword(self):
-        return self.name
+        return self.name or ''
 
     def is_comment(self):
         return False
@@ -157,6 +160,9 @@ class Fixture(Setting):
 
     def is_set(self):
         return self.name is not None
+
+    def is_active(self):
+        return self.name and self.name.upper() != 'NONE'
 
     def _data_as_list(self):
         ret = [self.setting_name]
