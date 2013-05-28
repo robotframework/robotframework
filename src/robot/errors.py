@@ -59,11 +59,6 @@ class DataError(RobotError):
     """
 
 
-class UnrecognizedParameterError(RobotError):
-    """Used when non allowed parameters are given for a keyword."""
-
-
-
 class TimeoutError(RobotError):
     """Used when a test or keyword timeout occurs.
 
