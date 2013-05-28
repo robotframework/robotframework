@@ -132,8 +132,12 @@ Failing Higher Level Suite Setup
     Check Suite Status    ${SUITE}    FAIL
     ...    Suite setup failed:\nExpected failure in higher level setup\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
-    Check Suite Status    ${SUITE.suites[0]}    FAIL    ${1 FAIL MSG}    Test 1
-    Check Suite Status    ${SUITE.suites[1]}    FAIL    ${1 FAIL MSG}    Test 2
+    Check Suite Status    ${SUITE.suites[0]}    FAIL
+    ...    Parent suite setup failed:\nExpected failure in higher level setup\n\n${1 FAIL MSG}
+    ...    Test 1
+    Check Suite Status    ${SUITE.suites[1]}    FAIL
+    ...    Parent suite setup failed:\nExpected failure in higher level setup\n\n${1 FAIL MSG}
+    ...    Test 2
 
 Long Error Messages
     Run Tests    ${EMPTY}    core/long_suite_setup_and_teardown_errors.txt
