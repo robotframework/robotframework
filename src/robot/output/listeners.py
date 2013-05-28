@@ -82,11 +82,16 @@ class Listeners(object):
                 li.call_method(li.start_suite, suite.name, suite.doc)
             else:
                 attrs = self._get_start_attrs(suite, 'metadata')
-                attrs.update({'tests' : [t.name for t in suite.tests],
-                              'suites': [s.name for s in suite.suites],
-                              'totaltests': suite.test_count,
-                              'source': suite.source or ''})
+                attrs.update(self._get_suite_attrs(suite))
                 li.call_method(li.start_suite, suite.name, attrs)
+
+    def _get_suite_attrs(self, suite):
+        return {
+            'tests' : [t.name for t in suite.tests],
+            'suites': [s.name for s in suite.suites],
+            'totaltests': suite.test_count,
+            'source': suite.source or ''
+        }
 
     def end_suite(self, suite):
         for li in self._listeners:
@@ -95,8 +100,8 @@ class Listeners(object):
                                suite.get_full_message())
             else:
                 attrs = self._get_end_attrs(suite, 'metadata')
-                attrs.update({'statistics': suite.get_stat_message(),
-                              'source': suite.source or ''})
+                attrs['statistics'] = suite.get_stat_message()
+                attrs.update(self._get_suite_attrs(suite))
                 li.call_method(li.end_suite, suite.name, attrs)
 
     def start_test(self, test):
