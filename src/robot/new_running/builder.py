@@ -14,6 +14,7 @@
 
 from robot.new_running.defaults import TestDefaults
 from robot.parsing import TestData
+from robot.errors import DataError
 
 from .model import TestSuite, ForLoop
 
@@ -25,11 +26,17 @@ class TestSuiteBuilder(object):
 
     def build(self, *paths):
         if len(paths) == 1:
-            return self._build_suite(TestData(source=paths[0]))
+            return self._build_suite(self._parse(paths[0]))
         root = TestSuite()
         for path in paths:
-            root.suites.append(self._build_suite(TestData(source=path)))
+            root.suites.append(self._build_suite(self._parse(path)))
         return root
+
+    def _parse(self, path):
+        try:
+            return TestData(source=path)
+        except DataError, err:
+            raise DataError("Parsing '%s' failed: %s" % (path, unicode(err)))
 
     def _build_suite(self, data, parent_defaults=None):
         defaults = TestDefaults(data.setting_table, parent_defaults)

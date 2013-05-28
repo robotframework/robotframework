@@ -84,7 +84,6 @@ class TestCase(model.TestCase):
         return Timeout(*timeout) if timeout else None
 
 
-
 class TestSuite(model.TestSuite):
     __slots__ = []
     test_class = TestCase
@@ -127,11 +126,6 @@ class TestSuite(model.TestSuite):
         namespace.IMPORTER.reset()
         settings = settings or RobotSettings(options)
         pyloggingconf.initialize(settings['LogLevel'])
-        LOGGER.register_console_logger(width=settings['MonitorWidth'],
-                                       colors=settings['MonitorColors'],
-                                       markers=settings['MonitorMarkers'],
-                                       stdout=settings['StdOut'],
-                                       stderr=settings['StdErr'])
         init_global_variables(settings)
         output = Output(settings)
         runner = Runner(output, settings)

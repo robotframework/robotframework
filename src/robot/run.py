@@ -351,10 +351,10 @@ class RobotFramework(Application):
 
     def __init__(self):
         Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
-        if os.environ.get('NEWRUN'):
-            self.main = self.new_main
+        if os.environ.get('OLDRUN'):
+            self.main = self.old_main
 
-    def main(self, datasources, **options):
+    def old_main(self, datasources, **options):
         STOP_SIGNAL_MONITOR.start()
         namespace.IMPORTER.reset()
         settings = RobotSettings(options)
@@ -374,9 +374,14 @@ class RobotFramework(Application):
             ResultWriter(settings.output).write_results(settings.get_rebot_settings())
         return suite.return_code
 
-    def new_main(self, datasources, **options):
+    def main(self, datasources, **options):
         from robot.new_running import TestSuiteBuilder
         settings = RobotSettings(options)
+        LOGGER.register_console_logger(width=settings['MonitorWidth'],
+                               colors=settings['MonitorColors'],
+                               markers=settings['MonitorMarkers'],
+                               stdout=settings['StdOut'],
+                               stderr=settings['StdErr'])
         suite = TestSuiteBuilder().build(*datasources)
         suite.configure(**settings.suite_config)
         result = suite.run(settings)
