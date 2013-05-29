@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Check That Default Orders Are Correct
 Force Tags      pybot  jybot  regression
-Resource        atest_resource.txt
+Resource        cli_resource.txt
 
 *** Variables ***
 ${DEFAULT SUITE ORDER}  [Suite First, Sub.Suite.1, Suite3, Suite4, Suite5, Suite10, Suite 6, SUite7, suiTe 8, Suite 9 Name]

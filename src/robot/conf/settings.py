@@ -109,7 +109,7 @@ class _BaseSettings(object):
         if name == 'TagStatLink':
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'Randomize':
-            return self._process_randomize_target(value)
+            return self._process_randomize_value(value)
         if name in ['RemoveKeywords', 'RunMode']:
             return [v.upper() for v in value]
         return value
@@ -136,12 +136,13 @@ class _BaseSettings(object):
             raise DataError("Default visible log level '%s' is lower than "
                             "log level '%s'" % (default, log_level))
 
-    def _process_randomize_target(self, original_value):
+    def _process_randomize_value(self, original_value):
         formatted_value = original_value.lower()
         if formatted_value in ('test', 'suite'):
             formatted_value += 's'
         if formatted_value not in ('tests', 'suites', 'none', 'all'):
-            raise DataError("Don't know how to randomize '%s'" % original_value)
+            raise DataError("Option '--randomize' does not support value '%s'"
+                            % original_value)
         return formatted_value
 
     def __getitem__(self, name):
