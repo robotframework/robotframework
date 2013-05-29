@@ -295,7 +295,7 @@ class RobotSettings(_BaseSettings):
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
-                       'SkipTearDownOnExit' : ('skipteardownonexit', False),
+                       'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'None'),
                        'RunMode'            : ('runmode', []),
                        'RunEmptySuite'      : ('runemptysuite', False),

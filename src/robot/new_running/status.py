@@ -20,17 +20,24 @@ class _ExecutionStatus(object):
         self.setup_failure = None
         self.test_failure = None
         self.teardown_failure = None
-        self.teardown_allowed = False
+        self._teardown_allowed = False
         self.exiting_on_failure = parent.exiting_on_failure if parent else False
+        self.skip_teardown_on_exit_mode = parent.skip_teardown_on_exit_mode if parent else False
 
     def setup_executed(self, failure=None):
         if failure:
             self.setup_failure = unicode(failure)
-        self.teardown_allowed = True
+        self._teardown_allowed = True
 
     def teardown_executed(self, failure=None):
         if failure:
             self.teardown_failure = unicode(failure)
+
+    @property
+    def teardown_allowed(self):
+        if self.exiting_on_failure and self.skip_teardown_on_exit_mode:
+            return False
+        return self._teardown_allowed
 
     @property
     def failures(self):
@@ -66,12 +73,14 @@ class _ExecutionStatus(object):
 
 class SuiteStatus(_ExecutionStatus):
 
-    def __init__(self, parent, exit_on_failure_mode=False):
+    def __init__(self, parent, exit_on_failure_mode=False,
+                 skip_teardown_on_exit_mode=False):
         _ExecutionStatus.__init__(self, parent)
-        self._exit_on_failure_mode = exit_on_failure_mode
+        self.exit_on_failure_mode = exit_on_failure_mode
+        self.skip_teardown_on_exit_mode = skip_teardown_on_exit_mode
 
     def critical_failure(self):
-        if self._exit_on_failure_mode:
+        if self.exit_on_failure_mode:
             self.exiting_on_failure = True
         if self.parent:
             self.parent.critical_failure()
@@ -89,6 +98,7 @@ class TestStatus(_ExecutionStatus):
         self.test_failure = unicode(failure)
         if critical:
             self.parent.critical_failure()
+        self.exiting_on_failure = self.parent.exiting_on_failure
 
     def _my_message(self):
         return TestMessage(self).message
@@ -98,18 +108,14 @@ class _Message(object):
     setup_message = NotImplemented
     teardown_message = NotImplemented
     also_teardown_message = NotImplemented
-    exit_on_failure_message = NotImplemented
 
     def __init__(self, status):
         self.setup_failure = status.setup_failure
         self.test_failure = status.test_failure or ''
         self.teardown_failure = status.teardown_failure
-        self.exiting_on_failure = False
 
     @property
     def message(self):
-        if self.exiting_on_failure:
-            return self.exit_on_failure_message
         msg = self._get_message_before_teardown()
         return self._get_message_after_teardown(msg)
 
@@ -136,6 +142,15 @@ class TestMessage(_Message):
     def __init__(self, status):
         _Message.__init__(self, status)
         self.exiting_on_failure = status.exiting_on_failure
+
+    @property
+    def message(self):
+        message = super(TestMessage, self).message
+        if message:
+            return message
+        if self.exiting_on_failure:
+            return self.exit_on_failure_message
+        return ''
 
 
 class SuiteMessage(_Message):
