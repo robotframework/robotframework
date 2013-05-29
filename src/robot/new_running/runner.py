@@ -113,9 +113,9 @@ class Runner(SuiteVisitor):
         self._context.start_test(result)
         status = TestStatus(self._suite_status)
         if not status.failures and not test.name:
-            status.test_failed('Test case name cannot be empty.', test.critical)
+            status.test_failed('Test case name cannot be empty.', result.critical)
         if not status.failures and not keywords:
-            status.test_failed('Test case contains no keywords.', test.critical)
+            status.test_failed('Test case contains no keywords.', result.critical)
         self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failures:
@@ -123,7 +123,7 @@ class Runner(SuiteVisitor):
         except PassExecution, exception:
             err = exception.earlier_failures
             if err:
-                status.test_failed(err, test.critical)
+                status.test_failed(err, result.critical)
             else:
                 result.message = exception.message
         except ExecutionFailed, err:
@@ -133,6 +133,8 @@ class Runner(SuiteVisitor):
         if status.teardown_allowed:
             self._context.set_test_status_before_teardown(result.message, status.status)  # TODO: This is fugly
             self._run_teardown(test.keywords.teardown, status, result)
+        if not status.failures and result.timeout and result.timeout.timed_out():
+            status.test_failed(result.timeout.get_message(), result.critical)
         result.status = status.status
         result.message = status.message or result.message
         result.endtime = utils.get_timestamp()

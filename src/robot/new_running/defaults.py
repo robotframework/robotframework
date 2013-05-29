@@ -25,6 +25,7 @@ class TestDefaults(object):
         if parent:
             self.setup = self.setup or parent.setup
             self.teardown = self.teardown or parent.teardown
+            self.timeout = self.timeout or parent.timeout
             self.force_tags += parent.force_tags
 
     def get_test_values(self, test):
