@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import PassExecution
+
 
 class _ExecutionStatus(object):
 
@@ -26,13 +28,13 @@ class _ExecutionStatus(object):
         self.skip_teardown_on_exit_mode = parent.skip_teardown_on_exit_mode if parent else False
 
     def setup_executed(self, failure=None):
-        if failure:
+        if failure and not isinstance(failure, PassExecution):
             self.setup_failure = unicode(failure)
             self._handle_possible_fatal(failure)
         self._teardown_allowed = True
 
     def teardown_executed(self, failure=None):
-        if failure:
+        if failure and not isinstance(failure, PassExecution):
             self.teardown_failure = unicode(failure)
             self._handle_possible_fatal(failure)
 

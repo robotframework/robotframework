@@ -23,7 +23,7 @@ from robot.variables import GLOBAL_VARIABLES
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.keywords import Keywords, Keyword
 from robot.running.userkeyword import UserLibrary
-from robot.errors import ExecutionFailed, DataError
+from robot.errors import ExecutionFailed, DataError, PassExecution
 from robot import utils
 
 from .status import SuiteStatus, TestStatus
@@ -115,17 +115,23 @@ class Runner(SuiteVisitor):
             status.test_failed('Test case name cannot be empty.', test.critical)
         if not keywords:
             status.test_failed('Test case contains no keywords.', test.critical)
-        self._run_setup(test.keywords.setup, status)
+        self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failures:
                 keywords.run(self._context)
+        except PassExecution, exception:
+            err = exception.earlier_failures
+            if err:
+                status.test_failed(err, test.critical)
+            else:
+                result.message = exception.message
         except ExecutionFailed, err:
             status.test_failed(err, test.critical)
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
             self._context.set_test_status_before_teardown(status.message, status.status)  # TODO: This is fugly
-            self._run_teardown(test.keywords.teardown, status)
+            self._run_teardown(test.keywords.teardown, status, result)
         result.status = status.status
         result.message = status.message or result.message
         result.endtime = utils.get_timestamp()
@@ -139,15 +145,19 @@ class Runner(SuiteVisitor):
         timeout.start()
         return timeout
 
-    def _run_setup(self, setup, status):
+    def _run_setup(self, setup, status, result=None):
         if not status.failures:
             failure = self._run_setup_or_teardown(setup, 'setup')
             status.setup_executed(failure)
+            if result and isinstance(failure, PassExecution):
+                result.message = failure.message
 
-    def _run_teardown(self, teardown, status):
+    def _run_teardown(self, teardown, status, result=None):
         if status.teardown_allowed:
             failure = self._run_setup_or_teardown(teardown, 'teardown')
             status.teardown_executed(failure)
+            if result and isinstance(failure, PassExecution):
+                result.message = failure.message
             return failure
 
     def _run_setup_or_teardown(self, data, type):

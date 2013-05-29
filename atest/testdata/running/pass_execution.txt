@@ -116,17 +116,14 @@ If test case setup fails
     Fail    this should not be executed
 
 With test case teardown
-    [Documentation]    FAIL message
-    [Teardown]    Pass Execution    message
-    Fail    Teardown should succeed
+    [Documentation]    FAIL This message is used.
+    Fail    This message is used.
+    [Teardown]    Pass Execution    This message is NOT used.
 
 If test case teardown fails
-    [Documentation]    FAIL    message
-    ...
-    ...                Also teardown failed:
-    ...                failure
-    [Teardown]    Fail    failure
-    Pass Execution    message
+    [Documentation]    FAIL Teardown failed:\nThis message is used.
+    Pass Execution    This message is NOT used.
+    [Teardown]    Fail    This message is used.
 
 Modifying tags in test case teardown should succeed
     [Documentation]    PASS message
