@@ -73,7 +73,8 @@ class Runner(SuiteVisitor):
             self._suite.suites.append(result)
         self._suite = result
         self._suite_status = SuiteStatus(self._suite_status,
-                                         self._settings.exit_on_failure)
+                                         self._settings.exit_on_failure,
+                                         self._settings.skip_teardown_on_exit)
         self._output.start_suite(self._suite)
         self._run_setup(suite.keywords.setup, self._suite_status)
         self._executed_tests = utils.NormalizedDict(ignore='_')
