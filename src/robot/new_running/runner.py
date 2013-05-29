@@ -119,12 +119,12 @@ class Runner(SuiteVisitor):
         except ExecutionFailed, err:
             status.test_failed(err)
         result.status = status.status
-        result.message = status.message
+        result.message = status.message or result.message
         if status.teardown_allowed:
             self._context.set_test_status_before_teardown(status.message, status.status)  # TODO: This is fugly
             self._run_teardown(test.keywords.teardown, status)
         result.status = status.status
-        result.message = status.message
+        result.message = status.message or result.message
         result.endtime = utils.get_timestamp()
         self._context.end_test(result)
 
