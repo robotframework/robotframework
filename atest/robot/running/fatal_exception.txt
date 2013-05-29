@@ -38,7 +38,7 @@ Multiple Suite Aware Exiting From Suite Setup
     Should Be Equal  ${ts2.teardown}  ${None}
 
 Multiple Suite Aware Exiting From Suite Setup With Skip Teardowns
-    Run Tests  --runmode SkipTeardownOnExit  running/fatal_exception_suite_setup/
+    Run Tests  --SkipTeardownOnExit  running/fatal_exception_suite_setup/
     Check Test Case  Test That Should Not Be Run 1
     ${ts1} =  Get Test Suite  Suite Setup
     Should Be Equal  ${ts1.teardown}  ${None}
@@ -48,12 +48,12 @@ Multiple Suite Aware Exiting From Suite Setup With Skip Teardowns
     Should Be Equal  ${ts2.teardown}  ${None}
 
 Fatal Exception and Runmode Exit on Failure
-    Run Tests  --runmode exitonfailure  running/fatal_exception/01__python_library_kw.txt
+    Run Tests  --exitonfailure  running/fatal_exception/01__python_library_kw.txt
     Check Test Case  Test That Should Not Be Run 1  FAIL
     ...  Critical failure occurred and ExitOnFailure option is in use
 
 Fatal Exception and Runmodes Exit On Failure And Skip Teardown On Exit
-    Run Tests  --runmode SkipTeardownOnExit  running/fatal_exception
+    Run Tests  --SkipTeardownOnExit  running/fatal_exception
     ${tcase} =  Check Test Case  Exit From Python Keyword
     Should Be Equal  ${tcase.teardown}  ${None}
     ${tsuite}  Get Test Suite  Python Library Kw

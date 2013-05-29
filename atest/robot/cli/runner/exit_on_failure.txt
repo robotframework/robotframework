@@ -4,7 +4,7 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Exit On Failure
-    [Setup]  Run Tests  --runmode exitonfailure  misc/pass_and_fail.txt  misc/suites  running/fatal_exception/02__irrelevant.txt
+    [Setup]  Run Tests  --exitonfailure  misc/pass_and_fail.txt  misc/suites  running/fatal_exception/02__irrelevant.txt
     Check Test Case  Pass
     Check Test Case  Fail
     Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
@@ -15,7 +15,7 @@ Imports Are Skipped On Exit
     Should be empty  ${ERRORS.messages}
 
 Correct Suite Teardown Is Executed When Exitonfailure Is Used
-    [Setup]  Run Tests  --runmode exitonfailure  misc/suites
+    [Setup]  Run Tests  --exitonfailure  misc/suites
     ${tsuite} =  Get Test Suite  Suites
     Should Be Equal  ${tsuite.teardown.name}  BuiltIn.Log
     ${tsuite} =  Get Test Suite  Fourth
@@ -24,7 +24,7 @@ Correct Suite Teardown Is Executed When Exitonfailure Is Used
     Should Be Equal  ${tsuite.teardown}  ${None}
 
 Exit On Failure With Skip Teardown On Exit
-    [Setup]  Run Tests  --runmode ExitOnFailure --runmode SkipTeardownOnExit  misc/suites
+    [Setup]  Run Tests  --ExitOnFailure --SkipTeardownOnExit  misc/suites
     ${tcase} =  Check Test Case  Suite4 First
     Should Be Equal  ${tcase.teardown}  ${None}
     ${tsuite} =  Get Test Suite  Fourth
