@@ -26,7 +26,7 @@ from robot.running.userkeyword import UserLibrary
 from robot.errors import ExecutionFailed, DataError
 from robot import utils
 
-from .failures import ExecutionStatus
+from .status import SuiteStatus, TestStatus
 
 
 class Runner(SuiteVisitor):
@@ -71,7 +71,7 @@ class Runner(SuiteVisitor):
         else:
             self._suite.suites.append(result)
         self._suite = result
-        self._suite_status = ExecutionStatus(self._suite_status)
+        self._suite_status = SuiteStatus(self._suite_status)
         self._output.start_suite(self._suite)
         self._run_setup(suite.keywords.setup, self._suite_status)
         self._executed_tests = utils.NormalizedDict(ignore='_')
@@ -107,7 +107,7 @@ class Runner(SuiteVisitor):
                                           status='RUNNING')
         keywords = Keywords(test.keywords.normal, test.continue_on_failure)
         self._context.start_test(result)
-        status = ExecutionStatus(self._suite_status, test=True)
+        status = TestStatus(self._suite_status)
         if not test.name:
             status.test_failed('Test case name cannot be empty.')
         if not keywords:

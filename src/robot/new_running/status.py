@@ -13,23 +13,19 @@
 #  limitations under the License.
 
 
-class ExecutionStatus(object):
+class _ExecutionStatus(object):
 
-    def __init__(self, parent_status=None, test=False):
+    def __init__(self, parent_status=None):
         self.parent_status = parent_status
         self.setup_failure = None
         self.test_failure = None
         self.teardown_failure = None
         self.teardown_allowed = False
-        self._test = test
 
     def setup_executed(self, failure=None):
         if failure:
             self.setup_failure = unicode(failure)
         self.teardown_allowed = True
-
-    def test_failed(self, failure):
-        self.test_failure = unicode(failure)
 
     def teardown_executed(self, failure=None):
         if failure:
@@ -39,11 +35,12 @@ class ExecutionStatus(object):
     def message(self):
         if self.parent_status and self.parent_status.failures:
             message = ParentMessage(self.parent_status)
-        elif self._test:
-            message = TestMessage(self)
         else:
-            message = SuiteMessage(self)
+            message = self._get_message()
         return unicode(message)
+
+    def _get_message(self):
+        raise NotImplementedError
 
     @property
     def failures(self):
@@ -55,6 +52,21 @@ class ExecutionStatus(object):
     @property
     def status(self):
         return 'FAIL' if self.failures else 'PASS'
+
+
+class SuiteStatus(_ExecutionStatus):
+
+    def _get_message(self):
+        return SuiteMessage(self)
+
+
+class TestStatus(_ExecutionStatus):
+
+    def test_failed(self, failure):
+        self.test_failure = unicode(failure)
+
+    def _get_message(self):
+        return TestMessage(self)
 
 
 class TestMessage(object):
