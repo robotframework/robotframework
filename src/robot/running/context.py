@@ -59,7 +59,7 @@ class _ExecutionContext(object):
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
-        self._in_suite_teardown = False
+        self.suite_teardown = False
         self._in_keyword_teardown = 0
         self._started_keywords = 0
 
@@ -68,15 +68,15 @@ class _ExecutionContext(object):
     @property
     @contextmanager
     def in_suite_teardown(self):
-        self._in_suite_teardown = True
+        self.suite_teardown = True
         try:
             yield
         finally:
-            self._in_suite_teardown = False
+            self.suite_teardown = False
 
     @property
     def teardown(self):
-        if self._in_suite_teardown or self._in_keyword_teardown:
+        if self.suite_teardown or self._in_keyword_teardown:
             return True
         test = self.namespace.test
         return test and test.status != 'RUNNING'

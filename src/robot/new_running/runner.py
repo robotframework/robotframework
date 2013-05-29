@@ -50,21 +50,21 @@ class Runner(SuiteVisitor):
     def start_suite(self, suite):
         variables = GLOBAL_VARIABLES.copy()
         variables.set_from_variable_table(suite.variables)
-        ns = Namespace(suite,
+        result = TestSuite(name=suite.name,
+                           source=suite.source,
+                           starttime=utils.get_timestamp())
+        ns = Namespace(result,
                        self._context.namespace.variables if self._context else None,
                        UserLibrary(suite.user_keywords),
-                       variables)
+                       variables,
+                       suite.imports)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
         if not (self._suite_status and self._suite_status.failures):  # Skips imports if exiting
             ns.handle_imports()
         variables.resolve_delayed()
-        result = TestSuite(name=suite.name,
-                           doc=self._resolve_setting(suite.doc),
-                           metadata=[(self._resolve_setting(n),
-                                      self._resolve_setting(v))
-                                     for n, v in suite.metadata.items()],
-                           source=suite.source,
-                           starttime=utils.get_timestamp())
+        result.doc = self._resolve_setting(suite.doc)
+        result.metadata = [(self._resolve_setting(n), self._resolve_setting(v))
+                           for n, v in suite.metadata.items()]
         if not self.result:
             result.set_criticality(suite.criticality.critical_tags,
                                    suite.criticality.non_critical_tags)

@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 import re
 import time
 
@@ -1093,7 +1092,7 @@ class _RunKeyword:
         if not isinstance(name, basestring):
             raise RuntimeError('Keyword name must be a string.')
         kw = Keyword(name, list(args))
-        return kw.run(self._execution_context)
+        return kw.run(self._context)
 
     def run_keywords(self, *keywords):
         """Executes all the given keywords in a sequence.
@@ -1134,7 +1133,7 @@ class _RunKeyword:
                 self.run_keyword(kw, *args)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                if not err.can_continue(self._execution_context.teardown):
+                if not err.can_continue(self._context.teardown):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -1517,7 +1516,7 @@ class _RunKeyword:
         """
         suite = self._get_suite_in_teardown('Run Keyword If '
                                             'All Critical Tests Passed')
-        if suite.critical_stats.failed == 0:
+        if suite.statistics.critical.failed == 0:
             return self.run_keyword(name, *args)
 
     def run_keyword_if_any_critical_tests_failed(self, name, *args):
@@ -1531,7 +1530,7 @@ class _RunKeyword:
         """
         suite = self._get_suite_in_teardown('Run Keyword If '
                                             'Any Critical Tests Failed')
-        if suite.critical_stats.failed > 0:
+        if suite.statistics.critical.failed > 0:
             return self.run_keyword(name, *args)
 
     def run_keyword_if_all_tests_passed(self, name, *args):
@@ -1544,7 +1543,7 @@ class _RunKeyword:
         documentation for more details.
         """
         suite = self._get_suite_in_teardown('Run Keyword If All Tests Passed')
-        if suite.all_stats.failed == 0:
+        if suite.statistics.all.failed == 0:
             return self.run_keyword(name, *args)
 
     def run_keyword_if_any_tests_failed(self, name, *args):
@@ -1557,11 +1556,11 @@ class _RunKeyword:
         documentation for more details.
         """
         suite = self._get_suite_in_teardown('Run Keyword If Any Tests Failed')
-        if suite.all_stats.failed > 0:
+        if suite.statistics.all.failed > 0:
             return self.run_keyword(name, *args)
 
     def _get_suite_in_teardown(self, kwname):
-        if self._namespace.suite.status == 'RUNNING':
+        if not self._context.suite_teardown:
             raise RuntimeError("Keyword '%s' can only be used in suite teardown"
                                % kwname)
         return self._namespace.suite
@@ -1903,7 +1902,7 @@ class _Misc:
         logging).
         """
         try:
-            old = self._execution_context.output.set_log_level(level)
+            old = self._context.output.set_log_level(level)
         except DataError, err:
             raise RuntimeError(unicode(err))
         self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
@@ -2360,18 +2359,16 @@ class _Misc:
                                         utils.seq2str(tags)))
 
     def _set_or_remove_tags(self, handler, suite=None, test=None):
-
         if not (suite or test):
             ns = self._namespace
             if ns.test is None:
-                if ns.suite.status != 'RUNNING':
+                if self._context.suite_teardown:
                     raise RuntimeError("'Set Tags' and 'Remove Tags' keywords "
                                        "cannot be used in suite teardown.")
                 self._set_or_remove_tags(handler, suite=ns.suite)
             else:
                 self._set_or_remove_tags(handler, test=ns.test)
                 ns.variables.set_test('@{TEST_TAGS}', ns.test.tags[:])
-            ns.suite._set_critical_tags(ns.suite.critical)
         elif suite:
             for sub in suite.suites:
                 self._set_or_remove_tags(handler, suite=sub)
@@ -2427,12 +2424,12 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ROBOT_LIBRARY_VERSION = get_version()
 
     @property
-    def _execution_context(self):
+    def _context(self):
         return EXECUTION_CONTEXTS.current
 
     @property
     def _namespace(self):
-        return self._execution_context.namespace
+        return self._context.namespace
 
     def _get_namespace(self, top=False):
         ctx = EXECUTION_CONTEXTS.top if top else EXECUTION_CONTEXTS.current
