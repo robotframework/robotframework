@@ -73,7 +73,7 @@ One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardow
     Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Logging Suite Teardown
 
 One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
-    Start And Send Signal  with_teardown.txt  One SIGINT  runmode=SkipTeardownOnExit
+    Start And Send Signal  with_teardown.txt  One SIGINT  runmode=--SkipTeardownOnExit
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
     ${tc} =  Get Test Case  Test
@@ -84,7 +84,7 @@ One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
 
 *** Keywords ***
 Start And Send Signal
-    [Arguments]    ${datasource}    ${signals}    ${sleep}=0s    ${runmode}=normal
+    [Arguments]    ${datasource}    ${signals}    ${sleep}=0s    ${runmode}=${EMPTY}
     Remove File    ${TEST FILE}
     Start Run    ${datasource}    ${sleep}    ${runmode}
     Wait Until Created    ${TESTFILE}    timeout=45s
@@ -101,7 +101,7 @@ Start Run
     ...    --output    ${OUTFILE}    --report    NONE    --log    NONE
     ...    --variable    TESTSIGNALFILE:${TEST FILE}
     ...    --variable    TEARDOWNSLEEP:${sleep}
-    ...    --runmode    ${runmode}
+    ...    ${runmode}
     ...    ${datasource}
     Log Many    @{command}
     ProcessManager.start process    @{command}
