@@ -71,12 +71,7 @@ class Namespace:
     def _create_variables(self, suite, parent_vars, suite_variables=None):
         if suite_variables is None:
             suite_variables = suite.variables
-        variables = _VariableScopes(suite_variables, parent_vars)
-        variables['${SUITE_NAME}'] = suite.longname
-        variables['${SUITE_SOURCE}'] = suite.source
-        variables['${SUITE_DOCUMENTATION}'] = suite.doc
-        variables['${SUITE_METADATA}'] = suite.metadata.copy()
-        return variables
+        return _VariableScopes(suite_variables, parent_vars)
 
     def _import_default_libraries(self):
         for name in self._default_libraries:

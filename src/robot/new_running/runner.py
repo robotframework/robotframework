@@ -76,6 +76,7 @@ class Runner(SuiteVisitor):
                                          self._settings.exit_on_failure,
                                          self._settings.skip_teardown_on_exit)
         self._output.start_suite(self._suite)
+        self._context.set_suite_variables(result)
         self._run_setup(suite.keywords.setup, self._suite_status)
         self._executed_tests = utils.NormalizedDict(ignore='_')
 
