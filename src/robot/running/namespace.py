@@ -42,10 +42,18 @@ class Namespace:
                              'OperatingSystem': 'DeprecatedOperatingSystem'}
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, suite, parent_vars, user_keywords=None, variables=None):
+    def __init__(self, suite, parent_vars, user_keywords=None, variables=None,
+                 imports=None):
         if suite is not None:
             LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.suite = suite
+        # TODO: REmove Compatibility
+        if imports is not None:
+            self._imports = imports
+        elif suite:
+            self._imports = suite.imports
+        else:
+            self._imports = []
         # TODO: Remove variable and uk compatibility with old/new running
         self.variables = self._create_variables(suite, parent_vars, variables)
         self._user_keywords = user_keywords if user_keywords is not None else suite.user_keywords
@@ -58,7 +66,7 @@ class Namespace:
 
     def handle_imports(self):
         self._import_default_libraries()
-        self._handle_imports(self.suite.imports)
+        self._handle_imports(self._imports)
 
     def _create_variables(self, suite, parent_vars, suite_variables=None):
         if suite_variables is None:
