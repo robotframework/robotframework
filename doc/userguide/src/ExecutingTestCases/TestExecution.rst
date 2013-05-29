@@ -129,7 +129,7 @@ required order. This easily leads to overly long start-up commands,
 but `argument files`_ allow listing files nicely one file per line.
 
 It is also possible to `randomize the execution order`__ using
-the :opt:`--runmode` option.
+the :opt:`--randomize` option.
 
 __ `Randomizing execution order`_
 
@@ -287,9 +287,16 @@ __ `Stopping test execution`_
 :opt:`ExitOnFailure` mode
 '''''''''''''''''''''''''
 
-If option :opt:`--runmode` is used with value :opt:`ExitOnFailure`
-(case-insensitive), the execution of tests stops immediately if
-a `critical test`_ fails and the remaining tests are marked as failed.
+If option :opt:`--exitonfailure` (case-insensitive) is used, the execution of
+tests stops immediately if a `critical test`_ fails. Also the remaining tests
+are marked as failed.
+
+.. Note:: Prior to Robot Framework 2.8, this behaviour is achieved by
+          using :opt:`--runmode ExitOnFailure` (case-insensitive).
+
+          Option :opt:`--runmode` is deprecated in 2.8 and will be removed
+          in the future.
+
 
 Handling teardowns
 ''''''''''''''''''
@@ -298,6 +305,14 @@ By default teardowns for tests and suites that have been started are executed
 even if test execution is stopped using one of the methods above. This allows
 clean-up activities to be run regardless how execution ends.
 
-Starting from Robot Framework 2.5.2, teardowns are skipped when the execution is
-stopped if the :opt:`--runmode SkipTeardownOnExit` command line option is used.
+Starting from Robot Framework 2.8, teardowns are skipped when the execution is
+stopped and command line option :opt:`--SkipTeardownOnExit` (case-insensitive)
+is used.
+
 This can be useful if clean-up takes a lot of time.
+
+.. Note:: Prior to Robot Framework 2.8, this behaviour is achieved by
+          using :opt:`--runmode SkipTearDownOnExit` (case-insensitive).
+
+          Option :opt:`--runmode` is deprecated in 2.8 and will be removed
+          in the future.

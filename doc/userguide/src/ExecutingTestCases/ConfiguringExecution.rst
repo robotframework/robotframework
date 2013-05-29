@@ -358,9 +358,14 @@ Robot Framework supports so called *dry run* mode where the tests are
 run normally otherwise, but the keywords coming from the test libraries
 are not executed at all. The dry run mode can be used to validate the
 test data; if the dry run passes, the data should be syntactically
-correct.  This mode is triggered using option :opt:`--runmode DryRun`
-(case-insensitive) and it is supported starting from Robot Framework
-2.5.
+correct. This mode is triggered using option :opt:`--dryrun`
+(case-insensitive) and supported starting from Robot Framework 2.8.
+
+.. note:: Prior to Robot Framework 2.8, dry run mode is triggered using
+          option :opt:`--runmode dryrun` (case-insensitive).
+
+          Option :opt:`--runmode` is deprecated in 2.8 and will be removed
+          in the future.
 
 The dry run execution may fail for following reasons:
 
@@ -380,25 +385,37 @@ __ `Errors and warnings during execution`_
 Randomizing execution order
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The :opt:`--runmode` option can also be used to randomize the test
-execution order. This is done using the different values explained
-below.
+The test execution order can be randomized using option
+:opt:`--randomize <what>`, where :opt:`<what>` is one of the following:
 
-:opt:`random:test`
-    Test cases inside each test suite are executed in random
-    order.
+:opt:`tests`
+    Test cases inside each test suite are executed in random order.
 
-:opt:`random:suite`
+:opt:`suites`
     All test suites are executed in a random order, but test cases inside
     suites are run in the order they are defined.
 
-:opt:`random:all`
-    Both test cases and test suites are executed in a random
-    order.
+:opt:`all`
+    Both test cases and test suites are executed in a random order.
+
+:opt:`none`
+    Neither execution order of test nor suites is randomized.
+    This value can be used to override the earlier value set with
+    :opt:`--randomize`.
+
 
 Example::
 
-    pybot --runmode random:test my_test.txt
+    pybot --randomize tests my_test.txt
+
+
+.. note:: Prior to Robot Framework 2.8, randomization is triggered using option
+          :opt:`--runmode <mode>`, where <mode> is either :opt:`Random:Test`,
+          :opt:`Random:Suite` or :opt:`Random:All`.
+          These values work respectively as with option :opt:`--randomize`.
+
+          Option :opt:`--runmode` is deprecated in 2.8 and will be removed
+          in the future.
 
 Controlling console output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
