@@ -22,20 +22,24 @@ class _ExecutionStatus(object):
         self.teardown_failure = None
         self._teardown_allowed = False
         self.exiting_on_failure = parent.exiting_on_failure if parent else False
+        self.exiting_on_fatal = parent.exiting_on_fatal if parent else False
         self.skip_teardown_on_exit_mode = parent.skip_teardown_on_exit_mode if parent else False
 
     def setup_executed(self, failure=None):
         if failure:
             self.setup_failure = unicode(failure)
+            self._handle_possible_fatal(failure)
         self._teardown_allowed = True
 
     def teardown_executed(self, failure=None):
         if failure:
             self.teardown_failure = unicode(failure)
+            self._handle_possible_fatal(failure)
 
     @property
     def teardown_allowed(self):
-        if self.exiting_on_failure and self.skip_teardown_on_exit_mode:
+        if self.skip_teardown_on_exit_mode and (self.exiting_on_failure or
+                                                self.exiting_on_fatal):
             return False
         return self._teardown_allowed
 
@@ -50,7 +54,8 @@ class _ExecutionStatus(object):
         return bool(self.setup_failure or
                     self.teardown_failure or
                     self.test_failure or
-                    self.exiting_on_failure)
+                    self.exiting_on_failure or
+                    self.exiting_on_fatal)
 
     @property
     def status(self):
@@ -70,6 +75,11 @@ class _ExecutionStatus(object):
     def _parent_message(self):
         return ParentMessage(self.parent).message
 
+    def _handle_possible_fatal(self, failure):
+        if getattr(failure, 'exit', False):
+            self.parent.fatal_failure()
+            self.exiting_on_fatal = True
+
 
 class SuiteStatus(_ExecutionStatus):
 
@@ -85,6 +95,11 @@ class SuiteStatus(_ExecutionStatus):
         if self.parent:
             self.parent.critical_failure()
 
+    def fatal_failure(self):
+        self.exiting_on_fatal = True
+        if self.parent:
+            self.parent.fatal_failure()
+
     def _my_message(self):
         return SuiteMessage(self).message
 
@@ -98,7 +113,8 @@ class TestStatus(_ExecutionStatus):
         self.test_failure = unicode(failure)
         if critical:
             self.parent.critical_failure()
-        self.exiting_on_failure = self.parent.exiting_on_failure
+            self.exiting_on_failure = self.parent.exit_on_failure_mode
+        self._handle_possible_fatal(failure)
 
     def _my_message(self):
         return TestMessage(self).message
@@ -138,10 +154,12 @@ class TestMessage(_Message):
     also_teardown_message = '%s\n\nAlso teardown failed:\n%s'
     # TODO: Clean up error message below
     exit_on_failure_message = 'Critical failure occurred and ExitOnFailure option is in use'
+    exit_on_fatal_message = 'Test execution is stopped due to a fatal error'
 
     def __init__(self, status):
         _Message.__init__(self, status)
         self.exiting_on_failure = status.exiting_on_failure
+        self.exiting_on_fatal = status.exiting_on_fatal
 
     @property
     def message(self):
@@ -150,6 +168,8 @@ class TestMessage(_Message):
             return message
         if self.exiting_on_failure:
             return self.exit_on_failure_message
+        if self.exiting_on_fatal:
+            return self.exit_on_fatal_message
         return ''
 
 
