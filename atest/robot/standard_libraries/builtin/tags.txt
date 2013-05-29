@@ -20,7 +20,7 @@ Set One Tag
 Set Multiple Tags
     ${tc} =  Tags Should Have Been Added  Set Multiple Tags  1  2  3  HELLO  Some spaces here
     Check Log Message  ${tc.kws[0].msgs[0]}  Set tags '1', '2' and '3'.
-    Check Log Message  ${tc.kws[1].msgs[0]}  Set tags 'HELLO' and 'Some spaces here'.
+    Check Log Message  ${tc.kws[1].msgs[0]}  Set tags 'HELLO', '' and 'Some spaces here'.
 
 Tags Set In One Test Are Not Visible To Others
     Should Have Only Suite Tags  Tags Set In One Test Are Not Visible To Others
@@ -37,8 +37,8 @@ Remove Non-Existing Tag
 
 Remove Multiple Tags
     ${tc} =  Tags Should Have Been Removed  Remove Multiple Tags  default  set  set-init
-    Check Log Message  ${tc.kws[0].msgs[0]}  Removed tags 'default', 'non-existing' and 'SET'.
-    Check Log Message  ${tc.kws[1].msgs[0]}  Removed tag 'set-init'.
+    Check Log Message  ${tc.kws[0].msgs[0]}  Removed tags 'default', 'SET' and 'non-existing'.
+    Check Log Message  ${tc.kws[1].msgs[0]}  Removed tags '' and 'set-init'.
 
 Remove Tags With Pattern
     Check Test Tags  Remove Tags With Pattern

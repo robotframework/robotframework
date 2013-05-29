@@ -67,3 +67,8 @@ class TestCases(ItemList):
 
     def __init__(self, test_class=TestCase, parent=None, tests=None):
         ItemList.__init__(self, test_class, {'parent': parent}, tests)
+
+    def _check_type_and_set_attrs(self, test):
+        ItemList._check_type_and_set_attrs(self, test)
+        for visitor in test.parent._visitors:
+            test.visit(visitor)
