@@ -130,7 +130,7 @@ class Runner(SuiteVisitor):
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
-            self._context.set_test_status_before_teardown(status.message, status.status)  # TODO: This is fugly
+            self._context.set_test_status_before_teardown(result.message, status.status)  # TODO: This is fugly
             self._run_teardown(test.keywords.teardown, status, result)
         result.status = status.status
         result.message = status.message or result.message

@@ -31,10 +31,10 @@ Failure Resets Set Message
     Fail  Fail Message
     [Teardown]  Should Be Equal  ${TEST MESSAGE}  Fail Message
 
-Set Message To Failed Test On Teardown
-    [Documentation]  FAIL  Teardown Message
-    Fail  Message That Will Be Ignored
-    [Teardown]  Set Test Message  Teardown Message
+Setting Message To Failed Test On Teardown Does Not Work
+    [Documentation]  FAIL  Body Message
+    Fail     Body Message
+    [Teardown]  Set Test Message  Message That Will Be Ignored
 
 Setting Message In Test Body After Continuable Failure Has No Effect
     [Documentation]  FAIL  Failure Message
@@ -42,30 +42,23 @@ Setting Message In Test Body After Continuable Failure Has No Effect
     Set Test Message   Ignored Message
     [Teardown]  Should Be Equal  ${TEST MESSAGE}  Failure Message
 
-Setting Message In Teardown After Continuable Failure Works
-    [Documentation]  FAIL  Set Message
+Setting Message In Teardown After Continuable Failure Does Not Work
+    [Documentation]  FAIL  Failure Message
     Run Keyword And Continue On Failure  Fail  Failure Message
     [Teardown]  Set Test Message   Set Message
 
 Set Message In Body and Fail In Teardown
-    [Documentation]  FAIL  Message Before Teardown\n\nAlso teardown failed:\n
-    ...  Failing Teardown Message
+    [Documentation]  FAIL  Teardown failed:\nFailing Teardown Message
     Set Test Message  Message Before Teardown
     [Teardown]  Fail  Failing Teardown Message
 
 Set Message In Teardown And Fail Afterwards
-    [Documentation]  FAIL  My message before failure
-    ...
-    ...  Also teardown failed:
-    ...  My failure after message
+    [Documentation]  FAIL  Teardown failed:\nMy failure after message
     No Operation
     [Teardown]  Set Message In Teardown And Fail Afterwards
 
 Fail In Teardown And Set Message Afterwards
-    [Documentation]  FAIL  My message after failure
-    ...
-    ...  Also teardown failed:
-    ...  My failure before message
+    [Documentation]  FAIL  Teardown failed:\nMy failure before message
     No Operation
     [Teardown]  Fail In Teardown And Set Message Afterwards
 
