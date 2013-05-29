@@ -81,16 +81,21 @@ class _ExecutionContext(object):
         test = self.namespace.test
         return test and test.status != 'RUNNING'
 
+    @property
+    def variables(self):
+        return self.namespace.variables
+
+    # TODO: Remove
+    def get_current_vars(self):
+        return self.variables
+
     def start_keyword_teardown(self, error):
-        self.namespace.variables['${KEYWORD_STATUS}'] = 'FAIL' if error else 'PASS'
-        self.namespace.variables['${KEYWORD_MESSAGE}'] = unicode(error or '')
+        self.variables['${KEYWORD_STATUS}'] = 'FAIL' if error else 'PASS'
+        self.variables['${KEYWORD_MESSAGE}'] = unicode(error or '')
         self._in_keyword_teardown += 1
 
     def end_keyword_teardown(self):
         self._in_keyword_teardown -= 1
-
-    def get_current_vars(self):
-        return self.namespace.variables
 
     def end_test(self, test):
         self.output.end_test(test)
@@ -106,27 +111,26 @@ class _ExecutionContext(object):
     def replace_vars_from_setting(self, name, value, errors):
         return self.namespace.variables.replace_meta(name, value, errors)
 
+    def set_suite_variables(self, suite):
+        self.variables['${SUITE_NAME}'] = suite.longname
+        self.variables['${SUITE_SOURCE}'] = suite.source
+        self.variables['${SUITE_DOCUMENTATION}'] = suite.doc
+        self.variables['${SUITE_METADATA}'] = suite.metadata.copy()
+
     def set_prev_test_variables(self, test):
-        self._set_prev_test_variables(self.get_current_vars(), test.name,
-                                      test.status, test.message)
+        self.variables['${PREV_TEST_NAME}'] = test.name
+        self.variables['${PREV_TEST_STATUS}'] = test.status
+        self.variables['${PREV_TEST_MESSAGE}'] = test.message
 
     def copy_prev_test_vars_to_global(self):
-        varz = self.get_current_vars()
-        name, status, message = varz['${PREV_TEST_NAME}'], \
-                    varz['${PREV_TEST_STATUS}'], varz['${PREV_TEST_MESSAGE}']
-        self._set_prev_test_variables(GLOBAL_VARIABLES, name, status, message)
-
-    def _set_prev_test_variables(self, destination, name, status, message):
-        destination['${PREV_TEST_NAME}'] = name
-        destination['${PREV_TEST_STATUS}'] = status
-        destination['${PREV_TEST_MESSAGE}'] = message
-
-    def _set_global_variable(self, name, value):
-        self.namespace.variables.set_global(name, value)
+        for var in ['${PREV_TEST_NAME}',
+                    '${PREV_TEST_STATUS}',
+                    '${PREV_TEST_MESSAGE}']:
+            GLOBAL_VARIABLES[var] = self.variables[var]
 
     def report_suite_status(self, status, message):
-        self.get_current_vars()['${SUITE_STATUS}'] = status
-        self.get_current_vars()['${SUITE_MESSAGE}'] = message
+        self.variables['${SUITE_STATUS}'] = status
+        self.variables['${SUITE_MESSAGE}'] = message
 
     def start_test(self, test):
         self.namespace.start_test(test)

@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os    # FIXME: This seems to be used by Evaluate!!!!
 import re
 import time
 
