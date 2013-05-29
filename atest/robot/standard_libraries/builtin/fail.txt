@@ -47,4 +47,4 @@ Set tags should not be removed
     ${tc}=    Check Test Tags    ${TESTNAME}    fii    foo
     Length Should Be    ${tc.kws[0].msgs}    3
     Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'f*'.
-    Check Log Message    ${tc.kws[0].msgs[1]}     Set tags 'fii' and 'foo'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Set tags 'foo' and 'fii'.
