@@ -15,12 +15,13 @@
 
 class _ExecutionStatus(object):
 
-    def __init__(self, parent_status=None):
-        self.parent_status = parent_status
+    def __init__(self, parent=None):
+        self.parent = parent
         self.setup_failure = None
         self.test_failure = None
         self.teardown_failure = None
         self.teardown_allowed = False
+        self.exiting_on_failure = parent.exiting_on_failure if parent else False
 
     def setup_executed(self, failure=None):
         if failure:
@@ -32,82 +33,123 @@ class _ExecutionStatus(object):
             self.teardown_failure = unicode(failure)
 
     @property
-    def message(self):
-        if self.parent_status and self.parent_status.failures:
-            message = ParentMessage(self.parent_status)
-        else:
-            message = self._get_message()
-        return unicode(message)
-
-    def _get_message(self):
-        raise NotImplementedError
-
-    @property
     def failures(self):
-        return bool(self.parent_status and self.parent_status.failures or
-                    self.setup_failure or
+        return bool(self._parent_failures() or self._my_failures())
+
+    def _parent_failures(self):
+        return self.parent and self.parent.failures
+
+    def _my_failures(self):
+        return bool(self.setup_failure or
+                    self.teardown_failure or
                     self.test_failure or
-                    self.teardown_failure)
+                    self.exiting_on_failure)
 
     @property
     def status(self):
         return 'FAIL' if self.failures else 'PASS'
 
+    @property
+    def message(self):
+        if self._my_failures():
+            return self._my_message()
+        if self._parent_failures():
+            return self._parent_message()
+        return ''
+
+    def _my_message(self):
+        raise NotImplementedError
+
+    def _parent_message(self):
+        return ParentMessage(self.parent).message
+
 
 class SuiteStatus(_ExecutionStatus):
 
-    def _get_message(self):
-        return SuiteMessage(self)
+    def __init__(self, parent, exit_on_failure_mode=False):
+        _ExecutionStatus.__init__(self, parent)
+        self._exit_on_failure_mode = exit_on_failure_mode
+
+    def critical_failure(self):
+        if self._exit_on_failure_mode:
+            self.exiting_on_failure = True
+        if self.parent:
+            self.parent.critical_failure()
+
+    def _my_message(self):
+        return SuiteMessage(self).message
 
 
 class TestStatus(_ExecutionStatus):
 
-    def test_failed(self, failure):
+    def __init__(self, suite_status):
+        _ExecutionStatus.__init__(self, suite_status)
+
+    def test_failed(self, failure, critical=True):
         self.test_failure = unicode(failure)
+        if critical:
+            self.parent.critical_failure()
 
-    def _get_message(self):
-        return TestMessage(self)
+    def _my_message(self):
+        return TestMessage(self).message
 
 
-class TestMessage(object):
-    setup_failed = 'Setup failed:\n%s'
-    teardown_failed = 'Teardown failed:\n%s'
-    also_teardown_failed = '%s\n\nAlso teardown failed:\n%s'
+class _Message(object):
+    setup_message = NotImplemented
+    teardown_message = NotImplemented
+    also_teardown_message = NotImplemented
+    exit_on_failure_message = NotImplemented
 
     def __init__(self, status):
-        self.setup = status.setup_failure
-        self.test = status.test_failure or ''
-        self.teardown = status.teardown_failure
+        self.setup_failure = status.setup_failure
+        self.test_failure = status.test_failure or ''
+        self.teardown_failure = status.teardown_failure
+        self.exiting_on_failure = False
 
-    def __unicode__(self):
+    @property
+    def message(self):
+        if self.exiting_on_failure:
+            return self.exit_on_failure_message
         msg = self._get_message_before_teardown()
         return self._get_message_after_teardown(msg)
 
     def _get_message_before_teardown(self):
-        if self.setup:
-            return self.setup_failed % self.setup
-        return self.test
+        if self.setup_failure:
+            return self.setup_message % self.setup_failure
+        return self.test_failure
 
     def _get_message_after_teardown(self, msg):
-        if not self.teardown:
+        if not self.teardown_failure:
             return msg
         if not msg:
-            return self.teardown_failed % self.teardown
-        return self.also_teardown_failed % (msg, self.teardown)
+            return self.teardown_message % self.teardown_failure
+        return self.also_teardown_message % (msg, self.teardown_failure)
 
 
-class SuiteMessage(TestMessage):
-    setup_failed = 'Suite setup failed:\n%s'
-    teardown_failed = 'Suite teardown failed:\n%s'
-    also_teardown_failed = '%s\n\nAlso suite teardown failed:\n%s'
+class TestMessage(_Message):
+    setup_message = 'Setup failed:\n%s'
+    teardown_message = 'Teardown failed:\n%s'
+    also_teardown_message = '%s\n\nAlso teardown failed:\n%s'
+    # TODO: Clean up error message below
+    exit_on_failure_message = 'Critical failure occurred and ExitOnFailure option is in use'
+
+    def __init__(self, status):
+        _Message.__init__(self, status)
+        self.exiting_on_failure = status.exiting_on_failure
+
+
+class SuiteMessage(_Message):
+    setup_message = 'Suite setup failed:\n%s'
+    teardown_message = 'Suite teardown failed:\n%s'
+    also_teardown_message = '%s\n\nAlso suite teardown failed:\n%s'
 
 
 class ParentMessage(SuiteMessage):
-    setup_failed = 'Parent suite setup failed:\n%s'
-    teardown_failed = 'Parent suite teardown failed:\n%s'
-    also_teardown_failed = '%s\n\nAlso parent suite teardown failed:\n%s'
+    setup_message = 'Parent suite setup failed:\n%s'
+    teardown_message = 'Parent suite teardown failed:\n%s'
+    also_teardown_message = '%s\n\nAlso parent suite teardown failed:\n%s'
 
     def __init__(self, status):
-        while status.parent_status and status.parent_status.failures:
-            status = status.parent_status
+        while status.parent and status.parent.failures:
+            status = status.parent
         SuiteMessage.__init__(self, status)
