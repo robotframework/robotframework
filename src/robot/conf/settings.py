@@ -108,6 +108,8 @@ class _BaseSettings(object):
             return [self._process_tag_stat_combine(v) for v in value]
         if name == 'TagStatLink':
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
+        if name == 'Randomize':
+            return self._process_randomize_target(value)
         if name in ['RemoveKeywords', 'RunMode']:
             return [v.upper() for v in value]
         return value
@@ -133,6 +135,14 @@ class _BaseSettings(object):
         if not loggerhelper.IsLogged(log_level)(default):
             raise DataError("Default visible log level '%s' is lower than "
                             "log level '%s'" % (default, log_level))
+
+    def _process_randomize_target(self, original_value):
+        formatted_value = original_value.lower()
+        if formatted_value in ('test', 'suite'):
+            formatted_value += 's'
+        if formatted_value not in ('tests', 'suites', 'none', 'all'):
+            raise DataError("Don't know how to randomize '%s'" % original_value)
+        return formatted_value
 
     def __getitem__(self, name):
         if name not in self._opts:
@@ -285,6 +295,7 @@ class RobotSettings(_BaseSettings):
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'SkipTearDownOnExit' : ('skipteardownonexit', False),
+                       'Randomize'          : ('randomize', 'None'),
                        'RunMode'            : ('runmode', []),
                        'RunEmptySuite'      : ('runemptysuite', False),
                        'WarnOnSkipped'      : ('warnonskippedfiles', False),
@@ -337,19 +348,23 @@ class RobotSettings(_BaseSettings):
 
     @property
     def randomize_suites(self):
-        return any(mode in ('RANDOM:SUITE', 'RANDOM:ALL') for mode in self['RunMode'])
+        return (self['Randomize'] in ('suites', 'all') or
+                any(mode in ('RANDOM:SUITE', 'RANDOM:ALL') for mode in self['RunMode']))
 
     @property
     def randomize_tests(self):
-        return any(mode in ('RANDOM:TEST', 'RANDOM:ALL') for mode in self['RunMode'])
+        return (self['Randomize'] in ('tests', 'all') or
+                any(mode in ('RANDOM:TEST', 'RANDOM:ALL') for mode in self['RunMode']))
 
     @property
     def dry_run(self):
-        return self['DryRun'] or any(mode == 'DRYRUN' for mode in self['RunMode'])
+        return (self['DryRun'] or
+                any(mode == 'DRYRUN' for mode in self['RunMode']))
 
     @property
     def exit_on_failure(self):
-        return self['ExitOnFailure'] or any(mode == 'EXITONFAILURE' for mode in self['RunMode'])
+        return (self['ExitOnFailure'] or
+                any(mode == 'EXITONFAILURE' for mode in self['RunMode']))
 
 
 class RebotSettings(_BaseSettings):

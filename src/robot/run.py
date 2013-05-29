@@ -234,7 +234,10 @@ Options
     --exitonfailure       Stops test execution if a critical test fails.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is
                           stopped prematurely.
-    --runmode mode *      Possible values are `Random:Test`, `Random:Suite`,
+    --randomize none|tests|suites|all  Change the execution order of tests,
+                          suites or both. None overrides the previous setting.
+    --runmode mode *      (DEPRECATED in 2.8, please use the respective flags)
+                          Possible values are `Random:Test`, `Random:Suite`,
                           `Random:All`, `ExitOnFailure`, `SkipTeardownOnExit`,
                           and `DryRun` (case-insensitive). First three change
                           the execution order of tests, suites, or both.

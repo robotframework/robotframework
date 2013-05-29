@@ -9,21 +9,20 @@ ${DEFAULT TEST ORDER}  [test1, test2, test3, test4, test5, test6, test7, test8, 
 
 *** Test Cases ***
 Randomizing Tests
-    [Setup]  Run Tests  --randomize test  misc/multiple_suites/01__suite_first.html
+    [Setup]  Run Tests  --runmode random:test  misc/multiple_suites/01__suite_first.html
     Should Not Be Equal As Strings  ${SUITE.tests}  ${DEFAULT TEST ORDER}
 
 Randomizing Suites
-    [Setup]  Run Tests  --randomize Suites  misc/multiple_suites
+    [Setup]  Run Tests  --runmode RANDOM:SuitE  misc/multiple_suites
     Should Not Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
     ${tests} =  Get Tests
     Should Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
 
 Randomizing Suites And Tests
-    [Setup]  Run Tests  --randomize all  misc/multiple_suites
+    [Setup]  Run Tests  --runmode random:all  misc/multiple_suites
     Should Not Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
     ${tests} =  Get Tests
     Should Not Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
-
 
 *** Keywords ***
 Check That Default Orders Are Correct
