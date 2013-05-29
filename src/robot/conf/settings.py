@@ -367,6 +367,11 @@ class RobotSettings(_BaseSettings):
         return (self['ExitOnFailure'] or
                 any(mode == 'EXITONFAILURE' for mode in self['RunMode']))
 
+    @property
+    def skip_teardown_on_exit(self):
+        return (self['SkipTeardownOnExit'] or
+                any(mode == 'SKIPTEARDOWNONEXIT' for mode in self['RunMode']))
+
 
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'            : ('output', 'NONE'),
