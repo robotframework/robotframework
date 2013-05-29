@@ -32,6 +32,9 @@ class _NamePatterns(object):
     def __nonzero__(self):
         return bool(self._matcher)
 
+    def __iter__(self):
+        return iter(self._matcher)
+
 
 class SuiteNamePatterns(_NamePatterns):
 

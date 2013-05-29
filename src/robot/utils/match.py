@@ -75,7 +75,7 @@ class MultiMatcher(object):
         if patterns is None:
             return []
         if isinstance(patterns, basestring):
-            return  [patterns]
+            return [patterns]
         return patterns
 
     def match(self, string):

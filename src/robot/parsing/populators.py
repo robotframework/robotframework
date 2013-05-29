@@ -101,8 +101,8 @@ class FromDirectoryPopulator(object):
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def populate(self, path, datadir, include_suites, warn_on_skipped,
-                 recurse=True):
+    def populate(self, path, datadir, include_suites=None,
+                 warn_on_skipped=False, recurse=True):
         LOGGER.info("Parsing test data directory '%s'" % path)
         include_suites = self._get_include_suites(path, include_suites)
         init_file, children = self._get_children(path, include_suites)
@@ -136,7 +136,8 @@ class FromDirectoryPopulator(object):
     def _get_include_suites(self, path, incl_suites):
         if not isinstance(incl_suites, SuiteNamePatterns):
             # Use only the last part of names given like '--suite parent.child'
-            incl_suites = SuiteNamePatterns(i.split('.')[-1] for i in incl_suites)
+            incl_suites = SuiteNamePatterns(i.split('.')[-1]
+                                            for i in incl_suites or [])
         if not incl_suites:
             return incl_suites
         # If a directory is included, also all its children should be included.

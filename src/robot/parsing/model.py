@@ -27,7 +27,7 @@ from .settings import (Documentation, Fixture, Timeout, Tags, Metadata, Library,
     Resource, Variables, Arguments, Return, Template, MetadataList, ImportList)
 
 
-def TestData(parent=None, source=None, include_suites=[],
+def TestData(parent=None, source=None, include_suites=None,
              warn_on_skipped=False):
     # TODO: can we change the order of parent and source?? source seems mandatory
     """Parses a file or directory to a corresponding model object.
@@ -195,7 +195,7 @@ class TestDataDirectory(_TestData):
         self.keyword_table = KeywordTable(self)
         _TestData.__init__(self, parent, source)
 
-    def populate(self, include_suites=[], warn_on_skipped=False, recurse=True):
+    def populate(self, include_suites=None, warn_on_skipped=False, recurse=True):
         FromDirectoryPopulator().populate(self.source, self, include_suites,
                                           warn_on_skipped, recurse)
         self.children = [ch for ch in self.children if ch.has_tests()]

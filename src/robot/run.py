@@ -391,7 +391,8 @@ class RobotFramework(Application):
                                        stdout=settings['StdOut'],
                                        stderr=settings['StdErr'])
         LOGGER.info(unicode(settings))
-        suite = TestSuiteBuilder().build(*datasources)
+        suite = TestSuiteBuilder(settings['SuiteNames'],
+                                 settings['WarnOnSkipped']).build(*datasources)
         suite.configure(**settings.suite_config)
         result = suite.run(settings)
         result.configure(status_rc=settings.status_rc)

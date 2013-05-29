@@ -15,14 +15,16 @@
 from robot.new_running.defaults import TestDefaults
 from robot.parsing import TestData
 from robot.errors import DataError
+from robot.utils import abspath
 
 from .model import TestSuite, ForLoop
 
 
 class TestSuiteBuilder(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, include_suites=None, warn_on_skipped=False):
+        self.include_suites = include_suites
+        self.warn_on_skipped = warn_on_skipped
 
     def build(self, *paths):
         if len(paths) == 1:
@@ -34,7 +36,9 @@ class TestSuiteBuilder(object):
 
     def _parse(self, path):
         try:
-            return TestData(source=path)
+            return TestData(source=abspath(path),
+                            include_suites=self.include_suites,
+                            warn_on_skipped=self.warn_on_skipped)
         except DataError, err:
             raise DataError("Parsing '%s' failed: %s" % (path, unicode(err)))
 
