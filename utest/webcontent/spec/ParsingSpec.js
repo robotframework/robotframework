@@ -290,9 +290,9 @@ describe("Parent Suite Teardown Failure", function (){
         expect(suite.status).toEqual("FAIL");
     });
 
-    it("should show test message 'Teardown of the parent suite failed.'", function (){
+    it("should show test message 'Parent suite teardown failed.'", function (){
         var test = firstTest(window.testdata.suite().suites()[0]);
-        expect(test.message()).toEqual("Teardown of the parent suite failed:\nAssertionError");
+        expect(test.message()).toEqual("Parent suite teardown failed:\nAssertionError");
     });
 
     it("should not show suite message", function (){
@@ -312,9 +312,9 @@ describe("Parent Suite Teardown and Test failure", function(){
         window.output = window.teardownFailureOutput;
     });
 
-    it("should show test message 'In test\n\nAlso teardown of the parent suite failed.'", function (){
+    it("should show test message 'In test\n\nAlso parent suite teardown failed.'", function (){
         var test = window.testdata.suite().suites()[0].tests()[1];
-        expect(test.message()).toEqual("In test\n\nAlso teardown of the parent suite failed:\nAssertionError");
+        expect(test.message()).toEqual("In test\n\nAlso parent suite teardown failed:\nAssertionError");
     });
 })
 
