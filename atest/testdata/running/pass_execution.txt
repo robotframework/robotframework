@@ -92,7 +92,7 @@ With continuable failure in FOR loop
     :FOR    ${var}    IN    foo    bar
     \    Run Keyword And Continue On Failure    Fail    failure
     \    Pass Execution    message
-    Should Be True    '${var}' == 'foo'
+    Should Be Equal    ${var}    foo
 
 With continuable failure and test case teardown fails
     [Documentation]    FAIL failure
