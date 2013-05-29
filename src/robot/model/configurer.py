@@ -49,6 +49,7 @@ class SuiteConfigurer(SuiteVisitor):
         self._filter(suite)
         suite.set_tags(self.add_tags, self.remove_tags)
         suite.set_criticality(self.critical_tags, self.non_critical_tags)
+        suite.remove_empty_suites()
 
     def _set_suite_attributes(self, suite):
         if self.name:

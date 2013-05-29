@@ -31,11 +31,12 @@ Grandgrandchild File Suite Executed
     Suite Passed  Test File 3  ${1_test_msg}
 
 Child Suites Not Containing Tests Not Executed
-    Check Parsing Failed Due To No Test Cases  no_tests_file_1.html
-    Check Parsing Failed Due To No Test Cases  test_dir_1/no_tests_file_2.html
-    Check Parsing Failed Due To No Test Cases  test_dir_1/no_tests_dir_2/no_tests_file_3.html
-    Check Sub Suite Count  Test Suite Dir  2
-    Check Sub Suite Count  Test Dir 1  2
+    Should Contain Suites    ${SUITE}    Test Dir 1    Test File 1
+    Should Contain Suites    ${SUITE.suites[0]}    Test Dir 2    Test File 2
+    Should Contain Suites    ${SUITE.suites[1]}
+    Should Contain Suites    ${SUITE.suites[0].suites[0]}    Test Dir 3
+    Should Contain Suites    ${SUITE.suites[0].suites[0].suites[0]}    Test File 3
+
 
 File Without Extension
     Check Syslog Contains  Ignoring file or directory 'no_extension'.
@@ -53,9 +54,3 @@ Check Sub Suite Count
     [Arguments]  ${name}  ${expected_count}
     ${suite} =  Get Test Suite  ${name}
     Length Should Be  ${suite.suites}  ${expected_count}
-
-Check Parsing Failed Due To No Test Cases
-    [Arguments]  ${file}
-    ${path} =  Normalize Path  ${CURDIR}/../../testdata/core/test_suite_dir/${file}
-    Check Syslog Contains  Running test suite '${path}' failed: Test suite contains no test cases.
-

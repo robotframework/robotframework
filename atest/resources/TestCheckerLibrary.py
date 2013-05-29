@@ -134,6 +134,7 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
                 raise AssertionError('Suite should not have contained test "%s"' % name)
 
     def should_contain_suites(self, suite, *suite_names):
+        print 'Suite has suites', suite.suites
         actual_names = [s.name for s in suite.suites]
         assert_equals(len(actual_names), len(suite_names), 'Wrong number of subsuites')
         for expected in suite_names:
