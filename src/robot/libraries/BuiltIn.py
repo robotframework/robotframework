@@ -2201,10 +2201,7 @@ class _Misc:
     def set_test_message(self, message, append=False):
         """Sets message for the current test case.
 
-        If this keyword is used outside a test teardown, the message is
-        overridden by possible failure message. If this is used in teardown,
-        possible earlier failure message is overridden. Failures in teardown
-        are always shown in addition to this message.
+        Possible failures override this message.
 
         If the optional `append` argument is given any value considered `true`
         in Python, for example, any non-empty string, the given `message` is
