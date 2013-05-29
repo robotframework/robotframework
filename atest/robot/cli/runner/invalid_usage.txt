@@ -28,16 +28,3 @@ Invalid Option Values
     Stderr Should Contain Once  Invalid format for option '--tagstatlink'. Expected 'tag:link:title' but got 'less_than_3x_:'.\n
     Stderr Should Contain Once  Option '--runmode' does not support value 'INVALID'.\n
     Should Be Equal  ${SUITE.status}  PASS
-
-
-*** Keywords ***
-
-Run Should Fail  [Arguments]  ${options}  ${exp error}
-    Set Runners
-    ${rc}  ${output} =  Run And Return RC and Output  ${ROBOT} ${options}
-    Should Be Equal As Integers  ${rc}  252
-    Should Match Regexp  ${output}  ^\\[ .*ERROR.* \\] ${exp error}${USAGETIP}$
-
-Stderr Should Contain Once  [Arguments]  ${msg}
-    ${stderr} =  Get Stderr
-    Should Contain X Times  ${stderr}  ${msg}  1

@@ -34,3 +34,13 @@ Tests Should Pass Without Errors  [Arguments]  ${options}  ${datasource}
     Run Tests  ${options}  ${datasource}
     Should Be Equal  ${SUITE.status}  PASS
     File Should Be Empty  ${STDERR FILE}
+
+Run Should Fail  [Arguments]  ${options}  ${exp error}
+    Set Runners
+    ${rc}  ${output} =  Run And Return RC and Output  ${ROBOT} ${options}
+    Should Be Equal As Integers  ${rc}  252
+    Should Match Regexp  ${output}  ^\\[ .*ERROR.* \\] ${exp error}${USAGETIP}$
+
+Stderr Should Contain Once  [Arguments]  ${msg}
+    ${stderr} =  Get Stderr
+    Should Contain X Times  ${stderr}  ${msg}  1
