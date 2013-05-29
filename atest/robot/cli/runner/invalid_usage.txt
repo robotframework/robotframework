@@ -13,10 +13,10 @@ Argument File Option Without Value As Last Argument
     Run Should Fail  --argumentfile  option --argumentfile requires argument
 
 Non-Existing Input
-    Run Should Fail  nonexisting.html  Parsing '.*[/\\\\]nonexisting.html' failed: Data source does not exist\\.
+    Run Should Fail  nonexisting.html  Parsing 'nonexisting\\.html' failed: Data source does not exist\\.
 
 Non-Existing Input With Non-Ascii Characters
-    Run Should Fail  eitäällä.txt  Parsing '.*[/\\\\]eitäällä\\.txt' failed: Data source does not exist\\.
+    Run Should Fail  eitäällä.txt  Parsing 'eitäällä\\.txt' failed: Data source does not exist\\.
 
 Invalid Options
     Run Should Fail  --invalid option  option --invalid not recognized
