@@ -77,7 +77,8 @@ class _ExecutionStatus(object):
 
     def _handle_possible_fatal(self, failure):
         if getattr(failure, 'exit', False):
-            self.parent.fatal_failure()
+            if self.parent:
+                self.parent.fatal_failure()
             self.exiting_on_fatal = True
 
 
