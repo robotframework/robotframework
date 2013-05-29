@@ -53,6 +53,29 @@ class TestTestSuite(unittest.TestCase):
         assert_equal(list(suite.suites), [sub1])
         assert_equal(list(sub1.suites), [sub2])
 
+    def test_set_tags(self):
+        suite = TestSuite()
+        suite.tests.create()
+        suite.tests.create(tags=['t1', 't2'])
+        suite.set_tags(add='a', remove=['t2', 'nonex'])
+        suite.tests.create()
+        assert_equal(list(suite.tests[0].tags), ['a'])
+        assert_equal(list(suite.tests[1].tags), ['a', 't1'])
+        assert_equal(list(suite.tests[2].tags), [])
+
+    def test_set_tags_also_to_new_child(self):
+        suite = TestSuite()
+        suite.tests.create()
+        suite.set_tags(add='a', remove=['t2', 'nonex'], persist=True)
+        suite.tests.create(tags=['t1', 't2'])
+        suite.tests = list(suite.tests)
+        suite.tests.create()
+        suite.suites.create().tests.create()
+        assert_equal(list(suite.tests[0].tags), ['a'])
+        assert_equal(list(suite.tests[1].tags), ['a', 't1'])
+        assert_equal(list(suite.tests[2].tags), ['a'])
+        assert_equal(list(suite.suites[0].tests[0].tags), ['a'])
+
     def test_slots(self):
         assert_raises(AttributeError, setattr, self.suite, 'attr', 'value')
 

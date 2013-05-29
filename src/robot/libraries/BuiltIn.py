@@ -2329,11 +2329,18 @@ class _Misc:
         See `Remove Tags` if you want to remove certain tags and `Fail` if
         you want to fail the test case after setting and/or removing tags.
         """
-        tags = utils.normalize_tags(tags)
-        handler = lambda test: utils.normalize_tags(test.tags + tags)
-        self._set_or_remove_tags(handler)
+        ns = self._namespace
+        if ns.test:
+            ns.test.tags.add(tags)
+            ns.variables.set_test('@{TEST_TAGS}', ns.test.tags[:])
+        elif self._context.suite_teardown:
+            raise RuntimeError("'Set Tags' and 'Remove Tags' keywords "
+                               "cannot be used in suite teardown.")
+        else:
+            ns.suite.set_tags(tags, persist=True)
         self.log('Set tag%s %s.' % (utils.plural_or_not(tags),
                                     utils.seq2str(tags)))
+
 
     def remove_tags(self, *tags):
         """Removes given `tags` from the current test or all tests in a suite.
@@ -2352,30 +2359,17 @@ class _Misc:
         See `Set Tags` if you want to add certain tags and `Fail` if you want
         to fail the test case after setting and/or removing tags.
         """
-        tags = TagPatterns(tags)
-        handler = lambda test: [t for t in test.tags if not tags.match(t)]
-        self._set_or_remove_tags(handler)
+        ns = self._namespace
+        if ns.test:
+            ns.test.tags.remove(tags)
+            ns.variables.set_test('@{TEST_TAGS}', ns.test.tags[:])
+        elif self._context.suite_teardown:
+            raise RuntimeError("'Set Tags' and 'Remove Tags' keywords "
+                               "cannot be used in suite teardown.")
+        else:
+            ns.suite.set_tags(remove=tags, persist=True)
         self.log('Removed tag%s %s.' % (utils.plural_or_not(tags),
                                         utils.seq2str(tags)))
-
-    def _set_or_remove_tags(self, handler, suite=None, test=None):
-        if not (suite or test):
-            ns = self._namespace
-            if ns.test is None:
-                if self._context.suite_teardown:
-                    raise RuntimeError("'Set Tags' and 'Remove Tags' keywords "
-                                       "cannot be used in suite teardown.")
-                self._set_or_remove_tags(handler, suite=ns.suite)
-            else:
-                self._set_or_remove_tags(handler, test=ns.test)
-                ns.variables.set_test('@{TEST_TAGS}', ns.test.tags[:])
-        elif suite:
-            for sub in suite.suites:
-                self._set_or_remove_tags(handler, suite=sub)
-            for test in suite.tests:
-                self._set_or_remove_tags(handler, test=test)
-        else:
-            test.tags = handler(test)
 
     def get_library_instance(self, name):
         """Returns the currently active instance of the specified test library.
