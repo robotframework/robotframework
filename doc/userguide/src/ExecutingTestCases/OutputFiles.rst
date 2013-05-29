@@ -81,6 +81,9 @@ log files are always created and their default name is
 
    An example of a log file with keyword details visible
 
+.. note:: Disabling log file generation can save memory, because there is no
+   need for :path:`output.xml` parsing (new in Robot Framework 2.8.).
+
 Report file
 '''''''''''
 
