@@ -162,4 +162,4 @@ Should only pass successful suite teardown if test case fails
 
 With suite teardown should not modify tags
     Check Test Tags    ${TESTNAME}    force1    force2
-    Should Be True    '${SUITE.status}' == 'FAIL'
+    Should Be Equal    ${SUITE.status}    FAIL
