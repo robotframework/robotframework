@@ -141,6 +141,7 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
                 raise AssertionError('Suite %s not found' % expected)
 
     def should_contain_tags(self, test, *tags):
+        print 'Test has tags', test.tags
         assert_equals(len(test.tags), len(tags), 'Wrong number of tags')
         tags = sorted(tags, key=lambda s: s.lower().replace('_', '').replace(' ', ''))
         for act, exp in zip(test.tags, tags):

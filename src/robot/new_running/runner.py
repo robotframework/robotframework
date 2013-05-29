@@ -104,8 +104,7 @@ class Runner(SuiteVisitor):
         self._executed_tests[test.name] = True
         result = self._suite.tests.create(name=test.name,
                                           doc=self._resolve_setting(test.doc),
-                                          tags=[self._resolve_setting(t)
-                                                for t in test.tags],
+                                          tags=self._variables.replace_meta('fixme', test.tags, []),
                                           starttime=utils.get_timestamp(),
                                           timeout=self._get_timeout(test),
                                           status='RUNNING')
