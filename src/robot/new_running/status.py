@@ -94,7 +94,7 @@ class TestStatus(_ExecutionStatus):
     def __init__(self, suite_status):
         _ExecutionStatus.__init__(self, suite_status)
 
-    def test_failed(self, failure, critical=True):
+    def test_failed(self, failure, critical):
         self.test_failure = unicode(failure)
         if critical:
             self.parent.critical_failure()
