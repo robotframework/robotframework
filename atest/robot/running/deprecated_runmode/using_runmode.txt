@@ -1,0 +1,20 @@
+*** Settings ***
+Force Tags      regression  pybot  jybot
+Resource        ../../cli/runner/cli_resource.txt
+
+
+*** Test Cases ***
+
+Invalid Runmode
+    ${options} =  Set Variable  --runmode INVALID ${TESTFILE}
+    ${msg} =  Set Variable  Option '--runmode' does not support value 'INVALID'.
+    Set Runners
+    ${rc}  ${output} =  Run And Return RC and Output  ${ROBOT} ${options}
+    Should Be Equal As Integers  ${rc}  252
+    Should Contain  ${output}  [ ERROR ] ${msg}${USAGETIP}
+
+Logs Deprecation Warning
+    ${options} =  Set Variable  --runmode something ${TESTFILE}
+    ${msg} =  Set Variable  Option --runmode is deprecated in Robot Framework 2.8 and will be removed in the future.
+    ${_}  ${output} =  Run And Return RC and Output  ${ROBOT} ${options}
+    Should Contain  ${output}  [ WARN ] ${msg}
