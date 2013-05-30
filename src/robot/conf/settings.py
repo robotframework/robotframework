@@ -110,8 +110,10 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'Randomize':
             return self._process_randomize_value(value)
-        if name in ['RemoveKeywords', 'RunMode']:
+        if name == 'RemoveKeywords':
             return [v.upper() for v in value]
+        if name == 'RunMode':
+            return [self._process_runmode_value(v) for v in value]
         return value
 
     def _process_log_level(self, level):
@@ -141,8 +143,19 @@ class _BaseSettings(object):
         if formatted_value in ('test', 'suite'):
             formatted_value += 's'
         if formatted_value not in ('tests', 'suites', 'none', 'all'):
-            raise DataError("Option '--randomize' does not support value '%s'"
-                            % original_value)
+            self._raise_invalid_option_value('--randomize', original_value)
+        return formatted_value
+
+    def _raise_invalid_option_value(self, option_name, given_value):
+        raise DataError("Option '%s' does not support value '%s'." %
+                        (option_name, given_value))
+
+    def _process_runmode_value(self, original_value):
+        formatted_value = original_value.lower()
+        if formatted_value not in ('exitonfailure', 'skipteardownonexit',
+                                   'dryrun', 'random:test', 'random:suite',
+                                   'random:all'):
+            self._raise_invalid_option_value('--runmode', original_value)
         return formatted_value
 
     def __getitem__(self, name):
@@ -352,27 +365,27 @@ class RobotSettings(_BaseSettings):
     @property
     def randomize_suites(self):
         return (self['Randomize'] in ('suites', 'all') or
-                any(mode in ('RANDOM:SUITE', 'RANDOM:ALL') for mode in self['RunMode']))
+                any(mode in ('random:suite', 'random:all') for mode in self['RunMode']))
 
     @property
     def randomize_tests(self):
         return (self['Randomize'] in ('tests', 'all') or
-                any(mode in ('RANDOM:TEST', 'RANDOM:ALL') for mode in self['RunMode']))
+                any(mode in ('random:test', 'random:all') for mode in self['RunMode']))
 
     @property
     def dry_run(self):
         return (self['DryRun'] or
-                any(mode == 'DRYRUN' for mode in self['RunMode']))
+                any(mode == 'dryrun' for mode in self['RunMode']))
 
     @property
     def exit_on_failure(self):
         return (self['ExitOnFailure'] or
-                any(mode == 'EXITONFAILURE' for mode in self['RunMode']))
+                any(mode == 'exitonfailure' for mode in self['RunMode']))
 
     @property
     def skip_teardown_on_exit(self):
         return (self['SkipTeardownOnExit'] or
-                any(mode == 'SKIPTEARDOWNONEXIT' for mode in self['RunMode']))
+                any(mode == 'skipteardownonexit' for mode in self['RunMode']))
 
 
 class RebotSettings(_BaseSettings):

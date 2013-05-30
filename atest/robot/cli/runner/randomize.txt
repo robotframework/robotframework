@@ -30,9 +30,8 @@ Last Option Overrides All Previous
     ${tests} =  Get Tests
     Should Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
 
-Invalid Option Value
-    [Setup]  Run Tests  --randomize invalid  ${TESTFILE}
-    Stderr Should Contain Once  Option '--randomize' does not support value 'invalid'.\n
+Invalid Option value
+    Run Should Fail  --randomize INVALID ${TESTFILE}  Option '--randomize' does not support value 'INVALID'.
 
 *** Keywords ***
 Check That Default Orders Are Correct

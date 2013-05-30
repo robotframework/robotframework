@@ -84,7 +84,7 @@ One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
 
 *** Keywords ***
 Start And Send Signal
-    [Arguments]    ${datasource}    ${signals}    ${sleep}=0s    ${runmode}=normal
+    [Arguments]    ${datasource}    ${signals}    ${sleep}=0s    ${runmode}=${EMPTY}
     Remove File    ${TEST FILE}
     Start Run    ${datasource}    ${sleep}    ${runmode}
     Wait Until Created    ${TESTFILE}    timeout=45s
@@ -98,13 +98,17 @@ Start Run
     @{runner} =    Get Runner    ${INTERPRETER}    ${ROBOTPATH}
     @{command} =    Create List
     ...    @{runner}
-    ...    --output    ${OUTFILE}    --report    NONE    --log    NONE
-    ...    --variable    TESTSIGNALFILE:${TEST FILE}
-    ...    --variable    TEARDOWNSLEEP:${sleep}
-    ...    --runmode  ${runmode}
-    ...    ${datasource}
+    ...    --output     ${OUTFILE}    --report    NONE    --log    NONE
+    ...    --variable   TESTSIGNALFILE:${TEST FILE}
+    ...    --variable   TEARDOWNSLEEP:${sleep}
+    Run Keyword Unless  '${runmode}' == '${EMPTY}'  Set Runmode  ${command}  ${runmode}
+    Append To List  ${command}  ${datasource}
     Log Many    @{command}
     ProcessManager.start process    @{command}
+
+Set Runmode
+    [Arguments]   ${command}   ${runmode}
+    Append To List  ${command}  --runmode   ${runmode}
 
 Check Test Cases Have Failed Correctly
     Check Test Case    Test    FAIL    Execution terminated by signal
