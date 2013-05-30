@@ -76,6 +76,9 @@ class _Timeout(object):
         return self.active and self.time_left() <= 0
 
     def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    def __unicode__(self):
         return self.string
 
     def __cmp__(self, other):
