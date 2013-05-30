@@ -55,8 +55,8 @@ class TestBuilding(unittest.TestCase):
         assert_equals(test.name, 'Fail')
         assert_equals(test.doc, 'FAIL Expected failure')
         assert_equals(list(test.tags), ['fail', 'force'])
-        assert_true(not test.timeout)
-        assert_equals(test.continue_on_failure, False)
+        assert_equals(test.timeout, None)
+        assert_equals(test.template, None)
 
     def test_test_keywords(self):
         kw = build('pass_and_fail.txt').tests[0].keywords[0]
@@ -115,8 +115,8 @@ class TestTemplates(unittest.TestCase):
 
     def test_from_setting_table(self):
         test = build('../running/test_template.txt').tests[0]
-        assert_keyword(test.keywords[0], (), 'Should Be Equal',('Fail', 'Fail'))
-        assert_equals(test.continue_on_failure, True)
+        assert_keyword(test.keywords[0], (), 'Should Be Equal', ('Fail', 'Fail'))
+        assert_equals(test.template, 'Should Be Equal')
 
     def test_from_test_case(self):
         test = build('../running/test_template.txt').tests[3]
@@ -124,10 +124,10 @@ class TestTemplates(unittest.TestCase):
         assert_keyword(kws[0], (), 'Should Not Be Equal', ('Same', 'Same'))
         assert_keyword(kws[1], (), 'Should Not Be Equal', ('42', '43'))
         assert_keyword(kws[2], (), 'Should Not Be Equal', ('Something', 'Different'))
-        assert_equals(test.continue_on_failure, True)
+        assert_equals(test.template, 'Should Not Be Equal')
 
     def test_no_variable_assign(self):
         test = build('../running/test_template.txt').tests[8]
         assert_keyword(test.keywords[0], (), 'Expect Exactly Three Args',
                        ('${SAME VARIABLE}', 'Variable content', '${VARIABLE}'))
-        assert_equals(test.continue_on_failure, True)
+        assert_equals(test.template, 'Expect Exactly Three Args')

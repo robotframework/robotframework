@@ -72,12 +72,12 @@ class ForLoop(Keyword):
 
 
 class TestCase(model.TestCase):
-    __slots__ = ['continue_on_failure']
+    __slots__ = ['template']
     keyword_class = Keyword
 
-    def __init__(self, continue_on_failure=False, **kwargs):
+    def __init__(self, template=None, **kwargs):
         model.TestCase.__init__(self, **kwargs)
-        self.continue_on_failure = continue_on_failure
+        self.template = template
 
     @setter
     def timeout(self, timeout):

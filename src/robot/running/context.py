@@ -98,7 +98,6 @@ class _ExecutionContext(object):
         self._in_keyword_teardown -= 1
 
     def end_test(self, test):
-        self.output.end_test(test)
         self.namespace.end_test()
         self.set_prev_test_variables(test)
 
@@ -134,7 +133,6 @@ class _ExecutionContext(object):
 
     def start_test(self, test):
         self.namespace.start_test(test)
-        self.output.start_test(test)
 
     def set_test_status_before_teardown(self, message, status):
         self.namespace.set_test_status_before_teardown(message, status)
