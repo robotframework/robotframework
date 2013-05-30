@@ -36,23 +36,28 @@ is created automatically, if it does not exist already.
 Output file
 '''''''''''
 
-Output files contain all the test execution results in XML
-format. Log_ and report_ files are generated based on
-output files, and output files can also be `combined and otherwise
-post-processed`__ after the test execution.
+Output files contain all the test execution results in machine readable XML
+format. Log_, report_ and xUnit_ files are typically generated based on them,
+and they can also be combined and otherwise post-processed with Rebot_.
+
+.. tip:: Starting from Robot Framework 2.8, generating report_ and xUnit_
+         files as part of test execution does not anymore require processing
+         output files. Disabling log_ generation when running tests can thus
+         save memory.
 
 The command line option :opt:`--output (-o)` determines the path where
 the output file is created relative to the `output directory`_. The default
 name for the output file, when tests are run, is :path:`output.xml`.
 
-When post-processing outputs, new output files are not created unless
-:opt:`--output (-o)` option is explicitly used.
+When post-processing outputs with Rebot, new output files are not created
+unless :opt:`--output (-o)` option is explicitly used.
 
 Starting from Robot Framework 2.6, it is possible to disable creation of
-the output file also when running tests with special value :opt:`NONE`. In this
-case also other output files, except for the `debug file`_, are disabled.
-
-__ `Post-processing outputs`_
+the output file when running tests with a special value :opt:`NONE`.
+In Robot Framework 2.6 and 2.7 versions this automatically disabled also
+creating log and report files, but starting from the 2.8 version this is
+not done anymore. If no outputs are needed, they should all be explicitly
+disabled using :opt:`--output NONE --report NONE --log NONE`.
 
 Log file
 ''''''''
@@ -80,9 +85,6 @@ log files are always created and their default name is
    :width: 500
 
    An example of a log file with keyword details visible
-
-.. note:: Disabling log file generation can save memory, because there is no
-   need for :path:`output.xml` parsing (new in Robot Framework 2.8.).
 
 Report file
 '''''''''''
@@ -112,6 +114,8 @@ name is :path:`report.html`.
    :width: 500
 
    An example report file of failed test execution
+
+.. _xunit:
 
 XUnit compatible result file
 ''''''''''''''''''''''''''''
