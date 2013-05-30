@@ -12,7 +12,7 @@ Exit On Failure
 
 Imports Are Skipped On Exit
     Previous test should have passed  Exit On Failure
-    Should be empty  ${ERRORS.messages}
+    Length Should Be  ${ERRORS.msgs}  1
 
 Correct Suite Teardown Is Executed When Exitonfailure Is Used
     [Setup]  Run Tests  --runmode exitonfailure  misc/suites
