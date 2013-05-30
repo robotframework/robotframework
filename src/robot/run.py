@@ -390,7 +390,7 @@ class RobotFramework(Application):
                                        markers=settings['MonitorMarkers'],
                                        stdout=settings['StdOut'],
                                        stderr=settings['StdErr'])
-        LOGGER.info(unicode(settings))
+        LOGGER.info('Settings:\n%s' % unicode(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped']).build(*datasources)
         suite.configure(**settings.suite_config)
