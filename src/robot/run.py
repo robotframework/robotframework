@@ -399,10 +399,11 @@ class RobotFramework(Application):
                          stat_config=settings.statistics_config)
         LOGGER.info("Tests execution ended. Statistics:\n%s"
                     % result.suite.statistics.message)
+        rc = result.return_code
         if settings.log or settings.report or settings.xunit:
             writer = ResultWriter(settings.output if settings.log else result)
             writer.write_results(settings.get_rebot_settings())
-        return result.return_code
+        return rc
 
 
 def run_cli(arguments):

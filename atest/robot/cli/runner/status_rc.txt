@@ -2,6 +2,7 @@
 Suite Setup     Set Runners
 Default Tags    regression  pybot  jybot
 Resource        cli_resource.txt
+Test Template   Run Tests and Verify RC
 
 *** Variables ***
 ${MISCDIR}   ${CURDIR}/../../../testdata/misc
@@ -11,23 +12,25 @@ ${FAILING}   ${MISCDIR}/pass_and_fail.txt
 *** Test Cases ***
 
 Zero RC when all tests pass
-    Run Tests and Verify RC  ${PASSING}                  rc=0
+    ${PASSING}                  rc=0
 
 Zero RC when all critical tests pass
-    Run Tests and Verify RC  --critical pass ${FAILING}  rc=0
+    --critical pass ${FAILING}  rc=0
 
 Non-zero RC when critical tests fail
-    Run Tests and Verify RC  ${FAILING}                  rc=1
+    ${FAILING}                  rc=1
+    -r report.html ${FAILING}   rc=1
+    -l log.html ${FAILING}      rc=1
 
 Zero RC when all tests pass with --NoStatusRC
-    Run Tests and Verify RC  --NoStatusRC ${PASSING}     rc=0
+    --NoStatusRC ${PASSING}     rc=0
 
 Zero RC when critical tests fail with --NoStatusRC
-    Run Tests and Verify RC  --nostatusrc ${FAILING}     rc=0
+    --nostatusrc ${FAILING}     rc=0
 
 
 *** Keywords ***
 Run Tests and Verify RC
-    [Arguments]  ${options & source}  ${rc}=
-    ${returned}=  Run And Return Rc  ${ROBOT} --output NONE ${options & source}
-    Should Be Equal As Integers  ${returned}  ${rc}
+    [Arguments]    ${options & source}    ${rc}=
+    ${returned}=    Run And Return Rc    ${ROBOT} -o NONE -l NONE -r NONE ${options & source}
+    Should Be Equal As Integers    ${returned}    ${rc}
