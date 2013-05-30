@@ -62,6 +62,7 @@ class _ExecutionContext(object):
         self.suite_teardown = False
         self._in_keyword_teardown = 0
         self._started_keywords = 0
+        self.timeout_occured = False
 
     # TODO: Clean-up needed here ....
 
@@ -97,9 +98,13 @@ class _ExecutionContext(object):
     def end_keyword_teardown(self):
         self._in_keyword_teardown -= 1
 
+    def set_timeout(self, err):
+        self.timeout_occured = bool(err.timeout)
+
     def end_test(self, test):
         self.namespace.end_test()
         self.set_prev_test_variables(test)
+        self.timeout_occured = False
 
     def end_suite(self, suite):
         self.copy_prev_test_vars_to_global()

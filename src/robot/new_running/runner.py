@@ -127,6 +127,7 @@ class Runner(SuiteVisitor):
             else:
                 result.message = exception.message
         except ExecutionFailed, err:
+            self._context.set_timeout(err)
             status.test_failed(err, test.critical)
         result.status = status.status
         result.message = status.message or result.message
@@ -177,6 +178,7 @@ class Runner(SuiteVisitor):
         try:
             kw.run(self._context)
         except ExecutionFailed, err:
+            self._context.set_timeout(err)
             return err
 
 

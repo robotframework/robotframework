@@ -1496,7 +1496,7 @@ class _RunKeyword:
         Available in Robot Framework 2.5 and newer.
         """
         test = self._get_test_in_teardown('Run Keyword If Timeout Occurred')
-        if test.timeout and test.timeout.any_timeout_occurred():
+        if self._context.timeout_occured:
             return self.run_keyword(name, *args)
 
     def _get_test_in_teardown(self, kwname):
