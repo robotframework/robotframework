@@ -24,3 +24,6 @@ class ModelObject(object):
 
     def __str__(self):
         return unicode(self).encode('ASCII', 'replace')
+
+    def __repr__(self):
+        return repr(str(self))

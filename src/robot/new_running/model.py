@@ -204,5 +204,5 @@ class Import(object):
     def report_invalid_syntax(self, message, level='ERROR'):
         # TODO: Remove table information from error message here and
         # also from _TestData.report_invalid_syntax in parsing/model.py
-        LOGGER.write("Error in file '%s' in table 'Setting': %s"
+        LOGGER.write("Error in file '%s' in table 'Settings': %s"
                      % (self.source or '<unknown>', message), level)
