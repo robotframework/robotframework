@@ -1,0 +1,8 @@
+*** Settings ***
+Force Tags      regression  pybot  jybot
+Resource        ../../cli/runner/cli_resource.txt
+
+
+*** Test Cases ***
+Invalid Runmode
+    Run Should Fail   --runmode INVALID ${TESTFILE}   Option '--runmode' does not support value 'INVALID'.
