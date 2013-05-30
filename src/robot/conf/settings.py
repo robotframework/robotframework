@@ -306,6 +306,18 @@ class _BaseSettings(object):
     def xunit_skip_noncritical(self):
         return self['XUnitSkipNonCritical']
 
+    @property
+    def statistics_config(self):
+        return {
+            'suite_stat_level': self['SuiteStatLevel'],
+            'tag_stat_include': self['TagStatInclude'],
+            'tag_stat_exclude': self['TagStatExclude'],
+            'tag_stat_combine': self['TagStatCombine'],
+            'tag_stat_link': self['TagStatLink'],
+            'tag_doc': self['TagDoc'],
+        }
+
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
@@ -420,17 +432,6 @@ class RebotSettings(_BaseSettings):
             'non_critical': self['NonCritical'],
             'start_time': self['StartTime'],
             'end_time': self['EndTime']
-        }
-
-    @property
-    def statistics_config(self):
-        return {
-            'suite_stat_level': self['SuiteStatLevel'],
-            'tag_stat_include': self['TagStatInclude'],
-            'tag_stat_exclude': self['TagStatExclude'],
-            'tag_stat_combine': self['TagStatCombine'],
-            'tag_stat_link': self['TagStatLink'],
-            'tag_doc': self['TagDoc'],
         }
 
     @property
