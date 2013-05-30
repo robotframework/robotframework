@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation   NO RIDE: Imports contain invalid syntax on purpose
 
 Resource     resources_and_variables/resources.html

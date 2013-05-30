@@ -11,19 +11,19 @@ Valid Test
     Equals  ${test.doc}  This test should be executed and PASS
 
 Library Imports
-    Verify Error  Library setting requires a name  Setting
-    Verify Error  Importing test library 'NonExistingLibrary' failed: ImportError:  Setting
+    Verify Error  Library setting requires a name  Settings
+    Verify Error  Importing test library 'NonExistingLibrary' failed: ImportError:  Settings
     Check Test Case  Check Valid Library Import
-    Verify Error  Replacing variables from setting 'Library' failed: Resolving variable '\${unicodeï¿½ï¿½ï¿½}' failed: Non-existing variable '\${unicodeï}'.  Setting
+    Verify Error  Replacing variables from setting 'Library' failed: Resolving variable '\${unicodeï¿½ï¿½ï¿½}' failed: Non-existing variable '\${unicodeï}'.  Settings
 
 Resource Imports
-    Verify Error  Resource file 'non-existing-resource.html' does not exist  Setting
-    Verify Error  Resource setting requires a name  Setting
+    Verify Error  Resource file 'non-existing-resource.html' does not exist  Settings
+    Verify Error  Resource setting requires a name  Settings
     Check Test Case  Check Valid Resource Import
 
 Variable File Imports
-    Verify Error  Variable file 'non-existing-variables.py' does not exist  Setting
-    Verify Error  Variables setting requires a name  Setting
+    Verify Error  Variable file 'non-existing-variables.py' does not exist  Settings
+    Verify Error  Variables setting requires a name  Settings
     Check Test Case  Check Valid Variable File Import
 
 Invalid Setting

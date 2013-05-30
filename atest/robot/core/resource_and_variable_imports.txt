@@ -147,7 +147,7 @@ Stderr Should Contain Error
     [Arguments]    ${path}    @{error parts}
     ${path} =  Join Path    ${DATADIR}    ${path}
     ${error} =  Catenate  @{error parts}
-    Check Stderr Contains    [ ERROR ] Error in file '${path}' in table 'Setting': ${error}
+    Check Stderr Contains    [ ERROR ] Error in file '${path}' in table 'Settings': ${error}
 
 File Should Have Already Been Imported
     [Arguments]    ${type}    ${path}   ${arguments}=    ${suite}=Resource And Variable Imports
