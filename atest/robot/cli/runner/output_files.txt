@@ -7,26 +7,29 @@ Resource        cli_resource.txt
 *** Test Cases ***
 
 Output Only
-    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --output myoutput.xml --report none --log none  ${TESTFILE}
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --output myoutput.xml --report none --log none    ${TESTFILE}
     Output Directory Should Contain  myoutput.xml
 
 Output And Report
-    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --output myoutput.xml --report myreport.html --log none  ${TESTFILE}
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --output myoutput.xml --report myreport.html --log none    ${TESTFILE}
     Output Directory Should Contain  myoutput.xml  myreport.html
 
 Output And Log
-    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --output myoutput.xml --report none --log mylog.html  ${TESTFILE}
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --output myoutput.xml --report none --log mylog.html    ${TESTFILE}
     Output Directory Should Contain  mylog.html  myoutput.xml
 
-Output Disabled with NONE
-    Remove File    NONE
-    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o NONE -r None -l none  ${TESTFILE}
-    Output Directory Should Be Empty
-    File Should Not Exist     NONE
+Disabling output XML only disables log with a warning
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o nOnE -r report.html -l mylog.html    ${TESTFILE}
+    Output Directory Should Contain    report.html
+    Check Stderr Matches Regexp    \\[ ERROR \\] Log file is not created if output.xml is disabled.
 
-Debugfile Can Be Created When Output Is NONE
-    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o NONE -r report.html -b debug.txt  ${TESTFILE}
-    Output Directory Should Contain  debug.txt
+All output files disabled
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o nOnE -r NONE -l none    ${TESTFILE}
+    Directory Should Be Empty    ${CLI OUTDIR}
+
+Debug, Xunit And Report File Can Be Created When Output Is NONE
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o NONE -r myreport.html -b mydebug.txt -x myxunit.xml    ${TESTFILE}
+    Output Directory Should Contain  mydebug.txt  myreport.html  myxunit.xml
 
 All Outputs
     Run Tests Without Processing Output  --outputdir=${CLI OUTDIR} --output=myoutput.xml --report=myreport.html --log=mylog.html  ${TESTFILE}
@@ -75,3 +78,4 @@ Non-writable Split Log
     Check Stdout Contains  Output:
     Check Stdout Does Not Contain  Log:
     Check Stdout Contains  Report:
+
