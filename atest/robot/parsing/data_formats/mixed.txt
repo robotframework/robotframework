@@ -68,9 +68,14 @@ Directory With Mixed Data
     Run Tests And Verify Status  ${MIXEDDIR}
     Run Keyword If/Unless Docutils Installed  Verify Directory with Mixed Data With ReST  Verify Directory with Mixed Data Without ReST
 
-Multiple Data Sources
+Multiple Data Sources Without reST
+    Run Tests And Verify Status  ${HTMLDIR}${/}sample.html  ${TSVDIR}${/}sample.tsv  ${TXTDIR}${/}sample.txt  ${MIXEDDIR}
+    Verify Multiple Data Sources Without ReST
+
+Multiple Data Sources With reST
+    [Setup]  Make test non-critical and fail it if docutils is not installed
     Run Tests And Verify Status  ${HTMLDIR}${/}sample.html  ${TSVDIR}${/}sample.tsv  ${RESTDIR}${/}sample.rst  ${TXTDIR}${/}sample.txt  ${MIXEDDIR}
-    Run Keyword If/Unless Docutils Installed  Verify Multiple Data Sources With ReST  Verify Multiple Data Sources Without ReST
+    Verify Multiple Data Sources With ReST
 
 *** Keywords ***
 Verify Directory With Mixed Data With ReST
