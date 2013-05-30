@@ -36,7 +36,8 @@ ${string}
 
 *** Test Cases ***
 \   ...  # Invalid usage
-    [Documentation]  FAIL Test case name is required.
+    [Documentation]  FAIL Test case name cannot be empty.
+    No Operation
 
 Invalid Usage In Test And User Keyword
     ...
