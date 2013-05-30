@@ -218,8 +218,7 @@ class _BaseSettings(object):
 
     def _process_report_background(self, colors):
         if colors.count(':') not in [1, 2]:
-            LOGGER.error("Invalid report background colors '%s'." % colors)
-            return self._get_default_value('ReportBackground')
+            raise DataError("Invalid report background colors '%s'." % colors)
         colors = colors.split(':')
         if len(colors) == 2:
             return colors[0], colors[0], colors[1]
@@ -237,9 +236,8 @@ class _BaseSettings(object):
         tokens = value.split(':')
         if len(tokens) >= 3:
             return tokens[0], ':'.join(tokens[1:-1]), tokens[-1]
-        LOGGER.error("Invalid format for option '--tagstatlink'. "
-                     "Expected 'tag:link:title' but got '%s'." % value)
-        return None
+        raise DataError("Invalid format for option '--tagstatlink'. "
+                        "Expected 'tag:link:title' but got '%s'." % value)
 
     def _convert_to_positive_integer_or_default(self, name, value):
         value = self._convert_to_integer(name, value)
@@ -249,9 +247,8 @@ class _BaseSettings(object):
         try:
             return int(value)
         except ValueError:
-            LOGGER.error("Option '--%s' expected integer value but got '%s'. "
-                         "Default value used instead." % (name.lower(), value))
-            return self._get_default_value(name)
+            raise DataError("Option '--%s' expected integer value but got '%s'."
+                            % (name.lower(), value))
 
     def _get_default_value(self, name):
         return self._cli_opts[name][1]

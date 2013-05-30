@@ -40,7 +40,3 @@ Run Should Fail  [Arguments]  ${options}  ${exp error}
     ${rc}  ${output} =  Run And Return RC and Output  ${ROBOT} ${options}
     Should Be Equal As Integers  ${rc}  252
     Should Match Regexp  ${output}  ^\\[ .*ERROR.* \\] ${exp error}${USAGETIP}$
-
-Stderr Should Contain Once  [Arguments]  ${msg}
-    ${stderr} =  Get Stderr
-    Should Contain X Times  ${stderr}  ${msg}  1
