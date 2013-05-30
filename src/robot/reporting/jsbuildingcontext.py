@@ -38,6 +38,8 @@ class JsBuildingContext(object):
 
     def string(self, string, escape=True):
         if escape and string:   # string can, but should not, be None
+            if not isinstance(string, unicode):
+                string = unicode(string)
             string = html_escape(string)
         return self._strings.add(string)
 
