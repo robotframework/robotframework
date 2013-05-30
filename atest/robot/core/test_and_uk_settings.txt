@@ -15,8 +15,8 @@ Test Case Tags With Variables
     [Documentation]  Check that variables work in test case tags and invalid variables are handled correctly
     Check Test Tags  Test Case Tags With Variables  force-1  test-1  test-2  test-3  test-4  test-5
 
-Test Case Tags With Non-Existing Variables
-    Check Test Tags  Test Case Tags With Non-Existing Variables  \${non_existing}  \@{non_existing}  force-1
+Test Case Tags With Non-Existing Variables is Okay
+    Check Test Tags  Test Case Tags With Non-Existing Variables   \${non_existing} \@{non_existing}  force-1
 
 Test Case Setup
     ${test} =  Check Test Case  Test Case Setup
@@ -127,6 +127,12 @@ Non Existing Variable In Suite Setup and Teardown
     ${tc} =  Get Test Case  Test Case Documentation
     Should Be Equal  ${tc.status}  FAIL
     Should Be Equal  ${tc.message}  Parent suite setup failed:\nNon-existing variable '\${SUITE_SETUP_FROM_CLI}'.
+
+Non existing variable in suite metadata is okay
+    Run Tests  --variable suite_setup_from_cli:Log --variable suite_teardown_from_cli:Log --test TestCaseDocumentation  core/test_and_uk_settings.html
+    Should Be Equal  ${SUITE.status}  PASS
+    Should Be Empty  ${SUITE.message}
+    Should be Equal  ${SUITE.metadata['Var From CLI']}      \${META_FROM_CLI}
 
 *** Keywords ***
 My Setup
