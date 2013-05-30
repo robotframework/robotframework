@@ -30,7 +30,7 @@ Invalid Setting
     Verify Error  Non-existing setting 'Invalid Setting'  Setting
 
 Variables In Variable Table
-    Verify Error  Setting variable 'Invalid Variable Name' failed: Invalid variable name 'Invalid Variable Name'.  Variable
+    Verify Error  Setting variable 'Invalid Variable Name' failed: Invalid variable name 'Invalid Variable Name'.  Variables
     Check Test Case  Check Valid Variable In Variable Table
 
 Non-Existing Variable In Test
