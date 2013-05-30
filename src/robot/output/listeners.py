@@ -113,7 +113,7 @@ class Listeners(object):
             else:
                 attrs = self._get_start_attrs(test, 'tags')
                 attrs['critical'] = 'yes' if test.critical else 'no'
-                attrs['template'] = getattr(test, 'template', None) or ''  # TODO: Doesn't work correctly with new run
+                attrs['template'] = test.template or ''
                 li.call_method(li.start_test, test.name, attrs)
 
     def end_test(self, test):
@@ -124,7 +124,7 @@ class Listeners(object):
             else:
                 attrs = self._get_end_attrs(test, 'tags')
                 attrs['critical'] = 'yes' if test.critical else 'no'
-                attrs['template'] = getattr(test, 'template', None) or ''  # TODO: Doesn't work correctly with new run
+                attrs['template'] = test.template or ''
                 li.call_method(li.end_test, test.name, attrs)
 
     def start_keyword(self, kw):

@@ -108,8 +108,9 @@ class Runner(SuiteVisitor):
                                           starttime=utils.get_timestamp(),
                                           timeout=self._get_timeout(test),
                                           status='RUNNING')
-        keywords = Keywords(test.keywords.normal, test.continue_on_failure)
+        keywords = Keywords(test.keywords.normal, bool(test.template))
         self._context.start_test(result)
+        self._output.start_test(ModelCombiner(result, test))
         status = TestStatus(self._suite_status)
         if not status.failures and not test.name:
             status.test_failed('Test case name cannot be empty.', result.critical)
@@ -137,6 +138,7 @@ class Runner(SuiteVisitor):
         result.status = status.status
         result.message = status.message or result.message
         result.endtime = utils.get_timestamp()
+        self._output.end_test(ModelCombiner(result, test))
         self._context.end_test(result)
 
     def _get_timeout(self, test):
