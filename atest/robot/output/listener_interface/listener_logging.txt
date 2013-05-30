@@ -37,8 +37,8 @@ Correct warnings should be shown in execution errors
     Correct start/end warnings should be shown in execution errors
 
 Execution errors should have messages from message and log_message methods
-    Check Log Message  ${ERRORS.msgs[0]}  message: INFO Robot Framework *  WARN  pattern=yes
-    Check Log Message  ${ERRORS.msgs[-5]}  log_message: DEBUG Traceback *  WARN  pattern=yes
+    Check Log Message  ${ERRORS[0]}  message: INFO Robot Framework *  WARN  pattern=yes
+    Check Log Message  ${ERRORS[-4]}  log_message: DEBUG Traceback *  WARN  pattern=yes
 
 Correct start/end warnings should be shown in execution errors
     ${msgs} =  Get start/end messages  ${ERRORS.msgs}
