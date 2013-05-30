@@ -403,25 +403,6 @@ class RobotFramework(Application):
             writer.write_results(settings.get_rebot_settings())
         return result.return_code
 
-    def validate(self, options, arguments):
-        if len(arguments) > 1:
-            arguments = self._validate_arguments_exist(arguments)
-        return options, arguments
-
-    def _validate_arguments_exist(self, arguments):
-        valid = []
-        nonex = []
-        for arg in arguments:
-            (valid if os.path.exists(arg) else nonex).append(arg)
-        if nonex:
-            s, were = ('s', 'were') if len(nonex) > 1 else ('', 'was')
-            LOGGER.warn("Argument%s %s did not exist and %s ignored. "
-                        "Validate the used command line syntax."
-                        % (s, seq2str(nonex), were))
-            if not valid:
-                raise DataError('No valid arguments given.')
-        return valid
-
 
 def run_cli(arguments):
     """Command line execution entry point for running tests.

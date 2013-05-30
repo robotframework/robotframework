@@ -47,15 +47,13 @@ Wildcards
     Should Contain Tests  ${SUITE.suites[2]}   Suite3 First
     Check Names  ${SUITE.suites[2].tests[0]}  Suite3 First  Tsuite1 & Tsuite2 & Tsuite3.Tsuite3.
 
-Warning When Parsing Any Data Source Fails
-    Run Tests  ${EMPTY}  nönex  misc/pass_and_fail.txt
-    ${nönex} =  Normalize Path  ${DATADIR}/nönex
-    Check Log Message  ${ERRORS.msgs[0]}  Argument '${nönex}' did not exist and was ignored. Validate the used command line syntax.  WARN
-    Check Names  ${SUITE}  Pass And Fail
-    Should Contain Tests  ${SUITE}  Pass  Fail
+Failure When Parsing Any Data Source Fails
+    Run Tests Without Processing Output    ${EMPTY}    nönex    misc/pass_and_fail.txt
+    ${nönex} =    Normalize Path    ${DATADIR}/nönex
+    Check Stderr Contains  [ ERROR ] Parsing '${nönex}' failed: Data source does not exist.
+    File Should Not Exist    ${OUTDIR}${/}output.xml
 
 Warnings And Error When Parsing All Data Sources Fail
     Run Tests Without Processing Output  ${EMPTY}  nönex1  nönex2
     ${nönex} =  Normalize Path  ${DATADIR}/nönex
-    Check Stderr Contains  [ WARN ]  Arguments '${nönex}1' and '${nönex}2' did not exist and were ignored. Validate the used command line syntax.
-    Check Stderr Contains  [ ERROR ] No valid arguments given.
+    Check Stderr Contains  [ ERROR ] Parsing '${nönex}1' failed: Data source does not exist.

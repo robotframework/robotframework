@@ -113,6 +113,8 @@ class _BaseSettings(object):
         if name == 'RemoveKeywords':
             return [v.upper() for v in value]
         if name == 'RunMode':
+            LOGGER.warn('Option --runmode is deprecated in Robot Framework 2.8 '
+                        'and will be removed in the future.')
             return [self._process_runmode_value(v) for v in value]
         return value
 

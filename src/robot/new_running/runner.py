@@ -53,6 +53,12 @@ class Runner(SuiteVisitor):
         result = TestSuite(name=suite.name,
                            source=suite.source,
                            starttime=utils.get_timestamp())
+        if not self.result:
+            result.set_criticality(suite.criticality.critical_tags,
+                                   suite.criticality.non_critical_tags)
+            self.result = Result(root_suite=result)
+        else:
+            self._suite.suites.append(result)
         ns = Namespace(result,
                        self._context.namespace.variables if self._context else None,
                        UserLibrary(suite.user_keywords),
@@ -65,12 +71,6 @@ class Runner(SuiteVisitor):
         result.doc = self._resolve_setting(suite.doc)
         result.metadata = [(self._resolve_setting(n), self._resolve_setting(v))
                            for n, v in suite.metadata.items()]
-        if not self.result:
-            result.set_criticality(suite.criticality.critical_tags,
-                                   suite.criticality.non_critical_tags)
-            self.result = Result(root_suite=result)
-        else:
-            self._suite.suites.append(result)
         self._suite = result
         self._suite_status = SuiteStatus(self._suite_status,
                                          self._settings.exit_on_failure,
