@@ -152,17 +152,21 @@ class _BaseSettings(object):
             return self._get_output_file(name)
         return self._opts[name]
 
-    def _get_output_file(self, type_):
+    def _get_output_file(self, option):
         """Returns path of the requested output file and creates needed dirs.
 
-        `type_` can be 'Output', 'Log', 'Report', 'DebugFile' or 'XUnitFile'.
+        `option` can be 'Output', 'Log', 'Report', 'DebugFile' or 'XUnitFile'.
         """
-        name = self._opts[type_]
-        if self._outputfile_disabled(type_, name):
+        value = self._opts[option]
+        if value == 'NONE':
             return 'NONE'
-        name = self._process_output_name(name, type_)
-        path = utils.abspath(os.path.join(self['OutputDir'], name))
-        self._create_output_dir(os.path.dirname(path), type_)
+        if option == 'Log' and self._output_disabled():
+            self['Log'] = 'NONE'
+            LOGGER.error('Log file is not created if output.xml is disabled.')
+            return 'NONE'
+        value = self._process_output_name(value, option)
+        path = utils.abspath(os.path.join(self['OutputDir'], value))
+        self._create_output_dir(os.path.dirname(path), option)
         return path
 
     def _process_output_name(self, name, type_):
@@ -321,10 +325,8 @@ class RobotSettings(_BaseSettings):
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
         return settings
 
-    def _outputfile_disabled(self, type_, name):
-        if name == 'NONE':
-            return True
-        return self._opts['Output'] == 'NONE' and type_ != 'DebugFile'
+    def _output_disabled(self):
+        return self.output is None
 
     def _escape(self, value):
         return utils.escape(value)
@@ -381,8 +383,8 @@ class RebotSettings(_BaseSettings):
                        'EndTime'           : ('endtime', None),
                        'RunFailed'         : ('runfailed', 'NONE')}
 
-    def _outputfile_disabled(self, type_, name):
-        return name == 'NONE'
+    def _output_disabled(self):
+        return False
 
     def _escape(self, value):
         return value
