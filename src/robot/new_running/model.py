@@ -106,7 +106,7 @@ class TestSuite(model.TestSuite):
 
     @setter
     def variables(self, variables):
-        return model.ItemList(Variable, items=variables)
+        return model.ItemList(Variable, {'source': self.source}, items=variables)
 
     def configure(self, randomize_suites=False, randomize_tests=False,
                   **options):
@@ -141,10 +141,17 @@ class TestSuite(model.TestSuite):
 
 class Variable(object):
 
-    def __init__(self, name, value):
+    def __init__(self, name, value, source=None):
         # TODO: check name and value
         self.name = name
         self.value = value
+        self.source = source
+
+    def report_invalid_syntax(self, message, level='ERROR'):
+        # TODO: Remove table information here and elsewhere
+        LOGGER.write("Error in file '%s' in table 'Variables': "
+                     "Setting variable '%s' failed: %s"
+                     % (self.source or '<unknown>', self.name, message), level)
 
 
 class Timeout(object):

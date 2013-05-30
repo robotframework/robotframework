@@ -333,26 +333,19 @@ class Variables(utils.NormalizedDict):
                 self.set(name, value)
 
     def set_from_variable_table(self, variables, overwrite=False):
-        def report_invalid_syntax(name, error):
-            # TODO: Error reporting is disabled with new model
-            if not hasattr(variables, 'report_invalid_syntax'):
-                return
-            variables.report_invalid_syntax("Setting variable '%s' failed: %s"
-                                            % (name, unicode(error)))
         for var in variables:
             if not var:
                 continue  # TODO: Remove compatibility with old run model.
             try:
                 name, value = self._get_var_table_name_and_value(
-                    var.name, var.value, report_invalid_syntax)
+                    var.name, var.value, var.report_invalid_syntax)
                 if overwrite or not self.contains(name):
                     self.set(name, value)
             except DataError, err:
-                report_invalid_syntax(var.name, err)
+                var.report_invalid_syntax(err)
 
     def _get_var_table_name_and_value(self, name, value, error_reporter):
         self._validate_var_name(name)
-        # TODO: Old run gives as scalars as list, new as strings. Clean up!
         if is_scalar_var(name) and isinstance(value, basestring):
             value = [value]
         else:
@@ -433,7 +426,7 @@ class DelayedVariable(object):
         try:
             value = self._resolve(name, variables)
         except DataError, err:
-            self._error_reporter(name, err)
+            self._error_reporter(unicode(err))
             variables.pop(name)
             raise DataError("Non-existing variable '%s'." % name)
         variables[name] = value

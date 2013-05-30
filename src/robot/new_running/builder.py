@@ -116,13 +116,8 @@ class TestSuiteBuilder(object):
             self._create_step(uk, step_data)
 
     def _create_variable(self, suite, data):
-        if not data:
-            return
-        if data.name.startswith('$'):
-            value = data.value[0]
-        else:
-            value = data.value
-        suite.variables.create(name=data.name, value=value)
+        if data:
+            suite.variables.create(name=data.name, value=data.value)
 
     def _create_setup(self, parent, data):
         if data.is_active():
