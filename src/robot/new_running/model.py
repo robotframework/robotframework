@@ -201,6 +201,8 @@ class Import(object):
             return self.source
         return os.path.dirname(self.source)
 
-    # TODO: Error reporting doesn't belong here
     def report_invalid_syntax(self, message, level='ERROR'):
-        LOGGER.write(message, level)
+        # TODO: Remove table information from error message here and
+        # also from _TestData.report_invalid_syntax in parsing/model.py
+        LOGGER.write("Error in file '%s' in table 'Setting': %s"
+                     % (self.source or '<unknown>', message), level)
