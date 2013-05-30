@@ -402,7 +402,7 @@ class VariableTable(_Table):
         return OldStyleSettingAndVariableTableHeaderMatcher()
 
     def add(self, name, value, comment=None):
-        self.variables.append(Variable(name, value, comment))
+        self.variables.append(Variable(self, name, value, comment))
 
     def __iter__(self):
         return iter(self.variables)
@@ -454,7 +454,8 @@ class KeywordTable(_Table):
 
 class Variable(object):
 
-    def __init__(self, name, value, comment=None):
+    def __init__(self, parent, name, value, comment=None):
+        self.parent = parent
         self.name = name.rstrip('= ')
         if name.startswith('$') and value == []:
             value = ''
@@ -479,6 +480,10 @@ class Variable(object):
 
     def __nonzero__(self):
         return self.has_data()
+
+    def report_invalid_syntax(self, message, level='ERROR'):
+        self.parent.report_invalid_syntax("Setting variable '%s' failed: %s"
+                                          % (self.name, message), level)
 
 
 class _WithSteps(object):

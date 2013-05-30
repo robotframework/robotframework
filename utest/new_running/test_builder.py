@@ -41,9 +41,9 @@ class TestBuilding(unittest.TestCase):
     def test_variables(self):
         variables = build('pass_and_fail.txt').variables
         assert_equals(variables[0].name, '${LEVEL1}')
-        assert_equals(variables[0].value, 'INFO')
+        assert_equals(variables[0].value, ['INFO'])
         assert_equals(variables[1].name, '${LEVEL2}')
-        assert_equals(variables[1].value, 'DEBUG')
+        assert_equals(variables[1].value, ['DEBUG'])
 
     def test_user_keywords(self):
         uk = build('pass_and_fail.txt').user_keywords[0]
