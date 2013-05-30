@@ -16,17 +16,16 @@ Non-Existing Input
     Rebot should fail  nönéx.xml  Reading XML source 'nönéx\\.xml' failed: .*
 
 Non-Existing Input And Existing Input
-    Run Rebot  ${EMPTY}  nönex  ${MYINPUT}
+    Run Rebot Without Processing Output    ${EMPTY}    nönex    ${MYINPUT}
     ${nönex} =  Normalize Path  ${DATADIR}/nönex
-    Check Stderr Contains  [ WARN ]  Argument '${nönex}' did not exist and was ignored. Validate the used command line syntax
-    Check Names  ${SUITE}  Normal
-    Should Contain Tests  ${SUITE}  First One  Second One
+    Check Stderr Contains    [ ERROR ] Reading XML source '${nönex}' failed: No such file or directory
+    File Should Not Exist    ${OUTDIR}${/}output.xml
 
 Only Non-Existing Inputs
     Run Rebot Without Processing Output  ${EMPTY}  nönex1  nönex2
     ${nönex} =  Normalize Path  ${DATADIR}/nönex
-    Check Stderr Contains  [ WARN ]  Arguments '${nönex}1' and '${nönex}2' did not exist and were ignored. Validate the used command line syntax
-    Check Stderr Contains  [ ERROR ] No valid arguments given.
+    Check Stderr Contains    [ ERROR ] Reading XML source '${nönex}1' failed: No such file or directory
+    File Should Not Exist    ${OUTDIR}${/}output.xml
 
 Non-XML Input
     Create File  ${MYOUTDIR}/invalid.txt  Hello, world
