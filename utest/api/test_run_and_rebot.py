@@ -16,7 +16,8 @@ LOG = 'Log:     %s' % LOG_PATH
 
 
 def run_without_outputs(*args, **kwargs):
-    return run(*args, output='NONE', report='NoNe', log='none', **kwargs)
+    kwargs.update(output='NONE', log='NoNe', report='none')
+    return run(*args, **kwargs)
 
 
 class StreamWithOnlyWriteAndFlush(object):
