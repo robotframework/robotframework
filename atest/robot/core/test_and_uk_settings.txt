@@ -116,22 +116,21 @@ User Keyword With Invalid Metadata
     Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Passing': Non-existing setting 'Invalid UK Meta'.
     Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Failing': Non-existing setting 'Invalid'.
 
-Non Existing Variable In Suite Setup And Teardown
+Non Existing Variable In Suite Setup and Teardown
     Run Tests  ${EMPTY}  core/test_and_uk_settings.html
     Should Be Equal  ${SUITE.status}  FAIL
-    ${errors} =    Catenate    SEPARATOR=\n
-    ...    Replacing variables from Setup failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.
-    ...    Replacing variables from Teardown failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.
-    ...    Replacing variables from setting 'Var from CLI' failed: Non-existing variable '\${META_FROM_CLI}'.
-    ${exp} =  Catenate  SEPARATOR=\n
-    Should Be Equal  ${SUITE.message}  Suite initialization failed:\n${errors}
+    ${errors} =    Catenate   SEPARATOR=\n
+                   ...        Non-existing variable '\${SUITE_SETUP_FROM_CLI}'.\n
+                   ...        Also suite teardown failed:
+                   ...        Non-existing variable '\${SUITE_TEARDOWN_FROM_CLI}'.
+    Should Be Equal  ${SUITE.message}  Suite setup failed:\n${errors}
     ${tc} =  Get Test Case  Test Case Documentation
     Should Be Equal  ${tc.status}  FAIL
-    Should Be Equal  ${tc.message}  Initialization of the parent suite failed:\n${errors}
+    Should Be Equal  ${tc.message}  Parent suite setup failed:\nNon-existing variable '\${SUITE_SETUP_FROM_CLI}'.
 
 *** Keywords ***
 My Setup
-    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log --variable meta_from_cli:my_metadata  core${/}test_and_uk_settings.html
+    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_setup_from_cli:Log --variable suite_teardown_from_cli:Log --variable meta_from_cli:my_metadata  core${/}test_and_uk_settings.html
     ${PATH} =  Normalize Path  ${CURDIR}/../../testdata/core/test_and_uk_settings.html
     Set Suite Variable  $PATH
 
