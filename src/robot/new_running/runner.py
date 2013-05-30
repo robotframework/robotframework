@@ -75,7 +75,7 @@ class Runner(SuiteVisitor):
         self._suite_status = SuiteStatus(self._suite_status,
                                          self._settings.exit_on_failure,
                                          self._settings.skip_teardown_on_exit)
-        self._output.start_suite(self._suite)
+        self._output.start_suite(ModelCombiner(suite, self._suite))
         self._context.set_suite_variables(result)
         self._run_setup(suite.keywords.setup, self._suite_status)
         self._executed_tests = utils.NormalizedDict(ignore='_')
@@ -176,3 +176,15 @@ class Runner(SuiteVisitor):
             kw.run(self._context)
         except ExecutionFailed, err:
             return err
+
+
+class ModelCombiner(object):
+
+    def __init__(self, *models):
+        self.models = models
+
+    def __getattr__(self, name):
+        for model in self.models:
+            if hasattr(model, name):
+                return getattr(model, name)
+        raise AttributeError(name)
