@@ -94,7 +94,8 @@ class Variables(utils.NormalizedDict):
         return value
 
     def resolve_delayed(self):
-        for var in self:
+        # cannot iterate over `self` here because loop changes the state.
+        for var in self.keys():
             try:
                 self[var]  # getting variable indirectly resolves it if needed
             except DataError:
