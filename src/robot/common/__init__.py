@@ -21,7 +21,6 @@ The whole package is likely to be removed in RF 2.8 when test execution model
 is refactored. No new code should depend on this package.
 """
 
-from .model import BaseTestSuite, BaseTestCase
 from .keyword import BaseKeyword
 from .handlers import UserErrorHandler
 from .libraries import BaseLibrary
