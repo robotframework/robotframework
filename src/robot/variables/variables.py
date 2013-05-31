@@ -178,6 +178,7 @@ class Variables(utils.NormalizedDict):
         want to resolve some of the arguments in the beginning and pass others
         to called keywords unmodified.
         """
+        items = list(items or [])
         if replace_until is not None:
             return self._replace_list_until(items, replace_until)
         return self._replace_list(items)
@@ -204,7 +205,7 @@ class Variables(utils.NormalizedDict):
 
     def _replace_list(self, items):
         results = []
-        for item in items or []:
+        for item in items:
             listvar = self._replace_variables_inside_possible_list_var(item)
             if listvar:
                 results.extend(self[listvar])
