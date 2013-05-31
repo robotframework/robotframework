@@ -17,6 +17,7 @@ from robot.errors import ExecutionFailed, DataError
 from .keywords import Keyword
 
 
+# TODO: remove if possible
 class _Fixture(object):
 
     def __init__(self, name, args):

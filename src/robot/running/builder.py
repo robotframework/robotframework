@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.new_running.defaults import TestDefaults
+from robot.running.defaults import TestDefaults
 from robot.parsing import TestData
 from robot.errors import DataError
 from robot.utils import abspath

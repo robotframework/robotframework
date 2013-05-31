@@ -1,7 +1,7 @@
 import unittest
 
 from robot import model
-from robot.new_running import TestSuite, TestCase, Keyword
+from robot.running.model import TestSuite, TestCase, Keyword
 from robot.utils.asserts import assert_equals, assert_not_equals
 
 

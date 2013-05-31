@@ -29,16 +29,16 @@ class TestExposedApi(unittest.TestCase):
         assert_equals(api.TestSuite, running.TestSuite)
 
 
-class TestTestSuite(unittest.TestCase):
+class TestTestSuiteBuilder(unittest.TestCase):
     misc = join(abspath(__file__), '..', '..', '..', 'atest', 'testdata', 'misc')
     sources = [join(misc, n) for n in 'pass_and_fail.txt', 'normal.txt']
 
     def test_create_with_datasources_as_list(self):
-        suite = api.TestSuite(self.sources, RobotSettings())
+        suite = api.TestSuiteBuilder().build(*self.sources)
         assert_equals(suite.name, 'Pass And Fail & Normal')
 
     def test_create_with_datasource_as_string(self):
-        suite = api.TestSuite(self.sources[0], RobotSettings())
+        suite = api.TestSuiteBuilder().build(self.sources[0])
         assert_equals(suite.name, 'Pass And Fail')
 
 if __name__ == '__main__':

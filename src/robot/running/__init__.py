@@ -21,12 +21,13 @@ Currently, the main entry point is the :func:`~.model.TestSuite` factory
 method.
 """
 
-from .model import TestSuite
+from .builder import TestSuiteBuilder
+from .context import EXECUTION_CONTEXTS
 from .keywords import Keyword
+from .model import TestSuite, TestCase
 from .testlibraries import TestLibrary
 from .runkwregister import RUN_KW_REGISTER
 from .signalhandler import STOP_SIGNAL_MONITOR
-from .context import EXECUTION_CONTEXTS
 
 
 def UserLibrary(path):

@@ -74,7 +74,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot import utils
-from robot.running import TestSuite, Keyword
+from robot.running import TestSuiteBuilder
 from robot.conf import RobotSettings
 from robot.parsing import disable_curdir_processing
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
@@ -99,7 +99,12 @@ class TestDoc(utils.Application):
 
 @disable_curdir_processing
 def TestSuiteFactory(datasources, **options):
-    return TestSuite(datasources, RobotSettings(options), process_variables=False)
+    settings = RobotSettings(options)
+    if isinstance(datasources, basestring):
+        datasources = [datasources]
+    suite = TestSuiteBuilder().build(*datasources)
+    suite.configure(**settings.suite_config)
+    return suite
 
 
 class TestdocModelWriter(ModelWriter):
@@ -144,7 +149,7 @@ class JsonConverter(object):
             'doc': self._html(suite.doc),
             'metadata': [(self._escape(name), self._html(value))
                          for name, value in suite.metadata.items()],
-            'numberOfTests': suite.get_test_count(),
+            'numberOfTests': suite.test_count   ,
             'suites': self._convert_suites(suite),
             'tests': self._convert_tests(suite),
             'keywords': list(self._convert_keywords(suite))
@@ -179,26 +184,46 @@ class JsonConverter(object):
         }
 
     def _convert_keywords(self, item):
-        if item.setup.name:
-            yield self._convert_keyword(item.setup, type='SETUP')
         for kw in getattr(item, 'keywords', []):
-            yield self._convert_keyword(kw)
-        if item.teardown.name:
-            yield self._convert_keyword(item.teardown, type='TEARDOWN')
+            if kw.type == 'setup':
+                yield self._convert_keyword(kw, 'SETUP')
+            elif kw.type == 'teardown':
+                yield self._convert_keyword(kw, 'TEARDOWN')
+            elif kw.is_for_loop():
+                yield self._convert_for_loop(kw)
+            else:
+                yield self._convert_keyword(kw, 'KEYWORD')
 
-    def _convert_keyword(self, kw, type=None):
+    def _convert_for_loop(self, kw):
         return {
-            'name': self._escape(kw._get_name(kw.name)
-                                 if isinstance(kw, Keyword) else kw.name),
-            'arguments': self._escape(', '.join(kw.args)),
-            'type': type or {'kw': 'KEYWORD', 'for': 'FOR'}[kw.type]
+            'name': self._escape(self._get_for_loop(kw)),
+            'arguments': '',
+            'type': 'FOR'
         }
 
+    def _convert_keyword(self, kw, type):
+        return {
+            'name': self._escape(self._get_kw_name(kw)),
+            'arguments': self._escape(', '.join(kw.args)),
+            'type': type
+        }
+
+    def _get_kw_name(self, kw):
+        if kw.assign:
+            return '%s = %s' % (', '.join(a.rstrip('= ') for a in kw.assign), kw.name)
+        return kw.name
+
+    def _get_for_loop(self, kw):
+        joiner = ' IN RANGE ' if kw.range else ' IN '
+        return ', '.join(kw.vars) + joiner +  utils.seq2str2(kw.items)
+
     def _get_timeout(self, timeout):
+        if timeout is None:
+            return ''
         try:
-            tout = utils.secs_to_timestr(utils.timestr_to_secs(timeout.string))
+            tout = utils.secs_to_timestr(utils.timestr_to_secs(timeout.value))
         except ValueError:
-            tout = timeout.string
+            tout = timeout.value
         if timeout.message:
             tout += ' :: ' + timeout.message
         return tout

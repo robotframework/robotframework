@@ -1,6 +1,6 @@
 import unittest
 
-from robot.new_running import TestSuite, TestCase
+from robot.running import TestSuite, TestCase
 from robot.utils.asserts import assert_equals, assert_not_equals
 
 class TestRandomizing(unittest.TestCase):
