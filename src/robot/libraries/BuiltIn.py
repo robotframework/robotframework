@@ -24,7 +24,7 @@ from robot.utils import asserts
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
-from robot.common import UserErrorHandler
+from robot.running.usererrorhandler import UserErrorHandler
 from robot.version import get_version
 
 if utils.is_jython:

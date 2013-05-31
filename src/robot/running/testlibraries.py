@@ -18,9 +18,9 @@ import inspect
 
 from robot import utils
 from robot.errors import DataError
-from robot.common import BaseLibrary
 from robot.output import LOGGER
 
+from .baselibrary import BaseLibrary
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              GetKeywordNames, RunKeyword)
 from .handlers import Handler, InitHandler, DynamicHandler

@@ -19,10 +19,10 @@ import copy
 from robot import utils
 from robot.errors import DataError
 from robot.variables import GLOBAL_VARIABLES, is_scalar_var
-from robot.common import UserErrorHandler
 from robot.output import LOGGER
 from robot.parsing.settings import Library, Variables, Resource
 
+from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
 from .importer import Importer, ImportCache
 from .runkwregister import RUN_KW_REGISTER

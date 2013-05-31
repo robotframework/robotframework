@@ -15,7 +15,6 @@
 import os
 import re
 
-from robot.common import BaseLibrary, UserErrorHandler
 from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
                           PassExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed)
@@ -23,6 +22,8 @@ from robot.variables import is_list_var, VariableSplitter
 from robot.output import LOGGER
 from robot import utils
 
+from .baselibrary import BaseLibrary
+from .usererrorhandler import UserErrorHandler
 from .keywords import Keywords
 from .fixture import Teardown
 from .timeouts import KeywordTimeout

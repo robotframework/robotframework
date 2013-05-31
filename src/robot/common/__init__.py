@@ -12,16 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Base classes for test execution model.
+# TODO: Remove
 
-This code was earlier used also by test result processing modules but not
-anymore in RF 2.7.
-
-The whole package is likely to be removed in RF 2.8 when test execution model
-is refactored. No new code should depend on this package.
-"""
-
-from .keyword import BaseKeyword
-from .handlers import UserErrorHandler
-from .libraries import BaseLibrary
 from .statistics import Statistics

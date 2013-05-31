@@ -18,7 +18,6 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           HandlerExecutionFailed)
 
-from robot.common import BaseKeyword
 from robot.variables import is_scalar_var, VariableAssigner
 
 
@@ -67,10 +66,37 @@ class Keywords(object):
         return iter(self._keywords)
 
 
-class Keyword(BaseKeyword):
+class _BaseKeyword:
+
+    def __init__(self, name='', args=None, doc='', timeout='', type='kw'):
+        self.name = name
+        self.args = args or []
+        self.doc = doc
+        self.timeout = timeout
+        self.type = type
+        self.message = ''
+        self.status = 'NOT_RUN'
+
+    @property
+    def passed(self):
+        return self.status == 'PASS'
+
+    def serialize(self, serializer):
+        serializer.start_keyword(self)
+        serializer.end_keyword(self)
+
+    def _get_status(self, error):
+        if not error:
+            return 'PASS'
+        if isinstance(error, ExecutionPassed) and not error.earlier_failures:
+            return 'PASS'
+        return 'FAIL'
+
+
+class Keyword(_BaseKeyword):
 
     def __init__(self, name, args, assign=None, type='kw'):
-        BaseKeyword.__init__(self, name, args, type=type)
+        _BaseKeyword.__init__(self, name, args, type=type)
         self.assign = assign or []
         self.handler_name = name
 
@@ -146,10 +172,10 @@ class Keyword(BaseKeyword):
         raise failure
 
 
-class ForLoop(BaseKeyword):
+class ForLoop(_BaseKeyword):
 
     def __init__(self, forstep, template=None):
-        BaseKeyword.__init__(self, self._get_name(forstep), type='for')
+        _BaseKeyword.__init__(self, self._get_name(forstep), type='for')
         self.vars = forstep.vars
         self.items = forstep.items
         self.range = forstep.range
@@ -265,12 +291,12 @@ class ForLoop(BaseKeyword):
             return int(eval(item))
 
 
-class _ForItem(BaseKeyword):
+class _ForItem(_BaseKeyword):
 
     def __init__(self, vars, items):
         name = ', '.join(format_assign_message(var, item)
                          for var, item in zip(vars, items))
-        BaseKeyword.__init__(self, name, type='foritem')
+        _BaseKeyword.__init__(self, name, type='foritem')
         self.starttime = get_timestamp()
 
     def end(self, status):
