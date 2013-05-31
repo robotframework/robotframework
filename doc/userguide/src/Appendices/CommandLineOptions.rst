@@ -119,7 +119,6 @@ Command line options for post-processing outputs
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
                           Tag` table.
-                          table in outputs.
   --removekeywords <all|passed|for|wuks>  `Removes keyword data`_ from the generated outputs.
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
                           reports.
