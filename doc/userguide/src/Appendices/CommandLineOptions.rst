@@ -31,8 +31,8 @@ Command line options for test execution
   -o, --output <file>     Sets the path to the generated `output file`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
-  -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
-  --xunitskipnoncritical  Mark non-critical tests on `XUnit compatible result file`_ as skipped.
+  -x, --xunitfile <file>  Sets the path to the generated `xUnit compatible result file`_.
+  --xunitskipnoncritical  Mark non-critical tests on `xUnit compatible result file`_ as skipped.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
@@ -59,18 +59,17 @@ Command line options for test execution
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
                           in test cases. Error codes are returned normally.
-  --runemptysuite         Executes tests also if the top level `test suite is
-                          empty`_.
-  --dryrun                When `dry run`_, keywords coming from the test
-                          libraries are not executed at all.
+  --runemptysuite         Executes tests also if the selected `test suites are empty`_.
+  --dryrun                In the `dry run`_ mode tests are run without executing
+                          keywords originating from test libraries. Useful for
+                          validating test data syntax.
   --exitonfailure         `Stops execution`_ immediately if a critical test fails.
-  --skipteardownonexit    `Skips teardowns`_ when the execution is stopped.
-  --randomize <what>      `Randomizes the test execution order`_.
-  --runmode <mode>        Deprecated in Robot Framework 2.8, please use the
-                          the respective options above.
-                          Sets the execution mode for this test run.
-                          Valid modes are `ExitOnFailure`_, `SkipTeardownOnExit`_,
-                          `DryRun`_, and `Random`_:<what>.
+  --skipteardownonexit    `Skips teardowns`_ is test execution is prematurely stopped.
+  --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
+  --runmode <mode>        Deprecated in Robot Framework 2.8. Use separate
+                          :opt:`--dryrun`, :opt:`--exitonfailure`,
+                          :opt:`--skipteardownonexit` and :opt:`--randomize`
+                          options instead.
   -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used on the console.
   -K, --monitormarkers <on|off|force>  Specifies are `console markers`_
@@ -98,8 +97,8 @@ Command line options for post-processing outputs
   -o, --output <file>     Sets the path to the generated `output file`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
-  -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
-  --xunitskipnoncritical  Mark non-critical tests on `XUnit compatible result file`_ as skipped.
+  -x, --xunitfile <file>  Sets the path to the generated `xUnit compatible result file`_.
+  --xunitskipnoncritical  Mark non-critical tests on `xUnit compatible result file`_ as skipped.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
                           browser transparently.
@@ -126,8 +125,8 @@ Command line options for post-processing outputs
   --endtime <timestamp>   Sets the `ending time`_ of test execution when creating reports.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
                           in test cases. Error codes are returned normally.
-  --processemptysuite     Processes an output file even if the top level `test suite is
-                          empty`_.
+  --processemptysuite     Processes output files even if files contain
+                          `empty test suites`_.
   -E, --escape <what:with>  `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
@@ -145,13 +144,11 @@ Command line options for post-processing outputs
 .. _considered critical: `Setting criticality`_
 .. _not critical: `considered critical`_
 .. _ContinueOnFailure: `Continue on failure`_
-.. _Stops execution: `ExitOnFailure mode`_
-.. _ExitOnFailure: `ExitOnFailure mode`_
+.. _Stops execution: `Stopping when first test case fails`_
 .. _Skips teardowns: `Handling Teardowns`_
 .. _SkipTeardownOnExit: `Handling Teardowns`_
 .. _DryRun: `Dry run`_
-.. _Randomizes the test execution order: `Randomizing execution order`_
-.. _Random: `Randomizing execution order`_
+.. _Randomizes: `Randomizing execution order`_
 .. _individual variables: `Setting variables in command line`_
 
 .. _create output files: `Output directory`_
@@ -170,7 +167,8 @@ Command line options for post-processing outputs
 
 .. _Sets a listener: `Setting listeners`_
 .. _an invalid file is skipped: `Warning on invalid files`_
-.. _test suite is empty: `When no tests match selection`_
+.. _test suites are empty: `When no tests match selection`_
+.. _empty test suites: `test suites are empty`_
 .. _Sets the width: `Console width`_
 .. _Specifies are colors: `Console colors`_
 .. _search test libraries: `library search path`_

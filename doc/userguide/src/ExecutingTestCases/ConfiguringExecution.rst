@@ -358,14 +358,7 @@ Robot Framework supports so called *dry run* mode where the tests are
 run normally otherwise, but the keywords coming from the test libraries
 are not executed at all. The dry run mode can be used to validate the
 test data; if the dry run passes, the data should be syntactically
-correct. This mode is triggered using option :opt:`--dryrun`
-(case-insensitive) and supported starting from Robot Framework 2.8.
-
-.. note:: Prior to Robot Framework 2.8, dry run mode is triggered using
-          option :opt:`--runmode dryrun` (case-insensitive).
-
-          Option :opt:`--runmode` is deprecated in 2.8 and will be removed
-          in the future.
+correct. This mode is triggered using option :opt:`--dryrun`.
 
 The dry run execution may fail for following reasons:
 
@@ -379,6 +372,10 @@ resolved.
 
 .. note:: The dry run mode does not validate variables. This
           limitation may be lifted in the future releases.
+
+.. note:: Prior to Robot Framework 2.8, the dry run mode was activate using
+          option :opt:`--runmode dryrun`. Option :opt:`--runmode` was
+          deprecated in 2.8 and will be removed in the future.
 
 __ `Errors and warnings during execution`_
 
@@ -411,8 +408,8 @@ Example::
 
 .. note:: Prior to Robot Framework 2.8, randomization is triggered using option
           :opt:`--runmode <mode>`, where <mode> is either :opt:`Random:Test`,
-          :opt:`Random:Suite` or :opt:`Random:All`.
-          These values work respectively as with option :opt:`--randomize`.
+          :opt:`Random:Suite` or :opt:`Random:All`. These values work the
+          same way as matching values for :opt:`--randomize`.
 
           Option :opt:`--runmode` is deprecated in 2.8 and will be removed
           in the future.
