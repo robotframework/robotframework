@@ -308,14 +308,14 @@ class _RunKeywordHandler(_PythonHandler):
                 yield kw_call
 
     def _split_run_kw_if_args(self, given_args, control_word, required_after):
-        index = given_args.index(control_word)
+        index = list(given_args).index(control_word)
         expr_and_call = given_args[:index]
         remaining = given_args[index+1:]
         if not (self._validate_kw_call(expr_and_call) and
                 self._validate_kw_call(remaining, required_after)):
             raise DataError("Invalid 'Run Keyword If' usage.")
         if is_list_var(expr_and_call[0]):
-            return [], remaining
+            return (), remaining
         return expr_and_call[1:], remaining
 
     def _validate_kw_call(self, kw_call, min_length=2):
@@ -333,14 +333,14 @@ class _RunKeywordHandler(_PythonHandler):
                 yield [kw_call,]
         else:
             while 'AND' in given_args:
-                index = given_args.index('AND')
+                index = list(given_args).index('AND')
                 kw_call, given_args = given_args[:index], given_args[index + 1:]
                 yield kw_call
             if given_args:
                 yield given_args
 
     def _get_default_run_kw_keywords(self, given_args):
-        index = self.arguments.positional.index('name')
+        index = list(self.arguments.positional).index('name')
         return [Keyword(given_args[index], given_args[index+1:])]
 
 

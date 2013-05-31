@@ -27,7 +27,6 @@ from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.common import UserErrorHandler
 from robot.version import get_version
-from robot.model import TagPatterns
 
 if utils.is_jython:
     from java.lang import String, Number
@@ -1219,8 +1218,7 @@ class _RunKeyword:
         return args, lambda: None
 
     def _split_branch(self, args, control_word, required, required_error):
-        args = list(args)
-        index = args.index(control_word)
+        index = list(args).index(control_word)
         branch = self._variables.replace_list(args[index+1:], required)
         if len(branch) < required:
             raise DataError('%s requires %s.' % (control_word, required_error))
