@@ -57,6 +57,8 @@ class Runner(SuiteVisitor):
             result.set_criticality(suite.criticality.critical_tags,
                                    suite.criticality.non_critical_tags)
             self.result = Result(root_suite=result)
+            self.result.configure(status_rc=self._settings.status_rc,
+                                  stat_config=self._settings.statistics_config)
         else:
             self._suite.suites.append(result)
         ns = Namespace(result,

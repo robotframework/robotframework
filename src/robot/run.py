@@ -366,8 +366,6 @@ class RobotFramework(Application):
                                  settings['RunEmptySuite']).build(*datasources)
         suite.configure(**settings.suite_config)
         result = suite.run(settings)
-        result.configure(status_rc=settings.status_rc,
-                         stat_config=settings.statistics_config)
         LOGGER.info("Tests execution ended. Statistics:\n%s"
                     % result.suite.statistics.message)
         rc = result.return_code
