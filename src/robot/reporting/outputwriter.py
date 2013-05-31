@@ -13,14 +13,9 @@
 #  limitations under the License.
 
 from robot.output.xmllogger import XmlLogger
-from robot.result.visitor import ResultVisitor
 
 
-# TODO: Unify XmlLogger and ResultVisitor APIs.
-# Perhaps XmlLogger could be ResultVisitor.
-
-
-class OutputWriter(XmlLogger, ResultVisitor):
+class OutputWriter(XmlLogger):
 
     def __init__(self, output):
         XmlLogger.__init__(self, output, generator='Rebot')
@@ -32,22 +27,5 @@ class OutputWriter(XmlLogger, ResultVisitor):
         self._writer.end('robot')
         self._writer.close()
 
-    def start_errors(self, errors):
-        XmlLogger.start_errors(self)
-
-    def end_errors(self, errors):
-        XmlLogger.end_errors(self)
-
     def end_result(self, result):
         self.close()
-
-    start_total_statistics = XmlLogger.start_total_stats
-    start_tag_statistics = XmlLogger.start_tag_stats
-    start_suite_statistics = XmlLogger.start_suite_stats
-    end_total_statistics = XmlLogger.end_total_stats
-    end_tag_statistics = XmlLogger.end_tag_stats
-    end_suite_statistics = XmlLogger.end_suite_stats
-
-    def visit_stat(self, stat):
-        self._writer.element('stat', stat.name,
-                             stat.get_attributes(values_as_strings=True))

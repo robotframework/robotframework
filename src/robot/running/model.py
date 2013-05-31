@@ -130,7 +130,7 @@ class TestSuite(model.TestSuite):
         output = Output(settings)
         runner = Runner(output, settings)
         self.visit(runner)
-        output.close(runner.result.suite)
+        output.close(runner.result)
         return runner.result
 
     # TODO: Remove compatibility with old model
