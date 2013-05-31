@@ -67,12 +67,17 @@ class Process(object):
     - `stdout` is a file path of standard output
     - `stderr` is a file path of standard error
     - `alias` is a short name for the process which can be used for interacting
-    with that process.
+    with that process as a process handle.
 
     == Current working directory ==
 
     If `cwd` argument is not given, the child program's execution directory
-    will be a the directory where Robot Framework executable was launched.
+    will be a the directory where Robot Framework executable was launched or
+    where current working directory is set during test execution with other
+    keywords.
+
+    If `cwd` is given then that directory is used as the current working
+    directory.
 
     == Running processes in a shell ==
 
@@ -125,7 +130,8 @@ class Process(object):
     is used for keyword. Active process can be switched using keyword
     `Switch Process`.
 
-    The most recently started process is always a `active process`.
+    The most recently started process, started with `Start Process`, is always
+    the `active process`.
 
     = Stopping processes =
 
@@ -213,7 +219,7 @@ class Process(object):
         [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
         class (see `Configurations`).
 
-        Finally switches back to active process.
+        This command doesn't change the `active process`.
         """
         active_process_index = self._started_processes.current_index
         try:
@@ -243,7 +249,7 @@ class Process(object):
 
         Returns process index on success.
 
-        This new process is set as an `active process`.
+        This new process is set as the `active process`.
 
         Examples:
 
@@ -285,7 +291,7 @@ class Process(object):
         return self._process(handle).poll() is None
 
     def process_should_be_running(self, handle=None):
-        """This keyword expects that process with `handle` is running.
+        """Expects that process with `handle` is running.
         Argument `handle` is optional, if `None` then the active process
         is used.
 
@@ -297,7 +303,7 @@ class Process(object):
             raise AssertionError('Process is not running')
 
     def process_should_be_stopped(self, handle=None):
-        """This keyword expects that process with `handle` is stopped.
+        """Expects that process with `handle` is stopped.
         Argument `handle` is optional, if `None` then the active
         process is used.
 
@@ -331,7 +337,7 @@ class Process(object):
         return result
 
     def terminate_process(self, handle=None, kill=False):
-        """This keyword terminates process using either kill or terminate method.
+        """Terminates process using either kill or terminate method.
 
         See [http://docs.python.org/2.7/library/subprocess.html|subprocess]
         module's `kill()` or `terminate()`, which can be selected using `kill`
@@ -385,7 +391,7 @@ class Process(object):
                 raise AssertionError('None Pid - can not kill process!')
 
     def terminate_all_processes(self, kill=True):
-        """This keyword terminates all processes started by the library.
+        """Terminates all still running processes started by this library.
         """
         for handle in range(len(self._started_processes._connections)):
             if self.process_is_running(handle):
