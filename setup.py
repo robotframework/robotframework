@@ -24,7 +24,7 @@ Operating System :: OS Independent
 Programming Language :: Python
 Topic :: Software Development :: Testing
 """.strip().splitlines()
-PACKAGES = ['robot', 'robot.api', 'robot.common', 'robot.conf',
+PACKAGES = ['robot', 'robot.api', 'robot.conf',
             'robot.htmldata', 'robot.libdocpkg', 'robot.libraries',
             'robot.model', 'robot.output', 'robot.parsing',
             'robot.reporting', 'robot.result', 'robot.running',
