@@ -536,4 +536,5 @@ class ProcessConfig(object):
         if sys.platform == "win32":
             must_values['COMSPEC'] = os.environ['COMSPEC']
             must_values['PATH'] = os.environ['PATH']
+            must_values['SYSTEMROOT'] = os.environ['SYSTEMROOT']
         return must_values
