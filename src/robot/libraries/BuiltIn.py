@@ -386,14 +386,13 @@ class _Verify:
         | Should Be True | ${number}   | # Passes if ${number} is not zero |
         | Should Be True | ${list}     | # Passes if ${list} is not empty  |
 
-        Should Be True automatically imports Python's os- and sys-modules:
+        Starting from Robot Framework 2.8, `Should Be True` automatically
+        imports Python's os- and sys-modules:
 
         | Should Be True | os.linesep == '\\n' | # Is Unix |
         | Should Be True | os.linesep == '\\r\\n' | # Is Windows |
         | Should Be True | sys.platform == 'darwin' | # Is OS X |
         | Should Be True | sys.platform == 'linux2' | # Is Linux |
-
-        This feature was added in 2.8.
         """
         if not msg:
             msg = "'%s' should be true" % condition
@@ -1210,12 +1209,12 @@ class _RunKeyword:
         and ELSE IF strings as arguments, you can either use variables or
         escape them with a backslash like `\\ELSE` and `\\ELSE IF`.
 
-        Starting from 2.8., Python's os- and sys-modules are automatically
+        Starting from Robot Framework 2.8, Python's os- and sys-modules are automatically
         imported when evaluating the `condition`:
 
         | `Run Keyword If` | os.sep == '/' | `Unix Keyword` |
         | ...              | ELSE          | `Windows Keyword` |
-                """
+        """
         args, branch = self._split_elif_or_else_branch(args)
         if self._is_true(condition):
             return self.run_keyword(name, *args)
