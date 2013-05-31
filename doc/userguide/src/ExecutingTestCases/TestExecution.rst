@@ -250,8 +250,7 @@ have finished, but so that logs and reports are created. Different ways how
 to accomplish this are explained below. In all these cases the remaining
 test cases are marked failed.
 
-.. Note:: Most of these features are new in Robot Framework 2.5. Only
-          the `ExitOnFailure mode`_ is supported in earlier versions.
+.. Note:: Most of these features are new in Robot Framework 2.5.
 
 Pressing :code:`Ctrl-C`
 '''''''''''''''''''''''
@@ -284,35 +283,29 @@ custom keywords can use `fatal exceptions`__ when they fail.
 
 __ `Stopping test execution`_
 
-:opt:`ExitOnFailure` mode
-'''''''''''''''''''''''''
+Stopping when first test case fails
+'''''''''''''''''''''''''''''''''''
 
-If option :opt:`--exitonfailure` (case-insensitive) is used, the execution of
-tests stops immediately if a `critical test`_ fails. Also the remaining tests
+If option :opt:`--exitonfailure` is used, test execution stops
+immediately if any `critical test`_ fails. Also the remaining tests
 are marked as failed.
 
-.. Note:: Prior to Robot Framework 2.8, this behaviour is achieved by
-          using :opt:`--runmode ExitOnFailure` (case-insensitive).
-
-          Option :opt:`--runmode` is deprecated in 2.8 and will be removed
-          in the future.
-
+.. note:: Prior to Robot Framework 2.8, this behaviour was achieved by
+          using :opt:`--runmode exitonfailure`. Option :opt:`--runmode`
+          was deprecated in 2.8 and will be removed in the future.
 
 Handling teardowns
 ''''''''''''''''''
 
-By default teardowns for tests and suites that have been started are executed
-even if test execution is stopped using one of the methods above. This allows
-clean-up activities to be run regardless how execution ends.
+By default teardowns of the tests and suites that have been started are
+executed even if the test execution is stopped using one of the methods
+above. This allows clean-up activities to be run regardless how execution
+ends.
 
-Starting from Robot Framework 2.8, teardowns are skipped when the execution is
-stopped and command line option :opt:`--SkipTeardownOnExit` (case-insensitive)
-is used.
+It is also possible to skip teardowns when execution is stopped by using
+:opt:`--skipteardownonexit` option. This can be useful if, for example,
+clean-up tasks take a lot of time.
 
-This can be useful if clean-up takes a lot of time.
-
-.. Note:: Prior to Robot Framework 2.8, this behaviour is achieved by
-          using :opt:`--runmode SkipTearDownOnExit` (case-insensitive).
-
-          Option :opt:`--runmode` is deprecated in 2.8 and will be removed
-          in the future.
+.. note:: Prior to Robot Framework 2.8, this behaviour was achieved by
+          using :opt:`--runmode skipteardownonexit`. Option :opt:`--runmode`
+          was deprecated in 2.8 and will be removed in the future.
