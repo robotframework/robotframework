@@ -231,21 +231,17 @@ Options
                           is not an error that no test matches the condition.
     --dryrun              Verifies test data and runs tests so that library
                           keywords are not executed.
-    --exitonfailure       Stops test execution if a critical test fails.
+    --exitonfailure       Stops test execution if ant critical test fails.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is
                           stopped prematurely.
-    --randomize none|tests|suites|all  Change the execution order of tests,
-                          suites or both. None overrides the previous setting.
-    --runmode mode *      (DEPRECATED in 2.8, please use the respective flags)
-                          Possible values are `Random:Test`, `Random:Suite`,
-                          `Random:All`, `ExitOnFailure`, `SkipTeardownOnExit`,
-                          and `DryRun` (case-insensitive). First three change
-                          the execution order of tests, suites, or both.
-                          `ExitOnFailure` stops test execution if a critical
-                          test fails. `SkipTeardownOnExit` causes teardowns to
-                          be skipped if test execution is stopped prematurely.
-                          In the `DryRun` test data is verified and tests run
-                          so that library keywords are not executed.
+    --randomize all|suites|tests|none  Randomizes the test execution order.
+                          all:    randomizes both suites and tests
+                          suites: randomizes suites
+                          tests:  randomizes tests
+                          none:   no randomization (default)
+    --runmode mode *      Deprecated in version 2.8. Use individual options
+                          --dryrun, --exitonfailure, --skipteardownonexit, or
+                          --randomize instead.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
