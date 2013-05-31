@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os    # FIXME: This seems to be used by Evaluate!!!!
 import re
 import time
 
@@ -2438,11 +2437,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     def _is_true(self, condition):
         if isinstance(condition, basestring):
-            try:
-                condition = eval(condition)
-            except:
-                raise RuntimeError("Evaluating condition '%s' failed: %s"
-                                   % (condition, utils.get_error_message()))
+            condition = self.evaluate(condition, modules='os,sys')
         return bool(condition)
 
 
