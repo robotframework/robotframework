@@ -149,17 +149,21 @@ Current working directory should not be used with stdout and stderr when absolut
 *** Keywords ***
 Restart Suite Process If Needed
     ${alive}=    Process Is Running    suite_process
-    Run Keyword If    not ${alive}    Some process    suite_process
+    Run Keyword Unless    ${alive}    Some process    suite_process
 
 Suite Setup
     Check Preconditions
     Some process    suite_process
 
 Suite Teardown
-    ${is_ok}=   Evaluate   sys.platform != 'cli'   sys
+    ${is_ok}=   Valid Platform
     Run Keyword If  ${is_ok}   Stop some process    suite_process
 
 Check Preconditions
-    ${is_ok}=   Evaluate   sys.platform != 'cli'   sys
-    Run Keyword If  not ${is_ok}    Set Suite Metadata  info   precondition_fail
-    Run Keyword If  not ${is_ok}    Fail
+    ${is_ok}=   Valid Platform
+    Run Keyword Unless   ${is_ok}    Set Suite Metadata  info   precondition_fail
+    Run Keyword Unless   ${is_ok}    Fail
+
+Valid Platform
+    ${is_ok}=   Evaluate   sys.platform != 'cli' and not (os.sep == '\\\\' and sys.platform.startswith('java'))   sys, os
+    [Return]    ${is_ok}
