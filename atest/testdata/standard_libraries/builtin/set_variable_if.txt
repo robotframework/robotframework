@@ -33,7 +33,7 @@ False Condition
     Should Be Equal  ${var}  ${None}
 
 Invalid Expression
-    [Documentation]  FAIL STARTS: Evaluating condition 'invalid expr' failed: SyntaxError:
+    [Documentation]  FAIL STARTS: Evaluating expression 'invalid expr' failed: SyntaxError:
     Set Variable If  invalid expr  whatever  values
 
 Fails Without Values 1

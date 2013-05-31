@@ -21,7 +21,7 @@ Should Not Be True With Message
     Should Not Be True  True  My message
 
 Should Not Be True With Invalid Expression
-    [Documentation]  FAIL STARTS: Evaluating condition 'this is invalid' failed: NameError:
+    [Documentation]  FAIL STARTS: Evaluating expression 'this is invalid' failed: NameError:
     Should Not Be True  this is invalid
 
 Should Be True
@@ -37,8 +37,14 @@ Should Be True With Message
     Should Be True  False  My error message
 
 Should Be True With Invalid Expression
-    [Documentation]  FAIL STARTS: Evaluating condition '"quotes" != "quote missing' failed: SyntaxError:
+    [Documentation]  FAIL STARTS: Evaluating expression '"quotes" != "quote missing' failed: SyntaxError:
     Should Be True  "quotes" != "quote missing
+
+Should (Not) Be True is evaluated with os- and sys-modules
+    Should Be True    os.sep
+    Should Be True    sys.platform
+    Should Not Be True    'os.sep' == 'wrong'
+    Should Not Be True    'sys.platform' == 'hurd'    # let's see when this starts failing
 
 Should Not Be Equal
     [Documentation]  FAIL 1 == 1
