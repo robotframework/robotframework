@@ -335,7 +335,6 @@ $ pybot tests.tsv
 """
 
 import sys
-import os.path
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
@@ -343,43 +342,18 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.conf import RobotSettings
-from robot.errors import DataError
-from robot.output import LOGGER, Output, pyloggingconf
+from robot.output import LOGGER
 from robot.reporting import ResultWriter
-from robot.running import TestSuite, STOP_SIGNAL_MONITOR, namespace
-from robot.utils import Application, seq2str
-from robot.variables import init_global_variables
+from robot.running import  TestSuiteBuilder
+from robot.utils import Application
 
 
 class RobotFramework(Application):
 
     def __init__(self):
         Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
-        if os.environ.get('OLDRUN'):
-            self.main = self.old_main
-
-    def old_main(self, datasources, **options):
-        STOP_SIGNAL_MONITOR.start()
-        namespace.IMPORTER.reset()
-        settings = RobotSettings(options)
-        pyloggingconf.initialize(settings['LogLevel'])
-        LOGGER.register_console_logger(width=settings['MonitorWidth'],
-                                       colors=settings['MonitorColors'],
-                                       markers=settings['MonitorMarkers'],
-                                       stdout=settings['StdOut'],
-                                       stderr=settings['StdErr'])
-        init_global_variables(settings)
-        suite = TestSuite(datasources, settings)
-        output = Output(settings)
-        suite.run(output)
-        LOGGER.info("Tests execution ended. Statistics:\n%s" % suite.get_stat_message())
-        output.close(suite)
-        if settings.log or settings.report or settings.xunit:
-            ResultWriter(settings.output).write_results(settings.get_rebot_settings())
-        return suite.return_code
 
     def main(self, datasources, **options):
-        from robot.new_running import TestSuiteBuilder
         settings = RobotSettings(options)
         LOGGER.register_console_logger(width=settings['MonitorWidth'],
                                        colors=settings['MonitorColors'],

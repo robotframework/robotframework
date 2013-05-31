@@ -47,4 +47,5 @@ See documentations of the individual APIs for more details.
 
 from robot.parsing import TestCaseFile, TestDataDirectory, ResourceFile, TestData
 from robot.result import ExecutionResult
-from robot.running import TestSuite
+# TODO: Document and test these new APIs
+from robot.running import TestSuite, TestSuiteBuilder

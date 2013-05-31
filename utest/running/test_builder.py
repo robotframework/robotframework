@@ -2,7 +2,7 @@ import unittest
 from os.path import abspath, dirname, normpath, join
 
 from robot.utils.asserts import assert_equals, assert_true
-from robot.new_running import TestSuite, TestSuiteBuilder
+from robot.running import TestSuite, TestSuiteBuilder
 
 
 CURDIR = dirname(abspath(__file__))
