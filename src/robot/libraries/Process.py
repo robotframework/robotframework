@@ -533,7 +533,7 @@ class ProcessConfig(object):
 
     def _must_env_values(self):
         must_values = {}
-        if sys.platform == "win32":
+        if os.sep != '/':
             must_values['COMSPEC'] = os.environ['COMSPEC']
             must_values['PATH'] = os.environ['PATH']
             must_values['SYSTEMROOT'] = os.environ['SYSTEMROOT']
