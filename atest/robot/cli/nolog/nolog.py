@@ -6,7 +6,6 @@ def difference_between_stuff(file1, file2):
         content1 = f1.readlines()
         with open(file2) as f2:
             content2 = f2.readlines()
-            content2.append("sffdfdsdf")
             for l1,l2 in zip(content1, content2):
                 if 'generatedTimestamp' in l1:
                     continue
