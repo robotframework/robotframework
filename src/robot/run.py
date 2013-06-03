@@ -374,6 +374,12 @@ class RobotFramework(Application):
             writer.write_results(settings.get_rebot_settings())
         return rc
 
+    def validate(self, options, arguments):
+        return self._filter_options_without_value(options), arguments
+
+    def _filter_options_without_value(self, options):
+        return dict((name, value) for name, value in options.items() if value)
+
 
 def run_cli(arguments):
     """Command line execution entry point for running tests.

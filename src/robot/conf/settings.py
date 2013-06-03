@@ -36,7 +36,7 @@ class _BaseSettings(object):
                  'OutputDir'        : ('outputdir', utils.abspath('.')),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
-                 'XUnitFile'        : ('xunitfile', 'NONE'),
+                 'XUnitFile'        : ('xunitfile', None),
                  'SplitLog'         : ('splitlog', False),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
@@ -57,19 +57,16 @@ class _BaseSettings(object):
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
     _output_opts = ['Output', 'Log', 'Report', 'DebugFile', 'XUnitFile']
 
-    # TODO: Accept options as **kwargs instead/in addition?
-    def __init__(self, options=None):
+    def __init__(self, options=None, **extra_options):
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
         self._cli_opts.update(self._extra_cli_opts)
-        self._process_cli_opts(options or {})
+        self._process_cli_opts(dict(options or {}, **extra_options))
 
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
-            value = opts.get(cli_name, default)
-            if value in [None, []]:
-                value = default
-            elif default == [] and isinstance(value, basestring):
+            value = opts[cli_name] if cli_name in opts else default
+            if default == [] and isinstance(value, basestring):
                 value = [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['RunFailed']
@@ -87,15 +84,17 @@ class _BaseSettings(object):
         if value == self._get_default_value(name):
             return value
         if name in ['Name', 'Doc', 'LogTitle', 'ReportTitle']:
-            if name == 'Doc': value = self._escape(value)
+            if name == 'Doc':
+                value = self._escape_as_data(value)
             return value.replace('_', ' ')
         if name in ['Metadata', 'TagDoc']:
-            if name == 'Metadata': value = [self._escape(v) for v in value]
+            if name == 'Metadata':
+                value = [self._escape_as_data(v) for v in value]
             return [self._process_metadata_or_tagdoc(v) for v in value]
         if name in ['Include', 'Exclude']:
             return [v.replace('AND', '&').replace('_', ' ') for v in value]
-        if name in self._output_opts and utils.eq(value, 'NONE'):
-            return 'NONE'
+        if name in self._output_opts and (not value or value.upper() == 'NONE'):
+            return None
         if name == 'OutputDir':
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
@@ -116,6 +115,9 @@ class _BaseSettings(object):
             LOGGER.warn('Option --runmode is deprecated in Robot Framework 2.8 '
                         'and will be removed in the future.')
             return [self._process_runmode_value(v) for v in value]
+        return value
+
+    def _escape_as_data(self, value):
         return value
 
     def _process_log_level(self, level):
@@ -173,12 +175,12 @@ class _BaseSettings(object):
         `option` can be 'Output', 'Log', 'Report', 'DebugFile' or 'XUnitFile'.
         """
         value = self._opts[option]
-        if value == 'NONE':
-            return 'NONE'
+        if not value:
+            return None
         if option == 'Log' and self._output_disabled():
-            self['Log'] = 'NONE'
+            self['Log'] = None
             LOGGER.error('Log file is not created if output.xml is disabled.')
-            return 'NONE'
+            return None
         value = self._process_output_name(value, option)
         path = utils.abspath(os.path.join(self['OutputDir'], value))
         self._create_output_dir(os.path.dirname(path), option)
@@ -275,23 +277,19 @@ class _BaseSettings(object):
 
     @property
     def output(self):
-        return self._get_file('Output')
+        return self['Output']
 
     @property
     def log(self):
-        return self._get_file('Log')
+        return self['Log']
 
     @property
     def report(self):
-        return self._get_file('Report')
+        return self['Report']
 
     @property
     def xunit(self):
-        return self._get_file('XUnitFile')
-
-    def _get_file(self, name):
-        value = self[name]
-        return value if value != 'NONE' else None
+        return self['XUnitFile']
 
     @property
     def split_log(self):
@@ -317,14 +315,13 @@ class _BaseSettings(object):
         }
 
 
-
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
-                       'Randomize'          : ('randomize', 'None'),
+                       'Randomize'          : ('randomize', 'NONE'),
                        'RunMode'            : ('runmode', []),
                        'RunEmptySuite'      : ('runemptysuite', False),
                        'WarnOnSkipped'      : ('warnonskippedfiles', False),
@@ -333,7 +330,7 @@ class RobotSettings(_BaseSettings):
                        'Listeners'          : ('listener', []),
                        'MonitorWidth'       : ('monitorwidth', 78),
                        'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
-                       'DebugFile'          : ('debugfile', 'NONE')}
+                       'DebugFile'          : ('debugfile', None)}
 
     def get_rebot_settings(self):
         settings = RebotSettings()
@@ -344,7 +341,7 @@ class RobotSettings(_BaseSettings):
             settings._opts[name] = []
         for name in ['Name', 'Doc']:
             settings._opts[name] = None
-        settings._opts['Output'] = 'NONE'
+        settings._opts['Output'] = None
         settings._opts['LogLevel'] = 'TRACE'
         settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
         return settings
@@ -352,7 +349,7 @@ class RobotSettings(_BaseSettings):
     def _output_disabled(self):
         return self.output is None
 
-    def _escape(self, value):
+    def _escape_as_data(self, value):
         return utils.escape(value)
 
     @property
@@ -400,7 +397,7 @@ class RobotSettings(_BaseSettings):
 
 
 class RebotSettings(_BaseSettings):
-    _extra_cli_opts = {'Output'            : ('output', 'NONE'),
+    _extra_cli_opts = {'Output'            : ('output', None),
                        'LogLevel'          : ('loglevel', 'TRACE'),
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
@@ -409,9 +406,6 @@ class RebotSettings(_BaseSettings):
 
     def _output_disabled(self):
         return False
-
-    def _escape(self, value):
-        return value
 
     @property
     def suite_config(self):

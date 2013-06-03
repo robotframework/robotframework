@@ -29,7 +29,7 @@ class XmlLogger(ResultVisitor):
         self._errors = []
 
     def _get_writer(self, path, generator):
-        if path == 'NONE':
+        if not path:
             return NullMarkupWriter()
         try:
             writer = XmlWriter(path, encoding='UTF-8')
