@@ -15,25 +15,11 @@ LOGGER.disable_automatic_console_logger()
 
 class TestReporting(unittest.TestCase):
     EXPECTED_SUITE_NAME = 'My Suite Name'
-    EXPECTED_TEST_NAME  = 'My Test Name'
+    EXPECTED_TEST_NAME = 'My Test Name'
     EXPECTED_KEYWORD_NAME = 'My Keyword Name'
     EXPECTED_FAILING_TEST = 'My Failing Test'
     EXPECTED_DEBUG_MESSAGE = '1111DEBUG777'
     EXPECTED_ERROR_MESSAGE = 'ERROR M355463'
-
-    def test_no_generation(self):
-        settings = StubSettings()
-        results = StubResults(None, settings)
-        rc = ResultWriter().write_results(settings, results)
-        assert_equals(rc, -1)
-
-    def test_generating_from_existing_result(self):
-        report = ClosableOutput('report.html')
-        settings = StubSettings(report=report)
-        result = Result()
-        result.suite.name = 'mysuite'
-        ResultWriter(result).write_results(settings)
-        assert_true('mysuite' in report.value)
 
     def test_only_output(self):
         output = ClosableOutput('output.xml')
@@ -73,18 +59,27 @@ class TestReporting(unittest.TestCase):
         self._verify_log(log.value)
         self._verify_report(report.value)
 
-    def test_log_generation_removes_keywords_from_execution_result(self):
-        execution_result = self._write_results(log=ClosableOutput('log.html'))
-        for test in execution_result.suite.tests:
+    def test_js_generation_does_not_prune_given_result(self):
+        result = self._get_execution_result()
+        results = Results(StubSettings(), result)
+        _ = results.js_result
+        for test in results.result.suite.tests:
+            assert_true(len(test.keywords) > 0)
+
+    def test_js_generation_prunes_read_result(self):
+        result = self._get_execution_result()
+        results = Results(StubSettings(), 'output.xml')
+        assert_equals(results._result, None)
+        results._result = result  # Fake reading results
+        _ = results.js_result
+        for test in result.suite.tests:
             assert_equals(len(test.keywords), 0)
 
     def _write_results(self, **settings):
-        execution_result = self._get_execution_result()
+        result = self._get_execution_result()
         settings = StubSettings(**settings)
-        results = StubResults(execution_result, settings)
-        rc = ResultWriter().write_results(settings, results)
+        rc = ResultWriter(result).write_results(settings)
         assert_equals(rc, 1)
-        return execution_result
 
     def _get_execution_result(self):
         suite = TestSuite(name=self.EXPECTED_SUITE_NAME)
@@ -142,21 +137,6 @@ class StubSettings(object):
 
     def __init__(self, **settings):
         self.__dict__.update(settings)
-
-
-class StubResults(Results):
-
-    def __init__(self, result, settings):
-        Results.__init__(self, None, settings)
-        self._result = result
-        if result:
-            self.return_code = result.return_code
-
-    @property
-    def result(self):
-        if self._result is None:
-            raise AssertionError('Result should not be regenerated')
-        return self._result
 
 
 class ClosableOutput(object):

@@ -368,11 +368,10 @@ class RobotFramework(Application):
         result = suite.run(settings)
         LOGGER.info("Tests execution ended. Statistics:\n%s"
                     % result.suite.statistics.message)
-        rc = result.return_code
         if settings.log or settings.report or settings.xunit:
             writer = ResultWriter(settings.output if settings.log else result)
             writer.write_results(settings.get_rebot_settings())
-        return rc
+        return result.return_code
 
     def validate(self, options, arguments):
         return self._filter_options_without_value(options), arguments

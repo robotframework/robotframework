@@ -39,7 +39,7 @@ def create_jsdata(outxml, target):
                            'i?:IX',
                            '<*>:<any>']
     })
-    result = Results(outxml, settings).js_result
+    result = Results(settings, outxml).js_result
     config = {'logURL': 'log.html',
               'title': 'This is a long long title. A very long title indeed. '
                        'And it even contains some stuff to <esc&ape>. '

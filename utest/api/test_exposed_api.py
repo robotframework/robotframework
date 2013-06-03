@@ -2,8 +2,7 @@ import unittest
 
 from os.path import abspath, join
 
-from robot import api, parsing, result, running
-from robot.conf import RobotSettings
+from robot import api, parsing, reporting, result, running
 
 from robot.utils.asserts import assert_equals
 
@@ -28,6 +27,9 @@ class TestExposedApi(unittest.TestCase):
     def test_test_suite(self):
         assert_equals(api.TestSuite, running.TestSuite)
 
+    def test_result_writer(self):
+        assert_equals(api.ResultWriter, reporting.ResultWriter)
+
 
 class TestTestSuiteBuilder(unittest.TestCase):
     misc = join(abspath(__file__), '..', '..', '..', 'atest', 'testdata', 'misc')
@@ -40,6 +42,7 @@ class TestTestSuiteBuilder(unittest.TestCase):
     def test_create_with_datasource_as_string(self):
         suite = api.TestSuiteBuilder().build(self.sources[0])
         assert_equals(suite.name, 'Pass And Fail')
+
 
 if __name__ == '__main__':
     unittest.main()

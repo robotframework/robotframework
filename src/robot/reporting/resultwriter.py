@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.conf import RebotSettings
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.result import ExecutionResult
@@ -25,22 +26,26 @@ from .xunitwriter import XUnitWriter
 
 class ResultWriter(object):
 
-    def __init__(self, *data_sources):
-        self._data_sources = data_sources
+    def __init__(self, *sources):
+        # TODO: Document that sources can be XML output files or one Result
+        self._sources = sources
 
-    # TODO: Add possibility to pass options as **kwargs and make settings optional.
-    def write_results(self, settings, results=None):
-        results = results or Results(self._data_sources, settings)
+    def write_results(self, settings=None, **options):
+        settings = settings or RebotSettings(options)
+        results = Results(settings, *self._sources)
         if settings.output:
             self._write_output(results.result, settings.output)
         if settings.xunit:
-            self._write_xunit(results.result, settings.xunit, settings.xunit_skip_noncritical)
+            self._write_xunit(results.result, settings.xunit,
+                              settings.xunit_skip_noncritical)
         if settings.log:
-            config = dict(settings.log_config, minLevel=results.js_result.min_level)
+            config = dict(settings.log_config,
+                          minLevel=results.js_result.min_level)
             self._write_log(results.js_result, settings.log, config)
         if settings.report:
             results.js_result.remove_data_not_needed_in_report()
-            self._write_report(results.js_result, settings.report, settings.report_config)
+            self._write_report(results.js_result, settings.report,
+                               settings.report_config)
         return results.return_code
 
     def _write_output(self, result, path):
@@ -72,26 +77,28 @@ class ResultWriter(object):
 
 class Results(object):
 
-    def __init__(self, data_sources, settings):
-        self._data_sources = data_sources \
-            if not isinstance(data_sources, basestring) else [data_sources]
+    def __init__(self, settings, *sources):
         self._settings = settings
-        if data_sources and len(data_sources) == 1 and isinstance(data_sources[0], Result):
-            self._result = data_sources[0]
+        self._sources = sources
+        if len(sources) == 1 and isinstance(sources[0], Result):
+            self._result = sources[0]
+            self._prune = False
             self.return_code = self._result.return_code
         else:
             self._result = None
+            self._prune = True
             self.return_code = -1
         self._js_result = None
 
     @property
     def result(self):
         if self._result is None:
+            # TODO: Are keywords really needed w/ xUnit?
             include_keywords = bool(self._settings.log or
                                     self._settings.output or
                                     self._settings.xunit)
             self._result = ExecutionResult(include_keywords=include_keywords,
-                                           *self._data_sources)
+                                           *self._sources)
             self._result.configure(self._settings.status_rc,
                                    self._settings.suite_config,
                                    self._settings.statistics_config)
@@ -103,7 +110,8 @@ class Results(object):
         if self._js_result is None:
             builder = JsModelBuilder(log_path=self._settings.log,
                                      split_log=self._settings.split_log,
-                                     prune_input_to_save_memory=True)
+                                     prune_input_to_save_memory=self._prune)
             self._js_result = builder.build_from(self.result)
-            self._result = None
+            if self._prune:
+                self._result = None
         return self._js_result
