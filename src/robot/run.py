@@ -344,7 +344,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 from robot.conf import RobotSettings
 from robot.output import LOGGER
 from robot.reporting import ResultWriter
-from robot.running import  TestSuiteBuilder
+from robot.running import TestSuiteBuilder
 from robot.utils import Application
 
 
@@ -373,6 +373,12 @@ class RobotFramework(Application):
             writer = ResultWriter(settings.output if settings.log else result)
             writer.write_results(settings.get_rebot_settings())
         return rc
+
+    def validate(self, options, arguments):
+        return self._filter_options_without_value(options), arguments
+
+    def _filter_options_without_value(self, options):
+        return dict((name, value) for name, value in options.items() if value)
 
 
 def run_cli(arguments):

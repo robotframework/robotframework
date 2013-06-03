@@ -19,7 +19,7 @@ from .loggerhelper import IsLogged
 
 
 def DebugFile(path):
-    if path == 'NONE':
+    if not path:
         LOGGER.info('No debug file')
         return None
     try:

@@ -28,9 +28,9 @@ Debugfile Log Level Should Always Be Debug
     Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n Logging with debug level\n +-- END KW: BuiltIn.Log
 
 No Debugfile
-    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile None -o o.xml  ${TESTFILE}
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile NoNe -o o.xml  ${TESTFILE}
     Directory Should Contain  ${CLI OUTDIR}  o.xml
-    Check Syslog Contains  DebugFile: NONE
+    Check Syslog Contains  DebugFile: None
 
 Invalid Debugfile
     Create Directory  ${CLI OUTDIR}${/}debug.txt

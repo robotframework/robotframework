@@ -68,15 +68,35 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
 
 class TestRobotAndRebotSettings(unittest.TestCase):
 
-    def test_creating_robot_and_rebot_settings_are_independent(self):
+    def test_robot_and_rebot_settings_are_independent(self):
         # http://code.google.com/p/robotframework/issues/detail?id=881
         orig_opts = RobotSettings()._opts
         RebotSettings()
         assert_equals(RobotSettings()._opts, orig_opts)
 
+    def test_extra_options(self):
+        assert_equals(RobotSettings(name='My Name')['Name'], 'My Name')
+        assert_equals(RobotSettings({'name': 'Override'}, name='Set')['Name'],'Set')
+
     def test_multi_options_as_single_string(self):
         assert_equals(RobotSettings({'test': 'one'})['TestNames'], ['one'])
         assert_equals(RebotSettings({'exclude': 'two'})['Exclude'], ['two'])
+
+    def test_output_files_as_none_string(self):
+        for name in 'Output', 'Report', 'Log', 'XUnitFile', 'DebugFile':
+            attr = (name[:-4] if name.endswith('File') else name).lower()
+            settings = RobotSettings({name.lower(): 'NoNe'})
+            assert_equals(settings[name], None)
+            if hasattr(settings, attr):
+                assert_equals(getattr(settings, attr), None)
+
+    def test_output_files_as_none_object(self):
+        for name in 'Output', 'Report', 'Log', 'XUnitFile', 'DebugFile':
+            attr = (name[:-4] if name.endswith('File') else name).lower()
+            settings = RobotSettings({name.lower(): None})
+            assert_equals(settings[name], None)
+            if hasattr(settings, attr):
+                assert_equals(getattr(settings, attr), None)
 
     def test_log_levels(self):
         self._verify_log_level('TRACE')

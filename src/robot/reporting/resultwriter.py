@@ -28,6 +28,7 @@ class ResultWriter(object):
     def __init__(self, *data_sources):
         self._data_sources = data_sources
 
+    # TODO: Add possibility to pass options as **kwargs and make settings optional.
     def write_results(self, settings, results=None):
         results = results or Results(self._data_sources, settings)
         if settings.output:
