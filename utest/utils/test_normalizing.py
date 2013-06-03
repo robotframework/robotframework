@@ -121,12 +121,26 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(nd.data, {})
         assert_equals(nd.keys(), [])
 
-    def test_popping_items(self):
+    def test_pop(self):
         nd = NormalizedDict({'A': 1, 'b': 2})
         assert_equals(nd.pop('A'), 1)
         assert_equals(nd.pop('B'), 2)
         assert_equals(nd.data, {})
         assert_equals(nd.keys(), [])
+
+    def test_pop_with_default(self):
+        assert_equals(NormalizedDict().pop('nonex', 'default'), 'default')
+
+    def test_popitem(self):
+        items = [(str(i), i) for i in range(9)]
+        nd = NormalizedDict(items)
+        for i in range(9):
+            assert_equals(nd.popitem(), items[i])
+        assert_equals(nd.data, {})
+        assert_equals(nd.keys(), [])
+
+    def test_popitem_empty(self):
+        assert_raises(KeyError, NormalizedDict().popitem)
 
     def test_len(self):
         nd = NormalizedDict()

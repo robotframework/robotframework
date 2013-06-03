@@ -110,10 +110,10 @@ class NormalizedDict(UserDict):
     def __getitem__(self, key):
         return self.data[self._normalize(key)]
 
-    def pop(self, key):
+    def pop(self, key, *default):
         nkey = self._normalize(key)
-        del self._keys[nkey]
-        return self.data.pop(nkey)
+        self._keys.pop(nkey, *default)
+        return self.data.pop(nkey, *default)
 
     __delitem__ = pop
 
@@ -146,6 +146,12 @@ class NormalizedDict(UserDict):
 
     def iteritems(self):
         return ((key, self[key]) for key in self)
+
+    def popitem(self):
+        if not self:
+            raise KeyError('dictionary is empty')
+        key = self.iterkeys().next()
+        return key, self.pop(key)
 
     def copy(self):
         copy = UserDict.copy(self)
