@@ -344,7 +344,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 from robot.conf import RobotSettings
 from robot.output import LOGGER
 from robot.reporting import ResultWriter
-from robot.running import  TestSuiteBuilder
+from robot.running import TestSuiteBuilder
 from robot.utils import Application
 
 
