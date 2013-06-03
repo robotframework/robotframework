@@ -112,7 +112,7 @@ class AnchorNameCell(HtmlCell):
                           {'class': 'name'}, escape=False)
 
     def _link_from_name(self, name, type_):
-        return '<a name="%s_%s">%s</a>' % (type_, utils.html_attr_escape(name),
+        return '<a name="%s_%s">%s</a>' % (type_, utils.attribute_escape(name),
                                            utils.html_escape(name))
 
 

@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils import normalize, normalize_tags, NormalizedDict
+from robot.utils import normalize, NormalizedDict
 from robot.utils.asserts import (assert_equals, assert_true, assert_false,
                                  assert_raises)
 
@@ -41,34 +41,6 @@ class TestNormalizing(unittest.TestCase):
                                 caseless=False), 'Fbar')
         assert_equals(normalize('Foo_\n bar\n', ignore=['\n'],
                                 spaceless=False), 'foo_ bar')
-
-
-class TestNormalizeTags(unittest.TestCase):
-
-    def test_no_tasg(self):
-        assert_equals(normalize_tags([]), [])
-
-    def test_case_and_space(self):
-        for inp in ['lower'], ['MiXeD', 'UPPER'], ['a few', 'spaces here']:
-            assert_equals(normalize_tags(inp), inp)
-
-    def test_underscore(self):
-        assert_equals(normalize_tags(['a_tag', 'a tag', 'ATag']), ['a_tag'])
-        assert_equals(normalize_tags(['tag', '_t_a_g_']), ['tag'])
-
-    def test_remove_empty_and_none(self):
-        for inp in ['', 'X', '', '  ', '\n'], ['none', 'N O N E', 'X', '', '_']:
-            assert_equals(normalize_tags(inp), ['X'])
-
-    def test_remove_dupes(self):
-        for inp in ['dupe', 'DUPE', ' d u p e '], ['d U', 'du', 'DU', 'Du']:
-            assert_equals(normalize_tags(inp), [inp[0]])
-
-    def test_sorting(self):
-        for inp, exp in [(['SORT','1','B','2','a'], ['1','2','a','B','SORT']),
-                         (['all', 'A L L', 'NONE', '10', '1', 'A', 'a', ''],
-                           ['1', '10', 'A', 'all'])]:
-            assert_equals(normalize_tags(inp), exp)
 
 
 class TestNormalizedDict(unittest.TestCase):

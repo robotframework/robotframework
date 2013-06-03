@@ -178,7 +178,7 @@ class JsonConverter(object):
             'fullName': self._escape(test.longname),
             'id': test.id,
             'doc': self._html(test.doc),
-            'tags': [self._escape(t) for t in utils.normalize_tags(test.tags)],
+            'tags': [self._escape(t) for t in test.tags],
             'timeout': self._get_timeout(test.timeout),
             'keywords': list(self._convert_keywords(test))
         }

@@ -60,23 +60,6 @@ else:
         return False
 
 
-# TODO: Move normalizing tags to robot.model.Tags in 2.8.
-# Move can be done after all tag related code uses Tags.
-
-def normalize_tags(tags):
-    """DEPRECATED!! Use robot.model.Tags instead.
-
-    Returns tags sorted and duplicates, empty, and NONE removed.
-
-    If duplicate tags have different case/space, the one used first wins.
-    """
-    norm = NormalizedDict(((t, 1) for t in tags), ignore=['_'])
-    for removed in '', 'NONE':
-        if removed in norm:
-            norm.pop(removed)
-    return norm.keys()
-
-
 class NormalizedDict(UserDict):
     """Custom dictionary implementation automatically normalizing keys."""
 

@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import normalize_tags, setter, Matcher
+from robot.utils import Matcher, NormalizedDict, setter
 
 
 class Tags(object):
@@ -24,7 +24,14 @@ class Tags(object):
     def _tags(self, tags):
         if isinstance(tags, basestring):
             tags = [tags]
-        return normalize_tags(tags or [])
+        return self._normalize(tags or [])
+
+    def _normalize(self, tags):
+        normalized = NormalizedDict(((t, 1) for t in tags), ignore='_')
+        for removed in '', 'NONE':
+            if removed in normalized:
+                normalized.pop(removed)
+        return list(normalized)
 
     def add(self, tags):
         self._tags = list(self) + list(Tags(tags))

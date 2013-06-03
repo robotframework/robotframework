@@ -33,7 +33,7 @@ from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, matches, matches_any, Matcher, MultiMatcher
 from .misc import plural_or_not, printable_name, seq2str, seq2str2, getdoc, isatty
-from .normalizing import lower, normalize, normalize_tags, NormalizedDict
+from .normalizing import lower, normalize, NormalizedDict
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotpath import normpath, abspath, get_link_path
 from .robottime import (get_timestamp, get_start_timestamp, format_time,
@@ -44,9 +44,6 @@ from .setter import setter
 from .text import (cut_long_message, format_assign_message,
                    pad_console_length, get_console_length)
 from .unic import unic, safe_repr
-
-# TODO: for backwards compatibility, remove in RF 2.8
-html_attr_escape = attribute_escape
 
 import sys
 is_jython = sys.platform.startswith('java')

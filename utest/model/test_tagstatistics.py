@@ -3,6 +3,7 @@ import unittest
 from robot.model import Criticality
 from robot.utils.asserts import assert_equals, assert_none
 from robot.model.tagstatistics import TagStatisticsBuilder, TagStatLink
+from robot.model import Tags
 from robot.result.testcase import TestCase
 from robot import utils
 
@@ -152,7 +153,7 @@ class TestTagStatistics(unittest.TestCase):
             names = [stat.name for stat in builder.stats]
             # 3) Expected values
             exp_crit = []; exp_noncr = []
-            for tag in utils.normalize_tags(all_tags):
+            for tag in Tags(all_tags):
                 if tag in crit_tags:
                     exp_crit.append(tag)
                 else:
