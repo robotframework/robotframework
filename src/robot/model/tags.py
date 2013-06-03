@@ -22,19 +22,21 @@ class Tags(object):
 
     @setter
     def _tags(self, tags):
+        if not tags:
+            return ()
         if isinstance(tags, basestring):
-            tags = [tags]
-        return self._normalize(tags or [])
+            tags = (tags,)
+        return self._normalize(tags)
 
     def _normalize(self, tags):
         normalized = NormalizedDict(((t, 1) for t in tags), ignore='_')
         for removed in '', 'NONE':
             if removed in normalized:
                 normalized.pop(removed)
-        return list(normalized)
+        return tuple(normalized)
 
     def add(self, tags):
-        self._tags = list(self) + list(Tags(tags))
+        self._tags = tuple(self) + tuple(Tags(tags))
 
     def remove(self, tags):
         tags = TagPatterns(tags)
@@ -56,7 +58,7 @@ class Tags(object):
         return u'[%s]' % ', '.join(self)
 
     def __repr__(self):
-        return repr(self._tags)
+        return repr(list(self))
 
     def __str__(self):
         return unicode(self).encode('UTF-8')
@@ -65,13 +67,13 @@ class Tags(object):
         return self._tags[item]
 
     def __add__(self, other):
-        return Tags(list(self) + list(Tags(other)))
+        return Tags(tuple(self) + tuple(Tags(other)))
 
 
 class TagPatterns(object):
 
     def __init__(self, patterns):
-        self._patterns = [TagPattern(p) for p in Tags(patterns)]
+        self._patterns = tuple(TagPattern(p) for p in Tags(patterns))
 
     def match(self, tags):
         tags = tags if isinstance(tags, Tags) else Tags(tags)
@@ -114,7 +116,7 @@ class _SingleTagPattern(object):
 class _AndTagPattern(object):
 
     def __init__(self, patterns):
-        self._patterns = [TagPattern(p) for p in patterns]
+        self._patterns = tuple(TagPattern(p) for p in patterns)
 
     def match(self, tags):
         return all(p.match(tags) for p in self._patterns)
@@ -124,7 +126,7 @@ class _NotTagPattern(object):
 
     def __init__(self, must_match, *must_not_match):
         self._must = TagPattern(must_match)
-        self._must_not = [TagPattern(m) for m in must_not_match]
+        self._must_not = tuple(TagPattern(m) for m in must_not_match)
 
     def match(self, tags):
         return self._must.match(tags) \
