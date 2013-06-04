@@ -40,10 +40,10 @@ Non-existing argument does not trigger named usage
 Naming twice
     Check Test Case    ${TESTNAME}
 
-With Run Keyword
+Run Keyword's own named arguments are not resolved
     Check Test Case    ${TESTNAME}
 
-Inside Run Keyword
+Inside Run Keyword named arguments are resolved
     Check Test Case    ${TESTNAME}
 
 Named combinations with varargs
