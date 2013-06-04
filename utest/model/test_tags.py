@@ -81,6 +81,7 @@ class TestTags(unittest.TestCase):
 
     def test_truth(self):
         assert_true(not Tags())
+        assert_true(not Tags('NONE'))
         assert_true(Tags(['a']))
 
     def test_unicode(self):
@@ -120,6 +121,24 @@ class TestTags(unittest.TestCase):
         assert_equal(list(tags), ['xx', 'yy'])
         assert_equal(list(new_tags), list(tags))
         assert_true(new_tags is not tags)
+
+    def test_getitem_with_index(self):
+        tags = Tags(['2', '0', '1'])
+        assert_equal(tags[0], '0')
+        assert_equal(tags[1], '1')
+        assert_equal(tags[2], '2')
+
+    def test_getitem_with_slice(self):
+        tags = Tags(['2', '0', '1'])
+        self._verify_slice(tags[:], ['0', '1', '2'])
+        self._verify_slice(tags[1:], ['1', '2'])
+        self._verify_slice(tags[1:-1], ['1'])
+        self._verify_slice(tags[1:-2], [])
+        self._verify_slice(tags[::2], ['0', '2'])
+
+    def _verify_slice(self, sliced, expected):
+        assert_true(isinstance(sliced, Tags))
+        assert_equal(list(sliced), expected)
 
 
 class TestNormalizing(unittest.TestCase):
