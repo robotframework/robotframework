@@ -254,37 +254,12 @@ by the example test below that uses the same keyword as the above
 example. In this example the arguments that are not specified will get
 their default values.
 
-In Robot Framework 2.8 support for using named argument syntax for
-arguments without default values was added. Also possibility to use named
-argument syntax with Python keywords that take keyword arguments `**kwargs`
-was added.
-
-
-.. table:: Keywords with named arguments
-   :class: example
-
-   ====================  ================  ==============  ==============  ==============
-         Test Case            Action          Argument        Argument        Argument
-   ====================  ================  ==============  ==============  ==============
-   Named Arguments       [Documentation]   Not specified   arguments get   default values
-   \                     Example Keyword   arg3=value
-   \                     Example Keyword   arg2=xxx        arg3=yyy
-   ====================  ================  ==============  ==============  ==============
-
 The named argument syntax can naturally be used with arguments
 accepting default values also when no arguments are left away. This
 can make argument meanings more clear than when only the value is
 shown. Naming the required arguments this way is not possible,
 though. Additionally, it is not possible to give first named arguments
 and then varargs.
-
-The biggest limitation of the name arguments functionality is that it
-currently works only with `user keywords`_ and with `library
-keywords`_ implemented with Python that use either the `static library
-API`_ or the `hybrid library API`_. It is possible that support for
-Java libraries and for the `dynamic library API`_ is added in the
-future. Until that it is possible to create user keywords that wrap
-the incompatible keywords.
 
 .. note:: When the named argument syntax is used with user keywords,
           the argument names are given without the :var:`${}`
@@ -343,6 +318,60 @@ __ `Taking test libraries into use`_
    List files     [Arguments]        ${path}=.              ${options}=
    \              Execute command    ls ${options} ${path}
    =============  =================  =====================  ============  ============
+
+Starting from Robot Framework 2.8, it is also possible to name the positional
+arguments and to give them out of order. In the example below, the message is
+a mandatory argument, but if all the arguments are named, they can be given
+in different order.
+
+.. table::
+   :class: example
+
+   =============  ================  =================  =======================
+     Test Case          Action        Argument         Argument
+   =============  ================  =================  =======================
+   Example        Log               message=mandatory  level=DEBUG
+   \              Log               level=WARN         message=This works also
+   =============  ================  =================  =======================
+
+Prior to Robot Framework 2.8 the biggest limitation of the keyword arguments
+functionality was that it worked only with `user keywords`_ and with `library
+keywords`_ implemented with Python that use either the `static library
+API`_ or the `hybrid library API`_.
+
+Starting from Robot Framework 2.8, it is also possible to to use named arguments
+with the `dynamic library API`_.
+
+
+Free keyword arguments
+''''''''''''''''''''''
+
+In Robot Framework 2.8 possibility to use named argument syntax with Python
+keywords that take keyword arguments `**kwargs` was added.
+
+
+In the example below, the Example Keyword will get a called with dictionary
+where the keys are the argument names given in keyword call.
+
+.. table:: Keywords with free keyword arguments
+   :class: example
+
+   ====================  ================  ==============  ==============  ==============
+         Test Case            Action          Argument        Argument        Argument
+   ====================  ================  ==============  ==============  ==============
+   Keyword Arguments
+   \                     Example Keyword   hello=value
+   \                     Example Keyword   anything=xxx    you_want=yyy
+   ====================  ================  ==============  ==============  ==============
+
+.. sourcecode:: python
+
+
+    def example_keyword(**kwargs):
+        ...
+
+
+
 
 Arguments embedded to keyword names
 '''''''''''''''''''''''''''''''''''
