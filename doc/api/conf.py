@@ -243,3 +243,14 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+def non_example_lines(line):
+    if not line.startswith(('| ', 'Examples', 'Example', '=>')):
+        return True
+
+def remove_library_examples(app, what, name, obj, options, lines):
+    if name.startswith("robot.libraries"):
+        lines[:] = filter(non_example_lines, lines)
+
+def setup(app):
+    app.connect('autodoc-process-docstring', remove_library_examples)
