@@ -9,6 +9,14 @@ conf Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`gatherfailed` Module
+--------------------------
+
+.. automodule:: robot.conf.gatherfailed
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`settings` Module
 ----------------------
 

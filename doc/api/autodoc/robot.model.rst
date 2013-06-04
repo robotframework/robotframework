@@ -9,6 +9,14 @@ model Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`configurer` Module
+------------------------
+
+.. automodule:: robot.model.configurer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`criticality` Module
 -------------------------
 
