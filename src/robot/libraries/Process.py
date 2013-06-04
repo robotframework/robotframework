@@ -116,6 +116,9 @@ class Process(object):
     in temporary files. Information about these streams is stored into
     `ExecutionResult` object.
 
+    The `stderr` and the `stdout` can be redirected to PIPE by giving it
+    value PIPE.
+
     The `stderr` can be redirected to the standard output stream by giving
     argument in a way shown below.
 
@@ -268,8 +271,8 @@ class Process(object):
                              shell=config.shell,
                              cwd=config.cwd,
                              env=config.env)
-        self._logs[p] = ExecutionResult(config.stdout_stream.name,
-                                        config.stderr_stream.name)
+        self._logs[p] = ExecutionResult(config.stdout_stream,
+                                        config.stderr_stream)
         return self._started_processes.register(p, alias=config.alias)
 
     def _cmd(self, args, command, use_shell):
@@ -333,6 +336,10 @@ class Process(object):
         result = self._logs[process]
         logger.info('waiting for process to terminate')
         result.exit_code = process.wait()
+        if not result.stdout_path:
+            result._stdout = process.stdout.read()
+        if not result.stderr_path:
+            result._stderr = process.stderr.read()
         logger.info('process terminated')
         return result
 
@@ -447,9 +454,9 @@ class Process(object):
 class ExecutionResult(object):
     _stdout = _stderr = None
 
-    def __init__(self, stdout_path, stderr_path, exit_code=None):
-        self.stdout_path = stdout_path
-        self.stderr_path = stderr_path
+    def __init__(self, stdout, stderr, exit_code=None):
+        self.stdout_path = stdout.name if stdout != subprocess.PIPE else None
+        self.stderr_path = stderr.name if stderr != subprocess.PIPE else None
         self.exit_code = exit_code
 
     @property
@@ -493,6 +500,8 @@ class ProcessConfig(object):
         self._handle_rest(rest)
 
     def _new_stream(self, name, postfix):
+        if name == 'PIPE':
+            return subprocess.PIPE
         if name:
             return open(os.path.join(self.cwd, name), 'w')
         return self._get_temp_file(postfix)
@@ -501,6 +510,8 @@ class ProcessConfig(object):
         if stderr:
             if stderr == 'STDOUT' or stderr == stdout:
                 return self.stdout_stream
+            if stderr == 'PIPE':
+                return subprocess.PIPE
         return self._new_stream(stderr, 'stderr')
 
     def _get_temp_file(self, suffix):

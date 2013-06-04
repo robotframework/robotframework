@@ -71,6 +71,11 @@ Current working directory should be used with stdout and stderr
 Current working directory should not be used with stdout and stderr when absolute path in use
     Check Test Case    ${TESTNAME}
 
+Piped stdout
+    Check Test Case    ${TESTNAME}
+
+Piped stderr
+    Check Test Case    ${TESTNAME}
 
 *** Keywords ***
 Check Preconditions

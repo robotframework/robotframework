@@ -59,29 +59,29 @@ Setting Stderr
 Without Env Configuration the Environment Should Be As It Was
     Set Environment Variable  normalvar  normal
     ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True
-    Should Be Equal        ${result.stdout}    normal -\n
+    Should Be Equal        ${result.stdout.strip()}    normal -
 
 With Env: Configuration the Environment Should Contain Additional Variable
     Set Environment Variable  normalvar  normal
     ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env:specialvar=spessu
-    Should Be Equal        ${result.stdout}    normal spessu\n
+    Should Be Equal        ${result.stdout.strip()}    normal spessu
 
 With Env= Configuration the Environment Should Contain Only Additional Variable
     Set Environment Variable  normalvar  normal
     ${setenv}=    Create Dictionary           specialvar  spessu
     ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env=${setenv}
-    Should Be Equal        ${result.stdout}    - spessu\n
+    Should Be Equal        ${result.stdout.strip()}    - spessu
 
 Setting Environment With Multiple Values
     Set Environment Variable  normalvar  normal
     ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba', '-');"    shell=True   env:specialvar=spessu   env:diiba=daaba
-    Should Be Equal        ${result.stdout}  normal spessu daaba\n
+    Should Be Equal        ${result.stdout.strip()}  normal spessu daaba
 
 Setting Environment With Multiple Values Using Dictionary
     Set Environment Variable  normalvar  normal
     ${setenv}=    Create Dictionary           specialvar  spessu  diiba2  daaba2
     ${result}=    Run Process    python   -c    import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba2', '-');    env=${setenv}
-    Should Be Equal        ${result.stdout}  - spessu daaba2\n
+    Should Be Equal        ${result.stdout.strip()}  - spessu daaba2
 
 Unsupported Arguments Should Cause Error
     ${setenv}=    Create Dictionary           sp  spessu
@@ -145,6 +145,13 @@ Current working directory should not be used with stdout and stderr when absolut
     Remove File    ${stdout_path}
     [Teardown]    Run Keyword And Ignore Error   Remove Directory    ${TEMPDIR}${/}hc    True
 
+Piped stdout
+    ${result}=    Run Process    python    -c   print 'hello'    stdout=PIPE
+    Should Match    ${result.stdout}    *hello*
+
+Piped stderr
+    ${result}=    Run Process    python    -c   1/0    stderr=PIPE
+    Should Match    ${result.stderr}    *ZeroDivisionError*
 
 *** Keywords ***
 Restart Suite Process If Needed
@@ -165,5 +172,5 @@ Check Preconditions
     Run Keyword Unless   ${is_ok}    Fail
 
 Valid Platform
-    ${is_ok}=   Evaluate   sys.platform != 'cli' and not (os.sep == '\\\\' and sys.platform.startswith('java'))   sys, os
+    ${is_ok}=   Evaluate   sys.platform != 'cli' and not (os.sep == '\\\\' and sys.platform.startswith('javax'))   sys, os
     [Return]    ${is_ok}
