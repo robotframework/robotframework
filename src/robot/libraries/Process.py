@@ -23,6 +23,8 @@ from robot.utils import ConnectionCache
 from robot.version import get_version
 from robot.api import logger
 
+jython = sys.platform.startswith('java')
+cli = sys.platform == 'cli'
 
 class Process(object):
     """Robot Framework test library for running processes.
@@ -113,7 +115,8 @@ class Process(object):
 
     Process output and error streams can be given as an argument to
     `Run Process` and `Start Process` keywords. By default streams are stored
-    in temporary files. Information about these streams is stored into
+    in temporary files when running with c python and PIPE:d when running with
+    Jython or IronPython. Information about these streams is stored into
     `ExecutionResult` object.
 
     The `stderr` and the `stdout` can be redirected to PIPE by giving it
@@ -504,14 +507,14 @@ class ProcessConfig(object):
             return subprocess.PIPE
         if name:
             return open(os.path.join(self.cwd, name), 'w')
+        if jython or cli:
+            return subprocess.PIPE
         return self._get_temp_file(postfix)
 
     def _get_stderr(self, stderr, stdout):
         if stderr:
             if stderr == 'STDOUT' or stderr == stdout:
                 return self.stdout_stream
-            if stderr == 'PIPE':
-                return subprocess.PIPE
         return self._new_stream(stderr, 'stderr')
 
     def _get_temp_file(self, suffix):
