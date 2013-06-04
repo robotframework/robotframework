@@ -207,7 +207,7 @@ class Namespace:
             lib.start_test()
         self.variables['${TEST_NAME}'] = test.name
         self.variables['${TEST_DOCUMENTATION}'] = test.doc
-        self.variables['@{TEST_TAGS}'] = test.tags[:]
+        self.variables['@{TEST_TAGS}'] = list(test.tags)
 
     def end_test(self):
         self.test = None
