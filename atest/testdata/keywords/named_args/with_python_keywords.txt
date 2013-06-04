@@ -65,11 +65,11 @@ Naming twice
     [Documentation]    FAIL Keyword 'KwargsLibrary.Two Named' got multiple values for argument 'fst'.
     ${ret}=    Two Named    fst=foo    fst=foo
 
-With Run Keyword
+Run Keyword's own named arguments are not resolved
+    [Documentation]    FAIL No keyword with name 'name=No Operation' found.
     Run Keyword    name=No Operation
-    Run Keyword If    name=Fail    condition=1 < 0
 
-Inside Run Keyword
+Inside Run Keyword named arguments are resolved
     ${ret}=    Run Keyword    Four Named    foo    d=quux    b=kääx
     Should Be Equal    ${ret}    foo, kääx, None, quux
 

@@ -249,7 +249,8 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _get_argument_resolver(self, argspec):
         resolve_until = self._get_args_to_process()
-        return ArgumentResolver(argspec, resolve_variables_until=resolve_until)
+        return ArgumentResolver(argspec, resolve_named=False,
+                                resolve_variables_until=resolve_until)
 
     def _get_args_to_process(self):
         return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
