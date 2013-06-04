@@ -1652,6 +1652,17 @@ other hand, if the `libdoc`_ tool is used for documenting the
 library, arguments are shown in the documentation, in which case they
 need to have meaningful names.
 
+.. note::  Dynamic library handling was changed in Robot Framework 2.8 so that
+           named default values for optional arguments are filled in by the
+           Framework if necessary.
+
+           For example if the arguments for a keyword are given as
+           :code:`['a', 'b=1', 'c=2']` then a call
+           :code:`Keyword   foo   c=bar` would lead the Framework to call the
+           keyword with arguments :code:`'foo', '1', 'bar'`, where string
+           :code:`'1'` was filled in by the Framework based on the keyword
+           argument specification.
+
 Getting keyword documentation
 '''''''''''''''''''''''''''''
 
