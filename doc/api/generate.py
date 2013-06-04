@@ -8,8 +8,7 @@ from subprocess import call
 from sys import exit
 
 
-class GenerateDocs(object):
-
+class GenerateApiDocs(object):
     BUILD_DIR = abspath(dirname(__file__))
     AUTODOC_DIR = join(BUILD_DIR, 'autodoc')
     ROOT = join(BUILD_DIR, '..', '..')
@@ -35,26 +34,25 @@ class GenerateDocs(object):
         print abspath(join(self.BUILD_DIR, '_build', 'html', 'index.html'))
         exit(rc)
 
-    def clean_directory(self, dirname):
-        if os.path.exists(dirname):
-            print 'Cleaning', dirname
-            shutil.rmtree(dirname)
-
     def create_autodoc(self):
-        self.clean_directory(self.AUTODOC_DIR)
+        self._clean_directory(self.AUTODOC_DIR)
         print 'Creating autodoc'
         call(['sphinx-apidoc', '--output-dir', self.AUTODOC_DIR, '--force',
               '--no-toc', '--maxdepth', '2', self.ROBOT_DIR])
 
     def create_javadoc(self):
-        self.clean_directory(self.JAVA_TARGET)
+        self._clean_directory(self.JAVA_TARGET)
         print 'Creating javadoc'
         call(['javadoc', '-sourcepath', self.JAVA_SRC, '-d', self.JAVA_TARGET,
               '-notimestamp', 'org.robotframework'])
 
+    def _clean_directory(self, dirname):
+        if os.path.exists(dirname):
+            print 'Cleaning', dirname
+            shutil.rmtree(dirname)
+
 
 class GeneratorOptions():
-
     usage = """
     generate.py [options]
 
@@ -69,27 +67,28 @@ class GeneratorOptions():
 
     def __init__(self):
         self._parser = OptionParser(self.usage)
-        self._add_parser_options()
+        self._add_options()
         self._options, _ = self._parser.parse_args()
         if not self._options.also_javadoc:
-           self.prompt_for_javadoc()
+           self._prompt_for_javadoc()
 
     @property
     def also_javadoc(self):
         return self._options.also_javadoc
 
-    def _add_parser_options(self):
+    def _add_options(self):
         self._parser.add_option("-j", "--also-javadoc",
             action='store_true',
             dest="also_javadoc",
-            help="also generate Javadocs (off by default)"
+            help="also generate Javadocs (skips the prompt)"
         )
 
-    def prompt_for_javadoc(self):
+    def _prompt_for_javadoc(self):
         selection = raw_input("Also generate Javadoc [Y/N] (N by default) > ")
         if len(selection) > 0 and selection[0].lower() == "y":
             self._options.also_javadoc = True
 
 
 if __name__ == '__main__':
-    GenerateDocs().run()
+    GenerateApiDocs().run()
+
