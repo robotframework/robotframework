@@ -65,14 +65,6 @@ robot Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`runner` Module
---------------------
-
-.. automodule:: robot.runner
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`testdoc` Module
 ---------------------
 
@@ -103,7 +95,6 @@ Subpackages
 .. toctree::
 
     robot.api
-    robot.common
     robot.conf
     robot.htmldata
     robot.libdocpkg

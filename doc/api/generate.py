@@ -8,8 +8,7 @@ from subprocess import call
 from sys import exit
 
 
-class GenerateDocs(object):
-
+class GenerateApiDocs(object):
     BUILD_DIR = abspath(dirname(__file__))
     AUTODOC_DIR = join(BUILD_DIR, 'autodoc')
     ROOT = join(BUILD_DIR, '..', '..')
@@ -25,8 +24,9 @@ class GenerateDocs(object):
         self.options = GeneratorOptions()
 
     def run(self):
-        self.create_autodoc()
-        if self.options.also_javadoc:
+        if self.options.autodoc:
+            self.create_autodoc()
+        if self.options.javadoc:
             self.create_javadoc()
         orig_dir = abspath(os.curdir)
         os.chdir(self.BUILD_DIR)
@@ -35,27 +35,26 @@ class GenerateDocs(object):
         print abspath(join(self.BUILD_DIR, '_build', 'html', 'index.html'))
         exit(rc)
 
-    def clean_directory(self, dirname):
-        if os.path.exists(dirname):
-            print 'Cleaning', dirname
-            shutil.rmtree(dirname)
-
     def create_autodoc(self):
-        self.clean_directory(self.AUTODOC_DIR)
-        print 'Creating autodoc'
+        self._clean_directory(self.AUTODOC_DIR)
+        print 'Regenearting autodoc'
         call(['sphinx-apidoc', '--output-dir', self.AUTODOC_DIR, '--force',
               '--no-toc', '--maxdepth', '2', self.ROBOT_DIR])
 
     def create_javadoc(self):
-        self.clean_directory(self.JAVA_TARGET)
-        print 'Creating javadoc'
+        self._clean_directory(self.JAVA_TARGET)
+        print 'Regenerating javadoc'
         call(['javadoc', '-sourcepath', self.JAVA_SRC, '-d', self.JAVA_TARGET,
               '-notimestamp', 'org.robotframework'])
 
+    def _clean_directory(self, dirname):
+        if os.path.exists(dirname):
+            print 'Cleaning', dirname
+            shutil.rmtree(dirname)
+
 
 class GeneratorOptions():
-
-    usage = """
+    usage = '''
     generate.py [options]
 
     This script creates API documentation from both Python and Java source code
@@ -65,31 +64,44 @@ class GeneratorOptions():
     API documentation entry point is create using Sphinx's `make html`.
 
     Sphinx, sphinx-apidoc and javadoc commands need to be in $PATH.
-    """
+    '''
 
     def __init__(self):
         self._parser = OptionParser(self.usage)
-        self._add_parser_options()
+        self._add_options()
         self._options, _ = self._parser.parse_args()
-        if not self._options.also_javadoc:
-           self.prompt_for_javadoc()
+        if not self._options._autodoc:
+           self._prompt_for_regeneration('autodoc')
+        if not self._options._javadoc:
+           self._prompt_for_regeneration('javadoc')
 
     @property
-    def also_javadoc(self):
-        return self._options.also_javadoc
+    def autodoc(self):
+        return self._options._autodoc
 
-    def _add_parser_options(self):
-        self._parser.add_option("-j", "--also-javadoc",
+    @property
+    def javadoc(self):
+        return self._options._javadoc
+
+    def _add_options(self):
+        self._parser.add_option('-a', '--autodoc',
             action='store_true',
-            dest="also_javadoc",
-            help="also generate Javadocs (off by default)"
+            dest='_autodoc',
+            help='Regenerates Autodoc'
         )
 
-    def prompt_for_javadoc(self):
-        selection = raw_input("Also generate Javadoc [Y/N] (N by default) > ")
-        if len(selection) > 0 and selection[0].lower() == "y":
-            self._options.also_javadoc = True
+        self._parser.add_option('-j', '--javadoc',
+            action='store_true',
+            dest='_javadoc',
+            help='Regenerates Javadoc'
+        )
+
+    def _prompt_for_regeneration(self, attr_name):
+        selection = raw_input('Regenerate %s? This overrides manual changes. '
+        '[Y/N] (N by default) > ' % attr_name.title())
+        if len(selection) > 0 and selection[0].lower() == 'y':
+            setattr(self._options, '_%s' % attr_name, True)
 
 
 if __name__ == '__main__':
-    GenerateDocs().run()
+    GenerateApiDocs().run()

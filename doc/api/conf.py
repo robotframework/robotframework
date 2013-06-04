@@ -45,7 +45,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Robot Framework'
-copyright = u'2012, Nokia Siemens Networks'
+copyright = u'2013, Nokia Siemens Networks'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -243,3 +243,14 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+def non_example_lines(line):
+    if not line.startswith(('| ', 'Examples', 'Example', '=>')):
+        return True
+
+def remove_library_examples(app, what, name, obj, options, lines):
+    if name.startswith("robot.libraries"):
+        lines[:] = filter(non_example_lines, lines)
+
+def setup(app):
+    app.connect('autodoc-process-docstring', remove_library_examples)

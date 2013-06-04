@@ -9,10 +9,18 @@ running Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`arguments` Module
------------------------
+:mod:`baselibrary` Module
+-------------------------
 
-.. automodule:: robot.running.arguments
+.. automodule:: robot.running.baselibrary
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`builder` Module
+---------------------
+
+.. automodule:: robot.running.builder
     :members:
     :undoc-members:
     :show-inheritance:
@@ -25,10 +33,18 @@ running Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`defaultvalues` Module
----------------------------
+:mod:`defaults` Module
+----------------------
 
-.. automodule:: robot.running.defaultvalues
+.. automodule:: robot.running.defaults
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`dynamicmethods` Module
+----------------------------
+
+.. automodule:: robot.running.dynamicmethods
     :members:
     :undoc-members:
     :show-inheritance:
@@ -53,14 +69,6 @@ running Package
 ----------------------
 
 .. automodule:: robot.running.importer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`javaargcoercer` Module
-----------------------------
-
-.. automodule:: robot.running.javaargcoercer
     :members:
     :undoc-members:
     :show-inheritance:
@@ -97,10 +105,10 @@ running Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`runerrors` Module
------------------------
+:mod:`randomizer` Module
+------------------------
 
-.. automodule:: robot.running.runerrors
+.. automodule:: robot.running.randomizer
     :members:
     :undoc-members:
     :show-inheritance:
@@ -113,6 +121,14 @@ running Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`runner` Module
+--------------------
+
+.. automodule:: robot.running.runner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`signalhandler` Module
 ---------------------------
 
@@ -121,10 +137,26 @@ running Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`status` Module
+--------------------
+
+.. automodule:: robot.running.status
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`testlibraries` Module
 ---------------------------
 
 .. automodule:: robot.running.testlibraries
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`usererrorhandler` Module
+------------------------------
+
+.. automodule:: robot.running.usererrorhandler
     :members:
     :undoc-members:
     :show-inheritance:
@@ -142,5 +174,6 @@ Subpackages
 
 .. toctree::
 
+    robot.running.arguments
     robot.running.timeouts
 
