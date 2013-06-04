@@ -2353,7 +2353,6 @@ class _Misc:
         self.log('Set tag%s %s.' % (utils.plural_or_not(tags),
                                     utils.seq2str(tags)))
 
-
     def remove_tags(self, *tags):
         """Removes given `tags` from the current test or all tests in a suite.
 
