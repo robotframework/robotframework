@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Settings for both test execution and output processing."""
+"""Settings for both test execution and output processing.
+
+The modules in this package are used internally by Robot Framework
+and are not intended to be used as public APIs.
+"""
 
 from .settings import RobotSettings, RebotSettings

@@ -12,9 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""TImplements runtime logging and listener interface.
+"""Implements runtime logging and listener interface.
 
-This package is likely to change in RF 2.8.
+The modules in this package are used internally by Robot Framework
+and are not intended to be used as public APIs.
 """
 
 from .output import Output

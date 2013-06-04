@@ -20,7 +20,8 @@ modified and saved back to disk. In addition, a convenience factory function
 :func:`~.model.TestData` can be used to parse file or directory to a
 corresponding object.
 
-This package is considered stable.
+This package is considered stable but will likely change radically in
+Robot Framework 2.9.
 
 Example
 -------

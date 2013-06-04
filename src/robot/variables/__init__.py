@@ -14,8 +14,8 @@
 
 """Implements handling and resolving of variables.
 
-This package is likely to change radically in RF 2.8. External code should use
-functionality provided directly by this package with care.
+The modules in this package are used internally by Robot Framework
+and are not intended to be used as public APIs.
 """
 
 import os

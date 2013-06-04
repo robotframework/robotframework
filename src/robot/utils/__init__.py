@@ -16,6 +16,9 @@
 
 Provided utilities are generally stable, but absolute backwards compatibility
 between major versions is not guaranteed.
+
+The modules in this package are used internally by Robot Framework
+and are not intended to be used as public APIs.
 """
 
 from .argumentparser import ArgumentParser

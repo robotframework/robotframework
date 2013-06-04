@@ -32,9 +32,12 @@ Currently exposed APIs are:
     :py:class:`~robot.parsing.model.TestCaseFile` or
     :py:class:`~robot.parsing.model.TestDataDirectory` based on the input.
 
-  * :py:func:`~robot.running.model.TestSuite` for creating a
-    test suite that can be executed. This API is going to change in
-    Robot Framework 2.8.
+  * :py:class:`~robot.running.model.TestSuite` for creating a test suites
+    programmatically and :py:class:`~robot.running.builder.TestSuiteBuilder`
+    for creating test suites programmatically from source files.
+
+  * :py:class:`~robot.reporting.resultwriter.ResultWriter` for writing test results,
+    logs, reports and XUnits results.
 
 These names can be imported like this:
 

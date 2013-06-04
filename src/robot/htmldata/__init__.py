@@ -12,7 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Generic functionality for writing output files in HTML format.
+"""This package has modules for writing output files in HTML format.
+
+The modules in this package are used internally by Robot Framework
+and are not intended to be used as public APIs.
 
 :mod:`robot.reporting`, :mod:`robot.libdoc` and :mod:`robot.testdoc` use
 this package.
