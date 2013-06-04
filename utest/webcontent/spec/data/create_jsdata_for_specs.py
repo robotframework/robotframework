@@ -30,7 +30,7 @@ def run_robot(testdata, output=OUTPUT):
 
 
 def create_jsdata(target, split_log, outxml=OUTPUT):
-    result = Results(outxml, RebotSettings({'splitlog': split_log})).js_result
+    result = Results(RebotSettings({'splitlog': split_log}), outxml).js_result
     config = {'logURL': 'log.html', 'reportURL': 'report.html', 'background': {'fail': 'DeepPink'}}
     with open(target, 'w') as output:
         JsResultWriter(output, start_block='', end_block='\n').write(result, config)
