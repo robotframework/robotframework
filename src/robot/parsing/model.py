@@ -608,9 +608,6 @@ class ForLoop(_WithSteps):
     def is_for_loop(self):
         return True
 
-    def apply_template(self, template):
-        return self
-
     def as_list(self, indent=False, include_comment=True):
         IN = ['IN RANGE' if self.range else 'IN']
         comments = self.comment.as_list() if include_comment else []
@@ -645,11 +642,6 @@ class Step(object):
 
     def is_for_loop(self):
         return False
-
-    def apply_template(self, template):
-        if self.is_comment():
-            return self
-        return Step([template] + self.as_list(include_comment=False))
 
     def is_set(self):
         return True

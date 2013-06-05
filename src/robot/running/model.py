@@ -39,10 +39,6 @@ class Keyword(model.Keyword):
     def keyword(self):
         return self.name
 
-    # TODO: Remove compatibility
-    def apply_template(self, template):
-        return self
-
 
 class ForLoop(Keyword):
     keyword_class = Keyword
@@ -65,10 +61,6 @@ class ForLoop(Keyword):
     @property
     def steps(self):
         return self.keywords
-
-    # TODO: Remove compatibility
-    def apply_template(self, template):
-        return self
 
 
 class TestCase(model.TestCase):

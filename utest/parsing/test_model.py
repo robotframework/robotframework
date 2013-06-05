@@ -319,14 +319,6 @@ class TestStep(unittest.TestCase):
         assert_equals(Step(['${v}, @{list}=', 'KW', 'arg']).as_list(),
                       ['${v}, @{list}=', 'KW', 'arg'])
 
-    def test_apply_template_to_step(self):
-        kw = 'Should Be Equal'
-        args = ['Foo', 'Bar']
-        step = Step(args)
-        templated_step = step.apply_template(kw)
-        assert_equal(templated_step.keyword, kw)
-        assert_equal(templated_step.args, args)
-
     def _test(self, content, kw='KW', args=[], assign=[]):
         step = Step(content)
         assert_equal(step.keyword, kw)
