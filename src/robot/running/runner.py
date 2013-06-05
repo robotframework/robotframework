@@ -14,19 +14,18 @@
 
 from __future__ import with_statement
 
-from robot.model import SuiteVisitor
-from robot.result.testsuite import TestSuite     # TODO: expose in __init__?
-from robot.result.executionresult import Result  # ---------- ii -----------
-from robot.running.namespace import Namespace
-from robot.running.timeouts import TestTimeout
-from robot.variables import GLOBAL_VARIABLES
-from robot.running.context import EXECUTION_CONTEXTS
-from robot.running.keywords import Keywords, Keyword
-from robot.running.userkeyword import UserLibrary
 from robot.errors import ExecutionFailed, DataError, PassExecution
-from robot import utils
+from robot.model import SuiteVisitor
+from robot.result import TestSuite, Result
+from robot.variables import GLOBAL_VARIABLES
+from robot.utils import get_timestamp, NormalizedDict
 
+from .context import EXECUTION_CONTEXTS
+from .keywords import Keywords, Keyword
+from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
+from .timeouts import TestTimeout
+from .userkeyword import UserLibrary
 
 
 class Runner(SuiteVisitor):
@@ -52,7 +51,7 @@ class Runner(SuiteVisitor):
         variables.set_from_variable_table(suite.variables)
         result = TestSuite(name=suite.name,
                            source=suite.source,
-                           starttime=utils.get_timestamp())
+                           starttime=get_timestamp())
         if not self.result:
             result.set_criticality(suite.criticality.critical_tags,
                                    suite.criticality.non_critical_tags)
@@ -80,7 +79,7 @@ class Runner(SuiteVisitor):
         self._output.start_suite(ModelCombiner(suite, self._suite))
         self._context.set_suite_variables(result)
         self._run_setup(suite.keywords.setup, self._suite_status)
-        self._executed_tests = utils.NormalizedDict(ignore='_')
+        self._executed_tests = NormalizedDict(ignore='_')
 
     def _resolve_setting(self, value):
         return self._variables.replace_string(value, ignore_errors=True)
@@ -93,7 +92,7 @@ class Runner(SuiteVisitor):
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
                 self._suite.suite_teardown_failed(unicode(failure))
-        self._suite.endtime = utils.get_timestamp()
+        self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
         self._context.end_suite(self._suite)
         self._suite = self._suite.parent
@@ -107,7 +106,7 @@ class Runner(SuiteVisitor):
         result = self._suite.tests.create(name=test.name,
                                           doc=self._resolve_setting(test.doc),
                                           tags=self._variables.replace_meta('fixme', test.tags, []),
-                                          starttime=utils.get_timestamp(),
+                                          starttime=get_timestamp(),
                                           timeout=self._get_timeout(test),
                                           status='RUNNING')
         keywords = Keywords(test.keywords.normal, bool(test.template))
@@ -140,7 +139,7 @@ class Runner(SuiteVisitor):
             status.test_failed(result.timeout.get_message(), result.critical)
         result.status = status.status
         result.message = status.message or result.message
-        result.endtime = utils.get_timestamp()
+        result.endtime = get_timestamp()
         self._output.end_test(ModelCombiner(result, test))
         self._context.end_test(result)
 

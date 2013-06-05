@@ -31,5 +31,7 @@ normal log and report files could be generated with ``rebot`` tool.
 .. literalinclude:: /../../doc/api/code_examples/check_test_times.py
 """
 
+from .executionresult import Result
 from .resultbuilder import ExecutionResult
+from .testsuite import TestSuite
 from .visitor import ResultVisitor
