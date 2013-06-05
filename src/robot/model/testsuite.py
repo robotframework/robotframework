@@ -30,12 +30,12 @@ class TestSuite(ModelObject):
     test_class = TestCase
     keyword_class = Keyword
 
-    def __init__(self, source='', name='', doc='', metadata=None):
+    def __init__(self, name='', doc='', metadata=None, source=None):
         self.parent = None
-        self.source = source
         self.name = name
         self.doc = doc
         self.metadata = metadata
+        self.source = source
         self.suites = []
         self.tests = []
         self.keywords = []

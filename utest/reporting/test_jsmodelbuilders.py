@@ -31,7 +31,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_suite(TestSuite())
 
     def test_suite_with_values(self):
-        suite = TestSuite('', 'Name', 'Doc', {'m1': 'v1', 'M2': 'V2'}, 'Message',
+        suite = TestSuite('Name', 'Doc', {'m1': 'v1', 'M2': 'V2'}, None, 'Message',
                           '20111204 19:00:00.000', '20111204 19:00:42.001')
         self._verify_suite(suite, 'Name', 'Doc', ('m1', '<p>v1</p>', 'M2', '<p>V2</p>'),
                            message='Message', start=0, elapsed=42001)

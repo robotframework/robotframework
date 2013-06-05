@@ -119,7 +119,7 @@ class _ExecutionContext(object):
 
     def set_suite_variables(self, suite):
         self.variables['${SUITE_NAME}'] = suite.longname
-        self.variables['${SUITE_SOURCE}'] = suite.source
+        self.variables['${SUITE_SOURCE}'] = suite.source or ''
         self.variables['${SUITE_DOCUMENTATION}'] = suite.doc
         self.variables['${SUITE_METADATA}'] = suite.metadata.copy()
 

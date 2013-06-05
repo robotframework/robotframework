@@ -13,7 +13,7 @@ def build(*paths):
     paths = [normpath(join(DATADIR, p)) for p in paths]
     suite = TestSuiteBuilder().build(*paths)
     assert_true(isinstance(suite, TestSuite))
-    assert_equals(suite.source, paths[0] if len(paths) == 1 else '')
+    assert_equals(suite.source, paths[0] if len(paths) == 1 else None)
     return suite
 
 
