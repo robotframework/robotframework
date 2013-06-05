@@ -75,6 +75,16 @@ class _ExecutionContext(object):
         finally:
             self.suite_teardown = False
 
+    @contextmanager
+    def in_keyword_teardown(self, error):
+        self.variables['${KEYWORD_STATUS}'] = 'FAIL' if error else 'PASS'
+        self.variables['${KEYWORD_MESSAGE}'] = unicode(error or '')
+        self._in_keyword_teardown += 1
+        try:
+            yield
+        finally:
+            self._in_keyword_teardown -= 1
+
     @property
     def teardown(self):
         if self.suite_teardown or self._in_keyword_teardown:
@@ -89,14 +99,6 @@ class _ExecutionContext(object):
     # TODO: Remove
     def get_current_vars(self):
         return self.variables
-
-    def start_keyword_teardown(self, error):
-        self.variables['${KEYWORD_STATUS}'] = 'FAIL' if error else 'PASS'
-        self.variables['${KEYWORD_MESSAGE}'] = unicode(error or '')
-        self._in_keyword_teardown += 1
-
-    def end_keyword_teardown(self):
-        self._in_keyword_teardown -= 1
 
     def set_timeout(self, err):
         self.timeout_occured = bool(err.timeout)
