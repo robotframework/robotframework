@@ -11,6 +11,14 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+"""
+Visitors can be used to easily travel the test suites, test cases and keywords.
+
+For usage example, see :py:mod:`~robot.result` package.
+
+The pattern is internally widely used in Robot Framework, for example see the
+source code of :py:class:`robot.model.tagsetter.TagSetter`.
+"""
 
 from robot.model import SuiteVisitor
 
