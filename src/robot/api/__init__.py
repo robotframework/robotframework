@@ -36,8 +36,8 @@ Currently exposed APIs are:
     programmatically and :py:class:`~robot.running.builder.TestSuiteBuilder`
     for creating test suites programmatically from source files.
 
-  * :py:class:`~robot.reporting.resultwriter.ResultWriter` for writing test results,
-    logs, reports and XUnits results.
+  * :py:class:`~robot.reporting.resultwriter.ResultWriter` for writing test
+    results, logs, reports and XUnit files.
 
 These names can be imported like this:
 
@@ -50,6 +50,5 @@ See documentations of the individual APIs for more details.
 
 from robot.parsing import TestCaseFile, TestDataDirectory, ResourceFile, TestData
 from robot.result import ExecutionResult
-# TODO: Document below new and newly exposed APIs and list them here
 from robot.reporting import ResultWriter
 from robot.running import TestSuite, TestSuiteBuilder
