@@ -1,31 +1,33 @@
 #!/usr/bin/env python
 
-"""Usage: check_test_times.py inpath [outpath]
+"""Usage: check_test_times.py seconds inpath [outpath]
 
 Reads result of a test run from Robot output file and checks that no test
-took longer than 3 minutest to execute. If outpath is not given, the
-result is written over the original file.
+took longer than given amount of seconds to execute. If outpath is not
+given, the result is written over the original file.
 """
 
 import sys
-from robot.result import ExecutionResult
+from robot.api import ExecutionResult, ResultVisitor
 
 
-def check_tests(inpath, outpath=None):
+class ExecutionTimeChecker(ResultVisitor):
+
+    def __init__(self, max_seconds):
+        self.max_milliseconds = max_seconds * 1000
+
+    def visit_test(self, test):
+        if test.status == 'PASS' and test.elapsedtime > self.max_milliseconds:
+            test.status = 'FAIL'
+            test.message = 'Test execution took too long.'
+
+
+def check_tests(max_seconds, inpath, outpath=None):
     if not outpath:
         outpath = inpath
     result = ExecutionResult(inpath)
-    _check_execution_times(result.suite)
+    result.suite.visit(ExecutionTimeChecker(int(max_seconds)))
     result.save(outpath)
-
-def _check_execution_times(suite):
-    for test in suite.tests:
-        if test.status == 'PASS' and test.elapsedtime > 1000 * 60 * 3:
-            test.status = 'FAIL'
-            test.message = 'Test execution time was too long: %s' % test.elapsedtime
-    for suite in suite.suites:
-        _check_execution_times(suite)
-
 
 if __name__ == '__main__':
     try:
