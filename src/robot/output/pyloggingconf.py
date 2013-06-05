@@ -14,8 +14,8 @@
 
 import logging
 
-from robot.api import logger
 from robot import utils
+
 
 LEVELS = {'TRACE': logging.NOTSET,
           'DEBUG': logging.DEBUG,
@@ -39,12 +39,19 @@ def set_level(level):
 
 class RobotHandler(logging.Handler):
 
+    @property
+    def _logger(self):
+        # TODO: move logger implementation away from api so that it can be
+        # imported without causing cyclic imports.
+        from robot.api import logger
+        return logger
+
     def emit(self, record):
         message, error = self._get_message(record)
         method = self._get_logger_method(record.levelno)
         method(message)
         if error:
-            logger.debug(error)
+            self._logger.debug(error)
 
     def _get_message(self, record):
         try:
@@ -57,9 +64,9 @@ class RobotHandler(logging.Handler):
 
     def _get_logger_method(self, level):
         if level >= logging.WARNING:
-            return logger.warn
+            return self._logger.warn
         if level >= logging.INFO:
-            return logger.info
+            return self._logger.info
         if level >= logging.DEBUG:
-            return logger.debug
-        return logger.trace
+            return self._logger.debug
+        return self._logger.trace
