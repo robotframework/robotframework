@@ -25,9 +25,14 @@ from .xunitwriter import XUnitWriter
 
 
 class ResultWriter(object):
+    """The writer to create output, log, report and XUnit files.
+
+    :param sources: can be either single
+        :class:`~robot.result.executionresult.Result` object or
+        multiple paths to existing output.xml files.
+    """
 
     def __init__(self, *sources):
-        # TODO: Document that sources can be XML output files or one Result
         self._sources = sources
 
     def write_results(self, settings=None, **options):
