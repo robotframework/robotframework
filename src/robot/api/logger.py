@@ -43,22 +43,17 @@ shown as HTML, this argument should be set to `True`.
 Example
 -------
 
-from robot.api import logger
+.. code-block:: python
 
-def my_keyword(arg):
-    logger.debug('Got argument %s' % arg)
-    do_something()
-    logger.info('<i>This</i> is a boring example', html=True)
+    from robot.api import logger
+
+    def my_keyword(arg):
+        logger.debug('Got argument %s' % arg)
+        do_something()
+        logger.info('<i>This</i> is a boring example', html=True)
 """
 
-import sys
-import threading
-
-from robot.output import LOGGER, Message
-from robot.running.timeouts import timeoutthread
-
-
-LOGGING_THREADS = ('MainThread', timeoutthread.TIMEOUT_THREAD_NAME)
+from robot.output import librarylogger
 
 
 def write(msg, level, html=False):
@@ -68,16 +63,18 @@ def write(msg, level, html=False):
     of using this method, it is generally better to use the level
     specific methods such as `info` and `debug`.
     """
-    if threading.currentThread().getName() in LOGGING_THREADS:
-        LOGGER.log_message(Message(msg, level, html))
+    librarylogger.write(msg, level, html)
+
 
 def trace(msg, html=False):
     """Writes the message to the log file with the TRACE level."""
-    write(msg, 'TRACE', html)
+    librarylogger.trace(msg, html)
+
 
 def debug(msg, html=False):
     """Writes the message to the log file with the DEBUG level."""
-    write(msg, 'DEBUG', html)
+    librarylogger.debug(msg, html)
+
 
 def info(msg, html=False, also_console=False):
     """Writes the message to the log file with the INFO level.
@@ -85,13 +82,13 @@ def info(msg, html=False, also_console=False):
     If `also_console` argument is set to `True`, the message is written
     both to the log file and to the console.
     """
-    write(msg, 'INFO', html)
-    if also_console:
-        console(msg)
+    librarylogger.info(msg, html, also_console)
+
 
 def warn(msg, html=False):
     """Writes the message to the log file with the WARN level."""
-    write(msg, 'WARN', html)
+    librarylogger.warn(msg, html)
+
 
 def console(msg, newline=True):
     """Writes the message to the console.
@@ -99,7 +96,4 @@ def console(msg, newline=True):
     If the `newline` argument is `True`, a newline character is automatically
     added to the message.
     """
-    if newline:
-        msg += '\n'
-    sys.__stdout__.write(msg)
-    sys.__stdout__.flush()
+    librarylogger.console(msg, newline)

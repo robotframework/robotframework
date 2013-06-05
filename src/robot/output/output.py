@@ -12,10 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from . import pyloggingconf
+from .debugfile import DebugFile
 from .listeners import Listeners
 from .logger import LOGGER
 from .loggerhelper import AbstractLogger
-from .debugfile import DebugFile
 from .xmllogger import XmlLogger
 
 
@@ -61,8 +62,6 @@ class Output(AbstractLogger):
         LOGGER.log_message(msg)
 
     def set_log_level(self, level):
-        # TODO: Module structure should be cleaned up to prevent cyclic imports
-        from .pyloggingconf import set_level
-        set_level(level)
+        pyloggingconf.set_level(level)
         return self._xmllogger.set_log_level(level)
 
