@@ -2446,7 +2446,8 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     def _matches(self, string, pattern):
         # Must use this instead of fnmatch when string may contain newlines.
-        return utils.matches(string, pattern, caseless=False, spaceless=False)
+        matcher = utils.Matcher(pattern, caseless=False, spaceless=False)
+        return matcher.match(string)
 
     def _is_true(self, condition):
         if isinstance(condition, basestring):

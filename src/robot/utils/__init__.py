@@ -34,7 +34,7 @@ from .etreewrapper import ET, ETSource
 from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
-from .match import eq, matches, matches_any, Matcher, MultiMatcher
+from .match import eq, Matcher, MultiMatcher
 from .misc import plural_or_not, printable_name, seq2str, seq2str2, getdoc, isatty
 from .normalizing import lower, normalize, NormalizedDict
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
