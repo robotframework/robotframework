@@ -45,6 +45,13 @@ class TestMatcher(unittest.TestCase):
                        'forw/slash/and\\back\\slash']:
             self._matches(string, string), string
 
+    def test_match_any(self):
+        matcher = Matcher('H?llo')
+        assert matcher.match_any(('Hello', 'world'))
+        assert matcher.match_any(['jam', 'is', 'hillo'])
+        assert not matcher.match_any(('no', 'match', 'here'))
+        assert not matcher.match_any(())
+
     def _matches(self, string, pattern, **config):
         assert Matcher(pattern, **config).match(string), pattern
 
@@ -69,6 +76,7 @@ class TestMultiMatcher(unittest.TestCase):
 
     def test_len(self):
         assert_equals(len(MultiMatcher()), 0)
+        assert_equals(len(MultiMatcher([])), 0)
         assert_equals(len(MultiMatcher(['one', 'two'])), 2)
 
     def test_iter(self):
@@ -81,6 +89,12 @@ class TestMultiMatcher(unittest.TestCase):
         assert not matcher.match('o')
         assert_equals(len(matcher), 1)
 
+    def test_match_any(self):
+        matcher = MultiMatcher(['H?llo', 'w*'])
+        assert matcher.match_any(('Hi', 'world'))
+        assert matcher.match_any(['jam', 'is', 'hillo'])
+        assert not matcher.match_any(('no', 'match', 'here'))
+        assert not matcher.match_any(())
 
 if __name__ == '__main__':
     unittest.main()

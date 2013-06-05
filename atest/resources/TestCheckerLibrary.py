@@ -138,7 +138,7 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
         actual_names = [s.name for s in suite.suites]
         assert_equals(len(actual_names), len(expected_names), 'Wrong number of subsuites')
         for expected in expected_names:
-            if not any(utils.Matcher(expected).match(name) for name in actual_names):
+            if not utils.Matcher(expected).match_any(actual_names):
                 raise AssertionError('Suite %s not found' % expected)
 
     def should_contain_tags(self, test, *tags):

@@ -48,6 +48,9 @@ class Matcher(object):
     def match(self, string):
         return self._regexp.match(self._normalize(string)) is not None
 
+    def match_any(self, strings):
+        return any(self.match(s) for s in strings)
+
 
 class MultiMatcher(object):
 
@@ -68,6 +71,9 @@ class MultiMatcher(object):
         if self._matchers:
             return any(m.match(string) for m in self._matchers)
         return self._match_if_no_patterns
+
+    def match_any(self, strings):
+        return any(self.match(s) for s in strings)
 
     def __len__(self):
         return len(self._matchers)

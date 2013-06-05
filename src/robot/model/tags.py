@@ -105,10 +105,10 @@ def TagPattern(pattern):
 class _SingleTagPattern(object):
 
     def __init__(self, pattern):
-        self._matcher = Matcher(pattern, ignore=['_'])
+        self._matcher = Matcher(pattern, ignore='_')
 
     def match(self, tags):
-        return any(self._matcher.match(tag) for tag in tags)
+        return self._matcher.match_any(tags)
 
     def __unicode__(self):
         return self._matcher.pattern
