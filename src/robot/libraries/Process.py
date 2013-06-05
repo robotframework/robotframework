@@ -23,8 +23,6 @@ from robot.utils import ConnectionCache
 from robot.version import get_version
 from robot.api import logger
 
-jython = sys.platform.startswith('java')
-cli = sys.platform == 'cli'
 
 class Process(object):
     """Robot Framework test library for running processes.
@@ -339,10 +337,7 @@ class Process(object):
         result = self._logs[process]
         logger.info('waiting for process to terminate')
         result.exit_code = process.wait()
-        if not result.stdout_path:
-            result._stdout = process.stdout.read()
-        if not result.stderr_path:
-            result._stderr = process.stderr.read()
+        result.prepare_stdout_and_stderr(process)
         logger.info('process terminated')
         return result
 
@@ -455,26 +450,46 @@ class Process(object):
 
 
 class ExecutionResult(object):
-    _stdout = _stderr = None
+    _stdout = _stderr = _process = None
 
     def __init__(self, stdout, stderr, exit_code=None):
         self.stdout_path = stdout.name if stdout != subprocess.PIPE else None
-        self.stderr_path = stderr.name if stderr != subprocess.PIPE else None
+        if stderr == subprocess.PIPE:
+            self.stderr_path = None
+        elif stderr == subprocess.STDOUT:
+            self.stderr_path = subprocess.STDOUT
+        else:
+            self.stderr_path = stderr.name
         self.exit_code = exit_code
 
     @property
     def stdout(self):
         if self._stdout is None:
-            with open(self.stdout_path, 'r') as f:
-                self._stdout = f.read()
+            self._stdout = self._construct_stdout()
         return self._stdout
+
+    def _construct_stdout(self):
+        if not self.stdout_path:
+            return self._process.stdout.read()
+        with open(self.stdout_path, 'r') as f:
+            return f.read()
 
     @property
     def stderr(self):
         if self._stderr is None:
-            with open(self.stderr_path, 'r') as f:
-                self._stderr = f.read()
+            self._stderr = self._construct_stderr()
         return self._stderr
+
+    def _construct_stderr(self):
+        if self.stderr_path == subprocess.STDOUT:
+            return self.stdout
+        elif not self.stderr_path:
+            return self._process.stderr.read()
+        with open(self.stderr_path, 'r') as f:
+            return f.read()
+
+    def prepare_stdout_and_stderr(self, process):
+        self._process = process
 
     def __str__(self):
         return """\
@@ -484,7 +499,6 @@ exit_code   : %d""" % (self.stdout_path, self.stderr_path, self.exit_code)
 
 
 class ProcessConfig(object):
-    FILE_INDEX = 0
 
     def __init__(self, tempdir,
                  cwd=None,
@@ -507,20 +521,15 @@ class ProcessConfig(object):
             return subprocess.PIPE
         if name:
             return open(os.path.join(self.cwd, name), 'w')
-        if jython or cli:
-            return subprocess.PIPE
-        return self._get_temp_file(postfix)
+        return subprocess.PIPE
 
     def _get_stderr(self, stderr, stdout):
         if stderr:
             if stderr == 'STDOUT' or stderr == stdout:
+                if self.stdout_stream == subprocess.PIPE:
+                    return subprocess.STDOUT
                 return self.stdout_stream
         return self._new_stream(stderr, 'stderr')
-
-    def _get_temp_file(self, suffix):
-        filename = 'tmp_logfile_%d_%s.out' % (ProcessConfig.FILE_INDEX, suffix)
-        ProcessConfig.FILE_INDEX += 1
-        return open(os.path.join(self._tempdir, filename), 'w')
 
     def _handle_rest(self, rest):
         if not rest:
