@@ -71,8 +71,8 @@ class TestCase(model.TestCase):
     __slots__ = ['template']
     keyword_class = Keyword
 
-    def __init__(self, template=None, **kwargs):
-        model.TestCase.__init__(self, **kwargs)
+    def __init__(self, name='', doc='', tags=None, timeout=None, template=None):
+        model.TestCase.__init__(self, name, doc, tags, timeout)
         self.template = template
 
     @setter
@@ -85,8 +85,20 @@ class TestSuite(model.TestSuite):
     test_class = TestCase
     keyword_class = Keyword
 
-    def __init__(self, **kwargs):
-        model.TestSuite.__init__(self, **kwargs)
+    def __init__(self,  source='', name='', doc='', metadata=None):
+        """Running model for single test suite.
+
+        :ivar parent: Parent :class:`TestSuite` or `None`.
+        :ivar source: Path to the source file.
+        :ivar name: Test suite name.
+        :ivar doc: Test suite documentation.
+        :ivar metadata: Test suite metadata as a dictionary.
+        :ivar suites: Child suites.
+        :ivar tests: A list of :class:`~.testcase.TestCase` instances.
+        :ivar keywords: A list containing setup and teardown.
+        """
+
+        model.TestSuite.__init__(self, source, name, doc, metadata)
         self.imports = []
         self.user_keywords = []
         self.variables = []
