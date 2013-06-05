@@ -107,7 +107,7 @@ class TestReporting(unittest.TestCase):
         assert_true(self.EXPECTED_TEST_NAME in content)
         assert_true(self.EXPECTED_FAILING_TEST in content)
         assert_true(self.EXPECTED_KEYWORD_NAME not in content)
-        assert_true(self.EXPECTED_DEBUG_MESSAGE in content)
+        assert_true(self.EXPECTED_DEBUG_MESSAGE not in content)
         assert_true(self.EXPECTED_ERROR_MESSAGE not in content)
 
     def _verify_log(self, content):

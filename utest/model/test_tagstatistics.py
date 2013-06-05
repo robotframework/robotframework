@@ -5,7 +5,7 @@ from robot.utils.asserts import assert_equals, assert_none
 from robot.model.tagstatistics import TagStatisticsBuilder, TagStatLink
 from robot.model import Tags
 from robot.result.testcase import TestCase
-from robot import utils
+from robot.utils import MultiMatcher
 
 
 class TestTagStatistics(unittest.TestCase):
@@ -24,16 +24,16 @@ class TestTagStatistics(unittest.TestCase):
         for incl, tags in self._incl_excl_data:
             builder = TagStatisticsBuilder(Criticality(), incl, [])
             builder.add_test(TestCase(status='PASS', tags=tags))
-            expected = [tag for tag in tags
-                        if incl == [] or any(utils.matches(tag, i) for i in incl)]
+            matcher = MultiMatcher(incl, match_if_no_patterns=True)
+            expected = [tag for tag in tags if matcher.match(tag)]
             assert_equals([s.name for s in builder.stats], sorted(expected))
 
     def test_exclude(self):
         for excl, tags in self._incl_excl_data:
             builder = TagStatisticsBuilder(Criticality(), [], excl)
             builder.add_test(TestCase(status='PASS', tags=tags))
-            expected = [tag for tag in tags
-                        if not any(utils.matches(tag, e) for e in excl)]
+            matcher = MultiMatcher(excl)
+            expected = [tag for tag in tags if not matcher.match(tag)]
             assert_equals([s.name for s in builder.stats], sorted(expected))
 
     def test_include_and_exclude(self):
