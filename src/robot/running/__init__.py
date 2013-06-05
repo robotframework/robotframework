@@ -26,7 +26,6 @@ from .keywords import Keyword
 from .model import TestSuite, TestCase
 from .testlibraries import TestLibrary
 from .runkwregister import RUN_KW_REGISTER
-from .signalhandler import STOP_SIGNAL_MONITOR
 
 
 def UserLibrary(path):

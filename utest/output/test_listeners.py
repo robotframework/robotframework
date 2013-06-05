@@ -18,13 +18,9 @@ class SuiteMock(_Mock):
         self.doc = 'somedoc'
         self.status = 'PASS'
         self.tests = self.suites = []
-        self.get_test_count = lambda: 0
 
-    def get_stat_message(self):
-        return 'full message'
-
-    def get_full_message(self):
-        return 'full message'
+    stat_message = 'stat message'
+    full_message = 'full message'
 
 class TestMock(_Mock):
     def __init__(self):
@@ -121,6 +117,7 @@ class InvalidListenerOldStyle:
 
 
 class _BaseListenerTest:
+    stat_message = ''
 
     def setUp(self):
         self.listeners = Listeners([(self.listener_name, [])])
@@ -149,7 +146,7 @@ class _BaseListenerTest:
 
     def test_end_suite(self):
         self.listeners.end_suite(SuiteMock())
-        self._assert_output('SUITE END: PASS full message')
+        self._assert_output('SUITE END: PASS ' + self.stat_message)
 
     def test_output_file(self):
         self.listeners.output_file('output', 'path/to/output')
@@ -183,6 +180,7 @@ class _BaseListenerTest:
 
 class TestOldStyleListeners(_BaseListenerTest, unittest.TestCase):
     listener_name = 'test_listeners.ListenAllOldStyle'
+    stat_message = 'full message'
 
     def test_importing(self):
         assert_equals(self.listener.version, 1)
@@ -191,6 +189,7 @@ class TestOldStyleListeners(_BaseListenerTest, unittest.TestCase):
 
 class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
     listener_name = 'test_listeners.ListenAllNewStyle'
+    stat_message = 'stat message'
 
     def test_importing(self):
         assert_equals(self.listener.version, 2)

@@ -40,7 +40,7 @@ class CommandLineMonitor(object):
     def end_suite(self, suite):
         self._writer.info(suite.longname, suite.doc)
         self._writer.status(suite.status)
-        self._writer.message(suite.get_full_message())
+        self._writer.message(suite.full_message)
         self._writer.suite_separator()
 
     def start_test(self, test):

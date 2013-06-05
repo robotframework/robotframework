@@ -337,7 +337,7 @@ class Variables(utils.NormalizedDict):
     def set_from_variable_table(self, variables, overwrite=False):
         for var in variables:
             if not var:
-                continue  # TODO: Remove compatibility with old run model.
+                continue
             try:
                 name, value = self._get_var_table_name_and_value(
                     var.name, var.value, var.report_invalid_syntax)

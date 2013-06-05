@@ -14,12 +14,16 @@
 
 import os.path
 
+from robot.conf import RobotSettings
 from robot import model
-from robot.output import LOGGER
+from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import setter
+from robot.variables import init_global_variables
 
+from .namespace import IMPORTER
 from .randomizer import Randomizer
 from .runner import Runner
+from .signalhandler import STOP_SIGNAL_MONITOR
 
 
 class Keyword(model.Keyword):
@@ -38,10 +42,6 @@ class Keyword(model.Keyword):
     @property
     def keyword(self):
         return self.name
-
-    # TODO: Remove compatibility
-    def apply_template(self, template):
-        return self
 
 
 class ForLoop(Keyword):
@@ -66,10 +66,6 @@ class ForLoop(Keyword):
     def steps(self):
         return self.keywords
 
-    # TODO: Remove compatibility
-    def apply_template(self, template):
-        return self
-
 
 class TestCase(model.TestCase):
     __slots__ = ['template']
@@ -88,7 +84,6 @@ class TestSuite(model.TestSuite):
     __slots__ = []
     test_class = TestCase
     keyword_class = Keyword
-    status = 'RUNNING'   # TODO: Remove compatibility
 
     def __init__(self, **kwargs):
         model.TestSuite.__init__(self, **kwargs)
@@ -117,13 +112,8 @@ class TestSuite(model.TestSuite):
         self.visit(Randomizer(suites, tests))
 
     def run(self, settings=None, **options):
-        from robot.conf import RobotSettings
-        from robot.output import LOGGER, Output, pyloggingconf
-        from robot.running import STOP_SIGNAL_MONITOR, namespace
-        from robot.variables import init_global_variables
-
         STOP_SIGNAL_MONITOR.start()
-        namespace.IMPORTER.reset()
+        IMPORTER.reset()
         settings = settings or RobotSettings(options)
         pyloggingconf.initialize(settings['LogLevel'])
         init_global_variables(settings)
@@ -132,11 +122,6 @@ class TestSuite(model.TestSuite):
         self.visit(runner)
         output.close(runner.result)
         return runner.result
-
-    # TODO: Remove compatibility with old model
-    def _set_critical_tags(self, arg):
-        pass
-    critical = None
 
 
 class Variable(object):
@@ -165,8 +150,9 @@ class Timeout(object):
 
 
 class UserKeyword(object):
-    # TODO: Teardown should be handled as a keyword like with tests and suites.
-    # Cannot easily do it until running user keywords is "modernized".
+    # TODO: In 2.9:
+    # - Teardown should be handled as a keyword like with tests and suites.
+    # - Also resource files should use these model objects.
 
     def __init__(self, name, args=(), doc='', return_=None, timeout=None,
                  teardown=None):
@@ -183,7 +169,7 @@ class UserKeyword(object):
     def keywords(self, keywords):
         return model.ItemList(Keyword, items=keywords)
 
-    # TODO: Remove compatibility
+    # Compatibility with parsing model. Should be removed in 2.9.
     @property
     def steps(self):
         return self.keywords

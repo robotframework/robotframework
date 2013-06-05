@@ -97,10 +97,10 @@ class Listeners(object):
         for li in self._listeners:
             if li.version == 1:
                 li.call_method(li.end_suite, suite.status,
-                               suite.get_full_message())
+                               suite.full_message)
             else:
                 attrs = self._get_end_attrs(suite, 'metadata')
-                attrs['statistics'] = suite.get_stat_message()
+                attrs['statistics'] = suite.stat_message
                 attrs.update(self._get_suite_attrs(suite))
                 li.call_method(li.end_suite, suite.name, attrs)
 

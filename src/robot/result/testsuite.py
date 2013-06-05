@@ -64,8 +64,12 @@ class TestSuite(model.TestSuite):
     @property
     def full_message(self):
         if not self.message:
-            return self.statistics.message
-        return '%s\n\n%s' % (self.message, self.statistics.message)
+            return self.stat_message
+        return '%s\n\n%s' % (self.message, self.stat_message)
+
+    @property
+    def stat_message(self):
+        return self.statistics.message
 
     @property
     def elapsedtime(self):
@@ -88,14 +92,3 @@ class TestSuite(model.TestSuite):
 
     def suite_teardown_failed(self, message):
         self.visit(SuiteTeardownFailed(message))
-
-    # TODO: Remove compatibility code below when new run is integrated
-    def get_full_message(self):
-        return self.full_message
-
-    @property
-    def critical(self):
-        return self.criticality
-
-    def get_stat_message(self):
-        return self.statistics.message

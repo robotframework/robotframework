@@ -23,19 +23,17 @@ from robot.variables import is_scalar_var, VariableAssigner
 
 class Keywords(object):
 
-    def __init__(self, steps, template=None):
+    def __init__(self, steps, templated=False):
         self._keywords = []
-        self._templated = bool(template)
-        if self._templated:
-            steps = [s.apply_template(template) for s in steps]
+        self._templated = templated
         for s in steps:
-            self._add_step(s, template)
+            self._add_step(s)
 
-    def _add_step(self, step, template):
+    def _add_step(self, step):
         if step.is_comment():
             return
         if step.is_for_loop():
-            keyword = ForLoop(step, template)
+            keyword = ForLoop(step, self._templated)
         else:
             keyword = Keyword(step.keyword, step.args, step.assign)
         self.add_keyword(keyword)
@@ -174,13 +172,13 @@ class Keyword(_BaseKeyword):
 
 class ForLoop(_BaseKeyword):
 
-    def __init__(self, forstep, template=None):
+    def __init__(self, forstep, templated=False):
         _BaseKeyword.__init__(self, self._get_name(forstep), type='for')
         self.vars = forstep.vars
         self.items = forstep.items
         self.range = forstep.range
-        self.keywords = Keywords(forstep.steps, template)
-        self._templated = bool(template)
+        self.keywords = Keywords(forstep.steps, templated)
+        self._templated = templated
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.vars),
