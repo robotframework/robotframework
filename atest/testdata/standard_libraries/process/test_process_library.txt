@@ -101,6 +101,7 @@ Input things to process
     Start Process    python -c "print 'inp %s' % raw_input()"    shell=True
     ${process}=    Get Process Object
     Log   ${process.stdin.write("some input\n")}
+    Log   ${process.stdin.flush()}
     ${result}=    Wait For Process
     Should Match    ${result.stdout}    *inp some input*
 
