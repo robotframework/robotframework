@@ -66,59 +66,36 @@ class XUnitFileWriter(ResultVisitor):
         if suite is self._root_suite:
             self._writer.end('testsuite')
 
-    def start_test(self, test):
-        attrs = {'classname': test.parent.longname,
-                 'name': test.name,
-                 'time': self._time_as_seconds(test.elapsedtime)}
-        self._writer.start('testcase', attrs)
+    def visit_test(self, test):
+        self._writer.start('testcase',
+                           {'classname': test.parent.longname,
+                            'name': test.name,
+                            'time': self._time_as_seconds(test.elapsedtime)})
         if self._skip_noncritical and not test.critical:
             self._skip_test(test)
         elif not test.passed:
-            test.visit(TestFailureWriter(self._writer))
+            self._fail_test(test)
+        self._writer.end('testcase')
 
     def _skip_test(self, test):
-        self._writer.start('skipped', newline=False)
-        self._writer.content(self._get_test_skip_message(test))
-        self._writer.end('skipped')
+        self._writer.element('skipped', '%s: %s' % (test.status, test.message)
+                                        if test.message else test.status)
 
-    def _get_test_skip_message(self, test):
-        msg = 'PASS' if test.passed else 'FAIL'
-        if test.message:
-            msg += ': %s' % test.message
-        return msg
+    def _fail_test(self, test):
+        self._writer.element('failure', attrs={'message': test.message,
+                                               'type': 'AssertionError'})
 
     def _time_as_seconds(self, millis):
         return str(int(round(millis, -3) / 1000))
 
-    def end_test(self, test):
-        self._writer.end('testcase')
-
     def visit_keyword(self, kw):
+        pass
+
+    def visit_statistics(self, stats):
+        pass
+
+    def visit_errors(self, errors):
         pass
 
     def end_result(self, result):
         self._writer.close()
-
-
-class TestFailureWriter(ResultVisitor):
-
-    def __init__(self, writer):
-        self._writer = writer
-
-    def start_test(self, test):
-        self._writer.start('failure', {'message': test.message,
-                                       'type': 'AssertionError'}, newline=False)
-
-    def end_test(self, test):
-        self._writer.end('failure')
-
-    def visit_message(self, msg):
-        """Populates the <failure> section, normally only with a 'Stacktrace'.
-
-        There is a weakness here because filtering is based on message level:
-        - DEBUG level is used by RF for 'Tracebacks' (what is expected here)
-        - INFO and TRACE are used for keywords and arguments (not errors)
-        - first FAIL message is already reported as <failure> attribute
-        """
-        if msg.level == 'DEBUG':
-            self._writer.content(msg.message + '\n')
