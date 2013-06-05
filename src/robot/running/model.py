@@ -164,6 +164,7 @@ class Timeout(object):
 class UserKeyword(object):
     # TODO: In 2.9:
     # - Teardown should be handled as a keyword like with tests and suites.
+    # - Timeout should be handled consistently with tests.
     # - Also resource files should use these model objects.
 
     def __init__(self, name, args=(), doc='', return_=None, timeout=None,

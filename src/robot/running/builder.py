@@ -104,8 +104,6 @@ class TestSuiteBuilder(object):
         return unicode(template) if template.is_active() else None
 
     def _create_user_keyword(self, suite, data):
-        # TODO: Tests and uks have inconsistent timeout types
-        # and also teardowns are handled totally differently.
         uk = suite.user_keywords.create(name=data.name,
                                         args=tuple(data.args),
                                         doc=unicode(data.doc),
