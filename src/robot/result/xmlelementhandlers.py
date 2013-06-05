@@ -89,7 +89,7 @@ class RootSuiteHandler(SuiteHandler):
 
     def start(self, elem, result):
         result.suite.name = elem.get('name')
-        result.suite.source = elem.get('source', '')
+        result.suite.source = elem.get('source')
         return result.suite
 
     def _children(self):

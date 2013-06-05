@@ -37,7 +37,7 @@ class JsBuildingContext(object):
         self._msg_links = {}
 
     def string(self, string, escape=True):
-        if escape and string:   # string can, but should not, be None
+        if escape and string:
             if not isinstance(string, unicode):
                 string = unicode(string)
             string = html_escape(string)

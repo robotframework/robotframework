@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
+
 import os
 import re
 
@@ -24,8 +26,7 @@ from robot import utils
 
 from .baselibrary import BaseLibrary
 from .usererrorhandler import UserErrorHandler
-from .keywords import Keywords
-from .fixture import Teardown
+from .keywords import Keywords, Keyword
 from .timeouts import KeywordTimeout
 from .arguments import (ArgumentValidator, UserKeywordArgumentParser,
                         ArgumentResolver, ArgumentMapper)
@@ -191,7 +192,8 @@ class UserKeywordHandler(object):
             error = exception.earlier_failures
         except ExecutionFailed, exception:
             error = exception
-        td_error = self._run_teardown(context, error)
+        with context.in_keyword_teardown(error):
+            td_error = self._run_teardown(context)
         if error or td_error:
             error = UserKeywordExecutionFailed(error, td_error)
         return error or pass_, return_
@@ -217,17 +219,23 @@ class UserKeywordHandler(object):
                 for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
-    def _run_teardown(self, context, error):
+    def _run_teardown(self, context):
         if not self.teardown:
             return None
-        teardown = Teardown(self.teardown.name, self.teardown.args)
-        teardown.replace_variables(context.get_current_vars(), [])
-        context.start_keyword_teardown(error)
-        error = teardown.run(context)
-        context.end_keyword_teardown()
-        if isinstance(error, PassExecution):
+        try:
+            name = context.variables.replace_string(self.teardown.name)
+        except DataError, err:
+            return ExecutionFailed(unicode(err), syntax=True)
+        if name.upper() in ('', 'NONE'):
             return None
-        return error
+        kw = Keyword(name, self.teardown.args, type='teardown')
+        try:
+            kw.run(context)
+        except PassExecution:
+            return None
+        except ExecutionFailed, err:
+            return err
+        return None
 
     def _verify_keyword_is_valid(self):
         if self._errors:

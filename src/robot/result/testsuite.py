@@ -31,15 +31,15 @@ class TestSuite(model.TestSuite):
     test_class = TestCase
     keyword_class = Keyword
 
-    def __init__(self, source='', name='', doc='', metadata=None,
+    def __init__(self, name='', doc='', metadata=None, source=None,
                  message='', starttime=None, endtime=None):
         """Results of a single test suite.
 
         :ivar parent: Parent :class:`TestSuite` or `None`.
-        :ivar source: Path to the source file.
         :ivar name: Test suite name.
         :ivar doc: Test suite documentation.
         :ivar metadata: Test suite metadata as a dictionary.
+        :ivar source: Path to the source file.
         :ivar suites: Child suite results.
         :ivar tests: Test case results. a list of :class:`~.testcase.TestCase`
             instances.
@@ -48,7 +48,7 @@ class TestSuite(model.TestSuite):
         :ivar starttime: Test suite execution start time as a timestamp.
         :ivar endtime: Test suite execution end time as a timestamp.
         """
-        model.TestSuite.__init__(self, source, name, doc, metadata)
+        model.TestSuite.__init__(self, name, doc, metadata, source)
         self.message = message
         self.starttime = starttime
         self.endtime = endtime
