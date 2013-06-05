@@ -98,7 +98,6 @@ class Results(object):
     @property
     def result(self):
         if self._result is None:
-            # TODO: Are keywords really needed w/ xUnit?
             include_keywords = bool(self._settings.log or self._settings.output)
             self._result = ExecutionResult(include_keywords=include_keywords,
                                            *self._sources)
