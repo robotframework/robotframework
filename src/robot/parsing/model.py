@@ -29,7 +29,6 @@ from .settings import (Documentation, Fixture, Timeout, Tags, Metadata, Library,
 
 def TestData(parent=None, source=None, include_suites=None,
              warn_on_skipped=False):
-    # TODO: can we change the order of parent and source?? source seems mandatory
     """Parses a file or directory to a corresponding model object.
 
     :param parent: (optional) parent to be used in creation of the model object.

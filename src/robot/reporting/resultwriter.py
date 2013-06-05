@@ -99,9 +99,7 @@ class Results(object):
     def result(self):
         if self._result is None:
             # TODO: Are keywords really needed w/ xUnit?
-            include_keywords = bool(self._settings.log or
-                                    self._settings.output or
-                                    self._settings.xunit)
+            include_keywords = bool(self._settings.log or self._settings.output)
             self._result = ExecutionResult(include_keywords=include_keywords,
                                            *self._sources)
             self._result.configure(self._settings.status_rc,
