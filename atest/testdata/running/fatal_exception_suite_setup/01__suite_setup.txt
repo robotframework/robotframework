@@ -5,5 +5,5 @@ Suite Teardown  Log  Tearing down 1
 
 *** Test Cases ***
 Test That Should Not Be Run 1
-    [Documentation]  FAIL  Test execution is stopped due to a fatal error
+    [Documentation]  FAIL  Test execution stopped due to a fatal error.
     Fail  This should not be executed

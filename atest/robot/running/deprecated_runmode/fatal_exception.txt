@@ -50,7 +50,7 @@ Multiple Suite Aware Exiting From Suite Setup With Skip Teardowns
 Fatal Exception and Runmode Exit on Failure
     Run Tests  --runmode exitonfailure  running/fatal_exception/01__python_library_kw.txt
     Check Test Case  Test That Should Not Be Run 1  FAIL
-    ...  Critical failure occurred and ExitOnFailure option is in use
+    ...  Critical failure occurred and exit-on-failure mode is in use.
 
 Fatal Exception and Runmodes Exit On Failure And Skip Teardown On Exit
     Run Tests  --runmode SkipTeardownOnExit  running/fatal_exception

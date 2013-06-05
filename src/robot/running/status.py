@@ -155,9 +155,9 @@ class TestMessage(_Message):
     setup_message = 'Setup failed:\n%s'
     teardown_message = 'Teardown failed:\n%s'
     also_teardown_message = '%s\n\nAlso teardown failed:\n%s'
-    # TODO: Clean up error message below
-    exit_on_failure_message = 'Critical failure occurred and ExitOnFailure option is in use'
-    exit_on_fatal_message = 'Test execution is stopped due to a fatal error'
+    exit_on_fatal_message = 'Test execution stopped due to a fatal error.'
+    exit_on_failure_message = \
+        'Critical failure occurred and exit-on-failure mode is in use.'
 
     def __init__(self, status):
         _Message.__init__(self, status)

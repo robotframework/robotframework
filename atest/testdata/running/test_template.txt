@@ -164,7 +164,7 @@ Templates and fatal errors 1
     Fail  This should not be executed
 
 Templates and fatal errors 2
-    [Documentation]  FAIL  Test execution is stopped due to a fatal error
+    [Documentation]  FAIL  Test execution stopped due to a fatal error.
     Fail  This should not be executed
 
 *** Keywords ***

@@ -15,6 +15,6 @@ Run Keyword And Ignore Error
     Run Keyword And Ignore Error  Exit On Failure
 
 Failing Test Case
-    [Documentation]  FAIL  Test execution is stopped due to a fatal error
+    [Documentation]  FAIL  Test execution stopped due to a fatal error.
     Fail  This test should failt to exit on failure
 

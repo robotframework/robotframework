@@ -63,7 +63,7 @@ Run Keyword And Continue On Failure With Fatal Error
     Fail    This Should Not Be Executed!
 
 Run Keyword And Continue On Failure With Fatal Error 2
-    [Documentation]    FAIL    Test execution is stopped due to a fatal error
+    [Documentation]    FAIL    Test execution stopped due to a fatal error.
     No Operation
 
 *** Keywords ***

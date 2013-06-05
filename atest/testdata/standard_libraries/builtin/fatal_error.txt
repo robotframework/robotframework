@@ -14,7 +14,7 @@ Test is stopped when `Fatal Error` keyword is used
 
 Subsequent tests are not executed after `Fatal Error` keyword has been used
     [Documentation]  FAIL
-    ...  Test execution is stopped due to a fatal error
+    ...  Test execution stopped due to a fatal error.
     ...
     ...  Also parent suite teardown failed:
     ...  AssertionError

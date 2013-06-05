@@ -7,8 +7,8 @@ Exit On Failure
     [Setup]  Run Tests  --exitonfailure  misc/pass_and_fail.txt  misc/suites  running/fatal_exception/02__irrelevant.txt
     Check Test Case  Pass
     Check Test Case  Fail
-    Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
-    Check Test Case  Suite3 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
+    Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and exit-on-failure mode is in use.
+    Check Test Case  Suite3 First  FAIL  Critical failure occurred and exit-on-failure mode is in use.
 
 Imports Are Skipped On Exit
     Previous test should have passed  Exit On Failure
@@ -29,5 +29,5 @@ Exit On Failure With Skip Teardown On Exit
     Should Be Equal  ${tcase.teardown}  ${None}
     ${tsuite} =  Get Test Suite  Fourth
     Should Be Equal  ${tsuite.teardown}  ${None}
-    Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
-    Check Test Case  Suite3 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
+    Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and exit-on-failure mode is in use.
+    Check Test Case  Suite3 First  FAIL  Critical failure occurred and exit-on-failure mode is in use.
