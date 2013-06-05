@@ -118,7 +118,7 @@ class _RunnableHandler(object):
 
     def _run(self, context, args):
         positional, named = \
-            self.resolve_arguments(args, context.get_current_vars())
+            self.resolve_arguments(args, context.variables)
         context.output.trace(lambda: self._log_args(positional, named))
         runner = self._runner_for(self._current_handler(), context, positional,
                                   named, self._get_timeout(context.namespace))

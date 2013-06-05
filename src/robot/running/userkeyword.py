@@ -143,14 +143,13 @@ class UserKeywordHandler(object):
             context.end_user_keyword()
 
     def _run(self, context, arguments):
-        variables = context.get_current_vars()
         if context.dry_run:
-            return self._dry_run(context, variables, arguments)
-        return self._normal_run(context, variables, arguments)
+            return self._dry_run(context, arguments)
+        return self._normal_run(context, arguments)
 
-    def _dry_run(self, context, variables, arguments):
+    def _dry_run(self, context, arguments):
         arguments = self._resolve_dry_run_args(arguments)
-        error, return_ = self._execute(context, variables, arguments)
+        error, return_ = self._execute(context, arguments)
         if error:
             raise error
 
@@ -159,12 +158,12 @@ class UserKeywordHandler(object):
         missing_args = len(self.arguments.positional) - len(arguments)
         return tuple(arguments) + (None,) * missing_args
 
-    def _normal_run(self, context, variables, arguments):
-        arguments = self._resolve_arguments(arguments, variables)
-        error, return_ = self._execute(context, variables, arguments)
+    def _normal_run(self, context, arguments):
+        arguments = self._resolve_arguments(arguments, context.variables)
+        error, return_ = self._execute(context, arguments)
         if error and not error.can_continue(context.teardown):
             raise error
-        return_value = self._get_return_value(variables, return_)
+        return_value = self._get_return_value(context.variables, return_)
         if error:
             error.return_value = return_value
             raise error
@@ -176,9 +175,9 @@ class UserKeywordHandler(object):
         positional, named = resolver.resolve(arguments, variables)
         return mapper.map(positional, named, variables)
 
-    def _execute(self, context, variables, arguments):
-        self._set_variables(arguments, variables)
-        context.output.trace(lambda: self._log_args(variables))
+    def _execute(self, context, arguments):
+        self._set_variables(arguments, context.variables)
+        context.output.trace(lambda: self._log_args(context.variables))
         self._verify_keyword_is_valid()
         self.timeout.start()
         error = return_ = pass_ = None
@@ -348,6 +347,6 @@ class EmbeddedArgs(UserKeywordHandler):
     def _run(self, context, args):
         if not context.dry_run:
             for name, value in self.embedded_args:
-                context.get_current_vars()[name] = \
-                    context.get_current_vars().replace_scalar(value)
+                context.variables[name] = \
+                    context.variables.replace_scalar(value)
         return UserKeywordHandler._run(self, context, args)

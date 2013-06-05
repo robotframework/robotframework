@@ -597,9 +597,7 @@ class _FakeContext:
         self.namespace =  _FakeNamespace()
         self.dry_run = False
         self.teardown = False
-
-    def get_current_vars(self):
-        return self.namespace.variables
+        self.variables = _FakeVariableScope()
 
 
 if __name__ == '__main__':

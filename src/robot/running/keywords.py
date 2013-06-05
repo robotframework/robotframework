@@ -114,7 +114,7 @@ class Keyword(_BaseKeyword):
 
     def _start(self, context):
         handler = context.get_handler(self.handler_name)
-        handler.init_keyword(context.get_current_vars())
+        handler.init_keyword(context.variables)
         self.name = self._get_name(handler.longname)
         self.doc = handler.shortdoc
         self.timeout = getattr(handler, 'timeout', '')
@@ -247,14 +247,14 @@ class ForLoop(_BaseKeyword):
     def _get_items_and_iteration_steps(self, context):
         if context.dry_run:
             return self.vars, [0]
-        items = self._replace_vars_from_items(context.get_current_vars())
+        items = self._replace_vars_from_items(context.variables)
         return items, range(0, len(items), len(self.vars))
 
     def _run_one_round(self, context, variables, values):
         foritem = _ForItem(variables, values)
         context.start_keyword(foritem)
         for var, value in zip(variables, values):
-            context.get_current_vars()[var] = value
+            context.variables[var] = value
         error = self._run_with_error_handling(self.keywords.run, context)
         foritem.end(self._get_status(error))
         context.end_keyword(foritem)

@@ -96,10 +96,6 @@ class _ExecutionContext(object):
     def variables(self):
         return self.namespace.variables
 
-    # TODO: Remove
-    def get_current_vars(self):
-        return self.variables
-
     def set_timeout(self, err):
         self.timeout_occured = bool(err.timeout)
 
@@ -168,3 +164,6 @@ class _ExecutionContext(object):
 
     def trace(self, message):
         self.output.trace(message)
+
+    def info(self, message):
+        self.output.info(message)

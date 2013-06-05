@@ -68,6 +68,7 @@ class _FakeContext(object):
     def start_keyword(self, kw): pass
     def end_keyword(self, kw): pass
     def trace(self, msg): pass
+    def info(self, msg): pass
 
 
 class TestKeyword(unittest.TestCase):
