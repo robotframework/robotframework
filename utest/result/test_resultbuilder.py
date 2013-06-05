@@ -191,7 +191,7 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
         assert_equals(suite.id, 's1')
         assert_equals(suite.name, 'foo')
         assert_equals(suite.doc, '')
-        assert_equals(suite.source, '')
+        assert_equals(suite.source, None)
         assert_equals(suite.metadata, {})
         assert_equals(list(suite.keywords), [])
         assert_equals(suite.starttime, None)
