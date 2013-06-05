@@ -12,6 +12,27 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""
+The modules inside this package implement all the executables provided by
+Robot Framework.
+
+Class :py:class:`robot.run.RobotFramework` provides both
+:py:func:`command line <robot.run.run_cli>` and
+:py:func:`programmatic <robot.run.run>` entry points for
+executing Robot Framework tests.
+
+Similarly, classes :py:class:`robot.rebot.Rebot`,
+:py:class:`robot.tidy.TidyCommandLine`, :py:class:`robot.libdoc.LibDoc`
+and :py:class:`robot.testdoc.TestDoc` implement both the command line and
+programmatic entry points for Rebot, Tidy, Libdoc and Testdoc.
+
+Module :py:mod:`robot.jarrunner` wraps all the command line
+entry points and acts a runner for standalone JAR distribution.
+
+Module :py:mod:`robot.errors` takes care of the error handling within
+the whole framework.
+"""
+
 import sys
 
 if 'pythonpathsetter' not in sys.modules:
