@@ -216,6 +216,7 @@ if utils.is_jython:
     class TestJavaListener(_BaseListenerTest, unittest.TestCase):
 
         listener_name = 'NewStyleJavaListener'
+        stat_message = 'stat message'
 
         def test_importing(self):
             assert_equals(self.listener.version, 2)
