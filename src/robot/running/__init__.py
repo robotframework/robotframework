@@ -14,11 +14,10 @@
 
 """Implements the core test execution logic.
 
-The code in this package is in many places suboptimal and likely to change in
-RF 2.8. External code should use this package with care.
-
 Currently, the main entry point is the :func:`~.model.TestSuite` factory
 method.
+
+This package was rewritten for Robot Framework 2.8.
 """
 
 from .builder import TestSuiteBuilder

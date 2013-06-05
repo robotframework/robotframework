@@ -14,6 +14,9 @@
 
 """Implements `libdoc` tool.
 
+The modules in this package are used internally by Robot Framework
+and are not intended to be used as public APIs.
+
 For programmatic entry point, see :mod:`robot.libdoc`.
 
 This package is considered stable.

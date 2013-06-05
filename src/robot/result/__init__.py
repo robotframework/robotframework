@@ -32,3 +32,4 @@ normal log and report files could be generated with ``rebot`` tool.
 """
 
 from .resultbuilder import ExecutionResult
+from .visitor import ResultVisitor

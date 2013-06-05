@@ -12,4 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Contains Robot Framework standard test libraries."""
+"""Contains Robot Framework standard test libraries.
+
+The modules in this package are used internally by Robot Framework
+and are not intended to be used as public APIs.
+"""

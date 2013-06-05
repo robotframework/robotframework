@@ -22,7 +22,9 @@ Currently exposed APIs are:
   * :py:mod:`.logger` for test libraries' logging purposes.
 
   * :py:func:`~robot.result.resultbuilder.ExecutionResult` for reading
-    execution results from XML output files.
+    execution results from XML output files and
+    :py:class:`~robot.result.visitor.ResultVisitor` to ease processing
+    of the execution results.
 
   * :py:class:`~robot.parsing.model.TestCaseFile`,
     :py:class:`~robot.parsing.model.TestDataDirectory`, and
@@ -34,10 +36,10 @@ Currently exposed APIs are:
 
   * :py:class:`~robot.running.model.TestSuite` for creating a test suites
     programmatically and :py:class:`~robot.running.builder.TestSuiteBuilder`
-    for creating test suites programmatically from source files.
+    for creating test suites from source files.
 
   * :py:class:`~robot.reporting.resultwriter.ResultWriter` for writing test results,
-    logs, reports and XUnits results.
+    logs, reports and XUnit results.
 
 These names can be imported like this:
 
@@ -49,7 +51,7 @@ See documentations of the individual APIs for more details.
 """
 
 from robot.parsing import TestCaseFile, TestDataDirectory, ResourceFile, TestData
-from robot.result import ExecutionResult
+from robot.result import ExecutionResult, ResultVisitor
 # TODO: Document below new and newly exposed APIs and list them here
 from robot.reporting import ResultWriter
 from robot.running import TestSuite, TestSuiteBuilder

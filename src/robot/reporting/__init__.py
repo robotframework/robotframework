@@ -14,6 +14,8 @@
 
 """Implements report and log file generation.
 
+ResultWriter should be imported via robot.api
+
 This package is considered stable.
 """
 

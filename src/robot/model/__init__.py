@@ -14,6 +14,9 @@
 
 """Contains base classes and other generic functionality.
 
+The modules in this package are used internally by Robot Framework
+and are not intended to be used as public APIs.
+
 This package is considered stable.
 """
 
