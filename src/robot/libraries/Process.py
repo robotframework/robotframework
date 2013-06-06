@@ -112,13 +112,12 @@ class Process(object):
     == Standard output and error ==
 
     Process output and error streams can be given as an argument to
-    `Run Process` and `Start Process` keywords. By default streams are stored
-    in temporary files when running with c python and PIPE:d when running with
-    Jython or IronPython. Information about these streams is stored into
+    `Run Process` and `Start Process` keywords. By default streams are `PIPEd.
+    Information about these streams is stored into
     `ExecutionResult` object.
 
-    The `stderr` and the `stdout` can be redirected to PIPE by giving it
-    value PIPE.
+    The `stderr` and the `stdout` can be redirected to `PIPE` by giving it
+    value `PIPE.
 
     The `stderr` can be redirected to the standard output stream by giving
     argument in a way shown below.
