@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags      regression  pybot  jybot
-Resource        ../../cli/runner/cli_resource.txt
+Resource        ../cli_resource.txt
 
 
 *** Test Cases ***
