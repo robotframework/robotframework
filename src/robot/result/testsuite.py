@@ -68,8 +68,12 @@ class TestSuite(model.TestSuite):
         return self._criticality
 
     @property
+    def passed(self):
+        return not self.statistics.critical.failed
+
+    @property
     def status(self):
-        return 'FAIL' if self.statistics.critical.failed else 'PASS'
+        return 'PASS' if self.passed else 'FAIL'
 
     @property
     def statistics(self):

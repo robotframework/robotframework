@@ -76,6 +76,16 @@ class TestSuiteStatus(unittest.TestCase):
         suite.suites.create().tests.create(status='FAIL')
         assert_equal(suite.status, 'FAIL')
 
+    def test_passed(self):
+        suite = TestSuite()
+        assert_true(suite.passed)
+        suite.tests.create(status='PASS')
+        assert_true(suite.passed)
+        suite.tests.create(status='FAIL', tags='tag')
+        assert_false(suite.passed)
+        suite.set_criticality(non_critical_tags='tag')
+        assert_true(suite.passed)
+
 
 class TestElapsedTime(unittest.TestCase):
 
