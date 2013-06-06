@@ -43,4 +43,5 @@ from .namepatterns import SuiteNamePatterns, TestNamePatterns
 from .visitor import SuiteVisitor, SkipAllVisitor
 from .totalstatistics import TotalStatisticsBuilder
 from .statistics import Statistics
+from .imports import Imports
 from .itemlist import ItemList

@@ -72,15 +72,6 @@ class TestRunning(unittest.TestCase):
         assert_suite(result.suites[0], 'Child', 'PASS')
         assert_test(result.suites[0].tests[0], 'Test', 'PASS')
 
-    def test_imports(self):
-        suite = TestSuite(name='Suite')
-        suite.imports.create('Library', 'OperatingSystem')
-        suite.tests.create(name='Test').keywords.create('Directory Should Exist',
-                                                        args=['.'])
-        result = run(suite)
-        assert_suite(result, 'Suite', 'PASS')
-        assert_test(result.tests[0], 'Test', 'PASS')
-
     def test_user_keywords(self):
         suite = TestSuite(name='Suite')
         suite.tests.create(name='Test').keywords.create('User keyword', args=['From uk'])

@@ -104,7 +104,7 @@ class TestSuite(model.TestSuite):
 
     @setter
     def imports(self, imports):
-        return model.ItemList(Import, {'source': self.source}, items=imports)
+        return model.Imports(self.source, imports)
 
     @setter
     def user_keywords(self, keywords):
@@ -185,29 +185,3 @@ class UserKeyword(object):
     @property
     def steps(self):
         return self.keywords
-
-
-class Import(object):
-
-    # TODO: Should type be verified?
-    # TODO: Should we have separate methods for adding libs, resources, vars?
-    def __init__(self, type, name, args=(), alias=None, source=None):
-        self.type = type
-        self.name = name
-        self.args = args
-        self.alias = alias
-        self.source = source
-
-    @property
-    def directory(self):
-        if not self.source:
-            return None
-        if os.path.isdir(self.source):
-            return self.source
-        return os.path.dirname(self.source)
-
-    def report_invalid_syntax(self, message, level='ERROR'):
-        # TODO: Remove table information from error message here and
-        # also from _TestData.report_invalid_syntax in parsing/model.py
-        LOGGER.write("Error in file '%s' in table 'Settings': %s"
-                     % (self.source or '<unknown>', message), level)

@@ -24,8 +24,7 @@ class ItemList(object):
             self.extend(items)
 
     def create(self, *args, **kwargs):
-        self.append(self._item_class(*args, **kwargs))
-        return self._items[-1]
+        return self.append(self._item_class(*args, **kwargs))
 
     def append(self, item):
         self._check_type_and_set_attrs(item)
