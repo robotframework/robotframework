@@ -306,7 +306,6 @@ Free keyword arguments
 In Robot Framework 2.8 possibility to use named argument syntax with Python
 keywords that take keyword arguments `**kwargs` was added.
 
-
 In the example below, the Example Keyword will get a called with dictionary
 where the keys are the argument names given in keyword call.
 
@@ -323,13 +322,19 @@ where the keys are the argument names given in keyword call.
 
 .. sourcecode:: python
 
-
     def example_keyword(**kwargs):
         ...
 
 
+The free keyword arguments are especially useful when there too many possible
+options to list all in keyword arguments. For example the `Process Library`__,
+which was added in Robot Framework 2.8, uses the free keyword arguments for
+processes configuration.
+
 Writing test libraries section has more information on these free
 `python kwargs`_.
+
+__ http://robotframework.googlecode.com/hg/doc/libraries/Process.html#Start%20Process
 
 Arguments embedded to keyword names
 '''''''''''''''''''''''''''''''''''
