@@ -1,0 +1,9 @@
+*** Test cases ***
+
+Test 1
+    [Tags]    my tag
+    No operation
+
+Test 2
+    [Tags]    my critical tag
+    No operation
