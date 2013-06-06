@@ -5,7 +5,7 @@
   Robot Framework Quick Start Guide
 =====================================
 
-| Copyright |copy| Nokia Siemens Networks 2008-2012
+| Copyright |copy| Nokia Siemens Networks 2008-2013
 | Licensed under the `Creative Commons Attribution 3.0 Unported`__ license
 
 __ http://creativecommons.org/licenses/by/3.0/
