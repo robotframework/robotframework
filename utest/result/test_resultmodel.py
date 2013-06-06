@@ -158,6 +158,9 @@ class TestCriticality(unittest.TestCase):
         assert_equal(suite.tests.create().critical, False)
         assert_equal(suite.tests.create(tags=['crit']).critical, True)
 
+    def test_critical_without_parent(self):
+        assert_equal(TestCase().critical, True)
+
     def _verify_criticality(self, suite, crit, non_crit):
         assert_equal([unicode(t) for t in suite.criticality.critical_tags], crit)
         assert_equal([unicode(t) for t in suite.criticality.non_critical_tags], non_crit)

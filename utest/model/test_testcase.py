@@ -20,9 +20,6 @@ class TestTestCase(unittest.TestCase):
         assert_equal(suite.suites[0].tests[1].id, 's1-s1-t2')
         assert_equal(suite.suites[1].tests[0].id, 's1-s2-t1')
 
-    def test_critical_without_parent(self):
-        assert_equal(self.test.critical, True)
-
     def test_modify_tags(self):
         self.test.tags.add(['t0', 't3'])
         self.test.tags.remove('T2')

@@ -54,12 +54,6 @@ class TestSuite(ModelObject):
 
     name = property(_get_name, _set_name)
 
-    @property
-    def criticality(self):
-        if self.parent:
-            return self.parent.criticality
-        return Criticality()
-
     @setter
     def metadata(self, metadata):
         return Metadata(metadata)

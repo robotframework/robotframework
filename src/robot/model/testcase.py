@@ -52,12 +52,6 @@ class TestCase(ModelObject):
             return self.name
         return '%s.%s' % (self.parent.longname, self.name)
 
-    @property
-    def critical(self):
-        if not self.parent:
-            return True
-        return self.parent.criticality.test_is_critical(self)
-
     def visit(self, visitor):
         visitor.visit_test(self)
 

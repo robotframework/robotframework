@@ -50,3 +50,9 @@ class TestCase(model.TestCase):
     @property
     def passed(self):
         return self.status == 'PASS'
+
+    @property
+    def critical(self):
+        if not self.parent:
+            return True
+        return self.parent.criticality.test_is_critical(self)

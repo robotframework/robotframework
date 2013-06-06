@@ -129,7 +129,7 @@ class Runner(SuiteVisitor):
                 result.message = exception.message
         except ExecutionFailed, err:
             self._context.set_timeout(err)
-            status.test_failed(err, test.critical)
+            status.test_failed(err, result.critical)
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
