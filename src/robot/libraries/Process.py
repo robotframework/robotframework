@@ -112,12 +112,12 @@ class Process(object):
     == Standard output and error ==
 
     Process output and error streams can be given as an argument to
-    `Run Process` and `Start Process` keywords. By default streams are `PIPEd.
+    `Run Process` and `Start Process` keywords. By default streams are `PIPE`d.
     Information about these streams is stored into
     `ExecutionResult` object.
 
     The `stderr` and the `stdout` can be redirected to `PIPE` by giving it
-    value `PIPE.
+    value `PIPE`.
 
     The `stderr` can be redirected to the standard output stream by giving
     argument in a way shown below.
@@ -229,7 +229,8 @@ class Process(object):
             p = self.start_process(command, *arguments, **configuration)
             return self.wait_for_process(p)
         finally:
-            self._started_processes.switch(active_process_index)
+            if active_process_index is not None:
+                self._started_processes.switch(active_process_index)
 
     def start_process(self, command, *arguments, **configuration):
         """Starts a new process.
@@ -263,7 +264,7 @@ class Process(object):
         | ${handle5}= | `Start Process` | /bin/script.sh | stdout=somefile.out |
         """
         config = ProcessConfig(self._tempdir, **configuration)
-        logger.info('starting process "%r"' % command)
+        logger.info('starting process %r' % command)
         p = subprocess.Popen(self._cmd(arguments, command, config.shell),
                              stdout=config.stdout_stream,
                              stderr=config.stderr_stream,

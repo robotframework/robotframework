@@ -227,39 +227,14 @@ the latter requires at least one argument.
 Named arguments
 '''''''''''''''
 
-When a keyword accepts more than one argument with a default value,
-overriding only the last one using positional argument is not
-possible. For example, if a keyword having arguments :code:`arg1=a,
-arg2=b, arg3=c` is used as in the test below, its arguments
-:code:`arg1` and :code:`arg2` both get an empty string as value
-instead of their default values.
+It is also possible to name the arguments that you give to a keyword. This is
+especially useful when arguments have default values, as it allows overriding
+only the last default value in a keyword.
 
-.. table:: Overriding default values with positional arguments
-   :class: example
-
-   ====================  ================  ==============  ==============  ==============
-         Test Case            Action          Argument        Argument        Argument
-   ====================  ================  ==============  ==============  ==============
-   Positional Arguments  [Documentation]   1st and 2nd     argument get    empty strings
-   \                     Example Keyword                                   value
-   ====================  ================  ==============  ==============  ==============
-
-To make giving only some of the arguments that expect default values
-easier, new `named arguments` syntax was added in Robot Framework
-2.5. With this syntax the arguments that need to override their
-default values are given immediately after the required arguments in
-format :code:`argname=value`. The arguments that should use defaults
-can be simply be left out. How this works in practice is illustrated
-by the example test below that uses the same keyword as the above
-example. In this example the arguments that are not specified will get
-their default values.
-
-The named argument syntax can naturally be used with arguments
-accepting default values also when no arguments are left away. This
-can make argument meanings more clear than when only the value is
-shown. Naming the required arguments this way is not possible,
-though. Additionally, it is not possible to give first named arguments
-and then varargs.
+For example, if a keyword having arguments :code:`arg1=a, arg2=b, arg3=c` is
+called with only the argument :code:`arg3=override`, the keyword would get
+default values for :code:`arg1` and :code:`arg2`, but :code:`arg3` would get
+value :code:`override`.
 
 .. note:: When the named argument syntax is used with user keywords,
           the argument names are given without the :var:`${}`
@@ -267,10 +242,11 @@ and then varargs.
           :code:`${arg1}=default, ${arg2}=second` must be used like
           :code:`arg2=override`.
 
+Naming arguments does not work with Java libraries, unless they use the
+`dynamic library API`_.
+
 The named argument syntax is used only when the part of the argument
-before the equal sign matches the name of an argument.
-This matching is started from the end of the given
-argument list and stopped when there is no match. In those rare cases
+before the equal sign matches the name of an argument. In those rare cases
 when there are accidental matches, it is possible to use :code:`\\`
 to escape this syntax like :code:`nomatch\\=here`.
 
@@ -282,7 +258,8 @@ to escape this syntax like :code:`nomatch\\=here`.
           :code:`=` sign, and possible spaces after it are considered
           part of the default value itself.
 
-.. note:: No positional arguments after named arguments can be given.
+.. note:: No positional arguments after named arguments can be given. Starting
+          from Robot Framework 2.8 this causes an error.
 
 The following example demonstrates using named arguments in different
 scenarios, including in `test library imports`__.
@@ -319,36 +296,15 @@ __ `Taking test libraries into use`_
    \              Execute command    ls ${options} ${path}
    =============  =================  =====================  ============  ============
 
-Starting from Robot Framework 2.8, it is also possible to name the positional
-arguments and to give them out of order. In the example below, the message is
-a mandatory argument, but if all the arguments are named, they can be given
-in different order.
 
-.. table::
-   :class: example
-
-   =============  ================  =================  =======================
-     Test Case          Action        Argument         Argument
-   =============  ================  =================  =======================
-   Example        Log               message=mandatory  level=DEBUG
-   \              Log               level=WARN         message=This works also
-   =============  ================  =================  =======================
-
-Prior to Robot Framework 2.8 the biggest limitation of the keyword arguments
-functionality was that it worked only with `user keywords`_ and with `library
-keywords`_ implemented with Python that use either the `static library
-API`_ or the `hybrid library API`_.
-
-Starting from Robot Framework 2.8, it is also possible to to use named arguments
-with the `dynamic library API`_.
-
+Prior to Robot Framework 2.8 it was not possible to name positional arguments,
+only the default arguments.
 
 Free keyword arguments
 ''''''''''''''''''''''
 
 In Robot Framework 2.8 possibility to use named argument syntax with Python
 keywords that take keyword arguments `**kwargs` was added.
-
 
 In the example below, the Example Keyword will get a called with dictionary
 where the keys are the argument names given in keyword call.
@@ -366,12 +322,19 @@ where the keys are the argument names given in keyword call.
 
 .. sourcecode:: python
 
-
     def example_keyword(**kwargs):
         ...
 
 
+The free keyword arguments are especially useful when there too many possible
+options to list all in keyword arguments. For example the `Process Library`__,
+which was added in Robot Framework 2.8, uses the free keyword arguments for
+processes configuration.
 
+Writing test libraries section has more information on these free
+`python kwargs`_.
+
+__ http://robotframework.googlecode.com/hg/doc/libraries/Process.html#Start%20Process
 
 Arguments embedded to keyword names
 '''''''''''''''''''''''''''''''''''
