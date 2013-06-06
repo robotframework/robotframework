@@ -14,16 +14,16 @@
 
 """Implements the core test execution logic.
 
-This package was rewritten for Robot Framework 2.8.
+Currently, the main entry points are classes
+:py:class:`~robot.running.model.TestSuite` for creating test suites
+programmatically, and
+:py:class:`~robot.running.builder.TestSuiteBuilder` for creating test suites
+from existing test case files.
 
-Currently, the main entry point is the :func:`~.model.TestSuite` factory
-method.
+This package was rewritten for Robot Framework 2.8.
 
 Example: Creating a test suite programmatically
 -----------------------------------------------
-
-Starting from Robot Framework 2.8, it is possible to create runnable test suites
-programmatically using :py:mod:`Robot Framework Public APIs <robot.api>`.
 
 In this example, we create a basic test suite having one test case.
 
@@ -65,13 +65,14 @@ On line 8, the actual test suite is ran by issuing method
 :py:func:`robot.running.model.TestSuite.run`. This method returns test results
 as an object which is type of :py:class:`robot.result.executionresult.Result`.
 
-
 Example: Creating a test suite from source
 ------------------------------------------
 
-[explanation]
+.. literalinclude:: /../../doc/api/code_examples/test_suite_from_file.py
 
-.. literalinclude:: /../../doc/api/code_examples/test_suite_builder.py
+And here is the test case file:
+
+.. literalinclude:: /../../doc/api/code_examples/my_tests.txt
 """
 
 from .builder import TestSuiteBuilder

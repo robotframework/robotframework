@@ -53,8 +53,8 @@ class Runner(SuiteVisitor):
                            source=suite.source,
                            starttime=get_timestamp())
         if not self.result:
-            result.set_criticality(suite.criticality.critical_tags,
-                                   suite.criticality.non_critical_tags)
+            result.set_criticality(self._settings.critical_tags,
+                                   self._settings.non_critical_tags)
             self.result = Result(root_suite=result)
             self.result.configure(status_rc=self._settings.status_rc,
                                   stat_config=self._settings.statistics_config)

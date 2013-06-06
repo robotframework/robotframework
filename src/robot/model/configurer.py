@@ -22,14 +22,11 @@ class SuiteConfigurer(SuiteVisitor):
 
     def __init__(self, name=None, doc=None, metadata=None, set_tags=None,
                  include_tags=None, exclude_tags=None, include_suites=None,
-                 include_tests=None, empty_suite_ok=False,
-                 critical=None, non_critical=None):
+                 include_tests=None, empty_suite_ok=False):
         self.name = name
         self.doc = doc
         self.metadata = metadata
         self.set_tags = set_tags or []
-        self.critical_tags = critical
-        self.non_critical_tags = non_critical
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
         self.include_suites = include_suites
@@ -48,7 +45,6 @@ class SuiteConfigurer(SuiteVisitor):
         self._set_suite_attributes(suite)
         self._filter(suite)
         suite.set_tags(self.add_tags, self.remove_tags)
-        suite.set_criticality(self.critical_tags, self.non_critical_tags)
 
     def _set_suite_attributes(self, suite):
         if self.name:
