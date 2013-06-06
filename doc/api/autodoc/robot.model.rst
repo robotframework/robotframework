@@ -33,6 +33,14 @@ model Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`imports` Module
+---------------------
+
+.. automodule:: robot.model.imports
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`itemlist` Module
 ----------------------
 

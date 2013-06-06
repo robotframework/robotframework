@@ -17,6 +17,22 @@
 Currently, the main entry point is the :func:`~.model.TestSuite` factory
 method.
 
+Examples
+--------
+
+1) Creating test cases programmatically
+
+[explanation]
+
+.. literalinclude:: /../../doc/api/code_examples/test_suite.py
+
+2) Creating test cases from source files
+
+[explanation]
+
+.. literalinclude:: /../../doc/api/code_examples/test_suite_builder.py
+
+
 This package was rewritten for Robot Framework 2.8.
 """
 

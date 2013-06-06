@@ -33,6 +33,14 @@ output Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`librarylogger` Module
+---------------------------
+
+.. automodule:: robot.output.librarylogger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`listeners` Module
 -----------------------
 

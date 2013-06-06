@@ -49,14 +49,6 @@ running Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`fixture` Module
----------------------
-
-.. automodule:: robot.running.fixture
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`handlers` Module
 ----------------------
 
