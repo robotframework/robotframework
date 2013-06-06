@@ -229,7 +229,8 @@ class Process(object):
             p = self.start_process(command, *arguments, **configuration)
             return self.wait_for_process(p)
         finally:
-            self._started_processes.switch(active_process_index)
+            if active_process_index is not None:
+                self._started_processes.switch(active_process_index)
 
     def start_process(self, command, *arguments, **configuration):
         """Starts a new process.
@@ -263,7 +264,7 @@ class Process(object):
         | ${handle5}= | `Start Process` | /bin/script.sh | stdout=somefile.out |
         """
         config = ProcessConfig(self._tempdir, **configuration)
-        logger.info('starting process "%r"' % command)
+        logger.info('starting process %r' % command)
         p = subprocess.Popen(self._cmd(arguments, command, config.shell),
                              stdout=config.stdout_stream,
                              stderr=config.stderr_stream,
