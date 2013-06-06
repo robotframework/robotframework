@@ -1,6 +1,5 @@
 from __future__ import with_statement
 import unittest
-import os
 from StringIO import StringIO
 
 from robot.result import ExecutionResult
