@@ -112,12 +112,12 @@ class Process(object):
     == Standard output and error ==
 
     Process output and error streams can be given as an argument to
-    `Run Process` and `Start Process` keywords. By default streams are `PIPEd.
+    `Run Process` and `Start Process` keywords. By default streams are `PIPE`d.
     Information about these streams is stored into
     `ExecutionResult` object.
 
     The `stderr` and the `stdout` can be redirected to `PIPE` by giving it
-    value `PIPE.
+    value `PIPE`.
 
     The `stderr` can be redirected to the standard output stream by giving
     argument in a way shown below.
