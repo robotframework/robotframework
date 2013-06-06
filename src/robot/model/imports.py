@@ -14,7 +14,9 @@
 
 import os
 
-from itemlist import ItemList
+from robot.utils import seq2str
+
+from .itemlist import ItemList
 
 
 class Import(object):
@@ -22,9 +24,8 @@ class Import(object):
 
     def __init__(self, type, name, args=(), alias=None, source=None):
         if type not in self.ALLOWED_TYPES:
-            raise ValueError('Invalid import type. Should be either %s or %s' %
-                             (', '.join(self.ALLOWED_TYPES[:-1]),
-                              self.ALLOWED_TYPES[-1]))
+            raise ValueError("Invalid import type '%s'. Should be one of %s."
+                             % (type, seq2str(self.ALLOWED_TYPES, lastsep=' or ')))
         self.type = type
         self.name = name
         self.args = args
@@ -41,9 +42,7 @@ class Import(object):
 
     def report_invalid_syntax(self, message, level='ERROR'):
         from robot.output import LOGGER
-        # TODO: Remove table information from error message here and
-        # also from _TestData.report_invalid_syntax in parsing/model.py
-        LOGGER.write("Error in file '%s' in table 'Settings': %s"
+        LOGGER.write("Error in file '%s': %s"
                      % (self.source or '<unknown>', message), level)
 
 

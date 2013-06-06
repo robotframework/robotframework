@@ -95,11 +95,10 @@ class _TestData(object):
     def imports(self):
         return self.setting_table.imports
 
-    def report_invalid_syntax(self, table, message, level='ERROR'):
+    def report_invalid_syntax(self, message, level='ERROR'):
         initfile = getattr(self, 'initfile', None)
         path = os.path.join(self.source, initfile) if initfile else self.source
-        LOGGER.write("Error in file '%s' in table '%s': %s"
-                     % (path, table, message), level)
+        LOGGER.write("Error in file '%s': %s" % (path, message), level)
 
     def save(self, **options):
         """Writes this datafile to disk.
@@ -255,7 +254,7 @@ class _Table(object):
         return self.parent.directory
 
     def report_invalid_syntax(self, message, level='ERROR'):
-        self.parent.report_invalid_syntax(self.name, message, level)
+        self.parent.report_invalid_syntax(message, level)
 
     def __nonzero__(self):
         return bool(self._header or len(self))

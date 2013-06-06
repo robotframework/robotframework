@@ -144,9 +144,7 @@ class Variable(object):
         self.source = source
 
     def report_invalid_syntax(self, message, level='ERROR'):
-        # TODO: Remove table information here and elsewhere
-        LOGGER.write("Error in file '%s' in table 'Variables': "
-                     "Setting variable '%s' failed: %s"
+        LOGGER.write("Error in file '%s': Setting variable '%s' failed: %s"
                      % (self.source or '<unknown>', self.name, message), level)
 
 

@@ -5,9 +5,9 @@ from robot.running import TestSuite
 from robot.utils.asserts import assert_equals, assert_raises_with_msg
 
 
-def run(suite, **kwargs):
-    result = suite.run(output='NONE', stdout=StringIO(), stderr=StringIO(),
-                       **kwargs)
+def run(suite, **config):
+    result = suite.run(output=None, log=None, report=None,
+                       stdout=StringIO(), stderr=StringIO(), **config)
     return result.suite
 
 def assert_suite(suite, name, status, message='', tests=1):
@@ -64,10 +64,10 @@ class TestImports(unittest.TestCase):
         assert_test(result.tests[0], 'Test', 'PASS')
 
     def test_invalid_import_type(self):
-        suite = TestSuite(name='Suite')
-        error_msg = 'Invalid import type. Should be either Library, ' \
-                    'Resource or Variables'
-        assert_raises_with_msg(ValueError, error_msg, suite.imports.create,
+        assert_raises_with_msg(ValueError,
+                               "Invalid import type 'InvalidType'. Should be "
+                               "one of 'Library', 'Resource' or 'Variables'.",
+                               TestSuite().imports.create,
                                'InvalidType', 'Name')
 
 
