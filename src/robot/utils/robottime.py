@@ -315,7 +315,7 @@ def secs_to_timestamp(secs, seps=None, millis=False):
     ttuple = time.localtime(secs)[:6]
     if millis:
         millis = (secs - int(secs)) * 1000
-        ttuple = ttuple + (int(millis),)
+        ttuple = ttuple + (int(round(millis)),)
     return format_time(ttuple, *seps)
 
 
