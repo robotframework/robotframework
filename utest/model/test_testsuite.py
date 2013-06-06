@@ -80,38 +80,6 @@ class TestTestSuite(unittest.TestCase):
         assert_raises(AttributeError, setattr, self.suite, 'attr', 'value')
 
 
-class TestCriticality(unittest.TestCase):
-
-    def setUp(self):
-        self.suite = TestSuite()
-        self.sub = self.suite.suites.create()
-
-    def test_default_criticality(self):
-        self._verify_criticality(self.suite, [], [])
-        self._verify_criticality(self.sub, [], [])
-
-    def test_set_criticality(self):
-        self.suite.set_criticality(['c1', 'c2'], 'non')
-        self._verify_criticality(self.suite, ['c1', 'c2'], ['non'])
-        self._verify_criticality(self.sub, ['c1', 'c2'], ['non'])
-
-    def test_cannot_set_criticality_for_child_suites(self):
-        assert_raises(TypeError, self.sub.set_criticality)
-
-    def test_criticality_set_for_child_suites_earlier_is_ignored(self):
-        self.suite.set_criticality('use', 'us')
-        sub2 = TestSuite()
-        sub2.set_criticality('ignore', 'these')
-        self.suite.suites.append(sub2)
-        self._verify_criticality(self.suite, ['use'], ['us'])
-        self._verify_criticality(self.sub, ['use'], ['us'])
-        self._verify_criticality(sub2, ['use'], ['us'])
-
-    def _verify_criticality(self, suite, crit, non_crit):
-        assert_equal([unicode(t) for t in suite.criticality.critical_tags], crit)
-        assert_equal([unicode(t) for t in suite.criticality.non_critical_tags], non_crit)
-
-
 class TestSuiteId(unittest.TestCase):
 
     def test_one_suite(self):

@@ -26,7 +26,7 @@ from .testcase import TestCase, TestCases
 
 
 class TestSuite(ModelObject):
-    __slots__ = ['parent', 'source', '_name', 'doc', '_criticality', '_my_visitors']
+    __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors']
     test_class = TestCase
     keyword_class = Keyword
 
@@ -39,8 +39,8 @@ class TestSuite(ModelObject):
         self.suites = []
         self.tests = []
         self.keywords = []
-        self._criticality = None
         self._my_visitors = []
+
 
     @property
     def _visitors(self):
@@ -53,18 +53,11 @@ class TestSuite(ModelObject):
         self._name = name
     name = property(_get_name, _set_name)
 
-    def set_criticality(self, critical_tags=None, non_critical_tags=None):
-        if self.parent:
-            raise TypeError('Criticality can only be set to top level suite')
-        self._criticality = Criticality(critical_tags, non_critical_tags)
-
     @property
     def criticality(self):
         if self.parent:
             return self.parent.criticality
-        if self._criticality is None:
-            self.set_criticality()
-        return self._criticality
+        return Criticality()
 
     @setter
     def metadata(self, metadata):

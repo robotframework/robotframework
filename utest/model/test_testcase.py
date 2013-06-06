@@ -23,13 +23,6 @@ class TestTestCase(unittest.TestCase):
     def test_critical_without_parent(self):
         assert_equal(self.test.critical, True)
 
-    def test_critical_with_parent(self):
-        suite = TestSuite()
-        assert_equal(suite.tests.create().critical, True)
-        suite.set_criticality(critical_tags=['crit'])
-        assert_equal(suite.tests.create().critical, False)
-        assert_equal(suite.tests.create(tags=['crit']).critical, True)
-
     def test_modify_tags(self):
         self.test.tags.add(['t0', 't3'])
         self.test.tags.remove('T2')
