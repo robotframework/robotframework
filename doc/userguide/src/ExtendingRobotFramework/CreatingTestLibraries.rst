@@ -703,6 +703,51 @@ varargs with `library constructors`__.
 __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
 __ `Providing arguments to test libraries`_
 
+Python kwargs
+'''''''''''''
+
+Robot Framework 2.8 added support for free keyword arguments using python's
+`**kwargs` syntax.
+
+.. sourcecode:: python
+
+  def any_kw_arguments(**kwargs):
+      for key in kwargs:
+          print 'Got argument %s with value %s' % (key, kwargs[key])
+
+
+.. table:: Using keywords with python `**kwargs`
+   :class: example
+
+   ===============  ================  =============  ==============
+      Test Case         Action        Argument       Argument
+   ===============  ================  =============  ==============
+   Kwargs           Any Kw Arguments  hello=kitty    another=value
+   ===============  ================  =============  ==============
+
+Kwargs can be used with all other argument types, but it is important to note
+that using kwargs can lead to accidental matches, because all equals signs in
+given argument values have to escaped or else the value is interpreted as a key
+value pair. For example given the keyword definition below, to give value
+:code:`xpath=.foo` to argument :code:`target`, it would have to be escaped as
+:code:`xpath\\=.foo`. Other ways the kwargs would just get a new key
+:code:`xpath` and target would get the default value.
+
+.. sourcecode:: python
+
+  def html_ops(target=None, **kwargs):
+      ...
+
+.. table:: Escaping keyword values with python `**kwargs`
+   :class: example
+
+   ===============  ============  =============  ===================================
+      Test Case         Action    Argument
+   ===============  ============  =============  ===================================
+   Kwargs           HTML ops      xpath=.foo     # target will have default value
+   \                HTML ops      xpath\\=.foo   # target will have value xpath=foo
+   ===============  ============  =============  ===================================
+
 Argument types
 ''''''''''''''
 
