@@ -12,8 +12,8 @@ Library Namespace should be global
     Process Should Be Running    suite_process
 
 Running a process
-    ${result}=    Run Python Process    print 'hello'
-    Result should equal    ${result}    stdout=hello\n    exit_code=0
+    ${result}=    Run Python Process    import sys; sys.stdout.write('hello')
+    Result should equal    ${result}    stdout=hello   exit_code=0
 
 Error in exit code and stderr output
     ${result}=    Run Python Process    1/0
