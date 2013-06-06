@@ -37,6 +37,5 @@ Import Should Have Failed
     [Arguments]  ${index}  ${expected message}  ${expected traceback}=
     ${message} =  Set Variable  ${ERRORS.msgs[${index}].message}
     ${path} =   Normalize Path  ${DATADIR}/test_libraries/library_import_failing.txt
-    Should Start With  ${message}  Error in file '${path}' in table 'Settings': ${expected message}
+    Should Start With  ${message}  Error in file '${path}': ${expected message}
     Should Contain  ${message}  ${expected traceback}
-

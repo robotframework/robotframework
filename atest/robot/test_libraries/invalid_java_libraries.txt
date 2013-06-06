@@ -38,5 +38,5 @@ Verify Error
     [Arguments]    ${index}    ${error}
     ${path} =    Normalize Path    ${DATADIR}/test_libraries/invalid_java_libraries.txt
     Check Log Message    ${ERRORS.msgs[${index}]}
-    ...    Error in file '${path}' in table 'Settings': ${error}
+    ...    Error in file '${path}': ${error}
     ...    ERROR    pattern=yes

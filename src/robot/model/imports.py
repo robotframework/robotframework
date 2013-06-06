@@ -42,9 +42,7 @@ class Import(object):
 
     def report_invalid_syntax(self, message, level='ERROR'):
         from robot.output import LOGGER
-        # TODO: Remove table information from error message here and
-        # also from _TestData.report_invalid_syntax in parsing/model.py
-        LOGGER.write("Error in file '%s' in table 'Settings': %s"
+        LOGGER.write("Error in file '%s': %s"
                      % (self.source or '<unknown>', message), level)
 
 

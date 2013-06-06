@@ -78,7 +78,7 @@ Creating Variable Should Have Failed
     [Arguments]    ${error}    ${name}    @{message}
     ${path} =    Normalize Path    ${DATADIR}/variables/resource_for_variable_table_in_resource_file.txt
     ${msg} =    Catenate
-    ...    Error in file '${path}' in table 'Variables':
+    ...    Error in file '${path}':
     ...    Setting variable '${name}' failed:
     ...    @{message}
     Check Log Message    ${error}    ${msg}    ERROR
@@ -87,7 +87,7 @@ Import Should Have Failed
     [Arguments]    ${error}    ${name}    @{message}
     ${path} =    Normalize Path    ${DATADIR}/variables/resource_for_variable_table_in_resource_file.txt
     ${msg} =    Catenate
-    ...    Error in file '${path}' in table 'Settings':
+    ...    Error in file '${path}':
     ...    Replacing variables from setting '${name}' failed:
     ...    @{message}
     Check Log Message    ${error}    ${msg}    ERROR

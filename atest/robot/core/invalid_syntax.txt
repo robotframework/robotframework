@@ -74,11 +74,10 @@ User Keyword Defined Multiple Times
 
 *** Keywords ***
 My Setup
-    Run Tests  ${EMPTY}  core${/}invalid_syntax.html
-    ${PATH} =  Join Path  ${CURDIR}..${/}..${/}..${/}testdata  core${/}invalid_syntax.html
-    Set Suite Variable  $PATH
+    Run Tests  ${EMPTY}  core/invalid_syntax.html
+    ${PATH} =  Normalize Path  ${DATADIR}/core/invalid_syntax.html
+    Set Suite Variable  ${PATH}
 
 Verify Error
     [Arguments]  ${error}  ${table}
-    Check Stderr Contains  [ ERROR ] Error in file '${PATH}'  in table '${table}': ${error}
-
+    Check Stderr Contains  [ ERROR ] Error in file '${PATH}': ${error}

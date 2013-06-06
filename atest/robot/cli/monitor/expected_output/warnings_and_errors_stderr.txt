@@ -1,4 +1,4 @@
-? ERROR ? Error in file '*' in table 'Settings': Non-existing setting 'Non-Existing'.
+? ERROR ? Error in file '*': Non-existing setting 'Non-Existing'.
 [ WARN ] Warning in suite setup
 [ WARN ] Warning in test case
 [ WARN ] Multiple test cases with name 'Warning in test case' executed in test suite 'Warnings And Errors'.
