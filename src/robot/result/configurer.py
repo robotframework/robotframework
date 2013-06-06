@@ -19,14 +19,15 @@ from robot import model
 class SuiteConfigurer(model.SuiteConfigurer):
 
     def __init__(self, remove_keywords=None, log_level=None, start_time=None,
-                 end_time=None, critical=None, non_critical=None, **config):
-        model.SuiteConfigurer.__init__(self, **config)
+                 end_time=None, critical_tags=None, non_critical_tags=None,
+                 **base_config):
+        model.SuiteConfigurer.__init__(self, **base_config)
         self.remove_keywords = self._get_remove_keywords(remove_keywords)
         self.log_level = log_level
         self.start_time = self._get_time(start_time)
         self.end_time = self._get_time(end_time)
-        self.critical_tags = critical
-        self.non_critical_tags = non_critical
+        self.critical_tags = critical_tags
+        self.non_critical_tags = non_critical_tags
 
     def _get_remove_keywords(self, value):
         if value is None:

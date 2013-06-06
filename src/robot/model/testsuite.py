@@ -15,7 +15,6 @@
 from robot.utils import setter
 
 from .configurer import SuiteConfigurer
-from .criticality import Criticality
 from .filter import Filter, EmptySuiteRemover
 from .itemlist import ItemList
 from .keyword import Keyword, Keywords
@@ -49,8 +48,10 @@ class TestSuite(ModelObject):
 
     def _get_name(self):
         return self._name or ' & '.join(s.name for s in self.suites)
+
     def _set_name(self, name):
         self._name = name
+
     name = property(_get_name, _set_name)
 
     @property

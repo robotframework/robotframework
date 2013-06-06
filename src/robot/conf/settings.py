@@ -426,8 +426,8 @@ class RebotSettings(_BaseSettings):
             'empty_suite_ok': self['ProcessEmptySuite'],
             'remove_keywords': self['RemoveKeywords'],
             'log_level': self['LogLevel'],
-            'critical': self['Critical'],
-            'non_critical': self['NonCritical'],
+            'critical_tags': self.critical_tags,
+            'non_critical_tags': self.non_critical_tags,
             'start_time': self['StartTime'],
             'end_time': self['EndTime']
         }

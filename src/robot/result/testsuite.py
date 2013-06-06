@@ -27,7 +27,7 @@ from .testcase import TestCase
 
 
 class TestSuite(model.TestSuite):
-    __slots__ = ['_criticality', 'message', 'starttime', 'endtime']
+    __slots__ = ['message', 'starttime', 'endtime', '_criticality']
     test_class = TestCase
     keyword_class = Keyword
 
@@ -49,23 +49,10 @@ class TestSuite(model.TestSuite):
         :ivar endtime: Test suite execution end time as a timestamp.
         """
         model.TestSuite.__init__(self, name, doc, metadata, source)
-        self._criticality = None
         self.message = message
         self.starttime = starttime
         self.endtime = endtime
-
-    def set_criticality(self, critical_tags=None, non_critical_tags=None):
-        if self.parent:
-            raise TypeError('Criticality can only be set to top level suite')
-        self._criticality = Criticality(critical_tags, non_critical_tags)
-
-    @property
-    def criticality(self):
-        if self.parent:
-            return self.parent.criticality
-        if self._criticality is None:
-            self.set_criticality()
-        return self._criticality
+        self._criticality = None
 
     @property
     def passed(self):
@@ -95,6 +82,19 @@ class TestSuite(model.TestSuite):
             return utils.get_elapsed_time(self.starttime, self.endtime)
         return sum(child.elapsedtime for child in
                    chain(self.suites, self.tests, self.keywords))
+
+    @property
+    def criticality(self):
+        if self.parent:
+            return self.parent.criticality
+        if self._criticality is None:
+            self.set_criticality()
+        return self._criticality
+
+    def set_criticality(self, critical_tags=None, non_critical_tags=None):
+        if self.parent:
+            raise TypeError('Criticality can only be set to top level suite')
+        self._criticality = Criticality(critical_tags, non_critical_tags)
 
     def remove_keywords(self, how):
         self.visit(KeywordRemover(how))
