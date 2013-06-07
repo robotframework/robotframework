@@ -159,6 +159,8 @@ class HtmlReader(HTMLParser):
         encoding = None
         for name, value in attrs:
             name = name.lower()
+            if name == 'charset':  # html5
+                return value
             if name == 'http-equiv' and value.lower() == 'content-type':
                 valid_http_equiv = True
             if name == 'content':
