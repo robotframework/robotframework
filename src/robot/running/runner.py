@@ -25,7 +25,6 @@ from .keywords import Keywords, Keyword
 from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
-from .userkeyword import UserLibrary
 
 
 class Runner(SuiteVisitor):
@@ -44,7 +43,8 @@ class Runner(SuiteVisitor):
 
     @property
     def _variables(self):
-        return self._context.namespace.variables
+        ctx = self._context
+        return ctx.variables if ctx else None
 
     def start_suite(self, suite):
         variables = GLOBAL_VARIABLES.copy()
@@ -60,13 +60,10 @@ class Runner(SuiteVisitor):
                                   stat_config=self._settings.statistics_config)
         else:
             self._suite.suites.append(result)
-        ns = Namespace(result,
-                       self._context.namespace.variables if self._context else None,
-                       UserLibrary(suite.user_keywords),
-                       variables,
-                       suite.imports)
+        ns = Namespace(result, variables, self._variables,
+                       suite.user_keywords, suite.imports)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
-        if not (self._suite_status and self._suite_status.failures):  # Skips imports if exiting
+        if not (self._suite_status and self._suite_status.failures):
             ns.handle_imports()
         variables.resolve_delayed()
         result.doc = self._resolve_setting(suite.doc)
@@ -166,7 +163,7 @@ class Runner(SuiteVisitor):
                 result.message = failure.message
             return failure
 
-    def _run_setup_or_teardown(self, data, type):
+    def _run_setup_or_teardown(self, data, kw_type):
         if not data:
             return None
         try:
@@ -175,7 +172,7 @@ class Runner(SuiteVisitor):
             return err
         if name.upper() in ('', 'NONE'):
             return None
-        kw = Keyword(name, data.args, type=type)
+        kw = Keyword(name, data.args, type=kw_type)
         try:
             kw.run(self._context)
         except ExecutionFailed, err:
