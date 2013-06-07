@@ -264,8 +264,9 @@ class Process(object):
         | ${handle5}= | `Start Process` | /bin/script.sh | stdout=somefile.out |
         """
         config = ProcessConfig(self._tempdir, **configuration)
-        logger.info('starting process %r' % command)
-        p = subprocess.Popen(self._cmd(arguments, command, config.shell),
+        executable_command = self._cmd(arguments, command, config.shell)
+        logger.info('starting process %r' % executable_command)
+        p = subprocess.Popen(executable_command,
                              stdout=config.stdout_stream,
                              stderr=config.stderr_stream,
                              stdin=subprocess.PIPE,
