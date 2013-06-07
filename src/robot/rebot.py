@@ -96,12 +96,13 @@ Options
                           is considered relative to that unless it is absolute.
  -o --output file         XML output file. Not created unless this option is
                           specified. Given path, similarly as paths given to
-                          --log and --report, is relative to --outputdir unless
-                          given as an absolute path. Default: output.xml
+                          --log, --report and --xunit, is relative to
+                          --outputdir unless given as an absolute path.
  -l --log file            HTML log file. Can be disabled by giving a special
-                          name `NONE`. Examples: `--log mylog.html`, `-l none`
+                          name `NONE`. Default: log.html
+                          Examples: `--log mylog.html`, `-l none`
  -r --report file         HTML report file. Can be disabled with `NONE`
-                          similarly as --log. Default is `report.html`.
+                          similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
     --xunitfile file      Deprecated. Use --xunit instead.
@@ -240,7 +241,7 @@ ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
                           value `NONE`, writing to the syslog file is disabled.
 ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
                           Available levels are the same as for --loglevel
-                          option to Robot and the default is INFO.
+                          command line option and the default is INFO.
 
 Examples
 ========

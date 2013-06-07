@@ -127,7 +127,7 @@ Options
                           directory where tests are run from and the given path
                           is considered relative to that unless it is absolute.
  -o --output file         XML output file. Given path, similarly as paths given
-                          to --log, --report, --debugfile and --xunitfile, is
+                          to --log, --report, --xunit, and --debugfile, is
                           relative to --outputdir unless given as an absolute
                           path. Other output files are created based on XML
                           output files after the test execution and XML outputs
@@ -310,7 +310,7 @@ ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
                           syslog file is disabled.
 ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
                           Available levels are the same as for --loglevel
-                          option and the default is INFO.
+                          command line option and the default is INFO.
 
 Examples
 ========
