@@ -11,20 +11,22 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-"""Implements report and log file generation.
 
-Class :class:`~.ResultWriter` is used to write output, log, report
-and XUnit files from single :class:`~robot.result.executionresult.Result`
-object as well as from one or more existing output.xml files.
+"""Implements report, log, output XML, and xUnit file generation.
 
-:class:`~.ResultWriter` should be imported via :mod:`robot.api`
-package:
+The public API of this package is the :class:`~.ResultWriter` class. It
+can write result files based on XML output files on the file system,
+as well as based on the result objects returned by
+the :func:`~robot.result.resultbuilder.ExecutionResult` factory method or
+an executed :class:`~robot.running.model.TestSuite`.
 
-.. code-block:: python
+It is highly recommended to use the public API via the :mod:`robot.api`
+package like in the example below::
 
     from robot.api import ResultWriter
 
-ResultWriter should be imported via robot.api
+    writer = ResultWriter('output.xml')
+    writer.write_results(report='my_report.hml', log=None, xunit='xunit.xml')
 
 This package is considered stable.
 """

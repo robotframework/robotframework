@@ -43,9 +43,9 @@ Currently exposed APIs are:
 
 * :class:`~robot.reporting.resultwriter.ResultWriter` class for writing
   reports, logs, XML outputs, and XUnit files. Can write results based on
-  XML outputs on the file system as well as based on result objects
-  returned by :func:`~robot.result.resultbuilder.ExecutionResult` or
-  executed :class:`~robot.running.model.TestSuite`.
+  XML outputs on the file system, as well as based on the result objects
+  returned by the :func:`~robot.result.resultbuilder.ExecutionResult` or
+  an executed :class:`~robot.running.model.TestSuite`.
 
 
 All of the above names can be imported like::

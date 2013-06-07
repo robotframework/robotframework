@@ -23,8 +23,9 @@ from .testsuite import TestSuite
 class Result(object):
     """Test execution results.
 
-    Typically created based on XML output files using
+    Can be created based on XML output files using
     the :func:`~.resultbuilder.ExecutionResult` factory method.
+    Also returned by executed :class:`~robot.running.model.TestSuite`.
 
     :ivar source: Path to the XML file where results are read from.
     :ivar suite: Hierarchical execution results as

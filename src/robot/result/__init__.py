@@ -16,8 +16,9 @@
 
 The public API of this package is the :func:`~.ExecutionResult` factory
 method, which returns :class:`~.Result` objects, and :class:`~.ResultVisitor`
-abstract class to ease further processing the results. Note that it is
-highly recommended to import public API via the :mod:`robot.api` package.
+abstract class to ease further processing the results. It is highly
+recommended to use the public API via the :mod:`robot.api` package like in
+the example below.
 
 This package is considered stable.
 
