@@ -110,11 +110,28 @@ from robot.utils import Application
 
 
 class Tidy(object):
+    """Programmatic API for the `Tidy` tool.
 
-    def __init__(self, **options):
-        self._options = options
+    Accepted arguments have same semantics as Tidy command line options
+    with same names.
+    """
+
+    def __init__(self, format='txt', use_pipes=False,
+                 space_count=4, line_separator=os.linesep):
+        self._options = dict(format=format,
+                             pipe_separated=use_pipes,
+                             txt_separating_spaces=space_count,
+                             line_separator=line_separator)
 
     def file(self, path, output=None):
+        """Tidy a file.
+
+        :param path: Path of the input file.
+        :param output: Path of the output file. If not given, output is
+            returned.
+
+        Use :func:`inplace` to tidy files in-place.
+        """
         data = self._parse_data(path)
         outfile = open(output, 'wb') if output else StringIO()
         try:
@@ -124,11 +141,22 @@ class Tidy(object):
         finally:
             outfile.close()
 
-    def directory(self, path):
-        self._save_directory(self._parse_data(path))
+    def inplace(self, *paths):
+        """Tidy file(s) in-place.
 
-    def inplace(self, path):
-        self._save_file(self._parse_data(path))
+        :param paths: Paths of the files to to process.
+        """
+        for path in paths:
+            self._save_file(self._parse_data(path))
+
+    def directory(self, path):
+        """Tidy a directory.
+
+        :param path: Path of the directory to process.
+
+        All files in a directory, recursively, are processed in-place.
+        """
+        self._save_directory(self._parse_data(path))
 
     @disable_curdir_processing
     def _parse_data(self, path):
@@ -168,20 +196,23 @@ class Tidy(object):
 
 
 class TidyCommandLine(Application):
+    """Command line interface for the `Tidy` tool.
+
+    Typically :func:`tidy_cli` is a better entry point for command line style
+    usage and :class:Tidy for programmatic usage.
+    """
 
     def __init__(self):
         Application.__init__(self, USAGE, arg_limits=(1,))
 
     def main(self, arguments, recursive=False, inplace=False, format='txt',
              usepipes=False, spacecount=4, lineseparator=os.linesep):
-        tidy = Tidy(format=format, pipe_separated=usepipes,
-                    txt_separating_spaces=spacecount,
-                    line_separator=lineseparator)
+        tidy = Tidy(format=format, use_pipes=usepipes,
+                    space_count=spacecount, line_separator=lineseparator)
         if recursive:
             tidy.directory(arguments[0])
         elif inplace:
-            for source in arguments:
-                tidy.inplace(source)
+            tidy.inplace(*arguments)
         else:
             output = tidy.file(*arguments)
             self.console(output)
@@ -253,15 +284,18 @@ class ArgumentValidator(object):
         return spacecount
 
 
-def tidy_cli(args):
-    """Executes tidy similarly as from the command line.
+def tidy_cli(arguments):
+    """Executes `Tidy` similarly as from the command line.
 
-    :param args: command line arguments as a list of strings.
+    :param arguments: Command line arguments as a list of strings.
 
-    Example:
-        tidy_cli(['--format', 'txt', 'mytests.html'])
+    Example::
+
+        from robot.tidy import tidy_cli
+
+        tidy_cli(['--format', 'txt', 'tests.html'])
     """
-    TidyCommandLine().execute_cli(args)
+    TidyCommandLine().execute_cli(arguments)
 
 
 if __name__ == '__main__':
