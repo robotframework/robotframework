@@ -140,8 +140,9 @@ Options
                           Examples: `--log mylog.html`, `-l NONE`
  -r --report file         HTML report file. Can be disabled with `NONE`
                           similarly as --log. Default: report.html
- -x --xunitfile file      xUnit compatible result file. Not created unless this
+ -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
+    --xunitfile file      Deprecated. Use --xunit instead.
     --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.

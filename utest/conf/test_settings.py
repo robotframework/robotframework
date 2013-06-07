@@ -83,7 +83,7 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         assert_equals(RebotSettings({'exclude': 'two'})['Exclude'], ['two'])
 
     def test_output_files_as_none_string(self):
-        for name in 'Output', 'Report', 'Log', 'XUnitFile', 'DebugFile':
+        for name in 'Output', 'Report', 'Log', 'XUnit', 'DebugFile':
             attr = (name[:-4] if name.endswith('File') else name).lower()
             settings = RobotSettings({name.lower(): 'NoNe'})
             assert_equals(settings[name], None)
@@ -91,7 +91,7 @@ class TestRobotAndRebotSettings(unittest.TestCase):
                 assert_equals(getattr(settings, attr), None)
 
     def test_output_files_as_none_object(self):
-        for name in 'Output', 'Report', 'Log', 'XUnitFile', 'DebugFile':
+        for name in 'Output', 'Report', 'Log', 'XUnit', 'DebugFile':
             attr = (name[:-4] if name.endswith('File') else name).lower()
             settings = RobotSettings({name.lower(): None})
             assert_equals(settings[name], None)

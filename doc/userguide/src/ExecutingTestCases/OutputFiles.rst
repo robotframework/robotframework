@@ -129,7 +129,7 @@ results.
 .. tip:: Jenkins also has a separate `Robot Framework plugin`__.
 
 XUnit output files are not created unless the command line option
-:opt:`--xunitfile (-x)` is used explicitly. This option requires a path to
+:opt:`--xunit (-x)` is used explicitly. This option requires a path to
 the generated xUnit file, relatively to the `output directory`_, as a value.
 
 Because xUnit reports do not have the concept of `non-critical tests`__,

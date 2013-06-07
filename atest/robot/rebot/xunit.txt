@@ -21,9 +21,9 @@ No XUnit Option Given
     Check Stdout Does Not Contain  XUnit
 
 XUnit Option Given
-    Run Rebot  --xunitfile xunit.xml --log log.html  ${INPUT FILE}
+    Run Rebot  --xunit xunit.xml --log log.html  ${INPUT FILE}
     Stderr Should Be Empty
-    Check Stdout Contains  XUnit
+    Check Stdout Contains  XUnit:
     File Should Exist  ${OUTDIR}/xunit.xml
     File Should Exist  ${OUTDIR}/log.html
     ${root} =  Parse XML  ${OUTDIR}/xunit.xml
@@ -36,7 +36,7 @@ XUnit Option Given
     Should Be Equal  ${failures[0].attrib['message']}  ${MESSAGES}
 
 XUnit skip non-criticals
-    Run Rebot    --xunitfile xunit.xml --XUnitSkipNonCritical --noncritical f1    ${INPUT FILE}
+    Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical --NonCritical f1    ${INPUT FILE}
     Stderr Should Be Empty
     ${root} =    Parse XML  ${OUTDIR}/xunit.xml
     Element Attribute Should Be    ${root}    tests    18
@@ -55,6 +55,13 @@ Invalid XUnit File
     ${path} =  Regexp Escape  ${INVALID}
     Check Stderr Matches Regexp
     ...  \\[ ERROR \\] Writing xunit file '${path}' failed: .*
+
+--xunitfile is deprecated
+    Run Rebot    --xunitfile xunit.xml    ${INPUT FILE}
+    Check Stdout Contains  XUnit:
+    File Should Exist  ${OUTDIR}/xunit.xml
+    Check Stderr Matches Regexp
+    ...  \\[ WARN \\] Option --xunitfile is deprecated. Use --xunit instead.
 
 *** Keywords ***
 Create Input File

@@ -102,8 +102,9 @@ Options
                           name `NONE`. Examples: `--log mylog.html`, `-l none`
  -r --report file         HTML report file. Can be disabled with `NONE`
                           similarly as --log. Default is `report.html`.
- -x --xunitfile file      xUnit compatible result file. Not created unless this
+ -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
+    --xunitfile file      Deprecated. Use --xunit instead.
     --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           `YYYYMMDD-hhmmss` is added to all generated output

@@ -36,7 +36,8 @@ class _BaseSettings(object):
                  'OutputDir'        : ('outputdir', utils.abspath('.')),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
-                 'XUnitFile'        : ('xunitfile', None),
+                 'XUnit'            : ('xunit', None),
+                 'DeprecatedXUnit'  : ('xunitfile', None),
                  'SplitLog'         : ('splitlog', False),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
@@ -55,7 +56,7 @@ class _BaseSettings(object):
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
-    _output_opts = ['Output', 'Log', 'Report', 'DebugFile', 'XUnitFile']
+    _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
         self._opts = {}
@@ -94,6 +95,10 @@ class _BaseSettings(object):
         if name in ['Include', 'Exclude']:
             return [v.replace('AND', '&').replace('_', ' ') for v in value]
         if name in self._output_opts and (not value or value.upper() == 'NONE'):
+            return None
+        if name == 'DeprecatedXUnit':
+            LOGGER.warn('Option --xunitfile is deprecated. Use --xunit instead.')
+            self['XUnit'] = self._process_value('XUnit', value)
             return None
         if name == 'OutputDir':
             return utils.abspath(value)
@@ -172,7 +177,7 @@ class _BaseSettings(object):
     def _get_output_file(self, option):
         """Returns path of the requested output file and creates needed dirs.
 
-        `option` can be 'Output', 'Log', 'Report', 'DebugFile' or 'XUnitFile'.
+        `option` can be 'Output', 'Log', 'Report', 'XUnit' or 'DebugFile'.
         """
         name = self._opts[option]
         if not name:
@@ -196,7 +201,7 @@ class _BaseSettings(object):
     def _get_output_extension(self, ext, type_):
         if ext != '':
             return ext
-        if type_ in ['Output', 'XUnitFile']:
+        if type_ in ['Output', 'XUnit']:
             return '.xml'
         if type_ in ['Log', 'Report']:
             return '.html'
@@ -289,7 +294,7 @@ class _BaseSettings(object):
 
     @property
     def xunit(self):
-        return self['XUnitFile']
+        return self['XUnit']
 
     @property
     def split_log(self):

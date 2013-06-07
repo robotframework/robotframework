@@ -31,7 +31,8 @@ Command line options for test execution
   -o, --output <file>     Sets the path to the generated `output file`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
-  -x, --xunitfile <file>  Sets the path to the generated `xUnit compatible result file`_.
+  -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
+  --xunitfile <file>      Deprecated. Use :opt:`--xunit` instead.
   --xunitskipnoncritical  Mark non-critical tests on `xUnit compatible result file`_ as skipped.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
@@ -97,7 +98,8 @@ Command line options for post-processing outputs
   -o, --output <file>     Sets the path to the generated `output file`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
-  -x, --xunitfile <file>  Sets the path to the generated `xUnit compatible result file`_.
+  -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
+  --xunitfile <file>      Deprecated. Use :opt:`--xunit` instead.
   --xunitskipnoncritical  Mark non-critical tests on `xUnit compatible result file`_ as skipped.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
