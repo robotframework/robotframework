@@ -326,9 +326,7 @@ def rebot(*datasources, **options):
 
     A return code is returned similarly as when running on the command line.
 
-    Examples:
-
-    .. code-block:: python
+    Examples::
 
         from robot import rebot
 

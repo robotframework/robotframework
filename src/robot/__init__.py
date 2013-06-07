@@ -32,7 +32,7 @@ Functions and classes provided by the modules need to be imported like
 ``from robot.libdoc import libdoc_cli``.
 
 The functions and modules listed above are considered stable. Other modules in
-this package are for for internal usage and may change without a prior notice.
+this package are for for internal usage and may change without prior notice.
 
 .. tip:: More public APIs are exposed by the :mod:`robot.api` package.
 """

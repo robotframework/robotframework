@@ -235,12 +235,10 @@ def testdoc_cli(arguments):
     :param arguments: command line arguments as a list of strings.
 
     For programmatic usage the :func:`testdoc` function is typically better. It
-    has a better API for that usage and does not call :func:`sys.exit` like
+    has a better API for that and does not call :func:`sys.exit` like
     this function.
 
-    Example:
-
-    .. code-block:: python
+    Example::
 
         from robot.testdoc import testdoc_cli
 
@@ -255,9 +253,7 @@ def testdoc(*arguments, **options):
     Arguments and options have same semantics, and options have same names,
     as arguments and options to Testdoc.
 
-    Example:
-
-    .. code-block:: python
+    Example::
 
         from robot.testdoc import testdoc
 
