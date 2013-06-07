@@ -25,7 +25,12 @@ This package was rewritten for Robot Framework 2.8.
 Example: Creating a test suite programmatically
 -----------------------------------------------
 
-In this example, we create a basic test suite having one test case.
+In this example, we create the following suite programmatically:
+
+.. literalinclude:: /../../doc/api/code_examples/suite_for_programmatic_tests.txt
+   :language: RobotFramework
+
+The corresponding Python code is:
 
 .. literalinclude:: /../../doc/api/code_examples/test_suite.py
    :linenos:
@@ -64,6 +69,9 @@ the test case.
 On line 8, the actual test suite is ran by issuing method
 :py:func:`~robot.running.model.TestSuite.run`. This method returns test results
 as an object which is type of :py:class:`~robot.result.executionresult.Result`.
+
+
+
 
 Example: Creating a test suite from source
 ------------------------------------------
