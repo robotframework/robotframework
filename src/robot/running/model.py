@@ -12,10 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
-
-from robot.conf import RobotSettings
 from robot import model
+from robot.conf import RobotSettings
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import setter
 from robot.variables import init_global_variables
@@ -27,6 +25,7 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 
 
 class Keyword(model.Keyword):
+    __slots__ = ['assign']
     message_class = None  # TODO: Remove from base model?
 
     def __init__(self, name='', args=(), assign=(), type='kw'):
@@ -45,6 +44,7 @@ class Keyword(model.Keyword):
 
 
 class ForLoop(Keyword):
+    __slots__ = ['range']
     keyword_class = Keyword
 
     def __init__(self, vars, items, range):

@@ -42,17 +42,16 @@ class Namespace:
                              'OperatingSystem': 'DeprecatedOperatingSystem'}
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, suite, parent_vars, user_keywords, variables,
-                 imports=None):
-        if suite is not None:
-            LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
+    def __init__(self, suite, variables, parent_variables, user_keywords,
+                 imports):
+        LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.suite = suite
-        self._imports = imports or []
-        self.variables = _VariableScopes(variables, parent_vars)
-        self._user_keywords = user_keywords
         self.test = None
         self.uk_handlers = []
+        self.variables = _VariableScopes(variables, parent_variables)
         self.library_search_order = []
+        self._imports = imports
+        self._user_keywords = UserLibrary(user_keywords)
         self._testlibs = {}
         self._imported_resource_files = ImportCache()
         self._imported_variable_files = ImportCache()
