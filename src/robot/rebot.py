@@ -335,9 +335,8 @@ def rebot(*datasources, **options):
     their names are same as long command line options without hyphens.
 
     Options that can be given on the command line multiple times can be
-    passed as lists like `include=['tag1', 'tag2']`. Starting from 2.7.2,
-    when such option is used only once, it can be given also as a single string
-    like `include='tag'`.
+    passed as lists like `include=['tag1', 'tag2']`. If such option is used
+    only once, it can be given also as a single string like `include='tag'`.
 
     To capture stdout and/or stderr streams, pass open file objects in as
     special keyword arguments `stdout` and `stderr`, respectively.
