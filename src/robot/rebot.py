@@ -318,7 +318,7 @@ def rebot_cli(arguments):
     a better API for that usage and does not call :func:`sys.exit` like this
     method.
 
-    .. code-block:: python
+    Example::
 
         from robot import rebot_cli
 
@@ -343,9 +343,7 @@ def rebot(*datasources, **options):
 
     A return code is returned similarly as when running on the command line.
 
-    Examples:
-
-    .. code-block:: python
+    Examples::
 
         from robot import rebot
 

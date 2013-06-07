@@ -48,7 +48,7 @@ shown as HTML, this argument should be set to ``True``.
 Example
 -------
 
-.. code-block:: python
+::
 
     from robot.api import logger
 

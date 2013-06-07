@@ -252,9 +252,7 @@ def testdoc_cli(arguments):
     has a better API for that usage and does not call :func:`sys.exit` like
     this function.
 
-    Example:
-
-    .. code-block:: python
+    Example::
 
         from robot.testdoc import testdoc_cli
 
@@ -269,9 +267,7 @@ def testdoc(*arguments, **options):
     Arguments and options have same semantics, and options have same names,
     as arguments and options to Testdoc.
 
-    Example:
-
-    .. code-block:: python
+    Example::
 
         from robot.testdoc import testdoc
 

@@ -54,9 +54,7 @@ unittest license::
     SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
-Examples:
-
-.. code-block:: python
+Examples::
 
     import unittest
     from robot.util.asserts import *
@@ -99,7 +97,6 @@ Example output::
     Ran 2 tests in 0.000s
 
     FAILED (failures=2)
-
 """
 
 from .unic import unic

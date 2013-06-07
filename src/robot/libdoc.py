@@ -187,9 +187,7 @@ def libdoc_cli(arguments):
     has a better API for that usage and does not call :func:`sys.exit` like
     this function.
 
-    Example:
-
-    .. code-block:: python
+    Example::
 
         from robot.libdoc import libdoc_cli
 
@@ -204,9 +202,7 @@ def libdoc(library_or_resource, outfile, name='', version='', format=None):
     Arguments have same semantics as Libdoc command line options with
     same names.
 
-    Example:
-
-    .. code-block:: python
+    Example::
 
         from robot.libdoc import libdoc
 

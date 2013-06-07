@@ -26,7 +26,7 @@ Robot Framework 2.9.
 Example
 -------
 
-.. code-block:: python
+::
 
     from robot.parsing import TestCaseFile
 
