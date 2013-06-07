@@ -12,22 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package contains base classes e.g. for
-:py:class:`suites <robot.model.testsuite.TestSuite>`,
-:py:class:`test cases <robot.model.testcase.TestCase>`,
-:py:class:`keywords <robot.model.keyword.Keyword>` and for other generic
-functionality, such as :py:mod:`visitors <robot.model.visitor>`.
+"""Package with reusable and extendable model classes.
 
-These base classes are inherited both in packages :py:mod:`robot.result` and
-:py:mod:`robot.running`. For example,
-:py:class:`robot.model.testsuite.TestSuite` is extended in
-:py:mod:`running <robot.running>` by
-:py:class:`robot.running.model.TestSuite`
-and :py:class:`robot.model.visitor` in :py:mod:`result <robot.result>`
-by :py:class:`robot.result.visitor.ResultVisitor`.
+This package contains base classes, for example, for
+:class:`test suites <robot.model.testsuite.TestSuite>`,
+:class:`test cases <robot.model.testcase.TestCase>` and
+:class:`keywords <robot.model.keyword.Keyword>`, and for other generic
+functionality, such as :mod:`visitors <robot.model.visitor>`.
 
-The modules in this package are used internally by Robot Framework
-and are not intended to be used as public APIs.
+These classes are extended both in :mod:`robot.result` and :mod:`robot.running`
+packages and used also elsewhere. There should, however, be no need to
+externally use these classes directly, and they are not part of the public API.
 
 This package is considered stable.
 """

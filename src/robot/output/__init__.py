@@ -12,10 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Implements runtime logging and listener interface.
+"""Package for internal logging and other output.
 
-The modules in this package are used internally by Robot Framework
-and are not intended to be used as public APIs.
+Not part of the public API, and also subject to change in the future when
+test execution is refactored.
 """
 
 from .output import Output

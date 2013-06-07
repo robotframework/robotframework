@@ -12,34 +12,46 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Implements parsing of test data files.
+"""Implements test data parsing.
 
-Classes :class:`~.model.TestCaseFile`, :class:`~.model.TestDataDirectory` and
-:class:`~.model.ResourceFile` represented parsed test data. These can be
-modified and saved back to disk. In addition, a convenience factory function
-:func:`~.model.TestData` can be used to parse file or directory to a
-corresponding object.
+Classes :class:`~.model.TestCaseFile`, :class:`~.model.TestDataDirectory`
+and :class:`~.model.ResourceFile` represented parsed test data. Objects
+of these classes can be modified and saved back to disk. In addition,
+a convenience factory function :func:`~.model.TestData` can be used to
+parse a test case file or directory to a corresponding object.
 
-This package is considered stable but will likely change radically in
-Robot Framework 2.9.
+Aforementioned classes and functions are part of the public API. It is
+recommended that they are imported through the :mod:`robot.api` package
+like in the example below.
+
+This package is likely to change radically in Robot Framework 2.9. The main
+motivation for the planned changes is making the data easier to use for
+external tools that use these modules.
 
 Example
 -------
 
 ::
 
-    from robot.parsing import TestCaseFile
+    import sys
+    from robot.api import TestData
 
-    suite = TestCaseFile(source='path/to/tests.html').populate()
-    print 'Suite: ', suite.name
-    for test in suite.testcase_table:
-        print test.name
+    def print_suite(suite):
+        print 'Suite:', suite.name
+        for test in suite.testcase_table:
+            print '-', test.name
+        for child in suite.children:
+            print_suite(child)
+
+    suite = TestData(source=sys.argv[1])
+    print_suite(suite)
 """
 
 from .model import TestData, TestCaseFile, TestDataDirectory, ResourceFile
 from . import populators
 
 VALID_EXTENSIONS = tuple(populators.READERS)
+
 
 def disable_curdir_processing(method):
     """Decorator to disable processing `${CURDIR}` variable."""
