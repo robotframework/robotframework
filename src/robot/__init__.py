@@ -12,25 +12,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""
-The modules inside this package implement all the executables provided by
-Robot Framework.
+"""The root of the Robot Framework package.
 
-Class :py:class:`robot.run.RobotFramework` provides both
-:py:func:`command line <robot.run.run_cli>` and
-:py:func:`programmatic <robot.run.run>` entry points for
-executing Robot Framework tests.
+The command line entry points provided by the framework are exposed for
+programmatic usage as follows:
 
-Similarly, classes :py:class:`robot.rebot.Rebot`,
-:py:class:`robot.tidy.TidyCommandLine`, :py:class:`robot.libdoc.LibDoc`
-and :py:class:`robot.testdoc.TestDoc` implement both the command line and
-programmatic entry points for Rebot, Tidy, Libdoc and Testdoc.
+  * :func:`~robot.run.run`: Function to run tests.
+  * :func:`~robot.run.run_cli`: Function to run tests
+    with command line argument processing.
+  * :func:`~robot.rebot.rebot`: Function to post-process outputs.
+  * :func:`~robot.rebot.rebot_cli`: Function to post-process outputs
+    with command line argument processing.
+  * :mod:`~robot.libdoc`: Module for library documentation generation.
+  * :mod:`~robot.testdoc`: Module for test case documentation generation.
+  * :mod:`~robot.tidy`: Module for test data clean-up and format change.
 
-Module :py:mod:`robot.jarrunner` wraps all the command line
-entry points and acts a runner for standalone JAR distribution.
+All the functions above can be imported like ``from robot import run``.
+Functions and classes provided by the modules need to be imported like
+``from robot.libdoc import libdoc_cli``.
 
-Module :py:mod:`robot.errors` takes care of the error handling within
-the whole framework.
+The functions and modules listed above are considered stable. Other modules in
+this package are for for internal usage and may change without a prior notice.
+
+.. tip:: More public APIs are exposed by the :mod:`robot.api` package.
 """
 
 import sys
