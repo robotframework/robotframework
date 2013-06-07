@@ -294,9 +294,17 @@ class Rebot(RobotFramework):
 def rebot_cli(arguments):
     """Command line execution entry point for running rebot.
 
+    :param arguments: Command line arguments as a list of strings.
+
     For programmatic usage the :func:`rebot` method is typically better. It has
-    better API for that usage and does not call :func:`sys.exit` like this
+    a better API for that usage and does not call :func:`sys.exit` like this
     method.
+
+    .. code-block:: python
+
+        from robot import rebot_cli
+
+        rebot_cli(['--report', 'r.html', '--log', 'NONE', 'o1.xml', 'o2.xml'])
     """
     Rebot().execute_cli(arguments)
 
@@ -321,6 +329,8 @@ def rebot(*datasources, **options):
     Examples:
 
     .. code-block:: python
+
+        from robot import rebot
 
         rebot('path/to/output.xml')
         with open('stdout.txt', 'w') as stdout:

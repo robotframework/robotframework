@@ -70,7 +70,7 @@ class Application(object):
 
     def execute(self, *arguments, **options):
         with self._logging():
-            return self._execute(arguments, options)
+            return self._execute(list(arguments), options)
 
     def _execute(self, arguments, options):
         try:

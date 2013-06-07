@@ -74,10 +74,10 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot import utils
-from robot.running import TestSuiteBuilder
 from robot.conf import RobotSettings
-from robot.parsing import disable_curdir_processing
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
+from robot.parsing import disable_curdir_processing
+from robot.running import TestSuiteBuilder
 
 
 class TestDoc(utils.Application):
@@ -201,11 +201,11 @@ class JsonConverter(object):
             'type': 'FOR'
         }
 
-    def _convert_keyword(self, kw, type):
+    def _convert_keyword(self, kw, kw_type):
         return {
             'name': self._escape(self._get_kw_name(kw)),
             'arguments': self._escape(', '.join(kw.args)),
-            'type': type
+            'type': kw_type
         }
 
     def _get_kw_name(self, kw):
@@ -215,7 +215,7 @@ class JsonConverter(object):
 
     def _get_for_loop(self, kw):
         joiner = ' IN RANGE ' if kw.range else ' IN '
-        return ', '.join(kw.vars) + joiner +  utils.seq2str2(kw.items)
+        return ', '.join(kw.vars) + joiner + utils.seq2str2(kw.items)
 
     def _get_timeout(self, timeout):
         if timeout is None:
@@ -229,15 +229,41 @@ class JsonConverter(object):
         return tout
 
 
-def testdoc_cli(args):
-    """Executes testdoc similarly as from the command line.
+def testdoc_cli(arguments):
+    """Executes Testdoc similarly as from the command line.
 
-    :param args: command line arguments as a list of strings.
+    :param arguments: command line arguments as a list of strings.
+
+    For programmatic usage the :func:`testdoc` function is typically better. It
+    has a better API for that usage and does not call :func:`sys.exit` like
+    this function.
 
     Example:
-       testdoc_cli(['--title', 'Test Plan', 'mytests', 'plan.html'])
+
+    .. code-block:: python
+
+        from robot.testdoc import testdoc_cli
+
+        testdoc_cli(['--title', 'Test Plan', 'mytests', 'plan.html'])
     """
-    TestDoc().execute_cli(args)
+    TestDoc().execute_cli(arguments)
+
+
+def testdoc(*arguments, **options):
+    """Executes Testdoc programmatically.
+
+    Arguments and options have same semantics, and options have same names,
+    as arguments and options to Testdoc.
+
+    Example:
+
+    .. code-block:: python
+
+        from robot.testdoc import testdoc
+
+        testdoc('mytests', 'plan.html', title='Test Plan')
+    """
+    TestDoc().execute(*arguments, **options)
 
 
 if __name__ == '__main__':

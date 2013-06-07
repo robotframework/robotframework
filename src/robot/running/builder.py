@@ -28,6 +28,8 @@ class TestSuiteBuilder(object):
         self.include_empty_suites = include_empty_suites
 
     def build(self, *paths):
+        if not paths:
+            raise DataError('One or more source paths required.')
         if len(paths) == 1:
             return self._build_and_check_if_empty(paths[0])
         root = TestSuite()
