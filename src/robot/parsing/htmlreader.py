@@ -12,21 +12,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-import HTMLParser
+from HTMLParser import HTMLParser
 from htmlentitydefs import entitydefs
 
 
 NON_BREAKING_SPACE = u'\xA0'
 
 
-class HtmlReader(HTMLParser.HTMLParser):
+class HtmlReader(HTMLParser):
     IGNORE = 0
     INITIAL = 1
     PROCESS = 2
 
     def __init__(self):
-        HTMLParser.HTMLParser.__init__(self)
+        HTMLParser.__init__(self)
         self._encoding = 'ISO-8859-1'
         self._handlers = {'table_start' : self.table_start,
                           'table_end'   : self.table_end,
@@ -102,11 +101,6 @@ class HtmlReader(HTMLParser.HTMLParser):
         except ValueError:
             return '&#'+number+';'
 
-    def handle_pi(self, data):
-        encoding = self._get_encoding_from_pi(data)
-        if encoding:
-            self._encoding = encoding
-
     def unknown_decl(self, data):
         # Ignore everything even if it's invalid. This kind of stuff comes
         # at least from MS Excel
@@ -168,11 +162,19 @@ class HtmlReader(HTMLParser.HTMLParser):
             if name == 'http-equiv' and value.lower() == 'content-type':
                 valid_http_equiv = True
             if name == 'content':
-                for token in value.split(';'):
-                    token = token.strip()
-                    if token.lower().startswith('charset='):
-                        encoding = token[8:]
+                encoding = self._get_encoding_from_content_attr(value)
         return encoding if valid_http_equiv else None
+
+    def _get_encoding_from_content_attr(self, value):
+        for token in value.split(';'):
+            token = token.strip()
+            if token.lower().startswith('charset='):
+                return token[8:]
+
+    def handle_pi(self, data):
+        encoding = self._get_encoding_from_pi(data)
+        if encoding:
+            self._encoding = encoding
 
     def _get_encoding_from_pi(self, data):
         data = data.strip()
