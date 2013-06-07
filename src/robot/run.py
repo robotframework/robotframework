@@ -383,9 +383,19 @@ class RobotFramework(Application):
 def run_cli(arguments):
     """Command line execution entry point for running tests.
 
-    For programmatic usage the :func:`run` method is typically better. It has
-    better API for that usage and does not call :func:`sys.exit` like this
-    method.
+    :param arguments: Command line arguments as a list of strings.
+
+    For programmatic usage the :func:`run` function is typically better. It has
+    a better API for that usage and does not call :func:`sys.exit` like this
+    function.
+
+    Example:
+
+    .. code-block:: python
+
+        from robot import run_cli
+
+        run_cli(['--include', 'tag', 'path/to/tests.html'])
     """
     RobotFramework().execute_cli(arguments)
 
@@ -394,8 +404,9 @@ def run(*datasources, **options):
     """Executes given Robot Framework data sources with given options.
 
     Data sources are paths to files and directories, similarly as when running
-    pybot/jybot from the command line. Options are given as keywords arguments
-    and their names are same as long command line options without hyphens.
+    `pybot` command from the command line. Options are given as keyword
+    arguments and their names are same as long command line options without
+    hyphens.
 
     Options that can be given on the command line multiple times can be
     passed as lists like `include=['tag1', 'tag2']`. Starting from 2.7.2,
@@ -411,6 +422,8 @@ def run(*datasources, **options):
 
     .. code-block:: python
 
+        from robot import run
+
         run('path/to/tests.html', include=['tag1', 'tag2'])
         with open('stdout.txt', 'w') as stdout:
             run('t1.txt', 't2.txt', report='r.html', log='NONE', stdout=stdout)
@@ -425,4 +438,3 @@ def run(*datasources, **options):
 
 if __name__ == '__main__':
     run_cli(sys.argv[1:])
-

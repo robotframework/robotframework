@@ -162,26 +162,40 @@ class LibDoc(Application):
         return format
 
 
-def libdoc_cli(args):
-    """Executes libdoc similarly as from the command line.
+def libdoc_cli(arguments):
+    """Executes Libdoc similarly as from the command line.
 
-    :param args: command line arguments as a list of strings.
+    :param arguments: Command line arguments as a list of strings.
+
+    For programmatic usage the :func:`libdoc` function is typically better. It
+    has a better API for that usage and does not call :func:`sys.exit` like
+    this function.
 
     Example:
-        libdoc_cli(['--name', 'Something', 'MyLibrary.py', 'doc.html'])
+
+    .. code-block:: python
+
+        from robot.libdoc import libdoc_cli
+
+        libdoc_cli(['--version', '1.0', 'MyLibrary.py', 'MyLibraryDoc.html'])
     """
-    LibDoc().execute_cli(args)
+    LibDoc().execute_cli(arguments)
 
 
 def libdoc(library_or_resource, outfile, name='', version='', format=None):
     """Executes libdoc.
 
-    Arguments are same as command line options to libdoc.py.
+    Arguments have same semantics as Libdoc command line options with
+    same names.
 
     Example:
-        libdoc('MyLibrary.py', 'MyLibrary.html', version='1.0')
-    """
 
+    .. code-block:: python
+
+        from robot.libdoc import libdoc
+
+        libdoc('MyLibrary.py', 'MyLibraryDoc.html', version='1.0')
+    """
     LibDoc().execute(library_or_resource, outfile, name=name, version=version,
                      format=format)
 
