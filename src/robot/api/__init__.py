@@ -12,9 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package exposes the public APIs of Robot Framework.
+""":mod:`robot.api` package exposes the public APIs of Robot Framework.
 
-Unless stated otherwise, the APIs exposed in this module are considered stable,
+Unless stated otherwise, the APIs exposed in this package are considered stable,
 and thus safe to use when building external tools on top of Robot Framework.
 
 Currently exposed APIs are:

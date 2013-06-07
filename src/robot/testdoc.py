@@ -14,6 +14,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""Module implementing the command line entry point for the `Testdoc` tool.
+
+This module can be executed from the command line using the following
+approaches::
+
+    python -m robot.testdoc
+    python path/to/robot/testdoc.py
+
+Instead of ``python`` it is possible to use also other Python interpreters.
+
+This module also provides :func:`testdoc` and :func:`testdoc_cli` functions
+that can be used programmatically. Other code is for internal usage.
+"""
+
 from __future__ import with_statement
 
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool
@@ -230,7 +244,7 @@ class JsonConverter(object):
 
 
 def testdoc_cli(arguments):
-    """Executes Testdoc similarly as from the command line.
+    """Executes `Testdoc` similarly as from the command line.
 
     :param arguments: command line arguments as a list of strings.
 
@@ -250,7 +264,7 @@ def testdoc_cli(arguments):
 
 
 def testdoc(*arguments, **options):
-    """Executes Testdoc programmatically.
+    """Executes `Testdoc` programmatically.
 
     Arguments and options have same semantics, and options have same names,
     as arguments and options to Testdoc.

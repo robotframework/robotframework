@@ -14,6 +14,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""Module implementing the command line entry point for post-processing outputs.
+
+This module can be executed from the command line using the following
+approaches::
+
+    python -m robot.rebot
+    python path/to/robot/rebot.py
+
+Instead of ``python`` it is possible to use also other Python interpreters.
+This module is also used by the installed ``rebot``, ``jyrebot`` and
+``ipyrebot`` start-up scripts.
+
+This module also provides :func:`rebot` and :func:`rebot_cli` functions
+that can be used programmatically. Other code is for internal usage.
+"""
+
 USAGE = """Rebot -- Robot Framework report and log generator
 
 Version:  <VERSION>

@@ -14,6 +14,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""Module implementing the command line entry point for the `Tidy` tool.
+
+This module can be executed from the command line using the following
+approaches::
+
+    python -m robot.tidy
+    python path/to/robot/tidy.py
+
+Instead of ``python`` it is possible to use also other Python interpreters.
+
+This module also provides :class:`Tidy` class and :func:`tidy_cli` function
+that can be used programmatically. Other code is for internal usage.
+"""
+
 USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
 Version:  <VERSION>
@@ -112,8 +126,8 @@ from robot.utils import Application
 class Tidy(object):
     """Programmatic API for the `Tidy` tool.
 
-    Accepted arguments have same semantics as Tidy command line options
-    with same names.
+    Arguments accepted when creating an instance have same semantics as
+    Tidy command line options with same names.
     """
 
     def __init__(self, format='txt', use_pipes=False,
@@ -198,8 +212,8 @@ class Tidy(object):
 class TidyCommandLine(Application):
     """Command line interface for the `Tidy` tool.
 
-    Typically :func:`tidy_cli` is a better entry point for command line style
-    usage and :class:Tidy for programmatic usage.
+    Typically :func:`tidy_cli` is a better suited for command line style
+    usage and :class:`Tidy` for other programmatic usage.
     """
 
     def __init__(self):

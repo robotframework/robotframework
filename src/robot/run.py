@@ -14,6 +14,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""Module implementing the command line entry point for executing tests.
+
+This module can be executed from the command line using the following
+approaches::
+
+    python -m robot.run
+    python path/to/robot/run.py
+
+Instead of ``python`` it is possible to use also other Python interpreters.
+This module is also used by the installed ``pybot``, ``jybot`` and
+``ipybot`` start-up scripts.
+
+This module also provides :func:`run` and :func:`run_cli` functions
+that can be used programmatically. Other code is for internal usage.
+"""
+
 USAGE = """Robot Framework -- A generic test automation framework
 
 Version:  <VERSION>
