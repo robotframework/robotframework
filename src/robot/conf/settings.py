@@ -174,23 +174,23 @@ class _BaseSettings(object):
 
         `option` can be 'Output', 'Log', 'Report', 'DebugFile' or 'XUnitFile'.
         """
-        value = self._opts[option]
-        if not value:
+        name = self._opts[option]
+        if not name:
             return None
         if option == 'Log' and self._output_disabled():
             self['Log'] = None
             LOGGER.error('Log file is not created if output.xml is disabled.')
             return None
-        value = self._process_output_name(value, option)
-        path = utils.abspath(os.path.join(self['OutputDir'], value))
+        name = self._process_output_name(option, name)
+        path = utils.abspath(os.path.join(self['OutputDir'], name))
         self._create_output_dir(os.path.dirname(path), option)
         return path
 
-    def _process_output_name(self, name, type_):
+    def _process_output_name(self, option, name):
         base, ext = os.path.splitext(name)
         if self['TimestampOutputs']:
             base = '%s-%s' % (base, utils.get_start_timestamp('', '-', ''))
-        ext = self._get_output_extension(ext, type_)
+        ext = self._get_output_extension(ext, option)
         return base + ext
 
     def _get_output_extension(self, ext, type_):
@@ -321,6 +321,7 @@ class _BaseSettings(object):
     @property
     def non_critical_tags(self):
         return self['NonCritical']
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
