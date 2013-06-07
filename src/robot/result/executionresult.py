@@ -21,11 +21,16 @@ from .testsuite import TestSuite
 
 
 class Result(object):
-    """Contains results of test execution.
+    """Test execution results.
 
-    :ivar source: Path to the xml file where results are read from.
-    :ivar suite: Hierarchical :class:`~.testsuite.TestSuite` results.
-    :ivar errors: Execution :class:`~.executionerrors.ExecutionErrors`.
+    Typically created based on XML output files using
+    the :func:`~.resultbuilder.ExecutionResult` factory method.
+
+    :ivar source: Path to the XML file where results are read from.
+    :ivar suite: Hierarchical execution results as
+        a :class:`~.testsuite.TestSuite` object.
+    :ivar errors: Execution errors as
+        an :class:`~.executionerrors.ExecutionErrors` object.
     """
 
     def __init__(self, source=None, root_suite=None, errors=None):
@@ -38,41 +43,92 @@ class Result(object):
 
     @property
     def statistics(self):
-        """Test execution :class:`~robot.model.statistics.Statistics`."""
+        """Test execution statistics.
+
+        Statistics are an instance of
+        :class:`~robot.model.statistics.Statistics` that is created based
+        on the contained ``suite`` and possible
+        :func:`configuration <configure>`.
+
+        Statistics are created every time this property is accessed. Saving
+        them to a variable is thus often a good idea to avoid re-creating
+        them unnecessarily::
+
+            from robot.api import ExecutionResult
+
+            result = ExecutionResult('output.xml')
+            result.configure(stat_config={'suite_stat_level': 2,
+                                          'tag_stat_combine': 'tagANDanother'})
+            stats = result.statistics
+            print stats.total.critical.failed
+            print stats.total.critical.passed
+            print stats.tags.combined[0].total
+        """
         return Statistics(self.suite, **self._stat_config)
 
     @property
     def return_code(self):
-        """Return code (integer) of test execution."""
+        """Return code (integer) of test execution.
+
+        By default returns the number of failed critical tests (max 250),
+        but can be :func:`configured <configure>` to always return 0.
+        """
         if self._status_rc:
             return min(self.suite.statistics.critical.failed, 250)
         return 0
 
     def configure(self, status_rc=True, suite_config=None, stat_config=None):
+        """Configures the result object and objects it contains.
+
+        :param status_rc: If set to ``False``, :attr:`return_code` always
+            returns 0.
+        :param suite_config: A dictionary of configuration options passed
+            to :meth:`~.testsuite.TestSuite.configure` method of the contained
+            ``suite``.
+        :param stat_config: A dictionary of configuration options used when
+            creating :attr:`statistics`.
+        """
         if suite_config:
             self.suite.configure(**suite_config)
         self._status_rc = status_rc
         self._stat_config = stat_config or {}
 
-    def visit(self, visitor):
-        visitor.visit_result(self)
-
     def save(self, path=None):
-        # avoids cyclic import
+        """Save results as a new output XML file.
+
+        :param path: Path to save results to. If omitted, overwrites the
+            original file.
+        """
         from robot.reporting.outputwriter import OutputWriter
         self.visit(OutputWriter(path or self.source))
 
+    def visit(self, visitor):
+        """An entry point to visit the whole result object.
+
+        :param visitor: An instance of :class:`~.visitor.ResultVisitor`.
+
+        Visitors can gather information, modify results, etc. See
+        :mod:`~robot.result` package for a simple usage example.
+
+        Notice that it is also possible to call :meth:`result.suite.visit
+        <robot.result.testsuite.TestSuite.visit>` if there is no need to
+        visit the contained ``statistics`` or ``errors``.
+        """
+        visitor.visit_result(self)
+
     def handle_suite_teardown_failures(self):
+        """Internal usage only."""
         if self.generated_by_robot:
             self.suite.handle_suite_teardown_failures()
 
 
 class CombinedResult(Result):
+    """Combined results of multiple test executions."""
 
-    def __init__(self, others):
+    def __init__(self, results=None):
         Result.__init__(self)
-        for other in others:
-            self.add_result(other)
+        for result in results or ():
+            self.add_result(result)
 
     def add_result(self, other):
         self.suite.suites.append(other.suite)

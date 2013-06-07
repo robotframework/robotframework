@@ -22,15 +22,14 @@ from .executionresult import Result, CombinedResult
 
 
 def ExecutionResult(*sources, **options):
-    """Constructs :class:`Result` object based on execution result xml file(s).
+    """Factory method to constructs :class:`~.executionresult.Result` objects.
 
-    :param sources: The Robot Framework output xml file(s).
+    :param sources: Output XML file(s).
     :param options: Configuration options passed to
                     :py:class:`~ExecutionResultBuilder` as keyword arguments.
-                    New in 2.7.5.
-    :returns: :py:class:`~.executionresult.Result` instance.
+    :returns: :class:`~.executionresult.Result` instance.
 
-    See :py:mod:`robot.result` for usage example.
+    See :mod:`~robot.result` package for a usage example.
     """
     if not sources:
         raise DataError('One or more data source needed.')
@@ -38,8 +37,10 @@ def ExecutionResult(*sources, **options):
         return _combined_result(sources, options)
     return _single_result(sources[0], options)
 
+
 def _combined_result(sources, options):
     return CombinedResult(ExecutionResult(src, **options) for src in sources)
+
 
 def _single_result(source, options):
     ets = ETSource(source)

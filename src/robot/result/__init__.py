@@ -12,21 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Implements parsing results from XML output files.
+"""Implements parsing execution results from XML output files.
 
-The entry point of this API is the :func:`~.resultbuilder.ExecutionResult`
-factory method, which returns an instance of
-:class:`~.executionresult.Result`.
+The public API of this package is the :func:`~.ExecutionResult` factory
+method, which returns :class:`~.Result` objects, and :class:`~.ResultVisitor`
+abstract class to ease further processing the results. Note that it is
+highly recommended to import public API via the :mod:`robot.api` package.
 
 This package is considered stable.
 
 Example
 -------
-
-The example below reads a given output file and marks each test case whose
-execution time is longer than three minutes failed. The
-:class:`~.executionresult.Result` object is then written back to disk and
-normal log and report files could be generated with ``rebot`` tool.
 
 .. literalinclude:: /../../doc/api/code_examples/check_test_times.py
 """

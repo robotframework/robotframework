@@ -2,9 +2,11 @@
 
 """Usage: check_test_times.py seconds inpath [outpath]
 
-Reads result of a test run from Robot output file and checks that no test
-took longer than given amount of seconds to execute. If outpath is not
-given, the result is written over the original file.
+Reads test execution result from an output XML file and checks that no test
+took longer than given amount of seconds to execute.
+
+Optional `outpath` specifies where to write processed results. If not given,
+results are written over the original file.
 """
 
 import sys
@@ -22,12 +24,11 @@ class ExecutionTimeChecker(ResultVisitor):
             test.message = 'Test execution took too long.'
 
 
-def check_tests(max_seconds, inpath, outpath=None):
-    if not outpath:
-        outpath = inpath
+def check_tests(seconds, inpath, outpath=None):
     result = ExecutionResult(inpath)
-    result.suite.visit(ExecutionTimeChecker(int(max_seconds)))
+    result.visit(ExecutionTimeChecker(float(seconds)))
     result.save(outpath)
+
 
 if __name__ == '__main__':
     try:
