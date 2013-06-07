@@ -12,14 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Implements `libdoc` tool.
+"""Implements the `Libdoc` tool.
 
-The modules in this package are used internally by Robot Framework
-and are not intended to be used as public APIs.
+The command line entry point and programmatic interface for Libdoc
+are provided by the separate :mod:`robot.libdoc` module.
 
-For programmatic entry point, see :mod:`robot.libdoc`.
-
-This package is considered stable.
+This package is considered stable but it is not part of the public API.
 """
 
 from robot.errors import DataError

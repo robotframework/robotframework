@@ -12,8 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Contains Robot Framework standard test libraries.
+"""Package hosting Robot Framework standard test libraries.
 
-The modules in this package are used internally by Robot Framework
-and are not intended to be used as public APIs.
+Libraries are mainly used externally in the test data, but they can be
+also used by custom test libraries if there is a need. Especially
+the :class:`~robot.libraries.BuiltIn.BuiltIn` library is often useful
+when there is a need to interact with the framework.
+
+Because libraries are documented using Robot Framework's own documentation
+syntax, the generated API docs are not that well formed. It is thus better
+to find the generated library documentations, for example, via
+the http://robotframework.org web site.
 """

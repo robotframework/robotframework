@@ -12,14 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package implements settings for both test execution and
-output processing.
+"""Implements settings for both test execution and output processing.
 
-This package contains classes :py:class:`robot.conf.settings.RobotSettings`
-and :py:class:`robot.conf.settings.RebotSettings` used internally by
-Robot Framework. There should be no need to use these classes in own
-implementations as each :py:mod:`public api <robot.api>` is configured
-by its own settings.
+This package implements :class:`~robot.conf.settings.RobotSettings` and
+:class:`~robot.conf.settings.RebotSettings` classes used internally by
+the framework. There should be no need to use these classes externally.
+
+This package can be considered relatively stable. Aforementioned classes
+are likely to be rewritten at some point to be more convenient to use.
+Instantiating them is not likely to change, though.
 """
 
 from .settings import RobotSettings, RebotSettings

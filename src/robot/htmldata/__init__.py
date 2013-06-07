@@ -12,13 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package has modules for writing output files in HTML format.
+"""Package for writing output files in HTML format.
 
-The modules in this package are used internally by Robot Framework
-and are not intended to be used as public APIs.
-
-:mod:`robot.reporting`, :mod:`robot.libdoc` and :mod:`robot.testdoc` use
-this package.
+This package is considered stable but it is not part of the public API.
 """
 
 from .htmlfilewriter import HtmlFileWriter, ModelWriter

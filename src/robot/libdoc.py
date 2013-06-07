@@ -26,6 +26,8 @@ Instead of ``python`` it is possible to use also other Python interpreters.
 
 This module also provides :func:`libdoc` and :func:`libdoc_cli` functions
 that can be used programmatically. Other code is for internal usage.
+
+Libdoc itself is implemented in the :mod:`~robot.libdocpkg` package.
 """
 
 USAGE = """robot.libdoc -- Robot Framework library documentation generator
