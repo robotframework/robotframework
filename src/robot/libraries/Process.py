@@ -19,7 +19,7 @@ import subprocess
 import sys
 import tempfile
 
-from robot.utils import ConnectionCache
+from robot.utils import ConnectionCache, encode_to_system
 from robot.version import get_version
 from robot.api import logger
 
@@ -278,7 +278,7 @@ class Process(object):
         return self._started_processes.register(p, alias=config.alias)
 
     def _cmd(self, args, command, use_shell):
-        cmd = [command] + [str(i) for i in args]
+        cmd = [command] + [encode_to_system(i) for i in args]
         if use_shell and args:
             cmd = subprocess.list2cmdline(cmd)
         elif use_shell:
@@ -540,15 +540,15 @@ class ProcessConfig(object):
     def _construct_env(self, rest):
         new_env = dict()
         for key, val in rest.iteritems():
-            key = key.encode('utf-8')
+            key = encode_to_system(key)
             if key == "env":
                 self.env = dict()
                 for k, v in val.iteritems():
-                    k = k.encode('utf-8')
-                    v = v.encode('utf-8')
+                    k = encode_to_system(k)
+                    v = encode_to_system(v)
                     self.env[k] = v
             elif "env:" == key[:4]:
-                new_env[key[4:]] = val.encode('utf-8')
+                new_env[key[4:]] = encode_to_system(val)
             else:
                 raise RuntimeError("'%s' is not supported by this keyword." % key)
         if not self.env:
@@ -562,3 +562,13 @@ class ProcessConfig(object):
             must_values['PATH'] = os.environ['PATH']
             must_values['SYSTEMROOT'] = os.environ['SYSTEMROOT']
         return must_values
+
+    def __str__(self):
+        return encode_to_system("""
+cwd = %s
+stdout_stream = %s
+stderr_stream = %s
+shell = %r
+alias = %s
+env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
+            self.shell, self.alias, self.env))
