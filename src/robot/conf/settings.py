@@ -71,6 +71,8 @@ class _BaseSettings(object):
                 value = [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['RunFailed']
+        if self['DeprecatedXUnit']:
+            self['XUnit'] = self['DeprecatedXUnit']
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
@@ -98,8 +100,7 @@ class _BaseSettings(object):
             return None
         if name == 'DeprecatedXUnit':
             LOGGER.warn('Option --xunitfile is deprecated. Use --xunit instead.')
-            self['XUnit'] = self._process_value('XUnit', value)
-            return None
+            return self._process_value('XUnit', value)
         if name == 'OutputDir':
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
