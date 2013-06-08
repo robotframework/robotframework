@@ -12,13 +12,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Various generic utility classes and functions.
+"""Various generic utility functions and classes.
 
-Provided utilities are generally stable, but absolute backwards compatibility
-between major versions is not guaranteed.
+Utilities are mainly for internal usage, but external libraries and tools
+may find some of them useful. Utilities are generally stable, but absolute
+backwards compatibility between major versions is not guaranteed.
 
-The modules in this package are used internally by Robot Framework
-and are not intended to be used as public APIs.
+All utilities are exposed via the :mod:`robot.utils` package, and should be
+used either like::
+
+    from robot import utils
+
+    assert utils.Matcher('H?llo').match('Hillo')
+
+or::
+
+    from robot.utils import Matcher
+
+    assert Matcher('H?llo').match('Hillo')
 """
 
 from .argumentparser import ArgumentParser

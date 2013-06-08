@@ -12,10 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Implements handling and resolving of variables.
+"""Implements storing and resolving variables.
 
-The modules in this package are used internally by Robot Framework
-and are not intended to be used as public APIs.
+This package is for internal usage only, and also subject to heavy refactoring
+in the future.
 """
 
 import os
