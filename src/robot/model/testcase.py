@@ -25,6 +25,13 @@ class TestCase(ModelObject):
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None):
+        """Model for single test suite.
+
+        :param name: Test suite name.
+        :param doc: Test suite documentation.
+        :param tags: Test suite tags.
+        :param timeout: Timeout for test suite.
+        """
         self.parent = None
         self.name = name
         self.doc = doc

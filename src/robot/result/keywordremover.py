@@ -18,6 +18,15 @@ from robot.model import SuiteVisitor, SkipAllVisitor
 
 
 def KeywordRemover(how):
+    """Returns correct keyword remover based on given criteria.
+
+    `how` is a string of one of the following:
+        * `PASSED` returns :class:`.PassedKeywordRemover`.
+        * `FOR` returns :class:`ForLoopItemsRemover`.
+        * `ALL` returns :class:`AllKeywordsRemover`.
+        * `WUKS` return :class:`WaitUntilKeywordSucceedsRemover`.
+        * Otherwise, :class:`~robot.model.visitor.SkipAllVisitor` is returned.
+    """
     return {
         'PASSED': PassedKeywordRemover,
         'FOR': ForLoopItemsRemover,
@@ -47,13 +56,13 @@ class _KeywordRemover(SuiteVisitor):
 
 
 class AllKeywordsRemover(_KeywordRemover):
-
+    """Removes all keywords."""
     def visit_keyword(self, keyword):
         self._clear_content(keyword)
 
 
 class PassedKeywordRemover(_KeywordRemover):
-
+    """Removes those keywords that have passed."""
     def start_suite(self, suite):
         if not suite.statistics.all.failed:
             for keyword in suite.keywords:
@@ -70,6 +79,7 @@ class PassedKeywordRemover(_KeywordRemover):
 
 
 class ForLoopItemsRemover(_KeywordRemover):
+    """Removes for loop keywords."""
     _message = '%d passing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
@@ -84,6 +94,7 @@ class ForLoopItemsRemover(_KeywordRemover):
 
 
 class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
+    """Removes `BuiltIn.Wait Until Keyword Succeeds` keywords."""
     _message = '%d failing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):

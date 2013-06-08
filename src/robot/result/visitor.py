@@ -14,17 +14,21 @@
 """
 Visitors can be used to easily travel the test suites, test cases and keywords.
 
-For usage example, see :py:mod:`~robot.result` package.
+For usage example, see :mod:`~robot.result` package.
 
 The pattern is internally widely used in Robot Framework, for example see the
-source code of :py:class:`robot.model.tagsetter.TagSetter`.
+source code of :class:`robot.model.tagsetter.TagSetter`.
 """
 
 from robot.model import SuiteVisitor
 
 
 class ResultVisitor(SuiteVisitor):
+    """Abstract class to conveniently travel
+    :class:`robot.result.executionresult.result` objects.
 
+    See :mod:`example of usage <robot.result>`
+    """
     def visit_result(self, result):
         if self.start_result(result) is not False:
             result.suite.visit(self)

@@ -62,7 +62,7 @@ class SuiteVisitor(object):
 
 
 class SkipAllVisitor(SuiteVisitor):
-
+    """Travels suite and it's sub-suites without doing anything."""
     def visit_suite(self, suite):
         pass
 

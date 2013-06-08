@@ -113,7 +113,11 @@ class _TestData(object):
 
 
 class TestCaseFile(_TestData):
-    """The parsed test case file object."""
+    """The parsed test case file object.
+
+    :param parent: parent object to be used in creation of the model object.
+    :param source: path where test data is read from.
+    """
 
     def __init__(self, parent=None, source=None):
         self.directory = os.path.dirname(source) if source else None
@@ -145,7 +149,10 @@ class TestCaseFile(_TestData):
 
 
 class ResourceFile(_TestData):
-    """The parsed resource file object."""
+    """The parsed resource file object.
+
+    :param source: path where resource file is read from.
+    """
 
     def __init__(self, source=None):
         self.directory = os.path.dirname(source) if source else None
@@ -182,6 +189,9 @@ class TestDataDirectory(_TestData):
     """The parsed test data directory object. Contains hiearchical structure
     of other :py:class:`.TestDataDirectory` and :py:class:`.TestCaseFile`
     objects.
+
+    :param parent: parent object to be used in creation of the model object.
+    :param source: path where test data is read from.
     """
 
     def __init__(self, parent=None, source=None):

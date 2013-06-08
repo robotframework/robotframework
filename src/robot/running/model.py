@@ -29,6 +29,14 @@ class Keyword(model.Keyword):
     message_class = None  # TODO: Remove from base model?
 
     def __init__(self, name='', args=(), assign=(), type='kw'):
+        # TODO: What exactly are arguments `assign` and `type`?
+        """Running model for single keyword.
+
+        :param name: Name of the keyword.
+        :param args: Arguments for the keyword.
+        :param assign:
+        :param type:
+        """
         model.Keyword.__init__(self, name=name, args=args, type=type)
         self.assign = assign
 
@@ -72,6 +80,15 @@ class TestCase(model.TestCase):
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None):
+        # TODO: what exactly is `template`?
+        """Running model for single test case.
+
+        :param name: Name of the test case.
+        :param doc: Documentation of the test case.
+        :param tags: Tags of the test case.
+        :param timeout: Timeout limit of the test case
+        :param template:
+        """
         model.TestCase.__init__(self, name, doc, tags, timeout)
         self.template = template
 
@@ -95,7 +112,10 @@ class TestSuite(model.TestSuite):
         :ivar source: Path to the source file or directory.
         :ivar suites: Child suites.
         :ivar tests: A list of :class:`~.testcase.TestCase` instances.
-        :ivar keywords: A list containing setup and teardown.
+        :ivar keywords: A list containing setup and teardown
+            :class:`Keyword <robot.running.model.Keyword>` objects.
+
+        This class might change in the future.
         """
         model.TestSuite.__init__(self, name, doc, metadata, source)
         self.imports = []

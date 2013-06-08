@@ -23,6 +23,12 @@ from .model import TestSuite, ForLoop
 class TestSuiteBuilder(object):
 
     def __init__(self, include_suites=None, warn_on_skipped=False, include_empty_suites=False):
+        """Create programmatically executable
+        :class:`~robot.running.model.TestSuite` objects based on existing data
+        on the file system.
+
+        See example of usage in :mod:`.running` package.
+        """
         self.include_suites = include_suites
         self.warn_on_skipped = warn_on_skipped
         self.include_empty_suites = include_empty_suites

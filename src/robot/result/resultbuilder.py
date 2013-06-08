@@ -24,7 +24,7 @@ from .executionresult import Result, CombinedResult
 def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
-    :param sources: Output XML file(s).
+    :param sources: Path(s) to output XML file(s).
     :param options: Configuration options passed to
                     :py:class:`~ExecutionResultBuilder` as keyword arguments.
     :returns: :class:`~.executionresult.Result` instance.
@@ -56,6 +56,13 @@ def _single_result(source, options):
 class ExecutionResultBuilder(object):
 
     def __init__(self, source, include_keywords=True):
+        """Builds :class:`~.executionresult.Result` objects from existing
+        output XML files on the file system.
+
+        :param source: Path to output XML file.
+        :param include_keywords: Include keyword information to the
+            :class:`~.executionresult.Result` objects
+        """
         self._source = source \
             if isinstance(source, ETSource) else ETSource(source)
         self._include_keywords = include_keywords
