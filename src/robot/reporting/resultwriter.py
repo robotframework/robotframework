@@ -29,7 +29,13 @@ class ResultWriter(object):
     :param sources: Either one :class:`~robot.result.executionresult.Result`
         object, or one or more paths to existing output XML files.
 
-    See :mod:`~robot.reporting` package for a usage example.
+    By default writes ``report.html`` and ``log.html``, but no output XML
+    or xUnit files. Custom file names can be given and results disabled
+    or enabled using ``settings`` or ``options`` passed to the
+    :meth:`write_results` method. The latter is typically more convenient::
+
+        writer = ResultWriter(result)
+        writer.write_results(report='custom.html', log=None, xunit='xunit.xml')
     """
 
     def __init__(self, *sources):

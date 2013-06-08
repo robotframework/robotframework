@@ -20,13 +20,7 @@ as well as based on the result objects returned by
 the :func:`~robot.result.resultbuilder.ExecutionResult` factory method or
 an executed :class:`~robot.running.model.TestSuite`.
 
-It is highly recommended to use the public API via the :mod:`robot.api`
-package like in the example below::
-
-    from robot.api import ResultWriter
-
-    writer = ResultWriter('output.xml')
-    writer.write_results(report='my_report.hml', log=None, xunit='xunit.xml')
+It is highly recommended to use the public API via the :mod:`robot.api` package.
 
 This package is considered stable.
 """
