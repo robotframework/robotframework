@@ -1,7 +1,0 @@
-*** Settings ***
-Library  OperatingSystem
-
-*** Test Cases ***
-Should Initialize Environment
-    [Setup]  Set Environment Variable  SKYNET  true
-    Environment Variable Should Be Set  SKYNET

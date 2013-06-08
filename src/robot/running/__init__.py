@@ -14,73 +14,86 @@
 
 """Implements the core test execution logic.
 
-Currently, the main entry points are classes
-:py:class:`~robot.running.model.TestSuite` for creating test suites
-programmatically, and
-:py:class:`~robot.running.builder.TestSuiteBuilder` for creating test suites
-from existing test case files.
+The public API of this package consists of the following two classes:
 
-This package was rewritten for Robot Framework 2.8.
+* :class:`~robot.running.model.TestSuite` for creating an executable
+  test suite structure programmatically.
 
-Example: Creating a test suite programmatically
------------------------------------------------
+* :class:`~robot.running.builder.TestSuiteBuilder` for creating executable
+  test suites based on existing test case files and directories.
 
-In this example, we create the following suite programmatically:
+It is recommended to import both of these classes via the :mod:`robot.api`
+package like in the examples below.
 
-.. literalinclude:: /../../doc/api/code_examples/suite_for_programmatic_tests.txt
-   :language: RobotFramework
+This package and especially all public code was rewritten in Robot Framework
+2.8 to make it easier to generate and execute test suites programmatically.
+Rewriting of the test execution logic will continue in future releases,
+but changes to the public API ought to be relatively small.
 
-The corresponding Python code is:
+Examples
+--------
 
-.. literalinclude:: /../../doc/api/code_examples/test_suite.py
-   :linenos:
+First, let's assume we have the following test suite in file
+``activate_skynet.txt``:
 
-On line 1, we start by importing :py:class:`robot.running.model.TestSuite`,
-exposed via :py:mod:`robot.api`. Please not, that there is no need to import
-other classes from the API. This is due to fact that everything related to tests
-(test cases, keywords, variables, etc.) are always created via
-:py:class:`robot.running.model.TestSuite`.
+.. sourcecode:: RobotFramework
 
-On line 3, we instantiate a new test suite from
-:py:class:`robot.running.model.TestSuite`. When creating new test suites,
-test cases or keywords, the first parameter is always the `name`
+    *** Settings ***
+    Library    OperatingSystem
 
-On line 4, the `OperatingSystem` library is imported into use by
-using :py:func:`robot.model.imports.Imports.library`. Other possible import
-types are :py:func:`resource file <robot.model.imports.Imports.resource>` and
-:py:func:`variable file <robot.model.imports.Imports.variables>`.
+    *** Test Cases ***
+    Should Activate Skynet
+        [Tags]    smoke
+        [Setup]    Set Environment Variable    SKYNET    activated
+        Environment Variable Should Be Set    SKYNET
 
-On line 5, the actual test case is created into the suite. Besides the name,
-the test case is also given an additional tag as a named argument.
-Multiple values can be given as a list, for example:
-`tags=['regression', 'slow']`.
+We can easily parse and create an executable test suite based on the above file
+using the :class:`~robot.running.builder.TestSuiteBuilder` class as follows::
 
-On line 6, the test case setup is created by adding keyword
-`Set Environment Variable` (from `OperatingSystem` library) into the test case.
-This keyword takes multiple arguments, hence the arguments are given as a list.
-Here, parameter `type` specifies that this keyword is defined as the test case setup.
-Similarly, `type` could be `teardown` for defining the test
-case teardown. If no `type` is given as parameter, the keyword is assumed to be
-a normal, i.e. non-setup and non-teardown, keyword.
+    from robot.api import TestSuiteBuilder
 
-On line 7, another keyword `Environment Variable Should Be Set`, is added into
-the test case.
+    suite = TestSuiteBuilder().build('path/to/activate_skynet.txt')
 
-On line 8, the actual test suite is ran by issuing method
-:py:func:`~robot.running.model.TestSuite.run`. This method returns test results
-as an object which is type of :py:class:`~robot.result.executionresult.Result`.
+That was easy. Let's next generate the same test suite from scratch
+using the :class:`~robot.running.model.TestSuite` class::
 
+    from robot.api import TestSuite
 
+    suite = TestSuite('Activate Skynet')
+    suite.imports.library('OperatingSystem')
+    test = suite.tests.create('Should Activate Skynet', tags=['smoke'])
+    test.keywords.create('Set Environment Variable', args=['SKYNET', 'activated'], type='setup')
+    test.keywords.create('Environment Variable Should Be Set', args=['SKYNET'])
 
+Not that complicated either, especially considering the flexibility. Notice
+that the suite created based on the file could be edited further using
+the same API.
 
-Example: Creating a test suite from source
-------------------------------------------
+Now that we have a test suite ready, let's run it and verify that the returned
+:class:`~robot.result.executionresult.Result` object contains correct
+information::
 
-.. literalinclude:: /../../doc/api/code_examples/test_suite_from_file.py
+    result = suite.run(critical='smoke', output='skynet.xml')
 
-And here is the test case file:
+    assert result.return_code == 0
+    assert result.suite.name == 'Activate Skynet'
+    test = result.suite.tests[0]
+    assert test.name == 'Should Activate Skynet'
+    assert test.passed and test.critical
+    stats = result.suite.statistics
+    assert stats.critical.total == 1 and stats.critical.failed == 0
 
-.. literalinclude:: /../../doc/api/code_examples/my_tests.txt
+Running the suite generates a normal output XML file, unless it is disabled
+by using ``output=None``. Generating log, report, and xUnit files based on
+the results is possible using the
+:class:`~robot.reporting.resultwriter.ResultWriter` class::
+
+    from robot.api import ResultWriter
+
+    # Report and xUnit files can be generated based on the  result object.
+    ResultWriter(result).write_results(report='skynet.html', log=None)
+    # Generating log files requires processing the earlier generated output XML.
+    ResultWriter('skynet.xml').write_results()
 
 Package methods
 ---------------
@@ -97,7 +110,8 @@ from .runkwregister import RUN_KW_REGISTER
 def UserLibrary(path):
     """Create a user library instance from given resource file.
 
-    This is used at least by libdoc.py."""
+    This is used by Libdoc.
+    """
     from robot.parsing import ResourceFile
     from robot import utils
     from .arguments.argumentspec import ArgumentSpec
