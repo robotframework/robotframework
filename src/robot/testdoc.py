@@ -249,7 +249,7 @@ def testdoc_cli(arguments):
     :param arguments: command line arguments as a list of strings.
 
     For programmatic usage the :func:`testdoc` function is typically better. It
-    has a better API for that usage and does not call :func:`sys.exit` like
+    has a better API for that and does not call :func:`sys.exit` like
     this function.
 
     Example::

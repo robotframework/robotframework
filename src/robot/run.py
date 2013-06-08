@@ -420,8 +420,8 @@ def run(*datasources, **options):
 
     Data sources are paths to files and directories, similarly as when running
     `pybot` command from the command line. Options are given as keyword
-    arguments and their names are same as long command line options without
-    hyphens.
+    arguments and their names are same as long command line options except
+    without hyphens.
 
     Options that can be given on the command line multiple times can be
     passed as lists like `include=['tag1', 'tag2']`. If such option is used
