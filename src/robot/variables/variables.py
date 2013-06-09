@@ -97,7 +97,7 @@ class Variables(utils.NormalizedDict):
         # cannot iterate over `self` here because loop changes the state.
         for var in self.keys():
             try:
-                self[var]  # getting variable indirectly resolves it if needed
+                self[var]  # getting variable resolves it if needed
             except DataError:
                 pass
 
