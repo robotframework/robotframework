@@ -128,12 +128,11 @@ class UserKeywordHandler(object):
     def shortdoc(self):
         return self.doc.splitlines()[0] if self.doc else ''
 
-    def init_keyword(self, varz):
-        self._errors = []
-        self.doc = varz.replace_meta('Documentation', self._doc, self._errors)
+    def init_keyword(self, variables):
+        self.doc = variables.replace_string(self._doc, ignore_errors=True)
         timeout = (self._timeout.value, self._timeout.message) if self._timeout else ()
         self.timeout = KeywordTimeout(*timeout)
-        self.timeout.replace_variables(varz)
+        self.timeout.replace_variables(variables)
 
     def run(self, context, arguments):
         context.start_user_keyword(self)
@@ -237,9 +236,6 @@ class UserKeywordHandler(object):
         return None
 
     def _verify_keyword_is_valid(self):
-        if self._errors:
-            raise DataError('User keyword initialization failed:\n%s'
-                            % '\n'.join(self._errors))
         if not (self.keywords or self.return_value):
             raise DataError("User keyword '%s' contains no keywords."
                             % self.name)
