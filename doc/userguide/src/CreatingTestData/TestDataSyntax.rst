@@ -500,29 +500,27 @@ from the `BuiltIn library`_.
 Escaping
 ''''''''
 
-The escape character for the Robot Framework parser is the backslash
-(:code:`\\`).  The escape character can be used as follows:
+The escape character in Robot Framework test data is the backslash (:code:`\\`).
+It has has plenty of usages:
 
-- To escape special characters so that their literal values are
-  used:
+- Escape special characters so that their literal values are used:
 
-  * :code:`\\${notvar}` means a literal string :code:`${notvar}` that
-    looks like a variable_
-  * :code:`\\\\` means a single backslash (for example, :code:`C:\\\\Temp`)
-  * :code:`\\#` means a literal hash (#) mark, even at the beginning of a cell
+  * :code:`\\${notvar}` means a literal string :code:`${notvar}`, not a variable_
+  * :code:`\\#` means a literal hash character, even at the beginning of a cell, not a comment
+  * :code:`name\\=value` means a literal value :code:`name=value`, not `named argument syntax`_
+  * :code:`\\\\` means a literal backslash (for example, :code:`C:\\\\Temp`)
 
-- To affect `the parsing of whitespaces`__.
+- Affect `the parsing of whitespaces`__.
 
-- To prevent ignoring empty cells at the end of a row in general and
+- Prevent ignoring empty cells at the end of a row in general and
   everywhere when using the `plain text format`_. Another, and often
   clearer, possibility is using `built-in variable`__ :var:`${EMPTY}`.
 
-- To escape pipe character when using the `pipe and space separated format`_.
+- Escape the pipe character when using the `pipe and space separated format`_.
 
-- To escape indented cells in `for loops`_ when using the `plain text format`_.
+- Escape indented cells in `for loops`_ when using the `plain text format`_.
 
-- To prevent catenating documentation split into multiple rows `with
-  newlines`__.
+- Prevent catenating documentation split into multiple rows `with newlines`__.
 
 __ `Handling whitespace`_
 __ `Space and empty variables`_
@@ -536,14 +534,14 @@ Handling whitespace
 '''''''''''''''''''
 
 Robot Framework handles whitespace, such as spaces, newlines and tabs,
-the same way as they are handled in HTML. This means that
-Robot Framework:
+the same way as they are handled in HTML. This means that Robot Framework:
 
 - Removes leading and trailing whitespace in all cells.
 - Changes multiple consecutive spaces into single spaces.
 - Converts all newlines and tabs into spaces.
 
-To prevent Robot Framework from parsing data according to these rules, a backslash can be used:
+To prevent Robot Framework from parsing data according to these rules,
+the backslash character can be used:
 
 - Before leading spaces, for example :code:`\\ some text`.
 - Between consecutive spaces, for example :code:`text \\ \\ more text`.
