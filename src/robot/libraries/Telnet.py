@@ -38,6 +38,7 @@ class Telnet:
     - `Importing`
     - `Logging`
     - `Time string format`
+    - `Importing`
     - `Shortcuts`
     - `Keywords`
 

@@ -606,8 +606,8 @@ the earlier Python example:
        multipleDefaults(arg1, "default 1");
    }
 
-Variable number of arguments
-''''''''''''''''''''''''''''
+Variable number of arguments (:code:`*varargs`)
+'''''''''''''''''''''''''''''''''''''''''''''''
 
 Robot Framework supports also keywords that take any number of
 arguments. Similarly as with the default values, the actual syntax to use
@@ -703,50 +703,68 @@ varargs with `library constructors`__.
 __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
 __ `Providing arguments to test libraries`_
 
-Python kwargs
-'''''''''''''
+Free keyword arguments (:code:`**kwargs`)
+'''''''''''''''''''''''''''''''''''''''''
 
-Robot Framework 2.8 added support for free keyword arguments using python's
-`**kwargs` syntax.
+Robot Framework 2.8 added the support for free keyword arguments using Python's
+:code:`**kwargs` syntax. How to use the syntax in the test data is discussed
+in `Free keyword arguments`_ section under `Creating test cases`_. In this
+section we take a look at how to actually use it in custom test libraries.
 
-.. sourcecode:: python
-
-  def any_kw_arguments(**kwargs):
-      for key in kwargs:
-          print 'Got argument %s with value %s' % (key, kwargs[key])
-
-
-.. table:: Using keywords with python `**kwargs`
-   :class: example
-
-   ===============  ================  =============  ==============
-      Test Case         Action        Argument       Argument
-   ===============  ================  =============  ==============
-   Kwargs           Any Kw Arguments  hello=kitty    another=value
-   ===============  ================  =============  ==============
-
-Kwargs can be used with all other argument types, but it is important to note
-that using kwargs can lead to accidental matches, because all equals signs in
-given argument values have to escaped or else the value is interpreted as a key
-value pair. For example given the keyword definition below, to give value
-:code:`xpath=.foo` to argument :code:`target`, it would have to be escaped as
-:code:`xpath\\=.foo`. Other ways the kwargs would just get a new key
-:code:`xpath` and target would get the default value.
+If you are already familiar how kwargs work with Python, understanding how
+they works with Robot Framework test libraries is rather simple. The example
+below shows the basic functionality.
 
 .. sourcecode:: python
 
-  def html_ops(target=None, **kwargs):
-      ...
+    def example_keyword(**stuff):
+        for name, value in stuff.items():
+            print name, value
 
-.. table:: Escaping keyword values with python `**kwargs`
+.. table:: Using keywords with python :code:`**kwargs`
    :class: example
 
-   ===============  ============  =============  ===================================
-      Test Case         Action    Argument
-   ===============  ============  =============  ===================================
-   Kwargs           HTML ops      xpath=.foo     # target will have default value
-   \                HTML ops      xpath\\=.foo   # target will have value xpath=foo
-   ===============  ============  =============  ===================================
+   ====================  ================  ==============  ==============  ===========================
+         Test Case            Action          Argument        Argument              Argument
+   ====================  ================  ==============  ==============  ===========================
+   Keyword Arguments     Example Keyword   hello=world                     # Logs 'hello world'
+   \                     Example Keyword   foo=1           bar=42          # Logs 'foo 1' and 'bar 42'
+   ====================  ================  ==============  ==============  ===========================
+
+Basically, all arguments at the end of the keyword call that use the
+`named argument syntax`_ :code:`name=value`, and that do not match any
+other arguments, are passed to the keyword as kwargs. To avoid using a literal
+value like :code:`foo=quux` as a keyword argument, it must be escaped__
+like :code:`foo\\=quux`.
+
+The following examples illustrate how normal arguments, varargs, and kwargs
+work together.
+
+.. sourcecode:: python
+
+  def various_args(arg, *varargs, **kwargs):
+      print 'arg:', arg
+      for value in varargs:
+          print 'vararg:', value
+      for name, value in kwargs.items():
+          print 'kwarg:', name, value
+
+.. table:: Using defaults, varargs, and kwargs together
+   :class: example
+
+   ===================  ============  ===========  ===========  ==========  ================================================
+        Test Case          Action      Argument     Argument     Argument                      Argument
+   ===================  ============  ===========  ===========  ==========  ================================================
+   Positional           Various Args  hello        world                    # Logs 'arg: hello' and 'vararg: world'
+   Named                Various Args  arg=value    hello=world              # Logs 'arg: value' and 'kwarg: hello world'
+   Both (and escaping)  Various Args  1            vararg\\=2   kwarg=3     # Logs 'arg: 1', 'vararg=2' and 'kwarg: kwarg 3'
+   ===================  ============  ===========  ===========  ==========  ================================================
+
+For a real world example of using a signature exactly like in the above
+example, see :name:`Run Process` and :name:`Start Keyword` keywords in the
+Process_ library.
+
+__ Escaping_
 
 Argument types
 ''''''''''''''
@@ -1447,7 +1465,7 @@ them anyway.
 
 It is also easy to use Robot Framework itself for testing libraries
 and that way have actual end-to-end acceptance tests for them. There are
-plenty of useful keywords in the `BuiltIn library`_ for this
+plenty of useful keywords in the BuiltIn_ library for this
 purpose. One worth mentioning specifically is :name:`Run Keyword And Expect
 Error`, which is useful for testing that keywords report errors
 correctly.
@@ -1887,7 +1905,7 @@ keyword must be executed elsewhere and the proxy can only pass forward
 the keyword name and arguments.
 
 A good example of using the hybrid API is Robot Framework's own
-`Telnet library`_.
+Telnet_ library.
 
 Using Robot Framework's internal modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

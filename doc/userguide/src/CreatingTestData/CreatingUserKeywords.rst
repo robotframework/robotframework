@@ -112,7 +112,7 @@ specifying them is probably the most complicated feature normally
 needed with Robot Framework, but even that is relatively easy,
 particularly in most common cases. Arguments are normally specified with
 the :opt:`[Arguments]` setting, and argument names use the same
-syntax as variables_, for example :var:`${arg}`.
+syntax as variables_, for example :code:`${arg}`.
 
 Positional arguments
 ''''''''''''''''''''
@@ -129,7 +129,7 @@ are argument names in its signature. The actual argument names do not
 matter to the framework, but from users' perspective they should should
 be as descriptive as possible. It is recommended
 to use lower-case letters in variable names, either as
-:var:`${my_arg}`, :var:`${my arg}` or :var:`${myArg}`.
+:code:`${my_arg}`, :code:`${my arg}` or :code:`${myArg}`.
 
 .. table:: User keyword taking different number of arguments
    :class: example
@@ -146,19 +146,19 @@ to use lower-case letters in variable names, either as
    \                Log          3rd argument: ${arg3}
    ===============  ===========  ========================  ==========  ==========
 
-Default values
-''''''''''''''
+Default values with user keywords
+'''''''''''''''''''''''''''''''''
 
-Positional arguments are probably sufficient in most
-situations. However, sometimes it is useful to be able to have a
-keyword that takes a different number of arguments and has default
-values for those that are not given. User keywords also allow this,
-and the needed new syntax does not add very much to the already
-discussed basic syntax. In short, default values are added to
-arguments, so that first there is the equals sign (:code:`=`) and then
-the value, for example :var:`${arg}=default`. There can be many
-arguments with defaults, but they all must be given after the normal
-positional arguments.
+When creating user keywords, positional arguments are sufficient in
+most situations. It is, however, sometimes useful that keywords have
+`default values`_ for some or all of their arguments. Also user keywords
+support default values, and the needed new syntax does not add very much
+to the already discussed basic syntax.
+
+In short, default values are added to arguments, so that first there is
+the equals sign (:code:`=`) and then the value, for example
+:code:`${arg}=default`. There can be many arguments with defaults, but they
+all must be given after the normal positional arguments.
 
 .. note:: The syntax for default values is space sensitive. Spaces
           before the :code:`=` sign are not allowed, and possible spaces
@@ -190,7 +190,7 @@ some of them needs to be overridden, it is often handy to use the
 `named arguments`_ syntax. When this syntax is used with user
 keywords, the arguments are specified without the :var:`${}`
 decoration. For example, the second keyword above could be used like
-below and :var:`${arg1}` would still get its default value.
+below and :code:`${arg1}` would still get its default value.
 
 .. table:: User keyword and named arguments syntax
    :class: example
@@ -205,13 +205,13 @@ As all Pythonistas must have already noticed, the syntax for
 specifying default arguments is heavily inspired by Python syntax for
 function default values.
 
-Variable number of arguments
-''''''''''''''''''''''''''''
+Varargs with user keywords
+''''''''''''''''''''''''''
 
 Sometimes even default values are not enough and there is a need
-for a keyword accepting any number of arguments. User keywords
-support also this. All that is needed is having `list variable`__
-such as :var:`@{varargs}` as the last argument in the keyword signature.
+for a keyword accepting `variable number of arguments`_. User keywords
+support also this feature. All that is needed is having `list variable`__
+such as :code:`@{varargs}` as the last argument in the keyword signature.
 This syntax can be combined with the previously described positional
 arguments and default values, and at the end the list variable gets all
 the leftover arguments that do not match other arguments. The list
@@ -240,7 +240,7 @@ __ `list variables`_
    ===========================  ===========  ================  ==========  ==========
 
 Notice that if the last keyword above is used with more than one
-argument, the second argument :var:`${opt}` always gets the given
+argument, the second argument :code:`${opt}` always gets the given
 value instead of the default value. This happens even if the given
 value is empty. The last example also illustrates how a variable
 number of arguments accepted by a user keyword can be used in a `for

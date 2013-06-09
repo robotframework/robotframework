@@ -62,7 +62,7 @@ Using Import Library keyword
 ''''''''''''''''''''''''''''
 
 Another possibility to take a test library into use is using the
-keyword :name:`Import Library` from the `BuiltIn library`_. This keyword
+keyword :name:`Import Library` from the BuiltIn_ library. This keyword
 takes the library name and possible arguments similarly as the
 :opt:`Library` setting. Keywords from the imported library are
 available in the test suite where the :name:`Import Library` keyword was
@@ -211,131 +211,46 @@ different arguments:
 Setting a custom name to a test library works both when importing a
 library in the Setting table and when using the :name:`Import Library` keyword.
 
-
 Standard libraries
 ~~~~~~~~~~~~~~~~~~~
 
 Some test libraries are distributed with Robot Framework and these
-libraries are called *standard libraries*. These are the available
-standard libraries:
+libraries are called *standard libraries*. The BuiltIn_ library is special,
+because it is taken into use automatically and thus its keywords are always
+available. Other standard libraries need to be imported in the same way
+as any other libraries, but there is no need to install them.
 
-  - `BuiltIn`_
-  - `OperatingSystem`_
-  - `Telnet`_
-  - `Collections`_
-  - `String`_
-  - `Dialogs`_
-  - `Screenshot`_
-  - `Remote`_
-  - `Process`_
+Normal standard libraries
+'''''''''''''''''''''''''
 
-The BuiltIn library is special, because it is taken into use
-automatically and thus its keywords are always available. Other
-standard libraries need to be imported in the same way as any other
-libraries, but there is no need to install them. Additionally, they
-work when running tests both with Python and Jython (with the
-Screenshot library as an exception).
+The available normal standard libraries are listed below with links to their
+documentations:
 
-New standard libraries can, and will, be added in the future. If you
-have an idea for a new standard library, or even have one that could
-be incorporated immediately, please contact Robot Framework
-developers. In general, a library is a good candidate to be added into
-standard libraries if it is generic, works on both Python and Jython
-without any external dependencies, and is adequately tested and
-documented.
+  - BuiltIn_
+  - Collections_
+  - Dialogs_
+  - OperatingSystem_
+  - Process_
+  - Screenshot_
+  - String_
+  - Telnet_
+  - XML_
 
-BuiltIn library
-'''''''''''''''
-
-The BuiltIn library provides a set of generic keywords needed
-often. It is imported automatically and thus always available. The
-provided keywords can be used, for example, for verifications
-(e.g. :name:`Should Be Equal`, :name:`Should Contain`), conversions
-(e.g. :name:`Convert To Integer`) and for various other purposes
-(e.g. :name:`Log`, :name:`Sleep`, :name:`Run Keyword If`, :name:`Set
-Global Variable`).
-
-The names of the keywords in the BuiltIn library have been renamed in
-Robot Framework version 1.8. All the old keywords still work, but the
-long names (the names visible in log files) of the keywords that are
-deprecated begin with :name:`DeprecatedBuiltIn.` (for example,
-:name:`DeprecatedBuiltIn.Equals`). It is highly recommended to use the
-new names of the keywords as the old versions will be removed
-altogether in the future.
-
-For more information, see the `BuiltIn library documentation`_.
-
-OperatingSystem library
-'''''''''''''''''''''''
-
-The OperatingSystem library enables various operating system related
-tasks to be performed in the system where Robot Framework is
-running. It can, among other things, execute commands
-(e.g. :name:`Run`), create and remove files and directories
-(e.g. :name:`Create File`, :name:`Remove Directory`), check whether
-files or directories exists or contain something (e.g. :name:`File
-Should Exist`, :name:`Directory Should Be Empty`) and manipulate
-environment variables (e.g. :name:`Set Environment Variable`).
-
-The names of the keywords in the OperatingSystem library have been
-renamed in Robot Framework 1.8 similarly as the names of the BuiltIn
-keywords.
-
-For more information, see the `OperatingSystem library documentation`_.
-
-Telnet library
-''''''''''''''
-
-The Telnet library makes it possible to connect to Telnet servers and
-execute commands on the opened connections.
-
-For more information, see the `Telnet library documentation`_.
-
-Collections library
-'''''''''''''''''''
-
-The Collections library provides a set of keywords for handling Python
-lists and dictionaries. This library has keywords, for example, for
-modifying and getting values from lists and dictionaries
-(e.g. :name:`Append To List`, :name:`Get From Dictionary`) and for
-verifying their contents (e.g. :name:`Lists Should Be Equal`,
-:name:`Dictionary Should Contain Value`).
-
-For more information, see the `Collections library documentation`_.
-
-String library
-''''''''''''''
-
-The String library enables manipulating strings (e.g. :name:`Replace
-String With Regexp`, :name:`Split To Lines`) and verifying their
-contents (e.g. :name:`Should Be String`).
-
-For more information, see the `String library documentation`_. This
-library is new in Robot Framework 2.1.
-
-Dialogs library
-'''''''''''''''
-
-The Dialogs library provides means for pausing the test execution and
-getting input from users. The dialogs are slightly different depending
-on are tests run on Python or Jython but they provide the same
-functionality.
-
-For more information, see the `Dialogs library documentation`_. This
-library is new in Robot Framework 2.1.
-
-Screenshot library
-''''''''''''''''''
-
-The Screenshot library has keywords to capture and store screenshots
-of the whole desktop.
-
-For more information, see the `Screenshot library documentation`_.
+.. _BuiltIn: ../libraries/BuiltIn.html
+.. _Collections: ../libraries/Collections.html
+.. _Dialogs: ../libraries/Dialogs.html
+.. _OperatingSystem: ../libraries/OperatingSystem.html
+.. _Process: ../libraries/Process.html
+.. _String: ../libraries/String.html
+.. _Screenshot: ../libraries/Screenshot.html
+.. _Telnet: ../libraries/Telnet.html
+.. _XML: ../libraries/XML.html
 
 Remote library
 ''''''''''''''
 
-The Remote library is totally different than the other standard
+In addition to the normal standard libraries listed above, there is
+also :name:`Remote` library that is totally different than the other standard
 libraries. It does not have any keywords of its own but it works as a
 proxy between Robot Framework and actual test library implementations.
 These libraries can be running on other machines than the core
@@ -343,18 +258,7 @@ framework and can even be implemented using languages not supported by
 Robot Framework natively.
 
 See separate `Remote library interface`_ section for more information
-about the concept. This library is new in Robot Framework 2.1.
-
-Process library
-'''''''''''''''
-
-The Process library has keywords for running processes. This library is
-implemented with Python's Subprocess module and it has some restrictions
-when used with Jython, and at the moment is not supported with IronPython.
-
-For more information, see the `Process library documentation`_. This
-library is new in Robot Framework 2.8.
-
+about this concept.
 
 External libraries
 ~~~~~~~~~~~~~~~~~~~
