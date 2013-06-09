@@ -436,21 +436,6 @@ class _VariableScopes:
         if self._uk_handlers:
             self.current.set_from_variable_table(rawvariables, overwrite)
 
-    def replace_meta(self, name, item, errors):
-        error = None
-        for varz in [self.current] + self._parents:
-            try:
-                if name == 'Documentation':
-                    return varz.replace_string(item, ignore_errors=True)
-                elif isinstance(item, basestring):
-                    return varz.replace_string(item)
-                return varz.replace_list(item)
-            except DataError, error:
-                pass
-        errors.append("Replacing variables from setting '%s' failed: %s"
-                      % (name, error))
-        return utils.unescape(item)
-
     def __getitem__(self, name):
         return self.current[name]
 

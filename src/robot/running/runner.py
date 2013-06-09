@@ -27,6 +27,8 @@ from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
 
 
+# TODO: Some 'extract method' love needed here. Perhaps even 'extract class'.
+
 class Runner(SuiteVisitor):
 
     def __init__(self, output, settings):
@@ -102,17 +104,22 @@ class Runner(SuiteVisitor):
         self._executed_tests[test.name] = True
         result = self._suite.tests.create(name=test.name,
                                           doc=self._resolve_setting(test.doc),
-                                          tags=self._variables.replace_meta('fixme', test.tags, []),
+                                          tags=test.tags,
                                           starttime=get_timestamp(),
                                           timeout=self._get_timeout(test))
         keywords = Keywords(test.keywords.normal, bool(test.template))
-        self._context.start_test(result)
-        self._output.start_test(ModelCombiner(result, test))
         status = TestStatus(self._suite_status)
         if not status.failures and not test.name:
             status.test_failed('Test case name cannot be empty.', result.critical)
         if not status.failures and not keywords:
             status.test_failed('Test case contains no keywords.', result.critical)
+        try:
+            result.tags = self._context.variables.replace_list(result.tags)
+        except DataError, err:
+            status.test_failed('Replacing variables from test tags failed: %s'
+                               % unicode(err), result.critical)
+        self._context.start_test(result)
+        self._output.start_test(ModelCombiner(result, test))
         self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failures:
