@@ -24,18 +24,22 @@ from .runner import Runner
 from .signalhandler import STOP_SIGNAL_MONITOR
 
 
+# TODO: This module should be turned into a package with submodules.
+# No time for that prior to 2.8, but ii ought to be safe also in 2.8.x.
+# Important to check that references in API docs don't break.
+
+
 class Keyword(model.Keyword):
     __slots__ = ['assign']
     message_class = None  # TODO: Remove from base model?
 
     def __init__(self, name='', args=(), assign=(), type='kw'):
-        # TODO: What exactly are arguments `assign` and `type`?
         """Running model for single keyword.
 
-        :param name: Name of the keyword.
-        :param args: Arguments for the keyword.
-        :param assign:
-        :param type:
+        :ivar name: Name of the keyword.
+        :ivar args: Arguments for the keyword.
+        :ivar assign: Variables to be assigned.
+        :ivar type: Keyword type. Either 'kw', 'setup', or 'teardown'
         """
         model.Keyword.__init__(self, name=name, args=args, type=type)
         self.assign = assign
@@ -80,14 +84,14 @@ class TestCase(model.TestCase):
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None):
-        # TODO: what exactly is `template`?
         """Running model for single test case.
 
-        :param name: Name of the test case.
-        :param doc: Documentation of the test case.
-        :param tags: Tags of the test case.
-        :param timeout: Timeout limit of the test case
-        :param template:
+        :ivar name: Name of the test case.
+        :ivar doc: Documentation of the test case.
+        :ivar tags: Tags of the test case.
+        :ivar timeout: Timeout limit of the test case
+        :ivar template: Name of the keyword that has been used as template
+            when building the test. `None` if no template used.
         """
         model.TestCase.__init__(self, name, doc, tags, timeout)
         self.template = template
@@ -112,10 +116,13 @@ class TestSuite(model.TestSuite):
         :ivar source: Path to the source file or directory.
         :ivar suites: Child suites.
         :ivar tests: A list of :class:`~.testcase.TestCase` instances.
-        :ivar keywords: A list containing setup and teardown
-            :class:`Keyword <robot.running.model.Keyword>` objects.
-
-        This class might change in the future.
+        :ivar keywords: A list containing setup and teardown as
+            :class:`~robot.running.model.Keyword` objects.
+        :ivar imports: Imports the suite contains.
+        :ivar user_keywords: User keywords defined in the same file as the
+            suite. **Likely to change or to be removed.**
+        :ivar variables: Variables defined in the same file as the suite.
+            **Likely to change or to be removed.**
         """
         model.TestSuite.__init__(self, name, doc, metadata, source)
         self.imports = []
@@ -140,9 +147,14 @@ class TestSuite(model.TestSuite):
         self.randomize(randomize_suites, randomize_tests)
 
     def randomize(self, suites=True, tests=True):
+        """Randomizes the order of suites and/or tests, recursively."""
         self.visit(Randomizer(suites, tests))
 
     def run(self, settings=None, **options):
+        # TODO: This method should be documented already in 2.8.
+        # - Would be great to document accepted options, but just a note that
+        #   all execution related options can be used is better than nothing.
+        # - Reference to examples in the package level is a must.
         STOP_SIGNAL_MONITOR.start()
         IMPORTER.reset()
         settings = settings or RobotSettings(options)
