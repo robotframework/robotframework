@@ -187,7 +187,7 @@ links in the generated HTML documentation), and it should thus be as
 describing as possible, but not too long.
 
 The simple example below illustrates how to write the documentation in
-general, and there is a little longer `example`_ at the end of this
+general, and there is a `bit longer example`__ at the end of this
 chapter containing also an example of the generated documentation.
 
 .. sourcecode:: python
@@ -217,6 +217,7 @@ chapter containing also an example of the generated documentation.
 
          For more information on Python documentation strings, see `PEP-257`__.
 
+__ `Libdoc example`_
 __ http://www.python.org/dev/peps/pep-0263
 __ http://www.python.org/dev/peps/pep-0257
 
@@ -582,8 +583,8 @@ resource files are listed in a separate column. User keyword arguments
 are shown without :var:`${}` or :var:`@{}` to make arguments look
 the same regardless where keywords originated from.
 
-Example
-~~~~~~~
+Libdoc example
+~~~~~~~~~~~~~~
 
 The following example illustrates how to use the most important
 `documentation formatting`_ possibilities, `internal linking`_, and so
