@@ -85,7 +85,7 @@ class Runner(SuiteVisitor):
         self._suite.message = self._suite_status.message
         self._context.report_suite_status(self._suite.status,
                                           self._suite.full_message)
-        with self._context.in_suite_teardown:
+        with self._context.suite_teardown():
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
                 self._suite.suite_teardown_failed(unicode(failure))
@@ -104,8 +104,7 @@ class Runner(SuiteVisitor):
                                           doc=self._resolve_setting(test.doc),
                                           tags=self._variables.replace_meta('fixme', test.tags, []),
                                           starttime=get_timestamp(),
-                                          timeout=self._get_timeout(test),
-                                          status='RUNNING')
+                                          timeout=self._get_timeout(test))
         keywords = Keywords(test.keywords.normal, bool(test.template))
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(result, test))
@@ -130,8 +129,8 @@ class Runner(SuiteVisitor):
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
-            self._context.set_test_status_before_teardown(result.message, status.status)  # TODO: This is fugly
-            self._run_teardown(test.keywords.teardown, status, result)
+            with self._context.test_teardown(result):
+                self._run_teardown(test.keywords.teardown, status, result)
         if not status.failures and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message(), result.critical)
         result.status = status.status

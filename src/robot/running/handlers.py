@@ -121,7 +121,7 @@ class _RunnableHandler(object):
             self.resolve_arguments(args, context.variables)
         context.output.trace(lambda: self._log_args(positional, named))
         runner = self._runner_for(self._current_handler(), context, positional,
-                                  named, self._get_timeout(context.namespace))
+                                  named, self._get_timeout(context))
         return self._run_with_output_captured_and_signal_monitor(runner, context)
 
     def _log_args(self, positional, named):
@@ -142,7 +142,7 @@ class _RunnableHandler(object):
 
     def _run_with_signal_monitoring(self, runner, context):
         try:
-            STOP_SIGNAL_MONITOR.start_running_keyword(context.teardown)
+            STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
             return runner()
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
@@ -158,18 +158,15 @@ class _RunnableHandler(object):
     def _get_handler(self, lib_instance, handler_name):
         return getattr(lib_instance, handler_name)
 
-    def _get_timeout(self, namespace):
-        timeouts = self._get_timeouts(namespace)
+    def _get_timeout(self, context):
+        timeouts = self._get_timeouts(context)
         return None if not timeouts else min(timeouts)
 
-    def _get_timeouts(self, namespace):
-        timeouts = [handler.timeout for handler in namespace.uk_handlers]
-        if self._test_running_and_not_in_teardown(namespace.test):
-            timeouts.append(namespace.test.timeout)
+    def _get_timeouts(self, context):
+        timeouts = [kw.timeout for kw in context.keywords]
+        if context.test and not context.in_test_teardown:
+            timeouts.append(context.test.timeout)
         return [timeout for timeout in timeouts if timeout]
-
-    def _test_running_and_not_in_teardown(self, test):
-        return test and test.status == 'RUNNING'
 
 
 class _PythonHandler(_RunnableHandler):

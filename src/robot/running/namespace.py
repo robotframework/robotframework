@@ -208,10 +208,6 @@ class Namespace:
         for lib in self._testlibs.values():
             lib.end_test()
 
-    def set_test_status_before_teardown(self, message, status):
-        self.variables['${TEST_MESSAGE}'] = message
-        self.variables['${TEST_STATUS}'] = status
-
     def end_suite(self):
         self.suite = None
         self.variables.end_suite()

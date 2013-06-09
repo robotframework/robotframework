@@ -147,19 +147,13 @@ With continuable failure in test teardown
 With continuable failure in keyword teardown
     Check Test Case    ${TESTNAME}
 
-Should only pass successful suite setup if test case fails
-    Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup.txt
-    Check Test Case    ${TESTNAME}
+Passes suite setup and teardown and can modify tags in former
+    Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup_and_teardown.txt
+    Check Test Tags    Test in suite with valid Pass Execution usage in Suite Setup and Teardown
+    ...    force1    tag1    tag2
 
-With suite setup should modify tags
-    Check Test Tags    ${TESTNAME}    force1    tag1    tag2
-    Check Log Message    ${SUITE.setup.msgs[0]}    Removed tag 'force2'.
-    Check Log Message    ${SUITE.setup.msgs[1]}    Set tags 'tag1' and 'tag2'.
+Trying to modify tags in suite teardown fails
+    Run Tests    ${EMPTY}    running/pass_execution_in_suite_teardown_invalid.txt
+    Check Test Tags    Test in suite with invalid Pass Execution usage in Suite Teardown
+    ...    force1    force2
 
-Should only pass successful suite teardown if test case fails
-    Run Tests    ${EMPTY}    running/pass_execution_in_suite_teardown.txt
-    Check Test Case    ${TESTNAME}
-
-With suite teardown should not modify tags
-    Check Test Tags    ${TESTNAME}    force1    force2
-    Should Be Equal    ${SUITE.status}    FAIL

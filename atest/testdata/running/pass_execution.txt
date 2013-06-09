@@ -1,6 +1,8 @@
 *** Settings ***
-Force Tags    force1    force2
-Library    pass_execution_library.py
+Force Tags        force1    force2
+Library           pass_execution_library.py
+Suite Setup       Pass Execution    Hello, world!
+Suite Teardown    Pass Execution    Hi, tellus!
 
 *** Test Cases ***
 

@@ -3,7 +3,7 @@ Suite Teardown    Set Tags    this-should-fail
 Library           Collections
 
 *** Variable ***
-${ERROR}    FAIL Parent suite teardown failed:\n'Set Tags' and 'Remove Tags' keywords cannot be used in suite teardown.
+${ERROR}    FAIL Parent suite teardown failed:\n'Set Tags' cannot be used in suite teardown.
 
 *** Test Case ***
 Set Tags In Test Setup

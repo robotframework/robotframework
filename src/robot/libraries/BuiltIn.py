@@ -1140,7 +1140,7 @@ class _RunKeyword:
                 self.run_keyword(kw, *args)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                if not err.can_continue(self._context.teardown):
+                if not err.can_continue(self._context.in_teardown):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -1506,14 +1506,14 @@ class _RunKeyword:
 
         Available in Robot Framework 2.5 and newer.
         """
-        test = self._get_test_in_teardown('Run Keyword If Timeout Occurred')
-        if self._context.timeout_occured:
+        self._get_test_in_teardown('Run Keyword If Timeout Occurred')
+        if self._context.timeout_occurred:
             return self.run_keyword(name, *args)
 
     def _get_test_in_teardown(self, kwname):
-        test = self._namespace.test
-        if test and test.status != 'RUNNING':
-            return test
+        ctx = self._context
+        if ctx.test and ctx.in_test_teardown:
+            return ctx.test
         raise RuntimeError("Keyword '%s' can only be used in test teardown"
                            % kwname)
 
@@ -1572,10 +1572,10 @@ class _RunKeyword:
             return self.run_keyword(name, *args)
 
     def _get_suite_in_teardown(self, kwname):
-        if not self._context.suite_teardown:
+        if not self._context.in_suite_teardown:
             raise RuntimeError("Keyword '%s' can only be used in suite teardown"
                                % kwname)
-        return self._namespace.suite
+        return self._context.suite
 
 
 class _Control:
@@ -2341,15 +2341,14 @@ class _Misc:
         See `Remove Tags` if you want to remove certain tags and `Fail` if
         you want to fail the test case after setting and/or removing tags.
         """
-        ns = self._namespace
-        if ns.test:
-            ns.test.tags.add(tags)
-            ns.variables.set_test('@{TEST_TAGS}', list(ns.test.tags))
-        elif self._context.suite_teardown:
-            raise RuntimeError("'Set Tags' and 'Remove Tags' keywords "
-                               "cannot be used in suite teardown.")
+        ctx = self._context
+        if ctx.test:
+            ctx.test.tags.add(tags)
+            ctx.variables.set_test('@{TEST_TAGS}', list(ctx.test.tags))
+        elif not ctx.in_suite_teardown:
+            ctx.suite.set_tags(tags, persist=True)
         else:
-            ns.suite.set_tags(tags, persist=True)
+            raise RuntimeError("'Set Tags' cannot be used in suite teardown.")
         self.log('Set tag%s %s.' % (utils.plural_or_not(tags),
                                     utils.seq2str(tags)))
 
@@ -2370,15 +2369,14 @@ class _Misc:
         See `Set Tags` if you want to add certain tags and `Fail` if you want
         to fail the test case after setting and/or removing tags.
         """
-        ns = self._namespace
-        if ns.test:
-            ns.test.tags.remove(tags)
-            ns.variables.set_test('@{TEST_TAGS}', list(ns.test.tags))
-        elif self._context.suite_teardown:
-            raise RuntimeError("'Set Tags' and 'Remove Tags' keywords "
-                               "cannot be used in suite teardown.")
+        ctx = self._context
+        if ctx.test:
+            ctx.test.tags.remove(tags)
+            ctx.variables.set_test('@{TEST_TAGS}', list(ctx.test.tags))
+        elif not ctx.in_suite_teardown:
+            ctx.suite.set_tags(remove=tags, persist=True)
         else:
-            ns.suite.set_tags(remove=tags, persist=True)
+            raise RuntimeError("'Remove Tags' cannot be used in suite teardown.")
         self.log('Removed tag%s %s.' % (utils.plural_or_not(tags),
                                         utils.seq2str(tags)))
 

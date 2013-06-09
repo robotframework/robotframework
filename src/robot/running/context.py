@@ -59,50 +59,69 @@ class _ExecutionContext(object):
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
-        self.suite_teardown = False
-        self._in_keyword_teardown = 0
+        self.in_suite_teardown = False
+        self.in_test_teardown = False
+        self.in_keyword_teardown = 0
         self._started_keywords = 0
-        self.timeout_occured = False
-
-    # TODO: Clean-up needed here ....
+        self.timeout_occurred = False
 
     @property
+    def suite(self):
+        return self.namespace.suite
+
+    @property
+    def test(self):
+        return self.namespace.test
+
+    @property
+    def keywords(self):
+        return self.namespace.uk_handlers
+
     @contextmanager
-    def in_suite_teardown(self):
-        self.suite_teardown = True
+    def suite_teardown(self):
+        self.in_suite_teardown = True
         try:
             yield
         finally:
-            self.suite_teardown = False
+            self.in_suite_teardown = False
 
     @contextmanager
-    def in_keyword_teardown(self, error):
+    def test_teardown(self, test):
+        self.variables['${TEST_STATUS}'] = test.status
+        self.variables['${TEST_MESSAGE}'] = test.message
+        self.in_test_teardown = True
+        try:
+            yield
+        finally:
+            self.in_test_teardown = False
+
+    @contextmanager
+    def keyword_teardown(self, error):
         self.variables['${KEYWORD_STATUS}'] = 'FAIL' if error else 'PASS'
         self.variables['${KEYWORD_MESSAGE}'] = unicode(error or '')
-        self._in_keyword_teardown += 1
+        self.in_keyword_teardown += 1
         try:
             yield
         finally:
-            self._in_keyword_teardown -= 1
+            self.in_keyword_teardown -= 1
 
     @property
-    def teardown(self):
-        if self.suite_teardown or self._in_keyword_teardown:
-            return True
-        test = self.namespace.test
-        return test and test.status != 'RUNNING'
+    def in_teardown(self):
+        return bool(self.in_suite_teardown or
+                    self.in_test_teardown or
+                    self.in_keyword_teardown)
 
     @property
     def variables(self):
         return self.namespace.variables
 
     def set_timeout(self, err):
-        self.timeout_occured = bool(err.timeout)
+        self.timeout_occurred = bool(err.timeout)
 
     def end_test(self, test):
         self.namespace.end_test()
         self.set_prev_test_variables(test)
-        self.timeout_occured = False
+        self.timeout_occurred = False
 
     def end_suite(self, suite):
         self.copy_prev_test_vars_to_global()
@@ -136,9 +155,6 @@ class _ExecutionContext(object):
 
     def start_test(self, test):
         self.namespace.start_test(test)
-
-    def set_test_status_before_teardown(self, message, status):
-        self.namespace.set_test_status_before_teardown(message, status)
 
     def get_handler(self, name):
         return self.namespace.get_handler(name)

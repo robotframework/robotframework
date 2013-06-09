@@ -161,7 +161,7 @@ class UserKeywordHandler(object):
     def _normal_run(self, context, arguments):
         arguments = self._resolve_arguments(arguments, context.variables)
         error, return_ = self._execute(context, arguments)
-        if error and not error.can_continue(context.teardown):
+        if error and not error.can_continue(context.in_teardown):
             raise error
         return_value = self._get_return_value(context.variables, return_)
         if error:
@@ -191,7 +191,7 @@ class UserKeywordHandler(object):
             error = exception.earlier_failures
         except ExecutionFailed, exception:
             error = exception
-        with context.in_keyword_teardown(error):
+        with context.keyword_teardown(error):
             td_error = self._run_teardown(context)
         if error or td_error:
             error = UserKeywordExecutionFailed(error, td_error)

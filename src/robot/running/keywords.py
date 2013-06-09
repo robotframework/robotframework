@@ -51,7 +51,8 @@ class Keywords(object):
                 raise exception
             except ExecutionFailed, exception:
                 errors.extend(exception.get_errors())
-                if not exception.can_continue(context.teardown, self._templated,
+                if not exception.can_continue(context.in_teardown,
+                                              self._templated,
                                               context.dry_run):
                     break
         if errors:
@@ -146,7 +147,7 @@ class Keyword(_BaseKeyword):
         if error and self.type == 'teardown':
             self.message = unicode(error)
         try:
-            if not error or error.can_continue(context.teardown):
+            if not error or error.can_continue(context.in_teardown):
                 self._set_variables(context, return_value, error)
         finally:
             context.end_keyword(self)
@@ -238,7 +239,8 @@ class ForLoop(_BaseKeyword):
                     exception.set_earlier_failures(errors)
                     raise exception
                 errors.extend(exception.get_errors())
-                if not exception.can_continue(context.teardown, self._templated,
+                if not exception.can_continue(context.in_teardown,
+                                              self._templated,
                                               context.dry_run):
                     break
         if errors:

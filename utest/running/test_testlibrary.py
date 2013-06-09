@@ -594,10 +594,12 @@ class _FakeOutput:
 class _FakeContext:
     def __init__(self):
         self.output = _FakeOutput()
-        self.namespace =  _FakeNamespace()
+        self.namespace = _FakeNamespace()
         self.dry_run = False
-        self.teardown = False
+        self.in_teardown = False
         self.variables = _FakeVariableScope()
+        self.keywords = []
+        self.test = None
 
 
 if __name__ == '__main__':

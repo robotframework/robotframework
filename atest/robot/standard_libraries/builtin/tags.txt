@@ -56,7 +56,7 @@ Set Tags In Test Teardown
     Check Test Tags  Set Tags In Test Teardown  set-init  teardown
 
 Using Set And Remove Tags In Suite Teardown Fails
-    Should Be Equal  ${SUITE.suites[1].message}  Suite teardown failed:\n 'Set Tags' and 'Remove Tags' keywords cannot be used in suite teardown.
+    Should Be Equal  ${SUITE.suites[1].message}  Suite teardown failed:\n'Set Tags' cannot be used in suite teardown.
 
 Set and Removed Tags Should Affect Criticality
     ${tags} =  Get Total Stat Nodes
