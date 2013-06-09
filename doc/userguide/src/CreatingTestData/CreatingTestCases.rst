@@ -363,6 +363,11 @@ See `Free keyword arguments (**kwargs)`_ section under `Creating test
 libraries`_ for more information about using the kwargs syntax in
 your custom test libraries.
 
+.. note:: Free keyword arguments are only supported by Python libraries
+          using the `static library API`_. If this feature turns out to be
+          very useful, it is possible to extend the support to dynamic
+          libraries and perhaps also to user keywords in the future.
+
 __ http://docs.python.org/2/tutorial/controlflow.html#keyword-arguments
 
 Arguments embedded to keyword names

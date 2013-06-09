@@ -532,6 +532,11 @@ Example Python keywords taking different numbers of arguments:
   def three_arguments(a1, a2, a3):
       print "Keyword got three arguments '%s', '%s' and '%s'." % (a1, a2, a3)
 
+.. note:: A major limitation with Java libraries using the static library API
+          is that they do not support the `named argument syntax`_. If this
+          is a blocker, it is possible to either use Python or switch to
+          the `dynamic library API`_.
+
 Default values to keywords
 ''''''''''''''''''''''''''
 
@@ -710,6 +715,8 @@ Robot Framework 2.8 added the support for free keyword arguments using Python's
 :code:`**kwargs` syntax. How to use the syntax in the test data is discussed
 in `Free keyword arguments`_ section under `Creating test cases`_. In this
 section we take a look at how to actually use it in custom test libraries.
+Because Java does not have similar keyword argument concept, this functionality
+is only available with Python based libraries.
 
 If you are already familiar how kwargs work with Python, understanding how
 they works with Robot Framework test libraries is rather simple. The example
@@ -1709,22 +1716,11 @@ and :code:`run_keyword` is not even called. The last column of the
 table above shows the minimum and maximum argument counts calculated
 from the presented examples.
 
-The actual argument names do not matter when tests are executed,
-because only argument counts are of concern to Robot Framework. On the
-other hand, if the `libdoc`_ tool is used for documenting the
-library, arguments are shown in the documentation, in which case they
-need to have meaningful names.
+The actual names and default values that are returned are also important.
+They are needed for `named argument support`__ and the Libdoc_ tool needs
+them to be able to create a meaningful library documentation.
 
-.. note::  Dynamic library handling was changed in Robot Framework 2.8 so that
-           named default values for optional arguments are filled in by the
-           Framework if necessary.
-
-           For example if the arguments for a keyword are given as
-           :code:`['a', 'b=1', 'c=2']` then a call
-           :code:`Keyword   foo   c=bar` would lead the Framework to call the
-           keyword with arguments :code:`'foo', '1', 'bar'`, where string
-           :code:`'1'` was filled in by the Framework based on the keyword
-           argument specification.
+__ `Named argument syntax with dynamic libraries`_
 
 Getting keyword documentation
 '''''''''''''''''''''''''''''
@@ -1766,6 +1762,44 @@ priority.
 
 .. note:: Getting general library documentation is supported in Robot
           Framework 2.6.2 and newer.
+
+Named argument syntax with dynamic libraries
+''''''''''''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.8, also the dynamic library API supports
+the `named argument syntax`_. Using the syntax works based on the
+argument names and default values `got from the library`__ using the
+:code:`get_keyword_arguments` method.
+
+For the most parts, the named arguments syntax works with dynamic keywords
+exactly like it works with any other keyword supporting it. The only special
+case is the situation where a keyword has multiple arguments with default
+values, and only some of the latter ones are given. In that case the framework
+fills the skipped optional arguments based on the default values returned
+by the :code:`get_keyword_arguments` method.
+
+Using the named argument syntax with dynamic libraries is illustrated
+by the following examples. All the examples use a keyword :name:`Dynamic`
+that has been specified to have arguments :code:`arg1, arg2=xxx, arg3=yyy`.
+The last column shows the arguments that the keyword is actually called with.
+
+.. table:: Using named argument syntax with a dynamic keyword
+   :class: example
+
+   ===============   ========  ========  ========  ========  ===========
+      Test Case       Action   Argument  Argument  Argument  Called With
+   ===============   ========  ========  ========  ========  ===========
+   Only positional   Dynamic   a                             # a
+   \                 Dynamic   a         b                   # a, b
+   \                 Dynamic   a         b         c         # a, b, c
+   Named             Dynamic   a         arg2=b              # a, b
+   \                 Dynamic   a         b         arg3=c    # a, b, c
+   \                 Dynamic   a         arg2=b    arg3=c    # a, b, c
+   \                 Dynamic   arg1=a    arg2=b    arg3=c    # a, b, c
+   Fill skipped      Dynamic   a         arg3=c              # a, xxx, c
+   ===============   ========  ========  ========  ========  ===========
+
+__ `Getting keyword arguments`_
 
 Summary
 '''''''
