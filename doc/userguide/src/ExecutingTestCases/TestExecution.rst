@@ -138,7 +138,7 @@ Passing execution
 
 Typically test cases, setups and teardowns are considered passed if
 all keywords they contain are executed and none of them fail. From
-Robot Framework 2.8 onwards, it is also possible to use `BuiltIn keywords`_
+Robot Framework 2.8 onwards, it is also possible to use BuiltIn_ keywords
 :name:`Pass Execution` and :name:`Pass Execution If` to stop execution with
 PASS status and skip the remaining keywords.
 
@@ -182,8 +182,8 @@ subsequent keywords would give more information about the state of the
 system.
 
 Before Robot Framework 2.5 the only way to handle failures so that
-test execution is not terminated immediately was using `BuiltIn
-keywords`_ :name:`Run Keyword And Ignore Error` and :name:`Run Keyword
+test execution is not terminated immediately was using BuiltIn_ keywords
+:name:`Run Keyword And Ignore Error` and :name:`Run Keyword
 And Expect Error`. Using these keywords for this purpose often added
 extra complexity to test cases, and in Robot Framework 2.5 the
 following features were added to make continuing after failures
@@ -219,7 +219,7 @@ __ `Continuing test execution despite of failures`_
 :name:`Run Keyword And Continue On Failure` keyword
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 
-`BuiltIn keyword`_ :name:`Run Keyword And Continue On Failure` allows
+BuiltIn_ keyword :name:`Run Keyword And Continue On Failure` allows
 converting any failure into a continuable failure. These failures are
 handled by the framework exactly the same way as continuable failures
 originating from library keywords.
@@ -278,7 +278,7 @@ Using keywords
 ''''''''''''''
 
 The execution can be stopped also by the executed keywords. There is a
-separate :name:`Fatal Error` `BuiltIn keyword`_ for this purpose, and
+separate :name:`Fatal Error` BuiltIn_ keyword for this purpose, and
 custom keywords can use `fatal exceptions`__ when they fail.
 
 __ `Stopping test execution`_

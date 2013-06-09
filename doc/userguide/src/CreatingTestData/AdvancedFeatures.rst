@@ -52,7 +52,7 @@ the resource or library and a dot is a delimiter.
 
 With library keywords, the long format means only using the format
 :name:`LibraryName.Keyword Name`. For example, the keyword :name:`Run`
-from the `OperatingSystem library`_ could be used as
+from the OperatingSystem_ library could be used as
 :name:`OperatingSystem.Run`, even if there was another :name:`Run`
 keyword somewhere else. If the library is in a module or package, the
 full module or package name must be used (for example,
@@ -78,7 +78,7 @@ in the long format can be quite a lot work. Using the long format also makes it
 impossible to create dynamic test cases or user keywords that work differently
 depending on which libraries or resources are available. A solution to both of
 these problems is specifying the keyword priorities explicitly using the keyword
-:name:`Set Library Search Order` from the `BuiltIn library`_.
+:name:`Set Library Search Order` from the BuiltIn_ library.
 
  .. note:: Although the keyword has the word `library` in its name, it works
            also with resource files starting from Robot Framework 2.6.2.
@@ -479,7 +479,7 @@ Repeating single keyword
 
 For loops can be excessive in situations where there is only a need to
 repeat a single keyword. In these cases it is often easier to use
-`BuiltIn keyword`_ :name:`Repeat Keyword`.  This keyword takes a
+BuiltIn_ keyword :name:`Repeat Keyword`.  This keyword takes a
 keyword and how many times to repeat it as arguments. The times to
 repeat the keyword can have an optional postfix `times` or `x` to make
 the syntax easier to read.
@@ -515,21 +515,21 @@ construct, there are several ways to get the same effect.
   variable. This facilitates changing them, for example, from
   the command line.
 
-- The `BuiltIn keyword`_ :name:`Run Keyword` takes a keyword to actually
+- The BuiltIn_ keyword :name:`Run Keyword` takes a keyword to actually
   execute as an argument, and it can thus be a variable. The value of
   the variable can, for example, be got dynamically from an earlier
   keyword or given from the command line.
 
-- The `BuiltIn keywords`_ :name:`Run Keyword If` and :name:`Run Keyword
+- The BuiltIn_ keywords :name:`Run Keyword If` and :name:`Run Keyword
   Unless` execute a named keyword only if a certain expression is
   true or false, respectively. They are ideally suited to creating
   simple if/else constructs. For an example, see the documentation of
   the former.
 
-- Another `BuiltIn keyword`_, :name:`Set Variable If`, can be used to set
+- Another BuiltIn_ keyword, :name:`Set Variable If`, can be used to set
   variables dynamically based on a given expression.
 
-- There are several `BuiltIn keywords`_ that allow executing a named
+- There are several BuiltIn_ keywords that allow executing a named
   keyword only if a test case or test suite has failed or passed.
 
 __ `Test setup and teardown`_
@@ -548,5 +548,5 @@ level so that the library executes the code on background. Typically this
 means that the library needs a keyword like :name:`Start Something` that
 starts the execution and returns immediately, and another keyword like
 :name:`Get Results From Something` that waits until the result is available
-and returns it. See `OperatingSystem library`_ keywords :name:`Start Process`
+and returns it. See OperatingSystem_ library keywords :name:`Start Process`
 and :name:`Read Process Output` for an example.

@@ -1465,7 +1465,7 @@ them anyway.
 
 It is also easy to use Robot Framework itself for testing libraries
 and that way have actual end-to-end acceptance tests for them. There are
-plenty of useful keywords in the `BuiltIn library`_ for this
+plenty of useful keywords in the BuiltIn_ library for this
 purpose. One worth mentioning specifically is :name:`Run Keyword And Expect
 Error`, which is useful for testing that keywords report errors
 correctly.
@@ -1905,7 +1905,7 @@ keyword must be executed elsewhere and the proxy can only pass forward
 the keyword name and arguments.
 
 A good example of using the hybrid API is Robot Framework's own
-`Telnet library`_.
+Telnet_ library.
 
 Using Robot Framework's internal modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

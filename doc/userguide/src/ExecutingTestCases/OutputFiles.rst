@@ -271,8 +271,8 @@ viewing later with the :msg:`INFO` level. By default all the messages
 included during execution will be included also with :prog:`rebot`.
 Messages ignored during the execution cannot be recovered.
 
-Another possibility to change the log level is using the `BuiltIn
-keyword`_ :name:`Set Log Level` in the test data. It takes the same
+Another possibility to change the log level is using the BuiltIn_
+keyword :name:`Set Log Level` in the test data. It takes the same
 arguments as the :opt:`--loglevel` option, and it also returns the
 old level so that it can be restored later, for example, in a `test
 teardown`_.

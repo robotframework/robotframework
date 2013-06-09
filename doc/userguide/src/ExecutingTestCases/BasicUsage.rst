@@ -545,7 +545,7 @@ the problem is in an individual keyword.
 If the log file still does not have enough information, it is a good
 idea to enable the syslog_ and see what information it provides. It is
 also possible to add some keywords to the test cases to see what is
-going on. Especially `BuiltIn keywords`_ :name:`Log` and :name:`Log
+going on. Especially BuiltIn_ keywords :name:`Log` and :name:`Log
 Variables` are useful. If nothing else works, it is always possible to
 search help from `mailing lists`_ or elsewhere.
 

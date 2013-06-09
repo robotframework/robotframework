@@ -12,8 +12,8 @@ Variables are an integral feature of Robot Framework, and they can be
 used in most places in test data. Most commonly, they are used in
 arguments for keywords in test case tables and keyword tables, but
 also all settings allow variables in their values. A normal keyword
-name *cannot* be specified with a variable, but the `BuiltIn
-keyword`_ :name:`Run Keyword` can be used to get the same effect.
+name *cannot* be specified with a variable, but the BuiltIn_ keyword
+:name:`Run Keyword` can be used to get the same effect.
 
 Robot Framework itself has two kinds of variables, scalars__ and lists__,
 and they have the syntaxes :var:`${SCALAR}` and :var:`@{LIST}`,
@@ -321,7 +321,7 @@ Environment variables set in the operating system before the test execution are
 available during it, and it is possible to create new ones with the keyword
 :name:`Set Environment Variable` or delete existing ones with the
 keyword :name:`Delete Environment Variable`, both available in the
-`OperatingSystem library`_. Because environment variables are global,
+OperatingSystem_ library. Because environment variables are global,
 environment variables set in one test case can be used in other test
 cases executed after it. However, changes to environment variables are
 not effective after the test execution.
@@ -543,12 +543,12 @@ because, in general, automated test cases should not depend on each
 other, and accidentally setting a variable that is used elsewhere
 could cause hard-to-debug errors. If there is a genuine need for
 setting a variable in one test case and using it in another, it is
-possible to use built-in keywords as explained in the next section.
+possible to use BuiltIn_ keywords as explained in the next section.
 
-Using built-in :name:`Set Test/Suite/Global Variable` keywords
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Using :name:`Set Test/Suite/Global Variable` keywords
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-The `BuiltIn library`_ has keywords :name:`Set Test Variable`,
+The BuiltIn_ library has keywords :name:`Set Test Variable`,
 :name:`Set Suite Variable` and :name:`Set Global Variable` which can
 be used for setting variables dynamically during the test
 execution. If a variable already exists within the new scope, its
@@ -878,13 +878,11 @@ __ `Creating start-up scripts`_
 *Variables set during test execution*
 
    Variables set during the test execution either using `return values
-   from keywords`_ or `built-in keywords`__ :name:`Set
-   Test/Suite/Global Variable` always override possible existing
+   from keywords`_ or `using Set Test/Suite/Global Variable keywords`_
+   always override possible existing
    variables in the scope where they are set. In a sense they thus
    have the highest priority, but on the other hand they do not affect
    variables outside the scope they are defined.
-
-__ `Using built-in Set Test/Suite/Global Variable keywords`_
 
 *Built-in variables*
 
@@ -908,7 +906,7 @@ global, test suite, test case or user keyword scope.
    variables are normally `set from the command line`__ with the
    :opt:`--variable` and :opt:`--variablefile` options, but it is also
    possible to create new global variables or change the existing ones
-   with the `BuiltIn keyword`_ :name:`Set Global Variable` anywhere in
+   with the BuiltIn_ keyword :name:`Set Global Variable` anywhere in
    the test data. Additionally also `built-in variables`_ are global.
 
    It is recommended to use capital letters with all global variables.
@@ -918,7 +916,7 @@ global, test suite, test case or user keyword scope.
    Variables with the test suite scope are available anywhere in the
    test suite where they are defined or imported. They can be created
    in Variable tables, imported from `resource and variable files`_,
-   or set during the test execution using the `BuiltIn keyword`_
+   or set during the test execution using the BuiltIn_ keyword
    :name:`Set Suite Variable`.
 
    The test suite scope *is not recursive*, which means that variables
@@ -933,7 +931,7 @@ global, test suite, test case or user keyword scope.
 
    Variables created in test cases from the return values of keywords have a
    test case scope and they are available only in that test
-   case. Another possibility to create them is using the `BuiltIn keyword`_
+   case. Another possibility to create them is using the BuiltIn_ keyword
    :name:`Set Test Variable` anywhere in that particular test case. Test
    case variables are local and should use lower-case letters.
 

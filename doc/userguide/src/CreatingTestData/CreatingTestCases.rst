@@ -533,7 +533,7 @@ approaches can naturally be used together.
    to tags they got elsewhere.
 
 `Set Tags`:name:, `Remove Tags`:name:, `Fail`:name: and `Pass Execution`:name: keywords
-   These `BuiltIn keywords`_ can be used to manipulate tags dynamically
+   These BuiltIn_ keywords can be used to manipulate tags dynamically
    during the test execution.
 
 Tags are free text, but they are normalized so that they are converted
@@ -620,7 +620,7 @@ normal keywords with possible arguments.
 Setup and teardown are always a single keyword. If they need to take care
 of multiple separate tasks, it is possible to create higher-level `user
 keywords`_ for that purpose. An alternative solution is executing multiple
-keywords using the `BuiltIn keyword`_ :name:`Run Keywords` that was added
+keywords using the BuiltIn_ keyword :name:`Run Keywords` that was added
 in Robot Framework 2.5.
 
 The test teardown is special in two ways. First of all, it is executed also

@@ -495,7 +495,7 @@ Framework also ignore them. To add information that is visible in
 Robot Framework outputs, or available to, for example, RIDE_,
 place it to the documentation or other metadata of test cases or suites,
 or log with the :name:`Log` or :name:`Comment` keywords available
-from the `BuiltIn library`_.
+from the BuiltIn_ library.
 
 Escaping
 ''''''''
