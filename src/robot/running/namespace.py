@@ -193,13 +193,10 @@ class Namespace:
             self.import_library(self._deprecated_libraries[name])
 
     def start_test(self, test):
-        self.variables.start_test(test)
         self.test = test
+        self.variables.start_test()
         for lib in self._testlibs.values():
             lib.start_test()
-        self.variables['${TEST_NAME}'] = test.name
-        self.variables['${TEST_DOCUMENTATION}'] = test.doc
-        self.variables['@{TEST_TAGS}'] = list(test.tags)
 
     def end_test(self):
         self.test = None
@@ -215,7 +212,7 @@ class Namespace:
             lib.end_suite()
 
     def start_user_keyword(self, handler):
-        self.variables.start_uk(handler)
+        self.variables.start_uk()
         self.uk_handlers.append(handler)
 
     def end_user_keyword(self):
@@ -463,13 +460,13 @@ class _VariableScopes:
     def end_suite(self):
         self._suite = self._test = self.current = None
 
-    def start_test(self, test):
+    def start_test(self):
         self._test = self.current = self._suite.copy()
 
     def end_test(self):
         self.current = self._suite
 
-    def start_uk(self, handler):
+    def start_uk(self):
         self._uk_handlers.append(self.current)
         self.current = self.current.copy()
 

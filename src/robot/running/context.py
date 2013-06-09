@@ -63,7 +63,11 @@ class _ExecutionContext(object):
         self.in_test_teardown = False
         self.in_keyword_teardown = 0
         self._started_keywords = 0
+        # Set by Runner, checked by Builtin. Should be moved to TestStatus,
+        # but currently BuiltIn doesn't have access to it.
         self.timeout_occurred = False
+
+    # TODO: namespace should not have suite, test, or uk_handlers.
 
     @property
     def suite(self):
@@ -115,22 +119,16 @@ class _ExecutionContext(object):
     def variables(self):
         return self.namespace.variables
 
-    def set_timeout(self, err):
-        self.timeout_occurred = bool(err.timeout)
-
-    def end_test(self, test):
-        self.namespace.end_test()
-        self.set_prev_test_variables(test)
-        self.timeout_occurred = False
+    # TODO: Move start_suite here from EXECUTION_CONTEXT
 
     def end_suite(self, suite):
-        self.copy_prev_test_vars_to_global()
+        for var in ['${PREV_TEST_NAME}',
+                    '${PREV_TEST_STATUS}',
+                    '${PREV_TEST_MESSAGE}']:
+            GLOBAL_VARIABLES[var] = self.variables[var]
         self.output.end_suite(suite)
         self.namespace.end_suite()
         EXECUTION_CONTEXTS.end_suite()
-
-    def replace_vars_from_setting(self, name, value, errors):
-        return self.namespace.variables.replace_meta(name, value, errors)
 
     def set_suite_variables(self, suite):
         self.variables['${SUITE_NAME}'] = suite.longname
@@ -138,26 +136,24 @@ class _ExecutionContext(object):
         self.variables['${SUITE_DOCUMENTATION}'] = suite.doc
         self.variables['${SUITE_METADATA}'] = suite.metadata.copy()
 
-    def set_prev_test_variables(self, test):
-        self.variables['${PREV_TEST_NAME}'] = test.name
-        self.variables['${PREV_TEST_STATUS}'] = test.status
-        self.variables['${PREV_TEST_MESSAGE}'] = test.message
-
-    def copy_prev_test_vars_to_global(self):
-        for var in ['${PREV_TEST_NAME}',
-                    '${PREV_TEST_STATUS}',
-                    '${PREV_TEST_MESSAGE}']:
-            GLOBAL_VARIABLES[var] = self.variables[var]
-
     def report_suite_status(self, status, message):
         self.variables['${SUITE_STATUS}'] = status
         self.variables['${SUITE_MESSAGE}'] = message
 
     def start_test(self, test):
         self.namespace.start_test(test)
+        self.variables['${TEST_NAME}'] = test.name
+        self.variables['${TEST_DOCUMENTATION}'] = test.doc
+        self.variables['@{TEST_TAGS}'] = list(test.tags)
 
-    def get_handler(self, name):
-        return self.namespace.get_handler(name)
+    def end_test(self, test):
+        self.namespace.end_test()
+        self.variables['${PREV_TEST_NAME}'] = test.name
+        self.variables['${PREV_TEST_STATUS}'] = test.status
+        self.variables['${PREV_TEST_MESSAGE}'] = test.message
+        self.timeout_occurred = False
+
+    # Should not need separate start/end_keyword and start/end_user_keyword
 
     def start_keyword(self, keyword):
         self._started_keywords += 1
@@ -174,6 +170,9 @@ class _ExecutionContext(object):
 
     def end_user_keyword(self):
         self.namespace.end_user_keyword()
+
+    def get_handler(self, name):
+        return self.namespace.get_handler(name)
 
     def warn(self, message):
         self.output.warn(message)
