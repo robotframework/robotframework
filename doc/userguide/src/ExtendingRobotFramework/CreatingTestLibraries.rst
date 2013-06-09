@@ -275,7 +275,7 @@ Specifying library version
 When a test library is taken into use, Robot Framework tries to
 determine its version. This information is then written into the syslog_
 to provide debugging information. Library documentation tool
-`libdoc`_ also writes this information into the keyword
+Libdoc_ also writes this information into the keyword
 documentations it generates.
 
 Version information is read from attribute
@@ -311,7 +311,7 @@ A Java class using :code:`ROBOT_LIBRARY_VERSION`:
 Specifying documentation format
 '''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 2.7.5, library documentation tool `libdoc`_
+Starting from Robot Framework 2.7.5, library documentation tool Libdoc_
 supports documentation in multiple formats. If you want to use something
 else than Robot Framework's own `documentation formatting`_, you can specify
 the format in the source code using  :code:`ROBOT_LIBRARY_DOC_FORMAT` attribute
@@ -325,7 +325,7 @@ and :code:`reST` (reStructuredText_). Using :code:`reST` format requires
 
 Setting the documentation format is illustrated by the following Python and
 Java examples that use reStructuredText and HTML formats, respectively.
-See `Documenting libraries`_ section and `libdoc`_ chapter for more information
+See `Documenting libraries`_ section and Libdoc_ chapter for more information
 about documenting test libraries in general.
 
 .. sourcecode:: python
@@ -512,7 +512,7 @@ keyword needs is got directly from the method that implements it.
 Libraries using the `dynamic library API`_ have other means for sharing
 this information, so this section is not relevant to them.
 
-The most common and also simplest situation is when a keyword needs an
+The most common and also the simplest situation is when a keyword needs an
 exact number of arguments. In this case, both the Python and Java methods
 simply take exactly those arguments. For example, a method implementing a
 keyword with no arguments takes no arguments either, a method
@@ -524,13 +524,13 @@ Example Python keywords taking different numbers of arguments:
 .. sourcecode:: python
 
   def no_arguments():
-      print "Keyword got no arguments"
+      print "Keyword got no arguments."
 
   def one_argument(arg):
-      print "Keyword got one argument '%s'" % arg
+      print "Keyword got one argument '%s'." % arg
 
-  def multiple_arguments(a1, a2, a3):
-      print "Keyword got three arguments '%s', '%s' and '%s'" % (a1, a2, a3)
+  def three_arguments(a1, a2, a3):
+      print "Keyword got three arguments '%s', '%s' and '%s'." % (a1, a2, a3)
 
 Default values to keywords
 ''''''''''''''''''''''''''
@@ -549,7 +549,7 @@ which is familiar to all Python programmers, is illustrated below:
 .. sourcecode:: python
 
    def one_default(arg='default'):
-       print "Argument has value '%s'" % arg
+       print "Argument has value %s" % arg
 
    def multiple_defaults(arg1, arg2='default 1', arg3='default 2'):
        print "Got arguments %s, %s and %s" % (arg1, arg2, arg3)
@@ -587,7 +587,7 @@ the earlier Python example:
 .. sourcecode:: java
 
    public void oneDefault(String arg) {
-       System.out.println("Argument has value '" + arg "'");
+       System.out.println("Argument has value " + arg);
    }
 
    public void oneDefault() {
@@ -854,7 +854,7 @@ When writing static keywords, it is sometimes useful to modify them with
 Python's decorators. However, decorators modify function signatures,
 and can confuse Robot Framework's introspection when determining which
 arguments keywords accept. This is especially problematic when creating
-library documentation with libdoc_ and when using  RIDE_. To avoid this
+library documentation with Libdoc_ and when using  RIDE_. To avoid this
 issue, either do not use decorators, or use the handy `decorator module`__
 to create signature-preserving decorators.
 
@@ -1420,7 +1420,7 @@ the examples below.
 Both Python and Java have tools for creating an API documentation of a
 library documented as above. However, outputs from these tools can be slightly
 technical for some users. Another alternative is using Robot
-Framework's own documentation tool `libdoc`_. This tool can
+Framework's own documentation tool Libdoc_. This tool can
 create a library documentation from both Python and Java libraries
 using the static library API, such as the ones above, but it also handles
 libraries using the `dynamic library API`_ and `hybrid library API`_.
@@ -1428,7 +1428,7 @@ libraries using the `dynamic library API`_ and `hybrid library API`_.
 The first line of a keyword documentation is used for a special
 purpose and should contain a short overall description of the
 keyword. It is used as a *short documentation*, for example as a tool
-tip, by `libdoc`_ and also shown in the test logs. However, the latter
+tip, by Libdoc_ and also shown in the test logs. However, the latter
 does not work with Java libraries using the static API,
 because their documentations are lost in compilation and not available
 at runtime.
@@ -1439,7 +1439,7 @@ styles like :code:`*bold*` and :code:`_italic_`, tables, lists, links, etc.
 Starting from Robot Framework 2.7.5, it is possible to use also HTML, plain
 text and reStructuredText_ formats. See `Specifying documentation format`_
 section for information how to set the format in the library source code and
-`libdoc`_ chapter for more information about the formats in general.
+Libdoc_ chapter for more information about the formats in general.
 
 .. note:: If you want to use non-ASCII characters in the documentation of
           Python libraries, you must either use UTF-8 as your `source code
@@ -1548,7 +1548,7 @@ information for automatically replacing deprecated keywords. The tool
 will most likely get the name of the new keyword from the
 documentation so that it searches words inside backticks
 (:code:`\``). Thus it would find :name:`Other Keyword` from the
-earlier example. Note that `libdoc`_ also automatically creates
+earlier example. Note that Libdoc_ also automatically creates
 internal links using the same syntax.
 
 __ `Documenting libraries`_
@@ -1668,9 +1668,9 @@ under these circumstances they would need to check the argument counts
 themselves.
 
 Dynamic libraries can tell Robot Framework what arguments the keywords
-that it implements actually expect using
-:code:`get_keyword_arguments` (alias :code:`getKeywordArguments`)
-method. This method takes the name of a keyword as an argument and returns a
+it implements expect by using the :code:`get_keyword_arguments`
+(alias :code:`getKeywordArguments`)
+method. This method takes the name of a keyword as an argument, and returns a
 list of strings (a string array in Java) containing the arguments
 accepted by that keyword.
 
@@ -1738,7 +1738,7 @@ a string.
 The returned documentation is used similarly as the keyword
 documentation string with static libraries implemented with
 Python. The main use case is getting keywords' documentations into a
-library documentation generated with `libdoc`_. Additionally,
+library documentation generated by Libdoc_. Additionally,
 the first line of the documentation (until the first :code:`\\n`) is
 shown in test logs.
 
@@ -1748,18 +1748,18 @@ Getting general library documentation
 The :code:`get_keyword_documentation` method can also be used for
 specifying overall library documentation. This documentation is not
 used when tests are executed, but it can make the documentation
-generated by `libdoc`_ much better.
+generated by Libdoc_ much better.
 
 Dynamic libraries can provide both general library documentation and
 documentation related to taking the library into use. The former is
 got by calling :code:`get_keyword_documentation` with special value
 :code:`__intro__`, and the latter is got using value
 :code:`__init__`. How the documentation is presented is best tested
-with `libdoc`_ in practice.
+with Libdoc_ in practice.
 
 Python based dynamic libraries can also specify the general library
 documentation directly in the code as the docstring of the library
-class or its :code:`__init__` method. If non-empty documentation is
+class and its :code:`__init__` method. If a non-empty documentation is
 got both directly from the code and from the
 :code:`get_keyword_documentation` method, the latter has higher
 priority.
