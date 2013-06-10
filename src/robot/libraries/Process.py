@@ -321,8 +321,7 @@ class Process(object):
             return subprocess.list2cmdline(command)
         return command[0]
 
-    # TODO: process_is_running vs is_process_running
-    def process_is_running(self, handle=None):
+    def is_process_running(self, handle=None):
         """Checks is the process running or not.
 
         If `handle`is not given, uses the current `active process`.
@@ -339,7 +338,7 @@ class Process(object):
 
         Fails if the process has stopped.
         """
-        if not self.process_is_running(handle):
+        if not self.is_process_running(handle):
             raise AssertionError(error_message)
 
     def process_should_be_stopped(self, handle=None,
@@ -350,7 +349,7 @@ class Process(object):
 
         Fails if the process is still running.
         """
-        if self.process_is_running(handle):
+        if self.is_process_running(handle):
             raise AssertionError(error_message)
 
     def wait_for_process(self, handle=None):
@@ -419,7 +418,7 @@ class Process(object):
         See `Stopping processes` for more details.
         """
         for handle in range(len(self._started_processes._connections)):
-            if self.process_is_running(handle):
+            if self.is_process_running(handle):
                 self.terminate_process(handle, kill=kill)
 
     def get_process_id(self, handle=None):

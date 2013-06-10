@@ -21,8 +21,7 @@ Error in exit code and stderr output
 
 Start And Wait Process
     ${handle}=    Start Python Process    import time;time.sleep(0.1)
-    ${is_alive}=    Process Is Running    ${handle}
-    Should Be True    ${is_alive}
+    Process Should Be Running    ${handle}
     Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
 
@@ -161,7 +160,7 @@ Piped stderr
 
 *** Keywords ***
 Restart Suite Process If Needed
-    ${alive}=    Process Is Running    suite_process
+    ${alive}=    Is Process Running    suite_process
     Run Keyword Unless    ${alive}    Some process    suite_process
 
 Suite Setup

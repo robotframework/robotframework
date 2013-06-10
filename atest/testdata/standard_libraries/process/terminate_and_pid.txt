@@ -14,8 +14,7 @@ Run process does not change active process
 
 Killing process
     ${handle}=    Some process
-    ${is_alive}=    Process Is Running    ${handle}
-    Should Be True    ${is_alive}
+    Process Should Be Running
     Terminate Process    ${handle}    kill=${True}
     Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}

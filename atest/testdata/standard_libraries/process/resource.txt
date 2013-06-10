@@ -7,7 +7,7 @@ Some process
 Stop some process
     [Arguments]    ${alias}=${null}
     ${process}=    Get Process Object   ${alias}
-    Log   ${process.communicate("stop\n")}
+    Call Method    ${process}    communicate    stop\n
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${exit_code}=0
@@ -20,7 +20,6 @@ Result should match
     Should Match    ${result.stdout}    ${stdout}
     Should Match    ${result.stderr}    ${stderr}
     Should Be Equal As Integers    ${result.exit_code}    ${exit_code}
-
 
 Start Python Process
     [Arguments]    ${command}    ${alias}=${null}

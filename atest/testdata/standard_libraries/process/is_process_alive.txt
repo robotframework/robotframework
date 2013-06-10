@@ -5,13 +5,17 @@ Resource          resource.txt
 
 *** Test Cases ***
 No Process Should Fail
-    Run Keyword And Expect Error    No started processes.   Process Is Running
+    Run Keyword And Expect Error    No started processes.   Is Process Running
 
 Test Process Should Be Alive
     ${handle}=    Some process
     Process Should Be Running    ${handle}
+    ${running} =    Is Process Running
+    Should Be Equal    ${running}    ${TRUE}
     Stop some process
     Wait For Process    ${handle}
+    ${running} =    Is Process Running
+    Should Be Equal    ${running}    ${FALSE}
     Run Keyword And Expect Error    Process is not running.    Process Should Be Running    ${handle}
 
 Test Process Should Be Dead
