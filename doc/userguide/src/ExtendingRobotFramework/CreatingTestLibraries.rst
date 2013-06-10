@@ -719,7 +719,7 @@ Because Java does not have similar keyword argument concept, this functionality
 is only available with Python based libraries.
 
 If you are already familiar how kwargs work with Python, understanding how
-they works with Robot Framework test libraries is rather simple. The example
+they work with Robot Framework test libraries is rather simple. The example
 below shows the basic functionality.
 
 .. sourcecode:: python

@@ -264,7 +264,7 @@ Using normal positional arguments after named arguments like, for example,
 Starting from Robot Framework 2.8 this causes an explicit error.
 Otherwise the order of the named arguments does not matter.
 
-.. note:: Prior to Robot Framework 2.8 it was not possible name arguments
+.. note:: Prior to Robot Framework 2.8 it was not possible to name arguments
           that did not have a default value.
 
 Escaping named arguments syntax
@@ -292,7 +292,7 @@ addition to that, it also works when `taking test libraries into use`_.
 
 Naming arguments is supported by `user keywords`_ and by most `test libraries`_.
 The only exception are Java based libraries that use the `static library API`_.
-Library documentation generated with `Libdoc`_ has a note does the library
+Library documentation generated with `Libdoc`_ has a note, does the library
 support named arguments or not.
 
 .. note:: Prior to Robot Framework 2.8 named argument syntax did not work
@@ -339,7 +339,7 @@ Free keyword arguments
 
 Robot Framework 2.8 added a possibility to use the named argument syntax with
 Python keywords that accept `keyword arguments`__ in form :code:`**kwargs`.
-If a keyword uses this syntax , all arguments at the end of the keyword
+If a keyword uses this syntax, all arguments at the end of the keyword
 call using the :code:`name=value` syntax, but not matching any other arguments,
 are passed to it as free keyword arguments.
 
