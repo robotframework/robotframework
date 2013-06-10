@@ -151,10 +151,64 @@ class TestSuite(model.TestSuite):
         self.visit(Randomizer(suites, tests))
 
     def run(self, settings=None, **options):
-        # TODO: This method should be documented already in 2.8.
-        # - Would be great to document accepted options, but just a note that
-        #   all execution related options can be used is better than nothing.
-        # - Reference to examples in the package level is a must.
+        """
+        Executes the tests based based the given ``settings`` or ``options``.
+
+        :param settings: :class:`~robot.conf.settings.RobotSettings` object
+            to configure test execution.
+        :param options: Used to construct new
+            :class:`~robot.conf.settings.RobotSettings` object if ``settings``
+            are not given.
+
+        Options are given as keyword arguments and their names are same as
+        long command line options except without hyphens.
+
+        The effective options are all that relate to the actual
+        execution of tests. This means, that filtering and writing log,
+        report or XUnit is not affected by the given options.
+
+        Example::
+
+            suite = TestSuite(...)
+            ...
+            result = suite.run(
+                skipteardownonexit=True,
+                randomize_suites=True,
+                output='my_output.xml'
+            )
+
+        Options that can be given on the command line multiple times can be
+        passed as lists like `include=['tag1', 'tag2']`.
+
+        Example::
+
+            suite = TestSuite(...)
+            ...
+            result = suite.run(include=['tag1, 'tag2'])
+
+        If such option is used only once, it can be given also as
+        a single string like `include='tag'`.
+
+        Example::
+
+            suite = TestSuite(...)
+            ...
+            result = suite.run(include='tag')
+
+        To capture stdout and/or stderr streams, pass open file objects in as
+        special keyword arguments `stdout` and `stderr`, respectively.
+
+        Example::
+
+            suite = TestSuite(...)
+            ...
+            stdout_file = open('test_output.txt', 'w')
+            stderr_file = open('test_errors.txt', 'w')
+            result = suite.run(stdout=stdout_file, stderr=stderr_file)
+
+        Please see examples at :mod:`running API <robot.running>`
+        on how to create runnable test suites.
+        """
         STOP_SIGNAL_MONITOR.start()
         IMPORTER.reset()
         settings = settings or RobotSettings(options)
