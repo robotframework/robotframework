@@ -526,11 +526,11 @@ class ProcessConfig(object):
         self.shell = bool(shell)
         self.alias = alias
         self.env = env
-        self._handle_rest(rest)
-        if env:
+        self._construct_env(rest)
+        if self.env:
             for k, v in self.env.items():
                 del self.env[k]
-                self.env[str(k)] = str(v)
+                self.env[encode_to_system(k)] = encode_to_system(v)
 
     def _new_stream(self, name, postfix):
         if name == 'PIPE':
@@ -547,40 +547,16 @@ class ProcessConfig(object):
                 return self.stdout_stream
         return self._new_stream(stderr, 'stderr')
 
-    def _handle_rest(self, rest):
-        if not rest:
-            return
-        self.env = self._construct_env(rest)
-
     # TODO: cleanup and fixes
-   # - confusing to first set self.env here but then reset it by
-    #   the returned value
     # - we probably should not encode items in the given env, only
     #   the individually given name/value pairs
     def _construct_env(self, rest):
-        new_env = dict(os.environ.copy().items())
-        env_called = False
-        for key, val in rest.iteritems():
-            key = encode_to_system(key)
-            if "env:" == key[:4]:
-                new_env[key[4:]] = encode_to_system(val)
-                env_called = True
-            else:
+        for key in rest:
+            if not key.startswith('env:'):
                 raise RuntimeError("'%s' is not supported by this keyword." % key)
-        if self.env is None and env_called:
-            return new_env
-        return self.env
-
-    # TODO: Why is this done? Can't we just let the command fail if env is invalid?
-    # If this is considered useful, should add PATH to env elsewhere too.
-    # And that should be documented.
-    def _must_env_values(self):
-        must_values = {}
-        if os.sep != '/':
-            must_values['COMSPEC'] = os.environ['COMSPEC']
-            must_values['PATH'] = os.environ['PATH']
-            must_values['SYSTEMROOT'] = os.environ['SYSTEMROOT']
-        return must_values
+            if self.env is None:
+                self.env = os.environ.copy()
+            self.env[key[4:]] = rest[key]
 
     # TODO: Is this needed?
     def __str__(self):
