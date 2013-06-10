@@ -151,63 +151,47 @@ class TestSuite(model.TestSuite):
         self.visit(Randomizer(suites, tests))
 
     def run(self, settings=None, **options):
-        """
-        Executes the tests based based the given ``settings`` or ``options``.
+        """Executes the suite based based the given ``settings`` or ``options``.
 
         :param settings: :class:`~robot.conf.settings.RobotSettings` object
             to configure test execution.
         :param options: Used to construct new
             :class:`~robot.conf.settings.RobotSettings` object if ``settings``
             are not given.
+        :return: :class:`~robot.result.executionresult.Result` object with
+            information about executed suites and tests.
 
-        Options are given as keyword arguments and their names are same as
-        long command line options except without hyphens.
-
-        The effective options are all that relate to the actual
-        execution of tests. This means, that filtering and writing log,
-        report or XUnit is not affected by the given options.
-
-        Example::
-
-            suite = TestSuite(...)
-            ...
-            result = suite.run(
-                skipteardownonexit=True,
-                randomize_suites=True,
-                output='my_output.xml'
-            )
-
+        If ``options`` are used, their names are the same as long command line
+        options except without hyphens, and they also have the same semantics.
         Options that can be given on the command line multiple times can be
-        passed as lists like `include=['tag1', 'tag2']`.
+        passed as lists like ``variable=['VAR1:value1', 'VAR2:value2']``.
+        If such an option is used only once, it can be given also as a single
+        string like ``variable='VAR:value'``.
+
+        Only options related to the actual test execution have an effect.
+        For example, options related to selecting test cases or creating
+        logs and reports are silently ignored. The output XML generated
+        as part of the execution can be configured, though, including
+        disabling it with ``output=None``.
 
         Example::
 
-            suite = TestSuite(...)
-            ...
-            result = suite.run(include=['tag1, 'tag2'])
+            result = suite.run(variable='EXAMPLE:value',
+                               critical='regression',
+                               output='example.xml',
+                               exitonfailure=True,
+                               skipteardownonexit=True)
+            print result.return_code
 
-        If such option is used only once, it can be given also as
-        a single string like `include='tag'`.
+        To save memory, the returned
+        :class:`~robot.result.executionresult.Result` object object does not
+        have any information about the executed keywords. If that information
+        is needed, the created output XML file needs to be read  using the
+        :class:`~robot.result.resultbuilder.ExecutionResult` factory method.
 
-        Example::
-
-            suite = TestSuite(...)
-            ...
-            result = suite.run(include='tag')
-
-        To capture stdout and/or stderr streams, pass open file objects in as
-        special keyword arguments `stdout` and `stderr`, respectively.
-
-        Example::
-
-            suite = TestSuite(...)
-            ...
-            stdout_file = open('test_output.txt', 'w')
-            stderr_file = open('test_errors.txt', 'w')
-            result = suite.run(stdout=stdout_file, stderr=stderr_file)
-
-        Please see examples at :mod:`running API <robot.running>`
-        on how to create runnable test suites.
+        See the :mod:`package level <robot.running>` documentation for
+        more examples, including how to construct executable test suites and
+        how to create logs and reports based on the execution results.
         """
         STOP_SIGNAL_MONITOR.start()
         IMPORTER.reset()

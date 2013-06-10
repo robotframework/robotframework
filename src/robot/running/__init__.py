@@ -69,7 +69,8 @@ Not that complicated either, especially considering the flexibility. Notice
 that the suite created based on the file could be edited further using
 the same API.
 
-Now that we have a test suite ready, let's run it and verify that the returned
+Now that we have a test suite ready, let's
+:meth:`run <robot.running.model.TestSuite.run>` it and verify that the returned
 :class:`~robot.result.executionresult.Result` object contains correct
 information::
 
