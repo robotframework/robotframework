@@ -22,10 +22,10 @@ class InternalLinking:
     - `linking to headers`
     - `first = level =`
 
-    == Other levels cannot be linked ==
+    == Other levels can be linked too ==
 
     - `Second level`
-    - `Third level`
+    - `third level`
 
     =   First = Level = =
 
@@ -45,7 +45,7 @@ class InternalLinking:
         """First keyword here. See also `Importing` and `Second Keyword`."""
 
     def second_keyword(self, arg):
-        """We got `arg`. And have `no link`. Even on `second level`.
+        """We got `arg`. And have `no link`. Except to `Second LEVEL`.
 
         = Not linkable =
 

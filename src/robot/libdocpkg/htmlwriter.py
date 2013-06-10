@@ -17,6 +17,7 @@ import re
 from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
 from robot.utils import get_timestamp, html_escape, html_format, NormalizedDict
+from robot.utils.htmlformatters import HeaderFormatter
 
 
 class LibdocHtmlWriter(object):
@@ -72,7 +73,7 @@ class JsonConverter(object):
 
 
 class DocFormatter(object):
-    _header_regexp = re.compile(r'<h2>(.+?)</h2>')
+    _header_regexp = re.compile(r'<h([234])>(.+?)</h\1>')
     _name_regexp = re.compile('`(.+?)`')
 
     def __init__(self, keywords, introduction, doc_format='ROBOT'):
@@ -97,15 +98,16 @@ class DocFormatter(object):
         return targets
 
     def _yield_header_targets(self, introduction):
+        headers = HeaderFormatter()
         for line in introduction.splitlines():
-            line = line.strip()
-            if line.startswith('= ') and line.endswith(' ='):
-                yield line[1:-1].strip()
+            match = headers.match(line)
+            if match:
+                yield match.group(2)
 
     def html(self, doc, intro=False):
         doc = self._doc_to_html(doc)
         if intro:
-            doc = self._header_regexp.sub(r'<h2 id="\1">\1</h2>', doc)
+            doc = self._header_regexp.sub(r'<h\1 id="\2">\2</h\1>', doc)
         return self._name_regexp.sub(self._link_keywords, doc)
 
     def _link_keywords(self, match):

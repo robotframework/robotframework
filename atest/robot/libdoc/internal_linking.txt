@@ -33,7 +33,6 @@ Non-matching text in backticks gets formatting
     ${MODEL['keywords'][1]}    no link
 
 Linking to first level headers in introduction
-
     [Template]    NONE
     Doc Should Contain Link    ${MODEL}    Linking to headers    linking to headers
     Doc Should Contain Link    ${MODEL}    First = Level =       first = level =
@@ -44,11 +43,13 @@ Linking to first level headers in importing and keywords
     ${MODEL['inits'][0]}       Formatting            formatting
     ${MODEL['keywords'][1]}    Linking to headers    linking to headers
 
-Second and third level headers are not linkable
-    [Template]    Doc Should Contain Name
-    ${MODEL}    Second level
-    ${MODEL}    Third level
-    ${MODEL['keywords'][1]}    second level
+Linking to second and third level headers
+    [Template]    NONE
+    Doc Should Contain Link    ${MODEL}                   Second level    Second level
+    Doc Should Contain Link    ${MODEL}                   Third level     third level
+    Doc Should Contain Link    ${MODEL['keywords'][1]}    Second level    Second LEVEL
+    Doc Should Contain    ${MODEL}    <h3 id="Second level">Second level</h3>
+    Doc Should Contain    ${MODEL}    <h4 id="Third level">Third level</h4>
 
 Only headers in introduction are linkable
     [Template]    NONE

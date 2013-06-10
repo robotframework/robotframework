@@ -538,7 +538,7 @@ Linking to custom sections
 ``````````````````````````
 
 Starting from version 2.7.5, Robot Framework's `documentation syntax`_
-supports custom `section titles`_. The first level titles used in the
+supports custom `section titles`_, and the titles used in the
 library or resource file introduction automatically create link
 targets. The example below illustrates linking both to automatic and
 custom sections:
@@ -564,6 +564,9 @@ custom sections:
 
 .. note:: Linking to custom sections works only when using `Robot Framework
           documentation format`_.
+
+.. note:: Prior to Robot Framework 2.8, only the first level section
+          titles were linkable.
 
 Argument formatting
 ```````````````````
