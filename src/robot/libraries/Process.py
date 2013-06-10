@@ -19,7 +19,7 @@ import signal
 import subprocess
 import sys
 
-from robot.utils import ConnectionCache, encode_to_system, decode_output, decode_from_system
+from robot.utils import ConnectionCache, encode_to_system, decode_from_system
 from robot.version import get_version
 from robot.api import logger
 
