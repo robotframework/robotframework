@@ -68,7 +68,7 @@ With Env: Configuration the Environment Should Contain Additional Variable
 
 With Env= Configuration the Environment Should Contain Only Additional Variable
     Set Environment Variable  normalvar  normal
-    ${setenv}=    Create Dictionary           specialvar  spessu
+    ${setenv}=    Create env dictionary    specialvar  spessu
     ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env=${setenv}
     Should Be Equal        ${result.stdout.strip()}    - spessu
 
@@ -78,13 +78,13 @@ Setting Environment With Multiple Values
     Should Be Equal        ${result.stdout.strip()}  normal spessu daaba
 
 Setting Environment Variable Overrides Original
-    Set Environment Variable  vari  original
-    ${result}=    Run Process    python -c "import os; print os.getenv('vari', '-');"    shell=True   env:vari=new
+    Set Environment Variable  VARI  original
+    ${result}=    Run Process    python -c "import os; print os.getenv('VARI', '-');"    shell=True   env:VARI=new
     Should Be Equal        ${result.stdout.strip()}  new
 
 Setting Environment With Multiple Values Using Dictionary
     Set Environment Variable  normalvar  normal
-    ${setenv}=    Create Dictionary           specialvar  spessu  diiba2  daaba2
+    ${setenv}=    Create env dictionary   specialvar  spessu  diiba2  daaba2
     ${result}=    Run Process    python   -c    import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba2', '-');    env=${setenv}
     Should Be Equal        ${result.stdout.strip()}  - spessu daaba2
 
@@ -180,3 +180,11 @@ Check Preconditions
 Valid Platform
     ${is_ok}=   Evaluate   sys.platform != 'cli'   sys
     [Return]    ${is_ok}
+
+Create env dictionary
+    [Arguments]  @{env_args}
+    ${comspec}=     Get Environment Variable  COMSPEC  default=.
+    ${path}=        Get Environment Variable  PATH   default=.
+    ${systemroot}=  Get Environment Variable  SYSTEMROOT  default=.
+    ${setenv}=    Create Dictionary  PATH  ${path}  SYSTEMROOT  ${SYSTEMROOT}  @{env_args}
+    [Return]  ${setenv}

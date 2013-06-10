@@ -519,14 +519,18 @@ exit_code   : %d""" % (self.stdout_path, self.stderr_path, self.exit_code)
 class ProcessConfig(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
-                 alias=None, **rest):
+                 alias=None, env=None, **rest):
         self.cwd = cwd or os.path.abspath(os.curdir)
         self.stdout_stream = self._new_stream(stdout, 'stdout')
         self.stderr_stream = self._get_stderr(stderr, stdout)
         self.shell = bool(shell)
         self.alias = alias
-        self.env = None
+        self.env = env
         self._handle_rest(rest)
+        if env:
+            for k, v in self.env.items():
+                del self.env[k]
+                self.env[str(k)] = str(v)
 
     def _new_stream(self, name, postfix):
         if name == 'PIPE':
@@ -549,29 +553,23 @@ class ProcessConfig(object):
         self.env = self._construct_env(rest)
 
     # TODO: cleanup and fixes
-    # - if env is not given, individually given env values are overridden
-    #   by values with same names in os.environ!!
-    # - confusing to first set self.env here but then reset it by
+   # - confusing to first set self.env here but then reset it by
     #   the returned value
     # - we probably should not encode items in the given env, only
     #   the individually given name/value pairs
     def _construct_env(self, rest):
-        new_env = dict()
+        new_env = dict(os.environ.copy().items())
+        env_called = False
         for key, val in rest.iteritems():
             key = encode_to_system(key)
-            if key == "env":
-                self.env = dict()
-                for k, v in val.iteritems():
-                    k = encode_to_system(k)
-                    v = encode_to_system(v)
-                    self.env[k] = v
-            elif "env:" == key[:4]:
+            if "env:" == key[:4]:
                 new_env[key[4:]] = encode_to_system(val)
+                env_called = True
             else:
                 raise RuntimeError("'%s' is not supported by this keyword." % key)
-        if not self.env:
-            return dict(os.environ.copy().items()+new_env.items())
-        return dict(self._must_env_values().items() + self.env.items())
+        if self.env is None and env_called:
+            return new_env
+        return self.env
 
     # TODO: Why is this done? Can't we just let the command fail if env is invalid?
     # If this is considered useful, should add PATH to env elsewhere too.
