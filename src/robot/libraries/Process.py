@@ -525,12 +525,7 @@ class ProcessConfig(object):
         self.stderr_stream = self._get_stderr(stderr, stdout)
         self.shell = bool(shell)
         self.alias = alias
-        self.env = env
-        self._construct_env(rest)
-        if self.env:
-            for k, v in self.env.items():
-                del self.env[k]
-                self.env[encode_to_system(k)] = encode_to_system(v)
+        self.env = self._construct_env(env, rest)
 
     def _new_stream(self, name, postfix):
         if name == 'PIPE':
@@ -547,16 +542,17 @@ class ProcessConfig(object):
                 return self.stdout_stream
         return self._new_stream(stderr, 'stderr')
 
-    # TODO: cleanup and fixes
-    # - we probably should not encode items in the given env, only
-    #   the individually given name/value pairs
-    def _construct_env(self, rest):
+    def _construct_env(self, env, rest):
         for key in rest:
             if not key.startswith('env:'):
                 raise RuntimeError("'%s' is not supported by this keyword." % key)
-            if self.env is None:
-                self.env = os.environ.copy()
-            self.env[key[4:]] = rest[key]
+            if env is None:
+                env = os.environ.copy()
+            env[key[4:]] = rest[key]
+        if env:
+            env = dict((encode_to_system(key), encode_to_system(env[key]))
+                       for key in env)
+        return env
 
     # TODO: Is this needed?
     def __str__(self):
