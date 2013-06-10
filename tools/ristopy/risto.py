@@ -60,8 +60,7 @@ Options:
   -P --nopassed       Do not plot passed graphs.
   -F --nofailed       Do not plot failed graphs.
   -t --tag name *     Add graphs for these tags. Name can contain '*' and
-                      '?' as wildcards. 'AND' in the tag name is converted
-                      to ' & ', to make it easier to plot combined tags.
+                      '?' as wildcards.
   -o --output path    Path to the image file to create. If not given, the
                       image is opened into Matplotlib's image viewer.
   -i --title title    Title of the graph. Underscores in the given title
@@ -126,7 +125,7 @@ except ImportError:
                       'Make sure you have Robot Framework installed.')
 
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 
 class AllStatistics(object):
@@ -281,7 +280,7 @@ class Plotter(object):
         # axes2 is used only for getting ytick labels also on right side
         self._axes2 = self._axes.twinx()
         self._axes2.set_xticklabels([], visible=False)
-        self._tags = self._get_tags(tags)
+        self._tags = tags or []
         self._critical = critical
         self._all = all
         self._totals = totals
@@ -301,11 +300,6 @@ class Plotter(object):
                     float(width)/self._dpi, float(height)/self._dpi)
         except ValueError:
             raise DataError('Width, height, font and xticks must be numbers.')
-
-    def _get_tags(self, tags):
-        if tags is None:
-            return []
-        return [t.replace('AND',' & ') for t in tags]
 
     def set_axis(self, stats):
         slen = len(stats)
@@ -345,7 +339,7 @@ class Plotter(object):
             self._legends.append(Legend(label='all tests', **line))
 
     def tag(self, stats):
-        if utils.matches_any(stats[0].name, self._tags):
+        if utils.MultiMatcher(self._tags).match(stats[0].name):
             line = {'linestyle': '-', 'linewidth': 0.3}
             mark = {'marker': self._get_marker(),
                     'markersize': self._marker_size}
