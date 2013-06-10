@@ -1,11 +1,12 @@
 *** Settings ***
 Suite Setup       Check Preconditions
 Library           Process
+Library           OperatingSystem
 Resource          resource.txt
 
 *** Test Cases ***
 Non-ascii in the command using shell=True
-    ${result}=   Run Process    python -c 'print "ööåöåöå"'   shell=True
+    ${result}=   Run Process    python -c "print 'ööåöåöå'"   shell=True
     Result should equal    ${result}    stdout=ööåöåöå   exit_code=0
 
 Non-ascii in the command using shell=False
@@ -15,18 +16,20 @@ Non-ascii in the command using shell=False
 Non-ascii in the command with given stdout
     ${result}=   Run Process    python  -c    print "ööåöåöå"   shell=True   stdout=myfile.txt
     Result should equal    ${result}    stdout=ööåöåöå   exit_code=0
+    [Teardown]   Run Keyword And Ignore Error   Remove File   myfile.txt
 
 Ascii characters in output with dir command
-    ${result}=   Run Process    dir   ${CURDIR}    shell=True
+    ${result}=   Run Process    python -c "import os,pprint; pprint.pprint(os.listdir('.'));"   shell=True    stdout=dirlist.txt   cwd=${CURDIR}
     Log     ${result.stdout}
+    [Teardown]   Run Keyword And Ignore Error   Remove File   dirlist.txt
 
 Non-ascii in the command arguments
     ${result}=   Run Process    python -c "import os; print os.getenv('varri', '-');"  shell=True  env:varri=Öoa
     Should Be Equal        ${result.stdout.strip()}  Öoa
 
 Newline test using shell=True
-    ${result}=   Run Process    python -c 'print "hello"'   shell=True
-    Result should equal    ${result}    stdout=hello  exit_code=0
+    ${result}=   Run Process    python -c "print 'hello'"   shell=True
+    Result should equal    ${result}    stdout=*hello*    exit_code=0
 
 Newline test using shell=False
     ${result}=   Run Process    python  -c   print "hello"
