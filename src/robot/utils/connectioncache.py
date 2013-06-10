@@ -12,27 +12,33 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from normalizing import NormalizedDict
+from .normalizing import NormalizedDict
 
 
-class ConnectionCache:
+class ConnectionCache(object):
+    """Cache for test libs to use with concurrent connections, processes, etc.
 
-    """Connection cache for different Robot test libraries that use connections.
+    The cache stores the registered connections (or other objects) and allows
+    switching between them using generated indices or user given aliases.
+    This is useful with any test library where there's need for multiple
+    concurrent connections, processes, etc.
 
-    This cache stores connections and allows switching between them using
-    generated indexes or user given aliases. Can be used for example by web
-    testing libraries where there's need for multiple concurrent connections.
-
-    Note that in most cases there should be only one instance of this class but
-    this is not enforced.
+    This class can, and is, used also outside the core framework by SSHLibrary,
+    Selenium(2)Library, etc. Backwards compatibility is thus important when
+    doing changes.
     """
 
-    def __init__(self, no_current_msg='No open connection'):
-        self.current = self._no_current = _NoConnection(no_current_msg)
-        self.current_index = None
+    def __init__(self, no_current_msg='No open connection.'):
+        self.current = self._no_current = NoConnection(no_current_msg)
         self._connections = []
         self._aliases = NormalizedDict()
         self._no_current_msg = no_current_msg
+
+    @property
+    def current_index(self):
+        if self.current is self._no_current:
+            return None
+        return self._connections.index(self.current) + 1
 
     def register(self, connection, alias=None):
         """Registers given connection with optional alias and returns its index.
@@ -43,7 +49,6 @@ class ConnectionCache:
         """
         self.current = connection
         self._connections.append(connection)
-        self.current_index = len(self._connections)
         if isinstance(alias, basestring):
             self._aliases[alias] = self.current_index
         return self.current_index
@@ -55,7 +60,7 @@ class ConnectionCache:
         or strings that can be converted into integer. Raises RuntimeError
         if no connection with given index or alias found.
         """
-        self.current, self.current_index = self.get_connection(index_or_alias)
+        self.current = self.get_connection(index_or_alias)
         return self.current
 
     def get_connection(self, index_or_alias):
@@ -66,10 +71,11 @@ class ConnectionCache:
         if no connection with given index or alias found.
         """
         try:
-            index = self._get_index(index_or_alias)
+            index = self._resolve_index_or_alias(index_or_alias)
         except ValueError:
-            raise RuntimeError("Non-existing index or alias '%s'" % index_or_alias)
-        return self._connections[index-1], index
+            raise RuntimeError("Non-existing index or alias '%s'."
+                               % index_or_alias)
+        return self._connections[index-1]
 
     def close_all(self, closer_method='close'):
         """Closes connections using given closer method and empties cache.
@@ -84,15 +90,15 @@ class ConnectionCache:
         return self.current
 
     def empty_cache(self):
-        """Empties the connections cache.
+        """Empties the connection cache.
 
-        Indexes of new connections starts from 1 after this."""
+        Indexes of the new connections starts from 1 after this.
+        """
         self.current = self._no_current
-        self.current_index = None
         self._connections = []
         self._aliases = NormalizedDict()
 
-    def _get_index(self, index_or_alias):
+    def _resolve_index_or_alias(self, index_or_alias):
         try:
             return self._resolve_alias(index_or_alias)
         except ValueError:
@@ -113,7 +119,7 @@ class ConnectionCache:
         return index
 
 
-class _NoConnection:
+class NoConnection(object):
 
     def __init__(self, msg):
         self._msg = msg

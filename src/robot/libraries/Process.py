@@ -265,8 +265,7 @@ class Process(object):
     ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self):
-        # TODO: Configure error when no process active
-        self._started_processes = ConnectionCache()
+        self._started_processes = ConnectionCache('No started processes.')
         self._results = {}
 
     def run_process(self, command, *arguments, **configuration):
@@ -465,7 +464,7 @@ class Process(object):
     def _process(self, handle):
         # TODO: Handle errors when using invalid handle or when no processes running.
         if handle:
-            process, _ = self._started_processes.get_connection(handle)
+            process = self._started_processes.get_connection(handle)
         else:
             process = self._started_processes.current
         return process
