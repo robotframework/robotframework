@@ -17,6 +17,18 @@ from robot import model
 
 
 class SuiteConfigurer(model.SuiteConfigurer):
+    """Result suite configured.
+
+    Calls suite's
+    :meth:`~robot.result.testsuite.TestSuite.remove_keywords`,
+    :meth:`~robot.result.testsuite.TestSuite.filter_messages` and
+    :meth:`~robot.result.testsuite.TestSuite.set_criticality` methods
+    and sets it's start and end time based on the given named parameters.
+
+    ``base_config`` is forwarded to
+    :class:`robot.model.SuiteConfigurer <robot.model.configurer.SuiteConfigurer>`
+    that will do further configuration based on them.
+    """
 
     def __init__(self, remove_keywords=None, log_level=None, start_time=None,
                  end_time=None, critical_tags=None, non_critical_tags=None,

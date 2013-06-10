@@ -56,6 +56,7 @@ class TestSuite(ModelObject):
 
     @setter
     def metadata(self, metadata):
+        """Free test suite metadata as a dictionary."""
         return Metadata(metadata)
 
     @setter
@@ -72,21 +73,38 @@ class TestSuite(ModelObject):
 
     @property
     def id(self):
+        """An automatically generated unique id.
+
+        The root suite has id ``s1``, its children have ids ``s1-s1``,
+        ``s1-s2``, ..., their children get ids ``s1-s1-s1``, ``s1-s1-s2``,
+        ..., ``s1-s2-s1``, ..., and so on.
+        """
         if not self.parent:
             return 's1'
         return '%s-s%d' % (self.parent.id, self.parent.suites.index(self)+1)
 
     @property
     def longname(self):
+        """Suite name prefixed with all parent suite names."""
         if not self.parent:
             return self.name
         return '%s.%s' % (self.parent.longname, self.name)
 
     @property
     def test_count(self):
+        """Number of the tests in this suite, recursively."""
         return len(self.tests) + sum(suite.test_count for suite in self.suites)
 
     def set_tags(self, add=None, remove=None, persist=False):
+        """Add and/or remove specified tags to the tests in this suite.
+
+        :param add: Tags to add as a list or, if adding only one,
+            as a single string.
+        :param remove: Tags to remove as a list or as a single string.
+            Can be given as patterns where ``*`` and ``?`` work as wildcards.
+        :param persist: Add/remove specified tags also to new tests added
+            to this suite in the future.
+        """
         setter = TagSetter(add, remove)
         self.visit(setter)
         if persist:
@@ -94,6 +112,21 @@ class TestSuite(ModelObject):
 
     def filter(self, included_suites=None, included_tests=None,
                included_tags=None, excluded_tags=None):
+        """Select test cases and remove others from this suite.
+
+        Parameters have the same semantics as ``--suite``, ``--test``,
+        ``--include``, and ``--exclude`` command line options. All of them
+        can be given as a list of strings, or when selecting only one, as
+        a single string.
+
+        Child suites that contain no tests after filtering are automatically
+        removed.
+
+        Example::
+
+            suite.filter(included_tests=['Test 1', '* Example'],
+                         included_tags='priority-1')
+        """
         self.visit(Filter(included_suites, included_tests,
                           included_tags, excluded_tags))
 
@@ -101,6 +134,7 @@ class TestSuite(ModelObject):
         self.visit(SuiteConfigurer(**options))
 
     def remove_empty_suites(self):
+        """Removes all child suites not containing any tests, recursively."""
         self.visit(EmptySuiteRemover())
 
     def visit(self, visitor):

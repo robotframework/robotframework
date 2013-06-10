@@ -22,7 +22,7 @@ class TotalStatistics(object):
     :ivar critical: Instance of :class:`~robot.model.stats.TotalStat` for
                     critical tests.
     :ivar all: Instance of :class:`~robot.model.stats.TotalStat` for
-               all the tests, including critical.
+               all the tests.
     """
 
     def __init__(self):
@@ -37,8 +37,9 @@ class TotalStatistics(object):
 
     @property
     def message(self):
-        """Returns a summary of total statistics in a string representation,
-        for example::
+        """String representation of the statistics.
+
+        For example::
 
             2 critical tests, 1 passed, 1 failed
             2 tests total, 1 passed, 1 failed

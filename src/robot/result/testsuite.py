@@ -39,53 +39,57 @@ class TestSuite(model.TestSuite):
         :ivar name: Test suite name.
         :ivar doc: Test suite documentation.
         :ivar metadata: Test suite metadata as a dictionary.
-        :ivar source: Path to the source file.
+        :ivar source: Path to the source file or directory.
         :ivar suites: A list of child :class:`~.testsuite.TestSuite` instances.
         :ivar tests: A list of :class:`~.testcase.TestCase` instances.
         :ivar keywords: A list containing setup and teardown
             :class:`~.keyword.Keyword` instances.
-        :ivar starttime: Test suite execution start time as a timestamp.
-        :ivar endtime: Test suite execution end time as a timestamp.
         """
         model.TestSuite.__init__(self, name, doc, metadata, source)
-        self.message = message
+        self.message = message      #: Suite setup/teardown error message.
         self.starttime = starttime
         self.endtime = endtime
         self._criticality = None
 
     @property
     def passed(self):
-        """Returns boolean based on if any critical test cases failed in the
-        suite."""
+        """``True`` if all critical tests succeeded, ``False`` otherwise."""
         return not self.statistics.critical.failed
 
     @property
     def status(self):
-        """Returns string `'PASS'` or `'FAIL'` if the test suite failed."""
+        """``'PASS'`` if all critical tests succeeded, ``'FAIL'`` otherwise."""
         return 'PASS' if self.passed else 'FAIL'
 
     @property
     def statistics(self):
-        """Builds a new :class:`~robot.model.totalstatistics.TotalStatistics`
-        object based from itself and returns it."""
+        """Suite statistics as a :class:`~robot.model.totalstatistics.TotalStatistics` object.
+
+        Recreated every time this property is accessed, so saving the results
+        to a variable and inspecting it is often a good idea::
+
+            stats = suite.statistics
+            print stats.critical.failed
+            print stats.all.total
+            print stats.message
+        """
         return TotalStatisticsBuilder(self).stats
 
     @property
     def full_message(self):
-        """Returns a possible failure message."""
+        """Combination of :attr:`message` and :attr:`stat_message`."""
         if not self.message:
             return self.stat_message
         return '%s\n\n%s' % (self.message, self.stat_message)
 
     @property
     def stat_message(self):
-        """Returns a string with passed and failed information of critical as
-        well as all test cases."""
+        """String representation of suite's :attr:`statistics`."""
         return self.statistics.message
 
     @property
     def elapsedtime(self):
-        """Returns total execution time of the suite in milliseconds."""
+        """Total execution time of the suite in milliseconds."""
         if self.starttime and self.endtime:
             return utils.get_elapsed_time(self.starttime, self.endtime)
         return sum(child.elapsedtime for child in
@@ -93,7 +97,10 @@ class TestSuite(model.TestSuite):
 
     @property
     def criticality(self):
-        """Returns if the test suite is critical or not."""
+        """Used by tests to determine are they considered critical or not.
+
+        Set using :meth:`set_criticality`.
+        """
         if self.parent:
             return self.parent.criticality
         if self._criticality is None:
@@ -101,33 +108,50 @@ class TestSuite(model.TestSuite):
         return self._criticality
 
     def set_criticality(self, critical_tags=None, non_critical_tags=None):
-        """Set which tags are considered critical for the test suite and which
-        are not."""
+        """Sets which tags are considered critical and which non-critical.
+
+        Tags can be given as lists of strings or, when giving only one,
+        as single strings. This information is used by tests to determine
+        are they considered critical or not.
+
+        Criticality can be set only to the top level test suite.
+        """
         if self.parent:
             raise TypeError('Criticality can only be set to top level suite')
         self._criticality = Criticality(critical_tags, non_critical_tags)
 
     def remove_keywords(self, how):
-        """Remove keywords based on
-        :func:`given criteria<robot.result.keywordremover.KeywordRemover>`."""
+        """Remove keywords based on the given condition.
+
+        ``how`` is either ``ALL``, ``PASSED``, ``FOR``, or ``WUKS``.
+        These values have exact same semantics as values accepted by
+        ``--removekeywords`` command line option.
+        """
         self.visit(KeywordRemover(how))
 
     def filter_messages(self, log_level='TRACE'):
-        """Visitor to filter :class:`~.keyword.Keyword` messages of a given
-        log level.
-
-        :attr log_level: Optional log level. If no log level is given, messages
-            are filtered on the `TRACE` log level.
-        """
+        """Remove log messages below the specified ``log_level``."""
         self.visit(MessageFilter(log_level))
 
     def configure(self, **options):
-        """Configure suite with
-        :class:`set of options <.configurer.SuiteConfigurer>`."""
+        """A shortcut to configure a suite using one method call.
+
+        ``options`` are passed to
+        :class:`~robot.result.configurer.SuiteConfigurer` that will then call
+        :meth:`filter`, :meth:`remove_keywords`, etc. based on them.
+
+        Example::
+
+            suite.configure(remove_keywords='PASSED',
+                            critical_tags='smoke',
+                            doc='Smoke test results.')
+        """
         self.visit(SuiteConfigurer(**options))
 
     def handle_suite_teardown_failures(self):
+        """Internal usage only."""
         self.visit(SuiteTeardownFailureHandler())
 
     def suite_teardown_failed(self, message):
+        """Internal usage only."""
         self.visit(SuiteTeardownFailed(message))
