@@ -19,6 +19,18 @@ from .modelobject import ModelObject
 
 
 class Message(ModelObject):
+    """A message outputted during the test execution.
+
+    The message can be a log message triggered by a keyword, or a warning
+    or an error occurred during the test execution.
+
+    :ivar message: The message content as a string.
+    :ivar level: Severity of the message. Either ``TRACE``, ``INFO``,
+                 ``WARN``, ``DEBUG`` or ``FAIL``/``ERROR``.
+    :ivar html: ``True`` if the content is in HTML, ``False`` otherwise.
+    :ivar timestamp: Timestamp in format ``%Y%m%d %H:%M:%S.%f``.
+    :ivar parent: The object this message was triggered by.
+    """
     __slots__ = ['message', 'level', 'html', 'timestamp', 'parent']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
@@ -31,6 +43,8 @@ class Message(ModelObject):
 
     @property
     def html_message(self):
+        """Returns the message content as HTML.
+        """
         return self.message if self.html else html_escape(self.message)
 
     def visit(self, visitor):

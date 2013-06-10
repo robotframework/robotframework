@@ -18,6 +18,19 @@ from .tags import TagPatterns
 
 
 class Stat(object):
+    """Generic statistic object used for storing all the statistic values.
+
+    :ivar name: Human readable identifier of the object these statistics
+                belong to. Either `All Tests` or `Critical Tests` for
+                :class:`~robot.model.totalstatistics.TotalStatistics`,
+                long name of the suite for
+                :class:`~robot.model.suitestatistics.SuiteStatistics`
+                or name of the tag for
+                :class:`~robot.model.tagstatistics.TagStatistics`
+    :ivar passed: Number of passed tests.
+    :ivar failed: Number of failed tests.
+    :ivar elapsed: Number of milliseconds it took to execute.
+    """
 
     def __init__(self, name):
         self.name = name
@@ -78,10 +91,21 @@ class Stat(object):
 
 
 class TotalStat(Stat):
+    """Stores statistic values for a test run.
+
+    :ivar type: Always string `total`.
+    """
     type = 'total'
 
 
 class SuiteStat(Stat):
+    """Stores statistics values for a single suite.
+
+    :ivar id: Identifier of the suite, e.g. `s1-s2`.
+    :ivar elapsed: Number of milliseconds it took to execute this suite,
+                   including sub-suites.
+    :ivar type: Always string `suite`
+    """
     type = 'suite'
 
     def __init__(self, suite):
@@ -102,6 +126,18 @@ class SuiteStat(Stat):
 
 
 class TagStat(Stat):
+    """Stores statistic values for a single tag.
+
+    :ivar doc: Documentation of tag as a string.
+    :ivar links: List of tuples in which the first value is the link URL and
+                 the second is the link title. An empty list by default.
+    :ivar critical: ``True`` if tag is considered critical, ``False`` otherwise.
+    :ivar non_critical: ``True`` if tag is considered non-critical, ``False``
+                        otherwise.
+    :ivar combined: Pattern as a string if the tag is combined, an empty string
+                    otherwise.
+    :ivar type: Always string `tag`.
+    """
     type = 'tag'
 
     def __init__(self, name, doc='', links=None, critical=False,
@@ -115,6 +151,10 @@ class TagStat(Stat):
 
     @property
     def info(self):
+        """Returns additional information of the tag statistics
+           are about. Either `critical`, `non-critical`, `combined` or an
+           empty string.
+        """
         if self.critical:
             return 'critical'
         if self.non_critical:
