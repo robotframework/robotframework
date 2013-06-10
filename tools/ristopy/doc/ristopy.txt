@@ -7,8 +7,8 @@
 :prog:`risto.py` is a tool for plotting graphs about test execution
 history based on statistics read from Robot Framework output files.
 Actual drawing is handled by Matplotlib tool, which must be installed
-separately. :prog:`risto.py` is included in source distributions and can also 
-be downloaded from 
+separately. :prog:`risto.py` is included in source distributions and can also
+be downloaded from
 http://code.google.com/p/robotframework/wiki/HistoricalReportingTool.
 
 .. contents::
@@ -18,11 +18,10 @@ Synopsis
 --------
 
 ::
- 
+
   risto.py options input files
   risto.py options1 --- options2 --- optionsN --- input files
   risto.py --argumentfile path
-
 
 Options
 -------
@@ -33,8 +32,8 @@ Options
   -P, --nopassed         Does not plot passed graphs.
   -F, --nofailed         Does not plot failed graphs.
   -t, --tag <name>       Adds graphs for these tags. The name can contain "\*"
-                         and "?" as wildcards. "AND" in the given name is 
-                         converted to " & ", to make it easier to plot 
+                         and "?" as wildcards. "AND" in the given name is
+                         converted to " & ", to make it easier to plot
                          combined tags.
   -o, --output <path>    The path to the image file to create. If not given,
                          the image is opened into Matplotlib viewer.
@@ -43,23 +42,22 @@ Options
                          title.
   -w, --width <inches>   The width of the image. The default is 800.
   -h, --height <inches>  The height of the image. The default is 400.
-  -f, --font <size>      The font size used for legends and labels. 
+  -f, --font <size>      The font size used for legends and labels.
                          The default is 8.
-  -m, --marker <size>    The size of the marker used with tag graphs. 
+  -m, --marker <size>    The size of the marker used with tag graphs.
                          The default is 5.
-  -x, --xticks <num>     The maximum number of ticks on the x-axis. 
+  -x, --xticks <num>     The maximum number of ticks on the x-axis.
                          The default is 15.
   -n, --namemeta <name>  The name of the metadata of the top-level test suite
-                         where to get the name of the test round. By default, 
+                         where to get the name of the test round. By default,
                          names are got from the paths to input files.
   --argumentfile <path>  Reads arguments from the specified file.
   --verbose              The verbose output.
   --help                 Prints this help.
   --version              Prints the version information.
 
-Additionally, :code:`---` can be used to group options when creating multiple 
+Additionally, :code:`---` can be used to group options when creating multiple
 images at once.
-
 
 Description
 -----------
@@ -120,15 +118,12 @@ ignored::
    path/to/*.xml
    ======================================
 
-
 Installation
 ------------
 
 :prog:`risto.py` itself does not need to be installed, simply running
-it from the command line is enough, but it has some preconditions. The
-most obvious one is Python, and versions 2.5 and 2.4 have been
-tested. Some Robot Framework internal modules are also needed, and
-thus Robot Framework version 1.8 or newer is required.
+it from the command line is enough. It has some preconditions, though,
+first ones being Robot Framework and Python.
 
 The Matplotlib tool is used for plotting graphs, and it needs to be
 installed separately. Matplotlib has its own preconditions, and at
@@ -139,26 +134,19 @@ Additionally, you may need to install graphical front-ends to be able
 to use Matplotlib's own viewer for opening graphs without saving them
 to a file.
 
-:prog:`risto.py` reads statistics from XML output files using the
-ElementTree module. Python 2.5 and newer have this module in standard
-library, but for older versions it needs to be installed separately.
-
-Links to the needed software: 
+Links to the needed software:
 
 Matplotlib
    http://matplotlib.sourceforge.net/
 NumPy
    http://numpy.scipy.org/
-ElementTree
-   http://effbot.org/zone/element-index.htm
-
 
 Screenshots
 -----------
 
 Default settings
 ~~~~~~~~~~~~~~~~
- 
+
 The screenshot below uses some very simple example outputs, thus the lines
 are mainly straight. The default settings have been used otherwise,
 but the output has been saved into a file with the :opt:`--output
@@ -168,10 +156,9 @@ default.png` option.
    :width: 800
    :height: 400
 
-
 Various settings
 ~~~~~~~~~~~~~~~~
- 
+
 The example outputs used in this screenshot are the same as in the previous
 one, but now the following options have been specified::
 
@@ -180,11 +167,10 @@ one, but now the following options have been specified::
 .. figure:: risto_another.png
    :width: 600
    :height: 250
-   
 
 Using Matplotlib's viewer
 ~~~~~~~~~~~~~~~~~~~~~~~~~
- 
+
 This time there are more input files and the image has been opened
 in Matplotlib's viewer (that is, the :opt:`--output` option has not been
 used). The options used to create this example are the ones below::
@@ -194,7 +180,6 @@ used). The options used to create this example are the ones below::
 .. figure:: risto_yetanother.png
    :width: 820
    :height: 393
-
 
 More realistic examples
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -212,7 +197,7 @@ following argument file:
    --noall
    --tag phase-drt
    -nofailed
-   --output drt.png 
+   --output drt.png
    ------------------
    path/*/output.xml
 
@@ -223,4 +208,3 @@ following argument file:
 .. figure:: risto_drt.png
    :width: 800
    :height: 400
-
