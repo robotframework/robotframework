@@ -77,6 +77,11 @@ Setting Environment With Multiple Values
     ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba', '-');"    shell=True   env:specialvar=spessu   env:diiba=daaba
     Should Be Equal        ${result.stdout.strip()}  normal spessu daaba
 
+Setting Environment Variable Overrides Original
+    Set Environment Variable  vari  original
+    ${result}=    Run Process    python -c "import os; print os.getenv('vari', '-');"    shell=True   env:vari=new
+    Should Be Equal        ${result.stdout.strip()}  new
+
 Setting Environment With Multiple Values Using Dictionary
     Set Environment Variable  normalvar  normal
     ${setenv}=    Create Dictionary           specialvar  spessu  diiba2  daaba2

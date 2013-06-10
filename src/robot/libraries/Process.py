@@ -570,7 +570,7 @@ class ProcessConfig(object):
             else:
                 raise RuntimeError("'%s' is not supported by this keyword." % key)
         if not self.env:
-            return dict(new_env.items() + os.environ.copy().items())
+            return dict(os.environ.copy().items()+new_env.items())
         return dict(self._must_env_values().items() + self.env.items())
 
     # TODO: Why is this done? Can't we just let the command fail if env is invalid?
