@@ -206,20 +206,18 @@ class Process(object):
     What is available is documented in the table below.
 
     | *Attribute* | *Explanation*                                 |
+    | rc          | Return code of the process as an integer.     |
     | stdout      | Contents of the standard output stream.       |
     | stderr      | Contents of the standard error stream.        |
     | stdout_path | Path of the file where stdout was redirected. |
     | stderr_path | Path of the file where stderr was redirected. |
-    | exit_code   | Return code of the process.                   |
 
     TODO:
     - value of stdxxx_path when no redirection?
-    - is exit_code integer or string? can it be None?
-    - why exit_code and not return_core or rc?
 
     Example:
     | ${result} =            | `Run Process`         | program               |
-    | `Log`                  | ${result.exit_code}   |                       |
+    | `Should Be Equal As Integers` | ${result.rc}   |                       |
     | `Should Match`         | ${result.stdout}      | Some t?xt*            |
     | `Should Be Empty`      | ${result.stderr}      |                       |
     | ${stdout} =            | `Get File`            | ${result.stdout_path} |
@@ -257,9 +255,7 @@ class Process(object):
     |     `Should Not Contain`    ${result.stdout}    FAIL
     |     `Terminate Process`    ${handle}
     |     ${result} =    `Wait For Process`    First
-    |     Should Be Equal    ${result.exit_code}    0
-
-    TODO: Is the above exit_code check ok?
+    |     `Should Be Equal As Integers`   ${result.rc}    0
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -362,7 +358,7 @@ class Process(object):
         process = self._process(handle)
         result = self._results[process]
         logger.info('Waiting for process to complete.')
-        result.exit_code = process.wait()
+        result.rc = process.wait() or 0
         logger.info('Process completed.')
         return result
 
@@ -465,11 +461,11 @@ class Process(object):
 class ExecutionResult(object):
     _stdout = _stderr = _process = None
 
-    def __init__(self, process, stdout, stderr, exit_code=None):
+    def __init__(self, process, stdout, stderr, rc=None):
         self._process = process
         self.stdout_path = self._construct_stdout_path(stdout)
         self.stderr_path = self._construct_stderr_path(stderr)
-        self.exit_code = exit_code
+        self.rc = rc
 
     def _construct_stdout_path(self, stdout):
         return stdout.name if stdout != subprocess.PIPE else None
@@ -516,7 +512,7 @@ class ExecutionResult(object):
         return """\
 stdout_name : %s
 stderr_name : %s
-exit_code   : %d""" % (self.stdout_path, self.stderr_path, self.exit_code)
+exit_code   : %d""" % (self.stdout_path, self.stderr_path, self.rc)
 
 
 class ProcessConfig(object):

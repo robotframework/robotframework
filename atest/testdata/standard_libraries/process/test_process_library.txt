@@ -13,11 +13,11 @@ Library Namespace should be global
 
 Running a process
     ${result}=    Run Python Process    import sys; sys.stdout.write('hello')
-    Result should equal    ${result}    stdout=hello   exit_code=0
+    Result should equal    ${result}    stdout=hello
 
 Error in exit code and stderr output
     ${result}=    Run Python Process    1/0
-    Result should match    ${result}    stderr=*ZeroDivisionError: integer division or modulo by zero*    exit_code=1
+    Result should match    ${result}    stderr=*ZeroDivisionError: integer division or modulo by zero*    rc=1
 
 Start And Wait Process
     ${handle}=    Start Python Process    import time;time.sleep(0.1)
@@ -98,7 +98,7 @@ Escaping equals sign
 
 Running a process in a shell
     ${result}=    Run Process    python -c "print 'hello'"    shell=True
-    Result should equal    ${result}    stdout=hello    exit_code=0
+    Result should equal    ${result}    stdout=hello
     Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=${False}
 
 Input things to process

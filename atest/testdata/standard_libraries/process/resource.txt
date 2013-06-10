@@ -10,16 +10,16 @@ Stop some process
     Call Method    ${process}    communicate    stop\n
 
 Result should equal
-    [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${exit_code}=0
+    [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
     Should Be Equal    ${result.stdout}    ${stdout}
     Should Be Equal    ${result.stderr}    ${stderr}
-    Should Be Equal As Integers    ${result.exit_code}    ${exit_code}
+    Should Be Equal As Integers    ${result.rc}    ${rc}
 
 Result should match
-    [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${exit_code}=0
+    [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
     Should Match    ${result.stdout}    ${stdout}
     Should Match    ${result.stderr}    ${stderr}
-    Should Be Equal As Integers    ${result.exit_code}    ${exit_code}
+    Should Be Equal As Integers    ${result.rc}    ${rc}
 
 Start Python Process
     [Arguments]    ${command}    ${alias}=${null}
@@ -29,6 +29,6 @@ Start Python Process
 Run Python Process
     [Arguments]    ${command}
     ${result}=    Run Process    python    -c    ${command}
-    Log    ${result.exit_code}
+    Log    ${result.rc}
     Log    ${result.stderr}
     [Return]    ${result}
