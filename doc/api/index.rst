@@ -2,22 +2,23 @@
 Robot Framework API documentation
 =================================
 
+This documentation describes the public API of `Robot Framework`__.
+Installation, basic usage and wealth of other topics are
+covered by the `Robot Framework User Guide`__.
 
-This document describes the public API of Robot Framework. Installation,
-basic usage and wealth of other topics are covered in `Robot Framework User Guide`__.
+Main API entry points are documented here, but the lower level
+implementation details are not always that well documented. If the
+documentation is insufficient, it is possible to view the source code
+by clicking `[source]` link in the documentation. In case viewing the
+source is not helpful either, questions may be sent to the
+`robotframework-users`__ mailing list.
 
-Main API entry points are documented here, but the lower level implementation
-details are not that well documented. If the documentation is insufficient,
-it is possible to view the source code by clicking `[source]` link in the
-documentation. In case viewing the source is not helpful either,
-questions may be sent to the `users mailing list`__.
-
+__ http://robotframework.org
 __ http://code.google.com/p/robotframework/wiki/UserGuide
 __ http://groups.google.com/group/robotframework-users
 
 .. toctree::
     :maxdepth: 2
-
 
 Entry points
 ============
@@ -31,10 +32,9 @@ provide programmatic APIs. Following entry points exist:
   * :py:mod:`robot.testdoc` entry point for the `testdoc`__ tool.
   * :py:mod:`robot.tidy` entry point for the `tidy`__ tool.
 
-__ http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool
-__ http://code.google.com/p/robotframework/wiki/TestDataDocumentationTool
-__ http://code.google.com/p/robotframework/wiki/TestDataTidyingTool
-
+__ http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html#libdoc
+__ http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html#testdoc
+__ http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html#tidy
 
 Java entry points
 =================
@@ -49,7 +49,6 @@ Public API
 
 .. automodule:: robot.api
 
-
 All packages
 ============
 
@@ -62,7 +61,6 @@ return objects implemented in them.
 
     autodoc/robot
     autodoc/robot.api
-    autodoc/robot.common
     autodoc/robot.conf
     autodoc/robot.htmldata
     autodoc/robot.libdocpkg
@@ -76,8 +74,6 @@ return objects implemented in them.
     autodoc/robot.utils
     autodoc/robot.variables
     autodoc/robot.writer
-
-
 
 Indices
 =======
