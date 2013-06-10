@@ -17,6 +17,13 @@ from .visitor import SuiteVisitor
 
 
 class TotalStatistics(object):
+    """Container for total statistics.
+
+    :ivar critical: Instance of :class:`~robot.model.stats.TotalStat` for
+                    critical tests.
+    :ivar all: Instance of :class:`~robot.model.stats.TotalStat` for
+               all the tests, including critical.
+    """
 
     def __init__(self):
         self.critical = TotalStat('Critical Tests')
@@ -30,6 +37,12 @@ class TotalStatistics(object):
 
     @property
     def message(self):
+        """Returns a summary of total statistics in a string representation,
+        for example::
+
+            2 critical tests, 1 passed, 1 failed
+            2 tests total, 1 passed, 1 failed
+        """
         ctotal, cend, cpass, cfail = self._get_counts(self.critical)
         atotal, aend, apass, afail = self._get_counts(self.all)
         return ('%d critical test%s, %d passed, %d failed\n'

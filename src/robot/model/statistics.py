@@ -19,6 +19,15 @@ from .visitor import SuiteVisitor
 
 
 class Statistics(object):
+    """Container for total, suite and tag statistics.
+
+    Accepted parameters have the same semantics as the matching command line
+    options.
+
+    :ivar total: Instance of :class:`~robot.model.totalstatistics.TotalStatistics`.
+    :ivar suite: Instance of :class:`~robot.model.suitestatistics.SuiteStatistics`.
+    :ivar tags: Instance of :class:`~robot.model.tagstatistics.TagStatistics`.
+    """
 
     def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
                  tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
