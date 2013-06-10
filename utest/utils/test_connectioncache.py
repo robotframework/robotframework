@@ -18,19 +18,19 @@ class ConnectionMock:
 
 
 class TestConnnectionCache(unittest.TestCase):
-    
+
     def setUp(self):
         self.cache = ConnectionCache()
-        
+
     def test_initial(self):
         self._verify_initial_state()
 
     def test_no_connection(self):
-        assert_raises_with_msg(RuntimeError, 'No open connection', getattr,
+        assert_raises_with_msg(RuntimeError, 'No open connection.', getattr,
                                ConnectionCache().current, 'whatever')
         assert_raises_with_msg(RuntimeError, 'Custom msg', getattr,
                                ConnectionCache('Custom msg').current, 'xxx')
-        
+
     def test_register_one(self):
         conn = ConnectionMock()
         index = self.cache.register(conn)
@@ -46,7 +46,7 @@ class TestConnnectionCache(unittest.TestCase):
             assert_equals(index, i+1)
             assert_equals(self.cache.current, conn)
         assert_equals(self.cache._connections, conns)
-        
+
     def test_switch_with_index(self):
         self._register('a', 'b', 'c')
         self._assert_current('c', 3)
@@ -58,12 +58,12 @@ class TestConnnectionCache(unittest.TestCase):
     def _assert_current(self, id, index):
         assert_equals(self.cache.current.id, id)
         assert_equals(self.cache.current_index, index)
-        
+
     def test_switch_with_non_existing_index(self):
         self._register('a', 'b')
-        assert_raises_with_msg(RuntimeError, "Non-existing index or alias '3'",
+        assert_raises_with_msg(RuntimeError, "Non-existing index or alias '3'.",
                                self.cache.switch, 3)
-        assert_raises_with_msg(RuntimeError, "Non-existing index or alias '42'",
+        assert_raises_with_msg(RuntimeError, "Non-existing index or alias '42'.",
                                self.cache.switch, 42)
 
     def test_register_with_alias(self):
@@ -82,7 +82,7 @@ class TestConnnectionCache(unittest.TestCase):
             assert_equals(self.cache.current, conn)
         assert_equals(self.cache._connections, [c1, c2, c3])
         assert_equals(self.cache._aliases, {'c1': 1, 'c2': 2, 'c3': 3})
-        
+
     def test_switch_with_alias(self):
         self._register('a', 'b', 'c', 'd', 'e')
         assert_equals(self.cache.current.id, 'e')
@@ -92,33 +92,33 @@ class TestConnnectionCache(unittest.TestCase):
         assert_equals(self.cache.current.id, 'c')
         self.cache.switch('  B   ')
         assert_equals(self.cache.current.id, 'b')
-        
+
     def test_switch_with_non_existing_alias(self):
         self._register('a', 'b')
-        assert_raises_with_msg(RuntimeError, "Non-existing index or alias 'whatever'",
+        assert_raises_with_msg(RuntimeError, "Non-existing index or alias 'whatever'.",
                                self.cache.switch, 'whatever')
-                
+
     def test_switch_with_alias_overriding_index(self):
         self._register('2', '1')
         self.cache.switch(1)
         assert_equals(self.cache.current.id, '2')
         self.cache.switch('1')
         assert_equals(self.cache.current.id, '1')
-        
+
     def test_close_all(self):
         connections = self._register('a', 'b', 'c', 'd')
         self.cache.close_all()
         self._verify_initial_state()
         for conn in connections:
             assert_true(conn.closed_by_close)
-            
+
     def test_close_all_with_given_method(self):
         connections = self._register('a', 'b', 'c', 'd')
         self.cache.close_all('exit')
         self._verify_initial_state()
         for conn in connections:
             assert_true(conn.closed_by_exit)
-            
+
     def test_empty_cache(self):
         connections = self._register('a', 'b', 'c', 'd')
         self.cache.empty_cache()
@@ -126,7 +126,7 @@ class TestConnnectionCache(unittest.TestCase):
         for conn in connections:
             assert_false(conn.closed_by_close)
             assert_false(conn.closed_by_exit)
-        
+
     def _verify_initial_state(self):
         assert_equals(self.cache.current, self.cache._no_current)
         assert_none(self.cache.current_index)
