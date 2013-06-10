@@ -11,13 +11,13 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from __future__ import with_statement
 
 import os
 import signal
 import subprocess
 import sys
-import tempfile
 
 from robot.utils import ConnectionCache, encode_to_system
 from robot.version import get_version
@@ -35,194 +35,249 @@ class Process(object):
 
     The library has following main usages:
 
-    - Starting a processes, and managing their handles, stdouts and stderrs
-      (e.g. `Run Process` and `Start Process` keywords).
-    - Stopping processes started by this library (e.g. `Terminate All Processes`
-      and `Terminate Process` keywords). See `Stopping processes` for more
-      information.
-    - Switching between processes (e.g. `Switch Process` keyword).
-    - Checking process status (e.g. `Process Should Be Running` and
-      `Process Should Be Stopped` keywords).
+    - Running processes in system and waiting for their completion using
+      `Run Process` keyword.
+    - Starting processes on background using `Start Process`.
+    - Waiting started process to complete using `Wait For Process` or
+      stopping them with `Terminate Process` or `Terminate All Processes`.
 
+    This library is new in Robot Framework 2.8.
+
+    TODO: Is the below comment still true? Document issues with Jython and IPY.
     Note that this library has not been designed for
     [http://ironpython.codeplex.com/|IronPython] compatibility.
 
     == Table of contents ==
 
-    - `Configurations`
+    - `Specifying command and arguments`
+    - `Process configuration`
     - `Active process`
     - `Stopping processes`
-    - `ExecutionResult`
-    - `Similarities with OperatingSystem library`
+    - `Result object`
+    - `Using with OperatingSystem library`
     - `Example`
 
-    = Configurations =
+    = Specifying command and arguments =
 
-    `Run Process` and `Start Process` keywords can be given several named
-    arguments, which are listed below.
+    Both `Run Process` and `Start Process` accept the command to execute
+    and all arguments passed to it as separate arguments. This is convenient
+    to use and also allows these keywords to automatically escape possible
+    spaces and other special characters in the command or arguments.
 
-    - `cwd` specifies the working directory
-    - `shell` specifies whether shell is used for program execution
-    - `env` specifies the environment of the program being run
-    - `stdout` is a file path of standard output
-    - `stderr` is a file path of standard error
-    - `alias` is a short name for the process which can be used for interacting
-    with that process as a process handle.
+    When `running processes in shell`, it is also possible to give the
+    whole command to execute as a single string. The command can then
+    contain multiple commands, for example, connected with pipes. When
+    using this approach the caller is responsible on escaping.
+
+    Examples:
+    | `Run Process` | ${progdir}/prog.exe      | first arg | second         |
+    | `Run Process` | prog1.py arg && prog2.py | shell=yes | cwd=${progdir} |
+
+    = Process configuration =
+
+    `Run Process` and `Start Process` keywords can be configured using
+    optional `**configuration` keyword arguments. Available configuration
+    arguments are listed below and discussed further in sections afterwards.
+
+    | *Name*     | *Explanation*                                         |
+    | shell      | Specifies whether to run the command in shell or not  |
+    | cwd        | Specifies the working directory.                      |
+    | env        | Specifies environment variables given to the process. |
+    | env:<name> | Overrides the named environment variable(s) only.     |
+    | stdout     | Path of a file where to write standard output.        |
+    | stderr     | Path of a file where to write standard error.         |
+    | alias      | Alias given to the process.                           |
+
+    Configuration must be given after other arguments passed to these keywords
+    and must use syntax `name=value`.
+
+    == Running processes in shell ==
+
+    The `shell` argument specifies whether to run the process in a shell or
+    not. By default shell is not used, which means that shell specific
+    commands, like `copy` and `dir` on Windows, are not available.
+
+    Giving the `shell` argument any non-false value, such as `shell=True`,
+    changes the program to be executed in a shell. It allows using the shell
+    capabilities, but can also make the process invocation operating system
+    dependent.
+
+    When using a shell it is possible to give the whole command to execute
+    as a single string. See `Specifying command and arguments` section for
+    more details.
 
     == Current working directory ==
 
-    If `cwd` argument is not given, the child program's execution directory
-    will be a the directory where Robot Framework executable was launched or
-    where current working directory is set during test execution with other
-    keywords.
+    By default the child process will be executed in the same directory
+    as the parent process, the process running tests, is executed. This
+    can be changed by giving an alternative location using the `cwd` argument.
 
-    If `cwd` is given then that directory is used as the current working
-    directory.
+    Example:
+    | `Run Process` | prog.exe | cwd=c:\\\\temp |
 
-    == Running processes in a shell ==
+    == Environment variables ==
 
-    The `shell` argument specifies whether shell is used as program during
-    execution. By default this has value `False`, which means that shell
-    specific commands, like `copy` and `dir` are not available. It also means
-    that process runnable and its arguments must be given as a separate argument
-    for `Run Process` and `Start Process` keywords.
+    By default the child process will get a copy of the parent process's
+    environment variables. The `env` argument can be used to give the
+    child a custom environment as a Python dictionary. If there is a need
+    to specify only certain environment variable, it is possible to use the
+    `env:<name>` format to set or override only that named variables. It is
+    also possible to use these two approaches together.
 
-    When `shell` is `True`, the program with its arguments can be given in a
-    single string for `Run Process` and `Start Process` keywords.
+    Examples:
+    | `Run Process` | program | env=${environ} |
+    | `Run Process` | program | env:PATH=%{PATH}${:}${PROGRAM DIR} |
+    | `Run Process` | program | env=${environ} | env:EXTRA=value   |
 
-    On Unix, the default shell is `/bin/sh`. On Windows, the default shell is
-    specified by the `COMSPEC` environment variable.
+    == Standard output and error streams ==
 
-    == Environment ==
+    By default processes are run so that their standard output and standard
+    error streams are kept in the memory. This works fine normally,
+    but if there is a lot of output, the output buffers may get full and
+    the program hang.
 
-    If `env` argument is not given or is `None`, then the current process's
-    environment is used. Argument can be used to customize the environment of
-    the program being run.
+    To avoid output buffers getting full, it is possible to use `stdout`
+    and `stderr` arguments to specify files on the file system where to
+    redirect the outputs. This can also be useful if other processes or
+    other keywords need to read or manipulate the outputs somehow.
 
-    There are two ways of giving environment variables:
+    As a special feature, it is possible to redirect the standard error to
+    the standard output by using `stderr=STDOUT`.
 
-        - as a dictionary containing environment variables in a key-value pairs
-        - or using special key `env:` in the argument.
+    Regardless are outputs redirected to files or not, they are accessible
+    through the `result object` returned when the process ends.
 
-    Examples below.
+    Examples:
+    | ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=${TEMPDIR}/stderr.txt |
+    | `Log Many`  | stdout: ${result.stdout} | stderr: ${result.stderr} |
+    | ${result} = | `Run Process` | program | stderr=STDOUT |
+    | `Log`       | all output: ${result.stdout} |
 
-    | ${result}= | Run Process | python -c "import os; print os.environ;" | shell=True | env:specialvar=spessu |
-    | ${result}= | Run Process | python -c "import os; print os.environ;" | shell=True | env=${setenv} |
+    TODO:
+    - Document issues with Jython/Ipy.
+    - Document are stdout/stderr files relative to the cwd or what.
+    - Replace / with \ in stdout/stderr paths on Windows? Also in command?
 
-    == Standard output and error ==
+    == Alias ==
 
-    Process output and error streams can be given as an argument to
-    `Run Process` and `Start Process` keywords. By default streams are `PIPE`d.
-    Information about these streams is stored into
-    `ExecutionResult` object.
+    A custom name given to the process that can be used when selecting the
+    `active process`.
 
-    The `stderr` and the `stdout` can be redirected to `PIPE` by giving it
-    value `PIPE`.
-
-    The `stderr` can be redirected to the standard output stream by giving
-    argument in a way shown below.
-
-    | ${result}= | Run Process | python -c "print 'hello';1/0" | shell=True | stderr=STDOUT |
-    | ${result}= | Run Process | python -c "print 'hello';1/0" | shell=True | stdout=filename.txt | stderr=filename.txt |
+    Example:
+    | `Start Process` | program | alias=example |
 
     = Active process =
 
-    The test library keeps record which of the started processes is an active
-    process. Many of the library keywords have `handle` as optional argument.
-    This means that if argument `handle` is NOT given, then the active process
-    is used for keyword. Active process can be switched using keyword
-    `Switch Process`.
+    The test library keeps record which of the started processes is currently
+    active. By default it is latest process started with `Start Process`,
+    but `Switch Process` can be used to select a different one.
 
-    The most recently started process, started with `Start Process`, is always
-    the `active process`.
+    The keywords that operate on started processes will use the active process
+    by default, but it is possible to explicitly select a different process
+    using the `handle` argument. The handle can be the identifier returned by
+    `Start Process` or an explicitly given `alias`.
 
     = Stopping processes =
 
-    Due restrictions set by
-    [http://docs.python.org/2.7/library/subprocess.html|subprocess] module,
-    the process stopping is NOT functioning properly on
-    [http://www.jython.org|Jython]  and pre-2.6 Python.
-    In Jython especially we don't have the information about the PIDs of the
-    started processes therefore making the stopping of the process difficult.
+    Started processed can be stopped using `Terminate Process` and
+    `Terminate All Processes`. The former is used for stopping a selected
+    process, and the latter to make sure all processes are stopped, for
+    example, in a suite teardown.
 
-    = ExecutionResult =
+    Both keywords use `subprocess`
+    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen.terminate|terminate()]
+    method by default, but can be configured to use
+    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen.kill|kill()]
+    instead.
 
-    This object contains information about the process execution.
+    Because both `terminate()` and `kill()` were added to `subprocess` in
+    Python 2.6, stopping processes does not work with Python or Jython 2.5.
 
-    Included information is:
+    TODO: Has Jython 2.7 been tested?
 
-    - `stdout` file content of standard output stream
-    - `stderr` file content of standard error stream
-    - `stdout_path` filepath of standard output
-    - `stderr_path` filepath of standard error
-    - `exit_code` from the process.
+    Examples:
+    | `Terminate Process` | kill=True |
+    | `Terminate All Processes` |
 
-    | ${result}= | Run Process | python | -c | ${command} |
-    | ${output1}= | Get File | ${result.stdout_path} |
-    | ${output2}= | Get File | ${result.stderr_path} |
-    | Log | ${result.exit_code} |
-    | Should Be Equal | ${result.stdout} | ${output1} |
-    | Should Be Equal | ${result.stderr} | ${output2} |
+    = Result object =
 
-    = Similarities with OperatingSystem library =
+    `Run Process` and `Wait For Process` keywords return a result object
+    that contains information about the process execution as its attibutes.
+    What is available is documented in the table below.
 
-    The OperatingSystem library also contains the keywords `Start Process` and
-    `Switch Process`. In the situation that these both libraries are in use
-    within the same test suite, the `Process` library's keywords will
-    be preferred.
+    | *Attribute* | *Explanation*                                 |
+    | stdout      | Contents of the standard output stream.       |
+    | stderr      | Contents of the standard error stream.        |
+    | stdout_path | Path of the file where stdout was redirected. |
+    | stderr_path | Path of the file where stderr was redirected. |
+    | exit_code   | Return code of the process.                   |
 
-    You can still use OperatingSystem keywords by calling it explicitly
-    (e.g. `OperatingSystem.Start Process`) or by setting library search order
-    using `BuiltIn` library's keyword `Set Library Search Order` and then
-    calling `Start Process`.
+    TODO:
+    - value of stdxxx_path when no redirection?
+    - is exit_code integer or string? can it be None?
+    - why exit_code and not return_core or rc?
 
-    | *** Settings *** |
-    | Library | Process |
-    | Library | OperatingSystem |
-    |  |
-    | *** Test Cases *** |
-    | Similar libraries in use |
-    | | `Start Process` | /path/command.sh    | # Process Library keyword is used |
-    | | `OperatingSystem.Start Process` | ${CURDIR}${/}mytool   | # OperatingSystem library keyword is used |
-    | | `Process.Start Process` | ${CURDIR}${/}mytool   | # Process library keyword is used |
-    | | Set Library Search Order | OperatingSystem |
-    | | `Start Process` | /path/command.sh   | # OperatingSystem library keyword is used |
+    Example:
+    | ${result} =            | `Run Process`         | program               |
+    | `Log`                  | ${result.exit_code}   |                       |
+    | `Should Match`         | ${result.stdout}      | Some t?xt*            |
+    | `Should Be Empty`      | ${result.stderr}      |                       |
+    | ${stdout} =            | `Get File`            | ${result.stdout_path} |
+    | `File Should Be Empty` | ${result.stderr_path} |                       |
+    | `Should Be Equal`      | ${result.stdout}      | ${stdout}             |
+
+    = Using with OperatingSystem library =
+
+    The OperatingSystem library also contains keywords for running processes.
+    They are not as flexible as the keywords provided by this library, and
+    thus not recommended to be used anymore. They may eventually even be
+    deprecated.
+
+    There is a name collision because both of these libraries have
+    `Start Process` and `Switch Process` keywords. This is handled so that
+    if both libraries are imported, the keywords in the Process library are
+    used by default. If there is a need to use the OperatingSystem variants,
+    it is possible to use `OperatingSystem.Start Process` syntax or use
+    the `BuiltIn` keyword `Set Library Search Order` to change the priority.
+
+    Other keywords in the OperatingSystem library can be used freely with
+    keywords in the Process library.
 
     = Example =
 
-    The following example demonstrates library's main usages as stated above.
+    | ***** Settings *****
+    | Library    Process
+    | Suite Teardown    `Terminate All Processes`    kill=True
+    |
+    | ***** Test Cases *****
+    | Example
+    |     `Start Process`    program    arg1   arg2    alias=First
+    |     ${handle} =    `Start Process`    command.sh arg | command2.sh   shell=True    cwd=/path
+    |     ${result} =    `Run Process`    ${CURDIR}/script.py
+    |     `Should Not Contain`    ${result.stdout}    FAIL
+    |     `Terminate Process`    ${handle}
+    |     ${result} =    `Wait For Process`    First
+    |     Should Be Equal    ${result.exit_code}    0
 
-    | *** Settings *** |
-    | Library | Process |
-    |  |
-    | *** Test Cases *** |
-    | Example |
-    | | ${handle1}= | `Start Process` | /path/command.sh    | shell=True  | cwd=/path |
-    | | ${handle2}= | `Start Process` | ${CURDIR}${/}mytool   | shell=True |
-    | | ${result1}=  | `Wait For Process` | ${handle1} |
-    | | `Terminate Process` | ${handle2} |
-    | | `Process Should Be Stopped` | ${handle2} |
-    | | [Teardown] | `Terminate All Processes` | kill=True |
+    TODO: Is the above exit_code check ok?
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self):
+        # TODO: Configure error when no process active
         self._started_processes = ConnectionCache()
-        self._logs = dict()
-        self._tempdir = tempfile.mkdtemp(suffix="processlib")
+        self._results = {}
 
     def run_process(self, command, *arguments, **configuration):
-        """Runs a process and waits for it to terminate.
+        """Runs a process and waits for it to complete.
 
-        The `command` is a child program which is started in a new process,
-        `arguments` are arguments for the `command` and `configuration` are
-        arguments for the
-        [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
-        [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
-        class (see `Configurations`).
+        See `Specifying command and arguments` and `Process configuration`
+        for more information about the arguments.
 
-        This command doesn't change the `active process`.
+        Returns a `result object` containing information about the execution.
+
+        This command does not change the `active process`.
         """
         active_process_index = self._started_processes.current_index
         try:
@@ -232,39 +287,22 @@ class Process(object):
             if active_process_index is not None:
                 self._started_processes.switch(active_process_index)
 
+        # TODO: Apparently the process is still left to the cache
+        # TODO: Are changes to ConnectionCache compatible with SeLibs??!!
+
     def start_process(self, command, *arguments, **configuration):
-        """Starts a new process.
+        """Starts a new process on background.
 
-        The `command` is a child program which is started in a new process,
-        `arguments` are arguments for the `command` and `configuration` are
-        arguments for the
-        [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
-        [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
-        class (see `Configurations`).
+        See `Specifying command and arguments` and `Process configuration`
+        for more information about the arguments.
 
-        Configuration can contain the following options for the process:
-
-        - stdout - A file path to use for standard output from the process
-        - stderr - A file path to use for standard error from the process
-        - shell  - True value will execute the process in a shell
-        - cwd - Current working directory for the process
-        - env and env:VARNAME=VALUE - dictionary for the environment variables to
-          use
-
-        Returns process index on success.
-
-        This new process is set as the `active process`.
-
-        Examples:
-
-        | ${handle1}= | `Start Process` | /bin/script.sh |
-        | ${handle2}= | `Start Process` | totals |
-        | ${handle3}= | `Start Process` | /bin/script.sh | cwd=/some/directory/ |
-        | ${handle4}= | `Start Process` | /bin/script.sh | env:MYVAR=myvalue |
-        | ${handle5}= | `Start Process` | /bin/script.sh | stdout=somefile.out |
+        Makes the started process new `active process`. Returns an identifier
+        that can be used as a handle to active the started process if needed.
         """
-        config = ProcessConfig(self._tempdir, **configuration)
+        config = ProcessConfig(**configuration)
         executable_command = self._cmd(arguments, command, config.shell)
+        # TODO: Prefer proper sentences in log messages (also elsewhere).
+        # TODO: Why %r and not %s? Perhaps 'Starting process:\n%s'.
         logger.info('starting process %r' % executable_command)
         p = subprocess.Popen(executable_command,
                              stdout=config.stdout_stream,
@@ -273,11 +311,12 @@ class Process(object):
                              shell=config.shell,
                              cwd=config.cwd,
                              env=config.env)
-        self._logs[p] = ExecutionResult(config.stdout_stream,
-                                        config.stderr_stream)
+        self._results[p] = ExecutionResult(config.stdout_stream,
+                                           config.stderr_stream)
         return self._started_processes.register(p, alias=config.alias)
 
     def _cmd(self, args, command, use_shell):
+        # TODO: Why is command not encoded? Remember also elif below.
         cmd = [command] + [encode_to_system(i) for i in args]
         if use_shell and args:
             cmd = subprocess.list2cmdline(cmd)
@@ -285,81 +324,65 @@ class Process(object):
             cmd = command
         return cmd
 
+    # TODO: process_is_running vs is_process_running
     def process_is_running(self, handle=None):
-        """Checks if process with `handle` is running or not.
+        """Checks is the process running or not.
 
-        Argument `handle` is optional, if `None` then the active process is used.
+        If `handle`is not given, uses the current `active process`.
 
-        Return value is either `True` (process is running) or `False`
-        (process has stopped).
+        Returns `True` if the process is still running and `False` otherwise.
         """
         return self._process(handle).poll() is None
 
+    # TODO: Custom error messages with Should keywords.
+
     def process_should_be_running(self, handle=None):
-        """Expects that process with `handle` is running.
-        Argument `handle` is optional, if `None` then the active process
-        is used.
+        """Verifies that the process is running.
 
-        Check is done using `Process Is Running` keyword.
+        If `handle`is not given, uses the current `active process`.
 
-        Raises an error if process is stopped.
+        Fails if the process has stopped.
         """
         if not self.process_is_running(handle):
             raise AssertionError('Process is not running')
 
     def process_should_be_stopped(self, handle=None):
-        """Expects that process with `handle` is stopped.
-        Argument `handle` is optional, if `None` then the active
-        process is used.
+        """Verifies that the process is not running.
 
-        Check is done using `Process Is Running` keyword.
+        If `handle`is not given, uses the current `active process`.
 
-        Raises an error if process is running.
+        Fails if the process is still running.
         """
         if self.process_is_running(handle):
             raise AssertionError('Process is running')
 
     def wait_for_process(self, handle=None):
-        """Waits for process with `handle` to terminate.
+        """Waits for the process to complete.
 
-        Argument `handle` is optional, if `None` then the active process is
-        used.
+        If `handle`is not given, uses the current `active process`.
 
-        Returns an `ExecutionResult` object.
-
-        Examples:
-
-        | ${output}= | `Wait For Process` |
-        | Should Be Equal As Integers | ${output.exit_code} | 0 |
-        | Should Match | ${output.stdout} | `*text in the out*` |
-        | Should Match | ${output.stderr} |
+        Returns a `result object` containing information about the execution.
         """
         process = self._process(handle)
-        result = self._logs[process]
+        result = self._results[process]
+        # TODO: Proper sentences. Only one log message. Terminate -> complete.
         logger.info('waiting for process to terminate')
         result.exit_code = process.wait()
+        # TODO: Avoid public method in result object
         result.prepare_stdout_and_stderr(process)
         logger.info('process terminated')
         return result
 
     def terminate_process(self, handle=None, kill=False):
-        """Terminates process using either kill or terminate method.
+        """Terminates the process.
 
-        See [http://docs.python.org/2.7/library/subprocess.html|subprocess]
-        module's `kill()` or `terminate()`, which can be selected using `kill`
-        argument (by default `terminate()` is used).
+        If `handle`is not given, uses the current `active process`.
 
-        Argument `handle` is optional, if `None` then the active process is
-        used.
-
-        Examples:
-
-        | `Terminate Process` | |  | # Terminates the active process |
-        | `Terminate Process` | ${handle3} |
-        | `Terminate Process` | ${handle3} | kill=True | # Using kill instead of terminate |
+        See `Stopping process` for more details.
         """
         process = self._process(handle)
 
+        # TODO: Is pre 2.6 support needed? If yes, and it works, docs need to be changed.
         # This should be enough to check if we are dealing with <2.6 Python
         if not hasattr(process, 'kill'):
             self._terminate_process(process)
@@ -398,44 +421,41 @@ class Process(object):
 
     def terminate_all_processes(self, kill=True):
         """Terminates all still running processes started by this library.
+
+        See `Stopping processes` for more details.
         """
         for handle in range(len(self._started_processes._connections)):
             if self.process_is_running(handle):
                 self.terminate_process(handle, kill=kill)
 
     def get_process_id(self, handle=None):
-        """Returns a process ID of process with `handle`.
+        """Returns the process ID (pid) of the process.
 
-        Argument `handle` is optional, if `None` then the active process is
-        used.
+        If `handle`is not given, uses the current `active process`.
 
-        Return value is a integer value.
+        Returns the pid assigned by the operating system as an integer.
 
-        Examples:
-
-        | ${handle1}= | `Start Process` | python -c "print 'hello'" | shell=True | alias=hello |
-        | ${pid_1}= | `Get Process Id` | | | | # Gets PID of the active process |
-        | ${pid_2}= | `Get Process Id` | ${handle1} | | | # Gets PID with `handle1` |
-        | ${pid_3}= | `Get Process Id` | hello | | | # Gets PID with alias `hello` |
-        | Should Be Equal As Integers | ${pid_1} | ${pid_2} |
-        | Should Be Equal As Integers | ${pid_1} | ${pid_3} |
+        The pid is not the same as the identifier returned by
+        `Start Process` that is used internally by this library.
         """
         return self._process(handle).pid
 
     def get_process_object(self, handle=None):
-        """Return the underlying Popen process object with `handle`.
+        """Return the underlying `subprocess.Popen`  object.
 
-        Argument `handle` is optional, if `None` then the active process is used.
+        If `handle`is not given, uses the current `active process`.
         """
         return self._process(handle)
 
     def switch_process(self, handle):
-        """Switches active process into process with `handle`.
+        """Makes the specified process the current `active process`.
 
-        Examples:
+        The handle can be an identifier returned by `Start Process` or
+        the `alias` given to it explicitly.
 
-        | `Start Process` | dir | shell=True | alias=process1 |
-        | `Start Process` | ls  | shell=True | alias=process2 |
+        Example:
+        | `Start Process` | prog1 | alias=process1 |
+        | `Start Process` | prog2 | alias=process2 |
         | # currently active process is process2 |
         | `Switch Process` | process1 |
         | # now active process is process 1 |
@@ -443,6 +463,7 @@ class Process(object):
         self._started_processes.switch(handle)
 
     def _process(self, handle):
+        # TODO: Handle errors when using invalid handle or when no processes running.
         if handle:
             process, _ = self._started_processes.get_connection(handle)
         else:
@@ -454,11 +475,12 @@ class ExecutionResult(object):
     _stdout = _stderr = _process = None
 
     def __init__(self, stdout, stderr, exit_code=None):
+        # TODO: Cleanup if/elses
         self.stdout_path = stdout.name if stdout != subprocess.PIPE else None
         if stderr == subprocess.PIPE:
             self.stderr_path = None
         elif stderr == subprocess.STDOUT:
-            self.stderr_path = subprocess.STDOUT
+            self.stderr_path = subprocess.STDOUT    # TODO: Why not None here too?
         else:
             self.stderr_path = stderr.name
         self.exit_code = exit_code
@@ -492,6 +514,7 @@ class ExecutionResult(object):
     def prepare_stdout_and_stderr(self, process):
         self._process = process
 
+    # TODO: attribute names are wrong. should also somehow show that stdout and stderr are available
     def __str__(self):
         return """\
 stdout_name : %s
@@ -501,14 +524,8 @@ exit_code   : %d""" % (self.stdout_path, self.stderr_path, self.exit_code)
 
 class ProcessConfig(object):
 
-    def __init__(self, tempdir,
-                 cwd=None,
-                 shell=False,
-                 stdout=None,
-                 stderr=None,
-                 alias=None,
-                 **rest):
-        self._tempdir = tempdir
+    def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
+                 alias=None, **rest):
         self.cwd = cwd or os.path.abspath(os.curdir)
         self.stdout_stream = self._new_stream(stdout, 'stdout')
         self.stderr_stream = self._get_stderr(stderr, stdout)
@@ -537,6 +554,13 @@ class ProcessConfig(object):
             return
         self.env = self._construct_env(rest)
 
+    # TODO: cleanup and fixes
+    # - if env is not given, individually given env values are overridden
+    #   by values with same names in os.environ!!
+    # - confusing to first set self.env here but then reset it by
+    #   the returned value
+    # - we probably should not encode items in the given env, only
+    #   the individually given name/value pairs
     def _construct_env(self, rest):
         new_env = dict()
         for key, val in rest.iteritems():
@@ -555,6 +579,9 @@ class ProcessConfig(object):
             return dict(new_env.items() + os.environ.copy().items())
         return dict(self._must_env_values().items() + self.env.items())
 
+    # TODO: Why is this done? Can't we just let the command fail if env is invalid?
+    # If this is considered useful, should add PATH to env elsewhere too.
+    # And that should be documented.
     def _must_env_values(self):
         must_values = {}
         if os.sep != '/':
@@ -563,6 +590,7 @@ class ProcessConfig(object):
             must_values['SYSTEMROOT'] = os.environ['SYSTEMROOT']
         return must_values
 
+    # TODO: Is this needed?
     def __str__(self):
         return encode_to_system("""
 cwd = %s
