@@ -153,7 +153,7 @@ class AllStatistics(object):
 
     def _get_names(self, paths):
         paths = [os.path.splitext(os.path.abspath(p))[0] for p in paths]
-        path_tokens = [p.replace('\\','/').split('/') for p in paths]
+        path_tokens = [p.replace('\\', '/').split('/') for p in paths]
         min_tokens = min(len(t) for t in path_tokens)
         index = -1
         while self._tokens_are_same_at_index(path_tokens, index):
@@ -334,13 +334,13 @@ class Plotter(object):
 
     def critical_tests(self, stats):
         if self._critical:
-            line =  {'linestyle': '--', 'linewidth': 1}
+            line = {'linestyle': '--', 'linewidth': 1}
             self._plot(self._indexes, stats, **line)
             self._legends.append(Legend(label='critical tests', **line))
 
     def all_tests(self, stats):
         if self._all:
-            line =  {'linestyle': ':', 'linewidth': 1}
+            line = {'linestyle': ':', 'linewidth': 1}
             self._plot(self._indexes, stats, **line)
             self._legends.append(Legend(label='all tests', **line))
 
@@ -485,7 +485,7 @@ class Ristopy(object):
             if line == '' or line.startswith('#'):
                 continue
             elif line.startswith('-'):
-                fargs.extend(line.split(' ',1))
+                fargs.extend(line.split(' ', 1))
             else:
                 fargs.append(line)
         args[index:index+2] = fargs
@@ -495,7 +495,7 @@ class Ristopy(object):
         opt_groups = []
         current = []
         for arg in args:
-            if arg.replace('-','') == '' and len(arg) >= 3:
+            if arg.replace('-', '') == '' and len(arg) >= 3:
                 opts = self._arg_parser.parse_args(current)[0]
                 opt_groups.append(opts)
                 current = []
