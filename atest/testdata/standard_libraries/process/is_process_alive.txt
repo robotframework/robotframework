@@ -5,18 +5,18 @@ Resource          resource.txt
 
 *** Test Cases ***
 No Process Should Fail
-    Run Keyword And Expect Error    No open connection    Process Is Running
+    Run Keyword And Expect Error    No started processes.   Process Is Running
 
 Test Process Should Be Alive
     ${handle}=    Some process
     Process Should Be Running    ${handle}
     Stop some process
     Wait For Process    ${handle}
-    Run Keyword And Expect Error    Process is not running    Process Should Be Running    ${handle}
+    Run Keyword And Expect Error    Process is not running.    Process Should Be Running    ${handle}
 
 Test Process Should Be Dead
     ${handle}=    Some process
-    Run Keyword And Expect Error    Process is running    Process Should Be Stopped    ${handle}
+    Run Keyword And Expect Error    Process is running.    Process Should Be Stopped    ${handle}
     Stop some process
     Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
