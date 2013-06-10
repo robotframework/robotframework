@@ -486,6 +486,8 @@ class ExecutionResult(object):
     def stdout(self):
         if self._stdout is None:
             self._stdout = self._construct_stdout()
+        if self._stdout.endswith('\n'):
+            self._stdout = self._stdout[:-1]
         return self._stdout
 
     def _construct_stdout(self):
@@ -498,6 +500,8 @@ class ExecutionResult(object):
     def stderr(self):
         if self._stderr is None:
             self._stderr = self._construct_stderr()
+        if self._stderr.endswith('\n'):
+            self._stderr = self._stderr[:-1]
         return self._stderr
 
     def _construct_stderr(self):

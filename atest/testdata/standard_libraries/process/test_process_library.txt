@@ -17,7 +17,7 @@ Running a process
 
 Error in exit code and stderr output
     ${result}=    Run Python Process    1/0
-    Result should equal    ${result}    stderr=*ZeroDivisionError: integer division or modulo by zero*    exit_code=1
+    Result should match    ${result}    stderr=*ZeroDivisionError: integer division or modulo by zero*    exit_code=1
 
 Start And Wait Process
     ${handle}=    Start Python Process    import time;time.sleep(0.1)
@@ -46,14 +46,14 @@ Setting Stdout
     ${result}=    Run Process    python -c "print 'hello'"    shell=True    stdout=${TEMPDIR}${/}myfile_1.txt
     ${output}=    Get File    ${TEMPDIR}${/}myfile_1.txt
     Should Not Be Empty    ${output}
-    Should Be Equal    ${result.stdout}    ${output}
+    Should Match  ${output}   ${result.stdout}*
     [Teardown]    Run Keyword And Ignore Error   Remove File    ${TEMPDIR}${/}myfile_1.txt
 
 Setting Stderr
     ${result}=    Run Process    python -c "1/0"    shell=True    stderr=${TEMPDIR}${/}myfile.txt
     ${output}=    Get File    ${TEMPDIR}${/}myfile.txt
     Should Not Be Empty    ${output}
-    Should Be Equal    ${result.stderr}    ${output}
+    Should Match   ${output}   ${result.stderr}*
     [Teardown]    Run Keyword And Ignore Error   Remove File    ${TEMPDIR}${/}myfile.txt
 
 Without Env Configuration the Environment Should Be As It Was
@@ -95,11 +95,11 @@ Unsupported Arguments Should Cause Error
 
 Escaping equals sign
     ${result}=    Run Process    python    -c    print 'stderr\=bar.buu'    shell=True
-    Result should equal    ${result}    stdout=*stderr=bar.buu*
+    Result should match    ${result}    stdout=*stderr=bar.buu*
 
 Running a process in a shell
     ${result}=    Run Process    python -c "print 'hello'"    shell=True
-    Result should equal    ${result}    stdout=*hello*    exit_code=0
+    Result should equal    ${result}    stdout=hello    exit_code=0
     Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=${False}
 
 Input things to process

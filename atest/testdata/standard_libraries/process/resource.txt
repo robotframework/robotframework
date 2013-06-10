@@ -11,9 +11,16 @@ Stop some process
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${exit_code}=0
+    Should Be Equal    ${result.stdout}    ${stdout}
+    Should Be Equal    ${result.stderr}    ${stderr}
+    Should Be Equal As Integers    ${result.exit_code}    ${exit_code}
+
+Result should match
+    [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${exit_code}=0
     Should Match    ${result.stdout}    ${stdout}
     Should Match    ${result.stderr}    ${stderr}
     Should Be Equal As Integers    ${result.exit_code}    ${exit_code}
+
 
 Start Python Process
     [Arguments]    ${command}    ${alias}=${null}

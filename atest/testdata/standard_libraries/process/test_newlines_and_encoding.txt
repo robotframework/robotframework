@@ -18,10 +18,9 @@ Non-ascii in the command with given stdout
     Result should equal    ${result}    stdout=ööåöåöå   exit_code=0
     [Teardown]   Run Keyword And Ignore Error   Remove File   myfile.txt
 
-Ascii characters in output with dir command
-    ${result}=   Run Process    python -c "import os,pprint; pprint.pprint(os.listdir('.'));"   shell=True    stdout=dirlist.txt   cwd=${CURDIR}
-    Log     ${result.stdout}
-    [Teardown]   Run Keyword And Ignore Error   Remove File   dirlist.txt
+Newlines and trailing newline is removed
+    ${result}=   Run Process    python -c "print 'first line\\nsecond line\\nthird line'"   shell=True    cwd=${CURDIR}
+    Result should equal    ${result}    stdout=first line\nsecond line\nthird line   exit_code=0
 
 Non-ascii in the command arguments
     ${result}=   Run Process    python -c "import os; print os.getenv('varri', '-');"  shell=True  env:varri=Öoa
@@ -29,7 +28,7 @@ Non-ascii in the command arguments
 
 Newline test using shell=True
     ${result}=   Run Process    python -c "print 'hello'"   shell=True
-    Result should equal    ${result}    stdout=*hello*    exit_code=0
+    Result should equal    ${result}    stdout=hello    exit_code=0
 
 Newline test using shell=False
     ${result}=   Run Process    python  -c   print "hello"

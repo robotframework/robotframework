@@ -14,7 +14,7 @@ Non-ascii in the command using shell=False
 Non-ascii in the command with given stdout
     Check Test Case    ${TESTNAME}
 
-Ascii characters in output with dir command
+Newlines and trailing newline is removed
     Check Test Case    ${TESTNAME}
 
 Non-ascii in the command arguments
