@@ -19,7 +19,7 @@ import signal
 import subprocess
 import sys
 
-from robot.utils import ConnectionCache, encode_to_system
+from robot.utils import ConnectionCache, encode_to_system, decode_output, decode_from_system
 from robot.version import get_version
 from robot.api import logger
 
@@ -306,20 +306,20 @@ class Process(object):
                                    stdin=subprocess.PIPE,
                                    shell=config.shell,
                                    cwd=config.cwd,
-                                   env=config.env)
+                                   env=config.env,
+                                   universal_newlines=True)
         self._results[process] = ExecutionResult(process,
                                                  config.stdout_stream,
                                                  config.stderr_stream)
         return self._started_processes.register(process, alias=config.alias)
 
     def _cmd(self, args, command, use_shell):
-        # TODO: Why is command not encoded? Remember also elif below.
-        cmd = [command] + [encode_to_system(i) for i in args]
-        if use_shell and args:
-            cmd = subprocess.list2cmdline(cmd)
-        elif use_shell:
-            cmd = command
-        return cmd
+        command = [encode_to_system(item) for item in [command] + list(args)]
+        if not use_shell:
+            return command
+        if args:
+            return subprocess.list2cmdline(command)
+        return command[0]
 
     # TODO: process_is_running vs is_process_running
     def process_is_running(self, handle=None):
@@ -490,9 +490,9 @@ class ExecutionResult(object):
 
     def _construct_stdout(self):
         if not self.stdout_path:
-            return self._process.stdout.read()
+            return decode_from_system(self._process.stdout.read())
         with open(self.stdout_path, 'r') as f:
-            return f.read()
+            return decode_from_system(f.read())
 
     @property
     def stderr(self):
