@@ -16,7 +16,7 @@ import re
 
 from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
-from robot import utils
+from robot.utils import get_timestamp, html_escape, html_format, NormalizedDict
 
 
 class LibdocHtmlWriter(object):
@@ -54,7 +54,7 @@ class JsonConverter(object):
             'version': libdoc.version,
             'named_args': libdoc.named_args,
             'scope': libdoc.scope,
-            'generated': utils.get_timestamp(daysep='-', millissep=None),
+            'generated': get_timestamp(daysep='-', millissep=None),
             'inits': self._get_keywords(libdoc.inits),
             'keywords': self._get_keywords(libdoc.keywords)
         }
@@ -78,10 +78,10 @@ class DocFormatter(object):
     def __init__(self, keywords, introduction, doc_format='ROBOT'):
         self._doc_to_html = DocToHtml(doc_format)
         self._targets = self._get_targets(keywords, introduction,
-                                          robot_format=doc_format=='ROBOT')
+                                          robot_format=doc_format == 'ROBOT')
 
     def _get_targets(self, keywords, introduction, robot_format):
-        targets = utils.NormalizedDict({
+        targets = NormalizedDict({
             'introduction': 'Introduction',
             'library introduction': 'Introduction',
             'importing': 'Importing',
@@ -117,20 +117,20 @@ class DocFormatter(object):
 
 class DocToHtml(object):
 
-    def __init__(self, format):
-        self._formatter =  self._get_formatter(format)
+    def __init__(self, doc_format):
+        self._formatter = self._get_formatter(doc_format)
 
-    def _get_formatter(self, format):
+    def _get_formatter(self, doc_format):
         try:
-            return {'ROBOT': utils.html_format,
+            return {'ROBOT': html_format,
                     'TEXT': self._format_text,
                     'HTML': self._format_html,
-                    'REST': self._format_rest}[format]
+                    'REST': self._format_rest}[doc_format]
         except KeyError:
-            raise DataError("Invalid documentation format '%s'." % format)
+            raise DataError("Invalid documentation format '%s'." % doc_format)
 
     def _format_text(self, doc):
-        return '<p style="white-space: pre-wrap">%s</p>' % utils.html_escape(doc)
+        return '<p style="white-space: pre-wrap">%s</p>' % html_escape(doc)
 
     def _format_html(self, doc):
         return '<div style="margin: 0">%s</div>' % doc
