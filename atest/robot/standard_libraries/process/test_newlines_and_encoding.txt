@@ -1,0 +1,31 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}  standard_libraries/process/test_newlines_and_encoding.txt
+Force Tags       regression    pybot    jybot
+Test Setup       Check Preconditions
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Non-ascii in the command using shell=True
+    Check Test Case    ${TESTNAME}
+
+Non-ascii in the command using shell=False
+    Check Test Case    ${TESTNAME}
+
+Non-ascii in the command with given stdout
+    Check Test Case    ${TESTNAME}
+
+Ascii characters in output with dir command
+    Check Test Case    ${TESTNAME}
+
+Non-ascii in the command arguments
+    Check Test Case    ${TESTNAME}
+
+Newline test using shell=True
+    Check Test Case    ${TESTNAME}
+
+Newline test using shell=False
+    Check Test Case    ${TESTNAME}
+
+*** Keywords ***
+Check Preconditions
+    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression
