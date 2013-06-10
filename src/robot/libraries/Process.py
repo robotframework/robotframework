@@ -287,7 +287,6 @@ class Process(object):
                 self._started_processes.switch(active_process_index)
 
         # TODO: Apparently the process is still left to the cache
-        # TODO: Are changes to ConnectionCache compatible with SeLibs??!!
 
     def start_process(self, command, *arguments, **configuration):
         """Starts a new process on background.
@@ -300,19 +299,18 @@ class Process(object):
         """
         config = ProcessConfig(**configuration)
         executable_command = self._cmd(arguments, command, config.shell)
-        # TODO: Prefer proper sentences in log messages (also elsewhere).
-        # TODO: Why %r and not %s? Perhaps 'Starting process:\n%s'.
-        logger.info('starting process %r' % executable_command)
-        p = subprocess.Popen(executable_command,
-                             stdout=config.stdout_stream,
-                             stderr=config.stderr_stream,
-                             stdin=subprocess.PIPE,
-                             shell=config.shell,
-                             cwd=config.cwd,
-                             env=config.env)
-        self._results[p] = ExecutionResult(config.stdout_stream,
-                                           config.stderr_stream)
-        return self._started_processes.register(p, alias=config.alias)
+        logger.info('Starting process:\n%s' % executable_command)
+        process = subprocess.Popen(executable_command,
+                                   stdout=config.stdout_stream,
+                                   stderr=config.stderr_stream,
+                                   stdin=subprocess.PIPE,
+                                   shell=config.shell,
+                                   cwd=config.cwd,
+                                   env=config.env)
+        self._results[process] = ExecutionResult(process,
+                                                 config.stdout_stream,
+                                                 config.stderr_stream)
+        return self._started_processes.register(process, alias=config.alias)
 
     def _cmd(self, args, command, use_shell):
         # TODO: Why is command not encoded? Remember also elif below.
@@ -333,9 +331,8 @@ class Process(object):
         """
         return self._process(handle).poll() is None
 
-    # TODO: Custom error messages with Should keywords.
-
-    def process_should_be_running(self, handle=None):
+    def process_should_be_running(self, handle=None,
+                                  error_message='Process is not running.'):
         """Verifies that the process is running.
 
         If `handle`is not given, uses the current `active process`.
@@ -343,9 +340,10 @@ class Process(object):
         Fails if the process has stopped.
         """
         if not self.process_is_running(handle):
-            raise AssertionError('Process is not running')
+            raise AssertionError(error_message)
 
-    def process_should_be_stopped(self, handle=None):
+    def process_should_be_stopped(self, handle=None,
+                                  error_message='Process is running.'):
         """Verifies that the process is not running.
 
         If `handle`is not given, uses the current `active process`.
@@ -353,7 +351,7 @@ class Process(object):
         Fails if the process is still running.
         """
         if self.process_is_running(handle):
-            raise AssertionError('Process is running')
+            raise AssertionError(error_message)
 
     def wait_for_process(self, handle=None):
         """Waits for the process to complete.
@@ -364,12 +362,9 @@ class Process(object):
         """
         process = self._process(handle)
         result = self._results[process]
-        # TODO: Proper sentences. Only one log message. Terminate -> complete.
-        logger.info('waiting for process to terminate')
+        logger.info('Waiting for process to complete.')
         result.exit_code = process.wait()
-        # TODO: Avoid public method in result object
-        result.prepare_stdout_and_stderr(process)
-        logger.info('process terminated')
+        logger.info('Process completed.')
         return result
 
     def terminate_process(self, handle=None, kill=False):
@@ -464,25 +459,28 @@ class Process(object):
     def _process(self, handle):
         # TODO: Handle errors when using invalid handle or when no processes running.
         if handle:
-            process = self._started_processes.get_connection(handle)
-        else:
-            process = self._started_processes.current
-        return process
+            return self._started_processes.get_connection(handle)
+        return self._started_processes.current
 
 
 class ExecutionResult(object):
     _stdout = _stderr = _process = None
 
-    def __init__(self, stdout, stderr, exit_code=None):
-        # TODO: Cleanup if/elses
-        self.stdout_path = stdout.name if stdout != subprocess.PIPE else None
-        if stderr == subprocess.PIPE:
-            self.stderr_path = None
-        elif stderr == subprocess.STDOUT:
-            self.stderr_path = subprocess.STDOUT    # TODO: Why not None here too?
-        else:
-            self.stderr_path = stderr.name
+    def __init__(self, process, stdout, stderr, exit_code=None):
+        self._process = process
+        self.stdout_path = self._construct_stdout_path(stdout)
+        self.stderr_path = self._construct_stderr_path(stderr)
         self.exit_code = exit_code
+
+    def _construct_stdout_path(self, stdout):
+        return stdout.name if stdout != subprocess.PIPE else None
+
+    def _construct_stderr_path(self, stderr):
+        if stderr == subprocess.PIPE:
+            return None
+        if stderr == subprocess.STDOUT:
+            return subprocess.STDOUT
+        return stderr.name
 
     @property
     def stdout(self):
@@ -509,9 +507,6 @@ class ExecutionResult(object):
             return self._process.stderr.read()
         with open(self.stderr_path, 'r') as f:
             return f.read()
-
-    def prepare_stdout_and_stderr(self, process):
-        self._process = process
 
     # TODO: attribute names are wrong. should also somehow show that stdout and stderr are available
     def __str__(self):
