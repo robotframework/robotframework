@@ -42,10 +42,6 @@ class Process(object):
 
     This library is new in Robot Framework 2.8.
 
-    TODO: Is the below comment still true? Document issues with Jython and IPY.
-    Note that this library has not been designed for
-    [http://ironpython.codeplex.com/|IronPython] compatibility.
-
     == Table of contents ==
 
     - `Specifying command and arguments`
@@ -190,10 +186,10 @@ class Process(object):
     [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen.kill|kill()]
     instead.
 
-    Because both `terminate()` and `kill()` were added to `subprocess` in
-    Python 2.6, stopping processes does not work with Python or Jython 2.5.
-
-    TODO: Has Jython 2.7 been tested?
+    Because both `terminate()` and `kill()` methods were added to `subprocess`
+    in Python 2.6, stopping processes does not work with Python or Jython 2.5.
+    Unfortunately at least beta releases of Jython 2.7
+    [http://bugs.jython.org/issue1898|do not seem to support it either].
 
     Examples:
     | `Terminate Process` | kill=True |
@@ -396,6 +392,8 @@ class Process(object):
         If `handle`is not given, uses the current `active process`.
 
         Returns the pid assigned by the operating system as an integer.
+        Note that with Jython, at least with the 2.5 version, the returned
+        pid seems to always be `None`.
 
         The pid is not the same as the identifier returned by
         `Start Process` that is used internally by this library.
