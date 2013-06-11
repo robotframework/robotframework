@@ -207,15 +207,12 @@ class Process(object):
     that contains information about the process execution as its attibutes.
     What is available is documented in the table below.
 
-    | *Attribute* | *Explanation*                                 |
-    | rc          | Return code of the process as an integer.     |
-    | stdout      | Contents of the standard output stream.       |
-    | stderr      | Contents of the standard error stream.        |
-    | stdout_path | Path of the file where stdout was redirected. |
-    | stderr_path | Path of the file where stderr was redirected. |
-
-    TODO:
-    - value of stdxxx_path when no redirection?
+    | *Attribute* | *Explanation*                             |
+    | rc          | Return code of the process as an integer. |
+    | stdout      | Contents of the standard output stream.   |
+    | stderr      | Contents of the standard error stream.    |
+    | stdout_path | Path where stdout was redirected or `None` if not redirected. |
+    | stderr_path | Path where stderr was redirected or `None` if not redirected. |
 
     Example:
     | ${result} =            | `Run Process`         | program               |
@@ -463,53 +460,47 @@ class Process(object):
 
 
 class ExecutionResult(object):
-    _stdout = _stderr = _process = None
 
     def __init__(self, process, stdout, stderr, rc=None):
         self._process = process
-        self.stdout_path = self._construct_stdout_path(stdout)
-        self.stderr_path = self._construct_stderr_path(stderr)
+        self.stdout_path = self._get_path(stdout)
+        self.stderr_path = self._get_path(stderr)
         self.rc = rc
+        self._stdout = None
+        self._stderr = None
 
-    def _construct_stdout_path(self, stdout):
-        return stdout.name if stdout != subprocess.PIPE else None
-
-    def _construct_stderr_path(self, stderr):
-        if stderr == subprocess.PIPE:
+    def _get_path(self, stream):
+        if stream in (subprocess.PIPE, subprocess.STDOUT):
             return None
-        if stderr == subprocess.STDOUT:
-            return subprocess.STDOUT
-        return stderr.name
+        return stream.name
 
     @property
     def stdout(self):
         if self._stdout is None:
-            self._stdout = self._construct_stdout()
-        if self._stdout.endswith('\n'):
-            self._stdout = self._stdout[:-1]
-        return decode_from_system(self._stdout)
-
-    def _construct_stdout(self):
-        if not self.stdout_path:
-            return self._process.stdout.read()
-        with open(self.stdout_path, 'r') as f:
-            return f.read()
+            self._stdout = self._read_stream(self.stdout_path,
+                                             self._process.stdout)
+        return self._stdout
 
     @property
     def stderr(self):
         if self._stderr is None:
-            self._stderr = self._construct_stderr()
-        if self._stderr.endswith('\n'):
-            self._stderr = self._stderr[:-1]
-        return decode_from_system(self._stderr)
+            self._stderr = self._read_stream(self.stderr_path,
+                                             self._process.stderr)
+        return self._stderr
 
-    def _construct_stderr(self):
-        if self.stderr_path == subprocess.STDOUT:
-            return self.stdout
-        elif not self.stderr_path:
-            return self._process.stderr.read()
-        with open(self.stderr_path, 'r') as f:
-            return f.read()
+    def _read_stream(self, stream_path, stream):
+        if stream_path:
+            stream = open(stream_path, 'r')
+        try:
+            return self._format_output(stream.read() if stream else '')
+        finally:
+            if stream_path:
+                stream.close()
+
+    def _format_output(self, output):
+        if output.endswith('\n'):
+            output = output[:-1]
+        return decode_from_system(output)
 
     def __str__(self):
         return '<result object with rc %d>' % self.rc

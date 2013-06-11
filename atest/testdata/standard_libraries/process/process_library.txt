@@ -119,13 +119,19 @@ Redirecting Stderr to Stdout
     ${result}=    Run Process    python    -c    print 'hello';1/0    stderr=STDOUT
     Should Match    ${result.stdout}    *hello*
     Should Match    ${result.stdout}    *ZeroDivisionError*
-    Log    ${result.stderr}
+    Should Be Equal    ${result.stderr}    ${EMPTY}
+    Should Be Equal    ${result.stdout_path}    ${NONE}
+    Should Be Equal    ${result.stderr_path}    ${NONE}
 
 Redirecting Stderr to Stdout with filename
     ${path}=    Normalize Path    %{TEMPDIR}/filename.txt
     ${result}=    Run Process    python    -c    print 'hello';1/0    stdout=${path}    stderr=${path}
     Should Match    ${result.stdout}    *hello*
     Should Match    ${result.stdout}    *ZeroDivisionError*
+    Should Match    ${result.stderr}    *hello*
+    Should Match    ${result.stderr}    *ZeroDivisionError*
+    Should Be Equal    ${result.stdout_path}    ${path}
+    Should Be Equal    ${result.stderr_path}    ${path}
     [Teardown]    Remove File    ${path}
 
 Current working directory should be used with stdout and stderr
@@ -143,10 +149,13 @@ Current working directory should not be used with stdout and stderr when absolut
     ${stdout_path}=    Normalize Path    %{TEMPDIR}/stdout.txt
     ${result}=    Run Process    python    -c    print 'moon kuu';1/0    cwd=%{TEMPDIR}${/}hc    stdout=${stdout_path}
     ...    stderr=stderr.txt
+    ${stderr_path}=    Normalize Path    %{TEMPDIR}/hc/stderr.txt
     ${stdout}=    Get File    ${stdout_path}
-    ${stderr}=    Get File    %{TEMPDIR}/hc/stderr.txt
+    ${stderr}=    Get File    ${stderr_path}
     Should Match    ${stdout}    *moon kuu*
     Should Match    ${stderr}    *ZeroDivisionError*
+    Should Be Equal    ${result.stdout_path}    ${stdout_path}
+    Should Be Equal    ${result.stderr_path}    ${stderr_path}
     [Teardown]    Run Keywords
     ...   Remove Directory    %{TEMPDIR}${/}hc    recursive=True    AND
     ...   Remove File    ${stdout_path}
