@@ -18,6 +18,7 @@ class setter(object):
     def __init__(self, method):
         self.method = method
         self.attr_name = '_setter__' + method.__name__
+        self.__doc__ = method.__doc__
 
     def __get__(self, instance, owner):
         if instance is None:
