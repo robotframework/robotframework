@@ -65,9 +65,10 @@ Wait For Process Which Does Not Exist
 
 Lot of output
     [Tags]    performance
-    ${handle}=    Run Process    python -c "for i in range(350000): \tprint 'a'*400"    shell=True    stdout=${TEMPDIR}${/}myout.txt
-    File Should Not Be Empty    ${TEMPDIR}${/}myout.txt
-    [Teardown]    Remove File    ${TEMPDIR}${/}myout.txt
+    ${stdout}=    Normalize Path    %{TEMPDIR}${/}stdout.txt
+    ${handle}=    Run Process    python -c "for i in range(350000): \tprint 'a'*400"    shell=True    stdout=${stdout}    stderr=STDOUT
+    File Should Not Be Empty    ${stdout}
+    [Teardown]    Remove File    ${stdout}
 
 Getting PIDs in different ways should give same result
     ${handle}=    Start Process    python -c "print 'hello'"    shell=True    alias=hello

@@ -42,18 +42,18 @@ Change Current Working Directory
     Should Not Be Equal    ${result.stdout}    ${result2.stdout}
 
 Setting Stdout
-    ${result}=    Run Process    python -c "print 'hello'"    shell=True    stdout=${TEMPDIR}${/}myfile_1.txt
-    ${output}=    Get File    ${TEMPDIR}${/}myfile_1.txt
+    ${result}=    Run Process    python -c "print 'hello'"    shell=True    stdout=%{TEMPDIR}${/}myfile_1.txt
+    ${output}=    Get File    %{TEMPDIR}${/}myfile_1.txt
     Should Not Be Empty    ${output}
     Should Match  ${output}   ${result.stdout}*
-    [Teardown]    Run Keyword And Ignore Error   Remove File    ${TEMPDIR}${/}myfile_1.txt
+    [Teardown]    Remove File    %{TEMPDIR}${/}myfile_1.txt
 
 Setting Stderr
-    ${result}=    Run Process    python -c "1/0"    shell=True    stderr=${TEMPDIR}${/}myfile.txt
-    ${output}=    Get File    ${TEMPDIR}${/}myfile.txt
+    ${result}=    Run Process    python -c "1/0"    shell=True    stderr=%{TEMPDIR}${/}myfile.txt
+    ${output}=    Get File    %{TEMPDIR}${/}myfile.txt
     Should Not Be Empty    ${output}
     Should Match   ${output}   ${result.stderr}*
-    [Teardown]    Run Keyword And Ignore Error   Remove File    ${TEMPDIR}${/}myfile.txt
+    [Teardown]    Remove File    %{TEMPDIR}${/}myfile.txt
 
 Without Env Configuration the Environment Should Be As It Was
     Set Environment Variable  normalvar  normal
@@ -119,36 +119,46 @@ Redirecting Stderr to Stdout
     ${result}=    Run Process    python    -c    print 'hello';1/0    stderr=STDOUT
     Should Match    ${result.stdout}    *hello*
     Should Match    ${result.stdout}    *ZeroDivisionError*
-    Log    ${result.stderr}
+    Should Be Equal    ${result.stderr}    ${EMPTY}
+    Should Be Equal    ${result.stdout_path}    ${NONE}
+    Should Be Equal    ${result.stderr_path}    ${NONE}
 
 Redirecting Stderr to Stdout with filename
-    ${result}=    Run Process    python    -c    print 'hello';1/0    stdout=filename.txt    stderr=filename.txt
+    ${path}=    Normalize Path    %{TEMPDIR}/filename.txt
+    ${result}=    Run Process    python    -c    print 'hello';1/0    stdout=${path}    stderr=${path}
     Should Match    ${result.stdout}    *hello*
     Should Match    ${result.stdout}    *ZeroDivisionError*
-    Log    ${result.stderr}
-    [Teardown]    Run Keyword And Ignore Error   Remove File    filename.txt
+    Should Match    ${result.stderr}    *hello*
+    Should Match    ${result.stderr}    *ZeroDivisionError*
+    Should Be Equal    ${result.stdout_path}    ${path}
+    Should Be Equal    ${result.stderr_path}    ${path}
+    [Teardown]    Remove File    ${path}
 
 Current working directory should be used with stdout and stderr
-    Create Directory    ${TEMPDIR}${/}hc
-    ${result}=    Run Process    python    -c    print 'moon kuu';1/0    cwd=${TEMPDIR}${/}hc    stdout=myout.txt
+    Create Directory    %{TEMPDIR}${/}hc
+    ${result}=    Run Process    python    -c    print 'moon kuu';1/0    cwd=%{TEMPDIR}${/}hc    stdout=myout.txt
     ...    stderr=myerr.txt
-    ${output}=    Get File    ${TEMPDIR}${/}hc${/}myout.txt
-    ${output2}=    Get File    ${TEMPDIR}${/}hc${/}myerr.txt
+    ${output}=    Get File    %{TEMPDIR}${/}hc${/}myout.txt
+    ${output2}=    Get File    %{TEMPDIR}${/}hc${/}myerr.txt
     Should Match    ${output}    *moon kuu*
     Should Match    ${output2}    *ZeroDivisionError*
-    [Teardown]    Run Keyword And Ignore Error   Remove Directory    ${TEMPDIR}${/}hc    True
+    [Teardown]    Remove Directory    %{TEMPDIR}${/}hc    recursive=True
 
 Current working directory should not be used with stdout and stderr when absolute path in use
-    Create Directory    ${TEMPDIR}${/}hc
-    ${stdout_path}=    Evaluate    os.path.abspath('myout.txt')    os
-    ${result}=    Run Process    python    -c    print 'moon kuu';1/0    cwd=${TEMPDIR}${/}hc    stdout=${stdout_path}
-    ...    stderr=myerr.txt
-    ${output}=    Get File    ${stdout_path}
-    ${output2}=    Get File    ${TEMPDIR}${/}hc${/}myerr.txt
-    Should Match    ${output}    *moon kuu*
-    Should Match    ${output2}    *ZeroDivisionError*
-    Remove File    ${stdout_path}
-    [Teardown]    Run Keyword And Ignore Error   Remove Directory    ${TEMPDIR}${/}hc    True
+    Create Directory    %{TEMPDIR}${/}hc
+    ${stdout_path}=    Normalize Path    %{TEMPDIR}/stdout.txt
+    ${result}=    Run Process    python    -c    print 'moon kuu';1/0    cwd=%{TEMPDIR}${/}hc    stdout=${stdout_path}
+    ...    stderr=stderr.txt
+    ${stderr_path}=    Normalize Path    %{TEMPDIR}/hc/stderr.txt
+    ${stdout}=    Get File    ${stdout_path}
+    ${stderr}=    Get File    ${stderr_path}
+    Should Match    ${stdout}    *moon kuu*
+    Should Match    ${stderr}    *ZeroDivisionError*
+    Should Be Equal    ${result.stdout_path}    ${stdout_path}
+    Should Be Equal    ${result.stderr_path}    ${stderr_path}
+    [Teardown]    Run Keywords
+    ...   Remove Directory    %{TEMPDIR}${/}hc    recursive=True    AND
+    ...   Remove File    ${stdout_path}
 
 Piped stdout
     ${result}=    Run Process    python    -c   print 'hello'    stdout=PIPE
