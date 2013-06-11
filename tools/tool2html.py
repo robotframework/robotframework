@@ -114,7 +114,7 @@ def create_tooldoc(tool_name):
     stylesheet_path = os.path.join(BASEDIR, '..', 'doc', 'userguide', 'src', 
                                    'userguide.css')
     base_path = os.path.join(BASEDIR, tool_name, 'doc', tool_name)
-    arguments = [ '--time', '--stylesheet-path=%s' % stylesheet_path,
+    arguments = [ '--time', '--stylesheet-path', [stylesheet_path],
                   base_path+'.txt', base_path+'.html' ]
 
     publish_cmdline(writer_name='html', description=description, argv=arguments)
