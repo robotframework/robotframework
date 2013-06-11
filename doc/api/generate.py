@@ -36,13 +36,13 @@ class GenerateApiDocs(object):
 
     def create_autodoc(self):
         self._clean_directory(self.AUTODOC_DIR)
-        print 'Regenearting autodoc'
+        print 'Genearting autodoc'
         call(['sphinx-apidoc', '--output-dir', self.AUTODOC_DIR, '--force',
               '--no-toc', '--maxdepth', '2', self.ROBOT_DIR])
 
     def create_javadoc(self):
         self._clean_directory(self.JAVA_TARGET)
-        print 'Regenerating javadoc'
+        print 'Generating javadoc'
         call(['javadoc', '-sourcepath', self.JAVA_SRC, '-d', self.JAVA_TARGET,
               '-notimestamp', 'org.robotframework'])
 
@@ -70,7 +70,7 @@ class GeneratorOptions():
         self._add_options()
         self._options, _ = self._parser.parse_args()
         if not self._options._javadoc:
-           self._prompt_for_regeneration('javadoc')
+           self._prompt_for_generation('javadoc')
 
     @property
     def javadoc(self):
@@ -80,11 +80,11 @@ class GeneratorOptions():
         self._parser.add_option('-j', '--javadoc',
             action='store_true',
             dest='_javadoc',
-            help='Regenerates Javadoc'
+            help='Generates Javadoc'
         )
 
-    def _prompt_for_regeneration(self, attr_name):
-        selection = raw_input('Regenerate also %s? '
+    def _prompt_for_generation(self, attr_name):
+        selection = raw_input('Generate also %s? '
         '[Y/N] (N by default) > ' % attr_name.title())
         if len(selection) > 0 and selection[0].lower() == 'y':
             setattr(self._options, '_%s' % attr_name, True)
