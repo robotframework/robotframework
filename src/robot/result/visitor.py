@@ -25,7 +25,7 @@ from robot.model import SuiteVisitor
 
 class ResultVisitor(SuiteVisitor):
     """Abstract class to conveniently travel
-    :class:`robot.result.executionresult.result` objects.
+    :class:`robot.result.executionresult.Result` objects.
 
     See :mod:`example of usage <robot.result>`
     """
