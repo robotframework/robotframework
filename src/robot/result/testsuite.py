@@ -34,21 +34,11 @@ class TestSuite(model.TestSuite):
     def __init__(self, name='', doc='', metadata=None, source=None,
                  message='', starttime=None, endtime=None):
         """Result of a single test suite.
-
-        :ivar parent: Parent :class:`TestSuite` or `None`.
-        :ivar name: Test suite name.
-        :ivar doc: Test suite documentation.
-        :ivar metadata: Test suite metadata as a dictionary.
-        :ivar source: Path to the source file or directory.
-        :ivar suites: A list of child :class:`~.testsuite.TestSuite` instances.
-        :ivar tests: A list of :class:`~.testcase.TestCase` instances.
-        :ivar keywords: A list containing setup and teardown
-            :class:`~.keyword.Keyword` instances.
         """
         model.TestSuite.__init__(self, name, doc, metadata, source)
         self.message = message      #: Suite setup/teardown error message.
-        self.starttime = starttime
-        self.endtime = endtime
+        self.starttime = starttime  #: Suite execution start time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.endtime = endtime      #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self._criticality = None
 
     @property

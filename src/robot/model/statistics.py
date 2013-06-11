@@ -23,12 +23,7 @@ class Statistics(object):
 
     Accepted parameters have the same semantics as the matching command line
     options.
-
-    :ivar total: Instance of :class:`~robot.model.totalstatistics.TotalStatistics`.
-    :ivar suite: Instance of :class:`~robot.model.suitestatistics.SuiteStatistics`.
-    :ivar tags: Instance of :class:`~robot.model.tagstatistics.TagStatistics`.
     """
-
     def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
                  tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
                  tag_stat_link=None):
@@ -38,9 +33,9 @@ class Statistics(object):
                                            tag_stat_exclude, tag_stat_combine,
                                            tag_doc, tag_stat_link)
         suite.visit(StatisticsBuilder(total_builder, suite_builder, tag_builder))
-        self.total = total_builder.stats
-        self.suite = suite_builder.stats
-        self.tags = tag_builder.stats
+        self.total = total_builder.stats  #: Instance of :class:`~robot.model.totalstatistics.TotalStatistics`.
+        self.suite = suite_builder.stats  #: Instance of :class:`~robot.model.suitestatistics.SuiteStatistics`.
+        self.tags = tag_builder.stats     #: Instance of :class:`~robot.model.tagstatistics.TagStatistics`.
 
     def visit(self, visitor):
         visitor.visit_statistics(self)

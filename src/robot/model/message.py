@@ -23,23 +23,17 @@ class Message(ModelObject):
 
     The message can be a log message triggered by a keyword, or a warning
     or an error occurred during the test execution.
-
-    :ivar message: The message content as a string.
-    :ivar level: Severity of the message. Either ``TRACE``, ``INFO``,
-                 ``WARN``, ``DEBUG`` or ``FAIL``/``ERROR``.
-    :ivar html: ``True`` if the content is in HTML, ``False`` otherwise.
-    :ivar timestamp: Timestamp in format ``%Y%m%d %H:%M:%S.%f``.
-    :ivar parent: The object this message was triggered by.
     """
     __slots__ = ['message', 'level', 'html', 'timestamp', 'parent']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  parent=None):
-        self.message = message
-        self.level = level
-        self.html = html
-        self.timestamp = timestamp
-        self.parent = parent
+        self.message = message  #: The message content as a string.
+        self.level = level      #: Severity of the message. Either ``TRACE``, ``INFO``,
+                                #: ``WARN``, ``DEBUG`` or ``FAIL``/``ERROR``.
+        self.html = html        #: ``True`` if the content is in HTML, ``False`` otherwise.
+        self.timestamp = timestamp  #: Timestamp in format ``%Y%m%d %H:%M:%S.%f``.
+        self.parent = parent    #: The object this message was triggered by.
 
     @property
     def html_message(self):

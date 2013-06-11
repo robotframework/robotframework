@@ -25,21 +25,23 @@ from .testcase import TestCase, TestCases
 
 
 class TestSuite(ModelObject):
+    """Base model for single suite.
+    """
     __slots__ = ['parent', 'source', '_name', 'doc', '_my_visitors']
     test_class = TestCase
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', metadata=None, source=None):
-        self.parent = None
-        self.name = name
-        self.doc = doc
-        self.metadata = metadata
-        self.source = source
-        self.suites = []
-        self.tests = []
-        self.keywords = []
+        self.parent = None        #: Parent :class:`TestSuite` or `None`.
+        self.name = name          #: Test suite name.
+        self.doc = doc            #: Test suite documentation.
+        self.metadata = metadata  #: Test suite metadata as a dictionary.
+        self.source = source      #: Path to the source file or directory.
+        self.suites = []          #: A list of child :class:`~.testsuite.TestSuite` instances.
+        self.tests = []           #: A list of :class:`~.testcase.TestCase` instances.
+        self.keywords = []        #: A list containing setup and teardown as
+                                  #: :class:`~keyword.Keyword` instances.
         self._my_visitors = []
-
 
     @property
     def _visitors(self):

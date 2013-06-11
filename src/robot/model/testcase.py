@@ -21,23 +21,19 @@ from .tags import Tags
 
 
 class TestCase(ModelObject):
+    """Base model for single test case.
+    """
     __slots__ = ['parent', 'name', 'doc', 'timeout']
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None):
-        """Model for single test suite.
-
-        :param name: Test suite name.
-        :param doc: Test suite documentation.
-        :param tags: Test suite tags.
-        :param timeout: Timeout for test suite.
-        """
-        self.parent = None
-        self.name = name
-        self.doc = doc
-        self.tags = tags
-        self.timeout = timeout
-        self.keywords = []
+        self.parent = None      #: :class:`~.testsuite.TestSuite` that contains this test.
+        self.name = name        #: Test case name.
+        self.doc = doc          #: Test case documentation.
+        self.tags = tags        #: Test case tags, a list of strings.
+        self.timeout = timeout  #: Test case timeout.
+        self.keywords = []      #: Keyword results, a list of :class:`~.keyword.Keyword`.
+                                #: instances and contains also possible setup and teardown keywords.
 
     @setter
     def tags(self, tags):

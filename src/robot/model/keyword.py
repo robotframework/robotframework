@@ -20,6 +20,8 @@ from modelobject import ModelObject
 
 
 class Keyword(ModelObject):
+    """Base model for single keyword.
+    """
     __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout']
     KEYWORD_TYPE = 'kw'
     SETUP_TYPE = 'setup'
@@ -30,14 +32,17 @@ class Keyword(ModelObject):
     message_class = Message
 
     def __init__(self, name='', doc='', args=(), type='kw', timeout=None):
-        self.parent = None
-        self.name = name
-        self.doc = doc
-        self.args = args
-        self.type = type
-        self.timeout = timeout
-        self.messages = []
-        self.keywords = []
+        self.parent = None      #: :class:`~.testsuite.TestSuite` or
+                                #: :class:`~.testcase.TestCase` that contains this keyword.
+        self.name = name        #: Keyword name.
+        self.doc = doc          #: Keyword documentation.
+        self.args = args        #: Keyword arguments, a list of strings.
+        self.type = type        #: 'SETUP', 'TEARDOWN' or 'KW'.
+        self.timeout = timeout  #: Keyword timeout.
+        self.messages = []      #: Keyword messages, a list of
+                                #: :class:`~robot.model.message.Messages` instances.
+        self.keywords = []      #: Child keyword results, a list of
+                                #: :class:`~.Keyword`. instances
 
     @setter
     def keywords(self, keywords):

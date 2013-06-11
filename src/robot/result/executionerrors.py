@@ -22,14 +22,12 @@ class ExecutionErrors(object):
     """Represents errors occurred during the execution of tests.
 
     An error might be, for example, that importing a library has failed.
-
-    :ivar messages: A list-like object of :class:`~robot.model.message.Message`
-                    instances.
     """
     message_class = Message
 
     def __init__(self, messages=None):
-        self.messages = messages
+        self.messages = messages  #:  A list-like object of :class:`~robot.model.message.Message`
+                                  #:  instances.
 
     @setter
     def messages(self, msgs):
