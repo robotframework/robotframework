@@ -61,6 +61,7 @@ class TestSuite(ModelObject):
 
     @setter
     def suites(self, suites):
+        """A list-like :class:`~.TestSuites` object containing child suites."""
         return TestSuites(self.__class__, self, suites)
 
     @setter
