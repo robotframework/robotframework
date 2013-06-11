@@ -133,7 +133,7 @@ class Process(object):
     By default processes are run so that their standard output and standard
     error streams are kept in the memory. This works fine normally,
     but if there is a lot of output, the output buffers may get full and
-    the program hang.
+    the program could hang.
 
     To avoid output buffers getting full, it is possible to use `stdout`
     and `stderr` arguments to specify files on the file system where to
@@ -141,6 +141,9 @@ class Process(object):
     other keywords need to read or manipulate the outputs somehow.
     Given `stdout` and `stderr` paths are relative to the `current working
     directory`.
+
+    *Note:* The created files are not automatically removed after the test run
+    and the user is responsible of removing the output files if needed.
 
     As a special feature, it is possible to redirect the standard error to
     the standard output by using `stderr=STDOUT`.
