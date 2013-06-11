@@ -5,7 +5,7 @@ Resource          resource.txt
 
 *** Test Cases ***
 No Process Should Fail
-    Run Keyword And Expect Error    No started processes.   Is Process Running
+    Run Keyword And Expect Error    No active process.   Is Process Running
 
 Test Process Should Be Alive
     ${handle}=    Some process

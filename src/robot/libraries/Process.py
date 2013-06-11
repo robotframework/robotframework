@@ -511,16 +511,7 @@ class ExecutionResult(object):
             return f.read()
 
     def __str__(self):
-        return """\
-stdout_path : %s
-stdout : %s
-stderr_path : %s
-stderr : %s
-rc : %d""" % (self.stdout_path if self.stdout_path else "PIPE",
-                type(self.stdout),
-                self.stderr_path if self.stderr_path else "PIPE",
-                type(self.stderr),
-                self.rc)
+        return '<result object with rc %d>' % self.rc
 
 
 class ProcessConfig(object):
