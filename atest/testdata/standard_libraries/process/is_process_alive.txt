@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Check Preconditions
+#Suite Setup       Check Preconditions
 Library           Process
 Resource          resource.txt
 
@@ -27,6 +27,6 @@ Test Process Should Be Dead
 
 *** Keywords ***
 Check Preconditions
-    ${is_ok}=   Evaluate   sys.version_info >= (2,6) and sys.platform != 'cli'   sys
+    ${is_ok}=   Evaluate   sys.version_info >= (2,6)  sys
     Run Keyword If  not ${is_ok}    Set Suite Metadata  info   precondition_fail
     Run Keyword If  not ${is_ok}    Fail

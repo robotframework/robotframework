@@ -188,7 +188,7 @@ Check Preconditions
     Run Keyword Unless   ${is_ok}    Fail
 
 Valid Platform
-    ${is_ok}=   Evaluate   sys.platform != 'cli'   sys
+    ${is_ok}=   Evaluate   sys.version_info >= (2,6)   sys
     [Return]    ${is_ok}
 
 Create env dictionary
