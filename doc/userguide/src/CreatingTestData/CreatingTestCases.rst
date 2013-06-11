@@ -273,17 +273,17 @@ Named arguments with variables
 It is possible to use `variables`_ in named argument values.
 As when using `scalar variables`_, if the value is a single variable,
 it is passed to the keyword as-is. This allows using any objects, not only
-strings, as values also when using the named argument syntax. For example
-calling a keyword with a named variable value :code:`arg=${object}` will pass
-the variable `${object}` to keyword without converting it to a string.
+strings, as values also when using the named argument syntax. For example,
+calling a keyword like :code:`arg=${object}` will pass
+the variable `${object}` to the keyword without converting it to a string.
 
 Using variables that contain a value like :code:`name=value` does not
 trigger the named argument usage. This is because named argument syntax requires
-the argument name to be written in the keyword call. This is important
-especially when wrapping keywords into other keywords. If for example a keyword
-takes a `variable number of arguments`_ like :code:`@{args}` and passes all of
-them to another keyword using the same :code:`@{args}` syntax, the values are
-not recognized as named. See the example below:
+the argument name to be written in the keyword call. This is important to
+remember especially when wrapping keywords into other keywords. If, for example,
+a keyword takes a `variable number of arguments`_ like :code:`@{args}`
+and passes all of them to another keyword using the same :code:`@{args}`
+syntax, the values are not recognized as named. See the example below:
 
 .. table:: Named arguments are not recognized from variable values
    :class: example
@@ -291,7 +291,7 @@ not recognized as named. See the example below:
    =============  ================  ============  ============
      Test Case          Action        Argument      Argument
    =============  ================  ============  ============
-   Example        wrapper           shell=true    # This will not come as a named argument to Start process
+   Example        wrapper           shell=True    # This will not come as a named argument to Start process
    =============  ================  ============  ============
 
 .. table::
@@ -334,7 +334,6 @@ support named arguments or not.
 
 .. note:: Prior to Robot Framework 2.8 named argument syntax did not work
           with test libraries using the `dynamic library API`_.
-
 
 Named arguments example
 ```````````````````````
@@ -381,6 +380,9 @@ If a keyword uses this syntax, all arguments at the end of the keyword
 call using the :code:`name=value` syntax, but not matching any other arguments,
 are passed to it as free keyword arguments.
 
+Using variables with free keyword arguments works exactly like when `using
+the named argument syntax`__.
+
 For a real life example of using kwargs, let's take a look at
 :name:`Run Process` keyword in the Process_ library. It has a signature
 :code:`command, *arguments, **configuration`, which means that it takes
@@ -407,6 +409,7 @@ your custom test libraries.
           libraries and perhaps also to user keywords in the future.
 
 __ http://docs.python.org/2/tutorial/controlflow.html#keyword-arguments
+__ `Named arguments with variables`_
 
 Arguments embedded to keyword names
 '''''''''''''''''''''''''''''''''''
