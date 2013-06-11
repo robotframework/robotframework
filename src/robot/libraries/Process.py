@@ -65,8 +65,8 @@ class Process(object):
     using this approach the caller is responsible on escaping.
 
     Examples:
-    | `Run Process` | ${progdir}/prog.exe      | first arg | second         |
-    | `Run Process` | prog1.py arg && prog2.py | shell=yes | cwd=${progdir} |
+    | `Run Process` | ${progdir}${/}prog.py        | first arg | second         |
+    | `Run Process` | script1.sh arg && script2.sh | shell=yes | cwd=${progdir} |
 
     = Process configuration =
 
