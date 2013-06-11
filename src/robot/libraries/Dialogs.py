@@ -80,9 +80,8 @@ def get_value_from_user(message, default_value=''):
     fails the keyword.
 
     Example:
-    | Do something | | | |
-    | ${value} = | Get Value From User | Enter new value  | default_value=1 |
-    | Do something with the value | ${value} | | |
+    | ${value} =   | Get Value From User | Enter new value  | default_value=1 |
+    | Do something | ${value} |
     """
     return _validate_user_input(InputDialog(message, default_value))
 
@@ -99,5 +98,5 @@ def get_selection_from_user(message, *values):
 def _validate_user_input(dialog):
     value = dialog.show()
     if value is None:
-        raise RuntimeError('No value provided by user')
+        raise RuntimeError('No value provided by user.')
     return value
