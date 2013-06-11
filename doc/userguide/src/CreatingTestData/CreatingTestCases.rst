@@ -267,6 +267,41 @@ Otherwise the order of the named arguments does not matter.
 .. note:: Prior to Robot Framework 2.8 it was not possible to name arguments
           that did not have a default value.
 
+Named arguments with variables
+``````````````````````````````
+
+Named argument values are passed forward as objects, so calling a keyword
+with a `variable with an object value`__ :code:`arg=${object}` will pass the
+variable `${object}` to keyword without converting it to a string.
+
+__ `Scalar variables`_
+
+Named argument syntax also requires the argument name to be written in the
+keyword call. This is important especially when wrapping keywords into other
+keywords. If for example a keyword takes a `variable number of arguments`_ like
+:code:`@{args}` and passes all of them to another keyword using the same
+:code:`@{args}` syntax, the values are not recognized as named. See the example
+below:
+
+.. table:: Named arguments are not recognized from variable values
+   :class: example
+
+   =============  ================  ============  ============
+     Test Case          Action        Argument      Argument
+   =============  ================  ============  ============
+   Example        wrapper           shell=true    # This will not come as a named argument to Start process
+   =============  ================  ============  ============
+
+.. table::
+   :class: example
+
+   =============  =================  =====================  ============  ============
+     Keyword            Action              Argument          Argument      Argument
+   =============  =================  =====================  ============  ============
+   Wrapper        [Arguments]        @{args}
+   \              Start process      MyProcess              @{args}       # named arguments are not recognized from inside @{args}
+   =============  =================  =====================  ============  ============
+
 Escaping named arguments syntax
 ```````````````````````````````
 
@@ -298,6 +333,7 @@ support named arguments or not.
 .. note:: Prior to Robot Framework 2.8 named argument syntax did not work
           with test libraries using the `dynamic library API`_.
 
+
 Named arguments example
 ```````````````````````
 
@@ -319,7 +355,7 @@ library keywords, user keywords, and when importing the Telnet_ test library.
    =============  ================  ============  ============  =============
      Test Case          Action        Argument      Argument      Argument
    =============  ================  ============  ============  =============
-   Example        Open connection   10.0.0.42     port=25       alias=example
+   Example        Open connection   10.0.0.42     port=${PORT}  alias=example
    \              List files        options=-lh
    \              List files        path=/tmp     options=-l
    =============  ================  ============  ============  =============
