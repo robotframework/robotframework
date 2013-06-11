@@ -29,11 +29,14 @@ class Result(object):
     """
 
     def __init__(self, source=None, root_suite=None, errors=None):
-        self.source = source                       #: Path to the XML file where results are read from.
-        self.suite = root_suite or TestSuite()     #: Hierarchical execution results as
-                                                   #: a :class:`~.testsuite.TestSuite` object.
-        self.errors = errors or ExecutionErrors()  #: Execution errors as an
-                                                   #: :class:`~.executionerrors.ExecutionErrors` object.
+        #: Path to the XML file where results are read from.
+        self.source = source
+        #: Hierarchical execution results as a
+        #: :class:`~.testsuite.TestSuite` object.
+        self.suite = root_suite or TestSuite()
+        #: Execution errors as a
+        #: :class:`~.executionerrors.ExecutionErrors` object.
+        self.errors = errors or ExecutionErrors()
         self.generated_by_robot = True
         self._status_rc = True
         self._stat_config = {}

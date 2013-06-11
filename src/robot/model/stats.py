@@ -22,16 +22,20 @@ class Stat(object):
     """
 
     def __init__(self, name):
-        self.name = name  #: Human readable identifier of the object these statistics
-                          #: belong to. Either `All Tests` or `Critical Tests` for
-                          #: :class:`~robot.model.totalstatistics.TotalStatistics`,
-                          #: long name of the suite for
-                          #: :class:`~robot.model.suitestatistics.SuiteStatistics`
-                          #: or name of the tag for
-                          #: :class:`~robot.model.tagstatistics.TagStatistics`
-        self.passed = 0   #: Number of passed tests.
-        self.failed = 0   #: Number of failed tests.
-        self.elapsed = 0  #: Number of milliseconds it took to execute.
+        #: Human readable identifier of the object these statistics
+        #: belong to. Either `All Tests` or `Critical Tests` for
+        #: :class:`~robot.model.totalstatistics.TotalStatistics`,
+        #: long name of the suite for
+        #: :class:`~robot.model.suitestatistics.SuiteStatistics`
+        #: or name of the tag for
+        #: :class:`~robot.model.tagstatistics.TagStatistics`
+        self.name = name
+        #: Number of passed tests.
+        self.passed = 0
+        #: Number of failed tests.
+        self.failed = 0
+        #: Number of milliseconds it took to execute.
+        self.elapsed = 0
         self._norm_name = normalize(name, ignore='_')
 
     def get_attributes(self, include_label=False, include_elapsed=False,
@@ -88,19 +92,23 @@ class Stat(object):
 class TotalStat(Stat):
     """Stores statistic values for a test run.
     """
-    type = 'total'  #: Always string `total`
+    #: Always string `total`
+    type = 'total'
 
 
 class SuiteStat(Stat):
     """Stores statistics values for a single suite.
     """
-    type = 'suite'  #: Always string `suite`
+    #: Always string `suite`
+    type = 'suite'
 
     def __init__(self, suite):
         Stat.__init__(self, suite.longname)
-        self.id = suite.id                #: Identifier of the suite, e.g. `s1-s2`.
-        self.elapsed = suite.elapsedtime  #: Number of milliseconds it took to execute this suite,
-                                          #: including sub-suites.
+        #: Identifier of the suite, e.g. `s1-s2`.
+        self.id = suite.id
+        #: Number of milliseconds it took to execute this suite,
+        #: including sub-suites.
+        self.elapsed = suite.elapsedtime
         self._name = suite.name
 
     def _get_custom_attrs(self):
@@ -117,19 +125,24 @@ class SuiteStat(Stat):
 class TagStat(Stat):
     """Stores statistic values for a single tag.
     """
-    type = 'tag'  #: Always string `tag`.
+    #: Always string `tag`.
+    type = 'tag'
 
     def __init__(self, name, doc='', links=None, critical=False,
                  non_critical=False, combined=''):
         Stat.__init__(self, name)
-        self.doc = doc                    #: Documentation of tag as a string.
-        self.links = links or []          #: List of tuples in which the first value is the link URL and
-                                          #: the second is the link title. An empty list by default.
-        self.critical = critical          #: ``True`` if tag is considered critical, ``False`` otherwise.
-        self.non_critical = non_critical  #: ``True`` if tag is considered non-critical,
-                                          #: ``False`` otherwise.
-        self.combined = combined          #: Pattern as a string if the tag is combined,
-                                          #: an empty string otherwise.
+        #: Documentation of tag as a string.
+        self.doc = doc
+        #: List of tuples in which the first value is the link URL and
+        #: the second is the link title. An empty list by default.
+        self.links = links or []
+        #: ``True`` if tag is considered critical, ``False`` otherwise.
+        self.critical = critical
+        #: ``True`` if tag is considered non-critical, ``False`` otherwise.
+        self.non_critical = non_critical
+        #: Pattern as a string if the tag is combined,
+        #: an empty string otherwise.
+        self.combined = combined
 
     @property
     def info(self):

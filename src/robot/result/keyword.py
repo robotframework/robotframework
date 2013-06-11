@@ -26,20 +26,24 @@ class Keyword(model.Keyword):
         """Results of a single keyword.
         """
         model.Keyword.__init__(self, name, doc, args, type, timeout)
-        self.status = status        #: String 'PASS' of 'FAIL'.
-        self.starttime = starttime  #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.endtime = endtime      #: Keyword execution end time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.message = ''           #: Log messages, a list of :class:`~.message.Message`
-                                    #: instances. Only used with suite teardowns.
+        #: String 'PASS' of 'FAIL'.
+        self.status = status
+        #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.starttime = starttime
+        #: Keyword execution end time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.endtime = endtime
+        #: Log messages, a list of :class:`~.message.Message`
+        #: instances. Only used with suite teardowns.
+        self.message = ''
 
     @property
     def elapsedtime(self):
-        """ Elapsed time in milliseconds.
+        """Elapsed execution time of the keyword in milliseconds.
         """
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
     @property
     def passed(self):
-        """ ``True`` if keyword did pass, ``False``otherwise.
+        """``True`` if the keyword did pass, ``False`` otherwise.
         """
         return self.status == 'PASS'

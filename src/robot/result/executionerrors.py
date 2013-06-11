@@ -26,8 +26,9 @@ class ExecutionErrors(object):
     message_class = Message
 
     def __init__(self, messages=None):
-        self.messages = messages  #:  A list-like object of :class:`~robot.model.message.Message`
-                                  #:  instances.
+        #: A :class:`list-like object <robot.model.itemlist.ItemList>` of
+        #: :class:`~robot.model.message.Message` instances.
+        self.messages = messages
 
     @setter
     def messages(self, msgs):

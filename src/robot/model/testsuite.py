@@ -32,15 +32,23 @@ class TestSuite(ModelObject):
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', metadata=None, source=None):
-        self.parent = None        #: Parent :class:`TestSuite` or `None`.
-        self.name = name          #: Test suite name.
-        self.doc = doc            #: Test suite documentation.
-        self.metadata = metadata  #: Test suite metadata as a dictionary.
-        self.source = source      #: Path to the source file or directory.
-        self.suites = []          #: A list of child :class:`~.testsuite.TestSuite` instances.
-        self.tests = []           #: A list of :class:`~.testcase.TestCase` instances.
-        self.keywords = []        #: A list containing setup and teardown as
-                                  #: :class:`~keyword.Keyword` instances.
+        #: Parent :class:`TestSuite` or `None`.
+        self.parent = None
+        #: Test suite name.
+        self.name = name
+        #: Test suite documentation.
+        self.doc = doc
+        #: Test suite metadata as a dictionary.
+        self.metadata = metadata
+        #: Path to the source file or directory.
+        self.source = source
+        #: A list of child :class:`~.testsuite.TestSuite` instances.
+        self.suites = []
+        #: A list of :class:`~.testcase.TestCase` instances.
+        self.tests = []
+        #: A list containing setup and teardown as
+        #: :class:`~keyword.Keyword` instances.
+        self.keywords = []
         self._my_visitors = []
 
     @property

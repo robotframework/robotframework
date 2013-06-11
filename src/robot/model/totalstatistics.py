@@ -21,10 +21,10 @@ class TotalStatistics(object):
     """
 
     def __init__(self):
-        self.critical = TotalStat('Critical Tests')  #: Instance of :class:`~robot.model.stats.TotalStat` for
-                                                     #: critical tests.
-        self.all = TotalStat('All Tests')            #: Instance of :class:`~robot.model.stats.TotalStat` for
-                                                     #: all the tests.
+        #: Instance of :class:`~robot.model.stats.TotalStat` for critical tests.
+        self.critical = TotalStat('Critical Tests')
+        #: Instance of :class:`~robot.model.stats.TotalStat` for all the tests.
+        self.all = TotalStat('All Tests')
 
     def visit(self, visitor):
         visitor.visit_total_statistics(self)

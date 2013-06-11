@@ -33,9 +33,12 @@ class Statistics(object):
                                            tag_stat_exclude, tag_stat_combine,
                                            tag_doc, tag_stat_link)
         suite.visit(StatisticsBuilder(total_builder, suite_builder, tag_builder))
-        self.total = total_builder.stats  #: Instance of :class:`~robot.model.totalstatistics.TotalStatistics`.
-        self.suite = suite_builder.stats  #: Instance of :class:`~robot.model.suitestatistics.SuiteStatistics`.
-        self.tags = tag_builder.stats     #: Instance of :class:`~robot.model.tagstatistics.TagStatistics`.
+        #: Instance of :class:`~robot.model.totalstatistics.TotalStatistics`.
+        self.total = total_builder.stats
+         #: Instance of :class:`~robot.model.suitestatistics.SuiteStatistics`.
+        self.suite = suite_builder.stats
+        #: Instance of :class:`~robot.model.tagstatistics.TagStatistics`.
+        self.tags = tag_builder.stats
 
     def visit(self, visitor):
         visitor.visit_statistics(self)

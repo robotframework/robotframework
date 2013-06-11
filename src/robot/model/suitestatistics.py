@@ -20,8 +20,10 @@ class SuiteStatistics(object):
     """
 
     def __init__(self, suite):
-        self.stat = SuiteStat(suite)  #: Instance of :class:`~robot.model.stats.SuiteStat`.
-        self.suites = []              #: List of :class:`~robot.model.testsuite.TestSuite` objects.
+        #: Instance of :class:`~robot.model.stats.SuiteStat`.
+        self.stat = SuiteStat(suite)
+        #: List of :class:`~robot.model.testsuite.TestSuite` objects.
+        self.suites = []
 
     def visit(self, visitor):
         visitor.visit_suite_statistics(self)

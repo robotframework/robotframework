@@ -27,13 +27,19 @@ class TestCase(ModelObject):
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None):
-        self.parent = None      #: :class:`~.testsuite.TestSuite` that contains this test.
-        self.name = name        #: Test case name.
-        self.doc = doc          #: Test case documentation.
-        self.tags = tags        #: Test case tags, a list of strings.
-        self.timeout = timeout  #: Test case timeout.
-        self.keywords = []      #: Keyword results, a list of :class:`~.keyword.Keyword`.
-                                #: instances and contains also possible setup and teardown keywords.
+        #: :class:`~.testsuite.TestSuite` that contains this test.
+        self.parent = None
+        #: Test case name.
+        self.name = name
+        #: Test case documentation.
+        self.doc = doc
+        #: Test case tags, a list of strings.
+        self.tags = tags
+        #: Test case timeout.
+        self.timeout = timeout
+        #: Keyword results, a list of :class:`~.keyword.Keyword`
+        #: instances and contains also possible setup and teardown keywords.
+        self.keywords = []
 
     @setter
     def tags(self, tags):
