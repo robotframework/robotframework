@@ -26,12 +26,12 @@ class TagStatistics(object):
     """
 
     def __init__(self, combined_stats):
-        self.tags = NormalizedDict(ignore=['_'])  #: Dictionary, where key is the name of the tag
-                                                  #: as a string and value is an instance of
-                                                  #: :class:`~robot.model.stats.TagStat`.
-        self.combined = combined_stats            #: Dictionary, where key is the name
-                                                  #: of the created tag as a string and value is an instance of
-                                                  #: :class:`~robot.model.stats.TagStat`.
+         #: Dictionary, where key is the name of the tag as a string and value
+         #: is an instance of :class:`~robot.model.stats.TagStat`.
+        self.tags = NormalizedDict(ignore=['_'])
+        #: Dictionary, where key is the name of the created tag as a string
+        # and value is an instance of :class:`~robot.model.stats.TagStat`.
+        self.combined = combined_stats
 
     def visit(self, visitor):
         visitor.visit_tag_statistics(self)

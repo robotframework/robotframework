@@ -28,13 +28,17 @@ class Message(ModelObject):
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  parent=None):
-        self.message = message  #: The message content as a string.
-        self.level = level      #: Severity of the message. Either ``TRACE``, ``INFO``,
-                                #: ``WARN``, ``DEBUG`` or ``FAIL``/``ERROR``.
-        self.html = html        #: ``True`` if the content is in HTML, ``False`` otherwise.
-        self.timestamp = timestamp  #: Timestamp in format ``%Y%m%d %H:%M:%S.%f``.
-        self.parent = parent    #: The object this message was triggered by.
-
+        #: The message content as a string.
+        self.message = message
+        #: Severity of the message. Either ``TRACE``, ``INFO``,
+        #: ``WARN``, ``DEBUG`` or ``FAIL``/``ERROR``.
+        self.level = level
+        #: ``True`` if the content is in HTML, ``False`` otherwise.
+        self.html = html
+        #: Timestamp in format ``%Y%m%d %H:%M:%S.%f``.
+        self.timestamp = timestamp
+        #: The object this message was triggered by.
+        self.parent = parent
     @property
     def html_message(self):
         """Returns the message content as HTML.

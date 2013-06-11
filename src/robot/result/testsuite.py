@@ -36,9 +36,12 @@ class TestSuite(model.TestSuite):
         """Result of a single test suite.
         """
         model.TestSuite.__init__(self, name, doc, metadata, source)
-        self.message = message      #: Suite setup/teardown error message.
-        self.starttime = starttime  #: Suite execution start time in format ``%Y%m%d %H:%M:%S.%f``.
-        self.endtime = endtime      #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
+        #: Suite setup/teardown error message.
+        self.message = message
+        #: Suite execution start time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.starttime = starttime
+        #: Suite execution end time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.endtime = endtime
         self._criticality = None
 
     @property
@@ -74,7 +77,7 @@ class TestSuite(model.TestSuite):
 
     @property
     def stat_message(self):
-        """String representation of suite's :attr:`statistics`."""
+        """String representation of the suite's :attr:`statistics`."""
         return self.statistics.message
 
     @property

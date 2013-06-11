@@ -37,7 +37,8 @@ class Keyword(model.Keyword):
         """Running model for single keyword.
         """
         model.Keyword.__init__(self, name=name, args=args, type=type)
-        self.assign = assign  #: Variables to be assigned.
+        #: Variables to be assigned.
+        self.assign = assign
 
     def is_for_loop(self):
         return False
@@ -47,6 +48,8 @@ class Keyword(model.Keyword):
 
     @property
     def keyword(self):
+        """ Name of the keyword.
+        """
         return self.name
 
 
@@ -82,12 +85,13 @@ class TestCase(model.TestCase):
         """Running model for single test case.
         """
         model.TestCase.__init__(self, name, doc, tags, timeout)
-        self.template = template  #: Name of the keyword that has been used as template
-                                  #: when building the test. `None` if no template used.
+        #: Name of the keyword that has been used as template
+        #: when building the test. `None` if no is template used.
+        self.template = template
 
     @setter
     def timeout(self, timeout):
-        """Timeout limit of the test case
+        """Timeout limit of the test case as an instance of :class:`~.Timeout`
         """
         return Timeout(*timeout) if timeout else None
 
@@ -101,11 +105,14 @@ class TestSuite(model.TestSuite):
         """Running model for single test suite.
         """
         model.TestSuite.__init__(self, name, doc, metadata, source)
-        self.imports = []        #: Imports the suite contains.
-        self.user_keywords = []  #: User keywords defined in the same file as the
-                                 #: suite. **Likely to change or to be removed.**
-        self.variables = []      #: Variables defined in the same file as the suite.
-                                 #: **Likely to change or to be removed.**
+        #: Imports the suite contains.
+        self.imports = []
+        #: User keywords defined in the same file as the suite.
+        #: **Likely to change or to be removed.**
+        self.user_keywords = []
+        #: Variables defined in the same file as the suite.
+        #: **Likely to change or to be removed.**
+        self.variables = []
 
     @setter
     def imports(self, imports):

@@ -32,17 +32,25 @@ class Keyword(ModelObject):
     message_class = Message
 
     def __init__(self, name='', doc='', args=(), type='kw', timeout=None):
-        self.parent = None      #: :class:`~.testsuite.TestSuite` or
-                                #: :class:`~.testcase.TestCase` that contains this keyword.
-        self.name = name        #: Keyword name.
-        self.doc = doc          #: Keyword documentation.
-        self.args = args        #: Keyword arguments, a list of strings.
-        self.type = type        #: 'SETUP', 'TEARDOWN' or 'KW'.
-        self.timeout = timeout  #: Keyword timeout.
-        self.messages = []      #: Keyword messages, a list of
-                                #: :class:`~robot.model.message.Messages` instances.
-        self.keywords = []      #: Child keyword results, a list of
-                                #: :class:`~.Keyword`. instances
+        #: :class:`~.testsuite.TestSuite` or
+        #: :class:`~.testcase.TestCase` that contains this keyword.
+        self.parent = None
+        #: Keyword name.
+        self.name = name
+        #: Keyword documentation.
+        self.doc = doc
+        #: Keyword arguments, a list of strings.
+        self.args = args
+        #: 'SETUP', 'TEARDOWN' or 'KW'.
+        self.type = type
+          #: Keyword timeout.
+        self.timeout = timeout
+        #: Keyword messages, a list of
+        #: :class:`~robot.model.message.Messages` instances.
+        self.messages = []
+        #: Child keyword results, a list of
+        #: :class:`~.Keyword`. instances
+        self.keywords = []
 
     @setter
     def keywords(self, keywords):
