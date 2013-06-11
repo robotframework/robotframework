@@ -66,7 +66,7 @@ Wait For Process Which Does Not Exist
 
 Lot of output
     [Tags]    performance
-    ${stdout}=    Normalize Path    %{TEMPDIR}${/}stdout.txt
+    ${stdout}=    Normalize Path    %{TEMPDIR}/stdout.txt
     ${handle}=    Run Process    python -c "for i in range(350000): \tprint 'a'*400"    shell=True    stdout=${stdout}    stderr=STDOUT
     File Should Not Be Empty    ${stdout}
     [Teardown]    Run Keyword And Ignore Error    Remove File    ${stdout}

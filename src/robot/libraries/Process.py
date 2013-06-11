@@ -17,8 +17,8 @@ from __future__ import with_statement
 import os
 import subprocess
 
-from robot.utils import (ConnectionCache, encode_to_system, decode_from_system,
-                         get_env_vars)
+from robot.utils import (ConnectionCache, abspath, encode_to_system,
+                         decode_from_system, get_env_vars)
 from robot.version import get_version
 from robot.api import logger
 
@@ -106,13 +106,15 @@ class Process(object):
     By default the child process will be executed in the same directory
     as the parent process, the process running tests, is executed. This
     can be changed by giving an alternative location using the `cwd` argument.
+    Forward slashes in the given path are automatically converted to
+    backslashes on Windows.
 
     `Standard output and error streams`, when redirected to files,
     are also relative to the current working directory possibly set using
     the `cwd` argument.
 
     Example:
-    | `Run Process` | prog.exe | cwd=c:\\\\temp | stdout=stdout.txt |
+    | `Run Process` | prog.exe | cwd=${ROOT}/directory | stdout=stdout.txt |
 
     == Environment variables ==
 
@@ -139,11 +141,10 @@ class Process(object):
     and `stderr` arguments to specify files on the file system where to
     redirect the outputs. This can also be useful if other processes or
     other keywords need to read or manipulate the outputs somehow.
-    Given `stdout` and `stderr` paths are relative to the `current working
-    directory`.
 
-    *Note:* The created files are not automatically removed after the test run
-    and the user is responsible of removing the output files if needed.
+    Given `stdout` and `stderr` paths are relative to the `current working
+    directory`. Forward slashes in the given paths are automatically converted
+    to backslashes on Windows.
 
     As a special feature, it is possible to redirect the standard error to
     the standard output by using `stderr=STDOUT`.
@@ -156,6 +157,9 @@ class Process(object):
     | `Log Many`  | stdout: ${result.stdout} | stderr: ${result.stderr} |
     | ${result} = | `Run Process` | program | stderr=STDOUT |
     | `Log`       | all output: ${result.stdout} |
+
+    *Note:* The created output files are not automatically removed after
+    the test run. The user is responsible to remove them if needed.
 
     == Alias ==
 
@@ -484,15 +488,21 @@ class ProcessConfig(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
                  alias=None, env=None, **rest):
-        self.cwd = cwd or os.path.abspath(os.curdir)
+        self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout)
         self.shell = bool(shell)
         self.alias = alias
         self.env = self._construct_env(env, rest)
 
+    def _get_cwd(self, cwd):
+        if cwd:
+            return cwd.replace('/', os.sep)
+        return abspath('.')
+
     def _new_stream(self, name):
         if name:
+            name = name.replace('/', os.sep)
             return open(os.path.join(self.cwd, name), 'w')
         return subprocess.PIPE
 
