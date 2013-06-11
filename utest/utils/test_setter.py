@@ -4,17 +4,22 @@ from robot.utils.asserts import assert_equal, assert_raises
 from robot.utils.setter import setter, SetterAwareType
 
 
-class Example(object):
+class ExampleWithSlots(object):
+    __slots__ = []
+    __metaclass__ = SetterAwareType
+
     @setter
     def attr(self, value):
         return value * 2
 
-class ExampleWithSlots(object):
-    __slots__ = []
-    __metaclass__ = SetterAwareType
     @setter
-    def attr(self, value):
-        return value * 2
+    def with_doc(self, value):
+        """The doc string."""
+        return value
+
+
+class Example(ExampleWithSlots):
+    __metaclass__ = type
 
 
 class TestSetter(unittest.TestCase):
@@ -32,6 +37,10 @@ class TestSetter(unittest.TestCase):
     def test_set_other_attr(self):
         self.item.other_attr = 1
         assert_equal(self.item.other_attr, 1)
+
+    def test_copy_doc(self):
+        assert_equal(type(self.item).attr.__doc__, None)
+        assert_equal(type(self.item).with_doc.__doc__, "The doc string.")
 
 
 class TestSetterWithSlotsAndSetterAwareType(TestSetter):
