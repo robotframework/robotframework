@@ -370,43 +370,18 @@ class Process(object):
         See `Stopping process` for more details.
         """
         process = self._process(handle)
-
-        # TODO: Is pre 2.6 support needed? If yes, and it works, docs need to be changed.
-        # This should be enough to check if we are dealing with <2.6 Python
-        if not hasattr(process, 'kill'):
-            self._terminate_process(process)
-            return
         try:
-            if kill:
-                logger.info('calling subprocess.Popen.kill()')
-                process.kill()
-            else:
-                logger.info('calling subprocess.Popen.terminate()')
-                process.terminate()
+            terminator = process.kill if kill else process.terminate
+        except AttributeError:
+            raise RuntimeError('Terminating processes is not supported '
+                               'by this interpreter version.')
+        logger.info('Killing process.' if kill else 'Terminating process.')
+        try:
+            terminator()
         except OSError:
-            logger.debug('OSError during process termination')
             if process.poll() is None:
-                logger.debug('Process still alive raising exception')
                 raise
-            logger.debug('Process is not executing - consuming OSError')
-
-    def _terminate_process(self, theprocess):
-        if sys.platform == 'win32':
-            logger.info('terminating process using ctypes.windll.kernel32')
-            import ctypes
-            PROCESS_TERMINATE = 1
-            handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE,
-                                                        False,
-                                                        theprocess.pid)
-            ctypes.windll.kernel32.TerminateProcess(handle, -1)
-            ctypes.windll.kernel32.CloseHandle(handle)
-        else:
-            pid = theprocess.pid
-            if pid is not None:
-                logger.info('terminating process using os.kill')
-                os.kill(pid, signal.SIGKILL)
-            else:
-                raise AssertionError('None Pid - can not kill process!')
+            logger.debug('Ignored OSError because process was stopped.')
 
     def terminate_all_processes(self, kill=True):
         """Terminates all still running processes started by this library.
