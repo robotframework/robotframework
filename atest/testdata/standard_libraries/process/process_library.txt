@@ -160,15 +160,6 @@ Current working directory should not be used with stdout and stderr when absolut
     ...   Remove Directory    %{TEMPDIR}${/}hc    recursive=True    AND
     ...   Remove File    ${stdout_path}
 
-Piped stdout
-    ${result}=    Run Process    python    -c   print 'hello'    stdout=PIPE
-    Should Match    ${result.stdout}    *hello*
-
-Piped stderr
-    ${result}=    Run Process    python    -c   1/0    stderr=PIPE
-    Should Match    ${result.stderr}    *ZeroDivisionError*
-
-
 *** Keywords ***
 Restart Suite Process If Needed
     ${alive}=    Is Process Running    suite_process
