@@ -19,7 +19,8 @@ import signal
 import subprocess
 import sys
 
-from robot.utils import ConnectionCache, encode_to_system, decode_from_system
+from robot.utils import (ConnectionCache, encode_to_system, decode_from_system,
+                         get_env_vars)
 from robot.version import get_version
 from robot.api import logger
 
@@ -547,7 +548,7 @@ class ProcessConfig(object):
             if not key.startswith('env:'):
                 raise RuntimeError("'%s' is not supported by this keyword." % key)
             if env is None:
-                env = os.environ.copy()
+                env = get_env_vars(upper=False)
             env[key[4:]] = rest[key]
         if env:
             env = dict((encode_to_system(key), encode_to_system(env[key]))
