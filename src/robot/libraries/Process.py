@@ -113,8 +113,12 @@ class Process(object):
     as the parent process, the process running tests, is executed. This
     can be changed by giving an alternative location using the `cwd` argument.
 
+    `Standard output and error streams`, when redirected to files,
+    are also relative to the current working directory possibly set using
+    the `cwd` argument.
+
     Example:
-    | `Run Process` | prog.exe | cwd=c:\\\\temp |
+    | `Run Process` | prog.exe | cwd=c:\\\\temp | stdout=stdout.txt |
 
     == Environment variables ==
 
@@ -141,6 +145,8 @@ class Process(object):
     and `stderr` arguments to specify files on the file system where to
     redirect the outputs. This can also be useful if other processes or
     other keywords need to read or manipulate the outputs somehow.
+    Given `stdout` and `stderr` paths are relative to the `current working
+    directory`.
 
     As a special feature, it is possible to redirect the standard error to
     the standard output by using `stderr=STDOUT`.
@@ -153,11 +159,6 @@ class Process(object):
     | `Log Many`  | stdout: ${result.stdout} | stderr: ${result.stderr} |
     | ${result} = | `Run Process` | program | stderr=STDOUT |
     | `Log`       | all output: ${result.stdout} |
-
-    TODO:
-    - Document issues with Jython/Ipy.
-    - Document are stdout/stderr files relative to the cwd or what.
-    - Replace / with \ in stdout/stderr paths on Windows? Also in command?
 
     == Alias ==
 
@@ -519,15 +520,13 @@ class ProcessConfig(object):
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
                  alias=None, env=None, **rest):
         self.cwd = cwd or os.path.abspath(os.curdir)
-        self.stdout_stream = self._new_stream(stdout, 'stdout')
+        self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout)
         self.shell = bool(shell)
         self.alias = alias
         self.env = self._construct_env(env, rest)
 
-    def _new_stream(self, name, postfix):
-        if name == 'PIPE':
-            return subprocess.PIPE
+    def _new_stream(self, name):
         if name:
             return open(os.path.join(self.cwd, name), 'w')
         return subprocess.PIPE
@@ -538,7 +537,7 @@ class ProcessConfig(object):
                 if self.stdout_stream == subprocess.PIPE:
                     return subprocess.STDOUT
                 return self.stdout_stream
-        return self._new_stream(stderr, 'stderr')
+        return self._new_stream(stderr)
 
     def _construct_env(self, env, rest):
         for key in rest:
@@ -560,4 +559,4 @@ stderr_stream = %s
 shell = %r
 alias = %s
 env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
-            self.shell, self.alias, self.env))
+               self.shell, self.alias, self.env))
