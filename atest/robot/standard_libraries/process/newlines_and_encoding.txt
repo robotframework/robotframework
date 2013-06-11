@@ -29,3 +29,4 @@ Newline test using shell=False
 *** Keywords ***
 Check Preconditions
     Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression
+    Set Environment Variable     GLOBAL_TEST_ENCODING_VAR    t€stvär
