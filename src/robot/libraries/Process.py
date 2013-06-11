@@ -484,13 +484,13 @@ class ExecutionResult(object):
             self._stdout = self._construct_stdout()
         if self._stdout.endswith('\n'):
             self._stdout = self._stdout[:-1]
-        return self._stdout
+        return decode_from_system(self._stdout)
 
     def _construct_stdout(self):
         if not self.stdout_path:
-            return decode_from_system(self._process.stdout.read())
+            return self._process.stdout.read()
         with open(self.stdout_path, 'r') as f:
-            return decode_from_system(f.read())
+            return f.read()
 
     @property
     def stderr(self):
