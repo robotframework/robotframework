@@ -24,15 +24,12 @@ class _TkDialog(Toplevel):
 
     def __init__(self, message, value=None):
         self._prevent_execution_with_timeouts()
-        Toplevel.__init__(self, self._get_parent())
-        self._init_dialog()
+        self._parent = self._get_parent()
+        Toplevel.__init__(self, self._parent)
+        self._initialize_dialog()
         self._create_body(message, value)
         self._create_buttons()
         self._result = None
-
-    def show(self):
-        self.wait_window(self)
-        return self._result
 
     def _prevent_execution_with_timeouts(self):
         if 'linux' not in sys.platform \
@@ -45,7 +42,7 @@ class _TkDialog(Toplevel):
         parent.withdraw()
         return parent
 
-    def _init_dialog(self):
+    def _initialize_dialog(self):
         self.title('Robot Framework')
         self.grab_set()
         self.protocol("WM_DELETE_WINDOW", self._right_button_clicked)
@@ -91,20 +88,28 @@ class _TkDialog(Toplevel):
     def _left_button_clicked(self, event=None):
         if self._validate_value():
             self._result = self._get_value()
-            self.destroy()
-
-    def _get_value(self):
-        return None
+            self._close()
 
     def _validate_value(self):
         return True
 
+    def _get_value(self):
+        return None
+
+    def _close(self):
+        # self.destroy() is not enough on Linux
+        self._parent.destroy()
+
     def _right_button_clicked(self, event=None):
         self._result = self._get_right_button_value()
-        self.destroy()
+        self._close()
 
     def _get_right_button_value(self):
         return None
+
+    def show(self):
+        self.wait_window(self)
+        return self._result
 
 
 class MessageDialog(_TkDialog):
