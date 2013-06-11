@@ -24,24 +24,12 @@ class TestCase(model.TestCase):
     def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
                  message='', starttime=None, endtime=None):
         """Results of a single test case.
-
-        :ivar name: Test case name.
-        :ivar parent: :class:`~.testsuite.TestSuite` that contains this test.
-        :ivar doc: Test case documentation.
-        :ivar tags: Test case tags, a list of strings.
-        :ivar timeout: Test case timeout.
-        :ivar keywords: Keyword results, a list of :class:`~.keyword.Keyword`.
-            instances and contains also possible setup and teardown keywords.
-        :ivar status: String 'PASS' of 'FAIL'.
-        :ivar message: Possible failure message.
-        :ivar starttime: Test case execution start time as a timestamp.
-        :ivar endtime: Test case execution end time as a timestamp.
         """
         model.TestCase.__init__(self, name, doc, tags, timeout)
-        self.status = status
-        self.message = message
-        self.starttime = starttime
-        self.endtime = endtime
+        self.status = status        #: String 'PASS' of 'FAIL'.
+        self.message = message      #: Possible failure message.
+        self.starttime = starttime  #: Test case execution start time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.endtime = endtime      #: Test case execution end time in format ``%Y%m%d %H:%M:%S.%f``.
 
     @property
     def elapsedtime(self):

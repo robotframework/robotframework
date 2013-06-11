@@ -17,14 +17,11 @@ from .stats import SuiteStat
 
 class SuiteStatistics(object):
     """Container for suite statistics.
-
-    :ivar stat: Instance of :class:`~robot.model.stats.SuiteStat`.
-    :ivar suites: List of :class:`~robot.model.testsuite.TestSuite` objects.
     """
 
     def __init__(self, suite):
-        self.stat = SuiteStat(suite)
-        self.suites = []
+        self.stat = SuiteStat(suite)  #: Instance of :class:`~robot.model.stats.SuiteStat`.
+        self.suites = []              #: List of :class:`~robot.model.testsuite.TestSuite` objects.
 
     def visit(self, visitor):
         visitor.visit_suite_statistics(self)

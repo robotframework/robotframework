@@ -35,14 +35,9 @@ class Keyword(model.Keyword):
 
     def __init__(self, name='', args=(), assign=(), type='kw'):
         """Running model for single keyword.
-
-        :ivar name: Name of the keyword.
-        :ivar args: Arguments for the keyword.
-        :ivar assign: Variables to be assigned.
-        :ivar type: Keyword type. Either 'kw', 'setup', or 'teardown'
         """
         model.Keyword.__init__(self, name=name, args=args, type=type)
-        self.assign = assign
+        self.assign = assign  #: Variables to be assigned.
 
     def is_for_loop(self):
         return False
@@ -85,19 +80,15 @@ class TestCase(model.TestCase):
 
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None):
         """Running model for single test case.
-
-        :ivar name: Name of the test case.
-        :ivar doc: Documentation of the test case.
-        :ivar tags: Tags of the test case.
-        :ivar timeout: Timeout limit of the test case
-        :ivar template: Name of the keyword that has been used as template
-            when building the test. `None` if no template used.
         """
         model.TestCase.__init__(self, name, doc, tags, timeout)
-        self.template = template
+        self.template = template  #: Name of the keyword that has been used as template
+                                  #: when building the test. `None` if no template used.
 
     @setter
     def timeout(self, timeout):
+        """Timeout limit of the test case
+        """
         return Timeout(*timeout) if timeout else None
 
 
@@ -108,26 +99,13 @@ class TestSuite(model.TestSuite):
 
     def __init__(self,  name='', doc='', metadata=None, source=None):
         """Running model for single test suite.
-
-        :ivar parent: Parent :class:`TestSuite` or `None`.
-        :ivar name: Test suite name.
-        :ivar doc: Test suite documentation.
-        :ivar metadata: Test suite metadata as a dictionary.
-        :ivar source: Path to the source file or directory.
-        :ivar suites: Child suites.
-        :ivar tests: A list of :class:`~.testcase.TestCase` instances.
-        :ivar keywords: A list containing setup and teardown as
-            :class:`~robot.running.model.Keyword` objects.
-        :ivar imports: Imports the suite contains.
-        :ivar user_keywords: User keywords defined in the same file as the
-            suite. **Likely to change or to be removed.**
-        :ivar variables: Variables defined in the same file as the suite.
-            **Likely to change or to be removed.**
         """
         model.TestSuite.__init__(self, name, doc, metadata, source)
-        self.imports = []
-        self.user_keywords = []
-        self.variables = []
+        self.imports = []        #: Imports the suite contains.
+        self.user_keywords = []  #: User keywords defined in the same file as the
+                                 #: suite. **Likely to change or to be removed.**
+        self.variables = []      #: Variables defined in the same file as the suite.
+                                 #: **Likely to change or to be removed.**
 
     @setter
     def imports(self, imports):

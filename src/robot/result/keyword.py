@@ -24,32 +24,22 @@ class Keyword(model.Keyword):
     def __init__(self, name='', doc='', args=(), type='kw', timeout='',
                  status='FAIL', starttime=None, endtime=None):
         """Results of a single keyword.
-
-        :ivar name: Keyword name.
-        :ivar parent: :class:`~.testsuite.TestSuite` or
-            :class:`~.testcase.TestCase` that contains this keyword.
-        :ivar doc: Keyword documentation.
-        :ivar args: Keyword arguments, a list of strings.
-        :ivar type: 'SETUP', 'TEARDOWN' or 'KW'.
-        :ivar timeout: Keyword timeout.
-        :ivar messages: Log messages, a list of :class:`~.message.Message`
-            instances.
-        :ivar keywords: Child keyword results, a list of
-            :class:`~.Keyword`. instances
-        :ivar status: String 'PASS' of 'FAIL'.
-        :ivar starttime: Keyword execution start time as a timestamp.
-        :ivar endtime: Keyword execution end time as a timestamp.
         """
         model.Keyword.__init__(self, name, doc, args, type, timeout)
-        self.status = status
-        self.starttime = starttime
-        self.endtime = endtime
-        self.message = ''  # only used with suite teardowns
+        self.status = status        #: String 'PASS' of 'FAIL'.
+        self.starttime = starttime  #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.endtime = endtime      #: Keyword execution end time in format ``%Y%m%d %H:%M:%S.%f``.
+        self.message = ''           #: Log messages, a list of :class:`~.message.Message`
+                                    #: instances. Only used with suite teardowns.
 
     @property
     def elapsedtime(self):
+        """ Elapsed time in milliseconds.
+        """
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
     @property
     def passed(self):
+        """ ``True`` if keyword did pass, ``False``otherwise.
+        """
         return self.status == 'PASS'

@@ -18,16 +18,13 @@ from .visitor import SuiteVisitor
 
 class TotalStatistics(object):
     """Container for total statistics.
-
-    :ivar critical: Instance of :class:`~robot.model.stats.TotalStat` for
-                    critical tests.
-    :ivar all: Instance of :class:`~robot.model.stats.TotalStat` for
-               all the tests.
     """
 
     def __init__(self):
-        self.critical = TotalStat('Critical Tests')
-        self.all = TotalStat('All Tests')
+        self.critical = TotalStat('Critical Tests')  #: Instance of :class:`~robot.model.stats.TotalStat` for
+                                                     #: critical tests.
+        self.all = TotalStat('All Tests')            #: Instance of :class:`~robot.model.stats.TotalStat` for
+                                                     #: all the tests.
 
     def visit(self, visitor):
         visitor.visit_total_statistics(self)

@@ -26,18 +26,14 @@ class Result(object):
     Can be created based on XML output files using
     the :func:`~.resultbuilder.ExecutionResult` factory method.
     Also returned by executed :class:`~robot.running.model.TestSuite`.
-
-    :ivar source: Path to the XML file where results are read from.
-    :ivar suite: Hierarchical execution results as
-        a :class:`~.testsuite.TestSuite` object.
-    :ivar errors: Execution errors as
-        an :class:`~.executionerrors.ExecutionErrors` object.
     """
 
     def __init__(self, source=None, root_suite=None, errors=None):
-        self.source = source
-        self.suite = root_suite or TestSuite()
-        self.errors = errors or ExecutionErrors()
+        self.source = source                       #: Path to the XML file where results are read from.
+        self.suite = root_suite or TestSuite()     #: Hierarchical execution results as
+                                                   #: a :class:`~.testsuite.TestSuite` object.
+        self.errors = errors or ExecutionErrors()  #: Execution errors as an
+                                                   #: :class:`~.executionerrors.ExecutionErrors` object.
         self.generated_by_robot = True
         self._status_rc = True
         self._stat_config = {}
