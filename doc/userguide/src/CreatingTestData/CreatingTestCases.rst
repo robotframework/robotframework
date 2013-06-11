@@ -270,18 +270,20 @@ Otherwise the order of the named arguments does not matter.
 Named arguments with variables
 ``````````````````````````````
 
-Named argument values are passed forward as objects, so calling a keyword
-with a `variable with an object value`__ :code:`arg=${object}` will pass the
-variable `${object}` to keyword without converting it to a string.
+It is possible to use `variables`_ in named argument values.
+As when using `scalar variables`_, if the value is a single variable,
+it is passed to the keyword as-is. This allows using any objects, not only
+strings, as values also when using the named argument syntax. For example
+calling a keyword with a named variable value :code:`arg=${object}` will pass
+the variable `${object}` to keyword without converting it to a string.
 
-__ `Scalar variables`_
-
-Named argument syntax also requires the argument name to be written in the
-keyword call. This is important especially when wrapping keywords into other
-keywords. If for example a keyword takes a `variable number of arguments`_ like
-:code:`@{args}` and passes all of them to another keyword using the same
-:code:`@{args}` syntax, the values are not recognized as named. See the example
-below:
+Using variables that contain a value like :code:`name=value` does not
+trigger the named argument usage. This is because named argument syntax requires
+the argument name to be written in the keyword call. This is important
+especially when wrapping keywords into other keywords. If for example a keyword
+takes a `variable number of arguments`_ like :code:`@{args}` and passes all of
+them to another keyword using the same :code:`@{args}` syntax, the values are
+not recognized as named. See the example below:
 
 .. table:: Named arguments are not recognized from variable values
    :class: example
