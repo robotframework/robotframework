@@ -282,8 +282,8 @@ class Process(object):
         finally:
             if active_process_index is not None:
                 self._started_processes.switch(active_process_index)
-
-        # TODO: Apparently the process is still left to the cache
+            else:
+                self._started_processes.empty_cache()
 
     def start_process(self, command, *arguments, **configuration):
         """Starts a new process on background.
@@ -454,9 +454,10 @@ class Process(object):
         self._started_processes.switch(handle)
 
     def _process(self, handle):
-        # TODO: Handle errors when using invalid handle or when no processes running.
         if handle:
             return self._started_processes.get_connection(handle)
+        if self._started_processes.current_index is None:
+            raise RuntimeError("No active process.")
         return self._started_processes.current
 
 
@@ -499,7 +500,7 @@ class ExecutionResult(object):
             self._stderr = self._construct_stderr()
         if self._stderr.endswith('\n'):
             self._stderr = self._stderr[:-1]
-        return self._stderr
+        return decode_from_system(self._stderr)
 
     def _construct_stderr(self):
         if self.stderr_path == subprocess.STDOUT:
@@ -509,12 +510,17 @@ class ExecutionResult(object):
         with open(self.stderr_path, 'r') as f:
             return f.read()
 
-    # TODO: attribute names are wrong. should also somehow show that stdout and stderr are available
     def __str__(self):
         return """\
-stdout_name : %s
-stderr_name : %s
-exit_code   : %d""" % (self.stdout_path, self.stderr_path, self.rc)
+stdout_path : %s
+stdout : %s
+stderr_path : %s
+stderr : %s
+rc : %d""" % (self.stdout_path if self.stdout_path else "PIPE",
+                type(self.stdout),
+                self.stderr_path if self.stderr_path else "PIPE",
+                type(self.stderr),
+                self.rc)
 
 
 class ProcessConfig(object):

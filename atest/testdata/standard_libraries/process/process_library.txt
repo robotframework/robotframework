@@ -158,6 +158,7 @@ Piped stderr
     ${result}=    Run Process    python    -c   1/0    stderr=PIPE
     Should Match    ${result.stderr}    *ZeroDivisionError*
 
+
 *** Keywords ***
 Restart Suite Process If Needed
     ${alive}=    Is Process Running    suite_process

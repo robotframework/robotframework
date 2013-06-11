@@ -1,0 +1,14 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/no_active_process.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+No active process
+    Check Test Case    ${TESTNAME}
+
+No active process after run process
+    Check Test Case    ${TESTNAME}
+
+Invalid handle
+    Check Test Case    ${TESTNAME}
