@@ -15,9 +15,7 @@
 from __future__ import with_statement
 
 import os
-import signal
 import subprocess
-import sys
 
 from robot.utils import (ConnectionCache, encode_to_system, decode_from_system,
                          get_env_vars)
