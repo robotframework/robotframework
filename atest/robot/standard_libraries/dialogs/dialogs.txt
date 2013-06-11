@@ -34,6 +34,9 @@ Get Selection From User
 Get Selection From User Cancelled
     Check Test Case  ${TESTNAME}
 
+Multiple dialogs in a row
+    Check Test Case  ${TESTNAME}
+
 Dialog and timeout
     [Tags]    regression  jybot  manual
     Run Tests  --include jybot_only  standard_libraries/dialogs/dialogs.txt

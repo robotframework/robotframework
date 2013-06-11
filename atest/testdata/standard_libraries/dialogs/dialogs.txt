@@ -43,6 +43,13 @@ Get Selection From User Cancelled
     [Documentation]  FAIL No value provided by user
     Get Selection From User    Press Cancel.    zip    zap    foo
 
+Multiple dialogs in a row
+    [Documentation]  FAIL No value provided by user
+    Pause Execution    Verify that dialog is closed immediately.\n\nAfter pressing Ok.
+    Sleep    1s
+    Get Value From User    Verify that dialog is closed immediately.\n\nAfter pressing Cancel.
+    [Teardown]    Sleep    1s
+
 Dialog and timeout
     [Timeout]  1s
     [Tags]     jybot_only

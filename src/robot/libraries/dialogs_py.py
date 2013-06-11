@@ -24,7 +24,8 @@ class _TkDialog(Toplevel):
 
     def __init__(self, message, value=None):
         self._prevent_execution_with_timeouts()
-        Toplevel.__init__(self, self._get_parent())
+        self._parent = self._get_parent()
+        Toplevel.__init__(self, self._parent)
         self._initialize_dialog()
         self._create_body(message, value)
         self._create_buttons()
@@ -87,7 +88,7 @@ class _TkDialog(Toplevel):
     def _left_button_clicked(self, event=None):
         if self._validate_value():
             self._result = self._get_value()
-            self.destroy()
+            self._close()
 
     def _validate_value(self):
         return True
@@ -95,9 +96,13 @@ class _TkDialog(Toplevel):
     def _get_value(self):
         return None
 
+    def _close(self):
+        # self.destroy() is not enough on Linux
+        self._parent.destroy()
+
     def _right_button_clicked(self, event=None):
         self._result = self._get_right_button_value()
-        self.destroy()
+        self._close()
 
     def _get_right_button_value(self):
         return None
