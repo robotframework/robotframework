@@ -120,3 +120,28 @@ libraries Package
     :members:
     :undoc-members:
     :show-inheritance:
+
+:mod:`dialogs_ipy` Module
+-------------------------
+
+.. automodule:: robot.libraries.dialogs_ipy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`dialogs_jy` Module
+------------------------
+
+.. automodule:: robot.libraries.dialogs_jy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`dialogs_py` Module
+------------------------
+
+.. automodule:: robot.libraries.dialogs_py
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
