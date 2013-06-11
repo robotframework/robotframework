@@ -30,12 +30,12 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 
 
 class Keyword(model.Keyword):
+    """Running model for single keyword."""
     __slots__ = ['assign']
     message_class = None  # TODO: Remove from base model?
 
     def __init__(self, name='', args=(), assign=(), type='kw'):
-        """Running model for single keyword.
-        """
+
         model.Keyword.__init__(self, name=name, args=args, type=type)
         #: Variables to be assigned.
         self.assign = assign
@@ -48,8 +48,7 @@ class Keyword(model.Keyword):
 
     @property
     def keyword(self):
-        """ Name of the keyword.
-        """
+        """Name of the keyword."""
         return self.name
 
 
@@ -78,12 +77,11 @@ class ForLoop(Keyword):
 
 
 class TestCase(model.TestCase):
+    """Running model for single test case."""
     __slots__ = ['template']
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None, template=None):
-        """Running model for single test case.
-        """
         model.TestCase.__init__(self, name, doc, tags, timeout)
         #: Name of the keyword that has been used as template
         #: when building the test. `None` if no is template used.
@@ -91,19 +89,20 @@ class TestCase(model.TestCase):
 
     @setter
     def timeout(self, timeout):
-        """Timeout limit of the test case as an instance of :class:`~.Timeout`
+        """Timeout limit of the test case as an instance of
+        :class:`~.Timeout.
         """
         return Timeout(*timeout) if timeout else None
 
 
 class TestSuite(model.TestSuite):
+    """Running model for single test suite."""
     __slots__ = []
     test_class = TestCase
     keyword_class = Keyword
 
     def __init__(self,  name='', doc='', metadata=None, source=None):
-        """Running model for single test suite.
-        """
+
         model.TestSuite.__init__(self, name, doc, metadata, source)
         #: Imports the suite contains.
         self.imports = []

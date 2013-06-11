@@ -17,8 +17,7 @@ from .visitor import SuiteVisitor
 
 
 class TotalStatistics(object):
-    """Container for total statistics.
-    """
+    """Container for total statistics."""
 
     def __init__(self):
         #: Instance of :class:`~robot.model.stats.TotalStat` for critical tests.

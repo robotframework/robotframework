@@ -18,13 +18,12 @@ from keyword import Keyword
 
 
 class TestCase(model.TestCase):
+    """Results of a single test case."""
     __slots__ = ['status', 'message', 'starttime', 'endtime']
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None, status='FAIL',
                  message='', starttime=None, endtime=None):
-        """Results of a single test case.
-        """
         model.TestCase.__init__(self, name, doc, tags, timeout)
         #: String 'PASS' of 'FAIL'.
         self.status = status
@@ -37,19 +36,18 @@ class TestCase(model.TestCase):
 
     @property
     def elapsedtime(self):
-        """Elapsed execution time of the test case in milliseconds.
-        """
+        """Elapsed execution time of the test case in milliseconds."""
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
     @property
     def passed(self):
-        """``True`` if the test case did pass, ``False`` otherwise.
-        """
+        """``True`` if the test case did pass, ``False`` otherwise."""
         return self.status == 'PASS'
 
     @property
     def critical(self):
-        """``True`` if the test case is marked as critical, ``False`` otherwise.
+        """``True`` if the test case is marked as critical,
+        ``False`` otherwise.
         """
         if not self.parent:
             return True

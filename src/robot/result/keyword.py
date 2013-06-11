@@ -18,13 +18,12 @@ from .message import Message
 
 
 class Keyword(model.Keyword):
+    """Results of a single keyword."""
     __slots__ = ['status', 'starttime', 'endtime', 'message']
     message_class = Message
 
     def __init__(self, name='', doc='', args=(), type='kw', timeout='',
                  status='FAIL', starttime=None, endtime=None):
-        """Results of a single keyword.
-        """
         model.Keyword.__init__(self, name, doc, args, type, timeout)
         #: String 'PASS' of 'FAIL'.
         self.status = status
@@ -38,12 +37,10 @@ class Keyword(model.Keyword):
 
     @property
     def elapsedtime(self):
-        """Elapsed execution time of the keyword in milliseconds.
-        """
+        """Elapsed execution time of the keyword in milliseconds."""
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
     @property
     def passed(self):
-        """``True`` if the keyword did pass, ``False`` otherwise.
-        """
+        """``True`` if the keyword did pass, ``False`` otherwise."""
         return self.status == 'PASS'

@@ -20,8 +20,7 @@ from modelobject import ModelObject
 
 
 class Keyword(ModelObject):
-    """Base model for single keyword.
-    """
+    """Base model for single keyword."""
     __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout']
     KEYWORD_TYPE = 'kw'
     SETUP_TYPE = 'setup'
@@ -48,8 +47,7 @@ class Keyword(ModelObject):
         #: Keyword messages, a list of
         #: :class:`~robot.model.message.Messages` instances.
         self.messages = []
-        #: Child keyword results, a list of
-        #: :class:`~.Keyword`. instances
+        #: Child keyword results, a list of class:`~.Keyword`. instances
         self.keywords = []
 
     @setter

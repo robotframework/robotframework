@@ -35,7 +35,7 @@ class Statistics(object):
         suite.visit(StatisticsBuilder(total_builder, suite_builder, tag_builder))
         #: Instance of :class:`~robot.model.totalstatistics.TotalStatistics`.
         self.total = total_builder.stats
-         #: Instance of :class:`~robot.model.suitestatistics.SuiteStatistics`.
+        #: Instance of :class:`~robot.model.suitestatistics.SuiteStatistics`.
         self.suite = suite_builder.stats
         #: Instance of :class:`~robot.model.tagstatistics.TagStatistics`.
         self.tags = tag_builder.stats
