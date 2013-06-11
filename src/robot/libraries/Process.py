@@ -296,6 +296,7 @@ class Process(object):
         config = ProcessConfig(**configuration)
         executable_command = self._cmd(arguments, command, config.shell)
         logger.info('Starting process:\n%s' % executable_command)
+        logger.debug('Process configuration:\n%s' % config)
         process = subprocess.Popen(executable_command,
                                    stdout=config.stdout_stream,
                                    stderr=config.stderr_stream,
@@ -553,9 +554,8 @@ class ProcessConfig(object):
                        for key in env)
         return env
 
-    # TODO: Is this needed?
     def __str__(self):
-        return encode_to_system("""
+        return encode_to_system("""\
 cwd = %s
 stdout_stream = %s
 stderr_stream = %s
