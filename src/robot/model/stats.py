@@ -18,8 +18,7 @@ from .tags import TagPatterns
 
 
 class Stat(object):
-    """Generic statistic object used for storing all the statistic values.
-    """
+    """Generic statistic object used for storing all the statistic values."""
 
     def __init__(self, name):
         #: Human readable identifier of the object these statistics
@@ -90,15 +89,13 @@ class Stat(object):
 
 
 class TotalStat(Stat):
-    """Stores statistic values for a test run.
-    """
+    """Stores statistic values for a test run."""
     #: Always string `total`
     type = 'total'
 
 
 class SuiteStat(Stat):
-    """Stores statistics values for a single suite.
-    """
+    """Stores statistics values for a single suite."""
     #: Always string `suite`
     type = 'suite'
 
@@ -123,8 +120,7 @@ class SuiteStat(Stat):
 
 
 class TagStat(Stat):
-    """Stores statistic values for a single tag.
-    """
+    """Stores statistic values for a single tag."""
     #: Always string `tag`.
     type = 'tag'
 

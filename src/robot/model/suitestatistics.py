@@ -16,8 +16,7 @@ from .stats import SuiteStat
 
 
 class SuiteStatistics(object):
-    """Container for suite statistics.
-    """
+    """Container for suite statistics."""
 
     def __init__(self, suite):
         #: Instance of :class:`~robot.model.stats.SuiteStat`.

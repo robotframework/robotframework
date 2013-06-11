@@ -27,14 +27,13 @@ from .testcase import TestCase
 
 
 class TestSuite(model.TestSuite):
+    """Result of a single test suite."""
     __slots__ = ['message', 'starttime', 'endtime', '_criticality']
     test_class = TestCase
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', metadata=None, source=None,
                  message='', starttime=None, endtime=None):
-        """Result of a single test suite.
-        """
         model.TestSuite.__init__(self, name, doc, metadata, source)
         #: Suite setup/teardown error message.
         self.message = message
@@ -116,9 +115,9 @@ class TestSuite(model.TestSuite):
     def remove_keywords(self, how):
         """Remove keywords based on the given condition.
 
-        ``how`` is either ``ALL``, ``PASSED``, ``FOR``, or ``WUKS``.
-        These values have exact same semantics as values accepted by
-        ``--removekeywords`` command line option.
+        :param how: Is either ``ALL``, ``PASSED``, ``FOR``, or ``WUKS``.
+                    These values have exact same semantics as values accepted by
+                    ``--removekeywords`` command line option.
         """
         self.visit(KeywordRemover(how))
 
@@ -129,9 +128,9 @@ class TestSuite(model.TestSuite):
     def configure(self, **options):
         """A shortcut to configure a suite using one method call.
 
-        ``options`` are passed to
-        :class:`~robot.result.configurer.SuiteConfigurer` that will then call
-        :meth:`filter`, :meth:`remove_keywords`, etc. based on them.
+        :param options: Passed to
+                        :class:`~robot.result.configurer.SuiteConfigurer` that will then call
+                        :meth:`filter`, :meth:`remove_keywords`, etc. based on them.
 
         Example::
 

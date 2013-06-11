@@ -39,10 +39,10 @@ class Message(ModelObject):
         self.timestamp = timestamp
         #: The object this message was triggered by.
         self.parent = parent
+
     @property
     def html_message(self):
-        """Returns the message content as HTML.
-        """
+        """Returns the message content as HTML."""
         return self.message if self.html else html_escape(self.message)
 
     def visit(self, visitor):
