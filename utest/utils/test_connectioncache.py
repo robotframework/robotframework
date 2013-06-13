@@ -148,6 +148,17 @@ class TestConnnectionCache(unittest.TestCase):
             assert_false(conn.closed_by_close)
             assert_false(conn.closed_by_exit)
 
+    def test_truthy(self):
+        assert_false(self.cache)
+        self.cache.register(None)
+        assert_true(self.cache)
+        self.cache.current_index = None
+        assert_false(self.cache)
+        self.cache.current_index = 1
+        assert_true(self.cache)
+        self.cache.empty_cache()
+        assert_false(self.cache)
+
     def _verify_initial_state(self):
         assert_equals(self.cache.current, self.cache._no_current)
         assert_equals(self.cache.current_index, None)

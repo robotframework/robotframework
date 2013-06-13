@@ -105,6 +105,9 @@ class ConnectionCache(object):
         self._connections = []
         self._aliases = NormalizedDict()
 
+    def __nonzero__(self):
+        return self.current is not self._no_current
+
     def _resolve_index_or_alias(self, index_or_alias):
         try:
             return self._resolve_alias(index_or_alias)
