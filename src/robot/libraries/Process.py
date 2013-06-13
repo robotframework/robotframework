@@ -261,7 +261,7 @@ class Process(object):
     ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self):
-        self._started_processes = ConnectionCache('No started processes.')
+        self._started_processes = ConnectionCache('No active process.')
         self._results = {}
 
     def run_process(self, command, *arguments, **configuration):
@@ -428,11 +428,7 @@ class Process(object):
         self._started_processes.switch(handle)
 
     def _process(self, handle):
-        if handle is not None:
-            return self._started_processes.get_connection(handle)
-        if not self._started_processes:
-            raise RuntimeError("No active process.")
-        return self._started_processes.current
+        return self._started_processes.get_connection(handle)
 
 
 class ExecutionResult(object):
