@@ -32,18 +32,13 @@ class ConnectionCache(object):
         self.current = self._no_current = NoConnection(no_current_msg)
         self._connections = []
         self._aliases = NormalizedDict()
-        self._no_current_msg = no_current_msg
 
     def _get_current_index(self):
-        if self.current is self._no_current:
-            return None
-        return self._connections.index(self.current) + 1
+        return self._connections.index(self.current) + 1 if self else None
 
     def _set_current_index(self, index):
-        if index is None:
-            self.current = self._no_current
-        else:
-            self.current = self._connections[index - 1]
+        self.current = self._connections[index - 1] \
+            if index is not None else self._no_current
 
     current_index = property(_get_current_index, _set_current_index)
 
