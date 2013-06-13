@@ -46,6 +46,8 @@ Starting many processes and killing all
     Process Should Be Running    ${handle3}
     Process Should Be Running    ${handle4}
     Process Should Be Running    ${handle5}
+    Switch Process    ${handle3}
+    Terminate Process    ${handle2}
     Terminate All Processes
     Sleep    0.1
     Process Should Be Stopped    ${handle1}

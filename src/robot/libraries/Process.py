@@ -386,7 +386,7 @@ class Process(object):
 
         See `Stopping processes` for more details.
         """
-        for handle in range(len(self._started_processes._connections)):
+        for handle in range(1, len(self._started_processes) + 1):
             if self.is_process_running(handle):
                 self.terminate_process(handle, kill=kill)
 
@@ -427,7 +427,7 @@ class Process(object):
         self._started_processes.switch(handle)
 
     def _process(self, handle):
-        if handle:
+        if handle is not None:
             return self._started_processes.get_connection(handle)
         if not self._started_processes:
             raise RuntimeError("No active process.")
