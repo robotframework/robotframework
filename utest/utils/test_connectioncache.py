@@ -53,17 +53,16 @@ class TestConnnectionCache(unittest.TestCase):
     def test_set_current_index(self):
         self.cache.current_index = None
         assert_equals(self.cache.current_index, None)
-        self.cache.register('a')
-        self.cache.register('b')
+        self._register('a', 'b')
         self.cache.current_index = 1
         assert_equals(self.cache.current_index, 1)
-        assert_equals(self.cache.current, 'a')
+        assert_equals(self.cache.current.id, 'a')
         self.cache.current_index = None
         assert_equals(self.cache.current_index, None)
         assert_equals(self.cache.current, self.cache._no_current)
         self.cache.current_index = 2
         assert_equals(self.cache.current_index, 2)
-        assert_equals(self.cache.current, 'b')
+        assert_equals(self.cache.current.id, 'b')
 
     def test_set_invalid_index(self):
         assert_raises(IndexError, setattr, self.cache, 'current_index', 1)
@@ -116,7 +115,8 @@ class TestConnnectionCache(unittest.TestCase):
 
     def test_switch_with_non_existing_alias(self):
         self._register('a', 'b')
-        assert_raises_with_msg(RuntimeError, "Non-existing index or alias 'whatever'.",
+        assert_raises_with_msg(RuntimeError,
+                               "Non-existing index or alias 'whatever'.",
                                self.cache.switch, 'whatever')
 
     def test_switch_with_alias_overriding_index(self):
@@ -125,6 +125,28 @@ class TestConnnectionCache(unittest.TestCase):
         assert_equals(self.cache.current.id, '2')
         self.cache.switch('1')
         assert_equals(self.cache.current.id, '1')
+
+    def test_get_connection_with_index(self):
+        self._register('a', 'b')
+        assert_equals(self.cache.get_connection(1).id, 'a')
+        assert_equals(self.cache.current.id, 'b')
+        assert_equals(self.cache.get_connection(2).id, 'b')
+
+    def test_get_connection_with_alias(self):
+        self._register('a', 'b')
+        assert_equals(self.cache.get_connection('a').id, 'a')
+        assert_equals(self.cache.current.id, 'b')
+        assert_equals(self.cache.get_connection('b').id, 'b')
+
+    def test_get_connection_with_none_returns_current(self):
+        self._register('a', 'b')
+        assert_equals(self.cache.get_connection(None).id, 'b')
+        assert_equals(self.cache.get_connection().id, 'b')
+
+    def test_get_connection_with_none_fails_if_no_current(self):
+        assert_raises_with_msg(RuntimeError,
+                               'No open connection.',
+                               self.cache.get_connection)
 
     def test_close_all(self):
         connections = self._register('a', 'b', 'c', 'd')

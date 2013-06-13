@@ -29,7 +29,8 @@ class ConnectionCache(object):
     """
 
     def __init__(self, no_current_msg='No open connection.'):
-        self.current = self._no_current = NoConnection(no_current_msg)
+        self._no_current = NoConnection(no_current_msg)
+        self.current = self._no_current  #: Current active connection.
         self._connections = []
         self._aliases = NormalizedDict()
 
@@ -45,9 +46,13 @@ class ConnectionCache(object):
     def register(self, connection, alias=None):
         """Registers given connection with optional alias and returns its index.
 
-        Given connection is set to be the current connection. Alias must be
-        a string. The index of the first connection after initialization or
-        close_all or empty_cache is 1, second is 2, etc.
+        Given connection is set to be the :attr:`current` connection.
+
+        If alias is given, it must be a string. Aliases are case and space
+        insensitive.
+
+        The index of the first connection after initialization, or
+        :meth:`close_all` or :meth:`empty_cache`, is 1, second is 2, etc.
         """
         self.current = connection
         self._connections.append(connection)
@@ -58,20 +63,29 @@ class ConnectionCache(object):
     def switch(self, index_or_alias):
         """Switches to the connection specified by given index or alias.
 
-        If alias is given it must be a string. Indexes can be either integers
-        or strings that can be converted into integer. Raises RuntimeError
-        if no connection with given index or alias found.
+        Alias is whatever was given to :meth:`register` method and indices
+        are returned by it. Index can be given either as an integer or
+        as a string that can be converted to an integer. Raises an error
+        if no connection with the given index or alias found.
         """
         self.current = self.get_connection(index_or_alias)
         return self.current
 
-    def get_connection(self, index_or_alias):
+    def get_connection(self, index_or_alias=None):
         """Get the connection specified by given index or alias.
 
-        If alias is given it must be a string. Indexes can be either integers
-        or strings that can be converted into integer. Raises RuntimeError
-        if no connection with given index or alias found.
+        If ``index_or_alias`` is ``None``, returns the current connection
+        if it is active, or raises an error if it is not.
+
+        Alias is whatever was given to :meth:`register` method and indices
+        are returned by it. Index can be given either as an integer or
+        as a string that can be converted to an integer. Raises an error
+        if no connection with the given index or alias found.
         """
+        if index_or_alias is None:
+            if not self:
+                self.current.raise_error()
+            return self.current
         try:
             index = self._resolve_index_or_alias(index_or_alias)
         except ValueError:
@@ -124,7 +138,10 @@ class ConnectionCache(object):
         raise ValueError
 
     def _resolve_index(self, index):
-        index = int(index)
+        try:
+            index = int(index)
+        except TypeError:
+            raise ValueError
         if not 0 < index <= len(self._connections):
             raise ValueError
         return index
@@ -132,13 +149,16 @@ class ConnectionCache(object):
 
 class NoConnection(object):
 
-    def __init__(self, msg):
-        self._msg = msg
+    def __init__(self, message):
+        self.message = message
 
     def __getattr__(self, name):
         if name.startswith('__') and name.endswith('__'):
             raise AttributeError
-        raise RuntimeError(self._msg)
+        self.raise_error()
+
+    def raise_error(self):
+        raise RuntimeError(self.message)
 
     def __nonzero__(self):
         return False
