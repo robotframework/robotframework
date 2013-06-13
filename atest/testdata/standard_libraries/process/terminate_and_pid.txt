@@ -34,27 +34,34 @@ Pid
     Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
 
-Starting many processes and killing all
-    ${handle1}=    Some process
-    ${handle2}=    Some process
-    ${handle3}=    Some process
-    ${handle4}=    Some process
-    ${handle5}=    Some process
+Terminate All Processes
+    ${h1}=    Some process
+    ${h2}=    Some process
+    ${h3}=    Some process
+    ${h4}=    Some process
+    ${h5}=    Some process
     Sleep    0.1
-    Process Should Be Running    ${handle1}
-    Process Should Be Running    ${handle2}
-    Process Should Be Running    ${handle3}
-    Process Should Be Running    ${handle4}
-    Process Should Be Running    ${handle5}
-    Switch Process    ${handle3}
-    Terminate Process    ${handle2}
+    ${p1}=    Get Process Object    ${h1}
+    ${p2}=    Get Process Object    ${h2}
+    ${p3}=    Get Process Object    ${h3}
+    ${p4}=    Get Process Object    ${h4}
+    ${p5}=    Get Process Object    ${h5}
+    :FOR    ${process}    IN    ${p1}    ${p2}    ${p3}    ${p4}    ${p5}
+    \    ${poll}=    Call Method    ${process}    poll
+    \    Should Be Equal    ${poll}    ${NONE}
+    Switch Process    ${h3}
+    Terminate Process    ${h2}
     Terminate All Processes
     Sleep    0.1
-    Process Should Be Stopped    ${handle1}
-    Process Should Be Stopped    ${handle2}
-    Process Should Be Stopped    ${handle3}
-    Process Should Be Stopped    ${handle4}
-    Process Should Be Stopped    ${handle5}
+    :FOR    ${process}    IN    ${p1}    ${p2}    ${p3}    ${p4}    ${p5}
+    \    ${poll}=    Call Method    ${process}    poll
+    \    Should Not Be Equal    ${poll}    ${NONE}
+
+Terminate All Empties Cache
+    Some process
+    Terminate All Processes
+    ${handle} =    Some Process
+    Should Be Equal    ${handle}    ${1}
 
 Kill Process Which Does Not Exist
     ${handle}=    Some process

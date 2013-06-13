@@ -389,6 +389,7 @@ class Process(object):
         for handle in range(1, len(self._started_processes) + 1):
             if self.is_process_running(handle):
                 self.terminate_process(handle, kill=kill)
+        self.__init__()
 
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process.

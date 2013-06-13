@@ -17,7 +17,10 @@ Terminating process
 Pid
     Check Test Case    ${TESTNAME}
 
-Starting many processes and killing all
+Terminate All Processes
+    Check Test Case    ${TESTNAME}
+
+Terminate All Empties Cache
     Check Test Case    ${TESTNAME}
 
 Kill Process Which Does Not Exist
@@ -31,7 +34,7 @@ Lot of output
 
 Getting PIDs in different ways should give same result
     Check Test Case    ${TESTNAME}
-    
+
 *** Keywords ***
 Check Preconditions
     Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression
