@@ -1,9 +1,7 @@
 *** Settings ***
-Suite Setup       Suite Setup
-Suite Teardown    Suite Teardown
-Test Teardown     Restart Suite Process If Needed
-Library           Process.py
-Library           OperatingSystem
+Suite Setup       Some process    suite_process
+Suite Teardown    Stop some process    suite_process
+Test Setup        Restart Suite Process If Needed
 Library           Collections
 Resource          resource.txt
 
@@ -46,14 +44,14 @@ Setting Stdout
     ${output}=    Get File    %{TEMPDIR}/myfile_1.txt
     Should Not Be Empty    ${output}
     Should Match  ${output}   ${result.stdout}*
-    [Teardown]    Run Keyword And Ignore Error   Remove File    %{TEMPDIR}/myfile_1.txt
+    [Teardown]    Safe Remove File    %{TEMPDIR}/myfile_1.txt
 
 Setting Stderr
     ${result}=    Run Process    python -c "1/0"    shell=True    stderr=%{TEMPDIR}/myfile.txt
     ${output}=    Get File    %{TEMPDIR}/myfile.txt
     Should Not Be Empty    ${output}
     Should Match   ${output}   ${result.stderr}*
-    [Teardown]    Run Keyword And Ignore Error   Remove File    %{TEMPDIR}/myfile.txt
+    [Teardown]    Safe Remove File    %{TEMPDIR}/myfile.txt
 
 Without Env Configuration the Environment Should Be As It Was
     Set Environment Variable  normalvar  normal
@@ -132,7 +130,7 @@ Redirecting Stderr to Stdout with filename
     Should Match    ${result.stderr}    *ZeroDivisionError*
     Should Be Equal    ${result.stdout_path}    ${path}
     Should Be Equal    ${result.stderr_path}    ${path}
-    [Teardown]    Run Keyword And Ignore Error   Remove File    ${path}
+    [Teardown]    Safe Remove File    ${path}
 
 Current working directory should be used with stdout and stderr
     Create Directory    %{TEMPDIR}/hc
@@ -142,7 +140,7 @@ Current working directory should be used with stdout and stderr
     ${output2}=    Get File    %{TEMPDIR}/hc/myerr.txt
     Should Match    ${output}    *moon kuu*
     Should Match    ${output2}    *ZeroDivisionError*
-    [Teardown]    Run Keyword And Ignore Error   Remove Directory    %{TEMPDIR}/hc    recursive=True
+    [Teardown]    Safe Remove Directory    %{TEMPDIR}/hc
 
 Current working directory should not be used with stdout and stderr when absolute path in use
     Create Directory    %{TEMPDIR}/hc
@@ -156,29 +154,14 @@ Current working directory should not be used with stdout and stderr when absolut
     Should Match    ${stderr}    *ZeroDivisionError*
     Should Be Equal    ${result.stdout_path}    ${stdout_path}
     Should Be Equal    ${result.stderr_path}    ${stderr_path}
-    [Teardown]   Remove Directory and File  %{TEMPDIR}/hc    ${stdout_path}}
+    [Teardown]   Run Keywords
+    ...    Safe Remove Directory   %{TEMPDIR}/hc    AND
+    ...    Safe Remove File    ${stdout_path}
 
 *** Keywords ***
 Restart Suite Process If Needed
     ${alive}=    Is Process Running    suite_process
     Run Keyword Unless    ${alive}    Some process    suite_process
-
-Suite Setup
-    Check Preconditions
-    Some process    suite_process
-
-Suite Teardown
-    ${is_ok}=   Valid Platform
-    Run Keyword If  ${is_ok}   Stop some process    suite_process
-
-Check Preconditions
-    ${is_ok}=   Valid Platform
-    Run Keyword Unless   ${is_ok}    Set Suite Metadata  info   precondition_fail
-    Run Keyword Unless   ${is_ok}    Fail
-
-Valid Platform
-    ${is_ok}=   Evaluate   sys.version_info >= (2,6)   sys
-    [Return]    ${is_ok}
 
 Create env dictionary
     [Arguments]  @{env_args}
@@ -187,8 +170,3 @@ Create env dictionary
     ${systemroot}=  Get Environment Variable  SYSTEMROOT  default=.
     ${setenv}=    Create Dictionary  PATH  ${path}  SYSTEMROOT  ${SYSTEMROOT}  @{env_args}
     [Return]  ${setenv}
-
-Remove Directory and File
-    [Arguments]  ${dir_to_remove}    ${file_to_remove}
-    Run Keyword And Ignore Error     Remove Directory    ${dir_to_remove}   recursive=True
-    Run Keyword And Ignore Error     Remove File         ${file_to_remove}

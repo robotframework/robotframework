@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/is_process_alive.txt
-Test Setup       Check Preconditions
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
@@ -13,7 +12,3 @@ Test Process Should Be Alive
 
 Test Process Should Be Dead
     Check Test Case    ${TESTNAME}
-
-*** Keywords ***
-Check Preconditions
-    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression

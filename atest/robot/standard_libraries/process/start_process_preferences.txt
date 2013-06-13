@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/start_process_preferences.txt
-Test Setup       Check Preconditions
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
@@ -23,7 +22,3 @@ Implicitly run Operating System library keyword when library search order is set
 
 Process switch
     Check Test Case   ${TESTNAME}
-
-*** Keywords ***
-Check Preconditions
-    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression

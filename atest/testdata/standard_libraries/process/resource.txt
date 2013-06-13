@@ -1,3 +1,7 @@
+*** Settings ***
+Library           Process
+Library           OperatingSystem
+
 *** Keywords ***
 Some process
     [Arguments]    ${alias}=${null}
@@ -32,3 +36,19 @@ Run Python Process
     Log    ${result.rc}
     Log    ${result.stderr}
     [Return]    ${result}
+
+Safe Remove File
+    [Documentation]    Ignore errors caused by process being locked.
+    ...                That happens at least with IronPython.
+    [Arguments]    ${path}
+    Run Keyword And Ignore Error    Remove File    ${path}
+
+Safe Remove Directory
+    [Arguments]    ${path}
+    Run Keyword And Ignore Error    Remove Directory    ${path}    recursive=yep
+
+Check Precondition
+    [Arguments]    ${precondition}
+    ${nok}=    Evaluate    not ${precondition}    modules=sys
+    Run Keyword If  ${nok}    Set Suite Metadata  info   precondition_fail
+    Run Keyword If  ${nok}    Fail    ${precondition} was not true
