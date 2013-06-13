@@ -1,7 +1,7 @@
 import unittest
 
 from robot.utils.asserts import (assert_equals, assert_false, assert_true,
-                                 assert_raises_with_msg)
+                                 assert_raises, assert_raises_with_msg)
 
 
 from robot.utils import ConnectionCache
@@ -49,6 +49,24 @@ class TestConnnectionCache(unittest.TestCase):
             assert_equals(self.cache.current, conn)
             assert_equals(self.cache.current_index, i+1)
         assert_equals(self.cache._connections, conns)
+
+    def test_set_current_index(self):
+        self.cache.current_index = None
+        assert_equals(self.cache.current_index, None)
+        self.cache.register('a')
+        self.cache.register('b')
+        self.cache.current_index = 1
+        assert_equals(self.cache.current_index, 1)
+        assert_equals(self.cache.current, 'a')
+        self.cache.current_index = None
+        assert_equals(self.cache.current_index, None)
+        assert_equals(self.cache.current, self.cache._no_current)
+        self.cache.current_index = 2
+        assert_equals(self.cache.current_index, 2)
+        assert_equals(self.cache.current, 'b')
+
+    def test_set_invalid_index(self):
+        assert_raises(IndexError, setattr, self.cache, 'current_index', 1)
 
     def test_switch_with_index(self):
         self._register('a', 'b', 'c')

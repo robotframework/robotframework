@@ -34,11 +34,18 @@ class ConnectionCache(object):
         self._aliases = NormalizedDict()
         self._no_current_msg = no_current_msg
 
-    @property
-    def current_index(self):
+    def _get_current_index(self):
         if self.current is self._no_current:
             return None
         return self._connections.index(self.current) + 1
+
+    def _set_current_index(self, index):
+        if index is None:
+            self.current = self._no_current
+        else:
+            self.current = self._connections[index - 1]
+
+    current_index = property(_get_current_index, _set_current_index)
 
     def register(self, connection, alias=None):
         """Registers given connection with optional alias and returns its index.
