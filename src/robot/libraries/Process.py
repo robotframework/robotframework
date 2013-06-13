@@ -274,15 +274,12 @@ class Process(object):
 
         This command does not change the `active process`.
         """
-        active_process_index = self._started_processes.current_index
+        current_index = self._started_processes.current_index
         try:
-            p = self.start_process(command, *arguments, **configuration)
-            return self.wait_for_process(p)
+            handle = self.start_process(command, *arguments, **configuration)
+            return self.wait_for_process(handle)
         finally:
-            if active_process_index is not None:
-                self._started_processes.switch(active_process_index)
-            else:
-                self._started_processes.empty_cache()
+            self._started_processes.current_index = current_index
 
     def start_process(self, command, *arguments, **configuration):
         """Starts a new process on background.
@@ -432,7 +429,7 @@ class Process(object):
     def _process(self, handle):
         if handle:
             return self._started_processes.get_connection(handle)
-        if self._started_processes.current_index is None:
+        if not self._started_processes:
             raise RuntimeError("No active process.")
         return self._started_processes.current
 
