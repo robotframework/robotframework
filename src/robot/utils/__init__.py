@@ -62,3 +62,17 @@ from .unic import unic, safe_repr
 import sys
 is_jython = sys.platform.startswith('java')
 del sys
+
+
+# Following utils were removed in 2.8 but added back in 2.8.1 because they
+# were used by SSHLibrary and SeleniumLibrary. Libs must be changed not to
+# use them and then, hopefully, we can remove them again in 2.9.
+# https://code.google.com/p/robotframework/issues/detail?id=1472
+
+def matches(string, pattern, ignore=(), caseless=True, spaceless=True):
+    """Deprecated!! Use Matcher instead."""
+    return Matcher(pattern, ignore, caseless, spaceless).match(string)
+
+def html_attr_escape(attr):
+    """Deprecated!! Use attribute_escape instead."""
+    return attribute_escape(attr)
