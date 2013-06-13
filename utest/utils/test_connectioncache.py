@@ -148,6 +148,21 @@ class TestConnnectionCache(unittest.TestCase):
             assert_false(conn.closed_by_close)
             assert_false(conn.closed_by_exit)
 
+    def test_iter(self):
+        conns = ['a', object(), 1, None]
+        for c in conns:
+            self.cache.register(c)
+        assert_equals(list(self.cache), conns)
+
+    def test_len(self):
+        assert_equals(len(self.cache), 0)
+        self.cache.register(None)
+        assert_equals(len(self.cache), 1)
+        self.cache.register(None)
+        assert_equals(len(self.cache), 2)
+        self.cache.empty_cache()
+        assert_equals(len(self.cache), 0)
+
     def test_truthy(self):
         assert_false(self.cache)
         self.cache.register(None)

@@ -100,6 +100,12 @@ class ConnectionCache(object):
         self._connections = []
         self._aliases = NormalizedDict()
 
+    def __iter__(self):
+        return iter(self._connections)
+
+    def __len__(self):
+        return len(self._connections)
+
     def __nonzero__(self):
         return self.current is not self._no_current
 
