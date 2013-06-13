@@ -261,7 +261,7 @@ class Process(object):
     ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self):
-        self._started_processes = ConnectionCache('No active process.')
+        self._processes = ConnectionCache('No active process.')
         self._results = {}
 
     def run_process(self, command, *arguments, **configuration):
@@ -274,12 +274,12 @@ class Process(object):
 
         This command does not change the `active process`.
         """
-        current_index = self._started_processes.current_index
+        current = self._processes.current
         try:
             handle = self.start_process(command, *arguments, **configuration)
             return self.wait_for_process(handle)
         finally:
-            self._started_processes.current_index = current_index
+            self._processes.current = current
 
     def start_process(self, command, *arguments, **configuration):
         """Starts a new process on background.
@@ -305,7 +305,7 @@ class Process(object):
         self._results[process] = ExecutionResult(process,
                                                  config.stdout_stream,
                                                  config.stderr_stream)
-        return self._started_processes.register(process, alias=config.alias)
+        return self._processes.register(process, alias=config.alias)
 
     def _cmd(self, args, command, use_shell):
         command = [encode_to_system(item) for item in [command] + list(args)]
@@ -322,7 +322,7 @@ class Process(object):
 
         Returns `True` if the process is still running and `False` otherwise.
         """
-        return self._process(handle).poll() is None
+        return self._processes[handle].poll() is None
 
     def process_should_be_running(self, handle=None,
                                   error_message='Process is not running.'):
@@ -353,7 +353,7 @@ class Process(object):
 
         Returns a `result object` containing information about the execution.
         """
-        process = self._process(handle)
+        process = self._processes[handle]
         result = self._results[process]
         logger.info('Waiting for process to complete.')
         result.rc = process.wait() or 0
@@ -367,7 +367,7 @@ class Process(object):
 
         See `Stopping process` for more details.
         """
-        process = self._process(handle)
+        process = self._processes[handle]
         try:
             terminator = process.kill if kill else process.terminate
         except AttributeError:
@@ -386,7 +386,7 @@ class Process(object):
 
         See `Stopping processes` for more details.
         """
-        for handle in range(1, len(self._started_processes) + 1):
+        for handle in range(1, len(self._processes) + 1):
             if self.is_process_running(handle):
                 self.terminate_process(handle, kill=kill)
         self.__init__()
@@ -403,14 +403,14 @@ class Process(object):
         The pid is not the same as the identifier returned by
         `Start Process` that is used internally by this library.
         """
-        return self._process(handle).pid
+        return self._processes[handle].pid
 
     def get_process_object(self, handle=None):
         """Return the underlying `subprocess.Popen`  object.
 
         If `handle`is not given, uses the current `active process`.
         """
-        return self._process(handle)
+        return self._processes[handle]
 
     def switch_process(self, handle):
         """Makes the specified process the current `active process`.
@@ -425,10 +425,7 @@ class Process(object):
         | `Switch Process` | process1 |
         | # now active process is process 1 |
         """
-        self._started_processes.switch(handle)
-
-    def _process(self, handle):
-        return self._started_processes.get_connection(handle)
+        self._processes.switch(handle)
 
 
 class ExecutionResult(object):

@@ -130,18 +130,18 @@ class TestConnnectionCache(unittest.TestCase):
         self._register('a', 'b')
         assert_equals(self.cache.get_connection(1).id, 'a')
         assert_equals(self.cache.current.id, 'b')
-        assert_equals(self.cache.get_connection(2).id, 'b')
+        assert_equals(self.cache[2].id, 'b')
 
     def test_get_connection_with_alias(self):
         self._register('a', 'b')
         assert_equals(self.cache.get_connection('a').id, 'a')
         assert_equals(self.cache.current.id, 'b')
-        assert_equals(self.cache.get_connection('b').id, 'b')
+        assert_equals(self.cache['b'].id, 'b')
 
     def test_get_connection_with_none_returns_current(self):
         self._register('a', 'b')
-        assert_equals(self.cache.get_connection(None).id, 'b')
         assert_equals(self.cache.get_connection().id, 'b')
+        assert_equals(self.cache[None].id, 'b')
 
     def test_get_connection_with_none_fails_if_no_current(self):
         assert_raises_with_msg(RuntimeError,

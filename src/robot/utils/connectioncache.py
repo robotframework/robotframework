@@ -93,6 +93,8 @@ class ConnectionCache(object):
                                % index_or_alias)
         return self._connections[index-1]
 
+    __getitem__ = get_connection
+
     def close_all(self, closer_method='close'):
         """Closes connections using given closer method and empties cache.
 
