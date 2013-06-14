@@ -14,6 +14,10 @@ Create Dictionary with wrong number of arguments
     [Documentation]  FAIL ValueError: Creating a dictionary failed. There should be an even number of key-value-pairs.
     Create Dictionary  a  1  b
 
+Create Dictionary With **kwargs
+    ${dict} =  Create Dictionary  k1  ${1}  over  write  k2=${2}  over=written
+    Compare To Expected String  ${dict}  {'k1': 1, 'k2': 2, 'over': 'written'}
+
 Set To Dictionary
     Set To Dictionary  ${D0}  a  ${1}
     Should Be Equal  ${D0}  ${D1}
@@ -23,6 +27,10 @@ Set To Dictionary
 Set To Dictionary With wrong number of arguments
     [Documentation]  FAIL ValueError: Adding data to a dictionary failed. There should be an even number of key-value-pairs.
     Set To Dictionary  ${D0}  a
+
+Set To Dictionary With **kwargs
+    Set To Dictionary  ${D0}  k1  ${1}  over  write  k2=${2}  over=written
+    Compare To Expected String  ${D0}  {'k1': 1, 'k2': 2, 'over': 'written'}
 
 Remove From Dictionary
     Remove From Dictionary  ${D3}  b  x  ${2}

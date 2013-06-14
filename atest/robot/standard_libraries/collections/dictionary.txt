@@ -12,10 +12,16 @@ Create Dictionary
 Create Dictionary with wrong number of arguments
     Check Test Case  ${TEST NAME}
 
+Create Dictionary With **kwargs
+    Check Test Case  ${TEST NAME}
+
 Set To Dictionary
     Check Test Case  ${TEST NAME}
 
 Set To Dictionary With wrong number of arguments
+    Check Test Case  ${TEST NAME}
+
+Set To Dictionary With **kwargs
     Check Test Case  ${TEST NAME}
 
 Remove From Dictionary

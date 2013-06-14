@@ -425,25 +425,35 @@ class _List:
 
 class _Dictionary:
 
-    def create_dictionary(self, *key_value_pairs):
-        """Creates and returns a dictionary from the given `key_value_pairs`.
+    def create_dictionary(self, *key_value_pairs, **items):
+        """Creates and returns a dictionary based on given items.
 
-        Examples:
-        | ${x} = | Create Dictionary | name | value |   |   |
-        | ${y} = | Create Dictionary | a    | 1     | b | 2 |
-        | ${z} = | Create Dictionary | a    | ${1}  | b | ${2} |
+        Giving items as `key_value_pairs` means giving keys and values
+        as separate arguments:
+
+        | ${x} = | Create Dictionary | name | value |   |      |
+        | ${y} = | Create Dictionary | a    | 1     | b | ${2} |
         =>
         - ${x} = {'name': 'value'}
-        - ${y} = {'a': '1', 'b': '2'}
-        - ${z} = {'a': 1, 'b': 2}
+        - ${y} = {'a': '1', 'b': 2}
+
+        Starting from Robot Framework 2.8.1, items can also be given as kwargs:
+
+        | ${x} = | Create Dictionary | name=value |        |
+        | ${y} = | Create Dictionary | a=1        | b=${2} |
+
+        The latter syntax is typically more convenient to use, but it has
+        a limitation that keys must be strings.
         """
         if len(key_value_pairs) % 2 != 0:
             raise ValueError("Creating a dictionary failed. There should be "
                              "an even number of key-value-pairs.")
-        return self.set_to_dictionary({}, *key_value_pairs)
+        return self.set_to_dictionary({}, *key_value_pairs, **items)
 
-    def set_to_dictionary(self, dictionary, *key_value_pairs):
-        """Adds the given `key_value_pairs` to the `dictionary`.
+    def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
+        """Adds the given `key_value_pairs` and `items`to the `dictionary`.
+
+        See `Create Dictionary` for information about giving items.
 
         Example:
         | Set To Dictionary | ${D1} | key | value |
@@ -455,6 +465,7 @@ class _Dictionary:
                              "should be an even number of key-value-pairs.")
         for i in range(0, len(key_value_pairs), 2):
             dictionary[key_value_pairs[i]] = key_value_pairs[i+1]
+        dictionary.update(items)
         return dictionary
 
     def remove_from_dictionary(self, dictionary, *keys):
@@ -585,7 +596,7 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         self.dictionary_should_contain_key(dictionary, key, msg)
-        actual, expected =  unicode(dictionary[key]), unicode(value)
+        actual, expected = unicode(dictionary[key]), unicode(value)
         default = "Value of dictionary key '%s' does not match. '%s'!='%s'" % (key, actual, expected)
         _verify_condition(actual == expected, default, msg)
 
