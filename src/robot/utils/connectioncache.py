@@ -35,7 +35,11 @@ class ConnectionCache(object):
         self._aliases = NormalizedDict()
 
     def _get_current_index(self):
-        return self._connections.index(self.current) + 1 if self else None
+        if not self:
+            return None
+        for index, conn in enumerate(self):
+            if conn is self.current:
+                return index + 1
 
     def _set_current_index(self, index):
         self.current = self._connections[index - 1] \

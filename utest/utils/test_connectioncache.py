@@ -8,14 +8,20 @@ from robot.utils import ConnectionCache
 
 
 class ConnectionMock:
+
     def __init__(self, id=None):
         self.id = id
         self.closed_by_close = False
         self.closed_by_exit = False
+
     def close(self):
         self.closed_by_close = True
+
     def exit(self):
         self.closed_by_exit = True
+
+    def __eq__(self, other):
+        return hasattr(other, 'id') and self.id == other.id
 
 
 class TestConnnectionCache(unittest.TestCase):
@@ -42,12 +48,30 @@ class TestConnnectionCache(unittest.TestCase):
         assert_equals(self.cache._aliases, {})
 
     def test_register_multiple(self):
-        conns = [ConnectionMock(), ConnectionMock(), ConnectionMock()]
+        conns = [ConnectionMock(1), ConnectionMock(2), ConnectionMock(3)]
         for i, conn in enumerate(conns):
             index = self.cache.register(conn)
             assert_equals(index, i+1)
             assert_equals(self.cache.current, conn)
             assert_equals(self.cache.current_index, i+1)
+        assert_equals(self.cache._connections, conns)
+
+    def test_register_multiple_equal_objects(self):
+        conns = [ConnectionMock(1), ConnectionMock(1), ConnectionMock(1)]
+        for i, conn in enumerate(conns):
+            index = self.cache.register(conn)
+            assert_equals(index, i+1)
+            assert_equals(self.cache.current, conn)
+            assert_equals(self.cache.current_index, i+1)
+        assert_equals(self.cache._connections, conns)
+
+    def test_register_multiple_same_object(self):
+        conns = [ConnectionMock()] * 3
+        for i, conn in enumerate(conns):
+            index = self.cache.register(conn)
+            assert_equals(index, i+1)
+            assert_equals(self.cache.current, conn)
+            assert_equals(self.cache.current_index, 1)
         assert_equals(self.cache._connections, conns)
 
     def test_set_current_index(self):
