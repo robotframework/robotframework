@@ -6,7 +6,10 @@ ${REMOVED FOR MESSAGE}     -FOR -ALL
 ${KEPT FOR MESSAGE}        +FOR -ALL
 ${REMOVED WUKS MESSAGE}    -WUKS -ALL
 ${KEPT WUKS MESSAGE}       +WUKS -ALL
-
+${REMOVED BY NAME MESSAGE}    -BYNAME -ALL
+${KEPT BY NAME MESSAGE}    +BYNAME -ALL
+${REMOVED BY PATTERN MESSAGE}    -BYPATTERN -ALL
+${KEPT BY PATTERN MESSAGE}    +BYPATTERN -ALL
 
 *** Test Case ***
 
@@ -34,6 +37,28 @@ WUKS when test fails
 WUKS when test passes
      Wait Until Keyword Succeeds    2s    0.01s    My WUKS
 
+NAME when test passes
+    Remove By Name
+    Do not remove by name
+
+NAME when test fails
+    [Documentation]    FAIL this fails
+    Remove By Name
+    Do not remove by name
+    Fail    this fails
+
+NAME with pattern when test passes
+    This should be removed
+    This should be removed also
+    This should not be removed
+
+NAME with pattern when test fails
+    [Documentation]    FAIL this fails
+    This should be removed
+    This should be removed also
+    This should not be removed
+    Fail    this fails
+
 *** Keywords ***
 
 My FOR
@@ -47,3 +72,20 @@ My WUKS
     Set Test Variable    $COUNTER    ${COUNTER + 1}
     Run Keyword If    ${COUNTER} < 10    Fail    ${REMOVED WUKS MESSAGE}
     Run Keyword If    ${COUNTER} == 10    Fail    ${KEPT WUKS MESSAGE}
+
+Remove By Name
+    Log    ${REMOVED BY NAME MESSAGE}
+
+Do not remove by name
+    Remove By Name
+    Log    ${KEPT BY NAME MESSAGE}
+
+This should be removed
+    Log    ${REMOVED BY PATTERN MESSAGE}
+
+This should be removed also
+    Log    ${REMOVED BY PATTERN MESSAGE}
+
+This should not be removed
+    This should be removed
+    Log    ${KEPT BY PATTERN MESSAGE}

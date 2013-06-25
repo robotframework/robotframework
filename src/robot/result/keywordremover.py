@@ -18,6 +18,9 @@ from robot.model import SuiteVisitor, SkipAllVisitor
 
 
 def KeywordRemover(how):
+    if ':' in how and how.startswith('NAME'):
+        _, pattern = how.split(':', 1)
+        return ByNameKeywordRemover(pattern)
     return {
         'PASSED': PassedKeywordRemover,
         'FOR': ForLoopItemsRemover,
@@ -132,3 +135,22 @@ class RemovalMessage(object):
 
     def set(self, kw, message=None):
         kw.doc = ('%s\n\n_%s_' % (kw.doc, message or self._message)).strip()
+
+
+class ByNameKeywordRemover(_KeywordRemover):
+    def __init__(self, pattern):
+        super(ByNameKeywordRemover, self).__init__()
+        self._pattern = pattern.lower()
+
+    def start_keyword(self, keyword):
+        if self._matches(keyword.name):
+            self._clear_content(keyword)
+
+    def _matches(self, kw_name):
+        kw_name = kw_name.lower()
+        if '*' in self._pattern:
+            pattern = self._pattern.split('*', 1)[0]
+            return kw_name.startswith(pattern)
+        return kw_name == self._pattern
+
+

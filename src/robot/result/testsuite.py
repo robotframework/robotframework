@@ -115,7 +115,9 @@ class TestSuite(model.TestSuite):
     def remove_keywords(self, how):
         """Remove keywords based on the given condition.
 
-        :param how: Is either ``ALL``, ``PASSED``, ``FOR``, or ``WUKS``.
+        :param how: Is either ``ALL``, ``PASSED``, ``FOR``, ``WUKS``, or
+                    ``NAME:<pattern>``.
+
                     These values have exact same semantics as values accepted by
                     ``--removekeywords`` command line option.
         """

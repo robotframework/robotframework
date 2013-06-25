@@ -35,6 +35,8 @@ Validate Tests
     Check Suite Contains Tests    ${SUITE}    Passing    Failing
     ...    For when test fails    For when test passes
     ...    WUKS when test fails    WUKS when test passes
+    ...    NAME when test fails    NAME when test passes
+    ...    NAME with pattern when test fails    NAME with pattern when test passes
 
 Create Output
     Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/all_combinations.txt
