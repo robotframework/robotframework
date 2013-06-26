@@ -147,7 +147,7 @@ class ByNameKeywordRemover(_KeywordRemover):
             self._clear_content(keyword)
 
     def _matches(self, kw_name):
-        kw_name = kw_name.lower()
+        kw_name = ''.join(kw_name.lower().split())
         if '*' in self._pattern:
             pattern = self._pattern.split('*', 1)[0]
             return kw_name.startswith(pattern)

@@ -52,8 +52,8 @@ Run tests and remove keywords
     ...    --removekeywords passed
     ...    --RemoveKeywords FoR
     ...    --removek WUKS
-    ...    --removekeywords "name:Remove By Name"
-    ...    --removekeywords "name:This should be*"
+    ...    --removekeywords name:RemoveByName
+    ...    --removekeywords name:Thisshouldbe*
     ...    --log log.html
     Run tests    ${opts}    cli/remove_keywords/all_combinations.txt
     ${LOG} =    Get file    ${OUTDIR}/log.html
