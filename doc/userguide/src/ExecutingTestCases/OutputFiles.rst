@@ -486,15 +486,22 @@ The option has the following modes of operation:
    Remove all but last failing keyword inside BuiltIn_ keyword
    :name:`Wait Until Keyword Succeeds`.
 
+:opt:`NAME:<pattern>`
+    Remove all keywords matching the pattern. Pattern can be full name of the
+    keyword or utilize the `*` wildcard to match many keywords.
+
 Examples::
 
    rebot --removekeywords all output.xml
    pybot --removekeywords passed --removekeywords for tests.txt
-
+   pybot --removekeywords name:MyKeyword --removekeywords name:MyResourceFile.* tests.txt
 
 .. Note::
    The support for using :opt:`--removekeywords` when executing tests as well
    as :opt:`FOR` and :opt:`WUKS` modes were added in Robot Framework 2.7.
+
+.. Note::
+    Option :opt:`NAME:<pattern>` was added in Robot Framework 2.8.2.
 
 Setting start and end time of execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
