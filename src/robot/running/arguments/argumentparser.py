@@ -79,8 +79,13 @@ class _ArgumentSpecParser(_ArgumentParser):
     def parse(self, name, argspec):
         result = ArgumentSpec(name, self._type)
         for arg in argspec:
+            if result.kwargs:
+                raise DataError('Only last argument can be kwargs.')
+            if self._is_kwargs(arg):
+                self._add_kwargs(arg, result)
+                continue
             if result.varargs:
-                raise DataError('Only last argument can be varargs.')
+                raise DataError('Only kwargs argument may follow varargs.')
             if self._is_varargs(arg):
                 self._add_varargs(arg, result)
                 continue
@@ -91,6 +96,15 @@ class _ArgumentSpecParser(_ArgumentParser):
                 raise DataError('Non-default argument after default arguments.')
             self._add_arg(arg, result)
         return result
+
+    def _is_kwargs(self, arg):
+        raise NotImplementedError
+
+    def _add_kwargs(self, kwargs, result):
+        result.kwargs = self._format_kwargs(kwargs)
+
+    def _format_kwargs(self, kwargs):
+        return kwargs
 
     def _is_varargs(self, arg):
         raise NotImplementedError
@@ -115,8 +129,14 @@ class _ArgumentSpecParser(_ArgumentParser):
 
 class DynamicArgumentParser(_ArgumentSpecParser):
 
+    def _is_kwargs(self, arg):
+        return arg.startswith('**')
+
+    def _format_kwargs(self, kwargs):
+        return kwargs[2:]
+
     def _is_varargs(self, arg):
-        return arg.startswith('*')
+        return arg.startswith('*') and not arg[1:].startswith('*')
 
     def _format_varargs(self, varargs):
         return varargs[1:]

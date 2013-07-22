@@ -217,8 +217,8 @@ class _DynamicHandler(_RunnableHandler):
 
     def resolve_arguments(self, arguments, variables):
         positional, named = _RunnableHandler.resolve_arguments(self, arguments, variables)
-        arguments = ArgumentMapper(self.arguments).map(positional, named, prune_trailing_defaults=True)
-        return arguments, {}
+        arguments, kwargs = ArgumentMapper(self.arguments).map(positional, named, prune_trailing_defaults=True)
+        return arguments, kwargs
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
@@ -228,8 +228,12 @@ class _DynamicHandler(_RunnableHandler):
         return self._get_dynamic_handler(method, name)
 
     def _get_dynamic_handler(self, runner, name):
-        def handler(*positional):
-            return runner(name, positional)
+        def handler(*positional, **kwargs):
+            if kwargs:
+                return runner(name, positional, kwargs)
+            else: # For backwards compatibility
+                # --> run_keyword methods with kwargs should define a default
+                return runner(name, positional)
         return handler
 
 
