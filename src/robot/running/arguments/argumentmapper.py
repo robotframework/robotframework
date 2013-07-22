@@ -21,11 +21,11 @@ class ArgumentMapper(object):
     def map(self, positional, named, variables=None, prune_trailing_defaults=False):
         template = KeywordCallTemplate(self._argspec, variables)
         template.fill_positional(positional)
-        kwargs = template.fill_named(named)
+        template.fill_named(named)
         if prune_trailing_defaults:
             template.prune_trailing_defaults()
         template.fill_defaults()
-        return list(template), kwargs
+        return list(template), template.kwargs
 
 
 class KeywordCallTemplate(object):
@@ -37,23 +37,22 @@ class KeywordCallTemplate(object):
         self._template = [None] * argspec.minargs + [Default(value) for value in defaults]
         self._positional = argspec.positional
         self._kwargs = argspec.kwargs
+        # Gets the unfillable named args for Keyword's **kwargs:
+        self.kwargs = {}
 
     def fill_positional(self, positional):
         self._template[:len(positional)] = positional
 
     def fill_named(self, named):
-        # Returns the unfillable named args for Keyword's **kwargs
-        kwargs = {}
         for name, value in named.items():
             try:
                 index = self._positional.index(name)
             except ValueError:
                 if not self._kwargs:
                     raise
-                kwargs[name] = value
+                self.kwargs[name] = value
             else:
                 self._template[index] = value
-        return kwargs
 
     def prune_trailing_defaults(self):
         while self._template and isinstance(self._template[-1], Default):
