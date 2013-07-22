@@ -144,6 +144,10 @@ class DynamicArgumentParser(_ArgumentSpecParser):
 
 class UserKeywordArgumentParser(_ArgumentSpecParser):
 
+    def _is_kwargs(self, arg):
+        #TODO
+        return False
+
     def _is_varargs(self, arg):
         return is_list_var(arg)
 
