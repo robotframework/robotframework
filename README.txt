@@ -14,6 +14,10 @@ with additional support for \**kwargs in Dynamic Test Libraries.
     def run_keyword(self, name, args, kwargs={}):
         ...
 
+There is also a branch with additional support for \**kwargs in User Keywords:
+
+https://bitbucket.org/userzimmermann/robotframework/commits/branch/userkwargs
+
 -- Stefan Zimmermann
 
 
