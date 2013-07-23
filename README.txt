@@ -1,3 +1,22 @@
+This is a Robot Framework 2.8.x fork
+with additional support for ``**kwargs`` in Dynamic Test Libraries.
+
+- ``get_keyword_arguments`` methods
+  may return an additional ``**`` argument
+  to define a Keyword's ``**kwargs`` support::
+
+    return ['arg', '*varargs', '**kwargs']
+
+- ``run_keyword`` methods
+  just need an additional argument for ``**kwargs`` support.
+  This must have a default value for backwards compatibility::
+
+    def run_keyword(self, name, args, kwargs={}):
+        ...
+
+-- Stefan Zimmermann
+
+
 Robot Framework
 ===============
 
