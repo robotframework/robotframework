@@ -8,10 +8,9 @@ with additional support for \**kwargs in Dynamic Test Libraries.
     return ['arg', '*varargs', '**kwargs']
 
 - ``run_keyword`` methods
-  just need an additional argument for \**kwargs support.
-  This must have a default value for backwards compatibility::
+  just need an additional argument to support Keywords with \**kwargs::
 
-    def run_keyword(self, name, args, kwargs={}):
+    def run_keyword(self, name, args, kwargs):
         ...
 
 There is also a branch with additional support for \**kwargs in User Keywords:
