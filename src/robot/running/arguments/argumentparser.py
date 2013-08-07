@@ -85,7 +85,7 @@ class _ArgumentSpecParser(_ArgumentParser):
                 self._add_kwargs(arg, result)
                 continue
             if result.varargs:
-                raise DataError('Only kwargs argument may follow varargs.')
+                raise DataError('Positional argument after varargs.')
             if self._is_varargs(arg):
                 self._add_varargs(arg, result)
                 continue
