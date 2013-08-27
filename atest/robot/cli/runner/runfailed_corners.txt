@@ -37,7 +37,7 @@ Stops on error when output is invalid
     Stderr Should Be Equal To
     ...  [ ERROR ] Collecting failed tests from '${RUN FAILED FROM}' failed:
     ...  Reading XML source '${RUN FAILED FROM}' failed:
-    ...  Incompatible XML element 'xml'${USAGE TIP}\n
+    ...  Incompatible XML element 'xml'.${USAGE TIP}\n
 
 *** Keywords ***
 Generate Output
