@@ -33,7 +33,7 @@ class ItemList(object):
 
     def _check_type_and_set_attrs(self, item):
         if not isinstance(item, self._item_class):
-            raise TypeError("Only '%s' objects accepted, got '%s'"
+            raise TypeError("Only '%s' objects accepted, got '%s'."
                             % (self._item_class.__name__, type(item).__name__))
         if self._common_attrs:
             for attr in self._common_attrs:

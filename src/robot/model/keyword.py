@@ -46,9 +46,9 @@ class Keyword(ModelObject):
         self.timeout = timeout
         #: Keyword messages, a list of
         #: :class:`~robot.model.message.Messages` instances.
-        self.messages = []
+        self.messages = None
         #: Child keyword results, a list of class:`~.Keyword`. instances
-        self.keywords = []
+        self.keywords = None
 
     @setter
     def keywords(self, keywords):
