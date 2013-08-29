@@ -35,16 +35,14 @@ class Keyword(ModelObject):
         #: :class:`~.testcase.TestCase` that contains this keyword.
         self.parent = None
         #: Keyword name.
-        self.name = intern(name)
+        self.name = name
         #: Keyword documentation.
-        self.doc = intern(doc)
+        self.doc = doc
         #: Keyword arguments, a list of strings.
         self.args = args
         #: 'SETUP', 'TEARDOWN' or 'KW'.
-        self.type = intern(type)
+        self.type = type
         #: Keyword timeout.
-        if isinstance(timeout, basestring):
-            timeout = intern(timeout)
         self.timeout = timeout
         #: Keyword messages, a list of
         #: :class:`~robot.model.message.Messages` instances.
