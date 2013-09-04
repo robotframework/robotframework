@@ -26,7 +26,7 @@ def KeywordRemover(how):
         'FOR': ForLoopItemsRemover,
         'ALL': AllKeywordsRemover,
         'WUKS': WaitUntilKeywordSucceedsRemover,
-    }.get(how.upper(), SkipAllVisitor)()
+    }.get(how.upper(), SkipAllVisitor)()  # TODO: Should fail, not skip
 
 
 class _KeywordRemover(SuiteVisitor):
