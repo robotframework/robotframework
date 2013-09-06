@@ -32,7 +32,6 @@ class Keyword(model.Keyword):
         #: Keyword execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
         #: Keyword status message. Used only with suite teardowns.
-        #: A non-empty message means that the teardown has failed.
         self.message = ''
 
     @property
