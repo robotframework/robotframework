@@ -72,6 +72,9 @@ Dictionary Should Not Contain Key
 Dictionary Should Not Contain Key With Existing Key
     Check Test Case  ${TEST NAME}
 
+Dictionary Should (Not) Contain Key Does Not Require `has_key`
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Contain Value
     Check Test Case  ${TEST NAME}
 

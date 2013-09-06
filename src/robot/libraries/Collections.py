@@ -576,7 +576,7 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary does not contain key '%s'." % key
-        _verify_condition(dictionary.has_key(key), default, msg)
+        _verify_condition(key in dictionary, default, msg)
 
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
         """Fails if `key` is found from `dictionary`.
@@ -586,7 +586,7 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary contains key '%s'." % key
-        _verify_condition(not dictionary.has_key(key), default, msg)
+        _verify_condition(key not in dictionary, default, msg)
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
         """An item of `key`/`value` must be found in a `dictionary`.

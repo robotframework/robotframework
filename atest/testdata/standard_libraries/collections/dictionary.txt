@@ -1,6 +1,7 @@
 *** Settings ***
 Test Setup      Create Dictionaries For Testing
 Resource        collections_resources.txt
+Library         CollectionsHelperLibrary.py
 
 *** Test Cases ***
 Create Dictionary
@@ -96,6 +97,11 @@ Dictionary Should Not Contain Key
 Dictionary Should Not Contain Key With Existing Key
     [Documentation]  FAIL Dictionary contains key 'b'.
     Dictionary Should Not Contain Key  ${D3}  b
+
+Dictionary Should (Not) Contain Key Does Not Require `has_key`
+    ${dict} =  Get Dict Without Has Key  name=value
+    Dictionary Should Contain Key  ${dict}  name
+    Dictionary Should Not Contain Key  ${dict}  nonex
 
 Dictionary Should Contain Value
     Dictionary Should Contain Value  ${D3}  ${2}
