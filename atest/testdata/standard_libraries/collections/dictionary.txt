@@ -1,6 +1,7 @@
 *** Settings ***
 Test Setup      Create Dictionaries For Testing
 Resource        collections_resources.txt
+Library         CollectionsHelperLibrary.py
 
 *** Test Cases ***
 Create Dictionary
@@ -11,7 +12,7 @@ Create Dictionary
     Compare To Expected String  ${dict}  {'a': '1', 'b': '2', 3: 3.1, True: {}}
 
 Create Dictionary with wrong number of arguments
-    [Documentation]  FAIL ValueError: Creating a dictionary failed. There should be an even number of key-value-pairs.
+    [Documentation]  FAIL ValueError: Creating a dictionary failed. There should be even number of key-value-pairs.
     Create Dictionary  a  1  b
 
 Create Dictionary With **kwargs
@@ -25,7 +26,7 @@ Set To Dictionary
     Should Be Equal  ${D0}  ${D3}
 
 Set To Dictionary With wrong number of arguments
-    [Documentation]  FAIL ValueError: Adding data to a dictionary failed. There should be an even number of key-value-pairs.
+    [Documentation]  FAIL ValueError: Adding data to a dictionary failed. There should be even number of key-value-pairs.
     Set To Dictionary  ${D0}  a
 
 Set To Dictionary With **kwargs
@@ -69,46 +70,51 @@ Get From Dictionary
     Should Be Equal As Integers  ${value}  2
 
 Get From Dictionary With Invalid Key
-    [Documentation]  FAIL Dictionary does not contain key 'x'
+    [Documentation]  FAIL Dictionary does not contain key 'x'.
     Get From Dictionary  ${D3}  x
 
 Dictionary Should Contain Key
     Dictionary Should Contain Key  ${D3}  a
 
 Dictionary Should Contain Key With Missing Key
-    [Documentation]  FAIL Dictionary does not contain key 'x'
+    [Documentation]  FAIL Dictionary does not contain key 'x'.
     Dictionary Should Contain Key  ${D3}  x
 
 Dictionary Should Contain Item
     Dictionary Should Contain Item  ${D3}  a   1
 
 Dictionary Should Contain Item With Missing Key
-    [Documentation]  FAIL Dictionary does not contain key 'x'
+    [Documentation]  FAIL Dictionary does not contain key 'x'.
     Dictionary Should Contain Item  ${D3}  x   1
 
 Dictionary Should Contain Item With Wrong Value
-    [Documentation]  FAIL Value of dictionary key 'a' does not match. '1'!='2'
+    [Documentation]  FAIL Value of dictionary key 'a' does not match: 1 != 2
     Dictionary Should Contain Item  ${D3}  a   2
 
 Dictionary Should Not Contain Key
     Dictionary Should Not Contain Key  ${D3}  x
 
 Dictionary Should Not Contain Key With Existing Key
-    [Documentation]  FAIL Dictionary contains key 'b'
+    [Documentation]  FAIL Dictionary contains key 'b'.
     Dictionary Should Not Contain Key  ${D3}  b
+
+Dictionary Should (Not) Contain Key Does Not Require `has_key`
+    ${dict} =  Get Dict Without Has Key  name=value
+    Dictionary Should Contain Key  ${dict}  name
+    Dictionary Should Not Contain Key  ${dict}  nonex
 
 Dictionary Should Contain Value
     Dictionary Should Contain Value  ${D3}  ${2}
 
 Dictionary Should Contain Value With Missing Value
-    [Documentation]  FAIL Dictionary does not contain value 'x'
+    [Documentation]  FAIL Dictionary does not contain value 'x'.
     Dictionary Should Contain Value  ${D3}  x
 
 Dictionary Should Not Contain Value
     Dictionary Should Not Contain Value  ${D3}  x
 
 Dictionary Should Not Contain Value With Existing Value
-    [Documentation]  FAIL Dictionary contains value '2'
+    [Documentation]  FAIL Dictionary contains value '2'.
     Dictionary Should Not Contain Value  ${D3}  ${2}
 
 Dictionaries Should Be Equal

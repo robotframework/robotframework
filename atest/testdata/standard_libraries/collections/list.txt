@@ -3,8 +3,8 @@ Test Setup      Create Lists for the Tests
 Resource        collections_resources.txt
 
 *** Variables ***
-${INDEX ERROR}  ValueError: Cannot convert index 'index' to an integer
-${LIST OUT OF RANGE}  IndexError: Given index 10 is out of the range 0-2
+${INDEX ERROR}  ValueError: Cannot convert index 'index' to an integer.
+${LIST OUT OF RANGE}  IndexError: Given index 10 is out of the range 0-2.
 
 *** Test Cases ***
 Convert To List
@@ -186,7 +186,7 @@ List Should Contain Value
     List Should Contain Value  ${L1}  1
 
 List Should Contain Value, Value Not Found
-    [Documentation]  FAIL [ 1 ] does not contain value '2'
+    [Documentation]  FAIL [ 1 ] does not contain value '2'.
     List Should Contain Value  ${L1}  2
 
 List Should Contain Value, Value Not Found And Own Error Message
@@ -197,7 +197,7 @@ List Should Not Contain Value
     List Should Not Contain Value  ${L1}  2
 
 List Should Not Contain Value, Value Found
-    [Documentation]  FAIL [ 1 ] contains value '1'
+    [Documentation]  FAIL [ 1 ] contains value '1'.
     List Should Not Contain Value  ${L1}  1
 
 List Should Not Contain Value, Value Found And Own Error Message
@@ -215,12 +215,12 @@ List Should Not Contain Duplicates Is Case And Space Sensitive
     List Should Not Contain Duplicates  ${list}
 
 List Should Not Contain Duplicates With One Duplicate
-    [Documentation]  FAIL 'item' found multiple times
+    [Documentation]  FAIL 'item' found multiple times.
     ${list} =  Create List  item  item  another item  fourth item  ITEM
     List Should Not Contain Duplicates  ${list}
 
 List Should Not Contain Duplicates With Multiple Duplicates
-    [Documentation]  FAIL '2', 'None', '4', '[1, 2, 3]' and '[]' found multiple times
+    [Documentation]  FAIL '2', 'None', '4', '[1, 2, 3]' and '[]' found multiple times.
     ${list} =  Evaluate  [1, 2, '2', 2, None, '4', '4', '4', '4', '42', [1, 2, 3], {}, False] + [[]]*10 + [[1, 2, 3], None, (1, 2, 3, 4), 'a', 'A']
     List Should Not Contain Duplicates  ${list}
 
