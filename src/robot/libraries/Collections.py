@@ -286,7 +286,7 @@ class _List:
         not contain the value 'x'" is shown in case of a failure. Otherwise,
         the given `msg` is used in case of a failure.
         """
-        default = "%s does not contain value '%s'" % (seq2str2(list_), value)
+        default = "%s does not contain value '%s'." % (seq2str2(list_), value)
         _verify_condition(value in list_, default, msg)
 
     def list_should_not_contain_value(self, list_, value, msg=None):
@@ -294,7 +294,7 @@ class _List:
 
         See `List Should Contain Value` for an explanation of `msg`.
         """
-        default = "%s contains value '%s'" % (seq2str2(list_), value)
+        default = "%s contains value '%s'." % (seq2str2(list_), value)
         _verify_condition(value not in list_, default, msg)
 
     def list_should_not_contain_duplicates(self, list_, msg=None):
@@ -315,10 +315,11 @@ class _List:
             if item not in dupes:
                 count = list_.count(item)
                 if count > 1:
-                    logger.info("'%s' found %d times" % (item, count))
+                    logger.info("'%s' found %d times." % (item, count))
                     dupes.append(item)
         if dupes:
-            raise AssertionError(msg or '%s found multiple times' % seq2str(dupes))
+            raise AssertionError(msg or
+                                 '%s found multiple times.' % seq2str(dupes))
 
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
                               names=None):
@@ -388,7 +389,7 @@ class _List:
         """
         diffs = ', '.join(unic(item) for item in list2 if item not in list1)
         default = 'Following values were not found from first list: ' + diffs
-        _verify_condition(diffs == '', default, msg, values)
+        _verify_condition(not diffs, default, msg, values)
 
     def log_list(self, list_, level='INFO'):
         """Logs the length and contents of the `list` using given `level`.
@@ -402,7 +403,7 @@ class _List:
 
     def _log_list(self, list_):
         if not list_:
-            yield 'List is empty'
+            yield 'List is empty.'
         elif len(list_) == 1:
             yield 'List has one item:\n%s' % list_[0]
         else:
@@ -416,10 +417,10 @@ class _List:
         try:
             return int(index)
         except ValueError:
-            raise ValueError("Cannot convert index '%s' to an integer" % index)
+            raise ValueError("Cannot convert index '%s' to an integer." % index)
 
     def _index_error(self, list_, index):
-        raise IndexError('Given index %s is out of the range 0-%d'
+        raise IndexError('Given index %s is out of the range 0-%d.'
                          % (index, len(list_)-1))
 
 
@@ -447,7 +448,7 @@ class _Dictionary:
         """
         if len(key_value_pairs) % 2 != 0:
             raise ValueError("Creating a dictionary failed. There should be "
-                             "an even number of key-value-pairs.")
+                             "even number of key-value-pairs.")
         return self.set_to_dictionary({}, *key_value_pairs, **items)
 
     def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
@@ -462,7 +463,7 @@ class _Dictionary:
         """
         if len(key_value_pairs) % 2 != 0:
             raise ValueError("Adding data to a dictionary failed. There "
-                             "should be an even number of key-value-pairs.")
+                             "should be even number of key-value-pairs.")
         for i in range(0, len(key_value_pairs), 2):
             dictionary[key_value_pairs[i]] = key_value_pairs[i+1]
         dictionary.update(items)
@@ -482,9 +483,9 @@ class _Dictionary:
         for key in keys:
             if key in dictionary:
                 value = dictionary.pop(key)
-                logger.info("Removed item with key '%s' and value '%s'" % (key, value))
+                logger.info("Removed item with key '%s' and value '%s'." % (key, value))
             else:
-                logger.info("Key '%s' not found" % (key))
+                logger.info("Key '%s' not found." % key)
 
     def keep_in_dictionary(self, dictionary, *keys):
         """Keeps the given `keys` in the `dictionary` and removes all other.
@@ -565,7 +566,7 @@ class _Dictionary:
         try:
             return dictionary[key]
         except KeyError:
-            raise RuntimeError("Dictionary does not contain key '%s'" % key)
+            raise RuntimeError("Dictionary does not contain key '%s'." % key)
 
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
         """Fails if `key` is not found from `dictionary`.
@@ -574,7 +575,7 @@ class _Dictionary:
 
         The given dictionary is never altered by this keyword.
         """
-        default = "Dictionary does not contain key '%s'" % key
+        default = "Dictionary does not contain key '%s'." % key
         _verify_condition(dictionary.has_key(key), default, msg)
 
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
@@ -584,7 +585,7 @@ class _Dictionary:
 
         The given dictionary is never altered by this keyword.
         """
-        default = "Dictionary contains key '%s'" % key
+        default = "Dictionary contains key '%s'." % key
         _verify_condition(not dictionary.has_key(key), default, msg)
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
@@ -597,7 +598,7 @@ class _Dictionary:
         """
         self.dictionary_should_contain_key(dictionary, key, msg)
         actual, expected = unicode(dictionary[key]), unicode(value)
-        default = "Value of dictionary key '%s' does not match. '%s'!='%s'" % (key, actual, expected)
+        default = "Value of dictionary key '%s' does not match: %s != %s" % (key, actual, expected)
         _verify_condition(actual == expected, default, msg)
 
     def dictionary_should_contain_value(self, dictionary, value, msg=None):
@@ -607,7 +608,7 @@ class _Dictionary:
 
         The given dictionary is never altered by this keyword.
         """
-        default = "Dictionary does not contain value '%s'" % value
+        default = "Dictionary does not contain value '%s'." % value
         _verify_condition(value in dictionary.values(), default, msg)
 
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None):
@@ -617,7 +618,7 @@ class _Dictionary:
 
         The given dictionary is never altered by this keyword.
         """
-        default = "Dictionary contains value '%s'" % value
+        default = "Dictionary contains value '%s'." % value
         _verify_condition(not value in dictionary.values(), default, msg)
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
@@ -644,7 +645,7 @@ class _Dictionary:
         diffs = [unic(k) for k in keys if k not in dict1]
         default = "Following keys missing from first dictionary: %s" \
                   % ', '.join(diffs)
-        _verify_condition(diffs == [], default, msg, values)
+        _verify_condition(not diffs, default, msg, values)
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
 
     def log_dictionary(self, dictionary, level='INFO'):
@@ -659,11 +660,11 @@ class _Dictionary:
 
     def _log_dictionary(self, dictionary):
         if not dictionary:
-            yield 'Dictionary is empty'
+            yield 'Dictionary is empty.'
         elif len(dictionary) == 1:
             yield 'Dictionary has one item:'
         else:
-            yield 'Dictionary size is %d and it contains following items:' % len( dictionary)
+            yield 'Dictionary size is %d and it contains following items:' % len(dictionary)
         for key in self.get_dictionary_keys(dictionary):
             yield '%s: %s' % (key, dictionary[key])
 
@@ -679,13 +680,13 @@ class _Dictionary:
         if miss2:
             error += ['Following keys missing from second dictionary: %s'
                       % ', '.join(miss2)]
-        _verify_condition(error == [], '\n'.join(error), msg, values)
+        _verify_condition(not error, '\n'.join(error), msg, values)
         return keys1
 
     def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values):
         diffs = list(self._yield_dict_diffs(keys, dict1, dict2))
         default = 'Following keys have different values:\n' + '\n'.join(diffs)
-        _verify_condition(diffs == [], default, msg, values)
+        _verify_condition(not diffs, default, msg, values)
 
     def _yield_dict_diffs(self, keys, dict1, dict2):
         for key in keys:

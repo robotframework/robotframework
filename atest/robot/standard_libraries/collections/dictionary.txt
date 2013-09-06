@@ -26,9 +26,9 @@ Set To Dictionary With **kwargs
 
 Remove From Dictionary
     ${tc} =  Check Test Case  ${TEST NAME}
-    Check Log Message  ${tc.kws[0].msgs[0]}  Removed item with key 'b' and value '2'
-    Check Log Message  ${tc.kws[0].msgs[1]}  Key 'x' not found
-    Check Log Message  ${tc.kws[0].msgs[2]}  Key '2' not found
+    Check Log Message  ${tc.kws[0].msgs[0]}  Removed item with key 'b' and value '2'.
+    Check Log Message  ${tc.kws[0].msgs[1]}  Key 'x' not found.
+    Check Log Message  ${tc.kws[0].msgs[2]}  Key '2' not found.
 
 Keep In Dictionary
     Check Test Case  ${TEST NAME}
@@ -134,7 +134,11 @@ Dictionary Should Contain Sub Dictionary With Different Value And Own And Defaul
 
 Log Dictionary With Different Log Levels
     ${tc} =  Check Test Case  ${TEST NAME}
-    ${expected} =  Set Variable  Dictionary size is 3 and it contains following items:\n 3: None\n a: 1\n b: 2
+    ${expected} =  Catenate  SEPARATOR=\n
+    ...  Dictionary size is 3 and it contains following items:
+    ...  3: None
+    ...  a: 1
+    ...  b: 2
     Check Log Message  ${tc.kws[0].msgs[0]}  ${expected}  INFO
     Should Be Empty    ${tc.kws[1].msgs}
     Check Log Message  ${tc.kws[2].msgs[0]}  ${expected}  WARN
@@ -143,7 +147,7 @@ Log Dictionary With Different Log Levels
 
 Log Dictionary With Different Dictionaries
     ${tc} =  Check Test Case  ${TEST NAME}
-    Check Log Message  ${tc.kws[0].msgs[0]}  Dictionary is empty
-    Check Log Message  ${tc.kws[1].msgs[0]}  Dictionary has one item:\n a: 1
+    Check Log Message  ${tc.kws[0].msgs[0]}  Dictionary is empty.
+    Check Log Message  ${tc.kws[1].msgs[0]}  Dictionary has one item:\na: 1
     Check Log Message  ${tc.kws[3].msgs[0]}  Dictionary size is 3 and it contains following items:\nTrue: xxx\nfoo: []\n(1, 2, 3): 3.14
 
