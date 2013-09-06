@@ -24,7 +24,7 @@ class BaseLibrary:
             raise DataError("No keyword handler with name '%s' found"  % name)
 
     def has_handler(self, name):
-        return self.handlers.has_key(name)
+        return name in self.handlers
 
     def __len__(self):
         return len(self.handlers)

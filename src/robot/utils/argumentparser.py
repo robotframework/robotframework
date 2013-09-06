@@ -262,7 +262,7 @@ class ArgumentParser:
             self._raise_option_multiple_times_in_usage('--' + long_opt)
         self._names.append(long_opt)
         for sopt in short_opts:
-            if self._short_to_long.has_key(sopt):
+            if sopt in self._short_to_long:
                 self._raise_option_multiple_times_in_usage('-' + sopt)
             self._short_to_long[sopt] = long_opt
         if is_multi:
