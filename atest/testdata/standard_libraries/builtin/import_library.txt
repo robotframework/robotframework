@@ -20,8 +20,8 @@ Import Library With Arguments
 
 Import Library With Variables And WITH NAME
     ${name} =  Set Variable  ParameterLibrary
-    Import Library  ${name}  ${42}  ${name}  WITH NAME  Variables
-    ${first}  ${second} =  Variables.Parameters
+    Import Library  ${name}  ${42}  ${name}  WITH NAME  Variables-${42}
+    ${first}  ${second} =  Variables-42.Parameters
     Should Be Equal  ${first}  ${42}
     Should Be Equal  ${second}  ParameterLibrary
 
