@@ -15,7 +15,7 @@
 import re
 import time
 
-from robot.output import LOGGER, Message
+from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExitForLoop, PassExecution,
                           ReturnFromKeyword)
@@ -1884,7 +1884,7 @@ class _Misc:
         the console and in the Test Execution Errors section in the
         log file.
         """
-        LOGGER.log_message(Message(message, level))
+        logger.write(message, level)
 
     def log_many(self, *messages):
         """Logs the given messages as separate entries with the INFO level."""

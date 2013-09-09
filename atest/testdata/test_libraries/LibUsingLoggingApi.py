@@ -23,3 +23,10 @@ def write_messages_to_console():
     logger.console('To console ', newline=False)
     logger.console('in two parts')
     logger.info('To log and console', also_console=True)
+
+def log_non_strings():
+    logger.info(42)
+    logger.warn(True)
+
+def log_callable():
+    logger.info(log_callable)
