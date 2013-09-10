@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import Matcher, plural_or_not
 
 from robot.model import SuiteVisitor, SkipAllVisitor
 
@@ -131,26 +131,18 @@ class RemovalMessage(object):
     def set_if_removed(self, kw, len_before):
         removed = len_before - len(kw.keywords)
         if removed:
-            self.set(kw, self._message % (removed, utils.plural_or_not(removed)))
+            self.set(kw, self._message % (removed, plural_or_not(removed)))
 
     def set(self, kw, message=None):
         kw.doc = ('%s\n\n_%s_' % (kw.doc, message or self._message)).strip()
 
 
 class ByNameKeywordRemover(_KeywordRemover):
+
     def __init__(self, pattern):
         super(ByNameKeywordRemover, self).__init__()
-        self._pattern = pattern.lower()
+        self._matcher = Matcher(pattern, ignore='_')
 
-    def start_keyword(self, keyword):
-        if self._matches(keyword.name):
-            self._clear_content(keyword)
-
-    def _matches(self, kw_name):
-        kw_name = ''.join(kw_name.lower().split())
-        if '*' in self._pattern:
-            pattern = self._pattern.split('*', 1)[0]
-            return kw_name.startswith(pattern)
-        return kw_name == self._pattern
-
-
+    def start_keyword(self, kw):
+        if self._matcher.match(kw.name) and not self._contains_warning(kw):
+            self._clear_content(kw)
