@@ -47,16 +47,27 @@ NAME when test fails
     Do not remove by name
     Fail    this fails
 
-NAME with pattern when test passes
+NAME with * pattern when test passes
     This should be removed
     This should be removed also
     This should not be removed
 
-NAME with pattern when test fails
+
+NAME with * pattern when test fails
     [Documentation]    FAIL this fails
     This should be removed
     This should be removed also
     This should not be removed
+    Fail    this fails
+
+NAME with ? pattern when test passes
+    RemoveYES
+    RemoveNO
+
+NAME with ? pattern when test fails
+    [Documentation]    FAIL this fails
+    RemoveYES
+    RemoveNO
     Fail    this fails
 
 *** Keywords ***
@@ -88,4 +99,11 @@ This should be removed also
 
 This should not be removed
     This should be removed
+    Log    ${KEPT BY PATTERN MESSAGE}
+
+RemoveYES
+    Log    ${REMOVED BY PATTERN MESSAGE}
+
+RemoveNO
+    RemoveYES
     Log    ${KEPT BY PATTERN MESSAGE}
