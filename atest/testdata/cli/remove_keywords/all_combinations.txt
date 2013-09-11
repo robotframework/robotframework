@@ -52,7 +52,6 @@ NAME with * pattern when test passes
     This should be removed also
     This should not be removed
 
-
 NAME with * pattern when test fails
     [Documentation]    FAIL this fails
     This should be removed
