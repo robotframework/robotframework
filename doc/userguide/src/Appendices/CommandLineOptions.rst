@@ -54,7 +54,7 @@ Command line options for test execution
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
                           Tag` table.
-  --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the
+  --removekeywords <all|passed|name:pattern|for|wuks|none>  `Removes keyword data`_ from the
                           generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
@@ -120,7 +120,7 @@ Command line options for post-processing outputs
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
                           Tag` table.
-  --removekeywords <all|passed|for|wuks>  `Removes keyword data`_ from the generated outputs.
+  --removekeywords <all|passed|for|wuks|none>  `Removes keyword data`_ from the generated outputs.
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
                           reports.
   --endtime <timestamp>   Sets the `ending time`_ of test execution when creating reports.

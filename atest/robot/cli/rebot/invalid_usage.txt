@@ -40,9 +40,12 @@ Invalid --SuiteStatLevel
     ...    Option '--suitestatlevel' expected integer value but got 'not_int'.
 
 Invalid --TagStatLink
-    --tagstatlink less_than_3x_: ${MYINPUT}
+    --tagstatlink a:b:c --TagStatLink less_than_3x_: ${MYINPUT}
     ...    Invalid format for option '--tagstatlink'. Expected 'tag:link:title' but got 'less_than_3x_:'.
 
+Invalid --RemoveKeywords
+    --removekeywords wuks --removek none --RemoveKeywords Invalid ${MYINPUT}
+    ...    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', 'WUKS', or 'NONE' but got 'Invalid'.
 
 *** Keywords ***
 

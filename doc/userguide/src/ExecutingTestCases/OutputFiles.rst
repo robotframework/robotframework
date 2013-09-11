@@ -492,6 +492,9 @@ The option has the following modes of operation:
    Remove all but last failing keyword inside BuiltIn_ keyword
    :name:`Wait Until Keyword Succeeds`.
 
+:opt:`NONE`
+    Remove nothing. This is the default behavior.
+
 Examples::
 
    rebot --removekeywords all output.xml
@@ -501,7 +504,8 @@ Examples::
 .. Note::
    The support for using :opt:`--removekeywords` when executing tests as well
    as :opt:`FOR` and :opt:`WUKS` options were added in Robot Framework 2.7.
-   Option :opt:`NAME:<pattern>` was added in Robot Framework 2.8.2.
+   Options :opt:`NAME:<pattern>` and :opt:`NONE` were added in Robot Framework
+   2.8.2.
 
 __ `Option value as simple pattern`_
 

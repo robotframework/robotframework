@@ -53,6 +53,7 @@ Run tests and remove keywords
     ...    --RemoveKeywords FoR
     ...    --removek WUKS
     ...    --removekeywords name:RemoveByName
+    ...    --removekeywords none
     ...    --removekeywords name:Thisshouldbe*
     ...    --removekeywords name:Remove???
     ...    --log log.html

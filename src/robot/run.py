@@ -223,8 +223,8 @@ Options
                           automatically converted to spaces.
                           Examples: --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
-    --removekeywords all|passed|for|wuks|name:<pattern> *  Remove keyword data
-                          from the generated log file. Keywords containing
+    --removekeywords all|passed|name:<pattern>|for|wuks|none *  Remove keyword
+                          data from the generated log file. Keywords containing
                           warnings are not removed except in `all` mode.
                           all:     remove data from all keywords
                           passed:  remove data only from keywords in passed
@@ -240,6 +240,7 @@ Options
                           for:     remove passed iterations from for loops
                           wuks:    remove all but the last failing keyword
                                    from `BuiltIn.Wait Until Keyword Succeeds`
+                          none:    remove nothing (default)
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
                           Arguments to listener class can be given after class

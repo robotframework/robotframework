@@ -27,5 +27,9 @@ Invalid --SuiteStatLevel
     ...  Option '--suitestatlevel' expected integer value but got 'not_int'.
 
 Invalid --TagStatLink
-    --tagstatlink less_than_3x_: tests.txt
+    --tagstatlink a:b:c --TagStatLi less_than_3x_: tests.txt
     ...    Invalid format for option '--tagstatlink'. Expected 'tag:link:title' but got 'less_than_3x_:'.
+
+Invalid --RemoveKeywords
+    --removekeywords wuks --removek none --RemoveKeywords Invalid tests.txt
+    ...    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', 'WUKS', or 'NONE' but got 'Invalid'.

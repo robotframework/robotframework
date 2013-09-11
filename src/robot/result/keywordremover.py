@@ -12,21 +12,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import Matcher, plural_or_not
-
+from robot.errors import DataError
 from robot.model import SuiteVisitor, SkipAllVisitor
+from robot.utils import Matcher, plural_or_not
 
 
 def KeywordRemover(how):
-    how = how.upper()
-    if how.startswith('NAME:'):
+    upper = how.upper()
+    if upper.startswith('NAME:'):
         return ByNameKeywordRemover(pattern=how[5:])
-    return {
-        'PASSED': PassedKeywordRemover,
-        'FOR': ForLoopItemsRemover,
-        'ALL': AllKeywordsRemover,
-        'WUKS': WaitUntilKeywordSucceedsRemover,
-    }.get(how, SkipAllVisitor)()  # TODO: Should fail, not skip
+    try:
+        return {'ALL': AllKeywordsRemover,
+                'PASSED': PassedKeywordRemover,
+                'FOR': ForLoopItemsRemover,
+                'WUKS': WaitUntilKeywordSucceedsRemover,
+                'NONE': SkipAllVisitor}[upper]()
+    except KeyError:
+        raise DataError("Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', "
+                        "'WUKS', or 'NONE' but got '%s'." % how)
 
 
 class _KeywordRemover(SuiteVisitor):
