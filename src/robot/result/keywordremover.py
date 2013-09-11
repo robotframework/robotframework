@@ -18,15 +18,15 @@ from robot.model import SuiteVisitor, SkipAllVisitor
 
 
 def KeywordRemover(how):
-    if ':' in how and how.startswith('NAME'):
-        _, pattern = how.split(':', 1)
-        return ByNameKeywordRemover(pattern)
+    how = how.upper()
+    if how.startswith('NAME:'):
+        return ByNameKeywordRemover(pattern=how[5:])
     return {
         'PASSED': PassedKeywordRemover,
         'FOR': ForLoopItemsRemover,
         'ALL': AllKeywordsRemover,
         'WUKS': WaitUntilKeywordSucceedsRemover,
-    }.get(how.upper(), SkipAllVisitor)()  # TODO: Should fail, not skip
+    }.get(how, SkipAllVisitor)()  # TODO: Should fail, not skip
 
 
 class _KeywordRemover(SuiteVisitor):
@@ -70,6 +70,17 @@ class PassedKeywordRemover(_KeywordRemover):
 
     def visit_keyword(self, keyword):
         pass
+
+
+class ByNameKeywordRemover(_KeywordRemover):
+
+    def __init__(self, pattern):
+        _KeywordRemover.__init__(self)
+        self._matcher = Matcher(pattern, ignore='_')
+
+    def start_keyword(self, kw):
+        if self._matcher.match(kw.name) and not self._contains_warning(kw):
+            self._clear_content(kw)
 
 
 class ForLoopItemsRemover(_KeywordRemover):
@@ -135,14 +146,3 @@ class RemovalMessage(object):
 
     def set(self, kw, message=None):
         kw.doc = ('%s\n\n_%s_' % (kw.doc, message or self._message)).strip()
-
-
-class ByNameKeywordRemover(_KeywordRemover):
-
-    def __init__(self, pattern):
-        super(ByNameKeywordRemover, self).__init__()
-        self._matcher = Matcher(pattern, ignore='_')
-
-    def start_keyword(self, kw):
-        if self._matcher.match(kw.name) and not self._contains_warning(kw):
-            self._clear_content(kw)
