@@ -2,7 +2,6 @@
 Force Tags        regression    pybot    jybot
 Resource          rebot_cli_resource.txt
 Suite Setup       Run tests to create input file for Rebot
-Suite Teardown    Remove temporary files
 Test Template     Rebot Should Fail
 
 *** Test Cases ***
