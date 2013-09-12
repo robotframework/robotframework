@@ -22,14 +22,12 @@ class ArgumentValidator(object):
     def __init__(self, argspec):
         self._argspec = argspec
 
-    def validate(self, positional, named):
+    def validate(self, positional, named, dryrun=False):
+        if dryrun and any(is_list_var(arg) for arg in positional):
+            return
         self._validate_limits(positional, named, self._argspec)
         self._validate_no_multiple_values(positional, named, self._argspec)
         self._validate_no_mandatory_missing(positional, named, self._argspec)
-
-    def validate_dry_run(self, arguments):
-        if not any(is_list_var(arg) for arg in arguments):
-            self._validate_limits(arguments, {}, self._argspec)
 
     def _validate_limits(self, positional, named, spec):
         count = len(positional) + sum(1 for n in named if n in spec.positional)

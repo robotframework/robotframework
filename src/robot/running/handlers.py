@@ -20,7 +20,7 @@ from robot.variables import is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser, ArgumentResolver,
-                        ArgumentValidator, ArgumentMapper, JavaArgumentCoercer)
+                        ArgumentMapper, JavaArgumentCoercer)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -83,7 +83,7 @@ class _RunnableHandler(object):
             return self._get_global_handler(method, name)
         return None
 
-    def resolve_arguments(self, args, variables):
+    def resolve_arguments(self, args, variables=None):
         return self._argument_resolver.resolve(args, variables)
 
     @property
@@ -113,7 +113,7 @@ class _RunnableHandler(object):
     def _dry_run(self, context, args):
         if self.longname == 'BuiltIn.Import Library':
             return self._run(context, args)
-        ArgumentValidator(self.arguments).validate_dry_run(args)
+        self.resolve_arguments(args)
         return None
 
     def _run(self, context, args):

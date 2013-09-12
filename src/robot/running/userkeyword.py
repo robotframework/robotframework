@@ -24,12 +24,12 @@ from robot.variables import is_list_var, VariableSplitter
 from robot.output import LOGGER
 from robot import utils
 
+from .arguments import (ArgumentMapper, ArgumentResolver,
+                        UserKeywordArgumentParser)
 from .baselibrary import BaseLibrary
-from .usererrorhandler import UserErrorHandler
 from .keywords import Keywords, Keyword
 from .timeouts import KeywordTimeout
-from .arguments import (ArgumentValidator, UserKeywordArgumentParser,
-                        ArgumentResolver, ArgumentMapper)
+from .usererrorhandler import UserErrorHandler
 
 
 class UserLibrary(BaseLibrary):
@@ -147,15 +147,11 @@ class UserKeywordHandler(object):
         return self._normal_run(context, arguments)
 
     def _dry_run(self, context, arguments):
-        arguments = self._resolve_dry_run_args(arguments)
+        arguments = self._resolve_arguments(arguments)
         error, return_ = self._execute(context, arguments)
         if error:
             raise error
-
-    def _resolve_dry_run_args(self, arguments):
-        ArgumentValidator(self.arguments).validate_dry_run(arguments)
-        missing_args = len(self.arguments.positional) - len(arguments)
-        return tuple(arguments) + (None,) * missing_args
+        return None
 
     def _normal_run(self, context, arguments):
         arguments = self._resolve_arguments(arguments, context.variables)
@@ -168,7 +164,7 @@ class UserKeywordHandler(object):
             raise error
         return return_value
 
-    def _resolve_arguments(self, arguments, variables):
+    def _resolve_arguments(self, arguments, variables=None):
         resolver = ArgumentResolver(self.arguments)
         mapper = ArgumentMapper(self.arguments)
         positional, named = resolver.resolve(arguments, variables)
