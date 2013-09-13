@@ -1,4 +1,5 @@
 import unittest
+from UserDict import UserDict
 
 from robot.utils import normalize, NormalizedDict
 from robot.utils.asserts import (assert_equals, assert_true, assert_false,
@@ -246,23 +247,15 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(list(nd.iteritems()), zip(nd.iterkeys(), nd.itervalues()))
 
     def test_cmp(self):
-        n1 = NormalizedDict()
-        n2 = NormalizedDict()
-        assert_true(n1 == n1 == n2 == n2)
-        n1['a'] = 1
-        assert_true(n1 == n1 != n2 == n2)
-        n2['a'] = 1
-        assert_true(n1 == n1 == n2 == n2)
-        n1['b'] = 1
-        n2['B'] = 1
-        assert_true(n1 == n1 == n2 == n2)
-        n1['C'] = 1
-        n2['C'] = 2
-        assert_true(n1 == n1 != n2 == n2)
+        self._verify_cmp(NormalizedDict(), NormalizedDict())
 
     def test_cmp_with_normal_dict(self):
-        d1 = NormalizedDict()
-        d2 = {}
+        self._verify_cmp(NormalizedDict(), {})
+
+    def test_cmp_with_user_dict(self):
+        self._verify_cmp(NormalizedDict(), UserDict())
+
+    def _verify_cmp(self, d1, d2):
         assert_true(d1 == d1 == d2 == d2)
         d1['a'] = 1
         assert_true(d1 == d1 != d2 == d2)
@@ -275,12 +268,17 @@ class TestNormalizedDict(unittest.TestCase):
         d1['D'] = d2['d'] = 1
         assert_true(d1 == d1 == d2 == d2)
 
+    def test_cmp_with_other_objects(self):
+        nd = NormalizedDict()
+        for other in ['string', 2, None, [], self.test_clear]:
+            assert_true(nd != other, other)
+
     def test_clear(self):
         nd = NormalizedDict({'a': 1, 'B': 2})
         nd.clear()
         assert_equals(nd.data, {})
         assert_equals(nd._keys, {})
 
+
 if __name__ == '__main__':
     unittest.main()
-
