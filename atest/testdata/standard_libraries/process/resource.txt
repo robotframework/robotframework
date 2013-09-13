@@ -10,7 +10,9 @@ Some process
 
 Stop some process
     [Arguments]    ${alias}=${null}
-    ${process}=    Get Process Object   ${alias}
+    ${running}=    Is Process Running    ${alias}
+    Return From Keyword If    not ${running}
+    ${process}=    Get Process Object    ${alias}
     Call Method    ${process}    communicate    stop\n
 
 Result should equal
