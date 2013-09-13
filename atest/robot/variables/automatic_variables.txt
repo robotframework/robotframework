@@ -39,6 +39,10 @@ Modifying ${SUITE METADATA} does not affect actual metadata suite has
 Suite Status And Suite Message Are Not Visible In Tests
     Check Test Case    ${TEST NAME}
 
+Suite Variables Are Available At Import Time
+    [Documentation]    Possible variables in them are not resolved, though.
+    Check Test Case    ${TEST NAME}
+
 Test Status Should Not Exist Outside Teardown
     Check test case    ${TEST NAME}
 

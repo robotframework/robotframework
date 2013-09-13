@@ -9,13 +9,15 @@ Suite Teardown    Check Variables In Suite Teardown    ${EXP_SUITE_NAME}
 Force Tags        Force 1
 Resource          resource.txt
 Library           Collections
+Library           HelperLib.py    ${SUITE SOURCE}    ${SUITE NAME}
+...               ${SUITE DOCUMENTATION}    ${SUITE METADATA}
 
 *** Variable ***
 ${VARIABLE}          variable value
 ${EXP_SUITE_NAME}    Automatic Variables.Auto1
 ${EXP_SUITE_DOC}     This is suite documentation. With ${VARIABLE}.
 ${EXP_SUITE_META}    {'MeTa1': 'Value', 'meta2': '${VARIABLE}'}
-${EXP_SUITE_STATS}   15 critical tests, 13 passed, 2 failed\n 15 tests total, 13 passed, 2 failed
+${EXP_SUITE_STATS}   16 critical tests, 14 passed, 2 failed\n 16 tests total, 14 passed, 2 failed
 @{LAST_TEST}         Previous Test Variables Should Have Correct Values When That Test Fails    PASS
 
 *** Test Case ***
@@ -63,6 +65,13 @@ Modifying ${SUITE METADATA} does not affect actual metadata suite has
     Set To Dictionary    ${SUITE METADATA}    NotSet    not really set
     Suite Metadata Should Be Correct
     ...    {'MeTa1': 'not really set', 'meta2': '${VARIABLE}', 'NotSet': 'not really set'}
+
+Suite Variables Are Available At Import Time
+    [Documentation]    Possible variables in them are not resolved, though.
+    Source Should Be    ${CURDIR}${/}auto1.txt
+    Name Should Be    Automatic Variables.Auto1
+    Documentation Should Be    This is suite documentation. With \${VARIABLE}.
+    Metadata Should Be    {'MeTa1': 'Value', 'meta2': '\${VARIABLE}'}
 
 Suite Status And Suite Message Are Not Visible In Tests
     Variable Should Not Exist    $SUITE_STATUS
