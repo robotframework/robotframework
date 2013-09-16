@@ -221,6 +221,9 @@ a string and it can have the following three values:
   is shared by all test cases and test suites. Libraries created from
   modules are always global.
 
+.. note:: If a library is imported multiple times with different arguments__,
+          a new instance is created every time regardless the scope.
+
 When the :code:`TEST SUITE` or :code:`GLOBAL` scopes are used with test
 libraries that have a state, it is recommended that libraries have some
 special keyword for cleaning up the state. This keyword can then be
@@ -229,7 +232,7 @@ cases in the next test suites can start from a known state. For example,
 :name:`SeleniumLibrary` uses the :code:`GLOBAL` scope to enable
 using the same browser in different test cases without having to
 reopen it, and it also has the :name:`Close All Browsers` keyword for
-easily closing all open browsers.
+easily closing all opened browsers.
 
 Example Python library using the :code:`TEST SUITE` scope:
 
@@ -268,6 +271,8 @@ Example Java library using the :code:`GLOBAL` scope:
             counter = 0;
         }
     }
+
+__ `Providing arguments to test libraries`_
 
 Specifying library version
 ''''''''''''''''''''''''''
