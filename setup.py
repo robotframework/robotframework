@@ -5,6 +5,9 @@ import os
 from os.path import join, dirname
 from distutils.core import setup
 
+if 'develop' in sys.argv:
+    import setuptools    # support setuptools development mode
+
 execfile(join(dirname(__file__), 'src', 'robot', 'version.py'))
 
 # Maximum width in Windows installer seems to be 70 characters -------|

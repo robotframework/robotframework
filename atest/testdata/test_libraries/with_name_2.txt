@@ -1,8 +1,9 @@
 *** Settings ***
 Documentation   NO RIDE because it could change WITH NAME format.
 Library         OperatingSystem  WITH NAME  OS
-Library         ParameterLibrary  arg1a  arg1b  with name  Param1
-Library         ParameterLibrary  arg2a  arg2b  WITH NAME  Param2
+Library         ParameterLibrary  1  2  with name  Param1
+Library         ParameterLibrary  ${VAR}  ${42}  WITH NAME  Param2
+Library         ParameterLibrary  a  b  WITH NAME  ${VAR}
 Library         ParameterLibrary  whatever  with name
 Library         BuiltIn  With Name  B2
 Library         module_library  with name  MOD1
@@ -16,6 +17,9 @@ Library         libraryscope.Global  WITH NAME  G Scope
 Library         libraryscope.Suite  WITH NAME  S Scope
 Library         libraryscope.Test  WITH NAME  T Scope
 
+*** Variables ***
+${VAR}          VAR
+
 *** Test Cases ***
 No Arguments
     [Documentation]  FAIL No keyword with name 'OperatingSystem.Should Exist' found.
@@ -23,15 +27,23 @@ No Arguments
     Should Exist  ${CURDIR}
     OperatingSystem.Should Exist  ${CURDIR}
 
-With Arguments And Import Same Library Twice
+Arguments Containing Variables And Import Same Library Twice
     ${a1}  ${a2} =  Param1.parameters
-    BuiltIn.Should Be Equal  ${a1}  arg1a
-    BuiltIn.Should Be Equal  ${a1}  arg1a
+    BuiltIn.Should Be Equal  ${a1}  1
+    BuiltIn.Should Be Equal  ${a2}  2
     ${a1}  ${a2} =  par am 2 . par A meter S
-    BuiltIn.Should Be Equal  ${a1}  arg2a
-    BuiltIn.Should Be Equal  ${a2}  arg2b
+    BuiltIn.Should Be Equal  ${a1}  VAR
+    BuiltIn.Should Be Equal  ${a2}  ${42}
 
-WIth Name Has No Effect If Not Second Last
+Alias Containing Variable
+    ${a1}  ${a2} =  VAR.parameters
+    BuiltIn.Should Be Equal  ${a1}  a
+    BuiltIn.Should Be Equal  ${a2}  b
+    ${a1}  ${a2} =  Run Keyword  ${VAR}.parameters
+    BuiltIn.Should Be Equal  ${a1}  a
+    BuiltIn.Should Be Equal  ${a2}  b
+
+With Name Has No Effect If Not Second Last
     ${a1}  ${a2} =  ParameterLibrary.parameters
     BuiltIn.Should Be Equal  ${a1}  whatever
     BuiltIn.Should Be Equal  ${a2}  with name
@@ -76,7 +88,10 @@ Import Library Keyword
     BuiltIn.Should Be Equal  ${a2}  second arg
 
 Correct Error When Using Keyword From Same Library With Different Names Without Prefix 2
-    [Documentation]  FAIL Multiple keywords with name 'Parameters' found.\n  Give the full name of the keyword you want to use.\n  Found: 'MyParamLib.Parameters', 'Param1.Parameters', 'Param2.Parameters' and 'ParameterLibrary.Parameters'
+    [Documentation]  FAIL
+    ...  Multiple keywords with name 'Parameters' found.
+    ...  Give the full name of the keyword you want to use.
+    ...  Found: 'MyParamLib.Parameters', 'Param1.Parameters', 'Param2.Parameters', 'ParameterLibrary.Parameters' and 'VAR.Parameters'
     Parameters
 
 Dynamic Library

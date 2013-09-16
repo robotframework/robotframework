@@ -25,7 +25,7 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 
 
 # TODO: This module should be turned into a package with submodules.
-# No time for that prior to 2.8, but ii ought to be safe also in 2.8.x.
+# No time for that prior to 2.8, but it ought to be safe also in 2.8.x.
 # Important to check that references in API docs don't break.
 
 
@@ -35,7 +35,6 @@ class Keyword(model.Keyword):
     message_class = None  # TODO: Remove from base model?
 
     def __init__(self, name='', args=(), assign=(), type='kw'):
-
         model.Keyword.__init__(self, name=name, args=args, type=type)
         #: Variables to be assigned.
         self.assign = assign

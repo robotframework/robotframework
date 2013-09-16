@@ -456,17 +456,18 @@ Examples::
 Removing keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Most of the content of `output files`_ comes from keywords and especially their
+Most of the content of `output files`_ comes from keywords and their
 log messages. When creating higher level reports, log files are not necessarily
 needed at all, and then keywords and their messages just take space
 unnecessarily. Log files themselves can also grow overly large if they contain
 `for loops`_ or other constructs that repeat certain keywords multiple times.
 
 In these situations, the command line option :opt:`--removekeywords` can be
-used to dispose of unnecessary keywords. It can be used both when executing
-tests and with :prog:`rebot`, but in the former case keywords are not removed
-from the output file. Keywords that contain warnings are not removed except
-in :opt:`ALL` mode.
+used to dispose of unnecessary keywords and messages. It can be used both when
+executing tests and when post-processing outputs. Notice that when running
+tests, keywords are only removed from the log file, not from the XML output
+file. Keywords that contain warnings are not removed except in the :opt:`ALL`
+mode.
 
 The option has the following modes of operation:
 
@@ -475,33 +476,38 @@ The option has the following modes of operation:
 
 :opt:`PASSED`
    Remove keyword data from test cases that have passed and do not
-   contain warnings_. In most cases, log files created after this contain
-   enough information to investigate possible failures.
+   contain warnings_. In most cases, log files created when this option is
+   in use contain enough information to investigate possible failures.
+
+:opt:`NAME:<pattern>`
+   Remove data from all keywords matching the given pattern. The pattern is
+   matched against the full name of the keyword, prefixed with
+   the possible library or resource file name. The pattern is case, space, and
+   underscore insensitive, and it may contain `*` and `?` as wildcards__.
 
 :opt:`FOR`
-   Remove passed iterations from `for loops`_. Starting from Robot Framework
-   2.7.5, the last iteration is always kept.
+   Remove all passed iterations except the last one from `for loops`_.
 
 :opt:`WUKS`
    Remove all but last failing keyword inside BuiltIn_ keyword
    :name:`Wait Until Keyword Succeeds`.
 
-:opt:`NAME:<pattern>`
-    Remove all keywords matching the pattern. Pattern can be full name of the
-    keyword or utilize the `*` wildcard to match many keywords.
+:opt:`NONE`
+    Remove nothing. This is the default behavior.
 
 Examples::
 
    rebot --removekeywords all output.xml
    pybot --removekeywords passed --removekeywords for tests.txt
-   pybot --removekeywords name:MyKeyword --removekeywords name:MyResourceFile.* tests.txt
+   pybot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.txt
 
 .. Note::
    The support for using :opt:`--removekeywords` when executing tests as well
-   as :opt:`FOR` and :opt:`WUKS` modes were added in Robot Framework 2.7.
+   as :opt:`FOR` and :opt:`WUKS` options were added in Robot Framework 2.7.
+   Options :opt:`NAME:<pattern>` and :opt:`NONE` were added in Robot Framework
+   2.8.2.
 
-.. Note::
-    Option :opt:`NAME:<pattern>` was added in Robot Framework 2.8.2.
+__ `Option value as simple pattern`_
 
 Setting start and end time of execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

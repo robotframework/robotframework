@@ -38,3 +38,13 @@ Write messages to console
     Check stdout contains  To console in two parts
     Check stdout contains  To log and console
     Check log message  ${tc.kws[0].msgs[0]}  To log and console  INFO
+
+Log Non-Strings
+    ${tc} =  Check test case  ${TEST NAME}
+    Check log message  ${tc.kws[0].msgs[0]}  42
+    Check log message  ${tc.kws[0].msgs[1]}  True  WARN
+    Check log message  ${ERRORS.msgs[3]}  True  WARN
+
+Log Callable
+    ${tc} =  Check test case  ${TEST NAME}
+    Check log message  ${tc.kws[0].msgs[0]}  <function log_callable at *>  pattern=yes

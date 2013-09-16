@@ -19,3 +19,9 @@ Log HTML
 
 Write messages to console
     Write messages to console
+
+Log Non-Strings
+    Log Non Strings
+
+Log Callable
+    Log Callable

@@ -817,6 +817,13 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    | ${OUTPUT DIR}          | An absolute path to the `output directory`_.          | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
 
+Suite related variables :var:`${SUITE SOURCE}`, :var:`${SUITE NAME}`,
+:var:`${SUITE DOCUMENTATION}` and :var:`${SUITE METADATA}` are
+available already when test libraries and variable files are imported,
+except to Robot Framework 2.8 and 2.8.1 where this support was broken.
+Possible variables in these automatic variables are not yet resolved
+at the import time, though.
+
 Variable priorities and scopes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

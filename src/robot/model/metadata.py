@@ -18,7 +18,7 @@ from robot.utils import NormalizedDict
 class Metadata(NormalizedDict):
 
     def __init__(self, initial=None):
-        NormalizedDict.__init__(self, initial, ignore=['_'])
+        NormalizedDict.__init__(self, initial, ignore='_')
 
     def __unicode__(self):
         return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)

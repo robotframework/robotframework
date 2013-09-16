@@ -31,6 +31,10 @@ Log HTML
     Check Log Message  ${tc.kws[3].msgs[0]}  <img src="nonex.png">  INFO
     Check Log Message  ${tc.kws[4].msgs[0]}  <img src="nonex.png">  HTML
 
+Log Callable
+    ${tc} =  Check Test Case  Log Callable
+    Check Log Message  ${tc.kws[0].msgs[0]}  objects_for_call_method.MyObject
+
 Log Many
     ${tc} =  Check Test Case  Log Many
     Check Log Message  ${tc.kws[0].msgs[0]}  Log Many says:  INFO

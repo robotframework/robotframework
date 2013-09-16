@@ -59,13 +59,22 @@ class TestItemLists(unittest.TestCase):
         assert_true(items[-1] is item2)
 
     def test_getitem_slice_is_not_supported(self):
-        assert_raises(ValueError, ItemList(int).__getitem__, slice(0))
+        assert_raises(TypeError, ItemList(int).__getitem__, slice(0))
+
+    def test_index(self):
+        items = ItemList(str, items=('first', 'second'))
+        assert_equal(items.index('first'), 0)
+        assert_equal(items.index('second'), 1)
 
     def test_len(self):
         items = ItemList(object)
         assert_equal(len(items), 0)
         items.create()
         assert_equal(len(items), 1)
+
+    def test_truth(self):
+        assert_true(not ItemList(int))
+        assert_true(ItemList(int, items=[1]))
 
     def test_clear(self):
         items = ItemList(int, range(10))

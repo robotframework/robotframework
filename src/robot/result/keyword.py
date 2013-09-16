@@ -31,8 +31,7 @@ class Keyword(model.Keyword):
         self.starttime = starttime
         #: Keyword execution end time in format ``%Y%m%d %H:%M:%S.%f``.
         self.endtime = endtime
-        #: Log messages, a list of :class:`~.message.Message`
-        #: instances. Only used with suite teardowns.
+        #: Keyword status message. Used only with suite teardowns.
         self.message = ''
 
     @property

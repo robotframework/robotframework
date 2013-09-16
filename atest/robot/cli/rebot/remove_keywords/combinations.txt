@@ -14,7 +14,7 @@ Rational                    FOR       WUKS
 
 Irrational                  ALL       WUKS
                             ALL       FOR       PASSED
-                            WUKS      FOR       FOR       WUKS
+                            WUKS      FOR       NONE    FOR    WUKS    NONE
 
 
 *** Keywords ***
@@ -36,7 +36,8 @@ Validate Tests
     ...    For when test fails    For when test passes
     ...    WUKS when test fails    WUKS when test passes
     ...    NAME when test fails    NAME when test passes
-    ...    NAME with pattern when test fails    NAME with pattern when test passes
+    ...    NAME with * pattern when test fails    NAME with * pattern when test passes
+    ...    NAME with ? pattern when test fails    NAME with ? pattern when test passes
 
 Create Output
     Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/all_combinations.txt

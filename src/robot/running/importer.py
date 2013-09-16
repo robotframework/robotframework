@@ -32,11 +32,12 @@ class Importer(object):
     def reset(self):
         self.__init__()
 
-    def import_library(self, name, args=None, alias=None, variables=None):
+    def import_library(self, name, args, alias, variables):
         lib = TestLibrary(name, args, variables, create_handlers=False)
         positional, named = lib.positional_args, lib.named_args
         lib = self._import_library(name, positional, named, lib)
-        if alias and name != alias:
+        if alias:
+            alias = variables.replace_scalar(alias)
             lib = self._copy_library(lib, alias)
             LOGGER.info("Imported library '%s' with name '%s'" % (name, alias))
         return lib

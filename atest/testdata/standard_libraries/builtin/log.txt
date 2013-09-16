@@ -30,6 +30,9 @@ Log HTML
     Log  ${html}
     Log  ${html}  HTML
 
+Log Callable
+    Log  ${MyObject}
+
 Log Many
     Log Many  Log Many says:  Hello  from  tests!
     Log Many  Log Many says: Hi!!

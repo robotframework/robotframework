@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     My Setup
+Suite Setup     Run 'With Name' Tests
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.txt
@@ -41,14 +41,17 @@ No Arguments
     Should Be Equal  ${test.kws[1].name}  OS.Should Exist
     Check Syslog Contains  Imported library 'OperatingSystem' with name 'OS'
 
-With Arguments And Import Same Library Twice
-    ${test} =  Check Test Case  With Arguments And Import Same Library Twice
+Arguments Containing Variables And Import Same Library Twice
+    ${test} =  Check Test Case  Arguments Containing Variables And Import Same Library Twice
     Should Be Equal  ${test.kws[0].name}  \${a1}, \${a2} = Param1.Parameters
     Should Be Equal  ${test.kws[3].name}  \${a1}, \${a2} = Param2.Parameters
-    Check Syslog Contains  Imported library 'ParameterLibrary' with arguments [ arg1a | arg1b ] (version <unknown>, class type, testcase scope,
+    Check Syslog Contains  Imported library 'ParameterLibrary' with arguments [ 1 | 2 ] (version <unknown>, class type, testcase scope,
     Check Syslog Contains  Imported library 'ParameterLibrary' with name 'Param1'
-    Check Syslog Contains  Imported library 'ParameterLibrary' with arguments [ arg2a | arg2b ] (version <unknown>, class type, testcase scope,
+    Check Syslog Contains  Imported library 'ParameterLibrary' with arguments [ VAR | 42 ] (version <unknown>, class type, testcase scope,
     Check Syslog Contains  Imported library 'ParameterLibrary' with name 'Param2'
+
+Alias Containing Variable
+    Check Test Case  Alias Containing Variable
 
 With Name Has No Effect If Not Second Last
     ${test} =  Check Test Case  With Name Has No Effect If Not Second Last
@@ -121,7 +124,7 @@ With Name When Library Arguments Are Not Strings
     Check Syslog Contains  Imported library 'ParameterLibrary' with arguments [ 1 | 2 ]
 
 *** Keywords ***
-My Setup
+Run 'With Name' Tests
     Run Tests  ${EMPTY}  test_libraries/with_name_1.txt  test_libraries/with_name_2.txt  test_libraries/with_name_3.txt
     Should Be Equal  ${SUITE.name}  With Name 1 & With Name 2 & With Name 3
 

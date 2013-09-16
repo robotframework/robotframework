@@ -11,10 +11,11 @@ Test Name
     Check Test Case    ${TEST NAME}
 
 Test Documentation
-    Check Test Case    ${TEST NAME}
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.doc}    My doc.\nIn 2 lines! And with variable value!!
 
 Test Tags
-    Check Test Case    ${TEST NAME}
+    Check Test Tags    ${TEST NAME}    Force 1    Hello, world!    id-42    variable value
 
 Modifying ${TEST TAGS} does not affect actual tags test has
     Check Test Tags    ${TEST NAME}    Force 1    mytag
@@ -24,9 +25,11 @@ Suite Name
 
 Suite Documentation
     Check Test Case    ${TEST NAME}
+    Should Be Equal    ${SUITE.suites[0].doc}    This is suite documentation. With variable value.
 
 Suite Metadata
     Check Test Case    ${TEST NAME}
+    Should Be Equal    ${SUITE.suites[0].metadata['Meta2']}    variable value
 
 Modifying ${SUITE METADATA} does not affect actual metadata suite has
     Check Test Case    ${TEST NAME}
@@ -34,6 +37,10 @@ Modifying ${SUITE METADATA} does not affect actual metadata suite has
     Dictionary Should Not Contain Key    ${SUITE.suites[0].metadata}    NotSet
 
 Suite Status And Suite Message Are Not Visible In Tests
+    Check Test Case    ${TEST NAME}
+
+Suite Variables Are Available At Import Time
+    [Documentation]    Possible variables in them are not resolved, though.
     Check Test Case    ${TEST NAME}
 
 Test Status Should Not Exist Outside Teardown

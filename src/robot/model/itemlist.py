@@ -19,7 +19,7 @@ class ItemList(object):
     def __init__(self, item_class, common_attrs=None, items=None):
         self._item_class = item_class
         self._common_attrs = common_attrs
-        self._items = []
+        self._items = ()
         if items:
             self.extend(items)
 
@@ -28,12 +28,12 @@ class ItemList(object):
 
     def append(self, item):
         self._check_type_and_set_attrs(item)
-        self._items.append(item)
+        self._items += (item,)
         return item
 
     def _check_type_and_set_attrs(self, item):
         if not isinstance(item, self._item_class):
-            raise TypeError("Only '%s' objects accepted, got '%s'"
+            raise TypeError("Only '%s' objects accepted, got '%s'."
                             % (self._item_class.__name__, type(item).__name__))
         if self._common_attrs:
             for attr in self._common_attrs:
@@ -42,13 +42,17 @@ class ItemList(object):
     def extend(self, items):
         for item in items:
             self._check_type_and_set_attrs(item)
-        self._items.extend(items)
+        self._items += tuple(items)
 
-    def index(self, item):
-        return self._items.index(item)
+    if hasattr(tuple, 'index'):  # tuples got index method in Python 2.6
+        def index(self, item):
+            return self._items.index(item)
+    else:
+        def index(self, item):
+            return list(self._items).index(item)
 
     def clear(self):
-        self._items = []
+        self._items = ()
 
     def visit(self, visitor):
         for item in self:
@@ -59,7 +63,8 @@ class ItemList(object):
 
     def __getitem__(self, index):
         if isinstance(index, slice):
-            raise ValueError("'%s' object does not support slicing" % type(self).__name__)
+            raise TypeError("'%s' objects do not support slicing."
+                            % type(self).__name__)
         return self._items[index]
 
     def __len__(self):

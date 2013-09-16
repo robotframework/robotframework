@@ -15,6 +15,12 @@
 import re
 import sys
 from UserDict import UserDict
+try:
+    from collections import Mapping
+except ImportError:  # Pre Python 2.6 support
+    mappings = (dict, UserDict)
+else:
+    mappings = (Mapping, UserDict)
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
@@ -162,6 +168,6 @@ class NormalizedDict(UserDict):
         return str(dict(self.items()))
 
     def __cmp__(self, other):
-        if not isinstance(other, NormalizedDict):
+        if not isinstance(other, NormalizedDict) and isinstance(other, mappings):
             other = NormalizedDict(other)
         return UserDict.__cmp__(self, other)

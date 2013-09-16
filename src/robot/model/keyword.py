@@ -14,9 +14,9 @@
 
 from robot.utils import setter
 
-from itemlist import ItemList
-from message import Message, Messages
-from modelobject import ModelObject
+from .itemlist import ItemList
+from .message import Message, Messages
+from .modelobject import ModelObject
 
 
 class Keyword(ModelObject):
@@ -42,13 +42,13 @@ class Keyword(ModelObject):
         self.args = args
         #: 'SETUP', 'TEARDOWN' or 'KW'.
         self.type = type
-          #: Keyword timeout.
+        #: Keyword timeout.
         self.timeout = timeout
         #: Keyword messages, a list of
         #: :class:`~robot.model.message.Messages` instances.
-        self.messages = []
+        self.messages = None
         #: Child keyword results, a list of class:`~.Keyword`. instances
-        self.keywords = []
+        self.keywords = None
 
     @setter
     def keywords(self, keywords):

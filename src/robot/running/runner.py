@@ -51,8 +51,10 @@ class Runner(SuiteVisitor):
     def start_suite(self, suite):
         variables = GLOBAL_VARIABLES.copy()
         variables.set_from_variable_table(suite.variables)
-        result = TestSuite(name=suite.name,
-                           source=suite.source,
+        result = TestSuite(source=suite.source,
+                           name=suite.name,
+                           doc=suite.doc,
+                           metadata=suite.metadata,
                            starttime=get_timestamp())
         if not self.result:
             result.set_criticality(self._settings.critical_tags,
@@ -65,18 +67,19 @@ class Runner(SuiteVisitor):
         ns = Namespace(result, variables, self._variables,
                        suite.user_keywords, suite.imports)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
+        self._context.set_suite_variables(result)
         if not (self._suite_status and self._suite_status.failures):
             ns.handle_imports()
         variables.resolve_delayed()
-        result.doc = self._resolve_setting(suite.doc)
+        result.doc = self._resolve_setting(result.doc)
         result.metadata = [(self._resolve_setting(n), self._resolve_setting(v))
-                           for n, v in suite.metadata.items()]
+                           for n, v in result.metadata.items()]
+        self._context.set_suite_variables(result)
         self._suite = result
         self._suite_status = SuiteStatus(self._suite_status,
                                          self._settings.exit_on_failure,
                                          self._settings.skip_teardown_on_exit)
         self._output.start_suite(ModelCombiner(suite, self._suite))
-        self._context.set_suite_variables(result)
         self._run_setup(suite.keywords.setup, self._suite_status)
         self._executed_tests = NormalizedDict(ignore='_')
 

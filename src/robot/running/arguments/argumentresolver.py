@@ -30,7 +30,8 @@ class ArgumentResolver(object):
         positional, named = self._named_resolver.resolve(arguments)
         positional, named = self._variable_replacer.replace(positional, named,
                                                             variables)
-        self._argument_validator.validate(positional, named)
+        self._argument_validator.validate(positional, named,
+                                          dryrun=not variables)
         return positional, named
 
 
@@ -98,7 +99,7 @@ class VariableReplacer(object):
         self._resolve_until = resolve_until
 
     def replace(self, positional, named, variables=None):
-        # `variables` is None when using Libdoc
+        # `variables` is None in dry-run mode and when using Libdoc
         if variables:
             positional = variables.replace_list(positional, self._resolve_until)
             named = dict((name, variables.replace_scalar(value))

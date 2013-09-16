@@ -43,7 +43,7 @@ NAME option
 NAME option with pattern
     Log should not contain    ${REMOVED BY PATTERN MESSAGE}
     Log should contain    ${KEPT BY PATTERN MESSAGE}
-    Output should contain NAME messages with pattern
+    Output should contain NAME messages with patterns
 
 *** Keywords ***
 
@@ -53,7 +53,9 @@ Run tests and remove keywords
     ...    --RemoveKeywords FoR
     ...    --removek WUKS
     ...    --removekeywords name:RemoveByName
+    ...    --removekeywords none
     ...    --removekeywords name:Thisshouldbe*
+    ...    --removekeywords name:Remove???
     ...    --log log.html
     Run tests    ${opts}    cli/remove_keywords/all_combinations.txt
     ${LOG} =    Get file    ${OUTDIR}/log.html
@@ -103,10 +105,6 @@ Output should contain NAME messages
     Test should contain NAME messages    NAME when test passes
     Test should contain NAME messages    NAME when test fails
 
-Output should contain NAME messages with pattern
-    Test should contain NAME messages with patterns    NAME with pattern when test passes
-    Test should contain NAME messages with patterns    NAME with pattern when test fails
-
 Test should contain NAME messages
     [Arguments]    ${name}
     ${tc}=    Check test case    ${name}
@@ -114,10 +112,23 @@ Test should contain NAME messages
     Check log message    ${tc.kws[1].kws[0].kws[0].msgs[0]}   ${REMOVED BY NAME MESSAGE}
     Check log message    ${tc.kws[1].kws[1].msgs[0]}   ${KEPT BY NAME MESSAGE}
 
-Test should contain NAME messages with patterns
+Output should contain NAME messages with patterns
+    Test should contain NAME messages with * pattern    NAME with * pattern when test passes
+    Test should contain NAME messages with * pattern    NAME with * pattern when test fails
+    Test should contain NAME messages with ? pattern    NAME with ? pattern when test passes
+    Test should contain NAME messages with ? pattern    NAME with ? pattern when test fails
+
+Test should contain NAME messages with * pattern
     [Arguments]    ${name}
     ${tc}=    Check test case    ${name}
     Check log message    ${tc.kws[0].kws[0].msgs[0]}   ${REMOVED BY PATTERN MESSAGE}
     Check log message    ${tc.kws[1].kws[0].msgs[0]}   ${REMOVED BY PATTERN MESSAGE}
     Check log message    ${tc.kws[2].kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
     Check log message    ${tc.kws[2].kws[1].msgs[0]}    ${KEPT BY PATTERN MESSAGE}
+
+Test should contain NAME messages with ? pattern
+    [Arguments]    ${name}
+    ${tc}=    Check test case    ${name}
+    Check log message    ${tc.kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
+    Check log message    ${tc.kws[1].kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
+    Check log message    ${tc.kws[1].kws[1].msgs[0]}    ${KEPT BY PATTERN MESSAGE}

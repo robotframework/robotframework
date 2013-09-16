@@ -21,8 +21,7 @@ from .tags import Tags
 
 
 class TestCase(ModelObject):
-    """Base model for single test case.
-    """
+    """Base model for single test case."""
     __slots__ = ['parent', 'name', 'doc', 'timeout']
     keyword_class = Keyword
 
@@ -39,7 +38,7 @@ class TestCase(ModelObject):
         self.timeout = timeout
         #: Keyword results, a list of :class:`~.keyword.Keyword`
         #: instances and contains also possible setup and teardown keywords.
-        self.keywords = []
+        self.keywords = None
 
     @setter
     def tags(self, tags):

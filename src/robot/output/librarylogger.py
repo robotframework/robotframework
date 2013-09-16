@@ -21,6 +21,8 @@ here to avoid cyclic imports.
 import sys
 import threading
 
+from robot.utils import unic
+
 from .logger import LOGGER
 from .loggerhelper import Message
 
@@ -29,6 +31,11 @@ LOGGING_THREADS = ('MainThread', 'RobotFrameworkTimeoutThread')
 
 
 def write(msg, level, html=False):
+    # Callable messages allow lazy logging internally, but we don't want to
+    # expose this functionality publicly. See the following issue for details:
+    # http://code.google.com/p/robotframework/issues/detail?id=1505
+    if callable(msg):
+        msg = unic(msg)
     if threading.currentThread().getName() in LOGGING_THREADS:
         LOGGER.log_message(Message(msg, level, html))
 

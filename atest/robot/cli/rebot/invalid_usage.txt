@@ -1,61 +1,57 @@
 *** Settings ***
-Force Tags    regression  pybot  jybot
-Resource        rebot_cli_resource.txt
-
+Force Tags        regression    pybot    jybot
+Resource          rebot_cli_resource.txt
+Suite Setup       Run tests to create input file for Rebot
+Test Template     Rebot Should Fail
 
 *** Test Cases ***
 
 Invalid Options
-    Rebot should fail  --invalid option  option --invalid not recognized
-    Rebot should fail  --name valid -I   option -I not recognized
+    --invalid option    option --invalid not recognized
+    --name valid -I     option -I not recognized
 
 No Input
-    Rebot should fail  ${EMPTY}  Expected at least 1 argument, got 0.
+    ${EMPTY}    Expected at least 1 argument, got 0.
 
 Non-Existing Input
-    Rebot should fail  nönéx.xml  Reading XML source 'nönéx\\.xml' failed: .*
+    nönéx.xml    Reading XML source 'nönéx\\.xml' failed: .*
 
-Non-Existing Input And Existing Input
-    Run Rebot Without Processing Output    ${EMPTY}    nönex    ${MYINPUT}
-    ${nönex} =  Normalize Path  ${DATADIR}/nönex
-    Check Stderr Contains    [ ERROR ] Reading XML source '${nönex}' failed: No such file or directory
-    File Should Not Exist    ${OUTDIR}${/}output.xml
-
-Only Non-Existing Inputs
-    Run Rebot Without Processing Output  ${EMPTY}  nönex1  nönex2
-    ${nönex} =  Normalize Path  ${DATADIR}/nönex
-    Check Stderr Contains    [ ERROR ] Reading XML source '${nönex}1' failed: No such file or directory
-    File Should Not Exist    ${OUTDIR}${/}output.xml
+Existing And Non-Existing Input
+    ${MYINPUT} nönéx.xml nonex2.xml    Reading XML source 'nönéx\\.xml' failed: .*
 
 Non-XML Input
-    Create File  ${MYOUTDIR}/invalid.txt  Hello, world
-    Rebot should fail  ${MYOUTDIR}${/}invalid.txt  (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.txt' failed: .*
+    [Setup]    Create File    ${MYOUTDIR}/invalid.txt    Hello, world
+    ${MYOUTDIR}${/}invalid.txt    (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.txt' failed: .*
 
 Incompatible XML
-    Create File  ${MYOUTDIR}/invalid.xml  <not><our>type</our></not>
-    Rebot should fail  ${MYOUTDIR}${/}invalid.xml  Reading XML source '.*invalid.xml' failed: Incompatible XML element 'not'
+    [Setup]    Create File    ${MYOUTDIR}/invalid.xml    <not><our>type</our></not>
+    ${MYOUTDIR}${/}invalid.xml    Reading XML source '.*invalid.xml' failed: Incompatible XML element 'not'.
 
 Invalid Output Directory
-    Create File  ${MYOUTDIR}${/}not-dir
-    Rebot should fail  -d ${MYOUTDIR}${/}not-dir${/}dir ${MYINPUT}
-    ...  Creating log file directory '.*' failed: .*
-    Rebot should fail  -d ${MYOUTDIR}${/}not-dir${/}dir -o out.xml -l none -r none ${MYINPUT}
-    ...  Creating output file directory '.*' failed: .*
+    [Setup]    Create File    ${MYOUTDIR}${/}not-dir
+    -d ${MYOUTDIR}${/}not-dir${/}dir ${MYINPUT}
+    ...    Creating log file directory '.*' failed: .*
+    -d ${MYOUTDIR}${/}not-dir${/}dir -o out.xml -l none -r none ${MYINPUT}
+    ...    Creating output file directory '.*' failed: .*
 
-Invalid Suite Stat Level
-    Rebot should fail  --suitestatlevel not_int ${MYINPUT}
-    ...  Option '--suitestatlevel' expected integer value but got 'not_int'.
+Invalid --SuiteStatLevel
+    --suitestatlevel not_int ${MYINPUT}
+    ...    Option '--suitestatlevel' expected integer value but got 'not_int'.
 
-Invalid Tag Stat Link
-    Rebot should fail  --tagstatlink less_than_3x_: ${MYINPUT}
-    ...  Invalid format for option '--tagstatlink'. Expected 'tag:link:title' but got 'less_than_3x_:'.
+Invalid --TagStatLink
+    --tagstatlink a:b:c --TagStatLink less_than_3x_: ${MYINPUT}
+    ...    Invalid format for option '--tagstatlink'. Expected 'tag:link:title' but got 'less_than_3x_:'.
 
+Invalid --RemoveKeywords
+    --removekeywords wuks --removek none --RemoveKeywords Invalid ${MYINPUT}
+    ...    Invalid value for option '--removekeywords'. Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', 'WUKS', or 'NONE' but got 'Invalid'.
 
 *** Keywords ***
 
-Rebot Should Fail  [Arguments]  ${options}  ${exp msg}
+Rebot Should Fail
+    [Arguments]    ${options}    ${exp msg}
     Set Runners
-    ${rc}  ${output} =  Run And Return RC and Output  ${REBOT} ${options}
-    Log  ${output}
-    Should Be Equal As Integers  ${rc}  252
-    Should Match Regexp  ${output}  ^\\[ .*ERROR.* \\] ${exp msg}${USAGETIP}$
+    ${rc}    ${output} =    Run And Return RC and Output    ${REBOT} ${options}
+    Log    ${output}
+    Should Be Equal As Integers    ${rc}    252
+    Should Match Regexp    ${output}    ^\\[ .*ERROR.* \\] ${exp msg}${USAGETIP}$

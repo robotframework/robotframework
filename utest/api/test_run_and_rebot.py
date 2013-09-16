@@ -179,7 +179,7 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         assert_true(res is not self._import_resource())
 
     def _import_library(self):
-        return namespace.IMPORTER.import_library('OperatingSystem')
+        return namespace.IMPORTER.import_library('OperatingSystem',None, None, None)
 
     def _import_resource(self):
         resource = join(ROOT, 'atest', 'testdata', 'core', 'resources.html')

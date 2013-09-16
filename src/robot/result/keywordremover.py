@@ -12,21 +12,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
-
+from robot.errors import DataError
 from robot.model import SuiteVisitor, SkipAllVisitor
+from robot.utils import Matcher, plural_or_not
 
 
 def KeywordRemover(how):
-    if ':' in how and how.startswith('NAME'):
-        _, pattern = how.split(':', 1)
-        return ByNameKeywordRemover(pattern)
-    return {
-        'PASSED': PassedKeywordRemover,
-        'FOR': ForLoopItemsRemover,
-        'ALL': AllKeywordsRemover,
-        'WUKS': WaitUntilKeywordSucceedsRemover,
-    }.get(how.upper(), SkipAllVisitor)()
+    upper = how.upper()
+    if upper.startswith('NAME:'):
+        return ByNameKeywordRemover(pattern=how[5:])
+    try:
+        return {'ALL': AllKeywordsRemover,
+                'PASSED': PassedKeywordRemover,
+                'FOR': ForLoopItemsRemover,
+                'WUKS': WaitUntilKeywordSucceedsRemover,
+                'NONE': SkipAllVisitor}[upper]()
+    except KeyError:
+        raise DataError("Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', "
+                        "'WUKS', or 'NONE' but got '%s'." % how)
 
 
 class _KeywordRemover(SuiteVisitor):
@@ -70,6 +73,17 @@ class PassedKeywordRemover(_KeywordRemover):
 
     def visit_keyword(self, keyword):
         pass
+
+
+class ByNameKeywordRemover(_KeywordRemover):
+
+    def __init__(self, pattern):
+        _KeywordRemover.__init__(self)
+        self._matcher = Matcher(pattern, ignore='_')
+
+    def start_keyword(self, kw):
+        if self._matcher.match(kw.name) and not self._contains_warning(kw):
+            self._clear_content(kw)
 
 
 class ForLoopItemsRemover(_KeywordRemover):
@@ -131,26 +145,7 @@ class RemovalMessage(object):
     def set_if_removed(self, kw, len_before):
         removed = len_before - len(kw.keywords)
         if removed:
-            self.set(kw, self._message % (removed, utils.plural_or_not(removed)))
+            self.set(kw, self._message % (removed, plural_or_not(removed)))
 
     def set(self, kw, message=None):
         kw.doc = ('%s\n\n_%s_' % (kw.doc, message or self._message)).strip()
-
-
-class ByNameKeywordRemover(_KeywordRemover):
-    def __init__(self, pattern):
-        super(ByNameKeywordRemover, self).__init__()
-        self._pattern = pattern.lower()
-
-    def start_keyword(self, keyword):
-        if self._matches(keyword.name):
-            self._clear_content(keyword)
-
-    def _matches(self, kw_name):
-        kw_name = ''.join(kw_name.lower().split())
-        if '*' in self._pattern:
-            pattern = self._pattern.split('*', 1)[0]
-            return kw_name.startswith(pattern)
-        return kw_name == self._pattern
-
-

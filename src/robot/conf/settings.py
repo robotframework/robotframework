@@ -17,6 +17,7 @@ import os
 from robot import utils
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
+from robot.result.keywordremover import KeywordRemover
 
 from .gatherfailed import gather_failed_tests
 
@@ -115,12 +116,12 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'Randomize':
             return self._process_randomize_value(value)
-        if name == 'RemoveKeywords':
-            return [v.upper() for v in value]
         if name == 'RunMode':
             LOGGER.warn('Option --runmode is deprecated in Robot Framework 2.8 '
                         'and will be removed in the future.')
             return [self._process_runmode_value(v) for v in value]
+        if name == 'RemoveKeywords':
+            self._validate_remove_keywords(value)
         return value
 
     def _escape_as_data(self, value):
@@ -273,6 +274,13 @@ class _BaseSettings(object):
         if os.path.exists(name):
             name = os.path.abspath(name)
         return name, args
+
+    def _validate_remove_keywords(self, values):
+        for value in values:
+            try:
+                KeywordRemover(value)
+            except DataError, err:
+                raise DataError("Invalid value for option '--removekeywords'. %s" % err)
 
     def __contains__(self, setting):
         return setting in self._cli_opts

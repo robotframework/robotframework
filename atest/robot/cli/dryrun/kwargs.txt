@@ -1,0 +1,17 @@
+*** Settings ***
+Suite Setup      Run Tests    --dryrun    cli/dryrun/kwargs.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Positional and kwargs
+    Check Test Case    ${TESTNAME}
+
+Varargs and kwargs
+    Check Test Case    ${TESTNAME}
+
+Kwargs
+    Check Test Case    ${TESTNAME}
+
+Invalid kwargs
+    Check Test Case    ${TESTNAME}
