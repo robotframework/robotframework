@@ -38,7 +38,6 @@ class Telnet:
     - `Importing`
     - `Logging`
     - `Time string format`
-    - `Importing`
     - `Shortcuts`
     - `Keywords`
 
@@ -638,7 +637,7 @@ class TelnetConnection(telnetlib.Telnet):
                     return self.read_until(expected, loglevel)
             except AssertionError:
                 pass
-        self._raise_no_match_found(expected, timeout)
+        self._raise_no_match_found(expected, timeout=timeout)
 
     def read(self, loglevel=None):
         """Reads everything that is currently available in the output.
@@ -664,7 +663,7 @@ class TelnetConnection(telnetlib.Telnet):
         success, output = self._read_until(expected)
         self._log(output, loglevel)
         if not success:
-            self._raise_no_match_found(expected)
+            self._raise_no_match_found(expected, output=output)
         return output
 
     def _read_until(self, expected):
@@ -708,7 +707,7 @@ class TelnetConnection(telnetlib.Telnet):
         if not success:
             expected = [exp if isinstance(exp, basestring) else exp.pattern
                         for exp in expected]
-            self._raise_no_match_found(expected)
+            self._raise_no_match_found(expected, output=output)
         return output
 
     def _read_until_regexp(self, *expected):
@@ -785,11 +784,9 @@ class TelnetConnection(telnetlib.Telnet):
         if msg:
             logger.write(msg, level or self._default_log_level)
 
-    def _raise_no_match_found(self, expected, timeout=None):
+    def _raise_no_match_found(self, expected, timeout=None, output=None):
         timeout = utils.secs_to_timestr(timeout or self._timeout)
-        expected = "'%s'" % expected if isinstance(expected, basestring) \
-            else utils.seq2str(expected, lastsep=' or ')
-        raise AssertionError("No match found for %s in %s" % (expected, timeout))
+        raise NoMatchError(expected, timeout, output)
 
     def _negotiate_echo_on(self, sock, cmd, opt):
         # This is supposed to turn server side echoing on and turn other options off.
@@ -804,3 +801,20 @@ class TelnetConnection(telnetlib.Telnet):
     def msg(self, msg, *args):
         # Forward telnetlib's debug messages to log
         logger.trace(lambda: msg % args)
+
+
+class NoMatchError(AssertionError):
+
+    def __init__(self, expected, timeout, output=None):
+        self.expected = expected
+        self.timeout = timeout
+        self.output = output
+        AssertionError.__init__(self, self._get_message())
+
+    def _get_message(self):
+        expected = "'%s'" % self.expected if isinstance(self.expected, basestring) \
+        else utils.seq2str(self.expected, lastsep=' or ')
+        msg = "No match found for %s in %s." % (expected, self.timeout)
+        if self.output:
+            msg += '\nOutput:%s' % self.output
+        raise AssertionError(msg)
