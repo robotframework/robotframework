@@ -1,0 +1,23 @@
+*** Settings ***
+Library    DynamicLibraryWithKwargsSupport.py
+Library    helper.py
+
+*** Test Cases ***
+Named combinations with kwargs
+    [template]    Execute working named kwarg combination with result
+    a                    a
+    a                    a=a
+    a, b                 a=a    b=b
+    a, b                 b=b    a=a
+    a, c:c, d:d          a      c=c    d=d
+    a, b, c:c, d:d       a      c=c    d=d    b=b
+    a, b                 a      b
+    a, b                 a      b=b
+    a, b, c:c            a      b      c=c
+    a, b, c:c            a      b=b    c=c
+
+*** Keywords ***
+Execute working named kwarg combination with result
+    [arguments]    ${expected}    @{args}
+    ${res} =    Get result or error    Mandatory, Named And Kwargs    @{args}
+    Should be equal    ${expected}    ${res}

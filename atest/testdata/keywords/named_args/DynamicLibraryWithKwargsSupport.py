@@ -1,4 +1,10 @@
+from dynamic_library_impl import var_args, return_argument, return_arguments
 from DynamicLibrary import KEYWORDS, DynamicLibrary
+
+KEYWORDS.update({
+    'Mandatory, Named And Kwargs': (var_args, ['a', 'b=default', '**kwargs']),
+    'Mandatory, Named, Varargs And Kwargs': (var_args, ['a', 'b=default', '*varargs', '**kwargs']),
+})
 
 class DynamicLibraryWithKwargsSupport(DynamicLibrary):
 
