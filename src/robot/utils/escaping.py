@@ -69,6 +69,28 @@ class Unescaper(object):
     def _unescaper_for_t(self, text):
         return '\t' + text
 
+    def _unescaper_for_x(self, text):
+        return self._unescape_character(text, 2, 'x')
+
+    def _unescaper_for_u(self, text):
+        return self._unescape_character(text, 4, 'u')
+
+    def _unescaper_for_U(self, text):
+        return self._unescape_character(text, 8, 'U')
+
+    def _unescape_character(self, text, length, escape):
+        try:
+            ordinal = self._get_ordinal(text, length)
+        except ValueError:
+            return escape + text
+        else:
+            return unichr(ordinal) + text[length:]
+
+    def _get_ordinal(self, text, length):
+        if len(text) < length:
+            raise ValueError
+        return int(text[:length], 16)
+
 
 class EscapeFinder(object):
     _escaped = re.compile(r'(\\+)([^\\]*)')
