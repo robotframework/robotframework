@@ -893,8 +893,16 @@ from the exception type and its message. With generic exceptions (for
 example, :code:`AssertionError`, :code:`Exception`, and
 :code:`RuntimeError`), only the exception message is used, and with
 others, the message is created in the format :msg:`ExceptionType:
-Actual message`. In both cases, it is important for the users that the
-exception message is as informative as possible.
+Actual message`.
+
+Since Robot Framework 2.8.2 it is possible to add a special
+:code:`ROBOT_SUPPRESS_NAME` attribute with value :code:`True` to your exception
+if you want to use some other exception type besides the generic exceptions,
+but also to suppress adding the exception type as a prefix to failure
+message.
+
+In all cases, it is important for the users that the exception message is as
+informative as possible.
 
 HTML in error messages
 ``````````````````````
