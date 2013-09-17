@@ -70,7 +70,7 @@ Read Until Non-ASCII
     Should Be Equal    ${out}    Hyvää yötä
 
 Read Until Fails
-    [Documentation]    FAIL No match found for 'Not found' in ${TIMEOUT}
+    [Documentation]    FAIL No match found for 'Not found' in ${TIMEOUT}.
     Read Until    Not found
 
 Read Until Regexp
@@ -95,7 +95,7 @@ Read Until Regexp Non-ASCII
     Should Be Equal    ${out}    Päivää
 
 Read Until Regexp Fails
-    [Documentation]    FAIL No match found for 'Not found' in ${TIMEOUT}
+    [Documentation]    FAIL No match found for 'Not found' in ${TIMEOUT}.
     Read Until Regexp    Not found
 
 Read Until Regexp Requires At Least One Pattern
@@ -103,7 +103,7 @@ Read Until Regexp Requires At Least One Pattern
     Read Until Regexp
 
 Read Until Prompt
-    [Documentation]    FAIL Prompt '$$' not found in ${TIMEOUT}
+    [Documentation]    FAIL Prompt '$$' not found in ${TIMEOUT}.
     Write    pwd
     ${out} =    Read Until Prompt
     Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
@@ -115,7 +115,7 @@ Read Until Prompt
     Read Until Prompt
 
 Read Until Regexp Prompt
-    [Documentation]    FAIL Prompt 'No match' not found in ${TIMEOUT}
+    [Documentation]    FAIL Prompt 'No match' not found in ${TIMEOUT}.
     Set Prompt    \\$\\s    REGEXP
     Write    pwd
     ${out} =    Read Until Prompt
@@ -125,9 +125,9 @@ Read Until Regexp Prompt
     Read Until Prompt
 
 Write Until Expected Output
-    [Documentation]    FAIL No match found for 'Not found' in 300 milliseconds
+    [Documentation]    FAIL No match found for 'Not found' in 300 milliseconds.
     Write    a=10
-    Write Until Expected Output    a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi\r\n    BLAST OFF    2 s    10ms
+    Write Until Expected Output    a=$(($a - 1)); if (($a == 0)); then echo BLAST; fi\r\n    BLAST    2 s    10ms
     Write Until Expected Output    ls    Not found    300ms    100ms
 
 Execute Command

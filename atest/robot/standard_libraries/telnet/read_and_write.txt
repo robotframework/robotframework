@@ -74,9 +74,9 @@ Read Until Regexp Prompt
 
 Write Until Expected Output
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    ${FULL PROMPT}a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${FULL PROMPT}a=$(($a - 1)); if (($a == 0)); then echo BLAST; fi
     Check Log Message    ${tc.kws[1].msgs[1]}    ${FULL PROMPT}
-    Check Log Message    ${tc.kws[1].msgs[2]}    a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi
+    Check Log Message    ${tc.kws[1].msgs[2]}    a=$(($a - 1)); if (($a == 0)); then echo BLAST; fi
 
 Execute Command
     Check Test Case    ${TEST NAME}

@@ -733,12 +733,12 @@ class TelnetConnection(telnetlib.Telnet):
         See `Logging` section for more information about log levels.
         """
         if not self._prompt_is_set():
-            raise RuntimeError('Prompt is not set')
+            raise RuntimeError('Prompt is not set.')
         success, output = self._read_until_prompt()
         self._log(output, loglevel)
         if not success:
             prompt, regexp = self._prompt
-            raise AssertionError("Prompt '%s' not found in %s"
+            raise AssertionError("Prompt '%s' not found in %s."
                     % (prompt if not regexp else prompt.pattern,
                        utils.secs_to_timestr(self._timeout)))
         return output
@@ -800,10 +800,11 @@ class TelnetConnection(telnetlib.Telnet):
 
     def msg(self, msg, *args):
         # Forward telnetlib's debug messages to log
-        logger.trace(lambda: msg % args)
+        logger.trace(msg % args)
 
 
 class NoMatchError(AssertionError):
+    ROBOT_SUPPRESS_NAME = True
 
     def __init__(self, expected, timeout, output=None):
         self.expected = expected
@@ -813,8 +814,9 @@ class NoMatchError(AssertionError):
 
     def _get_message(self):
         expected = "'%s'" % self.expected if isinstance(self.expected, basestring) \
-        else utils.seq2str(self.expected, lastsep=' or ')
+                   else utils.seq2str(self.expected, lastsep=' or ')
         msg = "No match found for %s in %s." % (expected, self.timeout)
         if self.output:
             msg += '\nOutput:%s' % self.output
-        raise AssertionError(msg)
+        return msg
+
