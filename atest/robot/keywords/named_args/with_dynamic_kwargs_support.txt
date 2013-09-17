@@ -57,3 +57,6 @@ Nön äscii named arguments
 
 Named combinations with kwargs
     Check Test Case    ${TESTNAME}
+
+Named combinations with varargs and kwargs
+    Check Test Case    ${TESTNAME}
