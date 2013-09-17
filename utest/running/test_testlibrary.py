@@ -440,7 +440,7 @@ class TestHandlers(unittest.TestCase):
 
         def test_extending_java_lib_in_python(self):
             handlers = TestLibrary('extendingjava.ExtendJavaLib').handlers
-            assert_equals(len(handlers), 24)
+            assert_equals(len(handlers), 25)
             for handler in 'kw_in_java_extender', 'javaSleep', 'divByZero':
                 assert_true(handler in handlers)
 
