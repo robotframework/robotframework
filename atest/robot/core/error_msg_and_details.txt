@@ -13,6 +13,13 @@ Exception Type is Removed From Generic Java Failures
     [Tags]    jybot
     Generic Failure In Java    bar != foo    2
 
+Exception Type is Removed with Exception Attribute
+    Exception Name Suppressed in Error Message    No Exception Name
+
+Exception Type is Removed with Exception Attribute in Java
+    [Tags]    jybot
+    Exception Name Suppressed in Error Message In Java    No Exception Name
+
 Exception Type is Included In Non-Generic Failures
     Non Generic Failure    FloatingPointError: Too Large A Number !!
 
