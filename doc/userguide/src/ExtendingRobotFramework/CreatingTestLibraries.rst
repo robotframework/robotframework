@@ -895,11 +895,24 @@ example, :code:`AssertionError`, :code:`Exception`, and
 others, the message is created in the format :msg:`ExceptionType:
 Actual message`.
 
-Since Robot Framework 2.8.2 it is possible to add a special
-:code:`ROBOT_SUPPRESS_NAME` attribute with value :code:`True` to your exception
-if you want to use some other exception type besides the generic exceptions,
-but also to suppress adding the exception type as a prefix to failure
-message.
+Starting from Robot Framework 2.8.2 it is possible to avoid adding the
+exception type as a prefix to failure message also with non generic exceptions.
+This is done by adding a special :code:`ROBOT_SUPPRESS_NAME` attribute with
+value :code:`True` to your exception.
+
+Python:
+
+.. sourcecode:: python
+
+    class MyError(RuntimeError):
+        ROBOT_SUPPRESS_NAME = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MyError extends RuntimeException {
+        public static final boolean ROBOT_SUPPRESS_NAME = true;
 
 In all cases, it is important for the users that the exception message is as
 informative as possible.
