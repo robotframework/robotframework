@@ -637,7 +637,7 @@ class TelnetConnection(telnetlib.Telnet):
                     return self.read_until(expected, loglevel)
             except AssertionError:
                 pass
-        self._raise_no_match_found(expected, timeout=timeout)
+        raise NoMatchError(expected, timeout)
 
     def read(self, loglevel=None):
         """Reads everything that is currently available in the output.
@@ -663,7 +663,7 @@ class TelnetConnection(telnetlib.Telnet):
         success, output = self._read_until(expected)
         self._log(output, loglevel)
         if not success:
-            self._raise_no_match_found(expected, output=output)
+            raise NoMatchError(expected, self._timeout, output)
         return output
 
     def _read_until(self, expected):
@@ -707,7 +707,7 @@ class TelnetConnection(telnetlib.Telnet):
         if not success:
             expected = [exp if isinstance(exp, basestring) else exp.pattern
                         for exp in expected]
-            self._raise_no_match_found(expected, output=output)
+            raise NoMatchError(expected, self._timeout, output)
         return output
 
     def _read_until_regexp(self, *expected):
@@ -784,10 +784,6 @@ class TelnetConnection(telnetlib.Telnet):
         if msg:
             logger.write(msg, level or self._default_log_level)
 
-    def _raise_no_match_found(self, expected, timeout=None, output=None):
-        timeout = utils.secs_to_timestr(timeout or self._timeout)
-        raise NoMatchError(expected, timeout, output)
-
     def _negotiate_echo_on(self, sock, cmd, opt):
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
@@ -808,7 +804,7 @@ class NoMatchError(AssertionError):
 
     def __init__(self, expected, timeout, output=None):
         self.expected = expected
-        self.timeout = timeout
+        self.timeout = utils.secs_to_timestr(timeout)
         self.output = output
         AssertionError.__init__(self, self._get_message())
 
@@ -816,7 +812,7 @@ class NoMatchError(AssertionError):
         expected = "'%s'" % self.expected if isinstance(self.expected, basestring) \
                    else utils.seq2str(self.expected, lastsep=' or ')
         msg = "No match found for %s in %s." % (expected, self.timeout)
-        if self.output:
-            msg += '\nOutput:%s' % self.output
+        if self.output is not None:
+            msg += ' Output:\n%s' % self.output
         return msg
 

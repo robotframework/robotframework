@@ -33,7 +33,7 @@ Timeout Set In Open Connection
     Timeout Should Be    1 minute 1 second
 
 Set Timeout Keyword
-    [Documentation]    FAIL STARTS: No match found for 'Not found' in 42 milliseconds.\nOutput:
+    [Documentation]    FAIL STARTS: No match found for 'Not found' in 42 milliseconds. Output:\n
     Set Timeout    1 h 2 min 3 secs
     Timeout Should Be    1 hour 2 minutes 3 seconds
     Set Timeout    0.042

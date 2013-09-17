@@ -70,7 +70,7 @@ Read Until Non-ASCII
     Should Be Equal    ${out}    Hyvää yötä
 
 Read Until Fails
-    [Documentation]    FAIL No match found for 'Not found' in ${TIMEOUT}.
+    [Documentation]    FAIL No match found for 'Not found' in ${TIMEOUT}. Output:\n
     Read Until    Not found
 
 Read Until Regexp
@@ -95,7 +95,7 @@ Read Until Regexp Non-ASCII
     Should Be Equal    ${out}    Päivää
 
 Read Until Regexp Fails
-    [Documentation]    FAIL No match found for 'Not found' in ${TIMEOUT}.
+    [Documentation]    FAIL No match found for 'Not found' in ${TIMEOUT}. Output:\n
     Read Until Regexp    Not found
 
 Read Until Regexp Requires At Least One Pattern
