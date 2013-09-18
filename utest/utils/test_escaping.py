@@ -104,9 +104,13 @@ class TestUnEscape(unittest.TestCase):
             assert_unescape(inp, inp.replace('\\', ''))
 
     def test_valid_U(self):
+        try:
+            u00010905 = unichr(int('00010905', 16))  # PHOENICIAN LETTER WAU
+        except ValueError:  # occurs on "narrow" Python builds
+            u00010905 = 'U00010905'
         for inp, exp in [(r'\U00000000', u'\x00'),
                          (r'\U0000ABba', u'\uabba'),
-                         (r'\U00010905', u'\U00010905'),
+                         (r'\U00010905', u00010905),
                          (r'\U000000e4iti', u'\xe4iti')]:
             assert_unescape(inp, exp)
 
