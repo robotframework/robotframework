@@ -1,0 +1,128 @@
+*** Setting ***
+Variables         escaping_variables.py
+
+*** Variable ***
+${MY SPACE}       \ \
+${TWO SPACES}     ${MY SPACE}${MY SPACE}
+${FOUR SPACES}    \ \ \ \ \
+${PRE SPACES}     \ \ two leading spaces
+${POST SPACES}    seven trailing spaces \ \ \ \ \ \ \
+${BACKSLASH}      c:\\temp\\new\\
+${BACKSLASH 2}    c:\temp\new\
+${NEWLINE}        \n
+${TABULATOR}      \t
+${CARRIAGE}       \r
+${NL TAB CR}      \n${NEWLINE}\t${TABULATOR}\r${CARRIAGE}
+${NOT VAR}        \${whatever}
+${NOT VAR 2}      ${NOT VAR}
+@{LIST}           \ \    c:\\temp\\    \n    \${xxx}
+${NON STRING}     ${None}
+
+*** Test Case ***
+Spaces In Variable Table
+    Should Be Equal    ${MY SPACE}    ${SP}
+    Should Be Equal    ${MY SPACE}${MY SPACE}    ${SP}${SP}
+    Should Be Equal    ${MY SPACE * 3}    ${SP}${SP}${SP}
+    Should Be Equal    ${TWO SPACES}    ${SP}${SP}
+    Should Be Equal    ${FOUR SPACES}    ${SP}${SP}${SP}${SP}
+    Should Be True    len('${FOUR SPACES}') == 4
+    Should Be Equal    "\n ${FOUR SPACES}"    "${NL}${SP}${SP}${SP}${SP}"
+
+Leading And Trailing Spaces In Variable Table
+    Should Be Equal    ${PRE SPACES}    ${SP}${SP}two leading spaces
+    Should Be Equal    ${POST SPACES}    seven trailing spaces${SP*7}
+    Should Be Equal    ${POST SPACES}${PRE SPACES}    seven trailing spaces${SP*9}two leading spaces
+
+Backslash In Variable Table
+    Should Be Equal    ${BACKSLASH}    c:${BS}temp${BS}new${BS}
+    Should Be Equal    ${BACKSLASH}${BS}${BS}    c:${BS}temp${BS}new${BS*3}
+    Should Be Equal    ${BACKSLASH}${PRE SPACES}    c:${BS}temp${BS}new${BS}${SP*2}two leading spaces
+    Should Be Equal    ${BACKSLASH 2}    c:${TAB}emp${NL}ew
+
+Newline, Tab And Carriage Return In Variable Table
+    Should Be Equal    ${NEWLINE}    ${NL}
+    Should Be Equal    ${TABULATOR}    ${TAB}
+    Should Be Equal    ${CARRIAGE}    ${CR}
+    Should Be Equal    ${NL TAB CR}    ${NL*2}${TAB*2}${CR*2}
+    Should Be Equal    ${SP}${NEWLINE}    ${SP}${NL}
+
+Escaping Variables In Variable Table
+    Should Be Equal    ${NOT VAR}    \${whatever}
+    Should Be Equal    ${NOT VAR 2}    \${whatever}
+    Should Be Equal    \\${NOT VAR}    \\\${whatever}
+    Should Be Equal    \\${NOT VAR 2}    \\\${whatever}
+    Should Start With    \${NOT VAR}    ${NOT VAR
+
+Escaping From List Variable In variable Table
+    Should Be Equal    @{LIST}[0]    ${SP}
+    Should Be Equal    @{LIST}[1]    c:${BS}temp${BS}
+    Should Be Equal    @{LIST}[2]    ${NL}
+    Should Be Equal    @{LIST}[3]    \${xxx}
+    Should Be Equal    @{LIST}[0]@{LIST}[0]@{LIST}[2]    ${SP}${SP}${NL}
+    Should Be Equal    @{LIST}[1]@{LIST}[0]@{LIST}[2]    c:${BS}temp${BS}${SP}${NL}
+    Should Be True    @{LIST} == [' ', 'c:\\\\temp\\\\', '\\n', '$'+'{xxx}']
+
+Non Strings Are Ok In variable Table
+    Should Be Equal    ${NON STRING}    ${None}
+
+Remove Spaces Before And After
+    Should Be Equal    foo    foo
+
+Remove Extra Spaces between
+    Should Be Equal    foo bar    foo bar
+
+Escaping Space
+    Should Be Equal    \ \ foo \ \    ${SP*2}foo${SP*2}
+    ${x} =    Set Variable    \ \
+    Should Be Equal    ${x}    ${SP}
+    Should Be Equal    ${x}${x}    ${SP}${SP}
+    Should Be Equal    ${x*4}    ${SP}${SP}${SP}${SP}
+
+Newline
+    Should Be Equal    \n    ${NL}
+    Should Be Equal    \\n    ${NOT NL}
+
+Space After Newline Escape Is Ignored
+    Should Be Equal    foo\n bar\n zap    foo${NL}bar${NL}zap
+    Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
+    Should Be Equal    foo\\n bar    foo${NOT NL}${SP}bar
+
+Carrriage Return
+    Should Be Equal    \r    ${CR}
+    Should Be Equal    \\r    ${NOT CR}
+
+Backslash
+    Should Be Equal    \\    ${BS}
+    Should Be Equal    \foo    foo
+
+Tabulator
+    Should Be Equal    \t    ${TAB}
+
+Hash
+    Should Be Equal    \#    ${HASH}    # This is a comment
+
+Any Character Escaped
+    Should Be Equal    \x    x
+
+Escaping Variables
+    [Documentation]    FAIL Non-existing variable '\${bar}'.
+    Should Be Equal    \${foo}    $\{foo}
+    Should Be Equal    \\${var}    \\\${non_existing}
+    Should Be Equal    \${bar}    ${bar}
+
+Escaping Variables With User Keywords
+    ${ret} =    User Keyword    \${foo}    foo
+    Should Be Equal    ${ret}    \${foo}\${foo}
+    User keyword 2    \${foo}    {foo}
+
+*** Keyword ***
+User keyword
+    [Arguments]    ${a1}    ${a2}
+    Should Contain    ${a1}    ${a2}
+    [Return]    ${a1}\${${a2}}
+
+User keyword 2
+    [Arguments]    ${a1}    ${a2}
+    Should Be Equal    ${a1}    $${a2}
+    ${ret} =    User Keyword    ${a1}    ${a2}
+    Should Be Equal    ${ret}    ${a1}\${${a2}}
