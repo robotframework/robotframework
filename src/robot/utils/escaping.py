@@ -80,10 +80,18 @@ class Unescaper(object):
 
     def _unescape_character(self, text, length, escape):
         try:
-            ordinal = self._get_ordinal(text, length)
-            return unichr(ordinal) + text[length:]
-        except (ValueError, OverflowError):
+            char = self._get_character(text, length)
+        except ValueError:
             return escape + text
+        else:
+            return char + text[length:]
+
+    def _get_character(self, text, length):
+        ordinal = self._get_ordinal(text, length)
+        try:
+            return unichr(ordinal)
+        except (OverflowError, TypeError):
+            raise ValueError
 
     def _get_ordinal(self, text, length):
         if len(text) < length:
