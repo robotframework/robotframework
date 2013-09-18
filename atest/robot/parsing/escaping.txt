@@ -34,6 +34,9 @@ Remove Extra Spaces Between
 Escaping Space
     Check Test Case    ${TEST NAME}
 
+Backslash
+    Check Test Case    ${TEST NAME}
+
 New Line
     Check Test Case    ${TEST NAME}
 
@@ -43,10 +46,28 @@ Space After Newline Escape Is Ignored
 Carrriage Return
     Check Test Case    ${TEST NAME}
 
-Backslash
+Tabulator
     Check Test Case    ${TEST NAME}
 
-Tabulator
+Valid \x Escape
+    Check Test Case    ${TEST NAME}
+
+Invalid \x Escape
+    Check Test Case    ${TEST NAME}
+
+Valid \u Escape
+    Check Test Case    ${TEST NAME}
+
+Invalid \u Escape
+    Check Test Case    ${TEST NAME}
+
+Valid \U (32bit) Escape
+    Check Test Case    ${TEST NAME}
+
+Invalid \U (32bit) Escape
+    Check Test Case    ${TEST NAME}
+
+\U (32bit) Escape Above Valid Range
     Check Test Case    ${TEST NAME}
 
 Hash
