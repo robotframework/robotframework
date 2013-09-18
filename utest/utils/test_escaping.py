@@ -110,6 +110,10 @@ class TestUnEscape(unittest.TestCase):
                          (r'\U000000e4iti', u'\xe4iti')]:
             assert_unescape(inp, exp)
 
+    def test_U_above_valid_range(self):
+        assert_unescape(r'\U12345678', 'U12345678')
+        assert_unescape(r'\UffffFFFF', 'UffffFFFF')
+
 
 class TestEscape(unittest.TestCase):
 
