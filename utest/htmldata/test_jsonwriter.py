@@ -28,7 +28,7 @@ class TestJsonDumper(unittest.TestCase):
         self._test('123', '"123"')
 
     def test_dump_non_ascii_string(self):
-        self._test(u'hyv\xe4', '"hyv\\u00e4"')
+        self._test(u'hyv\xe4', u'"hyv\xe4"'.encode('UTF-8'))
 
     def test_escape_string(self):
         self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')
@@ -48,19 +48,19 @@ class TestJsonDumper(unittest.TestCase):
         self._test(0L, '0')
 
     def test_dump_list(self):
-        self._test([1,2,True, 'hello', 'world'], '[1,2,true,"hello","world"]')
-        self._test(['*nes"ted', [1,2,[4]]], '["*nes\\"ted",[1,2,[4]]]')
+        self._test([1, 2, True, 'hello', 'world'], '[1,2,true,"hello","world"]')
+        self._test(['*nes"ted', [1, 2, [4]]], '["*nes\\"ted",[1,2,[4]]]')
 
     def test_dump_tuple(self):
         self._test(('hello', '*world'), '["hello","*world"]')
-        self._test((1,2,(3,4)), '[1,2,[3,4]]')
+        self._test((1, 2, (3, 4)), '[1,2,[3,4]]')
 
     def test_dump_dictionary(self):
         self._test({'key': 1}, '{"key":1}')
         self._test({'nested': [-1L, {42: None}]}, '{"nested":[-1,{42:null}]}')
 
     def test_dictionaries_are_sorted(self):
-        self._test({'key':1, 'hello':['wor','ld'], 'z': 'a', 'a': 'z'},
+        self._test({'key': 1, 'hello': ['wor', 'ld'], 'z': 'a', 'a': 'z'},
                    '{"a":"z","hello":["wor","ld"],"key":1,"z":"a"}')
 
     def test_dump_none(self):
@@ -72,21 +72,20 @@ class TestJsonDumper(unittest.TestCase):
         mapped1 = object()
         mapped2 = 'string'
         dumper.dump([mapped1, [mapped2, {mapped2: mapped1}]],
-                    mapping={mapped1:'1', mapped2:'a'})
-        assert_equals(output.getvalue(),  '[1,[a,{a:1}]]')
+                    mapping={mapped1: '1', mapped2: 'a'})
+        assert_equals(output.getvalue(), '[1,[a,{a:1}]]')
         assert_raises(ValueError, dumper.dump, [mapped1])
 
     if json:
         def test_against_standard_json(self):
-            string = u'*string\u00A9\v\\\'\"\r\t\njee' \
-                + u''.join(unichr(i) for i in xrange(32, 1024))
-            data = [string, {'A': 1}, None]
-            expected = StringIO()
+            data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in xrange(32, 127)),
+                    {'A': 1, 'b': 2, 'C': ()}, None, (1, 2, 3)]
             try:
-                json.dump(data, expected, separators=(',', ':'))
+                expected = json.dumps(data, sort_keys=True,
+                                      separators=(',', ':'))
             except UnicodeError:
                 return  # http://ironpython.codeplex.com/workitem/32331
-            self._test(data, expected.getvalue())
+            self._test(data, expected)
 
 
 if __name__ == '__main__':

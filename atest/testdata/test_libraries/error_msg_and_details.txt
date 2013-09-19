@@ -13,6 +13,10 @@ Generic Failure In Java
     Set To Hashtable    ${ht}    foo    bar
     Check In Hashtable    ${ht}    foo    foo
 
+Exception Name Suppressed in Error Message
+    [Documentation]    FAIL No Exception Name
+    Fail with suppressed exception name    No Exception Name
+
 Non Generic Failure
     [Documentation]    FAIL FloatingPointError: Too Large A Number !!
     Exception    FloatingPointError    Too Large A Number !!
@@ -20,6 +24,10 @@ Non Generic Failure
 Non Generic Failure In Java
     [Documentation]    FAIL ArrayStoreException: My message
     Java Exception    My message
+
+Exception Name Suppressed in Error Message In Java
+    [Documentation]    FAIL No Exception Name
+    Fail with suppressed exception name in Java    No Exception Name
 
 Python Exception With Non-String Message
     [Documentation]    FAIL ValueError: ['a', 'b', (1, 2), None, {'a': 1}]

@@ -221,6 +221,9 @@ a string and it can have the following three values:
   is shared by all test cases and test suites. Libraries created from
   modules are always global.
 
+.. note:: If a library is imported multiple times with different arguments__,
+          a new instance is created every time regardless the scope.
+
 When the :code:`TEST SUITE` or :code:`GLOBAL` scopes are used with test
 libraries that have a state, it is recommended that libraries have some
 special keyword for cleaning up the state. This keyword can then be
@@ -229,7 +232,7 @@ cases in the next test suites can start from a known state. For example,
 :name:`SeleniumLibrary` uses the :code:`GLOBAL` scope to enable
 using the same browser in different test cases without having to
 reopen it, and it also has the :name:`Close All Browsers` keyword for
-easily closing all open browsers.
+easily closing all opened browsers.
 
 Example Python library using the :code:`TEST SUITE` scope:
 
@@ -268,6 +271,8 @@ Example Java library using the :code:`GLOBAL` scope:
             counter = 0;
         }
     }
+
+__ `Providing arguments to test libraries`_
 
 Specifying library version
 ''''''''''''''''''''''''''
@@ -888,8 +893,29 @@ from the exception type and its message. With generic exceptions (for
 example, :code:`AssertionError`, :code:`Exception`, and
 :code:`RuntimeError`), only the exception message is used, and with
 others, the message is created in the format :msg:`ExceptionType:
-Actual message`. In both cases, it is important for the users that the
-exception message is as informative as possible.
+Actual message`.
+
+Starting from Robot Framework 2.8.2 it is possible to avoid adding the
+exception type as a prefix to failure message also with non generic exceptions.
+This is done by adding a special :code:`ROBOT_SUPPRESS_NAME` attribute with
+value :code:`True` to your exception.
+
+Python:
+
+.. sourcecode:: python
+
+    class MyError(RuntimeError):
+        ROBOT_SUPPRESS_NAME = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MyError extends RuntimeException {
+        public static final boolean ROBOT_SUPPRESS_NAME = true;
+
+In all cases, it is important for the users that the exception message is as
+informative as possible.
 
 HTML in error messages
 ``````````````````````

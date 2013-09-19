@@ -148,4 +148,17 @@ public class ExampleJavaLibrary {
             }
         };
     }
+
+    public void failWithSuppressedExceptionNameInJava(String msg) {
+        throw new MyJavaException(msg);
+    }
+
+
+    public class MyJavaException extends RuntimeException {
+        public static final boolean ROBOT_SUPPRESS_NAME = true;
+
+        public MyJavaException(String msg) {
+            super(msg);
+        }
+    }
 }

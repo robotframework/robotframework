@@ -147,6 +147,9 @@ class ExampleLibrary:
             def __unicode__(self): raise RuntimeError
         return FailiningStr(), FailiningUnicode()
 
+    def fail_with_suppressed_exception_name(self, msg):
+        raise MyException(msg)
+
 
 class _MyIterable(object):
     def __init__(self, *values):
@@ -157,3 +160,8 @@ class _MyIterable(object):
 
 class _MyList(list):
     pass
+
+
+class MyException(AssertionError):
+
+    ROBOT_SUPPRESS_NAME = True

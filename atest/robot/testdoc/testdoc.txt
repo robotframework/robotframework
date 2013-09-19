@@ -25,7 +25,7 @@ Variables and imports are not processes
 
 Many inputs
     ${output}=    Run TestDoc    --exclude t1 --title Nön-ÄSCII ${INPUT 1} ${INPUT2} ${INPUT 3}
-    Testdoc Should Contain    "name":"Pass And Fail &amp; Suites &amp; Testdoc"    "title":"N\\u00f6n-\\u00c4SCII"    "numberOfTests":7
+    Testdoc Should Contain    "name":"Pass And Fail &amp; Suites &amp; Testdoc"    "title":"Nön-ÄSCII"    "numberOfTests":7
     Testdoc Should Not Contain    "name":"Suite4 First"
     Outfile Should Have Correct Line Separators
     Output Should Contain Outfile    ${output}
