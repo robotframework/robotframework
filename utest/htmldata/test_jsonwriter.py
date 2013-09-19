@@ -28,7 +28,7 @@ class TestJsonDumper(unittest.TestCase):
         self._test('123', '"123"')
 
     def test_dump_non_ascii_string(self):
-        self._test(u'hyv\xe4', '"hyv\\u00e4"')
+        self._test(u'hyv\xe4', u'"hyv\xe4"'.encode('UTF-8'))
 
     def test_escape_string(self):
         self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')
@@ -78,15 +78,14 @@ class TestJsonDumper(unittest.TestCase):
 
     if json:
         def test_against_standard_json(self):
-            string = u'*string\u00A9\v\\\'\"\r\t\njee' \
-                + u''.join(unichr(i) for i in xrange(32, 1024))
-            data = [string, {'A': 1}, None]
-            expected = StringIO()
+            data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in xrange(32, 127)),
+                    {'A': 1, 'b': 2, 'C': ()}, None, (1, 2, 3)]
             try:
-                json.dump(data, expected, separators=(',', ':'))
+                expected = json.dumps(data, sort_keys=True,
+                                      separators=(',', ':'))
             except UnicodeError:
                 return  # http://ironpython.codeplex.com/workitem/32331
-            self._test(data, expected.getvalue())
+            self._test(data, expected)
 
 
 if __name__ == '__main__':

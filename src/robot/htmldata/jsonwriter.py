@@ -73,20 +73,17 @@ class _Dumper(object):
 
 class StringDumper(_Dumper):
     _handled_types = basestring
-    _replace = {'\\': '\\\\', '"': '\\"', '\t': '\\t', '\n': '\\n', '\r': '\\r'}
+    _search_and_replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
+                           ('\n', '\\n'), ('\r', '\\r')]
 
     def dump(self, data, mapping):
-        self._write('"%s"' % ''.join(self._encode_chars(data)))
+        self._write('"%s"' % self._encode(data))
 
-    def _encode_chars(self, string):
-        # Performance optimized code..
-        replace = self._replace
-        for char in string:
-            if char in replace:
-                yield replace[char]
-            else:
-                val = ord(char)
-                yield char if 31 < val < 127 else '\\u%04x' % val
+    def _encode(self, string):
+        for search, replace in self._search_and_replace:
+            if search in string:
+                string = string.replace(search, replace)
+        return string.encode('UTF-8')
 
 
 class IntegerDumper(_Dumper):
