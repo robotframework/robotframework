@@ -48,19 +48,19 @@ class TestJsonDumper(unittest.TestCase):
         self._test(0L, '0')
 
     def test_dump_list(self):
-        self._test([1,2,True, 'hello', 'world'], '[1,2,true,"hello","world"]')
-        self._test(['*nes"ted', [1,2,[4]]], '["*nes\\"ted",[1,2,[4]]]')
+        self._test([1, 2, True, 'hello', 'world'], '[1,2,true,"hello","world"]')
+        self._test(['*nes"ted', [1, 2, [4]]], '["*nes\\"ted",[1,2,[4]]]')
 
     def test_dump_tuple(self):
         self._test(('hello', '*world'), '["hello","*world"]')
-        self._test((1,2,(3,4)), '[1,2,[3,4]]')
+        self._test((1, 2, (3, 4)), '[1,2,[3,4]]')
 
     def test_dump_dictionary(self):
         self._test({'key': 1}, '{"key":1}')
         self._test({'nested': [-1L, {42: None}]}, '{"nested":[-1,{42:null}]}')
 
     def test_dictionaries_are_sorted(self):
-        self._test({'key':1, 'hello':['wor','ld'], 'z': 'a', 'a': 'z'},
+        self._test({'key': 1, 'hello': ['wor', 'ld'], 'z': 'a', 'a': 'z'},
                    '{"a":"z","hello":["wor","ld"],"key":1,"z":"a"}')
 
     def test_dump_none(self):
@@ -72,8 +72,8 @@ class TestJsonDumper(unittest.TestCase):
         mapped1 = object()
         mapped2 = 'string'
         dumper.dump([mapped1, [mapped2, {mapped2: mapped1}]],
-                    mapping={mapped1:'1', mapped2:'a'})
-        assert_equals(output.getvalue(),  '[1,[a,{a:1}]]')
+                    mapping={mapped1: '1', mapped2: 'a'})
+        assert_equals(output.getvalue(), '[1,[a,{a:1}]]')
         assert_raises(ValueError, dumper.dump, [mapped1])
 
     if json:
