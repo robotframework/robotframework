@@ -77,7 +77,7 @@ class StringDumper(_Dumper):
                            ('\n', '\\n'), ('\r', '\\r')]
 
     def dump(self, data, mapping):
-        self._write('"%s"' % self._encode(data) if data else '')
+        self._write('"%s"' % (self._encode(data) if data else ''))
 
     def _encode(self, string):
         for search, replace in self._search_and_replace:
