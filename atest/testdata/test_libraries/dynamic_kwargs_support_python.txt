@@ -1,0 +1,15 @@
+*** Settings ***
+Library         ${CURDIR}/dynamic_libraries/DynamicLibraryWithKwargsSupportWithoutArgspec.py
+
+*** Test Cases ***
+Dynamic kwargs support should work without argument specification
+    [Documentation]    PASS
+    Do Something    print this
+    Do Something else    something    something else
+    Do Something else    something
+    Do something third    x    b=1
+    Do Something with kwargs    something    y=12    b=13
+
+Unexpected keyword argument
+    [Documentation]  FAIL TypeError: do_something_third() got an unexpected keyword argument 'y'
+    Do something third    x    y=1

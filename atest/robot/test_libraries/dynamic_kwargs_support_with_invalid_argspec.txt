@@ -1,0 +1,26 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_kwargs_support_with_invalid_argspec.txt
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Argspec has kwargs before positional arguments
+    Error message should be correct    1    kwargs before positional args
+    ...    Only last argument can be kwargs.
+
+Argspec has kwargs before named arguments
+    Error message should be correct    0    kwargs before named args
+    ...    Only last argument can be kwargs.
+
+Argspec has kwargs before varargs
+    Error message should be correct    2    kwargs before varargs
+    ...    Only last argument can be kwargs.
+
+
+*** Keywords ***
+
+Error message should be correct
+    [Arguments]    ${index}    ${kw}    ${msg}
+    Check Test Case    ${TESTNAME}
+    Check Log Message    ${ERRORS[${index}]}    Adding keyword '${kw}' to library 'DynamicLibraryWithKwargsSupport' failed: ${msg}    WARN
