@@ -267,7 +267,11 @@ window.testdata = function () {
         function extract(text) {
             var decoded = JXG.Util.Base64.decodeAsArray(text);
             var extracted = (new JXG.Util.Unzip(decoded)).unzip()[0][0];
-            return JXG.Util.utf8Decode(extracted);
+            // To decode UTF-8 in javascript, there is this interesting hack:
+            // http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
+            // This works also for characters outside of Unicode BMP (unlike
+            // JXG.Util.utf8Decode)
+            return decodeURIComponent(escape(extracted));
         }
 
         function get(id) {
