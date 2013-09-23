@@ -25,8 +25,8 @@ class ArgumentValidator(object):
     def validate(self, positional, named, dryrun=False):
         if dryrun and any(is_list_var(arg) for arg in positional):
             return
-        self._validate_limits(positional, named, self._argspec)
         self._validate_no_multiple_values(positional, named, self._argspec)
+        self._validate_limits(positional, named, self._argspec)
         self._validate_no_mandatory_missing(positional, named, self._argspec)
 
     def _validate_limits(self, positional, named, spec):
