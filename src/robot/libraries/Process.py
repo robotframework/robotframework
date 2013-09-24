@@ -318,7 +318,7 @@ class Process(object):
     def is_process_running(self, handle=None):
         """Checks is the process running or not.
 
-        If `handle`is not given, uses the current `active process`.
+        If `handle` is not given, uses the current `active process`.
 
         Returns `True` if the process is still running and `False` otherwise.
         """
@@ -328,7 +328,7 @@ class Process(object):
                                   error_message='Process is not running.'):
         """Verifies that the process is running.
 
-        If `handle`is not given, uses the current `active process`.
+        If `handle` is not given, uses the current `active process`.
 
         Fails if the process has stopped.
         """
@@ -339,7 +339,7 @@ class Process(object):
                                   error_message='Process is running.'):
         """Verifies that the process is not running.
 
-        If `handle`is not given, uses the current `active process`.
+        If `handle` is not given, uses the current `active process`.
 
         Fails if the process is still running.
         """
@@ -349,7 +349,7 @@ class Process(object):
     def wait_for_process(self, handle=None):
         """Waits for the process to complete.
 
-        If `handle`is not given, uses the current `active process`.
+        If `handle` is not given, uses the current `active process`.
 
         Returns a `result object` containing information about the execution.
         """
@@ -363,7 +363,7 @@ class Process(object):
     def terminate_process(self, handle=None, kill=False):
         """Terminates the process.
 
-        If `handle`is not given, uses the current `active process`.
+        If `handle` is not given, uses the current `active process`.
 
         See `Stopping process` for more details.
         """
@@ -394,7 +394,7 @@ class Process(object):
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process.
 
-        If `handle`is not given, uses the current `active process`.
+        If `handle` is not given, uses the current `active process`.
 
         Returns the pid assigned by the operating system as an integer.
         Note that with Jython, at least with the 2.5 version, the returned
@@ -408,7 +408,7 @@ class Process(object):
     def get_process_object(self, handle=None):
         """Return the underlying `subprocess.Popen`  object.
 
-        If `handle`is not given, uses the current `active process`.
+        If `handle` is not given, uses the current `active process`.
         """
         return self._processes[handle]
 

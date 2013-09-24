@@ -13,6 +13,9 @@ Mandatory And Named As Positional
 Mandatory And Named As Named
     Check Test Case    ${TESTNAME}
 
+Same Argument As Positional And Named Fails
+    Check Test Case    ${TESTNAME}
+
 Mandatory, Named And Varargs As Positional
     Check Test Case    ${TESTNAME}
 

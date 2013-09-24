@@ -22,6 +22,10 @@ Mandatory And Named As Named
     ${ret}=    Mandatory And Named    c=3    a=1    b=2
     Should Be Equal    ${ret}    1, 2, 3
 
+Same Argument As Positional And Named Fails
+    [Documentation]    FAIL Keyword 'KwargsLibrary.One Named' got multiple values for argument 'named'.
+    One Named    positional    named=named
+
 Mandatory, Named And Varargs As Positional
     ${ret}=    Mandatory Named And Varargs    mandatory    d1    d2\=d2
     Should Be Equal    ${ret}    mandatory, d1, d2=d2, []
@@ -121,6 +125,9 @@ Non working combinations with kwargs
     expected 1 to 2 non-keyword arguments, got 0.
     missing value for argument 'a'.                   b=2
     missing value for argument 'a'.                   b=2    c=3    d=4
+    got multiple values for argument 'a'.             a      a=a
+    got multiple values for argument 'a'.             a      b      a=a
+    got multiple values for argument 'a'.             a      b=b    a=a
     expected 1 to 2 non-keyword arguments, got 3.     1      2      3
 
 Named combinations without varargs
@@ -138,6 +145,7 @@ Non working named combinations without varargs
     missing value for argument 'a'.                   b=b
     got positional argument after named arguments.    b=b    b
     got multiple values for argument 'a'.             a      a=a
+    got multiple values for argument 'a'.             a      b      a=a
 
 Working combinations with all argument types
     [Template]    Execute working combinations with everything
@@ -164,6 +172,8 @@ Illegal combinations with all argument types
     [Template]    Execute illegal combinations with everything
     expected at least 1 non-keyword argument, got 0.    d1=d
     got multiple values for argument 'a'.               a      a=a
+    got multiple values for argument 'a'.               a      b       a=a
+    got multiple values for argument 'a'.               a      b=b     a=a
     got multiple values for argument 'a'.               a=a    a=a
     got positional argument after named arguments.      a=a    b
     got multiple values for argument 'b'.               a      b       b=b

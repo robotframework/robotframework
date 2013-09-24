@@ -102,6 +102,8 @@ Non working named combinations without varargs
     missing value for argument 'a'.                   b=b
     got positional argument after named arguments.    b=b    b
     got multiple values for argument 'a'.             a      a=a
+    got multiple values for argument 'a'.             a      b      a=a
+    got multiple values for argument 'a'.             a      b=b    a=a
 
 Nön äscii named arguments
     ${result} =     Nön äscii named args   官话=官话     nönäscii=nönäscii
