@@ -8,7 +8,8 @@ from distutils.core import setup
 if 'develop' in sys.argv:
     import setuptools    # support setuptools development mode
 
-execfile(join(dirname(__file__), 'src', 'robot', 'version.py'))
+with open(join(dirname(__file__), 'src', 'robot', 'version.py')) as py:
+    exec(py.read())
 
 # Maximum width in Windows installer seems to be 70 characters -------|
 DESCRIPTION = """
@@ -34,8 +35,8 @@ PACKAGES = ['robot', 'robot.api', 'robot.conf',
             'robot.running.arguments', 'robot.running.timeouts',
             'robot.utils', 'robot.variables', 'robot.writer']
 PACKAGE_DATA = [join('htmldata', directory, pattern)
-                for directory in 'rebot', 'libdoc', 'testdoc', 'lib', 'common'
-                for pattern in '*.html', '*.css', '*.js']
+                for directory in ['rebot', 'libdoc', 'testdoc', 'lib', 'common']
+                for pattern in ['*.html', '*.css', '*.js']]
 if sys.platform.startswith('java'):
     SCRIPTS = ['jybot', 'jyrebot']
 elif sys.platform == 'cli':
@@ -65,4 +66,9 @@ setup(
     package_data = {'robot': PACKAGE_DATA},
     packages     = PACKAGES,
     scripts      = SCRIPTS,
+    use_2to3     = True,
+    use_2to3_exclude_fixers = ['lib2to3.fixes.fix_' + fix for fix in [
+      'dict',
+      'filter',
+      ]],
 )
