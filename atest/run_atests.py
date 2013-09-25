@@ -20,6 +20,7 @@ $ atest/run_atests.py python --test example atest/robot
 $ atest/run_atests.py /usr/bin/jython25 atest/robot/tags/tag_doc.txt
 """
 
+import re
 import os
 import shutil
 import signal
@@ -29,7 +30,71 @@ import tempfile
 from os.path import abspath, basename, dirname, exists, join, normpath, splitext
 
 
-CURDIR = dirname(abspath(__file__))
+try:
+    CURDIR = CURDIR
+except NameError:
+    CURDIR = dirname(abspath(__file__))
+ROBOTDIR = join(CURDIR, '..', 'src', 'robot')
+
+# If run with Python 3:
+# - Copy src/robot/ and atest/ to atest/python3/
+# - Run 2to3
+# - Modify Python literals in Suite/Resource .txt files
+# - Exec this file's copy in-place for actual testing
+try:
+    # Is this file already the Python 3 copy or the original?
+    do2to3 = do2to3
+except NameError:
+    do2to3 = True
+if sys.version_info[0] == 3 and do2to3:
+    PY3DIR = join(CURDIR, 'python3')
+    PY3ATESTDIR = join(PY3DIR, 'atest')
+
+    shutil.rmtree((PY3DIR), ignore_errors=True)
+    os.makedirs(join(PY3DIR, 'src'))
+    shutil.copytree(ROBOTDIR, join(PY3DIR, 'src', 'robot'), symlinks=True)
+    shutil.copytree(
+      CURDIR, join(PY3ATESTDIR), symlinks=True,
+      ignore=lambda src, names: names if src == PY3DIR else []
+      )
+    status = subprocess.call(
+      ['2to3', '--no-diffs', '-n', '-w',
+       '-x', 'dict',
+       '-x', 'filter',
+       PY3DIR
+       ])
+    if status:
+        sys.exit(status)
+
+    # Modify the Suite/Resource .txt files:
+    for atest_dirname in ['testdata', 'robot']:
+        for dirpath, dirnames, filenames in os.walk(
+          join(PY3ATESTDIR, atest_dirname)
+          ):
+            for filename in filenames:
+                if filename.endswith('.txt'):
+                    path = join(dirpath, filename)
+                    try:
+                        with open(path) as f:
+                            text = f.read()
+                    except UnicodeDecodeError:
+                        pass
+                    else:
+                        print("Preparing for Python 3: %s" % path)
+                        with open(path, 'w') as f:
+                            f.write(re.sub(r'([\[( ])u\'', r'\1\'', text))
+
+    do2to3 = False
+    CURDIR = PY3ATESTDIR
+
+    # Redirect the Test Suite arg to the Python3 copy:
+    sys.argv[-1] = join(CURDIR, sys.argv[-1])
+
+    # Exec this file's Python 3 copy:
+    TESTRUNNER = join(CURDIR, 'run_atests.py')
+    exec(open(TESTRUNNER).read())
+    sys.exit(0)
+
 RUNNER = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
 ARGUMENTS = ' '.join('''
 --doc RobotSPFrameworkSPacceptanceSPtests
@@ -84,7 +149,7 @@ def atests(interpreter_path, *params):
         args += ' --noncritical x-fails-on-ipy'
     command = '%s %s %s %s' % (sys.executable, RUNNER, args, ' '.join(params))
     environ = dict(os.environ, TEMPDIR=tempdir)
-    print 'Running command\n%s\n' % command
+    print('Running command\n%s\n' % command)
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     return subprocess.call(command.split(), env=environ)
@@ -109,7 +174,7 @@ def _get_result_and_temp_dirs(interpreter):
 
 if __name__ == '__main__':
     if len(sys.argv) == 1 or '--help' in sys.argv:
-        print __doc__
+        print(__doc__)
         rc = 251
     else:
         rc = atests(*sys.argv[1:])
