@@ -2516,4 +2516,8 @@ def register_run_keyword(library, keyword, args_to_process=None):
 
 for name in [attr for attr in dir(_RunKeyword) if not attr.startswith('_')]:
     register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
-del name, attr
+try:
+    del attr
+except NameError: # Python 3
+    pass
+del name
