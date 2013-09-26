@@ -1,4 +1,7 @@
-import UserDict
+try:
+    from UserDict import UserDict
+except ImportError: # Python 3
+    from collections import UserDict
 
 def get_variables(type):
     return {'dict': get_dict,
@@ -16,11 +19,11 @@ class MyDict(dict):
         dict.__init__(self, from_my_dict='This From My Dict', from_my_dict2=2)
 
 def get_UserDict():
-    userdict = UserDict.UserDict()
+    userdict = UserDict()
     userdict.update({'from UserDict': 'This From UserDict', 'from UserDict2': 2})
     return userdict
 
-class MyUserDict(UserDict.UserDict):
+class MyUserDict(UserDict):
     def __init__(self, dict):
         self.data = {}
         self.update(dict)

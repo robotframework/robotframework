@@ -15,7 +15,10 @@
 import re
 import inspect
 from functools import partial
-from UserDict import UserDict
+try:
+    from collections import UserDict
+except ImportError:
+    from UserDict import UserDict
 try:
     from java.lang.System import getProperty as getJavaSystemProperty
     from java.util import Map

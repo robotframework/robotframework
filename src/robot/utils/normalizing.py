@@ -14,7 +14,10 @@
 
 import re
 import sys
-from UserDict import UserDict
+try:
+    from collections import UserDict
+except ImportError:
+    from UserDict import UserDict
 try:
     from collections import Mapping
 except ImportError:  # Pre Python 2.6 support
