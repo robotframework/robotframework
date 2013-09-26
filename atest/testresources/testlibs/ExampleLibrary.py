@@ -1,6 +1,9 @@
 import sys
 import time
-import exceptions
+try:
+    import exceptions
+except ImportError: # Python 3
+    import builtins as exceptions
 
 from robot import utils
 

@@ -1,4 +1,7 @@
-import exceptions
+try:
+    import exceptions
+except ImportError: # Python 3
+    import builtins as exceptions
 
 class ObjectToReturn:
     
