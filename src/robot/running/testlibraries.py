@@ -125,7 +125,9 @@ class _BaseTestLibrary(BaseLibrary):
         return init_method if self._valid_init(init_method) else lambda: None
 
     def _valid_init(self, init_method):
-        if inspect.ismethod(init_method):
+        # Python 3 has no unbound methods, they are just functions,
+        # so both tests are needed for compatibility:
+        if inspect.isfunction(init_method) or inspect.ismethod(init_method):
             return True
         if utils.is_jython and isinstance(init_method, PyReflectedConstructor):
             return True
