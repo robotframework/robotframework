@@ -365,7 +365,9 @@ import sys
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
 if 'robot' not in sys.modules and __name__ == '__main__':
-    import pythonpathsetter
+    ## import pythonpathsetter
+    #HACK: Prevent 2to3 from converting to relative import
+    pythonpathsetter = __import__('pythonpathsetter')
 
 from robot.conf import RobotSettings
 from robot.output import LOGGER

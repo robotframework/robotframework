@@ -19,7 +19,9 @@ import fnmatch
 
 from robot.utils import asserts
 
-import BuiltIn
+## import BuiltIn
+#HACK: Prevent 2to3 from converting to relative import
+BuiltIn = __import__('BuiltIn')
 
 
 BUILTIN = BuiltIn.BuiltIn()

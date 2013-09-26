@@ -13,7 +13,9 @@
 #  limitations under the License.
 
 
-import OperatingSystem
+## import OperatingSystem
+#HACK: Prevent 2to3 from converting to relative import
+OperatingSystem = __import__('OperatingSystem')
 
 OPSYS = OperatingSystem.OperatingSystem()
 
