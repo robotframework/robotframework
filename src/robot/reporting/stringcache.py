@@ -12,10 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from operator import itemgetter
 
 from robot.utils import compress_text
 
+
+# Normally handled by 2to3, but not for long as base type:
+if sys.version_info[0] == 3:
+    long = int
 
 class StringIndex(long):
     # Methods below are needed due to http://bugs.jython.org/issue1828
@@ -56,5 +61,5 @@ class StringCache(object):
         return '*'+text
 
     def dump(self):
-        return tuple(item[0] for item in sorted(self._cache.iteritems(),
+        return tuple(item[0] for item in sorted(self._cache.items(),
                                                 key=itemgetter(1)))
