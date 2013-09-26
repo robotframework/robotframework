@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import utils
+##TODO: In Python 3 this causes some circular import problems:
+## import utils
 
 # Return codes from Robot and Rebot.
 # RC below 250 is the number of failed critical tests and exactly 250
@@ -80,6 +81,7 @@ class ExecutionFailed(RobotError):
                  continue_on_failure=False, return_value=None):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
+        from . import utils #HACK: See commented global import
         RobotError.__init__(self, utils.cut_long_message(message))
         self.timeout = timeout
         self.syntax = syntax
@@ -118,6 +120,7 @@ class ExecutionFailed(RobotError):
 class HandlerExecutionFailed(ExecutionFailed):
 
     def __init__(self):
+        from . import utils #HACK: See commented global import
         details = utils.ErrorDetails()
         timeout = isinstance(details.error, TimeoutError)
         syntax = isinstance(details.error, DataError)
@@ -201,6 +204,7 @@ class ExecutionPassed(ExecutionFailed):
         self._earlier_failures = []
 
     def _get_message(self):
+        from . import utils #HACK: See commented global import
         return "Invalid '%s' usage." \
                % utils.printable_name(self.__class__.__name__, code_style=True)
 
