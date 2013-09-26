@@ -13,6 +13,9 @@
 #  limitations under the License.
 
 
+import sys
+
+
 class JsonWriter(object):
 
     def __init__(self, output, separator=''):
@@ -43,6 +46,7 @@ class JsonDumper(object):
                          IntegerDumper(self),
                          TupleListDumper(self),
                          StringDumper(self),
+                         BytesDumper(self), # Only Python 3
                          NoneDumper(self),
                          DictDumper(self))
 
@@ -83,7 +87,19 @@ class StringDumper(_Dumper):
         for search, replace in self._search_and_replace:
             if search in string:
                 string = string.replace(search, replace)
+        if sys.version_info[0] == 3:
+            return string
         return string.encode('UTF-8')
+
+# For Python 3
+class BytesDumper(StringDumper):
+    try:
+        _handled_types = bytes
+    except NameError:
+        pass
+
+    def _encode(self, string):
+        return StringDumper._encode(self, string.decode())
 
 
 class IntegerDumper(_Dumper):
