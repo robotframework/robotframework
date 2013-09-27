@@ -30,7 +30,9 @@ Failing        [Document]   FAIL    Failing test case.
    Fail                     Failing test case.
 User Keyword   [Document]   FAIL    A cunning argument. != something
    My Keyword With Arg      A cunning argument.
-
+Nön-äscïï
+      [Documentation]   FAIL Nön-äscïï error
+      Fail    Nön-äscïï error
 Own Tags   [Tags]   own1   own2
    Log   tags test
 

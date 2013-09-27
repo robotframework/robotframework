@@ -1,5 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -55,6 +56,8 @@ th {
   <title>Robot Test Cases</title></head>
 <body>
 <h1>Robot Test Cases</h1>
+<b>This text should be ignored, even though it's no a comment.
+We have a devious plan to rule the world with robots.</b>
 <table border="1">
   <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
   <thead>
@@ -152,6 +155,24 @@ th {
       <td></td>
     </tr>
   </tbody>
+</table>
+<b>This text should be ignored, even though it's no a comment.
+We have a devious plan to rule the world with robots.</b>
+<table border="1">
+  <tr>
+    <th>Non-robot table</th>
+    <th>Value</th>
+    <th>Value</th>
+    <th>Value</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Documentation</td>
+    <td>This is ignored</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 </table>
 <table border="1">
   <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
@@ -267,6 +288,20 @@ th {
       <td></td>
       <td></td>
       <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Nön-äscïï</td>
+      <td>[Documentation]</td>
+      <td>FAIL</td>
+      <td>Non-äscïï error</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Fail</td>
+      <td>Non-äscïï error</td>
       <td></td>
       <td></td>
     </tr>

@@ -56,6 +56,10 @@ def ignore_me_or_die():
    User Keyword   [Document]   FAIL    A cunning argument. != something
       My Keyword With Arg      A cunning argument.
 
+   Nön-äscïï
+      [Documentation]   FAIL Nön-äscïï error
+      Fail    Nön-äscïï error
+
    Own Tags   [Tags]   own1   own2
       Log   tags test
 
