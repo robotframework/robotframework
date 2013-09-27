@@ -1,0 +1,104 @@
+ReST Test Data Example
+======================
+
+This text should be ignored, even though it's no a comment.
+We have a devious plan to rule the world with robots.
+
+.. code:: robotframework
+
+   *Setting*      *Value*
+
+   Document       A complex testdata file   in rst format.
+   Default Tags   default1
+   Force Tags     force1   force2
+
+   Suite Setup    Log   Setup
+   Test Teardown  Log   Test Teardown
+   Resource       ../resources/rest_resource.rst
+   Variables      ../resources/variables.py
+   Library       OperatingSystem
+
+.. code:: robotframework
+
+   * Variable
+
+   ${table_var}   foo
+   @{table_listvar}   bar   ${table_var}
+   ${quoted}   """this has """"many "" quotes """""
+   ${single_quoted}   s'ingle'qu'ot'es''
+
+.. code:: robotframework
+
+   ***Test Case***
+
+   Passing   Log   Passing test case.
+
+   Failing        [Document]   FAIL    Failing test case.
+      Fail                     Failing test case.
+   User Keyword   [Document]   FAIL    A cunning argument. != something
+      My Keyword With Arg      A cunning argument.
+
+   Own Tags   [Tags]   own1   own2
+      Log   tags test
+
+   Default Tags   No Operation
+
+   Variable Table   Equals   ${table_var}   foo
+      Equals   @{table_listvar}[0]   bar
+      Equals   @{table_listvar}[1]   foo
+
+   Resource File   Keyword from ReST resource
+      Keyword from ReST resource 2
+      Equals   ${rest_resource_var}   ReST Resource Variable
+      Equals   ${rest_resource_var2}   ReST Resource Variable From Recursive Resource
+
+   Variable File   Equals   @{file_listvar}[0]   ${True}
+      Equals   @{file_listvar}[1]   ${3.14}
+      Equals   @{file_listvar}[2]   Hello, world!!
+      Equals   ${file_var1}   ${-314}
+      Equals   ${file_var2}   file variable 2
+
+   Library Import   Fail If Dir Empty   ${CURDIR}
+
+   Test Timeout   [Timeout]   1second
+      [Document]   FAIL   Test timeout 1 second exceeded.
+      Sleep   2
+
+   Keyword Timeout   [Document]   FAIL   Keyword timeout 1 second exceeded.
+      Timeouted Keyword
+
+   Empty Rows
+      [Document]   Testing that empty rows are ignored.   FAIL Expected failure.
+
+      Noop
+
+      Fail   Expected failure.
+
+   Document   [Document]   Testing the metadata parsing.
+      noop
+
+   Default Fixture   Noop
+
+   Overridden Fixture   [Teardown]   Fail   Failing Teardown
+      [Setup]   Log   Own Setup
+      [Document]   FAIL   Teardown failed:\n Failing Teardown
+      NOOP
+
+   Quotes   Equals   ${quoted}   """this has """"many "" quotes """""
+      Equals   ${single_quoted}   s'ingle'qu'ot'es''
+
+.. code:: robotframework
+
+   *User Keywords*   *Action*   *Argument*   *Argument*   *Argument*
+
+   My Keyword With Arg   [Arguments]   ${arg1}
+      Keyword with no arguments
+      Another Keyword   ${arg1}
+
+   Another Keyword   [Arguments]   ${arg1}   ${arg2}=something
+      Equals   ${arg1}   ${arg2}
+
+   Timeouted Keyword   [Timeout]   1second
+      Sleep   2
+
+   Keyword With No Arguments   Log   Hello world!

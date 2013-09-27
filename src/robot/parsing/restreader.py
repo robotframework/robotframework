@@ -12,18 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import tempfile
 import os
-
+import tempfile
 from robot.errors import DataError
-
 from .htmlreader import HtmlReader
+from .txtreader import TxtReader
 
 
 def RestReader():
     try:
-        from docutils.core import publish_cmdline
-        from docutils.parsers.rst import directives
+        import docutils.core
+        from docutils.parsers.rst.directives import register_directive
+        from docutils.parsers.rst.directives import body
     except ImportError:
         raise DataError("Using reStructuredText test data requires having "
                         "'docutils' module installed.")
@@ -32,25 +32,75 @@ def RestReader():
     # See e.g. ug2html.py for an example how custom directives are created.
     ignorer = lambda *args: []
     ignorer.content = 1
-    directives.register_directive('sourcecode', ignorer)
+    register_directive('sourcecode', ignorer)
 
-    class RestReader(HtmlReader):
+    # Override default CodeBlock with a derived custom directive, which can
+    # capture Robot Framework test suite snippets and then discard the content
+    # to speed up the parser.
+    class RobotAwareCodeBlock(body.CodeBlock):
+        def run(self):
+            if u'robotframework' in self.arguments:
+                document = self.state_machine.document
+                if RestReader.has_robotdata(document):
+                    robotdata = RestReader.get_robotdata(document) + u'\n'
+                    robotdata += u'\n'.join(self.content)
+                else:
+                    robotdata = u'\n'.join(self.content)
+                RestReader.set_robotdata(document, robotdata)
+            return []  # Parsed content is not required for testing purposes
+    register_directive('code', RobotAwareCodeBlock)
 
+    class RestReader:
         def read(self, rstfile, rawdata):
-            htmlpath = self._rest_to_html(rstfile.name)
-            htmlfile = None
+            doctree = docutils.core.publish_doctree(rstfile.read())
+            if RestReader.has_robotdata(doctree):
+                delegate = RestReader.txtreader_read
+            else:
+                delegate = RestReader.htmlreader_read
+            return delegate(doctree, rawdata)
+
+        @staticmethod
+        def has_robotdata(doctree):
+            return hasattr(doctree, '_robotdata')
+
+        @staticmethod
+        def set_robotdata(doctree, robotdata):
+            setattr(doctree, '_robotdata', robotdata)
+
+        @staticmethod
+        def get_robotdata(doctree, default=u''):
+            return getattr(doctree, '_robotdata', default)
+
+        @staticmethod
+        def txtreader_read(doctree, rawdata):
+            txtfile = tempfile.NamedTemporaryFile(suffix='.robot')
+            txtfile.write(RestReader.get_robotdata(doctree).encode('utf-8'))
+            txtfile.seek(0)
+            txtreader = TxtReader()
             try:
-                htmlfile = open(htmlpath, 'rb')
-                return HtmlReader.read(self, htmlfile, rawdata)
+                return txtreader.read(txtfile, rawdata)
             finally:
+                # Ensure that the temp file gets closed and deleted:
+                if txtfile:
+                    txtfile.close()
+                if os.path.isfile(txtfile.name):
+                    os.remove(txtfile.name)
+
+        @staticmethod
+        def htmlreader_read(doctree, rawdata):
+            htmlfile = tempfile.NamedTemporaryFile(suffix='.html')
+            htmlfile.write(docutils.core.publish_from_doctree(
+                doctree, writer_name='html',
+                settings_overrides={'output_encoding': 'utf-8'}))
+            htmlfile.seek(0)
+            htmlreader = HtmlReader()
+            try:
+                return htmlreader.read(htmlfile, rawdata)
+            finally:
+                # Ensure that the temp file gets closed and deleted:
                 if htmlfile:
                     htmlfile.close()
-                os.remove(htmlpath)
-
-        def _rest_to_html(self, rstpath):
-            filedesc, htmlpath = tempfile.mkstemp('.html')
-            os.close(filedesc)
-            publish_cmdline(writer_name='html', argv=[rstpath, htmlpath])
-            return htmlpath
+                if os.path.isfile(htmlfile.name):
+                    os.remove(htmlfile.name)
 
     return RestReader()
