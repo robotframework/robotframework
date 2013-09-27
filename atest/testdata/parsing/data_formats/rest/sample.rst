@@ -1,3 +1,5 @@
+.. include:: empty.rest
+
 ReST Test Data Example
 ======================
 
