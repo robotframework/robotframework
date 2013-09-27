@@ -1,14 +1,14 @@
 ReST Test Data Example
 ======================
 
-This text should be ignored, even though it's no a comment.
+This text should be ignored, even though it's not a comment.
 We have a devious plan to rule the world with robots.
 
 .. code:: robotframework
 
    *Setting*      *Value*
 
-   Document       A complex testdata file   in rst format.
+   Documentation  A complex testdata file   in rst format.
    Default Tags   default1
    Force Tags     force1   force2
 
@@ -18,14 +18,32 @@ We have a devious plan to rule the world with robots.
    Variables      ../resources/variables.py
    Library       OperatingSystem
 
+
+Please ignore me and the non-robotframework code blocks below.
+
+.. code:: python
+
+def ignore_me_or_die():
+    raise SystemExit('I did warn you!!')
+
+.. code:: NonExistingProgrammingLanguage
+
+   *** Settings ***
+   Documentation    This Robot data in non-robot code block should be ignored.
+   Force Tags       do    not    add    us
+
+   *** Test Cases ****
+   Ignore me or die
+       Fatal Error    I did warn you!!
+
 .. code:: robotframework
 
-   * Variable
+          * Variable
 
-   ${table_var}   foo
-   @{table_listvar}   bar   ${table_var}
-   ${quoted}   """this has """"many "" quotes """""
-   ${single_quoted}   s'ingle'qu'ot'es''
+          ${table_var}   foo
+          @{table_listvar}   bar   ${table_var}
+          ${quoted}   """this has """"many "" quotes """""
+          ${single_quoted}   s'ingle'qu'ot'es''
 
 .. code:: robotframework
 
