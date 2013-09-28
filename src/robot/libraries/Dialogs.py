@@ -35,7 +35,13 @@ if sys.platform.startswith('java'):
 elif sys.platform == 'cli':
     from dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 else:
-    from dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    ## from dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    #HACK: Prevent 2to3 from converting to relative import
+    dialogs_py = __import__('dialogs_py')
+    MessageDialog = dialogs_py.MessageDialog
+    PassFailDialog = dialogs_py.PassFailDialog
+    InputDialog = dialogs_py.InputDialog
+    SelectionDialog = dialogs_py.SelectionDialog
 
 try:
     from robot.version import get_version

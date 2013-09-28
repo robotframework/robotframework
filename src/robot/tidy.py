@@ -115,7 +115,9 @@ from StringIO import StringIO
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
 if 'robot' not in sys.modules and __name__ == '__main__':
-    import pythonpathsetter
+    ## import pythonpathsetter
+    #HACK: Prevent 2to3 from converting to relative import
+    pythonpathsetter = __import__('pythonpathsetter')
 
 from robot.errors import DataError
 from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
@@ -147,11 +149,17 @@ class Tidy(object):
         Use :func:`inplace` to tidy files in-place.
         """
         data = self._parse_data(path)
-        outfile = open(output, 'wb') if output else StringIO()
+        mode = 'w' if sys.version_info[0] == 3 else 'wb'
+        outfile = open(output, mode) if output else StringIO()
         try:
             self._save_file(data, outfile)
             if not output:
-                return outfile.getvalue().replace('\r\n', '\n').decode('UTF-8')
+                value = outfile.getvalue().replace('\r\n', '\n')
+                # Only decode if not already unicode (Python 3 str).
+                # 2to3 changes `unicode` to `str`.
+                if type(value) is not unicode:
+                    value = value.decode('UTF-8')
+                return value
         finally:
             outfile.close()
 
