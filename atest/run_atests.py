@@ -19,6 +19,7 @@ Examples:
 $ atest/run_atests.py python --test example atest/robot
 $ atest/run_atests.py /usr/bin/jython25 atest/robot/tags/tag_doc.txt
 """
+from __future__ import with_statement
 
 import re
 import os

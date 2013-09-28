@@ -1,12 +1,24 @@
 import re
-from collections import namedtuple
+try:
+    from collections import namedtuple
+except ImportError:
+    pass
 
 from robot.utils import ET
 
 
 MATCHER = re.compile(r'.*\((\w*) (.*) on (.*)\)')
-Interpreter = namedtuple('Interpreter', ['interpreter', 'version', 'platform'])
+try:
+    Interpreter = namedtuple('Interpreter', ['interpreter', 'version', 'platform'])
+except NameError:
+    class Interpreter(tuple):
+        def __new__(cls, *values):
+            return tuple.__new__(cls, values)
 
+        def __init__(self, interpreter, version, platform):
+            self.interpreter = interpreter
+            self.version = version
+            self.platform = platform
 
 def get_interpreter(output):
     tree = ET.parse(output)
