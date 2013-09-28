@@ -1332,13 +1332,16 @@ class _RunKeyword:
         except ExecutionFailed, err:
             if err.dont_continue:
                 raise
+            # To make err accessible after this except block in Python 3:
+            # (`err` will be deleted)
+            exc = err
         else:
             raise AssertionError("Expected error '%s' did not occur"
                                  % expected_error)
-        if not self._matches(unicode(err), expected_error):
+        if not self._matches(unicode(exc), expected_error):
             raise AssertionError("Expected error '%s' but got '%s'"
-                                 % (expected_error, err))
-        return unicode(err)
+                                 % (expected_error, exc))
+        return unicode(exc)
 
     def repeat_keyword(self, times, name, *args):
         """Executes the specified keyword multiple times.
