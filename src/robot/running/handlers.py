@@ -214,12 +214,13 @@ class _DynamicHandler(_RunnableHandler):
         self._run_keyword_method_name = handler_method.__name__
         self._doc = doc is not None and utils.unic(doc) or ''
         # Check **kwargs handling requirements:
-        self._handler_argspec = inspect.getargspec(handler_method)
+        self._handler_argspec = PythonArgumentParser('DynamicMethod').parse(
+          handler_name, handler_method)
         if argspec and argspec[-1].startswith('**'):
             # --> Keyword has **kwargs
-            handler_args = self._handler_argspec.args
+            handler_args = self._handler_argspec.positional
             # --> Handler method needs (self, name, args, kwargs)
-            if (len(handler_args) < 4
+            if (len(handler_args) < 3
                 and not self._handler_argspec.varargs
                 ):
                 raise DataError(
@@ -246,7 +247,7 @@ class _DynamicHandler(_RunnableHandler):
         def handler(*positional, **kwargs):
             # Does the runner have enough parameters for **kwargs support?
             # (self, name, args, kwargs)
-            if (len(self._handler_argspec.args) > 3
+            if (len(self._handler_argspec.positional) > 2
                 or self._handler_argspec.varargs
                 ):
                 return runner(name, positional, kwargs)

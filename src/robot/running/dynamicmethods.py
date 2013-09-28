@@ -17,6 +17,8 @@ import inspect
 from robot.errors import DataError
 from robot.utils import get_error_message, unic
 
+from .arguments import PythonArgumentParser
+
 
 def no_dynamic_method(*args):
     pass
@@ -92,8 +94,9 @@ class GetKeywordArguments(_DynamicMethod):
         # (self, name, args, kwargs)
         run_keyword_method = RunKeyword(lib).method
         if run_keyword_method is not no_dynamic_method:
-            argspec = inspect.getargspec(run_keyword_method)
-            if len(argspec.args) > 3 or argspec.varargs:
+            argspec = PythonArgumentParser('DynamicMethod').parse(
+              'run_keyword', run_keyword_method)
+            if len(argspec.positional) > 2 or argspec.varargs:
                 self._kwargs_support = True
                 return
         self._kwargs_support = False
