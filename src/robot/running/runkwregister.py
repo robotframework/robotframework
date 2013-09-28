@@ -39,10 +39,18 @@ class _RunKeywordRegister:
         return self.get_args_to_process(libname, kwname) >= 0
 
     def _get_args_from_method(self, method):
+        # Python 3 has no unbound methods, they are just functions,
+        # so ismethod won't be True...
         if inspect.ismethod(method):
             return method.im_func.func_code.co_argcount - 1
         elif inspect.isfunction(method):
-            return method.func_code.co_argcount
+            code = method.__code__
+            argcount = code.co_argcount
+            # ...but you can look at the args:
+            #TODO: Better solution?
+            if argcount and code.co_varnames[0] == 'self':
+                argcount -= 1
+            return argcount
         raise ValueError('Needs function or method')
 
 
