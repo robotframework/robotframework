@@ -66,3 +66,10 @@ class KeywordDoc(object):
 
     def __cmp__(self, other):
         return cmp(self.name.lower(), other.name.lower())
+
+    def __lt__(self, other):
+        return self.name.lower() < other.name.lower()
+
+    #TODO: Necessary? Are KeywordDocs ever compared with other than < ?
+    ## def __eq__(self, other):
+    ##     ...

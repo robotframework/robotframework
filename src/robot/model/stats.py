@@ -87,7 +87,6 @@ class Stat(object):
     #TODO: Necessary? Are Stats ever compared with other than < ?
     ## def __eq__(self, other):
     ##     ...
-        ## return self._norm_name == other._norm_name
 
     def __nonzero__(self):
         return not self.failed
