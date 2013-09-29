@@ -15,6 +15,7 @@
 import os
 import sys
 import copy
+from itertools import chain
 
 from robot import utils
 from robot.errors import DataError
@@ -359,7 +360,7 @@ class Namespace:
         libname, kwname = name.rsplit('.', 1)
         # 1) Find matching lib(s)
         libs = [lib for lib
-                in self._imported_resource_files.values() + self._testlibs.values()
+                in chain(self._imported_resource_files.values(), self._testlibs.values())
                 if utils.eq(lib.name, libname)]
         if not libs:
             return None
