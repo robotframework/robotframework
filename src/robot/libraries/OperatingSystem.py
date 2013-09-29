@@ -1286,6 +1286,8 @@ class _Process:
                 command = command[:-1] + ' 2>&1 &'
             else:
                 command += ' 2>&1'
+        if sys.version_info[0] == 3:
+            return command
         return self._encode_to_file_system(command)
 
     def _encode_to_file_system(self, string):

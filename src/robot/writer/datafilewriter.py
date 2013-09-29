@@ -14,6 +14,7 @@
 
 from __future__ import with_statement
 import os
+import sys
 
 from robot.errors import DataError
 
@@ -94,7 +95,10 @@ class WritingContext(object):
 
     def __enter__(self):
         if not self.output:
-            self.output = open(self._output_path(), 'wb')
+            # In Python 3, open with 'wb' only accepts bytes data,
+            # which causes TypeErrors at other points
+            mode = 'w' if sys.version_info[0] == 3 else 'wb'
+            self.output = open(self._output_path(), mode)
         return self
 
     def __exit__(self, *exc_info):

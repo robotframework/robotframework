@@ -44,6 +44,12 @@ else:
 
 
 def _unic(item, *args):
+    # First check if already unicode (Python 3 str)
+    # --> Python 3 will raise TypeError
+    #     if trying to decode with str(item, *args) below.
+    # 2to3 changes `unicode` to `str`.
+    if type(item) is unicode:
+        return item
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
         return unicode(item, *args)

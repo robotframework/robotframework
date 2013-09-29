@@ -30,7 +30,7 @@ def decode_output(string):
 def encode_output(string, errors='replace'):
     """Encodes Unicode to bytes in console encoding."""
     # http://ironpython.codeplex.com/workitem/29487
-    if sys.platform == 'cli':
+    if sys.version_info[0] == 3 or sys.platform == 'cli':
         return string
     return string.encode(OUTPUT_ENCODING, errors)
 

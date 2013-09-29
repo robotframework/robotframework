@@ -76,6 +76,8 @@ class _Timeout(object):
         return self.active and self.time_left() <= 0
 
     def __str__(self):
+        if sys.version_info[0] == 3:
+            return self.__unicode__()
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):

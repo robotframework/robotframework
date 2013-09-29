@@ -23,7 +23,10 @@ class TsvReader:
     def read(self, tsvfile, populator):
         process = False
         for index, row in enumerate(tsvfile.readlines()):
-            row = self._decode_row(row, index == 0)
+            # Only decode if not already unicode (Python 3 str).
+            # 2to3 changes `unicode` to `str`.
+            if type(row) is not unicode:
+                row = self._decode_row(row, index == 0)
             cells = [self._process(cell) for cell in self.split_row(row)]
             name = cells and cells[0].strip() or ''
             if name.startswith('*') and \

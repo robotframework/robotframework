@@ -51,6 +51,9 @@ class Message(ModelObject):
     def __unicode__(self):
         return self.message
 
+    def __str__(self):
+        return self.message
+
 
 class Messages(ItemList):
     __slots__ = []

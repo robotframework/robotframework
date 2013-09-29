@@ -13,6 +13,9 @@
 #  limitations under the License.
 
 
+import sys
+
+
 class ItemList(object):
     __slots__ = ['_item_class', '_common_attrs', '_items']
 
@@ -74,4 +77,6 @@ class ItemList(object):
         return u'[%s]' % ', '.join(unicode(item) for item in self)
 
     def __str__(self):
+        if sys.version_info[0] == 3:
+            return self.__unicode__()
         return unicode(self).encode('ASCII', 'replace')

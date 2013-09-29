@@ -395,7 +395,11 @@ class ArgFileParser(object):
     def _read_from_file(self, path):
         try:
             with open(path) as f:
-                content = f.read().decode('UTF-8')
+                content = f.read()
+                # Only decode if not already unicode (Python 3 str).
+                # 2to3 changes `unicode` to `str`.
+                if type(content) is not unicode:
+                    content = content.decode('UTF-8')
         except (IOError, UnicodeError), err:
             raise DataError("Opening argument file '%s' failed: %s"
                             % (path, err))

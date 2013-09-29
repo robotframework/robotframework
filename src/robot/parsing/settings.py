@@ -83,6 +83,8 @@ class Setting(object):
     def __unicode__(self):
         return unicode(self.value or '')
 
+    def __str__(self):
+        return self.__unicode__()
 
 class StringValueJoiner(object):
 

@@ -33,7 +33,11 @@ class FileLogger(AbstractLogger):
         if self._is_logged(msg.level) and not self._writer.closed:
             entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5),
                                         msg.message)
-            self._writer.write(entry.encode('UTF-8'))
+            encoded_entry = entry.encode('UTF-8')
+            try:
+                self._writer.write(encoded_entry)
+            except TypeError: # Python 3
+                self._writer.write(entry)
 
     def start_suite(self, suite):
         self.info("Started test suite '%s'" % suite.name)

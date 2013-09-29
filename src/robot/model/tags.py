@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
 from robot.utils import Matcher, NormalizedDict, setter
 
 
@@ -61,6 +63,8 @@ class Tags(object):
         return repr(list(self))
 
     def __str__(self):
+        if sys.version_info[0] == 3:
+            return self.__unicode__()
         return unicode(self).encode('UTF-8')
 
     def __getitem__(self, index):

@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
 from robot.utils.setter import SetterAwareType
 
 
@@ -23,6 +25,8 @@ class ModelObject(object):
         return self.name
 
     def __str__(self):
+        if sys.version_info[0] == 3:
+            return self.__unicode__()
         return unicode(self).encode('ASCII', 'replace')
 
     def __repr__(self):

@@ -103,6 +103,11 @@ class _DebugFileWriter:
 
     def _write(self, text, separator=False):
         if not (separator and self._separator_written_last):
-            self._outfile.write(text.encode('UTF-8').rstrip() + '\n')
+            text = text.rstrip() + '\n'
+            encoded_text = text.encode('UTF-8')
+            try:
+                self._outfile.write(encoded_text)
+            except TypeError: # Python 3
+                self._outfile.write(text)
             self._outfile.flush()
             self._separator_written_last = separator

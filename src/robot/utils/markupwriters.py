@@ -71,7 +71,11 @@ class _MarkupWriter(object):
         self.output.close()
 
     def _write(self, text, newline=False):
-        self.output.write(self._encode(text))
+        encoded_text = self._encode(text)
+        try:
+            self.output.write(encoded_text)
+        except TypeError: # Python 3
+            self.output.write(text)
         if newline:
             self.output.write(self._line_separator)
 
