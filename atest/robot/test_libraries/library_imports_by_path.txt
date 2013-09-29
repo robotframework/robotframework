@@ -43,10 +43,16 @@ Importing Invalid Python File Fails
     Check Stderr Contains  Importing test library '${path}' failed:  ImportError: I'm not really a library!
 
 Inporting Dir Library Without Trailing "/" Fails
-    Check Stderr Contains  Importing test library 'MyLibDir' failed:  ImportError: No module named MyLibDir
+    Run on python 2.x
+    ...  Check Stderr Contains  Importing test library 'MyLibDir' failed:  ImportError: No module named MyLibDir
+    Run on python 3.x
+    ...  Check Stderr Contains  Importing test library 'MyLibDir' failed:  ImportError: No module named 'MyLibDir'
 
 Importing Non Python File Fails
-    Check Stderr Contains  Importing test library 'java_libraries.html' failed:  ImportError: No module named java_libraries
+    Run on python 2.x
+    ...  Check Stderr Contains  Importing test library 'java_libraries.html' failed:  ImportError: No module named java_libraries
+    Run on python 3.x
+    ...  Check Stderr Contains  Importing test library 'java_libraries.html' failed:  ImportError: No module named 'java_libraries'
 
 Importing Non Python Dir Fails
     Check Stderr Contains  Test library 'library_scope/' does not exist.

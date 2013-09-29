@@ -50,9 +50,15 @@ Message Is Got Correctly If Java Exception Has 'null' Message
 Message And Internal Trace Are Removed From Details When Exception In Library
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    Generic Failure    foo != bar
-    Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception, msg
+    Run on python 2.x
+    ...  Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception, msg
+    Run on python 3.x
+    ...  Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception(msg)
     ${tc} =    Verify Test Case And Error In Log    Non Generic Failure    FloatingPointError: Too Large A Number !!
-    Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception, msg
+    Run on python 2.x
+    ...  Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception, msg
+    Run on python 3.x
+    ...  Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception(msg)
 
 Message And Internal Trace Are Removed From Details When Exception In Java Library
     [Tags]    jybot
@@ -65,7 +71,10 @@ Message And Internal Trace Are Removed From Details When Exception In Java Libra
 Message and Internal Trace Are Removed From Details When Exception In External Code
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure    UnboundLocalError: Raised from an external object!
-    Verify Python Traceback    ${tc.kws[0].msgs[1]}    external_exception    ObjectToReturn('failure').exception(name, msg)    exception    raise exception, msg
+    Run on python 2.x
+    ...  Verify Python Traceback    ${tc.kws[0].msgs[1]}    external_exception    ObjectToReturn('failure').exception(name, msg)    exception    raise exception, msg
+    Run on python 3.x
+    ...  Verify Python Traceback    ${tc.kws[0].msgs[1]}    external_exception    ObjectToReturn('failure').exception(name, msg)    exception    raise exception(msg)
 
 Message and Internal Trace Are Removed From Details When Exception In External Java Code
     [Tags]    jybot

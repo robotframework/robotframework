@@ -35,10 +35,18 @@ Listener With Wrong Number Of Arguments
     ...    Creating instance failed: TypeError:
 
 Non Existing Listener
-    [Template]    Check Syslog Contains
-    Taking listener 'NonExistingListener' into use failed:
+    [Template]    Run on python 2.x
+    Check Syslog Contains
+    ...    Taking listener 'NonExistingListener' into use failed:
     ...    Importing listener 'NonExistingListener' failed:
     ...    ImportError: No module named NonExistingListener${EMPTY TB}
+
+Non Existing Listener Python 3
+    [Template]    Run on python 3.x
+    Check Syslog Contains
+    ...    Taking listener 'NonExistingListener' into use failed:
+    ...    Importing listener 'NonExistingListener' failed:
+    ...    ImportError: No module named 'NonExistingListener'${EMPTY TB}
 
 Java Listener
     [Tags]  jybot
