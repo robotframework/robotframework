@@ -404,6 +404,51 @@ of the table::
     \             Directory Should Exist  ${path}
     ============  ======================  ============  ==========
 
+.. note:: In reST files, also Space separated format is
+          supported starting from Robot Framework 2.8.2.
+
+Apart from writing the test cases in reStructuredText documents using table
+format, user can write the test cases in space separated format also. For
+writing test case in space separated format, ``.. code::
+robotframework``-directive should be used to indicate that test suite in space
+separated text syntax is starting. The actual test suite would start from the
+next line with proper indentation.
+
+The actual test suite can be written in a manner similar to shown earlier (in
+`space separated format`_). Also same escaping rule needs to be followed. For
+example::
+
+    .. code:: robotframework
+
+       *** Settings ***
+
+       Library  OperatingSystem
+
+       *** Variables ***
+
+       ${MESSAGE}  Hello, world!
+
+       *** Test Cases ***
+
+       My Test
+           [Documentation]  Example test
+           Log  ${MESSAGE}
+           My Keyword  /tmp
+
+       Another Test
+           Should Be Equal  ${MESSAGE}  Hello, world!
+
+       *** Keywords ***
+
+       My Keyword
+           [Arguments]  ${path}
+           Directory Should Exist  ${path}
+
+.. note:: If a single reST document contains multiple
+          ``.. code:: robotframework``-directives, their contents are
+          concatenated into a text file before parsing with space separated
+          format parser.
+
 Editing test data
 `````````````````
 

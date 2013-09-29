@@ -12,45 +12,115 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import tempfile
 import os
+import tempfile
 
 from robot.errors import DataError
 
 from .htmlreader import HtmlReader
+from .txtreader import TxtReader
 
 
 def RestReader():
     try:
-        from docutils.core import publish_cmdline
-        from docutils.parsers.rst import directives
+        from docutils.core import publish_doctree, publish_from_doctree
     except ImportError:
         raise DataError("Using reStructuredText test data requires having "
                         "'docutils' module installed.")
 
-    # Ignore custom sourcecode directives at least we use in reST sources.
-    # See e.g. ug2html.py for an example how custom directives are created.
-    ignorer = lambda *args: []
-    ignorer.content = 1
-    directives.register_directive('sourcecode', ignorer)
+    if not register_custom_directives.registered:
+        register_custom_directives()
+        register_custom_directives.registered = True
 
-    class RestReader(HtmlReader):
+    class RestReader(object):
 
         def read(self, rstfile, rawdata):
-            htmlpath = self._rest_to_html(rstfile.name)
-            htmlfile = None
+            # TODO: Figure out a better way to handle relative paths in reST
+            # files than using os.chdir. Or at least clean up this code.
+            origdir = os.path.abspath('.')
+            os.chdir(os.path.dirname(rstfile.name))
             try:
-                htmlfile = open(htmlpath, 'rb')
-                return HtmlReader.read(self, htmlfile, rawdata)
+                document = publish_doctree(
+                    rstfile.read(),
+                    settings_overrides={'input_encoding': 'utf-8'})
             finally:
+                os.chdir(origdir)
+            store = RobotDataStorage(document)
+            if store.has_data():
+                return self._read_text(store.get_data(), rawdata)
+            return self._read_html(document, rawdata)
+
+        def _read_text(self, data, rawdata):
+            txtfile = tempfile.NamedTemporaryFile(suffix='.robot')
+            txtfile.write(data.encode('utf-8'))
+            txtfile.seek(0)
+            txtreader = TxtReader()
+            try:
+                return txtreader.read(txtfile, rawdata)
+            finally:
+                # Ensure that the temp file gets closed and deleted:
+                if txtfile:
+                    txtfile.close()
+                if os.path.isfile(txtfile.name):
+                    os.remove(txtfile.name)
+
+        def _read_html(self, document, rawdata):
+            htmlfile = tempfile.NamedTemporaryFile(suffix='.html')
+            htmlfile.write(publish_from_doctree(
+                document, writer_name='html',
+                settings_overrides={'output_encoding': 'utf-8'}))
+            htmlfile.seek(0)
+            htmlreader = HtmlReader()
+            try:
+                return htmlreader.read(htmlfile, rawdata)
+            finally:
+                # Ensure that the temp file gets closed and deleted:
                 if htmlfile:
                     htmlfile.close()
-                os.remove(htmlpath)
-
-        def _rest_to_html(self, rstpath):
-            filedesc, htmlpath = tempfile.mkstemp('.html')
-            os.close(filedesc)
-            publish_cmdline(writer_name='html', argv=[rstpath, htmlpath])
-            return htmlpath
+                if os.path.isfile(htmlfile.name):
+                    os.remove(htmlfile.name)
 
     return RestReader()
+
+
+def register_custom_directives():
+    from docutils.parsers.rst.directives import register_directive
+    from docutils.parsers.rst.directives.body import CodeBlock
+
+    class IgnoreCode(CodeBlock):
+
+        def run(self):
+            return []
+
+    class CaptureRobotData(CodeBlock):
+
+        def run(self):
+            if 'robotframework' in self.arguments:
+                store = RobotDataStorage(self.state_machine.document)
+                store.add_data(self.content)
+            return []
+
+    # 'sourcode' directive is our old custom directive used in User Guide and
+    # Quick Start Guide. Should be replaced with the standard 'code' directive.
+    register_directive('sourcecode', IgnoreCode)
+    register_directive('code', CaptureRobotData)
+
+
+register_custom_directives.registered = False
+
+
+class RobotDataStorage(object):
+
+    def __init__(self, document):
+        if not hasattr(document, '_robot_data'):
+            document._robot_data = []
+        self._robot_data = document._robot_data
+
+    def add_data(self, rows):
+        self._robot_data.extend(rows)
+
+    def get_data(self):
+        return '\n'.join(self._robot_data)
+
+    def has_data(self):
+        return bool(self._robot_data)
