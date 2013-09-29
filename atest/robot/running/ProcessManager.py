@@ -13,7 +13,12 @@ class ProcessManager(object):
 
     def start_process(self, *args):
         self._process = subprocess.Popen(args, stderr=subprocess.PIPE,
-                                         stdout=subprocess.PIPE)
+                                         stdout=subprocess.PIPE,
+                                         # Important for Python 3:
+                                         # (opens stdout and stderr
+                                         #  in text mode, returning str
+                                         #  instead of bytes)
+                                         universal_newlines=True)
         self._stdout = None
         self._stderr = None
 

@@ -25,11 +25,14 @@ class LibDocLib(object):
         cmd = self._cmd + [a for a in args.split(' ') if a]
         cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
-        stdout = tempfile.TemporaryFile()
+        # In Python 3, explicitly open in text mode (w+, default w+b)
+        # causes less problems (works with str, not bytes):
+        stdout = tempfile.TemporaryFile('w+')
         call(cmd, cwd=ROBOT_SRC, stdout=stdout, stderr=STDOUT, shell=os.sep=='\\')
         stdout.seek(0)
         output = stdout.read().replace('\r\n', '\n')
         logger.info(output)
+        # Python 3 compatibility is handled by robot.utils.unic:
         return decode_output(output)
 
     def get_libdoc_model_from_html(self, path):

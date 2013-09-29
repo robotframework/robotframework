@@ -43,7 +43,10 @@ Create File To Non-Existing Dir
 *** Keywords ***
 Create Non-ASCII Input
     ${BYTES} =    Evaluate    '\xc1\xdf\xd0\xe1\xd8\xd1\xde'
-    ${UNICODE} =    Evaluate    '${BYTES}'.decode('ISO-8859-5')
+    ${status}  ${UNICODE} =    Run Keyword And Ignore Error
+    ...  Evaluate    '${BYTES}'.decode('ISO-8859-5')
+    ${status}  ${UNICODE} =    Run Keyword And Ignore Error
+    ...  Evaluate    b'${BYTES}'.decode('ISO-8859-5')
     Set Suite Variable    ${BYTES}
     Set Suite Variable    ${UNICODE}
 

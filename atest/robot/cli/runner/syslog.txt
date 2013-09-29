@@ -18,7 +18,7 @@ Setting syslog sile
     Run Some Tests
     File Should Not Be Empty  ${CLI OUTDIR}/syslog.txt
     ${syslog} =  Get Binary File  ${CLI OUTDIR}/syslog.txt
-    ${linesep} =  Evaluate  os.linesep  modules=os
+    ${linesep} =  Evaluate  os.linesep.encode()  modules=os
     Should Contain  ${syslog}  ${linesep}
 
 Syslog file set to NONE
