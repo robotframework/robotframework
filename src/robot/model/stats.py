@@ -81,6 +81,14 @@ class Stat(object):
     def __cmp__(self, other):
         return cmp(self._norm_name, other._norm_name)
 
+    def __lt__(self, other):
+        return self._norm_name < other._norm_name
+
+    #TODO: Necessary? Are Stats ever compared with other than < ?
+    ## def __eq__(self, other):
+    ##     ...
+        ## return self._norm_name == other._norm_name
+
     def __nonzero__(self):
         return not self.failed
 
@@ -166,6 +174,17 @@ class TagStat(Stat):
             or cmp(other.non_critical, self.non_critical) \
             or cmp(bool(other.combined), bool(self.combined)) \
             or Stat.__cmp__(self, other)
+
+    def __lt__(self, other):
+        key = (other.critical, other.non_critical, other.combined,
+               self._norm_name)
+        other_key = (self.critical, self.non_critical, self.combined,
+                     other._norm_name)
+        return key < other_key
+
+    #TODO: Necessary? See commented Stat.__eq__
+    ## def __eq__(self, other):
+    ##     ...
 
 
 class CombinedTagStat(TagStat):

@@ -85,6 +85,15 @@ class _Timeout(object):
         return cmp(not self.active, not other.active) \
             or cmp(self.time_left(), other.time_left())
 
+    def __lt__(self, other):
+        key = (not self.active, self.time_left())
+        other_key = (not other.active, other.time_left())
+        return key < other_key
+
+    #TODO: Necessary? Are _Timeouts ever compared with other than < ?
+    ## def __eq__(self, other):
+    ##     ...
+
     def __nonzero__(self):
         return bool(self.string and self.string.upper() != 'NONE')
 
