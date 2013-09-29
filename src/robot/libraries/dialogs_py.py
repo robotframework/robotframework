@@ -14,8 +14,12 @@
 
 import sys
 from threading import currentThread
-from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
-                     BOTH, END, LEFT, W)
+try:
+    from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
+                         BOTH, END, LEFT, W)
+except ImportError: # Python 3
+    from tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
+                         BOTH, END, LEFT, W)
 
 
 class _TkDialog(Toplevel):
