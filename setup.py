@@ -50,7 +50,7 @@ if 'bdist_wininst' in sys.argv:
     SCRIPTS.append('robot_postinstall.py')
 
 setup(
-    name         = 'robotframework',
+    name         = 'robotframework-python3',
     version      = get_version(sep=''),
     author       = 'Robot Framework Developers',
     author_email = 'robotframework@gmail.com',
