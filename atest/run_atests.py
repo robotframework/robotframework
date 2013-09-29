@@ -82,8 +82,10 @@ if sys.version_info[0] == 3 and do2to3:
                         pass
                     else:
                         print("Preparing for Python 3: %s" % path)
+                        # Remove u prefixes from unicode literals:
+                        text = re.sub(r'([\[(= ])u\'', r'\1\'', text)
                         with open(path, 'w') as f:
-                            f.write(re.sub(r'([\[( ])u\'', r'\1\'', text))
+                            f.write(text)
 
     do2to3 = False
     CURDIR = PY3ATESTDIR
