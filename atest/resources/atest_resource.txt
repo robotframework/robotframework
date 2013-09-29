@@ -87,7 +87,7 @@ Set Variables And Get Datasources
 Set Variables
     [Arguments]  ${name}
     ${OUTDIR} =  Join Path  ${OUTPUTDIR}  output  ${name}
-    Set Global Variable  $OUTDIR  ${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}
+    Set Global Variable  $OUTDIR  ${OUTDIR.encode('ascii', 'ignore').decode().replace('?', '_') .replace('*', '_')}
     Create Directory  ${OUTDIR}
     Set Suite Variable  $OUTFILE  ${OUTDIR}${/}output.xml
     Set Suite Variable  $STDOUT_FILE  ${OUTDIR}${/}stdout.txt
@@ -332,3 +332,15 @@ Run on python 2.5
     ${interpreter} =    Get interpreter    ${OUTFILE}
     ${is 25} =   is 25    ${interpreter}
     Run keyword if    ${is 25}    ${kw}   @{args}
+
+Run on python 3.x
+    [arguments]     ${kw}   @{args}
+    ${interpreter} =    Get interpreter    ${OUTFILE}
+    ${is 3x} =   is 3x    ${interpreter}
+    Run keyword if    ${is 3x}    ${kw}   @{args}
+
+Run on python 2.x
+    [arguments]     ${kw}   @{args}
+    ${interpreter} =    Get interpreter    ${OUTFILE}
+    ${is 2x} =   is 2x    ${interpreter}
+    Run keyword if    ${is 2x}    ${kw}   @{args}

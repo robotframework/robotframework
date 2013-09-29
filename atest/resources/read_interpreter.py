@@ -25,6 +25,12 @@ def get_interpreter(output):
     root = tree.getroot()
     return Interpreter(*MATCHER.match(root.attrib['generator']).groups())
 
+def is_3x(interpreter):
+    return interpreter.version.startswith('3')
+
+def is_2x(interpreter):
+    return interpreter.version.startswith('2')
+
 def is_27(interpreter):
     return interpreter.version.startswith('2.7')
 
