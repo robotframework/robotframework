@@ -35,12 +35,12 @@ Switching active process
     Stop Some Process
 
 Change Current Working Directory
-    ${result}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=.
-    ${result2}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=..
+    ${result}=    Run Process    python    -c    import os; print(os.path.abspath(os.curdir));    cwd=.
+    ${result2}=    Run Process    python    -c    import os; print(os.path.abspath(os.curdir));    cwd=..
     Should Not Be Equal    ${result.stdout}    ${result2.stdout}
 
 Setting Stdout
-    ${result}=    Run Process    python -c "print 'hello'"    shell=True    stdout=%{TEMPDIR}/myfile_1.txt
+    ${result}=    Run Process    python -c "print('hello')"    shell=True    stdout=%{TEMPDIR}/myfile_1.txt
     ${output}=    Get File    %{TEMPDIR}/myfile_1.txt
     Should Not Be Empty    ${output}
     Should Match  ${output}   ${result.stdout}*
@@ -55,52 +55,52 @@ Setting Stderr
 
 Without Env Configuration the Environment Should Be As It Was
     Set Environment Variable  normalvar  normal
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True
+    ${result}=    Run Process    python -c "import os; print('%s %s' % (os.getenv('normalvar', '-'), os.getenv('specialvar', '-')));"    shell=True
     Should Be Equal        ${result.stdout.strip()}    normal -
 
 With Env: Configuration the Environment Should Contain Additional Variable
     Set Environment Variable  normalvar  normal
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env:specialvar=spessu
+    ${result}=    Run Process    python -c "import os; print('%s %s' % (os.getenv('normalvar', '-'), os.getenv('specialvar', '-')));"    shell=True   env:specialvar=spessu
     Should Be Equal        ${result.stdout.strip()}    normal spessu
 
 With Env= Configuration the Environment Should Contain Only Additional Variable
     Set Environment Variable  normalvar  normal
     ${setenv}=    Create env dictionary    specialvar  spessu
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env=${setenv}
+    ${result}=    Run Process    python -c "import os; print('%s %s' % (os.getenv('normalvar', '-'), os.getenv('specialvar', '-')));"    shell=True   env=${setenv}
     Should Be Equal        ${result.stdout.strip()}    - spessu
 
 Setting Environment With Multiple Values
     Set Environment Variable  normalvar  normal
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba', '-');"    shell=True   env:specialvar=spessu   env:diiba=daaba
+    ${result}=    Run Process    python -c "import os; print('%s %s %s' % (os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba', '-')));"    shell=True   env:specialvar=spessu   env:diiba=daaba
     Should Be Equal        ${result.stdout.strip()}  normal spessu daaba
 
 Setting Environment Variable Overrides Original
     Set Environment Variable  VARI  original
-    ${result}=    Run Process    python -c "import os; print os.getenv('VARI', '-');"    shell=True   env:VARI=new
+    ${result}=    Run Process    python -c "import os; print(os.getenv('VARI', '-'));"    shell=True   env:VARI=new
     Should Be Equal        ${result.stdout.strip()}  new
 
 Setting Environment With Multiple Values Using Dictionary
     Set Environment Variable  normalvar  normal
     ${setenv}=    Create env dictionary   specialvar  spessu  diiba2  daaba2
-    ${result}=    Run Process    python   -c    import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba2', '-');    env=${setenv}
+    ${result}=    Run Process    python   -c    import os; print('%s %s %s' % (os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba2', '-')));    env=${setenv}
     Should Be Equal        ${result.stdout.strip()}  - spessu daaba2
 
 Unsupported Arguments Should Cause Error
     ${setenv}=    Create Dictionary           sp  spessu
-    Run Keyword And Expect Error  'genv' is not supported by this keyword.    Run Process    python -c "import os; print os.environ;"    shell=True   genv=${setenv}
-    Run Keyword And Expect Error  'shellx' is not supported by this keyword.    Run Process    python -c "import os; print os.environ;"    shellx=True
+    Run Keyword And Expect Error  'genv' is not supported by this keyword.    Run Process    python -c "import os; print(os.environ);"    shell=True   genv=${setenv}
+    Run Keyword And Expect Error  'shellx' is not supported by this keyword.    Run Process    python -c "import os; print(os.environ);"    shellx=True
 
 Escaping equals sign
-    ${result}=    Run Process    python    -c    print 'stderr\=bar.buu'    shell=True
+    ${result}=    Run Process    python -c "print('stderr\=bar.buu')"    shell=True
     Result should match    ${result}    stdout=*stderr=bar.buu*
 
 Running a process in a shell
-    ${result}=    Run Process    python -c "print 'hello'"    shell=True
+    ${result}=    Run Process    python -c "print('hello')"    shell=True
     Result should equal    ${result}    stdout=hello
-    Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=${False}
+    Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=${False}
 
 Input things to process
-    Start Process    python -c "print 'inp %s' % raw_input()"    shell=True
+    Start Process    python -c "import sys; print('inp %s' % (input() if sys.version_info[0] \=\= 3 else raw_input()))"    shell=True
     ${process}=    Get Process Object
     Log   ${process.stdin.write("some input\n")}
     Log   ${process.stdin.flush()}
@@ -108,13 +108,13 @@ Input things to process
     Should Match    ${result.stdout}    *inp some input*
 
 Process alias
-    ${handle}=    Start Process    python -c "print 'hello'"    shell=True    alias=hello
+    ${handle}=    Start Process    python -c "print('hello')"    shell=True    alias=hello
     ${pid_by_handle}=    Get process id    ${handle}
     ${pid_by_alias}=    Get process id    hello
     Should Be Equal    ${pid_by_handle}    ${pid_by_alias}
 
 Redirecting Stderr to Stdout
-    ${result}=    Run Process    python    -c    print 'hello';1/0    stderr=STDOUT
+    ${result}=    Run Process    python    -c    print('hello');1/0    stderr=STDOUT
     Should Match    ${result.stdout}    *hello*
     Should Match    ${result.stdout}    *ZeroDivisionError*
     Should Be Equal    ${result.stderr}    ${EMPTY}
@@ -123,7 +123,7 @@ Redirecting Stderr to Stdout
 
 Redirecting Stderr to Stdout with filename
     ${path}=    Normalize Path    %{TEMPDIR}/filename.txt
-    ${result}=    Run Process    python    -c    print 'hello';1/0    stdout=${path}    stderr=${path}
+    ${result}=    Run Process    python    -c    print('hello');1/0    stdout=${path}    stderr=${path}
     Should Match    ${result.stdout}    *hello*
     Should Match    ${result.stdout}    *ZeroDivisionError*
     Should Match    ${result.stderr}    *hello*
@@ -134,7 +134,7 @@ Redirecting Stderr to Stdout with filename
 
 Current working directory should be used with stdout and stderr
     Create Directory    %{TEMPDIR}/hc
-    ${result}=    Run Process    python    -c    print 'moon kuu';1/0    cwd=%{TEMPDIR}/hc    stdout=myout.txt
+    ${result}=    Run Process    python    -c    print('moon kuu');1/0    cwd=%{TEMPDIR}/hc    stdout=myout.txt
     ...    stderr=myerr.txt
     ${output}=    Get File    %{TEMPDIR}/hc/myout.txt
     ${output2}=    Get File    %{TEMPDIR}/hc/myerr.txt
@@ -145,7 +145,7 @@ Current working directory should be used with stdout and stderr
 Current working directory should not be used with stdout and stderr when absolute path in use
     Create Directory    %{TEMPDIR}/hc
     ${stdout_path}=    Normalize Path    %{TEMPDIR}/stdout.txt
-    ${result}=    Run Process    python    -c    print 'moon kuu';1/0    cwd=%{TEMPDIR}/hc    stdout=${stdout_path}
+    ${result}=    Run Process    python    -c    print('moon kuu');1/0    cwd=%{TEMPDIR}/hc    stdout=${stdout_path}
     ...    stderr=stderr.txt
     ${stderr_path}=    Normalize Path    %{TEMPDIR}/hc/stderr.txt
     ${stdout}=    Get File    ${stdout_path}

@@ -4,31 +4,31 @@ Resource          resource.txt
 
 *** Test Cases ***
 Non-ascii in the command using shell=True
-    ${result}=   Run Process    python -c "print 'ööåöåöå'"   shell=True
+    ${result}=   Run Process    python -c "print('ööåöåöå')"   shell=True
     Result should equal    ${result}    stdout=ööåöåöå
 
 Non-ascii in the command using shell=False
-    ${result}=   Run Process    python   -c     print "ööåöåöå"
+    ${result}=   Run Process    python   -c     print("ööåöåöå")
     Result should equal    ${result}    stdout=ööåöåöå
 
 Non-ascii in the command with given stdout
     ${path}=    Normalize Path    %{TEMPDIR}/process-stdout.txt
-    ${result}=   Run Process    python  -c    print "ööåöåöå"   shell=True   stdout=${path}
+    ${result}=   Run Process    python -c 'print("ööåöåöå")'   shell=True   stdout=${path}
     Result should equal    ${result}    stdout=ööåöåöå
     [Teardown]   Safe Remove File    ${path}
 
 Newlines and trailing newline is removed
-    ${result}=   Run Process    python -c "print 'first line\\nsecond line\\nthird line'"   shell=True    cwd=${CURDIR}
+    ${result}=   Run Process    python -c "print('first line\\nsecond line\\nthird line')"   shell=True    cwd=${CURDIR}
     Result should equal    ${result}    stdout=first line\nsecond line\nthird line
 
 Non-ascii in the command arguments
-    ${result}=   Run Process    python -c "import os; print os.getenv('varri', '-');"  shell=True  env:varri=Öoa
+    ${result}=   Run Process    python -c "import os; print(os.getenv('varri', '-'));"  shell=True  env:varri=Öoa
     Should Be Equal        ${result.stdout.strip()}  Öoa
 
 Newline test using shell=True
-    ${result}=   Run Process    python -c "print 'hello'"   shell=True
+    ${result}=   Run Process    python -c "print('hello')"   shell=True
     Result should equal    ${result}    stdout=hello
 
 Newline test using shell=False
-    ${result}=   Run Process    python  -c   print "hello"
+    ${result}=   Run Process    python  -c   print("hello")
     Result should equal    ${result}    stdout=hello
