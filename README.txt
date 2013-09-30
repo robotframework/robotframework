@@ -1,3 +1,28 @@
+This is an unofficial Robot Framework Python 3 compatibility fork.
+It also remains compatible with all officially supported
+Python 2 platforms and versions, starting with 2.5.
+
+It uses the ``2to3`` tool in ``setup.py`` and ``atest/run_atests.py``.
+The latter copies ``src/robot/`` and ``atest/`` to ``atest/python3/``
+before running the ``2to3`` script on them
+and also converts some contents
+of the Test Suite and Resource ``.txt`` files.
+
+``2to3`` can't handle everything...
+Some fixers are disabled and there are also manual code changes.
+The latter are mostly commented, with ``Python 3`` in the text,
+or contain ``if sys.version_info[0] == 3``.
+Manually changes in the acceptance Test Suites and Resources
+mostly use ``Run on python 2.x`` and ``3.x`` Keywords for switching.
+
+Most of the acceptance tests are already passing with Python 3.
+Only 109/3110 are currently failing on my machine,
+but this is mostly related to the tests themselves,
+which need some further workarounds, switches and conversions.
+
+-- Stefan Zimmermann
+
+
 Robot Framework
 ===============
 
