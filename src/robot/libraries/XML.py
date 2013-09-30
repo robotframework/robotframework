@@ -1173,7 +1173,9 @@ class XML(object):
         kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
         # Need to explicitly open/close files because older ET versions don't
         # close files they open and Jython/IPY don't close them implicitly.
-        with open(path, 'w') as output:
+        # Opening in binary mode is important for Python 3,
+        # because the ElementTree writes encoded bytes.
+        with open(path, 'wb') as output:
             tree.write(output, encoding, **kwargs)
 
 
