@@ -15,8 +15,12 @@ or contain ``if sys.version_info[0] == 3``.
 Manually changes in the acceptance Test Suites and Resources
 mostly use ``Run on python 2.x`` and ``3.x`` Keywords for switching.
 
+You can also look at this URL for a complete diff:
+
+https://bitbucket.org/userzimmermann/robotframework-python3/compare/default..c148e32#diff
+
 Most of the acceptance tests are already passing with Python 3.
-Only 109/3110 are currently failing on my machine,
+Only 109/3111 are currently failing on my machine,
 but this is mostly related to the tests themselves,
 which need some further workarounds, switches and conversions.
 
