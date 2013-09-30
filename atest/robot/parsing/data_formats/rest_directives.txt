@@ -1,0 +1,21 @@
+*** Settings ***
+Suite Setup     Run keywords
+...             Check is docutils installed
+Test Setup      Run keywords
+...             Make test non-critical and fail it if docutils is not installed
+Force Tags      regression  jybot  pybot
+Resource        formats_resource.txt
+
+*** Test Cases ***
+
+One ReST using code-directive
+    [Setup]
+    ${status}  ${msg} =  Run Keyword And Ignore Error  Run sample file and check tests  parsing${/}data_formats${/}rest_directives${/}sample.rst
+    Run Keyword If  "${DOCUTILS INSTALLED}" == "YES" and "${status}" == "FAIL"  FAIL  ${msg}
+    Run Keyword Unless  "${DOCUTILS INSTALLED}" == "YES"  Clear error should be given when docutils is not installed
+
+*** Keywords ***
+
+Clear Error Should Be Given When Docutils Is Not Installed
+    ${stderr} =  Get Stderr
+    Should Match RegExp  ${stderr}  \\[ ERROR \\] Parsing '.*[/\\\\]sample.rst' failed: Using reStructuredText test data requires having 'docutils' module installed.\n \n Try --help for usage information.\n
