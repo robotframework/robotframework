@@ -35,24 +35,17 @@ def RestReader():
     class RestReader(object):
 
         def read(self, rstfile, rawdata):
-            # TODO: Figure out a better way to handle relative paths in reST
-            # files than using os.chdir. Or at least clean up this code.
-            origdir = os.path.abspath('.')
-            os.chdir(os.path.dirname(rstfile.name))
-            try:
-                document = publish_doctree(
-                    rstfile.read(),
-                    settings_overrides={'input_encoding': 'utf-8'})
-            finally:
-                os.chdir(origdir)
-            store = RobotDataStorage(document)
+            doctree = publish_doctree(
+                rstfile.read(), source_path=rstfile.name,
+                settings_overrides={'input_encoding': 'UTF-8'})
+            store = RobotDataStorage(doctree)
             if store.has_data():
                 return self._read_text(store.get_data(), rawdata)
-            return self._read_html(document, rawdata)
+            return self._read_html(doctree, rawdata)
 
         def _read_text(self, data, rawdata):
             txtfile = tempfile.NamedTemporaryFile(suffix='.robot')
-            txtfile.write(data.encode('utf-8'))
+            txtfile.write(data.encode('UTF-8'))
             txtfile.seek(0)
             txtreader = TxtReader()
             try:
@@ -64,11 +57,11 @@ def RestReader():
                 if os.path.isfile(txtfile.name):
                     os.remove(txtfile.name)
 
-        def _read_html(self, document, rawdata):
+        def _read_html(self, doctree, rawdata):
             htmlfile = tempfile.NamedTemporaryFile(suffix='.html')
             htmlfile.write(publish_from_doctree(
-                document, writer_name='html',
-                settings_overrides={'output_encoding': 'utf-8'}))
+                doctree, writer_name='html',
+                settings_overrides={'output_encoding': 'UTF-8'}))
             htmlfile.seek(0)
             htmlreader = HtmlReader()
             try:
