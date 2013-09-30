@@ -485,6 +485,46 @@ class String:
         if not string.istitle():
             self._fail(msg, "'%s' is not titlecase.", string)
 
+    def remove_from_string(self, string, removable, count=-1):
+        """Removes `removable` in the given `string`.
+
+        `removable` is used as a literal string. See `Remove String
+        Using Regexp` if more powerful pattern matching is needed.
+
+        If the optional argument `count` is given, only that many
+        occurrences from left are replaced. Negative `count` means
+        that all occurrences are replaced (default behaviour) and zero
+        means that nothing is done.
+
+        A modified version of the string is returned and the original
+        string is not altered.
+
+        New in Robot Framework 2.8.2
+
+        Examples:
+        | ${str} = | Remove From String | ${str} | world |    |
+        | ${str} = | Remove From String | ${str} | l | 2 |
+        """
+        string = self.replace_string(string, removable, '', count)
+        return string
+
+    def remove_from_string_using_regexp(self, string, pattern, count=-1):
+        """Removes `pattern` from the given `string`.
+
+        This keyword is otherwise identical to `Remove From String`, but
+        the `pattern` to search for is considered to be a regular
+        expression.  See `BuiltIn.Should Match Regexp` for more
+        information about Python regular expression syntax in general
+        and how to use it in Robot Framework test data in particular.
+
+        New in Robot Framework 2.8.2
+
+        Examples:
+        | ${str} = | Remove From String Using Regexp | ${str} | (Hello|Hi) |    |
+        | ${str} = | Remove From String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | 2  |
+        """
+        return self.replace_string_using_regexp(string, pattern, '', count)
+
     def _convert_to_index(self, value, name):
         if value == '':
             return 0

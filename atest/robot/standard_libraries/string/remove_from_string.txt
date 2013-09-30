@@ -1,0 +1,29 @@
+*** Settings ***
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/remove_from_string.txt
+Force Tags        pybot    jybot    regression
+Resource          atest_resource.txt
+
+*** Test Cases ***
+Remove From String
+    Check Test Case    ${TESTNAME}
+
+Remove From String Non-ASCII characters
+    Check Test Case    ${TESTNAME}
+
+Remove From String Not Found
+    Check Test Case    ${TESTNAME}
+
+Remove From String With Count 0
+    Check Test Case    ${TESTNAME}
+
+Remove From String When Count Is Invalid
+    Check Test Case    ${TESTNAME}
+
+Remove From String Using Regexp
+    Check Test Case    ${TESTNAME}
+
+Remove From String Using Regexp Not Found
+    Check Test Case    ${TESTNAME}
+
+Remove From String Using Regexp When Count Is Invalid
+    Check Test Case    ${TESTNAME}
