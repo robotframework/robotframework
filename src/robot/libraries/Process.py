@@ -14,6 +14,7 @@
 
 from __future__ import with_statement
 
+import sys
 import os
 import subprocess
 
@@ -518,11 +519,14 @@ class ProcessConfig(object):
         return env
 
     def __str__(self):
-        return encode_to_system("""\
+        text = """\
 cwd = %s
 stdout_stream = %s
 stderr_stream = %s
 shell = %r
 alias = %s
 env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
-               self.shell, self.alias, self.env))
+               self.shell, self.alias, self.env)
+        if sys.version_info[0] == 3:
+            return text
+        return encode_to_system(text)
