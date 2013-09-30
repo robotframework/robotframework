@@ -89,11 +89,22 @@ class ETSource(object):
         # it didn't close files it had opened. This caused problems with Jython
         # especially on Windows: http://bugs.jython.org/issue1598
         # The bug has now been fixed in ET and worked around in Jython 2.5.2.
-        def _open_file(self, source):
-            return open(source, 'rb')
 
-        def _open_string_io(self, source):
-            return StringIO(source.encode('UTF-8'))
+        if sys.version_info[0] == 3:
+
+            def _open_file(self, source):
+                return open(source, 'r')
+
+            def _open_string_io(self, source):
+                return StringIO(source)
+
+        else:
+
+            def _open_file(self, source):
+                return open(source, 'rb')
+
+            def _open_string_io(self, source):
+                return StringIO(source.encode('UTF-8'))
 
     else:
 
