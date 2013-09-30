@@ -1,4 +1,5 @@
 .. include:: ../rest/empty.rest
+.. include:: include.rst
 
 ReST Test Data Example
 ======================
@@ -11,7 +12,7 @@ We have a devious plan to rule the world with robots.
    *Setting*      *Value*
 
    Documentation  A complex testdata file   in rst format.
-   Default Tags   default1
+   # Default Tags are in include.rst
    Force Tags     force1   force2
 
    Suite Setup    Log   Setup
