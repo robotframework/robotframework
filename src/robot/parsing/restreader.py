@@ -14,22 +14,13 @@
 
 from cStringIO import StringIO
 
-from robot.errors import DataError
-
 from .htmlreader import HtmlReader
 from .txtreader import TxtReader
 
 
 def RestReader():
-    try:
-        from docutils.core import publish_doctree, publish_from_doctree
-    except ImportError:
-        raise DataError("Using reStructuredText test data requires having "
-                        "'docutils' module installed.")
-
-    if not register_custom_directives.registered:
-        register_custom_directives()
-        register_custom_directives.registered = True
+    from .restsupport import (publish_doctree, publish_from_doctree,
+                              RobotDataStorage)
 
     class RestReader(object):
 
@@ -55,46 +46,3 @@ def RestReader():
             return HtmlReader().read(htmlfile, rawdata)
 
     return RestReader()
-
-
-def register_custom_directives():
-    from docutils.parsers.rst.directives import register_directive
-    from docutils.parsers.rst.directives.body import CodeBlock
-
-    class IgnoreCode(CodeBlock):
-
-        def run(self):
-            return []
-
-    class CaptureRobotData(CodeBlock):
-
-        def run(self):
-            if 'robotframework' in self.arguments:
-                store = RobotDataStorage(self.state_machine.document)
-                store.add_data(self.content)
-            return []
-
-    # 'sourcode' directive is our old custom directive used in User Guide and
-    # Quick Start Guide. Should be replaced with the standard 'code' directive.
-    register_directive('sourcecode', IgnoreCode)
-    register_directive('code', CaptureRobotData)
-
-
-register_custom_directives.registered = False
-
-
-class RobotDataStorage(object):
-
-    def __init__(self, document):
-        if not hasattr(document, '_robot_data'):
-            document._robot_data = []
-        self._robot_data = document._robot_data
-
-    def add_data(self, rows):
-        self._robot_data.extend(rows)
-
-    def get_data(self):
-        return '\n'.join(self._robot_data)
-
-    def has_data(self):
-        return bool(self._robot_data)
