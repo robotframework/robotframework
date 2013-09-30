@@ -12,8 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-import tempfile
+from cStringIO import StringIO
 
 from robot.errors import DataError
 
@@ -44,34 +43,16 @@ def RestReader():
             return self._read_html(doctree, rawdata)
 
         def _read_text(self, data, rawdata):
-            txtfile = tempfile.NamedTemporaryFile(suffix='.robot')
-            txtfile.write(data.encode('UTF-8'))
-            txtfile.seek(0)
-            txtreader = TxtReader()
-            try:
-                return txtreader.read(txtfile, rawdata)
-            finally:
-                # Ensure that the temp file gets closed and deleted:
-                if txtfile:
-                    txtfile.close()
-                if os.path.isfile(txtfile.name):
-                    os.remove(txtfile.name)
+            txtfile = StringIO(data.encode('UTF-8'))
+            return TxtReader().read(txtfile, rawdata)
 
         def _read_html(self, doctree, rawdata):
-            htmlfile = tempfile.NamedTemporaryFile(suffix='.html')
+            htmlfile = StringIO()
             htmlfile.write(publish_from_doctree(
                 doctree, writer_name='html',
                 settings_overrides={'output_encoding': 'UTF-8'}))
             htmlfile.seek(0)
-            htmlreader = HtmlReader()
-            try:
-                return htmlreader.read(htmlfile, rawdata)
-            finally:
-                # Ensure that the temp file gets closed and deleted:
-                if htmlfile:
-                    htmlfile.close()
-                if os.path.isfile(htmlfile.name):
-                    os.remove(htmlfile.name)
+            return HtmlReader().read(htmlfile, rawdata)
 
     return RestReader()
 
