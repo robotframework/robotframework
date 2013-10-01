@@ -9,6 +9,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import inspect
 
 from robot.errors import DataError
@@ -72,6 +73,28 @@ class JavaArgumentParser(_ArgumentParser):
         defaults = [''] * defaults
         varargs = '*varargs' if varargs else None
         return positional, defaults, varargs
+
+
+class DynamicMethodArgumentParser(PythonArgumentParser, JavaArgumentParser):
+    """A generic argument parser for Dynamic Test Library API methods
+       like run(_k|K)eyword, which can be either Python or Java based.
+    """
+    def __init__(self):
+        _ArgumentParser.__init__(self, 'DynamicMethod')
+
+    def _get_arg_spec(self, method):
+        try:
+            return PythonArgumentParser._get_arg_spec(self, method)
+        except TypeError, err:
+            if sys.platform.startswith('java'):
+                try:
+                    # Adapted from _JavaHandler._get_signatures():
+                    func = method.im_func
+                    signatures = func.argslist[:func.nargs]
+                except AttributeError:
+                    raise err
+                return JavaArgumentParser._get_arg_spec(self, signatures)
+            raise err
 
 
 class _ArgumentSpecParser(_ArgumentParser):

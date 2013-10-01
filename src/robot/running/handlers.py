@@ -14,15 +14,14 @@
 
 from __future__ import with_statement
 
-import inspect
-
 from robot import utils
 from robot.errors import DataError
 from robot.variables import is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser, ArgumentResolver,
-                        ArgumentMapper, JavaArgumentCoercer)
+                        ArgumentMapper, JavaArgumentCoercer,
+                        DynamicMethodArgumentParser)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -214,8 +213,8 @@ class _DynamicHandler(_RunnableHandler):
         self._run_keyword_method_name = handler_method.__name__
         self._doc = doc is not None and utils.unic(doc) or ''
         # Check **kwargs handling requirements:
-        self._handler_argspec = PythonArgumentParser('DynamicMethod').parse(
-          handler_name, handler_method)
+        self._handler_argspec = DynamicMethodArgumentParser().parse(
+              handler_name, handler_method)
         if argspec and argspec[-1].startswith('**'):
             # --> Keyword has **kwargs
             handler_args = self._handler_argspec.positional
