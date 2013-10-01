@@ -1,0 +1,12 @@
+*** Settings ***
+Library         RunKeywordLibraryJavaWithKwargsSupport
+
+*** Test Cases ***
+Run Keyword
+    Run Keyword That Passes
+    ${ret} =  Run Keyword That Passes  Hi  tellus
+    Should Be Equal  ${ret}  Hitellus
+    ${ret} =  Run Keyword That Passes  Hi=tellus
+    Should Be Equal  ${ret}  Hi:tellus
+    ${ret} =  Run Keyword That Passes  Hi  tellus  some=more
+    Should Be Equal  ${ret}  Hitellussome:more
