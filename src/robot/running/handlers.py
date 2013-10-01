@@ -219,9 +219,7 @@ class _DynamicHandler(_RunnableHandler):
             # --> Keyword has **kwargs
             handler_args = self._handler_argspec.positional
             # --> Handler method needs (self, name, args, kwargs)
-            if (len(handler_args) < 3
-                and not self._handler_argspec.varargs
-                ):
+            if len(handler_args) < 3:
                 raise DataError(
                   "Too few '%s' method parameters"
                   " for **kwargs support: %s" % (
@@ -246,9 +244,7 @@ class _DynamicHandler(_RunnableHandler):
         def handler(*positional, **kwargs):
             # Does the runner have enough parameters for **kwargs support?
             # (self, name, args, kwargs)
-            if (len(self._handler_argspec.positional) > 2
-                or self._handler_argspec.varargs
-                ):
+            if len(self._handler_argspec.positional) > 2:
                 return runner(name, positional, kwargs)
             else:
                 return runner(name, positional)

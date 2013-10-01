@@ -96,7 +96,7 @@ class GetKeywordArguments(_DynamicMethod):
         if run_keyword_method is not no_dynamic_method:
             argspec = DynamicMethodArgumentParser().parse(
               'run_keyword', run_keyword_method)
-            if len(argspec.positional) > 2 or argspec.varargs:
+            if len(argspec.positional) > 2:
                 self._kwargs_support = True
                 return
         self._kwargs_support = False
