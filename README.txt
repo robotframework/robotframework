@@ -13,6 +13,10 @@ with additional support for \**kwargs in Dynamic Test Libraries.
     def run_keyword(self, name, args, kwargs):
         ...
 
+A separate branch adds Python 3.x compatibility:
+
+https://bitbucket.org/userzimmermann/robotframework/commits/branch/python3
+
 There is also a branch with additional support for \**kwargs in User Keywords:
 
 https://bitbucket.org/userzimmermann/robotframework/commits/branch/userkwargs
