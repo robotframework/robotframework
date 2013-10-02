@@ -1,4 +1,5 @@
 .. include:: empty.rest
+.. include:: include.rst
 
 ReST Test Data Example
 ======================
@@ -10,8 +11,8 @@ This text should be ignored.
 =============  =========  ==============  ===============
   Metadata       Value         Value           Value
 =============  =========  ==============  ===============
-Document       A complex  testdata file   in rst format.
-Default Tags   default1   \               \
+Documentation  A complex  testdata file   in rst format.
+# Default      Tags       are in          include.rst
 Force Tags     force1     force2          \
 \              \          \               \
 Suite Setup    Log        Setup           \
