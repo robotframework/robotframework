@@ -235,6 +235,8 @@ class String:
         `search_for` is used as a literal string. See `Replace String
         Using Regexp` if more powerful pattern matching is needed.
 
+        If you need to just remove a string see `Remove String`.
+
         If the optional argument `count` is given, only that many
         occurrences from left are replaced. Negative `count` means
         that all occurrences are replaced (default behaviour) and zero
@@ -243,15 +245,22 @@ class String:
         A modified version of the string is returned and the original
         string is not altered.
 
-        Examples:
+        Examples: (assuming ${str} contains 'Hello world!' initially)
         | ${str} = | Replace String | ${str} | Hello | Hi     |   |
+        | Should Be Equal | ${str} | Hi world! | | | |
         | ${str} = | Replace String | ${str} | world | tellus | 1 |
+        | Should Be Equal | ${str} | Hello tellus! | | | |
+        | ${str} = | Replace String | ${str} | H | ${EMPTY} | 1 |
+        | Should Be Equal | ${str} | ello world! | | | |
+
         """
         count = self._convert_to_integer(count, 'count')
         return string.replace(search_for, replace_with, count)
 
     def replace_string_using_regexp(self, string, pattern, replace_with, count=-1):
         """Replaces `pattern` in the given `string` with `replace_with`.
+
+        If you need to just remove a string see `Remove String Using Regexp`.
 
         This keyword is otherwise identical to `Replace String`, but
         the `pattern` to search for is considered to be a regular
@@ -485,45 +494,50 @@ class String:
         if not string.istitle():
             self._fail(msg, "'%s' is not titlecase.", string)
 
-    def remove_from_string(self, string, removable, count=-1):
-        """Removes `removable` in the given `string`.
+    def remove_string(self, string, *removables):
+        """Removes `removables` in the given `string`.
 
-        `removable` is used as a literal string. See `Remove String
-        Using Regexp` if more powerful pattern matching is needed.
+        `removables` are used as literal strings. Each removable will be
+        matched to a temporary string from which preceding removables have
+        been already removed. See second example below.
 
-        If the optional argument `count` is given, only that many
-        occurrences from left are replaced. Negative `count` means
-        that all occurrences are replaced (default behaviour) and zero
-        means that nothing is done.
+        See `Remove String Using Regexp` if more powerful pattern matching is needed.
+
+        If you need to remove a certain number of matches use `Replace String` to
+        replace certain count with empty string.
 
         A modified version of the string is returned and the original
         string is not altered.
 
-        New in Robot Framework 2.8.2
+        Examples: (assuming ${str} contains 'Robot Framework' initially)
+        | ${str} = | Remove From String | ${str} | work | |
+        | Should Be Equal | ${str} | Robot Frame | | |
+        | ${str} = | Remove From String | ${str} | o | wrk |
+        | Should Be Equal | ${str} | Rbt Frame | | |
 
-        Examples:
-        | ${str} = | Remove From String | ${str} | world |    |
-        | ${str} = | Remove From String | ${str} | l | 2 |
+        New in Robot Framework 2.8.2
         """
-        string = self.replace_string(string, removable, '', count)
+
+        for removable in removables:
+            string = self.replace_string(string, removable, '')
         return string
 
-    def remove_from_string_using_regexp(self, string, pattern, count=-1):
+    def remove_string_using_regexp(self, string, pattern):
         """Removes `pattern` from the given `string`.
 
-        This keyword is otherwise identical to `Remove From String`, but
+        This keyword is otherwise identical to `Remove String`, but
         the `pattern` to search for is considered to be a regular
         expression.  See `BuiltIn.Should Match Regexp` for more
         information about Python regular expression syntax in general
         and how to use it in Robot Framework test data in particular.
 
-        New in Robot Framework 2.8.2
+        Examples: (assuming ${str} contains 'Robot Framework' initially)
+        | ${str} = | Remove From String | ${str} | w.*k |
+        | Should Be Equal | ${str} | Robot Frame | |
 
-        Examples:
-        | ${str} = | Remove From String Using Regexp | ${str} | (Hello|Hi) |    |
-        | ${str} = | Remove From String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | 2  |
+        New in Robot Framework 2.8.2
         """
-        return self.replace_string_using_regexp(string, pattern, '', count)
+        return self.replace_string_using_regexp(string, pattern, '')
 
     def _convert_to_index(self, value, name):
         if value == '':

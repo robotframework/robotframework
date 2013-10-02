@@ -2,38 +2,28 @@
 Library           String
 
 *** Test Cases ***
-Remove From String
-    ${result} =    Remove From String    RobotFramework    o
+Remove String
+    ${result} =    Remove String    RobotFramework    o
     Should Be Equal    ${result}    RbtFramewrk
-    ${result} =    Remove From String    RobotFramework    o    2
-    Should Be Equal    ${result}    RbtFramework
 
-Remove From String Non-ASCII characters
-    ${result} =    Remove From String    Robot\u2603Framew\u2603ork    \u2603
+Remove String Multiple Removables
+    ${result} =    Remove String    RobotFramework    o    wrk
+    Should Be Equal    ${result}    RbtFrame
+
+Remove String Non-ASCII characters
+    ${result} =    Remove String    Robot\u2603Framew\u2603ork    \u2603
     Should Be Equal    ${result}    RobotFramework
-    ${result} =    Remove From String    R\x00obotFramework    \x00
+    ${result} =    Remove String    R\x00obotFramework    \x00
     Should Be Equal    ${result}    RobotFramework
 
-Remove From String Not Found
-    ${result} =    Remove From String    Robot    bit
+Remove String Not Found
+    ${result} =    Remove String    Robot    bit
     Should Be Equal   ${result}    Robot
 
-Remove From String With Count 0
-    ${result} =    Remove From String    Robot    o    0
-    Should Be Equal    ${result}    Robot
-
-Remove From String When Count Is Invalid
-    [Documentation]    FAIL ValueError: Cannot convert 'count' argument 'invalid' to an integer.
-    ${result} =    Remove From String    Robot Framework    o    invalid
-
-Remove From String Using Regexp Not Found
-    ${result} =    Remove From String Using Regexp    Robot Framework    Fnot.*k
+Remove String Using Regexp Not Found
+    ${result} =    Remove String Using Regexp    Robot Framework    Fnot.*k
     Should be equal    ${result}    Robot Framework
 
-Remove From String Using Regexp
-    ${result} =    Remove From String Using Regexp    RobotFramework    F.*k
+Remove String Using Regexp
+    ${result} =    Remove String Using Regexp    RobotFramework    F.*k
     Should Be Equal    ${result}    Robot
-
-Remove From String Using Regexp When Count Is Invalid
-    [Documentation]    FAIL ValueError: Cannot convert 'count' argument 'invalid' to an integer.
-    Remove From String Using Regexp    Robot Framework    .*    invalid
