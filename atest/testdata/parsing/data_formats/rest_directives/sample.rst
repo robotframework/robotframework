@@ -112,6 +112,9 @@ def ignore_me_or_die():
    Quotes   Equals   ${quoted}   """this has """"many "" quotes """""
       Equals   ${single_quoted}   s'ingle'qu'ot'es''
 
+   Escaping
+      Should Be Equal    -c:\\temp-\t-\x00-\${x}-    ${ESCAPING}
+
 .. code:: robotframework
 
    *User Keywords*   *Action*   *Argument*   *Argument*   *Argument*
