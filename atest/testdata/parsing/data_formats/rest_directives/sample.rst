@@ -48,11 +48,15 @@ def ignore_me_or_die():
           ${quoted}   """this has """"many "" quotes """""
           ${single_quoted}   s'ingle'qu'ot'es''
 
-.. code:: robotframework
+We support also `code-block` and `sourcecode` directives as alias for `code`.
+
+.. code-block:: robotframework
 
    ***Test Case***
 
    Passing   Log   Passing test case.
+
+.. sourcecode:: robotframework
 
    Failing        [Document]   FAIL    Failing test case.
       Fail                     Failing test case.
