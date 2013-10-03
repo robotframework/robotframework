@@ -234,7 +234,6 @@ class String:
 
         `search_for` is used as a literal string. See `Replace String
         Using Regexp` if more powerful pattern matching is needed.
-
         If you need to just remove a string see `Remove String`.
 
         If the optional argument `count` is given, only that many
@@ -246,16 +245,10 @@ class String:
         string is not altered.
 
         Examples:
-        | ${str} = | Set Variable | Hello, world! | | | |
-        | ${str} = | Replace String | ${str} | Hello | Hi     |   |
-        | Should Be Equal | ${str} | Hi, world! | | | |
-        | ${str} = | Set Variable | Hello, world! | | | |
-        | ${str} = | Replace String | ${str} | o | oes | 1 |
-        | Should Be Equal | ${str} | Helloes, world! | | | |
-        | ${str} = | Set Variable | Hello, world! | | | |
-        | ${str} = | Replace String | ${str} | l | ${EMPTY} | 2 |
-        | Should Be Equal | ${str} | Heo world! | | | |
-
+        | ${str} =        | Replace String | Hello, world!  | world | tellus   |
+        | Should Be Equal | ${str}         | Hello, tellus! |       |          |
+        | ${str} =        | Replace String | Hello, world!  | l     | ${EMPTY} | count=1 |
+        | Should Be Equal | ${str}         | Helo, world!   |       |          |
         """
         count = self._convert_to_integer(count, 'count')
         return string.replace(search_for, replace_with, count)
@@ -263,21 +256,17 @@ class String:
     def replace_string_using_regexp(self, string, pattern, replace_with, count=-1):
         """Replaces `pattern` in the given `string` with `replace_with`.
 
-        If you need to just remove a string see `Remove String Using Regexp`.
-
         This keyword is otherwise identical to `Replace String`, but
         the `pattern` to search for is considered to be a regular
         expression.  See `BuiltIn.Should Match Regexp` for more
         information about Python regular expression syntax in general
         and how to use it in Robot Framework test data in particular.
 
+        If you need to just remove a string see `Remove String Using Regexp`.
+
         Examples:
-        | ${str} = | Set Variable | Hello, world! Hi, world! | | | |
-        | ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | Hei  |   |
-        | Should Be Equal | ${str} | Hei, world! Hei, world! | | | |
-        | ${str} = | Set Variable | Today is 2013-10-02. Tomorrow is 2013-10-03 | | | |
-        | ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE>  | 1 |
-        | Should Be Equal | ${str} | Today is <DATE>. Tomorrow is 2013-10-03 | | | |
+        | ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE> |
+        | ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | ${EMPTY} | count=1 |
         """
         count = self._convert_to_integer(count, 'count')
         # re.sub handles 0 and negative counts differently than string.replace
@@ -286,31 +275,27 @@ class String:
         return re.sub(pattern, replace_with, string, max(count, 0))
 
     def remove_string(self, string, *removables):
-        """Removes `removables` in the given `string`.
+        """Removes all `removables` from the given `string`.
 
         `removables` are used as literal strings. Each removable will be
         matched to a temporary string from which preceding removables have
         been already removed. See second example below.
 
-        See `Remove String Using Regexp` if more powerful pattern matching is needed.
-
-        If you need to remove a certain number of matches use `Replace String` to
-        replace certain count with empty string.
+        Use `Remove String Using Regexp` if more powerful pattern matching is
+        needed. If only a certain number of matches should be removed,
+        `Replace String` or `Replace String Using Regexp` can be used.
 
         A modified version of the string is returned and the original
         string is not altered.
 
         Examples:
-        | ${str} = | Set Variable | Robot Framework | | |
-        | ${str} = | Remove From String | ${str} | work | |
-        | Should Be Equal | ${str} | Robot Frame | | |
-        | ${str} = | Set Variable | Robot Framework | | |
-        | ${str} = | Remove From String | ${str} | o | wrk |
-        | Should Be Equal | ${str} | Rbt Frame | | |
+        | ${str} =        | Remove From String | Robot Framework | work   |
+        | Should Be Equal | ${str}             | Robot Frame     |
+        | ${str} =        | Remove From String | Robot Framework | o | bt |
+        | Should Be Equal | ${str}             | R Framewrk      |
 
-        New in Robot Framework 2.8.2
+        New in Robot Framework 2.8.2.
         """
-
         for removable in removables:
             string = self.replace_string(string, removable, '')
         return string
@@ -320,17 +305,10 @@ class String:
 
         This keyword is otherwise identical to `Remove String`, but
         the `patterns` to search for are considered to be a regular
-        expression.  See `BuiltIn.Should Match Regexp` for more
-        information about Python regular expression syntax in general
-        and how to use it in Robot Framework test data in particular.
-
-        Examples:
-        | ${str} = | Set Variable | Robot Framework | | |
-        | ${str} = | Remove String Using Regexp | ${str} | w.*k | |
-        | Should Be Equal | ${str} | Robot Frame | | |
-        | ${str} = | Set Variable | Robot Framework | | |
-        | ${str} = | Remove String Using Regexp | ${str} | b.t | w.*k |
-        | Should Be Equal | ${str} | Ro Frame | | |
+        expression. See `Replace String Using Regexp` for more information
+        about the regular expression syntax. That keyword can also be
+        used if there is a need to remove only a certain number of
+        occurrences.
 
         New in Robot Framework 2.8.2
         """
