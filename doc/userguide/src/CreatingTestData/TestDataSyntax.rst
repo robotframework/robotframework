@@ -523,11 +523,12 @@ When Robot Framework parses the test data, it ignores:
 
 - All tables that do not start with a recognized table name in the first cell.
 - Everything else on the first row of a table apart from the first cell.
-- Data outside tables in HTML/reST and data before the first table in TSV.
+- Data before the first table and also between tables if the data format
+  allows that.
 - All empty rows, which means these kinds of rows can be used to make
   the tables more readable.
-- All empty cells at the end of rows; you must add a backslash (\\) to
-  prevent such cells from being ignored.
+- All empty cells at the end of rows; you must add a backslash (\\) or `built-in
+  variable`__ :var:`${EMPTY}` to prevent such cells from being ignored.
 - All single backslashes (\\); they are used as an escape character.
 - All characters following a hash mark (#), if it is the first
   character of a cell; this means that hash marks can be used to enter
@@ -537,10 +538,11 @@ When Robot Framework parses the test data, it ignores:
 When Robot Framework ignores some data, this data is not available in
 any resulting reports and, additionally, most tools used with Robot
 Framework also ignore them. To add information that is visible in
-Robot Framework outputs, or available to, for example, RIDE_,
-place it to the documentation or other metadata of test cases or suites,
-or log with the :name:`Log` or :name:`Comment` keywords available
-from the BuiltIn_ library.
+Robot Framework outputs, place it to the documentation or other metadata of
+test cases or suites, or log it with the :name:`Log` or :name:`Comment` keywords
+available from the BuiltIn_ library.
+
+__ `Space and empty variables`_
 
 Escaping
 ''''''''
