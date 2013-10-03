@@ -21,3 +21,6 @@ Remove String Using Regexp
 
 Remove String Using Regexp Not Found
     Check Test Case    ${TESTNAME}
+
+Remove String Using Regexp Multiple Patterns
+    Check Test Case    ${TESTNAME}

@@ -245,13 +245,16 @@ class String:
         A modified version of the string is returned and the original
         string is not altered.
 
-        Examples: (assuming ${str} contains 'Hello world!' initially)
+        Examples:
+        | ${str} = | Set Variable | Hello, world! | | | |
         | ${str} = | Replace String | ${str} | Hello | Hi     |   |
-        | Should Be Equal | ${str} | Hi world! | | | |
-        | ${str} = | Replace String | ${str} | world | tellus | 1 |
-        | Should Be Equal | ${str} | Hello tellus! | | | |
-        | ${str} = | Replace String | ${str} | H | ${EMPTY} | 1 |
-        | Should Be Equal | ${str} | ello world! | | | |
+        | Should Be Equal | ${str} | Hi, world! | | | |
+        | ${str} = | Set Variable | Hello, world! | | | |
+        | ${str} = | Replace String | ${str} | o | oes | 1 |
+        | Should Be Equal | ${str} | Helloes, world! | | | |
+        | ${str} = | Set Variable | Hello, world! | | | |
+        | ${str} = | Replace String | ${str} | l | ${EMPTY} | 2 |
+        | Should Be Equal | ${str} | Heo world! | | | |
 
         """
         count = self._convert_to_integer(count, 'count')
@@ -269,8 +272,12 @@ class String:
         and how to use it in Robot Framework test data in particular.
 
         Examples:
+        | ${str} = | Set Variable | Hello, world! Hi, world! | | | |
         | ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | Hei  |   |
-        | ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE>  | 2  |
+        | Should Be Equal | ${str} | Hei, world! Hei, world! | | | |
+        | ${str} = | Set Variable | Today is 2013-10-02. Tomorrow is 2013-10-03 | | | |
+        | ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE>  | 1 |
+        | Should Be Equal | ${str} | Today is <DATE>. Tomorrow is 2013-10-03 | | | |
         """
         count = self._convert_to_integer(count, 'count')
         # re.sub handles 0 and negative counts differently than string.replace
@@ -509,9 +516,11 @@ class String:
         A modified version of the string is returned and the original
         string is not altered.
 
-        Examples: (assuming ${str} contains 'Robot Framework' initially)
+        Examples:
+        | ${str} = | Set Variable | Robot Framework | | |
         | ${str} = | Remove From String | ${str} | work | |
         | Should Be Equal | ${str} | Robot Frame | | |
+        | ${str} = | Set Variable | Robot Framework | | |
         | ${str} = | Remove From String | ${str} | o | wrk |
         | Should Be Equal | ${str} | Rbt Frame | | |
 
@@ -522,22 +531,28 @@ class String:
             string = self.replace_string(string, removable, '')
         return string
 
-    def remove_string_using_regexp(self, string, pattern):
-        """Removes `pattern` from the given `string`.
+    def remove_string_using_regexp(self, string, *patterns):
+        """Removes `patterns` from the given `string`.
 
         This keyword is otherwise identical to `Remove String`, but
-        the `pattern` to search for is considered to be a regular
+        the `patterns` to search for are considered to be a regular
         expression.  See `BuiltIn.Should Match Regexp` for more
         information about Python regular expression syntax in general
         and how to use it in Robot Framework test data in particular.
 
-        Examples: (assuming ${str} contains 'Robot Framework' initially)
-        | ${str} = | Remove From String | ${str} | w.*k |
-        | Should Be Equal | ${str} | Robot Frame | |
+        Examples:
+        | ${str} = | Set Variable | Robot Framework | | |
+        | ${str} = | Remove String Using Regexp | ${str} | w.*k | |
+        | Should Be Equal | ${str} | Robot Frame | | |
+        | ${str} = | Set Variable | Robot Framework | | |
+        | ${str} = | Remove String Using Regexp | ${str} | b.t | w.*k |
+        | Should Be Equal | ${str} | Ro Frame | | |
 
         New in Robot Framework 2.8.2
         """
-        return self.replace_string_using_regexp(string, pattern, '')
+        for pattern in patterns:
+            string = self.replace_string_using_regexp(string, pattern, '')
+        return string
 
     def _convert_to_index(self, value, name):
         if value == '':

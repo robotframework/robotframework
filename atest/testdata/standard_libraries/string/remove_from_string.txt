@@ -27,3 +27,7 @@ Remove String Using Regexp Not Found
 Remove String Using Regexp
     ${result} =    Remove String Using Regexp    RobotFramework    F.*k
     Should Be Equal    ${result}    Robot
+
+Remove String Using Regexp Multiple Patterns
+    ${result} =    Remove String Using Regexp    RobotFramework    o.o    r.*w
+    Should Be Equal    ${result}    RtFork
