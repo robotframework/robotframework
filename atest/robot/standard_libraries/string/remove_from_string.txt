@@ -4,26 +4,23 @@ Force Tags        pybot    jybot    regression
 Resource          atest_resource.txt
 
 *** Test Cases ***
-Remove From String
+Remove String
     Check Test Case    ${TESTNAME}
 
-Remove From String Non-ASCII characters
+Remove String Non-ASCII characters
     Check Test Case    ${TESTNAME}
 
-Remove From String Not Found
+Remove String Not Found
     Check Test Case    ${TESTNAME}
 
-Remove From String With Count 0
+Remove String Multiple Removables
     Check Test Case    ${TESTNAME}
 
-Remove From String When Count Is Invalid
+Remove String Using Regexp
     Check Test Case    ${TESTNAME}
 
-Remove From String Using Regexp
+Remove String Using Regexp Not Found
     Check Test Case    ${TESTNAME}
 
-Remove From String Using Regexp Not Found
-    Check Test Case    ${TESTNAME}
-
-Remove From String Using Regexp When Count Is Invalid
+Remove String Using Regexp Multiple Patterns
     Check Test Case    ${TESTNAME}

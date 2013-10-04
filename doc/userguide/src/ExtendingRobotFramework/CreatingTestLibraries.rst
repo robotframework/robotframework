@@ -325,8 +325,8 @@ similarly as scope__ and version__ are set with their own
 
 The possible case-insensitive values for documentation format are
 :code:`ROBOT` (default), :code:`HTML`, :code:`TEXT` (plain text),
-and :code:`reST` (reStructuredText_). Using :code:`reST` format requires
-:code:`docutils` module to be installed when documentation is generated.
+and :code:`reST` (reStructuredText_). Using the :code:`reST` format requires
+the docutils_ module to be installed when documentation is generated.
 
 Setting the documentation format is illustrated by the following Python and
 Java examples that use reStructuredText and HTML formats, respectively.

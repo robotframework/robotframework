@@ -445,7 +445,7 @@ reStructuredText documentation format
 
 reStructuredText_ is simple yet powerful markup syntax used widely in Python
 projects (including this User Guide) and elsewhere. The main limitation
-is that you need to have :code:`docutils` module installed to be able to generate
+is that you need to have the docutils_ module installed to be able to generate
 documentation using it. Because backtick characters have special meaning in
 reStructuredText, `linking to keywords`_ requires them to be escaped like
 :code:`\\\`My Keyword\\\``.
