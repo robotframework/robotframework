@@ -18,8 +18,8 @@ We have a devious plan to rule the world with robots.
    Suite Setup    Log   Setup
    Test Teardown  Log   Test Teardown
    Resource       ../resources/rest_resource.rst
-   Variables      ../resources/variables.py
-   Library       OperatingSystem
+   | Variables  | ../resources/variables.py
+   | Library    | OperatingSystem | | | | | | | | | | | | | | | |
 
 
 Please ignore me and the non-robotframework code blocks below.
@@ -67,10 +67,10 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
       [Documentation]   FAIL Nön-äscïï error
       Fail    Nön-äscïï error
 
-   Own Tags   [Tags]   own1   own2
-      Log   tags test
-
-   Default Tags   No Operation
+   | Own Tags     | [Tags]       | own1      | own2
+   |              | Log          | tags test |
+   |              |              |
+   | Default Tags | No Operation |
 
    Variable Table   Equals   ${table_var}   foo
       Equals   @{table_listvar}[0]   bar
