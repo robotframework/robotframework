@@ -340,40 +340,117 @@ distinguish test data files from other plain text files.
 reStructuredText format
 '''''''''''''''''''''''
 
-reStructuredText (reST) is an easy-to-read plain text markup syntax that
+reStructuredText_ (reST) is an easy-to-read plain text markup syntax that
 is commonly used for documentation of Python projects (including
-Python itself, as well as this User Guide). Using reST with Robot
-Framework allows you to mix richly formatted documents and tables that
-specify test data in a concise text format that is easy to work with
+Python itself, as well as this User Guide). reST documents are most
+often compiled to HTML, but also other output formats are supported.
+
+Using reST with Robot Framework allows you to mix richly formatted documents
+and test data in a concise text format that is easy to work with
 using simple text editors, diff tools, and source control systems.
-In practice it combines the benefits of plain text and HTML formats.
+In practice it combines many of the benefits of plain text and HTML formats.
 
-Tools to process reStructuredText are freely available as part of the
-docutils__ project, and there is a `quick reference guide`__ that
-shows the most common formatting constructs including the tables used
-by Robot Framework. Notice that Robot Framework converts test data in
-reST format internally to HTML before starting to actually parse
-it. The data must thus follow reST syntax strictly or otherwise
-processing it will not succeed.
+When using reST files with Robot Framework, there are two ways to define the
+test data. Either you can use `code blocks`__ and define test cases in them
+using the `plain text format`_ or alternatively you can use tables__ exactly
+like you would with the `HTML format`_.
 
-__ reStructuredText_
-__ http://docutils.sourceforge.net/docs/user/rst/quickref.html
-
-.. Note:: Using reST files with Robot Framework requires the Python docutils
+.. note:: Using reST files with Robot Framework requires the Python docutils_
           module to be installed.
 
-In reST files, test data is defined in tables within the document, similar to
-the HTML format. Robot Framework identifies `test data tables`_ based on the
-text in the first cell and all content outside of the recognized table types is
-ignored.
+__ `Using code blocks`_
+__ `Using tables`_
 
+Using code blocks
+`````````````````
+
+reStructuredText documents can contain code examples in so called code blocks.
+When these documents are compiled into HTML or other formats, the code blocks
+are syntax highlighted using Pygments_. In standard reST code blocks are
+started using the :code:`code` directive, but Sphinx_ uses :code:`code-block`
+or :code:`sourcecode` instead. The name of the programming language in
+the code block is given as an argument to the directive. For example, following
+code blocks contain Python and Robot Framework examples, respectively::
+
+    .. code:: python
+
+       def example_keyword():
+           print 'Hello, world!'
+
+    .. code:: robotframework
+
+       *** Test Cases ***
+       Example Test
+           Example Keyword
+
+When Robot Framework parses reStructuredText files, it first searches for
+possible :code:`code`, :code:`code-block` or :code:`sourcecode` blocks
+containing Robot Framework test data. If such code blocks are found, data
+they contain is written into an in-memory file and executed. All data outside
+the code blocks is ignored.
+
+The test data in the code blocks must be defined using the `plain text format`_.
+As the example below illustrates, both space and pipe separated variants are
+supported::
+
+    Example
+    -------
+
+    This text is outside code blocks and thus ignored.
+
+    .. code:: robotframework
+
+       *** Settings ***
+       Library       OperatingSystem
+
+       *** Variables ***
+       ${MESSAGE}    Hello, world!
+
+       *** Test Cases ***
+       My Test
+           [Documentation]    Example test
+           Log    ${MESSAGE}
+           My Keyword    /tmp
+
+       Another Test
+           Should Be Equal    ${MESSAGE}    Hello, world!
+
+    Also this text is outside code blocks and ignored. Above block used
+    the space separated plain text format and the block below uses the pipe
+    separated variant.
+
+    .. code:: robotframework
+
+       | *** Keyword ***  |                        |         |
+       | My Keyword       | [Arguments]            | ${path} |
+       |                  | Directory Should Exist | ${path} |
+
+.. note:: Escaping_ using the backslash character works normally in this format.
+          No double escaping is needed like when using reST tables.
+
+.. note:: Support for test data in code blocks is a new feature in
+          Robot Framework 2.8.2.
+
+Using tables
+````````````
+
+If a reStructuredText document contains no code blocks with Robot Framework
+data, it is expected to contain the data in tables similarly as in
+the `HTML format`_. In this case Robot Framework compiles the document to
+HTML in memory and parses it exactly like it would parse a normal HTML file.
+
+Robot Framework identifies `test data tables`_ based on the text in the first
+cell and all content outside of the recognized table types is ignored.
 An example of each of the four test data tables is shown below
-using the reST `Simple Tables` syntax. Note that :code:`\\` or
-:code:`..` must be used to indicate an empty cell in the first column
-of the table::
+using both simple table and grid table syntax::
+
+    Example
+    -------
+
+    This text is outside tables and thus ignored.
 
     ============  ================  =======  =======
-      Setting          Value         Value    Value
+       Setting          Value         Value    Value
     ============  ================  =======  =======
     Library       OperatingSystem
     ============  ================  =======  =======
@@ -386,68 +463,43 @@ of the table::
     ============  ================  =======  =======
 
 
-    ============  ===================  ============  =============
-     Test Case          Action           Argument      Argument
-    ============  ===================  ============  =============
-    My Test       [Documentation]      Example test
-    \             Log                  ${MESSAGE}
-    \             My Keyword           /tmp
+    =============  ==================  ============  =============
+      Test Case          Action          Argument      Argument
+    === =========  ==================  ============  =============
+    My Test        [Documentation]     Example test
+    \              Log                 ${MESSAGE}
+    \              My Keyword          /tmp
     \
-    Another Test  Should Be Equal      ${MESSAGE}    Hello, world!
-    ============  ===================  ============  =============
+    Another Test   Should Be Equal     ${MESSAGE}    Hello, world!
+    =============  ==================  ============  =============
 
+    Also this text is outside tables and ignored. Above tables are created
+    using the simple table syntax and the table below uses the grid table
+    approach.
 
-    ============  ======================  ============  ==========
-     Keyword            Action             Argument     Argument
-    ============  ======================  ============  ==========
-    My Keyword    [Arguments]             ${path}
-    \             Directory Should Exist  ${path}
-    ============  ======================  ============  ==========
+    +-------------+------------------------+------------+------------+
+    |   Keyword   |         Action         |  Argument  |  Argument  |
+    +-------------+------------------------+------------+------------+
+    | My Keyword  | [Arguments]            | ${path}    |            |
+    +-------------+------------------------+------------+------------+
+    |             | Directory Should Exist | ${path}    |            |
+    +-------------+------------------------+------------+------------+
 
-.. note:: In reST files, also Space separated format is
-          supported starting from Robot Framework 2.8.2.
+.. note:: Empty cells in the first column of simple tables needs to be escaped.
+          The above example uses :code:`\\` and :code:`..` could also be used.
 
-Apart from writing the test cases in reStructuredText documents using table
-format, user can write the test cases in space separated format also. For
-writing test case in space separated format, ``.. code::
-robotframework``-directive should be used to indicate that test suite in space
-separated text syntax is starting. The actual test suite would start from the
-next line with proper indentation.
+.. note:: Because the backslash character is an escape character in reST,
+          specifying a backslash so that Robot Framework will see it requires
+          escaping it with an other backslash like :code:`\\\\`. For example,
+          a new line character must be written like :code:`\\\\n`. Because
+          the backslash is used for escaping_ also in Robot Framework data,
+          specifying a literal backslash when using reST tables requires double
+          escaping like :code:`c:\\\\\\\\temp`.
 
-The actual test suite can be written in a manner similar to shown earlier (in
-`space separated format`_). Also same escaping rule needs to be followed. For
-example::
-
-    .. code:: robotframework
-
-       *** Settings ***
-
-       Library  OperatingSystem
-
-       *** Variables ***
-
-       ${MESSAGE}  Hello, world!
-
-       *** Test Cases ***
-
-       My Test
-           [Documentation]  Example test
-           Log  ${MESSAGE}
-           My Keyword  /tmp
-
-       Another Test
-           Should Be Equal  ${MESSAGE}  Hello, world!
-
-       *** Keywords ***
-
-       My Keyword
-           [Arguments]  ${path}
-           Directory Should Exist  ${path}
-
-.. note:: If a single reST document contains multiple
-          ``.. code:: robotframework``-directives, their contents are
-          concatenated into a text file before parsing with space separated
-          format parser.
+Generating HTML files based on reST files every time tests are run obviously
+adds some overhead. If this is a problem, it can be a good idea to convert
+reST files to HTML using external tools separately and let Robot Framework
+use the generated files only.
 
 Editing test data
 `````````````````
@@ -458,30 +510,14 @@ also provide automatic syntax highlighting for it.
 Note that RIDE_ does not support direct editing of test data in reST source
 files.
 
-Temporary files when using reST
-```````````````````````````````
-
-Unlike other formats, Robot Framework does not parse reST files
-directly.  Instead, docutils is used to automatically transform reST
-source files into temporary HTML files that are subsequently read by
-Robot. These temporary files are removed immediately after being
-read. This HTML file generation and cleanup is handled internally by
-Robot Framework, it does not require the user to directly invoke
-docutils tools.
-
-Generating HTML files based on reST files every time tests are run obviously
-adds some overhead. If this is a problem, it can be a good idea to convert
-reST files to HTML using external tools separately and let Robot Framework
-use the generated files only.
-
 Syntax errors in reST source files
 ``````````````````````````````````
 
-If reST file is not syntactically correct (a malformed table for
-example), the reST-to-HTML conversion will not take place and no test
-cases will be read from that file. When this occurs, Robot Framework
-will show the docutils error message in its console output showing the
-filename, line number, source context, and type of error.
+If a reStructuredText document is not syntactically correct (a malformed table
+for example), parsing it will fail and no test cases can be found from that
+file. When executing a single reST file, Robot Framework will show the error
+on the console. When executing a directory, such parsing errors will
+generally be ignored.
 
 Test data tables
 ~~~~~~~~~~~~~~~~
