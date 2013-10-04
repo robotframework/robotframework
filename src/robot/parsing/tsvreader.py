@@ -27,6 +27,7 @@ class TsvReader:
             # 2to3 changes `unicode` to `str`.
             if type(row) is not unicode:
                 row = self._decode_row(row, index == 0)
+            row = row.rstrip()
             cells = [self._process(cell) for cell in self.split_row(row)]
             name = cells and cells[0].strip() or ''
             if name.startswith('*') and \
@@ -42,7 +43,7 @@ class TsvReader:
         row = row.decode('UTF-8')
         if NBSP in row:
             row = row.replace(NBSP, ' ')
-        return row.rstrip()
+        return row
 
     @classmethod
     def split_row(cls, row):
