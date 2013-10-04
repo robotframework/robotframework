@@ -501,14 +501,15 @@ adds some overhead. If this is a problem, it can be a good idea to convert
 reST files to HTML using external tools separately and let Robot Framework
 use the generated files only.
 
-Editing test data
-`````````````````
+Editing and encoding
+````````````````````
 
-Test data in reST files can be edited with any text editor, and many editors
-also provide automatic syntax highlighting for it.
+Test data in reStructuredText files can be edited with any text editor, and
+many editors also provide automatic syntax highlighting for it. reST format
+is not supported by RIDE_, though.
 
-Note that RIDE_ does not support direct editing of test data in reST source
-files.
+Robot Framework requires reST files containing non-ASCII characters to be
+saved using UTF-8 encoding.
 
 Syntax errors in reST source files
 ``````````````````````````````````
