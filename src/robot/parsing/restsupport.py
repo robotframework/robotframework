@@ -23,12 +23,6 @@ except ImportError:
                     "'docutils' module installed.")
 
 
-class IgnoreCode(CodeBlock):
-
-    def run(self):
-        return []
-
-
 class CaptureRobotData(CodeBlock):
 
     def run(self):
@@ -38,10 +32,9 @@ class CaptureRobotData(CodeBlock):
         return []
 
 
-# 'sourcode' directive is our old custom directive used in User Guide and
-# Quick Start Guide. Should be replaced with the standard 'code' directive.
-register_directive('sourcecode', IgnoreCode)
 register_directive('code', CaptureRobotData)
+register_directive('code-block', CaptureRobotData)
+register_directive('sourcecode', CaptureRobotData)
 
 
 class RobotDataStorage(object):

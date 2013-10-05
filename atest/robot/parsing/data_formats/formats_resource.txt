@@ -11,7 +11,7 @@ ${REST DIR}        ${DATA ROOT}${/}rest
 ${MIXED DIR}       ${DATA ROOT}${/}mixed_data
 @{SAMPLE TESTS}    Passing  Failing  User Keyword  Nön-äscïï  Own Tags  Default Tags  Variable Table  Resource File
 ...  Variable File  Library Import  Test Timeout  Keyword Timeout  Empty Rows  Document  Default Fixture
-...  Overridden Fixture  Quotes
+...  Overridden Fixture  Quotes  Escaping
 @{SUBSUITE_TESTS}  Suite1 Test  Suite2 Test
 ${DOCUTILS INSTALLED}  Set to 'YES' or 'NO' depending is docutils installed or not
 

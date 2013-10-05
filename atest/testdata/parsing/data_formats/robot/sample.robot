@@ -95,6 +95,10 @@ Overridden Fixture   [Teardown]   Fail   Failing Teardown
 Quotes   Equals   ${quoted}   """this has """"many "" quotes """""
    Equals   ${single_quoted}   s'ingle'qu'ot'es''
 
+Escaping
+       Should Be Equal    -c:\\temp-\t-\x00-\${x}-    ${ESCAPING}
+
+
 *User Keywords*   *Action*   *Argument*   *Argument*   *Argument*
 
 My Keyword With Arg   [Arguments]   ${arg1}

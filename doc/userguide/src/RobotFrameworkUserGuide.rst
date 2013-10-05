@@ -220,6 +220,8 @@ Appendices
 .. _Java: http://java.com/
 .. _.NET: http://www.microsoft.com/NET/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
+.. _docutils: https://pypi.python.org/pypi/docutils
+.. _Sphinx: http://sphinx-doc.org/
 .. _Pygments: http://pygments.org/
 .. _distutils: http://docs.python.org/dist/dist.html
 .. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
