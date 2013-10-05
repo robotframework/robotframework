@@ -14,7 +14,15 @@ public class ArgDocDynamicJavaLibrary {
     }
 
     public Object runKeyword(String name, Object[] args) {
-        System.out.println("Executed keyword " + name + " with arguments " + args);
+        System.out.print("Executed keyword " + name + " with ");
+        if (args.length == 0) {
+            System.out.print("no ");
+        }
+        System.out.print("arguments");
+        for (Object arg : args) {
+            System.out.print(' ' + (String)arg);
+        }
+        System.out.println();
         return null;
     }
 
