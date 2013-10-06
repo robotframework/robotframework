@@ -16,7 +16,7 @@ public class ArgDocDynamicJavaLibraryWithKwargsSupport
     }
 
     public Object runKeyword
-      (String name, Object[] args, PyDictionary kwargs ) {
+      (String name, Object[] args, PyDictionary kwargs) {
 
         int index = args.length;
         Object[] superArgs = Arrays.copyOf(args, index + kwargs.size());
