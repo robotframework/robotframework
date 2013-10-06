@@ -1,3 +1,4 @@
+import org.python.core.*;
 public class ArgDocDynamicJavaLibrary {
 
     public ArgDocDynamicJavaLibrary() {}
@@ -9,6 +10,7 @@ public class ArgDocDynamicJavaLibrary {
                              "Java One Arg",
                              "Java One or Two Args",
                              "Java Many Args",
+                             "Unsupported Java Kwargs",
                              "Invalid Java Args",
                              "Invalid Java Doc"};
     }
@@ -45,6 +47,10 @@ public class ArgDocDynamicJavaLibrary {
             return new String[] {"arg", "default=default"};
         if (name.equals("Java Many Args"))
             return new String[] {"*args"};
+        if (name.equals("Unsupported Java Kwargs"))
+            // Must raise a DataError,
+            // because runKeyword has no kwargs support:
+            return new String[] {"**kwargs"};
         if (name.equals("Invalid Java Args"))
             throw new RuntimeException("Get args failure");
         return null;
