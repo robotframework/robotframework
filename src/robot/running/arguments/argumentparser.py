@@ -12,6 +12,11 @@
 import sys
 import inspect
 
+try: # Jython
+    import java.lang
+except ImportError:
+    pass
+
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
 
@@ -56,7 +61,7 @@ class JavaArgumentParser(_ArgumentParser):
 
     def _single_signature_arg_spec(self, signature):
         args = signature.args
-        if args and args[-1].isArray():
+        if args and type(args[-1]) is java.lang.Class and args[-1].isArray():
             return self._format_arg_spec(len(args)-1, varargs=True)
         return self._format_arg_spec(len(args))
 
