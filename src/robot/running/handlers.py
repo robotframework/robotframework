@@ -222,8 +222,8 @@ class _DynamicHandler(_RunnableHandler):
             if len(handler_args) < 3:
                 raise DataError(
                   "Too few '%s' method parameters"
-                  " for **kwargs support: %s" % (
-                      self._run_keyword_method_name, handler_args))
+                  " for **kwargs support."
+                  % self._run_keyword_method_name)
 
     def _parse_arguments(self, handler_method):
         return DynamicArgumentParser().parse(self.longname, self._argspec)
