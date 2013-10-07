@@ -1,0 +1,10 @@
+*** Settings ***
+Resource          resource.txt
+Suite Setup       Check Precondition   os.sep == "/"
+
+*** Test Cases ***
+Sending killing signal
+   [Timeout]        2 seconds
+   Start Process    python -c "import time; time.sleep(10)"      shell=True
+   Send Signal      SIGINT
+   ${out}=          Wait For Process
