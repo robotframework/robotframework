@@ -1660,11 +1660,18 @@ Dynamic libraries have a special :code:`run_keyword` (alias
 :code:`runKeyword`) method for executing their keywords. When a
 keyword from a dynamic library is used in the test data, Robot
 Framework uses the library's :code:`run_keyword` method to get it
-executed. This method takes two arguments. The first argument is a
+executed. This method takes two or three arguments. The first argument is a
 string containing the name of the keyword to be executed in the same
 format as returned by :code:`get_keyword_names`. The second argument is
 a list of arguments (an object array in Java) given to the keyword in
 the test data.
+
+The optional third argument is a dictionary
+(in Java the :code:`org.python.core.PyDictionary` class can be used).
+It gets all :code:`name=value` arguments given to the keyword
+which can't be mapped to the keyword's positional argument names.
+See the sections about `getting keyword arguments`_
+and `named argument syntax with dynamic libraries`_ for more details.
 
 After the library has got the keyword name and arguments, it can
 execute the keyword freely, but it must use the same mechanism to
@@ -1709,31 +1716,34 @@ accepted by that keyword.
 
 Similarly as static keywords, dynamic keywords can require any number
 of arguments, have default values and accept a variable number of
-arguments. The syntax for how to represent all these different
-situations is explained in the following table. Note that the examples
-use Python lists of strings, but Java developers should be able to
-translate them to string arrays.
+arguments and `named arguments`__. The syntax for how to represent
+all these different situations is explained in the following table.
+Note that the examples use Python lists of strings, but Java developers
+should be able to translate them to string arrays.
 
 .. table:: Representing different arguments with :code:`get_keyword_arguments`
    :class: tabular
 
-   +-----------------+----------------------------+-------------------------------+-------+
-   |    Expected     |      How to represent      |            Examples           | Min / |
-   |    arguments    |                            |                               | Max   |
-   +=================+============================+===============================+=======+
-   | No arguments    | Empty list.                | :code:`[]`                    | 0/0   |
-   +-----------------+----------------------------+-------------------------------+-------+
-   | One or more     | List of strings containing | :code:`['one_argument']`,     | 1/1,  |
-   | argument        | argument names.            | :code:`['a1', 'a2', 'a3']`    | 3/3   |
-   +-----------------+----------------------------+-------------------------------+-------+
-   | Default values  | Default values separated   | :code:`['arg=default value']`,| 0/1,  |
-   | for arguments   | from names with :code:`=`. | :code:`['a', 'b=1', 'c=2']`   | 1/3   |
-   |                 | Default values are always  |                               |       |
-   |                 | considered to be strings.  |                               |       |
-   +-----------------+----------------------------+-------------------------------+-------+
-   | Variable number | Last argument has          | :code:`['*arguments']`,       | 0/any,|
-   | of arguments    | :code:`*` before its name. | :code:`['a', 'b=42', '*rest']`| 1/any |
-   +-----------------+----------------------------+-------------------------------+-------+
+   +--------------------+-----------------------------+-----------------------------------+-------+
+   |    Expected        |      How to represent       |            Examples               | Min / |
+   |    arguments       |                             |                                   | Max   |
+   +====================+=============================+===================================+=======+
+   | No arguments       | Empty list.                 | :code:`[]`                        | 0/0   |
+   +--------------------+-----------------------------+-----------------------------------+-------+
+   | One or more        | List of strings containing  | :code:`['one_argument']`,         | 1/1,  |
+   | argument           | argument names.             | :code:`['a1', 'a2', 'a3']`        | 3/3   |
+   +--------------------+-----------------------------+-----------------------------------+-------+
+   | Default values     | Default values separated    | :code:`['arg=default value']`,    | 0/1,  |
+   | for arguments      | from names with :code:`=`.  | :code:`['a', 'b=1', 'c=2']`       | 1/3   |
+   |                    | Default values are always   |                                   |       |
+   |                    | considered to be strings.   |                                   |       |
+   +--------------------+-----------------------------+-----------------------------------+-------+
+   | Variable number    | Last argument has           | :code:`['*arguments']`,           | 0/any,|
+   | of arguments       | :code:`*` before its name.  | :code:`['a', 'b=42', '*rest']`    | 1/any |
+   +--------------------+-----------------------------+-----------------------------------+-------+
+   | Variable number    | Last arguments has          | :code:`['**named_arguments']`     | 0/any |
+   | of named arguments | :code:`**` before its name. | :code:`['a', '*rest', '**named']` | 1/any |
+   +--------------------+-----------------------------+-----------------------------------+-------+
 
 When the :code:`get_keyword_arguments` is used, Robot Framework
 automatically calculates how many arguments the keywords require. If a
@@ -1746,6 +1756,7 @@ The actual names and default values that are returned are also important.
 They are needed for `named argument support`__ and the Libdoc_ tool needs
 them to be able to create a meaningful library documentation.
 
+__ `Named argument syntax with dynamic libraries`_
 __ `Named argument syntax with dynamic libraries`_
 
 Getting keyword documentation
@@ -1825,6 +1836,18 @@ The last column shows the arguments that the keyword is actually called with.
    Fill skipped      Dynamic   a         arg3=c              # a, xxx, c
    ===============   ========  ========  ========  ========  ===========
 
+If the key of a named argument is not found in the keyword's argument names
+the resulting behaviour depends on the existance of a :code:`'**named'` entry
+in the `keyword's argument list`__ and the optional third parameter
+of the :code:`run_keyword` method. If both exist the named argument
+is added to the dictionary given to the third :code:`run_keyword` parameter.
+Without :code:`'**named'` the named argument is treated as a single positional
+:code:`'name=value'` string argument. If the library doesn't provide
+the :code:`get_keyword_arguments` method, all named arguments are either
+added to the dictionary or treated as single values, only depending
+on the existance of the third :code:`run_keyword` method parameter.
+
+__ `Getting keyword arguments`_
 __ `Getting keyword arguments`_
 
 Summary
