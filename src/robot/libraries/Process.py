@@ -392,6 +392,15 @@ class Process(object):
                 self.terminate_process(handle, kill=kill)
         self.__init__()
 
+    def send_signal(self, signal, handle=None):
+        if os.sep == '\\':
+            raise AssertionError('Process.Send Signal does not work in Windows')
+        self._processes[handle].send_signal(self._get_signal(signal))
+
+    def _get_signal(self, signal_string):
+        import signal
+        return getattr(signal, signal_string)
+
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process.
 
