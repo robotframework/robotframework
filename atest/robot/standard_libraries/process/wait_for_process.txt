@@ -1,0 +1,20 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/wait_for_process.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Wait For Process
+    Check Test Case    ${TESTNAME}
+
+Wait For Process Timeout
+    Check Test Case    ${TESTNAME}
+
+Wait For Process Terminate On Timeout
+    Check Test Case    ${TESTNAME}
+
+Wait For Process Kill On Timeout
+    Check Test Case    ${TESTNAME}
+
+Wait For Process Kill When Terminate Fails
+    Check Test Case    ${TESTNAME}
