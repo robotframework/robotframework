@@ -13,7 +13,7 @@ The specified interpreter is used by acceptance tests under `robot` to
 run test cases under `testdata`. It can be simply `python` or `jython`
 (if they are in PATH) or to a path a selected interpreter (e.g.
 `/usr/bin/python26`). Note that this script itself must always be
-executed with Python.
+executed with Python 2.6 or newer.
 
 Examples:
 $ atest/run_atests.py python --test example atest/robot
@@ -30,6 +30,8 @@ import sys
 import tempfile
 from os.path import abspath, basename, dirname, exists, join, normpath, splitext
 
+if sys.version_info < (2, 6):
+    sys.exit('Running this script requires Python 2.6 or newer.')
 
 try:
     CURDIR = CURDIR

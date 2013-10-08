@@ -1,10 +1,10 @@
 *** Settings ***
 Resource          resource.txt
-Suite Setup       Check Precondition   os.sep == "/"
+Suite Setup       Check Precondition   os.sep == "/" and sys.version_info >= (2,6)
 
 *** Test Cases ***
-Sending killing signal
+Sending INT signal
    [Timeout]        2 seconds
-   Start Process    python -c "import time; time.sleep(10)"      shell=True
+   Start Process    python -c "import time; for i in range(25): time.sleep(0.1)"      shell=True
    Send Signal      SIGINT
    ${out}=          Wait For Process
