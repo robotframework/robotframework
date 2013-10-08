@@ -86,6 +86,14 @@ if sys.version_info[0] == 3 and do2to3:
                         print("Preparing for Python 3: %s" % path)
                         # Remove u prefixes from unicode literals:
                         text = re.sub(r'([\[(= ])u\'', r'\1\'', text)
+                        text = re.sub(
+                          r'\\\\x([0-9a-f]{2})',
+                          lambda match: chr(int(match.group(1), 16)),
+                          text)
+                        text = re.sub(
+                          r'\\\\u([0-9a-f]{4})',
+                          lambda match: chr(int(match.group(1), 16)),
+                          text)
                         with open(path, 'w') as f:
                             f.write(text)
 

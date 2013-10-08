@@ -16,6 +16,10 @@ def get_variables(interpreter=None):
     return variables
 
 def _get_interpreter_specific_strs(interpreter):
+    if sys.version_info[0] == 3:
+        return {'byte_string_str': 'hyv\xe4',
+                'list_str': str([1, '\xe4', '\xe4']),
+                'dict_str': str({'\xe4': '\xe4'})}
     if not _running_on_iron_python(interpreter):
         return {'byte_string_str': 'hyv\\xe4',
                 'list_str': "[1, '\\xe4', u'\\xe4']",
