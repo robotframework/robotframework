@@ -271,6 +271,8 @@ __ Escaping_
 
 .. tip:: It is recommend to use four spaces between keywords and arguments.
 
+.. _pipe separated format:
+
 Pipe and space separated format
 ```````````````````````````````
 
@@ -553,22 +555,23 @@ used as a table name.
 Rules for parsing the data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. _comment:
+
 Ignored data
 ''''''''''''
 
 When Robot Framework parses the test data, it ignores:
 
-- All tables that do not start with a recognized table name in the first cell.
+- All tables that do not start with a `recognized table name`__ in the first cell.
 - Everything else on the first row of a table apart from the first cell.
-- Data before the first table and also between tables if the data format
-  allows that.
+- All data before the first table. If the data format allows data between
+  tables, also that is ignored.
 - All empty rows, which means these kinds of rows can be used to make
   the tables more readable.
-- All empty cells at the end of rows; you must add a backslash (\\) or `built-in
-  variable`__ :var:`${EMPTY}` to prevent such cells from being ignored.
-- All single backslashes (\\); they are used as an escape character.
-- All characters following a hash mark (#), if it is the first
-  character of a cell; this means that hash marks can be used to enter
+- All empty cells at the end of rows, unless they are escaped__.
+- All single backslashes (\\) when not used for escaping_.
+- All characters following the hash character (:code:`#`), when it is the first
+  character of a cell. This means that hash marks can be used to enter
   comments in the test data.
 - All formatting in the HTML/reST test data.
 
@@ -576,83 +579,165 @@ When Robot Framework ignores some data, this data is not available in
 any resulting reports and, additionally, most tools used with Robot
 Framework also ignore them. To add information that is visible in
 Robot Framework outputs, place it to the documentation or other metadata of
-test cases or suites, or log it with the :name:`Log` or :name:`Comment` keywords
-available from the BuiltIn_ library.
+test cases or suites, or log it with the BuiltIn_ keywords :name:`Log` or
+:name:`Comment`.
 
-__ `Space and empty variables`_
-
-Escaping
-''''''''
-
-The escape character in Robot Framework test data is the backslash (:code:`\\`).
-It has has plenty of usages:
-
-- Escape special characters so that their literal values are used:
-
-  * :code:`\\${notvar}` means a literal string :code:`${notvar}`, not a variable_
-  * :code:`\\#` means a literal hash character, even at the beginning of a cell, not a comment
-  * :code:`name\\=value` means a literal value :code:`name=value`, not `named argument syntax`_
-  * :code:`\\\\` means a literal backslash (for example, :code:`C:\\\\Temp`)
-
-- Affect `the parsing of whitespaces`__.
-
-- Prevent ignoring empty cells at the end of a row in general and
-  everywhere when using the `plain text format`_. Another, and often
-  clearer, possibility is using `built-in variable`__ :var:`${EMPTY}`.
-
-- Escape the pipe character when using the `pipe and space separated format`_.
-
-- Escape indented cells in `for loops`_ when using the `plain text format`_.
-
-- Prevent catenating documentation split into multiple rows `with newlines`__.
-
-__ `Handling whitespace`_
-__ `Space and empty variables`_
-__ `Automatic newlines in test data`_
-
-.. note:: These escaping rules are applied only to arguments to
-          keywords and values to settings. They are not used, for
-          example, with keyword and test case names.
+__ `Test data tables`_
+__ `Prevent ignoring empty cells`_
 
 Handling whitespace
 '''''''''''''''''''
 
-Robot Framework handles whitespace, such as spaces, newlines and tabs,
-the same way as they are handled in HTML. This means that Robot Framework:
+Robot Framework handles whitespace the same way as they are handled in HTML
+source code:
 
-- Removes leading and trailing whitespace in all cells.
-- Changes multiple consecutive spaces into single spaces.
-- Converts all newlines and tabs into spaces.
+- Newlines, carriage returns, and tabs are converted to spaces.
+- Leading and trailing whitespace in all cells is ignored.
+- Multiple consecutive spaces are collapsed into a single space.
 
-To prevent Robot Framework from parsing data according to these rules,
-the backslash character can be used:
+In addition to that, non-breaking spaces are replaced with normal spaces.
+This is done to avoid hard-to-debug errors
+when a non-breaking space is accidentally used instead of a normal space.
 
-- Before leading spaces, for example :code:`\\ some text`.
-- Between consecutive spaces, for example :code:`text \\ \\ more text`.
-- After trailing spaces, for example :code:`some text \\ \\`.
-- As :code:`\\n` to create a newline, for example :code:`first line\\n2nd line`.
-- As :code:`\\t` to create a tab character, for example :code:`text\\tmore text`.
-- As :code:`\\r` to create a carriage return, for example :code:`text\\rmore text`.
+If leading, trailing, or consecutive spaces are needed, they must either be
+escaped__. Newlines, carriage returns, tabs, and non-breaking spaces can be
+created using `escape sequences`_ :code:`\\n`, :code:`\\r`, :code:`\\t`, and
+:code:`\\xA0` respectively.
 
-Another, and often clearer, possibility for representing leading,
-trailing, or consecutive spaces is using `built-in variable`__
-:var:`${SPACE}`. The `extended variable syntax`_ even allows syntax
-like :var:`${SPACE * 8}` which makes handling consecutive spaces very simple.
+__ `Prevent ignoring spaces`_
+
+Escaping
+''''''''
+
+The escape character in Robot Framework test data is the backslash (:code:`\\`),
+and additionally `built-in variables`_ :var:`${EMPTY}` and :var:`${SPACE}`
+are often used for escaping. Different escaping mechanisms are
+discussed in the sections below.
+
+Escaping special characters
+```````````````````````````
+
+The backslash character can be used to escape special characters
+so that their literal values are used.
+
+.. table:: Escaping special characters
+   :class: tabular
+
+   ============  ================================================================  =================================
+    Character                              Meaning                                             Examples
+   ============  ================================================================  =================================
+   :code:`\\$`   Dollar sign, never starts a `scalar variable`_.                   :code:`\\${notvar}`
+   :code:`\\@`   At sign, never starts a `list variable`_.                         :code:`\\@{notvar}`
+   :code:`\\%`   Percent sign, never starts an `environment variable`_.            :code:`\\%{notvar}`
+   :code:`\\#`   Hash sign, never starts a comment_.                               :code:`\\# not comment`
+   :code:`\\=`   Equal sign, never part of `named argument syntax`_.               :code:`not\\=named`
+   :code:`\\|`   Pipe character, not a separator in the `pipe separated format`_.  :code:`| Run | ps \\| grep xxx |`
+   :code:`\\\\`  Backlash character, never escapes anything.                       :code:`c:\\\\temp, \\\\${var}`
+   ============  ================================================================  =================================
+
+.. _escape sequence:
+.. _escape sequences:
+
+Forming escape sequences
+````````````````````````
+
+The backslash character also allows creating special escape sequences that are
+recognized as characters that would otherwise be hard or impossible to create
+in the test data.
+
+.. table:: Escape sequences
+   :class: tabular
+
+   ===================  ==========================================  ==================================
+        Sequence                         Meaning                                 Examples
+   ===================  ==========================================  ==================================
+   :code:`\\n`          Newline character.                          :code:`first line\\n2nd line`.
+   :code:`\\r`          Carriage return character                   :code:`text\\rmore text`.
+   :code:`\\t`          Tab character.                              :code:`text\\tmore text`.
+   :code:`\\xhh`        Character with hex value :code:`hh`.        :code:`null byte: \\x00, ä: \\xe4`
+   :code:`\\uhhhh`      Character with hex value :code:`hhhh`.      :code:`snowman: \\u2603`
+   :code:`\\Uhhhhhhhh`  Character with hex value :code:`hhhhhhhh`.  :code:`love hotel: \\U0001f3e9`
+   ===================  ==========================================  ==================================
+
+.. note:: :code:`\\x`, :code:`\\u` and :code:`\\U` escape sequences are new in
+          Robot Framework 2.8.2.
 
 .. note:: Possible un-escaped whitespace character after the :code:`\\n` is
-          ignored to allow wrapping long lines containing newlines. This
-          means that :code:`two lines\\nhere` and :code:`two lines\\n here`
-          are equivalent. An exception to this rule is that the whitespace
-          character is not ignored inside the `extended variable syntax`_.
+          ignored. This means that :code:`two lines\\nhere` and
+          :code:`two lines\\n here` are equivalent. The motivation for this
+          is to allow wrapping long lines containing newlines when using
+          the HTML format, but the same logic is used also with other formats.
+          An exception to this rule is that the whitespace character is not
+          ignored inside the `extended variable syntax`_.
 
-.. note:: Starting from Robot Framework 2.7.5, non-breaking spaces are
-          replaced with normal spaces regardless the test data format.
-          This is done to avoid hard-to-debug errors when a non-breaking
-          space is accidentally used instead of a normal space. If real
-          non-breaking spaces are needed in test data, it is possible to
-          create variables containing them, for example, in `variable files`_.
+Prevent ignoring empty cells
+````````````````````````````
 
-__ `Space and empty variables`_
+If empty values are needed as arguments for keywords or otherwise, they often
+need to be escaped to prevent them to be ignored__. Empty trailing cells must
+be escaped regardless the test data format, and when using the
+`space separated format`_ all empty values must be escaped.
+
+Empty cells can be escaped either with the backslash character or with
+`built-in variable`_ :var:`${EMPTY}`. The latter is typically recommended
+as it is easier to understand. An exception to this recommendation is escaping
+the indented cells in `for loops`_ with a backslash when using the
+`space separated format`_. All this is illustrated in the following examples
+first in HTML and then in the space separated plain text format:
+
+.. table::
+   :class: example
+
+   ==================  ============  ==========  ==========  ================================
+        Test Case         Action      Argument    Argument                Argument
+   ==================  ============  ==========  ==========  ================================
+   Using backslash     Do Something  first arg   \\
+   Using ${EMPTY}      Do Something  first arg   ${EMPTY}
+   Non-trailing empty  Do Something              second arg  # No escaping needed in HTML
+   For loop            :FOR          ${var}      IN          @{VALUES}
+   \                                 Log         ${var}      # No escaping needed here either
+   ==================  ============  ==========  ==========  ================================
+
+::
+
+   *** Test Cases ***
+   Using backslash
+       Do Something    first arg    \\
+   Using ${EMPTY}
+       Do Something    first arg    ${EMPTY}
+   Non-trailing empty
+       Do Something    ${EMPTY}     second arg    # Escaping needed in space separated format
+   For loop
+       :FOR    ${var}    IN    @{VALUES}
+       \    Log    ${var}                         # Escaping needed here too
+
+__ `Ignored data`_
+
+Prevent ignoring spaces
+```````````````````````
+
+Because leading, trailing, and consecutive spaces in cells are ignored__, they
+need to escaped if needed as arguments to keywords or otherwise. Similarly
+as when preventing ignoring empty cells, it is possible to do that either
+using the backslash character or using `built-in variable`_ :var:`${SPACE}`.
+
+.. table:: Escaping spaces examples
+   :class: tabular
+
+   ================================  =====================================  ======================================
+        Escaping with backslash             Escaping with ${SPACE}                          Notes
+   ================================  =====================================  ======================================
+   :code:`\\ leading space`          :code:`${SPACE}leading space`
+   :code:`trailing space \\`         :code:`trailing space${SPACE}`         Backslash must be after the space.
+   :code:`\\ \\`                     :code:`${SPACE}`                       Backslash needed on both sides.
+   :code:`consecutive \\ \\ spaces`  :code:`consecutive${SPACE * 3}spaces`  Using `extended variable syntax`_.
+   ================================  =====================================  ======================================
+
+As the above examples show, using the :var:`${SPACE}` variable often makes the
+test data easier to understand. It is especially handy in combination with
+the `extended variable syntax`_ when more than one space is needed.
+
+__ `Handling whitespace`_
 
 Dividing test data to several rows
 ''''''''''''''''''''''''''''''''''
@@ -661,7 +746,6 @@ If there is more data than readily fits a row, it possible to use ellipsis
 (:code:`...`) to continue the previous line. In test case and user keyword tables,
 the ellipsis must be preceded by at least one empty cell.  In settings and
 variable tables, it can be placed directly under the setting or variable name.
-
 In all tables, all empty cells before the ellipsis are ignored.
 
 Additionally, values of settings that take only one value (mainly
@@ -671,8 +755,8 @@ parsed. Starting from Robot Framework 2.7, documentation and test
 suite metadata split into multiple rows will be `catenated together
 with newlines`__.
 
-All these syntaxes are illustrated in the following examples. In the
-first three tables test data has not been split, and
+All the syntax discussed above is illustrated in the following examples.
+In the first three tables test data has not been split, and
 the following three illustrate how fewer columns are needed after
 splitting the data to several rows.
 
@@ -751,56 +835,3 @@ __ `Automatic newlines in test data`_
    \                              ...             3           4
    \                              ...             5           6
    ===========  ================  ==============  ==========  ==========
-
-.. Note:: Empty cells before ellipsis are allowed generally only in Robot
-          Framework 2.5.2 and newer. In earlier versions a single leading
-          empty cell is allowed inside `for loops`_ but not otherwise.
-
-Splitting test data in reST tables
-```````````````````````````````````
-
-In the plain text markup for reST tables, there are two types of table
-syntax that can be used to create test data. When using the `Simple
-Tables` syntax, a :code:`\\` or :code:`..` is required in the first cell
-of a continued row in addition to the :code:`...` required by Robot Framework.
-
-Here is an example using reST `Simple Table` format::
-
-    ===========  ================  ==============  ==========  ==========
-     Test Case       Action           Argument      Argument    Argument
-    ===========  ================  ==============  ==========  ==========
-    Example      [Documentation]   Documentation   for this    test case.
-    \            ...               This can get    quite       long...
-    \            [Tags]            t-1             t-2         t-3
-    \            ...               t-4             t-5
-    \            Do X              one             two         three
-    \            ...               four            five        six
-    \            ${var} =          Get X           1           2
-    \            ...               3               4           5
-    \            ...               6
-    ===========  ================  ==============  ==========  ==========
-
-For `Grid Table` syntax, the first cell in a continued row may be blank,
-and the second cell should contain :code:`...` as with HTML tables::
-
-    +-----------+-------------------+---------------+------------+------------+
-    | Test Case |      Action       |   Argument    |  Argument  |  Argument  |
-    +===========+===================+===============+============+============+
-    | Example   | [Documentation]   | Documentation | for this   | test case. |
-    +-----------+-------------------+---------------+------------+------------+
-    |           | ...               | This can get  | quite      | long...    |
-    +-----------+-------------------+---------------+------------+------------+
-    |           | [Tags]            | t-1           | t-2        | t-3        |
-    +-----------+-------------------+---------------+------------+------------+
-    |           | ...               | t-4           | t-5        |            |
-    +-----------+-------------------+---------------+------------+------------+
-    |           | Do X              | one           | two        | three      |
-    +-----------+-------------------+---------------+------------+------------+
-    |           | ...               | four          | five       | six        |
-    +-----------+-------------------+---------------+------------+------------+
-    |           | ${var} =          | Get X         | 1          | 2          |
-    +-----------+-------------------+---------------+------------+------------+
-    |           | ...               | 3             | 4          | 5          |
-    +-----------+-------------------+---------------+------------+------------+
-    |           | ...               | 6             |            |            |
-    +-----------+-------------------+---------------+------------+------------+
