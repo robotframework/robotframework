@@ -1,6 +1,6 @@
 *** Settings ***
 Resource          resource.txt
-Suite Setup       Check Precondition   os.sep == "/"
+Suite Setup       Check Precondition   os.sep == "/" and sys.version_info >= (2,6)
 
 *** Test Cases ***
 Sending killing signal
