@@ -1,7 +1,8 @@
 *** Settings ***
-Suite Teardown    Terminate All Processes
-Library    Process
-Resource   resource.txt
+Suite Setup       Check Precondition         sys.version_info >= (2,6)
+Test Teardown     Terminate All Processes    kill=True
+Library           Process
+Resource          resource.txt
 
 *** Variables ***
 ${NONTERM}  ${CURDIR}${/}files${/}non_terminable.py
