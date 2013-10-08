@@ -79,6 +79,8 @@ curly braces. However, using only alphabetic characters from a to z,
 numbers, underscore and space is recommended, and it is
 even a requirement for using the `extended variable syntax`_.
 
+.. _scalar variable:
+
 Scalar variables
 ''''''''''''''''
 
@@ -310,6 +312,8 @@ an integer, using it as a list variable fails. Exactly like when using lists
 variables as scalars, using a scalar variable as a list only works if there
 is no list variable with the same base name.
 
+.. _environment variable:
+
 Environment variables
 '''''''''''''''''''''
 
@@ -353,7 +357,7 @@ Support for accessing Java system properties was added in Robot Framework 2.6.
    System Properties   Log      %{user.name} running tests on %{os.name}
    =================  ========  ========================================  ==========
 
-__ http://download.oracle.com/javase/tutorial/essential/environment/sysprop.html
+__ http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
 Creating variables
 ~~~~~~~~~~~~~~~~~~
@@ -577,6 +581,8 @@ them. Setting variables with this keyword thus has the same effect as
 everywhere, it should be used with care.
 
 __ `Setting variables in command line`_
+
+.. _built-in variable:
 
 Built-in variables
 ~~~~~~~~~~~~~~~~~~
