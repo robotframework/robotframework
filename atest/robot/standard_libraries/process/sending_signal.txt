@@ -5,7 +5,7 @@ Test Setup       Check Preconditions
 Resource         atest_resource.txt
 
 *** Test Cases ***
-Sending killing signal
+Sending INT signal
     Check Test Case    ${TESTNAME}
 
 *** Keywords ***
