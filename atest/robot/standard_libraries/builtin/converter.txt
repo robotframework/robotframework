@@ -69,4 +69,14 @@ Create List
 
 Verify argument type message
     [Arguments]  ${msg}  ${type1}
-    Check log message  ${msg}  Argument types are:\n<type '${type1}'>
+    ${type1} =    Unicode Type to Str On Python 3.x    ${type1}
+    Run on python 2.x
+    ...  Check log message  ${msg}  Argument types are:\n<type '${type1}'>
+    Run on python 3.x
+    ...  Check log message  ${msg}  Argument types are:\n<class '${type1}'>
+
+Unicode Type to Str On Python 3.x
+    [Arguments]    ${type}
+    ${type} =    Set Variable If    "${PYTHON3}" and "${type}" == "unicode"
+    ...     str    ${type}
+    [Return]    ${type}
