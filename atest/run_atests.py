@@ -86,14 +86,22 @@ if sys.version_info[0] == 3 and do2to3:
                         print("Preparing for Python 3: %s" % path)
                         # Remove u prefixes from unicode literals:
                         text = re.sub(r'([\[(= ])u\'', r'\1\'', text)
+                        # Replace hex codes in strings
+                        # with actual unicode characters,
+                        # if not used to create bytes objects:
                         text = re.sub(
-                          r'\\\\x([0-9a-f]{2})',
-                          lambda match: chr(int(match.group(1), 16)),
+                          r'(.*)\\\\x([0-9a-f]{2})',
+                          lambda match: (
+                            chr(int(match.group(2), 16))
+                            if not 'bytes' in match.group(1).lower()
+                            else match.group(0)),
                           text)
                         text = re.sub(
                           r'\\\\u([0-9a-f]{4})',
                           lambda match: chr(int(match.group(1), 16)),
                           text)
+                        # Remove L suffixes from integer literals:
+                        text = re.sub(r'([1-9][0-9]+)L', r'\1', text)
                         with open(path, 'w') as f:
                             f.write(text)
 
@@ -117,6 +125,7 @@ ARGUMENTS = ' '.join('''
 --metadata Platform:%(PLATFORM)s
 --variable INTERPRETER:%(INTERPRETER)s
 --variable PYTHON:%(PYTHON)s
+--variable PYTHON3:%(PYTHON3)s
 --variable JYTHON:%(JYTHON)s
 --variable IRONPYTHON:%(IRONPYTHON)s
 --variable STANDALONE_JYTHON:NO
@@ -149,6 +158,9 @@ def atests(interpreter_path, *params):
         'OUTPUTDIR' : resultdir,
         'INTERPRETER': interpreter_path,
         'PYTHON': interpreter_path if 'python' in interpreter else '',
+        'PYTHON3': interpreter_path
+                   if 'python' in interpreter and sys.version_info[0] == 3
+                   else '',
         'JYTHON': interpreter_path if 'jython' in interpreter else '',
         'IRONPYTHON': interpreter_path if 'ipy' in interpreter else '',
         'PLATFORM': sys.platform,
