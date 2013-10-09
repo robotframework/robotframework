@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import re
 from fnmatch import fnmatchcase
 from random import randint
@@ -480,7 +481,7 @@ class String:
 
         New in Robot Framework 2.7.7.
         """
-        if not isinstance(item, str):
+        if not isinstance(item, bytes if sys.version_info[0] == 3 else str):
             self._fail(msg, "'%s' is not a byte string.", item)
 
     def should_be_lowercase(self, string, msg=None):
