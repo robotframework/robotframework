@@ -201,7 +201,7 @@ class OperatingSystem:
         rc = process.close()
         return rc, stdout
 
-    def start_process(self, command, stdin=None, alias=None):
+    def start_process(self, command, stdin=None, alias=None, textio=False):
         """It is recommended to use same keyword from Process library instead.
 
         Starts the given command as a background process.
@@ -228,6 +228,10 @@ class OperatingSystem:
         keyword, but redirecting is done when the process is started and not
         by adding '2>&1' to the command.
 
+        Setting `textio` to any non-false value, such as `textio=True`,
+        the command's input/output streams will be opened in text mode,
+        working with `str` instead of `bytes` in Python 3.x.
+
         Example:
         | Start Process  | /path/longlasting.sh |
         | Do Something   |                      |
@@ -235,7 +239,7 @@ class OperatingSystem:
         | Should Contain | ${output}            | Expected text |
         | [Teardown]     | Stop All Processes   |
         """
-        process = _Process2(command, stdin)
+        process = _Process2(command, stdin, textio=bool(textio))
         self._info("Running command '%s'" % process)
         return PROCESSES.register(process, alias)
 
@@ -1303,11 +1307,13 @@ class _Process:
 
 class _Process2(_Process):
 
-    def __init__(self, command, input_):
+    def __init__(self, command, input_, textio=False):
         self._command = self._process_command(command)
+        ## raise RuntimeError(str(text_mode))
         p = subprocess.Popen(self._command, shell=True, stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             close_fds=os.sep=='/')
+                             close_fds=os.sep=='/',
+                             universal_newlines=textio)
         stdin, self.stdout = p.stdin, p.stdout
         if input_:
             stdin.write(input_)
