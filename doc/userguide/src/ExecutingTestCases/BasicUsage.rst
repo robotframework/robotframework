@@ -367,7 +367,6 @@ to use :opt:`--argumentfile` option multiple times or even recursively::
    pybot --argumentfile default_options.txt --name Example my_tests.html
    pybot -A first.txt -A second.txt -A third.txt tests.txt
 
-
 Reading argument files from standard input
 ''''''''''''''''''''''''''''''''''''''''''
 
@@ -377,7 +376,6 @@ This can be useful when generating arguments with a script::
 
    generate_arguments.sh | pybot --argumentfile STDIN
    generate_arguments.sh | pybot --name Example --argumentfile STDIN tests.txt
-
 
 Getting help and version information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -399,7 +397,6 @@ or Jython version and the platform type::
 
    C:\>rebot --version
    Rebot 2.7 (Python 2.7.1 on win32)
-
 
 Creating start-up scripts
 ~~~~~~~~~~~~~~~~~~~~~~~~~
