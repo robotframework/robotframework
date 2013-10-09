@@ -14,6 +14,7 @@
 
 import re
 import time
+import sys
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -206,7 +207,10 @@ class _Converter:
             prefix = '-' + prefix
             ret = ret[1:]
         if len(ret) > 1:  # oct(0) -> '0' (i.e. has no prefix)
-            prefix_length = {bin: 2, oct: 1, hex: 2}[method]
+            prefix_length = {bin: 2,
+                             oct: (2 if sys.version_info[0] == 3 else 1),
+                             hex: 2
+                             }[method]
             ret = ret[prefix_length:]
         if length:
             ret = ret.rjust(self._convert_to_integer(length), '0')
@@ -418,8 +422,9 @@ class _Verify:
         self.log('\n'.join(msg))
 
     def _get_type(self, arg):
-        # In IronPython type(u'x') is str. We want to report unicode anyway.
-        if isinstance(arg, unicode):
+        # In IronPython type(u'x') is str. We want to report unicode anyway,
+        # except for Python 3.
+        if sys.version_info[0] < 3 and isinstance(arg, unicode):
             return "<type 'unicode'>"
         return str(type(arg))
 
