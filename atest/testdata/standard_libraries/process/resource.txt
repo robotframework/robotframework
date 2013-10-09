@@ -51,6 +51,6 @@ Safe Remove Directory
 
 Check Precondition
     [Arguments]    ${precondition}
-    ${nok}=    Evaluate    not ${precondition}    modules=sys
+    ${nok}=    Evaluate    not (${precondition})    modules=sys,os
     Run Keyword If  ${nok}    Set Suite Metadata  info   precondition_fail
     Run Keyword If  ${nok}    Fail    ${precondition} was not true
