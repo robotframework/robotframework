@@ -28,7 +28,8 @@ Encode Non-ASCII String To Bytes Using Incompatible Encoding And Error Handler
     Byte Strings Should Be Equal    ${bytes}    Hyv?
 
 Decode ASCII Bytes To String
-    ${string} =    Decode Bytes To String    Hello, world!    UTF-8
+    ${bytes} =    Create Bytes    Hello, world!
+    ${string} =    Decode Bytes To String    ${bytes}    UTF-8
     Should Be Equal    ${string}    Hello, world!
 
 Decode Non-ASCII Bytes To String
@@ -50,13 +51,13 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
 
 *** Keywords ***
 Create Byte String Variables
-    ${ISO-8859-1} =    Evaluate    "Hyv\\xe4"
-    ${UTF-8} =    Evaluate    "Hyv\\xc3\\xa4"
+    ${ISO-8859-1} =    Create Bytes    Hyv\\xe4
+    ${UTF-8} =    Create Bytes    Hyv\\xc3\\xa4
     Set Suite Variable    ${ISO-8859-1}
     Set Suite Variable    ${UTF-8}
 
 Byte Strings Should Be Equal
     [Arguments]    ${bytes}    ${expected}
     Should Be Byte String    ${bytes}
-    ${expected} =    Evaluate    "${expected}"
+    ${expected} =    Create Bytes    ${expected}
     Should Be Equal    ${bytes}    ${expected}
