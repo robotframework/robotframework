@@ -313,7 +313,6 @@ the CLASSPATH environment variable. In this case, there are two different
 ways to configure CLASSPATH, which are shown in the examples below::
 
   java -cp lib/testlibrary.jar:lib/app.jar:robotframework-2.7.1.jar org.robotframework.RobotFramework example.txt
-
   java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-2.7.1.jar example.txt
 
 Using --pythonpath option
@@ -399,7 +398,6 @@ The test execution order can be randomized using option
     Neither execution order of test nor suites is randomized.
     This value can be used to override the earlier value set with
     :opt:`--randomize`.
-
 
 Example::
 

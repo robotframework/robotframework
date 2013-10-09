@@ -85,7 +85,9 @@ above example could be written also as follows.
    =============  ===========================
 
 This style works especially well in the `plain text format`_ where the
-same example could be written like this::
+same example could be written like this:
+
+.. sourcecode:: robotframework
 
   *** Settings ***
   Documentation
@@ -153,7 +155,9 @@ newline is added manually or automatically. Multiple paragraphs can be separated
 with an empty line (i.e. two newlines) and also tables, lists, and other
 specially formatted blocks discussed in subsequent sections end a paragraph.
 
-For example, the following test suite or resource file documentation::
+For example, the following test suite or resource file documentation:
+
+.. sourcecode:: robotframework
 
   *** Settings ***
   Documentation
