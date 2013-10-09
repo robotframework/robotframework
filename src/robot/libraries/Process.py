@@ -17,9 +17,10 @@ from __future__ import with_statement
 import sys
 import os
 import subprocess
+from time import sleep, time
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
-                         decode_from_system, get_env_vars)
+                         decode_from_system, get_env_vars, timestr_to_secs)
 from robot.version import get_version
 from robot.api import logger
 
@@ -347,17 +348,30 @@ class Process(object):
         if self.is_process_running(handle):
             raise AssertionError(error_message)
 
-    def wait_for_process(self, handle=None):
-        """Waits for the process to complete.
+    def wait_for_process(self, handle=None, timeout=None, handle_timeout='none'):
+        """Waits for the process to complete or to reach given timeout.
+        Reaching timeout will not fail tests. Instead the action triggered
+        by timeout is configured with `handle_timeout` parameter.
 
         If `handle` is not given, uses the current `active process`.
+
+        `timeout` is a string representing time. It is interpreted
+        according to Robot Framework User Guide Appendix `Time Format`
+
+        `handle_timeout` is a string specifying what is done to the process
+        when given timeout is reached. Values can be 'none', 'terminate' or 'kill'.
+        If 'none' is specified then the process is left running after
+        exiting the keyword execution on timeout.
+
+        If trying to terminate process and it does not stop, it will be killed
+        after five seconds.
 
         Returns a `result object` containing information about the execution.
         """
         process = self._processes[handle]
         result = self._results[process]
         logger.info('Waiting for process to complete.')
-        result.rc = process.wait() or 0
+        result.rc = self._wait_completion(handle, timeout, handle_timeout)
         logger.info('Process completed.')
         return result
 
@@ -437,6 +451,38 @@ class Process(object):
         """
         self._processes.switch(handle)
 
+    def _wait_completion(self, handle, timeout, handle_timeout):
+        timeout_reached = False
+        if timeout:
+            timeout = timestr_to_secs(timeout)
+            timeout_reached = self._is_timeout_reached(handle, timeout)
+        return self._handle_process_shutdown(handle, timeout_reached, handle_timeout)
+
+    def _is_timeout_reached(self, handle, timeout):
+        time_begin = time()
+        seconds_passed = 0
+        while self.is_process_running(handle) and seconds_passed < timeout:
+            seconds_passed = time() - time_begin
+            sleep(0.5)
+        if self.is_process_running(handle):
+            logger.info('Timeout reached')
+            return True
+        else:
+            return False
+
+    def _handle_process_shutdown(self, handle, timeout_reached, handle_timeout):
+        if timeout_reached:
+            if handle_timeout == 'terminate':
+                self.terminate_process(handle)
+                termination_timeout = 5
+                if self._is_timeout_reached(handle, termination_timeout):
+                    self.terminate_process(handle, True)
+            elif handle_timeout == 'kill':
+                self.terminate_process(handle, True)
+            else:
+                logger.info('Leaving process intact')
+                return None
+        return self._processes[handle].wait() or 0
 
 class ExecutionResult(object):
 
