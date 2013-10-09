@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
-from __future__ import with_statement
-
 def difference_between_stuff(file1, file2):
     with open(file1) as f1:
         content1 = f1.readlines()

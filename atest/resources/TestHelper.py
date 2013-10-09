@@ -1,5 +1,3 @@
-from __future__ import with_statement
-
 import os
 import sys
 from stat import S_IREAD, S_IWRITE
