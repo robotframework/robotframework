@@ -76,6 +76,6 @@ Format should be
     Element Attribute Should Be    ${LIBDOC}    format    ${expected}
 
 Fail test non-critically if docutils is not installed
-    ${output} =  Run  ${INTERPRETER} -c "import docutils; print 'OK'"
+    ${output} =  Run  ${INTERPRETER} -c "import docutils; print('OK')"
     Run Keyword If    """${output}""" != "OK"
     ...    Fail    This test requires `docutils` to be installed   -regression

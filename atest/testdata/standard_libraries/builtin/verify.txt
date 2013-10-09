@@ -137,14 +137,14 @@ Should Be Equal As Numbers
     ${STR1}.000001  ${STR1}.${STR0}${STR0}${STR1}  Only this message  False
 
 Should Be Equal As Numbers With Precision
-    [Documentation]  FAIL  Failure: 110.0 != 150.0
+    [Documentation]  FAIL  Failure: 110.0 != 130.0
     [Template]  Should Be Equal As Numbers
     1.123     1.456    precision=0
     1.123     ${1.1}   precision=1
     ${1.123}  ${1.12}  precision=2
     1123      1456     precision=-3
-    112       145      precision=-2
-    112       145      Failure  precision=-1
+    112       134      precision=-2
+    112       134      Failure  precision=-1
 
 Should Not Be Equal As Strings
     [Documentation]  FAIL These strings most certainly should not be equal

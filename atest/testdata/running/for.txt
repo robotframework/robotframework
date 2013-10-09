@@ -233,7 +233,7 @@ For In Range
     :FOR  ${i}  IN RANGE  100
     \  @{var} =  List  @{var}  ${i}
     \  Log  i: ${i}
-    Fail Unless  @{var} == range(100)
+    Fail Unless  @{var} == list(range(100))
 
 For In Range With Start And Stop
     @{var} =  List
