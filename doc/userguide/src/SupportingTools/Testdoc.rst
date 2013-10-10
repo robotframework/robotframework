@@ -67,4 +67,3 @@ Examples::
   python -m robot.testdoc my_test.html testdoc.html
   jython -m robot.testdoc --name smoke_tests --include smoke path/to/my_tests smoke.html
   ipy path/to/robot/testdoc.py first_suite.txt second_suite.txt output.html
-

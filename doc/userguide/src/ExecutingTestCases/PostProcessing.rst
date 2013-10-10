@@ -96,4 +96,3 @@ meaningful name::
    rebot --include smoke --name Smoke_Tests c:\results\*.xml
 
 __ `Specifying test data to be executed`_
-

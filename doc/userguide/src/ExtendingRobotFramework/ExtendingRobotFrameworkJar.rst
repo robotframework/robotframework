@@ -13,7 +13,6 @@ command in the directory containing `Lib`::
 
   jar uf /path/to/robotframework-2.7.1.jar Lib
 
-
 To add compiled java classes to the jar, you must have a directory structure
 corresponding to the Java package structure and add that recursively to the
 zip.

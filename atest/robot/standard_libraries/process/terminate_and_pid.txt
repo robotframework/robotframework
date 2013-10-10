@@ -9,16 +9,26 @@ Run process does not change active process
     Check Test Case    ${TESTNAME}
 
 Killing process
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[2].msgs[0]}    Forcefully killing process.
 
 Terminating process
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[2].msgs[0]}    Gracefully terminating process.
+
+Kill Process When Terminate Fails
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[3].msgs[0]}    Gracefully terminating process.
+    Pass Execution If    ${WINDOWS}    Pass on Windows since there's no kill command.
+    Check Log Message    ${tc.kws[3].msgs[1]}    Forcefully killing process.
+    Should Be True    ${tc.elapsedtime} > 5000
 
 Pid
     Check Test Case    ${TESTNAME}
 
 Terminate All Processes
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message   ${tc.kws[14].msgs[0]}    Gracefully terminating process.
 
 Terminate All Empties Cache
     Check Test Case    ${TESTNAME}
@@ -34,6 +44,7 @@ Lot of output
 
 Getting PIDs in different ways should give same result
     Check Test Case    ${TESTNAME}
+
 
 *** Keywords ***
 Check Preconditions

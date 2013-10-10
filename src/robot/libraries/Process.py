@@ -17,7 +17,7 @@ from __future__ import with_statement
 import sys
 import os
 import subprocess
-from time import sleep, time
+import time
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
                          decode_from_system, get_env_vars, timestr_to_secs)
@@ -363,9 +363,6 @@ class Process(object):
         If 'none' is specified then the process is left running after
         exiting the keyword execution on timeout.
 
-        If trying to terminate process and it does not stop, it will be killed
-        after five seconds.
-
         Returns a `result object` containing information about the execution.
         """
         process = self._processes[handle]
@@ -380,24 +377,39 @@ class Process(object):
 
         If `handle` is not given, uses the current `active process`.
 
+        `kill` is a boolean value. If False, a graceful termination is
+        attempted and if the process still remains running it will be
+        forcefully killed after 5 seconds. If True the process will immediately
+        be forcefully killed.
+
         See `Stopping process` for more details.
         """
         process = self._processes[handle]
-        try:
-            terminator = process.kill if kill else process.terminate
-        except AttributeError:
+        if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
                                'by this interpreter version.')
-        logger.info('Killing process.' if kill else 'Terminating process.')
+        terminator = self._kill_process if kill else self._terminate_process
         try:
-            terminator()
+            terminator(process)
         except OSError:
-            if process.poll() is None:
+            if not self._process_is_stopped(process):
                 raise
             logger.debug('Ignored OSError because process was stopped.')
 
-    def terminate_all_processes(self, kill=True):
+    def _kill_process(self, process):
+        logger.info('Forcefully killing process.')
+        process.kill()
+
+    def _terminate_process(self, process):
+        logger.info('Gracefully terminating process.')
+        process.terminate()
+        if not self._process_is_stopped(process):
+            self._kill_process(process)
+
+    def terminate_all_processes(self, kill=False):
         """Terminates all still running processes started by this library.
+
+        `kill` parameter works similar than in `Terminate Process`
 
         See `Stopping processes` for more details.
         """
@@ -455,28 +467,21 @@ class Process(object):
         timeout_reached = False
         if timeout:
             timeout = timestr_to_secs(timeout)
-            timeout_reached = self._is_timeout_reached(handle, timeout)
+            timeout_reached = not self._process_is_stopped(self._processes[handle], timeout)
         return self._handle_process_shutdown(handle, timeout_reached, handle_timeout)
 
-    def _is_timeout_reached(self, handle, timeout):
-        time_begin = time()
-        seconds_passed = 0
-        while self.is_process_running(handle) and seconds_passed < timeout:
-            seconds_passed = time() - time_begin
-            sleep(0.5)
-        if self.is_process_running(handle):
-            logger.info('Timeout reached')
-            return True
-        else:
-            return False
+    def _process_is_stopped(self, process, timeout=5):
+        max_time = time.time() + timeout
+        while time.time() <= max_time:
+            if process.poll() is not None:
+                return True
+            time.sleep(0.1)
+        return False
 
     def _handle_process_shutdown(self, handle, timeout_reached, handle_timeout):
         if timeout_reached:
             if handle_timeout == 'terminate':
                 self.terminate_process(handle)
-                termination_timeout = 5
-                if self._is_timeout_reached(handle, termination_timeout):
-                    self.terminate_process(handle, True)
             elif handle_timeout == 'kill':
                 self.terminate_process(handle, True)
             else:

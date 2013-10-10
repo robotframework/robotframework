@@ -282,7 +282,9 @@ second example, loop values are `split into two rows`__ and the
 loop is run altogether five times.
 
 .. tip:: If you use for loops in `plain text format`_ files, remember to
-         escape__ the indented cell using a backslash::
+         escape__ the indented cell using a backslash:
+
+         .. sourcecode:: robotframework
 
               *** Test Case ***
               Example 1

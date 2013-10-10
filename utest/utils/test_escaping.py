@@ -21,6 +21,9 @@ class TestUnEscape(unittest.TestCase):
                          ('\\ ', ' '),
                          ('a\\', 'a'),
                          ('\\a', 'a'),
+                         ('\\-', u'-'),
+                         (u'\\\xe4', u'\xe4'),
+                         ('\\0', '0'),
                          ('a\\b\\c\\d', 'abcd')]:
             assert_unescape(inp, exp)
 
@@ -80,7 +83,7 @@ class TestUnEscape(unittest.TestCase):
             assert_unescape(inp, exp)
 
     def test_invalid_x(self):
-        for inp in r'\x \xxx xx\xxx \x0 \x0g \X00'.split():
+        for inp in r'\x \xxx xx\xxx \x0 \x0g \X00 \x-1 \x+1'.split():
             assert_unescape(inp, inp.replace('\\', ''))
 
     def test_valid_x(self):
@@ -90,7 +93,15 @@ class TestUnEscape(unittest.TestCase):
             assert_unescape(inp, exp)
 
     def test_invalid_u(self):
-        for inp in r'\u \ukekkonen b\uu \u0 \u123 \u123x'.split():
+        for inp in r'''\u
+                       \ukekkonen
+                       b\uu
+                       \u0
+                       \u123
+                       \u123x
+                       \u-123
+                       \u+123
+                       \u1.23'''.split():
             assert_unescape(inp, inp.replace('\\', ''))
 
     def test_valid_u(self):
@@ -100,21 +111,27 @@ class TestUnEscape(unittest.TestCase):
             assert_unescape(inp, exp)
 
     def test_invalid_U(self):
-        for inp in r'\U \Ukekkonen b\Uu \U0 \U1234567 \U1234567x'.split():
+        for inp in r'''\U
+                       \Ukekkonen
+                       b\Uu
+                       \U0
+                       \U1234567
+                       \U1234567x
+                       \U-1234567
+                       \U+1234567
+                       \U1.234567'''.split():
             assert_unescape(inp, inp.replace('\\', ''))
 
     def test_valid_U(self):
-        try:
-            u00010905 = unichr(int('00010905', 16))  # PHOENICIAN LETTER WAU
-        except ValueError:  # occurs on "narrow" Python builds
-            u00010905 = 'U00010905'
         for inp, exp in [(r'\U00000000', u'\x00'),
                          (r'\U0000ABba', u'\uabba'),
-                         (r'\U00010905', u00010905),
+                         (r'\U0001f3e9', u'\U0001f3e9'),
+                         (r'\U0010FFFF', u'\U0010ffff'),
                          (r'\U000000e4iti', u'\xe4iti')]:
             assert_unescape(inp, exp)
 
     def test_U_above_valid_range(self):
+        assert_unescape(r'\U00110000', 'U00110000')
         assert_unescape(r'\U12345678', 'U12345678')
         assert_unescape(r'\UffffFFFF', 'UffffFFFF')
 
