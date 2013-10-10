@@ -52,7 +52,11 @@ class Unescaper(object):
 
     def _unescape(self, text):
         try:
-            unescaper = getattr(self, '_unescaper_for_' + text[0])
+            escape = str(text[0])
+        except UnicodeError:
+            return text
+        try:
+            unescaper = getattr(self, '_unescaper_for_' + escape)
         except AttributeError:
             return text
         else:
