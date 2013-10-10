@@ -30,7 +30,7 @@ Terminating process
     Process Should Be Stopped    ${handle}
 
 Kill Process When Terminate Fails
-    ${process} =    Start Process    python    ${NONTERM}    stderr=STDOUT
+    ${process} =    Start Process    python    ${NONTERM}
     Process Should Be Running    ${process}
     Sleep   0.1
     Terminate Process    ${process}
