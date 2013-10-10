@@ -50,4 +50,7 @@ Save Non-ASCII Using ASCII
 XML Content Should Be
     [Arguments]    ${expected}    ${encoding}=UTF-8
     ${actual} =    Get File    ${OUTPUT}    ${encoding}
-    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding}'?>\n${expected}
+    ${passed} =    Run Keyword And Return Status
+    ...    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding}'?>\n${expected}
+    Run Keyword Unless    ${passed}
+    ...    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding.lower()}'?>\n${expected}

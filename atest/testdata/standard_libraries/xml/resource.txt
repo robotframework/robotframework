@@ -28,13 +28,20 @@ Element Should Have Attributes
     ${expected} =    Create Dictionary    @{attributes}
     Dictionaries Should Be Equal    ${elem.attrib}    ${expected}
 
+XML Should Be
+    [Arguments]    ${xml}    ${encoding}    @{expected}
+    ${expected} =    Catenate    SEPARATOR=\n
+    ...    <?xml version='1.0' encoding='${encoding}'?>    @{expected}
+    Should Be Equal    ${xml}    ${expected}
+
 Saved XML Should Be
     [Arguments]    ${tree}    @{expected}
     Save XML    ${tree}    ${OUTPUT}
     ${content} =    Get File    ${OUTPUT}
-    ${expected} =    Catenate    SEPARATOR=\n
-    ...    <?xml version='1.0' encoding='UTF-8'?>    @{expected}
-    Should Be Equal    ${content}    ${expected}
+    ${passed} =    Run Keyword And Return Status
+    ...    XML Should Be    ${content}    UTF-8    @{expected}
+    Run Keyword Unless    ${passed}
+    ...    XML Should Be    ${content}    utf-8    @{expected}
 
 Run Keyword Depending On Etree Version
     [Arguments]    ${etree 1.3 keyword}    ${etree 1.2 keyword}=No Operation
