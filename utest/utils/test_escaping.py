@@ -21,6 +21,9 @@ class TestUnEscape(unittest.TestCase):
                          ('\\ ', ' '),
                          ('a\\', 'a'),
                          ('\\a', 'a'),
+                         ('\\-', u'-'),
+                         (u'\\\xe4', u'\xe4'),
+                         ('\\0', '0'),
                          ('a\\b\\c\\d', 'abcd')]:
             assert_unescape(inp, exp)
 
