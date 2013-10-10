@@ -405,8 +405,10 @@ class Process(object):
         if not self._process_is_stopped(process):
             self._kill_process(process)
 
-    def terminate_all_processes(self, kill=True):
+    def terminate_all_processes(self, kill=False):
         """Terminates all still running processes started by this library.
+
+        `kill` parameter works similar than in `Terminate Process`
 
         See `Stopping processes` for more details.
         """
