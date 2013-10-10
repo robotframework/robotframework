@@ -34,6 +34,7 @@ Kill Process When Terminate Fails
     Process Should Be Running    ${process}
     Sleep   0.1
     Terminate Process    ${process}
+    Wait For Process    ${process}
     Process Should Be Stopped    ${process}
 
 Pid
