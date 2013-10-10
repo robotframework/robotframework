@@ -84,19 +84,20 @@ Backslash
 
 Newline
     Should Be Equal    \n    ${NL}
-    Should Be Equal    \\n    ${NOT NL}
+    Should Be Equal    \\n    ${BS}n
 
 Space After Newline Escape Is Ignored
     Should Be Equal    foo\n bar\n zap    foo${NL}bar${NL}zap
     Should Be Equal    foo\n\ bar    foo${NL}${SP}bar
-    Should Be Equal    foo\\n bar    foo${NOT NL}${SP}bar
+    Should Be Equal    foo\\n bar    foo${BS}n${SP}bar
 
 Carrriage Return
     Should Be Equal    \r    ${CR}
-    Should Be Equal    \\r    ${NOT CR}
+    Should Be Equal    \\r    ${BS}r
 
 Tabulator
     Should Be Equal    \t    ${TAB}
+    Should Be Equal    \\t    ${BS}t
 
 Valid \x Escape
     Should Be Equal    \x00    ${x00}
@@ -108,6 +109,8 @@ Valid \x Escape
 
 Invalid \x Escape
     Should Be Equal    \x    x
+    Should Be Equal    \x+1    x+1
+    Should Be Equal    \\x00    ${BS}x00
     Should Be Equal    xx\xxx    xxxxx
     Should Be Equal    \x0    x0
 
@@ -122,6 +125,8 @@ Valid \u Escape
 
 Invalid \u Escape
     Should Be Equal    \u    u
+    Should Be Equal    \u+123    u+123
+    Should Be Equal    \\u1234    ${BS}u1234
     Should Be Equal    uuuu\uuuuu    uuuuuuuuu
     Should Be Equal    \u123    u123
 
@@ -129,24 +134,32 @@ Valid \U (32bit) Escape
     Should Be Equal    \U00000000    ${x00}
     Should Be Equal    \U000000e4    ${xE4}
     Should Be Equal    \U00002603    ${u2603}
-    Should Be Equal    \U00010905    ${u00010905}
+    Should Be Equal    \U00010905    ${U00010905}
+    Should Be Equal    \U0010FFFF    ${U0010FFFF}
     Should Be Equal    \U00000050\u00f6\x6cj\U000000E4    Pöljä
     Log    Phoenician letter wau: \U00010905
 
 Invalid \U (32bit) Escape
     Should Be Equal    \U    U
+    Should Be Equal    \U+0001234    U+0001234
+    Should Be Equal    \\U00012345    ${BS}U00012345
     Should Be Equal    \UUUUUUUUU    UUUUUUUUU
+    Should Be Equal    \U0000123x    U0000123x
     Should Be Equal    \U0000123    U0000123
 
 \U (32bit) Escape Above Valid Range
-    Should Be Equal    \U12345678   U12345678
-    Should Be Equal    \UffffFFFF   UffffFFFF
+    Should Be Equal    \U00110000    U00110000
+    Should Be Equal    \U12345678    U12345678
+    Should Be Equal    \UffffFFFF    UffffFFFF
 
 Hash
     Should Be Equal    \#    ${HASH}    # This is a comment
 
 Any Character Escaped
+    Should Be Equal    \0    0
+    Should Be Equal    \a    a
     Should Be Equal    \x    x
+    Should Be Equal    \ä    ä
 
 Escaping Variables
     [Documentation]    FAIL Non-existing variable '\${bar}'.
