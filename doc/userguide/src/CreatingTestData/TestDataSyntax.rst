@@ -239,7 +239,7 @@ at least two spaces, and it is thus possible to align the data nicely.
 This is a clear benefit over editing the TSV format in a text editor
 because with TSV the alignment cannot be controlled.
 
-::
+.. sourcecode:: robotframework
 
    *** Settings ***
    Library       OperatingSystem
@@ -282,7 +282,7 @@ especially if keywords take a lot of arguments and/or arguments
 contain spaces. In such cases the pipe and space delimited variant can
 work better because it makes the cell boundary more visible.
 
-::
+.. sourcecode:: robotframework
 
    | *Setting*  |     *Value*     |
    | Library    | OperatingSystem |
@@ -311,10 +311,13 @@ the pipes other than if it makes the data more clear.
 There is no need to escape empty cells (other than the `trailing empty
 cells`__) when using the pipe and space separated format. The only
 thing to take into account is that possible pipes surrounded by spaces
-in the actual test data must be escaped with a backslash::
+in the actual test data must be escaped with a backslash:
 
-   | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
-   | Should Be Equal | ${file count}   | 42                   |
+.. sourcecode:: robotframework
+
+   | *** Test Cases *** |                 |                 |                      |
+   | Escaping Pipe      | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
+   |                    | Should Be Equal | ${file count}   | 42                   |
 
 __ Escaping_
 
@@ -372,7 +375,9 @@ are syntax highlighted using Pygments_. In standard reST code blocks are
 started using the :code:`code` directive, but Sphinx_ uses :code:`code-block`
 or :code:`sourcecode` instead. The name of the programming language in
 the code block is given as an argument to the directive. For example, following
-code blocks contain Python and Robot Framework examples, respectively::
+code blocks contain Python and Robot Framework examples, respectively:
+
+.. sourcecode:: rest
 
     .. code:: python
 
@@ -393,7 +398,9 @@ the code blocks is ignored.
 
 The test data in the code blocks must be defined using the `plain text format`_.
 As the example below illustrates, both space and pipe separated variants are
-supported::
+supported:
+
+.. sourcecode:: rest
 
     Example
     -------
@@ -444,7 +451,9 @@ HTML in memory and parses it exactly like it would parse a normal HTML file.
 Robot Framework identifies `test data tables`_ based on the text in the first
 cell and all content outside of the recognized table types is ignored.
 An example of each of the four test data tables is shown below
-using both simple table and grid table syntax::
+using both simple table and grid table syntax:
+
+.. sourcecode:: rest
 
     Example
     -------
@@ -698,11 +707,11 @@ first in HTML and then in the space separated plain text format:
    \                                 Log         ${var}      # No escaping needed here either
    ==================  ============  ==========  ==========  ================================
 
-::
+.. sourcecode:: robotframework
 
    *** Test Cases ***
    Using backslash
-       Do Something    first arg    \\
+       Do Something    first arg    \
    Using ${EMPTY}
        Do Something    first arg    ${EMPTY}
    Non-trailing empty

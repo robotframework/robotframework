@@ -80,23 +80,23 @@ class Unescaper(object):
 
     def _unescape_character(self, text, length, escape):
         try:
-            char = self._get_character(text, length)
+            char = self._get_character(text[:length], length)
         except ValueError:
             return escape + text
         else:
             return char + text[length:]
 
     def _get_character(self, text, length):
-        ordinal = self._get_ordinal(text, length)
-        try:
-            return unichr(ordinal)
-        except (OverflowError, TypeError):
+        if len(text) < length or not text.isalnum():
             raise ValueError
-
-    def _get_ordinal(self, text, length):
-        if len(text) < length:
+        ordinal = int(text, 16)
+        # No Unicode code points above 0x10FFFF
+        if ordinal > 0x10FFFF:
             raise ValueError
-        return int(text[:length], 16)
+        # unichr only supports ordinals up to 0xFFFF with narrow Python builds
+        if ordinal > 0xFFFF:
+            return eval("u'\\U%08x'" % ordinal)
+        return unichr(ordinal)
 
 
 class EscapeFinder(object):
