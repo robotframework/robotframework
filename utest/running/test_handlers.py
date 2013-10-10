@@ -130,7 +130,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
     def test_vararg_not_last(self):
         for argspec in [['*foo', 'arg'], ['arg', '*var', 'arg'],
                         ['a', 'b=d', '*var', 'c'], ['*var', '*vararg']]:
-            self._assert_fails('Only last argument can be varargs.', argspec)
+            self._assert_fails('Positional argument after varargs.', argspec)
 
     def _assert_doc(self, doc, expected=None):
         expected = doc if expected is None else expected
