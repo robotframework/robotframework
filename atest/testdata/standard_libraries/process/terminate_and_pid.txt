@@ -1,7 +1,11 @@
 *** Settings ***
 Suite Setup       Check Precondition    sys.version_info >= (2,6)
+Test Teardown     Terminate All Processes    kill=True
 Resource          resource.txt
 Test Timeout      15s
+
+*** Variables ***
+${NONTERM}  ${CURDIR}${/}files${/}non_terminable.py
 
 *** Test Cases ***
 Run process does not change active process
@@ -20,9 +24,17 @@ Killing process
 
 Terminating process
     ${handle}=    Some process
+    Process Should Be Running
     Terminate Process    ${handle}
     Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
+
+Kill Process When Terminate Fails
+    ${process} =    Start Process    python    ${NONTERM}    stderr=STDOUT
+    Process Should Be Running    ${process}
+    Sleep   0.1
+    Terminate Process    ${process}
+    Process Should Be Stopped    ${process}
 
 Pid
     ${handle}=    Some process

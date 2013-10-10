@@ -4,9 +4,6 @@ Test Teardown     Terminate All Processes    kill=True
 Library           Process
 Resource          resource.txt
 
-*** Variables ***
-${NONTERM}  ${CURDIR}${/}files${/}non_terminable.py
-
 *** Test Cases ***
 Wait For Process
     ${process} =    Start Python Process    print 'Robot Framework'
@@ -31,10 +28,4 @@ Wait For Process Kill On Timeout
     ${process} =   Start Python Process    while(True): pass
     Process Should Be Running    ${process}
     Wait For Process    ${process}    timeout=1s    handle_timeout=kill
-    Process Should Be Stopped    ${process}
-
-Wait For Process Kill When Terminate Fails
-    ${process} =    Start Process    python    ${NONTERM}
-    Process Should Be Running    ${process}
-    Wait For Process    ${process}    timeout=1s    handle_timeout=terminate
     Process Should Be Stopped    ${process}
