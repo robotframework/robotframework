@@ -43,8 +43,8 @@
 $(document).ready(function() {
     try {
         var topsuite = window.testdata.suite();
-    } catch (e) {
-        addJavaScriptDisabledWarning();
+    } catch (error) {
+        addJavaScriptDisabledWarning(error);
         return;
     }
     initLayout(topsuite.name, 'Log');
