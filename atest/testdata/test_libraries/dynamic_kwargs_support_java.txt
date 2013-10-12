@@ -18,4 +18,4 @@ Documentation and Argument Boundaries Work With Kwargs In Java
     Java Kwargs  1
 
 Documentation and Argument Boundaries Work With Varargs and Kwargs In Java
-    Java Varargs and Kwargs  1 2 3 key=value
+    Java Varargs and Kwargs  1  2  3  key=value
