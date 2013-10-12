@@ -151,7 +151,7 @@ function addTestExecutionLog(main) {
       </div>
       <div class="tag-links">
         {{each links}}
-        <span>[<a href="${$value.url}" title="${$value.url}">{{html $value.title}}</a>]</span>
+        <span>[<a href="{{html $value.url}}" title="{{html $value.url}}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
     </td>

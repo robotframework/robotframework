@@ -401,8 +401,8 @@ function hideHiddenDetailsColumns(elem) {
       </div>
       <div class="tag-links">
         {{each links}}
-        <span>[<a href="${$value.url}" onclick="stopPropagation(event)"
-                  title="${$value.url}">{{html $value.title}}</a>]</span>
+        <span>[<a href="{{html $value.url}}" onclick="stopPropagation(event)"
+                  title="{{html $value.url}}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
     </td>
@@ -517,8 +517,8 @@ function hideHiddenDetailsColumns(elem) {
   {{if links}}{{if links.length}}
   <tr>
     <th>Links:</th>
-    <td>{{each links}}<a href="${$value.url}"
-                         title="${$value.url}">{{html $value.title}}</a> &nbsp; {{/each}}</td>
+    <td>{{each links}}<a href="{{html $value.url}}"
+                         title="{{html $value.url}}">{{html $value.title}}</a> &nbsp; {{/each}}</td>
   </tr>
   {{/if}}{{/if}}
   <tr>
