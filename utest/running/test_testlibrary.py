@@ -1,5 +1,6 @@
 import unittest
 import sys
+from itertools import chain, repeat
 
 from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
                                          _ModuleLibrary, _DynamicLibrary)
@@ -466,28 +467,55 @@ class TestDynamicLibrary(unittest.TestCase):
         assert_equals(len(lib.handlers), 0)
 
     def test_get_keyword_arguments_is_used_if_present(self):
+        no_kwargs = [('No Arg', ()), ('One Arg', (1,1)),
+                     ('One or Two Args', (1, 2)),
+                     ('Many Args', (0, sys.maxint))]
+        no_argspec = [('No Arg Spec', (0, sys.maxint))]
+
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
-        for name, exp in [('No Arg', ()), ('One Arg', (1,1)),
-                          ('One or Two Args', (1, 2)),
-                          ('Many Args', (0, sys.maxint)),
-                          ('No Arg Spec', (0, sys.maxint))]:
+        for name, exp in no_kwargs + no_argspec:
             self._assert_handler_args(lib.handlers[name], *exp)
 
-    def _assert_handler_args(self, handler, minargs=0, maxargs=0):
+        lib = TestLibrary('classes.ArgDocDynamicLibraryWithKwargsSupport')
+        for name, exp in no_kwargs:
+            self._assert_handler_args(lib.handlers[name], *exp)
+        for name, exp in [('Kwargs', ()),
+                          ('Varargs and Kwargs', (0, sys.maxint))
+                          # Missing argspec should also enable **kwargs support
+                          ] + no_argspec:
+            self._assert_handler_args(lib.handlers[name], *exp,
+                                      # kwargs=True doesn't work after *
+                                      # in Python 2.5:
+                                      **{'kwargs': True})
+
+    def _assert_handler_args(self, handler, minargs=0, maxargs=0,
+                             kwargs=False):
         assert_equals(handler.arguments.minargs, minargs)
         assert_equals(handler.arguments.maxargs, maxargs)
+        assert_equals(bool(handler.arguments.kwargs), kwargs)
 
     if utils.is_jython:
 
         def test_dynamic_java_handlers(self):
-            lib = TestLibrary('ArgDocDynamicJavaLibrary')
-            for name, min, max in [('Java No Arg', 0, 0),
-                                   ('Java One Arg', 1, 1),
-                                   ('Java One or Two Args', 1, 2),
-                                   ('Java Many Args', 0, sys.maxint)]:
+            def assert_handler(lib, name, min, max, kwargs=False):
                 self._assert_java_handler(lib.handlers[name],
                                           'Keyword documentation for %s' % name,
-                                          min, max)
+                                          min, max, kwargs)
+
+            no_kwargs = [('Java No Arg', 0, 0),
+                         ('Java One Arg', 1, 1),
+                         ('Java One or Two Args', 1, 2),
+                         ('Java Many Args', 0, sys.maxint)]
+            lib = TestLibrary('ArgDocDynamicJavaLibrary')
+            for name, min, max in no_kwargs:
+                assert_handler(lib, name, min, max)
+
+            lib = TestLibrary('ArgDocDynamicJavaLibraryWithKwargsSupport')
+            for name, min, max in no_kwargs:
+                assert_handler(lib, name, min, max)
+            for name, min, max in [('Java Kwargs', 0, 0),
+                                   ('Java Varargs and Kwargs', 0, sys.maxint)]:
+                assert_handler(lib, name, min, max, kwargs=True)
 
         def test_get_keyword_doc_and_args_are_ignored_if_not_callable_in_java(self):
             lib = TestLibrary('InvalidAttributeArgDocDynamicJavaLibrary')
@@ -498,9 +526,10 @@ class TestDynamicLibrary(unittest.TestCase):
             lib = TestLibrary('InvalidSignatureArgDocDynamicJavaLibrary')
             assert_equals(len(lib.handlers), 0)
 
-        def _assert_java_handler(self, handler, doc, minargs, maxargs):
+        def _assert_java_handler(self, handler, doc, minargs, maxargs,
+                                 kwargs=False):
             assert_equals(handler.doc, doc)
-            self._assert_handler_args(handler, minargs, maxargs)
+            self._assert_handler_args(handler, minargs, maxargs, kwargs)
 
 
 class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
