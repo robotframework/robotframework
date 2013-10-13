@@ -14,3 +14,32 @@ Dynamic kwargs support should work without argument specification
 
 Unexpected keyword argument
     ${tc}=    Check test Case    ${TESTNAME}
+
+Documentation and Argument Boundaries Work With Kwargs
+    Check test case and its doc  Kwargs  key:value
+
+Documentation and Argument Boundaries Work With Varargs and Kwargs
+    Check test case and its doc  Varargs and Kwargs
+    ...  \
+    ...  1 2 3
+    ...  key:value
+    ...  1 2 3 key:value
+
+Documentation and Argument Boundaries Work When Argspec is None
+    Check test case and its doc  No Arg Spec
+    ...  \
+    ...  1 2 3
+    ...  key:value
+    ...  1 2 3 key:value
+
+*** Keywords ***
+
+Check test case and its doc
+    [Arguments]  ${keyword}  @{argstrings}
+    ${tc} =  Check Test case  ${TESTNAME}
+    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for ${keyword}
+    @{argstrings}=  Evaluate  enumerate(${argstrings})
+    @{argstrings}=  Combine Lists  @{argstrings}
+    :FOR  ${id}  ${argstr}  IN  @{argstrings}
+    \   Check Log Message  ${tc.kws[${id}].msgs[0]}
+        ...  Executed keyword ${keyword} with arguments ${argstr}
