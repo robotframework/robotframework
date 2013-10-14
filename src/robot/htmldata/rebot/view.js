@@ -3,7 +3,9 @@ function removeJavaScriptDisabledWarning() {
     document.getElementById('javascript-disabled').style.display = 'none';
 }
 
-function addJavaScriptDisabledWarning() {
+function addJavaScriptDisabledWarning(error) {
+    if (window.console)
+        console.error('Opening failed: ' + error.name + ': ' + error.message);
     document.getElementById('javascript-disabled').style.display = 'block';
 }
 
