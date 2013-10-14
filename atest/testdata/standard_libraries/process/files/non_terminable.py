@@ -1,6 +1,12 @@
 import signal
+import time
 
-signal.signal(signal.SIGTERM, lambda *x: None)
+print 'Starting non-terminable process'
 
-while(True):
-	pass
+def handler(signum, frame):
+    print 'Ignoring signal %d' % signum
+
+signal.signal(signal.SIGTERM, handler)
+
+while True:
+    time.sleep(0.1)

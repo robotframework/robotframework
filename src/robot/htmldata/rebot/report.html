@@ -15,7 +15,7 @@
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tablesorter.min.js"></script>
-<script type="text/javascript" src="../lib/jsxcompressor.js"></script>
+<script type="text/javascript" src="../lib/jsxcompressor.min.js"></script>
 <script type="text/javascript" src="fileloading.js"></script>
 <script type="text/javascript" src="model.js"></script>
 <script type="text/javascript" src="util.js"></script>
@@ -44,8 +44,8 @@
 $(document).ready(function () {
     try {
         var topsuite = window.testdata.suite();
-    } catch (e) {
-        addJavaScriptDisabledWarning();
+    } catch (error) {
+        addJavaScriptDisabledWarning(error);
         return;
     }
     setBackground(topsuite);
@@ -401,8 +401,8 @@ function hideHiddenDetailsColumns(elem) {
       </div>
       <div class="tag-links">
         {{each links}}
-        <span>[<a href="${$value.url}" onclick="stopPropagation(event)"
-                  title="${$value.url}">{{html $value.title}}</a>]</span>
+        <span>[<a href="{{html $value.url}}" onclick="stopPropagation(event)"
+                  title="{{html $value.url}}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
     </td>
@@ -517,8 +517,8 @@ function hideHiddenDetailsColumns(elem) {
   {{if links}}{{if links.length}}
   <tr>
     <th>Links:</th>
-    <td>{{each links}}<a href="${$value.url}"
-                         title="${$value.url}">{{html $value.title}}</a> &nbsp; {{/each}}</td>
+    <td>{{each links}}<a href="{{html $value.url}}"
+                         title="{{html $value.url}}">{{html $value.title}}</a> &nbsp; {{/each}}</td>
   </tr>
   {{/if}}{{/if}}
   <tr>

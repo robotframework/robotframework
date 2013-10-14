@@ -613,13 +613,13 @@ operating-system-agnostic.
    |            | started from.                                                    |
    +------------+------------------------------------------------------------------+
    | ${/}       | The system directory path separator. :code:`/` in UNIX-like      |
-   |            | systems, :code:`\\` in Windows.                                  |
+   |            | systems and :code:`\\` in Windows.                               |
    +------------+------------------------------------------------------------------+
    | ${:}       | The system path element separator. :code:`:` in UNIX-like        |
    |            | systems and :code:`;` in Windows.                                |
    +------------+------------------------------------------------------------------+
    | ${\\n}     | The system line separator. :code:`\\n` in UNIX-like systems and  |
-   |            | systems and :code:`\\r\\n` in Windows. New in version 2.7.5.     |
+   |            | :code:`\\r\\n` in Windows. New in version 2.7.5.                 |
    +------------+------------------------------------------------------------------+
 
 .. table:: Using operating-system-related built-in variables

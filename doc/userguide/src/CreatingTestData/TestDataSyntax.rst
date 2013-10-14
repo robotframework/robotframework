@@ -239,7 +239,7 @@ at least two spaces, and it is thus possible to align the data nicely.
 This is a clear benefit over editing the TSV format in a text editor
 because with TSV the alignment cannot be controlled.
 
-::
+.. sourcecode:: robotframework
 
    *** Settings ***
    Library       OperatingSystem
@@ -282,7 +282,7 @@ especially if keywords take a lot of arguments and/or arguments
 contain spaces. In such cases the pipe and space delimited variant can
 work better because it makes the cell boundary more visible.
 
-::
+.. sourcecode:: robotframework
 
    | *Setting*  |     *Value*     |
    | Library    | OperatingSystem |
@@ -311,10 +311,13 @@ the pipes other than if it makes the data more clear.
 There is no need to escape empty cells (other than the `trailing empty
 cells`__) when using the pipe and space separated format. The only
 thing to take into account is that possible pipes surrounded by spaces
-in the actual test data must be escaped with a backslash::
+in the actual test data must be escaped with a backslash:
 
-   | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
-   | Should Be Equal | ${file count}   | 42                   |
+.. sourcecode:: robotframework
+
+   | *** Test Cases *** |                 |                 |                      |
+   | Escaping Pipe      | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
+   |                    | Should Be Equal | ${file count}   | 42                   |
 
 __ Escaping_
 
@@ -372,7 +375,9 @@ are syntax highlighted using Pygments_. In standard reST code blocks are
 started using the :code:`code` directive, but Sphinx_ uses :code:`code-block`
 or :code:`sourcecode` instead. The name of the programming language in
 the code block is given as an argument to the directive. For example, following
-code blocks contain Python and Robot Framework examples, respectively::
+code blocks contain Python and Robot Framework examples, respectively:
+
+.. sourcecode:: rest
 
     .. code:: python
 
@@ -393,7 +398,9 @@ the code blocks is ignored.
 
 The test data in the code blocks must be defined using the `plain text format`_.
 As the example below illustrates, both space and pipe separated variants are
-supported::
+supported:
+
+.. sourcecode:: rest
 
     Example
     -------
@@ -444,7 +451,9 @@ HTML in memory and parses it exactly like it would parse a normal HTML file.
 Robot Framework identifies `test data tables`_ based on the text in the first
 cell and all content outside of the recognized table types is ignored.
 An example of each of the four test data tables is shown below
-using both simple table and grid table syntax::
+using both simple table and grid table syntax:
+
+.. sourcecode:: rest
 
     Example
     -------
@@ -599,8 +608,8 @@ In addition to that, non-breaking spaces are replaced with normal spaces.
 This is done to avoid hard-to-debug errors
 when a non-breaking space is accidentally used instead of a normal space.
 
-If leading, trailing, or consecutive spaces are needed, they must either be
-escaped__. Newlines, carriage returns, tabs, and non-breaking spaces can be
+If leading, trailing, or consecutive spaces are needed, they `must be
+escaped`__. Newlines, carriage returns, tabs, and non-breaking spaces can be
 created using `escape sequences`_ :code:`\\n`, :code:`\\r`, :code:`\\t`, and
 :code:`\\xA0` respectively.
 
@@ -609,9 +618,9 @@ __ `Prevent ignoring spaces`_
 Escaping
 ''''''''
 
-The escape character in Robot Framework test data is the backslash (:code:`\\`),
+The escape character in Robot Framework test data is the backslash (:code:`\\`)
 and additionally `built-in variables`_ :var:`${EMPTY}` and :var:`${SPACE}`
-are often used for escaping. Different escaping mechanisms are
+can often be used for escaping. Different escaping mechanisms are
 discussed in the sections below.
 
 Escaping special characters
@@ -632,7 +641,7 @@ so that their literal values are used.
    :code:`\\#`   Hash sign, never starts a comment_.                               :code:`\\# not comment`
    :code:`\\=`   Equal sign, never part of `named argument syntax`_.               :code:`not\\=named`
    :code:`\\|`   Pipe character, not a separator in the `pipe separated format`_.  :code:`| Run | ps \\| grep xxx |`
-   :code:`\\\\`  Backlash character, never escapes anything.                       :code:`c:\\\\temp, \\\\${var}`
+   :code:`\\\\`  Backslash character, never escapes anything.                      :code:`c:\\\\temp, \\\\${var}`
    ============  ================================================================  =================================
 
 .. _escape sequence:
@@ -651,16 +660,31 @@ in the test data.
    ===================  ==========================================  ==================================
         Sequence                         Meaning                                 Examples
    ===================  ==========================================  ==================================
-   :code:`\\n`          Newline character.                          :code:`first line\\n2nd line`.
-   :code:`\\r`          Carriage return character                   :code:`text\\rmore text`.
-   :code:`\\t`          Tab character.                              :code:`text\\tmore text`.
-   :code:`\\xhh`        Character with hex value :code:`hh`.        :code:`null byte: \\x00, ä: \\xe4`
+   :code:`\\n`          Newline character.                          :code:`first line\\n2nd line`
+   :code:`\\r`          Carriage return character                   :code:`text\\rmore text`
+   :code:`\\t`          Tab character.                              :code:`text\\tmore text`
+   :code:`\\xhh`        Character with hex value :code:`hh`.        :code:`null byte: \\x00, ä: \\xE4`
    :code:`\\uhhhh`      Character with hex value :code:`hhhh`.      :code:`snowman: \\u2603`
    :code:`\\Uhhhhhhhh`  Character with hex value :code:`hhhhhhhh`.  :code:`love hotel: \\U0001f3e9`
    ===================  ==========================================  ==================================
 
-.. note:: :code:`\\x`, :code:`\\u` and :code:`\\U` escape sequences are new in
-          Robot Framework 2.8.2.
+.. note:: All strings created in the test data, including characters like
+          :code:`\\x02`, are Unicode and must be explicitly converted to
+          byte strings if needed. This can be done, for example, using
+          :name:`Encode String To Bytes` keyword in the String_ library or
+          something like :code:`str(value)` or :code:`value.encode('UTF-8')`
+          in Python code.
+
+.. note:: If invalid hexadecimal values are used with :code:`\\x`, :code:`\\u`
+          or :code:`\\U` escapes, the end result is the original value without
+          the backslash character. For example, :code:`\\xAX` (not hex) and
+          :code:`\\U00110000` (too large value) result with :code:`xAX`
+          and :code:`U00110000`, respectively. This behavior may change in
+          the future, though.
+
+.. note:: `Built-in variable`_ :var:`${\\n}` can be used if operating system
+          dependent line terminator is needed (:code:`\\r\\n` on Windows and
+          :code:`\\n` elsewhere).
 
 .. note:: Possible un-escaped whitespace character after the :code:`\\n` is
           ignored. This means that :code:`two lines\\nhere` and
@@ -669,6 +693,9 @@ in the test data.
           the HTML format, but the same logic is used also with other formats.
           An exception to this rule is that the whitespace character is not
           ignored inside the `extended variable syntax`_.
+
+.. note:: :code:`\\x`, :code:`\\u` and :code:`\\U` escape sequences are new in
+          Robot Framework 2.8.2.
 
 Prevent ignoring empty cells
 ````````````````````````````
@@ -682,8 +709,8 @@ Empty cells can be escaped either with the backslash character or with
 `built-in variable`_ :var:`${EMPTY}`. The latter is typically recommended
 as it is easier to understand. An exception to this recommendation is escaping
 the indented cells in `for loops`_ with a backslash when using the
-`space separated format`_. All this is illustrated in the following examples
-first in HTML and then in the space separated plain text format:
+`space separated format`_. All these cases are illustrated in the following
+examples first in HTML and then in the space separated plain text format:
 
 .. table::
    :class: example
@@ -698,11 +725,11 @@ first in HTML and then in the space separated plain text format:
    \                                 Log         ${var}      # No escaping needed here either
    ==================  ============  ==========  ==========  ================================
 
-::
+.. sourcecode:: robotframework
 
    *** Test Cases ***
    Using backslash
-       Do Something    first arg    \\
+       Do Something    first arg    \
    Using ${EMPTY}
        Do Something    first arg    ${EMPTY}
    Non-trailing empty

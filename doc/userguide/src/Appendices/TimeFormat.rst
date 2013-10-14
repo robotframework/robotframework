@@ -8,7 +8,6 @@ format is meant to be both flexible to use and easy to understand.
 
 __ `test case timeouts`_
 
-
 Time as number
 ~~~~~~~~~~~~~~
 
@@ -17,7 +16,6 @@ interpreted to be seconds. Both integers and floating point numbers
 work, and it is possible to use either real numbers or strings
 containing numerical values. This format is useful, for example, when
 the actual time value is calculated.
-
 
 Time as text
 ~~~~~~~~~~~~
@@ -46,4 +44,3 @@ Examples::
    90 s
    1 day 2 hours 3 minutes 4 seconds 5 milliseconds
    1d 2h 3m 4s 5ms
-   

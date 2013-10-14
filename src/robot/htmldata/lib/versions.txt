@@ -12,10 +12,10 @@ Includes our in-place fix for escaping &. See following links before update!
 http://code.google.com/p/robotframework/source/detail?r=f0b7401071b2c65b9fe30a31f2acf302e3206ed3
 https://github.com/jquery/jquery-tmpl/issues/79
 
-jsxcompressor
--------------
+jsxcompressor.min
+-----------------
 from http://jsxgraph.uni-bayreuth.de/distrib/jsxcompressor.zip
-downloaded 16th June 2011.
+downloaded 11th October 2013.
 
 jquery.tablesorter.min
 ----------------------

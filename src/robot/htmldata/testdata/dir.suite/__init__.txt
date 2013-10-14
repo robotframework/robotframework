@@ -26,7 +26,7 @@ Documentation  Documentation for the whole test suite. All this forms a single
 ...            | pre *formatted*
 ...            | \ \ content\t\with whitespaces
 ...            ---
-...            - first list item
+...            - first list item has snowman \u2603 and monkey face \U0001F435
 ...            - second list item
 ...            \ is continued \
 ...            using *two* different approaches

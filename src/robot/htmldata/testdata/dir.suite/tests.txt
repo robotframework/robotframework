@@ -56,8 +56,10 @@ Long doc with formatting
 
 Non-ASCII 官话
     [Documentation]   with nön-äscii 官话
-    [Tags]   with nön-äscii 官话
-    Log  hyvää joulua
+    [Tags]   with nön-äscii 官话  \u2603  \U0001F435
+    Log  hyvää joulua \u2603 \U0001F435
+    ${long enough to be zipped} =    Evaluate    u'\\u2603 \\U0001F435 ' * 1000
+    Log    ${long enough to be zipped}
 
 Complex
     [Setup]   Log   in own setup
