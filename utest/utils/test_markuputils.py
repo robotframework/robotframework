@@ -429,6 +429,27 @@ after
                              ['3.1','3.2','']])
         assert_format(inp, exp)
 
+    def test_th(self):
+        inp = '''
+| =a= |   =   b   =   | = = c = = |
+| = = |    = _e_ =    |  =_*f*_=  |
+'''
+        exp = '''
+<table border="1">
+<tr>
+<th>a</th>
+<th>b</th>
+<th>= c =</th>
+</tr>
+<tr>
+<th></th>
+<th><i>e</i></th>
+<th><i><b>f</b></i></th>
+</tr>
+</table>
+'''
+        assert_format(inp, exp.strip())
+
     def test_bold_in_table_cells(self):
         inp = '''
 | *a* | *b* | *c* |
@@ -685,6 +706,20 @@ class TestFormatTable(unittest.TestCase):
 <td>3.1</td>
 <td>3.2</td>
 <td></td>
+</tr>
+</table>'''
+        assert_equals(_format_table(inp), exp)
+
+    def test_th(self):
+        inp = [['=h1.1=', '=  h  1.2   ='], ['== _h2.1_ =', '= not h 2.2']]
+        exp = self._table_start + '''
+<tr>
+<th>h1.1</th>
+<th>h  1.2</th>
+</tr>
+<tr>
+<th>= <i>h2.1</i></th>
+<td>= not h 2.2</td>
 </tr>
 </table>'''
         assert_equals(_format_table(inp), exp)
