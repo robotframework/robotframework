@@ -681,13 +681,10 @@ class _Verify:
     def should_match_regexp(self, string, pattern, msg=None, values=True):
         """Fails if `string` does not match `pattern` as a regular expression.
 
-        Regular expression check is done using the Python 're' module, which
-        has a pattern syntax derived from Perl, and thus also very similar to
-        the one in Java. See the following documents for more details about
-        regular expressions in general and Python implementation in particular.
-
-        | http://docs.python.org/lib/module-re.html
-        | http://www.amk.ca/python/howto/regex/
+        Regular expression check is implemented using the Python
+        [http://docs.python.org/2/library/re.html|re module]. Python's regular
+        expression syntax is derived from Perl, and it is thus also very
+        similar to the syntax used, for example, in Java, Ruby and .NET.
 
         Things to note about the regexp syntax in Robot Framework test data:
 
