@@ -362,17 +362,14 @@ table.messages td.warn {
     font-size: 0.9em;
 }
 .doc > * {
-    margin: 10px 10px 0 10px;
+    margin: 0.7em 1em 0.1em 1em;
     padding: 0;
 }
-.doc > p {
-    margin: 10px 0 0 0;
+.doc > p, .doc > h1, .doc > h2, .doc > h3, .doc > h4 {
+    margin: 0.7em 0 0.1em 0;
 }
 .doc > *:first-child {
-    margin-top: 0;
-}
-.doc li {
-    list-style: square inside;
+    margin-top: 0.1em;
 }
 .doc table {
     border: 1px solid gray;
@@ -381,10 +378,25 @@ table.messages td.warn {
     empty-cells: show;
     font-size: 0.9em;
 }
-.doc table td {
+.doc table th, .doc table td {
     border: 1px solid gray;
     padding: 0.1em 0.3em;
     height: 1.2em;
+}
+.doc table th {
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+.doc pre {
+    font-size: 1.1em;
+    background: #F4F4FF;
+}
+.doc li {
+    list-style-position: inside;
+    list-style-type: square;
+}
+.doc img {
+    border: 1px solid gray;
 }
 .doc hr {
     background: gray;

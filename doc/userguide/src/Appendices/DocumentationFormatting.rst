@@ -306,29 +306,32 @@ equal signs and the title text are mandatory.
 Tables
 ~~~~~~
 
-Tables are created using the pipe character with whitespace around it
-as a cell boundary and the possibly automatically added newline character
-as a row separator::
+Tables are created using pipe characters with spaces around them
+as column separators and newlines as row separators. Header
+cells can be created by surrounding the cell content with equal signs
+and optional spaces like :code:`= Header =` or :code:`=Header=`. Tables
+cells can also contain links and formatting such as bold and italic::
 
-   | *A* | *B*   | *C*   |
-   | _1_ | Hello | world |
+   | =A= |  =B=  | = C =  |
+   | _1_ | Hello | world! |
    | _2_ | Hi    |
 
-The created table always has a thin border and the text is
-left-aligned. Formatting using bold and italic works also in table
-cells, so it is possible to create headers. Empty cells are automatically
-added to make rows equally long. For example, the above
-example would be formatted like this in HTML:
+The created table always has a thin border and normal text is left-aligned.
+Text in header cells is bold and centered. Empty cells are automatically
+added to make rows equally long. For example, the above example would be
+formatted like this in HTML:
 
 .. raw:: html
 
   <div class="doc">
-  <table>
-    <tr><td><b>A</b></td><td><b>B</b></td><td><b>C</b></td>
-    <tr><td><i>1</i></td><td>Hello</td><td>world</td>
-    <tr><td><i>2</i></td><td>Hi</td><td></td>
-  </table>
+    <table>
+      <tr><th>A</th><th>B</th><th>C</th></tr>
+      <tr><td><i>1</i></td><td>Hello</td><td>world</td></tr>
+      <tr><td><i>2</i></td><td>Hi</td><td></td></tr>
+    </table>
   </div>
+
+.. note:: Support for table headers is a new feature in Robot Framework 2.8.2.
 
 Lists
 ~~~~~
