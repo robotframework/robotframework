@@ -205,9 +205,9 @@ class Process(object):
 
     = Result object =
 
-    `Run Process` and `Wait For Process` keywords return a result object
-    that contains information about the process execution as its attibutes.
-    What is available is documented in the table below.
+    `Run Process`, `Wait For Process` and `Terminate Process` keywords return a
+    result object that contains information about the process execution as its
+    attibutes. What is available is documented in the table below.
 
     | *Attribute* | *Explanation*                             |
     | rc          | Return code of the process as an integer. |
@@ -349,7 +349,7 @@ class Process(object):
         if self.is_process_running(handle):
             raise AssertionError(error_message)
 
-    def wait_for_process(self, handle=None, timeout=None, handle_timeout='none'):
+    def wait_for_process(self, handle=None, timeout=None, on_timeout='none'):
         """Waits for the process to complete or to reach given timeout.
         Reaching timeout will not fail tests. Instead the action triggered
         by timeout is configured with `handle_timeout` parameter.
@@ -359,19 +359,43 @@ class Process(object):
         `timeout` is a string representing time. It is interpreted
         according to Robot Framework User Guide Appendix `Time Format`
 
-        `handle_timeout` is a string specifying what is done to the process
-        when given timeout is reached. Values can be 'none', 'terminate' or 'kill'.
-        If 'none' is specified then the process is left running after
-        exiting the keyword execution on timeout.
+        `on_timeout` is a string specifying what is done to the process
+        when the timeout is reached. Possible values are explained below:
+
+        | *Value*     | *Action*                                               |
+        | `none`      | The process is left running and returncode set to None |
+        | `terminate` | The process is gracefully terminated                   |
+        | `kill`      | The process is forcefully stopped                      |
+
+        See `Terminate Process` documentation on how termination and killing
+        processes are handled.
 
         Returns a `result object` containing information about the execution.
+
+        Timeout is new in Robot Framework 2.8.2
         """
         process = self._processes[handle]
         result = self._results[process]
         logger.info('Waiting for process to complete.')
-        result.rc = self._wait_completion(handle, timeout, handle_timeout)
+        if timeout:
+            timeout = timestr_to_secs(timeout)
+            if not self._process_is_stopped(process, timeout):
+                logger.warn('Process timeout reached')
+                return self._manage_process_timeout(handle, on_timeout)
+        result.rc = process.wait() or 0
         logger.info('Process completed.')
         return result
+
+    def _manage_process_timeout(self, handle, on_timeout):
+        if on_timeout == 'terminate':
+            return self.terminate_process(handle)
+        elif on_timeout == 'kill':
+            return self.terminate_process(handle, True)
+        else:
+            logger.info('Leaving process intact')
+            result = self._results[self._processes[handle]]
+            result.rc = None
+            return result
 
     def terminate_process(self, handle=None, kill=False):
         """Terminates the process.
@@ -474,13 +498,6 @@ class Process(object):
         """
         self._processes.switch(handle)
 
-    def _wait_completion(self, handle, timeout, handle_timeout):
-        timeout_reached = False
-        if timeout:
-            timeout = timestr_to_secs(timeout)
-            timeout_reached = not self._process_is_stopped(self._processes[handle], timeout)
-        return self._handle_process_shutdown(handle, timeout_reached, handle_timeout)
-
     def _process_is_stopped(self, process, timeout):
         max_time = time.time() + timeout
         while time.time() <= max_time:
@@ -489,16 +506,6 @@ class Process(object):
             time.sleep(0.1)
         return False
 
-    def _handle_process_shutdown(self, handle, timeout_reached, handle_timeout):
-        if timeout_reached:
-            if handle_timeout == 'terminate':
-                self.terminate_process(handle)
-            elif handle_timeout == 'kill':
-                self.terminate_process(handle, True)
-            else:
-                logger.info('Leaving process intact')
-                return None
-        return self._processes[handle].wait() or 0
 
 class ExecutionResult(object):
 
