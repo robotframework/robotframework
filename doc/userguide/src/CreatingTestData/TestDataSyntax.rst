@@ -496,8 +496,8 @@ using both simple table and grid table syntax:
     |             | Directory Should Exist | ${path}    |            |
     +-------------+------------------------+------------+------------+
 
-.. note:: Empty cells in the first column of simple tables needs to be escaped.
-          The above example uses :code:`\\` and :code:`..` could also be used.
+.. note:: Empty cells in the first column of simple tables need to be escaped.
+          The above example uses :code:`\\` but :code:`..` could also be used.
 
 .. note:: Because the backslash character is an escape character in reST,
           specifying a backslash so that Robot Framework will see it requires
@@ -701,8 +701,8 @@ Prevent ignoring empty cells
 ````````````````````````````
 
 If empty values are needed as arguments for keywords or otherwise, they often
-need to be escaped to prevent them to be ignored__. Empty trailing cells must
-be escaped regardless the test data format, and when using the
+need to be escaped to prevent them from being ignored__. Empty trailing cells
+must be escaped regardless of the test data format, and when using the
 `space separated format`_ all empty values must be escaped.
 
 Empty cells can be escaped either with the backslash character or with
@@ -744,9 +744,10 @@ Prevent ignoring spaces
 ```````````````````````
 
 Because leading, trailing, and consecutive spaces in cells are ignored__, they
-need to escaped if needed as arguments to keywords or otherwise. Similarly
-as when preventing ignoring empty cells, it is possible to do that either
-using the backslash character or using `built-in variable`_ :var:`${SPACE}`.
+need to be escaped if they are needed as arguments to keywords or otherwise.
+Similarly as when preventing ignoring empty cells, it is possible to do that
+either using the backslash character or using `built-in variable`_
+:var:`${SPACE}`.
 
 .. table:: Escaping spaces examples
    :class: tabular
