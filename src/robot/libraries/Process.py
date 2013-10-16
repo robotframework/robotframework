@@ -384,14 +384,19 @@ class Process(object):
         be forcefully killed.
 
         See `Stopping process` for more details.
+
+        Returns a `result object` containing information about the execution.
         """
         process = self._processes[handle]
+        result = self._results[process]
         if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
                                'by this interpreter version.')
         terminator = self._kill_process if kill else self._terminate_process
         try:
             terminator(process)
+            result.rc = process.wait() or 0
+            return result
         except OSError:
             if not self._process_is_stopped(process, self._kill_timeout):
                 raise
