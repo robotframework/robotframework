@@ -379,13 +379,16 @@ class Process(object):
         If `handle` is not given, uses the current `active process`.
 
         `kill` is a boolean value. If False, a graceful termination is
-        attempted and if the process still remains running it will be
-        forcefully killed after 5 seconds. If True the process will immediately
-        be forcefully killed.
+        attempted and if the process remains running after 30 seconds it
+        will be forcefully killed. If True the process will immediately
+        be forcefully killed. If the process doesn't shut down in 10
+        seconds from killing it, an exception is raised.
 
         See `Stopping process` for more details.
 
         Returns a `result object` containing information about the execution.
+
+        Termination timeout and result value are new in Robot Framework 2.8.2
         """
         process = self._processes[handle]
         result = self._results[process]
