@@ -264,6 +264,8 @@ class Process(object):
     def __init__(self):
         self._processes = ConnectionCache('No active process.')
         self._results = {}
+        self._terminate_timeout = 30
+        self._kill_timeout = 10
 
     def run_process(self, command, *arguments, **configuration):
         """Runs a process and waits for it to complete.
@@ -391,18 +393,20 @@ class Process(object):
         try:
             terminator(process)
         except OSError:
-            if not self._process_is_stopped(process):
+            if not self._process_is_stopped(process, self._kill_timeout):
                 raise
             logger.debug('Ignored OSError because process was stopped.')
 
     def _kill_process(self, process):
         logger.info('Forcefully killing process.')
         process.kill()
+        if not self._process_is_stopped(process, self._kill_timeout):
+            raise
 
     def _terminate_process(self, process):
         logger.info('Gracefully terminating process.')
         process.terminate()
-        if not self._process_is_stopped(process):
+        if not self._process_is_stopped(process, self._terminate_timeout):
             self._kill_process(process)
 
     def terminate_all_processes(self, kill=False):
@@ -469,7 +473,7 @@ class Process(object):
             timeout_reached = not self._process_is_stopped(self._processes[handle], timeout)
         return self._handle_process_shutdown(handle, timeout_reached, handle_timeout)
 
-    def _process_is_stopped(self, process, timeout=5):
+    def _process_is_stopped(self, process, timeout):
         max_time = time.time() + timeout
         while time.time() <= max_time:
             if process.poll() is not None:
