@@ -19,7 +19,8 @@ import subprocess
 import time
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
-                         decode_from_system, get_env_vars, timestr_to_secs)
+                         decode_from_system, get_env_vars, secs_to_timestr,
+                         timestr_to_secs)
 from robot.version import get_version
 from robot.api import logger
 
@@ -75,7 +76,7 @@ class Process(object):
     optional `**configuration` keyword arguments. Available configuration
     arguments are listed below and discussed further in sections afterwards.
 
-    | *Name*     | *Explanation*                                         |
+    |  = Name =  |                  = Explanation =                      |
     | shell      | Specifies whether to run the command in shell or not  |
     | cwd        | Specifies the working directory.                      |
     | env        | Specifies environment variables given to the process. |
@@ -209,12 +210,12 @@ class Process(object):
     result object that contains information about the process execution as its
     attibutes. What is available is documented in the table below.
 
-    | *Attribute* | *Explanation*                             |
-    | rc          | Return code of the process as an integer. |
-    | stdout      | Contents of the standard output stream.   |
-    | stderr      | Contents of the standard error stream.    |
-    | stdout_path | Path where stdout was redirected or `None` if not redirected. |
-    | stderr_path | Path where stderr was redirected or `None` if not redirected. |
+    | = Attribute = |             = Explanation =               |
+    | rc            | Return code of the process as an integer. |
+    | stdout        | Contents of the standard output stream.   |
+    | stderr        | Contents of the standard error stream.    |
+    | stdout_path   | Path where stdout was redirected or `None` if not redirected. |
+    | stderr_path   | Path where stderr was redirected or `None` if not redirected. |
 
     Example:
     | ${result} =            | `Run Process`         | program               |
@@ -351,18 +352,20 @@ class Process(object):
 
     def wait_for_process(self, handle=None, timeout=None, on_timeout='none'):
         """Waits for the process to complete or to reach given timeout.
+
         Reaching timeout will not fail tests. Instead the action triggered
         by timeout is configured with `handle_timeout` parameter.
 
         If `handle` is not given, uses the current `active process`.
 
         `timeout` is a string representing time. It is interpreted
-        according to Robot Framework User Guide Appendix `Time Format`
+        according to Robot Framework User Guide Appendix `Time Format`,
+        for example, '42', '42 s', '1 minute 30 seconds'.
 
         `on_timeout` is a string specifying what is done to the process
         when the timeout is reached. Possible values are explained below:
 
-        | *Value*     | *Action*                                               |
+        |  = Value =  |                     = Action =                         |
         | `none`      | The process is left running and returncode set to None |
         | `terminate` | The process is gracefully terminated                   |
         | `kill`      | The process is forcefully stopped                      |
@@ -372,7 +375,7 @@ class Process(object):
 
         Returns a `result object` containing information about the execution.
 
-        Timeout is new in Robot Framework 2.8.2
+        `timeout` and `on_timeout` are new in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
         result = self._results[process]
@@ -380,8 +383,9 @@ class Process(object):
         if timeout:
             timeout = timestr_to_secs(timeout)
             if not self._process_is_stopped(process, timeout):
-                logger.warn('Process timeout reached')
-                return self._manage_process_timeout(handle, on_timeout)
+                logger.warn('Process did not complete in %s.'
+                            % secs_to_timestr(timeout))
+                return self._manage_process_timeout(handle, on_timeout.lower())
         result.rc = process.wait() or 0
         logger.info('Process completed.')
         return result
@@ -390,9 +394,9 @@ class Process(object):
         if on_timeout == 'terminate':
             return self.terminate_process(handle)
         elif on_timeout == 'kill':
-            return self.terminate_process(handle, True)
+            return self.terminate_process(handle, kill=True)
         else:
-            logger.info('Leaving process intact')
+            logger.info('Leaving process intact.')
             result = self._results[self._processes[handle]]
             result.rc = None
             return result
