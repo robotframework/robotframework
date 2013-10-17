@@ -18,24 +18,30 @@ Run process does not change active process
 Killing process
     ${handle}=    Some process
     Process Should Be Running
-    Terminate Process    ${handle}    kill=${True}
+    ${result} =    Terminate Process    ${handle}    kill=${True}
     Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
+    Should Not Be Equal As Integers    ${result.rc}    0
 
 Terminating process
     ${handle}=    Some process
     Process Should Be Running
-    Terminate Process    ${handle}
+    ${result} =    Terminate Process    ${handle}
     Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
+    Should Not Be Equal As Integers     ${result.rc}    0
 
 Kill Process When Terminate Fails
+    ${lib} =    Get Library Instance    Process
+    ${lib._terminate_timeout} =    Set Variable    ${5}
+    ${lib._kill_timeout} =    Set Variable    ${1}
     ${process} =    Start Process    python    ${NONTERM}
     Process Should Be Running    ${process}
     Sleep   0.1
-    Terminate Process    ${process}
+    ${result} =    Terminate Process    ${process}
     Wait For Process    ${process}
     Process Should Be Stopped    ${process}
+    Should Not Be Equal As Integers    ${result.rc}    0
 
 Pid
     ${handle}=    Some process

@@ -74,18 +74,6 @@ Non-existing keyword name
     [Documentation]  FAIL No keyword with name 'Does not exist' found.
     Does not exist
 
-Too few arguments
-    [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.
-    Should Be Equal  1
-
-Too few arguments for UK
-    [Documentation]  FAIL Keyword 'resource.Anarchy in the UK' expected 3 arguments, got 1.
-    Anarchy in the UK  foo
-
-Too many arguments
-    [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 2.
-    No Operation  ${foo}  bar
-
 Invalid syntax in UK
     [Documentation]  FAIL No keyword with name 'Invalid Syntax UK' found.
     Invalid Syntax UK

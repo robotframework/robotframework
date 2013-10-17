@@ -218,7 +218,7 @@ class ParagraphFormatter(_Formatter):
 class TableFormatter(_Formatter):
     _table_line = re.compile('^\| (.* |)\|$')
     _line_splitter = re.compile(' \|(?= )')
-    _format_cell = LineFormatter().format
+    _format_cell_content = LineFormatter().format
 
     def _handles(self, line):
         return self._table_line.match(line) is not None
@@ -235,10 +235,18 @@ class TableFormatter(_Formatter):
         for row in rows:
             row += [''] * (maxlen - len(row))  # fix ragged tables
             table.append('<tr>')
-            table.extend('<td>%s</td>' % self._format_cell(c) for c in row)
+            table.extend(self._format_cell(cell) for cell in row)
             table.append('</tr>')
         table.append('</table>')
         return '\n'.join(table)
+
+    def _format_cell(self, content):
+        if content.startswith('=') and content.endswith('='):
+            tx = 'th'
+            content = content[1:-1].strip()
+        else:
+            tx = 'td'
+        return '<%s>%s</%s>' % (tx, self._format_cell_content(content), tx)
 
 
 class PreformattedFormatter(_Formatter):

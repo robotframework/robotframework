@@ -2,11 +2,11 @@
 Library    Library.py
 
 *** Test Cases ***
-Positional and kwargs
-    [Documentation]    FAIL Keyword 'Library.Positional And Kwargs' expected 1 non-keyword argument, got 0.
-    Positional and kwargs    arg
-    Positional and kwargs    arg    a=1    b=2
-    Positional and kwargs    a=1
+Normal and kwargs
+    [Documentation]    FAIL Keyword 'Library.Normal And Kwargs' expected 1 non-keyword argument, got 0.
+    Normal and kwargs    arg
+    Normal and kwargs    arg    a=1    b=2
+    Normal and kwargs    a=1
 
 Varargs and kwargs
     Varargs and kwargs
