@@ -260,12 +260,12 @@ class Process(object):
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
+    TERMINATE_TIMEOUT = 30
+    KILL_TIMEOUT = 10
 
     def __init__(self):
         self._processes = ConnectionCache('No active process.')
         self._results = {}
-        self._terminate_timeout = 30
-        self._kill_timeout = 10
 
     def run_process(self, command, *arguments, **configuration):
         """Runs a process and waits for it to complete.
@@ -402,17 +402,19 @@ class Process(object):
 
         If `handle` is not given, uses the current `active process`.
 
-        `kill` is a boolean value. If False, a graceful termination is
-        attempted and if the process remains running after 30 seconds it
-        will be forcefully killed. If True the process will immediately
-        be forcefully killed. If the process doesn't shut down in 10
-        seconds from killing it, an exception is raised.
+        Returns a `result object` containing information about the execution
+        similarly as `Wait For Process`.
+
+        By default, tries to terminate the process gracefully, but forcefully
+        kills it if it does not stop in 30 seconds. Kills the process
+        immediately if `kill` argument is given any non-empty value.
+        On Unix-like machines termination is done using `TERM (15)` signal and
+        killing using `KILL (9)`. On Windows Win32 API is used directly.
 
         See `Stopping process` for more details.
 
-        Returns a `result object` containing information about the execution.
-
-        Termination timeout and result value are new in Robot Framework 2.8.2
+        Termination timeout and returning the result object are new features
+        in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
         result = self._results[process]
@@ -425,20 +427,20 @@ class Process(object):
             result.rc = process.wait() or 0
             return result
         except OSError:
-            if not self._process_is_stopped(process, self._kill_timeout):
+            if not self._process_is_stopped(process, self.KILL_TIMEOUT):
                 raise
             logger.debug('Ignored OSError because process was stopped.')
 
     def _kill_process(self, process):
         logger.info('Forcefully killing process.')
         process.kill()
-        if not self._process_is_stopped(process, self._kill_timeout):
+        if not self._process_is_stopped(process, self.KILL_TIMEOUT):
             raise
 
     def _terminate_process(self, process):
         logger.info('Gracefully terminating process.')
         process.terminate()
-        if not self._process_is_stopped(process, self._terminate_timeout):
+        if not self._process_is_stopped(process, self.TERMINATE_TIMEOUT):
             self._kill_process(process)
 
     def terminate_all_processes(self, kill=False):

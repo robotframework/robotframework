@@ -33,8 +33,8 @@ Terminating process
 
 Kill Process When Terminate Fails
     ${lib} =    Get Library Instance    Process
-    ${lib._terminate_timeout} =    Set Variable    ${5}
-    ${lib._kill_timeout} =    Set Variable    ${1}
+    ${lib.TERMINATE_TIMEOUT} =    Set Variable    ${2}
+    ${lib.KILL_TIMEOUT} =    Set Variable    ${1}
     ${process} =    Start Process    python    ${NONTERM}
     Process Should Be Running    ${process}
     Sleep   0.1
