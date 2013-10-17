@@ -461,7 +461,7 @@ using both simple table and grid table syntax:
     This text is outside tables and thus ignored.
 
     ============  ================  =======  =======
-       Setting          Value         Value    Value
+      Setting          Value         Value    Value
     ============  ================  =======  =======
     Library       OperatingSystem
     ============  ================  =======  =======
@@ -476,7 +476,7 @@ using both simple table and grid table syntax:
 
     =============  ==================  ============  =============
       Test Case          Action          Argument      Argument
-    === =========  ==================  ============  =============
+    =============  ==================  ============  =============
     My Test        [Documentation]     Example test
     \              Log                 ${MESSAGE}
     \              My Keyword          /tmp
@@ -509,7 +509,7 @@ using both simple table and grid table syntax:
 
 Generating HTML files based on reST files every time tests are run obviously
 adds some overhead. If this is a problem, it can be a good idea to convert
-reST files to HTML using external tools separately and let Robot Framework
+reST files to HTML using external tools separately, and let Robot Framework
 use the generated files only.
 
 Editing and encoding
