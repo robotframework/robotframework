@@ -424,12 +424,12 @@ class Process(object):
         terminator = self._kill_process if kill else self._terminate_process
         try:
             terminator(process)
-            result.rc = process.wait() or 0
-            return result
         except OSError:
             if not self._process_is_stopped(process, self.KILL_TIMEOUT):
                 raise
             logger.debug('Ignored OSError because process was stopped.')
+        result.rc = process.wait() or 0
+        return result
 
     def _kill_process(self, process):
         logger.info('Forcefully killing process.')

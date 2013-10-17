@@ -19,17 +19,19 @@ Killing process
     ${handle}=    Some process
     Process Should Be Running
     ${result} =    Terminate Process    ${handle}    kill=${True}
-    Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
     Should Not Be Equal As Integers    ${result.rc}    0
+    Should Be Empty    ${result.stdout}
+    Should Be Empty    ${result.stderr}
 
 Terminating process
     ${handle}=    Some process
     Process Should Be Running
     ${result} =    Terminate Process    ${handle}
-    Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
     Should Not Be Equal As Integers     ${result.rc}    0
+    Should Be Empty    ${result.stdout}
+    Should Be Empty    ${result.stderr}
 
 Kill Process When Terminate Fails
     ${lib} =    Get Library Instance    Process
