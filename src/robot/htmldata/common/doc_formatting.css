@@ -17,6 +17,7 @@
 }
 .doc table th, .doc table td {
     border: 1px solid gray;
+    background: transparent;
     padding: 0.1em 0.3em;
     height: 1.2em;
 }

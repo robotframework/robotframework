@@ -21,7 +21,7 @@ Kill Process When Terminate Fails
     Check Log Message    ${tc.kws[6].msgs[0]}    Gracefully terminating process.
     Pass Execution If    ${WINDOWS}    Pass on Windows since there's no kill command.
     Check Log Message    ${tc.kws[6].msgs[1]}    Forcefully killing process.
-    Should Be True    ${tc.elapsedtime} > 5000
+    Should Be True    ${tc.elapsedtime} >= 2000
 
 Pid
     Check Test Case    ${TESTNAME}

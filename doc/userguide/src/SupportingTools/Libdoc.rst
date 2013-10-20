@@ -71,9 +71,25 @@ Options
                            output.
   -h, --help               Prints this help.
 
-
 __ `Specifying library version`_
 __ `Using --pythonpath option`_
+
+Alternative execution
+'''''''''''''''''''''
+
+Although :prog:`libdoc` is used only with Python in the synopsis above, it works
+also with Jython and IronPython. When documenting Java libraries, Jython is
+actually required.
+
+In the synopsis :prog:`libdoc` is executed as an installed module
+(:cli:`python -m robot.libdoc`). In addition to that, it can be run also as
+a script::
+
+    python path/robot/libdoc.py [options] arguments
+
+Executing as a script can be useful if you have done `manual installation`_
+or otherwise just have the :path:`robot` directory with the source code
+somewhere in your system.
 
 Specifying library or resource file
 '''''''''''''''''''''''''''''''''''
@@ -82,7 +98,7 @@ Python libraries and dynamic libraries with name or path
 ````````````````````````````````````````````````````````
 
 When documenting libraries implemented with Python or that use the
-dynamic library API, it is possible to specify the library either by
+`dynamic library API`_, it is possible to specify the library either by
 using just the library name or path to the library source code.
 In the former case the library is searched using the `library search path`_
 and its name must be in the same format as in Robot Framework test data.
@@ -96,7 +112,7 @@ provides or otherwise alter its documentation, it might be a good idea to use
 Java libraries with path
 ````````````````````````
 
-A Java test library implemented with a normal library API can be
+A Java test library implemented using the `static library API`_ can be
 specified by giving the path to the source code file containing the
 library implementation. Additionally, :path:`tools.jar`, which is part
 of the Java JDK distribution, must be found from CLASSPATH when
@@ -110,20 +126,21 @@ Resource files must always be specified using a path. If the path does
 not exist, resource files are also searched from all directories in
 PYTHONPATH similarly as when executing test cases.
 
-Creating documentation
-''''''''''''''''''''''
+Generating documentation
+''''''''''''''''''''''''
 
-When creating documentation in HTML or XML format, the output file must
+When generating documentation in HTML or XML format, the output file must
 be specified as the second argument after the library/resource name or path.
 Output format is got automatically from the extension but can also be set
-with :opt:`--format` option.
+using the :opt:`--format` option.
 
 Examples::
 
    python -m robot.libdoc OperatingSystem OperatingSystem.html
-   python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.html
+   python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.xml
    python -m robot.libdoc test/resource.html doc/resource_doc.html
-   jython -m robot.libdoc --version 1.0 MyJavaLibrary.java MyJavaLibrary.xml
+   jython -m robot.libdoc --version 1.0 MyJavaLibrary.java MyJavaLibrary.html
+   jython -m robot.libdoc my.organization.DynamicJavaLibrary my.organization.DynamicJavaLibrary.xml
 
 Viewing information on console
 ''''''''''''''''''''''''''''''
@@ -156,35 +173,27 @@ Examples::
   python -m robot.libdoc Selenium2Library show intro
   python -m robot.libdoc Selenium2Library version
 
-Alternative execution
-'''''''''''''''''''''
-
-Although :prog:`libdoc` is used only with Python in the synopsis above, it works
-also with Jython and IronPython. When documenting Java libraries, Jython is
-actually required. In the synopsis :prog:`libdoc` is executed as an installed
-module (:cli:`python -m robot.libdoc`), but it can be run also as a script::
-
-    python path/robot/libdoc.py [options] arguments
-
-Executing as a script can be useful if you have done `manual installation`_
-or otherwise just have the :path:`robot` directory with the source code
-somewhere in your system.
-
 Writing documentation
 ~~~~~~~~~~~~~~~~~~~~~
 
-`Creating test libraries`_ and `resource files`_ is described in more
-details elsewhere in this guide.
+This section discusses writing documentation for Python__ and Java__ based test
+libraries that use the static library API as well as for `dynamic libraries`_
+and `resource files`__. `Creating test libraries`_ and `resource files`_ is
+described in more details elsewhere in the User Guide.
+
+__ `Python libraries`_
+__ `Java libraries`_
+__ `Resource file documentation`_
 
 Python libraries
 ''''''''''''''''
 
-The documentation for Python libraries is written simply as doc
-strings for the library class or module and for methods implementing
-keywords. The first line of the method documentation is considered as
-a short documentation for the keyword (used, for example, as a tool tip in
-links in the generated HTML documentation), and it should thus be as
-describing as possible, but not too long.
+The documentation for Python libraries that use the `static library API`_
+is written simply as doc strings for the library class or module and for
+methods implementing keywords. The first line of the method documentation is
+considered as a short documentation for the keyword (used, for example, as
+a tool tip in links in the generated HTML documentation), and it should
+thus be as describing as possible, but not too long.
 
 The simple example below illustrates how to write the documentation in
 general, and there is a `bit longer example`__ at the end of this
@@ -224,11 +233,15 @@ __ http://www.python.org/dev/peps/pep-0257
 Java libraries
 ''''''''''''''
 
-When writing documentation for a normal Java library, conventions for
-writing Javadoc should be used. The documentation is generated based
-on the Javadocs in the source files. For example, the following simple
-example has exactly same documentation (and functionality) than the
-earlier Python example.
+Documentation for Java libraries that use the `static library API`_ is written
+as normal `Javadoc comments`__ for the library class and methods. In this case
+:prog:`libdoc` actually uses the Javadoc tool internally, and thus
+:path:`tools.jar` containing it must be in CLASSPATH. This jar file is part
+of the normal Java SDK distribution and ought to be found from :path:`bin`
+directory under the Java SDK installation.
+
+The following simple example has exactly same documentation (and functionality)
+than the earlier Python example.
 
 .. sourcecode:: java
 
@@ -255,6 +268,8 @@ earlier Python example.
         public void yourKeyword(String arg) {
         }
     }
+
+__ http://en.wikipedia.org/wiki/Javadoc
 
 Dynamic libraries
 '''''''''''''''''
@@ -288,6 +303,10 @@ accepts arguments, all its public constructors are shown.
            self.mode = mode
 
        def some_keyword(self, arg):
+           """Does something based on given `arg`.
+
+           What is done depends on the `mode` specified when `importing` the library.
+           """
            if self.mode == 'secret':
                 # ...
 

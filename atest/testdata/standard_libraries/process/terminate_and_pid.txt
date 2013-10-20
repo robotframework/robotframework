@@ -19,22 +19,24 @@ Killing process
     ${handle}=    Some process
     Process Should Be Running
     ${result} =    Terminate Process    ${handle}    kill=${True}
-    Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
     Should Not Be Equal As Integers    ${result.rc}    0
+    Should Be Empty    ${result.stdout}
+    Should Be Empty    ${result.stderr}
 
 Terminating process
     ${handle}=    Some process
     Process Should Be Running
     ${result} =    Terminate Process    ${handle}
-    Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
     Should Not Be Equal As Integers     ${result.rc}    0
+    Should Be Empty    ${result.stdout}
+    Should Be Empty    ${result.stderr}
 
 Kill Process When Terminate Fails
     ${lib} =    Get Library Instance    Process
-    ${lib._terminate_timeout} =    Set Variable    ${5}
-    ${lib._kill_timeout} =    Set Variable    ${1}
+    ${lib.TERMINATE_TIMEOUT} =    Set Variable    ${2}
+    ${lib.KILL_TIMEOUT} =    Set Variable    ${1}
     ${process} =    Start Process    python    ${NONTERM}
     Process Should Be Running    ${process}
     Sleep   0.1
