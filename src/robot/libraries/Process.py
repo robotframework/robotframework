@@ -465,8 +465,16 @@ class Process(object):
         self._processes[handle].send_signal(self._get_signal(signal))
 
     def _get_signal(self, signal_string):
-        import signal
-        return getattr(signal, signal_string)
+        if isinstance(signal_string, int):
+            return signal_string
+        try:
+            return int(signal_string)
+        except ValueError:
+            import signal
+            try:
+                return getattr(signal, 'SIG'+str(signal_string))
+            except AttributeError:
+                raise AssertionError("Unknown signal '%s'" % signal_string)
 
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process.
