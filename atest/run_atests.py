@@ -93,6 +93,7 @@ if sys.version_info[0] == 3 and do2to3:
                           lambda match: (
                             (match.group(1) + chr(int(match.group(2), 16)))
                             if not 'bytes' in match.group(1).lower()
+                            and match.group(2) >= '80'
                             else match.group(0)),
                           text)
                         text = re.sub(
