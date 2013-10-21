@@ -18,6 +18,7 @@ import telnetlib
 import time
 import re
 import inspect
+import struct
 
 from robot.api import logger
 from robot.version import get_version
@@ -253,7 +254,7 @@ class Telnet:
 
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
-                        encoding=None, encoding_errors=None, default_log_level=None):
+                        encoding=None, encoding_errors=None, default_log_level=None, window_size=None):
         """Opens a new Telnet connection to the given host and port.
 
         The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
@@ -272,6 +273,7 @@ class Telnet:
         encoding = encoding or self._encoding
         encoding_errors = encoding_errors or self._encoding_errors
         default_log_level = default_log_level or self._default_log_level
+        window_size = self._parse_window_size(window_size)
         if not prompt:
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
@@ -279,8 +281,18 @@ class Telnet:
         self._conn = self._get_connection(host, port, timeout, newline,
                                           prompt, prompt_is_regexp,
                                           encoding, encoding_errors,
-                                          default_log_level)
+                                          default_log_level, window_size)
         return self._cache.register(self._conn, alias)
+
+    def _parse_window_size(self, window_size):
+        if not window_size:
+            return None
+        try:
+            cols, rows = window_size.split('x')
+            cols, rows = (int(cols), int(rows))
+        except:
+            raise AssertionError("Invalid window size '%s'. Should be <rows>x<columns>" % window_size)
+        return cols, rows
 
     def _get_connection(self, *args):
         """Can be overridden to use a custom connection."""
@@ -341,14 +353,15 @@ class TelnetConnection(telnetlib.Telnet):
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
                  prompt=None, prompt_is_regexp=False,
                  encoding='UTF-8', encoding_errors='ignore',
-                 default_log_level='INFO'):
+                 default_log_level='INFO', window_size=None):
         telnetlib.Telnet.__init__(self, host, int(port) if port else 23)
         self._set_timeout(timeout)
         self._set_newline(newline)
         self._set_prompt(prompt, prompt_is_regexp)
         self._set_encoding(encoding, encoding_errors)
         self._set_default_log_level(default_log_level)
-        self.set_option_negotiation_callback(self._negotiate_echo_on)
+        self._window_size = window_size
+        self.set_option_negotiation_callback(self._negotiate_options)
 
     def set_timeout(self, timeout):
         """Sets the timeout used for waiting output in the current connection.
@@ -784,10 +797,16 @@ class TelnetConnection(telnetlib.Telnet):
         if msg:
             logger.write(msg, level or self._default_log_level)
 
-    def _negotiate_echo_on(self, sock, cmd, opt):
+    def _negotiate_options(self, sock, cmd, opt):
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
             self.sock.sendall(telnetlib.IAC + telnetlib.DO + opt)
+        elif cmd == telnetlib.DO and opt == telnetlib.NAWS and self._window_size:
+            self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
+            self.sock.sendall(telnetlib.IAC + telnetlib.SB
+                              + telnetlib.NAWS
+                              + struct.pack('!HH', self._window_size[0], self._window_size[1])
+                              + telnetlib.IAC + telnetlib.SE)
         elif opt != telnetlib.NOOPT:
             if cmd in (telnetlib.DO, telnetlib.DONT):
                 self.sock.sendall(telnetlib.IAC + telnetlib.WONT + opt)

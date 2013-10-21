@@ -7,6 +7,16 @@ Resource          telnet_resource.txt
 
 *** Test Cases ***
 
+Set Window Size
+    Open Connection    ${HOST}    prompt=${PROMPT}    window_size=100x100
+    Login    ${USERNAME}    ${PASSWORD}
+    Set Timeout    0.3 seconds    # Must set after login to give login time to succeed
+    Line Length Should Be    100    100
+
+Set Invalid Window Size
+    [Documentation]    FAIL Invalid window size '100yx100'. Should be <rows>x<columns>
+    Open Connection    ${HOST}    prompt=${PROMPT}    window_size=100yx100
+
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
 
@@ -175,3 +185,8 @@ Default Log Level Should Be
     Should Be Equal    ${level}    ${expected}
     ${level} =    Set Default Log Level    ${level}
     Should Be Equal    ${level}    WARN
+
+Line Length Should Be
+    [Arguments]    ${expected rows}    ${expected columns}
+    ${output}=   Execute Command    stty -a
+    Should Contain    ${output}    rows ${expected rows}; columns ${expected columns}    Window size does not match!

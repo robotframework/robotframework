@@ -5,6 +5,12 @@ Resource          telnet_resource.txt
 
 *** Test Case ***
 
+Set Window Size
+    Check Test Case    ${TEST NAME}
+
+Set Invalid Window Size
+    Check Test Case    ${TEST NAME}
+
 Prompt Set In Init
     Check Test Case    ${TEST NAME}
 
