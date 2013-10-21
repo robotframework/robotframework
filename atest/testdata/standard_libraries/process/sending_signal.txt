@@ -17,6 +17,18 @@ Sending an unknown signal
    Start Process               python -c "1+1"      shell=True
    Send Signal To Process      unknown
 
+Sending signal to a process with a handle
+   [Timeout]     2 seconds
+   ${handle}=      Start Process         python -c "import time; for i in range(25): time.sleep(0.1)"      shell=True
+   Start Process               python -c "1+1"      shell=True
+   Send Signal To Process      2     handle=${handle}
+   ${out}=                     Wait For Process   handle=${handle}
+
+Sending signal to a process with a wrong handle
+   [Documentation]  FAIL STARTS: Non-existing index or alias 'unknown'
+   Start Process               python -c "1+1"      shell=True
+   Send Signal To Process      2     handle=unknown
+
 *** Keywords ***
 Killer signal
    [Arguments]   ${signal}

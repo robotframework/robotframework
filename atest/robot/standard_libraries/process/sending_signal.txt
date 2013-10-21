@@ -17,6 +17,11 @@ Sending INT signal as a number
 Sending an unknown signal
     Check Test Case    ${TESTNAME}
 
+Sending signal to a process with a handle
+    Check Test Case    ${TESTNAME}
+
+Sending signal to a process with a wrong handle
+    Check Test Case    ${TESTNAME}
 
 *** Keywords ***
 Check Preconditions
