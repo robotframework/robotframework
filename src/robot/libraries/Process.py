@@ -460,6 +460,17 @@ class Process(object):
         self.__init__()
 
     def send_signal_to_process(self, signal, handle=None):
+        """ Sends a signal to a process. Signal can be a number or a name of the signal.
+        See 'man signal' for the complete list of signals available on your platform.
+        Signal name can be give with or without the SIG prefix
+        (for example SIGINT and INT will both send interrupt signal).
+
+        NOTE! This Keyword does not work on Windows.
+
+        `signal` is the number or name of the signal to be send.
+
+        If `handle` is not given, uses the current `active process`.
+        """
         if os.sep == '\\':
             raise AssertionError('Process.Send Signal To Process does not work on Windows')
         self._processes[handle].send_signal(self._get_signal(signal))
