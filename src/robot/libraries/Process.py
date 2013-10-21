@@ -472,9 +472,16 @@ class Process(object):
         except ValueError:
             import signal
             try:
-                return getattr(signal, 'SIG'+str(signal_string))
+                signal_name = self._get_signal_name_from(signal_string)
+                return getattr(signal, signal_name)
             except AttributeError:
                 raise AssertionError("Unknown signal '%s'" % signal_string)
+
+    def _get_signal_name_from(self, signal_string):
+        s = str(signal_string)
+        if s.startswith('SIG'):
+            return s
+        return 'SIG'+s
 
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process.

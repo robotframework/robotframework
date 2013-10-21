@@ -6,6 +6,9 @@ Suite Setup       Check Precondition   os.sep == "/" and sys.version_info >= (2,
 Sending INT signal
    Killer signal   INT
 
+Sending SIGINT signal
+   Killer signal   SIGINT
+
 Sending INT signal as a text number
    Killer signal   2
 
