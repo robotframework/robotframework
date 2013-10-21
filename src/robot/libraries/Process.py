@@ -459,9 +459,9 @@ class Process(object):
                 self.terminate_process(handle, kill=kill)
         self.__init__()
 
-    def send_signal(self, signal, handle=None):
+    def send_signal_to_process(self, signal, handle=None):
         if os.sep == '\\':
-            raise AssertionError('Process.Send Signal does not work in Windows')
+            raise AssertionError('Process.Send Signal To Process does not work on Windows')
         self._processes[handle].send_signal(self._get_signal(signal))
 
     def _get_signal(self, signal_string):

@@ -5,6 +5,6 @@ Suite Setup       Check Precondition   os.sep == "/" and sys.version_info >= (2,
 *** Test Cases ***
 Sending INT signal
    [Timeout]        2 seconds
-   Start Process    python -c "import time; for i in range(25): time.sleep(0.1)"      shell=True
-   Send Signal      SIGINT
-   ${out}=          Wait For Process
+   Start Process               python -c "import time; for i in range(25): time.sleep(0.1)"      shell=True
+   Send Signal To Process      SIGINT
+   ${out}=                     Wait For Process
