@@ -6,16 +6,27 @@ Resource         atest_resource.txt
 
 *** Test Cases ***
 Wait For Process
-    Check Test Case    ${TESTNAME}
+    ${tc} =   Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[1].msgs[0]}    Waiting for process to complete.
+    Check Log Message    ${tc.kws[1].msgs[1]}    Process completed.
 
 Wait For Process Timeout
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[2].msgs[0]}    Waiting for process to complete.
+    Check Log Message    ${tc.kws[2].msgs[1]}    Process did not complete in 1 second.
+    Check Log Message    ${tc.kws[2].msgs[2]}    Leaving process intact.
 
 Wait For Process Terminate On Timeout
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[2].msgs[0]}    Waiting for process to complete.
+    Check Log Message    ${tc.kws[2].msgs[1]}    Process did not complete in 1 second.
+    Check Log Message    ${tc.kws[2].msgs[2]}    Gracefully terminating process.
 
 Wait For Process Kill On Timeout
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[2].msgs[0]}    Waiting for process to complete.
+    Check Log Message    ${tc.kws[2].msgs[1]}    Process did not complete in 1 second.
+    Check Log Message    ${tc.kws[2].msgs[2]}    Forcefully killing process.
 
 *** Keywords ***
 Check Preconditions

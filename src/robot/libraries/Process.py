@@ -376,6 +376,14 @@ class Process(object):
 
         Returns a `result object` containing information about the execution.
 
+        Examples:
+        | `Start Process`               | non-finishing-process |
+        | `Wait For Process`            | timeout=30s           | on_timeout='none'     |
+        | `Process Should Be Running`   |
+        | ${result} =                   | `Wait For Process`    | timeout=1m30s         | on_timeout='kill' |
+        | `Process Should Be Stopped`   |
+        | `Should Be Equal As Integers` | ${result.rc}          | -9                    |
+
         `timeout` and `on_timeout` are new in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
@@ -384,7 +392,7 @@ class Process(object):
         if timeout:
             timeout = timestr_to_secs(timeout)
             if not self._process_is_stopped(process, timeout):
-                logger.warn('Process did not complete in %s.'
+                logger.info('Process did not complete in %s.'
                             % secs_to_timestr(timeout))
                 return self._manage_process_timeout(handle, on_timeout.lower())
         result.rc = process.wait() or 0
@@ -398,9 +406,7 @@ class Process(object):
             return self.terminate_process(handle, kill=True)
         else:
             logger.info('Leaving process intact.')
-            result = self._results[self._processes[handle]]
-            result.rc = None
-            return result
+            return None
 
     def terminate_process(self, handle=None, kill=False):
         """Terminates the process.
@@ -460,14 +466,40 @@ class Process(object):
                 self.terminate_process(handle, kill=kill)
         self.__init__()
 
-    def send_signal(self, signal, handle=None):
+    def send_signal_to_process(self, signal, handle=None):
+        """ Sends a signal to a process. Signal can be a number or a name of the signal.
+        See 'man signal' for the complete list of signals available on your platform.
+        Signal name can be give with or without the SIG prefix
+        (for example SIGINT and INT will both send interrupt signal).
+
+        NOTE! This Keyword does not work on Windows.
+
+        `signal` is the number or name of the signal to be send.
+
+        If `handle` is not given, uses the current `active process`.
+        """
         if os.sep == '\\':
-            raise AssertionError('Process.Send Signal does not work in Windows')
+            raise AssertionError('Process.Send Signal To Process does not work on Windows')
         self._processes[handle].send_signal(self._get_signal(signal))
 
     def _get_signal(self, signal_string):
-        import signal
-        return getattr(signal, signal_string)
+        if isinstance(signal_string, int):
+            return signal_string
+        try:
+            return int(signal_string)
+        except ValueError:
+            import signal
+            try:
+                signal_name = self._get_signal_name_from(signal_string)
+                return getattr(signal, signal_name)
+            except AttributeError:
+                raise AssertionError("Unknown signal '%s'" % signal_string)
+
+    def _get_signal_name_from(self, signal_string):
+        s = str(signal_string)
+        if s.startswith('SIG'):
+            return s
+        return 'SIG'+s
 
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process.

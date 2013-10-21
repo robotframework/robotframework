@@ -33,6 +33,9 @@ class TestJsonDumper(unittest.TestCase):
     def test_escape_string(self):
         self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')
 
+    def test_escape_closing_tags(self):
+        self._test('<script><></script>', '"<script><>\\x3c/script>"')
+
     def test_dump_boolean(self):
         self._test(True, 'true')
         self._test(False, 'false')

@@ -78,7 +78,7 @@ class _Dumper(object):
 class StringDumper(_Dumper):
     _handled_types = basestring
     _search_and_replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
-                           ('\n', '\\n'), ('\r', '\\r')]
+                           ('\n', '\\n'), ('\r', '\\r'), ('</', '\\x3c/')]
 
     def dump(self, data, mapping):
         self._write('"%s"' % (self._encode(data) if data else ''))

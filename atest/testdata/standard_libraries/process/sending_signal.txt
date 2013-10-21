@@ -4,7 +4,38 @@ Suite Setup       Check Precondition   os.sep == "/" and sys.version_info >= (2,
 
 *** Test Cases ***
 Sending INT signal
-   [Timeout]        2 seconds
-   Start Process    python -c "import time; for i in range(25): time.sleep(0.1)"      shell=True
-   Send Signal      SIGINT
-   ${out}=          Wait For Process
+   Killer signal   INT
+
+Sending SIGINT signal
+   Killer signal   SIGINT
+
+Sending INT signal as a text number
+   Killer signal   2
+
+Sending INT signal as a number
+   Killer signal   ${2}
+
+Sending an unknown signal
+   [Documentation]  FAIL STARTS: Unknown signal 'unknown'
+   Start Process               python -c "1+1"      shell=True
+   Send Signal To Process      unknown
+
+Sending signal to a process with a handle
+   [Timeout]     2 seconds
+   ${handle}=      Start Process         python -c "import time; for i in range(25): time.sleep(0.1)"      shell=True
+   Start Process               python -c "1+1"      shell=True
+   Send Signal To Process      2     handle=${handle}
+   ${out}=                     Wait For Process   handle=${handle}
+
+Sending signal to a process with a wrong handle
+   [Documentation]  FAIL STARTS: Non-existing index or alias 'unknown'
+   Start Process               python -c "1+1"      shell=True
+   Send Signal To Process      2     handle=unknown
+
+*** Keywords ***
+Killer signal
+   [Arguments]   ${signal}
+   [Timeout]     2 seconds
+   Start Process               python -c "import time; for i in range(25): time.sleep(0.1)"      shell=True
+   Send Signal To Process      ${signal}
+   ${out}=                     Wait For Process

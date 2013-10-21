@@ -88,6 +88,10 @@ Escape JS </script> " http://url.com
     kw http://url.com
     </script>
 
+Escape stuff logged as HTML
+    Log    <b id='dynamic'></b><script>document.getElementById('dynamic').innerHTML = 'dynamic'</script>    HTML
+    Fail    *HTML* <b>HTML</b></script>
+
 Long messages
     ${msg} =    Evaluate    'HelloWorld' * 100
     Log    ${msg}    WARN
