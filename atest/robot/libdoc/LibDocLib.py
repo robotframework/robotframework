@@ -30,7 +30,7 @@ class LibDocLib(object):
     def get_libdoc_model_from_html(self, path):
         with open(path) as html_file:
             model_string = self._find_model(html_file)
-        model = json.loads(model_string)
+        model = json.loads(model_string.replace('\\x3c/', '</'))
         logger.info(pprint.pformat(model))
         return model
 
