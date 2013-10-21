@@ -91,7 +91,7 @@ if sys.version_info[0] == 3 and do2to3:
                         text = re.sub(
                           r'(.*)\\\\x([0-9a-f]{2})',
                           lambda match: (
-                            chr(int(match.group(2), 16))
+                            (match.group(1) + chr(int(match.group(2), 16)))
                             if not 'bytes' in match.group(1).lower()
                             else match.group(0)),
                           text)
