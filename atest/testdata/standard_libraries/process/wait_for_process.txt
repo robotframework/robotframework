@@ -16,7 +16,7 @@ Wait For Process Timeout
     Process Should Be Running    ${process}
     ${result} =    Wait For Process    ${process}    timeout=1s
     Process Should Be Running    ${process}
-    Should Be Equal    ${result.rc}    ${None}
+    Should Be Equal    ${result}    ${NONE}
 
 Wait For Process Terminate On Timeout
     ${process} =   Start Python Process    while(True): pass

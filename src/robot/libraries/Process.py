@@ -375,6 +375,14 @@ class Process(object):
 
         Returns a `result object` containing information about the execution.
 
+        Examples:
+        | `Start Process`               | non-finishing-process |
+        | `Wait For Process`            | timeout=30s           | on_timeout='none'     |
+        | `Process Should Be Running`   |
+        | ${result} =                   | `Wait For Process`    | timeout=1m30s         | on_timeout='kill' |
+        | `Process Should Be Stopped`   |
+        | `Should Be Equal As Integers` | ${result.rc}          | -9                    |
+
         `timeout` and `on_timeout` are new in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
@@ -383,7 +391,7 @@ class Process(object):
         if timeout:
             timeout = timestr_to_secs(timeout)
             if not self._process_is_stopped(process, timeout):
-                logger.warn('Process did not complete in %s.'
+                logger.info('Process did not complete in %s.'
                             % secs_to_timestr(timeout))
                 return self._manage_process_timeout(handle, on_timeout.lower())
         result.rc = process.wait() or 0
@@ -397,9 +405,7 @@ class Process(object):
             return self.terminate_process(handle, kill=True)
         else:
             logger.info('Leaving process intact.')
-            result = self._results[self._processes[handle]]
-            result.rc = None
-            return result
+            return None
 
     def terminate_process(self, handle=None, kill=False):
         """Terminates the process.
