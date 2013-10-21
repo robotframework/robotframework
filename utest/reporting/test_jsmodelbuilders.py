@@ -86,7 +86,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_message_with_html(self):
         self._verify_message(Message('<img>'), '&lt;img&gt;')
-        self._verify_message(Message('<img>', html=True), '<img>')
+        self._verify_message(Message('<b></b>', html=True), '<b></b>')
 
     def test_nested_structure(self):
         suite = TestSuite()

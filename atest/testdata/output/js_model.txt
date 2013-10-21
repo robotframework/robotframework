@@ -11,6 +11,10 @@ Resource    </script>
     Log    </script>
     </script>
 
+HTML </script>
+    Log    <b>HTML</b></script>    HTML
+    Fail    *HTML* <b>HTML</b></script>
+
 *** Keywords ***
 </script>
     [Documentation]    </script>
