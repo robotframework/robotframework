@@ -806,25 +806,35 @@ class TelnetConnection(telnetlib.Telnet):
     def _negotiate_options(self, sock, cmd, opt):
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
-            self.sock.sendall(telnetlib.IAC + telnetlib.DO + opt)
+            self._opt_echo_on(opt)
         elif cmd == telnetlib.DO and opt == telnetlib.NEW_ENVIRON and self._environ_user:
-            self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
-            self.sock.sendall(telnetlib.IAC + telnetlib.SB
-                              + telnetlib.NEW_ENVIRON
-                              + self.NEW_ENVIRON_IS + self.NEW_ENVIRON_VAR
-                              + "USER" + self.NEW_ENVIRON_VALUE + self._environ_user
-                              + telnetlib.IAC + telnetlib.SE)
+            self._opt_environ_user(opt)
         elif cmd == telnetlib.DO and opt == telnetlib.NAWS and self._window_size:
-            self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
-            self.sock.sendall(telnetlib.IAC + telnetlib.SB
-                              + telnetlib.NAWS
-                              + struct.pack('!HH', self._window_size[0], self._window_size[1])
-                              + telnetlib.IAC + telnetlib.SE)
+            self._opt_window_size(opt)
         elif opt != telnetlib.NOOPT:
-            if cmd in (telnetlib.DO, telnetlib.DONT):
-                self.sock.sendall(telnetlib.IAC + telnetlib.WONT + opt)
-            elif cmd in (telnetlib.WILL, telnetlib.WONT):
-                self.sock.sendall(telnetlib.IAC + telnetlib.DONT + opt)
+            self._opt_dont_and_wont(cmd, opt)
+
+    def _opt_echo_on(self, opt):
+        return self.sock.sendall(telnetlib.IAC + telnetlib.DO + opt)
+
+    def _opt_environ_user(self, opt):
+        self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
+        self.sock.sendall(telnetlib.IAC + telnetlib.SB + telnetlib.NEW_ENVIRON
+                          + self.NEW_ENVIRON_IS + self.NEW_ENVIRON_VAR
+                          + "USER" + self.NEW_ENVIRON_VALUE + self._environ_user
+                          + telnetlib.IAC + telnetlib.SE)
+
+    def _opt_window_size(self, opt):
+        self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
+        self.sock.sendall(telnetlib.IAC + telnetlib.SB + telnetlib.NAWS
+                          + struct.pack('!HH', self._window_size[0], self._window_size[1])
+                          + telnetlib.IAC + telnetlib.SE)
+
+    def _opt_dont_and_wont(self, cmd, opt):
+        if cmd in (telnetlib.DO, telnetlib.DONT):
+            self.sock.sendall(telnetlib.IAC + telnetlib.WONT + opt)
+        elif cmd in (telnetlib.WILL, telnetlib.WONT):
+            self.sock.sendall(telnetlib.IAC + telnetlib.DONT + opt)
 
     def msg(self, msg, *args):
         # Forward telnetlib's debug messages to log
