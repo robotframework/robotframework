@@ -17,6 +17,10 @@ Set Invalid Window Size
     [Documentation]    FAIL Invalid window size '100yx100'. Should be <rows>x<columns>
     Open Connection    ${HOST}    prompt=${PROMPT}    window_size=100yx100
 
+Set User Environ Option
+    Open Connection    ${HOST}    prompt=${PROMPT}    environ_user=${USERNAME}
+    Verify Successful Login With User Option
+
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
 
@@ -190,3 +194,8 @@ Line Length Should Be
     [Arguments]    ${expected rows}    ${expected columns}
     ${output}=   Execute Command    stty -a
     Should Contain    ${output}    rows ${expected rows}; columns ${expected columns}    Window size does not match!
+
+Verify Successful Login With User Option
+    Read Until    Password:
+    Write   ${PASSWORD}
+    Read Until Prompt

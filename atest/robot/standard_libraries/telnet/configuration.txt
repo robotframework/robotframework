@@ -11,6 +11,9 @@ Set Window Size
 Set Invalid Window Size
     Check Test Case    ${TEST NAME}
 
+Set User Environ Option
+    Check Test Case    ${TEST NAME}
+
 Prompt Set In Init
     Check Test Case    ${TEST NAME}
 

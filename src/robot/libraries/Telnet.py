@@ -254,7 +254,8 @@ class Telnet:
 
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
-                        encoding=None, encoding_errors=None, default_log_level=None, window_size=None):
+                        encoding=None, encoding_errors=None, default_log_level=None,
+                        window_size=None, environ_user=None):
         """Opens a new Telnet connection to the given host and port.
 
         The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
@@ -281,7 +282,7 @@ class Telnet:
         self._conn = self._get_connection(host, port, timeout, newline,
                                           prompt, prompt_is_regexp,
                                           encoding, encoding_errors,
-                                          default_log_level, window_size)
+                                          default_log_level, window_size, environ_user)
         return self._cache.register(self._conn, alias)
 
     def _parse_window_size(self, window_size):
@@ -350,10 +351,14 @@ class Telnet:
 
 class TelnetConnection(telnetlib.Telnet):
 
+    NEW_ENVIRON_IS = chr(0)
+    NEW_ENVIRON_VAR = chr(0)
+    NEW_ENVIRON_VALUE = chr(1)
+
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
                  prompt=None, prompt_is_regexp=False,
                  encoding='UTF-8', encoding_errors='ignore',
-                 default_log_level='INFO', window_size=None):
+                 default_log_level='INFO', window_size=None, environ_user=None):
         telnetlib.Telnet.__init__(self, host, int(port) if port else 23)
         self._set_timeout(timeout)
         self._set_newline(newline)
@@ -361,6 +366,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._set_encoding(encoding, encoding_errors)
         self._set_default_log_level(default_log_level)
         self._window_size = window_size
+        self._environ_user = environ_user
         self.set_option_negotiation_callback(self._negotiate_options)
 
     def set_timeout(self, timeout):
@@ -801,6 +807,13 @@ class TelnetConnection(telnetlib.Telnet):
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
             self.sock.sendall(telnetlib.IAC + telnetlib.DO + opt)
+        elif cmd == telnetlib.DO and opt == telnetlib.NEW_ENVIRON and self._environ_user:
+            self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
+            self.sock.sendall(telnetlib.IAC + telnetlib.SB
+                              + telnetlib.NEW_ENVIRON
+                              + self.NEW_ENVIRON_IS + self.NEW_ENVIRON_VAR
+                              + "USER" + self.NEW_ENVIRON_VALUE + self._environ_user
+                              + telnetlib.IAC + telnetlib.SE)
         elif cmd == telnetlib.DO and opt == telnetlib.NAWS and self._window_size:
             self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
             self.sock.sendall(telnetlib.IAC + telnetlib.SB
