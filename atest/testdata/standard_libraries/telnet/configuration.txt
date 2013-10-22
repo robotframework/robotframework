@@ -27,6 +27,12 @@ Terminal Emulation
     ${output}=    Execute Command    echo -e "abba\\x1b[3Dcdc"
     Should Match   ${output}    acdc\r\n*
 
+Terminal Emulation Read Until Regex
+    Open Connection    ${HOST}    prompt=${PROMPT}   terminal_emulation=True
+    Login    ${USERNAME}    ${PASSWORD}
+    Write    echo -e "abba\\x1b[3Dcdc"
+    Read Until Regexp    acdc
+
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
 

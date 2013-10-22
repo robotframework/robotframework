@@ -702,6 +702,38 @@ class TelnetConnection(telnetlib.Telnet):
         output = self._emulate_terminal(output)
         return output.endswith(expected), self._decode(output)
 
+    def _read_until_regexp(self, *expected):
+        self._verify_connection()
+        expected = [self._encode(exp) if isinstance(exp, unicode) else exp
+                    for exp in expected]
+        if not self._terminal_emulation:
+            return self._telnet_read_until_regexp(expected)
+        return self._terminal_read_until_regexp(expected)
+
+    def _terminal_read_until_regexp(self, expected_list):
+        start_time = time.time()
+        stream = pyte.ByteStream()
+        screen = pyte.Screen(80, 80)
+        stream.attach(screen)
+        
+        regexp_list = [re.compile(rgx) for rgx in expected_list]
+        out_terminal = ""
+
+        while(time.time() < start_time + self._timeout):
+            _index, _, output = self.expect(expected_list, 0.1)
+            stream.feed(output)
+            out_terminal = self._newline.join(''.join(c.data for c in row).rstrip() for row in screen).rstrip(self._newline)
+            if any(rgx.search(out_terminal) for rgx in regexp_list):
+                return True, out_terminal
+        return False, out_terminal
+
+    def _telnet_read_until_regexp(self, expected_list):
+        try:
+            index, _, output = self.expect(expected_list, self._timeout)
+        except TypeError:
+            index, output = -1, ''
+        return index != -1, self._decode(output)
+
     def read_until_regexp(self, *expected):
         """Reads output until any of the `expected` regular expressions match.
 
@@ -739,16 +771,6 @@ class TelnetConnection(telnetlib.Telnet):
                         for exp in expected]
             raise NoMatchError(expected, self._timeout, output)
         return output
-
-    def _read_until_regexp(self, *expected):
-        self._verify_connection()
-        expected = [self._encode(exp) if isinstance(exp, unicode) else exp
-                    for exp in expected]
-        try:
-            index, _, output = self.expect(expected, self._timeout)
-        except TypeError:
-            index, output = -1, ''
-        return index != -1, self._decode(output)
 
     def read_until_prompt(self, loglevel=None):
         """Reads output until the prompt is encountered.

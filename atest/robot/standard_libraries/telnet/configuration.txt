@@ -14,6 +14,12 @@ Set Invalid Window Size
 Set User Environ Option
     Check Test Case    ${TEST NAME}
 
+Terminal Emulation
+    Check Test Case    ${TEST NAME}
+
+Terminal Emulation Read Until Regex
+    Check Test Case    ${TEST NAME}
+
 Prompt Set In Init
     Check Test Case    ${TEST NAME}
 
