@@ -19,6 +19,12 @@ import time
 import re
 import inspect
 import struct
+from cookielib import logger
+
+try:
+    import pyte
+except:
+    pyte = None
 
 from robot.api import logger
 from robot.version import get_version
@@ -255,7 +261,7 @@ class Telnet:
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
                         encoding=None, encoding_errors=None, default_log_level=None,
-                        window_size=None, environ_user=None):
+                        window_size=None, environ_user=None, terminal_emulation=False):
         """Opens a new Telnet connection to the given host and port.
 
         The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
@@ -275,6 +281,7 @@ class Telnet:
         encoding_errors = encoding_errors or self._encoding_errors
         default_log_level = default_log_level or self._default_log_level
         window_size = self._parse_window_size(window_size)
+        terminal_emulation = bool(terminal_emulation)
         if not prompt:
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
@@ -282,7 +289,8 @@ class Telnet:
         self._conn = self._get_connection(host, port, timeout, newline,
                                           prompt, prompt_is_regexp,
                                           encoding, encoding_errors,
-                                          default_log_level, window_size, environ_user)
+                                          default_log_level, window_size,
+                                          environ_user, terminal_emulation)
         return self._cache.register(self._conn, alias)
 
     def _parse_window_size(self, window_size):
@@ -358,7 +366,8 @@ class TelnetConnection(telnetlib.Telnet):
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
                  prompt=None, prompt_is_regexp=False,
                  encoding='UTF-8', encoding_errors='ignore',
-                 default_log_level='INFO', window_size=None, environ_user=None):
+                 default_log_level='INFO', window_size=None, environ_user=None,
+                 terminal_emulation=False):
         telnetlib.Telnet.__init__(self, host, int(port) if port else 23)
         self._set_timeout(timeout)
         self._set_newline(newline)
@@ -367,6 +376,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._set_default_log_level(default_log_level)
         self._window_size = window_size
         self._environ_user = environ_user
+        self._terminal_emulation = self._check_terminal_emulation(terminal_emulation)
         self.set_option_negotiation_callback(self._negotiate_options)
 
     def set_timeout(self, timeout):
@@ -689,6 +699,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._verify_connection()
         expected = self._encode(expected)
         output = telnetlib.Telnet.read_until(self, expected, self._timeout)
+        output = self._emulate_terminal(output)
         return output.endswith(expected), self._decode(output)
 
     def read_until_regexp(self, *expected):
@@ -840,6 +851,25 @@ class TelnetConnection(telnetlib.Telnet):
         # Forward telnetlib's debug messages to log
         logger.trace(msg % args)
 
+    def _check_terminal_emulation(self, terminal_emulation):
+        if not terminal_emulation:
+            return False
+        if not pyte:
+            raise AssertionError("Terminal emulation requires pyte module!\nhttps://pypi.python.org/pypi/pyte/")
+        return True
+
+    def _emulate_terminal(self, output):
+        if not self._terminal_emulation:
+            return output
+        logger.trace("Output now %r" % output)
+        stream = pyte.ByteStream()
+        screen = pyte.Screen(80, 80)
+        stream.attach(screen)
+        stream.feed(output)
+        out = self._newline.join(''.join(c.data for c in row).rstrip() for row in screen).rstrip(self._newline)
+        out = out + output[len(output.rstrip()):]
+        logger.trace("Output after %r" % out)
+        return out
 
 class NoMatchError(AssertionError):
     ROBOT_SUPPRESS_NAME = True

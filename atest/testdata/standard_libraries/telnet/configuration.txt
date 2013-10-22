@@ -21,6 +21,12 @@ Set User Environ Option
     Open Connection    ${HOST}    prompt=${PROMPT}    environ_user=${USERNAME}
     Verify Successful Login With User Option
 
+Terminal Emulation
+    Open Connection    ${HOST}    prompt=${PROMPT}   terminal_emulation=True
+    Login    ${USERNAME}    ${PASSWORD}
+    ${output}=    Execute Command    echo -e "abba\\x1b[3Dcdc"
+    Should Match   ${output}    acdc\r\n*
+
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
 
