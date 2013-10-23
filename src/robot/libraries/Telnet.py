@@ -675,7 +675,11 @@ class TelnetConnection(telnetlib.Telnet):
         information about log levels.
         """
         self._verify_connection()
-        output = self._decode(self.read_very_eager())
+        output = self.read_very_eager()
+        if self._terminal_emulator:
+            self._terminal_emulator.feed(output)
+            output = self._terminal_emulator.read()
+        output = self._decode(output)
         self._log(output, loglevel)
         return output
 

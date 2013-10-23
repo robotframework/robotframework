@@ -68,6 +68,13 @@ Terminal Emulation empties buffer on not found read until regexp
     Write bare      token
     Read until regexp should match    token     token
 
+Terminal Emulation read
+    Login and set prompt    terminal_emulation=True
+    Write    echo -e "abba\\x1b[3Dcdc"
+    Read Should Match     acdc*
+    Write bare      token
+    Read should match    token
+
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
 
@@ -206,6 +213,11 @@ Read until should match
 Read until regexp should match
     [Arguments]    ${expected}     @{match}
     ${output}=      Read until regexp   @{match}
+    Should match    ${output}    ${expected}
+
+Read Should Match
+    [Arguments]    ${expected}
+    ${output}=      Read
     Should match    ${output}    ${expected}
 
 Prompt Should Be
