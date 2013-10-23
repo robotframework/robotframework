@@ -362,6 +362,8 @@ class TelnetConnection(telnetlib.Telnet):
     NEW_ENVIRON_IS = chr(0)
     NEW_ENVIRON_VAR = chr(0)
     NEW_ENVIRON_VALUE = chr(1)
+    
+    terminal_buffer = ""
 
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
                  prompt=None, prompt_is_regexp=False,
@@ -698,8 +700,21 @@ class TelnetConnection(telnetlib.Telnet):
     def _read_until(self, expected):
         self._verify_connection()
         expected = self._encode(expected)
+        if self._terminal_emulation:
+            exp_index = self.terminal_buffer.find(expected)
+            if exp_index != -1:
+                out = self.terminal_buffer[:exp_index+len(expected)]
+                self.terminal_buffer = self.terminal_buffer[exp_index+len(expected):]
+                return True, out
         output = telnetlib.Telnet.read_until(self, expected, self._timeout)
         output = self._emulate_terminal(output)
+        if self._terminal_emulation:
+            output = self.terminal_buffer + output
+            exp_index = output.find(expected)
+            if exp_index != -1:
+                out = output[:exp_index+len(expected)]
+                self.terminal_buffer = output[exp_index+len(expected):]
+                return True, out
         return output.endswith(expected), self._decode(output)
 
     def _read_until_regexp(self, *expected):
@@ -715,16 +730,33 @@ class TelnetConnection(telnetlib.Telnet):
         stream = pyte.ByteStream()
         screen = pyte.Screen(80, 80)
         stream.attach(screen)
-        
+
         regexp_list = [re.compile(rgx) for rgx in expected_list]
         out_terminal = ""
+
+        match = None
+        for rgx in regexp_list:
+            match = rgx.search(self.terminal_buffer)
+            if match:
+                break
+        if match:
+            out = self.terminal_buffer[:match.end()]
+            self.terminal_buffer = self.terminal_buffer[match.end():]
+            return True, out
 
         while(time.time() < start_time + self._timeout):
             _index, _, output = self.expect(expected_list, 0.1)
             stream.feed(output)
             out_terminal = self._newline.join(''.join(c.data for c in row).rstrip() for row in screen).rstrip(self._newline)
-            if any(rgx.search(out_terminal) for rgx in regexp_list):
-                return True, out_terminal
+            match = None
+            for rgx in regexp_list:
+                match = rgx.search(out_terminal)
+                if match:
+                    break
+            if match:
+                out = self.terminal_buffer + out_terminal[:match.end()]
+                self.terminal_buffer = out_terminal[match.end():]
+                return True, out
         return False, out_terminal
 
     def _telnet_read_until_regexp(self, expected_list):

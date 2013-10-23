@@ -22,16 +22,37 @@ Set User Environ Option
     Verify Successful Login With User Option
 
 Terminal Emulation
-    Open Connection    ${HOST}    prompt=${PROMPT}   terminal_emulation=True
-    Login    ${USERNAME}    ${PASSWORD}
+    Login and set prompt    terminal_emulation=True
     ${output}=    Execute Command    echo -e "abba\\x1b[3Dcdc"
     Should Match   ${output}    acdc\r\n*
 
 Terminal Emulation Read Until Regex
-    Open Connection    ${HOST}    prompt=${PROMPT}   terminal_emulation=True
-    Login    ${USERNAME}    ${PASSWORD}
+    Login and set prompt    terminal_emulation=True
     Write    echo -e "abba\\x1b[3Dcdc"
     Read Until Regexp    acdc
+
+Terminal Emulation Read Until Multiple Regexp
+    Login and set prompt    terminal_emulation=True
+    Write    echo -e "abba\\x1b[3Dcdc"
+    Read Until Regexp    foo    acdc    bar
+
+Terminal Emulation Reads Only the Necessary Amount
+    Login and set prompt    terminal_emulation=True
+    Write    echo -e "abba\\x1b[3Dcdc_foo_bar_dar"
+    Read Until Regexp Should match    acdc    acdc
+    Read Until should match    _foo      foo
+    Read Until should match     _bar      bar
+    Read Until regexp should match   _dar    dar
+
+Terminal Emulation Reads Only the Necessary Amount with rewrites
+    Login and set prompt    terminal_emulation=True
+    Write    echo -e "abba\\x1b[3Dcdc_foo_"
+    Read Until Regexp Should match    acdc    acdc
+    Write Bare    echo -e "abba\\x1b[3Ddhd_bar_"\r\n
+    Read Until Regexp Should match    _foo_*adhd    adhd
+    Write Bare    echo -e "abba\\x1b[3Dmma_more"\r\n
+    Read until Should Match    _bar_*amma     amma
+    Read Until Should match    _more          more
 
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
@@ -163,6 +184,16 @@ Telnetlib's Debug Messages Are Logged On Trace Level
     [Teardown]    Set Log Level    DEBUG
 
 *** Keywords ***
+Read until should match
+    [Arguments]    ${expected}   ${match}
+    ${output}=      Read until   ${match}
+    Should match    ${output}    ${expected}
+
+Read until regexp should match
+    [Arguments]    ${expected}     @{match}
+    ${output}=      Read until regexp   @{match}
+    Should match    ${output}    ${expected}
+
 Prompt Should Be
     [Arguments]    ${expected prompt}    ${expected regexp}
     ${prompt}    ${regexp} =    Set Prompt    prompt

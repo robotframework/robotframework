@@ -20,6 +20,15 @@ Terminal Emulation
 Terminal Emulation Read Until Regex
     Check Test Case    ${TEST NAME}
 
+Terminal Emulation Read Until Multiple Regexp
+    Check Test Case    ${TEST NAME}
+
+Terminal Emulation Reads Only the Necessary Amount
+    Check Test Case    ${TEST NAME}
+
+Terminal Emulation Reads Only the Necessary Amount with rewrites
+    Check Test Case    ${TEST NAME}
+
 Prompt Set In Init
     Check Test Case    ${TEST NAME}
 
