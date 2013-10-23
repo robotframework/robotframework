@@ -890,18 +890,6 @@ class TelnetConnection(telnetlib.Telnet):
             raise AssertionError("Terminal emulation requires pyte module!\nhttps://pypi.python.org/pypi/pyte/")
         return TerminalEmulator(newline=self._newline)
 
-    def _emulate_terminal(self, output):
-        if not self._terminal_emulation:
-            return output
-        logger.trace("Output now %r" % output)
-        stream = pyte.ByteStream()
-        screen = pyte.Screen(80, 80)
-        stream.attach(screen)
-        stream.feed(output)
-        out = self._newline.join(''.join(c.data for c in row).rstrip() for row in screen).rstrip(self._newline)
-        out = out + output[len(output.rstrip()):]
-        logger.trace("Output after %r" % out)
-        return out
 
 class TerminalEmulator(object):
 
