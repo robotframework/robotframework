@@ -9,27 +9,30 @@ from robot.utils.asserts import assert_equals
 class TestStringContext(unittest.TestCase):
 
     def test_add_empty_string(self):
-        self._verify([''], [0] , [])
+        self._verify([''], [0], [])
 
     def test_add_string(self):
         self._verify(['Hello!'], [1], ['Hello!'])
 
     def test_add_several_strings(self):
-        self._verify(['Hello!', 'Foo'], [1, 2] , ['Hello!', 'Foo'])
+        self._verify(['Hello!', 'Foo'], [1, 2], ['Hello!', 'Foo'])
 
     def test_cache_strings(self):
-        self._verify(['Foo', '', 'Foo', 'Foo', ''], [1, 0, 1, 1, 0] , ['Foo'])
+        self._verify(['Foo', '', 'Foo', 'Foo', ''], [1, 0, 1, 1, 0], ['Foo'])
 
     def test_escape_strings(self):
-        self._verify(['</script>', '&', '&'], [1, 2, 2] , ['&lt;/script&gt;', '&amp;'])
+        self._verify(['</script>', '&', '&'], [1, 2, 2], ['&lt;/script&gt;', '&amp;'])
+
+    def test_no_escape(self):
+        self._verify(['</script>', '&', '&'], [1, 2, 2], ['</script>', '&'], escape=False)
 
     def test_none_string(self):
         self._verify([None, '', None], [0, 0, 0], [])
 
-    def _verify(self, strings, exp_ids, exp_strings):
+    def _verify(self, strings, exp_ids, exp_strings, escape=True):
         exp_strings = tuple('*'+s for s in [''] + exp_strings)
         ctx = JsBuildingContext()
-        results = [ctx.string(s) for s in strings]
+        results = [ctx.string(s, escape=escape) for s in strings]
         assert_equals(results, exp_ids)
         assert_equals(ctx.strings, exp_strings)
 

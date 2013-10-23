@@ -465,14 +465,40 @@ class Process(object):
                 self.terminate_process(handle, kill=kill)
         self.__init__()
 
-    def send_signal(self, signal, handle=None):
+    def send_signal_to_process(self, signal, handle=None):
+        """ Sends a signal to a process. Signal can be a number or a name of the signal.
+        See 'man signal' for the complete list of signals available on your platform.
+        Signal name can be give with or without the SIG prefix
+        (for example SIGINT and INT will both send interrupt signal).
+
+        NOTE! This Keyword does not work on Windows.
+
+        `signal` is the number or name of the signal to be send.
+
+        If `handle` is not given, uses the current `active process`.
+        """
         if os.sep == '\\':
-            raise AssertionError('Process.Send Signal does not work in Windows')
+            raise AssertionError('Process.Send Signal To Process does not work on Windows')
         self._processes[handle].send_signal(self._get_signal(signal))
 
     def _get_signal(self, signal_string):
-        import signal
-        return getattr(signal, signal_string)
+        if isinstance(signal_string, int):
+            return signal_string
+        try:
+            return int(signal_string)
+        except ValueError:
+            import signal
+            try:
+                signal_name = self._get_signal_name_from(signal_string)
+                return getattr(signal, signal_name)
+            except AttributeError:
+                raise AssertionError("Unknown signal '%s'" % signal_string)
+
+    def _get_signal_name_from(self, signal_string):
+        s = str(signal_string)
+        if s.startswith('SIG'):
+            return s
+        return 'SIG'+s
 
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process.

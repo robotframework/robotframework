@@ -9,14 +9,14 @@ ${MESSAGE}            <b>Hello, world!</b>
 
 *** Test Cases ***
 HTML message in log
-    ${content} =         Get File   ${OUTDIR}/log.html
-    Should Contain       ${content}   ${FAILURE}
-    Should Contain       ${content}   ${MESSAGE}
+    ${content} =    Get File   ${OUTDIR}/log.html
+    Should Contain Escaped    ${content}    ${FAILURE}
+    Should Contain Escaped    ${content}    ${MESSAGE}
 
 HTML message in report
-    ${content} =         Get File   ${OUTDIR}/report.html
-    Should Contain       ${content}   ${FAILURE}
-    Should Contain       ${content}   ${MESSAGE}
+    ${content} =    Get File   ${OUTDIR}/report.html
+    Should Contain Escaped    ${content}    ${FAILURE}
+    Should Contain Escaped    ${content}    ${MESSAGE}
 
 Failure message in log uses HTML
     ${tc} =    Check Test Case    HTML Failure
@@ -25,3 +25,8 @@ Failure message in log uses HTML
 `Set Test Message` keyword logs using HTML
     ${tc} =    Check Test Case    Set Test Message
     Check Log Message    ${tc.kws[0].msgs[0]}    Set test message to:\n${MESSAGE}    html=True
+
+*** Keywords ***
+Should Contain Escaped
+    [Arguments]    ${content}    ${expected}
+    Should Contain    ${content}    ${expected.replace('</', '\\x3c/')}
