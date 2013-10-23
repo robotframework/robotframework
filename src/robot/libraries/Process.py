@@ -495,6 +495,49 @@ class Process(object):
         """
         return self._processes[handle]
 
+    def get_process_result(self, handle=None, rc=False, stdout=False, stderr=False):
+        """Returns the results of process which has been run.
+
+        If `handle` is not given, uses the current `active process`.
+
+        Returns results of process as a tuple containing
+        (`rc`,`stdout`,`stderr`). The tuple will only contain the result values
+        which are enabled in the arguments. This keyword is implemented for
+        obtaining results from a process executed with remote library.
+
+        `rc` returns the returncode of the process.
+
+        `stdout` returns the standard output from the process.
+
+        `stderr` returns the error stream from the process.
+
+        Examples:
+        | Remote.Start Process        | python    | -c              | import sys;sys.exit(1) |
+        | Remote.Wait For Process     |
+        | ${rc} =                     | Remote.Get Process Result   |
+        | Should Be Equal As Integers | ${rc}     | 1               |
+        | Remote.Start Process        | echo      | Robot Framework |
+        | Remote.Wait For Process     |
+        | ${rc}                       | ${stdout} | ${stderr} =     | Remote.Get Process Result |
+        | Should Be Equal As Integers | ${rc}     | 0               |
+        | Should Be Equal             | ${stdout} | Robot Framework |
+        | Should Be Equal             | ${stderr} | ${EMPTY}        |
+
+        New in Robot Framework 2.8.2.
+        """
+        if not (rc or stdout or stderr):
+            raise RuntimeError('No arguments specified')
+        process = self._processes[handle]
+        result = self._results[process]
+        result_values = ()
+        if rc:
+            result_values += (result.rc,)
+        if stdout:
+            result_values += (result.stdout,)
+        if stderr:
+            result_values += (result.stderr,)
+        return result_values[0] if len(result_values) == 1 else result_values
+
     def switch_process(self, handle):
         """Makes the specified process the current `active process`.
 
