@@ -712,7 +712,7 @@ class TelnetConnection(telnetlib.Telnet):
         out = self._terminal_emulator.read_until(expected)
         if out:
             return True, out
-        return False, out
+        return False, self._terminal_emulator.read()
 
     def _read_until_regexp(self, *expected):
         self._verify_connection()
@@ -735,7 +735,7 @@ class TelnetConnection(telnetlib.Telnet):
             out = self._terminal_emulator.read_until_regexp(regexp_list)
             if out:
                 return True, out
-        return False, None
+        return False, self._terminal_emulator.read()
 
     def _telnet_read_until_regexp(self, expected_list):
         try:
@@ -903,12 +903,21 @@ class TerminalEmulator(object):
         self._buffer = ""
         self._whitespace_after_last_feed = ""
 
+    @property
+    def current_output(self):
+        return self._buffer + self._dump_screen()
+
     def feed(self, input_bytes):
         self._stream.feed(input_bytes)
         self._whitespace_after_last_feed = input_bytes[len(input_bytes.rstrip()):]
 
+    def read(self):
+        current_out = self.current_output
+        self._update_buffer("")
+        return current_out 
+
     def read_until(self, expected):
-        current_out = self._buffer + self._dump_screen()
+        current_out = self.current_output
         exp_index = current_out.find(expected)
         if exp_index != -1:
             self._update_buffer(current_out[exp_index+len(expected):])
@@ -916,7 +925,7 @@ class TerminalEmulator(object):
         return None
 
     def read_until_regexp(self, regexp_list):
-        current_out = self._buffer + self._dump_screen()
+        current_out = self.current_output
         match = None
         for rgx in regexp_list:
             match = rgx.search(current_out)

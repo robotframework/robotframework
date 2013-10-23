@@ -54,6 +54,20 @@ Terminal Emulation Reads Only the Necessary Amount with rewrites
     Read until Should Match    _bar_*amma     amma
     Read Until Should match    _more          more
 
+Terminal Emulation empties buffer on not found read until
+    Login and set prompt    terminal_emulation=True
+    Write    echo abba
+    Run keyword and expect error    No match found *      Read until    not there
+    Write bare      token
+    Read until should match    token     token
+
+Terminal Emulation empties buffer on not found read until regexp
+    Login and set prompt    terminal_emulation=True
+    Write    echo abba
+    Run keyword and expect error    No match found *      Read until regexp    not there
+    Write bare      token
+    Read until regexp should match    token     token
+
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
 
