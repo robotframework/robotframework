@@ -362,8 +362,6 @@ class TelnetConnection(telnetlib.Telnet):
     NEW_ENVIRON_IS = chr(0)
     NEW_ENVIRON_VAR = chr(0)
     NEW_ENVIRON_VALUE = chr(1)
-    
-    terminal_buffer = ""
 
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
                  prompt=None, prompt_is_regexp=False,
@@ -378,7 +376,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._set_default_log_level(default_log_level)
         self._window_size = window_size
         self._environ_user = environ_user
-        self._terminal_emulation = self._check_terminal_emulation(terminal_emulation)
+        self._terminal_emulator = self._check_terminal_emulation(terminal_emulation)
         self.set_option_negotiation_callback(self._negotiate_options)
 
     def set_timeout(self, timeout):
@@ -700,64 +698,44 @@ class TelnetConnection(telnetlib.Telnet):
     def _read_until(self, expected):
         self._verify_connection()
         expected = self._encode(expected)
-        if self._terminal_emulation:
-            exp_index = self.terminal_buffer.find(expected)
-            if exp_index != -1:
-                out = self.terminal_buffer[:exp_index+len(expected)]
-                self.terminal_buffer = self.terminal_buffer[exp_index+len(expected):]
-                return True, out
+        if self._terminal_emulator:
+            return self._terminal_read_until(expected)
         output = telnetlib.Telnet.read_until(self, expected, self._timeout)
-        output = self._emulate_terminal(output)
-        if self._terminal_emulation:
-            output = self.terminal_buffer + output
-            exp_index = output.find(expected)
-            if exp_index != -1:
-                out = output[:exp_index+len(expected)]
-                self.terminal_buffer = output[exp_index+len(expected):]
-                return True, out
-        return output.endswith(expected), self._decode(output)
+        return output.endswith(expected), self._decode(output) 
+
+    def _terminal_read_until(self, expected):
+        out = self._terminal_emulator.read_until(expected)
+        if out:
+            return True, out
+        input_bytes = telnetlib.Telnet.read_until(self, expected, self._timeout)
+        self._terminal_emulator.feed(input_bytes)
+        out = self._terminal_emulator.read_until(expected)
+        if out:
+            return True, out
+        return False, out
 
     def _read_until_regexp(self, *expected):
         self._verify_connection()
         expected = [self._encode(exp) if isinstance(exp, unicode) else exp
                     for exp in expected]
-        if not self._terminal_emulation:
+        if not self._terminal_emulator:
             return self._telnet_read_until_regexp(expected)
         return self._terminal_read_until_regexp(expected)
 
     def _terminal_read_until_regexp(self, expected_list):
         start_time = time.time()
-        stream = pyte.ByteStream()
-        screen = pyte.Screen(80, 80)
-        stream.attach(screen)
-
         regexp_list = [re.compile(rgx) for rgx in expected_list]
-        out_terminal = ""
-
-        match = None
-        for rgx in regexp_list:
-            match = rgx.search(self.terminal_buffer)
-            if match:
-                break
-        if match:
-            out = self.terminal_buffer[:match.end()]
-            self.terminal_buffer = self.terminal_buffer[match.end():]
+        out = self._terminal_emulator.read_until_regexp(regexp_list)
+        if out:
             return True, out
 
         while(time.time() < start_time + self._timeout):
             _index, _, output = self.expect(expected_list, 0.1)
-            stream.feed(output)
-            out_terminal = self._newline.join(''.join(c.data for c in row).rstrip() for row in screen).rstrip(self._newline)
-            match = None
-            for rgx in regexp_list:
-                match = rgx.search(out_terminal)
-                if match:
-                    break
-            if match:
-                out = self.terminal_buffer + out_terminal[:match.end()]
-                self.terminal_buffer = out_terminal[match.end():]
+            self._terminal_emulator.feed(output)
+            out = self._terminal_emulator.read_until_regexp(regexp_list)
+            if out:
                 return True, out
-        return False, out_terminal
+        return False, None
 
     def _telnet_read_until_regexp(self, expected_list):
         try:
@@ -910,7 +888,7 @@ class TelnetConnection(telnetlib.Telnet):
             return False
         if not pyte:
             raise AssertionError("Terminal emulation requires pyte module!\nhttps://pypi.python.org/pypi/pyte/")
-        return True
+        return TerminalEmulator(newline=self._newline)
 
     def _emulate_terminal(self, output):
         if not self._terminal_emulation:
@@ -924,6 +902,50 @@ class TelnetConnection(telnetlib.Telnet):
         out = out + output[len(output.rstrip()):]
         logger.trace("Output after %r" % out)
         return out
+
+class TerminalEmulator(object):
+
+    def __init__(self, rows=80, columns=80, newline="\r\n"):
+        self._rows = rows
+        self._columns = columns
+        self._newline = newline
+        self._stream = pyte.ByteStream()
+        self._screen = pyte.Screen(self._rows, self._columns)
+        self._stream.attach(self._screen)
+        self._buffer = ""
+        self._whitespace_after_last_feed = ""
+
+    def feed(self, input_bytes):
+        self._stream.feed(input_bytes)
+        self._whitespace_after_last_feed = input_bytes[len(input_bytes.rstrip()):]
+
+    def read_until(self, expected):
+        current_out = self._buffer + self._dump_screen()
+        exp_index = current_out.find(expected)
+        if exp_index != -1:
+            self._update_buffer(current_out[exp_index+len(expected):])
+            return current_out[:exp_index+len(expected)]
+        return None
+
+    def read_until_regexp(self, regexp_list):
+        current_out = self._buffer + self._dump_screen()
+        match = None
+        for rgx in regexp_list:
+            match = rgx.search(current_out)
+            if match:
+                self._update_buffer(current_out[match.end():])
+                return current_out[:match.end()]
+        return None
+
+    def _dump_screen(self):
+        out = self._newline.join(''.join(c.data for c in row).rstrip() for row in self._screen).rstrip(self._newline)
+        return out + self._whitespace_after_last_feed
+
+    def _update_buffer(self, terminal_buffer):
+        self._buffer = terminal_buffer
+        self._whitespace_after_last_feed = ""
+        self._screen.reset()
+
 
 class NoMatchError(AssertionError):
     ROBOT_SUPPRESS_NAME = True
