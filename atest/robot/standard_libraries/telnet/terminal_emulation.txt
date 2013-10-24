@@ -4,17 +4,38 @@ Force Tags        jybot    pybot
 Resource          telnet_resource.txt
 
 *** Test Cases ***
-Terminal Emulation
+Execute command
     Check Test Case    ${TEST NAME}
 
-Terminal Emulation Read Until Regex
+Read Until Regex
     Check Test Case    ${TEST NAME}
 
-Terminal Emulation Read Until Multiple Regexp
+Read Until Multiple Regexp
     Check Test Case    ${TEST NAME}
 
-Terminal Emulation Reads Only the Necessary Amount
+Reads Only the Necessary Amount
     Check Test Case    ${TEST NAME}
 
-Terminal Emulation Reads Only the Necessary Amount with rewrites
+Reads Only the Necessary Amount with rewrites
+    Check Test Case    ${TEST NAME}
+
+Empties buffer on not found read until
+    Check Test Case    ${TEST NAME}
+
+Empties buffer on not found read until regexp
+    Check Test Case    ${TEST NAME}
+
+Read
+    Check Test Case    ${TEST NAME}
+
+Read Until Reads Using Internal Update Frequency
+    Check Test Case    ${TEST NAME}
+
+Read Until With Timeout Faster Than Internal Frequency
+    Check Test Case    ${TEST NAME}
+
+Read Until Regexp Using Internal Update Frequency
+    Check Test Case    ${TEST NAME}
+
+Read Until Regexp With Timeout Faster Than Internal Frequency
     Check Test Case    ${TEST NAME}

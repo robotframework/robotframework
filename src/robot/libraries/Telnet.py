@@ -19,7 +19,7 @@ import time
 import re
 import inspect
 import struct
-from cookielib import logger
+
 
 try:
     import pyte
@@ -707,15 +707,21 @@ class TelnetConnection(telnetlib.Telnet):
         output = telnetlib.Telnet.read_until(self, expected, self._timeout)
         return output.endswith(expected), self._decode(output) 
 
+    @property
+    def _terminal_frequency(self):
+        return min(0.03, self._timeout)
+
     def _terminal_read_until(self, expected):
+        start_time = time.time()
         out = self._terminal_emulator.read_until(expected)
         if out:
             return True, out
-        input_bytes = telnetlib.Telnet.read_until(self, expected, self._timeout)
-        self._terminal_emulator.feed(input_bytes)
-        out = self._terminal_emulator.read_until(expected)
-        if out:
-            return True, out
+        while(time.time() < start_time + self._timeout):
+            input_bytes = telnetlib.Telnet.read_until(self, expected, self._terminal_frequency)
+            self._terminal_emulator.feed(input_bytes)
+            out = self._terminal_emulator.read_until(expected)
+            if out:
+                return True, out
         return False, self._terminal_emulator.read()
 
     def _read_until_regexp(self, *expected):
@@ -734,7 +740,7 @@ class TelnetConnection(telnetlib.Telnet):
             return True, out
 
         while(time.time() < start_time + self._timeout):
-            _index, _, output = self.expect(expected_list, 0.1)
+            _index, _, output = self.expect(expected_list, self._terminal_frequency)
             self._terminal_emulator.feed(output)
             out = self._terminal_emulator.read_until_regexp(regexp_list)
             if out:
@@ -892,14 +898,13 @@ class TelnetConnection(telnetlib.Telnet):
             return False
         if not pyte:
             raise AssertionError("Terminal emulation requires pyte module!\nhttps://pypi.python.org/pypi/pyte/")
-        return TerminalEmulator(newline=self._newline)
+        return TerminalEmulator(window_size=self._window_size, newline=self._newline)
 
 
 class TerminalEmulator(object):
 
-    def __init__(self, rows=80, columns=80, newline="\r\n"):
-        self._rows = rows
-        self._columns = columns
+    def __init__(self, window_size=None, newline="\r\n"):
+        self._rows, self._columns = window_size or (200, 200)
         self._newline = newline
         self._stream = pyte.ByteStream()
         self._screen = pyte.Screen(self._rows, self._columns)
