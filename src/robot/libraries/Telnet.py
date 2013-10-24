@@ -860,6 +860,8 @@ class TelnetConnection(telnetlib.Telnet):
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
             self._opt_echo_on(opt)
+        elif cmd == telnetlib.DO and opt == telnetlib.TTYPE:
+            self._opt_terminal_type(opt)
         elif cmd == telnetlib.DO and opt == telnetlib.NEW_ENVIRON and self._environ_user:
             self._opt_environ_user(opt)
         elif cmd == telnetlib.DO and opt == telnetlib.NAWS and self._window_size:
@@ -869,6 +871,12 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _opt_echo_on(self, opt):
         return self.sock.sendall(telnetlib.IAC + telnetlib.DO + opt)
+
+    def _opt_terminal_type(self, opt):
+        self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
+        self.sock.sendall(telnetlib.IAC + telnetlib.SB + telnetlib.TTYPE
+                          + self.NEW_ENVIRON_IS + "VT100"
+                          + telnetlib.IAC + telnetlib.SE)
 
     def _opt_environ_user(self, opt):
         self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)

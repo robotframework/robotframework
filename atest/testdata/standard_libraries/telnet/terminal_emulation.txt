@@ -77,11 +77,12 @@ Read Until Regexp With Timeout Faster Than Internal Frequency
     Run with Timeout 0.05    Read Until Regexp    acdc
 
 Window Size
-    [Setup]    Login and set prompt    terminal_emulation=True   window_size=200x80
+    [Setup]    Login and set prompt    terminal_emulation=True   window_size=1024x1024
     Set Timeout   5
+    Execute Command    echo $TERM
     Execute Command    stty -a
-    Write    echo ${=*190}
-    Read Should Match     ${=*190}*
+    Write    echo ${=*1000}
+    Read Should Match     ${=*1000}*
 
 Window Size 100x80
     [Setup]    Login and set prompt    terminal_emulation=True   window_size=100x80
