@@ -113,8 +113,10 @@ class Results(object):
     def result(self):
         if self._result is None:
             include_keywords = bool(self._settings.log or self._settings.output)
-            self._result = ExecutionResult(include_keywords=include_keywords,
-                                           *self._sources)
+            flattened = self._settings.flatten_keywords
+            self._result = ExecutionResult(*self._sources,
+                                           include_keywords=include_keywords,
+                                           flattened_keywords=flattened)
             self._result.configure(self._settings.status_rc,
                                    self._settings.suite_config,
                                    self._settings.statistics_config)
