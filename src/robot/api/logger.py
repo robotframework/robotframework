@@ -95,10 +95,14 @@ def warn(msg, html=False):
     librarylogger.warn(msg, html)
 
 
-def console(msg, newline=True):
+def console(msg, newline=True, stream='stdout'):
     """Writes the message to the console.
 
     If the ``newline`` argument is ``True``, a newline character is
     automatically added to the message.
+
+    By default the message is written to the standard output stream.
+    Using the standard error stream is possibly by giving the ``stream``
+    argument value ``'stderr'``. This is a new feature in RF 2.8.2.
     """
-    librarylogger.console(msg, newline)
+    librarylogger.console(msg, newline, stream)
