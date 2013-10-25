@@ -1864,7 +1864,7 @@ class _Misc:
             sep = ' '
         return sep.join(items)
 
-    def log(self, message, level='INFO', html=False):
+    def log(self, message, level='INFO', html=False, console=False):
         """Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, and WARN.
@@ -1881,16 +1881,22 @@ class _Misc:
         the `html` argument is using the `HTML` pseudo log level. It logs
         the message as HTML using the INFO level.
 
+        If the `console` argument is true, the message will be written to
+        the console in addition to the log file.
+
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
         | Log | Warning, world!      | WARN     |   | # Warning.               |
         | Log | <b>Hello</b>, world! | html=yes |   | # INFO message as HTML.  |
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
+        | Log | Hello, console!   | console=yes |   | # Write to the console.  |
 
-        The `html` argument is new in Robot Framework 2.8.2.
+        Both `html` and `console` arguments are new in Robot Framework 2.8.2.
         """
         logger.write(message, level, html)
+        if console:
+            logger.console(message)
 
     def log_many(self, *messages):
         """Logs the given messages as separate entries with the INFO level."""

@@ -38,6 +38,11 @@ Explicit HTML
     Log    ${HTML}    DEBUG    xxx
     Log    ${HTML}    html=${FALSE}    level=debug
 
+Log also to console
+    [Setup]    Set Log Level    DEBUG
+    Log    Hello, console!    console=yepyep
+    Log    ${HTML}    debug    enable both html    and console
+
 Log Callable
     Log    ${MyObject}
 
