@@ -1,46 +1,45 @@
 *** Settings ***
-Variables       objects_for_call_method.py
-Test Teardown   Set Log Level  INFO
+Test Teardown     Set Log Level    INFO
+Variables         objects_for_call_method.py
 
 *** Variables ***
-${HTML}         <a href="http://robotframework.org">Robot Framework</a>
+${HTML}           <a href="http://robotframework.org">Robot Framework</a>
 
 *** Test Cases ***
-
 Log
-    Log  Hello, world!
-    Log  ${42}
-    Log  ${None}
-    Log  ${OBJ}
+    Log    Hello, world!
+    Log    ${42}
+    Log    ${None}
+    Log    ${OBJ}
 
 Log With Different Levels
-    [Documentation]  FAIL Invalid log level 'INVALID'
-    [Setup]  Set Log Level  TRACE
-    Log  Log says: Hello from tests!
-    Log  Trace level  TRACE
-    Log  Debug level  debug
-    Log  Info level  Info
-    Log  Warn level  wArN
-    Log  Fail level  FAIL
-    Log  Error level  ERROR
-    Log  Invalid level  INVALID
+    [Documentation]    FAIL Invalid log level 'INVALID'
+    [Setup]    Set Log Level    TRACE
+    Log    Log says: Hello from tests!
+    Log    Trace level    TRACE
+    Log    Debug level    debug
+    Log    Info level    Info
+    Log    Warn level    wArN
+    Log    Fail level    FAIL
+    Log    Error level    ERROR
+    Log    Invalid level    INVALID
 
 HTML is escaped by default
-    Log  <b>not bold</b>
-    Log  ${HTML}
+    Log    <b>not bold</b>
+    Log    ${HTML}
 
 HTML pseudo level
-    Log  <b>bold</b>  HTML
-    Log  ${HTML}  HTML
+    Log    <b>bold</b>    HTML
+    Log    ${HTML}    HTML
 
 Explicit HTML
-    [Setup]  Set Log Level  DEBUG
-    Log  <b>bold</b>  html=yep
-    Log  ${HTML}  DEBUG  xxx
+    [Setup]    Set Log Level    DEBUG
+    Log    <b>bold</b>    html=yep
+    Log    ${HTML}    DEBUG    xxx
 
 Log Callable
-    Log  ${MyObject}
+    Log    ${MyObject}
 
 Log Many
-    Log Many  Log Many says:  Hello  from  tests!
-    Log Many  Log Many says: Hi!!
+    Log Many    Log Many says:    Hello    from    tests!
+    Log Many    Log Many says: Hi!!
