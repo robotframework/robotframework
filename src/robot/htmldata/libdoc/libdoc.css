@@ -27,9 +27,15 @@ div.shortcuts {
     font-size: 0.9em;
 }
 div.shortcuts a {
+    display: inline-block;
     text-decoration: none;
     white-space: nowrap;
     color: black;
+}
+div.shortcuts a::first-letter {
+    font-weight: bold;
+    font-size: 1.05em;
+    letter-spacing: 0.1em;
 }
 div.shortcuts a:hover {
     text-decoration: underline;
