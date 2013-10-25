@@ -12,7 +12,7 @@ Log
     Log    ${None}
     Log    ${OBJ}
 
-Log With Different Levels
+Log with different levels
     [Documentation]    FAIL Invalid log level 'INVALID'
     [Setup]    Set Log Level    TRACE
     Log    Log says: Hello from tests!
@@ -43,9 +43,15 @@ Log also to console
     Log    Hello, console!    console=yepyep
     Log    ${HTML}    debug    enable both html    and console
 
-Log Callable
+Log callable
     Log    ${MyObject}
 
 Log Many
     Log Many    Log Many says:    Hello    from    tests!
     Log Many    Log Many says: Hi!!
+
+Log to console
+    Log To Console    stdout w/ newline
+    Log To Console    stdout w/o new...    no_newline=true
+    Log To Console    stderr w/ newline    stdERR
+    Log To Console    ...line    stdout    continue without newlines

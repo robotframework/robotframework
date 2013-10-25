@@ -1868,21 +1868,27 @@ class _Misc:
         """Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, and WARN.
+        Messages below the current active log level are ignored. See
+        `Set Log Level` keyword and `--loglevel` command line option
+        for more details about setting the level.
 
-        Messages logged with the WARN level will be visible also in
-        the console and in the `Test Execution Errors` section in the
-        log file.
+        Messages logged with the WARN level will be automatically visible
+        also in the console and in the `Test Execution Errors` section in
+        the log file.
 
         If the `html` argument is given any true value (e.g. any non-empty
         string), the message will be considered HTML and special characters
-        like `<` and `>` are not escaped. For example, logging
+        such as `<` in it are not escaped. For example, logging
         `<img src="image.png">` creates an image when `html` is true, but
         otherwise the message is that exact string. An alternative to using
         the `html` argument is using the `HTML` pseudo log level. It logs
         the message as HTML using the INFO level.
 
         If the `console` argument is true, the message will be written to
-        the console in addition to the log file.
+        the console where test execution was started from in addition to
+        the log file. This keyword always uses the standard output stream
+        and adds a newline after the written message. Use `Log To Console`
+        instead if either of these is undesirable,
 
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
@@ -1890,7 +1896,10 @@ class _Misc:
         | Log | <b>Hello</b>, world! | html=yes |   | # INFO message as HTML.  |
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
-        | Log | Hello, console!   | console=yes |   | # Write to the console.  |
+        | Log | Hello, console! | console=yes | | # Write also to the console. |
+
+        See `Log Many` if you want to log multiple messages in one go, and
+        `Log To Console` if you only want to write to the console.
 
         Both `html` and `console` arguments are new in Robot Framework 2.8.2.
         """
@@ -1899,9 +1908,37 @@ class _Misc:
             logger.console(message)
 
     def log_many(self, *messages):
-        """Logs the given messages as separate entries with the INFO level."""
+        """Logs the given messages as separate entries using the INFO level.
+
+        See `Log` and `Log To Console` keywords if you want to use alternative
+        log levels, use HTML, or log to the console.
+        """
         for msg in messages:
             self.log(msg)
+
+    def log_to_console(self, message, stream='STDOUT', no_newline=False):
+        """Logs the given message to the console.
+
+        By default uses the standard output stream. Using the standard error
+        stream is possibly by giving the `stream` argument value `STDERR`
+        (case-insensitive).
+
+        By default appends a newline to the logged message. This can be
+        disabled by giving the `no_newline` argument any true value (e.g.
+        any non-empty string).
+
+        Examples:
+        | Log To Console | Hello, console!             |                 |
+        | Log To Console | Hello, stderr!              | STDERR          |
+        | Log To Console | Message starts where and is | no_newline=true |
+        | Log To Console | continued without newlines. | no_newline=true |
+
+        This keyword does not log the message to the normal log file. Use
+        `Log` keyword, possibly with argument `console`, if that is desired.
+
+        New in Robot Framework 2.8.2.
+        """
+        logger.console(message, newline=not no_newline, stream=stream)
 
     @run_keyword_variant(resolve=0)
     def comment(self, *messages):

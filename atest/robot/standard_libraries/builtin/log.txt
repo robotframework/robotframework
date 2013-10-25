@@ -14,7 +14,7 @@ Log
     Check Log Message    ${tc.kws[2].msgs[0]}    None
     Check Log Message    ${tc.kws[3].msgs[0]}    String presentation of MyObject
 
-Log With Different Levels
+Log with different levels
     ${tc} =    Check Test Case    ${TEST NAME}
     Comment    Test set log level to trace so    the logged message is second    and first contains resolved args
     Check Log Message    ${tc.kws[0].msgs[1]}    Log says: Hello from tests!    INFO
@@ -47,10 +47,10 @@ Log also to console
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Hello, console!
     Check Log Message    ${tc.kws[1].msgs[0]}    ${HTML}    DEBUG    html=True
-    Check stdout contains    Hello, console!\n
-    Check stdout contains    ${HTML}\n
+    Check Stdout Contains    Hello, console!\n
+    Check Stdout Contains    ${HTML}\n
 
-Log Callable
+Log callable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    objects_for_call_method.MyObject
 
@@ -61,3 +61,11 @@ Log Many
     Check Log Message    ${tc.kws[0].msgs[2]}    from    INFO
     Check Log Message    ${tc.kws[0].msgs[3]}    tests!    INFO
     Check Log Message    ${tc.kws[1].msgs[0]}    Log Many says: Hi!!    INFO
+
+Log To Console
+    ${tc} =    Check Test Case    ${TEST NAME}
+    :FOR    ${i}    IN RANGE    4
+    \    Should Be Empty    ${tc.kws[${i}].msgs}
+    Check Stdout Contains    stdout w/ newline\n
+    Check Stdout Contains    stdout w/o new......line
+    Check Stderr Contains    stderr w/ newline\n
