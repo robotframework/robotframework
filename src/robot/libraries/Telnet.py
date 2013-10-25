@@ -924,6 +924,10 @@ class TerminalEmulator(object):
     def current_output(self):
         return self._buffer + self._dump_screen()
 
+    def _dump_screen(self):
+        out = self._newline.join(''.join(c.data for c in row).rstrip() for row in self._screen).rstrip(self._newline)
+        return out + self._whitespace_after_last_feed
+
     def feed(self, input_bytes):
         self._stream.feed(input_bytes)
         self._whitespace_after_last_feed = input_bytes[len(input_bytes.rstrip()):]
@@ -950,10 +954,6 @@ class TerminalEmulator(object):
                 self._update_buffer(current_out[match.end():])
                 return current_out[:match.end()]
         return None
-
-    def _dump_screen(self):
-        out = self._newline.join(''.join(c.data for c in row).rstrip() for row in self._screen).rstrip(self._newline)
-        return out + self._whitespace_after_last_feed
 
     def _update_buffer(self, terminal_buffer):
         self._buffer = terminal_buffer
