@@ -41,6 +41,7 @@ Explicit HTML
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    <b>bold</b>    html=True
     Check Log Message    ${tc.kws[1].msgs[0]}    ${HTML}    DEBUG    html=True
+    Check Log Message    ${tc.kws[2].msgs[0]}    ${HTML}    DEBUG
 
 Log Callable
     ${tc} =    Check Test Case    ${TEST NAME}

@@ -36,6 +36,7 @@ Explicit HTML
     [Setup]    Set Log Level    DEBUG
     Log    <b>bold</b>    html=yep
     Log    ${HTML}    DEBUG    xxx
+    Log    ${HTML}    html=${FALSE}    level=debug
 
 Log Callable
     Log    ${MyObject}

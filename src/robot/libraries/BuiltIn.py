@@ -1867,19 +1867,28 @@ class _Misc:
     def log(self, message, level='INFO', html=False):
         """Logs the given message with the given level.
 
-        Valid levels are TRACE, DEBUG, INFO (default), HTML and WARN.
-
-        The HTML level is special because it allows writing messages
-        without HTML code in them being escaped. For example, logging
-        a message '<img src="image.png">' using the HTML level creates
-        an image, but with other levels the message would be that exact
-        string. Notice that invalid HTML can easily corrupt the whole
-        log file so this feature should be used with care. The
-        actual log level used for HTML messages is INFO.
+        Valid levels are TRACE, DEBUG, INFO (default), HTML, and WARN.
 
         Messages logged with the WARN level will be visible also in
-        the console and in the Test Execution Errors section in the
+        the console and in the `Test Execution Errors` section in the
         log file.
+
+        If the `html` argument is given any true value (e.g. any non-empty
+        string), the message will be considered HTML and special characters
+        like `<` and `>` are not escaped. For example, logging
+        `<img src="image.png">` creates an image when `html` is true, but
+        otherwise the message is that exact string. An alternative to using
+        the `html` argument is using the `HTML` pseudo log level. It logs
+        the message as HTML using the INFO level.
+
+        Examples:
+        | Log | Hello, world!        |          |   | # Normal INFO message.   |
+        | Log | Warning, world!      | WARN     |   | # Warning.               |
+        | Log | <b>Hello</b>, world! | html=yes |   | # INFO message as HTML.  |
+        | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
+        | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
+
+        The `html` argument is new in Robot Framework 2.8.2.
         """
         logger.write(message, level, html)
 
