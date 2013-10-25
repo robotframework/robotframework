@@ -7,6 +7,9 @@ Resource          atest_resource.txt
 Split String
     Check Test Case    ${TESTNAME}
 
+Split String With Longer Separator
+    Check Test Case    ${TESTNAME}
+
 Split String With Whitespaces and Separator Is None
     Check Test Case    ${TESTNAME}
 
@@ -29,6 +32,9 @@ Split String With Invalid Max Split
     Check Test Case    ${TESTNAME}
 
 Split String From Right
+    Check Test Case    ${TESTNAME}
+
+Split String From Right With Longer Separator
     Check Test Case    ${TESTNAME}
 
 Split String From Right With Whitespaces and Separator Is None

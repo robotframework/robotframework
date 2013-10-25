@@ -348,12 +348,13 @@ class String:
         an effect only when `max_split` is given.
 
         Examples:
-        | ${first} | ${others} = | Split String | ${string} | - | 1 |
-        | ${others} | ${last} = | Split String From Right | ${string} | - | 1 |
+        | ${first} | ${rest} = | Split String            | ${string} | - | 1 |
+        | ${rest}  | ${last} = | Split String From Right | ${string} | - | 1 |
         """
-        # Strings in Jython 2.2 don't have 'rsplit' methods
-        reversed = self.split_string(string[::-1], separator, max_split)
-        return [ r[::-1] for r in reversed ][::-1]
+        if separator == '':
+            separator = None
+        max_split = self._convert_to_integer(max_split, 'max_split')
+        return string.rsplit(separator, max_split)
 
     def split_string_to_characters(self, string):
         """Splits the string` to characters.
