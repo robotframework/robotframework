@@ -7,11 +7,8 @@ Resource         atest_resource.txt
 Get Process Result
     Check Test Case    ${TESTNAME}
 
-Get Process Result Stderr
+Get Process Result Multiple Return Values
     Check Test Case    ${TESTNAME}
 
-Get Process Result Empty Streams
-    Check Test Case    ${TESTNAME}
-
-Get Process Result Empty Parameters Should Raise Exception
+Get Process Result Empty Parameters Should Return Result Object
     Check Test Case    ${TESTNAME}

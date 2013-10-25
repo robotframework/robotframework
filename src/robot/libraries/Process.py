@@ -531,47 +531,60 @@ class Process(object):
         return self._processes[handle]
 
     def get_process_result(self, handle=None, rc=False, stdout=False, stderr=False):
-        """Returns the results of process which has been run.
+        """Returns a list of result attributes or a result object from a process.
+
+        The process must be started with `Start Process`, and it must be stopped
+        by using `Wait For Process` or `Terminate Process` before using this
+        keyword. Getting result attributes for running processes is not
+        supported.
 
         If `handle` is not given, uses the current `active process`.
 
-        Returns results of process as a tuple containing
-        (`rc`,`stdout`,`stderr`). The tuple will only contain the result values
-        which are enabled in the arguments. This keyword is implemented for
-        obtaining results from a process executed with remote library.
+        If no arguments are given a result object is returned. Enabling one
+        or more of the arguments will return a list containing attribute(s) of
+        the process result which are explained below:
 
-        `rc` returns the returncode of the process.
-
-        `stdout` returns the standard output from the process.
-
-        `stderr` returns the error stream from the process.
+        | = Argument = |  = Attribute =  |
+        | `rc`         | return code     |
+        | `stdout`     | standard output |
+        | `stderr`     | error output    |
 
         Examples:
-        | Remote.Start Process        | python    | -c              | import sys;sys.exit(1) |
-        | Remote.Wait For Process     |
-        | ${rc} =                     | Remote.Get Process Result   |
-        | Should Be Equal As Integers | ${rc}     | 1               |
-        | Remote.Start Process        | echo      | Robot Framework |
-        | Remote.Wait For Process     |
-        | ${rc}                       | ${stdout} | ${stderr} =     | Remote.Get Process Result |
-        | Should Be Equal As Integers | ${rc}     | 0               |
-        | Should Be Equal             | ${stdout} | Robot Framework |
-        | Should Be Equal             | ${stderr} | ${EMPTY}        |
+        | #Single return value        |
+        | ${rc} =                     | Get Process Result     | exampleprocess     | rc=true |
+        | Should Be Equal As Integers | ${rc}                  | 0                  |
+        | #Multiple return values     |
+        | ${rc}                       | ${stdout} =            | Get Process Result | rc=true | stdout=true |
+        | Should Be Equal As Integers | ${rc}                  | 0                  |
+        | Should Be Equal             | ${stdout}              | Robot Framework    |
+        | #No arguments given         |
+        | ${result} =                 | Get Process Result     |
+        | Should Be Equal As Integers | ${result.rc}           | 0                  |
+
+        Getting only certain attributes is especially useful when using this
+        library via the Remote library interface. This interface does not
+        support returning custom objects, but individual attributes can be
+        returned just fine.
 
         New in Robot Framework 2.8.2.
         """
-        if not (rc or stdout or stderr):
-            raise RuntimeError('No arguments specified')
-        process = self._processes[handle]
-        result = self._results[process]
-        result_values = ()
+        result = self._results[self._processes[handle]]
+        result_values = self._get_result_attributes(result, rc, stdout, stderr)
+        if not result_values:
+            return result
+        elif len(result_values) == 1:
+            return result_values[0]
+        return result_values
+
+    def _get_result_attributes(self, result, rc, stdout, stderr):
+        result_values = []
         if rc:
-            result_values += (result.rc,)
+            result_values.append(result.rc)
         if stdout:
-            result_values += (result.stdout,)
+            result_values.append(result.stdout)
         if stderr:
-            result_values += (result.stderr,)
-        return result_values[0] if len(result_values) == 1 else result_values
+            result_values.append(result.stderr)
+        return result_values
 
     def switch_process(self, handle):
         """Makes the specified process the current `active process`.

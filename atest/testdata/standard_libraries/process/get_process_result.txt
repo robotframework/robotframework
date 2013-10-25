@@ -6,25 +6,18 @@ Resource          resource.txt
 Get Process Result
     Start Python Process    print 'Robot Framework'
     Wait For Process
-    ${rc}    ${stdout} =    Get Process Result    rc=yes    stdout=yep
+    ${rc} =    Get Process Result    rc=yes
     Should Be Equal As Integers    ${rc}    0
-    Should Be Equal    ${stdout}    Robot Framework
 
-Get Process Result Stderr
-    Start Python Process    1/0
-    Wait For Process
-    ${rc}    ${stderr} =    Get Process Result    rc=yes    stderr=yep
+Get Process Result Multiple Return Values
+    Start Python Process    1/0    alias=proc1
+    Wait For Process    proc1
+    ${rc}    ${stderr} =    Get Process Result    proc1    rc=yes    stderr=yep
     Should Be Equal As Integers    ${rc}    1
     Should Match     ${stderr}    *ZeroDivisionError: integer division or modulo by zero*
 
-Get Process Result Empty Streams
-    Start Python Process    pass
-    Wait For Process
-    ${stdout}    ${stderr} =    Get Process Result    stdout=yes    stderr=yes
-    Should Be Equal    ${stdout}   ${EMPTY}
-    Should Be Equal    ${stderr}   ${EMPTY}
-
-Get Process Result Empty Parameters Should Raise Exception
+Get Process Result Empty Parameters Should Return Result Object
     Start Python Process    print 'R'
     Wait For Process
-    Run Keyword And Expect Error    No arguments specified    Get Process Result
+    ${result} =    Get Process Result
+    Should Be Equal As Integers    ${result.rc}    0
