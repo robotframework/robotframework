@@ -1,6 +1,9 @@
 *** Settings ***
 Variables       objects_for_call_method.py
+Test Teardown   Set Log Level  INFO
 
+*** Variables ***
+${HTML}         <a href="http://robotframework.org">Robot Framework</a>
 
 *** Test Cases ***
 
@@ -21,14 +24,19 @@ Log With Different Levels
     Log  Fail level  FAIL
     Log  Error level  ERROR
     Log  Invalid level  INVALID
-    [Teardown]  Set Log Level  INFO
 
-Log HTML
+HTML is escaped by default
     Log  <b>not bold</b>
+    Log  ${HTML}
+
+HTML pseudo level
     Log  <b>bold</b>  HTML
-    ${html} =  Set Variable  <img src="nonex.png">
-    Log  ${html}
-    Log  ${html}  HTML
+    Log  ${HTML}  HTML
+
+Explicit HTML
+    [Setup]  Set Log Level  DEBUG
+    Log  <b>bold</b>  html=yep
+    Log  ${HTML}  DEBUG  xxx
 
 Log Callable
     Log  ${MyObject}

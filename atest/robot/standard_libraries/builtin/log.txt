@@ -3,6 +3,9 @@ Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/log.txt
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
+*** Variables ***
+${HTML}         <a href="http://robotframework.org">Robot Framework</a>
+
 *** Test Cases ***
 Log
     ${tc} =  Check Test Case  Log
@@ -24,12 +27,20 @@ Log With Different Levels
     Check Log Message  ${tc.kws[5].msgs[1]}  Fail level  FAIL
     Check Log Message  ${tc.kws[6].msgs[1]}  Error level  ERROR
 
-Log HTML
-    ${tc} =  Check Test Case  Log HTML
-    Check Log Message  ${tc.kws[0].msgs[0]}  <b>not bold</b>  INFO
-    Check Log Message  ${tc.kws[1].msgs[0]}  <b>bold</b>  HTML
-    Check Log Message  ${tc.kws[3].msgs[0]}  <img src="nonex.png">  INFO
-    Check Log Message  ${tc.kws[4].msgs[0]}  <img src="nonex.png">  HTML
+HTML is escaped by default
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  <b>not bold</b>
+    Check Log Message  ${tc.kws[1].msgs[0]}  ${HTML}
+
+HTML pseudo level
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  <b>bold</b>  html=True
+    Check Log Message  ${tc.kws[1].msgs[0]}  ${HTML}  html=True
+
+Explicit HTML
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  <b>bold</b>  html=True
+    Check Log Message  ${tc.kws[1].msgs[0]}  ${HTML}  DEBUG  html=True
 
 Log Callable
     ${tc} =  Check Test Case  Log Callable

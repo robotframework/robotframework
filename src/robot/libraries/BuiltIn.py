@@ -1864,7 +1864,7 @@ class _Misc:
             sep = ' '
         return sep.join(items)
 
-    def log(self, message, level="INFO"):
+    def log(self, message, level='INFO', html=False):
         """Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML and WARN.
@@ -1881,7 +1881,7 @@ class _Misc:
         the console and in the Test Execution Errors section in the
         log file.
         """
-        logger.write(message, level)
+        logger.write(message, level, html)
 
     def log_many(self, *messages):
         """Logs the given messages as separate entries with the INFO level."""
