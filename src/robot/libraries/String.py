@@ -22,7 +22,7 @@ from robot.utils import unic
 from robot.version import get_version
 
 
-class String:
+class String(object):
     """A test library for string manipulation and verification.
 
     `String` is Robot Framework's standard library for manipulating
@@ -225,7 +225,7 @@ class String:
 
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
-        matching = [ line for line in lines if matches(line) ]
+        matching = [line for line in lines if matches(line)]
         logger.info('%d out of %d lines matched' % (len(matching), len(lines)))
         return '\n'.join(matching)
 
@@ -357,10 +357,12 @@ class String:
         return string.rsplit(separator, max_split)
 
     def split_string_to_characters(self, string):
-        """Splits the string` to characters.
+        """Splits the given `string` to characters.
 
         Example:
         | @{characters} = | Split String To Characters | ${string} |
+
+        New in Robot Framework 2.7.
         """
         return list(string)
 
@@ -412,7 +414,7 @@ class String:
                             ('[NUMBERS]', digits)]:
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
-        return ''.join([ chars[randint(0, maxi)] for i in xrange(length) ])
+        return ''.join(chars[randint(0, maxi)] for _ in xrange(length))
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from `start` index to `end` index.
