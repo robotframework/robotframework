@@ -530,8 +530,8 @@ class Process(object):
         """
         return self._processes[handle]
 
-    def get_process_result(self, handle=None, rc=False, stdout=False, stderr=False):
-        """Returns a list of result attributes or a result object from a process.
+    def get_process_result(self, handle=None, rc=False, stdout=False,
+                           stderr=False, stdout_path=False, stderr_path=False):
 
         The process must be started with `Start Process`, and it must be stopped
         by using `Wait For Process` or `Terminate Process` before using this
@@ -572,22 +572,18 @@ class Process(object):
         if result.rc is None:
             raise RuntimeError('Getting results of unfinished processes '
                                'is not supported.')
-        result_values = self._get_result_attributes(result, rc, stdout, stderr)
-        if not result_values:
+        attributes = self._get_result_attributes(result, rc, stdout, stderr,
+                                                 stdout_path, stderr_path)
+        if not attributes:
             return result
-        elif len(result_values) == 1:
-            return result_values[0]
-        return result_values
+        elif len(attributes) == 1:
+            return attributes[0]
+        return attributes
 
-    def _get_result_attributes(self, result, rc, stdout, stderr):
-        result_values = []
-        if rc:
-            result_values.append(result.rc)
-        if stdout:
-            result_values.append(result.stdout)
-        if stderr:
-            result_values.append(result.stderr)
-        return result_values
+    def _get_result_attributes(self, result, *includes):
+        attributes = (result.rc, result.stdout, result.stderr,
+                      result.stdout_path, result.stderr_path)
+        return tuple(attr for attr, incl in zip(attributes, includes) if incl)
 
     def switch_process(self, handle):
         """Makes the specified process the current `active process`.

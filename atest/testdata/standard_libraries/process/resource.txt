@@ -28,13 +28,15 @@ Result should match
     Should Be Equal As Integers    ${result.rc}    ${rc}
 
 Start Python Process
-    [Arguments]    ${command}    ${alias}=${null}
-    ${handle}=    Start Process    python    -c    ${command}    alias=${alias}
+    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}
+    ${handle}=    Start Process    python    -c    ${command}
+    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}
     [Return]    ${handle}
 
 Run Python Process
-    [Arguments]    ${command}    ${alias}=${null}
-    ${result}=    Run Process    python    -c    ${command}    alias=${alias}
+    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}
+    ${result}=    Run Process    python    -c    ${command}
+    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}
     [Return]    ${result}
 
 Safe Remove File

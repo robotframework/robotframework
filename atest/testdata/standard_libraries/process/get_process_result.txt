@@ -2,6 +2,10 @@
 Library           Process
 Resource          resource.txt
 Test Setup        Run Robot Process
+Suite Teardown    Remove File    ${TEMP FILE}
+
+*** Variables ***
+${TEMPFILE}       %{TEMPDIR}/get-process-result.txt
 
 *** Test Cases ****
 Get whole result object
@@ -9,17 +13,27 @@ Get whole result object
     Should Be Equal    ${result.rc}    ${2}
     Should Be Equal    ${result.stdout}    Robot
     Should Be Equal    ${result.stderr}    Framework
+    Should Be Equal    ${result.stdout_path}    ${NONE}
+    Should Be Equal    ${result.stderr_path}    ${TEMPFILE}
 
 Get one result attribute
     ${rc} =    Get Process Result    rc=yes    handle=robot
     Should Be Equal    ${rc}    ${2}
 
-Get multiple result attributes
-    ${rc}    ${stdout}    ${stderr} =
+Get two result attribute
+    ${rc}    ${stdout} =    Get Process Result    robot    1    2
+    Should Be Equal    ${rc}    ${2}
+    Should Be Equal    ${stdout}    Robot
+
+Get all result attributes
+    ${rc}    ${stdout}    ${stderr}    ${stdout_path}    ${stderr_path} =
     ...    Get Process Result    robot    stderr=yep    rc=x    stdout=${TRUE}
+    ...    stderr_path=nämä    stdout_path=myös
     Should Be Equal    ${rc}    ${2}
     Should Be Equal    ${stdout}    Robot
     Should Be Equal    ${stderr}    Framework
+    Should Be Equal    ${stdout_path}    ${NONE}
+    Should Be Equal    ${stderr_path}    ${TEMPFILE}
 
 Get same result multiple times
     ${result} =    Get Process Result    robot
@@ -50,4 +64,4 @@ Run Robot Process
     ...    sys.stdout.write('Robot')
     ...    sys.stderr.write('Framework')
     ...    sys.exit(2)
-    Run Python Process   ${command}    alias=robot
+    Run Python Process   ${command}    alias=robot    stderr=${TEMPFILE}

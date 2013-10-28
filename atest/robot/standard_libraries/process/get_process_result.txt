@@ -10,7 +10,10 @@ Get whole result object
 Get one result attribute
     Check Test Case    ${TESTNAME}
 
-Get multiple result attributes
+Get two result attribute
+    Check Test Case    ${TESTNAME}
+
+Get all result attributes
     Check Test Case    ${TESTNAME}
 
 Get same result multiple times
