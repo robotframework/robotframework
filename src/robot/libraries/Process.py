@@ -53,6 +53,8 @@ class Process(object):
     - `Result object`
     - `Using with OperatingSystem library`
     - `Example`
+    - `Shortcuts`
+    - `Keywords`
 
     = Specifying command and arguments =
 
@@ -208,7 +210,9 @@ class Process(object):
 
     `Run Process`, `Wait For Process` and `Terminate Process` keywords return a
     result object that contains information about the process execution as its
-    attibutes. What is available is documented in the table below.
+    attributes. The same result object, or some of its attributes, can also
+    be get using `Get Process Result` keyword. Attributes available in the
+    object are documented in the table below.
 
     | = Attribute = |             = Explanation =               |
     | rc            | Return code of the process as an integer. |
@@ -219,12 +223,12 @@ class Process(object):
 
     Example:
     | ${result} =            | `Run Process`         | program               |
-    | `Should Be Equal As Integers` | ${result.rc}   |                       |
+    | `Should Be Equal As Integers` | ${result.rc}   | 0                     |
     | `Should Match`         | ${result.stdout}      | Some t?xt*            |
     | `Should Be Empty`      | ${result.stderr}      |                       |
     | ${stdout} =            | `Get File`            | ${result.stdout_path} |
+    | `Should Be Equal`      | ${stdout}             | ${result.stdout}      |
     | `File Should Be Empty` | ${result.stderr_path} |                       |
-    | `Should Be Equal`      | ${result.stdout}      | ${stdout}             |
 
     = Using with OperatingSystem library =
 
@@ -532,39 +536,40 @@ class Process(object):
 
     def get_process_result(self, handle=None, rc=False, stdout=False,
                            stderr=False, stdout_path=False, stderr_path=False):
+        """Returns the specified `result object` or some of its attributes.
 
-        The process must be started with `Start Process`, and it must be stopped
-        by using `Wait For Process` or `Terminate Process` before using this
-        keyword. Getting result attributes for running processes is not
-        supported.
+        The given `handle` specifies the process whose results should be
+        returned. If no `handle` is given, results of the current `active
+        process` are returned. In either case, the process must have been
+        finishes before this keyword can be used.
 
-        If `handle` is not given, uses the current `active process`.
-
-        If no arguments are given a result object is returned. Enabling one
-        or more of the arguments will return a list containing attribute(s) of
-        the process result which are explained below:
-
-        | = Argument = |  = Attribute =  |
-        | `rc`         | return code     |
-        | `stdout`     | standard output |
-        | `stderr`     | error output    |
+        If no other arguments than the optional `handle` are given, a whole
+        `result object` is returned. If one or more of the other arguments are
+        given any true value (e.g. any non-empty string), only the specified
+        attributes of the `result object` are returned. These attributes are
+        always returned in the same order as arguments are specified in the
+        keyword signature.
 
         Examples:
-        | #Single return value        |
-        | ${rc} =                     | Get Process Result     | exampleprocess     | rc=true |
-        | Should Be Equal As Integers | ${rc}                  | 0                  |
-        | #Multiple return values     |
-        | ${rc}                       | ${stdout} =            | Get Process Result | rc=true | stdout=true |
-        | Should Be Equal As Integers | ${rc}                  | 0                  |
-        | Should Be Equal             | ${stdout}              | Robot Framework    |
-        | #No arguments given         |
-        | ${result} =                 | Get Process Result     |
-        | Should Be Equal As Integers | ${result.rc}           | 0                  |
+        | Run Process           | python             | -c            | print 'Hello, world!' | alias=myproc |
+        | # Get result object   |                    |               |
+        | ${result} =           | Get Process Result | myproc        |
+        | Should Be Equal       | ${result.rc}       | ${0}          |
+        | Should Be Equal       | ${result.stdout}   | Hello, world! |
+        | Should Be Empty       | ${result.stderr}   |               |
+        | # Get one attribute   |                    |               |
+        | ${stdout} =           | Get Process Result | myproc        | stdout=true |
+        | Should Be Equal       | ${stdout}          | Hello, world! |
+        | # Multiple attributes |                    |               |
+        | ${stdout}             | ${stderr} =        | Get Process Result |  myproc | stdout=yes | stderr=yes |
+        | Should Be Equal       | ${stdout}          | Hello, world! |
+        | Should Be Empty       | ${stderr}          |               |
 
-        Getting only certain attributes is especially useful when using this
-        library via the Remote library interface. This interface does not
-        support returning custom objects, but individual attributes can be
-        returned just fine.
+        Although getting results of a previously executed process can be handy
+        in general, the main use case for this keyword is returning results
+        over the remote library interface. The remote interface does not
+        support returning the whole result object, but individual attributes
+        can be returned without problems.
 
         New in Robot Framework 2.8.2.
         """
