@@ -25,7 +25,8 @@ class TestTime(unittest.TestCase):
         while True:
             expected = time.localtime()
             actual = _get_timetuple()
-            if expected == time.localtime():
+            # make sure got same times and _get_timetuple() did not round millis
+            if expected == time.localtime() and actual[-1] > 0:
                 break
         assert_equal(actual[:-1], expected[:6])
 
