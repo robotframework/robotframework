@@ -4,11 +4,20 @@ Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
 *** Test Cases ***
-Get Process Result
+Get whole result object
     Check Test Case    ${TESTNAME}
 
-Get Process Result Multiple Return Values
+Get one result attribute
     Check Test Case    ${TESTNAME}
 
-Get Process Result Empty Parameters Should Return Result Object
+Get multiple result attributes
+    Check Test Case    ${TESTNAME}
+
+Get same result multiple times
+    Check Test Case    ${TESTNAME}
+
+Get result of active process
+    Check Test Case    ${TESTNAME}
+
+Getting results of unfinished processes is not supported
     Check Test Case    ${TESTNAME}

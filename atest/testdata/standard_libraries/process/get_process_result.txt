@@ -1,23 +1,53 @@
 *** Settings ***
 Library           Process
 Resource          resource.txt
+Test Setup        Run Robot Process
 
 *** Test Cases ****
-Get Process Result
+Get whole result object
+    ${result} =    Get Process Result    robot
+    Should Be Equal    ${result.rc}    ${2}
+    Should Be Equal    ${result.stdout}    Robot
+    Should Be Equal    ${result.stderr}    Framework
+
+Get one result attribute
+    ${rc} =    Get Process Result    rc=yes    handle=robot
+    Should Be Equal    ${rc}    ${2}
+
+Get multiple result attributes
+    ${rc}    ${stdout}    ${stderr} =
+    ...    Get Process Result    robot    stderr=yep    rc=x    stdout=${TRUE}
+    Should Be Equal    ${rc}    ${2}
+    Should Be Equal    ${stdout}    Robot
+    Should Be Equal    ${stderr}    Framework
+
+Get same result multiple times
+    ${result} =    Get Process Result    robot
+    ${stdout} =    Get Process Result    robot    stdout=out
+    ${stderr} =    Get Process Result    robot    stderr=err
+    Should Be Equal    ${result.rc}    ${2}
+    Should Be Equal    ${stdout}    Robot
+    Should Be Equal    ${stderr}    Framework
+
+Get result of active process
     Start Python Process    print 'Robot Framework'
     Wait For Process
-    ${rc} =    Get Process Result    rc=yes
-    Should Be Equal As Integers    ${rc}    0
-
-Get Process Result Multiple Return Values
-    Start Python Process    1/0    alias=proc1
-    Wait For Process    proc1
-    ${rc}    ${stderr} =    Get Process Result    proc1    rc=yes    stderr=yep
-    Should Be Equal As Integers    ${rc}    1
-    Should Match     ${stderr}    *ZeroDivisionError: integer division or modulo by zero*
-
-Get Process Result Empty Parameters Should Return Result Object
-    Start Python Process    print 'R'
-    Wait For Process
     ${result} =    Get Process Result
-    Should Be Equal As Integers    ${result.rc}    0
+    ${stdout} =    Get Process Result    stdout=true
+    Should Be Equal    ${result.rc}    ${0}
+    Should Be Equal    ${result.stdout}    Robot Framework
+    Should Be Equal    ${stdout}    Robot Framework
+
+Getting results of unfinished processes is not supported
+    [Documentation]    FAIL    Getting results of unfinished processes is not supported.
+    Start Python Process    print 'Robot Framework'
+    Get Process Result
+
+*** Keywords ***
+Run Robot Process
+    ${command} =    Catenate    SEPARATOR=;
+    ...    import sys
+    ...    sys.stdout.write('Robot')
+    ...    sys.stderr.write('Framework')
+    ...    sys.exit(2)
+    Run Python Process   ${command}    alias=robot

@@ -569,6 +569,9 @@ class Process(object):
         New in Robot Framework 2.8.2.
         """
         result = self._results[self._processes[handle]]
+        if result.rc is None:
+            raise RuntimeError('Getting results of unfinished processes '
+                               'is not supported.')
         result_values = self._get_result_attributes(result, rc, stdout, stderr)
         if not result_values:
             return result
