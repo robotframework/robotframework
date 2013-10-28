@@ -82,7 +82,7 @@ Multiple Failures
     [Documentation]  FAIL Several failures occurred:\n\n
     ...  1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.\n\n
     ...  2) No keyword with name 'Invalid Syntax UK' found.\n\n
-    ...  3) Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 4.\n\n
+    ...  3) Keyword 'BuiltIn.Log' expected 1 to 4 arguments, got 5.\n\n
     ...  4) No keyword with name 'Yet another non-existing keyword' found.\n\n
     ...  5) No keyword with name 'Does not exist' found.
     Should Be Equal  1
@@ -114,6 +114,6 @@ Some Return Value
 
 UK with multiple failures
     Invalid Syntax UK
-    Log  too  many  arguments  here
+    Log  too  many  arguments  here  is
     Yet another non-existing keyword
 

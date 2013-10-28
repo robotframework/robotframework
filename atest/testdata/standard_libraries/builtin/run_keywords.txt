@@ -1,9 +1,8 @@
-***Settings***
+*** Settings ***
 Suite Setup  Run keywords  Passing  ${NOOP}
 Suite Teardown  Run keywords  Failing  Passing  Fail
 
-
-***Variables***
+*** Variables ***
 ${NOOP}      No Operation
 ${PASSING}   Passing
 ${FAILING}   Failing
@@ -12,9 +11,8 @@ ${ERRORS}    Several failures occurred:\n\n1) Expected error message\n\n2) Asser
 ${TD ERR}    Parent suite teardown failed:\n${ERRORS}
 ${ATD ERR}   \n\nAlso parent suite teardown failed:\n${ERRORS}
 
+*** Test Cases ***
 
-
-***Test Cases***
 Passing keywords
     [Documentation]  FAIL  ${TD ERR}
     Run keywords  No Operation  Passing  Log Variables
@@ -46,7 +44,7 @@ Non-existing keyword
     Run keywords  Passing  Non-Existing  Non-Existing But Not Executed
 
 Wrong number of arguments to keyword
-    [Documentation]  FAIL  Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 0.${ATD ERR}
+    [Documentation]  FAIL  Keyword 'BuiltIn.Log' expected 1 to 4 arguments, got 0.${ATD ERR}
     Run keywords  Passing  Log  This isn't argument to Log keyword
 
 In test setup
@@ -66,8 +64,8 @@ In test teardown
     ...  Executed but doesn't exist
     ...  Executed after syntax error in teardown
 
+*** Keywords ***
 
-***Keywords***
 Passing
     Log  Hello, world!
 
