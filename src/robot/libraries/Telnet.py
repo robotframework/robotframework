@@ -261,7 +261,7 @@ class Telnet:
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
                         encoding=None, encoding_errors=None, default_log_level=None,
-                        window_size=None, environ_user=None, terminal_emulation=False):
+                        window_size=None, environ_user=None, terminal_emulation=False, terminal_type=None):
         """Opens a new Telnet connection to the given host and port.
 
         The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
@@ -290,7 +290,8 @@ class Telnet:
                                           prompt, prompt_is_regexp,
                                           encoding, encoding_errors,
                                           default_log_level, window_size,
-                                          environ_user, terminal_emulation)
+                                          environ_user, terminal_emulation,
+                                          terminal_type)
         return self._cache.register(self._conn, alias)
 
     def _parse_window_size(self, window_size):
@@ -367,7 +368,7 @@ class TelnetConnection(telnetlib.Telnet):
                  prompt=None, prompt_is_regexp=False,
                  encoding='UTF-8', encoding_errors='ignore',
                  default_log_level='INFO', window_size=None, environ_user=None,
-                 terminal_emulation=False):
+                 terminal_emulation=False, terminal_type=None):
         telnetlib.Telnet.__init__(self, host, int(port) if port else 23)
         self._set_timeout(timeout)
         self._set_newline(newline)
@@ -377,6 +378,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._window_size = window_size
         self._environ_user = environ_user
         self._terminal_emulator = self._check_terminal_emulation(terminal_emulation)
+        self._terminal_type = str(terminal_type) if terminal_type else None
         self.set_option_negotiation_callback(self._negotiate_options)
 
     def set_timeout(self, timeout):
@@ -860,7 +862,7 @@ class TelnetConnection(telnetlib.Telnet):
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
             self._opt_echo_on(opt)
-        elif cmd == telnetlib.DO and opt == telnetlib.TTYPE:
+        elif cmd == telnetlib.DO and opt == telnetlib.TTYPE and self._terminal_type:
             self._opt_terminal_type(opt)
         elif cmd == telnetlib.DO and opt == telnetlib.NEW_ENVIRON and self._environ_user:
             self._opt_environ_user(opt)
@@ -875,7 +877,7 @@ class TelnetConnection(telnetlib.Telnet):
     def _opt_terminal_type(self, opt):
         self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
         self.sock.sendall(telnetlib.IAC + telnetlib.SB + telnetlib.TTYPE
-                          + self.NEW_ENVIRON_IS + "VT100"
+                          + self.NEW_ENVIRON_IS + self._terminal_type
                           + telnetlib.IAC + telnetlib.SE)
 
     def _opt_environ_user(self, opt):
