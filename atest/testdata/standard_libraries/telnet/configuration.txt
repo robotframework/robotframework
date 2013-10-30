@@ -28,8 +28,7 @@ Default terminal type is network
     Should match   ${out}    network*
 
 Set terminal type
-    [setup]   Open Connection    ${HOST}    prompt=${PROMPT}    terminal_type=vt100   terminal_emulation=True
-    Login    ${USERNAME}    ${PASSWORD}
+    [setup]   Login and set prompt    terminal_type=vt100   terminal_emulation=True
     ${out} =    Execute command    echo $TERM
     Should match   ${out}    vt100*
 

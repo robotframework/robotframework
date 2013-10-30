@@ -1,5 +1,5 @@
 *** Setting ***
-Test Setup        Login and set prompt    terminal_emulation=True
+Test Setup        Login and set prompt    terminal_emulation=True   terminal_type=vt100
 Test Teardown     Close All Connections
 Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG
 Library           String
