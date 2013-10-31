@@ -50,7 +50,7 @@ class Screenshot(object):
     Notice that successfully taking screenshots requires tests to be run with
     a physical or virtual display.
 
-    *Using with Python*
+    = Using with Python =
 
     With Python you need to have one of the following modules installed to be
     able to use this library. The first module that is found will be used.
@@ -64,7 +64,7 @@ class Screenshot(object):
 
     Python support was added in Robot Framework 2.5.5.
 
-    *Using with Jython and IronPython*
+    = Using with Jython and IronPython =
 
     With Jython and IronPython this library uses APIs provided by JVM and .NET
     platforms, respectively. These APIs are always available and thus no
@@ -72,7 +72,7 @@ class Screenshot(object):
 
     IronPython support was added in Robot Framework 2.7.5.
 
-    *Where screenshots are saved*
+    = Where screenshots are saved =
 
     By default screenshots are saved into the same directory where the Robot
     Framework log file is written. If no log is created, screenshots are saved
@@ -86,7 +86,7 @@ class Screenshot(object):
     Note that prior to Robot Framework 2.5.5 the default screenshot location
     was system's temporary directory.
 
-    *Changes in Robot Framework 2.5.5 and Robot Framework 2.6*
+    = Changes in Robot Framework 2.5.5 and Robot Framework 2.6 =
 
     This library was heavily enhanced in Robot Framework 2.5.5 release. The
     changes are listed below and explained more thoroughly in affected places.
@@ -119,7 +119,7 @@ class Screenshot(object):
 
         Examples (use only one of these):
 
-        | *Setting* | *Value*  | *Value*    | *Value* |
+        | =Setting= | =Value=  |  =Value=   | =Value= |
         | Library | Screenshot |            | # Default location |
         | Library | Screenshot | ${TEMPDIR} | # System temp (this was default prior to 2.5.5) |
         """

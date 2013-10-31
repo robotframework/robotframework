@@ -161,7 +161,7 @@ class Process(object):
     | ${result} = | `Run Process` | program | stderr=STDOUT |
     | `Log`       | all output: ${result.stdout} |
 
-    *Note:* The created output files are not automatically removed after
+    *NOTE:* The created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
 
     == Alias ==
@@ -363,18 +363,18 @@ class Process(object):
         returned instead.
 
         Examples:
-        | # Process ends cleanly        |                    |                 |
-        | ${result} =                   | `Wait For Process` | example         |
-        | `Process Should Be Stopped`   | example            |                 |
-        | `Should Be Equal As Integers` | ${result.rc}       | 0               |
-        | # Process does not end        |                    |                 |
-        | ${result} =                   | `Wait For Process` | timeout=42 secs |
-        | `Process Should Be Running`   |                    |                 |
-        | `Should Be Equal`             | ${result}          | ${NONE}         |
-        | # Kill non-ending process     |                    |                 |
-        | ${result} =                   | `Wait For Process` | timeout=1min 30s | on_timeout=kill |
-        | `Process Should Be Stopped`   |                    |                 |
-        | `Should Be Equal As Integers` | ${result.rc}       | -9              |
+        | # Process ends cleanly      |                  |                  |
+        | ${result} =                 | Wait For Process | example          |
+        | Process Should Be Stopped   | example          |                  |
+        | Should Be Equal As Integers | ${result.rc}     | 0                |
+        | # Process does not end      |                  |                  |
+        | ${result} =                 | Wait For Process | timeout=42 secs  |
+        | Process Should Be Running   |                  |                  |
+        | Should Be Equal             | ${result}        | ${NONE}          |
+        | # Kill non-ending process   |                  |                  |
+        | ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |
+        | Process Should Be Stopped   |                  |                  |
+        | Should Be Equal As Integers | ${result.rc}     | -9               |
 
         `timeout` and `on_timeout` are new in Robot Framework 2.8.2.
         """
@@ -422,7 +422,7 @@ class Process(object):
         | Should Be Equal As Integers | ${result.rc}      | -15      |
         | Terminate Process           | myproc            | kill=yes |
 
-        *Note:* Stopping processes requires the
+        *NOTE:* Stopping processes requires the
         [http://docs.python.org/2/library/subprocess.html|subprocess]
         module to have working `terminate` and `kill` functions. They were
         added in Python 2.6 and are thus missing from earlier versions.
@@ -497,7 +497,7 @@ class Process(object):
         If you are stopping a process, it is often easier and safer to use
         `Terminate Process` instead.
 
-        *Note:* Sending signals requires the
+        *NOTE:* Sending signals requires the
         [http://docs.python.org/2/library/subprocess.html|subprocess]
         module to have working `send_signal` function. It was added
         in Python 2.6 and are thus missing from earlier versions.
@@ -613,11 +613,11 @@ class Process(object):
         the `alias` given to it explicitly.
 
         Example:
-        | `Start Process` | prog1 | alias=process1 |
-        | `Start Process` | prog2 | alias=process2 |
+        | Start Process  | prog1    | alias=process1 |
+        | Start Process  | prog2    | alias=process2 |
         | # currently active process is process2 |
-        | `Switch Process` | process1 |
-        | # now active process is process 1 |
+        | Switch Process | process1 |
+        | # now active process is process1 |
         """
         self._processes.switch(handle)
 

@@ -394,6 +394,7 @@ class String(object):
         characters, and it is possible to use special markers
         explained in the table below:
 
+        | = Marker =  |              = Explanation =                |
         | _[LOWER]_   | Lowercase ASCII characters from 'a' to 'z'. |
         | _[UPPER]_   | Uppercase ASCII characters from 'A' to 'Z'. |
         | _[LETTERS]_ | Lowercase and uppercase ASCII characters.   |
