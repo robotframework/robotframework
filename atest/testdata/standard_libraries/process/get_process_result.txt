@@ -17,11 +17,11 @@ Get whole result object
     Should Be Equal    ${result.stderr_path}    ${TEMPFILE}
 
 Get one result attribute
-    ${rc} =    Get Process Result    rc=yes    handle=robot
+    ${rc} =    Get Process Result    rc=yes    handle=robot    stdout=FALSE
     Should Be Equal    ${rc}    ${2}
 
 Get two result attribute
-    ${rc}    ${stdout} =    Get Process Result    robot    1    2
+    ${rc}    ${stdout} =    Get Process Result    robot    1    2    false
     Should Be Equal    ${rc}    ${2}
     Should Be Equal    ${stdout}    Robot
 

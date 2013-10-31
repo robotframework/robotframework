@@ -51,6 +51,7 @@ class Process(object):
     - `Process configuration`
     - `Active process`
     - `Result object`
+    - `Boolean arguments`
     - `Using with OperatingSystem library`
     - `Example`
     - `Shortcuts`
@@ -161,7 +162,7 @@ class Process(object):
     | ${result} = | `Run Process` | program | stderr=STDOUT |
     | `Log`       | all output: ${result.stdout} |
 
-    *NOTE:* The created output files are not automatically removed after
+    Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
 
     == Alias ==
@@ -209,6 +210,31 @@ class Process(object):
     | ${stdout} =            | `Get File`            | ${result.stdout_path} |
     | `Should Be Equal`      | ${stdout}             | ${result.stdout}      |
     | `File Should Be Empty` | ${result.stderr_path} |                       |
+
+    = Boolean arguments =
+
+    Some keywords accept arguments that are handled as Boolean values.
+    If such an argument is given as a string, it is considered false if it
+    is either empty or case-insensitively equal to `false`. Other strings
+    are considered true regardless what they contain, and other argument
+    types are tested using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
+
+    True examples:
+    | `Terminate Process` | kill=True     | # Strings are generally true.    |
+    | `Terminate Process` | kill=yes      | # Same as above.                 |
+    | `Terminate Process` | kill=${TRUE}  | # Python `True` is true.         |
+    | `Terminate Process` | kill=${42}    | # Numbers other than 0 are true. |
+
+    False examples:
+    | `Terminate Process` | kill=False    | # String `False` is false.       |
+    | `Terminate Process` | kill=${EMPTY} | # Empty string is false.         |
+    | `Terminate Process` | kill=${FALSE} | # Python `False` is false.       |
+    | `Terminate Process` | kill=${0}     | # Number 0 is false.             |
+
+    Note that prior to Robot Framework 2.8 all non-empty strings, including
+    `false`, were considered true.
 
     = Using with OperatingSystem library =
 
@@ -405,22 +431,26 @@ class Process(object):
 
         If `handle` is not given, uses the current `active process`.
 
-        Returns a `result object` containing information about the execution
+        Waits for the process to stop after terminating it. Returns
+        a `result object` containing information about the execution
         similarly as `Wait For Process`.
 
         On Unix-like machines, by default, first tries to terminate the process
         gracefully, but forcefully kills it if it does not stop in 30 seconds.
-        Kills the process immediately if the `kill` argument is given any true
-        value (e.g. any non-empty string). Termination is done using `TERM
-        (15)` signal and killing using `KILL (9)`. Use `Send Signal To
-        Process` if you just want to send the `TERM` signal.
+        Kills the process immediately if the `kill` argument is given any value
+        considered true. See `Boolean arguments` section for more details about
+        true and false values.
 
-        On Windows the Win32 API function `TerminateProcess` is used directly
+        Termination is done using `TERM (15)` signal and killing using
+        `KILL (9)`. Use `Send Signal To Process` instead if you just want to
+        send either of these signals without waiting for the process to stop.
+
+        On Windows the Win32 API function `TerminateProcess()` is used directly
         to stop the process. Using the `kill` argument has no special effect.
 
-        | ${result} =                 | Terminate Process |          |
-        | Should Be Equal As Integers | ${result.rc}      | -15      |
-        | Terminate Process           | myproc            | kill=yes |
+        | ${result} =                 | Terminate Process |           |
+        | Should Be Equal As Integers | ${result.rc}      | -15       |
+        | Terminate Process           | myproc            | kill=true |
 
         *NOTE:* Stopping processes requires the
         [http://docs.python.org/2/library/subprocess.html|subprocess]
@@ -437,7 +467,7 @@ class Process(object):
         if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
                                'by this Python version.')
-        terminator = self._kill_process if kill else self._terminate_process
+        terminator = self._kill if is_true(kill) else self._terminate
         try:
             terminator(process)
         except OSError:
@@ -447,18 +477,18 @@ class Process(object):
         result.rc = process.wait() or 0
         return result
 
-    def _kill_process(self, process):
+    def _kill(self, process):
         logger.info('Forcefully killing process.')
         process.kill()
         if not self._process_is_stopped(process, self.KILL_TIMEOUT):
-            raise
+            raise RuntimeError('Failed to kill process.')
 
-    def _terminate_process(self, process):
+    def _terminate(self, process):
         logger.info('Gracefully terminating process.')
         process.terminate()
         if not self._process_is_stopped(process, self.TERMINATE_TIMEOUT):
             logger.info('Graceful termination failed.')
-            self._kill_process(process)
+            self._kill(process)
 
     def terminate_all_processes(self, kill=False):
         """Terminates all still running processes started by this library.
@@ -560,11 +590,12 @@ class Process(object):
         keyword.
 
         If no other arguments than the optional `handle` are given, a whole
-        `result object` is returned. If one or more of the other arguments are
-        given any true value (e.g. any non-empty string), only the specified
-        attributes of the `result object` are returned. These attributes are
-        always returned in the same order as arguments are specified in the
-        keyword signature.
+        `result object` is returned. If one or more of the other arguments
+        are given any true value, only the specified attributes of the
+        `result object` are returned. These attributes are always returned
+        in the same order as arguments are specified in the keyword signature.
+        See `Boolean arguments` section for more details about true and false
+        values.
 
         Examples:
         | Run Process           | python             | -c            | print 'Hello, world!' | alias=myproc |
@@ -604,6 +635,7 @@ class Process(object):
     def _get_result_attributes(self, result, *includes):
         attributes = (result.rc, result.stdout, result.stderr,
                       result.stdout_path, result.stderr_path)
+        includes = (is_true(incl) for incl in includes)
         return tuple(attr for attr, incl in zip(attributes, includes) if incl)
 
     def switch_process(self, handle):
@@ -684,7 +716,7 @@ class ProcessConfig(object):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout)
-        self.shell = bool(shell)
+        self.shell = is_true(shell)
         self.alias = alias
         self.env = self._construct_env(env, rest)
 
@@ -728,3 +760,9 @@ shell = %r
 alias = %s
 env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
                self.shell, self.alias, self.env))
+
+
+def is_true(argument):
+    if isinstance(argument, basestring) and argument.upper() == 'FALSE':
+        return False
+    return bool(argument)

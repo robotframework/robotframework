@@ -38,7 +38,7 @@ Kill Process When Terminate Fails
     ${process} =    Start Process    python    ${NONTERM}
     Process Should Be Running    ${process}
     Sleep   0.1
-    ${result} =    Terminate Process    ${process}
+    ${result} =    Terminate Process    ${process}    kill=false
     Wait For Process    ${process}
     Process Should Be Stopped    ${process}
     Should Not Be Equal As Integers    ${result.rc}    0
