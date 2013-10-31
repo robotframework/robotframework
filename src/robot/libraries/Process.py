@@ -17,6 +17,7 @@ from __future__ import with_statement
 import os
 import subprocess
 import time
+import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
                          decode_from_system, get_env_vars, secs_to_timestr,
@@ -435,7 +436,7 @@ class Process(object):
         result = self._results[process]
         if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
-                               'by this interpreter version.')
+                               'by this Python version.')
         terminator = self._kill_process if kill else self._terminate_process
         try:
             terminator(process)
@@ -475,39 +476,55 @@ class Process(object):
         self.__init__()
 
     def send_signal_to_process(self, signal, handle=None):
-        """ Sends a signal to a process. Signal can be a number or a name of the signal.
-        See 'man signal' for the complete list of signals available on your platform.
-        Signal name can be give with or without the SIG prefix
-        (for example SIGINT and INT will both send interrupt signal).
-
-        NOTE! This Keyword does not work on Windows nor with Python 2.5.
-
-        `signal` is the number or name of the signal to be send.
+        """Sends the given `signal` to the specified process.
 
         If `handle` is not given, uses the current `active process`.
+
+        Signal can be specified either as an integer, or anything that can
+        be converted to an integer, or as a name. In the latter case it is
+        possible to give the name both with or without a `SIG` prefix,
+        but names are case-sensitive. For example, all the examples below
+        send signal `INT (2)`:
+
+        | Send Signal To Process | 2      |        | # Send to active process |
+        | Send Signal To Process | INT    |        |                          |
+        | Send Signal To Process | SIGINT | myproc | # Send to named process  |
+
+        What signals are supported depends on the system. For a list of
+        existing signals on your system, see the Unix man pages related to
+        signal handling (typically `man signal` or `man 7 signal`).
+
+        If you are stopping a process, it is often easier and safer to use
+        `Terminate Process` instead.
+
+        *Note:* Sending signals requires the
+        [http://docs.python.org/2/library/subprocess.html|subprocess]
+        module to have working `send_signal` function. It was added
+        in Python 2.6 and are thus missing from earlier versions.
+        How well it will work with forthcoming Jython 2.7 is unknown.
+
+        New in Robot Framework 2.8.2.
         """
         if os.sep == '\\':
-            raise AssertionError('Process.Send Signal To Process does not work on Windows')
-        self._processes[handle].send_signal(self._get_signal(signal))
+            raise RuntimeError('This keyword does not work on Windows.')
+        process = self._processes[handle]
+        if not hasattr(process, 'send_signal'):
+            raise RuntimeError('Sending signals is not supported '
+                               'by this Python version.')
+        process.send_signal(self._get_signal_number(signal))
 
-    def _get_signal(self, signal_string):
-        if isinstance(signal_string, int):
-            return signal_string
+    def _get_signal_number(self, int_or_name):
         try:
-            return int(signal_string)
+            return int(int_or_name)
         except ValueError:
-            import signal
-            try:
-                signal_name = self._get_signal_name_from(signal_string)
-                return getattr(signal, signal_name)
-            except AttributeError:
-                raise AssertionError("Unknown signal '%s'" % signal_string)
+            return self._convert_signal_name_to_number(int_or_name)
 
-    def _get_signal_name_from(self, signal_string):
-        s = str(signal_string)
-        if s.startswith('SIG'):
-            return s
-        return 'SIG'+s
+    def _convert_signal_name_to_number(self, name):
+        try:
+            return getattr(signal_module,
+                           name if name.startswith('SIG') else 'SIG' + name)
+        except AttributeError:
+            raise RuntimeError("Unsupported signal '%s'." % name)
 
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process.
