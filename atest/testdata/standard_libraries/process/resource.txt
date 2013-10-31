@@ -6,6 +6,7 @@ Library           OperatingSystem
 Some process
     [Arguments]    ${alias}=${null}
     ${handle}=    Start Python Process    raw_input()    alias=${alias}
+    Process should be running
     [Return]    ${handle}
 
 Stop some process

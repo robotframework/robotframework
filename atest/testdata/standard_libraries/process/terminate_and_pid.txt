@@ -17,8 +17,7 @@ Run process does not change active process
 
 Killing process
     ${handle}=    Some process
-    Process Should Be Running
-    ${result} =    Terminate Process    ${handle}    kill=${True}
+    ${result} =    Terminate Process    ${handle}    kill=true
     Process Should Be Stopped    ${handle}
     Should Not Be Equal As Integers    ${result.rc}    0
     Should Be Empty    ${result.stdout}
@@ -26,7 +25,6 @@ Killing process
 
 Terminating process
     ${handle}=    Some process
-    Process Should Be Running
     ${result} =    Terminate Process    ${handle}
     Process Should Be Stopped    ${handle}
     Should Not Be Equal As Integers     ${result.rc}    0
@@ -45,13 +43,15 @@ Kill Process When Terminate Fails
     Process Should Be Stopped    ${process}
     Should Not Be Equal As Integers    ${result.rc}    0
 
-Pid
+Terminating already terminated process is ok
     ${handle}=    Some process
-    ${pid}=    Get Process Id    ${handle}
-    Should Not Be Equal   ${pid}   ${None}
-    Evaluate    os.kill(int(${pid}),signal.SIGTERM) if hasattr(os, 'kill') else os.system('taskkill /pid ${pid} /f')    os,signal
+    Terminate Process    ${handle}
+    Terminate Process    ${handle}
+
+Waiting for terminated process is ok
+    ${handle}=    Some process
+    Terminate Process    ${handle}
     Wait For Process    ${handle}
-    Process Should Be Stopped    ${handle}
 
 Terminate All Processes
     ${h1}=    Some process
@@ -78,26 +78,17 @@ Terminate All Processes
 
 Terminate All Empties Cache
     Some process
-    Terminate All Processes
+    Terminate All Processes    kill=True
     ${handle} =    Some Process
     Should Be Equal    ${handle}    ${1}
 
-Kill Process Which Does Not Exist
+Pid
     ${handle}=    Some process
-    Terminate Process    ${handle}    kill=${True}
-    Terminate Process    ${handle}    kill=${True}
-
-Wait For Process Which Does Not Exist
-    ${handle}=    Some process
-    Terminate Process    ${handle}    kill=${True}
+    ${pid}=    Get Process Id    ${handle}
+    Should Not Be Equal   ${pid}   ${None}
+    Evaluate    os.kill(int(${pid}),signal.SIGTERM) if hasattr(os, 'kill') else os.system('taskkill /pid ${pid} /f')    os,signal
     Wait For Process    ${handle}
-
-Lot of output
-    [Tags]    performance
-    ${stdout}=    Normalize Path    %{TEMPDIR}/stdout.txt
-    ${handle}=    Run Process    python -c "for i in range(350000): \tprint 'a'*400"    shell=True    stdout=${stdout}    stderr=STDOUT
-    File Should Not Be Empty    ${stdout}
-    [Teardown]    Safe Remove File    ${stdout}
+    Process Should Be Stopped    ${handle}
 
 Getting PIDs in different ways should give same result
     ${handle}=    Start Process    python -c "print 'hello'"    shell=True    alias=hello
