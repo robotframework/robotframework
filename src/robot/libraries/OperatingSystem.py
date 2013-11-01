@@ -14,6 +14,7 @@
 
 import os
 import sys
+import tempfile
 import time
 import glob
 import fnmatch
@@ -747,15 +748,21 @@ class OperatingSystem:
             raise RuntimeError("Source file '%s' does not exist" % source)
         if not os.path.isfile(source):
             raise RuntimeError("Source file '%s' is not a regular file" % source)
+        parent = self._destination_directory(dest, dest_is_dir)
         if not os.path.exists(dest):
-            if dest_is_dir:
-                parent = dest
-            else:
-                parent = os.path.dirname(dest)
             if not os.path.exists(parent):
                 os.makedirs(parent)
-        shutil.copy(source, dest)
+        temp_directory = tempfile.mkdtemp(dir=parent) # Temporary directory can be atomically created
+        temp_file = os.path.join(temp_directory, os.path.basename(source))
+        shutil.copy(source, temp_file)
+        shutil.move(temp_file, dest)
+        os.rmdir(temp_directory)
         return source, dest
+
+    def _destination_directory(self, destination, dest_is_dir):
+        if dest_is_dir:
+            return destination
+        return os.path.dirname(destination)
 
     def copy_directory(self, source, destination):
         """Copies the source directory into the destination.
