@@ -48,4 +48,6 @@ def decode_from_system(string, can_be_from_java=True):
 
 def encode_to_system(string, errors='replace'):
     """Encodes Unicode to system encoding (e.g. cli args and env vars)."""
+    if sys.version_info[0] == 3:
+        return string
     return string.encode(SYSTEM_ENCODING, errors)

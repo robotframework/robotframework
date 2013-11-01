@@ -696,6 +696,4 @@ shell = %r
 alias = %s
 env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
                self.shell, self.alias, self.env)
-        if sys.version_info[0] == 3:
-            return text
         return encode_to_system(text)
