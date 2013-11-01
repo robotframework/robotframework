@@ -352,37 +352,46 @@ class Process(object):
             raise AssertionError(error_message)
 
     def wait_for_process(self, handle=None, timeout=None, on_timeout='none'):
-        """Waits for the process to complete or to reach given timeout.
+        """Waits for the process to complete or to reach the given timeout.
 
-        Reaching timeout will not fail tests. Instead the action triggered
-        by timeout is configured with `handle_timeout` parameter.
+        The process to wait for must have been started earlier with
+        `Start Process`. If `handle` is not given, uses the current
+        `active process`.
 
-        If `handle` is not given, uses the current `active process`.
+        `timeout` defines the maximum time to wait for the process. It is
+        interpreted according to Robot Framework User Guide Appendix
+        `Time Format`, for example, '42', '42 s', or '1 minute 30 seconds'.
 
-        `timeout` is a string representing time. It is interpreted
-        according to Robot Framework User Guide Appendix `Time Format`,
-        for example, '42', '42 s', '1 minute 30 seconds'.
+        `on_timeout` defines what to do if the timeout occurs. Possible values
+        and corresponding actions are explained in the table below. Notice
+        that reaching the timeout never fails the test.
 
-        `on_timeout` is a string specifying what is done to the process
-        when the timeout is reached. Possible values are explained below:
+        |  = Value =  |               = Action =               |
+        | `none`      | The process is left running (default). |
+        | `terminate` | The process is gracefully terminated.  |
+        | `kill`      | The process is forcefully stopped.     |
 
-        |  = Value =  |                     = Action =                         |
-        | `none`      | The process is left running and returncode set to None |
-        | `terminate` | The process is gracefully terminated                   |
-        | `kill`      | The process is forcefully stopped                      |
+        See `Terminate Process` keyword for more details how processes are
+        terminated and killed.
 
-        See `Terminate Process` documentation on how termination and killing
-        processes are handled.
-
-        Returns a `result object` containing information about the execution.
+        If the process ends before the timeout or it is terminated or killed,
+        this keyword returns a `result object` containing information about
+        the execution. If the process is left running, Python `None` is
+        returned instead.
 
         Examples:
-        | `Start Process`               | non-finishing-process |
-        | `Wait For Process`            | timeout=30s           | on_timeout='none'     |
-        | `Process Should Be Running`   |
-        | ${result} =                   | `Wait For Process`    | timeout=1m30s         | on_timeout='kill' |
-        | `Process Should Be Stopped`   |
-        | `Should Be Equal As Integers` | ${result.rc}          | -9                    |
+        | # Process ends cleanly        |                    |                 |
+        | ${result} =                   | `Wait For Process` | example         |
+        | `Process Should Be Stopped`   | example            |                 |
+        | `Should Be Equal As Integers` | ${result.rc}       | 0               |
+        | # Process does not end        |                    |                 |
+        | ${result} =                   | `Wait For Process` | timeout=42 secs |
+        | `Process Should Be Running`   |                    |                 |
+        | `Should Be Equal`             | ${result}          | ${NONE}         |
+        | # Kill non-ending process     |                    |                 |
+        | ${result} =                   | `Wait For Process` | timeout=1min 30s | on_timeout=kill |
+        | `Process Should Be Stopped`   |                    |                 |
+        | `Should Be Equal As Integers` | ${result.rc}       | -9              |
 
         `timeout` and `on_timeout` are new in Robot Framework 2.8.2.
         """
@@ -521,6 +530,49 @@ class Process(object):
         If `handle` is not given, uses the current `active process`.
         """
         return self._processes[handle]
+
+    def get_process_result(self, handle=None, rc=False, stdout=False, stderr=False):
+        """Returns the results of process which has been run.
+
+        If `handle` is not given, uses the current `active process`.
+
+        Returns results of process as a tuple containing
+        (`rc`,`stdout`,`stderr`). The tuple will only contain the result values
+        which are enabled in the arguments. This keyword is implemented for
+        obtaining results from a process executed with remote library.
+
+        `rc` returns the returncode of the process.
+
+        `stdout` returns the standard output from the process.
+
+        `stderr` returns the error stream from the process.
+
+        Examples:
+        | Remote.Start Process        | python    | -c              | import sys;sys.exit(1) |
+        | Remote.Wait For Process     |
+        | ${rc} =                     | Remote.Get Process Result   |
+        | Should Be Equal As Integers | ${rc}     | 1               |
+        | Remote.Start Process        | echo      | Robot Framework |
+        | Remote.Wait For Process     |
+        | ${rc}                       | ${stdout} | ${stderr} =     | Remote.Get Process Result |
+        | Should Be Equal As Integers | ${rc}     | 0               |
+        | Should Be Equal             | ${stdout} | Robot Framework |
+        | Should Be Equal             | ${stderr} | ${EMPTY}        |
+
+        New in Robot Framework 2.8.2.
+        """
+        if not (rc or stdout or stderr):
+            raise RuntimeError('No arguments specified')
+        process = self._processes[handle]
+        result = self._results[process]
+        result_values = ()
+        if rc:
+            result_values += (result.rc,)
+        if stdout:
+            result_values += (result.stdout,)
+        if stderr:
+            result_values += (result.stderr,)
+        return result_values[0] if len(result_values) == 1 else result_values
 
     def switch_process(self, handle):
         """Makes the specified process the current `active process`.

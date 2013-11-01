@@ -1,0 +1,17 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/get_process_result.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Get Process Result
+    Check Test Case    ${TESTNAME}
+
+Get Process Result Stderr
+    Check Test Case    ${TESTNAME}
+
+Get Process Result Empty Streams
+    Check Test Case    ${TESTNAME}
+
+Get Process Result Empty Parameters Should Raise Exception
+    Check Test Case    ${TESTNAME}
