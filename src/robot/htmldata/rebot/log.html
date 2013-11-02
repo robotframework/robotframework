@@ -196,6 +196,8 @@ function addTestExecutionLog(main) {
       <span class="name">{{html name}}</span>
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
+      <a class="ext-link" href="#${id}" title="Link to this suite"
+         onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
     </div>
     <div class="children">
       <table class="metadata">
@@ -252,6 +254,8 @@ function addTestExecutionLog(main) {
       {{if !isCritical}}(non-critical){{/if}}
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
+      <a class="ext-link" href="#${id}" title="Link to this test"
+        onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
     </div>
     <div class="children">
       <table class="metadata">
@@ -304,6 +308,8 @@ function addTestExecutionLog(main) {
       <span class="arg">{{html arguments}}</span>
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
+      <a class="ext-link" href="#${id}" title="Link to this keyword"
+         onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
     </div>
     <div class="children">
       <table class="metadata keyword-metadata">
