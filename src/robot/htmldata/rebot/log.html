@@ -194,9 +194,10 @@ function addTestExecutionLog(main) {
     <div class="element-header closed" onclick="toggleSuite('${id}')" title="${fullName}">
       <span class="${status.toLowerCase()}">TEST SUITE: </span>
       <span class="name">{{html name}}</span>
-      <a class="expand" href="javascript:expandAllChildren('${id}')"
+      <a class="expand" title="Expand this suite fully"
+         href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
-      <a class="ext-link" href="#${id}" title="Link to this suite"
+      <a class="ext-link" title="Link to this suite" href="#${id}"
          onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
     </div>
     <div class="children">
@@ -252,10 +253,11 @@ function addTestExecutionLog(main) {
       <span class="${status.toLowerCase()}">TEST CASE: </span>
       <span class="name">{{html name}}</span>
       {{if !isCritical}}(non-critical){{/if}}
-      <a class="expand" href="javascript:expandAllChildren('${id}')"
+      <a class="expand" title="Expand this test fully"
+         href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
-      <a class="ext-link" href="#${id}" title="Link to this test"
-        onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
+      <a class="ext-link" title="Link to this test" href="#${id}"
+         onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
     </div>
     <div class="children">
       <table class="metadata">
@@ -306,9 +308,10 @@ function addTestExecutionLog(main) {
       <span class="${status.toLowerCase()}">${type}: </span>
       <span class="name">{{html name}}</span>
       <span class="arg">{{html arguments}}</span>
-      <a class="expand" href="javascript:expandAllChildren('${id}')"
+      <a class="expand" title="Expand this keyword fully"
+         href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
-      <a class="ext-link" href="#${id}" title="Link to this keyword"
+      <a class="ext-link" title="Link to this keyword" href="#${id}"
          onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
     </div>
     <div class="children">
