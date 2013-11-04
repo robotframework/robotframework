@@ -51,9 +51,9 @@ Start Sleeping Process
     [Arguments]    ${alias}=
     ${command} =    Catenate    SEPARATOR=\n
     ...    import time
-    ...    print 'start'
+    ...    print('start')
     ...    for i in range(25): time.sleep(0.1)
-    ...    print 'end'
+    ...    print('end')
     ${index} =    Start Python Process    ${command}    alias=${alias}
     Sleep    0.1s
     [Return]    ${index}
