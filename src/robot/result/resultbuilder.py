@@ -15,7 +15,7 @@
 from __future__ import with_statement
 
 from robot.errors import DataError
-from robot.utils import ET, ETSource, get_error_message
+from robot.utils import ET, ETSource, MultiMatcher, get_error_message
 
 from .xmlelementhandlers import XmlElementHandler
 from .executionresult import Result, CombinedResult
@@ -55,7 +55,7 @@ def _single_result(source, options):
 
 class ExecutionResultBuilder(object):
 
-    def __init__(self, source, include_keywords=True):
+    def __init__(self, source, include_keywords=True, flattened_keywords=None):
         """Builds :class:`~.executionresult.Result` objects from existing
         output XML files on the file system.
 
@@ -66,6 +66,7 @@ class ExecutionResultBuilder(object):
         self._source = source \
             if isinstance(source, ETSource) else ETSource(source)
         self._include_keywords = include_keywords
+        self._flattened_keywords = flattened_keywords
 
     def build(self, result):
         # Parsing is performance optimized. Do not change without profiling!
@@ -79,6 +80,8 @@ class ExecutionResultBuilder(object):
         context = ET.iterparse(source, events=('start', 'end'))
         if not self._include_keywords:
             context = self._omit_keywords(context)
+        elif self._flattened_keywords:
+            context = self._flatten_keywords(context, self._flattened_keywords)
         for event, elem in context:
             if event == 'start':
                 start(elem)
@@ -99,3 +102,23 @@ class ExecutionResultBuilder(object):
                 elem.clear()
             if kw and not start:
                 started_kws -= 1
+
+    def _flatten_keywords(self, context, flattened):
+        match = MultiMatcher(flattened).match
+        started = -1
+        for event, elem in context:
+            tag = elem.tag
+            if event == 'start' and tag == 'kw':
+                if started >= 0:
+                    started += 1
+                elif match(elem.attrib['name']):
+                    started = 0
+            if started == 0 and event == 'start' and tag == 'doc':
+                elem.text = ('%s\n\n_*Keyword content flattened.*_'
+                             % (elem.text or '')).strip()
+            if started <= 0 or tag == 'msg':
+                yield event, elem
+            else:
+                elem.clear()
+            if started >= 0 and event == 'end' and tag == 'kw':
+                started -= 1

@@ -10,6 +10,10 @@ Split String
     ${result} =    Split String    ${NSN}    _
     Result Should Contain Items In Given Order    ${result}    nokia    siemens    networks
 
+Split String With Longer Separator
+    ${result} =    Split String    1abc2abc3    abc
+    Result Should Contain Items In Given Order    ${result}    1    2    3
+
 Split String With Whitespaces and Separator Is None
     ${result} =    Split String    ${WHITE SPACES}
     Result Should Contain Items In Given Order    ${result}    hello    world    again
@@ -41,6 +45,10 @@ Split String With Invalid Max Split
 Split String From Right
     ${result} =    Split String From Right    ${NSN}    _
     Result Should Contain Items In Given Order    ${result}    nokia    siemens    networks
+
+Split String From Right With Longer Separator
+    ${result} =    Split String From Right    1abc2abc3    abc
+    Result Should Contain Items In Given Order    ${result}    1    2    3
 
 Split String From Right With Whitespaces and Separator Is None
     ${result} =    Split String From Right    ${WHITE SPACES}

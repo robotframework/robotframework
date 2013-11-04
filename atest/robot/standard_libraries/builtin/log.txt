@@ -1,44 +1,71 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/log.txt
-Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/log.txt
+Force Tags        regression    jybot    pybot
+Resource          atest_resource.txt
+
+*** Variables ***
+${HTML}           <a href="http://robotframework.org">Robot Framework</a>
 
 *** Test Cases ***
 Log
-    ${tc} =  Check Test Case  Log
-    Check Log Message  ${tc.kws[0].msgs[0]}  Hello, world!
-    Check Log Message  ${tc.kws[1].msgs[0]}  42
-    Check Log Message  ${tc.kws[2].msgs[0]}  None
-    Check Log Message  ${tc.kws[3].msgs[0]}  String presentation of MyObject
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Hello, world!
+    Check Log Message    ${tc.kws[1].msgs[0]}    42
+    Check Log Message    ${tc.kws[2].msgs[0]}    None
+    Check Log Message    ${tc.kws[3].msgs[0]}    String presentation of MyObject
 
-Log With Different Levels
-    ${tc} =  Check Test Case  Log With Different Levels
-    Comment  Test set log level to trace so  the logged message is second  and first contains resolved args
-    Check Log Message  ${tc.kws[0].msgs[1]}  Log says: Hello from tests!  INFO
-    Check Log Message  ${tc.kws[1].msgs[1]}  Trace level  TRACE
-    Check Log Message  ${tc.kws[2].msgs[1]}  Debug level  DEBUG
-    Check Log Message  ${tc.kws[3].msgs[1]}  Info level  INFO
-    Check Log Message  ${tc.kws[4].msgs[1]}  Warn level  WARN
-    Length Should Be   ${tc.kws[4].msgs}     3
-    Check Log Message  ${ERRORS.msgs[0]}     Warn level  WARN
-    Check Log Message  ${tc.kws[5].msgs[1]}  Fail level  FAIL
-    Check Log Message  ${tc.kws[6].msgs[1]}  Error level  ERROR
+Log with different levels
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Comment    Test set log level to trace so    the logged message is second    and first contains resolved args
+    Check Log Message    ${tc.kws[0].msgs[1]}    Log says: Hello from tests!    INFO
+    Check Log Message    ${tc.kws[1].msgs[1]}    Trace level    TRACE
+    Check Log Message    ${tc.kws[2].msgs[1]}    Debug level    DEBUG
+    Check Log Message    ${tc.kws[3].msgs[1]}    Info level    INFO
+    Check Log Message    ${tc.kws[4].msgs[1]}    Warn level    WARN
+    Length Should Be    ${tc.kws[4].msgs}    3
+    Check Log Message    ${ERRORS.msgs[0]}    Warn level    WARN
+    Check Log Message    ${tc.kws[5].msgs[1]}    Fail level    FAIL
+    Check Log Message    ${tc.kws[6].msgs[1]}    Error level    ERROR
 
-Log HTML
-    ${tc} =  Check Test Case  Log HTML
-    Check Log Message  ${tc.kws[0].msgs[0]}  <b>not bold</b>  INFO
-    Check Log Message  ${tc.kws[1].msgs[0]}  <b>bold</b>  HTML
-    Check Log Message  ${tc.kws[3].msgs[0]}  <img src="nonex.png">  INFO
-    Check Log Message  ${tc.kws[4].msgs[0]}  <img src="nonex.png">  HTML
+HTML is escaped by default
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    <b>not bold</b>
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${HTML}
 
-Log Callable
-    ${tc} =  Check Test Case  Log Callable
-    Check Log Message  ${tc.kws[0].msgs[0]}  objects_for_call_method.MyObject
+HTML pseudo level
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    <b>bold</b>    html=True
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${HTML}    html=True
+
+Explicit HTML
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    <b>bold</b>    html=True
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${HTML}    DEBUG    html=True
+    Check Log Message    ${tc.kws[2].msgs[0]}    ${HTML}    DEBUG
+
+Log also to console
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Hello, console!
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${HTML}    DEBUG    html=True
+    Check Stdout Contains    Hello, console!\n
+    Check Stdout Contains    ${HTML}\n
+
+Log callable
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    objects_for_call_method.MyObject
 
 Log Many
-    ${tc} =  Check Test Case  Log Many
-    Check Log Message  ${tc.kws[0].msgs[0]}  Log Many says:  INFO
-    Check Log Message  ${tc.kws[0].msgs[1]}  Hello  INFO
-    Check Log Message  ${tc.kws[0].msgs[2]}  from  INFO
-    Check Log Message  ${tc.kws[0].msgs[3]}  tests!  INFO
-    Check Log Message  ${tc.kws[1].msgs[0]}  Log Many says: Hi!!  INFO
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Log Many says:    INFO
+    Check Log Message    ${tc.kws[0].msgs[1]}    Hello    INFO
+    Check Log Message    ${tc.kws[0].msgs[2]}    from    INFO
+    Check Log Message    ${tc.kws[0].msgs[3]}    tests!    INFO
+    Check Log Message    ${tc.kws[1].msgs[0]}    Log Many says: Hi!!    INFO
+
+Log To Console
+    ${tc} =    Check Test Case    ${TEST NAME}
+    :FOR    ${i}    IN RANGE    4
+    \    Should Be Empty    ${tc.kws[${i}].msgs}
+    Check Stdout Contains    stdout w/ newline\n
+    Check Stdout Contains    stdout w/o new......line
+    Check Stderr Contains    stderr w/ newline\n

@@ -4,7 +4,7 @@ Resource          resource.txt
 
 *** Test Cases ***
 Some other test
-    [Documentation]  FAIL Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 0.
+    [Documentation]  FAIL Keyword 'BuiltIn.Log' expected 1 to 4 arguments, got 0.
     Fail  Not actually executed so won't fail.
     Log
 

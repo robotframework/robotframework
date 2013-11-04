@@ -23,7 +23,7 @@ from robot.utils import unic
 from robot.version import get_version
 
 
-class String:
+class String(object):
     """A test library for string manipulation and verification.
 
     `String` is Robot Framework's standard library for manipulating
@@ -226,7 +226,7 @@ class String:
 
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
-        matching = [ line for line in lines if matches(line) ]
+        matching = [line for line in lines if matches(line)]
         logger.info('%d out of %d lines matched' % (len(matching), len(lines)))
         return '\n'.join(matching)
 
@@ -349,18 +349,21 @@ class String:
         an effect only when `max_split` is given.
 
         Examples:
-        | ${first} | ${others} = | Split String | ${string} | - | 1 |
-        | ${others} | ${last} = | Split String From Right | ${string} | - | 1 |
+        | ${first} | ${rest} = | Split String            | ${string} | - | 1 |
+        | ${rest}  | ${last} = | Split String From Right | ${string} | - | 1 |
         """
-        # Strings in Jython 2.2 don't have 'rsplit' methods
-        reversed = self.split_string(string[::-1], separator, max_split)
-        return [ r[::-1] for r in reversed ][::-1]
+        if separator == '':
+            separator = None
+        max_split = self._convert_to_integer(max_split, 'max_split')
+        return string.rsplit(separator, max_split)
 
     def split_string_to_characters(self, string):
-        """Splits the string` to characters.
+        """Splits the given `string` to characters.
 
         Example:
         | @{characters} = | Split String To Characters | ${string} |
+
+        New in Robot Framework 2.7.
         """
         return list(string)
 
@@ -392,6 +395,7 @@ class String:
         characters, and it is possible to use special markers
         explained in the table below:
 
+        | = Marker =  |              = Explanation =                |
         | _[LOWER]_   | Lowercase ASCII characters from 'a' to 'z'. |
         | _[UPPER]_   | Uppercase ASCII characters from 'A' to 'Z'. |
         | _[LETTERS]_ | Lowercase and uppercase ASCII characters.   |
@@ -412,7 +416,7 @@ class String:
                             ('[NUMBERS]', digits)]:
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
-        return ''.join([ chars[randint(0, maxi)] for i in xrange(length) ])
+        return ''.join(chars[randint(0, maxi)] for _ in xrange(length))
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from `start` index to `end` index.

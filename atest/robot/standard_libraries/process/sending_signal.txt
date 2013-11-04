@@ -17,6 +17,9 @@ Sending INT signal as a text number
 Sending INT signal as a number
     Check Test Case    ${TESTNAME}
 
+Send other well-known signals
+    Check Test Case    ${TESTNAME}
+
 Sending an unknown signal
     Check Test Case    ${TESTNAME}
 

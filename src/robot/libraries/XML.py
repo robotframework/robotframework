@@ -202,7 +202,7 @@ class XML(object):
     Notice that predicates in general are supported only in ElementTree 1.3
     (i.e. Python/Jython 2.7 and newer).
 
-    | _Predicate_     | _Matches_                         | _Example_          |
+    |  = Predicate =  |             = Matches =           |    = Example =     |
     | @attrib         | Elements with attribute `attrib`. | second[@id]        |
     | @attrib="value" | Elements with attribute `attrib` having value `value`. | *[@id="2"] |
     | position        | Elements at the specified position. Position can be an integer (starting from 1), expression `last()`, or relative expression like `last() - 1`. | third/child[1] |

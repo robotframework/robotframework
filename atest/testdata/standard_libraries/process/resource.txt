@@ -6,6 +6,7 @@ Library           OperatingSystem
 Some process
     [Arguments]    ${alias}=${null}
     ${handle}=    Start Python Process    raw_input()    alias=${alias}
+    Process should be running
     [Return]    ${handle}
 
 Stop some process
@@ -28,15 +29,15 @@ Result should match
     Should Be Equal As Integers    ${result.rc}    ${rc}
 
 Start Python Process
-    [Arguments]    ${command}    ${alias}=${null}
-    ${handle}=    Start Process    python    -c    ${command}    alias=${alias}
+    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}
+    ${handle}=    Start Process    python    -c    ${command}
+    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}
     [Return]    ${handle}
 
 Run Python Process
-    [Arguments]    ${command}
+    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}
     ${result}=    Run Process    python    -c    ${command}
-    Log    ${result.rc}
-    Log    ${result.stderr}
+    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}
     [Return]    ${result}
 
 Safe Remove File

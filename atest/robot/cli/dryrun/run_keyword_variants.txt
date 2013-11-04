@@ -51,7 +51,7 @@ Run Keywords With Arguments When One Keyword Fails
     Test Should Have Correct Keywords  BuiltIn.Log  BuiltIn.Log
 
 Run Keywords With Arguments When Multiple Keyword Fails
-    Test Should Have Correct Keywords  BuiltIn.Log  no kw
+    Test Should Have Correct Keywords  BuiltIn.Log  Unknown Keyword
 
 Run Keywords With Arguments With Variables
     Test Should Have Correct Keywords  BuiltIn.Log

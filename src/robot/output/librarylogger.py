@@ -58,8 +58,9 @@ def warn(msg, html=False):
     write(msg, 'WARN', html)
 
 
-def console(msg, newline=True):
+def console(msg, newline=True, stream='stdout'):
     if newline:
         msg += '\n'
-    sys.__stdout__.write(msg)
-    sys.__stdout__.flush()
+    stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
+    stream.write(msg)
+    stream.flush()

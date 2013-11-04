@@ -1,38 +1,57 @@
 *** Settings ***
-Variables       objects_for_call_method.py
+Test Teardown     Set Log Level    INFO
+Variables         objects_for_call_method.py
 
+*** Variables ***
+${HTML}           <a href="http://robotframework.org">Robot Framework</a>
 
 *** Test Cases ***
-
 Log
-    Log  Hello, world!
-    Log  ${42}
-    Log  ${None}
-    Log  ${OBJ}
+    Log    Hello, world!
+    Log    ${42}
+    Log    ${None}
+    Log    ${OBJ}
 
-Log With Different Levels
-    [Documentation]  FAIL Invalid log level 'INVALID'
-    [Setup]  Set Log Level  TRACE
-    Log  Log says: Hello from tests!
-    Log  Trace level  TRACE
-    Log  Debug level  debug
-    Log  Info level  Info
-    Log  Warn level  wArN
-    Log  Fail level  FAIL
-    Log  Error level  ERROR
-    Log  Invalid level  INVALID
-    [Teardown]  Set Log Level  INFO
+Log with different levels
+    [Documentation]    FAIL Invalid log level 'INVALID'
+    [Setup]    Set Log Level    TRACE
+    Log    Log says: Hello from tests!
+    Log    Trace level    TRACE
+    Log    Debug level    debug
+    Log    Info level    Info
+    Log    Warn level    wArN
+    Log    Fail level    FAIL
+    Log    Error level    ERROR
+    Log    Invalid level    INVALID
 
-Log HTML
-    Log  <b>not bold</b>
-    Log  <b>bold</b>  HTML
-    ${html} =  Set Variable  <img src="nonex.png">
-    Log  ${html}
-    Log  ${html}  HTML
+HTML is escaped by default
+    Log    <b>not bold</b>
+    Log    ${HTML}
 
-Log Callable
-    Log  ${MyObject}
+HTML pseudo level
+    Log    <b>bold</b>    HTML
+    Log    ${HTML}    HTML
+
+Explicit HTML
+    [Setup]    Set Log Level    DEBUG
+    Log    <b>bold</b>    html=yep
+    Log    ${HTML}    DEBUG    xxx
+    Log    ${HTML}    html=${FALSE}    level=debug
+
+Log also to console
+    [Setup]    Set Log Level    DEBUG
+    Log    Hello, console!    console=yepyep
+    Log    ${HTML}    debug    enable both html    and console
+
+Log callable
+    Log    ${MyObject}
 
 Log Many
-    Log Many  Log Many says:  Hello  from  tests!
-    Log Many  Log Many says: Hi!!
+    Log Many    Log Many says:    Hello    from    tests!
+    Log Many    Log Many says: Hi!!
+
+Log to console
+    Log To Console    stdout w/ newline
+    Log To Console    stdout w/o new...    no_newline=true
+    Log To Console    stderr w/ newline    stdERR
+    Log To Console    ...line    stdout    continue without newlines

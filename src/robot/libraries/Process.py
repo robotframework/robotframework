@@ -18,6 +18,7 @@ import sys
 import os
 import subprocess
 import time
+import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
                          decode_from_system, get_env_vars, secs_to_timestr,
@@ -30,9 +31,9 @@ class Process(object):
     """Robot Framework test library for running processes.
 
     This library utilizes Python's
-    [http://docs.python.org/2.7/library/subprocess.html|subprocess]
+    [http://docs.python.org/2/library/subprocess.html|subprocess]
     module and its
-    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
+    [http://docs.python.org/2/library/subprocess.html#subprocess.Popen|Popen]
     class.
 
     The library has following main usages:
@@ -50,10 +51,12 @@ class Process(object):
     - `Specifying command and arguments`
     - `Process configuration`
     - `Active process`
-    - `Stopping processes`
     - `Result object`
+    - `Boolean arguments`
     - `Using with OperatingSystem library`
     - `Example`
+    - `Shortcuts`
+    - `Keywords`
 
     = Specifying command and arguments =
 
@@ -74,8 +77,10 @@ class Process(object):
     = Process configuration =
 
     `Run Process` and `Start Process` keywords can be configured using
-    optional `**configuration` keyword arguments. Available configuration
-    arguments are listed below and discussed further in sections afterwards.
+    optional `**configuration` keyword arguments. Configuration arguments
+    must be given after other arguments passed to these keywords and must
+    use syntax like `name=value`. Available configuration arguments are
+    listed below and discussed further in sections afterwards.
 
     |  = Name =  |                  = Explanation =                      |
     | shell      | Specifies whether to run the command in shell or not  |
@@ -85,9 +90,6 @@ class Process(object):
     | stdout     | Path of a file where to write standard output.        |
     | stderr     | Path of a file where to write standard error.         |
     | alias      | Alias given to the process.                           |
-
-    Configuration must be given after other arguments passed to these keywords
-    and must use syntax `name=value`.
 
     == Running processes in shell ==
 
@@ -102,7 +104,7 @@ class Process(object):
 
     When using a shell it is possible to give the whole command to execute
     as a single string. See `Specifying command and arguments` section for
-    more details.
+    examples and more details in general.
 
     == Current working directory ==
 
@@ -125,20 +127,20 @@ class Process(object):
     environment variables. The `env` argument can be used to give the
     child a custom environment as a Python dictionary. If there is a need
     to specify only certain environment variable, it is possible to use the
-    `env:<name>` format to set or override only that named variables. It is
-    also possible to use these two approaches together.
+    `env:<name>=<value>` format to set or override only that named variables.
+    It is also possible to use these two approaches together.
 
     Examples:
     | `Run Process` | program | env=${environ} |
-    | `Run Process` | program | env:PATH=%{PATH}${:}${PROGRAM DIR} |
-    | `Run Process` | program | env=${environ} | env:EXTRA=value   |
+    | `Run Process` | program | env:http_proxy=10.144.1.10:8080 | env:PATH=%{PATH}${:}${PROGDIR} |
+    | `Run Process` | program | env=${environ} | env:EXTRA=value |
 
     == Standard output and error streams ==
 
     By default processes are run so that their standard output and standard
     error streams are kept in the memory. This works fine normally,
     but if there is a lot of output, the output buffers may get full and
-    the program could hang.
+    the program can hang.
 
     To avoid output buffers getting full, it is possible to use `stdout`
     and `stderr` arguments to specify files on the file system where to
@@ -161,7 +163,7 @@ class Process(object):
     | ${result} = | `Run Process` | program | stderr=STDOUT |
     | `Log`       | all output: ${result.stdout} |
 
-    *Note:* The created output files are not automatically removed after
+    Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
 
     == Alias ==
@@ -169,47 +171,30 @@ class Process(object):
     A custom name given to the process that can be used when selecting the
     `active process`.
 
-    Example:
+    Examples:
     | `Start Process` | program | alias=example |
+    | `Run Process`   | python  | -c | print 'hello' | alias=hello |
 
     = Active process =
 
     The test library keeps record which of the started processes is currently
     active. By default it is latest process started with `Start Process`,
-    but `Switch Process` can be used to select a different one.
+    but `Switch Process` can be used to select a different one. Using
+    `Run Process` does not affect the active process.
 
     The keywords that operate on started processes will use the active process
     by default, but it is possible to explicitly select a different process
     using the `handle` argument. The handle can be the identifier returned by
-    `Start Process` or an explicitly given `alias`.
-
-    = Stopping processes =
-
-    Started processed can be stopped using `Terminate Process` and
-    `Terminate All Processes`. The former is used for stopping a selected
-    process, and the latter to make sure all processes are stopped, for
-    example, in a suite teardown.
-
-    Both keywords use `subprocess`
-    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen.terminate|terminate()]
-    method by default, but can be configured to use
-    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen.kill|kill()]
-    instead.
-
-    Because both `terminate()` and `kill()` methods were added to `subprocess`
-    in Python 2.6, stopping processes does not work with Python or Jython 2.5.
-    Unfortunately at least beta releases of Jython 2.7
-    [http://bugs.jython.org/issue1898|do not seem to support it either].
-
-    Examples:
-    | `Terminate Process` | kill=True |
-    | `Terminate All Processes` |
+    `Start Process` or an `alias` explicitly given to `Start Process` or
+    `Run Process`.
 
     = Result object =
 
     `Run Process`, `Wait For Process` and `Terminate Process` keywords return a
     result object that contains information about the process execution as its
-    attibutes. What is available is documented in the table below.
+    attributes. The same result object, or some of its attributes, can also
+    be get using `Get Process Result` keyword. Attributes available in the
+    object are documented in the table below.
 
     | = Attribute = |             = Explanation =               |
     | rc            | Return code of the process as an integer. |
@@ -220,12 +205,37 @@ class Process(object):
 
     Example:
     | ${result} =            | `Run Process`         | program               |
-    | `Should Be Equal As Integers` | ${result.rc}   |                       |
+    | `Should Be Equal As Integers` | ${result.rc}   | 0                     |
     | `Should Match`         | ${result.stdout}      | Some t?xt*            |
     | `Should Be Empty`      | ${result.stderr}      |                       |
     | ${stdout} =            | `Get File`            | ${result.stdout_path} |
+    | `Should Be Equal`      | ${stdout}             | ${result.stdout}      |
     | `File Should Be Empty` | ${result.stderr_path} |                       |
-    | `Should Be Equal`      | ${result.stdout}      | ${stdout}             |
+
+    = Boolean arguments =
+
+    Some keywords accept arguments that are handled as Boolean values.
+    If such an argument is given as a string, it is considered false if it
+    is either empty or case-insensitively equal to `false`. Other strings
+    are considered true regardless what they contain, and other argument
+    types are tested using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
+
+    True examples:
+    | `Terminate Process` | kill=True     | # Strings are generally true.    |
+    | `Terminate Process` | kill=yes      | # Same as above.                 |
+    | `Terminate Process` | kill=${TRUE}  | # Python `True` is true.         |
+    | `Terminate Process` | kill=${42}    | # Numbers other than 0 are true. |
+
+    False examples:
+    | `Terminate Process` | kill=False    | # String `False` is false.       |
+    | `Terminate Process` | kill=${EMPTY} | # Empty string is false.         |
+    | `Terminate Process` | kill=${FALSE} | # Python `False` is false.       |
+    | `Terminate Process` | kill=${0}     | # Number 0 is false.             |
+
+    Note that prior to Robot Framework 2.8 all non-empty strings, including
+    `false`, were considered true.
 
     = Using with OperatingSystem library =
 
@@ -351,7 +361,7 @@ class Process(object):
         if self.is_process_running(handle):
             raise AssertionError(error_message)
 
-    def wait_for_process(self, handle=None, timeout=None, on_timeout='none'):
+    def wait_for_process(self, handle=None, timeout=None, on_timeout='continue'):
         """Waits for the process to complete or to reach the given timeout.
 
         The process to wait for must have been started earlier with
@@ -367,7 +377,7 @@ class Process(object):
         that reaching the timeout never fails the test.
 
         |  = Value =  |               = Action =               |
-        | `none`      | The process is left running (default). |
+        | `continue`  | The process is left running (default). |
         | `terminate` | The process is gracefully terminated.  |
         | `kill`      | The process is forcefully stopped.     |
 
@@ -380,18 +390,18 @@ class Process(object):
         returned instead.
 
         Examples:
-        | # Process ends cleanly        |                    |                 |
-        | ${result} =                   | `Wait For Process` | example         |
-        | `Process Should Be Stopped`   | example            |                 |
-        | `Should Be Equal As Integers` | ${result.rc}       | 0               |
-        | # Process does not end        |                    |                 |
-        | ${result} =                   | `Wait For Process` | timeout=42 secs |
-        | `Process Should Be Running`   |                    |                 |
-        | `Should Be Equal`             | ${result}          | ${NONE}         |
-        | # Kill non-ending process     |                    |                 |
-        | ${result} =                   | `Wait For Process` | timeout=1min 30s | on_timeout=kill |
-        | `Process Should Be Stopped`   |                    |                 |
-        | `Should Be Equal As Integers` | ${result.rc}       | -9              |
+        | # Process ends cleanly      |                  |                  |
+        | ${result} =                 | Wait For Process | example          |
+        | Process Should Be Stopped   | example          |                  |
+        | Should Be Equal As Integers | ${result.rc}     | 0                |
+        | # Process does not end      |                  |                  |
+        | ${result} =                 | Wait For Process | timeout=42 secs  |
+        | Process Should Be Running   |                  |                  |
+        | Should Be Equal             | ${result}        | ${NONE}          |
+        | # Kill non-ending process   |                  |                  |
+        | ${result} =                 | Wait For Process | timeout=1min 30s | on_timeout=kill |
+        | Process Should Be Stopped   |                  |                  |
+        | Should Be Equal As Integers | ${result.rc}     | -9               |
 
         `timeout` and `on_timeout` are new in Robot Framework 2.8.2.
         """
@@ -418,30 +428,47 @@ class Process(object):
             return None
 
     def terminate_process(self, handle=None, kill=False):
-        """Terminates the process.
+        """Stops the process gracefully or forcefully.
 
         If `handle` is not given, uses the current `active process`.
 
-        Returns a `result object` containing information about the execution
+        Waits for the process to stop after terminating it. Returns
+        a `result object` containing information about the execution
         similarly as `Wait For Process`.
 
-        By default, tries to terminate the process gracefully, but forcefully
-        kills it if it does not stop in 30 seconds. Kills the process
-        immediately if `kill` argument is given any non-empty value.
-        On Unix-like machines termination is done using `TERM (15)` signal and
-        killing using `KILL (9)`. On Windows Win32 API is used directly.
+        On Unix-like machines, by default, first tries to terminate the process
+        gracefully, but forcefully kills it if it does not stop in 30 seconds.
+        Kills the process immediately if the `kill` argument is given any value
+        considered true. See `Boolean arguments` section for more details about
+        true and false values.
 
-        See `Stopping process` for more details.
+        Termination is done using `TERM (15)` signal and killing using
+        `KILL (9)`. Use `Send Signal To Process` instead if you just want to
+        send either of these signals without waiting for the process to stop.
 
-        Termination timeout and returning the result object are new features
-        in Robot Framework 2.8.2.
+        On Windows the Win32 API function `TerminateProcess()` is used directly
+        to stop the process. Using the `kill` argument has no special effect.
+
+        | ${result} =                 | Terminate Process |           |
+        | Should Be Equal As Integers | ${result.rc}      | -15       |
+        | Terminate Process           | myproc            | kill=true |
+
+        *NOTE:* Stopping processes requires the
+        [http://docs.python.org/2/library/subprocess.html|subprocess]
+        module to have working `terminate` and `kill` functions. They were
+        added in Python 2.6 and are thus missing from earlier versions.
+        Unfortunately at least beta releases of Jython 2.7
+        [http://bugs.jython.org/issue1898|do not seem to support them either].
+
+        Automatically killing the process if termination fails as well as
+        returning the result object are new features in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
         result = self._results[process]
         if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
-                               'by this interpreter version.')
-        terminator = self._kill_process if kill else self._terminate_process
+                               'by this Python version.')
+        terminator = self._kill if is_true(kill) else self._terminate
         try:
             terminator(process)
         except OSError:
@@ -451,24 +478,28 @@ class Process(object):
         result.rc = process.wait() or 0
         return result
 
-    def _kill_process(self, process):
+    def _kill(self, process):
         logger.info('Forcefully killing process.')
         process.kill()
         if not self._process_is_stopped(process, self.KILL_TIMEOUT):
-            raise
+            raise RuntimeError('Failed to kill process.')
 
-    def _terminate_process(self, process):
+    def _terminate(self, process):
         logger.info('Gracefully terminating process.')
         process.terminate()
         if not self._process_is_stopped(process, self.TERMINATE_TIMEOUT):
-            self._kill_process(process)
+            logger.info('Graceful termination failed.')
+            self._kill(process)
 
     def terminate_all_processes(self, kill=False):
         """Terminates all still running processes started by this library.
 
-        `kill` parameter works similar than in `Terminate Process`
+        This keyword can be used in suite teardown or elsewhere to make
+        sure that all processes are stopped,
 
-        See `Stopping processes` for more details.
+        By default tries to terminate processes gracefully, but can be
+        configured to forcefully kill them immediately. See `Terminate Process`
+        that this keyword uses internally for more details.
         """
         for handle in range(1, len(self._processes) + 1):
             if self.is_process_running(handle):
@@ -476,39 +507,55 @@ class Process(object):
         self.__init__()
 
     def send_signal_to_process(self, signal, handle=None):
-        """ Sends a signal to a process. Signal can be a number or a name of the signal.
-        See 'man signal' for the complete list of signals available on your platform.
-        Signal name can be give with or without the SIG prefix
-        (for example SIGINT and INT will both send interrupt signal).
-
-        NOTE! This Keyword does not work on Windows.
-
-        `signal` is the number or name of the signal to be send.
+        """Sends the given `signal` to the specified process.
 
         If `handle` is not given, uses the current `active process`.
+
+        Signal can be specified either as an integer, or anything that can
+        be converted to an integer, or as a name. In the latter case it is
+        possible to give the name both with or without a `SIG` prefix,
+        but names are case-sensitive. For example, all the examples below
+        send signal `INT (2)`:
+
+        | Send Signal To Process | 2      |        | # Send to active process |
+        | Send Signal To Process | INT    |        |                          |
+        | Send Signal To Process | SIGINT | myproc | # Send to named process  |
+
+        What signals are supported depends on the system. For a list of
+        existing signals on your system, see the Unix man pages related to
+        signal handling (typically `man signal` or `man 7 signal`).
+
+        If you are stopping a process, it is often easier and safer to use
+        `Terminate Process` instead.
+
+        *NOTE:* Sending signals requires the
+        [http://docs.python.org/2/library/subprocess.html|subprocess]
+        module to have working `send_signal` function. It was added
+        in Python 2.6 and are thus missing from earlier versions.
+        How well it will work with forthcoming Jython 2.7 is unknown.
+
+        New in Robot Framework 2.8.2.
         """
         if os.sep == '\\':
-            raise AssertionError('Process.Send Signal To Process does not work on Windows')
-        self._processes[handle].send_signal(self._get_signal(signal))
+            raise RuntimeError('This keyword does not work on Windows.')
+        process = self._processes[handle]
+        if not hasattr(process, 'send_signal'):
+            raise RuntimeError('Sending signals is not supported '
+                               'by this Python version.')
+        process.send_signal(self._get_signal_number(signal))
 
-    def _get_signal(self, signal_string):
-        if isinstance(signal_string, int):
-            return signal_string
+    def _get_signal_number(self, int_or_name):
         try:
-            return int(signal_string)
+            return int(int_or_name)
         except ValueError:
-            import signal
-            try:
-                signal_name = self._get_signal_name_from(signal_string)
-                return getattr(signal, signal_name)
-            except AttributeError:
-                raise AssertionError("Unknown signal '%s'" % signal_string)
+            return self._convert_signal_name_to_number(int_or_name)
 
-    def _get_signal_name_from(self, signal_string):
-        s = str(signal_string)
-        if s.startswith('SIG'):
-            return s
-        return 'SIG'+s
+    def _convert_signal_name_to_number(self, name):
+        try:
+            return getattr(signal_module,
+                           name if name.startswith('SIG') else 'SIG' + name)
+        except AttributeError:
+            raise RuntimeError("Unsupported signal '%s'." % name)
 
     def get_process_id(self, handle=None):
         """Returns the process ID (pid) of the process.
@@ -531,48 +578,66 @@ class Process(object):
         """
         return self._processes[handle]
 
-    def get_process_result(self, handle=None, rc=False, stdout=False, stderr=False):
-        """Returns the results of process which has been run.
+    def get_process_result(self, handle=None, rc=False, stdout=False,
+                           stderr=False, stdout_path=False, stderr_path=False):
+        """Returns the specified `result object` or some of its attributes.
 
-        If `handle` is not given, uses the current `active process`.
+        The given `handle` specifies the process whose results should be
+        returned. If no `handle` is given, results of the current `active
+        process` are returned. In either case, the process must have been
+        finishes before this keyword can be used. In practice this means
+        that processes started with `Start Process` must be finished either
+        with `Wait For Process` or `Terminate Process` before using this
+        keyword.
 
-        Returns results of process as a tuple containing
-        (`rc`,`stdout`,`stderr`). The tuple will only contain the result values
-        which are enabled in the arguments. This keyword is implemented for
-        obtaining results from a process executed with remote library.
-
-        `rc` returns the returncode of the process.
-
-        `stdout` returns the standard output from the process.
-
-        `stderr` returns the error stream from the process.
+        If no other arguments than the optional `handle` are given, a whole
+        `result object` is returned. If one or more of the other arguments
+        are given any true value, only the specified attributes of the
+        `result object` are returned. These attributes are always returned
+        in the same order as arguments are specified in the keyword signature.
+        See `Boolean arguments` section for more details about true and false
+        values.
 
         Examples:
-        | Remote.Start Process        | python    | -c              | import sys;sys.exit(1) |
-        | Remote.Wait For Process     |
-        | ${rc} =                     | Remote.Get Process Result   |
-        | Should Be Equal As Integers | ${rc}     | 1               |
-        | Remote.Start Process        | echo      | Robot Framework |
-        | Remote.Wait For Process     |
-        | ${rc}                       | ${stdout} | ${stderr} =     | Remote.Get Process Result |
-        | Should Be Equal As Integers | ${rc}     | 0               |
-        | Should Be Equal             | ${stdout} | Robot Framework |
-        | Should Be Equal             | ${stderr} | ${EMPTY}        |
+        | Run Process           | python             | -c            | print 'Hello, world!' | alias=myproc |
+        | # Get result object   |                    |               |
+        | ${result} =           | Get Process Result | myproc        |
+        | Should Be Equal       | ${result.rc}       | ${0}          |
+        | Should Be Equal       | ${result.stdout}   | Hello, world! |
+        | Should Be Empty       | ${result.stderr}   |               |
+        | # Get one attribute   |                    |               |
+        | ${stdout} =           | Get Process Result | myproc        | stdout=true |
+        | Should Be Equal       | ${stdout}          | Hello, world! |
+        | # Multiple attributes |                    |               |
+        | ${stdout}             | ${stderr} =        | Get Process Result |  myproc | stdout=yes | stderr=yes |
+        | Should Be Equal       | ${stdout}          | Hello, world! |
+        | Should Be Empty       | ${stderr}          |               |
+
+        Although getting results of a previously executed process can be handy
+        in general, the main use case for this keyword is returning results
+        over the remote library interface. The remote interface does not
+        support returning the whole result object, but individual attributes
+        can be returned without problems.
 
         New in Robot Framework 2.8.2.
         """
-        if not (rc or stdout or stderr):
-            raise RuntimeError('No arguments specified')
-        process = self._processes[handle]
-        result = self._results[process]
-        result_values = ()
-        if rc:
-            result_values += (result.rc,)
-        if stdout:
-            result_values += (result.stdout,)
-        if stderr:
-            result_values += (result.stderr,)
-        return result_values[0] if len(result_values) == 1 else result_values
+        result = self._results[self._processes[handle]]
+        if result.rc is None:
+            raise RuntimeError('Getting results of unfinished processes '
+                               'is not supported.')
+        attributes = self._get_result_attributes(result, rc, stdout, stderr,
+                                                 stdout_path, stderr_path)
+        if not attributes:
+            return result
+        elif len(attributes) == 1:
+            return attributes[0]
+        return attributes
+
+    def _get_result_attributes(self, result, *includes):
+        attributes = (result.rc, result.stdout, result.stderr,
+                      result.stdout_path, result.stderr_path)
+        includes = (is_true(incl) for incl in includes)
+        return tuple(attr for attr, incl in zip(attributes, includes) if incl)
 
     def switch_process(self, handle):
         """Makes the specified process the current `active process`.
@@ -581,11 +646,11 @@ class Process(object):
         the `alias` given to it explicitly.
 
         Example:
-        | `Start Process` | prog1 | alias=process1 |
-        | `Start Process` | prog2 | alias=process2 |
+        | Start Process  | prog1    | alias=process1 |
+        | Start Process  | prog2    | alias=process2 |
         | # currently active process is process2 |
-        | `Switch Process` | process1 |
-        | # now active process is process 1 |
+        | Switch Process | process1 |
+        | # now active process is process1 |
         """
         self._processes.switch(handle)
 
@@ -652,7 +717,7 @@ class ProcessConfig(object):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout)
-        self.shell = bool(shell)
+        self.shell = is_true(shell)
         self.alias = alias
         self.env = self._construct_env(env, rest)
 
@@ -688,12 +753,17 @@ class ProcessConfig(object):
         return env
 
     def __str__(self):
-        text = """\
+        return encode_to_system("""\
 cwd = %s
 stdout_stream = %s
 stderr_stream = %s
 shell = %r
 alias = %s
 env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
-               self.shell, self.alias, self.env)
-        return encode_to_system(text)
+               self.shell, self.alias, self.env))
+
+
+def is_true(argument):
+    if isinstance(argument, basestring) and argument.upper() == 'FALSE':
+        return False
+    return bool(argument)

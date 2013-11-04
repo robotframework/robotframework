@@ -97,7 +97,12 @@ Escaping equals sign
 Running a process in a shell
     ${result}=    Run Process    python -c "print('hello')"    shell=True
     Result should equal    ${result}    stdout=hello
+    ${result}=    Run Process    python -c "print 'hello'"    shell=0
+    Result should equal    ${result}    stdout=hello
     Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=${False}
+    Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=${0}
+    Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=False
+    Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=false
 
 Input things to process
     Start Process    python -c "import sys; print('inp %s' % (input() if sys.version_info[0] \=\= 3 else raw_input()))"    shell=True
@@ -157,6 +162,13 @@ Current working directory should not be used with stdout and stderr when absolut
     [Teardown]   Run Keywords
     ...    Safe Remove Directory   %{TEMPDIR}/hc    AND
     ...    Safe Remove File    ${stdout_path}
+
+Lot of output
+    [Tags]    performance
+    ${stdout}=    Normalize Path    %{TEMPDIR}/stdout.txt
+    ${handle}=    Run Process    python -c "for i in range(350000): \tprint 'a'*400"    shell=True    stdout=${stdout}    stderr=STDOUT
+    File Should Not Be Empty    ${stdout}
+    [Teardown]    Safe Remove File    ${stdout}
 
 *** Keywords ***
 Restart Suite Process If Needed

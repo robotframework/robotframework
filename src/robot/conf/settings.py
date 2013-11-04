@@ -52,6 +52,7 @@ class _BaseSettings(object):
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
+                 'FlattenKeywords'  : ('flattenkeywords', []),
                  'NoStatusRC'       : ('nostatusrc', False),
                  'MonitorColors'    : ('monitorcolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
@@ -336,6 +337,14 @@ class _BaseSettings(object):
     def non_critical_tags(self):
         return self['NonCritical']
 
+    @property
+    def remove_keywords(self):
+        return self['RemoveKeywords']
+
+    @property
+    def flatten_keywords(self):
+        return self['FlattenKeywords']
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
@@ -439,7 +448,7 @@ class RebotSettings(_BaseSettings):
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
             'empty_suite_ok': self['ProcessEmptySuite'],
-            'remove_keywords': self['RemoveKeywords'],
+            'remove_keywords': self.remove_keywords,
             'log_level': self['LogLevel'],
             'critical_tags': self.critical_tags,
             'non_critical_tags': self.non_critical_tags,
