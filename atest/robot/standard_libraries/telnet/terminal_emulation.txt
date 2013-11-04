@@ -42,3 +42,6 @@ Read Until Regexp With Timeout Faster Than Internal Frequency
 
 Override terminal emulation and type
     Check Test Case    ${TEST NAME}
+
+Pagination
+    Check Test Case    ${TEST NAME}

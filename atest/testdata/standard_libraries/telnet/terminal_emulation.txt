@@ -97,6 +97,12 @@ Override terminal emulation and type
     Should Match   ${output}    abba\x1b[3Dcdc\r\n*
     Environment variable should be    $TERM    network
 
+Pagination
+    [Setup]    Login and set prompt    terminal_emulation=True   window_size=80x10
+    Write bare    echo -e "abba\\x1b[3Dcdc\nline2\nline3\nline4\nline5\nline6\nline7\nline8\nline9\nline10\nline11"\n
+    ${out}=       Read until prompt
+    Should match    ${out}    *\r\nacdc\r\nline2\r\nline3\r\nline4\r\nline5\r\nline6\r\nline7\r\nline8\r\nline9\r\nline10\r\nline11\r\n*
+
 
 *** Keywords ***
 Run with timeout 0.5

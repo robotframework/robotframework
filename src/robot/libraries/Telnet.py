@@ -937,7 +937,9 @@ class TerminalEmulator(object):
         self._rows, self._columns = window_size or (200, 200)
         self._newline = newline
         self._stream = pyte.ByteStream()
-        self._screen = pyte.Screen(self._rows, self._columns)
+        self._screen = pyte.HistoryScreen(self._rows,
+                                          self._columns,
+                                          history=100000)
         self._stream.attach(self._screen)
         self._buffer = ""
         self._whitespace_after_last_feed = ""
@@ -947,8 +949,15 @@ class TerminalEmulator(object):
         return self._buffer + self._dump_screen()
 
     def _dump_screen(self):
-        out = self._newline.join(''.join(c.data for c in row).rstrip() for row in self._screen).rstrip(self._newline)
-        return out + self._whitespace_after_last_feed
+        return self._get_history() + self._get_screen(self._screen) + self._whitespace_after_last_feed
+
+    def _get_history(self):
+        if self._screen.history.top:
+            return self._get_screen(self._screen.history.top) + self._newline
+        return ''
+
+    def _get_screen(self, screen):
+        return self._newline.join(''.join(c.data for c in row).rstrip() for row in screen).rstrip(self._newline)
 
     def feed(self, input_bytes):
         self._stream.feed(input_bytes)
