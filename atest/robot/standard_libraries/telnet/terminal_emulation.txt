@@ -39,3 +39,6 @@ Read Until Regexp Using Internal Update Frequency
 
 Read Until Regexp With Timeout Faster Than Internal Frequency
     Check Test Case    ${TEST NAME}
+
+Override terminal emulation and type
+    Check Test Case    ${TEST NAME}

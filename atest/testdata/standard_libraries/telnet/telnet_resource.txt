@@ -14,3 +14,8 @@ Login and set prompt
 Should fail because no connection
     [Arguments]    ${kw}    @{args}
     Run Keyword And Expect Error    No connection open    ${kw}    @{args}
+
+Environment variable should be
+    [arguments]    ${var}    ${value}
+    ${out} =    Execute command    echo ${var}
+    Should match   ${out}    ${value}\r\n*

@@ -193,7 +193,9 @@ class Telnet:
     def __init__(self, timeout='3 seconds', newline='CRLF',
                  prompt=None, prompt_is_regexp=False,
                  encoding='UTF-8', encoding_errors='ignore',
-                 default_log_level='INFO'):
+                 default_log_level='INFO', window_size=None,
+                 environ_user=None, terminal_emulation=False,
+                 terminal_type=None):
         """Telnet library can be imported with optional configuration parameters.
 
         Configuration parameters are used as default values when new
@@ -220,6 +222,10 @@ class Telnet:
         self._encoding = encoding
         self._encoding_errors = encoding_errors
         self._default_log_level = default_log_level
+        self._window_size = self._parse_window_size(window_size)
+        self._environ_user = environ_user
+        self._terminal_emulation = self._parse_terminal_emulation(terminal_emulation)
+        self._terminal_type = terminal_type
         self._cache = utils.ConnectionCache()
         self._conn = None
         self._conn_kws = self._lib_kws = None
@@ -280,8 +286,10 @@ class Telnet:
         encoding = encoding or self._encoding
         encoding_errors = encoding_errors or self._encoding_errors
         default_log_level = default_log_level or self._default_log_level
-        window_size = self._parse_window_size(window_size)
-        terminal_emulation = bool(terminal_emulation)
+        window_size = self._parse_window_size(window_size) or self._window_size
+        environ_user = environ_user or self._environ_user
+        terminal_emulation = self._get_terminal_emulation_with_default(terminal_emulation)
+        terminal_type = terminal_type or self._terminal_type
         if not prompt:
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
@@ -293,6 +301,18 @@ class Telnet:
                                           environ_user, terminal_emulation,
                                           terminal_type)
         return self._cache.register(self._conn, alias)
+
+    def _get_terminal_emulation_with_default(self, terminal_emulation):
+        if terminal_emulation is None or terminal_emulation == '':
+            return self._terminal_emulation
+        return self._parse_terminal_emulation(terminal_emulation)
+
+    def _parse_terminal_emulation(self, terminal_emulation):
+        if not terminal_emulation:
+            return False
+        if isinstance(terminal_emulation, basestring):
+            return terminal_emulation.lower() == 'true'
+        return bool(terminal_emulation)
 
     def _parse_window_size(self, window_size):
         if not window_size:

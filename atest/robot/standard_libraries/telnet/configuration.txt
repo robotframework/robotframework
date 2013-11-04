@@ -4,6 +4,8 @@ Force Tags        jybot    pybot
 Resource          telnet_resource.txt
 
 *** Test Case ***
+Library Default Window Size
+    Check Test Case    ${TEST NAME}
 
 Set Window Size
     Check Test Case    ${TEST NAME}

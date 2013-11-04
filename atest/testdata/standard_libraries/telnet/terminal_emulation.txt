@@ -1,7 +1,7 @@
 *** Setting ***
-Test Setup        Login and set prompt    terminal_emulation=True   terminal_type=vt100
+Test Setup        Login and set prompt
 Test Teardown     Close All Connections
-Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG
+Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG    terminal_emulation=True   terminal_type=vt100
 Library           String
 Resource          telnet_resource.txt
 
@@ -90,6 +90,13 @@ Window Size 100x80
     Execute Command    stty -a
     Write    echo ${=*90}
     Read Should Match     ${=*90}*
+
+Override terminal emulation and type
+    [Setup]    Login and set prompt    terminal_emulation=False   terminal_type=network
+    ${output}=    Execute Command    echo -e "abba\\x1b[3Dcdc"
+    Should Match   ${output}    abba\x1b[3Dcdc\r\n*
+    Environment variable should be    $TERM    network
+
 
 *** Keywords ***
 Run with timeout 0.5

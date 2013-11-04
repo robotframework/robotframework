@@ -1,17 +1,21 @@
 *** Setting ***
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
-Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG
+Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG     window_size=95x95
 Library           String
 Resource          telnet_resource.txt
 
 *** Test Cases ***
+Library Default Window Size
+    [setup]    Login and set prompt
+    Set Timeout    0.3 seconds    # Must set after login to give login time to succeed
+    Window Size Should Be    95    95
 
 Set Window Size
     [setup]    Open Connection    ${HOST}    prompt=${PROMPT}    window_size=100x100
     Login    ${USERNAME}    ${PASSWORD}
     Set Timeout    0.3 seconds    # Must set after login to give login time to succeed
-    Line Length Should Be    100    100
+    Window Size Should Be    100    100
 
 Set Invalid Window Size
     [Documentation]    FAIL Invalid window size '100yx100'. Should be <rows>x<columns>
@@ -24,13 +28,11 @@ Set User Environ Option
 
 Default terminal type is network
     [setup]     Login and set prompt
-    ${out} =    Execute command    echo $TERM
-    Should match   ${out}    network*
+    Environment variable should be    $TERM    network
 
 Set terminal type
     [setup]   Login and set prompt    terminal_type=vt100   terminal_emulation=True
-    ${out} =    Execute command    echo $TERM
-    Should match   ${out}    vt100*
+    Environment variable should be    $TERM    vt100
 
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
@@ -201,7 +203,7 @@ Default Log Level Should Be
     ${level} =    Set Default Log Level    ${level}
     Should Be Equal    ${level}    WARN
 
-Line Length Should Be
+Window Size Should Be
     [Arguments]    ${expected rows}    ${expected columns}
     ${output}=   Execute Command    stty -a
     Should Contain    ${output}    rows ${expected rows}; columns ${expected columns}    Window size does not match!
