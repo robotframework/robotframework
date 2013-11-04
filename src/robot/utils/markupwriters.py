@@ -95,7 +95,8 @@ class HtmlWriter(_MarkupWriter):
 class XmlWriter(_MarkupWriter):
 
     def _preamble(self):
-        self._write('<?xml version="1.0" encoding="UTF-8"?>', newline=True)
+        self._write('<?xml version="1.0" encoding="%s"?>' % self._encoding,
+                    newline=True)
 
     def _escape(self, text):
         return xml_escape(text)

@@ -24,7 +24,7 @@
 .element-header {
     border: 1px solid transparent;
     border-radius: 2px;
-    padding: 0.3em 6em 0.3em 1.4em;
+    padding: 0.3em 6.5em 0.3em 1.4em;
     background-repeat: no-repeat;
     background-position: left center;
     background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxUShvPU1ZroHTlYWlJi1LAQA7);
@@ -42,7 +42,7 @@
 }
 .expand {
     float: right;
-    margin-right: -7em;
+    margin-right: -6em;
     font-size: 0.8em;
     width: 7em;
     padding: 0.3em 0 0.1em 0;
@@ -54,6 +54,21 @@
     text-decoration: none;
     background-color: #BBBBFF;
     color: black !important;
+}
+.ext-link, .ext-link:link, .ext-link:visited {
+    float: right;
+    margin-right: -7em;
+    padding: 0 0.3em;
+    color: #C60F0F;
+    text-decoration: none;
+    visibility: hidden;
+}
+.element-header:hover .ext-link {
+    visibility: visible;
+}
+.ext-link:hover {
+    background: #C60F0F;
+    color: #ECECF7;
 }
 /* Messages and errors */
 .messages {
