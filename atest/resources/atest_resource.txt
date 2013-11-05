@@ -103,7 +103,8 @@ Set Runners
     Set Suite Variable  $REBOT  ${INTERPRETER} ${rebot}
 
 Check Test Case
-    [Arguments]  ${name}=${TEST NAME}  ${status}=${None}  ${message}=${None}
+    [Arguments]  ${name}=${NONE}  ${status}=${NONE}  ${message}=${NONE}
+    ${name} =  Set Variable If    "${name}" != "${NONE}"   ${name}    ${TEST NAME}
     ${test} =  Get Test From Suite  ${SUITE}  ${name}
     Check Test Status  ${test}  ${status}  ${message}
     [Return]  ${test}

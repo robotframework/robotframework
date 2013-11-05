@@ -81,12 +81,13 @@ class VariableSplitter:
         return start_index, max_end_index
 
     def _find_start_index(self, string, start, end):
-        index = string.find('{', start, end) - 1
-        if index < 0:
-            return -1
-        if self._start_index_is_ok(string, index):
-            return index
-        return self._find_start_index(string, index+2, end)
+        while True:
+            index = string.find('{', start, end) - 1
+            if index < 0:
+                return -1
+            if self._start_index_is_ok(string, index):
+                return index
+            start = index + 2
 
     def _start_index_is_ok(self, string, index):
         return string[index] in self._identifiers \
