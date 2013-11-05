@@ -239,7 +239,7 @@ Options
                                              --removekeywords name:myresource.*
                           for:     remove passed iterations from for loops
                           wuks:    remove all but the last failing keyword
-                                   from `BuiltIn.Wait Until Keyword Succeeds`
+                                   inside `BuiltIn.Wait Until Keyword Succeeds`
     --flattenkeywords name:<pattern> *  Flattens matching keywords in the
                           generated log file. Matching keywords get all
                           messages from their child keywords and children are

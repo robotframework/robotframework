@@ -453,44 +453,51 @@ Examples::
     --tagdoc regression:*See*_http://info.html
     --tagdoc owner-*:Original_author
 
-Removing keywords from outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Removing and flattening keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Most of the content of `output files`_ comes from keywords and their
 log messages. When creating higher level reports, log files are not necessarily
-needed at all, and then keywords and their messages just take space
-unnecessarily. Log files themselves can also grow overly large if they contain
-`for loops`_ or other constructs that repeat certain keywords multiple times.
+needed at all, and in that case keywords and their messages just take space
+unnecessarily. Log files themselves can also grow overly large, especially if
+they contain `for loops`_ or other constructs that repeat certain keywords
+multiple times.
 
-In these situations, the command line option :opt:`--removekeywords` can be
-used to dispose of unnecessary keywords and messages. It can be used both when
-executing tests and when post-processing outputs. Notice that when running
-tests, keywords are only removed from the log file, not from the XML output
-file. Keywords that contain warnings are not removed except in the :opt:`ALL`
-mode.
+In these situations, command line options :opt:`--removekeywords` and
+:opt:`--flattenkeywords` can be used to dispose or flatten unnecessary keywords.
+They can be used both when `executing test cases`_ and when `post-processing
+outputs`_, but in the former case they only affect the log file, not the XML
+output file.
 
-The option has the following modes of operation:
+Removing keywords
+'''''''''''''''''
+
+The :opt:`--removekeywords` option removes keywords and their messages
+altogether. It has the following modes of operation, and it can be used
+multiple times to enable multiple modes. Keywords that contain warnings_
+are not removed except when using the :opt:`ALL` mode.
 
 :opt:`ALL`
    Remove data from all keywords unconditionally.
 
 :opt:`PASSED`
-   Remove keyword data from test cases that have passed and do not
-   contain warnings_. In most cases, log files created when this option is
-   in use contain enough information to investigate possible failures.
+   Remove keyword data from passed test cases. In most cases, log files
+   created using this option contain enough information to investigate
+   possible failures.
 
 :opt:`NAME:<pattern>`
-   Remove data from all keywords matching the given pattern. The pattern is
+   Remove data from all keywords matching the given pattern regardless the
+   keyword status. The pattern is
    matched against the full name of the keyword, prefixed with
    the possible library or resource file name. The pattern is case, space, and
    underscore insensitive, and it may contain `*` and `?` as wildcards__.
 
 :opt:`FOR`
-   Remove all passed iterations except the last one from `for loops`_.
+   Remove all passed iterations from `for loops`_ except the last one .
 
 :opt:`WUKS`
-   Remove all but last failing keyword inside BuiltIn_ keyword
-   :name:`Wait Until Keyword Succeeds`.
+   Remove all failing keywords inside BuiltIn_ keyword
+   :name:`Wait Until Keyword Succeeds` except the last one.
 
 Examples::
 
@@ -498,12 +505,39 @@ Examples::
    pybot --removekeywords passed --removekeywords for tests.txt
    pybot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.txt
 
-.. Note::
-   The support for using :opt:`--removekeywords` when executing tests as well
-   as :opt:`FOR` and :opt:`WUKS` options were added in Robot Framework 2.7.
-   Option :opt:`NAME:<pattern>` was added in Robot Framework 2.8.2.
+Removing keywords is done after parsing the `output file`_ and generating
+an internal model based on it. Thus it does not reduce memory usage as much
+as `flattening keywords`_.
+
+.. note:: The support for using :opt:`--removekeywords` when executing tests
+          as well as :opt:`FOR` and :opt:`WUKS` modes were added in Robot
+          Framework 2.7.
+
+.. note:: :opt:`NAME:<pattern>` mode was added in Robot Framework 2.8.2.
 
 __ `Option value as simple pattern`_
+
+Flattening keywords
+'''''''''''''''''''
+
+The :opt:`--flattenkeywords` option flattens matching keywords. In practice
+this means that matching keywords get all messages from their child keywords,
+recursively, and child keywords are discarded otherwise. It currently has only
+one mode, but more may be added in the future.
+
+:opt:`NAME:<pattern>`
+   Flatten keywords matching the given pattern. Pattern matching rules are
+   same as when `removing keywords`_ using :opt:`NAME:<pattern>` mode.
+
+Examples::
+
+   pybot --flattenkeywords name:HugeKeyword --flattenkeywords name:resource.* tests.txt
+
+Flattening keywords is done already when the `output file`_ is parsed. This
+can save a significant amount of memory especially with deeply nested
+keyword structures.
+
+.. note:: Flattening keywords is a new feature in Robot Framework 2.8.2.
 
 Setting start and end time of execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
