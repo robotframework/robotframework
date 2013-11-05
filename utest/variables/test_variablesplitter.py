@@ -133,6 +133,10 @@ class TestVariableSplitter(unittest.TestCase):
                 self._test(var, var, internal=True)
                 self._test('eggs'+var+'spam', var, start=4, internal=True)
 
+    def test_many_possible_starts_and_ends(self):
+        self._test('{}'*10000)
+        self._test('{{}}'*1000 + '${var}', '${var}', start=4000)
+
     def _test(self, inp, variable=None, start=0, index=None,
               identifiers=_identifiers, internal=False):
         if variable is None:
