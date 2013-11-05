@@ -752,12 +752,23 @@ class OperatingSystem:
         if not os.path.exists(dest):
             if not os.path.exists(parent):
                 os.makedirs(parent)
-        temp_directory = tempfile.mkdtemp(dir=parent) # Temporary directory can be atomically created
+        return self._atomic_copy(source, dest, parent)
+
+    def _atomic_copy(self, source, destination, destination_parent):
+        # This method tries to ensure that a file copy operation will not fail if the destination file is removed during
+        # copy operation.
+        # This has been an issue for at least some of the users that had a mechanism that polled and removed
+        # the destination - their test cases sometimes failed because the copy file failed.
+        # This is done by first copying the source to a temporary directory on the same drive as the destination is
+        # and then moving (that is almost always in every platform an atomic operation) that temporary file to
+        # the destination.
+        # See http://code.google.com/p/robotframework/issues/detail?id=1502 for details
+        temp_directory = tempfile.mkdtemp(dir=destination_parent) # Temporary directory can be atomically created
         temp_file = os.path.join(temp_directory, os.path.basename(source))
         shutil.copy(source, temp_file)
-        shutil.move(temp_file, dest)
+        shutil.move(temp_file, destination)
         os.rmdir(temp_directory)
-        return source, dest
+        return source, destination
 
     def _destination_directory(self, destination, dest_is_dir):
         if dest_is_dir:
