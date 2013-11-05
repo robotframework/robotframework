@@ -4,9 +4,10 @@ Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Variables ***
-${FLATTEN}      --FlattenKeywords NAME:Keyword3 --flat name:key*others --FLAT name:builtin.*
+${FLATTEN}      --FlattenKeywords NAME:Keyword3 --flat name:key*others --FLAT name:builtin.* --log log.html
 ${FLAT TEXT}    _*Keyword content flattened.*_
 ${FLAT HTML}    <p><i><b>Keyword content flattened.\\x3c/b>\\x3c/i>\\x3c/p>
+${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords'. Expected pattern to start with 'NAME:' but got 'invalid'.${USAGE TIP}\n
 
 *** Test Cases ***
 Non-matching keyword is not flattened
@@ -50,9 +51,15 @@ Flattened in log after execution
     Should Contain    ${LOG}    *${FLAT HTML}
     Should Contain    ${LOG}    *<p>Logs the given message with the given level.\\x3c/p>\\n${FLAT HTML}
 
+Invalid usage
+    Run Rebot Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   ${OUTFILE}
+    Stderr Should Be Equal To    ${ERROR}
+    Run Tests Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   output/flatten_keywords.txt
+    Stderr Should Be Equal To    ${ERROR}
+
 *** Keywords ***
 Run And Rebot Flattened
-    Run Tests Without Processing Output     ${FLATTEN} -l log.html    output/flatten_keywords.txt
+    Run Tests Without Processing Output     ${FLATTEN}    output/flatten_keywords.txt
     ${LOG} =    Get File    ${OUTDIR}/log.html
     Set Suite Variable    $LOG
     Run Rebot    ${FLATTEN}    ${OUTFILE}
