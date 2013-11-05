@@ -45,3 +45,6 @@ Override terminal emulation and type
 
 Pagination
     Check Test Case    ${TEST NAME}
+
+Lots and lots of pages
+    Check Test Case    ${TEST NAME}
