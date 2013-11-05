@@ -240,7 +240,6 @@ Options
                           for:     remove passed iterations from for loops
                           wuks:    remove all but the last failing keyword
                                    from `BuiltIn.Wait Until Keyword Succeeds`
-                          none:    remove nothing (default behavior)
     --flattenkeywords name:<pattern> *
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
