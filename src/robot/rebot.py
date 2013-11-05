@@ -201,7 +201,10 @@ Options
                           for:     remove passed iterations from for loops
                           wuks:    remove all but the last failing keyword
                                    from `BuiltIn.Wait Until Keyword Succeeds`
-    --flattenkeywords name:<pattern> *
+    --flattenkeywords name:<pattern> *  Flattens matching keywords. Matching
+                          keywords get all messages from their child keywords
+                          and children are discarded otherwise. Matching rules
+                          are same as with `--removekeywords name:<pattern>`.
     --starttime timestamp  Set starting time of test execution when creating
                           reports. Timestamp must be given in format
                           `2007-10-01 15:12:42.268` where all separators are
