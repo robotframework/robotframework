@@ -381,7 +381,8 @@ from robot.utils import Application
 class RobotFramework(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
+        Application.__init__(self, USAGE, arg_limits=(1,),
+                             env_options='ROBOT_OPTIONS', logger=LOGGER)
 
     def main(self, datasources, **options):
         settings = RobotSettings(options)

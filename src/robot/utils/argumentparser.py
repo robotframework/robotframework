@@ -48,9 +48,9 @@ class ArgumentParser:
     ''', re.VERBOSE)
 
     def __init__(self, usage, name=None, version=None, arg_limits=None,
-                 validator=None, auto_help=True, auto_version=True,
-                 auto_escape=True, auto_pythonpath=True, auto_argumentfile=True,
-                 from_environ=None):
+                 validator=None, env_options=None, auto_help=True,
+                 auto_version=True, auto_escape=True, auto_pythonpath=True,
+                 auto_argumentfile=True):
         """Available options and tool name are read from the usage.
 
         Tool name is got from the first row of the usage. It is either the
@@ -68,7 +68,7 @@ class ArgumentParser:
         self._auto_escape = auto_escape
         self._auto_pythonpath = auto_pythonpath
         self._auto_argumentfile = auto_argumentfile
-        self._from_environ = from_environ
+        self._env_options = env_options
         self._short_opts = ''
         self._long_opts = []
         self._multi_opts = []
@@ -123,8 +123,8 @@ class ArgumentParser:
         amount of horizontal space as <---ESCAPES--->. Both help and version
         are wrapped to Information exception.
         """
-        if self._from_environ:
-            args_list = os.getenv(self._from_environ, '').split() + args_list
+        if self._env_options:
+            args_list = os.getenv(self._env_options, '').split() + args_list
         args_list = [decode_from_system(a) for a in args_list]
         if self._auto_argumentfile:
             args_list = self._process_possible_argfile(args_list)

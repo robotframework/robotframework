@@ -307,7 +307,8 @@ from robot.run import RobotFramework
 class Rebot(RobotFramework):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
+        Application.__init__(self, USAGE, arg_limits=(1,),
+                             env_options='REBOT_OPTIONS', logger=LOGGER)
 
     def main(self, datasources, **options):
         settings = RebotSettings(options)

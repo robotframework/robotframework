@@ -227,7 +227,7 @@ class TestDefaultsFromEnvironmentVariables(unittest.TestCase):
  -t --toggle
  -v --value value
  -m --multi multi *
-''', from_environ='ROBOT_TEST_OPTIONS')
+''', env_options='ROBOT_TEST_OPTIONS')
 
     def tearDown(self):
         os.environ.pop('ROBOT_TEST_OPTIONS')
@@ -253,13 +253,13 @@ class TestDefaultsFromEnvironmentVariables(unittest.TestCase):
     def test_arguments(self):
         os.environ['ROBOT_TEST_OPTIONS'] = '-o opt arg1 arg2'
         ap = ArgumentParser('Usage:\n -o --opt value',
-                            from_environ='ROBOT_TEST_OPTIONS')
+                            env_options='ROBOT_TEST_OPTIONS')
         opts, args = ap.parse_args([])
         assert_equals(opts['opt'], 'opt')
         assert_equals(args, ['arg1', 'arg2'])
 
     def test_environment_variable_not_set(self):
-        ap = ArgumentParser('Usage:\n -o --opt value', from_environ='NOT_SET')
+        ap = ArgumentParser('Usage:\n -o --opt value', env_options='NOT_SET')
         opts, args = ap.parse_args(['arg'])
         assert_equals(opts['opt'], None)
         assert_equals(args, ['arg'])
