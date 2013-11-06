@@ -2,7 +2,8 @@ import unittest
 import os
 
 from robot.utils.argumentparser import ArgumentParser
-from robot.utils.asserts import *
+from robot.utils.asserts import (assert_equals, assert_raises,
+                                 assert_raises_with_msg, assert_true)
 from robot.errors import Information, DataError, FrameworkError
 from robot.version import get_full_version
 
@@ -216,6 +217,52 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         opts, args = ap.parse_args(['--help', '-v', '--escape', 'xxx'])
         assert_equals(opts, {'help': True, 'version': True, 'pythonpath': None,
                              'escape': 'xxx', 'argumentfile': None})
+
+
+class TestDefaultsFromEnvironmentVariables(unittest.TestCase):
+
+    def setUp(self):
+        os.environ['ROBOT_TEST_OPTIONS'] = '-t --value default -m1 --multi=2'
+        self.ap = ArgumentParser('''Options:
+ -t --toggle
+ -v --value value
+ -m --multi multi *
+''', from_environ='ROBOT_TEST_OPTIONS')
+
+    def tearDown(self):
+        os.environ.pop('ROBOT_TEST_OPTIONS')
+
+    def test_toggle(self):
+        opts, args = self.ap.parse_args([])
+        assert_equals(opts['toggle'], True)
+        opts, args = self.ap.parse_args(['--toggle'])
+        assert_equals(opts['toggle'], False)
+
+    def test_value(self):
+        opts, args = self.ap.parse_args([])
+        assert_equals(opts['value'], 'default')
+        opts, args = self.ap.parse_args(['--value', 'given'])
+        assert_equals(opts['value'], 'given')
+
+    def test_multi_value(self):
+        opts, args = self.ap.parse_args([])
+        assert_equals(opts['multi'], ['1', '2'])
+        opts, args = self.ap.parse_args(['-m3', '--multi', '4'])
+        assert_equals(opts['multi'], ['1', '2', '3', '4'])
+
+    def test_arguments(self):
+        os.environ['ROBOT_TEST_OPTIONS'] = '-o opt arg1 arg2'
+        ap = ArgumentParser('Usage:\n -o --opt value',
+                            from_environ='ROBOT_TEST_OPTIONS')
+        opts, args = ap.parse_args([])
+        assert_equals(opts['opt'], 'opt')
+        assert_equals(args, ['arg1', 'arg2'])
+
+    def test_environment_variable_not_set(self):
+        ap = ArgumentParser('Usage:\n -o --opt value', from_environ='NOT_SET')
+        opts, args = ap.parse_args(['arg'])
+        assert_equals(opts['opt'], None)
+        assert_equals(args, ['arg'])
 
 
 class TestArgumentValidation(unittest.TestCase):
