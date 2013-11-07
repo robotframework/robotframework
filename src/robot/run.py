@@ -332,6 +332,8 @@ but the latter matches --log, --loglevel and --logtitle.
 Environment Variables
 =====================
 
+ROBOT_OPTIONS             Space separated list of default options to be placed
+                          in front of any explicit options on the command line.
 ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
                           information about parsing test case files and running
                           tests. Can be useful when debugging problems. If not
@@ -359,7 +361,8 @@ $ jython /path/to/robot/run.py tests.robot
 # Executing multiple test case files and using case-insensitive long options.
 $ pybot --SuiteStatLevel 2 /my/tests/*.html /your/tests.html
 
-# Setting syslog file before running tests.
+# Setting default options and syslog file before running tests.
+$ export ROBOT_OPTIONS="--critical regression --suitestatlevel 2"
 $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
 $ pybot tests.tsv
 """

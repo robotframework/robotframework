@@ -263,6 +263,8 @@ but the latter matches both --log and --logtitle.
 Environment Variables
 =====================
 
+REBOT_OPTIONS             Space separated list of default options to be placed
+                          in front of any explicit options on the command line.
 ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
                           information about processed files. Can be useful when
                           debugging problems. If not set, or set to special
