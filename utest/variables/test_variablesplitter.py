@@ -1,6 +1,6 @@
 import unittest
 
-from robot.variables import VariableSplitter
+from robot.variables import VariableSplitter, VariableIterator
 from robot.utils.asserts import assert_equals
 
 
@@ -156,6 +156,33 @@ class TestVariableSplitter(unittest.TestCase):
         assert_equals(res.index, index, "'%s' index" % inp)
         assert_equals(res._may_have_internal_variables, internal,
                       "'%s' internal" % inp)
+
+
+class TestVariableIterator(unittest.TestCase):
+
+    def test_no_variables(self):
+        iterator = VariableIterator('no vars here', identifiers='$')
+        assert_equals(list(iterator), [])
+        assert_equals(len(iterator), 0)
+
+    def test_one_variable(self):
+        iterator = VariableIterator('one ${var} here', identifiers='$')
+        assert_equals(list(iterator), [('one ', '${var}', ' here')])
+        assert_equals(len(iterator), 1)
+
+    def test_multiple_variables(self):
+        iterator = VariableIterator('${1} @{2} and %{3}', identifiers='$@%')
+        assert_equals(list(iterator), [('', '${1}', ' @{2} and %{3}'),
+                                       (' ', '@{2}', ' and %{3}'),
+                                       (' and ', '%{3}', '')])
+        assert_equals(len(iterator), 3)
+
+    def test_can_be_iterated_many_times(self):
+        iterator = VariableIterator('one ${var} here', identifiers='$')
+        assert_equals(list(iterator), [('one ', '${var}', ' here')])
+        assert_equals(list(iterator), [('one ', '${var}', ' here')])
+        assert_equals(len(iterator), 1)
+        assert_equals(len(iterator), 1)
 
 
 if __name__ == '__main__':
