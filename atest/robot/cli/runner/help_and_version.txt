@@ -11,7 +11,12 @@ Help
     Log  ${help.replace(' ','_')}
     Should Not Contain  ${help}  \t
     Should Start With  ${help}  Robot Framework -- A generic test automation framework\n\nVersion: \
-    Should End With  ${help}  \n\n# Setting syslog file before running tests.\n$ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt\n$ pybot tests.tsv\n
+    ${end} =    Catenate    SEPARATOR=\n
+    ...    \# Setting default options and syslog file before running tests.
+    ...    $ export ROBOT_OPTIONS="--critical regression --suitestatlevel 2"
+    ...    $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
+    ...    $ pybot tests.tsv
+    Should End With    ${help}    \n\n${end}\n
     Should Not Contain  ${help}  [ ERROR ]
     Should Not Contain  ${help}  [ WARN \ ]
     @{lines} =  Evaluate  [ '%d\\t%s' % (len(line), line) for line in ${help.splitlines()} ]

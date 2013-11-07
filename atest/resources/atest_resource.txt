@@ -23,6 +23,7 @@ ${ERRORS}       -- ;; --
 ${LIBPATH1}     ${CURDIR}${/}..${/}testresources${/}testlibs
 ${LIBPATH2}     ${CURDIR}${/}..${/}testresources${/}listeners
 ${USAGE_TIP}    \n\nTry --help for usage information.
+${TESTNAME}     ${EMPTY}    # Used when not running test
 
 *** Keywords ***
 Run Robot Directly
@@ -103,8 +104,7 @@ Set Runners
     Set Suite Variable  $REBOT  ${INTERPRETER} ${rebot}
 
 Check Test Case
-    [Arguments]  ${name}=${NONE}  ${status}=${NONE}  ${message}=${NONE}
-    ${name} =  Set Variable If    "${name}" != "${NONE}"   ${name}    ${TEST NAME}
+    [Arguments]  ${name}=${TESTNAME}  ${status}=${NONE}  ${message}=${NONE}
     ${test} =  Get Test From Suite  ${SUITE}  ${name}
     Check Test Status  ${test}  ${status}  ${message}
     [Return]  ${test}
