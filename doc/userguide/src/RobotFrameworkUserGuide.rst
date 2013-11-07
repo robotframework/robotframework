@@ -231,5 +231,3 @@ Appendices
 .. _Read the Docs: http://readthedocs.org
 .. _AutoIT: http://www.autoitscript.com/autoit3
 .. _XML-RPC: http://www.xmlrpc.com/
-.. _Acceptance Test Driven Development: http://testobsessed.com/2008/12/08/acceptance-test-driven-development-atdd-an-overview
-.. _Behavior Driven Development: http://en.wikipedia.org/wiki/Behavior_Driven_Development
