@@ -701,7 +701,8 @@ class TelnetConnection(telnetlib.Telnet):
         if self._terminal_emulator:
             self._terminal_emulator.feed(output)
             output = self._terminal_emulator.read()
-        output = self._decode(output)
+        else:
+            output = self._decode(output)
         self._log(output, loglevel)
         return output
 
@@ -723,9 +724,9 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _read_until(self, expected):
         self._verify_connection()
-        expected = self._encode(expected)
         if self._terminal_emulator:
             return self._terminal_read_until(expected)
+        expected = self._encode(expected)
         output = telnetlib.Telnet.read_until(self, expected, self._timeout)
         return output.endswith(expected), self._decode(output) 
 
@@ -748,11 +749,12 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _read_until_regexp(self, *expected):
         self._verify_connection()
+        if self._terminal_emulator:
+            return self._terminal_read_until_regexp(expected)
         expected = [self._encode(exp) if isinstance(exp, unicode) else exp
                     for exp in expected]
-        if not self._terminal_emulator:
-            return self._telnet_read_until_regexp(expected)
-        return self._terminal_read_until_regexp(expected)
+        return self._telnet_read_until_regexp(expected)
+
 
     def _terminal_read_until_regexp(self, expected_list):
         start_time = time.time()
@@ -762,7 +764,7 @@ class TelnetConnection(telnetlib.Telnet):
             return True, out
 
         while(time.time() < start_time + self._timeout):
-            _index, _, output = self.expect(expected_list, self._terminal_frequency)
+            _index, _, output = self.expect(regexp_list, self._terminal_frequency)
             self._terminal_emulator.feed(output)
             out = self._terminal_emulator.read_until_regexp(regexp_list)
             if out:
@@ -928,19 +930,20 @@ class TelnetConnection(telnetlib.Telnet):
             return False
         if not pyte:
             raise AssertionError("Terminal emulation requires pyte module!\nhttps://pypi.python.org/pypi/pyte/")
-        return TerminalEmulator(window_size=self._window_size, newline=self._newline)
+        return TerminalEmulator(window_size=self._window_size, newline=self._newline, encoding=self._encoding)
 
 
 class TerminalEmulator(object):
 
-    def __init__(self, window_size=None, newline="\r\n"):
+    def __init__(self, window_size=None, newline="\r\n", encoding=('ASCII', 'ignore')):
         self._rows, self._columns = window_size or (200, 200)
         self._newline = newline
-        self._stream = pyte.ByteStream()
+        self._stream = pyte.ByteStream(encodings=(encoding,))
         self._screen = pyte.HistoryScreen(self._rows,
                                           self._columns,
                                           history=100000)
         self._stream.attach(self._screen)
+        self._screen.set_charset('B', '(')
         self._buffer = ""
         self._whitespace_after_last_feed = ""
 
@@ -990,6 +993,7 @@ class TerminalEmulator(object):
         self._buffer = terminal_buffer
         self._whitespace_after_last_feed = ""
         self._screen.reset()
+        self._screen.set_charset('B', '(')
 
 
 class NoMatchError(AssertionError):
