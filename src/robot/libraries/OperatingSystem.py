@@ -360,10 +360,21 @@ class OperatingSystem:
         Lines Matching Regexp`.
         """
         pattern = '*%s*' % pattern
-        orig = self.get_file(path, encoding).splitlines()
-        lines = [line for line in orig if fnmatch.fnmatchcase(line, pattern)]
-        self._info('%d out of %d lines matched' % (len(lines), len(orig)))
-        return '\n'.join(lines)
+        path = self._absnorm(path)
+        lines = []
+        total_lines = 0
+        self._link("Reading file '%s'", path)
+        f = open(path, 'rb')
+        try:
+            for line in f:
+                total_lines += 1
+                line = unicode(line, encoding).replace('\r\n', '\n').rstrip('\n')
+                if fnmatch.fnmatchcase(line, pattern):
+                    lines.append(line)
+            self._info('%d out of %d lines matched' % (len(lines), total_lines))
+            return '\n'.join(lines)
+        finally:
+            f.close()
 
     def log_file(self, path, encoding='UTF-8'):
         """Wrapper for `Get File` that also logs the returned file.
