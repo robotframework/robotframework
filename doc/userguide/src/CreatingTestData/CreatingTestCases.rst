@@ -150,10 +150,10 @@ documentation. Using too few or too many arguments will result in an
 error.
 
 The test below uses keywords :name:`Create Directory` and :name:`Copy
-File` from the :name:`OperatingSystem` library. Their arguments are
-specified as :code:`path` and :code:`source, destination` which means
+File` from the OperatingSystem_ library. Their arguments are
+specified as :code:`path` and :code:`source, destination`, which means
 that they take one and two arguments, respectively. The last keyword,
-:name:`No Operation` from :name:`BuiltIn`, takes no arguments.
+:name:`No Operation` from BuiltIn_, takes no arguments.
 
 .. table:: Keywords with positional arguments
    :class: example
@@ -195,6 +195,8 @@ three arguments would not work.
    \              Create File       ${TEMPDIR}/utf-8.txt       Hyvä esimerkki
    \              Create File       ${TEMPDIR}/iso-8859-1.txt  Hyvä esimerkki        ISO-8859-1
    =============  ================  =========================  ====================  ============
+
+.. _varargs:
 
 Variable number of arguments
 ''''''''''''''''''''''''''''
@@ -755,11 +757,23 @@ __  `Suite setup and teardown`_
 Test templates
 ~~~~~~~~~~~~~~
 
-Test templates convert the normal `keyword-driven`_ test cases into
-`data-driven`_ tests. Whereas the body of the normal test case is constructed
-from keywords and their possible arguments, test cases with template define
-only the arguments for the template keyword. This is illustrated by the
-following example test cases that are functionally fully identical.
+Test templates convert normal `keyword-driven`_ test cases into
+`data-driven`_ tests. Whereas the body of a keyword-driven test case
+is constructed from keywords and their possible arguments, test cases with
+template contain only the arguments for the template keyword.
+Instead of repeating the same keyword multiple times per test and/or with all
+tests in a file, it is possible to use it only per test or just once per file.
+
+Template keywords can accept both normal positional and named arguments, as
+well as arguments embedded to the keyword name. Unlike with other settings,
+it is not possible to define a template using a variable.
+
+Basic usage
+'''''''''''
+
+How a keyword accepting normal positional arguments can be used as a template
+is illustrated by the following example test cases. These two tests are
+functionally fully identical.
 
 .. table:: Using test template
    :class: example
@@ -773,7 +787,7 @@ following example test cases that are functionally fully identical.
    \                    first argument   second argument
    ===================  ===============  ================  ===============
 
-As the example above illustrates, it is possible to specify the
+As the example illustrates, it is possible to specify the
 template for an individual test case using the :opt:`[Template]`
 setting. An alternative approach is using the :opt:`Test Template`
 setting in the Setting table, in which case the template is applied
@@ -781,14 +795,14 @@ for all test cases in that test case file. The :opt:`[Template]`
 setting overrides the possible template set in the Setting table, and
 an empty value for :opt:`[Template]` means that the test has no
 template even when :opt:`Test Template` is used. Starting from Robot Framework
-2.5.6, it is also possible to use value :misc:`NONE` to indicate that a test
+2.5.6, it is also possible to use value :code:`NONE` to indicate that a test
 has no template.
 
-If a templated test case has multiple data rows in its body, like in
-the example below, the template is applied for all the rows. This
+If a templated test case has multiple data rows in its body, the template
+is applied for all the rows one by one. This
 means that the same keyword is executed multiple times, once with data
 on each row. Templated tests are also special so that all the rounds
-are executed even if there are failures. It is possible to use this
+are executed even if one or more of them fails. It is possible to use this
 kind of `continue on failure`_ mode with normal tests too, but with
 the templated tests the mode is on automatically.
 
@@ -803,6 +817,14 @@ the templated tests the mode is on automatically.
    \                    second round 1   second round 2
    \                    third round 1    third round 2
    ===================  ===============  ================  ===============
+
+Using arguments with `default values`_ or `varargs`_, as well as using
+`named arguments`_ and `free keyword arguments`_, work with templates
+exactly like they work otherwise. Using variables_ in arguments is also
+supported normally.
+
+Templates with for loops
+''''''''''''''''''''''''
 
 If templates are used with `for loops`_, the template is applied for
 all the steps inside the loop. The continue on failure mode is in use
@@ -821,16 +843,6 @@ all the looped elements even if there are failures.
    \                   :FOR             ${index}         IN RANGE    42
    \                                    1st arg          ${index}
    ==================  ===============  ===============  ==========  ==========
-
-The main use case for test templates is reducing duplication with
-data-driven tests. Instead of repeating the same keyword with all the
-tests in a file, it is possible to use it only once in the Setting
-table. This usage is illustrated more thoroughly in the next section.
-
-.. note:: Test templates is a new feature in Robot Framework 2.5.
-
-.. note:: Unlike with other settings, it is not possible to define a template
-          using a variable.
 
 Different test case styles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
