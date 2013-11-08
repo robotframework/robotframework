@@ -935,7 +935,7 @@ class TelnetConnection(telnetlib.Telnet):
 
 class TerminalEmulator(object):
 
-    def __init__(self, window_size=None, newline="\r\n", encoding=('ASCII', 'ignore')):
+    def __init__(self, window_size=None, newline="\r\n", encoding=('UTF-8', 'ignore')):
         self._rows, self._columns = window_size or (200, 200)
         self._newline = newline
         self._stream = pyte.ByteStream(encodings=(encoding,))

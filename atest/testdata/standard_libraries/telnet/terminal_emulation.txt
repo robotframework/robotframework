@@ -120,6 +120,13 @@ Write & Read non-ISO-LATIN-1
     ${out} =    Read until prompt    deBug
     Should Be Equal    ${out}    \u2603\r\n${FULL PROMPT}
 
+Write ASCII-Only Unicode When Encoding Is ASCII
+    [Documentation]   FAIL STARTS: UnicodeEncodeError:
+    Write    echo Only ASCII
+    ${out} =    Read Until Prompt
+    Should Be Equal    ${out}    Only ASCII\r\n${FULL PROMPT}
+    Write    Tämä ei toimi
+
 *** Keywords ***
 Run with timeout 0.5
     [Arguments]    ${kw}    @{args}
