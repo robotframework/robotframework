@@ -775,17 +775,15 @@ How a keyword accepting normal positional arguments can be used as a template
 is illustrated by the following example test cases. These two tests are
 functionally fully identical.
 
-.. table:: Using test template
-   :class: example
+.. sourcecode:: robotframework
 
-   ===================  ===============  ================  ===============
-        Test Case            Action          Argument         Argument
-   ===================  ===============  ================  ===============
-   Normal test case     Example keyword  first argument    second argument
-   \
-   Templated test case  [Template]       Example keyword
-   \                    first argument   second argument
-   ===================  ===============  ================  ===============
+   *** Test Cases **
+   Normal test case
+       Example keyword    first argument    second argument
+
+   Templated test case
+       [Template]    Example keyword
+       first argument    second argument
 
 As the example illustrates, it is possible to specify the
 template for an individual test case using the :opt:`[Template]`
@@ -806,22 +804,76 @@ are executed even if one or more of them fails. It is possible to use this
 kind of `continue on failure`_ mode with normal tests too, but with
 the templated tests the mode is on automatically.
 
-.. table:: Using test template with multiple data rows
-   :class: example
+.. sourcecode:: robotframework
 
-   ===================  ===============  ================  ===============
-        Test Case            Action          Argument         Argument
-   ===================  ===============  ================  ===============
-   Templated test case  [Template]       Example keyword
-   \                    first round 1    first round 2
-   \                    second round 1   second round 2
-   \                    third round 1    third round 2
-   ===================  ===============  ================  ===============
+   *** Settings ***
+   Test Template    Example keyword
+
+   *** Test Cases ***
+   Templated test case
+       first round 1     first round 2
+       second round 1    second round 2
+       third round 1     third round 2
 
 Using arguments with `default values`_ or `varargs`_, as well as using
 `named arguments`_ and `free keyword arguments`_, work with templates
 exactly like they work otherwise. Using variables_ in arguments is also
 supported normally.
+
+Templates with embedded arguments
+'''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.8.2, templates support a variation of
+the `embedded argument syntax`_. With templates this syntax works so
+that if the template keyword has variables in its name, they are considered
+placeholders for arguments and replaced with the actual arguments
+used with the template. The resulting keyword is then used without positional
+arguments. This is best illustrated with an example:
+
+.. sourcecode:: robotframework
+
+   *** Test Case ***
+   Normal test case with embedded arguments
+       The result of 1 + 1 should be 2
+       The result of 1 + 2 should be 3
+
+   Template with embedded arguments
+       [Template]    The result of ${calculation} should be ${expected}
+       1 + 1    2
+       1 + 2    3
+
+   *** Keywords ***
+   The result of ${calculation} should be ${expected}
+       ${result} =    Calculate    ${calculation}
+       Should Be Equal    ${result}     ${expected}
+
+When embedded arguments are used with templates, the number of arguments in
+the template keyword name must match the number of arguments it is used with.
+The argument names do not need to match the arguments of the original keyword,
+though, and it is also possible to use different arguments altogether:
+
+.. sourcecode:: robotframework
+
+   *** Test Case ***
+   Different argument names
+       [Template]    The result of ${foo} should be ${bar}
+       1 + 1    2
+       1 + 2    3
+
+   Only some arguments
+       [Template]    The result of ${calculation} should be 3
+       1 + 2
+       4 - 1
+
+   New arguments
+       [Template]    The ${meaning} of ${life} should be 42
+       result    21 * 2
+
+The main benefit of using embedded arguments with templates is that
+argument names are specified explicitly. When using normal arguments,
+the same effect can be achieved by naming the columns that contain
+arguments. This is illustrated by the `data-driven style`_ example in
+the next section.
 
 Templates with for loops
 ''''''''''''''''''''''''
