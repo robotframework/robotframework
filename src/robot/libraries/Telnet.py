@@ -437,6 +437,8 @@ class TelnetConnection(telnetlib.Telnet):
         connection specific configuration.
         """
         self._verify_connection()
+        if self._terminal_emulator:
+            raise AssertionError("Newline can not be changed when terminal emulation is used.")
         old = self._newline
         self._set_newline(newline)
         return old
@@ -502,6 +504,8 @@ class TelnetConnection(telnetlib.Telnet):
         Specifying the error handler and disabling encoding were added in 2.7.7.
         """
         self._verify_connection()
+        if self._terminal_emulator:
+            raise AssertionError("Encoding can not be changed when terminal emulation is used.")
         old = self._encoding
         self._set_encoding(encoding or old[0], errors or old[1])
         return old

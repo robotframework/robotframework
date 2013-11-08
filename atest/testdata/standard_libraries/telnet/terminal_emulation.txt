@@ -127,6 +127,14 @@ Write ASCII-Only Unicode When Encoding Is ASCII
     Should Be Equal    ${out}    Only ASCII\r\n${FULL PROMPT}
     Write    Tämä ei toimi
 
+Encoding can not be changed in terminal encoding
+    [Documentation]   FAIL STARTS: Encoding can not be changed when terminal emulation is used
+    Set encoding   UTF-8
+
+Newline can not be changed in terminal encoding
+    [Documentation]   FAIL STARTS: Newline can not be changed when terminal emulation is used
+    Set newline       LF
+
 *** Keywords ***
 Run with timeout 0.5
     [Arguments]    ${kw}    @{args}
