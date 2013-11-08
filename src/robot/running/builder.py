@@ -12,10 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.running.defaults import TestDefaults
-from robot.parsing import TestData
 from robot.errors import DataError
+from robot.parsing import TestData
+from robot.running.defaults import TestDefaults
 from robot.utils import abspath
+from robot.variables import VariableIterator
 
 from .model import TestSuite, ForLoop
 
@@ -53,7 +54,6 @@ class TestSuiteBuilder(object):
     @property
     def _empty_suites_allowed(self):
         return self.include_empty_suites or self.include_suites
-
 
     def _parse(self, path):
         try:
@@ -139,13 +139,28 @@ class TestSuiteBuilder(object):
         if data.is_for_loop():
             self._create_for_loop(parent, data, template)
         elif template and template.is_active():
-            parent.keywords.create(name=unicode(template),
-                                   args=tuple(data.as_list(include_comment=False)))
+            self._create_templated(parent, data, template)
         else:
             parent.keywords.create(name=data.keyword,
                                    args=tuple(data.args),
                                    assign=tuple(data.assign),
                                    type=kw_type)
+
+    def _create_templated(self, parent, data, template):
+        args = data.as_list(include_comment=False)
+        template, args = self._format_template(unicode(template), args)
+        parent.keywords.create(name=template, args=tuple(args))
+
+    def _format_template(self, template, args):
+        iterator = VariableIterator(template, identifiers='$')
+        variables = len(iterator)
+        if not variables or variables != len(args):
+            return template, args
+        temp = []
+        for before, variable, after in iterator:
+            temp.extend([before, args.pop(0)])
+        temp.append(after)
+        return ''.join(temp), ()
 
     def _create_for_loop(self, parent, data, template):
         loop = parent.keywords.append(ForLoop(vars=data.vars,

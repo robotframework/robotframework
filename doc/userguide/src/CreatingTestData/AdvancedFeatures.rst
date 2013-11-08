@@ -474,7 +474,7 @@ Starting from Robot Framework 2.7, it is possible to `remove unnecessary
 keywords`__ from the outputs using :opt:`--RemoveKeywords FOR` command line
 option.
 
-__ `Removing keywords from outputs`_
+__ `Removing and flattening keywords`_
 
 Repeating single keyword
 ''''''''''''''''''''''''

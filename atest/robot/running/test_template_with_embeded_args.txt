@@ -1,0 +1,26 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    running/test_template_with_embeded_args.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Matching arguments
+    Check Test Case    ${TESTNAME}
+
+Argument names do not need to be same as in definition
+    Check Test Case    ${TESTNAME}
+
+Some arguments can be hard-coded
+    Check Test Case    ${TESTNAME}
+
+Can have different arguments than definition
+    Check Test Case    ${TESTNAME}
+
+Can use variables
+    Check Test Case    ${TESTNAME}
+
+Cannot have more arguments than variables
+    Check Test Case    ${TESTNAME}
+
+Cannot have less arguments than variables
+    Check Test Case    ${TESTNAME}

@@ -8,6 +8,9 @@ Resource        atest_resource.txt
 Move File
     Check testcase  ${TESTNAME}
 
+Copy File
+    Check testcase  ${TESTNAME}
+
 Move File To Existing Dir
     Check testcase  ${TESTNAME}
 

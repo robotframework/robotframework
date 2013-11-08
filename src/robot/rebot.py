@@ -200,9 +200,11 @@ Options
                                              --removekeywords name:myresource.*
                           for:     remove passed iterations from for loops
                           wuks:    remove all but the last failing keyword
-                                   from `BuiltIn.Wait Until Keyword Succeeds`
-                          none:    remove nothing (default behavior)
-    --flattenkeywords name:<pattern> *
+                                   inside `BuiltIn.Wait Until Keyword Succeeds`
+    --flattenkeywords name:<pattern> *  Flattens matching keywords. Matching
+                          keywords get all messages from their child keywords
+                          and children are discarded otherwise. Matching rules
+                          are same as with `--removekeywords name:<pattern>`.
     --starttime timestamp  Set starting time of test execution when creating
                           reports. Timestamp must be given in format
                           `2007-10-01 15:12:42.268` where all separators are
@@ -261,6 +263,8 @@ but the latter matches both --log and --logtitle.
 Environment Variables
 =====================
 
+REBOT_OPTIONS             Space separated list of default options to be placed
+                          in front of any explicit options on the command line.
 ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
                           information about processed files. Can be useful when
                           debugging problems. If not set, or set to special
@@ -307,7 +311,8 @@ from robot.run import RobotFramework
 class Rebot(RobotFramework):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
+        Application.__init__(self, USAGE, arg_limits=(1,),
+                             env_options='REBOT_OPTIONS', logger=LOGGER)
 
     def main(self, datasources, **options):
         settings = RebotSettings(options)
