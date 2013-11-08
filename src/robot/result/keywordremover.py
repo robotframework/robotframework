@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.model import SuiteVisitor, SkipAllVisitor
+from robot.model import SuiteVisitor
 from robot.utils import Matcher, plural_or_not
 
 
@@ -25,11 +25,10 @@ def KeywordRemover(how):
         return {'ALL': AllKeywordsRemover,
                 'PASSED': PassedKeywordRemover,
                 'FOR': ForLoopItemsRemover,
-                'WUKS': WaitUntilKeywordSucceedsRemover,
-                'NONE': SkipAllVisitor}[upper]()
+                'WUKS': WaitUntilKeywordSucceedsRemover}[upper]()
     except KeyError:
         raise DataError("Expected 'ALL', 'PASSED', 'NAME:<pattern>', 'FOR', "
-                        "'WUKS', or 'NONE' but got '%s'." % how)
+                        "or 'WUKS' but got '%s'." % how)
 
 
 class _KeywordRemover(SuiteVisitor):

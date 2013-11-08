@@ -14,7 +14,7 @@ Rational                    FOR       WUKS
 
 Irrational                  ALL       WUKS
                             ALL       FOR       PASSED
-                            WUKS      FOR       NONE    FOR    WUKS    NONE
+                            WUKS      FOR       FOR    WUKS
 
 
 *** Keywords ***

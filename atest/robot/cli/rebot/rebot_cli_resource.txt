@@ -14,8 +14,9 @@ ${M_000_211}      0 critical tests, 0 passed, 0 failed\n 2 tests total, 1 passed
 *** Keywords ***
 
 Run tests to create input file for Rebot
-    Run Tests Without Processing Output  --loglevel TRACE  ${TESTFILE}
-    Move File  ${OUTFILE}  ${MYINPUT}
+    [Arguments]    ${tests}=${TESTFILE}    ${input}=${MYINPUT}
+    Run Tests Without Processing Output  --loglevel TRACE  ${tests}
+    Move File  ${OUTFILE}  ${input}
     Create Directory  ${MYOUTDIR}
 
 Remove temporary files

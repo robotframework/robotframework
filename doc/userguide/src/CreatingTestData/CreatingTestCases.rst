@@ -934,8 +934,8 @@ context and personal preferences.
    +-------------------+---------------+-------------------+---------+
 
 .. tip:: In both of the above examples, column headers have been
-   	 changed to match the data. This is possible because on the
-   	 first row other cells except the first one `are ignored`__.
+         changed to match the data. This is possible because on the
+         first row other cells except the first one `are ignored`__.
 
 __ `Ignored data`_
 
@@ -943,12 +943,12 @@ Behavior-driven style
 '''''''''''''''''''''
 
 It is also possible to write test cases as requirements that also non-technical
-project stakeholders must understand. These `Executable Requirements` are a
-corner stone of a process commonly called `Acceptance Test Driven Development`_
-(ATDD).
+project stakeholders must understand. These `executable requirements` are a
+corner stone of a process commonly called `Acceptance Test Driven Development`__
+(ATDD) or `Specification by Example`__.
 
 One way to write these requirements/tests is *Given-When-Then* style
-popularized by `Behavior Driven Development`_ (BDD). When writing test cases in
+popularized by `Behavior Driven Development`__ (BDD). When writing test cases in
 this style, the initial state is usually expressed with a keyword starting with
 word :name:`Given`, the actions are described with keyword starting with
 :name:`When` and the expectations with a keyword starting with :name:`Then`.
@@ -966,6 +966,10 @@ action.
    \                   and credentials are submitted
    \                   Then welcome page should be open
    ==================  ===========================
+
+__ http://testobsessed.com/2008/12/08/acceptance-test-driven-development-atdd-an-overview
+__ http://en.wikipedia.org/wiki/Specification_by_example
+__ http://en.wikipedia.org/wiki/Behavior_Driven_Development
 
 Ignoring :name:`Given/When/Then/And` prefixes
 `````````````````````````````````````````````

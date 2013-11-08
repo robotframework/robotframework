@@ -140,6 +140,29 @@ prefix-\*` matches all tags starting with :code:`prefix-`, and
 :cli:`--include a???` matches any tag that is four characters long and
 starts with a character :code:`a`.
 
+:var:`ROBOT_OPTIONS` and :var:`REBOT_OPTIONS` environment variables
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Environment variables :var:`ROBOT_OPTIONS` and :var:`REBOT_OPTIONS` can be
+used to specify default options for `test execution`_ and `result
+post-processing`__, respectively. The options and their values must be
+defined as a space separated list and they are placed in front of any
+explicit options on the command line. The main use case for these
+environment variables is setting global default values for certain options to
+avoid the need to repeat them every time tests are run or :prog:`rebot` used.
+
+.. sourcecode:: bash
+
+   export ROBOT_OPTIONS="--critical regression --tagdoc mytag:Example_doc"
+   pybot tests.txt
+   export REBOT_OPTIONS="--reportbackground green:yellow:red"
+   rebot --name example output.xml
+
+.. note:: Support for :var:`ROBOT_OPTIONS` and :var:`REBOT_OPTIONS` environment
+          variables was added in Robot Framework 2.8.2.
+
+__ `Post-processing outputs`_
+
 Test results
 ~~~~~~~~~~~~
 

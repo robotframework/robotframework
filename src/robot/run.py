@@ -239,18 +239,21 @@ Options
                                              --removekeywords name:myresource.*
                           for:     remove passed iterations from for loops
                           wuks:    remove all but the last failing keyword
-                                   from `BuiltIn.Wait Until Keyword Succeeds`
-                          none:    remove nothing (default behavior)
-    --flattenkeywords name:<pattern> *
+                                   inside `BuiltIn.Wait Until Keyword Succeeds`
+    --flattenkeywords name:<pattern> *  Flattens matching keywords in the
+                          generated log file. Matching keywords get all
+                          messages from their child keywords and children are
+                          discarded otherwise. Matching rules are same as with
+                          `--removekeywords name:<pattern>`.
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
                           Arguments to listener class can be given after class
                           name, using colon as separator. For example:
                           --listener MyListenerClass:arg1:arg2
-    --warnonskippedfiles  If this option is used, skipped files will cause a
-                          warning that is visible to console output and log
-                          files. By default skipped files only cause an info
-                          level syslog message.
+    --warnonskippedfiles  If this option is used, skipped test data files will
+                          cause a warning that is visible in the console output
+                          and the log file. By default skipped files only cause
+                          an info level syslog message.
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
     --runemptysuite       Executes tests also if the top level test suite is
@@ -258,7 +261,7 @@ Options
                           is not an error that no test matches the condition.
     --dryrun              Verifies test data and runs tests so that library
                           keywords are not executed.
-    --exitonfailure       Stops test execution if ant critical test fails.
+    --exitonfailure       Stops test execution if any critical test fails.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is
                           stopped prematurely.
     --randomize all|suites|tests|none  Randomizes the test execution order.
@@ -329,6 +332,8 @@ but the latter matches --log, --loglevel and --logtitle.
 Environment Variables
 =====================
 
+ROBOT_OPTIONS             Space separated list of default options to be placed
+                          in front of any explicit options on the command line.
 ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
                           information about parsing test case files and running
                           tests. Can be useful when debugging problems. If not
@@ -356,7 +361,8 @@ $ jython /path/to/robot/run.py tests.robot
 # Executing multiple test case files and using case-insensitive long options.
 $ pybot --SuiteStatLevel 2 /my/tests/*.html /your/tests.html
 
-# Setting syslog file before running tests.
+# Setting default options and syslog file before running tests.
+$ export ROBOT_OPTIONS="--critical regression --suitestatlevel 2"
 $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
 $ pybot tests.tsv
 """
@@ -378,7 +384,8 @@ from robot.utils import Application
 class RobotFramework(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
+        Application.__init__(self, USAGE, arg_limits=(1,),
+                             env_options='ROBOT_OPTIONS', logger=LOGGER)
 
     def main(self, datasources, **options):
         settings = RobotSettings(options)

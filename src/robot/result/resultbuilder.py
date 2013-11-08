@@ -15,10 +15,11 @@
 from __future__ import with_statement
 
 from robot.errors import DataError
-from robot.utils import ET, ETSource, MultiMatcher, get_error_message
+from robot.utils import ET, ETSource, get_error_message
 
-from .xmlelementhandlers import XmlElementHandler
 from .executionresult import Result, CombinedResult
+from .flattenkeywordmatcher import FlattenKeywordMatcher
+from .xmlelementhandlers import XmlElementHandler
 
 
 def ExecutionResult(*sources, **options):
@@ -104,7 +105,7 @@ class ExecutionResultBuilder(object):
                 started_kws -= 1
 
     def _flatten_keywords(self, context, flattened):
-        match = MultiMatcher(flattened).match
+        match = FlattenKeywordMatcher(flattened).match
         started = -1
         for event, elem in context:
             tag = elem.tag

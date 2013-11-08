@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 
-class VariableSplitter:
+class VariableSplitter(object):
 
     def __init__(self, string, identifiers):
         self.identifier = None
@@ -62,7 +62,7 @@ class VariableSplitter:
                 self._state(char, index)
             except StopIteration:
                 return
-            if index  == max_index and not self._scanning_list_variable_index():
+            if index == max_index and not self._scanning_list_variable_index():
                 return
 
     def _scanning_list_variable_index(self):
@@ -81,12 +81,13 @@ class VariableSplitter:
         return start_index, max_end_index
 
     def _find_start_index(self, string, start, end):
-        index = string.find('{', start, end) - 1
-        if index < 0:
-            return -1
-        if self._start_index_is_ok(string, index):
-            return index
-        return self._find_start_index(string, index+2, end)
+        while True:
+            index = string.find('{', start, end) - 1
+            if index < 0:
+                return -1
+            if self._start_index_is_ok(string, index):
+                return index
+            start = index + 2
 
     def _start_index_is_ok(self, string, index):
         return string[index] in self._identifiers \
@@ -132,3 +133,24 @@ class VariableSplitter:
         self._list_variable_index_chars.append(char)
         if char == ']':
             raise StopIteration
+
+
+class VariableIterator(object):
+
+    def __init__(self, string, identifiers):
+        self._string = string
+        self._identifiers = identifiers
+
+    def __iter__(self):
+        string = self._string
+        while True:
+            var = VariableSplitter(string, self._identifiers)
+            if var.identifier is None:
+                break
+            before = string[:var.start]
+            variable = '%s{%s}' % (var.identifier, var.base)
+            string = string[var.end:]
+            yield before, variable, string
+
+    def __len__(self):
+        return sum(1 for _ in self)
