@@ -58,6 +58,26 @@ Test Template With Variable And Assign Mark (=)
   ${42}=      42=
   ${1}=       ${2}=
 
+Test Named Arguments
+  [Documentation]  FAIL Several failures occurred:\n\n
+  ...  1) foo != default\n\n
+  ...  2) default != fool
+  [Template]  Test Template With Default Parameters
+  first=foo
+  foo           second=foo
+  first=foo     second=foo
+  second=foo    first=foo
+  second=fool
+
+Test Varargs
+  [Documentation]  FAIL 1 != 2 3
+  [Template]  Test Template With Varargs
+  ${EMPTY}
+  Hello  Hello
+  Hello world  Hello  world
+  1 2 3 4 5 6 7 8 9 10  1  2  3  4  5  6  7  8  9  10
+  1  2  3
+
 Test Empty Values
   [Template]  Expect Exactly Two Args
   \           \
@@ -169,8 +189,13 @@ Templates and fatal errors 2
 
 *** Keywords ***
 Test Template With Default Parameters
-  [arguments]  ${first}=first  ${second}=second
-  Log many  ${first}  ${second}
+  [Arguments]  ${first}=default  ${second}=default
+  Should Be Equal  ${first}  ${second}
+
+Test Template With Varargs
+  [Arguments]  ${first}  @{second}
+  ${second} =  Catenate  @{second}
+  Should Be Equal  ${first}  ${second}
 
 Expect Exactly Two Args  [arguments]  ${a1}  ${a2}
   Should Be Equal  ${a1}  ${a2}
