@@ -97,6 +97,9 @@ class Telnet:
     `Set Timeout`, `Set Newline`, `Set Prompt`, `Set Encoding`, and
     `Set Default Log Level`
 
+    Values of `environ_user`, `window_size`, `terminal_emulation`, and
+    `terminal_type` can not be changed after opening the connection.
+
     == Timeout ==
 
     Timeout defines how long is the maximum time to wait when reading
@@ -185,10 +188,11 @@ class Telnet:
 
     == User ==
 
-    Telnet protocol allows the `USER` environment variable to be sent when
+    Telnet protocol allows the USER environment variable to be sent when
     connecting to the server. On some servers it may happen that there is no
     login prompt, and on those cases this configuration option will allow still
-    to define the desired username.
+    to define the desired username. The option `environ_user` can be used in
+    `importing` and with `Open Connection`.
 
     = Logging =
 
@@ -230,8 +234,8 @@ class Telnet:
     size, as the terminal emulation will break all lines that are longer than
     the window row length.
 
-    When terminal emulation is used, the `window size`, `encoding`, and
-    `terminal type` can not be changed anymore after opening the connection.
+    When terminal emulation is used, the `newline` and `encoding` can not be
+    changed anymore after opening the connection.
 
     As a prequisite for using terminal emulation you need to have [https://github.com/selectel/pyte|Pyte]
     installed. This is easiest done with pip: 'pip install pyte'
@@ -268,6 +272,7 @@ class Telnet:
         | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
         | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
         | Library | Telnet | 2.0 | LF | (> |# ) | True | # set prompt as a regular expression |
+        | Library | Telnet | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 | # use terminal emulation |
         """
         self._timeout = timeout or 3.0
         self._newline = newline or 'CRLF'
@@ -486,6 +491,9 @@ class TelnetConnection(telnetlib.Telnet):
         The old newline is returned and can be used to restore the newline later.
         See `Set Timeout` for a similar example.
 
+        If terminal emulation is used, the newline can not be changed on an open
+        connection.
+
         See `Configuration` section for more information about global and
         connection specific configuration.
         """
@@ -552,6 +560,9 @@ class TelnetConnection(telnetlib.Telnet):
 
         The old values are returned and can be used to restore the encoding
         and the error handler later. See `Set Prompt` for a similar example.
+
+        If terminal emulation is used, the encoding can not be changed on an open
+        connection.
 
         Setting encoding in general is a new feature in Robot Framework 2.7.6.
         Specifying the error handler and disabling encoding were added in 2.7.7.
