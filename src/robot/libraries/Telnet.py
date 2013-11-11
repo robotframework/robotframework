@@ -329,9 +329,11 @@ class Telnet:
         """Opens a new Telnet connection to the given host and port.
 
         The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
-        and `default_log_level` arguments get default values when the library
-        is [#Importing|imported]. Setting them here overrides those values for
-        the opened connection. See `Configuration` section for more information.
+        `default_log_level`, `window_size`, `environ_user`,
+        `terminal_emulation`, and `terminal_type` arguments get default values
+        when the library is [#Importing|imported]. Setting them here overrides
+        those values for the opened connection. See `Configuration` section for
+        more information.
 
         Possible already opened connections are cached and it is possible to
         switch back to them using `Switch Connection` keyword. It is possible
