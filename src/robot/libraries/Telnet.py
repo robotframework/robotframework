@@ -272,7 +272,7 @@ class Telnet:
         | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
         | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
         | Library | Telnet | 2.0 | LF | (> |# ) | True | # set prompt as a regular expression |
-        | Library | Telnet | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 | | # use terminal emulation |
+        | Library | Telnet | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 | | # use terminal emulation with defined window size and terminal type |
         """
         self._timeout = timeout or 3.0
         self._newline = newline or 'CRLF'
