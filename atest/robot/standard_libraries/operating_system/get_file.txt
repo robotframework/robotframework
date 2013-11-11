@@ -53,3 +53,5 @@ Grep File
     Check Log Message  ${tc.kws[10].kws[0].msgs[1]}  1 out of 5 lines matched
     Check Log Message  ${tc.kws[12].kws[0].msgs[1]}  0 out of 0 lines matched
 
+Grep File non Ascii
+    Check testcase  ${TESTNAME}
