@@ -47,6 +47,7 @@ class Telnet:
     - `Time string format`
     - `Shortcuts`
     - `Keywords`
+    - `Terminal emulation`
 
     = Connections =
 
@@ -80,6 +81,12 @@ class Telnet:
 
     Written and read text is automatically encoded/decoded using a
     [#Configuration|configured encoding].
+
+    The terminal command codes, like cursor movement and color codes, are
+    normally returned as part of the read operation. They may also prevent
+    finding the searched string, if a command code occurs in middle of the
+    searched pattern. `Terminal emulation` can be used to process these
+    command codes as they would be if a real terminal would be in use.
 
     = Configuration =
 
@@ -164,6 +171,25 @@ class Telnet:
     are new features in Robot Framework 2.7.6. In earlier versions only
     `Set Default Log Level` could be used.
 
+    == Terminal type ==
+
+    By default the Telnet library does not negotiate any specific terminal type
+    with the server. If a specific terminal type, for example `vt100`, is desired,
+    the terminal type can be configured in `importing` and with
+    `Open Connection`.
+
+    == Window size ==
+
+    Window size for negotiation with the server can be configured when
+    `importing` the library and with `Open Connection`.
+
+    == User ==
+
+    Telnet protocol allows the `USER` environment variable to be sent when
+    connecting to the server. On some servers it may happen that there is no
+    login prompt, and on those cases this configuration option will allow still
+    to define the desired username.
+
     = Logging =
 
     All keywords that read something log the output. These keywords take the
@@ -186,6 +212,33 @@ class Telnet:
     just a number, for example, '10' or '1.5', it is considered to be seconds.
     The time string format is described in more detail in an appendix of
     [http://code.google.com/p/robotframework/wiki/UserGuide|Robot Framework User Guide].
+
+    = Terminal emulation =
+
+    Starting from Robot Framework 2.8.2, Telnet library supports terminal
+    emulation with [https://github.com/selectel/pyte|Pyte]. Terminal emulation
+    will process the output in a virtual screen. This means that command
+    characters, like cursor movements, carriage returns, and so forth, have the
+    same effect on the output as they would have on a normal terminal screen.
+    For example the sequence 'abba\\x1b[3Dcdc' will result in output 'acdc'.
+
+    Terminal emulation is taken into use with option terminal_emulation=True,
+    either in the library initialization, or as a option to `Open Connection`.
+
+    As Pyte approximates vt -style terminal, you may also want to set the
+    terminal type as `vt100`. We also recommend that you increase the window
+    size, as the terminal emulation will break all lines that are longer than
+    the window row length.
+
+    When terminal emulation is used, the `window size`, `encoding`, and
+    `terminal type` can not be changed anymore after opening the connection.
+
+    As a prequisite for using terminal emulation you need to have [https://github.com/selectel/pyte|Pyte]
+    installed. This is easiest done with pip: 'pip install pyte'
+
+    Examples:
+    | `Open Connection` | lolcathost | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 |
+
     """
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -732,7 +785,7 @@ class TelnetConnection(telnetlib.Telnet):
             return self._terminal_read_until(expected)
         expected = self._encode(expected)
         output = telnetlib.Telnet.read_until(self, expected, self._timeout)
-        return output.endswith(expected), self._decode(output) 
+        return output.endswith(expected), self._decode(output)
 
     @property
     def _terminal_frequency(self):
@@ -973,7 +1026,7 @@ class TerminalEmulator(object):
     def read(self):
         current_out = self.current_output
         self._update_buffer("")
-        return current_out 
+        return current_out
 
     def read_until(self, expected):
         current_out = self.current_output
