@@ -328,7 +328,8 @@ class EmbeddedArgs(UserKeywordHandler):
 
     def _run(self, context, args):
         if not context.dry_run:
+            variables = context.variables
+            self._resolve_arguments(args, variables)  # validates no args given
             for name, value in self.embedded_args:
-                context.variables[name] = \
-                    context.variables.replace_scalar(value)
+                variables[name] = variables.replace_scalar(value)
         return UserKeywordHandler._run(self, context, args)
