@@ -332,8 +332,10 @@ class Telnet:
 
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
-                        encoding=None, encoding_errors=None, default_log_level=None,
-                        window_size=None, environ_user=None, terminal_emulation=False, terminal_type=None):
+                        encoding=None, encoding_errors=None,
+                        default_log_level=None, window_size=None,
+                        environ_user=None, terminal_emulation=False,
+                        terminal_type=None):
         """Opens a new Telnet connection to the given host and port.
 
         The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
@@ -818,7 +820,8 @@ class TelnetConnection(telnetlib.Telnet):
         if out:
             return True, out
         while(time.time() < start_time + self._timeout):
-            input_bytes = telnetlib.Telnet.read_until(self, expected, self._terminal_frequency)
+            input_bytes = telnetlib.Telnet.read_until(self, expected,
+                                                      self._terminal_frequency)
             self._terminal_emulator.feed(input_bytes)
             out = self._terminal_emulator.read_until(expected)
             if out:
@@ -923,7 +926,8 @@ class TelnetConnection(telnetlib.Telnet):
         return read_until(prompt)
 
     def execute_command(self, command, loglevel=None):
-        """Executes the given `command` and reads, logs, and returns everything until the prompt.
+        """Executes the given `command` and reads, logs, and returns everything
+        until the prompt.
 
         This keyword requires the prompt to be [#Configuration|configured]
         either in `importing` or with `Open Connection` or `Set Prompt` keyword.
@@ -1015,7 +1019,8 @@ class TelnetConnection(telnetlib.Telnet):
 
 class TerminalEmulator(object):
 
-    def __init__(self, window_size=None, newline="\r\n", encoding=('UTF-8', 'ignore')):
+    def __init__(self, window_size=None, newline="\r\n",
+                 encoding=('UTF-8', 'ignore')):
         self._rows, self._columns = window_size or (200, 200)
         self._newline = newline
         self._stream = pyte.ByteStream(encodings=[encoding])
@@ -1032,7 +1037,9 @@ class TerminalEmulator(object):
         return self._buffer + self._dump_screen()
 
     def _dump_screen(self):
-        return self._get_history() + self._get_screen(self._screen) + self._whitespace_after_last_feed
+        return self._get_history() + \
+               self._get_screen(self._screen) + \
+               self._whitespace_after_last_feed
 
     def _get_history(self):
         if self._screen.history.top:
@@ -1040,7 +1047,8 @@ class TerminalEmulator(object):
         return ''
 
     def _get_screen(self, screen):
-        return self._newline.join(''.join(c.data for c in row).rstrip() for row in screen).rstrip(self._newline)
+        return self._newline.join(''.join(c.data for c in row).rstrip()
+                                  for row in screen).rstrip(self._newline)
 
     def feed(self, input_bytes):
         self._stream.feed(input_bytes)
@@ -1085,7 +1093,8 @@ class NoMatchError(AssertionError):
         AssertionError.__init__(self, self._get_message())
 
     def _get_message(self):
-        expected = "'%s'" % self.expected if isinstance(self.expected, basestring) \
+        expected = "'%s'" % self.expected \
+                   if isinstance(self.expected, basestring) \
                    else utils.seq2str(self.expected, lastsep=' or ')
         msg = "No match found for %s in %s." % (expected, self.timeout)
         if self.output is not None:
