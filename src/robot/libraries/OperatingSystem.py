@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
 import os
 import sys
 import tempfile
@@ -330,11 +331,8 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'", path)
-        f = open(path, 'rb')
-        try:
+        with open(path, 'rb') as f:
             return f.read()
-        finally:
-            f.close()
 
     def grep_file(self, path, pattern, encoding='UTF-8'):
         """Returns the lines of the specified file that match the `pattern`.
@@ -364,17 +362,14 @@ class OperatingSystem:
         lines = []
         total_lines = 0
         self._link("Reading file '%s'", path)
-        f = open(path, 'rb')
-        try:
+        with open(path, 'rU') as f:
             for line in f:
                 total_lines += 1
-                line = unicode(line, encoding).replace('\r\n', '\n').rstrip('\n')
+                line = unicode(line, encoding).rstrip('\n')
                 if fnmatch.fnmatchcase(line, pattern):
                     lines.append(line)
             self._info('%d out of %d lines matched' % (len(lines), total_lines))
             return '\n'.join(lines)
-        finally:
-            f.close()
 
     def log_file(self, path, encoding='UTF-8'):
         """Wrapper for `Get File` that also logs the returned file.
