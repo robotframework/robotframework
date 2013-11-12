@@ -192,7 +192,7 @@ class Telnet:
 
     == USER environment variable ==
 
-    Telnet protocol allows the USER environment variable to be sent when
+    Telnet protocol allows the `USER` environment variable to be sent when
     connecting to the server. On some servers it may happen that there is no
     login prompt, and on those cases this configuration option will allow still
     to define the desired username. The option `environ_user` can be used in
