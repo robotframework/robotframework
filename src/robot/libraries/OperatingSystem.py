@@ -743,6 +743,9 @@ class OperatingSystem:
     def move_file(self, source, destination):
         """Moves the source file into a new destination.
 
+        If the source and destination are in the same file system, rename operation is used.
+        Otherwise file is copied to the destination filesystem and then removed from the original.
+
         Arguments have exactly same semantics as with `Copy File` keyword.
         """
         source, destination, _ = self._prepare_for_move_or_copy(destination, source)
