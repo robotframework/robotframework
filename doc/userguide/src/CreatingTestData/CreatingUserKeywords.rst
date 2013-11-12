@@ -252,6 +252,8 @@ arguments syntax is very close to the one in Python.
 
 __ `for loops`_
 
+.. _Embedded argument syntax:
+
 Embedding arguments into keyword name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

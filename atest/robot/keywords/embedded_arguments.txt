@@ -11,6 +11,9 @@ Embedded Arguments In User Keyword Name
     Check Log Message  ${tc.kws[2].kws[0].msgs[0]}  This is always executed
     Should Be Equal  ${tc.kws[2].name}  \${name}, \${book} = User Juha Selects Playboy From Webshop
 
+Embedded And Positional Arguments Do Not Work Together
+    Check Test Case  ${TEST NAME}
+
 Complex Embedded Arguments
     ${tc} =  Check Test Case  ${TEST NAME}
     Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  feature-works
@@ -28,6 +31,12 @@ Embedded Arguments as Variables
 Non-Existing Variable in Embedded Arguments
     ${tc} =  Check Test Case  ${TEST NAME}
     Should Be Equal  ${tc.kws[0].name}  User \${non existing} Selects \${variables} From Webshop
+
+Non-Existing Variable in Embedded Arguments and Positional Arguments
+    Check Test Case  ${TEST NAME}
+
+Non-Existing Variable in Embedded Arguments and in Positional Arguments
+    Check Test Case  ${TEST NAME}
 
 Custom Embedded Argument Regexp
     Check Test Case  ${TEST NAME}

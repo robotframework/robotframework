@@ -91,6 +91,7 @@ function scrollToHash() {
     if (window.location.hash)
         setTimeout(function () {
             var id = window.location.hash.substring(1);
+            window.location.hash = '#';
             window.location.hash = id;
             highlight($('#' + id));
         }, 0);
