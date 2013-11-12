@@ -54,6 +54,7 @@ Read
     Write    echo -e "abba\\x1b[3Dcdc"
     Read Should Match     acdc*
     Write bare      token
+    Sleep       0.1    # We cant wait until output, because the whole idea is to test "read"
     Read should match    token
 
 Read Until Reads Using Internal Update Frequency
