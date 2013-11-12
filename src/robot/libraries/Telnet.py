@@ -82,11 +82,11 @@ class Telnet:
     Written and read text is automatically encoded/decoded using a
     [#Configuration|configured encoding].
 
-    The terminal command codes, like cursor movement and color codes, are
-    normally returned as part of the read operation. They may also prevent
-    finding the searched string, if a command code occurs in middle of the
-    searched pattern. `Terminal emulation` can be used to process these
-    command codes as they would be if a real terminal would be in use.
+    The ANSI escape codes, like cursor movement and color codes, are
+    normally returned as part of the read operation. If an escape code occurs
+    in middle of a search pattern it may also prevent finding the searched
+    string. `Terminal emulation` can be used to process these
+    escape codes as they would be if a real terminal would be in use.
 
     = Configuration =
 
@@ -221,10 +221,11 @@ class Telnet:
 
     Starting from Robot Framework 2.8.2, Telnet library supports terminal
     emulation with [https://github.com/selectel/pyte|Pyte]. Terminal emulation
-    will process the output in a virtual screen. This means that command
-    characters, like cursor movements, carriage returns, and so forth, have the
-    same effect on the output as they would have on a normal terminal screen.
-    For example the sequence 'abba\\x1b[3Dcdc' will result in output 'acdc'.
+    will process the output in a virtual screen. This means that ANSI escape
+    codes, like cursor movements, and also control characters, like
+    carriage returns and backspaces have the same effect on the result as they
+    would have on a normal terminal screen. For example the sequence
+    'abba\\x1b[3Dcdc' will result in output 'acdc'.
 
     Terminal emulation is taken into use with option terminal_emulation=True,
     either in the library initialization, or as a option to `Open Connection`.
