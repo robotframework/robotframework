@@ -31,12 +31,12 @@ Can use variables
     ${1} + ${2}    ${3}
 
 Cannot have more arguments than variables
-    [Documentation]    FAIL Non-existing variable '${calc}'.
+    [Documentation]    FAIL Keyword 'The result of ${calculation} should be ${expected}' expected 0 arguments, got 2.
     [Template]    The result of ${calc} should be 3
     1 + 2    extra
 
 Cannot have less arguments than variables
-    [Documentation]    FAIL Non-existing variable '${calc}'.
+    [Documentation]    FAIL Keyword 'The result of ${calculation} should be ${expected}' expected 0 arguments, got 1.
     [Template]    The result of ${calc} should be ${extra}
     1 + 2
     4 - 1
