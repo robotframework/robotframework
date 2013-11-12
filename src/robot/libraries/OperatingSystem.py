@@ -745,24 +745,26 @@ class OperatingSystem:
 
         Arguments have exactly same semantics as with `Copy File` keyword.
         """
-        destination, source, dest_is_dir = self._normalize_dest_and_source(destination, source)
-        self._verify_that_source_is_a_file(source)
-        self._ensure_directory_exists(destination, dest_is_dir)
+        source, destination, _ = self._prepare_for_move_or_copy(destination, source)
         shutil.move(source, destination)
         self._link("Moved file from '%s' to '%s'", source, destination)
 
-    def _copy_file(self, source, dest):
-        dest, source, dest_is_dir = self._normalize_dest_and_source(dest, source)
+    def _prepare_for_move_or_copy(self, destination, source):
+        source, destination, dest_is_dir = self._normalize_dest_and_source(destination, source)
         self._verify_that_source_is_a_file(source)
-        parent = self._ensure_directory_exists(dest, dest_is_dir)
-        return self._atomic_copy(source, dest, parent)
+        parent = self._ensure_directory_exists(destination, dest_is_dir)
+        return source, destination, parent
+
+    def _copy_file(self, source, destination):
+        source, destination, parent  = self._prepare_for_move_or_copy(destination, source)
+        return self._atomic_copy(source, destination, parent)
 
     def _normalize_dest_and_source(self, dest, source):
         source = self._absnorm(source)
         dest = dest.replace('/', os.sep)
         dest_is_dir = dest.endswith(os.sep)
         dest = self._absnorm(dest)
-        return dest, source, dest_is_dir
+        return source, dest, dest_is_dir
 
     def _verify_that_source_is_a_file(self, source):
         if not os.path.exists(source):
