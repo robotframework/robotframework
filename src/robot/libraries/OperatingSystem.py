@@ -756,7 +756,7 @@ class OperatingSystem:
         return source, destination, parent
 
     def _copy_file(self, source, destination):
-        source, destination, parent  = self._prepare_for_move_or_copy(destination, source)
+        source, destination, parent = self._prepare_for_move_or_copy(destination, source)
         return self._atomic_copy(source, destination, parent)
 
     def _normalize_dest_and_source(self, dest, source):
