@@ -1,5 +1,6 @@
 import os
 
+# We assume that prompt is PS1='\u@\h \W \$ '
 HOST = 'localhost'
 USERNAME = 'test'
 PASSWORD = 'test'
