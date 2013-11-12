@@ -746,24 +746,36 @@ class OperatingSystem:
         Uses `Copy File` keyword internally, and `source` and `destination`
         arguments have exactly same semantics as with that keyword.
         """
-        source, destination = self._copy_file(source, destination)
-        os.remove(source)
+        destination, source, dest_is_dir = self._normalize_dest_and_source(destination, source)
+        self._verify_that_source_is_a_file(source)
+        self._ensure_directory_exists(destination, dest_is_dir)
+        shutil.move(source, destination)
         self._link("Moved file from '%s' to '%s'", source, destination)
 
     def _copy_file(self, source, dest):
+        dest, source, dest_is_dir = self._normalize_dest_and_source(dest, source)
+        self._verify_that_source_is_a_file(source)
+        parent = self._ensure_directory_exists(dest, dest_is_dir)
+        return self._atomic_copy(source, dest, parent)
+
+    def _normalize_dest_and_source(self, dest, source):
         source = self._absnorm(source)
         dest = dest.replace('/', os.sep)
         dest_is_dir = dest.endswith(os.sep)
         dest = self._absnorm(dest)
+        return dest, source, dest_is_dir
+
+    def _verify_that_source_is_a_file(self, source):
         if not os.path.exists(source):
             raise RuntimeError("Source file '%s' does not exist" % source)
         if not os.path.isfile(source):
             raise RuntimeError("Source file '%s' is not a regular file" % source)
-        parent = self._destination_directory(dest, dest_is_dir)
-        if not os.path.exists(dest):
-            if not os.path.exists(parent):
-                os.makedirs(parent)
-        return self._atomic_copy(source, dest, parent)
+
+    def _ensure_directory_exists(self, path, dest_is_dir):
+        parent = self._destination_directory(path, dest_is_dir)
+        if not os.path.exists(path) and not os.path.exists(parent):
+            os.makedirs(parent)
+        return parent
 
     def _atomic_copy(self, source, destination, destination_parent):
         # This method tries to ensure that a file copy operation will not fail if the destination file is removed during
