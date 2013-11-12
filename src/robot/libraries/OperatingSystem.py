@@ -743,8 +743,7 @@ class OperatingSystem:
     def move_file(self, source, destination):
         """Moves the source file into a new destination.
 
-        Uses `Copy File` keyword internally, and `source` and `destination`
-        arguments have exactly same semantics as with that keyword.
+        Arguments have exactly same semantics as with `Copy File` keyword.
         """
         destination, source, dest_is_dir = self._normalize_dest_and_source(destination, source)
         self._verify_that_source_is_a_file(source)
