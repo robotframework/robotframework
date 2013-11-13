@@ -71,3 +71,10 @@ Logging HTML From Java
     Check Log Message  ${tc.kws[0].msgs[0]}  <b>Hello, stdout!</b>  HTML
     Check Log Message  ${tc.kws[1].msgs[0]}  <b>Hello, stderr!</b>  HTML
     Check Stderr Contains  *HTML* <b>Hello, stderr!</b>
+
+Logging both to Python and Java streams
+    [Tags]  jybot
+    ${tc} =  Check testcase  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  First message to Python
+    Check Log Message  ${tc.kws[0].msgs[1]}  Last message to Python
+    Check Log Message  ${tc.kws[0].msgs[2]}  Second message to Java

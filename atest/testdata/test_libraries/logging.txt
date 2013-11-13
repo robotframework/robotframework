@@ -44,3 +44,6 @@ Logging with Levels From Java
 Logging HTML From Java
     Java.Print  <b>Hello, stdout!</b>  HTML
     Java.Stderr  <b>Hello, stderr!</b>  HTML
+
+Logging both to Python and Java streams
+    Print to Python and Java streams
