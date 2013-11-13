@@ -21,7 +21,7 @@ here to avoid cyclic imports.
 import sys
 import threading
 
-from robot.utils import unic
+from robot.utils import unic, encode_output
 
 from .logger import LOGGER
 from .loggerhelper import Message
@@ -62,5 +62,5 @@ def console(msg, newline=True, stream='stdout'):
     if newline:
         msg += '\n'
     stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
-    stream.write(msg)
+    stream.write(encode_output(msg))
     stream.flush()
