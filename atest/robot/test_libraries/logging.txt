@@ -14,6 +14,18 @@ Logging From Python Library Using Stdout And Stderr
     Check Log Message  ${tc.kws[2].msgs[1]}  stderr: Hello!!
     Check Stderr Contains  Hello to stderr from Python Library!\nstderr: Hello!!
 
+Log Non-ASCII As Unicode From Python
+    ${tc} =  Check testcase  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  Hyvää päivää stdout!
+    Check Log Message  ${tc.kws[1].msgs[0]}  Hyvää päivää stderr!
+    Check Stderr Contains  Hyvää päivää stderr!
+
+Log Non-ASCII As Bytes From Python
+    ${tc} =  Check testcase  ${TEST NAME}
+    Check Log Message  ${tc.kws[2].msgs[0]}  Hyvää päivää!
+    Check Log Message  ${tc.kws[3].msgs[0]}  Hyvää päivää!
+    Check Stderr Contains  Hyvää päivää!
+
 Logging HTML From Python
     ${tc} =  Check testcase  ${TEST NAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  <a href="http://www.google.com">Google</a>  HTML
@@ -30,6 +42,13 @@ Logging From Java Library Using Stdout And Stderr
     Check Log Message  ${tc.kws[0].msgs[0]}  Hello from Java library!
     Check Log Message  ${tc.kws[1].msgs[0]}  Hello Java stderr!!
     Check Stderr Contains  Hello Java stderr!!
+
+Log Non-ASCII As Unicode From Java
+    [Tags]  jybot
+    ${tc} =  Check testcase  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  Hyvää päivää java stdout!
+    Check Log Message  ${tc.kws[1].msgs[0]}  Hyvää päivää java stderr!
+    Check Stderr Contains  Hyvää päivää java stderr!
 
 Logging with Levels From Java
     [Tags]  jybot

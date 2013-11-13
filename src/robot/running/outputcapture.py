@@ -16,56 +16,44 @@ import sys
 from StringIO import StringIO
 
 from robot.output import LOGGER
+from robot.utils import decode_output, encode_output
 
 
-class OutputCapturer:
+class OutputCapturer(object):
 
     def __init__(self, library_import=False):
-        if library_import:
-            LOGGER.enable_library_import_logging()
         self._library_import = library_import
-        self._python_out = _PythonCapturer(stdout=True)
-        self._python_err = _PythonCapturer(stdout=False)
-        self._java_out = _JavaCapturer(stdout=True)
-        self._java_err = _JavaCapturer(stdout=False)
+        self._python_out = PythonCapturer(stdout=True)
+        self._python_err = PythonCapturer(stdout=False)
+        self._java_out = JavaCapturer(stdout=True)
+        self._java_err = JavaCapturer(stdout=False)
 
     def __enter__(self):
+        if self._library_import:
+            LOGGER.enable_library_import_logging()
         return self
 
     def __exit__(self, exc_type, exc_value, exc_trace):
-        self.release_and_log()
+        self._release_and_log()
+        if self._library_import:
+            LOGGER.disable_library_import_logging()
         return False
 
-    def release_and_log(self):
+    def _release_and_log(self):
         stdout, stderr = self._release()
         if stdout:
             LOGGER.log_output(stdout)
         if stderr:
             LOGGER.log_output(stderr)
-            sys.__stderr__.write(stderr+'\n')
-        if self._library_import:
-            LOGGER.disable_library_import_logging()
+            sys.__stderr__.write(encode_output(stderr+'\n'))
 
     def _release(self):
-        py_out = self._python_out.release()
-        py_err = self._python_err.release()
-        java_out = self._java_out.release()
-        java_err = self._java_err.release()
-        # This should return both Python and Java stdout/stderr.
-        # It is unfortunately not possible to do py_out+java_out here, because
-        # java_out is always Unicode and py_out is bytes (=str). When py_out
-        # contains non-ASCII bytes catenation fails with UnicodeError.
-        # Unfortunately utils.unic(py_out) doesn't work either, because later
-        # splitting the output to levels and messages fails. Should investigate
-        # why that happens. It also seems that the byte message are never
-        # converted to Unicode - at least Message class doesn't do that.
-        # It's probably safe to leave this code like it is in RF 2.5, because
-        # a) the earlier versions worked the same way, and b) this code is
-        # used so that there should never be output both from Python and Java.
-        return (py_out, py_err) if (py_out or py_err) else (java_out, java_err)
+        stdout = self._python_out.release() + self._java_out.release()
+        stderr = self._python_err.release() + self._java_err.release()
+        return stdout, stderr
 
 
-class _PythonCapturer(object):
+class PythonCapturer(object):
 
     def __init__(self, stdout=True):
         if stdout:
@@ -89,24 +77,25 @@ class _PythonCapturer(object):
         self._stream.flush()
         output = self._stream.getvalue()
         self._stream.close()
-        return output
+        return output if isinstance(output, unicode) else decode_output(output)
 
 
 if not sys.platform.startswith('java'):
 
-    class _JavaCapturer(object):
-        def __init__(self, stdout):
+    class JavaCapturer(object):
+
+        def __init__(self, stdout=True):
             pass
+
         def release(self):
-            return ''
+            return u''
 
 else:
 
-    from java.io import PrintStream, ByteArrayOutputStream
+    from java.io import ByteArrayOutputStream, PrintStream
     from java.lang import System
 
-
-    class _JavaCapturer(object):
+    class JavaCapturer(object):
 
         def __init__(self, stdout=True):
             if stdout:
