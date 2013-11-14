@@ -3,12 +3,23 @@ Documentation   Tests for logging using stdout/stderr
 Library         ExampleLibrary  WITH NAME  Py
 Library         HtmlPrintLib.py
 Library         ExampleJavaLibrary  WITH NAME  Java
+Library         String
 
 *** Test Cases ***
 Logging From Python Library Using Stdout And Stderr
     Py.Print  Hello from Python Library!
     Py.Print  Hello to stderr from Python Library!  stderr
     Py.Print to stdout and stderr  Hello!!
+
+Log Non-ASCII As Unicode From Python
+    Py.Print  Hyvää päivää stdout!
+    Py.Print  Hyvää päivää stderr!  stderr
+
+Log Non-ASCII As Bytes From Python
+    ${encoding} =    Evaluate    robot.utils.encoding.OUTPUT_ENCODING    robot
+    ${bytes} =    Encode String To Bytes    Hyvää päivää!    ${encoding}
+    Py.Print  ${bytes}
+    Py.Print  ${bytes}  stderr
 
 Logging HTML From Python
     Print One HTML Line
@@ -20,6 +31,10 @@ Logging From Java Library Using Stdout And Stderr
     Java.Print  Hello from Java library!
     Java.Stderr  Hello Java stderr!!
 
+Log Non-ASCII As Unicode From Java
+    Java.Print  Hyvää päivää java stdout!
+    Java.Stderr  Hyvää päivää java stderr!
+
 Logging with Levels From Java
     Java.Print   This is debug  DEBUG
     Java.Print   First msg\n2nd line of1st msg\n*INFO* 2nd msg *INFO* Still 2nd
@@ -29,3 +44,6 @@ Logging with Levels From Java
 Logging HTML From Java
     Java.Print  <b>Hello, stdout!</b>  HTML
     Java.Stderr  <b>Hello, stderr!</b>  HTML
+
+Logging both to Python and Java streams
+    Print to Python and Java streams
