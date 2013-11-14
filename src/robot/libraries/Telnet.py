@@ -453,6 +453,7 @@ class TelnetConnection(telnetlib.Telnet):
     NEW_ENVIRON_IS = chr(0)
     NEW_ENVIRON_VAR = chr(0)
     NEW_ENVIRON_VALUE = chr(1)
+    INTERNAL_UPDATE_FREQUENCY = 0.03
 
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
                  prompt=None, prompt_is_regexp=False,
@@ -812,14 +813,14 @@ class TelnetConnection(telnetlib.Telnet):
 
     @property
     def _terminal_frequency(self):
-        return min(0.03, self._timeout)
+        return min(self.INTERNAL_UPDATE_FREQUENCY, self._timeout)
 
     def _terminal_read_until(self, expected):
-        start_time = time.time()
+        max_time = time.time() + self._timeout
         out = self._terminal_emulator.read_until(expected)
         if out:
             return True, out
-        while(time.time() < start_time + self._timeout):
+        while time.time() < max_time:
             input_bytes = telnetlib.Telnet.read_until(self, expected,
                                                       self._terminal_frequency)
             self._terminal_emulator.feed(input_bytes)
@@ -838,13 +839,12 @@ class TelnetConnection(telnetlib.Telnet):
 
 
     def _terminal_read_until_regexp(self, expected_list):
-        start_time = time.time()
+        max_time = time.time() + self._timeout
         regexp_list = [re.compile(rgx) for rgx in expected_list]
         out = self._terminal_emulator.read_until_regexp(regexp_list)
         if out:
             return True, out
-
-        while(time.time() < start_time + self._timeout):
+        while time.time() < max_time:
             _index, _, output = self.expect(regexp_list, self._terminal_frequency)
             self._terminal_emulator.feed(output)
             out = self._terminal_emulator.read_until_regexp(regexp_list)
