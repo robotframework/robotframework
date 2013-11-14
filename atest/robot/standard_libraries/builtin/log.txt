@@ -66,6 +66,6 @@ Log To Console
     ${tc} =    Check Test Case    ${TEST NAME}
     :FOR    ${i}    IN RANGE    4
     \    Should Be Empty    ${tc.kws[${i}].msgs}
-    Check Stdout Contains    stdout w/ newline\n
-    Check Stdout Contains    stdout w/o new......line
-    Check Stderr Contains    stderr w/ newline\n
+    Check Stdout Contains    stdout äö w/ newline\n
+    Check Stdout Contains    stdout äö w/o new......line äö
+    Check Stderr Contains    stderr äö w/ newline\n
