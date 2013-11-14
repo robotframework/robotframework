@@ -31,10 +31,10 @@ Failure Resets Set Message
     Fail  Fail Message
     [Teardown]  Should Be Equal  ${TEST MESSAGE}  Fail Message
 
-Setting Message To Failed Test On Teardown Does Not Work
-    [Documentation]  FAIL  Body Message
-    Fail     Body Message
-    [Teardown]  Set Test Message  Message That Will Be Ignored
+Set Message To Failed Test On Teardown
+    [Documentation]  FAIL  Teardown Message
+    Fail     Message That Will Be Ignored
+    [Teardown]  Set Test Message    Teardown Message
 
 Setting Message In Test Body After Continuable Failure Has No Effect
     [Documentation]  FAIL  Failure Message
@@ -42,8 +42,8 @@ Setting Message In Test Body After Continuable Failure Has No Effect
     Set Test Message   Ignored Message
     [Teardown]  Should Be Equal  ${TEST MESSAGE}  Failure Message
 
-Setting Message In Teardown After Continuable Failure Does Not Work
-    [Documentation]  FAIL  Failure Message
+Setting Message In Teardown After Continuable Failure Works
+    [Documentation]  FAIL  Set Message
     Run Keyword And Continue On Failure  Fail  Failure Message
     [Teardown]  Set Test Message   Set Message
 
