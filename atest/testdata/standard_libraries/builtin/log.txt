@@ -55,4 +55,5 @@ Log to console
     Log To Console    stdout äö w/o new...    no_newline=true
     Log To Console    stderr äö w/ newline    stdERR
     Log To Console    ...line äö   stdout    continue without newlines
+    Log To Console    ${42}
 

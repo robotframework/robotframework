@@ -69,3 +69,4 @@ Log To Console
     Check Stdout Contains    stdout äö w/ newline\n
     Check Stdout Contains    stdout äö w/o new......line äö
     Check Stderr Contains    stderr äö w/ newline\n
+    Check Stdout Contains    42

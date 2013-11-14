@@ -59,6 +59,7 @@ def warn(msg, html=False):
 
 
 def console(msg, newline=True, stream='stdout'):
+    msg = unic(msg)
     if newline:
         msg += '\n'
     stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
