@@ -100,8 +100,8 @@ If test case setup fails
 
 With test case teardown
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should Be True    '${tc.teardown.status}' == 'PASS'
-    Check Log Message    ${tc.teardown.msgs[0]}    ${PREFIX}This message is NOT used.
+    Should Be Equal    ${tc.teardown.status}    PASS
+    Check Log Message    ${tc.teardown.kws[0].msgs[0]}    ${PREFIX}This message is used.
 
 If test case teardown fails
     ${tc}=    Check Test Case    ${TESTNAME}
