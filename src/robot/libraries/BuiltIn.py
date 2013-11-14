@@ -17,8 +17,8 @@ import time
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExitForLoop, PassExecution,
-                          ReturnFromKeyword)
+                          ExecutionFailures, ExecutionPassed, ExitForLoop,
+                          PassExecution, ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
@@ -1135,6 +1135,8 @@ class _RunKeyword:
         for kw, args in self._split_run_keywords(list(keywords)):
             try:
                 self.run_keyword(kw, *args)
+            except ExecutionPassed:
+                raise
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(self._context.in_teardown):
@@ -2280,7 +2282,6 @@ class _Misc:
         | Set Test Message | is continued.       | append=yes |
         | Should Be Equal  | ${TEST MESSAGE}     | My message is continued. |
         | Set Test Message | *HTML*<b>Hello!</b> |            |
-
 
         New in Robot Framework 2.5. Support for `append` was added in 2.7.7
         and HTML support in 2.8.
