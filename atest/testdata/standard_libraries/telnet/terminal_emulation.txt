@@ -62,20 +62,10 @@ Read Until Reads Using Internal Update Frequency
     Set timeout    2
     Run with timeout 0.5    Read Until     acdc
 
-Read Until With Timeout Faster Than Internal Frequency
-    Write    echo -e "abba\\x1b[3Dcdc"
-    Set timeout    0.01
-    Run with Timeout 0.05    Read Until     acdc
-
 Read Until Regexp Using Internal Update Frequency
     Write    echo -e "abba\\x1b[3Dcdc"
     Set timeout    2
     Run with timeout 0.5    Read Until Regexp    acdc
-
-Read Until Regexp With Timeout Faster Than Internal Frequency
-    Write    echo -e "abba\\x1b[3Dcdc"
-    Set timeout    0.01
-    Run with Timeout 0.05    Read Until Regexp    acdc
 
 Window Size
     [Setup]    Login and set prompt    terminal_emulation=True   window_size=1024x1024
@@ -140,12 +130,6 @@ Newline can not be changed in terminal encoding
 Run with timeout 0.5
     [Arguments]    ${kw}    @{args}
     [Timeout]     0.5
-    ${res}=   Run keyword    ${kw}    @{args}
-    [Return]    ${res}
-
-Run with timeout 0.05
-    [Arguments]    ${kw}    @{args}
-    [Timeout]     0.05
     ${res}=   Run keyword    ${kw}    @{args}
     [Return]    ${res}
 
