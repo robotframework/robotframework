@@ -837,7 +837,6 @@ class TelnetConnection(telnetlib.Telnet):
                     for exp in expected]
         return self._telnet_read_until_regexp(expected)
 
-
     def _terminal_read_until_regexp(self, expected_list):
         max_time = time.time() + self._timeout
         regexp_list = [re.compile(rgx) for rgx in expected_list]
@@ -845,7 +844,7 @@ class TelnetConnection(telnetlib.Telnet):
         if out:
             return True, out
         while time.time() < max_time:
-            _index, _, output = self.expect(regexp_list, self._terminal_frequency)
+            output = self.expect(regexp_list, self._terminal_frequency)[-1]
             self._terminal_emulator.feed(output)
             out = self._terminal_emulator.read_until_regexp(regexp_list)
             if out:
@@ -967,34 +966,34 @@ class TelnetConnection(telnetlib.Telnet):
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
             self._opt_echo_on(opt)
         elif cmd == telnetlib.DO and opt == telnetlib.TTYPE and self._terminal_type:
-            self._opt_terminal_type(opt)
+            self._opt_terminal_type(opt, self._terminal_type)
         elif cmd == telnetlib.DO and opt == telnetlib.NEW_ENVIRON and self._environ_user:
-            self._opt_environ_user(opt)
+            self._opt_environ_user(opt, self._environ_user)
         elif cmd == telnetlib.DO and opt == telnetlib.NAWS and self._window_size:
-            self._opt_window_size(opt)
+            self._opt_window_size(opt, *self._window_size)
         elif opt != telnetlib.NOOPT:
             self._opt_dont_and_wont(cmd, opt)
 
     def _opt_echo_on(self, opt):
         return self.sock.sendall(telnetlib.IAC + telnetlib.DO + opt)
 
-    def _opt_terminal_type(self, opt):
+    def _opt_terminal_type(self, opt, terminal_type):
         self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
         self.sock.sendall(telnetlib.IAC + telnetlib.SB + telnetlib.TTYPE
-                          + self.NEW_ENVIRON_IS + self._terminal_type
+                          + self.NEW_ENVIRON_IS + terminal_type
                           + telnetlib.IAC + telnetlib.SE)
 
-    def _opt_environ_user(self, opt):
+    def _opt_environ_user(self, opt, environ_user):
         self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
         self.sock.sendall(telnetlib.IAC + telnetlib.SB + telnetlib.NEW_ENVIRON
                           + self.NEW_ENVIRON_IS + self.NEW_ENVIRON_VAR
-                          + "USER" + self.NEW_ENVIRON_VALUE + self._environ_user
+                          + "USER" + self.NEW_ENVIRON_VALUE + environ_user
                           + telnetlib.IAC + telnetlib.SE)
 
-    def _opt_window_size(self, opt):
+    def _opt_window_size(self, opt, window_x, window_y):
         self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
         self.sock.sendall(telnetlib.IAC + telnetlib.SB + telnetlib.NAWS
-                          + struct.pack('!HH', self._window_size[0], self._window_size[1])
+                          + struct.pack('!HH', window_x, window_y)
                           + telnetlib.IAC + telnetlib.SE)
 
     def _opt_dont_and_wont(self, cmd, opt):
