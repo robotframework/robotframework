@@ -78,7 +78,7 @@ class _DebugFileWriter:
 
     def log_message(self, msg):
         if self._is_logged(msg.level):
-            self._write(msg.message)
+            self._write(msg.message, msg_level=msg.level)
 
     def close(self):
         if not self._outfile.closed:
@@ -101,8 +101,11 @@ class _DebugFileWriter:
     def _separator(self, type_):
         self._write(self._separators[type_] * 78, separator=True)
 
-    def _write(self, text, separator=False):
-        if not (separator and self._separator_written_last):
-            self._outfile.write(text.encode('UTF-8').rstrip() + '\n')
-            self._outfile.flush()
-            self._separator_written_last = separator
+    def _write(self, text, separator=False, msg_level='INFO'):
+        if separator and self._separator_written_last:
+            return
+        if not separator:
+            text = '%s - %s - %s' % (utils.get_timestamp(), msg_level, text)
+        self._outfile.write(text.encode('UTF-8').rstrip() + '\n')
+        self._outfile.flush()
+        self._separator_written_last = separator

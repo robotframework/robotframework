@@ -3,6 +3,9 @@ Test Setup      Create Output Directory
 Default Tags    regression  pybot  jybot
 Resource        cli_resource.txt
 
+*** Variables ***
+${TIMESTAMP AND LOGLEVEL}   ???????? ??:??:??.??? - * -
+
 
 *** Test Cases ***
 
@@ -12,8 +15,8 @@ Debugfile
     ${content} =  Log File  ${CLI OUTDIR}${/}DeBug.TXT
     Should Contain  ${content}  + START SUITE: Normal
     Should Contain  ${content}  +- START TEST: First One
-    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Test 1 ]\n Test 1\n +-- END KW: BuiltIn.Log
-    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n Logging with debug level\n +-- END KW: BuiltIn.Log
+    Should Match  ${content}  *+-- START KW: BuiltIn.Log [ Test 1 ]\n${TIMESTAMP AND LOGLEVEL} Test 1\n${TIMESTAMP AND LOGLEVEL} +-- END KW: BuiltIn.Log*
+    Should Match  ${content}  *+-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n${TIMESTAMP AND LOGLEVEL} Logging with debug level\n${TIMESTAMP AND LOGLEVEL} +-- END KW: BuiltIn.Log*
     Should Contain  ${content}  + END SUITE: Normal
     Check Syslog Contains  DebugFile: DeBug.TXT
     ${path} =  Set Variable  [:.\\w /\\\\~+-]*DeBug\\.TXT
@@ -24,8 +27,8 @@ Debugfile Log Level Should Always Be Debug
     [Documentation]  --loglevel option should not affect what's written to debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b debug.txt -o o.xml --loglevel WARN  ${TESTFILE}
     ${content} =  Log File  ${CLI OUTDIR}${/}debug.txt
-    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Test 1 ]\n Test 1\n +-- END KW: BuiltIn.Log
-    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n Logging with debug level\n +-- END KW: BuiltIn.Log
+    Should Match  ${content}  *+-- START KW: BuiltIn.Log [ Test 1 ]\n${TIMESTAMP AND LOGLEVEL} Test 1\n${TIMESTAMP AND LOGLEVEL} +-- END KW: BuiltIn.Log*
+    Should Match  ${content}  *+-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n${TIMESTAMP AND LOGLEVEL} Logging with debug level\n${TIMESTAMP AND LOGLEVEL} +-- END KW: BuiltIn.Log*
 
 No Debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile NoNe -o o.xml  ${TESTFILE}
