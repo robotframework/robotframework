@@ -14,7 +14,7 @@
 
 import re
 
-from robot import utils
+from robot.utils import format_time
 
 from .loggerhelper import Message, LEVELS
 
@@ -51,7 +51,7 @@ class StdoutLogSplitter(object):
         return tokens[0] == ''
 
     def _format_timestamp(self, millis):
-        return utils.format_time(float(millis)/1000, millissep='.')
+        return format_time(float(millis)/1000, millissep='.')
 
     def __iter__(self):
         return iter(self._messages)
