@@ -925,8 +925,7 @@ class TelnetConnection(telnetlib.Telnet):
         return read_until(prompt)
 
     def execute_command(self, command, loglevel=None):
-        """Executes the given `command` and reads, logs, and returns everything
-        until the prompt.
+        """Executes the given `command` and reads, logs, and returns everything until the prompt.
 
         This keyword requires the prompt to be [#Configuration|configured]
         either in `importing` or with `Open Connection` or `Set Prompt` keyword.
@@ -1099,4 +1098,3 @@ class NoMatchError(AssertionError):
         if self.output is not None:
             msg += ' Output:\n%s' % self.output
         return msg
-
