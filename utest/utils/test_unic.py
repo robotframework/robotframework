@@ -66,6 +66,15 @@ class TestUnic(unittest.TestCase):
             expected = unrepresentable_msg[:-1] % ('list', 'UnicodeEncodeError: ')
             assert_true(result.startswith(expected))
 
+    def test_bytes(self):
+        assert_equals(unic('\x00-\x01-\x02'), u'\x00-\x01-\x02')
+        assert_equals(unic('hyv\xe4'), u'hyv\\xe4')
+        assert_equals(unic('\x00-\x01-\x02-\xe4'), u'\x00-\x01-\x02-\\xe4')
+
+    def test_bytes_with_newlines_tabs_etc(self):
+        # 'string_escape' escapes some chars we don't want to be escaped
+        assert_equals(unic("\x00\xe4\n\t\r\\'"), u"\x00\\xe4\n\t\r\\'")
+
     def test_failure_in_unicode(self):
         assert_equals(unic(UnicodeFails()),
                       unrepresentable_msg % ('UnicodeFails', 'Failure in __unicode__'))

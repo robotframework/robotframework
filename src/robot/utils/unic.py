@@ -53,11 +53,10 @@ def _unic(item, *args):
         return unicode(item, *args)
     except UnicodeError:
         try:
-            ascii_text = str(item).encode('string_escape')
+            return u''.join(c if ord(c) < 128 else c.encode('string_escape')
+                            for c in str(item))
         except:
             return _unrepresentable_object(item)
-        else:
-            return unicode(ascii_text)
     except:
         return _unrepresentable_object(item)
 

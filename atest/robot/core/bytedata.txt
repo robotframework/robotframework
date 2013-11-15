@@ -13,6 +13,10 @@ In Message
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  ${exp_log_msg}
 
+In Multiline Message
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  ${exp_log_multiline_msg}
+
 In Return Value
     [Documentation]  Return value is not altered by the framework and thus it
     ...              contains the exact same bytes that the keyword returned.
