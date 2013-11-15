@@ -5,7 +5,7 @@ Test Setup        Run Robot Process
 Suite Teardown    Remove File    ${TEMP FILE}
 
 *** Variables ***
-${TEMPFILE}       %{TEMPDIR}/get-process-result.txt
+${TEMPFILE}       %{TEMPDIR}${/}get-process-result.txt
 
 *** Test Cases ****
 Get whole result object
