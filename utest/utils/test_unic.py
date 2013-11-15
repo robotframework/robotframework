@@ -2,9 +2,10 @@ import unittest
 import sys
 
 from robot.utils import unic, is_jython, safe_repr
-from robot.utils.unic import _unrepresentable_msg
 from robot.utils.asserts import assert_equals, assert_true
+
 is_ironpython = sys.platform == 'cli'
+unrepresentable_msg = u"<Unrepresentable object '%s'. Error: %s>"
 
 if is_jython:
 
@@ -62,23 +63,23 @@ class TestUnic(unittest.TestCase):
             # And so is this.
             assert_equals(result, '[Hyv\xe4, Hyv\xe4]')
         else:
-            expected = _unrepresentable_msg[:-1] % ('list', 'UnicodeEncodeError: ')
+            expected = unrepresentable_msg[:-1] % ('list', 'UnicodeEncodeError: ')
             assert_true(result.startswith(expected))
 
     def test_failure_in_unicode(self):
         assert_equals(unic(UnicodeFails()),
-                      _unrepresentable_msg % ('UnicodeFails', 'Failure in __unicode__'))
+                      unrepresentable_msg % ('UnicodeFails', 'Failure in __unicode__'))
 
     def test_failure_in_str(self):
         assert_equals(unic(StrFails()),
-                      _unrepresentable_msg % ('StrFails', 'Failure in __str__'))
+                      unrepresentable_msg % ('StrFails', 'Failure in __str__'))
 
 
 class TestSafeRepr(unittest.TestCase):
 
     def test_failure_in_repr(self):
         assert_equals(safe_repr(ReprFails()),
-                      _unrepresentable_msg % ('ReprFails', 'Failure in __repr__'))
+                      unrepresentable_msg % ('ReprFails', 'Failure in __repr__'))
 
     def test_repr_of_unicode_has_u_prefix(self):
         assert_equals(safe_repr(u'foo'), "u'foo'")
