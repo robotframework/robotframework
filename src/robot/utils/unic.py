@@ -14,7 +14,6 @@
 
 import sys
 
-
 # Need different unic implementations for different Pythons because:
 # 1) Importing unicodedata module on Jython takes a very long time, and doesn't
 # seem to be necessary as Java probably already handles normalization.
@@ -23,7 +22,9 @@ import sys
 # 3) CPython doesn't automatically normalize Unicode strings.
 
 if sys.platform.startswith('java'):
+
     from java.lang import Object, Class
+
     def unic(item, *args):
         # http://bugs.jython.org/issue1564
         if isinstance(item, Object) and not isinstance(item, Class):
@@ -34,11 +35,14 @@ if sys.platform.startswith('java'):
         return _unic(item, *args)
 
 elif sys.platform == 'cli':
+
     def unic(item, *args):
         return _unic(item, *args)
 
 else:
+
     from unicodedata import normalize
+
     def unic(item, *args):
         return normalize('NFC', _unic(item, *args))
 
@@ -80,8 +84,7 @@ if sys.platform == 'cli':
         return ret
 
 
-_unrepresentable_msg = u"<Unrepresentable object '%s'. Error: %s>"
-
 def _unrepresentable_object(item):
     from robot.utils.error import get_error_message
-    return _unrepresentable_msg % (item.__class__.__name__, get_error_message())
+    return u"<Unrepresentable object '%s'. Error: %s>" \
+           % (item.__class__.__name__, get_error_message())
