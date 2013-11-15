@@ -36,6 +36,11 @@ Set Message To Failed Test On Teardown
     Fail     Message That Will Be Ignored
     [Teardown]  Set Test Message    Teardown Message
 
+Append To Failure Message
+    [Documentation]  FAIL My failure is continued
+    Fail    My failure
+    [Teardown]  Set Test Message    is continued    append=jepa
+
 Setting Message In Test Body After Continuable Failure Has No Effect
     [Documentation]  FAIL  Failure Message
     Run Keyword And Continue On Failure  Fail  Failure Message

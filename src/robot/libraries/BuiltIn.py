@@ -2263,25 +2263,26 @@ class _Misc:
     def set_test_message(self, message, append=False):
         """Sets message for the current test case.
 
-        Possible failures override this message.
-
         If the optional `append` argument is given any value considered `true`
         in Python, for example, any non-empty string, the given `message` is
         added after the possible earlier message by joining the messages with
         a space.
 
-        In teardown the current test message is available as a built-in variable
-        `${TEST MESSAGE}`. This keyword can not be used in suite setup or
-        or suite teardown.
+        In test teardown this keyword can alter the possible failure message,
+        but otherwise failures override messages set by this keyword. Notice
+        that in teardown the initial message is available as a built-in variable
+        `${TEST MESSAGE}`.
 
         It is possible to use HTML format in the message by starting the message
         with `*HTML*`.
 
         Examples:
-        | Set Test Message | My message          |            |
-        | Set Test Message | is continued.       | append=yes |
-        | Should Be Equal  | ${TEST MESSAGE}     | My message is continued. |
-        | Set Test Message | *HTML*<b>Hello!</b> |            |
+        | Set Test Message | My message           |                          |
+        | Set Test Message | is continued.        | append=yes               |
+        | Should Be Equal  | ${TEST MESSAGE}      | My message is continued. |
+        | Set Test Message | *HTML* <b>Hello!</b> |                          |
+
+        This keyword can not be used in suite setup or suite teardown.
 
         New in Robot Framework 2.5. Support for `append` was added in 2.7.7
         and HTML support in 2.8.

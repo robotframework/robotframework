@@ -33,6 +33,9 @@ Failure Resets Set Message
 Set Message To Failed Test On Teardown
     Check Test Case  ${TEST NAME}
 
+Append To Failure Message
+    Check Test Case  ${TEST NAME}
+
 Setting Message In Test Body After Continuable Failure Has No Effect
     Check Test Case  ${TEST NAME}
 
