@@ -57,6 +57,14 @@ parsing Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`restsupport` Module
+-------------------------
+
+.. automodule:: robot.parsing.restsupport
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`settings` Module
 ----------------------
 
