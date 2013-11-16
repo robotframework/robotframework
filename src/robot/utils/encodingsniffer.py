@@ -27,19 +27,61 @@ else:
 
 
 def get_system_encoding():
-    encoding = _get_python_file_system_encoding()
-    if not encoding and JYTHON:
-        encoding = _get_java_file_system_encoding()
+    encoding = _get_python_system_encoding()
+    if encoding:
+        return encoding
+    if JYTHON:
+        encoding = _get_java_system_encoding()
+    elif UNIXY:
+        encoding = _get_unixy_encoding()
     return encoding or DEFAULT_SYSTEM_ENCODING
 
-def _get_python_file_system_encoding():
-    encoding = sys.getfilesystemencoding()
-    return encoding if _is_valid(encoding) else None
 
-def _get_java_file_system_encoding():
+def get_output_encoding():
+    if _on_buggy_jython():
+        return DEFAULT_OUTPUT_ENCODING
+    encoding = _get_stream_output_encoding()
+    if encoding:
+        return encoding
+    if UNIXY:
+        encoding = _get_unixy_encoding()
+    return encoding or DEFAULT_OUTPUT_ENCODING
+
+
+def _get_python_system_encoding():
+    encoding = sys.getfilesystemencoding()
+    return _get_valid_or_none(encoding)
+
+
+def _get_java_system_encoding():
     from java.lang import System
     encoding = System.getProperty('file.encoding')
+    return _get_valid_or_none(encoding)
+
+
+def _get_unixy_encoding():
+    for name in 'LANG', 'LC_CTYPE', 'LANGUAGE', 'LC_ALL':
+        if name in os.environ:
+            # Encoding can be in format like `UTF-8` or `en_US.UTF-8`
+            encoding = os.environ[name].split('.')[-1]
+            if _is_valid(encoding):
+                return encoding
+    return None
+
+
+def _get_stream_output_encoding():
+    # Stream may not have encoding attribute if it is intercepted outside RF
+    # in Python. Encoding is None if process's outputs are redirected.
+    for stream in sys.__stdout__, sys.__stderr__, sys.__stdin__:
+        encoding = getattr(stream, 'encoding', None)
+        if _is_valid(encoding):
+            return encoding
+    return None
+
+
+def _get_valid_or_none(encoding):
     return encoding if _is_valid(encoding) else None
+
 
 def _is_valid(encoding):
     if not encoding:
@@ -52,34 +94,8 @@ def _is_valid(encoding):
         return True
 
 
-def get_output_encoding():
-    if _on_buggy_jython():
-        return DEFAULT_OUTPUT_ENCODING
-    encoding = _get_encoding_from_standard_streams()
-    if not encoding and UNIXY:
-        encoding = _get_encoding_from_unix_environment_variables()
-    return encoding or DEFAULT_OUTPUT_ENCODING
-
 def _on_buggy_jython():
     # http://bugs.jython.org/issue1568
     if UNIXY or not JYTHON:
         return False
     return sys.platform.startswith('java1.5') or sys.version_info < (2, 5, 2)
-
-def _get_encoding_from_standard_streams():
-    # Stream may not have encoding attribute if it is intercepted outside RF
-    # in Python. Encoding is None if process's outputs are redirected.
-    for stream in sys.__stdout__, sys.__stderr__, sys.__stdin__:
-        encoding = getattr(stream, 'encoding', None)
-        if _is_valid(encoding):
-            return encoding
-    return None
-
-def _get_encoding_from_unix_environment_variables():
-    for name in 'LANG', 'LC_CTYPE', 'LANGUAGE', 'LC_ALL':
-        if name in os.environ:
-            # Encoding can be in format like `UTF-8` or `en_US.UTF-8`
-            encoding = os.environ[name].split('.')[-1]
-            if _is_valid(encoding):
-                return encoding
-    return None
