@@ -1,8 +1,13 @@
 import unittest
 import sys
+import os
 
-from robot.utils.encodingsniffer import get_output_encoding, _on_buggy_jython
+from robot.utils.encodingsniffer import get_output_encoding
 from robot.utils.asserts import assert_equals, assert_not_none
+
+
+ON_BUGGY_JYTHON = os.sep == '\\' and (sys.platform.startswith('java1.5') or
+                                      sys.version_info < (2, 5, 2))
 
 
 class StreamStub(object):
@@ -45,7 +50,7 @@ class TestGetOutputEncodingFromStandardStreams(unittest.TestCase):
         assert_not_none(get_output_encoding())
 
     def _get_encoding(self, default):
-        return default if not _on_buggy_jython() else 'cp437'
+        return default if not ON_BUGGY_JYTHON else 'cp437'
 
 
 if __name__ == '__main__':
