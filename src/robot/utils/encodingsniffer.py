@@ -34,6 +34,8 @@ def get_system_encoding():
         encoding = _get_java_system_encoding()
     elif UNIXY:
         encoding = _get_unixy_encoding()
+    else:
+        encoding = _get_windows_system_encoding()
     return encoding or DEFAULT_SYSTEM_ENCODING
 
 
@@ -45,6 +47,8 @@ def get_output_encoding():
         return encoding
     if UNIXY:
         encoding = _get_unixy_encoding()
+    elif not JYTHON:
+        encoding = _get_windows_output_encoding()
     return encoding or DEFAULT_OUTPUT_ENCODING
 
 
@@ -77,6 +81,18 @@ def _get_stream_output_encoding():
         if _is_valid(encoding):
             return encoding
     return None
+
+
+def _get_windows_system_encoding():
+    from ctypes import windll
+    encoding = 'cp%s' % windll.kernel32.GetACP()
+    return _get_valid_or_none(encoding)
+
+
+def _get_windows_output_encoding():
+    from ctypes import windll
+    encoding = 'cp%s' % windll.kernel32.GetOEMCP()
+    return _get_valid_or_none(encoding)
 
 
 def _get_valid_or_none(encoding):
