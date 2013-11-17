@@ -21,6 +21,7 @@ Log Non-ASCII As Unicode From Python
     Check Stderr Contains  Hyvää päivää stderr!
 
 Log Non-ASCII As Bytes From Python
+    [Tags]  pybot  jybot  x-fails-on-ipy
     ${tc} =  Check testcase  ${TEST NAME}
     Check Log Message  ${tc.kws[2].msgs[0]}  Hyvää päivää!
     Check Log Message  ${tc.kws[3].msgs[0]}  Hyvää päivää!
