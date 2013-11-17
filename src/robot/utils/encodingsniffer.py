@@ -20,11 +20,11 @@ ANY = True
 UNIXY = os.sep == '/'
 WINDOWS = not UNIXY
 JYTHON = sys.platform.startswith('java')
-WINDOWS_NOT_JYTHON = WINDOWS and not JYTHON
 if UNIXY:
     DEFAULT_SYSTEM_ENCODING = 'UTF-8'
     DEFAULT_OUTPUT_ENCODING = 'UTF-8'
 else:
+    # These should never be needed anymore.
     DEFAULT_SYSTEM_ENCODING = 'cp1252'
     DEFAULT_OUTPUT_ENCODING = 'cp437'
 
@@ -33,14 +33,14 @@ def get_system_encoding():
     platform_getters = [(ANY, _get_python_system_encoding),
                         (JYTHON, _get_java_system_encoding),
                         (UNIXY, _get_unixy_encoding),
-                        (WINDOWS_NOT_JYTHON, _get_windows_system_encoding)]
+                        (WINDOWS, _get_windows_system_encoding)]
     return _get_encoding(platform_getters, DEFAULT_SYSTEM_ENCODING)
 
 
 def get_output_encoding():
     platform_getters = [(ANY, _get_stream_output_encoding),
                         (UNIXY, _get_unixy_encoding),
-                        (WINDOWS_NOT_JYTHON, _get_windows_output_encoding)]
+                        (WINDOWS, _get_windows_output_encoding)]
     return _get_encoding(platform_getters, DEFAULT_OUTPUT_ENCODING)
 
 
@@ -87,13 +87,15 @@ def _get_stream_output_encoding():
 
 
 def _get_windows_system_encoding():
-    from ctypes import windll
-    return 'cp%s' % windll.kernel32.GetACP()
+    from ctypes import cdll
+    cdll.kernel32.GetACP.argtypes = ()  # needed w/ jython (at least 2.5)
+    return 'cp%s' % cdll.kernel32.GetACP()
 
 
 def _get_windows_output_encoding():
-    from ctypes import windll
-    return 'cp%s' % windll.kernel32.GetOEMCP()
+    from ctypes import cdll
+    cdll.kernel32.GetOEMCP.argtypes = ()  # needed w/ jython (at least 2.5)
+    return 'cp%s' % cdll.kernel32.GetOEMCP()
 
 
 def _is_valid(encoding):

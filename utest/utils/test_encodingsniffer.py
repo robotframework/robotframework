@@ -49,8 +49,11 @@ class TestGetOutputEncodingFromStandardStreams(unittest.TestCase):
         sys.__stdin__ = StreamStub(None)
         assert_not_none(get_output_encoding())
 
-    def _get_encoding(self, default):
-        return default if not ON_BUGGY_JYTHON else 'cp437'
+    def _get_encoding(self, encoding):
+        if ON_BUGGY_JYTHON:
+            raise AssertionError('Reading encoding from streams does not work '
+                                 'with this Jython and/or Java version.')
+        return encoding
 
 
 if __name__ == '__main__':
