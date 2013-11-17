@@ -114,7 +114,7 @@ class ExecutionResultBuilder(object):
                     started += 1
                 elif match(elem.attrib['name']):
                     started = 0
-            if started == 0 and event == 'start' and tag == 'doc':
+            if started == 0 and event == 'end' and tag == 'doc':
                 elem.text = ('%s\n\n_*Keyword content flattened.*_'
                              % (elem.text or '')).strip()
             if started <= 0 or tag == 'msg':
