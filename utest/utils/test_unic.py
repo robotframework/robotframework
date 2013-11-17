@@ -1,13 +1,16 @@
 import unittest
 import sys
 
-from robot.utils import unic, is_jython, safe_repr
+from robot.utils import unic, safe_repr
 from robot.utils.asserts import assert_equals, assert_true
 
-is_ironpython = sys.platform == 'cli'
-unrepresentable_msg = u"<Unrepresentable object '%s'. Error: %s>"
 
-if is_jython:
+JYTHON = sys.platform.startswith('java')
+IPY = sys.platform == 'cli'
+UNREPR = u"<Unrepresentable object '%s'. Error: %s>"
+
+
+if JYTHON:
 
     from java.lang import String, Object, RuntimeException
     import JavaObject
@@ -35,13 +38,13 @@ if is_jython:
             class ToStringFails(Object):
                 def toString(self):
                     raise RuntimeException('failure in toString')
-
-            unic(ToStringFails())
+            assert_equals(unic(ToStringFails()),
+                          UNREPR % ('ToStringFails', 'failure in toString'))
 
 
 class TestUnic(unittest.TestCase):
 
-    if not (is_jython or is_ironpython):
+    if not (JYTHON or IPY):
         def test_unicode_nfc_and_nfd_decomposition_equality(self):
             import unicodedata
             text = u'Hyv\xe4'
@@ -56,14 +59,14 @@ class TestUnic(unittest.TestCase):
     def test_list_with_objects_containing_unicode_repr(self):
         objects = [UnicodeRepr(), UnicodeRepr()]
         result = unic(objects)
-        if is_jython:
+        if JYTHON:
             # This is actually wrong behavior
             assert_equals(result, '[Hyv\\xe4, Hyv\\xe4]')
-        elif is_ironpython:
+        elif IPY:
             # And so is this.
             assert_equals(result, '[Hyv\xe4, Hyv\xe4]')
         else:
-            expected = unrepresentable_msg[:-1] % ('list', 'UnicodeEncodeError: ')
+            expected = UNREPR[:-1] % ('list', 'UnicodeEncodeError: ')
             assert_true(result.startswith(expected))
 
     def test_bytes(self):
@@ -77,18 +80,18 @@ class TestUnic(unittest.TestCase):
 
     def test_failure_in_unicode(self):
         assert_equals(unic(UnicodeFails()),
-                      unrepresentable_msg % ('UnicodeFails', 'Failure in __unicode__'))
+                      UNREPR % ('UnicodeFails', 'Failure in __unicode__'))
 
     def test_failure_in_str(self):
         assert_equals(unic(StrFails()),
-                      unrepresentable_msg % ('StrFails', 'Failure in __str__'))
+                      UNREPR % ('StrFails', 'Failure in __str__'))
 
 
 class TestSafeRepr(unittest.TestCase):
 
     def test_failure_in_repr(self):
         assert_equals(safe_repr(ReprFails()),
-                      unrepresentable_msg % ('ReprFails', 'Failure in __repr__'))
+                      UNREPR % ('ReprFails', 'Failure in __repr__'))
 
     def test_repr_of_unicode_has_u_prefix(self):
         assert_equals(safe_repr(u'foo'), "u'foo'")
@@ -100,20 +103,26 @@ class TestSafeRepr(unittest.TestCase):
         assert_equals(safe_repr([u'a', 1, u"'"]), "[u'a', 1, u\"'\"]")
 
 
-class UnicodeRepr:
-
+class UnicodeRepr(object):
     def __repr__(self):
         return u'Hyv\xe4'
 
+
 class UnicodeFails(object):
-    def __unicode__(self): raise RuntimeError('Failure in __unicode__')
+    def __unicode__(self):
+        raise RuntimeError('Failure in __unicode__')
+
 
 class StrFails(object):
-    def __unicode__(self): raise UnicodeError()
-    def __str__(self): raise RuntimeError('Failure in __str__')
+    def __unicode__(self):
+        raise UnicodeError()
+    def __str__(self):
+        raise RuntimeError('Failure in __str__')
+
 
 class ReprFails(object):
-    def __repr__(self): raise RuntimeError('Failure in __repr__')
+    def __repr__(self):
+        raise RuntimeError('Failure in __repr__')
 
 
 if __name__ == '__main__':
