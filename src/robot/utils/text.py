@@ -12,24 +12,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from unic import unic
-from misc import seq2str2
-from charwidth import get_char_width
+from .charwidth import get_char_width
+from .misc import seq2str2
+from .unic import unic
 
 
 _MAX_ASSIGN_LENGTH = 200
 _MAX_ERROR_LINES = 40
 _MAX_ERROR_LINE_LENGTH = 78
-_ERROR_CUT_EXPLN = ('    [ Message content over the limit has been removed. ]')
+_ERROR_CUT_EXPLN = '    [ Message content over the limit has been removed. ]'
 
 
 def cut_long_message(msg):
     lines = msg.splitlines()
-    lengths = _count_line_lenghts(lines)
+    lengths = _count_line_lengths(lines)
     if sum(lengths) <= _MAX_ERROR_LINES:
         return msg
     start = _prune_excess_lines(lines, lengths)
-    end = _prune_excess_lines(lines, lengths, True)
+    end = _prune_excess_lines(lines, lengths, from_end=True)
     return '\n'.join(start + [_ERROR_CUT_EXPLN] + end)
 
 def _prune_excess_lines(lines, lengths, from_end=False):
@@ -59,14 +59,14 @@ def _cut_long_line(line, used, from_end):
             line = '...' + line[-available_chars:]
     return line
 
-def _count_line_lenghts(lines):
+def _count_line_lengths(lines):
     return [ _count_virtual_line_length(line) for line in lines ]
 
 def _count_virtual_line_length(line):
-    length = len(line) / _MAX_ERROR_LINE_LENGTH
-    if not len(line) % _MAX_ERROR_LINE_LENGTH == 0 or len(line) == 0:
-        length += 1
-    return length
+    if not line:
+        return 1
+    lines, remainder = divmod(len(line), _MAX_ERROR_LINE_LENGTH)
+    return lines if not remainder else lines + 1
 
 
 def format_assign_message(variable, value, cut_long=True):
@@ -84,9 +84,9 @@ def pad_console_length(text, width):
     if width < 5:
         width = 5
     diff = get_console_length(text) - width
-    if diff <= 0:
-        return _pad_width(text, width)
-    return _pad_width(_lose_width(text, diff+3)+'...', width)
+    if diff > 0:
+        text = _lose_width(text, diff+3) + '...'
+    return _pad_width(text, width)
 
 def _pad_width(text, width):
     more = width - get_console_length(text)
