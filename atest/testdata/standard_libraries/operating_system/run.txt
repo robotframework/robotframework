@@ -78,7 +78,7 @@ Trailing Newline Is Removed Automatically
     Should Be True  '${output}'[-1] not in ['\\n', '\\r']
 
 It Is Possible To Start Background Processes
-    ${output} =  Run  ${PROG} foo bar&
+    ${output} =  Run  ${PROG} 0 foo bar&
     Should Contain  ${output}  foo
     Should Contain  ${output}  bar
 
