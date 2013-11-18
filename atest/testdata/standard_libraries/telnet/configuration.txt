@@ -1,17 +1,44 @@
 *** Setting ***
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
-Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG
+Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG     window_size=95x95
 Library           String
 Resource          telnet_resource.txt
 
 *** Test Cases ***
+Library Default Window Size
+    [setup]    Login and set prompt
+    Set Timeout    0.3 seconds    # Must set after login to give login time to succeed
+    Window Size Should Be    95    95
+
+Set Window Size
+    [setup]    Open Connection    ${HOST}    prompt=${PROMPT}    window_size=100x100
+    Login    ${USERNAME}    ${PASSWORD}
+    Set Timeout    0.3 seconds    # Must set after login to give login time to succeed
+    Window Size Should Be    100    100
+
+Set Invalid Window Size
+    [Documentation]    FAIL Invalid window size '100yx100'. Should be <rows>x<columns>
+    [setup]
+    Open Connection    ${HOST}    prompt=${PROMPT}    window_size=100yx100
+
+Set User Environ Option
+    [setup]     Open Connection    ${HOST}    prompt=${PROMPT}    environ_user=${USERNAME}
+    Verify Successful Login With User Option
+
+Default terminal type is network
+    [setup]     Login and set prompt
+    Environment variable should be    $TERM    network
+
+Set terminal type
+    [setup]   Login and set prompt    terminal_type=vt100   terminal_emulation=True
+    Environment variable should be    $TERM    vt100
 
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
 
 Prompt Set In Open Connection
-    Open Connection    ${HOST}    prompt=xxx
+    [setup]    Open Connection    ${HOST}    prompt=xxx
     Prompt Should Be    xxx    ${FALSE}
     Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}
     ...    prompt    regexp
@@ -27,7 +54,7 @@ Timeout Set In Init
     Timeout Should Be    3 seconds 142 milliseconds
 
 Timeout Set In Open Connection
-    Open Connection    ${HOST}    timeout=0.5s
+    [setup]    Open Connection    ${HOST}    timeout=0.5s
     Timeout Should Be    500 milliseconds
     Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    61
     Timeout Should Be    1 minute 1 second
@@ -43,7 +70,7 @@ Newline Set In Init
     Newline Should Be    \r\n
 
 Newline Set In Open Connection
-    Open Connection    ${HOST}    newline=LF
+    [setup]    Open Connection    ${HOST}    newline=LF
     Newline Should Be    \n
     Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    ${EMPTY}    CR
     Newline Should Be    \r
@@ -56,7 +83,7 @@ Encoding Set In Init
     Encoding Should Be    ASCII    strict
 
 Encoding Set In Open Connection
-    Open Connection    ${HOST}    encoding=ISO-8859-15    encoding_errors=xxx
+    [setup]    Open Connection    ${HOST}    encoding=ISO-8859-15    encoding_errors=xxx
     Encoding Should Be    ISO-8859-15    xxx
     Open Connection    ${HOST}    encoding=Latin1
     Encoding Should Be    LATIN1    strict
@@ -72,7 +99,7 @@ Set Encoding Keyword
     Encoding Should Be    ASCII   ignore
 
 Use Configured Encoding
-    Login and set prompt
+    [setup]   Login and set prompt
     Run Keyword And Expect Error    UnicodeEncodeError:*    Write    echo päivää
     Set Encoding    errors=ignore
     Write    echo hyvää päivää
@@ -82,7 +109,7 @@ Use Configured Encoding
     Read Until    hyvää päivää
 
 Disable Encoding
-    Login and set prompt
+    [setup]   Login and set prompt
     Set Encoding    none    whatever
     Encoding Should Be    NONE    whatever
     Write    hello
@@ -93,7 +120,7 @@ Default Log Level In Init
     Default Log Level Should Be    DEBUG
 
 Default Log Level In Open Connection
-    Open Connection    ${HOST}    default_log_level=trace
+    [setup]   Open Connection    ${HOST}    default_log_level=trace
     Default Log Level Should Be    TRACE
 
 Set Default Log Level Keyword
@@ -175,3 +202,13 @@ Default Log Level Should Be
     Should Be Equal    ${level}    ${expected}
     ${level} =    Set Default Log Level    ${level}
     Should Be Equal    ${level}    WARN
+
+Window Size Should Be
+    [Arguments]    ${expected rows}    ${expected columns}
+    ${output}=   Execute Command    stty -a
+    Should Contain    ${output}    rows ${expected rows}; columns ${expected columns}    Window size does not match!
+
+Verify Successful Login With User Option
+    Read Until    Password:
+    Write   ${PASSWORD}
+    Read Until Prompt

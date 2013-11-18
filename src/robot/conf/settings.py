@@ -18,6 +18,7 @@ from robot import utils
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
+from robot.result.flattenkeywordmatcher import FlattenKeywordMatcher
 
 from .gatherfailed import gather_failed_tests
 
@@ -123,6 +124,8 @@ class _BaseSettings(object):
             return [self._process_runmode_value(v) for v in value]
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
+        if name == 'FlattenKeywords':
+            self._validate_flatten_keywords(value)
         return value
 
     def _escape_as_data(self, value):
@@ -282,6 +285,13 @@ class _BaseSettings(object):
                 KeywordRemover(value)
             except DataError, err:
                 raise DataError("Invalid value for option '--removekeywords'. %s" % err)
+
+    def _validate_flatten_keywords(self, values):
+        for value in values:
+            try:
+                FlattenKeywordMatcher(value)
+            except DataError, err:
+                raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
     def __contains__(self, setting):
         return setting in self._cli_opts

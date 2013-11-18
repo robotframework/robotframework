@@ -8,8 +8,7 @@ Variables       ../../resources/unicode_vars.py
 *** Test Cases ***
 Print Bytes
     [Documentation]  Check that bytes 0-255, incl. control chars, can be printed ok.
-    ...  The output from bytes 128-255 is an empty string on Python and unichr(byte) on Jython.
-    ...  This is due to string/unicode implementation differences on Python and Jython.
+    ...  The actual result depends on the interpreter and operating system.
     ${tc} =  Check Test Case  ${TESTNAME}
     Message  First check some printable bytes and control chars.  Control chars should result to an empty string.
     :FOR  ${index}  ${exp}  IN
@@ -20,12 +19,15 @@ Print Bytes
     ...  9    \t
     ...  10   \n
     ...  32   ${SPACE}
+    ...  39   '
+    ...  92   \\
     ...  82   R
     ...  111  o
     ...  98   b
     ...  111  o
     ...  116  t
     ...  123  {
+    ...  127  \x7f
     \  Check Log Message  ${tc.kws[0].msgs[${index}]}  Byte ${index}: '${exp}'
     #  Check that all bytes were really written without errors.
     :FOR  ${index}  IN RANGE  256

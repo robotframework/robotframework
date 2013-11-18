@@ -97,7 +97,12 @@ Escaping equals sign
 Running a process in a shell
     ${result}=    Run Process    python -c "print 'hello'"    shell=True
     Result should equal    ${result}    stdout=hello
+    ${result}=    Run Process    python -c "print 'hello'"    shell=0
+    Result should equal    ${result}    stdout=hello
     Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=${False}
+    Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=${0}
+    Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=False
+    Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=false
 
 Input things to process
     Start Process    python -c "print 'inp %s' % raw_input()"    shell=True

@@ -27,7 +27,23 @@ class ResultVisitor(SuiteVisitor):
     """Abstract class to conveniently travel
     :class:`robot.result.executionresult.Result` objects.
 
-    See :mod:`example of usage <robot.result>`
+    An implementation of visitor can be given to the visit method of result
+    object. This will cause the result object to traversed and the visitor
+    object's ``visit_x``, ``start_x``, and ``end_x`` methods to be called for
+    each suite, test, keyword, the results, and the statistics.
+
+    The start and end method are called for each element and their child
+    elements. The visitor implementation can override only those that it is
+    interested in. If any of the ``start_x`` methods returns False, the visiting
+    is stopped.
+
+    If the visitor implements a ``visit_x`` method for element x, then the
+    children of that element will not be visited, unless the visitor calls them
+    explicitly. For example if the visitor implements method :meth:`visit_test`,
+    the :meth:`visit_keyword`, :meth:`start_keyword`, and :meth:`end_keyword`
+    methods are not called.
+
+    See package documentation for :mod:`a usage example <robot.result>`.
     """
     def visit_result(self, result):
         if self.start_result(result) is not False:

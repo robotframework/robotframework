@@ -3,18 +3,21 @@ Suite Setup       Remove Wait Until Keyword Succeeds with Rebot
 Force Tags        regression    pybot    jybot
 Resource          remove_keywords_resource.txt
 
+*** Variables ***
+${DOC}            Waits until the specified keyword succeeds or the given timeout expires.
+
 *** Test Cases ***
 Last failing Step is not removed
     ${tc}=    Check Number Of Keywords     Fail Until The End    1
-    Should End With    ${tc.kws[0].doc}    failing steps removed using --RemoveKeywords option._
+    Should Match    ${tc.kws[0].doc}    ${DOC}\n\n_? failing step* removed using --RemoveKeywords option._
 
 Last passing Step is not removed
     ${tc}=    Check Number Of Keywords    Passes before timeout    2
-    Should Be Equal    ${tc.kws[0].doc}    Waits until the specified keyword succeeds or the given timeout expires.\n\n_1 failing step removed using --RemoveKeywords option._
+    Should Be Equal    ${tc.kws[0].doc}    ${DOC}\n\n_1 failing step removed using --RemoveKeywords option._
 
 Steps containing warnings are not removed
     ${tc}=   Check Number Of Keywords    Warnings    3
-    Should be Equal    ${tc.kws[0].doc}    Waits until the specified keyword succeeds or the given timeout expires.
+    Should be Equal    ${tc.kws[0].doc}    ${DOC}
     Check Number Of Keywords    One Warning    2
 
 Nested Wait Until keywords are removed

@@ -34,9 +34,9 @@ Init Documentation
 
 Init Arguments
     Init Arguments Should Be    0    timeout=3 seconds    newline=CRLF
-    ...    prompt=None    prompt_is_regexp=False
-    ...    encoding=UTF-8    encoding_errors=ignore
-    ...    default_log_level=INFO
+    ...    prompt=None    prompt_is_regexp=False    encoding=UTF-8
+    ...    encoding_errors=ignore    default_log_level=INFO     window_size=None
+    ...    environ_user=None    terminal_emulation=False    terminal_type=None
 
 Keyword Names
     Keyword Name Should Be     0    Close All Connections

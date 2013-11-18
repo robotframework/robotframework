@@ -20,7 +20,7 @@ import re
 from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
                           PassExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed)
-from robot.variables import is_list_var, VariableSplitter
+from robot.variables import is_list_var, VariableIterator
 from robot.output import LOGGER
 from robot import utils
 
@@ -271,22 +271,12 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
     def _read_embedded_args_and_regexp(self, string):
         args = []
         full_pattern = ['^']
-        while True:
-            before, variable, rest = self._split_from_variable(string)
-            if before is None:
-                break
-            variable, pattern = self._get_regexp_pattern(variable)
+        for before, variable, string in VariableIterator(string, identifiers='$'):
+            variable, pattern = self._get_regexp_pattern(variable[2:-1])
             args.append('${%s}' % variable)
             full_pattern.extend([re.escape(before), '(%s)' % pattern])
-            string = rest
-        full_pattern.extend([re.escape(rest), '$'])
+        full_pattern.extend([re.escape(string), '$'])
         return args, self._compile_regexp(full_pattern)
-
-    def _split_from_variable(self, string):
-        var = VariableSplitter(string, identifiers=['$'])
-        if var.identifier is None:
-            return None, None, string
-        return string[:var.start], var.base, string[var.end:]
 
     def _get_regexp_pattern(self, variable):
         if ':' not in variable:
@@ -338,7 +328,8 @@ class EmbeddedArgs(UserKeywordHandler):
 
     def _run(self, context, args):
         if not context.dry_run:
+            variables = context.variables
+            self._resolve_arguments(args, variables)  # validates no args given
             for name, value in self.embedded_args:
-                context.variables[name] = \
-                    context.variables.replace_scalar(value)
+                variables[name] = variables.replace_scalar(value)
         return UserKeywordHandler._run(self, context, args)

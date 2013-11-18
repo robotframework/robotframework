@@ -54,8 +54,9 @@ Command line options for test execution
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
                           Tag` table.
-  --removekeywords <all|passed|name:pattern|for|wuks|none>  `Removes keyword data`_ from the
+  --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the
                           generated log file.
+  --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
@@ -120,7 +121,8 @@ Command line options for post-processing outputs
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
                           Tag` table.
-  --removekeywords <all|passed|for|wuks|none>  `Removes keyword data`_ from the generated outputs.
+  --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the generated outputs.
+  --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated outputs.
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
                           reports.
   --endtime <timestamp>   Sets the `ending time`_ of test execution when creating reports.
@@ -178,7 +180,8 @@ Command line options for post-processing outputs
 .. _usage instructions: `Getting help and version information`_
 .. _version information: `usage instructions`_
 
-.. _Removes keyword data: `Removing keywords from outputs`_
+.. _Removes keyword data: `Removing and flattening keywords`_
+.. _Flattens keywords: `Removes keyword data`_
 .. _starting time: `Setting start and end time of execution`_
 .. _ending time: `starting time`_
 

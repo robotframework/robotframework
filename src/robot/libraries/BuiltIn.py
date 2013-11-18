@@ -1,4 +1,4 @@
-    #  Copyright 2008-2013 Nokia Siemens Networks Oyj
+#  Copyright 2008-2013 Nokia Siemens Networks Oyj
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ import time
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExitForLoop, PassExecution,
-                          ReturnFromKeyword)
+                          ExecutionFailures, ExecutionPassed, ExitForLoop,
+                          PassExecution, ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
@@ -1135,6 +1135,8 @@ class _RunKeyword:
         for kw, args in self._split_run_keywords(list(keywords)):
             try:
                 self.run_keyword(kw, *args)
+            except ExecutionPassed:
+                raise
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(self._context.in_teardown):
@@ -2261,26 +2263,26 @@ class _Misc:
     def set_test_message(self, message, append=False):
         """Sets message for the current test case.
 
-        Possible failures override this message.
-
         If the optional `append` argument is given any value considered `true`
         in Python, for example, any non-empty string, the given `message` is
         added after the possible earlier message by joining the messages with
         a space.
 
-        In teardown the current test message is available as a built-in variable
-        `${TEST MESSAGE}`. This keyword can not be used in suite setup or
-        or suite teardown.
+        In test teardown this keyword can alter the possible failure message,
+        but otherwise failures override messages set by this keyword. Notice
+        that in teardown the initial message is available as a built-in variable
+        `${TEST MESSAGE}`.
 
         It is possible to use HTML format in the message by starting the message
         with `*HTML*`.
 
         Examples:
-        | Set Test Message | My message          |            |
-        | Set Test Message | is continued.       | append=yes |
-        | Should Be Equal  | ${TEST MESSAGE}     | My message is continued. |
-        | Set Test Message | *HTML*<b>Hello!</b> |            |
+        | Set Test Message | My message           |                          |
+        | Set Test Message | is continued.        | append=yes               |
+        | Should Be Equal  | ${TEST MESSAGE}      | My message is continued. |
+        | Set Test Message | *HTML* <b>Hello!</b> |                          |
 
+        This keyword can not be used in suite setup or suite teardown.
 
         New in Robot Framework 2.5. Support for `append` was added in 2.7.7
         and HTML support in 2.8.

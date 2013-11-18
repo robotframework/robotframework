@@ -33,6 +33,14 @@ result Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`flattenkeywordmatcher` Module
+-----------------------------------
+
+.. automodule:: robot.result.flattenkeywordmatcher
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`keyword` Module
 ---------------------
 

@@ -144,8 +144,8 @@ class Runner(SuiteVisitor):
                 self._run_teardown(test.keywords.teardown, status, result)
         if not status.failures and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message(), result.critical)
+            result.message = status.message
         result.status = status.status
-        result.message = status.message or result.message
         result.endtime = get_timestamp()
         self._output.end_test(ModelCombiner(result, test))
         self._context.end_test(result)
@@ -169,6 +169,8 @@ class Runner(SuiteVisitor):
         if status.teardown_allowed:
             failure = self._run_setup_or_teardown(teardown, 'teardown')
             status.teardown_executed(failure)
+            if result and failure:
+                result.message = status.message
             if result and isinstance(failure, PassExecution):
                 result.message = failure.message
             return failure

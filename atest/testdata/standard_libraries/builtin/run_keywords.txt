@@ -64,6 +64,14 @@ In test teardown
     ...  Executed but doesn't exist
     ...  Executed after syntax error in teardown
 
+In test teardown with ExecutionPassed exception
+    [Documentation]  FAIL Stop here${ATD ERR}
+    No Operation
+    [Teardown]  Run Keywords
+    ...    Returning keyword    AND
+    ...    Pass Execution    Stop here    AND
+    ...    Fail    Do not run me please
+
 *** Keywords ***
 
 Passing
@@ -80,3 +88,7 @@ Multiple continuables
     Continuable failure  Continuable 2/4
     Continuable failure  Continuable 3/4
     Continuable failure  Continuable 4/4
+
+Returning keyword
+    Run Keywords    Return From Keyword
+    Fail    Do not run me please

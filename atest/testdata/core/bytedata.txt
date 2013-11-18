@@ -12,6 +12,9 @@ In Return Value
 In Message
     In Message
 
+In Multiline Message
+    In Multiline Message
+
 In Exception
     [Documentation]  FAIL ${exp_error_msg}
     In Exception

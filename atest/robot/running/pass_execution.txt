@@ -4,7 +4,6 @@ Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
 *** Variables ***
-
 ${PREFIX}=    Execution passed with message:\n
 
 *** Test Cases ***
@@ -76,21 +75,21 @@ With continuable failure
 
 With continuable failure in user keyword
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should Be True    '${tc.kws[0].status}' == 'FAIL'
+    Should Be Equal    ${tc.kws[0].status}    FAIL
 
 With continuable failure in FOR loop
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should Be True    '${tc.kws[0].status}' == 'FAIL'
-    Should Be True    '${tc.kws[0].kws[0].status}' == 'FAIL'
-    Should Be True    '${tc.kws[0].kws[0].kws[0].status}' == 'FAIL'
-    Should Be True    '${tc.kws[0].kws[0].kws[1].status}' == 'PASS'
+    Should Be Equal    ${tc.kws[0].status}    FAIL
+    Should Be Equal    ${tc.kws[0].kws[0].status}    FAIL
+    Should Be Equal    ${tc.kws[0].kws[0].kws[0].status}    FAIL
+    Should Be Equal    ${tc.kws[0].kws[0].kws[1].status}    PASS
 
 With continuable failure and test case teardown fails
     ${tc}=    Check Test Case    ${TESTNAME}
 
 With test case setup
     ${tc}=    Check Test Tags    ${TESTNAME}    force2    tag
-    Should Be True    '${tc.setup.status}' == 'PASS'
+    Should Be Equal    ${tc.setup.status}    PASS
     Check Log Message    ${tc.setup.msgs[0]}    Removed tag 'force1'.
     Check Log Message    ${tc.setup.msgs[1]}    Set tag 'tag'.
     Check Log Message    ${tc.setup.msgs[2]}    ${PREFIX}message
@@ -100,11 +99,11 @@ If test case setup fails
 
 With test case teardown
     ${tc}=    Check Test Case    ${TESTNAME}
-    Should Be True    '${tc.teardown.status}' == 'PASS'
-    Check Log Message    ${tc.teardown.msgs[0]}    ${PREFIX}This message is NOT used.
+    Should Be Equal    ${tc.teardown.status}    PASS
+    Check Log Message    ${tc.teardown.kws[0].msgs[0]}    ${PREFIX}This message is used.
 
 If test case teardown fails
-    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Modifying tags in test case teardown should succeed
     ${tc}=    Check Test Tags    ${TESTNAME}    tag1    tag2
@@ -156,4 +155,3 @@ Trying to modify tags in suite teardown fails
     Run Tests    ${EMPTY}    running/pass_execution_in_suite_teardown_invalid.txt
     Check Test Tags    Test in suite with invalid Pass Execution usage in Suite Teardown
     ...    force1    force2
-
