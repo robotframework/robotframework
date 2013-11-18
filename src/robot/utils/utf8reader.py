@@ -19,11 +19,15 @@ class Utf8Reader(object):
 
     def __init__(self, path_or_file):
         if isinstance(path_or_file, basestring):
-            self._file = open(path_or_file)
+            self._file = open(path_or_file, 'rb')
             self._close = True
         else:
             self._file = path_or_file
             self._close = False
+        # IronPython handles BOM incorrectly if file not opened in binary mode:
+        # http://code.google.com/p/robotframework/issues/detail?id=1580
+        if hasattr(self._file, 'mode') and self._file.mode != 'rb':
+            raise ValueError('Only files in binary mode accepted.')
 
     def __enter__(self):
         return self
@@ -35,11 +39,11 @@ class Utf8Reader(object):
     def read(self):
         return self._decode(self._file.read())
 
+    def readlines(self):
+        for index, line in enumerate(self._file.readlines()):
+            yield self._decode(line, remove_bom=index == 0)
+
     def _decode(self, content, remove_bom=True):
         if remove_bom and content.startswith(BOM_UTF8):
             content = content[len(BOM_UTF8):]
         return content.decode('UTF-8')
-
-    def readlines(self):
-        for index, line in enumerate(self._file.readlines()):
-            yield self._decode(line, remove_bom=index == 0)
