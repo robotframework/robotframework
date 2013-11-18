@@ -58,6 +58,7 @@ from .setter import setter
 from .text import (cut_long_message, format_assign_message,
                    pad_console_length, get_console_length)
 from .unic import unic, safe_repr
+from .utf8reader import Utf8Reader
 
 import sys
 is_jython = sys.platform.startswith('java')

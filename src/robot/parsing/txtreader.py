@@ -30,5 +30,5 @@ class TxtReader(TsvReader):
         row = row[1:-1] if row.endswith(' |') else row[1:]
         return [cell.strip() for cell in cls._pipe_splitter.split(row)]
 
-    def _process(self, cell):
+    def _process_cell(self, cell):
         return cell

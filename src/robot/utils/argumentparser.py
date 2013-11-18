@@ -19,7 +19,6 @@ import re
 import sys
 import glob
 import string
-import codecs
 import textwrap
 
 from robot.errors import DataError, Information, FrameworkError
@@ -27,6 +26,7 @@ from robot.version import get_full_version
 
 from .misc import plural_or_not
 from .encoding import decode_output, decode_from_system
+from .utf8reader import Utf8Reader
 
 
 ESCAPES = dict(
@@ -398,14 +398,11 @@ class ArgFileParser(object):
 
     def _read_from_file(self, path):
         try:
-            with open(path) as f:
-                content = f.read().decode('UTF-8')
+            with Utf8Reader(path) as reader:
+                return reader.read()
         except (IOError, UnicodeError), err:
             raise DataError("Opening argument file '%s' failed: %s"
                             % (path, err))
-        if content.startswith(codecs.BOM_UTF8.decode('UTF-8')):
-            content = content[1:]
-        return content
 
     def _read_from_stdin(self):
         content = sys.__stdin__.read()
