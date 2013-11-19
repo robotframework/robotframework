@@ -129,7 +129,12 @@ Non Existing Variable In Suite Setup and Teardown
     Should Be Equal  ${tc.message}  Parent suite setup failed:\nNon-existing variable '\${SUITE_SETUP_FROM_CLI}'.
 
 Non existing variable in suite metadata is okay
-    Run Tests  --variable suite_setup_from_cli:Log --variable suite_teardown_from_cli:Log --test TestCaseDocumentation  core/test_and_uk_settings.html
+    ${options} =  Catenate
+    ...  --test TestCaseDocumentation
+    ...  --variable suite_setup_from_cli:Log
+    ...  --variable suite_teardown_from_cli:Log
+    ...  --variable test_timeout:5sec
+    Run Tests  ${options}  core/test_and_uk_settings.html
     Should Be Equal  ${SUITE.status}  PASS
     Should Be Empty  ${SUITE.message}
     Should be Equal  ${SUITE.metadata['Var From CLI']}      \${META_FROM_CLI}
