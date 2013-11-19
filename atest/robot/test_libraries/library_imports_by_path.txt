@@ -39,17 +39,17 @@ Importing By Path Having Spaces
     Check Test Case  Importing By Path Having Spaces
 
 Importing Invalid Python File Fails
-    ${path} =  Normalize Path  ${CURDIR}/../../testdata/test_libraries/MyInvalidLibFile.py
+    ${path} =  Normalize Path  ${DATADIR}/test_libraries/MyInvalidLibFile.py
     Check Stderr Contains  Importing test library '${path}' failed:  ImportError: I'm not really a library!
 
-Inporting Dir Library Without Trailing "/" Fails
+Importing Dir Library Without Trailing "/" Fails
     Check Stderr Contains  Importing test library 'MyLibDir' failed:  ImportError: No module named MyLibDir
 
 Importing Non Python File Fails
     Check Stderr Contains  Importing test library 'java_libraries.html' failed:  ImportError: No module named java_libraries
 
 Importing Non Python Dir Fails
-    Check Stderr Contains  Test library 'library_scope/' does not exist.
+    Check Stderr Contains  Test library 'library_scope' does not exist.
 
 Importing Non Existing Py File
     Check Stderr Contains  Test library 'this_does_not_exist.py' does not exist.

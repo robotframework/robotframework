@@ -49,7 +49,7 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import plural_or_not, printable_name, seq2str, seq2str2, getdoc, isatty
 from .normalizing import lower, normalize, NormalizedDict
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
-from .robotpath import normpath, abspath, get_link_path
+from .robotpath import abspath, find_file, get_link_path, normpath
 from .robottime import (get_timestamp, get_start_timestamp, format_time,
                         get_time, get_elapsed_time, elapsed_time_to_string,
                         timestr_to_secs, secs_to_timestr, secs_to_timestamp,

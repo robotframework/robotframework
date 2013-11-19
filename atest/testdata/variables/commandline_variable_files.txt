@@ -14,3 +14,10 @@ Arguments To Variable Files
     Should Be Equal  ${ARG}  default value
     Should Be Equal  ${ARG 2}  given
 
+Variable File From PYTHONPATH
+    Should Be Equal  ${PYTHONPATH VAR 0}  Varfile found from PYTHONPATH
+    Should Be Equal  ${PYTHONPATH ARGS 0}  ${EMPTY}
+
+Variable File From PYTHONPATH with arguments
+    Should Be Equal  ${PYTHONPATH VAR 3}  Varfile found from PYTHONPATH
+    Should Be Equal  ${PYTHONPATH ARGS 3}  1-2-3
