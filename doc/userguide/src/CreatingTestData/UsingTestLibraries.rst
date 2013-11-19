@@ -13,7 +13,6 @@ section.
    :depth: 2
    :local:
 
-
 Taking test libraries into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -38,7 +37,6 @@ library imports similarly as with `arguments to keywords`__.  Both the
 library name and arguments can be set using variables.
 
 __ `Using arguments`_
-
 
 .. table:: Importing test libraries
    :class: example
@@ -140,7 +138,6 @@ be in a module with the same name as the class`__. Additionally, importing
 libraries distributed in JAR or ZIP packages is not possible with this mechanism.
 
 __ `Test library names`_
-
 
 Setting custom name to test library
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -264,18 +261,17 @@ External libraries
 ~~~~~~~~~~~~~~~~~~~
 
 Any test library that is not one of the standard libraries is, by
-definition, *an external library*. Robot Framework developers provide
-some generic libraries, such as Selenium2Library_ and SwingLibrary_,
-which are not packaged with the framework itself, because they require
-external dependencies. Generic libraries can also be provided by other
-parties, and most teams have also some custom libraries only for
-themselves.
+definition, *an external library*. The Robot Framework open source community
+has implemented several generic libraries, such as Selenium2Library_ and
+SwingLibrary_, which are not packaged with the core framework. A list of
+publicly available libraries can be found from http://robotframework.org.
+
+Generic and custom libraries can obviously also be implemented by teams using
+Robot Framework. See `Creating test libraries`_ section for more information
+about that topic.
 
 Different external libraries can have a totally different mechanism
-for installing and introducing them. Quite often they also require
+for installing them and taking them into use. Sometimes they may also require
 some other dependencies to be installed separately. All libraries
-should have clear instructions on this and preferably automate the
-installation.
-
-See `Creating test libraries`_ section for more information about how
-to create new test libraries for your own or generic usage.
+should have clear installation and usage documentation and they should
+preferably automate the installation process.
