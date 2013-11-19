@@ -34,11 +34,12 @@ Invalid Retry Interval Does Not Cause Uncatchable Failure
     ...  Wait Until Keyword Succeeds  1 seconds  invalid  No Operation
 
 Wait Until In User Keyword
-    Wait Until Inside User Keyword  
+    Wait Until Inside User Keyword
 
 Failing User Keyword with Wait Until
-    [Documentation]  FAIL  Timeout 200 milliseconds exceeded. The last error was: Still 0 times to fail!
-    Wait Until Keyword Succeeds  ${0.2}  0.11  User Keyword
+    [Documentation]  FAIL REGEXP: Timeout 123 milliseconds exceeded. The last error was: Still \\d times to fail!
+    Set Times To Fail  10
+    Wait Until Keyword Succeeds  ${0.12345}  0.02  User Keyword
 
 Passing User Keyword with Wait Until
     ${return value} =  Wait Until Keyword Succeeds  10 minutes  10 milliseconds  User Keyword

@@ -26,10 +26,10 @@ Stops on error when output contains only non-existing failing test cases
 
 Stops on error when output does not exist
     Run Tests Without Processing Output  --runfailed nonex.xml  cli/runfailed/onlypassing
-    Stderr Should Be Equal To
+    Stderr Should Match
     ...  [ ERROR ] Collecting failed tests from 'nonex.xml' failed:
     ...  Reading XML source 'nonex.xml' failed:
-    ...  No such file or directory${USAGE TIP}\n
+    ...  No such file*${USAGE TIP}\n
 
 Stops on error when output is invalid
     Create File  ${RUN FAILED FROM}  <xml><but not='correct'/></xml>
