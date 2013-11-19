@@ -72,12 +72,9 @@ class Importer(object):
         """Import a Python module or Java class using a file system path.
 
         When importing a Python file, the path must end with '.py' and the
-        actual file must also exist. When importing a Python module implemented
-        as a directory, the path must end with '/' or, on Windows, with '\\'.
-
-        When importing Java classes, the path must end with '.java' or '.class'.
-        The class file must exist in both cases and in the former case also
-        the source file must exist.
+        actual file must also exist. When importing Java classes, the path
+        must end with '.java' or '.class'. The class file must exist in both
+        cases and in the former case also the source file must exist.
 
         If `instantiate_with_args` is not None, imported classes are
         instantiated with the specified arguments automatically.
