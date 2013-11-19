@@ -26,8 +26,8 @@ There are two main reasons for using the remote library API:
 
 * Test libraries can be implemented using any language that supports
   `XML-RPC`_ protocol. Robot Framework 2.1 contains generic `remote
-  servers`_ for Python/Jython and Ruby, and the plan is to implement
-  generic servers for other languages like Java and Perl in the future.
+  servers`_ for Python/Jython and Ruby, and the community has implemented
+  generic servers for other languages like Java, .NET and Perl.
 
 The remote library interface is provided by the Remote library that is
 one of the `standard libraries`_ starting from Robot Framework
@@ -42,6 +42,12 @@ illustrated in the picture below:
 .. figure:: src/ExtendingRobotFramework/remote.png
 
    Robot Framework architecture with Remote library
+
+.. note:: The remote client uses Python's standard xmlrpclib__ module. It does
+          not support custom XML-RPC extensions implemented by some XML-RPC
+          servers.
+
+__ http://docs.python.org/2/library/xmlrpclib.html
 
 Taking Remote library into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
