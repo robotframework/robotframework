@@ -154,7 +154,7 @@ class UserKeywordHandler(object):
         return None
 
     def _normal_run(self, context, arguments):
-        arguments = self._resolve_arguments(arguments, context.variables)
+        arguments, kwargs = self._resolve_arguments(arguments, context.variables)
         error, return_ = self._execute(context, arguments)
         if error and not error.can_continue(context.in_teardown):
             raise error

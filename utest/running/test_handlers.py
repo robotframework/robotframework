@@ -112,11 +112,22 @@ class TestDynamicHandlerCreation(unittest.TestCase):
     def test_varargs(self):
         self._assert_spec(['*vararg'], 0, sys.maxint, vararg='vararg')
 
+    def test_kwargs(self):
+        self._assert_spec(['**kwarg'], 0, 0, kwarg='kwarg')
+
+    def test_varargs_and_kwargs(self):
+        self._assert_spec(['*vararg', '**kwarg'],
+                          0, sys.maxint, vararg='vararg', kwarg='kwarg')
+
     def test_integration(self):
         self._assert_spec(['arg', 'default=value'], 1, 2,
                           ['arg', 'default'], ['value'])
         self._assert_spec(['arg', 'default=value', '*var'], 1, sys.maxint,
                           ['arg', 'default'], ['value'], 'var')
+        self._assert_spec(['arg', 'default=value', '**kw'], 1, 2,
+                          ['arg', 'default'], ['value'], None, 'kw')
+        self._assert_spec(['arg', 'default=value', '*var', '**kw'], 1, sys.maxint,
+                          ['arg', 'default'], ['value'], 'var', 'kw')
 
     def test_invalid_argspec_type(self):
         for argspec in [True, [1, 2]]:
@@ -127,31 +138,50 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             self._assert_fails('Non-default argument after default arguments.',
                                argspec)
 
-    def test_vararg_not_last(self):
+    def test_positional_after_vararg(self):
         for argspec in [['*foo', 'arg'], ['arg', '*var', 'arg'],
                         ['a', 'b=d', '*var', 'c'], ['*var', '*vararg']]:
-            self._assert_fails('Only last argument can be varargs.', argspec)
+            self._assert_fails('Positional argument after varargs.', argspec)
+
+    def test_kwarg_not_last(self):
+        for argspec in [['**foo', 'arg'], ['arg', '**kw', 'arg'],
+                        ['a', 'b=d', '**kw', 'c'], ['**kw', '*vararg'],
+                        ['**kw', '**kwarg']]:
+            self._assert_fails('Only last argument can be kwargs.', argspec)
+
+    def test_missing_kwargs_support(self):
+        self._assert_fails("Too few '<lambda>' method parameters"
+                           " for **kwargs support.",
+                           ['**kwargs'])
 
     def _assert_doc(self, doc, expected=None):
         expected = doc if expected is None else expected
         assert_equals(self._create_handler(doc=doc).doc, expected)
 
     def _assert_spec(self, argspec, minargs=0, maxargs=0, positional=[],
-                     defaults=[], vararg=None):
-        arguments = self._create_handler(argspec).arguments
-        assert_equals(arguments.minargs, minargs)
-        assert_equals(arguments.maxargs, maxargs)
-        assert_equals(arguments.positional, positional)
-        assert_equals(arguments.defaults, defaults)
-        assert_equals(arguments.varargs, vararg)
+                     defaults=[], vararg=None, kwarg=None):
+        for kwargs_support in [True, False] if not kwarg else [True]:
+            arguments = self._create_handler(argspec,
+                                             kwargs_support=kwargs_support
+                                             ).arguments
+            assert_equals(arguments.minargs, minargs)
+            assert_equals(arguments.maxargs, maxargs)
+            assert_equals(arguments.positional, positional)
+            assert_equals(arguments.defaults, defaults)
+            assert_equals(arguments.varargs, vararg)
+            assert_equals(arguments.kwargs, kwarg)
 
     def _assert_fails(self, error, argspec=None, doc=None):
         assert_raises_with_msg(DataError, error,
                                self._create_handler, argspec, doc)
-    def _create_handler(self, argspec=None, doc=None):
+    def _create_handler(self, argspec=None, doc=None, kwargs_support=False):
         doc = GetKeywordDocumentation(lib=None)._handle_return_value(doc)
         argspec = GetKeywordArguments(lib=None)._handle_return_value(argspec)
-        return DynamicHandler(LibraryMock('TEST CASE'), 'mock', lambda x: None,
+        if kwargs_support:
+            handler_func = lambda x, args, kwargs: None
+        else:
+            handler_func = lambda x: None
+        return DynamicHandler(LibraryMock('TEST CASE'), 'mock', handler_func,
                               doc, argspec)
 
 

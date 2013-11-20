@@ -1,6 +1,9 @@
 *** Settings ***
-Library    DynamicLibrary.py
+Library    ${DynamicLibrary}.py
 Library    helper.py
+
+*** Variables ***
+${DynamicLibrary}    DynamicLibrary
 
 *** Test Cases ***
 Kwarg Syntax In Variable Is Ignored
@@ -54,11 +57,11 @@ Naming without the varargs works
     Should be equal    @{ret}[1]    bar
 
 Varargs with naming does not work
-    [documentation]    FAIL    Keyword 'DynamicLibrary.Named Arguments With Varargs' got positional argument after named arguments.
+    [documentation]    FAIL    Keyword '${DynamicLibrary}.Named Arguments With Varargs' got positional argument after named arguments.
     Named arguments with varargs    foo    b=bar    dar
 
 Varargs with naming does not work with empty lists either
-    [documentation]    FAIL    Keyword 'DynamicLibrary.Named Arguments With Varargs' got positional argument after named arguments.
+    [documentation]    FAIL    Keyword '${DynamicLibrary}.Named Arguments With Varargs' got positional argument after named arguments.
     Named arguments with varargs    foo    b=bar    @{EMPTY}
 
 Named combinations with varargs
@@ -115,7 +118,7 @@ Execute working named vararg combination with result
 Execute illegal named vararg combination
     [arguments]    ${expected error}    @{args}
     ${res} =    Get result or error    Mandatory, Named And Varargs    @{args}
-    Should be equal    ${res}    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' ${expected error}
+    Should be equal    ${res}    Keyword '${DynamicLibrary}.Mandatory, Named And Varargs' ${expected error}
 
 Execute working named combination with result
     [arguments]    ${expected}    @{args}
@@ -125,4 +128,4 @@ Execute working named combination with result
 Execute illegal named combination
     [arguments]    ${expected error}    @{args}
     ${res} =    Get result or error    Mandatory And Named    @{args}
-    Should be equal    ${res}    Keyword 'DynamicLibrary.Mandatory And Named' ${expected error}
+    Should be equal    ${res}    Keyword '${DynamicLibrary}.Mandatory And Named' ${expected error}

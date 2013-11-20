@@ -1,5 +1,7 @@
 __version__ = 'N/A'  # This should be ignored when version is parsed
 
+from itertools import chain
+
 
 class NameLibrary:
     handler_count = 10
@@ -149,6 +151,20 @@ class ArgDocDynamicLibrary:
         return self._keywords[name].doc
     def get_keyword_arguments(self, name):
         return self._keywords[name].argspec
+
+class ArgDocDynamicLibraryWithKwargsSupport(ArgDocDynamicLibrary):
+    def __init__(self):
+        ArgDocDynamicLibrary.__init__(self)
+        for name, argspec in [('Kwargs', ['**kwargs']),
+                              ('Varargs and Kwargs', ['*args', '**kwargs'])]:
+            self._keywords[name] = _KeywordInfo(name, argspec)
+
+    def run_keyword(self, name, args, kwargs):
+        argstr = ' '.join(chain(
+          map(str, args),
+          ('%s:%s' % kv for kv in kwargs.items())
+          ))
+        print '*INFO* Executed keyword %s with arguments %s' % (name, argstr)
 
 class _KeywordInfo:
     doc_template = 'Keyword documentation for %s'

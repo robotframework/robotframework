@@ -11,11 +11,11 @@ Argspec consists of something else than strings
 
 Argspec has varargs before positional arguments
     Error message should be correct    3    varargs before positional args
-    ...    Only last argument can be varargs.
+    ...    Positional argument after varargs.
 
 Argspec has varargs before named arguments
     Error message should be correct    2    varargs before named args
-    ...    Only last argument can be varargs.
+    ...    Positional argument after varargs.
 
 Argspec has named arguments before positional
     Error message should be correct    1    named args before positional

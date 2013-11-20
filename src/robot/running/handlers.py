@@ -20,7 +20,8 @@ from robot.variables import is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser, ArgumentResolver,
-                        ArgumentMapper, JavaArgumentCoercer)
+                        ArgumentMapper, JavaArgumentCoercer,
+                        DynamicMethodArgumentParser)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -211,14 +212,26 @@ class _DynamicHandler(_RunnableHandler):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         self._run_keyword_method_name = handler_method.__name__
         self._doc = doc is not None and utils.unic(doc) or ''
+        # Check **kwargs handling requirements:
+        self._handler_argspec = DynamicMethodArgumentParser().parse(
+              handler_name, handler_method)
+        if argspec and argspec[-1].startswith('**'):
+            # --> Keyword has **kwargs
+            handler_args = self._handler_argspec.positional
+            # --> Handler method needs (self, name, args, kwargs)
+            if len(handler_args) < 3:
+                raise DataError(
+                  "Too few '%s' method parameters"
+                  " for **kwargs support."
+                  % self._run_keyword_method_name)
 
     def _parse_arguments(self, handler_method):
         return DynamicArgumentParser().parse(self.longname, self._argspec)
 
     def resolve_arguments(self, arguments, variables):
         positional, named = _RunnableHandler.resolve_arguments(self, arguments, variables)
-        arguments = ArgumentMapper(self.arguments).map(positional, named, prune_trailing_defaults=True)
-        return arguments, {}
+        arguments, kwargs = ArgumentMapper(self.arguments).map(positional, named, prune_trailing_defaults=True)
+        return arguments, kwargs
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
@@ -228,8 +241,13 @@ class _DynamicHandler(_RunnableHandler):
         return self._get_dynamic_handler(method, name)
 
     def _get_dynamic_handler(self, runner, name):
-        def handler(*positional):
-            return runner(name, positional)
+        def handler(*positional, **kwargs):
+            # Does the runner have enough parameters for **kwargs support?
+            # (self, name, args, kwargs)
+            if len(self._handler_argspec.positional) > 2:
+                return runner(name, positional, kwargs)
+            else:
+                return runner(name, positional)
         return handler
 
 

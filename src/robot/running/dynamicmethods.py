@@ -12,8 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import inspect
+
 from robot.errors import DataError
 from robot.utils import get_error_message, unic
+
+from .arguments import DynamicMethodArgumentParser
 
 
 def no_dynamic_method(*args):
@@ -84,7 +88,22 @@ class GetKeywordDocumentation(_DynamicMethod):
 class GetKeywordArguments(_DynamicMethod):
     _underscore_name = 'get_keyword_arguments'
 
+    def __init__(self, lib):
+        _DynamicMethod.__init__(self, lib)
+        # Check if the lib's run_keyword method supports **kwargs
+        # (self, name, args, kwargs)
+        run_keyword_method = RunKeyword(lib).method
+        if run_keyword_method is not no_dynamic_method:
+            argspec = DynamicMethodArgumentParser().parse(
+              'run_keyword', run_keyword_method)
+            if len(argspec.positional) > 2:
+                self._kwargs_support = True
+                return
+        self._kwargs_support = False
+
     def _handle_return_value(self, value):
         if value is None:
+            if self._kwargs_support:
+                return ['*unknown', '**kwargs']
             return ['*unknown']
         return self._to_list_of_strings(value)

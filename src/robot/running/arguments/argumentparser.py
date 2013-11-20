@@ -9,7 +9,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import inspect
+
+try: # Jython
+    import java.lang
+except ImportError:
+    pass
 
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
@@ -55,7 +61,7 @@ class JavaArgumentParser(_ArgumentParser):
 
     def _single_signature_arg_spec(self, signature):
         args = signature.args
-        if args and args[-1].isArray():
+        if args and type(args[-1]) is java.lang.Class and args[-1].isArray():
             return self._format_arg_spec(len(args)-1, varargs=True)
         return self._format_arg_spec(len(args))
 
@@ -74,13 +80,40 @@ class JavaArgumentParser(_ArgumentParser):
         return positional, defaults, varargs
 
 
+class DynamicMethodArgumentParser(PythonArgumentParser, JavaArgumentParser):
+    """A generic argument parser for Dynamic Test Library API methods
+       like run(_k|K)eyword, which can be either Python or Java based.
+    """
+    def __init__(self):
+        _ArgumentParser.__init__(self, 'DynamicMethod')
+
+    def _get_arg_spec(self, method):
+        try:
+            return PythonArgumentParser._get_arg_spec(self, method)
+        except TypeError, err:
+            if sys.platform.startswith('java'):
+                try:
+                    # Adapted from _JavaHandler._get_signatures():
+                    func = method.im_func
+                    signatures = func.argslist[:func.nargs]
+                except AttributeError:
+                    raise err
+                return JavaArgumentParser._get_arg_spec(self, signatures)
+            raise err
+
+
 class _ArgumentSpecParser(_ArgumentParser):
 
     def parse(self, name, argspec):
         result = ArgumentSpec(name, self._type)
         for arg in argspec:
+            if result.kwargs:
+                raise DataError('Only last argument can be kwargs.')
+            if self._is_kwargs(arg):
+                self._add_kwargs(arg, result)
+                continue
             if result.varargs:
-                raise DataError('Only last argument can be varargs.')
+                raise DataError('Positional argument after varargs.')
             if self._is_varargs(arg):
                 self._add_varargs(arg, result)
                 continue
@@ -91,6 +124,15 @@ class _ArgumentSpecParser(_ArgumentParser):
                 raise DataError('Non-default argument after default arguments.')
             self._add_arg(arg, result)
         return result
+
+    def _is_kwargs(self, arg):
+        raise NotImplementedError
+
+    def _add_kwargs(self, kwargs, result):
+        result.kwargs = self._format_kwargs(kwargs)
+
+    def _format_kwargs(self, kwargs):
+        return kwargs
 
     def _is_varargs(self, arg):
         raise NotImplementedError
@@ -115,14 +157,24 @@ class _ArgumentSpecParser(_ArgumentParser):
 
 class DynamicArgumentParser(_ArgumentSpecParser):
 
+    def _is_kwargs(self, arg):
+        return arg.startswith('**')
+
+    def _format_kwargs(self, kwargs):
+        return kwargs[2:]
+
     def _is_varargs(self, arg):
-        return arg.startswith('*')
+        return arg.startswith('*') and not self._is_kwargs(arg)
 
     def _format_varargs(self, varargs):
         return varargs[1:]
 
 
 class UserKeywordArgumentParser(_ArgumentSpecParser):
+
+    def _is_kwargs(self, arg):
+        #TODO
+        return False
 
     def _is_varargs(self, arg):
         return is_list_var(arg)
