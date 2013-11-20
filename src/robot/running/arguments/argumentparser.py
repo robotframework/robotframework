@@ -11,11 +11,8 @@
 
 import sys
 import inspect
-
-try: # Jython
-    import java.lang
-except ImportError:
-    pass
+if sys.platform.startswith('java'):
+    from java.lang import Class
 
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
@@ -61,7 +58,7 @@ class JavaArgumentParser(_ArgumentParser):
 
     def _single_signature_arg_spec(self, signature):
         args = signature.args
-        if args and type(args[-1]) is java.lang.Class and args[-1].isArray():
+        if args and isinstance(args[-1], Class) and args[-1].isArray():
             return self._format_arg_spec(len(args)-1, varargs=True)
         return self._format_arg_spec(len(args))
 
@@ -80,6 +77,8 @@ class JavaArgumentParser(_ArgumentParser):
         return positional, defaults, varargs
 
 
+# TODO: Could this be implemented as a helper method instead of a class?
+# Current name isn't ideal anyway.
 class DynamicMethodArgumentParser(PythonArgumentParser, JavaArgumentParser):
     """A generic argument parser for Dynamic Test Library API methods
        like run(_k|K)eyword, which can be either Python or Java based.
@@ -132,7 +131,7 @@ class _ArgumentSpecParser(_ArgumentParser):
         result.kwargs = self._format_kwargs(kwargs)
 
     def _format_kwargs(self, kwargs):
-        return kwargs
+        raise NotImplementedError
 
     def _is_varargs(self, arg):
         raise NotImplementedError
@@ -141,7 +140,7 @@ class _ArgumentSpecParser(_ArgumentParser):
         result.varargs = self._format_varargs(varargs)
 
     def _format_varargs(self, varargs):
-        return varargs
+        raise NotImplementedError
 
     def _add_arg_with_default(self, arg, result):
         arg, default = arg.split('=', 1)
@@ -173,7 +172,6 @@ class DynamicArgumentParser(_ArgumentSpecParser):
 class UserKeywordArgumentParser(_ArgumentSpecParser):
 
     def _is_kwargs(self, arg):
-        #TODO
         return False
 
     def _is_varargs(self, arg):

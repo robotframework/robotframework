@@ -154,7 +154,7 @@ class UserKeywordHandler(object):
         return None
 
     def _normal_run(self, context, arguments):
-        arguments, kwargs = self._resolve_arguments(arguments, context.variables)
+        arguments = self._resolve_arguments(arguments, context.variables)
         error, return_ = self._execute(context, arguments)
         if error and not error.can_continue(context.in_teardown):
             raise error
@@ -168,7 +168,8 @@ class UserKeywordHandler(object):
         resolver = ArgumentResolver(self.arguments)
         mapper = ArgumentMapper(self.arguments)
         positional, named = resolver.resolve(arguments, variables)
-        return mapper.map(positional, named, variables)
+        arguments, _ = mapper.map(positional, named, variables)
+        return arguments
 
     def _execute(self, context, arguments):
         self._set_variables(arguments, context.variables)

@@ -212,6 +212,7 @@ class _DynamicHandler(_RunnableHandler):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         self._run_keyword_method_name = handler_method.__name__
         self._doc = doc is not None and utils.unic(doc) or ''
+        # TODO: Extract method. Also store only info are kwargs supported or not.
         # Check **kwargs handling requirements:
         self._handler_argspec = DynamicMethodArgumentParser().parse(
               handler_name, handler_method)
@@ -228,9 +229,10 @@ class _DynamicHandler(_RunnableHandler):
     def _parse_arguments(self, handler_method):
         return DynamicArgumentParser().parse(self.longname, self._argspec)
 
-    def resolve_arguments(self, arguments, variables):
+    def resolve_arguments(self, arguments, variables=None):
         positional, named = _RunnableHandler.resolve_arguments(self, arguments, variables)
-        arguments, kwargs = ArgumentMapper(self.arguments).map(positional, named, prune_trailing_defaults=True)
+        mapper = ArgumentMapper(self.arguments)
+        arguments, kwargs = mapper.map(positional, named, prune_trailing_defaults=True)
         return arguments, kwargs
 
     def _get_handler(self, lib_instance, handler_name):

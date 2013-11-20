@@ -1,5 +1,5 @@
 *** Settings ***
-Library         ${CURDIR}/dynamic_libraries/DynamicLibraryWithKwargsSupportWithoutArgspec.py
+Library         dynamic_libraries/DynamicLibraryWithKwargsSupportWithoutArgspec.py
 Library         classes.ArgDocDynamicLibraryWithKwargsSupport
 
 *** Test Cases ***

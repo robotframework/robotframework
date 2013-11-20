@@ -174,13 +174,14 @@ class TestDynamicHandlerCreation(unittest.TestCase):
     def _assert_fails(self, error, argspec=None, doc=None):
         assert_raises_with_msg(DataError, error,
                                self._create_handler, argspec, doc)
+
     def _create_handler(self, argspec=None, doc=None, kwargs_support=False):
         doc = GetKeywordDocumentation(lib=None)._handle_return_value(doc)
         argspec = GetKeywordArguments(lib=None)._handle_return_value(argspec)
         if kwargs_support:
-            handler_func = lambda x, args, kwargs: None
+            handler_func = lambda name, args, kwargs: None
         else:
-            handler_func = lambda x: None
+            handler_func = lambda name, args: None
         return DynamicHandler(LibraryMock('TEST CASE'), 'mock', handler_func,
                               doc, argspec)
 

@@ -1,31 +1,19 @@
 import java.util.*;
-import org.apache.commons.lang.*;
 
-import org.python.core.*;
-
-
-public class ArgDocDynamicJavaLibraryWithKwargsSupport
-  extends ArgDocDynamicJavaLibrary {
+public class ArgDocDynamicJavaLibraryWithKwargsSupport extends ArgDocDynamicJavaLibrary {
 
     public String[] getKeywordNames() {
-        return (String[])ArrayUtils.addAll
-          (super.getKeywordNames(), new String[] {
-            "Java Kwargs",
-            "Java Varargs and Kwargs",
-          });
+        List<String> names = new ArrayList<String>(Arrays.asList(super.getKeywordNames()));
+        names.add("Java Kwargs");
+        names.add("Java Varargs and Kwargs");
+        return names.toArray(new String[0]);
     }
 
-    public Object runKeyword
-      (String name, Object[] args, PyDictionary kwargs) {
-
-        int index = args.length;
-        Object[] superArgs = Arrays.copyOf(args, index + kwargs.size());
-        for (PyObject obj : kwargs.iteritems().asIterable()) {
-            PyTuple item = (PyTuple)obj;
-            superArgs[index++]
-              = item.get(0).toString() + ':' + item.get(1).toString();
-        }
-        return super.runKeyword(name, superArgs);
+    public Object runKeyword(String name, List<Object> args, Map<String, Object> kwargs) {
+        List<Object> superArgs = new ArrayList<Object>(args);
+        for (String key: kwargs.keySet())
+            superArgs.add(key+":"+kwargs.get(key).toString());
+        return super.runKeyword(name, superArgs.toArray());
     }
 
     public String[] getKeywordArguments(String name) {

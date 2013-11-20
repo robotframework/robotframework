@@ -1,5 +1,5 @@
 *** Settings ***
-Library         ${CURDIR}/dynamic_libraries/DynamicLibraryWithKwargsSupport.py
+Library         dynamic_libraries/DynamicLibraryWithKwargsSupport.py
 
 *** Test Cases ***
 

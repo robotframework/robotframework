@@ -1,4 +1,3 @@
-import org.python.core.*;
 public class ArgDocDynamicJavaLibrary {
 
     public ArgDocDynamicJavaLibrary() {}

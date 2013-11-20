@@ -1,3 +1,5 @@
+# TODO: Move code to run_keyword
+
 KEYWORDS = {
     'argspec with other than strings': (lambda a, *x: (a, x), [1, 2]),
     'varargs before positional args': (lambda a, *x: (a, x), ['*varargs', 'a']),

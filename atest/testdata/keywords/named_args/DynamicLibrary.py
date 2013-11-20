@@ -3,6 +3,7 @@
 
 from dynamic_library_impl import var_args, return_argument, return_arguments
 
+
 KEYWORDS = {
     'Escaped Default Value': (var_args, ['d1=${notvariable}', 'd2=\\\\', 'd3=\n', 'd4=\t']),
     'Four Kw Args': (var_args, ['a=default', 'b=default', 'c=default', 'd=default']),
@@ -16,13 +17,17 @@ KEYWORDS = {
     'three named': (var_args, ['a=a', 'b=b', 'c=c'])
 }
 
+
 class DynamicLibrary(object):
 
+    def __init__(self, **extra):
+        self.keywords = dict(KEYWORDS, **extra)
+
     def get_keyword_names(self):
-        return KEYWORDS.keys()
+        return self.keywords.keys()
 
     def run_keyword(self, kw_name, args):
-        return KEYWORDS[kw_name][0](*args)
+        return self.keywords[kw_name][0](*args)
 
     def get_keyword_arguments(self, kw_name):
-        return KEYWORDS[kw_name][1]
+        return self.keywords[kw_name][1]
