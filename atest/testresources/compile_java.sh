@@ -1,9 +1,9 @@
 #!/bin/sh
-DIR="$( cd "$( dirname "$0" )" && pwd )"
-javac -target 1.5 -source 1.5 $DIR/testlibs/*.java
-if [ -n "$JYTHON_HOME" ]
-then
-    javac -cp $JYTHON_HOME/jython.jar -target 1.5 -source 1.5 $DIR/listeners/*.java
-else
-    echo set JYTHON_HOME to compile listeners
+if [ -z "$JYTHON_HOME" ]; then
+    echo "Set JYTHON_HOME to compile."
+    exit 1
 fi
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+OPTS="-cp $JYTHON_HOME/jython.jar -target 1.5 -source 1.5 $* -Xlint:unchecked"
+javac $OPTS $DIR/testlibs/*.java
+javac $OPTS $DIR/listeners/*.java
