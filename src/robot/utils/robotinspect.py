@@ -22,8 +22,8 @@ if sys.platform.startswith('java'):
         return isinstance(init, PyReflectedConstructor)
 
     def is_java_method(method):
-        return hasattr(method, 'im_func') \
-            and isinstance(method.im_func, PyReflectedFunction)
+        func = method.im_func if hasattr(method, 'im_func') else method
+        return isinstance(func, PyReflectedFunction)
 
 else:
 
