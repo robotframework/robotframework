@@ -93,7 +93,10 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_fails('Return value must be string.', doc=True)
 
     def test_none_argspec(self):
-        self._assert_spec(None, maxargs=sys.maxint,vararg='unknown')
+        self._assert_spec(None, maxargs=sys.maxint, vararg='varargs', kwarg=False)
+
+    def test_none_argspec_when_kwargs_supported(self):
+        self._assert_spec(None, maxargs=sys.maxint, vararg='varargs', kwarg='kwargs')
 
     def test_empty_argspec(self):
         self._assert_spec([])
@@ -160,7 +163,14 @@ class TestDynamicHandlerCreation(unittest.TestCase):
 
     def _assert_spec(self, argspec, minargs=0, maxargs=0, positional=[],
                      defaults=[], vararg=None, kwarg=None):
-        for kwargs_support in [True, False] if not kwarg else [True]:
+        if kwarg is None:
+            kwargs_support_modes = [True, False]
+        elif kwarg is False:
+            kwargs_support_modes = [False]
+            kwarg = None
+        else:
+            kwargs_support_modes = [True]
+        for kwargs_support in kwargs_support_modes:
             arguments = self._create_handler(argspec,
                                              kwargs_support=kwargs_support
                                              ).arguments
@@ -176,14 +186,14 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                                self._create_handler, argspec, doc)
 
     def _create_handler(self, argspec=None, doc=None, kwargs_support=False):
-        doc = GetKeywordDocumentation(lib=None)._handle_return_value(doc)
-        argspec = GetKeywordArguments(lib=None)._handle_return_value(argspec)
+        lib = LibraryMock('TEST CASE')
         if kwargs_support:
-            handler_func = lambda name, args, kwargs: None
+            lib.run_keyword = lambda name, args, kwargs: None
         else:
-            handler_func = lambda name, args: None
-        return DynamicHandler(LibraryMock('TEST CASE'), 'mock', handler_func,
-                              doc, argspec)
+            lib.run_keyword = lambda name, args: None
+        doc = GetKeywordDocumentation(lib)._handle_return_value(doc)
+        argspec = GetKeywordArguments(lib)._handle_return_value(argspec)
+        return DynamicHandler(lib, 'mock', lib.run_keyword, doc, argspec)
 
 
 if utils.is_jython:
@@ -209,7 +219,7 @@ if utils.is_jython:
 
         def test_arg_limits_with_defaults(self):
             # defaults i.e. multiple signatures
-            for mina, maxa in [(0,1), (1,3)]:
+            for mina, maxa in [(0, 1), (1, 3)]:
                 method = handlers['a_%d_%d' % (mina, maxa)]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
                 assert_equals(handler.arguments.minargs, mina)

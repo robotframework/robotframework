@@ -102,8 +102,7 @@ class GetKeywordArguments(_DynamicMethod):
 
     def _handle_return_value(self, value):
         if value is None:
-             # TODO: Use *varargs, **kwargs or *unknown, **unknown
             if self._kwargs_support:
-                return ['*unknown', '**kwargs']
-            return ['*unknown']
+                return ['*varargs', '**kwargs']
+            return ['*varargs']
         return self._to_list_of_strings(value)

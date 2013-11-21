@@ -8,12 +8,14 @@ class DynamicLibrary(object):
         """This is overwritten and not shown in docs"""
 
     def get_keyword_names(self):
-        return ['0', 'Keyword 1', 'KW2', 'non ascii doc 42']
+        return ['0', 'Keyword 1', 'KW2', 'non ascii doc 42', 'no arg spec']
 
-    def run_keyword(self, name, args):
+    def run_keyword(self, name, args, kwargs):
         print name, args
 
     def get_keyword_arguments(self, name):
+        if name == 'no arg spec':
+            return None
         return ['arg%d' % (i+1) for i in range(int(name[-1]))]
 
     def get_keyword_documentation(self, name):
