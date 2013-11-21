@@ -154,7 +154,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             self._assert_fails('Only last argument can be kwargs.', argspec)
 
     def test_missing_kwargs_support(self):
-        self._assert_fails("Too few '<lambda>' method parameters"
+        self._assert_fails("Too few 'run_keyword' method parameters"
                            " for **kwargs support.",
                            ['**kwargs'])
 
@@ -192,6 +192,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             lib.run_keyword = lambda name, args, kwargs: None
         else:
             lib.run_keyword = lambda name, args: None
+        lib.run_keyword.__name__ = 'run_keyword'
         doc = GetKeywordDocumentation(lib)._handle_return_value(doc)
         argspec = GetKeywordArguments(lib)._handle_return_value(argspec)
         return DynamicHandler(lib, 'mock', RunKeyword(lib), doc, argspec)
