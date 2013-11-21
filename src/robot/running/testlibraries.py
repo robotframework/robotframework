@@ -19,7 +19,8 @@ import sys
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.utils import (getdoc, get_error_details, Importer, normalize,
+from robot.utils import (getdoc, get_error_details, Importer,
+                         is_java_init, is_java_method, normalize,
                          NormalizedDict, seq2str2, unic)
 
 from .baselibrary import BaseLibrary
@@ -30,19 +31,8 @@ from .outputcapture import OutputCapturer
 
 if sys.platform.startswith('java'):
     from java.lang import Object
-    from org.python.core import PyReflectedConstructor, PyReflectedFunction
-
-    def is_java_init(method):
-        return isinstance(method, PyReflectedConstructor)
-
-    def is_java_method(method):
-        # inspect.isroutine doesn't work with methods from Java classes
-        # prior to Jython 2.5.2: http://bugs.jython.org/issue1223
-        return isinstance(method, PyReflectedFunction)
-
 else:
     Object = None
-    is_java_init = is_java_method = lambda method: False
 
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True):
