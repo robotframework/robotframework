@@ -1,9 +1,8 @@
-from dynamic_library_impl import var_args
 from DynamicLibrary import DynamicLibrary
 
 KEYWORDS = {
-    'Mandatory, Named And Kwargs': (var_args, ['a', 'b=default', '**kwargs']),
-    'Mandatory, Named, Varargs And Kwargs': (var_args, ['a', 'b=default', '*varargs', '**kwargs']),
+    'Mandatory, Named And Kwargs': ['a', 'b=default', '**kwargs'],
+    'Mandatory, Named, Varargs And Kwargs': ['a', 'b=default', '*varargs', '**kwargs'],
 }
 
 
@@ -13,4 +12,4 @@ class DynamicLibraryWithKwargsSupport(DynamicLibrary):
         DynamicLibrary.__init__(self, **KEYWORDS)
 
     def run_keyword(self, name, args, kwargs):
-        return self.keywords[name][0](*args, **kwargs)
+        return self._pretty(*args, **kwargs)

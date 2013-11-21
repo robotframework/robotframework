@@ -45,16 +45,16 @@ Default value with escaped content
     Should Be Equal    ${ret}    \${notvariable}, \\\\, \n, \${nv}
 
 Varargs without naming arguments works
-    @{ret} =    Named arguments with varargs    foo    bar    dar
-    Should be equal    @{ret}[0]    foo
-    @{ret} =    Named arguments with varargs    foo    bar=bar    dar
-    Should be equal    @{ret}[1]    bar=bar
-    @{ret} =    Named arguments with varargs    foo    b\=bar    dar
-    Should be equal    @{ret}[1]    b=bar
+    ${ret} =    Named arguments with varargs    foo    bar    dar
+    Should be equal    ${ret}     foo, bar, dar
+    ${ret} =    Named arguments with varargs    foo    bar=bar    dar
+    Should be equal    ${ret}     foo, bar=bar, dar
+    ${ret} =    Named arguments with varargs    foo    b\=bar    dar
+    Should be equal    ${ret}     foo, b=bar, dar
 
 Naming without the varargs works
-    @{ret} =    Named arguments with varargs    foo    b=bar
-    Should be equal    @{ret}[1]    bar
+    ${ret} =    Named arguments with varargs    foo    b=bar
+    Should be equal    ${ret}     foo, bar
 
 Varargs with naming does not work
     [documentation]    FAIL    Keyword '${DynamicLibrary}.Named Arguments With Varargs' got positional argument after named arguments.
