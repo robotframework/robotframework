@@ -13,9 +13,9 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import get_error_message, unic
+from robot.utils import get_error_message, unic, is_java_method
 
-from .arguments import DynamicMethodArgumentParser
+from .arguments import JavaArgumentParser, PythonArgumentParser
 
 
 def no_dynamic_method(*args):
@@ -39,6 +39,10 @@ class _DynamicMethod(object):
     def _camelCaseName(self):
         tokens = self._underscore_name.split('_')
         return ''.join([tokens[0]] + [t.capitalize() for t in tokens[1:]])
+
+    @property
+    def name(self):
+        return self.method.__name__
 
     def __call__(self, *args):
         try:
@@ -75,6 +79,18 @@ class GetKeywordNames(_DynamicMethod):
 class RunKeyword(_DynamicMethod):
     _underscore_name = 'run_keyword'
 
+    def __init__(self, lib):
+        _DynamicMethod.__init__(self, lib)
+        argspec = self._parse_argspec(self.method)
+        self.kwargs_supported = len(argspec.positional) == 3
+
+    def _parse_argspec(self, method):
+        if not is_java_method(method):
+            return PythonArgumentParser().parse(method)
+        func = method.im_func
+        signatures = func.argslist[:func.nargs]
+        return JavaArgumentParser().parse(signatures)
+
 
 class GetKeywordDocumentation(_DynamicMethod):
     _underscore_name = 'get_keyword_documentation'
@@ -88,21 +104,11 @@ class GetKeywordArguments(_DynamicMethod):
 
     def __init__(self, lib):
         _DynamicMethod.__init__(self, lib)
-        # Check if the lib's run_keyword method supports **kwargs
-        # (self, name, args, kwargs)
-        # TODO: Extract method
-        run_keyword_method = RunKeyword(lib).method
-        if run_keyword_method is not no_dynamic_method:
-            argspec = DynamicMethodArgumentParser().parse(
-              'run_keyword', run_keyword_method)
-            if len(argspec.positional) > 2:
-                self._kwargs_support = True
-                return
-        self._kwargs_support = False
+        self._kwargs_supported = RunKeyword(lib).kwargs_supported
 
     def _handle_return_value(self, value):
         if value is None:
-            if self._kwargs_support:
+            if self._kwargs_supported:
                 return ['*varargs', '**kwargs']
             return ['*varargs']
         return self._to_list_of_strings(value)

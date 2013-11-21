@@ -158,7 +158,7 @@ class ArgDocDynamicLibraryWithKwargsSupport(ArgDocDynamicLibrary):
                               ('Varargs and Kwargs', ['*args', '**kwargs'])]:
             self._keywords[name] = _KeywordInfo(name, argspec)
 
-    def run_keyword(self, name, args, kwargs):
+    def run_keyword(self, name, args, kwargs={}):
         argstr = ' '.join([str(a) for a in args] +
                           ['%s:%s' % kv for kv in sorted(kwargs.items())])
         print '*INFO* Executed keyword %s with arguments %s' % (name, argstr)

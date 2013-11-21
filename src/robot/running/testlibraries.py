@@ -315,7 +315,7 @@ class _DynamicLibrary(_BaseTestLibrary):
         return GetKeywordNames(instance)()
 
     def _get_handler_method(self, instance, name):
-        return RunKeyword(instance).method
+        return RunKeyword(instance)
 
     def _create_handler(self, name, method):
         doc = self._get_kw_doc(name)

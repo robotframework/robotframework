@@ -25,7 +25,7 @@ class _ArgumentParser(object):
     def __init__(self, type='Keyword'):
         self._type = type
 
-    def parse(self, name, source):
+    def parse(self, source, name=None):
         return ArgumentSpec(name, self._type, *self._get_arg_spec(source))
 
     def _get_arg_spec(self, source):
@@ -77,33 +77,9 @@ class JavaArgumentParser(_ArgumentParser):
         return positional, defaults, varargs
 
 
-# TODO: Could this be implemented as a helper method instead of a class?
-# Current name isn't ideal anyway.
-class DynamicMethodArgumentParser(PythonArgumentParser, JavaArgumentParser):
-    """A generic argument parser for Dynamic Test Library API methods
-       like run(_k|K)eyword, which can be either Python or Java based.
-    """
-    def __init__(self):
-        _ArgumentParser.__init__(self, 'DynamicMethod')
-
-    def _get_arg_spec(self, method):
-        try:
-            return PythonArgumentParser._get_arg_spec(self, method)
-        except TypeError, err:
-            if sys.platform.startswith('java'):
-                try:
-                    # Adapted from _JavaHandler._get_signatures():
-                    func = method.im_func
-                    signatures = func.argslist[:func.nargs]
-                except AttributeError:
-                    raise err
-                return JavaArgumentParser._get_arg_spec(self, signatures)
-            raise err
-
-
 class _ArgumentSpecParser(_ArgumentParser):
 
-    def parse(self, name, argspec):
+    def parse(self, argspec, name=None):
         result = ArgumentSpec(name, self._type)
         for arg in argspec:
             if result.kwargs:

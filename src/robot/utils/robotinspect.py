@@ -14,12 +14,21 @@
 
 import sys
 
-from .argumentmapper import ArgumentMapper
-from .argumentparser import (PythonArgumentParser, UserKeywordArgumentParser,
-                             DynamicArgumentParser, JavaArgumentParser)
-from .argumentresolver import ArgumentResolver
-from .argumentvalidator import ArgumentValidator
+
 if sys.platform.startswith('java'):
-    from .javaargumentcoercer import JavaArgumentCoercer
+    from org.python.core import PyReflectedFunction, PyReflectedConstructor
+
+    def is_java_init(init):
+        return isinstance(init, PyReflectedConstructor)
+
+    def is_java_method(method):
+        return hasattr(method, 'im_func') \
+            and isinstance(method.im_func, PyReflectedFunction)
+
 else:
-    JavaArgumentCoercer = lambda *args: None
+
+    def is_java_init(init):
+        return False
+
+    def is_java_method(method):
+        return False

@@ -20,30 +20,19 @@ from robot.variables import is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser, ArgumentResolver,
-                        ArgumentMapper, JavaArgumentCoercer,
-                        DynamicMethodArgumentParser)
+                        ArgumentMapper, JavaArgumentCoercer)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
 from .signalhandler import STOP_SIGNAL_MONITOR
 
 
-if utils.is_jython:
-    from org.python.core import PyReflectedFunction, PyReflectedConstructor
-
-    def _is_java_init(init):
-        return isinstance(init, PyReflectedConstructor)
-    def _is_java_method(method):
-        return hasattr(method, 'im_func') \
-               and isinstance(method.im_func, PyReflectedFunction)
-else:
-    _is_java_init = _is_java_method = lambda item: False
 
 
 def Handler(library, name, method):
     if RUN_KW_REGISTER.is_run_keyword(library.orig_name, name):
         return _RunKeywordHandler(library, name, method)
-    if _is_java_method(method):
+    if utils.is_java_method(method):
         return _JavaHandler(library, name, method)
     else:
         return _PythonHandler(library, name, method)
@@ -56,7 +45,7 @@ def DynamicHandler(library, name, method, doc, argspec):
 
 
 def InitHandler(library, method, docgetter=None):
-    Init = _PythonInitHandler if not _is_java_init(method) else _JavaInitHandler
+    Init = _PythonInitHandler if not utils.is_java_init(method) else _JavaInitHandler
     return Init(library, '__init__', method, docgetter)
 
 
@@ -177,7 +166,7 @@ class _PythonHandler(_RunnableHandler):
         self._doc = utils.getdoc(handler_method)
 
     def _parse_arguments(self, handler_method):
-        return PythonArgumentParser().parse(self.longname, handler_method)
+        return PythonArgumentParser().parse(handler_method, self.longname)
 
 
 class _JavaHandler(_RunnableHandler):
@@ -189,7 +178,7 @@ class _JavaHandler(_RunnableHandler):
 
     def _parse_arguments(self, handler_method):
         signatures = self._get_signatures(handler_method)
-        return JavaArgumentParser().parse(self.longname, signatures)
+        return JavaArgumentParser().parse(signatures, self.longname)
 
     def _get_argument_resolver(self, argspec):
         return ArgumentResolver(argspec, resolve_named=False)
@@ -206,28 +195,21 @@ class _JavaHandler(_RunnableHandler):
 
 class _DynamicHandler(_RunnableHandler):
 
-    def __init__(self, library, handler_name, handler_method, doc='',
+    def __init__(self, library, handler_name, dynamic_method, doc='',
                  argspec=None):
         self._argspec = argspec
-        _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self._run_keyword_method_name = handler_method.__name__
+        _RunnableHandler.__init__(self, library, handler_name,
+                                  dynamic_method.method)
+        self._run_keyword_method_name = dynamic_method.name
         self._doc = doc is not None and utils.unic(doc) or ''
-        # TODO: Extract method. Also store only info are kwargs supported or not.
-        # Check **kwargs handling requirements:
-        self._handler_argspec = DynamicMethodArgumentParser().parse(
-              handler_name, handler_method)
+        self._kwargs_supported = dynamic_method.kwargs_supported
         if argspec and argspec[-1].startswith('**'):
-            # --> Keyword has **kwargs
-            handler_args = self._handler_argspec.positional
-            # --> Handler method needs (self, name, args, kwargs)
-            if len(handler_args) < 3:
-                raise DataError(
-                  "Too few '%s' method parameters"
-                  " for **kwargs support."
-                  % self._run_keyword_method_name)
+            if not self._kwargs_supported:
+                raise DataError("Too few '%s' method parameters for **kwargs "
+                                "support." % self._run_keyword_method_name)
 
     def _parse_arguments(self, handler_method):
-        return DynamicArgumentParser().parse(self.longname, self._argspec)
+        return DynamicArgumentParser().parse(self._argspec, self.longname)
 
     def resolve_arguments(self, arguments, variables=None):
         positional, named = _RunnableHandler.resolve_arguments(self, arguments, variables)
@@ -244,9 +226,7 @@ class _DynamicHandler(_RunnableHandler):
 
     def _get_dynamic_handler(self, runner, name):
         def handler(*positional, **kwargs):
-            # Does the runner have enough parameters for **kwargs support?
-            # (self, name, args, kwargs)
-            if len(self._handler_argspec.positional) > 2:
+            if self._kwargs_supported:
                 return runner(name, positional, kwargs)
             else:
                 return runner(name, positional)
@@ -400,7 +380,7 @@ class _PythonInitHandler(_PythonHandler):
 
     def _parse_arguments(self, handler_method):
         parser = PythonArgumentParser(type='Test Library')
-        return parser.parse(self.library.name, handler_method)
+        return parser.parse(handler_method, self.library.name)
 
 
 class _JavaInitHandler(_JavaHandler):
@@ -419,4 +399,4 @@ class _JavaInitHandler(_JavaHandler):
     def _parse_arguments(self, handler_method):
         parser = JavaArgumentParser(type='Test Library')
         signatures = self._get_signatures(handler_method)
-        return parser.parse(self.library.name, signatures)
+        return parser.parse(signatures, self.library.name)

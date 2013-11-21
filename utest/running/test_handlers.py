@@ -6,7 +6,8 @@ from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
 from robot import utils
 from robot.utils.asserts import *
 from robot.running.testlibraries import TestLibrary
-from robot.running.dynamicmethods import GetKeywordArguments, GetKeywordDocumentation
+from robot.running.dynamicmethods import (
+    GetKeywordArguments, GetKeywordDocumentation, RunKeyword)
 from robot.errors import DataError
 
 from classes import NameLibrary, DocLibrary, ArgInfoLibrary
@@ -193,7 +194,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             lib.run_keyword = lambda name, args: None
         doc = GetKeywordDocumentation(lib)._handle_return_value(doc)
         argspec = GetKeywordArguments(lib)._handle_return_value(argspec)
-        return DynamicHandler(lib, 'mock', lib.run_keyword, doc, argspec)
+        return DynamicHandler(lib, 'mock', RunKeyword(lib), doc, argspec)
 
 
 if utils.is_jython:

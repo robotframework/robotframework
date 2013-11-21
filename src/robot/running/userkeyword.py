@@ -116,8 +116,8 @@ class UserKeywordHandler(object):
         self.teardown = keyword.teardown
         self.libname = libname
         self.doc = self._doc = unicode(keyword.doc)
-        self.arguments = UserKeywordArgumentParser().parse(self.longname,
-                                                           tuple(keyword.args))
+        self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
+                                                           self.longname)
         self._timeout = keyword.timeout
 
     @property
