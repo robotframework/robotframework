@@ -1,3 +1,28 @@
+This is a Robot Framework 2.8.x fork from https://robotframework.googlecode.com
+
+It contains the following feature bookmarks:
+
+https://bitbucket.org/userzimmermann/robotframework/commits/branch/bytes
+
+- Adds a ``Bytes`` Library
+  for creating, manipulating and verifying ``bytearray``s.
+
+https://bitbucket.org/userzimmermann/robotframework/commits/branch/javakwargs
+
+- Supports \**kwargs in Static Java Test Library Keywords
+  via ``java.util.Map`` as last argument.
+
+A separate branch adds Python 3.x compatibility:
+
+https://bitbucket.org/userzimmermann/robotframework/commits/branch/python3
+
+And there is a branch with experimental support for \**kwargs in User Keywords:
+
+https://bitbucket.org/userzimmermann/robotframework/commits/branch/userkwargs
+
+-- Stefan Zimmermann
+
+
 Robot Framework
 ===============
 
