@@ -17,7 +17,7 @@ Write & Read Non-ASCII
 Write & Read Non-ASCII Bytes
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[2].msgs[0]}    echo Hyv\\xc3\\xa4\\xc3\\xa4 y\\xc3\\xb6t\\xc3\\xa4
-    Check Log Message    ${tc.kws[3].msgs[0]}    Hyv\\xc3\\xa4\\xc3\\xa4 y\\xc3\\xb6t\\xc3\\xa4\\r\\n${FULL PROMPT}
+    Check Log Message    ${tc.kws[3].msgs[0]}    Hyv\\xc3\\xa4\\xc3\\xa4 y\\xc3\\xb6t\\xc3\\xa4\n${FULL PROMPT}
 
 Write ASCII-Only Unicode When Encoding Is Disabled
     Check Test Case    ${TEST NAME}
