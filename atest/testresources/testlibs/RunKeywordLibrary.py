@@ -1,6 +1,3 @@
-from robot import utils
-
-
 class RunKeywordLibrary:
     ROBOT_LIBRARY_SCOPE = 'TESTCASE'
 
