@@ -14,3 +14,6 @@ Run Keyword But No Get Keyword Names
 Not Found Keyword
     Check Test Case  ${TESTNAME}
 
+Can use lists instead of arrays in dynamic API
+    Check Test Case  ${TESTNAME}
+
