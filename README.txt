@@ -4,8 +4,8 @@ It contains the following feature bookmarks:
 
 https://bitbucket.org/userzimmermann/robotframework/commits/branch/bytes
 
-- Adds a ``Bytes`` Library
-  for creating, manipulating and verifying ``bytearray``s.
+- Adds a ``Bytes`` Library for creating and verifying byte strings
+  with focus on binary data.
 
 https://bitbucket.org/userzimmermann/robotframework/commits/branch/javakwargs
 
