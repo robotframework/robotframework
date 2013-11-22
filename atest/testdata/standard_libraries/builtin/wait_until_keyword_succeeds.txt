@@ -1,6 +1,6 @@
 ***Settings***
 Library  ExampleLibrary
-Library  FailUntilSucceeds  3
+Library  FailUntilSucceeds.py  3
 
 ***Variables***
 ${HELLO}  Used to test that variable name, not value, is shown in arguments
@@ -10,7 +10,7 @@ ${HELLO}  Used to test that variable name, not value, is shown in arguments
 
 Fail Because Timeout exceeded
     [Documentation]  FAIL  Timeout 1 second 100 milliseconds exceeded. The last error was: Still 0 times to fail!
-    Wait Until Keyword Succeeds  1.1 seconds  1 s 1 ms  Fail Until Retried Often Enough
+    Wait Until Keyword Succeeds  1.1 seconds  555 ms  Fail Until Retried Often Enough
 
 Pass with first Try
     Wait Until Keyword Succeeds  2 minutes  30 seconds  Log  ${HELLO}
