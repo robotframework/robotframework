@@ -4,7 +4,7 @@ Default Tags    regression  pybot  jybot
 Resource        cli_resource.txt
 
 *** Variables ***
-${TIMESTAMP AND LOGLEVEL}   ???????? ??:??:??.??? - * -
+${TIMESTAMP}   ???????? ??:??:??.???
 
 
 *** Test Cases ***
@@ -13,11 +13,17 @@ Debugfile
     Run Tests Without Processing Output  --outputdir=${CLI OUTDIR} --debugfile=DeBug.TXT -o o.xml  ${TESTFILE}
     Output Directory Should Contain  DeBug.TXT  o.xml
     ${content} =  Log File  ${CLI OUTDIR}${/}DeBug.TXT
-    Should Contain  ${content}  + START SUITE: Normal
-    Should Contain  ${content}  +- START TEST: First One
-    Should Match  ${content}  *+-- START KW: BuiltIn.Log [ Test 1 ]\n${TIMESTAMP AND LOGLEVEL} Test 1\n${TIMESTAMP AND LOGLEVEL} +-- END KW: BuiltIn.Log*
-    Should Match  ${content}  *+-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n${TIMESTAMP AND LOGLEVEL} Logging with debug level\n${TIMESTAMP AND LOGLEVEL} +-- END KW: BuiltIn.Log*
-    Should Contain  ${content}  + END SUITE: Normal
+    Debug file should contain    ${content}           + START SUITE: Normal
+    Debug file should contain    ${content}           +- START TEST: First One
+    Debug file should contain    ${content}
+    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Test 1 ]
+    ...      ${TIMESTAMP} - INFO - Test 1
+    ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
+    Debug file should contain    ${content}
+    ...      ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]
+    ...      ${TIMESTAMP} - DEBUG - Logging with debug level
+    ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
+    Debug file should contain    ${content}    + END SUITE: Normal
     Check Syslog Contains  DebugFile: DeBug.TXT
     ${path} =  Set Variable  [:.\\w /\\\\~+-]*DeBug\\.TXT
     Check Stdout Matches Regexp  (?s).*Debug: {3}${path}.*
@@ -26,9 +32,15 @@ Debugfile
 Debugfile Log Level Should Always Be Debug
     [Documentation]  --loglevel option should not affect what's written to debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b debug.txt -o o.xml --loglevel WARN  ${TESTFILE}
-    ${content} =  Log File  ${CLI OUTDIR}${/}debug.txt
-    Should Match  ${content}  *+-- START KW: BuiltIn.Log [ Test 1 ]\n${TIMESTAMP AND LOGLEVEL} Test 1\n${TIMESTAMP AND LOGLEVEL} +-- END KW: BuiltIn.Log*
-    Should Match  ${content}  *+-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n${TIMESTAMP AND LOGLEVEL} Logging with debug level\n${TIMESTAMP AND LOGLEVEL} +-- END KW: BuiltIn.Log*
+    ${content}=     Log file     ${CLI OUTDIR}/debug.txt
+    Debug file should contain    ${content}
+    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Test 1 ]
+    ...    ${TIMESTAMP} - INFO - Test 1
+    ...    ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
+    Debug file should contain    ${content}
+    ...    ${TIMESTAMP} - INFO - +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]
+    ...    ${TIMESTAMP} - DEBUG - Logging with debug level
+    ...    ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
 
 No Debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile NoNe -o o.xml  ${TESTFILE}
@@ -46,3 +58,9 @@ Writing Unicode To Debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile debug -o o.xml  ${UNICODE TEST}
     Directory Should Contain  ${CLI OUTDIR}  debug.txt  o.xml
     Stderr Should Be Empty
+
+*** Keywords ***
+Debugfile should contain
+    [arguments]     ${content}    @{lines}
+    ${expected}=     Catenate   SEPARATOR=\n    @{lines}
+    Should Match    ${content}    *${expected}*
