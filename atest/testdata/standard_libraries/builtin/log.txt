@@ -43,6 +43,15 @@ Log also to console
     Log    Hello, console!    console=yepyep
     Log    ${HTML}    debug    enable both html    and console
 
+Log repr
+    [Setup]    Set Log Level    DEBUG
+    Log    Hyvää yötä \u2603!    repr=True
+    Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
+    ${bytes} =    Evaluate    chr(0) + chr(255)
+    Log    ${bytes}    repr=yes
+    ${list} =    Create List    Hyvä    \u2603    ${42}    ${bytes}
+    Log    ${list}    repr=yes    console=please
+
 Log callable
     Log    ${MyObject}
 
@@ -56,4 +65,3 @@ Log to console
     Log To Console    stderr äö w/ newline    stdERR
     Log To Console    ...line äö   stdout    continue without newlines
     Log To Console    ${42}
-

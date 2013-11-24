@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #  Copyright 2008-2013 Nokia Siemens Networks Oyj
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -1866,7 +1868,7 @@ class _Misc:
             sep = ' '
         return sep.join(items)
 
-    def log(self, message, level='INFO', html=False, console=False):
+    def log(self, message, level='INFO', html=False, console=False, repr=False):
         """Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, and WARN.
@@ -1892,6 +1894,11 @@ class _Misc:
         and adds a newline after the written message. Use `Log To Console`
         instead if either of these is undesirable,
 
+        If the `repr` argument is true, the given item will be passed through
+        Python's `repr()` function before logging it. This is useful, for
+        example, when working with strings or bytes containing invisible
+        characters.
+
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
         | Log | Warning, world!      | WARN     |   | # Warning.               |
@@ -1899,12 +1906,16 @@ class _Misc:
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
         | Log | Hello, console! | console=yes | | # Write also to the console. |
+        | Log | Hyvä \\x00      | repr=yes    | | # Logs `u'Hyv\\xe4 \\x00'`   |
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
 
-        Both `html` and `console` arguments are new in Robot Framework 2.8.2.
+        Arguments `html`, `console`, and `repr` are new in Robot Framework
+        2.8.2.
         """
+        if repr:
+            message = utils.safe_repr(message)
         logger.write(message, level, html)
         if console:
             logger.console(message)
