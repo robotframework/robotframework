@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation   This resource file contains, or imports, all general variables and keywords used by the running side of Robot Framework acceptance tests.
 Library         OperatingSystem
+Library         Process
 Library         Collections
 Library         String
 Library         TestCheckerLibrary
