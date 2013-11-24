@@ -54,9 +54,10 @@ Log repr
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    u'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
     Check Log Message    ${tc.kws[1].msgs[0]}    42    DEBUG
-    Check Log Message    ${tc.kws[3].msgs[0]}    '\\x00\\xff'
-    Check Log Message    ${tc.kws[5].msgs[0]}    [u'Hyv\\xe4', u'\\u2603', 42, '\\x00\\xff']
-    Check Stdout Contains    [u'Hyv\\xe4', u'\\u2603', 42, '\\x00\\xff']
+    ${bytes} =    Set Variable If    not "${IRONPYTHON}"    '\\x00\\xff'    u'\\x00\\xff'
+    Check Log Message    ${tc.kws[3].msgs[0]}    ${bytes}
+    Check Log Message    ${tc.kws[5].msgs[0]}    [u'Hyv\\xe4', u'\\u2603', 42, ${bytes}]
+    Check Stdout Contains    [u'Hyv\\xe4', u'\\u2603', 42, ${bytes}]
 
 Log callable
     ${tc} =    Check Test Case    ${TEST NAME}
