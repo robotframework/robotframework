@@ -330,39 +330,46 @@ class _Converter:
             except AttributeError:
                 raise RuntimeError("Invalid input type '%s'." % input_type)
             return ''.join(chr(o) for o in ordinals(input))
-        except RuntimeError, err:
-            raise RuntimeError("Creating bytes failed: %s" % unicode(err))
+        except:
+            raise RuntimeError("Creating bytes failed: %s"
+                               % utils.get_error_message())
 
     def _get_ordinals_from_text(self, input):
         for char in input:
-            ordinal = ord(char)
-            if ordinal > 255:
-                raise RuntimeError("Character '%s' (ordinal %d) is too big to "
-                                   "be represented as a byte." % (char, ordinal))
-            yield ordinal
+            yield self._test_ordinal(ord(char), char, 'Character')
+
+    def _test_ordinal(self, ordinal, original, type):
+        if 0 <= ordinal <= 255:
+            return ordinal
+        raise RuntimeError("%s '%s' cannot be represented as a byte."
+                           % (type, original))
 
     def _get_ordinals_from_int(self, input):
-        for integer in input.split():
+        if isinstance(input, basestring):
+            input = input.split()
+        elif isinstance(input, (int, long)):
+            input = [input]
+        for integer in input:
             ordinal = self._convert_to_integer(integer)
-            if ordinal > 255:
-                raise RuntimeError("Integer '%s' is too big to be represented "
-                                   "as a byte." % integer)
-            yield ordinal
+            yield self._test_ordinal(ordinal, integer, 'Integer')
 
     def _get_ordinals_from_hex(self, input):
-        return self._get_ordinals(input, base=16, token_length=2)
+        for token in self._input_to_tokens(input, length=2):
+            ordinal = self._convert_to_integer(token, base=16)
+            yield self._test_ordinal(ordinal, token, 'Hex value')
 
     def _get_ordinals_from_bin(self, input):
-        return self._get_ordinals(input, base=2, token_length=8)
+        for token in self._input_to_tokens(input, length=8):
+            ordinal = self._convert_to_integer(token, base=2)
+            yield self._test_ordinal(ordinal, token, 'Binary value')
 
-    def _get_ordinals(self, input, base, token_length):
+    def _input_to_tokens(self, input, length):
+        if not isinstance(input, basestring):
+            return input
         input = ''.join(input.split())
-        if len(input) % token_length != 0:
-            raise RuntimeError('Expected input to be multiple of %d.'
-                               % token_length)
-        for token in (input[i:i+token_length]
-                      for i in xrange(0, len(input), token_length)):
-            yield self._convert_to_integer(token, base)
+        if len(input) % length != 0:
+            raise RuntimeError('Expected input to be multiple of %d.' % length)
+        return (input[i:i+length] for i in xrange(0, len(input), length))
 
     def create_list(self, *items):
         """Returns a list containing given items.

@@ -2,6 +2,14 @@
 Test template    Correct bytes should be created
 Library          String
 
+*** Variables ***
+@{CHAR LIST}     h    y    v    ä    \x00
+@{INT LIST}      0    ${1}    0b10    0o3    0xff
+@{HEX LIST}      0    1    007    ff
+@{BIN LIST}      0    1    111    11111111
+@{BIG LIST}      100000000
+@{SMALL LIST}    -1
+
 *** Test Cases ***
 Default input type is text
     [Template]    NONE
@@ -26,8 +34,11 @@ Non-ASCII string
 
 Non-ASCII above 255 fails
     [Template]    Creating bytes should fail
-    \u0100      text    Character '\u0100' (ordinal 256) is too big to be represented as a byte.
-    \u2603      text    Character '\u2603' (ordinal 9731) is too big to be represented as a byte.
+    \u0100      text    Character '\u0100' cannot be represented as a byte.
+    \u2603      text    Character '\u2603' cannot be represented as a byte.
+
+Characters as a list
+    ${CHAR LIST}    text    104, 121, 118, 228, 0
 
 Byte string
     [Template]    NONE
@@ -52,16 +63,26 @@ Integers with prefixes
     0b10 0o10 10 0x10      int    2, 8, 10, 16
     0b11111111 0o377 0xff  int    255, 255, 255
 
+Integers as list
+    ${INT LIST}    int    0, 1, 2, 3, 255
+
+Integer as integer
+    ${0}     int    0
+    ${42}    int    42
+
 Integers without separators does not work
     [Template]    Creating bytes should fail
-    001007    int    Integer '001007' is too big to be represented as a byte.
+    001007    int    Integer '001007' cannot be represented as a byte.
 
-Too big integers fail
+Too big or small integers
     [Template]    Creating bytes should fail
-    256 1      int    Integer '256' is too big to be represented as a byte.
-    0 0xfff    int    Integer '0xfff' is too big to be represented as a byte.
+    256 1            int    Integer '256' cannot be represented as a byte.
+    0 0xfff          int    Integer '0xfff' cannot be represented as a byte.
+    -1               int    Integer '-1' cannot be represented as a byte.
+    ${BIG LIST}      int    Integer '100000000' cannot be represented as a byte.
+    ${SMALL LIST}    int    Integer '-1' cannot be represented as a byte.
 
-Invalid integers fail
+Invalid integers
     [Template]    Creating bytes should fail
     hello 1      int    'hello' cannot be converted to an integer: ValueError: *
     0 0xa 0ba    int    '0ba' cannot be converted to an integer: ValueError: *
@@ -84,7 +105,15 @@ Hex requires even input
     abc     hex    Expected input to be multiple of 2.
     ab c    hex    Expected input to be multiple of 2.
 
-Invalid hex fail
+Hex as list
+    ${HEX LIST}    hex    0, 1, 7, 255
+
+Too big or small hex
+    [Template]    Creating bytes should fail
+    ${BIG LIST}      hex    Hex value '100000000' cannot be represented as a byte.
+    ${SMALL LIST}    hex    Hex value '-1' cannot be represented as a byte.
+
+Invalid hex
     [Template]    Creating bytes should fail
     ff hello!    hex     'he' cannot be converted to an integer: ValueError: *
 
@@ -103,10 +132,18 @@ Binary requires input to be multiple of 8
     00000000111111110    bin    Expected input to be multiple of 8.
     0000 0000 1111       bin    Expected input to be multiple of 8.
 
-Invalid binary fail
+Binary as list
+    ${BIN LIST}    bin    0, 1, 7, 255
+
+Invalid binary
     [Template]    Creating bytes should fail
     hello!!!            bin    'hello!!!' cannot be converted to an integer: ValueError: *
     0000000100000002    bin    '00000002' cannot be converted to an integer: ValueError: *
+
+Too big or small binary
+    [Template]    Creating bytes should fail
+    ${BIG LIST}         bin    Binary value '100000000' cannot be represented as a byte.
+    ${SMALL LIST}       bin    Binary value '-1' cannot be represented as a byte.
 
 *** Keywords ***
 Correct bytes should be created
