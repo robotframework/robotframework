@@ -1,5 +1,4 @@
 *** Settings ***
-Library         OperatingSystem
 Resource        atest_resource.txt
 
 *** Keywords ***
@@ -11,17 +10,15 @@ Run if dependencies are available
 Make Suite Non-critical And Fail It If Screenshot dependencies are not installed
     ${dependencies} =     Are Screenshot dependencies available
     Run Keyword If    not ${dependencies}    Fail
-    ...   This suite is made non-critical and not executed because Screenshot library's dependencies are not installed.
+    ...   This suite is made non-critical and not executed because Screenshot library's dependencies are not installed or tests are run without display.
     ...   -regression
 
 Are Screenshot dependencies available
-    ${dependencies} =   Run keyword if    '${JYTHON}' or '${IRONPYTHON}'
-    ...    Set variable    ${TRUE}
-    ...    ELSE
-    ...    Interpreter has screenshot dependencies
-    [return]     ${dependencies}
-
-Interpreter has screenshot dependencies
     ${lib} =    Normalize Path    ${ROBOT PATH}/libraries/Screenshot.py
-    ${output} =   Run  ${INTERPRETER} "${lib}" test
-    [return]    ${output == 'OK'}
+    ${jpg} =    Normalize Path    %{TEMPDIR}/test-screenshot.jpg
+    ${ppath}    ${_} =    Split Path    ${ROBOT PATH}
+    ${result} =    Run Process   ${INTERPRETER}    ${lib}    test    ${jpg}    stderr=STDOUT
+    ...    env:JYTHONPATH=${ppath}    env:IRONPYTHONPATH=${ppath}    shell=true
+    Log    ${result.stdout}
+    [teardown]    Remove File    ${jpg}
+    [return]    ${result.rc == 0}

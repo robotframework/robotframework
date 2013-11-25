@@ -1596,31 +1596,31 @@ The dynamic API is in most ways similar to the static API. For
 example, reporting the keyword status, logging, and returning values
 works exactly the same way. Most importantly, there are no differences
 in importing dynamic libraries and using their keywords compared to
-other libraries, so you do not even need to know what APIs the
+other libraries, so users do not even need to know what APIs their
 libraries use.
 
-The only difference between static and dynamic libraries is the way
-how Robot Framework discovers what keywords the library implements,
-what arguments and documentation they have and how those keywords are
-actually executed. With the static API, all this is done using
-reflection (except for the documentation of Java libraries), but
-dynamic libraries have special methods that are used for these
+Only differences between static and dynamic libraries are
+how Robot Framework discovers what keywords a library implements,
+what arguments and documentation these keywords have, and how the
+keywords are actually executed. With the static API, all this is
+done using reflection (except for the documentation of Java libraries),
+but dynamic libraries have special methods that are used for these
 purposes.
 
 One of the benefits of the dynamic API is that you have more
 flexibility in organizing your library. With the static API, you have all
 keywords in one class (or module), whereas with the dynamic API, you can,
-for example, implement each keyword as a separate class, if you
-want. This use case is not so important with Python, because
-its dynamic capabilities and multi-inheritance already give plenty of
-flexibility and the `hybrid library API`_ is usually a better option.
+for example, implement each keyword as a separate class. This use case is
+not so important with Python, because its dynamic capabilities and
+multi-inheritance already give plenty of flexibility and the
+`hybrid library API`_ is often a better option.
 
 Another major use case for the dynamic API is implementing a library
-so that it is only a proxy for an actual library on some other
-computer or another JVM. This kind of a proxy library can be very
-thin, and because keyword names are got dynamically, there is no
-need to update the proxy when new keywords are added into the actual
-library.
+so that it works as proxy for an actual library possibly running on
+some other process or even on another computer. This kind of a proxy
+library can be very thin, and because keyword names and all other
+information is got dynamically, there is no need to update the proxy
+when new keywords are added to the actual library.
 
 This section explains how the dynamic API works between Robot
 Framework and dynamic libraries. It does not matter for Robot
@@ -1637,21 +1637,20 @@ Getting keyword names
 
 Dynamic libraries tell what keywords they implement with the
 :code:`get_keyword_names` method. The method also has the alias
-:code:`getKeywordNames` that is recommended when writing Java. This
-method cannot take any arguments, and it must return a list of strings
-(in Python) or a string array (in Java) containing the names of the
-keywords that the library implements.
+:code:`getKeywordNames` that is recommended when using Java. This
+method cannot take any arguments, and it must return a list or array
+of strings containing the names of the keywords that the library implements.
 
 If the returned keyword names contain several words, they can be returned
 separated with spaces or underscores, or in the camelCase format. For
 example, :code:`['first keyword', 'second keyword']`,
 :code:`['first_keyword', 'second_keyword']`, and
-:code:`['firstKeyword', 'secondKeyword']` would all result in the keywords
+:code:`['firstKeyword', 'secondKeyword']` would all be mapped to keywords
 :name:`First Keyword` and :name:`Second Keyword`.
 
 Dynamic libraries must always have this method. If it is missing, or
 if calling it fails for some reason, the library is considered a
-static library, instead.
+static library.
 
 Running keywords
 ''''''''''''''''
@@ -1663,18 +1662,15 @@ Framework uses the library's :code:`run_keyword` method to get it
 executed. This method takes two or three arguments. The first argument is a
 string containing the name of the keyword to be executed in the same
 format as returned by :code:`get_keyword_names`. The second argument is
-a list of arguments (an object array in Java) given to the keyword in
-the test data.
+a list of arguments given to the keyword in the test data.
 
-The optional third argument is a dictionary
-(in Java the :code:`org.python.core.PyDictionary` class can be used).
-It gets all :code:`name=value` arguments given to the keyword
-which can't be mapped to the keyword's positional argument names.
-See the sections about `getting keyword arguments`_
+The optional third argument is a dictionary (map in Java) that gets
+possible gets possible `free keyword arguments`_ (a.k.a. `**kwargs`)
+passed to the keyword. See the sections about `getting keyword arguments`_
 and `named argument syntax with dynamic libraries`_ for more details.
 
-After the library has got the keyword name and arguments, it can
-execute the keyword freely, but it must use the same mechanism to
+After getting keyword name and arguments, the library can execute
+the keyword freely, but it must use the same mechanism to
 communicate with the framework as static libraries. This
 means using exceptions for reporting keyword status, logging by
 writing to the standard output and using the return statement in
@@ -1693,7 +1689,7 @@ trivial) dynamic library.
            return ['first keyword', 'second keyword']
 
        def run_keyword(self, name, args):
-           print "Running keyword %s with arguments %s" % (name, args)
+           print "Running keyword %s with arguments %s." % (name, args)
 
 Getting keyword arguments
 '''''''''''''''''''''''''
@@ -1709,54 +1705,52 @@ themselves.
 
 Dynamic libraries can tell Robot Framework what arguments the keywords
 it implements expect by using the :code:`get_keyword_arguments`
-(alias :code:`getKeywordArguments`)
-method. This method takes the name of a keyword as an argument, and returns a
-list of strings (a string array in Java) containing the arguments
-accepted by that keyword.
+(alias :code:`getKeywordArguments`) method. This method takes the name
+of a keyword as an argument, and returns a list or array of strings
+containing the arguments accepted by that keyword.
 
 Similarly as static keywords, dynamic keywords can require any number
-of arguments, have default values and accept a variable number of
-arguments and `named arguments`__. The syntax for how to represent
-all these different situations is explained in the following table.
+of arguments, have default values, and accept variable number of
+arguments and free keyword arguments. The syntax for how to represent
+all these different variables is explained in the following table.
 Note that the examples use Python lists of strings, but Java developers
-should be able to translate them to string arrays.
+should be able to translate them to Java lists or arrays.
 
 .. table:: Representing different arguments with :code:`get_keyword_arguments`
    :class: tabular
 
-   +--------------------+-----------------------------+-----------------------------------+-------+
-   |    Expected        |      How to represent       |            Examples               | Min / |
-   |    arguments       |                             |                                   | Max   |
-   +====================+=============================+===================================+=======+
-   | No arguments       | Empty list.                 | :code:`[]`                        | 0/0   |
-   +--------------------+-----------------------------+-----------------------------------+-------+
-   | One or more        | List of strings containing  | :code:`['one_argument']`,         | 1/1,  |
-   | argument           | argument names.             | :code:`['a1', 'a2', 'a3']`        | 3/3   |
-   +--------------------+-----------------------------+-----------------------------------+-------+
-   | Default values     | Default values separated    | :code:`['arg=default value']`,    | 0/1,  |
-   | for arguments      | from names with :code:`=`.  | :code:`['a', 'b=1', 'c=2']`       | 1/3   |
-   |                    | Default values are always   |                                   |       |
-   |                    | considered to be strings.   |                                   |       |
-   +--------------------+-----------------------------+-----------------------------------+-------+
-   | Variable number    | Last argument has           | :code:`['*arguments']`,           | 0/any,|
-   | of arguments       | :code:`*` before its name.  | :code:`['a', 'b=42', '*rest']`    | 1/any |
-   +--------------------+-----------------------------+-----------------------------------+-------+
-   | Variable number    | Last arguments has          | :code:`['**named_arguments']`     | 0/any |
-   | of named arguments | :code:`**` before its name. | :code:`['a', '*rest', '**named']` | 1/any |
-   +--------------------+-----------------------------+-----------------------------------+-------+
+   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
+   |    Expected        |      How to represent       |            Examples             | Argument limits | ``**kwargs`` |
+   |    arguments       |                             |                                 | (min/max)       | supported    |
+   +====================+=============================+=================================+=================+==============+
+   | No arguments       | Empty list.                 | :code:`[]`                      | 0/0             | no           |
+   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
+   | One or more        | List of strings containing  | :code:`['one_argument']`,       | 1/1, 3/3        | no           |
+   | argument           | argument names.             | :code:`['a1', 'a2', 'a3']`      |                 |              |
+   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
+   | Default values     | Default values separated    | :code:`['arg=default value']`,  | 0/1, 1/3        | no           |
+   | for arguments      | from names with :code:`=`.  | :code:`['a', 'b=1', 'c=2']`     |                 |              |
+   |                    | Default values are always   |                                 |                 |              |
+   |                    | considered to be strings.   |                                 |                 |              |
+   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
+   | Variable number    | Last (or second last)       | :code:`['*varargs']`,           | 0/any, 1/any    | no           |
+   | of arguments       | argument has :code:`*`      | :code:`['a', 'b=42', '*rest']`  |                 |              |
+   | (``*varargs``)     | before its name.            |                                 |                 |              |
+   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
+   | Free keyword       | Last arguments has          | :code:`['**kwargs']`,           | 0/0, 1/2, 0/any | yes          |
+   | arguments          | :code:`**` before its name. | :code:`['a', 'b=42', '**kws']`, |                 |              |
+   | (``**kwargs``)     |                             | :code:`['*args', '**kws']`      |                 |              |
+   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
 
-When the :code:`get_keyword_arguments` is used, Robot Framework
-automatically calculates how many arguments the keywords require. If a
-keyword is used with an invalid number of arguments, an error occurs
-and :code:`run_keyword` is not even called. The last column of the
-table above shows the minimum and maximum argument counts calculated
-from the presented examples.
+When the :code:`get_keyword_arguments` is used, Robot Framework automatically
+calculates how many positional arguments the keyword requires and does it
+support free keyword arguments or not. If a keyword is used with invalid
+arguments, an error occurs and :code:`run_keyword` is not even called.
 
-The actual names and default values that are returned are also important.
-They are needed for `named argument support`__ and the Libdoc_ tool needs
-them to be able to create a meaningful library documentation.
+The actual argument names and default values that are returned are also
+important. They are needed for `named argument support`__ and the Libdoc_
+tool needs them to be able to create a meaningful library documentation.
 
-__ `Named argument syntax with dynamic libraries`_
 __ `Named argument syntax with dynamic libraries`_
 
 Getting keyword documentation
@@ -1794,8 +1788,7 @@ Python based dynamic libraries can also specify the general library
 documentation directly in the code as the docstring of the library
 class and its :code:`__init__` method. If a non-empty documentation is
 got both directly from the code and from the
-:code:`get_keyword_documentation` method, the latter has higher
-priority.
+:code:`get_keyword_documentation` method, the latter has precedence.
 
 .. note:: Getting general library documentation is supported in Robot
           Framework 2.6.2 and newer.

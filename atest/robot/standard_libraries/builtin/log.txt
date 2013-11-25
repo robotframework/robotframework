@@ -50,6 +50,15 @@ Log also to console
     Check Stdout Contains    Hello, console!\n
     Check Stdout Contains    ${HTML}\n
 
+Log repr
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    u'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
+    Check Log Message    ${tc.kws[1].msgs[0]}    42    DEBUG
+    ${bytes} =    Set Variable If    not "${IRONPYTHON}"    '\\x00\\xff'    u'\\x00\\xff'
+    Check Log Message    ${tc.kws[3].msgs[0]}    ${bytes}
+    Check Log Message    ${tc.kws[5].msgs[0]}    [u'Hyv\\xe4', u'\\u2603', 42, ${bytes}]
+    Check Stdout Contains    [u'Hyv\\xe4', u'\\u2603', 42, ${bytes}]
+
 Log callable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    objects_for_call_method.MyObject
@@ -70,3 +79,4 @@ Log To Console
     Check Stdout Contains    stdout äö w/o new......line äö
     Check Stderr Contains    stderr äö w/ newline\n
     Check Stdout Contains    42
+

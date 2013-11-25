@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #  Copyright 2008-2013 Nokia Siemens Networks Oyj
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -290,6 +292,76 @@ class _Converter:
             if utils.eq(item, 'False'):
                 return False
         return bool(item)
+
+    def convert_to_bytes(self, input, input_type='text'):
+        """Converts the given `input` to bytes according to the `input_type`.
+
+        Valid input types are listed in the table below.
+
+        | = Type = |              = Explanation =                            |
+        | text     | Converts text to bytes character by character. Default. |
+        | int      | Converts integers to bytes.                             |
+        | hex      | Converts hexadecimal numbers to bytes.                  |
+        | bin      | Converts binary numbers to bytes.                       |
+
+        With all numerical types, multiple bytes can be created by separating
+        numbers using whitespace. Numbers can also be joined together, but in
+        that case they must be zero padded so that individual numbers have
+        lengths 3 (int), 2 (hex), or 8 (bin).
+
+        Examples (last column shows returned bytes):
+        | ${bytes} = | Convert To Bytes | hyvä       |     | # hyv\\xe4        |
+        | ${bytes} = | Convert To Bytes | \\xff\\x07 |     | # \\xff\\x07      |
+        | ${bytes} = | Convert To Bytes | 82 70      | int | # RF              |
+        | ${bytes} = | Convert To Bytes | 255007     | int | # \\xff\\x07      |
+        | ${bytes} = | Convert To Bytes | 52 46      | hex | # RF              |
+        | ${bytes} = | Convert To Bytes | ff0007     | hex | # \\xff\\x00\\x07 |
+        | ${bytes} = | Convert To Bytes | 10 111     | bin | # \\x02\\x07      |
+        | ${bytes} = | Convert To Bytes | 0000001000000111 | bin | # \\x02\\x07 |
+
+        Use `Encode String To Bytes` in `String` library if you need to convert
+        text to bytes using a certain encoding.
+
+        New in Robot Framework 2.8.2.
+        """
+        try:
+            try:
+                ordinals = getattr(self, '_get_ordinals_from_%s' % input_type)
+            except AttributeError:
+                raise DataError("Invalid input type '%s'." % input_type)
+            return ''.join(chr(o) for o in ordinals(input))
+        except (DataError, RuntimeError), err:
+            raise RuntimeError("Creating bytes failed: %s" % unicode(err))
+
+    def _get_ordinals_from_text(self, input):
+        for char in input:
+            ordinal = ord(char)
+            if ordinal > 255:
+                raise DataError("Character '%s' (ordinal %s) is too big to be "
+                                "represented as a byte." % (char, hex(ordinal)))
+            yield ordinal
+
+    def _get_ordinals_from_int(self, input):
+        for token in input.split():
+            ordinal = self._convert_to_integer(token)
+            if ordinal > 255:
+                raise DataError("Integer '%s' is too big to be represented "
+                                "as a byte." % token)
+            yield ordinal
+
+    def _get_ordinals_from_hex(self, input):
+        return self._get_ordinals(input, base=16, token_length=2)
+
+    def _get_ordinals_from_bin(self, input):
+        return self._get_ordinals(input, base=2, token_length=8)
+
+    def _get_ordinals(self, input, base, token_length):
+        input = ''.join(input.split())
+        if len(input) % token_length != 0:
+            raise DataError('Expected input to be multiple of %d.' % token_length)
+        for token in (input[i:i+token_length]
+                      for i in xrange(0, len(input), token_length)):
+            yield self._convert_to_integer(token, base)
 
     def create_list(self, *items):
         """Returns a list containing given items.
@@ -1866,7 +1938,7 @@ class _Misc:
             sep = ' '
         return sep.join(items)
 
-    def log(self, message, level='INFO', html=False, console=False):
+    def log(self, message, level='INFO', html=False, console=False, repr=False):
         """Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, and WARN.
@@ -1892,6 +1964,11 @@ class _Misc:
         and adds a newline after the written message. Use `Log To Console`
         instead if either of these is undesirable,
 
+        If the `repr` argument is true, the given item will be passed through
+        Python's `repr()` function before logging it. This is useful, for
+        example, when working with strings or bytes containing invisible
+        characters.
+
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
         | Log | Warning, world!      | WARN     |   | # Warning.               |
@@ -1899,12 +1976,16 @@ class _Misc:
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
         | Log | Hello, console! | console=yes | | # Write also to the console. |
+        | Log | Hyvä \\x00      | repr=yes    | | # Logs `u'Hyv\\xe4 \\x00'`   |
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
 
-        Both `html` and `console` arguments are new in Robot Framework 2.8.2.
+        Arguments `html`, `console`, and `repr` are new in Robot Framework
+        2.8.2.
         """
+        if repr:
+            message = utils.safe_repr(message)
         logger.write(message, level, html)
         if console:
             logger.console(message)

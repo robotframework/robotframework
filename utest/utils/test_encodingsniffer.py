@@ -6,8 +6,10 @@ from robot.utils.encodingsniffer import get_output_encoding
 from robot.utils.asserts import assert_equals, assert_not_none
 
 
-ON_BUGGY_JYTHON = os.sep == '\\' and (sys.platform.startswith('java1.5') or
-                                      sys.version_info < (2, 5, 2))
+ON_BUGGY_JYTHON = (sys.platform.startswith('java') and
+                   os.sep == '\\' and
+                   (sys.platform.startswith('java1.5') or
+                    sys.version_info < (2, 5, 2)))
 
 
 class StreamStub(object):

@@ -24,7 +24,6 @@ if UNIXY:
     DEFAULT_SYSTEM_ENCODING = 'UTF-8'
     DEFAULT_OUTPUT_ENCODING = 'UTF-8'
 else:
-    # These should never be needed anymore.
     DEFAULT_SYSTEM_ENCODING = 'cp1252'
     DEFAULT_OUTPUT_ENCODING = 'cp437'
 
@@ -88,14 +87,20 @@ def _get_stream_output_encoding():
 
 def _get_windows_system_encoding():
     from ctypes import cdll
-    cdll.kernel32.GetACP.argtypes = ()  # needed w/ jython (at least 2.5)
-    return 'cp%s' % cdll.kernel32.GetACP()
+    return _call_ctypes(cdll.kernel32.GetACP)
 
 
 def _get_windows_output_encoding():
     from ctypes import cdll
-    cdll.kernel32.GetOEMCP.argtypes = ()  # needed w/ jython (at least 2.5)
-    return 'cp%s' % cdll.kernel32.GetOEMCP()
+    return _call_ctypes(cdll.kernel32.GetOEMCP)
+
+
+def _call_ctypes(method):
+    method.argtypes = ()  # needed w/ jython (at least 2.5)
+    try:
+        return 'cp%s' % method()
+    except Exception:  # Has failed on IronPython at least once
+        return None
 
 
 def _is_valid(encoding):
