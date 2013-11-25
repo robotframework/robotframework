@@ -1,11 +1,6 @@
 This is a Robot Framework 2.8.x fork from https://robotframework.googlecode.com
 
-It contains the following feature bookmarks:
-
-https://bitbucket.org/userzimmermann/robotframework/commits/branch/bytes
-
-- Adds a ``Bytes`` Library for creating and verifying byte strings
-  with focus on binary data.
+It currently contains the following feature bookmarks:
 
 https://bitbucket.org/userzimmermann/robotframework/commits/branch/javakwargs
 
