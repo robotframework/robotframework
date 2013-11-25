@@ -25,10 +25,13 @@ Byte string
 Integers
     Check Test Case    ${TESTNAME}
 
-Integers without separator works
+Any whitespace as integer separator
     Check Test Case    ${TESTNAME}
 
-Integers without separator requires input to be multiple of 3
+Integers with prefixes
+    Check Test Case    ${TESTNAME}
+
+Integers without separators does not work
     Check Test Case    ${TESTNAME}
 
 Too big integers fail
@@ -37,35 +40,26 @@ Too big integers fail
 Invalid integers fail
     Check Test Case    ${TESTNAME}
 
-Hex
+Hex without whitespace
     Check Test Case    ${TESTNAME}
 
-Hex without separator works
+Hex with whitespace
     Check Test Case    ${TESTNAME}
 
-Hex without separator requires even input
-    Check Test Case    ${TESTNAME}
-
-Too big hex fail
+Hex requires even input
     Check Test Case    ${TESTNAME}
 
 Invalid hex fail
     Check Test Case    ${TESTNAME}
 
-Binary
+Binary without spaces
     Check Test Case    ${TESTNAME}
 
-Binary without separator works
+Binary with whitespace
     Check Test Case    ${TESTNAME}
 
-Binary without separator requires input to be multiple of 8
-    Check Test Case    ${TESTNAME}
-
-Too big binary fail
+Binary requires input to be multiple of 8
     Check Test Case    ${TESTNAME}
 
 Invalid binary fail
-    Check Test Case    ${TESTNAME}
-
-Any whitesapce works as separator
     Check Test Case    ${TESTNAME}

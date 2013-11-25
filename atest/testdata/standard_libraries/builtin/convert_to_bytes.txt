@@ -41,73 +41,72 @@ Integers
     104 101 108 108 111    int    104, 101, 108, 108, 111
     0 1 2 3 4              int    0, 1, 2, 3, 4
 
-Integers without separator works
-    000001007    int    0, 1, 7
-    123255       int    123, 255
+Any whitespace as integer separator
+    0\t255                 int    0, 255
+    0\n1${SPACE*5}2\r33    int    0, 1, 2, 33
 
-Integers without separator requires input to be multiple of 3
+Integers with prefixes
+    0b111 0B0010           int    7, 2
+    0o111 0O0010           int    73, 8
+    0xF 0X0f               int    15, 15
+    0b10 0o10 10 0x10      int    2, 8, 10, 16
+    0b11111111 0o377 0xff  int    255, 255, 255
+
+Integers without separators does not work
     [Template]    Creating bytes should fail
-    1234       int    Expected input to be multiple of 3.
-    1234457    int    Expected input to be multiple of 3.
+    001007    int    Integer '001007' is too big to be represented as a byte.
 
 Too big integers fail
     [Template]    Creating bytes should fail
-    1000 1    int    Integer '1000' in base 10 is too big to be represented as a byte.
-    0 256     int    Integer '256' in base 10 is too big to be represented as a byte.
+    256 1      int    Integer '256' is too big to be represented as a byte.
+    0 0xfff    int    Integer '0xfff' is too big to be represented as a byte.
 
 Invalid integers fail
     [Template]    Creating bytes should fail
-    hello 1    int    Cannot convert 'hello' to an integer in base 10.
-    0 1 a      int    Cannot convert 'a' to an integer in base 10.
+    hello 1      int    'hello' cannot be converted to an integer: ValueError: *
+    0 0xa 0ba    int    '0ba' cannot be converted to an integer: ValueError: *
 
-Hex
-    a                 hex    10
-    aA                hex    170
-    68 65 6c 6C 6f    hex    104, 101, 108, 108, 111
-    0 1 2 ff          hex    0, 1, 2, 255
+Hex without whitespace
+    0a                 hex    10
+    aBbA               hex    171, 186
+    000102ff           hex    0, 1, 2, 255
+    68656c6C6f         hex    104, 101, 108, 108, 111
 
-Hex without separator works
-    68656c6C6f    hex    104, 101, 108, 108, 111
-    000102FF      hex    0, 1, 2, 255
+Hex with whitespace
+    68 65 6c 6C 6f     hex    104, 101, 108, 108, 111
+    6865 6c6C 6f       hex    104, 101, 108, 108, 111
+    6 8 6 5 6 c 6 C    hex    104, 101, 108, 108
+    01\t02\n\r03       hex    1, 2, 3
+    f${SPACE*10}f      hex    255
 
-Hex without separator requires even input
+Hex requires even input
     [Template]    Creating bytes should fail
-    abc    hex    Expected input to be multiple of 2.
-
-Too big hex fail
-    [Template]    Creating bytes should fail
-    ffF f    hex    Integer 'ffF' in base 16 is too big to be represented as a byte.
-    0 100    hex    Integer '100' in base 16 is too big to be represented as a byte.
+    abc     hex    Expected input to be multiple of 2.
+    ab c    hex    Expected input to be multiple of 2.
 
 Invalid hex fail
     [Template]    Creating bytes should fail
-    ff hello    hex     Cannot convert 'hello' to an integer in base 16.
-Binary
-    0                                bin   0
-    0 1 10 11 100 101 110 111        bin   0, 1, 2, 3, 4, 5, 6, 7
-    00000000 00001111 11111111       bin   0, 15, 255
-    00 01 10 11 100                  bin   0, 1, 2, 3, 4
+    ff hello!    hex     'he' cannot be converted to an integer: ValueError: *
 
-Binary without separator works
-    000000001111111101111111    bin    0, 255, 127
+Binary without spaces
+    00000000                     bin   0
+    0000000000000001             bin   0, 1
+    000000110000111111111111     bin   3, 15, 255
 
-Binary without separator requires input to be multiple of 8
+Binary with whitespace
+    0000 0000                    bin   0
+    00 00 00 00 00 00 00 01      bin   0, 1
+    0 0 0 0 0 0 1 1 0000 1111    bin   3, 15
+
+Binary requires input to be multiple of 8
     [Template]    Creating bytes should fail
     00000000111111110    bin    Expected input to be multiple of 8.
-
-Too big binary fail
-    [Template]    Creating bytes should fail
-    1 100000000    bin    Integer '100000000' in base 2 is too big to be represented as a byte.
+    0000 0000 1111       bin    Expected input to be multiple of 8.
 
 Invalid binary fail
     [Template]    Creating bytes should fail
-    hello    bin    Cannot convert 'hello' to an integer in base 2.
-    0 2      bin    Cannot convert '2' to an integer in base 2.
-
-Any whitesapce works as separator
-    0\t1\n2\r3       int    0, 1, 2, 3
-    a${SPACE*10}b    hex    10, 11
-    0\t\t\t1         bin    0, 1
+    hello!!!    bin    'hello!!!' cannot be converted to an integer: ValueError: *
+    00000002    bin    '00000002' cannot be converted to an integer: ValueError: *
 
 *** Keywords ***
 Correct bytes should be created

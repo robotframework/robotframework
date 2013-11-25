@@ -330,7 +330,7 @@ class _Converter:
             except AttributeError:
                 raise DataError("Invalid input type '%s'." % input_type)
             return ''.join(chr(o) for o in ordinals(input))
-        except DataError, err:
+        except (DataError, RuntimeError), err:
             raise RuntimeError("Creating bytes failed: %s" % unicode(err))
 
     def _get_ordinals_from_text(self, input):
@@ -341,32 +341,27 @@ class _Converter:
                                 "represented as a byte." % (char, hex(ordinal)))
             yield ordinal
 
-    def _get_ordinals_from_int(self, input, base=10, token_length=3):
-        for token in self._split_to_tokens(input, token_length):
-            try:
-                ordinal = int(token, base)
-            except ValueError:
-                raise DataError("Cannot convert '%s' to an integer in base %d."
-                                % (token, base))
+    def _get_ordinals_from_int(self, input):
+        for token in input.split():
+            ordinal = self._convert_to_integer(token)
             if ordinal > 255:
-                raise DataError("Integer '%s' in base %d is too big to be "
-                                "represented as a byte." % (token, base))
+                raise DataError("Integer '%s' is too big to be represented "
+                                "as a byte." % token)
             yield ordinal
 
     def _get_ordinals_from_hex(self, input):
-        return self._get_ordinals_from_int(input, base=16, token_length=2)
+        return self._get_ordinals(input, base=16, token_length=2)
 
     def _get_ordinals_from_bin(self, input):
-        return self._get_ordinals_from_int(input, base=2, token_length=8)
+        return self._get_ordinals(input, base=2, token_length=8)
 
-    def _split_to_tokens(self, input, token_length):
-        tokens = input.split()
-        length = len(input)
-        if len(tokens) > 1 or length < token_length:
-            return tokens
-        if length % token_length != 0:
+    def _get_ordinals(self, input, base, token_length):
+        input = ''.join(input.split())
+        if len(input) % token_length != 0:
             raise DataError('Expected input to be multiple of %d.' % token_length)
-        return (input[i:i+token_length] for i in xrange(0, length, token_length))
+        for token in (input[i:i+token_length]
+                      for i in xrange(0, len(input), token_length)):
+            yield self._convert_to_integer(token, base)
 
     def create_list(self, *items):
         """Returns a list containing given items.
