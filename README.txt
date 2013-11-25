@@ -2,6 +2,11 @@ This is a Robot Framework 2.8.x fork from https://robotframework.googlecode.com
 
 It currently contains the following feature bookmarks:
 
+https://bitbucket.org/userzimmermann/robotframework/commits/branch/javavarargs
+
+- Supports ``java.util.List`` for \*varargs argument
+  in Static Java Test Library Keywords
+
 https://bitbucket.org/userzimmermann/robotframework/commits/branch/javakwargs
 
 - Supports \**kwargs in Static Java Test Library Keywords
