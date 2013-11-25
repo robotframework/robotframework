@@ -67,12 +67,12 @@ class _Converter:
         integer in base 10. Starting from Robot Framework 2.6 there are two
         ways to convert from other bases:
 
-        1) Give base explicitly to the keyword as `base` argument.
+        - Give base explicitly to the keyword as `base` argument.
 
-        2) Prefix the given string with the base so that `0b` means binary
-        (base 2), `0o` means octal (base 8), and `0x` means hex (base 16).
-        The prefix is considered only when `base` argument is not given and
-        may itself be prefixed with a plus or minus sign.
+        - Prefix the given string with the base so that `0b` means binary
+          (base 2), `0o` means octal (base 8), and `0x` means hex (base 16).
+          The prefix is considered only when `base` argument is not given and
+          may itself be prefixed with a plus or minus sign.
 
         The syntax is case-insensitive and possible spaces are ignored.
 
@@ -234,8 +234,10 @@ class _Converter:
         Notice that machines generally cannot store floating point numbers
         accurately. This may cause surprises with these numbers in general
         and also when they are rounded. For more information see, for example,
-        this floating point arithmetic tutorial:
-        http://docs.python.org/tutorial/floatingpoint.html
+        these resources:
+
+        - http://docs.python.org/2/tutorial/floatingpoint.html
+        - http://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition
 
         If you need an integer number, use `Convert To Integer` instead.
         """
@@ -264,8 +266,8 @@ class _Converter:
     def convert_to_string(self, item):
         """Converts the given item to a Unicode string.
 
-        Uses '__unicode__' or '__str__' method with Python objects and
-        'toString' with Java objects.
+        Uses `__unicode__` or `__str__` method with Python objects and
+        `toString` with Java objects.
 
         Use `Encode String To Bytes` and `Decode Bytes To String` keywords
         in `String` library if you need to convert between Unicode and byte
@@ -280,10 +282,10 @@ class _Converter:
     def convert_to_boolean(self, item):
         """Converts the given item to Boolean true or false.
 
-        Handles strings 'True' and 'False' (case-insensitive) as expected,
-        otherwise returns item's truth value using Python's 'bool' method.
-        For more information about truth values, see
-        http://docs.python.org/lib/truth.html.
+        Handles strings `True` and `False` (case-insensitive) as expected,
+        otherwise returns item's
+        [http://docs.python.org/2/library/stdtypes.html#truth|truth value]
+        using Python's `bool` method.
         """
         self._log_types(item)
         if isinstance(item, basestring):
@@ -374,9 +376,8 @@ class _Converter:
     def create_list(self, *items):
         """Returns a list containing given items.
 
-        The returned list can be assigned both to ${scalar} and @{list}
-        variables. The earlier can be used e.g. with Java keywords expecting
-        an array as an argument.
+        The returned list can be assigned both to `${scalar}` and `@{list}`
+        variables.
 
         Examples:
         | @{list} =   | Create List | a    | b    | c    |
@@ -451,13 +452,13 @@ class _Verify:
     def should_be_true(self, condition, msg=None):
         """Fails if the given condition is not true.
 
-        If `condition` is a string (e.g. '${rc} < 10'), it is evaluated as a
-        Python expression using the built-in 'eval' function and the keyword
+        If `condition` is a string (e.g. `${rc} < 10`), it is evaluated as a
+        Python expression using the built-in `eval` function and the keyword
         status is decided based on the result. If a non-string item is given,
-        the status is got directly from its truth value as explained at
-        http://docs.python.org/lib/truth.html.
+        the status is got directly from its
+        [http://docs.python.org/2/library/stdtypes.html#truth|truth value].
 
-        The default error message ('<condition> should be true') is not very
+        The default error message (`<condition> should be true`) is not very
         informative, but it can be overridden with the `msg` argument.
 
         Examples:
@@ -467,12 +468,14 @@ class _Verify:
         | Should Be True | ${list}     | # Passes if ${list} is not empty  |
 
         Starting from Robot Framework 2.8, `Should Be True` automatically
-        imports Python's os- and sys-modules:
+        imports Python's [http://docs.python.org/2/library/os.html|os] and
+        [http://docs.python.org/2/library/sys.html|sys] modules that contain
+        several useful attributes:
 
-        | Should Be True | os.linesep == '\\n' | # Is Unix |
-        | Should Be True | os.linesep == '\\r\\n' | # Is Windows |
-        | Should Be True | sys.platform == 'darwin' | # Is OS X |
-        | Should Be True | sys.platform == 'linux2' | # Is Linux |
+        | Should Be True | os.linesep == '\\n'             | # Unixy   |
+        | Should Be True | os.linesep == '\\r\\n'          | # Windows |
+        | Should Be True | sys.platform == 'darwin'        | # OS X    |
+        | Should Be True | sys.platform.startswith('java') | # Jython  |
         """
         if not msg:
             msg = "'%s' should be true" % condition
@@ -597,8 +600,8 @@ class _Verify:
         which is both prone to rounding errors and does not work very well if
         numbers are really big or small. For more information about comparing
         floats, and ideas on how to implement your own context specific
-        comparison algorithm, see this great article:
-        http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
+        comparison algorithm, see
+        http://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/.
 
         See `Should Not Be Equal As Numbers` for a negative version of this
         keyword and `Should Be Equal` for an explanation on how to override
@@ -682,7 +685,7 @@ class _Verify:
     def should_contain(self, item1, item2, msg=None, values=True):
         """Fails if `item1` does not contain `item2` one or more times.
 
-        Works with strings, lists, and anything that supports Python's 'in'
+        Works with strings, lists, and anything that supports Python's `in`
         keyword. See `Should Be Equal` for an explanation on how to override
         the default error message with `msg` and `values`.
 
@@ -1136,7 +1139,7 @@ class _Variables:
             raise ValueError
         if name.startswith('\\'):
             name = name[1:]
-        elif name[0] in ['$','@'] and name[1] != '{':
+        elif name[0] in '$@' and name[1] != '{':
             name = '%s{%s}' % (name[0], name[1:])
         if is_var(name):
             return name
@@ -2021,8 +2024,8 @@ class _Misc:
         Examples:
         | Log To Console | Hello, console!             |                 |
         | Log To Console | Hello, stderr!              | STDERR          |
-        | Log To Console | Message starts where and is | no_newline=true |
-        | Log To Console | continued without newlines. | no_newline=true |
+        | Log To Console | Message starts here and is  | no_newline=true |
+        | Log To Console | continued without newline.  |                 |
 
         This keyword does not log the message to the normal log file. Use
         `Log` keyword, possibly with argument `console`, if that is desired.
@@ -2369,7 +2372,7 @@ class _Misc:
         | Set Test Message | My message           |                          |
         | Set Test Message | is continued.        | append=yes               |
         | Should Be Equal  | ${TEST MESSAGE}      | My message is continued. |
-        | Set Test Message | *HTML* <b>Hello!</b> |                          |
+        | Set Test Message | `*`HTML`*` <b>Hello!</b> |                      |
 
         This keyword can not be used in suite setup or suite teardown.
 
@@ -2431,7 +2434,7 @@ class _Misc:
         variable `${SUITE DOCUMENTATION}`.
 
         New in Robot Framework 2.7. Support for `append` and `top` were
-        added in 2.7.7..
+        added in 2.7.7.
         """
         ns = self._get_namespace(top)
         suite = ns.suite
