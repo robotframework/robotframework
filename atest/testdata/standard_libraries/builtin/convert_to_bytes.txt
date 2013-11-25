@@ -26,8 +26,8 @@ Non-ASCII string
 
 Non-ASCII above 255 fails
     [Template]    Creating bytes should fail
-    \u0100      text    Character '\u0100' (ordinal 0x100) is too big to be represented as a byte.
-    \u2603      text    Character '\u2603' (ordinal 0x2603) is too big to be represented as a byte.
+    \u0100      text    Character '\u0100' (ordinal 256) is too big to be represented as a byte.
+    \u2603      text    Character '\u2603' (ordinal 9731) is too big to be represented as a byte.
 
 Byte string
     [Template]    NONE
@@ -42,7 +42,7 @@ Integers
     0 1 2 3 4              int    0, 1, 2, 3, 4
 
 Any whitespace as integer separator
-    0\t255                 int    0, 255
+    0\t1 255               int    0, 1, 255
     0\n1${SPACE*5}2\r33    int    0, 1, 2, 33
 
 Integers with prefixes
@@ -105,8 +105,8 @@ Binary requires input to be multiple of 8
 
 Invalid binary fail
     [Template]    Creating bytes should fail
-    hello!!!    bin    'hello!!!' cannot be converted to an integer: ValueError: *
-    00000002    bin    '00000002' cannot be converted to an integer: ValueError: *
+    hello!!!            bin    'hello!!!' cannot be converted to an integer: ValueError: *
+    0000000100000002    bin    '00000002' cannot be converted to an integer: ValueError: *
 
 *** Keywords ***
 Correct bytes should be created
