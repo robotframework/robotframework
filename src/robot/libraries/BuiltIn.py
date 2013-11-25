@@ -84,8 +84,8 @@ class _Converter:
         | ${result} = | Convert To Integer | 0b100  |    | # Result is 4     |
         | ${result} = | Convert To Integer | -0x100 |    | # Result is -256  |
 
-        See also `Convert To Number`, `Convert To Binary`, `Convert To Octal`
-        and `Convert To Hex`.
+        See also `Convert To Number`, `Convert To Binary`, `Convert To Octal`,
+        `Convert To Hex`, and `Convert To Bytes`.
         """
         self._log_types(item)
         return self._convert_to_integer(item, base)
@@ -271,7 +271,8 @@ class _Converter:
 
         Use `Encode String To Bytes` and `Decode Bytes To String` keywords
         in `String` library if you need to convert between Unicode and byte
-        strings.
+        strings using different encodings. Use `Convert To Bytes` if you just
+        want to create byte strings.
         """
         self._log_types(item)
         return self._convert_to_string(item)
@@ -298,28 +299,42 @@ class _Converter:
     def convert_to_bytes(self, input, input_type='text'):
         """Converts the given `input` to bytes according to the `input_type`.
 
-        Valid input types are listed in the table below.
+        Valid input types are listed below:
 
-        | = Type = |              = Explanation =                            |
-        | text     | Converts text to bytes character by character. Default. |
-        | int      | Converts integers to bytes.                             |
-        | hex      | Converts hexadecimal numbers to bytes.                  |
-        | bin      | Converts binary numbers to bytes.                       |
+        - *text:* Converts text to bytes character by character. All characters
+          with ordinal below 256 can be used and are converted to bytes with
+          same values. Many characters are easiest to represent using escapes
+          like `\\x00` or `\\xff`.
 
-        With all numerical types, multiple bytes can be created by separating
-        numbers using whitespace. Numbers can also be joined together, but in
-        that case they must be zero padded so that individual numbers have
-        lengths 3 (int), 2 (hex), or 8 (bin).
+        - *int:* Converts integers separated by spaces to bytes. Similarly as
+          with `Convert To Integer`, it is possible to use binary, octal, or
+          hex values by prefixing the values with `0b`, `0o`, or `0x`,
+          respectively.
+
+        - *hex:* Converts hexadecimal values to bytes. Single byte is always
+          two characters long (e.g. `01` or `FF`). Spaces are ignored and can
+          be used freely as a visual separator.
+
+        - *bin:* Converts binary values to bytes. Single byte is always eight
+          characters long (e.g. `00001010`). Spaces are ignored and can be used
+          freely as a visual separator.
+
+        In addition to giving the input as a string, it is possible to use
+        lists or other iterables containing individual characters or numbers.
+        In that case numbers do not need to be padded to certain length and
+        they cannot contain extra spaces.
 
         Examples (last column shows returned bytes):
         | ${bytes} = | Convert To Bytes | hyvä       |     | # hyv\\xe4        |
         | ${bytes} = | Convert To Bytes | \\xff\\x07 |     | # \\xff\\x07      |
         | ${bytes} = | Convert To Bytes | 82 70      | int | # RF              |
-        | ${bytes} = | Convert To Bytes | 255007     | int | # \\xff\\x07      |
-        | ${bytes} = | Convert To Bytes | 52 46      | hex | # RF              |
-        | ${bytes} = | Convert To Bytes | ff0007     | hex | # \\xff\\x00\\x07 |
-        | ${bytes} = | Convert To Bytes | 10 111     | bin | # \\x02\\x07      |
-        | ${bytes} = | Convert To Bytes | 0000001000000111 | bin | # \\x02\\x07 |
+        | ${bytes} = | Convert To Bytes | 0b10 0x10  | int | # \\x02\\x10      |
+        | ${bytes} = | Convert To Bytes | ff 00 07   | hex | # \\xff\\x00\\x07 |
+        | ${bytes} = | Convert To Bytes | 5246212121 | hex | # RF!!!           |
+        | ${bytes} = | Convert To Bytes | 0000 1000  | bin | # \\x08           |
+        | ${input} = | Create List      | 1          | 2   | 12                |
+        | ${bytes} = | Convert To Bytes | ${input}   | int | # \\x01\\x02\\x0c |
+        | ${bytes} = | Convert To Bytes | ${input}   | hex | # \\x01\\x02\\x12 |
 
         Use `Encode String To Bytes` in `String` library if you need to convert
         text to bytes using a certain encoding.
