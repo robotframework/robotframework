@@ -1,0 +1,71 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/builtin/convert_to_bytes.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Default input type is text
+    Check Test Case    ${TESTNAME}
+
+Invalid input type fails
+    Check Test Case    ${TESTNAME}
+
+ASCII string
+    Check Test Case    ${TESTNAME}
+
+Non-ASCII string
+    Check Test Case    ${TESTNAME}
+
+Non-ASCII above 255 fails
+    Check Test Case    ${TESTNAME}
+
+Byte string
+    Check Test Case    ${TESTNAME}
+
+Integers
+    Check Test Case    ${TESTNAME}
+
+Integers without separator works
+    Check Test Case    ${TESTNAME}
+
+Integers without separator requires input to be multiple of 3
+    Check Test Case    ${TESTNAME}
+
+Too big integers fail
+    Check Test Case    ${TESTNAME}
+
+Invalid integers fail
+    Check Test Case    ${TESTNAME}
+
+Hex
+    Check Test Case    ${TESTNAME}
+
+Hex without separator works
+    Check Test Case    ${TESTNAME}
+
+Hex without separator requires even input
+    Check Test Case    ${TESTNAME}
+
+Too big hex fail
+    Check Test Case    ${TESTNAME}
+
+Invalid hex fail
+    Check Test Case    ${TESTNAME}
+
+Binary
+    Check Test Case    ${TESTNAME}
+
+Binary without separator works
+    Check Test Case    ${TESTNAME}
+
+Binary without separator requires input to be multiple of 8
+    Check Test Case    ${TESTNAME}
+
+Too big binary fail
+    Check Test Case    ${TESTNAME}
+
+Invalid binary fail
+    Check Test Case    ${TESTNAME}
+
+Any whitesapce works as separator
+    Check Test Case    ${TESTNAME}

@@ -293,6 +293,81 @@ class _Converter:
                 return False
         return bool(item)
 
+    def convert_to_bytes(self, input, input_type='text'):
+        """Converts the given `input` to bytes according to the `input_type`.
+
+        Valid input types are listed in the table below.
+
+        | = Type = |              = Explanation =                            |
+        | text     | Converts text to bytes character by character. Default. |
+        | int      | Converts integers to bytes.                             |
+        | hex      | Converts hexadecimal numbers to bytes.                  |
+        | bin      | Converts binary numbers to bytes.                       |
+
+        With all numerical types, multiple bytes can be created by separating
+        numbers using whitespace. Numbers can also be joined together, but in
+        that case they must be zero padded so that individual numbers have
+        lengths 3 (int), 2 (hex), or 8 (bin).
+
+        Examples (last column shows returned bytes):
+        | ${bytes} = | Convert To Bytes | hyvä       |     | # hyv\\xe4        |
+        | ${bytes} = | Convert To Bytes | \\xff\\x07 |     | # \\xff\\x07      |
+        | ${bytes} = | Convert To Bytes | 82 70      | int | # RF              |
+        | ${bytes} = | Convert To Bytes | 255007     | int | # \\xff\\x07      |
+        | ${bytes} = | Convert To Bytes | 52 46      | hex | # RF              |
+        | ${bytes} = | Convert To Bytes | ff0007     | hex | # \\xff\\x00\\x07 |
+        | ${bytes} = | Convert To Bytes | 10 111     | bin | # \\x02\\x07      |
+        | ${bytes} = | Convert To Bytes | 0000001000000111 | bin | # \\x02\\x07 |
+
+        Use `Encode String To Bytes` in `String` library if you need to convert
+        text to bytes using a certain encoding.
+
+        New in Robot Framework 2.8.2.
+        """
+        try:
+            try:
+                ordinals = getattr(self, '_get_ordinals_from_%s' % input_type)
+            except AttributeError:
+                raise DataError("Invalid input type '%s'." % input_type)
+            return ''.join(chr(o) for o in ordinals(input))
+        except DataError, err:
+            raise RuntimeError("Creating bytes failed: %s" % unicode(err))
+
+    def _get_ordinals_from_text(self, input):
+        for char in input:
+            ordinal = ord(char)
+            if ordinal > 255:
+                raise DataError("Character '%s' (ordinal %s) is too big to be "
+                                "represented as a byte." % (char, hex(ordinal)))
+            yield ordinal
+
+    def _get_ordinals_from_int(self, input, base=10, token_length=3):
+        for token in self._split_to_tokens(input, token_length):
+            try:
+                ordinal = int(token, base)
+            except ValueError:
+                raise DataError("Cannot convert '%s' to an integer in base %d."
+                                % (token, base))
+            if ordinal > 255:
+                raise DataError("Integer '%s' in base %d is too big to be "
+                                "represented as a byte." % (token, base))
+            yield ordinal
+
+    def _get_ordinals_from_hex(self, input):
+        return self._get_ordinals_from_int(input, base=16, token_length=2)
+
+    def _get_ordinals_from_bin(self, input):
+        return self._get_ordinals_from_int(input, base=2, token_length=8)
+
+    def _split_to_tokens(self, input, token_length):
+        tokens = input.split()
+        length = len(input)
+        if len(tokens) > 1 or length < token_length:
+            return tokens
+        if length % token_length != 0:
+            raise DataError('Expected input to be multiple of %d.' % token_length)
+        return (input[i:i+token_length] for i in xrange(0, length, token_length))
+
     def create_list(self, *items):
         """Returns a list containing given items.
 

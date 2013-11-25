@@ -1,0 +1,127 @@
+*** Settings ***
+Test template    Correct bytes should be created
+Library          String
+
+*** Test Cases ***
+Default input type is text
+    [Template]    NONE
+    ${bytes} =    Convert To Bytes    Tämä on testi
+    Bytes should be equal to    ${bytes}    84, 228, 109, 228, 32, 111, 110, 32, 116, 101, 115, 116, 105
+    ${bytes} =    Convert To Bytes    0 1 2    input_type=int
+    Bytes should be equal to    ${bytes}    0, 1, 2
+
+Invalid input type fails
+    [Template]    Creating bytes should fail
+    whatever    invalid    Invalid input type 'invalid'.
+
+ASCII string
+    H           text    72
+    hello       text    104, 101, 108, 108, 111
+    \x00\x01    text    0, 1
+    0 1 2       text    48, 32, 49, 32, 50
+
+Non-ASCII string
+    åäö         text    229, 228, 246
+    \xe4\xff    text    228, 255
+
+Non-ASCII above 255 fails
+    [Template]    Creating bytes should fail
+    \u0100      text    Character '\u0100' (ordinal 0x100) is too big to be represented as a byte.
+    \u2603      text    Character '\u2603' (ordinal 0x2603) is too big to be represented as a byte.
+
+Byte string
+    [Template]    NONE
+    ${b1} =    Convert To Bytes    \x00-a-ä-\xff
+    ${b2} =    Convert To Bytes    ${b1}
+    Should Be Equal    ${b1}    ${b2}
+
+Integers
+    4                      int    4
+    0 255                  int    0, 255
+    104 101 108 108 111    int    104, 101, 108, 108, 111
+    0 1 2 3 4              int    0, 1, 2, 3, 4
+
+Integers without separator works
+    000001007    int    0, 1, 7
+    123255       int    123, 255
+
+Integers without separator requires input to be multiple of 3
+    [Template]    Creating bytes should fail
+    1234       int    Expected input to be multiple of 3.
+    1234457    int    Expected input to be multiple of 3.
+
+Too big integers fail
+    [Template]    Creating bytes should fail
+    1000 1    int    Integer '1000' in base 10 is too big to be represented as a byte.
+    0 256     int    Integer '256' in base 10 is too big to be represented as a byte.
+
+Invalid integers fail
+    [Template]    Creating bytes should fail
+    hello 1    int    Cannot convert 'hello' to an integer in base 10.
+    0 1 a      int    Cannot convert 'a' to an integer in base 10.
+
+Hex
+    a                 hex    10
+    aA                hex    170
+    68 65 6c 6C 6f    hex    104, 101, 108, 108, 111
+    0 1 2 ff          hex    0, 1, 2, 255
+
+Hex without separator works
+    68656c6C6f    hex    104, 101, 108, 108, 111
+    000102FF      hex    0, 1, 2, 255
+
+Hex without separator requires even input
+    [Template]    Creating bytes should fail
+    abc    hex    Expected input to be multiple of 2.
+
+Too big hex fail
+    [Template]    Creating bytes should fail
+    ffF f    hex    Integer 'ffF' in base 16 is too big to be represented as a byte.
+    0 100    hex    Integer '100' in base 16 is too big to be represented as a byte.
+
+Invalid hex fail
+    [Template]    Creating bytes should fail
+    ff hello    hex     Cannot convert 'hello' to an integer in base 16.
+Binary
+    0                                bin   0
+    0 1 10 11 100 101 110 111        bin   0, 1, 2, 3, 4, 5, 6, 7
+    00000000 00001111 11111111       bin   0, 15, 255
+    00 01 10 11 100                  bin   0, 1, 2, 3, 4
+
+Binary without separator works
+    000000001111111101111111    bin    0, 255, 127
+
+Binary without separator requires input to be multiple of 8
+    [Template]    Creating bytes should fail
+    00000000111111110    bin    Expected input to be multiple of 8.
+
+Too big binary fail
+    [Template]    Creating bytes should fail
+    1 100000000    bin    Integer '100000000' in base 2 is too big to be represented as a byte.
+
+Invalid binary fail
+    [Template]    Creating bytes should fail
+    hello    bin    Cannot convert 'hello' to an integer in base 2.
+    0 2      bin    Cannot convert '2' to an integer in base 2.
+
+Any whitesapce works as separator
+    0\t1\n2\r3       int    0, 1, 2, 3
+    a${SPACE*10}b    hex    10, 11
+    0\t\t\t1         bin    0, 1
+
+*** Keywords ***
+Correct bytes should be created
+    [Arguments]    ${input}    ${type}    ${expected}
+    ${bytes} =    Convert To Bytes    ${input}    ${type}
+    Bytes should be equal to    ${bytes}    ${expected}
+
+Bytes should be equal to
+    [Arguments]    ${bytes}    ${expected}
+    ${expected} =    Evaluate    ''.join(chr(int(i)) for i in [${expected}])
+    Should Be Equal    ${bytes}   ${expected}
+    Should Be Byte String    ${bytes}
+
+Creating bytes should fail
+    [Arguments]    ${input}    ${type}    ${error}
+    Run Keyword And Expect Error    Creating bytes failed: ${error}
+    ...    Convert To Bytes    ${input}    ${type}
