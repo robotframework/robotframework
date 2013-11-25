@@ -1,9 +1,6 @@
 *** Settings ***
 Resource        atest_resource.txt
 
-*** Variables ***
-${TEST SCREENSHOT}    %{TEMPDIR}${/}test-screenshot.jpg
-
 *** Keywords ***
 Run if dependencies are available
     [arguments]    @{args}
@@ -17,15 +14,11 @@ Make Suite Non-critical And Fail It If Screenshot dependencies are not installed
     ...   -regression
 
 Are Screenshot dependencies available
-    ${dependencies} =   Run keyword if    '${JYTHON}'
-    ...    Set variable    ${TRUE}
-    ...    ELSE
-    ...    Interpreter has screenshot dependencies
-    [return]     ${dependencies}
-
-Interpreter has screenshot dependencies
     ${lib} =    Normalize Path    ${ROBOT PATH}/libraries/Screenshot.py
-    ${result} =    Run Process   ${INTERPRETER}    ${lib}    test    ${TEST SCREENSHOT}    stderr=STDOUT
+    ${jpg} =    Normalize Path    %{TEMPDIR}/test-screenshot.jpg
+    ${ppath}    ${_} =    Split Path    ${ROBOT PATH}
+    ${result} =    Run Process   ${INTERPRETER}    ${lib}    test    ${jpg}    stderr=STDOUT
+    ...    env:JYTHONPATH=${ppath}    env:IRONPYTHONPATH=${ppath}    shell=true
     Log    ${result.stdout}
-    [teardown]    Remove File    ${TEST SCREENSHOT}
+    [teardown]    Remove File    ${jpg}
     [return]    ${result.rc == 0}
