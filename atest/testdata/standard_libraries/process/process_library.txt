@@ -97,7 +97,7 @@ Escaping equals sign
 Running a process in a shell
     ${result}=    Run Process    python -c "print('hello')"    shell=True
     Result should equal    ${result}    stdout=hello
-    ${result}=    Run Process    python -c "print 'hello'"    shell=0
+    ${result}=    Run Process    python -c "print('hello')"    shell=0
     Result should equal    ${result}    stdout=hello
     Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=${False}
     Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=${0}
@@ -166,7 +166,7 @@ Current working directory should not be used with stdout and stderr when absolut
 Lot of output
     [Tags]    performance
     ${stdout}=    Normalize Path    %{TEMPDIR}/stdout.txt
-    ${handle}=    Run Process    python -c "for i in range(350000): \tprint 'a'*400"    shell=True    stdout=${stdout}    stderr=STDOUT
+    ${handle}=    Run Process    python -c "for i in range(350000): \tprint('a'*400)"    shell=True    stdout=${stdout}    stderr=STDOUT
     File Should Not Be Empty    ${stdout}
     [Teardown]    Safe Remove File    ${stdout}
 
