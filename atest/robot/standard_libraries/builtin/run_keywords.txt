@@ -39,6 +39,9 @@ In test teardown
 In test teardown with ExecutionPassed exception
     Check Test Case  ${TESTNAME}
 
+In test teardown with ExecutionPassed exception after continuable failure
+    Check Test Case  ${TESTNAME}
+
 In suite setup
     Check Log Message  ${SUITE.setup.kws[0].kws[0].msgs[0]}  Hello, world!
     Should Contain Keywords  ${SUITE.setup}  Passing  BuiltIn.No Operation

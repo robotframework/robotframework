@@ -71,6 +71,16 @@ In test teardown with ExecutionPassed exception
     ...    Returning keyword    AND
     ...    Pass Execution    Stop here    AND
     ...    Fail    Do not run me please
+    Fail    Do not run me either
+
+In test teardown with ExecutionPassed exception after continuable failure
+    [Documentation]  FAIL Stop here${ATD ERR}
+    No Operation
+    [Teardown]  Run Keywords
+    ...    Continuable failure    AND
+    ...    Pass Execution    Stop here    AND
+    ...    Fail    Do not run me please
+    Fail    Do not run me either
 
 *** Keywords ***
 
@@ -80,7 +90,8 @@ Passing
 Failing
     Fail  Expected error message
 
-Continuable failure  [Arguments]  ${msg}=Expected continuable failure
+Continuable failure
+    [Arguments]  ${msg}=Expected continuable failure
     Run keyword and continue on failure  Fail  ${msg}
 
 Multiple continuables

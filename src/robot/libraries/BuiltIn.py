@@ -1233,8 +1233,9 @@ class _RunKeyword:
         for kw, args in self._split_run_keywords(list(keywords)):
             try:
                 self.run_keyword(kw, *args)
-            except ExecutionPassed:
-                raise
+            except ExecutionPassed, err:
+                err.set_earlier_failures(errors)
+                raise err
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(self._context.in_teardown):
