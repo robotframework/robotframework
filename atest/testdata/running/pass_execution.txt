@@ -119,8 +119,10 @@ If test case setup fails
 
 With test case teardown
     [Documentation]    FAIL This message is used.
-    Fail    This message is used.
-    [Teardown]    Pass Execution    This message is NOT used.
+    Fail    This message is NOT used.
+    [Teardown]    Run Keywords
+    ...    Pass Execution    This message is used.    AND
+    ...    Fail    This keyword is not executed.
 
 If test case teardown fails
     [Documentation]    FAIL Teardown failed:\nThis message is used.

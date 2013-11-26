@@ -49,8 +49,8 @@ class Variables(utils.NormalizedDict):
     }$           # "}" and end of the string
     ''', re.UNICODE|re.VERBOSE)
 
-    def __init__(self, identifiers=('$','@','%','&','*')):
-        utils.NormalizedDict.__init__(self, ignore=['_'])
+    def __init__(self, identifiers=('$', '@', '%', '&', '*')):
+        utils.NormalizedDict.__init__(self, ignore='_')
         self._identifiers = identifiers
         importer = utils.Importer('variable file').import_class_or_module_by_path
         self._import_variable_file = partial(importer, instantiate_with_args=())

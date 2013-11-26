@@ -13,7 +13,10 @@
 #  limitations under the License.
 
 import os
+import sys
 import urllib
+
+from robot.errors import DataError
 
 from .encoding import decode_from_system
 
@@ -107,3 +110,22 @@ def _common_path(p1, p2):
         else:
             p2 = os.path.dirname(p2)
     return ''
+
+
+def find_file(path, basedir='.', file_type=None):
+    path = os.path.normpath(path.replace('/', os.sep))
+    for base in [basedir] + sys.path:
+        if not (base and os.path.isdir(base)):
+            continue
+        if not isinstance(base, unicode):
+            base = decode_from_system(base)
+        ret = os.path.abspath(os.path.join(base, path))
+        if os.path.isfile(ret):
+            return ret
+        if os.path.isdir(ret) and os.path.isfile(os.path.join(ret, '__init__.py')):
+            return ret
+    default = file_type or 'File'
+    file_type = {'Library': 'Test library',
+                 'Variables': 'Variable file',
+                 'Resource': 'Resource file'}.get(file_type, default)
+    raise DataError("%s '%s' does not exist." % (file_type, path))

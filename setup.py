@@ -55,7 +55,7 @@ setup(
     author       = 'Robot Framework Developers',
     author_email = 'robotframework@gmail.com',
     url          = 'http://robotframework.org',
-    download_url = 'http://code.google.com/p/robotframework/downloads/list?can=1',
+    download_url = 'https://pypi.python.org/pypi/robotframework',
     license      = 'Apache License 2.0',
     description  = 'A generic test automation framework',
     long_description = DESCRIPTION,

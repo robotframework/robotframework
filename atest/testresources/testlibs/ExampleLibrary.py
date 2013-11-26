@@ -33,6 +33,12 @@ class ExampleLibrary:
         sys.stdout.write('stdout: ' + msg)
         sys.stderr.write('stderr: ' + msg)
 
+    def print_to_python_and_java_streams(self):
+        import ExampleJavaLibrary
+        print '*INFO* First message to Python'
+        getattr(ExampleJavaLibrary(), 'print')('*INFO* Second message to Java')
+        print '*INFO* Last message to Python'
+
     def single_line_doc(self):
         """One line keyword documentation."""
         pass

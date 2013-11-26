@@ -1,28 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from helper import pretty
 
-from dynamic_library_impl import var_args, return_argument, return_arguments
 
 KEYWORDS = {
-    'Escaped Default Value': (var_args, ['d1=${notvariable}', 'd2=\\\\', 'd3=\n', 'd4=\t']),
-    'Four Kw Args': (var_args, ['a=default', 'b=default', 'c=default', 'd=default']),
-    'Mandatory, Named And Varargs': (var_args, ['a', 'b=default', '*varargs']),
-    'Mandatory And Kwargs': (var_args, ['man1', 'man2', 'kwarg=KWARG VALUE']),
-    'Mandatory And Named': (var_args, ['a', 'b=default']),
-    'Named Arguments With Varargs': (return_arguments, ['a=default', 'b=default', '*varargs']),
-    'One Kwarg Returned': (return_argument, ['kwarg=']),
-    'Two Kwargs': (var_args, ['first=', 'second=']),
-    u'Nön äscii named args': (var_args, [u'nönäscii=', u'官话=']),
-    'three named': (var_args, ['a=a', 'b=b', 'c=c'])
+    'Escaped Default Value': ['d1=${notvariable}', 'd2=\\\\', 'd3=\n', 'd4=\t'],
+    'Four Kw Args': ['a=default', 'b=default', 'c=default', 'd=default'],
+    'Mandatory, Named And Varargs': ['a', 'b=default', '*varargs'],
+    'Mandatory And Kwargs': ['man1', 'man2', 'kwarg=KWARG VALUE'],
+    'Mandatory And Named': ['a', 'b=default'],
+    'Named Arguments With Varargs': ['a=default', 'b=default', '*varargs'],
+    'One Kwarg Returned': ['kwarg='],
+    'Two Kwargs': ['first=', 'second='],
+    u'Nön äscii named args': [u'nönäscii=', u'官话='],
+    'three named': ['a=a', 'b=b', 'c=c']
 }
+
 
 class DynamicLibrary(object):
 
+    def __init__(self, **extra):
+        self.keywords = dict(KEYWORDS, **extra)
+
     def get_keyword_names(self):
-        return KEYWORDS.keys()
+        return self.keywords.keys()
 
     def run_keyword(self, kw_name, args):
-        return KEYWORDS[kw_name][0](*args)
+        return self._pretty(*args)
+
+    def _pretty(self, *args, **kwargs):
+        if all(isinstance(a, basestring) for a in args):
+            return pretty(*args, **kwargs)
+        return args[0] if len(args) == 1 else args
 
     def get_keyword_arguments(self, kw_name):
-        return KEYWORDS[kw_name][1]
+        return self.keywords[kw_name]

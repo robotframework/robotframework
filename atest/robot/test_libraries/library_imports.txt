@@ -24,7 +24,7 @@ Importing Library Class Should Have Been Syslogged
     ...    from '${base}${/}libmodule
 
 Number Of Keywords In Imported Library Is Reported In Syslog
-    Check Syslog Contains  | INFO \ |  Imported library 'ExampleLibrary' with arguments [ ] (version <unknown>, class type, testcase scope, 29 keywords)
+    Check Syslog Contains  | INFO \ |  Imported library 'ExampleLibrary' with arguments [ ] (version <unknown>, class type, testcase scope, 30 keywords)
     Check Syslog Contains  | INFO \ |  Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
 
 Warning Should Be Written To Syslog If Library Contains No Keywords

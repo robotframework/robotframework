@@ -47,4 +47,7 @@ Keyword Documentation
     Keyword Doc Should Start With    2   Dummy documentation for `KW2`.
 
 Non ASCII
-    Keyword Doc Should Be    3    Hyvää yötä.\n\nСпасибо!
+    Keyword Doc Should Be    4    Hyvää yötä.\n\nСпасибо!
+
+No Argspec
+    Keyword Arguments Should be     3     *varargs   **kwargs

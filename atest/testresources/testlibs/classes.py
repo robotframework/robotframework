@@ -150,6 +150,20 @@ class ArgDocDynamicLibrary:
     def get_keyword_arguments(self, name):
         return self._keywords[name].argspec
 
+
+class ArgDocDynamicLibraryWithKwargsSupport(ArgDocDynamicLibrary):
+    def __init__(self):
+        ArgDocDynamicLibrary.__init__(self)
+        for name, argspec in [('Kwargs', ['**kwargs']),
+                              ('Varargs and Kwargs', ['*args', '**kwargs'])]:
+            self._keywords[name] = _KeywordInfo(name, argspec)
+
+    def run_keyword(self, name, args, kwargs={}):
+        argstr = ' '.join([str(a) for a in args] +
+                          ['%s:%s' % kv for kv in sorted(kwargs.items())])
+        print '*INFO* Executed keyword %s with arguments %s' % (name, argstr)
+
+
 class _KeywordInfo:
     doc_template = 'Keyword documentation for %s'
     def __init__(self, name, argspec):
@@ -161,9 +175,11 @@ class InvalidGetDocDynamicLibrary(ArgDocDynamicLibrary):
     def get_keyword_documentation(self, name, invalid_arg):
         pass
 
+
 class InvalidGetArgsDynamicLibrary(ArgDocDynamicLibrary):
     def get_keyword_arguments(self, name):
         1/0
+
 
 class InvalidAttributeDynamicLibrary(ArgDocDynamicLibrary):
     get_keyword_documentation = True

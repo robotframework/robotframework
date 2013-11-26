@@ -13,12 +13,15 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-import os
 import inspect
+import os
+import sys
 
-from robot import utils
 from robot.errors import DataError
 from robot.output import LOGGER
+from robot.utils import (getdoc, get_error_details, Importer,
+                         is_java_init, is_java_method, normalize,
+                         NormalizedDict, seq2str2, unic)
 
 from .baselibrary import BaseLibrary
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
@@ -26,8 +29,7 @@ from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
 from .handlers import Handler, InitHandler, DynamicHandler
 from .outputcapture import OutputCapturer
 
-if utils.is_jython:
-    from org.python.core import PyReflectedFunction, PyReflectedConstructor
+if sys.platform.startswith('java'):
     from java.lang import Object
 else:
     Object = None
@@ -35,7 +37,7 @@ else:
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True):
     with OutputCapturer(library_import=True):
-        importer = utils.Importer('test library')
+        importer = Importer('test library')
         libcode = importer.import_class_or_module(name)
     libclass = _get_lib_class(libcode)
     lib = libclass(libcode, name, args or [], variables)
@@ -71,12 +73,13 @@ class _BaseTestLibrary(BaseLibrary):
         self._instance_cache = []
         self._libinst = None
         if libcode is not None:
-            self._doc = utils.getdoc(libcode)
+            self._doc = getdoc(libcode)
             self.doc_format = self._get_doc_format(libcode)
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
             self.init = self._create_init_handler(libcode)
-            self.positional_args, self.named_args = self.init.resolve_arguments(args, variables)
+            self.positional_args, self.named_args \
+                = self.init.resolve_arguments(args, variables)
 
     @property
     def doc(self):
@@ -105,9 +108,9 @@ class _BaseTestLibrary(BaseLibrary):
             or self._get_attr(libcode, '__version__')
 
     def _get_attr(self, object, attr, default='', upper=False):
-        value = utils.unic(getattr(object, attr, default))
+        value = unic(getattr(object, attr, default))
         if upper:
-            value = utils.normalize(value, ignore='_').upper()
+            value = normalize(value, ignore='_').upper()
         return value
 
     def _get_doc_format(self, libcode):
@@ -124,14 +127,11 @@ class _BaseTestLibrary(BaseLibrary):
         init_method = getattr(libcode, '__init__', None)
         return init_method if self._valid_init(init_method) else lambda: None
 
-    def _valid_init(self, init_method):
+    def _valid_init(self, method):
         # Python 3 has no unbound methods, they are just functions,
         # so both tests are needed for compatibility:
-        if inspect.isfunction(init_method) or inspect.ismethod(init_method):
-            return True
-        if utils.is_jython and isinstance(init_method, PyReflectedConstructor):
-            return True
-        return False
+        return (inspect.isfunction(method) or inspect.ismethod(method)
+                ) or is_java_init(method)
 
     def init_scope_handling(self):
         if self.scope == 'GLOBAL':
@@ -156,16 +156,14 @@ class _BaseTestLibrary(BaseLibrary):
         return self._libinst
 
     def _get_instance(self):
-        capturer = OutputCapturer(library_import=True)
-        try:
-            return self._libcode(*self.positional_args, **self.named_args)
-        except:
-            self._raise_creating_instance_failed()
-        finally:
-            capturer.release_and_log()
+        with OutputCapturer(library_import=True):
+            try:
+                return self._libcode(*self.positional_args, **self.named_args)
+            except:
+                self._raise_creating_instance_failed()
 
     def _create_handlers(self, libcode):
-        handlers = utils.NormalizedDict(ignore=['_'])
+        handlers = NormalizedDict(ignore='_')
         for name in self._get_handler_names(libcode):
             method = self._try_to_get_handler_method(libcode, name)
             if method:
@@ -186,7 +184,7 @@ class _BaseTestLibrary(BaseLibrary):
             self._report_adding_keyword_failed(name)
 
     def _report_adding_keyword_failed(self, name):
-        msg, details = utils.get_error_details()
+        msg, details = get_error_details()
         self._log_failure("Adding keyword '%s' to library '%s' failed: %s"
                           % (name, self.name, msg))
         if details:
@@ -208,11 +206,11 @@ class _BaseTestLibrary(BaseLibrary):
         return Handler(self, handler_name, handler_method)
 
     def _raise_creating_instance_failed(self):
-        msg, details = utils.get_error_details()
+        msg, details = get_error_details()
         if self.positional_args or self.named_args:
             args = self.positional_args \
-                    + ['%s=%s' % item for item in self.named_args.items()]
-            args_text = 'arguments %s' % utils.seq2str2(args)
+                + ['%s=%s' % item for item in self.named_args.items()]
+            args_text = 'arguments %s' % seq2str2(args)
         else:
             args_text = 'no arguments'
         raise DataError("Initializing test library '%s' with %s failed: %s\n%s"
@@ -240,15 +238,10 @@ class _ClassLibrary(_BaseTestLibrary):
             raise DataError('Implicit methods are ignored')
 
     def _is_routine(self, handler):
-        # inspect.isroutine doesn't work with methods from Java classes
-        # prior to Jython 2.5.2: http://bugs.jython.org/issue1223
-        return inspect.isroutine(handler) or self._is_java_method(handler)
-
-    def _is_java_method(self, handler):
-        return utils.is_jython and isinstance(handler, PyReflectedFunction)
+        return inspect.isroutine(handler) or is_java_method(handler)
 
     def _is_implicit_java_or_jython_method(self, handler):
-        if not self._is_java_method(handler):
+        if not is_java_method(handler):
             return False
         for signature in handler.argslist[:handler.nargs]:
             cls = signature.declaringClass
@@ -315,7 +308,7 @@ class _DynamicLibrary(_BaseTestLibrary):
         return GetKeywordNames(instance)()
 
     def _get_handler_method(self, instance, name):
-        return RunKeyword(instance).method
+        return RunKeyword(instance)
 
     def _create_handler(self, name, method):
         doc = self._get_kw_doc(name)

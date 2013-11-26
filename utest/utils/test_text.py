@@ -2,7 +2,7 @@ import unittest
 
 from robot.utils.asserts import *
 
-from robot.utils.text import cut_long_message, _count_line_lenghts, \
+from robot.utils.text import cut_long_message, _count_line_lengths, \
     _MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN,\
     get_console_length, pad_console_length
 
@@ -60,7 +60,7 @@ class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
         assert_true(_ERROR_CUT_EXPLN in self.result)
 
     def test_correct_number_of_lines(self):
-        assert_equal(sum(_count_line_lenghts(self.result)), _MAX_ERROR_LINES+1)
+        assert_equal(sum(_count_line_lengths(self.result)), _MAX_ERROR_LINES+1)
 
     def test_correct_lines(self):
         excpected = self.lines[:_MAX_ERROR_LINES/2] + [_ERROR_CUT_EXPLN] \
@@ -74,7 +74,7 @@ class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
         assert_true(_ERROR_CUT_EXPLN in result)
         assert_equal(result[0], lines[0])
         assert_equal(result[-1], lines[-1])
-        assert_true(sum(_count_line_lenghts(result)) <= _MAX_ERROR_LINES+1)
+        assert_true(sum(_count_line_lengths(result)) <= _MAX_ERROR_LINES+1)
 
 
 class TestCutHappensInsideLine(unittest.TestCase):
@@ -105,7 +105,7 @@ class TestCutHappensInsideLine(unittest.TestCase):
         assert_true('...\n'+_ERROR_CUT_EXPLN+'\n...' in result)
 
     def _assert_basics(self, result, input=None):
-        assert_equal(sum(_count_line_lenghts(result)), _MAX_ERROR_LINES+1)
+        assert_equal(sum(_count_line_lengths(result)), _MAX_ERROR_LINES+1)
         assert_true(_ERROR_CUT_EXPLN in result)
         if input:
             assert_equal(result[0], input[0])
@@ -115,25 +115,25 @@ class TestCutHappensInsideLine(unittest.TestCase):
 class TestCountLines(unittest.TestCase):
 
     def test_no_lines(self):
-        assert_equal(_count_line_lenghts([]), [])
+        assert_equal(_count_line_lengths([]), [])
 
     def test_empty_line(self):
-        assert_equal(_count_line_lenghts(['']), [1])
+        assert_equal(_count_line_lengths(['']), [1])
 
     def test_shorter_than_max_lines(self):
         lines = ['', '1', 'foo', 'barz and fooz', '', 'a bit longer line', '',
                  'This is a somewhat longer (but not long enough) error message']
-        assert_equal(_count_line_lenghts(lines), [1] * len(lines))
+        assert_equal(_count_line_lengths(lines), [1] * len(lines))
 
     def test_longer_than_max_lines(self):
         lines = [ '1' * i * (_MAX_ERROR_LINE_LENGTH+3) for i in range(4) ]
-        assert_equal(_count_line_lenghts(lines), [1,2,3,4])
+        assert_equal(_count_line_lengths(lines), [1,2,3,4])
 
     def test_boundary(self):
         b = _MAX_ERROR_LINE_LENGTH
         lengths = [b-1, b, b+1, 2*b-1, 2*b, 2*b+1, 7*b-1, 7*b, 7*b+1]
         lines = [ 'e'*length for length in lengths ]
-        assert_equal(_count_line_lenghts(lines), [1, 1, 2, 2, 2, 3, 7, 7, 8])
+        assert_equal(_count_line_lengths(lines), [1, 1, 2, 2, 2, 3, 7, 7, 8])
 
 
 class TestConsoleWidth(unittest.TestCase):

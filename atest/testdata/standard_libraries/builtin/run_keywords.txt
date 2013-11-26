@@ -44,7 +44,7 @@ Non-existing keyword
     Run keywords  Passing  Non-Existing  Non-Existing But Not Executed
 
 Wrong number of arguments to keyword
-    [Documentation]  FAIL  Keyword 'BuiltIn.Log' expected 1 to 4 arguments, got 0.${ATD ERR}
+    [Documentation]  FAIL  Keyword 'BuiltIn.Log' expected 1 to 5 arguments, got 0.${ATD ERR}
     Run keywords  Passing  Log  This isn't argument to Log keyword
 
 In test setup
@@ -64,6 +64,24 @@ In test teardown
     ...  Executed but doesn't exist
     ...  Executed after syntax error in teardown
 
+In test teardown with ExecutionPassed exception
+    [Documentation]  FAIL Stop here${ATD ERR}
+    No Operation
+    [Teardown]  Run Keywords
+    ...    Returning keyword    AND
+    ...    Pass Execution    Stop here    AND
+    ...    Fail    Do not run me please
+    Fail    Do not run me either
+
+In test teardown with ExecutionPassed exception after continuable failure
+    [Documentation]  FAIL Stop here${ATD ERR}
+    No Operation
+    [Teardown]  Run Keywords
+    ...    Continuable failure    AND
+    ...    Pass Execution    Stop here    AND
+    ...    Fail    Do not run me please
+    Fail    Do not run me either
+
 *** Keywords ***
 
 Passing
@@ -72,7 +90,8 @@ Passing
 Failing
     Fail  Expected error message
 
-Continuable failure  [Arguments]  ${msg}=Expected continuable failure
+Continuable failure
+    [Arguments]  ${msg}=Expected continuable failure
     Run keyword and continue on failure  Fail  ${msg}
 
 Multiple continuables
@@ -80,3 +99,7 @@ Multiple continuables
     Continuable failure  Continuable 2/4
     Continuable failure  Continuable 3/4
     Continuable failure  Continuable 4/4
+
+Returning keyword
+    Run Keywords    Return From Keyword
+    Fail    Do not run me please

@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation   This resource file contains, or imports, all general variables and keywords used by the running side of Robot Framework acceptance tests.
 Library         OperatingSystem
+Library         Process
 Library         Collections
 Library         String
 Library         TestCheckerLibrary
@@ -190,9 +191,19 @@ File Should Be Equal To
     ${exp} =  Catenate  @{expected}
     Should Be Equal  ${content}  ${exp}
 
+File Should Match
+    [Arguments]  ${path}  @{expected}
+    ${content} =  Get Output File  ${path}
+    ${exp} =  Catenate  @{expected}
+    Should Match  ${content}  ${exp}
+
 Stderr Should Be Equal To
     [Arguments]  @{expected}
-    File Should Be Equal To  ${STDERR FILE}  @{EXPECTED}
+    File Should Be Equal To  ${STDERR FILE}  @{expected}
+
+Stderr Should Match
+    [Arguments]  @{expected}
+    File Should Match  ${STDERR FILE}  @{expected}
 
 Stderr Should Be Empty
     ${stderr} =  Get Stderr

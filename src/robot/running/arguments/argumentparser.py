@@ -9,7 +9,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import inspect
+if sys.platform.startswith('java'):
+    from java.lang import Class
 
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
@@ -22,7 +25,7 @@ class _ArgumentParser(object):
     def __init__(self, type='Keyword'):
         self._type = type
 
-    def parse(self, name, source):
+    def parse(self, source, name=None):
         return ArgumentSpec(name, self._type, *self._get_arg_spec(source))
 
     def _get_arg_spec(self, source):
@@ -58,7 +61,7 @@ class JavaArgumentParser(_ArgumentParser):
 
     def _single_signature_arg_spec(self, signature):
         args = signature.args
-        if args and args[-1].isArray():
+        if args and isinstance(args[-1], Class) and args[-1].isArray():
             return self._format_arg_spec(len(args)-1, varargs=True)
         return self._format_arg_spec(len(args))
 
@@ -79,11 +82,16 @@ class JavaArgumentParser(_ArgumentParser):
 
 class _ArgumentSpecParser(_ArgumentParser):
 
-    def parse(self, name, argspec):
+    def parse(self, argspec, name=None):
         result = ArgumentSpec(name, self._type)
         for arg in argspec:
+            if result.kwargs:
+                raise DataError('Only last argument can be kwargs.')
+            if self._is_kwargs(arg):
+                self._add_kwargs(arg, result)
+                continue
             if result.varargs:
-                raise DataError('Only last argument can be varargs.')
+                raise DataError('Positional argument after varargs.')
             if self._is_varargs(arg):
                 self._add_varargs(arg, result)
                 continue
@@ -95,6 +103,15 @@ class _ArgumentSpecParser(_ArgumentParser):
             self._add_arg(arg, result)
         return result
 
+    def _is_kwargs(self, arg):
+        raise NotImplementedError
+
+    def _add_kwargs(self, kwargs, result):
+        result.kwargs = self._format_kwargs(kwargs)
+
+    def _format_kwargs(self, kwargs):
+        raise NotImplementedError
+
     def _is_varargs(self, arg):
         raise NotImplementedError
 
@@ -102,7 +119,7 @@ class _ArgumentSpecParser(_ArgumentParser):
         result.varargs = self._format_varargs(varargs)
 
     def _format_varargs(self, varargs):
-        return varargs
+        raise NotImplementedError
 
     def _add_arg_with_default(self, arg, result):
         arg, default = arg.split('=', 1)
@@ -118,14 +135,23 @@ class _ArgumentSpecParser(_ArgumentParser):
 
 class DynamicArgumentParser(_ArgumentSpecParser):
 
+    def _is_kwargs(self, arg):
+        return arg.startswith('**')
+
+    def _format_kwargs(self, kwargs):
+        return kwargs[2:]
+
     def _is_varargs(self, arg):
-        return arg.startswith('*')
+        return arg.startswith('*') and not self._is_kwargs(arg)
 
     def _format_varargs(self, varargs):
         return varargs[1:]
 
 
 class UserKeywordArgumentParser(_ArgumentSpecParser):
+
+    def _is_kwargs(self, arg):
+        return False
 
     def _is_varargs(self, arg):
         return is_list_var(arg)

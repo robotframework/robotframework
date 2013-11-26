@@ -5,18 +5,24 @@ Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
 *** Variables ***
-${VARFILEDIR}  ${CURDIR}/../../testdata/variables/resvarfiles
+${VARFILEDIR}  ${DATADIR}/variables/resvarfiles
 
 *** Test Cases ***
 Variables From Variable File
-    Check Test Case  Variables From Variable File
+    Check Test Case  ${TEST NAME}
 
 Arguments To Variable Files
-    Check Test Case  Arguments To Variable Files
+    Check Test Case  ${TEST NAME}
+
+Variable File From PYTHONPATH
+    Check Test Case  ${TEST NAME}
+
+Variable File From PYTHONPATH with arguments
+    Check Test Case  ${TEST NAME}
 
 Non-Existing Variable File
-    Check Stderr Contains  [ ERROR ] Importing variable file '${VF3}' failed: File or directory does not exist.
-    Check Stderr Contains  [ ERROR ] Importing variable file '${VF4}' failed: File or directory does not exist.
+    Check Stderr Contains  [ ERROR ] Variable file '${VF3}' does not exist.
+    Check Stderr Contains  [ ERROR ] Variable file '${VF4}' does not exist.
 
 Too Few Arguments To Variable File
     Check Stderr Contains  [ ERROR ] Processing variable file '${VF2}' failed: TypeError: get_variables()
@@ -29,20 +35,26 @@ Invalid Variable File
 
 *** Keywords ***
 Run Test Data
-    ${vf1} =  Normalize Path  ${VARFILEDIR}/cli_vars.py
-    ${vf2} =  Normalize Path  ${VARFILEDIR}/cli_vars_2.py
-    ${vf3} =  Normalize Path  ${VARFILEDIR}/non_existing.py
-    ${vf4} =  Set Variable  non_absolute_non_existing.py
-    ${varfiles} =  Catenate
-    ...  --variablefile ${vf1}
-    ...  -V ${vf2}:arg
-    ...  -V ${vf2}:arg2:given
-    ...  --variablefile ${vf2}
-    ...  -V ${vf2}:FAIL
-    ...  -V ${vf2}:too:many:args
-    ...  --variablefile ${vf3}
-    ...  --variablefile ${vf4}
-    Run Tests  ${varfiles}  variables/commandline_variable_files.txt
+    ${VF1} =  Set Variable  ${VARFILEDIR}/cli_vars.py
+    ${VF2} =  Set Variable  ${VARFILEDIR}/cli_vars_2.py
+    ${VF3} =  Set Variable  ${VARFILEDIR}/non_existing.py
+    ${VF4} =  Set Variable  non_absolute_non_existing.py
+    ${options} =  Catenate
+    ...  --variablefile ${VF1}
+    ...  -V ${VF2}:arg
+    ...  -V ${VF2}:arg2:given
+    ...  --VariableFile ${VF2}
+    ...  -V ${VF2}:FAIL
+    ...  -V ${VF2}:too:many:args
+    ...  --variablef ${VF3}
+    ...  --VARIABLEFILE ${VF4}
+    ...  --VariableFile pythonpath_varfile.py
+    ...  --VariableFile pythonpath_varfile.py:1:2:3
+    ...  --pythonpath ${VARFILEDIR}/pythonpath_dir
+    Run Tests  ${options}  variables/commandline_variable_files.txt
+    ${VF2} =  Normalize Path  ${VARFILEDIR}/cli_vars_2.py
+    ${VF3} =  Normalize Path  ${VARFILEDIR}/non_existing.py
+    ${VF4} =  Normalize Path  non_absolute_non_existing.py
     Set Suite Variable  $VF2
     Set Suite Variable  $VF3
     Set Suite Variable  $VF4

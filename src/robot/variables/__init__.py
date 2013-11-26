@@ -63,6 +63,7 @@ def init_global_variables(settings):
 def _set_cli_vars(settings):
     for path, args in settings['VariableFiles']:
         try:
+            path = utils.find_file(path, file_type='Variable file')
             GLOBAL_VARIABLES.set_from_file(path, args)
         except:
             msg, details = utils.get_error_details()

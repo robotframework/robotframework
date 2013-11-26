@@ -819,11 +819,16 @@ class OperatingSystem:
         `destination` arguments have exactly same semantics as with
         that keyword.
         """
-        source, destination = self._copy_dir(source, destination)
-        shutil.rmtree(source)
+        source, destination = self._prepare_copy_or_move_dir(source, destination)
+        shutil.move(source, destination)
         self._link("Moved directory from '%s' to '%s'", source, destination)
 
     def _copy_dir(self, source, dest):
+        source, dest = self._prepare_copy_or_move_dir(source, dest)
+        shutil.copytree(source, dest)
+        return source, dest
+
+    def _prepare_copy_or_move_dir(self, source, dest):
         source = self._absnorm(source)
         dest = self._absnorm(dest)
         if not os.path.exists(source):
@@ -839,7 +844,6 @@ class OperatingSystem:
             parent = os.path.dirname(dest)
             if not os.path.exists(parent):
                 os.makedirs(parent)
-        shutil.copytree(source, dest)
         return source, dest
 
     # Environment Variables

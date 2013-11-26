@@ -25,7 +25,7 @@ class ArgumentMapper(object):
         if prune_trailing_defaults:
             template.prune_trailing_defaults()
         template.fill_defaults()
-        return list(template)
+        return template.args, template.kwargs
 
 
 class KeywordCallTemplate(object):
@@ -34,31 +34,34 @@ class KeywordCallTemplate(object):
         defaults = argspec.defaults
         if variables:
             defaults = variables.replace_list(defaults)
-        self._template = [None] * argspec.minargs + [Default(value) for value in defaults]
         self._positional = argspec.positional
+        self._kwargs_supported = bool(argspec.kwargs)
+        self.args = [None] * argspec.minargs + [Default(d) for d in defaults]
+        self.kwargs = {}
 
     def fill_positional(self, positional):
-        self._template[:len(positional)] = positional
+        self.args[:len(positional)] = positional
 
     def fill_named(self, named):
         for name, value in named.items():
-            index = self._positional.index(name)
-            self._template[index] = value
+            if name in self._positional:
+                index = self._positional.index(name)
+                self.args[index] = value
+            elif self._kwargs_supported:
+                self.kwargs[name] = value
+            else:
+                raise ValueError("Non-existing named argument '%s'" % name)
 
     def prune_trailing_defaults(self):
-        while self._template and isinstance(self._template[-1], Default):
-            self._template.pop()
+        while self.args and isinstance(self.args[-1], Default):
+            self.args.pop()
 
     def fill_defaults(self):
-        for index, item in enumerate(self._template):
-            if isinstance(item, Default):
-                self._template[index] = item.value
-
-    def __iter__(self):
-        return iter(self._template)
+        self.args = [arg if not isinstance(arg, Default) else arg.value
+                     for arg in self.args]
 
 
 class Default(object):
 
     def __init__(self, value):
-        self.value=value
+        self.value = value

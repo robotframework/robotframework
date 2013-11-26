@@ -161,6 +161,14 @@ utils Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`robotinspect` Module
+--------------------------
+
+.. automodule:: robot.utils.robotinspect
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`robotpath` Module
 -----------------------
 
@@ -197,6 +205,14 @@ utils Package
 ------------------
 
 .. automodule:: robot.utils.unic
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`utf8reader` Module
+------------------------
+
+.. automodule:: robot.utils.utf8reader
     :members:
     :undoc-members:
     :show-inheritance:

@@ -9,12 +9,21 @@ public class ArgDocDynamicJavaLibrary {
                              "Java One Arg",
                              "Java One or Two Args",
                              "Java Many Args",
+                             "Unsupported Java Kwargs",
                              "Invalid Java Args",
                              "Invalid Java Doc"};
     }
 
     public Object runKeyword(String name, Object[] args) {
-        System.out.println("Executed keyword " + name + " with arguments " + args);
+        System.out.print("Executed keyword " + name + " with ");
+        if (args.length == 0) {
+            System.out.print("no ");
+        }
+        System.out.print("arguments");
+        for (Object arg : args) {
+            System.out.print(' ' + (String)arg);
+        }
+        System.out.println();
         return null;
     }
 
@@ -37,6 +46,10 @@ public class ArgDocDynamicJavaLibrary {
             return new String[] {"arg", "default=default"};
         if (name.equals("Java Many Args"))
             return new String[] {"*args"};
+        if (name.equals("Unsupported Java Kwargs"))
+            // Must raise a DataError,
+            // because runKeyword has no kwargs support:
+            return new String[] {"**kwargs"};
         if (name.equals("Invalid Java Args"))
             throw new RuntimeException("Get args failure");
         return null;

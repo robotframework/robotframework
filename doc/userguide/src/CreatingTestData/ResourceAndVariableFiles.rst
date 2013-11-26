@@ -30,7 +30,7 @@ after the setting name.
 If the path is given in an absolute format, it is used directly. In other
 cases, the resource file is first searched relatively to the directory
 where the importing file is located. If the file is not found there,
-it is then searched from the directories in PYTHONPATH. The path can
+it is then searched from the directories in :code:`PYTHONPATH`. The path can
 contain variables, and it is recommended to use them to make paths
 system-independent (for example, :path:`${RESOURCES}/login_resources.html` or
 :path:`${RESOURCE_PATH}`). Additionally, slashes ("/") in the path
@@ -172,7 +172,7 @@ All test data files can import variables using the
 setting. Similarly to resource files, the path to the imported
 variable file is considered relative to the directory where the
 importing file is, and if not found, it is searched from the
-directories in PYTHONPATH. The path can also contain variables, and
+directories in :code:`PYTHONPATH`. The path can also contain variables, and
 slashes are converted to backslashes on Windows. If an `argument file takes
 arguments`__, they are specified in the cells after the path and also they
 can contain variables.
@@ -210,7 +210,11 @@ possible arguments are joined to the path with a colon (:opt:`:`)::
    --variablefile /absolute/path/common.py
    --variablefile taking_arguments.py:arg1:arg2
 
-Variables in these files are globally available in all test data
+Starting from Robot Framework 2.8.2, variable files taken into use from the
+command line are also searched from the :code:`PYTHONPATH` similarly as
+variable files imported in the Setting table.
+
+Variables in these variable files are globally available in all test data
 files, similarly as `individual variables`__ set with the
 :opt:`--variable` option. If both :opt:`--variablefile` and
 :opt:`--variable` options are used and there are variables with same

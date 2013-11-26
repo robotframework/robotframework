@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 import os
-import sys
 import copy
 from itertools import chain
 
@@ -153,35 +152,13 @@ class Namespace:
         raise DataError("Replacing variables from setting '%s' failed: %s"
                         % (import_setting.type, unicode(err)))
 
-    def _get_path(self, name, basedir, type):
-        if type == 'Library' and not self._is_library_by_path(name):
+    def _get_path(self, name, basedir, import_type):
+        if import_type == 'Library' and not self._is_library_by_path(name):
             return name.replace(' ', '')
-        try:
-            return self._resolve_path(name.replace('/', os.sep), basedir)
-        except DataError:
-            self._raise_imported_does_not_exist(type, name)
+        return utils.find_file(name, basedir, file_type=import_type)
 
     def _is_library_by_path(self, path):
         return path.lower().endswith(self._library_import_by_path_endings)
-
-    def _resolve_path(self, path, basedir):
-        for base in [basedir] + sys.path:
-            if not (base and os.path.isdir(base)):
-                continue
-            if not isinstance(base, unicode):
-                base = utils.decode_from_system(base)
-            ret = os.path.abspath(os.path.join(base, path))
-            if os.path.isfile(ret):
-                return ret
-            if os.path.isdir(ret) and os.path.isfile(os.path.join(ret, '__init__.py')):
-                return ret
-        raise DataError
-
-    def _raise_imported_does_not_exist(self, type, path):
-        type = {'Library': 'Test library',
-                'Variables': 'Variable file',
-                'Resource': 'Resource file'}[type]
-        raise DataError("%s '%s' does not exist." % (type, path))
 
     def _resolve_args(self, import_setting):
         try:

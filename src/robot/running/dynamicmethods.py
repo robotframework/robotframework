@@ -13,7 +13,9 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import get_error_message, unic
+from robot.utils import get_error_message, unic, is_java_method
+
+from .arguments import JavaArgumentParser, PythonArgumentParser
 
 
 def no_dynamic_method(*args):
@@ -37,6 +39,10 @@ class _DynamicMethod(object):
     def _camelCaseName(self):
         tokens = self._underscore_name.split('_')
         return ''.join([tokens[0]] + [t.capitalize() for t in tokens[1:]])
+
+    @property
+    def name(self):
+        return self.method.__name__
 
     def __call__(self, *args):
         try:
@@ -73,6 +79,18 @@ class GetKeywordNames(_DynamicMethod):
 class RunKeyword(_DynamicMethod):
     _underscore_name = 'run_keyword'
 
+    @property
+    def kwargs_supported(self):
+        argspec = self._parse_argspec(self.method)
+        return len(argspec.positional) == 3
+
+    def _parse_argspec(self, method):
+        if not is_java_method(method):
+            return PythonArgumentParser().parse(method)
+        func = method.im_func if hasattr(method, 'im_func') else method
+        signatures = func.argslist[:func.nargs]
+        return JavaArgumentParser().parse(signatures)
+
 
 class GetKeywordDocumentation(_DynamicMethod):
     _underscore_name = 'get_keyword_documentation'
@@ -84,7 +102,13 @@ class GetKeywordDocumentation(_DynamicMethod):
 class GetKeywordArguments(_DynamicMethod):
     _underscore_name = 'get_keyword_arguments'
 
+    def __init__(self, lib):
+        _DynamicMethod.__init__(self, lib)
+        self._kwargs_supported = RunKeyword(lib).kwargs_supported
+
     def _handle_return_value(self, value):
         if value is None:
-            return ['*unknown']
+            if self._kwargs_supported:
+                return ['*varargs', '**kwargs']
+            return ['*varargs']
         return self._to_list_of_strings(value)

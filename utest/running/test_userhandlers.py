@@ -153,7 +153,7 @@ class TestGetArgSpec(unittest.TestCase):
         assert_equals(argspec.varargs, exp_varargs)
 
     def _parse(self, in_args):
-        return UserKeywordArgumentParser().parse('Name', in_args.split())
+        return UserKeywordArgumentParser().parse(in_args.split())
 
     def test_many_varargs_raises(self):
         assert_raises(DataError, self._parse, '@{varargs} @{varargs2}')

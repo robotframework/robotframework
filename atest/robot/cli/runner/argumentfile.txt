@@ -32,7 +32,7 @@ Recursive Argument File
 
 Argument File with Non-ASCII Characters
     Copy File  ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.txt  %{TEMPDIR}/testäö.txt
-    ${path} =  Join Path  %{TEMPDIR}/testäö.txt
+    ${path} =  Normalize Path  %{TEMPDIR}/testäö.txt
     Create Argument File  ${ARGFILE 3}  -D äëïöüÿ  -C off  ${path}
     ${output} =  Run Robot Directly  --argumentfile ${ARGFILE 3}
     Should Not Contain  ${output.upper()}  ERROR
@@ -66,11 +66,10 @@ Create Argument File
     [Arguments]  ${path}  @{lines}
     [Documentation]  Writes also UTF8 BOM to the file to test it's ignored
     ${content} =  Catenate  SEPARATOR=\n  @{lines}
-    ${bom} =  Evaluate  __import__('codecs').BOM_UTF8.decode('UTF-8')
+    ${bom} =  Evaluate  codecs.BOM_UTF8.decode('UTF-8')  modules=codecs
     Create File  ${path}  ${bom}${content}
 
 Create Argument File Without BOM
     [Arguments]  ${path}  @{lines}
     ${content} =  Catenate  SEPARATOR=\n  @{lines}
     Create File  ${path}  ${content}
-

@@ -1,0 +1,25 @@
+*** Settings ***
+Documentation   Tests for libraries using getKeywordNames and runKeyword with **kwargs functionality. In these tests libraries are implemented with Java.
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_kwargs_support_java.txt
+Force Tags      regression  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Run Keyword
+    Check Test Case  ${TESTNAME}
+
+Documentation and Argument Boundaries Work With Kwargs In Java
+    [Tags]  jybot
+    Check test case and its keyword  Java Kwargs  key:value
+
+Documentation and Argument Boundaries Work With Varargs and Kwargs In Java
+    [Tags]  jybot
+    Check test case and its keyword  Java Varargs and Kwargs  1 2 3 key:value
+
+*** Keywords ***
+
+Check test case and its keyword
+    [Arguments]  ${keyword}  ${args}
+    ${tc} =  Check Test case  ${TESTNAME}
+    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for ${keyword}
+    Check Log Message  ${tc.kws[0].msgs[0]}  Executed keyword ${keyword} with arguments ${args}

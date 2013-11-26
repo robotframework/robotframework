@@ -116,8 +116,8 @@ class UserKeywordHandler(object):
         self.teardown = keyword.teardown
         self.libname = libname
         self.doc = self._doc = unicode(keyword.doc)
-        self.arguments = UserKeywordArgumentParser().parse(self.longname,
-                                                           tuple(keyword.args))
+        self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
+                                                           self.longname)
         self._timeout = keyword.timeout
 
     @property
@@ -168,7 +168,8 @@ class UserKeywordHandler(object):
         resolver = ArgumentResolver(self.arguments)
         mapper = ArgumentMapper(self.arguments)
         positional, named = resolver.resolve(arguments, variables)
-        return mapper.map(positional, named, variables)
+        arguments, _ = mapper.map(positional, named, variables)
+        return arguments
 
     def _execute(self, context, arguments):
         self._set_variables(arguments, context.variables)

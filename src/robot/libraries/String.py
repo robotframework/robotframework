@@ -42,6 +42,7 @@ class String(object):
     - `Should (Not) Start With`
     - `Should (Not) End With`
     - `Convert To String`
+    - `Convert To Bytes`
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -62,9 +63,10 @@ class String(object):
         | ${bytes} = | Encode String To Bytes | ${string} | UTF-8 |
         | ${bytes} = | Encode String To Bytes | ${string} | ASCII | errors=ignore |
 
-        Use `Decode Bytes To String` if you need to convert byte strings to
-        Unicode strings, and `Convert To String` in `BuiltIn` if you need to
-        convert arbitrary objects to Unicode strings.
+        Use `Convert To Bytes` in `BuiltIn` if you want to create bytes based
+        on character or integer sequences. Use `Decode Bytes To String` if you
+        need to convert byte strings to Unicode strings and `Convert To String`
+        in `BuiltIn` if you need to convert arbitrary objects to Unicode.
 
         New in Robot Framework 2.7.7.
         """

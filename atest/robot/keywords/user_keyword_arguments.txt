@@ -55,7 +55,7 @@ Invalid Arguments Spec
     [Template]    Verify Invalid Argument Spec
     0    Invalid argument syntax    Invalid argument 'no deco'.
     1    Non-default after defaults    Non-default argument after default arguments.
-    2    Varargs not last    Only last argument can be varargs.
+    2    Varargs not last    Positional argument after varargs.
 
 *** Keywords ***
 Verify Invalid Argument Spec
