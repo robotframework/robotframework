@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
 import os
 import sys
 import tempfile
@@ -334,11 +335,8 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'", path)
-        f = open(path, 'rb')
-        try:
+        with open(path, 'rb') as f:
             return f.read()
-        finally:
-            f.close()
 
     def grep_file(self, path, pattern, encoding='UTF-8'):
         """Returns the lines of the specified file that match the `pattern`.
@@ -364,10 +362,18 @@ class OperatingSystem:
         Lines Matching Regexp`.
         """
         pattern = '*%s*' % pattern
-        orig = self.get_file(path, encoding).splitlines()
-        lines = [line for line in orig if fnmatch.fnmatchcase(line, pattern)]
-        self._info('%d out of %d lines matched' % (len(lines), len(orig)))
-        return '\n'.join(lines)
+        path = self._absnorm(path)
+        lines = []
+        total_lines = 0
+        self._link("Reading file '%s'", path)
+        with open(path, 'rU') as f:
+            for line in f:
+                total_lines += 1
+                line = unicode(line, encoding).rstrip('\n')
+                if fnmatch.fnmatchcase(line, pattern):
+                    lines.append(line)
+            self._info('%d out of %d lines matched' % (len(lines), total_lines))
+            return '\n'.join(lines)
 
     def log_file(self, path, encoding='UTF-8'):
         """Wrapper for `Get File` that also logs the returned file.
@@ -736,27 +742,44 @@ class OperatingSystem:
     def move_file(self, source, destination):
         """Moves the source file into a new destination.
 
-        Uses `Copy File` keyword internally, and `source` and `destination`
-        arguments have exactly same semantics as with that keyword.
+        If the source and destination are in the same filesystem, rename operation is used.
+        Otherwise file is copied to the destination filesystem and then removed from the
+        original filesystem.
+
+        Arguments have exactly same semantics as with `Copy File` keyword.
         """
-        source, destination = self._copy_file(source, destination)
-        os.remove(source)
+        source, destination, _ = self._prepare_for_move_or_copy(destination, source)
+        shutil.move(source, destination)
         self._link("Moved file from '%s' to '%s'", source, destination)
 
-    def _copy_file(self, source, dest):
+    def _prepare_for_move_or_copy(self, destination, source):
+        source, destination, dest_is_dir = self._normalize_dest_and_source(destination, source)
+        self._verify_that_source_is_a_file(source)
+        parent = self._ensure_directory_exists(destination, dest_is_dir)
+        return source, destination, parent
+
+    def _copy_file(self, source, destination):
+        source, destination, parent = self._prepare_for_move_or_copy(destination, source)
+        return self._atomic_copy(source, destination, parent)
+
+    def _normalize_dest_and_source(self, dest, source):
         source = self._absnorm(source)
         dest = dest.replace('/', os.sep)
         dest_is_dir = dest.endswith(os.sep)
         dest = self._absnorm(dest)
+        return source, dest, dest_is_dir
+
+    def _verify_that_source_is_a_file(self, source):
         if not os.path.exists(source):
             raise RuntimeError("Source file '%s' does not exist" % source)
         if not os.path.isfile(source):
             raise RuntimeError("Source file '%s' is not a regular file" % source)
-        parent = self._destination_directory(dest, dest_is_dir)
-        if not os.path.exists(dest):
-            if not os.path.exists(parent):
-                os.makedirs(parent)
-        return self._atomic_copy(source, dest, parent)
+
+    def _ensure_directory_exists(self, path, dest_is_dir):
+        parent = self._destination_directory(path, dest_is_dir)
+        if not os.path.exists(path) and not os.path.exists(parent):
+            os.makedirs(parent)
+        return parent
 
     def _atomic_copy(self, source, destination, destination_parent):
         # This method tries to ensure that a file copy operation will not fail if the destination file is removed during

@@ -73,6 +73,12 @@ Grep File
     Create File  ${TESTFILE}  ${EMPTY}
     Grep And Check File  *  ${EMPTY}
 
+Grep File non Ascii
+    Create File  ${TESTFILE}  fää\nbär\nföö bär\n\nA Fåå
+    Grep And Check File     fää     fää
+    Grep And Check File     ö       föö bär
+    Grep And Check File     A       A Fåå
+
 *** Keywords ***
 Get And Check File
     [Arguments]  ${path}  ${expected}

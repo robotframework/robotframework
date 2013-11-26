@@ -9,6 +9,11 @@ Embedded Arguments In User Keyword Name
     ${name}  ${book} =  User Juha Selects Playboy From Webshop
     Should Be Equal  ${name}-${book}  Juha-Playboy
 
+Embedded And Positional Arguments Do Not Work Together
+    [Documentation]  FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 1.
+    Given this "usage" with @{EMPTY} works  @{EMPTY}
+    Then User Invalid Selects Invalid From Webshop  invalid
+
 Complex Embedded Arguments
     Given this "feature" works
     When this "test case" is *executed*
@@ -31,6 +36,14 @@ Embedded Arguments as Variables
 Non-Existing Variable in Embedded Arguments
     [Documentation]  FAIL Non-existing variable '${non existing}'.
     User ${non existing} Selects ${variables} From Webshop
+
+Non-Existing Variable in Embedded Arguments and Positional Arguments
+    [Documentation]  FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 2.
+    User ${non existing} Selects ${variables} From Webshop    invalid    args
+
+Non-Existing Variable in Embedded Arguments and in Positional Arguments
+    [Documentation]  FAIL Non-existing variable '\${nonex pos}'.
+    User ${nonex emb} Selects ${variables} From Webshop    ${nonex pos}
 
 Custom Embedded Argument Regexp
     [Documentation]  FAIL No keyword with name 'Result of a + b is fail' found.
