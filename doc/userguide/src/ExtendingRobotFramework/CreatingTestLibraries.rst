@@ -1596,7 +1596,7 @@ The dynamic API is in most ways similar to the static API. For
 example, reporting the keyword status, logging, and returning values
 works exactly the same way. Most importantly, there are no differences
 in importing dynamic libraries and using their keywords compared to
-other libraries, so users do not even need to know what APIs their
+other libraries. In other words, users do not need to know what APIs their
 libraries use.
 
 Only differences between static and dynamic libraries are
@@ -1607,17 +1607,17 @@ done using reflection (except for the documentation of Java libraries),
 but dynamic libraries have special methods that are used for these
 purposes.
 
-One of the benefits of the dynamic API is that you have more
-flexibility in organizing your library. With the static API, you have all
-keywords in one class (or module), whereas with the dynamic API, you can,
+One of the benefits of the dynamic API is that you have more flexibility
+in organizing your library. With the static API, you must have all
+keywords in one class or module, whereas with the dynamic API, you can,
 for example, implement each keyword as a separate class. This use case is
-not so important with Python, because its dynamic capabilities and
-multi-inheritance already give plenty of flexibility and the
-`hybrid library API`_ is often a better option.
+not so important with Python, though, because its dynamic capabilities and
+multi-inheritance already give plenty of flexibility, and there is also
+possibility to use the `hybrid library API`_.
 
 Another major use case for the dynamic API is implementing a library
 so that it works as proxy for an actual library possibly running on
-some other process or even on another computer. This kind of a proxy
+some other process or even on another machine. This kind of a proxy
 library can be very thin, and because keyword names and all other
 information is got dynamically, there is no need to update the proxy
 when new keywords are added to the actual library.
@@ -1631,6 +1631,8 @@ possible. However, if you use Java, you may want to examine
 `JavalibCore`_ before implementing your own system. This collection of
 reusable tools supports several ways of creating keywords, and it is
 likely that it already has a mechanism that suites your needs.
+
+.. _`Getting dynamic keyword names`:
 
 Getting keyword names
 '''''''''''''''''''''
@@ -1652,6 +1654,8 @@ Dynamic libraries must always have this method. If it is missing, or
 if calling it fails for some reason, the library is considered a
 static library.
 
+.. _`Running dynamic keywords`:
+
 Running keywords
 ''''''''''''''''
 
@@ -1662,24 +1666,24 @@ Framework uses the library's :code:`run_keyword` method to get it
 executed. This method takes two or three arguments. The first argument is a
 string containing the name of the keyword to be executed in the same
 format as returned by :code:`get_keyword_names`. The second argument is
-a list of arguments given to the keyword in the test data.
+a list or array of arguments given to the keyword in the test data.
 
 The optional third argument is a dictionary (map in Java) that gets
-possible gets possible `free keyword arguments`_ (a.k.a. `**kwargs`)
-passed to the keyword. See the sections about `getting keyword arguments`_
-and `named argument syntax with dynamic libraries`_ for more details.
+possible `free keyword arguments`_ (:code:`**kwargs`) passed to the
+keyword. See `free keyword arguments with dynamic libraries`_ section
+for more details about using kwargs with dynamic test libraries.
 
 After getting keyword name and arguments, the library can execute
 the keyword freely, but it must use the same mechanism to
-communicate with the framework as static libraries. This
-means using exceptions for reporting keyword status, logging by
-writing to the standard output and using the return statement in
-:code:`run_keyword` for returning something.
+communicate with the framework as static libraries. This means using
+exceptions for reporting keyword status, logging by writing to
+the standard output or by using provided logging APIs, and using
+the return statement in :code:`run_keyword` for returning something.
 
 Every dynamic library must have both the :code:`get_keyword_names` and
-:code:`run_keyword` methods. The rest of the methods in the dynamic
-API are optional, so the example below shows a working (albeit
-trivial) dynamic library.
+:code:`run_keyword` methods but rest of the methods in the dynamic
+API are optional. The example below shows a working, albeit
+trivial, dynamic library implemented in Python.
 
 .. sourcecode:: python
 
@@ -1689,7 +1693,7 @@ trivial) dynamic library.
            return ['first keyword', 'second keyword']
 
        def run_keyword(self, name, args):
-           print "Running keyword %s with arguments %s." % (name, args)
+           print "Running keyword '%s' with arguments %s." % (name, args)
 
 Getting keyword arguments
 '''''''''''''''''''''''''
@@ -1719,28 +1723,28 @@ should be able to translate them to Java lists or arrays.
 .. table:: Representing different arguments with :code:`get_keyword_arguments`
    :class: tabular
 
-   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
-   |    Expected        |      How to represent       |            Examples             | Argument limits | ``**kwargs`` |
-   |    arguments       |                             |                                 | (min/max)       | supported    |
-   +====================+=============================+=================================+=================+==============+
-   | No arguments       | Empty list.                 | :code:`[]`                      | 0/0             | no           |
-   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
-   | One or more        | List of strings containing  | :code:`['one_argument']`,       | 1/1, 3/3        | no           |
-   | argument           | argument names.             | :code:`['a1', 'a2', 'a3']`      |                 |              |
-   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
-   | Default values     | Default values separated    | :code:`['arg=default value']`,  | 0/1, 1/3        | no           |
-   | for arguments      | from names with :code:`=`.  | :code:`['a', 'b=1', 'c=2']`     |                 |              |
-   |                    | Default values are always   |                                 |                 |              |
-   |                    | considered to be strings.   |                                 |                 |              |
-   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
-   | Variable number    | Last (or second last)       | :code:`['*varargs']`,           | 0/any, 1/any    | no           |
-   | of arguments       | argument has :code:`*`      | :code:`['a', 'b=42', '*rest']`  |                 |              |
-   | (``*varargs``)     | before its name.            |                                 |                 |              |
-   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
-   | Free keyword       | Last arguments has          | :code:`['**kwargs']`,           | 0/0, 1/2, 0/any | yes          |
-   | arguments          | :code:`**` before its name. | :code:`['a', 'b=42', '**kws']`, |                 |              |
-   | (``**kwargs``)     |                             | :code:`['*args', '**kws']`      |                 |              |
-   +--------------------+-----------------------------+---------------------------------+-----------------+--------------+
+   +--------------------+-----------------------------+---------------------------------+-----------------+
+   |    Expected        |      How to represent       |            Examples             | Argument limits |
+   |    arguments       |                             |                                 | (min/max)       |
+   +====================+=============================+=================================+=================+
+   | No arguments       | Empty list.                 | :code:`[]`                      | 0/0             |
+   +--------------------+-----------------------------+---------------------------------+-----------------+
+   | One or more        | List of strings containing  | :code:`['one_argument']`,       | 1/1, 3/3        |
+   | argument           | argument names.             | :code:`['a1', 'a2', 'a3']`      |                 |
+   +--------------------+-----------------------------+---------------------------------+-----------------+
+   | Default values     | Default values separated    | :code:`['arg=default value']`,  | 0/1, 1/3        |
+   | for arguments      | from names with :code:`=`.  | :code:`['a', 'b=1', 'c=2']`     |                 |
+   |                    | Default values are always   |                                 |                 |
+   |                    | considered to be strings.   |                                 |                 |
+   +--------------------+-----------------------------+---------------------------------+-----------------+
+   | Variable number    | Last (or second last)       | :code:`['*varargs']`,           | 0/any, 1/any    |
+   | of arguments       | argument has :code:`*`      | :code:`['a', 'b=42', '*rest']`  |                 |
+   | (:code:`*varargs`) | before its name.            |                                 |                 |
+   +--------------------+-----------------------------+---------------------------------+-----------------+
+   | Free keyword       | Last arguments has          | :code:`['**kwargs']`,           | 0/0, 1/2, 0/any,|
+   | arguments          | :code:`**` before its name. | :code:`['a', 'b=42', '**kws']`, | all accept also |
+   | (:code:`**kwargs`) |                             | :code:`['*varargs', '**kwargs']`| any kwargs      |
+   +--------------------+-----------------------------+---------------------------------+-----------------+
 
 When the :code:`get_keyword_arguments` is used, Robot Framework automatically
 calculates how many positional arguments the keyword requires and does it
@@ -1751,7 +1755,14 @@ The actual argument names and default values that are returned are also
 important. They are needed for `named argument support`__ and the Libdoc_
 tool needs them to be able to create a meaningful library documentation.
 
+If :code:`get_keyword_arguments` is missing or returns :code:`None` or
+:code:`null` for a certain keyword, that keyword gets an argument specification
+accepting all arguments. This automatic argument spec is either
+:code:`[*varargs, **kwargs]` or :code:`[*varargs]`, depending does
+:code:`run_keyword` `support kwargs`__ by having three arguments or not.
+
 __ `Named argument syntax with dynamic libraries`_
+__ `Free keyword arguments with dynamic libraries`_
 
 Getting keyword documentation
 '''''''''''''''''''''''''''''
@@ -1810,37 +1821,65 @@ by the :code:`get_keyword_arguments` method.
 
 Using the named argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
-that has been specified to have arguments :code:`arg1, arg2=xxx, arg3=yyy`.
+that has been specified to have argument specification
+:code:`[arg1, arg2=xxx, arg3=yyy]`.
 The last column shows the arguments that the keyword is actually called with.
 
 .. table:: Using named argument syntax with a dynamic keyword
    :class: example
 
-   ===============   ========  ========  ========  ========  ===========
-      Test Case       Action   Argument  Argument  Argument  Called With
-   ===============   ========  ========  ========  ========  ===========
-   Only positional   Dynamic   a                             # a
-   \                 Dynamic   a         b                   # a, b
-   \                 Dynamic   a         b         c         # a, b, c
-   Named             Dynamic   a         arg2=b              # a, b
-   \                 Dynamic   a         b         arg3=c    # a, b, c
-   \                 Dynamic   a         arg2=b    arg3=c    # a, b, c
-   \                 Dynamic   arg1=a    arg2=b    arg3=c    # a, b, c
-   Fill skipped      Dynamic   a         arg3=c              # a, xxx, c
-   ===============   ========  ========  ========  ========  ===========
-
-If the key of a named argument is not found in the keyword's argument names
-the resulting behaviour depends on the existance of a :code:`'**named'` entry
-in the `keyword's argument list`__ and the optional third parameter
-of the :code:`run_keyword` method. If both exist the named argument
-is added to the dictionary given to the third :code:`run_keyword` parameter.
-Without :code:`'**named'` the named argument is treated as a single positional
-:code:`'name=value'` string argument. If the library doesn't provide
-the :code:`get_keyword_arguments` method, all named arguments are either
-added to the dictionary or treated as single values, only depending
-on the existance of the third :code:`run_keyword` method parameter.
+   ===============   ========  ========  ========  ========  =============
+      Test Case       Action   Argument  Argument  Argument   Called With
+   ===============   ========  ========  ========  ========  =============
+   Only positional   Dynamic   a                             # [a]
+   \                 Dynamic   a         b                   # [a, b]
+   \                 Dynamic   a         b         c         # [a, b, c]
+   Named             Dynamic   a         arg2=b              # [a, b]
+   \                 Dynamic   a         b         arg3=c    # [a, b, c]
+   \                 Dynamic   a         arg2=b    arg3=c    # [a, b, c]
+   \                 Dynamic   arg1=a    arg2=b    arg3=c    # [a, b, c]
+   Fill skipped      Dynamic   a         arg3=c              # [a, xxx, c]
+   ===============   ========  ========  ========  ========  =============
 
 __ `Getting keyword arguments`_
+
+Free keyword arguments with dynamic libraries
+'''''''''''''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.8.2, dynamic libraries can also support
+`free keyword arguments`_ (:code:`**kwargs`). A mandatory precondition for
+this support is that the :code:`run_keyword` method `takes three arguments`__:
+the third one will get kwargs when they are used. Kwargs are passed to the
+keyword as a dictionary (Python) or Map (Java).
+
+What arguments a keyword accepts depends on what :code:`get_keyword_arguments`
+`returns for it`__. If the last argument starts with :code:`**`, that keyword is
+recognized to accept kwargs.
+
+Using the free keyword argument syntax with dynamic libraries is illustrated
+by the following examples. All the examples use a keyword :name:`Dynamic`
+that has been specified to have argument specification
+:code:`[arg1=xxx, arg2=yyy, **kwargs]`.
+The last column shows the arguments that the keyword is actually called with.
+
+.. table:: Using free keyword arguments with a dynamic keyword
+   :class: example
+
+   =====================  ========  ========  ========  ========  ========================
+         Test Case         Action   Argument  Argument  Argument         Called With
+   =====================  ========  ========  ========  ========  ========================
+   No arguments           Dynamic                                 # [], {}
+   Only positional        Dynamic   a                             # [a], {}
+   \                      Dynamic   a         b                   # [a, b], {}
+   Only kwargs            Dynamic   a=1                           # [], {a: 1}
+   \                      Dynamic   a=1       b=2       c=3       # [], {a: 1, b: 2, c: 3}
+   Positional and kwargs  Dynamic   a         b=2                 # [a], {b: 2}
+   \                      Dynamic   a         b=2       c=3       # [a], {b: 2, c: 3}
+   Named and kwargs       Dynamic   arg1=a    b=2                 # [a], {b: 2}
+   \                      Dynamic   arg2=a    b=2       c=3       # [xxx, a], {b: 2, c: 3}
+   =====================  ========  ========  ========  ========  ========================
+
+__ `Running dynamic keywords`_
 __ `Getting keyword arguments`_
 
 Summary
@@ -1853,20 +1892,25 @@ camelCase aliases work exactly the same way.
 .. table:: All special methods in the dynamic API
    :class: tabular
 
-   ==========================  ================  =======================================================
-              Name                 Arguments                       Purpose
-   ==========================  ================  =======================================================
-   get_keyword_names                             Return names of the implemented keywords.
-   run_keyword                 name, arguments   Execute the specified keyword with given arguments.
-   get_keyword_arguments       name              Return keywords' argument specifications. Optional.
-   get_keyword_documentation   name              Return keywords' and library's documentation. Optional.
-   ==========================  ================  =======================================================
+   =================================  ===============================  =======================================================
+                 Name                           Arguments                                       Purpose
+   =================================  ===============================  =======================================================
+   :code:`get_keyword_names`                                           `Return names`__ of the implemented keywords.
+   :code:`run_keyword`                :code:`name, arguments, kwargs`  `Execute the specified keyword`__ with given arguments. :code:`kwargs` is optional.
+   :code:`get_keyword_arguments`      :code:`name`                     Return keywords' `argument specifications`__. Optional method.
+   :code:`get_keyword_documentation`  :code:`name`                     Return keywords' and library's `documentation`__. Optional method.
+   =================================  ===============================  =======================================================
 
-It is possible to write a formal interface specification in Java, as
+__ `Getting dynamic keyword names`_
+__ `Running dynamic keywords`_
+__ `Getting keyword arguments`_
+__ `Getting keyword documentation`_
+
+It is possible to write a formal interface specification in Java as
 below. However, remember that libraries *do not need* to implement
 any explicit interface, because Robot Framework directly checks with
 reflection if the library has the required :code:`get_keyword_names` and
-:code:`run_keyword` methods. Additionally,
+:code:`run_keyword` methods or their camelCase aliases. Additionally,
 :code:`get_keyword_arguments` and :code:`get_keyword_documentation`
 are completely optional.
 
@@ -1874,15 +1918,20 @@ are completely optional.
 
    public interface RobotFrameworkDynamicAPI {
 
-       String[] getKeywordNames();
+       List<String> getKeywordNames();
 
-       Object runKeyword(String name, Object[] arguments);
+       Object runKeyword(String name, List arguments);
 
-       String[] getKeywordArguments(String name);
+       Object runKeyword(String name, List arguments, Map kwargs);
+
+       List<String> getKeywordArguments(String name);
 
        String getKeywordDocumentation(String name);
 
    }
+
+.. note:: In addition to using :code:`List`, it is possible to use also arrays
+          like :code:`String[]`.
 
 A good example of using the dynamic API is Robot Framework's own
 `Remote library`_.
