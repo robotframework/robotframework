@@ -1,3 +1,6 @@
+*** Variables ***
+@{ESCAPING}    c:\\temp    \${not var}    \x00\\x00    ELSE    \n\\n    ${/}
+
 *** Test Cases ***
 Return one value
     ${ret} =    Return one value    42
@@ -39,6 +42,31 @@ Outside user keyword
     [Documentation]    FAIL Invalid 'Return From Keyword' usage.
     Run Keyword And Return    Log    This does not work
     Fail    This is not executed
+
+With list variable containing escaped items
+    [Documentation]    FAIL No keyword with name 'c:\\temp' found.
+    ${ret} =    Run Keyword And Return With Variables    Create List    @{ESCAPING}
+    Should Be Equal    ${ret}    ${ESCAPING}
+    Run Keyword And Return With Variables    @{ESCAPING}
+
+Run Keyword And Return If
+    ${ret} =    Run Keyword And Return If Arg Is Positive
+    Should Be Equal    ${ret}    No positive arguments
+    ${ret} =    Run Keyword And Return If Arg Is Positive    -1  -2  -3
+    Should Be Equal    ${ret}    No positive arguments
+    ${ret} =    Run Keyword And Return If Arg Is Positive    -1  0  1  2
+    Should Be Equal    ${ret}    1 > 0
+
+Run Keyword And Return If can have non-existing keywords and variables if condition is not true
+    [Documentation]    FAIL No keyword with name 'Non-Existing Keyword When Condition Is True' found.
+    Run Keyword And Return If With Non-Existing Keyword And Variables
+
+Run Keyword And Return If with list variable containing escaped items
+    [Documentation]    FAIL STARTS: Evaluating expression 'c:\\temp' failed:
+    ${ret} =    Run Keyword And Return If With Variables    True   Create List    @{ESCAPING}
+    Should Be Equal    ${ret}    ${ESCAPING}
+    Run Keyword And Return If With Variables    @{ESCAPING}
+
 
 *** Keywords ***
 Return one value
@@ -100,3 +128,24 @@ Using Run Keywords
     ...    Fail    Not executed
     Fail    Not executed
     [Return]    Not returned
+
+Run Keyword And Return With Variables
+    [Arguments]    @{args}
+    Run Keyword And Return    @{args}
+
+Run Keyword And Return If Arg Is Positive
+    [Arguments]    @{args}
+    :FOR    ${arg}    IN    @{args}
+    \    Run Keyword And Return If    ${arg} > 0    Set Variable    ${arg} > 0
+    Run Keyword And Return If    True    Set Variable    No positive arguments
+    Fail    Not executed
+    [Return]    Not returned
+
+Run Keyword And Return If With Non-Existing Keyword And Variables
+    Run Keyword And Return If    False    Non-Existing Keyword
+    Run Keyword And Return If    False    Set Variable    ${non-existing variable}
+    Run Keyword And Return If    True    Non-Existing Keyword When Condition Is True
+
+Run Keyword And Return If With Variables
+    [Arguments]    @{args}
+    Run Keyword And Return If    @{args}
