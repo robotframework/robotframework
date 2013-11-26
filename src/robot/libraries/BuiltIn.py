@@ -1799,6 +1799,8 @@ class _Control:
         The most common use case, returning based on an expression, can be
         accomplished directly with `Return From Keyword If`. Both of these
         keywords are new in Robot Framework 2.8.
+
+        See also `Run Keyword And Return` and `Run Keyword And Return If`.
         """
         self.log('Returning from the enclosing user keyword.')
         raise ReturnFromKeyword(return_values)
@@ -1823,6 +1825,8 @@ class _Control:
         |    \\    ${index} =    Set Variable    ${index + 1}
         |    Return From Keyword    ${-1}    # Also [Return] would work here.
 
+        See also `Run Keyword And Return` and `Run Keyword And Return If`.
+
         New in Robot Framework 2.8.
         """
         if self._is_true(condition):
@@ -1830,8 +1834,48 @@ class _Control:
 
     @run_keyword_variant(resolve=1)
     def run_keyword_and_return(self, name, *args):
+        """Runs the specified keyword and returns from the enclosing user keyword.
+
+        The keyword to execute is defined with `name` and `*args` exactly like
+        with `Run Keyword`. After running the keyword, returns from the
+        enclosing user keyword and passes possible return value from the
+        executed keyword further. Returning from a keyword has exactly same
+        semantics as with `Return From Keyword`.
+
+        Example:
+        | `Run Keyword And Return`  | `My Keyword` | arg1 | arg2 |
+        | # Above is equivalent to: |
+        | ${result} =               | `My Keyword` | arg1 | arg2 |
+        | `Return From Keyword`     | ${result}    |      |      |
+
+        Use `Run Keyword And Return If` if you want to run keyword and return
+        based on a condition.
+
+        New in Robot Framework 2.8.2.
+        """
         ret = self.run_keyword(name, *args)
         self.return_from_keyword(ret)
+
+    @run_keyword_variant(resolve=2)
+    def run_keyword_and_return_if(self, condition, name, *args):
+        """Runs the specified keyword and returns from the enclosing user keyword.
+
+        A wrapper for `Run Keyword And Return` to run and return based on
+        the given `condition`. The condition is evaluated using the same
+        semantics as with `Should Be True` keyword.
+
+        Example:
+        | `Run Keyword And Return If` | ${rc} > 0 | `My Keyword` | arg1 | arg2 |
+        | # Above is equivalent to:   |
+        | `Run Keyword If`            | ${rc} > 0 | `Run Keyword And Return` | `My Keyword ` | arg1 | arg2 |
+
+        Use `Return From Keyword If` if you want to return a certain value
+        based on a condition.
+
+        New in Robot Framework 2.8.2.
+        """
+        if self._is_true(condition):
+            self.run_keyword_and_return(name, *args)
 
     def pass_execution(self, message, *tags):
         """Skips rest of the current test, setup, or teardown with PASS status.
