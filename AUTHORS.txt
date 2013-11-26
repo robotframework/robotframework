@@ -1,37 +1,43 @@
-The core team members during the years:
-Pekka Klärck (né Laukkanen)	2005 -         
-Juha Rantanen				2005 - 2011
-Lasse Koskela				2005 - 2006
-Janne Härkönen				2006 - 2012
-Sami Honkonen				2006 - 2007
-Antti Tuomaala				2006
-Ran Nyman					2007 - 2010
-Heikki Hulkko				2007 - 2009
-Anna Tevaniemi				2008
-Kari Husa					2009 - 2011
-Jussi Malinen				2010 - 
-Mikko Korpela				2010 - 
-Ismo Aro					2010 - 2012
-Ilmari Kontulainen			2010 - 2013    
-Tommi Asiala				2012
-Mika Hänninen				2012 - 2013
-Tatu Kairi					2012 - 
-Anssi Syrjäsalo				2013 -     
-Janne Piironen				2013 - 
+The core team members over the years:
+Pekka Klärck (né Laukkanen)    2005 -
+Juha Rantanen                  2005 - 2011
+Lasse Koskela                  2005 - 2006
+Janne Härkönen                 2006 - 2012
+Sami Honkonen                  2006 - 2007
+Antti Tuomaala                 2006
+Ran Nyman                      2007 - 2010
+Heikki Hulkko                  2007 - 2009
+Anna Tevaniemi                 2008
+Kari Husa                      2009 - 2011
+Jussi Malinen                  2010 -
+Mikko Korpela                  2010 -
+Ismo Aro                       2010 - 2012
+Ilmari Kontulainen             2010 - 2013
+Tommi Asiala                   2012
+Mika Hänninen                  2012 - 2013
+Tatu Kairi                     2012 -
+Anssi Syrjäsalo                2013 -
+Janne Piironen                 2013 -
 
 Other contributors:
-Elisabeth Hendrickson		Quick Start Guide (2.0)
-Marcin Michalak				String library (2.1)
-Chris Prinos				reStructuredText support (2.1) and Document how to debug execution with `pdb` (2.7.6)
-Régis Desgroppes			Fixing installation paths (2.1.3) and xUnit compatible outputs (2.5.5)
-Robert Spielman				Report background colors (2.5)
-Xie Yanbo					Alignment of east asian characters (2.5.3)
-JSXGraph Developers			JSXGraph tool and license changes for it (2.6)
-Imran						Template names to listener api (2.6) and Source to same (2.7)
-Tatu Aalto					Get Time keyword enhancement (2.7.5)
-Eemeli Kantola				Fix for non-breaking spaces (2.7.5)              
-Guy Kisel					Document decorators when creating custom test libraries (2.7.7)             
-Mike Terzo					Better connection errors to Remote library (2.7.7)
-Mirel Pehadzic and 
-Diogo Sa-Chaves De Oliveira	Terminal emulation for Telnet library (2.8.2)
-
+Elisabeth Hendrickson          Quick Start Guide (2.0)
+Marcin Michalak                String library (2.1)
+Chris Prinos                   reST (HTML) support (2.1)
+                               How-to debug execution with `pdb` (2.7.6)
+Régis Desgroppes               Fixing installation paths (2.1.3)
+                               xUnit compatible outputs (2.5.5)
+Robert Spielman                Report background colors (2.5)
+Xie Yanbo                      Alignment of east asian characters (2.5.3)
+JSXGraph Developers            JSXGraph tool and license changes for it (2.6)
+Imran                          Template names to listener API (2.6)
+                               Suite source to listener API (2.7)
+Tatu Aalto                     Get Time keyword enhancement (2.7.5)
+Eemeli Kantola                 Fix for non-breaking spaces (2.7.5)
+Martti Haukijärvi              IronPython support to Screenshot library (2.7.5)
+Guy Kisel                      How-to use decorators when creating libraries (2.7.7)
+Mike Terzo                     Better connection errors to Remote library (2.7.7)
+Asko Soukka                    reST (plain text) support (2.8.2)
+vivekkodu                      reST (plain text) support (2.8.2)
+Stefan Zimmermann              **kwargs support for dynamic libraries (2.8.2)
+Mirel Pehadzic                 Terminal emulation for Telnet library (2.8.2)
+Diogo Sa-Chaves De Oliveira    Terminal emulation for Telnet library (2.8.2)
