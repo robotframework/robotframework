@@ -47,6 +47,9 @@ Valid Arguments For Keyword Expecting Non String Scalar Arguments
 Valid Arguments For Keyword Expecting Non String Array Arguments
     Check Test Case    ${TESTNAME}
 
+Valid Arguments For Keyword Expecting Non String List Arguments
+    Check Test Case    ${TESTNAME}
+
 Invalid Argument Types
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2

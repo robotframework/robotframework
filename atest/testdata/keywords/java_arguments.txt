@@ -92,6 +92,9 @@ Varargs Work Also With Arrays And Lists
     ${array3} =    Get String Array    Hello    string    array    world
     Should Be Equal    ${array1}    ${array2}
     Should Be Equal    ${array2}    ${array3}
+    String List    ${list}
+    String List    ${array1.tolist()}
+    String List    Hello    string    list    world
 
 Valid Arguments For Keyword Expecting Non String Scalar Arguments
     Byte 1    ${1}
@@ -159,6 +162,18 @@ Valid Arguments For Keyword Expecting Non String Array Arguments
     ${ht} =    Get Hashtable
     Object Array
     Object Array    ${obj}    ${ht}    hello world    ${42}    ${null}
+
+Valid Arguments For Keyword Expecting Non String List Arguments
+    Integer List
+    Integer List    ${0}    ${1}    ${2}    ${10000}    ${-10000}
+    Double List
+    Double List    ${0.}    ${1.}    ${2.}    ${-3.14}    ${10*3.}
+    Boolean List
+    Boolean List    ${True}    ${False}    ${True}    ${False}
+    ${obj} =    Get Java Object    my name
+    ${ht} =    Get Hashtable
+    Object List
+    Object List    ${obj}    ${ht}    hello world    ${42}    ${null}
 
 Invalid Argument Types 1
     [Documentation]    FAIL ValueError: Argument at position 1 cannot be coerced to integer.
