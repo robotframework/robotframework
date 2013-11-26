@@ -1717,8 +1717,8 @@ Similarly as static keywords, dynamic keywords can require any number
 of arguments, have default values, and accept variable number of
 arguments and free keyword arguments. The syntax for how to represent
 all these different variables is explained in the following table.
-Note that the examples use Python lists of strings, but Java developers
-should be able to translate them to Java lists or arrays.
+Note that the examples use Python syntax for lists, but Java developers
+should use Java lists or String arrays instead.
 
 .. table:: Representing different arguments with :code:`get_keyword_arguments`
    :class: tabular
