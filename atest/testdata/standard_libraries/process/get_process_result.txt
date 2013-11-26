@@ -44,7 +44,7 @@ Get same result multiple times
     Should Be Equal    ${stderr}    Framework
 
 Get result of active process
-    Start Python Process    print 'Robot Framework'
+    Start Python Process    print('Robot Framework')
     Wait For Process
     ${result} =    Get Process Result
     ${stdout} =    Get Process Result    stdout=true
@@ -54,7 +54,7 @@ Get result of active process
 
 Getting results of unfinished processes is not supported
     [Documentation]    FAIL    Getting results of unfinished processes is not supported.
-    Start Python Process    print 'Robot Framework'
+    Start Python Process    print('Robot Framework')
     Get Process Result
 
 *** Keywords ***
