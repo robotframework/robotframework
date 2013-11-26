@@ -1,5 +1,6 @@
 *** Settings ***
 Library           ArgumentsJava    Arg    and    varargs    accepted
+Library           ListArgumentsJava    Arg    and    varargs    accepted
 Library           ArgumentTypes
 Library           ExampleJavaLibrary
 
@@ -69,21 +70,38 @@ Too Many Arguments With Defaults 2
 Correct Number Of Arguments With Varargs
     ${ret} =    A 0 N
     Should Be Equal    ${ret}    a_0_n:
+    ${ret} =    A 0 List
+    Should Be Equal    ${ret}    a_0_list:
     ${ret} =    A 0 N    My arg
     Should Be Equal    ${ret}    a_0_n: My arg
+    ${ret} =    A 0 List    My arg
+    Should Be Equal    ${ret}    a_0_list: My arg
     ${ret} =    A 0 N    1    2    3    4
     Should Be Equal    ${ret}    a_0_n: 1 2 3 4
+    ${ret} =    A 0 List    1    2    3    4
+    Should Be Equal    ${ret}    a_0_list: 1 2 3 4
     ${ret} =    A 1 N    Required arg
     Should Be Equal    ${ret}    a_1_n: Required arg
+    ${ret} =    A 1 List    Required arg
+    Should Be Equal    ${ret}    a_1_list: Required arg
     ${ret} =    A 1 N    Required arg    plus one
     Should Be Equal    ${ret}    a_1_n: Required arg plus one
+    ${ret} =    A 1 List    Required arg    plus one
+    Should Be Equal    ${ret}    a_1_list: Required arg plus one
     ${ret} =    A 1 N    1 (req)    2    3    4    5
     ...    6    7    8    9
     Should Be Equal    ${ret}    a_1_n: 1 (req) 2 3 4 5 6 7 8 9
+    ${ret} =    A 1 List    1 (req)    2    3    4    5
+    ...    6    7    8    9
+    Should Be Equal    ${ret}    a_1_list: 1 (req) 2 3 4 5 6 7 8 9
 
 Too Few Arguments With Varargs
     [Documentation]    FAIL Keyword 'ArgumentsJava.A 1 N' expected at least 1 argument, got 0.
     A 1 N
+
+Too Few Arguments With Varargs List
+    [Documentation]    FAIL Keyword 'ListArgumentsJava.A 1 List' expected at least 1 argument, got 0.
+    A 1 List
 
 Varargs Work Also With Arrays And Lists
     ${list} =    List    Hello    string    array    world
@@ -92,7 +110,12 @@ Varargs Work Also With Arrays And Lists
     ${array3} =    Get String Array    Hello    string    array    world
     Should Be Equal    ${array1}    ${array2}
     Should Be Equal    ${array2}    ${array3}
+    @{list1} =    Get String Array    ${list}
+    ${list2} =    Get String List    ${list}
     String List    ${list}
+    String List    ${list1}
+    String List    ${list2}
+    String List    @{array1}
     String List    ${array1.tolist()}
     String List    Hello    string    list    world
 
