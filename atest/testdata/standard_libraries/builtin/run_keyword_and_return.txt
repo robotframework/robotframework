@@ -1,0 +1,102 @@
+*** Test Cases ***
+Return one value
+    ${ret} =    Return one value    42
+    Should Be Equal    ${ret}    ${42}
+
+Return multiple values
+    @{ret} =    Return multiple values
+    ${ret} =    Catenate    SEPARATOR=-    @{ret}
+    Should Be Equal    ${ret}    1-2-3-4
+
+Return nothing
+    ${ret} =    Return nothing
+    Should Be Equal    ${ret}    ${NONE}
+
+Nested usage
+    ${ret} =    Nested usage
+    Should Be Equal    ${ret}    Nested return value
+
+Keyword fails
+    [Documentation]    FAIL    Expected error
+    Keyword fails
+
+Inside Run Keyword variants
+    [Documentation]    FAIL    Continuable\n\nAlso teardown failed:\nContinuable
+    ${ret} =    Inside Run Keyword If
+    Should Be Equal    ${ret}    Run Kw If
+    ${ret} =    Inside Run Keywords
+    Should Be Equal    ${ret}    Run Kws
+    [Teardown]    Inside Run Keywords
+
+Using Run Keyword variants
+    ${ret} =    Using Run Keyword If
+    Should Be Equal    ${ret}    Nested return value
+    ${ret} =    Using Run Keywords
+    Should Be Equal    ${ret}    This is returned
+    [Teardown]    Using Run Keywords
+
+Outside user keyword
+    [Documentation]    FAIL Invalid 'Return From Keyword' usage.
+    Run Keyword And Return    Log    This does not work
+    Fail    This is not executed
+
+*** Keywords ***
+Return one value
+    [Arguments]    ${arg}
+    Run Keyword And Return    Convert To Integer    ${arg}
+    Fail    Not executed
+    [Return]    Not returned
+
+Return multiple values
+    Run Keyword And Return    Create List    1    2    3    4
+    Fail    Not executed
+    [Return]    Not returned
+
+Return nothing
+    Run Keyword And Return    Log    No return value
+    Fail    Not executed
+    [Return]    Not returned
+
+Nested usage
+    Run Keyword And Return    Nested
+    Fail    Not executed
+    [Return]    Not returned
+
+Nested
+    Run Keyword And Return     Set Variable    Nested return value
+    Fail    Not executed
+    [Return]    Not returned
+
+Keyword fails
+    Run Keyword And Return    Fail    Expected error
+    Fail    Not executed
+    [Return]    Not returned
+
+Inside Run Keyword If
+    Run Keyword If    0    Run Keyword And Return    Fail
+    Run Keyword If    1    Run Keyword And Return    Set Variable    Run Kw If
+    Fail    Not executed
+    [Return]    Not returned
+
+Inside Run Keywords
+    Run Keywords
+    ...    Log    First keyword    AND
+    ...    Run Keyword And Continue On Failure    Fail    Continuable    AND
+    ...    Run Keyword And Return    Set Variable    Run Kws    AND
+    ...    Fail    Not executed 1
+    Fail    Not executed 2
+    [Return]    Not returned
+
+Using Run Keyword If
+    Run Keyword And Return    Run Keyword If    0    Fail    ELSE    Nested
+    Fail    Not executed
+    [Return]    Not returned
+
+Using Run Keywords
+    Run Keyword And Return    Run Keywords
+    ...    Set Variable    This is not returned    AND
+    ...    Log    Second keyword    AND
+    ...    Run Keyword And Return    Set Variable    This is returned    AND
+    ...    Fail    Not executed
+    Fail    Not executed
+    [Return]    Not returned

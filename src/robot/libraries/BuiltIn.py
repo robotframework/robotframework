@@ -1824,6 +1824,11 @@ class _Control:
         if self._is_true(condition):
             self.return_from_keyword(*return_values)
 
+    @run_keyword_variant(resolve=1)
+    def run_keyword_and_return(self, name, *args):
+        ret = self.run_keyword(name, *args)
+        self.return_from_keyword(ret)
+
     def pass_execution(self, message, *tags):
         """Skips rest of the current test, setup, or teardown with PASS status.
 
