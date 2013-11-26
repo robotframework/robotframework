@@ -1307,11 +1307,15 @@ class _RunKeyword:
         and ELSE IF strings as arguments, you can either use variables or
         escape them with a backslash like `\\ELSE` and `\\ELSE IF`.
 
-        Starting from Robot Framework 2.8, Python's os- and sys-modules are automatically
-        imported when evaluating the `condition`:
+        Starting from Robot Framework 2.8, Python's
+        [http://docs.python.org/2/library/os.html|os] and
+        [http://docs.python.org/2/library/sys.html|sys] modules are
+        automatically imported when evaluating the `condition`.
+        Attributes they contain can thus be used in the condition:
 
-        | `Run Keyword If` | os.sep == '/' | `Unix Keyword` |
-        | ...              | ELSE          | `Windows Keyword` |
+        | `Run Keyword If` | os.sep == '/' | `Unix Keyword`        |
+        | ...              | ELSE IF       | sys.platform.startswith('java') | `Jython Keyword` |
+        | ...              | ELSE          | `Windows Keyword`     |
         """
         args, branch = self._split_elif_or_else_branch(args)
         if self._is_true(condition):
