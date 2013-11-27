@@ -89,11 +89,10 @@ if sys.version_info[0] == 3 and do2to3:
                         # with actual unicode characters,
                         # if not used to create bytes objects:
                         text = re.sub(
-                          r'(.*)\\\\x([0-9a-f]{2})',
+                          r'\\\\x([0-9a-f]{2})',
                           lambda match: (
-                            (match.group(1) + chr(int(match.group(2), 16)))
-                            if not 'bytes' in match.group(1).lower()
-                            and match.group(2) >= '80'
+                            chr(int(match.group(1), 16))
+                            if match.group(1) >= '80'
                             else match.group(0)),
                           text)
                         text = re.sub(
