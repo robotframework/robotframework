@@ -407,22 +407,6 @@ class _Converter:
         """
         return list(items)
 
-    def create_bytes(self, string):
-        """Creates a bytes object from `string` by evaluating 'b"%(string)s"'.
-
-        Use two backslashes for writing bytes in hex: \\\\xXX
-        """
-        try:
-            if type(string) is bytes:
-                return string
-        except NameError:
-            pass
-        string = string.replace('"', '\\"')
-        try:
-            return eval('b"%s"' % string)
-        except SyntaxError: # Python 2.5
-            return eval('"%s"' % string)
-
 
 class _Verify:
 

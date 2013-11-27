@@ -13,9 +13,9 @@ Encode ASCII String To Bytes
 
 Encode Non-ASCII String To Bytes
     ${bytes} =    Encode String To Bytes    Hyvä    ISO-8859-1
-    Byte Strings Should Be Equal    ${bytes}    Hyv\\xe4
+    Byte Strings Should Be Equal    ${bytes}    Hyv\xe4
     ${bytes} =    Encode String To Bytes    Hyvä    UTF-8    strict
-    Byte Strings Should Be Equal    ${bytes}    Hyv\\xc3\\xa4
+    Byte Strings Should Be Equal    ${bytes}    Hyv\xc3\xa4
 
 Encode Non-ASCII String To Bytes Using Incompatible Encoding
     [Documentation]    FAIL STARTS: UnicodeEncodeError:
@@ -28,7 +28,7 @@ Encode Non-ASCII String To Bytes Using Incompatible Encoding And Error Handler
     Byte Strings Should Be Equal    ${bytes}    Hyv?
 
 Decode ASCII Bytes To String
-    ${bytes} =    Create Bytes    Hello, world!
+    ${bytes} =    Convert To Bytes    Hello, world!
     ${string} =    Decode Bytes To String    ${bytes}    UTF-8
     Should Be Equal    ${string}    Hello, world!
 
@@ -51,13 +51,13 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
 
 *** Keywords ***
 Create Byte String Variables
-    ${ISO-8859-1} =    Create Bytes    Hyv\\xe4
-    ${UTF-8} =    Create Bytes    Hyv\\xc3\\xa4
+    ${ISO-8859-1} =    Convert To Bytes    Hyv\xe4
+    ${UTF-8} =    Convert To Bytes    Hyv\xc3\xa4
     Set Suite Variable    ${ISO-8859-1}
     Set Suite Variable    ${UTF-8}
 
 Byte Strings Should Be Equal
     [Arguments]    ${bytes}    ${expected}
     Should Be Byte String    ${bytes}
-    ${expected} =    Create Bytes    ${expected}
+    ${expected} =    Convert To Bytes    ${expected}
     Should Be Equal    ${bytes}    ${expected}
