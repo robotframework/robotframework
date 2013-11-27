@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
 from robot.api import logger
 from robot.utils import plural_or_not, seq2str, seq2str2, unic
 from robot.utils.asserts import assert_equals
@@ -519,6 +521,11 @@ class _Dictionary:
         =>
         - ${keys} = ['a', 'b', 'c']
         """
+        #TODO: Sorting causes problems when key types are not comparable,
+        # especially in Python 3 where even basic types like int and str
+        # are not comparable to each other.
+        if sys.version_info[0] == 3:
+            return list(dictionary)
         return sorted(dictionary)
 
     def get_dictionary_values(self, dictionary):
