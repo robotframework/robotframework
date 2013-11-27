@@ -5,7 +5,9 @@ Library           OperatingSystem
 *** Keywords ***
 Some process
     [Arguments]    ${alias}=${null}
-    ${handle}=    Start Python Process    raw_input()    alias=${alias}
+    ${handle}=    Start Python Process
+    ...    __import__('sys').version_info[0] == 3 and input() or raw_input()
+    ...    alias=${alias}
     Process should be running
     [Return]    ${handle}
 
