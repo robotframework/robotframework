@@ -61,7 +61,10 @@ Log repr
 
 Log callable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    objects_for_call_method.MyObject
+    Run on python 3.x
+    ...    Check Log Message    ${tc.kws[0].msgs[0]}    <class 'objects_for_call_method.MyObject'>
+    Run on python 2.x
+    ...    Check Log Message    ${tc.kws[0].msgs[0]}    objects_for_call_method.MyObject
 
 Log Many
     ${tc} =    Check Test Case    ${TEST NAME}
