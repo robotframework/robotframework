@@ -366,7 +366,7 @@ class OperatingSystem:
         lines = []
         total_lines = 0
         self._link("Reading file '%s'", path)
-        with open(path, 'rU') as f:
+        with open(path, 'rbU') as f:
             for line in f:
                 total_lines += 1
                 line = unicode(line, encoding).rstrip('\n')
