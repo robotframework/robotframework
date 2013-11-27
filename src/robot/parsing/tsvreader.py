@@ -35,7 +35,7 @@ class TsvReader(object):
     def _process_row(self, row):
         if NBSP in row:
             row = row.replace(NBSP, ' ')
-        return row
+        return row.rstrip()
 
     @classmethod
     def split_row(cls, row):
