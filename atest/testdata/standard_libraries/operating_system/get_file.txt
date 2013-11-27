@@ -30,7 +30,8 @@ Get File With Space In Name
 Get Binary File
     Create File  ${TESTFILE}  hello world\r\nbinary
     ${file}=  Get Binary File  ${TESTFILE}
-    Should Be Equal  ${file}  hello world\r\nbinary
+    ${expected}=  Convert To Bytes  hello world\r\nbinary
+    Should Be Equal  ${file}  ${expected}
 
 Log File
     Create File  ${TESTFILE}  hello world\nwith two lines

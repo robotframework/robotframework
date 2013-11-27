@@ -1,6 +1,6 @@
 *** Settings ***
 Library           String
-Suite Setup       Create Byte String Variables
+Suite Setup       Create Bytes and String Variables
 
 *** Variables ***
 ${BYTES}          <set by suite setup>
@@ -9,7 +9,7 @@ ${BYTES}          <set by suite setup>
 Should Be String Positive
     Should be String    Robot
     Should be String    ${EMPTY}
-    Should be String    ${BYTES}
+    Should be String    ${STRING}
 
 Should Be String Negative
     [Template]     Run Keyword And Expect Error
@@ -22,7 +22,7 @@ Should Not Be String Positive
 
 Should Not Be String Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is a string.    Should not be string    ${BYTES}
+    '${STRING}' is a string.    Should not be string    ${STRING}
     My error message    Should not be string    Hello    My error message
 
 Should Be Unicode String Positive
@@ -43,32 +43,34 @@ Should Be Byte String Negative
 
 Should Be Lowercase Positive
     Should Be Lowercase    foo bar
-    Should Be Lowercase    ${BYTES.lower()}
+    Should Be Lowercase    ${STRING.lower()}
 
 Should Be Lowercase Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not lowercase.    Should Be Lowercase    ${BYTES}
+    '${STRING}' is not lowercase.    Should Be Lowercase    ${STRING}
     My error    Should Be Lowercase    UP!    My error
 
 Should Be Uppercase Positive
     Should Be Uppercase    FOO BAR
-    Should Be Uppercase    ${BYTES.upper()}
+    Should Be Uppercase    ${STRING.upper()}
 
 Should Be Uppercase Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not uppercase.    Should Be Uppercase    ${BYTES}
+    '${STRING}' is not uppercase.    Should Be Uppercase    ${STRING}
     Custom error    Should Be Uppercase    low...    Custom error
 
 Should Be Titlecase Positive
     Should Be Titlecase    Foo Bar!
-    Should Be Titlecase    ${BYTES}
+    Should Be Titlecase    ${STRING}
 
 Should Be Titlecase Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES.lower()}' is not titlecase.    Should Be Titlecase    ${BYTES.lower()}
+    '${STRING.lower()}' is not titlecase.    Should Be Titlecase    ${STRING.lower()}
     Special error    Should Be Titlecase    all low    Special error
 
 *** Keywords ***
-Create Byte String Variables
-    ${BYTES} =    Evaluate    "Hyv\\xe4"
+Create Bytes and String Variables
+    ${STRING} =    Evaluate    "Hyv\\xe4"
+    Set Suite Variable    ${STRING}
+    ${BYTES} =    Convert To Bytes    ${STRING}
     Set Suite Variable    ${BYTES}
