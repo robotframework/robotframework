@@ -15,7 +15,7 @@ Running a process
 
 Error in exit code and stderr output
     ${result}=    Run Python Process    1/0
-    Result should match    ${result}    stderr=*ZeroDivisionError: integer division or modulo by zero*    rc=1
+    Result should match    ${result}    stderr=*ZeroDivisionError: *division* by zero*    rc=1
 
 Start And Wait Process
     ${handle}=    Start Python Process    import time;time.sleep(0.1)

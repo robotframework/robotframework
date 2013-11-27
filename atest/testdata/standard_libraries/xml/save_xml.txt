@@ -33,7 +33,7 @@ Save Non-ASCII XML Using Custom Encoding
     XML Content Should Be    ${NON-ASCII}    iso-8859-1
 
 Save to Invalid File
-    [Documentation]    FAIL STARTS: IOError:
+    [Documentation]    FAIL REGEXP: (IO|IsADirectory)Error: .*
     Save XML    ${SIMPLE}    %{TEMPDIR}
 
 Save Using Invalid Encoding
