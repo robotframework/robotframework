@@ -187,7 +187,7 @@ class _JavaHandler(_RunnableHandler):
         code_object = getattr(handler, 'im_func', handler)
         return code_object.argslist[:code_object.nargs]
 
-    def resolve_arguments(self, args, variables):
+    def resolve_arguments(self, args, variables=None):
         positional, named = self._argument_resolver.resolve(args, variables)
         positional = self._arg_coercer.coerce(positional)
         return positional, named

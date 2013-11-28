@@ -46,7 +46,8 @@ from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
-from .misc import plural_or_not, printable_name, seq2str, seq2str2, getdoc, isatty
+from .misc import (isatty, getdoc, iterable, plural_or_not, printable_name,
+                   seq2str, seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method
