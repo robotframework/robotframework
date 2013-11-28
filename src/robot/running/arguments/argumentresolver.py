@@ -104,4 +104,6 @@ class VariableReplacer(object):
             positional = variables.replace_list(positional, self._resolve_until)
             named = dict((name, variables.replace_scalar(value))
                          for name, value in named.items())
+        else:
+            positional = list(positional)
         return positional, named
