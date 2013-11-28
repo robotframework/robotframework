@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from .variablesplitter import VariableIterator
+
 
 def is_var(string):
     if not isinstance(string, basestring):
@@ -27,3 +29,8 @@ def is_scalar_var(string):
 
 def is_list_var(string):
     return is_var(string) and string[0] == '@'
+
+
+def contains_var(string):
+    return bool(isinstance(string, basestring) and
+                VariableIterator(string, '$@'))
