@@ -2,20 +2,22 @@
 
 """Script to generate atest runners based on plain text data files.
 
-Usage:  %s path/to/data.txt
+Usage:  %s testdata/path/data.txt [robot/path/runner.txt]
 """
 
-from __future__ import with_statement
 from os.path import abspath, basename, dirname, exists, join, splitext
 import os
 import sys
 
-if len(sys.argv) != 2 or splitext(sys.argv[1])[1] != '.txt':
+if len(sys.argv) not in [2, 3] or not all(a.endswith('.txt') for a in sys.argv[1:]):
     print __doc__ % basename(sys.argv[0])
     sys.exit(1)
 
 INPATH = abspath(sys.argv[1])
-OUTPATH = INPATH.replace(join('atest', 'testdata'), join('atest', 'robot'))
+if len(sys.argv) == 2:
+    OUTPATH = INPATH.replace(join('atest', 'testdata'), join('atest', 'robot'))
+else:
+    OUTPATH = sys.argv[2]
 
 if not exists(dirname(OUTPATH)):
     os.mkdir(dirname(OUTPATH))
