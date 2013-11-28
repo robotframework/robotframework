@@ -37,6 +37,9 @@ Java Varargs Should Work
 Too Few Arguments With Varargs
     Check Test Case    ${TESTNAME}
 
+Too Few Arguments With Varargs List
+    Check Test Case    ${TESTNAME}
+
 Varargs Work Also With Arrays And Lists
     [Documentation]    Make sure varargs support doesn't make it impossible to used Java arrays and Python lists with Java keyword expecting arrays.
     Check Test Case    ${TESTNAME}
@@ -45,6 +48,9 @@ Valid Arguments For Keyword Expecting Non String Scalar Arguments
     Check Test Case    ${TESTNAME}
 
 Valid Arguments For Keyword Expecting Non String Array Arguments
+    Check Test Case    ${TESTNAME}
+
+Valid Arguments For Keyword Expecting Non String List Arguments
     Check Test Case    ${TESTNAME}
 
 Invalid Argument Types

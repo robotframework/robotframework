@@ -1,3 +1,4 @@
+import java.util.*;
 
 
 public class ArgumentTypes {
@@ -171,4 +172,31 @@ public class ArgumentTypes {
         }
     }
  
+    /* Lists (5) - No element type cast on coercion! */
+    
+    public void integer_list(List<Integer> il) {
+        for (int i : il) {
+            this.integer1(i);
+        }
+    }
+    public void double_list(List<Double> dl) {
+        for (double d : dl) {
+            this.double1(d);
+        }
+    }
+    public void boolean_list(List<Boolean> bl) {
+        for (boolean b : bl) {
+            this.boolean1(b);
+        }
+    }
+    public void string_list(List<String> sl) {
+        for (String s : sl) {
+            this.string(s);
+        }
+    }
+    public void object_list(List<Object> ol) {
+        for (Object o : ol) {
+            this.object(o);
+        }
+    }
 }
