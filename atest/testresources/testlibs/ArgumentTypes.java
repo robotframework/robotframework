@@ -3,7 +3,7 @@ import java.util.*;
 
 public class ArgumentTypes {
 
-    public int handler_count = 36;
+    public int handler_count = 41;
 
     /* Primitive types (8) */
 
@@ -35,7 +35,7 @@ public class ArgumentTypes {
         System.out.println(c);
     }
 
-    /* java.lang types (9) */
+    /* java.lang types (10) */
 
     public void byte2(Byte i) {
         System.out.println(i);
@@ -119,7 +119,7 @@ public class ArgumentTypes {
         }
     }
 
-    /* java.lang arrays (9) */
+    /* java.lang arrays (10) */
 
     public void byte2_array(Byte[] ia) {
         for (int i=0; i<ia.length; i++) {
