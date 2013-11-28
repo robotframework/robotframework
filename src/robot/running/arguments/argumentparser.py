@@ -13,6 +13,7 @@ import sys
 import inspect
 if sys.platform.startswith('java'):
     from java.lang import Class
+    from java.util import List
 
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
@@ -61,9 +62,13 @@ class JavaArgumentParser(_ArgumentParser):
 
     def _single_signature_arg_spec(self, signature):
         args = signature.args
-        if args and isinstance(args[-1], Class) and args[-1].isArray():
+        if args and self._is_varargs_type(args[-1]):
             return self._format_arg_spec(len(args)-1, varargs=True)
         return self._format_arg_spec(len(args))
+
+    def _is_varargs_type(self, arg):
+        return isinstance(arg, Class) and (
+          arg.isArray() or issubclass(arg, List))
 
     def _multi_signature_arg_spec(self, signatures):
         mina = maxa = len(signatures[0].args)

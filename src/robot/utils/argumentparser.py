@@ -124,7 +124,8 @@ class ArgumentParser:
         are wrapped to Information exception.
         """
         if self._env_options:
-            args_list = os.getenv(self._env_options, '').split() + args_list
+            # args_list is java String[] when using standalone jar
+            args_list = os.getenv(self._env_options, '').split() + list(args_list)
         args_list = [decode_from_system(a) for a in args_list]
         if self._auto_argumentfile:
             args_list = self._process_possible_argfile(args_list)

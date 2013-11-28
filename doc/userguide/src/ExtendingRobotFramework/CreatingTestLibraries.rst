@@ -684,9 +684,11 @@ to the above Python examples with same names:
       }
   }
 
-For legacy reasons it is possible to use variable number of arguments also by
-having an array as the last argument. This is illustrated by the following
-examples that are identical to the previous ones:
+It is also possible to use variable number of arguments also by
+having an array or, starting from Robot Framework 2.8.3,
+:code:`java.util.List` as the last argument. This is illustrated
+by the following examples that are functionally identical to
+the previous ones:
 
 .. sourcecode:: java
 
@@ -697,7 +699,7 @@ examples that are identical to the previous ones:
       }
   }
 
-  public void oneRequired(String required, String[] others) {
+  public void oneRequired(String required, List<String> others) {
       System.out.println("Required: " + required + "\nOthers:");
       for (String arg: others) {
           System.out.println(arg);

@@ -129,11 +129,7 @@ class Variables(utils.NormalizedDict):
             value = self._find_variable(name)
         except KeyError:
             value = self._get_extended_var(name)
-        try:
-            if isinstance(value, basestring):
-                raise TypeError
-            iter(value)
-        except TypeError:
+        if not utils.iterable(value):
             raise DataError("Using scalar variable '%s' as list variable '@%s' "
                             "requires its value to be list or list-like."
                             % (name, name[1:]))
