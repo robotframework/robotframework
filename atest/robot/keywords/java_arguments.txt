@@ -40,7 +40,11 @@ Too Few Arguments With Varargs
 Too Few Arguments With Varargs List
     Check Test Case    ${TESTNAME}
 
-Varargs Work Also With Arrays And Lists
+Varargs Work Also With Arrays
+    [Documentation]    Make sure varargs support doesn't make it impossible to used Java arrays and Python lists with Java keyword expecting arrays.
+    Check Test Case    ${TESTNAME}
+
+Varargs Work Also With Lists
     [Documentation]    Make sure varargs support doesn't make it impossible to used Java arrays and Python lists with Java keyword expecting arrays.
     Check Test Case    ${TESTNAME}
 
