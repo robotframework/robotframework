@@ -24,7 +24,7 @@ import tempfile
 from robot import utils
 from robot.output import LOGGER
 
-from .isvar import is_var, is_scalar_var, is_list_var
+from .isvar import contains_var, is_var, is_scalar_var, is_list_var
 from .variables import Variables
 from .variableassigner import VariableAssigner
 from .variablesplitter import VariableSplitter, VariableIterator

@@ -14,6 +14,8 @@
 
 from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
+from robot.variables import contains_var
+
 
 class JavaArgumentCoercer(object):
 
@@ -21,9 +23,9 @@ class JavaArgumentCoercer(object):
         self._coercers = CoercerFinder().find_coercers(signatures)
         self._varargs_handler = VarargsHandler(argspec)
 
-    def coerce(self, arguments):
+    def coerce(self, arguments, dryrun=False):
         arguments = self._varargs_handler.handle(arguments)
-        return [c.coerce(a) for c, a in zip(self._coercers, arguments)]
+        return [c.coerce(a, dryrun) for c, a in zip(self._coercers, arguments)]
 
 
 class CoercerFinder(object):
@@ -67,8 +69,9 @@ class _Coercer(object):
     def handles(self, type):
         return type in self._types or type.__name__ in self._primitives
 
-    def coerce(self, argument):
-        if not isinstance(argument, basestring):
+    def coerce(self, argument, dryrun=False):
+        if not isinstance(argument, basestring) \
+                or (dryrun and contains_var(argument)):
             return argument
         try:
             return self._coerce(argument)
@@ -115,7 +118,7 @@ class NullCoercer(_Coercer):
     def handles(self, argument):
         return True
 
-    def coerce(self, argument):
+    def _coerce(self, argument):
         return argument
 
 
