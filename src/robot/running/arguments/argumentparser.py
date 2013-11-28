@@ -57,15 +57,15 @@ class JavaArgumentParser(_ArgumentParser):
         # Happens when a class has no public constructors
         return self._format_arg_spec()
 
-    def _is_varargs_type(self, arg):
-        return isinstance(arg, Class) and (
-          arg.isArray() or issubclass(arg, List))
-
     def _single_signature_arg_spec(self, signature):
         args = signature.args
         if args and self._is_varargs_type(args[-1]):
             return self._format_arg_spec(len(args)-1, varargs=True)
         return self._format_arg_spec(len(args))
+
+    def _is_varargs_type(self, arg):
+        return isinstance(arg, Class) and (
+          arg.isArray() or issubclass(arg, List))
 
     def _multi_signature_arg_spec(self, signatures):
         mina = maxa = len(signatures[0].args)
