@@ -116,15 +116,21 @@ servers must be converted to compatible types. This applies to the
 keyword arguments the Remote library passes to remote servers and to
 the return values servers give back to the Remote library.
 
-The conversions are done using following rules:
+Both the Remote library and the Python remote server handle Python values
+according to the following rules. Other remote servers should behave similarly.
 
 * Strings, numbers and Boolean values are passed without modifications.
-* The :code:`None/nil` value is converted to an empty string.
-* Lists (and tuples in Python) are passed as lists so that their contents
-  are converted recursively.
-* Dictionaries/maps are passed so that their values are converted
-  to supported types recursively and keys are converted to strings.
+* Python :code:`None` is converted to an empty string.
+* All lists, tuples, and other iterable objects (except strings and
+  dictionaries) are passed as lists so that their contents are converted
+  recursively.
+* Dictionaries and other mappings are passed as dicts so that their keys are
+  converted to strings and values converted to supported types recursively.
 * Other types are converted to strings.
+
+.. note:: Prior to Robot Framework 2.8.3, only lists, tuples, and dictionaries
+          were handled according to the above rules. General iterables
+          and mappings were not supported.
 
 Using remote servers
 ~~~~~~~~~~~~~~~~~~~~
@@ -185,7 +191,7 @@ Ruby servers can also be used as examples.
 The remote protocol is implemented on top of `XML-RPC`_, which is a
 simple remote procedure call protocol using XML over HTTP. Most
 mainstream languages (Python, Java, C, Ruby, Perl, Javascript, PHP,
-...) have a support for XML-RPC either built-in or as extensions.
+...) have a support for XML-RPC either built-in or as an extension.
 
 Required methods
 ''''''''''''''''
@@ -250,26 +256,26 @@ following table.
 .. table:: Entries in the remote result dictionary
    :class: tabular
 
-   +------------+--------------------------------------------------------+
-   |     Name   |                     Explanation                        |
-   +============+========================================================+
-   | status     | Mandatory execution status. Either PASS or FAIL.       |
-   +------------+--------------------------------------------------------+
-   | output     | Possible output to write into the log file. Must be    |
-   |            | given as a single string but can contain multiple      |
-   |            | messages and different `log levels`__ in format        |
-   |            | :msg:`*INFO* First message\\n*INFO* Second\\n*WARN*    |
-   |            | Another message`.                                      |
-   +------------+--------------------------------------------------------+
-   | return     | Possible return value. Must be one of the `supported   |
-   |            | types`__.                                              |
-   +------------+--------------------------------------------------------+
-   | error      | Possible error message. Used only when the execution   |
-   |            | fails.                                                 |
-   +------------+--------------------------------------------------------+
-   | traceback  | Possible stack trace to `write into the log file`__    |
-   |            | using DEBUG level when the execution fails.            |
-   +------------+--------------------------------------------------------+
+   +------------+-------------------------------------------------------------+
+   |     Name   |                         Explanation                         |
+   +============+=============================================================+
+   | status     | Mandatory execution status. Either PASS or FAIL.            |
+   +------------+-------------------------------------------------------------+
+   | output     | Possible output to write into the log file. Must be given   |
+   |            | as a single string but can contain multiple messages and    |
+   |            | different `log levels`__ in format :msg:`*INFO* First       |
+   |            | message\\n*HTML* <b>2nd</b>\\n*WARN* Another message`. It   |
+   |            | is also possible to embed timestamps_ to the log messages   |
+   |            | like :msg:`*INFO:1308435758660* Message with timestamp`.    |
+   +------------+-------------------------------------------------------------+
+   | return     | Possible return value. Must be one of the `supported        |
+   |            | types`__.                                                   |
+   +------------+-------------------------------------------------------------+
+   | error      | Possible error message. Used only when the execution fails. |
+   +------------+-------------------------------------------------------------+
+   | traceback  | Possible stack trace to `write into the log file`__ using   |
+   |            | DEBUG level when the execution fails.                       |
+   +------------+-------------------------------------------------------------+
 
 __ `Supported argument and return value types`_
 __ `Logging information`_
