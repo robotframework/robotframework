@@ -44,7 +44,7 @@ class TestListlike(unittest.TestCase):
             assert_equals(is_list_like(thing), True, thing)
 
     def test_others_are_not_list_like(self):
-        for thing in [1, None, True, object(), object]:
+        for thing in [1, None, True, object()]:
             assert_equals(is_list_like(thing), False, thing)
 
     def test_generators_are_not_consumed(self):
@@ -63,7 +63,7 @@ class TestDictlike(unittest.TestCase):
             assert_equals(is_dict_like(thing), True, thing)
 
     def test_others(self):
-        for thing in ['', u'', 1, None, True, object(), object, [], (), set()]:
+        for thing in ['', u'', 1, None, True, object(), [], (), set()]:
             assert_equals(is_dict_like(thing), False, thing)
 
 
@@ -74,7 +74,7 @@ class TestStringlike(unittest.TestCase):
             assert_equals(is_str_like(thing), True, thing)
 
     def test_others(self):
-        for thing in [1, None, True, object(), object, [], (), {}]:
+        for thing in [1, None, True, object(), [], (), {}]:
             assert_equals(is_str_like(thing), False, thing)
 
 
