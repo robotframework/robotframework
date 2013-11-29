@@ -48,6 +48,18 @@ Varargs Work Also With Lists
     [Documentation]    Make sure varargs support doesn't make it impossible to used Java arrays and Python lists with Java keyword expecting arrays.
     Check Test Case    ${TESTNAME}
 
+Kwargs on java
+    Check Test Case    ${TESTNAME}
+
+Normal and Kwargs on java
+    Check Test Case    ${TESTNAME}
+
+Varargs and Kwargs on java
+    Check Test Case    ${TESTNAME}
+
+All args on java
+    Check Test Case    ${TESTNAME}
+
 Valid Arguments For Keyword Expecting Non String Scalar Arguments
     Check Test Case    ${TESTNAME}
 
