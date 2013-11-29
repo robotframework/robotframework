@@ -120,6 +120,9 @@ All args on java
    ${res} =       javaAllArgs    arg   hello   kitty  foo=one   bar=two
    Should be equal    ${res}    javaAllArgs: arg hello kitty foo:one bar:two
 
+Java kwargs wont be interpreted as values for positional arguments
+   ${res} =       javaManyNormalArgs    foo   huu   arg1=one
+   Should be equal    ${res}    javaManyNormalArgs: foo huu arg1:one
 
 Valid Arguments For Keyword Expecting Non String Scalar Arguments
     Byte 1    ${1}

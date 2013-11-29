@@ -84,14 +84,12 @@ class JavaArgumentParser(_ArgumentParser):
             maxa = max(argc, maxa)
         return self._format_arg_spec(maxa, maxa-mina)
 
-    def _format_arg_spec(
-      self, positional=0, defaults=0, varargs=False, kwargs=False
-      ):
+    def _format_arg_spec(self, positional=0, defaults=0, varargs=False, kwargs=False):
         positional = ['arg%d' % (i+1) for i in range(positional)]
         defaults = [''] * defaults
         varargs = '*varargs' if varargs else None
         kwargs = '**kwargs' if kwargs else None
-        return positional, defaults, varargs, kwargs
+        return positional, defaults, varargs, kwargs, False
 
 
 class _ArgumentSpecParser(_ArgumentParser):

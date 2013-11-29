@@ -60,6 +60,9 @@ Varargs and Kwargs on java
 All args on java
     Check Test Case    ${TESTNAME}
 
+Java kwargs wont be interpreted as values for positional arguments
+    Check Test Case    ${TESTNAME}
+
 Valid Arguments For Keyword Expecting Non String Scalar Arguments
     Check Test Case    ${TESTNAME}
 

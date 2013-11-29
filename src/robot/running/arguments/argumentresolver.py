@@ -58,6 +58,8 @@ class NamedArgumentResolver(object):
         name = arg.split('=')[0]
         if self._is_escaped(name):
             return False
+        if not self._argspec.named_arguments:
+            return self._argspec.kwargs
         return name in self._argspec.positional or self._argspec.kwargs
 
     def _is_escaped(self, name):
