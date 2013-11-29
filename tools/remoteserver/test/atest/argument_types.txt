@@ -3,6 +3,7 @@ Default Tags    python  ruby
 Library         Remote  localhost:${PORT}  WITH NAME  remote
 Library         Collections
 Variables       arguments.py
+Variables       ../libs/mapping.py
 
 *** Variables ***
 ${PORT}  8270
@@ -76,6 +77,9 @@ Dictionary Containing Objects As Argument
 
 Nested Dictionary As Argument
     Nested Dictionary As Argument  ${NESTED_DICT}
+
+Mapping As Argument
+    Dictionary As Argument    ${MyMapping(one=1, spam='eggs')}
 
 Control Char As Argument
     [Documentation]  In this situation the received error is not that good FAIL REGEXP: .*ExpatError.*

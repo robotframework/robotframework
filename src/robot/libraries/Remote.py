@@ -23,7 +23,7 @@ except ImportError:   # No expat in IronPython 2.7
         pass
 
 from robot.errors import RemoteError
-from robot.utils import unic
+from robot.utils import is_list_like, is_dict_like, unic
 
 
 class Remote(object):
@@ -68,9 +68,9 @@ class Remote(object):
     def _handle_argument(self, arg):
         if isinstance(arg, (basestring, int, long, float)):
             return arg
-        if isinstance(arg, (tuple, list)):
+        if is_list_like(arg):
             return [self._handle_argument(item) for item in arg]
-        if isinstance(arg, dict):
+        if is_dict_like(arg):
             return dict((self._str(key), self._handle_argument(value))
                         for key, value in arg.items())
         return self._str(arg)

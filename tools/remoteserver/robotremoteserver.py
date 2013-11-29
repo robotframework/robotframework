@@ -21,6 +21,10 @@ try:
     import signal
 except ImportError:
     signal = None
+try:
+    from collections import Mapping
+except ImportError:
+    Mapping = dict
 
 
 class RobotRemoteServer(SimpleXMLRPCServer):
@@ -30,6 +34,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         SimpleXMLRPCServer.__init__(self, (host, int(port)), logRequests=False)
         self._library = library
         self._allow_stop = allow_stop
+        self._shutdown = False
         self._register_functions()
         self._register_signal_handlers()
         self._log('Robot Framework remote server starting at %s:%s'
@@ -53,7 +58,6 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             signal.signal(signal.SIGINT, stop_with_signal)
 
     def serve_forever(self):
-        self._shutdown = False
         while not self._shutdown:
             self.handle_request()
 
@@ -150,12 +154,13 @@ class RobotRemoteServer(SimpleXMLRPCServer):
     def _handle_return_value(self, ret):
         if isinstance(ret, (basestring, int, long, float)):
             return ret
-        if isinstance(ret, (tuple, list)):
-            return [self._handle_return_value(item) for item in ret]
-        if isinstance(ret, dict):
+        if isinstance(ret, Mapping):
             return dict([(self._str(key), self._handle_return_value(value))
                          for key, value in ret.items()])
-        return self._str(ret)
+        try:
+            return [self._handle_return_value(item) for item in ret]
+        except TypeError:
+            return self._str(ret)
 
     def _str(self, item):
         if item is None:

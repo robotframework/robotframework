@@ -1,4 +1,4 @@
-import sys
+from mapping import MyMapping
 
 
 class RemoteTestLibrary:
@@ -302,6 +302,9 @@ class RemoteTestLibrary:
     def return_nested_dictionary(self):
         return { 1: {None: False},
                  2: {'A': {'n': None}, 'B': {'o': MyObject(), 'e': {}}} }
+
+    def return_mapping(self):
+        return MyMapping({'a': 1, 2: 'b', None: MyMapping(none=None)})
 
     def return_control_char(self):
         return '\x01'
