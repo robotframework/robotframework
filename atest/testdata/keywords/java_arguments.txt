@@ -104,6 +104,26 @@ Varargs Work Also With Lists
     String List    ${array1.tolist()}
     String List    Hello    string    list    world
 
+Kwargs on java
+   ${res} =       javaKWArgs    foo=one   bar=two
+   Should be equal    ${res}    javaKWArgs: foo:one bar:two
+
+Normal and Kwargs on java
+   ${res} =       javaNormalAndKWArgs    hello   foo=one   bar=two
+   Should be equal    ${res}    javaNormalAndKWArgs: hello foo:one bar:two
+
+Varargs and Kwargs on java
+   ${res} =       javaVarArgsAndKWArgs    hello   kitty  foo=one   bar=two
+   Should be equal    ${res}    javaVarArgsAndKWArgs: hello kitty foo:one bar:two
+
+All args on java
+   ${res} =       javaAllArgs    arg   hello   kitty  foo=one   bar=two
+   Should be equal    ${res}    javaAllArgs: arg hello kitty foo:one bar:two
+
+Java kwargs wont be interpreted as values for positional arguments
+   ${res} =       javaManyNormalArgs    foo   huu   arg1=one
+   Should be equal    ${res}    javaManyNormalArgs: foo huu arg1:one
+
 Valid Arguments For Keyword Expecting Non String Scalar Arguments
     Byte 1    ${1}
     Byte 2    ${2}

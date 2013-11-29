@@ -180,17 +180,15 @@ class _JavaHandler(_RunnableHandler):
         signatures = self._get_signatures(handler_method)
         return JavaArgumentParser().parse(signatures, self.longname)
 
-    def _get_argument_resolver(self, argspec):
-        return ArgumentResolver(argspec, resolve_named=False)
-
     def _get_signatures(self, handler):
         code_object = getattr(handler, 'im_func', handler)
         return code_object.argslist[:code_object.nargs]
 
     def resolve_arguments(self, args, variables=None):
         positional, named = self._argument_resolver.resolve(args, variables)
-        positional = self._arg_coercer.coerce(positional, dryrun=not variables)
-        return positional, named
+        arguments = self._arg_coercer.coerce(
+          positional, named, dryrun=not variables)
+        return arguments, {}
 
 
 class _DynamicHandler(_RunnableHandler):
