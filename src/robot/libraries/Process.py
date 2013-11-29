@@ -89,6 +89,7 @@ class Process(object):
     | env:<name> | Overrides the named environment variable(s) only.     |
     | stdout     | Path of a file where to write standard output.        |
     | stderr     | Path of a file where to write standard error.         |
+    | bytesio    | Specifies that streams are opened in binary mode.     |
     | alias      | Alias given to the process.                           |
 
     == Running processes in shell ==
@@ -165,6 +166,15 @@ class Process(object):
 
     Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
+
+    == Text or binary streams ==
+
+    The `bytesio` argument specifies that stdin, stdout and stderr streams
+    are opened in binary mode. By default they are opened in text mode.
+
+    Starting with Python 3 text streams only work with strings, binary streams
+    only with bytes. If you want to send or receive bytes instead of strings,
+    give `bytesio` any non-false value, such as `bytesio=True`.
 
     == Alias ==
 
@@ -316,7 +326,7 @@ class Process(object):
                                    shell=config.shell,
                                    cwd=config.cwd,
                                    env=config.env,
-                                   universal_newlines=True)
+                                   universal_newlines=not config.bytesio)
         self._results[process] = ExecutionResult(process,
                                                  config.stdout_stream,
                                                  config.stderr_stream)
@@ -713,11 +723,12 @@ class ExecutionResult(object):
 class ProcessConfig(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
-                 alias=None, env=None, **rest):
+                 bytesio=False, alias=None, env=None, **rest):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout)
         self.shell = is_true(shell)
+        self.bytesio = is_true(bytesio)
         self.alias = alias
         self.env = self._construct_env(env, rest)
 
