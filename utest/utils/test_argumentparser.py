@@ -218,6 +218,23 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         assert_equals(opts, {'help': True, 'version': True, 'pythonpath': None,
                              'escape': 'xxx', 'argumentfile': None})
 
+    def test_non_list_args(self):
+        ap = ArgumentParser('''Options:
+ -t --toggle
+ -v --value value
+ -m --multi multi *
+''')
+        opts, args = ap.parse_args(())
+        assert_equals(opts, {'toggle': False,
+                             'value': None,
+                             'multi': []})
+        assert_equals(args, [])
+        opts, args = ap.parse_args(('-t', '-v', 'xxx', '-m', '1', '-m2', 'arg'))
+        assert_equals(opts, {'toggle': True,
+                             'value': 'xxx',
+                             'multi': ['1', '2']})
+        assert_equals(args, ['arg'])
+
 
 class TestDefaultsFromEnvironmentVariables(unittest.TestCase):
 
@@ -263,6 +280,18 @@ class TestDefaultsFromEnvironmentVariables(unittest.TestCase):
         opts, args = ap.parse_args(['arg'])
         assert_equals(opts['opt'], None)
         assert_equals(args, ['arg'])
+
+    def test_non_list_args(self):
+        opts, args = self.ap.parse_args(())
+        assert_equals(opts, {'toggle': True,
+                             'value': 'default',
+                             'multi': ['1', '2']})
+        assert_equals(args, [])
+        opts, args = self.ap.parse_args(('-t', '-v', 'given', '-m3', 'a', 'b'))
+        assert_equals(opts, {'toggle': False,
+                             'value': 'given',
+                             'multi': ['1', '2', '3']})
+        assert_equals(args, ['a', 'b'])
 
 
 class TestArgumentValidation(unittest.TestCase):
