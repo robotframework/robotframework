@@ -18,7 +18,7 @@ class RemoteTestLibrary:
         See `Failing`, `Logging`, and `Returning` for other basic keywords.
         """
         pass
-  
+
     def failing(self, message):
         """This keyword fails with provided `message`"""
         raise AssertionError(message)
@@ -52,7 +52,7 @@ class RemoteTestLibrary:
 
     def log_unicode(self):
         print self._unicode
-        
+
     def logging_and_failing(self):
         print '*INFO* This keyword will fail!'
         print '*WARN* Run for your lives!!'
@@ -216,16 +216,16 @@ class RemoteTestLibrary:
 
     def return_negative_integer(self):
         return -1
-  
+
     def return_float(self):
         return 3.14
-  
+
     def return_negative_float(self):
         return -0.5
 
     def return_zero(self):
         return 0
-  
+
     def return_boolean_true(self):
         return True
 
