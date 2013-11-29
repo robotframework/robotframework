@@ -19,13 +19,14 @@ import sys
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:   # No expat in IronPython 2.7
-    class ExpatError(Exception): pass
+    class ExpatError(Exception):
+        pass
 
-from robot import utils
 from robot.errors import RemoteError
+from robot.utils import unic
 
 
-class Remote:
+class Remote(object):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
     def __init__(self, uri='http://localhost:8270'):
@@ -56,7 +57,7 @@ class Remote:
             return ''
 
     def run_keyword(self, name, args):
-        args = [self._handle_argument(arg) for arg in args]
+        args = self._handle_argument(args)
         result = RemoteResult(self._client.run_keyword(name, args))
         sys.stdout.write(result.output)
         if result.status != 'PASS':
@@ -76,10 +77,10 @@ class Remote:
     def _str(self, item):
         if item is None:
             return ''
-        return utils.unic(item)
+        return unic(item)
 
 
-class RemoteResult:
+class RemoteResult(object):
 
     def __init__(self, result):
         try:
@@ -92,7 +93,7 @@ class RemoteResult:
             raise RuntimeError('Invalid remote result dictionary: %s' % result)
 
 
-class XmlRpcRemoteClient:
+class XmlRpcRemoteClient(object):
 
     def __init__(self, uri):
         self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8')
