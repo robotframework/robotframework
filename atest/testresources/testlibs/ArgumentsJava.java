@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class ArgumentsJava {
 
     public ArgumentsJava(String arg, String[] varargs) {
@@ -55,6 +57,38 @@ public class ArgumentsJava {
         String ret = "javaVarArgs:";
         for (String arg: args)
             ret += " " + arg;
+        return ret;
+    }
+
+    public String javaKWArgs(Map<String,Object> kwargs) {
+        String ret = "javaKWArgs:";
+        for (String key: kwargs.keySet())
+            ret += " " + key + ":" + kwargs.get(key);
+        return ret;
+    }
+
+    public String javaNormalAndKWArgs(String arg, Map<String,Object> kwargs) {
+        String ret = "javaNormalAndKWArgs: "+arg;
+        for (String key: kwargs.keySet())
+            ret += " " + key + ":" + kwargs.get(key);
+        return ret;
+    }
+
+    public String javaVarArgsAndKWArgs(List<String> varargs, Map<String,Object> kwargs) {
+        String ret = "javaVarArgsAndKWArgs:";
+        for (String arg: varargs)
+            ret += " " + arg;
+        for (String key: kwargs.keySet())
+            ret += " " + key + ":" + kwargs.get(key);
+        return ret;
+    }
+
+    public String javaAllArgs(String arg, List<String> varargs, Map<String,Object> kwargs) {
+        String ret = "javaAllArgs: "+arg;
+        for (String a: varargs)
+            ret += " " + a;
+        for (String key: kwargs.keySet())
+            ret += " " + key + ":" + kwargs.get(key);
         return ret;
     }
 }
