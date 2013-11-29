@@ -6,7 +6,7 @@ Resource          resource.txt
 
 *** Test Cases ***
 Explicitly run Operating System library keyword
-    ${handle}=     OperatingSystem.Start Process    python -c "import os; print os.path.abspath(os.curdir);"    textio=True
+    ${handle}=     OperatingSystem.Start Process    python -c "import os; print os.path.abspath(os.curdir);"
     ${out}=        Read Process Output
 
 Explicitly run Process library keyword
@@ -22,7 +22,7 @@ Implicitly run Process library keyword
 
 Implicitly run Operating System library keyword when library search order is set
     Set Library Search Order     OperatingSystem
-    ${handle}=     Start Process    python -c "import os; print os.path.abspath(os.curdir);"    textio=True
+    ${handle}=     Start Process    python -c "import os; print os.path.abspath(os.curdir);"
     ${out}=        Read Process Output
     [Teardown]  Set Library Search Order  ${EMPTY}
 
