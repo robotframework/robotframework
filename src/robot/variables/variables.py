@@ -126,7 +126,7 @@ class Variables(utils.NormalizedDict):
             value = self._find_variable(name)
         except KeyError:
             value = self._get_extended_var(name)
-        if not utils.iterable(value):
+        if not utils.is_list_like(value):
             raise DataError("Using scalar variable '%s' as list variable '@%s' "
                             "requires its value to be list or list-like."
                             % (name, name[1:]))
