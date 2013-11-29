@@ -13,7 +13,7 @@ import sys
 import inspect
 if sys.platform.startswith('java'):
     from java.lang import Class
-    from java.util import List
+    from java.util import List, Map
 
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
@@ -59,13 +59,22 @@ class JavaArgumentParser(_ArgumentParser):
 
     def _single_signature_arg_spec(self, signature):
         args = signature.args
-        if args and self._is_varargs_type(args[-1]):
-            return self._format_arg_spec(len(args)-1, varargs=True)
-        return self._format_arg_spec(len(args))
+        len_ = len(args)
+        if len_:
+            if self._is_varargs_type(args[-1]):
+                return self._format_arg_spec(len_ - 1, varargs=True)
+            if self._is_kwargs_type(args[-1]):
+                varargs = len_ > 1 and self._is_varargs_type(args[-2])
+                return self._format_arg_spec(
+                  len_ - (varargs and 2 or 1), varargs=varargs, kwargs=True)
+        return self._format_arg_spec(len_)
 
     def _is_varargs_type(self, arg):
         return isinstance(arg, Class) and (
           arg.isArray() or issubclass(arg, List))
+
+    def _is_kwargs_type(self, arg):
+        return issubclass(arg, Map)
 
     def _multi_signature_arg_spec(self, signatures):
         mina = maxa = len(signatures[0].args)
@@ -75,11 +84,14 @@ class JavaArgumentParser(_ArgumentParser):
             maxa = max(argc, maxa)
         return self._format_arg_spec(maxa, maxa-mina)
 
-    def _format_arg_spec(self, positional=0, defaults=0, varargs=False):
+    def _format_arg_spec(
+      self, positional=0, defaults=0, varargs=False, kwargs=False
+      ):
         positional = ['arg%d' % (i+1) for i in range(positional)]
         defaults = [''] * defaults
         varargs = '*varargs' if varargs else None
-        return positional, defaults, varargs
+        kwargs = '**kwargs' if kwargs else None
+        return positional, defaults, varargs, kwargs
 
 
 class _ArgumentSpecParser(_ArgumentParser):

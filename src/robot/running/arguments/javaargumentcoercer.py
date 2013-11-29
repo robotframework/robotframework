@@ -20,12 +20,17 @@ from robot.variables import contains_var
 class JavaArgumentCoercer(object):
 
     def __init__(self, signatures, argspec):
+        self._argspec = argspec
         self._coercers = CoercerFinder().find_coercers(signatures)
         self._varargs_handler = VarargsHandler(argspec)
 
-    def coerce(self, arguments, dryrun=False):
+    def coerce(self, arguments, named, dryrun=False):
         arguments = self._varargs_handler.handle(arguments)
-        return [c.coerce(a, dryrun) for c, a in zip(self._coercers, arguments)]
+        arguments = [c.coerce(a, dryrun)
+                     for c, a in zip(self._coercers, arguments)]
+        if self._argspec.kwargs:
+            arguments.append(named)
+        return arguments
 
 
 class CoercerFinder(object):
