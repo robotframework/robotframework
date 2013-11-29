@@ -11,6 +11,9 @@ Variables From Dict Should Be Loaded
 Variables From My Dict Should Be Loaded
     Check Test Case  ${TEST NAME}
 
+Variables From Mapping Should Be Loaded
+    Check Test Case  ${TEST NAME}
+
 Variables From UserDict Should Be Loaded
     Check Test Case  ${TEST NAME}
 
