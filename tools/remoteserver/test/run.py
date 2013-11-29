@@ -4,7 +4,7 @@
 Usage 1: run.py language[:runner] [[options] datasources]
 
 Valid languages are 'python', 'jython' or 'ruby', and runner can
-either by 'pybot' (default) or 'jybot'. By default, all tests under
+either by 'python' (default) or 'jython'. By default, all tests under
 'test/data' directory are run, but this can be changed by providing
 options, which can be any Robot Framework command line options.
 
@@ -16,13 +16,14 @@ import sys
 import xmlrpclib
 import time
 import os
+from os.path import abspath, dirname, exists, join, normpath
 import subprocess
 import shutil
 import socket
 
-REMOTEDIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUTPUTDIR = os.path.join(REMOTEDIR, 'test', 'logs')
-if os.path.exists(OUTPUTDIR):
+REMOTEDIR = dirname(dirname(abspath(__file__)))
+OUTPUTDIR = join(REMOTEDIR, 'test', 'logs')
+if exists(OUTPUTDIR):
     shutil.rmtree(OUTPUTDIR)
 os.mkdir(OUTPUTDIR)
 
@@ -38,9 +39,9 @@ class Library:
     def _start_library(self, lang):
         opts = self._environment_setup(lang)
         ext = {'python': 'py', 'jython': 'py', 'ruby': 'rb'}[lang]
-        lib = os.path.join(REMOTEDIR, 'test', 'libs', 'examplelib.%s' % ext)
-        stdout = os.path.join(OUTPUTDIR, 'stdout.txt')
-        stderr = os.path.join(OUTPUTDIR, 'stderr.txt')
+        lib = join(REMOTEDIR, 'test', 'libs', 'examplelib.%s' % ext)
+        stdout = join(OUTPUTDIR, 'stdout.txt')
+        stderr = join(OUTPUTDIR, 'stderr.txt')
         cmd = '%s%s%s 1> %s 2> %s' % (lang, opts, lib, stdout, stderr)
         print 'Starting %s remote library with command:\n%s' % (lang, cmd)
         subprocess.Popen(cmd, shell=True)
@@ -88,21 +89,22 @@ if __name__ == '__main__':
     if ':' in mode:
         lang, runner = mode.split(':')
     else:
-        lang, runner = mode, 'pybot'
+        lang, runner = mode, 'python'
     lib = Library(lang)
     include = lang if lang != 'jython' else 'python'
-    output = os.path.join(OUTPUTDIR, 'output.xml')
-    args = [runner, '--log', 'NONE', '--report', 'NONE', '--output', output,
+    output = join(OUTPUTDIR, 'output.xml')
+    args = [runner, normpath(join(REMOTEDIR, '..', '..', 'src', 'robot', 'run.py')),
+            '--output', output, '--log', 'NONE', '--report', 'NONE',
             '--name', mode, '--include', include, '--noncritical', 'non-critical']
     if len(sys.argv) == 2:
-        args.append(os.path.join(REMOTEDIR, 'test', 'atest'))
+        args.append(join(REMOTEDIR, 'test', 'atest'))
     else:
         args.extend(sys.argv[2:])
     print 'Running tests with command:\n%s' % ' '.join(args)
     subprocess.call(args)
     lib.stop()
     print
-    checker = os.path.join(REMOTEDIR, '..', 'statuschecker', 'statuschecker.py')
+    checker = join(REMOTEDIR, '..', 'statuschecker', 'statuschecker.py')
     subprocess.call(['python', checker, output])
     rc = subprocess.call(['rebot', '--noncritical', 'non-critical',
                           '--outputdir', OUTPUTDIR, output])
