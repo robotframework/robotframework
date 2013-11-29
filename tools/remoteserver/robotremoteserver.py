@@ -76,12 +76,12 @@ class RobotRemoteServer(SimpleXMLRPCServer):
                      and inspect.isroutine(getattr(self._library, attr))]
         return names + ['stop_remote_server']
 
-    def run_keyword(self, name, args):
+    def run_keyword(self, name, args, kwargs=None):
         result = {'status': 'PASS', 'return': '', 'output': '',
                   'error': '', 'traceback': ''}
         self._intercept_stdout()
         try:
-            return_value = self._get_keyword(name)(*args)
+            return_value = self._get_keyword(name)(*args, **(kwargs or {}))
         except:
             result['status'] = 'FAIL'
             result['error'], result['traceback'] = self._get_error_details()
@@ -97,7 +97,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return self._arguments_from_kw(kw)
 
     def _arguments_from_kw(self, kw):
-        args, varargs, _, defaults = inspect.getargspec(kw)
+        args, varargs, kwargs, defaults = inspect.getargspec(kw)
         if inspect.ismethod(kw):
             args = args[1:]  # drop 'self'
         if defaults:
@@ -105,6 +105,8 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             args += ['%s=%s' % (n, d) for n, d in zip(names, defaults)]
         if varargs:
             args.append('*%s' % varargs)
+        if kwargs:
+            args.append('**%s' % kwargs)
         return args
 
     def get_keyword_documentation(self, name):

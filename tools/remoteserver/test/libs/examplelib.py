@@ -122,6 +122,28 @@ class RemoteTestLibrary:
     def required_defaults_and_varargs(self, req, default='world', *varargs):
         return ' '.join((req, default) + varargs)
 
+    def kwargs(self, **kwargs):
+        return self._format_args(**kwargs)
+
+    def args_and_kwargs(self, arg1='default1', arg2='default2', **kwargs):
+        return self._format_args(arg1, arg2, **kwargs)
+
+    def varargs_and_kwargs(self, *varargs, **kwargs):
+        return self._format_args(*varargs, **kwargs)
+
+    def args_varargs_and_kwargs(self, arg1='default1', arg2='default2',
+                                *varargs, **kwargs):
+        return self._format_args(arg1, arg2, *varargs, **kwargs)
+
+    def non_string_kwargs(self, **kwargs):
+        kwargs = dict((k, '%s (%s)' % (v, type(v).__name__))
+                      for k, v in kwargs.items())
+        return self._format_args(**kwargs)
+
+    def _format_args(self, *args, **kws):
+        args += tuple(':'.join(item) for item in sorted(kws.items()))
+        return ', '.join(args)
+
     # Argument types
 
     def string_as_argument(self, arg):

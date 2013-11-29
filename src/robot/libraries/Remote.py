@@ -56,9 +56,10 @@ class Remote(object):
         except TypeError:
             return ''
 
-    def run_keyword(self, name, args):
+    def run_keyword(self, name, args, kwargs):
         args = self._handle_argument(args)
-        result = RemoteResult(self._client.run_keyword(name, args))
+        kwargs = self._handle_argument(kwargs)
+        result = RemoteResult(self._client.run_keyword(name, args, kwargs))
         sys.stdout.write(result.output)
         if result.status != 'PASS':
             raise RemoteError(result.error, result.traceback)
@@ -118,9 +119,10 @@ class XmlRpcRemoteClient(object):
         except xmlrpclib.Error:
             raise TypeError
 
-    def run_keyword(self, name, args):
+    def run_keyword(self, name, args, kwargs):
+        run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
         try:
-            return self._server.run_keyword(name, args)
+            return self._server.run_keyword(*run_keyword_args)
         except xmlrpclib.Error, err:
             raise RuntimeError(err.faultString)
         except socket.error, (errno, err):
