@@ -91,4 +91,11 @@ public class ArgumentsJava {
             ret += " " + key + ":" + kwargs.get(key);
         return ret;
     }
+
+    public String javaManyNormalArgs(String arg, String arg2, Map<String,Object> kwargs) {
+        String ret = "javaManyNormalArgs: "+arg+" "+arg2;
+        for (String key: kwargs.keySet())
+            ret += " " + key + ":" + kwargs.get(key);
+        return ret;
+    }
 }
