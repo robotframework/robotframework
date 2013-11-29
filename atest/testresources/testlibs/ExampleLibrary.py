@@ -15,7 +15,7 @@ class ExampleLibrary:
     def print_(self, msg, stream='stdout'):
         """Print given message to selected stream (stdout or stderr)"""
         out_stream = getattr(sys, stream)
-        out_stream.write(msg)
+        out_stream.write(unicode(msg))
 
     def print_n_times(self, msg, count, delay=0):
         """Print given message n times"""
@@ -54,6 +54,8 @@ class ExampleLibrary:
     def exception(self, name, msg=""):
         """Raise exception with given name and message"""
         exception = getattr(exceptions, name)
+        if msg is None:
+            raise exception
         raise exception, msg
 
     def external_exception(self, name, msg):
