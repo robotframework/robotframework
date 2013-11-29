@@ -1591,6 +1591,8 @@ __ `Errors and warnings during execution`_
 __ `User keyword name and documentation`_
 __ `Creating static keywords`_
 
+.. _Dynamic library:
+
 Dynamic library API
 ~~~~~~~~~~~~~~~~~~~
 
