@@ -39,7 +39,8 @@ Return Object with Invalid Unicode Repr
     [Documentation]  How the return value is logged depends on the interpreter.
     ${test} =    Check Test Case  ${TESTNAME}
     ${path}    ${base} =    Split Path    ${INTERPRETER}
-    ${ret} =    Set Variable If    'python' in '${base}'    u'Hyv\\xe4'    Hyvä
+    ${ret} =    Set Variable If    'python' in '${base}' and not '${PYTHON3}'
+    ...    u'Hyv\\xe4'    Hyvä
     Check Log Message    ${test.kws[0].msgs[1]}    Return: ${ret}    TRACE
 
 Return Object with Non Ascii String from Repr
