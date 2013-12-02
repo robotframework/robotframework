@@ -686,7 +686,8 @@ to the above Python examples with same names:
 
 It is also possible to use variable number of arguments also by
 having an array or, starting from Robot Framework 2.8.3,
-:code:`java.util.List` as the last argument. This is illustrated
+:code:`java.util.List` as the last argument, or second to last
+if `free keyword arguments (**kwargs)`_ are used. This is illustrated
 by the following examples that are functionally identical to
 the previous ones:
 
@@ -724,7 +725,7 @@ in `Free keyword arguments`_ section under `Creating test cases`_. In this
 section we take a look at how to actually use it in custom test libraries.
 
 Starting from Robot Framework 2.8.3, also Java libraries support the free
-keyword arguments.
+keyword arguments,  if they have :code:`java.util.Map` as the last argument
 
 If you are already familiar how kwargs work with Python, understanding how
 they work with Robot Framework test libraries is rather simple. The example
