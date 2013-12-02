@@ -1,4 +1,5 @@
 import unittest
+import sys
 
 try:
     from collections import Mapping
@@ -65,6 +66,16 @@ class TestDictlike(unittest.TestCase):
     def test_others(self):
         for thing in ['', u'', 1, None, True, object(), [], (), set()]:
             assert_equals(is_dict_like(thing), False, thing)
+
+    def test_java(self):
+        if sys.platform.startswith('java'):
+            from java.util import HashMap
+            assert_equals(is_dict_like(HashMap()), False)
+            assert_equals(is_dict_like(HashMap(), allow_java=True), True)
+            assert_equals(is_dict_like([], allow_java=True), False)
+        else:
+            assert_equals(is_dict_like({}, allow_java=True), True)
+            assert_equals(is_dict_like([], allow_java=True), False)
 
 
 class TestStringlike(unittest.TestCase):
