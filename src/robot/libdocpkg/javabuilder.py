@@ -29,7 +29,7 @@ class JavaDocBuilder(object):
                             named_args=False,
                             doc_format=self._get_doc_format(doc))
         libdoc.keywords = self._keywords(doc)
-        libdoc.inits = self._intializers(doc)
+        libdoc.inits = self._initializers(doc)
         return libdoc
 
     def _get_doc(self, doc):
@@ -61,18 +61,38 @@ class JavaDocBuilder(object):
     def _keyword_doc(self, method):
         return KeywordDoc(
             name=utils.printable_name(method.name(), code_style=True),
-            args=list(self._yield_keyword_arguments(method)),
+            args=self._get_keyword_arguments(method),
             doc=self._get_doc(method)
         )
 
-    def _yield_keyword_arguments(self, method):
-        for param in method.parameters():
-            name = param.name()
-            if param.type().dimension() == '[]':
-                name = '*' + name
-            yield name
+    def _get_keyword_arguments(self, method):
+        reverse_params =  list(reversed(method.parameters()))
+        if not reverse_params:
+            return []
+        result = []
+        index = 0
+        param = reverse_params[index]
+        if self._is_kwargs(param):
+            result.append('**'+param.name())
+            index+=1
+        if len(reverse_params) == index:
+            return result
+        param = reverse_params[index]
+        if self._is_varargs(param):
+            result.append('*'+param.name())
+            index+=1
+        while (len(reverse_params)>index):
+            result.append(reverse_params[index].name())
+            index +=1
+        return list(reversed(result))
 
-    def _intializers(self, doc):
+    def _is_kwargs(self, param):
+        return str(param.type()).startswith('java.util.Map')
+
+    def _is_varargs(self, param):
+        return str(param.type()).startswith('java.util.List') or param.type().dimension() == '[]'
+
+    def _initializers(self, doc):
         inits = [self._keyword_doc(init) for init in doc.constructors()]
         if len(inits) == 1 and not inits[0].args:
             return []

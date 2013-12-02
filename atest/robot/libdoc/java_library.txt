@@ -39,13 +39,13 @@ Init Arguments
 
 Keyword Names
     Keyword Name Should Be    0    Keyword
-    Keyword Name Should Be    1    My Keyword
+    Keyword Name Should Be    4    My Keyword
 
 Keyword Arguments
     Keyword Arguments Should Be     0    arg
-    Keyword Arguments Should Be     1
-    Keyword Arguments Should Be     -2    *varargs
-    Keyword Arguments Should Be     -1    normal    *varargs
+    Keyword Arguments Should Be     4
+    Keyword Arguments Should Be     -4    *varargs
+    Keyword Arguments Should Be     -3    normal    *varargs
 
 Keyword Documentation
     Keyword Doc Should Start With    0
@@ -54,9 +54,24 @@ Keyword Documentation
     ...    | Your Keyword | xxx |\n
     ...    | Your Keyword | yyy |\n\n
     ...    See `My Keyword` for no more information.
-    Keyword Doc Should Start With    1
+    Keyword Doc Should Start With    4
     ...    Does nothing & <doc> has "stuff" to 'escape'!!
     ...    \nand ignored indentation
 
 Non ASCII
-    Keyword Doc Should Be    2    Hyvää yötä.\n\nСпасибо!
+    Keyword Doc Should Be    5    Hyvää yötä.\n\nСпасибо!
+
+Lists as varargs
+    Keyword Arguments Should Be     -1    *varargsList
+
+Kwargs
+    Keyword Arguments Should Be     1    normal  *varargs  **kwargs
+
+Only last map is kwargs
+    Keyword Arguments Should Be     2    normal  **kwargs
+
+Only last list is varargs
+    Keyword Arguments Should Be     -2    normalArray  *varargs
+
+Last argument overrides
+    Keyword Arguments Should Be     3    normalArray  normalMap  normal
