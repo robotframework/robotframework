@@ -14,9 +14,10 @@
 
 import sys
 if sys.platform.startswith('java'):
+    from java.lang import String
     from java.util import Map
 else:
-    Map = ()
+    String = Map = ()
 try:
     from collections import Mapping
 except ImportError:  # New in 2.6
@@ -25,12 +26,12 @@ from UserDict import UserDict
 from UserString import UserString
 
 
-def is_str_like(item):
-    return isinstance(item, (basestring, UserString))
-
+def is_str_like(item, allow_java=False):
+    return (isinstance(item, (basestring, UserString)) or
+            allow_java and isinstance(item, String))
 
 def is_list_like(item):
-    if is_str_like(item) or is_dict_like(item):
+    if is_str_like(item, allow_java=True) or is_dict_like(item, allow_java=True):
         return False
     try:
         iter(item)

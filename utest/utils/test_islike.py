@@ -5,6 +5,11 @@ try:
     from collections import Mapping
 except ImportError:
     Mapping = dict
+try:
+    from java.lang import String
+    from java.util import HashMap
+except ImportError:
+    pass
 from array import array
 from UserDict import UserDict
 from UserList import UserList
@@ -40,6 +45,14 @@ class TestListlike(unittest.TestCase):
         for thing in [dict(), UserDict(), MyMapping()]:
             assert_equals(is_list_like(thing), False, thing)
 
+    if sys.platform.startswith('java'):
+
+        def test_java_strings_are_not_list_like(self):
+            assert_equals(is_list_like(String()), False)
+
+        def test_java_dict_likes_are_not_list_like(self):
+            assert_equals(is_list_like(HashMap()), False)
+
     def test_other_iterables_are_list_like(self):
         for thing in [[], (), set(), xrange(1), generator(), array('i'), UserList()]:
             assert_equals(is_list_like(thing), True, thing)
@@ -67,14 +80,12 @@ class TestDictlike(unittest.TestCase):
         for thing in ['', u'', 1, None, True, object(), [], (), set()]:
             assert_equals(is_dict_like(thing), False, thing)
 
-    def test_java(self):
+    def test_allow_java(self):
+        assert_equals(is_dict_like({}, allow_java=True), True)
+        assert_equals(is_dict_like([], allow_java=True), False)
         if sys.platform.startswith('java'):
-            from java.util import HashMap
             assert_equals(is_dict_like(HashMap()), False)
             assert_equals(is_dict_like(HashMap(), allow_java=True), True)
-            assert_equals(is_dict_like([], allow_java=True), False)
-        else:
-            assert_equals(is_dict_like({}, allow_java=True), True)
             assert_equals(is_dict_like([], allow_java=True), False)
 
 
@@ -87,6 +98,14 @@ class TestStringlike(unittest.TestCase):
     def test_others(self):
         for thing in [1, None, True, object(), [], (), {}]:
             assert_equals(is_str_like(thing), False, thing)
+
+    def test_allow_java(self):
+        assert_equals(is_str_like('', allow_java=True), True)
+        assert_equals(is_str_like([], allow_java=True), False)
+        if sys.platform.startswith('java'):
+            assert_equals(is_str_like(String()), False)
+            assert_equals(is_str_like(String(), allow_java=True), True)
+            assert_equals(is_str_like([], allow_java=True), False)
 
 
 if __name__ == "__main__":
