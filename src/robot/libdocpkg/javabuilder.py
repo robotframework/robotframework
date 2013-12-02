@@ -87,10 +87,10 @@ class JavaDocBuilder(object):
         return list(reversed(result))
 
     def _is_kwargs(self, param):
-        return str(param.type()).startswith('java.util.Map')
+        return param.typeName().startswith('java.util.Map')
 
     def _is_varargs(self, param):
-        return str(param.type()).startswith('java.util.List') or param.type().dimension() == '[]'
+        return param.typeName().startswith('java.util.List') or param.type().dimension() == '[]'
 
     def _initializers(self, doc):
         inits = [self._keyword_doc(init) for init in doc.constructors()]
