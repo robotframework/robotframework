@@ -11,6 +11,15 @@ Move File
 Copy File
     Check testcase  ${TESTNAME}
 
+Copy File when destination exists should be ok
+    Check testcase  ${TESTNAME}
+
+Copy File when destination is a directory
+    Check testcase  ${TESTNAME}
+
+Copy File when destination is a directory and file with same name exists
+    Check testcase  ${TESTNAME}
+
 Move File To Existing Dir
     Check testcase  ${TESTNAME}
 

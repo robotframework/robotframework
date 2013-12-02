@@ -16,6 +16,28 @@ Copy File
     Verify File  ${TESTFILE2}  contents
     Directory Should Have Items   ${BASE}    ${TESTFILE SHORT NAME}    ${TESTFILE 2 SHORT NAME}
 
+Copy File when destination exists should be ok
+    Create File  ${TESTFILE}  contents
+    Copy File  ${TESTFILE}  ${TESTFILE2}
+    Create File  ${TESTFILE}  contents2
+    Copy File  ${TESTFILE}  ${TESTFILE2}
+    Verify File  ${TESTFILE2}  contents2
+
+Copy File when destination is a directory
+    ${destination}=    Set Variable    ${BASE}/foo
+    Create Directory   ${destination}
+    Create File  ${TESTFILE}  contents
+    Copy File    ${TESTFILE}  ${destination}
+    Verify File  ${destination}${/}${TESTFILE SHORT NAME}   contents
+
+Copy File when destination is a directory and file with same name exists
+    ${destination}=    Set Variable    ${BASE}/foo
+    Create Directory   ${destination}
+    Create File  ${TESTFILE}  contents
+    Create File  ${destination}${/}${TESTFILE SHORT NAME}   original
+    Copy File    ${TESTFILE}  ${destination}
+    Verify File  ${destination}${/}${TESTFILE SHORT NAME}   contents
+
 Move File To Existing Dir
     Create Directory  ${BASE}/foo
     Create Directory  ${BASE}/bar
