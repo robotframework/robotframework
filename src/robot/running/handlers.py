@@ -176,6 +176,9 @@ class _JavaHandler(_RunnableHandler):
         signatures = self._get_signatures(handler_method)
         self._arg_coercer = JavaArgumentCoercer(signatures, self.arguments)
 
+    def _get_argument_resolver(self, argspec):
+        return ArgumentResolver(argspec, dict_to_kwargs=True)
+
     def _parse_arguments(self, handler_method):
         signatures = self._get_signatures(handler_method)
         return JavaArgumentParser().parse(signatures, self.longname)
