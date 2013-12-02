@@ -300,13 +300,12 @@ contains :code:`**kwargs` exactly like with any other dynamic library.
 The main difference is that
 remote servers' :code:`run_keyword` method must have optional third argument
 that gets the kwargs specified by the user. The third argument must be optional
-because, for backwards-compatibility reasons, the Remote library only passes
-kwargs to it when they have been used in the test data.
+because, for backwards-compatibility reasons, the Remote library passes kwargs
+to the :code:`run_keyword` method only when they have been used in the test data.
 
 In practice :code:`run_keyword` should look something like the following
 Python and Java examples, depending on how the language handles optional
 arguments.
-
 
 .. sourcecode:: python
 
