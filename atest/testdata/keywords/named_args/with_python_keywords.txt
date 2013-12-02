@@ -2,6 +2,7 @@
 Library           KwargsLibrary.py
 Library           helper.py
 Library           python_library.py
+Library           Collections
 
 *** Test Cases ***
 Simple Named
@@ -195,6 +196,11 @@ Nön äscii allowed in keyword argument names
 Empty string is allowed in kwargs names
     ${res} =    Lib Mandatory Named varargs and kwargs    a    b    =whut
     Should be equal    a, b, :whut    ${res}
+
+Dict is not converted to kwargs
+    [Documentation]    FAIL Keyword 'python_library.Lib Kwargs' expected 0 non-keyword arguments, got 1.
+    ${dict} =    Create Dictionary   a=1    b=2
+    lib_kwargs    ${dict}
 
 *** Keywords ***
 Execute working combinations with everything

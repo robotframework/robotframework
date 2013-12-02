@@ -88,3 +88,6 @@ Nön äscii allowed in keyword argument names
 
 Empty string is allowed in kwargs names
     Check Test Case    ${TESTNAME}
+
+Dict is not converted to kwargs
+    Check Test Case    ${TESTNAME}
