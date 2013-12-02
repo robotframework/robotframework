@@ -35,7 +35,7 @@ class ArgumentValidator(object):
             self._raise_wrong_count(count, spec)
 
     def _named_positionals(self, named, spec):
-        if not spec.named_arguments:
+        if not spec.supports_named:
             return 0
         return sum(1 for n in named if n in spec.positional)
 
@@ -54,7 +54,7 @@ class ArgumentValidator(object):
 
     def _validate_no_multiple_values(self, positional, named, spec):
         for name in spec.positional[:len(positional)]:
-            if name in named and spec.named_arguments:
+            if name in named and spec.supports_named:
                 raise DataError("%s '%s' got multiple values for argument '%s'."
                                 % (spec.type, spec.name, name))
 

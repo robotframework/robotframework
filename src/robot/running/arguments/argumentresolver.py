@@ -58,7 +58,7 @@ class NamedArgumentResolver(object):
         name = arg.split('=')[0]
         if self._is_escaped(name):
             return False
-        if not self._argspec.named_arguments:
+        if not self._argspec.supports_named:
             return self._argspec.kwargs
         return name in self._argspec.positional or self._argspec.kwargs
 

@@ -58,20 +58,24 @@ class JavaArgumentParser(_ArgumentParser):
         return self._format_arg_spec()
 
     def _single_signature_arg_spec(self, signature):
-        args = signature.args
-        len_ = len(args)
-        if len_:
-            if self._is_varargs_type(args[-1]):
-                return self._format_arg_spec(len_ - 1, varargs=True)
-            if self._is_kwargs_type(args[-1]):
-                varargs = len_ > 1 and self._is_varargs_type(args[-2])
-                return self._format_arg_spec(
-                  len_ - (varargs and 2 or 1), varargs=varargs, kwargs=True)
-        return self._format_arg_spec(len_)
+        varargs, kwargs = self._get_varargs_and_kwargs_support(signature.args)
+        positional = len(signature.args) - int(varargs) - int(kwargs)
+        return self._format_arg_spec(positional, varargs=varargs, kwargs=kwargs)
+
+    def _get_varargs_and_kwargs_support(self, args):
+        if not args:
+            return False, False
+        if self._is_varargs_type(args[-1]):
+            return True, False
+        if not self._is_kwargs_type(args[-1]):
+            return False, False
+        if len(args) > 1 and self._is_varargs_type(args[-2]):
+            return True, True
+        return False, True
 
     def _is_varargs_type(self, arg):
-        return isinstance(arg, Class) and (
-          arg.isArray() or issubclass(arg, List))
+        return (isinstance(arg, Class) and arg.isArray()
+                or issubclass(arg, List))
 
     def _is_kwargs_type(self, arg):
         return issubclass(arg, Map)
@@ -89,7 +93,8 @@ class JavaArgumentParser(_ArgumentParser):
         defaults = [''] * defaults
         varargs = '*varargs' if varargs else None
         kwargs = '**kwargs' if kwargs else None
-        return positional, defaults, varargs, kwargs, False
+        supports_named = False
+        return positional, defaults, varargs, kwargs, supports_named
 
 
 class _ArgumentSpecParser(_ArgumentParser):

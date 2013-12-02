@@ -18,14 +18,14 @@ import sys
 class ArgumentSpec(object):
 
     def __init__(self, name, type='Keyword', positional=None, defaults=None,
-                 varargs=None, kwargs=None, named_arguments=True):
+                 varargs=None, kwargs=None, supports_named=True):
         self.name = name
         self.type = type
         self.positional = positional or []
         self.defaults = defaults or []
         self.varargs = varargs
         self.kwargs = kwargs
-        self.named_arguments = named_arguments
+        self.supports_named = supports_named
 
     @property
     def minargs(self):
