@@ -3,6 +3,7 @@ Library           ArgumentsJava    Arg    and    varargs    accepted
 Library           ListArgumentsJava    Arg    and    varargs    accepted
 Library           ArgumentTypes
 Library           ExampleJavaLibrary
+Library           Collections
 
 *** Variables ***
 @{LIST}           With    three    values
@@ -123,6 +124,23 @@ All args on java
 Java kwargs wont be interpreted as values for positional arguments
    ${res} =       javaManyNormalArgs    foo   huu   arg1=one
    Should be equal    ${res}    javaManyNormalArgs: foo huu arg1:one
+
+Map can be given as an argument still
+   ${map} =       getJavaMap    foo=one   bar=two
+   ${res} =       javaKWArgs    ${map}
+   Should be equal    ${res}    javaKWArgs: foo:one bar:two
+
+Dict can be given as an argument still
+   ${dict} =      Create dictionary     foo=one   bar=two
+   ${res} =       javaKWArgs    ${dict}
+   Should be equal    ${res}    javaKWArgs: foo:one bar:two
+
+Hashmap is not kwargs
+    [Documentation]    FAIL TypeError: hashmapArg(): 1st arg can't be coerced to java.util.HashMap
+    ${map} =       getJavaMap    foo=one   bar=two
+    ${res} =       hashmapArg    ${map}
+    Should be equal    ${res}    hashmapArg: foo:one bar:two
+    hashmapArg    foo=bar   doo=daa
 
 Valid Arguments For Keyword Expecting Non String Scalar Arguments
     Byte 1    ${1}

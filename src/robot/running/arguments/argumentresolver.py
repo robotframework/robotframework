@@ -13,6 +13,12 @@
 #  limitations under the License.
 
 from robot.errors import DataError
+from robot.utils import is_dict_like
+
+try:
+    from java.util import Map
+except:
+    Map = None
 
 from .argumentvalidator import ArgumentValidator
 
@@ -25,14 +31,25 @@ class ArgumentResolver(object):
             if resolve_named else NullNamedArgumentResolver()
         self._variable_replacer = VariableReplacer(resolve_variables_until)
         self._argument_validator = ArgumentValidator(argspec)
+        self._maxargs = argspec.maxargs
 
     def resolve(self, arguments, variables=None):
         positional, named = self._named_resolver.resolve(arguments)
         positional, named = self._variable_replacer.replace(positional, named,
                                                             variables)
+        if self._last_positional_is_kw_map(positional, named):
+            named = positional.pop()
         self._argument_validator.validate(positional, named,
                                           dryrun=not variables)
         return positional, named
+
+    def _last_positional_is_kw_map(self, positional, named):
+        if named:
+            return False
+        if not len(positional) == self._maxargs + 1:
+            return False
+        last = positional[-1]
+        return is_dict_like(last) or Map and isinstance(last, Map)
 
 
 class NamedArgumentResolver(object):

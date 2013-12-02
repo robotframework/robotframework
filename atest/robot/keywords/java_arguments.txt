@@ -63,6 +63,15 @@ All args on java
 Java kwargs wont be interpreted as values for positional arguments
     Check Test Case    ${TESTNAME}
 
+Map can be given as an argument still
+    Check Test Case    ${TESTNAME}
+
+Dict can be given as an argument still
+    Check Test Case    ${TESTNAME}
+
+Hashmap is not kwargs
+    Check Test Case    ${TESTNAME}
+
 Valid Arguments For Keyword Expecting Non String Scalar Arguments
     Check Test Case    ${TESTNAME}
 

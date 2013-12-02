@@ -81,15 +81,18 @@ class RunKeyword(_DynamicMethod):
 
     @property
     def kwargs_supported(self):
-        argspec = self._parse_argspec(self.method)
-        return len(argspec.positional) == 3
+        if is_java_method(self.method):
+            return self._is_java_runkw_with_kwargs(self.method)
+        return self._is_python_runkw_with_kwargs(self.method)
 
-    def _parse_argspec(self, method):
-        if not is_java_method(method):
-            return PythonArgumentParser().parse(method)
-        func = method.im_func if hasattr(method, 'im_func') else method
+    def _is_python_runkw_with_kwargs(self, method):
+        return len(PythonArgumentParser().parse(method).positional) == 3
+
+    def _is_java_runkw_with_kwargs(self, method):
+        func = self.method.im_func if hasattr(method, 'im_func') else method
         signatures = func.argslist[:func.nargs]
-        return JavaArgumentParser().parse(signatures)
+        spec = JavaArgumentParser().parse(signatures)
+        return len(spec.positional) == 3 or spec.kwargs
 
 
 class GetKeywordDocumentation(_DynamicMethod):

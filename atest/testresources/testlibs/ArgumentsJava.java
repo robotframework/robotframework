@@ -53,6 +53,10 @@ public class ArgumentsJava {
         return ret;
     }
 
+    public Map<String, Object> getJavaMap(Map<String, Object> kwargs) {
+        return new HashMap<String, Object>(kwargs);
+    }
+
     public String javaVarargs(String... args) {
         String ret = "javaVarArgs:";
         for (String arg: args)
@@ -96,6 +100,13 @@ public class ArgumentsJava {
         String ret = "javaManyNormalArgs: "+arg+" "+arg2;
         for (String key: kwargs.keySet())
             ret += " " + key + ":" + kwargs.get(key);
+        return ret;
+    }
+
+    public String hashmapArg(HashMap<String, Object> map) {
+        String ret = "hashmapArg:";
+        for (String key: map.keySet())
+            ret += " " + key + ":" + map.get(key);
         return ret;
     }
 }
