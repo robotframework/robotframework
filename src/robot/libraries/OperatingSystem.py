@@ -752,10 +752,13 @@ class OperatingSystem:
         source, destination, dest_is_dir = self._normalize_dest_and_source(destination, source)
         self._verify_that_source_is_a_file(source)
         parent = self._ensure_directory_exists(destination, dest_is_dir)
+        self._ensure_destination_file_does_not_exist(destination, dest_is_dir, source)
+        return source, destination, parent
+
+    def _ensure_destination_file_does_not_exist(self, destination, dest_is_dir, source):
         dest = os.path.join(destination, os.path.basename(source)) if dest_is_dir else destination
         if os.path.isfile(dest):
             os.remove(dest)
-        return source, destination, parent
 
     def _copy_file(self, source, destination):
         source, destination, parent = self._prepare_for_move_or_copy(destination, source)
