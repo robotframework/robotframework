@@ -12,6 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+if sys.platform.startswith('java'):
+    from java.util import Map
+else:
+    Map = ()
 try:
     from collections import Mapping
 except ImportError:  # New in 2.6
@@ -35,5 +40,6 @@ def is_list_like(item):
         return True
 
 
-def is_dict_like(item):
-    return isinstance(item, (Mapping, UserDict))
+def is_dict_like(item, allow_java=False):
+    return (isinstance(item, (Mapping, UserDict)) or
+            allow_java and isinstance(item, Map))

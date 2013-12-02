@@ -15,11 +15,6 @@
 from robot.errors import DataError
 from robot.utils import is_dict_like
 
-try:
-    from java.util import Map
-except:
-    Map = None
-
 from .argumentvalidator import ArgumentValidator
 
 
@@ -30,26 +25,17 @@ class ArgumentResolver(object):
         self._named_resolver = NamedArgumentResolver(argspec) \
             if resolve_named else NullNamedArgumentResolver()
         self._variable_replacer = VariableReplacer(resolve_variables_until)
+        self._kwargs_handler = KwArgsHandler(argspec)
         self._argument_validator = ArgumentValidator(argspec)
-        self._maxargs = argspec.maxargs
 
     def resolve(self, arguments, variables=None):
         positional, named = self._named_resolver.resolve(arguments)
         positional, named = self._variable_replacer.replace(positional, named,
                                                             variables)
-        if self._last_positional_is_kw_map(positional, named):
-            named = positional.pop()
+        positional, name = self._kwargs_handler.handle(positional, named)
         self._argument_validator.validate(positional, named,
                                           dryrun=not variables)
         return positional, named
-
-    def _last_positional_is_kw_map(self, positional, named):
-        if named:
-            return False
-        if not len(positional) == self._maxargs + 1:
-            return False
-        last = positional[-1]
-        return is_dict_like(last) or Map and isinstance(last, Map)
 
 
 class NamedArgumentResolver(object):
@@ -110,6 +96,25 @@ class NullNamedArgumentResolver(object):
 
     def resolve(self, arguments):
         return arguments, {}
+
+
+class KwArgsHandler(object):
+
+    def __init__(self, argspec):
+        self._maxargs = argspec.maxargs
+        self._supports_kwargs = bool(argspec.kwargs)
+
+    def handle(self, positional, named):
+        if self._extra_arg_has_kwargs(positional, named):
+            named = positional.pop()
+        return positional, named
+
+    def _extra_arg_has_kwargs(self, positional, named):
+        if named or not self._supports_kwargs:
+            return False
+        if len(positional) != self._maxargs + 1:
+            return False
+        return is_dict_like(positional[-1], allow_java=True)
 
 
 class VariableReplacer(object):

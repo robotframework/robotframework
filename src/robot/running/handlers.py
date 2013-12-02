@@ -200,9 +200,9 @@ class _DynamicHandler(_RunnableHandler):
                                   dynamic_method.method)
         self._run_keyword_method_name = dynamic_method.name
         self._doc = doc is not None and utils.unic(doc) or ''
-        self._kwargs_supported = dynamic_method.kwargs_supported
+        self._supports_kwargs = dynamic_method.supports_kwargs
         if argspec and argspec[-1].startswith('**'):
-            if not self._kwargs_supported:
+            if not self._supports_kwargs:
                 raise DataError("Too few '%s' method parameters for **kwargs "
                                 "support." % self._run_keyword_method_name)
 
@@ -224,7 +224,7 @@ class _DynamicHandler(_RunnableHandler):
 
     def _get_dynamic_handler(self, runner, name):
         def handler(*positional, **kwargs):
-            if self._kwargs_supported:
+            if self._supports_kwargs:
                 return runner(name, positional, kwargs)
             else:
                 return runner(name, positional)
