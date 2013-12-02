@@ -83,7 +83,7 @@ public class ArgumentsJava {
         return ret;
     }
 
-    public String javaAllArgs(String arg, List<String> varargs, Map<String,Object> kwargs) {
+    public String javaAllArgs(String arg, String[] varargs, Map<String,Object> kwargs) {
         String ret = "javaAllArgs: "+arg;
         for (String a: varargs)
             ret += " " + a;
