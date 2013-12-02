@@ -686,7 +686,8 @@ to the above Python examples with same names:
 
 It is also possible to use variable number of arguments also by
 having an array or, starting from Robot Framework 2.8.3,
-:code:`java.util.List` as the last argument. This is illustrated
+:code:`java.util.List` as the last argument, or second to last
+if `free keyword arguments (**kwargs)`_ are used. This is illustrated
 by the following examples that are functionally identical to
 the previous ones:
 
@@ -722,8 +723,9 @@ Robot Framework 2.8 added the support for free keyword arguments using Python's
 :code:`**kwargs` syntax. How to use the syntax in the test data is discussed
 in `Free keyword arguments`_ section under `Creating test cases`_. In this
 section we take a look at how to actually use it in custom test libraries.
-Because Java does not have similar keyword argument concept, this functionality
-is only available with Python based libraries.
+
+Starting from Robot Framework 2.8.3, also Java libraries support the free
+keyword arguments,  if they have :code:`java.util.Map` as the last argument
 
 If you are already familiar how kwargs work with Python, understanding how
 they work with Robot Framework test libraries is rather simple. The example
@@ -735,7 +737,17 @@ below shows the basic functionality.
         for name, value in stuff.items():
             print name, value
 
-.. table:: Using keywords with python :code:`**kwargs`
+
+Or the same in Java:
+
+.. sourcecode:: java
+
+    public void exampleKeyword(Map<String, Object> stuff):
+        for (String key: stuff.keySet())
+            System.out.println(key + " " + stuff.get(key));
+
+
+.. table:: Using keywords with :code:`**kwargs`
    :class: example
 
    ====================  ================  ==============  ==============  ===========================
@@ -754,6 +766,8 @@ like :code:`foo\\=quux`.
 The following examples illustrate how normal arguments, varargs, and kwargs
 work together.
 
+The example keyword in python:
+
 .. sourcecode:: python
 
   def various_args(arg, *varargs, **kwargs):
@@ -762,6 +776,18 @@ work together.
           print 'vararg:', value
       for name, value in kwargs.items():
           print 'kwarg:', name, value
+
+and the same keyword implemented in java:
+
+.. sourcecode:: java
+
+    public void exampleKeyword(String arg, List<String> varargs, Map<String, Object> kwargs):
+        System.out.println("arg:" + arg);
+        for (String varg: varargs)
+            System.out.println("vararg:" + varg);
+        for (String key: kwargs.keySet())
+            System.out.println(key + " " + kwargs.get(key));
+
 
 .. table:: Using defaults, varargs, and kwargs together
    :class: example
