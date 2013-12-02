@@ -752,6 +752,9 @@ class OperatingSystem:
         source, destination, dest_is_dir = self._normalize_dest_and_source(destination, source)
         self._verify_that_source_is_a_file(source)
         parent = self._ensure_directory_exists(destination, dest_is_dir)
+        dest = os.path.join(destination, os.path.basename(source)) if dest_is_dir else destination
+        if os.path.isfile(dest):
+            os.remove(dest)
         return source, destination, parent
 
     def _copy_file(self, source, destination):
@@ -761,7 +764,7 @@ class OperatingSystem:
     def _normalize_dest_and_source(self, dest, source):
         source = self._absnorm(source)
         dest = dest.replace('/', os.sep)
-        dest_is_dir = dest.endswith(os.sep)
+        dest_is_dir = dest.endswith(os.sep) or os.path.isdir(dest)
         dest = self._absnorm(dest)
         return source, dest, dest_is_dir
 
