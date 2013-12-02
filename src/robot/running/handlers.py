@@ -186,8 +186,8 @@ class _JavaHandler(_RunnableHandler):
 
     def resolve_arguments(self, args, variables=None):
         positional, named = self._argument_resolver.resolve(args, variables)
-        arguments = self._arg_coercer.coerce(
-          positional, named, dryrun=not variables)
+        arguments = self._arg_coercer.coerce(positional, named,
+                                             dryrun=not variables)
         return arguments, {}
 
 
