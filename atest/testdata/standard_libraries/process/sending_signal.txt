@@ -18,7 +18,7 @@ Sending INT signal as a number
 
 Send other well-known signals
     :FOR    ${signal}    IN    TERM    SIGTERM    15    KILL    SIGKILL    9
-    \    Start Python Process    pass
+    \    Start Sleeping Process
     \    Send Signal To Process    ${signal}
     \    ${result} =    Wait For Process
     \    Should Not Be Equal    ${result.rc}    ${0}
@@ -55,7 +55,7 @@ Start Sleeping Process
     ...    for i in range(25): time.sleep(0.1)
     ...    print 'end'
     ${index} =    Start Python Process    ${command}    alias=${alias}
-    Sleep    0.1s
+    Sleep    0.1s    Give process time to start
     [Return]    ${index}
 
 Sleeping Process Should Have Been Stopped
