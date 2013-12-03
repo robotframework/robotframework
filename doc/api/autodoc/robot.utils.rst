@@ -113,6 +113,14 @@ utils Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`islike` Module
+--------------------
+
+.. automodule:: robot.utils.islike
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`markuputils` Module
 -------------------------
 
