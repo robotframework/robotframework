@@ -105,21 +105,29 @@ Varargs Work Also With Lists
     String List    ${array1.tolist()}
     String List    Hello    string    list    world
 
-Kwargs on java
+Kwargs
    ${res} =       javaKWArgs    foo=one   bar=two
    Should be equal    ${res}    javaKWArgs: foo:one bar:two
 
-Normal and Kwargs on java
+Normal and Kwargs
    ${res} =       javaNormalAndKWArgs    hello   foo=one   bar=two
    Should be equal    ${res}    javaNormalAndKWArgs: hello foo:one bar:two
 
-Varargs and Kwargs on java
+Varargs and Kwargs
    ${res} =       javaVarArgsAndKWArgs    hello   kitty  foo=one   bar=two
    Should be equal    ${res}    javaVarArgsAndKWArgs: hello kitty foo:one bar:two
 
-All args on java
+All args
    ${res} =       javaAllArgs    arg   hello   kitty  foo=one   bar=two
    Should be equal    ${res}    javaAllArgs: arg hello kitty foo:one bar:two
+
+Too many positional with kwargs 1
+    [Documentation]     FAIL Keyword 'ArgumentsJava.Java KW Args' expected 0 non-keyword arguments, got 3.
+    Java kwargs    too    many    positional    foo=bar
+
+Too many positional with kwargs 2
+    [Documentation]     FAIL Keyword 'ArgumentsJava.Java Normal And KW Args' expected 1 non-keyword argument, got 3.
+    Java normal and kwargs    too    many    positional    foo=bar
 
 Java kwargs wont be interpreted as values for positional arguments
    ${res} =       javaManyNormalArgs    foo   huu   arg1=one
