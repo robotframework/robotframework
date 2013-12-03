@@ -376,20 +376,25 @@ library keywords, user keywords, and when importing the Telnet_ test library.
 Free keyword arguments
 ''''''''''''''''''''''
 
-Robot Framework 2.8 added a possibility to use the named argument syntax with
-Python keywords that accept `keyword arguments`__ in form :code:`**kwargs`.
-If a keyword uses this syntax, all arguments at the end of the keyword
-call using the :code:`name=value` syntax, but not matching any other arguments,
-are passed to it as free keyword arguments.
+Robot Framework 2.8 added support for `Python style free keyword arguments`__
+(:code:`**kwargs`). What this means is that keywords can receive all arguments
+at the end of the keyword call that use the :code:`name=value` syntax, and
+do not match any other arguments, as kwargs.
 
-Using variables with free keyword arguments works exactly like when `using
-the named argument syntax`__.
+Initially free keyword arguments only worked with Python based libraries, but
+Robot Framework 2.8.2 extended the support to the `dynamic library API`_
+and Robot Framework 2.8.3 extended it further to Java based libraries and to
+the `remote library interface`_. In other
+words, all libraries nowadays support kwargs. Unfortunately user keywords
+no not support them yet, but that support is planned for
+`Robot Framework 2.9`__.
 
 For a real life example of using kwargs, let's take a look at
 :name:`Run Process` keyword in the Process_ library. It has a signature
 :code:`command, *arguments, **configuration`, which means that it takes
 the command to execute, its arguments as `variable number of arguments`_,
-and finally optional configuration parameters as :code:`**configuration`.
+and finally optional configuration parameters as free keyword arguments
+:code:`**configuration`.
 
 .. table:: Using free keyword arguments
    :class: example
@@ -401,16 +406,15 @@ and finally optional configuration parameters as :code:`**configuration`.
    \              Run Process   command.exe   argument      shell=True    env=${ENVIRON}
    =============  ============  ============  ============  ============  ==============
 
+As the above example illustrates, using variables with free keyword arguments
+works exactly like when `using the named argument syntax`__.
+
 See `Free keyword arguments (**kwargs)`_ section under `Creating test
 libraries`_ for more information about using the kwargs syntax in
 your custom test libraries.
 
-.. note:: Free keyword arguments are only supported by Python libraries
-          using the `static library API`_. If this feature turns out to be
-          very useful, it is possible to extend the support to dynamic
-          libraries and perhaps also to user keywords in the future.
-
 __ http://docs.python.org/2/tutorial/controlflow.html#keyword-arguments
+__ http://code.google.com/p/robotframework/issues/detail?id=1561
 __ `Named arguments with variables`_
 
 Arguments embedded to keyword names
