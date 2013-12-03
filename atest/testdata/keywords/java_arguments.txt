@@ -136,7 +136,7 @@ Dict can be given as an argument still
    Should be equal    ${res}    javaKWArgs: foo:one bar:two
 
 Hashmap is not kwargs
-    [Documentation]    FAIL TypeError: hashmapArg(): 1st arg can't be coerced to java.util.HashMap
+    [Documentation]    FAIL Keyword 'ArgumentsJava.Hashmap Arg' expected 1 argument, got 2.
     ${map} =       getJavaMap    foo=one   bar=two
     ${res} =       hashmapArg    ${map}
     Should be equal    ${res}    hashmapArg: foo:one bar:two

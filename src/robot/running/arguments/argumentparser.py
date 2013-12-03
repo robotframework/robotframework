@@ -74,11 +74,10 @@ class JavaArgumentParser(_ArgumentParser):
         return False, True
 
     def _is_varargs_type(self, arg):
-        return (isinstance(arg, Class) and arg.isArray()
-                or issubclass(arg, List))
+        return arg is List or isinstance(arg, Class) and arg.isArray()
 
     def _is_kwargs_type(self, arg):
-        return issubclass(arg, Map)
+        return arg is Map
 
     def _multi_signature_arg_spec(self, signatures):
         mina = maxa = len(signatures[0].args)
