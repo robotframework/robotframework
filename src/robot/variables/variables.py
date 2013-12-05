@@ -129,7 +129,7 @@ class Variables(utils.NormalizedDict):
             value = self._find_variable(name)
         except KeyError:
             value = self._get_extended_var(name)
-        if not utils.iterable(value):
+        if not utils.is_list_like(value):
             raise DataError("Using scalar variable '%s' as list variable '@%s' "
                             "requires its value to be list or list-like."
                             % (name, name[1:]))
@@ -382,12 +382,12 @@ class Variables(utils.NormalizedDict):
         if not get_variables:
             return None
         variables = get_variables(*args)
-        if isinstance(variables, (dict, UserDict)):
+        if utils.is_dict_like(variables):
             return variables.items()
         if isinstance(variables, Map):
             return [(entry.key, entry.value) for entry in variables.entrySet()]
         raise DataError("Expected mapping but %s returned %s."
-                         % (get_variables.__name__, type(variables).__name__))
+                        % (get_variables.__name__, type(variables).__name__))
 
     def _get_static_variable_names(self, var_file):
         names = [attr for attr in dir(var_file) if not attr.startswith('_')]

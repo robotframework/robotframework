@@ -1,3 +1,5 @@
+import java.util.*;
+
 /**
  * Library for `libdoc.py` testing purposes.
  *
@@ -61,6 +63,36 @@ public class Example {
      * Creating varargs using `type...`.
      */
     public void varargs2(int normal, int... varargs) {
+    }
+
+    /**
+     * Creating varargs using `List`.
+     */
+    public void varargsList(List<String> varargsList) {
+    }
+
+    /**
+     * Only last array or list is kwargs.
+     */
+    public void varargsLast(String[] normalArray, String[] varargs) {
+    }
+
+    /**
+     * Only last arguments overrides.
+     */
+    public void lastArgument(String[] normalArray, Map<String, Object> normalMap, String normal) {
+    }
+
+    /**
+     * Creating kwargs.
+     */
+    public void kwargs(int normal, String[] varargs, Map<String, Object> kwargs) {
+    }
+
+    /**
+     * Only last map is kwargs.
+     */
+    public void kwargsLast(Map<String, Object> normal, Map<String, Object> kwargs) {
     }
 
     /**

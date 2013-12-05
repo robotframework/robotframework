@@ -35,7 +35,8 @@ class KeywordCallTemplate(object):
         if variables:
             defaults = variables.replace_list(defaults)
         self._positional = argspec.positional
-        self._kwargs_supported = bool(argspec.kwargs)
+        self._supports_kwargs = bool(argspec.kwargs)
+        self._supports_named = argspec.supports_named
         self.args = [None] * argspec.minargs + [Default(d) for d in defaults]
         self.kwargs = {}
 
@@ -44,10 +45,10 @@ class KeywordCallTemplate(object):
 
     def fill_named(self, named):
         for name, value in named.items():
-            if name in self._positional:
+            if name in self._positional and self._supports_named:
                 index = self._positional.index(name)
                 self.args[index] = value
-            elif self._kwargs_supported:
+            elif self._supports_kwargs:
                 self.kwargs[name] = value
             else:
                 raise ValueError("Non-existing named argument '%s'" % name)

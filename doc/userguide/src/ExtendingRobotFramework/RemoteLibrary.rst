@@ -116,15 +116,21 @@ servers must be converted to compatible types. This applies to the
 keyword arguments the Remote library passes to remote servers and to
 the return values servers give back to the Remote library.
 
-The conversions are done using following rules:
+Both the Remote library and the Python remote server handle Python values
+according to the following rules. Other remote servers should behave similarly.
 
 * Strings, numbers and Boolean values are passed without modifications.
-* The :code:`None/nil` value is converted to an empty string.
-* Lists (and tuples in Python) are passed as lists so that their contents
-  are converted recursively.
-* Dictionaries/maps are passed so that their values are converted
-  to supported types recursively and keys are converted to strings.
+* Python :code:`None` is converted to an empty string.
+* All lists, tuples, and other iterable objects (except strings and
+  dictionaries) are passed as lists so that their contents are converted
+  recursively.
+* Dictionaries and other mappings are passed as dicts so that their keys are
+  converted to strings and values converted to supported types recursively.
 * Other types are converted to strings.
+
+.. note:: Prior to Robot Framework 2.8.3, only lists, tuples, and dictionaries
+          were handled according to the above rules. General iterables
+          and mappings were not supported.
 
 Using remote servers
 ~~~~~~~~~~~~~~~~~~~~
@@ -185,7 +191,7 @@ Ruby servers can also be used as examples.
 The remote protocol is implemented on top of `XML-RPC`_, which is a
 simple remote procedure call protocol using XML over HTTP. Most
 mainstream languages (Python, Java, C, Ruby, Perl, Javascript, PHP,
-...) have a support for XML-RPC either built-in or as extensions.
+...) have a support for XML-RPC either built-in or as an extension.
 
 Required methods
 ''''''''''''''''
@@ -239,7 +245,8 @@ Executing remote keywords
 
 When the Remote library wants the server to execute some keyword, it
 calls remote server's :code:`run_keyword` method and passes it the
-keyword name and a list of arguments. Base types can be used as
+keyword name, a list of arguments, and possibly a dictionary of
+`free keyword arguments`__. Base types can be used as
 arguments directly but more complex types are `converted to supported
 types`__.
 
@@ -250,28 +257,75 @@ following table.
 .. table:: Entries in the remote result dictionary
    :class: tabular
 
-   +------------+--------------------------------------------------------+
-   |     Name   |                     Explanation                        |
-   +============+========================================================+
-   | status     | Mandatory execution status. Either PASS or FAIL.       |
-   +------------+--------------------------------------------------------+
-   | output     | Possible output to write into the log file. Must be    |
-   |            | given as a single string but can contain multiple      |
-   |            | messages and different `log levels`__ in format        |
-   |            | :msg:`*INFO* First message\\n*INFO* Second\\n*WARN*    |
-   |            | Another message`.                                      |
-   +------------+--------------------------------------------------------+
-   | return     | Possible return value. Must be one of the `supported   |
-   |            | types`__.                                              |
-   +------------+--------------------------------------------------------+
-   | error      | Possible error message. Used only when the execution   |
-   |            | fails.                                                 |
-   +------------+--------------------------------------------------------+
-   | traceback  | Possible stack trace to `write into the log file`__    |
-   |            | using DEBUG level when the execution fails.            |
-   +------------+--------------------------------------------------------+
+   +------------+-------------------------------------------------------------+
+   |     Name   |                         Explanation                         |
+   +============+=============================================================+
+   | status     | Mandatory execution status. Either PASS or FAIL.            |
+   +------------+-------------------------------------------------------------+
+   | output     | Possible output to write into the log file. Must be given   |
+   |            | as a single string but can contain multiple messages and    |
+   |            | different `log levels`__ in format :msg:`*INFO* First       |
+   |            | message\\n*HTML* <b>2nd</b>\\n*WARN* Another message`. It   |
+   |            | is also possible to embed timestamps_ to the log messages   |
+   |            | like :msg:`*INFO:1308435758660* Message with timestamp`.    |
+   +------------+-------------------------------------------------------------+
+   | return     | Possible return value. Must be one of the `supported        |
+   |            | types`__.                                                   |
+   +------------+-------------------------------------------------------------+
+   | error      | Possible error message. Used only when the execution fails. |
+   +------------+-------------------------------------------------------------+
+   | traceback  | Possible stack trace to `write into the log file`__ using   |
+   |            | DEBUG level when the execution fails.                       |
+   +------------+-------------------------------------------------------------+
 
+__ `Different argument syntaxes`_
 __ `Supported argument and return value types`_
 __ `Logging information`_
 __ `Supported argument and return value types`_
 __ `Reporting keyword status`_
+
+Different argument syntaxes
+'''''''''''''''''''''''''''
+
+The Remote library is a `dynamic library`_, and in general it handles
+different argument syntaxes `according to the same rules`__ as any other
+dynamic library.
+This includes mandatory arguments, default values, varargs, as well
+as `named argument syntax`__.
+
+Also free keyword arguments (:code:`**kwargs`) works mostly the `same way
+as with other dynamic libraries`__. First of all, the
+:code:`get_keyword_arguments` must return an argument specification that
+contains :code:`**kwargs` exactly like with any other dynamic library.
+The main difference is that
+remote servers' :code:`run_keyword` method must have optional third argument
+that gets the kwargs specified by the user. The third argument must be optional
+because, for backwards-compatibility reasons, the Remote library passes kwargs
+to the :code:`run_keyword` method only when they have been used in the test data.
+
+In practice :code:`run_keyword` should look something like the following
+Python and Java examples, depending on how the language handles optional
+arguments.
+
+.. sourcecode:: python
+
+    def run_keyword(name, args, kwargs=None):
+        # ...
+
+
+.. sourcecode:: java
+
+    public Map run_keyword(String name, List args) {
+        // ...
+    }
+
+    public Map run_keyword(String name, List args, Map kwargs) {
+        // ...
+    }
+
+.. note:: Remote library supports :code:`**kwargs` starting from
+          Robot Framework 2.8.3.
+
+__ `Getting keyword arguments`_
+__ `Named argument syntax with dynamic libraries`_
+__ `Free keyword arguments with dynamic libraries`_

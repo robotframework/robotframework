@@ -744,24 +744,31 @@ class OperatingSystem:
 
         Arguments have exactly same semantics as with `Copy File` keyword.
         """
-        source, destination, _ = self._prepare_for_move_or_copy(destination, source)
+        source, destination, _ = self._prepare_for_move_or_copy(source, destination)
         shutil.move(source, destination)
         self._link("Moved file from '%s' to '%s'", source, destination)
 
-    def _prepare_for_move_or_copy(self, destination, source):
-        source, destination, dest_is_dir = self._normalize_dest_and_source(destination, source)
+    def _prepare_for_move_or_copy(self, source, dest):
+        source, dest, dest_is_dir = self._normalize_source_and_dest(source, dest)
         self._verify_that_source_is_a_file(source)
-        parent = self._ensure_directory_exists(destination, dest_is_dir)
-        return source, destination, parent
+        parent = self._ensure_directory_exists(dest, dest_is_dir)
+        self._ensure_dest_file_does_not_exist(source, dest, dest_is_dir)
+        return source, dest, parent
 
-    def _copy_file(self, source, destination):
-        source, destination, parent = self._prepare_for_move_or_copy(destination, source)
-        return self._atomic_copy(source, destination, parent)
+    def _ensure_dest_file_does_not_exist(self, source, dest, dest_is_dir):
+        if dest_is_dir:
+            dest = os.path.join(dest, os.path.basename(source))
+        if os.path.isfile(dest):
+            os.remove(dest)
 
-    def _normalize_dest_and_source(self, dest, source):
+    def _copy_file(self, source, dest):
+        source, dest, parent = self._prepare_for_move_or_copy(source, dest)
+        return self._atomic_copy(source, dest, parent)
+
+    def _normalize_source_and_dest(self, source, dest):
         source = self._absnorm(source)
         dest = dest.replace('/', os.sep)
-        dest_is_dir = dest.endswith(os.sep)
+        dest_is_dir = dest.endswith(os.sep) or os.path.isdir(dest)
         dest = self._absnorm(dest)
         return source, dest, dest_is_dir
 
@@ -771,9 +778,9 @@ class OperatingSystem:
         if not os.path.isfile(source):
             raise RuntimeError("Source file '%s' is not a regular file" % source)
 
-    def _ensure_directory_exists(self, path, dest_is_dir):
-        parent = self._destination_directory(path, dest_is_dir)
-        if not os.path.exists(path) and not os.path.exists(parent):
+    def _ensure_directory_exists(self, dest, dest_is_dir):
+        parent = dest if dest_is_dir else os.path.dirname(dest)
+        if not os.path.exists(dest) and not os.path.exists(parent):
             os.makedirs(parent)
         return parent
 
@@ -792,11 +799,6 @@ class OperatingSystem:
         shutil.move(temp_file, destination)
         os.rmdir(temp_directory)
         return source, destination
-
-    def _destination_directory(self, destination, dest_is_dir):
-        if dest_is_dir:
-            return destination
-        return os.path.dirname(destination)
 
     def copy_directory(self, source, destination):
         """Copies the source directory into the destination.

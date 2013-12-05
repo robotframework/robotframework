@@ -13,7 +13,7 @@ import sys
 import inspect
 if sys.platform.startswith('java'):
     from java.lang import Class
-    from java.util import List
+    from java.util import List, Map
 
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
@@ -61,14 +61,26 @@ class JavaArgumentParser(_ArgumentParser):
         return self._format_arg_spec()
 
     def _single_signature_arg_spec(self, signature):
-        args = signature.args
-        if args and self._is_varargs_type(args[-1]):
-            return self._format_arg_spec(len(args)-1, varargs=True)
-        return self._format_arg_spec(len(args))
+        varargs, kwargs = self._get_varargs_and_kwargs_support(signature.args)
+        positional = len(signature.args) - int(varargs) - int(kwargs)
+        return self._format_arg_spec(positional, varargs=varargs, kwargs=kwargs)
+
+    def _get_varargs_and_kwargs_support(self, args):
+        if not args:
+            return False, False
+        if self._is_varargs_type(args[-1]):
+            return True, False
+        if not self._is_kwargs_type(args[-1]):
+            return False, False
+        if len(args) > 1 and self._is_varargs_type(args[-2]):
+            return True, True
+        return False, True
 
     def _is_varargs_type(self, arg):
-        return isinstance(arg, Class) and (
-          arg.isArray() or issubclass(arg, List))
+        return arg is List or isinstance(arg, Class) and arg.isArray()
+
+    def _is_kwargs_type(self, arg):
+        return arg is Map
 
     def _multi_signature_arg_spec(self, signatures):
         mina = maxa = len(signatures[0].args)
@@ -78,11 +90,13 @@ class JavaArgumentParser(_ArgumentParser):
             maxa = max(argc, maxa)
         return self._format_arg_spec(maxa, maxa-mina)
 
-    def _format_arg_spec(self, positional=0, defaults=0, varargs=False):
+    def _format_arg_spec(self, positional=0, defaults=0, varargs=False, kwargs=False):
         positional = ['arg%d' % (i+1) for i in range(positional)]
         defaults = [''] * defaults
         varargs = '*varargs' if varargs else None
-        return positional, defaults, varargs
+        kwargs = '**kwargs' if kwargs else None
+        supports_named = False
+        return positional, defaults, varargs, kwargs, supports_named
 
 
 class _ArgumentSpecParser(_ArgumentParser):

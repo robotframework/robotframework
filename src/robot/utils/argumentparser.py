@@ -78,12 +78,12 @@ class ArgumentParser:
         self._expected_args = ()
         self._create_options(usage)
 
-    def parse_args(self, args_list):
+    def parse_args(self, args):
         """Parse given arguments and return options and positional arguments.
 
         Arguments must be given as a list and are typically sys.argv[1:].
 
-        Options are retuned as a dictionary where long options are keys. Value
+        Options are returned as a dictionary where long options are keys. Value
         is a string for those options that can be given only one time (if they
         are given multiple times the last value is used) or None if the option
         is not used at all. Value for options that can be given multiple times
@@ -124,12 +124,11 @@ class ArgumentParser:
         are wrapped to Information exception.
         """
         if self._env_options:
-            # args_list is java String[] when using standalone jar
-            args_list = os.getenv(self._env_options, '').split() + list(args_list)
-        args_list = [decode_from_system(a) for a in args_list]
+            args = os.getenv(self._env_options, '').split() + list(args)
+        args = [decode_from_system(a) for a in args]
         if self._auto_argumentfile:
-            args_list = self._process_possible_argfile(args_list)
-        opts, args = self._parse_args(args_list)
+            args = self._process_possible_argfile(args)
+        opts, args = self._parse_args(args)
         opts, args = self._handle_special_options(opts, args)
         self._arg_limit_validator(args)
         if self._validator:

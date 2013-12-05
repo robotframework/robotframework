@@ -19,13 +19,14 @@ import sys
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:   # No expat in IronPython 2.7
-    class ExpatError(Exception): pass
+    class ExpatError(Exception):
+        pass
 
-from robot import utils
 from robot.errors import RemoteError
+from robot.utils import is_list_like, is_dict_like, unic
 
 
-class Remote:
+class Remote(object):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
     def __init__(self, uri='http://localhost:8270'):
@@ -55,9 +56,10 @@ class Remote:
         except TypeError:
             return ''
 
-    def run_keyword(self, name, args):
-        args = [self._handle_argument(arg) for arg in args]
-        result = RemoteResult(self._client.run_keyword(name, args))
+    def run_keyword(self, name, args, kwargs):
+        args = self._handle_argument(args)
+        kwargs = self._handle_argument(kwargs)
+        result = RemoteResult(self._client.run_keyword(name, args, kwargs))
         sys.stdout.write(result.output)
         if result.status != 'PASS':
             raise RemoteError(result.error, result.traceback)
@@ -66,9 +68,9 @@ class Remote:
     def _handle_argument(self, arg):
         if isinstance(arg, (basestring, int, long, float)):
             return arg
-        if isinstance(arg, (tuple, list)):
+        if is_list_like(arg):
             return [self._handle_argument(item) for item in arg]
-        if isinstance(arg, dict):
+        if is_dict_like(arg):
             return dict((self._str(key), self._handle_argument(value))
                         for key, value in arg.items())
         return self._str(arg)
@@ -76,10 +78,10 @@ class Remote:
     def _str(self, item):
         if item is None:
             return ''
-        return utils.unic(item)
+        return unic(item)
 
 
-class RemoteResult:
+class RemoteResult(object):
 
     def __init__(self, result):
         try:
@@ -92,7 +94,7 @@ class RemoteResult:
             raise RuntimeError('Invalid remote result dictionary: %s' % result)
 
 
-class XmlRpcRemoteClient:
+class XmlRpcRemoteClient(object):
 
     def __init__(self, uri):
         self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8')
@@ -117,9 +119,10 @@ class XmlRpcRemoteClient:
         except xmlrpclib.Error:
             raise TypeError
 
-    def run_keyword(self, name, args):
+    def run_keyword(self, name, args, kwargs):
+        run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
         try:
-            return self._server.run_keyword(name, args)
+            return self._server.run_keyword(*run_keyword_args)
         except xmlrpclib.Error, err:
             raise RuntimeError(err.faultString)
         except socket.error, (errno, err):

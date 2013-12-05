@@ -80,16 +80,27 @@ class RunKeyword(_DynamicMethod):
     _underscore_name = 'run_keyword'
 
     @property
-    def kwargs_supported(self):
-        argspec = self._parse_argspec(self.method)
-        return len(argspec.positional) == 3
+    def supports_kwargs(self):
+        if is_java_method(self.method):
+            return self._supports_java_kwargs(self.method)
+        return self._supports_python_kwargs(self.method)
 
-    def _parse_argspec(self, method):
-        if not is_java_method(method):
-            return PythonArgumentParser().parse(method)
-        func = method.im_func if hasattr(method, 'im_func') else method
+    def _supports_python_kwargs(self, method):
+        spec = PythonArgumentParser().parse(method)
+        return len(spec.positional) == 3
+
+    def _supports_java_kwargs(self, method):
+        func = self.method.im_func if hasattr(method, 'im_func') else method
         signatures = func.argslist[:func.nargs]
-        return JavaArgumentParser().parse(signatures)
+        spec = JavaArgumentParser().parse(signatures)
+        return (self._java_single_signature_kwargs(spec) or
+                self._java_multi_signature_kwargs(spec))
+
+    def _java_single_signature_kwargs(self, spec):
+        return len(spec.positional) == 1 and spec.varargs and spec.kwargs
+
+    def _java_multi_signature_kwargs(self, spec):
+        return len(spec.positional) == 3 and not (spec.varargs or spec.kwargs)
 
 
 class GetKeywordDocumentation(_DynamicMethod):
@@ -104,11 +115,11 @@ class GetKeywordArguments(_DynamicMethod):
 
     def __init__(self, lib):
         _DynamicMethod.__init__(self, lib)
-        self._kwargs_supported = RunKeyword(lib).kwargs_supported
+        self._supports_kwargs = RunKeyword(lib).supports_kwargs
 
     def _handle_return_value(self, value):
         if value is None:
-            if self._kwargs_supported:
+            if self._supports_kwargs:
                 return ['*varargs', '**kwargs']
             return ['*varargs']
         return self._to_list_of_strings(value)

@@ -1,4 +1,4 @@
-import sys
+from mapping import MyMapping
 
 
 class RemoteTestLibrary:
@@ -18,7 +18,7 @@ class RemoteTestLibrary:
         See `Failing`, `Logging`, and `Returning` for other basic keywords.
         """
         pass
-  
+
     def failing(self, message):
         """This keyword fails with provided `message`"""
         raise AssertionError(message)
@@ -52,7 +52,7 @@ class RemoteTestLibrary:
 
     def log_unicode(self):
         print self._unicode
-        
+
     def logging_and_failing(self):
         print '*INFO* This keyword will fail!'
         print '*WARN* Run for your lives!!'
@@ -121,6 +121,28 @@ class RemoteTestLibrary:
 
     def required_defaults_and_varargs(self, req, default='world', *varargs):
         return ' '.join((req, default) + varargs)
+
+    def kwargs(self, **kwargs):
+        return self._format_args(**kwargs)
+
+    def args_and_kwargs(self, arg1='default1', arg2='default2', **kwargs):
+        return self._format_args(arg1, arg2, **kwargs)
+
+    def varargs_and_kwargs(self, *varargs, **kwargs):
+        return self._format_args(*varargs, **kwargs)
+
+    def args_varargs_and_kwargs(self, arg1='default1', arg2='default2',
+                                *varargs, **kwargs):
+        return self._format_args(arg1, arg2, *varargs, **kwargs)
+
+    def non_string_kwargs(self, **kwargs):
+        kwargs = dict((k, '%s (%s)' % (v, type(v).__name__))
+                      for k, v in kwargs.items())
+        return self._format_args(**kwargs)
+
+    def _format_args(self, *args, **kws):
+        args += tuple(':'.join(item) for item in sorted(kws.items()))
+        return ', '.join(args)
 
     # Argument types
 
@@ -216,16 +238,16 @@ class RemoteTestLibrary:
 
     def return_negative_integer(self):
         return -1
-  
+
     def return_float(self):
         return 3.14
-  
+
     def return_negative_float(self):
         return -0.5
 
     def return_zero(self):
         return 0
-  
+
     def return_boolean_true(self):
         return True
 
@@ -280,6 +302,9 @@ class RemoteTestLibrary:
     def return_nested_dictionary(self):
         return { 1: {None: False},
                  2: {'A': {'n': None}, 'B': {'o': MyObject(), 'e': {}}} }
+
+    def return_mapping(self):
+        return MyMapping({'a': 1, 2: 'b', None: MyMapping(none=None)})
 
     def return_control_char(self):
         return '\x01'

@@ -30,9 +30,14 @@ class ArgumentValidator(object):
         self._validate_no_mandatory_missing(positional, named, self._argspec)
 
     def _validate_limits(self, positional, named, spec):
-        count = len(positional) + sum(1 for n in named if n in spec.positional)
+        count = len(positional) + self._named_positionals(named, spec)
         if not spec.minargs <= count <= spec.maxargs:
             self._raise_wrong_count(count, spec)
+
+    def _named_positionals(self, named, spec):
+        if not spec.supports_named:
+            return 0
+        return sum(1 for n in named if n in spec.positional)
 
     def _raise_wrong_count(self, count, spec):
         minend = plural_or_not(spec.minargs)
@@ -49,7 +54,7 @@ class ArgumentValidator(object):
 
     def _validate_no_multiple_values(self, positional, named, spec):
         for name in spec.positional[:len(positional)]:
-            if name in named:
+            if name in named and spec.supports_named:
                 raise DataError("%s '%s' got multiple values for argument '%s'."
                                 % (spec.type, spec.name, name))
 

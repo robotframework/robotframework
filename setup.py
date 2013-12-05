@@ -59,7 +59,7 @@ setup(
     license      = 'Apache License 2.0',
     description  = 'A generic test automation framework',
     long_description = DESCRIPTION,
-    keywords     = 'robotframework testing testautomation atdd',
+    keywords     = 'robotframework testing testautomation atdd bdd',
     platforms    = 'any',
     classifiers  = CLASSIFIERS,
     package_dir  = {'': 'src'},

@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
+from robot.utils import is_dict_like
 
 from .argumentvalidator import ArgumentValidator
 
@@ -20,16 +21,18 @@ from .argumentvalidator import ArgumentValidator
 class ArgumentResolver(object):
 
     def __init__(self, argspec, resolve_named=True,
-                 resolve_variables_until=None):
+                 resolve_variables_until=None, dict_to_kwargs=False):
         self._named_resolver = NamedArgumentResolver(argspec) \
             if resolve_named else NullNamedArgumentResolver()
         self._variable_replacer = VariableReplacer(resolve_variables_until)
+        self._dict_to_kwargs = DictToKwargs(argspec, dict_to_kwargs)
         self._argument_validator = ArgumentValidator(argspec)
 
     def resolve(self, arguments, variables=None):
         positional, named = self._named_resolver.resolve(arguments)
         positional, named = self._variable_replacer.replace(positional, named,
                                                             variables)
+        positional, named = self._dict_to_kwargs.handle(positional, named)
         self._argument_validator.validate(positional, named,
                                           dryrun=not variables)
         return positional, named
@@ -58,6 +61,8 @@ class NamedArgumentResolver(object):
         name = arg.split('=')[0]
         if self._is_escaped(name):
             return False
+        if not self._argspec.supports_named:
+            return self._argspec.kwargs
         return name in self._argspec.positional or self._argspec.kwargs
 
     def _is_escaped(self, name):
@@ -91,6 +96,23 @@ class NullNamedArgumentResolver(object):
 
     def resolve(self, arguments):
         return arguments, {}
+
+
+class DictToKwargs(object):
+
+    def __init__(self, argspec, enabled=False):
+        self._maxargs = argspec.maxargs
+        self._enabled = enabled and bool(argspec.kwargs)
+
+    def handle(self, positional, named):
+        if self._enabled and self._extra_arg_has_kwargs(positional, named):
+            named = positional.pop()
+        return positional, named
+
+    def _extra_arg_has_kwargs(self, positional, named):
+        if named or len(positional) != self._maxargs + 1:
+            return False
+        return is_dict_like(positional[-1], allow_java=True)
 
 
 class VariableReplacer(object):

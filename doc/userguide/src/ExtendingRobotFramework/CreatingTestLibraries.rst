@@ -625,6 +625,7 @@ in test libraries is different in Python and Java.
 
 Variable number of arguments with Python
 ````````````````````````````````````````
+
 Python supports methods accepting any number of arguments. The same
 syntax works in libraries and, as the examples below show, it can also
 be combined with other ways of specifying arguments:
@@ -664,6 +665,7 @@ be combined with other ways of specifying arguments:
 
 Variable number of arguments with Java
 ``````````````````````````````````````
+
 Robot Framework supports `Java varargs syntax`__ for defining variable number of
 arguments. For example, the following two keywords are functionally identical
 to the above Python examples with same names:
@@ -686,7 +688,8 @@ to the above Python examples with same names:
 
 It is also possible to use variable number of arguments also by
 having an array or, starting from Robot Framework 2.8.3,
-:code:`java.util.List` as the last argument. This is illustrated
+:code:`java.util.List` as the last argument, or second to last
+if `free keyword arguments (**kwargs)`_ are used. This is illustrated
 by the following examples that are functionally identical to
 the previous ones:
 
@@ -706,6 +709,9 @@ the previous ones:
       }
   }
 
+.. note:: Only :code:`java.util.List` is supported as varargs, not any of
+          its sub types.
+
 The support for variable number of arguments with Java keywords has one
 limitation: it works only when methods have one signature. Thus it is not
 possible to have Java keywords with both default values and varargs.
@@ -722,12 +728,13 @@ Robot Framework 2.8 added the support for free keyword arguments using Python's
 :code:`**kwargs` syntax. How to use the syntax in the test data is discussed
 in `Free keyword arguments`_ section under `Creating test cases`_. In this
 section we take a look at how to actually use it in custom test libraries.
-Because Java does not have similar keyword argument concept, this functionality
-is only available with Python based libraries.
+
+Free keyword arguments with Python
+``````````````````````````````````
 
 If you are already familiar how kwargs work with Python, understanding how
 they work with Robot Framework test libraries is rather simple. The example
-below shows the basic functionality.
+below shows the basic functionality:
 
 .. sourcecode:: python
 
@@ -735,24 +742,24 @@ below shows the basic functionality.
         for name, value in stuff.items():
             print name, value
 
-.. table:: Using keywords with python :code:`**kwargs`
+.. table:: Using keywords with :code:`**kwargs`
    :class: example
 
-   ====================  ================  ==============  ==============  ===========================
-         Test Case            Action          Argument        Argument              Argument
-   ====================  ================  ==============  ==============  ===========================
-   Keyword Arguments     Example Keyword   hello=world                     # Logs 'hello world'
-   \                     Example Keyword   foo=1           bar=42          # Logs 'foo 1' and 'bar 42'
-   ====================  ================  ==============  ==============  ===========================
+   ====================  ================  ==============  ==============  ============================
+         Test Case            Action          Argument        Argument               Argument
+   ====================  ================  ==============  ==============  ============================
+   Keyword Arguments     Example Keyword   hello=world                     # Logs 'hello world'.
+   \                     Example Keyword   foo=1           bar=42          # Logs 'foo 1' and 'bar 42'.
+   ====================  ================  ==============  ==============  ============================
 
 Basically, all arguments at the end of the keyword call that use the
 `named argument syntax`_ :code:`name=value`, and that do not match any
 other arguments, are passed to the keyword as kwargs. To avoid using a literal
-value like :code:`foo=quux` as a keyword argument, it must be escaped__
+value like :code:`foo=quux` as a free keyword argument, it must be escaped__
 like :code:`foo\\=quux`.
 
-The following examples illustrate how normal arguments, varargs, and kwargs
-work together.
+The following example illustrates how normal arguments, varargs, and kwargs
+work together:
 
 .. sourcecode:: python
 
@@ -760,25 +767,63 @@ work together.
       print 'arg:', arg
       for value in varargs:
           print 'vararg:', value
-      for name, value in kwargs.items():
+      for name, value in sorted(kwargs.items()):
           print 'kwarg:', name, value
 
-.. table:: Using defaults, varargs, and kwargs together
+.. table:: Using normal arguments, varargs, and kwargs together
    :class: example
 
-   ===================  ============  ===========  ===========  ==========  ================================================
-        Test Case          Action      Argument     Argument     Argument                      Argument
-   ===================  ============  ===========  ===========  ==========  ================================================
-   Positional           Various Args  hello        world                    # Logs 'arg: hello' and 'vararg: world'
-   Named                Various Args  arg=value    hello=world              # Logs 'arg: value' and 'kwarg: hello world'
-   Both (and escaping)  Various Args  1            vararg\\=2   kwarg=3     # Logs 'arg: 1', 'vararg=2' and 'kwarg: kwarg 3'
-   ===================  ============  ===========  ===========  ==========  ================================================
+   =====================  ============  ===========  ===========  ==========  ===================================================
+         Test Case            Action      Argument     Argument     Argument                             Argument
+   =====================  ============  ===========  ===========  ==========  ===================================================
+   Positional             Various Args  hello        world                    # Logs 'arg: hello' and 'vararg: world'.
+   Named                  Various Args  arg=value                             # Logs 'arg: value'.
+   Kwargs                 Various Args  a=1          b=2          c=3         # Logs 'kwarg: a 1', 'kwarg: b 2' and 'kwarg: c 3'.
+   \                      Various Args  c=3          a=1          b=2         # Same as above. Order does not matter.
+   Positional and kwargs  Various Args  1            2            kw=3        # Logs 'arg: 1', 'vararg: 2' and 'kwarg: kw 3'.
+   Named and kwargs       Various Args  arg=value    hello=world              # Logs 'arg: value' and 'kwarg: hello world'.
+   \                      Various Args  hello=world  arg=value                # Same as above. Order does not matter.
+   =====================  ============  ===========  ===========  ==========  ===================================================
 
 For a real world example of using a signature exactly like in the above
 example, see :name:`Run Process` and :name:`Start Keyword` keywords in the
 Process_ library.
 
 __ Escaping_
+
+Free keyword arguments with Java
+````````````````````````````````
+
+Starting from Robot Framework 2.8.3, also Java libraries support the free
+keyword arguments syntax. Java itself has no kwargs syntax, but keywords
+can have :code:`java.util.Map` as the last argument to specify that they
+accept kwargs.
+
+If a Java keyword accepts kwargs, Robot Framework will automatically pack
+all arguments in :code:`name=value` syntax at the end of the keyword call
+into a :code:`Map` and pass it to the keyword. For example, following
+example keywords can be used exactly like the previous Python examples:
+
+.. sourcecode:: java
+
+    public void exampleKeyword(Map<String, String> stuff):
+        for (String key: stuff.keySet())
+            System.out.println(key + " " + stuff.get(key));
+
+    public void variousArgs(String arg, List<String> varargs, Map<String, Object> kwargs):
+        System.out.println("arg: " + arg);
+        for (String varg: varargs)
+            System.out.println("vararg: " + varg);
+        for (String key: kwargs.keySet())
+            System.out.println("kwarg: " + key + " " + kwargs.get(key));
+
+.. note:: The type of the kwargs argument must be exactly :code:`java.util.Map`,
+          not any of its sub types.
+
+.. note:: Similarly as with the `varargs support`__, a keyword supporting
+          kwargs cannot have more than one signature.
+
+__ `Variable number of arguments with Java`_
 
 Argument types
 ''''''''''''''
@@ -1590,6 +1635,8 @@ __ `Documenting libraries`_
 __ `Errors and warnings during execution`_
 __ `User keyword name and documentation`_
 __ `Creating static keywords`_
+
+.. _Dynamic library:
 
 Dynamic library API
 ~~~~~~~~~~~~~~~~~~~

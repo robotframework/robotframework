@@ -15,17 +15,23 @@
 from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
 from robot.variables import contains_var
+from robot.utils import is_list_like
 
 
 class JavaArgumentCoercer(object):
 
     def __init__(self, signatures, argspec):
+        self._argspec = argspec
         self._coercers = CoercerFinder().find_coercers(signatures)
         self._varargs_handler = VarargsHandler(argspec)
 
-    def coerce(self, arguments, dryrun=False):
+    def coerce(self, arguments, named, dryrun=False):
         arguments = self._varargs_handler.handle(arguments)
-        return [c.coerce(a, dryrun) for c, a in zip(self._coercers, arguments)]
+        arguments = [c.coerce(a, dryrun)
+                     for c, a in zip(self._coercers, arguments)]
+        if self._argspec.kwargs:
+            arguments.append(named)
+        return arguments
 
 
 class CoercerFinder(object):
@@ -133,15 +139,7 @@ class VarargsHandler(object):
         return arguments
 
     def _passing_list(self, arguments):
-        return self._correct_count(arguments) and self._is_list(arguments[-1])
+        return self._correct_count(arguments) and is_list_like(arguments[-1])
 
     def _correct_count(self, arguments):
         return len(arguments) == self._index + 1
-
-    def _is_list(self, argument):
-        try:
-            list(argument)
-        except TypeError:
-            return False
-        else:
-            return not isinstance(argument, basestring)

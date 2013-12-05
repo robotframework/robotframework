@@ -176,12 +176,12 @@ class _JavaHandler(_RunnableHandler):
         signatures = self._get_signatures(handler_method)
         self._arg_coercer = JavaArgumentCoercer(signatures, self.arguments)
 
+    def _get_argument_resolver(self, argspec):
+        return ArgumentResolver(argspec, dict_to_kwargs=True)
+
     def _parse_arguments(self, handler_method):
         signatures = self._get_signatures(handler_method)
         return JavaArgumentParser().parse(signatures, self.longname)
-
-    def _get_argument_resolver(self, argspec):
-        return ArgumentResolver(argspec, resolve_named=False)
 
     def _get_signatures(self, handler):
         code_object = getattr(handler, 'im_func', handler)
@@ -189,8 +189,9 @@ class _JavaHandler(_RunnableHandler):
 
     def resolve_arguments(self, args, variables=None):
         positional, named = self._argument_resolver.resolve(args, variables)
-        positional = self._arg_coercer.coerce(positional, dryrun=not variables)
-        return positional, named
+        arguments = self._arg_coercer.coerce(positional, named,
+                                             dryrun=not variables)
+        return arguments, {}
 
 
 class _DynamicHandler(_RunnableHandler):
@@ -202,9 +203,9 @@ class _DynamicHandler(_RunnableHandler):
                                   dynamic_method.method)
         self._run_keyword_method_name = dynamic_method.name
         self._doc = doc is not None and utils.unic(doc) or ''
-        self._kwargs_supported = dynamic_method.kwargs_supported
+        self._supports_kwargs = dynamic_method.supports_kwargs
         if argspec and argspec[-1].startswith('**'):
-            if not self._kwargs_supported:
+            if not self._supports_kwargs:
                 raise DataError("Too few '%s' method parameters for **kwargs "
                                 "support." % self._run_keyword_method_name)
 
@@ -226,7 +227,7 @@ class _DynamicHandler(_RunnableHandler):
 
     def _get_dynamic_handler(self, runner, name):
         def handler(*positional, **kwargs):
-            if self._kwargs_supported:
+            if self._supports_kwargs:
                 return runner(name, positional, kwargs)
             else:
                 return runner(name, positional)

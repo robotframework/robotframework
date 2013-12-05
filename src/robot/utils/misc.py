@@ -105,17 +105,6 @@ def getdoc(item):
         return unic(doc)
 
 
-def iterable(item):
-    if isinstance(item, basestring):
-        return False
-    try:
-        iter(item)
-    except TypeError:
-        return False
-    else:
-        return True
-
-
 # On IronPython sys.stdxxx.isatty() always returns True
 if sys.platform != 'cli':
 
