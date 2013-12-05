@@ -82,15 +82,15 @@ class Process(object):
     use syntax like `name=value`. Available configuration arguments are
     listed below and discussed further in sections afterwards.
 
-    |  = Name =  |                  = Explanation =                      |
-    | shell      | Specifies whether to run the command in shell or not  |
-    | cwd        | Specifies the working directory.                      |
-    | env        | Specifies environment variables given to the process. |
-    | env:<name> | Overrides the named environment variable(s) only.     |
-    | stdout     | Path of a file where to write standard output.        |
-    | stderr     | Path of a file where to write standard error.         |
-    | bytesio    | Specifies that streams are opened in binary mode.     |
-    | alias      | Alias given to the process.                           |
+    |  = Name =   |                  = Explanation =                            |
+    | shell       | Specifies whether to run the command in shell or not        |
+    | cwd         | Specifies the working directory.                            |
+    | env         | Specifies environment variables given to the process.       |
+    | env:<name>  | Overrides the named environment variable(s) only.           |
+    | stdout      | Path of a file where to write standard output.              |
+    | stderr      | Path of a file where to write standard error.               |
+    | binary_mode | Specifies whether streams are opened in binary or text mode |
+    | alias       | Alias given to the process.                                 |
 
     == Running processes in shell ==
 
@@ -169,12 +169,12 @@ class Process(object):
 
     == Text or binary streams ==
 
-    The `bytesio` argument specifies that stdin, stdout and stderr streams
-    are opened in binary mode. By default they are opened in text mode.
+    The `binary_mode` argument specifies whether stdin, stdout and stderr
+    are opened in binary or text mode. By default they are opened in text mode.
 
     Starting with Python 3 text streams only work with strings, binary streams
     only with bytes. If you want to send or receive bytes instead of strings,
-    give `bytesio` any non-false value, such as `bytesio=True`.
+    give `binary_mode` any non-false value, such as `binary_mode=True`.
 
     == Alias ==
 
@@ -326,7 +326,7 @@ class Process(object):
                                    shell=config.shell,
                                    cwd=config.cwd,
                                    env=config.env,
-                                   universal_newlines=not config.bytesio)
+                                   universal_newlines=not config.binary_mode)
         self._results[process] = ExecutionResult(process,
                                                  config.stdout_stream,
                                                  config.stderr_stream)
@@ -723,12 +723,12 @@ class ExecutionResult(object):
 class ProcessConfig(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
-                 bytesio=False, alias=None, env=None, **rest):
+                 binary_mode=False, alias=None, env=None, **rest):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout)
         self.shell = is_true(shell)
-        self.bytesio = is_true(bytesio)
+        self.binary_mode = is_true(binary_mode)
         self.alias = alias
         self.env = self._construct_env(env, rest)
 
