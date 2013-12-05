@@ -32,9 +32,9 @@ from os.path import abspath, basename, dirname, exists, join, normpath, splitext
 if sys.version_info < (2, 6):
     sys.exit('Running this script requires Python 2.6 or newer.')
 
-try:
-    CURDIR = CURDIR
-except NameError:
+# Check for new working dir after 2to3:
+if not 'CURDIR' in globals():
+    # ==> still the original script before 2to3.
     CURDIR = dirname(abspath(__file__))
 ROBOTDIR = join(CURDIR, '..', 'src', 'robot')
 
@@ -43,10 +43,10 @@ ROBOTDIR = join(CURDIR, '..', 'src', 'robot')
 # - Run 2to3
 # - Modify Python literals in Suite/Resource .txt files
 # - Exec this file's copy in-place for actual testing
-try:
-    # Is this file already the Python 3 copy or the original?
-    do2to3 = do2to3
-except NameError:
+
+# Is this script already the Python 3 copy?
+if not 'do2to3' in globals():
+    # ==> still the original.
     do2to3 = True
 if sys.version_info[0] == 3 and do2to3:
     PY3DIR = join(CURDIR, 'python3')
