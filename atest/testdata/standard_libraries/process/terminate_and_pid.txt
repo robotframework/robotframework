@@ -92,7 +92,7 @@ Pid
     Process Should Be Stopped    ${handle}
 
 Getting PIDs in different ways should give same result
-    ${handle}=    Start Process    python -c "print 'hello'"    shell=True    alias=hello
+    ${handle}=    Start Process    python -c "print('hello')"    shell=True    alias=hello
     ${pid1}=      Get Process Id
     ${pid2}=      Get Process Id   hello
     ${pid3}=      Get Process Id   ${handle}
@@ -102,6 +102,6 @@ Getting PIDs in different ways should give same result
 Lot of output
     [Tags]    performance
     ${stdout}=    Normalize Path    %{TEMPDIR}/stdout.txt
-    ${handle}=    Run Process    python -c "for i in range(350000): \tprint 'a'*400"    shell=True    stdout=${stdout}    stderr=STDOUT
+    ${handle}=    Run Process    python -c "for i in range(350000): \tprint('a'*400)"    shell=True    stdout=${stdout}    stderr=STDOUT
     File Should Not Be Empty    ${stdout}
     [Teardown]    Safe Remove File    ${stdout}
