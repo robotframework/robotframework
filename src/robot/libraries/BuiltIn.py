@@ -346,6 +346,10 @@ class _Converter:
         New in Robot Framework 2.8.2.
         """
         try:
+            if sys.version_info[0] == 3 and input_type in ('text', 'int') and (
+              isinstance(input, (bytes, bytearray))
+              ):
+                return bytes(input)
             try:
                 ordinals = getattr(self, '_get_ordinals_from_%s' % input_type)
             except AttributeError:
