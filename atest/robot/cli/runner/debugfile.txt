@@ -24,7 +24,7 @@ Debugfile
     ...      ${TIMESTAMP} - DEBUG - Logging with debug level
     ...      ${TIMESTAMP} - INFO - +-- END KW: BuiltIn.Log
     Debug file should contain    ${content}    + END SUITE: Normal
-    Check Syslog Contains  DebugFile: DeBug.TXT
+    Check Syslog Contains Regexp  Debug(F| f)ile: .*DeBug.TXT
     ${path} =  Set Variable  [:.\\w /\\\\~+-]*DeBug\\.TXT
     Check Stdout Matches Regexp  (?s).*Debug: {3}${path}.*
     Check Syslog Matches Regexp  (?s).*Debug: ${path}.*
@@ -45,7 +45,7 @@ Debugfile Log Level Should Always Be Debug
 No Debugfile
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile NoNe -o o.xml  ${TESTFILE}
     Directory Should Contain  ${CLI OUTDIR}  o.xml
-    Check Syslog Contains  DebugFile: None
+    Check Syslog Contains Regexp  DebugFile: None|No debug file
 
 Invalid Debugfile
     Create Directory  ${CLI OUTDIR}${/}debug.txt
