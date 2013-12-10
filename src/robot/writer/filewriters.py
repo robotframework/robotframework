@@ -105,7 +105,7 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
         row = self._separator.join(row)
         if row:
             row = '| ' + row + ' |'
-        row += row + self._line_separator
+        row += self._line_separator
         encoded_row = self._encode(row)
         try:
             self._output.write(encoded_row)
