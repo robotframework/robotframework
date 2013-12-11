@@ -26,6 +26,7 @@ Development Status :: 5 - Production/Stable
 License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
 Programming Language :: Python
+Programming Language :: Python :: 3
 Topic :: Software Development :: Testing
 """.strip().splitlines()
 PACKAGES = ['robot', 'robot.api', 'robot.conf',
@@ -54,12 +55,16 @@ setup(
     version      = get_version(sep=''),
     author       = 'Robot Framework Developers',
     author_email = 'robotframework@gmail.com',
-    url          = 'http://robotframework.org',
-    download_url = 'https://pypi.python.org/pypi/robotframework',
+    maintainer   = 'Stefan Zimmermann',
+    maintainer_email =    'zimmermann.code@gmail.com',
+    url          = 'https://bitbucket.org/userzimmermann'
+                   '/robotframework-python3',
+    download_url = 'https://pypi.python.org/pypi/robotframework-python3',
     license      = 'Apache License 2.0',
-    description  = 'A generic test automation framework',
+    description  = 'Python 3 compatible generic test automation framework',
     long_description = DESCRIPTION,
-    keywords     = 'robotframework testing testautomation atdd bdd',
+    keywords     = 'robotframework testing testautomation atdd bdd'
+                   ' python3',
     platforms    = 'any',
     classifiers  = CLASSIFIERS,
     package_dir  = {'': 'src'},
