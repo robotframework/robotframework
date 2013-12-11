@@ -1980,7 +1980,7 @@ are completely optional.
    }
 
 .. note:: In addition to using :code:`List`, it is possible to use also arrays
-          like :code:`String[]`.
+          like :code:`Object[]` or :code:`String[]`.
 
 A good example of using the dynamic API is Robot Framework's own
 `Remote library`_.
