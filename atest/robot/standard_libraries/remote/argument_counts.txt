@@ -1,0 +1,38 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/remote/argument_counts.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+No Arguments
+    Check Test Case    ${TESTNAME}
+
+Required Arguments
+    Check Test Case    ${TESTNAME}
+
+Arguments With Default Values
+    Check Test Case    ${TESTNAME}
+
+Variable Number Of Arguments
+    Check Test Case    ${TESTNAME}
+
+Required Arguments, Default Values and Varargs
+    Check Test Case    ${TESTNAME}
+
+Using Arguments When No Accepted
+    Check Test Case    ${TESTNAME}
+
+Too Few Arguments When Using Only Required Args
+    Check Test Case    ${TESTNAME}
+
+Too Many Arguments When Using Only Required Args
+    Check Test Case    ${TESTNAME}
+
+Too Few Arguments When Using Default Values
+    Check Test Case    ${TESTNAME}
+
+Too Many Arguments When Using Default Values
+    Check Test Case    ${TESTNAME}
+
+Too Few Arguments When Using Varargs
+    Check Test Case    ${TESTNAME}

@@ -1,0 +1,20 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/remote/simple_server.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Passing
+    Check Test Case    ${TESTNAME}
+
+Failing
+    Check Test Case    ${TESTNAME}
+
+Failing with traceback
+    Check Test Case    ${TESTNAME}
+
+Returning
+    Check Test Case    ${TESTNAME}
+
+Logging
+    Check Test Case    ${TESTNAME}

@@ -1,0 +1,14 @@
+*** Settings ***
+Library           Process
+
+*** Keywords ***
+Start And Import Remote
+    [Arguments]    ${name}
+    Start Process    python    ${CURDIR}${/}${name}.py    alias=${name}    stderr=STDOUT
+    Import Library    Remote    http://localhost:8270
+    Set Log Level    DEBUG
+
+Stop Remote
+    [Arguments]    ${name}
+    ${result} =    Terminate Process    handle=${name}
+    Log    ${result.stdout}
