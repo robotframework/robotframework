@@ -32,14 +32,14 @@ def windows_install():
     try:
         _create_script('jybot.bat', 'jython')
         _create_script('ipybot.bat', 'ipy')
-    except Exception, err:
-        print 'Running post-install script failed: %s' % err
-        print 'Robot Framework start-up scripts may not work correctly.'
+    except:
+        print('Running post-install script failed: %s' % sys.exc_info()[1])
+        print('Robot Framework start-up scripts may not work correctly.')
         return
     # Avoid "close failed in file object destructor" error when UAC disabled
     # http://code.google.com/p/robotframework/issues/detail?id=1331
     if sys.stdout.fileno() != -2:
-        print SUCCESS
+        print(SUCCESS)
 
 
 def _create_script(name, interpreter):
