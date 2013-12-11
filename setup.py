@@ -3,7 +3,7 @@
 import sys
 import os
 from os.path import join, dirname
-from distutils.core import setup
+from setuptools import setup
 
 if 'develop' in sys.argv:
     import setuptools    # support setuptools development mode
