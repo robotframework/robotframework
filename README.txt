@@ -1,28 +1,52 @@
-This is an unofficial Robot Framework Python 3.x compatibility fork.
-It also remains compatible with all officially supported
-Python 2.x platforms and versions, starting with 2.5.
+Robot Framework with Python 3 compatibility
+===========================================
 
-It uses the ``2to3`` tool in ``setup.py`` and ``atest/run_atests.py``.
-The latter copies ``src/robot/`` and ``atest/`` to ``atest/python3/``
-before running the ``2to3`` script on them
-and also converts some contents
-of the Test Suite and Resource ``.txt`` files.
+- Forked from https://robotframework.googlecode.com
+- Still compatible with all officially supported
+  Python 2.x platforms and versions, starting with 2.5
+- Not tested with Python 3 < 3.3
+- Invokes ``2to3`` in ``setup.py`` and ``atest/run_atests.py``
+  in addition to manual code changes
+- Goal is to make code completely 2/3 compatible without the need for 2to3,
+  at the cost of dropping Python 2.5 support
 
-``2to3`` can't handle everything...
-Some fixers are disabled and there are also manual code changes.
-The latter are mostly commented, with ``Python 3`` in the text,
-or contain ``if sys.version_info[0] == 3``.
-Manually changes in the acceptance Test Suites and Resources
-mostly use ``Run on python 2.x`` and ``3.x`` Keywords for switching.
+Please report any issues to:
 
-You can also look at this URL for a complete diff:
+https://bitbucket.org/userzimmermann/robotframework-python3/issues
 
-https://bitbucket.org/userzimmermann/robotframework-python3/compare/default..853a2e8#diff
+You can look at this URL for a complete code diff:
 
-Most of the acceptance tests are already passing with Python 3.
-Only ``36/3249`` critical tests are currently failing on my machine,
-but this is mostly related to the tests themselves,
-which need some further workarounds, switches and conversions.
+https://bitbucket.org/userzimmermann/robotframework-python3/compare/master..robot#diff
+
+Differences in Python 3
+-----------------------
+
+Python 3 makes a clear distinction between ``str`` for textual data
+and ``bytes`` for binary data.
+This affects the Standard Test Libraries and their Keywords:
+
+- ``str`` arguments don't work where ``bytes`` are expected,
+  like writing to binary file streams or comparing with other ``bytes``.
+- ``bytes`` don't work where ``str`` is expected,
+  like writing to text mode streams or comparing with another ``str``.
+- Reading from binary streams always returns ``bytes``.
+- Reading from text streams always returns ``str``.
+
+You can use the following keywords to explicitly create ``bytes``:
+
+- ``BuiltIn.Convert To Bytes``
+- ``String.Encode String To Bytes``
+
+I extended ``Process.Start Process`` with a ``binary_mode`` argument.
+By default the process streams are opened in text mode.
+You can change this with setting ``binary_mode=True``.
+
+``Collections.Get Dictionary Keys`` normally sorts the keys.
+I disabled key sorting in Python 3,
+because most builtin types are not comparable to each other.
+This further affects ``Get Dictionary Values`` and ``Get Dictionary Items``.
+I still need to find a better solution... Maybe imitate Python 2 sorting?
+Any suggestions? :)
 
 -- Stefan Zimmermann
 
