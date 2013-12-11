@@ -8,6 +8,8 @@ class SimpleServer(SimpleXMLRPCServer):
         SimpleXMLRPCServer.__init__(self, ('127.0.0.1', int(port)))
         self.register_function(self.get_keyword_names)
         self.register_function(self.run_keyword)
+        sys.stdout.write('Remote server starting on port %s.\n' % port)
+        sys.stdout.flush()
         self.serve_forever()
 
     def get_keyword_names(self):

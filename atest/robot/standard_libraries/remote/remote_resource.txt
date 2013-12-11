@@ -12,7 +12,8 @@ Start Remote Server
     [Arguments]    ${server}    ${port}
     ${path} =    Normalize Path    ${DATADIR}/standard_libraries/remote/${server}
     Start Process    python    ${path}    ${port}    alias=${server}    stderr=STDOUT
-    Sleep    0.1s    Give process time to end if starting failed.
+    # TODO: Long time below for CI debugging purposes
+    Sleep    10s    Give process time to end if starting failed.
     Process Should Be Running    handle=${server}
 
 Stop Remote Server
