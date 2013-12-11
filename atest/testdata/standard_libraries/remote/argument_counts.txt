@@ -1,7 +1,6 @@
 *** Settings ***
-Suite Setup       Start And Import Remote    argcounts
-Suite Teardown    Stop Remote    argcounts
-Resource          resource.txt
+Library           Remote    http://127.0.0.1:8270
+Suite Setup       Set Log Level    DEBUG
 
 *** Test Cases ***
 No Arguments
@@ -63,7 +62,3 @@ Arguments Should Be Accepted
     [Arguments]    ${expected}    ${keyword}    @{arguments}
     ${actual} =    Run Keyword    ${keyword}    @{arguments}
     Should Be Equal    ${actual}    ${expected}
-
-Arguments Should Not Be Accepted
-    [Arguments]    ${error}    ${keyword}    @{arguments}
-    Run Keyword And Expect Error    ${error}    ${keyword}    @{arguments}

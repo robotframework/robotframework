@@ -1,7 +1,7 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/remote/simple_server.txt
+Suite Setup      Run Remote Tests    simpleserver.py    ${EMPTY}    simple_server.txt
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         remote_resource.txt
 
 *** Test Cases ***
 Passing

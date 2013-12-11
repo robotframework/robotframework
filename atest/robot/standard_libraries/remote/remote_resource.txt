@@ -1,0 +1,19 @@
+*** Settings ***
+Resource          atest_resource.txt
+
+*** Keywords ***
+Run Remote Tests
+    [Arguments]    ${server}    ${options}    ${tests}
+    Start Remote Server    ${server}
+    Run Tests    ${options}    standard_libraries/remote/${tests}
+    Stop Remote Server    ${server}
+
+Start Remote Server
+    [Arguments]    ${server}
+    ${path} =    Normalize Path    ${DATADIR}/standard_libraries/remote/${server}
+    Start Process    python    ${path}    alias=${server}    stderr=STDOUT
+
+Stop Remote Server
+    [Arguments]    ${server}
+    ${result} =    Terminate Process    handle=${server}
+    Log    ${result.stdout}

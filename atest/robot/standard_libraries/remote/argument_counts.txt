@@ -1,7 +1,7 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/remote/argument_counts.txt
+Suite Setup      Run Remote Tests    argcounts.py    ${EMPTY}    argument_counts.txt
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         remote_resource.txt
 
 *** Test Cases ***
 No Arguments

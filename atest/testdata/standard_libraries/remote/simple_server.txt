@@ -1,8 +1,6 @@
 *** Settings ***
 Documentation     Server has only get_kw_names and run_kw methods and returns minimal result dictionary.
-Suite Setup       Start And Import Remote    simpleserver
-Suite Teardown    Stop Remote    simpleserver
-Resource          resource.txt
+Library           Remote
 
 *** Test Cases ***
 Passing
