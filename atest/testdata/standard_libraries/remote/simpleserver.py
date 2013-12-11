@@ -5,7 +5,7 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 class SimpleServer(SimpleXMLRPCServer):
 
     def __init__(self, port=8270):
-        SimpleXMLRPCServer.__init__(self, ('localhost', int(port)))
+        SimpleXMLRPCServer.__init__(self, ('127.0.0.1', int(port)))
         self.register_function(self.get_keyword_names)
         self.register_function(self.run_keyword)
         self.serve_forever()

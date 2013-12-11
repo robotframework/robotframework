@@ -29,7 +29,7 @@ from robot.utils import is_list_like, is_dict_like, unic
 class Remote(object):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
-    def __init__(self, uri='http://localhost:8270'):
+    def __init__(self, uri='http://127.0.0.1:8270'):
         if '://' not in uri:
             uri = 'http://' + uri
         self._uri = uri

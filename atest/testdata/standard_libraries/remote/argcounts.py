@@ -6,7 +6,7 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 class RemoteServer(SimpleXMLRPCServer):
 
     def __init__(self, library, port=8270):
-        SimpleXMLRPCServer.__init__(self, ('localhost', int(port)))
+        SimpleXMLRPCServer.__init__(self, ('127.0.0.1', int(port)))
         self.library = library
         self.register_function(self.get_keyword_names)
         self.register_function(self.get_keyword_arguments)
