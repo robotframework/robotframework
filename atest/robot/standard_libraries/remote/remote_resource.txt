@@ -3,15 +3,15 @@ Resource          atest_resource.txt
 
 *** Keywords ***
 Run Remote Tests
-    [Arguments]    ${server}    ${options}    ${tests}
-    Start Remote Server    ${server}
+    [Arguments]    ${server}    ${port}    ${options}    ${tests}
+    Start Remote Server    ${server}    ${port}
     Run Tests    ${options}    standard_libraries/remote/${tests}
     Stop Remote Server    ${server}
 
 Start Remote Server
-    [Arguments]    ${server}
+    [Arguments]    ${server}    ${port}
     ${path} =    Normalize Path    ${DATADIR}/standard_libraries/remote/${server}
-    Start Process    python    ${path}    alias=${server}    stderr=STDOUT
+    Start Process    python    ${path}    ${port}    alias=${server}    stderr=STDOUT
 
 Stop Remote Server
     [Arguments]    ${server}

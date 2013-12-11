@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    argcounts.py    ${EMPTY}    argument_counts.txt
+Suite Setup      Run Remote Tests    argcounts.py    8271    -v PORT:8271    argument_counts.txt
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.txt
 
