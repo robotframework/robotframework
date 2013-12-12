@@ -71,7 +71,7 @@ class ArgumentCounts(object):
         return self._format_args(arg1, arg2, *varargs, **kwargs)
 
     def _format_args(self, *args, **kwargs):
-        args += tuple('%s: %s' % (k, self._type(kwargs))
+        args += tuple('%s:%s' % (k, self._type(v))
                       for k, v in sorted(kwargs.items()))
         return ', '.join(self._type(a) for a in args)
 

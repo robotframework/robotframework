@@ -22,6 +22,18 @@ Arguments With Default Values
     one, two, 3    Arguments With Default Values    one    two
     one, 2 (int), 3    Arguments With Default Values    one
 
+Named Arguments
+    ${result} =    Arguments With Default Values    first    arg2=second
+    Should Be Equal    ${result}    first, second, 3
+    ${result} =    Arguments With Default Values    arg1=first    arg2=second
+    Should Be Equal    ${result}    first, second, 3
+    ${result} =    Arguments With Default Values    arg2=second    arg1=first
+    Should Be Equal    ${result}    first, second, 3
+    ${result} =    Arguments With Default Values    first    arg3=third
+    Should Be Equal    ${result}    first, 2, third
+    ${result} =    Arguments With Default Values    arg3=C    arg1=A    arg2=B
+    Should Be Equal    ${result}    A, B, C
+
 Variable Number Of Arguments
     [Template]    Arguments Should Be Accepted
     ${EMPTY}    Varargs
@@ -36,21 +48,59 @@ Required Arguments, Default Values and Varargs
     Hello, again, world    Required Defaults And Varargs    Hello    again    world
     1, 2, 3, 4, 5 (int)    Required Defaults And Varargs    1    2    3    4    ${5}
 
-Named Arguments
-    ${result} =    Arguments With Default Values    first    arg2=second
-    Should Be Equal    ${result}    first, second, 3
-    ${result} =    Arguments With Default Values    arg1=first    arg2=second
-    Should Be Equal    ${result}    first, second, 3
-    ${result} =    Arguments With Default Values    arg2=second    arg1=first
-    Should Be Equal    ${result}    first, second, 3
-    ${result} =    Arguments With Default Values    first    arg3=third
-    Should Be Equal    ${result}    first, 2, third
-    ${result} =    Arguments With Default Values    arg3=C    arg1=A    arg2=B
-    Should Be Equal    ${result}    A, B, C
+No kwargs
+    ${result} =    Kwargs
+    Should Be Equal    ${result}    ${EMPTY}
+
+One kwarg
+    ${result} =    Kwargs    foo=bar
+    Should Be Equal    ${result}    foo:bar
+
+Multiple kwargs
+    ${result} =    Kwargs    a=1    c=3    d=4    b=2
+    Should Be Equal    ${result}    a:1, b:2, c:3, d:4
+
+Args and kwargs
+    ${result} =    Args and kwargs    arg
+    Should Be Equal    ${result}    arg, default2
+    ${result} =    Args and kwargs    arg    foo=bar
+    Should Be Equal    ${result}    arg, default2, foo:bar
+    ${result} =    Args and kwargs    a    arg2=b    c=3    d=4
+    Should Be Equal    ${result}    a, b, c:3, d:4
+    ${result} =    Args and kwargs    arg2=b    c=3    d=4
+    Should Be Equal    ${result}    default1, b, c:3, d:4
+
+Varargs and kwargs
+    ${result} =    Varargs and kwargs
+    Should Be Equal    ${result}    ${EMPTY}
+    ${result} =    Varargs and kwargs    foo=bar
+    Should Be Equal    ${result}    foo:bar
+    ${result} =    Varargs and kwargs    arg    foo=bar
+    Should Be Equal    ${result}    arg, foo:bar
+    ${result} =    Varargs and kwargs    a    b    c    d=4    e=5    f=6
+    Should Be Equal    ${result}    a, b, c, d:4, e:5, f:6
+
+Args, varargs and kwargs
+    ${result} =    Args varargs and kwargs    arg
+    Should Be Equal    ${result}    arg, default2
+    ${result} =    Args varargs and kwargs    arg    foo=bar
+    Should Be Equal    ${result}    arg, default2, foo:bar
+    ${result} =    Args varargs and kwargs    arg2=foo    foo=bar
+    Should Be Equal    ${result}    default1, foo, foo:bar
+    ${result} =    Args varargs and kwargs    a    arg2=b    c=3
+    Should Be Equal    ${result}    a, b, c:3
+    ${result} =    Args varargs and kwargs    c=3    arg1=a    d=4    arg2=b
+    Should Be Equal    ${result}    a, b, c:3, d:4
+    ${result} =    Args varargs and kwargs    a    b    c    d    e=5    f=6
+    Should Be Equal    ${result}    a, b, c, d, e:5, f:6
 
 Using Arguments When No Accepted
     [Documentation]    FAIL Keyword 'Remote.No Arguments' expected 0 arguments, got 1.
     No Arguments    not allowed
+
+Using Positional Arguments When Only Kwargs Accepted
+    [Documentation]    FAIL Keyword 'Remote.Kwargs' expected 0 non-keyword arguments, got 1.
+    Kwargs    not allowed
 
 Too Few Arguments When Using Only Required Args
     [Documentation]    FAIL Keyword 'Remote.One Argument' expected 1 argument, got 0.
@@ -71,6 +121,10 @@ Too Many Arguments When Using Default Values
 Too Few Arguments When Using Varargs
     [Documentation]    FAIL Keyword 'Remote.Required Defaults And Varargs' expected at least 1 argument, got 0.
     Required Defaults And Varargs
+
+Named arguments before positional
+    [Documentation]    FAIL Keyword 'Remote.Args And Kwargs' got positional argument after named arguments.
+    Args and kwargs    this=wont    work
 
 *** Keywords ***
 Arguments Should Be Accepted
