@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    argcounts.py    8271    -v PORT:8271    argument_counts.txt
+Suite Setup      Run Remote Tests    arguments.py    8271    -v PORT:8271    arguments.txt
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.txt
 
@@ -17,6 +17,9 @@ Variable Number Of Arguments
     Check Test Case    ${TESTNAME}
 
 Required Arguments, Default Values and Varargs
+    Check Test Case    ${TESTNAME}
+
+Named Arguments
     Check Test Case    ${TESTNAME}
 
 Using Arguments When No Accepted
