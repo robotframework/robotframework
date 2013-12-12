@@ -31,8 +31,13 @@ None
     None    ''
 
 Binary data
-    '\\x00\\x01\\xff'
-    u'\\x00\\x01\\xff'    '\\x00\\x01\\xff'
+    '\\x00\\x01\\xff'    binary=yes
+    u'\\x00\\x01'    '\\x00\\x01'    binary=yes
+
+Binary data with too big Unicode characters
+    [Template]  Run Keyword And Expect Error
+    ValueError: Cannot represent u'\\x00\\x01\\xff' as binary.    One Argument    \x00\x01\xff
+    ValueError: Cannot represent u'\\x00\\x01\\u2603' as binary.    One Argument    \x00\x01\u2603
 
 Arbitrary object
     ${MyObject()}    '<MyObject>'
@@ -63,7 +68,7 @@ Mapping
 
 *** Keywords ***
 Argument Should Be Accepted
-    [Arguments]    ${argument}    ${expected}=${NONE}
+    [Arguments]    ${argument}    ${expected}=${NONE}    ${binary}=${FALSE}
     ${expected} =    Get Non None    ${expected}   ${argument}
     ${argument} =    Evaluate If String    ${argument}
-    Argument Should Be    ${argument}    ${expected}
+    Argument Should Be    ${argument}    ${expected}    ${binary}

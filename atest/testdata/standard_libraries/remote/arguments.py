@@ -1,6 +1,7 @@
 import sys
 import inspect
 from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpclib import Binary
 
 
 class RemoteServer(SimpleXMLRPCServer):
@@ -41,10 +42,12 @@ class RemoteServer(SimpleXMLRPCServer):
 
 class Arguments(object):
 
-    def argument_should_be(self, argument, expected):
+    def argument_should_be(self, argument, expected, binary=False):
+        if binary:
+            assert isinstance(argument, Binary), 'Non-binary argument'
+            argument = str(argument)
         expected = eval(expected)
-        if argument != expected:
-            raise AssertionError('%r != %r' % (argument, expected))
+        assert argument == expected, '%r != %r' % (argument, expected)
 
     def no_arguments(self):
         return self._format_args()

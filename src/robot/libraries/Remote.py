@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 import socket
 import sys
 import time
@@ -68,9 +69,10 @@ class Remote(object):
 
 
 class ArgumentCoercer(object):
+    binary = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F]')
 
     def coerce(self, arg):
-        for handles, handle in [(self._is_string, self._pass_through),
+        for handles, handle in [(self._is_string, self._handle_string),
                                 (self._is_number, self._pass_through),
                                 (is_list_like, self._coerce_list),
                                 (is_dict_like, self._coerce_dict),
@@ -83,6 +85,15 @@ class ArgumentCoercer(object):
 
     def _is_number(self, arg):
         return isinstance(arg, (int, long, float))
+
+    def _handle_string(self, arg):
+        if not self.binary.search(arg):
+            return arg
+        try:
+            arg = str(arg)
+        except UnicodeError:
+            raise ValueError("Cannot represent %r as binary." % arg)
+        return xmlrpclib.Binary(arg)
 
     def _pass_through(self, arg):
         return arg

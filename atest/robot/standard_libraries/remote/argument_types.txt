@@ -20,7 +20,9 @@ None
     Check Test Case    ${TESTNAME}
 
 Binary data
-    Fail    not ready yet    -regression
+    Check Test Case    ${TESTNAME}
+
+Binary data with too big Unicode characters
     Check Test Case    ${TESTNAME}
 
 Arbitrary object
