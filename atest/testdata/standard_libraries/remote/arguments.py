@@ -30,11 +30,21 @@ class RemoteServer(SimpleXMLRPCServer):
         return args
 
     def run_keyword(self, name, args, kwargs=None):
-        result = getattr(self.library, name)(*args, **(kwargs or {}))
-        return {'status': 'PASS', 'return': result}
+        try:
+            result = getattr(self.library, name)(*args, **(kwargs or {}))
+        except AssertionError, err:
+            return {'status': 'FAIL', 'error': str(err)}
+        else:
+            return {'status': 'PASS',
+                    'return': result if result is not None else ''}
 
 
-class ArgumentCounts(object):
+class Arguments(object):
+
+    def argument_should_be(self, argument, expected):
+        expected = eval(expected)
+        if argument != expected:
+            raise AssertionError('%r != %r' % (argument, expected))
 
     def no_arguments(self):
         return self._format_args()
@@ -82,4 +92,4 @@ class ArgumentCounts(object):
 
 
 if __name__ == '__main__':
-    RemoteServer(ArgumentCounts(), *sys.argv[1:])
+    RemoteServer(Arguments(), *sys.argv[1:])

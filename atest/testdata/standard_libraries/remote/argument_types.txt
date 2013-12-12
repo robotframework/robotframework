@@ -1,0 +1,69 @@
+*** Settings ***
+Test Template     Argument Should Be Accepted
+Library           Remote    127.0.0.1:${PORT}
+Library           Helper.py
+Variables         variables.py
+
+*** Variables ***
+${PORT}           8270
+
+*** Test Cases ***
+String
+    'Hello, world!'
+    u'hyv\\xe4 \\u2603'
+    ''
+
+Integer
+    0
+    42
+    -1
+
+Float
+    0.0
+    3.14
+    -0.5
+
+Boolean
+    True
+    False
+
+None
+    None    ''
+
+Binary data
+    '\\x00\\x01\\xff'
+    u'\\x00\\x01\\xff'    '\\x00\\x01\\xff'
+
+Arbitrary object
+    ${MyObject()}    '<MyObject>'
+
+List
+    \[]
+    \['a', 'b', 'c']
+    \['One', -2, False]
+    \[None]    ['']
+    \[['a', 'b'], 3, [[[4]]]]
+
+Tuple
+    ()    []
+    ('a', 'b', 'c')    ['a', 'b', 'c']
+    ('One', -2, False, (None,))    ['One', -2, False, ['']]
+
+Dict
+    {}
+    {'one': 1, 'spam': 'eggs'}
+    {None: None}    {'': ''}
+    {'a': 0, 'b': True, 'c': {'x': [1, 2, 3]}}
+
+Dict with non-string keys
+    {1: 'a', 2: 3, (): ()}    {'1': 'a', '2': 3, '()': []}
+
+Mapping
+    ${MyMapping(a='one', b=2, c=[None, True])}    {'a': 'one', 'b': 2, 'c': ['', True]}
+
+*** Keywords ***
+Argument Should Be Accepted
+    [Arguments]    ${argument}    ${expected}=${NONE}
+    ${expected} =    Get Non None    ${expected}   ${argument}
+    ${argument} =    Evaluate If String    ${argument}
+    Argument Should Be    ${argument}    ${expected}

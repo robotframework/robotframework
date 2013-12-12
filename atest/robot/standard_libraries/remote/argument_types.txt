@@ -1,0 +1,42 @@
+*** Settings ***
+Suite Setup      Run Remote Tests    arguments.py    8272    -v PORT:8272    argument_types.txt
+Force Tags       regression    pybot    jybot
+Resource         remote_resource.txt
+
+*** Test Cases ***
+String
+    Check Test Case    ${TESTNAME}
+
+Integer
+    Check Test Case    ${TESTNAME}
+
+Float
+    Check Test Case    ${TESTNAME}
+
+Boolean
+    Check Test Case    ${TESTNAME}
+
+None
+    Check Test Case    ${TESTNAME}
+
+Binary data
+    Fail    not ready yet    -regression
+    Check Test Case    ${TESTNAME}
+
+Arbitrary object
+    Check Test Case    ${TESTNAME}
+
+List
+    Check Test Case    ${TESTNAME}
+
+Tuple
+    Check Test Case    ${TESTNAME}
+
+Dict
+    Check Test Case    ${TESTNAME}
+
+Dict with non-string keys
+    Check Test Case    ${TESTNAME}
+
+Mapping
+    Check Test Case    ${TESTNAME}
