@@ -48,3 +48,6 @@ Dict with non-string keys
 
 Mapping
     Check Test Case    ${TESTNAME}
+
+Returned binary
+    Check Test Case    ${TESTNAME}

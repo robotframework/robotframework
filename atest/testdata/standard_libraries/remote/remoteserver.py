@@ -52,6 +52,9 @@ class Library(object):
     def kwarg_should_be(self, **kwargs):
         self.argument_should_be(**kwargs)
 
+    def return_binary(self, *ordinals):
+        return Binary(''.join(chr(int(o)) for o in ordinals))
+
     def no_arguments(self):
         return self._format_args()
 

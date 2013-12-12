@@ -116,12 +116,18 @@ class RemoteResult(object):
     def __init__(self, result):
         try:
             self.status = result['status']
-            self.output = result.get('output', '')
-            self.return_ = result.get('return', '')
-            self.error = result.get('error', '')
-            self.traceback = result.get('traceback', '')
+            self.output = self._get(result, 'output')
+            self.return_ = self._get(result, 'return')
+            self.error = self._get(result, 'error')
+            self.traceback = self._get(result, 'traceback')
         except (KeyError, AttributeError):
             raise RuntimeError('Invalid remote result dictionary: %s' % result)
+
+    def _get(self, result, key):
+        value = result.get(key, '')
+        if isinstance(value, xmlrpclib.Binary):
+            value = str(value)
+        return value
 
 
 class XmlRpcRemoteClient(object):
