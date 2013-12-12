@@ -12,10 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import xmlrpclib
 import socket
-import time
 import sys
+import time
+import xmlrpclib
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:   # No expat in IronPython 2.7
@@ -57,25 +57,44 @@ class Remote(object):
             return ''
 
     def run_keyword(self, name, args, kwargs):
-        args = self._handle_argument(args)
-        kwargs = self._handle_argument(kwargs)
+        coercer = ArgumentCoercer()
+        args = coercer.coerce(args)
+        kwargs = coercer.coerce(kwargs)
         result = RemoteResult(self._client.run_keyword(name, args, kwargs))
         sys.stdout.write(result.output)
         if result.status != 'PASS':
             raise RemoteError(result.error, result.traceback)
         return result.return_
 
-    def _handle_argument(self, arg):
-        if isinstance(arg, (basestring, int, long, float)):
-            return arg
-        if is_list_like(arg):
-            return [self._handle_argument(item) for item in arg]
-        if is_dict_like(arg):
-            return dict((self._str(key), self._handle_argument(value))
-                        for key, value in arg.items())
-        return self._str(arg)
 
-    def _str(self, item):
+class ArgumentCoercer(object):
+
+    def coerce(self, arg):
+        for handles, handle in [(self._is_string, self._pass_through),
+                                (self._is_number, self._pass_through),
+                                (is_list_like, self._coerce_list),
+                                (is_dict_like, self._coerce_dict),
+                                (lambda arg: True, self._to_string)]:
+            if handles(arg):
+                return handle(arg)
+
+    def _is_string(self, arg):
+        return isinstance(arg, basestring)
+
+    def _is_number(self, arg):
+        return isinstance(arg, (int, long, float))
+
+    def _pass_through(self, arg):
+        return arg
+
+    def _coerce_list(self, arg):
+        return [self.coerce(item) for item in arg]
+
+    def _coerce_dict(self, arg):
+        return dict((self._to_string(key), self.coerce(value))
+                    for key, value in arg.items())
+
+    def _to_string(self, item):
         if item is None:
             return ''
         return unic(item)
