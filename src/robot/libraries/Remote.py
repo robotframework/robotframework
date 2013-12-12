@@ -153,12 +153,13 @@ class XmlRpcRemoteClient(object):
         run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
         try:
             return self._server.run_keyword(*run_keyword_args)
-        except xmlrpclib.Error, err:
-            raise RuntimeError(err.faultString)
+        except xmlrpclib.Fault, err:
+            message = err.faultString
         except socket.error, (errno, err):
-            raise RuntimeError('Connection to remote server broken: %s' % err)
+            message = 'Connection to remote server broken: %s' % err
         except ExpatError, err:
-            raise RuntimeError('Processing XML-RPC return value failed. '
-                               'Most often this happens when the return value '
-                               'contains characters that are not valid in XML. '
-                               'Original error was: ExpatError: %s' % err)
+            message = ('Processing XML-RPC return value failed. '
+                       'Most often this happens when the return value '
+                       'contains characters that are not valid in XML. '
+                       'Original error was: ExpatError: %s' % err)
+        raise RuntimeError(message)

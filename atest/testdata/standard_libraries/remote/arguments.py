@@ -49,6 +49,9 @@ class Arguments(object):
         expected = eval(expected)
         assert argument == expected, '%r != %r' % (argument, expected)
 
+    def kwarg_should_be(self, **kwargs):
+        self.argument_should_be(**kwargs)
+
     def no_arguments(self):
         return self._format_args()
 

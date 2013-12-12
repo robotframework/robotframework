@@ -7,6 +7,18 @@ Resource         remote_resource.txt
 String
     Check Test Case    ${TESTNAME}
 
+Newline an tab
+    Check Test Case    ${TESTNAME}
+
+Binary
+    Check Test Case    ${TESTNAME}
+
+Binary with too big Unicode characters
+    Check Test Case    ${TESTNAME}
+
+Unrepresentable Unicode
+    Check Test Case    ${TESTNAME}
+
 Integer
     Check Test Case    ${TESTNAME}
 
@@ -19,19 +31,13 @@ Boolean
 None
     Check Test Case    ${TESTNAME}
 
-Binary data
-    Check Test Case    ${TESTNAME}
-
-Binary data with too big Unicode characters
-    Check Test Case    ${TESTNAME}
-
 Arbitrary object
     Check Test Case    ${TESTNAME}
 
 List
     Check Test Case    ${TESTNAME}
 
-Tuple
+List like
     Check Test Case    ${TESTNAME}
 
 Dict
