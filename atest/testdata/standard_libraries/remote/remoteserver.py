@@ -40,7 +40,7 @@ class RemoteServer(SimpleXMLRPCServer):
                     'return': result if result is not None else ''}
 
 
-class Arguments(object):
+class Library(object):
 
     def argument_should_be(self, argument, expected, binary=False):
         if binary:
@@ -98,4 +98,4 @@ class Arguments(object):
 
 
 if __name__ == '__main__':
-    RemoteServer(Arguments(), *sys.argv[1:])
+    RemoteServer(Library(), *sys.argv[1:])

@@ -3,7 +3,7 @@ Resource          atest_resource.txt
 
 *** Keywords ***
 Run Remote Tests
-    [Arguments]    ${server}    ${port}    ${options}    ${tests}
+    [Arguments]    ${options}    ${tests}    ${server}=remoteserver.py    ${port}=8270
     Start Remote Server    ${server}    ${port}
     Run Tests    ${options}    standard_libraries/remote/${tests}
     Stop Remote Server    ${server}
