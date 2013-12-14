@@ -2,7 +2,6 @@
 Test Template     Argument Should Be Passed Correctly
 Library           Remote    127.0.0.1:${PORT}
 Library           Helper.py
-Library           String
 Variables         variables.py
 
 *** Variables ***
@@ -79,11 +78,6 @@ Mapping
     ${MyMapping()}    {}
     ${MyMapping(a='one', b=2, c=[None, True])}    {'a': 'one', 'b': 2, 'c': ['', True]}
 
-Returned binary
-    [Template]    Binary Should Be Returned Correctly
-    \x00\x01\x02    0    1    2
-    RF    82    70
-    ${EMPTY}
 
 *** Keywords ***
 Argument Should Be Passed Correctly
@@ -92,9 +86,3 @@ Argument Should Be Passed Correctly
     ${argument} =    Evaluate If String    ${argument}
     Argument Should Be    ${argument}    ${expected}    ${binary}
     Kwarg Should Be    argument=${argument}    expected=${expected}    binary=${binary}
-
-Binary Should Be Returned Correctly
-    [Arguments]    ${expected}    @{ordinals}
-    ${result} =    Return Binary    @{ordinals}
-    Should Be Equal    ${result}    ${expected}
-    Should Be Byte String    ${result}
