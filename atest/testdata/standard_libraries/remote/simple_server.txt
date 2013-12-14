@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation     Server has only get_kw_names and run_kw methods and returns minimal result dictionary.
 Library           Remote
+Suite Setup       Set Log Level    DEBUG
 
 *** Test Cases ***
 Passing
