@@ -1,0 +1,19 @@
+*** Settings ***
+Suite Setup      Run Remote Tests    -v PORT:8273    binary_result.txt    binaryresult.py    8273
+Force Tags       regression    pybot    jybot
+Resource         remote_resource.txt
+
+*** Test Cases ***
+Returned
+    Check Test Case    ${TESTNAME}
+
+Logged
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${EMPTY}
+    Check Log Message    ${tc.kws[1].msgs[0]}    RF
+    Should Be Empty    ${tc.kws[2].msgs}
+
+Failed
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Error: RF    FAIL
+    Check Log Message    ${tc.kws[0].msgs[1]}    Traceback: RF    DEBUG

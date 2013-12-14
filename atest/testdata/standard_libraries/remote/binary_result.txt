@@ -1,0 +1,32 @@
+*** Settings ***
+Library           Remote    127.0.0.1:${PORT}
+Library           String
+Suite Setup       Set Log Level    DEBUG
+
+*** Variables ***
+${PORT}           8270
+
+*** Test Cases ***
+Returned
+    [Template]    Binary Should Be Returned Correctly
+    \x00\x01\x02    0    1    2
+    RF    82    70
+    ${EMPTY}
+
+Logged
+    [Template]    Log Binary
+    0    0    7
+    82    70
+    @{EMPTY}
+
+Failed
+    [Documentation]    FAIL Error: RF
+    Fail Binary    82    0    0    7    70
+
+
+*** Keywords ***
+Binary Should Be Returned Correctly
+    [Arguments]    ${expected}    @{ordinals}
+    ${result} =    Return Binary    @{ordinals}
+    Should Be Equal    ${result}    ${expected}
+    Should Be Byte String    ${result}
