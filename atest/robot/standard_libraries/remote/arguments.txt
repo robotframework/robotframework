@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    -v PORT:8271    arguments.txt    port=8271
+Suite Setup      Run Remote Tests    arguments.txt    arguments.py
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.txt
 

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    -v PORT:8273    binary_result.txt    binaryresult.py    8273
+Suite Setup      Run Remote Tests    binary_result.txt    binaryresult.py
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.txt
 

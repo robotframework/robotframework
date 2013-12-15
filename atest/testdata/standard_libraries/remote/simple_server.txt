@@ -1,7 +1,10 @@
 *** Settings ***
 Documentation     Server has only get_kw_names and run_kw methods and returns minimal result dictionary.
-Library           Remote
+Library           Remote    127.0.0.1:${PORT}
 Suite Setup       Set Log Level    DEBUG
+
+*** Variables ***
+${PORT}           8270
 
 *** Test Cases ***
 Passing

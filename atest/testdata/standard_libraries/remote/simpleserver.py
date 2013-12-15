@@ -1,15 +1,15 @@
 import sys
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 
+from remoteserver import announce_port
 
 class SimpleServer(SimpleXMLRPCServer):
 
-    def __init__(self, port=8270):
+    def __init__(self, port=8270, port_file=None):
         SimpleXMLRPCServer.__init__(self, ('127.0.0.1', int(port)))
         self.register_function(self.get_keyword_names)
         self.register_function(self.run_keyword)
-        sys.stdout.write('Remote server starting on port %s.\n' % port)
-        sys.stdout.flush()
+        announce_port(self.socket, port_file)
         self.serve_forever()
 
     def get_keyword_names(self):

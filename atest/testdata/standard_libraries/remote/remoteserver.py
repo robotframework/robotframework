@@ -1,15 +1,17 @@
 import inspect
+import sys
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 
 
 class RemoteServer(SimpleXMLRPCServer):
 
-    def __init__(self, library, port=8270):
+    def __init__(self, library, port=8270, port_file=None):
         SimpleXMLRPCServer.__init__(self, ('127.0.0.1', int(port)))
         self.library = library
         self.register_function(self.get_keyword_names)
         self.register_function(self.get_keyword_arguments)
         self.register_function(self.run_keyword)
+        announce_port(self.socket, port_file)
         self.serve_forever()
 
     def get_keyword_names(self):
@@ -36,3 +38,12 @@ class RemoteServer(SimpleXMLRPCServer):
         else:
             return {'status': 'PASS',
                     'return': result if result is not None else ''}
+
+
+def announce_port(socket, port_file=None):
+    port = socket.getsockname()[1]
+    sys.stdout.write('Remote server starting on port %s.\n' % port)
+    sys.stdout.flush()
+    if port_file:
+        with open(port_file, 'w') as f:
+            f.write(str(port))
