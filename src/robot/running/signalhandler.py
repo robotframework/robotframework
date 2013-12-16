@@ -21,7 +21,11 @@ except ImportError:
 if sys.platform.startswith('java'):
     from java.lang import IllegalArgumentException
 else:
-    IllegalArgumentException = None
+    ## IllegalArgumentException = None
+    # `None` doesn't work in Python 3 if used in `except` statement
+    # (in _register_signal_handler)
+    class IllegalArgumentException(Exception):
+        pass
 
 from robot.errors import ExecutionFailed
 from robot.output import LOGGER
