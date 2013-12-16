@@ -7,6 +7,15 @@ Resource         remote_resource.txt
 Returned
     Check Test Case    ${TESTNAME}
 
+Returned in list
+    Check Test Case    ${TESTNAME}
+
+Returned in dict
+    Check Test Case    ${TESTNAME}
+
+Returned in nested structure
+    Check Test Case    ${TESTNAME}
+
 Logged
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    ${EMPTY}
