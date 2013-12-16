@@ -3,6 +3,7 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 
 from remoteserver import announce_port
 
+
 class SimpleServer(SimpleXMLRPCServer):
 
     def __init__(self, port=8270, port_file=None):

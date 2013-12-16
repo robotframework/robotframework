@@ -30,6 +30,7 @@ def is_str_like(item, allow_java=False):
     return (isinstance(item, (basestring, UserString)) or
             allow_java and isinstance(item, String))
 
+
 def is_list_like(item):
     if is_str_like(item, allow_java=True) or is_dict_like(item, allow_java=True):
         return False
