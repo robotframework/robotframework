@@ -17,6 +17,7 @@ import inspect
 import traceback
 from StringIO import StringIO
 from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpclib import Binary
 try:
     import signal
 except ImportError:
@@ -81,11 +82,12 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return names + ['stop_remote_server']
 
     def run_keyword(self, name, args, kwargs=None):
+        args, kwargs = self._handle_binary_args(args, kwargs or {})
         result = {'status': 'PASS', 'return': '', 'output': '',
                   'error': '', 'traceback': ''}
         self._intercept_stdout()
         try:
-            return_value = self._get_keyword(name)(*args, **(kwargs or {}))
+            return_value = self._get_keyword(name)(*args, **kwargs)
         except:
             result['status'] = 'FAIL'
             result['error'], result['traceback'] = self._get_error_details()
@@ -93,6 +95,14 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             result['return'] = self._handle_return_value(return_value)
         result['output'] = self._restore_stdout()
         return result
+
+    def _handle_binary_args(self, args, kwargs):
+        args = [self._handle_binary(a) for a in args]
+        kwargs = dict([(k, self._handle_binary(v)) for k, v in kwargs.items()])
+        return args, kwargs
+
+    def _handle_binary(self, arg):
+        return arg if not isinstance(arg, Binary) else str(arg)
 
     def get_keyword_arguments(self, name):
         kw = self._get_keyword(name)

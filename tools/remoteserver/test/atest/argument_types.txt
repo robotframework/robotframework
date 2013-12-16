@@ -81,10 +81,9 @@ Nested Dictionary As Argument
 Mapping As Argument
     Dictionary As Argument    ${MyMapping(one=1, spam='eggs')}
 
-Control Char As Argument
-    [Documentation]  In this situation the received error is not that good FAIL REGEXP: .*ExpatError.*
-    ${arg} =  Evaluate  '\\x01'
-    String As Argument  ${arg}
+Byte As Argument
+    Byte As Argument  0    \x00    byte=\x00
+    Byte As Argument  7    \x07    byte=\x07
 
 *** Keywords ***
 Argument Should Accepted

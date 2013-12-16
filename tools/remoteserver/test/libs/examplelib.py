@@ -149,6 +149,11 @@ class RemoteTestLibrary:
     def string_as_argument(self, arg):
         self._should_be_equal(arg, self.return_string())
 
+    def byte_as_argument(self, expected, arg, **kwargs):
+        expected = chr(int(expected))
+        self._should_be_equal(arg, expected)
+        self._should_be_equal(kwargs['byte'], expected)
+
     def unicode_string_as_argument(self, arg):
         self._should_be_equal(arg, self._unicode)
 
