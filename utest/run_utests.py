@@ -63,7 +63,6 @@ if sys.version_info[0] == 3 and do2to3:
     if status:
         sys.exit(status)
 
-    print("Hey Ho!")
     do2to3 = False
     UTESTDIR = PY3UTESTDIR
 
@@ -141,7 +140,6 @@ def usage_exit(msg=None):
     sys.exit(rc)
 
 
-print(__name__)
 if __name__ == '__main__':
     docs, vrbst = parse_args(sys.argv[1:])
     tests = get_tests()
