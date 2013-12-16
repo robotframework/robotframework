@@ -63,7 +63,7 @@ class RemoteTestLibrary:
         return 'Returned value'
 
     def log_control_char(self):
-        print '\x01'
+        print '0: \x01, 1: \x01'
 
     # Failures
 

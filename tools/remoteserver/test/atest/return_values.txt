@@ -95,8 +95,7 @@ Return Mapping
     Return Value Should Be  Return Mapping  {'a': 1, '2': 'b', '': {'none': ''}}
 
 Return Control Char
-    [Documentation]  FAIL REGEXP: Processing XML-RPC return value failed. Most often this happens when the return value contains characters that are not valid in XML. Original error was: ExpatError: .*
-    Return Control Char
+    Return Value Should Be  Return Control Char  '\\x01'
 
 *** Keywords ***
 Return Value Should Be
