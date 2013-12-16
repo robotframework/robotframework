@@ -44,7 +44,7 @@ class _RunKeywordRegister:
         if inspect.ismethod(method):
             return method.im_func.func_code.co_argcount - 1
         elif inspect.isfunction(method):
-            code = method.__code__
+            code = method.func_code
             argcount = code.co_argcount
             # ...but you can look at the args:
             #TODO: Better solution?
