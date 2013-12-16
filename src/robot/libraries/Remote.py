@@ -167,7 +167,7 @@ class XmlRpcRemoteClient(object):
             return self._server.run_keyword(*run_keyword_args)
         except xmlrpclib.Fault, err:
             message = err.faultString
-        except socket.error, (errno, err):
+        except socket.error, err:
             message = 'Connection to remote server broken: %s' % err
         except ExpatError, err:
             message = ('Processing XML-RPC return value failed. '

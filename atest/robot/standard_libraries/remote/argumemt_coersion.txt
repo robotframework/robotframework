@@ -13,6 +13,10 @@ Newline an tab
 Binary
     Check Test Case    ${TESTNAME}
 
+Binary in non-ASCII range
+    [Tags]    x-fails-on-ipy
+    Check Test Case    ${TESTNAME}
+
 Binary with too big Unicode characters
     Check Test Case    ${TESTNAME}
 

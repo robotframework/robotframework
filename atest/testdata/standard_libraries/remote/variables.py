@@ -10,7 +10,7 @@ try:
 
         def __init__(self, data=None, **extra):
             self.data = data or {}
-            self.data.update(**extra)
+            self.data.update(extra)
 
         def __getitem__(self, item):
             return self.data[item]

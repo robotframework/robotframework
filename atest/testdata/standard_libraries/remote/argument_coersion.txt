@@ -17,9 +17,12 @@ Newline an tab
     '\\t\\n\\r'    '\\t\\n\\n'
 
 Binary
-    '\\x00\\x01\\xff'    binary=yes
+    '\\x00\\x01\\x02'    binary=yes
     'foo\\x00bar'        binary=yes
     u'\\x00\\x01'        binary=yes
+
+Binary in non-ASCII range
+    '\\x00\\x01\\xff'    binary=yes
 
 Binary with too big Unicode characters
     [Template]  Run Keyword And Expect Error
@@ -76,6 +79,7 @@ Dict with non-string keys
 
 Mapping
     ${MyMapping()}    {}
+    ${MyMapping(a=1)}    {'a': 1}
     ${MyMapping(a='one', b=2, c=[None, True])}    {'a': 'one', 'b': 2, 'c': ['', True]}
 
 

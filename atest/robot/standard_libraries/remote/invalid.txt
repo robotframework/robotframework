@@ -11,6 +11,7 @@ Invalid result dict
     Check Test Case    ${TESTNAME}
 
 Invalid char in XML
+    [Tags]    x-fails-on-ipy
     Check Test Case    ${TESTNAME}
 
 Exception
