@@ -175,9 +175,9 @@ class TagStat(Stat):
             or Stat.__cmp__(self, other)
 
     def __lt__(self, other):
-        key = (other.critical, other.non_critical, other.combined,
+        key = (other.critical, other.non_critical, bool(other.combined),
                self._norm_name)
-        other_key = (self.critical, self.non_critical, self.combined,
+        other_key = (self.critical, self.non_critical, bool(self.combined),
                      other._norm_name)
         return key < other_key
 
