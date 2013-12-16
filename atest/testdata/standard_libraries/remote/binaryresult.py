@@ -1,13 +1,7 @@
 import sys
 from xmlrpclib import Binary
 
-from remoteserver import RemoteServer
-
-
-class DirectResultRemoteServer(RemoteServer):
-
-    def run_keyword(self, name, args, kwargs=None):
-        return getattr(self.library, name)(*args, **(kwargs or {}))
+from remoteserver import DirectResultRemoteServer
 
 
 class BinaryResult(object):

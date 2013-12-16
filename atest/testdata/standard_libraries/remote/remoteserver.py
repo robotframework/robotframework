@@ -40,6 +40,12 @@ class RemoteServer(SimpleXMLRPCServer):
                     'return': result if result is not None else ''}
 
 
+class DirectResultRemoteServer(RemoteServer):
+
+    def run_keyword(self, name, args, kwargs=None):
+        return getattr(self.library, name)(*args, **(kwargs or {}))
+
+
 def announce_port(socket, port_file=None):
     port = socket.getsockname()[1]
     sys.stdout.write('Remote server starting on port %s.\n' % port)
