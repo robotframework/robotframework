@@ -5,8 +5,8 @@ Robot Framework with Python 3 compatibility
 - Still compatible with all officially supported
   Python 2.x platforms and versions, starting with 2.5
 - Not tested with Python 3 < 3.3
-- Invokes ``2to3`` in ``setup.py`` and ``atest/run_atests.py``
-  in addition to manual code changes
+- Invokes ``2to3`` in ``setup.py``, ``atest/run_atests.py``
+  and ``utest/run_utests.py`` in addition to manual code changes
 - Goal is to make code completely 2/3 compatible without the need for 2to3,
   at the cost of dropping Python 2.5 support
 
