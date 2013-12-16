@@ -1,6 +1,5 @@
 import sys
 import unittest
-from types import UnicodeType
 
 from robot.parsing.htmlreader import HtmlReader
 from robot.utils.asserts import *

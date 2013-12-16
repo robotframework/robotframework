@@ -1,5 +1,8 @@
 import unittest
-from UserDict import UserDict
+try:
+    from UserDict import UserDict
+except ImportError: # Python 3
+    from collections import UserDict
 
 from robot.utils import normalize, NormalizedDict
 from robot.utils.asserts import (assert_equals, assert_true, assert_false,

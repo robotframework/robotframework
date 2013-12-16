@@ -11,9 +11,13 @@ try:
 except ImportError:
     pass
 from array import array
-from UserDict import UserDict
-from UserList import UserList
-from UserString import UserString, MutableString
+try:
+    from UserDict import UserDict
+    from UserList import UserList
+    from UserString import UserString, MutableString
+except ImportError: # Python 3
+    from collections import UserDict, UserList, UserString
+    MutableString = UserString
 
 from robot.utils import is_dict_like, is_list_like, is_str_like
 from robot.utils.asserts import assert_equals

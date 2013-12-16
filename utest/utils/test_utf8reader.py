@@ -1,6 +1,9 @@
 from __future__ import with_statement
 from codecs import BOM_UTF8
-from StringIO import StringIO
+try:
+    from io import BytesIO
+except ImportError: # Python < 3
+    from StringIO import StringIO as BytesIO
 import os
 import tempfile
 import unittest
@@ -43,7 +46,7 @@ class TestUtf8ReaderWithBom(unittest.TestCase):
             assert_raises(ValueError, Utf8Reader, f)
 
     def test_stringio_is_ok(self):
-        f = StringIO(self.BOM + STRING.encode('UTF-8'))
+        f = BytesIO(self.BOM + STRING.encode('UTF-8'))
         with Utf8Reader(f) as reader:
             assert_equals(reader.read(), STRING)
         assert_equals(f.closed, False)
@@ -59,7 +62,7 @@ class TestUtf8ReaderWithBom(unittest.TestCase):
 
 
 class TestUtf8ReaderWithoutBom(TestUtf8ReaderWithBom):
-    BOM = ''
+    BOM = ''.encode()
 
 
 if __name__ == '__main__':

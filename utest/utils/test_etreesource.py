@@ -8,6 +8,7 @@ from robot.utils.etreewrapper import ETSource, ET
 from robot.errors import DataError
 
 IRONPYTHON = sys.platform == 'cli'
+PYTHON3 = sys.version_info[0] == 3
 PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
 
 
@@ -44,7 +45,7 @@ class TestETSource(unittest.TestCase):
         source = ETSource(xml)
         with source as src:
             content = src.read()
-            if not IRONPYTHON:
+            if not (IRONPYTHON or PYTHON3):
                 content = content.decode('UTF-8')
             assert_equals(content, xml)
         self._verify_string_representation(source, '<in-memory file>')

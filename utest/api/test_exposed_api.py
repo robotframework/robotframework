@@ -33,7 +33,9 @@ class TestExposedApi(unittest.TestCase):
 
 class TestTestSuiteBuilder(unittest.TestCase):
     misc = join(abspath(__file__), '..', '..', '..', 'atest', 'testdata', 'misc')
-    sources = [join(misc, n) for n in 'pass_and_fail.txt', 'normal.txt']
+    def sources(misc):
+        return [join(misc, n) for n in 'pass_and_fail.txt', 'normal.txt']
+    sources = sources(misc)
 
     def test_create_with_datasources_as_list(self):
         suite = api.TestSuiteBuilder().build(*self.sources)

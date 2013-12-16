@@ -72,7 +72,7 @@ class TestMinLogLevel(unittest.TestCase):
         assert_equals('INFO', self._context.min_level)
 
     def _messages(self, levels):
-        levels = levels[:]
+        levels = list(levels)
         random.shuffle(levels)
         for level in levels:
             self._context.message_level(level)

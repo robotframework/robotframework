@@ -1,4 +1,5 @@
 from __future__ import with_statement
+import time
 import unittest
 import tempfile
 import inspect
@@ -152,6 +153,7 @@ class TestImportByPath(unittest.TestCase):
         importer = Importer(name, self.logger)
         sys_path_before = sys.path[:]
         try:
+            time.sleep(2)
             return importer.import_class_or_module_by_path(path)
         finally:
             assert_equals(sys.path, sys_path_before)

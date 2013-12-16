@@ -1,5 +1,8 @@
 import unittest
-from StringIO import StringIO
+try:
+    from io import BytesIO
+except ImportError: # Python < 3
+    from StringIO import StringIO as BytesIO
 
 from robot.parsing.tsvreader import TsvReader
 from robot.parsing.model import TestCaseFile
@@ -19,7 +22,7 @@ class TestTsvReader(unittest.TestCase):
         robot.parsing.populators.PROCESS_CURDIR = self._orig_curdir
 
     def test_start_table(self):
-        tsv = StringIO('''*SettING*\t*  Value  *\t*V*
+        tsv = BytesIO('''*SettING*\t*  Value  *\t*V*
 ***Variable
 
 *Not*Table*
@@ -27,13 +30,13 @@ class TestTsvReader(unittest.TestCase):
 Keyword*\tNot a table because doesn't start with '*'
 
 *******************T*e*s*t*********C*a*s*e************\t***********\t******\t*
-''')
+'''.encode())
         TsvReader().read(tsv, FromFilePopulator(self.tcf))
         assert_equals(self.tcf.setting_table.name, 'SettING')
         assert_equals(self.tcf.setting_table.header, ['SettING','Value','V'])
 
     def test_rows(self):
-        tsv = StringIO('''Ignored text before tables...
+        tsv = BytesIO('''Ignored text before tables...
 Mote\tignored\text
 *Setting*\t*Value*\t*Value*
 Document\tWhatever\t\t\\\t
@@ -42,7 +45,7 @@ Default Tags\tt1\tt2\tt3\t\t
 *Variable*\tWhatever
 \\ \\ 2 escaped spaces before and after \\ \\\t\\ \\ value \\ \\
 
-''')
+'''.encode())
         TsvReader().read(tsv, FromFilePopulator(self.tcf))
         assert_equals(self.tcf.setting_table.doc.value, 'Whatever  ')
         assert_equals(self.tcf.setting_table.default_tags.value, ['t1','t2','t3'])
@@ -51,7 +54,7 @@ Default Tags\tt1\tt2\tt3\t\t
 
 
     def test_quotes(self):
-        tsv = StringIO('''*Variable*\t*Value*
+        tsv = BytesIO('''*Variable*\t*Value*
 ${v}\tHello
 ${v}\t"Hello"
 ${v}\t"""Hello"""
@@ -60,7 +63,7 @@ ${v}\t"Hel""lo"
 ${v}\t"""Hel "" """" lo"""""""
 ${v}\t"Hello
 ${v}\tHello"
-''')
+'''.encode())
         TsvReader().read(tsv, FromFilePopulator(self.tcf))
         actual = [variable for variable in self.tcf.variable_table.variables]
         expected = ['Hello','Hello','"Hello"','""Hello""','Hel"lo',

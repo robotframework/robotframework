@@ -30,7 +30,7 @@ class TestCutting(unittest.TestCase):
     def setUp(self):
         self.lines = [ 'my error message %d' % i for i in range(_MAX_ERROR_LINES+1) ]
         self.result = cut_long_message('\n'.join(self.lines)).splitlines()
-        self.limit = _MAX_ERROR_LINES/2
+        self.limit = _MAX_ERROR_LINES//2
 
     def test_more_than_max_number_of_lines(self):
         assert_equal(len(self.result), _MAX_ERROR_LINES+1)
@@ -63,8 +63,8 @@ class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
         assert_equal(sum(_count_line_lengths(self.result)), _MAX_ERROR_LINES+1)
 
     def test_correct_lines(self):
-        excpected = self.lines[:_MAX_ERROR_LINES/2] + [_ERROR_CUT_EXPLN] \
-                + self.lines[-_MAX_ERROR_LINES/2+1:]
+        excpected = self.lines[:_MAX_ERROR_LINES//2] + [_ERROR_CUT_EXPLN] \
+                + self.lines[-_MAX_ERROR_LINES//2+1:]
         assert_equal(self.result, excpected)
 
     def test_every_line_longer_than_limit(self):
@@ -81,7 +81,7 @@ class TestCutHappensInsideLine(unittest.TestCase):
 
     def test_long_line_cut_before_cut_message(self):
         lines = ['line %d' % i for i in range(_MAX_ERROR_LINES)]
-        index = _MAX_ERROR_LINES/2-1
+        index = _MAX_ERROR_LINES//2-1
         lines[index] = 'abcdefgh' * _MAX_ERROR_LINE_LENGTH
         result = cut_long_message('\n'.join(lines)).splitlines()
         self._assert_basics(result, lines)
@@ -90,7 +90,7 @@ class TestCutHappensInsideLine(unittest.TestCase):
 
     def test_long_line_cut_after_cut_message(self):
         lines = ['line %d' % i for i in range(_MAX_ERROR_LINES)]
-        index = _MAX_ERROR_LINES/2
+        index = _MAX_ERROR_LINES//2
         lines[index] = 'abcdefgh' * _MAX_ERROR_LINE_LENGTH
         result = cut_long_message('\n'.join(lines)).splitlines()
         self._assert_basics(result, lines)
