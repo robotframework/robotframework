@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
 from robot.utils import html_escape
 
 from .itemlist import ItemList
@@ -51,8 +53,9 @@ class Message(ModelObject):
     def __unicode__(self):
         return self.message
 
-    def __str__(self):
-        return self.message
+    if sys.version_info[0] == 3:
+        def __str__(self):
+            return self.message
 
 
 class Messages(ItemList):
