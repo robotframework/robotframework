@@ -8,11 +8,16 @@ class RemoteServer(SimpleXMLRPCServer):
     def __init__(self, library, port=8270, port_file=None):
         SimpleXMLRPCServer.__init__(self, ('127.0.0.1', int(port)))
         self.library = library
+        self._shutdown = False
         self.register_function(self.get_keyword_names)
         self.register_function(self.get_keyword_arguments)
         self.register_function(self.run_keyword)
         announce_port(self.socket, port_file)
         self.serve_forever()
+
+    def serve_forever(self):
+        while not self._shutdown:
+            self.handle_request()
 
     def get_keyword_names(self):
         return [attr for attr in dir(self.library) if attr[0] != '_']
@@ -43,7 +48,11 @@ class RemoteServer(SimpleXMLRPCServer):
 class DirectResultRemoteServer(RemoteServer):
 
     def run_keyword(self, name, args, kwargs=None):
-        return getattr(self.library, name)(*args, **(kwargs or {}))
+        try:
+            return getattr(self.library, name)(*args, **(kwargs or {}))
+        except SystemExit:
+            self._shutdown = True
+            return {'status': 'PASS'}
 
 
 def announce_port(socket, port_file=None):

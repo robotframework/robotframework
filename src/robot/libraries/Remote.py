@@ -114,14 +114,13 @@ class ArgumentCoercer(object):
 class RemoteResult(object):
 
     def __init__(self, result):
-        try:
-            self.status = result['status']
-            self.output = self._get(result, 'output')
-            self.return_ = self._get(result, 'return')
-            self.error = self._get(result, 'error')
-            self.traceback = self._get(result, 'traceback')
-        except (KeyError, AttributeError):
+        if not (is_dict_like(result) and 'status' in result):
             raise RuntimeError('Invalid remote result dictionary: %s' % result)
+        self.status = result['status']
+        self.output = self._get(result, 'output')
+        self.return_ = self._get(result, 'return')
+        self.error = self._get(result, 'error')
+        self.traceback = self._get(result, 'traceback')
 
     def _get(self, result, key):
         value = result.get(key, '')
