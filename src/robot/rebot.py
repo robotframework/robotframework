@@ -314,9 +314,7 @@ class Rebot(RobotFramework):
 
     def main(self, datasources, **options):
         settings = RebotSettings(options)
-        LOGGER.register_console_logger(colors=settings['MonitorColors'],
-                                       stdout=settings['StdOut'],
-                                       stderr=settings['StdErr'])
+        LOGGER.register_console_logger(**settings.console_logger_config)
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
         if rc < 0:
