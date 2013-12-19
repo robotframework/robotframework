@@ -67,6 +67,10 @@ class Tags(object):
             return self.__unicode__()
         return unicode(self).encode('UTF-8')
 
+    if sys.version_info[0] == 3:
+        def __bytes__(self):
+            return str(self).encode('UTF-8')
+
     def __getitem__(self, index):
         item = self._tags[index]
         return item if not isinstance(index, slice) else Tags(item)
@@ -116,6 +120,10 @@ class _SingleTagPattern(object):
 
     def __unicode__(self):
         return self._matcher.pattern
+
+    if sys.version_info[0] == 3:
+        def __str__(self):
+            return self._matcher.pattern
 
 
 class _AndTagPattern(object):

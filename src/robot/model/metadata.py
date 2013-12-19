@@ -29,3 +29,7 @@ class Metadata(NormalizedDict):
         if sys.version_info[0] == 3:
             return self.__unicode__()
         return unicode(self).encode('ASCII', 'replace')
+
+    if sys.version_info[0] == 3:
+        def __bytes__(self):
+            return str(self).encode('ASCII', 'replace')

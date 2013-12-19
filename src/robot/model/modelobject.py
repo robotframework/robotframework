@@ -29,5 +29,9 @@ class ModelObject(object):
             return self.__unicode__()
         return unicode(self).encode('ASCII', 'replace')
 
+    if sys.version_info[0] == 3:
+        def __bytes__(self):
+            return str(self).encode('ASCII', 'replace')
+
     def __repr__(self):
         return repr(str(self))
