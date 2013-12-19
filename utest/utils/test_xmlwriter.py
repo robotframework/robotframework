@@ -1,10 +1,13 @@
 from __future__ import with_statement
+import sys
 import os
 import unittest
 import tempfile
 
 from robot.utils import XmlWriter, ET, ETSource
 from robot.utils.asserts import *
+
+PY3 = sys.version_info[0] == 3
 
 PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')
 
@@ -102,33 +105,34 @@ class TestXmlWriter(unittest.TestCase):
         assert_raises(IOError, XmlWriter, os.path.dirname(__file__))
 
     def test_custom_encoding(self):
+        encoding='ISO-8859-1'
         self.writer.close()
-        self.writer = XmlWriter(PATH, encoding='ISO-8859-1')
+        self.writer = XmlWriter(PATH, encoding=encoding)
         self.writer.element('test', u'hyv\xe4')
-        self._verify_content('encoding="ISO-8859-1"')
-        self._verify_node(None, 'test', u'hyv\xe4')
+        self._verify_content('encoding="ISO-8859-1"', encoding=encoding)
+        self._verify_node(None, 'test', u'hyv\xe4', encoding=encoding)
 
-    def _verify_node(self, node, name, text=None, attrs={}):
+    def _verify_node(self, node, name, text=None, attrs={}, encoding='UTF-8'):
         if node is None:
-            node = self._get_root()
+            node = self._get_root(encoding=encoding)
         assert_equals(node.tag, name)
         if text is not None:
             assert_equals(node.text, text)
         assert_equals(node.attrib, attrs)
 
-    def _verify_content(self, expected):
-        content = self._get_content()
+    def _verify_content(self, expected, encoding='UTF-8'):
+        content = self._get_content(encoding)
         assert_true(expected in content,
                     'Failed to find:\n%s\n\nfrom:\n%s' % (expected, content))
 
-    def _get_root(self):
+    def _get_root(self, encoding='UTF-8'):
         self.writer.close()
-        with ETSource(PATH) as source:
+        with ETSource(PATH, encoding=encoding) as source:
             return ET.parse(source).getroot()
 
-    def _get_content(self):
+    def _get_content(self, encoding='UTF-8'):
         self.writer.close()
-        with open(PATH) as f:
+        with open(PATH, encoding=encoding) if PY3 else open(PATH) as f:
             return f.read()
 
 

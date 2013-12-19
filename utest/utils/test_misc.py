@@ -10,6 +10,8 @@ if sys.platform.startswith('java'):
 
 IPY = sys.platform == 'cli'
 
+PY3 = sys.version_info[0] == 3
+
 
 class TestMiscUtils(unittest.TestCase):
 
@@ -73,13 +75,15 @@ class TestGetdoc(unittest.TestCase):
     def test_non_ascii_doc_in_utf8(self):
         def func():
             """Hyv\xc3\xa4 \xc3\xa4iti!"""
-        expected = u'Hyv\xe4 \xe4iti!' if not IPY else u'Hyv\xc3\xa4 \xc3\xa4iti!'
+        expected = (u'Hyv\xe4 \xe4iti!' if not (IPY or PY3)
+                    else u'Hyv\xc3\xa4 \xc3\xa4iti!')
         assert_equals(getdoc(func), expected)
 
     def test_non_ascii_doc_not_in_utf8(self):
         def func():
             """Hyv\xe4 \xe4iti!"""
-        expected = 'Hyv\\xe4 \\xe4iti!' if not IPY else u'Hyv\xe4 \xe4iti!'
+        expected = ('Hyv\\xe4 \\xe4iti!' if not (IPY or PY3)
+                    else u'Hyv\xe4 \xe4iti!')
         assert_equals(getdoc(func), expected)
 
     def test_unicode_doc(self):

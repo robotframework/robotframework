@@ -141,6 +141,8 @@ class StubSettings(object):
 
 class ClosableOutput(object):
 
+    encoding = None
+
     def __init__(self, path):
         self._output = StringIO()
         self._path = path
