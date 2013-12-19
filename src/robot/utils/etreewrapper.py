@@ -17,6 +17,8 @@ import os.path
 from StringIO import StringIO
 
 
+PY3 = sys.version_info[0] == 3
+
 _IRONPYTHON = sys.platform == 'cli'
 _ERROR = 'No valid ElementTree XML parser module found'
 
@@ -53,8 +55,9 @@ if ET.VERSION < '1.3' and hasattr(ET, 'tostringlist'):
 
 class ETSource(object):
 
-    def __init__(self, source):
+    def __init__(self, source, encoding='UTF-8'):
         self._source = source
+        self._encoding = encoding
         self._opened = None
 
     def __enter__(self):
@@ -90,16 +93,14 @@ class ETSource(object):
         # especially on Windows: http://bugs.jython.org/issue1598
         # The bug has now been fixed in ET and worked around in Jython 2.5.2.
 
-        if sys.version_info[0] == 3:
-
+        if PY3:
             def _open_file(self, source):
-                return open(source, 'r')
+                return open(source, 'r', encoding=self._encoding)
 
             def _open_string_io(self, source):
                 return StringIO(source)
 
         else:
-
             def _open_file(self, source):
                 return open(source, 'rb')
 
