@@ -178,7 +178,9 @@ class TestSuite(model.TestSuite):
         """
         STOP_SIGNAL_MONITOR.start()
         IMPORTER.reset()
-        settings = settings or RobotSettings(options)
+        if not settings:
+            settings = RobotSettings(options)
+            LOGGER.register_console_logger(**settings.console_logger_config)
         pyloggingconf.initialize(settings['LogLevel'])
         init_global_variables(settings)
         output = Output(settings)
