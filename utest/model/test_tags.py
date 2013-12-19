@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
@@ -89,10 +90,18 @@ class TestTags(unittest.TestCase):
         assert_equal(unicode(Tags(['y', "X'X", 'Y'])), "[X'X, y]")
         assert_equal(unicode(Tags([u'\xe4', 'a'])), u'[a, \xe4]')
 
-    def test_str(self):
-        assert_equal(str(Tags()), '[]')
-        assert_equal(str(Tags(['y', "X'X"])), "[X'X, y]")
-        assert_equal(str(Tags([u'\xe4', 'a'])), '[a, \xc3\xa4]')
+    if sys.version_info[0] < 3:
+        def test_str(self):
+            assert_equal(str(Tags()), '[]')
+            assert_equal(str(Tags(['y', "X'X"])), "[X'X, y]")
+            assert_equal(str(Tags([u'\xe4', 'a'])), '[a, \xc3\xa4]')
+
+    else:
+        def test_bytes(self):
+            assert_equal(bytes(Tags()), '[]'.encode())
+            assert_equal(bytes(Tags(['y', "X'X"])), "[X'X, y]".encode())
+            assert_equal(bytes(Tags([u'\xe4', 'a'])),
+                         '[a, \xc3\xa4]'.encode('latin'))
 
     def test_repr(self):
         for tags in ([], ['y', "X'X"], [u'\xe4', 'a']):

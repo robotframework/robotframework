@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from robot.model import Message
@@ -32,10 +33,17 @@ class TestStringRepresentation(unittest.TestCase):
         assert_equal(unicode(self.ascii), 'Kekkonen')
         assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
 
-    def test_str(self):
-        assert_equal(str(self.empty), '')
-        assert_equal(str(self.ascii), 'Kekkonen')
-        assert_equal(str(self.non_ascii), 'hyv? nimi')
+    if sys.version_info[0] < 3:
+        def test_str(self):
+            assert_equal(str(self.empty), '')
+            assert_equal(str(self.ascii), 'Kekkonen')
+            assert_equal(str(self.non_ascii), 'hyv? nimi')
+
+    else:
+        def test_bytes(self):
+            assert_equal(bytes(self.empty), ''.encode())
+            assert_equal(bytes(self.ascii), 'Kekkonen'.encode())
+            assert_equal(bytes(self.non_ascii), 'hyv? nimi'.encode())
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Message(), 'attr', 'value')
