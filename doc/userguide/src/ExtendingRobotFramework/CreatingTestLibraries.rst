@@ -1257,10 +1257,9 @@ API has a benefit that the log messages have accurate timestamps_. An
 obvious limitation is that test libraries using this logging API have
 a dependency to Robot Framework.
 
-The public logging API is documented as part of the API documentation but
-here is a simple usage example:
-
-.. FIXME: Link to API docs.
+The public logging API `is thoroughly documented`__ as part of the API
+documentation at https://robot-framework.readthedocs.org. Below is
+a simple usage example:
 
 .. sourcecode:: python
 
@@ -1271,6 +1270,8 @@ here is a simple usage example:
        do_something()
        logger.info('<i>This</i> is a boring example', html=True)
        logger.console('Hello, console!')
+
+__ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.api.html#module-robot.api.logger
 
 Using Python's standard :code:`logging` module
 ``````````````````````````````````````````````
