@@ -1,6 +1,8 @@
 import unittest
 import sys
 
+PY3 = sys.version_info[0] == 3
+
 from robot.variables import variables, is_list_var, is_scalar_var, is_var
 from robot.errors import *
 from robot import utils
@@ -267,19 +269,23 @@ class TestVariables(unittest.TestCase):
         assert_equals(self.varz.replace_scalar('${${1}+${2}}'), 3)
         assert_equals(self.varz.replace_scalar('${${1}-${2}}'), -1)
         assert_equals(self.varz.replace_scalar('${${1}*${2}}'), 2)
-        assert_equals(self.varz.replace_scalar('${${1}/${2}}'), 0)
+        assert_equals(self.varz.replace_scalar('${${1}/${2}}'),
+                      0.5 if PY3 else 0)
+        assert_equals(self.varz.replace_scalar('${${1}//${2}}'), 0)
 
     def test_math_with_internal_vars_with_spaces(self):
         assert_equals(self.varz.replace_scalar('${${1} + ${2.5}}'), 3.5)
         assert_equals(self.varz.replace_scalar('${${1} - ${2} + 1}'), 0)
         assert_equals(self.varz.replace_scalar('${${1} * ${2} - 1}'), 1)
         assert_equals(self.varz.replace_scalar('${${1} / ${2.0}}'), 0.5)
+        assert_equals(self.varz.replace_scalar('${${1} // ${2.0}}'), 0.0)
 
     def test_math_with_internal_vars_does_not_work_if_first_var_is_float(self):
         assert_raises(DataError, self.varz.replace_scalar, '${${1.1}+${2}}')
         assert_raises(DataError, self.varz.replace_scalar, '${${1.1} - ${2}}')
         assert_raises(DataError, self.varz.replace_scalar, '${${1.1} * ${2}}')
         assert_raises(DataError, self.varz.replace_scalar, '${${1.1}/${2}}')
+        assert_raises(DataError, self.varz.replace_scalar, '${${1.1}//${2}}')
 
     def test_list_variable_as_scalar(self):
         self.varz['@{name}'] = exp = ['spam', 'eggs']
