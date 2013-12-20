@@ -174,3 +174,8 @@ class NormalizedDict(UserDict):
         if not isinstance(other, NormalizedDict) and isinstance(other, mappings):
             other = NormalizedDict(other)
         return UserDict.__cmp__(self, other)
+
+    def __eq__(self, other):
+        if not isinstance(other, NormalizedDict) and isinstance(other, mappings):
+            other = NormalizedDict(other).data
+        return self.data == other
