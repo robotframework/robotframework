@@ -36,7 +36,8 @@ class RunningTestCase(unittest.TestCase):
     def _assert_output(self, stream, expected):
         output = stream.getvalue()
         if expected:
-            self._assert_output_contains(output, expected)
+            for content, count in expected:
+                self._assert_output_contains(output, content, count)
         else:
             self._assert_no_output(output)
 
@@ -44,11 +45,10 @@ class RunningTestCase(unittest.TestCase):
         if output:
             raise AssertionError('Expected output to be empty:\n%s' % output)
 
-    def _assert_output_contains(self, output, expected):
-        for content, count in expected:
-            if output.count(content) != count:
-                raise AssertionError("'%s' not %d times in output:\n%s"
-                                     % (content, count, output))
+    def _assert_output_contains(self, output, content, count):
+        if output.count(content) != count:
+            raise AssertionError("'%s' not %d times in output:\n%s"
+                                 % (content, count, output))
 
     def _remove_files(self):
         for path in self.remove_files:
