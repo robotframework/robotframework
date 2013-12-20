@@ -1,3 +1,7 @@
+import sys
+
+PY3 = sys.version_info[0] == 3
+
 from StringIO import StringIO
 try:
     import json
@@ -28,7 +32,10 @@ class TestJsonDumper(unittest.TestCase):
         self._test('123', '"123"')
 
     def test_dump_non_ascii_string(self):
-        self._test(u'hyv\xe4', u'"hyv\xe4"'.encode('UTF-8'))
+        expected = u'"hyv\xe4"'
+        if not PY3:
+            expected = expected.encode('UTF-8')
+        self._test(u'hyv\xe4', expected)
 
     def test_escape_string(self):
         self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')
