@@ -1,7 +1,10 @@
 import unittest
+import sys
 import re
 import time
 import datetime
+
+PY3 = sys.version_info[0] == 3
 
 from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
                                  assert_true, assert_not_none)
@@ -176,7 +179,8 @@ class TestTime(unittest.TestCase):
         for elapsed, expected in [(0, '00:00:00.000'),
                                   (0.1, '00:00:00.000'),
                                   (0.49999, '00:00:00.000'),
-                                  (0.5, '00:00:00.001'),
+                                  (0.5, '00:00:00.000' if PY3
+                                        else '00:00:00.001'),
                                   (1, '00:00:00.001'),
                                   (42, '00:00:00.042'),
                                   (999, '00:00:00.999'),
@@ -202,7 +206,8 @@ class TestTime(unittest.TestCase):
                                   (1, '00:00:00'),
                                   (499, '00:00:00'),
                                   (499.999, '00:00:00'),
-                                  (500, '00:00:01'),
+                                  (500, '00:00:00' if PY3
+                                        else '00:00:01'),
                                   (999, '00:00:01'),
                                   (1000, '00:00:01'),
                                   (1499, '00:00:01'),
@@ -211,12 +216,15 @@ class TestTime(unittest.TestCase):
                                   (59999, '00:01:00'),
                                   (60000, '00:01:00'),
                                   (654321, '00:10:54'),
-                                  (654500, '00:10:55'),
+                                  (654500, '00:10:54' if PY3
+                                           else '00:10:55'),
                                   (3599999, '01:00:00'),
                                   (3600000, '01:00:00'),
                                   (359999999, '100:00:00'),
                                   (360000000, '100:00:00'),
-                                  (360000500, '100:00:01')]:
+                                  (360000500, '100:00:00' if PY3
+                                              else '100:00:01'),
+                                  ]:
             assert_equal(elapsed_time_to_string(elapsed, include_millis=False),
                          expected, elapsed)
             if expected != '00:00:00':
