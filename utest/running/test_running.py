@@ -1,14 +1,16 @@
+import sys
 import unittest
+
 from StringIO import StringIO
 from os.path import abspath, dirname, normpath, join
 
 from robot.utils.asserts import assert_equals
 from robot.running import TestSuite, TestSuiteBuilder
+from resources.runningtestcase import RunningTestCase
 
 
 CURDIR = dirname(abspath(__file__))
 DATADIR = normpath(join(CURDIR, '..', '..', 'atest', 'testdata', 'misc'))
-
 
 def run(suite, **kwargs):
     result = suite.run(output='NONE', stdout=StringIO(), stderr=StringIO(),
@@ -162,6 +164,30 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
                         'Also parent suite teardown failed:\nAssertionError\n\n'
                         'Also parent suite teardown failed:\nTop level')
 
+
+class TestCustomStreams(RunningTestCase):
+
+    def test_stdout_and_stderr(self):
+        self._run()
+        self._assert_output(sys.__stdout__,
+                            [('T1', 1),
+                             ('1 critical test, 1 passed, 0 failed', 1)])
+        self._assert_output(sys.__stderr__, [('hello world', 1)])
+
+    def test_custom_stdout_and_stderr(self):
+        custom_stdout, custom_stderr = StringIO(), StringIO()
+        self._run(custom_stdout, custom_stderr)
+        self._assert_normal_stdout_stderr_are_empty()
+        self._assert_output(custom_stdout, [('T1', 1)])
+        self._assert_output(custom_stderr, [('hello world', 1)])
+
+    def _run(self, stdout=None, stderr=None):
+        suite = TestSuite(name='Suite')
+        suite.tests.create(name='T1').keywords.create('Log', args=['hello world', 'WARN'])
+        suite.run(stdout=stdout, stderr=stderr)
+
+    def _assert_normal_stdout_stderr_are_empty(self):
+        self._assert_outputs()
 
 if __name__ == '__main__':
     unittest.main()

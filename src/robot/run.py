@@ -389,11 +389,7 @@ class RobotFramework(Application):
 
     def main(self, datasources, **options):
         settings = RobotSettings(options)
-        LOGGER.register_console_logger(width=settings['MonitorWidth'],
-                                       colors=settings['MonitorColors'],
-                                       markers=settings['MonitorMarkers'],
-                                       stdout=settings['StdOut'],
-                                       stderr=settings['StdErr'])
+        LOGGER.register_console_logger(**settings.console_logger_config)
         LOGGER.info('Settings:\n%s' % unicode(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped'],

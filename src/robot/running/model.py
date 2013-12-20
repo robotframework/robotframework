@@ -176,9 +176,11 @@ class TestSuite(model.TestSuite):
         more examples, including how to construct executable test suites and
         how to create logs and reports based on the execution results.
         """
+        if not settings:
+            settings = RobotSettings(options)
+            LOGGER.register_console_logger(**settings.console_logger_config)
         STOP_SIGNAL_MONITOR.start()
         IMPORTER.reset()
-        settings = settings or RobotSettings(options)
         pyloggingconf.initialize(settings['LogLevel'])
         init_global_variables(settings)
         output = Output(settings)
