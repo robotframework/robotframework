@@ -20,7 +20,7 @@ class TestETSource(unittest.TestCase):
             if IRONPYTHON:
                 assert_equals(src, PATH)
             else:
-                assert_true(src.read().startswith('from __future__'))
+                assert_true(src.read().startswith('from __future__'.encode()))
         self._verify_string_representation(source, PATH)
         if IRONPYTHON:
             assert_true(source._opened is None)
@@ -36,7 +36,7 @@ class TestETSource(unittest.TestCase):
         assert_true(source._opened is None)
 
     def test_byte_string(self):
-        self._test_string('\n<tag>content</tag>\n')
+        self._test_string('\n<tag>content</tag>\n'.encode())
 
     def test_unicode_string(self):
         self._test_string(u'\n<tag>hyv\xe4</tag>\n')
