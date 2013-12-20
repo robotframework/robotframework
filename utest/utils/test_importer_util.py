@@ -8,6 +8,9 @@ import sys
 import os
 import re
 from os.path import abspath, basename, dirname, exists, join, normpath
+from itertools import repeat
+
+PY3 = sys.version_info[0] == 3
 
 from robot.errors import DataError
 from robot.utils.importer import Importer, ByPathImporter
@@ -377,7 +380,8 @@ class TestErrorDetails(unittest.TestCase):
 
     def test_structure(self):
         error = self._failing_import('NoneExisting')
-        message = "Importing 'NoneExisting' failed: ImportError: No module named NoneExisting"
+        message = ("Importing 'NoneExisting' failed: ImportError: No module named "
+                   + ("'%s'" if PY3 else "%s") % 'NoneExisting')
         expected = (message, self._get_traceback(error),
                     self._get_pythonpath(error), self._get_classpath(error))
         assert_equals(unicode(error), '\n'.join(expected).strip())

@@ -1,6 +1,8 @@
 import unittest
 import sys
 
+PY3 = sys.version_info[0] == 3
+
 from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
                                          _ModuleLibrary, _DynamicLibrary)
 from robot.utils.asserts import *
@@ -79,7 +81,8 @@ class TestImports(unittest.TestCase):
                          [("keyword from submodule", None)])
 
     def test_import_non_existing_module(self):
-        msg = "Importing test library '%s' failed: ImportError: No module named %s"
+        msg = ("Importing test library '%s' failed: ImportError: No module named "
+               + "'%s'" if PY3 else "%s")
         for name in 'nonexisting', 'nonexi.sting':
             error = assert_raises(DataError, TestLibrary, name)
             assert_equals(unicode(error).splitlines()[0],
