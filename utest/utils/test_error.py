@@ -24,6 +24,8 @@ class TestGetErrorDetails(unittest.TestCase):
                     (AssertionError, 'Msg\nin 3\nlines', 'Msg\nin 3\nlines'),
                     (ValueError, '2\nlines', 'ValueError: 2\nlines')]:
             try:
+                if not msg:
+                    raise exception
                 raise exception, msg
             except:
                 message, details = get_error_details()
