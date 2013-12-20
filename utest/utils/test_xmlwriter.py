@@ -110,11 +110,11 @@ class TestXmlWriter(unittest.TestCase):
         self.writer = XmlWriter(PATH, encoding=encoding)
         self.writer.element('test', u'hyv\xe4')
         self._verify_content('encoding="ISO-8859-1"', encoding=encoding)
-        self._verify_node(None, 'test', u'hyv\xe4', encoding=encoding)
+        self._verify_node(None, 'test', u'hyv\xe4')
 
-    def _verify_node(self, node, name, text=None, attrs={}, encoding='UTF-8'):
+    def _verify_node(self, node, name, text=None, attrs={}):
         if node is None:
-            node = self._get_root(encoding=encoding)
+            node = self._get_root()
         assert_equals(node.tag, name)
         if text is not None:
             assert_equals(node.text, text)
@@ -125,9 +125,9 @@ class TestXmlWriter(unittest.TestCase):
         assert_true(expected in content,
                     'Failed to find:\n%s\n\nfrom:\n%s' % (expected, content))
 
-    def _get_root(self, encoding='UTF-8'):
+    def _get_root(self):
         self.writer.close()
-        with ETSource(PATH, encoding=encoding) as source:
+        with ETSource(PATH) as source:
             return ET.parse(source).getroot()
 
     def _get_content(self, encoding='UTF-8'):
