@@ -14,10 +14,13 @@
 
 import sys
 import os.path
-from StringIO import StringIO
-
 
 PY3 = sys.version_info[0] == 3
+
+if PY3:
+    from io import BytesIO
+from StringIO import StringIO
+
 
 _IRONPYTHON = sys.platform == 'cli'
 _ERROR = 'No valid ElementTree XML parser module found'
@@ -55,9 +58,8 @@ if ET.VERSION < '1.3' and hasattr(ET, 'tostringlist'):
 
 class ETSource(object):
 
-    def __init__(self, source, encoding='UTF-8'):
+    def __init__(self, source):
         self._source = source
-        self._encoding = encoding
         self._opened = None
 
     def __enter__(self):
@@ -84,6 +86,8 @@ class ETSource(object):
             return self._open_file(self._source)
         if isinstance(self._source, basestring):
             return self._open_string_io(self._source)
+        if PY3 and isinstance(self._source, bytes):
+            return self._open_bytes_io(self._source)
         return None
 
     if not _IRONPYTHON:
@@ -92,18 +96,17 @@ class ETSource(object):
         # it didn't close files it had opened. This caused problems with Jython
         # especially on Windows: http://bugs.jython.org/issue1598
         # The bug has now been fixed in ET and worked around in Jython 2.5.2.
+        def _open_file(self, source):
+            return open(source, 'rb')
 
         if PY3:
-            def _open_file(self, source):
-                return open(source, 'r', encoding=self._encoding)
-
             def _open_string_io(self, source):
                 return StringIO(source)
 
-        else:
-            def _open_file(self, source):
-                return open(source, 'rb')
+            def _open_bytes_io(self, source):
+                return BytesIO(source)
 
+        else:
             def _open_string_io(self, source):
                 return StringIO(source.encode('UTF-8'))
 
