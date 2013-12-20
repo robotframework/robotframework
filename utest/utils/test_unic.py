@@ -1,6 +1,8 @@
 import unittest
 import sys
 
+PY3 = sys.version_info[0] == 3
+
 from robot.utils import unic, safe_repr
 from robot.utils.asserts import assert_equals, assert_true
 
@@ -72,7 +74,7 @@ class TestUnic(unittest.TestCase):
     def test_bytes_below_128(self):
         assert_equals(unic('\x00-\x01-\x02-\x7f'), u'\x00-\x01-\x02-\x7f')
 
-    if not IPY:
+    if not (IPY or PY3):
 
         def test_bytes_above_128(self):
             assert_equals(unic('hyv\xe4'), u'hyv\\xe4')
@@ -107,14 +109,15 @@ class TestSafeRepr(unittest.TestCase):
         assert_equals(safe_repr(ReprFails()),
                       UNREPR % ('ReprFails', 'Failure in __repr__'))
 
-    def test_repr_of_unicode_has_u_prefix(self):
-        assert_equals(safe_repr(u'foo'), "u'foo'")
-        assert_equals(safe_repr(u"f'o'o"), "u\"f'o'o\"")
+    if not PY3:
+        def test_repr_of_unicode_has_u_prefix(self):
+            assert_equals(safe_repr(u'foo'), "u'foo'")
+            assert_equals(safe_repr(u"f'o'o"), "u\"f'o'o\"")
 
-    def test_unicode_items_in_list_repr_have_u_prefix(self):
-        assert_equals(safe_repr([]), '[]')
-        assert_equals(safe_repr([u'foo']), "[u'foo']")
-        assert_equals(safe_repr([u'a', 1, u"'"]), "[u'a', 1, u\"'\"]")
+        def test_unicode_items_in_list_repr_have_u_prefix(self):
+            assert_equals(safe_repr([]), '[]')
+            assert_equals(safe_repr([u'foo']), "[u'foo']")
+            assert_equals(safe_repr([u'a', 1, u"'"]), "[u'a', 1, u\"'\"]")
 
 
 class UnicodeRepr(object):
