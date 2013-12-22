@@ -36,7 +36,8 @@ class _MarkupWriter(object):
                 output = open(output, 'w', encoding=encoding)
             else:
                 output = open(output, 'w')
-        self._encode_output = encoding and not hasattr(output, 'encoding')
+        self._encode_output = encoding and not (
+          PY3 and hasattr(output, 'encoding'))
         self.output = output
         self._encoding = encoding
         self._line_separator = self._encode(line_separator)
