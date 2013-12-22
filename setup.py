@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import re
 import sys
 import os
 from os.path import join, dirname
@@ -11,8 +12,13 @@ if 'develop' in sys.argv:
 with open(join(dirname(__file__), 'src', 'robot', 'version.py')) as py:
     exec(py.read())
 
+README = open(join(dirname(__file__), 'README.txt')).read()
 # Maximum width in Windows installer seems to be 70 characters -------|
-DESCRIPTION = """
+DESCRIPTION = re.match(
+  r"(.|\n)*Robot Framework\n"
+          "===============\n\n",
+  README
+  ).group(0) + """
 Robot Framework is a generic test automation framework for acceptance
 testing and acceptance test-driven development (ATDD). It has
 easy-to-use tabular test data syntax and utilizes the keyword-driven
