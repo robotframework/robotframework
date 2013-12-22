@@ -516,6 +516,11 @@ class _Dictionary:
         `Keys` are returned in sorted order. The given `dictionary` is never
         altered by this keyword.
 
+        In *Python 3* keys are not sorted,
+        because most builtin types are not comparable to each other.
+        This issue needs a better solution in future releases...
+        Maybe imitate Python 2 sorting? Any suggestions? :)
+
         Example:
         | ${keys} = | Get Dictionary Keys | ${D3} |
         =>
@@ -534,6 +539,9 @@ class _Dictionary:
         Values are returned sorted according to keys. The given dictionary is
         never altered by this keyword.
 
+        In *Python 3* values are not sorted.
+        See `Get Dictionary Keys` for more details.
+
         Example:
         | ${values} = | Get Dictionary Values | ${D3} |
         =>
@@ -546,6 +554,9 @@ class _Dictionary:
 
         Items are returned sorted by keys. The given `dictionary` is not
         altered by this keyword.
+
+        In *Python 3* items are not sorted.
+        See `Get Dictionary Keys` for more details.
 
         Example:
         | ${items} = | Get Dictionary Items | ${D3} |
