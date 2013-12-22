@@ -1,8 +1,12 @@
 from __future__ import with_statement
+import sys
 import unittest
-try:
+
+PY3 = sys.version_info[0] == 3
+
+if PY3:
     from io import StringIO, BytesIO
-except ImportError: # Python < 3
+else:
     from StringIO import StringIO
     BytesIO = StringIO
 

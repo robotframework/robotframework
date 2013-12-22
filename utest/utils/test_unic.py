@@ -64,7 +64,7 @@ class TestUnic(unittest.TestCase):
         if JYTHON:
             # This is actually wrong behavior
             assert_equals(result, '[Hyv\\xe4, Hyv\\xe4]')
-        elif IPY:
+        elif IPY or PY3:
             # And so is this.
             assert_equals(result, '[Hyv\xe4, Hyv\xe4]')
         else:
@@ -94,9 +94,10 @@ class TestUnic(unittest.TestCase):
             # 'string_escape' escapes some chars we don't want to be escaped
             assert_equals(unic("\x00\xe4\n\t\r\\'"), u"\x00\xe4\n\t\r\\'")
 
-    def test_failure_in_unicode(self):
-        assert_equals(unic(UnicodeFails()),
-                      UNREPR % ('UnicodeFails', 'Failure in __unicode__'))
+    if not PY3:
+        def test_failure_in_unicode(self):
+            assert_equals(unic(UnicodeFails()),
+                          UNREPR % ('UnicodeFails', 'Failure in __unicode__'))
 
     def test_failure_in_str(self):
         assert_equals(unic(StrFails()),

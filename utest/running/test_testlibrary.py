@@ -82,7 +82,7 @@ class TestImports(unittest.TestCase):
 
     def test_import_non_existing_module(self):
         msg = ("Importing test library '%s' failed: ImportError: No module named "
-               + "'%s'" if PY3 else "%s")
+               + ("'%s'" if PY3 else "%s"))
         for name in 'nonexisting', 'nonexi.sting':
             error = assert_raises(DataError, TestLibrary, name)
             assert_equals(unicode(error).splitlines()[0],
