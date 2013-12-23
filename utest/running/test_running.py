@@ -181,6 +181,12 @@ class TestCustomStreams(RunningTestCase):
         self._assert_output(custom_stdout, [('T1', 1)])
         self._assert_output(custom_stderr, [('hello world', 1)])
 
+    def test_same_custom_stdout_and_stderr(self):
+        custom_output = StringIO()
+        self._run(custom_output, custom_output)
+        self._assert_normal_stdout_stderr_are_empty()
+        self._assert_output(custom_output, [('T1', 1), ('hello world', 1)])
+
     def _run(self, stdout=None, stderr=None):
         suite = TestSuite(name='Suite')
         suite.tests.create(name='T1').keywords.create('Log', args=['hello world', 'WARN'])
