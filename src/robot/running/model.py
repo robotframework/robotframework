@@ -151,23 +151,28 @@ class TestSuite(model.TestSuite):
         If such an option is used only once, it can be given also as a single
         string like ``variable='VAR:value'``.
 
+        To capture stdout and/or stderr streams, pass open file objects in as
+        special keyword arguments `stdout` and `stderr`, respectively. Note
+        that this works only in version 2.8.4 and newer.
+
         Only options related to the actual test execution have an effect.
         For example, options related to selecting test cases or creating
         logs and reports are silently ignored. The output XML generated
-        as part of the execution can be configured, though, including
+        as part of the execution can be configured, though. This includes
         disabling it with ``output=None``.
 
         Example::
 
+            stdout = StringIO()
             result = suite.run(variable='EXAMPLE:value',
                                critical='regression',
                                output='example.xml',
                                exitonfailure=True,
-                               skipteardownonexit=True)
+                               stdout=stdout)
             print result.return_code
 
         To save memory, the returned
-        :class:`~robot.result.executionresult.Result` object object does not
+        :class:`~robot.result.executionresult.Result` object does not
         have any information about the executed keywords. If that information
         is needed, the created output XML file needs to be read  using the
         :class:`~robot.result.resultbuilder.ExecutionResult` factory method.
@@ -175,6 +180,9 @@ class TestSuite(model.TestSuite):
         See the :mod:`package level <robot.running>` documentation for
         more examples, including how to construct executable test suites and
         how to create logs and reports based on the execution results.
+
+        See the :func:`robot.run <robot.run.run>` function for a higher-level
+        API for executing tests in files or directories.
         """
         if not settings:
             settings = RobotSettings(options)
