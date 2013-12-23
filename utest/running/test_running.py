@@ -170,27 +170,29 @@ class TestCustomStreams(RunningTestCase):
     def test_stdout_and_stderr(self):
         self._run()
         self._assert_output(sys.__stdout__,
-                            [('T1', 1),
+                            [('My Suite', 2), ('My Test', 1),
                              ('1 critical test, 1 passed, 0 failed', 1)])
-        self._assert_output(sys.__stderr__, [('hello world', 1)])
+        self._assert_output(sys.__stderr__, [('Hello, world!', 1)])
 
     def test_custom_stdout_and_stderr(self):
-        custom_stdout, custom_stderr = StringIO(), StringIO()
-        self._run(custom_stdout, custom_stderr)
+        stdout, stderr = StringIO(), StringIO()
+        self._run(stdout, stderr)
         self._assert_normal_stdout_stderr_are_empty()
-        self._assert_output(custom_stdout, [('T1', 1)])
-        self._assert_output(custom_stderr, [('hello world', 1)])
+        self._assert_output(stdout, [('My Suite', 2), ('My Test', 1)])
+        self._assert_output(stderr, [('Hello, world!', 1)])
 
     def test_same_custom_stdout_and_stderr(self):
-        custom_output = StringIO()
-        self._run(custom_output, custom_output)
+        output = StringIO()
+        self._run(output, output)
         self._assert_normal_stdout_stderr_are_empty()
-        self._assert_output(custom_output, [('T1', 1), ('hello world', 1)])
+        self._assert_output(output, [('My Suite', 2), ('My Test', 1),
+                                     ('Hello, world!', 1)])
 
-    def _run(self, stdout=None, stderr=None):
-        suite = TestSuite(name='Suite')
-        suite.tests.create(name='T1').keywords.create('Log', args=['hello world', 'WARN'])
-        suite.run(stdout=stdout, stderr=stderr)
+    def _run(self, stdout=None, stderr=None, **options):
+        suite = TestSuite(name='My Suite')
+        suite.variables.create('${MESSAGE}', 'Hello, world!')
+        suite.tests.create(name='My Test').keywords.create('Log', args=['${MESSAGE}', 'WARN'])
+        suite.run(stdout=stdout, stderr=stderr, **options)
 
     def _assert_normal_stdout_stderr_are_empty(self):
         self._assert_outputs()
