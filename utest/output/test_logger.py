@@ -38,8 +38,7 @@ class LoggerMock2(LoggerMock):
 class TestLogger(unittest.TestCase):
 
     def setUp(self):
-        self.logger = Logger()
-        self.logger.disable_automatic_console_logger()
+        self.logger = Logger(register_console_logger=False)
 
     def test_write_to_one_logger(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))
@@ -143,26 +142,26 @@ class TestLogger(unittest.TestCase):
 
     def test_automatic_console_logger_can_be_disabled(self):
         logger = Logger()
-        logger.disable_automatic_console_logger()
+        logger.unregister_console_logger()
         assert_equals(logger._loggers.all_loggers(), [])
 
     def test_automatic_console_logger_can_be_disabled_after_registering_logger(self):
         logger = Logger()
         mock = LoggerMock()
         logger.register_logger(mock)
-        logger.disable_automatic_console_logger()
+        logger.unregister_console_logger()
         self._number_of_registered_loggers_should_be(1, logger)
         assert_true(logger._loggers.all_loggers()[0].message.im_class is LoggerMock)
 
     def test_disabling_automatic_logger_multiple_times_has_no_effect(self):
         logger = Logger()
-        logger.disable_automatic_console_logger()
+        logger.unregister_console_logger()
         self._number_of_registered_loggers_should_be(0, logger)
-        logger.disable_automatic_console_logger()
-        logger.disable_automatic_console_logger()
+        logger.unregister_console_logger()
+        logger.unregister_console_logger()
         self._number_of_registered_loggers_should_be(0, logger)
         logger.register_logger(LoggerMock())
-        logger.disable_automatic_console_logger()
+        logger.unregister_console_logger()
         self._number_of_registered_loggers_should_be(1, logger)
 
     def test_registering_console_logger_disables_automatic_console_logger(self):

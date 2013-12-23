@@ -34,12 +34,13 @@ class Logger(AbstractLogger):
     to get errors/warnings into console is using 'register_console_logger'.
     """
 
-    def __init__(self):
+    def __init__(self, register_console_logger=True):
         self._loggers = LoggerCollection()
         self._message_cache = []
         self._console_logger = None
         self._started_keywords = 0
-        self.register_console_logger()
+        if register_console_logger:
+            self.register_console_logger()
 
     def disable_message_cache(self):
         self._message_cache = None
