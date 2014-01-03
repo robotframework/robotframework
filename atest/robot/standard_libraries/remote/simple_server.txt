@@ -20,3 +20,8 @@ Logging
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    I can has logz?
     Check Log Message    ${tc.kws[0].msgs[1]}    Yezz!!    DEBUG
+
+Keyword documentation
+    [Documentation]    Library does not have `get_keyword_documentation` method.
+    ${tc} =    Get Test Case    Passing
+    Should Be Equal    ${tc.kws[0].doc}    ${EMPTY}

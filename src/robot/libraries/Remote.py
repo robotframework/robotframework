@@ -55,7 +55,7 @@ class Remote(object):
         try:
             return self._client.get_keyword_documentation(name)
         except TypeError:
-            return ''
+            return None
 
     def run_keyword(self, name, args, kwargs):
         coercer = ArgumentCoercer()
