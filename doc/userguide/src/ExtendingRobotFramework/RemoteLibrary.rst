@@ -64,17 +64,26 @@ descriptive name, you can import it using the `WITH NAME syntax`_.
 .. table:: Importing Remote library
    :class: example
 
-   =========  ===========  ======================  =========  =========
-    Setting      Value              Value            Value      Value
-   =========  ===========  ======================  =========  =========
-   Library    Remote       \http://localhost:8270  WITH NAME  Example1
-   Library    Remote       \http://10.0.0.42:7777  WITH NAME  Example2
-   =========  ===========  ======================  =========  =========
+   =========  ===========  ========================  =========  =========
+    Setting      Value               Value             Value      Value
+   =========  ===========  ========================  =========  =========
+   Library    Remote       \http://127.0.0.1:8270    WITH NAME  Example1
+   Library    Remote       \http://example.com:7777  WITH NAME  Example2
+   =========  ===========  ========================  =========  =========
 
 The URL used by the first example above is also the default address
 that the Remote library uses if no address is given. Similarly port
-:code:`8270` is the default port the provided remote servers use. (82
-and 70 are the ASCII codes of letters `R` and `F`, respectively.)
+:code:`8270` is the port that remote servers are expected to use by default.
+(82 and 70 are the ASCII codes of letters `R` and `F`, respectively.)
+
+.. note:: When connecting to the local machine, it is recommended to use
+          address :code:`127.0.0.1` instead of :code:`localhost`. This avoids
+          address resolution that can be extremely slow `at least on Windows`__.
+          Prior to Robot Framework 2.8.4 the Remote library itself used the
+          potentially slow :code:`localhost` by default.
+
+
+__ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
 
 Starting and stopping remote servers
 ''''''''''''''''''''''''''''''''''''

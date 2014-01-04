@@ -63,7 +63,7 @@ class RemoteTestLibrary:
         return 'Returned value'
 
     def log_control_char(self):
-        print '\x01'
+        print '0: \x01, 1: \x01'
 
     # Failures
 
@@ -148,6 +148,11 @@ class RemoteTestLibrary:
 
     def string_as_argument(self, arg):
         self._should_be_equal(arg, self.return_string())
+
+    def byte_as_argument(self, expected, arg, **kwargs):
+        expected = chr(int(expected))
+        self._should_be_equal(arg, expected)
+        self._should_be_equal(kwargs['byte'], expected)
 
     def unicode_string_as_argument(self, arg):
         self._should_be_equal(arg, self._unicode)

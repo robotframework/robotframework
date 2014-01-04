@@ -1,0 +1,92 @@
+*** Settings ***
+Test Template     Argument Should Be Passed Correctly
+Library           Remote    127.0.0.1:${PORT}
+Library           Helper.py
+Variables         variables.py
+
+*** Variables ***
+${PORT}           8270
+
+*** Test Cases ***
+String
+    'Hello, world!'
+    u'hyv\\xe4 \\u2603'
+    ''
+
+Newline an tab
+    '\\t\\n\\r'    '\\t\\n\\n'
+
+Binary
+    '\\x00\\x01\\x02'    binary=yes
+    'foo\\x00bar'        binary=yes
+    u'\\x00\\x01'        binary=yes
+
+Binary in non-ASCII range
+    '\\x00\\x01\\xff'    binary=yes
+
+Binary with too big Unicode characters
+    [Template]  Run Keyword And Expect Error
+    ValueError: Cannot represent u'\\x00\\x01\\xff' as binary.    One Argument    \x00\x01\xff
+    ValueError: Cannot represent u'\\x00\\x01\\u2603' as binary.    One Argument    \x00\x01\u2603
+
+Unrepresentable Unicode
+    [Template]  Run Keyword And Expect Error
+    *    One Argument    \uFFFF
+    *    One Argument    \uD800
+
+Integer
+    0
+    42
+    -1
+
+Float
+    0.0
+    3.14
+    -0.5
+
+Boolean
+    True
+    False
+
+None
+    None    ''
+
+Arbitrary object
+    ${MyObject()}    '<MyObject>'
+
+List
+    \[]
+    \['a', 'b', 'c']
+    \['One', -2, False]
+    \[None]    ['']
+    \[['a', 'b'], 3, [[[4]]]]
+
+List like
+    ()    []
+    ('a', 'b', 'c')    ['a', 'b', 'c']
+    ('One', -2, False, (None,))    ['One', -2, False, ['']]
+    set()    []
+    xrange(5)    [0, 1, 2, 3, 4]
+
+Dict
+    {}
+    {'one': 1, 'spam': 'eggs'}
+    {None: None}    {'': ''}
+    {'a': 0, 'b': True, 'c': {'x': [1, 2, 3]}}
+
+Dict with non-string keys
+    {1: 'a', 2: 3, (): ()}    {'1': 'a', '2': 3, '()': []}
+
+Mapping
+    ${MyMapping()}    {}
+    ${MyMapping(a=1)}    {'a': 1}
+    ${MyMapping(a='one', b=2, c=[None, True])}    {'a': 'one', 'b': 2, 'c': ['', True]}
+
+
+*** Keywords ***
+Argument Should Be Passed Correctly
+    [Arguments]    ${argument}    ${expected}=${NONE}    ${binary}=${FALSE}
+    ${expected} =    Get Non None    ${expected}   ${argument}
+    ${argument} =    Evaluate If String    ${argument}
+    Argument Should Be    ${argument}    ${expected}    ${binary}
+    Kwarg Should Be    argument=${argument}    expected=${expected}    binary=${binary}

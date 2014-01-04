@@ -12,11 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 import sys
 import inspect
 import traceback
 from StringIO import StringIO
 from SimpleXMLRPCServer import SimpleXMLRPCServer
+from xmlrpclib import Binary
 try:
     import signal
 except ImportError:
@@ -27,10 +29,13 @@ except ImportError:
     Mapping = dict
 
 
+BINARY = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F]')
+
+
 class RobotRemoteServer(SimpleXMLRPCServer):
     allow_reuse_address = True
 
-    def __init__(self, library, host='localhost', port=8270, allow_stop=True):
+    def __init__(self, library, host='127.0.0.1', port=8270, allow_stop=True):
         SimpleXMLRPCServer.__init__(self, (host, int(port)), logRequests=False)
         self._library = library
         self._allow_stop = allow_stop
@@ -81,11 +86,12 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return names + ['stop_remote_server']
 
     def run_keyword(self, name, args, kwargs=None):
+        args, kwargs = self._handle_binary_args(args, kwargs or {})
         result = {'status': 'PASS', 'return': '', 'output': '',
                   'error': '', 'traceback': ''}
         self._intercept_stdout()
         try:
-            return_value = self._get_keyword(name)(*args, **(kwargs or {}))
+            return_value = self._get_keyword(name)(*args, **kwargs)
         except:
             result['status'] = 'FAIL'
             result['error'], result['traceback'] = self._get_error_details()
@@ -93,6 +99,14 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             result['return'] = self._handle_return_value(return_value)
         result['output'] = self._restore_stdout()
         return result
+
+    def _handle_binary_args(self, args, kwargs):
+        args = [self._handle_binary_arg(a) for a in args]
+        kwargs = dict([(k, self._handle_binary_arg(v)) for k, v in kwargs.items()])
+        return args, kwargs
+
+    def _handle_binary_arg(self, arg):
+        return arg if not isinstance(arg, Binary) else str(arg)
 
     def get_keyword_arguments(self, name):
         kw = self._get_keyword(name)
@@ -152,7 +166,9 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return 'Traceback (most recent call last):\n' + trace
 
     def _handle_return_value(self, ret):
-        if isinstance(ret, (basestring, int, long, float)):
+        if isinstance(ret, basestring):
+            return self._handle_binary_result(ret)
+        if isinstance(ret, (int, long, float)):
             return ret
         if isinstance(ret, Mapping):
             return dict([(self._str(key), self._handle_return_value(value))
@@ -161,6 +177,15 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             return [self._handle_return_value(item) for item in ret]
         except TypeError:
             return self._str(ret)
+
+    def _handle_binary_result(self, result):
+        if not BINARY.search(result):
+            return result
+        try:
+            result = str(result)
+        except UnicodeError:
+            raise ValueError("Cannot represent %r as binary." % result)
+        return Binary(result)
 
     def _str(self, item):
         if item is None:
@@ -175,7 +200,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         output = sys.stdout.getvalue()
         sys.stdout.close()
         sys.stdout = sys.__stdout__
-        return output
+        return self._handle_binary_result(output)
 
     def _log(self, msg, level=None):
         if level:

@@ -2,12 +2,13 @@ import unittest
 import sys
 import tempfile
 from os.path import abspath, dirname, join, exists, curdir
-from os import remove, chdir
+from os import chdir
 from StringIO import StringIO
 
 from robot.utils.asserts import assert_equals, assert_true
 from robot.running import namespace
 from robot import run, rebot
+from resources.runningtestcase import RunningTestCase
 
 ROOT = dirname(dirname(dirname(abspath(__file__))))
 TEMP = tempfile.gettempdir()
@@ -35,54 +36,11 @@ class StreamWithOnlyWriteAndFlush(object):
         return ''.join(self._buffer)
 
 
-class Base(unittest.TestCase):
-
-    def setUp(self):
-        self.orig__stdout__ = sys.__stdout__
-        self.orig__stderr__ = sys.__stderr__
-        self.orig_stdout = sys.stdout
-        self.orig_stderr = sys.stderr
-        sys.__stdout__ = StringIO()
-        sys.__stderr__ = StringIO()
-        sys.stdout = StringIO()
-        sys.stderr = StringIO()
-        if exists(LOG_PATH):
-            remove(LOG_PATH)
-
-    def tearDown(self):
-        sys.__stdout__ = self.orig__stdout__
-        sys.__stderr__ = self.orig__stderr__
-        sys.stdout = self.orig_stdout
-        sys.stderr = self.orig_stderr
-
-    def _assert_outputs(self, stdout=None, stderr=None):
-        self._assert_output(sys.__stdout__, stdout)
-        self._assert_output(sys.__stderr__, stderr)
-        self._assert_output(sys.stdout, None)
-        self._assert_output(sys.stderr, None)
-
-    def _assert_output(self, stream, expected):
-        output = stream.getvalue()
-        if expected:
-            self._assert_output_contains(output, expected)
-        else:
-            self._assert_no_output(output)
-
-    def _assert_no_output(self, output):
-        if output:
-            raise AssertionError('Expected output to be empty:\n%s' % output)
-
-    def _assert_output_contains(self, output, expected):
-        for content, count in expected:
-            if output.count(content) != count:
-                raise AssertionError("'%s' not %d times in output:\n%s"
-                                     % (content, count, output))
-
-
-class TestRun(Base):
+class TestRun(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.txt')
     warn = join(ROOT, 'atest', 'testdata', 'misc', 'warnings_and_errors.txt')
     nonex = join(TEMP, 'non-existing-file-this-is.txt')
+    remove_files = [LOG_PATH]
 
     def test_run_once(self):
         assert_equals(run(self.data, outputdir=TEMP, report='none'), 1)
@@ -128,9 +86,10 @@ class TestRun(Base):
         self._assert_outputs([('FAIL', 0)])
 
 
-class TestRebot(Base):
+class TestRebot(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'rebot', 'created_normal.xml')
     nonex = join(TEMP, 'non-existing-file-this-is.xml')
+    remove_files = [LOG_PATH]
 
     def test_run_once(self):
         assert_equals(rebot(self.data, outputdir=TEMP, report='NONE'), 1)
@@ -195,7 +154,7 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         assert_equals(rc, 1)
 
 
-class TestRelativeImportsFromPythonpath(Base):
+class TestRelativeImportsFromPythonpath(RunningTestCase):
     _data = join(abspath(dirname(__file__)), 'import_test.txt')
 
     def setUp(self):

@@ -1,14 +1,16 @@
+import sys
 import unittest
+
 from StringIO import StringIO
 from os.path import abspath, dirname, normpath, join
 
 from robot.utils.asserts import assert_equals
 from robot.running import TestSuite, TestSuiteBuilder
+from resources.runningtestcase import RunningTestCase
 
 
 CURDIR = dirname(abspath(__file__))
 DATADIR = normpath(join(CURDIR, '..', '..', 'atest', 'testdata', 'misc'))
-
 
 def run(suite, **kwargs):
     result = suite.run(output='NONE', stdout=StringIO(), stderr=StringIO(),
@@ -161,6 +163,56 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
                     msg='Parent suite setup failed:\nAssertionError\n\n'
                         'Also parent suite teardown failed:\nAssertionError\n\n'
                         'Also parent suite teardown failed:\nTop level')
+
+
+class TestCustomStreams(RunningTestCase):
+
+    def test_stdout_and_stderr(self):
+        self._run()
+        self._assert_output(sys.__stdout__,
+                            [('My Suite', 2), ('My Test', 1),
+                             ('1 critical test, 1 passed, 0 failed', 1)])
+        self._assert_output(sys.__stderr__, [('Hello, world!', 1)])
+
+    def test_custom_stdout_and_stderr(self):
+        stdout, stderr = StringIO(), StringIO()
+        self._run(stdout, stderr)
+        self._assert_normal_stdout_stderr_are_empty()
+        self._assert_output(stdout, [('My Suite', 2), ('My Test', 1)])
+        self._assert_output(stderr, [('Hello, world!', 1)])
+
+    def test_same_custom_stdout_and_stderr(self):
+        output = StringIO()
+        self._run(output, output)
+        self._assert_normal_stdout_stderr_are_empty()
+        self._assert_output(output, [('My Suite', 2), ('My Test', 1),
+                                     ('Hello, world!', 1)])
+
+    def test_run_multiple_times_with_different_stdout_and_stderr(self):
+        stdout, stderr = StringIO(), StringIO()
+        self._run(stdout, stderr)
+        self._assert_normal_stdout_stderr_are_empty()
+        self._assert_output(stdout, [('My Suite', 2), ('My Test', 1)])
+        self._assert_output(stderr, [('Hello, world!', 1)])
+        stdout.close(); stderr.close()
+        output = StringIO()
+        self._run(output, output, variable='MESSAGE:Hi, again!')
+        self._assert_normal_stdout_stderr_are_empty()
+        self._assert_output(output, [('My Suite', 2), ('My Test', 1),
+                                     ('Hi, again!', 1), ('Hello, world!', 0)])
+        output.close()
+        self._run(variable='MESSAGE:Last hi!')
+        self._assert_output(sys.__stdout__, [('My Suite', 2), ('My Test', 1)])
+        self._assert_output(sys.__stderr__, [('Last hi!', 1), ('Hello, world!', 0)])
+
+    def _run(self, stdout=None, stderr=None, **options):
+        suite = TestSuite(name='My Suite')
+        suite.variables.create('${MESSAGE}', 'Hello, world!')
+        suite.tests.create(name='My Test').keywords.create('Log', args=['${MESSAGE}', 'WARN'])
+        suite.run(stdout=stdout, stderr=stderr, **options)
+
+    def _assert_normal_stdout_stderr_are_empty(self):
+        self._assert_outputs()
 
 
 if __name__ == '__main__':

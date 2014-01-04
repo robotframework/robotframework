@@ -1,0 +1,54 @@
+*** Settings ***
+Suite Setup      Run Remote Tests    argument_coersion.txt    arguments.py
+Force Tags       regression    pybot    jybot
+Resource         remote_resource.txt
+
+*** Test Cases ***
+String
+    Check Test Case    ${TESTNAME}
+
+Newline an tab
+    Check Test Case    ${TESTNAME}
+
+Binary
+    Check Test Case    ${TESTNAME}
+
+Binary in non-ASCII range
+    [Tags]    x-fails-on-ipy
+    Check Test Case    ${TESTNAME}
+
+Binary with too big Unicode characters
+    Check Test Case    ${TESTNAME}
+
+Unrepresentable Unicode
+    Check Test Case    ${TESTNAME}
+
+Integer
+    Check Test Case    ${TESTNAME}
+
+Float
+    Check Test Case    ${TESTNAME}
+
+Boolean
+    Check Test Case    ${TESTNAME}
+
+None
+    Check Test Case    ${TESTNAME}
+
+Arbitrary object
+    Check Test Case    ${TESTNAME}
+
+List
+    Check Test Case    ${TESTNAME}
+
+List like
+    Check Test Case    ${TESTNAME}
+
+Dict
+    Check Test Case    ${TESTNAME}
+
+Dict with non-string keys
+    Check Test Case    ${TESTNAME}
+
+Mapping
+    Check Test Case    ${TESTNAME}

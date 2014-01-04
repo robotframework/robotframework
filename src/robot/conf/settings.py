@@ -434,6 +434,15 @@ class RobotSettings(_BaseSettings):
         return (self['SkipTeardownOnExit'] or
                 any(mode == 'skipteardownonexit' for mode in self['RunMode']))
 
+    @property
+    def console_logger_config(self):
+        return {
+            'width':   self['MonitorWidth'],
+            'colors':  self['MonitorColors'],
+            'markers': self['MonitorMarkers'],
+            'stdout':  self['StdOut'],
+            'stderr':  self['StdErr']
+        }
 
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'            : ('output', None),
@@ -495,3 +504,11 @@ class RebotSettings(_BaseSettings):
     def _resolve_background_colors(self):
         colors = self['ReportBackground']
         return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
+
+    @property
+    def console_logger_config(self):
+        return {
+            'colors':  self['MonitorColors'],
+            'stdout':  self['StdOut'],
+            'stderr':  self['StdErr']
+        }

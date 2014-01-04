@@ -40,7 +40,7 @@ Logging And Returning
     Should Be Equal  ${ret}  ${EMPTY}
 
 Log Control Char
-    [Documentation]  FAIL REGEXP: Processing XML-RPC return value failed. Most often this happens when the return value contains characters that are not valid in XML. Original error was: ExpatError: .*
+    [Documentation]  LOG 1 INFO 0: , 1:
     Log Control Char
 
 *** Keywords ***
