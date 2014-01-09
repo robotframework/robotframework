@@ -40,6 +40,10 @@ Get Value From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Value From User    Press Cancel.
 
+Get Value From User Exited
+    [Documentation]  FAIL No value provided by user.
+    Get Value From User    Press <Esc>.
+
 Get Selection From User
     ${value} =    Get Selection From User    Select 'value' and press OK.
     ...    zip    zap    foo    value    bar
@@ -48,6 +52,10 @@ Get Selection From User
 Get Selection From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Selection From User    Press Cancel.    zip    zap    foo
+
+Get Selection From User Exited
+    [Documentation]  FAIL No value provided by user.
+    Get Selection From User    Press <Esc>.    zip    zap    foo
 
 Multiple dialogs in a row
     [Documentation]  FAIL No value provided by user.

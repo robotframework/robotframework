@@ -16,7 +16,7 @@ import time
 from java.awt import GridLayout
 from javax.swing import JLabel, JOptionPane, JPanel, JPasswordField, JTextField
 from javax.swing.JOptionPane import PLAIN_MESSAGE, UNINITIALIZED_VALUE, \
-    YES_NO_OPTION, OK_CANCEL_OPTION, DEFAULT_OPTION
+    YES_NO_OPTION, OK_CANCEL_OPTION, OK_OPTION, DEFAULT_OPTION
 
 
 class _SwingDialog(object):
@@ -67,6 +67,8 @@ class InputDialog(_SwingDialog):
         _SwingDialog.__init__(self, pane)
 
     def _get_value(self, pane):
+        if pane.getValue() != OK_OPTION:
+            return None
         return self._input_field.getText()
 
 
