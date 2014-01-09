@@ -12,9 +12,11 @@ ${PORT}           8270
 String
     'Hello, world!'
     u'hyv\\xe4 \\u2603'
+    '\\x7f'
+    u'\\x7f\\x80\\xff'
     ''
 
-Newline an tab
+Newline and tab
     '\\t\\n\\r'    '\\t\\n\\n'
 
 Binary
@@ -23,7 +25,9 @@ Binary
     u'\\x00\\x01'        binary=yes
 
 Binary in non-ASCII range
-    '\\x00\\x01\\xff'    binary=yes
+    '\\x00\\x01\\xe4'    binary=yes
+    '\\x80'              binary=yes
+    '\\xff'              binary=yes
 
 Binary with too big Unicode characters
     [Template]  Run Keyword And Expect Error
@@ -52,37 +56,72 @@ Boolean
 None
     None    ''
 
-Arbitrary object
+Custom object
     [Documentation]    Arbitrary objects cannot be transferred over XML-RPC and thus only their string presentation is used
     MyObject()    '<MyObject>'
     MyObject('xxx')    'xxx'
 
+Custom object with non-ASCII representation
+    MyObject(u'hyv\\xe4')    u'hyv\\xe4'
+
+Custom object with binary representation
+    MyObject('\\x00\\x01')    '\\x00\\x01'
+
 List
     \[]
     \['a', 'b', 'c']
-    \['One', -2, False]
-    \[None]    ['']
-    \[['a', 'b'], 3, [[[4]]]]
+    \['\\x7f', u'\\x7f']
 
-List like
+List with non-string values
+    \[1, 2, None, (), {'a': 1}]    [1, 2, '', [], {'a': 1}]
+
+List with non-ASCII values
+    \[u'\\xe4', u'\\u2603']
+
+List with non-ASCII byte values
+    \['\\x80', '\\xe4']    binary=yes
+
+List with binary values
+    \['\\x00', u'\\x01']
+
+Nested list
+    \[['a', 'b'], 3, [[[4], True]]]
+
+List-like
     ()    []
     ('a', 'b', 'c')    ['a', 'b', 'c']
-    ('One', -2, False, (None,))    ['One', -2, False, ['']]
+    ('One', -2, False, (None,), u'\\xe4')    ['One', -2, False, [''], u'\\xe4']
     set()    []
     xrange(5)    [0, 1, 2, 3, 4]
 
-Dict
+Dictionary
     {}
-    {'one': 1, 'spam': 'eggs'}
-    {None: None}    {'': ''}
-    {'a': 0, 'b': True, 'c': {'x': [1, 2, 3]}}
+    {'one': '1', 'spam': 'eggs'}
+    {'\\x7f': '\\x7f'}
 
-Dict with non-string keys
-    {1: 'a', 2: 3, (): ()}    {'1': 'a', '2': 3, '()': []}
+Dictionary with non-string keys and values
+    {1: 'a', 2: 3, (): (), None: None}    {'1': 'a', '2': 3, '()': [], '': ''}
+
+Dictionary with non-ASCII keys and values
+    {u'\\xe4': u'\\xe4', u'\\u2603': u'\\u2603'}
+
+Dictionary with non-ASCII byte keys and values
+    {'\\x80': '\\x80'}    {'\\\\x80': '\\x80'}    binary=yes
+    {'\\xe4': '\\xe4'}    {'\\\\xe4': '\\xe4'}    binary=yes
+
+Dictionary with binary values
+    {0: '\\x00', 1: u'\\x01'}    {'0': '\\x00', '1': '\\x01'}
+
+Dictionary with binary keys is not supported
+    [Documentation]    FAIL TypeError: unhashable instance
+    {'\\x00': 'value'}
+
+Nested dictionary
+    {'a': 0, 'b': True, 'c': {'x': [1, 2, 3]}, '\\x7f': '\\x7f'}
 
 Mapping
     MyMapping()    {}
-    MyMapping(a=1)    {'a': 1}
+    MyMapping(a=1, b='\\x01')    {'a': 1, 'b': '\\x01'}
     MyMapping(a='one', b=2, c=[None, True])    {'a': 'one', 'b': 2, 'c': ['', True]}
 
 *** Keywords ***
