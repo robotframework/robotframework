@@ -54,6 +54,7 @@ List with non-ASCII values
     Check Test Case    ${TESTNAME}
 
 List with non-ASCII byte values
+    [Tags]    x-fails-on-ipy
     Check Test Case    ${TESTNAME}
 
 List with binary values
@@ -71,16 +72,21 @@ Dictionary
 Dictionary with non-string keys and values
     Check Test Case    ${TESTNAME}
 
-Dictionary with non-ASCII keys and values
+Dictionary with non-ASCII keys
+    [Tags]    x-fails-on-ipy
+    Check Test Case    ${TESTNAME}
+
+Dictionary with non-ASCII values
     Check Test Case    ${TESTNAME}
 
 Dictionary with non-ASCII byte keys and values
-    Check Test Case    ${TESTNAME}
-
-Dictionary with binary values
+    [Tags]    x-fails-on-ipy
     Check Test Case    ${TESTNAME}
 
 Dictionary with binary keys is not supported
+    Check Test Case    ${TESTNAME}
+
+Dictionary with binary values
     Check Test Case    ${TESTNAME}
 
 Nested dictionary

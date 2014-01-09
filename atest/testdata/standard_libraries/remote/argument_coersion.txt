@@ -102,19 +102,24 @@ Dictionary
 Dictionary with non-string keys and values
     {1: 'a', 2: 3, (): (), None: None}    {'1': 'a', '2': 3, '()': [], '': ''}
 
-Dictionary with non-ASCII keys and values
-    {u'\\xe4': u'\\xe4', u'\\u2603': u'\\u2603'}
+Dictionary with non-ASCII keys
+    {u'\\xe4': 1}
+    {u'\\u2603': 2}
+
+Dictionary with non-ASCII values
+    {'1': u'\\xe4'}
+    {'2': u'\\u2603'}
 
 Dictionary with non-ASCII byte keys and values
     {'\\x80': '\\x80'}    {'\\\\x80': '\\x80'}    binary=yes
     {'\\xe4': '\\xe4'}    {'\\\\xe4': '\\xe4'}    binary=yes
 
-Dictionary with binary values
-    {0: '\\x00', 1: u'\\x01'}    {'0': '\\x00', '1': '\\x01'}
-
 Dictionary with binary keys is not supported
     [Documentation]    FAIL TypeError: unhashable instance
     {'\\x00': 'value'}
+
+Dictionary with binary values
+    {0: '\\x00', 1: u'\\x01'}    {'0': '\\x00', '1': '\\x01'}
 
 Nested dictionary
     {'a': 0, 'b': True, 'c': {'x': [1, 2, 3]}, '\\x7f': '\\x7f'}

@@ -27,6 +27,9 @@ from robot.errors import RemoteError
 from robot.utils import is_list_like, is_dict_like, unic
 
 
+IRONPYTHON = sys.platform == 'cli'
+
+
 class Remote(object):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
@@ -90,7 +93,7 @@ class ArgumentCoercer(object):
     def _handle_string(self, arg):
         if self.binary.search(arg):
             return self._handle_binary(arg)
-        if isinstance(arg, str) and self.non_ascii.search(arg):
+        if isinstance(arg, str) and not IRONPYTHON and self.non_ascii.search(arg):
             return self._handle_binary(arg)
         return arg
 
@@ -108,8 +111,20 @@ class ArgumentCoercer(object):
         return [self.coerce(item) for item in arg]
 
     def _coerce_dict(self, arg):
-        return dict((self._to_string(key), self.coerce(arg[key]))
-                    for key in arg)
+        return dict((self._to_key(key), self.coerce(arg[key])) for key in arg)
+
+    def _to_key(self, item):
+        item = self._to_string(item)
+        self._validate_key(item)
+        return item
+
+    def _validate_key(self, item):
+        if IRONPYTHON:
+            try:
+                return str(item)
+            except UnicodeError:
+                raise ValueError('Dictionary keys cannot contain non-ASCII '
+                                 'characters with IronPython.')
 
     def _to_string(self, item):
         item = unic(item) if item is not None else ''
