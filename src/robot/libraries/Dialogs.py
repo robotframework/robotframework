@@ -71,7 +71,7 @@ def execute_manual_step(message, default_error=''):
         raise AssertionError(msg)
 
 
-def get_value_from_user(message, default_value=''):
+def get_value_from_user(message, default_value='', hide=False):
     """Pauses test execution and asks user to input a value.
 
     Value typed by the user, or the possible default value, is returned.
@@ -80,11 +80,14 @@ def get_value_from_user(message, default_value=''):
     `message` is the instruction shown in the dialog and `default_value` is
     the possible default value shown in the input field.
 
+    If `hide` is given any true value, such as any non-empty string, the value
+    typed by the user is hidden. This is a new feature in Robot Framework 2.8.4.
+
     Example:
-    | ${value} =   | Get Value From User | Enter new value  | default_value=1 |
-    | Do something | ${value} |
+    | ${username} = | Get Value From User | Input user name | default  |
+    | ${password} = | Get Value From User | Input password  | hide=yes |
     """
-    return _validate_user_input(InputDialog(message, default_value))
+    return _validate_user_input(InputDialog(message, default_value, hide))
 
 
 def get_selection_from_user(message, *values):

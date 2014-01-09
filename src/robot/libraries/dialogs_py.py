@@ -22,12 +22,12 @@ class _TkDialog(Toplevel):
     _left_button = 'OK'
     _right_button = 'Cancel'
 
-    def __init__(self, message, value=None):
+    def __init__(self, message, value=None, **extra):
         self._prevent_execution_with_timeouts()
         self._parent = self._get_parent()
         Toplevel.__init__(self, self._parent)
         self._initialize_dialog()
-        self._create_body(message, value)
+        self._create_body(message, value, **extra)
         self._create_buttons()
         self._result = None
 
@@ -60,10 +60,10 @@ class _TkDialog(Toplevel):
         self.attributes('-topmost', True)
         self.attributes('-topmost', False)
 
-    def _create_body(self, message, value):
+    def _create_body(self, message, value, **extra):
         frame = Frame(self)
         Label(frame, text=message, anchor=W, justify=LEFT, wraplength=800).pack(fill=BOTH)
-        selector = self._create_selector(frame, value)
+        selector = self._create_selector(frame, value, **extra)
         if selector:
             selector.pack(fill=BOTH)
             selector.focus_set()
@@ -118,11 +118,11 @@ class MessageDialog(_TkDialog):
 
 class InputDialog(_TkDialog):
 
-    def __init__(self, message, default=''):
-        _TkDialog.__init__(self, message, default)
+    def __init__(self, message, default='', hide=False):
+        _TkDialog.__init__(self, message, default, hide=hide)
 
-    def _create_selector(self, parent, default):
-        self._entry = Entry(parent)
+    def _create_selector(self, parent, default, hide):
+        self._entry = Entry(parent, show='*' if hide else '')
         self._entry.insert(0, default)
         self._entry.select_range(0, END)
         return self._entry

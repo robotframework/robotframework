@@ -27,7 +27,7 @@ class MessageDialog(_AbstractWinformsDialog):
 
 class InputDialog(_AbstractWinformsDialog):
 
-    def __init__(self, message, default):
+    def __init__(self, message, default, hide=False):
         _AbstractWinformsDialog.__init__(self)
 
 

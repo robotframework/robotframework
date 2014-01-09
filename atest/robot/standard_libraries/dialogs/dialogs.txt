@@ -26,6 +26,9 @@ Get Value From User
 Get Empty Value From User
     Check Test Case  ${TESTNAME}
 
+Get Hidden Value From User
+    Check Test Case  ${TESTNAME}
+
 Get Value From User Cancelled
     Check Test Case  ${TESTNAME}
 

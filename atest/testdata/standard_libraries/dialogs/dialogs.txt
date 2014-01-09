@@ -30,6 +30,12 @@ Get Empty Value From User
     ${value} =    Get Value From User    Press OK.
     Should Be Equal    ${value}    ${EMPTY}
 
+Get Hidden Value From User
+    ${value} =    Get Value From User    Type 'value' and press OK.    hide=yes
+    Should Be Equal    ${value}    value
+    ${value} =    Get Value From User    Press OK.    initial value    hidden
+    Should Be Equal    ${value}    initial value
+
 Get Value From User Cancelled
     [Documentation]  FAIL No value provided by user.
     Get Value From User    Press Cancel.
