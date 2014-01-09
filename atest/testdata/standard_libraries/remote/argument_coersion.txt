@@ -2,6 +2,7 @@
 Test Template     Argument Should Be Passed Correctly
 Library           Remote    127.0.0.1:${PORT}
 Library           Helper.py
+Library           Collections
 Variables         variables.py
 
 *** Variables ***
@@ -52,7 +53,9 @@ None
     None    ''
 
 Arbitrary object
-    ${MyObject()}    '<MyObject>'
+    [Documentation]    Arbitrary objects cannot be transferred over XML-RPC and thus only their string presentation is used
+    MyObject()    '<MyObject>'
+    MyObject('xxx')    'xxx'
 
 List
     \[]
@@ -78,15 +81,15 @@ Dict with non-string keys
     {1: 'a', 2: 3, (): ()}    {'1': 'a', '2': 3, '()': []}
 
 Mapping
-    ${MyMapping()}    {}
-    ${MyMapping(a=1)}    {'a': 1}
-    ${MyMapping(a='one', b=2, c=[None, True])}    {'a': 'one', 'b': 2, 'c': ['', True]}
-
+    MyMapping()    {}
+    MyMapping(a=1)    {'a': 1}
+    MyMapping(a='one', b=2, c=[None, True])    {'a': 'one', 'b': 2, 'c': ['', True]}
 
 *** Keywords ***
 Argument Should Be Passed Correctly
     [Arguments]    ${argument}    ${expected}=${NONE}    ${binary}=${FALSE}
     ${expected} =    Get Non None    ${expected}   ${argument}
-    ${argument} =    Evaluate If String    ${argument}
+    ${ns} =    Create Dictionary    MyObject=${MyObject}        MyMapping=${MyMapping}
+    ${argument} =    Evaluate    ${argument}    namespace=${ns}
     Argument Should Be    ${argument}    ${expected}    ${binary}
     Kwarg Should Be    argument=${argument}    expected=${expected}    binary=${binary}
