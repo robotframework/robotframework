@@ -7,7 +7,7 @@ Resource         remote_resource.txt
 String
     Check Test Case    ${TESTNAME}
 
-Newline an tab
+Newline and tab
     Check Test Case    ${TESTNAME}
 
 Binary
@@ -35,19 +35,61 @@ Boolean
 None
     Check Test Case    ${TESTNAME}
 
-Arbitrary object
+Custom object
+    Check Test Case    ${TESTNAME}
+
+Custom object with non-ASCII representation
+    Check Test Case    ${TESTNAME}
+
+Custom object with binary representation
     Check Test Case    ${TESTNAME}
 
 List
     Check Test Case    ${TESTNAME}
 
-List like
+List with non-string values
     Check Test Case    ${TESTNAME}
 
-Dict
+List with non-ASCII values
     Check Test Case    ${TESTNAME}
 
-Dict with non-string keys
+List with non-ASCII byte values
+    [Tags]    x-fails-on-ipy
+    Check Test Case    ${TESTNAME}
+
+List with binary values
+    Check Test Case    ${TESTNAME}
+
+Nested list
+    Check Test Case    ${TESTNAME}
+
+List-like
+    Check Test Case    ${TESTNAME}
+
+Dictionary
+    Check Test Case    ${TESTNAME}
+
+Dictionary with non-string keys and values
+    Check Test Case    ${TESTNAME}
+
+Dictionary with non-ASCII keys
+    [Tags]    x-fails-on-ipy
+    Check Test Case    ${TESTNAME}
+
+Dictionary with non-ASCII values
+    Check Test Case    ${TESTNAME}
+
+Dictionary with non-ASCII byte keys and values
+    [Tags]    x-fails-on-ipy
+    Check Test Case    ${TESTNAME}
+
+Dictionary with binary keys is not supported
+    Check Test Case    ${TESTNAME}
+
+Dictionary with binary values
+    Check Test Case    ${TESTNAME}
+
+Nested dictionary
     Check Test Case    ${TESTNAME}
 
 Mapping

@@ -2352,29 +2352,38 @@ class _Misc:
         """
         return utils.get_time(format, utils.parse_time(time_))
 
-    def evaluate(self, expression, modules=None):
+    def evaluate(self, expression, modules=None, namespace=None):
         """Evaluates the given expression in Python and returns the results.
 
         `modules` argument can be used to specify a comma separated
         list of Python modules to be imported and added to the
         namespace of the evaluated `expression`.
 
+        `namespace` argument can be used to pass a custom namespace as
+        a dictionary. Possible `modules` are added to this namespace.
+
         Examples (expecting `${result}` is 3.14):
         | ${status} = | Evaluate | 0 < ${result} < 10    |
         | ${down}   = | Evaluate | int(${result})        |
         | ${up}     = | Evaluate | math.ceil(${result})  | math |
         | ${random} = | Evaluate | random.randint(0, sys.maxint) | random,sys |
+        | ${ns} =     | Create Dictionary | x=${4} | y=${2} |
+        | ${result} = | Evaluate | x*10 + y              | namespace=${ns} |
         =>
         | ${status} = True
         | ${down} = 3
         | ${up} = 4.0
         | ${random} = <random integer>
+        | ${result} = 42
 
         Notice that instead of creating complicated expressions, it is
         recommended to move the logic into a test library.
+
+        Support for `namespace` is a new feature in Robot Framework 2.8.4.
         """
-        modules = modules.replace(' ','').split(',') if modules else []
-        namespace = dict((m, __import__(m)) for m in modules if m != '')
+        namespace = namespace or {}
+        modules = modules.replace(' ', '').split(',') if modules else []
+        namespace.update((m, __import__(m)) for m in modules if m)
         try:
             return eval(expression, namespace)
         except:

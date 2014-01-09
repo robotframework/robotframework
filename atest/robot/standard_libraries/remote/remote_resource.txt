@@ -18,7 +18,7 @@ Start Remote Server
     ${path} =    Normalize Path    ${DATADIR}/standard_libraries/remote/${server}
     Start Process    python    ${path}    ${port}    ${PORT FILE}
     ...    alias=${server}    stdout=${STDOUT FILE}    stderr=STDOUT
-    Wait Until Created    ${PORT FILE}
+    Wait Until Created    ${PORT FILE}    30s
     ${port} =    Get File    ${PORT FILE}
     [Return]    ${port}
 

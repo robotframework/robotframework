@@ -27,6 +27,9 @@ from robot.errors import RemoteError
 from robot.utils import is_list_like, is_dict_like, unic
 
 
+IRONPYTHON = sys.platform == 'cli'
+
+
 class Remote(object):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
@@ -70,15 +73,16 @@ class Remote(object):
 
 class ArgumentCoercer(object):
     binary = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F]')
+    non_ascii = re.compile('[\x80-\xff]')
 
-    def coerce(self, arg):
+    def coerce(self, argument):
         for handles, handle in [(self._is_string, self._handle_string),
                                 (self._is_number, self._pass_through),
                                 (is_list_like, self._coerce_list),
                                 (is_dict_like, self._coerce_dict),
                                 (lambda arg: True, self._to_string)]:
-            if handles(arg):
-                return handle(arg)
+            if handles(argument):
+                return handle(argument)
 
     def _is_string(self, arg):
         return isinstance(arg, basestring)
@@ -87,12 +91,20 @@ class ArgumentCoercer(object):
         return isinstance(arg, (int, long, float))
 
     def _handle_string(self, arg):
-        if not self.binary.search(arg):
-            return arg
+        if self._contains_binary(arg):
+            return self._handle_binary(arg)
+        return arg
+
+    def _contains_binary(self, arg):
+        return (self.binary.search(arg) or
+                isinstance(arg, str) and not IRONPYTHON and
+                self.non_ascii.search(arg))
+
+    def _handle_binary(self, arg):
         try:
             arg = str(arg)
         except UnicodeError:
-            raise ValueError("Cannot represent %r as binary." % arg)
+            raise ValueError('Cannot represent %r as binary.' % arg)
         return xmlrpclib.Binary(arg)
 
     def _pass_through(self, arg):
@@ -102,13 +114,24 @@ class ArgumentCoercer(object):
         return [self.coerce(item) for item in arg]
 
     def _coerce_dict(self, arg):
-        return dict((self._to_string(key), self.coerce(value))
-                    for key, value in arg.items())
+        return dict((self._to_key(key), self.coerce(arg[key])) for key in arg)
+
+    def _to_key(self, item):
+        item = self._to_string(item)
+        if IRONPYTHON:
+            self._validate_key_on_ironpython(item)
+        return item
 
     def _to_string(self, item):
-        if item is None:
-            return ''
-        return unic(item)
+        item = unic(item) if item is not None else ''
+        return self._handle_string(item)
+
+    def _validate_key_on_ironpython(self, item):
+        try:
+            return str(item)
+        except UnicodeError:
+            raise ValueError('Dictionary keys cannot contain non-ASCII '
+                             'characters on IronPython. Got %r.' % item)
 
 
 class RemoteResult(object):
