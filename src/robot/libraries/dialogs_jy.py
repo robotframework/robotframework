@@ -14,6 +14,7 @@
 
 import time
 from java.awt import GridLayout
+from java.awt.event import WindowAdapter
 from javax.swing import JLabel, JOptionPane, JPanel, JPasswordField, JTextField
 from javax.swing.JOptionPane import PLAIN_MESSAGE, UNINITIALIZED_VALUE, \
     YES_NO_OPTION, OK_CANCEL_OPTION, OK_OPTION, DEFAULT_OPTION
@@ -32,6 +33,7 @@ class _SwingDialog(object):
         dialog = pane.createDialog(None, 'Robot Framework')
         dialog.setModal(False)
         dialog.setAlwaysOnTop(True)
+        dialog.addWindowFocusListener(pane.focus_listener)
         dialog.show()
         while dialog.isShowing():
             time.sleep(0.2)
@@ -40,12 +42,6 @@ class _SwingDialog(object):
     def _get_value(self, pane):
         value = pane.getInputValue()
         return value if value != UNINITIALIZED_VALUE else None
-
-
-class WrappedOptionPane(JOptionPane):
-
-    def getMaxCharactersPerLineCount(self):
-        return 120
 
 
 class MessageDialog(_SwingDialog):
@@ -60,10 +56,12 @@ class InputDialog(_SwingDialog):
     def __init__(self, message, default, hidden=False):
         self._input_field = JPasswordField() if hidden else JTextField()
         self._input_field.setText(default)
+        self._input_field.selectAll()
         panel = JPanel(layout=GridLayout(2, 1))
         panel.add(JLabel(message))
         panel.add(self._input_field)
         pane = WrappedOptionPane(panel, PLAIN_MESSAGE, OK_CANCEL_OPTION)
+        pane.set_focus_listener(self._input_field)
         _SwingDialog.__init__(self, pane)
 
     def _get_value(self, pane):
@@ -90,3 +88,22 @@ class PassFailDialog(_SwingDialog):
 
     def _get_value(self, pane):
         return pane.getValue() == 'PASS'
+
+
+class WrappedOptionPane(JOptionPane):
+    focus_listener = None
+
+    def getMaxCharactersPerLineCount(self):
+        return 120
+
+    def set_focus_listener(self, component):
+        self.focus_listener = WindowFocusListener(component)
+
+
+class WindowFocusListener(WindowAdapter):
+
+    def __init__(self, component):
+        self.component = component
+
+    def windowGainedFocus(self, event):
+        self.component.requestFocusInWindow()
