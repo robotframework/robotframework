@@ -9,3 +9,6 @@ Evaluate
 
 Evaluate With Modules
     Check Test Case    ${TEST NAME}
+
+Evaluate With Namespace
+    Check Test Case    ${TEST NAME}

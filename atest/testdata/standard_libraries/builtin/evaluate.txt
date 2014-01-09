@@ -32,3 +32,10 @@ Evaluate With Modules
     Should Be True    0 <= ${random} <= ${maxint}
     Should Be Equal    ${x}    ${y}
     Evaluate    1    nonex_module
+
+Evaluate With Namespace
+    ${ns} =    Create Dictionary    a=x    b=${2}    c=2
+    ${result} =    Evaluate    a*3 if b==2 and c!=2 else a    namespace=${ns}
+    Should Be Equal    ${result}    xxx
+    ${result} =    Evaluate    math.pow(b, 3)    math    ${ns}
+    Should Be Equal    ${result}    ${8}
