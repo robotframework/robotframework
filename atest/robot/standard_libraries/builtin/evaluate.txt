@@ -1,12 +1,11 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/evaluate.txt
-Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/evaluate.txt
+Force Tags        regression    jybot    pybot
+Resource          atest_resource.txt
 
 *** Test Cases ***
-
 Evaluate
-    Check Test Case  ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
 Evaluate With Modules
-    Check Test Case  ${TEST NAME}
+    Check Test Case    ${TEST NAME}
