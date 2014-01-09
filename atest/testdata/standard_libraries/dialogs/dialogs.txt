@@ -31,9 +31,9 @@ Get Empty Value From User
     Should Be Equal    ${value}    ${EMPTY}
 
 Get Hidden Value From User
-    ${value} =    Get Value From User    Type 'value' and press OK.    hide=yes
+    ${value} =    Get Value From User    Type 'value' and press OK.    hidden=yes
     Should Be Equal    ${value}    value
-    ${value} =    Get Value From User    Press OK.    initial value    hidden
+    ${value} =    Get Value From User    Press OK.    initial value    hide
     Should Be Equal    ${value}    initial value
 
 Get Value From User Cancelled

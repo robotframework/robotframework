@@ -57,8 +57,8 @@ class MessageDialog(_SwingDialog):
 
 class InputDialog(_SwingDialog):
 
-    def __init__(self, message, default, hide=False):
-        self._input_field = JPasswordField() if hide else JTextField()
+    def __init__(self, message, default, hidden=False):
+        self._input_field = JPasswordField() if hidden else JTextField()
         self._input_field.setText(default)
         panel = JPanel(layout=GridLayout(2, 1))
         panel.add(JLabel(message))

@@ -118,11 +118,11 @@ class MessageDialog(_TkDialog):
 
 class InputDialog(_TkDialog):
 
-    def __init__(self, message, default='', hide=False):
-        _TkDialog.__init__(self, message, default, hide=hide)
+    def __init__(self, message, default='', hidden=False):
+        _TkDialog.__init__(self, message, default, hidden=hidden)
 
-    def _create_selector(self, parent, default, hide):
-        self._entry = Entry(parent, show='*' if hide else '')
+    def _create_selector(self, parent, default, hidden):
+        self._entry = Entry(parent, show='*' if hidden else '')
         self._entry.insert(0, default)
         self._entry.select_range(0, END)
         return self._entry

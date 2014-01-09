@@ -27,7 +27,7 @@ Show whole library
     ...    Pauses test execution until user sets the keyword status.
     Should Contain Keyword    Get Selection From User    message, *values
     ...    Pauses test execution and asks user to select a value.
-    Should Contain Keyword    Get Value From User    message, default_value=, hide=False
+    Should Contain Keyword    Get Value From User    message, default_value=, hidden=False
     ...    Pauses test execution and asks user to input a value.
     Should Contain Keyword    Pause Execution    message=Test execution paused. Press OK to continue.
     ...   Pauses test execution until user clicks `Ok` button.
