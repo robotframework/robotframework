@@ -91,17 +91,20 @@ class ArgumentCoercer(object):
         return isinstance(arg, (int, long, float))
 
     def _handle_string(self, arg):
-        if self.binary.search(arg):
-            return self._handle_binary(arg)
-        if isinstance(arg, str) and not IRONPYTHON and self.non_ascii.search(arg):
+        if self._contains_binary(arg):
             return self._handle_binary(arg)
         return arg
+
+    def _contains_binary(self, arg):
+        return (self.binary.search(arg) or
+                isinstance(arg, str) and not IRONPYTHON and
+                self.non_ascii.search(arg))
 
     def _handle_binary(self, arg):
         try:
             arg = str(arg)
         except UnicodeError:
-            raise ValueError("Cannot represent %r as binary." % arg)
+            raise ValueError('Cannot represent %r as binary.' % arg)
         return xmlrpclib.Binary(arg)
 
     def _pass_through(self, arg):
@@ -115,20 +118,20 @@ class ArgumentCoercer(object):
 
     def _to_key(self, item):
         item = self._to_string(item)
-        self._validate_key(item)
-        return item
-
-    def _validate_key(self, item):
         if IRONPYTHON:
-            try:
-                return str(item)
-            except UnicodeError:
-                raise ValueError('Dictionary keys cannot contain non-ASCII '
-                                 'characters with IronPython.')
+            self._validate_key_on_ironpython(item)
+        return item
 
     def _to_string(self, item):
         item = unic(item) if item is not None else ''
         return self._handle_string(item)
+
+    def _validate_key_on_ironpython(self, item):
+        try:
+            return str(item)
+        except UnicodeError:
+            raise ValueError('Dictionary keys cannot contain non-ASCII '
+                             'characters on IronPython. Got %r.' % item)
 
 
 class RemoteResult(object):
