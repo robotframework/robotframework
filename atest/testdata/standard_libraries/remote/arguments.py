@@ -8,10 +8,28 @@ class Arguments(object):
 
     def argument_should_be(self, argument, expected, binary=False):
         if binary:
-            assert isinstance(argument, Binary), 'Non-binary argument'
-            argument = str(argument)
+            argument = self._handle_binary(argument)
         expected = eval(expected)
         assert argument == expected, '%r != %r' % (argument, expected)
+
+    def _handle_binary(self, arg, required=True):
+        if isinstance(arg, list):
+            return self._handle_binary_in_list(arg)
+        if isinstance(arg, dict):
+            return self._handle_binary_in_dict(arg)
+        assert isinstance(arg, Binary) or not required, 'Non-binary argument'
+        return str(arg) if isinstance(arg, Binary) else arg
+
+    def _handle_binary_in_list(self, arg):
+        assert any(isinstance(a, Binary) for a in arg)
+        return [self._handle_binary(a, required=False) for a in arg]
+
+    def _handle_binary_in_dict(self, arg):
+        assert any(isinstance(key, Binary) or isinstance(value, Binary)
+                   for key, value in arg.items())
+        return dict((self._handle_binary(key, required=False),
+                     self._handle_binary(value, required=False))
+                    for key, value in arg.items())
 
     def kwarg_should_be(self, **kwargs):
         self.argument_should_be(**kwargs)

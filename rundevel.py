@@ -37,4 +37,4 @@ else:
     args += sys.argv[2:] if sys.argv[1] == 'run' else sys.argv[1:]
 
 putenv('ROBOT_SYSLOG_FILE', join(tmp, 'syslog.txt'))
-runner(['--outputdir', 'tmp'] + args)
+runner(['--outputdir', tmp] + args)

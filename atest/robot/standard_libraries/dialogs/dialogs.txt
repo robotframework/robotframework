@@ -26,13 +26,22 @@ Get Value From User
 Get Empty Value From User
     Check Test Case  ${TESTNAME}
 
+Get Hidden Value From User
+    Check Test Case  ${TESTNAME}
+
 Get Value From User Cancelled
+    Check Test Case  ${TESTNAME}
+
+Get Value From User Exited
     Check Test Case  ${TESTNAME}
 
 Get Selection From User
     Check Test Case  ${TESTNAME}
 
 Get Selection From User Cancelled
+    Check Test Case  ${TESTNAME}
+
+Get Selection From User Exited
     Check Test Case  ${TESTNAME}
 
 Multiple dialogs in a row
