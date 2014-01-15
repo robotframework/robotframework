@@ -58,6 +58,15 @@ class TestSignalHandlerRegisteringFaiures(unittest.TestCase):
         t.join()
         assert_equal(len(self.logger.messages), 0)
 
+    def test_signal_handler_restore(self):
+        orig_sigint = signal.getsignal(signal.SIGINT)
+        orig_sigterm = signal.getsignal(signal.SIGTERM)
+        signal_monitor = _StopSignalMonitor()
+        signal_monitor.start()
+        signal_monitor.stop()
+        assert_equal(orig_sigint, signal.getsignal(signal.SIGINT))
+        assert_equal(orig_sigterm, signal.getsignal(signal.SIGTERM))
+
     if sys.platform.startswith('java'):
 
         # signal.signal may raise IllegalArgumentException with Jython 2.5.2:
