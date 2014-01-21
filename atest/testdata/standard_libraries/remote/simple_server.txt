@@ -15,10 +15,12 @@ Passing
 Failing
     [Documentation]    FAIL Teh error messaz
     Failing    Teh    error    messaz
+    Fail    This should not be executed
 
 Failing with traceback
     [Documentation]    FAIL RemoteError
     Traceback    Teh    trazeback
+    Fail    This should not be executed
 
 Returning
     ${ret} =    Returning
