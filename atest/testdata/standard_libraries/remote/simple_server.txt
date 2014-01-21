@@ -31,3 +31,6 @@ Returning
 Logging
     ${ret} =    Logging    I can has logz?    *DEBUG* Yezz!!
     Should Be Equal    ${ret}    ${EMPTY}
+
+Extra stuff in result dictionary is ignored
+    Extra stuff in result dictionary
