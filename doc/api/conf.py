@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Robot Framework'
-copyright = u'2013, Nokia Siemens Networks'
+copyright = u'2008-2014, Nokia Solutions and Networks'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
