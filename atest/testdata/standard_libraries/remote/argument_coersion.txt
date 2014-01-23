@@ -65,7 +65,7 @@ Custom object with non-ASCII representation
     MyObject(u'hyv\\xe4')    u'hyv\\xe4'
 
 Custom object with binary representation
-    MyObject('\\x00\\x01')    '\\x00\\x01'
+    MyObject('\\x00\\x01')    '\\x00\\x01'    binary=yes
 
 List
     \[]
@@ -82,7 +82,7 @@ List with non-ASCII byte values
     \['\\x80', '\\xe4']    binary=yes
 
 List with binary values
-    \['\\x00', u'\\x01']
+    \['\\x00', u'\\x01']    binary=yes
 
 Nested list
     \[['a', 'b'], 3, [[[4], True]]]
@@ -92,7 +92,7 @@ List-like
     ('a', 'b', 'c')    ['a', 'b', 'c']
     ('One', -2, False, (None,), u'\\xe4')    ['One', -2, False, [''], u'\\xe4']
     set()    []
-    xrange(5)    [0, 1, 2, 3, 4]
+    range(5) if __import__('sys').version_info[0] == 3 else xrange(5)    [0, 1, 2, 3, 4]
 
 Dictionary
     {}
@@ -115,18 +115,18 @@ Dictionary with non-ASCII byte keys and values
     {'\\xe4': '\\xe4'}    {'\\\\xe4': '\\xe4'}    binary=yes
 
 Dictionary with binary keys is not supported
-    [Documentation]    FAIL TypeError: unhashable instance
+    [Documentation]    FAIL REGEXP: TypeError: unhashable (instance|type: 'Binary')
     {'\\x00': 'value'}
 
 Dictionary with binary values
-    {0: '\\x00', 1: u'\\x01'}    {'0': '\\x00', '1': '\\x01'}
+    {0: '\\x00', 1: u'\\x01'}    {'0': '\\x00', '1': '\\x01'}    binary=yes
 
 Nested dictionary
     {'a': 0, 'b': True, 'c': {'x': [1, 2, 3]}, '\\x7f': '\\x7f'}
 
 Mapping
     MyMapping()    {}
-    MyMapping(a=1, b='\\x01')    {'a': 1, 'b': '\\x01'}
+    MyMapping(a=1, b='\\x01')    {'a': 1, 'b': '\\x01'}    binary=yes
     MyMapping(a='one', b=2, c=[None, True])    {'a': 'one', 'b': 2, 'c': ['', True]}
 
 *** Keywords ***

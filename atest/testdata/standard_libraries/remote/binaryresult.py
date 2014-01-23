@@ -4,7 +4,13 @@ from xmlrpclib import Binary
 from remoteserver import DirectResultRemoteServer
 
 
+PY3 = sys.version_info[0] == 3
+
+
 class BinaryResult(object):
+
+    def blacheck(self, value):
+        raise RuntimeError((type(value), str(value)))
 
     def return_binary(self, *ordinals):
         return self._result(return_=self._binary(ordinals))
@@ -32,6 +38,8 @@ class BinaryResult(object):
                             traceback=self._binary(ordinals, 'Traceback: '))
 
     def _binary(self, ordinals, extra=''):
+        if PY3:
+            return Binary(bytes(map(ord, extra)) + bytes(map(int, ordinals)))
         return Binary(extra + ''.join(chr(int(o)) for o in ordinals))
 
     def _result(self, return_='', output='', error='', traceback=''):

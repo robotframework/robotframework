@@ -18,7 +18,7 @@ Invalid char in XML
     Invalid char in XML
 
 Exception
-    [Documentation]    FAIL <type 'exceptions.Exception'>:my message
+    [Documentation]    FAIL REGEXP: <(type 'exceptions.|class ')Exception'>:my message
     Exception   my message
 
 Broken connection
