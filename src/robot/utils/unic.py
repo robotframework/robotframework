@@ -50,6 +50,8 @@ else:
 def _unic(item, *args):
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
+        if isinstance(item, unicode):
+            return item
         return unicode(item, *args)
     except UnicodeError:
         try:
