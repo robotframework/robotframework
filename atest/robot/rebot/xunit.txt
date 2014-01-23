@@ -29,7 +29,7 @@ XUnit Option Given
     ${root} =  Parse XML  ${OUTDIR}/xunit.xml
     Should Be Equal  ${root.tag}  testsuite
     ${tests} =  Get Elements  ${root}  testcase
-    Length Should Be  ${tests}  18
+    Length Should Be  ${tests}  19
     Should Be Equal  ${tests[7].attrib['name']}  Ünïcödë Tëst änd Këywörd Nämës
     ${failures} =  Get Elements  ${root}  testcase/failure
     Length Should Be  ${failures}  5
@@ -39,7 +39,7 @@ XUnit skip non-criticals
     Run Rebot    --xUnit xunit.xml --xUnitSkipNonCritical --NonCritical f1    ${INPUT FILE}
     Stderr Should Be Empty
     ${root} =    Parse XML  ${OUTDIR}/xunit.xml
-    Element Attribute Should Be    ${root}    tests    18
+    Element Attribute Should Be    ${root}    tests    19
     Element Attribute Should Be    ${root}    failures    4
     Element Attribute Should Be    ${root}    skip    10
     ${skipped} =  Get Elements  ${root}  xpath=testcase/skipped
