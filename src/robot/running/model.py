@@ -194,6 +194,7 @@ class TestSuite(model.TestSuite):
         output = Output(settings)
         runner = Runner(output, settings)
         self.visit(runner)
+        STOP_SIGNAL_MONITOR.stop()
         output.close(runner.result)
         return runner.result
 

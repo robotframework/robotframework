@@ -243,3 +243,8 @@ class ReturnFromKeyword(ExecutionPassed):
 
 class RemoteError(RobotError):
     """Used by Remote library to report remote errors."""
+
+    def __init__(self, message='', details='', fatal=False, continuable=False):
+        RobotError.__init__(self, message, details)
+        self.ROBOT_EXIT_ON_FAILURE = fatal
+        self.ROBOT_CONTINUE_ON_FAILURE = continuable

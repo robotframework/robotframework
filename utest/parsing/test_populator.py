@@ -1,7 +1,7 @@
 import unittest
 from StringIO import StringIO
 
-from robot.parsing.populators import FromFilePopulator, DataRow
+from robot.parsing.populators import FromFilePopulator, DataRow, FromDirectoryPopulator
 from robot.parsing.model import TestCaseFile
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
@@ -19,6 +19,15 @@ class _MockLogger(object):
 
     def value(self):
         return self._output.getvalue()
+
+
+class FromDirectoryPopulatorTest(unittest.TestCase):
+
+    def test_included_suites_with_dot(self):
+        populator = FromDirectoryPopulator()
+        self.assertEqual(populator._create_included_suites([]), [])
+        self.assertEqual(populator._create_included_suites(['foo']), ['foo'])
+        self.assertEqual(populator._create_included_suites(['bar.zoo']), ['zoo', 'bar.zoo'])
 
 
 class _PopulatorTest(unittest.TestCase):

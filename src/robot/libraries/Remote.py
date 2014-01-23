@@ -72,7 +72,8 @@ class Remote(object):
         result = RemoteResult(self._client.run_keyword(name, args, kwargs))
         sys.stdout.write(result.output)
         if result.status != 'PASS':
-            raise RemoteError(result.error, result.traceback)
+            raise RemoteError(result.error, result.traceback, result.fatal,
+                              result.continuable)
         return result.return_
 
 
@@ -152,9 +153,11 @@ class RemoteResult(object):
         self.return_ = self._get(result, 'return')
         self.error = self._get(result, 'error')
         self.traceback = self._get(result, 'traceback')
+        self.fatal = bool(self._get(result, 'fatal', False))
+        self.continuable = bool(self._get(result, 'continuable', False))
 
-    def _get(self, result, key):
-        value = result.get(key, '')
+    def _get(self, result, key, default=''):
+        value = result.get(key, default)
         return self._handle_binary(value)
 
     def _handle_binary(self, value):

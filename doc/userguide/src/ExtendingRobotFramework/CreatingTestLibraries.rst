@@ -942,7 +942,7 @@ example, :code:`AssertionError`, :code:`Exception`, and
 others, the message is created in the format :msg:`ExceptionType:
 Actual message`.
 
-Starting from Robot Framework 2.8.2 it is possible to avoid adding the
+Starting from Robot Framework 2.8.2, it is possible to avoid adding the
 exception type as a prefix to failure message also with non generic exceptions.
 This is done by adding a special :code:`ROBOT_SUPPRESS_NAME` attribute with
 value :code:`True` to your exception.
@@ -960,6 +960,7 @@ Java:
 
     public class MyError extends RuntimeException {
         public static final boolean ROBOT_SUPPRESS_NAME = true;
+    }
 
 In all cases, it is important for the users that the exception message is as
 informative as possible.
@@ -967,7 +968,7 @@ informative as possible.
 HTML in error messages
 ``````````````````````
 
-Starting from Robot Framework 2.8 it is also possible have HTML formatted
+Starting from Robot Framework 2.8, it is also possible have HTML formatted
 error messages by starting the message with text :msg:`*HTML*`:
 
 .. sourcecode:: python
@@ -998,7 +999,7 @@ good idea to run tests using :cli:`--loglevel DEBUG`.
 Stopping test execution
 '''''''''''''''''''''''
 
-Starting from Robot Framework 2.5 it is possible to fail a test case so that
+Starting from Robot Framework 2.5, it is possible to fail a test case so that
 `the whole test execution is stopped`__. This is done simply by having a special
 :code:`ROBOT_EXIT_ON_FAILURE` attribute with :code:`True` value set on the
 exception raised from the keyword. This is illustrated in the examples below.
@@ -1023,7 +1024,7 @@ __ `Stopping test execution gracefully`_
 Continuing test execution despite of failures
 '''''''''''''''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 2.5 it is possible to `continue test
+Starting from Robot Framework 2.5, it is possible to `continue test
 execution even when there are failures`__. The way to signal this from
 test libraries is adding a special :code:`ROBOT_CONTINUE_ON_FAILURE`
 attribute with :code:`True` value to the exception used to communicate
@@ -1106,7 +1107,7 @@ get their timestamps when the executed keyword ends. This means that
 the timestamps are not accurate and debugging problems especially with
 longer running keywords can be problematic.
 
-Starting from Robot Framework 2.6 keywords have a possibility to add
+Starting from Robot Framework 2.6, keywords have a possibility to add
 an accurate timestamp to the messages they log if there is a need. The
 timestamp must be given as milliseconds since the `Unix epoch`__ and it
 must be placed after the `log level`__ separated from it with a colon::

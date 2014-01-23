@@ -14,7 +14,8 @@ class SimpleServer(SimpleXMLRPCServer):
         self.serve_forever()
 
     def get_keyword_names(self):
-        return ['Passing', 'Failing', 'Traceback', 'Returning', 'Logging']
+        return ['Passing', 'Failing', 'Traceback', 'Returning', 'Logging',
+                'Extra stuff in result dictionary']
 
     def run_keyword(self, name, args):
         if name == 'Passing':
@@ -27,6 +28,8 @@ class SimpleServer(SimpleXMLRPCServer):
             return {'status': 'PASS', 'return': ' '.join(args)}
         if name == 'Logging':
             return {'status': 'PASS', 'output': '\n'.join(args)}
+        if name == 'Extra stuff in result dictionary':
+            return {'status': 'PASS', 'extra': 'stuff', 'is': 'ignored'}
 
 
 if __name__ == '__main__':

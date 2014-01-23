@@ -137,15 +137,21 @@ class FromDirectoryPopulator(object):
 
     def _get_include_suites(self, path, incl_suites):
         if not isinstance(incl_suites, SuiteNamePatterns):
-            # Use only the last part of names given like '--suite parent.child'
-            incl_suites = SuiteNamePatterns(i.split('.')[-1]
-                                            for i in incl_suites or [])
+            incl_suites = SuiteNamePatterns(self._create_included_suites(incl_suites))
         if not incl_suites:
             return incl_suites
         # If a directory is included, also all its children should be included.
         if self._directory_is_included(path, incl_suites):
             return SuiteNamePatterns()
         return incl_suites
+
+    def _create_included_suites(self, incl_suites):
+        # Use only the last part of names given like '--suite parent.child'
+        result = []
+        for splitted in (i.split('.') for i in incl_suites or []):
+            for j in range(1, len(splitted)+1):
+                result.append('.'.join(splitted[-j:]))
+        return result
 
     def _directory_is_included(self, path, incl_suites):
         name = os.path.basename(os.path.normpath(path))
