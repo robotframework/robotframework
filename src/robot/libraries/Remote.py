@@ -29,6 +29,8 @@ from robot.utils import is_list_like, is_dict_like, unic
 
 IRONPYTHON = sys.platform == 'cli'
 
+PY3 = sys.version_info[0] == 3
+
 
 class Remote(object):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
@@ -45,8 +47,11 @@ class Remote(object):
                 return self._client.get_keyword_names()
             except TypeError, err:
                 time.sleep(1)
+                # To make err accessible after this except block in Python 3:
+                # (`err` will be deleted)
+                exc = err
         raise RuntimeError('Connecting remote server at %s failed: %s'
-                           % (self._uri, err))
+                           % (self._uri, exc))
 
     def get_keyword_arguments(self, name):
         try:
@@ -97,13 +102,16 @@ class ArgumentCoercer(object):
 
     def _contains_binary(self, arg):
         return (self.binary.search(arg) or
-                isinstance(arg, str) and not IRONPYTHON and
+                isinstance(arg, str) and not (PY3 or IRONPYTHON) and
                 self.non_ascii.search(arg))
 
     def _handle_binary(self, arg):
         try:
-            arg = str(arg)
-        except UnicodeError:
+            if PY3:
+                arg = bytes(map(ord, arg))
+            else:
+                arg = str(arg)
+        except (ValueError, UnicodeError):
             raise ValueError('Cannot represent %r as binary.' % arg)
         return xmlrpclib.Binary(arg)
 
