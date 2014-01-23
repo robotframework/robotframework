@@ -135,11 +135,19 @@ according to the following rules. Other remote servers should behave similarly.
   recursively.
 * Dictionaries and other mappings are passed as dicts so that their keys are
   converted to strings and values converted to supported types recursively.
+* Strings containing bytes in the ASCII range that cannot be represented in
+  XML (e.g. the null byte) are sent as `Binary objects`__ that internally use
+  XML-RPC base64 data type. Received Binary objects are automatically converted
+  to byte strings.
 * Other types are converted to strings.
 
 .. note:: Prior to Robot Framework 2.8.3, only lists, tuples, and dictionaries
           were handled according to the above rules. General iterables
           and mappings were not supported.
+
+          Binary support is new in Robot Framework 2.8.4.
+
+__ http://docs.python.org/2/library/xmlrpclib.html#binary-objects
 
 Using remote servers
 ~~~~~~~~~~~~~~~~~~~~
