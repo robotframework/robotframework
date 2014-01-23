@@ -55,6 +55,12 @@ Suite Name With Spaces, Underscores And Mixed Case
     Should Contain Suites   ${SUITE}  TSuite1
     Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third in Suite1
 
+Suite Name With Dot
+    Run Suites  --suite suites.subsuites2.sub.suite.4
+    Should Contain Suites  ${SUITE}  Subsuites2
+    Should Contain Tests   ${SUITE}  Test From Sub Suite 4
+    Should Not Contain Tests    ${SUITE}   SubSuite3 First    SubSuite3 Second
+
 Suite With Two Args
     Run Suites  --suite tsuite1 --suite TSuite2
     Should Contain Suites  ${SUITE}  Tsuite1   Tsuite2
