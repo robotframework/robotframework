@@ -91,7 +91,7 @@ Check Suite Got From Misc/suites/ Directory
     Should Contain Suites  ${SUITE.suites[1]}  Sub1  Sub2
     Should Be True  ${SUITE.suites[0].suites} + ${SUITE.suites[1].suites[0].suites}+ ${SUITE.suites[1].suites[1].suites}+ ${SUITE.suites[2].suites[0].suites}+ ${SUITE.suites[3].suites} + ${SUITE.suites[4].suites} + ${SUITE.suites[5].suites}== []
     Check Suite Contains Tests  ${SUITE}  SubSuite1 First  SubSuite2 First  SubSuite3 First  SubSuite3 Second  Suite1 First  Suite1 Second
-    ...  Third In Suite1  Suite2 First  Suite3 First  Suite4 First
+    ...  Third In Suite1  Suite2 First  Suite3 First  Suite4 First  Test From Sub Suite 4
     Check Normal Suite Defaults  ${SUITE.suites[0]}  ${EMPTY}  []  teardown=BuiltIn.Log
     Check Normal Suite Defaults  ${SUITE.suites[1]}
     Check Normal Suite Defaults  ${SUITE.suites[1].suites[0]}  setup=BuiltIn.Log  teardown=BuiltIn.No Operation
