@@ -10,6 +10,7 @@ public class JavaSuiteAndTestCountListener {
         put("Sub2", new int[] {1,0,1});
         put("Subsuites2", new int[] {0,1,2});
         put("Subsuite3", new int[] {2,0,2});
+        put("Sub.Suite.4", new int[] {1, 0, 1});
     }};
     
     public void startSuite(String name, Map attrs) {
