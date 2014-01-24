@@ -60,6 +60,12 @@ window.model = (function () {
                     return !containsTagPattern(testTags, p);
                 }));
         }
+        if (pattern.indexOf('OR') != -1) {
+            patterns = pattern.split('OR');
+            return util.any(util.map(patterns, function (p) {
+                return containsTagPattern(testTags, p);
+            }));
+        }
         if (pattern.indexOf('AND') != -1) {
             patterns = pattern.split('AND');
             return util.all(util.map(patterns, function (p) {
