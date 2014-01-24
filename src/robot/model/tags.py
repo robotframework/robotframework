@@ -94,13 +94,12 @@ class TagPatterns(object):
 
 
 def TagPattern(pattern):
-    pattern = pattern.replace('&', 'AND')
     if 'NOT' in pattern:
         return _NotTagPattern(*pattern.split('NOT'))
     if 'OR' in pattern:
         return _OrTagPattern(pattern.split('OR'))
-    if 'AND' in pattern:
-        return _AndTagPattern(pattern.split('AND'))
+    if 'AND' in pattern or '&' in pattern:
+        return _AndTagPattern(pattern.replace('&', 'AND').split('AND'))
     return _SingleTagPattern(pattern)
 
 

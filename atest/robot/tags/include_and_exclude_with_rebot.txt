@@ -97,8 +97,8 @@ Non Matching Include
     [Template]    Run And Check Error
     --include nonex    tag 'nonex'
     --include nonex -i nonex2    tags 'nonex' or 'nonex2'
-    --include incl1ANDnonex    tag 'incl1&nonex'
-    --include nonexORnonex2    tag 'nonexORnonex2'
+    --include incl1AMPnonex    tag 'incl1 AND nonex'
+    --include nonex_OR_nonex_2    tag 'nonex OR nonex 2'
 
 Non Matching Exclude
     --exclude nonexisting -e nonex2 -e nonex3    @{ALL}
