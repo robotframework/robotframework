@@ -1,4 +1,4 @@
-#  Copyright 2008-2013 Nokia Siemens Networks Oyj
+#  Copyright 2008-2014 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ class _BaseSettings(object):
                 value = [self._escape_as_data(v) for v in value]
             return [self._process_metadata_or_tagdoc(v) for v in value]
         if name in ['Include', 'Exclude']:
-            return [v.replace('AND', '&').replace('_', ' ') for v in value]
+            return [self._format_tag_patterns(v) for v in value]
         if name in self._output_opts and (not value or value.upper() == 'NONE'):
             return None
         if name == 'DeprecatedXUnit':
@@ -237,13 +237,21 @@ class _BaseSettings(object):
             return colors[0], colors[0], colors[1]
         return tuple(colors)
 
-    def _process_tag_stat_combine(self, value):
-        for replwhat, replwith in [('&', 'AND'), ('AND', ' AND '), ('NOT', ' NOT ')]:
-            value = value.replace(replwhat, replwith)
-        if ':' not in value:
-            return value, ''
-        pattern, title = value.rsplit(':', 1)
-        return pattern, title.replace('_', ' ')
+    def _process_tag_stat_combine(self, pattern):
+        if ':' in pattern:
+            pattern, title = pattern.rsplit(':', 1)
+        else:
+            title = ''
+        return self._format_tag_patterns(pattern), title.replace('_', ' ')
+
+    def _format_tag_patterns(self, pattern):
+        for search, replace in [('&', 'AND'), ('AND', ' AND '), ('OR', ' OR '),
+                                ('NOT', ' NOT '), ('_', ' ')]:
+            if search in pattern:
+                pattern = pattern.replace(search, replace)
+        while '  ' in pattern:
+            pattern = pattern.replace('  ', ' ')
+        return pattern
 
     def _process_tag_stat_link(self, value):
         tokens = value.split(':')

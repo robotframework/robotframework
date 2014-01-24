@@ -20,6 +20,23 @@ describe("Searching by tags", function () {
         expect(model.containsTagPattern(['x', 'y'], 'xxANDy')).not.toBeTruthy();
     });
 
+    it("should find tags combined with OR", function() {
+        expect(model.containsTagPattern(['x', 'y'], 'xORy')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'xORz')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'z OR zz OR X')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'xxORyy')).not.toBeTruthy();
+    });
+
+    it("should find tags combined with OR and NOT", function() {
+        expect(model.containsTagPattern(['x', 'y'], 'x OR  y AND z')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'z OR  y AND x')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x AND y OR  z')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'z AND y OR  x')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x AND z OR  x AND y')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x OR  z AND x OR  y')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x AND z OR  y AND z')).not.toBeTruthy();
+    });
+
     it("should find tags combined with NOT", function() {
         expect(model.containsTagPattern(['x', 'y'], 'xNOTz')).toBeTruthy();
         expect(model.containsTagPattern(['X X', 'Y Y'], 'xx NOT yy')).not.toBeTruthy();
@@ -42,6 +59,16 @@ describe("Searching by tags", function () {
         expect(model.containsTagPattern(['x', 'y'], 'x AND y NOT x AND z')).toBeTruthy();
         expect(model.containsTagPattern(['x', 'y', 'z'], 'x AND y NOT x AND z NOT y AND z')).not.toBeTruthy();
         expect(model.containsTagPattern(['x', 'y', 'z'], 'x AND y NOT x AND z NOT xxx')).not.toBeTruthy();
+    });
+
+    it("should find tags combined with NOT and OR", function() {
+        expect(model.containsTagPattern(['a'], 'a NOT c OR d')).toBeTruthy();
+        expect(model.containsTagPattern(['a', 'b'], 'a NOT c OR d')).toBeTruthy();
+        expect(model.containsTagPattern(['a', 'b'], 'a NOT b OR c')).not.toBeTruthy();
+        expect(model.containsTagPattern(['a', 'b', 'c'], 'a NOT b OR c')).not.toBeTruthy();
+        expect(model.containsTagPattern(['x'], 'a NOT c OR d')).not.toBeTruthy();
+        expect(model.containsTagPattern(['x'], 'a OR x NOT b')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x OR a NOT y')).not.toBeTruthy();
     });
 
     it("should ignore underscore in patterns and tag names", function() {

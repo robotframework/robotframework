@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2013 Nokia Siemens Networks Oyj
+#  Copyright 2008-2014 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -65,9 +65,9 @@ Outputs in HTML format are for human consumption and XML output for integration
 with other systems. XML outputs can also be combined and otherwise further
 processed with `rebot` tool. Run `rebot --help` for more information.
 
-Robot Framework is open source software released under Apache License 2.0.
-Its copyrights are owned and development supported by Nokia Siemens Networks.
-For more information about the framework see http://robotframework.org.
+Robot Framework is open source software released under Apache License 2.0. Its
+copyrights are owned and development supported by Nokia Solutions and Networks.
+For more information about the framework see http://robotframework.org/.
 
 Options
 =======

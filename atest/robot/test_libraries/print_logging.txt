@@ -26,6 +26,11 @@ Logging Non-ASCII As Bytes
     Check Log Message    ${tc.kws[3].msgs[0]}    Hyvää päivää!
     Check Stderr Contains    Hyvää päivää!
 
+Logging Mixed Non-ASCII Unicode And Bytes
+    [Tags]    x-fails-on-ipy
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[2].msgs[0]}    Hyvä byte! Hyvä Unicode!
+
 Logging HTML
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    <a href="http://www.google.com">Google</a>    HTML

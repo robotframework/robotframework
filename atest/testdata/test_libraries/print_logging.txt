@@ -20,6 +20,11 @@ Logging Non-ASCII As Bytes
     Print    ${bytes}
     Print    ${bytes}    stderr
 
+Logging Mixed Non-ASCII Unicode And Bytes
+    ${encoding} =    Evaluate    robot.utils.encoding.OUTPUT_ENCODING    robot
+    ${bytes} =    Encode String To Bytes    Hyvä byte!    ${encoding}
+    Print Many    ${bytes}    Hyvä Unicode!
+
 Logging HTML
     Print One HTML Line
     Print Many HTML Lines

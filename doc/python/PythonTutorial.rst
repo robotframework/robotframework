@@ -6,7 +6,7 @@
   Python Tutorial for Robot Framework Test Library Developers
 ===============================================================
 
-| Copyright |copy| Nokia Siemens Networks 2008-2013
+| Copyright |copy| Nokia Solutions and Networks 2008-2014
 | Licensed under the `Creative Commons Attribution 3.0 Unported`__ license
 
 __ http://creativecommons.org/licenses/by/3.0/

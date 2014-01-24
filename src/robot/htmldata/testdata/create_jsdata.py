@@ -36,6 +36,7 @@ def create_jsdata(outxml, target):
                    'i*:Me, myself, and I.',
                    '</script>:<doc>'],
         'tagstatcombine': ['fooANDi*:No Match',
+                           'long1ORcollections',
                            'i?:IX',
                            '<*>:<any>']
     })

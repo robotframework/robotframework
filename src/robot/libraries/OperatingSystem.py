@@ -1,4 +1,4 @@
-#  Copyright 2008-2013 Nokia Siemens Networks Oyj
+#  Copyright 2008-2014 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -748,6 +748,61 @@ class OperatingSystem:
         shutil.move(source, destination)
         self._link("Moved file from '%s' to '%s'", source, destination)
 
+    def copy_files(self, *sources_and_destination):
+        """Copies a list of source files into a new destination.
+
+        _Glob patterns_ can be used in source files. Internally the keyword uses `Copy File`
+        keyword for actual copying and thus behaves similarly.
+
+        Last argument is the destination directory.
+        """
+        sources, destination = self._parse_sources_and_destination(sources_and_destination)
+        source_files = self._prepare_list_of_source_files(destination, *sources)
+
+        if len(source_files) < 1:
+            raise RuntimeError("No existing source files matching given list of files or patterns: %s" % ", ".join(sources))
+
+        for source in source_files:
+            self.copy_file(source, destination)
+
+    def move_files(self, *sources_and_destination):
+        """Moves or renames list of source files.
+
+        _Glob patterns_ can be used in source files. Internally the keyword uses `Move File`
+        keyword for actual moving and thus behaves similarly.
+
+        Last argument is the destination directory.
+        """
+        sources, destination = self._parse_sources_and_destination(sources_and_destination)
+        source_files = self._prepare_list_of_source_files(destination, *sources)
+
+        if len(source_files) < 1:
+            raise RuntimeError("No existing source files matching given list of files or patterns: %s" % ", ".join(sources))
+
+        for source in source_files:
+            self.move_file(source, destination)
+
+    def _parse_sources_and_destination(self, sources_and_destination):
+        if len(sources_and_destination) < 2:
+            raise RuntimeError("Must contain destination and at least one source")
+        return sources_and_destination[:-1], sources_and_destination[-1]
+
+    def _normalize_dest(self, dest):
+        dest = dest.replace('/', os.sep)
+        dest_is_dir = dest.endswith(os.sep) or os.path.isdir(dest)
+        dest = self._absnorm(dest)
+        return dest, dest_is_dir
+
+    def _prepare_list_of_source_files(self, destination, *sources):
+        destination, dest_is_dir = self._normalize_dest(destination)
+        source_files = []
+        for source in sources:
+            files_matching_pattern = glob.glob(source)
+            if len(files_matching_pattern) > 1 and not dest_is_dir:
+                raise RuntimeError("Several files match the pattern '%s' and will overwrite the single destination file." % source)
+            source_files.extend(files_matching_pattern)
+        return source_files
+
     def _prepare_for_move_or_copy(self, source, dest):
         source, dest, dest_is_dir = self._normalize_source_and_dest(source, dest)
         self._verify_that_source_is_a_file(source)
@@ -767,9 +822,7 @@ class OperatingSystem:
 
     def _normalize_source_and_dest(self, source, dest):
         source = self._absnorm(source)
-        dest = dest.replace('/', os.sep)
-        dest_is_dir = dest.endswith(os.sep) or os.path.isdir(dest)
-        dest = self._absnorm(dest)
+        dest, dest_is_dir = self._normalize_dest(dest)
         return source, dest, dest_is_dir
 
     def _verify_that_source_is_a_file(self, source):
@@ -1345,7 +1398,7 @@ class _Process:
         stdout = stdout.replace('\r\n', '\n') # http://bugs.jython.org/issue1566
         if stdout.endswith('\n'):
             stdout = stdout[:-1]
-        return decode_output(stdout)
+        return decode_output(stdout, force=True)
 
 
 class _Process2(_Process):

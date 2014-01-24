@@ -1,4 +1,4 @@
-#  Copyright 2008-2013 Nokia Siemens Networks Oyj
+#  Copyright 2008-2014 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -22,8 +22,15 @@ OUTPUT_ENCODING = get_output_encoding()
 SYSTEM_ENCODING = get_system_encoding()
 
 
-def decode_output(string):
-    """Decodes bytes from console encoding to Unicode."""
+def decode_output(string, force=False):
+    """Decodes bytes from console encoding to Unicode.
+
+    By default returns Unicode strings as-is. `force` argument can be used
+    on IronPython where all strings are `unicode` and caller knows decoding
+    is needed.
+    """
+    if isinstance(string, unicode) and not force:
+        return string
     return unic(string, OUTPUT_ENCODING)
 
 

@@ -1,4 +1,4 @@
-#  Copyright 2008-2013 Nokia Siemens Networks Oyj
+#  Copyright 2008-2014 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -74,10 +74,18 @@ class PythonCapturer(object):
     def release(self):
         # Original stream must be restored before closing the current
         self._set_stream(self._original)
-        self._stream.flush()
-        output = self._stream.getvalue()
-        self._stream.close()
-        return output if isinstance(output, unicode) else decode_output(output)
+        try:
+            return self._get_value(self._stream)
+        finally:
+            self._stream.close()
+
+    def _get_value(self, stream):
+        try:
+            return decode_output(stream.getvalue())
+        except UnicodeError:
+            stream.buf = decode_output(stream.buf)
+            stream.buflist = [decode_output(item) for item in stream.buflist]
+            return stream.getvalue()
 
 
 if not sys.platform.startswith('java'):

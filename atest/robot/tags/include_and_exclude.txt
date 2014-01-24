@@ -28,10 +28,16 @@ Includes With AND
     --include incl1ANDincl2    Incl-12    Incl-123
     -i incl1AMPincl2AMPincl3    Incl-123
 
+Includes With OR
+    --include incl3ORnonex    Incl-123
+    --include incl3ORincl2    Incl-12    Incl-123
+    --include nonexORxxxORincl2    Incl-12    Incl-123
+
 Include With Patterns
     --include incl?    @{INCL_ALL}
     -i STARcl3 -i iSTAR2    Incl-12    Incl-123    Excl-123
     -i i?*3ANDFORCE --include iSTAR    @{INCL_ALL}
+    -i incl?*ORnonex    @{INCL_ALL}
 
 One Exclude
     --exclude excl1    @{INCL_ALL}
@@ -46,9 +52,14 @@ Exclude With AND
     --exclude excl1AMPexcl2    @{INCL_ALL}    Excl-1
     -e excl1AMPexcl2ANDexcl3    @{INCL_ALL}    Excl-1    Excl-12
 
+Exclude With OR
+    --exclude nonexORexcl2    @{INCL_ALL}    Excl-1
+    --exclude excl3ORexcl2    @{INCL_ALL}    Excl-1
+
 Exclude With Patterns
     --exclude exc??    @{INCL_ALL}
     -e STAR3 -e eSTAR2 -e eSTAR1    Incl-1    Incl-12
+    --excl excl?ORnonex    @{INCL_ALL}
 
 Include And Exclude
     [Documentation]    Include and exclude together with and without patterns and ANDing
@@ -56,7 +67,10 @@ Include And Exclude
     --include STARcl2 -i nonex -e e???2 -i forceANDi*1    @{INCL_ALL}
 
 Include with NOT
-    --include incl1NOTincl3    Incl-1    Incl-12
+    --include incl1_NOT_incl3              Incl-1    Incl-12
+    --include incl1_NOT_incl2_AND_incl3    Incl-1    Incl-12
+    --include incl1_NOT_incl2_OR__incl3    Incl-1
+    --include incl1_NOT_incl2_NOT_incl3    Incl-1
 
 Exclude with NOT
     --exclude excl1NOTexcl2ANDexcl3    Excl-123    @{INCL_ALL}
@@ -76,6 +90,8 @@ Non Matching Include
     [Template]    Run And Check Error
     --include nonex    tag 'nonex'
     --include nonex -i nonex2    tags 'nonex' or 'nonex2'
+    --include incl1AMPnonex    tag 'incl1 AND nonex'
+    --include nonex_OR_nonex_2    tag 'nonex OR nonex 2'
 
 Non Matching Exclude
     --exclude nonexisting -e nonex2 -e nonex3    @{ALL}

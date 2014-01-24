@@ -264,12 +264,13 @@ When the Remote library wants the server to execute some keyword, it
 calls remote server's :code:`run_keyword` method and passes it the
 keyword name, a list of arguments, and possibly a dictionary of
 `free keyword arguments`__. Base types can be used as
-arguments directly but more complex types are `converted to supported
+arguments directly, but more complex types are `converted to supported
 types`__.
 
 The server must return results of the execution in a result dictionary
 (or map, depending on terminology) containing items explained in the
-following table.
+following table. Notice that only the :code:`status` entry is mandatory,
+others can be omitted if they are not applicable.
 
 .. table:: Entries in the remote result dictionary
    :class: tabular
@@ -294,12 +295,21 @@ following table.
    | traceback  | Possible stack trace to `write into the log file`__ using   |
    |            | DEBUG level when the execution fails.                       |
    +------------+-------------------------------------------------------------+
+   | continuable| When set to :code:`True`, or any value considered           |
+   |            | :code:`True` in Python, the occurred failure is considered  |
+   |            | continuable__. New in Robot Framework 2.8.4.                |
+   +------------+-------------------------------------------------------------+
+   | fatal      | Like :code:`continuable`, but denotes that the occurred     |
+   |            | failure is fatal__. Also new in Robot Framework 2.8.4.      |
+   +------------+-------------------------------------------------------------+
 
 __ `Different argument syntaxes`_
 __ `Supported argument and return value types`_
 __ `Logging information`_
 __ `Supported argument and return value types`_
 __ `Reporting keyword status`_
+__ `Continue on failure`_
+__ `Stopping test execution gracefully`_
 
 Different argument syntaxes
 '''''''''''''''''''''''''''

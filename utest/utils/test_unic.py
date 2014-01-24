@@ -55,6 +55,12 @@ class TestUnic(unittest.TestCase):
             # This is to check that unic normalizes all strings to NFC
             assert_equals(unic(unicodedata.normalize('NFD', text)), text)
 
+    if not IPY:
+        def test_encoding(self):
+            good = u'hyv\xe4'
+            assert_equals(unic(good.encode('UTF-8'), 'UTF-8'), good)
+            assert_equals(unic(good.encode('UTF-8'), 'ASCII', 'ignore'), 'hyv')
+
     def test_object_containing_unicode_repr(self):
         assert_equals(unic(UnicodeRepr()), u'Hyv\xe4')
 

@@ -1,5 +1,6 @@
 import sys
 import unittest
+import sys
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
 from robot import utils
@@ -123,7 +124,7 @@ class TestTags(unittest.TestCase):
         assert_equal(list(tags2), ['ee', 'XX', 'zz'])
         assert_equal(list(new_tags), ['ee', 'xx', 'yy', 'zz'])
 
-    def test__add__list(self):
+    def test__add__None(self):
         tags = Tags(['xx', 'yy'])
         new_tags = tags + None
         assert_true(isinstance(new_tags, Tags))
@@ -172,9 +173,10 @@ class TestNormalizing(unittest.TestCase):
             self._verify(inp, [inp[0]])
 
     def test_sorting(self):
-        for inp, exp in [(['SORT','1','B','2','a'], ['1','2','a','B','SORT']),
-                         (['all', 'A L L', 'NONE', '10', '1', 'A', 'a', ''],
-                           ['1', '10', 'A', 'all'])]:
+        for inp, exp in [(['SORT', '1', 'B', '2', 'a'],
+                          ['1', '2', 'a', 'B', 'SORT']),
+                         (['all', 'A LL', 'NONE', '10', '1', 'A', 'a', '', 'b'],
+                          ['1', '10', 'A', 'all', 'b'])]:
             self._verify(inp, exp)
 
     def _verify(self, tags, expected):
@@ -183,21 +185,57 @@ class TestNormalizing(unittest.TestCase):
 
 class TestTagPatterns(unittest.TestCase):
 
-    def test_match(self):
+    def test_single_pattern(self):
         patterns = TagPatterns(['x', 'y', 'z*'])
         assert_false(patterns.match([]))
         assert_false(patterns.match(['no', 'match']))
         assert_true(patterns.match(['x']))
         assert_true(patterns.match(['xxx', 'zzz']))
 
-    def test_match_with_and(self):
+    def test_and(self):
         patterns = TagPatterns(['xANDy', '???ANDz'])
         assert_false(patterns.match([]))
         assert_false(patterns.match(['x']))
         assert_true(patterns.match(['x', 'y', 'z']))
         assert_true(patterns.match(['123', 'y', 'z']))
 
-    def test_match_with_not(self):
+    def test_multiple_ands(self):
+        patterns = TagPatterns(['xANDyANDz'])
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(['x']))
+        assert_false(patterns.match(['x', 'y']))
+        assert_true(patterns.match(['x', 'Y', 'z']))
+        assert_true(patterns.match(['a', 'y', 'z', 'b', 'X']))
+
+    def test_or(self):
+        patterns = TagPatterns(['xORy', '???ORz'])
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(['a', 'b', '12', '1234']))
+        assert_true(patterns.match(['x']))
+        assert_true(patterns.match(['Y']))
+        assert_true(patterns.match(['123']))
+        assert_true(patterns.match(['Z']))
+        assert_true(patterns.match(['x', 'y', 'z']))
+        assert_true(patterns.match(['123', 'a', 'b', 'c', 'd']))
+        assert_true(patterns.match(['a', 'b', 'c', 'd', 'Z']))
+
+    def test_multiple_ors(self):
+        patterns = TagPatterns(['xORyORz'])
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(['xxx']))
+        assert_true(all(patterns.match([c]) for c in 'XYZ'))
+        assert_true(all(patterns.match(['a', 'b', c, 'd']) for c in 'xyz'))
+        assert_true(patterns.match(['x', 'y']))
+        assert_true(patterns.match(['x', 'Y', 'z']))
+
+    if sys.platform != 'cli':  # eval below sometimes fails on IronPython
+
+        def test_ands_and_ors(self):
+            for pattern in AndOrPatternGenerator(max_length=5):
+                expected = eval(pattern.lower())
+                assert_equal(TagPattern(pattern).match('1'), expected)
+
+    def test_not(self):
         patterns = TagPatterns(['xNOTy', '???NOT?'])
         assert_false(patterns.match([]))
         assert_false(patterns.match(['x', 'y']))
@@ -205,7 +243,7 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(['x']))
         assert_true(patterns.match(['123', 'xx']))
 
-    def test_match_with_not_and_and(self):
+    def test_not_and_and(self):
         patterns = TagPatterns(['xNOTyANDz', 'aANDbNOTc',
                                 '1 AND 2? AND 3?? NOT 4* AND 5* AND 6*'])
         assert_false(patterns.match([]))
@@ -222,7 +260,27 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(['1', '22', '333']))
         assert_true(patterns.match(['1', '22', '333', '4', '5', '7']))
 
-    def test_match_with_multiple_nots(self):
+    def test_not_and_or(self):
+        patterns = TagPatterns(['xNOTyORz', 'aORbNOTc',
+                                '1 OR 2? OR 3?? NOT 4* OR 5* OR 6*'])
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(['x', 'y', 'z']))
+        assert_false(patterns.match(['x', 'y']))
+        assert_false(patterns.match(['Z', 'x']))
+        assert_true(patterns.match(['x']))
+        assert_true(patterns.match(['xxx', 'X']))
+        assert_true(patterns.match(['a', 'b']))
+        assert_false(patterns.match(['a', 'b', 'c']))
+        assert_true(patterns.match(['a']))
+        assert_true(patterns.match(['B', 'XXX']))
+        assert_false(patterns.match(['b', 'c']))
+        assert_false(patterns.match(['c']))
+        assert_true(patterns.match(['x', 'y', '321']))
+        assert_false(patterns.match(['x', 'y', '32']))
+        assert_false(patterns.match(['1', '2', '3', '4']))
+        assert_true(patterns.match(['1', '22', '333']))
+
+    def test_multiple_nots(self):
         patterns = TagPatterns(['xNOTyNOTz', '1 NOT 2 NOT 3 NOT 4'])
         assert_true(patterns.match(['x']))
         assert_false(patterns.match(['x', 'y']))
@@ -234,7 +292,7 @@ class TestTagPatterns(unittest.TestCase):
         assert_false(patterns.match(['1', '2', '3']))
         assert_false(patterns.match(['1', '2', '3', '4']))
 
-    def test_match_with_multiple_nots_with_ands(self):
+    def test_multiple_nots_with_ands(self):
         patterns = TagPatterns('a AND b NOT c AND d NOT e AND f')
         assert_true(patterns.match(['a', 'b']))
         assert_true(patterns.match(['a', 'b', 'c']))
@@ -244,9 +302,39 @@ class TestTagPatterns(unittest.TestCase):
         assert_false(patterns.match(['a', 'b', 'c', 'd', 'e', 'f']))
         assert_false(patterns.match(['a', 'b', 'c', 'd', 'e']))
 
+    def test_multiple_nots_with_ors(self):
+        patterns = TagPatterns('a OR b NOT c OR d NOT e OR f')
+        assert_true(patterns.match(['a']))
+        assert_true(patterns.match(['B']))
+        assert_false(patterns.match(['c']))
+        assert_true(all(not patterns.match(['a', 'b', c]) for c in 'cdef'))
+        assert_true(patterns.match(['a', 'x']))
+
     def test_seq2str(self):
         patterns = TagPatterns([u'is\xe4', u'\xe4iti'])
         assert_equal(utils.seq2str(patterns), u"'is\xe4' and '\xe4iti'")
+
+
+class AndOrPatternGenerator(object):
+    tags = ['0', '1']
+    operators = ['OR', 'AND']
+
+    def __init__(self, max_length):
+        self.max_length = max_length
+
+    def __iter__(self):
+        for tag in self.tags:
+            for pattern in self._generate([tag], self.max_length-1):
+                yield pattern
+
+    def _generate(self, tokens, length):
+        yield ' '.join(tokens)
+        if length:
+            for operator in self.operators:
+                for tag in self.tags:
+                    for pattern in self._generate(tokens + [operator, tag],
+                                                  length-1):
+                        yield pattern
 
 
 if __name__ == '__main__':

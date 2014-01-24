@@ -52,19 +52,24 @@ window.model = (function () {
     }
 
     function containsTagPattern(testTags, pattern) {
+        var patterns;
         if (pattern.indexOf('NOT') != -1) {
-            var tagnames = pattern.split('NOT');
-            var required = tagnames[0];
-            var notAllowed = tagnames.slice(1);
-            return containsTagPattern(testTags, required) &&
-                util.all(util.map(notAllowed, function (name) {
-                    return !containsTagPattern(testTags, name);
+            patterns = pattern.split('NOT');
+            return containsTagPattern(testTags, patterns[0]) &&
+                util.all(util.map(patterns.slice(1), function (p) {
+                    return !containsTagPattern(testTags, p);
                 }));
         }
+        if (pattern.indexOf('OR') != -1) {
+            patterns = pattern.split('OR');
+            return util.any(util.map(patterns, function (p) {
+                return containsTagPattern(testTags, p);
+            }));
+        }
         if (pattern.indexOf('AND') != -1) {
-            var tagnames = pattern.split('AND');
-            return util.all(util.map(tagnames, function (name) {
-                return containsTagPattern(testTags, name);
+            patterns = pattern.split('AND');
+            return util.all(util.map(patterns, function (p) {
+                return containsTagPattern(testTags, p);
             }));
         }
         testTags = util.map(testTags, util.normalize);

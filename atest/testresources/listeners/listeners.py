@@ -33,12 +33,13 @@ class WithArgs(object):
 class SuiteAndTestCounts(object):
     ROBOT_LISTENER_API_VERSION = '2'
     exp_data = {
-        'Subsuites & Subsuites2': ([], ['Subsuites', 'Subsuites2'], 4),
+        'Subsuites & Subsuites2': ([], ['Subsuites', 'Subsuites2'], 5),
         'Subsuites':               ([], ['Sub1', 'Sub2'], 2),
         'Sub1':                   (['SubSuite1 First'], [], 1),
         'Sub2':                   (['SubSuite2 First'], [], 1),
-        'Subsuites2':             ([], ['Subsuite3'], 2),
+        'Subsuites2':             ([], ['Sub.Suite.4', 'Subsuite3'], 3),
         'Subsuite3':              (['SubSuite3 First', 'SubSuite3 Second'], [], 2),
+        'Sub.Suite.4':            (['Test From Sub Suite 4'], [], 1)
         }
 
     def start_suite(self, name, attrs):

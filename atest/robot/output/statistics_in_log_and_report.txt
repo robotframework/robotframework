@@ -46,7 +46,7 @@ Verify total stats
     [Arguments]    ${file}
     ${critical}    ${all} =    Get Total Stats    ${OUTDIR}${/}${file}
     Verify stat    ${critical}    label:Critical Tests    pass:5    fail:1
-    Verify stat    ${all}    label:All Tests    pass:9    fail:1
+    Verify stat    ${all}    label:All Tests    pass:10    fail:1
 
 Verify tag stats
     [Arguments]    ${file}
@@ -65,13 +65,13 @@ Verify suite stats
     ${stats} =    Get Suite Stats    ${OUTDIR}${/}${file}
     Length Should Be    ${stats}    7
     Verify stat    ${stats[0]}    label:Suites    name:Suites
-    ...    id:s1    pass:9    fail:1
+    ...    id:s1    pass:10    fail:1
     Verify stat    ${stats[1]}    label:Suites.Fourth    name:Fourth
     ...    id:s1-s1    pass:0    fail:1
     Verify stat    ${stats[2]}    label:Suites.Subsuites    name:Subsuites
     ...    id:s1-s2    pass:2    fail:0
     Verify stat    ${stats[3]}    label:Suites.Subsuites2    name:Subsuites2
-    ...    id:s1-s3    pass:2    fail:0
+    ...    id:s1-s3    pass:3    fail:0
     Verify stat    ${stats[4]}    label:Suites.Tsuite1    name:Tsuite1
     ...    id:s1-s4    pass:3    fail:0
     Verify stat    ${stats[5]}    label:Suites.Tsuite2    name:Tsuite2

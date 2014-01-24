@@ -1,4 +1,4 @@
-#  Copyright 2008-2013 Nokia Siemens Networks Oyj
+#  Copyright 2008-2014 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -102,11 +102,12 @@ class TagPatterns(object):
 
 
 def TagPattern(pattern):
-    pattern = pattern.replace('&', 'AND')
     if 'NOT' in pattern:
         return _NotTagPattern(*pattern.split('NOT'))
-    if 'AND' in pattern:
-        return _AndTagPattern(pattern.split('AND'))
+    if 'OR' in pattern:
+        return _OrTagPattern(pattern.split('OR'))
+    if 'AND' in pattern or '&' in pattern:
+        return _AndTagPattern(pattern.replace('&', 'AND').split('AND'))
     return _SingleTagPattern(pattern)
 
 
@@ -135,12 +136,20 @@ class _AndTagPattern(object):
         return all(p.match(tags) for p in self._patterns)
 
 
+class _OrTagPattern(object):
+
+    def __init__(self, patterns):
+        self._patterns = tuple(TagPattern(p) for p in patterns)
+
+    def match(self, tags):
+        return any(p.match(tags) for p in self._patterns)
+
+
 class _NotTagPattern(object):
 
     def __init__(self, must_match, *must_not_match):
-        self._must = TagPattern(must_match)
-        self._must_not = tuple(TagPattern(m) for m in must_not_match)
+        self._first = TagPattern(must_match)
+        self._rest = _OrTagPattern(must_not_match)
 
     def match(self, tags):
-        return self._must.match(tags) \
-            and not any(p.match(tags) for p in self._must_not)
+        return self._first.match(tags) and not self._rest.match(tags)
