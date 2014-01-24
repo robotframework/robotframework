@@ -748,6 +748,50 @@ class OperatingSystem:
         shutil.move(source, destination)
         self._link("Moved file from '%s' to '%s'", source, destination)
 
+    def copy_files(self, destination, *sources):
+        """Copies a list of source files into a new destination.
+
+        _Glob patterns_ can be used in source file list. Internally the keyword uses `Copy File`
+        keyword for actual copying and thus behaves similarly.
+        """
+        source_files = self._prepare_list_of_source_files(destination, *sources)
+
+        if len(source_files) < 1:
+            raise RuntimeError("No existing source files matching given list of files or patterns: %s" % ", ".join(sources))
+
+        for source in source_files:
+            self.copy_file(source, destination)
+
+    def move_files(self, destination, *sources):
+        """Moves or renames list of source files.
+
+        _Glob patterns_ can be used in source file list. Internally the keyword uses `Move File`
+        keyword for actual moving and thus behaves similarly.
+        """
+        source_files = self._prepare_list_of_source_files(destination, *sources)
+
+        if len(source_files) < 1:
+            raise RuntimeError("No existing source files matching given list of files or patterns: %s" % ", ".join(sources))
+
+        for source in source_files:
+            self.move_file(source, destination)
+
+    def _normalize_dest(self, dest):
+        dest = dest.replace('/', os.sep)
+        dest_is_dir = dest.endswith(os.sep) or os.path.isdir(dest)
+        dest = self._absnorm(dest)
+        return dest, dest_is_dir
+
+    def _prepare_list_of_source_files(self, destination, *sources):
+        destination, dest_is_dir = self._normalize_dest(destination)
+        source_files = []
+        for source in sources:
+            files_matching_pattern = glob.glob(source)
+            if len(files_matching_pattern) > 1 and not dest_is_dir:
+                raise RuntimeError("Several files match the pattern '%s' and will overwrite the single destination file." % source)
+            source_files.extend(files_matching_pattern)
+        return source_files
+
     def _prepare_for_move_or_copy(self, source, dest):
         source, dest, dest_is_dir = self._normalize_source_and_dest(source, dest)
         self._verify_that_source_is_a_file(source)
@@ -767,9 +811,7 @@ class OperatingSystem:
 
     def _normalize_source_and_dest(self, source, dest):
         source = self._absnorm(source)
-        dest = dest.replace('/', os.sep)
-        dest_is_dir = dest.endswith(os.sep) or os.path.isdir(dest)
-        dest = self._absnorm(dest)
+        dest, dest_is_dir = self._normalize_dest(dest)
         return source, dest, dest_is_dir
 
     def _verify_that_source_is_a_file(self, source):

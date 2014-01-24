@@ -47,3 +47,58 @@ Move Directory Using Just Dir Name
 Moving Non-Existing Directory Fails
     Check testcase  ${TESTNAME}
 
+# Test cases for Move Files keyword
+Move One File With Move Files
+    Check testcase  ${TESTNAME}
+
+Move Multiple Files
+    Check testcase  ${TESTNAME}
+
+Move Multiple Files From Multiple Directories
+    Check testcase  ${TESTNAME}
+
+Move List of Files
+    Check testcase  ${TESTNAME}
+
+Move List of Files with Patterns
+    Check testcase  ${TESTNAME}
+
+Moving Non-existing Files Fails
+    Check testcase  ${TESTNAME}
+
+Rename One File With Move Files
+    Check testcase  ${TESTNAME}
+
+Rename Multiple Files To One File Fails
+    Check testcase  ${TESTNAME}
+
+Rename List of Files with Patterns To One File Fails
+    Check testcase  ${TESTNAME}
+
+# Test cases for Copy Files keyword
+Copy One File To Dir With Copy Files
+    Check testcase  ${TESTNAME}
+
+Copy One File To File With Copy Files
+    Check testcase  ${TESTNAME}
+
+Copy Multiple Files
+    Check testcase  ${TESTNAME}
+
+Copy Multiple Files To One File Fails
+    Check testcase  ${TESTNAME}
+
+Copy Multiple Files From Multiple Directories
+    Check testcase  ${TESTNAME}
+
+Copy List of Files
+    Check testcase  ${TESTNAME}
+
+Copy List of Files with Patterns
+    Check testcase  ${TESTNAME}
+
+Copy List of Files with Pattern To One File Fails
+    Check testcase  ${TESTNAME}
+
+Copying Non-existing Files Fails
+    Check testcase  ${TESTNAME}
