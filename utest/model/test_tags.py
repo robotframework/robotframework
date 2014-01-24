@@ -114,7 +114,7 @@ class TestTags(unittest.TestCase):
         assert_equal(list(tags2), ['ee', 'XX', 'zz'])
         assert_equal(list(new_tags), ['ee', 'xx', 'yy', 'zz'])
 
-    def test__add__list(self):
+    def test__add__None(self):
         tags = Tags(['xx', 'yy'])
         new_tags = tags + None
         assert_true(isinstance(new_tags, Tags))
@@ -163,9 +163,10 @@ class TestNormalizing(unittest.TestCase):
             self._verify(inp, [inp[0]])
 
     def test_sorting(self):
-        for inp, exp in [(['SORT','1','B','2','a'], ['1','2','a','B','SORT']),
-                         (['all', 'A L L', 'NONE', '10', '1', 'A', 'a', ''],
-                           ['1', '10', 'A', 'all'])]:
+        for inp, exp in [(['SORT', '1', 'B', '2', 'a'],
+                          ['1', '2', 'a', 'B', 'SORT']),
+                         (['all', 'A LL', 'NONE', '10', '1', 'A', 'a', '', 'b'],
+                          ['1', '10', 'A', 'all', 'b'])]:
             self._verify(inp, exp)
 
     def _verify(self, tags, expected):
