@@ -21,13 +21,14 @@ Total statistics should be Correct
 Tag statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
     Tag Node Should Be Correct    ${stats[0]}    t1    5    1    info=critical    links=my title:http://url.to:::title:url
-    Tag Node Should Be Correct    ${stats[2]}    d1 AND d2    1    0    info=combined
-    Tag Node Should Be Correct    ${stats[3]}    F1 NOT _T1    4    0    info=combined
-    Tag Node Should Be Correct    ${stats[4]}    d1    1    0    links=title:url
-    Tag Node Should Be Correct    ${stats[5]}    d2    1    0
-    Tag Node Should Be Correct    ${stats[6]}    f1    9    1    doc=this is tagdoc    links=title:url
-    Tag Node Should Be Correct    ${stats[7]}    sub3    2    0
-    Tag Node Should Be Correct    ${stats[8]}    XXX    10    1
+    Tag Node Should Be Correct    ${stats[2]}    D1 OR sub3 OR t2    4    0    info=combined
+    Tag Node Should Be Correct    ${stats[3]}    f1 AND t1    5    1    info=combined
+    Tag Node Should Be Correct    ${stats[4]}    F1 NOT _T1    4    0    info=combined
+    Tag Node Should Be Correct    ${stats[5]}    d1    1    0    links=title:url
+    Tag Node Should Be Correct    ${stats[6]}    d2    1    0
+    Tag Node Should Be Correct    ${stats[7]}    f1    9    1    doc=this is tagdoc    links=title:url
+    Tag Node Should Be Correct    ${stats[8]}    sub3    2    0
+    Tag Node Should Be Correct    ${stats[9]}    XXX    10    1
 
 Combined Tag Statistics Name Can Be Given
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
@@ -50,7 +51,8 @@ My Setup
     ...    --tagdoc f1:this_is_tagdoc
     ...    --tagstatlink t*:http://url.to:my_title
     ...    --tagstatlink ?1:url:title
-    ...    --tagstatcombine d1ANDd2
+    ...    --tagstatcombine f1ANDt1
+    ...    --tagstatcombine D1ORsub3ORt2
     ...    --tagstatcombine d1ANDd2:combined_tag_with_new_name
     ...    --suitestatlevel 2
     ...    --tagstatexclude t2
