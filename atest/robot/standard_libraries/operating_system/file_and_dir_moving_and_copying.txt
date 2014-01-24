@@ -51,6 +51,12 @@ Moving Non-Existing Directory Fails
 Move One File With Move Files
     Check testcase  ${TESTNAME}
 
+Move Files fails when no destination
+    Check testcase  ${TESTNAME}
+
+Move Files without arguments fails
+    Check testcase  ${TESTNAME}
+
 Move Multiple Files
     Check testcase  ${TESTNAME}
 
@@ -77,6 +83,12 @@ Rename List of Files with Patterns To One File Fails
 
 # Test cases for Copy Files keyword
 Copy One File To Dir With Copy Files
+    Check testcase  ${TESTNAME}
+
+Copy Files fails when no destination
+    Check testcase  ${TESTNAME}
+
+Copy Files without arguments fails
     Check testcase  ${TESTNAME}
 
 Copy One File To File With Copy Files

@@ -122,17 +122,27 @@ Moving Non-Existing Directory Fails
 Move One File With Move Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Move Files    ${DEST}    ${source}movecopy-*.txt
+    Move Files    ${source}movecopy-*.txt    ${DEST}
     Directory Should Have Items    ${DEST}
 	...    movecopy-one.txt
 	Remove Values From List    ${source_files}
 	...    movecopy-one.txt
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
+Move Files fails when no destination
+    [Setup]    Create Test Files For Multifile Operations
+    [Teardown]    Remove Test Files For Multifile Operations
+    Run Keyword And Expect Error   Must contain destination and at least one source   Move Files    ${source}movecopy-*.txt
+
+Move Files without arguments fails
+    [Setup]    Create Test Files For Multifile Operations
+    [Teardown]    Remove Test Files For Multifile Operations
+    Run Keyword And Expect Error   Must contain destination and at least one source   Move Files
+
 Move Multiple Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Move Files    ${DEST}    ${SOURCE}movecopy_multi-*.txt
+    Move Files    ${SOURCE}movecopy_multi-*.txt    ${DEST}
     Directory Should Have Items    ${DEST}
 	...    movecopy_multi-1.txt
 	...    movecopy_multi-2.txt
@@ -144,7 +154,7 @@ Move Multiple Files
 Move Multiple Files From Multiple Directories
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Move Files    ${DEST}    ${BASE}*dir[12]${/}movecopy_multi_dir-*.txt
+    Move Files    ${BASE}*dir[12]${/}movecopy_multi_dir-*.txt    ${DEST}
     Directory Should Have Items    ${DEST}
     ...    movecopy_multi_dir-1.txt
     ...    movecopy_multi_dir-2.txt
@@ -162,7 +172,7 @@ Move Multiple Files From Multiple Directories
 Move List of Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Move Files    ${DEST}    ${SOURCE}movecopy_list-1.txt    ${SOURCE}movecopy_list-2.txt
+    Move Files    ${SOURCE}movecopy_list-1.txt    ${SOURCE}movecopy_list-2.txt    ${DEST}
     Directory Should Have Items    ${DEST}
     ...    movecopy_list-1.txt
     ...    movecopy_list-2.txt
@@ -174,7 +184,9 @@ Move List of Files
 Move List of Files with Patterns
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Move Files    ${DEST}    ${SOURCE}movecopy_list-3.txt    ${SOURCE}movecopy_list-4.txt    ${SOURCE}movecopy_list_pattern-*.txt    ${SOURCE}movecopy_list_pattern2-*.txt
+    Move Files    ${SOURCE}movecopy_list-3.txt    ${SOURCE}movecopy_list-4.txt
+    ...    ${SOURCE}movecopy_list_pattern-*.txt    ${SOURCE}movecopy_list_pattern2-*.txt
+    ...    ${DEST}
     Directory Should Have Items    ${DEST}
     ...    movecopy_list-3.txt
     ...    movecopy_list-4.txt
@@ -194,14 +206,15 @@ Move List of Files with Patterns
 Moving Non-existing Files Fails
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    No existing source files*    Move Files    ${DEST}    ${SOURCE}non_existing.txt    ${SOURCE}non_existing_pattern*.txt
+    Run Keyword And Expect Error    No existing source files*
+    ...       Move Files    ${SOURCE}non_existing.txt    ${SOURCE}non_existing_pattern*.txt    ${DEST}
     Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
 Rename One File With Move Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Move Files    ${SOURCE}renamed-one.txt    ${SOURCE}${/}rename-*.txt
+    Move Files    ${SOURCE}${/}rename-*.txt    ${SOURCE}renamed-one.txt
 	Remove Values From List    ${source_files}
 	...    rename-one.txt
 	Append To List    ${source_files}
@@ -213,14 +226,17 @@ Rename Multiple Files To One File Fails
     [Teardown]    Remove Test Files For Multifile Operations
 	Append To File    ${SOURCE}rename_multi-1.txt    one
 	Append To File    ${SOURCE}rename_multi-2.txt    two
-    Run Keyword And Expect Error    Several files match the pattern*    Move Files    ${SOURCE}rename_multi-renamed.txt    ${SOURCE}${/}rename_multi-[12].txt
+    Run Keyword And Expect Error    Several files match the pattern*
+    ...       Move Files    ${SOURCE}${/}rename_multi-[12].txt    ${SOURCE}rename_multi-renamed.txt
     Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
 Rename List of Files with Patterns To One File Fails
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    Several files match the pattern*    Move Files    ${SOURCE}renamed_list_pattern.txt    ${SOURCE}rename_list_pattern3-*.txt    ${SOURCE}rename_list_pattern4-?.txt
+    Run Keyword And Expect Error    Several files match the pattern*
+    ...       Move Files    ${SOURCE}rename_list_pattern3-*.txt    ${SOURCE}rename_list_pattern4-?.txt
+    ...       ${SOURCE}renamed_list_pattern.txt
     Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
@@ -228,15 +244,25 @@ Rename List of Files with Patterns To One File Fails
 Copy One File To Dir With Copy Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Copy Files    ${DEST}    ${SOURCE}movecopy-*.txt
+    Copy Files    ${SOURCE}movecopy-*.txt      ${DEST}
     Directory Should Have Items    ${DEST}
 	...    movecopy-one.txt
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
+Copy Files fails when no destination
+    [Setup]    Create Test Files For Multifile Operations
+    [Teardown]    Remove Test Files For Multifile Operations
+    Run Keyword And Expect Error   Must contain destination and at least one source   Copy Files    ${source}movecopy-*.txt
+
+Copy Files without arguments fails
+    [Setup]    Create Test Files For Multifile Operations
+    [Teardown]    Remove Test Files For Multifile Operations
+    Run Keyword And Expect Error   Must contain destination and at least one source   Copy Files
+
 Copy One File To File With Copy Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Copy Files    ${DEST}copied-movecopy.txt    ${SOURCE}movecopy-*.txt
+    Copy Files    ${SOURCE}movecopy-*.txt    ${DEST}copied-movecopy.txt
     Directory Should Have Items    ${DEST}
 	...    copied-movecopy.txt
 	Directory Should Have Items    ${SOURCE}    @{source_files}
@@ -244,7 +270,7 @@ Copy One File To File With Copy Files
 Copy Multiple Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Copy Files    ${DEST}    ${SOURCE}movecopy_multi-*.txt
+    Copy Files    ${SOURCE}movecopy_multi-*.txt     ${DEST}
     Directory Should Have Items    ${DEST}
 	...    movecopy_multi-1.txt
 	...    movecopy_multi-2.txt
@@ -253,14 +279,15 @@ Copy Multiple Files
 Copy Multiple Files To One File Fails
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    Several files match the pattern*    Copy Files    ${DEST}copied_multi.txt    ${SOURCE}${/}movecopy_multi-[12].txt
+    Run Keyword And Expect Error    Several files match the pattern*
+    ...     Copy Files    ${SOURCE}${/}movecopy_multi-[12].txt    ${DEST}copied_multi.txt
     Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
 Copy Multiple Files From Multiple Directories
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Copy Files    ${DEST}    ${BASE}*dir[12]${/}movecopy_multi_dir-*.txt
+    Copy Files    ${BASE}*dir[12]${/}movecopy_multi_dir-*.txt     ${DEST}
     Directory Should Have Items    ${DEST}
     ...    movecopy_multi_dir-1.txt
     ...    movecopy_multi_dir-2.txt
@@ -272,7 +299,7 @@ Copy Multiple Files From Multiple Directories
 Copy List of Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Copy Files    ${DEST}    ${SOURCE}movecopy_list-1.txt    ${SOURCE}movecopy_list-2.txt
+    Copy Files    ${SOURCE}movecopy_list-1.txt    ${SOURCE}movecopy_list-2.txt     ${DEST}
     Directory Should Have Items    ${DEST}
     ...    movecopy_list-1.txt
     ...    movecopy_list-2.txt
@@ -281,7 +308,9 @@ Copy List of Files
 Copy List of Files with Patterns
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Copy Files    ${DEST}    ${SOURCE}movecopy_list-3.txt    ${SOURCE}movecopy_list-4.txt    ${SOURCE}movecopy_list_pattern-*.txt    ${SOURCE}movecopy_list_pattern2-*.txt
+    Copy Files    ${SOURCE}movecopy_list-3.txt
+    ...    ${SOURCE}movecopy_list-4.txt    ${SOURCE}movecopy_list_pattern-*.txt
+    ...    ${SOURCE}movecopy_list_pattern2-*.txt    ${DEST}
     Directory Should Have Items    ${DEST}
     ...    movecopy_list-3.txt
     ...    movecopy_list-4.txt
@@ -294,14 +323,17 @@ Copy List of Files with Patterns
 Copy List of Files with Pattern To One File Fails
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    Several files match the pattern*    Copy Files    ${DEST}copied_list_pattern.txt    ${SOURCE}movecopy_list_pattern-*.txt    ${SOURCE}movecopy_list_pattern2-?.txt
+    Run Keyword And Expect Error    Several files match the pattern*
+    ...      Copy Files    ${SOURCE}movecopy_list_pattern-*.txt    ${SOURCE}movecopy_list_pattern2-?.txt
+    ...      ${DEST}copied_list_pattern.txt
     Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
 Copying Non-existing Files Fails
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    No existing source files*    Copy Files    ${DEST}    ${SOURCE}non_existing.txt    ${SOURCE}non_existing_pattern*.txt
+    Run Keyword And Expect Error    No existing source files*    Copy Files
+    ...      ${SOURCE}non_existing.txt    ${SOURCE}non_existing_pattern*.txt    ${DEST}
     Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
