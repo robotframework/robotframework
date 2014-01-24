@@ -1343,7 +1343,7 @@ class _Process:
         stdout = stdout.replace('\r\n', '\n') # http://bugs.jython.org/issue1566
         if stdout.endswith('\n'):
             stdout = stdout[:-1]
-        return decode_output(stdout)
+        return decode_output(stdout, force=True)
 
 
 class _Process2(_Process):

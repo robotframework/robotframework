@@ -22,8 +22,15 @@ OUTPUT_ENCODING = get_output_encoding()
 SYSTEM_ENCODING = get_system_encoding()
 
 
-def decode_output(string):
-    """Decodes bytes from console encoding to Unicode."""
+def decode_output(string, force=False):
+    """Decodes bytes from console encoding to Unicode.
+
+    By default returns Unicode strings as-is. `force` argument can be used
+    on IronPython where all strings are `unicode` and caller knows decoding
+    is needed.
+    """
+    if isinstance(string, unicode) and not force:
+        return string
     return unic(string, OUTPUT_ENCODING)
 
 
