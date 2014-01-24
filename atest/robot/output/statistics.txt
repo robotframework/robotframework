@@ -20,19 +20,29 @@ Total statistics should be Correct
 
 Tag statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
-    Tag Node Should Be Correct    ${stats[0]}    t1    5    1    info=critical    links=my title:http://url.to:::title:url
-    Tag Node Should Be Correct    ${stats[2]}    D1 OR sub3 OR t2    4    0    info=combined
-    Tag Node Should Be Correct    ${stats[3]}    f1 AND t1    5    1    info=combined
-    Tag Node Should Be Correct    ${stats[4]}    F1 NOT _T1    4    0    info=combined
-    Tag Node Should Be Correct    ${stats[5]}    d1    1    0    links=title:url
-    Tag Node Should Be Correct    ${stats[6]}    d2    1    0
-    Tag Node Should Be Correct    ${stats[7]}    f1    9    1    doc=this is tagdoc    links=title:url
-    Tag Node Should Be Correct    ${stats[8]}    sub3    2    0
-    Tag Node Should Be Correct    ${stats[9]}    XXX    10    1
+    Tag Node Should Be Correct    ${stats[0]}    t1
+    ...    5    1    info=critical    links=my title:http://url.to:::title:url
+    Tag Node Should Be Correct    ${stats[2]}    D1 OR sub3 OR t2 OR or and not
+    ...    4    0    info=combined    combined=D1 OR sub3 OR t2 OR or and not
+    Tag Node Should Be Correct    ${stats[3]}    f1 AND t1
+    ...    5    1    info=combined    combined=f1 AND t1
+    Tag Node Should Be Correct    ${stats[4]}    F1 NOT T1
+    ...    4    0    info=combined    combined=F1 NOT T1
+    Tag Node Should Be Correct    ${stats[5]}    d1
+    ...    1    0    links=title:url
+    Tag Node Should Be Correct    ${stats[6]}    d2
+    ...    1    0
+    Tag Node Should Be Correct    ${stats[7]}    f1
+    ...    9    1    doc=this is tagdoc    links=title:url
+    Tag Node Should Be Correct    ${stats[8]}    sub3
+    ...    2    0
+    Tag Node Should Be Correct    ${stats[9]}    XXX
+    ...    10    1
 
 Combined Tag Statistics Name Can Be Given
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
-    Tag Node Should Be Correct    ${stats[1]}    combined tag with new name    1    0    combined
+    Tag Node Should Be Correct    ${stats[1]}    Combined tag with new name AND-OR-NOT
+    ...    1    0    info=combined    combined=d1 AND d2
 
 Suite statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/suite
@@ -52,8 +62,8 @@ My Setup
     ...    --tagstatlink t*:http://url.to:my_title
     ...    --tagstatlink ?1:url:title
     ...    --tagstatcombine f1ANDt1
-    ...    --tagstatcombine D1ORsub3ORt2
-    ...    --tagstatcombine d1ANDd2:combined_tag_with_new_name
+    ...    --tagstatcombine D1ORsub3ORt2_OR_or_and_not
+    ...    --tagstatcombine d1ANDd2:Combined_tag_with_new_name_AND-OR-NOT
     ...    --suitestatlevel 2
     ...    --tagstatexclude t2
     ...    --TagStatComb F1NOT_T1
@@ -67,11 +77,12 @@ Node Should Be Correct
     Should be equal    ${node.attrib['fail']}    ${fail}
 
 Tag Node Should Be Correct
-    [Arguments]    ${node}    ${name}    ${pass}    ${fail}    ${info}=    ${doc}=    ${links}=
+    [Arguments]    ${node}    ${name}    ${pass}    ${fail}    ${info}=    ${doc}=    ${links}=    ${combined}=
     Node Should Be Correct    ${node}    ${name}    ${pass}    ${fail}
     Should be equal    ${node.attrib['info']}    ${info}
     Should be equal    ${node.attrib['doc']}     ${doc}
     Should be equal    ${node.attrib['links']}    ${links}
+    Should be equal    ${node.attrib['combined']}    ${combined}
 
 Suite Node Should Be Correct
     [Arguments]    ${node}    ${name}    ${pass}    ${fail}
