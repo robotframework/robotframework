@@ -111,7 +111,7 @@ class FromDirectoryPopulator(object):
         if init_file:
             self._populate_init_file(datadir, init_file)
         if recurse:
-            self._populate_chidren(datadir, children, include_suites,
+            self._populate_children(datadir, children, include_suites,
                                    warn_on_skipped)
 
     def _populate_init_file(self, datadir, init_file):
@@ -121,7 +121,7 @@ class FromDirectoryPopulator(object):
         except DataError, err:
             LOGGER.error(unicode(err))
 
-    def _populate_chidren(self, datadir, children, include_suites, warn_on_skipped):
+    def _populate_children(self, datadir, children, include_suites, warn_on_skipped):
         for child in children:
             try:
                 datadir.add_child(child, include_suites)
@@ -146,7 +146,6 @@ class FromDirectoryPopulator(object):
         return incl_suites
 
     def _create_included_suites(self, incl_suites):
-        # Use only the last part of names given like '--suite parent.child'
         result = []
         for splitted in (i.split('.') for i in incl_suites or []):
             for j in range(1, len(splitted)+1):
