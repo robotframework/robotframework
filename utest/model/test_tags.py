@@ -1,4 +1,5 @@
 import unittest
+import sys
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
 from robot import utils
@@ -218,9 +219,12 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(['x', 'y']))
         assert_true(patterns.match(['x', 'Y', 'z']))
 
-    def test_ands_and_ors(self):
-        for pattern in AndOrPatternGenerator(max_length=5):
-            assert_equal(TagPattern(pattern).match('1'), eval(pattern.lower()))
+    if sys.platform != 'cli':  # eval below sometimes fails on IronPython
+
+        def test_ands_and_ors(self):
+            for pattern in AndOrPatternGenerator(max_length=5):
+                expected = eval(pattern.lower())
+                assert_equal(TagPattern(pattern).match('1'), expected)
 
     def test_not(self):
         patterns = TagPatterns(['xNOTy', '???NOT?'])
