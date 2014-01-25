@@ -366,23 +366,14 @@ Generating combined tag statistics
 
 The command line option :opt:`--tagstatcombine` can be used to
 generate aggregate tags that combine statistics from multiple
-tags. There are three somewhat different ways for giving arguments for
-this option:
+tags. The combined tags are specified using `tag patterns`_ where
+:code:`*` and :code:`?` are supported as wildcards and :code:`AND`,
+:code:`OR` and :code:`NOT` operators can be used for combining
+individual tags or patterns together.
 
-One tag as a `simple pattern`_
-   All tags matching the given pattern are combined together.
-
-Two or more tags separated by :code:`AND` or :code:`&`
-   The combined statistics contain tests that have all the listed tags.
-   Tags can be given as simple patterns.
-
-Two or more tags separated by :code:`NOT`
-   The combined statistics contain tests that have the first tag but not
-   any of the others. Also in this case tags may be patterns.
-
-The following examples illustrate these usages, and the figure below shows a snippet
-of the resulting :name:`Statistics by Tag` table when the example test data is
-executed with these options::
+The following examples illustrate creating combined tag statistics using
+different patterns, and the figure below shows a snippet of the resulting
+:name:`Statistics by Tag` table::
 
     --tagstatcombine owner-*
     --tagstatcombine smokeANDmytag
@@ -393,15 +384,13 @@ executed with these options::
 
    Examples of combined tag statistics
 
-As the above example shows, the name of the added combined statistic
-is, by default, generated from the given pattern. In certain
-situations this name can look pretty cryptic and it is possible to
-specify a more descriptive name. This name is given after the pattern
-separating it with a colon (:code:`:`). Example below generates
-combined tag so that the name shown in reports and logs is
-:name:`Critical Tests`::
+As the above example illustrates, the name of the added combined statistic
+is, by default, just the given pattern. If this is not good enough, it
+is possible to give a custom name after the pattern by separating them
+with a colon (:code:`:`). Possible underscores in the name are converted
+to spaces::
 
-    --tagstatcombine *NOTnon-critical:Critical_Tests
+    --tagstatcombine prio1ORprio2:High_priority_tests
 
 Creating links from tag names
 '''''''''''''''''''''''''''''
@@ -490,7 +479,8 @@ are not removed except when using the :opt:`ALL` mode.
    keyword status. The pattern is
    matched against the full name of the keyword, prefixed with
    the possible library or resource file name. The pattern is case, space, and
-   underscore insensitive, and it may contain `*` and `?` as wildcards__.
+   underscore insensitive, and it supports `simple patterns`_ with :code:`*`
+   and :code:`?` as wildcards.
 
 :opt:`FOR`
    Remove all passed iterations from `for loops`_ except the last one .
@@ -514,8 +504,6 @@ as `flattening keywords`_.
           Framework 2.7.
 
 .. note:: :opt:`NAME:<pattern>` mode was added in Robot Framework 2.8.2.
-
-__ `Option value as simple pattern`_
 
 Flattening keywords
 '''''''''''''''''''
