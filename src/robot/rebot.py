@@ -72,41 +72,35 @@ Options
                           spaces. Value can contain same HTML formatting as
                           --doc. Example: `--metadata version:1.2`
  -G --settag tag *        Sets given tag(s) to all executed test cases.
- -t --test name *         Select test cases to run by name or long name. Name
-                          is case and space insensitive and it can also be a
-                          simple pattern where `*` matches anything and `?`
-                          matches any char. If using `*` and `?` in the console
-                          is problematic see --escape and --argumentfile.
+ -t --test name *         Select test cases by name or long name. Name is case
+                          and space insensitive and it can also be a simple
+                          pattern where `*` matches anything and `?` matches
+                          any char. If using `*` and `?` in the console is
+                          problematic, see --escape and --argumentfile.
  -s --suite name *        Select test suites by name. When this option is used
                           with --test, --include or --exclude, only test cases
                           in matching suites and also matching other filtering
                           criteria are selected. Given name can be a simple
                           pattern similarly as with --test.
- -i --include tag *       Select test cases to run by tag. Similarly as name in
-                          --test, tag is case and space insensitive. There are
-                          three ways to include test based on tags:
-                          1) One tag as a simple pattern. Tests having a tag
-                          matching the pattern are included. Example: `it-*`
-                          2) Two or more tags (or patterns) separated by `&` or
-                          `AND`. Only tests having all these tags are included.
-                          Examples: `tag1&tag2`, `smokeANDowner-*ANDit-10`
-                          3) Two or more tags (or patterns) separated by `NOT`.
-                          Tests having the first tag but not any of the latter
-                          ones are included. Example: `it-10NOTsmoke`
- -e --exclude tag *       Select test cases not to run by tag. These tests are
-                          not run even if they are included with --include.
-                          Tags are excluded using the rules explained in
-                          --include.
+ -i --include tag *       Select test cases to by tag. Similarly as name with
+                          --test, tag is case and space insensitive and it is
+                          possible to use patterns with `*` and `?` as
+                          wildcards. Tags and patterns can also be combined
+                          together with `AND`, `OR`, and `NOT` operators.
+                          Examples: --include foo --include bar*
+                                    --include fooANDbar*
+ -e --exclude tag *       Select test cases not to be included by tag. These
+                          tests are not selected even if included with
+                          --include. Tags are matched using the rules explained
+                          with --include.
     --processemptysuite   Processes output also if the top level test suite is
                           empty. Useful e.g. with --include/--exclude when it
                           is not an error that no test matches the condition.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
-                          can be given as a pattern like e.g. with --test.
-                          Resets possible critical tags set earlier.
+                          can be given as a pattern like  with --include.
  -n --noncritical tag *   Tests with given tag are not critical even if they
                           have a tag set with --critical. Tag can be a pattern.
-                          Resets possible non critical tags set earlier.
  -d --outputdir dir       Where to create output files. The default is the
                           directory where Rebot is run from and the given path
                           is considered relative to that unless it is absolute.
@@ -164,8 +158,8 @@ Options
                           `name` is not given, name of the combined tag is got
                           from the specified tags. Tags are combined using the
                           rules explained in --include.
-                          Examples: --tagstatcombine tag1ANDtag2:My_name
-                                    --tagstatcombine requirement-*
+                          Examples: --tagstatcombine requirement-*
+                                    --tagstatcombine tag1ANDtag2:My_name
     --tagdoc pattern:doc *  Add documentation to tags matching given pattern.
                           Documentation is shown in `Test Details` and also as
                           a tooltip in `Statistics by Tag`. Pattern can contain

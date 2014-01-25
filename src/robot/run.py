@@ -96,27 +96,22 @@ Options
                           pattern similarly as with --test and it can contain
                           parent name separated with a dot. For example
                           `-s X.Y` selects suite `Y` only if its parent is `X`.
- -i --include tag *       Select test cases to run by tag. Similarly as name in
-                          --test, tag is case and space insensitive. There are
-                          three ways to include test based on tags:
-                          1) One tag as a simple pattern. Tests having a tag
-                          matching the pattern are included. Example: `it-*`
-                          2) Two or more tags (or patterns) separated by `&` or
-                          `AND`. Only tests having all these tags are included.
-                          Examples: `tag1&tag2`, `smokeANDowner-*ANDit-10`
-                          3) Two or more tags (or patterns) separated by `NOT`.
-                          Tests having the first tag but not any of the latter
-                          ones are included. Example: `it-10NOTsmoke`
+ -i --include tag *       Select test cases to run by tag. Similarly as name
+                          with --test, tag is case and space insensitive and it
+                          is possible to use patterns with `*` and `?` as
+                          wildcards. Tags and patterns can also be combined
+                          together with `AND`, `OR`, and `NOT` operators.
+                          Examples: --include foo --include bar*
+                                    --include fooANDbar*
  -e --exclude tag *       Select test cases not to run by tag. These tests are
-                          not run even if they are included with --include.
-                          Tags are excluded using the rules explained in
-                          --include.
+                          not run even if included with --include. Tags are
+                          matched using the rules explained with --include.
  -R --runfailed output    Select failed tests from an earlier output file to be
                           re-executed. Equivalent to selecting same tests
                           individually using --test option.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
-                          can be given as a pattern like e.g. with --test.
+                          can be given as a pattern like with --include.
  -n --noncritical tag *   Tests with given tag are not critical even if they
                           have a tag set with --critical. Tag can be a pattern.
  -v --variable name:value *  Set variables in the test data. Only scalar
@@ -203,8 +198,8 @@ Options
                           `name` is not given, name of the combined tag is got
                           from the specified tags. Tags are combined using the
                           rules explained in --include.
-                          Examples: --tagstatcombine tag1ANDtag2:My_name
-                                    --tagstatcombine requirement-*
+                          Examples: --tagstatcombine requirement-*
+                                    --tagstatcombine tag1ANDtag2:My_name
     --tagdoc pattern:doc *  Add documentation to tags matching given pattern.
                           Documentation is shown in `Test Details` and also as
                           a tooltip in `Statistics by Tag`. Pattern can contain
