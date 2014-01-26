@@ -1,6 +1,6 @@
 import sys
 import unittest
-
+import signal
 from StringIO import StringIO
 from os.path import abspath, dirname, normpath, join
 
@@ -12,9 +12,12 @@ from resources.runningtestcase import RunningTestCase
 CURDIR = dirname(abspath(__file__))
 DATADIR = normpath(join(CURDIR, '..', '..', 'atest', 'testdata', 'misc'))
 
+
 def run(suite, **kwargs):
-    result = suite.run(output='NONE', stdout=StringIO(), stderr=StringIO(),
-                       **kwargs)
+    config = dict(output=None, log=None, report=None,
+                  stdout=StringIO(), stderr=StringIO())
+    config.update(kwargs)
+    result = suite.run(**config)
     return result.suite
 
 
@@ -209,10 +212,30 @@ class TestCustomStreams(RunningTestCase):
         suite = TestSuite(name='My Suite')
         suite.variables.create('${MESSAGE}', 'Hello, world!')
         suite.tests.create(name='My Test').keywords.create('Log', args=['${MESSAGE}', 'WARN'])
-        suite.run(stdout=stdout, stderr=stderr, **options)
+        run(suite, stdout=stdout, stderr=stderr, **options)
 
     def _assert_normal_stdout_stderr_are_empty(self):
         self._assert_outputs()
+
+
+class TestPreservingSignalHandlers(unittest.TestCase):
+
+    def setUp(self):
+        self.orig_sigint = signal.getsignal(signal.SIGINT)
+        self.orig_sigterm = signal.getsignal(signal.SIGTERM)
+
+    def tearDown(self):
+        signal.signal(signal.SIGINT, self.orig_sigint)
+        signal.signal(signal.SIGTERM, self.orig_sigterm)
+
+    def test_original_signal_handlers_are_restored(self):
+        my_sigterm = lambda signum, frame: None
+        signal.signal(signal.SIGTERM, my_sigterm)
+        suite = TestSuite(name='My Suite')
+        suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
+        run(suite)
+        assert_equals(signal.getsignal(signal.SIGINT), self.orig_sigint)
+        assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
 
 
 if __name__ == '__main__':
