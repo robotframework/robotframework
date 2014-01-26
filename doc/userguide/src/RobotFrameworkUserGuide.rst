@@ -163,8 +163,7 @@ Appendices
 .. _test execution: `Starting test execution`_
 .. _execution errors: `Errors and warnings during execution`_
 .. _test execution errors: `execution errors`_
-.. _simple pattern: `Option value as simple pattern`_
-.. _simple patterns: `simple pattern`_
+.. _simple pattern: `Simple patterns`_
 .. _critical test: `Setting criticality`_
 .. _critical tests: `critical test`_
 .. _critical: `critical test`_

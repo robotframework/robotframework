@@ -78,13 +78,19 @@ Exit For Loop If False
     \    Exit For Loop If     1 == 2
     \    Fail    Should fail here
 
-With Continuable Failure
-    [Documentation]    FAIL    one
-    :FOR    ${var}    IN    one    two    three
-    \       Exit For Loop If    '${var}' == 'two'
+With Continuable Failure After
+    [Documentation]    FAIL    Several failures occurred:\n\n1) one\n\n2) two
+    :FOR    ${var}    IN    one    two    three    four
+    \       Exit For Loop If    '${var}' == 'three'
     \       Run Keyword And Continue On Failure    Fail    ${var}
-    Should Be Equal    ${var}    two
+    Should Be Equal    ${var}    three
 
+With Continuable Failure Before
+    [Documentation]    FAIL    Several failures occurred:\n\n1) one\n\n2) two\n\n3) three
+    :FOR    ${var}    IN    one    two    three    four
+    \       Run Keyword And Continue On Failure    Fail    ${var}
+    \       Exit For Loop If    '${var}' == 'three'
+    Should Be Equal    ${var}    three
 
 *** Keyword ***
 With Loop

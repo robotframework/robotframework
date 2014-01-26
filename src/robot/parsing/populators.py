@@ -106,7 +106,7 @@ class FromDirectoryPopulator(object):
     def populate(self, path, datadir, include_suites=None,
                  warn_on_skipped=False, recurse=True):
         LOGGER.info("Parsing test data directory '%s'" % path)
-        include_suites = self._get_include_suites(path, include_suites)
+        include_suites = self._get_include_suites(path, include_suites or [])
         init_file, children = self._get_children(path, include_suites)
         if init_file:
             self._populate_init_file(datadir, init_file)
@@ -146,11 +146,11 @@ class FromDirectoryPopulator(object):
         return incl_suites
 
     def _create_included_suites(self, incl_suites):
-        result = []
-        for splitted in (i.split('.') for i in incl_suites or []):
-            for j in range(1, len(splitted)+1):
-                result.append('.'.join(splitted[-j:]))
-        return result
+        for suite in incl_suites:
+            yield suite
+            while '.' in suite:
+                suite = suite.split('.', 1)[1]
+                yield suite
 
     def _directory_is_included(self, path, incl_suites):
         name = os.path.basename(os.path.normpath(path))

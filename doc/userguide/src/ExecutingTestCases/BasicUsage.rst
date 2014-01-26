@@ -129,16 +129,72 @@ Some options can be specified several times. For example,
 variables. If the options that take only one value are used several
 times, the value given last is effective.
 
-Option value as simple pattern
-''''''''''''''''''''''''''''''
+Simple patterns
+'''''''''''''''
 
-Many of the options take arguments as *simple patterns*. This means
-that :code:`*` and :code:`?` can be used as special characters, so
-that the former matches any string (even an empty string) and the
-latter matches any single character. For example, :cli:`--include
-prefix-\*` matches all tags starting with :code:`prefix-`, and
-:cli:`--include a???` matches any tag that is four characters long and
-starts with a character :code:`a`.
+Many command line options take arguments as *simple patterns*. These
+`glob-like patterns`__ are matched according to the following rules:
+
+- :code:`*` is a wildcard matching any string, even an empty string.
+- :code:`?` is a wildcard matching any single character.
+- Unless noted otherwise, pattern matching is case, space, and underscore insensitive.
+
+Examples::
+
+   --test Example*     # Matches tests with name starting 'Example', case insensitively.
+   --include f??       # Matches tests with a tag that starts with 'f' or 'F' and is three characters long.
+
+__ http://en.wikipedia.org/wiki/Glob_(programming)
+
+Tag patterns
+''''''''''''
+
+Most tag related options accept arguments as *tag patterns*. They have all the
+same characteristics as `simple patterns`_, but they also support :code:`AND`,
+:code:`OR` and :code:`NOT` operators explained below. These operators can be
+used for combining two or more individual tags or patterns together.
+
+:code:`AND` or :code:`&`
+   The whole pattern matches if all individual patterns match. :code:`AND` and
+   :code:`&` are equivalent.
+
+   ::
+
+      --include fooANDbar     # Matches tests containing tags 'foo' and 'bar'.
+      --exclude xx&yy&zz      # Matches tests containing tags 'xx', 'yy', and 'zz'.
+
+:code:`OR`
+   The whole pattern matches if any individual pattern matches.
+
+   ::
+
+      --include fooORbar      # Matches tests containing either tag 'foo' or tag 'bar'.
+      --exclude xxORyyORzz    # Matches tests containing any of tags 'xx', 'yy', or 'zz'.
+
+:code:`NOT`
+   The whole pattern matches if the pattern on the left side matches but
+   the one on the right side does not. If used multiple times, none of
+   the patterns after the first :code:`NOT` must not match.
+
+   ::
+
+      --include fooNOTbar     # Matches tests containing tag 'foo' but not tag 'bar'.
+      --exclude xxNOTyyNOTzz  # Matches tests containing tag 'xx' but not tag 'yy' or tag 'zz'.
+
+Mixed
+   The above operators can also be used together. In that case the operator
+   precedence, from highest to lowest, is :code:`AND`, :code:`OR` :code:`NOT`.
+
+   ::
+
+      --include xANDyORz      # Matches tests that contain either tags 'x' and 'y', or tag 'z'.
+      --include xORyNOTz      # Matches tests that contain either tag 'x' or 'y', but not tag 'z'.
+      --include xNOTyANDz     # Matches tests that contain tag 'x', but not tags 'y' and 'z'.
+
+.. note:: All operators are case-sensitive and must be written with capital
+          letters.
+
+.. note:: :code:`OR` operator is new in Robot Framework 2.8.4.
 
 :var:`ROBOT_OPTIONS` and :var:`REBOT_OPTIONS` environment variables
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''

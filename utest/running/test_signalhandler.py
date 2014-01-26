@@ -1,3 +1,4 @@
+from __future__ import with_statement
 import sys
 import signal
 import unittest
@@ -21,7 +22,7 @@ class LoggerStub(AbstractLogger):
         self.messages.append(msg)
 
 
-class TestSignalHandlerRegisteringFaiures(unittest.TestCase):
+class TestSignalHandlerRegisteringFailures(unittest.TestCase):
 
     def setUp(self):
         self.logger = LoggerStub()
@@ -58,15 +59,6 @@ class TestSignalHandlerRegisteringFaiures(unittest.TestCase):
         t.join()
         assert_equal(len(self.logger.messages), 0)
 
-    def test_signal_handler_restore(self):
-        orig_sigint = signal.getsignal(signal.SIGINT)
-        orig_sigterm = signal.getsignal(signal.SIGTERM)
-        signal_monitor = _StopSignalMonitor()
-        signal_monitor.start()
-        signal_monitor.stop()
-        assert_equal(orig_sigint, signal.getsignal(signal.SIGINT))
-        assert_equal(orig_sigterm, signal.getsignal(signal.SIGTERM))
-
     if sys.platform.startswith('java'):
 
         # signal.signal may raise IllegalArgumentException with Jython 2.5.2:
@@ -81,6 +73,43 @@ class TestSignalHandlerRegisteringFaiures(unittest.TestCase):
             assert_equal(len(self.logger.messages), 1)
             self._verify_warning(self.logger.messages[0], 'INT',
                                  'java.lang.IllegalArgumentException: xxx')
+
+
+class TestRestoringOriginalHandlers(unittest.TestCase):
+
+    def get_int(self):
+        return signal.getsignal(signal.SIGINT)
+
+    def get_term(self):
+        return signal.getsignal(signal.SIGTERM)
+
+    def setUp(self):
+        self.orig_int = self.get_int()
+        self.orig_term = self.get_term()
+
+    def tearDown(self):
+        signal.signal(signal.SIGINT, self.orig_int)
+        signal.signal(signal.SIGTERM, self.orig_term)
+
+    def test_restore_when_no_failures(self):
+        with _StopSignalMonitor() as monitor:
+            assert_equal(self.get_int(), monitor)
+            assert_equal(self.get_term(), monitor)
+        assert_equal(self.get_int(), self.orig_int)
+        assert_equal(self.get_term(), self.orig_term)
+
+    def test_restore_when_failure(self):
+        try:
+            with _StopSignalMonitor() as monitor:
+                assert_equal(self.get_int(), monitor)
+                assert_equal(self.get_term(), monitor)
+                raise ZeroDivisionError
+        except ZeroDivisionError:
+            pass
+        else:
+            raise AssertionError
+        assert_equal(self.get_int(), self.orig_int)
+        assert_equal(self.get_term(), self.orig_term)
 
 
 if __name__ == '__main__':

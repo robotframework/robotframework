@@ -66,9 +66,9 @@ By tag names
 ''''''''''''
 
 It is possible to include and exclude test cases by tag_ names with the
-:opt:`--include (-i)` and :opt:`--exclude (-e)` options,
-respectively. When the former is used, only test cases having a
-matching tag are selected, and with the latter, test cases having a
+:opt:`--include (-i)` and :opt:`--exclude (-e)` options, respectively.
+If the :opt:`--include` option is used, only test cases having a matching
+tag are selected, and with the :opt:`--exclude` option test cases having a
 matching tag are not. If both are used, only tests with a tag
 matching the former option, and not with a tag matching the latter,
 are selected.
@@ -80,40 +80,36 @@ are selected.
    --include regression --exclude long_lasting
 
 Both :opt:`--include` and :opt:`--exclude` can be used several
-times to match multiple tags, and their arguments can be `simple
-patterns`_. In these cases, the rules for selecting test cases apply,
-so that test cases with a tag matching any include patterns are
-selected, and tests with a tag matching exclude patterns are not. It
-is also possible to select only test cases that have two or more
-specified tags by separating the tags either with :code:`&` or
-:code:`AND` (case-sensitive). Starting from Robot Framework 2.1.3, only tests
-with a certain tag, but without any others, can be selected by separating these
-tags with :code:`NOT` (case-sensitive). If any of the patterns between
-multiple :code:`NOT` is matching, the test case is not selected.
+times to match multiple tags. In that case a test is selected
+if it has a tag that matches any included tags, and also has no tag
+that matches any excluded tags.
 
-::
+In addition to specifying a tag to match fully, it is possible to use
+`tag patterns`_ where :code:`*` and :code:`?` are wildcards and
+:code:`AND`, :code:`OR`, and :code:`NOT` operators can be used for
+combining individual tags or patterns together::
 
-  --include req-*
-  --include regressionANDiter-42
-  --include tag1&tag2&tag3&tag4
-  --exclude regressionNOTowner-*
-  --include tag1NOTtag2NOTtag3&tag4  (includes tests which have `tag1`, but not tests which additionally have `tag2` or both tags `tag3` and `tag4`)
+   --include feature-4?
+   --exclude bug*
+   --include fooANDbar
+   --exclude xxORyyORzz
+   --include fooNOTbar
 
 Selecting test cases by tags is a very flexible mechanism and allows
 many interesting possibilities:
 
-- A subset of tests to be executed before other tests can be tagged
-  with :opt:`smoke` and executed with :cli:`--include smoke`.
+- A subset of tests to be executed before other tests, often called smoke
+  tests, can be tagged with :opt:`smoke` and executed with :cli:`--include smoke`.
 
-- Unfinished test can be committed to version control with the tag
+- Unfinished test can be committed to version control with a tag such as
   :opt:`not_ready` and excluded from the test execution with
   :cli:`--exclude not_ready`.
 
-- Tests can be tagged with :opt:`iter-<num>`, where
-  :opt:`<num>` specifies the number of the current iteration, and
+- Tests can be tagged with :opt:`sprint-<num>`, where
+  :opt:`<num>` specifies the number of the current sprint, and
   after executing all test cases, a separate report containing only
-  the tests for a certain iteration can be generated (for example, :cli:`rebot
-  --include iter-42 output.xml`).
+  the tests for a certain sprint can be generated (for example, :cli:`rebot
+  --include sprint-42 output.xml`).
 
 Re-executing failed test cases
 ''''''''''''''''''''''''''''''
@@ -169,22 +165,29 @@ running tests.
 Setting criticality
 ~~~~~~~~~~~~~~~~~~~
 
-The final result of test execution is determined on the basis of
+The final result of test execution is determined based on
 critical tests. If a single critical test fails, the whole test run is
 considered failed. On the other hand, non-critical test cases can
-fail and the overall status is still passed.
+fail and the overall status is still considered passed.
 
-By default, all test cases are critical, but this can be changed with
-the :opt:`--critical (-c)` and :opt:`--noncritical (-n)`
-options. These options specify which test cases are consider critical
-based on tags, similarly as :opt:`--include` and
-:opt:`--exclude` are used to `select test cases by tag
-names`__. If only :opt:`--critical` is used, test cases with a
+All test cases are considered critical by default, but this can be changed
+with the :opt:`--critical (-c)` and :opt:`--noncritical (-n)`
+options. These options specify which tests are critical
+based on tags_, similarly as :opt:`--include` and
+:opt:`--exclude` are used to `select tests by tags`__.
+If only :opt:`--critical` is used, test cases with a
 matching tag are critical. If only :opt:`--noncritical` is used,
 tests without a matching tag are critical. Finally, if both are
 used, only test with a critical tag but without a non-critical tag are
-considered critical.  Both of these options accept `simple patterns`_
-and can be given several times::
+critical.
+
+Both :opt:`--critical` and :opt:`--noncritical` also support same `tag
+patterns`_ as :opt:`--include` and :opt:`--exclude`. This means that pattern
+matching is case, space, and underscore insensitive, :code:`*` and :code:`?`
+are supported as wildcards, and :code:`AND`, :code:`OR` and :code:`NOT`
+operators can be used to create combined patterns.
+
+::
 
   --critical regression
   --noncritical not_ready
@@ -192,12 +195,12 @@ and can be given several times::
 
 The most common use case for setting criticality is having test cases
 that are not ready or test features still under development in the
-test execution. Of course, these tests could be excluded from the
+test execution. These tests could also be excluded from the
 test execution altogether with the :opt:`--exclude` option, but
 including them as non-critical tests enables you to see when
 they start to pass.
 
-`Starting from Robot Framework 2.1`__ criticality set when tests are
+Criticality set when tests are
 executed is not stored anywhere. If you want to keep same criticality
 when `post-processing outputs`_ with :prog:`rebot`, you need to
 use :opt:`--critical` and/or :opt:`--noncritical` also with it::
@@ -211,7 +214,6 @@ use :opt:`--critical` and/or :opt:`--noncritical` also with it::
   rebot --critical feature1 output.xml
 
 __ `By tag names`_
-__ http://code.google.com/p/robotframework/issues/detail?id=146
 
 Setting metadata
 ~~~~~~~~~~~~~~~~

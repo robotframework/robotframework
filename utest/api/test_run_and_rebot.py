@@ -1,6 +1,7 @@
 import unittest
 import sys
 import tempfile
+import signal
 from os.path import abspath, dirname, join, exists, curdir
 from os import chdir
 from StringIO import StringIO
@@ -152,6 +153,25 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),
                  test=['NormalText'])
         assert_equals(rc, 1)
+
+
+class TestPreservingSignalHandlers(unittest.TestCase):
+
+    def setUp(self):
+        self.orig_sigint = signal.getsignal(signal.SIGINT)
+        self.orig_sigterm = signal.getsignal(signal.SIGTERM)
+
+    def tearDown(self):
+        signal.signal(signal.SIGINT, self.orig_sigint)
+        signal.signal(signal.SIGTERM, self.orig_sigterm)
+
+    def test_original_signal_handlers_are_restored(self):
+        my_sigterm = lambda signum, frame: None
+        signal.signal(signal.SIGTERM, my_sigterm)
+        run(join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.txt'),
+            stdout=StringIO(), output=None, log=None, report=None)
+        assert_equals(signal.getsignal(signal.SIGINT), self.orig_sigint)
+        assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
 
 
 class TestRelativeImportsFromPythonpath(RunningTestCase):

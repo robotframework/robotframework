@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
+
 from robot import model
 from robot.conf import RobotSettings
 from robot.output import LOGGER, Output, pyloggingconf
@@ -187,14 +189,13 @@ class TestSuite(model.TestSuite):
         if not settings:
             settings = RobotSettings(options)
             LOGGER.register_console_logger(**settings.console_logger_config)
-        STOP_SIGNAL_MONITOR.start()
-        IMPORTER.reset()
-        pyloggingconf.initialize(settings['LogLevel'])
-        init_global_variables(settings)
-        output = Output(settings)
-        runner = Runner(output, settings)
-        self.visit(runner)
-        STOP_SIGNAL_MONITOR.stop()
+        with STOP_SIGNAL_MONITOR:
+            IMPORTER.reset()
+            pyloggingconf.initialize(settings['LogLevel'])
+            init_global_variables(settings)
+            output = Output(settings)
+            runner = Runner(output, settings)
+            self.visit(runner)
         output.close(runner.result)
         return runner.result
 

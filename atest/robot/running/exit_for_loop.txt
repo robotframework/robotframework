@@ -56,5 +56,8 @@ Exit For Loop If True
 Exit For Loop If False
     Check Test Case    ${TESTNAME}
 
-With Continuable Failure
+With Continuable Failure After
+    Check Test Case    ${TESTNAME}
+
+With Continuable Failure Before
     Check Test Case    ${TESTNAME}
