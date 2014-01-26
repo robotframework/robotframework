@@ -24,10 +24,13 @@ class _MockLogger(object):
 class FromDirectoryPopulatorTest(unittest.TestCase):
 
     def test_included_suites_with_dot(self):
-        populator = FromDirectoryPopulator()
-        self.assertEqual(populator._create_included_suites([]), [])
-        self.assertEqual(populator._create_included_suites(['foo']), ['foo'])
-        self.assertEqual(populator._create_included_suites(['bar.zoo']), ['zoo', 'bar.zoo'])
+        create_included_suites = FromDirectoryPopulator()._create_included_suites
+        for inp, exp in [([], []),
+                         (['foo'], ['foo']),
+                         (['bar.zoo'], ['bar.zoo', 'zoo']),
+                         (['1.2.3', 'x.y', 'z'],
+                          ['1.2.3', '2.3', '3', 'x.y', 'y', 'z'])]:
+            assert_equals(list(create_included_suites(inp)), exp)
 
 
 class _PopulatorTest(unittest.TestCase):
