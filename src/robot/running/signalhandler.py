@@ -49,13 +49,19 @@ class _StopSignalMonitor(object):
         raise ExecutionFailed('Execution terminated by signal', exit=True)
 
     def start(self):
+        # TODO: Remove start() in favor of __enter__ in RF 2.9. Refactoring
+        # the whole signal handler at that point would be a good idea.
+        self.__enter__()
+
+    def __enter__(self):
         if signal:
             self._orig_sigint = signal.getsignal(signal.SIGINT)
             self._orig_sigterm = signal.getsignal(signal.SIGTERM)
             for signum in signal.SIGINT, signal.SIGTERM:
                 self._register_signal_handler(signum)
+        return self
 
-    def stop(self):
+    def __exit__(self, *exc_info):
         if signal:
             signal.signal(signal.SIGINT, self._orig_sigint)
             signal.signal(signal.SIGTERM, self._orig_sigterm)
