@@ -72,14 +72,20 @@ Continue For Loop If False
     \    Continue For Loop If     1 == 2
     \    Fail    Should fail here
 
-With Continuable Failure
+With Continuable Failure After
     [Documentation]    FAIL    Several failures occurred:\n\n1) one\n\n2) three
     :FOR    ${var}    IN    one    two    three
     \       Continue For Loop If    '${var}' == 'two'
     \       Run Keyword And Continue On Failure    Fail    ${var}
     Should Be Equal    ${var}    three
 
-
+With Continuable Failure Before
+    [Documentation]    FAIL    Several failures occurred:\n\n1) one\n\n2) two
+    :FOR    ${var}    IN    one    two
+    \       Run Keyword And Continue On Failure    Fail    ${var}
+    \       Continue For Loop
+    \       Fail    This is not executed
+    Should Be Equal    ${var}    two
 
 *** Keyword ***
 With Loop

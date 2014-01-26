@@ -232,8 +232,12 @@ class ForLoop(_BaseKeyword):
             exception = self._run_one_round(context, self.vars, values)
             if exception:
                 if isinstance(exception, ExitForLoop):
+                    if exception.earlier_failures:
+                        errors.extend(exception.earlier_failures.get_errors())
                     break
                 if isinstance(exception, ContinueForLoop):
+                    if exception.earlier_failures:
+                        errors.extend(exception.earlier_failures.get_errors())
                     continue
                 if isinstance(exception, ExecutionPassed):
                     exception.set_earlier_failures(errors)
