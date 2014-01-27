@@ -926,19 +926,26 @@ class OperatingSystem:
         set_env_var(name, value)
         self._info("Environment variable '%s' set to value '%s'" % (name, value))
 
-    def append_to_environment_variable(self, name, *values):
+    def append_to_environment_variable(self, name, *values, **config):
         """Appends given `values` to environment variable `name`.
 
         If the environment variable already exists, values are added after it,
-        otherwise a new environment variable is created. Values are joined
-        together using the operating system path separator (';' on Windows,
-        ':' elsewhere).
+        and otherwise a new environment variable is created.
 
-        Examples (assuming `EXAMPLE` does not exist initially):
-        | Append To Environment Variable | EXAMPLE    | first  |       |
-        | Should Be Equal                | %{EXAMPLE} | first  |       |
-        | Append To Environment Variable | EXAMPLE    | second | third |
-        | Should Be Equal                | %{EXAMPLE} | first${:}second${:}third |
+        Values are, by default, joined together using the operating system
+        path separator (';' on Windows, ':' elsewhere). This can be changed
+        by giving a separator after the values like `separator=value`. No
+        other configuration parameters are accepted.
+
+        Examples (assuming `NAME` and `NAME2` do not exist initially):
+        | Append To Environment Variable | NAME     | first  |       |
+        | Should Be Equal                | %{NAME}  | first  |       |
+        | Append To Environment Variable | NAME     | second | third |
+        | Should Be Equal                | %{NAME}  | first${:}second${:}third |
+        | Append To Environment Variable | NAME2    | first  | separator=-     |
+        | Should Be Equal                | %{NAME2} | first  |                 |
+        | Append To Environment Variable | NAME2    | second | separator=-     |
+        | Should Be Equal                | %{NAME2} | first-second             |
 
         New in Robot Framework 2.8.4.
         """
@@ -946,7 +953,12 @@ class OperatingSystem:
         initial = self.get_environment_variable(name, sentinel)
         if initial is not sentinel:
             values = (initial,) + values
-        self.set_environment_variable(name, os.pathsep.join(values))
+        separator = config.pop('separator', os.pathsep)
+        if config:
+            config = ['='.join(i) for i in sorted(config.items())]
+            raise RuntimeError('Configuration %s not accepted.'
+                               % seq2str(config, lastsep=' or '))
+        self.set_environment_variable(name, separator.join(values))
 
     def remove_environment_variable(self, *names):
         """Deletes the specified environment variable.
