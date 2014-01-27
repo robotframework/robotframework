@@ -101,24 +101,29 @@ Test library names
 
 The name of a test library that is used when a library is imported is
 the same as the name of the module or class implementing it. For
-example, if you have a Python module :code:`MyLibrary` (that is, the
-file :path:`MyLibrary.py`), it will create a library with a name
+example, if you have a Python module :code:`MyLibrary` (that is,
+file :path:`MyLibrary.py`), it will create a library with name
 :name:`MyLibrary`. Similarly, a Java class :code:`YourLibrary`, when
 it is not in any package, creates a library with exactly that name.
 
 Python classes are always inside a module. If the name of a class
 implementing a library is the same as the name of the module, Robot
-Framework allows dropping the module name when importing the
-library. For example, the class :code:`MyLib` in the :path:`MyLib.py`
-file can be used as a library with the name :name:`MyLib`. If the
-module name and class name are different, libraries must be taken into
-use using both module and class names, such as
-:name:`mymodule.MyLibrary`.
+Framework allows dropping the class name when importing the
+library. For example, class :code:`MyLib` in :path:`MyLib.py`
+file can be used as a library with just name :name:`MyLib`. This also
+works with submodules so that if, for example, :code:`parent.MyLib` module
+has class :code:`MyLib`, importing it using just :name:`parent.MyLib`
+works. If the module name and class name are different, libraries must be
+taken into use using both module and class names, such as
+:name:`mymodule.MyLibrary` or :name:`parent.submodule.MyLib`.
 
 Java classes in a non-default package must be taken into use with the
-full name. For example, the class :code:`MyLib` in the
-:code:`com.mycompany.myproject` package must be imported with the name
-:name:`com.mycompany.myproject.MyLib`.
+full name. For example, class :code:`MyLib` in :code:`com.mycompany.myproject`
+package must be imported with name :name:`com.mycompany.myproject.MyLib`.
+
+.. note:: Dropping class names with submodules works only in Robot Framework
+          2.8.4 and newer. With earlier versions you need to include also
+          the class name like :name:`parent.MyLib.MyLib`.
 
 .. tip:: If the library name is really long, for example when the Java
          package name is long, it is recommended to give the library a
