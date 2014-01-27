@@ -24,6 +24,12 @@ Set Environment Variable
     Set Environment Variable    ${NAME}    Moi
     Should Be Equal    %{${NAME}}    Moi
 
+Append To Environment Variable
+    Append To Environment Variable    ${NAME}    first
+    Should Be Equal    %{${NAME}}    first
+    Append To Environment Variable    ${NAME}    second    third
+    Should Be Equal    %{${NAME}}    first${:}second${:}third
+
 Remove Environment Variable
     Set Environment Variable    ${NAME}    Hello
     Remove Environment Variable    ${NAME}

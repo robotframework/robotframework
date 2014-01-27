@@ -926,6 +926,28 @@ class OperatingSystem:
         set_env_var(name, value)
         self._info("Environment variable '%s' set to value '%s'" % (name, value))
 
+    def append_to_environment_variable(self, name, *values):
+        """Appends given `values` to environment variable `name`.
+
+        If the environment variable already exists, values are added after it,
+        otherwise a new environment variable is created. Values are joined
+        together using the operating system path separator (';' on Windows,
+        ':' elsewhere).
+
+        Examples (assuming `EXAMPLE` does not exist initially):
+        | Append To Environment Variable | EXAMPLE    | first  |       |
+        | Should Be Equal                | %{EXAMPLE} | first  |       |
+        | Append To Environment Variable | EXAMPLE    | second | third |
+        | Should Be Equal                | %{EXAMPLE} | first${:}second${:}third |
+
+        New in Robot Framework 2.8.4.
+        """
+        sentinel = object()
+        initial = self.get_environment_variable(name, sentinel)
+        if initial is not sentinel:
+            values = (initial,) + values
+        self.set_environment_variable(name, os.pathsep.join(values))
+
     def remove_environment_variable(self, *names):
         """Deletes the specified environment variable.
 
