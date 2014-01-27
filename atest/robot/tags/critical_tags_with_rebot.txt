@@ -19,8 +19,11 @@ Critical
 Critical Not Matching
     -c nomatch                                        no     no
 
-Critical With Pattern
-    --CritiCal fSTAR -c QUESTaSS                      yes    yes
+Critical As Pattern
+    --CritiCal faSTAR -c QUESTaSS                     yes    yes
+
+Critical As Combined Pattern
+    --CritiCal nonexORfaSTAR -c QUESTassANDforce      yes    yes
 
 Non-Critical
     --noncritical pass                                no     yes
@@ -28,8 +31,11 @@ Non-Critical
 Non-Critical Not Matching
     -n these -n dont -n match                         yes    yes
 
-Non-Critical With Pattern
-    --NonCritiCal f__STAR -n QUEST__ass               no     no
+Non-Critical As Pattern
+    --NonCritiCal fa__STAR -n QUEST__ass              no     no
+
+Non-Critical As Combined Pattern
+    --NonCri nonex_OR_faSTAR -n QUESTassANDforce      no     no
 
 Critical And Non-Critical Matching Different Test
     -c paSTARss -n faiQUEST -c nomatch                yes    no
@@ -47,7 +53,7 @@ Run Test To Create Output
 
 Test Criticality
     [Arguments]    ${options}    ${crit 1}    ${crit 2}
-    Run Rebot    ${options} --escape star:STAR --escape quest:QUEST --report rebot-report.html    ${INPUT FILE}
+    Run Rebot    ${options} --escape star:STAR --escape quest:QUEST    ${INPUT FILE}
     ${tests} =    Get Elements    ${OUT FILE}    suite/test
     Test Status And Criticality Should Be    ${tests[0]}    PASS    ${crit 1}
     Test Status And Criticality Should Be    ${tests[1]}    FAIL    ${crit 2}

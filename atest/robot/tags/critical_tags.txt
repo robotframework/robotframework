@@ -20,8 +20,11 @@ Critical
 Critical Not Matching
     -c nomatch    PASS    ${MSG 000 211}
 
-Critical With Pattern
-    --critical fSTAR -c QUESTaSS    FAIL    ${MSG 211 211}
+Critical As Simple Pattern
+    --critical faSTAR -c QUESTaSS    FAIL    ${MSG 211 211}
+
+Critical As Combined Pattern
+    --critical nonexORfaSTAR -c QUESTassANDforce    FAIL    ${MSG 211 211}
 
 Non-Critical
     --noncritical pass    FAIL    ${MSG 101 211}
@@ -29,8 +32,11 @@ Non-Critical
 Non-Critical Not Matching
     -n these -n dont -n match    FAIL    ${MSG 211 211}
 
-Non-Critical With Pattern
-    --NonCritical f__STAR -n QUESTass    PASS    ${MSG 000 211}
+Non-Critical As Simple Pattern
+    --NonCritical fa__STAR -n QUESTass    PASS    ${MSG 000 211}
+
+Non-Critical As Combined Pattern
+    --NonCritical nonexORfa__STAR -n QUESTassANDforce    PASS    ${MSG 000 211}
 
 Critical And Non-Critical Matching Different Test
     --critical paSTARss --noncritical faiQUEST -c nomatch    PASS    ${MSG 110 211}
