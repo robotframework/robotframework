@@ -13,6 +13,12 @@ Set Environment Variable
 Append To Environment Variable
     Check test case    ${TEST NAME}
 
+Append To Environment Variable With Custom Separator
+    Check test case    ${TEST NAME}
+
+Append To Environment Variable With Invalid Config
+    Check test case    ${TEST NAME}
+
 Remove Environment Variable
     Check test case    ${TEST NAME}
 
