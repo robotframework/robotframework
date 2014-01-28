@@ -281,17 +281,34 @@ class Process(object):
     def run_process(self, command, *arguments, **configuration):
         """Runs a process and waits for it to complete.
 
-        See `Specifying command and arguments` and `Process configuration`
-        for more information about the arguments.
+        `command` and `*arguments` specify the command to execute and arguments
+        passed to it. See `Specifying command and arguments` for more details.
+
+        `**configuration` contains additional configuration related to starting
+        processes and waiting for them to finish. See `Process configuration`
+        for more details about configuration related to starting processes.
+        Configuration related to waiting for processes consists of `timeout`
+        and `on_timeout` arguments that have same semantics as with `Wait
+        For Process` keyword. By default there is no timeout, and if timeout
+        is defined the default action on timeout is `terminate`.
 
         Returns a `result object` containing information about the execution.
 
+        Examples:
+        | ${result} = | Run Process | python | -c | print 'Hello, world!' |
+        | Should Be Equal | ${result.stdout} | Hello, world! |
+        | ${result} = | Run Process | ${command} | stderr=STDOUT | timeout=10s |
+        | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
+
         This command does not change the `active process`.
+        `timeout` and `on_timeout` arguments are new in Robot Framework 2.8.4.
         """
         current = self._processes.current
+        timeout = configuration.pop('timeout', None)
+        on_timeout = configuration.pop('on_timeout', 'terminate')
         try:
             handle = self.start_process(command, *arguments, **configuration)
-            return self.wait_for_process(handle)
+            return self.wait_for_process(handle, timeout, on_timeout)
         finally:
             self._processes.current = current
 
