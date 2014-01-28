@@ -20,8 +20,7 @@ import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
-                         decode_from_system, get_env_vars, secs_to_timestr,
-                         timestr_to_secs)
+                         decode_output, secs_to_timestr, timestr_to_secs)
 from robot.version import get_version
 from robot.api import logger
 
@@ -339,7 +338,7 @@ class Process(object):
         return self._processes.register(process, alias=config.alias)
 
     def _cmd(self, args, command, use_shell):
-        command = [encode_to_system(item) for item in [command] + list(args)]
+        command = [item for item in [command] + list(args)]
         if not use_shell:
             return command
         if args:
@@ -720,7 +719,7 @@ class ExecutionResult(object):
     def _format_output(self, output):
         if output.endswith('\n'):
             output = output[:-1]
-        return decode_from_system(output)
+        return decode_output(output)
 
     def __str__(self):
         return '<result object with rc %d>' % self.rc
@@ -756,16 +755,13 @@ class ProcessConfig(object):
                 return self.stdout_stream
         return self._new_stream(stderr)
 
-    def _construct_env(self, env, rest):
-        for key in rest:
+    def _construct_env(self, env, extra):
+        for key in extra:
             if not key.startswith('env:'):
                 raise RuntimeError("'%s' is not supported by this keyword." % key)
             if env is None:
-                env = get_env_vars(upper=False)
-            env[key[4:]] = rest[key]
-        if env:
-            env = dict((encode_to_system(key), encode_to_system(env[key]))
-                       for key in env)
+                env = os.environ.copy()
+            env[encode_to_system(key[4:])] = encode_to_system(extra[key])
         return env
 
     def __str__(self):
