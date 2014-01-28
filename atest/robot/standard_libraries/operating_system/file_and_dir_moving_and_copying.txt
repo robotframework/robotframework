@@ -20,6 +20,12 @@ Copy File when destination is a directory
 Copy File when destination is a directory and file with same name exists
     Check testcase  ${TESTNAME}
 
+Copy Files destination can not be an existing file
+    Check testcase  ${TESTNAME}
+
+Move Files destination can not be an existing file
+    Check testcase  ${TESTNAME}
+
 Move File To Existing Dir
     Check testcase  ${TESTNAME}
 

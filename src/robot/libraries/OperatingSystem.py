@@ -795,6 +795,8 @@ class OperatingSystem:
 
     def _prepare_list_of_source_files(self, destination, *sources):
         destination, dest_is_dir = self._normalize_dest(destination)
+        if not dest_is_dir and os.path.isfile(destination):
+            raise RuntimeError("Destination can not be an existing file '%s'" % destination)
         source_files = []
         for source in sources:
             files_matching_pattern = glob.glob(source)

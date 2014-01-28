@@ -259,6 +259,18 @@ Copy Files without arguments fails
     [Teardown]    Remove Test Files For Multifile Operations
     Run Keyword And Expect Error   Must contain destination and at least one source   Copy Files
 
+Copy Files destination can not be an existing file
+    [Setup]    Create Test Files For Multifile Operations
+    [Teardown]    Remove Test Files For Multifile Operations
+    Run Keyword And Expect Error    Destination can not be an existing file*
+    ...     Copy Files    ${SOURCE}movecopy_list-2.txt    ${SOURCE}movecopy_list-1.txt
+
+Move Files destination can not be an existing file
+    [Setup]    Create Test Files For Multifile Operations
+    [Teardown]    Remove Test Files For Multifile Operations
+    Run Keyword And Expect Error    Destination can not be an existing file*
+    ...     Move Files    ${SOURCE}movecopy_list-2.txt    ${SOURCE}movecopy_list-1.txt
+
 Copy One File To File With Copy Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
