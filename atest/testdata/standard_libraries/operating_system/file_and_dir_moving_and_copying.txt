@@ -211,35 +211,6 @@ Moving Non-existing Files Fails
     Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
-Rename One File With Move Files
-    [Setup]    Create Test Files For Multifile Operations
-    [Teardown]    Remove Test Files For Multifile Operations
-    Move Files    ${SOURCE}${/}rename-*.txt    ${SOURCE}renamed-one.txt
-	Remove Values From List    ${source_files}
-	...    rename-one.txt
-	Append To List    ${source_files}
-    ...    renamed-one.txt
-	Directory Should Have Items    ${SOURCE}    @{source_files}
-
-Rename Multiple Files To One File Fails
-    [Setup]    Create Test Files For Multifile Operations
-    [Teardown]    Remove Test Files For Multifile Operations
-	Append To File    ${SOURCE}rename_multi-1.txt    one
-	Append To File    ${SOURCE}rename_multi-2.txt    two
-    Run Keyword And Expect Error    Several files match the pattern*
-    ...       Move Files    ${SOURCE}${/}rename_multi-[12].txt    ${SOURCE}rename_multi-renamed.txt
-    Directory Should Be Empty    ${DEST}
-	Directory Should Have Items    ${SOURCE}    @{source_files}
-
-Rename List of Files with Patterns To One File Fails
-    [Setup]    Create Test Files For Multifile Operations
-    [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    Several files match the pattern*
-    ...       Move Files    ${SOURCE}rename_list_pattern3-*.txt    ${SOURCE}rename_list_pattern4-?.txt
-    ...       ${SOURCE}renamed_list_pattern.txt
-    Directory Should Be Empty    ${DEST}
-	Directory Should Have Items    ${SOURCE}    @{source_files}
-
 # Test cases for Copy Files keyword
 Copy One File To Dir With Copy Files
     [Setup]    Create Test Files For Multifile Operations
@@ -271,6 +242,18 @@ Move Files destination can not be an existing file
     Run Keyword And Expect Error    Destination can not be an existing file*
     ...     Move Files    ${SOURCE}movecopy_list-2.txt    ${SOURCE}movecopy_list-1.txt
 
+Copy Files directory will be created if it does not exist
+    [Setup]    Create Test Files For Multifile Operations
+    [Teardown]    Remove Test Files For Multifile Operations
+    Copy Files    ${SOURCE}movecopy_list-1.txt   ${DEST}copieddir
+    Directory Should Have Items   ${DEST}copieddir      movecopy_list-1.txt
+
+Move Files directory will be created if it does not exist
+    [Setup]    Create Test Files For Multifile Operations
+    [Teardown]    Remove Test Files For Multifile Operations
+    Move Files    ${SOURCE}movecopy_list-1.txt   ${DEST}moveddir
+    Directory Should Have Items   ${DEST}moveddir      movecopy_list-1.txt
+
 Copy One File To File With Copy Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
@@ -286,14 +269,6 @@ Copy Multiple Files
     Directory Should Have Items    ${DEST}
 	...    movecopy_multi-1.txt
 	...    movecopy_multi-2.txt
-	Directory Should Have Items    ${SOURCE}    @{source_files}
-
-Copy Multiple Files To One File Fails
-    [Setup]    Create Test Files For Multifile Operations
-    [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    Several files match the pattern*
-    ...     Copy Files    ${SOURCE}${/}movecopy_multi-[12].txt    ${DEST}copied_multi.txt
-    Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
 Copy Multiple Files From Multiple Directories
@@ -330,15 +305,6 @@ Copy List of Files with Patterns
     ...    movecopy_list_pattern-2.txt
     ...    movecopy_list_pattern2-3.txt
     ...    movecopy_list_pattern2-4.txt
-	Directory Should Have Items    ${SOURCE}    @{source_files}
-
-Copy List of Files with Pattern To One File Fails
-    [Setup]    Create Test Files For Multifile Operations
-    [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    Several files match the pattern*
-    ...      Copy Files    ${SOURCE}movecopy_list_pattern-*.txt    ${SOURCE}movecopy_list_pattern2-?.txt
-    ...      ${DEST}copied_list_pattern.txt
-    Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
 Copying Non-existing Files Fails

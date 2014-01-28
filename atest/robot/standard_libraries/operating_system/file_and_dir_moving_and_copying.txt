@@ -26,6 +26,12 @@ Copy Files destination can not be an existing file
 Move Files destination can not be an existing file
     Check testcase  ${TESTNAME}
 
+Copy Files directory will be created if it does not exist
+    Check testcase  ${TESTNAME}
+
+Move Files directory will be created if it does not exist
+    Check testcase  ${TESTNAME}
+
 Move File To Existing Dir
     Check testcase  ${TESTNAME}
 
@@ -78,15 +84,6 @@ Move List of Files with Patterns
 Moving Non-existing Files Fails
     Check testcase  ${TESTNAME}
 
-Rename One File With Move Files
-    Check testcase  ${TESTNAME}
-
-Rename Multiple Files To One File Fails
-    Check testcase  ${TESTNAME}
-
-Rename List of Files with Patterns To One File Fails
-    Check testcase  ${TESTNAME}
-
 # Test cases for Copy Files keyword
 Copy One File To Dir With Copy Files
     Check testcase  ${TESTNAME}
@@ -103,9 +100,6 @@ Copy One File To File With Copy Files
 Copy Multiple Files
     Check testcase  ${TESTNAME}
 
-Copy Multiple Files To One File Fails
-    Check testcase  ${TESTNAME}
-
 Copy Multiple Files From Multiple Directories
     Check testcase  ${TESTNAME}
 
@@ -113,9 +107,6 @@ Copy List of Files
     Check testcase  ${TESTNAME}
 
 Copy List of Files with Patterns
-    Check testcase  ${TESTNAME}
-
-Copy List of Files with Pattern To One File Fails
     Check testcase  ${TESTNAME}
 
 Copying Non-existing Files Fails
