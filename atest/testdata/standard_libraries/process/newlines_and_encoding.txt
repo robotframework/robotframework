@@ -1,42 +1,38 @@
 *** Settings ***
 Resource          resource.txt
 
+*** Variables ***
+${STDOUT}         %{TEMPDIR}/process-stdout.txt
+
 *** Test Cases ***
-Non-ascii in command using shell=True
-    ${result}=   Run Process    python -c "print repr('ä')"   shell=True
-    Result should equal    ${result}    stdout='\\xc3\\xa4'
+Non-ASCII command and output
+    ${result}=   Run Process    echo hyvä   shell=True
+    Result should equal    ${result}    stdout=hyvä
 
-Non-ascii in command using shell=False
-    ${result}=   Run Process    python    -c    print repr('ä')
-    Result should equal    ${result}    stdout='\\xc3\\xa4'
+Non-ASCII command and output with custom stream
+    ${result}=   Run Process    echo hyvä   shell=True    stdout=${STDOUT}
+    Result should equal    ${result}    stdout=hyvä
+    [Teardown]   Safe Remove File    ${STDOUT}
 
-Non-ascii in command and output using shell=True
-    ${result}=   Run Process    python -c "print 'ä'"   shell=True
-    Result should equal    ${result}    stdout=ä
+Non-ASCII in environment variables
+    ${result}=   Run Process    python    -c
+    ...    import os, sys; print os.getenv('X_X').decode(sys.getfilesystemencoding()) \=\= u'hyv\\xe4'
+    ...    env:X_X=hyvä    stderr=STDOUT
+    Result should equal    ${result}    stdout=True
 
-Non-ascii in command and output using shell=False
-    ${result}=   Run Process    python    -c    print 'ä'
-    Result should equal    ${result}    stdout=ä
+Trailing newline is removed
+    ${result}=   Run Process    python    -c    print 'nothing to remove',
+    Result should equal    ${result}    stdout=nothing to remove
+    ${result}=   Run Process    python    -c    print 'one is removed\\n',
+    Result should equal    ${result}    stdout=one is removed
+    ${result}=   Run Process    python    -c    print 'only one is removed\\n\\n\\n',
+    Result should equal    ${result}    stdout=only one is removed\n\n
 
-Non-ascii in command and output with given stdout
-    ${path}=    Normalize Path    %{TEMPDIR}/process-stdout.txt
-    ${result}=   Run Process    python  -c    print "ööåöåöå"   shell=True   stdout=${path}
-    Result should equal    ${result}    stdout=ööåöåöå
-    [Teardown]   Safe Remove File    ${path}
+Internal newlines are preserved
+    ${result}=   Run Process    python -c "print '1\\n2\\n3'"   shell=True
+    Result should equal    ${result}    stdout=1\n2\n3
 
-Non-ascii in environment variables
-    [Setup]    Check Precondition    not sys.platform.startswith('java')
-    ${result}=   Run Process    python -c "import os; print os.getenv('X_X')"  shell=True  env:X_X=Öoa
-    Result should equal    ${result}    stdout=Öoa
-
-Newlines and trailing newline is removed
-    ${result}=   Run Process    python -c "print 'first line\\nsecond line\\nthird line'"   shell=True    cwd=${CURDIR}
-    Result should equal    ${result}    stdout=first line\nsecond line\nthird line
-
-Newline test using shell=True
-    ${result}=   Run Process    python -c "print 'hello'"   shell=True
-    Result should equal    ${result}    stdout=hello
-
-Newline test using shell=False
-    ${result}=   Run Process    python  -c   print "hello"
-    Result should equal    ${result}    stdout=hello
+Newlines with custom stream
+    ${result}=   Run Process    python -c "print '1\\n2\\n3'"   shell=True    stdout=${STDOUT}
+    Result should equal    ${result}    stdout=1\n2\n3
+    [Teardown]   Safe Remove File    ${STDOUT}

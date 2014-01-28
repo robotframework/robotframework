@@ -16,6 +16,7 @@ from __future__ import with_statement
 
 import os
 import subprocess
+import sys
 import time
 import signal as signal_module
 
@@ -23,6 +24,10 @@ from robot.utils import (ConnectionCache, abspath, encode_to_system,
                          decode_output, secs_to_timestr, timestr_to_secs)
 from robot.version import get_version
 from robot.api import logger
+
+
+if os.sep == '/' and sys.platform.startswith('java'):
+    encode_to_system = lambda string: string
 
 
 class Process(object):
@@ -321,7 +326,7 @@ class Process(object):
         that can be used as a handle to active the started process if needed.
         """
         config = ProcessConfig(**configuration)
-        executable_command = self._cmd(arguments, command, config.shell)
+        executable_command = self._cmd(command, arguments, config.shell)
         logger.info('Starting process:\n%s' % executable_command)
         logger.debug('Process configuration:\n%s' % config)
         process = subprocess.Popen(executable_command,
@@ -337,8 +342,8 @@ class Process(object):
                                                  config.stderr_stream)
         return self._processes.register(process, alias=config.alias)
 
-    def _cmd(self, args, command, use_shell):
-        command = [item for item in [command] + list(args)]
+    def _cmd(self, command, args, use_shell):
+        command = [encode_to_system(item) for item in [command] + list(args)]
         if not use_shell:
             return command
         if args:
@@ -719,7 +724,7 @@ class ExecutionResult(object):
     def _format_output(self, output):
         if output.endswith('\n'):
             output = output[:-1]
-        return decode_output(output)
+        return decode_output(output, force=True)
 
     def __str__(self):
         return '<result object with rc %d>' % self.rc
@@ -756,6 +761,9 @@ class ProcessConfig(object):
         return self._new_stream(stderr)
 
     def _construct_env(self, env, extra):
+        if env:
+            env = dict((encode_to_system(k), encode_to_system(v))
+                       for k, v in env.items())
         for key in extra:
             if not key.startswith('env:'):
                 raise RuntimeError("'%s' is not supported by this keyword." % key)
