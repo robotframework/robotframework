@@ -687,6 +687,8 @@ class ExecutionResult(object):
 
     def __init__(self, process, stdout, stderr, rc=None):
         self._process = process
+        self._stdout_stream = stdout
+        self._stderr_stream = stderr
         self.stdout_path = self._get_path(stdout)
         self.stderr_path = self._get_path(stderr)
         self.rc = rc
@@ -694,13 +696,15 @@ class ExecutionResult(object):
         self._stderr = None
 
     def _get_path(self, stream):
-        if stream in (subprocess.PIPE, subprocess.STDOUT):
-            return None
-        return stream.name
+        return stream.name if self._is_custom_stream(stream) else None
+
+    def _is_custom_stream(self, stream):
+        return stream not in (subprocess.PIPE, subprocess.STDOUT)
 
     @property
     def stdout(self):
         if self._stdout is None:
+            self._close_stream(self._stdout_stream)
             self._stdout = self._read_stream(self.stdout_path,
                                              self._process.stdout)
         return self._stdout
@@ -708,9 +712,15 @@ class ExecutionResult(object):
     @property
     def stderr(self):
         if self._stderr is None:
+            self._close_stream(self._stderr_stream)
             self._stderr = self._read_stream(self.stderr_path,
                                              self._process.stderr)
         return self._stderr
+
+    def _close_stream(self, stream):
+        if self._is_custom_stream(stream) and not stream.closed:
+            stream.flush()
+            stream.close()
 
     def _read_stream(self, stream_path, stream):
         if stream_path:

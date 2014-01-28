@@ -30,3 +30,12 @@ Custom streams are written under cwd when relative
 
 Cwd does not affect absolute custom streams
     Check Test Case    ${TESTNAME}
+
+Lot of output to custom stream
+    Check Test Case    ${TESTNAME}
+
+Run multiple times
+    Check Test Case    ${TESTNAME}
+
+Run multiple times using custom streams
+    Check Test Case    ${TESTNAME}

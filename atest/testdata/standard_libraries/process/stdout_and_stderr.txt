@@ -45,13 +45,38 @@ Cwd does not affect absolute custom streams
     Result Should Equal    ${result}    stdout    stderr    stdout_path=${STDOUT}    stderr_path=${STDERR}
     [Teardown]    Safe Remove Directory    ${CWD}
 
+Lot of output to custom stream
+    [Tags]    performance
+    ${result}=    Run Process    python -c "for i in xrange(100000):\tprint 'a'*99"    shell=True    stdout=${STDOUT}
+    Length Should Be    ${result.stdout}    9999999
+    File Should Not Be Empty    ${STDOUT}
+
+Run multiple times
+    [Tags]    performance
+    :FOR    ${i}    IN RANGE    42
+    \   Run And Test Once    ${i}
+
+Run multiple times using custom streams
+    [Tags]    performance
+    :FOR    ${i}    IN RANGE    42
+    \   Run And Test Once    ${i}    ${STDOUT}    ${STDERR}
+
+
 *** Keywords ***
 Run Stdout Stderr Process
     [Arguments]    ${stdout}=${NONE}    ${stderr}=${NONE}    ${cwd}=${NONE}
+    ...    ${stdout_content}=stdout    ${stderr_content}=stderr
     ${code} =    Catenate    SEPARATOR=;
     ...    import sys
-    ...    sys.stdout.write('stdout')
-    ...    sys.stderr.write('stderr')
+    ...    sys.stdout.write('${stdout_content}')
+    ...    sys.stderr.write('${stderr_content}')
     ${result} =    Run Process    python    -c    ${code}
     ...    stdout=${stdout}    stderr=${stderr}    cwd=${cwd}
     [Return]    ${result}
+
+Run And Test Once
+    [Arguments]    ${content}    ${stdout}=${NONE}    ${stderr}=${NONE}
+    ${result} =    Run Stdout Stderr Process    stdout=${stdout}    stderr=${stderr}
+    ...    stdout_content=out-${content}    stderr_content=err-${content}
+    Should Be Equal   ${result.stdout}    out-${content}
+    Should Be Equal   ${result.stderr}    err-${content}
