@@ -5,19 +5,25 @@ Resource         process_resource.txt
 Test Setup       Check Precondition
 
 *** Test Cases ***
-Non-ascii in the command using shell=True
+Non-ascii in command using shell=True
     Check Test Case    ${TESTNAME}
 
-Non-ascii in the command using shell=False
+Non-ascii in command using shell=False
     Check Test Case    ${TESTNAME}
 
-Non-ascii in the command with given stdout
+Non-ascii in command and output using shell=True
+    Check Test Case    ${TESTNAME}
+
+Non-ascii in command and output using shell=False
+    Check Test Case    ${TESTNAME}
+
+Non-ascii in command and output with given stdout
+    Check Test Case    ${TESTNAME}
+
+Non-ascii in environment variables
     Check Test Case    ${TESTNAME}
 
 Newlines and trailing newline is removed
-    Check Test Case    ${TESTNAME}
-
-Non-ascii in the command arguments
     Check Test Case    ${TESTNAME}
 
 Newline test using shell=True

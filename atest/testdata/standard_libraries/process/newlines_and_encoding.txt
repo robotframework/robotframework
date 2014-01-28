@@ -1,29 +1,37 @@
 *** Settings ***
 Resource          resource.txt
-Test Setup        Check Precondition    sys.version_info >= (2,6)
 
 *** Test Cases ***
-Non-ascii in the command using shell=True
-    ${result}=   Run Process    python -c "print 'ööåöåöå'"   shell=True
-    Result should equal    ${result}    stdout=ööåöåöå
+Non-ascii in command using shell=True
+    ${result}=   Run Process    python -c "print repr('ä')"   shell=True
+    Result should equal    ${result}    stdout='\\xc3\\xa4'
 
-Non-ascii in the command using shell=False
-    ${result}=   Run Process    python   -c     print "ööåöåöå"
-    Result should equal    ${result}    stdout=ööåöåöå
+Non-ascii in command using shell=False
+    ${result}=   Run Process    python    -c    print repr('ä')
+    Result should equal    ${result}    stdout='\\xc3\\xa4'
 
-Non-ascii in the command with given stdout
+Non-ascii in command and output using shell=True
+    ${result}=   Run Process    python -c "print 'ä'"   shell=True
+    Result should equal    ${result}    stdout=ä
+
+Non-ascii in command and output using shell=False
+    ${result}=   Run Process    python    -c    print 'ä'
+    Result should equal    ${result}    stdout=ä
+
+Non-ascii in command and output with given stdout
     ${path}=    Normalize Path    %{TEMPDIR}/process-stdout.txt
     ${result}=   Run Process    python  -c    print "ööåöåöå"   shell=True   stdout=${path}
     Result should equal    ${result}    stdout=ööåöåöå
     [Teardown]   Safe Remove File    ${path}
 
+Non-ascii in environment variables
+    [Setup]    Check Precondition    not sys.platform.startswith('java')
+    ${result}=   Run Process    python -c "import os; print os.getenv('X_X')"  shell=True  env:X_X=Öoa
+    Result should equal    ${result}    stdout=Öoa
+
 Newlines and trailing newline is removed
     ${result}=   Run Process    python -c "print 'first line\\nsecond line\\nthird line'"   shell=True    cwd=${CURDIR}
     Result should equal    ${result}    stdout=first line\nsecond line\nthird line
-
-Non-ascii in the command arguments
-    ${result}=   Run Process    python -c "import os; print os.getenv('varri', '-');"  shell=True  env:varri=Öoa
-    Should Be Equal        ${result.stdout.strip()}  Öoa
 
 Newline test using shell=True
     ${result}=   Run Process    python -c "print 'hello'"   shell=True
