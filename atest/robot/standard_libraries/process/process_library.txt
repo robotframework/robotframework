@@ -1,4 +1,6 @@
 *** Settings ***
+Documentation    This suite should be split. Please don't add more tests but
+...              create a new suite and move related tests from here to it too.
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/process_library.txt
 Force Tags       regression    pybot    jybot
 Resource         process_resource.txt
@@ -20,12 +22,6 @@ Switching active process
     Check Test Case    ${TESTNAME}
 
 Change Current Working Directory
-    Check Test Case    ${TESTNAME}
-
-Setting Stdout
-    Check Test Case    ${TESTNAME}
-
-Setting Stderr
     Check Test Case    ${TESTNAME}
 
 Without Env Configuration the Environment Should Be As It Was
@@ -59,16 +55,4 @@ Input things to process
     Check Test Case    ${TESTNAME}
 
 Process alias
-    Check Test Case    ${TESTNAME}
-
-Redirecting Stderr to Stdout
-    Check Test Case    ${TESTNAME}
-
-Redirecting Stderr to Stdout with filename
-    Check Test Case    ${TESTNAME}
-
-Current working directory should be used with stdout and stderr
-    Check Test Case    ${TESTNAME}
-
-Current working directory should not be used with stdout and stderr when absolute path in use
     Check Test Case    ${TESTNAME}

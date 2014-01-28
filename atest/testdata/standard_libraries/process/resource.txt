@@ -2,6 +2,11 @@
 Library           Process
 Library           OperatingSystem
 
+*** Variables ***
+${STDOUT}         %{TEMPDIR}/process-stdout-file.txt
+${STDERR}         %{TEMPDIR}/process-stderr-file.txt
+${CWD}            %{TEMPDIR}/process-cwd
+
 *** Keywords ***
 Some process
     [Arguments]    ${alias}=${null}
@@ -18,15 +23,23 @@ Stop some process
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
-    Should Be Equal    ${result.stdout}    ${stdout}
-    Should Be Equal    ${result.stderr}    ${stderr}
-    Should Be Equal As Integers    ${result.rc}    ${rc}
+    ...    ${stdout_path}=    ${stderr_path}=
+    Should Be Equal    ${result.stdout}    ${stdout}    stdout:
+    Should Be Equal    ${result.stderr}    ${stderr}    stderr
+    Result should match    ${result}    *    *    ${rc}    ${stdout_path}    ${stderr_path}
 
 Result should match
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
-    Should Match    ${result.stdout}    ${stdout}
-    Should Match    ${result.stderr}    ${stderr}
-    Should Be Equal As Integers    ${result.rc}    ${rc}
+    ...    ${stdout_path}=    ${stderr_path}=
+    Should Match    ${result.stdout}    ${stdout}    stdout
+    Should Match    ${result.stderr}    ${stderr}    stderr
+    Should Be Equal As Integers    ${result.rc}    ${rc}    rc
+    ${stdout_path} =    Run Keyword If    "${stdout_path}"
+    ...    Normalize Path    ${stdout_path}
+    ${stderr_path} =    Run Keyword If    "${stderr_path}"
+    ...    Normalize Path    ${stderr_path}
+    Should Be Equal    ${result.stdout_path}    ${stdout_path}    stdout_path
+    Should Be Equal    ${result.stderr_path}    ${stderr_path}    stderr_path
 
 Start Python Process
     [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}
@@ -43,8 +56,8 @@ Run Python Process
 Safe Remove File
     [Documentation]    Ignore errors caused by process being locked.
     ...                That happens at least with IronPython.
-    [Arguments]    ${path}
-    Run Keyword And Ignore Error    Remove File    ${path}
+    [Arguments]    @{paths}
+    Run Keyword And Ignore Error    Remove Files    @{paths}
 
 Safe Remove Directory
     [Arguments]    ${path}

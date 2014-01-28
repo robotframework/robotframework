@@ -1,9 +1,6 @@
 *** Settings ***
 Resource          resource.txt
 
-*** Variables ***
-${STDOUT}         %{TEMPDIR}/process-stdout.txt
-
 *** Test Cases ***
 Non-ASCII command and output
     ${result}=   Run Process    echo hyvä   shell=True
@@ -11,7 +8,7 @@ Non-ASCII command and output
 
 Non-ASCII command and output with custom stream
     ${result}=   Run Process    echo hyvä   shell=True    stdout=${STDOUT}
-    Result should equal    ${result}    stdout=hyvä
+    Result should equal    ${result}    stdout=hyvä    stdout_path=${STDOUT}
     [Teardown]   Safe Remove File    ${STDOUT}
 
 Non-ASCII in environment variables
@@ -34,5 +31,5 @@ Internal newlines are preserved
 
 Newlines with custom stream
     ${result}=   Run Process    python -c "print '1\\n2\\n3'"   shell=True    stdout=${STDOUT}
-    Result should equal    ${result}    stdout=1\n2\n3
+    Result should equal    ${result}    stdout=1\n2\n3    stdout_path=${STDOUT}
     [Teardown]   Safe Remove File    ${STDOUT}

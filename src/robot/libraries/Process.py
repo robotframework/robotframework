@@ -736,7 +736,7 @@ class ProcessConfig(object):
                  alias=None, env=None, **rest):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
-        self.stderr_stream = self._get_stderr(stderr, stdout)
+        self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.shell = is_true(shell)
         self.alias = alias
         self.env = self._construct_env(env, rest)
@@ -752,12 +752,11 @@ class ProcessConfig(object):
             return open(os.path.join(self.cwd, name), 'w')
         return subprocess.PIPE
 
-    def _get_stderr(self, stderr, stdout):
-        if stderr:
-            if stderr == 'STDOUT' or stderr == stdout:
-                if self.stdout_stream == subprocess.PIPE:
-                    return subprocess.STDOUT
-                return self.stdout_stream
+    def _get_stderr(self, stderr, stdout, stdout_stream):
+        if stderr and stderr in ['STDOUT', stdout]:
+            if stdout_stream != subprocess.PIPE:
+                return stdout_stream
+            return subprocess.STDOUT
         return self._new_stream(stderr)
 
     def _construct_env(self, env, extra):
