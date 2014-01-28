@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/get_process_result.txt
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         process_resource.txt
 
 *** Test Cases ***
 Get whole result object

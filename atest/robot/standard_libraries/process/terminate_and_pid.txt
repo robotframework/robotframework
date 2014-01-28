@@ -1,8 +1,8 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/terminate_and_pid.txt
-Test Setup       Check Preconditions
+Test Setup       Check Precondition
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         process_resource.txt
 
 *** Test Cases ***
 Run process does not change active process
@@ -45,7 +45,3 @@ Getting PIDs in different ways should give same result
 
 Lot of output
     Check Test Case    ${TESTNAME}
-
-*** Keywords ***
-Check Preconditions
-    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression

@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Check Precondition    sys.version_info >= (2,6)
 Resource          resource.txt
+Test Setup        Check Precondition    sys.version_info >= (2,6)
 
 *** Test Cases ***
 Non-ascii in the command using shell=True
