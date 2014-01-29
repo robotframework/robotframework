@@ -26,7 +26,8 @@ Result should equal
     ...    ${stdout_path}=    ${stderr_path}=
     Should Be Equal    ${result.stdout}    ${stdout}    stdout:
     Should Be Equal    ${result.stderr}    ${stderr}    stderr
-    Result should match    ${result}    *    *    ${rc}    ${stdout_path}    ${stderr_path}
+    Result should match    ${result}    ${stdout}    ${stderr}    ${rc}
+    ...    ${stdout_path}    ${stderr_path}
 
 Result should match
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
@@ -34,12 +35,19 @@ Result should match
     Should Match    ${result.stdout}    ${stdout}    stdout
     Should Match    ${result.stderr}    ${stderr}    stderr
     Should Be Equal As Integers    ${result.rc}    ${rc}    rc
-    ${stdout_path} =    Run Keyword If    "${stdout_path}"
-    ...    Normalize Path    ${stdout_path}
-    ${stderr_path} =    Run Keyword If    "${stderr_path}"
-    ...    Normalize Path    ${stderr_path}
+    ${stdout_path} =    Custom stream should contain    ${stdout_path}    ${result.stdout}
+    ${stderr_path} =    Custom stream should contain    ${stderr_path}    ${result.stderr}
     Should Be Equal    ${result.stdout_path}    ${stdout_path}    stdout_path
     Should Be Equal    ${result.stderr_path}    ${stderr_path}    stderr_path
+
+Custom stream should contain
+    [Arguments]    ${path}    ${expected}
+    Return From Keyword If    not "${path}"    ${NONE}
+    ${path} =    Normalize Path    ${path}
+    ${encoding} =    Evaluate    robot.utils.encoding.OUTPUT_ENCODING    robot
+    ${content} =    Get File    ${path}    encoding=${encoding}
+    Should Be Equal    ${content.rstrip()}    ${expected}
+    [Return]    ${path}
 
 Start Python Process
     [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}

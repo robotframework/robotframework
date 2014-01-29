@@ -426,7 +426,6 @@ class Process(object):
         `timeout` and `on_timeout` are new in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
-        result = self._results[process]
         logger.info('Waiting for process to complete.')
         if timeout:
             timeout = timestr_to_secs(timeout)
@@ -434,9 +433,7 @@ class Process(object):
                 logger.info('Process did not complete in %s.'
                             % secs_to_timestr(timeout))
                 return self._manage_process_timeout(handle, on_timeout.lower())
-        result.rc = process.wait() or 0
-        logger.info('Process completed.')
-        return result
+        return self._wait(process)
 
     def _manage_process_timeout(self, handle, on_timeout):
         if on_timeout == 'terminate':
@@ -446,6 +443,13 @@ class Process(object):
         else:
             logger.info('Leaving process intact.')
             return None
+
+    def _wait(self, process):
+        result = self._results[process]
+        result.rc = process.wait() or 0
+        result.close_custom_streams()
+        logger.info('Process completed.')
+        return result
 
     def terminate_process(self, handle=None, kill=False):
         """Stops the process gracefully or forcefully.
@@ -484,7 +488,6 @@ class Process(object):
         returning the result object are new features in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
-        result = self._results[process]
         if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
                                'by this Python version.')
@@ -495,8 +498,7 @@ class Process(object):
             if not self._process_is_stopped(process, self.KILL_TIMEOUT):
                 raise
             logger.debug('Ignored OSError because process was stopped.')
-        result.rc = process.wait() or 0
-        return result
+        return self._wait(process)
 
     def _kill(self, process):
         logger.info('Forcefully killing process.')
@@ -687,13 +689,13 @@ class ExecutionResult(object):
 
     def __init__(self, process, stdout, stderr, rc=None):
         self._process = process
-        self._stdout_stream = stdout
-        self._stderr_stream = stderr
         self.stdout_path = self._get_path(stdout)
         self.stderr_path = self._get_path(stderr)
         self.rc = rc
         self._stdout = None
         self._stderr = None
+        self._custom_streams = [stream for stream in (stdout, stderr)
+                                if self._is_custom_stream(stream)]
 
     def _get_path(self, stream):
         return stream.name if self._is_custom_stream(stream) else None
@@ -704,7 +706,6 @@ class ExecutionResult(object):
     @property
     def stdout(self):
         if self._stdout is None:
-            self._close_stream(self._stdout_stream)
             self._stdout = self._read_stream(self.stdout_path,
                                              self._process.stdout)
         return self._stdout
@@ -712,15 +713,15 @@ class ExecutionResult(object):
     @property
     def stderr(self):
         if self._stderr is None:
-            self._close_stream(self._stderr_stream)
             self._stderr = self._read_stream(self.stderr_path,
                                              self._process.stderr)
         return self._stderr
 
-    def _close_stream(self, stream):
-        if self._is_custom_stream(stream) and not stream.closed:
-            stream.flush()
-            stream.close()
+    def close_custom_streams(self):
+        for stream in self._custom_streams:
+            if not stream.closed:
+                stream.flush()
+                stream.close()
 
     def _read_stream(self, stream_path, stream):
         if stream_path:
