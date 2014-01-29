@@ -93,6 +93,7 @@ Options
                           tests are not selected even if included with
                           --include. Tags are matched using the rules explained
                           with --include.
+ -R --rerunmerge          *** TODO ***
     --processemptysuite   Processes output also if the top level test suite is
                           empty. Useful e.g. with --include/--exclude when it
                           is not an error that no test matches the condition.

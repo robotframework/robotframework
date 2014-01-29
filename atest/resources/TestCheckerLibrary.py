@@ -106,19 +106,26 @@ class TestCheckerLibrary:
                              "Expected:\n%s\n\nActual:\n%s\n"
                              % (test.exp_message, test.message))
 
-    def check_suite_contains_tests(self, suite, *expected_names):
+    def check_suite_contains_tests(self, suite, *expected_names, **statuses):
         actual_tests = [test for test in self.get_tests_from_suite(suite)]
-        tests_msg  = """
+        tests_msg = """
 Expected tests : %s
-Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
+Actual tests   : %s""" % (str(list(expected_names)), str(actual_tests))
         expected_names = [utils.normalize(name) for name in expected_names]
+        statuses = dict((utils.normalize(k), v) for k, v in statuses.items())
         if len(actual_tests) != len(expected_names):
             raise AssertionError("Wrong number of tests." + tests_msg)
         for test in actual_tests:
+            norm_name = utils.normalize(test.name)
             if utils.MultiMatcher(expected_names).match(test.name):
                 print "Verifying test '%s'" % test.name
-                self.check_test_status(test)
-                expected_names.remove(utils.normalize(test.name))
+                status = statuses.get(norm_name)
+                if status and ':' in status:
+                    status, message = status.split(':', 1)
+                else:
+                    message = None
+                self.check_test_status(test, status, message)
+                expected_names.remove(norm_name)
             else:
                 raise AssertionError("Test '%s' was not expected to be run.%s"
                                      % (test.name, tests_msg))
