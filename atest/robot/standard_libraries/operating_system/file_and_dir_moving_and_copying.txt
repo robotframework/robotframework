@@ -11,6 +11,18 @@ Move File
 Copy File
     Check testcase  ${TESTNAME}
 
+Copy File With Glob Pattern
+    Check testcase  ${TESTNAME}
+
+Move File With Glob Pattern
+    Check testcase  ${TESTNAME}
+
+Copy File With Glob Pattern With Multiple Matches Fails
+    Check testcase  ${TESTNAME}
+
+Move File With Glob Pattern With Multiple Matches Fails
+    Check testcase  ${TESTNAME}
+
 Copy File when destination exists should be ok
     Check testcase  ${TESTNAME}
 

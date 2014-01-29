@@ -816,7 +816,10 @@ class OperatingSystem:
         return self._atomic_copy(source, dest, parent)
 
     def _normalize_source_and_dest(self, source, dest):
-        source = self._absnorm(source)
+        sources = self._glob_files([source])
+        if len(sources) > 1:
+            raise RuntimeError("Multiple matches with source pattern '%s'" % source)
+        source = sources[0] if sources else source
         dest, dest_is_dir = self._normalize_dest(dest)
         return source, dest, dest_is_dir
 

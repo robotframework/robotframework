@@ -22,6 +22,30 @@ Copy File
     Verify File  ${TESTFILE2}  contents
     Directory Should Have Items   ${BASE}    ${TESTFILE SHORT NAME}    ${TESTFILE 2 SHORT NAME}
 
+Copy File With Glob Pattern
+    Create File  ${BASE}/somefile.txt  contents
+    Copy File  ${BASE}/som*i??.txt  ${TESTFILE}
+    Verify File  ${TESTFILE}  contents
+    Directory Should Have Items   ${BASE}    ${TESTFILE SHORT NAME}    somefile.txt
+
+Move File With Glob Pattern
+    Create File  ${BASE}/somefile.txt  contents
+    Move File  ${BASE}/s?me?i??.txt  ${TESTFILE}
+    Verify File  ${TESTFILE}  contents
+    Should Not Exist  ${BASE}/somefile.txt
+
+Move File With Glob Pattern With Multiple Matches Fails
+    [Documentation]  FAIL REGEXP: Multiple matches with source pattern '.*file\\*\\.txt'
+    Create File  ${BASE}/file1.txt  contents
+    Create File  ${BASE}/file2.txt  contents
+    Move File   ${BASE}/file*.txt   somewhere
+
+Copy File With Glob Pattern With Multiple Matches Fails
+    [Documentation]  FAIL REGEXP: Multiple matches with source pattern '.*file\\*\\.txt'
+    Create File  ${BASE}/file1.txt  contents
+    Create File  ${BASE}/file2.txt  contentshg
+    Copy File   ${BASE}/file*.txt   somewhere
+
 Copy File when destination exists should be ok
     Create File  ${TESTFILE}  contents
     Copy File  ${TESTFILE}  ${TESTFILE2}
@@ -76,7 +100,7 @@ Move File Using Just File Name
     [Teardown]  Remove Files  rf_test.1  rf_test.2
 
 Moving Non-Existing File Fails
-    [Documentation]  FAIL REGEXP: Source file '${ANYDIR}non-existing-file.txt' does not exist
+    [Documentation]  FAIL REGEXP: Source file 'non-existing-file.txt' does not exist
     Move File  non-existing-file.txt  whatever.txt
 
 Move Directory
