@@ -66,6 +66,20 @@ class TestItemLists(unittest.TestCase):
         assert_equal(items.index('first'), 0)
         assert_equal(items.index('second'), 1)
 
+    def test_setitem(self):
+        orig1, orig2 = Object(), Object()
+        new1, new2 = Object(), Object()
+        items = ItemList(Object, {'attr': 2}, [orig1, orig2])
+        items[0] = new1
+        assert_equal(list(items), [new1, orig2])
+        assert_equal(new1.attr, 2)
+        items[-1] = new2
+        assert_equal(list(items), [new1, new2])
+        assert_equal(new2.attr, 2)
+
+    def test_setitem_slice_is_not_supported(self):
+        assert_raises(TypeError, ItemList(int).__setitem__, slice(0))
+
     def test_len(self):
         items = ItemList(object)
         assert_equal(len(items), 0)
