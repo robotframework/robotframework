@@ -203,11 +203,10 @@ Move List of Files with Patterns
     ...    movecopy_list_pattern2-4.txt
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
-Moving Non-existing Files Fails
+Moving Non-existing Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    No existing source files*
-    ...       Move Files    ${SOURCE}non_existing.txt    ${SOURCE}non_existing_pattern*.txt    ${DEST}
+    Move Files    ${SOURCE}non_existing.txt    ${SOURCE}non_existing_pattern*.txt    ${DEST}
     Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
@@ -233,13 +232,13 @@ Copy Files without arguments fails
 Copy Files destination can not be an existing file
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    Destination can not be an existing file*
+    Run Keyword And Expect Error    Destination '*' exists and is not a directory
     ...     Copy Files    ${SOURCE}movecopy_list-2.txt    ${SOURCE}movecopy_list-1.txt
 
 Move Files destination can not be an existing file
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    Destination can not be an existing file*
+    Run Keyword And Expect Error    Destination '*' exists and is not a directory
     ...     Move Files    ${SOURCE}movecopy_list-2.txt    ${SOURCE}movecopy_list-1.txt
 
 Copy Files directory will be created if it does not exist
@@ -307,13 +306,23 @@ Copy List of Files with Patterns
     ...    movecopy_list_pattern2-4.txt
 	Directory Should Have Items    ${SOURCE}    @{source_files}
 
-Copying Non-existing Files Fails
+Copying Non-existing Files
     [Setup]    Create Test Files For Multifile Operations
     [Teardown]    Remove Test Files For Multifile Operations
-    Run Keyword And Expect Error    No existing source files*    Copy Files
-    ...      ${SOURCE}non_existing.txt    ${SOURCE}non_existing_pattern*.txt    ${DEST}
+    Copy Files    ${SOURCE}non_existing.txt    ${SOURCE}non_existing_pattern*.txt    ${DEST}
     Directory Should Be Empty    ${DEST}
 	Directory Should Have Items    ${SOURCE}    @{source_files}
+
+Copying And Moving With backslash in glob pattern
+    [Setup]    Create Test Files For Multifile Operations
+    [Teardown]    Remove Test Files For Multifile Operations
+    Copy Files    ${BASE}move_from//movecopy_list_pattern-*.txt   ${DEST}
+    Move Files    ${BASE}move_from//movecopy_list_pattern2-*.txt  ${DEST}
+    Directory Should Have Items    ${DEST}
+    ...    movecopy_list_pattern-1.txt
+    ...    movecopy_list_pattern-2.txt
+    ...    movecopy_list_pattern2-3.txt
+    ...    movecopy_list_pattern2-4.txt
 
 ***Keywords***
 Remove Just Name Dirs

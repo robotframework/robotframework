@@ -756,14 +756,9 @@ class OperatingSystem:
 
         Last argument is the destination directory.
         """
-        sources, destination = self._parse_sources_and_destination(sources_and_destination)
-        source_files = self._prepare_list_of_source_files(destination, *sources)
-
-        if len(source_files) < 1:
-            raise RuntimeError("No existing source files matching given list of files or patterns: %s" % ", ".join(sources))
-
+        source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
         for source in source_files:
-            self.copy_file(source, destination)
+            self.copy_file(source, dest_dir)
 
     def move_files(self, *sources_and_destination):
         """Moves or renames list of source files.
@@ -773,19 +768,16 @@ class OperatingSystem:
 
         Last argument is the destination directory.
         """
-        sources, destination = self._parse_sources_and_destination(sources_and_destination)
-        source_files = self._prepare_list_of_source_files(destination, *sources)
-
-        if len(source_files) < 1:
-            raise RuntimeError("No existing source files matching given list of files or patterns: %s" % ", ".join(sources))
-
+        source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
         for source in source_files:
-            self.move_file(source, destination)
+            self.move_file(source, dest_dir)
 
-    def _parse_sources_and_destination(self, sources_and_destination):
-        if len(sources_and_destination) < 2:
+    def _parse_sources_and_destination(self, items):
+        if len(items) < 2:
             raise RuntimeError("Must contain destination and at least one source")
-        return sources_and_destination[:-1], sources_and_destination[-1]
+        sources, destination = items[:-1], items[-1]
+        self._ensure_destination_directory(destination)
+        return self._glob_files(sources), destination
 
     def _normalize_dest(self, dest):
         dest = dest.replace('/', os.sep)
@@ -793,16 +785,18 @@ class OperatingSystem:
         dest = self._absnorm(dest)
         return dest, dest_is_dir
 
-    def _prepare_list_of_source_files(self, destination, *sources):
-        destination, dest_is_dir = self._normalize_dest(destination)
-        if not dest_is_dir and os.path.isfile(destination):
-            raise RuntimeError("Destination can not be an existing file '%s'" % destination)
-        if not os.path.isdir(destination):
+    def _ensure_destination_directory(self, destination):
+        destination, _ = self._normalize_dest(destination)
+        if not os.path.exists(destination):
             os.makedirs(destination)
-        source_files = []
-        for source in sources:
-            source_files.extend(glob.glob(source))
-        return source_files
+        elif not os.path.isdir(destination):
+            raise RuntimeError("Destination '%s' exists and is not a directory" % destination)
+
+    def _glob_files(self, patterns):
+        files = []
+        for pattern in patterns:
+            files.extend(glob.glob(self._absnorm(pattern)))
+        return files
 
     def _prepare_for_move_or_copy(self, source, dest):
         source, dest, dest_is_dir = self._normalize_source_and_dest(source, dest)

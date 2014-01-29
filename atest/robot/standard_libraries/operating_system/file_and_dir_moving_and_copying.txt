@@ -81,7 +81,7 @@ Move List of Files
 Move List of Files with Patterns
     Check testcase  ${TESTNAME}
 
-Moving Non-existing Files Fails
+Moving Non-existing Files
     Check testcase  ${TESTNAME}
 
 # Test cases for Copy Files keyword
@@ -109,5 +109,8 @@ Copy List of Files
 Copy List of Files with Patterns
     Check testcase  ${TESTNAME}
 
-Copying Non-existing Files Fails
+Copying Non-existing Files
+    Check testcase  ${TESTNAME}
+
+Copying And Moving With backslash in glob pattern
     Check testcase  ${TESTNAME}
