@@ -42,6 +42,3 @@ Pid
 
 Getting PIDs in different ways should give same result
     Check Test Case    ${TESTNAME}
-
-Lot of output
-    Check Test Case    ${TESTNAME}
