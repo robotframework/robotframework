@@ -452,13 +452,13 @@ class RobotSettings(_BaseSettings):
             'stderr':  self['StdErr']
         }
 
+
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'            : ('output', None),
                        'LogLevel'          : ('loglevel', 'TRACE'),
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
-                       'EndTime'           : ('endtime', None),
-                       'RunFailed'         : ('runfailed', 'NONE')}
+                       'EndTime'           : ('endtime', None)}
 
     def _output_disabled(self):
         return False
