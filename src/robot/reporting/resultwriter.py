@@ -114,8 +114,10 @@ class Results(object):
         if self._result is None:
             include_keywords = bool(self._settings.log or self._settings.output)
             flattened = self._settings.flatten_keywords
+            rerun_merge = self._settings.rerun_merge
             self._result = ExecutionResult(include_keywords=include_keywords,
                                            flattened_keywords=flattened,
+                                           rerun_merge=rerun_merge,
                                            *self._sources)
             self._result.configure(self._settings.status_rc,
                                    self._settings.suite_config,

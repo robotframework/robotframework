@@ -458,7 +458,8 @@ class RebotSettings(_BaseSettings):
                        'LogLevel'          : ('loglevel', 'TRACE'),
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
-                       'EndTime'           : ('endtime', None)}
+                       'EndTime'           : ('endtime', None),
+                       'ReRunMerge'        : ('rerunmerge', False)}
 
     def _output_disabled(self):
         return False
@@ -512,6 +513,10 @@ class RebotSettings(_BaseSettings):
     def _resolve_background_colors(self):
         colors = self['ReportBackground']
         return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
+
+    @property
+    def rerun_merge(self):
+        return self['ReRunMerge']
 
     @property
     def console_logger_config(self):
