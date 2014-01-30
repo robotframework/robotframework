@@ -28,7 +28,8 @@ class _BaseSettings(object):
                  'Doc'              : ('doc', None),
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
-                 'RunFailed'        : ('runfailed', 'NONE'),
+                 'ReRunFailed'      : ('rerunfailed', 'NONE'),
+                 'DeprecatedRunFailed': ('runfailed', 'NONE'),
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -73,7 +74,7 @@ class _BaseSettings(object):
             if default == [] and isinstance(value, basestring):
                 value = [value]
             self[name] = self._process_value(name, value)
-        self['TestNames'] += self['RunFailed']
+        self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
         if self['DeprecatedXUnit']:
             self['XUnit'] = self['DeprecatedXUnit']
 
@@ -83,7 +84,7 @@ class _BaseSettings(object):
         self._opts[name] = value
 
     def _process_value(self, name, value):
-        if name == 'RunFailed':
+        if name in ['ReRunFailed', 'DeprecatedRunFailed']:
             return gather_failed_tests(value)
         if name == 'LogLevel':
             return self._process_log_level(value)
