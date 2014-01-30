@@ -715,13 +715,18 @@ class OperatingSystem:
     # Moving and copying files and directories
 
     def copy_file(self, source, destination):
-        """Copies the source file into a new destination.
+        """Copies the source file into the destination.
+
+        Source must be an existing file. Starting from Robot Framework 2.8.4,
+        it can be given as a glob pattern (see `Pattern matching`) that matches
+        exactly one file. How the destination is interpreted is explained below.
 
         1) If the destination is an existing file, the source file is copied
         over it.
 
         2) If the destination is an existing directory, the source file is
-        copied into it. A possible file with the same name is overwritten.
+        copied into it. A possible file with the same name as the source is
+        overwritten.
 
         3) If the destination does not exist and it ends with a path
         separator ('/' or '\\'), it is considered a directory. That
@@ -732,47 +737,56 @@ class OperatingSystem:
         separator, it is considered a file. If the path to the file does not
         exist, it is created.
 
-        5) Source can be a glob pattern (see `pattern matching`) that matches
-        exactly one file. New in RF 2.8.4.
+        See also `Copy Files`, `Move File`, and `Move Files`.
         """
         source, destination = self._copy_file(source, destination)
         self._link("Copied file from '%s' to '%s'", source, destination)
 
     def move_file(self, source, destination):
-        """Moves the source file into a new destination.
-
-        If the source and destination are in the same filesystem, rename operation is used.
-        Otherwise file is copied to the destination filesystem and then removed from the
-        original filesystem.
+        """Moves the source file into the destination.
 
         Arguments have exactly same semantics as with `Copy File` keyword.
+
+        If the source and destination are on the same filesystem, rename
+        operation is used. Otherwise file is copied to the destination
+        filesystem and then removed from the original filesystem.
+
+        See also `Move Files`, `Copy File`, and `Copy Files`.
         """
         source, destination, _ = self._prepare_for_move_or_copy(source, destination)
         shutil.move(source, destination)
         self._link("Moved file from '%s' to '%s'", source, destination)
 
     def copy_files(self, *sources_and_destination):
-        """Copies specified files to a target directory.
+        """Copies specified files to the target directory.
 
-        Glob patterns (see `pattern matching`) can be used in source files.
-        Internally the keyword uses `Copy File`
-        keyword for actual copying and thus behaves similarly.
+        Source files can be given as exact paths and as glob patterns (see
+        `Pattern matching`). At least one source must be given, but it is
+        not an error if it is a pattern that does not match anything.
 
-        Last argument is the destination directory. If the destination does not exist,
-        it will be created.
+        Last argument must be the destination directory. If the destination
+        does not exist, it will be created.
 
-        New in RF 2.8.4.
+        Examples:
+        | Copy Files | ${dir}/file1.txt  | ${dir}/file2.txt | ${dir2} |
+        | Copy Files | ${dir}/file-*.txt | ${dir2}          |         |
+
+        See also `Copy File`, `Move File`, and `Move Files`.
+
+        New in Robot Framework 2.8.4.
         """
         source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
         for source in source_files:
             self.copy_file(source, dest_dir)
 
     def move_files(self, *sources_and_destination):
-        """Moves specified files to a target directory.
+        """Moves specified files to the target directory.
 
         Arguments have exactly same semantics as with `Copy Files` keyword.
 
-        New in RF 2.8.4.
+        See also `Move File`, `Copy File`, and `Copy Files`.
+
+        New in Robot Framework 2.8.4.
         """
         source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
         for source in source_files:
