@@ -69,7 +69,7 @@ Verify original tests
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
 
 Rerun tests
-    Create Output With Robot    ${RERUN}    --runfailed ${ORIGINAL}    ${TEST CASES}
+    Create Output With Robot    ${RERUN}    --rerunfailed ${ORIGINAL}    ${TEST CASES}
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{RERUN SUITES}
     Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}[0]

@@ -97,7 +97,7 @@ Options
                           with --include.
  -R --rerunmerge          Combine results of re-running tests so that tests in
                           the latter runs replace the original. Typically used
-                          after using --runfailed option when running tests.
+                          after using --rerunfailed option when running tests.
                           Example: rebot --rerunmerge orig.xml rerun.xml
     --processemptysuite   Processes output also if the top level test suite is
                           empty. Useful e.g. with --include/--exclude when it
