@@ -55,6 +55,15 @@ Non-matching test
     ...    [ ERROR ] Merged test 'Suites.Fourth.Non-existing' is ignored because it is not found from original result.\n
     Merge should have been successful    message 1=Expected
 
+Using other options
+    [Documentation]  Test that other command line options works normally with
+    ...              --rerunmerge. Most importantly verify that options handled
+    ...              by ExecutionResult (--flattenkeyword) work correctly.
+    Rerun tests
+    Run merge    --log log.html --flattenkeyword name:BuiltIn.Log --name Custom
+    Merge should have been successful    suite name=Custom
+    Log should have been created with all Log keywords flattened
+
 *** Keywords **
 Run original tests
     Create Output With Robot    ${ORIGINAL}    --variable FAIL:YES    ${TEST CASES}
@@ -92,14 +101,16 @@ Create output with incompatible test
     Save XML    ${xml}    ${RERUN}
 
 Run merge
-    Run Rebot    --rerunmerge    ${ORIGINAL}    ${RERUN}
+    [Arguments]    ${options}=
+    Run Rebot    --rerunmerge ${options}    ${ORIGINAL}    ${RERUN}
 
 Run multi-merge
     Run Rebot    -R    ${ORIGINAL}    ${RERUN}    ${RERUN 2}
 
 Merge should have been successful
-    [Arguments]    ${status 1}=FAIL    ${message 1}=    ${status 2}=PASS    ${message 2}=
-    Should Be Equal    ${SUITE.name}    Suites
+    [Arguments]    ${suite name}=Suites    ${status 1}=FAIL    ${message 1}=
+    ...    ${status 2}=PASS    ${message 2}=
+    Should Be Equal    ${SUITE.name}    ${suite name}
     Should Contain Suites    ${SUITE}    @{ALL SUITES}
     Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}
     Should Contain Suites    ${SUITE.suites[2]}    @{SUB SUITES 2}
@@ -129,3 +140,8 @@ Create expected multi-merge message
     ${message} =    Create expected merge message    ${EMPTY}
     ...    FAIL    This test was doomed to fail: again != NO    PASS    ${message}
     [Return]    ${message}
+
+Log should have been created with all Log keywords flattened
+    ${log} =    Get File    ${OUTDIR}/log.html
+    Should Not Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>"
+    Should Contain    ${log}    "*<p>Logs the given message with the given level.\\x3c/p>\\n<p><i><b>Keyword content flattened.\\x3c/b>\\x3c/i>\\x3c/p>"
