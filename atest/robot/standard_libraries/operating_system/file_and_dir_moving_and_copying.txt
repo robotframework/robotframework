@@ -1,66 +1,65 @@
 *** Settings ***
-Documentation   Copy File and Copy Dir don't currently have tests but as Move File and Move Dir use them internally they are somehow tested. At least simple tests for them should be added anyway.
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_moving_and_copying.txt
-Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/file_and_dir_moving_and_copying.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
 
 *** Test Cases ***
 Move File
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Copy File
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Copy File With Glob Pattern
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move File With Glob Pattern
-    Check testcase  ${TESTNAME}
-
-Copy File With Glob Pattern With Multiple Matches Fails
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move File With Glob Pattern With Multiple Matches Fails
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
+
+Copy File With Glob Pattern With Multiple Matches Fails
+    Check Test Case    ${TESTNAME}
 
 Copy File With Glob Pattern With No Matches Fails
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move File With Glob Pattern With No Matches Fails
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Copy File when destination exists should be ok
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Copy File when destination is a directory
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Copy File when destination is a directory and file with same name exists
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move File To Existing Dir
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move File To Non-Existing Dir
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move File Using Just File Name
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Moving Non-Existing File Fails
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move Directory
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move Directory To Existing Dir
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move Directory To Non-Existing Dir Tree
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move Directory Using Just Dir Name
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Moving Non-Existing Directory Fails
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}

@@ -40,7 +40,6 @@ Copy File With Glob Pattern With Multiple Matches Fails
     Create File  ${BASE}/file2.txt  contents
     Copy File   ${BASE}/file*.txt   somewhere
 
-
 Copy File With Glob Pattern With No Matches Fails
     [Documentation]  FAIL Source file 'zoo*bar*not*here' does not exist
     Copy File   zoo*bar*not*here    somewhere
