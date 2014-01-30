@@ -20,7 +20,8 @@ Command line options for test execution
   -G, --settag <tag>      `Sets the tag(s)`_ to all executed test cases.
   -t, --test <name>       `Selects the test cases by name`_.
   -s, --suite <name>      `Selects the test suites`_ by name.
-  -R, --runfailed <file>  `Selects failed tests`_ from an earlier `output file`_ to be re-executed.
+  -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_ to be re-executed.
+  --runfailed <file>      Deprecated. Use :opt:`--rerunfailed` instead.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
