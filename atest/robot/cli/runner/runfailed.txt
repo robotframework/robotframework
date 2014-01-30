@@ -1,35 +1,39 @@
 *** Settings ***
-Suite Setup     Suite initialization
-Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Suite Setup       Suite initialization
+Suite Teardown    Remove Directory    ${RERUN DIR}    recursive
+Force Tags        regression    pybot    jybot
+Resource          atest_resource.txt
 
 *** Variables ***
-${RUN FAILED FROM}    %{TEMPDIR}${/}run-failed-output.xml
+${ORIG DIR}           ${DATADIR}/cli/runfailed
+${RERUN DIR}          %{TEMPDIR}/rerun-dir
+${SUITE DIR}          ${RERUN DIR}/suite
+${RUN FAILED FROM}    ${RERUN DIR}/rerun-output.xml
 
 *** Test Cases ***
-Check that passing is not executed
-    Run Keyword And Expect Error  No test 'Passing' found*  Check Test Case   Passing
+Passing is not re-executed
+    Run Keyword And Expect Error    No test 'Passing' found*    Check Test Case    Passing
 
-Check that failing is executed
-    Check Test Case   Failing
+Failing is re-executed
+    Check Test Case    Failing
 
-Check that explicitly selected is executed
-    Check Test Case   Selected
+Failing from subsuite is executed
+    Check Test Case    Really Failing
 
-Check that excluded failing is not executed
-    Run Keyword And Expect Error  No test 'Failing with tag' found*  Check Test Case   Failing with tag
+Explicitly selected is executed
+    Check Test Case    Selected
 
-Check that non-existing failing from output file is not executed
-    Run Keyword And Expect Error  No test 'Only in one suite' found*  Check Test Case   Only in one suite
+Excluded failing is not executed
+    Run Keyword And Expect Error    No test 'Failing with tag' found*    Check Test Case    Failing with tag
 
-Check that failing test case from subsuite is executed
-    Check Test Case   Really Failing
+Non-existing failing from output file is not executed
+    Run Keyword And Expect Error    No test 'Only in one suite' found*    Check Test Case    Only in one suite
 
 *** Keywords ***
 Suite initialization
-    Copy File  ${DATADIR}/cli/runfailed/runfailed1.txt  ${DATADIR}/cli/runfailed/suite/runfailed.txt
-    Run Tests  ${EMPTY}  cli/runfailed/suite
-    Copy File  ${OUTFILE}  ${RUN FAILED FROM}
-    Copy File  ${DATADIR}/cli/runfailed/runfailed2.txt  ${DATADIR}/cli/runfailed/suite/runfailed.txt
-    Run Tests  --runfailed ${RUN FAILED FROM} --test Selected --exclude tag  cli/runfailed/suite
-    [Teardown]  Remove Files  ${RUN FAILED FROM}  ${DATADIR}/cli/runfailed/suite/runfailed.txt
+    Copy Directory    ${ORIG DIR}/suite    ${SUITE DIR}
+    Copy File    ${ORIG DIR}/runfailed1.txt    ${SUITE DIR}/runfailed.txt
+    Run Tests    ${EMPTY}    ${SUITE DIR}
+    Copy File    ${OUTFILE}    ${RUN FAILED FROM}
+    Copy File    ${ORIG DIR}/runfailed2.txt    ${SUITE DIR}/runfailed.txt
+    Run Tests    --runfailed ${RUN FAILED FROM} --test Selected --exclude tag    ${SUITE DIR}
