@@ -11,13 +11,13 @@ ${DEST}=    ${BASE}move_to${/}
 
 *** Test Cases ***
 Move File
-    Create FIle  ${TESTFILE}  contents
+    Create File  ${TESTFILE}  contents
     Move File  ${TESTFILE}  ${TESTFILE2}
     Should Not Exist  ${TESTFILE}
     Verify File  ${TESTFILE2}  contents
 
 Copy File
-    Create FIle  ${TESTFILE}  contents
+    Create File  ${TESTFILE}  contents
     Copy File  ${TESTFILE}  ${TESTFILE2}
     Verify File  ${TESTFILE2}  contents
     Directory Should Have Items   ${BASE}    ${TESTFILE SHORT NAME}    ${TESTFILE 2 SHORT NAME}
