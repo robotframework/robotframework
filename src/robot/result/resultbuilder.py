@@ -19,6 +19,7 @@ from robot.utils import ET, ETSource, get_error_message
 
 from .executionresult import Result, CombinedResult
 from .flattenkeywordmatcher import FlattenKeywordMatcher
+from .rerunmerger import ReRunMerger
 from .xmlelementhandlers import XmlElementHandler
 
 
@@ -26,20 +27,33 @@ def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
     :param sources: Path(s) to output XML file(s).
-    :param options: Configuration options passed to
-                    :py:class:`~ExecutionResultBuilder` as keyword arguments.
+    :param options: Configuration options. `rerun_merge` with True value causes
+                    multiple results to be combined so that tests in the latter
+                    results replace the ones in the original. Other options
+                    are passed further to :py:class:`~ExecutionResultBuilder`.
     :returns: :class:`~.executionresult.Result` instance.
 
     See :mod:`~robot.result` package for a usage example.
     """
     if not sources:
         raise DataError('One or more data source needed.')
+    if options.pop('rerun_merge', False):
+        return _rerun_merge_results(sources[0], sources[1:], options)
     if len(sources) > 1:
-        return _combined_result(sources, options)
+        return _combine_results(sources, options)
     return _single_result(sources[0], options)
 
 
-def _combined_result(sources, options):
+def _rerun_merge_results(original, merged, options):
+    result = ExecutionResult(original, **options)
+    merger = ReRunMerger(result)
+    for path in merged:
+        merged = ExecutionResult(path, **options)
+        merger.merge(merged)
+    return result
+
+
+def _combine_results(sources, options):
     return CombinedResult(ExecutionResult(src, **options) for src in sources)
 
 

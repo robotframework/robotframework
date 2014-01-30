@@ -114,15 +114,15 @@ many interesting possibilities:
 Re-executing failed test cases
 ''''''''''''''''''''''''''''''
 
-Command line option `--runfailed (-R)` can be used to select all failed tests
+Command line option `--rerunfailed (-R)` can be used to select all failed tests
 from an earlier `output file`_ for re-execution. This option is useful, for
 example, if running all tests takes a lot of time and one wants to
 iteratively fix failing test cases.
 
 ::
 
-  pybot tests                           # first execute all tests
-  pybot --runfailed output.xml tests    # then re-execute failing
+  pybot tests                             # first execute all tests
+  pybot --rerunfailed output.xml tests    # then re-execute failing
 
 Behind the scenes this option selects the failed tests as they would have been
 selected individually with the :opt:`--test` option. It is possible to further
@@ -134,7 +134,14 @@ now causes undefined results. Additionally, it is an error if the output
 contains no failed tests. Using a special value :opt:`NONE` as the output
 is same as not specifying this option at all.
 
-.. note:: This is a new option in Robot Framework 2.8.
+.. tip:: Re-execution results and original results can be `merged together`__
+         using the :opt:`--rerunmerge` command line option.
+
+.. note:: Re-executing failed tests is a new feature in Robot Framework 2.8.
+          Prior Robot Framework 2.8.4 the option was named :opt:`--runfailed`.
+          The old name still works, but it will be removed in the future.
+
+__ `Merging re-executed output`_
 
 When no tests match selection
 '''''''''''''''''''''''''''''

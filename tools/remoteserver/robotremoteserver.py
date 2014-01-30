@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+__version__ = '1.0'
+
 import re
 import sys
 import inspect
@@ -30,20 +32,23 @@ except ImportError:
 
 
 BINARY = re.compile('[\x00-\x08\x0B\x0C\x0E-\x1F]')
+NON_ASCII = re.compile('[\x80-\xff]')
 
 
 class RobotRemoteServer(SimpleXMLRPCServer):
     allow_reuse_address = True
+    _generic_exceptions = (AssertionError, RuntimeError, Exception)
+    _fatal_exceptions = (SystemExit, KeyboardInterrupt)
 
-    def __init__(self, library, host='127.0.0.1', port=8270, allow_stop=True):
+    def __init__(self, library, host='127.0.0.1', port=8270, port_file=None,
+                 allow_stop=True):
         SimpleXMLRPCServer.__init__(self, (host, int(port)), logRequests=False)
         self._library = library
         self._allow_stop = allow_stop
         self._shutdown = False
         self._register_functions()
         self._register_signal_handlers()
-        self._log('Robot Framework remote server starting at %s:%s'
-                  % (host, port))
+        self._announce_start(port_file)
         self.serve_forever()
 
     def _register_functions(self):
@@ -57,22 +62,36 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         def stop_with_signal(signum, frame):
             self._allow_stop = True
             self.stop_remote_server()
-        if hasattr(signal, 'SIGHUP'):
-            signal.signal(signal.SIGHUP, stop_with_signal)
-        if hasattr(signal, 'SIGINT'):
-            signal.signal(signal.SIGINT, stop_with_signal)
+            raise KeyboardInterrupt
+        for name in 'SIGINT', 'SIGTERM', 'SIGHUP':
+            if hasattr(signal, name):
+                signal.signal(getattr(signal, name), stop_with_signal)
+
+    def _announce_start(self, port_file=None):
+        host, port = self.server_address
+        self._log('Robot Framework remote server at %s:%s starting.'
+                  % (host, port))
+        if port_file:
+            pf = open(port_file, 'w')
+            try:
+                pf.write(str(port))
+            finally:
+                pf.close()
 
     def serve_forever(self):
-        while not self._shutdown:
-            self.handle_request()
+        try:
+            while not self._shutdown:
+                self.handle_request()
+        except KeyboardInterrupt:
+            pass
 
     def stop_remote_server(self):
         prefix = 'Robot Framework remote server at %s:%s ' % self.server_address
         if self._allow_stop:
-            self._log(prefix + 'stopping')
+            self._log(prefix + 'stopping.')
             self._shutdown = True
         else:
-            self._log(prefix + 'does not allow stopping', 'WARN')
+            self._log(prefix + 'does not allow stopping.', 'WARN')
         return True
 
     def get_keyword_names(self):
@@ -87,17 +106,33 @@ class RobotRemoteServer(SimpleXMLRPCServer):
 
     def run_keyword(self, name, args, kwargs=None):
         args, kwargs = self._handle_binary_args(args, kwargs or {})
-        result = {'status': 'PASS', 'return': '', 'output': '',
-                  'error': '', 'traceback': ''}
-        self._intercept_stdout()
+        result = {'status': 'FAIL'}
+        self._intercept_std_streams()
         try:
             return_value = self._get_keyword(name)(*args, **kwargs)
         except:
-            result['status'] = 'FAIL'
-            result['error'], result['traceback'] = self._get_error_details()
+            exc_type, exc_value, exc_tb = sys.exc_info()
+            self._add_to_result(result, 'error',
+                                self._get_error_message(exc_type, exc_value))
+            self._add_to_result(result, 'traceback',
+                                self._get_error_traceback(exc_tb))
+            self._add_to_result(result, 'continuable',
+                                self._get_error_attribute(exc_value, 'CONTINUE'),
+                                default=False)
+            self._add_to_result(result, 'fatal',
+                                self._get_error_attribute(exc_value, 'EXIT'),
+                                default=False)
         else:
-            result['return'] = self._handle_return_value(return_value)
-        result['output'] = self._restore_stdout()
+            try:
+                self._add_to_result(result, 'return',
+                                    self._handle_return_value(return_value))
+            except:
+                exc_type, exc_value, _ = sys.exc_info()
+                self._add_to_result(result, 'error',
+                                    self._get_error_message(exc_type, exc_value))
+            else:
+                result['status'] = 'PASS'
+        self._add_to_result(result, 'output', self._restore_std_streams())
         return result
 
     def _handle_binary_args(self, args, kwargs):
@@ -106,7 +141,13 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return args, kwargs
 
     def _handle_binary_arg(self, arg):
-        return arg if not isinstance(arg, Binary) else str(arg)
+        if isinstance(arg, Binary):
+            return arg.data
+        return arg
+
+    def _add_to_result(self, result, key, value, default=''):
+        if value != default:
+            result[key] = value
 
     def get_keyword_arguments(self, name):
         kw = self._get_keyword(name)
@@ -142,28 +183,35 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             return kw
         return None
 
-    def _get_error_details(self):
-        exc_type, exc_value, exc_tb = sys.exc_info()
-        if exc_type in (SystemExit, KeyboardInterrupt):
-            self._restore_stdout()
-            raise
-        return (self._get_error_message(exc_type, exc_value),
-                self._get_error_traceback(exc_tb))
-
     def _get_error_message(self, exc_type, exc_value):
+        if exc_type in self._fatal_exceptions:
+            self._restore_std_streams()
+            raise
         name = exc_type.__name__
-        message = str(exc_value)
+        message = self._get_message_from_exception(exc_value)
         if not message:
             return name
-        if name in ('AssertionError', 'RuntimeError', 'Exception'):
+        if exc_type in self._generic_exceptions \
+                or getattr(exc_value, 'ROBOT_SUPPRESS_NAME', False):
             return message
         return '%s: %s' % (name, message)
+
+    def _get_message_from_exception(self, value):
+        # UnicodeError occurs below 2.6 and if message contains non-ASCII bytes
+        try:
+            msg = unicode(value)
+        except UnicodeError:
+            msg = ' '.join([self._str(a, handle_binary=False) for a in value.args])
+        return self._handle_binary_result(msg)
 
     def _get_error_traceback(self, exc_tb):
         # Latest entry originates from this class so it can be removed
         entries = traceback.extract_tb(exc_tb)[1:]
         trace = ''.join(traceback.format_list(entries))
         return 'Traceback (most recent call last):\n' + trace
+
+    def _get_error_attribute(self, exc_value, name):
+        return bool(getattr(exc_value, 'ROBOT_%s_ON_FAILURE' % name, False))
 
     def _handle_return_value(self, ret):
         if isinstance(ret, basestring):
@@ -179,7 +227,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             return self._str(ret)
 
     def _handle_binary_result(self, result):
-        if not BINARY.search(result):
+        if not self._contains_binary(result):
             return result
         try:
             result = str(result)
@@ -187,22 +235,46 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             raise ValueError("Cannot represent %r as binary." % result)
         return Binary(result)
 
-    def _str(self, item):
+    def _contains_binary(self, result):
+        return (BINARY.search(result) or isinstance(result, str) and
+                sys.platform != 'cli' and NON_ASCII.search(result))
+
+    def _str(self, item, handle_binary=True):
         if item is None:
             return ''
-        return str(item)
+        if not isinstance(item, basestring):
+            item = unicode(item)
+        if handle_binary:
+            return self._handle_binary_result(item)
+        return item
 
-    def _intercept_stdout(self):
-        # TODO: What about stderr?
+    def _intercept_std_streams(self):
         sys.stdout = StringIO()
+        sys.stderr = StringIO()
 
-    def _restore_stdout(self):
-        output = sys.stdout.getvalue()
-        sys.stdout.close()
+    def _restore_std_streams(self):
+        stdout = sys.stdout.getvalue()
+        stderr = sys.stderr.getvalue()
+        close = [sys.stdout, sys.stderr]
         sys.stdout = sys.__stdout__
-        return self._handle_binary_result(output)
+        sys.stderr = sys.__stderr__
+        for stream in close:
+            stream.close()
+        if stdout and stderr:
+            if not stderr.startswith(('*TRACE*', '*DEBUG*', '*INFO*', '*HTML*',
+                                      '*WARN*')):
+                stderr = '*INFO* %s' % stderr
+            if not stdout.endswith('\n'):
+                stdout += '\n'
+        return self._handle_binary_result(stdout + stderr)
 
     def _log(self, msg, level=None):
         if level:
             msg = '*%s* %s' % (level.upper(), msg)
-        print msg
+        self._write_to_stream(msg, sys.stdout)
+        if sys.__stdout__ is not sys.stdout:
+            self._write_to_stream(msg, sys.__stdout__)
+
+    def _write_to_stream(self, msg, stream):
+        stream.write(msg + '\n')
+        stream.flush()

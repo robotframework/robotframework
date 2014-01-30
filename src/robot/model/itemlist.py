@@ -67,6 +67,15 @@ class ItemList(object):
                             % type(self).__name__)
         return self._items[index]
 
+    def __setitem__(self, index, item):
+        if isinstance(index, slice):
+            raise TypeError("'%s' objects do not support slicing."
+                            % type(self).__name__)
+        self._check_type_and_set_attrs(item)
+        items = list(self._items)
+        items[index] = item
+        self._items = tuple(items)
+
     def __len__(self):
         return len(self._items)
 
