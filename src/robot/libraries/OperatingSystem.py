@@ -732,7 +732,8 @@ class OperatingSystem:
         separator, it is considered a file. If the path to the file does not
         exist, it is created.
 
-        5) source can be a glob pattern (New in RF 2.8.4) that matches exactly one file
+        5) Source can be a glob pattern (see `pattern matching`) that matches
+        exactly one file. New in RF 2.8.4.
         """
         source, destination = self._copy_file(source, destination)
         self._link("Copied file from '%s' to '%s'", source, destination)
@@ -745,20 +746,20 @@ class OperatingSystem:
         original filesystem.
 
         Arguments have exactly same semantics as with `Copy File` keyword.
-
-        New in RF 2.8.4: Source can be a glob pattern.
         """
         source, destination, _ = self._prepare_for_move_or_copy(source, destination)
         shutil.move(source, destination)
         self._link("Moved file from '%s' to '%s'", source, destination)
 
     def copy_files(self, *sources_and_destination):
-        """Copies a list of source files into a new destination.
+        """Copies specified files to a target directory.
 
-        _Glob patterns_ can be used in source files. Internally the keyword uses `Copy File`
+        Glob patterns (see `pattern matching`) can be used in source files.
+        Internally the keyword uses `Copy File`
         keyword for actual copying and thus behaves similarly.
 
-        Last argument is the destination directory.
+        Last argument is the destination directory. If the destination does not exist,
+        it will be created.
 
         New in RF 2.8.4.
         """
@@ -767,12 +768,9 @@ class OperatingSystem:
             self.copy_file(source, dest_dir)
 
     def move_files(self, *sources_and_destination):
-        """Moves or renames list of source files.
+        """Moves specified files to a target directory.
 
-        _Glob patterns_ can be used in source files. Internally the keyword uses `Move File`
-        keyword for actual moving and thus behaves similarly.
-
-        Last argument is the destination directory.
+        Arguments have exactly same semantics as with `Copy Files` keyword.
 
         New in RF 2.8.4.
         """
