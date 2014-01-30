@@ -731,6 +731,8 @@ class OperatingSystem:
         4) If the destination does not exist and it does not end with a path
         separator, it is considered a file. If the path to the file does not
         exist, it is created.
+
+        5) source can be a glob pattern (New in RF 2.8.4) that matches exactly one file
         """
         source, destination = self._copy_file(source, destination)
         self._link("Copied file from '%s' to '%s'", source, destination)
@@ -743,6 +745,8 @@ class OperatingSystem:
         original filesystem.
 
         Arguments have exactly same semantics as with `Copy File` keyword.
+
+        New in RF 2.8.4: Source can be a glob pattern.
         """
         source, destination, _ = self._prepare_for_move_or_copy(source, destination)
         shutil.move(source, destination)
@@ -755,6 +759,8 @@ class OperatingSystem:
         keyword for actual copying and thus behaves similarly.
 
         Last argument is the destination directory.
+
+        New in RF 2.8.4.
         """
         source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
         for source in source_files:
@@ -767,6 +773,8 @@ class OperatingSystem:
         keyword for actual moving and thus behaves similarly.
 
         Last argument is the destination directory.
+
+        New in RF 2.8.4.
         """
         source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
         for source in source_files:
