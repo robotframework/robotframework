@@ -1,0 +1,73 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/move_copy_files.txt
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+# Test cases for Move Files keyword
+Move One File With Move Files
+    Check testcase  ${TESTNAME}
+
+Move Files fails when no destination
+    Check testcase  ${TESTNAME}
+
+Move Files without arguments fails
+    Check testcase  ${TESTNAME}
+
+Move Multiple Files
+    Check testcase  ${TESTNAME}
+
+Move Multiple Files From Multiple Directories
+    Check testcase  ${TESTNAME}
+
+Move List of Files
+    Check testcase  ${TESTNAME}
+
+Move List of Files with Patterns
+    Check testcase  ${TESTNAME}
+
+Moving Non-existing Files
+    Check testcase  ${TESTNAME}
+
+# Test cases for Copy Files keyword
+Copy One File To Dir With Copy Files
+    Check testcase  ${TESTNAME}
+
+Copy Files fails when no destination
+    Check testcase  ${TESTNAME}
+
+Copy Files without arguments fails
+    Check testcase  ${TESTNAME}
+
+Copy One File To File With Copy Files
+    Check testcase  ${TESTNAME}
+
+Copy Multiple Files
+    Check testcase  ${TESTNAME}
+
+Copy Multiple Files From Multiple Directories
+    Check testcase  ${TESTNAME}
+
+Copy List of Files
+    Check testcase  ${TESTNAME}
+
+Copy List of Files with Patterns
+    Check testcase  ${TESTNAME}
+
+Copying Non-existing Files
+    Check testcase  ${TESTNAME}
+
+Copying And Moving With backslash in glob pattern
+    Check testcase  ${TESTNAME}
+
+Copy Files destination can not be an existing file
+    Check testcase  ${TESTNAME}
+
+Move Files destination can not be an existing file
+    Check testcase  ${TESTNAME}
+
+Copy Files directory will be created if it does not exist
+    Check testcase  ${TESTNAME}
+
+Move Files directory will be created if it does not exist
+    Check testcase  ${TESTNAME}
