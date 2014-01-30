@@ -94,6 +94,7 @@ Command line options for post-processing outputs
   -s, --suite <name>      `Selects the test suites`_ by name.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
+  -R, --rerunmerge        TODO
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_.
   -d, --outputdir <dir>   Defines where to `create output files`_.
