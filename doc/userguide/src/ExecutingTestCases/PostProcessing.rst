@@ -119,8 +119,10 @@ and :opt:`--rerunmerge` together::
   pybot --rerunfailed original.xml --output rerun.xml tests    # then re-execute failing
   rebot --rerunmerge original.xml rerun.xml                    # finally merge results
 
-It is also possible to merge together more than two results, and all other
-command line options work normally::
+The :opt:`--rerunmerge` option itself does not take any arguments. Just using
+the option alone changes the way how :prog:`rebot` combines two or more output
+files. All other command line options can be used with :opt:`--rerunmerge`
+normally::
 
   rebot --rerunmerge --name Merged --critical regression original.xml rerun1.xml rerun2.xml
 
