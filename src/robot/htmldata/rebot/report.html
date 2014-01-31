@@ -490,8 +490,8 @@ function hideHiddenDetailsColumns(elem) {
       <th>Search:</th>
       <td>
         <form>
-          <input id="search-field" type="text" value="${selected}">
-          <input type="submit" value="Search" onclick="tagDetailSelected($('#search-field').val())">
+          <input id="search-field" type="text" value="{{html selected}}">
+          <input type="submit" value="Search" onclick="tagDetailSelected(util.escape($('#search-field').val()))">
           <input type="button" value="Clear" onclick="$('#search-field').val('')">
         </form>
       </td>
