@@ -38,6 +38,46 @@ th {
 #print-selector {
     display: none;
 }
+/* Search */
+#search td, #search th {
+    padding: 0 0.4em 0.4em 0.4em;
+}
+#search a:hover {
+    text-decoration: none;
+}
+#search-help div {
+    margin: 1em;
+    padding: 0.5em;
+    background: #ECECF7;
+    border: 1px solid #BCBCD7;
+    border-radius: 3px;
+}
+#search-help p {
+    margin: 0 0 0.7em 0;
+}
+#search-help table, #search-help tr, #search-help th, #search-help td {
+    background: transparent;
+    margin: 0;
+    padding: 0.1em 0.7em 0.1em 0;
+}
+#search-help table {
+    table-layout: auto;
+    width: 100%;
+}
+#search-help th {
+    font-weight: normal;
+    font-style: italic;
+    letter-spacing: 0.1em;
+}
+.help-item {
+    width: 10%;
+}
+.help-explanation {
+    width: 60%;
+}
+.help-examples {
+    width: 30%;
+}
 /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
 #detail-tabs {
     list-style: none;
