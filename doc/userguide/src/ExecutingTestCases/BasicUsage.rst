@@ -182,8 +182,8 @@ used for combining two or more individual tags or patterns together.
       --exclude xxNOTyyNOTzz  # Matches tests containing tag 'xx' but not tag 'yy' or tag 'zz'.
 
 Mixed
-   The above operators can also be used together. In that case the operator
-   precedence, from highest to lowest, is :code:`AND`, :code:`OR` :code:`NOT`.
+   The above operators can also be used together. The operator precedence,
+   from highest to lowest, is :code:`AND`, :code:`OR` and :code:`NOT`.
 
    ::
 
