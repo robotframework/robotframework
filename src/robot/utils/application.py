@@ -69,6 +69,13 @@ class Application(object):
             return options, arguments
 
     def parse_arguments(self, cli_args):
+        """Public interface for parsing command line arguments.
+
+        :param    cli_args: Command line arguments as a list
+        :returns: options (dict), arguments (list)
+        :raises:  :class:`~robot.errors.Information` when --help or --version used
+        :raises:  :class:`~robot.errors.DataError` when parsing fails
+        """
         return self._ap.parse_args(cli_args)
 
     def execute(self, *arguments, **options):
