@@ -1,6 +1,7 @@
 /* Generic table styles */
 table {
     margin: 0 1px;
+    background: white;
 }
 tr {
     background: white;
