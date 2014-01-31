@@ -46,7 +46,7 @@ th {
     text-decoration: none;
 }
 #search-help div {
-    margin: 1em;
+    margin: 0.5em 0.5em 0.7em 0.5em;
     padding: 0.5em;
     background: #ECECF7;
     border: 1px solid #BCBCD7;
