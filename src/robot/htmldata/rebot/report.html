@@ -245,6 +245,8 @@ function renderSelector(args, template, stats) {
 }
 
 function drawTestDetailsTable(tests, sortByStatus) {
+    if (!tests.length)
+        return;
     renderTestDetailsHeader();
     window.elementsToRender = tests;
     var target = $('#test-details').find('tbody');
@@ -266,8 +268,6 @@ function sortByStatus(t1, t2) {
 }
 
 function getTestsHavingTag(tag) {
-    if (!tag)
-        return [];
     return window.testdata.suite().searchTestsByTag(tag).sort(sortByStatus);
 }
 
