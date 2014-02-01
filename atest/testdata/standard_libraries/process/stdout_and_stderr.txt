@@ -47,7 +47,7 @@ Cwd does not affect absolute custom streams
 
 Lot of output to custom stream
     [Tags]    performance
-    ${result}=    Run Process    python -c "for i in xrange(100000):\tprint 'a'*99"    shell=True    stdout=${STDOUT}
+    ${result}=    Run Process    python -c "for i in range(100000):\tprint('a'*99)"    shell=True    stdout=${STDOUT}
     Length Should Be    ${result.stdout}    9999999
     File Should Not Be Empty    ${STDOUT}
 

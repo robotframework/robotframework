@@ -18,11 +18,11 @@ Non-ASCII in environment variables
     Result should equal    ${result}    stdout=True
 
 Trailing newline is removed
-    ${result}=   Run Process    python    -c    print('nothing to remove')
+    ${result}=   Run Process    python    -c    __import__('sys').stdout.write('nothing to remove')
     Result should equal    ${result}    stdout=nothing to remove
-    ${result}=   Run Process    python    -c    print('one is removed\\n')
+    ${result}=   Run Process    python    -c    __import__('sys').stdout.write('one is removed\\n')
     Result should equal    ${result}    stdout=one is removed
-    ${result}=   Run Process    python    -c    print('only one is removed\\n\\n\\n')
+    ${result}=   Run Process    python    -c    __import__('sys').stdout.write('only one is removed\\n\\n\\n')
     Result should equal    ${result}    stdout=only one is removed\n\n
 
 Internal newlines are preserved
