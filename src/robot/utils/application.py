@@ -59,7 +59,7 @@ class Application(object):
 
     def _parse_arguments(self, cli_args):
         try:
-            options, arguments = self._ap.parse_args(cli_args)
+            options, arguments = self.parse_arguments(cli_args)
         except Information, msg:
             self._report_info(unicode(msg))
         except DataError, err:
@@ -67,6 +67,16 @@ class Application(object):
         else:
             self._logger.info('Arguments: %s' % ','.join(arguments))
             return options, arguments
+
+    def parse_arguments(self, cli_args):
+        """Public interface for parsing command line arguments.
+
+        :param    cli_args: Command line arguments as a list
+        :returns: options (dict), arguments (list)
+        :raises:  :class:`~robot.errors.Information` when --help or --version used
+        :raises:  :class:`~robot.errors.DataError` when parsing fails
+        """
+        return self._ap.parse_args(cli_args)
 
     def execute(self, *arguments, **options):
         with self._logging():

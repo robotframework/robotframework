@@ -12,7 +12,7 @@ a:link, a:visited {
 .details, .statistics {
     width: 100%;
 }
-#generated-ago, #top-right-header, #normal-selector,
+#generated-ago, #top-right-header, #normal-selector, #search,
 .folding-button, .expand, .hidden, .details-col-toggle {
     display: none;
 }

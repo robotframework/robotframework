@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Check Precondition    sys.version_info >= (2,6)
+Test Setup        Check Precondition    sys.version_info >= (2,6)
 Test Teardown     Terminate All Processes    kill=True
 Library           Collections
 Resource          resource.txt
@@ -98,10 +98,3 @@ Getting PIDs in different ways should give same result
     ${pid3}=      Get Process Id   ${handle}
     Should Be Equal As Integers   ${pid1}   ${pid2}
     Should Be Equal As Integers   ${pid1}   ${pid3}
-
-Lot of output
-    [Tags]    performance
-    ${stdout}=    Normalize Path    %{TEMPDIR}/stdout.txt
-    ${handle}=    Run Process    python -c "for i in range(350000): \tprint('a'*400)"    shell=True    stdout=${stdout}    stderr=STDOUT
-    File Should Not Be Empty    ${stdout}
-    [Teardown]    Safe Remove File    ${stdout}

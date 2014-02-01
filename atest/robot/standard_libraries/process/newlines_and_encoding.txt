@@ -1,32 +1,23 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}  standard_libraries/process/newlines_and_encoding.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/newlines_and_encoding.txt
 Force Tags       regression    pybot    jybot
-Test Setup       Check Preconditions
-Resource         atest_resource.txt
+Resource         process_resource.txt
 
 *** Test Cases ***
-Non-ascii in the command using shell=True
+Non-ASCII command and output
     Check Test Case    ${TESTNAME}
 
-Non-ascii in the command using shell=False
+Non-ASCII command and output with custom stream
     Check Test Case    ${TESTNAME}
 
-Non-ascii in the command with given stdout
+Non-ASCII in environment variables
     Check Test Case    ${TESTNAME}
 
-Newlines and trailing newline is removed
+Trailing newline is removed
     Check Test Case    ${TESTNAME}
 
-Non-ascii in the command arguments
+Internal newlines are preserved
     Check Test Case    ${TESTNAME}
 
-Newline test using shell=True
+Newlines with custom stream
     Check Test Case    ${TESTNAME}
-
-Newline test using shell=False
-    Check Test Case    ${TESTNAME}
-
-*** Keywords ***
-Check Preconditions
-    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression
-    Set Environment Variable     GLOBAL_TEST_ENCODING_VAR    t€stvär

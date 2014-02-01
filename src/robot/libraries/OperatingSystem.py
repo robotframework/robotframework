@@ -715,13 +715,18 @@ class OperatingSystem:
     # Moving and copying files and directories
 
     def copy_file(self, source, destination):
-        """Copies the source file into a new destination.
+        """Copies the source file into the destination.
+
+        Source must be an existing file. Starting from Robot Framework 2.8.4,
+        it can be given as a glob pattern (see `Pattern matching`) that matches
+        exactly one file. How the destination is interpreted is explained below.
 
         1) If the destination is an existing file, the source file is copied
         over it.
 
         2) If the destination is an existing directory, the source file is
-        copied into it. A possible file with the same name is overwritten.
+        copied into it. A possible file with the same name as the source is
+        overwritten.
 
         3) If the destination does not exist and it ends with a path
         separator ('/' or '\\'), it is considered a directory. That
@@ -731,61 +736,68 @@ class OperatingSystem:
         4) If the destination does not exist and it does not end with a path
         separator, it is considered a file. If the path to the file does not
         exist, it is created.
+
+        See also `Copy Files`, `Move File`, and `Move Files`.
         """
         source, destination = self._copy_file(source, destination)
         self._link("Copied file from '%s' to '%s'", source, destination)
 
     def move_file(self, source, destination):
-        """Moves the source file into a new destination.
-
-        If the source and destination are in the same filesystem, rename operation is used.
-        Otherwise file is copied to the destination filesystem and then removed from the
-        original filesystem.
+        """Moves the source file into the destination.
 
         Arguments have exactly same semantics as with `Copy File` keyword.
+
+        If the source and destination are on the same filesystem, rename
+        operation is used. Otherwise file is copied to the destination
+        filesystem and then removed from the original filesystem.
+
+        See also `Move Files`, `Copy File`, and `Copy Files`.
         """
         source, destination, _ = self._prepare_for_move_or_copy(source, destination)
         shutil.move(source, destination)
         self._link("Moved file from '%s' to '%s'", source, destination)
 
     def copy_files(self, *sources_and_destination):
-        """Copies a list of source files into a new destination.
+        """Copies specified files to the target directory.
 
-        _Glob patterns_ can be used in source files. Internally the keyword uses `Copy File`
-        keyword for actual copying and thus behaves similarly.
+        Source files can be given as exact paths and as glob patterns (see
+        `Pattern matching`). At least one source must be given, but it is
+        not an error if it is a pattern that does not match anything.
 
-        Last argument is the destination directory.
+        Last argument must be the destination directory. If the destination
+        does not exist, it will be created.
+
+        Examples:
+        | Copy Files | ${dir}/file1.txt  | ${dir}/file2.txt | ${dir2} |
+        | Copy Files | ${dir}/file-*.txt | ${dir2}          |         |
+
+        See also `Copy File`, `Move File`, and `Move Files`.
+
+        New in Robot Framework 2.8.4.
         """
-        sources, destination = self._parse_sources_and_destination(sources_and_destination)
-        source_files = self._prepare_list_of_source_files(destination, *sources)
-
-        if len(source_files) < 1:
-            raise RuntimeError("No existing source files matching given list of files or patterns: %s" % ", ".join(sources))
-
+        source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
         for source in source_files:
-            self.copy_file(source, destination)
+            self.copy_file(source, dest_dir)
 
     def move_files(self, *sources_and_destination):
-        """Moves or renames list of source files.
+        """Moves specified files to the target directory.
 
-        _Glob patterns_ can be used in source files. Internally the keyword uses `Move File`
-        keyword for actual moving and thus behaves similarly.
+        Arguments have exactly same semantics as with `Copy Files` keyword.
 
-        Last argument is the destination directory.
+        See also `Move File`, `Copy File`, and `Copy Files`.
+
+        New in Robot Framework 2.8.4.
         """
-        sources, destination = self._parse_sources_and_destination(sources_and_destination)
-        source_files = self._prepare_list_of_source_files(destination, *sources)
-
-        if len(source_files) < 1:
-            raise RuntimeError("No existing source files matching given list of files or patterns: %s" % ", ".join(sources))
-
+        source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
         for source in source_files:
-            self.move_file(source, destination)
+            self.move_file(source, dest_dir)
 
-    def _parse_sources_and_destination(self, sources_and_destination):
-        if len(sources_and_destination) < 2:
+    def _parse_sources_and_destination(self, items):
+        if len(items) < 2:
             raise RuntimeError("Must contain destination and at least one source")
-        return sources_and_destination[:-1], sources_and_destination[-1]
+        sources, destination = items[:-1], items[-1]
+        self._ensure_destination_directory(destination)
+        return self._glob_files(sources), destination
 
     def _normalize_dest(self, dest):
         dest = dest.replace('/', os.sep)
@@ -793,15 +805,18 @@ class OperatingSystem:
         dest = self._absnorm(dest)
         return dest, dest_is_dir
 
-    def _prepare_list_of_source_files(self, destination, *sources):
-        destination, dest_is_dir = self._normalize_dest(destination)
-        source_files = []
-        for source in sources:
-            files_matching_pattern = glob.glob(source)
-            if len(files_matching_pattern) > 1 and not dest_is_dir:
-                raise RuntimeError("Several files match the pattern '%s' and will overwrite the single destination file." % source)
-            source_files.extend(files_matching_pattern)
-        return source_files
+    def _ensure_destination_directory(self, destination):
+        destination, _ = self._normalize_dest(destination)
+        if not os.path.exists(destination):
+            os.makedirs(destination)
+        elif not os.path.isdir(destination):
+            raise RuntimeError("Destination '%s' exists and is not a directory" % destination)
+
+    def _glob_files(self, patterns):
+        files = []
+        for pattern in patterns:
+            files.extend(glob.glob(self._absnorm(pattern)))
+        return files
 
     def _prepare_for_move_or_copy(self, source, dest):
         source, dest, dest_is_dir = self._normalize_source_and_dest(source, dest)
@@ -821,7 +836,10 @@ class OperatingSystem:
         return self._atomic_copy(source, dest, parent)
 
     def _normalize_source_and_dest(self, source, dest):
-        source = self._absnorm(source)
+        sources = self._glob_files([source])
+        if len(sources) > 1:
+            raise RuntimeError("Multiple matches with source pattern '%s'" % source)
+        source = sources[0] if sources else source
         dest, dest_is_dir = self._normalize_dest(dest)
         return source, dest, dest_is_dir
 
@@ -925,6 +943,40 @@ class OperatingSystem:
         """
         set_env_var(name, value)
         self._info("Environment variable '%s' set to value '%s'" % (name, value))
+
+    def append_to_environment_variable(self, name, *values, **config):
+        """Appends given `values` to environment variable `name`.
+
+        If the environment variable already exists, values are added after it,
+        and otherwise a new environment variable is created.
+
+        Values are, by default, joined together using the operating system
+        path separator (';' on Windows, ':' elsewhere). This can be changed
+        by giving a separator after the values like `separator=value`. No
+        other configuration parameters are accepted.
+
+        Examples (assuming `NAME` and `NAME2` do not exist initially):
+        | Append To Environment Variable | NAME     | first  |       |
+        | Should Be Equal                | %{NAME}  | first  |       |
+        | Append To Environment Variable | NAME     | second | third |
+        | Should Be Equal                | %{NAME}  | first${:}second${:}third |
+        | Append To Environment Variable | NAME2    | first  | separator=-     |
+        | Should Be Equal                | %{NAME2} | first  |                 |
+        | Append To Environment Variable | NAME2    | second | separator=-     |
+        | Should Be Equal                | %{NAME2} | first-second             |
+
+        New in Robot Framework 2.8.4.
+        """
+        sentinel = object()
+        initial = self.get_environment_variable(name, sentinel)
+        if initial is not sentinel:
+            values = (initial,) + values
+        separator = config.pop('separator', os.pathsep)
+        if config:
+            config = ['='.join(i) for i in sorted(config.items())]
+            raise RuntimeError('Configuration %s not accepted.'
+                               % seq2str(config, lastsep=' or '))
+        self.set_environment_variable(name, separator.join(values))
 
     def remove_environment_variable(self, *names):
         """Deletes the specified environment variable.

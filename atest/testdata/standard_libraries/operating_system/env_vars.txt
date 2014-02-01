@@ -24,6 +24,22 @@ Set Environment Variable
     Set Environment Variable    ${NAME}    Moi
     Should Be Equal    %{${NAME}}    Moi
 
+Append To Environment Variable
+    Append To Environment Variable    ${NAME}    first
+    Should Be Equal    %{${NAME}}    first
+    Append To Environment Variable    ${NAME}    second    third
+    Should Be Equal    %{${NAME}}    first${:}second${:}third
+
+Append To Environment Variable With Custom Separator
+    Append To Environment Variable    ${NAME}    first    separator=-
+    Should Be Equal    %{${NAME}}    first
+    Append To Environment Variable    ${NAME}    second    3rd\=x    separator=-
+    Should Be Equal    %{${NAME}}    first-second-3rd=x
+
+Append To Environment Variable With Invalid Config
+    [Documentation]    FAIL Configuration 'not=ok' or 'these=are' not accepted.
+    Append To Environment Variable    ${NAME}    value    these=are    not=ok
+
 Remove Environment Variable
     Set Environment Variable    ${NAME}    Hello
     Remove Environment Variable    ${NAME}

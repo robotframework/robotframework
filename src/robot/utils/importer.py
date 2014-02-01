@@ -155,8 +155,8 @@ class _Importer(object):
             return imported
         raise DataError('Expected class or module, got <%s>.' % type(imported).__name__)
 
-    def _get_class_from_module(self, module):
-        klass = getattr(module, module.__name__, None)
+    def _get_class_from_module(self, module, name=None):
+        klass = getattr(module, name or module.__name__, None)
         return klass if inspect.isclass(klass) else None
 
     def _get_source(self, module):
@@ -251,4 +251,5 @@ class DottedImporter(_Importer):
         except AttributeError:
             raise DataError("Module '%s' does not contain '%s'."
                             % (parent_name, lib_name))
+        imported = self._get_class_from_module(imported, lib_name) or imported
         return self._verify_type(imported), self._get_source(parent)

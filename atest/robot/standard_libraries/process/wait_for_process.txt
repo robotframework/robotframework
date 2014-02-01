@@ -1,8 +1,8 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/wait_for_process.txt
-Test Setup       Check Preconditions
+Test Setup       Check Precondition
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         process_resource.txt
 
 *** Test Cases ***
 Wait For Process
@@ -21,13 +21,11 @@ Wait For Process Terminate On Timeout
     Check Log Message    ${tc.kws[2].msgs[0]}    Waiting for process to complete.
     Check Log Message    ${tc.kws[2].msgs[1]}    Process did not complete in 1 second.
     Check Log Message    ${tc.kws[2].msgs[2]}    Gracefully terminating process.
+    Check Log Message    ${tc.kws[2].msgs[3]}    Process completed.
 
 Wait For Process Kill On Timeout
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[2].msgs[0]}    Waiting for process to complete.
     Check Log Message    ${tc.kws[2].msgs[1]}    Process did not complete in 1 second.
     Check Log Message    ${tc.kws[2].msgs[2]}    Forcefully killing process.
-
-*** Keywords ***
-Check Preconditions
-    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression
+    Check Log Message    ${tc.kws[2].msgs[3]}    Process completed.

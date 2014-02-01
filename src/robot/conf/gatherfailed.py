@@ -36,7 +36,7 @@ def gather_failed_tests(output):
         return []
     gatherer = GatherFailedTests()
     try:
-        ExecutionResult(output).suite.visit(gatherer)
+        ExecutionResult(output, include_keywords=False).suite.visit(gatherer)
         if not gatherer.tests:
             raise DataError('All tests passed.')
     except:

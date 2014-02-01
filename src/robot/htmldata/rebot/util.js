@@ -49,6 +49,10 @@ window.util = function () {
         return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
     }
 
+    function escape(string) {
+        return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
     function normalize(string) {
         return string.toLowerCase().replace(/ /g, '').replace(/_/g, '');
     }
@@ -169,6 +173,7 @@ window.util = function () {
         any: any,
         contains: contains,
         last: last,
+        escape: escape,
         unescape: unescape,
         normalize: normalize,
         Matcher: Matcher,

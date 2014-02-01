@@ -17,14 +17,18 @@ from __future__ import with_statement
 import sys
 import os
 import subprocess
+import sys
 import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
-                         decode_from_system, get_env_vars, secs_to_timestr,
-                         timestr_to_secs)
+                         decode_output, secs_to_timestr, timestr_to_secs)
 from robot.version import get_version
 from robot.api import logger
+
+
+if os.sep == '/' and sys.platform.startswith('java'):
+    encode_to_system = lambda string: string
 
 
 class Process(object):
@@ -292,17 +296,34 @@ class Process(object):
     def run_process(self, command, *arguments, **configuration):
         """Runs a process and waits for it to complete.
 
-        See `Specifying command and arguments` and `Process configuration`
-        for more information about the arguments.
+        `command` and `*arguments` specify the command to execute and arguments
+        passed to it. See `Specifying command and arguments` for more details.
+
+        `**configuration` contains additional configuration related to starting
+        processes and waiting for them to finish. See `Process configuration`
+        for more details about configuration related to starting processes.
+        Configuration related to waiting for processes consists of `timeout`
+        and `on_timeout` arguments that have same semantics as with `Wait
+        For Process` keyword. By default there is no timeout, and if timeout
+        is defined the default action on timeout is `terminate`.
 
         Returns a `result object` containing information about the execution.
 
+        Examples:
+        | ${result} = | Run Process | python | -c | print 'Hello, world!' |
+        | Should Be Equal | ${result.stdout} | Hello, world! |
+        | ${result} = | Run Process | ${command} | stderr=STDOUT | timeout=10s |
+        | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
+
         This command does not change the `active process`.
+        `timeout` and `on_timeout` arguments are new in Robot Framework 2.8.4.
         """
         current = self._processes.current
+        timeout = configuration.pop('timeout', None)
+        on_timeout = configuration.pop('on_timeout', 'terminate')
         try:
             handle = self.start_process(command, *arguments, **configuration)
-            return self.wait_for_process(handle)
+            return self.wait_for_process(handle, timeout, on_timeout)
         finally:
             self._processes.current = current
 
@@ -316,7 +337,7 @@ class Process(object):
         that can be used as a handle to active the started process if needed.
         """
         config = ProcessConfig(**configuration)
-        executable_command = self._cmd(arguments, command, config.shell)
+        executable_command = self._cmd(command, arguments, config.shell)
         logger.info('Starting process:\n%s' % executable_command)
         logger.debug('Process configuration:\n%s' % config)
         process = subprocess.Popen(executable_command,
@@ -332,7 +353,7 @@ class Process(object):
                                                  config.stderr_stream)
         return self._processes.register(process, alias=config.alias)
 
-    def _cmd(self, args, command, use_shell):
+    def _cmd(self, command, args, use_shell):
         command = [encode_to_system(item) for item in [command] + list(args)]
         if not use_shell:
             return command
@@ -416,7 +437,6 @@ class Process(object):
         `timeout` and `on_timeout` are new in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
-        result = self._results[process]
         logger.info('Waiting for process to complete.')
         if timeout:
             timeout = timestr_to_secs(timeout)
@@ -424,9 +444,7 @@ class Process(object):
                 logger.info('Process did not complete in %s.'
                             % secs_to_timestr(timeout))
                 return self._manage_process_timeout(handle, on_timeout.lower())
-        result.rc = process.wait() or 0
-        logger.info('Process completed.')
-        return result
+        return self._wait(process)
 
     def _manage_process_timeout(self, handle, on_timeout):
         if on_timeout == 'terminate':
@@ -436,6 +454,13 @@ class Process(object):
         else:
             logger.info('Leaving process intact.')
             return None
+
+    def _wait(self, process):
+        result = self._results[process]
+        result.rc = process.wait() or 0
+        result.close_custom_streams()
+        logger.info('Process completed.')
+        return result
 
     def terminate_process(self, handle=None, kill=False):
         """Stops the process gracefully or forcefully.
@@ -474,7 +499,6 @@ class Process(object):
         returning the result object are new features in Robot Framework 2.8.2.
         """
         process = self._processes[handle]
-        result = self._results[process]
         if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
                                'by this Python version.')
@@ -485,8 +509,7 @@ class Process(object):
             if not self._process_is_stopped(process, self.KILL_TIMEOUT):
                 raise
             logger.debug('Ignored OSError because process was stopped.')
-        result.rc = process.wait() or 0
-        return result
+        return self._wait(process)
 
     def _kill(self, process):
         logger.info('Forcefully killing process.')
@@ -682,11 +705,14 @@ class ExecutionResult(object):
         self.rc = rc
         self._stdout = None
         self._stderr = None
+        self._custom_streams = [stream for stream in (stdout, stderr)
+                                if self._is_custom_stream(stream)]
 
     def _get_path(self, stream):
-        if stream in (subprocess.PIPE, subprocess.STDOUT):
-            return None
-        return stream.name
+        return stream.name if self._is_custom_stream(stream) else None
+
+    def _is_custom_stream(self, stream):
+        return stream not in (subprocess.PIPE, subprocess.STDOUT)
 
     @property
     def stdout(self):
@@ -702,6 +728,12 @@ class ExecutionResult(object):
                                              self._process.stderr)
         return self._stderr
 
+    def close_custom_streams(self):
+        for stream in self._custom_streams:
+            if not stream.closed:
+                stream.flush()
+                stream.close()
+
     def _read_stream(self, stream_path, stream):
         if stream_path:
             stream = open(stream_path, 'r')
@@ -714,7 +746,7 @@ class ExecutionResult(object):
     def _format_output(self, output):
         if output.endswith('\n'):
             output = output[:-1]
-        return decode_from_system(output)
+        return decode_output(output, force=True)
 
     def __str__(self):
         return '<result object with rc %d>' % self.rc
@@ -726,7 +758,7 @@ class ProcessConfig(object):
                  binary_mode=False, alias=None, env=None, **rest):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
-        self.stderr_stream = self._get_stderr(stderr, stdout)
+        self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.shell = is_true(shell)
         self.binary_mode = is_true(binary_mode)
         self.alias = alias
@@ -743,24 +775,23 @@ class ProcessConfig(object):
             return open(os.path.join(self.cwd, name), 'w')
         return subprocess.PIPE
 
-    def _get_stderr(self, stderr, stdout):
-        if stderr:
-            if stderr == 'STDOUT' or stderr == stdout:
-                if self.stdout_stream == subprocess.PIPE:
-                    return subprocess.STDOUT
-                return self.stdout_stream
+    def _get_stderr(self, stderr, stdout, stdout_stream):
+        if stderr and stderr in ['STDOUT', stdout]:
+            if stdout_stream != subprocess.PIPE:
+                return stdout_stream
+            return subprocess.STDOUT
         return self._new_stream(stderr)
 
-    def _construct_env(self, env, rest):
-        for key in rest:
+    def _construct_env(self, env, extra):
+        if env:
+            env = dict((encode_to_system(k), encode_to_system(v))
+                       for k, v in env.items())
+        for key in extra:
             if not key.startswith('env:'):
                 raise RuntimeError("'%s' is not supported by this keyword." % key)
             if env is None:
-                env = get_env_vars(upper=False)
-            env[key[4:]] = rest[key]
-        if env:
-            env = dict((encode_to_system(key), encode_to_system(env[key]))
-                       for key in env)
+                env = os.environ.copy()
+            env[encode_to_system(key[4:])] = encode_to_system(extra[key])
         return env
 
     def __str__(self):

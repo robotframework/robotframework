@@ -27,7 +27,7 @@ describe("Searching by tags", function () {
         expect(model.containsTagPattern(['x', 'y'], 'xxORyy')).not.toBeTruthy();
     });
 
-    it("should find tags combined with OR and NOT", function() {
+    it("should find tags combined with OR and AND", function() {
         expect(model.containsTagPattern(['x', 'y'], 'x OR  y AND z')).toBeTruthy();
         expect(model.containsTagPattern(['x', 'y'], 'z OR  y AND x')).toBeTruthy();
         expect(model.containsTagPattern(['x', 'y'], 'x AND y OR  z')).toBeTruthy();

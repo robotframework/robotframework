@@ -1,116 +1,65 @@
 *** Settings ***
-Documentation   Copy File and Copy Dir don't currently have tests but as Move File and Move Dir use them internally they are somehow tested. At least simple tests for them should be added anyway.
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_moving_and_copying.txt
-Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/file_and_dir_moving_and_copying.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
 
 *** Test Cases ***
 Move File
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Copy File
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
+
+Copy File With Glob Pattern
+    Check Test Case    ${TESTNAME}
+
+Move File With Glob Pattern
+    Check Test Case    ${TESTNAME}
+
+Move File With Glob Pattern With Multiple Matches Fails
+    Check Test Case    ${TESTNAME}
+
+Copy File With Glob Pattern With Multiple Matches Fails
+    Check Test Case    ${TESTNAME}
+
+Copy File With Glob Pattern With No Matches Fails
+    Check Test Case    ${TESTNAME}
+
+Move File With Glob Pattern With No Matches Fails
+    Check Test Case    ${TESTNAME}
 
 Copy File when destination exists should be ok
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Copy File when destination is a directory
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Copy File when destination is a directory and file with same name exists
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move File To Existing Dir
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move File To Non-Existing Dir
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move File Using Just File Name
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Moving Non-Existing File Fails
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move Directory
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move Directory To Existing Dir
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move Directory To Non-Existing Dir Tree
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Move Directory Using Just Dir Name
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
 Moving Non-Existing Directory Fails
-    Check testcase  ${TESTNAME}
-
-# Test cases for Move Files keyword
-Move One File With Move Files
-    Check testcase  ${TESTNAME}
-
-Move Files fails when no destination
-    Check testcase  ${TESTNAME}
-
-Move Files without arguments fails
-    Check testcase  ${TESTNAME}
-
-Move Multiple Files
-    Check testcase  ${TESTNAME}
-
-Move Multiple Files From Multiple Directories
-    Check testcase  ${TESTNAME}
-
-Move List of Files
-    Check testcase  ${TESTNAME}
-
-Move List of Files with Patterns
-    Check testcase  ${TESTNAME}
-
-Moving Non-existing Files Fails
-    Check testcase  ${TESTNAME}
-
-Rename One File With Move Files
-    Check testcase  ${TESTNAME}
-
-Rename Multiple Files To One File Fails
-    Check testcase  ${TESTNAME}
-
-Rename List of Files with Patterns To One File Fails
-    Check testcase  ${TESTNAME}
-
-# Test cases for Copy Files keyword
-Copy One File To Dir With Copy Files
-    Check testcase  ${TESTNAME}
-
-Copy Files fails when no destination
-    Check testcase  ${TESTNAME}
-
-Copy Files without arguments fails
-    Check testcase  ${TESTNAME}
-
-Copy One File To File With Copy Files
-    Check testcase  ${TESTNAME}
-
-Copy Multiple Files
-    Check testcase  ${TESTNAME}
-
-Copy Multiple Files To One File Fails
-    Check testcase  ${TESTNAME}
-
-Copy Multiple Files From Multiple Directories
-    Check testcase  ${TESTNAME}
-
-Copy List of Files
-    Check testcase  ${TESTNAME}
-
-Copy List of Files with Patterns
-    Check testcase  ${TESTNAME}
-
-Copy List of Files with Pattern To One File Fails
-    Check testcase  ${TESTNAME}
-
-Copying Non-existing Files Fails
-    Check testcase  ${TESTNAME}
+    Check Test Case    ${TESTNAME}

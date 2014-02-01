@@ -169,12 +169,19 @@ function updatePrintSelector(name, info) {
 function tagDetailSelected(name) {
     if (!name) return;
     renderTagSelector(name);
-    var tag = util.filter(window.testdata.statistics().tag, function (tag) {
-        return tag.label == name;
-    })[0];
+    var tag = findTag(name);
     renderTagDetails(tag);
     updatePrintSelector(name, tag.info);
     scrollToSelector('tag_'+name);
+}
+
+function findTag(name) {
+    var tags = window.testdata.statistics().tag;
+    for (var i = 0, len = tags.length; i < len; i++) {
+        if (tags[i].label == name)
+            return tags[i];
+    }
+    return {combined: name, label: name, info: 'search'};
 }
 
 function renderTagSelector(name) {
@@ -186,8 +193,14 @@ function renderTagSelector(name) {
 
 function renderTagDetails(tag) {
     var tests = getTestsHavingTag(tag);
-    if (tag)
-        tag.totalTime = calculateTotalTime(tests);
+    tag.totalTime = calculateTotalTime(tests);
+    if (tag.info == 'search') {
+        tag.total = tests.length;
+        tag.pass = util.filter(tests, function (test) {
+            return test.status == 'PASS';
+        }).length;
+        tag.fail = tag.total - tag.pass;
+    }
     $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
@@ -232,6 +245,8 @@ function renderSelector(args, template, stats) {
 }
 
 function drawTestDetailsTable(tests, sortByStatus) {
+    if (!tests.length)
+        return;
     renderTestDetailsHeader();
     window.elementsToRender = tests;
     var target = $('#test-details').find('tbody');
@@ -253,8 +268,6 @@ function sortByStatus(t1, t2) {
 }
 
 function getTestsHavingTag(tag) {
-    if (!tag)
-        return [];
     return window.testdata.suite().searchTestsByTag(tag).sort(sortByStatus);
 }
 
@@ -472,6 +485,72 @@ function hideHiddenDetailsColumns(elem) {
         </select>
       </td>
       <td id="print-selector"></td>
+    </tr>
+    <tr id="search">
+      <th>Search:</th>
+      <td>
+        <form>
+          <input id="search-field" type="text" value="{{html selected}}">
+          <input type="submit" value="Search" onclick="tagDetailSelected(util.escape($('#search-field').val()))">
+          <input type="button" value="Clear" onclick="$('#search-field').val('')">
+          <a href="javascript:void(0)" onclick="$('#search-help').toggle()"
+             title="Toggle search pattern help.">Help</a>
+        </form>
+      </td>
+    </tr>
+    <tr id="search-help" style="display: none">
+      <th></th>
+      <td>
+        <div>
+          <p>
+            Search patterns support wildcards and combining operators explained
+            in the table below. Search is also case, space and underscore
+            insensitive. See <em>Tag patterns</em> section in
+            <a href="https://code.google.com/p/robotframework/wiki/UserGuide">Robot
+            Framework User Guide</a> for more details.
+          </p>
+          <table>
+            <col class="help-item">
+            <col class="help-explanation">
+            <col class="help-examples>
+            <tr>
+              <th></th>
+              <th>Explanation</th>
+              <th>Examples</th>
+            </tr>
+            <tr>
+              <td>*</td>
+              <td>Matches anything, even an empty string.</td>
+              <td>f*, sprint-*, x*y*z</td>
+            </tr>
+            <tr>
+              <td>?</td>
+              <td>Matches any single character.</td>
+              <td>f??, sprint-??, x?y?z</td>
+            </tr>
+            <tr>
+              <td>AND</td>
+              <td>Matches if all patterns match.</td>
+              <td>fooANDbar, xANDy*ANDz??</td>
+            </tr>
+            <tr>
+              <td>OR</td>
+              <td>Matches if any pattern match.</td>
+              <td>fooORbar, xORy*ORz??</td>
+            </tr>
+            <tr>
+              <td>NOT</td>
+              <td>Matches if pattern before matches and pattern after does not.</td>
+              <td>fooNOTbar, *NOTowner-*</td>
+            </tr>
+            <tr>
+              <td>Mixed</td>
+              <td>The above operators can also be used together. The operator precedence, from highest to lowest, is AND, OR, and NOT.</td>
+              <td>xANDyORz, x*NOTyANDz</td>
+            </tr>
+          </table>
+        </div>
+      </td>
     </tr>
   </table>
 </script>

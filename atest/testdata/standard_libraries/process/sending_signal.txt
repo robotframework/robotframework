@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Check Precondition    os.sep == "/" and sys.version_info >= (2,6)
+Test Setup        Check Precondition    os.sep == "/" and sys.version_info >= (2,6)
 Suite Teardown    Terminate All Processes
 Resource          resource.txt
 

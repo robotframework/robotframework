@@ -96,3 +96,41 @@ meaningful name::
    rebot --include smoke --name Smoke_Tests c:\results\*.xml
 
 __ `Specifying test data to be executed`_
+
+Merging re-executed output
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is often a need to re-execute a subset of tests, for example, after
+fixing a bug in the system under test or in the tests themselves. This can be
+accomplished by `selecting test cases`_ by names (:opt:`--test` and
+:opt:`--suite` options), tags (:opt:`--include` and :opt:`--exclude`), or
+by previous status (:opt:`--rerunfailed`).
+
+Combining re-execution results with the original results using the default
+`combining outputs`_ approach does not work too well. The main problem is
+that you get separate test suites and possibly already fixed failures are
+also shown. In this situation it is often better to use :opt:`--rerunmerge (-R)`
+option to tell :prog:`rebot` to merge the results instead. In practice this
+means that tests from the latter test runs replace tests in the original.
+The usage is best illustrated by a practical example using :opt:`--rerunfailed`
+and :opt:`--rerunmerge` together::
+
+  pybot --output original.xml tests                            # first execute all tests
+  pybot --rerunfailed original.xml --output rerun.xml tests    # then re-execute failing
+  rebot --rerunmerge original.xml rerun.xml                    # finally merge results
+
+The :opt:`--rerunmerge` option itself does not take any arguments. Just using
+the option alone changes the way how :prog:`rebot` combines two or more output
+files. All other command line options can be used with :opt:`--rerunmerge`
+normally::
+
+  rebot --rerunmerge --name Merged --critical regression original.xml rerun1.xml rerun2.xml
+
+The message of the merged tests contains a note that results have been
+replaced. The message also shows the old status and message of the test.
+
+Merging results requires that the original result contains all same suites
+and tests as the merged results. Suites and tests tests not found from the
+original are ignored and an error printed to the console.
+
+.. note:: Merging re-executed results is a new feature in Robot Framework 2.8.4.
