@@ -72,8 +72,7 @@ window.model = (function () {
                 return containsTagPattern(testTags, p);
             }));
         }
-        testTags = util.map(testTags, util.normalize);
-        return util.any(util.map(testTags, util.Matcher(pattern).matches));
+        return util.Matcher(pattern).matchesAny(testTags);
     }
 
     function findSuiteByName(suite, name) {

@@ -65,8 +65,17 @@ window.util = function () {
         pattern = regexpEscape(normalize(pattern));
         var rePattern = '^' + pattern.replace(/\\\?/g, ".").replace(/\\\*/g, ".*") + '$';
         var regexp = new RegExp(rePattern);
+        function matches(string) {
+            return regexp.test(normalize(string));
+        }
         return {
-            matches: function (string) { return regexp.test(string); }
+            matches: matches,
+            matchesAny: function (strings) {
+                for (var i = 0, len = strings.length; i < len; i++)
+                    if (matches(strings[i]))
+                        return true;
+                return false;
+            }
         }
     }
 
