@@ -252,7 +252,8 @@ function renderSearchSelector(suite, test, include, exclude) {
 }
 
 function renderSearchDetails(suite, test, include, exclude) {
-    var tests = searchTests(suite, test, include, exclude);
+    var tests = searchTests(util.escape(suite), util.escape(test),
+                            util.escape(include), util.escape(exclude));
     var passed = calculatePassed(tests);
     var stats = {total: tests.length,
                  pass: passed,
@@ -639,35 +640,35 @@ function hideHiddenDetailsColumns(elem) {
       <tr>
         <th><label for="search-suite">Suite:</label></th>
         <td>
-          <input id="search-suite" type="text" value="{{html suite}}">
+          <input id="search-suite" type="text" value="${suite}">
         </td>
       </tr>
       <tr>
         <th><label for="search-test">Test:</label></th>
         <td>
-          <input id="search-test" type="text" value="{{html test}}">
+          <input id="search-test" type="text" value="${test}">
         </td>
       </tr>
       <tr>
         <th><label for="search-include">Include:</label></th>
         <td>
-          <input id="search-include" type="text" value="{{html include}}">
+          <input id="search-include" type="text" value="${include}">
         </td>
       </tr>
       <tr>
         <th><label for="search-exclude">Exclude:</label></th>
         <td>
-          <input id="search-exclude" type="text" value="{{html exclude}}">
+          <input id="search-exclude" type="text" value="${exclude}">
         </td>
       </tr>
       <tr>
         <th></th>
         <td>
           <input type="submit" value="Search"
-                 onclick="searchExecuted(util.escape($('#search-suite').val()),
-                                         util.escape($('#search-test').val()),
-                                         util.escape($('#search-include').val()),
-                                         util.escape($('#search-exclude').val()));
+                 onclick="searchExecuted($('#search-suite').val(),
+                                         $('#search-test').val(),
+                                         $('#search-include').val(),
+                                         $('#search-exclude').val());
                           return false">
           <input type="button" value="Clear"
                  onclick="$('#search-suite').val('');
