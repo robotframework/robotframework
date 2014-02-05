@@ -23,6 +23,17 @@ window.model = (function () {
                 tests = tests.concat(suites[i].searchTests(predicate));
             return tests.concat(util.filter(this.tests(), predicate));
         };
+        suite.searchTestsInSuite = function (pattern, matcher) {
+            if (!matcher)
+                matcher = util.Matcher(pattern);
+            if (matcher.matchesAny([suite.fullName, suite.name]))
+                return suite.allTests();
+            var tests = [];
+            var suites = this.suites();
+            for (var i in suites)
+                tests = tests.concat(suites[i].searchTestsInSuite(pattern, matcher));
+            return tests;
+        }
         suite.searchTestsByTag = function (tag) {
             return suite.searchTests(function (test) {
                 if (tag.combined)
@@ -119,6 +130,9 @@ window.model = (function () {
         test.isCritical = data.isCritical;
         test.tags = data.tags;
         test.message = data.message;
+        test.matchesTagPattern = function (pattern) {
+            return containsTagPattern(test.tags, pattern);
+        }
         return test;
     }
 

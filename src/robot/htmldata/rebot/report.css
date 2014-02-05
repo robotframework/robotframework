@@ -42,6 +42,9 @@ th {
 #search td, #search th {
     padding: 0 0.4em 0.4em 0.4em;
 }
+#search-suite, #search-test, #search-include, #search-exclude {
+    width: 20em;
+}
 #search a:hover {
     text-decoration: none;
 }

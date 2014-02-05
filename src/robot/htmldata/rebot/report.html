@@ -115,6 +115,7 @@ function showDetailsByHash() {
     var action = {'totals': showTotalSelector,
                   'tags':   showTagSelector,
                   'suites': showSuiteSelector,
+                  'search': showSearchSelector,
                   'total':  totalDetailSelected,
                   'tag':    tagDetailSelected,
                   'suite':  suiteDetailSelected}[key];
@@ -135,6 +136,11 @@ function showTagSelector() {
 function showSuiteSelector() {
     renderSuiteSelector();
     scrollToSelector('suites');
+}
+
+function showSearchSelector() {
+    renderSearchSelector();
+    scrollToSelector('search');
 }
 
 function totalDetailSelected(name) {
@@ -196,9 +202,7 @@ function renderTagDetails(tag) {
     tag.totalTime = calculateTotalTime(tests);
     if (tag.info == 'search') {
         tag.total = tests.length;
-        tag.pass = util.filter(tests, function (test) {
-            return test.status == 'PASS';
-        }).length;
+        tag.pass = calculatePassed(tests);
         tag.fail = tag.total - tag.pass;
     }
     $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details-header');
@@ -227,6 +231,49 @@ function renderSuiteDetails(id) {
         $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details-header');
         drawTestDetailsTable(suite.allTests(), false);
         updatePrintSelector(suite.fullName);
+    });
+}
+
+function searchExecuted(suite, test, include, exclude) {
+    if (!(suite || test || include || exclude))
+        return;
+    renderSearchSelector(suite, test, include, exclude);
+    renderSearchDetails(suite, test, include, exclude);
+    scrollToSelector('search_' + suite + '::' + test + '::' + include + '::' + exclude);
+}
+
+function renderSearchSelector(suite, test, include, exclude) {
+    var args = {linkTarget: (suite || test || include || exclude) ?
+                            ('search_' + suite + '::' + test + '::' + include + '::' + exclude) :
+                            'search',
+                searchTabStatus: 'detail-tab-selected'};
+    var search = {suite: suite, test: test, include: include, exclude: exclude};
+    renderSelector(args, 'searchSelectorTemplate', search);
+}
+
+function renderSearchDetails(suite, test, include, exclude) {
+    var tests = searchTests(suite, test, include, exclude);
+    var passed = calculatePassed(tests);
+    var stats = {total: tests.length,
+                 pass: passed,
+                 fail: tests.length - passed,
+                 totalTime: calculateTotalTime(tests)};
+    $.tmpl('tagOrTotalDetailsTemplate', stats).appendTo('#details-header');
+    drawTestDetailsTable(tests, true);
+}
+
+function searchTests(suitePattern, testPattern, includePattern, excludePattern) {
+    var tests;
+    if (suitePattern)
+        tests = window.testdata.suite().searchTestsInSuite(suitePattern);
+    else
+        tests = window.testdata.suite().allTests();
+    return util.filter(tests, function (test) {
+        if (testPattern && !util.Matcher(testPattern).matches(test.name))
+            return false;
+        if (includePattern && !test.matchesTagPattern(includePattern))
+            return false;
+        return !(excludePattern && test.matchesTagPattern(excludePattern));
     });
 }
 
@@ -282,6 +329,13 @@ function calculateTotalTime(tests) {
     for (var i = 0, len = tests.length; i < len; i++)
         total += tests[i].times.elapsedMillis;
     return util.formatElapsed(total);
+}
+
+function calculatePassed(tests) {
+    var passed = util.filter(tests, function (test) {
+        return test.status == 'PASS';
+    });
+    return passed.length;
 }
 
 function renderTestDetails(sortByStatus, target) {
@@ -446,6 +500,9 @@ function hideHiddenDetailsColumns(elem) {
     <li class="${suiteTabStatus} detail-tab">
       <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
     </li>
+    <li class="${searchTabStatus} detail-tab">
+      <a href="#search" onclick="renderSearchSelector()">Search</a>
+    </li>
   </ul>
 </script>
 
@@ -574,6 +631,55 @@ function hideHiddenDetailsColumns(elem) {
       <td id="print-selector"></td>
     </tr>
   </table>
+</script>
+
+<script  type="text/x-jquery-tmpl" id="searchSelectorTemplate">
+  <form>
+    <table class="details" id="details-header">
+      <tr>
+        <th><label for="search-suite">Suite:</label></th>
+        <td>
+          <input id="search-suite" type="text" value="{{html suite}}">
+        </td>
+      </tr>
+      <tr>
+        <th><label for="search-test">Test:</label></th>
+        <td>
+          <input id="search-test" type="text" value="{{html test}}">
+        </td>
+      </tr>
+      <tr>
+        <th><label for="search-include">Include:</label></th>
+        <td>
+          <input id="search-include" type="text" value="{{html include}}">
+        </td>
+      </tr>
+      <tr>
+        <th><label for="search-exclude">Exclude:</label></th>
+        <td>
+          <input id="search-exclude" type="text" value="{{html exclude}}">
+        </td>
+      </tr>
+      <tr>
+        <th></th>
+        <td>
+          <input type="submit" value="Search"
+                 onclick="searchExecuted(util.escape($('#search-suite').val()),
+                                         util.escape($('#search-test').val()),
+                                         util.escape($('#search-include').val()),
+                                         util.escape($('#search-exclude').val()));
+                          return false">
+          <input type="button" value="Clear"
+                 onclick="$('#search-suite').val('');
+                          $('#search-test').val('');
+                          $('#search-include').val('');
+                          $('#search-exclude').val('')">
+          <a href="javascript:void(0)" onclick="$('#search-help').toggle()"
+             title="Toggle search pattern help.">Help</a>
+        </td>
+      </tr>
+    </table>
+  </form>
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
