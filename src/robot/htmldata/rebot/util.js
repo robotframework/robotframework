@@ -76,7 +76,7 @@ window.util = function () {
                         return true;
                 return false;
             }
-        }
+        };
     }
 
     function formatParentName(item) {
