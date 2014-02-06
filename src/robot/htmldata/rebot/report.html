@@ -257,7 +257,7 @@ function searchTests(suitePattern, testPattern, includePattern, excludePattern) 
     else
         tests = window.testdata.suite().allTests();
     return util.filter(tests, function (test) {
-        if (testPattern && !util.Matcher(testPattern).matches(test.name))
+        if (testPattern && !test.matchesNamePattern(testPattern))
             return false;
         if (includePattern && !test.matchesTagPattern(includePattern))
             return false;
