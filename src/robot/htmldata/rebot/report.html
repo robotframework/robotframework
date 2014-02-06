@@ -658,6 +658,111 @@ function hideHiddenDetailsColumns(elem) {
              title="Toggle search pattern help.">Help</a>
         </td>
       </tr>
+      <tr id="search-help" style="display: none">
+        <th></th>
+        <td>
+          <div>
+            <h3>Search fields</h3>
+            <p>
+              Test cases can be searched based on test suite and test case
+              names as well as based on tags. If multiple search criteria are
+              used, only tests matching all of them are included.
+              Search fields have same semantics as <em>&#8209;&#8209;suite</em>,
+              <em>&#8209;&#8209;test</em>, <em>&#8209;&#8209;include</em>, and
+              <em>&#8209;&#8209;exclude</em> command line options, respectively.
+            </p>
+            <table class="search-help-examples">
+              <col class="help-item">
+              <col class="help-explanation">
+              <col class="help-examples>
+              <tr>
+                <th>Field</th>
+                <th>Explanation</th>
+                <th>Examples</th>
+              </tr>
+              <tr>
+                <td>Suite</td>
+                <td>
+                  Tests in matching suites are included. The pattern can match
+                  either suite's own name or its full name containing also
+                  parent suite names.
+                </td>
+                <td>My Suite<br>Root.Parent.Sui*</td>
+              </tr>
+              <tr>
+                <td>Test</td>
+                <td>
+                  Matching tests are included. The pattern can match either
+                  test's own name or its full name containing also parent
+                  suite names.
+                </td>
+                <td>Test*<br>Root.Pa*.T???</td>
+              </tr>
+              <tr>
+                <td>Include</td>
+                <td>
+                  Tests that contain matching tags are included.
+                </td>
+                <td>smoke<br>bug-*</td>
+              </tr>
+              <tr>
+                <td>Exclude</td>
+                <td>
+                  Tests that contain matching tags are not included.
+                </td>
+                <td>slow<br>feature-4?</td>
+              </tr>
+            </table>
+            <h3>Patterns</h3>
+            <p>
+              All searches support <em>*</em> and <em>?</em> wildcards and are case, space
+              and underscore sensitive. Tag related searches also support <em>AND</em>,
+              <em>OR</em>, and <em>NOT</em> combining operators. If operators are used together,
+              their precedence is <em>AND</em>, <em>OR</em>, <em>NOT</em>.
+
+              See <em>Simple patterns</em>
+              and <em>Tag patterns</em> sections in
+              <a href="https://code.google.com/p/robotframework/wiki/UserGuide">Robot
+              Framework User Guide</a> for more details.
+            </p>
+            <table class="search-help-examples">
+              <col class="help-item">
+              <col class="help-explanation">
+              <col class="help-examples>
+              <tr>
+                <th>Pattern</th>
+                <th>Explanation</th>
+                <th>Examples</th>
+              </tr>
+              <tr>
+                <td>*</td>
+                <td>Matches anything, even an empty string.</td>
+                <td>f*<br>sprint-*</td>
+              </tr>
+              <tr>
+                <td>?</td>
+                <td>Matches any single character.</td>
+                <td>f??<br>sprint-6??</td>
+              </tr>
+              <tr>
+                <td>AND</td>
+                <td>Matches if all patterns match.</td>
+                <td>foo AND bar<br>x AND y* AND z??</td>
+              </tr>
+              <tr>
+                <td>OR</td>
+                <td>Matches if any pattern match.</td>
+                <td>foo OR bar<br>x OR y* OR z1 AND z2</td>
+              </tr>
+              <tr>
+                <td>NOT</td>
+                <td>Matches if pattern before matches and pattern after does not.</td>
+                <td>foo NOT bar<br>* NOT id-* AND smoke</td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
     </table>
   </form>
 </script>

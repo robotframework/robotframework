@@ -39,29 +39,30 @@ th {
     display: none;
 }
 /* Search */
-#search td, #search th {
-    padding: 0 0.4em 0.4em 0.4em;
-}
 #search-suite, #search-test, #search-include, #search-exclude {
-    width: 20em;
+    width: 25em;
 }
 #search a:hover {
     text-decoration: none;
 }
 #search-help div {
-    margin: 0.5em 0.5em 0.7em 0.5em;
-    padding: 0.5em;
+    margin: 0.5em 0.5em 0.7em 0;
+    padding: 0.7em;
     background: #ECECF7;
     border: 1px solid #BCBCD7;
     border-radius: 3px;
 }
-#search-help p {
+#search-help h3, #search-help p {
     margin: 0 0 0.7em 0;
 }
-#search-help table, #search-help tr, #search-help th, #search-help td {
+.search-help-examples, .search-help-examples tr {
     background: transparent;
     margin: 0;
-    padding: 0.1em 0.7em 0.1em 0;
+}
+.search-help-examples th, .search-help-examples td {
+    background: transparent;
+    margin: 0;
+    padding: 0.2em 0.7em 0.2em 0;
 }
 #search-help table {
     table-layout: auto;
@@ -76,10 +77,10 @@ th {
     width: 10%;
 }
 .help-explanation {
-    width: 60%;
+    width: 65%;
 }
 .help-examples {
-    width: 30%;
+    width: 25%;
 }
 /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
 #detail-tabs {
