@@ -108,53 +108,33 @@ function addCustomSortersForDetails() {
 function showDetailsByHash() {
     if (window.location.hash == window.prevLocationHash)
         return;
-    // TODO: Should not decode here yet! And should never use decodeURI
-    // but decodeURIComponen. Also, why '%' -> '%25'???
-    var hash = window.location.hash.substring(1).replace('%', '%25');
-    var hashParts = decodeURI(hash).split('_');
-    var key = hashParts.shift();
-    var arg = hashParts.join('_');
-    var action = {'totals': showTotalSelector,
-                  'tags':   showTagSelector,
-                  'suites': showSuiteSelector,
-                  'search': urlSearch,
-                  'total':  totalDetailSelected,
-                  'tag':    tagDetailSelected,
-                  'suite':  suiteDetailSelected}[key];
+    var parts = window.location.hash.substring(1).split('?');
+    var name = parts.shift();
+    var query = parts.join('?');
+    if (name == 'search') {
+        var params = util.parseQueryString(query);
+        searchExecuted(params.suite, params.test, params.include, params.exclude);
+        return
+    }
+    query = decodeURIComponent(query);
+    var action = {'totals': totalDetailSelected,
+                  'tags':   tagDetailSelected,
+                  'suites': suiteDetailSelected}[name];
     if (action)
-        action(arg);
-}
-
-function showTotalSelector() {
-    renderTotalSelector();
-    scrollToSelector('totals');
-}
-
-function showTagSelector() {
-    renderTagSelector();
-    scrollToSelector('tags');
-}
-
-function showSuiteSelector() {
-    renderSuiteSelector();
-    scrollToSelector('suites');
-}
-
-function urlSearch(query) {
-    var params = util.parseQueryString(query);
-    searchExecuted(params.suite, params.test, params.include, params.exclude);
+        action(query);
 }
 
 function totalDetailSelected(name) {
-    if (!name) return;
     renderTotalSelector(name);
-    renderTotalDetails(name);
-    updatePrintSelector(name == 'critical' ? 'Critical Tests' : 'All Tests');
-    scrollToSelector('total_'+name);
+    if (name) {
+        renderTotalDetails(name);
+        updatePrintSelector(name == 'critical' ? 'Critical Tests' : 'All Tests');
+    }
+    scrollToSelector('totals', name);
 }
 
 function renderTotalSelector(name) {
-    var args = {linkTarget: (name) ? 'total_'+name : 'totals',
+    var args = {linkTarget: (name) ? 'totals?'+name : 'totals',
                 totalTabStatus: 'detail-tab-selected'};
     renderSelector(args, 'totalDetailsSelectorTemplate', {selected: name});
 }
@@ -175,12 +155,13 @@ function updatePrintSelector(name, info) {
 }
 
 function tagDetailSelected(name) {
-    if (!name) return;
     renderTagSelector(name);
-    var tag = findTag(name);
-    renderTagDetails(tag);
-    updatePrintSelector(name, tag.info);
-    scrollToSelector('tag_'+name);
+    if (name) {
+        var tag = findTag(name);
+        renderTagDetails(tag);
+        updatePrintSelector(name, tag.info);
+    }
+    scrollToSelector('tags', name);
 }
 
 function findTag(name) {
@@ -193,7 +174,7 @@ function findTag(name) {
 }
 
 function renderTagSelector(name) {
-    var args = {linkTarget: (name) ? 'tag_'+name : 'tags',
+    var args = {linkTarget: (name) ? 'tags?'+name : 'tags',
                 tagTabStatus: 'detail-tab-selected'};
     var stats = {tags: window.testdata.statistics().tag, selected: name};
     renderSelector(args, 'tagDetailsSelectorTemplate', stats);
@@ -212,14 +193,14 @@ function renderTagDetails(tag) {
 }
 
 function suiteDetailSelected(id) {
-    if (!id) return;
     renderSuiteSelector(id);
-    renderSuiteDetails(id);
-    scrollToSelector('suite_'+id);
+    if (id)
+        renderSuiteDetails(id);
+    scrollToSelector('suites', id);
 }
 
 function renderSuiteSelector(id) {
-    var args = {linkTarget: (id) ? 'suite_'+id : 'suites',
+    var args = {linkTarget: (id) ? 'suites?'+id : 'suites',
                 suiteTabStatus: 'detail-tab-selected'};
     var stats = {suites: window.testdata.statistics().suite,
                  selected: id};
@@ -240,13 +221,17 @@ function searchExecuted(suite, test, include, exclude) {
     renderSearchSelector(suite, test, include, exclude);
     if (suite || test || include || exclude) {
         renderSearchDetails(suite, test, include, exclude);
-        scrollToSelector('search_suite=' + suite + '&test=' + test + '&include=' + include + '&exclude=' + exclude);
+        scrollToSelector('search' +
+                         '?suite=' + encodeURIComponent(suite) +
+                         '&test=' + encodeURIComponent(test) +
+                         '&include=' + encodeURIComponent(include) +
+                         '&exclude=' + encodeURIComponent(exclude));
     }
 }
 
 function renderSearchSelector(suite, test, include, exclude) {
     var args = {linkTarget: (suite || test || include || exclude) ?
-                            ('search_suite=' + suite + '&test=' + test + '&include=' + include + '&exclude=' + exclude) :
+                            ('search?suite=' + suite + '&test=' + test + '&include=' + include + '&exclude=' + exclude) :
                             'search',
                 searchTabStatus: 'detail-tab-selected'};
     var search = {suite: suite, test: test, include: include, exclude: exclude};
@@ -280,9 +265,10 @@ function searchTests(suitePattern, testPattern, includePattern, excludePattern) 
     });
 }
 
-function scrollToSelector(anchor) {
+function scrollToSelector(base, query) {
     $('#test-details-container').css('min-height', $(window).height());
-    window.prevLocationHash = "#"+anchor;
+    var anchor = query ? base + '?' + encodeURIComponent(query) : base;
+    window.prevLocationHash = '#' + anchor;
     window.location.hash = anchor;
 }
 
@@ -404,13 +390,13 @@ function hideHiddenDetailsColumns(elem) {
     <tr>
       <th>Status:</th>
       {{if criticalFailed}}
-      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
              class="fail">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
       {{else totalFailed}}
-      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
              class="pass">All critical tests passed</a></td>
       {{else}}
-      <td><a href="#total_all" onclick="totalDetailSelected('all')"
+      <td><a href="#totals?all" onclick="totalDetailSelected('all')"
              class="pass">All tests passed</a></td>
       {{/if}}
     </tr>
@@ -455,7 +441,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr onclick="totalDetailSelected('${type}')" class="row-${$item.index}">
     <td class="stats-col-name">
       <div class="stat-name">
-        <a href="#total_${type}">{{html label}}</a>
+        <a href="#totals?${type}">{{html label}}</a>
       </div>
     </td>
     {{tmpl($data) 'statColumnsTemplate'}}
@@ -466,7 +452,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr onclick="tagDetailSelected('${label}')" class="row-${$item.index}">
     <td class="stats-col-name" title="${doc}">
       <div class="stat-name">
-        <a href="#tag_${label}">{{html label}}</a>
+        <a href="#tags?${label}">{{html label}}</a>
         {{if info}}(${info}){{/if}}
       </div>
       <div class="tag-links">
@@ -484,7 +470,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr onclick="suiteDetailSelected('${id}')" class="row-${$item.index}">
     <td class="stats-col-name" title="${label}">
       <div class="stat-name">
-        <a href="#suite_${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a>
+        <a href="#suites?${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
     </td>
     {{tmpl($data) 'statColumnsTemplate'}}
