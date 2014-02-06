@@ -55,23 +55,17 @@ th {
 #search-help h3, #search-help p {
     margin: 0 0 0.7em 0;
 }
-.search-help-examples, .search-help-examples tr {
+.search-help-examples {
+    table-layout: auto;
+    width: 100%;
+}
+.search-help-examples, .search-help-examples tr,
+.search-help-examples th, .search-help-examples td {
     background: transparent;
     margin: 0;
 }
 .search-help-examples th, .search-help-examples td {
-    background: transparent;
-    margin: 0;
     padding: 0.2em 0.7em 0.2em 0;
-}
-#search-help table {
-    table-layout: auto;
-    width: 100%;
-}
-#search-help th {
-    font-weight: normal;
-    font-style: italic;
-    letter-spacing: 0.1em;
 }
 .help-item {
     width: 10%;

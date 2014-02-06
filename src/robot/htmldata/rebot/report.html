@@ -586,7 +586,7 @@ function hideHiddenDetailsColumns(elem) {
                           $('#search-include').val('');
                           $('#search-exclude').val('')">
           <a href="javascript:void(0)" onclick="$('#search-help').toggle()"
-             title="Toggle search pattern help.">Help</a>
+             title="Toggle search help.">Help</a>
         </td>
       </tr>
       <tr id="search-help" style="display: none">
@@ -599,7 +599,7 @@ function hideHiddenDetailsColumns(elem) {
               names as well as based on tags. If multiple search criteria are
               used, only tests matching all of them are included.
               Search fields have same semantics as <em>&#8209;&#8209;suite</em>,
-              <em>&#8209;&#8209;test</em>, <em>&#8209;&#8209;include</em>, and
+              <em>&#8209;&#8209;test</em>, <em>&#8209;&#8209;include</em> and
               <em>&#8209;&#8209;exclude</em> command line options, respectively.
             </p>
             <table class="search-help-examples">
@@ -615,7 +615,7 @@ function hideHiddenDetailsColumns(elem) {
                 <td>Suite</td>
                 <td>
                   Tests in matching suites are included. The pattern can match
-                  either suite's own name or its full name containing also
+                  either suite's name or its full name that contains also
                   parent suite names.
                 </td>
                 <td>My Suite<br>Root.Parent.Sui*</td>
@@ -624,7 +624,7 @@ function hideHiddenDetailsColumns(elem) {
                 <td>Test</td>
                 <td>
                   Matching tests are included. The pattern can match either
-                  test's own name or its full name containing also parent
+                  test's name or its full name that contains also parent
                   suite names.
                 </td>
                 <td>Test*<br>Root.Pa*.T???</td>
@@ -646,15 +646,15 @@ function hideHiddenDetailsColumns(elem) {
             </table>
             <h3>Patterns</h3>
             <p>
-              All searches support <em>*</em> and <em>?</em> wildcards and are case, space
-              and underscore sensitive. Tag related searches also support <em>AND</em>,
-              <em>OR</em>, and <em>NOT</em> combining operators. If operators are used together,
-              their precedence is <em>AND</em>, <em>OR</em>, <em>NOT</em>.
-
-              See <em>Simple patterns</em>
-              and <em>Tag patterns</em> sections in
+              All searches support <em>*</em> and <em>?</em> wildcards and are
+              case, space and underscore sensitive. Tag related searches also
+              support <em>AND</em>, <em>OR</em> and <em>NOT</em> (case-sensitive)
+              combining operators. If operators are used together, their
+              precedence, from highest to lowest, is <em>AND</em>, <em>OR</em>,
+              <em>NOT</em>. See <em>Simple patterns</em> and
+              <em>Tag patterns</em> sections in
               <a href="https://code.google.com/p/robotframework/wiki/UserGuide">Robot
-              Framework User Guide</a> for more details.
+              Framework User Guide</a> version 2.8.4 or newer for more details.
             </p>
             <table class="search-help-examples">
               <col class="help-item">
@@ -673,7 +673,7 @@ function hideHiddenDetailsColumns(elem) {
               <tr>
                 <td>?</td>
                 <td>Matches any single character.</td>
-                <td>f??<br>sprint-6??</td>
+                <td>f??<br>sprint-1?</td>
               </tr>
               <tr>
                 <td>AND</td>
@@ -682,7 +682,7 @@ function hideHiddenDetailsColumns(elem) {
               </tr>
               <tr>
                 <td>OR</td>
-                <td>Matches if any pattern match.</td>
+                <td>Matches if any pattern matches.</td>
                 <td>foo OR bar<br>x OR y* OR z1 AND z2</td>
               </tr>
               <tr>
