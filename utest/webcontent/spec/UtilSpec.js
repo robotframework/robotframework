@@ -43,3 +43,38 @@ describe("Testing Matcher", function () {
     });
 
 });
+
+describe("Testing parseQueryString", function () {
+    var parse = util.parseQueryString;
+
+    it("should parse empty string", function () {
+        expect(parse('')).toEqual({});
+    });
+
+    it("should parse one param", function () {
+        expect(parse('foo=bar')).toEqual({foo: 'bar'});
+    });
+
+    it("should parse multiple params", function () {
+        expect(parse('a=1&b=2&c=3')).toEqual({a: '1', b: '2', c: '3'});
+    });
+
+    it("should accept param with name alone (i.e. no =)", function () {
+        expect(parse('foo')).toEqual({foo: ''});
+        expect(parse('foo&bar')).toEqual({foo: '', bar: ''});
+        expect(parse('a&b=2&c=&d')).toEqual({a: '', b: '2', c: '', d: ''});
+    });
+
+    it("should accept = in value (although it should be encoded)", function () {
+        expect(parse('a=1=2&b==')).toEqual({a: '1=2', b: '='});
+    });
+
+    it("should convert + to space", function () {
+        expect(parse('value=hello+world')).toEqual({value: 'hello world'});
+    });
+
+    it("should decode uri", function () {
+        expect(parse('value=%26%20%3d')).toEqual({value: '& ='});
+    });
+
+});

@@ -174,6 +174,22 @@ window.util = function () {
         }
     }
 
+    function parseQueryString(query) {
+        var result = {};
+        if (!query)
+            return result;
+        var params = query.split('&');
+        var parts;
+        function decode(item) {
+            return decodeURIComponent(item.replace('+', ' '));
+        }
+        for (var i = 0, len = params.length; i < len; i++) {
+            parts = params[i].split('=');
+            result[decode(parts.shift())] = decode(parts.join('='));
+        }
+        return result;
+    }
+
     return {
         map: map,
         filter: filter,
@@ -191,6 +207,7 @@ window.util = function () {
         dateTimeFromDate: dateTimeFromDate,
         formatElapsed: formatElapsed,
         timestamp: timestamp,
-        createGeneratedAgoString: createGeneratedAgoString
+        createGeneratedAgoString: createGeneratedAgoString,
+        parseQueryString: parseQueryString
     };
 }();

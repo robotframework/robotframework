@@ -108,6 +108,8 @@ function addCustomSortersForDetails() {
 function showDetailsByHash() {
     if (window.location.hash == window.prevLocationHash)
         return;
+    // TODO: Should not decode here yet! And should never use decodeURI
+    // but decodeURIComponen. Also, why '%' -> '%25'???
     var hash = window.location.hash.substring(1).replace('%', '%25');
     var hashParts = decodeURI(hash).split('_');
     var key = hashParts.shift();
@@ -115,7 +117,7 @@ function showDetailsByHash() {
     var action = {'totals': showTotalSelector,
                   'tags':   showTagSelector,
                   'suites': showSuiteSelector,
-                  'search': showSearchSelector,
+                  'search': urlSearch,
                   'total':  totalDetailSelected,
                   'tag':    tagDetailSelected,
                   'suite':  suiteDetailSelected}[key];
@@ -138,9 +140,9 @@ function showSuiteSelector() {
     scrollToSelector('suites');
 }
 
-function showSearchSelector() {
-    renderSearchSelector();
-    scrollToSelector('search');
+function urlSearch(query) {
+    var params = util.parseQueryString(query);
+    searchExecuted(params.suite, params.test, params.include, params.exclude);
 }
 
 function totalDetailSelected(name) {
@@ -235,16 +237,16 @@ function renderSuiteDetails(id) {
 }
 
 function searchExecuted(suite, test, include, exclude) {
-    if (!(suite || test || include || exclude))
-        return;
     renderSearchSelector(suite, test, include, exclude);
-    renderSearchDetails(suite, test, include, exclude);
-    scrollToSelector('search_' + suite + '::' + test + '::' + include + '::' + exclude);
+    if (suite || test || include || exclude) {
+        renderSearchDetails(suite, test, include, exclude);
+        scrollToSelector('search_suite=' + suite + '&test=' + test + '&include=' + include + '&exclude=' + exclude);
+    }
 }
 
 function renderSearchSelector(suite, test, include, exclude) {
     var args = {linkTarget: (suite || test || include || exclude) ?
-                            ('search_' + suite + '::' + test + '::' + include + '::' + exclude) :
+                            ('search_suite=' + suite + '&test=' + test + '&include=' + include + '&exclude=' + exclude) :
                             'search',
                 searchTabStatus: 'detail-tab-selected'};
     var search = {suite: suite, test: test, include: include, exclude: exclude};
