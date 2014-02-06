@@ -637,31 +637,23 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script  type="text/x-jquery-tmpl" id="searchSelectorTemplate">
-  <form>
+  <form action="javascript:void(0)">
     <table class="details" id="details-header">
       <tr>
         <th><label for="search-suite">Suite:</label></th>
-        <td>
-          <input id="search-suite" type="text" value="${suite}">
-        </td>
+        <td><input id="search-suite" type="text" value="${suite}"></td>
       </tr>
       <tr>
         <th><label for="search-test">Test:</label></th>
-        <td>
-          <input id="search-test" type="text" value="${test}">
-        </td>
+        <td><input id="search-test" type="text" value="${test}"></td>
       </tr>
       <tr>
         <th><label for="search-include">Include:</label></th>
-        <td>
-          <input id="search-include" type="text" value="${include}">
-        </td>
+        <td><input id="search-include" type="text" value="${include}"></td>
       </tr>
       <tr>
         <th><label for="search-exclude">Exclude:</label></th>
-        <td>
-          <input id="search-exclude" type="text" value="${exclude}">
-        </td>
+        <td><input id="search-exclude" type="text" value="${exclude}"></td>
       </tr>
       <tr>
         <th></th>
@@ -670,8 +662,7 @@ function hideHiddenDetailsColumns(elem) {
                  onclick="searchExecuted($('#search-suite').val(),
                                          $('#search-test').val(),
                                          $('#search-include').val(),
-                                         $('#search-exclude').val());
-                          return false">
+                                         $('#search-exclude').val())">
           <input type="button" value="Clear"
                  onclick="$('#search-suite').val('');
                           $('#search-test').val('');
