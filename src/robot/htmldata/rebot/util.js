@@ -65,9 +65,18 @@ window.util = function () {
         pattern = regexpEscape(normalize(pattern));
         var rePattern = '^' + pattern.replace(/\\\?/g, ".").replace(/\\\*/g, ".*") + '$';
         var regexp = new RegExp(rePattern);
-        return {
-            matches: function (string) { return regexp.test(string); }
+        function matches(string) {
+            return regexp.test(normalize(string));
         }
+        return {
+            matches: matches,
+            matchesAny: function (strings) {
+                for (var i = 0, len = strings.length; i < len; i++)
+                    if (matches(strings[i]))
+                        return true;
+                return false;
+            }
+        };
     }
 
     function formatParentName(item) {
@@ -129,8 +138,8 @@ window.util = function () {
     function createGeneratedAgoString(generatedMillis) {
         generatedMillis = timestamp(generatedMillis);
         function timeString(time, shortUnit) {
-            var unit = {'y': 'year', 'd': 'day', 'h': 'hour',
-                        'm': 'minute', 's': 'second'}[shortUnit];
+            var unit = {y: 'year', d: 'day', h: 'hour', m: 'minute',
+                        s: 'second'}[shortUnit];
             var end = time == 1 ? ' ' : 's ';
             return time + ' ' + unit + end;
         }
@@ -141,29 +150,44 @@ window.util = function () {
         var generated = Math.round(generatedMillis / 1000);
         var current = Math.round(new Date().getTime() / 1000);
         var elapsed = current - generated;
+        var prefix = '';
         if (elapsed < 0) {
-            elapsed = Math.abs(elapsed);
             prefix = '- ';
-        } else {
-            prefix = '';
+            elapsed = Math.abs(elapsed);
         }
         var secs  = elapsed % 60;
         var mins  = Math.floor(elapsed / 60) % 60;
         var hours = Math.floor(elapsed / (60*60)) % 24;
         var days  = Math.floor(elapsed / (60*60*24)) % 365;
         var years = Math.floor(elapsed / (60*60*24*365));
-        if (years > 0) {
+        if (years) {
             days = compensateLeapYears(days, years);
             return prefix + timeString(years, 'y') + timeString(days, 'd');
-        } else if (days > 0) {
+        } else if (days) {
             return prefix + timeString(days, 'd') + timeString(hours, 'h');
-        } else if (hours > 0) {
+        } else if (hours) {
             return prefix + timeString(hours, 'h') + timeString(mins, 'm');
-        } else if (mins > 0) {
+        } else if (mins) {
             return prefix + timeString(mins, 'm') + timeString(secs, 's');
         } else {
             return prefix + timeString(secs, 's');
         }
+    }
+
+    function parseQueryString(query) {
+        var result = {};
+        if (!query)
+            return result;
+        var params = query.split('&');
+        var parts;
+        function decode(item) {
+            return decodeURIComponent(item.replace('+', ' '));
+        }
+        for (var i = 0, len = params.length; i < len; i++) {
+            parts = params[i].split('=');
+            result[decode(parts.shift())] = decode(parts.join('='));
+        }
+        return result;
     }
 
     return {
@@ -183,6 +207,7 @@ window.util = function () {
         dateTimeFromDate: dateTimeFromDate,
         formatElapsed: formatElapsed,
         timestamp: timestamp,
-        createGeneratedAgoString: createGeneratedAgoString
+        createGeneratedAgoString: createGeneratedAgoString,
+        parseQueryString: parseQueryString
     };
 }();

@@ -1,59 +1,62 @@
-arguments Package
-=================
+robot.running.arguments package
+===============================
 
-:mod:`arguments` Package
-------------------------
+Submodules
+----------
 
-.. automodule:: robot.running.arguments
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`argumentmapper` Module
-----------------------------
+robot.running.arguments.argumentmapper module
+---------------------------------------------
 
 .. automodule:: robot.running.arguments.argumentmapper
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`argumentparser` Module
-----------------------------
+robot.running.arguments.argumentparser module
+---------------------------------------------
 
 .. automodule:: robot.running.arguments.argumentparser
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`argumentresolver` Module
-------------------------------
+robot.running.arguments.argumentresolver module
+-----------------------------------------------
 
 .. automodule:: robot.running.arguments.argumentresolver
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`argumentspec` Module
---------------------------
+robot.running.arguments.argumentspec module
+-------------------------------------------
 
 .. automodule:: robot.running.arguments.argumentspec
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`argumentvalidator` Module
--------------------------------
+robot.running.arguments.argumentvalidator module
+------------------------------------------------
 
 .. automodule:: robot.running.arguments.argumentvalidator
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`javaargumentcoercer` Module
----------------------------------
+robot.running.arguments.javaargumentcoercer module
+--------------------------------------------------
 
 .. automodule:: robot.running.arguments.javaargumentcoercer
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.running.arguments
+    :members:
+    :undoc-members:
+    :show-inheritance:

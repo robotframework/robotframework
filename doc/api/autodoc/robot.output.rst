@@ -1,107 +1,110 @@
-output Package
-==============
+robot.output package
+====================
 
-:mod:`output` Package
----------------------
+Submodules
+----------
 
-.. automodule:: robot.output
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`debugfile` Module
------------------------
+robot.output.debugfile module
+-----------------------------
 
 .. automodule:: robot.output.debugfile
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`filelogger` Module
-------------------------
+robot.output.filelogger module
+------------------------------
 
 .. automodule:: robot.output.filelogger
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`highlighting` Module
---------------------------
+robot.output.highlighting module
+--------------------------------
 
 .. automodule:: robot.output.highlighting
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`librarylogger` Module
----------------------------
+robot.output.librarylogger module
+---------------------------------
 
 .. automodule:: robot.output.librarylogger
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`listeners` Module
------------------------
+robot.output.listeners module
+-----------------------------
 
 .. automodule:: robot.output.listeners
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`logger` Module
---------------------
+robot.output.logger module
+--------------------------
 
 .. automodule:: robot.output.logger
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`loggerhelper` Module
---------------------------
+robot.output.loggerhelper module
+--------------------------------
 
 .. automodule:: robot.output.loggerhelper
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`monitor` Module
----------------------
+robot.output.monitor module
+---------------------------
 
 .. automodule:: robot.output.monitor
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`output` Module
---------------------
+robot.output.output module
+--------------------------
 
 .. automodule:: robot.output.output
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`pyloggingconf` Module
----------------------------
+robot.output.pyloggingconf module
+---------------------------------
 
 .. automodule:: robot.output.pyloggingconf
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`stdoutlogsplitter` Module
--------------------------------
+robot.output.stdoutlogsplitter module
+-------------------------------------
 
 .. automodule:: robot.output.stdoutlogsplitter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`xmllogger` Module
------------------------
+robot.output.xmllogger module
+-----------------------------
 
 .. automodule:: robot.output.xmllogger
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.output
+    :members:
+    :undoc-members:
+    :show-inheritance:

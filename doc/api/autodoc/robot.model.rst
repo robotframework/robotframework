@@ -1,171 +1,174 @@
-model Package
-=============
+robot.model package
+===================
 
-:mod:`model` Package
---------------------
+Submodules
+----------
 
-.. automodule:: robot.model
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`configurer` Module
-------------------------
+robot.model.configurer module
+-----------------------------
 
 .. automodule:: robot.model.configurer
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`criticality` Module
--------------------------
+robot.model.criticality module
+------------------------------
 
 .. automodule:: robot.model.criticality
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`filter` Module
---------------------
+robot.model.filter module
+-------------------------
 
 .. automodule:: robot.model.filter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`imports` Module
----------------------
+robot.model.imports module
+--------------------------
 
 .. automodule:: robot.model.imports
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`itemlist` Module
-----------------------
+robot.model.itemlist module
+---------------------------
 
 .. automodule:: robot.model.itemlist
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`keyword` Module
----------------------
+robot.model.keyword module
+--------------------------
 
 .. automodule:: robot.model.keyword
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`message` Module
----------------------
+robot.model.message module
+--------------------------
 
 .. automodule:: robot.model.message
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`metadata` Module
-----------------------
+robot.model.metadata module
+---------------------------
 
 .. automodule:: robot.model.metadata
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`modelobject` Module
--------------------------
+robot.model.modelobject module
+------------------------------
 
 .. automodule:: robot.model.modelobject
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`namepatterns` Module
---------------------------
+robot.model.namepatterns module
+-------------------------------
 
 .. automodule:: robot.model.namepatterns
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`statistics` Module
-------------------------
+robot.model.statistics module
+-----------------------------
 
 .. automodule:: robot.model.statistics
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`stats` Module
--------------------
+robot.model.stats module
+------------------------
 
 .. automodule:: robot.model.stats
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`suitestatistics` Module
------------------------------
+robot.model.suitestatistics module
+----------------------------------
 
 .. automodule:: robot.model.suitestatistics
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`tags` Module
-------------------
+robot.model.tags module
+-----------------------
 
 .. automodule:: robot.model.tags
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`tagsetter` Module
------------------------
+robot.model.tagsetter module
+----------------------------
 
 .. automodule:: robot.model.tagsetter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`tagstatistics` Module
----------------------------
+robot.model.tagstatistics module
+--------------------------------
 
 .. automodule:: robot.model.tagstatistics
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`testcase` Module
-----------------------
+robot.model.testcase module
+---------------------------
 
 .. automodule:: robot.model.testcase
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`testsuite` Module
------------------------
+robot.model.testsuite module
+----------------------------
 
 .. automodule:: robot.model.testsuite
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`totalstatistics` Module
------------------------------
+robot.model.totalstatistics module
+----------------------------------
 
 .. automodule:: robot.model.totalstatistics
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`visitor` Module
----------------------
+robot.model.visitor module
+--------------------------
 
 .. automodule:: robot.model.visitor
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.model
+    :members:
+    :undoc-members:
+    :show-inheritance:

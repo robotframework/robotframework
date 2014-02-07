@@ -1,83 +1,86 @@
-reporting Package
-=================
+robot.reporting package
+=======================
 
-:mod:`reporting` Package
-------------------------
+Submodules
+----------
 
-.. automodule:: robot.reporting
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`jsbuildingcontext` Module
--------------------------------
+robot.reporting.jsbuildingcontext module
+----------------------------------------
 
 .. automodule:: robot.reporting.jsbuildingcontext
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`jsexecutionresult` Module
--------------------------------
+robot.reporting.jsexecutionresult module
+----------------------------------------
 
 .. automodule:: robot.reporting.jsexecutionresult
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`jsmodelbuilders` Module
------------------------------
+robot.reporting.jsmodelbuilders module
+--------------------------------------
 
 .. automodule:: robot.reporting.jsmodelbuilders
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`jswriter` Module
-----------------------
+robot.reporting.jswriter module
+-------------------------------
 
 .. automodule:: robot.reporting.jswriter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`logreportwriters` Module
-------------------------------
+robot.reporting.logreportwriters module
+---------------------------------------
 
 .. automodule:: robot.reporting.logreportwriters
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`outputwriter` Module
---------------------------
+robot.reporting.outputwriter module
+-----------------------------------
 
 .. automodule:: robot.reporting.outputwriter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`resultwriter` Module
---------------------------
+robot.reporting.resultwriter module
+-----------------------------------
 
 .. automodule:: robot.reporting.resultwriter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`stringcache` Module
--------------------------
+robot.reporting.stringcache module
+----------------------------------
 
 .. automodule:: robot.reporting.stringcache
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`xunitwriter` Module
--------------------------
+robot.reporting.xunitwriter module
+----------------------------------
 
 .. automodule:: robot.reporting.xunitwriter
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.reporting
+    :members:
+    :undoc-members:
+    :show-inheritance:

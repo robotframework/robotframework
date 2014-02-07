@@ -1,165 +1,5 @@
-running Package
-===============
-
-:mod:`running` Package
-----------------------
-
-.. automodule:: robot.running
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`baselibrary` Module
--------------------------
-
-.. automodule:: robot.running.baselibrary
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`builder` Module
----------------------
-
-.. automodule:: robot.running.builder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`context` Module
----------------------
-
-.. automodule:: robot.running.context
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`defaults` Module
-----------------------
-
-.. automodule:: robot.running.defaults
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`dynamicmethods` Module
-----------------------------
-
-.. automodule:: robot.running.dynamicmethods
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`handlers` Module
-----------------------
-
-.. automodule:: robot.running.handlers
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`importer` Module
-----------------------
-
-.. automodule:: robot.running.importer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`keywords` Module
-----------------------
-
-.. automodule:: robot.running.keywords
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`model` Module
--------------------
-
-.. automodule:: robot.running.model
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`namespace` Module
------------------------
-
-.. automodule:: robot.running.namespace
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`outputcapture` Module
----------------------------
-
-.. automodule:: robot.running.outputcapture
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`randomizer` Module
-------------------------
-
-.. automodule:: robot.running.randomizer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`runkwregister` Module
----------------------------
-
-.. automodule:: robot.running.runkwregister
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`runner` Module
---------------------
-
-.. automodule:: robot.running.runner
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`signalhandler` Module
----------------------------
-
-.. automodule:: robot.running.signalhandler
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`status` Module
---------------------
-
-.. automodule:: robot.running.status
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`testlibraries` Module
----------------------------
-
-.. automodule:: robot.running.testlibraries
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`usererrorhandler` Module
-------------------------------
-
-.. automodule:: robot.running.usererrorhandler
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`userkeyword` Module
--------------------------
-
-.. automodule:: robot.running.userkeyword
-    :members:
-    :undoc-members:
-    :show-inheritance:
+robot.running package
+=====================
 
 Subpackages
 -----------
@@ -169,3 +9,166 @@ Subpackages
     robot.running.arguments
     robot.running.timeouts
 
+Submodules
+----------
+
+robot.running.baselibrary module
+--------------------------------
+
+.. automodule:: robot.running.baselibrary
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.builder module
+----------------------------
+
+.. automodule:: robot.running.builder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.context module
+----------------------------
+
+.. automodule:: robot.running.context
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.defaults module
+-----------------------------
+
+.. automodule:: robot.running.defaults
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.dynamicmethods module
+-----------------------------------
+
+.. automodule:: robot.running.dynamicmethods
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.handlers module
+-----------------------------
+
+.. automodule:: robot.running.handlers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.importer module
+-----------------------------
+
+.. automodule:: robot.running.importer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.keywords module
+-----------------------------
+
+.. automodule:: robot.running.keywords
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.model module
+--------------------------
+
+.. automodule:: robot.running.model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.namespace module
+------------------------------
+
+.. automodule:: robot.running.namespace
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.outputcapture module
+----------------------------------
+
+.. automodule:: robot.running.outputcapture
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.randomizer module
+-------------------------------
+
+.. automodule:: robot.running.randomizer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.runkwregister module
+----------------------------------
+
+.. automodule:: robot.running.runkwregister
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.runner module
+---------------------------
+
+.. automodule:: robot.running.runner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.signalhandler module
+----------------------------------
+
+.. automodule:: robot.running.signalhandler
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.status module
+---------------------------
+
+.. automodule:: robot.running.status
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.testlibraries module
+----------------------------------
+
+.. automodule:: robot.running.testlibraries
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.usererrorhandler module
+-------------------------------------
+
+.. automodule:: robot.running.usererrorhandler
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.userkeyword module
+--------------------------------
+
+.. automodule:: robot.running.userkeyword
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: robot.running
+    :members:
+    :undoc-members:
+    :show-inheritance:
