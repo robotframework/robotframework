@@ -113,7 +113,8 @@ function showDetailsByHash() {
     var query = parts.join('?');
     if (name == 'search') {
         var params = util.parseQueryString(query);
-        searchExecuted(params.suite, params.test, params.include, params.exclude);
+        searchExecuted(params.suite || '', params.test || '',
+                       params.include || '', params.exclude || '');
         return
     }
     query = decodeURIComponent(query);
@@ -223,6 +224,8 @@ function searchExecuted(suite, test, include, exclude) {
                          '&test=' + encodeURIComponent(test) +
                          '&include=' + encodeURIComponent(include) +
                          '&exclude=' + encodeURIComponent(exclude));
+    } else {
+        scrollToSelector('search');
     }
 }
 
@@ -572,7 +575,7 @@ function hideHiddenDetailsColumns(elem) {
         <th><label for="search-exclude">Exclude:</label></th>
         <td><input id="search-exclude" type="text" value="${exclude}"></td>
       </tr>
-      <tr>
+      <tr id="search-buttons">
         <th></th>
         <td>
           <input type="submit" value="Search"
@@ -647,7 +650,7 @@ function hideHiddenDetailsColumns(elem) {
             <h3>Patterns</h3>
             <p>
               All searches support <em>*</em> and <em>?</em> wildcards and are
-              case, space and underscore sensitive. Tag related searches also
+              case, space and underscore insensitive. Tag related searches also
               support <em>AND</em>, <em>OR</em> and <em>NOT</em> (case-sensitive)
               combining operators. If operators are used together, their
               precedence, from highest to lowest, is <em>AND</em>, <em>OR</em>,
