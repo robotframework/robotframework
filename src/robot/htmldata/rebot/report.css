@@ -30,10 +30,20 @@ th {
     vertical-align: top;
     padding: 0.2em 0.4em;
 }
-#selector th, #selector td {
+.selector th, .selector td {
     padding-top: 0.5em;
-    padding-bottom: 1em;
+    padding-bottom: 0.5em;
     white-space: normal;
+}
+.first-selector th, .first-selector td{
+    padding-bottom: 0.2em;
+}
+.middle-selector th, .middle-selector td {
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+}
+.last-selector th, .last-selector td{
+    padding-top: 0.2em;
 }
 #print-selector {
     display: none;

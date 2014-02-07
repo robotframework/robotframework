@@ -497,7 +497,7 @@ function hideHiddenDetailsColumns(elem) {
 
 <script  type="text/x-jquery-tmpl" id="totalDetailsSelectorTemplate">
   <table class="details" id="details-header">
-    <tr id="selector">
+    <tr class="selector">
       <th>Type:</th>
       <td id="normal-selector">
         <input id="radio-critical" type="radio" name="totals-radio"
@@ -516,7 +516,7 @@ function hideHiddenDetailsColumns(elem) {
 
 <script  type="text/x-jquery-tmpl" id="tagDetailsSelectorTemplate">
   <table class="details" id="details-header">
-    <tr id="selector">
+    <tr class="selector">
       <th>Name:</th>
       <td id="normal-selector">
         <select id="tag-detail-selector"
@@ -537,7 +537,7 @@ function hideHiddenDetailsColumns(elem) {
 
 <script  type="text/x-jquery-tmpl" id="suiteDetailsSelectorTemplate">
   <table class="details" id="details-header">
-    <tr id="selector">
+    <tr class="selector">
       <th>Name:</th>
       <td id="normal-selector">
         <select id="suite-detail-selector"
@@ -559,23 +559,23 @@ function hideHiddenDetailsColumns(elem) {
 <script  type="text/x-jquery-tmpl" id="searchSelectorTemplate">
   <form action="javascript:void(0)">
     <table class="details" id="details-header">
-      <tr>
+      <tr class="selector first-selector">
         <th><label for="search-suite">Suite:</label></th>
         <td><input id="search-suite" type="text" value="${suite}"></td>
       </tr>
-      <tr>
+      <tr class="selector middle-selector">
         <th><label for="search-test">Test:</label></th>
         <td><input id="search-test" type="text" value="${test}"></td>
       </tr>
-      <tr>
+      <tr class="selector middle-selector">
         <th><label for="search-include">Include:</label></th>
         <td><input id="search-include" type="text" value="${include}"></td>
       </tr>
-      <tr>
+      <tr class="selector middle-selector">
         <th><label for="search-exclude">Exclude:</label></th>
         <td><input id="search-exclude" type="text" value="${exclude}"></td>
       </tr>
-      <tr id="search-buttons">
+      <tr class="selector last-selector" id="search-buttons">
         <th></th>
         <td>
           <input type="submit" value="Search"
