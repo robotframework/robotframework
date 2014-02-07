@@ -61,10 +61,11 @@ Invalid Time Does Not Cause Un-Catchable Failure
     ...  Get Time  timestamp  invalid
 
 When Time Is UTC
-    ${utc} =  Get Time  epoch  UTC
-    ${now} =  Get Time  epoch  NOW
+    ${before} =   Get Time  epoch  NOW
+    ${utc} =      Get Time  epoch  UTC
+    ${after} =    Get Time  epoch  NOW
     ${zone} =  Get Current Time Zone
-    Should Be True  ${now} <= ${utc} - ${zone} <= ${now} + 1
+    Should Be True  ${before} <= ${utc} - ${zone} <= ${after}
 
 When Time Is UTC +- Something
     ${time} =  Get Time  epoch  UTC
