@@ -108,45 +108,34 @@ function addCustomSortersForDetails() {
 function showDetailsByHash() {
     if (window.location.hash == window.prevLocationHash)
         return;
-    var hash = window.location.hash.substring(1).replace('%', '%25');
-    var hashParts = decodeURI(hash).split('_');
-    var key = hashParts.shift();
-    var arg = hashParts.join('_');
-    var action = {'totals': showTotalSelector,
-                  'tags':   showTagSelector,
-                  'suites': showSuiteSelector,
-                  'total':  totalDetailSelected,
-                  'tag':    tagDetailSelected,
-                  'suite':  suiteDetailSelected}[key];
+    var parts = window.location.hash.substring(1).split('?');
+    var name = parts.shift();
+    var query = parts.join('?');
+    if (name == 'search') {
+        var params = util.parseQueryString(query);
+        searchExecuted(params.suite || '', params.test || '',
+                       params.include || '', params.exclude || '');
+        return
+    }
+    query = decodeURIComponent(query);
+    var action = {'totals': totalDetailSelected,
+                  'tags':   tagDetailSelected,
+                  'suites': suiteDetailSelected}[name];
     if (action)
-        action(arg);
-}
-
-function showTotalSelector() {
-    renderTotalSelector();
-    scrollToSelector('totals');
-}
-
-function showTagSelector() {
-    renderTagSelector();
-    scrollToSelector('tags');
-}
-
-function showSuiteSelector() {
-    renderSuiteSelector();
-    scrollToSelector('suites');
+        action(query);
 }
 
 function totalDetailSelected(name) {
-    if (!name) return;
     renderTotalSelector(name);
-    renderTotalDetails(name);
-    updatePrintSelector(name == 'critical' ? 'Critical Tests' : 'All Tests');
-    scrollToSelector('total_'+name);
+    if (name) {
+        renderTotalDetails(name);
+        updatePrintSelector(name == 'critical' ? 'Critical Tests' : 'All Tests');
+    }
+    scrollToSelector('totals', name);
 }
 
 function renderTotalSelector(name) {
-    var args = {linkTarget: (name) ? 'total_'+name : 'totals',
+    var args = {linkTarget: (name) ? 'totals?'+name : 'totals',
                 totalTabStatus: 'detail-tab-selected'};
     renderSelector(args, 'totalDetailsSelectorTemplate', {selected: name});
 }
@@ -167,12 +156,15 @@ function updatePrintSelector(name, info) {
 }
 
 function tagDetailSelected(name) {
-    if (!name) return;
     renderTagSelector(name);
-    var tag = findTag(name);
-    renderTagDetails(tag);
-    updatePrintSelector(name, tag.info);
-    scrollToSelector('tag_'+name);
+    if (name) {
+        var tag = findTag(name);
+        if (tag) {
+            renderTagDetails(tag);
+            updatePrintSelector(name, tag.info);
+        }
+    }
+    scrollToSelector('tags', name);
 }
 
 function findTag(name) {
@@ -181,11 +173,11 @@ function findTag(name) {
         if (tags[i].label == name)
             return tags[i];
     }
-    return {combined: name, label: name, info: 'search'};
+    return null;
 }
 
 function renderTagSelector(name) {
-    var args = {linkTarget: (name) ? 'tag_'+name : 'tags',
+    var args = {linkTarget: (name) ? 'tags?'+name : 'tags',
                 tagTabStatus: 'detail-tab-selected'};
     var stats = {tags: window.testdata.statistics().tag, selected: name};
     renderSelector(args, 'tagDetailsSelectorTemplate', stats);
@@ -194,26 +186,19 @@ function renderTagSelector(name) {
 function renderTagDetails(tag) {
     var tests = getTestsHavingTag(tag);
     tag.totalTime = calculateTotalTime(tests);
-    if (tag.info == 'search') {
-        tag.total = tests.length;
-        tag.pass = util.filter(tests, function (test) {
-            return test.status == 'PASS';
-        }).length;
-        tag.fail = tag.total - tag.pass;
-    }
     $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
 
 function suiteDetailSelected(id) {
-    if (!id) return;
     renderSuiteSelector(id);
-    renderSuiteDetails(id);
-    scrollToSelector('suite_'+id);
+    if (id)
+        renderSuiteDetails(id);
+    scrollToSelector('suites', id);
 }
 
 function renderSuiteSelector(id) {
-    var args = {linkTarget: (id) ? 'suite_'+id : 'suites',
+    var args = {linkTarget: (id) ? 'suites?'+id : 'suites',
                 suiteTabStatus: 'detail-tab-selected'};
     var stats = {suites: window.testdata.statistics().suite,
                  selected: id};
@@ -230,9 +215,60 @@ function renderSuiteDetails(id) {
     });
 }
 
-function scrollToSelector(anchor) {
+function searchExecuted(suite, test, include, exclude) {
+    renderSearchSelector(suite, test, include, exclude);
+    if (suite || test || include || exclude) {
+        renderSearchDetails(suite, test, include, exclude);
+        scrollToSelector('search' +
+                         '?suite=' + encodeURIComponent(suite) +
+                         '&test=' + encodeURIComponent(test) +
+                         '&include=' + encodeURIComponent(include) +
+                         '&exclude=' + encodeURIComponent(exclude));
+    } else {
+        scrollToSelector('search');
+    }
+}
+
+function renderSearchSelector(suite, test, include, exclude) {
+    var args = {linkTarget: (suite || test || include || exclude) ?
+                            ('search?suite=' + suite + '&test=' + test + '&include=' + include + '&exclude=' + exclude) :
+                            'search',
+                searchTabStatus: 'detail-tab-selected'};
+    var search = {suite: suite, test: test, include: include, exclude: exclude};
+    renderSelector(args, 'searchSelectorTemplate', search);
+}
+
+function renderSearchDetails(suite, test, include, exclude) {
+    var tests = searchTests(util.escape(suite), util.escape(test),
+                            util.escape(include), util.escape(exclude));
+    var passed = calculatePassed(tests);
+    var stats = {total: tests.length,
+                 pass: passed,
+                 fail: tests.length - passed,
+                 totalTime: calculateTotalTime(tests)};
+    $.tmpl('tagOrTotalDetailsTemplate', stats).appendTo('#details-header');
+    drawTestDetailsTable(tests, true);
+}
+
+function searchTests(suitePattern, testPattern, includePattern, excludePattern) {
+    var tests;
+    if (suitePattern)
+        tests = window.testdata.suite().searchTestsInSuite(suitePattern);
+    else
+        tests = window.testdata.suite().allTests();
+    return util.filter(tests, function (test) {
+        if (testPattern && !test.matchesNamePattern(testPattern))
+            return false;
+        if (includePattern && !test.matchesTagPattern(includePattern))
+            return false;
+        return !(excludePattern && test.matchesTagPattern(excludePattern));
+    });
+}
+
+function scrollToSelector(base, query) {
     $('#test-details-container').css('min-height', $(window).height());
-    window.prevLocationHash = "#"+anchor;
+    var anchor = query ? base + '?' + encodeURIComponent(query) : base;
+    window.prevLocationHash = '#' + anchor;
     window.location.hash = anchor;
 }
 
@@ -282,6 +318,13 @@ function calculateTotalTime(tests) {
     for (var i = 0, len = tests.length; i < len; i++)
         total += tests[i].times.elapsedMillis;
     return util.formatElapsed(total);
+}
+
+function calculatePassed(tests) {
+    var passed = util.filter(tests, function (test) {
+        return test.status == 'PASS';
+    });
+    return passed.length;
 }
 
 function renderTestDetails(sortByStatus, target) {
@@ -347,13 +390,13 @@ function hideHiddenDetailsColumns(elem) {
     <tr>
       <th>Status:</th>
       {{if criticalFailed}}
-      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
              class="fail">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
       {{else totalFailed}}
-      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
              class="pass">All critical tests passed</a></td>
       {{else}}
-      <td><a href="#total_all" onclick="totalDetailSelected('all')"
+      <td><a href="#totals?all" onclick="totalDetailSelected('all')"
              class="pass">All tests passed</a></td>
       {{/if}}
     </tr>
@@ -398,7 +441,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr onclick="totalDetailSelected('${type}')" class="row-${$item.index}">
     <td class="stats-col-name">
       <div class="stat-name">
-        <a href="#total_${type}">{{html label}}</a>
+        <a href="#totals?${type}">{{html label}}</a>
       </div>
     </td>
     {{tmpl($data) 'statColumnsTemplate'}}
@@ -409,7 +452,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr onclick="tagDetailSelected('${label}')" class="row-${$item.index}">
     <td class="stats-col-name" title="${doc}">
       <div class="stat-name">
-        <a href="#tag_${label}">{{html label}}</a>
+        <a href="#tags?${label}">{{html label}}</a>
         {{if info}}(${info}){{/if}}
       </div>
       <div class="tag-links">
@@ -427,7 +470,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr onclick="suiteDetailSelected('${id}')" class="row-${$item.index}">
     <td class="stats-col-name" title="${label}">
       <div class="stat-name">
-        <a href="#suite_${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a>
+        <a href="#suites?${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
     </td>
     {{tmpl($data) 'statColumnsTemplate'}}
@@ -445,6 +488,9 @@ function hideHiddenDetailsColumns(elem) {
     </li>
     <li class="${suiteTabStatus} detail-tab">
       <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
+    </li>
+    <li class="${searchTabStatus} detail-tab">
+      <a href="#search" onclick="renderSearchSelector()">Search</a>
     </li>
   </ul>
 </script>
@@ -486,16 +532,6 @@ function hideHiddenDetailsColumns(elem) {
       </td>
       <td id="print-selector"></td>
     </tr>
-    <tr id="search">
-      <th>Search:</th>
-      <td>
-        <form>
-          <input id="search-field" type="text" value="{{html selected}}">
-          <input type="submit" value="Search" onclick="tagDetailSelected(util.escape($('#search-field').val()))">
-          <input type="button" value="Clear" onclick="$('#search-field').val('')">
-        </form>
-      </td>
-    </tr>
   </table>
 </script>
 
@@ -518,6 +554,151 @@ function hideHiddenDetailsColumns(elem) {
       <td id="print-selector"></td>
     </tr>
   </table>
+</script>
+
+<script  type="text/x-jquery-tmpl" id="searchSelectorTemplate">
+  <form action="javascript:void(0)">
+    <table class="details" id="details-header">
+      <tr>
+        <th><label for="search-suite">Suite:</label></th>
+        <td><input id="search-suite" type="text" value="${suite}"></td>
+      </tr>
+      <tr>
+        <th><label for="search-test">Test:</label></th>
+        <td><input id="search-test" type="text" value="${test}"></td>
+      </tr>
+      <tr>
+        <th><label for="search-include">Include:</label></th>
+        <td><input id="search-include" type="text" value="${include}"></td>
+      </tr>
+      <tr>
+        <th><label for="search-exclude">Exclude:</label></th>
+        <td><input id="search-exclude" type="text" value="${exclude}"></td>
+      </tr>
+      <tr id="search-buttons">
+        <th></th>
+        <td>
+          <input type="submit" value="Search"
+                 onclick="searchExecuted($('#search-suite').val(),
+                                         $('#search-test').val(),
+                                         $('#search-include').val(),
+                                         $('#search-exclude').val())">
+          <input type="button" value="Clear"
+                 onclick="$('#search-suite').val('');
+                          $('#search-test').val('');
+                          $('#search-include').val('');
+                          $('#search-exclude').val('')">
+          <a href="javascript:void(0)" onclick="$('#search-help').toggle()"
+             title="Toggle search help.">Help</a>
+        </td>
+      </tr>
+      <tr id="search-help" style="display: none">
+        <th></th>
+        <td>
+          <div>
+            <h3>Search fields</h3>
+            <p>
+              Test cases can be searched based on test suite and test case
+              names as well as based on tags. If multiple search criteria are
+              used, only tests matching all of them are included.
+              Search fields have same semantics as <em>&#8209;&#8209;suite</em>,
+              <em>&#8209;&#8209;test</em>, <em>&#8209;&#8209;include</em> and
+              <em>&#8209;&#8209;exclude</em> command line options, respectively.
+            </p>
+            <table class="search-help-examples">
+              <col class="help-item">
+              <col class="help-explanation">
+              <col class="help-examples>
+              <tr>
+                <th>Field</th>
+                <th>Explanation</th>
+                <th>Examples</th>
+              </tr>
+              <tr>
+                <td>Suite</td>
+                <td>
+                  Tests in matching suites are included. The pattern can match
+                  either suite's name or its full name that contains also
+                  parent suite names.
+                </td>
+                <td>My Suite<br>Root.Parent.Sui*</td>
+              </tr>
+              <tr>
+                <td>Test</td>
+                <td>
+                  Matching tests are included. The pattern can match either
+                  test's name or its full name that contains also parent
+                  suite names.
+                </td>
+                <td>Test*<br>Root.Pa*.T???</td>
+              </tr>
+              <tr>
+                <td>Include</td>
+                <td>
+                  Tests that contain matching tags are included.
+                </td>
+                <td>smoke<br>bug-*</td>
+              </tr>
+              <tr>
+                <td>Exclude</td>
+                <td>
+                  Tests that contain matching tags are not included.
+                </td>
+                <td>slow<br>feature-4?</td>
+              </tr>
+            </table>
+            <h3>Patterns</h3>
+            <p>
+              All searches support <em>*</em> and <em>?</em> wildcards and are
+              case, space and underscore insensitive. Tag related searches also
+              support <em>AND</em>, <em>OR</em> and <em>NOT</em> (case-sensitive)
+              combining operators. If operators are used together, their
+              precedence, from highest to lowest, is <em>AND</em>, <em>OR</em>,
+              <em>NOT</em>. See <em>Simple patterns</em> and
+              <em>Tag patterns</em> sections in
+              <a href="https://code.google.com/p/robotframework/wiki/UserGuide">Robot
+              Framework User Guide</a> version 2.8.4 or newer for more details.
+            </p>
+            <table class="search-help-examples">
+              <col class="help-item">
+              <col class="help-explanation">
+              <col class="help-examples>
+              <tr>
+                <th>Pattern</th>
+                <th>Explanation</th>
+                <th>Examples</th>
+              </tr>
+              <tr>
+                <td>*</td>
+                <td>Matches anything, even an empty string.</td>
+                <td>f*<br>sprint-*</td>
+              </tr>
+              <tr>
+                <td>?</td>
+                <td>Matches any single character.</td>
+                <td>f??<br>sprint-1?</td>
+              </tr>
+              <tr>
+                <td>AND</td>
+                <td>Matches if all patterns match.</td>
+                <td>foo AND bar<br>x AND y* AND z??</td>
+              </tr>
+              <tr>
+                <td>OR</td>
+                <td>Matches if any pattern matches.</td>
+                <td>foo OR bar<br>x OR y* OR z1 AND z2</td>
+              </tr>
+              <tr>
+                <td>NOT</td>
+                <td>Matches if pattern before matches and pattern after does not.</td>
+                <td>foo NOT bar<br>* NOT id-* AND smoke</td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </form>
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">

@@ -1,6 +1,7 @@
 /* Generic table styles */
 table {
     margin: 0 1px;
+    background: white;
 }
 tr {
     background: white;
@@ -36,6 +37,44 @@ th {
 }
 #print-selector {
     display: none;
+}
+/* Search */
+#search-suite, #search-test, #search-include, #search-exclude {
+    width: 25em;
+}
+#search a:hover {
+    text-decoration: none;
+}
+#search-help div {
+    margin: 0.5em 0.5em 0.7em 0;
+    padding: 0.7em;
+    background: #ECECF7;
+    border: 1px solid #BCBCD7;
+    border-radius: 3px;
+}
+#search-help h3, #search-help p {
+    margin: 0 0 0.7em 0;
+}
+.search-help-examples {
+    table-layout: auto;
+    width: 100%;
+}
+.search-help-examples, .search-help-examples tr,
+.search-help-examples th, .search-help-examples td {
+    background: transparent;
+    margin: 0;
+}
+.search-help-examples th, .search-help-examples td {
+    padding: 0.2em 0.7em 0.2em 0;
+}
+.help-item {
+    width: 10%;
+}
+.help-explanation {
+    width: 65%;
+}
+.help-examples {
+    width: 25%;
 }
 /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
 #detail-tabs {
