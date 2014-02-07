@@ -1,19 +1,22 @@
-api Package
-===========
+robot.api package
+=================
 
-:mod:`api` Package
-------------------
+Submodules
+----------
 
-.. automodule:: robot.api
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`logger` Module
---------------------
+robot.api.logger module
+-----------------------
 
 .. automodule:: robot.api.logger
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.api
+    :members:
+    :undoc-members:
+    :show-inheritance:

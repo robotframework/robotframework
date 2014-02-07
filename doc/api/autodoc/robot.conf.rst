@@ -1,27 +1,30 @@
-conf Package
-============
+robot.conf package
+==================
 
-:mod:`conf` Package
--------------------
+Submodules
+----------
 
-.. automodule:: robot.conf
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`gatherfailed` Module
---------------------------
+robot.conf.gatherfailed module
+------------------------------
 
 .. automodule:: robot.conf.gatherfailed
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`settings` Module
-----------------------
+robot.conf.settings module
+--------------------------
 
 .. automodule:: robot.conf.settings
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.conf
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,99 +1,102 @@
-parsing Package
-===============
+robot.parsing package
+=====================
 
-:mod:`parsing` Package
-----------------------
+Submodules
+----------
 
-.. automodule:: robot.parsing
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`comments` Module
-----------------------
+robot.parsing.comments module
+-----------------------------
 
 .. automodule:: robot.parsing.comments
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`datarow` Module
----------------------
+robot.parsing.datarow module
+----------------------------
 
 .. automodule:: robot.parsing.datarow
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`htmlreader` Module
-------------------------
+robot.parsing.htmlreader module
+-------------------------------
 
 .. automodule:: robot.parsing.htmlreader
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`model` Module
--------------------
+robot.parsing.model module
+--------------------------
 
 .. automodule:: robot.parsing.model
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`populators` Module
-------------------------
+robot.parsing.populators module
+-------------------------------
 
 .. automodule:: robot.parsing.populators
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`restreader` Module
-------------------------
+robot.parsing.restreader module
+-------------------------------
 
 .. automodule:: robot.parsing.restreader
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`restsupport` Module
--------------------------
+robot.parsing.restsupport module
+--------------------------------
 
 .. automodule:: robot.parsing.restsupport
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`settings` Module
-----------------------
+robot.parsing.settings module
+-----------------------------
 
 .. automodule:: robot.parsing.settings
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`tablepopulators` Module
------------------------------
+robot.parsing.tablepopulators module
+------------------------------------
 
 .. automodule:: robot.parsing.tablepopulators
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`tsvreader` Module
------------------------
+robot.parsing.tsvreader module
+------------------------------
 
 .. automodule:: robot.parsing.tsvreader
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`txtreader` Module
------------------------
+robot.parsing.txtreader module
+------------------------------
 
 .. automodule:: robot.parsing.txtreader
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.parsing
+    :members:
+    :undoc-members:
+    :show-inheritance:

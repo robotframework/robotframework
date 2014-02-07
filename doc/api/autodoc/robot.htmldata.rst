@@ -1,51 +1,54 @@
-htmldata Package
-================
+robot.htmldata package
+======================
 
-:mod:`htmldata` Package
------------------------
+Submodules
+----------
 
-.. automodule:: robot.htmldata
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`htmlfilewriter` Module
-----------------------------
+robot.htmldata.htmlfilewriter module
+------------------------------------
 
 .. automodule:: robot.htmldata.htmlfilewriter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`jartemplate` Module
--------------------------
+robot.htmldata.jartemplate module
+---------------------------------
 
 .. automodule:: robot.htmldata.jartemplate
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`jsonwriter` Module
-------------------------
+robot.htmldata.jsonwriter module
+--------------------------------
 
 .. automodule:: robot.htmldata.jsonwriter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`normaltemplate` Module
-----------------------------
+robot.htmldata.normaltemplate module
+------------------------------------
 
 .. automodule:: robot.htmldata.normaltemplate
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`template` Module
-----------------------
+robot.htmldata.template module
+------------------------------
 
 .. automodule:: robot.htmldata.template
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.htmldata
+    :members:
+    :undoc-members:
+    :show-inheritance:

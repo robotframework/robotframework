@@ -1,147 +1,150 @@
-libraries Package
-=================
+robot.libraries package
+=======================
 
-:mod:`libraries` Package
-------------------------
+Submodules
+----------
 
-.. automodule:: robot.libraries
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`BuiltIn` Module
----------------------
+robot.libraries.BuiltIn module
+------------------------------
 
 .. automodule:: robot.libraries.BuiltIn
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Collections` Module
--------------------------
+robot.libraries.Collections module
+----------------------------------
 
 .. automodule:: robot.libraries.Collections
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`DeprecatedBuiltIn` Module
--------------------------------
+robot.libraries.DeprecatedBuiltIn module
+----------------------------------------
 
 .. automodule:: robot.libraries.DeprecatedBuiltIn
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`DeprecatedOperatingSystem` Module
----------------------------------------
+robot.libraries.DeprecatedOperatingSystem module
+------------------------------------------------
 
 .. automodule:: robot.libraries.DeprecatedOperatingSystem
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Dialogs` Module
----------------------
+robot.libraries.Dialogs module
+------------------------------
 
 .. automodule:: robot.libraries.Dialogs
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Easter` Module
---------------------
+robot.libraries.Easter module
+-----------------------------
 
 .. automodule:: robot.libraries.Easter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`OperatingSystem` Module
------------------------------
+robot.libraries.OperatingSystem module
+--------------------------------------
 
 .. automodule:: robot.libraries.OperatingSystem
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Process` Module
----------------------
+robot.libraries.Process module
+------------------------------
 
 .. automodule:: robot.libraries.Process
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Remote` Module
---------------------
+robot.libraries.Remote module
+-----------------------------
 
 .. automodule:: robot.libraries.Remote
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Reserved` Module
-----------------------
+robot.libraries.Reserved module
+-------------------------------
 
 .. automodule:: robot.libraries.Reserved
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Screenshot` Module
-------------------------
+robot.libraries.Screenshot module
+---------------------------------
 
 .. automodule:: robot.libraries.Screenshot
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`String` Module
---------------------
+robot.libraries.String module
+-----------------------------
 
 .. automodule:: robot.libraries.String
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`Telnet` Module
---------------------
+robot.libraries.Telnet module
+-----------------------------
 
 .. automodule:: robot.libraries.Telnet
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`XML` Module
------------------
+robot.libraries.XML module
+--------------------------
 
 .. automodule:: robot.libraries.XML
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`dialogs_ipy` Module
--------------------------
+robot.libraries.dialogs_ipy module
+----------------------------------
 
 .. automodule:: robot.libraries.dialogs_ipy
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`dialogs_jy` Module
-------------------------
+robot.libraries.dialogs_jy module
+---------------------------------
 
 .. automodule:: robot.libraries.dialogs_jy
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`dialogs_py` Module
-------------------------
+robot.libraries.dialogs_py module
+---------------------------------
 
 .. automodule:: robot.libraries.dialogs_py
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.libraries
+    :members:
+    :undoc-members:
+    :show-inheritance:

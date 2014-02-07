@@ -1,93 +1,5 @@
-robot Package
+robot package
 =============
-
-:mod:`robot` Package
---------------------
-
-.. automodule:: robot.__init__
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`errors` Module
---------------------
-
-.. automodule:: robot.errors
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`jarrunner` Module
------------------------
-
-.. automodule:: robot.jarrunner
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`jythonworkarounds` Module
--------------------------------
-
-.. automodule:: robot.jythonworkarounds
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`libdoc` Module
---------------------
-
-.. automodule:: robot.libdoc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`pythonpathsetter` Module
-------------------------------
-
-.. automodule:: robot.pythonpathsetter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`rebot` Module
--------------------
-
-.. automodule:: robot.rebot
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`run` Module
------------------
-
-.. automodule:: robot.run
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`testdoc` Module
----------------------
-
-.. automodule:: robot.testdoc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`tidy` Module
-------------------
-
-.. automodule:: robot.tidy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`version` Module
----------------------
-
-.. automodule:: robot.version
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Subpackages
 -----------
@@ -109,3 +21,94 @@ Subpackages
     robot.variables
     robot.writer
 
+Submodules
+----------
+
+robot.errors module
+-------------------
+
+.. automodule:: robot.errors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.jarrunner module
+----------------------
+
+.. automodule:: robot.jarrunner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.jythonworkarounds module
+------------------------------
+
+.. automodule:: robot.jythonworkarounds
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.libdoc module
+-------------------
+
+.. automodule:: robot.libdoc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.pythonpathsetter module
+-----------------------------
+
+.. automodule:: robot.pythonpathsetter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.rebot module
+------------------
+
+.. automodule:: robot.rebot
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.run module
+----------------
+
+.. automodule:: robot.run
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.testdoc module
+--------------------
+
+.. automodule:: robot.testdoc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.tidy module
+-----------------
+
+.. automodule:: robot.tidy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.version module
+--------------------
+
+.. automodule:: robot.version
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: robot
+    :members:
+    :undoc-members:
+    :show-inheritance:

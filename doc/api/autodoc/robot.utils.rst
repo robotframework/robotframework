@@ -1,227 +1,230 @@
-utils Package
-=============
+robot.utils package
+===================
 
-:mod:`utils` Package
---------------------
+Submodules
+----------
 
-.. automodule:: robot.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`application` Module
--------------------------
+robot.utils.application module
+------------------------------
 
 .. automodule:: robot.utils.application
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`argumentparser` Module
-----------------------------
+robot.utils.argumentparser module
+---------------------------------
 
 .. automodule:: robot.utils.argumentparser
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`asserts` Module
----------------------
+robot.utils.asserts module
+--------------------------
 
 .. automodule:: robot.utils.asserts
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`charwidth` Module
------------------------
+robot.utils.charwidth module
+----------------------------
 
 .. automodule:: robot.utils.charwidth
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`compress` Module
-----------------------
+robot.utils.compress module
+---------------------------
 
 .. automodule:: robot.utils.compress
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`connectioncache` Module
------------------------------
+robot.utils.connectioncache module
+----------------------------------
 
 .. automodule:: robot.utils.connectioncache
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`encoding` Module
-----------------------
+robot.utils.encoding module
+---------------------------
 
 .. automodule:: robot.utils.encoding
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`encodingsniffer` Module
------------------------------
+robot.utils.encodingsniffer module
+----------------------------------
 
 .. automodule:: robot.utils.encodingsniffer
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`error` Module
--------------------
+robot.utils.error module
+------------------------
 
 .. automodule:: robot.utils.error
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`escaping` Module
-----------------------
+robot.utils.escaping module
+---------------------------
 
 .. automodule:: robot.utils.escaping
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`etreewrapper` Module
---------------------------
+robot.utils.etreewrapper module
+-------------------------------
 
 .. automodule:: robot.utils.etreewrapper
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`htmlformatters` Module
-----------------------------
+robot.utils.htmlformatters module
+---------------------------------
 
 .. automodule:: robot.utils.htmlformatters
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`importer` Module
-----------------------
+robot.utils.importer module
+---------------------------
 
 .. automodule:: robot.utils.importer
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`islike` Module
---------------------
+robot.utils.islike module
+-------------------------
 
 .. automodule:: robot.utils.islike
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`markuputils` Module
--------------------------
+robot.utils.markuputils module
+------------------------------
 
 .. automodule:: robot.utils.markuputils
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`markupwriters` Module
----------------------------
+robot.utils.markupwriters module
+--------------------------------
 
 .. automodule:: robot.utils.markupwriters
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`match` Module
--------------------
+robot.utils.match module
+------------------------
 
 .. automodule:: robot.utils.match
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`misc` Module
-------------------
+robot.utils.misc module
+-----------------------
 
 .. automodule:: robot.utils.misc
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`normalizing` Module
--------------------------
+robot.utils.normalizing module
+------------------------------
 
 .. automodule:: robot.utils.normalizing
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`robotenv` Module
-----------------------
+robot.utils.robotenv module
+---------------------------
 
 .. automodule:: robot.utils.robotenv
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`robotinspect` Module
---------------------------
+robot.utils.robotinspect module
+-------------------------------
 
 .. automodule:: robot.utils.robotinspect
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`robotpath` Module
------------------------
+robot.utils.robotpath module
+----------------------------
 
 .. automodule:: robot.utils.robotpath
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`robottime` Module
------------------------
+robot.utils.robottime module
+----------------------------
 
 .. automodule:: robot.utils.robottime
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`setter` Module
---------------------
+robot.utils.setter module
+-------------------------
 
 .. automodule:: robot.utils.setter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`text` Module
-------------------
+robot.utils.text module
+-----------------------
 
 .. automodule:: robot.utils.text
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`unic` Module
-------------------
+robot.utils.unic module
+-----------------------
 
 .. automodule:: robot.utils.unic
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`utf8reader` Module
-------------------------
+robot.utils.utf8reader module
+-----------------------------
 
 .. automodule:: robot.utils.utf8reader
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:

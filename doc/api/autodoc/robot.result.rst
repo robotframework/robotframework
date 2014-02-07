@@ -1,123 +1,134 @@
-result Package
-==============
+robot.result package
+====================
 
-:mod:`result` Package
----------------------
+Submodules
+----------
 
-.. automodule:: robot.result
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`configurer` Module
-------------------------
+robot.result.configurer module
+------------------------------
 
 .. automodule:: robot.result.configurer
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`executionerrors` Module
------------------------------
+robot.result.executionerrors module
+-----------------------------------
 
 .. automodule:: robot.result.executionerrors
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`executionresult` Module
------------------------------
+robot.result.executionresult module
+-----------------------------------
 
 .. automodule:: robot.result.executionresult
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`flattenkeywordmatcher` Module
------------------------------------
+robot.result.flattenkeywordmatcher module
+-----------------------------------------
 
 .. automodule:: robot.result.flattenkeywordmatcher
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`keyword` Module
----------------------
+robot.result.keyword module
+---------------------------
 
 .. automodule:: robot.result.keyword
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`keywordremover` Module
-----------------------------
+robot.result.keywordremover module
+----------------------------------
 
 .. automodule:: robot.result.keywordremover
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`message` Module
----------------------
+robot.result.message module
+---------------------------
 
 .. automodule:: robot.result.message
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`messagefilter` Module
----------------------------
+robot.result.messagefilter module
+---------------------------------
 
 .. automodule:: robot.result.messagefilter
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`resultbuilder` Module
----------------------------
+robot.result.rerunmerger module
+-------------------------------
+
+.. automodule:: robot.result.rerunmerger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.result.resultbuilder module
+---------------------------------
 
 .. automodule:: robot.result.resultbuilder
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`suiteteardownfailed` Module
----------------------------------
+robot.result.suiteteardownfailed module
+---------------------------------------
 
 .. automodule:: robot.result.suiteteardownfailed
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`testcase` Module
-----------------------
+robot.result.testcase module
+----------------------------
 
 .. automodule:: robot.result.testcase
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`testsuite` Module
------------------------
+robot.result.testsuite module
+-----------------------------
 
 .. automodule:: robot.result.testsuite
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`visitor` Module
----------------------
+robot.result.visitor module
+---------------------------
 
 .. automodule:: robot.result.visitor
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`xmlelementhandlers` Module
---------------------------------
+robot.result.xmlelementhandlers module
+--------------------------------------
 
 .. automodule:: robot.result.xmlelementhandlers
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.result
+    :members:
+    :undoc-members:
+    :show-inheritance:

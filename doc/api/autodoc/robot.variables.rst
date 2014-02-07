@@ -1,43 +1,46 @@
-variables Package
-=================
+robot.variables package
+=======================
 
-:mod:`variables` Package
-------------------------
+Submodules
+----------
 
-.. automodule:: robot.variables
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`isvar` Module
--------------------
+robot.variables.isvar module
+----------------------------
 
 .. automodule:: robot.variables.isvar
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`variableassigner` Module
-------------------------------
+robot.variables.variableassigner module
+---------------------------------------
 
 .. automodule:: robot.variables.variableassigner
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`variables` Module
------------------------
+robot.variables.variables module
+--------------------------------
 
 .. automodule:: robot.variables.variables
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`variablesplitter` Module
-------------------------------
+robot.variables.variablesplitter module
+---------------------------------------
 
 .. automodule:: robot.variables.variablesplitter
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: robot.variables
+    :members:
+    :undoc-members:
+    :show-inheritance:
