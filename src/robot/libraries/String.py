@@ -291,10 +291,10 @@ class String(object):
         string is not altered.
 
         Examples:
-        | ${str} =        | Remove From String | Robot Framework | work   |
-        | Should Be Equal | ${str}             | Robot Frame     |
-        | ${str} =        | Remove From String | Robot Framework | o | bt |
-        | Should Be Equal | ${str}             | R Framewrk      |
+        | ${str} =        | Remove String | Robot Framework | work   |
+        | Should Be Equal | ${str}        | Robot Frame     |
+        | ${str} =        | Remove String | Robot Framework | o | bt |
+        | Should Be Equal | ${str}        | R Framewrk      |
 
         New in Robot Framework 2.8.2.
         """
@@ -312,7 +312,7 @@ class String(object):
         used if there is a need to remove only a certain number of
         occurrences.
 
-        New in Robot Framework 2.8.2
+        New in Robot Framework 2.8.2.
         """
         for pattern in patterns:
             string = self.replace_string_using_regexp(string, pattern, '')
