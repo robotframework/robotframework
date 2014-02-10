@@ -12,10 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
 from robot import utils
 
 from .logger import LOGGER
 from .loggerhelper import IsLogged
+
+PY3 = sys.version_info[0] == 3
 
 
 def DebugFile(path):
@@ -108,10 +112,9 @@ class _DebugFileWriter:
             text = '%s - %s - %s' % (timestamp or utils.get_timestamp(),
                                      level, text)
         text = text.rstrip() + '\n'
-        encoded_text = text.encode('UTF-8')
-        try:
-            self._outfile.write(encoded_text)
-        except TypeError: # Python 3
+        if PY3 and hasattr(self._outfile, 'encoding'):
             self._outfile.write(text)
+        else:
+            self._outfile.write(text.encode('UTF-8'))
         self._outfile.flush()
         self._separator_written_last = separator
