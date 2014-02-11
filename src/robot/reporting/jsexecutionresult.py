@@ -35,7 +35,7 @@ class JsExecutionResult(object):
             'stats': statistics,
             'errors': errors,
             'baseMillis': basemillis,
-            'generatedMillis': long(time.mktime(gentime) * 1000) - basemillis,
+            'generatedMillis': int(time.mktime(gentime) * 1000) - basemillis,
             'generatedTimestamp': utils.format_time(gentime, gmtsep=' ')
         }
 

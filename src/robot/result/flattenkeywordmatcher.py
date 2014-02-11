@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 from robot.errors import DataError
 from robot.utils import MultiMatcher
 
@@ -22,7 +24,7 @@ class FlattenKeywordMatcher(object):
         self.match = MultiMatcher(self._yield_patterns(flattened)).match
 
     def _yield_patterns(self, flattened):
-        if isinstance(flattened, basestring):
+        if isinstance(flattened, string_types):
             flattened = [flattened]
         for flat in flattened:
             if not flat.upper().startswith('NAME:'):

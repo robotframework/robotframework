@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 import os
 import copy
 from itertools import chain
@@ -75,7 +77,7 @@ class Namespace:
                 if not item.name:
                     raise DataError('%s setting requires a name' % item.type)
                 self._import(item)
-            except DataError, err:
+            except DataError as err:
                 item.report_invalid_syntax(unicode(err))
 
     def _import(self, import_setting):
@@ -144,7 +146,7 @@ class Namespace:
         name = import_setting.name
         try:
             name = self.variables.replace_string(name)
-        except DataError, err:
+        except DataError as err:
             self._raise_replacing_vars_failed(import_setting, err)
         return self._get_path(name, import_setting.directory, import_setting.type)
 
@@ -163,7 +165,7 @@ class Namespace:
     def _resolve_args(self, import_setting):
         try:
             return self.variables.replace_list(import_setting.args)
-        except DataError, err:
+        except DataError as err:
             self._raise_replacing_vars_failed(import_setting, err)
 
     def _import_deprecated_standard_libs(self, name):
@@ -208,7 +210,7 @@ class Namespace:
             handler = self._get_handler(name)
             if handler is None:
                 raise DataError("No keyword with name '%s' found." % name)
-        except DataError, err:
+        except DataError as err:
             handler = UserErrorHandler(name, unicode(err))
         self._replace_variables_from_user_handlers(handler)
         return handler
@@ -221,7 +223,7 @@ class Namespace:
         handler = None
         if not name:
             raise DataError('Keyword name cannot be empty.')
-        if not isinstance(name, basestring):
+        if not isinstance(name, string_types):
             raise DataError('Keyword name must be a string.')
         if '.' in name:
             handler = self._get_explicit_handler(name)
@@ -458,7 +460,7 @@ class _VariableScopes:
         return self.current.keys()
 
     def has_key(self, key):
-        return self.current.has_key(key)
+        return key in self.current
 
     __contains__ = has_key
 

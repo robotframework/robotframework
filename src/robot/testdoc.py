@@ -27,8 +27,7 @@ Instead of ``python`` it is possible to use also other Python interpreters.
 This module also provides :func:`testdoc` and :func:`testdoc_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
-
-from __future__ import with_statement
+from six import string_types
 
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool
 
@@ -116,7 +115,7 @@ class TestDoc(utils.Application):
 @disable_curdir_processing
 def TestSuiteFactory(datasources, **options):
     settings = RobotSettings(options)
-    if isinstance(datasources, basestring):
+    if isinstance(datasources, string_types):
         datasources = [datasources]
     suite = TestSuiteBuilder().build(*datasources)
     suite.configure(**settings.suite_config)
@@ -142,7 +141,7 @@ class TestdocModelWriter(ModelWriter):
             'suite': JsonConverter(self._output_path).convert(self._suite),
             'title': self._title,
             'generated': utils.format_time(generated_time, gmtsep=' '),
-            'generatedMillis': long(time.mktime(generated_time) * 1000)
+            'generatedMillis': int(time.mktime(generated_time) * 1000)
         }
         JsonWriter(self._output).write_json('testdoc = ', model)
 

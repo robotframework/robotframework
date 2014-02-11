@@ -21,5 +21,5 @@ with open(OUTPUT, 'w') as output:
 
 shutil.move(OUTPUT, REAL_OUTPUT)
 
-print REAL_OUTPUT
+print(REAL_OUTPUT)
 

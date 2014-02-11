@@ -12,10 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, text_type as unicode, unichr
+
 import sys
 
-from HTMLParser import HTMLParser
-from htmlentitydefs import entitydefs
+if PY3:
+    from html.parser import HTMLParser
+    from html.entities import entitydefs
+else:
+    from HTMLParser import HTMLParser
+    from htmlentitydefs import entitydefs
 
 
 NON_BREAKING_SPACE = u'\xA0'

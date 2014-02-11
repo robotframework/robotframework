@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 import os
 
 from robot.errors import DataError
@@ -91,7 +93,7 @@ class Logger(AbstractLogger):
             return
         try:
             logger = FileLogger(path, level)
-        except DataError, err:
+        except DataError as err:
             self.error("Opening syslog file '%s' failed: %s" % (path, unicode(err)))
         else:
             self.register_logger(logger)

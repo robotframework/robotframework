@@ -14,6 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY2, PY3, integer_types, string_types, text_type as unicode
+
 import re
 import time
 import sys
@@ -37,7 +39,7 @@ try:
     bin  # available since Python 2.6
 except NameError:
     def bin(integer):
-        if not isinstance(integer, (int, long)):
+        if not isinstance(integer, integer_types):
             raise TypeError
         if integer >= 0:
             prefix = '0b'
@@ -112,7 +114,7 @@ class _Converter:
         return item
 
     def _get_base(self, item, base):
-        if not isinstance(item, basestring):
+        if not isinstance(item, string_types):
             return item, base
         item = utils.normalize(item)
         if item.startswith(('-', '+')):
@@ -208,9 +210,9 @@ class _Converter:
         if ret[0] == '-':
             prefix = '-' + prefix
             ret = ret[1:]
-        if len(ret) > 1:  # oct(0) -> '0' (i.e. has no prefix)
+        if len(ret) > 1:  # oct(0) -> '0' (i.e. has no prefix), PY3: '0o0'
             prefix_length = {bin: 2,
-                             oct: (2 if sys.version_info[0] == 3 else 1),
+                             oct: (2 if PY3 else 1), # PY3: 0o..., PY2: 0...
                              hex: 2
                              }[method]
             ret = ret[prefix_length:]
@@ -293,7 +295,7 @@ class _Converter:
         using Python's `bool` method.
         """
         self._log_types(item)
-        if isinstance(item, basestring):
+        if isinstance(item, string_types):
             if utils.eq(item, 'True'):
                 return True
             if utils.eq(item, 'False'):
@@ -346,7 +348,7 @@ class _Converter:
         New in Robot Framework 2.8.2.
         """
         try:
-            if sys.version_info[0] == 3 and input_type in ('text', 'int') and (
+            if PY3 and input_type in ('text', 'int') and (
               isinstance(input, (bytes, bytearray))
               ):
                 return bytes(input)
@@ -354,7 +356,7 @@ class _Converter:
                 ordinals = getattr(self, '_get_ordinals_from_%s' % input_type)
             except AttributeError:
                 raise RuntimeError("Invalid input type '%s'." % input_type)
-            if sys.version_info[0] == 3:
+            if PY3: # bytes directly take number sequences
                 return bytes(ordinals(input))
             return ''.join(chr(o) for o in ordinals(input))
         except:
@@ -372,9 +374,9 @@ class _Converter:
                            % (type, original))
 
     def _get_ordinals_from_int(self, input):
-        if isinstance(input, basestring):
+        if isinstance(input, string_types):
             input = input.split()
-        elif isinstance(input, (int, long)):
+        elif isinstance(input, integer_types):
             input = [input]
         for integer in input:
             ordinal = self._convert_to_integer(integer)
@@ -391,12 +393,12 @@ class _Converter:
             yield self._test_ordinal(ordinal, token, 'Binary value')
 
     def _input_to_tokens(self, input, length):
-        if not isinstance(input, basestring):
+        if not isinstance(input, string_types):
             return input
         input = ''.join(input.split())
         if len(input) % length != 0:
             raise RuntimeError('Expected input to be multiple of %d.' % length)
-        return (input[i:i+length] for i in xrange(0, len(input), length))
+        return (input[i:i+length] for i in range(0, len(input), length))
 
     def create_list(self, *items):
         """Returns a list containing given items.
@@ -528,12 +530,12 @@ class _Verify:
     def _get_type(self, arg):
         # In IronPython type(u'x') is str. We want to report unicode anyway,
         # except for Python 3.
-        if sys.version_info[0] < 3 and isinstance(arg, unicode):
+        if PY2 and isinstance(arg, unicode):
             return "<type 'unicode'>"
         return str(type(arg))
 
     def _include_values(self, values):
-        if isinstance(values, basestring):
+        if isinstance(values, string_types):
             return values.lower() not in ['no values', 'false']
         return bool(values)
 
@@ -645,7 +647,7 @@ class _Verify:
         error message with `msg` and `values`.
         """
         self._log_types(first, second)
-        first, second = [self._convert_to_string(i) for i in first, second]
+        first, second = [self._convert_to_string(i) for i in (first, second)]
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True):
@@ -655,7 +657,7 @@ class _Verify:
         error message with `msg` and `values`.
         """
         self._log_types(first, second)
-        first, second = [self._convert_to_string(i) for i in first, second]
+        first, second = [self._convert_to_string(i) for i in (first, second)]
         self._should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):
@@ -1161,7 +1163,7 @@ class _Variables:
             return name
 
     def _unescape_variable_if_needed(self, name):
-        if not (isinstance(name, basestring) and len(name) > 1):
+        if not (isinstance(name, string_types) and len(name) > 1):
             raise ValueError
         if name.startswith('\\'):
             name = name[1:]
@@ -1202,7 +1204,7 @@ class _RunKeyword:
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
-        if not isinstance(name, basestring):
+        if not isinstance(name, string_types):
             raise RuntimeError('Keyword name must be a string.')
         kw = Keyword(name, list(args))
         return kw.run(self._context)
@@ -1244,10 +1246,10 @@ class _RunKeyword:
         for kw, args in self._split_run_keywords(list(keywords)):
             try:
                 self.run_keyword(kw, *args)
-            except ExecutionPassed, err:
+            except ExecutionPassed as err:
                 err.set_earlier_failures(errors)
                 raise err
-            except ExecutionFailed, err:
+            except ExecutionFailed as err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(self._context.in_teardown):
                     break
@@ -1375,7 +1377,7 @@ class _RunKeyword:
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             if err.dont_continue:
                 raise
             return 'FAIL', unicode(err)
@@ -1414,7 +1416,7 @@ class _RunKeyword:
         """
         try:
             return self.run_keyword(name, *args)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             if not err.dont_continue:
                 err.continue_on_failure = True
             raise err
@@ -1442,7 +1444,7 @@ class _RunKeyword:
         """
         try:
             self.run_keyword(name, *args)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             if err.dont_continue:
                 raise
             # To make err accessible after this except block in Python 3:
@@ -1482,7 +1484,7 @@ class _RunKeyword:
         times = self._convert_to_integer(times)
         if times <= 0:
             self.log("Keyword '%s' repeated zero times" % name)
-        for i in xrange(times):
+        for i in range(times):
             self.log("Repeating keyword, round %d/%d" % (i+1, times))
             self.run_keyword(name, *args)
 
@@ -1517,7 +1519,7 @@ class _RunKeyword:
         while not error:
             try:
                 return self.run_keyword(name, *args)
-            except ExecutionFailed, err:
+            except ExecutionFailed as err:
                 if err.dont_continue:
                     raise
                 if time.time() > maxtime:
@@ -2141,7 +2143,7 @@ class _Misc:
         """
         try:
             old = self._context.output.set_log_level(level)
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
         self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
         self.log('Log level changed from %s to %s' % (old, level.upper()))
@@ -2173,7 +2175,7 @@ class _Misc:
         """
         try:
             self._namespace.import_library(name, list(args))
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
 
     @run_keyword_variant(resolve=0)
@@ -2197,7 +2199,7 @@ class _Misc:
         """
         try:
             self._namespace.import_variables(path, list(args), overwrite=True)
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
 
     @run_keyword_variant(resolve=0)
@@ -2217,7 +2219,7 @@ class _Misc:
         """
         try:
             self._namespace.import_resource(path)
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
 
     def set_library_search_order(self, *libraries):
@@ -2280,7 +2282,7 @@ class _Misc:
                 raise DataError("No keyword with name '%s' found." % name)
             if isinstance(handler, UserErrorHandler):
                 handler.run()
-        except DataError, err:
+        except DataError as err:
             raise AssertionError(msg or unicode(err))
 
     def get_time(self, format='timestamp', time_='NOW'):
@@ -2638,7 +2640,7 @@ class _Misc:
         """
         try:
             return self._namespace.get_library_instance(name)
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
 
 
@@ -2683,7 +2685,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
         return matcher.match(string)
 
     def _is_true(self, condition):
-        if isinstance(condition, basestring):
+        if isinstance(condition, string_types):
             condition = self.evaluate(condition, modules='os,sys')
         return bool(condition)
 

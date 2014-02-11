@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import reraise
+
 import sys
 from threading import Event
 
@@ -55,7 +57,7 @@ class ThreadedRunner(Runnable):
 
     def get_result(self):
         if self._error:
-            raise self._error, None, self._traceback
+            reraise(self._error, None, self._traceback)
         return self._result
 
     def stop_thread(self):

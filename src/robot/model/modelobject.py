@@ -12,26 +12,28 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, add_metaclass
+
 import sys
 
 from robot.utils.setter import SetterAwareType
 
 
+@add_metaclass(SetterAwareType)
 class ModelObject(object):
     __slots__ = []
-    __metaclass__ = SetterAwareType
 
     def __unicode__(self):
         return self.name
 
     def __str__(self):
-        if sys.version_info[0] == 3:
+        if PY3:
             return self.__unicode__()
         return unicode(self).encode('ASCII', 'replace')
 
-    if sys.version_info[0] == 3:
-        def __bytes__(self):
-            return str(self).encode('ASCII', 'replace')
+    # PY3
+    def __bytes__(self):
+        return str(self).encode('ASCII', 'replace')
 
     def __repr__(self):
         return repr(str(self))

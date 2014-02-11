@@ -12,24 +12,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
 import sys
 from operator import itemgetter
 
 from robot.utils import compress_text
 
 
-# Normally handled by 2to3, but not for long as base type:
-if sys.version_info[0] == 3:
+if PY3:
     long = int
-
+#TODO: Still needed?
 class StringIndex(long):
     # Methods below are needed due to http://bugs.jython.org/issue1828
 
     def __str__(self):
         return long.__str__(self).rstrip('L')
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(long(self))
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
 
 class StringCache(object):

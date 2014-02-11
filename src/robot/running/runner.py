@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import text_type as unicode
 
 from robot.errors import ExecutionFailed, DataError, PassExecution
 from robot.model import SuiteVisitor
@@ -118,7 +118,7 @@ class Runner(SuiteVisitor):
             status.test_failed('Test case contains no keywords.', result.critical)
         try:
             result.tags = self._context.variables.replace_list(result.tags)
-        except DataError, err:
+        except DataError as err:
             status.test_failed('Replacing variables from test tags failed: %s'
                                % unicode(err), result.critical)
         self._context.start_test(result)
@@ -127,13 +127,13 @@ class Runner(SuiteVisitor):
         try:
             if not status.failures:
                 keywords.run(self._context)
-        except PassExecution, exception:
+        except PassExecution as exception:
             err = exception.earlier_failures
             if err:
                 status.test_failed(err, result.critical)
             else:
                 result.message = exception.message
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             status.test_failed(err, result.critical)
             if err.timeout:
                 self._context.timeout_occurred = True
@@ -180,14 +180,14 @@ class Runner(SuiteVisitor):
             return None
         try:
             name = self._variables.replace_string(data.name)
-        except DataError, err:
+        except DataError as err:
             return err
         if name.upper() in ('', 'NONE'):
             return None
         kw = Keyword(name, data.args, type=kw_type)
         try:
             kw.run(self._context)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             if err.timeout:
                 self._context.timeout_occurred = True
             return err

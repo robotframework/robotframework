@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 import sys
 
 # Need different unic implementations for different Pythons because:

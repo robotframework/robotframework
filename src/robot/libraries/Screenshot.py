@@ -253,24 +253,27 @@ class ScreenshotTaker(object):
     def __call__(self, path):
         self._screenshot(path)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.module != 'no'
 
+    def __nonzero__(self):
+        return self.__bool__()
+
     def test(self, path=None):
-        print "Using '%s' module." % self.module
+        print("Using '%s' module." % self.module)
         if not self:
             return False
         if not path:
-            print "Not taking test screenshot."
+            print("Not taking test screenshot.")
             return True
-        print "Taking test screenshot to '%s'." % path
+        print("Taking test screenshot to '%s'." % path)
         try:
             self(path)
         except:
-            print "Failed: %s" % utils.get_error_message()
+            print("Failed: %s" % utils.get_error_message())
             return False
         else:
-            print "Success!"
+            print("Success!")
             return True
 
     def _get_screenshot_taker(self, module_name):
@@ -348,6 +351,6 @@ if __name__ == "__main__":
     path = utils.abspath(sys.argv[1])
     module = sys.argv[2] if len(sys.argv) == 3 else None
     shooter = ScreenshotTaker(module)
-    print 'Using %s modules' % shooter.module
+    print('Using %s modules' % shooter.module)
     shooter(path)
-    print path
+    print(path)

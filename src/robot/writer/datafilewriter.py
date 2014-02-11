@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import PY3
+
 import os
 import sys
 
@@ -97,7 +98,7 @@ class WritingContext(object):
         if not self.output:
             # In Python 3, open with 'wb' only accepts bytes data,
             # which causes TypeErrors at other points
-            mode = 'w' if sys.version_info[0] == 3 else 'wb'
+            mode = 'w' if PY3 else 'wb'
             self.output = open(self._output_path(), mode)
         return self
 

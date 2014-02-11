@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 import os.path
 import copy
 
@@ -95,7 +97,7 @@ class ImportCache:
         self._items = []
 
     def __setitem__(self, key, item):
-        if not isinstance(key, (basestring, tuple)):
+        if not isinstance(key, (string_types) + (tuple,)):
             raise FrameworkError('Invalid key for ImportCache')
         key = self._norm_path_key(key)
         if key not in self._keys:
@@ -127,4 +129,4 @@ class ImportCache:
         return key
 
     def _is_path(self, key):
-        return isinstance(key, basestring) and os.path.isabs(key) and os.path.exists(key)
+        return isinstance(key, string_types) and os.path.isabs(key) and os.path.exists(key)

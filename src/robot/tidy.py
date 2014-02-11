@@ -27,6 +27,7 @@ Instead of ``python`` it is possible to use also other Python interpreters.
 This module also provides :class:`Tidy` class and :func:`tidy_cli` function
 that can be used programmatically. Other code is for internal usage.
 """
+from six import PY3, string_types, text_type as unicode
 
 USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
@@ -110,7 +111,10 @@ can also be run as a script like `python path/robot/tidy.py`.
 
 import os
 import sys
-from StringIO import StringIO
+if PY3:
+    from io import StringIO
+else:
+    from StringIO import StringIO
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
@@ -149,7 +153,7 @@ class Tidy(object):
         Use :func:`inplace` to tidy files in-place.
         """
         data = self._parse_data(path)
-        mode = 'w' if sys.version_info[0] == 3 else 'wb'
+        mode = 'w' if PY3 else 'wb'
         outfile = open(output, mode) if output else StringIO()
         try:
             self._save_file(data, outfile)

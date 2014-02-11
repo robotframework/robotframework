@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, text_type as unicode
+
 import sys
 
 from .encodingsniffer import get_output_encoding, get_system_encoding
@@ -37,7 +39,7 @@ def decode_output(string, force=False):
 def encode_output(string, errors='replace'):
     """Encodes Unicode to bytes in console encoding."""
     # http://ironpython.codeplex.com/workitem/29487
-    if sys.version_info[0] == 3 or sys.platform == 'cli':
+    if PY3 or sys.platform == 'cli':
         return string
     return string.encode(OUTPUT_ENCODING, errors)
 
@@ -55,6 +57,6 @@ def decode_from_system(string, can_be_from_java=True):
 
 def encode_to_system(string, errors='replace'):
     """Encodes Unicode to system encoding (e.g. cli args and env vars)."""
-    if sys.version_info[0] == 3:
+    if PY3:
         return string
     return string.encode(SYSTEM_ENCODING, errors)

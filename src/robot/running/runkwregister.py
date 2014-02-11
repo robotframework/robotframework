@@ -42,9 +42,9 @@ class _RunKeywordRegister:
         # Python 3 has no unbound methods, they are just functions,
         # so ismethod won't be True...
         if inspect.ismethod(method):
-            return method.im_func.func_code.co_argcount - 1
+            return method.__func__.__code__.co_argcount - 1
         elif inspect.isfunction(method):
-            code = method.func_code
+            code = method.__code__
             argcount = code.co_argcount
             # ...but you can look at the args:
             #TODO: Better solution?

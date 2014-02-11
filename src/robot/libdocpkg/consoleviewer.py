@@ -55,7 +55,7 @@ class ConsoleViewer(object):
         self._console(self._libdoc.version or 'N/A')
 
     def _console(self, msg):
-        print encode_output(msg)
+        print(encode_output(msg))
 
     def _show_intro(self, lib):
         self._header(lib.name, underline='=')

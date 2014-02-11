@@ -18,5 +18,5 @@ with open(OUTPUT, 'w') as output:
     libdoc = LibraryDocumentation(INPUT)
     LibdocModelWriter(output, libdoc).write_data()
 
-print OUTPUT
+print(OUTPUT)
 

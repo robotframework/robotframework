@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 import re
 import inspect
 from functools import partial
@@ -144,7 +146,7 @@ class Variables(utils.NormalizedDict):
         expression = res.group(2)
         try:
             variable = self['${%s}' % base_name]
-        except DataError, err:
+        except DataError as err:
             raise DataError(err_pre + unicode(err))
         try:
             return eval('_BASE_VAR_' + expression, {'_BASE_VAR_': variable})
@@ -214,7 +216,7 @@ class Variables(utils.NormalizedDict):
         return results
 
     def _replace_variables_inside_possible_list_var(self, item):
-        if not (isinstance(item, basestring) and
+        if not (isinstance(item, string_types) and
                 item.startswith('@{') and item.endswith('}')):
             return None
         var = VariableSplitter(item, self._identifiers)
@@ -237,7 +239,7 @@ class Variables(utils.NormalizedDict):
         return self.replace_string(item, var)
 
     def _cannot_have_variables(self, item):
-        return not (isinstance(item, basestring) and '{' in item)
+        return not (isinstance(item, string_types) and '{' in item)
 
     def replace_string(self, string, splitter=None, ignore_errors=False):
         """Replaces variables from a string. Result is always a string."""
@@ -322,7 +324,7 @@ class Variables(utils.NormalizedDict):
             if name.startswith(list_prefix):
                 name = '@{%s}' % name[len(list_prefix):]
                 try:
-                    if isinstance(value, basestring):
+                    if isinstance(value, string_types):
                         raise TypeError
                     value = list(value)
                 except TypeError:
@@ -342,12 +344,12 @@ class Variables(utils.NormalizedDict):
                     var.name, var.value, var.report_invalid_syntax)
                 if overwrite or not self.contains(name):
                     self.set(name, value)
-            except DataError, err:
+            except DataError as err:
                 var.report_invalid_syntax(err)
 
     def _get_var_table_name_and_value(self, name, value, error_reporter):
         self._validate_var_name(name)
-        if is_scalar_var(name) and isinstance(value, basestring):
+        if is_scalar_var(name) and isinstance(value, string_types):
             value = [value]
         else:
             self._validate_var_is_not_scalar_list(name, value)
@@ -413,7 +415,7 @@ class Variables(utils.NormalizedDict):
 
     def contains(self, variable, extended=False):
         if extended:
-            return self.has_key(variable)
+            return variable in self
         return utils.NormalizedDict.has_key(self, variable)
 
 
@@ -426,7 +428,7 @@ class DelayedVariable(object):
     def resolve(self, name, variables):
         try:
             value = self._resolve(name, variables)
-        except DataError, err:
+        except DataError as err:
             self._error_reporter(unicode(err))
             variables.pop(name)
             raise DataError("Non-existing variable '%s'." % name)

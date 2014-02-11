@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 import os
 import copy
 
@@ -266,8 +268,12 @@ class _Table(object):
     def report_invalid_syntax(self, message, level='ERROR'):
         self.parent.report_invalid_syntax(message, level)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._header or len(self))
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def __len__(self):
         return sum(1 for item in self)
@@ -437,8 +443,12 @@ class TestCaseTable(_Table):
     def is_started(self):
         return bool(self._header)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return True
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
 
 class KeywordTable(_Table):
@@ -467,7 +477,7 @@ class Variable(object):
         self.name = name.rstrip('= ')
         if name.startswith('$') and value == []:
             value = ''
-        if isinstance(value, basestring):
+        if isinstance(value, string_types):
             value = [value]  # Must support scalar lists until RF 2.8 (issue 939)
         self.value = value
         self.comment = Comment(comment)
@@ -486,8 +496,12 @@ class Variable(object):
     def has_data(self):
         return bool(self.name or ''.join(self.value))
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.has_data()
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def report_invalid_syntax(self, message, level='ERROR'):
         self.parent.report_invalid_syntax("Setting variable '%s' failed: %s"

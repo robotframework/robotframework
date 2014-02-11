@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import PY3, text_type as unicode
+
 import os
 import sys
 import tempfile
@@ -1252,7 +1253,7 @@ class OperatingSystem:
             if not os.path.isfile(path):
                 raise ValueError('Modified time can only be set to regular files')
             mtime = parse_time(mtime)
-        except ValueError, err:
+        except ValueError as err:
             raise RuntimeError("Setting modified time of '%s' failed: %s"
                                % (path, unicode(err)))
         os.utime(path, (mtime, mtime))
@@ -1400,7 +1401,7 @@ class OperatingSystem:
         if logger:
             logger.write(msg, level)
         else:
-            print '*%s* %s' % (level, msg)
+            print('*%s* %s' % (level, msg))
 
 
 class _Process:
@@ -1438,7 +1439,7 @@ class _Process:
                 command = command[:-1] + ' 2>&1 &'
             else:
                 command += ' 2>&1'
-        if sys.version_info[0] == 3:
+        if PY3:
             return command
         return self._encode_to_file_system(command)
 

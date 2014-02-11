@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
 import os
 from os.path import abspath, dirname, join, normpath
 

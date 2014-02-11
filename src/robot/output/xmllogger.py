@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 from robot.errors import DataError
 from robot.utils import XmlWriter, NullMarkupWriter, get_timestamp, unic
 from robot.version import get_full_version
@@ -33,7 +35,7 @@ class XmlLogger(ResultVisitor):
             return NullMarkupWriter()
         try:
             writer = XmlWriter(path, encoding='UTF-8')
-        except EnvironmentError, err:
+        except EnvironmentError as err:
             raise DataError("Opening output file '%s' failed: %s" %
                             (path, err.strerror))
         writer.start('robot', {'generator': get_full_version(generator),

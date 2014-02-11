@@ -12,11 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 from .variablesplitter import VariableIterator
 
 
 def is_var(string):
-    if not isinstance(string, basestring):
+    if not isinstance(string, string_types):
         return False
     length = len(string)
     return length > 3 and string[0] in ['$','@'] and string.rfind('{') == 1 \
@@ -32,5 +34,5 @@ def is_list_var(string):
 
 
 def contains_var(string):
-    return bool(isinstance(string, basestring) and
+    return bool(isinstance(string, string_types) and
                 VariableIterator(string, '$@'))

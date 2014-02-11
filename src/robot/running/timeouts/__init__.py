@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, text_type as unicode
+
 import sys
 import os
 import time
@@ -55,7 +57,7 @@ class _Timeout(object):
             self.secs = utils.timestr_to_secs(self.string)
             self.string = utils.secs_to_timestr(self.secs)
             self.message = variables.replace_string(self.message)
-        except (DataError, ValueError), err:
+        except (DataError, ValueError) as err:
             self.secs = 0.000001 # to make timeout active
             self.error = 'Setting %s timeout failed: %s' \
                     % (self.type.lower(), unicode(err))
@@ -76,7 +78,7 @@ class _Timeout(object):
         return self.active and self.time_left() <= 0
 
     def __str__(self):
-        if sys.version_info[0] == 3:
+        if PY3:
             return self.__unicode__()
         return unicode(self).encode('utf-8')
 
@@ -96,8 +98,12 @@ class _Timeout(object):
     ## def __eq__(self, other):
     ##     ...
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.string and self.string.upper() != 'NONE')
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def run(self, runnable, args=None, kwargs=None):
         if self.error:

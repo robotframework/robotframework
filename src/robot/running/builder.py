@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 from robot.errors import DataError
 from robot.parsing import TestData
 from robot.running.defaults import TestDefaults
@@ -60,7 +62,7 @@ class TestSuiteBuilder(object):
             return TestData(source=abspath(path),
                             include_suites=self.include_suites,
                             warn_on_skipped=self.warn_on_skipped)
-        except DataError, err:
+        except DataError as err:
             raise DataError("Parsing '%s' failed: %s" % (path, unicode(err)))
 
     def _build_suite(self, data, parent_defaults=None):

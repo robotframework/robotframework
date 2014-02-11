@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 ##TODO: In Python 3 this causes some circular import problems:
 ## import utils
 
@@ -35,11 +37,7 @@ class RobotError(Exception):
 
     @property
     def message(self):
-        return self.__unicode__()
-
-    def __unicode__(self):
-        # Needed to handle exceptions w/ Unicode correctly on Python 2.5
-        return unicode(self.args[0]) if self.args else u''
+        return unicode(self)
 
 
 class FrameworkError(RobotError):

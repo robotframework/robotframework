@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 import re
 from functools import partial
 
@@ -63,7 +65,7 @@ class MultiMatcher(object):
     def _ensure_list(self, patterns):
         if patterns is None:
             return []
-        if isinstance(patterns, basestring):
+        if isinstance(patterns, string_types):
             return [patterns]
         return patterns
 

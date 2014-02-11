@@ -12,12 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, string_types
+
 import sys
 
 from .markuputils import html_escape, xml_escape, attribute_escape
-
-
-PY3 = sys.version_info[0] == 3
 
 
 class _MarkupWriter(object):
@@ -31,7 +30,7 @@ class _MarkupWriter(object):
         :param encoding: Encoding to be used to encode all text written to the
             output file. If `None`, text will not be encoded.
         """
-        if isinstance(output, basestring):
+        if isinstance(output, string_types):
             if PY3:
                 output = open(output, 'w', encoding=encoding)
             else:

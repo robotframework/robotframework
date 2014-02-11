@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import integer_types, string_types
+
 import re
 
 from robot.errors import DataError
@@ -63,7 +65,7 @@ class VariableAssigner(object):
         return base.strip() + '}', attr[:-1].strip()
 
     def _variable_supports_extended_assign(self, var):
-        return not isinstance(var, (basestring, int, long, float))
+        return not isinstance(var, string_types + integer_types + (float,))
 
     def _is_valid_extended_attribute(self, attr):
         return self._valid_extended_attr.match(attr) is not None
@@ -133,7 +135,7 @@ class ReturnValue(object):
         return [(variable, ret)]
 
     def _convert_to_list(self, ret):
-        if isinstance(ret, basestring):
+        if isinstance(ret, string_types):
             self._raise_expected_list(ret)
         try:
             return list(ret)
@@ -145,16 +147,16 @@ class ReturnValue(object):
         if len(ret) < needed:
             self._raise_too_few_arguments(ret)
         if len(ret) == needed:
-            return zip(scalars, ret)
-        return zip(scalars[:-1], ret) + [(scalars[-1], ret[needed-1:])]
+            return list(zip(scalars, ret))
+        return list(zip(scalars[:-1], ret)) + [(scalars[-1], ret[needed-1:])]
 
     def _scalars_and_list(self, scalars, list_, ret):
         if len(ret) < len(scalars):
             self._raise_too_few_arguments(ret)
-        return zip(scalars, ret) + [(list_, ret[len(scalars):])]
+        return list(zip(scalars, ret)) + [(list_, ret[len(scalars):])]
 
     def _raise_expected_list(self, ret):
-        typ = 'string' if isinstance(ret, basestring) else type(ret).__name__
+        typ = 'string' if isinstance(ret, string_types) else type(ret).__name__
         self._raise('Expected list-like object, got %s instead.' % typ)
 
     def _raise_too_few_arguments(self, ret):

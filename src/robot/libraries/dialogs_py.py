@@ -12,13 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
 import sys
 from threading import currentThread
-try:
-    from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
-                         BOTH, END, LEFT, W)
-except ImportError: # Python 3
+if PY3:
     from tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
+                         BOTH, END, LEFT, W)
+else:
+    from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
                          BOTH, END, LEFT, W)
 
 

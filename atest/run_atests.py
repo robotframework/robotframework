@@ -63,7 +63,7 @@ if sys.version_info[0] == 3 and do2to3:
       ['2to3', '--no-diffs', '-n', '-w',
        '-x', 'dict',
        '-x', 'filter',
-       PY3DIR
+       PY3ATESTDIR
        ])
     if status:
         sys.exit(status)

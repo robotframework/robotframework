@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import text_type as unicode
 
 import os
 import re
@@ -41,7 +41,7 @@ class UserLibrary(BaseLibrary):
         for kw in user_keywords:
             try:
                 handler = self._create_handler(kw)
-            except DataError, err:
+            except DataError as err:
                 LOGGER.error("Creating user keyword '%s' failed: %s"
                              % (kw.name, unicode(err)))
                 continue
@@ -79,7 +79,7 @@ class UserLibrary(BaseLibrary):
     def get_handler(self, name):
         try:
             return BaseLibrary.get_handler(self, name)
-        except DataError, error:
+        except DataError as error:
             found = self._get_embedded_arg_handlers(name)
             if not found:
                 raise error
@@ -179,13 +179,13 @@ class UserKeywordHandler(object):
         error = return_ = pass_ = None
         try:
             self.keywords.run(context)
-        except ReturnFromKeyword, exception:
+        except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures
-        except ExecutionPassed, exception:
+        except ExecutionPassed as exception:
             pass_ = exception
             error = exception.earlier_failures
-        except ExecutionFailed, exception:
+        except ExecutionFailed as exception:
             error = exception
         with context.keyword_teardown(error):
             td_error = self._run_teardown(context)
@@ -219,7 +219,7 @@ class UserKeywordHandler(object):
             return None
         try:
             name = context.variables.replace_string(self.teardown.name)
-        except DataError, err:
+        except DataError as err:
             return ExecutionFailed(unicode(err), syntax=True)
         if name.upper() in ('', 'NONE'):
             return None
@@ -228,7 +228,7 @@ class UserKeywordHandler(object):
             kw.run(context)
         except PassExecution:
             return None
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             return err
         return None
 
@@ -244,7 +244,7 @@ class UserKeywordHandler(object):
         contains_list_var = any(is_list_var(item) for item in ret)
         try:
             ret = variables.replace_list(ret)
-        except DataError, err:
+        except DataError as err:
             raise DataError('Replacing variables from keyword return value '
                             'failed: %s' % unicode(err))
         if len(ret) != 1 or contains_list_var:
@@ -323,7 +323,7 @@ class EmbeddedArgs(UserKeywordHandler):
         if not match:
             raise TypeError('Does not match given name')
         UserKeywordHandler.__init__(self, template.keyword, template.libname)
-        self.embedded_args = zip(template.embedded_args, match.groups())
+        self.embedded_args = list(zip(template.embedded_args, match.groups()))
         self.name = name
         self.orig_name = template.name
 

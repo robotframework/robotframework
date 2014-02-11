@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import text_type as unicode
 
 from robot.errors import DataError
 from robot.utils import ET, ETSource, get_error_message
@@ -61,7 +61,7 @@ def _single_result(source, options):
     ets = ETSource(source)
     try:
         return ExecutionResultBuilder(ets, **options).build(Result(source))
-    except IOError, err:
+    except IOError as err:
         error = err.strerror
     except:
         error = get_error_message()

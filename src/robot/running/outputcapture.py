@@ -12,8 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
 import sys
-from StringIO import StringIO
+if PY3:
+    from io import StringIO
+else:
+    from StringIO import StringIO
 
 from robot.output import LOGGER
 from robot.utils import decode_output, encode_output

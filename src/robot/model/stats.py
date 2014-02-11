@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 from robot.utils import elapsed_time_to_string, html_escape, normalize
 
 from .tags import TagPatterns
@@ -59,7 +61,7 @@ class Stat(object):
         return {}
 
     def _html_escape(self, item):
-        return html_escape(item) if isinstance(item, basestring) else item
+        return html_escape(item) if isinstance(item, string_types) else item
 
     @property
     def total(self):
@@ -88,8 +90,11 @@ class Stat(object):
     ## def __eq__(self, other):
     ##     ...
 
-    def __nonzero__(self):
+    def __bool__(self):
         return not self.failed
+
+    def __nonzero__(self):
+        return self.__bool__()
 
     def visit(self, visitor):
         visitor.visit_stat(self)

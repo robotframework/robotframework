@@ -12,8 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
-
 from robot.model import Statistics
 
 from .executionerrors import ExecutionErrors

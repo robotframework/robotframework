@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
 import sys
 try:
     import csv
@@ -131,7 +133,7 @@ class TsvFileWriter(_DataFileWriter):
         return csv.writer(configuration.output, dialect=dialect)
 
     def _write_row(self, row):
-        if sys.version_info[0] == 3:
+        if PY3:
             self._writer.writerow(list(row))
         else:
             self._writer.writerow([self._encode(c) for c in row])

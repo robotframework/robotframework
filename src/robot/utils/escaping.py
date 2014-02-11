@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, unichr
+
 import re
 
 
@@ -19,7 +21,7 @@ _SEQS_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
 
 
 def escape(item):
-    if not isinstance(item, basestring):
+    if not isinstance(item, string_types):
         return item
     for seq in _SEQS_TO_BE_ESCAPED:
         if seq in item:
@@ -28,7 +30,7 @@ def escape(item):
 
 
 def unescape(item):
-    if not (isinstance(item, basestring) and '\\' in item):
+    if not (isinstance(item, string_types) and '\\' in item):
         return item
     return Unescaper().unescape(item)
 

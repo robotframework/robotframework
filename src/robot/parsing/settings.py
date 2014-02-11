@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, string_types
+
 from .comments import Comment
 
 
@@ -58,7 +60,7 @@ class Setting(object):
         self.parent.report_invalid_syntax(message, level)
 
     def _string_value(self, value):
-        return value if isinstance(value, basestring) else ' '.join(value)
+        return value if isinstance(value, string_types) else ' '.join(value)
 
     def _concat_string_with_value(self, string, value):
         if string:
@@ -74,8 +76,12 @@ class Setting(object):
             ret.extend(self.value)
         return ret
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.is_set()
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def __iter__(self):
         return iter(self.value)
@@ -83,8 +89,10 @@ class Setting(object):
     def __unicode__(self):
         return unicode(self.value or '')
 
-    def __str__(self):
-        return self.__unicode__()
+    if PY3:
+        def __str__(self):
+            return str(self.value or '')
+
 
 class StringValueJoiner(object):
 
@@ -97,7 +105,7 @@ class StringValueJoiner(object):
         return self.string_value(value)
 
     def string_value(self, value):
-        if isinstance(value, basestring):
+        if isinstance(value, string_types):
             return value
         return self._separator.join(value)
 
@@ -111,7 +119,7 @@ class Documentation(Setting):
         self.value = self._concat_string_with_value(self.value, value)
 
     def _string_value(self, value):
-        return value if isinstance(value, basestring) else ''.join(value)
+        return value if isinstance(value, string_types) else ''.join(value)
 
     def _data_as_list(self):
         return [self.setting_name, self.value]
@@ -277,7 +285,7 @@ class Library(_Import):
         _Import.__init__(self, parent, name, args, alias, comment)
 
     def _split_alias(self, args):
-        if len(args) >= 2 and isinstance(args[-2], basestring) \
+        if len(args) >= 2 and isinstance(args[-2], string_types) \
                 and args[-2].upper() == 'WITH NAME':
             return args[:-2], args[-1]
         return args, None

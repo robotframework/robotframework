@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import string_types
 
 import copy
 import re
@@ -460,7 +460,7 @@ class XML(object):
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if isinstance(source, basestring):
+        if isinstance(source, string_types):
             source = self.parse_xml(source)
         if not xpath:
             raise RuntimeError('No xpath given.')

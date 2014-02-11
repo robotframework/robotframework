@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 from robot import utils
 from robot import model
 
@@ -44,7 +46,7 @@ class SuiteConfigurer(model.SuiteConfigurer):
     def _get_remove_keywords(self, value):
         if value is None:
             return []
-        if isinstance(value, basestring):
+        if isinstance(value, string_types):
             return [value]
         return value
 

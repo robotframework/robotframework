@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 from robot.errors import DataError
 from robot.utils import get_error_message, unic, is_java_method
 
@@ -55,7 +57,7 @@ class _DynamicMethod(object):
         raise NotImplementedError
 
     def _to_string(self, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, string_types):
             raise DataError('Return value must be string.')
         return value if isinstance(value, unicode) else unic(value, 'UTF-8')
 
@@ -65,8 +67,12 @@ class _DynamicMethod(object):
         except (TypeError, DataError):
             raise DataError('Return value must be list of strings.')
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.method is not no_dynamic_method
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
 
 class GetKeywordNames(_DynamicMethod):
@@ -90,7 +96,7 @@ class RunKeyword(_DynamicMethod):
         return len(spec.positional) == 3
 
     def _supports_java_kwargs(self, method):
-        func = self.method.im_func if hasattr(method, 'im_func') else method
+        func = self.method.__func__ if hasattr(method, 'im_func') else method
         signatures = func.argslist[:func.nargs]
         spec = JavaArgumentParser().parse(signatures)
         return (self._java_single_signature_kwargs(spec) or

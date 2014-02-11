@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 from .normalizing import NormalizedDict
 
 
@@ -61,7 +63,7 @@ class ConnectionCache(object):
         self.current = connection
         self._connections.append(connection)
         index = len(self._connections)
-        if isinstance(alias, basestring):
+        if isinstance(alias, string_types):
             self._aliases[alias] = index
         return index
 
@@ -129,8 +131,12 @@ class ConnectionCache(object):
     def __len__(self):
         return len(self._connections)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.current is not self._no_current
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def _resolve_alias_or_index(self, alias_or_index):
         try:
@@ -139,7 +145,7 @@ class ConnectionCache(object):
             return self._resolve_index(alias_or_index)
 
     def _resolve_alias(self, alias):
-        if isinstance(alias, basestring):
+        if isinstance(alias, string_types):
             try:
                 return self._aliases[alias]
             except KeyError:
@@ -169,5 +175,9 @@ class NoConnection(object):
     def raise_error(self):
         raise RuntimeError(self.message)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return False
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()

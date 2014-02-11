@@ -12,14 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
 import sys
 
 from robot import utils
 
 from .logger import LOGGER
 from .loggerhelper import IsLogged
-
-PY3 = sys.version_info[0] == 3
 
 
 def DebugFile(path):
@@ -28,7 +28,7 @@ def DebugFile(path):
         return None
     try:
         outfile = open(path, 'w')
-    except EnvironmentError, err:
+    except EnvironmentError as err:
         LOGGER.error("Opening debug file '%s' failed: %s" % (path, err.strerror))
         return None
     else:

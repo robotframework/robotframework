@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import text_type as unicode
+
 import sys
 from contextlib import contextmanager
 
@@ -46,7 +47,7 @@ class Application(object):
 
     def console(self, msg):
         if msg:
-            print encode_output(msg)
+            print(encode_output(msg))
 
     @contextmanager
     def _logging(self):
@@ -60,9 +61,9 @@ class Application(object):
     def _parse_arguments(self, cli_args):
         try:
             options, arguments = self.parse_arguments(cli_args)
-        except Information, msg:
+        except Information as msg:
             self._report_info(unicode(msg))
-        except DataError, err:
+        except DataError as err:
             self._report_error(unicode(err), help=True, exit=True)
         else:
             self._logger.info('Arguments: %s' % ','.join(arguments))
@@ -85,7 +86,7 @@ class Application(object):
     def _execute(self, arguments, options):
         try:
             rc = self.main(arguments, **options)
-        except DataError, err:
+        except DataError as err:
             return self._report_error(unicode(err), help=True)
         except (KeyboardInterrupt, SystemExit):
             return self._report_error('Execution stopped by user.',
@@ -125,7 +126,7 @@ class DefaultLogger(object):
         pass
 
     def error(self, message):
-        print encode_output(message)
+        print(encode_output(message))
 
     def close(self):
         pass

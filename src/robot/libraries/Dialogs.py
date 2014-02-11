@@ -31,9 +31,9 @@ The library has following two limitations:
 import sys
 
 if sys.platform.startswith('java'):
-    from dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 elif sys.platform == 'cli':
-    from dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 else:
     ## from dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
     #HACK: Prevent 2to3 from converting to relative import

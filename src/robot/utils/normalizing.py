@@ -131,7 +131,7 @@ class NormalizedDict(UserDict):
         self._keys.clear()
 
     def has_key(self, key):
-        return self.data.has_key(self._normalize(key))
+        return self._normalize(key) in self.data
 
     __contains__ = has_key
 
@@ -159,7 +159,7 @@ class NormalizedDict(UserDict):
     def popitem(self):
         if not self:
             raise KeyError('dictionary is empty')
-        key = self.iterkeys().next()
+        key = next(self.iterkeys())
         return key, self.pop(key)
 
     def copy(self):

@@ -49,12 +49,12 @@ class JarRunner(RobotRunner):
     def run(self, args):
         try:
             self._run(args)
-        except SystemExit, err:
+        except SystemExit as err:
             return err.code
 
     def _run(self, args):
         if not args or args[0] in ('-h', '--help'):
-            print USAGE
+            print(USAGE)
             raise SystemExit(0)
         command, args = self._parse_command_line(args)
         command(args) # Always calls sys.exit()

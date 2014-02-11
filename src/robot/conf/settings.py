@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 import os
 
 from robot import utils
@@ -71,7 +73,7 @@ class _BaseSettings(object):
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             value = opts[cli_name] if cli_name in opts else default
-            if default == [] and isinstance(value, basestring):
+            if default == [] and isinstance(value, string_types):
                 value = [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
@@ -220,7 +222,7 @@ class _BaseSettings(object):
         try:
             if not os.path.exists(path):
                 os.makedirs(path)
-        except EnvironmentError, err:
+        except EnvironmentError as err:
             raise DataError("Creating %s file directory '%s' failed: %s"
                             % (type_.lower(), path, err.strerror))
 
@@ -292,14 +294,14 @@ class _BaseSettings(object):
         for value in values:
             try:
                 KeywordRemover(value)
-            except DataError, err:
+            except DataError as err:
                 raise DataError("Invalid value for option '--removekeywords'. %s" % err)
 
     def _validate_flatten_keywords(self, values):
         for value in values:
             try:
                 FlattenKeywordMatcher(value)
-            except DataError, err:
+            except DataError as err:
                 raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
     def __contains__(self, setting):

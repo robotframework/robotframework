@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import reraise, text_type as unicode
+
 import os
 import sys
 import inspect
@@ -60,7 +61,7 @@ class Importer(object):
             imported, source = self._import_class_or_module(name)
             self._log_import_succeeded(imported, name, source)
             return self._instantiate_if_needed(imported, instantiate_with_args)
-        except DataError, err:
+        except DataError as err:
             self._raise_import_failed(name, err)
 
     def _import_class_or_module(self, name):
@@ -83,7 +84,7 @@ class Importer(object):
             imported, source = self._by_path_importer.import_(path)
             self._log_import_succeeded(imported, imported.__name__, source)
             return self._instantiate_if_needed(imported, instantiate_with_args)
-        except DataError, err:
+        except DataError as err:
             self._raise_import_failed(path, err)
 
     def _raise_import_failed(self, name, error):
@@ -146,7 +147,7 @@ class _Importer(object):
                     return self._import(name, fromlist, retry=False)
                 # Cannot use plain raise due to
                 # http://ironpython.codeplex.com/workitem/32332
-                raise sys.exc_type, sys.exc_value, sys.exc_traceback
+                reraise(*sys.exc_info())
         except:
             raise DataError(*get_error_details())
 

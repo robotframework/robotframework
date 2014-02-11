@@ -12,8 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
 import ctypes
-import thread
+if PY3:
+    import _thread as thread
+else:
+    import thread
 import time
 from threading import Timer
 

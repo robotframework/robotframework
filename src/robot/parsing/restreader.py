@@ -12,10 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY2, PY3
+
 import sys
-if sys.version_info[0] == 3:
-    from io import BytesIO
-from cStringIO import StringIO
+if PY3:
+    from io import BytesIO, StringIO
+else:
+    from cStringIO import StringIO
 
 from .htmlreader import HtmlReader
 from .txtreader import TxtReader
@@ -37,17 +40,13 @@ def RestReader():
             return self._read_html(doctree, rawdata)
 
         def _read_text(self, data, rawdata):
-            if sys.version_info[0] == 3:
-                txtfile = StringIO(data)
-            else:
-                txtfile = StringIO(data.encode('UTF-8'))
+            if PY2:
+                data = data.encode('UTF-8')
+            txtfile = StringIO(data)
             return TxtReader().read(txtfile, rawdata)
 
         def _read_html(self, doctree, rawdata):
-            if sys.version_info[0] == 3:
-                htmlfile = BytesIO()
-            else:
-                htmlfile = StringIO()
+            htmlfile = BytesIO() if PY3 else StringIO()
             htmlfile.write(publish_from_doctree(
                 doctree, writer_name='html',
                 settings_overrides={'output_encoding': 'UTF-8'}))

@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, integer_types
 
 import sys
 
@@ -76,7 +77,7 @@ class _Dumper(object):
 
 
 class StringDumper(_Dumper):
-    _handled_types = basestring
+    _handled_types = str if PY3 else basestring
     _search_and_replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
                            ('\n', '\\n'), ('\r', '\\r'), ('</', '\\x3c/')]
 
@@ -87,7 +88,7 @@ class StringDumper(_Dumper):
         for search, replace in self._search_and_replace:
             if search in string:
                 string = string.replace(search, replace)
-        if sys.version_info[0] == 3:
+        if PY3:
             return string
         return string.encode('UTF-8')
 
@@ -103,7 +104,7 @@ class BytesDumper(StringDumper):
 
 
 class IntegerDumper(_Dumper):
-    _handled_types = (int, long, bool)
+    _handled_types = integer_types + (bool,)
 
     def dump(self, data, mapping):
         self._write(str(data).lower())

@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
 import sys
 
 from robot.utils import html_escape
@@ -53,9 +55,9 @@ class Message(ModelObject):
     def __unicode__(self):
         return self.message
 
-    if sys.version_info[0] == 3:
+    if PY3:
         def __str__(self):
-            return self.message
+            return self.__unicode__()
 
 
 class Messages(ItemList):

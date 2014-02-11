@@ -36,8 +36,12 @@ class NullPopulator(Populator):
     def populate(self):
         pass
 
-    def __nonzero__(self):
+    def __bool__(self):
         return False
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
 
 class _TablePopulator(Populator):
@@ -89,9 +93,9 @@ class SettingTablePopulator(_TablePopulator):
         setter = self._table.get_setter(row.head)
         if not setter:
             return NullPopulator()
-        if setter.im_class is Documentation:
+        if setter.__self__.__class__ is Documentation:
             return DocumentationPopulator(setter)
-        if setter.im_class is MetadataList:
+        if setter.__self__.__class__ is MetadataList:
             return MetadataPopulator(setter)
         return SettingPopulator(setter)
 
@@ -214,7 +218,7 @@ class _TestCaseUserKeywordPopulator(Populator):
             setter = self._setting_setter(row)
             if not setter:
                 return NullPopulator()
-            if setter.im_class is Documentation:
+            if setter.__self__.__class__ is Documentation:
                 return DocumentationPopulator(setter)
             return SettingPopulator(setter)
         if row.starts_for_loop():

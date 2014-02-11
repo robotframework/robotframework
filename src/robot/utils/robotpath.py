@@ -12,9 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, text_type as unicode
+
 import os
 import sys
-import urllib
+if PY3:
+    from urllib.request import pathname2url
+else:
+    from urllib import pathname2url
 
 from robot.errors import DataError
 
@@ -55,7 +60,7 @@ def abspath(path):
     if os.sep == '\\' and len(path) == 2 and path[1] == ':':
         return path + '\\'
     if not os.path.isabs(path):
-        path = os.path.join(os.getcwdu(), path)
+        path = os.path.join(os.getcwd() if PY3 else os.getcwdu(), path)
     return os.path.normpath(path)
 
 
@@ -68,7 +73,7 @@ def get_link_path(target, base):
     Rationale: os.path.relpath is not available before Python 2.6
     """
     path =  _get_pathname(target, base)
-    url = urllib.pathname2url(path.encode('UTF-8'))
+    url = pathname2url(path.encode('UTF-8'))
     if os.path.isabs(path):
         url = 'file:' + url
     # At least Jython seems to use 'C|/Path' and not 'C:/Path'

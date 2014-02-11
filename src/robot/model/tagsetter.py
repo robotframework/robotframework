@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from visitor import SuiteVisitor
+from .visitor import SuiteVisitor
 
 
 class TagSetter(SuiteVisitor):
@@ -31,5 +31,9 @@ class TagSetter(SuiteVisitor):
     def visit_keyword(self, keyword):
         pass
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.add or self.remove)
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()

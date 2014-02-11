@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 from robot.utils import (format_assign_message, get_elapsed_time,
                          get_error_message, get_timestamp, plural_or_not)
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -46,10 +48,10 @@ class Keywords(object):
         for kw in self._keywords:
             try:
                 kw.run(context)
-            except ExecutionPassed, exception:
+            except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
-            except ExecutionFailed, exception:
+            except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
                 if not exception.can_continue(context.in_teardown,
                                               self._templated,
@@ -58,8 +60,12 @@ class Keywords(object):
         if errors:
             raise ExecutionFailures(errors)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._keywords)
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def __iter__(self):
         return iter(self._keywords)
@@ -103,7 +109,7 @@ class Keyword(_BaseKeyword):
         handler = self._start(context)
         try:
             return_value = self._run(handler, context)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             self.status = self._get_status(err)
             self._end(context, error=err)
             raise
@@ -157,7 +163,7 @@ class Keyword(_BaseKeyword):
             return_value = error.return_value
         try:
             VariableAssigner(self.assign).assign(context, return_value)
-        except DataError, err:
+        except DataError as err:
             self.status = 'FAIL'
             msg = unicode(err)
             context.output.fail(msg)
@@ -200,9 +206,9 @@ class ForLoop(_BaseKeyword):
     def _run_with_error_handling(self, runnable, context):
         try:
             runnable(context)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             return err
-        except DataError, err:
+        except DataError as err:
             msg = unicode(err)
             context.output.fail(msg)
             return ExecutionFailed(msg, syntax=True)
@@ -254,7 +260,7 @@ class ForLoop(_BaseKeyword):
         if context.dry_run:
             return self.vars, [0]
         items = self._replace_vars_from_items(context.variables)
-        return items, range(0, len(items), len(self.vars))
+        return items, list(range(0, len(items), len(self.vars)))
 
     def _run_one_round(self, context, variables, values):
         foritem = _ForItem(variables, values)
@@ -285,7 +291,7 @@ class ForLoop(_BaseKeyword):
         if not 1 <= len(items) <= 3:
             raise DataError('FOR IN RANGE expected 1-3 arguments, '
                             'got %d instead.' % len(items))
-        return range(*items)
+        return list(range(*items))
 
     def _to_int_with_arithmetics(self, item):
         item = str(item)

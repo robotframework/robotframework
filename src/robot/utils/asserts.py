@@ -99,6 +99,8 @@ Example output::
     FAILED (failures=2)
 """
 
+from six import PY3, text_type as unicode
+
 from .unic import unic
 
 
@@ -151,7 +153,7 @@ def fail_unless_raises(exc_class, callable_obj, *args, **kwargs):
     """
     try:
         callable_obj(*args, **kwargs)
-    except exc_class, err:
+    except exc_class as err:
         return err
     else:
         if hasattr(exc_class,'__name__'):
@@ -165,7 +167,7 @@ def fail_unless_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
     """Similar to fail_unless_raises but also checks the exception message."""
     try:
         callable_obj(*args, **kwargs)
-    except exc_class, err:
+    except exc_class as err:
         assert_equal(expected_msg, unic(err), 'Correct exception but wrong message')
     else:
         if hasattr(exc_class,'__name__'):
@@ -250,6 +252,9 @@ def _get_default_message(obj1, obj2, delim):
         return '%s (%s) != %s (%s)' % (str1, _type_name(obj1),
                                        str2, _type_name(obj2))
     return '%s %s %s' % (str1, delim, str2)
+
+if PY3:
+    long = int
 
 def _type_name(val):
     known_types = {int: 'number', long: 'number', float: 'number',

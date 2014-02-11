@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import string_types
 
 import sys
 import os
@@ -806,6 +806,6 @@ env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
 
 
 def is_true(argument):
-    if isinstance(argument, basestring) and argument.upper() == 'FALSE':
+    if isinstance(argument, string_types) and argument.upper() == 'FALSE':
         return False
     return bool(argument)

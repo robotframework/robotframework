@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 from contextlib import contextmanager
 import os.path
 
@@ -27,7 +29,7 @@ class JsBuildingContext(object):
     def __init__(self, log_path=None, split_log=False, prune_input=False):
         # log_path can be a custom object in unit tests
         self._log_dir = os.path.dirname(log_path) \
-                if isinstance(log_path, basestring) else None
+                if isinstance(log_path, string_types) else None
         self._split_log = split_log
         self._prune_input = prune_input
         self._strings = self._top_level_strings = StringCache()
@@ -55,7 +57,7 @@ class JsBuildingContext(object):
         if not time:
             return None
         # Must use `long` due to http://ironpython.codeplex.com/workitem/31549
-        millis = long(round(timestamp_to_secs(time) * 1000))
+        millis = int(round(timestamp_to_secs(time) * 1000))
         if self.basemillis is None:
             self.basemillis = millis
         return millis - self.basemillis

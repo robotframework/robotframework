@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 
 class CommentCache(object):
 
@@ -22,7 +24,8 @@ class CommentCache(object):
         self._comments.append(comment)
 
     def consume_with(self, function):
-        map(function, self._comments)
+        for comment in self._comments:
+            function(comment)
         self.__init__()
 
 
@@ -43,7 +46,7 @@ class Comments(object):
 class Comment(object):
 
     def __init__(self, comment_data):
-        if isinstance(comment_data, basestring):
+        if isinstance(comment_data, string_types):
             comment_data = [comment_data] if comment_data else []
         self._comment = comment_data or []
 

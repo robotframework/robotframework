@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 from robot.errors import DataError
 from robot.utils import is_dict_like
 
@@ -56,7 +58,7 @@ class NamedArgumentResolver(object):
         return positional, named
 
     def _is_named(self, arg):
-        if not isinstance(arg, basestring) or '=' not in arg:
+        if not isinstance(arg, string_types) or '=' not in arg:
             return False
         name = arg.split('=')[0]
         if self._is_escaped(name):

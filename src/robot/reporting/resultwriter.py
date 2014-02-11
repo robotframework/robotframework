@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 from robot.conf import RebotSettings
 from robot.errors import DataError
 from robot.output import LOGGER
@@ -82,9 +84,9 @@ class ResultWriter(object):
     def _write(self, name, writer, path, *args):
         try:
             writer(path, *args)
-        except DataError, err:
+        except DataError as err:
             LOGGER.error(unicode(err))
-        except EnvironmentError, err:
+        except EnvironmentError as err:
             # `err.filename` can be different than `path` at least if reading
             # log/report templates or writing split log fails.
             # `unic` is needed due to http://bugs.jython.org/issue1825.

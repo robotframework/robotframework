@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
+from six import string_types
+
 import getopt     # optparse was not supported by Jython 2.2
 import os
 import re
@@ -157,7 +158,7 @@ class ArgumentParser:
         args = [self._lowercase_long_option(a) for a in args]
         try:
             opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
-        except getopt.GetoptError, err:
+        except getopt.GetoptError as err:
             raise DataError(err.msg)
         return self._process_opts(opts), self._glob_args(args)
 
@@ -280,7 +281,7 @@ class ArgumentParser:
         self._short_opts += (''.join(short_opts))
 
     def _get_pythonpath(self, paths):
-        if isinstance(paths, basestring):
+        if isinstance(paths, string_types):
             paths = [paths]
         temp = []
         for path in self._split_pythonpath(paths):
@@ -342,11 +343,11 @@ class ArgLimitValidator(object):
 
     def _parse_arg_limits(self, arg_limits):
         if arg_limits is None:
-            return 0, sys.maxint
+            return 0, sys.maxsize
         if isinstance(arg_limits, int):
             return arg_limits, arg_limits
         if len(arg_limits) == 1:
-            return arg_limits[0], sys.maxint
+            return arg_limits[0], sys.maxsize
         return arg_limits[0], arg_limits[1]
 
     def __call__(self, args):
@@ -357,7 +358,7 @@ class ArgLimitValidator(object):
         min_end = plural_or_not(min_args)
         if min_args == max_args:
             expectation = "%d argument%s" % (min_args, min_end)
-        elif max_args != sys.maxint:
+        elif max_args != sys.maxsize:
             expectation = "%d to %d arguments" % (min_args, max_args)
         else:
             expectation = "at least %d argument%s" % (min_args, min_end)
@@ -400,7 +401,7 @@ class ArgFileParser(object):
         try:
             with Utf8Reader(path) as reader:
                 return reader.read()
-        except (IOError, UnicodeError), err:
+        except (IOError, UnicodeError) as err:
             raise DataError("Opening argument file '%s' failed: %s"
                             % (path, err))
 

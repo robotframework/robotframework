@@ -26,7 +26,7 @@ class FileLogger(AbstractLogger):
     def _get_writer(self, path):
         try:
             return open(path, 'w')
-        except EnvironmentError, err:
+        except EnvironmentError as err:
             raise DataError(err.strerror)
 
     def message(self, msg):

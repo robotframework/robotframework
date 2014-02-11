@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 import sys
 import re
 from fnmatch import fnmatchcase
@@ -418,7 +420,7 @@ class String(object):
                             ('[NUMBERS]', digits)]:
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
-        return ''.join(chars[randint(0, maxi)] for _ in xrange(length))
+        return ''.join(chars[randint(0, maxi)] for _ in range(length))
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from `start` index to `end` index.
@@ -448,7 +450,7 @@ class String(object):
         The default error message can be overridden with the optional
         `msg` argument.
         """
-        if not isinstance(item, basestring):
+        if not isinstance(item, string_types):
             self._fail(msg, "'%s' is not a string.", item)
 
     def should_not_be_string(self, item, msg=None):
@@ -457,7 +459,7 @@ class String(object):
         The default error message can be overridden with the optional
         `msg` argument.
         """
-        if isinstance(item, basestring):
+        if isinstance(item, string_types):
             self._fail(msg, "'%s' is a string.", item)
 
     def should_be_unicode_string(self, item, msg=None):
@@ -487,7 +489,8 @@ class String(object):
 
         New in Robot Framework 2.7.7.
         """
-        if not isinstance(item, bytes if sys.version_info[0] == 3 else str):
+        # Python 2.7 also has 'bytes' (alias for 'str')
+        if not isinstance(item, bytes):
             self._fail(msg, "'%s' is not a byte string.", item)
 
     def should_be_lowercase(self, string, msg=None):

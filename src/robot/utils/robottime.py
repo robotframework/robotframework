@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import integer_types
+
 import time
 import datetime
 
@@ -83,7 +85,7 @@ def _timestr_to_secs(timestr):
     return sign * (millis/1000 + secs + mins*60 + hours*60*60 + days*60*60*24)
 
 def _normalize_timestr(timestr):
-    if isinstance(timestr, (int, long, float)):
+    if isinstance(timestr, integer_types + (float,)):
         return timestr
     timestr = normalize(timestr)
     for item in 'milliseconds', 'millisecond', 'millis':
@@ -171,7 +173,7 @@ def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
 
     Seconds after epoch can be either an integer or a float.
     """
-    if isinstance(timetuple_or_epochsecs, (int, long, float)):
+    if isinstance(timetuple_or_epochsecs, integer_types + (float,)):
         timetuple = _get_timetuple(timetuple_or_epochsecs)
     else:
         timetuple = timetuple_or_epochsecs

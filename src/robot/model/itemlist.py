@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, text_type as unicode
 
 import sys
 
@@ -86,6 +87,6 @@ class ItemList(object):
         return u'[%s]' % ', '.join(unicode(item) for item in self)
 
     def __str__(self):
-        if sys.version_info[0] == 3:
+        if PY3:
             return self.__unicode__()
         return unicode(self).encode('ASCII', 'replace')

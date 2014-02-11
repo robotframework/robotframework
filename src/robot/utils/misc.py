@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import integer_types, text_type as unicode
+
 import inspect
 import sys
 
@@ -72,7 +74,7 @@ def _isWordBoundary(prev, char, next):
 
 
 def plural_or_not(item):
-    count = item if isinstance(item, (int, long)) else len(item)
+    count = item if isinstance(item, integer_types) else len(item)
     return '' if count == 1 else 's'
 
 

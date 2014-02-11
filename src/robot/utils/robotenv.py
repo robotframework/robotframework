@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 import os
 import sys
 
@@ -65,7 +67,7 @@ else:
     from java.lang import String, System
 
     def _get_env_var_from_java(name):
-        name = name if isinstance(name, basestring) else unic(name)
+        name = name if isinstance(name, string_types) else unic(name)
         value_set_before_execution = System.getenv(name)
         if value_set_before_execution is None:
             return None

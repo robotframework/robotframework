@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, string_types
+
 import sys
 if sys.platform.startswith('java'):
     from java.lang import String
@@ -22,15 +24,15 @@ try:
     from collections import Mapping
 except ImportError:  # New in 2.6
     Mapping = dict
-try:
+if PY3:
+    from collections import UserDict, UserString
+else:
     from UserDict import UserDict
     from UserString import UserString
-except ImportError: # Python 3
-    from collections import UserDict, UserString
 
 
 def is_str_like(item, allow_java=False):
-    return (isinstance(item, (basestring, UserString)) or
+    return (isinstance(item, string_types + (UserString,)) or
             allow_java and isinstance(item, String))
 
 

@@ -12,11 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, integer_types, string_types
+
 import re
 import socket
 import sys
 import time
-import xmlrpclib
+if PY3:
+    import xmlrpc.client as xmlrpclib
+else:
+    import xmlrpclib
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:   # No expat in IronPython 2.7
@@ -28,8 +33,6 @@ from robot.utils import is_list_like, is_dict_like, unic
 
 
 IRONPYTHON = sys.platform == 'cli'
-
-PY3 = sys.version_info[0] == 3
 
 
 class Remote(object):
@@ -45,7 +48,7 @@ class Remote(object):
         for i in range(attempts):
             try:
                 return self._client.get_keyword_names()
-            except TypeError, err:
+            except TypeError as err:
                 time.sleep(1)
                 # To make err accessible after this except block in Python 3:
                 # (`err` will be deleted)
@@ -91,10 +94,10 @@ class ArgumentCoercer(object):
                 return handle(argument)
 
     def _is_string(self, arg):
-        return isinstance(arg, basestring)
+        return isinstance(arg, string_types)
 
     def _is_number(self, arg):
-        return isinstance(arg, (int, long, float))
+        return isinstance(arg, integer_types + (float,))
 
     def _handle_string(self, arg):
         if self._contains_binary(arg):
@@ -178,9 +181,10 @@ class XmlRpcRemoteClient(object):
     def get_keyword_names(self):
         try:
             return self._server.get_keyword_names()
-        except socket.error, (errno, err):
+        except socket.error as err:
+            errno, err = err.args
             raise TypeError(err)
-        except xmlrpclib.Error, err:
+        except xmlrpclib.Error as err:
             raise TypeError(err)
 
     def get_keyword_arguments(self, name):
@@ -199,11 +203,11 @@ class XmlRpcRemoteClient(object):
         run_keyword_args = [name, args, kwargs] if kwargs else [name, args]
         try:
             return self._server.run_keyword(*run_keyword_args)
-        except xmlrpclib.Fault, err:
+        except xmlrpclib.Fault as err:
             message = err.faultString
-        except socket.error, err:
+        except socket.error as err:
             message = 'Connection to remote server broken: %s' % err
-        except ExpatError, err:
+        except ExpatError as err:
             message = ('Processing XML-RPC return value failed. '
                        'Most often this happens when the return value '
                        'contains characters that are not valid in XML. '
