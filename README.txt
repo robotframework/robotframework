@@ -1,14 +1,14 @@
-Robot Framework with Python 3 compatibility
-===========================================
+Robot Framework with Python 3.3+ compatibility
+==============================================
+
+https://bitbucket.org/userzimmermann/robotframework-python3
 
 - Forked from https://robotframework.googlecode.com
-- Still compatible with all officially supported
-  Python 2.x platforms and versions, starting with 2.5
-- Not tested with Python 3 < 3.3
-- Invokes ``2to3`` in ``setup.py``, ``atest/run_atests.py``
-  and ``utest/run_utests.py`` in addition to manual code changes
-- Goal is to make code completely 2/3 compatible without the need for 2to3,
-  at the cost of dropping Python 2.5 support
+- Compatible with **Python 2.7**
+- ``robot`` code directly compatible (using six_)
+  ``utest`` and ``atest`` code still needs dynamic ``2to3``
+
+:: _six: https://pypi.python.org/pypi/six
 
 Please report any issues to:
 
@@ -17,6 +17,30 @@ https://bitbucket.org/userzimmermann/robotframework-python3/issues
 You can look at this URL for a complete code diff:
 
 https://bitbucket.org/userzimmermann/robotframework-python3/compare/master..robot#diff
+
+
+Installation
+------------
+
+::
+
+    python setup.py install
+
+Or with `pip <http://www.pip-installer.org>`_::
+
+    pip install .
+
+Or from `PyPI <https://pypi.python.org/pypi/robotframework-python3>`_
+(Latest release ``2.8.3`` still completely relies on ``2to3``
+and doesn't use ``six``)::
+
+    pip install robotframework-python3
+
+Requirements
+............
+
+* `six <https://pypi.python.org/pypi/six>`_
+
 
 Differences in Python 3
 -----------------------
