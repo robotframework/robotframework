@@ -6,7 +6,7 @@ https://bitbucket.org/userzimmermann/robotframework-python3
 - Forked from https://robotframework.googlecode.com
 - Compatible with **Python 2.7**
 - ``robot`` code directly compatible (using six_)
-- `utest` and `atest` code still needs dynamic `2to3`
+- *utest* and *atest* code still needs dynamic *2to3*
 
 .. _six: https://pypi.python.org/pypi/six
 
@@ -31,8 +31,8 @@ Or with `pip <http://www.pip-installer.org>`_::
     pip install .
 
 Or from `PyPI <https://pypi.python.org/pypi/robotframework-python3>`_
-(Latest release **2.8.3** still completely relies on `2to3`
-and doesn't use `six`)::
+(Latest release **2.8.3** still completely relies on *2to3*
+and doesn't use *six*)::
 
     pip install robotframework-python3
 
@@ -45,36 +45,37 @@ Requirements
 Differences in Python 3
 -----------------------
 
-Python 3 makes a clear distinction between `str` for textual data
-and `bytes` for binary data.
+Python 3 makes a clear distinction between *str* for textual data
+and *bytes* for binary data.
 This affects the Standard Test Libraries and their Keywords:
 
-- `str` arguments don't work where `bytes` are expected,
-  like writing to binary file streams or comparing with other `bytes`.
-- `bytes` don't work where `str` is expected,
-  like writing to text mode streams or comparing with another `str`.
-- Reading from binary streams always returns `bytes`.
-- Reading from text streams always returns `str`.
+- *str* arguments don't work where *bytes* are expected,
+  like writing to binary file streams or comparing with other *bytes*.
+- *bytes* don't work where *str* is expected,
+  like writing to text mode streams or comparing with another *str*.
+- Reading from binary streams always returns *bytes*.
+- Reading from text streams always returns *str*.
 
-You can use the following keywords to explicitly create `bytes`:
+You can use the following keywords to explicitly create *bytes*:
 
-- `BuiltIn.Convert To Bytes`
-- `String.Encode String To Bytes`
+- **BuiltIn.Convert To Bytes**
+- **String.Encode String To Bytes**
 
-I extended `Process.Start Process` with a `binary_mode` argument.
+I extended **Process.Start Process** with a *binary_mode* argument.
 By default the process streams are opened in text mode.
 You can change this with::
 
     binary_mode=True
 
-`Collections.Get Dictionary Keys` normally sorts the keys.
+**Collections.Get Dictionary Keys** normally sorts the keys.
 I disabled key sorting in Python 3,
 because most builtin types are not comparable to each other.
-This further affects `Get Dictionary Values` and `Get Dictionary Items`.
+This further affects **Get Dictionary Values** and **Get Dictionary Items**.
 I still need to find a better solution... Maybe imitate Python 2 sorting?
 Any suggestions? :)
 
--- Stefan Zimmermann
+
+-- **Stefan Zimmermann**
 
 
 Robot Framework
