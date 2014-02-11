@@ -56,6 +56,8 @@ if os.sep == '\\':
 if 'bdist_wininst' in sys.argv:
     SCRIPTS.append('robot_postinstall.py')
 
+REQUIRES = open('requirements.txt').read()
+
 setup(
     name         = 'robotframework-python3',
     version      = get_version(sep=''),
@@ -77,4 +79,5 @@ setup(
     package_data = {'robot': PACKAGE_DATA},
     packages     = PACKAGES,
     scripts      = SCRIPTS,
+    install_requires = REQUIRES,
 )
