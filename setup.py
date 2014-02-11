@@ -77,9 +77,4 @@ setup(
     package_data = {'robot': PACKAGE_DATA},
     packages     = PACKAGES,
     scripts      = SCRIPTS,
-    use_2to3     = True,
-    use_2to3_exclude_fixers = ['lib2to3.fixes.fix_' + fix for fix in [
-      'dict',
-      'filter',
-      ]],
 )
