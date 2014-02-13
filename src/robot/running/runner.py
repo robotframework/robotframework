@@ -160,20 +160,19 @@ class Runner(SuiteVisitor):
 
     def _run_setup(self, setup, status, result=None):
         if not status.failures:
-            failure = self._run_setup_or_teardown(setup, 'setup')
-            status.setup_executed(failure)
-            if result and isinstance(failure, PassExecution):
-                result.message = failure.message
+            exception = self._run_setup_or_teardown(setup, 'setup')
+            status.setup_executed(exception)
+            if result and isinstance(exception, PassExecution):
+                result.message = exception.message
 
     def _run_teardown(self, teardown, status, result=None):
         if status.teardown_allowed:
-            failure = self._run_setup_or_teardown(teardown, 'teardown')
-            status.teardown_executed(failure)
-            if result and failure:
-                result.message = status.message
-            if result and isinstance(failure, PassExecution):
-                result.message = failure.message
-            return failure
+            exception = self._run_setup_or_teardown(teardown, 'teardown')
+            status.teardown_executed(exception)
+            failed = not isinstance(exception, PassExecution)
+            if result and exception:
+                result.message = status.message if failed else exception.message
+            return exception
 
     def _run_setup_or_teardown(self, data, kw_type):
         if not data:
