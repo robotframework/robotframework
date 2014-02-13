@@ -146,6 +146,11 @@ With continuable failure in test teardown
 With continuable failure in keyword teardown
     Check Test Case    ${TESTNAME}
 
+Statuses should be correct when running tests
+    Check Stdout Contains    SEPARATOR=\n
+    ...    35 critical tests, 18 passed, 17 failed
+    ...    35 tests total, 18 passed, 17 failed
+
 Passes suite setup and teardown and can modify tags in former
     Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup_and_teardown.txt
     Check Test Tags    Test in suite with valid Pass Execution usage in Suite Setup and Teardown

@@ -172,7 +172,7 @@ class Runner(SuiteVisitor):
             failed = not isinstance(exception, PassExecution)
             if result and exception:
                 result.message = status.message if failed else exception.message
-            return exception
+            return exception if failed else None
 
     def _run_setup_or_teardown(self, data, kw_type):
         if not data:
