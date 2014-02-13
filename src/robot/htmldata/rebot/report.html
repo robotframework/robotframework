@@ -106,7 +106,9 @@ function addCustomSortersForDetails() {
 }
 
 function showDetailsByHash() {
-    var hash = window.location.hash.substring(1);
+    // Cannot use window.location.hash because Firefox incorrectly decodes it:
+    // http://stackoverflow.com/questions/1703552/encoding-of-window-location-hash
+    var hash = window.location.href.split('#').splice(1).join('#');
     if (!hash || hash == window.prevLocationHash)
         return;
     var parts = hash.split('?');
