@@ -106,9 +106,10 @@ function addCustomSortersForDetails() {
 }
 
 function showDetailsByHash() {
-    if (window.location.hash == window.prevLocationHash)
+    var hash = window.location.hash.substring(1);
+    if (!hash || hash == window.prevLocationHash)
         return;
-    var parts = window.location.hash.substring(1).split('?');
+    var parts = hash.split('?');
     var name = parts.shift();
     var query = parts.join('?');
     if (name == 'search') {
@@ -268,8 +269,7 @@ function searchTests(suitePattern, testPattern, includePattern, excludePattern) 
 function scrollToSelector(base, query) {
     $('#test-details-container').css('min-height', $(window).height());
     var anchor = query ? base + '?' + encodeURIComponent(query) : base;
-    window.prevLocationHash = '#' + anchor;
-    window.location.hash = anchor;
+    window.location.hash = window.prevLocationHash = anchor;
 }
 
 function renderSelector(args, template, stats) {
