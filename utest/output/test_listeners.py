@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import unittest
 
 from robot.output.listeners import Listeners
@@ -55,31 +57,31 @@ class ListenOutputs(object):
         self._out_file('XUnit', path)
 
     def _out_file(self, name, path):
-        print '%s: %s' % (name, path)
+        print('%s: %s' % (name, path))
 
 
 class ListenAllOldStyle(ListenOutputs):
 
     def start_suite(self, name, doc):
-        print "SUITE START: %s '%s'" % (name, doc)
+        print("SUITE START: %s '%s'" % (name, doc))
     def start_test(self, name, doc, tags):
         tags = ', '.join([ str(tag) for tag in tags ])
-        print "TEST START: %s '%s' %s" % (name, doc, tags)
+        print("TEST START: %s '%s' %s" % (name, doc, tags))
     def start_keyword(self, name, args):
         args = [ str(arg) for arg in args ]
-        print "KW START: %s %s" % (name, args)
+        print("KW START: %s %s" % (name, args))
     def end_keyword(self, status):
-        print "KW END: %s" % (status)
+        print("KW END: %s" % (status))
     def end_test(self, status, message):
         if status == 'PASS':
-            print 'TEST END: PASS'
+            print('TEST END: PASS')
         else:
-            print "TEST END: %s %s" % (status, message)
+            print("TEST END: %s %s" % (status, message))
     def end_suite(self, status, message):
-        print 'SUITE END: %s %s' % (status, message)
+        print('SUITE END: %s %s' % (status, message))
 
     def close(self):
-        print 'Closing...'
+        print('Closing...')
 
 
 class ListenAllNewStyle(ListenOutputs):
@@ -87,24 +89,24 @@ class ListenAllNewStyle(ListenOutputs):
     ROBOT_LISTENER_API_VERSION = '2'
 
     def start_suite(self, name, attrs):
-        print "SUITE START: %s '%s'" % (name, attrs['doc'])
+        print("SUITE START: %s '%s'" % (name, attrs['doc']))
     def start_test(self, name, attrs):
-        print "TEST START: %s '%s' %s" % (name, attrs['doc'],
-                                          ', '.join(attrs['tags']))
+        print("TEST START: %s '%s' %s" % (name, attrs['doc'],
+                                          ', '.join(attrs['tags'])))
     def start_keyword(self, name, attrs):
         args = [ str(arg) for arg in attrs['args'] ]
-        print "KW START: %s %s" % (name, args)
+        print("KW START: %s %s" % (name, args))
     def end_keyword(self, name, attrs):
-        print "KW END: %s" % attrs['status']
+        print("KW END: %s" % attrs['status'])
     def end_test(self, name, attrs):
         if attrs['status'] == 'PASS':
-            print 'TEST END: PASS'
+            print('TEST END: PASS')
         else:
-            print "TEST END: %s %s" % (attrs['status'], attrs['message'])
+            print("TEST END: %s %s" % (attrs['status'], attrs['message']))
     def end_suite(self, name, attrs):
-        print 'SUITE END: %s %s' % (attrs['status'], attrs['statistics'])
+        print('SUITE END: %s %s' % (attrs['status'], attrs['statistics']))
     def close(self):
-        print 'Closing...'
+        print('Closing...')
 
 
 class InvalidListenerOldStyle:

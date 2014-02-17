@@ -59,7 +59,7 @@ class TestHtmlReader(unittest.TestCase):
             assert_none(self.reader.populator.current)
             self.reader.feed(ROW_TEMPLATE % ('This', 'row', 'is ignored'))
             assert_equals(self.reader.state, self.reader.IGNORE)
-            assert_equals(len(self.reader.populator.tables.values()), 0)
+            assert_equals(len(self.reader.populator.tables), 0)
             self.reader.feed('</table>')
             assert_equals(self.reader.state, self.reader.IGNORE)
 

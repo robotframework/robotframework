@@ -1,3 +1,5 @@
+from six import text_type as unicode
+
 import unittest
 from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
@@ -91,7 +93,7 @@ class TestItemLists(unittest.TestCase):
         assert_true(ItemList(int, items=[1]))
 
     def test_clear(self):
-        items = ItemList(int, range(10))
+        items = ItemList(int, items=list(range(10)))
         items.clear()
         assert_equal(len(items), 0)
 

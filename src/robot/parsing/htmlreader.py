@@ -16,12 +16,8 @@ from six import PY3, text_type as unicode, unichr
 
 import sys
 
-if PY3:
-    from html.parser import HTMLParser
-    from html.entities import entitydefs
-else:
-    from HTMLParser import HTMLParser
-    from htmlentitydefs import entitydefs
+from six.moves.html_parser import HTMLParser
+from six.moves.html_entities import entitydefs
 
 
 NON_BREAKING_SPACE = u'\xA0'

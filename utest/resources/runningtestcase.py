@@ -2,7 +2,7 @@ import sys
 from os import remove
 from os.path import exists
 import unittest
-from StringIO import StringIO
+from six.moves import StringIO
 
 
 class RunningTestCase(unittest.TestCase):

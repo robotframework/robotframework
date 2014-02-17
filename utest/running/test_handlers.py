@@ -68,7 +68,7 @@ class TestPythonHandler(unittest.TestCase):
         for handler in handlers:
             assert_true(handler.name in ['Foo','Bar','Zap'])
             assert_equals(handler.arguments.minargs, 0)
-            assert_equals(handler.arguments.maxargs, sys.maxint)
+            assert_equals(handler.arguments.maxargs, sys.maxsize)
 
 
 class TestDynamicHandlerCreation(unittest.TestCase):
@@ -94,10 +94,10 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_fails('Return value must be string.', doc=True)
 
     def test_none_argspec(self):
-        self._assert_spec(None, maxargs=sys.maxint, vararg='varargs', kwarg=False)
+        self._assert_spec(None, maxargs=sys.maxsize, vararg='varargs', kwarg=False)
 
     def test_none_argspec_when_kwargs_supported(self):
-        self._assert_spec(None, maxargs=sys.maxint, vararg='varargs', kwarg='kwargs')
+        self._assert_spec(None, maxargs=sys.maxsize, vararg='varargs', kwarg='kwargs')
 
     def test_empty_argspec(self):
         self._assert_spec([])
@@ -114,23 +114,23 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_spec(['d=foo=bar'], 0, 1, ['d'], ['foo=bar'])
 
     def test_varargs(self):
-        self._assert_spec(['*vararg'], 0, sys.maxint, vararg='vararg')
+        self._assert_spec(['*vararg'], 0, sys.maxsize, vararg='vararg')
 
     def test_kwargs(self):
         self._assert_spec(['**kwarg'], 0, 0, kwarg='kwarg')
 
     def test_varargs_and_kwargs(self):
         self._assert_spec(['*vararg', '**kwarg'],
-                          0, sys.maxint, vararg='vararg', kwarg='kwarg')
+                          0, sys.maxsize, vararg='vararg', kwarg='kwarg')
 
     def test_integration(self):
         self._assert_spec(['arg', 'default=value'], 1, 2,
                           ['arg', 'default'], ['value'])
-        self._assert_spec(['arg', 'default=value', '*var'], 1, sys.maxint,
+        self._assert_spec(['arg', 'default=value', '*var'], 1, sys.maxsize,
                           ['arg', 'default'], ['value'], 'var')
         self._assert_spec(['arg', 'default=value', '**kw'], 1, 2,
                           ['arg', 'default'], ['value'], None, 'kw')
-        self._assert_spec(['arg', 'default=value', '*var', '**kw'], 1, sys.maxint,
+        self._assert_spec(['arg', 'default=value', '*var', '**kw'], 1, sys.maxsize,
                           ['arg', 'default'], ['value'], 'var', 'kw')
 
     def test_invalid_argspec_type(self):
@@ -217,7 +217,7 @@ if utils.is_jython:
                 method = handlers['a_%d_n' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
                 assert_equals(handler.arguments.minargs, count)
-                assert_equals(handler.arguments.maxargs, sys.maxint)
+                assert_equals(handler.arguments.maxargs, sys.maxsize)
 
         def test_arg_limits_with_defaults(self):
             # defaults i.e. multiple signatures

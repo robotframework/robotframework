@@ -34,7 +34,7 @@ if JYTHON:
         def test_with_iterator(self):
             iterator = UnicodeJavaLibrary().javaIterator()
             assert_true('java.util' in unic(iterator))
-            assert_true('Circle is 360' in iterator.next())
+            assert_true('Circle is 360' in next(iterator))
 
         def test_failure_in_toString(self):
             class ToStringFails(Object):

@@ -54,7 +54,7 @@ if sys.version_info[0] == 3 and do2to3:
       ATESTDIR, PY3ATESTDIR, symlinks=True,
       ignore=lambda src, names: names if src == join(ATESTDIR, 'python3') else []
       )
-    for testdir in [PY3UTESTDIR, PY3ATESTDIR]:
+    for testdir in [PY3ATESTDIR]:
         status = subprocess.call(
           ['2to3', '--no-diffs', '-n', '-w',
            '-x', 'dict',

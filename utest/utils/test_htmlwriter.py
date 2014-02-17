@@ -1,14 +1,11 @@
+from six import PY3
+
 import sys
 import os
 import unittest
 
-PY3 = sys.version_info[0] == 3
-
-if PY3:
-    from io import BytesIO, StringIO
-else:
-    from StringIO import StringIO
-    BytesIO = StringIO
+from six.moves import StringIO
+from io import BytesIO
 
 from robot.utils import HtmlWriter
 from robot.utils.asserts import assert_equals

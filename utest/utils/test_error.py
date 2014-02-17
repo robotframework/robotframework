@@ -26,7 +26,7 @@ class TestGetErrorDetails(unittest.TestCase):
             try:
                 if not msg:
                     raise exception
-                raise exception, msg
+                raise exception(msg)
             except:
                 message, details = get_error_details()
                 assert_equals(message, get_error_message())

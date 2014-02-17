@@ -1,9 +1,5 @@
-from __future__ import with_statement
 from codecs import BOM_UTF8
-try:
-    from io import BytesIO
-except ImportError: # Python < 3
-    from StringIO import StringIO as BytesIO
+from io import BytesIO
 import os
 import tempfile
 import unittest

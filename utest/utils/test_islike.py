@@ -1,3 +1,5 @@
+from six import PY2, PY3
+
 import unittest
 import sys
 
@@ -11,13 +13,13 @@ try:
 except ImportError:
     pass
 from array import array
-try:
+if PY3:
+    from collections import UserDict, UserList, UserString
+    MutableString = UserString
+else:
     from UserDict import UserDict
     from UserList import UserList
     from UserString import UserString, MutableString
-except ImportError: # Python 3
-    from collections import UserDict, UserList, UserString
-    MutableString = UserString
 
 from robot.utils import is_dict_like, is_list_like, is_str_like
 from robot.utils.asserts import assert_equals
@@ -58,7 +60,7 @@ class TestListlike(unittest.TestCase):
             assert_equals(is_list_like(HashMap()), False)
 
     def test_other_iterables_are_list_like(self):
-        for thing in [[], (), set(), xrange(1), generator(), array('i'), UserList()]:
+        for thing in [[], (), set(), (range if PY3 else xrange)(1), generator(), array('i'), UserList()]:
             assert_equals(is_list_like(thing), True, thing)
 
     def test_others_are_not_list_like(self):

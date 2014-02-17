@@ -1,7 +1,7 @@
+from six import PY3, text_type as unicode
+
 import unittest
 import sys
-
-PY3 = sys.version_info[0] == 3
 
 from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
                                          _ModuleLibrary, _DynamicLibrary)
@@ -206,10 +206,10 @@ class TestLibraryInit(unittest.TestCase):
             self._test_init_handler('extendingjava.ExtendJavaLibWithConstructor', ['arg'], 1, 3)
 
         def test_extended_java_lib_with_init_and_no_constructor(self):
-            self._test_init_handler('extendingjava.ExtendJavaLibWithInit', [1,2,3], 0, sys.maxint)
+            self._test_init_handler('extendingjava.ExtendJavaLibWithInit', [1,2,3], 0, sys.maxsize)
 
         def test_extended_java_lib_with_init_and_constructor(self):
-            self._test_init_handler('extendingjava.ExtendJavaLibWithInitAndConstructor', ['arg'], 0, sys.maxint)
+            self._test_init_handler('extendingjava.ExtendJavaLibWithInitAndConstructor', ['arg'], 0, sys.maxsize)
 
 
 class TestVersion(unittest.TestCase):
@@ -458,7 +458,7 @@ class TestDynamicLibrary(unittest.TestCase):
         lib = TestLibrary('classes.InvalidAttributeDynamicLibrary')
         assert_equals(len(lib.handlers), 5)
         assert_equals(lib.handlers['No Arg'].doc, '')
-        assert_handler_args(lib.handlers['No Arg'], 0, sys.maxint)
+        assert_handler_args(lib.handlers['No Arg'], 0, sys.maxsize)
 
     def test_handler_is_not_created_if_get_keyword_doc_fails(self):
         lib = TestLibrary('classes.InvalidGetDocDynamicLibrary')
@@ -473,8 +473,8 @@ class TestDynamicLibrary(unittest.TestCase):
         for name, (mina, maxa) in [('No Arg', (0, 0)),
                                    ('One Arg', (1, 1)),
                                    ('One or Two Args', (1, 2)),
-                                   ('Many Args', (0, sys.maxint)),
-                                   ('No Arg Spec', (0, sys.maxint))]:
+                                   ('Many Args', (0, sys.maxsize)),
+                                   ('No Arg Spec', (0, sys.maxsize))]:
             assert_handler_args(lib.handlers[name], mina, maxa)
 
     def test_arguments_with_kwargs(self):
@@ -482,11 +482,11 @@ class TestDynamicLibrary(unittest.TestCase):
         for name, (mina, maxa) in [('No Arg', (0, 0)),
                                    ('One Arg', (1, 1)),
                                    ('One or Two Args', (1, 2)),
-                                   ('Many Args', (0, sys.maxint))]:
+                                   ('Many Args', (0, sys.maxsize))]:
             assert_handler_args(lib.handlers[name], mina, maxa, kwargs=False)
         for name, (mina, maxa) in [('Kwargs', (0, 0)),
-                                   ('Varargs and Kwargs', (0, sys.maxint)),
-                                   ('No Arg Spec', (0, sys.maxint))]:
+                                   ('Varargs and Kwargs', (0, sys.maxsize)),
+                                   ('No Arg Spec', (0, sys.maxsize))]:
             assert_handler_args(lib.handlers[name], mina, maxa, kwargs=True)
 
 
@@ -505,7 +505,7 @@ if utils.is_jython:
             for name, (mina, maxa) in [('Java No Arg', (0, 0)),
                                        ('Java One Arg', (1, 1)),
                                        ('Java One or Two Args', (1, 2)),
-                                       ('Java Many Args', (0, sys.maxint))]:
+                                       ('Java Many Args', (0, sys.maxsize))]:
                 self._assert_handler(lib, name, mina, maxa)
 
         def test_arguments_with_kwargs(self):
@@ -513,16 +513,16 @@ if utils.is_jython:
             for name, (mina, maxa) in [('Java No Arg', (0, 0)),
                                        ('Java One Arg', (1, 1)),
                                        ('Java One or Two Args', (1, 2)),
-                                       ('Java Many Args', (0, sys.maxint))]:
+                                       ('Java Many Args', (0, sys.maxsize))]:
                 self._assert_handler(lib, name, mina, maxa)
             for name, (mina, maxa) in [('Java Kwargs', (0, 0)),
-                                       ('Java Varargs and Kwargs', (0, sys.maxint))]:
+                                       ('Java Varargs and Kwargs', (0, sys.maxsize))]:
                 self._assert_handler(lib, name, mina, maxa, kwargs=True)
 
         def test_get_keyword_doc_and_args_are_ignored_if_not_callable(self):
             lib = TestLibrary('InvalidAttributeArgDocDynamicJavaLibrary')
             assert_equals(len(lib.handlers), 1)
-            assert_handler_args(lib.handlers['keyword'], 0, sys.maxint)
+            assert_handler_args(lib.handlers['keyword'], 0, sys.maxsize)
 
         def test_handler_is_not_created_if_get_keyword_doc_fails(self):
             lib = TestLibrary('InvalidSignatureArgDocDynamicJavaLibrary')

@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from six.moves import StringIO
 import os
 import unittest
 

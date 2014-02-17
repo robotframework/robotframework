@@ -1,5 +1,5 @@
 import unittest
-from StringIO import StringIO
+from six.moves import StringIO
 
 from robot.running import TestSuite
 from robot.utils.asserts import assert_equals, assert_raises_with_msg

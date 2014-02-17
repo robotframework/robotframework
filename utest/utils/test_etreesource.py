@@ -1,9 +1,8 @@
-from __future__ import with_statement
+from six import PY3, text_type as unicode
+
 import os
 import sys
 import unittest
-
-PY3 = sys.version_info[0] == 3
 
 from robot.utils.asserts import assert_equals, assert_raises, assert_true
 from robot.utils.etreewrapper import ETSource, ET
@@ -11,7 +10,7 @@ from robot.errors import DataError
 
 IRONPYTHON = sys.platform == 'cli'
 PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
-STARTSWITH = 'from __future__' if not PY3 else '\nimport os'
+STARTSWITH = 'from six import'
 
 
 class TestETSource(unittest.TestCase):

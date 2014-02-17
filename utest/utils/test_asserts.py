@@ -1,3 +1,5 @@
+from six import PY3
+
 import unittest, sys
 
 if __name__ == "__main__":
@@ -25,7 +27,7 @@ class MyEqual(object):
 
 def func(msg=None):
     if msg is not None:
-        raise ValueError, msg
+        raise ValueError(msg)
 
 
 class TestAsserts(unittest.TestCase):
@@ -42,12 +44,12 @@ class TestAsserts(unittest.TestCase):
         try:
             assert_raises_with_msg(ValueError, 'msg', func)
             error('No AssertionError raised')
-        except AE, err:
+        except AE as err:
             assert_equal(str(err), 'ValueError not raised')
         try:
             assert_raises_with_msg(ValueError, 'msg1', func, 'msg2')
             error('No AssertionError raised')
-        except AE, err:
+        except AE as err:
             expected = "Correct exception but wrong message: msg1 != msg2"
             assert_equal(str(err), expected)
 
@@ -62,7 +64,9 @@ class TestAsserts(unittest.TestCase):
         assert_raises(AE, assert_equals, None, True)
 
     def test_fail_unless_equal_with_values_having_same_string_repr(self):
-        for val, type_ in [(1, 'number'), (1L, 'number'), (MyEqual(1), 'MyEqual')]:
+        if PY3:
+            long = int
+        for val, type_ in [(1, 'number'), (long(1), 'number'), (MyEqual(1), 'MyEqual')]:
             assert_raises_with_msg(AE, '1 (string) != 1 (%s)' % type_,
                                    fail_unless_equal, '1', val)
         assert_raises_with_msg(AE, '1.0 (number) != 1.0 (string)',

@@ -1,5 +1,7 @@
+from six import string_types
+
 import unittest
-from StringIO import StringIO
+from six.moves import StringIO
 
 from robot.parsing.populators import FromFilePopulator, DataRow, FromDirectoryPopulator
 from robot.parsing.model import TestCaseFile
@@ -50,7 +52,7 @@ class _PopulatorTest(unittest.TestCase):
         assert_true(self._logger.value() == '', self._logger.value())
 
     def _start_table(self, name):
-        if isinstance(name, basestring):
+        if isinstance(name, string_types):
             name = [name]
         return self._populator.start_table(name)
 

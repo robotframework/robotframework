@@ -1,14 +1,10 @@
-from __future__ import with_statement
+from six import PY3
+
 import sys
 import unittest
 
-PY3 = sys.version_info[0] == 3
-
-if PY3:
-    from io import StringIO, BytesIO
-else:
-    from StringIO import StringIO
-    BytesIO = StringIO
+from six.moves import StringIO
+from io import BytesIO
 
 from robot.result import ExecutionResult
 from robot.reporting.outputwriter import OutputWriter

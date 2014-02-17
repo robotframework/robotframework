@@ -1,3 +1,5 @@
+from six import integer_types
+
 import unittest
 from os.path import abspath, basename, dirname, join
 
@@ -17,7 +19,7 @@ CURDIR = dirname(abspath(__file__))
 def remap(model, strings):
     if isinstance(model, StringIndex):
         return strings[model][1:]
-    elif isinstance(model, (int, long, type(None))):
+    elif isinstance(model, integer_types + (type(None),)):
         return model
     elif isinstance(model, tuple):
         return tuple(remap(item, strings) for item in model)

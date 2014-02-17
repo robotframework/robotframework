@@ -19,8 +19,12 @@ class FakeArgs(object):
     def __init__(self, args):
         self.value = args
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.value)
+
+    #PY2:
+    def __nonzero__(self):
+        return self.__bool__()
 
     def __iter__(self):
         return iter(self.value)

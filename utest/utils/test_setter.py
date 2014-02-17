@@ -1,12 +1,14 @@
+from six import add_metaclass
+
 import unittest
 from robot.utils.asserts import assert_equal, assert_raises
 
 from robot.utils.setter import setter, SetterAwareType
 
 
+@add_metaclass(SetterAwareType)
 class ExampleWithSlots(object):
     __slots__ = []
-    __metaclass__ = SetterAwareType
 
     @setter
     def attr(self, value):
@@ -18,8 +20,9 @@ class ExampleWithSlots(object):
         return value
 
 
+@add_metaclass(type)
 class Example(ExampleWithSlots):
-    __metaclass__ = type
+    pass
 
 
 class TestSetter(unittest.TestCase):

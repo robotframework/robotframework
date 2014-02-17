@@ -246,8 +246,8 @@ class TestNormalizedDict(unittest.TestCase):
         for i, c in enumerate('abcdefghijklmnopqrstuvwxyz0123456789!"#%&/()=?'):
             nd[c.upper()] = i
             nd[c+str(i)] = 1
-        assert_equals(nd.items(), zip(nd.keys(), nd.values()))
-        assert_equals(list(nd.iteritems()), zip(nd.iterkeys(), nd.itervalues()))
+        assert_equals(nd.items(), list(zip(nd.keys(), nd.values())))
+        assert_equals(list(nd.iteritems()), list(zip(nd.iterkeys(), nd.itervalues())))
 
     def test_cmp(self):
         self._verify_cmp(NormalizedDict(), NormalizedDict())

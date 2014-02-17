@@ -12,7 +12,7 @@ class TestStringCache(unittest.TestCase):
 
     def setUp(self):
         # To make test reproducable log the random seed if test fails
-        self._seed = long(time.time() * 256)
+        self._seed = int(time.time() * 256)
         random.seed(self._seed)
         self.cache = StringCache()
 
@@ -62,7 +62,7 @@ class TestStringIndex(unittest.TestCase):
         assert_equals(str(value), '42')
 
     def test_long_values(self):
-        target = sys.maxint + 42
+        target = sys.maxsize + 42
         value = StringIndex(target)
         assert_equals(str(value), str(target))
         assert_false(str(value).endswith('L'))

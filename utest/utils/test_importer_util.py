@@ -1,4 +1,5 @@
-from __future__ import with_statement
+from six import text_type as unicode
+
 import time
 import unittest
 import tempfile
