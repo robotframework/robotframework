@@ -20,6 +20,8 @@ $ atest/run_atests.py python --test example atest/robot
 $ atest/run_atests.py /usr/bin/jython25 atest/robot/tags/tag_doc.txt
 """
 
+from six import PY3
+
 import re
 import os
 import shutil
@@ -40,7 +42,6 @@ ROBOTDIR = join(CURDIR, '..', 'src', 'robot')
 
 # If run with Python 3:
 # - Copy src/robot/ and atest/ to atest/python3/
-# - Run 2to3
 # - Modify Python literals in Suite/Resource .txt files
 # - Exec this file's copy in-place for actual testing
 
@@ -48,7 +49,7 @@ ROBOTDIR = join(CURDIR, '..', 'src', 'robot')
 if not 'do2to3' in globals():
     # ==> still the original.
     do2to3 = True
-if sys.version_info[0] == 3 and do2to3:
+if PY3 and do2to3:
     PY3DIR = join(CURDIR, 'python3')
     PY3ATESTDIR = join(PY3DIR, 'atest')
 
@@ -59,19 +60,11 @@ if sys.version_info[0] == 3 and do2to3:
       CURDIR, join(PY3ATESTDIR), symlinks=True,
       ignore=lambda src, names: names if src == PY3DIR else []
       )
-    status = subprocess.call(
-      ['2to3', '--no-diffs', '-n', '-w',
-       '-x', 'dict',
-       '-x', 'filter',
-       PY3ATESTDIR
-       ])
-    if status:
-        sys.exit(status)
 
     # Modify the Suite/Resource .txt files:
-    for atest_dirname in ['testdata', 'robot']:
+    for dirname in ['testdata', 'robot']:
         for dirpath, dirnames, filenames in os.walk(
-          join(PY3ATESTDIR, atest_dirname)
+          join(PY3ATESTDIR, dirname)
           ):
             for filename in filenames:
                 if filename.endswith('.txt'):
