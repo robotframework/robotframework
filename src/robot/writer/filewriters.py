@@ -89,11 +89,10 @@ class SpaceSeparatedTxtWriter(_DataFileWriter):
 
     def _write_row(self, row):
         line = self._separator.join(row).rstrip() + self._line_separator
-        encoded_line = self._encode(line)
-        try:
-            self._output.write(encoded_line)
-        except TypeError: # Python 3
+        if PY3 and hasattr(self._output, 'encoding'):
             self._output.write(line)
+        else:
+            self._output.write(self._encode(line))
 
 
 class PipeSeparatedTxtWriter(_DataFileWriter):
@@ -108,11 +107,10 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
         if row:
             row = '| ' + row + ' |'
         row += self._line_separator
-        encoded_row = self._encode(row)
-        try:
-            self._output.write(encoded_row)
-        except TypeError: # Python 3
+        if PY3 and hasattr(self._output, 'encoding'):
             self._output.write(row)
+        else:
+            self._output.write(self._encode(row))
 
 
 class TsvFileWriter(_DataFileWriter):

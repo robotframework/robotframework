@@ -1,4 +1,6 @@
 from six import PY3
+if PY3:
+    long = int
 
 import unittest, sys
 
@@ -64,8 +66,6 @@ class TestAsserts(unittest.TestCase):
         assert_raises(AE, assert_equals, None, True)
 
     def test_fail_unless_equal_with_values_having_same_string_repr(self):
-        if PY3:
-            long = int
         for val, type_ in [(1, 'number'), (long(1), 'number'), (MyEqual(1), 'MyEqual')]:
             assert_raises_with_msg(AE, '1 (string) != 1 (%s)' % type_,
                                    fail_unless_equal, '1', val)

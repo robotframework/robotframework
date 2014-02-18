@@ -1,8 +1,10 @@
+from six import PY3
+
 import unittest
-try:
-    from UserDict import UserDict
-except ImportError: # Python 3
+if PY3:
     from collections import UserDict
+else:
+    from UserDict import UserDict
 
 from robot.utils import normalize, NormalizedDict
 from robot.utils.asserts import (assert_equals, assert_true, assert_false,

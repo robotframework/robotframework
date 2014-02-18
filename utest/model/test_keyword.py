@@ -1,4 +1,4 @@
-from six import text_type as unicode
+from six import PY2, text_type as unicode
 
 import sys
 import unittest
@@ -43,7 +43,7 @@ class TestStringRepresentation(unittest.TestCase):
         assert_equal(unicode(self.ascii), 'Kekkonen')
         assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
 
-    if sys.version_info[0] < 3:
+    if PY2:
         def test_str(self):
             assert_equal(str(self.empty), '')
             assert_equal(str(self.ascii), 'Kekkonen')

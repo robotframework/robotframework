@@ -1,12 +1,11 @@
-import sys
+from six import PY3
+
 import os
 import unittest
 import tempfile
 
 from robot.utils import XmlWriter, ET, ETSource
 from robot.utils.asserts import *
-
-PY3 = sys.version_info[0] == 3
 
 PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')
 

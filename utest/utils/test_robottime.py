@@ -1,10 +1,9 @@
+from six import PY3
+
 import unittest
-import sys
 import re
 import time
 import datetime
-
-PY3 = sys.version_info[0] == 3
 
 from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
                                  assert_true, assert_not_none)

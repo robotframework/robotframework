@@ -1,7 +1,7 @@
+from six import PY3
+
 import unittest
 import sys
-
-PY3 = sys.version_info[0] == 3
 
 from robot.variables import variables, is_list_var, is_scalar_var, is_var
 from robot.errors import *

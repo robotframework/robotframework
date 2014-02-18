@@ -1,7 +1,7 @@
+from six import PY3
+
 import unittest
 import sys
-
-PY3 = sys.version_info[0] == 3
 
 from robot.utils import unic, safe_repr
 from robot.utils.asserts import assert_equals, assert_true

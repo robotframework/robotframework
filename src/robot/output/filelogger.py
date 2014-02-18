@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
 from robot.errors import DataError
 
 from .loggerhelper import AbstractLogger
@@ -33,11 +35,10 @@ class FileLogger(AbstractLogger):
         if self._is_logged(msg.level) and not self._writer.closed:
             entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5),
                                         msg.message)
-            encoded_entry = entry.encode('UTF-8')
-            try:
-                self._writer.write(encoded_entry)
-            except TypeError: # Python 3
+            if PY3 and hasattr(self._writer, 'encoding'):
                 self._writer.write(entry)
+            else:
+                self._writer.write(entry.encode('UTF-8'))
 
     def start_suite(self, suite):
         self.info("Started test suite '%s'" % suite.name)
