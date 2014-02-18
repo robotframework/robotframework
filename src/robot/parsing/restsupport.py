@@ -20,7 +20,7 @@ try:
     from docutils.parsers.rst.directives.body import CodeBlock
 except ImportError:
     raise DataError("Using reStructuredText test data requires having "
-                    "'docutils' module installed.")
+                    "'docutils' module version 0.9 or newer installed.")
 
 
 class CaptureRobotData(CodeBlock):
