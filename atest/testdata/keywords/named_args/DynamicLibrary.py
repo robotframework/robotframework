@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from six import string_types
+
 from helper import pretty
 
 
@@ -29,7 +31,7 @@ class DynamicLibrary(object):
         return self._pretty(*args)
 
     def _pretty(self, *args, **kwargs):
-        if all(isinstance(a, basestring) for a in args):
+        if all(isinstance(a, string_types) for a in args):
             return pretty(*args, **kwargs)
         return args[0] if len(args) == 1 else args
 

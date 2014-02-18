@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 import re
 
@@ -27,7 +29,7 @@ class TestCheckerLibrary:
     def process_output(self, path):
         path = path.replace('/', os.sep)
         try:
-            print "Processing output '%s'" % path
+            print("Processing output '%s'" % path)
             result = Result(root_suite=NoSlotsTestSuite())
             ExecutionResultBuilder(path).build(result)
         except:
@@ -118,7 +120,7 @@ Actual tests   : %s""" % (str(list(expected_names)), str(actual_tests))
         for test in actual_tests:
             norm_name = utils.normalize(test.name)
             if utils.MultiMatcher(expected_names).match(test.name):
-                print "Verifying test '%s'" % test.name
+                print("Verifying test '%s'" % test.name)
                 status = statuses.get(norm_name)
                 if status and ':' in status:
                     status, message = status.split(':', 1)
@@ -141,7 +143,7 @@ Actual tests   : %s""" % (str(list(expected_names)), str(actual_tests))
                 raise AssertionError('Suite should not have contained test "%s"' % name)
 
     def should_contain_suites(self, suite, *expected_names):
-        print 'Suite has suites', suite.suites
+        print('Suite has suites', suite.suites)
         actual_names = [s.name for s in suite.suites]
         assert_equals(len(actual_names), len(expected_names), 'Wrong number of subsuites')
         for expected in expected_names:
@@ -149,7 +151,7 @@ Actual tests   : %s""" % (str(list(expected_names)), str(actual_tests))
                 raise AssertionError('Suite %s not found' % expected)
 
     def should_contain_tags(self, test, *tags):
-        print 'Test has tags', test.tags
+        print('Test has tags', test.tags)
         assert_equals(len(test.tags), len(tags), 'Wrong number of tags')
         tags = sorted(tags, key=lambda s: s.lower().replace('_', '').replace(' ', ''))
         for act, exp in zip(test.tags, tags):

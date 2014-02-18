@@ -1,10 +1,9 @@
+from six import PY3
+
 import sys
-from xmlrpclib import Binary
+from six.moves.xmlrpc_client import Binary
 
 from remoteserver import DirectResultRemoteServer
-
-
-PY3 = sys.version_info[0] == 3
 
 
 class BinaryResult(object):

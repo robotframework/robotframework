@@ -1,3 +1,6 @@
+from __future__ import print_function
+from six import text_type as unicode
+
 import sys
 import time
 try:
@@ -20,13 +23,13 @@ class ExampleLibrary:
     def print_n_times(self, msg, count, delay=0):
         """Print given message n times"""
         for i in range(int(count)):
-            print msg
+            print(msg)
             self._sleep(delay)
 
     def print_many(self, *msgs):
         """Print given messages"""
         for msg in msgs:
-            print msg,
+            print(msg, end=' ')
         print
 
     def print_to_stdout_and_stderr(self, msg):
@@ -35,9 +38,9 @@ class ExampleLibrary:
 
     def print_to_python_and_java_streams(self):
         import ExampleJavaLibrary
-        print '*INFO* First message to Python'
+        print('*INFO* First message to Python')
         getattr(ExampleJavaLibrary(), 'print')('*INFO* Second message to Java')
-        print '*INFO* Last message to Python'
+        print('*INFO* Last message to Python')
 
     def single_line_doc(self):
         """One line keyword documentation."""
@@ -56,7 +59,7 @@ class ExampleLibrary:
         exception = getattr(exceptions, name)
         if msg is None:
             raise exception
-        raise exception, msg
+        raise exception(msg)
 
     def external_exception(self, name, msg):
         ObjectToReturn('failure').exception(name, msg)
@@ -89,14 +92,14 @@ class ExampleLibrary:
         try:
             actual = getattr(self, utils.normalize(name))
         except AttributeError:
-            raise AssertionError, "Attribute '%s' not set" % name
+            raise AssertionError("Attribute '%s' not set" % name)
         if not utils.eq(actual, expected):
-            raise AssertionError, "Attribute '%s' was '%s', expected '%s'" \
-                    % (name, actual, expected)
+            raise AssertionError("Attribute '%s' was '%s', expected '%s'" \
+                    % (name, actual, expected))
 
     def check_attribute_not_set(self, name):
         if hasattr(self, utils.normalize(name)):
-            raise AssertionError, "Attribute '%s' should not be set" % name
+            raise AssertionError("Attribute '%s' should not be set" % name)
 
     def backslashes(self, count=1):
         return '\\' * int(count)
@@ -104,17 +107,17 @@ class ExampleLibrary:
     def read_and_log_file(self, path, binary=False):
         mode = binary and 'rb' or 'r'
         _file = open(path, mode)
-        print _file.read()
+        print(_file.read())
         _file.close()
 
     def print_control_chars(self):
-        print '\033[31mRED\033[m\033[32mGREEN\033[m'
+        print('\033[31mRED\033[m\033[32mGREEN\033[m')
 
     def long_message(self, line_length, line_count, chars='a'):
         line_length = int(line_length)
         line_count = int(line_count)
         msg = chars*line_length + '\n'
-        print msg*line_count
+        print(msg*line_count)
 
     def loop_forever(self, no_print=False):
         i = 0
@@ -122,7 +125,7 @@ class ExampleLibrary:
             i += 1
             self._sleep(1)
             if not no_print:
-                print 'Looping forever: %d' % i
+                print('Looping forever: %d' % i)
 
     def write_to_file_after_sleeping(self, path, sec, msg=None):
         f = open(path, 'w')

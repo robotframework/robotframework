@@ -10,14 +10,14 @@ class ImportRobotModuleTestLibrary:
             import logging
         except ImportError:
             if os.name == 'java':
-                print 'Could not import logging, which is OK in Jython!'
+                print('Could not import logging, which is OK in Jython!')
                 return
-            raise AssertionError, 'Importing logging module failed with Python!'
+            raise AssertionError('Importing logging module failed with Python!')
         try:
             logger = logging.getLogger()
         except:
-            raise AssertionError, 'Wrong logging module imported!'
-        print 'Importing succeeded!'
+            raise AssertionError('Wrong logging module imported!')
+        print('Importing succeeded!')
 
     def importing_robot_module_directly_fails(self):
         try:
@@ -28,10 +28,10 @@ class ImportRobotModuleTestLibrary:
             raise
         else:
             msg = "'import result' should have failed. Got it from '%s'. sys.path: %s"
-            raise AssertionError, msg % (serializing.__file__, sys.path)
+            raise AssertionError(msg % (serializing.__file__, sys.path))
 
     def importing_robot_module_through_robot_succeeds(self):
         try:
             import robot.running
         except:
-            raise AssertionError, "'import robot.running' failed"
+            raise AssertionError("'import robot.running' failed")

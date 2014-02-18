@@ -144,7 +144,7 @@ class ArgDocDynamicLibrary:
     def get_keyword_names(self):
         return sorted(self._keywords.keys())
     def run_keyword(self, name, *args):
-        print '*INFO* Executed keyword %s with arguments %s' % (name, args)
+        print('*INFO* Executed keyword %s with arguments %s' % (name, args))
     def get_keyword_documentation(self, name):
         return self._keywords[name].doc
     def get_keyword_arguments(self, name):
@@ -161,7 +161,7 @@ class ArgDocDynamicLibraryWithKwargsSupport(ArgDocDynamicLibrary):
     def run_keyword(self, name, args, kwargs={}):
         argstr = ' '.join([str(a) for a in args] +
                           ['%s:%s' % kv for kv in sorted(kwargs.items())])
-        print '*INFO* Executed keyword %s with arguments %s' % (name, argstr)
+        print('*INFO* Executed keyword %s with arguments %s' % (name, argstr))
 
 
 class _KeywordInfo:

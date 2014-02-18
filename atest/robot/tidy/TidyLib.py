@@ -1,4 +1,4 @@
-from __future__ import with_statement
+from six import text_type as unicode
 
 import os
 import re
@@ -29,7 +29,7 @@ class TidyLib(object):
         command.append(self._path(input))
         if output:
             command.append(output)
-        print ' '.join(command)
+        print(' '.join(command))
         with tempfile.TemporaryFile() as stdout:
             rc = call(command, stdout=stdout, stderr=STDOUT,
                       cwd=ROBOT_SRC, shell=os.sep=='\\')

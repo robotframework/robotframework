@@ -13,4 +13,4 @@ class ObjectToReturn:
     
     def exception(self, name, msg=""):
         exception = getattr(exceptions, name)
-        raise exception, msg
+        raise exception(msg)

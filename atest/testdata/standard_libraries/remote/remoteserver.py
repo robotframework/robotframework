@@ -1,6 +1,11 @@
+from six import PY3
+
 import inspect
 import sys
-from SimpleXMLRPCServer import SimpleXMLRPCServer
+if PY3:
+    from xmlrpc.server import SimpleXMLRPCServer
+else:
+    from SimpleXMLRPCServer import SimpleXMLRPCServer
 
 
 class RemoteServer(SimpleXMLRPCServer):
@@ -38,7 +43,7 @@ class RemoteServer(SimpleXMLRPCServer):
     def run_keyword(self, name, args, kwargs=None):
         try:
             result = getattr(self.library, name)(*args, **(kwargs or {}))
-        except AssertionError, err:
+        except AssertionError as err:
             return {'status': 'FAIL', 'error': str(err)}
         else:
             return {'status': 'PASS',

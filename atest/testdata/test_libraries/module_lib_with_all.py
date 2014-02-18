@@ -12,4 +12,4 @@ def not_in_all():
 attr_is_not_kw = 'Listed in __all__ but not a fuction'
 
 def _not_kw_even_if_listed_in_all():
-    print 'Listed in __all__ but starts with an underscore'
+    print('Listed in __all__ but starts with an underscore')

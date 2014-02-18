@@ -1,4 +1,6 @@
 # coding=UTF-8
+from __future__ import print_function
+
 
 class DynamicLibrary(object):
     """This is overwritten and not shown in docs"""
@@ -11,7 +13,7 @@ class DynamicLibrary(object):
         return ['0', 'Keyword 1', 'KW2', 'non ascii doc 42', 'no arg spec']
 
     def run_keyword(self, name, args, kwargs):
-        print name, args
+        print(name, args)
 
     def get_keyword_arguments(self, name):
         if name == 'no arg spec':

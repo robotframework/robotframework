@@ -9,8 +9,8 @@ class _BaseLib:
     def should_be_registered(self, *expected):
         exp = dict([ (name, None) for name in expected ])
         if self.registered != exp:
-            raise AssertionError, 'Wrong registered: %s != %s' \
-                % (self.registered.keys(), exp.keys())
+            raise AssertionError('Wrong registered: %s != %s' \
+                % (list(self.registered.keys()), list(exp.keys())))
 
 
 class Global(_BaseLib):

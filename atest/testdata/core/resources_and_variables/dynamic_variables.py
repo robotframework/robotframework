@@ -16,4 +16,4 @@ def get_variables(*args):
         return one_arg_vars
     if len(args) == 2:
         return None   # this is invalid
-    raise Exception, 'Invalid arguments for get_variables'
+    raise Exception('Invalid arguments for get_variables')

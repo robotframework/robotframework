@@ -1,3 +1,5 @@
+from six import text_type as unicode
+
 import logging
 import time
 import sys

@@ -9,8 +9,8 @@ def failing():
     raise AssertionError('This is a failing keyword from module library')
 
 def logging():
-    print 'Hello from module library'
-    print '*WARN* WARNING!'
+    print('Hello from module library')
+    print('*WARN* WARNING!')
     
 def returning():
     return 'Hello from module library'

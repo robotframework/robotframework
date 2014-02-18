@@ -1,3 +1,6 @@
+from __future__ import print_function
+
+
 class RunKeywordLibrary:
     ROBOT_LIBRARY_SCOPE = 'TESTCASE'
 
@@ -16,7 +19,7 @@ class RunKeywordLibrary:
 
     def _passes(self, args):
         for arg in args:
-            print arg,
+            print(arg, end=' ')
         return ', '.join(args)
 
     def _fails(self, args):

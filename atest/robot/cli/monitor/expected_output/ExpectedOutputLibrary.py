@@ -1,4 +1,3 @@
-from __future__ import with_statement
 from os.path import abspath, dirname, join
 from fnmatch import fnmatchcase
 from operator import eq

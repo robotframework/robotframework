@@ -1,3 +1,5 @@
+from six import unichr
+
 message_list = [ u'Circle is 360\u00B0',
                u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4',
                u'\u0989\u09C4 \u09F0 \u09FA \u099F \u09EB \u09EA \u09B9' ]
