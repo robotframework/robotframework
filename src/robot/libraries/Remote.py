@@ -18,10 +18,7 @@ import re
 import socket
 import sys
 import time
-if PY3:
-    import xmlrpc.client as xmlrpclib
-else:
-    import xmlrpclib
+import six.moves.xmlrpc_client as xmlrpclib
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:   # No expat in IronPython 2.7
@@ -86,6 +83,7 @@ class ArgumentCoercer(object):
 
     def coerce(self, argument):
         for handles, handle in [(self._is_string, self._handle_string),
+                                (self._is_bytes, self._handle_binary), #PY3
                                 (self._is_number, self._pass_through),
                                 (is_list_like, self._coerce_list),
                                 (is_dict_like, self._coerce_dict),
@@ -95,6 +93,10 @@ class ArgumentCoercer(object):
 
     def _is_string(self, arg):
         return isinstance(arg, string_types)
+
+    #PY3:
+    def _is_bytes(self, arg):
+        return isinstance(arg, bytes)
 
     def _is_number(self, arg):
         return isinstance(arg, integer_types + (float,))
@@ -112,7 +114,8 @@ class ArgumentCoercer(object):
     def _handle_binary(self, arg):
         try:
             if PY3:
-                arg = bytes(map(ord, arg))
+                if not isinstance(arg, bytes):
+                    arg = bytes(map(ord, arg))
             else:
                 arg = str(arg)
         except (ValueError, UnicodeError):
