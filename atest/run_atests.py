@@ -94,7 +94,7 @@ if PY3 and do2to3:
                           text)
                         # Remove L suffixes from integer literals:
                         text = re.sub(r'([1-9][0-9]+)L', r'\1', text)
-                        with open(path, 'w') as f:
+                        with open(path, 'w', encoding='utf8') as f:
                             f.write(text)
 
     do2to3 = False
