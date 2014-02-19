@@ -16,10 +16,7 @@ from six import PY3, text_type as unicode
 
 import os
 import sys
-if PY3:
-    from urllib.request import pathname2url
-else:
-    from urllib import pathname2url
+from six.moves.urllib.request import pathname2url
 
 from robot.errors import DataError
 
@@ -73,7 +70,8 @@ def get_link_path(target, base):
     Rationale: os.path.relpath is not available before Python 2.6
     """
     path =  _get_pathname(target, base)
-    url = pathname2url(path.encode('UTF-8'))
+    # Windows Python 3 pathname2url doesn't accept bytes
+    url = pathname2url(path if PY3 else path.encode('UTF-8'))
     if os.path.isabs(path):
         url = 'file:' + url
     # At least Jython seems to use 'C|/Path' and not 'C:/Path'

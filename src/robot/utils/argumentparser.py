@@ -305,7 +305,7 @@ class ArgumentParser:
             if drive:
                 ret.append(drive)
                 drive = ''
-            if len(item) == 1 and item in string.letters:
+            if len(item) == 1 and item in string.ascii_letters:
                 drive = item
             else:
                 ret.append(item)
