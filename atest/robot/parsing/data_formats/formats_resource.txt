@@ -37,7 +37,9 @@ Run Sample File And Check Tests
     Check Test Tags  Own Tags  force1  force2  own1  own2
     Check Test Tags  Default Tags  default1  force1  force2
     ${test} =  Check Test Case  Test Timeout
-    Should Be Equal  ${test.timeout}  1 second
+    Should Be Equal  ${test.timeout}  10 milliseconds
+    ${test} =  Check Test Case  Keyword Timeout
+    Should Be Equal  ${test.kws[0].timeout}  2 milliseconds
     Check Test Doc  Document  Testing the metadata parsing.
     ${test} =  Check Test Case  Default Fixture
     Should Be Equal  ${test.setup}  ${None}
