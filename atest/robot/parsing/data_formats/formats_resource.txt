@@ -82,4 +82,3 @@ Run Keyword If/Unless Docutils Installed
     [Arguments]  ${if kw}  ${unless kw}
     Run Keyword If  "${DOCUTILS INSTALLED}" == "YES"  ${if kw}
     Run Keyword Unless  "${DOCUTILS INSTALLED}" == "YES"  ${unless kw}
-
