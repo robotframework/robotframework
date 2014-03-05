@@ -6,16 +6,20 @@ Resource         process_resource.txt
 
 *** Test Cases ***
 Sending INT signal
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    Sending signal INT (2).
 
 Sending SIGINT signal
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    Sending signal SIGINT (2).
 
 Sending INT signal as a text number
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    Sending signal 2 (2).
 
 Sending INT signal as a number
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    Sending signal 2 (2).
 
 Send other well-known signals
     Check Test Case    ${TESTNAME}

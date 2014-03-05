@@ -564,7 +564,9 @@ class Process(object):
         if not hasattr(process, 'send_signal'):
             raise RuntimeError('Sending signals is not supported '
                                'by this Python version.')
-        process.send_signal(self._get_signal_number(signal))
+        signum = self._get_signal_number(signal)
+        logger.info('Sending signal %s (%d).' % (signal, signum))
+        process.send_signal(signum)
 
     def _get_signal_number(self, int_or_name):
         try:
