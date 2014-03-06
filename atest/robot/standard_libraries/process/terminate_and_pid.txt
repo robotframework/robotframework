@@ -5,9 +5,6 @@ Force Tags       regression    pybot    jybot
 Resource         process_resource.txt
 
 *** Test Cases ***
-Run process does not change active process
-    Check Test Case    ${TESTNAME}
-
 Terminate process
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    Gracefully terminating process.
@@ -46,10 +43,4 @@ Terminate all processes
     Check Log Message   ${tc.kws[14].msgs[0]}    Gracefully terminating process.
 
 Terminating all empties cache
-    Check Test Case    ${TESTNAME}
-
-Pid
-    Check Test Case    ${TESTNAME}
-
-Getting PIDs in different ways should give same result
     Check Test Case    ${TESTNAME}

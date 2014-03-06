@@ -12,13 +12,6 @@ ${COUNTDOWN}      ${CURDIR}${/}files${/}countdown.py
 ${TEMPFILE}       %{TEMPDIR}${/}terminate-process-temp.txt
 
 *** Test Cases ***
-Run process does not change active process
-    Some process    active
-    ${expected id}=    Get Process Id
-    Run Python Process    1+1
-    ${id}=    Get Process Id
-    Should Be Equal    ${expected id}    ${id}
-
 Terminate process
     ${handle}=    Some process
     ${result} =    Terminate Process    ${handle}
@@ -101,22 +94,6 @@ Terminating all empties cache
     Terminate All Processes    kill=True
     ${handle} =    Some Process
     Should Be Equal    ${handle}    ${1}
-
-Pid
-    ${handle}=    Some process
-    ${pid}=    Get Process Id    ${handle}
-    Should Not Be Equal   ${pid}   ${None}
-    Evaluate    os.kill(int(${pid}),signal.SIGTERM) if hasattr(os, 'kill') else os.system('taskkill /pid ${pid} /f')    os,signal
-    Wait For Process    ${handle}
-    Process Should Be Stopped    ${handle}
-
-Getting PIDs in different ways should give same result
-    ${handle}=    Start Process    python -c "print 'hello'"    shell=True    alias=hello
-    ${pid1}=      Get Process Id
-    ${pid2}=      Get Process Id   hello
-    ${pid3}=      Get Process Id   ${handle}
-    Should Be Equal As Integers   ${pid1}   ${pid2}
-    Should Be Equal As Integers   ${pid1}   ${pid3}
 
 *** Keywords ***
 Terminate should stop countdown

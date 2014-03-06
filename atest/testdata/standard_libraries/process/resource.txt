@@ -10,16 +10,17 @@ ${CWD}            %{TEMPDIR}/process-cwd
 *** Keywords ***
 Some process
     [Arguments]    ${alias}=${null}
-    ${handle}=    Start Python Process    raw_input()    alias=${alias}
+    ${handle}=    Start Python Process    print raw_input()    alias=${alias}    stderr=STDOUT
     Process should be running
     [Return]    ${handle}
 
 Stop some process
-    [Arguments]    ${alias}=${null}
-    ${running}=    Is Process Running    ${alias}
+    [Arguments]    ${handle}=${null}    ${message}=
+    ${running}=    Is Process Running    ${handle}
     Return From Keyword If    not ${running}
-    ${process}=    Get Process Object    ${alias}
-    Call Method    ${process}    communicate    stop\n
+    ${process}=    Get Process Object    ${handle}
+    ${stdout}    ${_} =    Call Method    ${process}    communicate    ${message}\n
+    [Return]    ${stdout.rstrip()}
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0

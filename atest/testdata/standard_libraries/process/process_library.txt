@@ -23,17 +23,6 @@ Start And Wait Process
     Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
 
-Switching active process
-    ${process_one}=    Some process    one
-    Stop Some Process    one
-    ${process_two}=    Some process    two
-    Process Should Be Running    ${process_two}
-    Switch Process    one
-    Process Should Be Stopped
-    Switch Process    two
-    Process Should Be Running
-    Stop Some Process
-
 Change Current Working Directory
     ${result}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=.
     ${result2}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=..
@@ -98,11 +87,13 @@ Input things to process
     ${result}=    Wait For Process
     Should Match    ${result.stdout}    *inp some input*
 
-Process alias
-    ${handle}=    Start Process    python -c "print 'hello'"    shell=True    alias=hello
-    ${pid_by_handle}=    Get process id    ${handle}
-    ${pid_by_alias}=    Get process id    hello
-    Should Be Equal    ${pid_by_handle}    ${pid_by_alias}
+Get process id
+    Check Precondition    not sys.platform.startswith('java')
+    ${handle}=    Some process
+    ${pid}=    Get Process Id    ${handle}
+    Should Not Be Equal   ${pid}   ${None}
+    Evaluate    os.kill(int(${pid}),signal.SIGTERM) if hasattr(os, 'kill') else os.system('taskkill /pid ${pid} /f')    os,signal
+    Wait For Process    ${handle}
 
 *** Keywords ***
 Restart Suite Process If Needed
