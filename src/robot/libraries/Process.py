@@ -329,14 +329,7 @@ class Process(object):
         executable_command = self._cmd(command, arguments, config.shell)
         logger.info('Starting process:\n%s' % executable_command)
         logger.debug('Process configuration:\n%s' % config)
-        process = subprocess.Popen(executable_command,
-                                   stdout=config.stdout_stream,
-                                   stderr=config.stderr_stream,
-                                   stdin=subprocess.PIPE,
-                                   shell=config.shell,
-                                   cwd=config.cwd,
-                                   env=config.env,
-                                   universal_newlines=True)
+        process = subprocess.Popen(executable_command, **config.full_config)
         self._results[process] = ExecutionResult(process,
                                                  config.stdout_stream,
                                                  config.stderr_stream)
@@ -783,6 +776,17 @@ class ProcessConfig(object):
                 env = os.environ.copy()
             env[encode_to_system(key[4:])] = encode_to_system(extra[key])
         return env
+
+    @property
+    def full_config(self):
+        config = {'stdout': self.stdout_stream,
+                  'stderr': self.stderr_stream,
+                  'stdin': subprocess.PIPE,
+                  'shell': self.shell,
+                  'cwd': self.cwd,
+                  'env': self.env,
+                  'universal_newlines': True}
+        return config
 
     def __str__(self):
         return encode_to_system("""\
