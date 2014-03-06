@@ -19,15 +19,7 @@ Run process does not change active process
     ${id}=    Get Process Id
     Should Be Equal    ${expected id}    ${id}
 
-Killing process
-    ${handle}=    Some process
-    ${result} =    Terminate Process    ${handle}    kill=true
-    Process Should Be Stopped    ${handle}
-    Should Not Be Equal As Integers    ${result.rc}    0
-    Should Be Empty    ${result.stdout}
-    Should Be Empty    ${result.stderr}
-
-Terminating process
+Terminate process
     ${handle}=    Some process
     ${result} =    Terminate Process    ${handle}
     Process Should Be Stopped    ${handle}
@@ -35,28 +27,33 @@ Terminating process
     Should Be Empty    ${result.stdout}
     Should Be Empty    ${result.stderr}
 
-Killing process running on shell
+Kill process
+    ${handle}=    Some process
+    ${result} =    Terminate Process    ${handle}    kill=true
+    Process Should Be Stopped    ${handle}
+    Should Not Be Equal As Integers    ${result.rc}    0
+    Should Be Empty    ${result.stdout}
+    Should Be Empty    ${result.stderr}
+
+Terminate process running on shell
+    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
+    Terminate should stop countdown
+
+Kill process running on shell
     Check Precondition    os.sep == '/'
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
-    Wait Until Created    ${TEMPFILE}
-    Terminate Process    kill=yes
-    ${content1} =    Get File    ${TEMPFILE}
-    Should Not Contain    ${content1}    BLASTOFF
-    Sleep    0.2
-    ${content2} =    Get File    ${TEMPFILE}
-    Should Be Equal    ${content1}    ${content2}
+    Terminate should stop countdown    kill=yes
 
-Terminating process running on shell
-    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
-    Wait Until Created    ${TEMPFILE}
-    Terminate Process
-    ${content1} =    Get File    ${TEMPFILE}
-    Should Not Contain    ${content1}    BLASTOFF
-    Sleep    0.2
-    ${content2} =    Get File    ${TEMPFILE}
-    Should Be Equal    ${content1}    ${content2}
+Also child processes are terminated
+    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    3
+    Terminate should stop countdown
 
-Kill Process When Terminate Fails
+Also child processes are killed
+    Check Precondition    os.sep == '/'
+    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    3
+    Terminate should stop countdown    kill=${True}
+
+Kill process when terminate fails
     ${lib} =    Get Library Instance    Process
     ${lib.TERMINATE_TIMEOUT} =    Set Variable    ${2}
     ${lib.KILL_TIMEOUT} =    Set Variable    ${1}
@@ -76,7 +73,7 @@ Waiting for terminated process is ok
     Terminate Process    ${handle}
     Wait For Process    ${handle}
 
-Terminate All Processes
+Terminate all processes
     ${h1}=    Some process
     ${h2}=    Some process
     ${h3}=    Some process
@@ -99,7 +96,7 @@ Terminate All Processes
     \    ${poll}=    Call Method    ${process}    poll
     \    Should Not Be Equal    ${poll}    ${NONE}
 
-Terminate All Empties Cache
+Terminating all empties cache
     Some process
     Terminate All Processes    kill=True
     ${handle} =    Some Process
@@ -120,3 +117,15 @@ Getting PIDs in different ways should give same result
     ${pid3}=      Get Process Id   ${handle}
     Should Be Equal As Integers   ${pid1}   ${pid2}
     Should Be Equal As Integers   ${pid1}   ${pid3}
+
+*** Keywords ***
+Terminate should stop countdown
+    [Arguments]    ${kill}=false
+    Wait Until Created    ${TEMPFILE}
+    Terminate Process    kill=${kill}
+    ${content1} =    Get File    ${TEMPFILE}
+    Should Not Contain    ${content1}    BLASTOFF
+    Sleep    0.2
+    ${content2} =    Get File    ${TEMPFILE}
+    Should Be Equal    ${content1}    ${content2}
+

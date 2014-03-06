@@ -8,38 +8,44 @@ Resource         process_resource.txt
 Run process does not change active process
     Check Test Case    ${TESTNAME}
 
-Killing process
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    Forcefully killing process.
-
-Terminating process
+Terminate process
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    Gracefully terminating process.
 
-Killing process running on shell
+Kill process
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[1].msgs[0]}    Forcefully killing process.
+
+Terminate process running on shell
     Check Test Case    ${TESTNAME}
 
-Terminating process running on shell
+Kill process running on shell
     Check Test Case    ${TESTNAME}
 
-Kill Process When Terminate Fails
+Also child processes are terminated
+    Check Test Case    ${TESTNAME}
+
+Also child processes are killed
+    Check Test Case    ${TESTNAME}
+
+Kill process when terminate fails
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[5].msgs[0]}    Gracefully terminating process.
     Check Log Message    ${tc.kws[5].msgs[1]}    Graceful termination failed.
     Check Log Message    ${tc.kws[5].msgs[2]}    Forcefully killing process.
     Should Be True    ${tc.elapsedtime} >= 2000
 
-Terminate All Processes
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message   ${tc.kws[14].msgs[0]}    Gracefully terminating process.
-
-Terminate All Empties Cache
-    Check Test Case    ${TESTNAME}
-
 Terminating already terminated process is ok
     Check Test Case    ${TESTNAME}
 
 Waiting for terminated process is ok
+    Check Test Case    ${TESTNAME}
+
+Terminate all processes
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message   ${tc.kws[14].msgs[0]}    Gracefully terminating process.
+
+Terminating all empties cache
     Check Test Case    ${TESTNAME}
 
 Pid
