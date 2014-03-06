@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/terminate_and_pid.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/terminate_process.txt
 Test Setup       Check Precondition
 Force Tags       regression    pybot    jybot
 Resource         process_resource.txt
