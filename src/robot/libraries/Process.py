@@ -14,6 +14,7 @@
 
 from __future__ import with_statement
 
+import ctypes
 import os
 import subprocess
 import sys
@@ -324,6 +325,10 @@ class Process(object):
 
         Makes the started process new `active process`. Returns an identifier
         that can be used as a handle to active the started process if needed.
+
+        Starting from Robot Framework 2.8.5, processes are started so that
+        they create a new process group. This allows sending signals to and
+        terminating also possible child processes.
         """
         config = ProcessConfig(**configuration)
         executable_command = self._cmd(command, arguments, config.shell)
@@ -454,17 +459,21 @@ class Process(object):
         similarly as `Wait For Process`.
 
         On Unix-like machines, by default, first tries to terminate the process
-        gracefully, but forcefully kills it if it does not stop in 30 seconds.
-        Kills the process immediately if the `kill` argument is given any value
-        considered true. See `Boolean arguments` section for more details about
-        true and false values.
+        group gracefully, but forcefully kills it if it does not stop in 30
+        seconds. Kills the process group immediately if the `kill` argument is
+        given any value considered true. See `Boolean arguments` section for
+        more details about true and false values.
 
         Termination is done using `TERM (15)` signal and killing using
         `KILL (9)`. Use `Send Signal To Process` instead if you just want to
         send either of these signals without waiting for the process to stop.
 
-        On Windows the Win32 API function `TerminateProcess()` is used directly
-        to stop the process. Using the `kill` argument has no special effect.
+        On Windows, by default, sends `CTRL_BREAK_EVENT` signal to the process
+        group. If that does not stop the process in 30 seconds, or `kill`
+        argument is given a true value, uses Win32 API function
+        `TerminateProcess()` to kill the process forcefully. Note that
+        `TerminateProcess()` does not kill possible child processes. Using
+        `CTRL_BREAK_EVENT` by default is a new feature in Robot Framework 2.8.5.
 
         | ${result} =                 | Terminate Process |           |
         | Should Be Equal As Integers | ${result.rc}      | -15       |
@@ -479,6 +488,11 @@ class Process(object):
 
         Automatically killing the process if termination fails as well as
         returning the result object are new features in Robot Framework 2.8.2.
+
+        Prior to Robot Framework 2.8.5 only the started process itself, not
+        possible child processes started by it, was terminated. This also meant
+        that when `running processes in shell`, only the shell, not the
+        process, was terminated.
         """
         process = self._processes[handle]
         if not hasattr(process, 'terminate'):
@@ -495,13 +509,28 @@ class Process(object):
 
     def _kill(self, process):
         logger.info('Forcefully killing process.')
-        process.kill()
+        if hasattr(os, 'killpg') and process.pid:
+            os.killpg(process.pid, signal_module.SIGKILL)
+        else:
+            process.terminate()
         if not self._process_is_stopped(process, self.KILL_TIMEOUT):
             raise RuntimeError('Failed to kill process.')
 
     def _terminate(self, process):
         logger.info('Gracefully terminating process.')
-        process.terminate()
+        # Sends signal to the whole process group both on POSIX and on Windows
+        # if supported by the interpreter.
+        if hasattr(os, 'killpg') and process.pid:
+            os.killpg(process.pid, signal_module.SIGTERM)
+        elif hasattr(signal_module, 'CTRL_BREAK_EVENT'):
+            if sys.platform == 'cli':
+                # https://ironpython.codeplex.com/workitem/35020
+                ctypes.windll.kernel32.GenerateConsoleCtrlEvent(
+                    signal_module.CTRL_BREAK_EVENT, process.pid)
+            else:
+                process.send_signal(signal_module.CTRL_BREAK_EVENT)
+        else:
+            process.terminate()
         if not self._process_is_stopped(process, self.TERMINATE_TIMEOUT):
             logger.info('Graceful termination failed.')
             self._kill(process)
@@ -786,6 +815,10 @@ class ProcessConfig(object):
                   'cwd': self.cwd,
                   'env': self.env,
                   'universal_newlines': True}
+        if hasattr(os, 'setsid') and not sys.platform.startswith('java'):
+            config['preexec_fn'] = os.setsid
+        if hasattr(subprocess, 'CREATE_NEW_PROCESS_GROUP'):
+            config['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
         return config
 
     def __str__(self):
