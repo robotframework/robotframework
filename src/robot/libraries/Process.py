@@ -489,10 +489,8 @@ class Process(object):
         Automatically killing the process if termination fails as well as
         returning the result object are new features in Robot Framework 2.8.2.
 
-        Prior to Robot Framework 2.8.5 only the started process itself, not
-        possible child processes started by it, was terminated. This also meant
-        that when `running processes in shell`, only the shell, not the
-        process, was terminated.
+        Starting from Robot Framework 2.8.5, also possible child processes
+        started by the main process are terminated.
         """
         process = self._processes[handle]
         if not hasattr(process, 'terminate'):
@@ -509,10 +507,10 @@ class Process(object):
 
     def _kill(self, process):
         logger.info('Forcefully killing process.')
-        if hasattr(os, 'killpg') and process.pid:
+        if hasattr(os, 'killpg'):
             os.killpg(process.pid, signal_module.SIGKILL)
         else:
-            process.terminate()
+            process.kill()
         if not self._process_is_stopped(process, self.KILL_TIMEOUT):
             raise RuntimeError('Failed to kill process.')
 
@@ -520,7 +518,7 @@ class Process(object):
         logger.info('Gracefully terminating process.')
         # Sends signal to the whole process group both on POSIX and on Windows
         # if supported by the interpreter.
-        if hasattr(os, 'killpg') and process.pid:
+        if hasattr(os, 'killpg'):
             os.killpg(process.pid, signal_module.SIGTERM)
         elif hasattr(signal_module, 'CTRL_BREAK_EVENT'):
             if sys.platform == 'cli':
