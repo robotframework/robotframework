@@ -3,6 +3,8 @@ Library           Process
 Library           OperatingSystem
 
 *** Variables ***
+${COUNTDOWN}      ${CURDIR}${/}files${/}countdown.py
+${TEMPFILE}       %{TEMPDIR}${/}terminate-process-temp.txt
 ${STDOUT}         %{TEMPDIR}/process-stdout-file.txt
 ${STDERR}         %{TEMPDIR}/process-stderr-file.txt
 ${CWD}            %{TEMPDIR}/process-cwd
@@ -51,9 +53,9 @@ Custom stream should contain
     [Return]    ${path}
 
 Start Python Process
-    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}
+    [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}    ${shell}=False
     ${handle}=    Start Process    python    -c    ${command}
-    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}
+    ...    alias=${alias}    stdout=${stdout}    stderr=${stderr}    shell=${shell}
     [Return]    ${handle}
 
 Run Python Process
@@ -77,3 +79,16 @@ Check Precondition
     ${ok} =    Evaluate    ${precondition}    modules=sys,os
     Run Keyword If    not ${ok}
     ...    Fail    Precondition '${precondition}' was not true.    precondition-fail
+
+Wait until countdown started
+    Wait Until Created    ${TEMPFILE}
+
+Countdown should have stopped
+    [Arguments]    ${handle}=${None}
+    ${result}=    Wait For Process    ${handle}
+    Should Not Be Equal    ${result.rc}    ${0}
+    ${content1} =    Get File    ${TEMPFILE}
+    Should Not Contain    ${content1}    BLASTOFF
+    Sleep    0.2
+    ${content2} =    Get File    ${TEMPFILE}
+    Should Be Equal    ${content1}    ${content2}

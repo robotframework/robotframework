@@ -8,8 +8,6 @@ Resource          resource.txt
 
 *** Variables ***
 ${NONTERM}        ${CURDIR}${/}files${/}non_terminable.py
-${COUNTDOWN}      ${CURDIR}${/}files${/}countdown.py
-${TEMPFILE}       %{TEMPDIR}${/}terminate-process-temp.txt
 
 *** Test Cases ***
 Terminate process
@@ -98,11 +96,6 @@ Terminating all empties cache
 *** Keywords ***
 Terminate should stop countdown
     [Arguments]    ${kill}=false
-    Wait Until Created    ${TEMPFILE}
+    Wait until countdown started
     Terminate Process    kill=${kill}
-    ${content1} =    Get File    ${TEMPFILE}
-    Should Not Contain    ${content1}    BLASTOFF
-    Sleep    0.2
-    ${content2} =    Get File    ${TEMPFILE}
-    Should Be Equal    ${content1}    ${content2}
-
+    Countdown should have stopped

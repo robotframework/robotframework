@@ -1,5 +1,7 @@
 *** Settings ***
-Test Setup        Check Precondition    os.sep == "/" and sys.version_info >= (2,6)
+Test Setup        Run Keywords
+...               Check Precondition    os.sep == "/" and sys.version_info >= (2,6)
+...               AND    Remove File    ${TEMPFILE}
 Suite Teardown    Terminate All Processes
 Resource          resource.txt
 
@@ -17,11 +19,8 @@ Sending INT signal as a number
     Killer signal    ${2}
 
 Send other well-known signals
-    :FOR    ${signal}    IN    TERM    SIGTERM    15    KILL    SIGKILL    9
-    \    Start Sleeping Process
-    \    Send Signal To Process    ${signal}
-    \    ${result} =    Wait For Process
-    \    Should Not Be Equal    ${result.rc}    ${0}
+    :FOR    ${signal}    IN    TERM    SIGTERM    15    KILL    SIGKILL    ${9}
+    \    Killer signal    ${signal}
 
 Sending an unknown signal
     [Documentation]    FAIL Unsupported signal 'unknown'.
@@ -29,12 +28,12 @@ Sending an unknown signal
     Send Signal To Process    unknown
 
 Sending signal to a process with a handle
-    ${index} =    Start Sleeping Process
-    Start Sleeping Process    alias=alias
+    ${index} =    Start Countdown
+    Start Countdown    alias=alias
     Send Signal To Process    INT    handle=${index}
     Send Signal To Process    INT    alias
-    Sleeping Process Should Have Been Stopped    ${index}
-    Sleeping Process Should Have Been Stopped    alias
+    Countdown Should Have Stopped    ${index}
+    Countdown Should Have Stopped    alias
 
 Sending signal to a process with a wrong handle
     [Documentation]    FAIL Non-existing index or alias 'unknown'.
@@ -43,23 +42,13 @@ Sending signal to a process with a wrong handle
 *** Keywords ***
 Killer signal
     [Arguments]    ${signal}
-    Start Sleeping Process
+    Start Countdown    alias=${signal}
     Send Signal To Process    ${signal}
-    Sleeping Process Should Have Been Stopped
+    Countdown Should Have Stopped    handle=${signal}
 
-Start Sleeping Process
-    [Arguments]    ${alias}=
-    ${command} =    Catenate    SEPARATOR=\n
-    ...    import time
-    ...    print 'start'
-    ...    for i in range(25): time.sleep(0.1)
-    ...    print 'end'
-    ${index} =    Start Python Process    ${command}    alias=${alias}
-    Sleep    0.1s    Give process time to start
-    [Return]    ${index}
-
-Sleeping Process Should Have Been Stopped
-    [Arguments]    ${handle}=
-    ${result}=    Wait For Process    ${handle}
-    Should Not Be Equal    ${result.rc}    ${0}
-    Should Be Equal    ${result.stdout}    start    handle "${handle}"
+Start Countdown
+    [Arguments]    ${alias}=    ${shell}=False
+    ${handle} =    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}
+    ...    alias=${alias}    shell=${shell}
+    Wait Until Countdown Started
+    [Return]    ${handle}
