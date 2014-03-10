@@ -472,11 +472,10 @@ class Process(object):
         group. If that does not stop the process in 30 seconds, or `kill`
         argument is given a true value, uses Win32 API function
         `TerminateProcess()` to kill the process forcefully. Note that
-        `TerminateProcess()` does not kill possible child processes. Using
-        `CTRL_BREAK_EVENT` by default is a new feature in Robot Framework 2.8.5.
+        `TerminateProcess()` does not kill possible child processes.
 
-        | ${result} =                 | Terminate Process |           |
-        | Should Be Equal As Integers | ${result.rc}      | -15       |
+        | ${result} =                 | Terminate Process |     |
+        | Should Be Equal As Integers | ${result.rc}      | -15 | # On Unixes |
         | Terminate Process           | myproc            | kill=true |
 
         *NOTE:* Stopping processes requires the
@@ -487,10 +486,9 @@ class Process(object):
         [http://bugs.jython.org/issue1898|do not seem to support them either].
 
         Automatically killing the process if termination fails as well as
-        returning the result object are new features in Robot Framework 2.8.2.
-
-        Starting from Robot Framework 2.8.5, also possible child processes
-        started by the main process are terminated.
+        returning a result object are new features in Robot Framework 2.8.2.
+        Terminating also possible child processes, including using
+        `CTRL_BREAK_EVENT` on Windows, is new in Robot Framework 2.8.5.
         """
         process = self._processes[handle]
         if not hasattr(process, 'terminate'):
@@ -554,8 +552,8 @@ class Process(object):
         If `handle` is not given, uses the current `active process`.
 
         Signal can be specified either as an integer, or anything that can
-        be converted to an integer, or as a name. In the latter case it is
-        possible to give the name both with or without a `SIG` prefix,
+        be converted to an integer, or as a signal name. In the latter case it
+        is possible to give the name both with or without a `SIG` prefix,
         but names are case-sensitive. For example, all the examples below
         send signal `INT (2)`:
 
@@ -568,7 +566,7 @@ class Process(object):
         signal handling (typically `man signal` or `man 7 signal`).
 
         If you are stopping a process, it is often easier and safer to use
-        `Terminate Process` instead.
+        `Terminate Process` keyword instead.
 
         *NOTE:* Sending signals requires the
         [http://docs.python.org/2/library/subprocess.html|subprocess]
