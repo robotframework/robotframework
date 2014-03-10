@@ -92,3 +92,13 @@ Countdown should have stopped
     Sleep    0.2
     ${content2} =    Get File    ${TEMPFILE}
     Should Be Equal    ${content1}    ${content2}
+
+Countdown should not have stopped
+    [Arguments]    ${handle}=${None}
+    ${result}=    Wait For Process    ${handle}
+    Should Not Be Equal    ${result.rc}    ${0}
+    ${content1} =    Get File    ${TEMPFILE}
+    Should Not Contain    ${content1}    BLASTOFF
+    Sleep    0.2
+    ${content2} =    Get File    ${TEMPFILE}
+    Should Not Be Equal    ${content1}    ${content2}

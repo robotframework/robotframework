@@ -546,7 +546,7 @@ class Process(object):
                 self.terminate_process(handle, kill=kill)
         self.__init__()
 
-    def send_signal_to_process(self, signal, handle=None):
+    def send_signal_to_process(self, signal, handle=None, group=False):
         """Sends the given `signal` to the specified process.
 
         If `handle` is not given, uses the current `active process`.
@@ -565,6 +565,14 @@ class Process(object):
         existing signals on your system, see the Unix man pages related to
         signal handling (typically `man signal` or `man 7 signal`).
 
+        By default sends the signal only to the parent process, not to possible
+        child processes started by it. Notice that when `running processes in
+        shell`, the shell is the parent process and thus the actual started
+        process does not receive the signal. To send the signal to the whole
+        process group, `group` argument can be set to any true value:
+
+        | Send Signal To Process | TERM  | group=yes |
+
         If you are stopping a process, it is often easier and safer to use
         `Terminate Process` keyword instead.
 
@@ -574,17 +582,21 @@ class Process(object):
         in Python 2.6 and are thus missing from earlier versions.
         How well it will work with forthcoming Jython 2.7 is unknown.
 
-        New in Robot Framework 2.8.2.
+        New in Robot Framework 2.8.2. Support for `group` argument is new
+        in Robot Framework 2.8.5.
         """
         if os.sep == '\\':
             raise RuntimeError('This keyword does not work on Windows.')
         process = self._processes[handle]
-        if not hasattr(process, 'send_signal'):
-            raise RuntimeError('Sending signals is not supported '
-                               'by this Python version.')
         signum = self._get_signal_number(signal)
         logger.info('Sending signal %s (%d).' % (signal, signum))
-        process.send_signal(signum)
+        if is_true(group) and hasattr(os, 'killpg'):
+            os.killpg(process.pid, signum)
+        elif hasattr(process, 'send_signal'):
+            process.send_signal(signum)
+        else:
+            raise RuntimeError('Sending signals is not supported '
+                               'by this Python version.')
 
     def _get_signal_number(self, int_or_name):
         try:
