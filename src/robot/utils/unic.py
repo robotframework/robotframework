@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from six import text_type as unicode
+from six import PY3, text_type as unicode
 
 import sys
 
@@ -50,12 +50,6 @@ else:
 
 
 def _unic(item, *args):
-    # First check if already unicode (Python 3 str)
-    # --> Python 3 will raise TypeError
-    #     if trying to decode with str(item, *args) below.
-    # 2to3 changes `unicode` to `str`.
-    if type(item) is unicode:
-        return item
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
         return unicode(item, *args)
@@ -67,6 +61,23 @@ def _unic(item, *args):
             return _unrepresentable_object(item)
     except:
         return _unrepresentable_object(item)
+
+if PY3:
+    def _unic(item, *args):
+        if isinstance(item, str):
+            return item
+        if isinstance(item, (bytes, bytearray)) and not args:
+            #TODO: Somehow nicer(?)
+            # First map byte values to unicode:
+            item = item.decode('latin')
+            # Then PY3 string_escape (==> bytes):
+            item = item.encode('unicode_escape')
+            # Finally to unicode again:
+            return item.decode('ascii')
+        try:
+            return str(item, *args)
+        except (UnicodeError, TypeError):
+            return _unrepresentable_object(item)
 
 
 def safe_repr(item):
