@@ -8,9 +8,6 @@ from remoteserver import DirectResultRemoteServer
 
 class BinaryResult(object):
 
-    def blacheck(self, value):
-        raise RuntimeError((type(value), str(value)))
-
     def return_binary(self, *ordinals):
         return self._result(return_=self._binary(ordinals))
 
