@@ -115,10 +115,10 @@ class ArgumentCoercer(object):
         try:
             if PY3:
                 if not isinstance(arg, bytes):
-                    arg = bytes(map(ord, arg))
+                    arg = bytes(arg, 'ascii')
             else:
                 arg = str(arg)
-        except (ValueError, UnicodeError):
+        except UnicodeError:
             raise ValueError('Cannot represent %r as binary.' % arg)
         return xmlrpclib.Binary(arg)
 
