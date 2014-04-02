@@ -168,7 +168,7 @@ class RemoteResult(object):
 
     def _handle_binary(self, value):
         if isinstance(value, xmlrpclib.Binary):
-            return str(value)
+            return value.data
         if is_list_like(value):
             return [self._handle_binary(v) for v in value]
         if is_dict_like(value):
