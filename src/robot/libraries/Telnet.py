@@ -1041,12 +1041,15 @@ class TerminalEmulator(object):
 
     def _get_history(self):
         if self._screen.history.top:
-            return self._get_screen(self._screen.history.top) + self._newline
+            return self._get_history_screen(self._screen.history.top) + self._newline
         return ''
 
-    def _get_screen(self, screen):
+    def _get_history_screen(self, deque):
         return self._newline.join(''.join(c.data for c in row).rstrip()
-                                  for row in screen).rstrip(self._newline)
+                                  for row in deque).rstrip(self._newline)
+
+    def _get_screen(self, screen):
+        return self._newline.join(row.rstrip() for row in screen.display).rstrip(self._newline)
 
     def feed(self, input_bytes):
         self._stream.feed(input_bytes)
