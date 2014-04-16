@@ -160,6 +160,11 @@ function getRules(style) {
     }
 }
 
+function selectMessage(parentId) {
+    var element = $('#' + parentId).find('.message')[0];
+    selectText(element);
+}
+
 function selectText(element) {
     // Based on http://stackoverflow.com/questions/985272
     var range, selection;

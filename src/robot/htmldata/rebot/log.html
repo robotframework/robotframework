@@ -177,7 +177,7 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="errorTemplate">
-  <tr id="${id}">
+  <tr id="${id}" class="message-row">
     <td class="error-time">
       {{if link}}
       <a onclick="makeElementVisible('${link}')" href="#${link}" title="Link to details">${date} ${time}</a>
@@ -187,7 +187,8 @@ function addTestExecutionLog(main) {
     </td>
     <td class="${level.toLowerCase()} level">${level}</td>
     <td class="message">{{html text}}</td>
-    <td class="select-text"><a href="javascript:selectText($('#${id} .message')[0])">Select Text</a></td>
+    <td class="select-text" onclick="javascript:selectMessage('${id}')"
+        title="Select message text"></td>
   </tr>
 </script>
 
@@ -341,11 +342,12 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="messageTemplate">
   <table id="${id}" class="messages ${level.toLowerCase()}-message">
-    <tr>
+    <tr class="message-row">
       <td class="time">${time}</td>
       <td class="${level.toLowerCase()} level">${level}</td>
       <td class="message">{{html text}}</td>
-      <td class="select-text"><a href="javascript:selectText($('#${id} .message')[0])">Select Text</a></td>
+      <td class="select-text" onclick="javascript:selectMessage('${id}')"
+          title="Select message text"></td>
     </tr>
   </table>
 </script>

@@ -75,6 +75,9 @@
     font-family: monospace;
     font-size: 1.1em;
 }
+.message-row {
+    height: 17px;
+}
 .time {
     width: 8em;
 }
@@ -87,22 +90,12 @@
     text-align: center;
 }
 .select-text {
-    width: 7em;
-    white-space: nowrap;
-    text-align: right;
-    padding-right: 0.5em;
+    width: 2em;
+    background-position: top right;
+    background-repeat: no-repeat;
 }
-.select-text > a {
-    font-size: 0.8em;
-    color: #808080 !important;
-    font-family: Helvetica, sans-serif;
-    border-radius: 8px;
-    padding: 0.3em 1em 0.1em 1em;
-}
-.select-text > a:hover {
-    text-decoration: none;
-    background-color: #BBBBFF;
-    color: black !important;
+.message-row:hover .select-text {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAMAAAAMs7fIAAAAUVBMVEWtw9urwdmpv9elu9Oht8/k6/OTqcHS3uuHnbWtwtro6Oj1+Pvu8veovtakutKiuNCgts7G1uaYrsaUqsL////t8vf5+/zb5e/T09PR3ev7/P0xxh/0AAAAZklEQVQYlWWQWQ6AIAwFKyAquKCCIvc/qAECrTKfky6vBa++eFDBUYIC5ZhBmIuGnwhPBgi7jmaVla23aY6oLNmQpudKxoyF47ZNzRx+c0TOQ3bJleYZEhozdzaDd01oyu3VNP95AZQgDMntcf1bAAAAAElFTkSuQmCC);
 }
 /* Message tables - these MUST NOT be combined together because otherwise
    dynamically altering them based on visible log level is not possible. */
