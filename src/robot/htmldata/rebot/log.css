@@ -7,8 +7,12 @@
 .test {
     border-style: dashed;
 }
-#errors, .metadata, .messages {
+#errors, .messages, .metadata {
     width: 100%;
+    border-spacing: 0;
+}
+#errors td, .messages td, .metadata th, .metadata td {
+    padding: 0.2em;
 }
 .children {
     display: none;
@@ -95,7 +99,10 @@
     background-repeat: no-repeat;
 }
 .message-row:hover .select-text {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAMAAAAMs7fIAAAAUVBMVEWtw9urwdmpv9elu9Oht8/k6/OTqcHS3uuHnbWtwtro6Oj1+Pvu8veovtakutKiuNCgts7G1uaYrsaUqsL////t8vf5+/zb5e/T09PR3ev7/P0xxh/0AAAAZklEQVQYlWWQWQ6AIAwFKyAquKCCIvc/qAECrTKfky6vBa++eFDBUYIC5ZhBmIuGnwhPBgi7jmaVla23aY6oLNmQpudKxoyF47ZNzRx+c0TOQ3bJleYZEhozdzaDd01oyu3VNP95AZQgDMntcf1bAAAAAElFTkSuQmCC);
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAV1BMVEXq7/atw9u6zOHS3uvA0eP3+fvZ4+7g6PHO2+n5+vz1+PvAwMC+z+KQkJDx9fm1yd/s8ffa5O/I1+fU4Oz////t8vf6+/3c5fC4y+Dj6vPv8/ju8/fd5vA594LsAAAAXklEQVQYlW3PVxKAIAwE0NhLRGxY0Puf05hRCIzvjx2yAVAYUIBLAAFNKhgKIBHoiP3klU10Y3s6zs47uHR3Zt4iRmoORGlWFX9rbS5YCgbNLvf0d2R0wQqs/YL4+ze2IArI2yb6sQAAAABJRU5ErkJggg==);
+}
+.message-row:hover .select-text:hover {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAV1BMVEXv833O26y1yc+tw9v5+m/c5Zjq74T1+HTx9Xrt8oDU4KPAwE3//2b3+XLa5JvS3qfs8YHg6JOQkDrd5pbZ45zj6o6+z8O6zMnu8376+27I17TA0cC4y8w8SaSaAAAAXklEQVQYlW3PWQ6AIAwE0LpVsSqK+3L/c4qNQiG+PyZ0CmAoYICaAAGpVVA2wExAG1SHN+XRjeLp2BZv5tLLqXmLGEk4EKV6aP/WwinYI/UpG93T35HOBTuy8gvi798gGQzuN7QrSQAAAABJRU5ErkJggg==);
 }
 /* Message tables - these MUST NOT be combined together because otherwise
    dynamically altering them based on visible log level is not possible. */
