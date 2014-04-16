@@ -160,6 +160,22 @@ function getRules(style) {
     }
 }
 
+function selectText(element) {
+    // Based on http://stackoverflow.com/questions/985272
+    var range, selection;
+    if (document.body.createTextRange) { //ms
+        range = document.body.createTextRange();
+        range.moveToElementText(element);
+        range.select();
+    } else if (window.getSelection) { //all others
+        selection = window.getSelection();
+        range = document.createRange();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}
+
 function LogLevelController(minLevel, defaultLevel) {
     minLevel = LEVELS[minLevel];
     defaultLevel = LEVELS[defaultLevel];

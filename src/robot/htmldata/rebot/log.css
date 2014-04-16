@@ -86,6 +86,24 @@
     width: 4.5em;
     text-align: center;
 }
+.select-text {
+    width: 7em;
+    white-space: nowrap;
+    text-align: right;
+    padding-right: 0.5em;
+}
+.select-text > a {
+    font-size: 0.8em;
+    color: #808080 !important;
+    font-family: Helvetica, sans-serif;
+    border-radius: 8px;
+    padding: 0.3em 1em 0.1em 1em;
+}
+.select-text > a:hover {
+    text-decoration: none;
+    background-color: #BBBBFF;
+    color: black !important;
+}
 /* Message tables - these MUST NOT be combined together because otherwise
    dynamically altering them based on visible log level is not possible. */
 .trace-message {
