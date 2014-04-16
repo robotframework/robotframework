@@ -161,18 +161,18 @@ function getRules(style) {
 }
 
 function selectMessage(parentId) {
-    var element = $('#' + parentId).find('.message')[0];
+    var element = $('#' + parentId).find('.message').get(0);
     selectText(element);
 }
 
 function selectText(element) {
     // Based on http://stackoverflow.com/questions/985272
     var range, selection;
-    if (document.body.createTextRange) { //ms
+    if (document.body.createTextRange) {  // IE 8
         range = document.body.createTextRange();
         range.moveToElementText(element);
         range.select();
-    } else if (window.getSelection) { //all others
+    } else if (window.getSelection) {  // Others
         selection = window.getSelection();
         range = document.createRange();
         range.selectNodeContents(element);
