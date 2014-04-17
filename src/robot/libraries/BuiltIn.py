@@ -2649,6 +2649,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     @property
     def _context(self):
+        if EXECUTION_CONTEXTS.current is None:
+            raise AttributeError('Cannot access execution context when '
+                                 'Robot Framework is not running.')
         return EXECUTION_CONTEXTS.current
 
     @property
