@@ -1484,11 +1484,14 @@ class _RunKeyword:
         Both `timeout` and `retry_interval` must be given in Robot Framework's
         time format (e.g. '1 minute', '2 min 3 s', '4.5').
 
+        If the executed keyword passes, returns its return value.
+
+        Examples:
+        | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | argument |
+        | ${result} = | Wait Until Keyword Succeeds | 30 s | 1 s | My keyword |
+
         Errors caused by invalid syntax, test or keyword timeouts, or fatal
         exceptions are not caught by this keyword.
-
-        Example:
-        | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | arg1 | arg2 |
 
         Running the same keyword multiple times inside this keyword can create
         lots of output and considerably increase the size of the generated
