@@ -16,7 +16,7 @@ from __future__ import with_statement
 
 from robot import utils
 from robot.errors import DataError
-from robot.variables import is_list_var
+from robot.variables import contains_var, is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser, ArgumentResolver,
@@ -265,19 +265,10 @@ class _RunKeywordHandler(_PythonHandler):
     def _get_runnable_dry_run_keywords(self, context, args):
         keywords = Keywords([])
         for keyword in self._get_dry_run_keywords(args):
-            if self._variable_syntax_in(keyword.name, context):
+            if contains_var(keyword.name):
                 continue
             keywords.add_keyword(keyword)
         return keywords
-
-    def _variable_syntax_in(self, kw_name, context):
-        try:
-            resolved = context.namespace.variables.replace_string(kw_name)
-            #Variable can contain value, but it might be wrong,
-            #therefore it cannot be returned
-            return resolved != kw_name
-        except DataError:
-            return True
 
     def _get_dry_run_keywords(self, args):
         if self._handler_name == 'run_keyword_if':
