@@ -156,10 +156,20 @@ Actual tests   : %s""" % (str(list(expected_names)), str(actual_tests))
             assert_equals(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
-        actual_names =  [kw.name for kw in item.keywords]
+        actual_names = [kw.name for kw in item.keywords]
         assert_equals(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equals(act, exp)
+
+    def test_should_have_correct_keywords(self, *kw_names, **config):
+        get_var = BuiltIn().get_variable_value
+        suite = get_var('${SUITE}')
+        name = config.get('name', get_var('${TEST NAME}'))
+        kw_index = int(config.get('kw_index', 0))
+        test = self.get_test_from_suite(suite, name)
+        self.check_test_status(test)
+        self.should_contain_keywords(test.keywords[kw_index], *kw_names)
+        return test
 
 
 def process_suite(suite):

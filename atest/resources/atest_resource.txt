@@ -316,11 +316,6 @@ Tag Statistics Should Be
     Should Be Equal As Integers  ${tag.attrib['pass']}  ${pass}
     Should Be Equal As Integers  ${tag.attrib['fail']}  ${fail}
 
-Test Should Have Correct Keywords  [Arguments]  @{expected}
-    ${tc} =  Check Test Case  ${TESTNAME}
-    Should Contain Keywords  ${tc.kws[0]}  @{expected}
-    [Return]  ${tc}
-
 Test And All Keywords Should Have Passed
     [Arguments]    ${name}=${TESTNAME}
     ${tc} =    Check Test Case    ${name}
