@@ -1,28 +1,32 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/create_file.txt
-Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/create_file.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
 
 *** Test Cases ***
+Create File With Default Content
+    Check Test Case    ${TESTNAME}
 
-Create File
-    Check Test Case  ${TESTNAME}
+Create File With Content
+    Check Test Case    ${TESTNAME}
+
+Create Non-ASCII File With Default Encoding
+    Check Test Case    ${TESTNAME}
 
 Create File With Encoding
-    Check Test Case  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
-Create Non-Ascii File
-    Check Test Case  ${TESTNAME}
+Create File With Non-ASCII Name
+    Check Test Case    ${TESTNAME}
 
 Create File With Space In Name
-    Check Test Case  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
-Create File Fails If Encoding Is Incorrect
-    Check Test Case  ${TESTNAME}
+Create File To Non-Existing Directory
+    Check Test Case    ${TESTNAME}
+
+Creating File Fails If Encoding Is Incorrect
+    Check Test Case    ${TESTNAME}
 
 Append To File
-    Check Test Case  ${TESTNAME}
-
-Create File To Non-Existing Dir
-    Check Test Case  ${TESTNAME}
-
+    Check Test Case    ${TESTNAME}

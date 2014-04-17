@@ -1,54 +1,56 @@
 *** Settings ***
-Suite Setup     Create Non-ASCII Input
 Test Setup      Create Base Test Directory
 Suite Teardown  Remove Base Test Directory
 Resource        os_resource.txt
 
 *** Test Cases ***
-Create File
+Create File With Default Content
     Create File    ${TESTFILE}
     Verify File    ${TESTFILE}    ${EMPTY}
-    Create File    ${TESTFILE}    This is content in\n3\nlines
-    Verify File    ${TESTFILE}    This is content in\n3\nlines
+
+Create File With Content
+    [Template]    Create and Verify File
+    ${EMPTY}
+    Content in one line
+    This is content in\n3\nlines
+    Nön-ÄSCÏÏ Cöntënt
+
+Create Non-ASCII File With Default Encoding
+    Create File    ${TESTFILE}    Nön-ÄSCÏÏ Cöntënt
+    Verify File    ${TESTFILE}    Nön-ÄSCÏÏ Cöntënt
 
 Create File With Encoding
     [Template]    Create and Verify File
     Just ASCII     ASCII
     Hyvää yötä!    UTF-8
     Hyvää yötä!    ISO-8859-1
-    ${UNICODE}     UTF-8
-    ${UNICODE}     ISO-8859-5
+    Спасибо        UTF-8
+    Спасибо        ISO-8859-5
 
-Create Non-Ascii File
-    Create And Verify File    ASCII content    file=${NON ASCII}
-    Create And Verify File    ${UNICODE}    file=${NON ASCII}
+Create File With Non-ASCII Name
+    [Template]    Create and Verify File
+    ASCII content    file=${NON ASCII}
+    Спасибо          file=${NON ASCII}
 
 Create File With Space In Name
     Create And Verify File    file=${WITH SPACE}
 
-Create File Fails If Encoding Is Incorrect
+Create File To Non-Existing Directory
+    Create And Verify File    file=${TESTDIR}${/}file.txt
+
+Creating File Fails If Encoding Is Incorrect
     [Documentation]    FAIL REGEXP: Unicode(Encode|)Error: .*
     Create File    ${TESTFILE}    Hyvää yötä!    ASCII
 
 Append To File
     Append To File    ${TESTFILE}    First line\n
     Append To File    ${TESTFILE}    Second line\n    ASCII
-    Append To File    ${TESTFILE}    ${UNICODE}
-    Verify File    ${TESTFILE}    First line\nSecond line\n${UNICODE}
-
-Create File To Non-Existing Dir
-    Create File    ${TESTDIR}${/}file.txt    my content
-    Verify File    ${TESTDIR}${/}file.txt    my content
+    Append To File    ${TESTFILE}    ${EMPTY}
+    Append To File    ${TESTFILE}    Lääst läin
+    Verify File    ${TESTFILE}    First line\nSecond line\nLääst läin
 
 *** Keywords ***
-Create Non-ASCII Input
-    ${BYTES} =    Evaluate    '\xc1\xdf\xd0\xe1\xd8\xd1\xde'
-    ${UNICODE} =    Evaluate    '${BYTES}'.decode('ISO-8859-5')
-    Set Suite Variable    ${BYTES}
-    Set Suite Variable    ${UNICODE}
-
-Create And Verify Binary File
-    [Arguments]   ${content}
-    Create Binary File    ${TESTFILE}    ${content}
-    ${result} =    Get Binary File    ${TESTFILE}
-    Should Be Equal    ${result}    ${content}
+Create And Verify File
+    [Arguments]    ${content}=content    ${encoding}=UTF-8    ${file}=${TESTFILE}
+    Create File    ${file}    ${content}    ${encoding}
+    Verify File    ${file}    ${content}    ${encoding}

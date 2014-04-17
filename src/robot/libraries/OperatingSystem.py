@@ -608,7 +608,7 @@ class OperatingSystem:
         and use `File Should Not Exist` if you want to avoid overwriting
         existing files.
         """
-        path = self._write_to_file(path, content, encoding, 'w')
+        path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'", path)
 
     def append_to_file(self, path, content, encoding='UTF-8'):
@@ -617,19 +617,17 @@ class OperatingSystem:
         If the file does not exists, this keyword works exactly the same
         way as `Create File With Encoding`.
         """
-        path = self._write_to_file(path, content, encoding, 'a')
+        path = self._write_to_file(path, content, encoding, mode='a')
         self._link("Appended to file '%s'", path)
 
-    def _write_to_file(self, path, content, encoding, mode):
+    def _write_to_file(self, path, content, encoding, mode='w'):
         path = self._absnorm(path)
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
             os.makedirs(parent)
-        f = open(path, mode+'b')
-        try:
-            f.write(content.encode(encoding))
-        finally:
-            f.close()
+        content = content.encode(encoding)
+        with open(path, mode+'b') as f:
+            f.write(content)
         return path
 
     def remove_file(self, path):
