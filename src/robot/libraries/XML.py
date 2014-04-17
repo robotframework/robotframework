@@ -425,6 +425,12 @@ class XML(object):
         `Parse XML` is recommended for parsing XML when the whole structure
         is needed. It must be used if there is a need to configure how XML
         namespaces are handled.
+
+        Many other keywords use this keyword internally, and keywords modifying
+        XML are typically documented to both to modify the given source and
+        to return it. Modifying the source does not apply if the source is
+        given as a string. The XML structure parsed based on the string and
+        then modified is nevertheless returned.
         """
         elements = self.get_elements(source, xpath)
         if len(elements) != 1:
