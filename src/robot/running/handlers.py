@@ -52,6 +52,8 @@ def InitHandler(library, method, docgetter=None):
 class _RunnableHandler(object):
     type = 'library'
     _doc = ''
+    _executed_in_dry_run = ('BuiltIn.Import Library',
+                            'BuiltIn.Set Library Search Order')
 
     def __init__(self, library, handler_name, handler_method):
         self.library = library
@@ -101,7 +103,7 @@ class _RunnableHandler(object):
         return self._run(context, args)
 
     def _dry_run(self, context, args):
-        if self.longname == 'BuiltIn.Import Library':
+        if self.longname in self._executed_in_dry_run:
             return self._run(context, args)
         self.resolve_arguments(args)
         return None
