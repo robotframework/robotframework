@@ -95,6 +95,11 @@ class Process(object):
     | stderr     | Path of a file where to write standard error.         |
     | alias      | Alias given to the process.                           |
 
+    Note that because `**configuration` is passed using `name=value` syntax,
+    possible equal signs in other arguments passed to `Run Process` and
+    `Start Process` must be escaped with a backslash like `name\\=value`.
+    See `Run Process` for an example.
+
     == Running processes in shell ==
 
     The `shell` argument specifies whether to run the process in a shell or
@@ -299,11 +304,16 @@ class Process(object):
 
         Returns a `result object` containing information about the execution.
 
+        Note that possible equal signs in `*arguments` must be escaped
+        with a backslash (e.g. `name\\=value`) to avoid them to be passed in
+        as `**configuration`.
+
         Examples:
         | ${result} = | Run Process | python | -c | print 'Hello, world!' |
         | Should Be Equal | ${result.stdout} | Hello, world! |
         | ${result} = | Run Process | ${command} | stderr=STDOUT | timeout=10s |
         | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
+        | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} |
 
         This command does not change the `active process`.
         `timeout` and `on_timeout` arguments are new in Robot Framework 2.8.4.
@@ -321,7 +331,8 @@ class Process(object):
         """Starts a new process on background.
 
         See `Specifying command and arguments` and `Process configuration`
-        for more information about the arguments.
+        for more information about the arguments, and `Run Process` keyword
+        for related examples.
 
         Makes the started process new `active process`. Returns an identifier
         that can be used as a handle to active the started process if needed.
