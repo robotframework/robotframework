@@ -126,14 +126,14 @@ class TestSuite(model.TestSuite):
     def variables(self, variables):
         return model.ItemList(Variable, {'source': self.source}, items=variables)
 
-    def configure(self, randomize_suites=False, randomize_tests=False, randomize_seed=None,
-                  **options):
+    def configure(self, randomize_suites=False, randomize_tests=False,
+                  randomize_seed=None, **options):
         model.TestSuite.configure(self, **options)
         self.randomize(randomize_suites, randomize_tests, randomize_seed)
 
     def randomize(self, suites=True, tests=True, seed=None):
         """Randomizes the order of suites and/or tests, recursively."""
-        self.visit( Randomizer(suites, tests, seed) )
+        self.visit(Randomizer(suites, tests, seed))
 
     def run(self, settings=None, **options):
         """Executes the suite based based the given ``settings`` or ``options``.

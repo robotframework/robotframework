@@ -13,6 +13,8 @@
 #  limitations under the License.
 
 import os
+import random
+import sys
 
 from robot import utils
 from robot.errors import DataError, FrameworkError
@@ -154,25 +156,25 @@ class _BaseSettings(object):
             raise DataError("Default visible log level '%s' is lower than "
                             "log level '%s'" % (default, log_level))
 
-    def _process_randomize_value(self, original_value):
-        formatted_value = original_value.lower()
-        if formatted_value in ('test', 'suite'):
-            formatted_value += 's'
-        formatted_value = formatted_value.split(':')
-        if len(formatted_value) not in (1,2):
-            self._raise_invalid_option_value('--randomize', original_value)
-        if formatted_value[0] not in ('tests', 'suites', 'none', 'all'):
-            self._raise_invalid_option_value('--randomize', original_value)
-        if len(formatted_value) == 2:
-            try:
-                formatted_value[1] = int(formatted_value[1])
-            except ValueError:
-                self._raise_invalid_option_value('--randomize', original_value)
-        return formatted_value
+    def _process_randomize_value(self, original):
+        value = original.lower()
+        if ':' in value:
+            value, seed = value.split(':', 1)
+        else:
+            seed = random.randint(0, sys.maxint)
+        if value in ('test', 'suite'):
+            value += 's'
+        if value not in ('tests', 'suites', 'none', 'all'):
+            self._raise_invalid_option_value('--randomize', original)
+        try:
+            seed = int(seed)
+        except ValueError:
+            self._raise_invalid_option_value('--randomize', original)
+        return value, seed
 
     def _raise_invalid_option_value(self, option_name, given_value):
-        raise DataError("Option '%s' does not support value '%s'." %
-                        (option_name, given_value))
+        raise DataError("Option '%s' does not support value '%s'."
+                        % (option_name, given_value))
 
     def _process_runmode_value(self, original_value):
         formatted_value = original_value.lower()
@@ -429,12 +431,7 @@ class RobotSettings(_BaseSettings):
 
     @property
     def randomize_seed(self):
-        randomize_opts = self['Randomize']
-        if len(randomize_opts) == 2:
-            return randomize_opts[1]
-        else:
-            import random
-            return random.randint(1,99999)
+        return self['Randomize'][1]
 
     @property
     def randomize_suites(self):

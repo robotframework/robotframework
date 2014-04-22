@@ -8,41 +8,57 @@ ${DEFAULT SUITE ORDER}  [Suite First, Sub.Suite.1, Suite3, Suite4, Suite5, Suite
 ${DEFAULT TEST ORDER}  [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12]
 
 *** Test Cases ***
-Randomizing Tests
+Randomizing tests
     [Setup]  Run Tests  --randomize test  misc/multiple_suites/01__suite_first.html
     Should Not Be Equal As Strings  ${SUITE.tests}  ${DEFAULT TEST ORDER}
 
-Randomizing Suites
+Randomizing suites
     [Setup]  Run Tests  --randomize Suites  misc/multiple_suites
-    Should Not Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
-    ${tests} =  Get Tests
-    Should Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
+    Suites should be randomized
+    Tests should be in default order
 
-Randomizing Suites And Tests
+Randomizing suites and tests
     [Setup]  Run Tests  --randomize all  misc/multiple_suites
-    Should Not Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
-    ${tests} =  Get Tests
-    Should Not Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
+    Suites should be randomized
+    Tests should be randomized
 
-Randomizing Suites And Tests with seed
-    [Setup]  Run Tests  --randomize all:1234  misc/multiple_suites
-    ${suites1} =  Get Suites
-    ${tests1} =  Get Tests
-    Should Not Be Equal As Strings  ${suites1}  ${DEFAULT SUITE ORDER}
-    Should Not Be Equal As Strings  ${tests1}  ${DEFAULT TEST ORDER}
+Randomizing tests with seed
+    Run Tests  --randomize test:1234  misc/multiple_suites
+    ${suites1} =    Suites should be in default order
+    ${tests1} =    Tests should be randomized
+    Run Tests  --randomize TESTS:1234  misc/multiple_suites
+    ${suites2} =    Suites should be in default order
+    ${tests2} =    Tests should be randomized
+    Order should be same    ${suites1}    ${suites2}
+    Order should be same    ${tests1}    ${tests2}
+
+Randomizing suites with seed
+    Run Tests  --randomize Suite:1234  misc/multiple_suites
+    ${suites1} =    Suites should be randomized
+    ${tests1} =    Tests should be in default order
+    Run Tests  --randomize SuiteS:1234  misc/multiple_suites
+    ${suites2} =    Suites should be randomized
+    ${tests2} =    Tests should be in default order
+    Order should be same    ${suites1}    ${suites2}
+    Order should be same    ${tests1}    ${tests2}
+
+Randomizing suites and tests with seed
     Run Tests  --randomize all:1234  misc/multiple_suites
-    ${suites2} =  Get Suites
-    ${tests2} =  Get Tests
-    Should Be Equal As Strings  ${suites1}	${suites2}
-    Should Be Equal As Strings  ${tests1}	${tests2}
+    ${suites1} =    Suites should be randomized
+    ${tests1} =    Tests should be randomized
+    Run Tests  --randomize ALL:1234  misc/multiple_suites
+    ${suites2} =    Suites should be randomized
+    ${tests2} =    Tests should be randomized
+    Order should be same    ${suites1}    ${suites2}
+    Order should be same    ${tests1}    ${tests2}
 
-Last Option Overrides All Previous
+Last option overrides all previous
     [Setup]  Run Tests  --randomize suites --randomize tests --randomize none  misc/multiple_suites
     Should Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
     ${tests} =  Get Tests
     Should Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
 
-Invalid Option value
+Invalid option value
     Run Should Fail  --randomize INVALID ${TESTFILE}  Option '--randomize' does not support value 'INVALID'.
 
 Invalid seed value
@@ -51,13 +67,32 @@ Invalid seed value
 *** Keywords ***
 Check That Default Orders Are Correct
     Run Tests  ${EMPTY}  misc/multiple_suites
-    Should Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
-    Should Be Equal As Strings  ${SUITE.suites[0].tests}  ${DEFAULT TEST ORDER}
+    Suites should be in default order
+    Tests should be in default order
 
-Get Suites
+Suites Should Be Randomized
+    Should Not Be Equal As Strings    ${SUITE.suites}    ${DEFAULT SUITE ORDER}
     [Return]  ${SUITE.suites}
 
+Suites should be in default order
+    Should Be Equal As Strings    ${SUITE.suites}    ${DEFAULT SUITE ORDER}
+    [Return]  ${SUITE.suites}
+
+Tests Should Be Randomized
+    ${tests} =  Get Tests
+    Should Not Be Equal As Strings    ${tests}    ${DEFAULT TEST ORDER}
+    [Return]  ${tests}
+
+Tests should be in default order
+    ${tests} =  Get Tests
+    Should Be Equal As Strings    ${tests}    ${DEFAULT TEST ORDER}
+    [Return]  ${tests}
+
+Order should be same
+    [Arguments]    ${first}    ${second}
+    Should Be Equal As Strings    ${first}    ${second}
+
 Get Tests
-    Comment  This keyword is needed as there is also one directory suite, which does not contain tests.
+    # This keyword is needed because 'Sub.Suite.1' is directory and thus doesn't itself have tests
     ${tests} =  Set Variable If  '${SUITE.suites[0].name}' == 'Sub.Suite.1'  ${SUITE.suites[0].suites[0].tests}  ${SUITE.suites[0].tests}
     [Return]  ${tests}

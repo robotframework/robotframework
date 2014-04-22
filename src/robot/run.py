@@ -261,11 +261,13 @@ Options
     --skipteardownonexit  Causes teardowns to be skipped if test execution is
                           stopped prematurely.
     --randomize all|suites|tests|none  Randomizes the test execution order.
-                          all[:<seed>]:    randomizes both suites and tests with
-                          optional seed
-                          suites[:<seed>]: randomizes suites with optional seed
-                          tests[:<seed>]:  randomizes tests with optional seed
+                          all:    randomizes both suites and tests
+                          suites: randomizes suites
+                          tests:  randomizes tests
                           none:   no randomization (default)
+                          Use syntax `VALUE:SEED` to use a custom random seed.
+                          Examples: --randomize all
+                                    --randomize tests:1234
     --runmode mode *      Deprecated in version 2.8. Use individual options
                           --dryrun, --exitonfailure, --skipteardownonexit, or
                           --randomize instead.
