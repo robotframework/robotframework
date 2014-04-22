@@ -38,6 +38,9 @@ Outside user keyword
 With list variable containing escaped items
     Check Test Case    ${TESTNAME}
 
+Return strings that needs to be escaped
+    Check Test Case    ${TESTNAME}
+
 Run Keyword And Return If
     ${tc} =    Check Test Case    ${TESTNAME}
     Check log message    ${tc.kws[0].kws[1].msgs[0]}    Returning from the enclosing user keyword.
@@ -48,4 +51,7 @@ Run Keyword And Return If can have non-existing keywords and variables if condit
     Check Test Case    ${TESTNAME}
 
 Run Keyword And Return If with list variable containing escaped items
+    Check Test Case    ${TESTNAME}
+
+Run Keyword And Return If return strings that needs to be escaped
     Check Test Case    ${TESTNAME}

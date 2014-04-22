@@ -1857,7 +1857,7 @@ class _Control:
         New in Robot Framework 2.8.2.
         """
         ret = self.run_keyword(name, *args)
-        self.return_from_keyword(ret)
+        self.return_from_keyword(utils.escape(ret))
 
     @run_keyword_variant(resolve=2)
     def run_keyword_and_return_if(self, condition, name, *args):

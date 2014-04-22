@@ -49,6 +49,14 @@ With list variable containing escaped items
     Should Be Equal    ${ret}    ${ESCAPING}
     Run Keyword And Return With Variables    @{ESCAPING}
 
+Return strings that needs to be escaped
+    ${ret} =    Run Keyword And Return Given Args    \${not var}
+    Should Be Equal    ${ret}    \${not var}
+    ${ret} =    Run Keyword And Return Given Args    c:\\temp\\new
+    Should Be Equal    ${ret}    c:\\temp\\new
+    ${ret} =    Run Keyword And Return Given Args    @{ESCAPING}
+    Should Be Equal    ${ret}    ${ESCAPING}
+
 Run Keyword And Return If
     ${ret} =    Run Keyword And Return If Arg Is Positive
     Should Be Equal    ${ret}    No positive arguments
@@ -67,6 +75,15 @@ Run Keyword And Return If with list variable containing escaped items
     Should Be Equal    ${ret}    ${ESCAPING}
     Run Keyword And Return If With Variables    @{ESCAPING}
 
+Run Keyword And Return If return strings that needs to be escaped
+    ${ret} =    Run Keyword And Return Given Args If    True    \${not var}
+    Should Be Equal    ${ret}    \${not var}
+    ${ret} =    Run Keyword And Return Given Args If   True    c:\\temp\\new
+    Should Be Equal    ${ret}    c:\\temp\\new
+    ${ret} =    Run Keyword And Return Given Args If    1 > 0    @{ESCAPING}
+    Should Be Equal    ${ret}    ${ESCAPING}
+    ${ret} =    Run Keyword And Return Given Args If    False    @{ESCAPING}
+    Should Be Equal    ${ret}    ${NONE}
 
 *** Keywords ***
 Return one value
@@ -132,6 +149,14 @@ Using Run Keywords
 Run Keyword And Return With Variables
     [Arguments]    @{args}
     Run Keyword And Return    @{args}
+
+Run Keyword And Return Given Args
+    [Arguments]    @{return}
+    Run Keyword And Return    Set Variable    @{return}
+
+Run Keyword And Return Given Args If
+    [Arguments]    ${condition}    @{return}
+    Run Keyword And Return If    ${condition}    Set Variable    @{return}
 
 Run Keyword And Return If Arg Is Positive
     [Arguments]    @{args}
