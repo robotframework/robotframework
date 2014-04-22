@@ -81,7 +81,7 @@ Nön-ÄSCÏÏ
 
 Special ½!"#¤%&/()=?<|>+-_.!~*'() chars
     [Documentation]
-    ...    Also has has ½!"#¤%&/()=?<|>+-_.!~*'()
+    ...    Also doc has ½!"#¤%&/()=?<|>+-_.!~*'().
 
 ZZZ - Long documentation
     [Documentation]
