@@ -604,12 +604,44 @@ class OperatingSystem:
         If the directory where to create file does not exist it, and possible
         intermediate missing directories, are created.
 
-        Use `Append To File` if you want to append to an existing file,
-        and use `File Should Not Exist` if you want to avoid overwriting
-        existing files.
+        Examples:
+        | Create File | ${dir}/example.txt | Hello, world!      |         |
+        | Create File | ${path}            | Hyv\\xe4 esimerkki | latin-1 |
+
+        Use `Append To File` if you want to append to an existing file
+        and `Create Binary File` if you need to write bytes without encoding.
+        `File Should Not Exist` can be used to avoid overwriting existing
+        files.
         """
         path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'", path)
+
+    def create_binary_file(self, path, content):
+        """Creates a binary file with the given content.
+
+        If content is given as a Unicode string, it is first converted to bytes
+        character by character. All characters with ordinal below 256 can be
+        used and are converted to bytes with same values.
+
+        Byte strings, and possible other types, are written to the file as is.
+
+        If the directory where to create file does not exist it, and possible
+        intermediate missing directories, are created.
+
+        Examples:
+        | Create Binary File | ${dir}/example.png | ${image content}     |
+        | Create Binary File | ${path}            | \\x01\\x00\\xe4\\x00 |
+
+        Use `Create File` if you want to create a text file using a certain
+        encoding. `File Should Not Exist` can be used to avoid overwriting
+        existing files.
+
+        New in Robot Framework 2.8.5.
+        """
+        if isinstance(content, unicode):
+            content = ''.join(chr(ord(c)) for c in content)
+        path = self._write_to_file(path, content)
+        self._link("Created binary file '%s'", path)
 
     def append_to_file(self, path, content, encoding='UTF-8'):
         """Appends the given contend to the specified file.
@@ -620,12 +652,13 @@ class OperatingSystem:
         path = self._write_to_file(path, content, encoding, mode='a')
         self._link("Appended to file '%s'", path)
 
-    def _write_to_file(self, path, content, encoding, mode='w'):
+    def _write_to_file(self, path, content, encoding=None, mode='w'):
         path = self._absnorm(path)
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
             os.makedirs(parent)
-        content = content.encode(encoding)
+        if encoding:
+            content = content.encode(encoding)
         with open(path, mode+'b') as f:
             f.write(content)
         return path

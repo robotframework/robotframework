@@ -28,5 +28,14 @@ Create File To Non-Existing Directory
 Creating File Fails If Encoding Is Incorrect
     Check Test Case    ${TESTNAME}
 
+Create Binary File Using Bytes
+    Check Test Case    ${TESTNAME}
+
+Create Binary File Using Unicode
+    Check Test Case    ${TESTNAME}
+
+Creating Binary File Using Unicode With Ordinal > 255 Fails
+    Check Test Case    ${TESTNAME}
+
 Append To File
     Check Test Case    ${TESTNAME}

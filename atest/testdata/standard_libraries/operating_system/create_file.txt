@@ -42,6 +42,24 @@ Creating File Fails If Encoding Is Incorrect
     [Documentation]    FAIL REGEXP: Unicode(Encode|)Error: .*
     Create File    ${TESTFILE}    Hyvää yötä!    ASCII
 
+Create Binary File Using Bytes
+    [Template]    Create And Verify Binary File Using Bytes
+    ${EMPTY}
+    Hello, world!
+    Hyvää yötä!
+    \x00\x01\xe4\xff
+
+Create Binary File Using Unicode
+    [Template]    Create And Verify Binary File Using Unicode
+    ${EMPTY}
+    Hello, world!
+    Hyvää yötä!
+    \x00\x01\xe4\xff
+
+Creating Binary File Using Unicode With Ordinal > 255 Fails
+    [Documentation]    FAIL STARTS: ValueError:
+    Create Binary File    ${TESTFILE}    \u0100
+
 Append To File
     Append To File    ${TESTFILE}    First line\n
     Append To File    ${TESTFILE}    Second line\n    ASCII
@@ -54,3 +72,20 @@ Create And Verify File
     [Arguments]    ${content}=content    ${encoding}=UTF-8    ${file}=${TESTFILE}
     Create File    ${file}    ${content}    ${encoding}
     Verify File    ${file}    ${content}    ${encoding}
+
+Create And Verify Binary File Using Bytes
+    [Arguments]    ${content}    ${file}=${TESTFILE}
+    ${content} =    Convert To Bytes    ${content}
+    Create Binary File    ${file}    ${content}
+    Verify Binary File    ${file}    ${content}
+
+Create And Verify Binary File Using Unicode
+    [Arguments]    ${content}    ${file}=${TESTFILE}
+    Create Binary File    ${file}    ${content}
+    ${expected} =    Convert To Bytes    ${content}
+    Verify Binary File    ${file}    ${expected}
+
+Verify Binary File
+    [Arguments]    ${path}    ${expected}
+    ${content} =    Get Binary File    ${file}
+    Should Be Equal    ${content}    ${expected}
