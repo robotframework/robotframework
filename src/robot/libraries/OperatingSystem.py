@@ -615,7 +615,7 @@ class OperatingSystem:
         """Appends the given contend to the specified file.
 
         If the file does not exists, this keyword works exactly the same
-        way as `Create File With Encoding`.
+        way as `Create File`.
         """
         path = self._write_to_file(path, content, encoding, mode='a')
         self._link("Appended to file '%s'", path)
