@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import re
+import urllib
 
 from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
@@ -82,20 +83,20 @@ class DocFormatter(object):
                                           robot_format=doc_format == 'ROBOT')
 
     def _get_targets(self, keywords, introduction, robot_format):
-        targets = NormalizedDict({
+        targets = {
             'introduction': 'Introduction',
             'library introduction': 'Introduction',
             'importing': 'Importing',
             'library importing': 'Importing',
             'shortcuts': 'Shortcuts',
             'keywords': 'Keywords'
-        })
+        }
         for kw in keywords:
             targets[kw.name] = kw.name
         if robot_format:
             for header in self._yield_header_targets(introduction):
                 targets[header] = header
-        return targets
+        return self._escape_and_encode_targets(targets)
 
     def _yield_header_targets(self, introduction):
         headers = HeaderFormatter()
@@ -103,6 +104,14 @@ class DocFormatter(object):
             match = headers.match(line)
             if match:
                 yield match.group(2)
+
+    def _escape_and_encode_targets(self, targets):
+        return NormalizedDict((html_escape(key), self._encode_uri_component(value))
+                              for key, value in targets.iteritems())
+
+    def _encode_uri_component(self, value):
+        # Emulates encodeURIComponent javascript function
+        return urllib.quote(value.encode('UTF-8'), safe="-_.!~*'()")
 
     def html(self, doc, intro=False):
         doc = self._doc_to_html(doc)

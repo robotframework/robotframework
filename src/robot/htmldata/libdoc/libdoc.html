@@ -89,7 +89,7 @@
     <h2 id="Shortcuts">Shortcuts</h2>
     <div class='shortcuts'>
         {{each keywords}}
-            <a href="#${$value.name}" title="${$value.shortdoc}">${$value.name}</a>
+            <a href="#${encodeURIComponent($value.name)}" title="${$value.shortdoc}">${$value.name}</a>
             {{if $index < keywords.length-1}} &middot; {{/if}}
         {{/each}}
     </div>

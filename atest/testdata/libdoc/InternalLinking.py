@@ -1,5 +1,5 @@
 class InternalLinking:
-    """Library for testing libdoc's internal linking.
+    u"""Library for testing libdoc's internal linking.
 
     = Linking to sections =
 
@@ -33,6 +33,14 @@ class InternalLinking:
 
     === Third level ===
 
+    = Escaping =
+
+    == Percent encoding: !"#%/()=?|+-_.!~*'() ==
+
+    == HTML entities: &<> ==
+
+    == Non-ASCII: \xe4\u2603 ==
+
     = Formatting =
 
     Non-matching `backticks` just get special formatting.
@@ -50,4 +58,11 @@ class InternalLinking:
         = Not linkable =
 
         We are `linking to headers` and `shortcuts` but not to `not linkable`.
+        """
+
+    def escaping(self):
+        u"""Escaped links:
+        - `Percent encoding: !"#%/()=?|+-_.!~*'()`
+        - `HTML entities: &<>`
+        - `Non-ASCII: \xe4\u2603`
         """
