@@ -22,6 +22,7 @@ class Randomizer(SuiteVisitor):
     def __init__(self, randomize_suites=True, randomize_tests=True, seed=None):
         self.randomize_suites = randomize_suites
         self.randomize_tests = randomize_tests
+        self.seed = seed
         if seed is not None:
             random.seed(seed)
 
@@ -32,11 +33,20 @@ class Randomizer(SuiteVisitor):
             suite.suites = self._shuffle(suite.suites)
         if self.randomize_tests:
             suite.tests = self._shuffle(suite.tests)
+        if not suite.parent:
+            suite.metadata['Randomized'] = self._get_message()
 
     def _shuffle(self, item_list):
         items = list(item_list)
         random.shuffle(items)
         return items
+
+    def _get_message(self):
+        possibilities = {(True, True): 'Suites and tests',
+                         (True, False): 'Suites',
+                         (False, True): 'Tests'}
+        randomized = (self.randomize_suites, self.randomize_tests)
+        return '%s (seed %s)' % (possibilities[randomized], self.seed)
 
     def visit_test(self, test):
         pass

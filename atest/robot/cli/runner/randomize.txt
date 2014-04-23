@@ -11,44 +11,53 @@ ${DEFAULT TEST ORDER}  [test1, test2, test3, test4, test5, test6, test7, test8, 
 Randomizing tests
     [Setup]  Run Tests  --randomize test  misc/multiple_suites/01__suite_first.html
     Should Not Be Equal As Strings  ${SUITE.tests}  ${DEFAULT TEST ORDER}
+    Randomized metadata is added    Tests
 
 Randomizing suites
     [Setup]  Run Tests  --randomize Suites  misc/multiple_suites
     Suites should be randomized
     Tests should be in default order
+    Randomized metadata is added    Suites
 
 Randomizing suites and tests
     [Setup]  Run Tests  --randomize all  misc/multiple_suites
     Suites should be randomized
     Tests should be randomized
+    Randomized metadata is added    Suites and tests
 
 Randomizing tests with seed
     Run Tests  --randomize test:1234  misc/multiple_suites
     ${suites1} =    Suites should be in default order
     ${tests1} =    Tests should be randomized
+    Randomized metadata is added    Tests    1234
     Run Tests  --randomize TESTS:1234  misc/multiple_suites
     ${suites2} =    Suites should be in default order
     ${tests2} =    Tests should be randomized
+    Randomized metadata is added    Tests    1234
     Order should be same    ${suites1}    ${suites2}
     Order should be same    ${tests1}    ${tests2}
 
 Randomizing suites with seed
-    Run Tests  --randomize Suite:1234  misc/multiple_suites
+    Run Tests  --randomize Suite:42  misc/multiple_suites
     ${suites1} =    Suites should be randomized
     ${tests1} =    Tests should be in default order
-    Run Tests  --randomize SuiteS:1234  misc/multiple_suites
+    Randomized metadata is added    Suites    42
+    Run Tests  --randomize SuiteS:42  misc/multiple_suites
     ${suites2} =    Suites should be randomized
     ${tests2} =    Tests should be in default order
+    Randomized metadata is added    Suites    42
     Order should be same    ${suites1}    ${suites2}
     Order should be same    ${tests1}    ${tests2}
 
 Randomizing suites and tests with seed
-    Run Tests  --randomize all:1234  misc/multiple_suites
+    Run Tests  --randomize all:123456  misc/multiple_suites
     ${suites1} =    Suites should be randomized
     ${tests1} =    Tests should be randomized
-    Run Tests  --randomize ALL:1234  misc/multiple_suites
+    Randomized metadata is added    Suites and tests    123456
+    Run Tests  --randomize ALL:123456  misc/multiple_suites
     ${suites2} =    Suites should be randomized
     ${tests2} =    Tests should be randomized
+    Randomized metadata is added    Suites and tests    123456
     Order should be same    ${suites1}    ${suites2}
     Order should be same    ${tests1}    ${tests2}
 
@@ -96,3 +105,9 @@ Get Tests
     # This keyword is needed because 'Sub.Suite.1' is directory and thus doesn't itself have tests
     ${tests} =  Set Variable If  '${SUITE.suites[0].name}' == 'Sub.Suite.1'  ${SUITE.suites[0].suites[0].tests}  ${SUITE.suites[0].tests}
     [Return]  ${tests}
+
+Randomized metadata is added
+    [Arguments]    ${what}    ${seed}=*
+    Should Match    ${SUITE.metadata['Randomized']}    ${what} (seed ${seed})
+    Run Keyword If    ${SUITE.suites}
+    ...    Should Be Equal    ${SUITE.suites[0].metadata.get('Randomized')}    ${NONE}
