@@ -2653,8 +2653,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     @property
     def _context(self):
         if EXECUTION_CONTEXTS.current is None:
-            raise AttributeError('Cannot access execution context when '
-                                 'Robot Framework is not running.')
+            raise RobotNotRunningError('Cannot access execution context')
         return EXECUTION_CONTEXTS.current
 
     @property
@@ -2678,6 +2677,16 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
         if isinstance(condition, basestring):
             condition = self.evaluate(condition, modules='os,sys')
         return bool(condition)
+
+
+class RobotNotRunningError(AttributeError):
+    """Used when something cannot be done because Robot is not running.
+
+    Based on AttributeError to be backwards compatible with RF < 2.8.5.
+    May later be based directly on Exception, so new code should except
+    this exception explicitly.
+    """
+    pass
 
 
 def register_run_keyword(library, keyword, args_to_process=None):
