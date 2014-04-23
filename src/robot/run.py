@@ -265,7 +265,8 @@ Options
                           suites: randomizes suites
                           tests:  randomizes tests
                           none:   no randomization (default)
-                          Use syntax `VALUE:SEED` to use a custom random seed.
+                          Use syntax `VALUE:SEED` to give a custom random seed.
+                          The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
     --runmode mode *      Deprecated in version 2.8. Use individual options
