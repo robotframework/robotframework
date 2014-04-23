@@ -226,11 +226,13 @@ implement keywords itself.
 
 Remote servers should additionally have :code:`stop_remote_server`
 method in their public interface to ease stopping them. They should
-also expose this method as :name:`Stop Remote Server` keyword
-automatically so that it can be used in the test data regardless of
-the test library. Allowing users to stop the server using these
-methods is not always desirable, and servers can choose to allow
-disabling them via some configuration parameter.
+also automatically expose this method as :name:`Stop Remote Server`
+keyword to allow using it in the test data regardless of the test
+library. Allowing users to stop the server is not always desirable,
+and servers may support disabling this functionality somehow.
+The method, and also the exposed keyword, should return :code:`True`
+or :code:`False` depending was stopping allowed or not. That makes it
+possible for external tools to know did stopping the server succeed.
 
 The provided Python remote server can be used as a reference
 implementation.
