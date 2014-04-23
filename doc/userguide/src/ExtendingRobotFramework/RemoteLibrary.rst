@@ -69,6 +69,7 @@ descriptive name, you can import it using the `WITH NAME syntax`_.
    =========  ===========  ========================  =========  =========
    Library    Remote       \http://127.0.0.1:8270    WITH NAME  Example1
    Library    Remote       \http://example.com:7777  WITH NAME  Example2
+   Library    Remote       \http://10.0.0.2/example  WITH NAME  Example3
    =========  ===========  ========================  =========  =========
 
 The URL used by the first example above is also the default address
@@ -82,6 +83,11 @@ that the Remote library uses if no address is given. Similarly port
           Prior to Robot Framework 2.8.4 the Remote library itself used the
           potentially slow :code:`localhost` by default.
 
+.. note:: Depending on the remote server, the trailing slash after the server
+          address may or may not be significant. For example, using
+          :code:`http://127.0.0.1:8270` is not always the same as using
+          :code:`http://127.0.0.1:8270/`. If there is a difference, remote
+          servers themselves should document which format to use.
 
 __ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
 
