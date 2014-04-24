@@ -23,7 +23,10 @@ class Randomizer(SuiteVisitor):
         self.randomize_suites = randomize_suites
         self.randomize_tests = randomize_tests
         self.seed = seed
-        self._shuffle = Random(seed).shuffle
+        # Cannot use just Random(seed) due to
+        # https://ironpython.codeplex.com/workitem/35155
+        args = (seed,) if seed is not None else ()
+        self._shuffle = Random(*args).shuffle
 
     def start_suite(self, suite):
         if not self.randomize_suites and not self.randomize_tests:
