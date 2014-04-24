@@ -307,7 +307,7 @@ class OperatingSystem:
         """
         PROCESSES.close_all()
 
-    def get_file(self, path, encoding='UTF-8'):
+    def get_file(self, path, encoding='UTF-8', encoding_errors='strict'):
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents.
@@ -317,9 +317,20 @@ class OperatingSystem:
         `encoding` defines the encoding of the file. By default the value is
         'UTF-8', which means that UTF-8 and ASCII-encoded files are read
         correctly.
+
+        `encoding_errors` argument controls what to do if decoding some bytes
+        fails. All values accepted by `decode` method in Python are valid, but
+        in practice the following values are most useful:
+
+        - `strict`: fail if characters cannot be decoded (default)
+        - `ignore`: ignore characters that cannot be decoded
+        - `replace`: replace characters that cannot be decoded with
+          a replacement character
+
+        `encoding_errors` argument is new in Robot Framework 2.8.5.
         """
         content = self.get_binary_file(path)
-        return unicode(content, encoding).replace('\r\n', '\n')
+        return unicode(content, encoding, encoding_errors).replace('\r\n', '\n')
 
     def get_binary_file(self, path):
         """Returns the contents of a specified file.

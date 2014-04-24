@@ -35,6 +35,18 @@ Get Latin-1 With Default Encoding
 Get Latin-1 With Latin-1 Encoding
     Check testcase  ${TESTNAME}
 
+Get Utf-16 File with Default Encoding
+    Check testcase    ${TESTNAME}
+
+Get Utf-16 File with UTF-16 Encoding
+    Check testcase    ${TESTNAME}
+
+Get Utf-16 File with Default Encoding and error handler 'ignore'
+    Check testcase    ${TESTNAME}
+
+Get Utf-16 File with Default Encoding and error handler 'replace'
+    Check testcase    ${TESTNAME}
+
 Log Latin-1 With Latin-1 Encoding
     ${tc} =  Check testcase  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[1]}  ${RESULT}

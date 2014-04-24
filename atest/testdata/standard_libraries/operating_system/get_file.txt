@@ -8,6 +8,10 @@ Variables       files/result.py
 ${utf-8file}  ${CURDIR}${/}files${/}utf-8.txt
 ${asciifile}  ${CURDIR}${/}files${/}ascii.txt
 ${latin-1file}  ${CURDIR}${/}files${/}latin-1.txt
+${utf-16 LE file}  ${CURDIR}${/}files${/}utf-16LE.txt                   # Little Endian
+${utf-16 BE file}    ${CURDIR}${/}files${/}utf-16BE.txt                 # Big Endian
+${utf-16 LE with BOM file}    ${CURDIR}${/}files${/}utf-16LEBOM.txt     # Little Endian with Byte Order Marker
+${utf-16 BE with BOM file}    ${CURDIR}${/}files${/}utf-16BEBOM.txt     # Big Endian with BOM
 
 *** Test Cases ***
 Get File
@@ -55,6 +59,31 @@ Get Latin-1 With Latin-1 Encoding
     ${file} =  Get File  ${latin-1file}  Latin-1
     Should Be Equal  ${file}  ${result}
 
+Get Utf-16 File with Default Encoding
+    [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError): .*
+    ${file}=    Get File    ${utf-16LEfile}
+
+Get Utf-16 File with UTF-16 Encoding
+    [Template]     Verify UTF-16 File
+    ${utf-16 LE file}   UTF-16-LE
+    ${utf-16 BE file}    UTF-16-BE
+    ${utf-16 LE with BOM file}    UTF-16
+    ${utf-16 BE with BOM file}    UTF-16
+
+Get Utf-16 File with Default Encoding and error handler 'ignore'
+    [Template]    Verify UTF-16 File with error handler
+    ${utf-16 LE file}            ignore    H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00\x00
+    ${utf-16 BE file}            ignore    \x00H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00
+    ${utf-16 LE with BOM file}   ignore    H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00\x00
+    ${utf-16 BE with BOM file}   ignore    \x00H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00
+
+Get Utf-16 File with Default Encoding and error handler 'replace'
+    [Template]    Verify UTF-16 File with error handler
+    ${utf-16 LE file}             replace    H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd\x00
+    ${utf-16 BE file}             replace    \x00H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd
+    ${utf-16 LE with BOM file}    replace    \ufffd\ufffdH\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd\x00
+    ${utf-16 BE with BOM file}    replace    \ufffd\ufffd\x00H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd
+
 Log Latin-1 With Latin-1 Encoding
     ${file} =  Log File  ${latin-1file}  Latin-1
 
@@ -90,3 +119,12 @@ Grep And Check File
     ${content} =  Grep File  ${TESTFILE}  ${pattern}
     Should Be Equal  ${content}  ${expected}
 
+Verify UTF-16 File
+    [Arguments]    ${utf-16file}    ${encoding}
+    ${file}=    Get File    ${utf-16file}    ${encoding}
+    Should Be Equal    ${file}    Hyvää üötä
+
+Verify UTF-16 File with error handler
+    [Arguments]    ${utf-16 file}    ${error handler}    ${expected}
+    ${file}=    Get File    ${utf-16 file}    encoding_errors=${error handler}
+    Should Be Equal    ${file}    ${expected}
