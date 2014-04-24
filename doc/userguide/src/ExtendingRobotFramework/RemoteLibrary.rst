@@ -69,6 +69,7 @@ descriptive name, you can import it using the `WITH NAME syntax`_.
    =========  ===========  ========================  =========  =========
    Library    Remote       \http://127.0.0.1:8270    WITH NAME  Example1
    Library    Remote       \http://example.com:7777  WITH NAME  Example2
+   Library    Remote       \http://10.0.0.2/example  WITH NAME  Example3
    =========  ===========  ========================  =========  =========
 
 The URL used by the first example above is also the default address
@@ -82,6 +83,11 @@ that the Remote library uses if no address is given. Similarly port
           Prior to Robot Framework 2.8.4 the Remote library itself used the
           potentially slow :code:`localhost` by default.
 
+.. note:: Depending on the remote server, the trailing slash after the server
+          address may or may not be significant. For example, using
+          :code:`http://127.0.0.1:8270` is not always the same as using
+          :code:`http://127.0.0.1:8270/`. If there is a difference, remote
+          servers themselves should document which format to use.
 
 __ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
 
@@ -226,11 +232,13 @@ implement keywords itself.
 
 Remote servers should additionally have :code:`stop_remote_server`
 method in their public interface to ease stopping them. They should
-also expose this method as :name:`Stop Remote Server` keyword
-automatically so that it can be used in the test data regardless of
-the test library. Allowing users to stop the server using these
-methods is not always desirable, and servers can choose to allow
-disabling them via some configuration parameter.
+also automatically expose this method as :name:`Stop Remote Server`
+keyword to allow using it in the test data regardless of the test
+library. Allowing users to stop the server is not always desirable,
+and servers may support disabling this functionality somehow.
+The method, and also the exposed keyword, should return :code:`True`
+or :code:`False` depending was stopping allowed or not. That makes it
+possible for external tools to know did stopping the server succeed.
 
 The provided Python remote server can be used as a reference
 implementation.

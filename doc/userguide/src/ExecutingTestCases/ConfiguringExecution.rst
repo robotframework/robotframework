@@ -391,7 +391,7 @@ Randomizing execution order
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The test execution order can be randomized using option
-:opt:`--randomize <what>`, where :opt:`<what>` is one of the following:
+:opt:`--randomize <what>[:<seed>]`, where :opt:`<what>` is one of the following:
 
 :opt:`tests`
     Test cases inside each test suite are executed in random order.
@@ -408,18 +408,27 @@ The test execution order can be randomized using option
     This value can be used to override the earlier value set with
     :opt:`--randomize`.
 
-Example::
+Starting from Robot Framework 2.8.5, it is possible to give a custom seed
+to initialize the random generator. This is useful if you want to re-run tests
+using the same order as earlier. The seed is given as part of the value for
+:opt:`--randomize` in format :opt:`<what>:<seed>` and it must be an integer.
+If no seed is given, it is generated randomly. The executed top level test
+suite automatically gets metadata__ named :name:`Randomized` that tells both
+what was randomized and what seed was used.
+
+Examples::
 
     pybot --randomize tests my_test.txt
-
+    pybot --randomize all:12345 path/to/tests
 
 .. note:: Prior to Robot Framework 2.8, randomization is triggered using option
-          :opt:`--runmode <mode>`, where <mode> is either :opt:`Random:Test`,
+          :opt:`--runmode <mode>`, where :opt:`<mode>` is either :opt:`Random:Test`,
           :opt:`Random:Suite` or :opt:`Random:All`. These values work the
           same way as matching values for :opt:`--randomize`.
-
-          Option :opt:`--runmode` is deprecated in 2.8 and will be removed
+          Option :opt:`--runmode` was deprecated in 2.8 and will be removed
           in the future.
+
+__ `Free test suite metadata`_
 
 Controlling console output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
