@@ -5,8 +5,8 @@ import os
 from os.path import join, dirname
 from distutils.core import setup
 
-if 'develop' in sys.argv:
-    import setuptools    # support setuptools development mode
+if 'develop' in sys.argv or 'bdist_wheel' in sys.argv:
+    import setuptools    # support setuptools development mode and wheels
 
 execfile(join(dirname(__file__), 'src', 'robot', 'version.py'))
 
