@@ -75,7 +75,7 @@ class TestTime(unittest.TestCase):
 
     def test_timestr_to_secs_invalid(self):
         for inv in ['', 'foo', '1sec 42 millis 3', '1min 2w', None]:
-            assert_raises_with_msg(ValueError, "Invalid time string '%s'" % inv,
+            assert_raises_with_msg(ValueError, "Invalid time string '%s'." % inv,
                                    timestr_to_secs, inv)
 
     def test_secs_to_timestr(self):
@@ -251,9 +251,9 @@ class TestTime(unittest.TestCase):
         for value, msg in [("-100", "Epoch time must be positive (got -100)"),
                            ("YYYY-MM-DD hh:mm:ss",
                             "Invalid time format 'YYYY-MM-DD hh:mm:ss'"),
-                           ("now + foo", "Invalid time string 'foo'"),
-                           ("now -    2a ", "Invalid time string '2a'"),
-                           ("now+", "Invalid time string ''"),
+                           ("now + foo", "Invalid time string 'foo'."),
+                           ("now -    2a ", "Invalid time string '2a'."),
+                           ("now+", "Invalid time string ''."),
                            ("nowadays", "Invalid time format 'nowadays'")]:
             assert_raises_with_msg(ValueError, msg, parse_time, value)
 

@@ -20,7 +20,7 @@ Sleep With Reason
     Sleep    42 ms    No good reason
 
 Invalid Time Does Not Cause Uncatchable Error
-    Run Keyword And Expect Error    ValueError: Invalid time string 'invalid time'    Sleep    invalid time
+    Run Keyword And Expect Error    ValueError: Invalid time string 'invalid time'.    Sleep    invalid time
 
 Can Stop Sleep With Timeout
     [Documentation]    FAIL Test timeout 10 milliseconds exceeded.

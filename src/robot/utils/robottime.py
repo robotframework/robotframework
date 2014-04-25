@@ -53,7 +53,7 @@ def timestr_to_secs(timestr):
     try:
         secs = _timestr_to_secs(timestr)
     except (ValueError, TypeError):
-        raise ValueError("Invalid time string '%s'" % timestr)
+        raise ValueError("Invalid time string '%s'." % timestr)
     return round(secs, 3)
 
 def _timestr_to_secs(timestr):

@@ -26,11 +26,11 @@ Pass With Returning Value Correctly
     Should Be Equal  ${return value}  ${HELLO}  Returned value should be the one that is given to the keyword.
 
 Invalid Timeout Does Not Cause Uncatchable Failure
-    Run Keyword And Expect Error  ValueError: Invalid time string 'Not Time Value'
+    Run Keyword And Expect Error  ValueError: Invalid time string 'Not Time Value'.
     ...  Wait Until Keyword Succeeds  Not Time Value  1 seconds  No Operation
 
 Invalid Retry Interval Does Not Cause Uncatchable Failure
-    Run Keyword And Expect Error  ValueError: Invalid time string 'invalid'
+    Run Keyword And Expect Error  ValueError: Invalid time string 'invalid'.
     ...  Wait Until Keyword Succeeds  1 seconds  invalid  No Operation
 
 Wait Until In User Keyword
