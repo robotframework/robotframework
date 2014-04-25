@@ -1,0 +1,26 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/convert_time_input_format.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Time string
+    Check Test Case    ${TESTNAME}
+
+Number as string
+    Check Test Case    ${TESTNAME}
+
+Number
+    Check Test Case    ${TESTNAME}
+
+Clock
+    Check Test Case    ${TESTNAME}
+
+Clock without millis
+    Check Test Case    ${TESTNAME}
+
+Timedelta
+    Check Test Case    ${TESTNAME}
+
+Invalid
+    Check Test Case    ${TESTNAME}

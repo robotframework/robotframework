@@ -1,0 +1,48 @@
+*** Settings ***
+Test Template     Time conversion should succeed
+Library           DateTime
+Variables         datesandtimes.py
+
+*** Test Cases ***    INPUT              FORMAT       EXPECTED
+Convert to seconds    10 s               number       ${10}
+                      ${-62.3}           NUMBER       ${-62.3}
+                      ${timedelta(2)}    NUMber       ${172800}
+
+Convert to string     10 s               verbose      10 seconds
+                      ${-62.3}           VERBOSE      - 1 minute 2 seconds 300 milliseconds
+                      ${timedelta(2)}    VERbose      2 days
+
+Convert to compact string
+                      10 s               compact      10s
+                      ${-62.3}           COMPACT      - 1min 2s 300ms
+                      ${timedelta(2)}    COMpact      2d
+
+Convert to clock      10 s               clock        00:00:10.000
+                      ${-62.3}           CLOCK        -00:01:02.300
+                      ${timedelta(5)}    CLock        120:00:00.000
+
+Convert to timedelta
+                      10 s               timedelta    ${timedelta(seconds=10)}
+                      ${-62.3}           TIMEDELTA    ${timedelta(minutes=-1, seconds=-2.3)}
+                      ${timedelta(2)}    TIMEdelta    ${timedelta(2)}
+
+Ignore millis         [Template]         Time conversion without millis should succeed
+                      61.5               number       ${62}
+                      61.5               verbose      1 minute 2 seconds
+                      61.5               compact      1min 2s
+                      61.5               clock        00:01:02
+                      61.5               timedelta    ${timedelta(seconds=62)}
+
+Invalid format        [Documentation]    FAIL ValueError: Unknown format 'invalid'.
+                      10s                invalid      0
+
+*** Keywords ***
+Time conversion should succeed
+    [Arguments]    ${input}    ${format}    ${expected}
+    ${result} =    Convert Time    ${input}    ${format}
+    Should Be Equal    ${result}    ${expected}
+
+Time conversion without millis should succeed
+    [Arguments]    ${input}    ${format}    ${expected}
+    ${result} =    Convert Time    ${input}    ${format}    exclude_millis=Yes
+    Should Be Equal    ${result}    ${expected}

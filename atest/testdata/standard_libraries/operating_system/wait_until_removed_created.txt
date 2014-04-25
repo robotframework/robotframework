@@ -52,7 +52,7 @@ Not Removed Before Timeout With Pattern
     Wait Until Removed  ${BOTH PATTERN}  0.042
 
 Invalid Remove Timeout
-    [Documentation]  FAIL ValueError: Invalid time string 'invalid timeout'
+    [Documentation]  FAIL ValueError: Invalid time string 'invalid timeout'.
     Wait Until Removed  non-existing  invalid timeout
 
 File And Dir Already Created
@@ -85,7 +85,7 @@ Not Created Before Timeout With Pattern
     Wait Until Created  ${BOTH PATTERN}  0.022
 
 Invalid Create Timeout
-    [Documentation]  FAIL ValueError: Invalid time string 'invalid timeout'
+    [Documentation]  FAIL ValueError: Invalid time string 'invalid timeout'.
     Wait Until Created  ${CURDIR}  invalid timeout
 
 *** Keywords ***

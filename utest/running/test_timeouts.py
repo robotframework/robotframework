@@ -34,7 +34,7 @@ class TestInit(unittest.TestCase):
         for inv in ['invalid', '1s 1']:
             for params in [ [inv], [inv,'whatever'] ]:
                 tout = TestTimeout(*params)
-                err = "Setting test timeout failed: Invalid time string '%s'"
+                err = "Setting test timeout failed: Invalid time string '%s'."
                 self._verify_tout(tout, str=inv, secs=0.000001, err=err % inv)
 
     def _verify_tout(self, tout, str='', secs=-1, err=None):
