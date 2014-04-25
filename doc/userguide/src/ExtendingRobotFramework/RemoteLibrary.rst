@@ -25,16 +25,15 @@ There are two main reasons for using the remote library API:
   possibilities for distributed testing.
 
 * Test libraries can be implemented using any language that supports
-  `XML-RPC`_ protocol. Robot Framework 2.1 contains generic `remote
-  servers`_ for Python/Jython and Ruby, and the community has implemented
-  generic servers for other languages like Java, .NET and Perl.
+  `XML-RPC`_ protocol. At the time of this writing `there exists ready-made
+  remote servers`__ for Python, Java, Ruby, .NET, Clojure, Perl and node.js.
 
 The remote library interface is provided by the Remote library that is
-one of the `standard libraries`_ starting from Robot Framework
-2.1. This library does not have any keywords of its own, but it works
+one of the `standard libraries`_.
+This library does not have any keywords of its own, but it works
 as a proxy between the core framework and keywords implemented
 elsewhere. The Remote library interacts with actual library
-implementations through `remote servers`_, and the Remote library and
+implementations through remote servers, and the Remote library and
 servers communicate using a simple `remote protocol`_ on top of an
 XML-RPC channel.  The high level architecture of all this is
 illustrated in the picture below:
@@ -47,6 +46,7 @@ illustrated in the picture below:
           not support custom XML-RPC extensions implemented by some XML-RPC
           servers.
 
+__ https://code.google.com/p/robotframework/wiki/RemoteLibrary#Available_remote_servers
 __ http://docs.python.org/2/library/xmlrpclib.html
 
 Taking Remote library into use
@@ -103,20 +103,18 @@ the server up, but then you may need to use `Import Library keyword`__
 because the library is not available when the test execution starts.
 
 How a remote server can be stopped depends on how it is
-implemented. Following methods work with the servers distributed with
-Robot Framework:
+implemented. Typically servers support the following methods:
 
-* Regardless of the library used, remote servers provide :name:`Stop
-  Remote Server` keyword that can be used from the test data.
-* Remote servers have :code:`stop_remote_server` method in their
+* Regardless of the library used, remote servers should provide :name:`Stop
+  Remote Server` keyword that can be easily used by executed tests.
+* Remote servers should have :code:`stop_remote_server` method in their
   XML-RPC interface.
-* :code:`Ctrl-C` stops the server if it is running on a terminal
-  window. Unfortunately this does not work with all servers on all
-  operating systems.
+* Hitting :code:`Ctrl-C` on the console where the server is running should
+  stop the server.
 * The server process can be terminated using tools provided by the
   operating system (e.g. :prog:`kill`).
 
-.. note:: The server may be configured so that users cannot stop it with
+.. note:: Servers may be configured so that users cannot stop it with
           :name:`Stop Remote Server` keyword or :code:`stop_remote_server`
           method.
 
@@ -154,54 +152,6 @@ according to the following rules. Other remote servers should behave similarly.
           Binary support is new in Robot Framework 2.8.4.
 
 __ http://docs.python.org/2/library/xmlrpclib.html#binary-objects
-
-Using remote servers
-~~~~~~~~~~~~~~~~~~~~
-
-Robot Framework 2.1 includes remote server implementations written
-both in Python and Ruby. These servers, as well as the example
-libraries shown below and an example test case file, are
-included in source distributions under :path:`tools/remoteserver`
-directory and available also at
-http://code.google.com/p/robotframework/wiki/RemoteLibrary.
-
-The provided servers are designed so that it is easy to create test
-libraries using them. With both of the servers the basic procedure is
-as follows:
-
-* Create a test library module or class similarly as a normal test
-  library using the `static library API`_. With the Python server it
-  is also possible to use the `hybrid library API`_.
-* Import the remote server class and create an instance of it giving
-  the library instance or module to it as an argument. The listening
-  address and port, possibly got from the command line, can be given
-  as optional arguments.
-
-Both these steps can be done in the same module as illustrated by the
-examples below. Executing these modules as scripts from the command
-line will start the remote server so that it serves the keywords
-implemented in the library.
-
-Python remote library example
-'''''''''''''''''''''''''''''
-
-This example demonstrates how to use the Python version of the
-remote server. The example library implements keywords :name:`Count
-Items In Directory` and :name:`Strings Should Be Equal`.
-
-.. sourcecode:: python
-
-   ../../tools/remoteserver/example/examplelibrary.py
-
-Ruby remote library example
-'''''''''''''''''''''''''''
-
-This example uses the Ruby remote server and provides exactly same
-keywords as the previous Python example:
-
-.. sourcecode:: ruby
-
-   ../../tools/remoteserver/example/examplelibrary.rb
 
 Remote protocol
 ~~~~~~~~~~~~~~~
