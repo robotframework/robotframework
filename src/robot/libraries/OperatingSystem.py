@@ -345,15 +345,17 @@ class OperatingSystem:
         with open(path, 'rb') as f:
             return f.read()
 
-    def grep_file(self, path, pattern, encoding='UTF-8'):
+    def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict'):
         """Returns the lines of the specified file that match the `pattern`.
 
         This keyword reads a file from the file system using the defined
-        `path` and `encoding` similarly as `Get File`. A difference is
-        that only the lines that match the given `pattern` are returned.
-        Lines are returned as a single string catenated back together with
-        newlines and the number of matched lines is automatically logged.
+        `path`, `encoding` and `encoding_errors` similarly as `Get File`. A
+        difference is that only the lines that match the given `pattern` are
+        returned. Lines are returned as a single string catenated back together
+        with newlines and the number of matched lines is automatically logged.
         Possible trailing newline is never returned.
+
+        `encoding_errors` argument is new in Robot Framework 2.8.5.
 
         A line matches if it contains the `pattern` anywhere in it and
         it *does not need to match the pattern fully*. The pattern
@@ -376,7 +378,7 @@ class OperatingSystem:
         with open(path, 'rU') as f:
             for line in f:
                 total_lines += 1
-                line = unicode(line, encoding).rstrip('\n')
+                line = unicode(line, encoding, encoding_errors).rstrip('\n')
                 if fnmatch.fnmatchcase(line, pattern):
                     lines.append(line)
             self._info('%d out of %d lines matched' % (len(lines), total_lines))
