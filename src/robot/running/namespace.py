@@ -29,7 +29,7 @@ from .handlers import _XTimesHandler
 from .context import EXECUTION_CONTEXTS
 
 
-STDLIB_NAMES = set(('BuiltIn', 'Collections', 'Dialogs', 'Easter',
+STDLIB_NAMES = set(('BuiltIn', 'Collections', 'DateTime', 'Dialogs', 'Easter',
                     'OperatingSystem', 'Process', 'Remote', 'Reserved',
                     'Screenshot', 'String', 'Telnet', 'XML'))
 IMPORTER = Importer()
