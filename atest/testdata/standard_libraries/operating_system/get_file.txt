@@ -5,11 +5,13 @@ Resource        os_resource.txt
 Variables       files/result.py
 
 *** Variables ***
-${utf-8file}  ${CURDIR}${/}files${/}utf-8.txt
-${asciifile}  ${CURDIR}${/}files${/}ascii.txt
-${latin-1file}  ${CURDIR}${/}files${/}latin-1.txt
-${utf-16 LE file}  ${CURDIR}${/}files${/}utf-16LE.txt                   # Little Endian
-${utf-16 BE file}    ${CURDIR}${/}files${/}utf-16BE.txt                 # Big Endian
+${utf-8file}                  ${CURDIR}${/}files${/}utf-8.txt
+${asciifile}                  ${CURDIR}${/}files${/}ascii.txt
+${latin-1file}                ${CURDIR}${/}files${/}latin-1.txt
+${latin-1 long file}          ${CURDIR}${/}files${/}latin-1_multiple_rows.txt
+${utf-8 long file}            ${CURDIR}${/}files${/}utf-8_multiple_rows.txt
+${utf-16 LE file}             ${CURDIR}${/}files${/}utf-16LE.txt        # Little Endian
+${utf-16 BE file}             ${CURDIR}${/}files${/}utf-16BE.txt        # Big Endian
 ${utf-16 LE with BOM file}    ${CURDIR}${/}files${/}utf-16LEBOM.txt     # Little Endian with Byte Order Marker
 ${utf-16 BE with BOM file}    ${CURDIR}${/}files${/}utf-16BEBOM.txt     # Big Endian with BOM
 
@@ -70,43 +72,47 @@ Get Utf-16 File with UTF-16 Encoding
     ${utf-16 LE with BOM file}    UTF-16
     ${utf-16 BE with BOM file}    UTF-16
 
-Get Utf-16 File with Default Encoding and error handler 'ignore'
-    [Template]    Verify UTF-16 File with error handler
-    ${utf-16 LE file}            ignore    H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00\x00
-    ${utf-16 BE file}            ignore    \x00H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00
-    ${utf-16 LE with BOM file}   ignore    H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00\x00
-    ${utf-16 BE with BOM file}   ignore    \x00H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00
-
-Get Utf-16 File with Default Encoding and error handler 'replace'
-    [Template]    Verify UTF-16 File with error handler
-    ${utf-16 LE file}             replace    H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd\x00
-    ${utf-16 BE file}             replace    \x00H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd
-    ${utf-16 LE with BOM file}    replace    \ufffd\ufffdH\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd\x00
-    ${utf-16 BE with BOM file}    replace    \ufffd\ufffd\x00H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd
+Get File with Default Encoding and error handlers
+    :FOR    ${file}    ${handler}     ${expected}    IN
+    ...     ${utf-16 LE file}    ignore     H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00\x00
+    ...     ${latin-1file}       ignore     Hyv t
+    ...     ${utf-16 LE file}    replace    H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd\x00
+    ...     ${latin-1file}       replace    Hyv�� ��t�
+    \    Verify Get File with error handler    ${file}    ${handler}    ${expected}
 
 Log Latin-1 With Latin-1 Encoding
     ${file} =  Log File  ${latin-1file}  Latin-1
 
 Grep File
-    Create File  ${TESTFILE}  foo\nbar\nfoo bar\n\nA Foo
-    Grep And Check File  ${EMPTY}  foo\nbar\nfoo bar\n\nA Foo
-    Grep And Check File  foo  foo\nfoo bar
-    Grep And Check File  foo?  foo bar
-    Grep And Check File  ?foo  ${EMPTY}
-    Grep And Check File  ?oo  foo\nfoo bar\nA Foo
-    Grep And Check File  [Ff]oo  foo\nfoo bar\nA Foo
-    Grep And Check File  f*a  foo bar
-    Grep And Check File  ?  foo\nbar\nfoo bar\nA Foo
-    Grep And Check File  ????  foo bar\nA Foo
-    Grep And Check File  foo bar  foo bar
+    [Template]    Grep And Check File
+    ${EMPTY}    foo\nbar\nfoo bar\n\nA Foo
+    foo         foo\nfoo bar
+    foo?        foo bar
+    ?foo        ${EMPTY}
+    ?oo         foo\nfoo bar\nA Foo
+    [Ff]oo      foo\nfoo bar\nA Foo
+    f*a         foo bar
+    ?           foo\nbar\nfoo bar\nA Foo
+    ????        foo bar\nA Foo
+    foo bar     foo bar
+
+Grep File with empty file
     Create File  ${TESTFILE}  ${EMPTY}
-    Grep And Check File  *  ${EMPTY}
+    Grep And Check File  *  ${EMPTY}    ${TESTFILE}
 
 Grep File non Ascii
-    Create File  ${TESTFILE}  fää\nbär\nföö bär\n\nA Fåå
-    Grep And Check File     fää     fää
-    Grep And Check File     ö       föö bär
-    Grep And Check File     A       A Fåå
+    [Setup]    Create File    ${TESTFILE}    fää\nbär\nföö bär\n\nA Fåå
+    [Template]    Grep And Check File
+    fää     fää        ${TESTFILE}
+    ö       föö bär    ${TESTFILE}
+    A       A Fåå      ${TESTFILE}
+
+Grep File With Encoding Error Handlers
+    :FOR    ${error handler}    ${expected}    IN    ignore     f bar
+    ...                                              replace    f\ufffd\ufffd bar
+    \     ${ret}=     Grep File    ${latin-1 long file}    f*a    encoding_errors=${error handler}
+    \     Should Be Equal    ${ret}    ${expected}
+
 
 *** Keywords ***
 Get And Check File
@@ -115,16 +121,16 @@ Get And Check File
     Should Be Equal  ${content}  ${expected}
 
 Grep And Check File
-    [Arguments]  ${pattern}  ${expected}
-    ${content} =  Grep File  ${TESTFILE}  ${pattern}
+    [Arguments]  ${pattern}  ${expected}    ${test file}=${utf-8 long file}
+    ${content} =  Grep File  ${test file}  ${pattern}
     Should Be Equal  ${content}  ${expected}
 
 Verify UTF-16 File
-    [Arguments]    ${utf-16file}    ${encoding}
-    ${file}=    Get File    ${utf-16file}    ${encoding}
+    [Arguments]    ${utf-16 file}    ${encoding}
+    ${file}=    Get File    ${utf-16 file}    ${encoding}
     Should Be Equal    ${file}    Hyvää üötä
 
-Verify UTF-16 File with error handler
-    [Arguments]    ${utf-16 file}    ${error handler}    ${expected}
-    ${file}=    Get File    ${utf-16 file}    encoding_errors=${error handler}
-    Should Be Equal    ${file}    ${expected}
+Verify Get File with error handler
+    [Arguments]    ${file}    ${error handler}    ${expected}
+    ${ret}=    Get File    ${file}    encoding_errors=${error handler}
+    Should Be Equal    ${ret}    ${expected}
