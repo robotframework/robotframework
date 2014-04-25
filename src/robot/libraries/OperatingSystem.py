@@ -13,14 +13,15 @@
 #  limitations under the License.
 
 from __future__ import with_statement
+import codecs
+import fnmatch
+import glob
 import os
+import shutil
+import subprocess
 import sys
 import tempfile
 import time
-import glob
-import fnmatch
-import shutil
-import subprocess
 
 try:
     from robot.version import get_version
@@ -375,10 +376,10 @@ class OperatingSystem:
         lines = []
         total_lines = 0
         self._link("Reading file '%s'", path)
-        with open(path, 'rU') as f:
-            for line in f:
+        with codecs.open(path, encoding=encoding, errors=encoding_errors) as f:
+            for line in f.readlines():
                 total_lines += 1
-                line = unicode(line, encoding, encoding_errors).rstrip('\n')
+                line = line.strip('\r').rstrip('\n')
                 if fnmatch.fnmatchcase(line, pattern):
                     lines.append(line)
             self._info('%d out of %d lines matched' % (len(lines), total_lines))

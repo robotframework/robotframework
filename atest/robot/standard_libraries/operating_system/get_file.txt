@@ -38,9 +38,6 @@ Get Latin-1 With Latin-1 Encoding
 Get Utf-16 File with Default Encoding
     Check testcase    ${TESTNAME}
 
-Get Utf-16 File with UTF-16 Encoding
-    Check testcase    ${TESTNAME}
-
 Get File with Default Encoding and error handlers
     Check testcase    ${TESTNAME}
 
@@ -67,12 +64,18 @@ Grep File with empty file
 
 Grep File non Ascii
     ${tc}=    Check testcase    ${TESTNAME}
-    Log    ${tc.kws[1].kws[0].msgs}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
     Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    1 out of 5 lines matched
 
+Grep File with UTF-16 files
+    ${tc}=    Check testcase    ${TESTNAME}
+    Log    ${tc.kws[0].kws[0].msgs}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[1]}   3 out of 4 lines matched
+    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}   1 out of 2 lines matched
+    Check Log Message    ${tc.kws[2].kws[0].msgs[1]}   4 out of 5 lines matched
+    Check Log Message    ${tc.kws[3].kws[0].msgs[1]}   2 out of 3 lines matched
+
 Grep File With Encoding Error Handlers
     ${tc}=    Check testcase    ${TESTNAME}
-    Log    ${tc.kws[0].kws[1].kws[0].msgs}
-    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
-    Check Log Message    ${tc.kws[0].kws[1].kws[0].msgs[1]}    1 out of 5 lines matched
+    Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
+    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    1 out of 5 lines matched
