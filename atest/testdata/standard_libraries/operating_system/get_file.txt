@@ -2,19 +2,19 @@
 Test Setup      Create Base Test Directory
 Suite Teardown  Remove Base Test Directory
 Resource        os_resource.txt
-Variables       files/result.py
 
 *** Variables ***
-${utf-8file}                  ${CURDIR}${/}files${/}utf-8.txt
-${asciifile}                  ${CURDIR}${/}files${/}ascii.txt
-${latin-1file}                ${CURDIR}${/}files${/}latin-1.txt
-${latin-1 long file}          ${CURDIR}${/}files${/}latin-1_multiple_rows.txt
-${utf-8 long file}            ${CURDIR}${/}files${/}utf-8_multiple_rows.txt
-${utf-16 LE file}             ${CURDIR}${/}files${/}utf-16LE.txt        # Little Endian
-${utf-16 BE file}             ${CURDIR}${/}files${/}utf-16BE.txt        # Big Endian
-${utf-16 LE with BOM file}    ${CURDIR}${/}files${/}utf-16LEBOM.txt     # Little Endian with Byte Order Marker
-${utf-16 BE with BOM file}    ${CURDIR}${/}files${/}utf-16BEBOM.txt     # Big Endian with BOM
-${utf-8 with windows line endings}    ${CURDIR}${/}files${/}utf-8_windows_line_endings.txt
+${UTF-8 FILE}               ${CURDIR}${/}files${/}utf-8.txt
+${ASCII FILE}               ${CURDIR}${/}files${/}ascii.txt
+${LATIN-1 FILE}             ${CURDIR}${/}files${/}latin-1.txt
+${LATIN-1 LONG FILE}        ${CURDIR}${/}files${/}latin-1_multiple_rows.txt
+${UTF-8 LONG FILE}          ${CURDIR}${/}files${/}utf-8_multiple_rows.txt
+${UTF-16 LE FILE}           ${CURDIR}${/}files${/}utf-16LE.txt        # Little Endian
+${UTF-16 BE FILE}           ${CURDIR}${/}files${/}utf-16BE.txt        # Big Endian
+${UTF-16 LE W/ BOM FILE}    ${CURDIR}${/}files${/}utf-16LEBOM.txt     # Little Endian with Byte Order Marker
+${UTF-16 BE W/ BOM FILE}    ${CURDIR}${/}files${/}utf-16BEBOM.txt     # Big Endian with BOM
+${UTF-8 WINDOWS FILE}       ${CURDIR}${/}files${/}utf-8_windows_line_endings.txt
+${RESULT}                   Hyvää üötä
 
 *** Test Cases ***
 Get File
@@ -45,37 +45,35 @@ Log File
     Should Be Equal  ${file}  hello world\nwith two lines
 
 Get Utf-8 File
-    ${file} =  Get File  ${utf-8file}
-    Log Variables
-    Log  ${file}
+    ${file} =  Get File  ${UTF-8 FILE}
     Should Be Equal  ${file}  ${RESULT}
 
 Get Ascii File With Default Encoding
-    ${file} =  Get File  ${asciifile}
+    ${file} =  Get File  ${ASCII FILE}
     Should Be Equal  ${file}  Hyvaa yota
 
 Get Latin-1 With Default Encoding
     [Documentation]  FAIL REGEXP: (UnicodeDecodeError|UnicodeError): .*
-    ${file} =  Get File  ${latin-1file}
+    Get File  ${LATIN-1 FILE}
 
 Get Latin-1 With Latin-1 Encoding
-    ${file} =  Get File  ${latin-1file}  Latin-1
+    ${file} =  Get File  ${LATIN-1 FILE}  Latin-1
     Should Be Equal  ${file}  ${result}
 
 Get Utf-16 File with Default Encoding
     [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError): .*
-    ${file}=    Get File    ${utf-16LEfile}
+    ${file}=    Get File    ${UTF-16LEfile}
 
 Get File with Default Encoding and error handlers
-    :FOR    ${file}    ${handler}     ${expected}    IN
-    ...     ${utf-16 BE file}    ignore     \x00H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00\x00\n\x00f\x00\x00\x00 \x00b\x00a\x00r
-    ...     ${latin-1file}       ignore     Hyv t
-    ...     ${utf-16 BE file}    replace    \x00H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd\x00\n\x00f\x00\ufffd\x00\ufffd\x00 \x00b\x00a\x00r
-    ...     ${latin-1file}       replace    Hyv�� ��t�
-    \    Verify Get File with error handler    ${file}    ${handler}    ${expected}
+    [Template]    Verify Get File with error handler
+    ${UTF-16 BE FILE}    ignore     \x00H\x00y\x00v\x00\x00\x00 \x00\x00\x00t\x00\x00\n\x00f\x00\x00\x00 \x00b\x00a\x00r
+    ${LATIN-1 FILE}      ignore     Hyv t
+    ${UTF-16 BE FILE}    replace    \x00H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd\x00\n\x00f\x00\ufffd\x00\ufffd\x00 \x00b\x00a\x00r
+    ${LATIN-1 FILE}      replace    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
 
 Log Latin-1 With Latin-1 Encoding
-    ${file} =  Log File  ${latin-1file}  Latin-1
+    ${file} =  Log File  ${LATIN-1 FILE}  Latin-1
+    Should be equal    ${file}    ${RESULT}
 
 Grep File
     [Template]    Grep And Check File
@@ -103,10 +101,10 @@ Grep File non Ascii
 
 Grep File with UTF-16 files
     [Template]    Verify Grep File With UTF-16 files
-    ${utf-16 LE file}             UTF-16-LE    föö bar\nföö bar\nföö bar
-    ${utf-16 BE file}             UTF-16-BE    föö bar
-    ${utf-16 LE with BOM file}    UTF-16    föö bar\nföö bar\nföö bar\nföö bar
-    ${utf-16 BE with BOM file}    UTF-16    föö bar\nföö bar
+    ${UTF-16 LE FILE}             UTF-16-LE    föö bar\nföö bar\nföö bar
+    ${UTF-16 BE FILE}             UTF-16-BE    föö bar
+    ${UTF-16 LE W/ BOM FILE}    UTF-16    föö bar\nföö bar\nföö bar\nföö bar
+    ${UTF-16 BE W/ BOM FILE}    UTF-16    föö bar\nföö bar
 
 Grep File With Encoding Error Handlers
     [Template]    Verify Grep File with error handler
@@ -114,8 +112,7 @@ Grep File With Encoding Error Handlers
     replace    f\ufffd\ufffd bar
 
 Grep File With Windows line endings
-    Grep And Check File    f*a    foo bar    ${utf-8 with windows line endings}
-
+    Grep And Check File    f*a    foo bar    ${UTF-8 WINDOWS FILE}
 
 *** Keywords ***
 Get And Check File
@@ -124,8 +121,8 @@ Get And Check File
     Should Be Equal  ${content}  ${expected}
 
 Grep And Check File
-    [Arguments]  ${pattern}  ${expected}    ${test file}=${utf-8 long file}
-    ${content} =  Grep File  ${test file}  ${pattern}
+    [Arguments]  ${pattern}  ${expected}    ${test FILE}=${UTF-8 LONG FILE}
+    ${content} =  Grep File  ${test FILE}  ${pattern}
     Should Be Equal  ${content}  ${expected}
 
 Verify Get File with error handler
@@ -135,7 +132,7 @@ Verify Get File with error handler
 
 Verify Grep File with error handler
     [Arguments]    ${error handler}    ${expected}
-    ${ret}=    Grep File    ${latin-1 long file}    f*a    encoding_errors=${error handler}
+    ${ret}=    Grep File    ${LATIN-1 LONG FILE}    f*a    encoding_errors=${error handler}
     Should Be Equal    ${ret}    ${expected}
 
 Verify Grep File With UTF-16 files

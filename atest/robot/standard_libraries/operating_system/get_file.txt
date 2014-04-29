@@ -2,7 +2,6 @@
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/get_file.txt
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
-Variables       ../../../testdata/standard_libraries/operating_system/files/result.py
 
 *** Test Cases ***
 Get File
@@ -43,7 +42,7 @@ Get File with Default Encoding and error handlers
 
 Log Latin-1 With Latin-1 Encoding
     ${tc} =  Check testcase  ${TESTNAME}
-    Check Log Message  ${tc.kws[0].msgs[1]}  ${RESULT}
+    Check Log Message  ${tc.kws[0].msgs[1]}  Hyvää üötä
 
 Grep File
     ${tc}=    Check testcase    ${TESTNAME}
