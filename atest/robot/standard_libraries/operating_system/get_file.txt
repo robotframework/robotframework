@@ -19,8 +19,14 @@ Get Binary File
     Check testcase  ${TESTNAME}
 
 Log File
-    ${tc} =  Check testcase  ${TESTNAME}
-    Check Log Message  ${tc.kws[1].msgs[1]}  hello world\nwith two lines
+    ${tc}=    Check testcase    ${TESTNAME}
+    Check Log Message    ${tc.kws[1].msgs[1]}    hello world\nwith two lines
+
+Log File with default encoding and error handlers
+    ${tc}=    Check testcase    ${TESTNAME}
+    Log    ${tc.kws[0].kws[0].msgs}
+    Check Log Message     ${tc.kws[0].kws[0].msgs[1]}    Hyv t
+    Check Log Message     ${tc.kws[1].kws[0].msgs[1]}    Hyv�� ��t�
 
 Get Utf-8 File
     Check testcase  ${TESTNAME}

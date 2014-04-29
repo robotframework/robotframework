@@ -40,9 +40,14 @@ Get Binary File
     Should Be Equal  ${file}  hello world\r\nbinary
 
 Log File
-    Create File  ${TESTFILE}  hello world\nwith two lines
-    ${file} =  Log File  ${TESTFILE}
-    Should Be Equal  ${file}  hello world\nwith two lines
+    Create File    ${TESTFILE}    hello world\nwith two lines
+    ${file}=    Log File    ${TESTFILE}
+    Should Be Equal    ${file}    hello world\nwith two lines
+
+Log File with default encoding and error handlers
+    [Template]    Verify Log File with error handler
+    ignore      Hyv t
+    replace     Hyv�� ��t�
 
 Get Utf-8 File
     ${file} =  Get File  ${UTF-8 FILE}
@@ -133,6 +138,11 @@ Verify Get File with error handler
 Verify Grep File with error handler
     [Arguments]    ${error handler}    ${expected}
     ${ret}=    Grep File    ${LATIN-1 LONG FILE}    f*a    encoding_errors=${error handler}
+    Should Be Equal    ${ret}    ${expected}
+
+Verify Log File with error handler
+    [Arguments]    ${error handler}    ${expected}
+    ${ret}=    Log File    ${LATIN-1 FILE}    encoding_errors=${error handler}
     Should Be Equal    ${ret}    ${expected}
 
 Verify Grep File With UTF-16 files

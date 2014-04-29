@@ -385,14 +385,16 @@ class OperatingSystem:
             self._info('%d out of %d lines matched' % (len(lines), total_lines))
             return '\n'.join(lines)
 
-    def log_file(self, path, encoding='UTF-8'):
+    def log_file(self, path, encoding='UTF-8', encoding_errors='strict'):
         """Wrapper for `Get File` that also logs the returned file.
 
         The file is logged with the INFO level. If you want something else,
         just use `Get File` and the built-in keyword `Log` with the desired
         level.
+
+        `encoding_errors` argument is new in Robot Framework 2.8.5.
         """
-        content = self.get_file(path, encoding)
+        content = self.get_file(path, encoding, encoding_errors)
         self._info(content)
         return content
 
