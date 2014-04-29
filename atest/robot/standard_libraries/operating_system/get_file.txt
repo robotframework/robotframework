@@ -15,19 +15,6 @@ Get File With Non-ASCII Name
 Get File With Space In Name
     Check testcase  ${TESTNAME}
 
-Get Binary File
-    Check testcase  ${TESTNAME}
-
-Log File
-    ${tc}=    Check testcase    ${TESTNAME}
-    Check Log Message    ${tc.kws[1].msgs[1]}    hello world\nwith two lines
-
-Log File with default encoding and error handlers
-    ${tc}=    Check testcase    ${TESTNAME}
-    Log    ${tc.kws[0].kws[0].msgs}
-    Check Log Message     ${tc.kws[0].kws[0].msgs[1]}    Hyv t
-    Check Log Message     ${tc.kws[1].kws[0].msgs[1]}    Hyv�� ��t�
-
 Get Utf-8 File
     Check testcase  ${TESTNAME}
 
@@ -46,9 +33,24 @@ Get Utf-16 File with Default Encoding
 Get File with Default Encoding and error handlers
     Check testcase    ${TESTNAME}
 
+Log File
+    ${tc}=    Check testcase    ${TESTNAME}
+    Check Log Message    ${tc.kws[1].msgs[1]}    hello world\nwith two lines
+
 Log Latin-1 With Latin-1 Encoding
     ${tc} =  Check testcase  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[1]}  Hyvää üötä
+
+Log File with default encoding and error handlers
+    ${tc}=    Check testcase    ${TESTNAME}
+    Check Log Message     ${tc.kws[0].kws[0].msgs[1]}    Hyv t
+    Check Log Message     ${tc.kws[1].kws[0].msgs[1]}    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
+
+Get Binary File preserves CRLF line endings
+    Check testcase    ${TESTNAME}
+
+Get Binary File returns bytes as-is
+    Check testcase    ${TESTNAME}
 
 Grep File
     ${tc}=    Check testcase    ${TESTNAME}
