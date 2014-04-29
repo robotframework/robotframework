@@ -356,8 +356,6 @@ class OperatingSystem:
         with newlines and the number of matched lines is automatically logged.
         Possible trailing newline is never returned.
 
-        `encoding_errors` argument is new in Robot Framework 2.8.5.
-
         A line matches if it contains the `pattern` anywhere in it and
         it *does not need to match the pattern fully*. The pattern
         matching syntax is explained in `introduction`, and in this
@@ -370,6 +368,8 @@ class OperatingSystem:
         If more complex pattern matching is needed, it is possible to use
         `Get File` in combination with String library keywords like `Get
         Lines Matching Regexp`.
+
+        `encoding_errors` argument is new in Robot Framework 2.8.5.
         """
         pattern = '*%s*' % pattern
         path = self._absnorm(path)
