@@ -1,4 +1,7 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
+from numbers import Number
+from time import mktime
+from string import digits
 import re
 
 from robot.utils import elapsed_time_to_string, secs_to_timestr, timestr_to_secs
@@ -8,6 +11,9 @@ class DateTime(object):
 
     def convert_time(self, time, result_format='number', exclude_millis=False):
         return Time(time).convert(result_format, millis=not exclude_millis)
+
+    def convert_date(self, date, result_format='timestamp', input_format=None):
+        return Date(date, input_format).convert(result_format)
 
 
 class Time(object):
@@ -55,3 +61,46 @@ class Time(object):
 
     def _convert_to_timedelta(self, seconds, millis=True):
         return timedelta(seconds=seconds)
+
+
+class Date(object):
+    def __init__(self, dt, input_format):
+        self.dt = self._convert_to_dt(dt, input_format)
+
+    def _convert_to_dt(self, dt, input_format):
+        if isinstance(dt, datetime):
+            return dt
+        if isinstance(dt, basestring):
+            return self._string_to_datetime(dt, input_format)
+        if isinstance(dt, Number):
+            return datetime.fromtimestamp(dt)
+
+    def _string_to_datetime(self, dt, input_format):
+        if not input_format:
+            dt = self._normalize_timestamp(dt)
+            input_format = '%Y-%m-%d %H:%M:%S.%f'
+        return datetime.strptime(dt, input_format)
+
+    def _normalize_timestamp(self, date):
+        stamp = ''.join(digit for digit in date if digit in digits)
+        stamp = stamp.ljust(17, '0')
+        return '%s-%s-%s %s:%s:%s.%s' % (stamp[:4], stamp[4:6], stamp[6:8], stamp[8:10],
+                                         stamp[10:12], stamp[12:14], stamp[14:17])
+
+    def convert(self, output_format):
+        try:
+            result_converter = getattr(self, '_convert_to_%s' % output_format.lower())
+        except AttributeError:
+            raise ValueError("Unknown format '%s'." % output_format)
+        return result_converter()
+
+    def _convert_to_timestamp(self):
+        if self.dt.microsecond:
+            return str(self.dt)[:-3]
+        return str(self.dt)
+
+    def _convert_to_epoch(self):
+        return mktime(self.dt.timetuple())
+
+    def _convert_to_datetime(self):
+        return self.dt

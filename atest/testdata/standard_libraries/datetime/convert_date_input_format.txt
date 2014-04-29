@@ -1,0 +1,30 @@
+*** Settings ***
+Library         DateTime
+Test Template   Date Conversion Should Succeed
+Variables       datesandtimes.py
+
+*** Test Cases ***  INPUT                       FORMAT                OUTPUT
+String inputs       2014-04-24 21:45:12.123     ${NONE}               2014-04-24 21:45:12.123
+                    2014-04-24 21:45:12         ${NONE}               2014-04-24 21:45:12
+                    2014-04-24T21:45:12.123     ${NONE}               2014-04-24 21:45:12.123
+                    2014.04+24@@21/45!12,123    ${NONE}               2014-04-24 21:45:12.123
+
+Formatted strings   21:45:12.123 24.04.2014     %H:%M:%S.%f %d.%m.%Y  2014-04-24 21:45:12.123
+                    04/24/2014T21.45.12         %m/%d/%YT%H.%M.%S     2014-04-24 21:45:12
+                    24.04.2014                  %d.%m.%Y              2014-04-24 00:00:00
+                    24-04.2014@21               %d-%m.%Y@%H           2014-04-24 21:00:00
+
+Epoch               ${1398365112.0}             ${NONE}               2014-04-24 21:45:12
+                    ${1398365112.123}           ${NONE}               2014-04-24 21:45:12.123
+
+Datetime object     ${datetime.strptime('2014-04-24 21:45:12.123', '%Y-%m-%d %H:%M:%S.%f')}  ${NONE}  2014-04-24 21:45:12.123
+
+Pad zeroes to missing values
+                    2014-04-24                  ${NONE}               2014-04-24 00:00:00
+                    2014.04.24 21               ${NONE}               2014-04-24 21:00:00
+
+*** Keywords ***
+Date Conversion Should Succeed
+    [Arguments]  ${input}  ${input_format}  ${expected}
+    ${ts} =  Convert Date  ${input}  input_format=${input_format}
+    Should Be Equal  ${ts}  ${expected}

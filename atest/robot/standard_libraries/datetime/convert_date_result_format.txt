@@ -1,0 +1,14 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/convert_date_result_format.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Should convert to timestamp
+    Check Test Case    ${TESTNAME}
+
+Should convert to epoch
+    Check Test Case    ${TESTNAME}
+
+Should convert to datetime
+    Check Test Case    ${TESTNAME}

@@ -1,0 +1,20 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/convert_date_input_format.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+String inputs
+    Check Test Case    ${TESTNAME}
+
+Formatted strings
+    Check Test Case    ${TESTNAME}
+
+Epoch
+    Check Test Case    ${TESTNAME}
+
+Datetime object
+    Check Test Case    ${TESTNAME}
+
+Pad zeroes to missing values
+    Check Test Case    ${TESTNAME}
