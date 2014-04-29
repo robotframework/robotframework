@@ -14,6 +14,7 @@ ${utf-16 LE file}             ${CURDIR}${/}files${/}utf-16LE.txt        # Little
 ${utf-16 BE file}             ${CURDIR}${/}files${/}utf-16BE.txt        # Big Endian
 ${utf-16 LE with BOM file}    ${CURDIR}${/}files${/}utf-16LEBOM.txt     # Little Endian with Byte Order Marker
 ${utf-16 BE with BOM file}    ${CURDIR}${/}files${/}utf-16BEBOM.txt     # Big Endian with BOM
+${utf-8 with windows line endings}    ${CURDIR}${/}files${/}utf-8_windows_line_endings.txt
 
 *** Test Cases ***
 Get File
@@ -111,6 +112,9 @@ Grep File With Encoding Error Handlers
     [Template]    Verify Grep File with error handler
     ignore     f bar
     replace    f\ufffd\ufffd bar
+
+Grep File With Windows line endings
+    Grep And Check File    f*a    foo bar    ${utf-8 with windows line endings}
 
 
 *** Keywords ***

@@ -79,3 +79,7 @@ Grep File With Encoding Error Handlers
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
     Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    1 out of 5 lines matched
+
+Grep File With Windows line endings
+    ${tc}=    Check testcase    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[1]}     1 out of 5 lines matched

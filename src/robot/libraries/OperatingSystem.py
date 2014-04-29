@@ -379,7 +379,7 @@ class OperatingSystem:
         with codecs.open(path, encoding=encoding, errors=encoding_errors) as f:
             for line in f.readlines():
                 total_lines += 1
-                line = line.strip('\r').rstrip('\n')
+                line = line.rstrip('\r\n')
                 if fnmatch.fnmatchcase(line, pattern):
                     lines.append(line)
             self._info('%d out of %d lines matched' % (len(lines), total_lines))
