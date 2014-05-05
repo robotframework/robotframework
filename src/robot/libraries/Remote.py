@@ -70,7 +70,7 @@ class Remote(object):
         args = coercer.coerce(args)
         kwargs = coercer.coerce(kwargs)
         result = RemoteResult(self._client.run_keyword(name, args, kwargs))
-        sys.stdout.write(result.output)
+        sys.stdout.write(unic(result.output))
         if result.status != 'PASS':
             raise RemoteError(result.error, result.traceback, result.fatal,
                               result.continuable)
