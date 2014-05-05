@@ -5,10 +5,6 @@ https://bitbucket.org/userzimmermann/robotframework-python3
 
 - Forked from https://robotframework.googlecode.com
 - Compatible with **Python 2.7**
-- ``robot`` code directly compatible (using six_)
-- *utest* and *atest* code still needs dynamic *2to3*
-
-.. _six: https://pypi.python.org/pypi/six
 
 Please report any issues to:
 
