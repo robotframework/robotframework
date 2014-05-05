@@ -1,11 +1,11 @@
 from __future__ import print_function
-from six import text_type as unicode
+from six import PY2
 
 import sys
 import time
-try:
+if PY2:
     import exceptions
-except ImportError: # Python 3
+else:
     import builtins as exceptions
 
 from robot import utils
@@ -18,7 +18,7 @@ class ExampleLibrary:
     def print_(self, msg, stream='stdout'):
         """Print given message to selected stream (stdout or stderr)"""
         out_stream = getattr(sys, stream)
-        out_stream.write(unicode(msg))
+        out_stream.write(utils.unic(msg))
 
     def print_n_times(self, msg, count, delay=0):
         """Print given message n times"""
