@@ -3,24 +3,30 @@ Library         DateTime
 Test Template   Date Conversion Should Succeed
 Variables       datesandtimes.py
 
+*** Variables ***
+${DATE}         ${datetime(2014, 4, 24, 21, 45, 12, 123000)}
+
 *** Test Cases ***
-Should convert to timestamp  2014-04-24 21:45:12.123  timeSTAMP  ${NONE}               2014-04-24 21:45:12.123
-                             21:45:12.123 2014-04-24  tImestamp  %H:%M:%S.%f %Y-%m-%d  2014-04-24 21:45:12.123
-                             ${1398365112.0}          TIMEstamp  ${NONE}               2014-04-24 21:45:12
-                             ${datetime.strptime('2014-04-24 21:45:12.123000', '%Y-%m-%d %H:%M:%S.%f')}  TimeStamp  ${NONE}  2014-04-24 21:45:12.123
+Should convert to timestamp
+    2014-04-24 21:45:12.123    timeSTAMP    ${NONE}                 2014-04-24 21:45:12.123
+    2014-04-24 21:45:12.123    tImestamp    %Y-%m-%d %H:%M:%S.%f    2014-04-24 21:45:12.123
+    ${1398365112.0}            TIMEstamp    ${NONE}                 2014-04-24 21:45:12
+    ${DATE}                    TimeStamp    ${NONE}                 2014-04-24 21:45:12.123
 
-Should convert to epoch      2014-04-24 21:45:12.123  epoch      ${NONE}               ${1398365112.0}
-                             21:45:12.123 2014-04-24  epoch      %H:%M:%S.%f %Y-%m-%d  ${1398365112.0}
-                             ${1398365112.0}          epoch      ${NONE}               ${1398365112.0}
-                             ${datetime.strptime('2014-04-24 21:45:12.123000', '%Y-%m-%d %H:%M:%S.%f')}  epoch  ${NONE}  ${1398365112.0}
+Should convert to epoch
+    2014-04-24 21:45:12.123    epoch      ${NONE}                 ${1398365112.0}
+    2014-04-24 21:45:12.123    epoch      %Y-%m-%d %H:%M:%S.%f    ${1398365112.0}
+    ${1398365112.0}            epoch      ${NONE}                 ${1398365112.0}
+    ${DATE}                    epoch      ${NONE}                 ${1398365112.0}
 
-Should convert to datetime   2014-04-24 21:45:12.123  datetime   ${NONE}               ${datetime.strptime('2014-04-24 21:45:12.123000', '%Y-%m-%d %H:%M:%S.%f')}
-                             21:45:12.123 2014-04-24  datetime   %H:%M:%S.%f %Y-%m-%d  ${datetime.strptime('2014-04-24 21:45:12.123000', '%Y-%m-%d %H:%M:%S.%f')}
-                             ${1398365112.123}        dateTiMe   ${NONE}               ${datetime.strptime('2014-04-24 21:45:12.123000', '%Y-%m-%d %H:%M:%S.%f')}
-                             ${datetime.strptime('2014-04-24 21:45:12.123000', '%Y-%m-%d %H:%M:%S.%f')}  datetimE  ${NONE}  ${datetime.strptime('2014-04-24 21:45:12.123000', '%Y-%m-%d %H:%M:%S.%f')}
+Should convert to datetime
+    2014-04-24 21:45:12.123    datetime    ${NONE}                 ${DATE}
+    2014-04-24 21:45:12.123    datetime    %Y-%m-%d %H:%M:%S.%f    ${DATE}
+    ${1398365112.123}          dateTiMe    ${NONE}                 ${DATE}
+    ${DATE}                    datetimE    ${NONE}                 ${DATE}
 
 *** Keywords ***
 Date Conversion Should Succeed
-    [Arguments]  ${input}  ${output_format}  ${input_format}  ${expected}
-    ${ts} =  Convert Date  ${input}  ${output_format}  ${input_format}
-    Should Be Equal  ${ts}  ${expected}
+    [Arguments]    ${input}    ${output_format}    ${input_format}    ${expected}
+    ${ts} =    Convert Date    ${input}    ${output_format}    ${input_format}
+    Should Be Equal    ${ts}    ${expected}
