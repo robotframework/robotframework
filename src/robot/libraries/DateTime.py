@@ -1,6 +1,5 @@
 from datetime import timedelta, datetime
-from numbers import Number
-from time import mktime
+import time
 from string import digits
 import re
 
@@ -24,7 +23,9 @@ class Time(object):
 
     def _convert_time_to_seconds(self, time):
         if isinstance(time, timedelta):
-            return time.total_seconds()
+            # timedelta.total_seconds() is new in Python 2.7
+            return (time.days * 24 * 60 * 60 + time.seconds +
+                    time.microseconds / 1000000.0)
         if isinstance(time, basestring):
             match = self._clock_re.match(time)
             if match:
@@ -72,7 +73,7 @@ class Date(object):
             return dt
         if isinstance(dt, basestring):
             return self._string_to_datetime(dt, input_format)
-        if isinstance(dt, Number):
+        if isinstance(dt, (int, long, float)):
             return datetime.fromtimestamp(dt)
 
     def _string_to_datetime(self, dt, input_format):
@@ -100,7 +101,7 @@ class Date(object):
         return str(self.dt)
 
     def _convert_to_epoch(self):
-        return mktime(self.dt.timetuple())
+        return time.mktime(self.dt.timetuple())
 
     def _convert_to_datetime(self):
         return self.dt
