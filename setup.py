@@ -32,7 +32,11 @@ Development Status :: 5 - Production/Stable
 License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
 Programming Language :: Python
+Programming Language :: Python :: 2
+Programming Language :: Python :: 2.7
 Programming Language :: Python :: 3
+Programming Language :: Python :: 3.3
+Programming Language :: Python :: 3.4
 Topic :: Software Development :: Testing
 """.strip().splitlines()
 PACKAGES = ['robot', 'robot.api', 'robot.conf',
