@@ -1,6 +1,7 @@
 from datetime import timedelta, datetime
 import time
-from string import digits
+import string
+import sys
 import re
 
 from robot.utils import elapsed_time_to_string, secs_to_timestr, timestr_to_secs
@@ -65,43 +66,69 @@ class Time(object):
 
 
 class Date(object):
+
     def __init__(self, dt, input_format):
         self.dt = self._convert_to_dt(dt, input_format)
 
     def _convert_to_dt(self, dt, input_format):
-        if isinstance(dt, datetime):
-            return dt
         if isinstance(dt, basestring):
-            return self._string_to_datetime(dt, input_format)
-        if isinstance(dt, (int, long, float)):
-            return datetime.fromtimestamp(dt)
+            dt = self._string_to_datetime(dt, input_format)
+        elif isinstance(dt, (int, long, float)):
+            dt = self._dt_from_timestamp(dt)
+        elif not isinstance(dt, datetime):
+            raise ValueError("Unsupported input '%s'." % dt)
+        return self._round_dt_to_millis(dt)
+
+    def _round_dt_to_millis(self, dt):
+        return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute,
+                        dt.second, int(round(dt.microsecond, -3)))
 
     def _string_to_datetime(self, dt, input_format):
         if not input_format:
             dt = self._normalize_timestamp(dt)
             input_format = '%Y-%m-%d %H:%M:%S.%f'
+        if '%f' in input_format and (sys.version_info < (2, 6) or
+                                     sys.platform == 'cli'):
+            return self._handle_un_supported_f_directive(dt, input_format)
         return datetime.strptime(dt, input_format)
 
     def _normalize_timestamp(self, date):
-        stamp = ''.join(digit for digit in date if digit in digits)
-        stamp = stamp.ljust(17, '0')
-        return '%s-%s-%s %s:%s:%s.%s' % (stamp[:4], stamp[4:6], stamp[6:8], stamp[8:10],
-                                         stamp[10:12], stamp[12:14], stamp[14:17])
+        ts = ''.join(d for d in date if d in string.digits).ljust(20, '0')
+        return '%s-%s-%s %s:%s:%s.%s' % (ts[:4], ts[4:6], ts[6:8], ts[8:10],
+                                         ts[10:12], ts[12:14], ts[14:])
 
-    def convert(self, output_format):
+    def _handle_un_supported_f_directive(self, dt, input_format):
+        if not input_format.endswith('%f'):
+            raise ValueError('%f directive is supported only at the end of '
+                             'the format string on this Python interpreter.')
+        input_format = input_format[:-2]
+        micro = re.search('\d+$', dt).group(0)
+        dt = dt[:-len(micro)]
+        epoch = time.mktime(time.strptime(dt, input_format))
+        epoch += float(micro) / 10**len(micro)
+        return self._dt_from_timestamp(epoch)
+
+    def _dt_from_timestamp(self, ts):
+        # Jython and IronPython handle floats incorrectly. For example,
+        # datetime.fromtimestamp(1399410716.123).microsecond == 122999
+        dt = datetime.fromtimestamp(ts)
+        return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute,
+                        dt.second, int(round(ts % 1 * 10**6, -3)))
+
+    def convert(self, format):
         try:
-            result_converter = getattr(self, '_convert_to_%s' % output_format.lower())
+            result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
-            raise ValueError("Unknown format '%s'." % output_format)
-        return result_converter()
+            raise ValueError("Unknown format '%s'." % format)
+        return result_converter(self.dt)
 
-    def _convert_to_timestamp(self):
-        if self.dt.microsecond:
-            return str(self.dt)[:-3]
-        return str(self.dt)
+    def _convert_to_timestamp(self, dt):
+        if dt.microsecond:
+            return str(dt)[:-3]
+        return str(dt)
 
-    def _convert_to_epoch(self):
-        return time.mktime(self.dt.timetuple())
+    def _convert_to_epoch(self, dt):
+        return time.mktime(dt.timetuple())
 
-    def _convert_to_datetime(self):
-        return self.dt
+    def _convert_to_datetime(self, dt):
+        return dt
