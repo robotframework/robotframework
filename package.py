@@ -131,7 +131,7 @@ def _verify_version(given, valid):
 
 def _update_version(version_number, release_tag):
     timestamp = '%d%02d%02d-%02d%02d%02d' % time.localtime()[:6]
-    vfile = open(VERSION_PATH, 'wb')
+    vfile = open(VERSION_PATH, 'w')
     vfile.write(VERSION_CONTENT % locals())
     vfile.close()
     # TODO: Fix before next final release
