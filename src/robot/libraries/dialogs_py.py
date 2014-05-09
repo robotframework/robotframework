@@ -12,16 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from six import PY3
-
 import sys
 from threading import currentThread
-if PY3:
-    from tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
-                         BOTH, END, LEFT, W)
-else:
-    from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
-                         BOTH, END, LEFT, W)
+from six.moves.tkinter import (
+  Tk, Toplevel, Frame, Listbox, Label, Button, Entry, BOTH, END, LEFT, W)
 
 
 class _TkDialog(Toplevel):
