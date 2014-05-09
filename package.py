@@ -34,7 +34,7 @@ Examples:
   package.py version trunk
 """
 
-from __future__ import with_statement
+from __future__ import with_statement, print_function
 import sys
 import os
 from os.path import abspath, dirname, exists, join
@@ -136,7 +136,7 @@ def _update_version(version_number, release_tag):
     vfile.close()
     # TODO: Fix before next final release
     #_update_pom_version(version_number, release_tag)
-    print 'Updated version to %s %s' % (version_number, release_tag)
+    print('Updated version to %s %s' % (version_number, release_tag))
 
 def _update_pom_version(version_number, release_tag):
     version = '%s-%s' % (version_number, release_tag)
@@ -149,18 +149,18 @@ def _update_pom_version(version_number, release_tag):
 def _keep_version():
     sys.path.insert(0, ROBOT_PATH)
     from version import get_version
-    print 'Keeping version %s' % get_version()
+    print('Keeping version %s' % get_version())
 
 def _clean():
-    print 'Cleaning up...'
+    print('Cleaning up...')
     for path in [DIST_PATH, BUILD_PATH]:
         if exists(path):
             shutil.rmtree(path)
 
 def _verify_platform(version_number, release_tag=None):
     if release_tag == 'final' and os.sep != '\\':
-        print 'Final Windows installers can only be created in Windows.'
-        print 'Windows installer was not created.'
+        print('Final Windows installers can only be created in Windows.')
+        print('Windows installer was not created.')
         return False
     return True
 
@@ -171,25 +171,25 @@ def _create_wininst():
     _create('bdist_wininst --bitmap %s --install-script %s' % (BITMAP, INSTALL_SCRIPT),
             'Windows installer')
     if os.sep != '\\':
-        print 'Warning: Windows installers created on other platforms may not'
-        print 'be exactly identical to ones created in Windows.'
+        print('Warning: Windows installers created on other platforms may not')
+        print('be exactly identical to ones created in Windows.')
 
 def _create(command, name):
-    print 'Creating %s...' % name
+    print('Creating %s...' % name)
     rc = os.system('%s %s %s' % (sys.executable, SETUP_PATH, command))
     if rc != 0:
-        print 'Creating %s failed.' % name
+        print('Creating %s failed.' % name)
         sys.exit(rc)
-    print '%s created successfully.' % name.capitalize()
+    print('%s created successfully.' % name.capitalize())
 
 def _announce():
-    print 'Created:'
+    print('Created:')
     for path in os.listdir(DIST_PATH):
-        print abspath(join(DIST_PATH, path))
+        print(abspath(join(DIST_PATH, path)))
 
 def jar(*version_info):
     jython_jar = _get_jython_jar()
-    print 'Using Jython %s' % jython_jar
+    print('Using Jython %s' % jython_jar)
     ver = version(*version_info)
     tmpdir = _create_tmpdir()
     try:
@@ -200,11 +200,11 @@ def jar(*version_info):
         _overwrite_manifest(tmpdir, ver)
         try:
             jar_path = _create_jar_file(tmpdir, ver)
-            print 'Created %s based on %s' % (jar_path, jython_jar)
+            print('Created %s based on %s' % (jar_path, jython_jar))
         except subprocess.CalledProcessError:
-            print "Unable to create jar! Check for jar command available at the command line."
+            print("Unable to create jar! Check for jar command available at the command line.")
     except subprocess.CalledProcessError:
-        print "Unable to compile java classes! Check for javac command available at the command line."
+        print("Unable to compile java classes! Check for javac command available at the command line.")
     shutil.rmtree(tmpdir)
 
 def _get_jython_jar():
@@ -216,14 +216,14 @@ def _get_jython_jar():
         os.mkdir(lib_dir)
     dl_url = "http://search.maven.org/remotecontent?filepath=org/python/jython-standalone/%s/jython-standalone-%s.jar" \
             % (JYTHON_VERSION, JYTHON_VERSION)
-    print 'Jython not found, going to download from %s' % dl_url
+    print('Jython not found, going to download from %s' % dl_url)
     urllib.urlretrieve(dl_url, jar_path)
     return jar_path
 
 def _compile_java_classes(tmpdir, jython_jar):
     source_files = [join(JAVA_SRC, f)
                     for f in os.listdir(JAVA_SRC) if f.endswith('.java')]
-    print 'Compiling %d source files' % len(source_files)
+    print('Compiling %d source files' % len(source_files))
     subprocess.check_call(['javac', '-d', tmpdir, '-target', '1.5', '-source', '1.5',
                      '-cp', jython_jar] + source_files, shell=os.name=='nt')
 
@@ -275,5 +275,5 @@ if __name__ == '__main__':
     try:
         globals()[sys.argv[1]](*sys.argv[2:])
     except (KeyError, IndexError, TypeError, ValueError):
-        print __doc__
+        print(__doc__)
 
