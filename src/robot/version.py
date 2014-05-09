@@ -4,7 +4,7 @@ import sys
 
 VERSION = '2.8.4'
 RELEASE = 'final'
-TIMESTAMP = '20140207-122231'
+TIMESTAMP = '20140509-105233'
 
 def get_version(sep=' '):
     if RELEASE == 'final':
