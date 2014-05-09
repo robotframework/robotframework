@@ -26,9 +26,7 @@ Or with `pip <http://www.pip-installer.org>`_::
 
     pip install .
 
-Or from `PyPI <https://pypi.python.org/pypi/robotframework-python3>`_
-(Latest release **2.8.3** still completely relies on *2to3*
-and doesn't use *six*)::
+Or from `PyPI <https://pypi.python.org/pypi/robotframework-python3>`_::
 
     pip install robotframework-python3
 
