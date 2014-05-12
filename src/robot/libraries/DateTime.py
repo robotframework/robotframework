@@ -4,7 +4,7 @@ import string
 import sys
 import re
 
-from robot.utils import elapsed_time_to_string, secs_to_timestr, timestr_to_secs
+from robot.utils import elapsed_time_to_string, secs_to_timestr, timestr_to_secs, parse_time
 
 
 class DateTime(object):
@@ -12,8 +12,8 @@ class DateTime(object):
     def convert_time(self, time, result_format='number', exclude_millis=False):
         return Time(time).convert(result_format, millis=not exclude_millis)
 
-    def convert_date(self, date, result_format='timestamp', input_format=None):
-        return Date(date, input_format).convert(result_format)
+    def convert_date(self, date, result_format='timestamp', input_format=None, exclude_millis=False):
+        return Date(date, input_format).convert(result_format, millis=not exclude_millis)
 
 
 class Time(object):
@@ -68,29 +68,26 @@ class Time(object):
 class Date(object):
 
     def __init__(self, dt, input_format):
-        self.dt = self._convert_to_dt(dt, input_format)
+        self.seconds = self._convert_to_secs(dt, input_format)
 
-    def _convert_to_dt(self, dt, input_format):
-        if isinstance(dt, basestring):
-            dt = self._string_to_datetime(dt, input_format)
-        elif isinstance(dt, (int, long, float)):
-            dt = self._dt_from_timestamp(dt)
-        elif not isinstance(dt, datetime):
-            raise ValueError("Unsupported input '%s'." % dt)
-        return self._round_dt_to_millis(dt)
+    def _convert_to_secs(self, timestamp, input_format):
+        if isinstance(timestamp, basestring):
+            timestamp = self._string_to_epoch(timestamp, input_format)
+        elif isinstance(timestamp, datetime):
+            timestamp = self._mktime_with_millis(timestamp)
+        elif not isinstance(timestamp, (int, long, float)):
+            raise ValueError("Unsupported input '%s'." % timestamp)
+        return round(timestamp, 3)
 
-    def _round_dt_to_millis(self, dt):
-        return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute,
-                        dt.second, int(round(dt.microsecond, -3)))
-
-    def _string_to_datetime(self, dt, input_format):
+    def _string_to_epoch(self, dt, input_format):
         if not input_format:
             dt = self._normalize_timestamp(dt)
             input_format = '%Y-%m-%d %H:%M:%S.%f'
         if '%f' in input_format and (sys.version_info < (2, 6) or
                                      sys.platform == 'cli'):
             return self._handle_un_supported_f_directive(dt, input_format)
-        return datetime.strptime(dt, input_format)
+        else:
+            return self._mktime_with_millis(datetime.strptime(dt, input_format))
 
     def _normalize_timestamp(self, date):
         ts = ''.join(d for d in date if d in string.digits).ljust(20, '0')
@@ -106,7 +103,7 @@ class Date(object):
         dt = dt[:-len(micro)]
         epoch = time.mktime(time.strptime(dt, input_format))
         epoch += float(micro) / 10**len(micro)
-        return self._dt_from_timestamp(epoch)
+        return epoch
 
     def _dt_from_timestamp(self, ts):
         # Jython and IronPython handle floats incorrectly. For example,
@@ -115,20 +112,33 @@ class Date(object):
         return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute,
                         dt.second, int(round(ts % 1 * 10**6, -3)))
 
-    def convert(self, format):
+    def _mktime_with_millis(self, dt):
+        return time.mktime(dt.timetuple()) + dt.microsecond / 10.0**6
+
+    def convert(self, format, millis=True):
+        if ':' in format:
+            format, output_format = format.split(':', 1)
+            return self._convert_to_timestamp(self.seconds, millis, output_format)
         try:
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
-        return result_converter(self.dt)
+        dt = self.seconds if millis else round(self.seconds)
+        return result_converter(dt, millis)
 
-    def _convert_to_timestamp(self, dt):
-        if dt.microsecond:
-            return str(dt)[:-3]
-        return str(dt)
+    def _convert_to_timestamp(self, dt, millis=True, output_format=None):
+        dtime = self._dt_from_timestamp(dt)
+        if output_format:
+            return datetime.strftime(dtime, output_format)
+        if dtime.microsecond and millis:
+            return str(dtime)[:-3]
+        elif millis:
+            return str(dtime) + '.000'
+        else:
+            return str(dtime)
 
-    def _convert_to_epoch(self, dt):
-        return time.mktime(dt.timetuple())
-
-    def _convert_to_datetime(self, dt):
+    def _convert_to_epoch(self, dt, millis=True):
         return dt
+
+    def _convert_to_datetime(self, dt, millis=True):
+        return self._dt_from_timestamp(dt)

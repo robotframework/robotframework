@@ -3,50 +3,50 @@ Test Template     Date Conversion Should Succeed
 Library           DateTime
 Variables         datesandtimes.py
 
-*** Test Cases ***    INPUT                       FORMAT                  OUTPUT
-String inputs         2014-04-24 21:45:12.123     ${NONE}                 2014-04-24 21:45:12.123
-                      2014-04-24 21:45:12         ${NONE}                 2014-04-24 21:45:12
-                      2014-04-24T21:45:12.123     ${NONE}                 2014-04-24 21:45:12.123
-                      2014.04+24@@21/45!12,123    ${NONE}                 2014-04-24 21:45:12.123
+*** Test Cases ***    INPUT                                           OUTPUT                     INPUT FORMAT
+String inputs         2014-04-24 21:45:12.123                         2014-04-24 21:45:12.123
+                      2014-04-24 21:45:12                             2014-04-24 21:45:12.000
+                      2014-04-24T21:45:12.123                         2014-04-24 21:45:12.123
+                      2014.04+24@@21/45!12,123                        2014-04-24 21:45:12.123
 
-Formatted strings     2014-04-24 21:45:12.123     %Y-%m-%d %H:%M:%S.%f    2014-04-24 21:45:12.123
-                      2014-04-24T21:45:12.123     %Y-%m-%dT%H:%M:%S.%f    2014-04-24 21:45:12.123
-                      24.4.2014 21:45:12-123      %d.%m.%Y %H:%M:%S-%f    2014-04-24 21:45:12.123
-                      04/24/2014T21.45.12         %m/%d/%YT%H.%M.%S       2014-04-24 21:45:12
-                      24.04.2014                  %d.%m.%Y                2014-04-24 00:00:00
-                      24-04.2014@21               %d-%m.%Y@%H             2014-04-24 21:00:00
+Formatted strings     2014-04-24 21:45:12.123                         2014-04-24 21:45:12.123    %Y-%m-%d %H:%M:%S.%f
+                      2014-04-24T21:45:12.123                         2014-04-24 21:45:12.123    %Y-%m-%dT%H:%M:%S.%f
+                      24.4.2014 21:45:12-123                          2014-04-24 21:45:12.123    %d.%m.%Y %H:%M:%S-%f
+                      04/24/2014T21.45.12                             2014-04-24 21:45:12.000    %m/%d/%YT%H.%M.%S
+                      24.04.2014                                      2014-04-24 00:00:00.000    %d.%m.%Y
+                      24-04.2014@21                                   2014-04-24 21:00:00.000    %d-%m.%Y@%H
 
-Formatted with %f in middle
-    [Template]    NONE
-    Run Keyword If    sys.version_info < (2, 6) or sys.platform == 'cli'
-    ...    Run Keyword And Expect Error    ValueError: %f directive is supported only at the end of the format string on this Python interpreter.
-    ...    Date Conversion Should Succeed    21:45:12.123 24.04.2014     %H:%M:%S.%f %d.%m.%Y    2014-04-24 21:45:12.123
-    ...    ELSE
-    ...    Date Conversion Should Succeed    21:45:12.123 24.04.2014     %H:%M:%S.%f %d.%m.%Y    2014-04-24 21:45:12.123
+Epoch                 ${1398365112.0}                                 2014-04-24 21:45:12.000
+                      ${1398365112.123}                               2014-04-24 21:45:12.123
 
-Epoch                 ${1398365112.0}             ${NONE}                 2014-04-24 21:45:12
-                      ${1398365112.123}           ${NONE}                 2014-04-24 21:45:12.123
-
-Datetime object       ${datetime(2014, 4, 24, 21, 45, 12, 123000)}    ${NONE}    2014-04-24 21:45:12.123
-                      ${datetime(2014, 4, 24, 21)}                    ${NONE}    2014-04-24 21:00:00
+Datetime object       ${datetime(2014, 4, 24, 21, 45, 12, 123000)}    2014-04-24 21:45:12.123
+                      ${datetime(2014, 4, 24, 21)}                    2014-04-24 21:00:00.000
 
 Pad zeroes to missing values
-                      2014-04-24                  ${NONE}                 2014-04-24 00:00:00
-                      2014.04.24 21               ${NONE}                 2014-04-24 21:00:00
+                      2014-04-24                                      2014-04-24 00:00:00.000
+                      2014.04.24 21                                   2014-04-24 21:00:00.000
 
 Rounding milliseconds
-                      2014-04-24 21:45:12.123456     ${NONE}                 2014-04-24 21:45:12.123
-                      2014-04-24 21:45:12.1234       ${NONE}                 2014-04-24 21:45:12.123
-                      2014-04-24 21:45:12.1235       ${NONE}                 2014-04-24 21:45:12.124
-                      2014-04-24T21:45:12.123456     %Y-%m-%dT%H:%M:%S.%f    2014-04-24 21:45:12.123
-                      2014-04-24T21:45:12.1234       %Y-%m-%dT%H:%M:%S.%f    2014-04-24 21:45:12.123
-                      2014-04-24T21:45:12.1235       %Y-%m-%dT%H:%M:%S.%f    2014-04-24 21:45:12.124
-                      ${1398365112.123456}           ${NONE}                 2014-04-24 21:45:12.123
-                      ${1398365112.1234}             ${NONE}                 2014-04-24 21:45:12.123
-                      ${1398365112.1235}             ${NONE}                 2014-04-24 21:45:12.124
-                      ${datetime(2014, 4, 24, 21, 45, 12, 123456)}    ${NONE}    2014-04-24 21:45:12.123
-                      ${datetime(2014, 4, 24, 21, 45, 12, 123400)}    ${NONE}    2014-04-24 21:45:12.123
-                      ${datetime(2014, 4, 24, 21, 45, 12, 123500)}    ${NONE}    2014-04-24 21:45:12.124
+                      2014-04-24 21:45:12.123456                      2014-04-24 21:45:12.123
+                      2014-04-24 21:45:12.1234                        2014-04-24 21:45:12.123
+                      2014-04-24 21:45:12.1235                        2014-04-24 21:45:12.124
+                      2014-04-24T21:45:12.123456                      2014-04-24 21:45:12.123    %Y-%m-%dT%H:%M:%S.%f
+                      2014-04-24T21:45:12.1234                        2014-04-24 21:45:12.123    %Y-%m-%dT%H:%M:%S.%f
+                      2014-04-24T21:45:12.1235                        2014-04-24 21:45:12.124    %Y-%m-%dT%H:%M:%S.%f
+                      ${1398365112.123456}                            2014-04-24 21:45:12.123
+                      ${1398365112.1234}                              2014-04-24 21:45:12.123
+                      ${1398365112.1235}                              2014-04-24 21:45:12.124
+                      ${datetime(2014, 4, 24, 21, 45, 12, 123456)}    2014-04-24 21:45:12.123
+                      ${datetime(2014, 4, 24, 21, 45, 12, 123400)}    2014-04-24 21:45:12.123
+                      ${datetime(2014, 4, 24, 21, 45, 12, 123500)}    2014-04-24 21:45:12.124
+
+Formatted with %f in middle
+    [Template]     NONE
+    Run Keyword If    sys.version_info < (2, 6) or sys.platform == 'cli'
+    ...   Run Keyword And Expect Error    ValueError: %f directive is supported only at the end of the format string on this Python interpreter.
+    ...   Date Conversion Should Succeed    21:45:12.123 24.04.2014    2014-04-24 21:45:12.123    %H:%M:%S.%f %d.%m.%Y
+    ...   ELSE
+    ...   Date Conversion Should Succeed    21:45:12.123 24.04.2014    2014-04-24 21:45:12.123    %H:%M:%S.%f %d.%m.%Y
 
 Invalid input format
     [Documentation]    FAIL ValueError: Unsupported input 'None'.
@@ -55,6 +55,6 @@ Invalid input format
 
 *** Keywords ***
 Date Conversion Should Succeed
-    [Arguments]    ${input}    ${input_format}    ${expected}
+    [Arguments]    ${input}    ${expected}    ${input_format}=${NONE}
     ${ts} =    Convert Date    ${input}    input_format=${input_format}
     Should Be Equal    ${ts}    ${expected}
