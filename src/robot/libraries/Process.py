@@ -456,7 +456,7 @@ class Process(object):
     def _wait(self, process):
         result = self._results[process]
         result.rc = process.wait() or 0
-        result.close_custom_streams()
+        result.close_streams()
         logger.info('Process completed.')
         return result
 
@@ -749,22 +749,20 @@ class ExecutionResult(object):
     @property
     def stdout(self):
         if self._stdout is None:
-            self._stdout = self._read_stream(self.stdout_path,
-                                             self._process.stdout)
+            self._read_stdout()
         return self._stdout
 
     @property
     def stderr(self):
         if self._stderr is None:
-            self._stderr = self._read_stream(self.stderr_path,
-                                             self._process.stderr)
+            self._read_stderr()
         return self._stderr
 
-    def close_custom_streams(self):
-        for stream in self._custom_streams:
-            if not stream.closed:
-                stream.flush()
-                stream.close()
+    def _read_stdout(self):
+        self._stdout = self._read_stream(self.stdout_path, self._process.stdout)
+
+    def _read_stderr(self):
+        self._stderr = self._read_stream(self.stderr_path, self._process.stderr)
 
     def _read_stream(self, stream_path, stream):
         if stream_path:
@@ -779,6 +777,21 @@ class ExecutionResult(object):
         if output.endswith('\n'):
             output = output[:-1]
         return decode_output(output, force=True)
+
+    def close_streams(self):
+        standard_streams = self._get_and_read_standard_streams(self._process)
+        for stream in standard_streams + self._custom_streams:
+            if stream and not stream.closed:
+                stream.flush()
+                stream.close()
+
+    def _get_and_read_standard_streams(self, process):
+        stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
+        if stdout:
+            self._read_stdout()
+        if stderr:
+            self._read_stderr()
+        return [stdin, stdout, stderr]
 
     def __str__(self):
         return '<result object with rc %d>' % self.rc

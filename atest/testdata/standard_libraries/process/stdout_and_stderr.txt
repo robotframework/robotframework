@@ -53,12 +53,12 @@ Lot of output to custom stream
 
 Run multiple times
     [Tags]    performance
-    :FOR    ${i}    IN RANGE    42
+    :FOR    ${i}    IN RANGE    500
     \   Run And Test Once    ${i}
 
 Run multiple times using custom streams
     [Tags]    performance
-    :FOR    ${i}    IN RANGE    42
+    :FOR    ${i}    IN RANGE    500
     \   Run And Test Once    ${i}    ${STDOUT}    ${STDERR}
 
 
