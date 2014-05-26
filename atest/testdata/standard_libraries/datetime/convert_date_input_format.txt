@@ -56,5 +56,5 @@ Invalid input format
 *** Keywords ***
 Date Conversion Should Succeed
     [Arguments]    ${input}    ${expected}    ${input_format}=${NONE}
-    ${ts} =    Convert Date    ${input}    input_format=${input_format}
+    ${ts} =    Convert Date    ${input}    date_format=${input_format}
     Should Be Equal    ${ts}    ${expected}

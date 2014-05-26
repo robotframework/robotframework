@@ -14,8 +14,9 @@ Should convert to timestamp
                       ${DATE}                    TimeStamp                      2014-04-24 21:45:12.123
 
 Should convert to timestamp with format
-                      2014-04-24 21:45:12.123    TimeStamp:%H:%M:%S %Y-%m-%d    21:45:12 2014-04-24
-                      2014/04/24 21:45:12.123    timestamp:%H:%M %Y-%m-%d       21:45 2014-04-24           %Y/%m/%d %H:%M:%S.%f
+                      2014-04-24 21:45:12.123    TimeStamp:%H:%M:%S %Y-%m-%d       21:45:12 2014-04-24
+                      2014-04-24 21:45:12.123    TimeStamp:%H:%M:%S.%f %Y-%m-%d    21:45:12.123000 2014-04-24
+                      2014/04/24 21:45:12.123    timestamp:%H:%M %Y-%m-%d          21:45 2014-04-24           %Y/%m/%d %H:%M:%S.%f
 
 Should convert to epoch
                       2014-04-24 21:45:12.123    epoch                          ${1398365112.123}
@@ -39,7 +40,7 @@ Should exclude milliseconds
 *** Keywords ***
 Date Conversion Should Succeed
     [Arguments]    ${input}    ${output_format}    ${expected}    ${input_format}=${NONE}
-    ${ts} =    Convert Date    ${input}    ${output_format}    ${input_format}
+    ${ts} =    Convert Date    ${input}    ${output_format}    date_format=${input_format}
     Should Be Equal    ${ts}    ${expected}
 
 Date Conversion Should Succeed Without Milliseconds

@@ -1,0 +1,13 @@
+*** Settings ***
+Library          DateTime
+Variables        datesandtimes.py
+Test Template    Compare Current Date
+
+*** Test Cases ***
+Local Time
+UTC Time
+Increment
+Negative Increment
+Result formats
+*** Keywords ***
+Compare Current Date

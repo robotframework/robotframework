@@ -1,10 +1,24 @@
+#  Copyright 2008-2014 Nokia Solutions and Networks
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 from datetime import timedelta, datetime
 import time
 import string
 import sys
 import re
 
-from robot.utils import elapsed_time_to_string, secs_to_timestr, timestr_to_secs, parse_time
+from robot.utils import elapsed_time_to_string, secs_to_timestr, timestr_to_secs
 
 
 class DateTime(object):
@@ -12,15 +26,56 @@ class DateTime(object):
     def convert_time(self, time, result_format='number', exclude_millis=False):
         return Time(time).convert(result_format, millis=not exclude_millis)
 
-    def convert_date(self, date, result_format='timestamp', input_format=None, exclude_millis=False):
-        return Date(date, input_format).convert(result_format, millis=not exclude_millis)
+    def convert_date(self, date, result_format='timestamp', exclude_millis=False, date_format=None):
+        return Date(date, date_format).convert(result_format, millis=not exclude_millis)
 
+    def subtract_dates(self, date1, date2, result_format='number', exclude_millis=False, date1_format=None, date2_format=None):
+        time = Date(date1, date1_format) - Date(date2, date2_format)
+        return time.convert(result_format, millis=not exclude_millis)
+
+    def add_to_date(self, date, time, result_format='timestamp', exclude_millis=False, date_format=None):
+        date = Date(date, date_format) + Time(time)
+        return date.convert(result_format, millis=not exclude_millis)
+
+    def subtract_from_date(self, date, time, result_format='timestamp', exclude_millis=False, date_format=None):
+        date = Date(date, date_format) - Time(time)
+        return date.convert(result_format, millis=not exclude_millis)
+
+    def add_to_time(self, time1, time2, result_format='number', exclude_millis=False):
+        time = Time(time1) + Time(time2)
+        return time.convert(result_format, millis=not exclude_millis)
+
+    def subtract_from_time(self, time1, time2, result_format='number', exclude_millis=False):
+        time = Time(time1) - Time(time2)
+        return time.convert(result_format, millis=not exclude_millis)
+
+    def get_current_date(self, time_zone='local', increment='0', result_format='timestamp', exclude_millis=False):
+        dt = self._get_current_date(time_zone.upper())
+        date = Date(dt) + Time(increment)
+        return date.convert(result_format, millis=not exclude_millis)
+
+    def _get_current_date(self, time_zone):
+        if time_zone == 'LOCAL':
+            return datetime.now()
+        if time_zone == 'UTC':
+            return datetime.utcnow()
+        raise ValueError('Unsupported timezone %s' % time_zone)
 
 class Time(object):
-    _clock_re = re.compile('(\d{2,}):(\d{2}):(\d{2})(\.(\d{3}))?')
+    _clock_re = re.compile('([-+])?(\d+):(\d{2}):(\d{2})(\.\d{3})?')
 
     def __init__(self, time):
         self.seconds = self._convert_time_to_seconds(time)
+
+    def __add__(self, other):
+        if isinstance(other, Time):
+            return Time(self.seconds + other.seconds)
+        raise TypeError('Can only add Time to Time, not %s' % type(other).__name__)
+
+    def __sub__(self, other):
+        if isinstance(other, Time):
+            return Time(self.seconds - other.seconds)
+        raise TypeError('Can only subtract Time from Time, not %s' % type(other).__name__)
 
     def _convert_time_to_seconds(self, time):
         if isinstance(time, timedelta):
@@ -34,11 +89,12 @@ class Time(object):
         return timestr_to_secs(time)
 
     def _convert_clock_to_secs(self, match):
-        hours, minutes, seconds, millis_included, millis = match.groups()
+        prefix, hours, minutes, seconds, millis = match.groups()
         result = 60 * 60 * int(hours) + 60 * int(minutes) + int(seconds)
-        print match.groups()
-        if millis_included:
-            result += int(millis) / 1000.0
+        if millis:
+            result += int(millis[1:]) / 1000.0
+        if prefix == '-':
+            result *= -1
         return result
 
     def convert(self, format, millis=True):
@@ -67,8 +123,20 @@ class Time(object):
 
 class Date(object):
 
-    def __init__(self, dt, input_format):
+    def __init__(self, dt, input_format=None):
         self.seconds = self._convert_to_secs(dt, input_format)
+
+    def __add__(self, other):
+        if isinstance(other, Time):
+            return Date(self.seconds + other.seconds)
+        raise TypeError('Can only add Time to Date, not %s' % type(other).__name__)
+
+    def __sub__(self, other):
+        if isinstance(other, Date):
+            return Time(self.seconds - other.seconds)
+        if isinstance(other, Time):
+            return Date(self.seconds - other.seconds)
+        raise TypeError('Can only subtract Date or Time from Date, not %s' % type(other).__name__)
 
     def _convert_to_secs(self, timestamp, input_format):
         if isinstance(timestamp, basestring):
@@ -86,8 +154,7 @@ class Date(object):
         if '%f' in input_format and (sys.version_info < (2, 6) or
                                      sys.platform == 'cli'):
             return self._handle_un_supported_f_directive(dt, input_format)
-        else:
-            return self._mktime_with_millis(datetime.strptime(dt, input_format))
+        return self._mktime_with_millis(datetime.strptime(dt, input_format))
 
     def _normalize_timestamp(self, date):
         ts = ''.join(d for d in date if d in string.digits).ljust(20, '0')
@@ -126,16 +193,18 @@ class Date(object):
         dt = self.seconds if millis else round(self.seconds)
         return result_converter(dt, millis)
 
-    def _convert_to_timestamp(self, dt, millis=True, output_format=None):
-        dtime = self._dt_from_timestamp(dt)
+    def _convert_to_timestamp(self, seconds, millis=True, output_format=None):
+        dt = self._dt_from_timestamp(seconds)
         if output_format:
-            return datetime.strftime(dtime, output_format)
-        if dtime.microsecond and millis:
-            return str(dtime)[:-3]
-        elif millis:
-            return str(dtime) + '.000'
+            output_format = str(output_format) #Python 2.5 does not accept unicode
+            millis = False
         else:
-            return str(dtime)
+            output_format = '%Y-%m-%d %H:%M:%S'
+        ts = dt.strftime(output_format)
+        if millis:
+            ts += '.%03d' % (round(seconds % 1 * 1000))
+        return ts
+
 
     def _convert_to_epoch(self, dt, millis=True):
         return dt
