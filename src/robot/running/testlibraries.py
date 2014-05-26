@@ -85,6 +85,12 @@ class _BaseTestLibrary(BaseLibrary):
     def doc(self):
         return self._doc
 
+    @property
+    def listener(self):
+        if not self._libinst:
+            return None
+        return getattr(self._libinst, 'ROBOT_LIBRARY_LISTENER', None)
+
     def create_handlers(self):
         if self._libcode:
             self._libinst = self.get_instance()
