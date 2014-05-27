@@ -2,6 +2,7 @@
 Library           XML
 Resource          resource.txt
 Test Setup        Remove File    ${OUTPUT}
+Suite Teardown    Remove File    ${OUTPUT}
 
 *** Variables ***
 ${NON-ASCII}    <hyvää>yötä</hyvää>

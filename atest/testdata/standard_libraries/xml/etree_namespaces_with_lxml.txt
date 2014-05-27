@@ -1,9 +1,10 @@
 *** Settings ***
-Library           XML    lxml=yes
-Resource          resource.txt
-Suite Setup       Remove File    ${OUTPUT}
+Suite Setup       Run Keywords    Set lxml availability to suite metadata
+...               AND    Remove File    ${OUTPUT}
 Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
 Test Teardown     Remove File    ${OUTPUT}
+Library           XML    lxml=yes
+Resource          resource.txt
 
 *** Test Cases ***
 Tag names contain namespace in Clark Notation

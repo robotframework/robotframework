@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/element_should_exist.txt
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         xml_resource.txt
 
 *** Test Cases ***
 

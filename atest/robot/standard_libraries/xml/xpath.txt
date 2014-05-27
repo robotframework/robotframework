@@ -2,7 +2,7 @@
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/xpath.txt
 Test Setup       Make Tests Requiring ET 1.3 Non-Critical If Requirement Not Met
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         xml_resource.txt
 
 *** Test Cases ***
 

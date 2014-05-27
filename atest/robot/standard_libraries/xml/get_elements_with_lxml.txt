@@ -1,7 +1,8 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/get_elements_with_lxml.txt
+Test Teardown    Make test non-critical if lxml not available
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         xml_resource.txt
 
 *** Test Cases ***
 Get element from parent element

@@ -1,8 +1,9 @@
 *** Settings ***
+Suite Setup       Set lxml availability to suite metadata
+Test Setup        Remove File    ${OUTPUT}
+Suite Teardown    Remove File    ${OUTPUT}
 Library           XML    lxml=yes
 Resource          resource.txt
-Test Setup        Remove File    ${OUTPUT}
-#Suite Teardown    Remove File    ${OUTPUT}
 
 *** Test Cases ***
 Tag names contain no namespaces

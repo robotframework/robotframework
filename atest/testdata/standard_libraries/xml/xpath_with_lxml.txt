@@ -1,7 +1,8 @@
 *** Settings ***
-Library          XML    lxml=true
-Resource         resource.txt
-Test Template    Get element by xpath
+Suite Setup       Set lxml availability to suite metadata
+Test Template     Get element by xpath
+Library           XML    lxml=true
+Resource          resource.txt
 
 *** Test Cases ***
 Tag

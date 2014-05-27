@@ -1,4 +1,5 @@
 *** Settings ***
+Suite Setup       Set lxml availability to suite metadata
 Library           XML    lxml=yes
 Resource          resource.txt
 Test Setup        Parse XML To Test Variable    ${SIMPLE}    \${XML}

@@ -1,7 +1,8 @@
 *** Settings ***
+Suite Setup       Set lxml availability to suite metadata
+Test Template     Elements should not match
 Library           XML    lxml=yes
 Resource          resource.txt
-Test Template     Elements should not match
 
 *** Test cases ***
 Elements should match

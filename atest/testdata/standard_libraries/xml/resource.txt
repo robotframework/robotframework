@@ -73,3 +73,7 @@ Test Attribute Namespace Parsing With lxml
      Element Attribute Should Be    ${elem}    {xxx}id    2
      Saved XML Should Equal    ${elem}    <root xmlns:p="xxx" id="1" p:id="2"/>
      Elements Should Be Equal    ${elem}    ${OUTPUT}
+
+Set lxml availability to suite metadata
+     ${lib} =    Get Library Instance    XML
+     Set Suite Metadata    lxml    ${lib.lxml_etree}

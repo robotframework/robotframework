@@ -1,0 +1,8 @@
+*** Settings ***
+Resource         atest_resource.txt
+
+*** Keywords ***
+Make test non-critical if lxml not available
+    Return From Keyword If    ${SUITE.metadata['lxml']}
+    Set Test Message    Test made non-critical because lxml was not available.
+    Remove Tags    regression
