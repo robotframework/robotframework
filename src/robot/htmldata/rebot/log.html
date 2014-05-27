@@ -194,7 +194,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
-    <div class="element-header closed" onclick="toggleSuite('${id}')" title="${fullName}">
+    <div class="element-header closed" onclick="toggleSuite('${id}')" title="{{html fullName}}">
       <span class="${status.toLowerCase()}">TEST SUITE: </span>
       <span class="name">{{html name}}</span>
       <a class="expand" title="Expand this suite fully"
@@ -252,7 +252,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
-    <div class="element-header closed" onclick="toggleTest('${id}')" title="${fullName}">
+    <div class="element-header closed" onclick="toggleTest('${id}')" title="{{html fullName}}">
       <span class="${status.toLowerCase()}">TEST CASE: </span>
       <span class="name">{{html name}}</span>
       {{if !isCritical}}(non-critical){{/if}}

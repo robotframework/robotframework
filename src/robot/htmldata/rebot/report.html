@@ -768,7 +768,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr>
     <th>Log File:</th>
     <td><a href="${$item.logURL}#${id}"
-           title="${fullName}">${$item.logURL}#${id}</a></td>
+           title="{{html fullName}}">${$item.logURL}#${id}</a></td>
   </tr>
   {{/if}}
 </script>
@@ -814,12 +814,12 @@ function hideHiddenDetailsColumns(elem) {
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   {{if $item.logURL}}
-  <tr onclick="location = '${$item.logURL}#${id}'" title="${fullName}">
+  <tr onclick="location = '${$item.logURL}#${id}'" title="{{html fullName}}">
     <td class="details-col-name">
       <div><a href="${$item.logURL}#${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a></div>
     </td>
   {{else}}
-  <tr title="${fullName}">
+  <tr title="{{html fullName}}">
     <td class="details-col-name">
       <div><span class="parent-name">{{html formatParentName}}</span>{{html name}}</div>
     </td>
