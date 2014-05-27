@@ -376,6 +376,9 @@ class XML(object):
             self.modern_etree = True
             self.lxml_etree = True
         else:
+            if not lxml_etree:
+                logger.warn('XML library reverted to use standard ElementTree '
+                            'because requested lxml is not installed.')
             self.etree = ET
             self.modern_etree = ET.VERSION >= '1.3'
             self.lxml_etree = False
