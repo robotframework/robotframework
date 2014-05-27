@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/to_string_with_lxml.txt
+Suite Setup      Run Tests    --loglevel debug    standard_libraries/xml/to_string_with_lxml.txt
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
@@ -11,7 +11,11 @@ Child element to string
     Check Test Case    ${TESTNAME}
 
 Log element
-    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    <root>\n\t<täg attr="hyvä">sisältö</täg>\n</root>
+    Check Log Message    ${tc.kws[2].msgs[0]}    <root><tag a="1" c="3">päivää</tag></root>    DEBUG
+    Check Log Message    ${tc.kws[3].msgs[0]}    <test name="root">*</test>    pattern=yes
 
 Log child element
-    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    <täg attr="hyv&#xE4;">sisältö</täg>
