@@ -133,9 +133,13 @@ class AbstractLoggerProxy:
             setattr(self, name, self._get_method(logger, name))
 
     def _get_method(self, logger, name):
-        if hasattr(logger, name):
-            return getattr(logger, name)
-        return getattr(logger, self._toCamelCase(name), self._no_method)
+        for method_name in self._get_method_names(name):
+            if hasattr(logger, method_name):
+                return getattr(logger, method_name)
+        return self._no_method
+
+    def _get_method_names(self, name):
+        return (name, self._toCamelCase(name))
 
     def _toCamelCase(self, name):
         parts = name.split('_')

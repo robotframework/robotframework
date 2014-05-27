@@ -218,12 +218,15 @@ class _ListenerProxy(AbstractLoggerProxy):
                 'output_file', 'report_file', 'log_file', 'debug_file',
                 'xunit_file', 'close']
 
-    def __init__(self, name=None, args=None, listener=None):
-        listener = listener or self._import_listener(name, args)
+    def __init__(self, name, args):
+        listener = self._import_listener(name, args)
         AbstractLoggerProxy.__init__(self, listener)
-        self.name = name or type(listener).__name__
+        self.name = name
         self.version = self._get_version(listener)
-        self.is_java = utils.is_jython and isinstance(listener, Object)
+        self.is_java = self._is_java(listener)
+
+    def _is_java(self, listener):
+        return utils.is_jython and isinstance(listener, Object)
 
     def _import_listener(self, name, args):
         importer = utils.Importer('listener')
