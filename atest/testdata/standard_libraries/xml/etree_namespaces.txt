@@ -1,8 +1,9 @@
 *** Settings ***
-Resource         resource.txt
-Suite Setup      Remove File    ${OUTPUT}
-Test Setup       Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
-Test Teardown    Remove File    ${OUTPUT}
+Library           XML
+Resource          resource.txt
+Suite Setup       Remove File    ${OUTPUT}
+Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
+Test Teardown     Remove File    ${OUTPUT}
 
 *** Test Cases ***
 Tag names contain namespace in Clark Notation

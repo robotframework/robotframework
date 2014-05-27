@@ -1,5 +1,4 @@
 *** Settings ***
-Library        XML
 Library        Collections
 Library        OperatingSystem
 

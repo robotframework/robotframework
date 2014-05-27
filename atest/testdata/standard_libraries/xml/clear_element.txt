@@ -1,5 +1,6 @@
 *** Settings ***
-Resource    resource.txt
+Library           XML
+Resource          resource.txt
 
 *** Variables ***
 ${WITH TAIL}    <root a="v"><child a="v">text</child>tail</root>

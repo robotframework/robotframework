@@ -1,5 +1,6 @@
 *** Settings ***
-Resource     resource.txt
+Library           XML
+Resource          resource.txt
 
 *** Test cases ***
 Get text of current element

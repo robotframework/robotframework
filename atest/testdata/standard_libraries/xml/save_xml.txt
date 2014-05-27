@@ -1,6 +1,7 @@
 *** Settings ***
-Resource        resource.txt
-Test Setup      Remove File    ${OUTPUT}
+Library           XML
+Resource          resource.txt
+Test Setup        Remove File    ${OUTPUT}
 
 *** Variables ***
 ${NON-ASCII}    <hyvää>yötä</hyvää>

@@ -1,6 +1,7 @@
 *** Settings ***
-Resource        resource.txt
-Test Setup      Parse XML To Test Variable    ${SIMPLE}    \${XML}
+Library           XML
+Resource          resource.txt
+Test Setup        Parse XML To Test Variable    ${SIMPLE}    \${XML}
 
 *** Test Cases ***
 
