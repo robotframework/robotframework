@@ -1,0 +1,53 @@
+*** Settings ***
+Library           XML    lxml=yes
+Resource          resource.txt
+Suite Setup       Remove File    ${OUTPUT}
+Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
+Test Teardown     Remove File    ${OUTPUT}
+
+*** Test Cases ***
+Tag names contain namespace in Clark Notation
+    Should Be Equal    ${ROOT.tag}    {default}test
+    ${children} =    Get Child Elements    ${ROOT}
+    Should Be Equal    ${children[0].tag}    {default}child1
+    Should Be Equal    ${children[1].tag}    {http://uri}child2
+    Should Be Equal    ${children[2].tag}    {whatever.xsd}child3
+    Should Be Equal    ${children[3].tag}    {default2}another
+    Should Be Equal    ${children[4].tag}    {default}back
+
+Clarck Notation must be used in xpaths
+    [Template]    Element Text Should Be
+    ${ROOT}    default ns        xpath={default}child1
+    ${ROOT}    ns with prefix    xpath={http://uri}child2
+    ${ROOT}    2nd prefix        xpath={whatever.xsd}child3/{whatever.xsd}grand-child
+    ${ROOT}    1st prefix again  xpath={whatever.xsd}child3/{http://uri}grand-child-2/{http://uri}ggc
+    ${ROOT}    default ns 2      xpath={whatever.xsd}child3/{http://uri}grand-child-2/{default}ggc2
+    ${ROOT}    2nd default       xpath={default2}another/{default2}child
+    ${ROOT}    back in default   xpath={default}back
+
+xmlns attributes are removed
+    [Template]    Element Should Have Attributes
+    ${ROOT}    .    name    root
+    ${ROOT}    {default}child1    id    1
+    ${ROOT}    {http://uri}child2
+    ${ROOT}    {whatever.xsd}child3
+    ${ROOT}    {whatever.xsd}child3/{whatever.xsd}grand-child
+    ${ROOT}    {whatever.xsd}child3/{http://uri}grand-child-2
+    ${ROOT}    {whatever.xsd}child3/{http://uri}grand-child-2/{http://uri}ggc
+    ${ROOT}    {whatever.xsd}child3/{http://uri}grand-child-2/{default}ggc2
+    ${ROOT}    {whatever.xsd}child3/{whatever.xsd}grand-child-3
+    ${ROOT}    {default2}another
+    ${ROOT}    {default2}another/{default2}child
+    ${ROOT}    {default}back
+
+Parsed XML is semantically same as original
+    Save XML    ${ROOT}    ${OUTPUT}
+    ${root2} =    Parse XML    ${OUTPUT}    etree_namespaces=yes please
+    Elements Should Be Equal    ${ROOT}    ${root2}
+
+Saved XML has same namespaces as original
+    Saved XML Should Equal File    ${ROOT}    ${NS}
+
+Attribute namespaces
+    ${elem} =    Parse XML    ${ATTR NS}    etree_namespaces=yes
+    Test Attribute Namespace Parsing With lxml    ${elem}

@@ -17,6 +17,11 @@ from __future__ import with_statement
 import copy
 import re
 
+try:
+    from lxml import etree as lxml_etree
+except ImportError:
+    lxml_etree = None
+
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import asserts, ET, ETSource, plural_or_not as s
@@ -365,6 +370,16 @@ class XML(object):
     _whitespace = re.compile('\s+')
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
+    def __init__(self, lxml=False):
+        if lxml and lxml_etree:
+            self.etree = lxml_etree
+            self.modern_etree = True
+            self.lxml_etree = True
+        else:
+            self.etree = ET
+            self.modern_etree = ET.VERSION >= '1.3'
+            self.lxml_etree = False
+
     def parse_xml(self, source, keep_clark_notation=False):
         """Parses the given XML file or string into an element structure.
 
@@ -392,19 +407,10 @@ class XML(object):
         Stripping namespaces is a new feature in Robot Framework 2.7.5.
         """
         with ETSource(source) as source:
-            root = ET.parse(source).getroot()
+            root = self.etree.parse(source).getroot()
         if not keep_clark_notation:
-            self._strip_namespaces(root)
+            NameSpaceStripper().strip(root)
         return root
-
-    def _strip_namespaces(self, elem, current_ns=None):
-        if elem.tag.startswith('{') and '}' in elem.tag:
-            ns, elem.tag = elem.tag[1:].split('}', 1)
-            if ns != current_ns:
-                elem.set('xmlns', ns)
-                current_ns = ns
-        for child in elem:
-            self._strip_namespaces(child, current_ns)
 
     def get_element(self, source, xpath='.'):
         """Returns an element in the `source` matching the `xpath`.
@@ -474,20 +480,18 @@ class XML(object):
             return [source]
         return source.findall(self._get_xpath(xpath))
 
-    if ET.VERSION >= '1.3':
-        def _get_xpath(self, xpath):
+    def _get_xpath(self, xpath):
+        if self.modern_etree:
             return xpath
-    else:
-        def _get_xpath(self, xpath):
-            try:
-                return str(xpath)
-            except UnicodeError:
-                if not xpath.replace('/', '').isalnum():
-                    logger.warn('XPATHs containing non-ASCII characters and '
-                                'other than tag names do not always work with '
-                                'Python/Jython versions prior to 2.7. Verify '
-                                'results manually and consider upgrading to 2.7.')
-                return xpath
+        try:
+            return str(xpath)
+        except UnicodeError:
+            if not xpath.replace('/', '').isalnum():
+                logger.warn('XPATHs containing non-ASCII characters and '
+                            'other than tag names do not always work with '
+                            'Python/Jython versions prior to 2.7. Verify '
+                            'results manually and consider upgrading to 2.7.')
+            return xpath
 
     def get_child_elements(self, source, xpath='.'):
         """Returns the child elements of the specified element as a list.
@@ -711,7 +715,7 @@ class XML(object):
 
         Use `Get Element Attribute` to get the value of a single attribute.
         """
-        return self.get_element(source, xpath).attrib.copy()
+        return dict(self.get_element(source, xpath).attrib)
 
     def element_attribute_should_be(self, source, name, expected, xpath='.',
                                     message=None):
@@ -1144,7 +1148,7 @@ class XML(object):
 
         See also `Log Element` and `Save XML`.
         """
-        string = ET.tostring(self.get_element(source, xpath), encoding='UTF-8')
+        string = self.etree.tostring(self.get_element(source, xpath), encoding='UTF-8')
         return self._xml_declaration.sub('', string.decode('UTF-8')).strip()
 
     def log_element(self, source, level='INFO', xpath='.'):
@@ -1175,12 +1179,34 @@ class XML(object):
 
         New in Robot Framework 2.7.5.
         """
-        tree = ET.ElementTree(self.get_element(source))
-        kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
+        elem = self.get_element(source)
+        if self.lxml_etree:
+            NameSpaceStripper().unstrip(elem)
+        tree = self.etree.ElementTree(elem)
+        xml_declaration = {'xml_declaration': True} if self.modern_etree else {}
         # Need to explicitly open/close files because older ET versions don't
         # close files they open and Jython/IPY don't close them implicitly.
         with open(path, 'w') as output:
-            tree.write(output, encoding, **kwargs)
+            tree.write(output, encoding=encoding, **xml_declaration)
+
+
+class NameSpaceStripper(object):
+
+    def strip(self, elem, current_ns=None):
+        if elem.tag.startswith('{') and '}' in elem.tag:
+            ns, elem.tag = elem.tag[1:].split('}', 1)
+            if ns != current_ns:
+                elem.attrib['xmlns'] = ns
+                current_ns = ns
+        for child in elem:
+            self.strip(child, current_ns)
+
+    def unstrip(self, elem, current_ns=None):
+        ns = elem.attrib.pop('xmlns', current_ns)
+        if ns:
+            elem.tag = '{%s}%s' % (ns, elem.tag)
+        for child in elem:
+            self.unstrip(child, ns)
 
 
 class ElementComparator(object):

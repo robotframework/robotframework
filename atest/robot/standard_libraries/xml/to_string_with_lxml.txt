@@ -1,0 +1,17 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/to_string_with_lxml.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Element to string
+    Check Test Case    ${TESTNAME}
+
+Child element to string
+    Check Test Case    ${TESTNAME}
+
+Log element
+    Check Test Case    ${TESTNAME}
+
+Log child element
+    Check Test Case    ${TESTNAME}

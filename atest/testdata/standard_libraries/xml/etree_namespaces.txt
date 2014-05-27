@@ -49,7 +49,7 @@ Prefixes are mangled when XML is saved
     @{expected} =    Run Keyword Depending On Etree Version
     ...    Get Expected Etree 1.3 Output
     ...    Get Expected Etree 1.2 Output
-    Saved XML Should Be    ${ROOT}    @{expected}
+    Saved XML Should Equal    ${ROOT}    @{expected}
 
 Attribute namespaces
     ${elem} =    Parse XML    ${ATTR NS}    etree_namespaces=yes

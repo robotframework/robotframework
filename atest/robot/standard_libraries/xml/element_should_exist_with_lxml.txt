@@ -1,0 +1,29 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/element_should_exist_with_lxml.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Get Element Count
+    Check Test Case    ${TESTNAME}
+
+Element Should Exist Passes When There Are One Or More Matches
+    Check Test Case    ${TESTNAME}
+
+Element Should Exist Fails When There Are No Matches
+    Check Test Case    ${TESTNAME}
+
+Element Should Exist With Custom Error Message
+    Check Test Case    ${TESTNAME}
+
+Element Should Not Exist Passes When There Are No Matches
+    Check Test Case    ${TESTNAME}
+
+Element Should Not Exist Fails When There Is One Match
+    Check Test Case    ${TESTNAME}
+
+Element Should Not Exist Fails When There Are Multiple Matches
+    Check Test Case    ${TESTNAME}
+
+Element Should Not Exist With Custom Error Message
+    Check Test Case    ${TESTNAME}
