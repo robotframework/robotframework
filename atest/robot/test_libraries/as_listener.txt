@@ -1,0 +1,15 @@
+*** Settings ***
+Documentation   Tests for libraries using getKeywordNames and runKeyword with **kwargs functionality. In these tests libraries are implemented with Java.
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/as_listener/
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Test scope library gets events
+    Check Test Case  ${TESTNAME}
+New test gets empty events
+    Check Test Case  ${TESTNAME}
+Suite scope library gets events
+    Check Test Case  ${TESTNAME}
+New test gets previous suite scope events
+    Check Test Case  ${TESTNAME}

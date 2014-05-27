@@ -1,0 +1,12 @@
+*** Settings ***
+Library    listenerlibrary.py
+
+*** Test Cases ***
+Test scope library gets events
+    Log     not listened yet
+    Events should be empty
+    Events should be    end kw listenerlibrary.Events Should Be Empty
+        ...             start kw listenerlibrary.Events Should Be
+
+New test gets empty events
+    Events should be empty

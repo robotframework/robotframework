@@ -1,0 +1,17 @@
+*** Settings ***
+Library    suite_listenerlibrary.py
+
+*** Test Cases ***
+Suite scope library gets events
+    Log     not listened yet
+    Events should be empty
+    Events should be    end kw suite_listenerlibrary.Events Should Be Empty
+        ...             start kw suite_listenerlibrary.Events Should Be
+
+New test gets previous suite scope events
+    Events should be    end kw suite_listenerlibrary.Events Should Be Empty
+            ...         start kw suite_listenerlibrary.Events Should Be
+            ...         end kw suite_listenerlibrary.Events Should Be
+            ...         end test Suite scope library gets events
+            ...         start test New test gets previous suite scope events
+            ...         start kw suite_listenerlibrary.Events Should Be

@@ -1,0 +1,33 @@
+class listenerlibrary(object):
+
+    ROBOT_LISTENER_API_VERSION = 2
+    ROBOT_LIBRARY_SCOPE = "TEST CASE"
+
+    def __init__(self):
+        self.ROBOT_LIBRARY_LISTENER = self
+        self.events = []
+
+    def get_events(self):
+        return self.events[:]
+
+    def start_test(self, name, attrs):
+        self.events.append('start test %s' % name)
+
+    def end_test(self, name, attrs):
+        self.events.append('end test %s' % name)
+
+    def start_keyword(self, name, attrs):
+        self.events.append('start kw %s' % name)
+
+    def end_keyword(self, name, attrs):
+        self.events.append('end kw %s' % name)
+
+    def events_should_be(self, *expected):
+        assert self._format(self.events) == self._format(expected), 'Expected events\n %s\n actual\n %s' % (self._format(expected), self._format(self.events))
+
+    def events_should_be_empty(self):
+        assert not self.events, 'Expected empty events, has %s' % self._format(self.events)
+
+    def _format(self, events):
+        return ' | '.join(events)
+
