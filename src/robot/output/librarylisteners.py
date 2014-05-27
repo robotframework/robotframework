@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from .listeners import Listeners, _ListenerProxy
+from .loggerhelper import AbstractLoggerProxy
 
 
 class LibraryListeners(Listeners):
@@ -29,5 +30,16 @@ class LibraryListeners(Listeners):
         from robot.running import EXECUTION_CONTEXTS
         if not EXECUTION_CONTEXTS.current:
             return []
-        return [_ListenerProxy(listener=listener) for listener in
+        return [_LibraryListenerProxy(listener) for listener in
                 EXECUTION_CONTEXTS.current.namespace.library_listeners]
+
+class _LibraryListenerProxy(_ListenerProxy):
+
+    def __init__(self, listener):
+        AbstractLoggerProxy.__init__(self, listener)
+        self.name = type(listener).__name__
+        self.version = self._get_version(listener)
+        self.is_java = self._is_java(listener)
+
+    def _get_method_names(self, name):
+        return (name, self._toCamelCase(name), '_%s' % name)

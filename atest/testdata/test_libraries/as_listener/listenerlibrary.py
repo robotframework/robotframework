@@ -10,13 +10,13 @@ class listenerlibrary(object):
     def get_events(self):
         return self.events[:]
 
-    def start_test(self, name, attrs):
+    def _start_test(self, name, attrs):
         self.events.append('start test %s' % name)
 
     def end_test(self, name, attrs):
         self.events.append('end test %s' % name)
 
-    def start_keyword(self, name, attrs):
+    def _start_keyword(self, name, attrs):
         self.events.append('start kw %s' % name)
 
     def end_keyword(self, name, attrs):
