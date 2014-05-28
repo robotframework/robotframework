@@ -1176,6 +1176,11 @@ class XML(object):
         with open(path, 'w') as output:
             tree.write(output, encoding=encoding, **xml_declaration)
 
+    def evaluate_xpath(self, source, xpath, context='.'):
+        if not self.lxml_etree:
+            raise RuntimeError("'Evaluate Xpath' keyword only works in lxml mode.")
+        return self.get_element(source, context).xpath(xpath)
+
 
 class NameSpaceStripper(object):
 

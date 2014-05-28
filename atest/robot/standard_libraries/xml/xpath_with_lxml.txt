@@ -55,3 +55,6 @@ Advanced xpath supported by lxml
 
 Advanced xpath supported by lxml matching multiple elements
     Check Test Case    ${TESTNAME}
+
+Evaluate xpath
+    Check Test Case    ${TESTNAME}

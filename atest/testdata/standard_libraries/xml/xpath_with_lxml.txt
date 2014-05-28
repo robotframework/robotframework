@@ -85,6 +85,10 @@ Advanced xpath supported by lxml
     (//child)[last()]                  child         text
     (child/grandchild)[last()]         grandchild    ${NONE}
     (child | another | xxx)[last()]    another
+    self::test                         test
+    child::child[1]/parent::test       test
+    descendant::ggc/parent::*          grandchild
+    descendant::ggc/ancestor::child[attribute::id]    child
 
 Advanced xpath supported by lxml matching multiple elements
     [Template]    Xpath should match elements
@@ -92,6 +96,19 @@ Advanced xpath supported by lxml matching multiple elements
     (child | another | xxx)    child 1 text    child 2 text grand child text more text    ${EMPTY}    text
     child[starts-with(normalize-space(text()), 'child')]
     ...                        child 1 text    child 2 text grand child text more text
+
+Evaluate xpath
+    [Template]    Result of evaluation should be
+    count(*)                           ${4}
+    count(child[3])                    ${1}
+    count(preceding-sibling::*)        ${0}
+    count(*)                           ${1}            context=child[3]
+    count(preceding-sibling::*)        ${2}            context=child[3]
+    string(child[1])                   child 1 text
+    string()                           child 1 text    context=child[1]
+    contains(child[1], '1 text')       ${True}
+    string(child::child[last()]/ancestor::test/attribute::name)     root
+    string(descendant::ggc/ancestor::child[attribute::id=3]/@a2)    xxx
 
 *** Keywords ***
 Xpath should match element
@@ -104,3 +121,8 @@ Xpath should match elements
     [Arguments]    ${xpath}    @{expected texts}
     ${texts} =    Get Elements Texts    ${TEST}    ${xpath}    normalize_whitespace=yes
     Lists Should be Equal    ${texts}    ${expected texts}
+
+Result of evaluation should be
+    [Arguments]    ${xpath}    ${expected}    ${xml}=${TEST}    ${context}=.
+    ${result} =    Evaluate xpath    ${xml}    ${xpath}    context=${context}
+    Should Be Equal    ${result}    ${expected}

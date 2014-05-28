@@ -80,6 +80,10 @@ More complex non-ASCII xpath
     [Documentation]    FAIL Multiple elements (2) matching './/chïld' found.
     .//chïld    chïld    xml=<rööt><chïld/><täg><chïld/></täg></rööt>
 
+Evaluate xpath does not work
+    [Documentation]    FAIL 'Evaluate Xpath' keyword only works in lxml mode.
+    [Template]    NONE
+    Evaluate Xpath    ${TEST}    .
 
 *** Keywords ***
 Xpath should match element
