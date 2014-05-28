@@ -10,6 +10,9 @@ class listenerlibrary(object):
     def get_events(self):
         return self.events[:]
 
+    def _start_suite(self, name, attrs):
+        self.events.append('start suite %s' % name)
+
     def _start_test(self, name, attrs):
         self.events.append('start test %s' % name)
 
