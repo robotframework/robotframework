@@ -58,7 +58,7 @@ class Namespace:
     @property
     def library_listeners(self):
         for lib in self._testlibs.itervalues():
-            if lib.listener:
+            if lib.has_listener:
                 yield lib.listener
 
     def handle_imports(self):
