@@ -71,6 +71,7 @@ class _BaseTestLibrary(BaseLibrary):
         self.positional_args = []
         self.named_args = {}
         self._instance_cache = []
+        self._has_listener = False # Set when instance is created
         self._libinst = None
         if libcode is not None:
             self._doc = getdoc(libcode)
@@ -87,9 +88,14 @@ class _BaseTestLibrary(BaseLibrary):
 
     @property
     def listener(self):
-        if not self._libinst:
+        if self._has_listener:
+            return self._get_instance_listener(self.get_instance())
+        return None
+
+    def _get_instance_listener(self, inst):
+        if not inst:
             return None
-        return getattr(self._libinst, 'ROBOT_LIBRARY_LISTENER', None)
+        return getattr(inst, 'ROBOT_LIBRARY_LISTENER', None)
 
     def create_handlers(self):
         if self._libcode:
@@ -161,7 +167,9 @@ class _BaseTestLibrary(BaseLibrary):
     def _get_instance(self):
         with OutputCapturer(library_import=True):
             try:
-                return self._libcode(*self.positional_args, **self.named_args)
+                instance = self._libcode(*self.positional_args, **self.named_args)
+                self._has_listener = self._get_instance_listener(instance) is not None
+                return instance
             except:
                 self._raise_creating_instance_failed()
 
