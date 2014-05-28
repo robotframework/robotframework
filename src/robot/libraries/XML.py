@@ -477,24 +477,8 @@ class XML(object):
         """
         if isinstance(source, basestring):
             source = self.parse_xml(source)
-        if not xpath:
-            raise RuntimeError('No xpath given.')
-        if xpath == '.':  # ET < 1.3 does not support '.' alone.
-            return [source]
-        return source.findall(self._get_xpath(xpath))
-
-    def _get_xpath(self, xpath):
-        if self.modern_etree:
-            return xpath
-        try:
-            return str(xpath)
-        except UnicodeError:
-            if not xpath.replace('/', '').isalnum():
-                logger.warn('XPATHs containing non-ASCII characters and '
-                            'other than tag names do not always work with '
-                            'Python/Jython versions prior to 2.7. Verify '
-                            'results manually and consider upgrading to 2.7.')
-            return xpath
+        finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
+        return finder.find_all(source, xpath)
 
     def get_child_elements(self, source, xpath='.'):
         """Returns the child elements of the specified element as a list.
@@ -1210,6 +1194,38 @@ class NameSpaceStripper(object):
             elem.tag = '{%s}%s' % (ns, elem.tag)
         for child in elem:
             self.unstrip(child, ns)
+
+
+class ElementFinder(object):
+
+    def __init__(self, etree, modern=True, lxml=False):
+        self.etree = etree
+        self.modern = modern
+        self.lxml = lxml
+
+    def find_all(self, elem, xpath):
+        xpath = self._get_xpath(xpath)
+        if xpath == '.':  # ET < 1.3 does not support '.' alone.
+            return [elem]
+        if not self.lxml:
+            return elem.findall(xpath)
+        finder = self.etree.ETXPath(xpath)
+        return finder(elem)
+
+    def _get_xpath(self, xpath):
+        if not xpath:
+            raise RuntimeError('No xpath given.')
+        if self.modern:
+            return xpath
+        try:
+            return str(xpath)
+        except UnicodeError:
+            if not xpath.replace('/', '').isalnum():
+                logger.warn('XPATHs containing non-ASCII characters and '
+                            'other than tag names do not always work with '
+                            'Python/Jython versions prior to 2.7. Verify '
+                            'results manually and consider upgrading to 2.7.')
+            return xpath
 
 
 class ElementComparator(object):

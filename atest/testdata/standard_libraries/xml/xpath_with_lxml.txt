@@ -76,6 +76,23 @@ More complex non-ASCII xpath
     [Documentation]    FAIL Multiple elements (2) matching './/chïld' found.
     .//chïld    chïld    xml=<rööt><chïld/><täg><chïld/></täg></rööt>
 
+Advanced xpath supported by lxml
+    child[text() = 'child 1 text']     child         child 1 text
+    child[position()=1]                child         child 1 text
+    child[position() > 1 and not(position() >= 3)]    child    \n${SPACE*8}child 2 text\n${SPACE*8}
+    child[last()]                      child         ${NONE}
+    child[last()]/grandchild           grandchild    ${NONE}
+    (//child)[last()]                  child         text
+    (child/grandchild)[last()]         grandchild    ${NONE}
+    (child | another | xxx)[last()]    another
+
+Advanced xpath supported by lxml matching multiple elements
+    [Template]    Xpath should match elements
+    //child[last()]            ${EMPTY}    text
+    (child | another | xxx)    child 1 text    child 2 text grand child text more text    ${EMPTY}    text
+    child[starts-with(normalize-space(text()), 'child')]
+    ...                        child 1 text    child 2 text grand child text more text
+
 *** Keywords ***
 Xpath should match element
     [Arguments]    ${xpath}    ${tag}    ${text}=IGNORE    ${xml}=${TEST}
