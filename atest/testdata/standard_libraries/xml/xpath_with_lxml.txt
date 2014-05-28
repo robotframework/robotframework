@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Set lxml availability to suite metadata
-Test Template     Get element by xpath
+Test Template     Xpath should match element
 Library           XML    lxml=true
 Resource          resource.txt
 
@@ -11,13 +11,10 @@ Tag
 Path
     another/child    child    text
 
-Path matches children from different parents
-    [Template]    NONE
-    @{elements}=    Get Elements    ${TEST}    child/grandchild
-    Length Should Be    ${elements}    2
-    :FOR    ${elem}    IN    @{elements}
-    \    Should Be Equal    ${elem.tag}    grandchild
-    Should Be Equal    ${elem.text}    ${NONE}
+Path matching multiple elements
+    [Template]    Xpath should match elements
+    child               child 1 text    child 2 text grand child text more text    ${EMPTY}
+    child/grandchild    grand child text    ${EMPTY}
 
 '*'
     */child    child    text
@@ -32,13 +29,10 @@ Path matches children from different parents
     child//ggc    ggc
     another//child    child
 
-'//' returning multiple elements
-    [Template]    NONE
-    @{elements}=    Get Elements    ${TEST}    .//child
-    Length Should Be    ${elements}    4
-    :FOR    ${elem}    IN    @{elements}
-    \    Should Be Equal    ${elem.tag}    child
-    Should Be Equal    ${elem.text}    text
+'//' matching multiple elements
+    [Template]    Xpath should match elements
+    .//child               child 1 text    child 2 text grand child text more text    ${EMPTY}    text
+    .//child/grandchild    grand child text    ${EMPTY}
 
 '..'
     another/..    test
@@ -83,8 +77,13 @@ More complex non-ASCII xpath
     .//chïld    chïld    xml=<rööt><chïld/><täg><chïld/></täg></rööt>
 
 *** Keywords ***
-Get element by xpath
+Xpath should match element
     [Arguments]    ${xpath}    ${tag}    ${text}=IGNORE    ${xml}=${TEST}
     ${element}=     Get Element    ${xml}    ${xpath}
     Should Be Equal    ${element.tag}    ${tag}
     Run Keyword If    '''${text}''' != 'IGNORE'    Should Be Equal    ${element.text}    ${text}
+
+Xpath should match elements
+    [Arguments]    ${xpath}    @{expected texts}
+    ${texts} =    Get Elements Texts    ${TEST}    ${xpath}    normalize_whitespace=yes
+    Lists Should be Equal    ${texts}    ${expected texts}

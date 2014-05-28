@@ -11,7 +11,7 @@ Tag
 Path
     Check Test Case    ${TESTNAME}
 
-Path matches children from different parents
+Path matching multiple elements
     Check Test Case    ${TESTNAME}
 
 '*'
@@ -23,7 +23,7 @@ Path matches children from different parents
 '//'
     Check Test Case    ${TESTNAME}
 
-'//' returning multiple elements
+'//' matching multiple elements
     Check Test Case    ${TESTNAME}
 
 '..'
