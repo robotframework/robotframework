@@ -29,11 +29,11 @@ public class JavaListenerLibrary {
         events.add("end test "+name);
     }
 
-    public void startKeyword(String name, Map attrs){
+    public void _startKeyword(String name, Map attrs){
         events.add("start kw "+name);
     }
 
-    public void endKeyword(String name, Map attrs){
+    public void _endKeyword(String name, Map attrs){
         events.add("end kw "+name);
     }
 

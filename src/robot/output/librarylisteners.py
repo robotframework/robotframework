@@ -42,4 +42,4 @@ class _LibraryListenerProxy(_ListenerProxy):
         self.is_java = self._is_java(listener)
 
     def _get_method_names(self, name):
-        return (name, self._toCamelCase(name), '_%s' % name)
+        return (name, self._toCamelCase(name), '_%s' % name, '_%s' % self._toCamelCase(name))
