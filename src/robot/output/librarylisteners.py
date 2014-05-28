@@ -33,6 +33,7 @@ class LibraryListeners(Listeners):
         return [_LibraryListenerProxy(listener) for listener in
                 EXECUTION_CONTEXTS.current.namespace.library_listeners]
 
+
 class _LibraryListenerProxy(_ListenerProxy):
 
     def __init__(self, listener):
@@ -42,7 +43,6 @@ class _LibraryListenerProxy(_ListenerProxy):
         self.is_java = self._is_java(listener)
 
     def _get_method_names(self, name):
-        return self._add_underscores(name, self._toCamelCase(name))
+        names = _ListenerProxy._get_method_names(self, name)
+        return names + ['_' + name for name in names]
 
-    def _add_underscores(self, *names):
-        return list(names) + ['_%s' % name for name in names]

@@ -139,7 +139,7 @@ class AbstractLoggerProxy:
         return self._no_method
 
     def _get_method_names(self, name):
-        return (name, self._toCamelCase(name))
+        return [name, self._toCamelCase(name)]
 
     def _toCamelCase(self, name):
         parts = name.split('_')

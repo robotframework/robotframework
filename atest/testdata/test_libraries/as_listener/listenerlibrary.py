@@ -22,7 +22,7 @@ class listenerlibrary(object):
     def _start_keyword(self, name, attrs):
         self.events.append('start kw %s' % name)
 
-    def end_keyword(self, name, attrs):
+    def _end_keyword(self, name, attrs):
         self.events.append('end kw %s' % name)
 
     def events_should_be(self, *expected):

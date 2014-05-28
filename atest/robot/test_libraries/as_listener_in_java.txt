@@ -1,0 +1,14 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/as_listener/suite_scope_java.txt
+Force Tags      regression  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Java suite scope library gets events
+    Check Test Case  ${TESTNAME}
+New java test gets previous suite scope events
+    Check Test Case  ${TESTNAME}
+Listener methods in library are keywords
+    Check Test Case  ${TESTNAME}
+Listener methods starting with underscore are not keywords
+    Check Test Case  ${TESTNAME}

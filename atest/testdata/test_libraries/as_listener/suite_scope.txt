@@ -15,3 +15,10 @@ New test gets previous suite scope events
             ...         end test Suite scope library gets events
             ...         start test New test gets previous suite scope events
             ...         start kw suite_listenerlibrary.Events Should Be
+
+Listener methods in library are keywords
+    end_test   foo   zap
+
+Listener methods starting with underscore are not keywords
+    [Documentation]         FAIL No keyword with name '_end_keyword' found.
+    _end_keyword   bar  zap
