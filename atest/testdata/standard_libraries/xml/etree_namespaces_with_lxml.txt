@@ -3,7 +3,7 @@ Suite Setup       Run Keywords    Set lxml availability to suite metadata
 ...               AND    Remove File    ${OUTPUT}
 Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
 Test Teardown     Remove File    ${OUTPUT}
-Library           XML    lxml=yes
+Library           XML    use_lxml=yes
 Resource          resource.txt
 
 *** Test Cases ***

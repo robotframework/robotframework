@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup       Set lxml availability to suite metadata
 Test Template     Elements should not be equal
-Library           XML    lxml=yes
+Library           XML    use_lxml=yes
 Resource          resource.txt
 
 *** Test Cases ***

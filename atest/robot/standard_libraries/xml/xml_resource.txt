@@ -2,7 +2,7 @@
 Resource         atest_resource.txt
 
 *** Variables ***
-${NO LXML}        XML library reverted to use standard ElementTree because requested lxml is not installed.
+${NO LXML}        XML library reverted to use standard ElementTree because lxml module is not installed.
 
 *** Keywords ***
 Make test non-critical if lxml not available

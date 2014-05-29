@@ -370,18 +370,18 @@ class XML(object):
     _whitespace = re.compile('\s+')
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
-    def __init__(self, lxml=False):
-        if lxml and lxml_etree:
+    def __init__(self, use_lxml=False):
+        if use_lxml and lxml_etree:
             self.etree = lxml_etree
             self.modern_etree = True
             self.lxml_etree = True
         else:
-            if lxml and not lxml_etree:
-                logger.warn('XML library reverted to use standard ElementTree '
-                            'because requested lxml is not installed.')
             self.etree = ET
             self.modern_etree = ET.VERSION >= '1.3'
             self.lxml_etree = False
+        if use_lxml and not lxml_etree:
+            logger.warn('XML library reverted to use standard ElementTree '
+                        'because lxml module is not installed.')
 
     def parse_xml(self, source, keep_clark_notation=False):
         """Parses the given XML file or string into an element structure.
