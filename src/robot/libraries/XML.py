@@ -459,7 +459,7 @@ class XML(object):
         `xpath`. Use `Get Elements` if you want all matching elements to be
         returned.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${element} = | Get Element | ${XML}     | second |
         | ${child} =   | Get Element | ${element} | child  |
 
@@ -501,7 +501,7 @@ class XML(object):
         match, an empty list is returned. Use `Get Element` if you want to get
         exactly one match.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${children} =    | Get Elements | ${XML} | third/child |
         | Length Should Be | ${children}  | 2      |             |
         | ${children} =    | Get Elements | ${XML} | first/child |
@@ -522,7 +522,7 @@ class XML(object):
         All the direct child elements of the specified element are returned.
         If the element has no children, an empty list is returned.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${children} =    | Get Child Elements | ${XML} |             |
         | Length Should Be | ${children}        | 4      |             |
         | ${children} =    | Get Child Elements | ${XML} | xpath=first |
@@ -598,7 +598,7 @@ class XML(object):
         multiple spaces collapsed into one. This is especially useful when
         dealing with HTML data.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${text} =       | Get Element Text | ${XML}       | first        |
         | Should Be Equal | ${text}          | text         |              |
         | ${text} =       | Get Element Text | ${XML}       | second/child |
@@ -639,7 +639,7 @@ class XML(object):
         as with `Get Element Text`. This includes optional whitespace
         normalization using the `normalize_whitespace` option.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | @{texts} =       | Get Elements Texts | ${XML}    | third/child |
         | Length Should Be | ${texts}           | 2         |             |
         | Should Be Equal  | @{texts}[0]        | more text |             |
@@ -665,7 +665,7 @@ class XML(object):
         be overridden with the `message` argument.  Use `Element Text Should
         Match` to verify the text against a pattern instead of an exact value.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Text Should Be | ${XML}       | text     | xpath=first      |
         | Element Text Should Be | ${XML}       | ${EMPTY} | xpath=second/child |
         | ${paragraph} =         | Get Element  | ${XML}   | xpath=html/p     |
@@ -686,7 +686,7 @@ class XML(object):
         always case-sensitive. In the pattern, '*' matches anything and '?'
         matches any single character.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Text Should Match | ${XML}       | t???   | xpath=first  |
         | ${paragraph} =            | Get Element  | ${XML} | xpath=html/p |
         | Element Text Should Match | ${paragraph} | Text with * and *. | normalize_whitespace=yes |
@@ -705,7 +705,7 @@ class XML(object):
         If the element does not have such element, the `default` value is
         returned instead.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${attribute} =  | Get Element Attribute | ${XML} | id | xpath=first |
         | Should Be Equal | ${attribute}          | 1      |    |             |
         | ${attribute} =  | Get Element Attribute | ${XML} | xx | xpath=first | default=value |
@@ -726,7 +726,7 @@ class XML(object):
         Attributes are returned as a Python dictionary. It is a copy of the
         original attributes so modifying it has no effect on the XML structure.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${attributes} = | Get Element Attributes      | ${XML} | first |
         | Dictionary Should Contain Key | ${attributes} | id     |       |
         | ${attributes} = | Get Element Attributes      | ${XML} | third |
@@ -752,7 +752,7 @@ class XML(object):
         `None` (i.e. variable `${NONE}`) can be used as the `expected` value.
         A cleaner alternative is using `Element Should Not Have Attribute`.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Attribute Should Be | ${XML} | id | 1       | xpath=first |
         | Element Attribute Should Be | ${XML} | id | ${NONE} |             |
 
@@ -773,7 +773,7 @@ class XML(object):
         always case-sensitive. In the pattern, '*' matches anything and '?'
         matches any single character.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Attribute Should Match | ${XML} | id | ?   | xpath=first |
         | Element Attribute Should Match | ${XML} | id | c*d | xpath=third/second |
         """
@@ -792,7 +792,7 @@ class XML(object):
         The keyword fails if the specified element has attribute `name`.
         The default error message can be overridden with the `message` argument.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Should Not Have Attribute | ${XML} | id  |
         | Element Should Not Have Attribute | ${XML} | xxx | xpath=first |
 
@@ -828,7 +828,7 @@ class XML(object):
         discussion about elements' `text` and `tail` attributes in the
         `introduction`.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${first} =               | Get Element | ${XML} | first             |
         | Elements Should Be Equal | ${first}    | <first id="1">text</first> |
         | ${p} =                   | Get Element | ${XML} | html/p            |
@@ -856,7 +856,7 @@ class XML(object):
         always case-sensitive. In the pattern, '*' matches anything and '?'
         matches any single character.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${first} =            | Get Element | ${XML} | first          |
         | Elements Should Match | ${first}    | <first id="?">*</first> |
 
@@ -1208,10 +1208,31 @@ class XML(object):
         with open(path, 'w') as output:
             tree.write(output, encoding=encoding, **xml_declaration)
 
-    def evaluate_xpath(self, source, xpath, context='.'):
+    def evaluate_xpath(self, source, expression, context='.'):
+        """Evaluates the given xpath expression and returns results.
+
+        The element in which context the expression is executed is specified
+        using `source` and `context` arguments. They have exactly the same
+        semantics as `source` and `xpath` arguments have with `Get Element`
+        keyword.
+
+        The xpath expression to evaluate is given as `expression` argument.
+        The result of the evaluation is returned as-is.
+
+        Examples using `${XML}` structure from `Example`:
+        | ${count} =      | Evaluate Xpath | ${XML}  | count(third/*) |
+        | Should Be Equal | ${count}       | ${3}    |
+        | ${text} =       | Evaluate Xpath | ${XML}  | string(descendant::second[last()]/@id) |
+        | Should Be Equal | ${text}        | child   |
+        | ${bold} =       | Evaluate Xpath | ${XML}  | boolean(preceding-sibling::*[1] = 'bold') | context=html/p/i |
+        | Should Be Equal | ${bold}        | ${True} |
+
+        This keyword works only if lxml mode is taken into use when `importing`
+        the library. New in Robot Framework 2.8.5.
+        """
         if not self.lxml_etree:
             raise RuntimeError("'Evaluate Xpath' keyword only works in lxml mode.")
-        return self.get_element(source, context).xpath(xpath)
+        return self.get_element(source, context).xpath(expression)
 
 
 class NameSpaceStripper(object):
