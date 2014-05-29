@@ -37,7 +37,7 @@ class XML(object):
 
     As the name implies, `XML` is a test library for verifying contents of XML
     files. In practice it is a pretty thin wrapper on top of Python's
-    [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].
+    [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree XML API].
 
     The library has the following main usages:
 
@@ -50,6 +50,13 @@ class XML(object):
       (e.g `Element Text Should Be` and `Elements Should Be Equal`).
     - Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`
       and `Save XML`).
+
+    By default this library uses ElementTree module for parsing XML, but it
+    can be configured to use [http://lxml.de|lxml] instead when `importing`
+    the library. The main benefit of using lxml is that it supports richer
+    xpath syntax than the standard ElementTree. It also enables using
+    `Evaluate Xpath` keyword and preserves possible namespace prefixes when
+    saving XML. The lxml support is new in Robot Framework 2.8.5.
 
     == Table of contents ==
 
@@ -131,13 +138,17 @@ class XML(object):
     ElementTree, and thus also this library, supports finding elements using
     xpath expressions. ElementTree does not, however, support the full xpath
     syntax, and what is supported depends on its version. ElementTree 1.3 that
-    is distributed with Python and Jython 2.7 supports richer syntax than
-    versions distributed with earlier Python interpreters.
+    is distributed with Python 2.7 supports richer syntax than earlier versions.
 
     The supported xpath syntax is explained below and
     [http://effbot.org/zone/element-xpath.htm|ElementTree documentation]
     provides more details. In the examples `${XML}` refers to the same XML
     structure as in the earlier example.
+
+    If lxml support is enabled when `importing` the library, the whole
+    [http://www.w3.org/TR/xpath/|xpath 1.0 standard] is supported.
+    That includes everything listed below but also lot of other useful
+    constructs.
 
     == Tag names ==
 
@@ -275,8 +286,8 @@ class XML(object):
 
     = Handling XML namespaces =
 
-    ElementTree handles possible namespaces in XML documents by adding the
-    namespace URI to tag names in so called Clark Notation. That is
+    ElementTree and lxml handle possible namespaces in XML documents by adding
+    the namespace URI to tag names in so called Clark Notation. That is
     inconvenient especially with xpaths, and by default this library strips
     those namespaces away and moves them to `xmlns` attribute instead. That can
     be avoided by passing `keep_clark_notation` argument to `Parse XML` keyword.
@@ -286,7 +297,7 @@ class XML(object):
 
     If an XML document has namespaces, ElementTree adds namespace information
     to tag names in [http://www.jclark.com/xml/xmlns.htm|Clark Notation]
-    (e.g. `{http://ns.uri}tag` and removes original `xmlns` attributes. This
+    (e.g. `{http://ns.uri}tag`) and removes original `xmlns` attributes. This
     is done both with default namespaces and with namespaces with a prefix.
     How it works in practice is illustrated by the following example, where
     `${NS}` variable contains this XML document:
@@ -346,7 +357,13 @@ class XML(object):
     | </stylesheet>
 
     Also this output is semantically same as the original. If the original XML
-    had only default namespaces, the output would also looks identical.
+    had only default namespaces, the output would also look identical.
+
+    == Namespaces with lxml ==
+
+    Namespaces are handled the same way also if lxml mode is enabled when
+    `importing` the library. The only difference is that lxml stores information
+    about namespace prefixes and thus they are preserved if XML is saved.
 
     == Attribute namespaces ==
 
@@ -371,6 +388,21 @@ class XML(object):
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
     def __init__(self, use_lxml=False):
+        """Import library with optionally lxml mode enabled.
+
+        By default this library uses Python's standard
+        [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree]
+        module for parsing XML. If `use_lxml` argument is given any true
+        value (e.g. any non-empty string), the library will use
+        [http://lxml.de|lxml] instead. See `introduction` for benefits
+        provided by lxml.
+
+        Using lxml requires that the lxml module is installed on the system.
+        If lxml mode is enabled but the module is not installed, this library
+        will emit a warning and revert back to using the standard ElementTree.
+
+        The support for lxml is new in Robot Framework 2.8.5.
+        """
         if use_lxml and lxml_etree:
             self.etree = lxml_etree
             self.modern_etree = True
