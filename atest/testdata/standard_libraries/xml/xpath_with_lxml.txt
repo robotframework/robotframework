@@ -100,7 +100,7 @@ Advanced xpath supported by lxml matching multiple elements
 Evaluate xpath
     [Template]    Result of evaluation should be
     count(*)                           ${4}
-    count(child[3])                    ${1}
+    count(child[3]/descendant::*)      ${2}
     count(preceding-sibling::*)        ${0}
     count(*)                           ${1}            context=child[3]
     count(preceding-sibling::*)        ${2}            context=child[3]
