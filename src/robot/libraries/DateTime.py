@@ -151,10 +151,14 @@ class Date(object):
         if not input_format:
             dt = self._normalize_timestamp(dt)
             input_format = '%Y-%m-%d %H:%M:%S.%f'
-        if '%f' in input_format and (sys.version_info < (2, 6) or
-                                     sys.platform == 'cli'):
+        if self._need_to_handle_f_directive(input_format):
             return self._handle_un_supported_f_directive(dt, input_format)
         return self._mktime_with_millis(datetime.strptime(dt, input_format))
+
+    def _need_to_handle_f_directive(self, format):
+        if '%f' in format and (sys.version_info < (2, 6) or sys.platform == 'cli'):
+            return True
+        return False
 
     def _normalize_timestamp(self, date):
         ts = ''.join(d for d in date if d in string.digits).ljust(20, '0')
@@ -162,15 +166,18 @@ class Date(object):
                                          ts[10:12], ts[12:14], ts[14:])
 
     def _handle_un_supported_f_directive(self, dt, input_format):
-        if not input_format.endswith('%f'):
-            raise ValueError('%f directive is supported only at the end of '
-                             'the format string on this Python interpreter.')
-        input_format = input_format[:-2]
+        input_format = self._remove_f_from_format(input_format)
         micro = re.search('\d+$', dt).group(0)
         dt = dt[:-len(micro)]
         epoch = time.mktime(time.strptime(dt, input_format))
         epoch += float(micro) / 10**len(micro)
         return epoch
+
+    def _remove_f_from_format(self, format):
+        if not format.endswith('%f'):
+            raise ValueError('%f directive is supported only at the end of '
+                             'the format string on this Python interpreter.')
+        return format[:-2]
 
     def _dt_from_timestamp(self, ts):
         # Jython and IronPython handle floats incorrectly. For example,
@@ -196,15 +203,17 @@ class Date(object):
     def _convert_to_timestamp(self, seconds, millis=True, output_format=None):
         dt = self._dt_from_timestamp(seconds)
         if output_format:
-            output_format = str(output_format) #Python 2.5 does not accept unicode
-            millis = False
+            if self._need_to_handle_f_directive(output_format):
+                output_format = self._remove_f_from_format(output_format)
+            else:
+                output_format = str(output_format) #Python 2.5 does not accept unicode
+                millis = False
         else:
             output_format = '%Y-%m-%d %H:%M:%S'
         ts = dt.strftime(output_format)
         if millis:
             ts += '.%03d' % (round(seconds % 1 * 1000))
         return ts
-
 
     def _convert_to_epoch(self, dt, millis=True):
         return dt

@@ -1,23 +1,26 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/convert_date_result_format.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/get_current_date.txt
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
 *** Test Cases ***
-Should convert to timestamp
+Local time increases
     Check Test Case    ${TESTNAME}
 
-Should convert to timestamp with format
+UTC Time
     Check Test Case    ${TESTNAME}
 
-Should convert to epoch
+Increment
     Check Test Case    ${TESTNAME}
 
-Should convert to datetime
+Negative Increment
     Check Test Case    ${TESTNAME}
 
-Should exclude milliseconds
+Result format timestamp
     Check Test Case    ${TESTNAME}
 
-Formatted with %f in middle
+Result format epoch
+    Check Test Case    ${TESTNAME}
+
+Result format datetime
     Check Test Case    ${TESTNAME}
