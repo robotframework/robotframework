@@ -7,8 +7,14 @@ Resource         atest_resource.txt
 Should convert to timestamp
     Check Test Case    ${TESTNAME}
 
+Should convert to timestamp with format
+    Check Test Case    ${TESTNAME}
+
 Should convert to epoch
     Check Test Case    ${TESTNAME}
 
 Should convert to datetime
+    Check Test Case    ${TESTNAME}
+
+Should exclude milliseconds
     Check Test Case    ${TESTNAME}
