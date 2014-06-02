@@ -94,6 +94,57 @@ class DateTime(object):
     nearest second.
     """
 
+    def should_be_date(self, date, input_format=None):
+        """Validate input to be a date.
+
+        `date` is valid when it is in one of the `Date Formats`.
+
+        `input_format` is formatting directive (See `Formatted Timestamps` in introduction) that can be given to validate
+        a timestamp string in custom format.
+
+        Returns `True` if `date` is valid and `False` otherwise.
+
+        Examples:
+        | ${result} =        | Should Be Date | 2014-06-02 11:59:01.001 |
+        | Should Be True     | ${result}      |
+        | ${result} =        | Should Be Date | 11:59:01.001 02-06-2014 | %H:%M:%S %d-%m-%Y |
+        | Should Be True     | ${result}      |
+        | ${result} =        | Should Be Date | no date here |
+        | Should Not Be True | ${result}      |
+        | ${result} =        | Should Be Date | ${111} |
+        | Should Be True     | ${result}      |
+        | ${result} =        | Should Be Date | 111 |
+        | Should Not Be True | ${result}      |
+
+        New in Robot Framework 2.8.5.
+        """
+        try:
+            Date(date, input_format)
+        except ValueError:
+            return False
+        return True
+
+    def should_be_time(self, time):
+        """Validate input to be a time value.
+
+        `time` is valid when it is in one of the `Time Formats`.
+
+        Returns `True` if `time` is valid and `False` otherwise.
+
+        Examples:
+        | ${result} =        | Should Be Time | 10 s     |
+        | Should Be True     | ${result}      |
+        | ${result} =        | Should Be Time | 1 parsec |
+        | Should Not Be True | ${result}      |
+
+        New in Robot Framework 2.8.5.
+        """
+        try:
+            Time(time)
+        except ValueError:
+            return False
+        return True
+
     def convert_time(self, time, result_format='number', exclude_millis=False):
         """Convert time to different format.
 

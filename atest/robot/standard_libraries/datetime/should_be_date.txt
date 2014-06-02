@@ -1,0 +1,11 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/should_be_date.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Valid date
+    Check Test Case    ${TESTNAME}
+
+Invalid date
+    Check Test Case    ${TESTNAME}
