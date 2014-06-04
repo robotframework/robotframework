@@ -20,7 +20,7 @@ from .normalizing import normalize
 from .misc import plural_or_not
 
 
-_timer_re = re.compile('(-)?(\d+:)?(\d+):(\d+)(.\d+)?')
+_timer_re = re.compile('([+-])?(\d+:)?(\d+):(\d+)(.\d+)?')
 
 
 def _get_timetuple(epoch_secs=None):
@@ -58,13 +58,13 @@ def _timer_to_secs(number):
     match = _timer_re.match(number)
     if not match:
         return None
-    negative, hours, minutes, seconds, millis = match.groups()
+    prefix, hours, minutes, seconds, millis = match.groups()
     seconds = float(minutes) * 60 + float(seconds)
     if hours:
         seconds += float(hours[:-1]) * 60 * 60
     if millis:
         seconds += float(millis[1:]) / 10**len(millis[1:])
-    if negative:
+    if prefix == '-':
         seconds *= -1
     return seconds
 
