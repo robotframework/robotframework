@@ -95,12 +95,14 @@ def _time_string_to_secs(timestr):
 
 def _normalize_timestr(timestr):
     timestr = normalize(timestr)
-    for specifier, aliases in [('x', ('milliseconds', 'millisecond', 'millis', 'ms')),
-                               ('s', ('seconds', 'second', 'secs', 'sec')),
-                               ('m', ('minutes', 'minute', 'mins', 'min')),
-                               ('h', ('hours', 'hour')),
-                               ('d', ('days', 'day'))]:
-        for alias in aliases:
+    for specifier, aliases in [('x', ['millisecond', 'millisec', 'millis',
+                                      'msec', 'ms']),
+                               ('s', ['second', 'sec']),
+                               ('m', ['minute', 'min']),
+                               ('h', ['hour']),
+                               ('d', ['day'])]:
+        plural_aliases = [a+'s' for a in aliases if not a.endswith('s')]
+        for alias in plural_aliases + aliases:
             if alias in timestr:
                 timestr = timestr.replace(alias, specifier)
     return timestr
