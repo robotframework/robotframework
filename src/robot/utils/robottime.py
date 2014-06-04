@@ -20,7 +20,7 @@ from .normalizing import normalize
 from .misc import plural_or_not
 
 
-_clock_re = re.compile('(-)?(\d+:)?(\d+):(\d+)(.\d+)?')
+_timer_re = re.compile('(-)?(\d+:)?(\d+):(\d+)(.\d+)?')
 
 
 def _get_timetuple(epoch_secs=None):
@@ -42,7 +42,7 @@ START_TIME = _get_timetuple()
 def timestr_to_secs(timestr):
     """Parses time like '1h 10s', '01:00:10' or '42' and returns seconds."""
     if isinstance(timestr, (basestring, int, long, float)):
-        for converter in _number_to_secs, _clock_to_secs, _timestr_to_secs:
+        for converter in _number_to_secs, _timer_to_secs, _time_string_to_secs:
             secs = converter(timestr)
             if secs is not None:
                 return round(secs, 3)
@@ -54,8 +54,8 @@ def _number_to_secs(number):
     except ValueError:
         return None
 
-def _clock_to_secs(number):
-    match = _clock_re.match(number)
+def _timer_to_secs(number):
+    match = _timer_re.match(number)
     if not match:
         return None
     negative, hours, minutes, seconds, millis = match.groups()
@@ -68,7 +68,7 @@ def _clock_to_secs(number):
         seconds *= -1
     return seconds
 
-def _timestr_to_secs(timestr):
+def _time_string_to_secs(timestr):
     timestr = _normalize_timestr(timestr)
     if not timestr:
         return None
@@ -85,7 +85,7 @@ def _timestr_to_secs(timestr):
             elif c == 's': secs   = float(''.join(temp)); temp = []
             elif c == 'm': mins   = float(''.join(temp)); temp = []
             elif c == 'h': hours  = float(''.join(temp)); temp = []
-            elif c == 'p': days   = float(''.join(temp)); temp = []
+            elif c == 'd': days   = float(''.join(temp)); temp = []
             else: temp.append(c)
         except ValueError:
             return None
@@ -95,19 +95,15 @@ def _timestr_to_secs(timestr):
 
 def _normalize_timestr(timestr):
     timestr = normalize(timestr)
-    for item in 'milliseconds', 'millisecond', 'millis':
-        timestr = timestr.replace(item, 'ms')
-    for item in 'seconds', 'second', 'secs', 'sec':
-        timestr = timestr.replace(item, 's')
-    for item in 'minutes', 'minute', 'mins', 'min':
-        timestr = timestr.replace(item, 'm')
-    for item in 'hours', 'hour':
-        timestr = timestr.replace(item, 'h')
-    for item in 'days', 'day':
-        timestr = timestr.replace(item, 'd')
-    # 1) 'ms' -> 'x' to ease processing later
-    # 2) 'd' -> 'p' because float('1d') returns 1.0 in Jython (bug submitted)
-    return timestr.replace('ms','x').replace('d','p')
+    for specifier, aliases in [('x', ('milliseconds', 'millisecond', 'millis', 'ms')),
+                               ('s', ('seconds', 'second', 'secs', 'sec')),
+                               ('m', ('minutes', 'minute', 'mins', 'min')),
+                               ('h', ('hours', 'hour')),
+                               ('d', ('days', 'day'))]:
+        for alias in aliases:
+            if alias in timestr:
+                timestr = timestr.replace(alias, specifier)
+    return timestr
 
 
 def secs_to_timestr(secs, compact=False):

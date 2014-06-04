@@ -52,7 +52,7 @@ class TestTime(unittest.TestCase):
             if not isinstance(inp, basestring):
                 assert_equal(timestr_to_secs(str(inp)), exp, inp)
 
-    def test_timestr_to_secs_with_timestr(self):
+    def test_timestr_to_secs_with_time_string(self):
         for inp, exp in [('1s', 1),
                          ('0 day 1 MINUTE 2 S 42 millis', 62.042),
                          ('1minute 0sec 10 millis', 60.01),
@@ -77,7 +77,7 @@ class TestTime(unittest.TestCase):
                          ('0day 0hour 0minute 0seconds 0millisecond', 0)]:
             assert_equal(timestr_to_secs(inp), exp, inp)
 
-    def test_timestr_to_secs_with_clock(self):
+    def test_timestr_to_secs_with_timer_string(self):
         for inp, exp in [('00:00:00', 0),
                          ('00:00:01', 1),
                          ('01:02:03', 3600 + 2*60 + 3),
@@ -102,8 +102,11 @@ class TestTime(unittest.TestCase):
                          ('00:00:00.42', 0.42),
                          ('00:00:00.001', 0.001),
                          ('00:00:00.123', 0.123),
+                         ('00:00:00.1234', 0.123),
+                         ('00:00:00.12345', 0.123),
+                         ('00:00:00.12356', 0.124),
                          ('00:00:00.999', 0.999),
-                         ('00:00:00.9995', 1),
+                         ('00:00:00.9995001', 1),
                          ('00:00:00.000000001', 0)]:
             assert_equal(timestr_to_secs(inp), exp, inp)
             if '.' not in inp:
