@@ -53,8 +53,9 @@ class _RecursionAvoidingMetaclass(type):
 
 class Listeners(object):
     __metaclass__ = _RecursionAvoidingMetaclass
-    _start_attrs = ['doc', 'starttime', 'longname']
-    _end_attrs = _start_attrs + ['endtime', 'elapsedtime', 'status', 'message']
+    _start_attrs = ('doc', 'starttime', 'longname')
+    _end_attrs = _start_attrs + ('endtime', 'elapsedtime', 'status', 'message')
+    _kw_extra_attrs = ('args', '-longname', '-message')
 
     def __init__(self, listeners):
         self._listeners = self._import_listeners(listeners)
@@ -132,7 +133,7 @@ class Listeners(object):
             if li.version == 1:
                 li.call_method(li.start_keyword, kw.name, kw.args)
             else:
-                attrs = self._get_start_attrs(kw, 'args', '-longname')
+                attrs = self._get_start_attrs(kw, *self._kw_extra_attrs)
                 attrs['type'] = self._get_keyword_type(kw, start=True)
                 li.call_method(li.start_keyword, kw.name, attrs)
 
@@ -141,7 +142,7 @@ class Listeners(object):
             if li.version == 1:
                 li.call_method(li.end_keyword, kw.status)
             else:
-                attrs = self._get_end_attrs(kw, 'args', '-longname', '-message')
+                attrs = self._get_end_attrs(kw, *self._kw_extra_attrs)
                 attrs['type'] = self._get_keyword_type(kw, start=False)
                 li.call_method(li.end_keyword, kw.name, attrs)
 
@@ -181,23 +182,23 @@ class Listeners(object):
         for li in self._listeners:
             li.call_method(li.close)
 
-    def _get_start_attrs(self, item, *names):
-        return self._get_attrs(item, self._start_attrs, names)
+    def _get_start_attrs(self, item, *extra):
+        return self._get_attrs(item, self._start_attrs, extra)
 
-    def _get_end_attrs(self, item, *names):
-        return self._get_attrs(item, self._end_attrs, names)
+    def _get_end_attrs(self, item, *extra):
+        return self._get_attrs(item, self._end_attrs, extra)
 
-    def _get_attrs(self, item, defaults, extras):
-        names = self._get_attr_names(defaults, extras)
+    def _get_attrs(self, item, default, extra):
+        names = self._get_attr_names(default, extra)
         return dict((n, self._get_attr_value(item, n)) for n in names)
 
-    def _get_attr_names(self, defaults, extras):
-        names = list(defaults)
-        for name in extras:
-            if name.startswith('-'):
-                names.remove(name[1:])
-            else:
+    def _get_attr_names(self, default, extra):
+        names = list(default)
+        for name in extra:
+            if not name.startswith('-'):
                 names.append(name)
+            elif name[1:] in names:
+                names.remove(name[1:])
         return names
 
     def _get_attr_value(self, item, name):
