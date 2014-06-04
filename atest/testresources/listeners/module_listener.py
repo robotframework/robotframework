@@ -7,13 +7,13 @@ ROBOT_LISTENER_API_VERSION = 2
 
 def start_suite(name, attrs):
     metastr = ' '.join('%s: %s' % (k, v) for k, v in attrs['metadata'].items())
-    OUTFILE.write("SUITE START: %s '%s' [%s]\n"
-                  % (name, attrs['doc'], metastr))
+    OUTFILE.write("SUITE START: %s (%s) '%s' [%s]\n"
+                  % (name, attrs['id'], attrs['doc'], metastr))
 
 def start_test(name, attrs):
     tags = [str(tag) for tag in attrs['tags']]
-    OUTFILE.write("TEST START: %s '%s' %s crit: %s\n"
-                  % (name, attrs['doc'], tags,  attrs['critical']))
+    OUTFILE.write("TEST START: %s (%s) '%s' %s crit: %s\n"
+                  % (name, attrs['id'], attrs['doc'], tags,  attrs['critical']))
 
 def start_keyword(name, attrs):
     args = [str(arg) for arg in attrs['args']]

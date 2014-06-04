@@ -12,19 +12,19 @@ EXPECTED_TYPES = {'elapsedtime': (int, long), 'tags': list, 'args': list,
 
 def start_suite(name, attrs):
     _verify_attrs('START SUITE', attrs,
-                  START_ATTRS + 'longname metadata source tests suites totaltests')
+                  START_ATTRS + 'id longname metadata source tests suites totaltests')
 
 def end_suite(name, attrs):
     _verify_attrs('END SUITE', attrs,
-                  END_ATTRS + 'longname metadata source tests suites totaltests statistics message')
+                  END_ATTRS + 'id longname metadata source tests suites totaltests statistics message')
 
 def start_test(name, attrs):
     _verify_attrs('START TEST', attrs,
-                  START_ATTRS + 'longname tags critical template')
+                  START_ATTRS + 'id longname tags critical template')
 
 def end_test(name, attrs):
     _verify_attrs('END TEST', attrs,
-                  END_ATTRS + 'longname tags critical message template')
+                  END_ATTRS + 'id longname tags critical message template')
 
 def start_keyword(name, attrs):
     _verify_attrs('START KEYWORD', attrs, START_ATTRS + 'args type')

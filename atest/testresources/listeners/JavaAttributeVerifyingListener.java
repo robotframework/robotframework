@@ -34,22 +34,22 @@ public class JavaAttributeVerifyingListener {
 
     public void startSuite(String name, Map attrs) {
         verifyAttributes("START SUITE", attrs,
-                         new String[] {"doc", "starttime", "longname",  "source", "metadata", "tests", "suites", "totaltests"});
+                         new String[] {"id", "doc", "starttime", "longname",  "source", "metadata", "tests", "suites", "totaltests"});
     }
 
     public void endSuite(String name, Map attrs) {
         verifyAttributes("END SUITE", attrs,
-                         new String[] {"doc", "starttime", "longname",  "source", "metadata", "tests", "suites", "totaltests", "endtime", "elapsedtime", "status", "message", "statistics"});
+                         new String[] {"id", "doc", "starttime", "longname",  "source", "metadata", "tests", "suites", "totaltests", "endtime", "elapsedtime", "status", "message", "statistics"});
     }
 
     public void startTest(String name, Map attrs) {
         verifyAttributes("START TEST", attrs,
-                         new String[] {"doc", "starttime", "longname", "tags", "critical", "template"});
+                         new String[] {"id", "doc", "starttime", "longname", "tags", "critical", "template"});
     }
 
     public void endTest(String name, Map attrs) {
         verifyAttributes("END TEST", attrs,
-                         new String[] {"doc", "starttime", "longname", "tags", "critical", "template", "endtime", "elapsedtime", "status", "message"});
+                         new String[] {"id", "doc", "starttime", "longname", "tags", "critical", "template", "endtime", "elapsedtime", "status", "message"});
     }
 
     public void startKeyword(String name, Map attrs) {

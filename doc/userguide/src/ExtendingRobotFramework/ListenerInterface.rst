@@ -89,6 +89,9 @@ synonym to :code:`start_suite`.
    +===============+==================+==================================================+
    | start_suite   | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
+   |               |                  | * id: suite id. 's1' for top level suite, 's1-s1'|
+   |               |                  |   for its first child suite, 's1-s2' for second  |
+   |               |                  |   child, and so on. (new in 2.8.5)
    |               |                  | * longname: suite name including parent suites   |
    |               |                  | * doc: test suite documentation                  |
    |               |                  | * metadata: dictionary/map containing `free test |
@@ -106,6 +109,9 @@ synonym to :code:`start_suite`.
    +---------------+------------------+--------------------------------------------------+
    | end_suite     | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
+   |               |                  | * id: suite id. 's1' for top level suite, 's1-s1'|
+   |               |                  |   for its first child suite, 's1-s2' for second  |
+   |               |                  |   child, and so on. (new in 2.8.5)
    |               |                  | * longname: test suite name including parents    |
    |               |                  | * doc: test suite documentation                  |
    |               |                  | * metadata: dictionary/map containing `free test |
@@ -124,6 +130,9 @@ synonym to :code:`start_suite`.
    +---------------+------------------+--------------------------------------------------+
    | start_test    | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
+   |               |                  | * id: test id in format like 's1-s2-t2', where   |
+   |               |                  |   beginning is parent suite id and last part     |
+   |               |                  |   shows test index in that suite (new in 2.8.5)  |
    |               |                  | * longname: test name including parent suites    |
    |               |                  | * doc: test case documentation                   |
    |               |                  | * tags: test case tags as a list of strings      |
@@ -136,6 +145,9 @@ synonym to :code:`start_suite`.
    +---------------+------------------+--------------------------------------------------+
    | end_test      | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
+   |               |                  | * id: test id in format like 's1-s2-t2', where   |
+   |               |                  |   beginning is parent suite id and last part     |
+   |               |                  |   shows test index in that suite (new in 2.8.5)  |
    |               |                  | * longname: test name including parent suites    |
    |               |                  | * doc: test case documentation                   |
    |               |                  | * tags: test case tags as a list of strings      |
