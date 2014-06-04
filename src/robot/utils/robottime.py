@@ -12,11 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import time
 import datetime
+import time
+import re
 
 from .normalizing import normalize
 from .misc import plural_or_not
+
+
+_clock_re = re.compile('(-)?(\d+:)?(\d+):(\d+)(.\d+)?')
 
 
 def _get_timetuple(epoch_secs=None):
@@ -36,34 +40,38 @@ START_TIME = _get_timetuple()
 
 
 def timestr_to_secs(timestr):
-    """Parses time in format like '1h 10s' and returns time in seconds (float).
+    """Parses time like '1h 10s', '01:00:10' or '42' and returns seconds."""
+    if isinstance(timestr, (basestring, int, long, float)):
+        for converter in _number_to_secs, _clock_to_secs, _timestr_to_secs:
+            secs = converter(timestr)
+            if secs is not None:
+                return round(secs, 3)
+    raise ValueError("Invalid time string '%s'." % timestr)
 
-    Given time must be in format '1d 2h 3m 4s 5ms' with following rules:
-
-    - Time parts having zero value can be ignored (e.g. '3m 4s' is ok)
-    - Format is case and space insensitive
-    - Instead of 'd' it is also possible to use 'day' or 'days'
-    - Instead of 'h' also 'hour' and 'hours' are ok
-    - Instead of 'm' also 'minute', 'minutes', 'min' and 'mins' are ok
-    - Instead of 's' also 'second', 'seconds', 'sec' and 'secs' are ok
-    - Instead of 'ms' also 'millisecond', 'milliseconds' and 'millis' are ok
-    - It is possible to give time only as a float and then it is considered
-      to be seconds (e.g. '123', '123.0', '123s', '2min 3s' are all equivelant)
-    """
+def _number_to_secs(number):
     try:
-        secs = _timestr_to_secs(timestr)
-    except (ValueError, TypeError):
-        raise ValueError("Invalid time string '%s'." % timestr)
-    return round(secs, 3)
+        return float(number)
+    except ValueError:
+        return None
+
+def _clock_to_secs(number):
+    match = _clock_re.match(number)
+    if not match:
+        return None
+    negative, hours, minutes, seconds, millis = match.groups()
+    seconds = float(minutes) * 60 + float(seconds)
+    if hours:
+        seconds += float(hours[:-1]) * 60 * 60
+    if millis:
+        seconds += float(millis[1:]) / 10**len(millis[1:])
+    if negative:
+        seconds *= -1
+    return seconds
 
 def _timestr_to_secs(timestr):
     timestr = _normalize_timestr(timestr)
-    if timestr == '':
-        raise ValueError
-    try:
-        return float(timestr)
-    except ValueError:
-        pass
+    if not timestr:
+        return None
     millis = secs = mins = hours = days = 0
     if timestr[0] == '-':
         sign = -1
@@ -72,19 +80,20 @@ def _timestr_to_secs(timestr):
         sign = 1
     temp = []
     for c in timestr:
-        if   c == 'x': millis = float(''.join(temp)); temp = []
-        elif c == 's': secs   = float(''.join(temp)); temp = []
-        elif c == 'm': mins   = float(''.join(temp)); temp = []
-        elif c == 'h': hours  = float(''.join(temp)); temp = []
-        elif c == 'p': days   = float(''.join(temp)); temp = []
-        else: temp.append(c)
+        try:
+            if   c == 'x': millis = float(''.join(temp)); temp = []
+            elif c == 's': secs   = float(''.join(temp)); temp = []
+            elif c == 'm': mins   = float(''.join(temp)); temp = []
+            elif c == 'h': hours  = float(''.join(temp)); temp = []
+            elif c == 'p': days   = float(''.join(temp)); temp = []
+            else: temp.append(c)
+        except ValueError:
+            return None
     if temp:
-        raise ValueError
+        return None
     return sign * (millis/1000 + secs + mins*60 + hours*60*60 + days*60*60*24)
 
 def _normalize_timestr(timestr):
-    if isinstance(timestr, (int, long, float)):
-        return timestr
     timestr = normalize(timestr)
     for item in 'milliseconds', 'millisecond', 'millis':
         timestr = timestr.replace(item, 'ms')
