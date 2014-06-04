@@ -91,7 +91,7 @@ synonym to :code:`start_suite`.
    |               |                  |                                                  |
    |               |                  | * id: suite id. 's1' for top level suite, 's1-s1'|
    |               |                  |   for its first child suite, 's1-s2' for second  |
-   |               |                  |   child, and so on. (new in 2.8.5)
+   |               |                  |   child, and so on. (new in 2.8.5)               |
    |               |                  | * longname: suite name including parent suites   |
    |               |                  | * doc: test suite documentation                  |
    |               |                  | * metadata: dictionary/map containing `free test |
@@ -111,7 +111,7 @@ synonym to :code:`start_suite`.
    |               |                  |                                                  |
    |               |                  | * id: suite id. 's1' for top level suite, 's1-s1'|
    |               |                  |   for its first child suite, 's1-s2' for second  |
-   |               |                  |   child, and so on. (new in 2.8.5)
+   |               |                  |   child, and so on. (new in 2.8.5)               |
    |               |                  | * longname: test suite name including parents    |
    |               |                  | * doc: test suite documentation                  |
    |               |                  | * metadata: dictionary/map containing `free test |
