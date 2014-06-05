@@ -53,7 +53,7 @@ class DateTime(object):
     | number          | 3903.0                  |
     | verbose         | 1hour 5minutes 3seconds |
     | compact         | 1h 5m 3s                |
-    | clock           | 01:05:03.000            |
+    | timer           | 01:05:03.000            |
     | timedelta       | Python timedelta object |
 
     = Date formats =
@@ -289,7 +289,7 @@ class DateTime(object):
         Examples:
         | ${time} =       | Add To Time | 01:00:00.000      | 3h |
         | Should Be Equal | ${time}     | ${14400}          |
-        | ${time} =       | Add To Time | 3 hours 5 minutes | 00:01:00.000 | clock |
+        | ${time} =       | Add To Time | 3 hours 5 minutes | 00:01:00.000 | timer |
         | Should Be Equal | ${time}     | 03:06:00.000      |
 
         New in Robot Framework 2.8.5.
@@ -357,8 +357,8 @@ class DateTime(object):
             return datetime.utcnow()
         raise ValueError('Unsupported timezone %s' % time_zone)
 
+
 class Time(object):
-    _clock_re = re.compile('([-+])?(\d+):(\d{2}):(\d{2})(\.\d{3})?')
 
     def __init__(self, time):
         self.seconds = self._convert_time_to_seconds(time)
@@ -378,20 +378,7 @@ class Time(object):
             # timedelta.total_seconds() is new in Python 2.7
             return (time.days * 24 * 60 * 60 + time.seconds +
                     time.microseconds / 1000000.0)
-        if isinstance(time, basestring):
-            match = self._clock_re.match(time)
-            if match:
-                return self._convert_clock_to_secs(match)
         return timestr_to_secs(time)
-
-    def _convert_clock_to_secs(self, match):
-        prefix, hours, minutes, seconds, millis = match.groups()
-        result = 60 * 60 * int(hours) + 60 * int(minutes) + int(seconds)
-        if millis:
-            result += int(millis[1:]) / 1000.0
-        if prefix == '-':
-            result *= -1
-        return result
 
     def convert(self, format, millis=True):
         try:
@@ -410,7 +397,7 @@ class Time(object):
     def _convert_to_compact(self, seconds, millis=True):
         return secs_to_timestr(seconds, compact=True)
 
-    def _convert_to_clock(self, seconds, millis=True):
+    def _convert_to_timer(self, seconds, millis=True):
         return elapsed_time_to_string(seconds * 1000, include_millis=millis)
 
     def _convert_to_timedelta(self, seconds, millis=True):

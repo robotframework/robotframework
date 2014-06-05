@@ -13,7 +13,7 @@ Convert to string
 Convert to compact string
     Check Test Case    ${TESTNAME}
 
-Convert to clock
+Convert to timer
     Check Test Case    ${TESTNAME}
 
 Convert to timedelta

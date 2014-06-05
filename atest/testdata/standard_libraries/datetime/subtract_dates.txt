@@ -13,11 +13,11 @@ Subtraction between two dates should succeed
     ${DATE2}                   ${DATE1}               1 hour
     ${DATE1}                   ${DATE2}               - 1 hour
     ${DATE2}                   ${DATE1}               ${3600.0}               result_format=number
-    ${DATE2}                   ${DATE1}               01:00:00.000            result_format=clock
+    ${DATE2}                   ${DATE1}               01:00:00.000            result_format=timer
     ${DATE2}                   ${DATE1}               1h                      result_format=compact
     ${DATE2}                   ${DATE1}               ${timedelta(hours=1)}   result_format=timedelta
     2014.04.24 22:45:12.123    ${DATE1}               1 hour
-    22:45:12 2014.04.24        2014-04-24 21.43.11    01:02:01.000            result_format=clock   date1_format=%H:%M:%S %Y.%m.%d     date2_format=%Y-%m-%d %H.%M.%S
+    22:45:12 2014.04.24        2014-04-24 21.43.11    01:02:01.000            result_format=timer   date1_format=%H:%M:%S %Y.%m.%d     date2_format=%Y-%m-%d %H.%M.%S
 
 *** Keywords ***
 Subtraction Should Succeed

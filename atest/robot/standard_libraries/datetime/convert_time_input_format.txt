@@ -13,10 +13,13 @@ Number as string
 Number
     Check Test Case    ${TESTNAME}
 
-Clock
+Timer
     Check Test Case    ${TESTNAME}
 
-Clock without millis
+Timer without millis
+    Check Test Case    ${TESTNAME}
+
+Timer without hours
     Check Test Case    ${TESTNAME}
 
 Timedelta
