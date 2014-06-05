@@ -14,7 +14,7 @@ Valid date
 Invalid date
     [Template]  Verification should return false
     no date here
-    11:59 02-06-2014    %H:%M %d-%m
+    11:59 02-06-2014    %S:%H:%M %d-%m-%Y
     ${timedelta(1)}
 
 *** Keywords ***

@@ -8,6 +8,7 @@ String inputs         2014-04-24 21:45:12.123                         2014-04-24
                       2014-04-24 21:45:12                             2014-04-24 21:45:12.000
                       2014-04-24T21:45:12.123                         2014-04-24 21:45:12.123
                       2014.04+24@@21/45!12,123                        2014-04-24 21:45:12.123
+                      2014foo06bar05                                  2014-06-05 00:00:00.000
 
 Formatted strings     2014-04-24 21:45:12.123                         2014-04-24 21:45:12.123    %Y-%m-%d %H:%M:%S.%f
                       2014-04-24T21:45:12.123                         2014-04-24 21:45:12.123    %Y-%m-%dT%H:%M:%S.%f
@@ -48,13 +49,21 @@ Formatted with %f in middle
     ...   ELSE
     ...   Date Conversion Should Succeed    21:45:12.123 24.04.2014    2014-04-24 21:45:12.123    %H:%M:%S.%f %d.%m.%Y
 
-Invalid input format
-    [Documentation]    FAIL ValueError: Unsupported input 'None'.
-    [Template]    NONE
-    Convert Date    ${NONE}
+Invalid input
+    [Template]    Date Conversion Should Fail
+    kekkonen      Invalid timestamp 'kekkonen'.
+    2014-06       Invalid timestamp '2014-06'.
+    2014-06-5     Invalid timestamp '2014-06-5'.
+    2014-06-05    time data *                  %Y-%m-%d %H:%M:%S.%f
+    ${NONE}       Unsupported input 'None'.
 
 *** Keywords ***
 Date Conversion Should Succeed
     [Arguments]    ${input}    ${expected}    ${input_format}=${NONE}
     ${ts} =    Convert Date    ${input}    date_format=${input_format}
     Should Be Equal    ${ts}    ${expected}
+
+Date Conversion Should Fail
+    [Arguments]    ${input}    ${error}    ${input_format}=${NONE}
+    Run Keyword And Expect Error    ValueError: ${error}
+    ...    Convert Date    ${input}    date_format=${input_format}

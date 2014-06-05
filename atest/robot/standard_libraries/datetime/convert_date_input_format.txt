@@ -22,8 +22,8 @@ Datetime object
 Pad zeroes to missing values
     Check Test Case    ${TESTNAME}
 
-Invalid input format
+Rounding milliseconds
     Check Test Case    ${TESTNAME}
 
-Rounding milliseconds
+Invalid input
     Check Test Case    ${TESTNAME}

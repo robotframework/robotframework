@@ -440,7 +440,10 @@ class Date(object):
         return sys.version_info < (2, 6) or sys.platform == 'cli'
 
     def _normalize_timestamp(self, date):
-        ts = ''.join(d for d in date if d in string.digits).ljust(20, '0')
+        ts = ''.join(d for d in date if d in string.digits)
+        if len(ts) < 8:
+            raise ValueError("Invalid timestamp '%s'." % date)
+        ts = ts.ljust(20, '0')
         return '%s-%s-%s %s:%s:%s.%s' % (ts[:4], ts[4:6], ts[6:8], ts[8:10],
                                          ts[10:12], ts[12:14], ts[14:])
 
