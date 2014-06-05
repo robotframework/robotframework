@@ -10,6 +10,9 @@ Local time increases
 UTC Time
     Check Test Case    ${TESTNAME}
 
+Invalid time zone
+    Check Test Case    ${TESTNAME}
+
 Increment
     Check Test Case    ${TESTNAME}
 

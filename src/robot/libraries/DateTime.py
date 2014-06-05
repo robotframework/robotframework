@@ -124,6 +124,7 @@ def should_be_date(date, input_format=None):
         return False
     return True
 
+
 def should_be_time(time):
     """Validate input to be a time value.
 
@@ -144,6 +145,7 @@ def should_be_time(time):
     except ValueError:
         return False
     return True
+
 
 def convert_time(time, result_format='number', exclude_millis=False):
     """Convert time to different format.
@@ -167,6 +169,7 @@ def convert_time(time, result_format='number', exclude_millis=False):
     New in Robot Framework 2.8.5.
     """
     return Time(time).convert(result_format, millis=not exclude_millis)
+
 
 def convert_date(date, result_format='timestamp', exclude_millis=False, date_format=None):
     """Convert date to different format.
@@ -193,6 +196,7 @@ def convert_date(date, result_format='timestamp', exclude_millis=False, date_for
     New in Robot Framework 2.8.5.
     """
     return Date(date, date_format).convert(result_format, millis=not exclude_millis)
+
 
 def subtract_dates(date1, date2, result_format='number', exclude_millis=False, date1_format=None, date2_format=None):
     """Subtract date2 from date1.
@@ -221,6 +225,7 @@ def subtract_dates(date1, date2, result_format='number', exclude_millis=False, d
     time = Date(date1, date1_format) - Date(date2, date2_format)
     return time.convert(result_format, millis=not exclude_millis)
 
+
 def add_to_date(date, time, result_format='timestamp', exclude_millis=False, date_format=None):
     """Add time to a date.
 
@@ -247,6 +252,7 @@ def add_to_date(date, time, result_format='timestamp', exclude_millis=False, dat
     """
     date = Date(date, date_format) + Time(time)
     return date.convert(result_format, millis=not exclude_millis)
+
 
 def subtract_from_date(date, time, result_format='timestamp', exclude_millis=False, date_format=None):
     """Subtract time from date.
@@ -275,6 +281,7 @@ def subtract_from_date(date, time, result_format='timestamp', exclude_millis=Fal
     date = Date(date, date_format) - Time(time)
     return date.convert(result_format, millis=not exclude_millis)
 
+
 def add_to_time(time1, time2, result_format='number', exclude_millis=False):
     """Add time2 to time1.
 
@@ -297,6 +304,7 @@ def add_to_time(time1, time2, result_format='number', exclude_millis=False):
     time = Time(time1) + Time(time2)
     return time.convert(result_format, millis=not exclude_millis)
 
+
 def subtract_from_time(time1, time2, result_format='number', exclude_millis=False):
     """Subtract time2 from time1.
 
@@ -318,6 +326,7 @@ def subtract_from_time(time1, time2, result_format='number', exclude_millis=Fals
     """
     time = Time(time1) - Time(time2)
     return time.convert(result_format, millis=not exclude_millis)
+
 
 def get_current_date(time_zone='local', increment='0', result_format='timestamp', exclude_millis=False):
     """Get current date value.
@@ -350,7 +359,7 @@ def get_current_date(time_zone='local', increment='0', result_format='timestamp'
     elif time_zone.upper() == 'UTC':
         dt = datetime.utcnow()
     else:
-        raise ValueError('Unsupported timezone %s' % time_zone)
+        raise ValueError("Unsupported timezone '%s'." % time_zone)
     date = Date(dt) + Time(increment)
     return date.convert(result_format, millis=not exclude_millis)
 
@@ -359,16 +368,6 @@ class Time(object):
 
     def __init__(self, time):
         self.seconds = self._convert_time_to_seconds(time)
-
-    def __add__(self, other):
-        if isinstance(other, Time):
-            return Time(self.seconds + other.seconds)
-        raise TypeError('Can only add Time to Time, not %s' % type(other).__name__)
-
-    def __sub__(self, other):
-        if isinstance(other, Time):
-            return Time(self.seconds - other.seconds)
-        raise TypeError('Can only subtract Time from Time, not %s' % type(other).__name__)
 
     def _convert_time_to_seconds(self, time):
         if isinstance(time, timedelta):
@@ -400,23 +399,23 @@ class Time(object):
     def _convert_to_timedelta(self, seconds, millis=True):
         return timedelta(seconds=seconds)
 
+    def __add__(self, other):
+        if isinstance(other, Time):
+            return Time(self.seconds + other.seconds)
+        raise TypeError('Can only add Time to Time, not %s.'
+                        % type(other).__name__)
+
+    def __sub__(self, other):
+        if isinstance(other, Time):
+            return Time(self.seconds - other.seconds)
+        raise TypeError('Can only subtract Time from Time, not %s.'
+                        % type(other).__name__)
+
 
 class Date(object):
 
     def __init__(self, dt, input_format=None):
         self.seconds = self._convert_to_secs(dt, input_format)
-
-    def __add__(self, other):
-        if isinstance(other, Time):
-            return Date(self.seconds + other.seconds)
-        raise TypeError('Can only add Time to Date, not %s' % type(other).__name__)
-
-    def __sub__(self, other):
-        if isinstance(other, Date):
-            return Time(self.seconds - other.seconds)
-        if isinstance(other, Time):
-            return Date(self.seconds - other.seconds)
-        raise TypeError('Can only subtract Date or Time from Date, not %s' % type(other).__name__)
 
     def _convert_to_secs(self, timestamp, input_format):
         if isinstance(timestamp, basestring):
@@ -436,9 +435,9 @@ class Date(object):
         return self._mktime_with_millis(datetime.strptime(dt, input_format))
 
     def _need_to_handle_f_directive(self, format):
-        if '%f' in format and (sys.version_info < (2, 6) or sys.platform == 'cli'):
-            return True
-        return False
+        if '%f' not in format:
+            return False
+        return sys.version_info < (2, 6) or sys.platform == 'cli'
 
     def _normalize_timestamp(self, date):
         ts = ''.join(d for d in date if d in string.digits).ljust(20, '0')
@@ -460,11 +459,10 @@ class Date(object):
         return format[:-2]
 
     def _dt_from_timestamp(self, ts):
-        # Jython and IronPython handle floats incorrectly. For example,
+        # Jython and IronPython handle floats incorrectly. For example:
         # datetime.fromtimestamp(1399410716.123).microsecond == 122999
         dt = datetime.fromtimestamp(ts)
-        return datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute,
-                        dt.second, int(round(ts % 1 * 10**6, -3)))
+        return dt.replace(microsecond=int(round(ts % 1 * 10**6, -3)))
 
     def _mktime_with_millis(self, dt):
         return time.mktime(dt.timetuple()) + dt.microsecond / 10.0**6
@@ -486,7 +484,7 @@ class Date(object):
             if self._need_to_handle_f_directive(output_format):
                 output_format = self._remove_f_from_format(output_format)
             else:
-                output_format = str(output_format) #Python 2.5 does not accept unicode
+                output_format = str(output_format)  # Needed by Python 2.5
                 millis = False
         else:
             output_format = '%Y-%m-%d %H:%M:%S'
@@ -500,3 +498,17 @@ class Date(object):
 
     def _convert_to_datetime(self, dt, millis=True):
         return self._dt_from_timestamp(dt)
+
+    def __add__(self, other):
+        if isinstance(other, Time):
+            return Date(self.seconds + other.seconds)
+        raise TypeError('Can only add Time to Date, not %s.'
+                        % type(other).__name__)
+
+    def __sub__(self, other):
+        if isinstance(other, Date):
+            return Time(self.seconds - other.seconds)
+        if isinstance(other, Time):
+            return Date(self.seconds - other.seconds)
+        raise TypeError('Can only subtract Date or Time from Date, not %s.'
+                        % type(other).__name__)

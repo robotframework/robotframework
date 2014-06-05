@@ -14,6 +14,10 @@ UTC Time
     ${after} =    Get Current Date  result_format=epoch
     Should Be True  ${before} <= ${utc} - ${TIMEZONE} <= ${after}
 
+Invalid time zone
+    [Documentation]    FAIL ValueError: Unsupported timezone 'invalid'.
+    Get Current Date    invalid
+
 Increment
     ${date1} =  Get Current Date  result_format=epoch
     ${date2} =  Get Current Date  increment=2h  result_format=epoch
