@@ -56,10 +56,8 @@ class Namespace:
         self._imported_variable_files = ImportCache()
 
     @property
-    def library_listeners(self):
-        for lib in self._testlibs.itervalues():
-            if lib.has_listener:
-                yield lib.listener
+    def libraries(self):
+        return list(self._testlibs.itervalues())
 
     def handle_imports(self):
         self._import_default_libraries()

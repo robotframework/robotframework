@@ -37,6 +37,11 @@ public class JavaListenerLibrary {
         events.add("end kw "+name);
     }
 
+    public void close() {
+        System.err.println("CLOSING IN JAVA SUITE LIBRARY LISTENER");
+    }
+
+    @SuppressWarnings("unchecked")
     public List<String> getEvents() {
         return (List<String>)events.clone();
     }

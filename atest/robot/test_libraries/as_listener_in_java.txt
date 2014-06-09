@@ -12,3 +12,5 @@ Listener methods in library are keywords
     Check Test Case  ${TESTNAME}
 Listener methods starting with underscore are not keywords
     Check Test Case  ${TESTNAME}
+Check closing
+    Stderr Should Match   *CLOSING IN JAVA SUITE LIBRARY LISTENER\n

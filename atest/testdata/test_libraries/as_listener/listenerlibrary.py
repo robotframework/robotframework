@@ -1,3 +1,5 @@
+import sys
+
 class listenerlibrary(object):
 
     ROBOT_LISTENER_API_VERSION = 2
@@ -24,6 +26,10 @@ class listenerlibrary(object):
 
     def _end_keyword(self, name, attrs):
         self.events.append('end kw %s' % name)
+
+    def _close(self):
+        self.events.append('close %s' % self.ROBOT_LIBRARY_SCOPE)
+        sys.__stderr__.write("CLOSING %s\n" % self.ROBOT_LIBRARY_SCOPE)
 
     def events_should_be(self, *expected):
         assert self._format(self.events) == self._format(expected), 'Expected events\n %s\n actual\n %s' % (self._format(expected), self._format(self.events))
