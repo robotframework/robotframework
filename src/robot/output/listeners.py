@@ -69,7 +69,7 @@ class Listeners(object):
         listeners = []
         for name, args in listener_data:
             try:
-                listeners.append(_ListenerProxy(name, args))
+                listeners.append(ListenerProxy(name, args))
             except DataError, err:
                 if args:
                     name += ':' + ':'.join(args)
@@ -78,13 +78,13 @@ class Listeners(object):
         return listeners
 
     def start_suite(self, suite):
-        for li in self._listeners:
-            if li.version == 1:
-                li.call_method(li.start_suite, suite.name, suite.doc)
+        for listener in self._listeners:
+            if listener.version == 1:
+                listener.call_method(listener.start_suite, suite.name, suite.doc)
             else:
                 attrs = self._get_start_attrs(suite, 'metadata')
                 attrs.update(self._get_suite_attrs(suite))
-                li.call_method(li.start_suite, suite.name, attrs)
+                listener.call_method(listener.start_suite, suite.name, attrs)
 
     def _get_suite_attrs(self, suite):
         return {
@@ -95,56 +95,62 @@ class Listeners(object):
         }
 
     def end_suite(self, suite):
-        for li in self._listeners:
-            if li.version == 1:
-                li.call_method(li.end_suite, suite.status,
-                               suite.full_message)
-            else:
-                attrs = self._get_end_attrs(suite, 'metadata')
-                attrs['statistics'] = suite.stat_message
-                attrs.update(self._get_suite_attrs(suite))
-                li.call_method(li.end_suite, suite.name, attrs)
+        for listener in self._listeners:
+            self._notify_end_suite(listener, suite)
+
+    def _notify_end_suite(self, listener, suite):
+        if listener.version == 1:
+            listener.call_method(listener.end_suite, suite.status,
+                           suite.full_message)
+        else:
+            attrs = self._get_end_attrs(suite, 'metadata')
+            attrs['statistics'] = suite.stat_message
+            attrs.update(self._get_suite_attrs(suite))
+            listener.call_method(listener.end_suite, suite.name, attrs)
 
     def start_test(self, test):
         self._running_test = True
-        for li in self._listeners:
-            if li.version == 1:
-                li.call_method(li.start_test, test.name, test.doc,
-                               list(test.tags))
+        for listener in self._listeners:
+            if listener.version == 1:
+                listener.call_method(listener.start_test, test.name, test.doc,
+                                     list(test.tags))
             else:
                 attrs = self._get_start_attrs(test, 'tags')
                 attrs['critical'] = 'yes' if test.critical else 'no'
                 attrs['template'] = test.template or ''
-                li.call_method(li.start_test, test.name, attrs)
+                listener.call_method(listener.start_test, test.name, attrs)
 
     def end_test(self, test):
         self._running_test = False
-        for li in self._listeners:
-            if li.version == 1:
-                li.call_method(li.end_test, test.status, test.message)
-            else:
-                attrs = self._get_end_attrs(test, 'tags')
-                attrs['critical'] = 'yes' if test.critical else 'no'
-                attrs['template'] = test.template or ''
-                li.call_method(li.end_test, test.name, attrs)
+        for listener in self._listeners:
+            self._notify_end_test(listener, test)
+
+    def _notify_end_test(self, listener, test):
+        if listener.version == 1:
+            listener.call_method(listener.end_test, test.status, test.message)
+        else:
+            attrs = self._get_end_attrs(test, 'tags')
+            attrs['critical'] = 'yes' if test.critical else 'no'
+            attrs['template'] = test.template or ''
+            listener.call_method(listener.end_test, test.name, attrs)
 
     def start_keyword(self, kw):
-        for li in self._listeners:
-            if li.version == 1:
-                li.call_method(li.start_keyword, kw.name, kw.args)
+        for listener in self._listeners:
+            if listener.version == 1:
+                listener.call_method(listener.start_keyword, kw.name, kw.args)
             else:
                 attrs = self._get_start_attrs(kw, *self._kw_extra_attrs)
                 attrs['type'] = self._get_keyword_type(kw, start=True)
-                li.call_method(li.start_keyword, kw.name, attrs)
+                listener.call_method(listener.start_keyword, kw.name, attrs)
 
     def end_keyword(self, kw):
-        for li in self._listeners:
-            if li.version == 1:
-                li.call_method(li.end_keyword, kw.status)
+        for listener in self._listeners:
+            if listener.version == 1:
+                listener.call_method(listener.end_keyword, kw.status)
             else:
                 attrs = self._get_end_attrs(kw, *self._kw_extra_attrs)
                 attrs['type'] = self._get_keyword_type(kw, start=False)
-                li.call_method(li.end_keyword, kw.name, attrs)
+                listener.call_method(listener.end_keyword, kw.name, attrs)
 
     def _get_keyword_type(self, kw, start=True):
         # When running setup or teardown, only the top level keyword has type
@@ -161,26 +167,26 @@ class Listeners(object):
                           kw.type.title())
 
     def log_message(self, msg):
-        for li in self._listeners:
-            if li.version == 2:
-                li.call_method(li.log_message, self._create_msg_dict(msg))
+        for listener in self._listeners:
+            if listener.version == 2:
+                listener.call_method(listener.log_message, self._create_msg_dict(msg))
 
     def message(self, msg):
-        for li in self._listeners:
-            if li.version == 2:
-                li.call_method(li.message, self._create_msg_dict(msg))
+        for listener in self._listeners:
+            if listener.version == 2:
+                listener.call_method(listener.message, self._create_msg_dict(msg))
 
     def _create_msg_dict(self, msg):
         return {'timestamp': msg.timestamp, 'message': msg.message,
                 'level': msg.level, 'html': 'yes' if msg.html else 'no'}
 
     def output_file(self, name, path):
-        for li in self._listeners:
-            li.call_method(getattr(li, '%s_file' % name.lower()), path)
+        for listener in self._listeners:
+            listener.call_method(getattr(listener, '%s_file' % name.lower()), path)
 
     def close(self):
-        for li in self._listeners:
-            li.call_method(li.close)
+        for listener in self._listeners:
+            listener.call_method(listener.close)
 
     def _get_start_attrs(self, item, *extra):
         return self._get_attrs(item, self._start_attrs, extra)
@@ -213,7 +219,7 @@ class Listeners(object):
         return value
 
 
-class _ListenerProxy(AbstractLoggerProxy):
+class ListenerProxy(AbstractLoggerProxy):
     _methods = ['start_suite', 'end_suite', 'start_test', 'end_test',
                 'start_keyword', 'end_keyword', 'log_message', 'message',
                 'output_file', 'report_file', 'log_file', 'debug_file',
@@ -256,3 +262,8 @@ class _ListenerProxy(AbstractLoggerProxy):
         for key, value in dictionary.iteritems():
             map.put(key, value)
         return map
+
+
+# TODO: Remove in 2.9, left here in 2.8.5 for backwards compatibility.
+# Consider also decoupling importing from __init__ to ease extending.
+_ListenerProxy = ListenerProxy
