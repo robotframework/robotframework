@@ -87,7 +87,6 @@ nearest second.
 
 from datetime import timedelta, datetime
 import time
-import string
 import sys
 import re
 
@@ -367,9 +366,9 @@ def get_current_date(time_zone='local', increment='0', result_format='timestamp'
 class Time(object):
 
     def __init__(self, time):
-        self.seconds = self._convert_time_to_seconds(time)
+        self.seconds = self._convert_to_seconds(time)
 
-    def _convert_time_to_seconds(self, time):
+    def _convert_to_seconds(self, time):
         if isinstance(time, timedelta):
             # timedelta.total_seconds() is new in Python 2.7
             return (time.days * 24 * 60 * 60 + time.seconds +
@@ -414,25 +413,27 @@ class Time(object):
 
 class Date(object):
 
-    def __init__(self, dt, input_format=None):
-        self.seconds = self._convert_to_secs(dt, input_format)
+    def __init__(self, date, input_format=None):
+        self.seconds = self._convert_to_seconds(date, input_format)
 
-    def _convert_to_secs(self, timestamp, input_format):
-        if isinstance(timestamp, basestring):
-            timestamp = self._string_to_epoch(timestamp, input_format)
-        elif isinstance(timestamp, datetime):
-            timestamp = self._mktime_with_millis(timestamp)
-        elif not isinstance(timestamp, (int, long, float)):
-            raise ValueError("Unsupported input '%s'." % timestamp)
-        return round(timestamp, 3)
+    def _convert_to_seconds(self, date, input_format):
+        if isinstance(date, basestring):
+            seconds = self._string_to_epoch(date, input_format)
+        elif isinstance(date, datetime):
+            seconds = self._mktime_with_millis(date)
+        elif isinstance(date, (int, long, float)):
+            seconds = date
+        else:
+            raise ValueError("Unsupported input '%s'." % date)
+        return round(seconds, 3)
 
-    def _string_to_epoch(self, dt, input_format):
+    def _string_to_epoch(self, ts, input_format):
         if not input_format:
-            dt = self._normalize_timestamp(dt)
+            ts = self._normalize_timestamp(ts)
             input_format = '%Y-%m-%d %H:%M:%S.%f'
         if self._need_to_handle_f_directive(input_format):
-            return self._handle_un_supported_f_directive(dt, input_format)
-        return self._mktime_with_millis(datetime.strptime(dt, input_format))
+            return self._handle_un_supported_f_directive(ts, input_format)
+        return self._mktime_with_millis(datetime.strptime(ts, input_format))
 
     def _need_to_handle_f_directive(self, format):
         if '%f' not in format:
@@ -440,18 +441,18 @@ class Date(object):
         return sys.version_info < (2, 6) or sys.platform == 'cli'
 
     def _normalize_timestamp(self, date):
-        ts = ''.join(d for d in date if d in string.digits)
+        ts = ''.join(d for d in date if d.isdigit())
         if len(ts) < 8:
             raise ValueError("Invalid timestamp '%s'." % date)
         ts = ts.ljust(20, '0')
         return '%s-%s-%s %s:%s:%s.%s' % (ts[:4], ts[4:6], ts[6:8], ts[8:10],
                                          ts[10:12], ts[12:14], ts[14:])
 
-    def _handle_un_supported_f_directive(self, dt, input_format):
+    def _handle_un_supported_f_directive(self, ts, input_format):
         input_format = self._remove_f_from_format(input_format)
-        micro = re.search('\d+$', dt).group(0)
-        dt = dt[:-len(micro)]
-        epoch = time.mktime(time.strptime(dt, input_format))
+        micro = re.search('\d+$', ts).group(0)
+        ts = ts[:-len(micro)]
+        epoch = time.mktime(time.strptime(ts, input_format))
         epoch += float(micro) / 10**len(micro)
         return epoch
 
@@ -460,12 +461,6 @@ class Date(object):
             raise ValueError('%f directive is supported only at the end of '
                              'the format string on this Python interpreter.')
         return format[:-2]
-
-    def _dt_from_timestamp(self, ts):
-        # Jython and IronPython handle floats incorrectly. For example:
-        # datetime.fromtimestamp(1399410716.123).microsecond == 122999
-        dt = datetime.fromtimestamp(ts)
-        return dt.replace(microsecond=int(round(ts % 1 * 10**6, -3)))
 
     def _mktime_with_millis(self, dt):
         return time.mktime(dt.timetuple()) + dt.microsecond / 10.0**6
@@ -478,11 +473,11 @@ class Date(object):
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
-        dt = self.seconds if millis else round(self.seconds)
-        return result_converter(dt, millis)
+        seconds = self.seconds if millis else round(self.seconds)
+        return result_converter(seconds, millis)
 
     def _convert_to_timestamp(self, seconds, millis=True, output_format=None):
-        dt = self._dt_from_timestamp(seconds)
+        dt = self._datetime_from_seconds(seconds)
         if output_format:
             if self._need_to_handle_f_directive(output_format):
                 output_format = self._remove_f_from_format(output_format)
@@ -496,11 +491,17 @@ class Date(object):
             ts += '.%03d' % (round(seconds % 1 * 1000))
         return ts
 
-    def _convert_to_epoch(self, dt, millis=True):
-        return dt
+    def _datetime_from_seconds(self, ts):
+        # Jython and IronPython handle floats incorrectly. For example:
+        # datetime.fromtimestamp(1399410716.123).microsecond == 122999
+        dt = datetime.fromtimestamp(ts)
+        return dt.replace(microsecond=int(round(ts % 1 * 10**6, -3)))
 
-    def _convert_to_datetime(self, dt, millis=True):
-        return self._dt_from_timestamp(dt)
+    def _convert_to_epoch(self, seconds, millis=True):
+        return seconds
+
+    def _convert_to_datetime(self, seconds, millis=True):
+        return self._datetime_from_seconds(seconds)
 
     def __add__(self, other):
         if isinstance(other, Time):
