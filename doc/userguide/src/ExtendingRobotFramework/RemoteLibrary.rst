@@ -67,7 +67,7 @@ descriptive name, you can import it using the `WITH NAME syntax`_.
    =========  ===========  ========================  =========  =========
     Setting      Value               Value             Value      Value
    =========  ===========  ========================  =========  =========
-   Library    Remote       \http://127.0.0.1:8270    WITH NAME  Example1
+   Library    Remote       \http://127.0.0.1:8270/   WITH NAME  Example1
    Library    Remote       \http://example.com:7777  WITH NAME  Example2
    Library    Remote       \http://10.0.0.2/example  WITH NAME  Example3
    =========  ===========  ========================  =========  =========
@@ -83,13 +83,18 @@ that the Remote library uses if no address is given. Similarly port
           Prior to Robot Framework 2.8.4 the Remote library itself used the
           potentially slow :code:`localhost` by default.
 
-.. note:: Depending on the remote server, the trailing slash after the server
-          address may or may not be significant. For example, using
-          :code:`http://127.0.0.1:8270` is not always the same as using
-          :code:`http://127.0.0.1:8270/`. If there is a difference, remote
-          servers themselves should document which format to use.
+.. note:: Notice that if the URI contains no path after the server address,
+          `xmlrpclib module`__ used by the Remote library will use
+          :code:`/RPC2` path by default. In practice using
+          :code:`http://127.0.0.1:8270` is thus identical to using
+          :code:`http://127.0.0.1:8270/RPC2`. Depending on the remote server
+          this may or may not be a problem. No extra path is appended if
+          the address has a path even if the path is just :code:`/`. For
+          example, neither :code:`http://127.0.0.1:8270/` nor
+          :code:`http://127.0.0.1:8270/my/path` will be modified.
 
 __ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
+__ https://docs.python.org/2/library/xmlrpclib.html
 
 Starting and stopping remote servers
 ''''''''''''''''''''''''''''''''''''
