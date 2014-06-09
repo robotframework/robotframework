@@ -64,13 +64,13 @@ descriptive name, you can import it using the `WITH NAME syntax`_.
 .. table:: Importing Remote library
    :class: example
 
-   =========  ===========  ========================  =========  =========
-    Setting      Value               Value             Value      Value
-   =========  ===========  ========================  =========  =========
-   Library    Remote       \http://127.0.0.1:8270/   WITH NAME  Example1
-   Library    Remote       \http://example.com:7777  WITH NAME  Example2
-   Library    Remote       \http://10.0.0.2/example  WITH NAME  Example3
-   =========  ===========  ========================  =========  =========
+   =========  ===========  =========================  =========  =========
+    Setting      Value                Value             Value      Value
+   =========  ===========  =========================  =========  =========
+   Library    Remote       \http://127.0.0.1:8270     WITH NAME  Example1
+   Library    Remote       \http://example.com:8080/  WITH NAME  Example2
+   Library    Remote       \http://10.0.0.2/example   WITH NAME  Example3
+   =========  ===========  =========================  =========  =========
 
 The URL used by the first example above is also the default address
 that the Remote library uses if no address is given. Similarly port
