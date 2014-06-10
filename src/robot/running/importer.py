@@ -64,11 +64,12 @@ class Importer(object):
 
     def _log_imported_library(self, name, args, lib):
         type = lib.__class__.__name__.replace('Library', '').lower()[1:]
+        listener = ', with listener' if lib.has_listener else ''
         LOGGER.info("Imported library '%s' with arguments %s "
-                    "(version %s, %s type, %s scope, %d keywords)"
+                    "(version %s, %s type, %s scope, %d keywords%s)"
                     % (name, utils.seq2str2(args), lib.version or '<unknown>',
-                       type, lib.scope.lower(), len(lib)))
-        if not lib:
+                       type, lib.scope.lower(), len(lib), listener))
+        if not lib and not lib.has_listener:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
 
     def _copy_library(self, lib, newname):
