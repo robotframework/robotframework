@@ -77,7 +77,7 @@ Safe Remove Directory
 
 Check Precondition
     [Arguments]    ${precondition}
-    ${ok} =    Evaluate    ${precondition}    modules=sys,os
+    ${ok} =    Evaluate    ${precondition}    modules=sys,os,signal
     Run Keyword If    not ${ok}
     ...    Fail    Precondition '${precondition}' was not true.    precondition-fail
 

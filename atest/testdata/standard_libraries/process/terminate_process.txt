@@ -27,6 +27,7 @@ Kill process
     Should Be Empty    ${result.stderr}
 
 Terminate process running on shell
+    Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
     Terminate should stop countdown
 
@@ -36,6 +37,7 @@ Kill process running on shell
     Terminate should stop countdown    kill=yes
 
 Also child processes are terminated
+    Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    3
     Terminate should stop countdown
 
@@ -45,6 +47,7 @@ Also child processes are killed
     Terminate should stop countdown    kill=${True}
 
 Kill process when terminate fails
+    Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
     ${lib} =    Get Library Instance    Process
     ${lib.TERMINATE_TIMEOUT} =    Set Variable    ${2}
     ${lib.KILL_TIMEOUT} =    Set Variable    ${1}
