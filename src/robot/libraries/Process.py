@@ -767,11 +767,16 @@ class ExecutionResult(object):
     def _read_stream(self, stream_path, stream):
         if stream_path:
             stream = open(stream_path, 'r')
+        elif not self._is_open(stream):
+            return ''
         try:
-            return self._format_output(stream.read() if stream else '')
+            return self._format_output(stream.read())
         finally:
             if stream_path:
                 stream.close()
+
+    def _is_open(self, stream):
+        return stream and not stream.closed
 
     def _format_output(self, output):
         if output.endswith('\n'):
@@ -781,8 +786,7 @@ class ExecutionResult(object):
     def close_streams(self):
         standard_streams = self._get_and_read_standard_streams(self._process)
         for stream in standard_streams + self._custom_streams:
-            if stream and not stream.closed:
-                stream.flush()
+            if self._is_open(stream):
                 stream.close()
 
     def _get_and_read_standard_streams(self, process):

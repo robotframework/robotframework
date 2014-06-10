@@ -61,6 +61,20 @@ Run multiple times using custom streams
     :FOR    ${i}    IN RANGE    500
     \   Run And Test Once    ${i}    ${STDOUT}    ${STDERR}
 
+Read standard streams when they are already closed externally
+    ${code} =    Catenate    SEPARATOR=;
+    ...    import sys
+    ...    message = raw_input()
+    ...    sys.stdout.write('%s out' % message)
+    ...    sys.stderr.write('%s err' % message)
+    Start Python Process    ${code}
+    ${process} =    Get Process Object
+    ${stdout}    ${stderr} =    Call Method    ${process}    communicate    hi\n
+    Should Be Equal    ${stdout}--${stderr}    hi out--hi err
+    Should Be True    ${process.stdout.closed}
+    Should Be True    ${process.stderr.closed}
+    ${result} =    Wait For Process
+    Should Be Equal    ${result.stdout}--${result.stderr}    --
 
 *** Keywords ***
 Run Stdout Stderr Process
