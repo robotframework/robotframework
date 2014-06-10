@@ -419,7 +419,7 @@ A test library can register a listener by using :code:`ROBOT_LIBRARY_LISTENER`
 attribute. The value of this attribute should be an instance of the listener
 to use. It may be a totally independent listener or the library itself can
 act as a listener. To avoid listener methods to be exposed as keywords in
-the latter case, it is possible to prefix them with an underscore./home/peke/Devel/robotframework/doc/userguide/RobotFrameworkUserGuide.html
+the latter case, it is possible to prefix them with an underscore.
 For example, instead of using :code:`end_suite` or :code:`endSuite`, it is
 possible to use :code:`_end_suite` or :code:`_endSuite`.
 
