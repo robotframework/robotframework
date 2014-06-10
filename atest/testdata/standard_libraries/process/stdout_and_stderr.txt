@@ -71,8 +71,10 @@ Read standard streams when they are already closed externally
     ${process} =    Get Process Object
     ${stdout}    ${stderr} =    Call Method    ${process}    communicate    hi\n
     Should Be Equal    ${stdout}--${stderr}    hi out--hi err
-    Should Be True    ${process.stdout.closed}
-    Should Be True    ${process.stderr.closed}
+    Run Keyword If    not ${process.stdout.closed}
+    ...    Call Method    ${process.stdout}    close
+    Run Keyword If    not ${process.stderr.closed}
+    ...    Call Method    ${process.stderr}    close
     ${result} =    Wait For Process
     Should Be Equal    ${result.stdout}--${result.stderr}    --
 

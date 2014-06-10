@@ -86,7 +86,7 @@ Wait until countdown started
 Countdown should have stopped
     [Arguments]    ${handle}=${None}
     ${result}=    Wait For Process    ${handle}
-    Should Not Be Equal    ${result.rc}    ${0}
+    Should Not Be Equal    ${result.rc}    ${0}    handle ${handle}
     ${content1} =    Get File    ${TEMPFILE}
     Should Not Contain    ${content1}    BLASTOFF
     Sleep    0.2
