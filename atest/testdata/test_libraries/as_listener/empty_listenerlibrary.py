@@ -14,6 +14,9 @@ class empty_listenerlibrary(object):
     def _end_test(self, name, attrs):
         self._stderr("END TEST")
 
+    def log_message(self, msg):
+        self._stderr("MESSAGE %s" % msg['message'])
+
     def _close(self):
         self._stderr("CLOSE")
 

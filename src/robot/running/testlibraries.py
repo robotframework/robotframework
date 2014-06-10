@@ -274,6 +274,8 @@ class _ModuleLibrary(_BaseTestLibrary):
         return method
 
     def get_instance(self):
+        if self.has_listener is None:
+            self.has_listener = self._get_listener(self._libcode) is not None
         return self._libcode
 
     def _create_init_handler(self, libcode):
