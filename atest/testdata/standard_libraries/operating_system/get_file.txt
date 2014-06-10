@@ -139,17 +139,17 @@ Grep And Check File
 
 Verify Get File with error handler
     [Arguments]    ${file}    ${error handler}    ${expected}
-    ${ret}=    Get File    ${file}    encoding_errors=${error handler}
+    ${ret}=    Get File    ${file}    ASCII    encoding_errors=${error handler}
     Should Be Equal    ${ret}    ${expected}
 
 Verify Grep File with error handler
     [Arguments]    ${error handler}    ${expected}
-    ${ret}=    Grep File    ${LATIN-1 LONG FILE}    f*a    encoding_errors=${error handler}
+    ${ret}=    Grep File    ${LATIN-1 LONG FILE}    f*a    ASCII    encoding_errors=${error handler}
     Should Be Equal    ${ret}    ${expected}
 
 Verify Log File with error handler
     [Arguments]    ${error handler}    ${expected}
-    ${ret}=    Log File    ${LATIN-1 FILE}    encoding_errors=${error handler}
+    ${ret}=    Log File    ${LATIN-1 FILE}    ASCII    encoding_errors=${error handler}
     Should Be Equal    ${ret}    ${expected}
 
 Verify Grep File With UTF-16 files
