@@ -27,6 +27,7 @@ This library is new in Robot Framework 2.8.5.
 - `Date formats`
 - `Time formats`
 - `Millisecond handling`
+- `Programmatic usage`
 - `Shortcuts`
 - `Keywords`
 
@@ -117,6 +118,16 @@ Every keyword in this library has the option to leave milliseconds out of the
 result. By default, milliseconds are kept with every conversion and calculation.
 If milliseconds are chosen to be left out the result will be rounded to nearest
 second.
+
+= Programmatic Usage =
+Along with the keywords, the public API of this library consists of the
+following two classes:
+
+* class `robot.libraries.DateTime.Date` for creating a Date object from given
+  string or number.
+
+* class `robot.libraries.DateTime.Time` for creating a Time object from given
+  string or number.
 """
 
 from datetime import timedelta, datetime
@@ -411,7 +422,6 @@ def get_current_date(time_zone='local', increment='0',
 
 
 class Time(object):
-
     def __init__(self, time):
         self.seconds = self._convert_to_seconds(time)
 
