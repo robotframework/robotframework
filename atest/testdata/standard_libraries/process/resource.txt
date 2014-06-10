@@ -97,8 +97,8 @@ Countdown should not have stopped
     [Arguments]    ${handle}=${None}
     ${result}=    Wait For Process    ${handle}
     Should Not Be Equal    ${result.rc}    ${0}
-    ${content1} =    Get File    ${TEMPFILE}
-    Should Not Contain    ${content1}    BLASTOFF
-    Sleep    0.2
-    ${content2} =    Get File    ${TEMPFILE}
-    Should Not Be Equal    ${content1}    ${content2}
+    Wait Until Keyword Succeeds    1.2s    0.2s    Blastoff Successful
+
+Blastoff Successful
+    ${content} =    Get File    ${TEMPFILE}
+    Should End With    ${content}    BLASTOFF

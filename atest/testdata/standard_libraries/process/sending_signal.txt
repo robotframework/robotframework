@@ -45,10 +45,10 @@ Sending an unknown signal
 
 Sending signal to a process with a handle
     ${index} =    Start Countdown
-    Start Countdown    alias=alias
     Send Signal To Process    INT    group=yes    handle=${index}
-    Send Signal To Process    INT    alias    group
     Countdown Should Have Stopped    ${index}
+    Start Countdown    alias=alias
+    Send Signal To Process    INT    alias
     Countdown Should Have Stopped    alias
 
 Sending signal to a process with a wrong handle
