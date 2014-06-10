@@ -48,7 +48,7 @@ Sending signal to a process with a handle
     Send Signal To Process    INT    group=yes    handle=${index}
     Countdown Should Have Stopped    ${index}
     Start Countdown    alias=alias
-    Send Signal To Process    INT    alias
+    Send Signal To Process    INT    alias    groupie
     Countdown Should Have Stopped    alias
 
 Sending signal to a process with a wrong handle
