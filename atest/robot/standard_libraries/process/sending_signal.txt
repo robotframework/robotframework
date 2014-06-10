@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    -l sending_signal_log.html    standard_libraries/process/sending_signal.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/sending_signal.txt
 Force Tags       regression    pybot    jybot
 Test Setup       Check Precondition
 Resource         process_resource.txt
