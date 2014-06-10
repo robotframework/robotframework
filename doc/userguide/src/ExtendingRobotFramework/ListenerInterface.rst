@@ -402,3 +402,73 @@ The third example implements the same functionality as the previous one, but use
        }
 
    }
+
+Test libraries as listeners
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sometimes it is useful also for `test libraries`_ to get notifications about
+test execution. This allows them, for example, to perform certain clean-up
+activities automatically when a test suite or the whole test execution ends.
+
+.. note:: This functionality is new in Robot Framework 2.8.5.
+
+Registering listener
+''''''''''''''''''''
+
+A test library can register a listener by using :code:`ROBOT_LIBRARY_LISTENER`
+attribute. The value of this attribute should be an instance of the listener
+to use. It may be a totally independent listener or the library itself can
+act as a listener. To avoid listener methods to be exposed as keywords in
+the latter case, it is possible to prefix them with an underscore./home/peke/Devel/robotframework/doc/userguide/RobotFrameworkUserGuide.html
+For example, instead of using :code:`end_suite` or :code:`endSuite`, it is
+possible to use :code:`_end_suite` or :code:`_endSuite`.
+
+Following examples illustrates using an external listener as well as library
+acting as a listener itself:
+
+.. sourcecode:: java
+
+   import my.project.Listener;
+
+   public class JavaLibraryWithExternalListener {
+       public static final Listener ROBOT_LIBRARY_LISTENER = new Listener();
+       public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
+
+       // actual library code here ...
+   }
+
+.. sourcecode:: python
+
+   class PythonLibraryAsListenerItself(object):
+       ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+       ROBOT_LISTENER_API_VERSION = 2
+
+       def __init__(self):
+           self.ROBOT_LIBRARY_LISTENER = self
+
+       def _end_suite(self, name, attrs):
+           print 'Suite %s (%s) ending.' % (name, attrs['id'])
+
+       # actual library code here ...
+
+As the seconds example above already demonstrated, library listeners can
+specify `listener interface versions`_ using :code:`ROBOT_LISTENER_API_VERSION`
+attribute exactly like any other listener.
+
+Called listener methods
+'''''''''''''''''''''''
+
+Library's listener will get notifications about all events in suites where
+the library is imported. In practice this means that :code:`start_suite`,
+:code:`end_suite`, :code:`start_test`, :code:`end_test`, :code:`start_keyword`,
+:code:`end_keyword`, :code:`log_message`, and :code:`message` methods are
+called inside those suites.
+
+If the library creates a new listener instance every time when the library
+itself is instantiated, the actual listener instance to use will change
+according to the `test library scope`_.
+In addition to the previously listed listener methods, :code:`close`
+method is called when the library goes out of the scope.
+
+See `Listener interface method signatures`_ section above
+for more information about all these methods.
