@@ -11,8 +11,8 @@ ${CWD}            %{TEMPDIR}/process-cwd
 
 *** Keywords ***
 Some process
-    [Arguments]    ${alias}=${null}
-    ${handle}=    Start Python Process    print raw_input()    alias=${alias}    stderr=STDOUT
+    [Arguments]    ${alias}=${null}    ${stderr}=STDOUT
+    ${handle}=    Start Python Process    print raw_input()    alias=${alias}    stderr=${stderr}
     Process should be running
     [Return]    ${handle}
 
@@ -22,7 +22,8 @@ Stop some process
     Return From Keyword If    not ${running}
     ${process}=    Get Process Object    ${handle}
     ${stdout}    ${_} =    Call Method    ${process}    communicate    ${message}\n
-    [Return]    ${stdout.rstrip()}
+    # Python 2.5 adds null bytes
+    [Return]    ${stdout.replace('\x00', '').rstrip()}
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
