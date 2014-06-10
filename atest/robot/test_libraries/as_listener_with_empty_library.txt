@@ -1,0 +1,15 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}
+...      test_libraries/as_listener/empty_library.txt
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Empty library should not cause warning when it is listener
+    Stderr Should Match
+    ...     SEPARATOR=\n
+    ...     *START TEST
+    ...     END TEST
+    ...     CLOSE
+    Check Stderr Does Not Contain     WARN
+
