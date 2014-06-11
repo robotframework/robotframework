@@ -786,7 +786,7 @@ class TelnetConnection(telnetlib.Telnet):
         | Write Control Character | 241 | # Send No operation command |
         """
         self._verify_connection()
-        self.sock.sendall(telnetlib.IAC + self._get_control_character(code))
+        self.sock.sendall(telnetlib.IAC + self._get_control_character(character))
 
     def _get_control_character(self, int_or_name):
         try:

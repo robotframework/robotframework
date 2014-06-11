@@ -31,6 +31,9 @@ Write Bare
 Write Bare With Newlines
     Check Test Case    ${TEST NAME}
 
+Write control character
+    Check Test Case    ${TEST NAME}
+
 Read Until
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    /
