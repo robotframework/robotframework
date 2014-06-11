@@ -771,6 +771,44 @@ class TelnetConnection(telnetlib.Telnet):
                 pass
         raise NoMatchError(expected, timeout)
 
+    def write_control_character(self, character):
+        """Writes the given control character into the connection.
+
+        The control character is preprended with an IAC (interpret as command)
+        character.
+
+        The following control character names are supported: BRK, IP, AO, AYT,
+        EC, EL, NOP. Additionally, you can use arbitrary numbers to send any
+        control character.
+
+        Example:
+        | Write Control Character | BRK | # Send Break command |
+        | Write Control Character | 241 | # Send No operation command |
+        """
+        self._verify_connection()
+        self.sock.sendall(telnetlib.IAC + self._get_control_character(code))
+
+    def _get_control_character(self, int_or_name):
+        try:
+            return chr(int(int_or_name))
+        except ValueError:
+            return self._convert_control_code_name_to_character(int_or_name)
+
+    def _convert_control_code_name_to_character(self, name):
+        code_names = {
+                'BRK' : telnetlib.BRK,
+                'IP' : telnetlib.IP,
+                'AO' : telnetlib.AO,
+                'AYT' : telnetlib.AYT,
+                'EC' : telnetlib.EC,
+                'EL' : telnetlib.EL,
+                'NOP' : telnetlib.NOP
+        }
+        try:
+            return code_names[name]
+        except KeyError:
+            raise RuntimeError("Unsupported control character '%s'." % name)
+
     def read(self, loglevel=None):
         """Reads everything that is currently available in the output.
 
