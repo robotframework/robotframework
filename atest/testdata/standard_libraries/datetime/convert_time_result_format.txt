@@ -4,7 +4,7 @@ Library           DateTime
 Variables         datesandtimes.py
 
 *** Test Cases ***    INPUT              FORMAT       EXPECTED
-Convert to seconds    10 s               number       ${10}
+Convert to number     10 s               number       ${10}
                       ${-62.3}           NUMBER       ${-62.3}
                       ${timedelta(2)}    NUMber       ${172800}
 
@@ -33,6 +33,13 @@ Ignore millis         [Template]         Time conversion without millis should s
                       61.5               timer        00:01:02
                       61.5               timedelta    ${timedelta(seconds=62)}
 
+Number is float regardless are millis included or not
+                      [Template]    Number format should be
+                      ${1000.123}        1000.123
+                      ${1000}            1000.0
+                      ${1000.123}        1000.0       no millis
+                      ${1000}            1000.0       no millis
+
 Invalid format        [Documentation]    FAIL ValueError: Unknown format 'invalid'.
                       10s                invalid      0
 
@@ -46,3 +53,8 @@ Time conversion without millis should succeed
     [Arguments]    ${input}    ${format}    ${expected}
     ${result} =    Convert Time    ${input}    ${format}    exclude_millis=Yes
     Should Be Equal    ${result}    ${expected}
+
+Number format should be
+    [Arguments]    ${input}    ${expected}    ${millis}=
+    ${result} =    Convert Time    ${input}    result_format=number    exclude_millis=${millis}
+    Should Be Equal As Strings    ${result}    ${expected}

@@ -422,10 +422,11 @@ def get_current_date(time_zone='local', increment='0',
 
 
 class Time(object):
-    def __init__(self, time):
-        self.seconds = self._convert_to_seconds(time)
 
-    def _convert_to_seconds(self, time):
+    def __init__(self, time):
+        self.seconds = self._convert_time_to_seconds(time)
+
+    def _convert_time_to_seconds(self, time):
         if isinstance(time, timedelta):
             # timedelta.total_seconds() is new in Python 2.7
             return (time.days * 24 * 60 * 60 + time.seconds +
@@ -437,7 +438,7 @@ class Time(object):
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
-        seconds = self.seconds if millis else int(round(self.seconds))
+        seconds = self.seconds if millis else round(self.seconds)
         return result_converter(seconds, millis)
 
     def _convert_to_number(self, seconds, millis=True):
@@ -471,9 +472,9 @@ class Time(object):
 class Date(object):
 
     def __init__(self, date, input_format=None):
-        self.seconds = self._convert_to_seconds(date, input_format)
+        self.seconds = self._convert_date_to_seconds(date, input_format)
 
-    def _convert_to_seconds(self, date, input_format):
+    def _convert_date_to_seconds(self, date, input_format):
         if isinstance(date, basestring):
             seconds = self._string_to_epoch(date, input_format)
         elif isinstance(date, datetime):
@@ -523,13 +524,13 @@ class Date(object):
         return time.mktime(dt.timetuple()) + dt.microsecond / 10.0**6
 
     def convert(self, format, millis=True):
+        seconds = self.seconds if millis else round(self.seconds)
         if '%' in format:
-            return self._convert_to_timestamp(self.seconds, millis, format)
+            return self._convert_to_timestamp(seconds, millis, format)
         try:
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
-        seconds = self.seconds if millis else round(self.seconds)
         return result_converter(seconds, millis)
 
     def _convert_to_timestamp(self, seconds, millis=True, output_format=None):
