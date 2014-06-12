@@ -13,11 +13,12 @@
 #  limitations under the License.
 
 
-"""A test library for manipulating and verifying date and time values.
+"""A test library for handling date and time values.
 
-`DateTime` is a standard library of Robot Framework that allows converting date
-and time values, adding and subtracting them and verifying variables as date or
-time values.
+_DateTime_ is a Robot Framework standard library that supports creating,
+converting, and verifying date and time values, as well as doing simple
+calculations with them. It supports dates and times in various formats,
+and can also be used by other libraries programmatically.
 
 This library is new in Robot Framework 2.8.5.
 
@@ -33,104 +34,250 @@ This library is new in Robot Framework 2.8.5.
 
 = Terminology =
 
-The terms used by this library differ somewhat from those used in Python. In
-this library the term `time` is used to represent a period of time measured in
-hours, minutes, seconds etc. (like Python's timedelta).
+In the context of this library, _date_ and _time_ generally have following
+meanings:
 
-On the other hand, `date` represents both date and time of day (like Python's
- datetime).
+- _date_: An entity with both date and time components but without any
+   timezone information. For example, '2014-06-11 10:07:42'.
+- _time_: A time interval. For example, '1 hour 20 minutes' or '01:20:00'.
+
+This terminology differs from what Python's standard
+[https://docs.python.org/2/library/datetime.html|datetime] module uses.
+Basically its
+[https://docs.python.org/2/library/datetime.html#datetime-objects|datetime] and
+[https://docs.python.org/2/library/datetime.html#timedelta-objects|timedelta]
+objects match _date_ and _time_ as defined by this library.
 
 = Date formats =
 
-Date can be input in and converted to following formats:
+Dates can given to and received from keywords in `timestamp`, `custom
+timestamp`, `Python datetime` and `epoch time` formats. These formats are
+discussed thoroughly in subsequent sections.
 
-== timestamp ==
-'timestamp' is a string value containing both date and time.
+Input format is determined automatically based on the given date except when
+using custom timestamps, in which case it needs to be given using
+`date_format` argument. Default result format is timestamp, but it can
+be overridden using `result_format` argument.
 
-'timestamp' strings can have both input and output formatting specified in
-formatting directives which are documented in Python's
-[https://docs.python.org/2/library/time.html#time.strftime|time.strftime()
-documentation].
+== Timestamp ==
 
-Input formatting is always given as separate parameter (or parameters, if there
-are many date inputs) to keywords handling dates. In output formatting however,
-a colon character is needed to specify that we want a timestamp with custom
-formatting (e.g. 'timestamp:format').
+If a date is given as a string, it is always considered to be a timestamp.
+If no custom formatting is given using `date_format` argument, the timestamp
+is expected to be in [http://en.wikipedia.org/wiki/ISO_8601|ISO 8601] like
+format 'YYYY-MM-DD hh:mm:ss.mil', where any non-digit character can be used
+as a separator or separators can be omitted altogether. Additionallly,
+only the date part is mandatory, all possibly missing time components are
+considered to be zeros.
 
-If a format is not given to string input or output in keyword, it is assumed to
-be '%Y-%m-%d %H:%M:%S' by default. However, the input is flexible and will
-accept any non-digit separators as long as the numbers are in the right order.
+Dates can also be returned in the same 'YYYY-MM-DD hh:mm:ss.mil' format by using
+_timestamp_ value with `result_format` argument. This is also the default
+format that keywords returning dates use. Milliseconds can be excluded using
+`exclude_millis` as explained in `Millisecond handling` section.
 
 Examples:
-| ${ts} =         | Convert Date | 12:05:03 28.05.2014 | date_format=%H:%M:%S %m.%d.%Y |
-| Should Be Equal | ${ts}        | 2014-05-28 12:05:03 |
-| Add To Date     | ${ts}        | 1hour               | timestamp:%H.%M.%S %d-%m |
-| Should Be Equal | ${ts}        | 13.05.03 28-05      |
+| ${date1} =      | Convert Date | 2014-06-11 10:07:42.000 |
+| ${date2} =      | Convert Date | 20140611 100742         | result_format=timestamp |
+| Should Be Equal | ${date1}     | ${date2}                |
+| ${date} =       | Convert Date | 20140612 12:57          | exclude_millis=yes |
+| Should Be Equal | ${date}      | 2014-06-12 12:57:00     |
 
-== epoch ==
+== Custom timestamp ==
 
-'epoch' value is the time in seconds since January 1, 1970 00:00:00.000. 'epoch'
-value needs to be given in integer, long or float and is returned in float.
+It is possible to use custom timestamps in both input and output.
+The custom format is same as accepted by Python's
+[https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior|
+datatime.strptime() function]. For example, the default timestamp discussed
+in the previous section would match '%Y-%m-%d %H:%M:%S.%f'.
 
-== datetime ==
+When using a custom timestamp in input, it must be specified using `date_format`
+argument. The actual input value must be a string that matches the specified
+format exactly. When using a custom timestamp in output, it must be given
+using `result_format` argument.
 
-'datetime' is a Python
+Examples:
+| ${date} =       | Convert Date | 28.05.2014 12:05        | date_format=%d.%m.%Y %H:%M |
+| Should Be Equal | ${date}      | 2014-05-28 12:05:00.000 |
+| ${date} =       | Convert Date | ${date}                 | result_format=%d.%m.%Y |
+| Should Be Equal | ${date}      | 28.05.2014              |
+
+== Python datetime ==
+
+Python's standard
 [https://docs.python.org/2/library/datetime.html#datetime.datetime|datetime]
-object containing the date and time.
+objects can be used both in input and output. In input they are recognized
+automatically, and in output it is possible to get them by giving _datetime_
+value to `result_format` argument.
+
+One nice benefit with datetime objects is that they have different time
+components available as attributes that can be easily accessed using the
+extended variable syntax.
+
+Examples:
+| ${datetime} = | Convert Date | 2014-06-11 10:07:42.123 | datetime |
+| Should Be Equal As Integers | ${datetime.year}        | 2014   |
+| Should Be Equal As Integers | ${datetime.month}       | 6      |
+| Should Be Equal As Integers | ${datetime.day}         | 11     |
+| Should Be Equal As Integers | ${datetime.hour}        | 10     |
+| Should Be Equal As Integers | ${datetime.minute}      | 7      |
+| Should Be Equal As Integers | ${datetime.second}      | 42     |
+| Should Be Equal As Integers | ${datetime.microsecond} | 123000 |
+
+== Epoch time ==
+
+Epoch time is the time in seconds since the
+[http://en.wikipedia.org/wiki/Unix_time|UNIX epoch] i.e. 00:00:00.000 (UTC)
+1 January 1970. To give a date in epoch time, it must be given as a number
+(integer or float), not as a string. To return a date in epoch time,
+it is possible to use _epoch_ value with `result_format` argument.
+Epoch time is returned as a floating point number.
+
+Notice that epoch time itself is independent on timezones and thus same
+around the world at a certain time. What local time a certain epoch time
+matches obviously then depends on the timezone. For example, examples below
+were tested in Finland but verifications would fail on other timezones.
+
+Examples:
+| ${date} =       | Convert Date | ${1000000000}           |
+| Should Be Equal | ${date}      | 2001-09-09 04:46:40.000 |
+| ${date} =       | Convert Date | 2014-06-12 13:27:59.279 | epoch |
+| Should Be Equal | ${date}      | ${1402568879.279}       |
 
 = Time formats =
 
-Time can be input in and converted to following formats:
+Similarly as dates, times can be given to and received from keywords in
+various different formats. Supported formats are `number`, `time string`
+(verbose and compact), `timer string` and `Python timedelta`.
 
-== number ==
+Input format for time is always determined automatically based on the input.
+Result format is number by default, but it can be customised using
+`result_format` argument.got
 
-'number' value is amount of seconds given as integer, long or float.
+== Number ==
 
-== verbose ==
+Time given as a number is interpreted to be seconds. It can be given
+either as an integer or a float, or it can be a string that can be converted
+to a number.
 
-'verbose' is a string containing long descriptions of the time units. For
-example '1 hour 5 minutes 3 seconds'. Units supported are days, hours, minutes,
-seconds and milliseconds.
+To return a time as a number, `result_format` argument must be _number_,
+which is also the default. Returned number is always a float.
 
-== compact ==
+Examples:
+| ${time} =       | Convert Time | 3.14    |
+| Should Be Equal | ${time}      | ${3.14} |
+| ${time} =       | Convert Time | ${time} | result_format=number |
+| Should Be Equal | ${time}      | ${3.14} |
 
-'compact' is like the `verbose` except the time units are shortened to only
-first letters. For example: '1h 5m 3s'. Units supported are 'd', 'h', 'm', 's'
-and 'ms'.
+== Time string ==
 
-== timer ==
+Time strings are strings in format like '1 minutes 42 seconds' or '1min 42s'.
+The basic idea of this format is having first a number and then a text
+specifying what time that number represents. Numbers can be either
+integers or floating point numbers, the whole format is case and space
+insensitive, and it is possible to add a minus prefix to specify negative
+times. The available time specifiers are:
 
-'timer' is a time value in stopwatch-like string. For example: '01:11:12.010'.
-Zero value fields on the left side can be left out. Also, each of the values
-(hours, minutes, seconds) have no upper limit at all so for example
-'101:213.120' would be valid (albeit cryptic) 'timer' value with 101 minutes and
-213 seconds.
+- days, day, d
+- hours, hour, h
+- minutes, minute, mins, min, m
+- seconds, second, secs, sec, s
+- milliseconds, millisecond, millis, ms
 
-== timedelta ==
+When returning a time string, it is possible to select between _verbose_
+and _compact_ representations using `result_format` argument. The verbose
+format uses long specifiers 'day', 'hour', 'minute', 'second' and
+'millisecond', and adds 's' at the end when needed. The compact format uses
+shorter specifiers 'd', 'h', 'min', 's' and 'ms', and even drops a space
+between the number and the specifier.
 
-'timedelta' is a Python
+Examples:
+| ${time} =       | Convert Time | 1 minute 42 seconds |
+| Should Be Equal | ${time}      | ${102}              |
+| ${time} =       | Convert Time | 4200                | verbose |
+| Should Be Equal | ${time}      | 1 hour 10 minutes   |
+| ${time} =       | Convert Time | - 1.5 hours         | compact |
+| Should Be Equal | ${time}      | - 1h 30min          |
+
+== Timer string ==
+
+Timer string is a string given in timer like format 'hh:mm:ss.mil'. In this
+format both hour and millisecond parts are optional, leading and trailing
+zeros can be left out when they are not meaningful, and negative times can
+be represented by adding a minus prefix.
+
+To return a time as timer string, `result_format` argument must be given
+value _timer_. Timer strings are by default returned in full _hh:mm:ss.mil_
+format, but milliseconds can be excluded using `exclude_millis` as explained
+in `Millisecond handling` section.
+
+Examples:
+| ${time} =       | Convert Time | 01:42        |
+| Should Be Equal | ${time}      | ${102}       |
+| ${time} =       | Convert Time | 01:10:00.123 |
+| Should Be Equal | ${time}      | ${4200.123}  |
+| ${time} =       | Convert Time | 102          | timer |
+| Should Be Equal | ${time}      | 00:01:42.000 |
+| ${time} =       | Convert Time | -101.567     | timer | exclude_millis=yes |
+| Should Be Equal | ${time}      | -00:01:42    |
+
+== Python timedelta ==
+
+Python's standard
 [https://docs.python.org/2/library/datetime.html#datetime.timedelta|timedelta]
-object containing the time interval.
+objects are also supported both in input and in output. In input they are
+recognized automatically, and in output it is possible to receive them by
+giving _timedelta_ value to `result_format` argument.
+
+Examples:
+| ${timedelta} =  | Convert Time                 | 01:10:02.123 | timedelta |
+| Should Be Equal | ${timedelta.total_seconds()} | ${4202.123}  |
 
 = Millisecond handling =
 
-Every keyword in this library has the option to leave milliseconds out of the
-result. By default, milliseconds are kept with every conversion and calculation.
-If milliseconds are chosen to be left out the result will be rounded to nearest
-second.
+This library stores dates and times internally using millisecond accuracy.
+By default all result formats will also have milliseconds included even if
+they would be zero.
 
-= Programmatic Usage =
-Along with the keywords, the public API of this library consists of the
-following two classes:
+All keywords returning dates or times have an option to leave milliseconds
+out by giving any value considered true (e.g. any non-empty string) to
+`exclude_millis` argument. When this option is used, milliseconds in
+the returned date or time are rounded to the nearest seconds. With dates
+returned as a `timestamp` and times returned as a `timer string`, milliseconds
+will also be removed from the returned string altogether.
 
-* class `robot.libraries.DateTime.Date` for creating a Date object from given
-  string or number.
+Examples:
+| ${date} =       | Convert Date | 2014-06-11 10:07:42     |
+| Should Be Equal | ${date}      | 2014-06-11 10:07:42.000 |
+| ${date} =       | Convert Date | 2014-06-11 10:07:42.500 | exclude_millis=yes |
+| Should Be Equal | ${date}      | 2014-06-11 10:07:43     |
+| ${time} =       | Convert Time | 102          | timer |
+| Should Be Equal | ${time}      | 00:01:42.000 |       |
+| ${time} =       | Convert Time | 102.567      | timer | exclude_millis=true |
+| Should Be Equal | ${time}      | 00:01:43     |       |
 
-* class `robot.libraries.DateTime.Time` for creating a Time object from given
-  string or number.
+= Programmatic usage =
+
+In addition to be used as normal library, this library is intended to
+provide a stable API for other libraries to use if they want to support
+same date and time formats as this library. All the provided keywords
+are available as functions that can be easily imported:
+
+| from robot.libraries.DateTime import convert_time
+|
+| def example_keyword(timeout):
+|     seconds = convert_time(timeout)
+|     # ...
+
+Additionally helper classes _Date_ and _Time_ can be used directly:
+
+| from robot.libraries.DateTime import Date, Time
+|
+| def example_keyword(date, interval):
+|     date = Date(date).convert('datetime')
+|     interval = Time(interval).convert('number')
+|     # ...
 """
 
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 import time
 import sys
 import re
@@ -144,14 +291,15 @@ __all__ = ['should_be_date', 'should_be_time', 'convert_time', 'convert_date',
            'add_to_time', 'add_to_date', 'get_current_date']
 
 
-def should_be_date(date, input_format=None):
+# TODO: Are Should Be Date/Time needed? Should at least rename them to
+# Is Date/Time or change them to raise exception when verification fails.
+# If removed, remove also from __all__!!
+def should_be_date(date, date_format=None):
     """Validate input to be a date.
 
-    `date` is valid when it is in one of the `Date Formats`.
+    `date` is valid when it is in one of the supported `date formats`.
 
-    `input_format` is formatting directive (See `Formatted Timestamps` in
-    introduction) that can be given to validate a timestamp string in custom
-    format.
+    `date_format` can be used to specify a `custom timestamp`.
 
     Returns `True` if `date` is valid and `False` otherwise.
 
@@ -168,7 +316,7 @@ def should_be_date(date, input_format=None):
     | Should Not Be True | ${result}      |
     """
     try:
-        Date(date, input_format)
+        Date(date, date_format)
     except ValueError:
         return False
     return True
@@ -195,51 +343,43 @@ def should_be_time(time):
 
 
 def convert_time(time, result_format='number', exclude_millis=False):
-    """Convert time to different format.
+    """Converts between supported `time formats`.
 
-    `time` is a time representation given in one of the supported formats.
-
-    `result_format` is the name of the format that `time` is converted to.
-
-    Set `exclude_millis` to True to leave milliseconds out of the result by
-    default they are kept.
-
-    Returns time in specified format.
+    Arguments:
+    - _time:_           Time in one of the supported `time formats`.
+    - _result_format:_  Format of the returned time.
+    - _exclude_millis:_ When set to any true value, rounds and drops
+                        milliseconds as explained in `millisecond handling`.
 
     Examples:
-    | ${time} =       | Convert Time  | 10 s              | number  |
+    | ${time} =       | Convert Time  | 10 seconds        |
     | Should Be Equal | ${time}       | ${10}             |
     | ${time} =       | Convert Time  | 1:00:01           | verbose |
-    | Should Be Equal | ${time}       | 1 hour 1 seconds  |
-    | ${time} =       | Convert Time  | ${3660}           | compact |
-    | Should Be Equal | ${time}       | 1h 1min           |
+    | Should Be Equal | ${time}       | 1 hour 1 second   |
+    | ${time} =       | Convert Time  | ${3661.5} | timer | exclude_milles=yes |
+    | Should Be Equal | ${time}       | 01:01:02          |
     """
     return Time(time).convert(result_format, millis=not exclude_millis)
 
 
 def convert_date(date, result_format='timestamp', exclude_millis=False,
                  date_format=None):
-    """Convert date to different format.
+    """Converts between supported `date formats`.
 
-    `date` is a date representation given in one of the supported formats.
-
-    `result_format` is the name of the format that `date` is converted to.
-
-    Set `exclude_millis` to True to leave milliseconds out of the result by
-    default they are kept.
-
-    `date_format` can be used to specify how the input date is formatted if it
-    is a string. See `Date formats` in the introduction for syntax.
-
-    Returns date in specified format.
+    Arguments:
+    - _date:_           Date in one of the supported `date formats`.
+    - _result_format:_  Format of the returned date.
+    - _exclude_millis:_ When set to any true value, rounds and drops
+                        milliseconds as explained in `millisecond handling`.
+    - _date_format:_    Specifies possible `custom timestamp` format.
 
     Examples:
-    | ${ts} =         | Convert Date | 2014.05.28 12:05:03.111 | epoch                         |
-    | Should Be Equal | ${ts}        | ${1401267903.111}       |
-    | ${ts} =         | Convert Date | 12.05.03 28-05-2014     | date_format=%H.%M.%S %m-%d-%Y |
-    | Should Be Equal | ${ts}        | 2014-05-28 12:05:03     |
-    | ${ts} =         | Convert Date | ${datetime.now()}       | timestamp:%Y/%m/%d %H:%M      |
-    | Should Be Equal | ${ts}        | 2014/05/28 12:05        |
+    | ${date} =       | Convert Date | 20140528 12:05:03.111   |
+    | Should Be Equal | ${date}      | 2014-05-28 12:05:03.111 |
+    | ${date} =       | Convert Date | ${date}                 | epoch |
+    | Should Be Equal | ${date}      | ${1401267903.111}       |
+    | ${date} =       | Convert Date | 5.28.2014 12:05         | exclude_millis=yes | date_format=%m.%d.%Y %H:%M |
+    | Should Be Equal | ${date}      | 2014-05-28 12:05:00     |
     """
     return Date(date, date_format).convert(result_format,
                                            millis=not exclude_millis)
@@ -247,30 +387,24 @@ def convert_date(date, result_format='timestamp', exclude_millis=False,
 
 def subtract_dates(date1, date2, result_format='number', exclude_millis=False,
                    date1_format=None, date2_format=None):
-    """Subtract date2 from date1.
+    """Subtracts date from another date and returns time between.
 
-    `date1` and `date2` are date representations given in one supported formats.
-    They can be of different formats.
-
-    `result_format` is the name of the time format that the result is outputted
-    in.
-
-    Set `exclude_millis` to True to leave milliseconds out of the result by
-    default they are kept.
-
-    `date1_format` and `date2_format` can be used to specify how the two input
-    dates are formatted if they are strings. See `Date formats` in the
-    introduction for syntax.
-
-    Returns difference between date1 and date2 in time.
+    Arguments:
+    - _date1:_          Date to subtract another date from in one of the
+                        supported `date formats`.
+    - _date2:_          Date that is subtracted in one of the supported
+                        `date formats`.
+    - _result_format:_  Format of the returned time (see `time formats`).
+    - _exclude_millis:_ When set to any true value, rounds and drops
+                        milliseconds as explained in `millisecond handling`.
+    - _date1_format:_   Specifies possible `custom timestamp` format of _date1_.
+    - _date2_format:_   Specifies possible `custom timestamp` format of _date2_.
 
      Examples:
-    | ${time} =       | Subtract Dates | 2014.05.28 12:05:03.111 | 2014.05.27 12:05:03.111 |
-    | Should Be Equal | ${time}        | ${86400}                |
-    | ${time} =       | Subtract Dates | 2014.05.28 12:05:03.111 | 2014.05.27 11:04:03.111 | verbose |
-    | Should Be Equal | ${time}        | 1 day 1 hour 1 second   |
-    | ${time} =       | Subtract Dates | 2014.05.28 12:05:03.000 | 2014.05.27 12:05:03.499 | compact | exclude_millis=true |
-    | Should Be Equal | ${time}        | 1d                      |
+    | ${time} =       | Subtract Dates | 2014-05-28 12:05:52     | 2014-05-28 12:05:10 |
+    | Should Be Equal | ${time}        | ${42}                   |
+    | ${time} =       | Subtract Dates | 2014-05-28 12:05:52     | 2014-05-27 12:05:10 | verbose |
+    | Should Be Equal | ${time}        | 1 day 42 seconds        |
     """
     time = Date(date1, date1_format) - Date(date2, date2_format)
     return time.convert(result_format, millis=not exclude_millis)
@@ -278,28 +412,23 @@ def subtract_dates(date1, date2, result_format='number', exclude_millis=False,
 
 def add_to_date(date, time, result_format='timestamp', exclude_millis=False,
                 date_format=None):
-    """Add time to a date.
+    """Adds time to date and returns the resulting date.
 
-    `date` is a date representation given in one of the supported formats.
-
-    `time` is a time representation given in one of the supported formats.
-
-    `result_format` is the name of the date format that the result is outputted
-    in.
-
-    Set `exclude_millis` to True to leave milliseconds out of the result by
-    default they are kept.
-
-    `date_format` can be used to specify how the input date is formatted if it
-    is a string. See `Date formats` in the introduction for syntax.
-
-    Returns date which is given amount of time in the future.
+    Arguments:
+    - _date:_           Date to add time to in one of the supported
+                        `date formats`.
+    - _time:_           Time that is added in one of the supported
+                        `time formats`.
+    - _result_format:_  Format of the returned date.
+    - _exclude_millis:_ When set to any true value, rounds and drops
+                        milliseconds as explained in `millisecond handling`.
+    - _date_format:_    Specifies possible `custom timestamp` format of _date_.
 
     Examples:
-    | ${date} =       | Add To Date    | 2014.05.28 12:05:03.111 | 1h |
-    | Should Be Equal | ${date}        | 2014.05.28 13:05:03.111 |
-    | ${date} =       | Add To Date    | 2014.05.28 12:05:03.111 | 1 year 3 hours |
-    | Should Be Equal | ${date}        | 2015.05.28 15:05:03.111 |
+    | ${date} =       | Add To Date | 2014-05-28 12:05:03.111 | 7 days       |
+    | Should Be Equal | ${date}     | 2014-06-04 12:05:03.111 |              |
+    | ${date} =       | Add To Date | 2014-05-28 12:05:03.111 | 01:02:03:004 |
+    | Should Be Equal | ${date}     | 2014-05-28 13:07:06.115 |
     """
     date = Date(date, date_format) + Time(time)
     return date.convert(result_format, millis=not exclude_millis)
@@ -307,52 +436,43 @@ def add_to_date(date, time, result_format='timestamp', exclude_millis=False,
 
 def subtract_from_date(date, time, result_format='timestamp',
                        exclude_millis=False, date_format=None):
-    """Subtract time from date.
+    """Subtracts time from date and returns the resulting date.
 
-    `date` is a date representation given in one of the supported formats.
-
-    `time` is a time representation given in one of the supported formats.
-
-    `result_format` is the name of the date format that the result is outputted
-    in.
-
-    Set `exclude_millis` to True to leave milliseconds out of the result by
-    default they are kept.
-
-    `date_format` can be used to specify how the input date is formatted if it
-    is a string. See `Date formats` in the introduction for syntax.
-
-    Returns date which is given time before the specified date.
+    Arguments:
+    - _date:_           Date to subtract time from in one of the supported
+                        `date formats`.
+    - _time:_           Time that is subtracted in one of the supported
+                        `time formats`.
+    - _result_format:_  Format of the returned date.
+    - _exclude_millis:_ When set to any true value, rounds and drops
+                        milliseconds as explained in `millisecond handling`.
+    - _date_format:_    Specifies possible `custom timestamp` format of _date_.
 
     Examples:
-    | ${date} =       | Subtract From Date | 2014.05.28 12:05:03.111 | 1h                |
-    | Should Be Equal | ${date}            | 2014.05.28 11:05:03.111 |
-    | ${date} =       | Subtract From Date | 2014.05.28 12:05:03.111 | 12h 5min 3s 111ms | timestamp:%d:%m |
-    | Should Be Equal | ${date}            | 28.05                   |
+    | ${date} =       | Subtract From Date | 2014-06-04 12:05:03.111 | 7 days |
+    | Should Be Equal | ${date}            | 2014-05-28 12:05:03.111 |
+    | ${date} =       | Subtract From Date | 2014-05-28 13:07:06.115 | 01:02:03:004 |
+    | Should Be Equal | ${date}            | 2014-05-28 12:05:03.111 |
     """
     date = Date(date, date_format) - Time(time)
     return date.convert(result_format, millis=not exclude_millis)
 
 
 def add_to_time(time1, time2, result_format='number', exclude_millis=False):
-    """Add time2 to time1.
+    """Adds time to another time and returns the resulting time.
 
-    `time1` and `time2` are time representations given in one of the supported
-    formats.
-
-    `result_format` is the name of the time format that the result is outputted
-    in.
-
-    Set `exclude_millis` to True to leave milliseconds out of the result by
-    default they are kept.
-
-    Returns the sum of two times.
+    Arguments:
+    - _time1:_          First time in one of the supported `time formats`.
+    - _time2:_          Second time in one of the supported `time formats`.
+    - _result_format:_  Format of the returned time.
+    - _exclude_millis:_ When set to any true value, rounds and drops
+                        milliseconds as explained in `millisecond handling`.
 
     Examples:
-    | ${time} =       | Add To Time | 01:00:00.000      | 3h |
-    | Should Be Equal | ${time}     | ${14400}          |
-    | ${time} =       | Add To Time | 3 hours 5 minutes | 00:01:00.000 | timer |
-    | Should Be Equal | ${time}     | 03:06:00.000      |
+    | ${time} =       | Add To Time | 1 minute          | 42       |
+    | Should Be Equal | ${time}     | ${102}            |
+    | ${time} =       | Add To Time | 3 hours 5 minutes | 01:02:03 | timer | exclude_millis=yes |
+    | Should Be Equal | ${time}     | 04:07:03          |
     """
     time = Time(time1) + Time(time2)
     return time.convert(result_format, millis=not exclude_millis)
@@ -360,56 +480,51 @@ def add_to_time(time1, time2, result_format='number', exclude_millis=False):
 
 def subtract_from_time(time1, time2, result_format='number',
                        exclude_millis=False):
-    """Subtract time2 from time1.
+    """Subtracts time from another time and returns the resulting time.
 
-    `time1` and `time2` are time representations given in one of the supported
-    formats.
-
-    `result_format` is the name of the time format that the result is outputted
-    in.
-
-    Set `exclude_millis` to True to leave milliseconds out of the result by
-    default they are kept.
-
-    Returns the difference of two times.
+    Arguments:
+    - _time1:_          Time to subtract another time from in one of
+                        the supported `time formats`.
+    - _time2:_          Time to subtract in one of the supported `time formats`.
+    - _result_format:_  Format of the returned time.
+    - _exclude_millis:_ When set to any true value, rounds and drops
+                        milliseconds as explained in `millisecond handling`.
 
     Examples:
-    | ${time} =       | Subtract From Time | 01:00:00.000 | 5min |
-    | Should Be Equal | ${time}            | ${3300}      |
-    | ${time} =       | Subtract From Time | ${36}        | 1m   |
-    | Should Be Equal | ${time}            | ${-14}       |
+    | ${time} =       | Subtract From Time | 00:02:30 | 100      |
+    | Should Be Equal | ${time}            | ${50}    |
+    | ${time} =       | Subtract From Time | ${time}  | 1 minute | compact |
+    | Should Be Equal | ${time}            | - 10s    |
     """
     time = Time(time1) - Time(time2)
     return time.convert(result_format, millis=not exclude_millis)
 
 
-def get_current_date(time_zone='local', increment='0',
+def get_current_date(time_zone='local', increment=0,
                      result_format='timestamp', exclude_millis=False):
-    """Get current date value.
+    """Returns current local or UTC time with an optional increment.
 
-    Current date can be returned in either local time or in UTC by specifying
-    the `time_zone` as either 'local' or 'UTC'.
-
-    The value van also be incremented or subtracted by `increment`, which can be
-    any of the supported time formats.
-
-    `result_format` is the name of the time format that the result is outputted
-    in.
-
-    Set `exclude_millis` to True to leave milliseconds out of the result by
-    default they are kept.
-
-    Returns a date in specified format.
+    Arguments:
+    - _time_zone:_:     Get the current time on this time zone. Currently only
+                        'local' (default) and 'UTC' are supported.
+    - _increment_:      Optional time increment to add to the returned date in
+                        one of the supported `time formats`. Can be negative.
+    - _result_format:_  Format of the returned date (see `date formats`).
+    - _exclude_millis:_ When set to any true value, rounds and drops
+                        milliseconds as explained in `millisecond handling`.
 
     Examples:
     | ${date} =       | Get Current Date |
-    | Should Be Equal | ${date}          | 2014-05-30 14:45:01.135 |
+    | Should Be Equal | ${date}          | 2014-06-12 20:00:58.946 |
     | ${date} =       | Get Current Date | UTC                     |
-    | Should Be Equal | ${date}          | 2014-05-30 11:45:01.135 |
-    | ${date} =       | Get Current Date | UTC                     | -5h |
-    | Should Be Equal | ${date}          | 2014-05-30 06:45:01.135 |
-    | ${date} =       | Get Current Date | result_format=epoch     |
-    | Should Be Equal | ${date}          | ${1401450301.0}         |
+    | Should Be Equal | ${date}          | 2014-06-12 17:00:58.946 |
+    | ${date} =       | Get Current Date | increment=02:30:00      |
+    | Should Be Equal | ${date}          | 2014-06-12 22:30:58.946 |
+    | ${date} =       | Get Current Date | UTC                     | - 5 hours |
+    | Should Be Equal | ${date}          | 2014-06-12 12:00:58.946 |
+    | ${date} =       | Get Current Date | result_format=datetime  |
+    | Should Be Equal | ${date.year}     | ${2014}                 |
+    | Should Be Equal | ${date.month}    | ${6}                    |
     """
     if time_zone.upper() == 'LOCAL':
         dt = datetime.now()
