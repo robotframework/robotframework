@@ -53,7 +53,7 @@ Time as "timer" string
 Starting from Robot Framework 2.8.5, time can also be given in timer like
 format :code:`hh:mm:ss.mil`. In this format  both hour and millisecond parts
 are optional, leading and trailing zeros can be left out when they are not
-needed, and negative times can be represented by adding :code:`-` prefix.
+meaningful, and negative times can be represented by adding :code:`-` prefix.
 For example, following timer and time string values are identical:
 
 .. table:: Timer and time string examples
