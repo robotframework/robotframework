@@ -523,10 +523,8 @@ class Date(object):
         return time.mktime(dt.timetuple()) + dt.microsecond / 10.0**6
 
     def convert(self, format, millis=True):
-        if ':' in format:
-            format, output_format = format.split(':', 1)
-            return self._convert_to_timestamp(self.seconds, millis,
-                                              output_format)
+        if '%' in format:
+            return self._convert_to_timestamp(self.seconds, millis, format)
         try:
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:

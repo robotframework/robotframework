@@ -6,43 +6,43 @@ Variables         datesandtimes.py
 *** Variables ***
 ${DATE}           ${datetime(2014, 4, 24, 21, 45, 12, 123000)}
 
-*** Test Cases ***    INPUT                      FORMAT                         OUTPUT                          INPUT FORMAT
+*** Test Cases ***    INPUT                      FORMAT               OUTPUT                     INPUT FORMAT
 Should convert to timestamp
-                      2014-04-24 21:45:12.123    timeSTAMP                      2014-04-24 21:45:12.123
-                      2014-04-24 21:45:12.123    tImestamp                      2014-04-24 21:45:12.123         %Y-%m-%d %H:%M:%S.%f
-                      ${EPOCH}                   TIMEstamp                      2014-04-24 21:45:12.000
-                      ${DATE}                    TimeStamp                      2014-04-24 21:45:12.123
+                      2014-04-24 21:45:12.123    timeSTAMP            2014-04-24 21:45:12.123
+                      2014-04-24 21:45:12.123    tImestamp            2014-04-24 21:45:12.123    %Y-%m-%d %H:%M:%S.%f
+                      ${EPOCH}                   TIMEstamp            2014-04-24 21:45:12.000
+                      ${DATE}                    TimeStamp            2014-04-24 21:45:12.123
 
 Should convert to timestamp with format
-                      2014-04-24 21:45:12.123    TimeStamp:%H:%M:%S %Y-%m-%d       21:45:12 2014-04-24
-                      2014/04/24 21:45:12.123    timestamp:%H:%M %Y-%m-%d          21:45 2014-04-24             %Y/%m/%d %H:%M:%S.%f
+                      2014-04-24 21:45:12.123    %H:%M:%S %Y-%m-%d    21:45:12 2014-04-24
+                      2014/04/24 21:45:12.123    %H:%M %Y-%m-%d       21:45 2014-04-24           %Y/%m/%d %H:%M:%S.%f
 
 Should convert to epoch
-                      2014-04-24 21:45:12.123    epoch                          ${EPOCH + 0.123}
-                      2014-04-24 21:45:12.123    epoch                          ${EPOCH + 0.123}                %Y-%m-%d %H:%M:%S.%f
-                      ${EPOCH}                   epoch                          ${EPOCH}
-                      ${DATE}                    epoch                          ${EPOCH + 0.123}
+                      2014-04-24 21:45:12.123    epoch                ${EPOCH + 0.123}
+                      2014-04-24 21:45:12.123    epoch                ${EPOCH + 0.123}           %Y-%m-%d %H:%M:%S.%f
+                      ${EPOCH}                   epoch                ${EPOCH}
+                      ${DATE}                    epoch                ${EPOCH + 0.123}
 
 Should convert to datetime
-                      2014-04-24 21:45:12.123    datetime                       ${DATE}
-                      2014-04-24 21:45:12.123    datetime                       ${DATE}                         %Y-%m-%d %H:%M:%S.%f
-                      ${EPOCH + 0.123}           dateTiMe                       ${DATE}
-                      ${DATE}                    datetimE                       ${DATE}
+                      2014-04-24 21:45:12.123    datetime             ${DATE}
+                      2014-04-24 21:45:12.123    datetime             ${DATE}                    %Y-%m-%d %H:%M:%S.%f
+                      ${EPOCH + 0.123}           dateTiMe             ${DATE}
+                      ${DATE}                    datetimE             ${DATE}
 
 Should exclude milliseconds
                       [Template]    Date Conversion Should Succeed Without Milliseconds
-                      2014-04-24 21:45:12.123    timestamp                      2014-04-24 21:45:12
-                      2014-04-24 21:45:12.999    timestamp                      2014-04-24 21:45:13
-                      ${DATE}                    timestamp                      2014-04-24 21:45:12
-                      ${EPOCH + 0.123}           datetime                       ${datetime(2014, 4, 24, 21, 45, 12)}
+                      2014-04-24 21:45:12.123    timestamp            2014-04-24 21:45:12
+                      2014-04-24 21:45:12.999    timestamp            2014-04-24 21:45:13
+                      ${DATE}                    timestamp            2014-04-24 21:45:12
+                      ${EPOCH + 0.123}           datetime             ${datetime(2014, 4, 24, 21, 45, 12)}
 
 Formatted with %f in middle
     [Template]     NONE
     Run Keyword If    sys.version_info < (2, 6) or sys.platform == 'cli'
     ...   Run Keyword And Expect Error    ValueError: %f directive is supported only at the end of the format string on this Python interpreter.
-    ...   Date Conversion Should Succeed    2014-04-24 21:45:12.123    TimeStamp:%H:%M:%S.%f %Y-%m-%d    21:45:12.123000 2014-04-24
+    ...   Date Conversion Should Succeed    2014-04-24 21:45:12.123    %H:%M:%S.%f %Y-%m-%d    21:45:12.123000 2014-04-24
     ...   ELSE
-    ...   Date Conversion Should Succeed    2014-04-24 21:45:12.123    TimeStamp:%H:%M:%S.%f %Y-%m-%d    21:45:12.123000 2014-04-24
+    ...   Date Conversion Should Succeed    2014-04-24 21:45:12.123    %H:%M:%S.%f %Y-%m-%d    21:45:12.123000 2014-04-24
 
 *** Keywords ***
 Date Conversion Should Succeed
