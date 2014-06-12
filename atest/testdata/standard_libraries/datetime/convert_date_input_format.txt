@@ -21,6 +21,8 @@ Epoch                 ${EPOCH}                                        2014-04-24
                       ${EPOCH + 0.123}                                2014-04-24 21:45:12.123
 
 Datetime object       ${datetime(2014, 4, 24, 21, 45, 12, 123000)}    2014-04-24 21:45:12.123
+                      ${datetime(2014, 4, 24, 21, 45, 12, 123456)}    2014-04-24 21:45:12.123
+                      ${datetime(2014, 4, 24, 21, 45, 12, 123500)}    2014-04-24 21:45:12.124
                       ${datetime(2014, 4, 24, 21)}                    2014-04-24 21:00:00.000
 
 Pad zeroes to missing values
@@ -54,7 +56,7 @@ Invalid input
     kekkonen      Invalid timestamp 'kekkonen'.
     2014-06       Invalid timestamp '2014-06'.
     2014-06-5     Invalid timestamp '2014-06-5'.
-    2014-06-05    time data *                  %Y-%m-%d %H:%M:%S.%f
+    2014-06-05    *                                 %Y-%m-%d %H:%M:%S.%f
     ${NONE}       Unsupported input 'None'.
 
 *** Keywords ***

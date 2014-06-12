@@ -4,31 +4,42 @@ Library           DateTime
 Variables         datesandtimes.py
 
 *** Variables ***
-${DATE}           ${datetime(2014, 4, 24, 21, 45, 12, 123000)}
+${DATE}              ${datetime(2014, 4, 24, 21, 45, 12)}
+${DATE w/ MILLIS}    ${datetime(2014, 4, 24, 21, 45, 12, 123000)}
+${DATE w/ MICRO}     ${datetime(2014, 4, 24, 21, 45, 12, 123456)}
 
 *** Test Cases ***    INPUT                      FORMAT               OUTPUT                     INPUT FORMAT
 Should convert to timestamp
                       2014-04-24 21:45:12.123    timeSTAMP            2014-04-24 21:45:12.123
                       2014-04-24 21:45:12.123    tImestamp            2014-04-24 21:45:12.123    %Y-%m-%d %H:%M:%S.%f
+                      20140424 21:45:12.12399    tImestamp            2014-04-24 21:45:12.124    %Y%m%d %H:%M:%S.%f
                       ${EPOCH}                   TIMEstamp            2014-04-24 21:45:12.000
-                      ${DATE}                    TimeStamp            2014-04-24 21:45:12.123
+                      ${DATE}                    TimeStamp            2014-04-24 21:45:12.000
+                      ${DATE w/ MILLIS}          TimeStamp            2014-04-24 21:45:12.123
+                      ${DATE w/ MICRO}           TimeStamp            2014-04-24 21:45:12.123
 
 Should convert to timestamp with format
                       2014-04-24 21:45:12.123    %H:%M:%S %Y-%m-%d    21:45:12 2014-04-24
                       2014-04-24 21:45:12.999    %H:%M:%S %Y-%m-%d    21:45:12 2014-04-24
+                      20140424 21:45:12.123456   %Y%m%d %H:%M:%S.%f   20140424 21:45:12.123456
+                      20140424 21:45:12.123456   %H:%M:%S.%f          21:45:12.123456
+                      20140424 21:45:12.123      %H:%M:%S.%f          21:45:12.123000
+                      20140424 21:45             %H:%M:%S.%f          21:45:00.000000
                       2014/04/24 21:45:12.123    %H:%M %Y-%m-%d       21:45 2014-04-24           %Y/%m/%d %H:%M:%S.%f
 
 Should convert to epoch
                       2014-04-24 21:45:12.123    epoch                ${EPOCH + 0.123}
                       2014-04-24 21:45:12.123    epoch                ${EPOCH + 0.123}           %Y-%m-%d %H:%M:%S.%f
                       ${EPOCH}                   epoch                ${EPOCH}
-                      ${DATE}                    epoch                ${EPOCH + 0.123}
+                      ${DATE w/ MICRO}           epoch                ${EPOCH + 0.123456}
 
 Should convert to datetime
-                      2014-04-24 21:45:12.123    datetime             ${DATE}
-                      2014-04-24 21:45:12.123    datetime             ${DATE}                    %Y-%m-%d %H:%M:%S.%f
-                      ${EPOCH + 0.123}           dateTiMe             ${DATE}
-                      ${DATE}                    datetimE             ${DATE}
+                      20140424 21:45:12.123456   datetime             ${DATE w/ MICRO}
+                      20140424 21:45:12.123456   datetime             ${DATE w/ MICRO}           %Y%m%d %H:%M:%S.%f
+                      ${EPOCH + 0.123456}        DateTiMe             ${DATE w/ MICRO}
+                      ${DATE}                    datetime             ${DATE}
+                      ${DATE w/ MILLIS}          datetime             ${DATE w/ MILLIS}
+                      ${DATE w/ MICRO}           datetime             ${DATE w/ MICRO}
 
 Should exclude milliseconds
                       [Template]    Date Conversion Should Succeed Without Milliseconds
@@ -37,6 +48,9 @@ Should exclude milliseconds
                       ${DATE}                    timestamp            2014-04-24 21:45:12
                       ${EPOCH + 0.123}           %Y-%m-%d %H:%M:%S    2014-04-24 21:45:12
                       ${EPOCH + 0.500}           %Y-%m-%d %H:%M:%S    2014-04-24 21:45:13
+                      ${DATE}                    datetime             ${datetime(2014, 4, 24, 21, 45, 12)}
+                      ${DATE w/ MILLIS}          datetime             ${datetime(2014, 4, 24, 21, 45, 12)}
+                      ${DATE w/ MICRO}           datetime             ${datetime(2014, 4, 24, 21, 45, 12)}
                       ${EPOCH + 0.123}           datetime             ${datetime(2014, 4, 24, 21, 45, 12)}
                       ${EPOCH + 0.500}           datetime             ${datetime(2014, 4, 24, 21, 45, 13)}
                       ${EPOCH + 0.123}           epoch                ${EPOCH}

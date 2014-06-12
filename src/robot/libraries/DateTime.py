@@ -233,22 +233,26 @@ Examples:
 
 = Millisecond handling =
 
-This library stores dates and times internally using millisecond accuracy.
-By default all result formats will also have milliseconds included even if
-they would be zero.
+This library handles dates and times internally using the precision of the
+given input. With `timestamp`, `time string`, and `timer string` result
+formats seconds are, however, rounded to millisecond accuracy. Milliseconds
+may also be included even if there would be none.
 
 All keywords returning dates or times have an option to leave milliseconds
 out by giving any value considered true (e.g. any non-empty string) to
-`exclude_millis` argument. When this option is used, milliseconds in
-the returned date or time are rounded to the nearest seconds. With dates
-returned as a `timestamp` and times returned as a `timer string`, milliseconds
-will also be removed from the returned string altogether.
+`exclude_millis` argument. When this option is used, seconds in returned
+dates and times are rounded to the nearest full second. With `timestamp`
+and `timer string` result formats, milliseconds will also be removed from
+the returned string altogether.
 
 Examples:
 | ${date} =       | Convert Date | 2014-06-11 10:07:42     |
 | Should Be Equal | ${date}      | 2014-06-11 10:07:42.000 |
 | ${date} =       | Convert Date | 2014-06-11 10:07:42.500 | exclude_millis=yes |
 | Should Be Equal | ${date}      | 2014-06-11 10:07:43     |
+| ${dt} =         | Convert Date | 2014-06-11 10:07:42.500 | datetime | exclude_millis=yes |
+| Should Be Equal | ${dt.second} | ${43}        |
+| Should Be Equal | ${dt.microsecond} | ${0}    |
 | ${time} =       | Convert Time | 102          | timer |
 | Should Be Equal | ${time}      | 00:01:42.000 |       |
 | ${time} =       | Convert Time | 102.567      | timer | exclude_millis=true |
@@ -546,7 +550,7 @@ class Time(object):
             # timedelta.total_seconds() is new in Python 2.7
             return (time.days * 24 * 60 * 60 + time.seconds +
                     time.microseconds / 1000000.0)
-        return timestr_to_secs(time)
+        return timestr_to_secs(time, round_to=None)
 
     def convert(self, format, millis=True):
         try:
@@ -591,14 +595,12 @@ class Date(object):
 
     def _convert_date_to_seconds(self, date, input_format):
         if isinstance(date, basestring):
-            seconds = self._string_to_epoch(date, input_format)
+            return self._string_to_epoch(date, input_format)
         elif isinstance(date, datetime):
-            seconds = self._mktime_with_millis(date)
+            return self._mktime_with_millis(date)
         elif isinstance(date, (int, long, float)):
-            seconds = date
-        else:
-            raise ValueError("Unsupported input '%s'." % date)
-        return round(seconds, 3)
+            return float(date)
+        raise ValueError("Unsupported input '%s'." % date)
 
     def _string_to_epoch(self, ts, input_format):
         if not input_format:
@@ -641,33 +643,34 @@ class Date(object):
     def convert(self, format, millis=True):
         seconds = self.seconds if millis else round(self.seconds)
         if '%' in format:
-            return self._convert_to_timestamp(seconds, millis, format)
+            return self._convert_to_custom_timestamp(seconds, format)
         try:
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
         return result_converter(seconds, millis)
 
-    def _convert_to_timestamp(self, seconds, millis=True, output_format=None):
+    def _convert_to_custom_timestamp(self, seconds, format):
+        format = str(format)  # Needed by Python 2.5
         dt = self._datetime_from_seconds(seconds)
-        if output_format:
-            if self._need_to_handle_f_directive(output_format):
-                output_format = self._remove_f_from_format(output_format)
-            else:
-                output_format = str(output_format)  # Needed by Python 2.5
-                millis = False
-        else:
-            output_format = '%Y-%m-%d %H:%M:%S'
-        ts = dt.strftime(output_format)
+        if not self._need_to_handle_f_directive(format):
+            return dt.strftime(format)
+        format = self._remove_f_from_format(format)
+        micro = round(seconds % 1 * 10**6)
+        return '%s%06d' % (dt.strftime(format), micro)
+
+    def _convert_to_timestamp(self, seconds, millis=True):
+        dt = self._datetime_from_seconds(seconds)
+        ts = dt.strftime('%Y-%m-%d %H:%M:%S')
         if millis:
-            ts += '.%03d' % (round(seconds % 1 * 1000))
+            ts += '.%03d' % round(seconds % 1 * 1000)
         return ts
 
     def _datetime_from_seconds(self, ts):
         # Jython and IronPython handle floats incorrectly. For example:
         # datetime.fromtimestamp(1399410716.123).microsecond == 122999
         dt = datetime.fromtimestamp(ts)
-        return dt.replace(microsecond=int(round(ts % 1 * 10**6, -3)))
+        return dt.replace(microsecond=int(round(ts % 1 * 10**6)))
 
     def _convert_to_epoch(self, seconds, millis=True):
         return seconds

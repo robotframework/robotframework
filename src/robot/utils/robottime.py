@@ -39,13 +39,13 @@ def _float_secs_to_secs_and_millis(secs):
 START_TIME = _get_timetuple()
 
 
-def timestr_to_secs(timestr):
+def timestr_to_secs(timestr, round_to=3):
     """Parses time like '1h 10s', '01:00:10' or '42' and returns seconds."""
     if isinstance(timestr, (basestring, int, long, float)):
         for converter in _number_to_secs, _timer_to_secs, _time_string_to_secs:
             secs = converter(timestr)
             if secs is not None:
-                return round(secs, 3)
+                return secs if round_to is None else round(secs, round_to)
     raise ValueError("Invalid time string '%s'." % timestr)
 
 def _number_to_secs(number):
