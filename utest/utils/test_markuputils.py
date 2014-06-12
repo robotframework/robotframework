@@ -294,9 +294,17 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
     def test_link_is_required(self):
         assert_format('[|]', '[|]', p=True)
 
-    def test_whitespace_is_strip(self):
+    def test_spaces_are_stripped(self):
         assert_format('[ link.html  | title words  ]',
                       '<a href="link.html">title words</a>', p=True)
+
+    def test_newlines_inside_text(self):
+        assert_format('[http://url|text\non\nmany\nlines]',
+                      '<a href="http://url">text on many lines</a>', p=True)
+
+    def test_newline_after_pipe(self):
+        assert_format('[http://url|\nwrapping was needed]',
+                      '<a href="http://url">wrapping was needed</a>', p=True)
 
     def test_url_and_link(self):
         assert_format('http://url [link|title]',
