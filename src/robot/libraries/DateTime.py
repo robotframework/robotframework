@@ -150,7 +150,7 @@ various different formats. Supported formats are `number`, `time string`
 
 Input format for time is always determined automatically based on the input.
 Result format is number by default, but it can be customised using
-`result_format` argument.got
+`result_format` argument.
 
 == Number ==
 
@@ -509,9 +509,9 @@ def get_current_date(time_zone='local', increment=0,
     """Returns current local or UTC time with an optional increment.
 
     Arguments:
-    - _time_zone:_:     Get the current time on this time zone. Currently only
+    - _time_zone:_     Get the current time on this time zone. Currently only
                         'local' (default) and 'UTC' are supported.
-    - _increment_:      Optional time increment to add to the returned date in
+    - _increment:_      Optional time increment to add to the returned date in
                         one of the supported `time formats`. Can be negative.
     - _result_format:_  Format of the returned date (see `date formats`).
     - _exclude_millis:_ When set to any true value, rounds and drops
