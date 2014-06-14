@@ -295,24 +295,40 @@ __all__ = ['convert_time', 'convert_date', 'subtract_dates',
            'add_to_time', 'add_to_date', 'get_current_date']
 
 
-def convert_time(time, result_format='number', exclude_millis=False):
-    """Converts between supported `time formats`.
+def get_current_date(time_zone='local', increment=0,
+                     result_format='timestamp', exclude_millis=False):
+    """Returns current local or UTC time with an optional increment.
 
     Arguments:
-    - _time:_           Time in one of the supported `time formats`.
-    - _result_format:_  Format of the returned time.
+    - _time_zone:_:     Get the current time on this time zone. Currently only
+                        'local' (default) and 'UTC' are supported.
+    - _increment_:      Optional time increment to add to the returned date in
+                        one of the supported `time formats`. Can be negative.
+    - _result_format:_  Format of the returned date (see `date formats`).
     - _exclude_millis:_ When set to any true value, rounds and drops
                         milliseconds as explained in `millisecond handling`.
 
     Examples:
-    | ${time} =       | Convert Time  | 10 seconds        |
-    | Should Be Equal | ${time}       | ${10}             |
-    | ${time} =       | Convert Time  | 1:00:01           | verbose |
-    | Should Be Equal | ${time}       | 1 hour 1 second   |
-    | ${time} =       | Convert Time  | ${3661.5} | timer | exclude_milles=yes |
-    | Should Be Equal | ${time}       | 01:01:02          |
+    | ${date} =       | Get Current Date |
+    | Should Be Equal | ${date}          | 2014-06-12 20:00:58.946 |
+    | ${date} =       | Get Current Date | UTC                     |
+    | Should Be Equal | ${date}          | 2014-06-12 17:00:58.946 |
+    | ${date} =       | Get Current Date | increment=02:30:00      |
+    | Should Be Equal | ${date}          | 2014-06-12 22:30:58.946 |
+    | ${date} =       | Get Current Date | UTC                     | - 5 hours |
+    | Should Be Equal | ${date}          | 2014-06-12 12:00:58.946 |
+    | ${date} =       | Get Current Date | result_format=datetime  |
+    | Should Be Equal | ${date.year}     | ${2014}                 |
+    | Should Be Equal | ${date.month}    | ${6}                    |
     """
-    return Time(time).convert(result_format, millis=not exclude_millis)
+    if time_zone.upper() == 'LOCAL':
+        dt = datetime.now()
+    elif time_zone.upper() == 'UTC':
+        dt = datetime.utcnow()
+    else:
+        raise ValueError("Unsupported timezone '%s'." % time_zone)
+    date = Date(dt) + Time(increment)
+    return date.convert(result_format, millis=not exclude_millis)
 
 
 def convert_date(date, result_format='timestamp', exclude_millis=False,
@@ -336,6 +352,26 @@ def convert_date(date, result_format='timestamp', exclude_millis=False,
     """
     return Date(date, date_format).convert(result_format,
                                            millis=not exclude_millis)
+
+
+def convert_time(time, result_format='number', exclude_millis=False):
+    """Converts between supported `time formats`.
+
+    Arguments:
+    - _time:_           Time in one of the supported `time formats`.
+    - _result_format:_  Format of the returned time.
+    - _exclude_millis:_ When set to any true value, rounds and drops
+                        milliseconds as explained in `millisecond handling`.
+
+    Examples:
+    | ${time} =       | Convert Time  | 10 seconds        |
+    | Should Be Equal | ${time}       | ${10}             |
+    | ${time} =       | Convert Time  | 1:00:01           | verbose |
+    | Should Be Equal | ${time}       | 1 hour 1 second   |
+    | ${time} =       | Convert Time  | ${3661.5} | timer | exclude_milles=yes |
+    | Should Be Equal | ${time}       | 01:01:02          |
+    """
+    return Time(time).convert(result_format, millis=not exclude_millis)
 
 
 def subtract_dates(date1, date2, result_format='number', exclude_millis=False,
@@ -453,90 +489,6 @@ def subtract_from_time(time1, time2, result_format='number',
     return time.convert(result_format, millis=not exclude_millis)
 
 
-def get_current_date(time_zone='local', increment=0,
-                     result_format='timestamp', exclude_millis=False):
-    """Returns current local or UTC time with an optional increment.
-
-    Arguments:
-    - _time_zone:_:     Get the current time on this time zone. Currently only
-                        'local' (default) and 'UTC' are supported.
-    - _increment_:      Optional time increment to add to the returned date in
-                        one of the supported `time formats`. Can be negative.
-    - _result_format:_  Format of the returned date (see `date formats`).
-    - _exclude_millis:_ When set to any true value, rounds and drops
-                        milliseconds as explained in `millisecond handling`.
-
-    Examples:
-    | ${date} =       | Get Current Date |
-    | Should Be Equal | ${date}          | 2014-06-12 20:00:58.946 |
-    | ${date} =       | Get Current Date | UTC                     |
-    | Should Be Equal | ${date}          | 2014-06-12 17:00:58.946 |
-    | ${date} =       | Get Current Date | increment=02:30:00      |
-    | Should Be Equal | ${date}          | 2014-06-12 22:30:58.946 |
-    | ${date} =       | Get Current Date | UTC                     | - 5 hours |
-    | Should Be Equal | ${date}          | 2014-06-12 12:00:58.946 |
-    | ${date} =       | Get Current Date | result_format=datetime  |
-    | Should Be Equal | ${date.year}     | ${2014}                 |
-    | Should Be Equal | ${date.month}    | ${6}                    |
-    """
-    if time_zone.upper() == 'LOCAL':
-        dt = datetime.now()
-    elif time_zone.upper() == 'UTC':
-        dt = datetime.utcnow()
-    else:
-        raise ValueError("Unsupported timezone '%s'." % time_zone)
-    date = Date(dt) + Time(increment)
-    return date.convert(result_format, millis=not exclude_millis)
-
-
-class Time(object):
-
-    def __init__(self, time):
-        self.seconds = self._convert_time_to_seconds(time)
-
-    def _convert_time_to_seconds(self, time):
-        if isinstance(time, timedelta):
-            # timedelta.total_seconds() is new in Python 2.7
-            return (time.days * 24 * 60 * 60 + time.seconds +
-                    time.microseconds / 1000000.0)
-        return timestr_to_secs(time, round_to=None)
-
-    def convert(self, format, millis=True):
-        try:
-            result_converter = getattr(self, '_convert_to_%s' % format.lower())
-        except AttributeError:
-            raise ValueError("Unknown format '%s'." % format)
-        seconds = self.seconds if millis else round(self.seconds)
-        return result_converter(seconds, millis)
-
-    def _convert_to_number(self, seconds, millis=True):
-        return seconds
-
-    def _convert_to_verbose(self, seconds, millis=True):
-        return secs_to_timestr(seconds)
-
-    def _convert_to_compact(self, seconds, millis=True):
-        return secs_to_timestr(seconds, compact=True)
-
-    def _convert_to_timer(self, seconds, millis=True):
-        return elapsed_time_to_string(seconds * 1000, include_millis=millis)
-
-    def _convert_to_timedelta(self, seconds, millis=True):
-        return timedelta(seconds=seconds)
-
-    def __add__(self, other):
-        if isinstance(other, Time):
-            return Time(self.seconds + other.seconds)
-        raise TypeError('Can only add Time to Time, not %s.'
-                        % type(other).__name__)
-
-    def __sub__(self, other):
-        if isinstance(other, Time):
-            return Time(self.seconds - other.seconds)
-        raise TypeError('Can only subtract Time from Time, not %s.'
-                        % type(other).__name__)
-
-
 class Date(object):
 
     def __init__(self, date, input_format=None):
@@ -639,4 +591,52 @@ class Date(object):
         if isinstance(other, Time):
             return Date(self.seconds - other.seconds)
         raise TypeError('Can only subtract Date or Time from Date, not %s.'
+                        % type(other).__name__)
+
+
+class Time(object):
+
+    def __init__(self, time):
+        self.seconds = self._convert_time_to_seconds(time)
+
+    def _convert_time_to_seconds(self, time):
+        if isinstance(time, timedelta):
+            # timedelta.total_seconds() is new in Python 2.7
+            return (time.days * 24 * 60 * 60 + time.seconds +
+                    time.microseconds / 1000000.0)
+        return timestr_to_secs(time, round_to=None)
+
+    def convert(self, format, millis=True):
+        try:
+            result_converter = getattr(self, '_convert_to_%s' % format.lower())
+        except AttributeError:
+            raise ValueError("Unknown format '%s'." % format)
+        seconds = self.seconds if millis else round(self.seconds)
+        return result_converter(seconds, millis)
+
+    def _convert_to_number(self, seconds, millis=True):
+        return seconds
+
+    def _convert_to_verbose(self, seconds, millis=True):
+        return secs_to_timestr(seconds)
+
+    def _convert_to_compact(self, seconds, millis=True):
+        return secs_to_timestr(seconds, compact=True)
+
+    def _convert_to_timer(self, seconds, millis=True):
+        return elapsed_time_to_string(seconds * 1000, include_millis=millis)
+
+    def _convert_to_timedelta(self, seconds, millis=True):
+        return timedelta(seconds=seconds)
+
+    def __add__(self, other):
+        if isinstance(other, Time):
+            return Time(self.seconds + other.seconds)
+        raise TypeError('Can only add Time to Time, not %s.'
+                        % type(other).__name__)
+
+    def __sub__(self, other):
+        if isinstance(other, Time):
+            return Time(self.seconds - other.seconds)
+        raise TypeError('Can only subtract Time from Time, not %s.'
                         % type(other).__name__)
