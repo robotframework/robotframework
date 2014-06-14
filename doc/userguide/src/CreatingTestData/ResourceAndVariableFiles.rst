@@ -274,6 +274,12 @@ Variable table below.
    @{MIXED}             first value           ${-1.1}     ${None}    ${True}
    ===================  ====================  ==========  =========  =========
 
+.. note:: Variables are not replaced in strings got from variable files.
+          For example, :code:`VAR = "an ${example}"` would create
+          variable :var:`${VAR}` with a literal string value
+          :var:`an ${example}` regardless would variable :var:`${example}`
+          exist or not.
+
 Using objects as values
 ```````````````````````
 
