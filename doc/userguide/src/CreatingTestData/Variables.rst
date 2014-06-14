@@ -497,25 +497,32 @@ libraries. The syntax for a simple case is illustrated in the example below:
 .. table:: Assigning values from keywords to variables
    :class: example
 
-   ===========  ==========  ============  ============
-    Test Case     Action      Argument      Argument
-   ===========  ==========  ============  ============
-   Returning    ${x} =      Get X         an argument
-   \            Log         We got ${x}!
-   ===========  ==========  ============  ============
+   ============  ===============  ============  ============
+     Test Case        Action        Argument      Argument
+   ============  ===============  ============  ============
+   Returning     ${x} =           Get X         an argument
+   \             Log              We got ${x}!
+   Set Variable  ${var} =         Set Variable  example
+   \             Should Be Equal  ${var}        example
+   ============  ===============  ============  ============
 
-In the example above, the value returned by the :name:`Get X` keyword is
-first set into the variable :var:`${x}` and then used by the :name:`Log`
+In the first example above, the value returned by the :name:`Get X` keyword
+is first set into the variable :var:`${x}` and then used by the :name:`Log`
 keyword. This syntax works in all cases where a keywords returns
 something, and the variable is set to whatever value returned by the
 keyword. Having the equals sign :code:`=` after the variable name is
 not obligatory, but recommended, because it makes the assignment
 more explicit.
 
-If a keyword returns a list, it is also possible to assign the return
-value into several scalar variables and/or one list variable. Starting
-from Robot Framework 2.5 this works with all list-like objects, but
-prior to it only Python lists and tuples and Java arrays were supported.
+The second example above shows how to set a predefined `test case
+scope`_ variable using BuiltIn_ :name:`Set Variable` keyword. Same
+approach obviously works also with variables in `user keyword scope`_.
+If all tests share same predefined variable, it is recommended to use
+`variable table`_ instead.
+
+If a keyword returns a list, or any list-like object, it is also possible
+to assign the return value into several scalar variables and/or one list
+variable.
 
 .. table:: Assigning multiple values at once
    :class: example
@@ -580,7 +587,14 @@ them. Setting variables with this keyword thus has the same effect as
 :opt:`--variablefile`. Because this keyword can change variables
 everywhere, it should be used with care.
 
+.. note:: :name:`Set Test/Suite/Global Variable` keywords set named
+          variables directly into `test, suite or global variable scope`__
+          and return nothing. On the other hand, another BuiltIn_ keyword
+          :name:`Set Variable` sets local variables using `return values`__.
+
 __ `Setting variables in command line`_
+__ `Variable scopes`_
+__ `Return values from keywords`_
 
 .. _built-in variable:
 
@@ -913,46 +927,50 @@ Variable scopes
 Depending on where and how they are created, variables can have a
 global, test suite, test case or user keyword scope.
 
-*Global scope*
+Global scope
+````````````
 
-   Global variables are available everywhere in the test data. These
-   variables are normally `set from the command line`__ with the
-   :opt:`--variable` and :opt:`--variablefile` options, but it is also
-   possible to create new global variables or change the existing ones
-   with the BuiltIn_ keyword :name:`Set Global Variable` anywhere in
-   the test data. Additionally also `built-in variables`_ are global.
+Global variables are available everywhere in the test data. These
+variables are normally `set from the command line`__ with the
+:opt:`--variable` and :opt:`--variablefile` options, but it is also
+possible to create new global variables or change the existing ones
+with the BuiltIn_ keyword :name:`Set Global Variable` anywhere in
+the test data. Additionally also `built-in variables`_ are global.
 
-   It is recommended to use capital letters with all global variables.
+It is recommended to use capital letters with all global variables.
 
-*Test suite scope*
+Test suite scope
+````````````````
 
-   Variables with the test suite scope are available anywhere in the
-   test suite where they are defined or imported. They can be created
-   in Variable tables, imported from `resource and variable files`_,
-   or set during the test execution using the BuiltIn_ keyword
-   :name:`Set Suite Variable`.
+Variables with the test suite scope are available anywhere in the
+test suite where they are defined or imported. They can be created
+in Variable tables, imported from `resource and variable files`_,
+or set during the test execution using the BuiltIn_ keyword
+:name:`Set Suite Variable`.
 
-   The test suite scope *is not recursive*, which means that variables
-   available in a higher-level test suite *are not available* in
-   lower-level suites. If necessary, `resource and variable files`_ can
-   be used for sharing variables.
+The test suite scope *is not recursive*, which means that variables
+available in a higher-level test suite *are not available* in
+lower-level suites. If necessary, `resource and variable files`_ can
+be used for sharing variables.
 
-   Since these variables can be considered global in the test suite where
-   they are used, it is recommended to use capital letters also with them.
+Since these variables can be considered global in the test suite where
+they are used, it is recommended to use capital letters also with them.
 
-*Test case scope*
+Test case scope
+```````````````
 
-   Variables created in test cases from the return values of keywords have a
-   test case scope and they are available only in that test
-   case. Another possibility to create them is using the BuiltIn_ keyword
-   :name:`Set Test Variable` anywhere in that particular test case. Test
-   case variables are local and should use lower-case letters.
+Variables created in test cases from the `return values from keywords`_
+have a test case scope and they are available only in that test
+case. Another possibility to create them is using the BuiltIn_ keyword
+:name:`Set Test Variable` anywhere in that particular test case. Test
+case variables are local and should use lower-case letters.
 
-*User keyword scope*
+User keyword scope
+``````````````````
 
-   User keywords get their own variables from `arguments passed to them`__
-   and return values from the keywords they use. Also these variables
-   are local and should use lower-case letters.
+User keywords get their own variables from `arguments passed to them`__
+and `return values from keywords`_ they use. Also these variables
+are local and should use lower-case letters.
 
 __ `Setting variables in command line`_
 __ `User keyword arguments`_
