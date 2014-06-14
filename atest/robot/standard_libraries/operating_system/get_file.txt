@@ -30,7 +30,11 @@ Get Latin-1 With Latin-1 Encoding
 Get Utf-16 File with Default Encoding
     Check testcase    ${TESTNAME}
 
-Get File with Default Encoding and error handlers
+Get File with 'ignore' Error Handler
+    Check testcase    ${TESTNAME}
+
+Get File with 'replace' Error Handler
+    Run Keyword If    "${IRONPYTHON}"    Remove Tags    regression
     Check testcase    ${TESTNAME}
 
 Log File
@@ -41,10 +45,14 @@ Log Latin-1 With Latin-1 Encoding
     ${tc} =  Check testcase  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[1]}  Hyvää üötä
 
-Log File with default encoding and error handlers
+Log File with 'ignore' Error Handler
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message     ${tc.kws[0].kws[0].msgs[1]}    Hyv t
-    Check Log Message     ${tc.kws[1].kws[0].msgs[1]}    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
+
+Log File with 'replace' Error Handler
+    Run Keyword If    "${IRONPYTHON}"    Remove Tags    regression
+    ${tc}=    Check testcase    ${TESTNAME}
+    Check Log Message     ${tc.kws[0].kws[0].msgs[1]}    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
 
 Get Binary File preserves CRLF line endings
     Check testcase    ${TESTNAME}
@@ -82,10 +90,15 @@ Grep File with UTF-16 files
     Check Log Message    ${tc.kws[2].kws[0].msgs[1]}   4 out of 5 lines matched
     Check Log Message    ${tc.kws[3].kws[0].msgs[1]}   2 out of 3 lines matched
 
-Grep File With Encoding Error Handlers
+Grep File with 'ignore' Error Handler
+    Run Keyword If    "${IRONPYTHON}"    Remove Tags    regression
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
-    Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    1 out of 5 lines matched
+
+Grep File with 'replace' Error Handler
+    Run Keyword If    "${IRONPYTHON}"    Remove Tags    regression
+    ${tc}=    Check testcase    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
 
 Grep File With Windows line endings
     ${tc}=    Check testcase    ${TESTNAME}
