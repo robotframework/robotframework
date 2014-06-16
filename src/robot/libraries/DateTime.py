@@ -517,7 +517,11 @@ class Date(object):
     def _need_to_handle_f_directive(self, format):
         if '%f' not in format:
             return False
-        return sys.version_info < (2, 6) or sys.platform == 'cli'
+        if sys.version_info < (2, 6):
+            return True
+        # https://ironpython.codeplex.com/workitem/34706
+        # http://bugs.jython.org/issue2166
+        return sys.platform == 'cli' or sys.platform.startswith('java')
 
     def _normalize_timestamp(self, date):
         ts = ''.join(d for d in date if d.isdigit())
