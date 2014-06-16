@@ -290,9 +290,9 @@ from robot.version import get_version
 from robot.utils import elapsed_time_to_string, secs_to_timestr, timestr_to_secs
 
 __version__ = get_version()
-__all__ = ['convert_time', 'convert_date', 'subtract_dates',
-           'subtract_from_date', 'subtract_from_time',
-           'add_to_time', 'add_to_date', 'get_current_date']
+__all__ = ['convert_time', 'convert_date', 'subtract_date_from_date',
+           'subtract_time_from_date', 'subtract_time_from_time',
+           'add_time_to_time', 'add_time_to_date', 'get_current_date']
 
 
 def get_current_date(time_zone='local', increment=0,
@@ -374,8 +374,9 @@ def convert_time(time, result_format='number', exclude_millis=False):
     return Time(time).convert(result_format, millis=not exclude_millis)
 
 
-def subtract_dates(date1, date2, result_format='number', exclude_millis=False,
-                   date1_format=None, date2_format=None):
+def subtract_date_from_date(date1, date2, result_format='number',
+                            exclude_millis=False, date1_format=None,
+                            date2_format=None):
     """Subtracts date from another date and returns time between.
 
     Arguments:
@@ -390,17 +391,17 @@ def subtract_dates(date1, date2, result_format='number', exclude_millis=False,
     - _date2_format:_   Specifies possible `custom timestamp` format of _date2_.
 
      Examples:
-    | ${time} =       | Subtract Dates | 2014-05-28 12:05:52     | 2014-05-28 12:05:10 |
-    | Should Be Equal | ${time}        | ${42}                   |
-    | ${time} =       | Subtract Dates | 2014-05-28 12:05:52     | 2014-05-27 12:05:10 | verbose |
-    | Should Be Equal | ${time}        | 1 day 42 seconds        |
+    | ${time} =       | Subtract Date From Date | 2014-05-28 12:05:52     | 2014-05-28 12:05:10 |
+    | Should Be Equal | ${time}                 | ${42}                   |
+    | ${time} =       | Subtract Date From Date | 2014-05-28 12:05:52     | 2014-05-27 12:05:10 | verbose |
+    | Should Be Equal | ${time}                 | 1 day 42 seconds        |
     """
     time = Date(date1, date1_format) - Date(date2, date2_format)
     return time.convert(result_format, millis=not exclude_millis)
 
 
-def add_to_date(date, time, result_format='timestamp', exclude_millis=False,
-                date_format=None):
+def add_time_to_date(date, time, result_format='timestamp',
+                     exclude_millis=False, date_format=None):
     """Adds time to date and returns the resulting date.
 
     Arguments:
@@ -414,16 +415,16 @@ def add_to_date(date, time, result_format='timestamp', exclude_millis=False,
     - _date_format:_    Specifies possible `custom timestamp` format of _date_.
 
     Examples:
-    | ${date} =       | Add To Date | 2014-05-28 12:05:03.111 | 7 days       |
-    | Should Be Equal | ${date}     | 2014-06-04 12:05:03.111 |              |
-    | ${date} =       | Add To Date | 2014-05-28 12:05:03.111 | 01:02:03:004 |
-    | Should Be Equal | ${date}     | 2014-05-28 13:07:06.115 |
+    | ${date} =       | Add Time To Date | 2014-05-28 12:05:03.111 | 7 days       |
+    | Should Be Equal | ${date}          | 2014-06-04 12:05:03.111 |              |
+    | ${date} =       | Add Time To Date | 2014-05-28 12:05:03.111 | 01:02:03:004 |
+    | Should Be Equal | ${date}          | 2014-05-28 13:07:06.115 |
     """
     date = Date(date, date_format) + Time(time)
     return date.convert(result_format, millis=not exclude_millis)
 
 
-def subtract_from_date(date, time, result_format='timestamp',
+def subtract_time_from_date(date, time, result_format='timestamp',
                        exclude_millis=False, date_format=None):
     """Subtracts time from date and returns the resulting date.
 
@@ -438,16 +439,17 @@ def subtract_from_date(date, time, result_format='timestamp',
     - _date_format:_    Specifies possible `custom timestamp` format of _date_.
 
     Examples:
-    | ${date} =       | Subtract From Date | 2014-06-04 12:05:03.111 | 7 days |
-    | Should Be Equal | ${date}            | 2014-05-28 12:05:03.111 |
-    | ${date} =       | Subtract From Date | 2014-05-28 13:07:06.115 | 01:02:03:004 |
-    | Should Be Equal | ${date}            | 2014-05-28 12:05:03.111 |
+    | ${date} =       | Subtract Time From Date | 2014-06-04 12:05:03.111 | 7 days |
+    | Should Be Equal | ${date}                 | 2014-05-28 12:05:03.111 |
+    | ${date} =       | Subtract Time From Date | 2014-05-28 13:07:06.115 | 01:02:03:004 |
+    | Should Be Equal | ${date}                 | 2014-05-28 12:05:03.111 |
     """
     date = Date(date, date_format) - Time(time)
     return date.convert(result_format, millis=not exclude_millis)
 
 
-def add_to_time(time1, time2, result_format='number', exclude_millis=False):
+def add_time_to_time(time1, time2, result_format='number',
+                     exclude_millis=False):
     """Adds time to another time and returns the resulting time.
 
     Arguments:
@@ -458,16 +460,16 @@ def add_to_time(time1, time2, result_format='number', exclude_millis=False):
                         milliseconds as explained in `millisecond handling`.
 
     Examples:
-    | ${time} =       | Add To Time | 1 minute          | 42       |
-    | Should Be Equal | ${time}     | ${102}            |
-    | ${time} =       | Add To Time | 3 hours 5 minutes | 01:02:03 | timer | exclude_millis=yes |
-    | Should Be Equal | ${time}     | 04:07:03          |
+    | ${time} =       | Add Time To Time | 1 minute          | 42       |
+    | Should Be Equal | ${time}          | ${102}            |
+    | ${time} =       | Add Time To Time | 3 hours 5 minutes | 01:02:03 | timer | exclude_millis=yes |
+    | Should Be Equal | ${time}          | 04:07:03          |
     """
     time = Time(time1) + Time(time2)
     return time.convert(result_format, millis=not exclude_millis)
 
 
-def subtract_from_time(time1, time2, result_format='number',
+def subtract_time_from_time(time1, time2, result_format='number',
                        exclude_millis=False):
     """Subtracts time from another time and returns the resulting time.
 
@@ -480,10 +482,10 @@ def subtract_from_time(time1, time2, result_format='number',
                         milliseconds as explained in `millisecond handling`.
 
     Examples:
-    | ${time} =       | Subtract From Time | 00:02:30 | 100      |
-    | Should Be Equal | ${time}            | ${50}    |
-    | ${time} =       | Subtract From Time | ${time}  | 1 minute | compact |
-    | Should Be Equal | ${time}            | - 10s    |
+    | ${time} =       | Subtract Time From Time | 00:02:30 | 100      |
+    | Should Be Equal | ${time}                 | ${50}    |
+    | ${time} =       | Subtract Time From Time | ${time}  | 1 minute | compact |
+    | Should Be Equal | ${time}                 | - 10s    |
     """
     time = Time(time1) - Time(time2)
     return time.convert(result_format, millis=not exclude_millis)

@@ -16,5 +16,5 @@ Time addition to date should succeed
 *** Keywords ***
 Addition Should Succeed
     [Arguments]    ${date}    ${time}    ${expected}     ${format}=datetime
-    ${new_date} =    Add To Date    ${date}    ${time}    ${format}    date_format=${format}
+    ${new_date} =    Add Time To Date    ${date}    ${time}    ${format}    date_format=${format}
     Should Be Equal    ${new_date}    ${expected}

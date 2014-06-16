@@ -18,10 +18,10 @@ Time subtraction from time should succeed
 *** Keywords ***
 Time Addition To Time Should Succeed
     [Arguments]    ${time1}    ${time2}    ${expected}    ${result_format}=verbose
-    ${new_time} =    Add To Time    ${time1}    ${time2}    ${result_format}
+    ${new_time} =    Add Time To Time    ${time1}    ${time2}    ${result_format}
     Should Be Equal    ${new_time}    ${expected}
 
 Time Subtraction From Time Should Succeed
     [Arguments]    ${time1}    ${time2}    ${expected}    ${result_format}=verbose
-    ${new_time} =    Subtract From Time    ${time1}    ${time2}    ${result_format}
+    ${new_time} =    Subtract Time From Time    ${time1}    ${time2}    ${result_format}
     Should Be Equal    ${new_time}    ${expected}

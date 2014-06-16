@@ -17,5 +17,5 @@ Time subtraction from date should succeed
 *** Keywords ***
 Time Subtraction Should Succeed
     [Arguments]    ${date}    ${time}    ${expected}    ${format}=datetime
-    ${new_date} =    Subtract From Date    ${date}    ${time}    ${format}    date_format=${format}
+    ${new_date} =    Subtract Time From Date    ${date}    ${time}    ${format}    date_format=${format}
     Should Be Equal    ${new_date}    ${expected}

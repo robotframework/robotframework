@@ -22,5 +22,5 @@ Subtraction between two dates should succeed
 *** Keywords ***
 Subtraction Should Succeed
     [Arguments]    ${latter_date}    ${former_date}    ${expected}    ${result_format}=verbose    ${date1_format}=${NONE}    ${date2_format}=${NONE}
-    ${diff} =    Subtract Dates    ${latter_date}    ${former_date}    ${result_format}    date1_format=${date1_format}    date2_format=${date2_format}
+    ${diff} =    Subtract Date From Date    ${latter_date}    ${former_date}    ${result_format}    date1_format=${date1_format}    date2_format=${date2_format}
     Should Be Equal    ${diff}    ${expected}
