@@ -5,6 +5,12 @@ Flatten stuff
     Keyword calling others
     Log    Flatten me too!!
 
+For loop
+    :FOR    ${i}    IN RANGE    10
+    \    Log   index: ${i}
+    \    Keyword 3
+    \    Keyword 2
+
 *** Keywords ***
 Keyword 3
     [Documentation]    Doc of keyword 3
