@@ -339,3 +339,7 @@ Run on python 2.5
     ${interpreter} =    Get interpreter    ${OUTFILE}
     ${is 25} =   is 25    ${interpreter}
     Run keyword if    ${is 25}    ${kw}   @{args}
+
+Make test non-critical if
+    [Arguments]    ${condition}
+    Run Keyword If    ${condition}    Remove Tags    regression
