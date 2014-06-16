@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from ctypes import cdll
 import sys
 import os
 
@@ -86,21 +87,20 @@ def _get_stream_output_encoding():
 
 
 def _get_windows_system_encoding():
-    from ctypes import cdll
-    return _call_ctypes(cdll.kernel32.GetACP)
+    return _get_code_page('GetACP')
 
 
 def _get_windows_output_encoding():
-    from ctypes import cdll
-    return _call_ctypes(cdll.kernel32.GetOEMCP)
+    return _get_code_page('GetOEMCP')
 
 
-def _call_ctypes(method):
-    method.argtypes = ()  # needed w/ jython (at least 2.5)
+def _get_code_page(method_name):
     try:
-        return 'cp%s' % method()
-    except Exception:  # Has failed on IronPython at least once
+        method = getattr(cdll.kernel32, method_name)
+    except TypeError:       # Sometimes occurs w/ IronPython (mainly on CI)
         return None
+    method.argtypes = ()    # Needed w/ Jython (at least 2.5)
+    return 'cp%s' % method()
 
 
 def _is_valid(encoding):
