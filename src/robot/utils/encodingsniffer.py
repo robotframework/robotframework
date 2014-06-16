@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from ctypes import cdll
 import sys
 import os
 
@@ -95,6 +94,7 @@ def _get_windows_output_encoding():
 
 
 def _get_code_page(method_name):
+    from ctypes import cdll
     try:
         method = getattr(cdll.kernel32, method_name)
     except TypeError:       # Sometimes occurs w/ IronPython (mainly on CI)
