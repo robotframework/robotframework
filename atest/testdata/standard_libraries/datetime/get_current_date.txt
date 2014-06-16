@@ -40,4 +40,4 @@ Result format datetime
     ${before} =  Evaluate  datetime.datetime.now().isoformat()  datetime
     ${dt} =  Get Current Date   result_format=datetime
     ${after} =  Evaluate  datetime.datetime.now().isoformat()  datetime
-    Should Be True  "${before}" < "${dt.isoformat()}" < "${after}"
+    Should Be True  "${before}" <= "${dt.isoformat()}" <= "${after}"
