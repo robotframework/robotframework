@@ -219,12 +219,15 @@ Options
                           automatically converted to spaces.
                           Examples: --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
-    --removekeywords all|passed|name:<pattern>|for|wuks|none *  Remove keyword
-                          data from the generated log file. Keywords containing
+    --removekeywords all|passed|for|wuks|name:<pattern> *  Remove keyword data
+                          from the generated log file. Keywords containing
                           warnings are not removed except in `all` mode.
                           all:     remove data from all keywords
                           passed:  remove data only from keywords in passed
                                    test cases and suites
+                          for:     remove passed iterations from for loops
+                          wuks:    remove all but the last failing keyword
+                                   inside `BuiltIn.Wait Until Keyword Succeeds`
                           name:<pattern>:  remove data from keywords that match
                                    the given pattern. The pattern is matched
                                    against the full name of the keyword (e.g.
@@ -233,14 +236,15 @@ Options
                                    and may contain `*` and `?` as wildcards.
                                    Examples: --removekeywords name:Lib.HugeKw
                                              --removekeywords name:myresource.*
-                          for:     remove passed iterations from for loops
-                          wuks:    remove all but the last failing keyword
-                                   inside `BuiltIn.Wait Until Keyword Succeeds`
-    --flattenkeywords name:<pattern> *  Flattens matching keywords in the
-                          generated log file. Matching keywords get all
-                          messages from their child keywords and children are
-                          discarded otherwise. Matching rules are same as with
-                          `--removekeywords name:<pattern>`.
+    --flattenkeywords for|foritem|name:<pattern> *  Flattens matching keywords
+                          in the generated log file. Matching keywords get all
+                          log messages from their child keywords and children
+                          are discarded otherwise.
+                          for:     flatten for loops fully
+                          foritem: flatten individual for loop iterations
+                          name:<pattern>:  flatten matched keywords using same
+                                   matching rules as with
+                                   `--removekeywords name:<pattern>`
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
                           Arguments to listener class can be given after class
