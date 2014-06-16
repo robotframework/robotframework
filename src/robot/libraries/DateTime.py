@@ -15,10 +15,11 @@
 
 """A test library for handling date and time values.
 
-_DateTime_ is a Robot Framework standard library that supports creating,
-converting, and verifying date and time values, as well as doing simple
-calculations with them. It supports dates and times in various formats,
-and can also be used by other libraries programmatically.
+_DateTime_ is a Robot Framework standard library that supports creating and
+converting date and time values (e.g. `Get Current Date`, `Convert Time`),
+as well as doing simple calculations with them (e.g. `Subtract Time From Date`,
+`Add Time To Time`). It supports dates and times in various formats, and can
+also be used by other libraries programmatically.
 
 This library is new in Robot Framework 2.8.5.
 
