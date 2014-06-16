@@ -578,9 +578,10 @@ class Process(object):
 
         By default sends the signal only to the parent process, not to possible
         child processes started by it. Notice that when `running processes in
-        shell`, the shell is the parent process and thus the actual started
-        process does not receive the signal. To send the signal to the whole
-        process group, `group` argument can be set to any true value:
+        shell`, the shell is the parent process and it depends on the system
+        does the shell propagate the signal to the actual started process.
+        To send the signal to the whole process group, `group` argument can
+        be set to any true value:
 
         | Send Signal To Process | TERM  | group=yes |
 
