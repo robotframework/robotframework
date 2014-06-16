@@ -37,5 +37,7 @@ Result format epoch
     Should Be True  1000000000 < ${date} < 2000000000
 
 Result format datetime
-    ${date} =  Get Current Date   result_format=datetime
-    Should Be Equal  ${date.replace(microsecond=0)}  ${datetime.now().replace(microsecond=0)}
+    ${before} =  Evaluate  datetime.datetime.now().isoformat()  datetime
+    ${dt} =  Get Current Date   result_format=datetime
+    ${after} =  Evaluate  datetime.datetime.now().isoformat()  datetime
+    Should Be True  "${before}" < "${dt.isoformat()}" < "${after}"
