@@ -455,8 +455,9 @@ multiple times.
 In these situations, command line options :opt:`--removekeywords` and
 :opt:`--flattenkeywords` can be used to dispose or flatten unnecessary keywords.
 They can be used both when `executing test cases`_ and when `post-processing
-outputs`_, but in the former case they only affect the log file, not the XML
-output file.
+outputs`_. When used during execution, they only affect the log file, not
+the XML output file. With :code:`rebot` they affect both logs and possibly
+generated new output XML files.
 
 Removing keywords
 '''''''''''''''''
@@ -491,7 +492,7 @@ are not removed except when using the :opt:`ALL` mode.
 
 Examples::
 
-   rebot --removekeywords all output.xml
+   rebot --removekeywords all --output removed.xml output.xml
    pybot --removekeywords passed --removekeywords for tests.txt
    pybot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.txt
 
@@ -526,11 +527,11 @@ supports the following modes:
 Examples::
 
    pybot --flattenkeywords name:HugeKeyword --flattenkeywords name:resource.* tests.txt
-   rebot --flattenkeywords foritem tests.txt
+   rebot --flattenkeywords foritem --output flattened.xml original.xml
 
-Flattening keywords is done already when the `output file`_ is parsed. This
-can save a significant amount of memory especially with deeply nested
-keyword structures.
+Flattening keywords is done already when the `output file`_ is parsed
+initially. This can save a significant amount of memory especially with
+deeply nested keyword structures.
 
 .. note:: Flattening keywords is a new feature in Robot Framework 2.8.2, and
           :opt:`FOR` and :opt:`FORITEM` modes were added in Robot Framework
