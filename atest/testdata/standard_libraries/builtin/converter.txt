@@ -8,7 +8,7 @@ Convert To Integer
     [Template]  Test Convert To Integer
     1  1
     -42  -42
-    10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000  10**100L
+    10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000  10**100
     ${OBJECT}  42
     ${OBJECT_FAILING}  This fails!
 
@@ -126,6 +126,22 @@ Convert To Number With Precision
     Should Be Equal  ${res}  ${1.0}
     Convert to Number  1  invalid
 
+Numeric conversions with long types
+    [Template]    Numeric conversions with long types
+    # 0x8000000000000000 == sys.maxint+1 on 64bit machines
+    Convert To Integer    0                     0
+    Convert To Integer    42                    42
+    Convert To Integer    0x8000000000000000    9223372036854775808
+    Convert To Hex        0                     0
+    Convert To Hex        42                    2A
+    Convert To Hex        0x8000000000000000    8000000000000000
+    Convert To Octal      0                     0
+    Convert To Octal      42                    52
+    Convert To Octal      0x8000000000000000    1000000000000000000000
+    Convert To Binary     0                     0
+    Convert To Binary     42                    101010
+    Convert To Binary     0x8000000000000000    1000000000000000000000000000000000000000000000000000000000000000
+
 Convert To String
     ${int42} =  Convert To Integer  42
     Should Not Be Equal  ${int42}  42
@@ -190,3 +206,9 @@ Test Convert To Number
     ${act} =  Convert To Number  ${item}
     ${exp} =  Evaluate  ${exp}
     Should Be True  round(${act}, 6) == ${exp}
+
+Numeric conversions with long types
+    [Arguments]    ${keyword}    ${input}    ${expected}
+    ${input} =    Evaluate    long(${input})
+    ${result} =    Run Keyword    ${keyword}    ${input}
+    Should Be Equal As Strings    ${result}    ${expected}
