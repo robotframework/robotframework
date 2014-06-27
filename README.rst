@@ -4,8 +4,8 @@ Robot Framework
 NOTICE
 ------
 
-This repository is currently under migration. Please do not clone or watch this, 
-as you will get thousands of spam when we migrate all issues from Google Code.
+This repository is currently under migration. Please do not fork or watch this
+repo, as you will get thousands of spam when we migrate all issues from Google Code.
 
 Introduction
 ------------
