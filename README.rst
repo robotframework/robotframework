@@ -5,7 +5,7 @@ NOTICE
 ------
 
 This repository is currently under migration. Please do not clone or watch this, 
-as you might get a bunch of spam when we migrate all issues from Google Code.
+as you will get thousands of spam when we migrate all issues from Google Code.
 
 Introduction
 ------------
