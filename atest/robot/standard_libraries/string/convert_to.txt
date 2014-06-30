@@ -1,0 +1,23 @@
+*** Settings ***
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/converto_to.txt
+Force Tags        pybot    jybot    regression
+Resource          atest_resource.txt
+
+*** Test Cases ***
+Convert To Uppercase string
+    Check Test Case    ${TESTNAME}
+
+Convert To Uppercase numbers
+    Check Test Case    ${TESTNAME}
+
+Convert To Uppercase mixed
+    Check Test Case    ${TESTNAME}
+
+Convert To Lowercase string
+    Check Test Case    ${TESTNAME}
+
+Convert To Lowercase numbers
+    Check Test Case    ${TESTNAME}
+
+Convert To Lowercase mixed
+    Check Test Case    ${TESTNAME}

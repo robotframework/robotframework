@@ -1,0 +1,27 @@
+*** Settings ***
+Library           String
+
+*** Test Cases ***
+Convert To Uppercase string
+    ${result}=    Convert To Uppercase    abcd
+    Should be Equal    ${result}    ABCD
+
+Convert To Uppercase numbers
+    ${result}=    Convert To Uppercase    1234
+    Should be Equal    ${result}    1234
+
+Convert To Uppercase mixed
+    ${result}=    Convert To Uppercase    a1b2C3d4e
+    Should be Equal    ${result}    A1B2C3D4E
+
+Convert To Lowercase string
+    ${result}=    Convert To Lowercase    ABCD
+    Should be Equal    ${result}    abcd
+
+Convert To Lowercase numbers
+    ${result}=    Convert To Lowercase    1234
+    Should be Equal    ${result}    1234
+
+Convert To Lowercase mixed
+    ${result}=    Convert To Lowercase    A1B2c3D4E
+    Should be Equal    ${result}    a1b2c3d4e
