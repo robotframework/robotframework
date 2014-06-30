@@ -4,10 +4,10 @@ Robot Framework
 NOTICE
 ------
 
-This repository is currently under migration
-fromhttp://code.google.com/p/robotframework/. Code and issues ought to
-be now migrated, but it will take some time before we get
-documentation such as this README and wikis updated.
+This repository is currently under migration from
+http://code.google.com/p/robotframework/. Code and issues ought to be
+now migrated, but it will take some time before we get documentation
+such as this README and wikis updated.
 
 Introduction
 ------------
