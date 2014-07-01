@@ -1,0 +1,607 @@
+<html>
+    <head>
+        <title>Robot Framework documentation</title>
+        <link rel="stylesheet" href="/css/reset.css">
+        <style>
+            body {
+                margin: 0 2em;
+            }
+        </style>
+        <script>
+            function addEvent(element, event_, func) {
+                if (element.attachEvent){
+                    return element.attachEvent('on' + event_, func);
+                } else {
+                    return element.addEventListener(event_, func, false);
+                }
+            }
+
+            function getIdAndVersion(evt) {
+                var id = evt.srcElement.value;
+                return {
+                    'id' : id,
+                    'version' : document.getElementById(id).value
+                };
+            }
+
+            function getGoPath(targetId, targetVersion) {
+                if (targetId === 'ug'){
+                    return targetVersion + '/RobotFrameworkUserGuide.html';
+                }
+                return targetVersion + '/libraries/' + targetId + '.html';
+            }
+
+            function getZipPath(version) {
+                return 'robotframework-userguide-' + version + '.zip'
+            }
+
+            function getBaseURL() {
+                return window.location.href.replace(window.location.hash, '');
+            }
+
+            function go(event_) {
+                var target = getIdAndVersion(event_);
+                document.location = getBaseURL() + getGoPath(target.id, target.version);
+            }
+
+            function download(event_) {
+                var target = getIdAndVersion(event_);
+                document.location = getBaseURL() + getZipPath(target.version);
+            }
+
+            window.onload = function() {
+                var goButtons = document.getElementsByClassName('go-button');
+                var downloadButtons = document.getElementsByClassName('download-button');
+                for (var i = goButtons.length - 1; i >= 0; i--) {
+                    addEvent(goButtons[i], 'click', go);
+                    addEvent(downloadButtons[i], 'click', download);
+                };
+            };
+        </script>
+    </head>
+    <body>
+        <h1><a name="top">Robot Framework documentation</a></h1>
+
+        <p>Table of content</p>
+        <ul id="toc">
+            <li><a href="#toc-ug">User Guide</a></li>
+            <li>
+                <a href="#toc-lib">Library documentation</a>
+                <ul>
+                    <li><a href="#toc-builtin">Builtin</a></li>
+                    <li><a href="#toc-collections">Collections</a></li>
+                    <li><a href="#toc-datetime">DateTime</a></li>
+                    <li><a href="#toc-dialogs">Dialogs</a></li>
+                    <li><a href="#toc-operatingsystem">OperatingSystem</a></li>
+                    <li><a href="#toc-process">Process</a></li>
+                    <li><a href="#toc-remote">Remote</a></li>
+                    <li><a href="#toc-screenshot">Screenshot</a></li>
+                    <li><a href="#toc-string">String</a></li>
+                    <li><a href="#toc-telnet">Telnet</a></li>
+                    <li><a href="#toc-xml">XML</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2><a name="toc-ug">Robot Framework User Guide</a></h2>
+
+        <p>Most of the Robot Framework documentation is in separate version specific user guides, which contain also standard library and supporting tool documentations.</p>
+
+        <p>Different user guide versions can be downloaded separately and they are also available online through this page.</p>
+
+        <select name="ug" id="ug">
+            <option value="2.0">2.0</option>
+            <option value="2.0.1">2.0.1</option>
+            <option value="2.0.2">2.0.2</option>
+            <option value="2.0.3">2.0.3</option>
+            <option value="2.0.4">2.0.4</option>
+            <option value="2.1">2.1</option>
+            <option value="2.1.1">2.1.1</option>
+            <option value="2.1.2">2.1.2</option>
+            <option value="2.1.3">2.1.3</option>
+            <option value="2.5">2.5</option>
+            <option value="2.5.1">2.5.1</option>
+            <option value="2.5.2">2.5.2</option>
+            <option value="2.5.3">2.5.3</option>
+            <option value="2.5.4">2.5.4</option>
+            <option value="2.5.5">2.5.5</option>
+            <option value="2.5.6">2.5.6</option>
+            <option value="2.5.7">2.5.7</option>
+            <option value="2.6.0">2.6.0</option>
+            <option value="2.6.1">2.6.1</option>
+            <option value="2.6.2">2.6.2</option>
+            <option value="2.6.3">2.6.3</option>
+            <option value="2.7">2.7</option>
+            <option value="2.7.1">2.7.1</option>
+            <option value="2.7.2">2.7.2</option>
+            <option value="2.7.3">2.7.3</option>
+            <option value="2.7.4">2.7.4</option>
+            <option value="2.7.5">2.7.5</option>
+            <option value="2.7.6">2.7.6</option>
+            <option value="2.7.7">2.7.7</option>
+            <option value="2.8">2.8</option>
+            <option value="2.8.1">2.8.1</option>
+            <option value="2.8.2">2.8.2</option>
+            <option value="2.8.3">2.8.3</option>
+            <option value="2.8.4">2.8.4</option>
+            <option value="2.8.5" selected="selected">2.8.5</option>
+        </select>
+        <button class="go-button" value="ug">Go</button>
+        <button class="download-button" value="ug">Download</button>
+        <a href="#top">[back to top]</a>
+
+        <h2><a name="toc-lib">Library documentation</a></h2>
+
+        <ul>
+            <li>
+                <h3><a name="toc-builtin">BuiltIn</a></h3>
+                <p><code>BuiltIn</code> is Robot Framework's standard library that provides a set of generic keywords needed often. It is imported automatically and thus always available. The provided keywords can be used, for example, for verifications (e.g. <code>Should Be Equal</code>, <code>Should Contain</code>), conversions (e.g. <code>Convert To Integer</code>) and for various other purposes (e.g. <code>Log</code>, <code>Sleep</code>, <code>Run Keyword If</code>, <code>Set Global Variable</code>).</p>
+
+                <p>The full library documentation by release is found below. The documentation of the latest minor version (e.g. 2.0.4) is always applicable with earlier minor versions.</p>
+
+                <select name="BuiltIn" id="BuiltIn">
+                    <option value="2.0">2.0</option>
+                    <option value="2.0.1">2.0.1</option>
+                    <option value="2.0.2">2.0.2</option>
+                    <option value="2.0.3">2.0.3</option>
+                    <option value="2.0.4">2.0.4</option>
+                    <option value="2.1">2.1</option>
+                    <option value="2.1.1">2.1.1</option>
+                    <option value="2.1.2">2.1.2</option>
+                    <option value="2.1.3">2.1.3</option>
+                    <option value="2.5">2.5</option>
+                    <option value="2.5.1">2.5.1</option>
+                    <option value="2.5.2">2.5.2</option>
+                    <option value="2.5.3">2.5.3</option>
+                    <option value="2.5.4">2.5.4</option>
+                    <option value="2.5.5">2.5.5</option>
+                    <option value="2.5.6">2.5.6</option>
+                    <option value="2.5.7">2.5.7</option>
+                    <option value="2.6.0">2.6.0</option>
+                    <option value="2.6.1">2.6.1</option>
+                    <option value="2.6.2">2.6.2</option>
+                    <option value="2.6.3">2.6.3</option>
+                    <option value="2.7">2.7</option>
+                    <option value="2.7.1">2.7.1</option>
+                    <option value="2.7.2">2.7.2</option>
+                    <option value="2.7.3">2.7.3</option>
+                    <option value="2.7.4">2.7.4</option>
+                    <option value="2.7.5">2.7.5</option>
+                    <option value="2.7.6">2.7.6</option>
+                    <option value="2.7.7">2.7.7</option>
+                    <option value="2.8">2.8</option>
+                    <option value="2.8.1">2.8.1</option>
+                    <option value="2.8.2">2.8.2</option>
+                    <option value="2.8.3">2.8.3</option>
+                    <option value="2.8.4">2.8.4</option>
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="BuiltIn">Go</button>
+                <button class="download-button" value="BuiltIn">Download</button>
+                <a href="#top">[back to top]</a>
+            </li>
+            <li>
+                <h3><a name="toc-collections">Collections</a></h3>
+                <p><code>Collections</code> is Robot Framework's standard library that provides a set of keywords for handling Python lists and dictionaries. This library has keywords, for example, for modifying and getting values from lists and dictionaries (e.g. <code>Append To List</code>, <code>Get From Dictionary</code>) and for verifying their contents (e.g. <code>Lists Should Be Equal</code>, <code>Dictionary Should Contain Value</code>). BuiltIn library has also some additional keywords that can be used with lists and dictionaries.</p>
+
+                <p>The full library documentation by release is found below. The documentation of the latest minor version (e.g. 2.0.4) is always applicable with earlier minor versions.</p>
+
+                <select name="Collections" id="Collections">
+                    <option value="2.0">2.0</option>
+                    <option value="2.0.1">2.0.1</option>
+                    <option value="2.0.2">2.0.2</option>
+                    <option value="2.0.3">2.0.3</option>
+                    <option value="2.0.4">2.0.4</option>
+                    <option value="2.1">2.1</option>
+                    <option value="2.1.1">2.1.1</option>
+                    <option value="2.1.2">2.1.2</option>
+                    <option value="2.1.3">2.1.3</option>
+                    <option value="2.5">2.5</option>
+                    <option value="2.5.1">2.5.1</option>
+                    <option value="2.5.2">2.5.2</option>
+                    <option value="2.5.3">2.5.3</option>
+                    <option value="2.5.4">2.5.4</option>
+                    <option value="2.5.5">2.5.5</option>
+                    <option value="2.5.6">2.5.6</option>
+                    <option value="2.5.7">2.5.7</option>
+                    <option value="2.6.0">2.6.0</option>
+                    <option value="2.6.1">2.6.1</option>
+                    <option value="2.6.2">2.6.2</option>
+                    <option value="2.6.3">2.6.3</option>
+                    <option value="2.7">2.7</option>
+                    <option value="2.7.1">2.7.1</option>
+                    <option value="2.7.2">2.7.2</option>
+                    <option value="2.7.3">2.7.3</option>
+                    <option value="2.7.4">2.7.4</option>
+                    <option value="2.7.5">2.7.5</option>
+                    <option value="2.7.6">2.7.6</option>
+                    <option value="2.7.7">2.7.7</option>
+                    <option value="2.8">2.8</option>
+                    <option value="2.8.1">2.8.1</option>
+                    <option value="2.8.2">2.8.2</option>
+                    <option value="2.8.3">2.8.3</option>
+                    <option value="2.8.4">2.8.4</option>
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="Collections">Go</button>
+                <button class="download-button" value="Collections">Download</button>
+                <a href="#top">[back to top]</a>
+            </li>
+            <li>
+                <h3><a name="toc-datetime">DateTime</a></h3>
+                <p><code>DateTime</code> is a Robot Framework standard library that supports creating, converting, and verifying date and time values, as well as doing simple calculations with them. It supports dates and times in various formats, and can also be used by other libraries programmatically.</p>
+
+                <p>This library is new in Robot Framework 2.8.5.</p>
+                <select name="DateTime" id="DateTime">
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="DateTime">Go</button>
+                <button class="download-button" value="DateTime">Download</button>
+                <a href="#top">[back to top]</a>
+            </li>
+            <li>
+                <h3><a name="toc-dialogs">Dialogs</a></h3>
+                <p><code>Dialogs</code> is Robot Framework's standard library that provides means for pausing the test execution and getting input from users. The dialogs are slightly different depending on are tests run on Python or Jython but they provide the same functionality.</p>
+
+                <p>Dialogs library is available from Robot Framework 2.1 onwards. It works also with older versions but must be downloaded separately.</p>
+
+                <p>The full library documentation by release is found below. The documentation of the latest minor version (e.g. 2.1.3) is always applicable with earlier minor versions.</p>
+
+                <select name="Dialogs" id="Dialogs">
+                    <option value="2.1">2.1</option>
+                    <option value="2.1.1">2.1.1</option>
+                    <option value="2.1.2">2.1.2</option>
+                    <option value="2.1.3">2.1.3</option>
+                    <option value="2.5">2.5</option>
+                    <option value="2.5.1">2.5.1</option>
+                    <option value="2.5.2">2.5.2</option>
+                    <option value="2.5.3">2.5.3</option>
+                    <option value="2.5.4">2.5.4</option>
+                    <option value="2.5.5">2.5.5</option>
+                    <option value="2.5.6">2.5.6</option>
+                    <option value="2.5.7">2.5.7</option>
+                    <option value="2.6.0">2.6.0</option>
+                    <option value="2.6.1">2.6.1</option>
+                    <option value="2.6.2">2.6.2</option>
+                    <option value="2.6.3">2.6.3</option>
+                    <option value="2.7">2.7</option>
+                    <option value="2.7.1">2.7.1</option>
+                    <option value="2.7.2">2.7.2</option>
+                    <option value="2.7.3">2.7.3</option>
+                    <option value="2.7.4">2.7.4</option>
+                    <option value="2.7.5">2.7.5</option>
+                    <option value="2.7.6">2.7.6</option>
+                    <option value="2.7.7">2.7.7</option>
+                    <option value="2.8">2.8</option>
+                    <option value="2.8.1">2.8.1</option>
+                    <option value="2.8.2">2.8.2</option>
+                    <option value="2.8.3">2.8.3</option>
+                    <option value="2.8.4">2.8.4</option>
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="Dialogs">Go</button>
+                <button class="download-button" value="Dialogs">Download</button>
+                <a href="#top">[back to top]</a>
+
+            </li>
+            <li>
+                <h3><a name="toc-operatingsystem">OperatingSystem</a></h3>
+                <p><code>OperatingSystem</code> is Robot Framework's standard library that enables various operating system related tasks to be performed in the system where Robot Framework is running. It can, among other things, execute commands (e.g. <code>Run</code>), create and remove files and directories (e.g. <code>Create File</code>, <code>Remove Directory</code>), check whether files or directories exists or contain something (e.g. <code>File Should Exist</code>, <code>Directory Should Be Empty</code>) and manipulate environment variables (e.g. <code>Set Environment Variable</code>).</p>
+
+                <p>The full library documentation by release is found below. The documentation of the latest minor version (e.g. 2.0.4) is always applicable with earlier minor versions.</p>
+
+                <select name="OperatingSystem" id="OperatingSystem">
+                    <option value="2.0">2.0</option>
+                    <option value="2.0.1">2.0.1</option>
+                    <option value="2.0.2">2.0.2</option>
+                    <option value="2.0.3">2.0.3</option>
+                    <option value="2.0.4">2.0.4</option>
+                    <option value="2.1">2.1</option>
+                    <option value="2.1.1">2.1.1</option>
+                    <option value="2.1.2">2.1.2</option>
+                    <option value="2.1.3">2.1.3</option>
+                    <option value="2.5">2.5</option>
+                    <option value="2.5.1">2.5.1</option>
+                    <option value="2.5.2">2.5.2</option>
+                    <option value="2.5.3">2.5.3</option>
+                    <option value="2.5.4">2.5.4</option>
+                    <option value="2.5.5">2.5.5</option>
+                    <option value="2.5.6">2.5.6</option>
+                    <option value="2.5.7">2.5.7</option>
+                    <option value="2.6.0">2.6.0</option>
+                    <option value="2.6.1">2.6.1</option>
+                    <option value="2.6.2">2.6.2</option>
+                    <option value="2.6.3">2.6.3</option>
+                    <option value="2.7">2.7</option>
+                    <option value="2.7.1">2.7.1</option>
+                    <option value="2.7.2">2.7.2</option>
+                    <option value="2.7.3">2.7.3</option>
+                    <option value="2.7.4">2.7.4</option>
+                    <option value="2.7.5">2.7.5</option>
+                    <option value="2.7.6">2.7.6</option>
+                    <option value="2.7.7">2.7.7</option>
+                    <option value="2.8">2.8</option>
+                    <option value="2.8.1">2.8.1</option>
+                    <option value="2.8.2">2.8.2</option>
+                    <option value="2.8.3">2.8.3</option>
+                    <option value="2.8.4">2.8.4</option>
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="OperatingSystem">Go</button>
+                <button class="download-button" value="OperatingSystem">Download</button>
+                <a href="#top">[back to top]</a>
+
+            </li>
+            <li>
+                <h3><a name="toc-process">Process</a></h3>
+                <p>Robot Framework test library for running processes. This library utilizes Python's <a href="https://docs.python.org/2.7/library/subprocess.html" target="_blank">subprocess</a> module and its <a href="https://docs.python.org/2.7/library/subprocess.html#subprocess.Popen" target="_blank">Popen</a> class.</p>
+
+                <p>Process library is available from Robot Framework 2.8 onwards.</p>
+
+                <p>The full library documentation by release is found below.</p>
+
+                <select name="Process" id="Process">
+                    <option value="2.8">2.8</option>
+                    <option value="2.8.1">2.8.1</option>
+                    <option value="2.8.2">2.8.2</option>
+                    <option value="2.8.3">2.8.3</option>
+                    <option value="2.8.4">2.8.4</option>
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="Process">Go</button>
+                <button class="download-button" value="Process">Download</button>
+                <a href="#top">[back to top]</a>
+            </li>
+            <li>
+                <h3><a name="toc-remote">Remote</a></h3>
+                <p>The Remote library is one of the standard libraries but totally different than the others. It does not have any keywords of its own but it works as a proxy between Robot Framework and actual test library implementations elsewhere.</p>
+
+                <p>There are two main reasons for using the Remote library and the remote library interface it provides:
+
+                <ul>
+                    <li><p>It is possible to have test libraries running on different machines than where Robot Framework itself is executed. This allows interesting possibilities for distributed testing.</p></li>
+                    <li><p>Test libraries can be implemented using any language that supports XML-RPC protocol. There are currently generic remote servers for Python/Jython, Ruby and .NET, and generic servers for other languages like Java and Perl may be implemented in the future.</p></li>
+                </ul>
+
+                The remote library interface is described in detail in the <a href="#toc-ug">User Guide</a>. This wiki page just gives a very high level overview and lists the available remote server implementations.</p>
+
+                <h4>High level architecture</h4>
+                <p>The Remote library interacts with actual library implementations through remote servers, and the Remote library and servers communicate using a simple remote protocol on top of an XML-RPC channel. The high level architecture of all this is illustrated in the picture below.</p>
+
+                <img src="/images/remote.png" />
+
+                <h4>Available remote servers</h4>
+                <p>Following remote servers are available as separate projects. See the project pages for installation and usage instructions. Older versions of Python and Ruby servers are also distributed with Robot Framework 2.8.x source distributions but they will be removed in the future.</p>
+
+                <table width="100%">
+                    <tbody align="center">
+                        <tr>
+                            <th>Language / Platform</th>
+                            <th>Project Pages</th>
+                        </tr>
+                        <tr>
+                            <td>Python</td>
+                            <td><a href="https://github.com/robotframework/PythonRemoteServer" target="_blank">https://github.com/robotframework/PythonRemoteServer</a></td>
+                        </tr>
+                        <tr>
+                            <td>Java</td>
+                            <td><a href="https://github.com/ombre42/jrobotremoteserver" target="_blank">https://github.com/ombre42/jrobotremoteserver</a></td>
+                        </tr>
+                        <tr>
+                            <td>Ruby</td>
+                            <td><a href="https://github.com/semperos/robot-remote-server-rb" target="_blank">https://github.com/semperos/robot-remote-server-rb</a></td>
+                        </tr>
+                        <tr>
+                            <td>.NET</td>
+                            <td><a href="http://code.google.com/p/nrobotremote" target="_blank">http://code.google.com/p/nrobotremote</a></td>
+                        </tr>
+                        <tr>
+                            <td>Clojure</td>
+                            <td><a href="https://github.com/semperos/robot-remote-server-clj" target="_blank">https://github.com/semperos/robot-remote-server-clj</a></td>
+                        </tr>
+                        <tr>
+                            <td>Perl</td>
+                            <td><a href="http://code.google.com/p/plrobotremoteserver" target="_blank">http://code.google.com/p/plrobotremoteserver</a></td>
+                        </tr>
+                        <tr>
+                            <td>Node.js</td>
+                            <td><a href="https://github.com/comick/node-robotremoteserver" target="_blank">https://github.com/comick/node-robotremoteserver</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><a href="#top">[back to top]</a></p>
+            </li>
+            <li>
+                <h3><a name="toc-screenshot">Screenshot</a></h3>
+                <p><code>Screenshot</code> is Robot Framework's standard library that provides keywords to capture and store screenshots of the whole desktop. This library was initially supported only with Jython, but version 2.5.5 and newer work work also with Python. Running on Python requires some external modules as explained in the documentation linked below.</p>
+
+                <p>In addition, all the old keywords were obsoleted in 2.5.5, so the 2.5.4 documentation should be consulted for earlier 2.5.x releases.</p>
+
+                <p>The full library documentation by release is found below. The documentation of the latest minor version (e.g. 2.0.4) is always applicable with earlier minor versions.</p>
+
+                <select name="Screenshot" id="Screenshot">
+                    <option value="2.0">2.0</option>
+                    <option value="2.0.1">2.0.1</option>
+                    <option value="2.0.2">2.0.2</option>
+                    <option value="2.0.3">2.0.3</option>
+                    <option value="2.0.4">2.0.4</option>
+                    <option value="2.1">2.1</option>
+                    <option value="2.1.1">2.1.1</option>
+                    <option value="2.1.2">2.1.2</option>
+                    <option value="2.1.3">2.1.3</option>
+                    <option value="2.5">2.5</option>                    <option value="2.5.1">2.5.1</option>
+                    <option value="2.5.2">2.5.2</option>
+                    <option value="2.5.3">2.5.3</option>
+                    <option value="2.5.4">2.5.4</option>
+                    <option value="2.5.5">2.5.5</option>
+                    <option value="2.5.6">2.5.6</option>
+                    <option value="2.5.7">2.5.7</option>
+                    <option value="2.6.0">2.6.0</option>
+                    <option value="2.6.1">2.6.1</option>
+                    <option value="2.6.2">2.6.2</option>
+                    <option value="2.6.3">2.6.3</option>
+                    <option value="2.7">2.7</option>
+                    <option value="2.7.1">2.7.1</option>
+                    <option value="2.7.2">2.7.2</option>
+                    <option value="2.7.3">2.7.3</option>
+                    <option value="2.7.4">2.7.4</option>
+                    <option value="2.7.5">2.7.5</option>
+                    <option value="2.7.6">2.7.6</option>
+                    <option value="2.7.7">2.7.7</option>
+                    <option value="2.8">2.8</option>
+                    <option value="2.8.1">2.8.1</option>
+                    <option value="2.8.2">2.8.2</option>
+                    <option value="2.8.3">2.8.3</option>
+                    <option value="2.8.4">2.8.4</option>
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="Screenshot">Go</button>
+                <button class="download-button" value="Screenshot">Download</button>
+                <a href="#top">[back to top]</a>
+
+            </li>
+            <li>
+                <h3><a name="toc-string">String</a></h3>
+                <p><code>String</code> is Robot Framework's standard library for manipulating strings (e.g. <code>Replace String With Regexp</code>, <code>Split To Lines</code>) and verifying their contents (e.g. <code>Should Be String</code>). BuiltIn library has also some additional keywords that can be used with strings.</p>
+
+                <p>String library is available from Robot Framework 2.1 onwards.</p>
+
+                <p>The full library documentation by release is found below. The documentation of the latest minor version (e.g. 2.1.3) is always applicable with earlier minor versions.</p>
+
+                <select name="String" id="String">
+                    <option value="2.1">2.1</option>
+                    <option value="2.1.1">2.1.1</option>
+                    <option value="2.1.2">2.1.2</option>
+                    <option value="2.1.3">2.1.3</option>
+                    <option value="2.5">2.5</option>
+                    <option value="2.5.1">2.5.1</option>
+                    <option value="2.5.2">2.5.2</option>
+                    <option value="2.5.3">2.5.3</option>
+                    <option value="2.5.4">2.5.4</option>
+                    <option value="2.5.5">2.5.5</option>
+                    <option value="2.5.6">2.5.6</option>
+                    <option value="2.5.7">2.5.7</option>
+                    <option value="2.6.0">2.6.0</option>
+                    <option value="2.6.1">2.6.1</option>
+                    <option value="2.6.2">2.6.2</option>
+                    <option value="2.6.3">2.6.3</option>
+                    <option value="2.7">2.7</option>
+                    <option value="2.7.1">2.7.1</option>
+                    <option value="2.7.2">2.7.2</option>
+                    <option value="2.7.3">2.7.3</option>
+                    <option value="2.7.4">2.7.4</option>
+                    <option value="2.7.5">2.7.5</option>
+                    <option value="2.7.6">2.7.6</option>
+                    <option value="2.7.7">2.7.7</option>
+                    <option value="2.8">2.8</option>
+                    <option value="2.8.1">2.8.1</option>
+                    <option value="2.8.2">2.8.2</option>
+                    <option value="2.8.3">2.8.3</option>
+                    <option value="2.8.4">2.8.4</option>
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="String">Go</button>
+                <button class="download-button" value="String">Download</button>
+                <a href="#top">[back to top]</a>
+            </li>
+            <li>
+                <h3><a name="toc-telnet">Telnet</a></h3>
+                <p><code>Telnet</code> is Robot Framework's standard library that makes it possible to connect to Telnet servers and execute commands on the opened connections.</p>
+
+                <p>The full library documentation by release is found below. The documentation of the latest minor version (e.g. 2.0.4) is always applicable with earlier minor versions.</p>
+
+                <select name="Telnet" id="Telnet">
+                    <option value="2.0">2.0</option>
+                    <option value="2.0.1">2.0.1</option>
+                    <option value="2.0.2">2.0.2</option>
+                    <option value="2.0.3">2.0.3</option>
+                    <option value="2.0.4">2.0.4</option>
+                    <option value="2.1">2.1</option>
+                    <option value="2.1.1">2.1.1</option>
+                    <option value="2.1.2">2.1.2</option>
+                    <option value="2.1.3">2.1.3</option>
+                    <option value="2.5">2.5</option>
+                    <option value="2.5.1">2.5.1</option>
+                    <option value="2.5.2">2.5.2</option>
+                    <option value="2.5.3">2.5.3</option>
+                    <option value="2.5.4">2.5.4</option>
+                    <option value="2.5.5">2.5.5</option>
+                    <option value="2.5.6">2.5.6</option>
+                    <option value="2.5.7">2.5.7</option>
+                    <option value="2.6.0">2.6.0</option>
+                    <option value="2.6.1">2.6.1</option>
+                    <option value="2.6.2">2.6.2</option>
+                    <option value="2.6.3">2.6.3</option>
+                    <option value="2.7">2.7</option>
+                    <option value="2.7.1">2.7.1</option>
+                    <option value="2.7.2">2.7.2</option>
+                    <option value="2.7.3">2.7.3</option>
+                    <option value="2.7.4">2.7.4</option>
+                    <option value="2.7.5">2.7.5</option>
+                    <option value="2.7.6">2.7.6</option>
+                    <option value="2.7.7">2.7.7</option>
+                    <option value="2.8">2.8</option>
+                    <option value="2.8.1">2.8.1</option>
+                    <option value="2.8.2">2.8.2</option>
+                    <option value="2.8.3">2.8.3</option>
+                    <option value="2.8.4">2.8.4</option>
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="Telnet">Go</button>
+                <button class="download-button" value="Telnet">Download</button>
+                <a href="#top">[back to top]</a>
+            </li>
+            <li>
+                <h3><a name="toc-xml">XML</a></h3>
+                <p>As the name implies, <code>XML</code> is a test library for verifying contents of XML files. In practice it is a pretty thin wrapper on top of Python's <a href="https://docs.python.org/2/library/xml.etree.elementtree.html" target="_blank">ElementTree XML API</a>.</p>
+
+                <p>XML library is available from Robot Framework 2.7.4 onwards, and it was heavily enhanced in RF 2.7.5. It works also with older 2.7 versions, but must be downloaded separately.</p>
+
+                <p>The full library documentation by release is found below. The documentation of the latest minor version (e.g. 2.7.5) is always applicable with earlier minor versions.</p>
+
+                <select name="XML" id="XML">
+                    <option value="2.0">2.0</option>
+                    <option value="2.0.1">2.0.1</option>
+                    <option value="2.0.2">2.0.2</option>
+                    <option value="2.0.3">2.0.3</option>
+                    <option value="2.0.4">2.0.4</option>
+                    <option value="2.1">2.1</option>
+                    <option value="2.1.1">2.1.1</option>
+                    <option value="2.1.2">2.1.2</option>
+                    <option value="2.1.3">2.1.3</option>
+                    <option value="2.5">2.5</option>
+                    <option value="2.5.1">2.5.1</option>
+                    <option value="2.5.2">2.5.2</option>
+                    <option value="2.5.3">2.5.3</option>
+                    <option value="2.5.4">2.5.4</option>
+                    <option value="2.5.5">2.5.5</option>
+                    <option value="2.5.6">2.5.6</option>
+                    <option value="2.5.7">2.5.7</option>
+                    <option value="2.6.0">2.6.0</option>
+                    <option value="2.6.1">2.6.1</option>
+                    <option value="2.6.2">2.6.2</option>
+                    <option value="2.6.3">2.6.3</option>
+                    <option value="2.7">2.7</option>
+                    <option value="2.7.1">2.7.1</option>
+                    <option value="2.7.2">2.7.2</option>
+                    <option value="2.7.3">2.7.3</option>
+                    <option value="2.7.4">2.7.4</option>
+                    <option value="2.7.5">2.7.5</option>
+                    <option value="2.7.6">2.7.6</option>
+                    <option value="2.7.7">2.7.7</option>
+                    <option value="2.8">2.8</option>
+                    <option value="2.8.1">2.8.1</option>
+                    <option value="2.8.2">2.8.2</option>
+                    <option value="2.8.3">2.8.3</option>
+                    <option value="2.8.4">2.8.4</option>
+                    <option value="2.8.5" selected="selected">2.8.5</option>
+                </select>
+                <button class="go-button" value="XML">Go</button>
+                <button class="download-button" value="XML">Download</button>
+                <a href="#top">[back to top]</a>
+            </li>
+        </ul>
+
+    </body>
+</html>
+
