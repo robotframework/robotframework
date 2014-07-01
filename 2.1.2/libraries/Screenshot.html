@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Screenshot - Documentation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+  body {
+    background: white;
+    color: black;
+  }
+
+  /* Generic Table Styles */
+  table {
+    background: white;
+    border: 1px solid black;
+    border-collapse: collapse;
+    empty-cells: show;
+    margin: 0.3em 0em;
+  }
+  th, td {
+    border: 1px solid black;
+    padding: 0.2em;
+  }
+  th {
+    background: #C6C6C6;
+  }
+  td {
+    vertical-align: top;
+  }    
+
+  /* Columns */
+  td.kw {
+    font-weight: bold;
+  }
+  td.arg {
+    width: 300px;
+    font-style: italic;
+  }
+  td.doc {
+  }
+
+  /* Tables in documentation */
+  table.doc {
+    border: 1px solid gray;
+    background: transparent;
+    border-collapse: collapse;
+    empty-cells: show;
+    font-size: 0.85em;
+    font-family: arial,helvetica,sans-serif;
+  }
+  table.doc td {
+    border: 1px solid gray;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+  }
+
+  /* Paragraphs */
+  .libdoc, .links {
+    width: 800px;
+  }
+
+  /* Misc */
+  a.name, span.name {  
+    font-style: italic;
+    background: #f4f4f4;
+    text-decoration: none;
+  }
+  a:link, a:visited {
+    color: blue;
+  }
+  a:hover, a:active {
+    text-decoration: underline;
+    color: purple;
+  }
+  .footer {
+    font-size: 0.9em;
+  }
+</style>
+</head>
+<body>
+<h1>Screenshot - Documentation</h1>
+<p><b>Version:</b> 2.1.2</p>
+
+<h2 id="introduction">Introduction</h2>
+<p class='libdoc'>A test library for taking full-screen screenshots of the desktop.<br />
+<br />
+<span class="name">Screenshot</span> is Robot Framework's standard library that provides keywords to capture and store screenshots of the whole desktop. This library is implemented with Java AWT APIs, so it can be used only when running Robot Framework on Jython.</p>
+
+<h2 id="importing">Importing</h2>
+<table class="keywords">
+<tr>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="arg">default_directory=None, log_file_directory=None</td>
+  <td class="doc">Screenshot library can be imported with optional arguments.<br />
+<br />
+If the <span class="name">default_directory</span> is provided, all the screenshots are saved into that directory by default. Otherwise the default location is the system temporary directory.<br />
+<br />
+<span class="name">log_file_directory</span> is used to create relative paths when screenshots are logged. By default the paths to images in the log file are absolute.<br />
+<br />
+Examples (use only one of these):<br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td><b>Setting</b></td>
+<td><b>Value</b></td>
+<td><b>Value</b></td>
+<td><b>Value</b></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>Screenshot</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>Screenshot</td>
+<td>${CURDIR}/images</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>Screenshot</td>
+<td>${OUTPUTDIR}</td>
+<td>${OUTPUTDIR}</td>
+</tr>
+</table>
+<br />
+It is also possible to set these directories using <a href="#Set Screenshot Directories" class="name">Set Screenshot Directories</a> keyword.</td>
+</tr>
+</table>
+
+<h2>Shortcuts</h2>
+<div class='links'>
+<a href="#Log Screenshot" title="Takes a screenshot and logs it to Robot Framework's log file.">Log&nbsp;Screenshot</a>&nbsp;
+<a href="#Save Screenshot" title="Saves a screenshot with a generated unique name.">Save&nbsp;Screenshot</a>&nbsp;
+<a href="#Save Screenshot To" title="Saves a screenshot to the specified file.">Save&nbsp;Screenshot&nbsp;To</a>&nbsp;
+<a href="#Set Screenshot Directories" title="Used to set `default_directory` and `log_file_directory`.">Set&nbsp;Screenshot&nbsp;Directories</a>&nbsp;
+</div>
+
+<h2>Keywords</h2>
+<table class="keywords">
+<tr>
+  <th class="kw">Keyword</th>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="kw"><a name="Log Screenshot"></a>Log Screenshot</td>
+  <td class="arg">basename=screenshot, directory=None, log_file_directory=None, width=100%</td>
+  <td class="doc">Takes a screenshot and logs it to Robot Framework's log file.<br />
+<br />
+Saves the files as defined in the keyword <a href="#Save Screenshot" class="name">Save Screenshot</a> and creates a picture to Robot Framework's log. <span class="name">directory</span> defines the directory where the screenshots are saved. By default, its value is <span class="name">default_directory</span>, which is set at the library import or with the keyword <a href="#Set Screenshot Directories" class="name">Set Screenshot Directories</a>. <span class="name">log_file_directory</span> is used to create relative paths to the pictures. This allows moving the log and pictures to different machines and having still working pictures. If <span class="name">log_file_directory</span> is not given or set (in the same way as <span class="name">default_directory</span> is set), the paths are absolute.<br />
+<br />
+The path where the screenshot is saved is returned.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Save Screenshot"></a>Save Screenshot</td>
+  <td class="arg">basename=screenshot, directory=None</td>
+  <td class="doc">Saves a screenshot with a generated unique name.<br />
+<br />
+The unique name is derived based on the provided <span class="name">basename</span> and <span class="name">directory</span> passed in as optional arguments. If a <span class="name">directory</span> is provided, the screenshot is saved under that directory. Otherwise, the <span class="name">default_directory</span> set during the library import or by the keyword <a href="#Set Screenshot Directories" class="name">Set Screenshot Directories</a> is used. If a <span class="name">basename</span> for the screenshot file is provided, a unique filename is determined by appending an underscore and a running counter. Otherwise, the <span class="name">basename</span> defaults to 'screenshot'.<br />
+<br />
+The path where the screenshot is saved is returned.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Save Screenshot</td>
+<td>mypic</td>
+<td>/home/user</td>
+<td># (1)</td>
+</tr>
+<tr>
+<td>Save Screenshot</td>
+<td>mypic</td>
+<td></td>
+<td># (2)</td>
+</tr>
+<tr>
+<td>Save Screenshot</td>
+<td></td>
+<td></td>
+<td># (3)</td>
+</tr>
+</table>
+=&gt;<br />
+1. /home/user/mypic_1.jpg, /home/user/mypic_2.jpg, ...<br />
+2. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...<br />
+3. /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Save Screenshot To"></a>Save Screenshot To</td>
+  <td class="arg">path</td>
+  <td class="doc">Saves a screenshot to the specified file.<br />
+<br />
+The directory holding the file must exist or an exception is raised.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Screenshot Directories"></a>Set Screenshot Directories</td>
+  <td class="arg">default_directory=None, log_file_directory=None</td>
+  <td class="doc">Used to set <span class="name">default_directory</span> and <span class="name">log_file_directory</span>.<br />
+<br />
+See the <a href="#importing" class="name">library importing</a> for details.</td>
+</tr>
+</table>
+<p class="footer">
+Altogether 4 keywords.<br />
+Generated by <a href="http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool">libdoc.py</a>
+on 2009-10-23 13:50:27.
+</p>
+</body>
+</html>

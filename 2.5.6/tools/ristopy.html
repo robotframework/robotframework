@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
+<title>risto.py -- Robot Framework's Historical Reporting Tool</title>
+<style type="text/css">
+
+/* Robot Framework User Guide Style Sheet
+
+   This stylesheet contains styles from restructuredText's default 
+   'html4css1.css' and after that modifications needed for Robot Framework User
+   Guide. These styles are added into the same file against suggestions at 
+   reST's stylesheet  howto mentioned below, because we want to be able to 
+   embed all styles into the created HTML file. Everything before 'Robot 
+   Framework User Guide Modifications' text is from 'html4css1.css' without 
+   any changes so that part can still be changed easily.
+*/
+
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 5196 2007-06-03 20:25:28Z wiemann $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left {
+  clear: left }
+
+img.align-right {
+  clear: right }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font-family: serif ;
+  font-size: 100% }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+
+/* **************************************** *
+ * Robot Framework User Guide Modifications * 
+ * **************************************** */
+
+/* Tables
+   - example, tsv-example: test data examples
+   - messages: log message examples
+   - tabular: normal tabular information
+*/
+table.example, table.tsv-example, table.messages, table.tabular {
+    border: 1px solid #808080;
+    border-collapse: collapse;
+    empty-cell: show;
+    margin: 0.5em 2em;
+}
+table.example caption, table.tsv-example caption, table.tabular caption {
+    text-align: left;
+    padding-bottom: 0.5em;
+    font-style: italic;
+    font-size: 0.9em;
+    width: 100%;
+}
+table.example th, table.example td, table.tsv-example td {
+    border: 1px solid #808080;
+    font-family: arial,helvetica,sans-serif;
+    height: 1.2em;
+    font-size: 0.8em;
+}
+table.example th {
+    padding: 0.1em 1em;
+    background: #E0E0E0;
+}
+table.example td, table.tsv-example td {
+    padding: 0.1em 1em 0.1em 0.3em;
+}
+table.tabular th, table.tabular td {
+    border: 1px solid black;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+    font-size: 0.8em;
+}
+table.messages {
+    border: 1px solid gray;
+    font-family: monospace;
+    margin: 1em 2em;
+    width: 60%;
+}
+table.messages td {
+    vertical-align: top;
+    padding: 0.1em 0.2em;
+}
+table.messages td.time {
+    width: 7em;
+    letter-spacing: -0.05em;
+} 
+table.messages td.level {
+    width: 5em;
+    text-align: center;
+}
+table.messages td.fail, table.messages td.error {
+    color: red;
+}
+table.messages td.pass {
+    color: #009900;
+}
+table.messages td.warn {
+    color: #FFCC00;
+}
+
+/* Roles -- these are defined in roles.txt file */
+
+.var {
+    background: #f4f4f4;
+    font-size: 0.9em;
+}
+.opt {
+    font-style: italic;
+}
+.prog, .code, .cli {
+    background: #f4f4f4;
+    font-family: monospace;
+}
+.msg {
+    font-family: monospace;
+}
+.name {  
+    font-style: italic;
+}
+.path {
+    font-style: italic;
+}
+.misc, .literal {
+    background: #f4f4f4;
+}
+
+
+/* Overridden and modified styles */
+
+cite {
+    font-size: 0.95em;
+}
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+    border: 0.1em solid gray;
+    margin: 1em 2em;
+    padding: 0.7em 1em;
+    font-size: 0.9em;
+}
+pre.literal-block, pre.doctest-block {
+    background: #f4f4f4;
+}
+li, li p.first {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+div.contents li {
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+
+/* Pygments 
+
+- Styles generated using "HtmlFormatter().get_style_defs('.highlight')"
+- Changed only background (f8f8f8 -> f4f4f4) and added margin
+- For more details see e.g. http://pygments.org/docs/quickstart/
+*/
+
+.highlight  { background: #f4f4f4; margin: 1em 2em; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #808080 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0040D0 } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+</style>
+</head>
+<body>
+<div class="document" id="risto-py-robot-framework-s-historical-reporting-tool">
+<h1 class="title">risto.py -- Robot Framework's Historical Reporting Tool</h1>
+
+<!-- Roles to use in text like :rolename:`text`. Styled in userguide.css.
+- var    variables
+- opt    settings in setting table (e.g. Force Tags), tc/kw tables
+         (e.g [Documentation]) and command line options (e.g. - -name)
+- prog   program names (e.g. rebot, risto.py)
+- code   programming code
+- msg    test case status and message, as well as log messages and levels
+- name   keyword, library, test case, test suite, etc. names
+- cli    command line examples (note that options alone use opt)
+- path   file names and paths
+- misc   everything else (synonym to ``text``) -->
+<p><span class="prog">risto.py</span> is a tool for plotting graphs about test execution
+history based on statistics read from Robot Framework output files.
+Actual drawing is handled by Matplotlib tool, which must be installed
+separately. <span class="prog">risto.py</span> is included in source distributions and can also
+be downloaded from
+<a class="reference external" href="http://code.google.com/p/robotframework/wiki/HistoricalReportingTool">http://code.google.com/p/robotframework/wiki/HistoricalReportingTool</a>.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></li>
+<li><a class="reference internal" href="#options" id="id2">Options</a></li>
+<li><a class="reference internal" href="#description" id="id3">Description</a></li>
+<li><a class="reference internal" href="#installation" id="id4">Installation</a></li>
+<li><a class="reference internal" href="#screenshots" id="id5">Screenshots</a><ul>
+<li><a class="reference internal" href="#default-settings" id="id6">Default settings</a></li>
+<li><a class="reference internal" href="#various-settings" id="id7">Various settings</a></li>
+<li><a class="reference internal" href="#using-matplotlib-s-viewer" id="id8">Using Matplotlib's viewer</a></li>
+<li><a class="reference internal" href="#more-realistic-examples" id="id9">More realistic examples</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="synopsis">
+<h1><a class="toc-backref" href="#id1">Synopsis</a></h1>
+<pre class="literal-block">
+risto.py options input files
+risto.py options1 --- options2 --- optionsN --- input files
+risto.py --argumentfile path
+</pre>
+</div>
+<div class="section" id="options">
+<h1><a class="toc-backref" href="#id2">Options</a></h1>
+<blockquote>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-C</span>, <span class="option">--nocritical</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Does not plot graphs for critical tests.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-A</span>, <span class="option">--noall</span></kbd></td>
+<td>Does not plot graphs for all tests.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-T</span>, <span class="option">--nototals</span></kbd></td>
+<td>Does not plot total graphs.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-P</span>, <span class="option">--nopassed</span></kbd></td>
+<td>Does not plot passed graphs.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-F</span>, <span class="option">--nofailed</span></kbd></td>
+<td>Does not plot failed graphs.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t</span>, <span class="option">--tag <var>&lt;name&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Adds graphs for these tags. The name can contain &quot;*&quot;
+and &quot;?&quot; as wildcards. &quot;AND&quot; in the given name is
+converted to &quot; &amp; &quot;, to make it easier to plot
+combined tags.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o</span>, <span class="option">--output <var>&lt;path&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The path to the image file to create. If not given,
+the image is opened into Matplotlib viewer.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i</span>, <span class="option">--title <var>&lt;title&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The title of the graph. Underscores in the given title
+are converted to spaces. By default, there is no
+title.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-w</span>, <span class="option">--width <var>&lt;inches&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The width of the image. The default is 800.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-h</span>, <span class="option">--height <var>&lt;inches&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The height of the image. The default is 400.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-f</span>, <span class="option">--font <var>&lt;size&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The font size used for legends and labels.
+The default is 8.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-m</span>, <span class="option">--marker <var>&lt;size&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The size of the marker used with tag graphs.
+The default is 5.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-x</span>, <span class="option">--xticks <var>&lt;num&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The maximum number of ticks on the x-axis.
+The default is 15.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-n</span>, <span class="option">--namemeta <var>&lt;name&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The name of the metadata of the top-level test suite
+where to get the name of the test round. By default,
+names are got from the paths to input files.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--argumentfile <var>&lt;path&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Reads arguments from the specified file.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--verbose</span></kbd></td>
+<td>The verbose output.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--help</span></kbd></td>
+<td>Prints this help.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--version</span></kbd></td>
+<td>Prints the version information.</td></tr>
+</tbody>
+</table>
+</blockquote>
+<p>Additionally, <span class="code">---</span> can be used to group options when creating multiple
+images at once.</p>
+</div>
+<div class="section" id="description">
+<h1><a class="toc-backref" href="#id3">Description</a></h1>
+<p><span class="prog">risto.py</span> plots graphs about test execution history, based on
+statistics read from Robot Framework's XML output files. By default,
+it draws total, passed and failed graphs for critical tests and all
+tests, but it is possible to omit some of these graphs and also to add
+graphs by tags.</p>
+<p>Names of test rounds that are shown on the x-axis are, by default,
+obtained from the paths to input files. Alternatively, names can be
+obtained from the metadata of the top-level test suite (for more
+information, see Robot Framework's <span class="opt">--metadata</span> option).</p>
+<p>Graphs are saved to a file specified with the <span class="opt">--output</span> option,
+and the output format is determined by the file extension. The
+supported formats depend on the installed Matplotlib back-ends, but at
+least PNG ought to be always available. If the output file is omitted,
+the graph is opened into Matplotlib's image viewer (which requires
+Matplotlib to be installed with some graphical front-end).</p>
+<p>Examples:</p>
+<pre class="literal-block">
+risto.py --output history.png output1.xml output2.xml output3.xml
+risto.py --title My_Report --noall --namemeta Date --output out.png *.xml
+risto.py --nopassed --tag smoke --tag iter-* results/*/output.xml
+</pre>
+<p>It is possible to draw several graphs with different options at
+once. This is done by separating different option groups with three or
+more hyphens (<span class="opt">---</span>).  Note that in this case, also paths to
+input files need to be separated from the options similarly:</p>
+<pre class="literal-block">
+risto.py -CAP -t tag1 --- -CAP -t tag2 --- -CAP -t tag3 --- outputs/*.xml
+</pre>
+<p>Instead of giving all options from the command line, it is possible to
+read them from a file specified with the <span class="opt">--argument</span> option. In
+an argument file, options and their possible arguments are listed one
+per line, and option groups are separated with lines of three or more
+hyphens. Empty lines and lines starting with a hash mark (#) are
+ignored:</p>
+<pre class="literal-block">
+risto.py --argumentfile arguments.txt
+</pre>
+<pre class="literal-block">
+====[arguments.txt]===================
+--title Overview
+--output overview.png
+----------------------
+--nocritical
+--noall
+--nopassed
+--tag smoke1
+--title Smoke Tests
+--output smoke.png
+----------------------
+path/to/*.xml
+======================================
+</pre>
+</div>
+<div class="section" id="installation">
+<h1><a class="toc-backref" href="#id4">Installation</a></h1>
+<p><span class="prog">risto.py</span> itself does not need to be installed, simply running
+it from the command line is enough, but it has some preconditions. The
+most obvious one is Python, and versions 2.5 and 2.4 have been
+tested. Some Robot Framework internal modules are also needed, and
+thus Robot Framework version 1.8 or newer is required.</p>
+<p>The Matplotlib tool is used for plotting graphs, and it needs to be
+installed separately. Matplotlib has its own preconditions, and at
+least NumPy needs to be installed. The default Matplotlib installation
+should always support at least PNG outputs, but if more output formats
+are needed, some extra back-ends may need to be installed.
+Additionally, you may need to install graphical front-ends to be able
+to use Matplotlib's own viewer for opening graphs without saving them
+to a file.</p>
+<p><span class="prog">risto.py</span> reads statistics from XML output files using the
+ElementTree module. Python 2.5 and newer have this module in standard
+library, but for older versions it needs to be installed separately.</p>
+<p>Links to the needed software:</p>
+<dl class="docutils">
+<dt>Matplotlib</dt>
+<dd><a class="reference external" href="http://matplotlib.sourceforge.net/">http://matplotlib.sourceforge.net/</a></dd>
+<dt>NumPy</dt>
+<dd><a class="reference external" href="http://numpy.scipy.org/">http://numpy.scipy.org/</a></dd>
+<dt>ElementTree</dt>
+<dd><a class="reference external" href="http://effbot.org/zone/element-index.htm">http://effbot.org/zone/element-index.htm</a></dd>
+</dl>
+</div>
+<div class="section" id="screenshots">
+<h1><a class="toc-backref" href="#id5">Screenshots</a></h1>
+<div class="section" id="default-settings">
+<h2><a class="toc-backref" href="#id6">Default settings</a></h2>
+<p>The screenshot below uses some very simple example outputs, thus the lines
+are mainly straight. The default settings have been used otherwise,
+but the output has been saved into a file with the <span class="opt">--output
+default.png</span> option.</p>
+<div class="figure">
+<img alt="risto_default.png" src="risto_default.png" style="width: 800px; height: 400px;" />
+</div>
+</div>
+<div class="section" id="various-settings">
+<h2><a class="toc-backref" href="#id7">Various settings</a></h2>
+<p>The example outputs used in this screenshot are the same as in the previous
+one, but now the following options have been specified:</p>
+<pre class="literal-block">
+--nopassed --noall --tag f1 --title Another_Example --width 600 --height 250 --font 6 --marker 3 --output another.png
+</pre>
+<div class="figure">
+<img alt="risto_another.png" src="risto_another.png" style="width: 600px; height: 250px;" />
+</div>
+</div>
+<div class="section" id="using-matplotlib-s-viewer">
+<h2><a class="toc-backref" href="#id8">Using Matplotlib's viewer</a></h2>
+<p>This time there are more input files and the image has been opened
+in Matplotlib's viewer (that is, the <span class="opt">--output</span> option has not been
+used). The options used to create this example are the ones below:</p>
+<pre class="literal-block">
+-CAP -t d1_AND_d2 -t t1 -t sub3 -i Yet_Another_Example -x 20 -w 1000 -n Name
+</pre>
+<div class="figure">
+<img alt="risto_yetanother.png" src="risto_yetanother.png" style="width: 820px; height: 393px;" />
+</div>
+</div>
+<div class="section" id="more-realistic-examples">
+<h2><a class="toc-backref" href="#id9">More realistic examples</a></h2>
+<p>These examples are generated from actual test outputs using the
+following argument file:</p>
+<pre class="literal-block">
+--title Overview
+--output overview.png
+-----------------
+--title DRT Tests
+--nocritical
+--noall
+--tag phase-drt
+-nofailed
+--output drt.png
+------------------
+path/*/output.xml
+</pre>
+<div class="figure">
+<img alt="risto_overview.png" src="risto_overview.png" style="width: 800px; height: 400px;" />
+</div>
+<div class="figure">
+<img alt="risto_drt.png" src="risto_drt.png" style="width: 800px; height: 400px;" />
+</div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr class="footer" />
+Generated on: 2011-02-07 12:49 UTC.
+
+</div>
+</body>
+</html>

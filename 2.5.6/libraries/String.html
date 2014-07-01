@@ -1,0 +1,653 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>String</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style media="all" type="text/css">
+body {
+  background: white;
+  color: black;
+  font-size: small;
+  font-family: sans-serif;
+  padding: 0.1em 0.5em;
+}
+a.name, span.name {
+  font-style: italic;
+}
+a, a:link, a:visited {
+  color: #c30;
+}
+a:hover, a:active {
+  text-decoration: underline;
+  color: black;
+}
+div.shortcuts {
+  margin: 1em 0em;
+  font-size: 0.9em;
+}
+div.shortcuts a {
+  text-decoration: none;
+  color: black;
+}
+div.shortcuts a:hover {
+  text-decoration: underline;
+}
+table.keywords {
+  border: 2px solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 0.3em 0em;
+  width: 100%;
+}
+table.keywords th, table.keywords td {
+  border: 2px solid black;
+  padding: 0.2em;
+  vertical-align: top;
+}
+table.keywords th {
+  background: #bbb;
+  color: black;
+}
+table.keywords td.kw {
+  width: 150px;
+  font-weight: bold;
+}
+table.keywords td.arg {
+  width: 300px;
+  font-style: italic;
+}
+table.doc {
+  border: 1px solid black;
+  background: transparent;
+  border-collapse: collapse;
+  empty-cells: show;
+  font-size: 0.85em;
+}
+table.doc td {
+  border: 1px solid black;
+  padding: 0.1em 0.3em;
+  height: 1.2em;
+
+}
+#footer {
+  font-size: 0.9em;
+}
+</style>
+<style media="print" type="text/css">
+body {
+  margin: 0px 1px;
+  padding: 0px;
+  font-size: 10px;
+}
+a {
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<h1>String</h1>
+<b>Version:</b> 2.5.6<br>
+<b>Scope:</b> global<br>
+<b>Named arguments: </b>
+supported
+
+<h2 id="introduction">Introduction</h2>
+<p>A test library for string manipulation and verification.<br />
+<br />
+<span class="name">String</span> is Robot Framework's standard library for manipulating strings (e.g. <a href="#Replace String Using Regexp" class="name">Replace String Using Regexp</a>, <a href="#Split To Lines" class="name">Split To Lines</a>) and verifying their contents (e.g. <a href="#Should Be String" class="name">Should Be String</a>).<br />
+<br />
+Following keywords from the BuiltIn library can also be used with strings:<br />
+- <span class="name">Catenate</span><br />
+- <span class="name">Get Length</span><br />
+- <span class="name">Length Should Be</span><br />
+- <span class="name">Should (Not) Match (Regexp)</span><br />
+- <span class="name">Should (Not) Be Empty</span><br />
+- <span class="name">Should (Not) Be Equal (As Strings/Integers/Numbers)</span><br />
+- <span class="name">Should (Not) Contain</span><br />
+- <span class="name">Should (Not) Start With</span><br />
+- <span class="name">Should (Not) End With</span></p>
+
+
+<h2>Shortcuts</h2>
+<div class='shortcuts'>
+<a href="#Fetch From Left" title="Returns contents of the `string` before the first occurrence of `marker`.">Fetch&nbsp;From&nbsp;Left</a>
+&nbsp;&middot;&nbsp;
+<a href="#Fetch From Right" title="Returns contents of the `string` after the last occurrence of `marker`.">Fetch&nbsp;From&nbsp;Right</a>
+&nbsp;&middot;&nbsp;
+<a href="#Generate Random String" title="Generates a string with a desired `length` from the given `chars`.">Generate&nbsp;Random&nbsp;String</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Line" title="Returns the specified line from the given `string`.">Get&nbsp;Line</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Line Count" title="Returns and logs the number of lines in the given `string`.">Get&nbsp;Line&nbsp;Count</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Lines Containing String" title="Returns lines of the given `string` that contain the `pattern`.">Get&nbsp;Lines&nbsp;Containing&nbsp;String</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Lines Matching Pattern" title="Returns lines of the given `string` that match the `pattern`.">Get&nbsp;Lines&nbsp;Matching&nbsp;Pattern</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Lines Matching Regexp" title="Returns lines of the given `string` that match the regexp `pattern`.">Get&nbsp;Lines&nbsp;Matching&nbsp;Regexp</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Substring" title="Returns a substring from `start` index to `end` index.">Get&nbsp;Substring</a>
+&nbsp;&middot;&nbsp;
+<a href="#Replace String" title="Replaces `search_for` in the given `string` with `replace_with`.">Replace&nbsp;String</a>
+&nbsp;&middot;&nbsp;
+<a href="#Replace String Using Regexp" title="Replaces `pattern` in the given `string` with `replace_with`.">Replace&nbsp;String&nbsp;Using&nbsp;Regexp</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be Lowercase" title="Fails if the given `string` is not in lowercase.">Should&nbsp;Be&nbsp;Lowercase</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be String" title="Fails if the given `item` is not a string.">Should&nbsp;Be&nbsp;String</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be Titlecase" title="Fails if given `string` is not title.">Should&nbsp;Be&nbsp;Titlecase</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be Uppercase" title="Fails if the given `string` is not in uppercase.">Should&nbsp;Be&nbsp;Uppercase</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Be String" title="Fails if the given `item` is a string.">Should&nbsp;Not&nbsp;Be&nbsp;String</a>
+&nbsp;&middot;&nbsp;
+<a href="#Split String" title="Splits the `string` using `separator` as a delimiter string.">Split&nbsp;String</a>
+&nbsp;&middot;&nbsp;
+<a href="#Split String From Right" title="Splits the `string` using `separator` starting from right.">Split&nbsp;String&nbsp;From&nbsp;Right</a>
+&nbsp;&middot;&nbsp;
+<a href="#Split To Lines" title="Converts the `string` into a list of lines.">Split&nbsp;To&nbsp;Lines</a>
+</div>
+
+<h2>Keywords</h2>
+<table border="1" class="keywords">
+<tr>
+  <th class="kw">Keyword</th>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="kw"><a name="Fetch From Left"></a>Fetch From Left</td>
+  <td class="arg">string, marker</td>
+  <td class="doc">Returns contents of the <span class="name">string</span> before the first occurrence of <span class="name">marker</span>.<br />
+<br />
+If the <span class="name">marker</span> is not found, whole string is returned.<br />
+<br />
+See also <a href="#Fetch From Right" class="name">Fetch From Right</a>, <a href="#Split String" class="name">Split String</a> and <a href="#Split String From Right" class="name">Split String From Right</a>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Fetch From Right"></a>Fetch From Right</td>
+  <td class="arg">string, marker</td>
+  <td class="doc">Returns contents of the <span class="name">string</span> after the last occurrence of <span class="name">marker</span>.<br />
+<br />
+If the <span class="name">marker</span> is not found, whole string is returned.<br />
+<br />
+See also <a href="#Fetch From Left" class="name">Fetch From Left</a>, <a href="#Split String" class="name">Split String</a> and <a href="#Split String From Right" class="name">Split String From Right</a>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Generate Random String"></a>Generate Random String</td>
+  <td class="arg">length=8, chars=[LETTERS][NUMBERS]</td>
+  <td class="doc">Generates a string with a desired <span class="name">length</span> from the given <span class="name">chars</span>.<br />
+<br />
+The population sequence <span class="name">chars</span> contains the characters to use when generating the random string. It can contain any characters, and it is possible to use special markers explained in the table below:<br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td><i>[LOWER]</i></td>
+<td>Lowercase ASCII characters from 'a' to 'z'.</td>
+</tr>
+<tr>
+<td><i>[UPPER]</i></td>
+<td>Uppercase ASCII characters from 'A' to 'Z'.</td>
+</tr>
+<tr>
+<td><i>[LETTERS]</i></td>
+<td>Lowercase and uppercase ASCII characters.</td>
+</tr>
+<tr>
+<td><i>[NUMBERS]</i></td>
+<td>Numbers from 0 to 9.</td>
+</tr>
+</table>
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${ret} =</td>
+<td>Generate Random String</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${low} =</td>
+<td>Generate Random String</td>
+<td>12</td>
+<td>[LOWER]</td>
+</tr>
+<tr>
+<td>${bin} =</td>
+<td>Generate Random String</td>
+<td>8</td>
+<td>01</td>
+</tr>
+<tr>
+<td>${hex} =</td>
+<td>Generate Random String</td>
+<td>4</td>
+<td>[NUMBERS]abcdef</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Line"></a>Get Line</td>
+  <td class="arg">string, line_number</td>
+  <td class="doc">Returns the specified line from the given <span class="name">string</span>.<br />
+<br />
+Line numbering starts from 0 and it is possible to use negative indices to refer to lines from the end. The line is returned without the newline character.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${first} =</td>
+<td>Get Line</td>
+<td>${string}</td>
+<td>0</td>
+</tr>
+<tr>
+<td>${2nd last} =</td>
+<td>Get Line</td>
+<td>${string}</td>
+<td>-2</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Line Count"></a>Get Line Count</td>
+  <td class="arg">string</td>
+  <td class="doc">Returns and logs the number of lines in the given <span class="name">string</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Lines Containing String"></a>Get Lines Containing String</td>
+  <td class="arg">string, pattern, case_insensitive=False</td>
+  <td class="doc">Returns lines of the given <span class="name">string</span> that contain the <span class="name">pattern</span>.<br />
+<br />
+The <span class="name">pattern</span> is always considered to be a normal string and a line matches if the <span class="name">pattern</span> is found anywhere in it. By default the match is case-sensitive, but setting <span class="name">case_insensitive</span> to any value makes it case-insensitive.<br />
+<br />
+Lines are returned as one string catenated back together with newlines. Possible trailing newline is never returned. The number of matching lines is automatically logged.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${lines} =</td>
+<td>Get Lines Containing String</td>
+<td>${result}</td>
+<td>An example</td>
+<td></td>
+</tr>
+<tr>
+<td>${ret} =</td>
+<td>Get Lines Containing String</td>
+<td>${ret}</td>
+<td>FAIL</td>
+<td>case-insensitive</td>
+</tr>
+</table>
+<br />
+See <a href="#Get Lines Matching Pattern" class="name">Get Lines Matching Pattern</a> and <a href="#Get Lines Matching Regexp" class="name">Get Lines Matching Regexp</a> if you need more complex pattern matching.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Lines Matching Pattern"></a>Get Lines Matching Pattern</td>
+  <td class="arg">string, pattern, case_insensitive=False</td>
+  <td class="doc">Returns lines of the given <span class="name">string</span> that match the <span class="name">pattern</span>.<br />
+<br />
+The <span class="name">pattern</span> is a <i>glob pattern</i> where:<br />
+<table border="1" class="doc">
+<tr>
+<td>*</td>
+<td>matches everything</td>
+</tr>
+<tr>
+<td>?</td>
+<td>matches any single character</td>
+</tr>
+<tr>
+<td>[chars]</td>
+<td>matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c')</td>
+</tr>
+<tr>
+<td>[!chars]</td>
+<td>matches any character not inside square brackets</td>
+</tr>
+</table>
+<br />
+A line matches only if it matches the <span class="name">pattern</span> fully. &nbsp;By default the match is case-sensitive, but setting <span class="name">case_insensitive</span> to any value makes it case-insensitive.<br />
+<br />
+Lines are returned as one string catenated back together with newlines. Possible trailing newline is never returned. The number of matching lines is automatically logged.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${lines} =</td>
+<td>Get Lines Matching Pattern</td>
+<td>${result}</td>
+<td>Wild???? example</td>
+<td></td>
+</tr>
+<tr>
+<td>${ret} =</td>
+<td>Get Lines Matching Pattern</td>
+<td>${ret}</td>
+<td>FAIL: *</td>
+<td>case-insensitive</td>
+</tr>
+</table>
+<br />
+See <a href="#Get Lines Matching Regexp" class="name">Get Lines Matching Regexp</a> if you need more complex patterns and <a href="#Get Lines Containing String" class="name">Get Lines Containing String</a> if searching literal strings is enough.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Lines Matching Regexp"></a>Get Lines Matching Regexp</td>
+  <td class="arg">string, pattern</td>
+  <td class="doc">Returns lines of the given <span class="name">string</span> that match the regexp <span class="name">pattern</span>.<br />
+<br />
+See <span class="name">BuiltIn.Should Match Regexp</span> for more information about Python regular expression syntax in general and how to use it in Robot Framework test data in particular. A line matches only if it matches the <span class="name">pattern</span> fully. Notice that to make the match case-insensitive, you need to embed case-insensitive flag into the pattern.<br />
+<br />
+Lines are returned as one string catenated back together with newlines. Possible trailing newline is never returned. The number of matching lines is automatically logged.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${lines} =</td>
+<td>Get Lines Matching Regexp</td>
+<td>${result}</td>
+<td>Reg\\w{3} example</td>
+</tr>
+<tr>
+<td>${ret} =</td>
+<td>Get Lines Matching Regexp</td>
+<td>${ret}</td>
+<td>(?i)FAIL: .*</td>
+</tr>
+</table>
+<br />
+See <a href="#Get Lines Matching Pattern" class="name">Get Lines Matching Pattern</a> and <a href="#Get Lines Containing String" class="name">Get Lines Containing String</a> if you do not need full regular expression powers (and complexity).</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Substring"></a>Get Substring</td>
+  <td class="arg">string, start, end=None</td>
+  <td class="doc">Returns a substring from <span class="name">start</span> index to <span class="name">end</span> index.<br />
+<br />
+The <span class="name">start</span> index is inclusive and <span class="name">end</span> is exclusive. Indexing starts from 0, and it is possible to use negative indices to refer to characters from the end.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${ignore first} =</td>
+<td>Get Substring</td>
+<td>${string}</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>${ignore last} =</td>
+<td>Get Substring</td>
+<td>${string}</td>
+<td></td>
+<td>-1</td>
+</tr>
+<tr>
+<td>${5th to 10th} =</td>
+<td>Get Substring</td>
+<td>${string}</td>
+<td>4</td>
+<td>10</td>
+</tr>
+<tr>
+<td>${first two} =</td>
+<td>Get Substring</td>
+<td>${string}</td>
+<td></td>
+<td>1</td>
+</tr>
+<tr>
+<td>${last two} =</td>
+<td>Get Substring</td>
+<td>${string}</td>
+<td>-2</td>
+<td></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Replace String"></a>Replace String</td>
+  <td class="arg">string, search_for, replace_with, count=-1</td>
+  <td class="doc">Replaces <span class="name">search_for</span> in the given <span class="name">string</span> with <span class="name">replace_with</span>.<br />
+<br />
+<span class="name">search_for</span> is used as a literal string. See <a href="#Replace String Using Regexp" class="name">Replace String Using Regexp</a> if more powerful pattern matching is needed.<br />
+<br />
+If the optional argument <span class="name">count</span> is given, only that many occurrences from left are replaced. Negative <span class="name">count</span> means that all occurrences are replaced (default behaviour) and zero means that nothing is done.<br />
+<br />
+A modified version of the string is returned and the original string is not altered.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${str} =</td>
+<td>Replace String</td>
+<td>${str}</td>
+<td>Hello</td>
+<td>Hi</td>
+<td></td>
+</tr>
+<tr>
+<td>${str} =</td>
+<td>Replace String</td>
+<td>${str}</td>
+<td>world</td>
+<td>tellus</td>
+<td>1</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Replace String Using Regexp"></a>Replace String Using Regexp</td>
+  <td class="arg">string, pattern, replace_with, count=-1</td>
+  <td class="doc">Replaces <span class="name">pattern</span> in the given <span class="name">string</span> with <span class="name">replace_with</span>.<br />
+<br />
+This keyword is otherwise identical to <a href="#Replace String" class="name">Replace String</a>, but the <span class="name">pattern</span> to search for is considered to be a regular expression. &nbsp;See <span class="name">BuiltIn.Should Match Regexp</span> for more information about Python regular expression syntax in general and how to use it in Robot Framework test data in particular.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${str} =</td>
+<td>Replace String Using Regexp</td>
+<td>${str}</td>
+<td>(Hello|Hi)</td>
+<td>Hei</td>
+<td></td>
+</tr>
+<tr>
+<td>${str} =</td>
+<td>Replace String Using Regexp</td>
+<td>${str}</td>
+<td>20\\d\\d-\\d\\d-\\d\\d</td>
+<td>&lt;DATE&gt;</td>
+<td>2</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be Lowercase"></a>Should Be Lowercase</td>
+  <td class="arg">string, msg=None</td>
+  <td class="doc">Fails if the given <span class="name">string</span> is not in lowercase.<br />
+<br />
+The default error message can be overridden with the optional <span class="name">msg</span> argument.<br />
+<br />
+For example 'string' and 'with specials!' would pass, and 'String', '' and ' ' would fail.<br />
+<br />
+See also <a href="#Should Be Uppercase" class="name">Should Be Uppercase</a> and <a href="#Should Be Titlecase" class="name">Should Be Titlecase</a>. All these keywords were added in Robot Framework 2.1.2.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be String"></a>Should Be String</td>
+  <td class="arg">item, msg=None</td>
+  <td class="doc">Fails if the given <span class="name">item</span> is not a string.<br />
+<br />
+The default error message can be overridden with the optional <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be Titlecase"></a>Should Be Titlecase</td>
+  <td class="arg">string, msg=None</td>
+  <td class="doc">Fails if given <span class="name">string</span> is not title.<br />
+<br />
+<span class="name">string</span> is a titlecased string if there is at least one character in it, uppercase characters only follow uncased characters and lowercase characters only cased ones.<br />
+<br />
+The default error message can be overridden with the optional <span class="name">msg</span> argument.<br />
+<br />
+For example 'This Is Title' would pass, and 'Word In UPPER', 'Word In lower', '' and ' ' would fail.<br />
+<br />
+See also <a href="#Should Be Uppercase" class="name">Should Be Uppercase</a> and <a href="#Should Be Lowercase" class="name">Should Be Lowercase</a>. All theses keyword were added in Robot Framework 2.1.2.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be Uppercase"></a>Should Be Uppercase</td>
+  <td class="arg">string, msg=None</td>
+  <td class="doc">Fails if the given <span class="name">string</span> is not in uppercase.<br />
+<br />
+The default error message can be overridden with the optional <span class="name">msg</span> argument.<br />
+<br />
+For example 'STRING' and 'WITH SPECIALS!' would pass, and 'String', '' and ' ' would fail.<br />
+<br />
+See also <a href="#Should Be Titlecase" class="name">Should Be Titlecase</a> and <a href="#Should Be Lowercase" class="name">Should Be Lowercase</a>. All these keywords were added in Robot Framework 2.1.2.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Be String"></a>Should Not Be String</td>
+  <td class="arg">item, msg=None</td>
+  <td class="doc">Fails if the given <span class="name">item</span> is a string.<br />
+<br />
+The default error message can be overridden with the optional <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Split String"></a>Split String</td>
+  <td class="arg">string, separator=None, max_split=-1</td>
+  <td class="doc">Splits the <span class="name">string</span> using <span class="name">separator</span> as a delimiter string.<br />
+<br />
+If a <span class="name">separator</span> is not given, any whitespace string is a separator. In that case also possible consecutive whitespace as well as leading and trailing whitespace is ignored.<br />
+<br />
+Split words are returned as a list. If the optional <span class="name">max_split</span> is given, at most <span class="name">max_split</span> splits are done, and the returned list will have maximum <span class="name">max_split + 1</span> elements.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>@{words} =</td>
+<td>Split String</td>
+<td>${string}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>@{words} =</td>
+<td>Split String</td>
+<td>${string}</td>
+<td>,${SPACE}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${pre}</td>
+<td>${post} =</td>
+<td>Split String</td>
+<td>${string}</td>
+<td>::</td>
+<td>1</td>
+</tr>
+</table>
+<br />
+See <a href="#Split String From Right" class="name">Split String From Right</a> if you want to start splitting from right, and <a href="#Fetch From Left" class="name">Fetch From Left</a> and <a href="#Fetch From Right" class="name">Fetch From Right</a> if you only want to get first/last part of the string.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Split String From Right"></a>Split String From Right</td>
+  <td class="arg">string, separator=None, max_split=-1</td>
+  <td class="doc">Splits the <span class="name">string</span> using <span class="name">separator</span> starting from right.<br />
+<br />
+Same as <a href="#Split String" class="name">Split String</a>, but splitting is started from right. This has an effect only when <span class="name">max_split</span> is given.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${first}</td>
+<td>${others} =</td>
+<td>Split String</td>
+<td>${string}</td>
+<td>-</td>
+<td>1</td>
+</tr>
+<tr>
+<td>${others}</td>
+<td>${last} =</td>
+<td>Split String From Right</td>
+<td>${string}</td>
+<td>-</td>
+<td>1</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Split To Lines"></a>Split To Lines</td>
+  <td class="arg">string, start=0, end=None</td>
+  <td class="doc">Converts the <span class="name">string</span> into a list of lines.<br />
+<br />
+It is possible to get only a selection of lines from <span class="name">start</span> to <span class="name">end</span> so that <span class="name">start</span> index is inclusive and <span class="name">end</span> is exclusive. Line numbering starts from 0, and it is possible to use negative indices to refer to lines from the end.<br />
+<br />
+Lines are returned without the newlines. The number of returned lines is automatically logged.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>@{lines} =</td>
+<td>Split To Lines</td>
+<td>${manylines}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>@{ignore first} =</td>
+<td>Split To Lines</td>
+<td>${manylines}</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>@{ignore last} =</td>
+<td>Split To Lines</td>
+<td>${manylines}</td>
+<td></td>
+<td>-1</td>
+</tr>
+<tr>
+<td>@{5th to 10th} =</td>
+<td>Split To Lines</td>
+<td>${manylines}</td>
+<td>4</td>
+<td>10</td>
+</tr>
+<tr>
+<td>@{first two} =</td>
+<td>Split To Lines</td>
+<td>${manylines}</td>
+<td></td>
+<td>1</td>
+</tr>
+<tr>
+<td>@{last two} =</td>
+<td>Split To Lines</td>
+<td>${manylines}</td>
+<td>-2</td>
+<td></td>
+</tr>
+</table>
+<br />
+Use <a href="#Get Line" class="name">Get Line</a> if you only need to get a single line.</td>
+</tr>
+</table>
+<p id="footer">
+Altogether 19 keywords.<br />
+Generated by <a href="http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool">libdoc.py</a>
+on 2011-02-07 14:50:13.
+</p>
+</body>
+</html>

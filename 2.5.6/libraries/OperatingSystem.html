@@ -1,0 +1,1281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>OperatingSystem</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style media="all" type="text/css">
+body {
+  background: white;
+  color: black;
+  font-size: small;
+  font-family: sans-serif;
+  padding: 0.1em 0.5em;
+}
+a.name, span.name {
+  font-style: italic;
+}
+a, a:link, a:visited {
+  color: #c30;
+}
+a:hover, a:active {
+  text-decoration: underline;
+  color: black;
+}
+div.shortcuts {
+  margin: 1em 0em;
+  font-size: 0.9em;
+}
+div.shortcuts a {
+  text-decoration: none;
+  color: black;
+}
+div.shortcuts a:hover {
+  text-decoration: underline;
+}
+table.keywords {
+  border: 2px solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 0.3em 0em;
+  width: 100%;
+}
+table.keywords th, table.keywords td {
+  border: 2px solid black;
+  padding: 0.2em;
+  vertical-align: top;
+}
+table.keywords th {
+  background: #bbb;
+  color: black;
+}
+table.keywords td.kw {
+  width: 150px;
+  font-weight: bold;
+}
+table.keywords td.arg {
+  width: 300px;
+  font-style: italic;
+}
+table.doc {
+  border: 1px solid black;
+  background: transparent;
+  border-collapse: collapse;
+  empty-cells: show;
+  font-size: 0.85em;
+}
+table.doc td {
+  border: 1px solid black;
+  padding: 0.1em 0.3em;
+  height: 1.2em;
+
+}
+#footer {
+  font-size: 0.9em;
+}
+</style>
+<style media="print" type="text/css">
+body {
+  margin: 0px 1px;
+  padding: 0px;
+  font-size: 10px;
+}
+a {
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<h1>OperatingSystem</h1>
+<b>Version:</b> 2.5.6<br>
+<b>Scope:</b> global<br>
+<b>Named arguments: </b>
+supported
+
+<h2 id="introduction">Introduction</h2>
+<p>A test library providing keywords for OS related tasks.<br />
+<br />
+<span class="name">OperatingSystem</span> is Robot Framework's standard library that enables various operating system related tasks to be performed in the system where Robot Framework is running. It can, among other things, execute commands (e.g. <a href="#Run" class="name">Run</a>), create and remove files and directories (e.g. <a href="#Create File" class="name">Create File</a>, <a href="#Remove Directory" class="name">Remove Directory</a>), check whether files or directories exists or contain something (e.g. <a href="#File Should Exist" class="name">File Should Exist</a>, <a href="#Directory Should Be Empty" class="name">Directory Should Be Empty</a>) and manipulate environment variables (e.g. <a href="#Set Environment Variable" class="name">Set Environment Variable</a>).<br />
+<br />
+<b>Pattern matching</b><br />
+<br />
+Some keywords allow their arguments to be specified as <i>glob patterns</i> where:<br />
+<table border="1" class="doc">
+<tr>
+<td>*</td>
+<td>matches anything, even an empty string</td>
+</tr>
+<tr>
+<td>?</td>
+<td>matches any single character</td>
+</tr>
+<tr>
+<td>[chars]</td>
+<td>matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c')</td>
+</tr>
+<tr>
+<td>[!chars]</td>
+<td>matches any character not inside square brackets</td>
+</tr>
+</table>
+<br />
+Unless otherwise noted, matching is case-insensitive on case-insensitive operating systems such as Windows. Pattern matching is implemented using Python's <span class="name">fnmatch</span> module: <a href="http://docs.python.org/library/fnmatch.html">http://docs.python.org/library/fnmatch.html</a><br />
+<br />
+<b>Path separators</b><br />
+<br />
+All keywords expecting paths as arguments accept a forward slash (<span class="name">/</span>) as a path separator regardless the operating system. Notice that this <b>does not work when the path is part of an argument</b>, like it often is with <a href="#Run" class="name">Run</a> and <a href="#Start Process" class="name">Start Process</a> keywords. In such cases the built-in variable <span class="name">${/}</span> can be used to keep the test data platform independent.<br />
+<br />
+<b>Example</b><br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td><b>Setting</b></td>
+<td><b>Value</b></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>OperatingSystem</td>
+</tr>
+</table>
+<br />
+<table border="1" class="doc">
+<tr>
+<td><b>Variable</b></td>
+<td><b>Value</b></td>
+</tr>
+<tr>
+<td>${PATH}</td>
+<td>${CURDIR}/example.txt</td>
+</tr>
+</table>
+<br />
+<table border="1" class="doc">
+<tr>
+<td><b>Test Case</b></td>
+<td><b>Action</b></td>
+<td><b>Argument</b></td>
+<td><b>Argument</b></td>
+</tr>
+<tr>
+<td>Example</td>
+<td>Create File</td>
+<td>${PATH}</td>
+<td>Some text</td>
+</tr>
+<tr>
+<td></td>
+<td>File Should Exist</td>
+<td>${PATH}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Copy File</td>
+<td>${PATH}</td>
+<td>${TEMPDIR}/stuff</td>
+</tr>
+<tr>
+<td></td>
+<td>${output} =</td>
+<td>Run</td>
+<td>${CURDIR}${/}script.py arg</td>
+</tr>
+</table>
+</p>
+
+
+<h2>Shortcuts</h2>
+<div class='shortcuts'>
+<a href="#Append To File" title="Appends the given contend to the specified file.">Append&nbsp;To&nbsp;File</a>
+&nbsp;&middot;&nbsp;
+<a href="#Copy Directory" title="Copies the source directory into the destination.">Copy&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Copy File" title="Copies the source file into a new destination.">Copy&nbsp;File</a>
+&nbsp;&middot;&nbsp;
+<a href="#Count Directories In Directory" title="A wrapper for `Count Items In Directory` returning only file count.">Count&nbsp;Directories&nbsp;In&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Count Files In Directory" title="A wrapper for `Count Items In Directory` returning onlyt directory count.">Count&nbsp;Files&nbsp;In&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Count Items In Directory" title="Returns and logs the number of all items in the given directory.">Count&nbsp;Items&nbsp;In&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Create Directory" title="Creates the specified directory.">Create&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Create File" title="Creates a file with the given content and encoding.">Create&nbsp;File</a>
+&nbsp;&middot;&nbsp;
+<a href="#Create File With Encoding" title="*DEPRECATED* Use `Create File` instead. This keyword will be removed in RF 2.6.">Create&nbsp;File&nbsp;With&nbsp;Encoding</a>
+&nbsp;&middot;&nbsp;
+<a href="#Directory Should Be Empty" title="Fails unless the specified directory is empty.">Directory&nbsp;Should&nbsp;Be&nbsp;Empty</a>
+&nbsp;&middot;&nbsp;
+<a href="#Directory Should Exist" title="Fails unless the given path points to an existing directory.">Directory&nbsp;Should&nbsp;Exist</a>
+&nbsp;&middot;&nbsp;
+<a href="#Directory Should Not Be Empty" title="Fails if the specified directory is empty.">Directory&nbsp;Should&nbsp;Not&nbsp;Be&nbsp;Empty</a>
+&nbsp;&middot;&nbsp;
+<a href="#Directory Should Not Exist" title="Fails if the given path points to an existing file.">Directory&nbsp;Should&nbsp;Not&nbsp;Exist</a>
+&nbsp;&middot;&nbsp;
+<a href="#Empty Directory" title="Deletes all the content (incl. subdirectories) from the given directory.">Empty&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Environment Variable Should Be Set" title="Fails if the specified environment variable is not set.">Environment&nbsp;Variable&nbsp;Should&nbsp;Be&nbsp;Set</a>
+&nbsp;&middot;&nbsp;
+<a href="#Environment Variable Should Not Be Set" title="Fails if the specified environment variable is set.">Environment&nbsp;Variable&nbsp;Should&nbsp;Not&nbsp;Be&nbsp;Set</a>
+&nbsp;&middot;&nbsp;
+<a href="#File Should Be Empty" title="Fails unless the specified file is empty.">File&nbsp;Should&nbsp;Be&nbsp;Empty</a>
+&nbsp;&middot;&nbsp;
+<a href="#File Should Exist" title="Fails unless the given `path` points to an existing file.">File&nbsp;Should&nbsp;Exist</a>
+&nbsp;&middot;&nbsp;
+<a href="#File Should Not Be Empty" title="Fails if the specified directory is empty.">File&nbsp;Should&nbsp;Not&nbsp;Be&nbsp;Empty</a>
+&nbsp;&middot;&nbsp;
+<a href="#File Should Not Exist" title="Fails if the given path points to an existing file.">File&nbsp;Should&nbsp;Not&nbsp;Exist</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Binary File" title="Returns the contents of a specified file.">Get&nbsp;Binary&nbsp;File</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Environment Variable" title="Returns the value of an environment variable with the given name.">Get&nbsp;Environment&nbsp;Variable</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get File" title="Returns the contents of a specified file.">Get&nbsp;File</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get File Size" title="Returns and logs file size as an integer in bytes">Get&nbsp;File&nbsp;Size</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Modified Time" title="Returns the last modification time of a file or directory.">Get&nbsp;Modified&nbsp;Time</a>
+&nbsp;&middot;&nbsp;
+<a href="#Grep File" title="Returns the lines of the specified file that match the `pattern`.">Grep&nbsp;File</a>
+&nbsp;&middot;&nbsp;
+<a href="#Join Path" title="Joins the given path part(s) to the given base path.">Join&nbsp;Path</a>
+&nbsp;&middot;&nbsp;
+<a href="#Join Paths" title="Joins given paths with base and returns resulted paths.">Join&nbsp;Paths</a>
+&nbsp;&middot;&nbsp;
+<a href="#List Directories In Directory" title="A wrapper for `List Directory` that returns only directories.">List&nbsp;Directories&nbsp;In&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#List Directory" title="Returns and logs items in a directory, optionally filtered with `pattern`.">List&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#List Files In Directory" title="A wrapper for `List Directory` that returns only files.">List&nbsp;Files&nbsp;In&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Log File" title="Wrapper for `Get File` that also logs the returned file.">Log&nbsp;File</a>
+&nbsp;&middot;&nbsp;
+<a href="#Move Directory" title="Moves the source directory into a destination.">Move&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Move File" title="Moves the source file into a new destination.">Move&nbsp;File</a>
+&nbsp;&middot;&nbsp;
+<a href="#Normalize Path" title="Normalizes the given path.">Normalize&nbsp;Path</a>
+&nbsp;&middot;&nbsp;
+<a href="#Read Process Output" title="Waits for the process to finish and returns its output.">Read&nbsp;Process&nbsp;Output</a>
+&nbsp;&middot;&nbsp;
+<a href="#Remove Directory" title="Removes the directory pointed to by the given `path`.">Remove&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Remove Environment Variable" title="Deletes the specified environment variable.">Remove&nbsp;Environment&nbsp;Variable</a>
+&nbsp;&middot;&nbsp;
+<a href="#Remove File" title="Removes a file with the given path.">Remove&nbsp;File</a>
+&nbsp;&middot;&nbsp;
+<a href="#Remove Files" title="Uses `Remove File` to remove multiple files one-by-one.">Remove&nbsp;Files</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run" title="Runs the given command in the system and returns the output.">Run</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run And Return Rc" title="Runs the given command in the system and returns the return code.">Run&nbsp;And&nbsp;Return&nbsp;Rc</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run And Return Rc And Output" title="Runs the given command in the system and returns the RC and output.">Run&nbsp;And&nbsp;Return&nbsp;Rc&nbsp;And&nbsp;Output</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Environment Variable" title="Sets an environment variable to a specified value.">Set&nbsp;Environment&nbsp;Variable</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Modified Time" title="Sets the file modification time.">Set&nbsp;Modified&nbsp;Time</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Exist" title="Fails unless the given path (file or directory) exists.">Should&nbsp;Exist</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Exist" title="Fails if the given path (file or directory) exists.">Should&nbsp;Not&nbsp;Exist</a>
+&nbsp;&middot;&nbsp;
+<a href="#Split Extension" title="Splits the extension from the given path.">Split&nbsp;Extension</a>
+&nbsp;&middot;&nbsp;
+<a href="#Split Path" title="Splits the given path from the last path separator ('/' or '\').">Split&nbsp;Path</a>
+&nbsp;&middot;&nbsp;
+<a href="#Start Process" title="Starts the given command as a background process.">Start&nbsp;Process</a>
+&nbsp;&middot;&nbsp;
+<a href="#Stop All Processes" title="Stops all the processes and removes them from the process list.">Stop&nbsp;All&nbsp;Processes</a>
+&nbsp;&middot;&nbsp;
+<a href="#Stop Process" title="Stops the current process without reading from it.">Stop&nbsp;Process</a>
+&nbsp;&middot;&nbsp;
+<a href="#Switch Process" title="Switches the active process to the specified process.">Switch&nbsp;Process</a>
+&nbsp;&middot;&nbsp;
+<a href="#Touch" title="Emulates the UNIX touch command.">Touch</a>
+&nbsp;&middot;&nbsp;
+<a href="#Wait Until Created" title="Waits until the given file or directory is created.">Wait&nbsp;Until&nbsp;Created</a>
+&nbsp;&middot;&nbsp;
+<a href="#Wait Until Removed" title="Waits until the given file or directory is removed.">Wait&nbsp;Until&nbsp;Removed</a>
+</div>
+
+<h2>Keywords</h2>
+<table border="1" class="keywords">
+<tr>
+  <th class="kw">Keyword</th>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="kw"><a name="Append To File"></a>Append To File</td>
+  <td class="arg">path, content, encoding=UTF-8</td>
+  <td class="doc">Appends the given contend to the specified file.<br />
+<br />
+If the file does not exists, this keyword works exactly the same way as <a href="#Create File With Encoding" class="name">Create File With Encoding</a>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Copy Directory"></a>Copy Directory</td>
+  <td class="arg">source, destination</td>
+  <td class="doc">Copies the source directory into the destination.<br />
+<br />
+If the destination exists, the source is copied under it. Otherwise the destination directory and the possible missing intermediate directories are created.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Copy File"></a>Copy File</td>
+  <td class="arg">source, destination</td>
+  <td class="doc">Copies the source file into a new destination.<br />
+<br />
+1) If the destination is an existing file, the source file is copied over it.<br />
+<br />
+2) If the destination is an existing directory, the source file is copied into it. A possible file with the same name is overwritten.<br />
+<br />
+3) If the destination does not exist and it ends with a path separator ('/' or '\'), it is considered a directory. That directory is created and a source file copied into it. Possible missing intermediate directories are also created.<br />
+<br />
+4) If the destination does not exist and it does not end with a path separator, it is considered a file. If the path to the file does not exist, it is created.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Count Directories In Directory"></a>Count Directories In Directory</td>
+  <td class="arg">path, pattern=None</td>
+  <td class="doc">A wrapper for <a href="#Count Items In Directory" class="name">Count Items In Directory</a> returning only file count.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Count Files In Directory"></a>Count Files In Directory</td>
+  <td class="arg">path, pattern=None</td>
+  <td class="doc">A wrapper for <a href="#Count Items In Directory" class="name">Count Items In Directory</a> returning onlyt directory count.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Count Items In Directory"></a>Count Items In Directory</td>
+  <td class="arg">path, pattern=None</td>
+  <td class="doc">Returns and logs the number of all items in the given directory.<br />
+<br />
+The argument <span class="name">pattern</span> has the same semantics as in the <a href="#List Directory" class="name">List Directory</a> keyword. The count is returned as an integer, so it must be checked e.g. with the built-in keyword <span class="name">Should Be Equal As Integers</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Create Directory"></a>Create Directory</td>
+  <td class="arg">path</td>
+  <td class="doc">Creates the specified directory.<br />
+<br />
+Also possible intermediate directories are created. Passes if the directory already exists, and fails if the path points to a regular file.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Create File"></a>Create File</td>
+  <td class="arg">path, content=, encoding=UTF-8</td>
+  <td class="doc">Creates a file with the given content and encoding.<br />
+<br />
+If the directory where to create file does not exist it, and possible intermediate missing directories, are created.<br />
+<br />
+Use <a href="#Append To File" class="name">Append To File</a> if you want to append to an existing file, and use <a href="#File Should Not Exist" class="name">File Should Not Exist</a> if you want to avoid overwriting existing files.<br />
+<br />
+Note that the deprecated <span class="name">mode</span> argument was replaced with <span class="name">encoding</span> in Robot Framework 2.5.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Create File With Encoding"></a>Create File With Encoding</td>
+  <td class="arg">path, content=, encoding=UTF-8</td>
+  <td class="doc"><b>DEPRECATED</b> Use <a href="#Create File" class="name">Create File</a> instead. This keyword will be removed in RF 2.6.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Directory Should Be Empty"></a>Directory Should Be Empty</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails unless the specified directory is empty.<br />
+<br />
+The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Directory Should Exist"></a>Directory Should Exist</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails unless the given path points to an existing directory.<br />
+<br />
+The path can be given as an exact path or as a glob pattern. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>. The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Directory Should Not Be Empty"></a>Directory Should Not Be Empty</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails if the specified directory is empty.<br />
+<br />
+The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Directory Should Not Exist"></a>Directory Should Not Exist</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails if the given path points to an existing file.<br />
+<br />
+The path can be given as an exact path or as a glob pattern. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>. The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Empty Directory"></a>Empty Directory</td>
+  <td class="arg">path</td>
+  <td class="doc">Deletes all the content (incl. subdirectories) from the given directory.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Environment Variable Should Be Set"></a>Environment Variable Should Be Set</td>
+  <td class="arg">name, msg=None</td>
+  <td class="doc">Fails if the specified environment variable is not set.<br />
+<br />
+The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Environment Variable Should Not Be Set"></a>Environment Variable Should Not Be Set</td>
+  <td class="arg">name, msg=None</td>
+  <td class="doc">Fails if the specified environment variable is set.<br />
+<br />
+The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="File Should Be Empty"></a>File Should Be Empty</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails unless the specified file is empty.<br />
+<br />
+The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="File Should Exist"></a>File Should Exist</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails unless the given <span class="name">path</span> points to an existing file.<br />
+<br />
+The path can be given as an exact path or as a glob pattern. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>. The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="File Should Not Be Empty"></a>File Should Not Be Empty</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails if the specified directory is empty.<br />
+<br />
+The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="File Should Not Exist"></a>File Should Not Exist</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails if the given path points to an existing file.<br />
+<br />
+The path can be given as an exact path or as a glob pattern. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>. The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Binary File"></a>Get Binary File</td>
+  <td class="arg">path</td>
+  <td class="doc">Returns the contents of a specified file.<br />
+<br />
+This keyword reads the specified file and returns the contents as is. See also <a href="#Get File" class="name">Get File</a>.<br />
+<br />
+New in Robot Framework 2.5.5.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Environment Variable"></a>Get Environment Variable</td>
+  <td class="arg">name, default=None</td>
+  <td class="doc">Returns the value of an environment variable with the given name.<br />
+<br />
+If no such environment variable is set, returns the default value, if given. Otherwise fails the test case.<br />
+<br />
+Note that you can also access environment variables directly using the variable syntax <span class="name">%{ENV_VAR_NAME}</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get File"></a>Get File</td>
+  <td class="arg">path, encoding=UTF-8</td>
+  <td class="doc">Returns the contents of a specified file.<br />
+<br />
+This keyword reads the specified file and returns the contents. Line breaks in content are converted to platform independent form. See also <a href="#Get Binary File" class="name">Get Binary File</a>.<br />
+<br />
+<span class="name">encoding</span> defines the encoding of the file. By default the value is 'UTF-8', which means that UTF-8 and ASCII-encoded files are read correctly.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get File Size"></a>Get File Size</td>
+  <td class="arg">path</td>
+  <td class="doc">Returns and logs file size as an integer in bytes</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Modified Time"></a>Get Modified Time</td>
+  <td class="arg">path, format=timestamp</td>
+  <td class="doc">Returns the last modification time of a file or directory.<br />
+<br />
+How time is returned is determined based on the given <span class="name">format</span> string as follows. Note that all checks are case-insensitive. Returned time is also automatically logged.<br />
+<br />
+1) If <span class="name">format</span> contains the word 'epoch', the time is returned in seconds after the UNIX epoch. The return value is always an integer.<br />
+<br />
+2) If <span class="name">format</span> contains any of the words 'year', 'month', 'day', 'hour', 'min' or 'sec', only the selected parts are returned. The order of the returned parts is always the one in the previous sentence and the order of the words in <span class="name">format</span> is not significant. The parts are returned as zero-padded strings (e.g. May -&gt; '05').<br />
+<br />
+3) Otherwise, and by default, the time is returned as a timestamp string in the format '2006-02-24 15:08:31'.<br />
+<br />
+Examples (when the modified time of the ${CURDIR} is 2006-03-29 15:06:21):<br />
+<table border="1" class="doc">
+<tr>
+<td>${time} =</td>
+<td>Get Modified Time</td>
+<td>${CURDIR}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${secs} =</td>
+<td>Get Modified Time</td>
+<td>${CURDIR}</td>
+<td>epoch</td>
+<td></td>
+</tr>
+<tr>
+<td>${year} =</td>
+<td>Get Modified Time</td>
+<td>${CURDIR}</td>
+<td>return year</td>
+<td></td>
+</tr>
+<tr>
+<td>${y}</td>
+<td>${d} =</td>
+<td>Get Modified Time</td>
+<td>${CURDIR}</td>
+<td>year,day</td>
+</tr>
+<tr>
+<td>@{time} =</td>
+<td>Get Modified Time</td>
+<td>${CURDIR}</td>
+<td>year,month,day,hour,min,sec</td>
+<td></td>
+</tr>
+</table>
+=&gt;<br />
+- ${time} = '2006-03-29 15:06:21'<br />
+- ${secs} = 1143637581<br />
+- ${year} = '2006'<br />
+- ${y} = '2006' &amp; ${d} = '29'<br />
+- @{time} = ['2006', '03', '29', '15', '06', '21']</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Grep File"></a>Grep File</td>
+  <td class="arg">path, pattern, encoding=UTF-8</td>
+  <td class="doc">Returns the lines of the specified file that match the <span class="name">pattern</span>.<br />
+<br />
+This keyword reads a file from the file system using the defined <span class="name">path</span> and <span class="name">encoding</span> similarly as <a href="#Get File" class="name">Get File</a>. A difference is that only the lines that match the given <span class="name">pattern</span> are returned. Lines are returned as a single string catenated back together with newlines and the number of matched lines is automatically logged. Possible trailing newline is never returned.<br />
+<br />
+A line matches if it contains the <span class="name">pattern</span> anywhere in it and it <b>does not need to match the pattern fully</b>. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>, and in this case matching is case-sensitive. Support for different pattern types were removed in Robot Framework 2.5.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${errors} =</td>
+<td>Grep File</td>
+<td>/var/log/myapp.log</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>${ret} =</td>
+<td>Grep File</td>
+<td>${CURDIR}/file.txt</td>
+<td>[Ww]ildc??d ex*ple</td>
+</tr>
+</table>
+<br />
+If more complex pattern matching is needed, it is possible to use <a href="#Get File" class="name">Get File</a> in combination with String library keywords like <span class="name">Get Lines Matching Regexp</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Join Path"></a>Join Path</td>
+  <td class="arg">base, *parts</td>
+  <td class="doc">Joins the given path part(s) to the given base path.<br />
+<br />
+The path separator ('/' or '\') is inserted when needed and the possible absolute paths handled as expected. The resulted path is also normalized.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>my</td>
+<td>path</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${p2} =</td>
+<td>Join Path</td>
+<td>my/</td>
+<td>path/</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${p3} =</td>
+<td>Join Path</td>
+<td>my</td>
+<td>path</td>
+<td>my</td>
+<td>file.txt</td>
+</tr>
+<tr>
+<td>${p4} =</td>
+<td>Join Path</td>
+<td>my</td>
+<td>/path</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${p5} =</td>
+<td>Join Path</td>
+<td>/my/path/</td>
+<td>..</td>
+<td>path2</td>
+<td></td>
+</tr>
+</table>
+=&gt;<br />
+- ${path} = 'my/path'<br />
+- ${p2} = 'my/path'<br />
+- ${p3} = 'my/path/my/file.txt'<br />
+- ${p4} = '/path'<br />
+- ${p5} = '/my/path2'</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Join Paths"></a>Join Paths</td>
+  <td class="arg">base, *paths</td>
+  <td class="doc">Joins given paths with base and returns resulted paths.<br />
+<br />
+See <a href="#Join Path" class="name">Join Path</a> for more information.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>@{p1} =</td>
+<td>Join Path</td>
+<td>base</td>
+<td>example</td>
+<td>other</td>
+<td></td>
+</tr>
+<tr>
+<td>@{p2} =</td>
+<td>Join Path</td>
+<td>/my/base</td>
+<td>/example</td>
+<td>other</td>
+<td></td>
+</tr>
+<tr>
+<td>@{p3} =</td>
+<td>Join Path</td>
+<td>my/base</td>
+<td>example/path/</td>
+<td>other</td>
+<td>one/more</td>
+</tr>
+</table>
+=&gt;<br />
+- @{p1} = ['base/example', 'base/other']<br />
+- @{p2} = ['/example', '/my/base/other']<br />
+- @{p3} = ['my/base/example/path', 'my/base/other', 'my/base/one/more']</td>
+</tr>
+<tr>
+  <td class="kw"><a name="List Directories In Directory"></a>List Directories In Directory</td>
+  <td class="arg">path, pattern=None, absolute=False, deprecated_absolute=None</td>
+  <td class="doc">A wrapper for <a href="#List Directory" class="name">List Directory</a> that returns only directories.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="List Directory"></a>List Directory</td>
+  <td class="arg">path, pattern=None, absolute=False, deprecated_absolute=None</td>
+  <td class="doc">Returns and logs items in a directory, optionally filtered with <span class="name">pattern</span>.<br />
+<br />
+File and directory names are returned in case-sensitive alphabetical order, e.g. ['A Name', 'Second', 'a lower case name', 'one more']. Implicit directories '.' and '..' are not returned. The returned items are automatically logged.<br />
+<br />
+By default, the file and directory names are returned relative to the given path (e.g. 'file.txt'). If you want them be returned in the absolute format (e.g. '/home/robot/file.txt'), set the <span class="name">absolute</span> argument to any non-empty string.<br />
+<br />
+If <span class="name">pattern</span> is given, only items matching it are returned. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>, and in this case matching is case-sensitive. Support for different pattern types was removed in Robot Framework 2.5.<br />
+<br />
+Examples (using also other <a href="#List Directory" class="name">List Directory</a> variants):<br />
+<table border="1" class="doc">
+<tr>
+<td>@{items} =</td>
+<td>List Directory</td>
+<td>${TEMPDIR}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>@{files} =</td>
+<td>List Files In Directory</td>
+<td>/tmp</td>
+<td>*.txt</td>
+<td>absolute</td>
+</tr>
+<tr>
+<td>${count} =</td>
+<td>Count Files In Directory</td>
+<td>${CURDIR}</td>
+<td>???</td>
+<td></td>
+</tr>
+</table>
+<br />
+The signature of this keyword was changed in RF 2.5 when the deprecated <span class="name">pattern_type</span> argument was removed. The <span class="name">deprecated_absolute</span> argument was added to keep the signature backwards compatible, but it will be removed in RF 2.6.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="List Files In Directory"></a>List Files In Directory</td>
+  <td class="arg">path, pattern=None, absolute=False, deprecated_absolute=None</td>
+  <td class="doc">A wrapper for <a href="#List Directory" class="name">List Directory</a> that returns only files.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Log File"></a>Log File</td>
+  <td class="arg">path, encoding=UTF-8</td>
+  <td class="doc">Wrapper for <a href="#Get File" class="name">Get File</a> that also logs the returned file.<br />
+<br />
+The file is logged with the INFO level. If you want something else, just use <a href="#Get File" class="name">Get File</a> and the built-in keyword <span class="name">Log</span> with the desired level.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Move Directory"></a>Move Directory</td>
+  <td class="arg">source, destination</td>
+  <td class="doc">Moves the source directory into a destination.<br />
+<br />
+Uses <a href="#Copy Directory" class="name">Copy Directory</a> keyword internally, and <span class="name">source</span> and <span class="name">destination</span> arguments have exactly same semantics as with that keyword.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Move File"></a>Move File</td>
+  <td class="arg">source, destination</td>
+  <td class="doc">Moves the source file into a new destination.<br />
+<br />
+Uses <a href="#Copy File" class="name">Copy File</a> keyword internally, and <span class="name">source</span> and <span class="name">destination</span> arguments have exactly same semantics as with that keyword.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Normalize Path"></a>Normalize Path</td>
+  <td class="arg">path</td>
+  <td class="doc">Normalizes the given path.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${path} =</td>
+<td>Normalize Path</td>
+<td>abc</td>
+</tr>
+<tr>
+<td>${p2} =</td>
+<td>Normalize Path</td>
+<td>abc/</td>
+</tr>
+<tr>
+<td>${p3} =</td>
+<td>Normalize Path</td>
+<td>abc/../def</td>
+</tr>
+<tr>
+<td>${p4} =</td>
+<td>Normalize Path</td>
+<td>abc/./def</td>
+</tr>
+<tr>
+<td>${p5} =</td>
+<td>Normalize Path</td>
+<td>abc//def</td>
+</tr>
+</table>
+=&gt;<br />
+- ${path} = 'abc'<br />
+- ${p2} = 'abc'<br />
+- ${p3} = 'def'<br />
+- ${p4} = 'abc/def'<br />
+- ${p5} = 'abc/def'</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Read Process Output"></a>Read Process Output</td>
+  <td class="arg"></td>
+  <td class="doc">Waits for the process to finish and returns its output.<br />
+<br />
+As mentioned in the documentation of <a href="#Start Process" class="name">Start Process</a> keyword, and documented thoroughly in <a href="#Run" class="name">Run</a> keyword, the standard error stream is automatically redirected to the standard output. This keyword thus always returns all the output procuded by the command.<br />
+<br />
+Note that although the process is finished, it is not removed from the process list. Trying to read from a stopped process nevertheless fails. To reset the process list (and indexes and aliases), <a href="#Stop All Processes" class="name">Stop All Processes</a> must be used.<br />
+<br />
+See <a href="#Start Process" class="name">Start Process</a> and <a href="#Switch Process" class="name">Switch Process</a> for more information and examples about running processes.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Remove Directory"></a>Remove Directory</td>
+  <td class="arg">path, recursive=False</td>
+  <td class="doc">Removes the directory pointed to by the given <span class="name">path</span>.<br />
+<br />
+If the second argument <span class="name">recursive</span> is set to any non-empty string, the directory is removed recursively. Otherwise removing fails if the directory is not empty.<br />
+<br />
+If the directory pointed to by the <span class="name">path</span> does not exist, the keyword passes, but it fails, if the <span class="name">path</span> points to a file.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Remove Environment Variable"></a>Remove Environment Variable</td>
+  <td class="arg">name</td>
+  <td class="doc">Deletes the specified environment variable.<br />
+<br />
+Does nothing if the environment variable is not set.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Remove File"></a>Remove File</td>
+  <td class="arg">path</td>
+  <td class="doc">Removes a file with the given path.<br />
+<br />
+Passes if the file does not exist, but fails if the path does not point to a regular file (e.g. it points to a directory).<br />
+<br />
+The path can be given as an exact path or as a glob pattern. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>. If the path is a pattern, all files matching it are removed.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Remove Files"></a>Remove Files</td>
+  <td class="arg">*paths</td>
+  <td class="doc">Uses <a href="#Remove File" class="name">Remove File</a> to remove multiple files one-by-one.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>Remove Files</td>
+<td>${TEMPDIR}${/}foo.txt</td>
+<td>${TEMPDIR}${/}bar.txt</td>
+<td>${TEMPDIR}${/}zap.txt</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run"></a>Run</td>
+  <td class="arg">command</td>
+  <td class="doc">Runs the given command in the system and returns the output.<br />
+<br />
+The execution status of the command <b>is not checked</b> by this keyword, and it must be done separately based on the returned output. If the execution return code is needed, either <a href="#Run And Return Rc" class="name">Run And Return RC</a> or <a href="#Run And Return Rc And Output" class="name">Run And Return RC And Output</a> can be used.<br />
+<br />
+The standard error stream is automatically redirected to the standard output stream by adding <span class="name">2&gt;&amp;1</span> after the executed command. This automatic redirection is done only when the executed command does not contain additional output redirections. You can thus freely forward the standard error somewhere else, for example, like <span class="name">my_command 2&gt;stderr.txt</span>.<br />
+<br />
+The returned output contains everything written into the standard output or error streams by the command (unless either of them is redirected explicitly). Many commands add an extra newline (<span class="name">\n</span>) after the output to make it easier to read in the console. To ease processing the returned output, this possible trailing newline is stripped by this keyword.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${output} =</td>
+<td>Run</td>
+<td>ls -lhF /tmp</td>
+</tr>
+<tr>
+<td>Log</td>
+<td>${output}</td>
+<td></td>
+</tr>
+<tr>
+<td>${result} =</td>
+<td>Run</td>
+<td>${CURDIR}${/}tester.py arg1 arg2</td>
+</tr>
+<tr>
+<td>Should Not Contain</td>
+<td>${result}</td>
+<td>FAIL</td>
+</tr>
+<tr>
+<td>${stdout} =</td>
+<td>Run</td>
+<td>/opt/script.sh 2&gt;/tmp/stderr.txt</td>
+</tr>
+<tr>
+<td>Should Be Equal</td>
+<td>${stdout}</td>
+<td>TEST PASSED</td>
+</tr>
+<tr>
+<td>File Should Be Empty</td>
+<td>/tmp/stderr.txt</td>
+<td></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run And Return Rc"></a>Run And Return Rc</td>
+  <td class="arg">command</td>
+  <td class="doc">Runs the given command in the system and returns the return code.<br />
+<br />
+The return code (RC) is returned as a positive integer in range from 0 to 255 as returned by the executed command. On some operating systems (notable Windows) original return codes can be something else, but this keyword always maps them to the 0-255 range. Since the RC is an integer, it must be checked e.g. with the keyword <span class="name">Should Be Equal As Integers</span> instead of <span class="name">Should Be Equal</span> (both are built-in keywords).<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${rc} =</td>
+<td>Run and Return RC</td>
+<td>${CURDIR}${/}script.py arg</td>
+</tr>
+<tr>
+<td>Should Be Equal As Integers</td>
+<td>${rc}</td>
+<td>0</td>
+</tr>
+<tr>
+<td>${rc} =</td>
+<td>Run and Return RC</td>
+<td>/path/to/example.rb arg1 arg2</td>
+</tr>
+<tr>
+<td>Should Be True</td>
+<td>0 &lt; ${rc} &lt; 42</td>
+<td></td>
+</tr>
+</table>
+<br />
+See <a href="#Run" class="name">Run</a> and <a href="#Run And Return Rc And Output" class="name">Run And Return RC And Output</a> if you need to get the output of the executed command.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run And Return Rc And Output"></a>Run And Return Rc And Output</td>
+  <td class="arg">command</td>
+  <td class="doc">Runs the given command in the system and returns the RC and output.<br />
+<br />
+The return code (RC) is returned similarly as with <a href="#Run And Return Rc" class="name">Run And Return RC</a> and the output similarly as with <a href="#Run" class="name">Run</a>.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${rc}</td>
+<td>${output} =</td>
+<td>Run and Return RC and Output</td>
+<td>${CURDIR}${/}mytool</td>
+</tr>
+<tr>
+<td>Should Be Equal As Integers</td>
+<td>${rc}</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>Should Not Contain</td>
+<td>${output}</td>
+<td>FAIL</td>
+<td></td>
+</tr>
+<tr>
+<td>${rc}</td>
+<td>${stdout} =</td>
+<td>Run and Return RC and Output</td>
+<td>/opt/script.sh 2&gt;/tmp/stderr.txt</td>
+</tr>
+<tr>
+<td>Should Be True</td>
+<td>${rc} &gt; 42</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Should Be Equal</td>
+<td>${stdout}</td>
+<td>TEST PASSED</td>
+<td></td>
+</tr>
+<tr>
+<td>File Should Be Empty</td>
+<td>/tmp/stderr.txt</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Environment Variable"></a>Set Environment Variable</td>
+  <td class="arg">name, value</td>
+  <td class="doc">Sets an environment variable to a specified value.<br />
+<br />
+Starting from Robot Framework 2.1.1, values are converted to strings automatically.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Modified Time"></a>Set Modified Time</td>
+  <td class="arg">path, mtime</td>
+  <td class="doc">Sets the file modification time.<br />
+<br />
+Changes the modification and access times of the given file to the value determined by <span class="name">mtime</span>, which can be given in four different ways.<br />
+<br />
+1) If <span class="name">mtime</span> is a floating point number, it is interpreted as seconds since epoch (Jan 1, 1970 0:00:00). This documentation is written about 1177654467 seconds since epoch.<br />
+<br />
+2) If <span class="name">mtime</span> is a valid timestamp, that time will be used. Valid timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.<br />
+<br />
+3) If <span class="name">mtime</span> is equal to 'NOW' (case-insensitive), the current time is used.<br />
+<br />
+4) If <span class="name">mtime</span> is in the format 'NOW - 1 day' or 'NOW + 1 hour 30 min', the current time plus/minus the time specified with the time string is used. The time string format is described in an appendix of Robot Framework User Guide.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Set Modified Time</td>
+<td>/path/file</td>
+<td>1177654467</td>
+<td>#(2007-04-27 9:14:27)</td>
+</tr>
+<tr>
+<td>Set Modified Time</td>
+<td>/path/file</td>
+<td>2007-04-27 9:14:27</td>
+<td></td>
+</tr>
+<tr>
+<td>Set Modified Time</td>
+<td>/path/file</td>
+<td>NOW</td>
+<td># The time of execution</td>
+</tr>
+<tr>
+<td>Set Modified Time</td>
+<td>/path/file</td>
+<td>NOW - 1d</td>
+<td># 1 day subtracted from NOW</td>
+</tr>
+<tr>
+<td>Set Modified Time</td>
+<td>/path/file</td>
+<td>NOW + 1h 2min 3s</td>
+<td># 1h 2min 3s added to NOW</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Exist"></a>Should Exist</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails unless the given path (file or directory) exists.<br />
+<br />
+The path can be given as an exact path or as a glob pattern. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>. The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Exist"></a>Should Not Exist</td>
+  <td class="arg">path, msg=None</td>
+  <td class="doc">Fails if the given path (file or directory) exists.<br />
+<br />
+The path can be given as an exact path or as a glob pattern. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>. The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Split Extension"></a>Split Extension</td>
+  <td class="arg">path</td>
+  <td class="doc">Splits the extension from the given path.<br />
+<br />
+The given path is first normalized (e.g. possible trailing path separators removed, special directories '..' and '.' removed). The base path and extension are returned as separate components so that the dot used as an extension separator is removed. If the path contains no extension, an empty string is returned for it. Possible leading and trailing dots in the file name are never considered to be extension separators.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${path}</td>
+<td>${ext} =</td>
+<td>Split Extension</td>
+<td>file.extension</td>
+</tr>
+<tr>
+<td>${p2}</td>
+<td>${e2} =</td>
+<td>Split Extension</td>
+<td>path/file.ext</td>
+</tr>
+<tr>
+<td>${p3}</td>
+<td>${e3} =</td>
+<td>Split Extension</td>
+<td>path/file</td>
+</tr>
+<tr>
+<td>${p4}</td>
+<td>${e4} =</td>
+<td>Split Extension</td>
+<td>p1/../p2/file.ext</td>
+</tr>
+<tr>
+<td>${p5}</td>
+<td>${e5} =</td>
+<td>Split Extension</td>
+<td>path/.file.ext</td>
+</tr>
+<tr>
+<td>${p6}</td>
+<td>${e6} =</td>
+<td>Split Extension</td>
+<td>path/.file</td>
+</tr>
+</table>
+=&gt;<br />
+- ${path} = 'file' &amp; ${ext} = 'extension'<br />
+- ${p2} = 'path/file' &amp; ${e2} = 'ext'<br />
+- ${p3} = 'path/file' &amp; ${e3} = ''<br />
+- ${p4} = 'p2/file' &amp; ${e4} = 'ext'<br />
+- ${p5} = 'path/.file' &amp; ${e5} = 'ext'<br />
+- ${p6} = 'path/.file' &amp; ${e6} = ''</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Split Path"></a>Split Path</td>
+  <td class="arg">path</td>
+  <td class="doc">Splits the given path from the last path separator ('/' or '\').<br />
+<br />
+The given path is first normalized (e.g. a possible trailing path separator is removed, special directories '..' and '.' removed). The parts that are split are returned as separate components.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${path1}</td>
+<td>${dir} =</td>
+<td>Split Path</td>
+<td>abc/def</td>
+</tr>
+<tr>
+<td>${path2}</td>
+<td>${file} =</td>
+<td>Split Path</td>
+<td>abc/def/ghi.txt</td>
+</tr>
+<tr>
+<td>${path3}</td>
+<td>${d2} &nbsp;=</td>
+<td>Split Path</td>
+<td>abc/../def/ghi/</td>
+</tr>
+</table>
+=&gt;<br />
+- ${path1} = 'abc' &amp; ${dir} = 'def'<br />
+- ${path2} = 'abc/def' &amp; ${file} = 'ghi.txt'<br />
+- ${path3} = 'def' &amp; ${d2} = 'ghi'</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Start Process"></a>Start Process</td>
+  <td class="arg">command, stdin=None, alias=None</td>
+  <td class="doc">Starts the given command as a background process.<br />
+<br />
+Starts the process in the background and sets this process as the current process. The following calls of the keywords <a href="#Read Process Output" class="name">Read Process Output</a> or <a href="#Stop Process" class="name">Stop Process</a> affect this process, unless the keyword <a href="#Switch Process" class="name">Switch Process</a> is used.<br />
+<br />
+If the command needs input through the standard input stream, it can be defined with the <span class="name">stdin</span> argument. &nbsp;It is not possible to give input to the command later. Possible command line arguments must be given as part of the command like '/tmp/script.sh arg1 arg2'.<br />
+<br />
+Returns the index of this process. The indexing starts from 1, and it can be used to switch between the processes with the <a href="#Switch Process" class="name">Switch Process</a> keyword. To end all processes and reset indexing, the <a href="#Stop All Processes" class="name">Stop All Processes</a> keyword must be used.<br />
+<br />
+The optional <span class="name">alias</span> is a name for this process that may be used with <a href="#Switch Process" class="name">Switch Process</a> instead of the returned index.<br />
+<br />
+The standard error stream is redirected to the standard input stream automatically by adding '2&gt;&amp;1' after the executed command. This is done the same way, and for the same reasons, as with <a href="#Run" class="name">Run</a> keyword.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>Start Process</td>
+<td>/path/longlasting.sh</td>
+<td></td>
+</tr>
+<tr>
+<td>Do Something</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${output} =</td>
+<td>Read Process Output</td>
+<td></td>
+</tr>
+<tr>
+<td>Should Contain</td>
+<td>${output}</td>
+<td>Expected text</td>
+</tr>
+<tr>
+<td>[Teardown]</td>
+<td>Stop All Processes</td>
+<td></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Stop All Processes"></a>Stop All Processes</td>
+  <td class="arg"></td>
+  <td class="doc">Stops all the processes and removes them from the process list.<br />
+<br />
+Resets the indexing that <a href="#Start Process" class="name">Start Process</a> uses. All aliases are also deleted. It does not matter have some of the processes already been closed or not.<br />
+<br />
+It is highly recommended to use this keyword in test or suite level teardown to make sure all the started processes are closed.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Stop Process"></a>Stop Process</td>
+  <td class="arg"></td>
+  <td class="doc">Stops the current process without reading from it.<br />
+<br />
+Stopping a process does not remove it from the process list. To reset the process list (and indexes and aliases), <a href="#Stop All Processes" class="name">Stop All Processes</a> must be used. Stopping an already stopped process has no effect.<br />
+<br />
+See <a href="#Start Process" class="name">Start Process</a> and <a href="#Switch Process" class="name">Switch Process</a> for more information.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Switch Process"></a>Switch Process</td>
+  <td class="arg">index_or_alias</td>
+  <td class="doc">Switches the active process to the specified process.<br />
+<br />
+The index is the return value of the <a href="#Start Process" class="name">Start Process</a> keyword and an alias may have been defined to it.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>Start Process</td>
+<td>/path/script.sh arg</td>
+<td></td>
+<td>1st process</td>
+</tr>
+<tr>
+<td>${2nd} =</td>
+<td>Start Process</td>
+<td>/path/script2.sh</td>
+<td></td>
+</tr>
+<tr>
+<td>Switch Process</td>
+<td>1st process</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${out1} =</td>
+<td>Read Process Output</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Switch Process</td>
+<td>${2nd}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${out2} =</td>
+<td>Read Process Output</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Log Many</td>
+<td>1st process: ${out1}</td>
+<td>2nd process: ${out1}</td>
+<td></td>
+</tr>
+<tr>
+<td>[Teardown]</td>
+<td>Stop All Processes</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Touch"></a>Touch</td>
+  <td class="arg">path</td>
+  <td class="doc">Emulates the UNIX touch command.<br />
+<br />
+Creates a file, if it does not exist. Otherwise changes its access and modification times to the current time.<br />
+<br />
+Fails if used with the directories or the parent directory of the given file does not exist.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Wait Until Created"></a>Wait Until Created</td>
+  <td class="arg">path, timeout=1 minute</td>
+  <td class="doc">Waits until the given file or directory is created.<br />
+<br />
+The path can be given as an exact path or as a glob pattern. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>. If the path is a pattern, the keyword returns when an item matching it is created.<br />
+<br />
+The optional <span class="name">timeout</span> can be used to control the maximum time of waiting. The timeout is given as a timeout string, e.g. in a format '15 seconds', '1min 10s' or just '10'. The time string format is described in an appendix of Robot Framework User Guide.<br />
+<br />
+If the timeout is negative, the keyword is never timed-out. The keyword returns immediately, if the path already exists.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Wait Until Removed"></a>Wait Until Removed</td>
+  <td class="arg">path, timeout=1 minute</td>
+  <td class="doc">Waits until the given file or directory is removed.<br />
+<br />
+The path can be given as an exact path or as a glob pattern. The pattern matching syntax is explained in <a href="#introduction" class="name">introduction</a>. If the path is a pattern, the keyword waits until all matching items are removed.<br />
+<br />
+The optional <span class="name">timeout</span> can be used to control the maximum time of waiting. The timeout is given as a timeout string, e.g. in a format '15 seconds', '1min 10s' or just '10'. The time string format is described in an appendix of Robot Framework User Guide.<br />
+<br />
+If the timeout is negative, the keyword is never timed-out. The keyword returns immediately, if the path does not exist in the first place.</td>
+</tr>
+</table>
+<p id="footer">
+Altogether 56 keywords.<br />
+Generated by <a href="http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool">libdoc.py</a>
+on 2011-02-07 14:50:10.
+</p>
+</body>
+</html>

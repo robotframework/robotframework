@@ -1,0 +1,1779 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>BuiltIn</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style media="all" type="text/css">
+body {
+  background: white;
+  color: black;
+  font-size: small;
+  font-family: sans-serif;
+  padding: 0.1em 0.5em;
+}
+a.name, span.name {
+  font-style: italic;
+}
+a, a:link, a:visited {
+  color: #c30;
+}
+a:hover, a:active {
+  text-decoration: underline;
+  color: black;
+}
+div.shortcuts {
+  margin: 1em 0em;
+  font-size: 0.9em;
+}
+div.shortcuts a {
+  text-decoration: none;
+  color: black;
+}
+div.shortcuts a:hover {
+  text-decoration: underline;
+}
+table.keywords {
+  border: 2px solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 0.3em 0em;
+  width: 100%;
+}
+table.keywords th, table.keywords td {
+  border: 2px solid black;
+  padding: 0.2em;
+  vertical-align: top;
+}
+table.keywords th {
+  background: #bbb;
+  color: black;
+}
+table.keywords td.kw {
+  width: 150px;
+  font-weight: bold;
+}
+table.keywords td.arg {
+  width: 300px;
+  font-style: italic;
+}
+table.doc {
+  border: 1px solid black;
+  background: transparent;
+  border-collapse: collapse;
+  empty-cells: show;
+  font-size: 0.85em;
+}
+table.doc td {
+  border: 1px solid black;
+  padding: 0.1em 0.3em;
+  height: 1.2em;
+
+}
+#footer {
+  font-size: 0.9em;
+}
+</style>
+<style media="print" type="text/css">
+body {
+  margin: 0px 1px;
+  padding: 0px;
+  font-size: 10px;
+}
+a {
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<h1>BuiltIn</h1>
+<b>Version:</b> 2.5.6<br>
+<b>Scope:</b> global<br>
+<b>Named arguments: </b>
+supported
+
+<h2 id="introduction">Introduction</h2>
+<p>An always available standard library with often needed keywords.<br />
+<br />
+<span class="name">BuiltIn</span> is Robot Framework's standard library that provides a set of generic keywords needed often. It is imported automatically and thus always available. The provided keywords can be used, for example, for verifications (e.g. <a href="#Should Be Equal" class="name">Should Be Equal</a>, <a href="#Should Contain" class="name">Should Contain</a>), conversions (e.g. <a href="#Convert To Integer" class="name">Convert To Integer</a>) and for various other purposes (e.g. <a href="#Log" class="name">Log</a>, <a href="#Sleep" class="name">Sleep</a>, <a href="#Run Keyword If" class="name">Run Keyword If</a>, <a href="#Set Global Variable" class="name">Set Global Variable</a>).</p>
+
+
+<h2>Shortcuts</h2>
+<div class='shortcuts'>
+<a href="#Call Method" title="Calls the named method of the given object with the provided arguments.">Call&nbsp;Method</a>
+&nbsp;&middot;&nbsp;
+<a href="#Catenate" title="Catenates the given items together and returns the resulted string.">Catenate</a>
+&nbsp;&middot;&nbsp;
+<a href="#Comment" title="Displays the given messages in the log file as keyword arguments.">Comment</a>
+&nbsp;&middot;&nbsp;
+<a href="#Convert To Boolean" title="Converts the given item to Boolean true or false.">Convert&nbsp;To&nbsp;Boolean</a>
+&nbsp;&middot;&nbsp;
+<a href="#Convert To Integer" title="Converts the given item to an integer number.">Convert&nbsp;To&nbsp;Integer</a>
+&nbsp;&middot;&nbsp;
+<a href="#Convert To Number" title="Converts the given item to a floating point number.">Convert&nbsp;To&nbsp;Number</a>
+&nbsp;&middot;&nbsp;
+<a href="#Convert To String" title="Converts the given item to a Unicode string.">Convert&nbsp;To&nbsp;String</a>
+&nbsp;&middot;&nbsp;
+<a href="#Create List" title="Returns a list containing given items.">Create&nbsp;List</a>
+&nbsp;&middot;&nbsp;
+<a href="#Evaluate" title="Evaluates the given expression in Python and returns the results.">Evaluate</a>
+&nbsp;&middot;&nbsp;
+<a href="#Exit For Loop" title="Immediately stops executing the enclosing for loop.">Exit&nbsp;For&nbsp;Loop</a>
+&nbsp;&middot;&nbsp;
+<a href="#Fail" title="Fails the test immediately with the given (optional) message.">Fail</a>
+&nbsp;&middot;&nbsp;
+<a href="#Fatal Error" title="Stops the whole test execution.">Fatal&nbsp;Error</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Count" title="Returns and logs how many times `item2` is found from `item1`.">Get&nbsp;Count</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Length" title="Returns and logs the length of the given item.">Get&nbsp;Length</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Library Instance" title="Returns the currently active instance of the specified test library.">Get&nbsp;Library&nbsp;Instance</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Time" title="Returns the given time in the requested format.">Get&nbsp;Time</a>
+&nbsp;&middot;&nbsp;
+<a href="#Get Variables" title="Returns a dictionary containing all variables in the current scope.">Get&nbsp;Variables</a>
+&nbsp;&middot;&nbsp;
+<a href="#Import Library" title="Imports a library with the given name and optional arguments.">Import&nbsp;Library</a>
+&nbsp;&middot;&nbsp;
+<a href="#Import Resource" title="Imports a resource file with the given path.">Import&nbsp;Resource</a>
+&nbsp;&middot;&nbsp;
+<a href="#Import Variables" title="Imports a variable file with the given path and optional arguments.">Import&nbsp;Variables</a>
+&nbsp;&middot;&nbsp;
+<a href="#Length Should Be" title="Verifies that the length of the given item is correct.">Length&nbsp;Should&nbsp;Be</a>
+&nbsp;&middot;&nbsp;
+<a href="#Log" title="Logs the given message with the given level.">Log</a>
+&nbsp;&middot;&nbsp;
+<a href="#Log Many" title="Logs the given messages as separate entries with the INFO level.">Log&nbsp;Many</a>
+&nbsp;&middot;&nbsp;
+<a href="#Log Variables" title="Logs all variables in the current scope with given log level.">Log&nbsp;Variables</a>
+&nbsp;&middot;&nbsp;
+<a href="#No Operation" title="Does absolutely nothing.">No&nbsp;Operation</a>
+&nbsp;&middot;&nbsp;
+<a href="#Regexp Escape" title="Returns each argument string escaped for use as a regular expression.">Regexp&nbsp;Escape</a>
+&nbsp;&middot;&nbsp;
+<a href="#Remove Tags" title="Removes given `tags` from the current test or all tests in a suite.">Remove&nbsp;Tags</a>
+&nbsp;&middot;&nbsp;
+<a href="#Repeat Keyword" title="Executes the specified keyword multiple times.">Repeat&nbsp;Keyword</a>
+&nbsp;&middot;&nbsp;
+<a href="#Replace Variables" title="Replaces variables in the given text with their current values.">Replace&nbsp;Variables</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword" title="Executes the given keyword with the given arguments.">Run&nbsp;Keyword</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword And Continue On Failure" title="Runs the keyword and continues execution even if a failure occurs.">Run&nbsp;Keyword&nbsp;And&nbsp;Continue&nbsp;On&nbsp;Failure</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword And Expect Error" title="Runs the keyword and checks that the expected error occurred.">Run&nbsp;Keyword&nbsp;And&nbsp;Expect&nbsp;Error</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword And Ignore Error" title="Runs the given keyword with the given arguments and ignores possible error.">Run&nbsp;Keyword&nbsp;And&nbsp;Ignore&nbsp;Error</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword If" title="Runs the given keyword with the given arguments, if `condition` is true.">Run&nbsp;Keyword&nbsp;If</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword If All Critical Tests Passed" title="Runs the given keyword with the given arguments, if all critical tests passed.">Run&nbsp;Keyword&nbsp;If&nbsp;All&nbsp;Critical&nbsp;Tests&nbsp;Passed</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword If All Tests Passed" title="Runs the given keyword with the given arguments, if all tests passed.">Run&nbsp;Keyword&nbsp;If&nbsp;All&nbsp;Tests&nbsp;Passed</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword If Any Critical Tests Failed" title="Runs the given keyword with the given arguments, if any critical tests failed.">Run&nbsp;Keyword&nbsp;If&nbsp;Any&nbsp;Critical&nbsp;Tests&nbsp;Failed</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword If Any Tests Failed" title="Runs the given keyword with the given arguments, if one or more tests failed.">Run&nbsp;Keyword&nbsp;If&nbsp;Any&nbsp;Tests&nbsp;Failed</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword If Test Failed" title="Runs the given keyword with the given arguments, if the test failed.">Run&nbsp;Keyword&nbsp;If&nbsp;Test&nbsp;Failed</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword If Test Passed" title="Runs the given keyword with the given arguments, if the test passed.">Run&nbsp;Keyword&nbsp;If&nbsp;Test&nbsp;Passed</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword If Timeout Occurred" title="Runs the given keyword if either a test or a keyword timeout has occurred.">Run&nbsp;Keyword&nbsp;If&nbsp;Timeout&nbsp;Occurred</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keyword Unless" title="Runs the given keyword with the given arguments, if `condition` is false.">Run&nbsp;Keyword&nbsp;Unless</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Keywords" title="Executes all the given keywords in a sequence without arguments.">Run&nbsp;Keywords</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Global Variable" title="Makes a variable available globally in all tests and suites.">Set&nbsp;Global&nbsp;Variable</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Library Search Order" title="Sets the resolution order to use when a name matches multiple keywords.">Set&nbsp;Library&nbsp;Search&nbsp;Order</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Log Level" title="Sets the log threshold to the specified level and returns the old level.">Set&nbsp;Log&nbsp;Level</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Suite Variable" title="Makes a variable available everywhere within the scope of the current suite.">Set&nbsp;Suite&nbsp;Variable</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Tags" title="Adds given `tags` for the current test or all tests in a suite.">Set&nbsp;Tags</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Test Message" title="Sets message for for the current test.">Set&nbsp;Test&nbsp;Message</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Test Variable" title="Makes a variable available everywhere within the scope of the current test.">Set&nbsp;Test&nbsp;Variable</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Variable" title="Returns the given values which can then be assigned to a variables.">Set&nbsp;Variable</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Variable If" title="Sets variable based on the given condition.">Set&nbsp;Variable&nbsp;If</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be Empty" title="Verifies that the given item is empty.">Should&nbsp;Be&nbsp;Empty</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be Equal" title="Fails if the given objects are unequal.">Should&nbsp;Be&nbsp;Equal</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be Equal As Integers" title="Fails if objects are unequal after converting them to integers.">Should&nbsp;Be&nbsp;Equal&nbsp;As&nbsp;Integers</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be Equal As Numbers" title="Fails if objects are unequal after converting them to real numbers.">Should&nbsp;Be&nbsp;Equal&nbsp;As&nbsp;Numbers</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be Equal As Strings" title="Fails if objects are unequal after converting them to strings.">Should&nbsp;Be&nbsp;Equal&nbsp;As&nbsp;Strings</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Be True" title="Fails if the given condition is not true.">Should&nbsp;Be&nbsp;True</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Contain" title="Fails if `item1` does not contain `item2` one or more times.">Should&nbsp;Contain</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Contain X Times" title="Fails if `item1` does not contain `item2` `count` times.">Should&nbsp;Contain&nbsp;X&nbsp;Times</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should End With" title="Fails if the string `str1` does not end with the string `str2`.">Should&nbsp;End&nbsp;With</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Match" title="Fails unless the given `string` matches the given `pattern`.">Should&nbsp;Match</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Match Regexp" title="Fails if `string` does not match `pattern` as a regular expression.">Should&nbsp;Match&nbsp;Regexp</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Be Empty" title="Verifies that the given item is not empty.">Should&nbsp;Not&nbsp;Be&nbsp;Empty</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Be Equal" title="Fails if the given objects are equal.">Should&nbsp;Not&nbsp;Be&nbsp;Equal</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Be Equal As Integers" title="Fails if objects are equal after converting them to integers.">Should&nbsp;Not&nbsp;Be&nbsp;Equal&nbsp;As&nbsp;Integers</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Be Equal As Numbers" title="Fails if objects are equal after converting them to real numbers.">Should&nbsp;Not&nbsp;Be&nbsp;Equal&nbsp;As&nbsp;Numbers</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Be Equal As Strings" title="Fails if objects are equal after converting them to strings.">Should&nbsp;Not&nbsp;Be&nbsp;Equal&nbsp;As&nbsp;Strings</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Be True" title="Fails if the given condition is true.">Should&nbsp;Not&nbsp;Be&nbsp;True</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Contain" title="Fails if `item1` contains `item2` one or more times.">Should&nbsp;Not&nbsp;Contain</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not End With" title="Fails if the string `str1` ends with the string `str2`.">Should&nbsp;Not&nbsp;End&nbsp;With</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Match" title="Fails if the given `string` matches the given `pattern`.">Should&nbsp;Not&nbsp;Match</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Match Regexp" title="Fails if `string` matches `pattern` as a regular expression.">Should&nbsp;Not&nbsp;Match&nbsp;Regexp</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Not Start With" title="Fails if the string `str1` starts with the string `str2`.">Should&nbsp;Not&nbsp;Start&nbsp;With</a>
+&nbsp;&middot;&nbsp;
+<a href="#Should Start With" title="Fails if the string `str1` does not start with the string `str2`.">Should&nbsp;Start&nbsp;With</a>
+&nbsp;&middot;&nbsp;
+<a href="#Sleep" title="Pauses the test executed for the given time.">Sleep</a>
+&nbsp;&middot;&nbsp;
+<a href="#Variable Should Exist" title="Fails unless the given variable exists within the current scope.">Variable&nbsp;Should&nbsp;Exist</a>
+&nbsp;&middot;&nbsp;
+<a href="#Variable Should Not Exist" title="Fails if the given variable exists within the current scope.">Variable&nbsp;Should&nbsp;Not&nbsp;Exist</a>
+&nbsp;&middot;&nbsp;
+<a href="#Wait Until Keyword Succeeds" title="Waits until the specified keyword succeeds or the given timeout expires.">Wait&nbsp;Until&nbsp;Keyword&nbsp;Succeeds</a>
+</div>
+
+<h2>Keywords</h2>
+<table border="1" class="keywords">
+<tr>
+  <th class="kw">Keyword</th>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="kw"><a name="Call Method"></a>Call Method</td>
+  <td class="arg">object, method_name, *args</td>
+  <td class="doc">Calls the named method of the given object with the provided arguments.<br />
+<br />
+The possible return value from the method is returned and can be assigned to a variable. Keyword fails both if the object does not have a method with the given name or if executing the method raises an exception.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Call Method</td>
+<td>${hashtable}</td>
+<td>put</td>
+<td>myname</td>
+<td>myvalue</td>
+</tr>
+<tr>
+<td>${isempty} =</td>
+<td>Call Method</td>
+<td>${hashtable}</td>
+<td>isEmpty</td>
+<td></td>
+</tr>
+<tr>
+<td>Should Not Be True</td>
+<td>${isempty}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${value} =</td>
+<td>Call Method</td>
+<td>${hashtable}</td>
+<td>get</td>
+<td>myname</td>
+</tr>
+<tr>
+<td>Should Be Equal</td>
+<td>${value}</td>
+<td>myvalue</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Catenate"></a>Catenate</td>
+  <td class="arg">*items</td>
+  <td class="doc">Catenates the given items together and returns the resulted string.<br />
+<br />
+By default, items are catenated with spaces, but if the first item contains the string 'SEPARATOR=&lt;sep&gt;', the separator '&lt;sep&gt;' is used. Items are converted into strings when necessary.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${str1} =</td>
+<td>Catenate</td>
+<td>Hello</td>
+<td>world</td>
+<td></td>
+</tr>
+<tr>
+<td>${str2} =</td>
+<td>Catenate</td>
+<td>SEPARATOR=---</td>
+<td>Hello</td>
+<td>world</td>
+</tr>
+<tr>
+<td>${str3} =</td>
+<td>Catenate</td>
+<td>SEPARATOR=</td>
+<td>Hello</td>
+<td>world</td>
+</tr>
+</table>
+=&gt;<br />
+- ${str1} = 'Hello world'<br />
+- ${str2} = 'Hello---world'<br />
+- ${str3} = 'Helloworld'</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Comment"></a>Comment</td>
+  <td class="arg">*messages</td>
+  <td class="doc">Displays the given messages in the log file as keyword arguments.<br />
+<br />
+This keyword does nothing with the arguments it receives, but as they are visible in the log, this keyword can be used to display simple messages. Given arguments are ignored so thoroughly that they can even contain non-existing variables. If you are interested about variable values, you can use the <a href="#Log" class="name">Log</a> or <a href="#Log Many" class="name">Log Many</a> keywords.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Convert To Boolean"></a>Convert To Boolean</td>
+  <td class="arg">item</td>
+  <td class="doc">Converts the given item to Boolean true or false.<br />
+<br />
+Handles strings 'True' and 'False' (case-insensitive) as expected, otherwise returns item's truth value using Python's 'bool' method. For more information about truth values, see <a href="http://docs.python.org/lib/truth.html">http://docs.python.org/lib/truth.html</a>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Convert To Integer"></a>Convert To Integer</td>
+  <td class="arg">item</td>
+  <td class="doc">Converts the given item to an integer number.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Convert To Number"></a>Convert To Number</td>
+  <td class="arg">item</td>
+  <td class="doc">Converts the given item to a floating point number.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Convert To String"></a>Convert To String</td>
+  <td class="arg">item</td>
+  <td class="doc">Converts the given item to a Unicode string.<br />
+<br />
+Uses '__unicode__' or '__str__' method with Python objects and 'toString' with Java objects.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Create List"></a>Create List</td>
+  <td class="arg">*items</td>
+  <td class="doc">Returns a list containing given items.<br />
+<br />
+The returned list can be assigned both to ${scalar} and @{list} variables. The earlier can be used e.g. with Java keywords expecting an array as an argument.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>@{list} =</td>
+<td>Create List</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+</tr>
+<tr>
+<td>${scalar} =</td>
+<td>Create List</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+</tr>
+<tr>
+<td>${ints} =</td>
+<td>Create List</td>
+<td>${1}</td>
+<td>${2}</td>
+<td>${3}</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Evaluate"></a>Evaluate</td>
+  <td class="arg">expression, modules=None</td>
+  <td class="doc">Evaluates the given expression in Python and returns the results.<br />
+<br />
+<span class="name">modules</span> argument can be used to specify a comma separated list of Python modules to be imported and added to the namespace of the evaluated <span class="name">expression</span>.<br />
+<br />
+Examples (expecting ${result} is 3.14):<br />
+<table border="1" class="doc">
+<tr>
+<td>${status} =</td>
+<td>Evaluate</td>
+<td>0 &lt; ${result} &lt; 10</td>
+<td></td>
+</tr>
+<tr>
+<td>${down} &nbsp; =</td>
+<td>Evaluate</td>
+<td>int(${result})</td>
+<td></td>
+</tr>
+<tr>
+<td>${up} &nbsp; &nbsp; =</td>
+<td>Evaluate</td>
+<td>math.ceil(${result})</td>
+<td>math</td>
+</tr>
+<tr>
+<td>${random} =</td>
+<td>Evaluate</td>
+<td>random.randint(0, sys.maxint)</td>
+<td>random,sys</td>
+</tr>
+</table>
+=&gt;<br />
+- ${status} = True<br />
+- ${down} = 3<br />
+- ${up} = 4.0<br />
+- ${random} = &lt;random integer&gt;<br />
+<br />
+Notice that instead of creating complicated expressions, it is recommended to move the logic into a test library.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Exit For Loop"></a>Exit For Loop</td>
+  <td class="arg"></td>
+  <td class="doc">Immediately stops executing the enclosing for loop.<br />
+<br />
+This keyword can be used directly in a for loop or in a keyword that the for loop uses. In both cases the test execution continues after the for loop. If executed outside of a for loop, the test fails.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>:FOR</td>
+<td>${var}</td>
+<td>IN</td>
+<td>@{SOME LIST}</td>
+</tr>
+<tr>
+<td></td>
+<td>Run Keyword If</td>
+<td>'${var}' == 'EXIT'</td>
+<td>Exit For Loop</td>
+</tr>
+<tr>
+<td></td>
+<td>Do Something</td>
+<td>${var}</td>
+<td></td>
+</tr>
+</table>
+<br />
+New in Robot Framework 2.5.2</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Fail"></a>Fail</td>
+  <td class="arg">msg=None</td>
+  <td class="doc">Fails the test immediately with the given (optional) message.<br />
+<br />
+See <a href="#Fatal Error" class="name">Fatal Error</a> if you need to stop the whole test execution.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Fatal Error"></a>Fatal Error</td>
+  <td class="arg">msg=None</td>
+  <td class="doc">Stops the whole test execution.<br />
+<br />
+The test or suite where this keyword is used fails with the provided message, and subsequent tests fail with a canned message. Possible teardowns will nevertheless be executed.<br />
+<br />
+See <a href="#Fail" class="name">Fail</a> if you only want to stop one test case unconditionally.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Count"></a>Get Count</td>
+  <td class="arg">item1, item2</td>
+  <td class="doc">Returns and logs how many times <span class="name">item2</span> is found from <span class="name">item1</span>.<br />
+<br />
+This keyword works with Python strings and lists and all objects that either have 'count' method or can be converted to Python lists.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>${count} =</td>
+<td>Get Count</td>
+<td>${some item}</td>
+<td>interesting value</td>
+</tr>
+<tr>
+<td>Should Be True</td>
+<td>5 &lt; ${count} &lt; 10</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Length"></a>Get Length</td>
+  <td class="arg">item</td>
+  <td class="doc">Returns and logs the length of the given item.<br />
+<br />
+The keyword first tries to get the length with the Python function 'len', which calls the item's '__len__' method internally. If that fails, the keyword tries to call the item's 'length' and 'size' methods directly. The final attempt is trying to get the value of the item's 'length' attribute. If all these attempts are unsuccessful, the keyword fails.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Library Instance"></a>Get Library Instance</td>
+  <td class="arg">name</td>
+  <td class="doc">Returns the currently active instance of the specified test library.<br />
+<br />
+This keyword makes it easy for test libraries to interact with other test libraries that have state. This is illustrated by the Python example below:<br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td>from robot.libraries.BuiltIn import BuiltIn</td>
+</tr>
+</table>
+| def title_should_start_with(expected):<br />
+| &nbsp; &nbsp; seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')<br />
+| &nbsp; &nbsp; title = seleniumlib.get_title()<br />
+| &nbsp; &nbsp; if not title.startswith(expected):<br />
+| &nbsp; &nbsp; &nbsp; &nbsp; raise AssertionError("Title '%s' did not start with '%s'"<br />
+| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;% (title, expected))<br />
+<br />
+It is also possible to use this keyword in the test data and pass the returned library instance to another keyword. If a library is imported with a custom name, the <span class="name">name</span> used to get the instance must be that name and not the original library name.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Time"></a>Get Time</td>
+  <td class="arg">format=timestamp, time=NOW</td>
+  <td class="doc">Returns the given time in the requested format.<br />
+<br />
+How time is returned is determined based on the given <span class="name">format</span> string as follows. Note that all checks are case-insensitive.<br />
+<br />
+1) If <span class="name">format</span> contains the word 'epoch', the time is returned in seconds after the UNIX epoch (Jan 1, 1970 0:00:00). The return value is always an integer.<br />
+<br />
+2) If <span class="name">format</span> contains any of the words 'year', 'month', 'day', 'hour', 'min', or 'sec', only the selected parts are returned. The order of the returned parts is always the one in the previous sentence and the order of words in <span class="name">format</span> is not significant. The parts are returned as zero-padded strings (e.g. May -&gt; '05').<br />
+<br />
+3) Otherwise (and by default) the time is returned as a timestamp string in the format '2006-02-24 15:08:31'.<br />
+<br />
+By default this keyword returns the current time, but that can be altered using <span class="name">time</span> argument as explained below. Notice that this argument is only available in Robot Framework 2.1.1 and newer.<br />
+<br />
+1) If <span class="name">time</span> is a floating point number, it is interpreted as seconds since the epoch. This documentation is written about 1177654467 seconds after the epoch.<br />
+<br />
+2) If <span class="name">time</span> is a valid timestamp, that time will be used. Valid timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.<br />
+<br />
+3) If <span class="name">time</span> is equal to 'NOW' (case-insensitive), the current time is used.<br />
+<br />
+4) If <span class="name">time</span> is in the format 'NOW - 1 day' or 'NOW + 1 hour 30 min', the current time plus/minus the time specified with the time string is used. The time string format is described in an appendix of Robot Framework User Guide.<br />
+<br />
+Examples (expecting the current time is 2006-03-29 15:06:21):<br />
+<table border="1" class="doc">
+<tr>
+<td>${time} =</td>
+<td>Get Time</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${secs} =</td>
+<td>Get Time</td>
+<td>epoch</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${year} =</td>
+<td>Get Time</td>
+<td>return year</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${yyyy}</td>
+<td>${mm}</td>
+<td>${dd} =</td>
+<td>Get Time</td>
+<td>year,month,day</td>
+</tr>
+<tr>
+<td>@{time} =</td>
+<td>Get Time</td>
+<td>year month day hour min sec</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${y}</td>
+<td>${s} =</td>
+<td>Get Time</td>
+<td>seconds and year</td>
+<td></td>
+</tr>
+</table>
+=&gt;<br />
+- ${time} = '2006-03-29 15:06:21'<br />
+- ${secs} = 1143637581<br />
+- ${year} = '2006'<br />
+- ${yyyy} = '2006', ${mm} = '03', ${dd} = '29'<br />
+- @{time} = ['2006', '03', '29', '15', '06', '21']<br />
+- ${y} = '2006'<br />
+- ${s} = '21'<br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td>${time} =</td>
+<td>Get Time</td>
+<td></td>
+<td>1177654467</td>
+<td></td>
+</tr>
+<tr>
+<td>${secs} =</td>
+<td>Get Time</td>
+<td>sec</td>
+<td>2007-04-27 09:14:27</td>
+<td></td>
+</tr>
+<tr>
+<td>${year} =</td>
+<td>Get Time</td>
+<td>year</td>
+<td>NOW</td>
+<td># The time of execution</td>
+</tr>
+<tr>
+<td>${day} =</td>
+<td>Get Time</td>
+<td>day</td>
+<td>NOW - 1d</td>
+<td># 1 day subtraced from NOW</td>
+</tr>
+<tr>
+<td>@{time} =</td>
+<td>Get Time</td>
+<td>hour min sec</td>
+<td>NOW + 1h 2min 3s</td>
+<td># 1h 2min 3s added to NOW</td>
+</tr>
+</table>
+=&gt;<br />
+- ${time} = '2007-04-27 09:14:27'<br />
+- ${secs} = 27<br />
+- ${year} = '2006'<br />
+- ${day} = '28'<br />
+- @{time} = ['16', '08', '24']</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Get Variables"></a>Get Variables</td>
+  <td class="arg"></td>
+  <td class="doc">Returns a dictionary containing all variables in the current scope.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Import Library"></a>Import Library</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Imports a library with the given name and optional arguments.<br />
+<br />
+This functionality allows dynamic importing of libraries while tests are running. That may be necessary, if the library itself is dynamic and not yet available when test data is processed. In a normal case, libraries should be imported using the Library setting in the Setting table.<br />
+<br />
+This keyword supports importing libraries both using library names and physical paths. When path are used, they must be given in absolute format. Forward slashes can be used as path separators in all operating systems. It is possible to use arguments as well as to give a custom name with 'WITH NAME' syntax. For more information about importing libraries, see Robot Framework User Guide.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Import Library</td>
+<td>MyLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Import Library</td>
+<td>${CURDIR}/Library.py</td>
+<td>some</td>
+<td>args</td>
+<td></td>
+</tr>
+<tr>
+<td>Import Library</td>
+<td>${CURDIR}/../libs/Lib.java</td>
+<td>arg</td>
+<td>WITH NAME</td>
+<td>JavaLib</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Import Resource"></a>Import Resource</td>
+  <td class="arg">path</td>
+  <td class="doc">Imports a resource file with the given path.<br />
+<br />
+Resources imported with this keyword are set into the test suite scope similarly when importing them in the Setting table using the Resource setting.<br />
+<br />
+The given path must be absolute. Forward slashes can be used as path separator regardless the operating system.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Import Resource</td>
+<td>${CURDIR}/resource.txt</td>
+</tr>
+<tr>
+<td>Import Resource</td>
+<td>${CURDIR}/../resources/resource.html</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Import Variables"></a>Import Variables</td>
+  <td class="arg">path, *args</td>
+  <td class="doc">Imports a variable file with the given path and optional arguments.<br />
+<br />
+Variables imported with this keyword are set into the test suite scope similarly when importing them in the Setting table using the Variables setting. These variables override possible existing variables with the same names and this functionality can thus be used to import new variables, e.g. for each test in a test suite.<br />
+<br />
+The given path must be absolute. Forward slashes can be used as path separator regardless the operating system.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Import Variables</td>
+<td>${CURDIR}/variables.py</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Import Variables</td>
+<td>${CURDIR}/../vars/env.py</td>
+<td>arg1</td>
+<td>arg2</td>
+</tr>
+</table>
+<br />
+New in Robot Framework 2.5.4</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Length Should Be"></a>Length Should Be</td>
+  <td class="arg">item, length, msg=None</td>
+  <td class="doc">Verifies that the length of the given item is correct.<br />
+<br />
+The length of the item is got using the <a href="#Get Length" class="name">Get Length</a> keyword. The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Log"></a>Log</td>
+  <td class="arg">message, level=INFO</td>
+  <td class="doc">Logs the given message with the given level.<br />
+<br />
+Valid levels are TRACE, DEBUG, INFO (default), HTML and WARN.<br />
+<br />
+The HTML level is special because it allows writing messages without HTML code in them being escaped. For example, logging a message '&lt;img src="image.png"&gt;' using the HTML level creates an image, but with other levels the message would be that exact string. Notice that invalid HTML can easily corrupt the whole log file so this feature should be used with care. The actual log level used for HTML messages is INFO.<br />
+<br />
+Messages logged with the WARN level will be visible also in the console and in the Test Execution Errors section in the log file.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Log Many"></a>Log Many</td>
+  <td class="arg">*messages</td>
+  <td class="doc">Logs the given messages as separate entries with the INFO level.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Log Variables"></a>Log Variables</td>
+  <td class="arg">level=INFO</td>
+  <td class="doc">Logs all variables in the current scope with given log level.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="No Operation"></a>No Operation</td>
+  <td class="arg"></td>
+  <td class="doc">Does absolutely nothing.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Regexp Escape"></a>Regexp Escape</td>
+  <td class="arg">*patterns</td>
+  <td class="doc">Returns each argument string escaped for use as a regular expression.<br />
+<br />
+This keyword can be used to escape strings to be used with <a href="#Should Match Regexp" class="name">Should Match Regexp</a> and <a href="#Should Not Match Regexp" class="name">Should Not Match Regexp</a> keywords.<br />
+<br />
+Escaping is done with Python's re.escape() function.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${escaped} =</td>
+<td>Regexp Escape</td>
+<td>${original}</td>
+</tr>
+<tr>
+<td>@{strings} =</td>
+<td>Regexp Escape</td>
+<td>@{strings}</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Remove Tags"></a>Remove Tags</td>
+  <td class="arg">*tags</td>
+  <td class="doc">Removes given <span class="name">tags</span> from the current test or all tests in a suite.<br />
+<br />
+Tags can be given exactly or using a pattern where '*' matches anything and '?' matches one character.<br />
+<br />
+This keyword can affect either one test case or all test cases in a test suite similarly as <a href="#Set Tags" class="name">Set Tags</a> keyword.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>Remove Tags</td>
+<td>mytag</td>
+<td>something-*</td>
+<td>?ython</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Repeat Keyword"></a>Repeat Keyword</td>
+  <td class="arg">times, name, *args</td>
+  <td class="doc">Executes the specified keyword multiple times.<br />
+<br />
+<span class="name">name</span> and <span class="name">args</span> define the keyword that is executed similarly as with <a href="#Run Keyword" class="name">Run Keyword</a>, and <span class="name">times</span> specifies how many the keyword should be executed. <span class="name">times</span> can be given as an integer or as a string that can be converted to an integer. It can also have postfix 'times' or 'x' (case and space insensitive) to make the expression easier to read.<br />
+<br />
+If <span class="name">times</span> is zero or negative, the keyword is not executed at all. This keyword fails immediately if any of the execution rounds fails.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Repeat Keyword</td>
+<td>5 times</td>
+<td>Goto Previous Page</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Repeat Keyword</td>
+<td>${var}</td>
+<td>Some Keyword</td>
+<td>arg1</td>
+<td>arg2</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Replace Variables"></a>Replace Variables</td>
+  <td class="arg">text</td>
+  <td class="doc">Replaces variables in the given text with their current values.<br />
+<br />
+If the text contains undefined variables, this keyword fails.<br />
+<br />
+Example:<br />
+<br />
+The file 'template.txt' contains 'Hello ${NAME}!' and variable '${NAME}' has the value 'Robot'.<br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td>${template} =</td>
+<td>Get File</td>
+<td>${CURDIR}/template.txt</td>
+</tr>
+<tr>
+<td>${message} =</td>
+<td>Replace Variables</td>
+<td>${template}</td>
+</tr>
+<tr>
+<td>Should Be Equal</td>
+<td>${message}</td>
+<td>Hello Robot!</td>
+</tr>
+</table>
+<br />
+If the given <span class="name">text</span> contains only a single variable, its value is returned as-is and it can be any object. Otherwise this keyword always returns a string.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword"></a>Run Keyword</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Executes the given keyword with the given arguments.<br />
+<br />
+Because the name of the keyword to execute is given as an argument, it can be a variable and thus set dynamically, e.g. from a return value of another keyword or from the command line.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword And Continue On Failure"></a>Run Keyword And Continue On Failure</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Runs the keyword and continues execution even if a failure occurs.<br />
+<br />
+The keyword name and arguments work as with <a href="#Run Keyword" class="name">Run Keyword</a>.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>Run Keyword And Continue On Failure</td>
+<td>Fail</td>
+<td>This is a stupid example</td>
+</tr>
+<tr>
+<td>Log</td>
+<td>This keyword is executed</td>
+<td></td>
+</tr>
+</table>
+<br />
+This keyword was added in Robot Framework 2.5. The execution is not continued if the failure is caused by invalid syntax, timeout, or fatal exception.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword And Expect Error"></a>Run Keyword And Expect Error</td>
+  <td class="arg">expected_error, name, *args</td>
+  <td class="doc">Runs the keyword and checks that the expected error occurred.<br />
+<br />
+The expected error must be given in the same format as in Robot Framework reports. It can be a pattern containing characters '?', which matches to any single character and '*', which matches to any number of any characters. <span class="name">name</span> and <span class="name">*args</span> have same semantics as with <a href="#Run Keyword" class="name">Run Keyword</a>.<br />
+<br />
+If the expected error occurs, the error message is returned and it can be further processed/tested, if needed. If there is no error, or the error does not match the expected error, this keyword fails.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Run Keyword And Expect Error</td>
+<td>My error</td>
+<td>Some Keyword</td>
+<td>arg1</td>
+<td>arg2</td>
+</tr>
+<tr>
+<td>${msg} =</td>
+<td>Run Keyword And Expect Error</td>
+<td>*</td>
+<td>My KW</td>
+<td></td>
+</tr>
+<tr>
+<td>Should Start With</td>
+<td>${msg}</td>
+<td>Once upon a time in</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<br />
+Starting from Robot Framework 2.5 errors caused by invalid syntax, timeouts, or fatal exceptions are not caught by this keyword.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword And Ignore Error"></a>Run Keyword And Ignore Error</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Runs the given keyword with the given arguments and ignores possible error.<br />
+<br />
+This keyword returns two values, so that the first is either 'PASS' or 'FAIL', depending on the status of the executed keyword. The second value is either the return value of the keyword or the received error message.<br />
+<br />
+The keyword name and arguments work as in <a href="#Run Keyword" class="name">Run Keyword</a>. See <a href="#Run Keyword If" class="name">Run Keyword If</a> for a usage example.<br />
+<br />
+Starting from Robot Framework 2.5 errors caused by invalid syntax, timeouts, or fatal exceptions are not caught by this keyword.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword If"></a>Run Keyword If</td>
+  <td class="arg">condition, name, *args</td>
+  <td class="doc">Runs the given keyword with the given arguments, if <span class="name">condition</span> is true.<br />
+<br />
+The given <span class="name">condition</span> is evaluated similarly as with <a href="#Should Be True" class="name">Should Be True</a> keyword, and <span class="name">name</span> and <span class="name">*args</span> have same semantics as with <a href="#Run Keyword" class="name">Run Keyword</a>.<br />
+<br />
+Example, a simple if/else construct:<br />
+<table border="1" class="doc">
+<tr>
+<td>${status}</td>
+<td>${value} =</td>
+<td>Run Keyword And Ignore Error</td>
+<td>My Keyword</td>
+</tr>
+<tr>
+<td>Run Keyword If</td>
+<td>'${status}' == 'PASS'</td>
+<td>Some Action</td>
+<td></td>
+</tr>
+<tr>
+<td>Run Keyword Unless</td>
+<td>'${status}' == 'PASS'</td>
+<td>Another Action</td>
+<td></td>
+</tr>
+</table>
+<br />
+In this example, only either 'Some Action' or 'Another Action' is executed, based on the status of 'My Keyword'.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword If All Critical Tests Passed"></a>Run Keyword If All Critical Tests Passed</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Runs the given keyword with the given arguments, if all critical tests passed.<br />
+<br />
+This keyword can only be used in suite teardown. Trying to use it in any other place will result in an error.<br />
+<br />
+Otherwise, this keyword works exactly like <a href="#Run Keyword" class="name">Run Keyword</a>, see its documentation for more details.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword If All Tests Passed"></a>Run Keyword If All Tests Passed</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Runs the given keyword with the given arguments, if all tests passed.<br />
+<br />
+This keyword can only be used in a suite teardown. Trying to use it anywhere else results in an error.<br />
+<br />
+Otherwise, this keyword works exactly like <a href="#Run Keyword" class="name">Run Keyword</a>, see its documentation for more details.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword If Any Critical Tests Failed"></a>Run Keyword If Any Critical Tests Failed</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Runs the given keyword with the given arguments, if any critical tests failed.<br />
+<br />
+This keyword can only be used in a suite teardown. Trying to use it anywhere else results in an error.<br />
+<br />
+Otherwise, this keyword works exactly like <a href="#Run Keyword" class="name">Run Keyword</a>, see its documentation for more details.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword If Any Tests Failed"></a>Run Keyword If Any Tests Failed</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Runs the given keyword with the given arguments, if one or more tests failed.<br />
+<br />
+This keyword can only be used in a suite teardown. Trying to use it anywhere else results in an error.<br />
+<br />
+Otherwise, this keyword works exactly like <a href="#Run Keyword" class="name">Run Keyword</a>, see its documentation for more details.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword If Test Failed"></a>Run Keyword If Test Failed</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Runs the given keyword with the given arguments, if the test failed.<br />
+<br />
+This keyword can only be used in a test teardown. Trying to use it anywhere else results in an error.<br />
+<br />
+Otherwise, this keyword works exactly like <a href="#Run Keyword" class="name">Run Keyword</a>, see its documentation for more details.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword If Test Passed"></a>Run Keyword If Test Passed</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Runs the given keyword with the given arguments, if the test passed.<br />
+<br />
+This keyword can only be used in a test teardown. Trying to use it anywhere else results in an error.<br />
+<br />
+Otherwise, this keyword works exactly like <a href="#Run Keyword" class="name">Run Keyword</a>, see its documentation for more details.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword If Timeout Occurred"></a>Run Keyword If Timeout Occurred</td>
+  <td class="arg">name, *args</td>
+  <td class="doc">Runs the given keyword if either a test or a keyword timeout has occurred.<br />
+<br />
+This keyword can only be used in a test teardown. Trying to use it anywhere else results in an error.<br />
+<br />
+Otherwise, this keyword works exactly like <a href="#Run Keyword" class="name">Run Keyword</a>, see its documentation for more details.<br />
+<br />
+Available in Robot Framework 2.5 and newer.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keyword Unless"></a>Run Keyword Unless</td>
+  <td class="arg">condition, name, *args</td>
+  <td class="doc">Runs the given keyword with the given arguments, if <span class="name">condition</span> is false.<br />
+<br />
+See <a href="#Run Keyword If" class="name">Run Keyword If</a> for more information and an example.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Keywords"></a>Run Keywords</td>
+  <td class="arg">*names</td>
+  <td class="doc">Executes all the given keywords in a sequence without arguments.<br />
+<br />
+This keyword is mainly useful in setups and teardowns when they need to take care of multiple actions and creating a new higher level user keyword is overkill. User keywords must nevertheless be used if the executed keywords need to take arguments.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td><b>Setting</b></td>
+<td><b>Value</b></td>
+<td><b>Value</b></td>
+<td><b>Value</b></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Keywords</td>
+<td>Initialize database</td>
+<td>Start servers</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Global Variable"></a>Set Global Variable</td>
+  <td class="arg">name, *values</td>
+  <td class="doc">Makes a variable available globally in all tests and suites.<br />
+<br />
+Variables set with this keyword are globally available in all test cases and suites executed after setting them. Setting variables with this keyword thus has the same effect as creating from the command line using the options '--variable' or '--variablefile'. Because this keyword can change variables everywhere, it should be used with care.<br />
+<br />
+See <a href="#Set Suite Variable" class="name">Set Suite Variable</a> for more information and examples.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Library Search Order"></a>Set Library Search Order</td>
+  <td class="arg">*libraries</td>
+  <td class="doc">Sets the resolution order to use when a name matches multiple keywords.<br />
+<br />
+The library search order is used to resolve conflicts when a keyword name in the test data matches multiple keywords. The first library containing the keyword is selected and that keyword implementation used. If keyword is not found from any library, or the library search order is not set, executing the specified keyword fails.<br />
+<br />
+When this keyword is used, there is no need to use the long <span class="name">LibraryName.Keyword Name</span> notation. &nbsp;For example, instead of having<br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td>MyLibrary.Keyword</td>
+<td>arg</td>
+</tr>
+<tr>
+<td>MyLibrary.Another Keyword</td>
+<td></td>
+</tr>
+<tr>
+<td>MyLibrary.Keyword</td>
+<td>xxx</td>
+</tr>
+</table>
+<br />
+you can have<br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td>Set Library Search Order</td>
+<td>MyLibrary</td>
+</tr>
+<tr>
+<td>Keyword</td>
+<td>arg</td>
+</tr>
+<tr>
+<td>Another Keyword</td>
+<td></td>
+</tr>
+<tr>
+<td>Keyword</td>
+<td>xxx</td>
+</tr>
+</table>
+<br />
+The library search order is valid only in the suite where this keyword is used in. The old order is returned and can be used to reset the search order later.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Log Level"></a>Set Log Level</td>
+  <td class="arg">level</td>
+  <td class="doc">Sets the log threshold to the specified level and returns the old level.<br />
+<br />
+Messages below the level will not logged. The default logging level is INFO, but it can be overridden with the command line option '--loglevel'.<br />
+<br />
+The available levels: TRACE, DEBUG, INFO (default), WARN and NONE (no logging).</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Suite Variable"></a>Set Suite Variable</td>
+  <td class="arg">name, *values</td>
+  <td class="doc">Makes a variable available everywhere within the scope of the current suite.<br />
+<br />
+Variables set with this keyword are available everywhere within the scope of the currently executed test suite. Setting variables with this keyword thus has the same effect as creating them using the Variable table in the test data file or importing them from variable files. Other test suites, including possible child test suites, will not see variables set with this keyword.<br />
+<br />
+The name of the variable can be given either as a normal variable name (e.g. ${NAME}) or in escaped format (e.g. \${NAME}). Notice that the former works only in Robot Framework 2.1 and newer.<br />
+<br />
+If a variable already exists within the new scope, its value will be overwritten. Otherwise a new variable is created. If a variable already exists within the current scope, the value can be left empty and the variable within the new scope gets the value within the current scope.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Set Suite Variable</td>
+<td>${GREET}</td>
+<td>Hello, world!</td>
+</tr>
+<tr>
+<td>${ID} =</td>
+<td>Get ID</td>
+<td></td>
+</tr>
+<tr>
+<td>Set Suite Variable</td>
+<td>${ID}</td>
+<td></td>
+</tr>
+</table>
+<br />
+<b>NOTE:</b> If the variable has value which itself is a variable (escaped or not), you must always use the escaped format like in the example below. This limitation applies to <span class="name">Set Test/Suite/Global Variable</span> and <span class="name">Variable Should (Not) Exist</span> keywords.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>${NAME} =</td>
+<td>Set Variable</td>
+<td>\${variable}</td>
+<td></td>
+</tr>
+<tr>
+<td>Set Suite Variable</td>
+<td>${NAME}</td>
+<td>new value</td>
+<td># Does not work</td>
+</tr>
+<tr>
+<td>Set Suite Variable</td>
+<td>\${NAME}</td>
+<td>new value</td>
+<td># This works</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Tags"></a>Set Tags</td>
+  <td class="arg">*tags</td>
+  <td class="doc">Adds given <span class="name">tags</span> for the current test or all tests in a suite.<br />
+<br />
+When this keyword is used inside a test case, that test gets the specified tags and other tests are not affected.<br />
+<br />
+If this keyword is used in a suite setup, all test cases in that suite, recursively, gets the given tags. It is a failure to use this keyword in a suite teardown.<br />
+<br />
+See <a href="#Remove Tags" class="name">Remove Tags</a> for another keyword to modify tags at test execution time.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Test Message"></a>Set Test Message</td>
+  <td class="arg">message</td>
+  <td class="doc">Sets message for for the current test.<br />
+<br />
+This is overridden by possible failure message, except when this keyword is used in test case teardown. In test case teardown this overrides messages even for failed tests.<br />
+<br />
+This keyword can not be used in suite setup or suite teardown.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Test Variable"></a>Set Test Variable</td>
+  <td class="arg">name, *values</td>
+  <td class="doc">Makes a variable available everywhere within the scope of the current test.<br />
+<br />
+Variables set with this keyword are available everywhere within the scope of the currently executed test case. For example, if you set a variable in a user keyword, it is available both in the test case level and also in all other user keywords used in the current test. Other test cases will not see variables set with this keyword.<br />
+<br />
+See <a href="#Set Suite Variable" class="name">Set Suite Variable</a> for more information and examples.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Variable"></a>Set Variable</td>
+  <td class="arg">*values</td>
+  <td class="doc">Returns the given values which can then be assigned to a variables.<br />
+<br />
+This keyword is mainly used for setting scalar variables. Additionally it can be used for converting a scalar variable containing a list to a list variable or to multiple scalar variables. It is recommended to use `Create List' when creating new lists.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>${hi} =</td>
+<td>Set Variable</td>
+<td>Hello, world!</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${hi2} =</td>
+<td>Set Variable</td>
+<td>I said: ${hi}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${var1}</td>
+<td>${var2} =</td>
+<td>Set Variable</td>
+<td>Hello</td>
+<td>world</td>
+</tr>
+<tr>
+<td>@{list} =</td>
+<td>Set Variable</td>
+<td>${list with some items}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${item1}</td>
+<td>${item2} =</td>
+<td>Set Variable</td>
+<td>${list with 2 items}</td>
+<td></td>
+</tr>
+</table>
+<br />
+Variables created with this keyword are available only in the scope where they are created. See <a href="#Set Global Variable" class="name">Set Global Variable</a>, <a href="#Set Test Variable" class="name">Set Test Variable</a> and <a href="#Set Suite Variable" class="name">Set Suite Variable</a> for information on how to set variables so that they are available also in a larger scope.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Variable If"></a>Set Variable If</td>
+  <td class="arg">condition, *values</td>
+  <td class="doc">Sets variable based on the given condition.<br />
+<br />
+The basic usage is giving a condition and two values. The given condition is first evaluated the same way as with the <a href="#Should Be True" class="name">Should Be True</a> keyword. If the condition is true, then the first value is returned, and otherwise the second value is returned. The second value can also be omitted, in which case it has a default value None. This usage is illustrated in the examples below, where ${rc} is assumed to be zero.<br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td>${var1} =</td>
+<td>Set Variable If</td>
+<td>${rc} == 0</td>
+<td>zero</td>
+<td>nonzero</td>
+</tr>
+<tr>
+<td>${var2} =</td>
+<td>Set Variable If</td>
+<td>${rc} &gt; 0</td>
+<td>value1</td>
+<td>value2</td>
+</tr>
+<tr>
+<td>${var3} =</td>
+<td>Set Variable If</td>
+<td>${rc} &gt; 0</td>
+<td>whatever</td>
+<td></td>
+</tr>
+</table>
+=&gt;<br />
+- ${var1} = 'zero'<br />
+- ${var2} = 'value2'<br />
+- ${var3} = None<br />
+<br />
+It is also possible to have 'Else If' support by replacing the second value with another condition, and having two new values after it. If the first condition is not true, the second is evaluated and one of the values after it is returned based on its truth value. This can be continued by adding more conditions without a limit.<br />
+<br />
+<table border="1" class="doc">
+<tr>
+<td>${var} =</td>
+<td>Set Variable If</td>
+<td>${rc} == 0</td>
+<td>zero</td>
+</tr>
+<tr>
+<td>...</td>
+<td>${rc} &gt; 0</td>
+<td>greater than zero</td>
+<td>less then zero</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${var} =</td>
+<td>Set Variable If</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>...</td>
+<td>${rc} == 0</td>
+<td>zero</td>
+<td></td>
+</tr>
+<tr>
+<td>...</td>
+<td>${rc} == 1</td>
+<td>one</td>
+<td></td>
+</tr>
+<tr>
+<td>...</td>
+<td>${rc} == 2</td>
+<td>two</td>
+<td></td>
+</tr>
+<tr>
+<td>...</td>
+<td>${rc} &gt; 2</td>
+<td>greater than two</td>
+<td></td>
+</tr>
+<tr>
+<td>...</td>
+<td>${rc} &lt; 0</td>
+<td>less than zero</td>
+<td></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be Empty"></a>Should Be Empty</td>
+  <td class="arg">item, msg=None</td>
+  <td class="doc">Verifies that the given item is empty.<br />
+<br />
+The length of the item is got using the <a href="#Get Length" class="name">Get Length</a> keyword. The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be Equal"></a>Should Be Equal</td>
+  <td class="arg">first, second, msg=None, values=True</td>
+  <td class="doc">Fails if the given objects are unequal.<br />
+<br />
+- If <span class="name">msg</span> is not given, the error message is 'first != second'.<br />
+- If <span class="name">msg</span> is given and <span class="name">values</span> is either Boolean False or the string 'False' or 'No Values', the error message is simply <span class="name">msg</span>.<br />
+- Otherwise the error message is '<span class="name">msg</span>: <span class="name">first</span> != <span class="name">second</span>'.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be Equal As Integers"></a>Should Be Equal As Integers</td>
+  <td class="arg">first, second, msg=None, values=True</td>
+  <td class="doc">Fails if objects are unequal after converting them to integers.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be Equal As Numbers"></a>Should Be Equal As Numbers</td>
+  <td class="arg">first, second, msg=None, values=True</td>
+  <td class="doc">Fails if objects are unequal after converting them to real numbers.<br />
+<br />
+The check for equality is done using six decimal places.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be Equal As Strings"></a>Should Be Equal As Strings</td>
+  <td class="arg">first, second, msg=None, values=True</td>
+  <td class="doc">Fails if objects are unequal after converting them to strings.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Be True"></a>Should Be True</td>
+  <td class="arg">condition, msg=None</td>
+  <td class="doc">Fails if the given condition is not true.<br />
+<br />
+If <span class="name">condition</span> is a string (e.g. '${rc} &lt; 10'), it is evaluated as a Python expression using the built-in 'eval' function and the keyword status is decided based on the result. If a non-string item is given, the status is got directly from its truth value as explained at <a href="http://docs.python.org/lib/truth.html">http://docs.python.org/lib/truth.html</a>.<br />
+<br />
+The default error message ('&lt;condition&gt; should be true') is not very informative, but it can be overridden with the <span class="name">msg</span> argument.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Should Be True</td>
+<td>${rc} &lt; 10</td>
+<td></td>
+</tr>
+<tr>
+<td>Should Be True</td>
+<td>'${status}' == 'PASS'</td>
+<td># Strings must be quoted</td>
+</tr>
+<tr>
+<td>Should Be True</td>
+<td>${number}</td>
+<td># Passes if ${number} is not zero</td>
+</tr>
+<tr>
+<td>Should Be True</td>
+<td>${list}</td>
+<td># Passes if ${list} is not empty</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Contain"></a>Should Contain</td>
+  <td class="arg">item1, item2, msg=None, values=True</td>
+  <td class="doc">Fails if <span class="name">item1</span> does not contain <span class="name">item2</span> one or more times.<br />
+<br />
+Works with strings, lists, and anything that supports Python's 'in' keyword. See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Should Contain</td>
+<td>${output}</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td>Should Contain</td>
+<td>${some_list}</td>
+<td>value</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Contain X Times"></a>Should Contain X Times</td>
+  <td class="arg">item1, item2, count, msg=None</td>
+  <td class="doc">Fails if <span class="name">item1</span> does not contain <span class="name">item2</span> <span class="name">count</span> times.<br />
+<br />
+Works with strings, lists and all objects that <a href="#Get Count" class="name">Get Count</a> works with. The default error message can be overridden with <span class="name">msg</span> and the actual count is always logged.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Should Contain X Times</td>
+<td>${output}</td>
+<td>hello</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Should Contain X Times</td>
+<td>${some list}</td>
+<td>value</td>
+<td>3</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should End With"></a>Should End With</td>
+  <td class="arg">str1, str2, msg=None, values=True</td>
+  <td class="doc">Fails if the string <span class="name">str1</span> does not end with the string <span class="name">str2</span>.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Match"></a>Should Match</td>
+  <td class="arg">string, pattern, msg=None, values=True</td>
+  <td class="doc">Fails unless the given <span class="name">string</span> matches the given <span class="name">pattern</span>.<br />
+<br />
+Pattern matching is similar as matching files in a shell, and it is always case-sensitive. In the pattern, '*' matches to anything and '?' matches to any single character.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Match Regexp"></a>Should Match Regexp</td>
+  <td class="arg">string, pattern, msg=None, values=True</td>
+  <td class="doc">Fails if <span class="name">string</span> does not match <span class="name">pattern</span> as a regular expression.<br />
+<br />
+Regular expression check is done using the Python 're' module, which has a pattern syntax derived from Perl, and thus also very similar to the one in Java. See the following documents for more details about regular expressions in general and Python implementation in particular.<br />
+<br />
+* <a href="http://docs.python.org/lib/module-re.html">http://docs.python.org/lib/module-re.html</a><br />
+* <a href="http://www.amk.ca/python/howto/regex/">http://www.amk.ca/python/howto/regex/</a><br />
+<br />
+Things to note about the regexp syntax in Robot Framework test data:<br />
+<br />
+1) Backslash is an escape character in the test data, and possible backslashes in the pattern must thus be escaped with another backslash (e.g. '\\d\\w+').<br />
+<br />
+2) Strings that may contain special characters, but should be handled as literal strings, can be escaped with the <a href="#Regexp Escape" class="name">Regexp Escape</a> keyword.<br />
+<br />
+3) The given pattern does not need to match the whole string. For example, the pattern 'ello' matches the string 'Hello world!'. If a full match is needed, the '^' and '$' characters can be used to denote the beginning and end of the string, respectively. For example, '^ello$' only matches the exact string 'ello'.<br />
+<br />
+4) Possible flags altering how the expression is parsed (e.g. re.IGNORECASE, re.MULTILINE) can be set by prefixing the pattern with the '(?iLmsux)' group (e.g. '(?im)pattern'). The available flags are 'IGNORECASE': 'i', 'MULTILINE': 'm', 'DOTALL': 's', 'VERBOSE': 'x', 'UNICODE': 'u', and 'LOCALE': 'L'.<br />
+<br />
+If this keyword passes, it returns the portion of the string that matched the pattern. Additionally, the possible captured groups are returned.<br />
+<br />
+See the <a href="#Should Be Equal" class="name">Should Be Equal</a> keyword for an explanation on how to override the default error message with the <span class="name">msg</span> and <span class="name">values</span> arguments.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Should Match Regexp</td>
+<td>${output}</td>
+<td>\\d{6}</td>
+<td># Output contains six numbers</td>
+</tr>
+<tr>
+<td>Should Match Regexp</td>
+<td>${output}</td>
+<td>^\\d{6}$</td>
+<td># Six numbers and nothing more</td>
+</tr>
+<tr>
+<td>${ret} =</td>
+<td>Should Match Regexp</td>
+<td>Foo: 42</td>
+<td>(?i)foo: \\d+</td>
+</tr>
+<tr>
+<td>${match}</td>
+<td>${group1}</td>
+<td>${group2} =</td>
+<td></td>
+</tr>
+<tr>
+<td>...</td>
+<td>Should Match Regexp</td>
+<td>Bar: 43</td>
+<td>(Foo|Bar): (\\d+)</td>
+</tr>
+</table>
+=&gt;<br />
+- ${ret} = 'Foo: 42'<br />
+- ${match} = 'Bar: 43'<br />
+- ${group1} = 'Bar'<br />
+- ${group2} = '43'</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Be Empty"></a>Should Not Be Empty</td>
+  <td class="arg">item, msg=None</td>
+  <td class="doc">Verifies that the given item is not empty.<br />
+<br />
+The length of the item is got using the <a href="#Get Length" class="name">Get Length</a> keyword. The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Be Equal"></a>Should Not Be Equal</td>
+  <td class="arg">first, second, msg=None, values=True</td>
+  <td class="doc">Fails if the given objects are equal.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Be Equal As Integers"></a>Should Not Be Equal As Integers</td>
+  <td class="arg">first, second, msg=None, values=True</td>
+  <td class="doc">Fails if objects are equal after converting them to integers.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Be Equal As Numbers"></a>Should Not Be Equal As Numbers</td>
+  <td class="arg">first, second, msg=None, values=True</td>
+  <td class="doc">Fails if objects are equal after converting them to real numbers.<br />
+<br />
+The check for equality is done using six decimal places.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Be Equal As Strings"></a>Should Not Be Equal As Strings</td>
+  <td class="arg">first, second, msg=None, values=True</td>
+  <td class="doc">Fails if objects are equal after converting them to strings.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Be True"></a>Should Not Be True</td>
+  <td class="arg">condition, msg=None</td>
+  <td class="doc">Fails if the given condition is true.<br />
+<br />
+See <a href="#Should Be True" class="name">Should Be True</a> for details about how <span class="name">condition</span> is evaluated and how <span class="name">msg</span> can be used to override the default error message.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Contain"></a>Should Not Contain</td>
+  <td class="arg">item1, item2, msg=None, values=True</td>
+  <td class="doc">Fails if <span class="name">item1</span> contains <span class="name">item2</span> one or more times.<br />
+<br />
+Works with strings, lists, and anything that supports Python's 'in' keyword. See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Should Not Contain</td>
+<td>${output}</td>
+<td>FAILED</td>
+</tr>
+<tr>
+<td>Should Not Contain</td>
+<td>${some_list}</td>
+<td>value</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not End With"></a>Should Not End With</td>
+  <td class="arg">str1, str2, msg=None, values=True</td>
+  <td class="doc">Fails if the string <span class="name">str1</span> ends with the string <span class="name">str2</span>.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Match"></a>Should Not Match</td>
+  <td class="arg">string, pattern, msg=None, values=True</td>
+  <td class="doc">Fails if the given <span class="name">string</span> matches the given <span class="name">pattern</span>.<br />
+<br />
+Pattern matching is similar as matching files in a shell, and it is always case-sensitive. In the pattern '*' matches to anything and '?' matches to any single character.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Match Regexp"></a>Should Not Match Regexp</td>
+  <td class="arg">string, pattern, msg=None, values=True</td>
+  <td class="doc">Fails if <span class="name">string</span> matches <span class="name">pattern</span> as a regular expression.<br />
+<br />
+See <a href="#Should Match Regexp" class="name">Should Match Regexp</a> for more information about arguments.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Not Start With"></a>Should Not Start With</td>
+  <td class="arg">str1, str2, msg=None, values=True</td>
+  <td class="doc">Fails if the string <span class="name">str1</span> starts with the string <span class="name">str2</span>.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Should Start With"></a>Should Start With</td>
+  <td class="arg">str1, str2, msg=None, values=True</td>
+  <td class="doc">Fails if the string <span class="name">str1</span> does not start with the string <span class="name">str2</span>.<br />
+<br />
+See <a href="#Should Be Equal" class="name">Should Be Equal</a> for an explanation on how to override the default error message with <span class="name">msg</span> and <span class="name">values</span>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Sleep"></a>Sleep</td>
+  <td class="arg">time, reason=None</td>
+  <td class="doc">Pauses the test executed for the given time.<br />
+<br />
+<span class="name">time</span> may be either a number or a time string. Time strings are in a format such as '1 day 2 hours 3 minutes 4 seconds 5milliseconds' or '1d 2h 3m 4s 5ms', and they are fully explained in an appendix of Robot Framework User Guide. Optional <span class="name">reason</span> can be used to explain why sleeping is necessary. Both the time slept and the reason are logged.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Sleep</td>
+<td>42</td>
+<td></td>
+</tr>
+<tr>
+<td>Sleep</td>
+<td>1.5</td>
+<td></td>
+</tr>
+<tr>
+<td>Sleep</td>
+<td>2 minutes 10 seconds</td>
+<td></td>
+</tr>
+<tr>
+<td>Sleep</td>
+<td>10s</td>
+<td>Wait for a reply</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Variable Should Exist"></a>Variable Should Exist</td>
+  <td class="arg">name, msg=None</td>
+  <td class="doc">Fails unless the given variable exists within the current scope.<br />
+<br />
+The name of the variable can be given either as a normal variable name (e.g. ${NAME}) or in escaped format (e.g. \${NAME}). Notice that the former works only in Robot Framework 2.1 and newer, and it has some limitations explained in <a href="#Set Suite Variable" class="name">Set Suite Variable</a>.<br />
+<br />
+The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Variable Should Not Exist"></a>Variable Should Not Exist</td>
+  <td class="arg">name, msg=None</td>
+  <td class="doc">Fails if the given variable exists within the current scope.<br />
+<br />
+The name of the variable can be given either as a normal variable name (e.g. ${NAME}) or in escaped format (e.g. \${NAME}). Notice that the former works only in Robot Framework 2.1 and newer, and it has some limitations explained in <a href="#Set Suite Variable" class="name">Set Suite Variable</a>.<br />
+<br />
+The default error message can be overridden with the <span class="name">msg</span> argument.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Wait Until Keyword Succeeds"></a>Wait Until Keyword Succeeds</td>
+  <td class="arg">timeout, retry_interval, name, *args</td>
+  <td class="doc">Waits until the specified keyword succeeds or the given timeout expires.<br />
+<br />
+<span class="name">name</span> and <span class="name">args</span> define the keyword that is executed similarly as with <a href="#Run Keyword" class="name">Run Keyword</a>. If the specified keyword does not succeed within <span class="name">timeout</span>, this keyword fails. <span class="name">retry_interval</span> is the time to wait before trying to run the keyword again after the previous run has failed.<br />
+<br />
+Both <span class="name">timeout</span> and <span class="name">retry_interval</span> must be given in Robot Framework's time format (e.g. '1 minute', '2 min 3 s', '4.5').<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>Wait Until Keyword Succeeds</td>
+<td>2 min</td>
+<td>5 sec</td>
+<td>My keyword</td>
+<td>arg1</td>
+<td>arg2</td>
+</tr>
+</table>
+<br />
+Starting from Robot Framework 2.5 errors caused by invalid syntax, timeouts, or fatal exceptions are not caught by this keyword.</td>
+</tr>
+</table>
+<p id="footer">
+Altogether 79 keywords.<br />
+Generated by <a href="http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool">libdoc.py</a>
+on 2011-02-07 14:50:08.
+</p>
+</body>
+</html>

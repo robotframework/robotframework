@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Screenshot</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style media="all" type="text/css">
+body {
+  background: white;
+  color: black;
+  font-size: small;
+  font-family: sans-serif;
+  padding: 0.1em 0.5em;
+}
+.libdoc {
+  white-space: pre-wrap;
+}
+a.name, span.name {
+  font-style: italic;
+}
+a, a:link, a:visited {
+  color: #c30;
+}
+a:hover, a:active {
+  text-decoration: underline;
+  color: black;
+}
+div.shortcuts {
+  margin: 1em 0em;
+  font-size: 0.9em;
+}
+div.shortcuts a {
+  text-decoration: none;
+  color: black;
+}
+div.shortcuts a:hover {
+  text-decoration: underline;
+}
+table.keywords {
+  border: 2px solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 0.3em 0em;
+  width: 100%;
+}
+table.keywords th, table.keywords td {
+  border: 2px solid black;
+  padding: 0.2em;
+  vertical-align: top;
+}
+table.keywords th {
+  background: #bbb;
+  color: black;
+}
+table.keywords td.kw {
+  width: 150px;
+  font-weight: bold;
+}
+table.keywords td.arg {
+  width: 300px;
+  font-style: italic;
+}
+table.doc {
+  border: 1px solid black;
+  background: transparent;
+  border-collapse: collapse;
+  empty-cells: show;
+  font-size: 0.85em;
+}
+table.doc td {
+  border: 1px solid black;
+  padding: 0.1em 0.3em;
+  height: 1.2em;
+
+}
+#footer {
+  font-size: 0.9em;
+}
+</style>
+<style media="print" type="text/css">
+body {
+  margin: 0px 1px;
+  padding: 0px;
+  font-size: 10px;
+}
+a {
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<h1>Screenshot</h1>
+<b>Version:</b> 2.6.3<br>
+<b>Scope:</b> test suite<br>
+<b>Named arguments: </b>
+supported
+
+<h2 id="introduction">Introduction</h2>
+<div class="libdoc">A test library for taking screenshots and embedding them into log files.
+
+<b>Using with Jython</b>
+
+On Jython this library uses Java AWT APIs. They are always available and thus no external modules are needed.
+
+<b>Using with Python</b>
+
+On Python you need to have one of the following modules installed to be able to use this library. The first module that is found will be used.
+
+- wxPython :: <a href="http://wxpython.org">http://wxpython.org</a> :: Required also by RIDE so many Robot Framework users already have this module installed.
+- PyGTK :: <a href="http://pygtk.org">http://pygtk.org</a> :: This module is available by default on most Linux distributions.
+- Python Imaging Library (PIL) :: <a href="http://www.pythonware.com/products/pil">http://www.pythonware.com/products/pil</a> :: This module can take screenshots only on Windows.
+
+Python support was added in Robot Framework 2.5.5.
+
+<b>Where screenshots are saved</b>
+
+By default screenshots are saved into the same directory where the Robot Framework log file is written. If no log is created, screenshots are saved into the directory where the XML output file is written.
+
+It is possible to specify a custom location for screenshots using <span class="name">screenshot_directory</span> argument in <a href="#importing" class="name">importing</a> and <a href="#Set Screenshot Directory" class="name">Set Screenshot Directory</a> keyword during execution. It is also possible to save screenshots using an absolute path.
+
+Note that prior to Robot Framework 2.5.5 the default screenshot location was system's temporary directory.
+
+<b>Changes in Robot Framework 2.5.5 and Robot Framework 2.6</b>
+
+This library was heavily enhanced in Robot Framework 2.5.5 release. The changes are listed below and explained more thoroughly in affected places.
+
+- The support for using this library on Python (see above) was added.
+- The default location where screenshots are saved was changed (see above).
+- New <a href="#Take Screenshot" class="name">Take Screenshot</a> and <a href="#Take Screenshot Without Embedding" class="name">Take Screenshot Without Embedding</a> keywords were added. These keywords should be used for taking screenshots in the future. Other screenshot taking keywords will be deprecated and removed later.
+- <span class="name">log_file_directory</span> argument was deprecated everywhere it was used.
+
+In Robot Framework 2.6, following additional changes were made:
+
+- <span class="name">log_file_directory</span> argument was removed altogether.
+- <span class="name">Set Screenshot Directories</span> keyword was removed.
+- <a href="#Save Screenshot" class="name">Save Screenshot</a>, <a href="#Save Screenshot To" class="name">Save Screenshot To</a> and <a href="#Log Screenshot" class="name">Log Screenshot</a> keywords were deprecated. They will be removed in 2.7 version.
+</div>
+
+<h2 id="importing">Importing</h2>
+<table border="1" class="keywords libdoc">
+<tr>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="arg">screenshot_directory=None</td>
+  <td class="doc">Configure where screenshots are saved.
+
+If <span class="name">screenshot_directory</span> is not given, screenshots are saved into same directory as the log file. The directory can also be set using <a href="#Set Screenshot Directory" class="name">Set Screenshot Directory</a> keyword.
+
+Examples (use only one of these):
+
+<table border="1" class="doc">
+<tr>
+<td><b>Setting</b></td>
+<td><b>Value</b></td>
+<td><b>Value</b></td>
+<td><b>Value</b></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>Screenshot</td>
+<td></td>
+<td># Default location</td>
+</tr>
+<tr>
+<td>Library</td>
+<td>Screenshot</td>
+<td>${TEMPDIR}</td>
+<td># System temp (this was default prior to 2.5.5)</td>
+</tr>
+</table></td>
+</tr>
+</table>
+
+<h2>Shortcuts</h2>
+<div class='shortcuts'>
+<a href="#Log Screenshot" title="*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead.">Log&nbsp;Screenshot</a>
+&nbsp;&middot;&nbsp;
+<a href="#Save Screenshot" title="*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead.">Save&nbsp;Screenshot</a>
+&nbsp;&middot;&nbsp;
+<a href="#Save Screenshot To" title="*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead.">Save&nbsp;Screenshot&nbsp;To</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Screenshot Directory" title="Sets the directory where screenshots are saved.">Set&nbsp;Screenshot&nbsp;Directory</a>
+&nbsp;&middot;&nbsp;
+<a href="#Take Screenshot" title="Takes a screenshot and embeds it into the log file.">Take&nbsp;Screenshot</a>
+&nbsp;&middot;&nbsp;
+<a href="#Take Screenshot Without Embedding" title="Takes a screenshot and links it from the log file.">Take&nbsp;Screenshot&nbsp;Without&nbsp;Embedding</a>
+</div>
+
+<h2>Keywords</h2>
+<table border="1" class="keywords libdoc">
+<tr>
+  <th class="kw">Keyword</th>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="kw"><a name="Log Screenshot"></a>Log Screenshot</td>
+  <td class="arg">basename=screenshot, directory=None, width=100%</td>
+  <td class="doc"><b>DEPRECATED</b> Use <a href="#Take Screenshot" class="name">Take Screenshot</a> or <a href="#Take Screenshot Without Embedding" class="name">Take Screenshot Without Embedding</a> instead.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Save Screenshot"></a>Save Screenshot</td>
+  <td class="arg">basename=screenshot, directory=None</td>
+  <td class="doc"><b>DEPRECATED</b> Use <a href="#Take Screenshot" class="name">Take Screenshot</a> or <a href="#Take Screenshot Without Embedding" class="name">Take Screenshot Without Embedding</a> instead.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Save Screenshot To"></a>Save Screenshot To</td>
+  <td class="arg">path</td>
+  <td class="doc"><b>DEPRECATED</b> Use <a href="#Take Screenshot" class="name">Take Screenshot</a> or <a href="#Take Screenshot Without Embedding" class="name">Take Screenshot Without Embedding</a> instead.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Screenshot Directory"></a>Set Screenshot Directory</td>
+  <td class="arg">path</td>
+  <td class="doc">Sets the directory where screenshots are saved.
+
+It is possible to use <span class="name">/</span> as a path separator in all operating systems. Path to the old directory is returned.
+
+The directory can also be set in <a href="#importing" class="name">importing</a>.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Take Screenshot"></a>Take Screenshot</td>
+  <td class="arg">name=screenshot, width=800px</td>
+  <td class="doc">Takes a screenshot and embeds it into the log file.
+
+Name of the file where the screenshot is stored is derived from <span class="name">name</span>. If <span class="name">name</span> ends with extension <span class="name">.jpg</span> or <span class="name">.jpeg</span>, the screenshot will be stored with that name. Otherwise a unique name is created by adding underscore, a running index and extension to the <span class="name">name</span>.
+
+The name will be interpreted to be relative to the directory where the log file is written. It is also possible to use absolute paths.
+
+<span class="name">width</span> specifies the size of the screenshot in the log file.
+
+The path where the screenshot is saved is returned.
+
+Examples: (LOGDIR is determined automatically by the library)
+<table border="1" class="doc">
+<tr>
+<td>Take Screenshot</td>
+<td></td>
+<td></td>
+<td># LOGDIR/screenshot_1.jpg (index automatically incremented)</td>
+</tr>
+<tr>
+<td>Take Screenshot</td>
+<td>mypic</td>
+<td></td>
+<td># LOGDIR/mypic_1.jpg (index automatically incremented)</td>
+</tr>
+<tr>
+<td>Take Screenshot</td>
+<td>${TEMPDIR}/mypic</td>
+<td></td>
+<td># /tmp/mypic_1.jpg (index automatically incremented)</td>
+</tr>
+<tr>
+<td>Take Screenshot</td>
+<td>pic.jpg</td>
+<td></td>
+<td># LOGDIR/pic.jpg (always uses this file)</td>
+</tr>
+<tr>
+<td>Take Screenshot</td>
+<td>images/login.jpg</td>
+<td>80%</td>
+<td># Specify both name and width.</td>
+</tr>
+<tr>
+<td>Take Screenshot</td>
+<td>width=550px</td>
+<td></td>
+<td># Specify only width.</td>
+</tr>
+</table>
+Screenshots can be only taken in JPEG format. It is possible to use <span class="name">/</span> as a path separator in all operating systems.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Take Screenshot Without Embedding"></a>Take Screenshot Without Embedding</td>
+  <td class="arg">name=screenshot</td>
+  <td class="doc">Takes a screenshot and links it from the log file.
+
+This keyword is otherwise identical to <a href="#Take Screenshot" class="name">Take Screenshot</a> but the saved screenshot is not embedded into the log file. The screenshot is linked so it is nevertheless easily available.</td>
+</tr>
+</table>
+<p id="footer">
+Altogether 6 keywords.<br />
+Generated by <a href="http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool">libdoc.py</a>
+on 2011-10-07 15:10:18.
+</p>
+</body>
+</html>
