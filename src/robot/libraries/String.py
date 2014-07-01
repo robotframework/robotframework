@@ -50,10 +50,12 @@ class String(object):
         """Converts string to lowercase. 
 
         Examples:
-        | ${str1}= | Convert To Lowercase | ABC |
-        | ${str2}= | Convert To Lowercase | 1A2c3D |
+        | ${str1} = | Convert To Lowercase | ABC |
+        | ${str2} = | Convert To Lowercase | 1A2c3D |
         | Should Be Equal | ${str1} | abc |
         | Should Be Equal | ${str2} | 1a2c3d |
+
+        New in Robot Framework 2.8.6
         """
         return string.lower()
 
@@ -61,10 +63,12 @@ class String(object):
         """Converts string to uppercase. 
 
         Examples:
-        | ${str1}= | Convert To Uppercase | abc |
-        | ${str2}= | Convert To Uppercase | 1a2C3d |
+        | ${str1} = | Convert To Uppercase | abc |
+        | ${str2} = | Convert To Uppercase | 1a2C3d |
         | Should Be Equal | ${str1} | ABC |
         | Should Be Equal | ${str2} | 1A2C3D |
+        
+        New in Robot Framework 2.8.6
         """
         return string.upper()   
 
