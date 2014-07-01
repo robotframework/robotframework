@@ -1,0 +1,11 @@
+body {
+    margin: 0 2em;
+}
+
+#remote-library-implementations {
+    width: 100%;
+}
+
+#remote-library-implementations > tbody {
+    align: center
+}
