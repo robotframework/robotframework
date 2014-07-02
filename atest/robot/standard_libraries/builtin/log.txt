@@ -59,6 +59,19 @@ Log repr
     Check Log Message    ${tc.kws[5].msgs[0]}    [u'Hyv\\xe4', u'\\u2603', 42, ${bytes}]
     Check Stdout Contains    [u'Hyv\\xe4', u'\\u2603', 42, ${bytes}]
 
+Log pprint
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[1].msgs[0]}    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
+    Check Stdout Contains    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
+    Check Log Message    ${tc.kws[3].msgs[0]}    ['One',${SPACE}'Two',${SPACE}3]
+    Check Stdout Contains    ['One',${SPACE}'Two',${SPACE}3]
+    Check Log Message    ${tc.kws[5].msgs[0]}    ['a long string',\n${SPACE}'a longer string!',\n${SPACE}'a much, much, much, much, much, much longer string']
+    Check Stdout Contains    ['a long string',\n${SPACE}'a longer string!',\n${SPACE}'a much, much, much, much, much, much longer string']
+    Check Log Message    ${tc.kws[7].msgs[0]}    u"{'list': ['a long string', 'a longer string!', 'a much, much, much, much, much, much longer string'], 'a much, much, much, much, much, much longer string': 3, 'a longer string!': 2, 'a long string': 1}"
+    Check Stdout Contains    u"{'list': ['a long string', 'a longer string!', 'a much, much, much, much, much, much longer string'], 'a much, much, much, much, much, much longer string': 3, 'a longer string!': 2, 'a long string': 1}"
+    Check Log Message    ${tc.kws[9].msgs[0]}    ['One',${SPACE}'Two',${SPACE}3]
+
+
 Log callable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    objects_for_call_method.MyObject

@@ -14,6 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import pprint as _pprint
 import re
 import time
 
@@ -2021,7 +2022,7 @@ class _Misc:
             sep = ' '
         return sep.join(items)
 
-    def log(self, message, level='INFO', html=False, console=False, repr=False):
+    def log(self, message, level='INFO', html=False, console=False, repr=False, pprint=False):
         """Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, and WARN.
@@ -2052,6 +2053,11 @@ class _Misc:
         example, when working with strings or bytes containing invisible
         characters.
 
+        If the `pprint` argument is true, the given item will be passed
+        through Python's `pprint.pformat()` function before logging it. This is
+        useful, for example, when working with native Python data structures
+        such as lists, dictionaries, or nested combinations of lists and dicts.
+
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
         | Log | Warning, world!      | WARN     |   | # Warning.               |
@@ -2069,6 +2075,8 @@ class _Misc:
         """
         if repr:
             message = utils.safe_repr(message)
+        if pprint:
+            message = _pprint.pformat(message)
         logger.write(message, level, html)
         if console:
             logger.console(message)
