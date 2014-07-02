@@ -14,6 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import pprint
 import re
 import time
 
@@ -2048,9 +2049,9 @@ class _Misc:
         instead if either of these is undesirable,
 
         If the `repr` argument is true, the given item will be passed through
-        Python's `repr()` function before logging it. This is useful, for
-        example, when working with strings or bytes containing invisible
-        characters.
+        Python's `pprint.pformat()` function before logging it. This is useful,
+        for example, when working with strings or bytes containing invisible
+        characters, or when working with nested data structures.
 
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
@@ -2066,9 +2067,12 @@ class _Misc:
 
         Arguments `html`, `console`, and `repr` are new in Robot Framework
         2.8.2.
+
+        Pprint support when `repr` is true is new in Robot Framework 2.8.6.
         """
         if repr:
-            message = utils.safe_repr(message)
+            message = utils.safe_repr(message) if utils.is_str_like(message) \
+                else pprint.pformat(message)
         logger.write(message, level, html)
         if console:
             logger.console(message)
