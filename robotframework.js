@@ -41,9 +41,12 @@ function download(event_) {
 
 window.onload = function() {
     var goButtons = document.getElementsByClassName('go-button');
-    var downloadButtons = document.getElementsByClassName('download-button');
     for (var i = goButtons.length - 1; i >= 0; i--) {
         addEvent(goButtons[i], 'click', go);
-        addEvent(downloadButtons[i], 'click', download);
     };
+
+    var downloadButtons = document.getElementsByClassName('download-button');
+    for (var i = downloadButtons.length - 1; i >= 0; i--){
+      addEvent(downloadButtons[i], 'click', download);
+    }  
 };
