@@ -52,6 +52,19 @@ Log repr
     ${list} =    Create List    Hyvä    \u2603    ${42}    ${bytes}
     Log    ${list}    repr=yes    console=please
 
+Log pprint
+    [Setup]    Set Log Level    DEBUG
+    ${dict} =     Evaluate    {'a long string': 1, 'a longer string!': 2, 'a much, much, much, much, much, much longer string': 3, 'list': ['a long string', 'a longer string!', 'a much, much, much, much, much, much longer string']}
+    Log    ${dict}    pprint=yes    console=please
+    ${list} =    Evaluate    ['One', 'Two', 3]
+    Log    ${list}    pprint=yes    console=please
+    ${list} =    Evaluate    ['a long string', 'a longer string!', 'a much, much, much, much, much, much longer string']
+    Log    ${list}    pprint=yes    console=please
+    ${dict} =     Evaluate    {'a long string': 1, 'a longer string!': 2, 'a much, much, much, much, much, much longer string': 3, 'list': ['a long string', 'a longer string!', 'a much, much, much, much, much, much longer string']}
+    Log    ${dict}    pprint=yes    repr=yes    console=please
+    ${list} =    Evaluate    ['One', 'Two', 3]
+    Log    ${list}    pprint=yes
+
 Log callable
     Log    ${MyObject}
 
