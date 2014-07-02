@@ -26,6 +26,7 @@ function getZipPath(version) {
 }
 
 function getBaseURL() {
+    return '';
     return window.location.href.replace(window.location.hash, '');
 }
 
@@ -48,5 +49,5 @@ window.onload = function() {
     var downloadButtons = document.getElementsByClassName('download-button');
     for (var i = downloadButtons.length - 1; i >= 0; i--){
       addEvent(downloadButtons[i], 'click', download);
-    }  
+    }
 };
