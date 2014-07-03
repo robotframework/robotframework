@@ -1,8 +1,0 @@
-*** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/convert_to_uppercase.txt
-Force Tags        pybot    jybot    regression
-Resource          atest_resource.txt
-
-*** Test Cases ***
-Convert To Uppercases
-    Check Test Case    ${TESTNAME}
