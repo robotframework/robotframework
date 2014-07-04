@@ -7,7 +7,8 @@ function addEvent(element, event_, func) {
 }
 
 function getIdAndVersion(evt) {
-    var id = evt.srcElement.value;
+    var targetElement = (evt.srcElement) ? evt.srcElement : evt.currentTarget;
+    var id = targetElement.value;
     return {
         'id' : id,
         'version' : document.getElementById(id).value
