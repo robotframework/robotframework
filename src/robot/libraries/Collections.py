@@ -769,28 +769,31 @@ def _contains(pattern, iterable, default_msg, given_msg, include_default=False,
     regex/glob patterns.
 
     """
+    regexp = False
     if str(pattern).lower().startswith('glob='):
         # translate glob pattern to re pattern
         pattern = fnmatch.translate(pattern[5:])
+        regexp = True
     elif str(pattern).lower().startswith('regexp='):
         pattern = pattern[7:]
-    else:
-        try:
-            # $ matches the end of a string in Python re syntax
-            pattern += '$'
-        except TypeError:
-            pass
+        regexp = True
+
 
     flags = 0
     if case_insensitive:
         flags = re.IGNORECASE
 
-    if isinstance(pattern, basestring):
+    if regexp:
         condition = any([re.match(pattern, item, flags)
                          if isinstance(item, basestring) else pattern == item
                          for item in iterable])
     else:
-        condition = pattern in iterable
+        if case_insensitive and isinstance(pattern, basestring):
+            condition = any([pattern.lower() == item.lower()
+                             if isinstance(item, basestring) else pattern == item
+                             for item in iterable])
+        else:
+            condition = pattern in iterable
     if inverse:
         condition = not condition
 
