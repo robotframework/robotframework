@@ -12,6 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+import fnmatch
+
 from robot.api import logger
 from robot.utils import plural_or_not, seq2str, seq2str2, unic
 from robot.utils.asserts import assert_equals
@@ -287,7 +290,8 @@ class _List:
         the given `msg` is used in case of a failure.
         """
         default = "%s does not contain value '%s'." % (seq2str2(list_), value)
-        _verify_condition(value in list_, default, msg)
+        _contains(value, list_, default, msg)
+        #_verify_condition(value in list_, default, msg)
 
     def list_should_not_contain_value(self, list_, value, msg=None):
         """Fails if the `value` is not found from `list`.
@@ -295,7 +299,8 @@ class _List:
         See `List Should Contain Value` for an explanation of `msg`.
         """
         default = "%s contains value '%s'." % (seq2str2(list_), value)
-        _verify_condition(value not in list_, default, msg)
+        _contains(value, list_, default, msg, inverse=True)
+        #_verify_condition(value not in list_, default, msg)
 
     def list_should_not_contain_duplicates(self, list_, msg=None):
         """Fails if any element in the `list` is found from it more than once.
@@ -576,7 +581,8 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary does not contain key '%s'." % key
-        _verify_condition(key in dictionary, default, msg)
+        _contains(key, dictionary, default, msg)
+        #_verify_condition(key in dictionary, default, msg)
 
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
         """Fails if `key` is found from `dictionary`.
@@ -586,7 +592,8 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary contains key '%s'." % key
-        _verify_condition(key not in dictionary, default, msg)
+        _contains(key, dictionary, default, msg, inverse=True)
+        #_verify_condition(key not in dictionary, default, msg)
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
         """An item of `key`/`value` must be found in a `dictionary`.
@@ -609,7 +616,8 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary does not contain value '%s'." % value
-        _verify_condition(value in dictionary.values(), default, msg)
+        _contains(value, dictionary.values(), default, msg)
+        #_verify_condition(value in dictionary.values(), default, msg)
 
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None):
         """Fails if `value` is found from `dictionary`.
@@ -619,7 +627,8 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary contains value '%s'." % value
-        _verify_condition(not value in dictionary.values(), default, msg)
+        _contains(value, dictionary.values(), default, msg, inverse=True)
+        #_verify_condition(not value in dictionary.values(), default, msg)
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
         """Fails if the given dictionaries are not equal.
@@ -752,6 +761,41 @@ def _verify_condition(condition, default_msg, given_msg, include_default=False):
         if _include_default_message(include_default):
             raise AssertionError(given_msg + '\n' + default_msg)
         raise AssertionError(given_msg)
+
+
+def _contains(pattern, iterable, default_msg, given_msg, include_default=False,
+              case_insensitive=False, inverse=False):
+    """Check if a pattern is within an iterable, with options for case insensitivity and
+    regex/glob patterns.
+
+    """
+    if str(pattern).lower().startswith('glob='):
+        # translate glob pattern to re pattern
+        pattern = fnmatch.translate(pattern[5:])
+    elif str(pattern).lower().startswith('regexp='):
+        pattern = pattern[7:]
+    else:
+        try:
+            # $ matches the end of a string in Python re syntax
+            pattern += '$'
+        except TypeError:
+            pass
+
+    flags = 0
+    if case_insensitive:
+        flags = re.IGNORECASE
+
+    if isinstance(pattern, basestring):
+        condition = any([re.match(pattern, item, flags)
+                         if isinstance(item, basestring) else pattern == item
+                         for item in iterable])
+    else:
+        condition = pattern in iterable
+    if inverse:
+        condition = not condition
+
+    return _verify_condition(condition, default_msg, given_msg, include_default)
+
 
 def _include_default_message(include):
     if isinstance(include, basestring):
