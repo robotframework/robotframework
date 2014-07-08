@@ -32,7 +32,7 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
         assert not os.path.exists('foo'), 'does not work if you have foo folder!'
         assert_equals(self.method('foo:'), ('foo', ['']))
         assert_equals(self.method('bar:arg1::arg3'), ('bar', ['arg1', '', 'arg3']))
-        assert_equals(self.method('L:'), ('L', ['']))
+        assert_equals(self.method('3:'), ('3', ['']))
 
     def test_with_windows_path_without_args(self):
         assert_equals(self.method('C:\\name.py'), ('C:\\name.py', []))
