@@ -199,6 +199,16 @@ Get Slice From List With Out Of List Index
 List Should Contain Value
     List Should Contain Value  ${L1}  1
 
+List Should Contain Value Case Insensitive
+    List Should Contain Value  ${STRINGS}  a
+    List Should Contain Value  ${STRINGS}  a  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  A  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  b  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  B  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  word  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  WORD  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  WoRd  case_insensitive=True
+
 List Should Contain Value, Value Not Found
     [Documentation]  FAIL [ 1 ] does not contain value '2'.
     List Should Contain Value  ${L1}  2
@@ -209,6 +219,12 @@ List Should Contain Value, Value Not Found And Own Error Message
 
 List Should Not Contain Value
     List Should Not Contain Value  ${L1}  2
+
+List Should Not Contain Value Case Insensitive
+    List Should Not Contain Value  ${STRINGS}  words  case_insensitive=True
+    List Should Not Contain Value  ${STRINGS}  2  case_insensitive=True
+    List Should Not Contain Value  ${STRINGS}  word
+    List Should Not Contain Value  ${STRINGS}  AB  case_insensitive=True
 
 List Should Not Contain Value, Value Found
     [Documentation]  FAIL [ 1 ] contains value '1'.

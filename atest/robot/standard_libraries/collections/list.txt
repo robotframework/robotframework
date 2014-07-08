@@ -122,6 +122,9 @@ Get Slice From List With Out Of List Index
 List Should Contain Value
     Check Test Case  ${TEST NAME}
 
+List Should Contain Value Case Insensitive
+    Check Test Case  ${TEST NAME}
+
 List Should Contain Value, Value Not Found
     Check Test Case  ${TEST NAME}
 
@@ -129,6 +132,9 @@ List Should Contain Value, Value Not Found and Own Error Message
     Check Test Case  ${TEST NAME}
 
 List Should Not Contain Value
+    Check Test Case  ${TEST NAME}
+
+List Should Not Contain Value Case Insensitive
     Check Test Case  ${TEST NAME}
 
 List Should Not Contain Value, Value Found
