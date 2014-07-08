@@ -767,14 +767,28 @@ def _verify_condition(condition, default_msg, given_msg, include_default=False):
 
 
 def _contains(pattern, iterable, case_insensitive=False):
-    """Check if a pattern is within an iterable, with options for case insensitivity and
-    regex/glob patterns.
+    """Check for matches to a pattern or value in an iterable.
 
+    If pattern is a string beginning with 'glob=' or 'regexp=', treat the rest
+    of the string as a glob or regexp pattern to match.
+
+    If case_insensitive is True, ignore case when matching.
+
+    Glob and regexp searches only match against strings.
     """
     return bool(_count(pattern, iterable, case_insensitive))
 
 
 def _count(pattern, iterable, case_insensitive=False):
+    """Count matches to a pattern or value in an iterable.
+
+    If pattern is a string beginning with 'glob=' or 'regexp=', treat the rest
+    of the string as a glob or regexp pattern to match.
+
+    If case_insensitive is True, ignore case when matching.
+
+    Glob and regexp searches only match against strings.
+    """
     regexp = False
     try:
         if pattern.lower().startswith('glob='):
@@ -785,13 +799,13 @@ def _count(pattern, iterable, case_insensitive=False):
             pattern = pattern[7:]
             regexp = True
     except AttributeError:
+        # calling lower() on a non-string raises AttributeError
         pass
 
-    flags = 0
-    if case_insensitive:
-        flags = re.IGNORECASE
-
     if regexp:
+        flags = 0
+        if case_insensitive:
+            flags = re.IGNORECASE
         condition = [re.match(pattern, item, flags)
                      if isinstance(item, basestring) else pattern == item
                      for item in iterable]
