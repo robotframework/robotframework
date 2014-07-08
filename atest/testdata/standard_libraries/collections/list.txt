@@ -211,6 +211,23 @@ List Should Contain Value Case Insensitive
 
 List Should Contain Value Regexp
     List Should Contain Value  ${STRINGS}  regexp=.*a.*
+    List Should Contain Value  ${STRINGS}  regexp=wOrD
+    List Should Contain Value  ${STRINGS}  regexp=word  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  regexp=wo.*  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  regexp=[a-z]  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  regexp=[a-zA-Z]
+    List Should Contain Value  ${STRINGS}  regexp=.*
+
+List Should Contain Value Glob
+    List Should Contain Value  ${STRINGS}  glob=*a*
+    List Should Contain Value  ${STRINGS}  glob=wOrD
+    List Should Contain Value  ${STRINGS}  glob=word  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  glob=wo*  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  glob=[az]  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  glob=[azAZ]
+    List Should Contain Value  ${STRINGS}  glob=*
+    List Should Contain Value  ${STRINGS}  glob=?
+    List Should Contain Value  ${STRINGS}  glob=????
 
 List Should Contain Value, Value Not Found
     [Documentation]  FAIL [ 1 ] does not contain value '2'.
