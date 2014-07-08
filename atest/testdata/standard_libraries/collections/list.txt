@@ -111,7 +111,7 @@ Count Values In List Case Insensitive
     ${count} =  Count Values In List  ${STRINGS}  A  case_insensitive=True
     Should Be Equal As Integers  ${count}  1
     ${count} =  Count Values In List  ${STRINGS}  word  case_insensitive=True
-    Should Be Equal As Integers  ${count}  1
+    Should Be Equal As Integers  ${count}  2
     ${count} =  Count Values In List  ${STRINGS}  b  case_insensitive=True
     Should Be Equal As Integers  ${count}  2
     ${count} =  Count Values In List  ${STRINGS}  b
@@ -208,6 +208,9 @@ List Should Contain Value Case Insensitive
     List Should Contain Value  ${STRINGS}  word  case_insensitive=True
     List Should Contain Value  ${STRINGS}  WORD  case_insensitive=True
     List Should Contain Value  ${STRINGS}  WoRd  case_insensitive=True
+
+List Should Contain Value Regexp
+    List Should Contain Value  ${STRINGS}  regexp=.*a.*
 
 List Should Contain Value, Value Not Found
     [Documentation]  FAIL [ 1 ] does not contain value '2'.
@@ -354,7 +357,7 @@ Create Lists For The Tests
     Set Test Variable  \${L4}
     ${LONG} =  Combine Lists  ${L1}  ${L2}  ${L4}  ${L2}
     Set Test Variable  \${LONG}
-    ${STRINGS} =  Create List  a  B  b  wOrD
+    ${STRINGS} =  Create List  a  B  b  wOrD  WOrd
     Set Test Variable  \${STRINGS}
 
 Insert Into List And Compare

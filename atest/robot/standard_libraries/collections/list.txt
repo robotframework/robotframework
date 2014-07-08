@@ -125,6 +125,9 @@ List Should Contain Value
 List Should Contain Value Case Insensitive
     Check Test Case  ${TEST NAME}
 
+List Should Contain Value Regexp
+    Check Test Case  ${TEST NAME}
+
 List Should Contain Value, Value Not Found
     Check Test Case  ${TEST NAME}
 

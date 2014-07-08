@@ -823,7 +823,7 @@ def _count(pattern, iterable, case_insensitive=False):
         flags = 0
         if case_insensitive:
             flags = re.IGNORECASE
-        condition = [re.match(pattern, item, flags)
+        condition = [bool(re.match(pattern, item, flags))
                      if isinstance(item, basestring) else pattern == item
                      for item in iterable]
     else:
