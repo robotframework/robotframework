@@ -139,7 +139,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def remove_duplicates(self, list_):
+    def remove_duplicates(self, list_, case_insensitive=False):
         """Returns a list without duplicates based on the given `list`.
 
         Creates and returns a new list that contains all items in the given
@@ -151,7 +151,7 @@ class _List:
         """
         ret = []
         for item in list_:
-            if item not in ret:
+            if not _count(item, ret, case_insensitive):
                 ret.append(item)
         removed = len(list_) - len(ret)
         logger.info('%d duplicate%s removed.' % (removed, plural_or_not(removed)))
@@ -211,7 +211,7 @@ class _List:
             end = self._index_to_int(end)
         return list_[start:end]
 
-    def count_values_in_list(self, list_, value, start=0, end=None):
+    def count_values_in_list(self, list_, value, start=0, end=None, case_insensitive=False):
         """Returns the number of occurrences of the given `value` in `list`.
 
         The search can be narrowed to the selected sublist by the `start` and
@@ -224,7 +224,8 @@ class _List:
         - ${x} = 1
         - ${L3} is not changed
         """
-        return self.get_slice_from_list(list_, start, end).count(value)
+        slice = self.get_slice_from_list(list_, start, end)
+        return _count(value, slice, case_insensitive)
 
     def get_index_from_list(self, list_, value, start=0, end=None):
         """Returns the index of the first occurrence of the `value` on the list.
@@ -300,7 +301,7 @@ class _List:
         default = "%s contains value '%s'." % (seq2str2(list_), value)
         _verify_condition(not _contains(value, list_, case_insensitive), default, msg)
 
-    def list_should_not_contain_duplicates(self, list_, msg=None):
+    def list_should_not_contain_duplicates(self, list_, msg=None, case_insensitive=False):
         """Fails if any element in the `list` is found from it more than once.
 
         The default error message lists all the elements that were found
@@ -316,7 +317,7 @@ class _List:
         dupes = []
         for item in list_:
             if item not in dupes:
-                count = list_.count(item)
+                count = _count(item, list_, case_insensitive)
                 if count > 1:
                     logger.info("'%s' found %d times." % (item, count))
                     dupes.append(item)
@@ -591,7 +592,8 @@ class _Dictionary:
         default = "Dictionary contains key '%s'." % key
         _verify_condition(not _contains(key, dictionary, case_insensitive), default, msg)
 
-    def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
+    def dictionary_should_contain_item(self, dictionary, key, value, msg=None,
+                                       case_insensitive=False):
         """An item of `key`/`value` must be found in a `dictionary`.
 
         Value is converted to unicode for comparison.
@@ -601,6 +603,12 @@ class _Dictionary:
         """
         self.dictionary_should_contain_key(dictionary, key, msg)
         actual, expected = unicode(dictionary[key]), unicode(value)
+        if case_insensitive:
+            try:
+                actual = actual.lower()
+                expected = expected.lower()
+            except AttributeError:
+                pass
         default = "Value of dictionary key '%s' does not match: %s != %s" % (key, actual, expected)
         _verify_condition(actual == expected, default, msg)
 
@@ -763,6 +771,10 @@ def _contains(pattern, iterable, case_insensitive=False):
     regex/glob patterns.
 
     """
+    return bool(_count(pattern, iterable, case_insensitive))
+
+
+def _count(pattern, iterable, case_insensitive=False):
     regexp = False
     try:
         if pattern.lower().startswith('glob='):
@@ -780,17 +792,17 @@ def _contains(pattern, iterable, case_insensitive=False):
         flags = re.IGNORECASE
 
     if regexp:
-        condition = any([re.match(pattern, item, flags)
-                         if isinstance(item, basestring) else pattern == item
-                         for item in iterable])
+        condition = [re.match(pattern, item, flags)
+                     if isinstance(item, basestring) else pattern == item
+                     for item in iterable]
     else:
         if case_insensitive and isinstance(pattern, basestring):
-            condition = any([pattern.lower() == item.lower()
-                             if isinstance(item, basestring) else pattern == item
-                             for item in iterable])
+            condition = [pattern.lower() == item.lower()
+                         if isinstance(item, basestring) else pattern == item
+                         for item in iterable]
         else:
-            condition = pattern in iterable
-    return condition
+            condition = [pattern == item for item in iterable]
+    return condition.count(True)
 
 
 def _include_default_message(include):
