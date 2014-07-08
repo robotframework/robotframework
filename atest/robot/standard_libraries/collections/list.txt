@@ -68,6 +68,9 @@ Remove Duplicates
 Count Values In List
     Check Test Case  ${TEST NAME}
 
+Count Values In List Case Insensitive
+    Check Test Case  ${TEST NAME}
+
 Count Values In List With Invalid Start Index
     Check Test Case  ${TEST NAME}
 

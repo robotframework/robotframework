@@ -138,8 +138,16 @@ Dictionary Should Contain Value With Missing Value
     [Documentation]  FAIL Dictionary does not contain value 'x'.
     Dictionary Should Contain Value  ${D3}  x
 
+Dictionary Should Contain Value With Missing Value Case Insensitive
+    [Documentation]  FAIL Dictionary does not contain value 'X'.
+    Dictionary Should Contain Value  ${D3}  X  case_insensitive=True
+
 Dictionary Should Not Contain Value
     Dictionary Should Not Contain Value  ${D3}  x
+
+Dictionary Should Not Contain Value Case Insensitive
+    Dictionary Should Not Contain Value  ${D3}  x  case_insensitive=True
+    Dictionary Should Not Contain Value  ${D3}  X  case_insensitive=True
 
 Dictionary Should Not Contain Value With Existing Value
     [Documentation]  FAIL Dictionary contains value '2'.

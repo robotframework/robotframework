@@ -102,7 +102,13 @@ Dictionary Should Contain Value Case Insensitive
 Dictionary Should Contain Value With Missing Value
     Check Test Case  ${TEST NAME}
 
+Dictionary Should Contain Value With Missing Value Case Insensitive
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Not Contain Value
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Not Contain Value Case Insensitive
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Not Contain Value With Existing Value
