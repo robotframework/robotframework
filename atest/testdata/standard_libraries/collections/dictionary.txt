@@ -76,16 +76,32 @@ Get From Dictionary With Invalid Key
 Dictionary Should Contain Key
     Dictionary Should Contain Key  ${D3}  a
 
+Dictionary Should Contain Key Case Insensitive
+    Dictionary Should Contain Key  ${D3}  A  case_insensitive=True
+    Dictionary Should Contain Key  ${D3}  a  case_insensitive=True
+
 Dictionary Should Contain Key With Missing Key
     [Documentation]  FAIL Dictionary does not contain key 'x'.
     Dictionary Should Contain Key  ${D3}  x
 
+Dictionary Should Contain Key With Missing Key Case Insensitive
+    [Documentation]  FAIL Dictionary does not contain key 'X'.
+    Dictionary Should Contain Key  ${D3}  X  case_insensitive=True
+
 Dictionary Should Contain Item
     Dictionary Should Contain Item  ${D3}  a   1
+
+Dictionary Should Contain Item Case Insensitive
+    Dictionary Should Contain Item  ${D3}  A   1   case_insensitive=True
+    Dictionary Should Contain Item  ${D3}  a   1   case_insensitive=True
 
 Dictionary Should Contain Item With Missing Key
     [Documentation]  FAIL Dictionary does not contain key 'x'.
     Dictionary Should Contain Item  ${D3}  x   1
+
+Dictionary Should Contain Item With Missing Key Case Insensitive
+    [Documentation]  FAIL Dictionary does not contain key 'X'.
+    Dictionary Should Contain Item  ${D3}  X   1   case_insensitive=True
 
 Dictionary Should Contain Item With Wrong Value
     [Documentation]  FAIL Value of dictionary key 'a' does not match: 1 != 2
@@ -94,9 +110,17 @@ Dictionary Should Contain Item With Wrong Value
 Dictionary Should Not Contain Key
     Dictionary Should Not Contain Key  ${D3}  x
 
+Dictionary Should Not Contain Key Case Insensitive
+    Dictionary Should Not Contain Key  ${D3}  X  case_insensitive=True
+    Dictionary Should Not Contain Key  ${D3}  x  case_insensitive=True
+
 Dictionary Should Not Contain Key With Existing Key
     [Documentation]  FAIL Dictionary contains key 'b'.
     Dictionary Should Not Contain Key  ${D3}  b
+
+Dictionary Should Not Contain Key With Existing Key Case Insensitive
+    [Documentation]  FAIL Dictionary contains key 'B'.
+    Dictionary Should Not Contain Key  ${D3}  B  case_insensitive=True
 
 Dictionary Should (Not) Contain Key Does Not Require `has_key`
     ${dict} =  Get Dict Without Has Key  name=value
@@ -105,6 +129,10 @@ Dictionary Should (Not) Contain Key Does Not Require `has_key`
 
 Dictionary Should Contain Value
     Dictionary Should Contain Value  ${D3}  ${2}
+
+Dictionary Should Contain Value Case Insensitive
+    Dictionary Should Contain Value  ${D2B}  x  case_insensitive=True
+    Dictionary Should Contain Value  ${D2B}  X  case_insensitive=True
 
 Dictionary Should Contain Value With Missing Value
     [Documentation]  FAIL Dictionary does not contain value 'x'.

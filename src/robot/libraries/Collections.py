@@ -211,7 +211,8 @@ class _List:
             end = self._index_to_int(end)
         return list_[start:end]
 
-    def count_values_in_list(self, list_, value, start=0, end=None, case_insensitive=False):
+    def count_values_in_list(self, list_, value, start=0, end=None,
+                             case_insensitive=False):
         """Returns the number of occurrences of the given `value` in `list`.
 
         The search can be narrowed to the selected sublist by the `start` and
@@ -283,7 +284,8 @@ class _List:
         """
         list_.sort()
 
-    def list_should_contain_value(self, list_, value, msg=None, case_insensitive=False):
+    def list_should_contain_value(self, list_, value, msg=None,
+                                  case_insensitive=False):
         """Fails if the `value` is not found from `list`.
 
         If `msg` is not given, the default error message "[ a | b | c ] does
@@ -291,17 +293,21 @@ class _List:
         the given `msg` is used in case of a failure.
         """
         default = "%s does not contain value '%s'." % (seq2str2(list_), value)
-        _verify_condition(_contains(value, list_, case_insensitive), default, msg)
+        _verify_condition(_contains(value, list_, case_insensitive),
+                          default, msg)
 
-    def list_should_not_contain_value(self, list_, value, msg=None, case_insensitive=False):
+    def list_should_not_contain_value(self, list_, value, msg=None,
+                                      case_insensitive=False):
         """Fails if the `value` is not found from `list`.
 
         See `List Should Contain Value` for an explanation of `msg`.
         """
         default = "%s contains value '%s'." % (seq2str2(list_), value)
-        _verify_condition(not _contains(value, list_, case_insensitive), default, msg)
+        _verify_condition(not _contains(value, list_, case_insensitive),
+                          default, msg)
 
-    def list_should_not_contain_duplicates(self, list_, msg=None, case_insensitive=False):
+    def list_should_not_contain_duplicates(self, list_, msg=None,
+                                           case_insensitive=False):
         """Fails if any element in the `list` is found from it more than once.
 
         The default error message lists all the elements that were found
@@ -572,7 +578,8 @@ class _Dictionary:
         except KeyError:
             raise RuntimeError("Dictionary does not contain key '%s'." % key)
 
-    def dictionary_should_contain_key(self, dictionary, key, msg=None, case_insensitive=False):
+    def dictionary_should_contain_key(self, dictionary, key, msg=None,
+                                      case_insensitive=False):
         """Fails if `key` is not found from `dictionary`.
 
         See `List Should Contain Value` for an explanation of `msg`.
@@ -580,9 +587,11 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary does not contain key '%s'." % key
-        _verify_condition(_contains(key, dictionary, case_insensitive), default, msg)
+        _verify_condition(_contains(key, dictionary, case_insensitive),
+                          default, msg)
 
-    def dictionary_should_not_contain_key(self, dictionary, key, msg=None, case_insensitive=False):
+    def dictionary_should_not_contain_key(self, dictionary, key, msg=None,
+                                          case_insensitive=False):
         """Fails if `key` is found from `dictionary`.
 
         See `List Should Contain Value` for an explanation of `msg`.
@@ -590,7 +599,8 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary contains key '%s'." % key
-        _verify_condition(not _contains(key, dictionary, case_insensitive), default, msg)
+        _verify_condition(not _contains(key, dictionary, case_insensitive),
+                          default, msg)
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None,
                                        case_insensitive=False):
@@ -601,7 +611,11 @@ class _Dictionary:
         See `Lists Should Be Equal` for an explanation of `msg`.
         The given dictionary is never altered by this keyword.
         """
-        self.dictionary_should_contain_key(dictionary, key, msg)
+        self.dictionary_should_contain_key(dictionary, key, msg,
+                                           case_insensitive)
+        if case_insensitive and isinstance(key, basestring):
+            key = [item for item in dictionary if isinstance(item, basestring)
+                   and item.lower() == key.lower()][0]
         actual, expected = unicode(dictionary[key]), unicode(value)
         if case_insensitive:
             try:
@@ -612,7 +626,8 @@ class _Dictionary:
         default = "Value of dictionary key '%s' does not match: %s != %s" % (key, actual, expected)
         _verify_condition(actual == expected, default, msg)
 
-    def dictionary_should_contain_value(self, dictionary, value, msg=None, case_insensitive=False):
+    def dictionary_should_contain_value(self, dictionary, value, msg=None,
+                                        case_insensitive=False):
         """Fails if `value` is not found from `dictionary`.
 
         See `List Should Contain Value` for an explanation of `msg`.
@@ -620,7 +635,8 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary does not contain value '%s'." % value
-        _verify_condition(_contains(value, dictionary.values(), case_insensitive), default, msg)
+        _verify_condition(_contains(value, dictionary.values(),
+                                    case_insensitive), default, msg)
 
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None,
                                             case_insensitive=False):
@@ -631,7 +647,8 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary contains value '%s'." % value
-        _verify_condition(not _contains(value, dictionary.values(), case_insensitive), default, msg)
+        _verify_condition(not _contains(value, dictionary.values(),
+                                        case_insensitive), default, msg)
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
         """Fails if the given dictionaries are not equal.

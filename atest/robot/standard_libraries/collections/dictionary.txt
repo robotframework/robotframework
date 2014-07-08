@@ -54,13 +54,25 @@ Get From Dictionary With Invalid Key
 Dictionary Should Contain Key
     Check Test Case  ${TEST NAME}
 
+Dictionary Should Contain Key Case Insensitive
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Contain Key With Missing Key
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Key With Missing Key Case Insensitive
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Contain Item
     Check Test Case  ${TEST NAME}
 
+Dictionary Should Contain Item Case Insensitive
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Contain Item With Missing Key
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Item With Missing Key Case Insensitive
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Contain Item With Wrong Value
@@ -69,13 +81,22 @@ Dictionary Should Contain Item With Wrong Value
 Dictionary Should Not Contain Key
     Check Test Case  ${TEST NAME}
 
+Dictionary Should Not Contain Key Case Insensitive
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Not Contain Key With Existing Key
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Not Contain Key With Existing Key Case Insensitive
     Check Test Case  ${TEST NAME}
 
 Dictionary Should (Not) Contain Key Does Not Require `has_key`
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Contain Value
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Value Case Insensitive
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Contain Value With Missing Value
