@@ -219,6 +219,9 @@ class _List:
         `end` indexes having the same semantics as in the `Get Slice From List`
         keyword. The given list is never altered by this keyword.
 
+        See `List Should Contain Value` for an explanation of valid patterns
+        to use as `value` and for an explanation of `case_insensitive`.
+
         Example:
         | ${x} = | Count Values In List | ${L3} | b |
         =>
@@ -291,6 +294,14 @@ class _List:
         If `msg` is not given, the default error message "[ a | b | c ] does
         not contain the value 'x'" is shown in case of a failure. Otherwise,
         the given `msg` is used in case of a failure.
+
+        To do a regexp match, prepend 'regexp=' to your match string, and to do
+        a glob match, prepend 'glob=' to your match string. For example, a
+        regexp match to find any string beginning with the letter 'a' would be
+        'regexp=a.*'
+
+        If `case_insensitive` is True, case will be ignored for all string
+        values. For example, 'string' will match 'String' or 'STRING'.
         """
         default = "%s does not contain value '%s'." % (seq2str2(list_), value)
         _verify_condition(_contains(value, list_, case_insensitive),
@@ -300,7 +311,9 @@ class _List:
                                       case_insensitive=False):
         """Fails if the `value` is not found from `list`.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of `msg`, an
+        explanation of valid patterns to use as `value`, and for an explanation
+        of `case_insensitive`.
         """
         default = "%s contains value '%s'." % (seq2str2(list_), value)
         _verify_condition(not _contains(value, list_, case_insensitive),
@@ -317,6 +330,9 @@ class _List:
 
         This keyword works with all iterables that can be converted to a list.
         The original iterable is never altered.
+
+        See `List Should Contain Value` for an explanation of
+        `case_insensitive`.
         """
         if not isinstance(list_, list):
             list_ = list(list_)
@@ -582,7 +598,9 @@ class _Dictionary:
                                       case_insensitive=False):
         """Fails if `key` is not found from `dictionary`.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of `msg`, an
+        explanation of valid patterns to use as `key`, and for an explanation
+        of `case_insensitive`.
 
         The given dictionary is never altered by this keyword.
         """
@@ -594,7 +612,9 @@ class _Dictionary:
                                           case_insensitive=False):
         """Fails if `key` is found from `dictionary`.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of `msg`, an
+        explanation of valid patterns to use as `key`, and for an explanation
+        of `case_insensitive`.
 
         The given dictionary is never altered by this keyword.
         """
@@ -608,7 +628,9 @@ class _Dictionary:
 
         Value is converted to unicode for comparison.
 
-        See `Lists Should Be Equal` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of `msg`, an
+        explanation of valid patterns to use as `key` and `value`, and for an
+        explanation of `case_insensitive`.
         The given dictionary is never altered by this keyword.
         """
         self.dictionary_should_contain_key(dictionary, key, msg,
@@ -630,7 +652,9 @@ class _Dictionary:
                                         case_insensitive=False):
         """Fails if `value` is not found from `dictionary`.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of `msg`, an
+        explanation of valid patterns to use as `value`, and for an explanation
+        of `case_insensitive`.
 
         The given dictionary is never altered by this keyword.
         """
@@ -642,7 +666,9 @@ class _Dictionary:
                                             case_insensitive=False):
         """Fails if `value` is found from `dictionary`.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of `msg`, an
+        explanation of valid patterns to use as `value`, and for an explanation
+        of `case_insensitive`.
 
         The given dictionary is never altered by this keyword.
         """
