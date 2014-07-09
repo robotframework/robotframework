@@ -845,6 +845,13 @@ def _count(pattern, iterable, case_insensitive=False):
                          for item in iterable]
         else:
             condition = [pattern == item for item in iterable]
+    if not condition or not any(condition):
+        # fall back to most basic logic if nothing else works
+        if pattern in iterable:
+            # the 'or 1' hack is required for NormalizedDict, since the
+            # list of keys of a NormalizedDict is not normalized, while
+            # NormalizedDict.__iter__ returns normalized keys
+            return list(iterable).count(pattern) or 1
     return condition.count(True)
 
 

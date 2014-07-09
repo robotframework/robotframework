@@ -75,6 +75,7 @@ Get From Dictionary With Invalid Key
 
 Dictionary Should Contain Key
     Dictionary Should Contain Key  ${D3}  a
+    Dictionary Should Contain Key  ${OUTLIERS}  \${cmd line}
 
 Dictionary Should Contain Key Case Insensitive
     Dictionary Should Contain Key  ${D3}  A  case_insensitive=True
@@ -265,4 +266,6 @@ Create Dictionaries For Testing
     Set Test Variable  \${D3}
     ${BIG} =  Evaluate  {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
     Set Test Variable  \${BIG}
+    ${OUTLIERS} =  Create Dictionary  \${cmd line}  value
+    Set Test Variable  \${OUTLIERS}
 

@@ -208,6 +208,7 @@ List Should Contain Value Case Insensitive
     List Should Contain Value  ${STRINGS}  word  case_insensitive=True
     List Should Contain Value  ${STRINGS}  WORD  case_insensitive=True
     List Should Contain Value  ${STRINGS}  WoRd  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  \${cmd list}
 
 List Should Contain Value Regexp
     List Should Contain Value  ${STRINGS}  regexp=.*a.*
@@ -374,7 +375,7 @@ Create Lists For The Tests
     Set Test Variable  \${L4}
     ${LONG} =  Combine Lists  ${L1}  ${L2}  ${L4}  ${L2}
     Set Test Variable  \${LONG}
-    ${STRINGS} =  Create List  a  B  b  wOrD  WOrd
+    ${STRINGS} =  Create List  a  B  b  wOrD  WOrd  !@#$@#@#$%  \${cmd list}
     Set Test Variable  \${STRINGS}
 
 Insert Into List And Compare
