@@ -103,6 +103,20 @@ Count Values In List
     ${count} =  Count Values In List  ${LONG}  1  0  4
     Should Be Equal As Integers  ${count}  2
 
+Count Values In List Case Insensitive
+    ${count} =  Count Values In List  ${STRINGS}  a
+    Should Be Equal As Integers  ${count}  1
+    ${count} =  Count Values In List  ${STRINGS}  A
+    Should Be Equal As Integers  ${count}  0
+    ${count} =  Count Values In List  ${STRINGS}  A  case_insensitive=True
+    Should Be Equal As Integers  ${count}  1
+    ${count} =  Count Values In List  ${STRINGS}  word  case_insensitive=True
+    Should Be Equal As Integers  ${count}  2
+    ${count} =  Count Values In List  ${STRINGS}  b  case_insensitive=True
+    Should Be Equal As Integers  ${count}  2
+    ${count} =  Count Values In List  ${STRINGS}  b
+    Should Be Equal As Integers  ${count}  1
+
 Count Values In List With Invalid Start Index
     [Documentation]  FAIL ${INDEX ERROR}
     Count Values In List  ${LONG}  2  index  1
@@ -185,6 +199,37 @@ Get Slice From List With Out Of List Index
 List Should Contain Value
     List Should Contain Value  ${L1}  1
 
+List Should Contain Value Case Insensitive
+    List Should Contain Value  ${STRINGS}  a
+    List Should Contain Value  ${STRINGS}  a  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  A  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  b  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  B  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  word  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  WORD  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  WoRd  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  \${cmd list}
+
+List Should Contain Value Regexp
+    List Should Contain Value  ${STRINGS}  regexp=.*a.*
+    List Should Contain Value  ${STRINGS}  regexp=wOrD
+    List Should Contain Value  ${STRINGS}  regexp=word  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  regexp=wo.*  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  regexp=[a-z]  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  regexp=[a-zA-Z]
+    List Should Contain Value  ${STRINGS}  regexp=.*
+
+List Should Contain Value Glob
+    List Should Contain Value  ${STRINGS}  glob=*a*
+    List Should Contain Value  ${STRINGS}  glob=wOrD
+    List Should Contain Value  ${STRINGS}  glob=word  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  glob=wo*  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  glob=[az]  case_insensitive=True
+    List Should Contain Value  ${STRINGS}  glob=[azAZ]
+    List Should Contain Value  ${STRINGS}  glob=*
+    List Should Contain Value  ${STRINGS}  glob=?
+    List Should Contain Value  ${STRINGS}  glob=????
+
 List Should Contain Value, Value Not Found
     [Documentation]  FAIL [ 1 ] does not contain value '2'.
     List Should Contain Value  ${L1}  2
@@ -195,6 +240,12 @@ List Should Contain Value, Value Not Found And Own Error Message
 
 List Should Not Contain Value
     List Should Not Contain Value  ${L1}  2
+
+List Should Not Contain Value Case Insensitive
+    List Should Not Contain Value  ${STRINGS}  words  case_insensitive=True
+    List Should Not Contain Value  ${STRINGS}  2  case_insensitive=True
+    List Should Not Contain Value  ${STRINGS}  word
+    List Should Not Contain Value  ${STRINGS}  AB  case_insensitive=True
 
 List Should Not Contain Value, Value Found
     [Documentation]  FAIL [ 1 ] contains value '1'.
@@ -324,6 +375,8 @@ Create Lists For The Tests
     Set Test Variable  \${L4}
     ${LONG} =  Combine Lists  ${L1}  ${L2}  ${L4}  ${L2}
     Set Test Variable  \${LONG}
+    ${STRINGS} =  Create List  a  B  b  wOrD  WOrd  !@#$@#@#$%  \${cmd list}
+    Set Test Variable  \${STRINGS}
 
 Insert Into List And Compare
     [Arguments]  ${list}  ${index}  ${value}  ${expected}

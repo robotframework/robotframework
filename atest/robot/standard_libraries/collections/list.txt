@@ -68,6 +68,9 @@ Remove Duplicates
 Count Values In List
     Check Test Case  ${TEST NAME}
 
+Count Values In List Case Insensitive
+    Check Test Case  ${TEST NAME}
+
 Count Values In List With Invalid Start Index
     Check Test Case  ${TEST NAME}
 
@@ -119,6 +122,15 @@ Get Slice From List With Out Of List Index
 List Should Contain Value
     Check Test Case  ${TEST NAME}
 
+List Should Contain Value Case Insensitive
+    Check Test Case  ${TEST NAME}
+
+List Should Contain Value Regexp
+    Check Test Case  ${TEST NAME}
+
+List Should Contain Value Glob
+    Check Test Case  ${TEST NAME}
+
 List Should Contain Value, Value Not Found
     Check Test Case  ${TEST NAME}
 
@@ -126,6 +138,9 @@ List Should Contain Value, Value Not Found and Own Error Message
     Check Test Case  ${TEST NAME}
 
 List Should Not Contain Value
+    Check Test Case  ${TEST NAME}
+
+List Should Not Contain Value Case Insensitive
     Check Test Case  ${TEST NAME}
 
 List Should Not Contain Value, Value Found

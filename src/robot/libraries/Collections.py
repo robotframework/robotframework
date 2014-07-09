@@ -12,6 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+import fnmatch
+
 from robot.api import logger
 from robot.utils import plural_or_not, seq2str, seq2str2, unic
 from robot.utils.asserts import assert_equals
@@ -136,7 +139,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def remove_duplicates(self, list_):
+    def remove_duplicates(self, list_, case_insensitive=False):
         """Returns a list without duplicates based on the given `list`.
 
         Creates and returns a new list that contains all items in the given
@@ -148,7 +151,7 @@ class _List:
         """
         ret = []
         for item in list_:
-            if item not in ret:
+            if not _count(item, ret, case_insensitive):
                 ret.append(item)
         removed = len(list_) - len(ret)
         logger.info('%d duplicate%s removed.' % (removed, plural_or_not(removed)))
@@ -208,7 +211,8 @@ class _List:
             end = self._index_to_int(end)
         return list_[start:end]
 
-    def count_values_in_list(self, list_, value, start=0, end=None):
+    def count_values_in_list(self, list_, value, start=0, end=None,
+                             case_insensitive=False):
         """Returns the number of occurrences of the given `value` in `list`.
 
         The search can be narrowed to the selected sublist by the `start` and
@@ -221,7 +225,8 @@ class _List:
         - ${x} = 1
         - ${L3} is not changed
         """
-        return self.get_slice_from_list(list_, start, end).count(value)
+        slice = self.get_slice_from_list(list_, start, end)
+        return _count(value, slice, case_insensitive)
 
     def get_index_from_list(self, list_, value, start=0, end=None):
         """Returns the index of the first occurrence of the `value` on the list.
@@ -279,7 +284,8 @@ class _List:
         """
         list_.sort()
 
-    def list_should_contain_value(self, list_, value, msg=None):
+    def list_should_contain_value(self, list_, value, msg=None,
+                                  case_insensitive=False):
         """Fails if the `value` is not found from `list`.
 
         If `msg` is not given, the default error message "[ a | b | c ] does
@@ -287,17 +293,21 @@ class _List:
         the given `msg` is used in case of a failure.
         """
         default = "%s does not contain value '%s'." % (seq2str2(list_), value)
-        _verify_condition(value in list_, default, msg)
+        _verify_condition(_contains(value, list_, case_insensitive),
+                          default, msg)
 
-    def list_should_not_contain_value(self, list_, value, msg=None):
+    def list_should_not_contain_value(self, list_, value, msg=None,
+                                      case_insensitive=False):
         """Fails if the `value` is not found from `list`.
 
         See `List Should Contain Value` for an explanation of `msg`.
         """
         default = "%s contains value '%s'." % (seq2str2(list_), value)
-        _verify_condition(value not in list_, default, msg)
+        _verify_condition(not _contains(value, list_, case_insensitive),
+                          default, msg)
 
-    def list_should_not_contain_duplicates(self, list_, msg=None):
+    def list_should_not_contain_duplicates(self, list_, msg=None,
+                                           case_insensitive=False):
         """Fails if any element in the `list` is found from it more than once.
 
         The default error message lists all the elements that were found
@@ -313,7 +323,7 @@ class _List:
         dupes = []
         for item in list_:
             if item not in dupes:
-                count = list_.count(item)
+                count = _count(item, list_, case_insensitive)
                 if count > 1:
                     logger.info("'%s' found %d times." % (item, count))
                     dupes.append(item)
@@ -568,7 +578,8 @@ class _Dictionary:
         except KeyError:
             raise RuntimeError("Dictionary does not contain key '%s'." % key)
 
-    def dictionary_should_contain_key(self, dictionary, key, msg=None):
+    def dictionary_should_contain_key(self, dictionary, key, msg=None,
+                                      case_insensitive=False):
         """Fails if `key` is not found from `dictionary`.
 
         See `List Should Contain Value` for an explanation of `msg`.
@@ -576,9 +587,11 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary does not contain key '%s'." % key
-        _verify_condition(key in dictionary, default, msg)
+        _verify_condition(_contains(key, dictionary, case_insensitive),
+                          default, msg)
 
-    def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
+    def dictionary_should_not_contain_key(self, dictionary, key, msg=None,
+                                          case_insensitive=False):
         """Fails if `key` is found from `dictionary`.
 
         See `List Should Contain Value` for an explanation of `msg`.
@@ -586,9 +599,11 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary contains key '%s'." % key
-        _verify_condition(key not in dictionary, default, msg)
+        _verify_condition(not _contains(key, dictionary, case_insensitive),
+                          default, msg)
 
-    def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
+    def dictionary_should_contain_item(self, dictionary, key, value, msg=None,
+                                       case_insensitive=False):
         """An item of `key`/`value` must be found in a `dictionary`.
 
         Value is converted to unicode for comparison.
@@ -596,12 +611,23 @@ class _Dictionary:
         See `Lists Should Be Equal` for an explanation of `msg`.
         The given dictionary is never altered by this keyword.
         """
-        self.dictionary_should_contain_key(dictionary, key, msg)
+        self.dictionary_should_contain_key(dictionary, key, msg,
+                                           case_insensitive)
+        if case_insensitive and isinstance(key, basestring):
+            key = [item for item in dictionary if isinstance(item, basestring)
+                   and item.lower() == key.lower()][0]
         actual, expected = unicode(dictionary[key]), unicode(value)
+        if case_insensitive:
+            try:
+                actual = actual.lower()
+                expected = expected.lower()
+            except AttributeError:
+                pass
         default = "Value of dictionary key '%s' does not match: %s != %s" % (key, actual, expected)
         _verify_condition(actual == expected, default, msg)
 
-    def dictionary_should_contain_value(self, dictionary, value, msg=None):
+    def dictionary_should_contain_value(self, dictionary, value, msg=None,
+                                        case_insensitive=False):
         """Fails if `value` is not found from `dictionary`.
 
         See `List Should Contain Value` for an explanation of `msg`.
@@ -609,9 +635,11 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary does not contain value '%s'." % value
-        _verify_condition(value in dictionary.values(), default, msg)
+        _verify_condition(_contains(value, dictionary.values(),
+                                    case_insensitive), default, msg)
 
-    def dictionary_should_not_contain_value(self, dictionary, value, msg=None):
+    def dictionary_should_not_contain_value(self, dictionary, value, msg=None,
+                                            case_insensitive=False):
         """Fails if `value` is found from `dictionary`.
 
         See `List Should Contain Value` for an explanation of `msg`.
@@ -619,7 +647,8 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary contains value '%s'." % value
-        _verify_condition(not value in dictionary.values(), default, msg)
+        _verify_condition(not _contains(value, dictionary.values(),
+                                        case_insensitive), default, msg)
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
         """Fails if the given dictionaries are not equal.
@@ -740,6 +769,18 @@ class Collections(_List, _Dictionary):
     {'a': 1} and ${D3} means {'a': 1, 'b': 2, 'c': 3}.
 
     --------
+
+    New in 2.8.6: Most keywords that search for values in a list or dictionary
+    now support case insensitive matching, regular expression matching, and
+    glob matching. Case insensitivity is controlled via a new boolean argument,
+    and regexp and glob matching use the same field as before.
+
+    To do a regexp match, prepend 'regexp=' to your match string, and to do a
+    glob match, prepend 'glob=' to your match string. For example, a regexp
+    match to find any string beginning with the letter 'a' would be 'regexp=a.*'
+
+    --------
+
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -752,6 +793,67 @@ def _verify_condition(condition, default_msg, given_msg, include_default=False):
         if _include_default_message(include_default):
             raise AssertionError(given_msg + '\n' + default_msg)
         raise AssertionError(given_msg)
+
+
+def _contains(pattern, iterable, case_insensitive=False):
+    """Check for matches to a pattern or value in an iterable.
+
+    If pattern is a string beginning with 'glob=' or 'regexp=', treat the rest
+    of the string as a glob or regexp pattern to match.
+
+    If case_insensitive is True, ignore case when matching.
+
+    Glob and regexp searches only match against strings.
+    """
+    return bool(_count(pattern, iterable, case_insensitive))
+
+
+def _count(pattern, iterable, case_insensitive=False):
+    """Count matches to a pattern or value in an iterable.
+
+    If pattern is a string beginning with 'glob=' or 'regexp=', treat the rest
+    of the string as a glob or regexp pattern to match.
+
+    If case_insensitive is True, ignore case when matching.
+
+    Glob and regexp searches only match against strings.
+    """
+    regexp = False
+    try:
+        if pattern.lower().startswith('glob='):
+            # translate glob pattern to re pattern
+            pattern = fnmatch.translate(pattern[5:])
+            regexp = True
+        elif pattern.lower().startswith('regexp='):
+            pattern = pattern[7:]
+            regexp = True
+    except AttributeError:
+        # calling lower() on a non-string raises AttributeError
+        pass
+
+    if regexp:
+        flags = 0
+        if case_insensitive:
+            flags = re.IGNORECASE
+        condition = [bool(re.match(pattern, item, flags))
+                     if isinstance(item, basestring) else pattern == item
+                     for item in iterable]
+    else:
+        if case_insensitive and isinstance(pattern, basestring):
+            condition = [pattern.lower() == item.lower()
+                         if isinstance(item, basestring) else pattern == item
+                         for item in iterable]
+        else:
+            condition = [pattern == item for item in iterable]
+    if not condition or not any(condition):
+        # fall back to most basic logic if nothing else works
+        if pattern in iterable:
+            # the 'or 1' hack is required for NormalizedDict, since the
+            # list of keys of a NormalizedDict is not normalized, while
+            # NormalizedDict.__iter__ returns normalized keys
+            return list(iterable).count(pattern) or 1
+    return condition.count(True)
+
 
 def _include_default_message(include):
     if isinstance(include, basestring):
