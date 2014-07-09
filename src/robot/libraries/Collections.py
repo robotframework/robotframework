@@ -151,7 +151,7 @@ class _List:
         """
         ret = []
         for item in list_:
-            if not item in ret:
+            if item not in ret:
                 ret.append(item)
         removed = len(list_) - len(ret)
         logger.info('%d duplicate%s removed.' % (removed, plural_or_not(removed)))
