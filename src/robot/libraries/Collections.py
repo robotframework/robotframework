@@ -139,7 +139,7 @@ class _List:
         except IndexError:
             self._index_error(list_, index)
 
-    def remove_duplicates(self, list_, case_insensitive=False):
+    def remove_duplicates(self, list_):
         """Returns a list without duplicates based on the given `list`.
 
         Creates and returns a new list that contains all items in the given
@@ -151,7 +151,7 @@ class _List:
         """
         ret = []
         for item in list_:
-            if not _count(item, ret, case_insensitive):
+            if not item in ret:
                 ret.append(item)
         removed = len(list_) - len(ret)
         logger.info('%d duplicate%s removed.' % (removed, plural_or_not(removed)))
