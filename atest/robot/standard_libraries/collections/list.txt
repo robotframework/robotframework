@@ -170,7 +170,25 @@ List Should Not Contain Value Glob
 List Should Not Contain Value, Value Found
     Check Test Case  ${TEST NAME}
 
+List Should Not Contain Value, Value Found Case Insensitive
+    Check Test Case  ${TEST NAME}
+
+List Should Not Contain Value, Value Found Regexp
+    Check Test Case  ${TEST NAME}
+
+List Should Not Contain Value, Value Found Glob
+    Check Test Case  ${TEST NAME}
+
 List Should Not Contain Value, Value Found and Own Error Message
+    Check Test Case  ${TEST NAME}
+
+List Should Not Contain Value, Value Found and Own Error Message Case Insensitive
+    Check Test Case  ${TEST NAME}
+
+List Should Not Contain Value, Value Found and Own Error Message Regexp
+    Check Test Case  ${TEST NAME}
+
+List Should Not Contain Value, Value Found and Own Error Message Glob
     Check Test Case  ${TEST NAME}
 
 List Should Not Contain Duplicates With No Duplicates
