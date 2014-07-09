@@ -769,6 +769,18 @@ class Collections(_List, _Dictionary):
     {'a': 1} and ${D3} means {'a': 1, 'b': 2, 'c': 3}.
 
     --------
+
+    New in 2.8.6: Most keywords that search for values in a list or dictionary
+    now support case insensitive matching, regular expression matching, and
+    glob matching. Case insensitivity is controlled via a new boolean argument,
+    and regexp and glob matching use the same field as before.
+
+    To do a regexp match, prepend 'regexp=' to your match string, and to do a
+    glob match, prepend 'glob=' to your match string. For example, a regexp
+    match to find any string beginning with the letter 'a' would be 'regexp=a.*'
+
+    --------
+
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
