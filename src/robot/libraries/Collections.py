@@ -298,7 +298,8 @@ class _List:
         To do a regexp match, prepend 'regexp=' to your match string, and to do
         a glob match, prepend 'glob=' to your match string. For example, a
         regexp match to find any string beginning with the letter 'a' would be
-        'regexp=a.*'
+        'regexp=a.*'. Note that while these seem similar to keyword arguments,
+        they are still positional arguments.
 
         If `case_insensitive` is True, case will be ignored for all string
         values. For example, 'string' will match 'String' or 'STRING'.
@@ -803,7 +804,9 @@ class Collections(_List, _Dictionary):
 
     To do a regexp match, prepend 'regexp=' to your match string, and to do a
     glob match, prepend 'glob=' to your match string. For example, a regexp
-    match to find any string beginning with the letter 'a' would be 'regexp=a.*'
+    match to find any string beginning with the letter 'a' would be
+    'regexp=a.*'. Note that while these seem similar to keyword arguments,
+    they are still positional arguments.
 
     --------
 
