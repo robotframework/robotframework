@@ -229,23 +229,61 @@ List Should Contain Value Glob
     List Should Contain Value  ${STRINGS}  glob=*
     List Should Contain Value  ${STRINGS}  glob=?
     List Should Contain Value  ${STRINGS}  glob=????
+    List Should Contain Value  ${STRINGS}  glob=?O??
+    List Should Contain Value  ${STRINGS}  glob=?o??  case_insensitive=True
 
 List Should Contain Value, Value Not Found
     [Documentation]  FAIL [ 1 ] does not contain value '2'.
     List Should Contain Value  ${L1}  2
 
+List Should Contain Value, Value Not Found Case Insensitive
+    [Documentation]  FAIL [ wOrD ] does not contain value 'words'.
+    List Should Contain Value  ${STRING}  words  case_insensitive=True
+
+List Should Contain Value, Value Not Found Regexp
+    [Documentation]  FAIL [ wOrD ] does not contain value 'regexp=wOrD.'.
+    List Should Contain Value  ${STRING}  regexp=wOrD.
+
+List Should Contain Value, Value Not Found Glob
+    [Documentation]  FAIL [ wOrD ] does not contain value 'glob=wOrD?'.
+    List Should Contain Value  ${STRING}  glob=wOrD?
+
 List Should Contain Value, Value Not Found And Own Error Message
     [Documentation]  FAIL My error message!
     List Should Contain Value  ${L1}  2  My error message!
+
+List Should Contain Value, Value Not Found And Own Error Message Case Insensitive
+    [Documentation]  FAIL My error message!
+    List Should Contain Value  ${STRING}  words  My error message!  case_insensitive=True
+
+List Should Contain Value, Value Not Found And Own Error Message Regexp
+    [Documentation]  FAIL My error message!
+    List Should Contain Value  ${STRING}  regexp=wOrD.  My error message!
+
+List Should Contain Value, Value Not Found And Own Error Message Glob
+    [Documentation]  FAIL My error message!
+    List Should Contain Value  ${STRING}  glob=wOrD?  My error message!
 
 List Should Not Contain Value
     List Should Not Contain Value  ${L1}  2
 
 List Should Not Contain Value Case Insensitive
     List Should Not Contain Value  ${STRINGS}  words  case_insensitive=True
-    List Should Not Contain Value  ${STRINGS}  2  case_insensitive=True
+    List Should Not Contain Value  ${STRINGS}  5  case_insensitive=True
     List Should Not Contain Value  ${STRINGS}  word
     List Should Not Contain Value  ${STRINGS}  AB  case_insensitive=True
+
+List Should Not Contain Value Regexp
+    List Should Not Contain Value  ${STRINGS}  regexp=.*words.*
+    List Should Not Contain Value  ${STRINGS}  regexp=[5-7]
+    List Should Not Contain Value  ${STRINGS}  regexp=.*word.*
+    List Should Not Contain Value  ${STRINGS}  regexp=(AB)  case_insensitive=True
+
+List Should Not Contain Value Glob
+    List Should Not Contain Value  ${STRINGS}  glob=*words*  case_insensitive=True
+    List Should Not Contain Value  ${STRINGS}  glob=[5]  case_insensitive=True
+    List Should Not Contain Value  ${STRINGS}  glob=*word?
+    List Should Not Contain Value  ${STRINGS}  glob=AB*  case_insensitive=True
 
 List Should Not Contain Value, Value Found
     [Documentation]  FAIL [ 1 ] contains value '1'.
@@ -375,8 +413,10 @@ Create Lists For The Tests
     Set Test Variable  \${L4}
     ${LONG} =  Combine Lists  ${L1}  ${L2}  ${L4}  ${L2}
     Set Test Variable  \${LONG}
-    ${STRINGS} =  Create List  a  B  b  wOrD  WOrd  !@#$@#@#$%  \${cmd list}
+    ${STRINGS} =  Create List  a  B  b  wOrD  WOrd  !@#$%^&*()_+-=  \${cmd list}  1  2  3  äö
     Set Test Variable  \${STRINGS}
+    ${STRING} =  Create List  wOrD
+    Set Test Variable  \${STRING}
 
 Insert Into List And Compare
     [Arguments]  ${list}  ${index}  ${value}  ${expected}

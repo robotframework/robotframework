@@ -134,13 +134,37 @@ List Should Contain Value Glob
 List Should Contain Value, Value Not Found
     Check Test Case  ${TEST NAME}
 
+List Should Contain Value, Value Not Found Case Insensitive
+    Check Test Case  ${TEST NAME}
+
+List Should Contain Value, Value Not Found Regexp
+    Check Test Case  ${TEST NAME}
+
+List Should Contain Value, Value Not Found Glob
+    Check Test Case  ${TEST NAME}
+
 List Should Contain Value, Value Not Found and Own Error Message
+    Check Test Case  ${TEST NAME}
+
+List Should Contain Value, Value Not Found And Own Error Message Case Insensitive
+    Check Test Case  ${TEST NAME}
+
+List Should Contain Value, Value Not Found and Own Error Message Regexp
+    Check Test Case  ${TEST NAME}
+
+List Should Contain Value, Value Not Found and Own Error Message Glob
     Check Test Case  ${TEST NAME}
 
 List Should Not Contain Value
     Check Test Case  ${TEST NAME}
 
 List Should Not Contain Value Case Insensitive
+    Check Test Case  ${TEST NAME}
+
+List Should Not Contain Value Regexp
+    Check Test Case  ${TEST NAME}
+
+List Should Not Contain Value Glob
     Check Test Case  ${TEST NAME}
 
 List Should Not Contain Value, Value Found
