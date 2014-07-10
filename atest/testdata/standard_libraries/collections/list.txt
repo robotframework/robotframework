@@ -305,17 +305,17 @@ List Should Not Contain Value, Value Found And Own Error Message
     [Documentation]  FAIL My error message!
     List Should Not Contain Value  ${L1}  1  My error message!
 
-List Should Contain Value, Value Found And Own Error Message Case Insensitive
+List Should Not Contain Value, Value Found And Own Error Message Case Insensitive
     [Documentation]  FAIL My error message!
-    List Should Contain Value  ${STRING}  word  My error message!  case_insensitive=True
+    List Should Not Contain Value  ${STRING}  word  My error message!  case_insensitive=True
 
-List Should Contain Value, Value Found And Own Error Message Regexp
+List Should Not Contain Value, Value Found And Own Error Message Regexp
     [Documentation]  FAIL My error message!
-    List Should Contain Value  ${STRING}  regexp=.*w.*  My error message!
+    List Should Not Contain Value  ${STRING}  regexp=.*w.*  My error message!
 
-List Should Contain Value, Value Found And Own Error Message Glob
+List Should Not Contain Value, Value Found And Own Error Message Glob
     [Documentation]  FAIL My error message!
-    List Should Contain Value  ${STRING}  glob=*  My error message!
+    List Should Not Contain Value  ${STRING}  glob=*  My error message!
 
 List Should Not Contain Duplicates With No Duplicates
     ${iterable}  ${tuple} =  Evaluate  xrange(100), (0, 1, 2, '0', '1', '2')
