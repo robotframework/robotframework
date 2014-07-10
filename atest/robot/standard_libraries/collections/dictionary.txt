@@ -96,10 +96,22 @@ Dictionary Should Not Contain Key
 Dictionary Should Not Contain Key Case Insensitive
     Check Test Case  ${TEST NAME}
 
+Dictionary Should Not Contain Key Regexp
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Not Contain Key Glob
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Not Contain Key With Existing Key
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Not Contain Key With Existing Key Case Insensitive
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Not Contain Key With Existing Key Regexp
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Not Contain Key With Existing Key Glob
     Check Test Case  ${TEST NAME}
 
 Dictionary Should (Not) Contain Key Does Not Require `has_key`
@@ -111,16 +123,34 @@ Dictionary Should Contain Value
 Dictionary Should Contain Value Case Insensitive
     Check Test Case  ${TEST NAME}
 
+Dictionary Should Contain Value Regexp
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Value Glob
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Contain Value With Missing Value
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Contain Value With Missing Value Case Insensitive
     Check Test Case  ${TEST NAME}
 
+Dictionary Should Contain Value With Missing Value Regexp
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Value With Missing Value Glob
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Not Contain Value
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Not Contain Value Case Insensitive
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Not Contain Value Regexp
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Not Contain Value Glob
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Not Contain Value With Existing Value

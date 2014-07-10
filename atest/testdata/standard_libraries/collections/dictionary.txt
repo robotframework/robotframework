@@ -131,6 +131,12 @@ Dictionary Should Not Contain Key Case Insensitive
     Dictionary Should Not Contain Key  ${D3}  X  case_insensitive=True
     Dictionary Should Not Contain Key  ${D3}  x  case_insensitive=True
 
+Dictionary Should Not Contain Key Regexp
+    Dictionary Should Not Contain Key  ${STRINGS}  regexp=.*blah.*
+
+Dictionary Should Not Contain Key Glob
+    Dictionary Should Not Contain Key  ${STRINGS}  glob=*blah*
+
 Dictionary Should Not Contain Key With Existing Key
     [Documentation]  FAIL Dictionary contains key 'b'.
     Dictionary Should Not Contain Key  ${D3}  b
@@ -138,6 +144,14 @@ Dictionary Should Not Contain Key With Existing Key
 Dictionary Should Not Contain Key With Existing Key Case Insensitive
     [Documentation]  FAIL Dictionary contains key 'B'.
     Dictionary Should Not Contain Key  ${D3}  B  case_insensitive=True
+
+Dictionary Should Not Contain Key With Existing Key Regexp
+    [Documentation]  FAIL Dictionary contains key 'regexp=.*'.
+    Dictionary Should Not Contain Key  ${STRINGS}  regexp=.*
+
+Dictionary Should Not Contain Key With Existing Key Glob
+    [Documentation]  FAIL Dictionary contains key 'glob=*'.
+    Dictionary Should Not Contain Key  ${STRINGS}  glob=*
 
 Dictionary Should (Not) Contain Key Does Not Require `has_key`
     ${dict} =  Get Dict Without Has Key  name=value
@@ -151,6 +165,14 @@ Dictionary Should Contain Value Case Insensitive
     Dictionary Should Contain Value  ${D2B}  x  case_insensitive=True
     Dictionary Should Contain Value  ${D2B}  X  case_insensitive=True
 
+Dictionary Should Contain Value Regexp
+    Dictionary Should Contain Value  ${STRINGS}  regexp=.*b.*
+    Dictionary Should Contain Value  ${STRINGS}  regexp=[a-zA-Z]
+
+Dictionary Should Contain Value Glob
+    Dictionary Should Contain Value  ${STRINGS}  glob=*b*
+    Dictionary Should Contain Value  ${STRINGS}  glob=*[o]*
+
 Dictionary Should Contain Value With Missing Value
     [Documentation]  FAIL Dictionary does not contain value 'x'.
     Dictionary Should Contain Value  ${D3}  x
@@ -159,12 +181,26 @@ Dictionary Should Contain Value With Missing Value Case Insensitive
     [Documentation]  FAIL Dictionary does not contain value 'X'.
     Dictionary Should Contain Value  ${D3}  X  case_insensitive=True
 
+Dictionary Should Contain Value With Missing Value Regexp
+    [Documentation]  FAIL Dictionary does not contain value 'regexp=.*x.*'.
+    Dictionary Should Contain Value  ${STRINGS}  regexp=.*x.*
+
+Dictionary Should Contain Value With Missing Value Glob
+    [Documentation]  FAIL Dictionary does not contain value 'glob=*x*'.
+    Dictionary Should Contain Value  ${STRINGS}  glob=*x*
+
 Dictionary Should Not Contain Value
     Dictionary Should Not Contain Value  ${D3}  x
 
 Dictionary Should Not Contain Value Case Insensitive
     Dictionary Should Not Contain Value  ${D3}  x  case_insensitive=True
     Dictionary Should Not Contain Value  ${D3}  X  case_insensitive=True
+
+Dictionary Should Not Contain Value Regexp
+    Dictionary Should Not Contain Value  ${STRINGS}  regexp=.*x.*
+
+Dictionary Should Not Contain Value Glob
+    Dictionary Should Not Contain Value  ${STRINGS}  glob=*x*
 
 Dictionary Should Not Contain Value With Existing Value
     [Documentation]  FAIL Dictionary contains value '2'.
