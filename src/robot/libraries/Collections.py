@@ -630,9 +630,9 @@ class _Dictionary:
 
         Value is converted to unicode for comparison.
 
-        See `List Should Contain Value` for an explanation of `msg`, an
-        explanation of valid patterns to use as `key` and `value`, and for an
-        explanation of `case_insensitive`.
+        See `List Should Contain Value` for an explanation of `msg` and for an
+        explanation of `case_insensitive`. `Dictionary Should Contain Item`
+        does not support regexp or glob pattern matching.
         The given dictionary is never altered by this keyword.
         """
         self.dictionary_should_contain_key(dictionary, key, msg,
