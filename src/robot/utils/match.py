@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import re
+import fnmatch
 from functools import partial
 
 from .normalizing import normalize
@@ -81,3 +82,71 @@ class MultiMatcher(object):
     def __iter__(self):
         for matcher in self._matchers:
             yield matcher.pattern
+
+
+def contains(pattern, iterable, case_insensitive=False):
+    """Check for matches to a pattern or value in an iterable.
+
+    If pattern is a string beginning with 'glob=' or 'regexp=', treat the rest
+    of the string as a glob or regexp pattern to match.
+
+    If case_insensitive is True, ignore case when matching.
+
+    Glob and regexp searches only match against strings.
+    """
+    return bool(count_matches(pattern, iterable, case_insensitive))
+
+
+def count_matches(pattern, iterable, case_insensitive=False):
+    """Count matches to a pattern or value in an iterable.
+
+    If pattern is a string beginning with 'glob=' or 'regexp=', treat the rest
+    of the string as a glob or regexp pattern to match.
+
+    If case_insensitive is True, ignore case when matching.
+
+    Glob and regexp searches only match against strings.
+    """
+    if not iterable:
+        return 0
+    regexp = False
+    try:
+        if pattern.lower().startswith('glob='):
+            # translate glob pattern to re pattern
+            pattern = fnmatch.translate(pattern[5:])
+            regexp = True
+        elif pattern.lower().startswith('regexp='):
+            pattern = pattern[7:]
+            regexp = True
+    except AttributeError:
+        # calling lower() on a non-string raises AttributeError
+        pass
+
+    if regexp:
+        flags = 0
+        if case_insensitive:
+            flags = re.IGNORECASE
+        condition = [bool(re.match(pattern, item, flags))
+                     if isinstance(item, basestring) else pattern == item
+                     for item in iterable]
+    else:
+        if case_insensitive and isinstance(pattern, basestring):
+            condition = [pattern.lower() == item.lower()
+                         if isinstance(item, basestring) else pattern == item
+                         for item in iterable]
+        else:
+            condition = [pattern == item for item in iterable]
+    if not condition or not any(condition):
+        # fall back to most basic logic if nothing else works
+        if pattern in iterable:
+            # try to convert uncountable iterables to lists
+            if not hasattr(iterable, 'count'):
+                try:
+                    iterable = list(iterable)
+                except AttributeError:
+                    pass
+            # the 'or 1' workaround is required for NormalizedDict, since the
+            # list of keys of a NormalizedDict is not normalized, while
+            # NormalizedDict.__iter__ returns normalized keys
+            return iterable.count(pattern) or 1
+    return condition.count(True)

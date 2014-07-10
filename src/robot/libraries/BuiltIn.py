@@ -23,6 +23,7 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           PassExecution, ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
+from robot.utils.match import contains, count_matches
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
@@ -683,7 +684,8 @@ class _Verify:
         msg = self._get_string_msg(str1, str2, msg, values, 'does not end with')
         asserts.fail_unless(str1.endswith(str2), msg)
 
-    def should_not_contain(self, item1, item2, msg=None, values=True):
+    def should_not_contain(self, item1, item2, msg=None, values=True,
+                           case_insensitive=False):
         """Fails if `item1` contains `item2` one or more times.
 
         Works with strings, lists, and anything that supports Python's 'in'
@@ -695,9 +697,10 @@ class _Verify:
         | Should Not Contain | ${some_list} | value  |
         """
         msg = self._get_string_msg(item1, item2, msg, values, 'contains')
-        asserts.fail_if(item2 in item1, msg)
+        asserts.fail_if(contains(item2, item1, case_insensitive), msg)
 
-    def should_contain(self, item1, item2, msg=None, values=True):
+    def should_contain(self, item1, item2, msg=None, values=True,
+                       case_insensitive=False):
         """Fails if `item1` does not contain `item2` one or more times.
 
         Works with strings, lists, and anything that supports Python's `in`
@@ -709,9 +712,10 @@ class _Verify:
         | Should Contain | ${some_list} | value  |
         """
         msg = self._get_string_msg(item1, item2, msg, values, 'does not contain')
-        asserts.fail_unless(item2 in item1, msg)
+        asserts.fail_unless(contains(item2, item1, case_insensitive), msg)
 
-    def should_contain_x_times(self, item1, item2, count, msg=None):
+    def should_contain_x_times(self, item1, item2, count, msg=None,
+                               case_insensitive=False):
         """Fails if `item1` does not contain `item2` `count` times.
 
         Works with strings, lists and all objects that `Get Count` works
@@ -725,10 +729,11 @@ class _Verify:
         if not msg:
             msg = "'%s' does not contain '%s' %s times" \
                     % (utils.unic(item1), utils.unic(item2), count)
-        self.should_be_equal_as_integers(self.get_count(item1, item2),
+        self.should_be_equal_as_integers(self.get_count(item1, item2,
+                                                        case_insensitive),
                                          count, msg, values=False)
 
-    def get_count(self, item1, item2):
+    def get_count(self, item1, item2, case_insensitive=False):
         """Returns and logs how many times `item2` is found from `item1`.
 
         This keyword works with Python strings and lists and all objects
@@ -744,7 +749,7 @@ class _Verify:
             except:
                 raise RuntimeError("Converting '%s' to list failed: %s"
                                 % (item1, utils.get_error_message()))
-        count = item1.count(item2)
+        count = count_matches(item2, item1, case_insensitive)
         self.log('Item found from the first item %d time%s'
                  % (count, utils.plural_or_not(count)))
         return count

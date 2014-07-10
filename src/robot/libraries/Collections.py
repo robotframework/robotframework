@@ -12,12 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-import fnmatch
-
 from robot.api import logger
 from robot.utils import plural_or_not, seq2str, seq2str2, unic
 from robot.utils.asserts import assert_equals
+from robot.utils.match import contains, count_matches
 from robot.version import get_version
 
 
@@ -229,7 +227,7 @@ class _List:
         - ${L3} is not changed
         """
         slice = self.get_slice_from_list(list_, start, end)
-        return _count(value, slice, case_insensitive)
+        return count_matches(value, slice, case_insensitive)
 
     def get_index_from_list(self, list_, value, start=0, end=None):
         """Returns the index of the first occurrence of the `value` on the list.
@@ -306,7 +304,7 @@ class _List:
         values. For example, 'string' will match 'String' or 'STRING'.
         """
         default = "%s does not contain value '%s'." % (seq2str2(list_), value)
-        _verify_condition(_contains(value, list_, case_insensitive),
+        _verify_condition(contains(value, list_, case_insensitive),
                           default, msg)
 
     def list_should_not_contain_value(self, list_, value, msg=None,
@@ -318,7 +316,7 @@ class _List:
         of `case_insensitive`.
         """
         default = "%s contains value '%s'." % (seq2str2(list_), value)
-        _verify_condition(not _contains(value, list_, case_insensitive),
+        _verify_condition(not contains(value, list_, case_insensitive),
                           default, msg)
 
     def list_should_not_contain_duplicates(self, list_, msg=None,
@@ -341,7 +339,7 @@ class _List:
         dupes = []
         for item in list_:
             if item not in dupes:
-                count = _count(item, list_, case_insensitive)
+                count = count_matches(item, list_, case_insensitive)
                 if count > 1:
                     logger.info("'%s' found %d times." % (item, count))
                     dupes.append(item)
@@ -607,7 +605,7 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary does not contain key '%s'." % key
-        _verify_condition(_contains(key, dictionary, case_insensitive),
+        _verify_condition(contains(key, dictionary, case_insensitive),
                           default, msg)
 
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None,
@@ -621,7 +619,7 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary contains key '%s'." % key
-        _verify_condition(not _contains(key, dictionary, case_insensitive),
+        _verify_condition(not contains(key, dictionary, case_insensitive),
                           default, msg)
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None,
@@ -661,7 +659,7 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary does not contain value '%s'." % value
-        _verify_condition(_contains(value, dictionary.values(),
+        _verify_condition(contains(value, dictionary.values(),
                                     case_insensitive), default, msg)
 
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None,
@@ -675,7 +673,7 @@ class _Dictionary:
         The given dictionary is never altered by this keyword.
         """
         default = "Dictionary contains value '%s'." % value
-        _verify_condition(not _contains(value, dictionary.values(),
+        _verify_condition(not contains(value, dictionary.values(),
                                         case_insensitive), default, msg)
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
@@ -824,66 +822,6 @@ def _verify_condition(condition, default_msg, given_msg, include_default=False):
         if _include_default_message(include_default):
             raise AssertionError(given_msg + '\n' + default_msg)
         raise AssertionError(given_msg)
-
-
-def _contains(pattern, iterable, case_insensitive=False):
-    """Check for matches to a pattern or value in an iterable.
-
-    If pattern is a string beginning with 'glob=' or 'regexp=', treat the rest
-    of the string as a glob or regexp pattern to match.
-
-    If case_insensitive is True, ignore case when matching.
-
-    Glob and regexp searches only match against strings.
-    """
-    return bool(_count(pattern, iterable, case_insensitive))
-
-
-def _count(pattern, iterable, case_insensitive=False):
-    """Count matches to a pattern or value in an iterable.
-
-    If pattern is a string beginning with 'glob=' or 'regexp=', treat the rest
-    of the string as a glob or regexp pattern to match.
-
-    If case_insensitive is True, ignore case when matching.
-
-    Glob and regexp searches only match against strings.
-    """
-    regexp = False
-    try:
-        if pattern.lower().startswith('glob='):
-            # translate glob pattern to re pattern
-            pattern = fnmatch.translate(pattern[5:])
-            regexp = True
-        elif pattern.lower().startswith('regexp='):
-            pattern = pattern[7:]
-            regexp = True
-    except AttributeError:
-        # calling lower() on a non-string raises AttributeError
-        pass
-
-    if regexp:
-        flags = 0
-        if case_insensitive:
-            flags = re.IGNORECASE
-        condition = [bool(re.match(pattern, item, flags))
-                     if isinstance(item, basestring) else pattern == item
-                     for item in iterable]
-    else:
-        if case_insensitive and isinstance(pattern, basestring):
-            condition = [pattern.lower() == item.lower()
-                         if isinstance(item, basestring) else pattern == item
-                         for item in iterable]
-        else:
-            condition = [pattern == item for item in iterable]
-    if not condition or not any(condition):
-        # fall back to most basic logic if nothing else works
-        if pattern in iterable:
-            # the 'or 1' hack is required for NormalizedDict, since the
-            # list of keys of a NormalizedDict is not normalized, while
-            # NormalizedDict.__iter__ returns normalized keys
-            return list(iterable).count(pattern) or 1
-    return condition.count(True)
 
 
 def _include_default_message(include):
