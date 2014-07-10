@@ -81,6 +81,14 @@ Dictionary Should Contain Key Case Insensitive
     Dictionary Should Contain Key  ${D3}  A  case_insensitive=True
     Dictionary Should Contain Key  ${D3}  a  case_insensitive=True
 
+Dictionary Should Contain Key Regexp
+    Dictionary Should Contain Key  ${STRINGS}  regexp=.*
+    Dictionary Should Contain Key  ${STRINGS}  regexp=.*wo.*  case_insensitive=True
+
+Dictionary Should Contain Key Glob
+    Dictionary Should Contain Key  ${STRINGS}  glob=*
+    Dictionary Should Contain Key  ${STRINGS}  glob=*wo*  case_insensitive=True
+
 Dictionary Should Contain Key With Missing Key
     [Documentation]  FAIL Dictionary does not contain key 'x'.
     Dictionary Should Contain Key  ${D3}  x
@@ -88,6 +96,14 @@ Dictionary Should Contain Key With Missing Key
 Dictionary Should Contain Key With Missing Key Case Insensitive
     [Documentation]  FAIL Dictionary does not contain key 'X'.
     Dictionary Should Contain Key  ${D3}  X  case_insensitive=True
+
+Dictionary Should Contain Key With Missing Key Regexp
+    [Documentation]  FAIL Dictionary does not contain key 'regexp=.*X.*'.
+    Dictionary Should Contain Key  ${STRINGS}  regexp=.*X.*  case_insensitive=True
+
+Dictionary Should Contain Key With Missing Key Glob
+    [Documentation]  FAIL Dictionary does not contain key 'glob=*X*'.
+    Dictionary Should Contain Key  ${STRINGS}  glob=*X*  case_insensitive=True
 
 Dictionary Should Contain Item
     Dictionary Should Contain Item  ${D3}  a   1
@@ -268,4 +284,6 @@ Create Dictionaries For Testing
     Set Test Variable  \${BIG}
     ${OUTLIERS} =  Create Dictionary  \${cmd line}  value
     Set Test Variable  \${OUTLIERS}
+    ${STRINGS} =  Create Dictionary  wOrD  1  WOrd  2  3  hElLo  4  HELlo  !@#$%^&*()_+-\=  äö  a  b  A  B
+    Set Test Variable  \${STRINGS}
 

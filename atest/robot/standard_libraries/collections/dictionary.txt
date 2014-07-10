@@ -57,10 +57,22 @@ Dictionary Should Contain Key
 Dictionary Should Contain Key Case Insensitive
     Check Test Case  ${TEST NAME}
 
+Dictionary Should Contain Key Regexp
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Key Glob
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Contain Key With Missing Key
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Contain Key With Missing Key Case Insensitive
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Key With Missing Key Regexp
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Key With Missing Key Glob
     Check Test Case  ${TEST NAME}
 
 Dictionary Should Contain Item
