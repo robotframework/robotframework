@@ -155,7 +155,7 @@ Appendices
 .. _`With Name syntax`: `Setting custom name to test library`_
 .. _SeleniumLibrary: http://code.google.com/p/robotframework-seleniumlibrary
 .. _Selenium2Library: https://github.com/rtomac/robotframework-selenium2library/wiki
-.. _SwingLibrary: http://code.google.com/p/robotframework-swinglibrary
+.. _SwingLibrary: https://github.com/robotframework/SwingLibrary
 
 .. 3. Executing test cases
 
@@ -202,18 +202,15 @@ Appendices
 .. 6. Misc
 
 .. _download page: http://downloads.robotframework.org
-.. _project page: http://robotframework.org
 .. _version control system: http://source.robotframework.org
-.. _issue tracker: http://issues.robotframework.org
-.. _previous User Guides: http://code.google.com/p/robotframework/wiki/UserGuide
+.. _previous User Guides: http://robotframework.org/robotframework/#user-guide
 .. _API documentation: http://robot-framework.readthedocs.org
-.. _BitBucket: https://bitbucket.org/robotframework
 
 .. External link targets
 
-.. _Python: http://www.python.org/
-.. _Jython: http://www.jython.org/
-.. _IronPython: http://ironpython.codeplex.com
+.. _Python: http://python.org
+.. _Jython: http://jython.org
+.. _IronPython: http://ironpython.net
 .. _PyPy: http://pypy.org
 .. _Java: http://java.com/
 .. _.NET: http://www.microsoft.com/NET/

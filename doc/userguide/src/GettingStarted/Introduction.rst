@@ -8,8 +8,8 @@ distributed, heterogeneous applications, where verification requires
 touching several technologies and interfaces.
 
 .. contents::
-   :depth: 2 
-   :local: 
+   :depth: 2
+   :local:
 
 Why Robot Framework?
 ~~~~~~~~~~~~~~~~~~~~
@@ -27,19 +27,19 @@ Why Robot Framework?
 - Provides a simple `library API`_ for creating customized test libraries
   which can be implemented natively with either Python or Java.
 
-- Provides a `command line interface`__ and XML based `output files`_  for 
-  integration into existing build infrastructure (continuous integration 
+- Provides a `command line interface`__ and XML based `output files`_  for
+  integration into existing build infrastructure (continuous integration
   systems).
 
-- Provides support for Selenium for web testing, Java GUI testing, running 
+- Provides support for Selenium for web testing, Java GUI testing, running
   processes, Telnet, SSH, and so on.
 
 - Supports creating `data-driven test cases`__.
 
 - Has built-in support for variables_, practical particularly for testing in
-  different environments. 
+  different environments.
 
-- Provides tagging__ to categorize and `select test cases`__ to be executed. 
+- Provides tagging__ to categorize and `select test cases`__ to be executed.
 
 - Enables easy integration with source control: `test suites`_ are just files
   and directories that can be versioned with the production code.
@@ -101,17 +101,10 @@ Project pages
 '''''''''''''
 
 The number one place to find more information about Robot Framework
-is the project web site at http://robotframework.org. This User Guide is
-naturally available there but you can also find more documentation__,
-an `issue tracker`__, downloads__, `source code`__ and links to other
-related projects. Robot Framework is hosted on `Google Code`__ which
-provides excellent free services for open source projects.
+and the rich ecosystem around it is http://robotframework.org.
+Robot Framework itself is hosted on GitHub__.
 
-__ http://code.google.com/p/robotframework/wiki/DocumentationIndex
-__ http://code.google.com/p/robotframework/issues
-__ http://code.google.com/p/robotframework/downloads
-__ http://code.google.com/p/robotframework/source
-__ http://code.google.com
+__ https://github.com/robotframework/robotframework
 
 Mailing lists
 '''''''''''''
@@ -137,7 +130,7 @@ robotframework-announce__
     lists.
 
 robotframework-devel__
-   Discussion about Robot Framework development. 
+   Discussion about Robot Framework development.
 
 robotframework-commit__
    Automatically generated mails about commits to the version control
@@ -145,7 +138,7 @@ robotframework-commit__
    follow Robot Framework development.
 
 __ http://www.catb.org/~esr/faqs/smart-questions.html
-__ http://groups.google.com/group/robotframework-users 
+__ http://groups.google.com/group/robotframework-users
 __ http://groups.google.com/group/robotframework-announce
-__ http://groups.google.com/group/robotframework-devel 
+__ http://groups.google.com/group/robotframework-devel
 __ http://groups.google.com/group/robotframework-commit

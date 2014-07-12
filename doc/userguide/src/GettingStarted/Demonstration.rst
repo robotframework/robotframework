@@ -1,30 +1,23 @@
 Demonstrations
 --------------
 
-Robot Framework Quick Start Guide acts also as a standalone demo. It
-is part of the source distribution (under :path:`doc/quickstart/`
-directory), and also available as a separate download from `project
-web pages`__.
+There are several demo projects that introduce Robot Framework and help getting
+started with it.
 
-__ http://code.google.com/p/robotframework/wiki/QuickStartGuide
+`Quick Start Guide <http://code.google.com/p/robotframework/wiki/QuickStartGuide>`__
+    Introduces the most important features of Robot Framework and acts as
+    an executable demo.
 
-Additional demos can be accessed from:
+`Robot Framework demo <https://bitbucket.org/robotframework/robotdemo/wiki/Home>`__
+    Simple example test cases. Demonstrates also creating custom test libraries.
 
-- External SwingLibrary_ has an easily executable demo available, which has a small Swing application that is used as a
-  system under test.
+`Web testing demo <https://bitbucket.org/robotframework/webdemo/wiki/Home>`__
+    Demonstrates how to create tests and higher level keywords. The system
+    under test is a simple web page that is tested using Selenium2Library_.
 
-- `Web testing with Robot Framework and Selenium2Library`__ demo can be found from BitBucket_. It contains a simple
-  standalone HTTP server and an application that is used as a system under test.
+`SwingLibrary demo <https://github.com/robotframework/SwingLibrary/wiki/SwingLibrary-Demo>`_
+    Demonstrates using SwingLibrary_ for testing Java GUI applications.
 
-- `A generic Robot Framework`__ demo is also on BitBucket_. It contains a simple calculator application that is used
-  as a system under test.
-
-- `Acceptance Test Driven Development with Robot Framework`__ demo on the Google Code site. It contain Finnish
-  vacation calculator application that is used as a system under test.
-
-
-The actual test case files and scripts for running demos on different systems are also provided on each demo site.
-
-__ https://bitbucket.org/robotframework/webdemo/wiki/Home
-__ https://bitbucket.org/robotframework/robotdemo/wiki/Home
-__ https://code.google.com/p/atdd-with-robot-framework/
+`ATDD with Robot Framework <https://code.google.com/p/atdd-with-robot-framework>`__
+    Demonstrates how to use Robot Framework when following
+    Acceptance Test Driven Development (ATDD) process.
