@@ -9,96 +9,82 @@ http://code.google.com/p/robotframework/. Code and issues ought to be
 now migrated, but it will take some time before we get documentation
 such as this README and wikis updated.
 
-Introduction
-------------
+Robot Framework
+===============
 
-Robot Framework is a Python-based keyword-driven test automation framework 
-with an easy-to-use tabular syntax for creating test cases. Its testing 
-capabilities can be extended by test libraries implemented either with Python 
-or Java.  Users can also create new keywords from existing ones using the same 
-simple syntax that is used for creating test cases.
+`Robot Framework`_ is a generic test automation framework for acceptance
+testing and acceptance test-driven development (ATDD). It has easy-to-use
+tabular test data syntax and it utilizes the keyword-driven testing
+approach. Its testing capabilities can be extended by test libraries
+implemented either with Python or Java, and users can create new
+higher-level keywords from existing ones using the same syntax that
+is used for creating test cases.
 
-  - Enables easy-to-use tabular syntax for creating test cases in a uniform
-    way.
-  - Provides ability to create reusable higher-level keywords from the
-    existing keywords.
-  - Provides easy-to-read result reports and logs in HTML format.
-  - Is platform and application independent.
-  - Can natively use both Python and Java test code.
-  - Provides a simple library API for creating customized test libraries.
-  - Provides a command line interface and XML based outputs for integration
-    into existing build infrastructure (continuous integration systems).
-  - Provides support for Selenium for web testing, Java GUI testing, running
-    processes, Telnet, SSH, and so on.
-  - Supports creating data-driven tests.
-  - Provides tagging to categorize and select test cases to be executed. 
+Robot Framework project is hosted on GitHub_ where you can find further
+documentation, source code, and issue tracker. Downloads are hosted at
+PyPI_, except for standalone jar distribution that is in `Maven central`_.
+The framework has a rich ecosystem around it consisting of various
+generic test libraries and tools that are developed as separate projects.
 
-Robot Framework documentation including User Guide and keyword
-documentations of standard libraries can be found from 'doc'
-directory. For more information, see http://robotframework.org.
+Robot Framework is operating system and application independent. The core
+framework is implemented using Python_ and runs also on Jython_ (JVM) and
+IronPython_ (.NET).
 
+For more information about Robot Framework and the ecosystem,
+see http://robotframework.org.
 
-License
--------
-
-Robot Framework code and tests are provided under Apache License 2.0.
-Documentation and other similar content use Creative Commons
-Attribution 3.0 Unported license.
-
- - http://apache.org/licenses/LICENSE-2.0
- - http://creativecommons.org/licenses/by/3.0
-
+.. _Robot Framework: http://robotframework.org
+.. _GitHub: https://github.com/robotframework/robotframework
+.. _PyPI: https://pypi.python.org/pypi/robotframework
+.. _Maven central: http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework
+.. _Python: http://python.org
+.. _Jython: http://jython.org
+.. _IronPython: http://ironpython.net
 
 Installation
 ------------
 
-See INSTALLATION.txt for installation and uninstallation instructions.
+If you already have Python with pip_ installed, you can simply run::
 
-Additionally PACKAGING.tx contains details about creating new
-installation packages.
+    pip install robotframework
 
+Otherwise see `INSTALL.rst`_ for detailed installation instructions.
+The cover also installing Python, Jython and IronPython.
+
+.. _INSTALL.rst: https://github.com/robotframework/robotframework/blob/master/INSTALL.rst
+.. _pip: http://pip-installer.org
 
 Usage
 -----
 
-Robot Framework is executed from command line using `pybot` or `jybot`
-runner scripts, which run the framework with Python or Jython interpreters,
-respectively. The basic usage is giving a path to test data to be executed as
-an argument to the selected runner, with possible command line options before
-the path. Additionally there is a `rebot` tool for post-processing outputs.
+Robot Framework is executed from the command line using ``pybot``, ``jybot``
+or ``ipybot`` scripts, depending is it run on Python, Jython or IronPython.
+The basic usage is giving a path to a test case file or directory as
+an argument with possible command line options before the path. Additionally
+there is ``rebot`` tool for post-processing outputs.
 
 Examples::
 
-  pybot mytests.html
-  jybot --variable HOST:myhost --outputdir results path/to/tests/
-  rebot --name Example output1.xml output2.xml
+    pybot tests.txt
+    jybot --variable HOST:example.com --outputdir results path/to/tests/
+    rebot --name Example output1.xml output2.xml
 
+Run ``pybot --help`` and ``rebot --help`` for more information about the command
+line usage. If you are new to Robot Framework, you probably want to start
+by looking examples at http://robotframework.org and studying demo projects
+linked from there. For a complete reference manual see
+`Robot Framewrk User Guide`_.
 
-For more information, run `pybot --help` and `rebot --help` or see the 
-user guide.
+.. _Robot Framewrk User Guide: http://robotframework.org/robotframework/#user-guide
 
+License
+-------
 
-Directory Layout
-----------------
+Robot Framework code is provided under `Apache License 2.0`_
+Documentation and other similar content use `Creative Commons
+Attribution 3.0 Unported`_ license. Most libraries and tools in
+the ecosystem are also open source, but they may use different
+licenses.
 
-atest/
-    Acceptance tests. Naturally using Robot Framework.
-
-doc/
-    User Guide and standard library documentation.
-
-proto/
-    Tools, scripts, etc. not yet ready for real use.
-
-src/
-    Robot Framework source code.
-
-templates/
-    Simple HTML and TSV test data templates.
-
-tools/
-    Different utilities for Robot Framework users.
-
-utest/
-    Unit tests.
-
+.. _Apache License 2.0: http://apache.org/licenses/LICENSE-2.0
+.. _Creative Commons Attribution 3.0 Unported: http://creativecommons.org/licenses/by/3.0
