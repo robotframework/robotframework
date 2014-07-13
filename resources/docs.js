@@ -36,6 +36,12 @@ function download(event_) {
     window.location.href = getZipPath(target.version);
 }
 
+function viewTool(event) {
+    var target = getIdAndVersion(event);
+    var ugUrl = getGoPath('ug', target.version);
+    window.location.href = ugUrl + '#' + target.id;
+}
+
 window.onload = function() {
     var goButtons = document.getElementsByClassName('go-button');
     for (var i = goButtons.length - 1; i >= 0; i--) {
@@ -45,5 +51,10 @@ window.onload = function() {
     var downloadButtons = document.getElementsByClassName('download-button');
     for (var i = downloadButtons.length - 1; i >= 0; i--){
       addEvent(downloadButtons[i], 'click', download);
+    }
+
+    var viewToolButtons = document.getElementsByClassName('view-tool');
+    for (var i = viewToolButtons.length - 1; i >= 0; i--){
+      addEvent(viewToolButtons[i], 'click', viewTool);
     }
 };
