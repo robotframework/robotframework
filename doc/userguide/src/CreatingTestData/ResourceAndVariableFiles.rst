@@ -1,5 +1,5 @@
 Resource and variable files
----------------------------
+===========================
 
 User keywords and variables in `test case files`_ and `test suite
 initialization files`_ can only be used in files where they are
@@ -18,10 +18,10 @@ them somewhat more complicated than `Variable tables`_.
    :local:
 
 Resource files
-~~~~~~~~~~~~~~
+--------------
 
 Taking resource files into use
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Resource files are imported using the :opt:`Resource` setting in the
 Settings table. The path to the resource file is given in the cell
@@ -54,7 +54,7 @@ libraries, resource files and variable files imported by the said
 resource file.
 
 Resource file structure
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The higher-level structure of resource files is the same as that of
 test case files otherwise, but, of course, they cannot contain Test
@@ -73,7 +73,7 @@ taken into use.
 __ `Handling keywords with same names`_
 
 Documenting resource files
-''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Keywords created in a resource file can be documented__ using
 :opt:`[Documentation]` setting. Starting from Robot Framework 2.1 also
@@ -90,7 +90,7 @@ __ `User keyword name and documentation`_
 __ `Test suite name and documentation`_
 
 Example resource file
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 .. table::
    :class: example
@@ -133,7 +133,7 @@ Example resource file
    ===============  ===============  ==============  ==============  ========
 
 Variable files
-~~~~~~~~~~~~~~
+--------------
 
 Variable files contain variables_ that can be used in the test
 data. Variables can also be created using variable tables or set from
@@ -161,10 +161,10 @@ variables as attributes or get them from a special method.
 __ `Implementing variable file as Python or Java class`_
 
 Taking variable files into use
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Setting table
-`````````````
+'''''''''''''
 
 All test data files can import variables using the
 :opt:`Variables` setting in the Setting table, in the same way as
@@ -199,7 +199,7 @@ taken into use. Additionally, variables created in Variable tables and
 set from the command line override variables from variable files.
 
 Command line
-````````````
+''''''''''''
 
 Another way to take variable files into use is using the command line option
 :opt:`--variablefile`. Variable files are referenced using a path to them, and
@@ -224,10 +224,10 @@ names, those that are set individually with
 __ `Setting variables in command line`_
 
 Creating variables directly
-'''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Basic syntax
-````````````
+''''''''''''
 
 When variable files are taken into use, they are imported as Python
 modules and all their global attributes that do not start with an
@@ -281,7 +281,7 @@ Variable table below.
           exist or not.
 
 Using objects as values
-```````````````````````
+'''''''''''''''''''''''
 
 Variables in variable files are not limited to having only strings or
 other base types as values like variable tables. Instead, their
@@ -313,7 +313,7 @@ the same file.
     OBJ2 = MyObject('Jane')
 
 Creating variables dynamically
-``````````````````````````````
+''''''''''''''''''''''''''''''
 
 Because variable files are created using a real programming language,
 they can have dynamic logic for setting variables.
@@ -351,7 +351,7 @@ the user.
     AREA2 = get_area(2)
 
 Selecting which variables to include
-````````````````````````````````````
+''''''''''''''''''''''''''''''''''''
 
 When Robot Framework processes variable files, all their attributes
 that do not start with an underscore are expected to be
@@ -402,7 +402,7 @@ as variables.
           when using the syntax :code:`from modulename import *`.
 
 Getting variables from a special function
-'''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An alternative approach for getting variables is having a special
 :code:`get_variables` function (also camelCase syntax
@@ -453,13 +453,13 @@ or database where to read variables from.
             return variables2
 
 Implementing variable file as Python or Java class
-''''''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.7, it is possible to implement variables files
 as Python or Java classes.
 
 Implementation
-``````````````
+''''''''''''''
 
 Because variable files are always imported using a file system path, creating
 them as classes has some restrictions:
@@ -481,7 +481,7 @@ the instance has. If you would actually need callable variables, you need
 to use other approaches to create variable files.
 
 Examples
-````````
+''''''''
 
 The first examples create variables from attributes using both Python and Java.
 Both of them create variables :var:`${VARIABLE}` and :var:`@{LIST}` from class

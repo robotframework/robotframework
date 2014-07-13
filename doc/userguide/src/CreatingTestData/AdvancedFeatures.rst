@@ -1,12 +1,12 @@
 Advanced features
------------------
+=================
 
 .. contents::
    :depth: 2
    :local:
 
 Handling keywords with same names
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------
 
 Keywords that are used with Robot Framework are either `library
 keywords`_ or `user keywords`_. The former come from `standard
@@ -17,7 +17,7 @@ that some of them have the same name, and this section describes how to
 handle possible conflicts in these situations.
 
 Keyword scopes
-''''''''''''''
+~~~~~~~~~~~~~~
 
 When only a keyword name is used and there are several keywords with
 that name, Robot Framework attempts to determine which keyword has the
@@ -41,7 +41,7 @@ on the basis of how the keyword in question is created:
    priority.
 
 Specifying a keyword explicitly
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Scopes alone are not a sufficient solution, because there can be
 keywords with the same name in several libraries or resources, and
@@ -71,7 +71,7 @@ of the keyword is case-, space- and underscore-insensitive, similarly
 as normal keyword names.
 
 Specifying explicit priority between libraries and resources
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If there are multiple conflicts between keywords, specifying all the keywords
 in the long format can be quite a lot work. Using the long format also makes it
@@ -95,7 +95,7 @@ when the search order is not set.
 For more information and examples, see the documentation of the keyword.
 
 Timeouts
-~~~~~~~~
+--------
 
 Keywords may be problematic in situations where they take
 exceptionally long to execute or just hang endlessly. Robot Framework
@@ -109,7 +109,7 @@ libraries should be implemented so that keywords cannot hang or that
 they have their own timeout mechanism, if necessary.
 
 Test case timeout
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~
 
 The test case timeout can be set either by using the :opt:`Test
 Timeout` setting in the Setting table or the :opt:`[Timeout]`
@@ -185,7 +185,7 @@ keywords with `user keyword timeouts`_.
    ===============  ===============  ========================================  ==========================  ==================
 
 User keyword timeout
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 A timeout can be set for a user keyword using the :opt:`[Timeout]`
 setting in the Keyword table. The syntax for setting it, including how
@@ -228,7 +228,7 @@ time left.
 .. _for loop:
 
 For loops
-~~~~~~~~~
+---------
 
 Repeating same actions several times is quite a common need in test
 automation. With Robot Framework, test libraries can have any kind of
@@ -244,7 +244,7 @@ complexity introduced by for loops. The basic for loop syntax,
 syntax is possible also in shell scripts or Perl.
 
 Normal for loop
-'''''''''''''''
+~~~~~~~~~~~~~~~
 
 In a normal for loop, one variable is assigned from a list of values,
 one value per iteration. The syntax starts with :name:`:FOR`, where
@@ -314,7 +314,7 @@ __ Escaping_
 __ `Using scalar variables as lists`_
 
 Using several loop variables
-''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is also possible to use several loop variables. The syntax is the
 same as with the normal for loop, but all loop variables are listed in
@@ -342,7 +342,7 @@ them below the loop variables, as in the first loop of the example below:
    ===========  ========  ===========  ==========  ==========  ============
 
 For in range
-''''''''''''
+~~~~~~~~~~~~
 
 Earlier for loops always iterated over a sequence, and this is also the most
 common use case. Sometimes it is still convenient to have a for loop
@@ -396,7 +396,7 @@ useful when the limits are specified with variables.
    ================  ===============  ===========  ==========  ========  ========  ========
 
 Exiting for loop
-''''''''''''''''
+~~~~~~~~~~~~~~~~
 
 Normally for loops are executed until all the loop values have been iterated
 or a keyword used inside the loop fails. If there is a need to exit the loop
@@ -431,7 +431,7 @@ see their documentation in the BuiltIn_ library.
           :name:`Exit For Loop If` in 2.8.
 
 Continuing for loop
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 In addition to exiting a for loop prematurely, it is also possible to
 continue to the next iteration of the loop before all keywords have been
@@ -466,7 +466,7 @@ documentation in the BuiltIn_ library.
            were added in Robot Framework 2.8.
 
 Removing unnecessary keywords from outputs
-''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For loops with multiple iterations often create lots of output and
 considerably increase the size of the generated output_ and log_ files.
@@ -477,7 +477,7 @@ option.
 __ `Removing and flattening keywords`_
 
 Repeating single keyword
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 For loops can be excessive in situations where there is only a need to
 repeat a single keyword. In these cases it is often easier to use
@@ -502,7 +502,7 @@ keyword. This syntax was deprecated in the 2.0.4 version in favor of
 :name:`Repeat Keyword` and it was removed in the 2.5 version.
 
 Conditional execution
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 In general, it is not recommended to have conditional logic in test
 cases, or even in user keywords, because it can make them hard to
@@ -539,7 +539,7 @@ __ `Suite setup and teardown`_
 
 
 Parallel execution of keywords
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Prior to the 2.5 version Robot Framework a had special syntax for executing
 keywords in parallel. This functionality was removed because it was rarely

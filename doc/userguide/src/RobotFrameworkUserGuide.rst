@@ -2,13 +2,13 @@
 .. include:: version.rst
 .. include:: roles.rst
 
-=============================
+==============================
   Robot Framework User Guide
-=============================
+==============================
 
---------------------
+---------------------
   Version |version|
---------------------
+---------------------
 
 | Copyright |copy| Nokia Solutions and Networks 2008-2014
 | Licensed under the `Creative Commons Attribution 3.0 Unported`__ license
@@ -21,8 +21,9 @@ __ http://creativecommons.org/licenses/by/3.0/
 .. sectnum::
    :depth: 3
 
-Getting started
-===============
+~~~~~~~~~~~~~~~~~~~
+  Getting started
+~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -33,8 +34,9 @@ Getting started
 .. include:: GettingStarted/Installation.rst
 .. include:: GettingStarted/Demonstration.rst
 
-Creating test data
-==================
+~~~~~~~~~~~~~~~~~~~~~~
+  Creating test data
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -49,8 +51,9 @@ Creating test data
 .. include:: CreatingTestData/ResourceAndVariableFiles.rst
 .. include:: CreatingTestData/AdvancedFeatures.rst
 
-Executing test cases
-====================
+~~~~~~~~~~~~~~~~~~~~~~~~
+  Executing test cases
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -62,8 +65,9 @@ Executing test cases
 .. include:: ExecutingTestCases/ConfiguringExecution.rst
 .. include:: ExecutingTestCases/OutputFiles.rst
 
-Extending Robot Framework
-=========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Extending Robot Framework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -74,8 +78,9 @@ Extending Robot Framework
 .. include:: ExtendingRobotFramework/ListenerInterface.rst
 .. include:: ExtendingRobotFramework/ExtendingRobotFrameworkJar.rst
 
-Supporting Tools
-================
+~~~~~~~~~~~~~~~~~~~~
+  Supporting Tools
+~~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -86,8 +91,9 @@ Supporting Tools
 .. include:: SupportingTools/Tidy.rst
 .. include:: SupportingTools/OtherTools.rst
 
-Appendices
-==========
+~~~~~~~~~~~~~~
+  Appendices
+~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1

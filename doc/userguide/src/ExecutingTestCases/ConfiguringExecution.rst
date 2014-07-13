@@ -1,5 +1,5 @@
 Configuring execution
----------------------
+=====================
 
 This section explains different command line options that can be used
 for configuring the `test execution`_ or `post-processing
@@ -13,14 +13,14 @@ __ `Created outputs`_
    :local:
 
 Selecting test cases
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 Robot Framework offers several command line options for selecting
 which test cases to execute. The same options also work when
 post-processing outputs with the :prog:`rebot` tool.
 
 By test suite and test case names
-'''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test suites and test cases can be selected by their names with the command
 line options :opt:`--suite (-s)` and :opt:`--test (-t)`,
@@ -63,7 +63,7 @@ case, but in general, selecting test cases by tag names is more
 flexible.
 
 By tag names
-''''''''''''
+~~~~~~~~~~~~
 
 It is possible to include and exclude test cases by tag_ names with the
 :opt:`--include (-i)` and :opt:`--exclude (-e)` options, respectively.
@@ -112,7 +112,7 @@ many interesting possibilities:
   --include sprint-42 output.xml`).
 
 Re-executing failed test cases
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Command line option `--rerunfailed (-R)` can be used to select all failed tests
 from an earlier `output file`_ for re-execution. This option is useful, for
@@ -144,7 +144,7 @@ is same as not specifying this option at all.
 __ `Merging re-executed output`_
 
 When no tests match selection
-'''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default when no tests match the selection criteria test execution fails
 with an error like::
@@ -170,7 +170,7 @@ running tests.
           and :opt:`--ProcessEmptySuite` in 2.7.2.
 
 Setting criticality
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 The final result of test execution is determined based on
 critical tests. If a single critical test fails, the whole test run is
@@ -223,10 +223,10 @@ use :opt:`--critical` and/or :opt:`--noncritical` also with it::
 __ `By tag names`_
 
 Setting metadata
-~~~~~~~~~~~~~~~~
+----------------
 
 Setting the name
-''''''''''''''''
+~~~~~~~~~~~~~~~~
 
 When Robot Framework parses test data, `test suite names are created
 from file and directory names`__. The name of the top-level test suite
@@ -238,7 +238,7 @@ __ `Test suite name and documentation`_
 
 
 Setting the documentation
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In addition to `defining documentation in the test data`__, documentation
 of the top-level suite can be given from the command line with the
@@ -248,7 +248,7 @@ are converted to spaces, and it may contain simple `HTML formatting`_.
 __ `Test suite name and documentation`_
 
 Setting free metadata
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 `Free test suite metadata`_ may also be given from the command line with the
 option :opt:`--metadata (-M)`. The argument must be in the format
@@ -258,14 +258,14 @@ spaces, and the latter may contain simple `HTML formatting`_. This option may
 be used several times to set multiple metadata.
 
 Setting tags
-''''''''''''
+~~~~~~~~~~~~
 
 The command line option :opt:`--settag (-G)` can be used to set
 the given tag to all executed test cases. This option may be used
 several times to set multiple tags.
 
 Adjusting library search path
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 When a `test library is taken into use`__, Robot Framework uses the Python
 or Jython interpreter to import a module implementing the library from
@@ -285,7 +285,7 @@ __ `Setting listeners`_
 __ `Creating start-up scripts`_
 
 Locations automatically in PYTHONPATH
-'''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Python and Jython installations put their own library directories into
 PYTHONPATH automatically. This means that test libraries `packaged
@@ -297,7 +297,7 @@ directory where tests are executed from into PYTHONPATH.
 __ `Packaging libraries`_
 
 Setting PYTHONPATH
-''''''''''''''''''
+~~~~~~~~~~~~~~~~~~
 
 There are several ways to alter PYTHONPATH in the system, but the most
 common one is setting an environment variable with the same name
@@ -307,7 +307,7 @@ locations listed in it are added into the library search path
 regardless of the interpreter.
 
 Setting CLASSPATH
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~
 
 CLASSPATH is used with Jython or when using the standalone jar.
 
@@ -325,7 +325,7 @@ ways to configure CLASSPATH, which are shown in the examples below::
   java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-2.7.1.jar example.txt
 
 Using --pythonpath option
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework also has a separate command line option
 :opt:`--pythonpath (-P)` for adding directories or archives into
@@ -343,7 +343,7 @@ Examples::
    --pythonpath mylib.jar --pythonpath lib/STAR.jar --escape star:STAR
 
 Setting variables
-~~~~~~~~~~~~~~~~~
+-----------------
 
 Variables_ can be set from the command line either individually__
 using the :opt:`--variable (-v)` option or through `variable files`_
@@ -360,7 +360,7 @@ illustrate how to use these options::
 __ `Setting variables in command line`_
 
 Dry run
-~~~~~~~
+-------
 
 Robot Framework supports so called *dry run* mode where the tests are
 run normally otherwise, but the keywords coming from the test libraries
@@ -388,7 +388,7 @@ resolved.
 __ `Errors and warnings during execution`_
 
 Randomizing execution order
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 The test execution order can be randomized using option
 :opt:`--randomize <what>[:<seed>]`, where :opt:`<what>` is one of the following:
@@ -431,10 +431,10 @@ Examples::
 __ `Free test suite metadata`_
 
 Controlling console output
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 Console width
-'''''''''''''
+~~~~~~~~~~~~~
 
 The width of the test execution output in the console can be set using
 the option :opt:`--monitorwidth (-W)`. The default width is 78 characters.
@@ -443,7 +443,7 @@ the option :opt:`--monitorwidth (-W)`. The default width is 78 characters.
          variable like :cli:`--monitorwidth $COLUMNS`.
 
 Console colors
-''''''''''''''
+~~~~~~~~~~~~~~
 
 The :opt:`--monitorcolors (-C)` option is used to control whether
 colors should be used in the console output. Colors are implemented
@@ -478,7 +478,7 @@ This option supports the following case-insensitive values:
 __ http://en.wikipedia.org/wiki/ANSI_escape_code
 
 Console markers
-'''''''''''''''
+~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.7, special markers :cli:`.` (success) and
 :cli:`F` (failure) are shown on the console when top level keywords in
@@ -500,7 +500,7 @@ case-insensitive values:
     Markers are disabled.
 
 Setting listeners
-~~~~~~~~~~~~~~~~~
+-----------------
 
 So-called listeners_ can be used for monitoring the test
 execution. They are taken into use with the command line option

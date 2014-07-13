@@ -1,5 +1,5 @@
 Introduction
-------------
+============
 
 Robot Framework is a Python-based, extensible keyword-driven test
 automation framework for end-to-end acceptance testing and
@@ -12,7 +12,7 @@ touching several technologies and interfaces.
    :local:
 
 Why Robot Framework?
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 - Enables easy-to-use tabular syntax for `creating test cases`_ in a uniform
   way.
@@ -58,7 +58,7 @@ __ `Suite setup and teardown`_
 
 
 High-level architecture
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Robot Framework is a generic, application and technology independent
 framework. It has a highly modular architecture illustrated in the
@@ -80,7 +80,7 @@ __ `Creating test libraries`_
 
 
 Screenshots
-~~~~~~~~~~~
+-----------
 
 Following screenshots show examples of the `test data`_ and created
 reports_ and logs_.
@@ -95,10 +95,10 @@ reports_ and logs_.
 
 
 Getting more information
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 Project pages
-'''''''''''''
+~~~~~~~~~~~~~
 
 The number one place to find more information about Robot Framework
 and the rich ecosystem around it is http://robotframework.org.
@@ -107,7 +107,7 @@ Robot Framework itself is hosted on GitHub__.
 __ https://github.com/robotframework/robotframework
 
 Mailing lists
-'''''''''''''
+~~~~~~~~~~~~~
 
 There are several Robot Framework mailing lists where to ask and
 search for more information. The mailing list archives are open for

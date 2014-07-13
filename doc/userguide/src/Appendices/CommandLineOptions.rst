@@ -1,5 +1,5 @@
 All command line options
-------------------------
+========================
 
 This appendix lists all the command line options that are available
 when `executing test cases`__ with :prog:`pybot` or :prog:`jybot`, and when
@@ -12,7 +12,7 @@ __ `Starting test execution`_
    :local:
 
 Command line options for test execution
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------
 
   -N, --name <name>       `Sets the name`_ of the top-level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
@@ -84,7 +84,7 @@ Command line options for test execution
   --version               Prints the `version information`_.
 
 Command line options for post-processing outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------------------
 
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.

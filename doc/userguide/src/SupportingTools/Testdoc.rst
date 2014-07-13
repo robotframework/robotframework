@@ -1,7 +1,7 @@
 .. _testdoc:
 
 Test data documentation tool (:prog:`testdoc`)
-----------------------------------------------
+==============================================
 
 .. contents::
    :depth: 1
@@ -21,17 +21,17 @@ has changed slightly between these versions.
 __ http://code.google.com/p/robotframework/wiki/TestDataDocumentationTool
 
 General usage
-~~~~~~~~~~~~~
+-------------
 
 Synopsis
-''''''''
+~~~~~~~~
 
 ::
 
     python -m robot.testdoc [options] data_sources output_file
 
 Options
-'''''''
+~~~~~~~
 
  -T, --title <title>           Set the title of the generated documentation.
                                Underscores in the title are converted to spaces.
@@ -52,7 +52,7 @@ options have when `executing test cases`__.
 __ `Configuring execution`_
 
 Generating documentation
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 Data can be given as a single file, directory, or as multiple files and
 directories. In all these cases, the last argument must be the file where

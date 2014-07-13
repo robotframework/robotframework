@@ -1,12 +1,12 @@
 All available settings in test data
------------------------------------
+===================================
 
 .. contents::
    :depth: 2
    :local:
 
 Setting table
-~~~~~~~~~~~~~
+-------------
 
 The Setting table is used to import test libraries, resource files and
 variable files and to define metadata for test suites and test
@@ -72,7 +72,7 @@ __ `Test suite documentation`_
 __ `Documenting resource files`_
 
 Test Case table
-~~~~~~~~~~~~~~~
+---------------
 
 The settings in the Test Case table are always specific to the test
 case for which they are defined. Some of these settings override the
@@ -102,7 +102,7 @@ default values defined in the Settings table.
    +-----------------+--------------------------------------------------------+
 
 Keyword table
-~~~~~~~~~~~~~
+-------------
 
 Settings in the Keyword table are specific to the user keyword for
 which they are defined.

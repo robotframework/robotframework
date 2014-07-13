@@ -1,5 +1,5 @@
 Other tools distributed with Robot Framework
---------------------------------------------
+============================================
 
 The tools listed below are included with Robot Framework project,
 but unlike the built-in tools libdoc_, testdoc_, and tidy_, they need to
@@ -41,7 +41,7 @@ __ http://code.google.com/p/robotframework/wiki/TestResultDiffingTool
 .. _One Click Installer: http://code.google.com/p/robotframework/wiki/OneClickInstaller
 
 External tools
---------------
+==============
 
 External tools are developed as separate projects. Some of the more mature
 tools are listed below, but because new tools are introduced pretty often

@@ -1,5 +1,5 @@
 Time format
------------
+===========
 
 Robot Framework has its own time format that is used by several
 keywords (for example :name:`Sleep` and :name:`Wait Until Keyword
@@ -9,7 +9,7 @@ format is meant to be both flexible to use and easy to understand.
 __ `test case timeouts`_
 
 Time as number
-~~~~~~~~~~~~~~
+--------------
 
 The time can always be given as a plain number, in which case it is
 interpreted to be seconds. Both integers and floating point numbers
@@ -18,7 +18,7 @@ containing numerical values. This format is useful, for example, when
 the actual time value is calculated.
 
 Time as time string
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 Representing the time as a time string means using a format such as
 :code:`2 minutes 42 seconds`, which is normally easier to understand than
@@ -48,7 +48,7 @@ Examples::
    - 10 seconds
 
 Time as "timer" string
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 Starting from Robot Framework 2.8.5, time can also be given in timer like
 format :code:`hh:mm:ss.mil`. In this format  both hour and millisecond parts

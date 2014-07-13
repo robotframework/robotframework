@@ -1,5 +1,5 @@
 Test execution
---------------
+==============
 
 This section describes how the test suite structure created from the parsed
 test data is executed, how to continue executing a test case after failures,
@@ -10,10 +10,10 @@ and how to stop the whole test execution gracefully.
    :local:
 
 Execution flow
-~~~~~~~~~~~~~~
+--------------
 
 Executed suites and tests
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test cases are always executed within a test suite. A test suite
 created from a `test case file`_ has tests directly, whereas suites
@@ -39,7 +39,7 @@ __ `Continue on failure`_
 
 
 Setups and teardowns
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 Setups and teardowns can be used on `test suite`__, `test case`__ and
 `user keyword`__ levels.
@@ -49,7 +49,7 @@ __ `Suite setup and teardown`_
 __ `User keyword teardown`_
 
 Suite setup
-```````````
+'''''''''''
 
 If a test suite has a setup, it is executed before its tests and child
 suites. If the suite setup passes, test execution continues
@@ -63,7 +63,7 @@ suite setups for verifying that the environment is in state in which the
 tests can be executed.
 
 Suite teardown
-``````````````
+''''''''''''''
 
 If a test suite has a teardown, it is executed after all its test
 cases and child suites. Suite teardowns are executed regardless of the
@@ -79,7 +79,7 @@ fail.
 __ `Continue on failure`_
 
 Test setup
-``````````
+''''''''''
 
 Possible test setup is executed before the keywords of the test case.
 If the setup fails, the keywords are not executed. The main use
@@ -87,7 +87,7 @@ for test setups is setting up the environment for that particular test
 case.
 
 Test teardown
-`````````````
+'''''''''''''
 
 Possible test teardown is executed after the test case has been
 executed. It is executed regardless of the test status and also
@@ -98,7 +98,7 @@ cleanup activities. Also they are executed fully even if some of their
 keywords fail.
 
 Keyword teardown
-````````````````
+''''''''''''''''
 
 `User keywords`_ cannot have setups, but they can have teardowns that work
 exactly like other teardowns. Keyword teardowns are run after the keyword is
@@ -106,7 +106,7 @@ executed otherwise, regardless the status, and they are executed fully even
 if some of their keywords fail.
 
 Execution order
-'''''''''''''''
+~~~~~~~~~~~~~~~
 
 Test cases in a test suite are executed in the same order as they are defined
 in the test case file. Test suites inside a higher level test suite are
@@ -134,7 +134,7 @@ the :opt:`--randomize` option.
 __ `Randomizing execution order`_
 
 Passing execution
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~
 
 Typically test cases, setups and teardowns are considered passed if
 all keywords they contain are executed and none of them fail. From
@@ -172,7 +172,7 @@ __ `BuiltIn`_
 __ `Setting criticality`_
 
 Continue on failure
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 Normally test cases are stopped immediately when any of their keywords
 fail. This behavior shortens test execution time and prevents
@@ -190,7 +190,7 @@ following features were added to make continuing after failures
 easier.
 
 Special failures from keywords
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Library keywords`_ report failures using exceptions, and it is
 possible to use special exceptions to tell the core framework that
@@ -217,7 +217,7 @@ variable, is always the Python :code:`None`.
 __ `Continuing test execution despite of failures`_
 
 :name:`Run Keyword And Continue On Failure` keyword
-'''''''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 BuiltIn_ keyword :name:`Run Keyword And Continue On Failure` allows
 converting any failure into a continuable failure. These failures are
@@ -225,7 +225,7 @@ handled by the framework exactly the same way as continuable failures
 originating from library keywords.
 
 Execution continues on teardowns automatically
-''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To make it sure that all the cleanup activities are taken care of, the
 continue on failure mode is automatically on in `test and suite
@@ -235,7 +235,7 @@ keywords in all levels are always executed.
 __ `Setups and teardowns`_
 
 All top-level keywords are executed when tests have templates
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When using `test templates`_, all the data rows are always executed to
 make it sure that all the different combinations are tested. In this
@@ -243,7 +243,7 @@ usage continuing is limited to the top-level keywords, and inside them
 the execution ends normally if there are non-continuable failures.
 
 Stopping test execution gracefully
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------
 
 Sometimes there is a need to stop the test execution before all the tests
 have finished, but so that logs and reports are created. Different ways how
@@ -253,7 +253,7 @@ test cases are marked failed.
 .. Note:: Most of these features are new in Robot Framework 2.5.
 
 Pressing :code:`Ctrl-C`
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The execution is stopped when :code:`Ctrl-C` is pressed in the console
 where the tests are running. When running the tests on Python, the
@@ -264,7 +264,7 @@ If :code:`Ctrl-C` is pressed again, the execution ends immediately and
 reports and logs are not created.
 
 Using signals
-'''''''''''''
+~~~~~~~~~~~~~
 
 On Unix-like machines it is possible to terminate test execution
 using signals :code:`INT` and :code:`TERM`. These signals can be sent
@@ -275,7 +275,7 @@ Signals have the same limitation on Jython as pressing :code:`Ctrl-C`.
 Similarly also the second signal stops the execution forcefully.
 
 Using keywords
-''''''''''''''
+~~~~~~~~~~~~~~
 
 The execution can be stopped also by the executed keywords. There is a
 separate :name:`Fatal Error` BuiltIn_ keyword for this purpose, and
@@ -284,7 +284,7 @@ custom keywords can use `fatal exceptions`__ when they fail.
 __ `Stopping test execution`_
 
 Stopping when first test case fails
-'''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If option :opt:`--exitonfailure` is used, test execution stops
 immediately if any `critical test`_ fails. Also the remaining tests
@@ -295,7 +295,7 @@ are marked as failed.
           was deprecated in 2.8 and will be removed in the future.
 
 Handling teardowns
-''''''''''''''''''
+~~~~~~~~~~~~~~~~~~
 
 By default teardowns of the tests and suites that have been started are
 executed even if the test execution is stopped using one of the methods

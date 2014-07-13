@@ -1,5 +1,5 @@
 Using test libraries
---------------------
+====================
 
 Test libraries contain those lowest-level keywords, often called
 *library keywords*, which actually interact with the system under
@@ -14,13 +14,13 @@ section.
    :local:
 
 Taking test libraries into use
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Instructions for taking test libraries into use are given in the
 subsections below.
 
 Using Library setting
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 Test libraries are normally imported using the :opt:`Library`
 setting in the Setting table and having the library name in the
@@ -57,7 +57,7 @@ file. With resource files, those keywords are also available in other
 files using them.
 
 Using Import Library keyword
-''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Another possibility to take a test library into use is using the
 keyword :name:`Import Library` from the BuiltIn_ library. This keyword
@@ -80,7 +80,7 @@ make it available.
    ===========  =================  ==========  ==========  ==========
 
 Library search path
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 The most common way to specify a test library to import is using its
 name, like it has been done in all the examples in this section. In
@@ -105,7 +105,7 @@ __ `Adjusting library search path`_
 __ `Creating start-up scripts`_
 
 Using physical path to library
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Another mechanism for specifying the library to import is using a
 path to it in the file system. This path is considered relative to the
@@ -140,7 +140,7 @@ libraries distributed in JAR or ZIP packages is not possible with this mechanism
 __ `Test library names`_
 
 Setting custom name to test library
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 The library name is shown in test logs before keyword names, and if
 multiple keywords have the same name, they must be used so that the
@@ -209,7 +209,7 @@ Setting a custom name to a test library works both when importing a
 library in the Setting table and when using the :name:`Import Library` keyword.
 
 Standard libraries
-~~~~~~~~~~~~~~~~~~~
+------------------
 
 Some test libraries are distributed with Robot Framework and these
 libraries are called *standard libraries*. The BuiltIn_ library is special,
@@ -218,7 +218,7 @@ available. Other standard libraries need to be imported in the same way
 as any other libraries, but there is no need to install them.
 
 Normal standard libraries
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The available normal standard libraries are listed below with links to their
 documentations:
@@ -244,7 +244,7 @@ documentations:
 .. _XML: ../libraries/XML.html
 
 Remote library
-''''''''''''''
+~~~~~~~~~~~~~~
 
 In addition to the normal standard libraries listed above, there is
 also :name:`Remote` library that is totally different than the other standard
@@ -258,7 +258,7 @@ See separate `Remote library interface`_ section for more information
 about this concept.
 
 External libraries
-~~~~~~~~~~~~~~~~~~~
+------------------
 
 Any test library that is not one of the standard libraries is, by
 definition, *an external library*. The Robot Framework open source community

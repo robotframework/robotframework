@@ -1,5 +1,5 @@
 Creating test libraries
------------------------
+=======================
 
 Robot Framework's actual testing capabilities are provided by test
 libraries. There are many existing libraries, some of which are even
@@ -13,10 +13,10 @@ and straightforward.
    :local:
 
 Introduction
-~~~~~~~~~~~~
+------------
 
 Supported programming languages
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework itself is written with Python_ and naturally test
 libraries extending it can be implemented using the same
@@ -45,7 +45,7 @@ __ http://docs.python.org/library/ctypes.html
 __ http://code.google.com/p/robotframework/wiki/PythonTutorial
 
 Different test library APIs
-'''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework has three different test library APIs.
 
@@ -91,13 +91,13 @@ __ `Logging information`_
 __ `Returning values`_
 
 Creating test library class or module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------
 
 Test libraries can be implemented as Python modules and Python or Java
 classes.
 
 Test library names
-''''''''''''''''''
+~~~~~~~~~~~~~~~~~~
 
 The name of a test library that is used when a library is imported is
 the same as the name of the module or class implementing it. For
@@ -130,7 +130,7 @@ package must be imported with name :name:`com.mycompany.myproject.MyLib`.
          simpler alias by using the `WITH NAME syntax`_.
 
 Providing arguments to test libraries
-'''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All test libraries implemented as classes can take arguments. These
 arguments are specified in the Setting table after the library name,
@@ -190,7 +190,7 @@ the libraries used in the above example:
    }
 
 Test library scope
-''''''''''''''''''
+~~~~~~~~~~~~~~~~~~
 
 Libraries implemented as classes can have an internal state, which can
 be altered by keywords and with arguments to the constructor of the
@@ -280,7 +280,7 @@ Example Java library using the :code:`GLOBAL` scope:
 __ `Providing arguments to test libraries`_
 
 Specifying library version
-''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When a test library is taken into use, Robot Framework tries to
 determine its version. This information is then written into the syslog_
@@ -319,7 +319,7 @@ A Java class using :code:`ROBOT_LIBRARY_VERSION`:
     }
 
 Specifying documentation format
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.7.5, library documentation tool Libdoc_
 supports documentation in multiple formats. If you want to use something
@@ -388,7 +388,7 @@ __ `Specifying library version`_
 
 
 Library acting as listener
-''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Listener interface`_ allows external listeners to get notifications about
 test execution. They are called, for example, when suites, tests, and keywords
@@ -399,10 +399,10 @@ should be an instance of the listener to use, possibly the library itself.
 For more information and examples see `Test libraries as listeners`_ section.
 
 Creating static keywords
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 What methods are considered keywords
-''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When the static library API is used, Robot Framework uses reflection
 to find out what public methods the library class or module
@@ -466,7 +466,7 @@ accidentally exposed as keywords.
           Robot Framework 2.5.5 onwards.
 
 Keyword names
-'''''''''''''
+~~~~~~~~~~~~~
 
 Keyword names used in the test data are compared with method names to
 find the method implementing these keywords. Name comparison is
@@ -525,7 +525,7 @@ in the `library search path`_.
    ===========  ===========  ============  ============
 
 Keyword arguments
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~
 
 With a static and hybrid API, the information on how many arguments a
 keyword needs is got directly from the method that implements it.
@@ -558,7 +558,7 @@ Example Python keywords taking different numbers of arguments:
           the `dynamic library API`_.
 
 Default values to keywords
-''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is often useful that some of the arguments that a keyword uses have
 default values. Python and Java have different syntax for handling default
@@ -566,7 +566,8 @@ values to methods, and the natural syntax of these languages can be
 used when creating test libraries for Robot Framework.
 
 Default values with Python
-``````````````````````````
+''''''''''''''''''''''''''
+
 In Python a method has always exactly one implementation and possible
 default values are specified in the method signature. The syntax,
 which is familiar to all Python programmers, is illustrated below:
@@ -601,7 +602,8 @@ with one to three arguments.
    ===========  ==================  =============  ============  =============
 
 Default values with Java
-````````````````````````
+''''''''''''''''''''''''
+
 In Java one method can have several implementations with different
 signatures. Robot Framework regards all these implementations as one
 keyword, which can be used with different arguments. This syntax can
@@ -632,14 +634,14 @@ the earlier Python example:
    }
 
 Variable number of arguments (:code:`*varargs`)
-'''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework supports also keywords that take any number of
 arguments. Similarly as with the default values, the actual syntax to use
 in test libraries is different in Python and Java.
 
 Variable number of arguments with Python
-````````````````````````````````````````
+''''''''''''''''''''''''''''''''''''''''
 
 Python supports methods accepting any number of arguments. The same
 syntax works in libraries and, as the examples below show, it can also
@@ -679,7 +681,7 @@ be combined with other ways of specifying arguments:
    ===============  =============  =============  ============  ==============
 
 Variable number of arguments with Java
-``````````````````````````````````````
+''''''''''''''''''''''''''''''''''''''
 
 Robot Framework supports `Java varargs syntax`__ for defining variable number of
 arguments. For example, the following two keywords are functionally identical
@@ -737,7 +739,7 @@ __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
 __ `Providing arguments to test libraries`_
 
 Free keyword arguments (:code:`**kwargs`)
-'''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework 2.8 added the support for free keyword arguments using Python's
 :code:`**kwargs` syntax. How to use the syntax in the test data is discussed
@@ -745,7 +747,7 @@ in `Free keyword arguments`_ section under `Creating test cases`_. In this
 section we take a look at how to actually use it in custom test libraries.
 
 Free keyword arguments with Python
-``````````````````````````````````
+''''''''''''''''''''''''''''''''''
 
 If you are already familiar how kwargs work with Python, understanding how
 they work with Robot Framework test libraries is rather simple. The example
@@ -807,7 +809,7 @@ Process_ library.
 __ Escaping_
 
 Free keyword arguments with Java
-````````````````````````````````
+''''''''''''''''''''''''''''''''
 
 Starting from Robot Framework 2.8.3, also Java libraries support the free
 keyword arguments syntax. Java itself has no kwargs syntax, but keywords
@@ -841,7 +843,7 @@ example keywords can be used exactly like the previous Python examples:
 __ `Variable number of arguments with Java`_
 
 Argument types
-''''''''''''''
+~~~~~~~~~~~~~~
 
 Normally keyword arguments come to Robot Framework as strings. If
 keywords require some other types, it is possible to either use
@@ -851,7 +853,8 @@ variables_ or convert strings to required types inside keywords. With
 __ `Argument types with Java`_
 
 Argument types with Python
-``````````````````````````
+''''''''''''''''''''''''''
+
 Because arguments in Python do not have any type information, there is
 no possibility to automatically convert strings to other types when
 using Python libraries. Calling a Python method implementing a keyword
@@ -866,7 +869,8 @@ is simple to convert arguments to suitable types inside keywords:
       # ...
 
 Argument types with Java
-````````````````````````
+''''''''''''''''''''''''
+
 Arguments to Java methods have types, and all the base types are
 handled automatically. This means that arguments that are normal
 strings in the test data are coerced to correct type at runtime. The
@@ -922,7 +926,7 @@ Starting from Robot Framework 2.8, argument type coercion works also with
 __ `Providing arguments to test libraries`_
 
 Using decorators
-''''''''''''''''
+~~~~~~~~~~~~~~~~
 
 When writing static keywords, it is sometimes useful to modify them with
 Python's decorators. However, decorators modify function signatures,
@@ -935,7 +939,7 @@ to create signature-preserving decorators.
 __ http://micheles.googlecode.com/hg/decorator/documentation.html
 
 Communicating with Robot Framework
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------
 
 After a method implementing a keyword is called, it can use any
 mechanism to communicate with the system under test. It can then also
@@ -944,7 +948,7 @@ can be saved to variables and, most importantly, report if the
 keyword passed or not.
 
 Reporting keyword status
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Reporting keyword status is done simply using exceptions. If an executed
 method raises an exception, the keyword status is :msg:`FAIL`, and if it
@@ -981,7 +985,7 @@ In all cases, it is important for the users that the exception message is as
 informative as possible.
 
 HTML in error messages
-``````````````````````
+''''''''''''''''''''''
 
 Starting from Robot Framework 2.8, it is also possible have HTML formatted
 error messages by starting the message with text :msg:`*HTML*`:
@@ -996,7 +1000,7 @@ in the example above, and `when users provide an error message in the test data`
 __ `Failures`_
 
 Cutting long messages automatically
-```````````````````````````````````
+'''''''''''''''''''''''''''''''''''
 
 If the error message is longer than 40 lines, it will be automatically
 cut from the middle to prevent reports from getting too long and
@@ -1004,7 +1008,7 @@ difficult to read. The full error message is always shown in the log
 message of the failed keyword.
 
 Tracebacks
-``````````
+''''''''''
 
 The traceback of the exception is also logged using :msg:`DEBUG` `log level`_.
 These messages are not visible in log files by default because they are very
@@ -1012,7 +1016,7 @@ rarely interesting for normal users. When developing libraries, it is often a
 good idea to run tests using :cli:`--loglevel DEBUG`.
 
 Stopping test execution
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.5, it is possible to fail a test case so that
 `the whole test execution is stopped`__. This is done simply by having a special
@@ -1037,7 +1041,7 @@ Java:
 __ `Stopping test execution gracefully`_
 
 Continuing test execution despite of failures
-'''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.5, it is possible to `continue test
 execution even when there are failures`__. The way to signal this from
@@ -1063,7 +1067,7 @@ Java:
 __ `Continue on failure`_
 
 Logging information
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 Exception messages are not the only way to give information to the
 users. In addition to them, methods can also send messages to `log
@@ -1081,7 +1085,8 @@ the stderr if you need some messages to be visible on the console where
 tests are executed.
 
 Using log levels
-````````````````
+''''''''''''''''
+
 To use other log levels than :msg:`INFO`, or to create several
 messages, specify the log level explicitly by embedding the level into
 the message in the format :code:`*LEVEL* Actual log message`, where
@@ -1090,7 +1095,8 @@ one of the available logging levels :msg:`TRACE`, :msg:`DEBUG`,
 :msg:`INFO`, :msg:`WARN`,:msg:`FAIL`  and :msg:`HTML`.
 
 Warnings
-````````
+''''''''
+
 Messages with :msg:`WARN` level are automatically written into `the
 console and into separate Test Execution Errors section`__ in log
 files. This makes warnings more visible than other messages and allows
@@ -1099,7 +1105,8 @@ using them for reporting important but non-critical problems to users.
 __ `Errors and warnings during execution`_
 
 Logging HTML
-````````````
+''''''''''''
+
 Everything normally logged by the library will be converted into a
 format that can be safely represented as HTML. For example,
 :code:`<b>foo</b>` will be displayed in the log exactly like that and
@@ -1116,7 +1123,8 @@ have optional :code:`html` attribute that can be set to :code:`True`
 to enable logging in HTML format.
 
 Timestamps
-``````````
+''''''''''
+
 By default messages logged via the standard output or error streams
 get their timestamps when the executed keyword ends. This means that
 the timestamps are not accurate and debugging problems especially with
@@ -1157,7 +1165,8 @@ __ http://en.wikipedia.org/wiki/Unix_epoch
 __ `Using log levels`_
 
 Logging to console
-``````````````````
+''''''''''''''''''
+
 If libraries need to write something to the console they have several
 options. As already discussed, warnings and all messages written to the
 standard error stream are written both to the log file and to the
@@ -1191,7 +1200,8 @@ The final option is using the `public logging API`_:
       logger.info('Got arg %s' % arg, also_console=True)
 
 Logging example
-```````````````
+'''''''''''''''
+
 In most cases, the :msg:`INFO` level is adequate. The levels below it,
 :msg:`DEBUG` and :msg:`TRACE`, are useful for writing debug information.
 These messages are normally not shown, but they can facilitate debugging
@@ -1255,14 +1265,14 @@ as pseudocode meaning :code:`System.out.println("message");`.
    </table>
 
 Programmatic logging APIs
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Programmatic APIs provide somewhat cleaner way to log information than
 using the standard output and error streams. Currently these
 interfaces are available only to Python bases test libraries.
 
 Public logging API
-``````````````````
+''''''''''''''''''
 
 Robot Framework 2.6 has a new Python based logging API for writing
 messages to the log file and to the console. Test libraries can use
@@ -1290,7 +1300,7 @@ a simple usage example:
 __ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.api.html#module-robot.api.logger
 
 Using Python's standard :code:`logging` module
-``````````````````````````````````````````````
+''''''''''''''''''''''''''''''''''''''''''''''
 
 In addition to the new `public logging API`_, Robot Framework 2.6 also
 added a built-in support to Python's standard logging__ module. This
@@ -1321,7 +1331,7 @@ and everything above is mapped to :msg:`WARN`. Custom levels below
 __ http://docs.python.org/library/logging.html
 
 Logging during library initialization
-'''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Libraries can also log during the test library import and initialization.
 These messages do not appear in the `log file`_ like the normal log messages,
@@ -1370,7 +1380,7 @@ Python library logging using the logging API during import:
 __ `Logging information`_
 
 Returning values
-''''''''''''''''
+~~~~~~~~~~~~~~~~
 
 The final way for keywords to communicate back to the core framework
 is returning information retrieved from the system under test or
@@ -1440,7 +1450,7 @@ __ `List variables`_
    ================  ==================  ==================  =======================
 
 Communication when using threads
-''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a library uses threads, it should generally communicate with the
 framework only from the main thread. If a worker thread has, for
@@ -1461,10 +1471,10 @@ the worker thread and reports gathered information accordingly.
           Framework 2.6.2.
 
 Distributing test libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 Documenting libraries
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 A test library without documentation about what keywords it
 contains and what those keywords do is rather useless. To ease
@@ -1547,7 +1557,7 @@ Libdoc_ chapter for more information about the formats in general.
 __ http://www.python.org/dev/peps/pep-0263
 
 Testing libraries
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~
 
 Any non-trivial test library needs to be thoroughly tested to prevent
 bugs in them. Of course, this testing should be automated to make it
@@ -1575,7 +1585,7 @@ Framework. If you cannot decide, of course it is possible to use both
 the approaches.
 
 Packaging libraries
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 After a library is implemented, documented, and tested, it still needs
 to be distributed to the users. With simple libraries consisting of a
@@ -1599,7 +1609,7 @@ does that automatically.
 __ `Creating start-up scripts`_
 
 Deprecating keywords
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 Sometimes there is a need to replace existing keywords with new ones
 or remove them altogether. Just informing the users about the change
@@ -1656,7 +1666,7 @@ __ `Creating static keywords`_
 .. _Dynamic library:
 
 Dynamic library API
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 The dynamic API is in most ways similar to the static API. For
 example, reporting the keyword status, logging, and returning values
@@ -1701,7 +1711,7 @@ likely that it already has a mechanism that suites your needs.
 .. _`Getting dynamic keyword names`:
 
 Getting keyword names
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 Dynamic libraries tell what keywords they implement with the
 :code:`get_keyword_names` method. The method also has the alias
@@ -1723,7 +1733,7 @@ static library.
 .. _`Running dynamic keywords`:
 
 Running keywords
-''''''''''''''''
+~~~~~~~~~~~~~~~~
 
 Dynamic libraries have a special :code:`run_keyword` (alias
 :code:`runKeyword`) method for executing their keywords. When a
@@ -1762,7 +1772,7 @@ trivial, dynamic library implemented in Python.
            print "Running keyword '%s' with arguments %s." % (name, args)
 
 Getting keyword arguments
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a dynamic library only implements the :code:`get_keyword_names` and
 :code:`run_keyword` methods, Robot Framework does not have any information
@@ -1831,7 +1841,7 @@ __ `Named argument syntax with dynamic libraries`_
 __ `Free keyword arguments with dynamic libraries`_
 
 Getting keyword documentation
-'''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The final special method that dynamic libraries can implement is
 :code:`get_keyword_documentation` (alias
@@ -1847,7 +1857,7 @@ the first line of the documentation (until the first :code:`\\n`) is
 shown in test logs.
 
 Getting general library documentation
-'''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :code:`get_keyword_documentation` method can also be used for
 specifying overall library documentation. This documentation is not
@@ -1871,7 +1881,7 @@ got both directly from the code and from the
           Framework 2.6.2 and newer.
 
 Named argument syntax with dynamic libraries
-''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.8, also the dynamic library API supports
 the `named argument syntax`_. Using the syntax works based on the
@@ -1910,7 +1920,7 @@ The last column shows the arguments that the keyword is actually called with.
 __ `Getting keyword arguments`_
 
 Free keyword arguments with dynamic libraries
-'''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.8.2, dynamic libraries can also support
 `free keyword arguments`_ (:code:`**kwargs`). A mandatory precondition for
@@ -1949,7 +1959,7 @@ __ `Running dynamic keywords`_
 __ `Getting keyword arguments`_
 
 Summary
-'''''''
+~~~~~~~
 
 All special methods in the dynamic API are listed in the table
 below. Method names are listed in the underscore format, but their
@@ -2003,14 +2013,14 @@ A good example of using the dynamic API is Robot Framework's own
 `Remote library`_.
 
 Hybrid library API
-~~~~~~~~~~~~~~~~~~
+------------------
 
 The hybrid library API is, as its name implies, a hybrid between the
 static API and the dynamic API. Just as with the dynamic API, it is
 possible to implement a library using the hybrid API only as a class.
 
 Getting keyword names
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 Keyword names are got in the exactly same way as with the dynamic
 API. In practice, the library needs to have the
@@ -2018,7 +2028,7 @@ API. In practice, the library needs to have the
 a list of keyword names that the library implements.
 
 Running keywords
-''''''''''''''''
+~~~~~~~~~~~~~~~~
 
 In the hybrid API, there is no :code:`run_keyword` method for executing
 keywords. Instead, Robot Framework uses reflection to find methods
@@ -2069,7 +2079,7 @@ to implement all the methods in the library class, but that brings few
 benefits compared to the static API.
 
 Getting keyword arguments and documentation
-'''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this API is used, Robot Framework uses reflection to find the
 methods implementing keywords, similarly as with the static API. After
@@ -2079,7 +2089,7 @@ API. Thus there is no need for special methods for getting arguments
 and documentation like there is with the dynamic API.
 
 Summary
-'''''''
+~~~~~~~
 
 When implementing a test library in Python, the hybrid API has the same
 dynamic capabilities as the actual dynamic API. A great benefit with it is
@@ -2099,7 +2109,7 @@ A good example of using the hybrid API is Robot Framework's own
 Telnet_ library.
 
 Using Robot Framework's internal modules
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------
 
 Test libraries implemented with Python can use Robot Framework's
 internal modules, for example, to get information about the executed
@@ -2110,7 +2120,7 @@ externally and they might change radically between different framework
 versions.
 
 Available APIs
-''''''''''''''
+~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.7, `API documentation`_ is hosted separately
 at the excellent `Read the Docs`_ service. If you are unsure how to use
@@ -2118,7 +2128,7 @@ certain API or is using them forward compatible, please send a question
 to `mailing list`_.
 
 Using BuiltIn library
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 The safest API to use are methods implementing keywords in the
 BuiltIn_ library. Changes to keywords are rare and they are always
@@ -2152,14 +2162,14 @@ method in :code:`BuiltIn` module. This method's documentation explains
 why this needs to be done and obviously also how to do it.
 
 Extending existing test libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------
 
 This section explains different approaches how to add new
 functionality to existing test libraries and how to use them in your
 own libraries otherwise.
 
 Modifying original source code
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you have access to the source code of the library you want to
 extend, you can naturally modify the source code directly. The biggest
@@ -2178,7 +2188,7 @@ them back, the approaches explained in the subsequent sections
 probably work better.
 
 Using inheritance
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~
 
 Another straightforward way to extend an existing library is using
 inheritance. This is illustrated by the example below that adds new
@@ -2214,7 +2224,7 @@ mechanisms explained in this section are probably better.
 __ `Handling keywords with same names`_
 
 Using other libraries directly
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Because test libraries are technically just classes or modules, a
 simple way to use another library is importing it and using its
@@ -2231,7 +2241,7 @@ an access to the same library instance that the framework uses.
 __ `Using Robot Framework's internal modules`_
 
 Getting active library instance from Robot Framework
-''''''''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework 2.5.2 added new BuiltIn_ keyword :name:`Get Library
 Instance` that can be used to get the currently active library
@@ -2284,9 +2294,8 @@ expected to be available in a new library :name:`SeLibExtensions`.
    \                Title Should Start With  Example         # SeLibExtensions
    ===============  =======================  ==============  =================
 
-
 Libraries using dynamic or hybrid API
-'''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test libraries that use the dynamic__ or `hybrid library API`_ often
 have their own systems how to extend them. With these libraries you

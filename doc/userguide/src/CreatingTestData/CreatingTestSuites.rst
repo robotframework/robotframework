@@ -1,5 +1,5 @@
 Creating test suites
---------------------
+====================
 
 Robot Framework test cases are created in test case files, which can
 be organized into directories. These files and directories create a
@@ -10,7 +10,7 @@ hierarchical test suite structure.
    :local:
 
 Test case files
-~~~~~~~~~~~~~~~
+---------------
 
 Robot Framework test cases `are created`__ using test case tables in
 test case files. Such a file automatically creates a test suite from
@@ -39,7 +39,7 @@ test suite:
 __ `Test case syntax`_
 
 Test suite directories
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 Test case files can be organized into directories, and these
 directories create higher-level test suites. A test suite created from
@@ -67,7 +67,7 @@ and the processing continues.
 __ `Supported file formats`_
 
 Warning on invalid files
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Normally files that do not have a valid test case table are silently ignored
 with a message written to the syslog_. As of Robot Framework 2.5.5 it is
@@ -77,7 +77,7 @@ the message into a warning shown in `test execution errors`__.
 __ `Errors and warnings during execution`_
 
 Initialization files
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 A test suite created from a directory can have similar settings as a suite
 created from a test case file. Because a directory alone cannot have that
@@ -148,7 +148,7 @@ How to use different settings in the initialization files:
 __ `Test case related settings in the Setting table`_
 
 Test suite name and documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------
 
 The test suite name is constructed from the file or directory name. The name
 is created so that the extension is ignored, possible underscores are
@@ -190,7 +190,7 @@ options :opt:`--name` and :opt:`--doc`, respectively, as
 explained in section `Setting metadata`_.
 
 Free test suite metadata
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 Test suites can also have other metadata than the documentation. This metadata
 is defined in the Setting table using the :opt:`Metadata` setting. Metadata
@@ -226,7 +226,7 @@ was defined in subsequent column. Robot Framework 2.5 still supports this old
 format but it will be deprecated in the future.
 
 Suite setup and teardown
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 Not only `test cases`__ but also test suites can have a setup and
 a teardown. A suite setup is executed before running any of the suite's

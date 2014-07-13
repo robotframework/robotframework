@@ -1,5 +1,5 @@
 Creating test cases
--------------------
+===================
 
 This section describes the overall test case syntax. Organizing test
 cases into `test suites`_ using `test case files`_ and `test suite
@@ -10,10 +10,10 @@ directories`_ is discussed in the next section.
    :local:
 
 Test case syntax
-~~~~~~~~~~~~~~~~
+----------------
 
 Basic syntax
-''''''''''''
+~~~~~~~~~~~~
 
 Test cases are constructed in test case tables from the available
 keywords. Keywords can be imported from `test libraries`_ or `resource
@@ -55,7 +55,7 @@ contain possible arguments to the specified keyword.
    ==================  ===========================  ==================  ===============
 
 Settings in the Test Case table
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test cases can also have their own settings. Setting names are always
 in the second column, where keywords normally are, and their values
@@ -95,7 +95,7 @@ below and explained later in this section.
    ==================  ===========================  ==================  ===============
 
 Test case related settings in the Setting table
-'''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Setting table can have the following test case related
 settings. These settings are mainly default values for the
@@ -117,7 +117,7 @@ test case specific settings listed earlier.
    their own section.
 
 Using arguments
-~~~~~~~~~~~~~~~
+---------------
 
 The earlier examples have already demonstrated keywords taking
 different arguments, and this section discusses this important
@@ -138,7 +138,7 @@ __ `User keyword arguments`_
 __ `Keyword arguments`_
 
 Mandatory arguments
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 Most keywords have a certain number of arguments that must always be
 given.  In the keyword documentation this is denoted by specifying the
@@ -167,7 +167,7 @@ that they take one and two arguments, respectively. The last keyword,
    =============  ================  ==================  ==================
 
 Default values
-''''''''''''''
+~~~~~~~~~~~~~~
 
 Arguments often have default values which can either be given or
 not. In the documentation the default value is typically separated
@@ -199,7 +199,7 @@ three arguments would not work.
 .. _varargs:
 
 Variable number of arguments
-''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is also possible to create keywords that accept any number of
 arguments. These arguments can be combined with mandatory arguments
@@ -229,7 +229,7 @@ the latter requires at least one argument.
 .. _Named argument syntax:
 
 Named arguments
-'''''''''''''''
+~~~~~~~~~~~~~~~
 
 The named argument syntax makes using arguments with `default values`_ more
 flexible, and allows explicitly labeling what a certain argument value means.
@@ -238,7 +238,7 @@ Technically named arguments work exactly like `keyword arguments`__ in Python.
 __ http://docs.python.org/2/tutorial/controlflow.html#keyword-arguments
 
 Basic syntax
-````````````
+''''''''''''
 
 It is possible to name an argument given to a keyword by prefixing the value
 with the name of the argument like :code:`arg=value`. This is especially
@@ -270,7 +270,7 @@ Otherwise the order of the named arguments does not matter.
           that did not have a default value.
 
 Named arguments with variables
-``````````````````````````````
+''''''''''''''''''''''''''''''
 
 It is possible to use `variables`_ in named argument values.
 As when using `scalar variables`_, if the value is a single variable,
@@ -307,7 +307,7 @@ syntax, the values are not recognized as named. See the example below:
    =============  =================  =====================  ============  ============
 
 Escaping named arguments syntax
-```````````````````````````````
+'''''''''''''''''''''''''''''''
 
 The named argument syntax is used only when the part of the argument
 before the equal sign matches one of the keyword's arguments. It is possible
@@ -324,7 +324,7 @@ escaping is not needed if there are no arguments with name :code:`foo`.
 __ Escaping_
 
 Where named arguments are supported
-```````````````````````````````````
+'''''''''''''''''''''''''''''''''''
 
 As already explained, the named argument syntax works with keywords. In
 addition to that, it also works when `taking test libraries into use`_.
@@ -338,7 +338,7 @@ support named arguments or not.
           with test libraries using the `dynamic library API`_.
 
 Named arguments example
-```````````````````````
+'''''''''''''''''''''''
 
 The following example demonstrates using the named arguments syntax with
 library keywords, user keywords, and when importing the Telnet_ test library.
@@ -374,7 +374,7 @@ library keywords, user keywords, and when importing the Telnet_ test library.
    =============  =================  =====================  ============  ============
 
 Free keyword arguments
-''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework 2.8 added support for `Python style free keyword arguments`__
 (:code:`**kwargs`). What this means is that keywords can receive all arguments
@@ -418,7 +418,7 @@ __ http://code.google.com/p/robotframework/issues/detail?id=1561
 __ `Named arguments with variables`_
 
 Arguments embedded to keyword names
-'''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A totally different approach to specify arguments is embedding them
 into keyword names. This syntax is, at least currently, only supported
@@ -427,10 +427,10 @@ by `user keywords`__.
 __ `Embedding arguments into keyword name`_
 
 Failures
-~~~~~~~~
+--------
 
 When test case fails
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 A test case fails if any of the keyword it uses fails. Normally this means that
 execution of that test case is stopped, possible `test teardown`_ is executed,
@@ -438,7 +438,7 @@ and then execution continues from the next test case. It is also possible to
 use special `continuable failures`__ if stopping test execution is not desired.
 
 Error messages
-''''''''''''''
+~~~~~~~~~~~~~~
 
 The error message assigned to a failed test case is got directly from the
 failed keyword. Often the error message is created by the keyword itself, but
@@ -476,7 +476,7 @@ __ `Continue on failure`_
 __ `HTML in error messages`_
 
 Test case name and documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------
 
 The test case name comes directly from the Test Case table: it is
 exactly what is entered into the test case column. Test cases in one
@@ -543,7 +543,7 @@ environment and user information in the last example above, is often
 better specified using tags_.
 
 Tagging test cases
-~~~~~~~~~~~~~~~~~~
+------------------
 
 Using tags in Robot Framework is a simple, yet powerful mechanism for
 classifying test cases. Tags are free text and they can be used at
@@ -661,7 +661,7 @@ can be created using variables, assuming that those variables exist.
    +---------------+-----------------+---------------------+------------------------+
 
 Test setup and teardown
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Robot Framework has similar test setup and teardown functionality as many
 other test automation frameworks. In short, a test setup is something
@@ -759,7 +759,7 @@ the command line.
 __  `Suite setup and teardown`_
 
 Test templates
-~~~~~~~~~~~~~~
+--------------
 
 Test templates convert normal `keyword-driven`_ test cases into
 `data-driven`_ tests. Whereas the body of a keyword-driven test case
@@ -773,7 +773,7 @@ well as arguments embedded to the keyword name. Unlike with other settings,
 it is not possible to define a template using a variable.
 
 Basic usage
-'''''''''''
+~~~~~~~~~~~
 
 How a keyword accepting normal positional arguments can be used as a template
 is illustrated by the following example test cases. These two tests are
@@ -825,7 +825,7 @@ exactly like they work otherwise. Using variables_ in arguments is also
 supported normally.
 
 Templates with embedded arguments
-'''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.8.2, templates support a variation of
 the `embedded argument syntax`_. With templates this syntax works so
@@ -880,7 +880,7 @@ arguments. This is illustrated by the `data-driven style`_ example in
 the next section.
 
 Templates with for loops
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 If templates are used with `for loops`_, the template is applied for
 all the steps inside the loop. The continue on failure mode is in use
@@ -901,7 +901,7 @@ all the looped elements even if there are failures.
    ==================  ===============  ===============  ==========  ==========
 
 Different test case styles
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 There are several different ways in which test cases may be written. Test
 cases that describe some kind of *workflow* may be written either in
@@ -909,7 +909,7 @@ keyword-driven or behavior-driven style. Data-driven style can be used to test
 the same workflow with varying input data.
 
 Keyword-driven style
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 Workflow tests, such as the :name:`Valid Login` test described
 earlier_, are constructed from several keywords and their possible
@@ -923,7 +923,7 @@ finally it is verified that the system behaved as expected
 .. _earlier: example-tests_
 
 Data-driven style
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~
 
 Another style to write test cases is the *data-driven* approach where
 test cases use only one higher-level keyword, normally created as a
@@ -1008,7 +1008,7 @@ context and personal preferences.
 __ `Ignored data`_
 
 Behavior-driven style
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 It is also possible to write test cases as requirements that also non-technical
 project stakeholders must understand. These `executable requirements` are a
@@ -1040,7 +1040,7 @@ __ http://en.wikipedia.org/wiki/Specification_by_example
 __ http://en.wikipedia.org/wiki/Behavior_Driven_Development
 
 Ignoring :name:`Given/When/Then/And` prefixes
-`````````````````````````````````````````````
+'''''''''''''''''''''''''''''''''''''''''''''
 
 Prefixes :name:`Given`, :name:`When`, :name:`Then` and :name:`And` are dropped
 when matching keywords are searched, if no match with the full name is
@@ -1052,7 +1052,7 @@ also allows using the same keyword with different prefixes. For example
 should be open`.
 
 Embedding data to keywords
-``````````````````````````
+''''''''''''''''''''''''''
 
 When writing concrete examples it is useful to be able pass actual data to
 keyword implementations. User keywords support this by allowing `embedding

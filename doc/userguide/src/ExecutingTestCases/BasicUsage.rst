@@ -1,5 +1,5 @@
 Basic usage
------------
+===========
 
 Robot Framework test cases are executed from the command line, and the
 end result is, by default, an `output file`_ in XML format and an HTML
@@ -13,10 +13,10 @@ __ `Post-processing outputs`_
    :local:
 
 Starting test execution
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Synopsis
-''''''''
+~~~~~~~~
 
 ::
 
@@ -38,7 +38,7 @@ command line options can be used to alter the test execution or generated
 outputs in some way.
 
 Specifying test data to be executed
-'''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework test cases are created in files__ and directories__,
 and they are executed by giving the path to the file or directory in
@@ -78,7 +78,7 @@ example below::
    pybot --name Example path/to/tests/pattern_*.html
 
 Using command line options
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 Robot Framework provides a number of command line options that can be
 used to control how test cases are executed and what outputs are
@@ -87,7 +87,7 @@ options actually exist. How they can be used is discussed elsewhere
 in this chapter.
 
 Using options
-'''''''''''''
+~~~~~~~~~~~~~
 
 When options are used, they must always be given between the runner
 script and the data sources. For example::
@@ -96,7 +96,7 @@ script and the data sources. For example::
    pybot --include smoke --variable HOST:10.0.0.42 path/to/tests/
 
 Short and long options
-''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~
 
 Options always have a long name, such as :opt:`--name`, and the
 most frequently needed options also have a short name, such as
@@ -115,7 +115,7 @@ names in an easy-to-read format. For example, :opt:`--SuiteStatLevel`
 is equivalent to, but easier to read than :opt:`--suitestatlevel`.
 
 Setting option values
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 Most of the options require a value, which is given after the option
 name. Both short and long options accept the value separated
@@ -130,7 +130,7 @@ variables. If the options that take only one value are used several
 times, the value given last is effective.
 
 Simple patterns
-'''''''''''''''
+~~~~~~~~~~~~~~~
 
 Many command line options take arguments as *simple patterns*. These
 `glob-like patterns`__ are matched according to the following rules:
@@ -147,7 +147,7 @@ Examples::
 __ http://en.wikipedia.org/wiki/Glob_(programming)
 
 Tag patterns
-''''''''''''
+~~~~~~~~~~~~
 
 Most tag related options accept arguments as *tag patterns*. They have all the
 same characteristics as `simple patterns`_, but they also support :code:`AND`,
@@ -197,7 +197,7 @@ Mixed
 .. note:: :code:`OR` operator is new in Robot Framework 2.8.4.
 
 :var:`ROBOT_OPTIONS` and :var:`REBOT_OPTIONS` environment variables
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Environment variables :var:`ROBOT_OPTIONS` and :var:`REBOT_OPTIONS` can be
 used to specify default options for `test execution`_ and `result
@@ -220,10 +220,10 @@ avoid the need to repeat them every time tests are run or :prog:`rebot` used.
 __ `Post-processing outputs`_
 
 Test results
-~~~~~~~~~~~~
+------------
 
 Command line output
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 The most visible output from test execution is the output displayed in
 the command line. All executed test suites and test cases, as well as
@@ -253,7 +253,7 @@ of line and they are overwritten by the test status when the test itself ends.
 Writing the markers is disabled if console output is redirected to a file.
 
 Generated output files
-''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~
 
 The command line output is very limited, and separate output files are
 normally needed for investigating the test results. As the example
@@ -264,7 +264,7 @@ detailed log file. These files and other possible output files are
 discussed in more detail in the section `Different output files`_.
 
 Return codes
-''''''''''''
+~~~~~~~~~~~~
 
 Runner scripts communicate the overall test execution status to the
 system running them using return codes. When the execution starts
@@ -302,7 +302,7 @@ execution can be determined.
 .. note:: Same return codes are also used with rebot_.
 
 Errors and warnings during execution
-''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 During the test execution there can be unexpected problems like
 failing to import a library or a resource file or a keyword being
@@ -334,7 +334,7 @@ __ `Deprecating keywords`_
 __ `Logging information`_
 
 Escaping complicated characters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------
 
 Because spaces are used for separating options from each other, it is
 problematic to use them in option values.  Some options, such as
@@ -391,7 +391,7 @@ data, are escaped. Escape character sequences thus need to be
 selected carefully.
 
 Argument files
-~~~~~~~~~~~~~~
+--------------
 
 Argument files allow placing all or some command line options and arguments
 into an external file where they will be read. This avoids the problems with
@@ -403,7 +403,7 @@ Argument files are taken into use with :opt:`--argumentfile` option
 (short option :opt:`-A`) along with possible other command line options.
 
 Argument file syntax
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 Argument files can contain both command line options and paths to the test data,
 one option or data source per line. Both short and long options are supported,
@@ -431,7 +431,7 @@ If argument files contain non-ASCII characters, they must be saved using
 UTF-8 encoding.
 
 Using argument files
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 Argument files can be used either alone so that they contain all the options
 and paths to the test data, or along with other options and paths. When
@@ -447,7 +447,7 @@ to use :opt:`--argumentfile` option multiple times or even recursively::
    pybot -A first.txt -A second.txt -A third.txt tests.txt
 
 Reading argument files from standard input
-''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.5.6, special argument file name :opt:`STDIN`
 can be used to read arguments from the standard input stream instead of a file.
@@ -457,7 +457,7 @@ This can be useful when generating arguments with a script::
    generate_arguments.sh | pybot --name Example --argumentfile STDIN tests.txt
 
 Getting help and version information
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 Both when executing test cases and when post-processing outputs, it is possible
 to get command line help with the option :opt:`--help` and its short version
@@ -478,7 +478,7 @@ or Jython version and the platform type::
    Rebot 2.7 (Python 2.7.1 on win32)
 
 Creating start-up scripts
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 Test cases are often executed automatically by a continuous
 integration system or some other mechanism. In such cases, there is a
@@ -566,7 +566,7 @@ function.
    goto :eof
 
 Modifying Java startup parameters
-'''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes when using Jython there is need to alter the Java startup parameters.
 The most common use case is increasing the JVM maximum memory size as the
@@ -586,7 +586,7 @@ outputs are very big. There are several ways to configure JVM options:
       jython -J-Xmx1024m -m robot.run some_tests.txt
 
 Debugging problems
-~~~~~~~~~~~~~~~~~~
+------------------
 
 A test case can fail because the system under test does not work
 correctly, in which case the test has found a bug, or because the test
@@ -628,7 +628,7 @@ search help from `mailing lists`_ or elsewhere.
 __ `Communicating with Robot Framework`_
 
 Using the Python debugger (pdb)
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is also possible to use the pdb__ module from the Python standard
 library to set a break point and interactively debug a running test.

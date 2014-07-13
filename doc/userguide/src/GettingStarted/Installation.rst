@@ -1,5 +1,5 @@
 Installation and uninstallation
--------------------------------
+===============================
 
 These instructions cover installing Robot Framework and its preconditions on
 different operating systems. Installation changed considerably in Robot
@@ -13,12 +13,12 @@ __ `Changes compared to Robot Framework 2.6 and earlier`_
    :local:
 
 Introduction
-~~~~~~~~~~~~
+------------
 
 .. tip:: If you have pip_ installed, just run :cli:`pip install robotframework`.
 
 Supported installation approaches
-'''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework is implemented with Python_ and also runs on Jython_ (JVM) and
 IronPython_ (.NET) interpreters. Before installing the framework, an obvious
@@ -55,12 +55,12 @@ http://downloads.robotframework.org.
     a custom manual installation.
 
 Different entry points
-''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. _runner script:
 
 Runner scripts
-``````````````
+''''''''''''''
 
 Robot Framework has different entry points for `executing test cases`_ and for
 `post-processing outputs`_ based on earlier test results. For both of
@@ -90,7 +90,7 @@ interpreter is in PATH_.
 .. _direct entry points:
 
 Running tests and post-processing output directly
-`````````````````````````````````````````````````
+'''''''''''''''''''''''''''''''''''''''''''''''''
 
 In addition to the above runner scripts, it is possible to both
 run tests and post-process outputs by executing framework's entry points
@@ -128,7 +128,7 @@ illustrate using them also with other interpreters.
            Robot Framework 2.7 and :code:`robot.run` should be used instead.
 
 Built-in tools
-``````````````
+''''''''''''''
 
 Starting from Robot Framework 2.7, libdoc_, testdoc_, and tidy_ tools are
 bundled with the core framework and have their own entry points. Also they can
@@ -148,7 +148,7 @@ any supported interpreter.
    =================  =================================  ======================================
 
 Verifying installation
-``````````````````````
+''''''''''''''''''''''
 
 After a successful installation, you should be able to execute created `runner
 scripts`_ with :opt:`--version` option and get both Robot Framework and interpreter
@@ -163,7 +163,7 @@ versions as a result.
    Robot Framework 2.7 (Jython 2.5.2 on java1.6.0_21)
 
 Changes compared to Robot Framework 2.6 and earlier
-```````````````````````````````````````````````````
+'''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Robot Framework installation has changed quite a bit between 2.6 and
 2.7 versions and the most important changes are listed below. If you need
@@ -188,7 +188,7 @@ User Guides`_.
 .. _precondition:
 
 Preconditions
-~~~~~~~~~~~~~
+-------------
 
 Robot Framework is supported on Python_, Jython_ (JVM) and IronPython_ (.NET)
 and should also run on PyPy_. The interpreter you want to use should be
@@ -206,7 +206,7 @@ considerably faster than Jython or IronPython (especially start-up time is
 faster) and also readily available on most UNIX-like operating systems.
 
 Python installation
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 On most UNIX-like systems such as Linux and OSX you have Python
 installed by default. If you are on Windows or otherwise need to
@@ -231,7 +231,7 @@ versions.
            machines. Robot Framework will not work correctly with it.
 
 Jython installation
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 Using test libraries implemented with Java_ or using Java tools internally
 requires running Robot Framework on Jython_, which in turn requires Java Runtime
@@ -255,7 +255,7 @@ versions support also Jython 2.2.
            Jython separately.
 
 IronPython installation
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 IronPython_ allows running Robot Framework on the `.NET`_ platform.
 Installation with IronPython is officially supported starting from Robot Framework
@@ -277,7 +277,7 @@ __ http://ironpython.codeplex.com/workitem/31923
 .. _PATH:
 
 Setting :var:`PATH`
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 The :var:`PATH` environment variable lists locations where commands
 executed in a system are searched from. To make using Robot Framework
@@ -292,7 +292,7 @@ needed. On Windows and with other interpreters :var:`PATH` must be configured
 separately.
 
 What directories to add
-```````````````````````
+'''''''''''''''''''''''
 
 What directories you need to add to :var:`PATH` depends on the
 interpreter and operating system. The first location is the installation
@@ -311,7 +311,7 @@ but Jython uses :path:`bin` directory (e.g. :path:`c:\\jython2.5.2\\bin`).
            Robot Framework or some other third party module is installed.
 
 Setting :var:`PATH` on Windows
-``````````````````````````````
+''''''''''''''''''''''''''''''
 
 On Windows you can configure :var:`PATH` by following the steps
 below. Notice that the exact setting names may be different on
@@ -342,7 +342,7 @@ different Windows versions, but the basic approach should still be the same.
 __ http://bugs.python.org/issue17023
 
 Setting :var:`PATH` on UNIX-like systems
-````````````````````````````````````````
+''''''''''''''''''''''''''''''''''''''''
 
 On UNIX-like systems you typically need to edit either some system
 wide or user specific configuration file. Which file to edit and how
@@ -350,10 +350,10 @@ depends on the system, and you need to consult your operating system
 documentation for more details.
 
 Installing Robot Framework
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 Installing from source
-''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~
 
 This installation method can be used on any operating system with any
 of the supported interpreters. Installing *from source* can sound a
@@ -362,7 +362,7 @@ bit scary, but the procedure is actually pretty straightforward.
 .. _source distribution:
 
 Getting the source code
-```````````````````````
+'''''''''''''''''''''''
 
 You typically get the source by downloading a *source distribution package*
 in :path:`.tar.gz` format from the `download page`_. You need to extract
@@ -380,7 +380,7 @@ from project's `version control system`_. By default you will get the latest
 code, but you can easily switch to different released versions or other tags.
 
 Installation
-````````````
+''''''''''''
 
 Robot Framework is installed from source using Python's standard :prog:`setup.py`
 script. The script is on the directory containing the sources and you can run
@@ -402,7 +402,7 @@ it from the command line using any of the supported interpreters:
            you need to install the framework separately using Jython.
 
 Different installation scripts
-``````````````````````````````
+''''''''''''''''''''''''''''''
 
 The standard :prog:`setup.py` script accepts several arguments allowing,
 for example, installation into non-default locations that do not require
@@ -415,7 +415,7 @@ installation and uninstallation_. Run it without arguments for more details.
 .. _Windows installer:
 
 Using Windows installer
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 There are separate graphical installers for 32 bit and 64 bit Windows
 systems. The former installer has name in format
@@ -446,7 +446,7 @@ need to be in PATH_.
            from the context menu when starting the installer.
 
 Python package managers
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Python nowadays has various good package managers available for
 installing and otherwise managing Python packages. The most well known ones are
@@ -491,7 +491,7 @@ and :prog:`easy_install` the basic usage is similar:
 .. note::  Only Robot Framework 2.7 and newer support :prog:`pip`.
 
 Using One Click Installer
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The One Click Installer can install Robot Framework and its preconditions_ Python
 and Jython (optional). It also automatically puts Robot Framework
@@ -508,7 +508,7 @@ available on `One Click Installer`_ wiki page.
            have Python or Jython installed.
 
 Standalone JAR distribution
-'''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework is also distributed as a standalone Java archive that
 contains both Jython and Robot Framework and only requires Java_ 5 or newer
@@ -539,7 +539,7 @@ arguments.
 __ http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.robotframework%22%20AND%20a%3A%22robotframework%22
 
 Manual installation
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 If you do not want to use any automatic way of installing Robot Framework,
 you can always do it manually following these steps:
@@ -555,7 +555,7 @@ you can always do it manually following these steps:
    with the interpreter of your choice.
 
 Where files are installed
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When an automatic installer is used, the Robot Framework code is copied
 into a directory containing external Python modules. On UNIX-like operating
@@ -573,17 +573,17 @@ the scripts are typically either in :path:`Scritps` or :path:`bin` directory
 under the interpreter installation directory.
 
 Uninstallation and upgrading
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 Uninstallation
-''''''''''''''
+~~~~~~~~~~~~~~
 
 How to uninstall Robot Framework depends on the original installation method.
 Notice that if you have set :var:`PATH` or configured your environment
 otherwise, you need to undo these changes separately.
 
 Using source distribution
-`````````````````````````
+'''''''''''''''''''''''''
 
 `Source distribution`_ contains a custom :prog:`install.py` script that
 also supports uninstallation:
@@ -593,14 +593,14 @@ also supports uninstallation:
    python install.py uninstall
 
 Uninstallation after using Windows installer
-````````````````````````````````````````````
+''''''''''''''''''''''''''''''''''''''''''''
 
 If `Windows installer`_  has been used, the uninstallation can be done
 using ``Control Panel > Add/Remove Programs``. Robot Framework is listed
 under Python applications.
 
 Using :prog:`pip`
-`````````````````
+'''''''''''''''''
 
 As discussed earlier__, :prog:`pip` package manager supports also
 uninstallation:
@@ -615,7 +615,7 @@ even if installation has been done using some other approach.
 __ `Python package managers`_
 
 Manual uninstallation
-`````````````````````
+'''''''''''''''''''''
 
 The framework can always be uninstalled manually. This requires removing
 :code:`robot` module as well as the created `runner scripts`_ from locations
@@ -624,7 +624,7 @@ The framework can always be uninstalled manually. This requires removing
 __ `Where files are installed`_
 
 Upgrading
-'''''''''
+~~~~~~~~~
 
 When upgrading or downgrading Robot Framework, it is safe to
 install a new version over the existing when switching between two
