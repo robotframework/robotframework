@@ -11,22 +11,21 @@ special parts of text, such as section headings, bullet lists, and
 emphasis. Some general formatting principles of reST that are followed
 in Robot Framework User Guide are presented here.
 
-
 Generating Robot Framework User Guide in the HTML format
 --------------------------------------------------------
 
-The preconditions for generating Robot Framework User Guide are
-downloading and installing latest stable version of Docutils_ and Pygments_ 
-(Python syntax highlighter).
+The precondition for generating Robot Framework User Guide is
+installing Docutils_ and Pygments_::
 
-Robot Framework User Guide can then be generated with `ug2html.py` script.
-Run following command to get available options::
+    pip install docutils pygments
 
-   python ug2html.py
+Robot Framework User Guide can then be generated with `<ug2html.py>`__ script.
+Run it without arguments to get the usage::
 
-Source files are under `src` directory, and `RobotFrameworkUserGuide.txt`
+    python ug2html.py
+
+Source files are under `src` directory. `<src/RobotFrameworkUserGuide.rst>`__
 includes other section specific files.
-
 
 Section style principles of reST
 --------------------------------
@@ -41,44 +40,45 @@ the order enforced is the order as encountered. The first style
 encountered becomes the outermost title, the second style is a
 subtitle, the third is a subsubtitle, and so on.
 
-
 Formatting used in Robot Framework User Guide
 ---------------------------------------------
 
 The section title styles used in Robot Framework User Guide are the
 following, in this order::
 
-   ===============
-    Section title
-   ===============
+   ==============
+     Main title
+   ==============
 
-   ---------------
-    Section title
-   ---------------
+   -------------
+      Version
+   -------------
+
+   ~~~~~~~~~~~~~~~~
+     Chapter title
+   ~~~~~~~~~~~~~~~~
 
    Section title
    =============
 
-   Section title
-   -------------
+   Subsection title
+   ----------------
 
-   Section title
-   ~~~~~~~~~~~~~
+   Subsubsection title
+   ~~~~~~~~~~~~~~~~~~~
 
-   Section title
-   '''''''''''''
+   Paragraph title
+   '''''''''''''''
 
    Section title
    `````````````
-
 
 Roles used in Robot Framework User Guide
 ----------------------------------------
 
 For the formatting roles, which are used in Robot Framework User Guide
 to make it easier for the reader to distinguish certain parts of the
-text, see the file `src/roles.rst`.
- 
+text, see the file `<src/roles.rst>`__.
 
 Using source code directive with files
 --------------------------------------
@@ -91,13 +91,11 @@ the user guide, for example::
 
    ExtendingRobotFramework/check_test_times.py
 
-
 References
 ----------
 
 For more information on Docutils reST, see `Quick reStructuredText`_
 and `reStructuredText Markup Specification`_.
-
 
 
 .. _Pygments: http://pygments.org/download/
