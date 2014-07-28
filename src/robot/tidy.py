@@ -106,6 +106,9 @@ Alternative execution
 In the above examples Tidy is used only with Python, but it works also with
 Jython and IronPython. Above it is executed as an installed module, but it
 can also be run as a script like `python path/robot/tidy.py`.
+
+For more information about Tidy and other built-in tools, see
+http://robotframework.org/robotframework/#built-in-tools.
 """
 
 import os

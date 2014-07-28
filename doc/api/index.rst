@@ -14,7 +14,7 @@ source is not helpful either, questions may be sent to the
 `robotframework-users`__ mailing list.
 
 __ http://robotframework.org
-__ http://code.google.com/p/robotframework/wiki/UserGuide
+__ http://robotframework.org/robotframework/#user-guide
 __ http://groups.google.com/group/robotframework-users
 
 .. toctree::
@@ -27,14 +27,15 @@ Command line entry points are implemented as Python modules and they also
 provide programmatic APIs. Following entry points exist:
 
   * :py:mod:`robot.run` entry point for executing tests.
-  * :py:mod:`robot.rebot` entry point for post-processing outputs.
-  * :py:mod:`robot.libdoc` entry point for the `libdoc`__ tool.
-  * :py:mod:`robot.testdoc` entry point for the `testdoc`__ tool.
-  * :py:mod:`robot.tidy` entry point for the `tidy`__ tool.
+  * :py:mod:`robot.rebot` entry point for post-processing outputs (Rebot).
+  * :py:mod:`robot.libdoc` entry point for Libdoc tool.
+  * :py:mod:`robot.testdoc` entry point for Testdoc tool.
+  * :py:mod:`robot.tidy` entry point for Tidy tool.
 
-__ http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html#libdoc
-__ http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html#testdoc
-__ http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html#tidy
+See `built-in tool documentation`__ for more details about Rebot, Libdoc,
+Testdoc, and Tidy tools.
+
+__ http://robotframework.org/robotframework/#built-in-tools
 
 Java entry points
 =================

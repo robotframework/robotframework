@@ -117,12 +117,12 @@ Alternative execution
 =====================
 
 Libdoc works with all interpreters supported by Robot Framework (Python,
-Jython and IronPython). In the examples above libdoc is executed as an
+Jython and IronPython). In the examples above Libdoc is executed as an
 installed module, but it can also be executed as a script like
 `python path/robot/libdoc.py`.
 
-For more information see libdoc section in Robot Framework User Guide at
-http://code.google.com/p/robotframework/wiki/UserGuide
+For more information about Libdoc and other built-in tools, see
+http://robotframework.org/robotframework/#built-in-tools.
 """
 
 import sys

@@ -249,7 +249,7 @@ class Telnet:
     in format like '15 seconds' or '1min 10s'. If the timeout is given as
     just a number, for example, '10' or '1.5', it is considered to be seconds.
     The time string format is described in more detail in an appendix of
-    [http://code.google.com/p/robotframework/wiki/UserGuide|Robot Framework User Guide].
+    [http://robotframework.org/robotframework/#user-guide|Robot Framework User Guide].
     """
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()

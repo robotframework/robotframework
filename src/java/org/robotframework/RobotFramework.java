@@ -53,9 +53,10 @@ public class RobotFramework {
      * @param args
      *              The command line options to Robot Framework.
      *
-     * @return      Robot Framework return code. See the {@link
-     *              <a href="http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html">
-     *              the user guide</a>} for meaning of different return codes.
+     * @return      Robot Framework return code. See
+     *              <a href="http://robotframework.org/robotframework/#user-guide"
+                       target="_top">Robot Framework User Guide</a>
+     *              for meaning of different return codes.
      */
     public static int run(String[] args) {
         RobotRunner runner = new RunnerFactory().createRunner();
