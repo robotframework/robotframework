@@ -163,7 +163,6 @@ def create_distribution():
 
     ugpath, version = create_userguide()  # we are in doc/userguide after this
     outdir = 'robotframework-userguide-%s' % version
-    tools = os.path.join(outdir, 'tools')
     templates = os.path.join(outdir, 'templates')
     libraries = os.path.join(outdir, 'libraries')
     images = os.path.join(outdir, 'images')
@@ -173,7 +172,7 @@ def create_distribution():
         print 'Removing previous user guide distribution'
         shutil.rmtree(outdir)
 
-    for dirname in [outdir, tools, templates, libraries, images]:
+    for dirname in [outdir, templates, libraries, images]:
         print "Creating output directory '%s'" % dirname
         os.mkdir(dirname)
 
@@ -185,11 +184,7 @@ def create_distribution():
             return res.group(0)
         replaced_link = '%s %s="%%s/%s"' % (res.group(1), res.group(4),
                                             os.path.basename(path))
-        if path.startswith('../../tools'):
-            copy(path, tools)
-            copy_tool_images(path)
-            replaced_link = replaced_link % 'tools'
-        elif path.startswith('../../templates'):
+        if path.startswith('../../templates'):
             copy(path, templates)
             replaced_link = replaced_link % 'templates'
         elif path.startswith('../libraries'):
@@ -207,12 +202,6 @@ def create_distribution():
     def copy(source, dest):
         print "Copying '%s' -> '%s'" % (source, dest)
         shutil.copy(source, dest)
-
-    def copy_tool_images(path):
-        indir = os.path.dirname(path)
-        for line in open(os.path.splitext(path)[0]+'.txt').readlines():
-            if line.startswith('.. figure::'):
-                copy(os.path.join(indir, line.strip().split()[-1]), tools)
 
     link_regexp = re.compile('''
 (<(a|img)\s+.*?)
