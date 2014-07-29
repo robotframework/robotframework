@@ -11,3 +11,5 @@ ext-lib
 *.iml
 .DS_Store
 doc/api/_build
+doc/libraries/*.html
+doc/userguide/RobotFrameworkUserGuide.html
