@@ -15,6 +15,7 @@
 import re
 import inspect
 from functools import partial
+from contextlib import contextmanager
 from UserDict import UserDict
 try:
     from java.lang.System import getProperty as getJavaSystemProperty
@@ -419,18 +420,31 @@ class DelayedVariable(object):
     def __init__(self, value, error_reporter):
         self._value = value
         self._error_reporter = error_reporter
+        self._resolving = False
 
     def resolve(self, name, variables):
         try:
             value = self._resolve(name, variables)
         except DataError, err:
-            self._error_reporter(unicode(err))
             variables.pop(name)
+            self._error_reporter(unicode(err))
             raise DataError("Non-existing variable '%s'." % name)
         variables[name] = value
         return value
 
     def _resolve(self, name, variables):
-        if is_list_var(name):
-            return variables.replace_list(self._value)
-        return variables.replace_scalar(self._value[0])
+        with self._avoid_recursion:
+            if is_list_var(name):
+                return variables.replace_list(self._value)
+            return variables.replace_scalar(self._value[0])
+
+    @property
+    @contextmanager
+    def _avoid_recursion(self):
+        if self._resolving:
+            raise DataError('Recursive variable definition.')
+        self._resolving = True
+        try:
+            yield
+        finally:
+            self._resolving = False
