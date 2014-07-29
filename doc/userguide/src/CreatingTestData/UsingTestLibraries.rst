@@ -225,6 +225,7 @@ documentations:
 
   - BuiltIn_
   - Collections_
+  - DateTime_
   - Dialogs_
   - OperatingSystem_
   - Process_
@@ -235,6 +236,7 @@ documentations:
 
 .. _BuiltIn: ../libraries/BuiltIn.html
 .. _Collections: ../libraries/Collections.html
+.. _DateTime: ../libraries/DateTime.html
 .. _Dialogs: ../libraries/Dialogs.html
 .. _OperatingSystem: ../libraries/OperatingSystem.html
 .. _Process: ../libraries/Process.html

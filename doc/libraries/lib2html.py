@@ -38,12 +38,16 @@ def create_libdoc(name):
     libdoc(ipath, opath)
 
 
+def create_all():
+    for name in sorted(set(LIBRARIES.values())):
+        create_libdoc(name)
+
+
 if __name__ == '__main__':
     try:
         name = sys.argv[1].lower()
         if name == 'all':
-            for name in sorted(set(LIBRARIES.values())):
-                create_libdoc(name)
+            create_all()
         else:
             create_libdoc(LIBRARIES[name])
     except (IndexError, KeyError):

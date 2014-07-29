@@ -1,12 +1,10 @@
 Time format
 ===========
 
-Robot Framework has its own time format that is used by several
-keywords (for example :name:`Sleep` and :name:`Wait Until Keyword
-Succeeds`) as well as `test case`__ and `user keyword timeouts`_. This
-format is meant to be both flexible to use and easy to understand.
-
-__ `test case timeouts`_
+Robot Framework has its own time format that is both flexible to use and easy
+to understand. It is used by several keywords (for example, BuiltIn_ keywords
+:name:`Sleep` and :name:`Wait Until Keyword Succeeds`), DateTime_ library, and
+`timeouts`_.
 
 Time as number
 --------------
@@ -14,8 +12,7 @@ Time as number
 The time can always be given as a plain number, in which case it is
 interpreted to be seconds. Both integers and floating point numbers
 work, and it is possible to use either real numbers or strings
-containing numerical values. This format is useful, for example, when
-the actual time value is calculated.
+containing numerical values.
 
 Time as time string
 -------------------
@@ -53,8 +50,8 @@ Time as "timer" string
 Starting from Robot Framework 2.8.5, time can also be given in timer like
 format :code:`hh:mm:ss.mil`. In this format  both hour and millisecond parts
 are optional, leading and trailing zeros can be left out when they are not
-meaningful, and negative times can be represented by adding :code:`-` prefix.
-For example, following timer and time string values are identical:
+meaningful, and negative times can be represented by adding the :code:`-`
+prefix. For example, following timer and time string values are identical:
 
 .. table:: Timer and time string examples
    :class: tabular
@@ -68,7 +65,7 @@ For example, following timer and time string values are identical:
    100:00:00     100 hours
    00:02         2 seconds
    42:00         42 minutes
-   00:00:00.123  123 milliseconds
+   00:01:02.003  1 minute 2 seconds 3 milliseconds
    00:01.5       1.5 seconds
-   -01:02:345    \- 1 minute 2 seconds 345 milliseconds
+   -01:02.345    \- 1 minute 2 seconds 345 milliseconds
    ============  ======================================
