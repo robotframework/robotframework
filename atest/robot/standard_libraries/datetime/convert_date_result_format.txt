@@ -7,6 +7,9 @@ Resource         atest_resource.txt
 Should convert to timestamp
     Check Test Case    ${TESTNAME}
 
+Timestamp should contain millis rounded to three digits
+    Check Test Case    ${TESTNAME}
+
 Should convert to timestamp with format
     Check Test Case    ${TESTNAME}
 

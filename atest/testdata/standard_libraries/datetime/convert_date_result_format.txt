@@ -18,6 +18,18 @@ Should convert to timestamp
                       ${DATE w/ MILLIS}          TimeStamp            2014-04-24 21:45:12.123
                       ${DATE w/ MICRO}           TimeStamp            2014-04-24 21:45:12.123
 
+Timestamp should contain millis rounded to three digits
+                      2014-07-30 17:31:00        timestamp            2014-07-30 17:31:00.000
+                      2014-07-30 17:31:00.000    timestamp            2014-07-30 17:31:00.000
+                      2014-07-30 17:31:00.0000   timestamp            2014-07-30 17:31:00.000
+                      2014-07-30 17:31:00.5      timestamp            2014-07-30 17:31:00.500
+                      2014-07-30 17:31:00.500    timestamp            2014-07-30 17:31:00.500
+                      2014-07-30 17:31:00.5000   timestamp            2014-07-30 17:31:00.500
+                      2014-07-30 17:31:00.9      timestamp            2014-07-30 17:31:00.900
+                      2014-07-30 17:31:00.999    timestamp            2014-07-30 17:31:00.999
+                      2014-07-30 17:31:00.9995   timestamp            2014-07-30 17:31:01.000
+                      2014-12-31 23:59:59.99999  timestamp            2015-01-01 00:00:00.000
+
 Should convert to timestamp with format
                       2014-04-24 21:45:12.123    %H:%M:%S %Y-%m-%d    21:45:12 2014-04-24
                       2014-04-24 21:45:12.999    %H:%M:%S %Y-%m-%d    21:45:12 2014-04-24
@@ -45,6 +57,7 @@ Should exclude milliseconds
                       [Template]    Date Conversion Should Succeed Without Milliseconds
                       2014-04-24 21:45:12.123    timestamp            2014-04-24 21:45:12
                       2014-04-24 21:45:12.999    timestamp            2014-04-24 21:45:13
+                      2014-04-24 21:45:12.99999  timestamp            2014-04-24 21:45:13
                       ${DATE}                    timestamp            2014-04-24 21:45:12
                       ${EPOCH + 0.123}           %Y-%m-%d %H:%M:%S    2014-04-24 21:45:12
                       ${EPOCH + 0.500}           %Y-%m-%d %H:%M:%S    2014-04-24 21:45:13
