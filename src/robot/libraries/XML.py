@@ -443,9 +443,18 @@ class XML(object):
         """
         with ETSource(source) as source:
             root = self.etree.parse(source).getroot()
+        if self.lxml_etree:
+            self._remove_comments(root)
         if not keep_clark_notation:
             NameSpaceStripper().strip(root)
         return root
+
+    def _remove_comments(self, node):
+        for comment in node.xpath('//comment()'):
+            parent = comment.getparent()
+            if parent:
+                self._preserve_tail(comment, parent)
+                parent.remove(comment)
 
     def get_element(self, source, xpath='.'):
         """Returns an element in the `source` matching the `xpath`.
@@ -1079,7 +1088,7 @@ class XML(object):
 
     def _remove_element(self, root, element, remove_tail=False):
         parent = self._find_parent(root, element)
-        if element.tail and not remove_tail:
+        if not remove_tail:
             self._preserve_tail(element, parent)
         parent.remove(element)
 
@@ -1091,6 +1100,8 @@ class XML(object):
         raise RuntimeError('Cannot remove root element.')
 
     def _preserve_tail(self, element, parent):
+        if not element.tail:
+            return
         index = list(parent).index(element)
         if index == 0:
             parent.text = (parent.text or '') + element.tail

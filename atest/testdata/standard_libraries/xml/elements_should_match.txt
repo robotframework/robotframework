@@ -68,7 +68,7 @@ Normalize whitespace
 
 Exclude children
     [Template]    Elements should match
-    ${TEST}    <test name="*">\n${SPACE*4}</test>    exclude_children=yes
+    ${TEST}    <test name="*">\n${SPACE*4}\n${SPACE*4}</test>    exclude_children=yes
     ${TEST}    <test name="????"/>    exclude    normalize
 
 *** Keywords ***
