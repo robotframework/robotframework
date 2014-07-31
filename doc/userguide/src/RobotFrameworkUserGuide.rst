@@ -232,3 +232,4 @@ __ http://creativecommons.org/licenses/by/3.0/
 .. _Read the Docs: http://readthedocs.org
 .. _AutoIT: http://www.autoitscript.com/autoit3
 .. _XML-RPC: http://www.xmlrpc.com/
+.. _RIDE: https://github.com/robotframework/RIDE
