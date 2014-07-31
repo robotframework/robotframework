@@ -1,0 +1,21 @@
+*** Settings ***
+Test Setup      Create Output Directory
+Force Tags      regression  pybot  jybot
+Resource        cli_resource.robot
+
+
+*** Test Cases ***
+
+Timestamped Outputs
+    Run Some Tests  --timestampoutputs
+    @{files} =  List Directory  ${CLI OUTDIR}
+    Should Be True  len(@{files}) == 3
+    :FOR  ${file}  IN  @{files}
+    \  Should Match Regexp  ${file}  (log|output|report)-20\\d{6}-\\d{6}\\.(html|xml)
+
+Timestamped Outputs With Names And Split Log
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --TimestampOutputs -l l -r r.html -o o --splitlog  ${TESTFILE}
+    @{files} =  List Directory  ${CLI OUTDIR}
+    Should Be True  len(@{files}) == 5
+    :FOR  ${file}  IN  @{files}
+    \  Should Match Regexp  ${file}  (l|o|r)-20\\d{6}-\\d{6}(\\.(html|xml)|-(1|2)\\.js)
