@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --variable meta_value_from_cli:my_metadata  core/suite_metadata.txt
+Suite Setup     Run Tests  --variable meta_value_from_cli:my_metadata  core/suite_metadata.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

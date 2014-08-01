@@ -1,5 +1,5 @@
 *** Settings ***
-Resource        resources/optional_given_when_then.txt
+Resource        resources/optional_given_when_then.robot
 
 *** Test Cases ***
 In user keyword name with normal arguments

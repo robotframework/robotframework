@@ -1,11 +1,11 @@
 *** Settings ***
 Documentation     Tests dynamic library that accepts **kwargs.
-...               Most tests are same as in with_dynamic_keywords.txt
+...               Most tests are same as in with_dynamic_keywords.robot
 ...               but there are tests at the end that actually use **kwargs.
 Suite Setup       Run Tests
 ...    --variable DynamicLibrary:DynamicLibraryWithKwargsSupport
-...    keywords/named_args/with_dynamic_keywords.txt
-...    keywords/named_args/with_dynamic_kwargs_support.txt
+...    keywords/named_args/with_dynamic_keywords.robot
+...    keywords/named_args/with_dynamic_kwargs_support.robot
 Force Tags        pybot    jybot    regression
 Resource          atest_resource.robot
 
@@ -61,7 +61,7 @@ Non working named combinations without varargs
 Nön äscii named arguments
     Check Test Case    ${TESTNAME}
 
-# Tests above same as in with_dynamic_keywords.txt but the library is different.
+# Tests above same as in with_dynamic_keywords.robot but the library is different.
 # Test below actually use **kwargs.
 
 Named combinations with kwargs

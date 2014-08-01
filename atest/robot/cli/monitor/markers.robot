@@ -4,7 +4,7 @@ Resource       monitor_resource.robot
 Suite Setup    Run Tests Without Processing Output   --monitormarkers on    ${TEST FILE}
 
 *** Variables ***
-${TEST FILE}    cli/monitor/markers.txt
+${TEST FILE}    cli/monitor/markers.robot
 ${SEPARATOR}    -
 
 *** Test Cases ***

@@ -4,7 +4,7 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 
 *** Variables ***
-${DATAFILE}      core/resource_and_variable_imports.txt
+${DATAFILE}      core/resource_and_variable_imports.robot
 ${RESDIR}        ${DATADIR}/core/resources_and_variables
 ${PPATH_RESDIR}  ${DATADIR}/../testresources/res_and_var_files
 
@@ -78,9 +78,9 @@ Resource Importing Library
 
 Re-Import Resource File
     [Template]    File Should Have Already Been Imported
-    Resource    resources.html
-    Resource    resources2.html
-    Resource    resources_imported_by_resource.html
+    Resource    resources.robot
+    Resource    resources2.robot
+    Resource    resources_imported_by_resource.robot
 
 Re-Import Variable File
     [Template]    File Should Have Already Been Imported
@@ -91,7 +91,7 @@ Re-Import Variable File
 
 Non-Existing Resource File
     Stderr Should Contain Error    ${DATAFILE}
-    ...  Resource file 'non_existing.html' does not exist
+    ...  Resource file 'non_existing.robot' does not exist
 
 Non-Existing Variable File
     Stderr Should Contain Error    ${DATAFILE}
@@ -103,23 +103,23 @@ Empty Resource File
 
 Invalid Resource Import Parameters
     Stderr Should Contain Error    ${DATAFILE}
-    ...  Resource file 'resources_and_variables${/}resources.html only one parameter allowed' does not exist
+    ...  Resource file 'resources_and_variables${/}resources.robot only one parameter allowed' does not exist
 
 Initialization file cannot be used as a resource file
-    ${path} =  Normalize Path  ${DATADIR}/core/test_suite_dir_with_init_file/__init__.txt
+    ${path} =  Normalize Path  ${DATADIR}/core/test_suite_dir_with_init_file/__init__.robot
     Stderr Should Contain Error    ${DATAFILE}
         ...  Initialization file '${path}' cannot be imported as a resource file.
-    ${path} =  Normalize Path  ${DATADIR}/core/test_suite_dir_with_init_file/sub_suite_with_init_file/__INIT__.txt
+    ${path} =  Normalize Path  ${DATADIR}/core/test_suite_dir_with_init_file/sub_suite_with_init_file/__INIT__.robot
     Stderr Should Contain Error    ${DATAFILE}
         ...  Initialization file '${path}' cannot be imported as a resource file.
 
 Invalid Setting In Resource File
-    Stderr Should Contain Error    ${RESDIR}/resources.html
+    Stderr Should Contain Error    ${RESDIR}/resources.robot
     ...  Non-existing setting 'Test Setup'.
-    Stderr Should Contain Error    ${RESDIR}/resources.html
-    ...  Non-existing setting 'Non existing'.
-    ${invres} =  Normalize Path  ${RESDIR}/resource_with_testcase_table.txt
-    Stderr Should Contain Error    ${RESDIR}/resources.html
+    Stderr Should Contain Error    ${RESDIR}/resources.robot
+    ...  Non-existing setting 'Non Existing'.
+    ${invres} =  Normalize Path  ${RESDIR}/resource_with_testcase_table.robot
+    Stderr Should Contain Error    ${RESDIR}/resources.robot
     ...  Resource file '${invres}' contains a test case table which is not allowed.
     Check Stderr Does Not Contain  AttributeError:
 

@@ -27,7 +27,7 @@ Nested Wait Until keywords are removed
 
 *** Keywords ***
 Remove Wait Until Keyword Succeeds with Rebot
-    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/wait_until_keyword_succeeds.txt
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/wait_until_keyword_succeeds.robot
     Run Rebot    --removekeywords wuKs    ${INPUTFILE}
 
 Check Number Of Keywords

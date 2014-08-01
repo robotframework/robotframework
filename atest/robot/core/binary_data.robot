@@ -48,7 +48,7 @@ Binary Data
 
 *** Keywords ***
 My Run Tests
-    Run Tests  ${EMPTY}  core/binary_data.txt
+    Run Tests  ${EMPTY}  core/binary_data.robot
     ${stderr} =  Get Stderr
     Should Be Empty  ${stderr}
 

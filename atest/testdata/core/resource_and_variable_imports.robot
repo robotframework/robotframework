@@ -1,9 +1,9 @@
 *** Settings ***
 Documentation   NO RIDE: Imports contain invalid syntax on purpose
 
-Resource     resources_and_variables/resources.html
-Resource     RESOURCES_AND_VARIABLES/resources.html  # Normalize on Windows
-Resource     ${resource_dir}/resources2.html
+Resource     resources_and_variables/resources.robot
+Resource     RESOURCES_AND_VARIABLES/resources.robot  # Normalize on Windows
+Resource     ${resource_dir}/resources2.robot
 Variables    resources_and_variables/variables.py
 Variables    ${variables2_file}
 
@@ -25,20 +25,20 @@ Variables    resvar_subdir/variables_in_pythonpath_2.py
 ...          Variable from variable file    in PYTHONPATH    (version 2)
 
 # Duplicate imports should be ignored with a message to syslog
-Resource     resources_and_variables/resources.html
-Resource     ${resource_dir}/resources2.html
-Resource     ${resource_dir}/resources_imported_by_resource.html
+Resource     resources_and_variables/resources.robot
+Resource     ${resource_dir}/resources2.robot
+Resource     ${resource_dir}/resources_imported_by_resource.robot
 Variables    resources_and_variables/variables.py
 Variables    ${resource_dir}/variables2.py
 Variables    ${resource_dir}/variables_imported_by_resource.py
 Variables    resources_and_variables/dynamic_variables.py    One arg works
 
 # Invalid imports
-Resource     non_existing.html
+Resource     non_existing.robot
 Variables    non_existing.py
 Resource     ${resource_dir}/invalid_resource.html
-Resource     resources_and_variables/resources.html   only one parameter allowed
-Resource     test_suite_dir_with_init_file/__init__.txt
+Resource     resources_and_variables/resources.robot   only one parameter allowed
+Resource     test_suite_dir_with_init_file/__init__.robot
 Resource     ${INIT FILE}
 Variables    ${resource_dir}/invalid_variable_file.py
 Variables    resources_and_variables/dynamicVariables.py    ${non_existing_var_as_arg}
@@ -48,17 +48,17 @@ Variables    resources_and_variables/invalid_list_variable.py
 ${resource_dir}       ${CURDIR}${/}resources_and_variables
 ${variables2_file}    ${resource_dir}/variables2.py
 ${works}              works
-${INIT FILE}          ${CURDIR}/test_suite_dir_with_init_file/sub_suite_with_init_file/__INIT__.txt
+${INIT FILE}          ${CURDIR}/test_suite_dir_with_init_file/sub_suite_with_init_file/__INIT__.robot
 
 *** Test Cases ***
 Normal Resource Import
     [Documentation]  Test that path given in resource import is relative to the current directory and that '/' is converted to correct path separator depending on os.
-    Should Be Equal  ${resources}  Variable from resources.html
+    Should Be Equal  ${resources}  Variable from resources.robot
     Resources
 
 Resource Import With Variables
     [Documentation]  Test that variables can be used in resource import path. Also test that path can be absolute.
-    Should Be Equal  ${resources2}  Variable from resources2.html
+    Should Be Equal  ${resources2}  Variable from resources2.robot
     Resources2
 
 Normal Variable Import
@@ -102,8 +102,8 @@ Dynamic Variable File With Variables And Backslashes In Args
     Should Be Equal  ${dyn_multi_args_getVar_x}  This 1 works back \\ slash \${escaped} ${CURDIR}
 
 Resource Importing Resources
-    [Documentation]  Test that resource file can import more resources. resources_imported_by_resource.html was imported ok by resources.html
-    Should Be Equal  ${resources_imported_by_resource}  Variable from resources_imported_by_resource.html
+    [Documentation]  Test that resource file can import more resources. resources_imported_by_resource.robot was imported ok by resources.robot
+    Should Be Equal  ${resources_imported_by_resource}  Variable from resources_imported_by_resource.robot
     Resources Imported By Resource
 
 Resource Importing Variables

@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    This suite should be split. Please don't add more tests but
 ...              create a new suite and move related tests from here to it too.
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/process_library.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/process_library.robot
 Force Tags       regression    pybot    jybot
 Resource         process_resource.robot
 

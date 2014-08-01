@@ -19,7 +19,7 @@ Stops on error when output contains only passing test cases
     ...  [ ERROR ] Collecting failed tests from '${RUN FAILED FROM}' failed: All tests passed.${USAGE TIP}\n
 
 Stops on error when output contains only non-existing failing test cases
-    Generate output  cli/runfailed/runfailed2.txt
+    Generate output  cli/runfailed/runfailed2.robot
     Run Tests Without Processing Output  --RERUN ${RUN FAILED FROM}  cli/runfailed/onlypassing
     Stderr Should Be Equal To
     ...  [ ERROR ]  Suite 'Onlypassing' contains no tests named 'Runfailed2.Failing' or 'Runfailed2.Failing With Tag'.${USAGE TIP}\n

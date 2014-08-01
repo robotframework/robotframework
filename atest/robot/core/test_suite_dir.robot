@@ -42,7 +42,7 @@ File Without Extension
     Check Syslog Contains  Ignoring file or directory 'no_extension'.
 
 File and Directory Starting with _
-    Check Syslog Contains  Ignoring file or directory '_ignore_this_file.txt'.
+    Check Syslog Contains  Ignoring file or directory '_ignore_this_file.robot'.
     Check Syslog Contains  Ignoring file or directory '_ignore_this_dir'.
 
 *** Keywords ***

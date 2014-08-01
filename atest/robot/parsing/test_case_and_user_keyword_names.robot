@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  parsing/test_case_and_user_keyword_names.txt
+Suite Setup     Run Tests  ${EMPTY}  parsing/test_case_and_user_keyword_names.robot
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 

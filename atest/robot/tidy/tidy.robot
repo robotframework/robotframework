@@ -4,7 +4,7 @@ Resource          tidy_resource.robot
 Test Setup        Create Directory     ${TEMP}
 Test Teardown     Remove Directory     ${TEMP}    recursive=True
 
-*** Test cases ***
+*** Test Cases ***
 Tidying single test case file
     [Documentation]   Test tidying to different formats
     [Template]    Run tidy with golden file and check result
@@ -17,14 +17,14 @@ Tidying single test case file
 
 Tidying single resource file
     [Template]    Run tidy with golden resource file and check result
-    ${EMPTY}    golden_resource.txt
-    -p    golden_pipes_resource.txt
+    ${EMPTY}    golden_resource.robot
+    -p    golden_pipes_resource.robot
     -f tsv    golden_resource.tsv
     --FORMAT html    golden_resource.html
-    --FOR ROBOT    golden_resource.txt
+    --FOR ROBOT    golden_resource.robot
 
 Tidying single init file
-    Run tidy and check result    ${EMPTY}    __init__.txt
+    Run tidy and check result    ${EMPTY}    __init__.robot
     File Should Exist    ${TEMP FILE}
 
 Tidying single file without output file prints output to console

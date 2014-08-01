@@ -15,7 +15,7 @@ Run tidy with golden file and check result
 
 Run tidy with golden resource file and check result
     [Arguments]    ${options}    ${expected}
-    ${output} =    Run tidy and check result    ${options}    golden_resource.txt    expected=${expected}
+    ${output} =    Run tidy and check result    ${options}    golden_resource.robot    expected=${expected}
     [Return]    ${output}
 
 Check file count

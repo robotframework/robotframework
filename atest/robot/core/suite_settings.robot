@@ -28,7 +28,7 @@ Suite Suite Teardown
 
 *** Keywords ***
 My Setup
-    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log  core/suite_settings.txt
+    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log  core/suite_settings.robot
 
 Verify Setup
     [Arguments]  ${item}  ${expected_name}  ${expected_message}

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/is_process_alive.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/is_process_alive.robot
 Force Tags       regression    pybot    jybot
 Resource         process_resource.robot
 

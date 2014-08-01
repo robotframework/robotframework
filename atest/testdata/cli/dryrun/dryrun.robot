@@ -1,7 +1,7 @@
 *** Settings ***
 Library  OperatingSystem
 Variables  vars.py
-Resource  ${RESOURCE PATH}
+Resource  ${RESOURCE PATH_FROM_VARS}
 
 Library  DoesNotExist
 Variables  wrong_path.py
@@ -110,4 +110,3 @@ UK with multiple failures
     Invalid Syntax UK
     Log  too  many  arguments  here  we  have
     Yet another non-existing keyword
-

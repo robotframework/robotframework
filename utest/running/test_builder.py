@@ -96,7 +96,7 @@ class TestBuilding(unittest.TestCase):
         assert_equals([kw.name for kw in kws.normal], ['Keyword'])
 
     def test_test_timeout(self):
-        tests = build('timeouts.txt').tests
+        tests = build('timeouts.robot').tests
         assert_equals(tests[0].timeout.value, '1min 42s')
         assert_equals(tests[0].timeout.message, '')
         assert_equals(tests[1].timeout.value, '1d2h')
@@ -106,7 +106,7 @@ class TestBuilding(unittest.TestCase):
 
     def test_keyword_timeout(self):
         # TODO: Tests and uks have inconsistent timeout types.
-        kw = build('timeouts.txt').user_keywords[0]
+        kw = build('timeouts.robot').user_keywords[0]
         assert_equals(kw.timeout.value, '42')
         assert_equals(kw.timeout.message, 'My message')
 

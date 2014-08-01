@@ -22,5 +22,5 @@ Test Case Documentation With Non-Existing Variables
 
 *** Keywords ***
 My Setup
-    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log --variable meta_from_cli:my_metadata  core/testcase_settings.txt
+    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log --variable meta_from_cli:my_metadata  core/testcase_settings.robot
 

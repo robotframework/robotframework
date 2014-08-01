@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Test cases for situations where non-existing keywords are used. Situations where keyword exist or the are too many keywords are tested in keyword_namespaces.html.
-Suite Setup     Run Tests  ${EMPTY}  keywords/keyword_not_found.txt
+Suite Setup     Run Tests  ${EMPTY}  keywords/keyword_not_found.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --loglevel TRACE  keywords/trace_log_keyword_arguments.txt
+Suite Setup     Run Tests  --loglevel TRACE  keywords/trace_log_keyword_arguments.robot
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 

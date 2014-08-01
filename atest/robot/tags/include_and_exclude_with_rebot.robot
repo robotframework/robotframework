@@ -7,8 +7,8 @@ Test Template     Run And Check Include And Exclude
 Resource          rebot_resource.robot
 
 *** Variables ***
-${TEST FILE}      tags/include_and_exclude.txt
-${TEST FILE2}     tags/no_force_no_default_tags.txt
+${TEST FILE}      tags/include_and_exclude.robot
+${TEST FILE2}     tags/no_force_no_default_tags.robot
 ${INPUT FILE}     %{TEMPDIR}/robot-tags-input.xml
 ${INPUT FILE 2}    %{TEMPDIR}/robot-tags-input-2.xml
 @{INPUT FILES}    ${INPUT FILE}

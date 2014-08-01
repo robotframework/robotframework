@@ -11,10 +11,10 @@ List all keywords
     ...   Pause Execution
 
 List some keywords
-    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.txt list o
+    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot list o
     ...   Keyword with some "stuff" to <escape>
     ...   non ascii doc
-    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.txt LIST KW? C*R
+    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot LIST KW? C*R
     ...   curdir
     ...   kw 3
     ...   kw 4
@@ -48,7 +48,7 @@ Show intro only
     Should Not Contain Keyword    Write
 
 Show intro and keywords
-    ${output}=    Run Libdoc    ${TESTDATADIR}/resource.txt SHOW NONASC* INTRO
+    ${output}=    Run Libdoc    ${TESTDATADIR}/resource.robot SHOW NONASC* INTRO
     Should Contain Intro    resource    Named arguments:${SPACE*2}supported
     Should Contain Keyword    non ascii doc    ${EMPTY}
     ...    Hyvää yötä.
@@ -58,7 +58,7 @@ Show intro and keywords
 
 Show version
     Run Libdoc And Verify Output    ${TESTDATADIR}/module.py version    0.1-alpha
-    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.txt version    N/A
+    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.robot version    N/A
 
 *** Keywords ***
 Should Contain Intro

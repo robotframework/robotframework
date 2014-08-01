@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --dryrun  cli/dryrun/dryrun.txt  cli/dryrun/more_tests.txt
+Suite Setup     Run Tests  --dryrun  cli/dryrun/dryrun.robot  cli/dryrun/more_tests.robot
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 

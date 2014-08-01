@@ -1,6 +1,6 @@
 *** Settings ***
 Library     Library.py
-Resource    resource.txt
+Resource    resource.robot
 
 *** Test Cases ***
 Valid positional args

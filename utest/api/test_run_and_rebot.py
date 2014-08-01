@@ -130,7 +130,7 @@ class TestRebot(RunningTestCase):
 class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_importer_caches_are_cleared_between_runs(self):
-        data = join(ROOT, 'atest', 'testdata', 'core', 'import_settings.txt')
+        data = join(ROOT, 'atest', 'testdata', 'core', 'import_settings.robot')
         run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO())
         lib = self._import_library()
         res = self._import_resource()

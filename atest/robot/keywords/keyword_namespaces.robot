@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Testing that keyword namespaces -- test case file user keywords, resource user keywords, base keywords -- work correctly and have correct priorities. Situations where more than one keyword with same name exists are tested also. Non-existing keywords are tested in keyword_not_found.html.
-Suite Setup     Run Tests  ${EMPTY}  keywords/keyword_namespaces.txt
+Suite Setup     Run Tests  ${EMPTY}  keywords/keyword_namespaces.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

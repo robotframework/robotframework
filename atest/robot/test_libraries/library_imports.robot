@@ -43,7 +43,7 @@ Library Import With Variables
     Check Test Case  Verify Library Import With List Variable
 
 Library Import With Variables From Resource File
-    Run Tests  ${EMPTY}  test_libraries/library_import_with_variable_from_resource.txt
+    Run Tests  ${EMPTY}  test_libraries/library_import_with_variable_from_resource.robot
     Check Test Case  Verify Library Import With Variable In Name
     Check Test Case  Verify Library Import With List Variable
 

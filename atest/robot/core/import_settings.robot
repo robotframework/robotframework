@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  \  core/import_settings.txt
+Suite Setup     Run Tests  \  core/import_settings.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

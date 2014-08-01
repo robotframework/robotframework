@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/deprecated_os/misc.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/deprecated_os/misc.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

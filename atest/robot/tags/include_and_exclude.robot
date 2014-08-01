@@ -4,7 +4,7 @@ Test Template     Run And Check Include And Exclude
 Resource          atest_resource.robot
 
 *** Variables ***
-@{DATA SOURCES}   tags/include_and_exclude.txt
+@{DATA SOURCES}   tags/include_and_exclude.robot
 ${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
 @{EXCL_ALL}       Excl-1    Excl-12    Excl-123
@@ -79,11 +79,11 @@ Include and Exclude with NOT
     --include incl1NOTincl3 --exclude incl1NOTincl2    Incl-12
 
 Select tests without any tags
-    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.txt
+    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.robot
     --exclude STAR    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
-    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.txt
+    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.robot
     --include STAR    Own Tags No Force Nor Default
 
 Non Matching Include

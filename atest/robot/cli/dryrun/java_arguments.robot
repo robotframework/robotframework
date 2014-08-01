@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    --dryrun    keywords/java_arguments.txt
+Suite Setup      Run Tests    --dryrun    keywords/java_arguments.robot
 Force Tags       regression    jybot
 Resource         atest_resource.robot
 

@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   This feature has been depreaced in 2.0.4 and will be removed in 2.2. See issue 193 for more information.
-Suite Setup     Run Tests  ${EMPTY}  keywords/repeating_keyword.txt
+Suite Setup     Run Tests  ${EMPTY}  keywords/repeating_keyword.robot
 Force Tags      regression  smoke  jybot  pybot
 Resource        atest_resource.robot
 

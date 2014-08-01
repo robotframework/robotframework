@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    --dryrun    cli/dryrun/kwargs.txt
+Suite Setup      Run Tests    --dryrun    cli/dryrun/kwargs.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 

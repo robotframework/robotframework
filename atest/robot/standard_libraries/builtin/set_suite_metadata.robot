@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/set_suite_metadata.txt    misc/pass_and_fail.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/set_suite_metadata.robot    misc/pass_and_fail.txt
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
 
