@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    binary_result.txt    binaryresult.py
+Suite Setup      Run Remote Tests    binary_result.robot    binaryresult.py
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.robot
 

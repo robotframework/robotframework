@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/string/encode_decode.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/string/encode_decode.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 

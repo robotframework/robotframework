@@ -19,7 +19,7 @@ Listener errors are shown
 *** Keywords ***
 Run Tests With Failing Listener
     ${path} =  Normalize Path  ${DATADIR}/output/listeners/failing_listener.py
-    Run Tests  --listener ${path} -l l.html -r r.html  misc/pass_and_fail.txt
+    Run Tests  --listener ${path} -l l.html -r r.html  misc/pass_and_fail.robot
 
 Test statuses should be correct
     Check Test Case  Pass

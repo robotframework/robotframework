@@ -5,7 +5,7 @@ Resource        data_formats/formats_resource.robot
 *** Variables ***
 ${PARSING}  parsing
 ${NO TESTS}  ${PARSING}${/}notests
-${EMPTY TC TABLE} =  ${PARSING}${/}empty_testcase_table.txt
+${EMPTY TC TABLE} =  ${PARSING}${/}empty_testcase_table.robot
 ${EMPTY TC TABLE MSG} =  File has no test case table.
 
 

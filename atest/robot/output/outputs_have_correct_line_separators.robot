@@ -8,12 +8,12 @@ ${REBOT INFILE}    %{TEMPDIR}/robot-rebot-infile.xml
 *** Test Cases ***
 
 Outputs generated at runtime should have correct line separators
-    Run Tests    -l log -r report -x xunit -b debug -L DEBUG    misc/pass_and_fail.txt
+    Run Tests    -l log -r report -x xunit -b debug -L DEBUG    misc/pass_and_fail.robot
     Outputs Should Have Correct Line Separators
     ...    output.xml    log.html    report.html    xunit.xml    debug.txt
 
 Split logs generated at runtime should have correct line separators
-    Run Tests    -l log --splitlog -L DEBUG    misc/pass_and_fail.txt
+    Run Tests    -l log --splitlog -L DEBUG    misc/pass_and_fail.robot
     Outputs Should Have Correct Line Separators
     ...    output.xml    log.html    log-1.js    log-2.js    log-3.js
 

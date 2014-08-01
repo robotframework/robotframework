@@ -70,11 +70,11 @@ Suite And Test Counts
     Stderr Should Be Empty
 
 Suite Source
-    Run Tests  --listener listeners.SuiteSource --name Root  misc/suites/subsuites  misc/pass_and_fail.txt
+    Run Tests  --listener listeners.SuiteSource --name Root  misc/suites/subsuites  misc/pass_and_fail.robot
     Stderr Should Be Empty
 
 Keyword Type
-    Run Tests  --listener listeners.KeywordType  misc/setups_and_teardowns.txt
+    Run Tests  --listener listeners.KeywordType  misc/setups_and_teardowns.robot
     Stderr Should Be Empty
 
 Suite And Test Counts With Java
@@ -83,7 +83,7 @@ Suite And Test Counts With Java
     Stderr Should Be Empty
 
 Executing Keywords from Listeners
-    Run Tests  --listener listeners.KeywordExecutingListener  misc/pass_and_fail.txt
+    Run Tests  --listener listeners.KeywordExecutingListener  misc/pass_and_fail.robot
     ${tc}=  Get Test Case  Pass
     Check Log Message  ${tc.kws[0].msgs[0]}  Start Pass
     Check Log Message  ${tc.kws[2].msgs[0]}  End Pass
@@ -91,7 +91,7 @@ Executing Keywords from Listeners
 Test Template
     ${listener} =  Normalize Path  ${CURDIR}/../../../testdata/output/listeners/verify_template_listener.py
     File Should Exist  ${listener}
-    Run Tests  --listener ${listener}  output/listeners/test_template.txt
+    Run Tests  --listener ${listener}  output/listeners/test_template.robot
     Stderr Should Be Empty
 
 
@@ -102,7 +102,7 @@ Run Tests With Listeners
     ...  --listener module_listener --listener listeners.ListenSome --listener JavaListener
     ...  --listener attributeverifyinglistener --listener JavaAttributeVerifyingListener
     ...  --metadata ListenerMeta:Hello --critical pass
-    Run Tests  ${args}  misc/pass_and_fail.txt
+    Run Tests  ${args}  misc/pass_and_fail.robot
 
 Check Listen All File
     [Arguments]  ${filename}

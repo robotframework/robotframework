@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/namespaces_with_lxml.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/namespaces_with_lxml.robot
 Test Teardown    Make test non-critical if lxml not available
 Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot

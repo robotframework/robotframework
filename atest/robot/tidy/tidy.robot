@@ -8,12 +8,12 @@ Test Teardown     Remove Directory     ${TEMP}    recursive=True
 Tidying single test case file
     [Documentation]   Test tidying to different formats
     [Template]    Run tidy with golden file and check result
-    ${EMPTY}            golden.txt
-    --usepipes -f txt   golden_pipes.txt
+    ${EMPTY}            golden.robot
+    --usepipes -f txt   golden_pipes.robot
     --format tsv        golden.tsv
     --format html       golden.html
-    --for robot         golden.txt
-    --spacecount 2      golden_two_spaces.txt
+    --for robot         golden.robot
+    --spacecount 2      golden_two_spaces.robot
 
 Tidying single resource file
     [Template]    Run tidy with golden resource file and check result
@@ -29,12 +29,12 @@ Tidying single init file
 
 Tidying single file without output file prints output to console
     [Documentation]    Depending on console encoding, non-ASCII characters may not be shown correctly
-    ${stdout} =    Run tidy    ${EMPTY}    golden.txt    output=${NONE}
-    Compare tidy results    ${stdout}    golden.txt    \\s+Log Many\\s+Non-ASCII:.*\\s+\\$\\{CURDIR\\}
+    ${stdout} =    Run tidy    ${EMPTY}    golden.robot    output=${NONE}
+    Compare tidy results    ${stdout}    golden.robot    \\s+Log Many\\s+Non-ASCII:.*\\s+\\$\\{CURDIR\\}
     File Should Not Exist    ${TEMP FILE}
 
 Default format is got from output file
-    Run tidy    ${EMPTY}    ${DATA}/golden.txt    ${TEMP}/golden.html
+    Run tidy    ${EMPTY}    ${DATA}/golden.robot    ${TEMP}/golden.html
     Compare tidy results    ${TEMP}/golden.html    ${DATA}/golden.html
 
 Tidying directory
@@ -51,10 +51,10 @@ Tidying directory
     Should Be Equal    ${output_before}    ${output_after}
 
 Custom headers are preserved and tables aligned accordingly
-    Run tidy and check result    ${EMPTY}     golden_with_headers.txt
+    Run tidy and check result    ${EMPTY}     golden_with_headers.robot
 
 Running Tidy as a script
-    Run tidy as a script and check result    ${EMPTY}    golden.txt
+    Run tidy as a script and check result    ${EMPTY}    golden.robot
 
 
 *** Keywords ***

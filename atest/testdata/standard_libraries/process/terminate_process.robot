@@ -4,7 +4,7 @@ Test Setup        Run Keywords
 ...               Remove File    ${TEMPFILE}
 Test Teardown     Terminate All Processes    kill=True
 Library           Collections
-Resource          resource.txt
+Resource          resource.robot
 
 *** Variables ***
 ${NONTERM}        ${CURDIR}${/}files${/}non_terminable.py

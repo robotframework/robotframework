@@ -6,7 +6,7 @@ Resource        atest_resource.robot
 *** Test Cases ***
 Test Case File Suite
     [Documentation]  Testing that output file created from simple test case file is correct.
-    My Run Robot And Rebot  ${EMPTY}  misc/normal.txt
+    My Run Robot And Rebot  ${EMPTY}  misc/normal.robot
     Should Be Equal  ${SUITE.name}  Normal
     Should Be Equal  ${SUITE.doc}  Normal test cases
     Should Be Equal  ${SUITE.metadata['Something']}  My Value

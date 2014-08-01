@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/timestamps_for_stdout_messages.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/timestamps_for_stdout_messages.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot

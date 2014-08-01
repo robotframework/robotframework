@@ -3,7 +3,7 @@ Documentation    Tests for different file and directory names.
 ...    These are, for most parts, tested also elsewhere.
 ...    Tests with non-ASCII chars having ordinal over 255 fail on Jython due to
 ...    http://bugs.jython.org/issue1658
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/special_names.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/special_names.robot
 Test Setup       Make Tests Failing On Jython/Windows Non Critical If Using That Combo
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/set_element_information.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/set_element_information.robot
 Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 

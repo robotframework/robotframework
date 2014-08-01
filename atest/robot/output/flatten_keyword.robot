@@ -88,12 +88,12 @@ Flatten for loop items
 Invalid usage
     Run Rebot Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   ${ORIG OUTFILE}
     Stderr Should Be Equal To    ${ERROR}
-    Run Tests Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   output/flatten_keywords.txt
+    Run Tests Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   output/flatten_keywords.robot
     Stderr Should Be Equal To    ${ERROR}
 
 *** Keywords ***
 Run And Rebot Flattened
-    Run Tests Without Processing Output     ${FLATTEN}    output/flatten_keywords.txt
+    Run Tests Without Processing Output     ${FLATTEN}    output/flatten_keywords.robot
     ${LOG} =    Get File    ${OUTDIR}/log.html
     Set Suite Variable    $LOG
     Set Suite Variable    $ORIG OUTFILE    ${OUTFILE}

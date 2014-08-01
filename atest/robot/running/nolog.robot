@@ -13,7 +13,7 @@ Should be same
 
 *** Keywords ***
 Run With Options  [Arguments]   ${options}
-    Run Tests  ${options} -r pybotreport.html   misc/pass_and_fail.txt
+    Run Tests  ${options} -r pybotreport.html   misc/pass_and_fail.robot
     Copy File   ${OUTDIR}${/}pybotreport.html   %{TEMPDIR}${/}pybotreport.html
     Run Rebot  -r rebotreport.html ${options}   ${OUTFILE}
     Copy File   ${OUTDIR}${/}rebotreport.html   %{TEMPDIR}${/}rebotreport.html

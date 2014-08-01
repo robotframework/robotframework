@@ -51,7 +51,7 @@ Run Test Data
     ...  --VariableFile pythonpath_varfile.py
     ...  --VariableFile pythonpath_varfile.py:1:2:3
     ...  --pythonpath ${VARFILEDIR}/pythonpath_dir
-    Run Tests  ${options}  variables/commandline_variable_files.txt
+    Run Tests  ${options}  variables/commandline_variable_files.robot
     ${VF2} =  Normalize Path  ${VARFILEDIR}/cli_vars_2.py
     ${VF3} =  Normalize Path  ${VARFILEDIR}/non_existing.py
     ${VF4} =  Normalize Path  non_absolute_non_existing.py

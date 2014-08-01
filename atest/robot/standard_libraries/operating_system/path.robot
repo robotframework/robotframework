@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/path.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/path.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

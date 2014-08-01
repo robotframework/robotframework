@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/get_matching_lines.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/get_matching_lines.robot
 Force Tags        pybot    jybot    regression
 Resource          atest_resource.robot
 

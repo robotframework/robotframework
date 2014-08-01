@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_args_and_docs.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_args_and_docs.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Test Template   Check test case and its doc

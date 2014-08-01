@@ -27,31 +27,31 @@ def assert_keyword(kw, assign=(), name='', args=(), type='kw'):
 class TestBuilding(unittest.TestCase):
 
     def test_suite_data(self):
-        suite = build('pass_and_fail.txt')
+        suite = build('pass_and_fail.robot')
         assert_equals(suite.name, 'Pass And Fail')
         assert_equals(suite.doc, 'Some tests here')
         assert_equals(suite.metadata, {})
 
     def test_imports(self):
-        imp = build('dummy_lib_test.txt').imports[0]
+        imp = build('dummy_lib_test.robot').imports[0]
         assert_equals(imp.type, 'Library')
         assert_equals(imp.name, 'DummyLib')
         assert_equals(imp.args, ())
 
     def test_variables(self):
-        variables = build('pass_and_fail.txt').variables
+        variables = build('pass_and_fail.robot').variables
         assert_equals(variables[0].name, '${LEVEL1}')
         assert_equals(variables[0].value, ['INFO'])
         assert_equals(variables[1].name, '${LEVEL2}')
         assert_equals(variables[1].value, ['DEBUG'])
 
     def test_user_keywords(self):
-        uk = build('pass_and_fail.txt').user_keywords[0]
+        uk = build('pass_and_fail.robot').user_keywords[0]
         assert_equals(uk.name, 'My Keyword')
         assert_equals(uk.args, ('${who}',))
 
     def test_test_data(self):
-        test = build('pass_and_fail.txt').tests[1]
+        test = build('pass_and_fail.robot').tests[1]
         assert_equals(test.name, 'Fail')
         assert_equals(test.doc, 'FAIL Expected failure')
         assert_equals(list(test.tags), ['fail', 'force'])
@@ -59,11 +59,11 @@ class TestBuilding(unittest.TestCase):
         assert_equals(test.template, None)
 
     def test_test_keywords(self):
-        kw = build('pass_and_fail.txt').tests[0].keywords[0]
+        kw = build('pass_and_fail.robot').tests[0].keywords[0]
         assert_keyword(kw, (), 'My Keyword', ('Pass',))
 
     def test_assign(self):
-        kw = build('unicode.txt').tests[1].keywords[0]
+        kw = build('unicode.robot').tests[1].keywords[0]
         assert_keyword(kw, ('${msg} =',), 'Evaluate', (r"u'Fran\\xe7ais'",))
 
     def test_directory_suite(self):
@@ -76,19 +76,19 @@ class TestBuilding(unittest.TestCase):
         assert_equals(suite.suites[1].suites[1].tests[0].id, 's1-s2-s2-t1')
 
     def test_multiple_inputs(self):
-        suite = build('pass_and_fail.txt', 'normal.txt')
+        suite = build('pass_and_fail.robot', 'normal.robot')
         assert_equals(suite.name, 'Pass And Fail & Normal')
         assert_equals(suite.suites[0].name, 'Pass And Fail')
         assert_equals(suite.suites[1].name, 'Normal')
         assert_equals(suite.suites[1].tests[1].id, 's1-s2-t2')
 
     def test_suite_setup_and_teardown(self):
-        kws = build('setups_and_teardowns.txt').keywords
+        kws = build('setups_and_teardowns.robot').keywords
         assert_keyword(kws.setup, name='${SUITE SETUP}', type='setup')
         assert_keyword(kws.teardown, name='${SUITE TEARDOWN}', type='teardown')
 
     def test_test_setup_and_teardown(self):
-        kws = build('setups_and_teardowns.txt').tests[0].keywords
+        kws = build('setups_and_teardowns.robot').tests[0].keywords
         assert_keyword(kws.setup, name='Test Setup', type='setup')
         assert_keyword(kws.teardown, name='Test Teardown', type='teardown')
         assert_equals([kw.name for kw in kws],
@@ -114,12 +114,12 @@ class TestBuilding(unittest.TestCase):
 class TestTemplates(unittest.TestCase):
 
     def test_from_setting_table(self):
-        test = build('../running/test_template.txt').tests[0]
+        test = build('../running/test_template.robot').tests[0]
         assert_keyword(test.keywords[0], (), 'Should Be Equal', ('Fail', 'Fail'))
         assert_equals(test.template, 'Should Be Equal')
 
     def test_from_test_case(self):
-        test = build('../running/test_template.txt').tests[3]
+        test = build('../running/test_template.robot').tests[3]
         kws = test.keywords
         assert_keyword(kws[0], (), 'Should Not Be Equal', ('Same', 'Same'))
         assert_keyword(kws[1], (), 'Should Not Be Equal', ('42', '43'))
@@ -127,7 +127,7 @@ class TestTemplates(unittest.TestCase):
         assert_equals(test.template, 'Should Not Be Equal')
 
     def test_no_variable_assign(self):
-        test = build('../running/test_template.txt').tests[8]
+        test = build('../running/test_template.robot').tests[8]
         assert_keyword(test.keywords[0], (), 'Expect Exactly Three Args',
                        ('${SAME VARIABLE}', 'Variable content', '${VARIABLE}'))
         assert_equals(test.template, 'Expect Exactly Three Args')

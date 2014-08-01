@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    --loglevel debug    standard_libraries/xml/to_string.txt
+Suite Setup      Run Tests    --loglevel debug    standard_libraries/xml/to_string.robot
 Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 

@@ -102,7 +102,7 @@ Non Matching Include And Exclude
     --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
 
 Non Matching When Running Multiple Suites
-    [Setup]    Set Test Variable    @{DATA SOURCES}    misc/pass_and_fail.txt    misc/normal.txt
+    [Setup]    Set Test Variable    @{DATA SOURCES}    misc/pass_and_fail.robot    misc/normal.robot
     [Template]    Run And Check Error
     --include nonex    tag 'nonex'    Pass And Fail & Normal
     --include nonex --name MyName   tag 'nonex'    MyName

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup  Import Resource  ${CURDIR}/import_resource_resource_1.txt
+Suite Setup  Import Resource  ${CURDIR}/import_resource_resource_1.robot
 
 *** Variables ***
 ${VAR FROM IMPORT RESOURCE RESOURCE}  this should be overwritten
@@ -18,7 +18,7 @@ Import Resource With Sub Resources
     Should Be Equal  ${VAR FROM VARFILE X}  Default varfile value
 
 Import Resource In Test Case
-    Import Resource  ${CURDIR}/import_resource_resource_2.txt
+    Import Resource  ${CURDIR}/import_resource_resource_2.robot
     Verify Test Case Resource Import
     Verify Test Case Resource Import In User Keyword
 
@@ -39,15 +39,15 @@ Re-Import Resource
     Re-Import Resource And Verify Imports  2  upper
 
 Import Resource Failure Is Catchable
-    Run Keyword And Expect Error  Resource file 'non_existing.txt' does not exist.
-    ...  Import Resource  non_existing.txt
-    ${path} =    Normalize Path    ${CURDIR}/tags/__init__.txt
+    Run Keyword And Expect Error  Resource file 'non_existing.robot' does not exist.
+    ...  Import Resource  non_existing.robot
+    ${path} =    Normalize Path    ${CURDIR}/tags/__init__.robot
     Run Keyword And Expect Error  Initialization file '${path}' cannot be imported as a resource file.
     ...  Import Resource  ${path}
 
 *** User Keywords ***
 Import Resource In User Keyword
-    Import Resource  ${CURDIR}/import_resource_resource_3.txt
+    Import Resource  ${CURDIR}/import_resource_resource_3.robot
     Verify User Keyword Resource Import
 
 Verify User Keyword Resource Import
@@ -77,7 +77,7 @@ Verify String Is Imported
 
 Re-Import Resource And Verify Imports
     [Arguments]  ${num}  ${upper}=
-    ${path} =  Set Variable  ${CURDIR}/import_resource_resource_${num}.txt
+    ${path} =  Set Variable  ${CURDIR}/import_resource_resource_${num}.robot
     ${path} =  Set Variable If  ${WINDOWS} and '${upper}' == 'upper'  ${path.upper()}  ${path}
     Import Resource  ${path}
     Should Be Equal  ${COMMON VAR}  resource ${num}

@@ -20,8 +20,8 @@ Existing And Non-Existing Input
     ${MYINPUT} nönéx.xml nonex2.xml    Reading XML source 'nönéx\\.xml' failed: .*
 
 Non-XML Input
-    [Setup]    Create File    ${MYOUTDIR}/invalid.txt    Hello, world
-    ${MYOUTDIR}${/}invalid.txt    (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.txt' failed: .*
+    [Setup]    Create File    ${MYOUTDIR}/invalid.robot    Hello, world
+    ${MYOUTDIR}${/}invalid.robot    (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.robot' failed: .*
 
 Incompatible XML
     [Setup]    Create File    ${MYOUTDIR}/invalid.xml    <not><our>type</our></not>

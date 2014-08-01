@@ -1,6 +1,6 @@
 *** Settings ***
 Library           Process
-Resource          resource.txt
+Resource          resource.robot
 Test Setup        Run Robot Process
 Suite Teardown    Safe Remove File    ${TEMP FILE}
 

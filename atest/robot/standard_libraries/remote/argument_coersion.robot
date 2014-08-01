@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    argument_coersion.txt    arguments.py
+Suite Setup      Run Remote Tests    argument_coersion.robot    arguments.py
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.robot
 

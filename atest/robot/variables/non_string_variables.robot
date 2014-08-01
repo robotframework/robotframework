@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    variables/non_string_variables.txt
+Suite Setup      Run Tests    ${EMPTY}    variables/non_string_variables.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 Variables        ../../testdata/variables/non_string_variables.py    ${INTERPRETER}

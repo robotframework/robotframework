@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  misc/unicode.txt  core/unicode_failure_in_suite_setup_and_teardown.robot
+Suite Setup     Run Tests  ${EMPTY}  misc/unicode.robot  core/unicode_failure_in_suite_setup_and_teardown.robot
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 Variables       unicode_vars.py

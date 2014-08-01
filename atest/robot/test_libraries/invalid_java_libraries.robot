@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    test_libraries/invalid_java_libraries.txt
+Suite Setup      Run Tests    ${EMPTY}    test_libraries/invalid_java_libraries.robot
 Force Tags       regression    jybot
 Resource         atest_resource.robot
 
@@ -36,7 +36,7 @@ Limit Error
 
 Verify Error
     [Arguments]    ${index}    ${error}
-    ${path} =    Normalize Path    ${DATADIR}/test_libraries/invalid_java_libraries.txt
+    ${path} =    Normalize Path    ${DATADIR}/test_libraries/invalid_java_libraries.robot
     Check Log Message    ${ERRORS.msgs[${index}]}
     ...    Error in file '${path}': ${error}
     ...    ERROR    pattern=yes

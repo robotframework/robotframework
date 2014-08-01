@@ -50,7 +50,7 @@ Critical And Non-Critical Matching Same Tag
 *** Keywords ***
 Test Criticality
     [Arguments]    ${options}    ${exp status}    ${exp msg}
-    Run Tests    ${options} --escape star:STAR --escape quest:QUEST    misc/pass_and_fail.txt
+    Run Tests    ${options} --escape star:STAR --escape quest:QUEST    misc/pass_and_fail.robot
     Suite Status And Message Should Be    ${exp status}    ${exp msg}
 
 Suite Status And Message Should Be

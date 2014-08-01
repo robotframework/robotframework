@@ -1,6 +1,6 @@
 *** Settings ***
-Resource        resources/embedded_args_in_uk_1.txt
-Resource        resources/embedded_args_in_uk_2.txt
+Resource        resources/embedded_args_in_uk_1.robot
+Resource        resources/embedded_args_in_uk_2.robot
 
 *** Test Cases ***
 Embedded Arguments In User Keyword Name

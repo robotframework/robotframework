@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/call_method.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/call_method.robot
 Force Tags      regression
 Default Tags    jybot  pybot
 Resource        atest_resource.robot

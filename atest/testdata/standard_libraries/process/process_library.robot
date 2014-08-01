@@ -3,7 +3,7 @@ Suite Setup       Some process    suite_process
 Suite Teardown    Stop some process    suite_process
 Test Setup        Restart Suite Process If Needed
 Library           Collections
-Resource          resource.txt
+Resource          resource.robot
 
 *** Test Cases ***
 Library Namespace should be global

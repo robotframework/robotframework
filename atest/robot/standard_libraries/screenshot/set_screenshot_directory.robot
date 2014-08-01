@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run if dependencies are available  ${EMPTY}  standard_libraries/screenshot/set_screenshot_directory.txt
+Suite Setup     Run if dependencies are available  ${EMPTY}  standard_libraries/screenshot/set_screenshot_directory.robot
 Force Tags      regression  pybot  jybot
 Resource        screenshot_resource.robot
 

@@ -26,7 +26,7 @@ Run tests with options containing </script>
     ...    --tagdoc *:LT/scriptGT
     ...    --tagstatlink LT/scriptGT:LT/scriptGT:LT/scriptGT
     ...    --tagstatcombine *:LT/scriptGT:LT/scriptGT
-    Run tests    ${options}    output/js_model.txt
+    Run tests    ${options}    output/js_model.robot
 
 Model should contain escaped strings
     [Arguments]    ${type}

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword.robot
 Force Tags        regression      jybot    pybot
 Resource          atest_resource.robot
 

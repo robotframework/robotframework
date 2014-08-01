@@ -61,5 +61,5 @@ Use NON-ASCII variable in child process
 *** Keywords ***
 Run Tests With Environment Variables
     Set Environment Variable    NON_ASCII_BY_RUNNER    I can häs åäö?!??!¿¿¡¡
-    Run Tests    ${EMPTY}    standard_libraries/operating_system/env_vars.txt
+    Run Tests    ${EMPTY}    standard_libraries/operating_system/env_vars.robot
     [Teardown]    Remove Environment Variable    NON_ASCII_BY_RUNNER

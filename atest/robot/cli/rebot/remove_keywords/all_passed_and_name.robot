@@ -77,7 +77,7 @@ Warnings Are Not Removed In Name Mode
 
 *** Keywords ***
 Run Some Tests
-    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    misc/pass_and_fail.txt    misc/warnings_and_errors.txt
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    misc/pass_and_fail.robot    misc/warnings_and_errors.robot
 
 Run Rebot And Set My Suite
     [Arguments]    ${rebot params}    ${suite index}

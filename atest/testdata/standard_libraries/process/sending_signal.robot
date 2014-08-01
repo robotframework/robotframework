@@ -3,7 +3,7 @@ Test Setup        Run Keywords
 ...               Check Precondition    os.sep == "/" and sys.version_info >= (2,6)
 ...               AND    Remove File    ${TEMPFILE}
 Suite Teardown    Terminate All Processes
-Resource          resource.txt
+Resource          resource.robot
 
 *** Test Cases ***
 Sending INT signal

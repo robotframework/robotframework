@@ -38,9 +38,9 @@ class StreamWithOnlyWriteAndFlush(object):
 
 
 class TestRun(RunningTestCase):
-    data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.txt')
-    warn = join(ROOT, 'atest', 'testdata', 'misc', 'warnings_and_errors.txt')
-    nonex = join(TEMP, 'non-existing-file-this-is.txt')
+    data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot')
+    warn = join(ROOT, 'atest', 'testdata', 'misc', 'warnings_and_errors.robot')
+    nonex = join(TEMP, 'non-existing-file-this-is.robot')
     remove_files = [LOG_PATH]
 
     def test_run_once(self):
@@ -168,14 +168,14 @@ class TestPreservingSignalHandlers(unittest.TestCase):
     def test_original_signal_handlers_are_restored(self):
         my_sigterm = lambda signum, frame: None
         signal.signal(signal.SIGTERM, my_sigterm)
-        run(join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.txt'),
+        run(join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot'),
             stdout=StringIO(), output=None, log=None, report=None)
         assert_equals(signal.getsignal(signal.SIGINT), self.orig_sigint)
         assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
 
 
 class TestRelativeImportsFromPythonpath(RunningTestCase):
-    _data = join(abspath(dirname(__file__)), 'import_test.txt')
+    _data = join(abspath(dirname(__file__)), 'import_test.robot')
 
     def setUp(self):
         self._orig_path = abspath(curdir)

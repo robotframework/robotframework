@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation     Tests for logging using stdout/stderr
-Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/print_logging_java.txt
+Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/print_logging_java.robot
 Force Tags        regression    jybot
 Resource          atest_resource.robot
 

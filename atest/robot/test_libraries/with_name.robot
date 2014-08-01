@@ -125,6 +125,6 @@ With Name When Library Arguments Are Not Strings
 
 *** Keywords ***
 Run 'With Name' Tests
-    Run Tests  ${EMPTY}  test_libraries/with_name_1.txt  test_libraries/with_name_2.txt  test_libraries/with_name_3.txt
+    Run Tests  ${EMPTY}  test_libraries/with_name_1.robot  test_libraries/with_name_2.robot  test_libraries/with_name_3.robot
     Should Be Equal  ${SUITE.name}  With Name 1 & With Name 2 & With Name 3
 

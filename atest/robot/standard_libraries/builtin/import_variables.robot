@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/import_variables.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/import_variables.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

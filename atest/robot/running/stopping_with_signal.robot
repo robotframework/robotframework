@@ -10,61 +10,61 @@ ${TEST FILE}    %{TEMPDIR}${/}signal-tests.txt
 
 *** Test Cases ***
 SIGINT Signal Should Stop Test Execution Gracefully
-    Start And Send Signal  without_any_timeout.txt  One SIGINT
+    Start And Send Signal  without_any_timeout.robot  One SIGINT
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 SIGTERM Signal Should Stop Test Execution Gracefully
     [Tags]  x-exclude-on-windows
-    Start And Send Signal  without_any_timeout.txt  One SIGTERM
+    Start And Send Signal  without_any_timeout.robot  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 Execution Is Stopped Even If Keyword Swallows Exception
     [Documentation]  This only works with Python.
     Run Keyword If    not "${PYTHON}"    Remove Tags    regression
-    Start And Send Signal  swallow_exception.txt  One SIGTERM
+    Start And Send Signal  swallow_exception.robot  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Run Keyword Is Used
-    Start And Send Signal  run_keyword.txt  One SIGTERM
+    Start And Send Signal  run_keyword.robot  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Test Timeout Is Used
-    Start And Send Signal  test_timeout.txt  One SIGTERM
+    Start And Send Signal  test_timeout.robot  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword_timeout.txt  One SIGTERM
+    Start And Send Signal  keyword_timeout.robot  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 Two SIGINT Signals Should Stop Test Execution Forcefully
-    Start And Send Signal  without_any_timeout.txt  Two SIGINTs  2s
+    Start And Send Signal  without_any_timeout.robot  Two SIGINTs  2s
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
     [Tags]  x-exclude-on-windows
-    Start And Send Signal  without_any_timeout.txt  Two SIGTERMs  2s
+    Start And Send Signal  without_any_timeout.robot  Two SIGTERMs  2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Run Keyword Is Used
-    Start And Send Signal  run_keyword.txt  Two SIGINTs  2s
+    Start And Send Signal  run_keyword.robot  Two SIGINTs  2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Test Timeout Is Used
-    Start And Send Signal  test_timeout.txt  Two SIGINTs  2s
+    Start And Send Signal  test_timeout.robot  Two SIGINTs  2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword_timeout.txt  Two SIGINTs  2s
+    Start And Send Signal  keyword_timeout.robot  Two SIGINTs  2s
     Check Tests Have Been Forced To Shutdown
 
 One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardowns Should Be Run
-    Start And Send Signal  with_teardown.txt  One SIGINT
+    Start And Send Signal  with_teardown.robot  One SIGINT
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
     ${tc} =  Get Test Case  Test
@@ -73,7 +73,7 @@ One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardow
     Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Logging Suite Teardown
 
 One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
-    Start And Send Signal  with_teardown.txt  One SIGINT  0s  --SkipTeardownOnExit
+    Start And Send Signal  with_teardown.robot  One SIGINT  0s  --SkipTeardownOnExit
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
     ${tc} =  Get Test Case  Test

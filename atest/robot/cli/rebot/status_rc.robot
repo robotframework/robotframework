@@ -35,9 +35,9 @@ Error when no output is created
 
 *** Keywords ***
 Generate input files
-    Run Tests Without Processing Output  ${EMPTY}  misc/normal.txt
+    Run Tests Without Processing Output  ${EMPTY}  misc/normal.robot
     Move File  ${OUTFILE}  ${PASSING}
-    Run Tests Without Processing Output  ${EMPTY}  misc/pass_and_fail.txt
+    Run Tests Without Processing Output  ${EMPTY}  misc/pass_and_fail.robot
     Move File  ${OUTFILE}  ${FAILING}
 
 Remove input files

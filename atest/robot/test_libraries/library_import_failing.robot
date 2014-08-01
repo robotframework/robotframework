@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Tests for checking that failing library imports will produce tracebacks to the log file.
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_failing.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_failing.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot
@@ -36,6 +36,6 @@ Initializing Java Library Fails
 Import Should Have Failed
     [Arguments]  ${index}  ${expected message}  ${expected traceback}=
     ${message} =  Set Variable  ${ERRORS.msgs[${index}].message}
-    ${path} =   Normalize Path  ${DATADIR}/test_libraries/library_import_failing.txt
+    ${path} =   Normalize Path  ${DATADIR}/test_libraries/library_import_failing.robot
     Should Start With  ${message}  Error in file '${path}': ${expected message}
     Should Contain  ${message}  ${expected traceback}

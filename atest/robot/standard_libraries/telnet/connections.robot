@@ -1,5 +1,5 @@
 *** Setting ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/telnet/connections.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/telnet/connections.robot
 Force Tags        jybot    pybot
 Resource          telnet_resource.robot
 

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  -l log.html -r report.html  running/html_error_message.txt
+Suite Setup     Run Tests  -l log.html -r report.html  running/html_error_message.robot
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 

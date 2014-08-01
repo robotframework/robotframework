@@ -48,7 +48,7 @@ Wildcards
     Check Names  ${SUITE.suites[2].tests[0]}  Suite3 First  Tsuite1 & Tsuite2 & Tsuite3.Tsuite3.
 
 Failure When Parsing Any Data Source Fails
-    Run Tests Without Processing Output    ${EMPTY}    nönex    misc/pass_and_fail.txt
+    Run Tests Without Processing Output    ${EMPTY}    nönex    misc/pass_and_fail.robot
     ${nönex} =    Normalize Path    ${DATADIR}/nönex
     Check Stderr Contains  [ ERROR ] Parsing '${nönex}' failed: Data source does not exist.
     File Should Not Exist    ${OUTDIR}${/}output.xml

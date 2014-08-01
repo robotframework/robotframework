@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/easter.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/easter.robot
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 

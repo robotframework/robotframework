@@ -1,5 +1,5 @@
 *** Settings ***
-Resource          resource.txt
+Resource          resource.robot
 
 *** Test Cases ***
 Non-ASCII command and output

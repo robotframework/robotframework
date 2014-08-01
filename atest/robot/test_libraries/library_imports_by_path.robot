@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Importing test libraries using relative and absolute path.
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_by_path.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_by_path.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot

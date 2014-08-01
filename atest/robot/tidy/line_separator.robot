@@ -8,22 +8,22 @@ Test Template     Output should be correct and have correct line separators
 
 *** Test Cases ***
 Default
-    ${EMPTY}                    golden.txt     ${\n}
+    ${EMPTY}                    golden.robot     ${\n}
     -f tsv                      golden.tsv     ${\n}
     --format html               golden.html    ${\n}
 
 Native
-    --lineseparator native      golden.txt     ${\n}
+    --lineseparator native      golden.robot     ${\n}
     --LineSep Native -f tsv     golden.tsv     ${\n}
     -l NATIVE --format html     golden.html    ${\n}
 
 Windows
-    --lineseparator windows     golden.txt     \r\n
+    --lineseparator windows     golden.robot     \r\n
     --LineSep Windows -f tsv    golden.tsv     \r\n
     -l WINDOWS --format html    golden.html    \r\n
 
 Unix
-    --lineseparator unix        golden.txt     \n
+    --lineseparator unix        golden.robot     \n
     --LineSep Unix -f tsv       golden.tsv     \n
     -l UNIX --format html       golden.html    \n
 

@@ -4,7 +4,7 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 
 *** Variables ***
-${TESTDATA_TEST}  misc/many_tests.txt
+${TESTDATA_TEST}  misc/many_tests.robot
 ${TESTDATA_SUITES}  misc/suites
 ${ESCAPES}  --escape star:STAR --escape quest:QUEST --escape space:SPACE
 
@@ -74,8 +74,8 @@ Correct Files Processed With --suite Matches Files
     Check Syslog Contains  Ignoring file or directory 'fourth.html'
     Check Syslog Contains  Ignoring file or directory 'tsuite3.html'
     Check Syslog Contains  Parsing test data directory '${subsuitedir}'
-    Check Syslog Contains  Ignoring file or directory 'sub1.txt'
-    Check Syslog Contains  Ignoring file or directory 'sub2.txt'
+    Check Syslog Contains  Ignoring file or directory 'sub1.robot'
+    Check Syslog Contains  Ignoring file or directory 'sub2.robot'
     Check Syslog Contains  Parsing file '${suitedir}${/}tsuite1.html
     Check Syslog Contains  Parsing file '${suitedir}${/}tsuite2.html
 
@@ -116,8 +116,8 @@ Correct Files Processed When --suite Matches Directory
     Check Syslog Contains  Ignoring file or directory 'tsuite2.html'
     Check Syslog Contains  Ignoring file or directory 'tsuite3.html'
     Check Syslog Contains  Parsing test data directory '${subsuitedir}'
-    Check Syslog Contains  Parsing file '${subsuitedir}${/}sub1.txt'
-    Check Syslog Contains  Parsing file '${subsuitedir}${/}sub2.txt'
+    Check Syslog Contains  Parsing file '${subsuitedir}${/}sub1.robot'
+    Check Syslog Contains  Parsing file '${subsuitedir}${/}sub2.robot'
 
 Suite Under Subdirectory Using Pattern
     Run And Check Suites Within Subdirs  --suite subQUEST  Sub1  Sub2

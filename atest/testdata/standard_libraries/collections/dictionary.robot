@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup      Create Dictionaries For Testing
-Resource        collections_resources.txt
+Resource        collections_resources.robot
 Library         CollectionsHelperLibrary.py
 
 *** Test Cases ***

@@ -1,5 +1,5 @@
 ﻿*** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  running/errors_in_test_teardown.txt
+Suite Setup     Run Tests  ${EMPTY}  running/errors_in_test_teardown.robot
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 
@@ -51,6 +51,6 @@ Suite Teardown Is Executed Fully
     Should Be Equal  ${ts.message}  ${msg}
 
 Suite Teardown Should Stop At Fatal Error
-    Run Tests  ${EMPTY}  running/fatal_error_in_suite_teardown.txt
+    Run Tests  ${EMPTY}  running/fatal_error_in_suite_teardown.robot
     ${ts} =  Get Test Suite  fatal error in suite teardown
     Length Should Be   ${ts.teardown.kws}   1

@@ -48,7 +48,7 @@ Critical And Non-Critical Matching Same Tag
 
 *** Keywords ***
 Run Test To Create Output
-    Run Tests    --critical pass --noncritical fail    misc/pass_and_fail.txt
+    Run Tests    --critical pass --noncritical fail    misc/pass_and_fail.robot
     Move File    ${OUT FILE}    ${INPUT FILE}
 
 Test Criticality

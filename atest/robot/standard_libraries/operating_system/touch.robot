@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/touch.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/touch.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

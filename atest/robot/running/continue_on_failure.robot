@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/continue_on_failure.txt    running/continue_on_failure_in_suite_setup.txt
+Suite Setup       Run Tests    ${EMPTY}    running/continue_on_failure.robot    running/continue_on_failure_in_suite_setup.robot
 Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 
