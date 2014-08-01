@@ -1,7 +1,7 @@
 *** Setting ***
 Suite Setup       Run Tests    --exclude exclude    core/same_test_multiple_times_in_suite.txt
 Force Tags        pybot    jybot    regression
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Case ***
 Tests With Same Name Should Be Executed

@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  ${EMPTY}  variables/environment_variables.txt
 Force Tags      regression
 Default Tags    pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Environment Variables In Keyword Argument

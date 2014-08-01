@@ -2,7 +2,7 @@
 Documentation   Tests for libraries using getKeywordNames and runKeyword with **kwargs functionality. In these tests libraries are implemented with Java.
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_kwargs_support_java.txt
 Force Tags      regression  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Run Keyword

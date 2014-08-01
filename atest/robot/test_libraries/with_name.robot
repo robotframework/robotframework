@@ -2,7 +2,7 @@
 Suite Setup     Run 'With Name' Tests
 Force Tags      regression
 Default Tags    pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Import Library Normally Before Importing With Name In Another Suite

@@ -1,7 +1,7 @@
 *** Setting ***
 Suite Setup       Run Tests    \    core${/}unicode_with_java_libs.html
 Force Tags        regression    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 Variables         ../../resources/unicode_vars.py
 
 *** Variable ***

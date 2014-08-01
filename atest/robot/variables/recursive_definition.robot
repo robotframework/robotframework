@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/recursive_definition.txt
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Direct recursion

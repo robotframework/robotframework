@@ -2,7 +2,7 @@
 Suite Setup       My Setup
 Force Tags        regression
 Default Tags      pybot    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Statistics Should Be Written to XML

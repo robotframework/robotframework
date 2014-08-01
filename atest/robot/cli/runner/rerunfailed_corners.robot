@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags        regression  pybot  jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 Suite Teardown    Remove File  ${RUN FAILED FROM}
 
 *** Variables ***

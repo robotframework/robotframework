@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  \  variables/suite_source
 Force Tags      pybot  jybot  regression
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 ${SUITE SOURCE} in dir suite

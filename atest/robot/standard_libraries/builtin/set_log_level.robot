@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  --log set_log_level_log.html  standard_libraries/builtin/set_log_level.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Set Log Level

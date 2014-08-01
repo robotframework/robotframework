@@ -2,7 +2,7 @@
 Documentation     Setting critical and non-critical tags
 Force Tags        regression    pybot    jybot
 Test Template     Test Criticality
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variables ***
 ${MSG 000 211}    0 critical tests, 0 passed, 0 failed\n 2 tests total, 1 passed, 1 failed

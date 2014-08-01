@@ -1,7 +1,7 @@
 *** Setting ***
 Suite Setup       Run Tests With Environment Variables
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Case ***
 Get Environment Variable

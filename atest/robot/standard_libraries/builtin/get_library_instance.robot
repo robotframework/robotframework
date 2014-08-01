@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/get_library_instance.txt
 Force Tags      regression
 Default Tags    pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 

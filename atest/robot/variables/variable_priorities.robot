@@ -2,7 +2,7 @@
 Documentation     Some of these tests are testing same features as tests under core/resource_and_variable_imports.html. These tests should all be gone through and all tests moved under variables/.
 Suite Setup       Run Tests    --variable PRIORITIES_1:CLI --variablefile ${VARFILE1} --variablefile ${VARFILE2}    variables/variable_priorities.txt
 Force Tags        pybot    jybot    regression
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 ${VARDIR}         atest/robot/variables${/}..${/}..${/}testdata${/}variables${/}resvarfiles

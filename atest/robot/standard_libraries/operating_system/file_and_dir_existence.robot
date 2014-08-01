@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_existence.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Should Exist

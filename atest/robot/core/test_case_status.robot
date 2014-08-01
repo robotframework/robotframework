@@ -2,7 +2,7 @@
 Documentation     Tests for setting test case status correctly when test passes and when a failure or error occurs. Also includes test cases for running test setup and teardown in different situations.
 Suite Setup       Run Tests    ${EMPTY}    core/test_case_status.txt
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 

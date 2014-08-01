@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags      regression    pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Library         ProcessManager.py
 Test Teardown   Run Keyword If Test Failed    Log Stdout And Stderr
 

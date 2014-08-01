@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Tests for xunit-compatible xml-output.
 Default Tags    regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Variables       unicode_vars.py
 Suite Setup     Run Tests  -x xunit.xml -l log.html  ${TESTDATA}
 

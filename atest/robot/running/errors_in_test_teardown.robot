@@ -1,7 +1,7 @@
 ﻿*** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  running/errors_in_test_teardown.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 One Error In Teardown

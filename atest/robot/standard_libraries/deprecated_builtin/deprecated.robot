@@ -1,7 +1,7 @@
 *** Setting ***
 Suite Setup       Run Tests    \    standard_libraries${/}deprecated_builtin${/}deprecated.html
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 

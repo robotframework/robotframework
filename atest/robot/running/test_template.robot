@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  running/test_template.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Test Using Normal Keyword Is Not Possible With Template

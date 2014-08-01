@@ -3,7 +3,7 @@ Documentation     Tests for BuiltIn library's misc functionality
 Suite Setup       Run Tests    \    standard_libraries${/}deprecated_builtin${/}misc.html
 Force Tags        regression
 Default Tags      jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 

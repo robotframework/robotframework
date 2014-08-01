@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    --dryrun    keywords/java_arguments.txt
 Force Tags       regression    jybot
-Resource         atest_resource.txt
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Correct Number Of Arguments When No Defaults Or Varargs

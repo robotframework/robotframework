@@ -3,7 +3,7 @@ Documentation   Tests for checking that failing library imports will produce tra
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_failing.txt
 Force Tags      regression
 Default Tags    pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Not a Library

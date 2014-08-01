@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    test_libraries/invalid_java_libraries.txt
 Force Tags       regression    jybot
-Resource         atest_resource.txt
+Resource         atest_resource.robot
 
 *** Test Cases ***
 

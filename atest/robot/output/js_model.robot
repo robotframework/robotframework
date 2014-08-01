@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup    Run tests with options containing </script>
-Resource       atest_resource.txt
+Resource       atest_resource.robot
 Force Tags     pybot    jybot    regression
 
 *** Test Cases ***

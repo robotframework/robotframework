@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/set_suite_metadata.txt    misc/pass_and_fail.txt
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Set new value

@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/libraries_extending_existing_classes.txt
 Force Tags      regression
 Default Tags    jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Keyword From Python Class Extended By Python Class

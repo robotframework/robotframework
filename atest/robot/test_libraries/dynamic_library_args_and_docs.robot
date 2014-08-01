@@ -3,7 +3,7 @@ Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_args_and_doc
 Force Tags      regression
 Default Tags    pybot  jybot
 Test Template   Check test case and its doc
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Documentation And Argument Boundaries Work With No Args

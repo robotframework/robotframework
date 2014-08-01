@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests And Rebot With Tag Stat Links
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Test Template   Tag link should be correct in output
 
 

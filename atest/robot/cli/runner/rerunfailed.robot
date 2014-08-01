@@ -2,7 +2,7 @@
 Suite Setup       Suite initialization
 Suite Teardown    Remove Directory    ${RERUN DIR}    recursive
 Force Tags        regression    pybot    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variables ***
 ${ORIG DIR}           ${DATADIR}/cli/runfailed

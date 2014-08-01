@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/should_be.txt
 Force Tags        pybot    jybot    regression
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Should Be String Positive

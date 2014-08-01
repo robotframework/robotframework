@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/hybrid_library.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Passing, Logging And Returning

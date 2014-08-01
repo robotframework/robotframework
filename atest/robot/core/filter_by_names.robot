@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Tests for --test and --suite options
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${TESTDATA_TEST}  misc/many_tests.txt

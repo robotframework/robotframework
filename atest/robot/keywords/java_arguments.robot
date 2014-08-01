@@ -3,7 +3,7 @@ Documentation     Handling valid and invalid arguments with Java keywords.
 ...               Related tests also in test_libraries/java_libraries.txt.
 Suite Setup       Run Tests    ${EMPTY}    keywords/java_arguments.txt
 Force Tags        regression    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Correct Number Of Arguments When No Defaults Or Varargs

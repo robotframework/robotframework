@@ -2,7 +2,7 @@
 Documentation   Empty test cases and user keywords
 Suite Setup     Run Tests  ${EMPTY}  core/empty_testcase_and_uk.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Test Case Without Name

@@ -1,7 +1,7 @@
 *** Setting ***
 Suite Setup       Run Tests    \    variables${/}reserved_syntax.html
 Force Tags        pybot    jybot    regression
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 

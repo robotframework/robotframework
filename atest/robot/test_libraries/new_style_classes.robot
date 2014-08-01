@@ -1,7 +1,7 @@
 *** Setting ***
 Suite Setup       Run Tests    \    test_libraries/${/}new_style_class_libraries.html
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 

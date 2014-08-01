@@ -1,7 +1,7 @@
 *** Settings ***
 Force Tags      regression    pybot    jybot
 Suite Setup     Run tests    -l LOG -r RaP    misc/multiple_suites/suiTe_8.html
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Suite name is not case normalized

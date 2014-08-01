@@ -3,7 +3,7 @@ Documentation     Tests Robots core importing and importing external modules wit
 Suite Setup       Run Module Import Tests
 Suite Teardown    Remove Robot Dir
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 ${DIRNAME}        robot_test_12345

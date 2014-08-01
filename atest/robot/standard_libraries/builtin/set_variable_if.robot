@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/set_variable_if.txt
 Force Tags      pybot  jybot  regression
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 True Condition

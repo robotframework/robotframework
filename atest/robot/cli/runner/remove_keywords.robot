@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests And Remove Keywords
 Default Tags    regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${PASS MESSAGE}    -PASSED -ALL

@@ -2,7 +2,7 @@
 Documentation     These tests are somewhat related to tests in variable_priorities.html
 Suite Setup       Run Tests    \    variables${/}variable_scopes.html
 Force Tags        pybot    jybot    regression
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 

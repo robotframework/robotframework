@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  ${EMPTY}
 ...      test_libraries/as_listener/module_v1_listenerlibrary.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Module listener with v1 version listener api

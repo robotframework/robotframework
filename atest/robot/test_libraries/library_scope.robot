@@ -1,6 +1,6 @@
 *** Setting ***
 Force Tags        regression
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 

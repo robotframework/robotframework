@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variables ***
 ${1 PASS MSG}     1 critical test, 1 passed, 0 failed\n 1 test total, 1 passed, 0 failed

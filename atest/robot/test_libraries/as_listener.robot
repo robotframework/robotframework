@@ -4,7 +4,7 @@ Suite Setup     Run Tests  ${EMPTY}
 ...      test_libraries/as_listener/test_scope.txt
 ...      test_libraries/as_listener/global_scope.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Test scope library gets events

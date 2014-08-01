@@ -2,7 +2,7 @@
 Documentation   Tests for using libraries implemented with Java. This stuff is tested also in keywords/java_arguments.txt and these files should be combined.
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/java_libraries.txt
 Force Tags      regression  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 String Arg

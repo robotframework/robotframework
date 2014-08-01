@@ -2,7 +2,7 @@
 Suite Setup       Run Tests    ${EMPTY}    running/dynamic_teardown.txt
 Force Tags        regression
 Default Tags      pybot    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test cases ***
 Setting teardowns with variables dynamically

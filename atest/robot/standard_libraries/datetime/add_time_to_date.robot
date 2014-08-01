@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/add_time_to_date.txt
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Time addition to date should succeed

@@ -1,7 +1,7 @@
 *** Settings ***
 Force Tags  regression  pybot  jybot
 Suite Setup  Run Tests  ${EMPTY}  standard_libraries/builtin/set_test_message.txt  standard_libraries/builtin/set_test_message_in_suite_level.txt
-Resource    atest_resource.txt
+Resource    atest_resource.robot
 
 *** Test Cases ***
 Set Message To Successful Test

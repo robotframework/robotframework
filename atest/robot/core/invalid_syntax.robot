@@ -3,7 +3,7 @@ Documentation   Tests for invalid syntax in the test data. Non-existing variable
 Suite Setup     My Setup
 Force Tags      regression
 Default Tags    jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Valid Test

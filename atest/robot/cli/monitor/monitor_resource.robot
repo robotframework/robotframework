@@ -1,5 +1,5 @@
 *** Settings ***
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${SEP_CHAR1}  =

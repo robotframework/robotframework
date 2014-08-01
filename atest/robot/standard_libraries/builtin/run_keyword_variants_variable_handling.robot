@@ -1,7 +1,7 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_variants_variable_handling.txt
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 @{EXPECTED ARGS}    c:\\\\temp\\\\foo    \\\${notvar}

@@ -2,7 +2,7 @@
 Documentation   Tests for BuiltIn library's keyword Get Time
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/get_time.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Get Time As Timestamp

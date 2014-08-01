@@ -2,7 +2,7 @@
 Documentation     Tests for registering own run keyword variant
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_variants_registering.txt
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Case ***
 Not registered Keyword Fails With Content That Should Not Be Evaluated Twice

@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/variables_inside_variables.txt
 Force Tags      pybot  jybot  regression
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Variable Inside Variable In Variable Table

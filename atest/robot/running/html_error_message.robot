@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  -l log.html -r report.html  running/html_error_message.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${FAILURE}            <a href='http://robotframework.org'>Robot Framework</a>

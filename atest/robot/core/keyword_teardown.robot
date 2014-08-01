@@ -1,5 +1,5 @@
 *** Settings ***
-Resource     atest_resource.txt
+Resource     atest_resource.robot
 Force Tags   regression  pybot  jybot
 Suite Setup  Run Tests  ${EMPTY}  core/keyword_teardown.txt
 

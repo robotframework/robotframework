@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run tests  ${EMPTY}  variables/variable_table.txt
 Force Tags      pybot  jybot  regression
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Scalar String

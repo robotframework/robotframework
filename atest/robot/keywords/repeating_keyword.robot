@@ -2,7 +2,7 @@
 Documentation   This feature has been depreaced in 2.0.4 and will be removed in 2.2. See issue 193 for more information.
 Suite Setup     Run Tests  ${EMPTY}  keywords/repeating_keyword.txt
 Force Tags      regression  smoke  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Repeat Keyword Name and Arguments

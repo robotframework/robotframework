@@ -3,7 +3,7 @@ Documentation     Tests for BuiltIn library's run keyword functionality
 Suite Setup       Run Tests    --critical critical    standard_libraries${/}builtin${/}run_keyword_based_on_suite_stats
 Force Tags        regression
 Default Tags      jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 

@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  misc/multiple_suites
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Documentation   Giving suite names from commandline is tested in robot/cli/runner/suite_name_doc_and_metadata.txt
 
 

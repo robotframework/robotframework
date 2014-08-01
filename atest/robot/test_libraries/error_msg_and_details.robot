@@ -2,7 +2,7 @@
 Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/error_msg_and_details.txt
 Force Tags        regression
 Default Tags      pybot    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 Test Template     Verify Test Case And Error In Log
 
 *** Test Case ***

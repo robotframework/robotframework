@@ -2,7 +2,7 @@
 Documentation   Robot unit tests
 Suite Setup     Set Variables  unit
 Force Tags      smoke  regression
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${TESTPATH}  ${CURDIR}${/}..${/}..${/}..${/}utest${/}run_utests.py

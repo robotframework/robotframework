@@ -5,7 +5,7 @@ Documentation   These tests log, raise, and return messages containing byte
 ...             are the same thing.
 Suite Setup     Run Tests  ${EMPTY}  core/bytedata.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Variables       ${DATADIR}/core/expbytevalues.py  ${INTERPRETER}
 
 *** Test Cases ***

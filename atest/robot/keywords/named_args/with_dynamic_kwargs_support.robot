@@ -7,7 +7,7 @@ Suite Setup       Run Tests
 ...    keywords/named_args/with_dynamic_keywords.txt
 ...    keywords/named_args/with_dynamic_kwargs_support.txt
 Force Tags        pybot    jybot    regression
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Kwarg Syntax In Variable Is Ignored

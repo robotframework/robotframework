@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags    regression   pybot   jybot
-Resource      atest_resource.txt
+Resource      atest_resource.robot
 
 *** Variables ***
 ${CMD}    ${INTERPRETER} ${CURDIR}${/}..${/}..${/}..${/}src${/}robot${/}testdoc.py

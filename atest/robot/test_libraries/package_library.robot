@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Set PYTHONPATH and run tests
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Class in package as library implicitly

@@ -2,7 +2,7 @@
 Documentation   Tests for customizing timeout messages. Main timeout functionality is tested in Timeouts and also in Metadata. It seems that on Cygwin Python tests now and then fail with an error message "error: can't allocate lock"
 Suite Setup     Run Tests  ${EMPTY}  core${/}timeouts_with_custom_messages.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Default Test Timeout Message

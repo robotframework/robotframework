@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run And Rebot Flattened
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${FLATTEN}      --FlattenKeywords NAME:Keyword3 --flat name:key*others --FLAT name:builtin.* --log log.html

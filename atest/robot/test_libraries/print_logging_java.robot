@@ -2,7 +2,7 @@
 Documentation     Tests for logging using stdout/stderr
 Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/print_logging_java.txt
 Force Tags        regression    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Logging Using Stdout And Stderr

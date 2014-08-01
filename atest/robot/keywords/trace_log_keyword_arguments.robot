@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  --loglevel TRACE  keywords/trace_log_keyword_arguments.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 
 *** Variables ***

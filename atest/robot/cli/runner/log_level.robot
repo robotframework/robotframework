@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Tests for setting log level from command line with --loglevel option. Setting log level while executing tests (BuiltIn.Set Log Level) is tested with BuiltIn library keywords.
 Default Tags    regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${TESTDATA}  misc/pass_and_fail.txt

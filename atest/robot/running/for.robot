@@ -2,7 +2,7 @@
 Documentation   For loop
 Suite Setup     Run Tests  ${EMPTY}  running/for.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${SYNTAX_ERROR}  Syntax error: Invalid syntax in FOR loop. Expected format:\n | : FOR | \${var} | IN | item1 | item2 |

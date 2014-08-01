@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup    Run Tests  ${EMPTY}  misc/timeouts.txt
-Resource  atest_resource.txt
+Resource  atest_resource.robot
 Force Tags   pybot    jybot    regression
 Test Template    Element Should Have Timeout
 

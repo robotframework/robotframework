@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/timestamps_for_stdout_messages.txt
 Force Tags      regression
 Default Tags    pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 

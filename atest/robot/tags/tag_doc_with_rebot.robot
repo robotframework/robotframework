@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests And Rebot With Tag Doc
 Force Tags      pybot  jybot  regression
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Test Template   Tag doc should be correct in output
 
 

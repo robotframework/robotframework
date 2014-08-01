@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/log.txt
 Force Tags        regression    jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variables ***
 ${HTML}           <a href="http://robotframework.org">Robot Framework</a>

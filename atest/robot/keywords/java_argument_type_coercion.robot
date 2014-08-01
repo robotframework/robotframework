@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    keywords/java_argument_type_coercion.txt
 Force Tags        regression    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Coercing Integer Arguments

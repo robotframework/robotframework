@@ -1,5 +1,5 @@
 ***Settings***
-Resource       atest_resource.txt
+Resource       atest_resource.robot
 Force Tags     jybot  pybot  regression
 Suite Setup    Run Tests  ${EMPTY}  standard_libraries/builtin/wait_until_keyword_succeeds.txt
 Test Template  Check Test Case

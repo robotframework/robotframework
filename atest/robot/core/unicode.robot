@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  misc/unicode.txt  core/unicode_failure_in_suite_setup_and_teardown.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Variables       unicode_vars.py
 
 *** Test Cases ***

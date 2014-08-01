@@ -6,7 +6,7 @@ Documentation    Tests for different file and directory names.
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/special_names.txt
 Test Setup       Make Tests Failing On Jython/Windows Non Critical If Using That Combo
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         atest_resource.robot
 
 *** Test Cases ***
 ASCII only file name

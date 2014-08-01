@@ -2,7 +2,7 @@
 Suite Setup       Run Tests    \    test_libraries/${/}library_version.html
 Force Tags        regression
 Default Tags      jybot    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 

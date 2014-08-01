@@ -2,7 +2,7 @@
 Force Tags  regression  pybot  jybot
 Suite Setup  Create input data and run tests
 Suite Teardown   Revert input data
-Resource  atest_resource.txt
+Resource  atest_resource.robot
 
 
 *** Variables ***

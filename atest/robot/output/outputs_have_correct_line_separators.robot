@@ -1,6 +1,6 @@
 *** Settings ***
 Default Tags    regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${REBOT INFILE}    %{TEMPDIR}/robot-rebot-infile.xml

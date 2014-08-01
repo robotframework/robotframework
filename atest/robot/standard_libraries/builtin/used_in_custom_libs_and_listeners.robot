@@ -4,7 +4,7 @@ Documentation   These tests mainly verify that using BuiltIn externally does not
 ...             There are separate tests for creating and registering Run Keyword variants.
 Suite Setup     Run Tests  --listener ${CURDIR}${/}listener_using_builtin.py  standard_libraries/builtin/used_in_custom_libs_and_listeners.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 

@@ -4,7 +4,7 @@ Suite Setup     Run Tests  ${EMPTY}  core/timeouts.txt
 Suite Teardown  Remove Directory  ${TIMEOUT TEMP}  recursive
 Force Tags      regression
 Default Tags    jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${TIMEOUT TEMP}  %{TEMPDIR}${/}robot_timeout_tests

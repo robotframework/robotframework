@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  --exclude jybot_only  standard_libraries/dialogs/dialogs.txt
 Force Tags      regression  manual
 Default Tags    jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Pause Execution

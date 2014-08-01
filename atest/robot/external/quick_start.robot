@@ -3,7 +3,7 @@ Documentation     Verify that Quick Start Guide can be executed without problems
 Suite Setup       Set Variables    quickstart
 Suite Teardown    Remove Directory    ${RESULTDIR}    recursively
 Force Tags        regression    pybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 ${QS DIR}         atest/robot/external/../../../doc/quickstart

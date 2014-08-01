@@ -1,6 +1,6 @@
 *** Settings ***
 Library           TidyLib.py    ${INTERPRETER}
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variables ***
 ${DATA}           ${CURDIR}/../../testdata/tidy

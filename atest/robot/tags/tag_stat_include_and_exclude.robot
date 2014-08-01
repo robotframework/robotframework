@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Test Template   Run And Check Include And Exclude
 
 *** Variables ***

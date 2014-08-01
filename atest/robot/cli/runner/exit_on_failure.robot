@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags      pybot  jybot  regression
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Exit On Failure

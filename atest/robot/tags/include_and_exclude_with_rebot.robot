@@ -4,7 +4,7 @@ Suite Setup       Create Input Files
 Suite Teardown    Remove File    ${INPUT FILE}
 Default Tags      regression    pybot    jybot
 Test Template     Run And Check Include And Exclude
-Resource          rebot_resource.txt
+Resource          rebot_resource.robot
 
 *** Variables ***
 ${TEST FILE}      tags/include_and_exclude.txt

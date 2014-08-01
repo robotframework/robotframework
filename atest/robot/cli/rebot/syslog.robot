@@ -2,7 +2,7 @@
 Test Setup      Empty Directory  ${MYOUTDIR}
 Suite Setup     Set Runners
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Resource        rebot_cli_resource.robot
 
 *** Test Cases ***

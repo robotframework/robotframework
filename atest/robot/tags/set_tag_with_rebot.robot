@@ -2,7 +2,7 @@
 Suite Setup       Run Tests And Read Outputs
 Suite Teardown    Remove Files    ${INFILE1}    ${INFILE2}
 Force Tags        pybot    jybot    regression
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Variable ***
 ${INFILE1}        %{TEMPDIR}${/}rebot-test-1.xml

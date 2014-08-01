@@ -2,7 +2,7 @@
 Documentation   Tests for variable should and should not exist related functionality in BuiltIn
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries${/}builtin${/}variable_should_exist.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Variable Should Exist With Default Error Message

@@ -2,7 +2,7 @@
 Force Tags        regression    pybot    jybot
 Suite Setup       Run original tests
 Suite Teardown    Remove Files    ${ORIGINAL}    ${RERUN}    ${RERUN 2}
-Resource          rebot_resource.txt
+Resource          rebot_resource.robot
 
 *** Variables ***
 ${TEST CASES}     ${DATADIR}/misc/suites

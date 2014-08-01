@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/converter.txt
 Force Tags      regression
 Default Tags    jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${ARG TYPES MSG}=  Argument types are:\n

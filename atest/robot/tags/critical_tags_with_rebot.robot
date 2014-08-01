@@ -3,7 +3,7 @@ Documentation     Setting critical and non-critical tags with Rebot.
 Suite Setup       Run Test To Create Output
 Suite Teardown    Remove File    ${INPUT FILE}
 Force Tags        regression    pybot    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 Test Template     Test Criticality
 
 *** Variables ***

@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests With Non-ASCII Items In PYTHONPATH
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${DATAFILE}      core/resource_and_variable_imports.txt

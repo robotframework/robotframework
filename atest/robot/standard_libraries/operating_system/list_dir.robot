@@ -1,7 +1,7 @@
 ﻿*** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/list_dir.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${BASE}   %{TEMPDIR}${/}robot-os-tests

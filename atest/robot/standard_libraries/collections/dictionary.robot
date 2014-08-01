@@ -3,7 +3,7 @@ Documentation   Tests for Collections library's dictionary functionality
 Suite Setup     Run Tests  --loglevel debug  standard_libraries/collections/dictionary.txt
 Force Tags      regression
 Default Tags    jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Create Dictionary

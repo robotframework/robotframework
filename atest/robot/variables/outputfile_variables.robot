@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Tests for automatic variables \${OUTPUT_FILE}, \${LOG_FILE} and \${REPORT_FILE}
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 Outputfile Variables Should Contain Absolute Paths To Outputfiles

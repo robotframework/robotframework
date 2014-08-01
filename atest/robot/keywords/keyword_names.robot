@@ -2,7 +2,7 @@
 Documentation   Testing that keyword names are view correctly in outputs. Names should always be full names (e.g. BuiltIn.Noop) and they should be as written in the library/resource and not as used.
 Suite Setup     Run Tests  --pythonpath ${RESDIR}  keywords/keyword_names.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${RESDIR}  ${CURDIR}${/}..${/}..${/}testdata${/}keywords${/}resources

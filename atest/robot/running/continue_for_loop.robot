@@ -2,7 +2,7 @@
 Suite Setup       Run Tests    ${EMPTY}    running/continue_for_loop.txt
 Force Tags        regression
 Default Tags      pybot    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Simple Continue For Loop

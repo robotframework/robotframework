@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  --critical *remove*  standard_libraries/builtin/tags
 Force Tags      pybot  jybot  regression
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 @{SUITE_TAGS}  default  force  force-init  set  set-init

@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/same_variable_file_names
 Force Tags      regression  jybot  pybot  smoke
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${6 TESTS}    6 critical tests, 6 passed, 0 failed\n6 tests total, 6 passed, 0 failed

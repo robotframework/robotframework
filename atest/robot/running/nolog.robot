@@ -1,5 +1,5 @@
 *** Settings ***
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 Force Tags      regression  pybot  jybot
 Library         nolog.py
 Test Template   Run With Options

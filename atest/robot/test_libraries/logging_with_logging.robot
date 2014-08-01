@@ -2,7 +2,7 @@
 Documentation   Tests for logging using Python's `logging` module.
 Suite Setup     Run Tests  -L none  test_libraries/logging_with_logging.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Test Cases ***
 

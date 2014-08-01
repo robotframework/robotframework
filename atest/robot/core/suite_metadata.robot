@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  --variable meta_value_from_cli:my_metadata  core/suite_metadata.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 Documentation  Tests for commandline option --metadata are located in robot/cli/runner
 

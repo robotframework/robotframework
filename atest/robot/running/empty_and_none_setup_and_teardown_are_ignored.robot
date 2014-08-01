@@ -3,7 +3,7 @@ Suite Setup       Run Tests    ${EMPTY}
 ...               running/empty_setup_and_teardown_are_ignored.txt
 ...               running/none_setup_and_teardown_are_ignored.txt
 Force Tags        regression    pybot    jybot
-Resource          atest_resource.txt
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Empty suite setup and teardown are ignored

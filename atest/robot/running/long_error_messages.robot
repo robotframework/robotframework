@@ -2,7 +2,7 @@
 Documentation   Testing that possible long error messages are truncated
 Suite Setup     Run Tests  ${EMPTY}  running/long_error_messages.txt
 Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
+Resource        atest_resource.robot
 
 *** Variables ***
 ${EXPLANATION}  \n${SPACE*4}[ Message content over the limit has been removed. ]\n
