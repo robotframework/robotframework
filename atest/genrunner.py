@@ -2,14 +2,14 @@
 
 """Script to generate atest runners based on plain text data files.
 
-Usage:  %s testdata/path/data.txt [robot/path/runner.txt]
+Usage:  %s testdata/path/data.robot [robot/path/runner.robot]
 """
 
 from os.path import abspath, basename, dirname, exists, join, splitext
 import os
 import sys
 
-if len(sys.argv) not in [2, 3] or not all(a.endswith('.txt') for a in sys.argv[1:]):
+if len(sys.argv) not in [2, 3] or not all(a.endswith('.robot') for a in sys.argv[1:]):
     print __doc__ % basename(sys.argv[0])
     sys.exit(1)
 
