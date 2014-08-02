@@ -130,7 +130,7 @@ class TestRebot(RunningTestCase):
 class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_importer_caches_are_cleared_between_runs(self):
-        data = join(ROOT, 'atest', 'testdata', 'core', 'import_settings.robot')
+        data = join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot')
         run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO())
         lib = self._import_library()
         res = self._import_resource()
@@ -139,7 +139,7 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         assert_true(res is not self._import_resource())
 
     def _import_library(self):
-        return namespace.IMPORTER.import_library('OperatingSystem',None, None, None)
+        return namespace.IMPORTER.import_library('BuiltIn', None, None, None)
 
     def _import_resource(self):
         resource = join(ROOT, 'atest', 'testdata', 'core', 'resources.robot')
