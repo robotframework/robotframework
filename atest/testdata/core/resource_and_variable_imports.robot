@@ -18,8 +18,8 @@ Variables    resources_and_variables/dynamicVariables.py
 ...          This    ${1}    ${works}    back \\ slash    \${escaped}    ${CURDIR}
 
 # Resources and variables in PYTHONPATH
-Resource     resource_in_pythonpath.html
-Resource     resvar_subdir/resource_in_pythonpath_2.html
+Resource     resource_in_pythonpath.robot
+Resource     resvar_subdir/resource_in_pythonpath_2.robot
 Variables    variables_in_pythonpath.py
 Variables    resvar_subdir/variables_in_pythonpath_2.py
 ...          Variable from variable file    in PYTHONPATH    (version 2)
