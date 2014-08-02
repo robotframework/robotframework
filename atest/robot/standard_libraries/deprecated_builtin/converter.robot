@@ -18,4 +18,3 @@ Boolean
 
 List
     Check testcase    ${TEST NAME}
-

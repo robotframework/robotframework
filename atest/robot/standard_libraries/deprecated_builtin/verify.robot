@@ -1,9 +1,7 @@
 *** Setting ***
-Suite Setup       Run Tests    \    standard_libraries${/}deprecated_builtin${/}verify.html
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/deprecated_builtin/verify.robot
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
-
-*** Variable ***
 
 *** Test Case ***
 Error

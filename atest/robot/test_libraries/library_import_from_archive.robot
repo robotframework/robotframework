@@ -18,5 +18,4 @@ Java Library From A Jar File
 My Setup
     ${TESTLIBPATH} =  Join Path  ${CURDIR}${/}..${/}..  testresources/testlibs/
     Set Suite Variable  $TESTLIBPATH
-    Run Tests  -P ${TESTLIBPATH}${/}ziplib.zip -P ${TESTLIBPATH}${/}JarLib.jar  test_libraries${/}library_import_from_archive.html
-
+    Run Tests  -P ${TESTLIBPATH}${/}ziplib.zip -P ${TESTLIBPATH}${/}JarLib.jar  test_libraries/library_import_from_archive.robot

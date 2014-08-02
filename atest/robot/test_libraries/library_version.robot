@@ -1,10 +1,8 @@
 *** Setting ***
-Suite Setup       Run Tests    \    test_libraries/${/}library_version.html
+Suite Setup       Run Tests    ${EMPTY}    test_libraries/library_version.robot
 Force Tags        regression
 Default Tags      jybot    pybot
 Resource          atest_resource.robot
-
-*** Variable ***
 
 *** Test Case ***
 Python Library Version
@@ -23,5 +21,3 @@ Java Library Version
 Version Undefined In Java Library
     [Tags]    jybot
     Check Syslog Contains    Imported library 'ExampleJavaLibrary' with arguments [ ] (version <unknown>, class type,
-
-*** Keyword ***

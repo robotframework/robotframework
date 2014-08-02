@@ -12,4 +12,3 @@ SubSuite2 First
     [Tags]
     Log    SubSuite2_First
     Sleep    ${SLEEP}    Make sure elapsed time > 0
-

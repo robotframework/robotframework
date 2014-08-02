@@ -1,6 +1,6 @@
 *** Settings ***
-Resource        resources/my_resource_1.html
-Resource        resources/my_resource_2.html
+Resource        resources/my_resource_1.robot
+Resource        resources/my_resource_2.robot
 Library         MyLibrary1
 
 *** Test Cases ***

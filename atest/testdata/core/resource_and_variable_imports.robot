@@ -36,7 +36,7 @@ Variables    resources_and_variables/dynamic_variables.py    One arg works
 # Invalid imports
 Resource     non_existing.robot
 Variables    non_existing.py
-Resource     ${resource_dir}/invalid_resource.html
+Resource     ${resource_dir}/empty_resource.robot
 Resource     resources_and_variables/resources.robot   only one parameter allowed
 Resource     test_suite_dir_with_init_file/__init__.robot
 Resource     ${INIT FILE}

@@ -40,4 +40,3 @@ Verify Grep
     [Arguments]  ${pattern}  ${pattern_type}  ${exp_result}  ${grep_text}=${TEXT}
     ${res} =  Grep  ${grep_text}  ${pattern}  ${pattern_type}
     Should Be Equal  ${res}  ${exp_result}
-

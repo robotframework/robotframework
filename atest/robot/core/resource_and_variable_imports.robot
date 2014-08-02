@@ -98,7 +98,7 @@ Non-Existing Variable File
     ...  Variable file 'non_existing.py' does not exist
 
 Empty Resource File
-    ${path} =  Normalize Path  ${RESDIR}/invalid_resource.html
+    ${path} =  Normalize Path  ${RESDIR}/empty_resource.robot
     Check Stderr Contains  [ WARN ] Imported resource file '${path}' is empty
 
 Invalid Resource Import Parameters

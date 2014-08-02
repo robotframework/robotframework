@@ -16,4 +16,3 @@ SubSuite1 First
     Log    SubSuite1_First
     Sleep    ${SLEEP}    Make sure elapsed time > 0
     Should Be Equal    ${FAIL}    NO    This test was doomed to fail
-

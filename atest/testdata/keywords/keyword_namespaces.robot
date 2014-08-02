@@ -1,6 +1,6 @@
 *** Settings ***
-Resource        resources/my_resource_1.html
-Resource        resources/my_resource_2.html
+Resource        resources/my_resource_1.robot
+Resource        resources/my_resource_2.robot
 Library         resources/MyLibrary1.py
 Library         resources/MyLibrary2.py
 Library         OperatingSystem

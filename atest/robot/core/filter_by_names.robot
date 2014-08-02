@@ -71,13 +71,13 @@ Correct Files Processed With --suite Matches Files
     ${suitedir} =  Join Path  ${DATADIR}  ${TESTDATA_SUITES}
     ${subsuitedir} =  Join Path  ${suitedir}  subsuites
     Check syslog contains  Parsing test data directory '${suitedir}'
-    Check Syslog Contains  Ignoring file or directory 'fourth.html'
-    Check Syslog Contains  Ignoring file or directory 'tsuite3.html'
+    Check Syslog Contains  Ignoring file or directory 'fourth.robot'
+    Check Syslog Contains  Ignoring file or directory 'tsuite3.robot'
     Check Syslog Contains  Parsing test data directory '${subsuitedir}'
     Check Syslog Contains  Ignoring file or directory 'sub1.robot'
     Check Syslog Contains  Ignoring file or directory 'sub2.robot'
-    Check Syslog Contains  Parsing file '${suitedir}${/}tsuite1.html
-    Check Syslog Contains  Parsing file '${suitedir}${/}tsuite2.html
+    Check Syslog Contains  Parsing file '${suitedir}${/}tsuite1.robot
+    Check Syslog Contains  Parsing file '${suitedir}${/}tsuite2.robot
 
 Non-Existing Suite
     Run Failing Test
@@ -111,10 +111,10 @@ Correct Files Processed When --suite Matches Directory
     ${suitedir} =  Join Path  ${DATADIR}  ${TESTDATA_SUITES}
     ${subsuitedir} =  Join Path  ${suitedir}  subsuites
     Check Syslog Contains  Parsing test data directory '${suitedir}'
-    Check Syslog Contains  Ignoring file or directory 'fourth.html'
-    Check Syslog Contains  Ignoring file or directory 'tsuite1.html'
-    Check Syslog Contains  Ignoring file or directory 'tsuite2.html'
-    Check Syslog Contains  Ignoring file or directory 'tsuite3.html'
+    Check Syslog Contains  Ignoring file or directory 'fourth.robot'
+    Check Syslog Contains  Ignoring file or directory 'tsuite1.robot'
+    Check Syslog Contains  Ignoring file or directory 'tsuite2.robot'
+    Check Syslog Contains  Ignoring file or directory 'tsuite3.robot'
     Check Syslog Contains  Parsing test data directory '${subsuitedir}'
     Check Syslog Contains  Parsing file '${subsuitedir}${/}sub1.robot'
     Check Syslog Contains  Parsing file '${subsuitedir}${/}sub2.robot'

@@ -19,10 +19,6 @@ Malformed HTML
 HTML File Not Containing Tests
     Check Parsing Error  invalid.html  ${EMPTY TC TABLE MSG}  ${HTMLDIR}${/}invalid.html
 
-Empty Directory
-    Run Tests Without Processing Output  ${EMPTY}  ${NO TESTS}${/}empty
-    Check Stderr Contains  [ ERROR ] Suite 'Empty' contains no tests.${USAGE_TIP}
-
 Directory Containing No Test Cases
     Run Tests Without Processing Output  ${EMPTY}  ${NO TESTS}
     Check Stderr Contains  [ ERROR ] Suite 'Notests' contains no tests.${USAGE_TIP}

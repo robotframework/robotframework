@@ -46,8 +46,8 @@ class TestJsonConverter(unittest.TestCase):
                      keywords=[])
         test_convert(self.suite['suites'][4]['suites'][1]['suites'][-1],
                      source=join(normpath(DATADIR), 'multiple_suites',
-                                 '02__sub.suite.1', 'second__.Sui.te.2..html'),
-                     relativeSource='misc/multiple_suites/02__sub.suite.1/second__.Sui.te.2..html',
+                                 '02__sub.suite.1', 'second__.Sui.te.2..robot'),
+                     relativeSource='misc/multiple_suites/02__sub.suite.1/second__.Sui.te.2..robot',
                      id='s1-s5-s2-s2',
                      name='.Sui.te.2.',
                      fullName='Misc.Multiple Suites.Sub.Suite.1..Sui.te.2.',

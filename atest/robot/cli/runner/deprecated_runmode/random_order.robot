@@ -9,7 +9,7 @@ ${DEFAULT TEST ORDER}  [test1, test2, test3, test4, test5, test6, test7, test8, 
 
 *** Test Cases ***
 Randomizing Tests
-    [Setup]  Run Tests  --runmode random:test  misc/multiple_suites/01__suite_first.html
+    [Setup]  Run Tests  --runmode random:test  misc/multiple_suites/01__suite_first.robot
     Should Not Be Equal As Strings  ${SUITE.tests}  ${DEFAULT TEST ORDER}
 
 Randomizing Suites
@@ -34,4 +34,3 @@ Get Tests
     Comment  This keyword is needed as there is also one directory suite, which does not contain tests.
     ${tests} =  Set Variable If  '${SUITE.suites[0].name}' == 'Sub.Suite.1'  ${SUITE.suites[0].suites[0].tests}  ${SUITE.suites[0].tests}
     [Return]  ${tests}
-

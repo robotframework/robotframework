@@ -1,9 +1,7 @@
 *** Setting ***
-Suite Setup       Run Tests    \    test_libraries/${/}new_style_class_libraries.html
+Suite Setup       Run Tests    ${EMPTY}    test_libraries/${/}new_style_class_libraries.robot
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
-
-*** Variable ***
 
 *** Test Case ***
 Keyword From New Style Class Library
@@ -19,5 +17,3 @@ Keyword Created By Metaclass
 
 Methods in Metaclass Are not Keywords
     Check Test Case    Methods in Metaclass Are not Keywords
-
-*** Keyword ***

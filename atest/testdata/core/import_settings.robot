@@ -1,14 +1,14 @@
 *** Settings ***
-LIbrary    OperatingSystem
-Resource   resources.html
+Library    OperatingSystem
+Resource   resources.robot
 Variables  variables.py
 
-*** Test case ***
+*** Test Case ***
 Library Import
-    Fail If File Exists  ${CURDIR}${/}non_existing.file
-    
+    File Should Not Exist  ${CURDIR}${/}non_existing.file
+
 Resource Import
     Should be Equal  ${resource_file_var}  Variable from a resource file
-    
+
 Variable Import
     Should be Equal  ${variable_file_var}  Variable from a variable file

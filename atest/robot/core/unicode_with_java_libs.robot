@@ -1,10 +1,8 @@
 *** Setting ***
-Suite Setup       Run Tests    \    core${/}unicode_with_java_libs.html
+Suite Setup       Run Tests    ${EMPTY}    core/unicode_with_java_libs.robot
 Force Tags        regression    jybot
 Resource          atest_resource.robot
 Variables         ../../resources/unicode_vars.py
-
-*** Variable ***
 
 *** Test Case ***
 Unicode In Xml Output
@@ -21,5 +19,3 @@ Unicode Object
 
 Unicode Error
     Check Test Case    Unicode Error    FAIL    ${MESSAGES}
-
-*** Keyword ***

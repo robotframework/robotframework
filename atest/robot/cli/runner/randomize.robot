@@ -9,7 +9,7 @@ ${DEFAULT TEST ORDER}  [test1, test2, test3, test4, test5, test6, test7, test8, 
 
 *** Test Cases ***
 Randomizing tests
-    [Setup]  Run Tests  --randomize test  misc/multiple_suites/01__suite_first.html
+    [Setup]  Run Tests  --randomize test  misc/multiple_suites/01__suite_first.robot
     Should Not Be Equal As Strings  ${SUITE.tests}  ${DEFAULT TEST ORDER}
     Randomized metadata is added    Tests
 

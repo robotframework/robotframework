@@ -1,7 +1,7 @@
 *** Settings ***
-Resource        ../core/resources2.html
-Library         ${oslib}
-Library         ${param}Library  @{args}
+Resource        variables_for_library_import.robot
+Library         ${OS LIB}
+Library         ${PARAM}Library    @{ARGS}
 
 *** Test Cases ***
 Verify Library Import With Variable In Name
@@ -12,4 +12,3 @@ Verify Library Import With List Variable
     ${host}    ${port} =    Parameters
     Should Be Equal    ${host}    myhost
     Should Be Equal    ${port}    1000
-

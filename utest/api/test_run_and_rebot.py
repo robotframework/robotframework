@@ -142,11 +142,11 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         return namespace.IMPORTER.import_library('OperatingSystem',None, None, None)
 
     def _import_resource(self):
-        resource = join(ROOT, 'atest', 'testdata', 'core', 'resources.html')
+        resource = join(ROOT, 'atest', 'testdata', 'core', 'resources.robot')
         return namespace.IMPORTER.import_resource(resource)
 
     def test_clear_namespace_between_runs(self):
-        data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.html')
+        data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.robot')
         rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),
                  test=['NormalText'], variable=['NormalText:Hello'])
         assert_equals(rc, 0)

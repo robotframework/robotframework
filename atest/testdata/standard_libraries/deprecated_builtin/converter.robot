@@ -45,4 +45,3 @@ List
     ${int_one}    Integer    1
     ${mixed}    List    one    ${int_one}
     Fail Unless    ${mixed} == ['one', 1]
-
