@@ -1,9 +1,15 @@
 *** Settings ***
-Documentation  Test cases for metadata in  Setting table (incl. imports)    and within Test Case and    Keyword tables.
-doc u ment  Text from multiple columns is catenated with spaces,  and line continuation creates a new line.  Real newlines can be  added with 'backslash+n' (e.g. '\n').\
-...  Also variables work since Robot     ${version}, and they work   from commandline too:   ${SUITE_DOC_FROM_CLI}.
-...  Starting from RF 2.1  ${nonexisting} variables are  just left unchanged.
-...  Of course escaping  (e.g.    '\${non-existing-in-suite-doc}'    and '\\')  works too.
+Documentation    Text from     multiple    columns    is catenated with spaces,
+...              and line continuation creates a new line.
+...              Newlines can also be added literally "\n\n".
+...  Variables work since Robot ${version} and ${SUITE_DOC_FROM_CLI} works too.
+...  Starting from RF 2.1  ${nonexisting} variables are         left unchanged.
+...  Escaping    (e.g. '\${non-existing}', 'c:\\temp', '\\n')    works too.
+...
+Document    For backwards compatibility reasons we still support 'Document'
+...  setting name and continuing
+Doc U Ment    the doc by just repeating the setting multiple times.
+
  Def ault TAGS  @{default_tags}
 Default Tags  \  default-39  # Empty tags should be ignored
 Forcetags  \  force-1
