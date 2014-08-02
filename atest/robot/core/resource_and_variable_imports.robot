@@ -128,6 +128,14 @@ Invalid Variable File
     Stderr Should Contain Error    ${DATAFILE}
     ...    Importing variable file '${path}' failed: This is an invalid variable file
 
+Resource Import Without Path
+    Stderr Should Contain Error    ${DATAFILE}
+    ...    Resource setting requires a name
+
+Variable Import Without Path
+    Stderr Should Contain Error    ${DATAFILE}
+    ...    Variables setting requires a name
+
 Resource File In PYTHONPATH
     Check Test Case  ${TEST NAME}
 

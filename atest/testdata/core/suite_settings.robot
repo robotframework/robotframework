@@ -19,6 +19,8 @@ Suitesetup  ${SUITE_FIXTURE_FROM_CLI}  ${default} suite setup  # Global variable
 Suite Teardown  ${SUITE_FIXTURE_FROM_CLI}
 Suite Tear down  Default suite teardown
 
+Invalid Setting    Yes, this is invalid.
+
 *** Variables ***
 ${version}  1.2
 ${default}  Default

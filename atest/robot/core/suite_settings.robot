@@ -36,6 +36,11 @@ Suite Setup
 Suite Teardown
     Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
+Invalid Setting
+    ${path} =    Normalize Path    ${DATADIR}/core/suite_settings.robot
+    Check Log Message    ${ERRORS[0]}
+    ...    Error in file '${path}': Non-existing setting 'Invalid Setting'.    ERROR
+
 *** Keywords ***
 Verify Setup
     [Arguments]    ${item}    ${expected_name}    ${expected_message}

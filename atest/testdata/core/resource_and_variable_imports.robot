@@ -3,13 +3,13 @@ Documentation   NO RIDE: Imports contain invalid syntax on purpose
 
 Resource     resources_and_variables/resources.robot
 Resource     RESOURCES_AND_VARIABLES/resources.robot  # Normalize on Windows
-Resource     ${resource_dir}/resources2.robot
-Variables    resources_and_variables/variables.py
+RESOURCE     ${resource_dir}/resources2.robot
+VARIABLES    resources_and_variables/variables.py
 Variables    ${variables2_file}
 
 # Arguments to variable files
-Variables    resources_and_variables/dynamic_variables.py    # No args works
-Variables    resources_and_variables/dynamic_variables.py    One arg works
+Var I able s    resources_and_variables/dynamic_variables.py    # No args works
+variables    resources_and_variables/dynamic_variables.py    One arg works
 Variables    resources_and_variables/dynamic_variables.py
 ...          Two args   returns invalid
 Variables    resources_and_variables/dynamic_variables.py
@@ -18,8 +18,8 @@ Variables    resources_and_variables/dynamicVariables.py
 ...          This    ${1}    ${works}    back \\ slash    \${escaped}    ${CURDIR}
 
 # Resources and variables in PYTHONPATH
-Resource     resource_in_pythonpath.robot
-Resource     resvar_subdir/resource_in_pythonpath_2.robot
+Res our ce     resource_in_pythonpath.robot
+resource     resvar_subdir/resource_in_pythonpath_2.robot
 Variables    variables_in_pythonpath.py
 Variables    resvar_subdir/variables_in_pythonpath_2.py
 ...          Variable from variable file    in PYTHONPATH    (version 2)
@@ -40,9 +40,11 @@ Resource     ${resource_dir}/empty_resource.robot
 Resource     resources_and_variables/resources.robot   only one parameter allowed
 Resource     test_suite_dir_with_init_file/__init__.robot
 Resource     ${INIT FILE}
+Resource
 Variables    ${resource_dir}/invalid_variable_file.py
 Variables    resources_and_variables/dynamicVariables.py    ${non_existing_var_as_arg}
 Variables    resources_and_variables/invalid_list_variable.py
+Variables
 
 *** Variables ***
 ${resource_dir}       ${CURDIR}${/}resources_and_variables
