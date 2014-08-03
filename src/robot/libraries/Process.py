@@ -837,7 +837,8 @@ class ProcessConfig(object):
                        for k, v in env.items())
         for key in extra:
             if not key.startswith('env:'):
-                raise RuntimeError("'%s' is not supported by this keyword." % key)
+                raise RuntimeError("Keyword argument '%s' is not supported by "
+                                   "this keyword." % key)
             if env is None:
                 env = os.environ.copy()
             env[encode_to_system(key[4:])] = encode_to_system(extra[key])

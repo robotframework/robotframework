@@ -2,7 +2,6 @@
 Suite Setup       Some process    suite_process
 Suite Teardown    Stop some process    suite_process
 Test Setup        Restart Suite Process If Needed
-Library           Collections
 Resource          resource.robot
 
 *** Test Cases ***
@@ -28,42 +27,12 @@ Change Current Working Directory
     ${result2}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=..
     Should Not Be Equal    ${result.stdout}    ${result2.stdout}
 
-Without Env Configuration the Environment Should Be As It Was
-    Set Environment Variable  normalvar  normal
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True
-    Should Be Equal        ${result.stdout.strip()}    normal -
-
-With Env: Configuration the Environment Should Contain Additional Variable
-    Set Environment Variable  normalvar  normal
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env:specialvar=spessu
-    Should Be Equal        ${result.stdout.strip()}    normal spessu
-
-With Env= Configuration the Environment Should Contain Only Additional Variable
-    Set Environment Variable  normalvar  normal
-    ${setenv}=    Create env dictionary    specialvar  spessu
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env=${setenv}
-    Should Be Equal        ${result.stdout.strip()}    - spessu
-
-Setting Environment With Multiple Values
-    Set Environment Variable  normalvar  normal
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba', '-');"    shell=True   env:specialvar=spessu   env:diiba=daaba
-    Should Be Equal        ${result.stdout.strip()}  normal spessu daaba
-
-Setting Environment Variable Overrides Original
-    Set Environment Variable  VARI  original
-    ${result}=    Run Process    python -c "import os; print os.getenv('VARI', '-');"    shell=True   env:VARI=new
-    Should Be Equal        ${result.stdout.strip()}  new
-
-Setting Environment With Multiple Values Using Dictionary
-    Set Environment Variable  normalvar  normal
-    ${setenv}=    Create env dictionary   specialvar  spessu  diiba2  daaba2
-    ${result}=    Run Process    python   -c    import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba2', '-');    env=${setenv}
-    Should Be Equal        ${result.stdout.strip()}  - spessu daaba2
-
 Unsupported Arguments Should Cause Error
-    ${setenv}=    Create Dictionary           sp  spessu
-    Run Keyword And Expect Error  'genv' is not supported by this keyword.    Run Process    python -c "import os; print os.environ;"    shell=True   genv=${setenv}
-    Run Keyword And Expect Error  'shellx' is not supported by this keyword.    Run Process    python -c "import os; print os.environ;"    shellx=True
+    [Template]    Run Keyword And Expect Error
+    Keyword argument 'invalid' is not supported by this keyword.
+    ...    Run Process    echo foo    shell=True   invalid=argument
+    Keyword argument 'shellx' is not supported by this keyword.
+    ...    Run Process    echo foo    shellx=True
 
 Escaping equals sign
     ${result}=    Run Process    python    -c    print 'stderr\=bar.buu'    shell=True
@@ -99,11 +68,3 @@ Get process id
 Restart Suite Process If Needed
     ${alive}=    Is Process Running    suite_process
     Run Keyword Unless    ${alive}    Some process    suite_process
-
-Create env dictionary
-    [Arguments]  @{env_args}
-    ${comspec}=     Get Environment Variable  COMSPEC  default=.
-    ${path}=        Get Environment Variable  PATH   default=.
-    ${systemroot}=  Get Environment Variable  SYSTEMROOT  default=.
-    ${setenv}=    Create Dictionary  PATH  ${path}  SYSTEMROOT  ${SYSTEMROOT}  @{env_args}
-    [Return]  ${setenv}

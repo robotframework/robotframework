@@ -1,5 +1,6 @@
 *** Settings ***
 Library           Process
+Library           Collections
 Library           OperatingSystem
 
 *** Variables ***
