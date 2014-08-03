@@ -1,10 +1,12 @@
 Robot Framework
 ===============
 
-.. note::
-    This repository is currently under migration from
-    http://code.google.com/p/robotframework/. Code and issues have been
-    moved, but it will take some time before wiki pages are migrated.
+.. note::  This repository is currently under migration from `Google Code`__.
+           Code and issues have already been moved, but it will take some tim
+           before `old wiki pages`__ are migrated.
+
+__ http://code.google.com/p/robotframework/
+__ http://code.google.com/p/robotframework/wiki/DocumentationIndex?tm=6
 
 Introduction
 ------------
