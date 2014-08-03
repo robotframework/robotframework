@@ -4,10 +4,13 @@ Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
-Just command
+Command and arguments in system
     Check Test Case    ${TESTNAME}
 
-Command and arguments
+Command and arguments in shell as separate arguments
+    Check Test Case    ${TESTNAME}
+
+Command and arguments in shell as single argument
     Check Test Case    ${TESTNAME}
 
 Escaping equal sign

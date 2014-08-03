@@ -2,23 +2,23 @@
 Resource          process_resource.robot
 
 *** Test Cases ***
-Just command
-    ${result} =    Run Process    echo
-    Result should equal    ${result}
-    ${result} =    Run Process    echo    shell=True
-    Result should equal    ${result}
+Command and arguments in system
+    ${result} =    Run Process    python    ${SCRIPT}    my stdout    my stderr
+    Script result should equal    ${result}    stdout=my stdout    stderr=my stderr
 
-Command and arguments
-    ${result} =    Run Process    python    -c    print 'Hello, world!'
-    Result should equal    ${result}    stdout=Hello, world!
-    ${result} =    Run Process    python    -c    print 'Hi again!'    shell=joo
-    Result should equal    ${result}    stdout=Hi again!
+Command and arguments in shell as separate arguments
+    ${result} =    Run Process    python    ${SCRIPT}    my stdout    shell=True
+    Script result should equal    ${result}    stdout=my stdout
+
+Command and arguments in shell as single argument
+    ${result} =    Run Process    python ${SCRIPT} my args    shell=joo
+    Script result should equal    ${result}    stdout=my    stderr=args
 
 Escaping equal sign
-    ${result}=    Run Process    python    -c    print 'name\=value'
-    Result should equal    ${result}    stdout=name\=value
-    ${result}=    Run Process    python -c "print 'shell\=xxx'"    shell=True
-    Result should equal    ${result}    stdout=shell=xxx
+    ${result} =    Run Process    python    ${SCRIPT}    name\=value
+    Script result should equal    ${result}    stdout=name\=value
+    ${result} =    Run Process    python    ${SCRIPT}    shell\=False    shell=True
+    Script result should equal    ${result}    stdout=shell=False
 
 Unsupported kwargs cause error
     [Template]    Run Keyword And Expect Error

@@ -4,6 +4,7 @@ Library           Collections
 Library           OperatingSystem
 
 *** Variables ***
+${SCRIPT}         ${CURDIR}${/}files${/}script.py
 ${COUNTDOWN}      ${CURDIR}${/}files${/}countdown.py
 ${TEMPFILE}       %{TEMPDIR}${/}terminate-process-temp.txt
 ${STDOUT}         %{TEMPDIR}/process-stdout-file.txt
@@ -29,8 +30,8 @@ Stop some process
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
     ...    ${stdout_path}=    ${stderr_path}=
-    Should Be Equal    ${result.stdout}    ${stdout}    stdout:
-    Should Be Equal    ${result.stderr}    ${stderr}    stderr:
+    Should Be Equal    ${result.stdout}    ${stdout}    stdout
+    Should Be Equal    ${result.stderr}    ${stderr}    stderr
     Result should match    ${result}    ${stdout}    ${stderr}    ${rc}
     ...    ${stdout_path}    ${stderr_path}
 
@@ -53,6 +54,11 @@ Custom stream should contain
     ${content} =    Get File    ${path}    encoding=${encoding}
     Should Be Equal    ${content.rstrip()}    ${expected}
     [Return]    ${path}
+
+Script result should equal
+    [Documentation]    These are default results by ${SCRIPT}
+    [Arguments]    ${result}    ${stdout}=stdout    ${stderr}=stderr    ${rc}=0
+    Result should equal    ${result}    ${stdout}    ${stderr}    ${rc}
 
 Start Python Process
     [Arguments]    ${command}    ${alias}=${NONE}    ${stdout}=${NONE}    ${stderr}=${NONE}    ${shell}=False
