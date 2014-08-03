@@ -9,9 +9,6 @@ Resource         process_resource.robot
 Library Namespace should be global
     Check Test Case    ${TESTNAME}
 
-Running a process
-    Check Test Case    ${TESTNAME}
-
 Error in exit code and stderr output
     Check Test Case    ${TESTNAME}
 
@@ -19,12 +16,6 @@ Start And Wait Process
     Check Test Case    ${TESTNAME}
 
 Change Current Working Directory
-    Check Test Case    ${TESTNAME}
-
-Unsupported Arguments Should Cause Error
-    Check Test Case    ${TESTNAME}
-
-Escaping equals sign
     Check Test Case    ${TESTNAME}
 
 Running a process in a shell

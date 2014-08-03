@@ -8,10 +8,6 @@ Resource          process_resource.robot
 Library Namespace should be global
     Process Should Be Running    suite_process
 
-Running a process
-    ${result}=    Run Python Process    import sys; sys.stdout.write('hello')
-    Result should equal    ${result}    stdout=hello
-
 Error in exit code and stderr output
     ${result}=    Run Python Process    1/0
     Result should match    ${result}    stderr=*ZeroDivisionError: integer division or modulo by zero*    rc=1
@@ -26,17 +22,6 @@ Change Current Working Directory
     ${result}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=.
     ${result2}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=..
     Should Not Be Equal    ${result.stdout}    ${result2.stdout}
-
-Unsupported Arguments Should Cause Error
-    [Template]    Run Keyword And Expect Error
-    Keyword argument 'invalid' is not supported by this keyword.
-    ...    Run Process    echo foo    shell=True   invalid=argument
-    Keyword argument 'shellx' is not supported by this keyword.
-    ...    Run Process    echo foo    shellx=True
-
-Escaping equals sign
-    ${result}=    Run Process    python    -c    print 'stderr\=bar.buu'    shell=True
-    Result should match    ${result}    stdout=*stderr=bar.buu*
 
 Running a process in a shell
     ${result}=    Run Process    python -c "print 'hello'"    shell=True

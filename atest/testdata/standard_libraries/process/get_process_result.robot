@@ -7,7 +7,7 @@ Suite Teardown    Safe Remove File    ${TEMP FILE}
 *** Variables ***
 ${TEMPFILE}       %{TEMPDIR}${/}get-process-result.txt
 
-*** Test Cases ****
+*** Test Cases ***
 Get whole result object
     ${result} =    Get Process Result    robot
     Should Be Equal    ${result.rc}    ${2}

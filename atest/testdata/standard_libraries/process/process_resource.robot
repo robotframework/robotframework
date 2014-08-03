@@ -30,7 +30,7 @@ Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
     ...    ${stdout_path}=    ${stderr_path}=
     Should Be Equal    ${result.stdout}    ${stdout}    stdout:
-    Should Be Equal    ${result.stderr}    ${stderr}    stderr
+    Should Be Equal    ${result.stderr}    ${stderr}    stderr:
     Result should match    ${result}    ${stdout}    ${stderr}    ${rc}
     ...    ${stdout_path}    ${stderr_path}
 
