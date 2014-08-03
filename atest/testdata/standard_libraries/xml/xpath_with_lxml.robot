@@ -2,7 +2,7 @@
 Suite Setup       Set lxml availability to suite metadata
 Test Template     Xpath should match element
 Library           XML    use_lxml=true
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Test Cases ***
 Tag

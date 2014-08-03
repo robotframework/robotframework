@@ -1,6 +1,6 @@
 *** Settings ***
 Library           XML
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Test Cases ***
 Get Element Count

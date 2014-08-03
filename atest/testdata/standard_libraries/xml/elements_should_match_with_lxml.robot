@@ -2,7 +2,7 @@
 Suite Setup       Set lxml availability to suite metadata
 Test Template     Elements should not match
 Library           XML    use_lxml=yes
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Test cases ***
 Elements should match

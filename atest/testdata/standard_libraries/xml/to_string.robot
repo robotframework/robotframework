@@ -1,6 +1,6 @@
 *** Settings ***
 Library           XML
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Variables ***
 ${TÄG}    <täg attr="hyvä">sisältö</täg>

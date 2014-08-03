@@ -2,7 +2,7 @@
 Suite Setup       Set lxml availability to suite metadata
 Test Setup        Parse XML To Test Variable    ${SIMPLE}    \${XML}
 Library           XML    use_lxml=yes
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Test Cases ***
 

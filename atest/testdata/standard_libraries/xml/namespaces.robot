@@ -1,6 +1,6 @@
 *** Settings ***
 Library           XML
-Resource          resource.robot
+Resource          xml_resource.robot
 Test Setup        Remove File    ${OUTPUT}
 Suite Teardown    Remove File    ${OUTPUT}
 

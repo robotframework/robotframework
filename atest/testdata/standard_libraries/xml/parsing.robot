@@ -1,6 +1,6 @@
 *** Settings ***
 Library           XML
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Test Cases ***
 Parse file using forwards slash as path separator

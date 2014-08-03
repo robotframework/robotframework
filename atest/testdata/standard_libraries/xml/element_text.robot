@@ -1,6 +1,6 @@
 *** Settings ***
 Library           XML
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Test cases ***
 Get text of current element

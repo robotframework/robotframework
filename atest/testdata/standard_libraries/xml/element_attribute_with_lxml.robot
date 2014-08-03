@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup       Set lxml availability to suite metadata
 Library           XML    use_lxml=yes
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Test Cases ***
 Get attribute of current element

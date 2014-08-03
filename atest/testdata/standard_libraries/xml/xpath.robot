@@ -5,7 +5,7 @@ Documentation    Tests ET's XPATH support documented at
 ...              expressions with non-ASCII characters require ET 1.3
 ...              (i.e. interpreter version 2.7) or newer.
 Library          XML
-Resource         resource.robot
+Resource         xml_resource.robot
 Suite Setup      Add Etree Version to Suite Metadata
 Test Template    Xpath should match element
 

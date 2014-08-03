@@ -4,7 +4,7 @@ Suite Setup       Run Keywords    Set lxml availability to suite metadata
 Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
 Test Teardown     Remove File    ${OUTPUT}
 Library           XML    use_lxml=yes
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Test Cases ***
 Tag names contain namespace in Clark Notation

@@ -3,7 +3,7 @@ Suite Setup       Set lxml availability to suite metadata
 Test Setup        Remove File    ${OUTPUT}
 Suite Teardown    Remove File    ${OUTPUT}
 Library           XML    use_lxml=yes
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Variables ***
 ${SIMPLE SAVED}       <root><child id="1">text</child><c2><gc/></c2></root>

@@ -1,6 +1,6 @@
 *** Settings ***
 Library           XML
-Resource          resource.robot
+Resource          xml_resource.robot
 
 *** Variables ***
 ${WITH TAIL}    <root a="v"><child a="v">text</child>tail</root>

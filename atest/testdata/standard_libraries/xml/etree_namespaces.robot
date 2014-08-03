@@ -1,6 +1,6 @@
 *** Settings ***
 Library           XML
-Resource          resource.robot
+Resource          xml_resource.robot
 Suite Setup       Remove File    ${OUTPUT}
 Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
 Test Teardown     Remove File    ${OUTPUT}

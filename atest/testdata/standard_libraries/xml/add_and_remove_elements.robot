@@ -1,6 +1,6 @@
 *** Settings ***
 Library           XML
-Resource          resource.robot
+Resource          xml_resource.robot
 Test Setup        Parse XML To Test Variable    ${SIMPLE}    \${XML}
 
 *** Variables ***
