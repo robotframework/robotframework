@@ -1,5 +1,5 @@
 *** Settings ***
-Resource          resource.robot
+Resource          process_resource.robot
 
 *** Test Cases ***
 Non-ASCII command and output

@@ -2,7 +2,7 @@
 Test Setup        Check Precondition         sys.version_info >= (2,6)
 Test Teardown     Terminate All Processes    kill=True
 Library           Process
-Resource          resource.robot
+Resource          process_resource.robot
 
 *** Test Cases ***
 Wait For Process

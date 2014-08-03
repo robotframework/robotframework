@@ -2,7 +2,7 @@
 Library           Process
 Library           OperatingSystem
 Library           CustomLib.py
-Resource          resource.robot
+Resource          process_resource.robot
 
 *** Test Cases ***
 Explicitly run Operating System library keyword

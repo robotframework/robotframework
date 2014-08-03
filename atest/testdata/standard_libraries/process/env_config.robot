@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Set Environment Variable    var1    system
-Resource          resource.robot
+Resource          process_resource.robot
 
 *** Variables ***
 @{COMMAND}        python    -c    import os; print os.getenv('var1', '-'), os.getenv('var2', '-'), os.getenv('var3', '-')

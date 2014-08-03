@@ -1,5 +1,5 @@
 *** Settings ***
-Resource          resource.robot
+Resource          process_resource.robot
 Test Teardown     Safe Remove File    ${STDOUT}    ${STDERR}
 
 *** Test Cases ***
