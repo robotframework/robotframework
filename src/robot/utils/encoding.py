@@ -54,5 +54,10 @@ def decode_from_system(string, can_be_from_java=True):
 
 
 def encode_to_system(string, errors='replace'):
-    """Encodes Unicode to system encoding (e.g. cli args and env vars)."""
+    """Encodes Unicode to system encoding (e.g. cli args and env vars).
+
+    Non-Unicode strings are first converted to Unicode.
+    """
+    if not isinstance(string, unicode):
+        string = unicode(string)
     return string.encode(SYSTEM_ENCODING, errors)

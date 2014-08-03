@@ -14,6 +14,10 @@ Command and arguments in shell as single argument
     ${result} =    Run Process    python ${SCRIPT} my args    shell=joo
     Script result should equal    ${result}    stdout=my    stderr=args
 
+Arguments are converted to strings automatically
+    ${result} =    Run Process    python    ${SCRIPT}    ${1}    ${2}    ${3}
+    Script result should equal    ${result}    stdout=1    stderr=2    rc=3
+
 Escaping equal sign
     ${result} =    Run Process    python    ${SCRIPT}    name\=value
     Script result should equal    ${result}    stdout=name\=value

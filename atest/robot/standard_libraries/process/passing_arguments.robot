@@ -13,6 +13,9 @@ Command and arguments in shell as separate arguments
 Command and arguments in shell as single argument
     Check Test Case    ${TESTNAME}
 
+Arguments are converted to strings automatically
+    Check Test Case    ${TESTNAME}
+
 Escaping equal sign
     Check Test Case    ${TESTNAME}
 

@@ -78,6 +78,9 @@ class Process(object):
     | `Run Process` | ${progdir}${/}prog.py        | first arg | second         |
     | `Run Process` | script1.sh arg && script2.sh | shell=yes | cwd=${progdir} |
 
+    Starting from Robot Framework 2.8.6, possible non-string arguments are
+    converted to strings automatically.
+
     = Process configuration =
 
     `Run Process` and `Start Process` keywords can be configured using
