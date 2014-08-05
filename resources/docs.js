@@ -7,11 +7,19 @@ function addHandler(element, eventName, handler) {
 }
 
 function addHandlerToButtons(className, handler) {
-    var buttons = document.getElementsByClassName(className);
+    var buttons = getElementsByClassName(className);
     for (var i = buttons.length - 1; i >= 0; i--) {
         addHandler(buttons[i], 'click', handler);
     };
 
+}
+
+function getElementsByClassName(className) {
+    if (document.getElementsByClassName) {
+        return document.getElementsByClassName(className);
+    } else {  // IE8
+        return document.querySelectorAll('.' + className);
+    }
 }
 
 function getIdAndVersion(evt) {
