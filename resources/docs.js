@@ -24,7 +24,7 @@ function getIdAndVersion(evt) {
 }
 
 function getViewUrl(targetId, targetVersion) {
-    if (targetId === 'ug'){
+    if (targetId === 'ug') {
         return targetVersion + '/RobotFrameworkUserGuide.html';
     }
     return targetVersion + '/libraries/' + targetId + '.html';
@@ -49,7 +49,6 @@ function viewTool(event) {
     var ugUrl = getViewUrl('ug', target.version);
     window.location.href = ugUrl + '#' + target.id;
 }
-
 
 window.onload = function() {
     addHandlerToButtons('download-doc', downloadDoc);
