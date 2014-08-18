@@ -48,16 +48,13 @@ class Namespace:
         self.test = None
         self.uk_handlers = []
         self.variables = _VariableScopes(variables, parent_variables)
-        self.library_search_order = []
         self._imports = imports
-        self._user_keywords = UserLibrary(user_keywords)
-        self._testlibs = {}
-        self._imported_resource_files = ImportCache()
+        self._kw_store = KeywordStore(user_keywords)
         self._imported_variable_files = ImportCache()
 
     @property
     def libraries(self):
-        return list(self._testlibs.itervalues())
+        return self._kw_store.libraries.values()
 
     def handle_imports(self):
         self._import_default_libraries()
@@ -93,11 +90,11 @@ class Namespace:
     def _import_resource(self, import_setting, overwrite=False):
         path = self._resolve_name(import_setting)
         self._validate_not_importing_init_file(path)
-        if overwrite or path not in self._imported_resource_files:
+        if overwrite or path not in self._kw_store.resources:
             resource = IMPORTER.import_resource(path)
             self.variables.set_from_variable_table(resource.variable_table,
                                                    overwrite)
-            self._imported_resource_files[path] \
+            self._kw_store.resources[path] \
                 = UserLibrary(resource.keyword_table.keywords, resource.source)
             self._handle_imports(resource.setting_table.imports)
         else:
@@ -133,11 +130,11 @@ class Namespace:
         name = self._resolve_name(import_setting)
         lib = IMPORTER.import_library(name, import_setting.args,
                                       import_setting.alias, self.variables)
-        if lib.name in self._testlibs:
+        if lib.name in self._kw_store.libraries:
             LOGGER.info("Test library '%s' already imported by suite '%s'"
                         % (lib.name, self.suite.longname))
             return
-        self._testlibs[lib.name] = lib
+        self._kw_store.libraries[lib.name] = lib
         lib.start_suite()
         if self.test:
             lib.start_test()
@@ -173,23 +170,28 @@ class Namespace:
         if name in self._deprecated_libraries:
             self.import_library(self._deprecated_libraries[name])
 
+    def set_search_order(self, new_order):
+        old_order = self._kw_store.search_order
+        self._kw_store.search_order = new_order
+        return old_order
+
     def start_test(self, test):
         self.test = test
         self.variables.start_test()
-        for lib in self._testlibs.values():
+        for lib in self.libraries:
             lib.start_test()
 
     def end_test(self):
         self.test = None
         self.variables.end_test()
         self.uk_handlers = []
-        for lib in self._testlibs.values():
+        for lib in self.libraries:
             lib.end_test()
 
     def end_suite(self):
         self.suite = None
         self.variables.end_suite()
-        for lib in self._testlibs.values():
+        for lib in self.libraries:
             lib.end_suite()
 
     def start_user_keyword(self, handler):
@@ -201,16 +203,11 @@ class Namespace:
         self.uk_handlers.pop()
 
     def get_library_instance(self, libname):
-        try:
-            return self._testlibs[libname.replace(' ', '')].get_instance()
-        except KeyError:
-            raise DataError("No library with name '%s' found." % libname)
+        return self._kw_store.get_library(libname).get_instance()
 
     def get_handler(self, name):
         try:
-            handler = self._get_handler(name)
-            if handler is None:
-                raise DataError("No keyword with name '%s' found." % name)
+            handler = self._kw_store.get_handler(name)
         except DataError, err:
             handler = UserErrorHandler(name, unicode(err))
         self._replace_variables_from_user_handlers(handler)
@@ -219,6 +216,27 @@ class Namespace:
     def _replace_variables_from_user_handlers(self, handler):
         if hasattr(handler, 'replace_variables'):
             handler.replace_variables(self.variables)
+
+
+class KeywordStore(object):
+
+    def __init__(self, user_keywords):
+        self.user_keywords = UserLibrary(user_keywords)
+        self.libraries = {}
+        self.resources = ImportCache()
+        self.search_order = ()
+
+    def get_library(self, name):
+        try:
+            return self.libraries[name.replace(' ', '')]
+        except KeyError:
+            raise DataError("No library with name '%s' found." % name)
+
+    def get_handler(self, name):
+        handler = self._get_handler(name)
+        if handler is None:
+            raise DataError("No keyword with name '%s' found." % name)
+        return handler
 
     def _get_handler(self, name):
         handler = None
@@ -274,28 +292,27 @@ class Namespace:
         return None
 
     def _get_handler_from_test_case_file_user_keywords(self, name):
-        if self._user_keywords.has_handler(name):
-            return self._user_keywords.get_handler(name)
+        if self.user_keywords.has_handler(name):
+            return self.user_keywords.get_handler(name)
 
     def _get_handler_from_resource_file_user_keywords(self, name):
-        found = [lib.get_handler(name) for lib
-                 in self._imported_resource_files.values()
+        found = [lib.get_handler(name) for lib in self.resources.values()
                  if lib.has_handler(name)]
         if not found:
             return None
         if len(found) > 1:
-            found = self._get_handler_based_on_library_search_order(found)
+            found = self._get_handler_based_on_search_order(found)
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
 
     def _get_handler_from_library_keywords(self, name):
-        found = [lib.get_handler(name) for lib in self._testlibs.values()
+        found = [lib.get_handler(name) for lib in self.libraries.values()
                  if lib.has_handler(name)]
         if not found:
             return None
         if len(found) > 1:
-            found = self._get_handler_based_on_library_search_order(found)
+            found = self._get_handler_based_on_search_order(found)
         if len(found) == 2:
             found = self._prefer_process_over_operatingsystem(*found)
         if len(found) == 2:
@@ -304,8 +321,8 @@ class Namespace:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
 
-    def _get_handler_based_on_library_search_order(self, handlers):
-        for libname in self.library_search_order:
+    def _get_handler_based_on_search_order(self, handlers):
+        for libname in self.search_order:
             for handler in handlers:
                 if utils.eq(libname, handler.libname):
                     return [handler]
@@ -339,8 +356,7 @@ class Namespace:
     def _get_explicit_handler(self, name):
         libname, kwname = name.rsplit('.', 1)
         # 1) Find matching lib(s)
-        libs = [lib for lib
-                in self._imported_resource_files.values() + self._testlibs.values()
+        libs = [lib for lib in self.libraries.values() + self.resources.values()
                 if utils.eq(lib.name, libname)]
         if not libs:
             return None

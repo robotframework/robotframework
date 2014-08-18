@@ -2213,7 +2213,7 @@ class _Misc:
         except DataError, err:
             raise RuntimeError(unicode(err))
 
-    def set_library_search_order(self, *libraries):
+    def set_library_search_order(self, *search_order):
         """Sets the resolution order to use when a name matches multiple keywords.
 
         The library search order is used to resolve conflicts when a keyword
@@ -2252,9 +2252,7 @@ class _Misc:
         - Starting from RF 2.6.2, library and resource names in the search order
           are both case and space insensitive.
         """
-        old_order = self._namespace.library_search_order
-        self._namespace.library_search_order = libraries
-        return old_order
+        return self._namespace.set_search_order(search_order)
 
     def keyword_should_exist(self, name, msg=None):
         """Fails unless the given keyword exists in the current scope.
@@ -2268,9 +2266,7 @@ class _Misc:
         New in Robot Framework 2.6. See also `Variable Should Exist`.
         """
         try:
-            handler = self._namespace._get_handler(name)
-            if not handler:
-                raise DataError("No keyword with name '%s' found." % name)
+            handler = self._namespace.get_handler(name)
             if isinstance(handler, UserErrorHandler):
                 handler.run()
         except DataError, err:
