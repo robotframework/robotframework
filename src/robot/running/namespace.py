@@ -354,18 +354,22 @@ class KeywordStore(object):
         return [external]
 
     def _get_explicit_handler(self, name):
-        libname, kwname = name.rsplit('.', 1)
-        # 1) Find matching lib(s)
-        libs = [lib for lib in self.libraries.values() + self.resources.values()
-                if utils.eq(lib.name, libname)]
-        if not libs:
-            return None
-        # 2) Find matching kw from found libs
-        found = [lib.get_handler(kwname) for lib in libs
-                 if lib.has_handler(kwname)]
+        found = []
+        for owner_name, kw_name in self._yield_owner_and_kw_names(name):
+            found.extend(self._find_keywords(owner_name, kw_name))
         if len(found) > 1:
             self._raise_multiple_keywords_found(name, found, implicit=False)
-        return found and found[0] or None
+        return found[0] if found else None
+
+    def _yield_owner_and_kw_names(self, full_name):
+        tokens = full_name.split('.')
+        for i in range(1, len(tokens)):
+            yield '.'.join(tokens[:i]), '.'.join(tokens[i:])
+
+    def _find_keywords(self, owner_name, name):
+        return [owner.get_handler(name)
+                for owner in self.libraries.values() + self.resources.values()
+                if utils.eq(owner.name, owner_name) and owner.has_handler(name)]
 
     def _raise_multiple_keywords_found(self, name, found, implicit=True):
         error = "Multiple keywords with name '%s' found.\n" % name
