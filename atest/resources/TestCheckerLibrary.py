@@ -96,9 +96,14 @@ class TestCheckerLibrary:
             pattern = test.exp_message.replace('REGEXP:', '', 1).strip()
             if re.match('^%s$' % pattern, test.message, re.DOTALL):
                 return
+        if test.exp_message.startswith('GLOB:'):
+            pattern = test.exp_message.replace('GLOB:', '', 1).strip()
+            matcher = utils.Matcher(pattern, caseless=False, spaceless=False)
+            if matcher.match(test.message):
+                return
         if test.exp_message.startswith('STARTS:'):
             start = test.exp_message.replace('STARTS:', '', 1).strip()
-            if start == '':
+            if not start:
                 raise RuntimeError("Empty 'STARTS:' is not allowed")
             if test.message.startswith(start):
                 return

@@ -22,7 +22,7 @@ Import Variables 2
     Should Be Equal  ${IMPORT_VARIABLES_1}  Simple variable file
 
 Import Variables With Arguments
-    [Documentation]  FAIL REGEXP: Processing variable file '.*variables_to_import_2.py' with arguments \\[ 1 | 2 | 3\\] failed: TypeError: .*
+    [Documentation]  FAIL GLOB: Processing variable file '*variables_to_import_2.py' with arguments [ 1 | 2 | 3 ] failed: TypeError: *
     Import Variables  ${VAR FILE 2}  my  args
     Should Be Equal  ${IMPORT_VARIABLES_2}  Dynamic variable file
     Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  my args

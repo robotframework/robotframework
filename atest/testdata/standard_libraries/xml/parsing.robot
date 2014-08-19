@@ -17,11 +17,11 @@ Parse string
     Should be equal     ${root.text}     päivää
 
 Parse invalid file
-    [Documentation]    FAIL REGEXP: .*Error: .*
+    [Documentation]    FAIL GLOB: *Error: *
     Parse XML    ${CURDIR}${/}parsing.txt
 
 Parse invalid string
-    [Documentation]    FAIL REGEXP: .*Error: .*
+    [Documentation]    FAIL GLOB: *Error: *
     Parse XML    <kekkonen>urho
 
 Parse non-existing file

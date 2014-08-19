@@ -115,14 +115,16 @@ running part (``robot`` folder). Test data side contains test cases for
 different features. Running side contains the actual acceptance test cases
 that run the test cases on the test data side and verify their results.
 
-The basic mechanism to verify that test cases in the test data side
-are executed as expected, is setting the expected status and possible
-error message in the documentation of the test cases. Normally test
-cases are expected to pass, but having ``FAIL`` in the documentation
-changes the expectation. Text after ``FAIL`` should contain the exact
-error message or, when the text starts with ``REGEXP:``, a regular
-expression matching the error. All other details can be tested also,
-but that logic is in the running side.
+The basic mechanism to verify that a test case in the test data side is
+executed as expected is setting the expected status and possible error
+message in its documentation. By default tests are expected to pass, but
+having ``FAIL`` (this and subsequent markers are case sensitive) in the
+documentation changes the expectation. The text after the ``FAIL`` marker
+is the expected error message, which, by default, must match the actual
+error exactly. If the error message starts with ``REGEXP:``, ``GLOG:` or
+``STARTS:`, the expected error is considered to be a regexp or glob pattern
+matching the actual error, or to contain the beginning of the error. All
+other details can be tested also, but that logic is in the running side.
 
 These acceptance tests are in general *not* good examples of
 well-written test cases. This is mainly due to us learning how to
