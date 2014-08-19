@@ -1,5 +1,5 @@
-Acceptance Tests
-================
+Robot Framework acceptance tests
+================================
 
 Introduction
 ------------
@@ -8,10 +8,10 @@ Acceptance tests for Robot Framework are naturally created using Robot
 Framework itself. This folder contains all those acceptance tests and other
 test data they need.
 
-License and Copyright
+License and copyright
 ---------------------
 
-All the content in `atest` folder is the under following copyright::
+All the content in ``atest`` folder is the under following copyright::
 
     Copyright 2008-2014 Nokia Solutions and Networks
 
@@ -31,34 +31,40 @@ Directory contents
 ------------------
 
 run_atests.py
-    A script for running acceptance tests. See below for further
-   instructions.
+    A script for running acceptance tests. See below for further instructions.
+
+genrunner.py
+    Script to generate atest runners based on plain text data files.
+
+    Usage:  genrunner.py testdata/path/data.robot [robot/path/runner.robot]
 
 robot/
     Contains actual acceptance test cases.
 
 resources/
-    Resources needed by acceptance tests in `robot` folder.
+    Resources needed by acceptance tests in ``robot`` folder.
 
 testdata/
     Contains test data used by acceptance tests. This test data consists
     mainly of test cases that are run by actual acceptance tests in
-    the `robot` folder.
+    the ``robot`` folder.
 
 testresources/
-    Contains resources needed by test cases in `testdata` folder.
+    Contains resources needed by test cases in ``testdata`` folder.
     Some of these resources are also used by unit tests.
 
 results/
     The place for test execution results like reports, logs and outputs.
     This directory is generated when acceptance tests are executed. It
-    is in `.hgignore` and can be safely deleted any time.
+    is in ``.gitignore`` and can be safely deleted any time.
 
-Running Acceptance Tests
+Running acceptance tests
 ------------------------
 
-Robot Framework's acceptance tests are run using `run_atests.py`. Its
-usage is displayed with `--help` and also shown below::
+Robot Framework's acceptance tests are run using ``run_atests.py``. Its
+usage is displayed with ``--help`` and also shown below::
+
+    A script for running Robot Framework's acceptance tests.
 
     Usage:  run_atests.py interpreter [options] datasource(s)
 
@@ -77,7 +83,7 @@ usage is displayed with `--help` and also shown below::
     $ atest/run_atests.py python --test example atest/robot
     $ atest/run_atests.py /usr/bin/jython25 atest/robot/tags/tag_doc.txt
 
-To run all the acceptance tests, execute the `atest/robot` folder entirely:
+To run all the acceptance tests, execute the ``atest/robot`` folder entirely::
 
     python atest/run_atests.py python atest/robot
 
@@ -93,28 +99,28 @@ used to verify interoperability with both supported interpreters. Tests
 can (and should) also be run using different Python and Jython versions and
 on different operating systems. Since running tests on Jython takes quite a
 lot time, it is sometimes a good idea to run only those tests that are not
-executed with Python with it:
+executed with Python with it::
 
     python atest/run_atests.py jython --exclude pybot atest/robot
 
-The results of the test execution are written to `results` folder. The
+The results of the test execution are written to ``results`` folder. The
 directory contains output, log and report files of the execution as
 well as a separate directory for other outputs.
 
-Test Data
+Test data
 ---------
 
-The test data is divided to two, test data part (`testdata` folder) and
-running part (`robot` folder). Test data side contains test cases for
+The test data is divided to two, test data part (``testdata`` folder) and
+running part (``robot`` folder). Test data side contains test cases for
 different features. Running side contains the actual acceptance test cases
 that run the test cases on the test data side and verify their results.
 
 The basic mechanism to verify that test cases in the test data side
 are executed as expected, is setting the expected status and possible
 error message in the documentation of the test cases. Normally test
-cases are expected to pass, but having `FAIL` in the documentation
-changes the expectation. Text after `FAIL` should contain the exact
-error message or, when the text starts with `REGEXP:`, a regular
+cases are expected to pass, but having ``FAIL`` in the documentation
+changes the expectation. Text after ``FAIL`` should contain the exact
+error message or, when the text starts with ``REGEXP:``, a regular
 expression matching the error. All other details can be tested also,
 but that logic is in the running side.
 
@@ -124,6 +130,6 @@ write good test cases with Robot Framework while developing it, and so
 far there has not been time for refactoring them. With better tools
 refactoring is getting easier and hopefully we can do something for
 these tests in the future. The first step would be reorganizing the
-structure of `robot` and `testdata` folders. Their current structure
+structure of ``robot`` and ``testdata`` folders. Their current structure
 follows Robot Framework's old internal module structure and it is far
 from ideal nowadays.
