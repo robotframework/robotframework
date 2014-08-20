@@ -121,7 +121,7 @@ message in its documentation. By default tests are expected to pass, but
 having ``FAIL`` (this and subsequent markers are case sensitive) in the
 documentation changes the expectation. The text after the ``FAIL`` marker
 is the expected error message, which, by default, must match the actual
-error exactly. If the error message starts with ``REGEXP:``, ``GLOG:` or
+error exactly. If the error message starts with ``REGEXP:``, ``GLOB:` or
 ``STARTS:`, the expected error is considered to be a regexp or glob pattern
 matching the actual error, or to contain the beginning of the error. All
 other details can be tested also, but that logic is in the running side.
