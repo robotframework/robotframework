@@ -14,6 +14,15 @@ Failing
 Global Dynamic Library
     Check Test Case  ${TESTNAME}
 
+Non-ASCII keyword name works when Unicode
+    Check Test Case  ${TESTNAME}
+
+Non-ASCII keyword name works when UTF-8 bytes
+    Check Test Case  ${TESTNAME}
+
+Non-ASCII keyword name fails when other bytes
+    Check Test Case  ${TESTNAME}
+
 Run Keyword in Static Library
     [Documentation]  Verify that library having run_keyword method but no get_keyword_names method is not considered dynamic
     Check Test Case  ${TESTNAME}
@@ -30,5 +39,3 @@ Dynamic libraries should work without argument specification
 Dynamic libraries should match named arguments same way as with user keywords
     ${tc}=    Check Test Case  ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    x y=1 z=2
-
-

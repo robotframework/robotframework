@@ -2,7 +2,8 @@
 Library         RunKeywordLibrary
 Library         RunKeywordLibrary.RunKeywordButNoGetKeywordNamesLibrary
 Library         RunKeywordLibrary.GlobalRunKeywordLibrary
-Library         ${CURDIR}/dynamic_libraries/DynamicLibraryWithoutArgspec.py
+Library         dynamic_libraries/DynamicLibraryWithoutArgspec.py
+Library         dynamic_libraries/NonAsciiKeywordNames.py
 
 
 *** Test Cases ***
@@ -19,6 +20,21 @@ Global Dynamic Library
     ${ret} =  RunKeywordLibrary. GlobalRunKeywordLibrary. RunKeyword That Passes  Hi  tellus  and  Hello  Mars!
     Should Be Equal  ${ret}  Hi, tellus, and, Hello, Mars!
     RunKeywordLibrary. GlobalRunKeywordLibrary. RunKeyword That Fails
+
+Non-ASCII keyword name works when Unicode
+    ${name} =    Unicode nön-äscïï
+    Should Be Equal    ${name}    Unicode nön-äscïï
+    ${name} =    ☃
+    Should Be Equal    ${name}    \u2603
+    Should Be Equal    ${name}    ☃
+
+Non-ASCII keyword name works when UTF-8 bytes
+    ${name} =    UTF-8 nön-äscïï
+    Should Be Equal    ${name}    UTF-8 nön-äscïï
+
+Non-ASCII keyword name fails when other bytes
+    [Documentation]  FAIL No keyword with name 'Latin1 nön-äscïï' found.
+    Latin1 nön-äscïï
 
 Run Keyword in Static Library
     [Documentation]  PASS
@@ -46,5 +62,3 @@ Dynamic libraries should match named arguments same way as with user keywords
     ...                positional arguments.
     ...                e.g. this should print strings 'x', 'y=1' and 'z=2'
     Do something third    x    y=1    z=2
-
-
