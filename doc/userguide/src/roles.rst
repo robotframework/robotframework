@@ -7,6 +7,7 @@
    - msg    test case status and message, as well as log messages and levels
    - name   keyword, library, test case, test suite, etc. names
    - cli    command line examples (note that options alone use opt)
+   - gui    gui entry
    - path   file names and paths
    - misc   everything else (synonym to ``text``)
 
@@ -17,6 +18,7 @@
 .. role:: msg
 .. role:: name
 .. role:: cli
+.. role:: gui
 .. role:: path
 .. role:: misc
 
