@@ -124,27 +124,6 @@ illustrate using them also with other interpreters.
    # Create reports/logs with Python by running `robot/rebot.py` script.
    python path/to/robot/rebot.py
 
-Built-in tools
-''''''''''''''
-
-Libdoc_, Testdoc_, and Tidy_ tools are bundled with the core framework. They
-do not have their own runner scripts, but they can be executed as a module
-using the :opt:`-m` option and directly as a script. The table below lists the
-entry points using Python but they can be used with any supported interpreter.
-
-.. table:: Entry points of built-in tools
-   :class: tabular
-
-   =================  ==============================  ===================================
-         Tool                 Run as module                     Run as script
-   =================  ==============================  ===================================
-   Libdoc             :cli:`python -m robot.libdoc`   :cli:`python path/robot/libdoc.py`
-   Testdoc            :cli:`python -m robot.testdoc`  :cli:`python path/robot/testdoc.py`
-   Tidy               :cli:`python -m robot.tidy`     :cli:`python path/robot/tidy.py`
-   =================  ==============================  ===================================
-
-All these tools have command line help accessible with :opt:`--help` option.
-
 .. _precondition:
 
 Preconditions
@@ -465,9 +444,9 @@ with it like:
   java -jar robotframework-2.8.5.jar mytests.txt
   java -jar robotframework-2.8.5.jar --variable name:value mytests.txt
 
-If you want to `post-process outputs`_ or use the `built-in tools`_,
-you need to give the command name (e.g. :prog:`rebot` or :prog:`libdoc`) as the
-first argument to the JAR file:
+If you want to `post-process outputs`_ or use the built-in `supporting tools`_,
+you need to give the command name :prog:`rebot`, :prog:`libdoc`, :prog:`testdoc`
+or :prog:`tidy` as the first argument to the JAR file:
 
 .. sourcecode:: bash
 
