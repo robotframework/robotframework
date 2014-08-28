@@ -10,14 +10,14 @@ different tables are recognized and the test data syntax in general.
 __ http://robotframework.org/robotframework/#user-guide
 
 
-* testcase_template.html, testcase_template.tsv: 
+* testcase_template.html, testcase_template.tsv
     Templates for creating test cases in HTML and TSV formats, respectively.
 
-* resource_template.html, resource_template.tsv: 
+* resource_template.html, resource_template.tsv
     HTML and TSV templates for creating resource files. Same templates
     can be used also to create test suite initialization files.
 
-* atdd_template.html:   
+* atdd_template.html
     Template for creating test cases in Acceptance Test-Driven
     Development (ATDD) style. These use-case-like test cases are
     created from high-level keywords needing no arguments, and the
