@@ -452,9 +452,11 @@ class _Dictionary:
         return self.set_to_dictionary({}, *key_value_pairs, **items)
 
     def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
-        """Adds the given `key_value_pairs` and `items`to the `dictionary`.
+        """Adds the given `key_value_pairs` and `items` to the `dictionary`.
 
         See `Create Dictionary` for information about giving items.
+        If the given `key` already exist in the `dictionary`, its value
+        is updated.
 
         Example:
         | Set To Dictionary | ${D1} | key | value |
