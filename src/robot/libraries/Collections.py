@@ -451,11 +451,11 @@ class _Dictionary:
                              "even number of key-value-pairs.")
         return self.set_to_dictionary({}, *key_value_pairs, **items)
 
-    def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
+    def remove_from_dictionary(self, dictionary, *key_value_pairs, **items):
         """Adds the given `key_value_pairs` and `items` to the `dictionary`.
-        If the key already exist, the value is updated.
 
         See `Create Dictionary` for information about giving items.
+        If the key already exist, the value is updated.
 
         Example:
         | Set To Dictionary | ${D1} | key | value |
