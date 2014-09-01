@@ -2,6 +2,15 @@ body {
     margin: 0 2em 10em 2em;
 }
 
+h2 > a {
+    color: inherit;
+    text-decoration: none;
+}
+h2 > a:hover:after {
+    content: ' \00b6';
+    color: #C60F0F;
+}
+
 code {
     font-size: 0.9em;
     background-color: #EDEDED;
