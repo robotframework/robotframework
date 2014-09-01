@@ -10,8 +10,7 @@ function addHandlerToButtons(className, handler) {
     var buttons = getElementsByClassName(className);
     for (var i = buttons.length - 1; i >= 0; i--) {
         addHandler(buttons[i], 'click', handler);
-    };
-
+    }
 }
 
 function getElementsByClassName(className) {
