@@ -214,12 +214,6 @@ __ http://creativecommons.org/licenses/by/3.0/
 
 .. External link targets
 
-.. _Python: http://python.org
-.. _Jython: http://jython.org
-.. _IronPython: http://ironpython.net
-.. _PyPy: http://pypy.org
-.. _Java: http://java.com/
-.. _.NET: http://www.microsoft.com/NET/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _docutils: https://pypi.python.org/pypi/docutils
 .. _Sphinx: http://sphinx-doc.org/
