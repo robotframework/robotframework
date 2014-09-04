@@ -61,11 +61,11 @@ Library Import   Fail If Dir Empty   ${CURDIR}
 
 
 
-Test Timeout   [Timeout]   1second
-   [Document]   FAIL   Test timeout 1 second exceeded.
-   Sleep   2
+Test Timeout   [Timeout]   0.01second
+   [Document]   FAIL   Test timeout 10 milliseconds exceeded.
+   Sleep   1
 
-Keyword Timeout   [Document]   FAIL   Keyword timeout 1 second exceeded.
+Keyword Timeout   [Document]   FAIL   Keyword timeout 2 milliseconds exceeded.
    Timeouted Keyword
 
 
@@ -110,7 +110,7 @@ My Keyword With Arg   [Arguments]   ${arg1}
 Another Keyword   [Arguments]   ${arg1}   ${arg2}=something
    Equals   ${arg1}   ${arg2}
 
-Timeouted Keyword   [Timeout]   1second
-   Sleep   2
+Timeouted Keyword   [Timeout]   2ms
+   Sleep   0.1
 
 Keyword With No Arguments   Log   Hello world!

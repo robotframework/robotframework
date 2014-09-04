@@ -18,9 +18,6 @@ Error in exit code and stderr output
 Start And Wait Process
     Check Test Case    ${TESTNAME}
 
-Switching active process
-    Check Test Case    ${TESTNAME}
-
 Change Current Working Directory
     Check Test Case    ${TESTNAME}
 
@@ -54,5 +51,6 @@ Running a process in a shell
 Input things to process
     Check Test Case    ${TESTNAME}
 
-Process alias
+Get process id
+    [Setup]    Check Precondition
     Check Test Case    ${TESTNAME}

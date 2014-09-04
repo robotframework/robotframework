@@ -50,6 +50,10 @@ class Screenshot(object):
     Notice that successfully taking screenshots requires tests to be run with
     a physical or virtual display.
 
+    This library was heavily enhanced in Robot Framework 2.5.5 release. Old
+    keywords for taking screenshots were deprecated and they have since been
+    removed.
+
     = Using with Python =
 
     With Python you need to have one of the following modules installed to be
@@ -61,8 +65,6 @@ class Screenshot(object):
       Linux distributions.
     - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
       This module can take screenshots only on Windows.
-
-    Python support was added in Robot Framework 2.5.5.
 
     = Using with Jython and IronPython =
 
@@ -82,29 +84,6 @@ class Screenshot(object):
    `screenshot_directory` argument in `importing` and `Set Screenshot Directory`
     keyword during execution. It is also possible to save screenshots using
     an absolute path.
-
-    Note that prior to Robot Framework 2.5.5 the default screenshot location
-    was system's temporary directory.
-
-    = Changes in Robot Framework 2.5.5 and Robot Framework 2.6 =
-
-    This library was heavily enhanced in Robot Framework 2.5.5 release. The
-    changes are listed below and explained more thoroughly in affected places.
-
-    - The support for using this library on Python (see above) was added.
-    - The default location where screenshots are saved was changed (see above).
-    - New `Take Screenshot` and `Take Screenshot Without Embedding` keywords
-      were added. These keywords should be used for taking screenshots in
-      the future. Other screenshot taking keywords will be deprecated and
-      removed later.
-    - `log_file_directory` argument was deprecated everywhere it was used.
-
-    In Robot Framework 2.6, following additional changes were made:
-
-    - `log_file_directory` argument was removed altogether.
-    - `Set Screenshot Directories` keyword was removed.
-    - `Save Screenshot`, `Save Screenshot To` and `Log Screenshot`
-      keywords were deprecated. They will be removed in Robot Framework 2.8.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
@@ -119,9 +98,9 @@ class Screenshot(object):
 
         Examples (use only one of these):
 
-        | =Setting= | =Value=  |  =Value=   | =Value= |
-        | Library | Screenshot |            | # Default location |
-        | Library | Screenshot | ${TEMPDIR} | # System temp (this was default prior to 2.5.5) |
+        | =Setting= |  =Value=   |  =Value=   |      =Value=       |
+        | Library   | Screenshot |            | # Default location |
+        | Library   | Screenshot | ${TEMPDIR} | # System temp      |
         """
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = ScreenshotTaker()

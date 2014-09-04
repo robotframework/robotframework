@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
 from robot.errors import DataError
 from robot import utils
 
@@ -111,8 +113,12 @@ def ClassDoc(path):
     jdoctool = JavadocTool.make0(context)
     filter = ModifierFilter(PUBLIC)
     java_names = List.of(path)
-    root = jdoctool.getRootDocImpl('en', 'utf-8', filter, java_names,
-                                   List.nil(), False, List.nil(),
-                                   List.nil(), False, False, True)
+    if sys.platform[4:7] < '1.8':  # API changed in Java 8
+        root = jdoctool.getRootDocImpl('en', 'utf-8', filter, java_names,
+                                       List.nil(), False, List.nil(),
+                                       List.nil(), False, False, True)
+    else:
+        root = jdoctool.getRootDocImpl('en', 'utf-8', filter, java_names,
+                                       List.nil(), List.nil(), False, List.nil(),
+                                       List.nil(), False, False, True)
     return root.classes()[0]
-

@@ -21,13 +21,22 @@ from robot.utils import MultiMatcher
 class FlattenKeywordMatcher(object):
 
     def __init__(self, flattened):
-        self.match = MultiMatcher(self._yield_patterns(flattened)).match
+        self._types = []
+        names = self._yield_names_and_set_types(flattened, self._types)
+        self._name_matcher = MultiMatcher(names)
 
-    def _yield_patterns(self, flattened):
+    def _yield_names_and_set_types(self, flattened, types):
         if isinstance(flattened, string_types):
             flattened = [flattened]
         for flat in flattened:
-            if not flat.upper().startswith('NAME:'):
-                raise DataError("Expected pattern to start with 'NAME:' "
-                                "but got '%s'." % flat)
-            yield flat[5:]
+            upper = flat.upper()
+            if upper in ('FOR', 'FORITEM'):
+                types.append(flat.lower())
+            elif upper.startswith('NAME:'):
+                yield flat[5:]
+            else:
+                raise DataError("Expected 'FOR', 'FORITEM', or "
+                                "'NAME:<pattern>' but got '%s'." % flat)
+
+    def match(self, name, type):
+        return self._name_matcher.match(name) or type in self._types

@@ -1,6 +1,6 @@
 *** Settings ***
-Library      OperatingSystem
-Resource     resource.txt
+Library           XML
+Resource          resource.txt
 
 *** Variables ***
 ${TÄG}    <täg attr="hyvä">sisältö</täg>

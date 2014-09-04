@@ -15,6 +15,7 @@
 from six import string_types
 
 import sys
+import ctypes
 import os
 import subprocess
 import sys
@@ -95,6 +96,11 @@ class Process(object):
     | stderr      | Path of a file where to write standard error.               |
     | binary_mode | Specifies whether streams are opened in binary or text mode |
     | alias       | Alias given to the process.                                 |
+
+    Note that because `**configuration` is passed using `name=value` syntax,
+    possible equal signs in other arguments passed to `Run Process` and
+    `Start Process` must be escaped with a backslash like `name\\=value`.
+    See `Run Process` for an example.
 
     == Running processes in shell ==
 
@@ -309,11 +315,16 @@ class Process(object):
 
         Returns a `result object` containing information about the execution.
 
+        Note that possible equal signs in `*arguments` must be escaped
+        with a backslash (e.g. `name\\=value`) to avoid them to be passed in
+        as `**configuration`.
+
         Examples:
         | ${result} = | Run Process | python | -c | print 'Hello, world!' |
         | Should Be Equal | ${result.stdout} | Hello, world! |
         | ${result} = | Run Process | ${command} | stderr=STDOUT | timeout=10s |
         | ${result} = | Run Process | ${command} | timeout=1min | on_timeout=continue |
+        | ${result} = | Run Process | java -Dname\\=value Example | shell=True | cwd=${EXAMPLE} |
 
         This command does not change the `active process`.
         `timeout` and `on_timeout` arguments are new in Robot Framework 2.8.4.
@@ -331,23 +342,21 @@ class Process(object):
         """Starts a new process on background.
 
         See `Specifying command and arguments` and `Process configuration`
-        for more information about the arguments.
+        for more information about the arguments, and `Run Process` keyword
+        for related examples.
 
         Makes the started process new `active process`. Returns an identifier
         that can be used as a handle to active the started process if needed.
+
+        Starting from Robot Framework 2.8.5, processes are started so that
+        they create a new process group. This allows sending signals to and
+        terminating also possible child processes.
         """
         config = ProcessConfig(**configuration)
         executable_command = self._cmd(command, arguments, config.shell)
         logger.info('Starting process:\n%s' % executable_command)
         logger.debug('Process configuration:\n%s' % config)
-        process = subprocess.Popen(executable_command,
-                                   stdout=config.stdout_stream,
-                                   stderr=config.stderr_stream,
-                                   stdin=subprocess.PIPE,
-                                   shell=config.shell,
-                                   cwd=config.cwd,
-                                   env=config.env,
-                                   universal_newlines=not config.binary_mode)
+        process = subprocess.Popen(executable_command, **config.full_config)
         self._results[process] = ExecutionResult(process,
                                                  config.stdout_stream,
                                                  config.stderr_stream)
@@ -458,7 +467,7 @@ class Process(object):
     def _wait(self, process):
         result = self._results[process]
         result.rc = process.wait() or 0
-        result.close_custom_streams()
+        result.close_streams()
         logger.info('Process completed.')
         return result
 
@@ -472,20 +481,23 @@ class Process(object):
         similarly as `Wait For Process`.
 
         On Unix-like machines, by default, first tries to terminate the process
-        gracefully, but forcefully kills it if it does not stop in 30 seconds.
-        Kills the process immediately if the `kill` argument is given any value
-        considered true. See `Boolean arguments` section for more details about
-        true and false values.
+        group gracefully, but forcefully kills it if it does not stop in 30
+        seconds. Kills the process group immediately if the `kill` argument is
+        given any value considered true. See `Boolean arguments` section for
+        more details about true and false values.
 
         Termination is done using `TERM (15)` signal and killing using
         `KILL (9)`. Use `Send Signal To Process` instead if you just want to
         send either of these signals without waiting for the process to stop.
 
-        On Windows the Win32 API function `TerminateProcess()` is used directly
-        to stop the process. Using the `kill` argument has no special effect.
+        On Windows, by default, sends `CTRL_BREAK_EVENT` signal to the process
+        group. If that does not stop the process in 30 seconds, or `kill`
+        argument is given a true value, uses Win32 API function
+        `TerminateProcess()` to kill the process forcefully. Note that
+        `TerminateProcess()` does not kill possible child processes.
 
-        | ${result} =                 | Terminate Process |           |
-        | Should Be Equal As Integers | ${result.rc}      | -15       |
+        | ${result} =                 | Terminate Process |     |
+        | Should Be Equal As Integers | ${result.rc}      | -15 | # On Unixes |
         | Terminate Process           | myproc            | kill=true |
 
         *NOTE:* Stopping processes requires the
@@ -496,7 +508,9 @@ class Process(object):
         [http://bugs.jython.org/issue1898|do not seem to support them either].
 
         Automatically killing the process if termination fails as well as
-        returning the result object are new features in Robot Framework 2.8.2.
+        returning a result object are new features in Robot Framework 2.8.2.
+        Terminating also possible child processes, including using
+        `CTRL_BREAK_EVENT` on Windows, is new in Robot Framework 2.8.5.
         """
         process = self._processes[handle]
         if not hasattr(process, 'terminate'):
@@ -513,13 +527,28 @@ class Process(object):
 
     def _kill(self, process):
         logger.info('Forcefully killing process.')
-        process.kill()
+        if hasattr(os, 'killpg'):
+            os.killpg(process.pid, signal_module.SIGKILL)
+        else:
+            process.kill()
         if not self._process_is_stopped(process, self.KILL_TIMEOUT):
             raise RuntimeError('Failed to kill process.')
 
     def _terminate(self, process):
         logger.info('Gracefully terminating process.')
-        process.terminate()
+        # Sends signal to the whole process group both on POSIX and on Windows
+        # if supported by the interpreter.
+        if hasattr(os, 'killpg'):
+            os.killpg(process.pid, signal_module.SIGTERM)
+        elif hasattr(signal_module, 'CTRL_BREAK_EVENT'):
+            if sys.platform == 'cli':
+                # https://ironpython.codeplex.com/workitem/35020
+                ctypes.windll.kernel32.GenerateConsoleCtrlEvent(
+                    signal_module.CTRL_BREAK_EVENT, process.pid)
+            else:
+                process.send_signal(signal_module.CTRL_BREAK_EVENT)
+        else:
+            process.terminate()
         if not self._process_is_stopped(process, self.TERMINATE_TIMEOUT):
             logger.info('Graceful termination failed.')
             self._kill(process)
@@ -539,14 +568,14 @@ class Process(object):
                 self.terminate_process(handle, kill=kill)
         self.__init__()
 
-    def send_signal_to_process(self, signal, handle=None):
+    def send_signal_to_process(self, signal, handle=None, group=False):
         """Sends the given `signal` to the specified process.
 
         If `handle` is not given, uses the current `active process`.
 
         Signal can be specified either as an integer, or anything that can
-        be converted to an integer, or as a name. In the latter case it is
-        possible to give the name both with or without a `SIG` prefix,
+        be converted to an integer, or as a signal name. In the latter case it
+        is possible to give the name both with or without a `SIG` prefix,
         but names are case-sensitive. For example, all the examples below
         send signal `INT (2)`:
 
@@ -558,8 +587,17 @@ class Process(object):
         existing signals on your system, see the Unix man pages related to
         signal handling (typically `man signal` or `man 7 signal`).
 
+        By default sends the signal only to the parent process, not to possible
+        child processes started by it. Notice that when `running processes in
+        shell`, the shell is the parent process and it depends on the system
+        does the shell propagate the signal to the actual started process.
+        To send the signal to the whole process group, `group` argument can
+        be set to any true value:
+
+        | Send Signal To Process | TERM  | group=yes |
+
         If you are stopping a process, it is often easier and safer to use
-        `Terminate Process` instead.
+        `Terminate Process` keyword instead.
 
         *NOTE:* Sending signals requires the
         [http://docs.python.org/2/library/subprocess.html|subprocess]
@@ -567,15 +605,21 @@ class Process(object):
         in Python 2.6 and are thus missing from earlier versions.
         How well it will work with forthcoming Jython 2.7 is unknown.
 
-        New in Robot Framework 2.8.2.
+        New in Robot Framework 2.8.2. Support for `group` argument is new
+        in Robot Framework 2.8.5.
         """
         if os.sep == '\\':
             raise RuntimeError('This keyword does not work on Windows.')
         process = self._processes[handle]
-        if not hasattr(process, 'send_signal'):
+        signum = self._get_signal_number(signal)
+        logger.info('Sending signal %s (%d).' % (signal, signum))
+        if is_true(group) and hasattr(os, 'killpg'):
+            os.killpg(process.pid, signum)
+        elif hasattr(process, 'send_signal'):
+            process.send_signal(signum)
+        else:
             raise RuntimeError('Sending signals is not supported '
                                'by this Python version.')
-        process.send_signal(self._get_signal_number(signal))
 
     def _get_signal_number(self, int_or_name):
         try:
@@ -717,36 +761,53 @@ class ExecutionResult(object):
     @property
     def stdout(self):
         if self._stdout is None:
-            self._stdout = self._read_stream(self.stdout_path,
-                                             self._process.stdout)
+            self._read_stdout()
         return self._stdout
 
     @property
     def stderr(self):
         if self._stderr is None:
-            self._stderr = self._read_stream(self.stderr_path,
-                                             self._process.stderr)
+            self._read_stderr()
         return self._stderr
 
-    def close_custom_streams(self):
-        for stream in self._custom_streams:
-            if not stream.closed:
-                stream.flush()
-                stream.close()
+    def _read_stdout(self):
+        self._stdout = self._read_stream(self.stdout_path, self._process.stdout)
+
+    def _read_stderr(self):
+        self._stderr = self._read_stream(self.stderr_path, self._process.stderr)
 
     def _read_stream(self, stream_path, stream):
         if stream_path:
             stream = open(stream_path, 'r')
+        elif not self._is_open(stream):
+            return ''
         try:
-            return self._format_output(stream.read() if stream else '')
+            return self._format_output(stream.read())
         finally:
             if stream_path:
                 stream.close()
+
+    def _is_open(self, stream):
+        return stream and not stream.closed
 
     def _format_output(self, output):
         if output.endswith('\n'):
             output = output[:-1]
         return decode_output(output, force=True)
+
+    def close_streams(self):
+        standard_streams = self._get_and_read_standard_streams(self._process)
+        for stream in standard_streams + self._custom_streams:
+            if self._is_open(stream):
+                stream.close()
+
+    def _get_and_read_standard_streams(self, process):
+        stdin, stdout, stderr = process.stdin, process.stdout, process.stderr
+        if stdout:
+            self._read_stdout()
+        if stderr:
+            self._read_stderr()
+        return [stdin, stdout, stderr]
 
     def __str__(self):
         return '<result object with rc %d>' % self.rc
@@ -793,6 +854,21 @@ class ProcessConfig(object):
                 env = os.environ.copy()
             env[encode_to_system(key[4:])] = encode_to_system(extra[key])
         return env
+
+    @property
+    def full_config(self):
+        config = {'stdout': self.stdout_stream,
+                  'stderr': self.stderr_stream,
+                  'stdin': subprocess.PIPE,
+                  'shell': self.shell,
+                  'cwd': self.cwd,
+                  'env': self.env,
+                  'universal_newlines': self.binary_mode}
+        if hasattr(os, 'setsid') and not sys.platform.startswith('java'):
+            config['preexec_fn'] = os.setsid
+        if hasattr(subprocess, 'CREATE_NEW_PROCESS_GROUP'):
+            config['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
+        return config
 
     def __str__(self):
         return encode_to_system("""\

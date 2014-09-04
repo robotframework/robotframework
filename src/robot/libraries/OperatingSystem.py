@@ -14,14 +14,15 @@
 
 from six import PY3, text_type as unicode
 
+import codecs
+import fnmatch
+import glob
 import os
+import shutil
+import subprocess
 import sys
 import tempfile
 import time
-import glob
-import fnmatch
-import shutil
-import subprocess
 
 try:
     from robot.version import get_version
@@ -308,7 +309,7 @@ class OperatingSystem:
         """
         PROCESSES.close_all()
 
-    def get_file(self, path, encoding='UTF-8'):
+    def get_file(self, path, encoding='UTF-8', encoding_errors='strict'):
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents.
@@ -318,9 +319,20 @@ class OperatingSystem:
         `encoding` defines the encoding of the file. By default the value is
         'UTF-8', which means that UTF-8 and ASCII-encoded files are read
         correctly.
+
+        `encoding_errors` argument controls what to do if decoding some bytes
+        fails. All values accepted by `decode` method in Python are valid, but
+        in practice the following values are most useful:
+
+        - `strict`: fail if characters cannot be decoded (default)
+        - `ignore`: ignore characters that cannot be decoded
+        - `replace`: replace characters that cannot be decoded with
+          a replacement character
+
+        `encoding_errors` argument is new in Robot Framework 2.8.5.
         """
         content = self.get_binary_file(path)
-        return unicode(content, encoding).replace('\r\n', '\n')
+        return unicode(content, encoding, encoding_errors).replace('\r\n', '\n')
 
     def get_binary_file(self, path):
         """Returns the contents of a specified file.
@@ -335,14 +347,14 @@ class OperatingSystem:
         with open(path, 'rb') as f:
             return f.read()
 
-    def grep_file(self, path, pattern, encoding='UTF-8'):
+    def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict'):
         """Returns the lines of the specified file that match the `pattern`.
 
         This keyword reads a file from the file system using the defined
-        `path` and `encoding` similarly as `Get File`. A difference is
-        that only the lines that match the given `pattern` are returned.
-        Lines are returned as a single string catenated back together with
-        newlines and the number of matched lines is automatically logged.
+        `path`, `encoding` and `encoding_errors` similarly as `Get File`. A
+        difference is that only the lines that match the given `pattern` are
+        returned. Lines are returned as a single string catenated back together
+        with newlines and the number of matched lines is automatically logged.
         Possible trailing newline is never returned.
 
         A line matches if it contains the `pattern` anywhere in it and
@@ -357,29 +369,33 @@ class OperatingSystem:
         If more complex pattern matching is needed, it is possible to use
         `Get File` in combination with String library keywords like `Get
         Lines Matching Regexp`.
+
+        `encoding_errors` argument is new in Robot Framework 2.8.5.
         """
         pattern = '*%s*' % pattern
         path = self._absnorm(path)
         lines = []
         total_lines = 0
         self._link("Reading file '%s'", path)
-        with open(path, 'rbU') as f:
-            for line in f:
+        with codecs.open(path, encoding=encoding, errors=encoding_errors) as f:
+            for line in f.readlines():
                 total_lines += 1
-                line = unicode(line, encoding).rstrip('\n')
+                line = line.rstrip('\r\n')
                 if fnmatch.fnmatchcase(line, pattern):
                     lines.append(line)
             self._info('%d out of %d lines matched' % (len(lines), total_lines))
             return '\n'.join(lines)
 
-    def log_file(self, path, encoding='UTF-8'):
+    def log_file(self, path, encoding='UTF-8', encoding_errors='strict'):
         """Wrapper for `Get File` that also logs the returned file.
 
         The file is logged with the INFO level. If you want something else,
         just use `Get File` and the built-in keyword `Log` with the desired
         level.
+
+        `encoding_errors` argument is new in Robot Framework 2.8.5.
         """
-        content = self.get_file(path, encoding)
+        content = self.get_file(path, encoding, encoding_errors)
         self._info(content)
         return content
 
@@ -605,32 +621,63 @@ class OperatingSystem:
         If the directory where to create file does not exist it, and possible
         intermediate missing directories, are created.
 
-        Use `Append To File` if you want to append to an existing file,
-        and use `File Should Not Exist` if you want to avoid overwriting
-        existing files.
+        Examples:
+        | Create File | ${dir}/example.txt | Hello, world!      |         |
+        | Create File | ${path}            | Hyv\\xe4 esimerkki | latin-1 |
+
+        Use `Append To File` if you want to append to an existing file
+        and `Create Binary File` if you need to write bytes without encoding.
+        `File Should Not Exist` can be used to avoid overwriting existing
+        files.
         """
-        path = self._write_to_file(path, content, encoding, 'w')
+        path = self._write_to_file(path, content, encoding)
         self._link("Created file '%s'", path)
+
+    def create_binary_file(self, path, content):
+        """Creates a binary file with the given content.
+
+        If content is given as a Unicode string, it is first converted to bytes
+        character by character. All characters with ordinal below 256 can be
+        used and are converted to bytes with same values.
+
+        Byte strings, and possible other types, are written to the file as is.
+
+        If the directory where to create file does not exist it, and possible
+        intermediate missing directories, are created.
+
+        Examples:
+        | Create Binary File | ${dir}/example.png | ${image content}     |
+        | Create Binary File | ${path}            | \\x01\\x00\\xe4\\x00 |
+
+        Use `Create File` if you want to create a text file using a certain
+        encoding. `File Should Not Exist` can be used to avoid overwriting
+        existing files.
+
+        New in Robot Framework 2.8.5.
+        """
+        if isinstance(content, unicode):
+            content = ''.join(chr(ord(c)) for c in content)
+        path = self._write_to_file(path, content)
+        self._link("Created binary file '%s'", path)
 
     def append_to_file(self, path, content, encoding='UTF-8'):
         """Appends the given contend to the specified file.
 
         If the file does not exists, this keyword works exactly the same
-        way as `Create File With Encoding`.
+        way as `Create File`.
         """
-        path = self._write_to_file(path, content, encoding, 'a')
+        path = self._write_to_file(path, content, encoding, mode='a')
         self._link("Appended to file '%s'", path)
 
-    def _write_to_file(self, path, content, encoding, mode):
+    def _write_to_file(self, path, content, encoding=None, mode='w'):
         path = self._absnorm(path)
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
             os.makedirs(parent)
-        f = open(path, mode+'b')
-        try:
-            f.write(content.encode(encoding))
-        finally:
-            f.close()
+        if encoding:
+            content = content.encode(encoding)
+        with open(path, mode+'b') as f:
+            f.write(content)
         return path
 
     def remove_file(self, path):

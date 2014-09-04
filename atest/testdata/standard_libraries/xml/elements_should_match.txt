@@ -1,4 +1,5 @@
 *** Settings ***
+Library           XML
 Resource          resource.txt
 Test Template     Elements should not match
 

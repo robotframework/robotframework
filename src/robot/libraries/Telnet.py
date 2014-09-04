@@ -772,6 +772,44 @@ class TelnetConnection(telnetlib.Telnet):
                 pass
         raise NoMatchError(expected, timeout)
 
+    def write_control_character(self, character):
+        """Writes the given control character into the connection.
+
+        The control character is preprended with an IAC (interpret as command)
+        character.
+
+        The following control character names are supported: BRK, IP, AO, AYT,
+        EC, EL, NOP. Additionally, you can use arbitrary numbers to send any
+        control character.
+
+        Example:
+        | Write Control Character | BRK | # Send Break command |
+        | Write Control Character | 241 | # Send No operation command |
+        """
+        self._verify_connection()
+        self.sock.sendall(telnetlib.IAC + self._get_control_character(character))
+
+    def _get_control_character(self, int_or_name):
+        try:
+            return chr(int(int_or_name))
+        except ValueError:
+            return self._convert_control_code_name_to_character(int_or_name)
+
+    def _convert_control_code_name_to_character(self, name):
+        code_names = {
+                'BRK' : telnetlib.BRK,
+                'IP' : telnetlib.IP,
+                'AO' : telnetlib.AO,
+                'AYT' : telnetlib.AYT,
+                'EC' : telnetlib.EC,
+                'EL' : telnetlib.EL,
+                'NOP' : telnetlib.NOP
+        }
+        try:
+            return code_names[name]
+        except KeyError:
+            raise RuntimeError("Unsupported control character '%s'." % name)
+
     def read(self, loglevel=None):
         """Reads everything that is currently available in the output.
 
@@ -1042,12 +1080,15 @@ class TerminalEmulator(object):
 
     def _get_history(self):
         if self._screen.history.top:
-            return self._get_screen(self._screen.history.top) + self._newline
+            return self._get_history_screen(self._screen.history.top) + self._newline
         return ''
 
-    def _get_screen(self, screen):
+    def _get_history_screen(self, deque):
         return self._newline.join(''.join(c.data for c in row).rstrip()
-                                  for row in screen).rstrip(self._newline)
+                                  for row in deque).rstrip(self._newline)
+
+    def _get_screen(self, screen):
+        return self._newline.join(row.rstrip() for row in screen.display).rstrip(self._newline)
 
     def feed(self, input_bytes):
         self._stream.feed(input_bytes)

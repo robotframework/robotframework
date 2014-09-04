@@ -28,7 +28,7 @@ with open(INPATH) as input:
     for line in input.readlines():
         line = line.rstrip()
         if line.startswith('*'):
-            name = line.replace('*', '').replace(' ', '').upper()
+            name = line.split('  ')[0].replace('*', '').replace(' ', '').upper()
             process = name in ('TESTCASE', 'TESTCASES')
         elif process and line and line[0] != ' ':
             TESTS.append(line.split('  ')[0])

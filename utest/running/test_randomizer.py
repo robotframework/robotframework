@@ -7,9 +7,13 @@ class TestRandomizing(unittest.TestCase):
     names = [str(i) for i in range(100)]
 
     def setUp(self):
-        self.suite = TestSuite()
-        self.suite.suites = self._generate_suites()
-        self.suite.tests = self._generate_tests()
+        self.suite = self._generate_suite()
+
+    def _generate_suite(self):
+        s = TestSuite()
+        s.suites = self._generate_suites()
+        s.tests  = self._generate_tests()
+        return s
 
     def _generate_suites(self):
         return [TestSuite(name=n) for n in self.names]
@@ -61,6 +65,23 @@ class TestRandomizing(unittest.TestCase):
         assert_equals([t.id for t in self.suite.tests],
                       ['s1-t%d' % i for i in range(1, 101)])
 
+    def _gen_random_suite(self, seed):
+        suite = self._generate_suite()
+        suite.randomize(suites=True, tests=True, seed=seed)
+        random_order_suites = [i.name for i in suite.suites]
+        random_order_tests  = [i.name for i in suite.tests]
+        return (random_order_suites, random_order_tests)
+
+    def test_randomize_seed(self):
+        """
+        GIVEN a test suite
+        WHEN it's randomized with a given seed
+        THEN it's always sorted in the same order
+        """
+        (random_order_suites1, random_order_tests1) = self._gen_random_suite(1234)
+        (random_order_suites2, random_order_tests2) = self._gen_random_suite(1234)
+        assert_equals( random_order_suites1, random_order_suites2 )
+        assert_equals( random_order_tests1, random_order_tests2 )
 
 if __name__ == '__main__':
     unittest.main()

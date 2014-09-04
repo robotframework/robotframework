@@ -1500,11 +1500,14 @@ class _RunKeyword:
         Both `timeout` and `retry_interval` must be given in Robot Framework's
         time format (e.g. '1 minute', '2 min 3 s', '4.5').
 
+        If the executed keyword passes, returns its return value.
+
+        Examples:
+        | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | argument |
+        | ${result} = | Wait Until Keyword Succeeds | 30 s | 1 s | My keyword |
+
         Errors caused by invalid syntax, test or keyword timeouts, or fatal
         exceptions are not caught by this keyword.
-
-        Example:
-        | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | arg1 | arg2 |
 
         Running the same keyword multiple times inside this keyword can create
         lots of output and considerably increase the size of the generated
@@ -1870,7 +1873,7 @@ class _Control:
         New in Robot Framework 2.8.2.
         """
         ret = self.run_keyword(name, *args)
-        self.return_from_keyword(ret)
+        self.return_from_keyword(utils.escape(ret))
 
     @run_keyword_variant(resolve=2)
     def run_keyword_and_return_if(self, condition, name, *args):
@@ -2665,6 +2668,8 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     @property
     def _context(self):
+        if EXECUTION_CONTEXTS.current is None:
+            raise RobotNotRunningError('Cannot access execution context')
         return EXECUTION_CONTEXTS.current
 
     @property
@@ -2688,6 +2693,16 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
         if isinstance(condition, string_types):
             condition = self.evaluate(condition, modules='os,sys')
         return bool(condition)
+
+
+class RobotNotRunningError(AttributeError):
+    """Used when something cannot be done because Robot is not running.
+
+    Based on AttributeError to be backwards compatible with RF < 2.8.5.
+    May later be based directly on Exception, so new code should except
+    this exception explicitly.
+    """
+    pass
 
 
 def register_run_keyword(library, keyword, args_to_process=None):

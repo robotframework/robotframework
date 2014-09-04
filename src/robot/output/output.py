@@ -14,6 +14,7 @@
 
 from . import pyloggingconf
 from .debugfile import DebugFile
+from .librarylisteners import LibraryListeners
 from .listeners import Listeners
 from .logger import LOGGER
 from .loggerhelper import AbstractLogger
@@ -30,8 +31,10 @@ class Output(AbstractLogger):
 
     def _register_loggers(self, listeners, debugfile):
         LOGGER.register_context_changing_logger(self._xmllogger)
-        for logger in Listeners(listeners), DebugFile(debugfile):
-            if logger: LOGGER.register_logger(logger)
+        for logger in (Listeners(listeners), LibraryListeners(),
+                       DebugFile(debugfile)):
+            if logger:
+                LOGGER.register_logger(logger)
         LOGGER.disable_message_cache()
 
     def close(self, result):

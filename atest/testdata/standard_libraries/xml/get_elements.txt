@@ -1,5 +1,6 @@
 *** Settings ***
-Resource     resource.txt
+Library           XML
+Resource          resource.txt
 
 *** Test Cases ***
 Get element from parent element

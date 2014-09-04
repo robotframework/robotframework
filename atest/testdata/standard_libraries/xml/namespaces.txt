@@ -1,7 +1,8 @@
 *** Settings ***
-Resource         resource.txt
-Test Setup       Remove File    ${OUTPUT}
-Suite Teardown   Remove File    ${OUTPUT}
+Library           XML
+Resource          resource.txt
+Test Setup        Remove File    ${OUTPUT}
+Suite Teardown    Remove File    ${OUTPUT}
 
 *** Test Cases ***
 Tag names contain no namespaces
@@ -45,7 +46,7 @@ Saved XML is semantically same as original
     Elements Should Be Equal    ${etree1}    ${etree2}
 
 Saved XML is has same content as original but only default namespaces
-    Saved XML Should Be    ${NS}
+    Saved XML Should Equal    ${NS}
     ...   <test name="root" xmlns="default">
     ...   ${INDENT}<child1 id="1">default ns</child1>
     ...   ${INDENT}<child2 xmlns="http://uri">ns with prefix</child2>

@@ -455,8 +455,9 @@ multiple times.
 In these situations, command line options :opt:`--removekeywords` and
 :opt:`--flattenkeywords` can be used to dispose or flatten unnecessary keywords.
 They can be used both when `executing test cases`_ and when `post-processing
-outputs`_, but in the former case they only affect the log file, not the XML
-output file.
+outputs`_. When used during execution, they only affect the log file, not
+the XML output file. With :code:`rebot` they affect both logs and possibly
+generated new output XML files.
 
 Removing keywords
 '''''''''''''''''
@@ -474,6 +475,13 @@ are not removed except when using the :opt:`ALL` mode.
    created using this option contain enough information to investigate
    possible failures.
 
+:opt:`FOR`
+   Remove all passed iterations from `for loops`_ except the last one.
+
+:opt:`WUKS`
+   Remove all failing keywords inside BuiltIn_ keyword
+   :name:`Wait Until Keyword Succeeds` except the last one.
+
 :opt:`NAME:<pattern>`
    Remove data from all keywords matching the given pattern regardless the
    keyword status. The pattern is
@@ -482,16 +490,9 @@ are not removed except when using the :opt:`ALL` mode.
    underscore insensitive, and it supports `simple patterns`_ with :code:`*`
    and :code:`?` as wildcards.
 
-:opt:`FOR`
-   Remove all passed iterations from `for loops`_ except the last one .
-
-:opt:`WUKS`
-   Remove all failing keywords inside BuiltIn_ keyword
-   :name:`Wait Until Keyword Succeeds` except the last one.
-
 Examples::
 
-   rebot --removekeywords all output.xml
+   rebot --removekeywords all --output removed.xml output.xml
    pybot --removekeywords passed --removekeywords for tests.txt
    pybot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.txt
 
@@ -509,9 +510,15 @@ Flattening keywords
 '''''''''''''''''''
 
 The :opt:`--flattenkeywords` option flattens matching keywords. In practice
-this means that matching keywords get all messages from their child keywords,
-recursively, and child keywords are discarded otherwise. It currently has only
-one mode, but more may be added in the future.
+this means that matching keywords get all log messages from their child
+keywords, recursively, and child keywords are discarded otherwise. Flattening
+supports the following modes:
+
+:opt:`FOR`
+   Flatten `for loops`_ fully.
+
+:opt:`FORITEM`
+   Flatten individual for loop iterations.
 
 :opt:`NAME:<pattern>`
    Flatten keywords matching the given pattern. Pattern matching rules are
@@ -520,12 +527,15 @@ one mode, but more may be added in the future.
 Examples::
 
    pybot --flattenkeywords name:HugeKeyword --flattenkeywords name:resource.* tests.txt
+   rebot --flattenkeywords foritem --output flattened.xml original.xml
 
-Flattening keywords is done already when the `output file`_ is parsed. This
-can save a significant amount of memory especially with deeply nested
-keyword structures.
+Flattening keywords is done already when the `output file`_ is parsed
+initially. This can save a significant amount of memory especially with
+deeply nested keyword structures.
 
-.. note:: Flattening keywords is a new feature in Robot Framework 2.8.2.
+.. note:: Flattening keywords is a new feature in Robot Framework 2.8.2, and
+          :opt:`FOR` and :opt:`FORITEM` modes were added in Robot Framework
+          2.8.5.
 
 Setting start and end time of execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

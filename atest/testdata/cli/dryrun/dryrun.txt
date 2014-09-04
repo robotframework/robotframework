@@ -89,12 +89,6 @@ Multiple Failures
     UK with multiple failures
     Does not exist
 
-Import Library Keyword is Called
-    Import Library   String
-    Get Line Count   foo
-    Import Library   ParameterLibrary   ${value}    ${42}
-    Parameters
-
 
 *** Keywords ***
 Embedded ${args} here

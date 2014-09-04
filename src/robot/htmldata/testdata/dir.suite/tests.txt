@@ -93,9 +93,12 @@ Escape stuff logged as HTML
     Fail    *HTML* <b>HTML</b></script>
 
 Long messages
-    ${msg} =    Evaluate    'HelloWorld' * 100
-    Log    ${msg}    WARN
-    Fail    ${msg}
+    ${msg1} =    Evaluate    'HelloWorld' * 100
+    ${msg2} =    Evaluate    (('Hello, world! ' * 100) + '\\n\\n') * 5
+    Log    ${msg1}    WARN
+    Log    ${msg2}    WARN
+    Run Keyword And Continue on Failure    Fail    ${msg1}
+    Fail    ${msg2}
 
 *** Keywords **
 User Kw

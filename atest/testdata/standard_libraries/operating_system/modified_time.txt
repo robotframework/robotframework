@@ -59,7 +59,7 @@ Set Modified Time Using Invalid Timestamp
     Set Modified Time  ${TESTFILE}  invalid
 
 Set Modified Time Using NOW
-    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time string 'invalid'
+    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time string 'invalid'.
     Create File  ${TESTFILE}
     ${t0} =  Get Modified Time  ${TESTFILE}  epoch
     Sleep  2.5 s

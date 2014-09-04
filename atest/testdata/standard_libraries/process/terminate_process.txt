@@ -1,30 +1,16 @@
 *** Settings ***
-Test Setup        Check Precondition    sys.version_info >= (2,6)
+Test Setup        Run Keywords
+...               Check Precondition    sys.version_info >= (2,6)    AND
+...               Remove File    ${TEMPFILE}
 Test Teardown     Terminate All Processes    kill=True
 Library           Collections
 Resource          resource.txt
-Test Timeout      15s
 
 *** Variables ***
-${NONTERM}  ${CURDIR}${/}files${/}non_terminable.py
+${NONTERM}        ${CURDIR}${/}files${/}non_terminable.py
 
 *** Test Cases ***
-Run process does not change active process
-    Some process    active
-    ${expected id}=    Get Process Id
-    Run Python Process    1+1
-    ${id}=    Get Process Id
-    Should Be Equal    ${expected id}    ${id}
-
-Killing process
-    ${handle}=    Some process
-    ${result} =    Terminate Process    ${handle}    kill=true
-    Process Should Be Stopped    ${handle}
-    Should Not Be Equal As Integers    ${result.rc}    0
-    Should Be Empty    ${result.stdout}
-    Should Be Empty    ${result.stderr}
-
-Terminating process
+Terminate process
     ${handle}=    Some process
     ${result} =    Terminate Process    ${handle}
     Process Should Be Stopped    ${handle}
@@ -32,17 +18,44 @@ Terminating process
     Should Be Empty    ${result.stdout}
     Should Be Empty    ${result.stderr}
 
-Kill Process When Terminate Fails
+Kill process
+    ${handle}=    Some process
+    ${result} =    Terminate Process    ${handle}    kill=true
+    Process Should Be Stopped    ${handle}
+    Should Not Be Equal As Integers    ${result.rc}    0
+    Should Be Empty    ${result.stdout}
+    Should Be Empty    ${result.stderr}
+
+Terminate process running on shell
+    Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
+    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
+    Terminate should stop countdown
+
+Kill process running on shell
+    Check Precondition    os.sep == '/'
+    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
+    Terminate should stop countdown    kill=yes
+
+Also child processes are terminated
+    Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
+    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    3
+    Terminate should stop countdown
+
+Also child processes are killed
+    Check Precondition    os.sep == '/'
+    Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    3
+    Terminate should stop countdown    kill=${True}
+
+Kill process when terminate fails
+    Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
     ${lib} =    Get Library Instance    Process
     ${lib.TERMINATE_TIMEOUT} =    Set Variable    ${2}
     ${lib.KILL_TIMEOUT} =    Set Variable    ${1}
-    ${process} =    Start Process    python    ${NONTERM}
-    Process Should Be Running    ${process}
-    Sleep   0.1
+    ${process} =    Start Process    python    ${NONTERM}    ${TEMPFILE}    stderr=STDOUT
+    Wait Until Created    ${TEMPFILE}
     ${result} =    Terminate Process    ${process}    kill=false
-    Wait For Process    ${process}
-    Process Should Be Stopped    ${process}
     Should Not Be Equal As Integers    ${result.rc}    0
+    Should Start With    ${result.stdout}    Starting non-terminable process.
 
 Terminating already terminated process is ok
     ${handle}=    Some process
@@ -54,7 +67,7 @@ Waiting for terminated process is ok
     Terminate Process    ${handle}
     Wait For Process    ${handle}
 
-Terminate All Processes
+Terminate all processes
     ${h1}=    Some process
     ${h2}=    Some process
     ${h3}=    Some process
@@ -77,24 +90,15 @@ Terminate All Processes
     \    ${poll}=    Call Method    ${process}    poll
     \    Should Not Be Equal    ${poll}    ${NONE}
 
-Terminate All Empties Cache
+Terminating all empties cache
     Some process
     Terminate All Processes    kill=True
     ${handle} =    Some Process
     Should Be Equal    ${handle}    ${1}
 
-Pid
-    ${handle}=    Some process
-    ${pid}=    Get Process Id    ${handle}
-    Should Not Be Equal   ${pid}   ${None}
-    Evaluate    os.kill(int(${pid}),signal.SIGTERM) if hasattr(os, 'kill') else os.system('taskkill /pid ${pid} /f')    os,signal
-    Wait For Process    ${handle}
-    Process Should Be Stopped    ${handle}
-
-Getting PIDs in different ways should give same result
-    ${handle}=    Start Process    python -c "print('hello')"    shell=True    alias=hello
-    ${pid1}=      Get Process Id
-    ${pid2}=      Get Process Id   hello
-    ${pid3}=      Get Process Id   ${handle}
-    Should Be Equal As Integers   ${pid1}   ${pid2}
-    Should Be Equal As Integers   ${pid1}   ${pid3}
+*** Keywords ***
+Terminate should stop countdown
+    [Arguments]    ${kill}=false
+    Wait until countdown started
+    Terminate Process    kill=${kill}
+    Countdown should have stopped

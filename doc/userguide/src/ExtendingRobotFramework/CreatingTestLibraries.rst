@@ -360,8 +360,6 @@ about documenting test libraries in general.
         """
         pass
 
-A Java class using :code:`ROBOT_LIBRARY_VERSION`:
-
 .. sourcecode:: java
 
     /**
@@ -387,6 +385,18 @@ A Java class using :code:`ROBOT_LIBRARY_VERSION`:
 
 __ `Test library scope`_
 __ `Specifying library version`_
+
+
+Library acting as listener
+''''''''''''''''''''''''''
+
+`Listener interface`_ allows external listeners to get notifications about
+test execution. They are called, for example, when suites, tests, and keywords
+start and end. Sometimes getting such notifications is also useful for test
+libraries, and they can register a custom listener by using
+:code:`ROBOT_LIBRARY_LISTENER` attribute. The value of this attribute
+should be an instance of the listener to use, possibly the library itself.
+For more information and examples see `Test libraries as listeners`_ section.
 
 Creating static keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~

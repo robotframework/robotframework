@@ -126,7 +126,7 @@ class ExecutionResultBuilder(object):
             if event == 'start' and tag == 'kw':
                 if started >= 0:
                     started += 1
-                elif match(elem.attrib['name']):
+                elif match(elem.get('name'), elem.get('type')):
                     started = 0
             if started == 0 and event == 'end' and tag == 'doc':
                 elem.text = ('%s\n\n_*Keyword content flattened.*_'

@@ -1,5 +1,4 @@
 *** Variables ***
-${existing} =  foo
 ${LOG GOT WRONG ARGS} =  Keyword 'BuiltIn.Log' expected 1 to 5 arguments, got
 ${UK GOT WRONG ARGS} =  Keyword 'UK' expected 0 arguments, got
 ${LOG KW} =  Log
@@ -14,10 +13,15 @@ Run Keyword With Missing Keyword
     [Documentation]  FAIL No keyword with name 'Missing' found.
     Run Keyword    Missing
 
-Run Keyword With Variable In Keyword Name
-    Run Keyword    Log ${missing}
-    Run Keyword    Log ${existing}
-    Run Keyword    Log ${EMPTY}
+Keywords with variable in name are ignored
+    Run Keyword    ${non-existing variable}
+    Run Keyword    No Operation
+    Run Keyword    Existing variable ${42}
+    Run Keywords    ${non existing}    No Operation    Existing @{TEST TAGS}
+
+Keywords with variable in name are ignored also when variable is argument
+    Higher order fun    No Operation
+    Higher order fun    ${name}
 
 Run Keyword With UK
     Run Keyword  UK
@@ -211,6 +215,12 @@ Test Teardown Related Run Keyword Variants
 
 
 *** Keywords ***
-UK  No Operation
+UK
+    No Operation
 
-Failing UK  Log
+Failing UK
+    Log
+
+Higher order fun
+    [Arguments]    ${name}
+    Run Keyword    ${name}

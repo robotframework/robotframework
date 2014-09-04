@@ -412,6 +412,7 @@ table.messages td.warn {
 }
 .opt {
     font-style: italic;
+    white-space: nowrap;
 }
 .prog, .code, .cli {
     background: #f4f4f4;

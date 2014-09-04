@@ -7,7 +7,7 @@ Resource        atest_resource.txt
 ${FLATTEN}      --FlattenKeywords NAME:Keyword3 --flat name:key*others --FLAT name:builtin.* --log log.html
 ${FLAT TEXT}    _*Keyword content flattened.*_
 ${FLAT HTML}    <p><i><b>Keyword content flattened.\\x3c/b>\\x3c/i>\\x3c/p>
-${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords'. Expected pattern to start with 'NAME:' but got 'invalid'.${USAGE TIP}\n
+${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords'. Expected 'FOR', 'FORITEM', or 'NAME:<pattern>' but got 'invalid'.${USAGE TIP}\n
 
 *** Test Cases ***
 Non-matching keyword is not flattened
@@ -51,8 +51,42 @@ Flattened in log after execution
     Should Contain    ${LOG}    *${FLAT HTML}
     Should Contain    ${LOG}    *<p>Logs the given message with the given level.\\x3c/p>\\n${FLAT HTML}
 
+Flatten for loops
+    Run Rebot    --flatten For    ${ORIG OUTFILE}
+    ${tc} =    Check Test Case    For loop
+    Should Be Equal    ${tc.kws[0].type}    for
+    Should Be Equal    ${tc.kws[0].doc}    ${FLAT TEXT}
+    Length Should Be    ${tc.kws[0].kws}    0
+    Length Should Be    ${tc.kws[0].msgs}    60
+    :FOR    ${index}    IN RANGE    10
+    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 0}]}    index: ${index}
+    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 1}]}    3
+    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 2}]}    2
+    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 3}]}    1
+    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 4}]}    2
+    \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 5}]}    1
+
+Flatten for loop items
+    Run Rebot    --flatten ForItem    ${ORIG OUTFILE}
+    ${tc} =    Check Test Case    For loop
+    Should Be Equal    ${tc.kws[0].type}    for
+    Should Be Empty    ${tc.kws[0].doc}
+    Length Should Be    ${tc.kws[0].kws}    10
+    Should Be Empty    ${tc.kws[0].msgs}
+    :FOR    ${index}    IN RANGE    10
+    \    Should Be Equal      ${tc.kws[0].kws[${index}].type}    foritem
+    \    Should Be Equal      ${tc.kws[0].kws[${index}].doc}    ${FLAT TEXT}
+    \    Should Be Empty      ${tc.kws[0].kws[${index}].kws}
+    \    Length Should Be     ${tc.kws[0].kws[${index}].msgs}    6
+    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[0]}    index: ${index}
+    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[1]}    3
+    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[2]}    2
+    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[3]}    1
+    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[4]}    2
+    \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[5]}    1
+
 Invalid usage
-    Run Rebot Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   ${OUTFILE}
+    Run Rebot Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   ${ORIG OUTFILE}
     Stderr Should Be Equal To    ${ERROR}
     Run Tests Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   output/flatten_keywords.txt
     Stderr Should Be Equal To    ${ERROR}
@@ -62,6 +96,7 @@ Run And Rebot Flattened
     Run Tests Without Processing Output     ${FLATTEN}    output/flatten_keywords.txt
     ${LOG} =    Get File    ${OUTDIR}/log.html
     Set Suite Variable    $LOG
+    Set Suite Variable    $ORIG OUTFILE    ${OUTFILE}
     Run Rebot    ${FLATTEN}    ${OUTFILE}
     ${TC} =    Check Test Case    Flatten stuff
     Set Suite Variable    $TC

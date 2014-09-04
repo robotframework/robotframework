@@ -56,14 +56,14 @@ Correct Attributes To Listener Methods
     ${status} =  Log File  %{TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  attributeverifyinglistener
     Should Not Contain  ${status}  FAILED
-    Should Contain X Times  ${status}  PASSED  163
+    Should Contain X Times  ${status}  PASSED  169
 
 Correct Attributes To Java Listener Methods
     [Tags]  jybot
     ${status} =  Log File  %{TEMPDIR}/${JAVA_ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  JavaAttributeVerifyingListener
     Should Not Contain  ${status}  FAILED
-    Should Contain X Times  ${status}  PASSED  163
+    Should Contain X Times  ${status}  PASSED  169
 
 Suite And Test Counts
     Run Tests  --listener listeners.SuiteAndTestCounts  misc/suites/sub*
@@ -107,7 +107,7 @@ Run Tests With Listeners
 Check Listen All File
     [Arguments]  ${filename}
     @{expected}=  Create List  Got settings on level: INFO
-    ...  SUITE START: Pass And Fail 'Some tests here' [ListenerMeta: Hello]
+    ...  SUITE START: Pass And Fail (s1) 'Some tests here' [ListenerMeta: Hello]
     ...  KW START: My Keyword ['Suite Setup']
     ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...  LOG MESSAGE: [INFO] Hello says "Suite Setup"!
@@ -116,7 +116,7 @@ Check Listen All File
     ...  LOG MESSAGE: [DEBUG] Debug message
     ...  KW END: PASS
     ...  KW END: PASS
-    ...  TEST START: Pass '' ['force', 'pass'] crit: yes
+    ...  TEST START: Pass (s1-t1) '' ['force', 'pass'] crit: yes
     ...  KW START: My Keyword ['Pass']
     ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...  LOG MESSAGE: [INFO] Hello says "Pass"!
@@ -126,7 +126,7 @@ Check Listen All File
     ...  KW END: PASS
     ...  KW END: PASS
     ...  TEST END: PASS crit: yes
-    ...  TEST START: Fail 'FAIL Expected failure' ['fail', 'force'] crit: no
+    ...  TEST START: Fail (s1-t2) 'FAIL Expected failure' ['fail', 'force'] crit: no
     ...  KW START: My Keyword ['Fail']
     ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...  LOG MESSAGE: [INFO] Hello says "Fail"!

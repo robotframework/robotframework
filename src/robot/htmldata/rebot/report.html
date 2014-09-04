@@ -106,9 +106,12 @@ function addCustomSortersForDetails() {
 }
 
 function showDetailsByHash() {
-    if (window.location.hash == window.prevLocationHash)
+    // Cannot use window.location.hash because Firefox incorrectly decodes it:
+    // http://stackoverflow.com/questions/1703552/encoding-of-window-location-hash
+    var hash = window.location.href.split('#').splice(1).join('#');
+    if (!hash || hash == window.prevLocationHash)
         return;
-    var parts = window.location.hash.substring(1).split('?');
+    var parts = hash.split('?');
     var name = parts.shift();
     var query = parts.join('?');
     if (name == 'search') {
@@ -268,8 +271,7 @@ function searchTests(suitePattern, testPattern, includePattern, excludePattern) 
 function scrollToSelector(base, query) {
     $('#test-details-container').css('min-height', $(window).height());
     var anchor = query ? base + '?' + encodeURIComponent(query) : base;
-    window.prevLocationHash = '#' + anchor;
-    window.location.hash = anchor;
+    window.location.hash = window.prevLocationHash = anchor;
 }
 
 function renderSelector(args, template, stats) {
@@ -766,7 +768,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr>
     <th>Log File:</th>
     <td><a href="${$item.logURL}#${id}"
-           title="${fullName}">${$item.logURL}#${id}</a></td>
+           title="{{html fullName}}">${$item.logURL}#${id}</a></td>
   </tr>
   {{/if}}
 </script>
@@ -812,12 +814,12 @@ function hideHiddenDetailsColumns(elem) {
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   {{if $item.logURL}}
-  <tr onclick="location = '${$item.logURL}#${id}'" title="${fullName}">
+  <tr onclick="location = '${$item.logURL}#${id}'" title="{{html fullName}}">
     <td class="details-col-name">
       <div><a href="${$item.logURL}#${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a></div>
     </td>
   {{else}}
-  <tr title="${fullName}">
+  <tr title="{{html fullName}}">
     <td class="details-col-name">
       <div><span class="parent-name">{{html formatParentName}}</span>{{html name}}</div>
     </td>

@@ -53,14 +53,25 @@ Lot of output to custom stream
 
 Run multiple times
     [Tags]    performance
-    :FOR    ${i}    IN RANGE    42
+    :FOR    ${i}    IN RANGE    500
     \   Run And Test Once    ${i}
 
 Run multiple times using custom streams
     [Tags]    performance
-    :FOR    ${i}    IN RANGE    42
+    :FOR    ${i}    IN RANGE    500
     \   Run And Test Once    ${i}    ${STDOUT}    ${STDERR}
 
+Read standard streams when they are already closed externally
+    Some Process    stderr=${NONE}
+    ${stdout} =    Stop Some Process    message=hello
+    Should Be Equal    ${stdout}    hello
+    ${process} =    Get Process Object
+    Run Keyword If    not ${process.stdout.closed}
+    ...    Call Method    ${process.stdout}    close
+    Run Keyword If    not ${process.stderr.closed}
+    ...    Call Method    ${process.stderr}    close
+    ${result} =    Wait For Process
+    Should Be Empty    ${result.stdout}${result.stderr}
 
 *** Keywords ***
 Run Stdout Stderr Process

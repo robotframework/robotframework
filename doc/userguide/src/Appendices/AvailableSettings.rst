@@ -119,5 +119,7 @@ which they are defined.
    +-----------------+--------------------------------------------------------+
    | [Return]        | Used for specifying `user keyword return values`_.     |
    +-----------------+--------------------------------------------------------+
+   | [Teardown]      | Used for specifying `user keyword teardown`_.          |
+   +-----------------+--------------------------------------------------------+
    | [Timeout]       | Used for specifying a `user keyword timeout`_.         |
    +-----------------+--------------------------------------------------------+

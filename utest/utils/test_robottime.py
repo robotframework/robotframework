@@ -1,4 +1,4 @@
-from six import PY3
+from six import PY3, string_types
 
 import unittest
 import re
@@ -38,46 +38,117 @@ class TestTime(unittest.TestCase):
         assert_equal(_get_timetuple(12345.67890)[-2:], (45, 679))
         assert_equal(_get_timetuple(12345.99999)[-2:], (46, 0))
 
-    def test_timestr_to_secs(self):
-        for inp, exp in [('1', 1),
-                         ('42', 42),
-                         (1, 1),
+    def test_timestr_to_secs_with_numbers(self):
+        for inp, exp in [(1, 1),
+                         (42, 42),
                          (1.1, 1.1),
-                         ('3.141', 3.141),
-                         ('1s', 1),
+                         (3.142, 3.142),
+                         (-1, -1),
+                         (-1.1, -1.1),
+                         (0, 0),
+                         (0.55555, 0.556),
+                         (11.111111, 11.111),
+                         ('1e2', 100),
+                         ('-1.5e3', -1500)]:
+            assert_equal(timestr_to_secs(inp), exp, inp)
+            if not isinstance(inp, string_types):
+                assert_equal(timestr_to_secs(str(inp)), exp, inp)
+
+    def test_timestr_to_secs_with_time_string(self):
+        for inp, exp in [('1s', 1),
                          ('0 day 1 MINUTE 2 S 42 millis', 62.042),
                          ('1minute 0sec 10 millis', 60.01),
                          ('9 9 secs    5  3 4 m i l l i s e co n d s', 99.534),
                          ('10DAY10H10M10SEC', 900610),
                          ('1day 23h 46min 7s 666ms', 171967.666),
                          ('1.5min 1.5s', 91.5),
+                         ('1.5 days', 60*60*36),
                          ('1 day', 60*60*24),
+                         ('2 days', 2*60*60*24),
                          ('1 d', 60*60*24),
                          ('1 hour', 60*60),
+                         ('3 hours', 3*60*60),
                          ('1 h', 60*60),
                          ('1 minute', 60),
+                         ('2 minutes', 2*60),
+                         ('1 min', 60),
+                         ('2 mins', 2*60),
                          ('1 m', 60),
                          ('1 second', 1),
+                         ('2 seconds', 2),
+                         ('1 sec', 1),
+                         ('2 secs', 2),
                          ('1 s', 1),
                          ('1 millisecond', 0.001),
+                         ('2 milliseconds', 0.002),
+                         ('1 millisec', 0.001),
+                         ('2 millisecs', 0.002),
+                         ('1234 millis', 1.234),
+                         ('1 msec', 0.001),
+                         ('2 msecs', 0.002),
                          ('1 ms', 0.001),
-                         (-1, -1),
-                         (-1.1, -1.1),
-                         ('-1', -1),
                          ('-1s', -1),
-                         ('-1 min 2 s', -62),
-                         ('0.55555', 0.556),
-                         (11.111111, 11.111),
+                         ('- 1 min 2 s', -62),
                          ('0.1millis', 0),
                          ('0.5ms', 0.001),
-                         (0, 0),
-                         ('0', 0),
                          ('0day 0hour 0minute 0seconds 0millisecond', 0)]:
-             assert_equal(timestr_to_secs(inp), exp, inp)
+            assert_equal(timestr_to_secs(inp), exp, inp)
 
-    def test_timestr_to_secs_invalid(self):
-        for inv in ['', 'foo', '1sec 42 millis 3', '1min 2w', None]:
-            assert_raises_with_msg(ValueError, "Invalid time string '%s'" % inv,
+    def test_timestr_to_secs_with_timer_string(self):
+        for inp, exp in [('00:00:00', 0),
+                         ('00:00:01', 1),
+                         ('01:02:03', 3600 + 2*60 + 3),
+                         ('100:00:00', 100*3600),
+                         ('1:00:00', 3600),
+                         ('11:00:00', 11*3600),
+                         ('00:00', 0),
+                         ('00:01', 1),
+                         ('42:01', 42*60 + 1),
+                         ('100:00', 100*60),
+                         ('100:100', 100*60 + 100),
+                         ('100:100:100', 100*3600 + 100*60 + 100),
+                         ('1:1:1', 3600 + 60 + 1),
+                         ('0001:0001:0001', 3600 + 60 + 1),
+                         ('-00:00:00', 0),
+                         ('-00:01:10', -70),
+                         ('-1:2:3', -3600 - 2*60 - 3),
+                         ('+00:00:00', 0),
+                         ('+00:01:10', 70),
+                         ('+1:2:3', 3600 + 2*60 + 3),
+                         ('00:00:00.0', 0),
+                         ('00:00:00.000', 0),
+                         ('00:00:00.000000000', 0),
+                         ('00:00:00.1', 0.1),
+                         ('00:00:00.42', 0.42),
+                         ('00:00:00.001', 0.001),
+                         ('00:00:00.123', 0.123),
+                         ('00:00:00.1234', 0.123),
+                         ('00:00:00.12345', 0.123),
+                         ('00:00:00.12356', 0.124),
+                         ('00:00:00.999', 0.999),
+                         ('00:00:00.9995001', 1),
+                         ('00:00:00.000000001', 0)]:
+            assert_equal(timestr_to_secs(inp), exp, inp)
+            if '.' not in inp:
+                inp += '.500'
+                exp += 0.5 if inp[0] != '-' else -0.5
+                assert_equal(timestr_to_secs(inp), exp, inp)
+
+    def test_timestr_to_secs_custom_rounding(self):
+        secs = 0.123456789
+        for round_to in 0, 1, 6:
+            expected = round(secs, round_to)
+            assert_equal(timestr_to_secs(secs, round_to), expected)
+            assert_equal(timestr_to_secs(str(secs), round_to), expected)
+
+    def test_timestr_to_secs_no_rounding(self):
+        secs = 0.123456789
+        assert_equal(timestr_to_secs(secs, round_to=None), secs)
+        assert_equal(timestr_to_secs(str(secs), round_to=None), secs)
+
+    def test_timestr_to_secs_with_invalid(self):
+        for inv in ['', 'foo', 'foo days', '1sec 42 millis 3', '1min 2w', None]:
+            assert_raises_with_msg(ValueError, "Invalid time string '%s'." % inv,
                                    timestr_to_secs, inv)
 
     def test_secs_to_timestr(self):
@@ -258,9 +329,9 @@ class TestTime(unittest.TestCase):
         for value, msg in [("-100", "Epoch time must be positive (got -100)"),
                            ("YYYY-MM-DD hh:mm:ss",
                             "Invalid time format 'YYYY-MM-DD hh:mm:ss'"),
-                           ("now + foo", "Invalid time string 'foo'"),
-                           ("now -    2a ", "Invalid time string '2a'"),
-                           ("now+", "Invalid time string ''"),
+                           ("now + foo", "Invalid time string 'foo'."),
+                           ("now -    2a ", "Invalid time string '2a'."),
+                           ("now+", "Invalid time string ''."),
                            ("nowadays", "Invalid time format 'nowadays'")]:
             assert_raises_with_msg(ValueError, msg, parse_time, value)
 

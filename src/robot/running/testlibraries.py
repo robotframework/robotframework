@@ -70,6 +70,7 @@ class _BaseTestLibrary(BaseLibrary):
         self.positional_args = []
         self.named_args = {}
         self._instance_cache = []
+        self.has_listener = None  # Set when first instance is created
         self._libinst = None
         if libcode is not None:
             self._doc = getdoc(libcode)
@@ -84,10 +85,18 @@ class _BaseTestLibrary(BaseLibrary):
     def doc(self):
         return self._doc
 
+    @property
+    def listener(self):
+        if self.has_listener:
+            return self._get_listener(self.get_instance())
+        return None
+
+    def _get_listener(self, inst):
+        return getattr(inst, 'ROBOT_LIBRARY_LISTENER', None)
+
     def create_handlers(self):
         if self._libcode:
-            self._libinst = self.get_instance()
-            self.handlers = self._create_handlers(self._libinst)
+            self.handlers = self._create_handlers(self.get_instance())
             self.init_scope_handling()
 
     def start_suite(self):
@@ -152,6 +161,8 @@ class _BaseTestLibrary(BaseLibrary):
     def get_instance(self):
         if self._libinst is None:
             self._libinst = self._get_instance()
+        if self.has_listener is None:
+            self.has_listener = self._get_listener(self._libinst) is not None
         return self._libinst
 
     def _get_instance(self):
@@ -265,6 +276,8 @@ class _ModuleLibrary(_BaseTestLibrary):
         return method
 
     def get_instance(self):
+        if self.has_listener is None:
+            self.has_listener = self._get_listener(self._libcode) is not None
         return self._libcode
 
     def _create_init_handler(self, libcode):

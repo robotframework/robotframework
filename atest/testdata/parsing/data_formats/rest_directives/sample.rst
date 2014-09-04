@@ -89,11 +89,11 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
 
    Library Import   Fail If Dir Empty   ${CURDIR}
 
-   Test Timeout   [Timeout]   1second
-      [Document]   FAIL   Test timeout 1 second exceeded.
+   Test Timeout   [Timeout]   0.01s
+      [Document]   FAIL   Test timeout 10 milliseconds exceeded.
       Sleep   2
 
-   Keyword Timeout   [Document]   FAIL   Keyword timeout 1 second exceeded.
+   Keyword Timeout   [Document]   FAIL   Keyword timeout 2 milliseconds exceeded.
       Timeouted Keyword
 
    Empty Rows
@@ -130,7 +130,7 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
    Another Keyword   [Arguments]   ${arg1}   ${arg2}=something
       Equals   ${arg1}   ${arg2}
 
-   Timeouted Keyword   [Timeout]   1second
+   Timeouted Keyword   [Timeout]   2ms
       Sleep   2
 
    Keyword With No Arguments   Log   Hello world!

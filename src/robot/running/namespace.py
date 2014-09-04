@@ -32,7 +32,7 @@ from .handlers import _XTimesHandler
 from .context import EXECUTION_CONTEXTS
 
 
-STDLIB_NAMES = set(('BuiltIn', 'Collections', 'Dialogs', 'Easter',
+STDLIB_NAMES = set(('BuiltIn', 'Collections', 'DateTime', 'Dialogs', 'Easter',
                     'OperatingSystem', 'Process', 'Remote', 'Reserved',
                     'Screenshot', 'String', 'Telnet', 'XML'))
 IMPORTER = Importer()
@@ -57,6 +57,10 @@ class Namespace:
         self._testlibs = {}
         self._imported_resource_files = ImportCache()
         self._imported_variable_files = ImportCache()
+
+    @property
+    def libraries(self):
+        return list(self._testlibs.itervalues())
 
     def handle_imports(self):
         self._import_default_libraries()

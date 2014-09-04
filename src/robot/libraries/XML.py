@@ -17,6 +17,11 @@ from six import string_types
 import copy
 import re
 
+try:
+    from lxml import etree as lxml_etree
+except ImportError:
+    lxml_etree = None
+
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import asserts, ET, ETSource, plural_or_not as s
@@ -32,7 +37,7 @@ class XML(object):
 
     As the name implies, `XML` is a test library for verifying contents of XML
     files. In practice it is a pretty thin wrapper on top of Python's
-    [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].
+    [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree XML API].
 
     The library has the following main usages:
 
@@ -45,6 +50,13 @@ class XML(object):
       (e.g `Element Text Should Be` and `Elements Should Be Equal`).
     - Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`
       and `Save XML`).
+
+    By default this library uses ElementTree module for parsing XML, but it
+    can be configured to use [http://lxml.de|lxml] instead when `importing`
+    the library. The main benefit of using lxml is that it supports richer
+    xpath syntax than the standard ElementTree. It also enables using
+    `Evaluate Xpath` keyword and preserves possible namespace prefixes when
+    saving XML. The lxml support is new in Robot Framework 2.8.5.
 
     == Table of contents ==
 
@@ -126,13 +138,17 @@ class XML(object):
     ElementTree, and thus also this library, supports finding elements using
     xpath expressions. ElementTree does not, however, support the full xpath
     syntax, and what is supported depends on its version. ElementTree 1.3 that
-    is distributed with Python and Jython 2.7 supports richer syntax than
-    versions distributed with earlier Python interpreters.
+    is distributed with Python 2.7 supports richer syntax than earlier versions.
 
     The supported xpath syntax is explained below and
     [http://effbot.org/zone/element-xpath.htm|ElementTree documentation]
     provides more details. In the examples `${XML}` refers to the same XML
     structure as in the earlier example.
+
+    If lxml support is enabled when `importing` the library, the whole
+    [http://www.w3.org/TR/xpath/|xpath 1.0 standard] is supported.
+    That includes everything listed below but also lot of other useful
+    constructs.
 
     == Tag names ==
 
@@ -270,8 +286,8 @@ class XML(object):
 
     = Handling XML namespaces =
 
-    ElementTree handles possible namespaces in XML documents by adding the
-    namespace URI to tag names in so called Clark Notation. That is
+    ElementTree and lxml handle possible namespaces in XML documents by adding
+    the namespace URI to tag names in so called Clark Notation. That is
     inconvenient especially with xpaths, and by default this library strips
     those namespaces away and moves them to `xmlns` attribute instead. That can
     be avoided by passing `keep_clark_notation` argument to `Parse XML` keyword.
@@ -281,7 +297,7 @@ class XML(object):
 
     If an XML document has namespaces, ElementTree adds namespace information
     to tag names in [http://www.jclark.com/xml/xmlns.htm|Clark Notation]
-    (e.g. `{http://ns.uri}tag` and removes original `xmlns` attributes. This
+    (e.g. `{http://ns.uri}tag`) and removes original `xmlns` attributes. This
     is done both with default namespaces and with namespaces with a prefix.
     How it works in practice is illustrated by the following example, where
     `${NS}` variable contains this XML document:
@@ -341,7 +357,13 @@ class XML(object):
     | </stylesheet>
 
     Also this output is semantically same as the original. If the original XML
-    had only default namespaces, the output would also looks identical.
+    had only default namespaces, the output would also look identical.
+
+    == Namespaces with lxml ==
+
+    Namespaces are handled the same way also if lxml mode is enabled when
+    `importing` the library. The only difference is that lxml stores information
+    about namespace prefixes and thus they are preserved if XML is saved.
 
     == Attribute namespaces ==
 
@@ -364,6 +386,34 @@ class XML(object):
     ROBOT_LIBRARY_VERSION = get_version()
     _whitespace = re.compile('\s+')
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
+
+    def __init__(self, use_lxml=False):
+        """Import library with optionally lxml mode enabled.
+
+        By default this library uses Python's standard
+        [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree]
+        module for parsing XML. If `use_lxml` argument is given any true
+        value (e.g. any non-empty string), the library will use
+        [http://lxml.de|lxml] instead. See `introduction` for benefits
+        provided by lxml.
+
+        Using lxml requires that the lxml module is installed on the system.
+        If lxml mode is enabled but the module is not installed, this library
+        will emit a warning and revert back to using the standard ElementTree.
+
+        The support for lxml is new in Robot Framework 2.8.5.
+        """
+        if use_lxml and lxml_etree:
+            self.etree = lxml_etree
+            self.modern_etree = True
+            self.lxml_etree = True
+        else:
+            self.etree = ET
+            self.modern_etree = ET.VERSION >= '1.3'
+            self.lxml_etree = False
+        if use_lxml and not lxml_etree:
+            logger.warn('XML library reverted to use standard ElementTree '
+                        'because lxml module is not installed.')
 
     def parse_xml(self, source, keep_clark_notation=False):
         """Parses the given XML file or string into an element structure.
@@ -392,19 +442,10 @@ class XML(object):
         Stripping namespaces is a new feature in Robot Framework 2.7.5.
         """
         with ETSource(source) as source:
-            root = ET.parse(source).getroot()
+            root = self.etree.parse(source).getroot()
         if not keep_clark_notation:
-            self._strip_namespaces(root)
+            NameSpaceStripper().strip(root)
         return root
-
-    def _strip_namespaces(self, elem, current_ns=None):
-        if elem.tag.startswith('{') and '}' in elem.tag:
-            ns, elem.tag = elem.tag[1:].split('}', 1)
-            if ns != current_ns:
-                elem.set('xmlns', ns)
-                current_ns = ns
-        for child in elem:
-            self._strip_namespaces(child, current_ns)
 
     def get_element(self, source, xpath='.'):
         """Returns an element in the `source` matching the `xpath`.
@@ -418,13 +459,19 @@ class XML(object):
         `xpath`. Use `Get Elements` if you want all matching elements to be
         returned.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${element} = | Get Element | ${XML}     | second |
         | ${child} =   | Get Element | ${element} | child  |
 
         `Parse XML` is recommended for parsing XML when the whole structure
         is needed. It must be used if there is a need to configure how XML
         namespaces are handled.
+
+        Many other keywords use this keyword internally, and keywords modifying
+        XML are typically documented to both to modify the given source and
+        to return it. Modifying the source does not apply if the source is
+        given as a string. The XML structure parsed based on the string and
+        then modified is nevertheless returned.
         """
         elements = self.get_elements(source, xpath)
         if len(elements) != 1:
@@ -454,7 +501,7 @@ class XML(object):
         match, an empty list is returned. Use `Get Element` if you want to get
         exactly one match.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${children} =    | Get Elements | ${XML} | third/child |
         | Length Should Be | ${children}  | 2      |             |
         | ${children} =    | Get Elements | ${XML} | first/child |
@@ -462,26 +509,8 @@ class XML(object):
         """
         if isinstance(source, string_types):
             source = self.parse_xml(source)
-        if not xpath:
-            raise RuntimeError('No xpath given.')
-        if xpath == '.':  # ET < 1.3 does not support '.' alone.
-            return [source]
-        return source.findall(self._get_xpath(xpath))
-
-    if ET.VERSION >= '1.3':
-        def _get_xpath(self, xpath):
-            return xpath
-    else:
-        def _get_xpath(self, xpath):
-            try:
-                return str(xpath)
-            except UnicodeError:
-                if not xpath.replace('/', '').isalnum():
-                    logger.warn('XPATHs containing non-ASCII characters and '
-                                'other than tag names do not always work with '
-                                'Python/Jython versions prior to 2.7. Verify '
-                                'results manually and consider upgrading to 2.7.')
-                return xpath
+        finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
+        return finder.find_all(source, xpath)
 
     def get_child_elements(self, source, xpath='.'):
         """Returns the child elements of the specified element as a list.
@@ -493,7 +522,7 @@ class XML(object):
         All the direct child elements of the specified element are returned.
         If the element has no children, an empty list is returned.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${children} =    | Get Child Elements | ${XML} |             |
         | Length Should Be | ${children}        | 4      |             |
         | ${children} =    | Get Child Elements | ${XML} | xpath=first |
@@ -569,7 +598,7 @@ class XML(object):
         multiple spaces collapsed into one. This is especially useful when
         dealing with HTML data.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${text} =       | Get Element Text | ${XML}       | first        |
         | Should Be Equal | ${text}          | text         |              |
         | ${text} =       | Get Element Text | ${XML}       | second/child |
@@ -610,7 +639,7 @@ class XML(object):
         as with `Get Element Text`. This includes optional whitespace
         normalization using the `normalize_whitespace` option.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | @{texts} =       | Get Elements Texts | ${XML}    | third/child |
         | Length Should Be | ${texts}           | 2         |             |
         | Should Be Equal  | @{texts}[0]        | more text |             |
@@ -636,7 +665,7 @@ class XML(object):
         be overridden with the `message` argument.  Use `Element Text Should
         Match` to verify the text against a pattern instead of an exact value.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Text Should Be | ${XML}       | text     | xpath=first      |
         | Element Text Should Be | ${XML}       | ${EMPTY} | xpath=second/child |
         | ${paragraph} =         | Get Element  | ${XML}   | xpath=html/p     |
@@ -657,7 +686,7 @@ class XML(object):
         always case-sensitive. In the pattern, '*' matches anything and '?'
         matches any single character.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Text Should Match | ${XML}       | t???   | xpath=first  |
         | ${paragraph} =            | Get Element  | ${XML} | xpath=html/p |
         | Element Text Should Match | ${paragraph} | Text with * and *. | normalize_whitespace=yes |
@@ -676,7 +705,7 @@ class XML(object):
         If the element does not have such element, the `default` value is
         returned instead.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${attribute} =  | Get Element Attribute | ${XML} | id | xpath=first |
         | Should Be Equal | ${attribute}          | 1      |    |             |
         | ${attribute} =  | Get Element Attribute | ${XML} | xx | xpath=first | default=value |
@@ -697,7 +726,7 @@ class XML(object):
         Attributes are returned as a Python dictionary. It is a copy of the
         original attributes so modifying it has no effect on the XML structure.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${attributes} = | Get Element Attributes      | ${XML} | first |
         | Dictionary Should Contain Key | ${attributes} | id     |       |
         | ${attributes} = | Get Element Attributes      | ${XML} | third |
@@ -705,7 +734,7 @@ class XML(object):
 
         Use `Get Element Attribute` to get the value of a single attribute.
         """
-        return self.get_element(source, xpath).attrib.copy()
+        return dict(self.get_element(source, xpath).attrib)
 
     def element_attribute_should_be(self, source, name, expected, xpath='.',
                                     message=None):
@@ -723,7 +752,7 @@ class XML(object):
         `None` (i.e. variable `${NONE}`) can be used as the `expected` value.
         A cleaner alternative is using `Element Should Not Have Attribute`.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Attribute Should Be | ${XML} | id | 1       | xpath=first |
         | Element Attribute Should Be | ${XML} | id | ${NONE} |             |
 
@@ -744,7 +773,7 @@ class XML(object):
         always case-sensitive. In the pattern, '*' matches anything and '?'
         matches any single character.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Attribute Should Match | ${XML} | id | ?   | xpath=first |
         | Element Attribute Should Match | ${XML} | id | c*d | xpath=third/second |
         """
@@ -763,7 +792,7 @@ class XML(object):
         The keyword fails if the specified element has attribute `name`.
         The default error message can be overridden with the `message` argument.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | Element Should Not Have Attribute | ${XML} | id  |
         | Element Should Not Have Attribute | ${XML} | xxx | xpath=first |
 
@@ -799,7 +828,7 @@ class XML(object):
         discussion about elements' `text` and `tail` attributes in the
         `introduction`.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${first} =               | Get Element | ${XML} | first             |
         | Elements Should Be Equal | ${first}    | <first id="1">text</first> |
         | ${p} =                   | Get Element | ${XML} | html/p            |
@@ -827,7 +856,7 @@ class XML(object):
         always case-sensitive. In the pattern, '*' matches anything and '?'
         matches any single character.
 
-        Examples using `${XML}` structure from the `introduction`:
+        Examples using `${XML}` structure from `Example`:
         | ${first} =            | Get Element | ${XML} | first          |
         | Elements Should Match | ${first}    | <first id="?">*</first> |
 
@@ -1138,7 +1167,7 @@ class XML(object):
 
         See also `Log Element` and `Save XML`.
         """
-        string = ET.tostring(self.get_element(source, xpath), encoding='UTF-8')
+        string = self.etree.tostring(self.get_element(source, xpath), encoding='UTF-8')
         return self._xml_declaration.sub('', string.decode('UTF-8')).strip()
 
     def log_element(self, source, level='INFO', xpath='.'):
@@ -1169,14 +1198,94 @@ class XML(object):
 
         New in Robot Framework 2.7.5.
         """
-        tree = ET.ElementTree(self.get_element(source))
-        kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
+        elem = self.get_element(source)
+        if self.lxml_etree:
+            NameSpaceStripper().unstrip(elem)
+        tree = self.etree.ElementTree(elem)
+        xml_declaration = {'xml_declaration': True} if self.modern_etree else {}
         # Need to explicitly open/close files because older ET versions don't
         # close files they open and Jython/IPY don't close them implicitly.
         # Opening in binary mode is important for Python 3,
         # because the ElementTree writes encoded bytes.
         with open(path, 'wb') as output:
             tree.write(output, encoding, **kwargs)
+
+    def evaluate_xpath(self, source, expression, context='.'):
+        """Evaluates the given xpath expression and returns results.
+
+        The element in which context the expression is executed is specified
+        using `source` and `context` arguments. They have exactly the same
+        semantics as `source` and `xpath` arguments have with `Get Element`
+        keyword.
+
+        The xpath expression to evaluate is given as `expression` argument.
+        The result of the evaluation is returned as-is.
+
+        Examples using `${XML}` structure from `Example`:
+        | ${count} =      | Evaluate Xpath | ${XML}  | count(third/*) |
+        | Should Be Equal | ${count}       | ${3}    |
+        | ${text} =       | Evaluate Xpath | ${XML}  | string(descendant::second[last()]/@id) |
+        | Should Be Equal | ${text}        | child   |
+        | ${bold} =       | Evaluate Xpath | ${XML}  | boolean(preceding-sibling::*[1] = 'bold') | context=html/p/i |
+        | Should Be Equal | ${bold}        | ${True} |
+
+        This keyword works only if lxml mode is taken into use when `importing`
+        the library. New in Robot Framework 2.8.5.
+        """
+        if not self.lxml_etree:
+            raise RuntimeError("'Evaluate Xpath' keyword only works in lxml mode.")
+        return self.get_element(source, context).xpath(expression)
+
+
+class NameSpaceStripper(object):
+
+    def strip(self, elem, current_ns=None):
+        if elem.tag.startswith('{') and '}' in elem.tag:
+            ns, elem.tag = elem.tag[1:].split('}', 1)
+            if ns != current_ns:
+                elem.attrib['xmlns'] = ns
+                current_ns = ns
+        for child in elem:
+            self.strip(child, current_ns)
+
+    def unstrip(self, elem, current_ns=None):
+        ns = elem.attrib.pop('xmlns', current_ns)
+        if ns:
+            elem.tag = '{%s}%s' % (ns, elem.tag)
+        for child in elem:
+            self.unstrip(child, ns)
+
+
+class ElementFinder(object):
+
+    def __init__(self, etree, modern=True, lxml=False):
+        self.etree = etree
+        self.modern = modern
+        self.lxml = lxml
+
+    def find_all(self, elem, xpath):
+        xpath = self._get_xpath(xpath)
+        if xpath == '.':  # ET < 1.3 does not support '.' alone.
+            return [elem]
+        if not self.lxml:
+            return elem.findall(xpath)
+        finder = self.etree.ETXPath(xpath)
+        return finder(elem)
+
+    def _get_xpath(self, xpath):
+        if not xpath:
+            raise RuntimeError('No xpath given.')
+        if self.modern:
+            return xpath
+        try:
+            return str(xpath)
+        except UnicodeError:
+            if not xpath.replace('/', '').isalnum():
+                logger.warn('XPATHs containing non-ASCII characters and '
+                            'other than tag names do not always work with '
+                            'Python/Jython versions prior to 2.7. Verify '
+                            'results manually and consider upgrading to 2.7.')
+            return xpath
 
 
 class ElementComparator(object):

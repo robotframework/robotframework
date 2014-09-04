@@ -17,19 +17,20 @@ work, and it is possible to use either real numbers or strings
 containing numerical values. This format is useful, for example, when
 the actual time value is calculated.
 
-Time as text
-~~~~~~~~~~~~
+Time as time string
+~~~~~~~~~~~~~~~~~~~
 
-Representing the time as text means using a format such as :code:`2 minutes
-42 seconds`, which is normally easier to understand than just having
-the value as seconds. It is, for example, not so easy to understand
-how long a time :code:`4200` is in seconds, but :code:`1 hour 10
-minutes` is clear immediately.
+Representing the time as a time string means using a format such as
+:code:`2 minutes 42 seconds`, which is normally easier to understand than
+just having the value as seconds. It is, for example, not so easy to
+understand how long a time :code:`4200` is in seconds, but
+:code:`1 hour 10 minutes` is clear immediately.
 
 The basic idea of this format is having first a number and then a text
 specifying what time that number represents. Numbers can be either
 integers or floating point numbers, the whole format is case and space
-insensitive, and the available specifier texts are:
+insensitive, and it is possible to add :code:`-` prefix to specify negative
+times. The available time specifiers are:
 
 * days, day, d
 * hours, hour, h
@@ -44,3 +45,30 @@ Examples::
    90 s
    1 day 2 hours 3 minutes 4 seconds 5 milliseconds
    1d 2h 3m 4s 5ms
+   - 10 seconds
+
+Time as "timer" string
+~~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 2.8.5, time can also be given in timer like
+format :code:`hh:mm:ss.mil`. In this format  both hour and millisecond parts
+are optional, leading and trailing zeros can be left out when they are not
+meaningful, and negative times can be represented by adding :code:`-` prefix.
+For example, following timer and time string values are identical:
+
+.. table:: Timer and time string examples
+   :class: tabular
+
+   ============  ======================================
+      Timer                   Time string
+   ============  ======================================
+   00:00:01      1 second
+   01:02:03      1 hour 2 minutes 3 seconds
+   1:00:00       1 hour
+   100:00:00     100 hours
+   00:02         2 seconds
+   42:00         42 minutes
+   00:00:00.123  123 milliseconds
+   00:01.5       1.5 seconds
+   -01:02:345    \- 1 minute 2 seconds 345 milliseconds
+   ============  ======================================

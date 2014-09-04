@@ -5,6 +5,7 @@
 Libraries:
   BuiltIn (bu)
   Collections (co)
+  DateTime (da)
   Dialogs (di)
   OperatingSystem (op)
   Process (pr)

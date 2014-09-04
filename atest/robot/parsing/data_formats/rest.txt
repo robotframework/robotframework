@@ -6,7 +6,7 @@ Resource        formats_resource.txt
 
 *** Test Cases ***
 One ReST
-    [Setup]
+    [Setup]  NONE
     ${status}  ${msg} =  Run Keyword And Ignore Error  Run sample file and check tests  ${RESTDIR}${/}sample.rst
     Run Keyword If  "${DOCUTILS INSTALLED}" == "YES" and "${status}" == "FAIL"  FAIL  ${msg}
     Run Keyword Unless  "${DOCUTILS INSTALLED}" == "YES"  Clear error should be given when docutils is not installed
@@ -24,6 +24,6 @@ Directory With ReST Init
 
 *** Keywords ***
 Clear Error Should Be Given When Docutils Is Not Installed
-    ${stderr} =  Get Stderr
-    Should Match RegExp  ${stderr}  \\[ ERROR \\] Parsing '.*[/\\\\]sample.rst' failed: Using reStructuredText test data requires having 'docutils' module installed.\n \n Try --help for usage information.\n
-
+    Stderr Should Match    [ ERROR ] Parsing '*rest?sample.rst' failed:
+    ...  Using reStructuredText test data requires having 'docutils'
+    ...  module version 0.9 or newer installed.${USAGE TIP}
