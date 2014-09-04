@@ -2385,7 +2385,7 @@ class _Misc:
         | ${status} = | Evaluate | 0 < ${result} < 10    |
         | ${down}   = | Evaluate | int(${result})        |
         | ${up}     = | Evaluate | math.ceil(${result})  | math |
-        | ${random} = | Evaluate | random.randint(0, sys.maxint) | random,sys |
+        | ${random} = | Evaluate | random.randint(0, sys.maxsize) | random,sys |
         | ${ns} =     | Create Dictionary | x=${4} | y=${2} |
         | ${result} = | Evaluate | x*10 + y              | namespace=${ns} |
         =>
