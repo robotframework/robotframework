@@ -281,6 +281,7 @@ Additionally helper classes _Date_ and _Time_ can be used directly:
 |     interval = Time(interval).convert('number')
 |     # ...
 """
+from six import integer_types, string_types
 
 from datetime import datetime, timedelta
 import time
@@ -498,11 +499,11 @@ class Date(object):
         self.seconds = self._convert_date_to_seconds(date, input_format)
 
     def _convert_date_to_seconds(self, date, input_format):
-        if isinstance(date, basestring):
+        if isinstance(date, string_types):
             return self._string_to_epoch(date, input_format)
         elif isinstance(date, datetime):
             return self._mktime_with_millis(date)
-        elif isinstance(date, (int, long, float)):
+        elif isinstance(date, integer_types + (float,)):
             return float(date)
         raise ValueError("Unsupported input '%s'." % date)
 
