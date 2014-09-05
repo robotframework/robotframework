@@ -18,8 +18,8 @@ Get Etree Version
     [Return]    ${et.VERSION}
 
 Parse XML To Test Variable
-    [Arguments]    ${input}    ${var}    ${etree namespaces}=
-    ${result} =    Parse XML    ${input}    ${etree namespaces}
+    [Arguments]    ${input}    ${var}    ${keep clark notation}=
+    ${result} =    Parse XML    ${input}    ${keep clark notation}
     Set Test Variable    ${var}    ${result}
 
 Element Should Have Attributes

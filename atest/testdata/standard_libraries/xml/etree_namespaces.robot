@@ -2,7 +2,7 @@
 Library           XML
 Resource          xml_resource.robot
 Suite Setup       Remove File    ${OUTPUT}
-Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
+Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    keep clark notation
 Test Teardown     Remove File    ${OUTPUT}
 
 *** Test Cases ***
@@ -42,7 +42,7 @@ xmlns attributes are removed
 
 Parsed XML is semantically same as original
     Save XML    ${ROOT}    ${OUTPUT}
-    ${root2} =    Parse XML    ${OUTPUT}    etree_namespaces=yes please
+    ${root2} =    Parse XML    ${OUTPUT}    keep_clark_notation=yes please
     Elements Should Be Equal    ${ROOT}    ${root2}
 
 Prefixes are mangled when XML is saved
@@ -52,7 +52,7 @@ Prefixes are mangled when XML is saved
     Saved XML Should Equal    ${ROOT}    @{expected}
 
 Attribute namespaces
-    ${elem} =    Parse XML    ${ATTR NS}    etree_namespaces=yes
+    ${elem} =    Parse XML    ${ATTR NS}    keep_clark_notation=yes
     Test Attribute Namespace Parsing    ${elem}
 
 *** Keywords ***

@@ -17,7 +17,7 @@ xmlns attributes with default namespaces are added when needed
 Saved XML is semantically same as original
     Check Test Case    ${TESTNAME}
 
-Saved XML is has same content as original but only default namespaces
+Saved XML has same content as original but only default namespaces
     Check Test Case    ${TESTNAME}
 
 Attribute namespaces are not handled

@@ -41,11 +41,11 @@ xmlns attributes with default namespaces are added when needed
 Saved XML is semantically same as original
     Save XML    ${NS}    ${OUTPUT}
     Elements Should Be Equal    ${NS}    ${OUTPUT}
-    ${etree1} =    Parse Xml    ${NS}    etree_namespaces=yep
-    ${etree2} =    Parse Xml    ${OUTPUT}    etree_namespaces=yep
+    ${etree1} =    Parse Xml    ${NS}    keep_clark_notation=yep
+    ${etree2} =    Parse Xml    ${OUTPUT}    keep_clark_notation=yep
     Elements Should Be Equal    ${etree1}    ${etree2}
 
-Saved XML is has same content as original but only default namespaces
+Saved XML has same content as original but only default namespaces
     Saved XML Should Equal    ${NS}
     ...   <test name="root" xmlns="default">
     ...   ${INDENT}<child1 id="1">default ns</child1>

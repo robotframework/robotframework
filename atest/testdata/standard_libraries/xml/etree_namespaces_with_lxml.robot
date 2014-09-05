@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup       Run Keywords    Set lxml availability to suite metadata
 ...               AND    Remove File    ${OUTPUT}
-Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
+Test Setup        Parse XML To Test Variable    ${NS}    \${ROOT}    keep clark notation
 Test Teardown     Remove File    ${OUTPUT}
 Library           XML    use_lxml=yes
 Resource          xml_resource.robot
@@ -43,12 +43,12 @@ xmlns attributes are removed
 
 Parsed XML is semantically same as original
     Save XML    ${ROOT}    ${OUTPUT}
-    ${root2} =    Parse XML    ${OUTPUT}    etree_namespaces=yes please
+    ${root2} =    Parse XML    ${OUTPUT}    keep_clark_notation=yes please
     Elements Should Be Equal    ${ROOT}    ${root2}
 
 Saved XML has same namespaces as original
     Saved XML Should Equal File    ${ROOT}    ${NS}
 
 Attribute namespaces
-    ${elem} =    Parse XML    ${ATTR NS}    etree_namespaces=yes
+    ${elem} =    Parse XML    ${ATTR NS}    keep_clark_notation=yes
     Test Attribute Namespace Parsing With lxml    ${elem}
