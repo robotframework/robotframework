@@ -863,7 +863,7 @@ class ProcessConfig(object):
                   'shell': self.shell,
                   'cwd': self.cwd,
                   'env': self.env,
-                  'universal_newlines': self.binary_mode}
+                  'universal_newlines': not self.binary_mode}
         if hasattr(os, 'setsid') and not sys.platform.startswith('java'):
             config['preexec_fn'] = os.setsid
         if hasattr(subprocess, 'CREATE_NEW_PROCESS_GROUP'):
