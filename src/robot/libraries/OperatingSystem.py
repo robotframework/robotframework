@@ -656,7 +656,7 @@ class OperatingSystem:
         New in Robot Framework 2.8.5.
         """
         if isinstance(content, unicode):
-            content = ''.join(chr(ord(c)) for c in content)
+            content = bytearray(map(ord, content))
         path = self._write_to_file(path, content)
         self._link("Created binary file '%s'", path)
 
