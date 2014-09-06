@@ -550,7 +550,8 @@ class Date(object):
         return time.mktime(dt.timetuple()) + dt.microsecond / 10.0**6
 
     def convert(self, format, millis=True):
-        seconds = self.seconds if millis else round(self.seconds)
+        #PY3: round() needs explicit ndigits arg to return float
+        seconds = self.seconds if millis else round(self.seconds, 0)
         if '%' in format:
             return self._convert_to_custom_timestamp(seconds, format)
         try:
@@ -619,7 +620,8 @@ class Time(object):
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
-        seconds = self.seconds if millis else round(self.seconds)
+        #PY3: round() needs explicit ndigits arg to return float
+        seconds = self.seconds if millis else round(self.seconds, 0)
         return result_converter(seconds, millis)
 
     def _convert_to_number(self, seconds, millis=True):
