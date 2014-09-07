@@ -35,7 +35,7 @@ if sys.version_info < (2, 6):
     sys.exit('Running this script requires Python 2.6 or newer.')
 
 # Check for new working dir after 2to3:
-if not 'CURDIR' in globals():
+if 'CURDIR' not in globals():
     # ==> still the original script before 2to3.
     CURDIR = dirname(abspath(__file__))
 ROBOTDIR = join(CURDIR, '..', 'src', 'robot')
@@ -46,7 +46,7 @@ ROBOTDIR = join(CURDIR, '..', 'src', 'robot')
 # - Exec this file's copy in-place for actual testing
 
 # Is this script already the Python 3 copy?
-if not 'do2to3' in globals():
+if 'do2to3' not in globals():
     # ==> still the original.
     do2to3 = True
 if PY3 and do2to3:
@@ -81,7 +81,7 @@ if PY3 and do2to3:
                         # Replace hex codes in strings
                         # with actual unicode characters,
                         # if not used to create bytes objects:
-                        if not 'remote' in dirpath:
+                        if 'remote' not in dirpath:
                             text = re.sub(
                               r'\\\\x([0-9a-f]{2})',
                               lambda match: (
@@ -94,7 +94,8 @@ if PY3 and do2to3:
                           lambda match: chr(int(match.group(1), 16)),
                           text)
                         # Remove L suffixes from integer literals:
-                        text = re.sub(r'([1-9][0-9]+)L', r'\1', text)
+                        text = re.sub(r'([1-9][0-9]+)L([^0-9A-Za-z_])',
+                                      r'\1\2', text)
                         with open(path, 'w', encoding='utf8') as f:
                             f.write(text)
 
