@@ -1208,7 +1208,7 @@ class XML(object):
         # Opening in binary mode is important for Python 3,
         # because the ElementTree writes encoded bytes.
         with open(path, 'wb') as output:
-            tree.write(output, encoding, **kwargs)
+            tree.write(output, encoding=encoding, **xml_declaration)
 
     def evaluate_xpath(self, source, expression, context='.'):
         """Evaluates the given xpath expression and returns results.
