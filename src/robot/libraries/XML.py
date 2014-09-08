@@ -1324,6 +1324,9 @@ class NameSpaceStripper(object):
             if ns != current_ns:
                 elem.attrib['xmlns'] = ns
                 current_ns = ns
+        elif current_ns:
+            elem.attrib['xmlns'] = ''
+            current_ns = None
         for child in elem:
             self.strip(child, current_ns)
 

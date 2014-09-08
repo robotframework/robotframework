@@ -64,6 +64,13 @@ Saved XML has same content as original but only default namespaces
     ...   ${INDENT}<back>back in default</back>
     ...   </test>
 
+Element without namepace inside element with namespace
+    Save XML    ${NO NS IN NS}    ${OUTPUT}
+    Elements Should Be Equal    ${NO NS IN NS}    ${OUTPUT}
+    Saved XML Should Equal    ${NO NS IN NS}
+    ...    <root xmlns="uri"><no xmlns=""><yes xmlns="uri"><no xmlns="">.</no></yes></no></root>
+    Element Text Should Be    ${NO NS IN NS}    .    xpath=no/yes/no
+
 Attribute namespaces are not handled
     ${elem} =    Parse XML    ${ATTR NS}
     Test Attribute Namespace Parsing    ${elem}

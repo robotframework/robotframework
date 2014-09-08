@@ -49,6 +49,12 @@ Saved XML is semantically same as original
 Saved XML has same namespaces as original
     Saved XML Should Equal File    ${NS}    ${NS}
 
+Element without namepace inside element with namespace
+    Save XML    ${NO NS IN NS}    ${OUTPUT}
+    Elements Should Be Equal    ${NO NS IN NS}    ${OUTPUT}
+    Saved XML Should Equal    ${NO NS IN NS}    ${NO NS IN NS}
+    Element Text Should Be    ${NO NS IN NS}    .    xpath=no/yes/no
+
 Attribute namespaces are not handled
     ${elem} =    Parse XML    ${ATTR NS}
     Test Attribute Namespace Parsing With lxml    ${elem}

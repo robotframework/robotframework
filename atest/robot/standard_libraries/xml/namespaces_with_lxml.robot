@@ -20,5 +20,8 @@ Saved XML is semantically same as original
 Saved XML has same namespaces as original
     Check Test Case    ${TESTNAME}
 
+Element without namepace inside element with namespace
+    Check Test Case    ${TESTNAME}
+
 Attribute namespaces are not handled
     Check Test Case    ${TESTNAME}

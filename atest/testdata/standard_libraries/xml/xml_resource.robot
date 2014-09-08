@@ -6,7 +6,7 @@ Library            String
 *** Variables ***
 ${TEST} =          ${CURDIR}/test.xml
 ${NS} =            ${CURDIR}/namespaces.xml
-${DEFAULT NS} =    ${CURDIR}/default_namespaces.xml
+${NO NS IN NS} =   <ns:root xmlns:ns="uri"><no><ns:yes><no>.</no></ns:yes></no></ns:root>
 ${SIMPLE} =        <root><child id="1">text</child><c2><gc /></c2></root>
 ${ATTR NS} =       <root id="1" p:id="2" xmlns:p="xxx" />
 ${OUTPUT} =        %{TEMPDIR}/xmllib.xml
