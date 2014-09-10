@@ -114,7 +114,8 @@ Embedded Arguments In Resource File Used Explicitly
     embedded_args_in_uk_2.-r1-r2-+r1+
 
 Keyword with normal arguments cannot have embedded arguments
-    [Documentation]  FAIL No keyword with name 'Keyword with value and normal args' found.
+    [Documentation]  FAIL No keyword with name 'Keyword with value and normal args' found. Did you mean:
+    ...    ${SPACE * 4}Keyword With ${variable} And Normal Args
     Keyword with ${variable} and normal args  foo  bar
     Keyword with value and normal args  foo  bar
 

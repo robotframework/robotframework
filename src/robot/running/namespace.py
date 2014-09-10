@@ -14,6 +14,7 @@
 
 import os
 import copy
+import difflib
 
 from robot import utils
 from robot.errors import DataError
@@ -235,8 +236,20 @@ class KeywordStore(object):
     def get_handler(self, name):
         handler = self._get_handler(name)
         if handler is None:
-            raise DataError("No keyword with name '%s' found." % name)
+            self._raise_no_keyword_found(name)
         return handler
+
+    def _raise_no_keyword_found(self, name):
+        msg = "No keyword with name '%s' found." % name
+        finder = KeywordRecommendationFinder(self.user_keywords,
+                                             self.libraries,
+                                             self.resources)
+        recommendations = finder.find_recommendations(name)
+        if recommendations:
+            msg += " Did you mean:"
+            for rec in recommendations:
+                msg += "\n    %s" % rec
+        raise DataError(msg)
 
     def _get_handler(self, name):
         handler = None
@@ -378,6 +391,73 @@ class KeywordStore(object):
         names = sorted(handler.longname for handler in found)
         error += "Found: %s" % utils.seq2str(names)
         raise DataError(error)
+
+
+class KeywordRecommendationFinder(object):
+
+    def __init__(self, user_keywords, libraries, resources):
+        self.user_keywords = user_keywords
+        self.libraries = libraries
+        self.resources = resources
+
+    def find_recommendations(self, name):
+        """Get recommendations of handlers similar to `name`."""
+        candidates = self._get_candidates(use_full_name='.' in name)
+        return self._get_close_matches(name, candidates)
+
+    def _normalize(self, name):
+        """Normalize to lowercase and replace underscores with spaces."""
+        return name.lower().replace('_', ' ')
+
+    def _get_candidates(self, use_full_name):
+        """Return a dictionary mapping normalized names to names."""
+        candidates = {}
+        for owner, name in self._get_all_handler_names():
+            full_name = '%s.%s' % (owner, name) if owner else name
+            norm_name = self._normalize(full_name if use_full_name else name)
+            candidates.setdefault(norm_name, []).append(full_name)
+        return candidates
+
+    def _get_all_handler_names(self):
+        """Return a list of (library name, handler name) tuples.
+
+        For user keywords, library name == None.
+
+        Excludes DeprecatedBuiltIn, DeprecatedOperatingSystem,
+        and Reserved libraries.
+        """
+        excluded = ['DeprecatedBuiltIn', 'DeprecatedOperatingSystem',
+                    'Reserved']
+        handlers = [(None, utils.printable_name(handler_name, True))
+                    for handler_name in self.user_keywords.handlers.keys()]
+        for library in (self.libraries.values() + self.resources.values()):
+            if library.name not in excluded:
+                handlers.extend(
+                    ((library.name,
+                      utils.printable_name(handler_name, code_style=True))
+                     for handler_name in library.handlers))
+        # sort handlers to ensure consistent ordering between Jython and Python
+        return sorted(handlers)
+
+    def _get_close_matches(self, name, candidates):
+        """Return a list of close matches to `name` from `handler_names`."""
+        if not name or not candidates:
+            return []
+        norm_name = self._normalize(name)
+        cutoff = self._calculate_cutoff(norm_name)
+        norm_matches = difflib.get_close_matches(norm_name,
+                                                 candidates,
+                                                 n=10,
+                                                 cutoff=cutoff)
+        matches = []
+        for match in norm_matches:
+            matches.extend(candidates[match])
+        return matches
+
+    def _calculate_cutoff(self, name, min_cutoff=.5, max_cutoff=.85, step=.03):
+        """Calculate a cutoff depending on name length. Hand-tuned defaults."""
+        cutoff = min_cutoff + len(name) * step
+        return min(cutoff, max_cutoff)
 
 
 class _VariableScopes:
