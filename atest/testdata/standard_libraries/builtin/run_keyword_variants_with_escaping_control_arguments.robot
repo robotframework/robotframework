@@ -8,7 +8,7 @@
 @{RUN KW IF FAIL ARGS}    ${TRUE}    Fail    Expected failure
 @{RUN KW IF FAIL}    Run Keyword If    @{RUN KW IF FAIL ARGS}
 
-*** Test cases ***
+*** Test Cases ***
 Run Keyword with Run Keywords With Arguments Inside List variable should escape AND
     [Documentation]    FAIL No keyword with name 'AND' found.
     Run Keyword    Run Keywords    @{RUN KWS ARGS}

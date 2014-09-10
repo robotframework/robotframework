@@ -19,7 +19,7 @@ Non Existing Explicit Keyword 2
 
 Non Existing Implicit In User Keyword
     [Documentation]    FAIL No keyword with name 'No Keyword With This Name' found.
-    Non Existing Implicit In User Keyoword
+    Non Existing Implicit In User Keyword
 
 Non Existing Explicit In User Keyword
     [Documentation]    FAIL No keyword with name 'BuiltIn.No Keyword With This Name' found.
@@ -31,7 +31,7 @@ Non Existing Library
     NoSuchLib.No Operation
 
 *** Keywords ***
-Non Existing Implicit In User Keyoword
+Non Existing Implicit In User Keyword
     No Keyword With This Name
 
 Non Existing Explicit In User Keyword

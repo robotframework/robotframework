@@ -1,12 +1,12 @@
-***Settings***
+*** Settings ***
 Library  ExampleLibrary
 Library  FailUntilSucceeds.py  3
 
-***Variables***
+*** Variables ***
 ${HELLO}  Used to test that variable name, not value, is shown in arguments
 
 
-***Test Cases***
+*** Test Cases ***
 
 Fail Because Timeout exceeded
     [Documentation]  FAIL  Timeout 1 second 100 milliseconds exceeded. The last error was: Still 0 times to fail!

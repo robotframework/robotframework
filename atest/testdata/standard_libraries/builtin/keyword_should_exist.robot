@@ -1,12 +1,12 @@
-***Settings***
+*** Settings ***
 Test Template    Keyword should exist
 Resource         keyword_should_exist_resource_1.robot
 Resource         keyword_should_exist_resource_2.robot
 
-***Variables***
+*** Variables ***
 ${LOG}  Log
 
-***Test Cases***
+*** Test Cases ***
 
 Library keyword exists with short name
     Log
