@@ -48,6 +48,18 @@ Repeated Keyword Failing
     Check Test Case    Repeated Keyword Failing Immediately
     Check Test Case    Repeated Keyword Failing On Third Round
 
+Repeat Keyword With Continuable Failure
+    Check Test Case    ${TEST_NAME}
+
+Repeat Keyword With Failure After Continuable Failure
+    Check Test Case    ${TEST_NAME}
+
+Repeat Keyword With Pass Execution
+    Check Test Case    ${TEST_NAME}
+
+Repeat Keyword With Pass Execution After Continuable Failure
+    Check Test Case    ${TEST_NAME}
+
 *** Keywords ***
 Check Repeated Messages
     [Arguments]    ${kw}    ${count}    ${msg}=${None}

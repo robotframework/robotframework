@@ -1,5 +1,7 @@
 *** Variables ***
-${COUNT}          0
+${COUNT}             0
+${NORMAL FAIL}       no
+${PASS EXECUTION}    no
 
 *** Test Cases ***
 Times As String
@@ -55,8 +57,35 @@ Repeated Keyword Failing On Third Round
     [Documentation]    FAIL '3 < 3' should be true
     Repeat Keyword    1000 times    Keyword Failing On Third Run
 
+Repeat Keyword With Continuable Failure
+    [Documentation]    FAIL Several failures occurred:\n\n1) XXX\n\n2) XXX\n\n3) XXX
+    Repeat Keyword    3x    Run Keyword And Continue On Failure    Fail    XXX
+
+Repeat Keyword With Failure After Continuable Failure
+    [Documentation]    FAIL Several failures occurred:\n\n1) Continuable\n\n2) Normal
+
+    Repeat Keyword    3x    First Continuable Failure And Then Normal Failure
+
+Repeat Keyword With Pass Execution
+    [Documentation]    PASS Message
+    Repeat Keyword    3x    Pass Execution    Message
+
+Repeat Keyword With Pass Execution After Continuable Failure
+    [Documentation]    FAIL Continuable
+    Repeat Keyword    3x    First Continuable Failure And Then Pass Execution
+
 *** Keywords ***
 Keyword Failing On Third Run
     ${COUNT} =    Evaluate    ${COUNT} + 1
     Should Be True    ${COUNT} < 3
-    Set Suite Variable    $COUNT
+    Set Suite Variable    ${COUNT}
+
+First Continuable Failure And Then Normal Failure
+    Should Be True    "${NORMAL FAIL}" == "no"    Normal
+    Set Suite Variable    ${NORMAL FAIL}    yes
+    Run Keyword And Continue On Failure    Fail    Continuable
+
+First Continuable Failure And Then Pass Execution
+    Pass Execution If    "${PASS EXECUTION}" == "yes"    Message
+    Set Suite Variable    ${PASS EXECUTION}    yes
+    Run Keyword And Continue On Failure    Fail    Continuable

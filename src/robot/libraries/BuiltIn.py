@@ -1230,8 +1230,11 @@ class _RunKeyword:
         string as argument, you can either use variables or escape it with
         a backslash like `\\AND`.
         """
+        self._run_keywords(self._split_run_keywords(list(keywords)))
+
+    def _run_keywords(self, iterable):
         errors = []
-        for kw, args in self._split_run_keywords(list(keywords)):
+        for kw, args in iterable:
             try:
                 self.run_keyword(kw, *args)
             except ExecutionPassed, err:
@@ -1461,17 +1464,23 @@ class _RunKeyword:
         | Repeat Keyword | 5 times | Goto Previous Page |
         | Repeat Keyword | ${var}  | Some Keyword | arg1 | arg2 |
         """
+        times = self._get_times_to_repeat(times)
+        self._run_keywords(self._yield_repeated_keywords(times, name, args))
+
+    def _get_times_to_repeat(self, times):
         times = utils.normalize(str(times))
         if times.endswith('times'):
             times = times[:-5]
         elif times.endswith('x'):
             times = times[:-1]
-        times = self._convert_to_integer(times)
+        return self._convert_to_integer(times)
+
+    def _yield_repeated_keywords(self, times, name, args):
         if times <= 0:
             self.log("Keyword '%s' repeated zero times" % name)
         for i in xrange(times):
             self.log("Repeating keyword, round %d/%d" % (i+1, times))
-            self.run_keyword(name, *args)
+            yield name, args
 
     def wait_until_keyword_succeeds(self, timeout, retry_interval, name, *args):
         """Waits until the specified keyword succeeds or the given timeout expires.
