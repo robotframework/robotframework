@@ -1,65 +1,62 @@
-*** Settings ***
-
 *** Variables ***
-${COUNT}  0
+${COUNT}          0
 
 *** Test Cases ***
 Times As String
-    Repeat Keyword  2  Log  Hello, repeating world!
+    Repeat Keyword    2    Log    Hello, repeating world!
 
 Times As Integer
-    Repeat Keyword  ${42}  Log  This works too!!
+    Repeat Keyword    ${42}    Log    This works too!!
 
 Times With 'times' Postfix
-    Repeat Keyword  3 times  Log  This is done 3 times
-    Repeat Keyword  2TimeS  Log  Case and space insensitive
+    Repeat Keyword    3 times    Log    This is done 3 times
+    Repeat Keyword    2TimeS    Log    Case and space insensitive
 
 Times With 'x' Postfix
-    Repeat Keyword  10 x  Log  Close to old repeating syntax
-    Repeat Keyword  ${1}X  Log  Case and space
+    Repeat Keyword    10 x    Log    Close to old repeating syntax
+    Repeat Keyword    ${1}X    Log    Case and space
 
 Zero And Negative Times
-    Repeat Keyword  0 times  This is not executed
-    ${name} =  Set Variable  This is not executed
-    Repeat Keyword  ${-1}  ${name}  ${nonex}
+    Repeat Keyword    0 times    This is not executed
+    ${name} =    Set Variable    This is not executed
+    Repeat Keyword    ${-1}    ${name}    ${nonex}
 
 Invalid Times 1
-    [Documentation]  FAIL STARTS: '1.3' cannot be converted to an integer: ValueError:
-    Repeat Keyword  ${1.3}  Log  Not an integer
+    [Documentation]    FAIL STARTS: '1.3' cannot be converted to an integer: ValueError:
+    Repeat Keyword    ${1.3}    Log    Not an integer
 
 Invalid Times 2
-    [Documentation]  FAIL STARTS: 'notaninteger' cannot be converted to an integer: ValueError:
-    Repeat Keyword  Not an integer  No Operation
+    [Documentation]    FAIL STARTS: 'notaninteger' cannot be converted to an integer: ValueError:
+    Repeat Keyword    Not an integer    No Operation
 
 Repeat Keyword Arguments As Variables
-    ${kw}  ${arg} =  Set Variable  Should Be Equal  Hello, world!
-    Repeat Keyword  2 times  ${kw}  ${arg}  Hello, world!
-    ${escaped} =  Set Variable  \\ and \${notvar}
-    Repeat Keyword  42 times  ${kw}  ${escaped}  \\ and \${notvar}
-    @{items} =  Set Variable  10 times  No Operation
-    Repeat Keyword  @{items}
-    @{items} =  Set Variable  ${kw}  ${escaped}  \\ and \${notvar}
-    Repeat Keyword  1x  @{items}
+    ${kw}    ${arg} =    Set Variable    Should Be Equal    Hello, world!
+    Repeat Keyword    2 times    ${kw}    ${arg}    Hello, world!
+    ${escaped} =    Set Variable    \\ and \${notvar}
+    Repeat Keyword    42 times    ${kw}    ${escaped}    \\ and \${notvar}
+    @{items} =    Set Variable    10 times    No Operation
+    Repeat Keyword    @{items}
+    @{items} =    Set Variable    ${kw}    ${escaped}    \\ and \${notvar}
+    Repeat Keyword    1x    @{items}
 
 Repeated Keyword As Non-existing Variable
-    [Documentation]  FAIL Non-existing variable '\${non existing}'.
-    Repeat Keyword  1 x  ${non existing}
+    [Documentation]    FAIL Non-existing variable '\${non existing}'.
+    Repeat Keyword    1 x    ${non existing}
 
 Argument To Repeated Keyword As Non-existing Variable
-    [Documentation]  FAIL Non-existing variable '\${nonex}'.
-    Repeat Keyword  1 x  Log  ${nonex}
+    [Documentation]    FAIL Non-existing variable '\${nonex}'.
+    Repeat Keyword    1 x    Log    ${nonex}
 
 Repeated Keyword Failing Immediately
-    [Documentation]  FAIL Immediate failure
-    Repeat Keyword  1000 times  Fail  Immediate failure
+    [Documentation]    FAIL Immediate failure
+    Repeat Keyword    1000 times    Fail    Immediate failure
 
 Repeated Keyword Failing On Third Round
-    [Documentation]  FAIL '3 < 3' should be true
-    Repeat Keyword  1000 times  Keyword Failing On Third Run
+    [Documentation]    FAIL '3 < 3' should be true
+    Repeat Keyword    1000 times    Keyword Failing On Third Run
 
 *** Keywords ***
 Keyword Failing On Third Run
-    ${COUNT} =  Evaluate  ${COUNT} + 1
-    Should Be True  ${COUNT} < 3
-    Set Suite Variable  $COUNT
-
+    ${COUNT} =    Evaluate    ${COUNT} + 1
+    Should Be True    ${COUNT} < 3
+    Set Suite Variable    $COUNT
