@@ -49,16 +49,20 @@ Repeated Keyword Failing
     Check Test Case    Repeated Keyword Failing On Third Round
 
 Repeat Keyword With Continuable Failure
-    Check Test Case    ${TEST_NAME}
+    ${tc} =    Check Test Case    ${TEST_NAME}
+    Length Should Be    ${tc.kws[0].kws}    3
 
 Repeat Keyword With Failure After Continuable Failure
-    Check Test Case    ${TEST_NAME}
+    ${tc} =    Check Test Case    ${TEST_NAME}
+    Length Should Be    ${tc.kws[0].kws}    2
 
 Repeat Keyword With Pass Execution
-    Check Test Case    ${TEST_NAME}
+    ${tc} =    Check Test Case    ${TEST_NAME}
+    Length Should Be    ${tc.kws[0].kws}    1
 
 Repeat Keyword With Pass Execution After Continuable Failure
-    Check Test Case    ${TEST_NAME}
+    ${tc} =    Check Test Case    ${TEST_NAME}
+    Length Should Be    ${tc.kws[0].kws}    2
 
 *** Keywords ***
 Check Repeated Messages
