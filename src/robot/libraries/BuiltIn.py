@@ -2397,8 +2397,13 @@ class _Misc:
         modules = modules.replace(' ', '').split(',') if modules else []
         namespace.update((m, __import__(m)) for m in modules if m)
         try:
+            if not isinstance(expression, basestring):
+                raise TypeError("Expression must be a string, not '%s'."
+                                % type(expression).__name__)
+            if not expression:
+                raise ValueError("Expression cannot be empty.")
             return eval(expression, namespace)
-        except:
+        except Exception:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
                                % (expression, utils.get_error_message()))
 
