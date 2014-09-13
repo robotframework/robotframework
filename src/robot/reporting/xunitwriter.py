@@ -50,7 +50,7 @@ class XUnitFileWriter(ResultVisitor):
                  'tests': tests,
                  'errors': '0',
                  'failures': failures,
-                 'skip': skip}
+                 'skipped': skip}
         self._writer.start('testsuite', attrs)
 
     def _get_stats(self, statistics):
