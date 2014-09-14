@@ -205,7 +205,7 @@ class _Converter:
     def _convert_to_bin_oct_hex(self, method, item, base, prefix, length,
                                 lowercase=False):
         self._log_types(item)
-        ret = method(self._convert_to_integer(item, base)).upper()
+        ret = method(self._convert_to_integer(item, base)).upper().rstrip('L')
         prefix = prefix or ''
         if ret[0] == '-':
             prefix = '-' + prefix
