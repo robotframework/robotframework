@@ -55,6 +55,7 @@ Convert To Number With Precision
     Check Test Case  ${TEST NAME}
 
 Numeric conversions with long types
+    [Tags]  jybot  pybot  x-exclude-on-py3
     Check Test Case  ${TEST NAME}
 
 Convert To String
