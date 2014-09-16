@@ -39,3 +39,12 @@ Evaluate With Namespace
     Should Be Equal    ${result}    xxx
     ${result} =    Evaluate    math.pow(b, 3)    math    ${ns}
     Should Be Equal    ${result}    ${8}
+
+Evaluate Empty
+    [Documentation]    FAIL Evaluating expression '' failed: ValueError: Expression cannot be empty.
+    Evaluate    ${EMPTY}
+
+Evaluate Nonstring
+    [Documentation]    FAIL Evaluating expression '5' failed: TypeError: Expression must be a string, not 'int'.
+    ${nonstring}=    Evaluate    5
+    Evaluate    ${nonstring}
