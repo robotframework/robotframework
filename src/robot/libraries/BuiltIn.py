@@ -2403,7 +2403,7 @@ class _Misc:
             if not expression:
                 raise ValueError("Expression cannot be empty.")
             return eval(expression, namespace)
-        except Exception:
+        except:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
                                % (expression, utils.get_error_message()))
 
