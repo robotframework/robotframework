@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/logging_api.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/logging_api.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

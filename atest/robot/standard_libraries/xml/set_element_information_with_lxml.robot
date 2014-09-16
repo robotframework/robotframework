@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/set_element_information_with_lxml.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/set_element_information_with_lxml.robot
 Test Teardown    Make test non-critical if lxml not available
 Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
@@ -14,6 +14,9 @@ Set Element Tag Using Xpath
 Set Element Tag Returns Root Element
     Check Test Case    ${TESTNAME}
 
+Set Elements Tag
+    Check Test Case    ${TESTNAME}
+
 Set Element Text
     Check Test Case    ${TESTNAME}
 
@@ -21,6 +24,9 @@ Set Element Text And Tail
     Check Test Case    ${TESTNAME}
 
 Set Element Text Returns Root Element
+    Check Test Case    ${TESTNAME}
+
+Set Elements Text
     Check Test Case    ${TESTNAME}
 
 Set Element Attribute
@@ -35,6 +41,9 @@ Overwrite Element Attribute
 Set Element Attribute Returns Root Element
     Check Test Case    ${TESTNAME}
 
+Set Elements Attribute
+    Check Test Case    ${TESTNAME}
+
 Remove Element Attribute
     Check Test Case    ${TESTNAME}
 
@@ -44,8 +53,14 @@ Removing Non-Existing Attribute Passes
 Remove Element Attribute Returns Root Element
     Check Test Case    ${TESTNAME}
 
+Remove Elements Attribute
+    Check Test Case    ${TESTNAME}
+
 Remove Element Attributes
     Check Test Case    ${TESTNAME}
 
 Remove Element Attributes Returns Root Element
+    Check Test Case    ${TESTNAME}
+
+Remove Elements Attributes
     Check Test Case    ${TESTNAME}

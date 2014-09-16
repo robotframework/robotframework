@@ -6,8 +6,8 @@ Test Template   Run Tests and Verify RC
 
 *** Variables ***
 ${MISCDIR}   ${CURDIR}/../../../testdata/misc
-${PASSING}   ${MISCDIR}/normal.txt
-${FAILING}   ${MISCDIR}/pass_and_fail.txt
+${PASSING}   ${MISCDIR}/normal.robot
+${FAILING}   ${MISCDIR}/pass_and_fail.robot
 
 *** Test Cases ***
 

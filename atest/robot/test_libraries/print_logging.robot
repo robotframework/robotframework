@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation     Tests for logging using stdout/stderr
-Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/print_logging.txt
+Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/print_logging.robot
 Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 

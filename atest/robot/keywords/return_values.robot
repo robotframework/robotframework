@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Tests for return values from keywords. Tests include e.g. setting different return values for variables and checking messages that are automatically logged when variables are set. Setting different return values got from Java libraries are tested thoroughly in java_libraries.html.
-Suite Setup     Run Tests  ${EMPTY}  keywords/return_values.txt
+Suite Setup     Run Tests  ${EMPTY}  keywords/return_values.robot
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 

@@ -1,43 +1,39 @@
 Robot Framework
 ===============
 
-.. note::
-    This repository is currently under migration from
-    http://code.google.com/p/robotframework/. Code and issues have been
-    moved, but it will take some time before we get documentation
-    such as this README and wiki updated.
+.. note::  This repository is currently under migration from `Google Code`__.
+           Code and issues have already been moved, but it will take some tim
+           before `old wiki pages`__ are migrated.
+
+__ http://code.google.com/p/robotframework/
+__ http://code.google.com/p/robotframework/wiki/DocumentationIndex?tm=6
 
 Introduction
 ------------
 
-`Robot Framework`_ is a generic test automation framework for acceptance
-testing and acceptance test-driven development (ATDD). It has easy-to-use
-tabular test data syntax and it utilizes the keyword-driven testing
-approach. Its testing capabilities can be extended by test libraries
-implemented either with Python or Java, and users can create new
-higher-level keywords from existing ones using the same syntax that
-is used for creating test cases.
-
-Robot Framework project is hosted on GitHub_ where you can find further
-documentation, source code, and issue tracker. Downloads are hosted at
-PyPI_, except for standalone jar distribution that is in `Maven central`_.
-The framework has a rich ecosystem around it consisting of various
-generic test libraries and tools that are developed as separate projects.
+`Robot Framework <http://robotframework.org>`__ is a generic test automation
+framework for acceptance testing and acceptance test-driven development (ATDD).
+It has easy-to-use tabular test data syntax and it utilizes the keyword-driven
+testing approach. Its testing capabilities can be extended by test libraries
+implemented either with Python or Java, and users can create new higher-level
+keywords from existing ones using the same syntax that is used for creating
+test cases.
 
 Robot Framework is operating system and application independent. The core
-framework is implemented using Python_ and runs also on Jython_ (JVM) and
-IronPython_ (.NET).
+framework is implemented using `Python <http://python.org>`__ and runs also on
+`Jython <http://jython.org>`__ (JVM) and `IronPython <http://ironpython.net>`__
+(.NET). The framework has a rich ecosystem around it consisting of various
+generic test libraries and tools that are developed as separate projects.
+For more information about Robot Framework and the ecosystem, see
+http://robotframework.org.
 
-For more information about Robot Framework and the ecosystem,
-see http://robotframework.org.
+Robot Framework project is hosted on GitHub_ where you can find source code,
+an issue tracker, and some further documentation.  Downloads are hosted at
+PyPI_, except for the standalone jar distribution that is in `Maven central`_.
 
-.. _Robot Framework: http://robotframework.org
 .. _GitHub: https://github.com/robotframework/robotframework
 .. _PyPI: https://pypi.python.org/pypi/robotframework
 .. _Maven central: http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework
-.. _Python: http://python.org
-.. _Jython: http://jython.org
-.. _IronPython: http://ironpython.net
 
 Installation
 ------------
@@ -46,9 +42,16 @@ If you already have Python with pip_ installed, you can simply run::
 
     pip install robotframework
 
-Otherwise see `INSTALL.rst`_ for detailed installation instructions.
-They cover also installing Python, Jython and IronPython.
+Alternatively you can get Robot Framework source code by downloading the source
+distribution from PyPI_ or cloning the project from GitHub_. After that you can
+install the framework with::
 
+    python setup.py install
+
+For more detailed installation instructions, including installing
+Python, Jython and IronPython, see `INSTALL.rst`_.
+
+.. Using an absolute URL here to make this work also on PyPI.
 .. _INSTALL.rst: https://github.com/robotframework/robotframework/blob/master/INSTALL.rst
 .. _pip: http://pip-installer.org
 
@@ -56,7 +59,7 @@ Example
 -------
 
 Below is a simple example test case for testing login to some system.
-You can find more examples with links to demo projects from
+You can find more examples with links to related demo projects from
 http://robotframework.org.
 
 .. code:: robotframework
@@ -84,25 +87,25 @@ Robot Framework is executed from the command line using ``pybot``, ``jybot``
 or ``ipybot`` scripts, depending is it run on Python, Jython or IronPython.
 The basic usage is giving a path to a test case file or directory as
 an argument with possible command line options before the path. Additionally
-there is ``rebot`` tool for post-processing outputs::
+there is ``rebot`` tool for combining results and otherwise post-processing
+outputs::
 
     pybot tests.txt
     jybot --variable HOST:example.com --outputdir results path/to/tests/
     rebot --name Example output1.xml output2.xml
 
 Run ``pybot --help`` and ``rebot --help`` for more information about the command
-line usage. For a complete reference manual see `Robot Framewrk User Guide`_.
+line usage. For a complete reference manual see `Robot Framework User Guide`__.
 
-.. _Robot Framewrk User Guide: http://robotframework.org/robotframework/#user-guide
+__ http://robotframework.org/robotframework/#user-guide
 
 License
 -------
 
-Robot Framework code is provided under `Apache License 2.0`_
-Documentation and other similar content use `Creative Commons
-Attribution 3.0 Unported`_ license. Most libraries and tools in
-the ecosystem are also open source, but they may use different
-licenses.
+Robot Framework code is provided under `Apache License 2.0`__. Documentation
+and other similar content use `Creative Commons Attribution 3.0 Unported`__
+license. Most libraries and tools in the ecosystem are also open source, but
+they may use different licenses.
 
-.. _Apache License 2.0: http://apache.org/licenses/LICENSE-2.0
-.. _Creative Commons Attribution 3.0 Unported: http://creativecommons.org/licenses/by/3.0
+__ http://apache.org/licenses/LICENSE-2.0
+__ http://creativecommons.org/licenses/by/3.0

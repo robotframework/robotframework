@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/get_library_instance.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/get_library_instance.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot

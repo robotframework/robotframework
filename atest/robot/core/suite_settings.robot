@@ -1,45 +1,56 @@
 *** Settings ***
-Suite Setup     My Setup
-Force Tags      regression  jybot  pybot
-Resource        atest_resource.robot
+Documentation     Tests for suite settings except for Metadata that is tested
+...               in 'suite_metadate.robot' file.
+Suite Setup       Run Tests    --variable suite_doc_from_cli:doc_from_cli --variable suite_fixture_from_cli:Log
+...               core/suite_settings.robot
+Force Tags        regression    jybot    pybot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Suite Name
-    Should Be Equal  ${suite.name}  Suite Settings
+    Should Be Equal    ${SUITE.name}    Suite Settings
 
 Suite Documentation
-    [Documentation]  Checks that suite document can be set in metadata. Also checks that backslashes are escaped correctly.
-    Should Be Equal  ${suite.doc}  Test cases for metadata in Setting table (incl. imports) and within Test Case and Keyword tables. Text from multiple columns is catenated with spaces, and line continuation creates a new line. Real newlines can be added with 'backslash+n' (e.g. '\n'). Also variables work since Robot 1.2, and they work from commandline too: Hello.\nStarting from RF 2.1 \${nonexisting} variables are just left unchanged.\nOf course escaping (e.g. '\${non-existing-in-suite-doc}' and '\\') works too.
+    ${doc} =    Catenate    SEPARATOR=\n
+    ...    Text from multiple columns is catenated with spaces,
+    ...    and line continuation creates a new line.
+    ...    Newlines can also be added literally "\n\n".
+    ...    Variables work since Robot 1.2 and doc_from_cli works too.
+    ...    Starting from RF 2.1 \${nonexisting} variables are left unchanged.
+    ...    Escaping (e.g. '\${non-existing}', 'c:\\temp', '\\n') works too.
+    ...    For backwards compatibility reasons we still support 'Document'
+    ...    setting name and continuing the doc by just repeating the setting multiple times.
+    Should Be Equal    ${SUITE.doc}    ${doc}
 
-Suite Test Setup
-    ${test} =  Check Test Case  Test Case
-    Verify Setup  ${test}  BuiltIn.Log  Default test setup
+Test Setup
+    ${test} =    Check Test Case    Test Case
+    Verify Setup    ${test}    BuiltIn.Log    Default test setup
 
-Suite Test Teardown
-    ${test} =  Check Test Case  Test Case
-    Verify Teardown  ${test}  BuiltIn.Log  Default test teardown
+Test Teardown
+    ${test} =    Check Test Case    Test Case
+    Verify Teardown    ${test}    BuiltIn.Log    Default test teardown
 
-Suite Suite Setup
-    Verify Setup  ${suite}  BuiltIn.Log  Default suite setup
+Suite Setup
+    Verify Setup    ${SUITE}    BuiltIn.Log    Default suite setup
 
-Suite Suite Teardown
-    Verify Teardown  ${suite}  BuiltIn.Log  Default suite teardown
+Suite Teardown
+    Verify Teardown    ${SUITE}    BuiltIn.Log    Default suite teardown
 
+Invalid Setting
+    ${path} =    Normalize Path    ${DATADIR}/core/suite_settings.robot
+    Check Log Message    ${ERRORS[0]}
+    ...    Error in file '${path}': Non-existing setting 'Invalid Setting'.    ERROR
 
 *** Keywords ***
-My Setup
-    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log  core/suite_settings.txt
-
 Verify Setup
-    [Arguments]  ${item}  ${expected_name}  ${expected_message}
-    Verify Fixture  ${item.setup}  ${expected_name}  ${expected_message}
+    [Arguments]    ${item}    ${expected_name}    ${expected_message}
+    Verify Fixture    ${item.setup}    ${expected_name}    ${expected_message}
 
 Verify Teardown
-    [Arguments]  ${item}  ${expected_name}  ${expected_message}
-    Verify Fixture  ${item.teardown}  ${expected_name}  ${expected_message}
+    [Arguments]    ${item}    ${expected_name}    ${expected_message}
+    Verify Fixture    ${item.teardown}    ${expected_name}    ${expected_message}
 
 Verify Fixture
-    [Arguments]  ${fixture}  ${expected_name}  ${expected_message}
-    Should be Equal  ${fixture.name}  ${expected_name}
-    Check Log Message  ${fixture.messages[0]}  ${expected_message}
-
+    [Arguments]    ${fixture}    ${expected_name}    ${expected_message}
+    Should be Equal    ${fixture.name}    ${expected_name}
+    Check Log Message    ${fixture.messages[0]}    ${expected_message}

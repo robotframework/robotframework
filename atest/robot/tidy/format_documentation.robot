@@ -5,8 +5,9 @@ Suite Setup       Create Directory     ${TEMP}
 Suite Teardown    Remove Directory     ${TEMP}    recursive=True
 Test Template     Verify documentation formatting
 
-*** Test cases ***
+*** Test Cases ***
 Documentation in text file
+    robot
     txt
 
 Documentation in TSV file
@@ -18,4 +19,4 @@ Documentation in HTML file
 *** Keywords ***
 Verify documentation formatting
     [Arguments]    ${format}
-    Run tidy and check result    --format=${format}    documentation.txt    expected=documentation_expected.${format}
+    Run tidy and check result    --format=${format}    documentation.robot    expected=documentation_expected.${format}

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    running/test_template_with_embeded_args.txt
+Suite Setup      Run Tests    ${EMPTY}    running/test_template_with_embeded_args.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 

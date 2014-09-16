@@ -48,6 +48,6 @@ Empty Loops Are Handled Correctly
 
 *** Keywords ***
 Remove For Loop Keywords With Rebot
-    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    running/for.txt
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    running/for.robot
     Run Rebot    --removekeywords fOr    ${INPUTFILE}
 

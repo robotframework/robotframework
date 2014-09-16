@@ -1,15 +1,12 @@
 *** Settings ***
 Documentation    This suite should be split. Please don't add more tests but
 ...              create a new suite and move related tests from here to it too.
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/process_library.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/process_library.robot
 Force Tags       regression    pybot    jybot
 Resource         process_resource.robot
 
 *** Test Cases ***
 Library Namespace should be global
-    Check Test Case    ${TESTNAME}
-
-Running a process
     Check Test Case    ${TESTNAME}
 
 Error in exit code and stderr output
@@ -19,30 +16,6 @@ Start And Wait Process
     Check Test Case    ${TESTNAME}
 
 Change Current Working Directory
-    Check Test Case    ${TESTNAME}
-
-Without Env Configuration the Environment Should Be As It Was
-    Check Test Case    ${TESTNAME}
-
-With Env: Configuration the Environment Should Contain Additional Variable
-    Check Test Case    ${TESTNAME}
-
-With Env= Configuration the Environment Should Contain Only Additional Variable
-    Check Test Case    ${TESTNAME}
-
-Setting Environment With Multiple Values
-    Check Test Case    ${TESTNAME}
-
-Setting Environment Variable Overrides Original
-    Check Test Case    ${TESTNAME}
-
-Setting Environment With Multiple Values Using Dictionary
-    Check Test Case    ${TESTNAME}
-
-Unsupported Arguments Should Cause Error
-    Check Test Case    ${TESTNAME}
-
-Escaping equals sign
     Check Test Case    ${TESTNAME}
 
 Running a process in a shell

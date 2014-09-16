@@ -4,7 +4,7 @@ Resource        atest_resource.robot
 Test Template   Run And Check Include And Exclude
 
 *** Variables ***
-${DATA SOURCE}  tags/include_and_exclude.txt
+${DATA SOURCE}  tags/include_and_exclude.robot
 ${ESCAPES}      -E star:STAR -E quest:QUEST -E space:SP
 ${F}            force
 ${I1}           incl1

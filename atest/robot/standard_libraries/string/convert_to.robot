@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/convert_to.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/convert_to.robot
 Force Tags        pybot    jybot    regression
 Resource          atest_resource.robot
 

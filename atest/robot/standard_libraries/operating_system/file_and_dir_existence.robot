@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_existence.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_existence.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

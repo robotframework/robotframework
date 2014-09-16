@@ -22,10 +22,10 @@ Importing Robot Module Through Robot Succeeds
 *** Keyword ***
 Run Module Import Tests
     [Documentation]    Creates robot dir which have caused problems with jython Runs also import tests
-    Create Dir    ${DIRPATH}${/}robot
-    Run Tests    --pythonpath ${DIRNAME}    core${/}robot_module_importing.html
+    Create Directory    ${DIRPATH}${/}robot
+    Run Tests    --pythonpath ${DIRNAME}    core/robot_module_importing.robot
 
 Remove Robot Dir
     [Documentation]    Removes created robot dir
-    Remove Dir    ${DIRPATH}${/}robot
-    Remove Dir    ${DIRPATH}
+    Remove Directory    ${DIRPATH}${/}robot
+    Remove Directory    ${DIRPATH}

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  parsing/multirow.txt
+Suite Setup     Run Tests  ${EMPTY}  parsing/multirow.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 
@@ -60,5 +60,5 @@ Invalid Multirow Usage
 *** Keywords ***
 Check Multirow Error From Stderr
     [Arguments]  ${err}
-    ${path} =  Join Path  ${CURDIR}  ..  ..  testdata  parsing  multirow.txt
+    ${path} =  Join Path  ${CURDIR}  ..  ..  testdata  parsing  multirow.robot
     Check Stderr Contains  [ ERROR ] Error in file '${path}': ${err}

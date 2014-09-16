@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/namespaces_with_lxml.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/namespaces_with_lxml.robot
 Test Teardown    Make test non-critical if lxml not available
 Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
@@ -18,6 +18,9 @@ Saved XML is semantically same as original
     Check Test Case    ${TESTNAME}
 
 Saved XML has same namespaces as original
+    Check Test Case    ${TESTNAME}
+
+Element without namepace inside element with namespace
     Check Test Case    ${TESTNAME}
 
 Attribute namespaces are not handled

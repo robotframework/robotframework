@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  variables/extended_variables.txt
+Suite Setup     Run Tests  ${EMPTY}  variables/extended_variables.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot

@@ -4,7 +4,7 @@ Resource        atest_resource.robot
 
 *** Test Cases ***
 Exit On Failure
-    [Setup]  Run Tests  --exitonfailure  misc/pass_and_fail.txt  misc/suites  running/fatal_exception/02__irrelevant.txt
+    [Setup]  Run Tests  --exitonfailure  misc/pass_and_fail.robot  misc/suites  running/fatal_exception/02__irrelevant.robot
     Check Test Case  Pass
     Check Test Case  Fail
     Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and exit-on-failure mode is in use.

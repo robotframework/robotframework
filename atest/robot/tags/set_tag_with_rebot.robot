@@ -33,7 +33,7 @@ Process Multiple Files Using set Tag
 
 *** Keyword ***
 Run Tests And Read Outputs
-    Run Tests Without Processing Output    --settag robottag    misc${/}normal.txt
+    Run Tests Without Processing Output    --settag robottag    misc${/}normal.robot
     Move File    ${OUT_FILE}    ${INFILE1}
     Run Tests Without Processing Output    \    misc${/}suites${/}subsuites
     Move File    ${OUT_FILE}    ${INFILE2}

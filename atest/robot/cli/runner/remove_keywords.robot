@@ -56,7 +56,7 @@ Run tests and remove keywords
     ...    --removekeywords name:Thisshouldbe*
     ...    --removekeywords name:Remove???
     ...    --log log.html
-    Run tests    ${opts}    cli/remove_keywords/all_combinations.txt
+    Run tests    ${opts}    cli/remove_keywords/all_combinations.robot
     ${LOG} =    Get file    ${OUTDIR}/log.html
     Set suite variable    $LOG
 

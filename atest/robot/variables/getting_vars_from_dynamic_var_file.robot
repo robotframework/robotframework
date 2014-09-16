@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  variables/dynamic_variable_files/getting_vars_from_dynamic_var_file.txt
+Suite Setup     Run Tests  ${EMPTY}  variables/dynamic_variable_files/getting_vars_from_dynamic_var_file.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot

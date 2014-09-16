@@ -1,10 +1,8 @@
 *** Setting ***
 Documentation     Tests for variable related functionality in BuiltIn
-Suite Setup       Run Tests    \    standard_libraries${/}deprecated_builtin${/}variables.html
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/deprecated_builtin/variables.robot
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
-
-*** Variable ***
 
 *** Test Case ***
 Fail Unless Variable Exists
@@ -20,5 +18,3 @@ Fail If Variable Exists
     Check Test Case    Fail If Variable Exists 3
     Check Test Case    Fail If Variable Exists 4
     Check Test Case    Fail If Variable Exists 5
-
-*** Keyword ***

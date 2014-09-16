@@ -17,7 +17,7 @@ Run Keyword And Ignore Error
 
 *** Keywords ***
 Run "${keyword name}" test Which Should Fail Immediately to Exit On Failure
-    Run Tests  --test "${keyword name}" --test "failing test case"  standard_libraries/builtin/exit_on_failure.txt
+    Run Tests  --test "${keyword name}" --test "failing test case"  standard_libraries/builtin/exit_on_failure.robot
     Check Test Case  ${keyword name}
 
 Check Rest of the tests have failed due the Exit On Failure

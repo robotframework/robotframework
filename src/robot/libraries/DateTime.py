@@ -301,7 +301,7 @@ def get_current_date(time_zone='local', increment=0,
     """Returns current local or UTC time with an optional increment.
 
     Arguments:
-    - _time_zone:_     Get the current time on this time zone. Currently only
+    - _time_zone:_      Get the current time on this time zone. Currently only
                         'local' (default) and 'UTC' are supported.
     - _increment:_      Optional time increment to add to the returned date in
                         one of the supported `time formats`. Can be negative.

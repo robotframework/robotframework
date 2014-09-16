@@ -9,7 +9,7 @@ Default format is got from output file extension
     String ${OUTXML}                      XML     String    path=${OUTXML}
 
 Using --format overrides output file extension
-    -f XmL ${TESTDATADIR}/resource.txt ${OUTHTML}   XML     resource
+    -f XmL ${TESTDATADIR}/resource.robot ${OUTHTML}   XML     resource
     --format hTmL BuiltIn ${OUTPREFIX}.xxx          HTML    BuiltIn   path=${OUTPREFIX}.xxx
 
 Override name and version

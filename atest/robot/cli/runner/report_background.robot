@@ -26,6 +26,6 @@ Invalid Colors
 
 Report should have correct background
     [Arguments]  ${opt}  ${pass}=#99FF66  ${noncrit}=#99FF66  ${fail}=#FF3333
-    Run Tests  ${opt} --report rep.html  misc/pass_and_fail.txt
+    Run Tests  ${opt} --report rep.html  misc/pass_and_fail.robot
     ${report} =  Get File  ${OUTDIR}/rep.html
     Should Contain  ${report}  "background":{"fail":"${fail}","nonCriticalFail":"${noncrit}","pass":"${pass}"},

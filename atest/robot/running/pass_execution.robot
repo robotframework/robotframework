@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    running/pass_execution.txt
+Suite Setup      Run Tests    ${EMPTY}    running/pass_execution.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
@@ -152,11 +152,11 @@ Statuses should be correct when running tests
     ...    35 tests total, 18 passed, 17 failed
 
 Passes suite setup and teardown and can modify tags in former
-    Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup_and_teardown.txt
+    Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup_and_teardown.robot
     Check Test Tags    Test in suite with valid Pass Execution usage in Suite Setup and Teardown
     ...    force1    tag1    tag2
 
 Trying to modify tags in suite teardown fails
-    Run Tests    ${EMPTY}    running/pass_execution_in_suite_teardown_invalid.txt
+    Run Tests    ${EMPTY}    running/pass_execution_in_suite_teardown_invalid.robot
     Check Test Tags    Test in suite with invalid Pass Execution usage in Suite Teardown
     ...    force1    force2

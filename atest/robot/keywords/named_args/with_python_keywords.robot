@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    keywords/named_args/with_python_keywords.txt
+Suite Setup      Run Tests    ${EMPTY}    keywords/named_args/with_python_keywords.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 

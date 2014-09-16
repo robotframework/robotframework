@@ -1,5 +1,5 @@
 *** Setting ***
-Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/error_msg_and_details.txt
+Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/error_msg_and_details.robot
 Force Tags        regression
 Default Tags      pybot    jybot
 Resource          atest_resource.robot

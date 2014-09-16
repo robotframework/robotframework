@@ -7,7 +7,7 @@ Default Tags    regression  jybot  pybot
 Resource        rebot_resource.robot
 
 *** Variables ***
-${TESTDATA_TEST}    misc${/}many_tests.txt
+${TESTDATA_TEST}    misc${/}many_tests.robot
 ${TESTDATA_SUITES}  misc${/}suites
 ${MYOUTDIR}         %{TEMPDIR}${/}robot-test-145567
 ${INPUT FILE}       %{TEMPDIR}${/}robot-test-file.xml

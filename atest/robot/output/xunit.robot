@@ -6,8 +6,8 @@ Variables       unicode_vars.py
 Suite Setup     Run Tests  -x xunit.xml -l log.html  ${TESTDATA}
 
 *** Variables ***
-${TESTDATA}  misc/unicode.txt
-${PASS AND FAIL}  misc/pass_and_fail.txt
+${TESTDATA}  misc/unicode.robot
+${PASS AND FAIL}  misc/pass_and_fail.robot
 ${INVALID}   %{TEMPDIR}${/}ïnvälïd-xünït.xml
 
 *** Test Cases ***

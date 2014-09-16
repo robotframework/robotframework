@@ -3,8 +3,8 @@ Resource          atest_resource.robot
 
 *** Variables ***
 ${CLI OUTDIR}     %{TEMPDIR}${/}cli
-${TEST FILE}      misc${/}normal.txt
-${UNICODE TEST}    misc${/}unicode.txt
+${TEST FILE}      misc${/}normal.robot
+${UNICODE TEST}    misc${/}unicode.robot
 
 *** Keywords ***
 Create Output Directory

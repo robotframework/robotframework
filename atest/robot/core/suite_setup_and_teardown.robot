@@ -14,13 +14,13 @@ ${EXECUTED FILE}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 
 *** Test Cases ***
 Passing Suite Setup
-    Run Tests    ${EMPTY}    core/passing_suite_setup.txt
+    Run Tests    ${EMPTY}    core/passing_suite_setup.robot
     Check Suite Status    ${SUITE}    PASS    ${1 PASS MSG}
     ...    Verify Suite Setup
 
 Passing Suite Teardown
     [Setup]    Remove File    ${EXECUTED FILE}
-    Run Tests    ${EMPTY}    core/passing_suite_teardown.txt
+    Run Tests    ${EMPTY}    core/passing_suite_teardown.robot
     Check Suite Status    ${SUITE}    PASS    ${1 PASS MSG}
     ...   Test
     File Should Exist    ${EXECUTED FILE}
@@ -28,14 +28,14 @@ Passing Suite Teardown
 
 Passing Suite Setup And Teardown
     [Setup]    Remove File    ${EXECUTED FILE}
-    Run Tests    ${EMPTY}    core/passing_suite_setup_and_teardown.txt
+    Run Tests    ${EMPTY}    core/passing_suite_setup_and_teardown.robot
     Check Suite Status    ${SUITE}    PASS    ${1 PASS MSG}
     ...    Verify Suite Setup
     File Should Exist    ${EXECUTED FILE}
     [Teardown]    Remove File    ${EXECUTED FILE}
 
 Failing Suite Setup
-    Run Tests    ${EMPTY}    core/failing_suite_setup.txt
+    Run Tests    ${EMPTY}    core/failing_suite_setup.robot
     Check Suite Status    ${SUITE}    FAIL
     ...    Suite setup failed:\nExpected failure\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
@@ -46,7 +46,7 @@ Failing Suite Setup
     Should Be Empty    ${SUITE.teardown.kws}
 
 Erroring Suite Setup
-    Run Tests    ${EMPTY}    core/erroring_suite_setup.txt
+    Run Tests    ${EMPTY}    core/erroring_suite_setup.robot
     Check Suite Status    ${SUITE}    FAIL
     ...    Suite setup failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
@@ -62,7 +62,7 @@ Erroring Suite Setup
     Should Be Equal    ${td.kws[1].name}    BuiltIn.No Operation
 
 Failing Suite Teardown When All Tests Pass
-    Run Tests    ${EMPTY}    core/failing_suite_teardown.txt
+    Run Tests    ${EMPTY}    core/failing_suite_teardown.robot
     ${error} =    Catenate    SEPARATOR=\n\n
     ...    Several failures occurred:
     ...    1) first
@@ -74,7 +74,7 @@ Failing Suite Teardown When All Tests Pass
     Output should contain teardown error    ${error}
 
 Failing Suite Teardown When Also Tests Fail
-    Run Tests    ${EMPTY}    core/failing_suite_teardown_2.txt
+    Run Tests    ${EMPTY}    core/failing_suite_teardown_2.robot
     Check Suite Status    ${SUITE}    FAIL
     ...    Suite teardown failed:\nExpected failure\n\n${5 FAIL MSG}
     ...    Test Passes    Test Fails    Setup Fails    Teardown Fails    Test and Teardown Fail
@@ -82,7 +82,7 @@ Failing Suite Teardown When Also Tests Fail
     Output should contain teardown error    Expected failure
 
 Erroring Suite Teardown
-    Run Tests    ${EMPTY}    core/erroring_suite_teardown.txt
+    Run Tests    ${EMPTY}    core/erroring_suite_teardown.robot
     Check Suite Status    ${SUITE}    FAIL
     ...    Suite teardown failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
@@ -90,7 +90,7 @@ Erroring Suite Teardown
     Output should contain teardown error    No keyword with name 'Non-Existing Keyword' found.
 
 Failing Suite Setup And Teardown
-    Run Tests    ${EMPTY}     core/failing_suite_setup_and_teardown.txt
+    Run Tests    ${EMPTY}     core/failing_suite_setup_and_teardown.robot
     ${error} =    Catenate    SEPARATOR=
     ...    Suite setup failed:\n
     ...    Setup failure\n
@@ -140,7 +140,7 @@ Failing Higher Level Suite Setup
     ...    Test 2
 
 Long Error Messages
-    Run Tests    ${EMPTY}    core/long_suite_setup_and_teardown_errors.txt
+    Run Tests    ${EMPTY}    core/long_suite_setup_and_teardown_errors.robot
     ${setup} =    Evaluate    'setup\\n' * 20
     ${teardown} =    Evaluate    'teardown\\n' * 20
     ${explanation} =    Set Variable    [ Message content over the limit has been removed. ]\n

@@ -4,7 +4,7 @@ Test Template     Run And Check Include And Exclude
 Resource          atest_resource.robot
 
 *** Variables ***
-@{DATA SOURCES}   tags/include_and_exclude.txt
+@{DATA SOURCES}   tags/include_and_exclude.robot
 ${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
 @{EXCL_ALL}       Excl-1    Excl-12    Excl-123
@@ -79,11 +79,11 @@ Include and Exclude with NOT
     --include incl1NOTincl3 --exclude incl1NOTincl2    Incl-12
 
 Select tests without any tags
-    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.txt
+    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.robot
     --exclude STAR    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
-    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.txt
+    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.robot
     --include STAR    Own Tags No Force Nor Default
 
 Non Matching Include
@@ -102,7 +102,7 @@ Non Matching Include And Exclude
     --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3    tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
 
 Non Matching When Running Multiple Suites
-    [Setup]    Set Test Variable    @{DATA SOURCES}    misc/pass_and_fail.txt    misc/normal.txt
+    [Setup]    Set Test Variable    @{DATA SOURCES}    misc/pass_and_fail.robot    misc/normal.robot
     [Template]    Run And Check Error
     --include nonex    tag 'nonex'    Pass And Fail & Normal
     --include nonex --name MyName   tag 'nonex'    MyName

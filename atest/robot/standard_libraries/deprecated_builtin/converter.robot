@@ -1,5 +1,5 @@
 *** Setting ***
-Suite Setup       Run Tests    ${EMPTY}   standard_libraries/deprecated_builtin/converter.txt
+Suite Setup       Run Tests    ${EMPTY}   standard_libraries/deprecated_builtin/converter.robot
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
 
@@ -18,4 +18,3 @@ Boolean
 
 List
     Check testcase    ${TEST NAME}
-

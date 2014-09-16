@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/wait_for_process.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/wait_for_process.robot
 Test Setup       Check Precondition
 Force Tags       regression    pybot    jybot
 Resource         process_resource.robot

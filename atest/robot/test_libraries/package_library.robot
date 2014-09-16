@@ -44,4 +44,4 @@ Sub-sub-module itself as library
 Set PYTHONPATH and run tests
     ${dir} =    Normalize Path    ${DATADIR}/test_libraries
     Append To Environment Variable    PYTHONPATH    ${dir}    ${dir}${/}dir_for_libs
-    Run Tests    ${EMPTY}    test_libraries/package_library.txt
+    Run Tests    ${EMPTY}    test_libraries/package_library.robot

@@ -80,5 +80,5 @@ Run Tests With Listeners
     ...    --listener JavaListenerWithArgs
     ...    --listener JavaListenerWithArgs:b:a:r
     ...    --listener NonExistingListener
-    Run Tests    ${listeners}    misc/pass_and_fail.txt
+    Run Tests    ${listeners}    misc/pass_and_fail.robot
 

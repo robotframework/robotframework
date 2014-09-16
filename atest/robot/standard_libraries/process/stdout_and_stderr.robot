@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/stdout_and_stderr.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/stdout_and_stderr.robot
 Force Tags       regression    pybot    jybot
 Resource         process_resource.robot
 

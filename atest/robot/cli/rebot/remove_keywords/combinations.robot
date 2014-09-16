@@ -40,5 +40,5 @@ Validate Tests
     ...    NAME with ? pattern when test fails    NAME with ? pattern when test passes
 
 Create Output
-    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/all_combinations.txt
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/all_combinations.robot
 

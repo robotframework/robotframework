@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/modified_time.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/modified_time.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

@@ -5,7 +5,7 @@ Resource        data_formats/formats_resource.robot
 *** Variables ***
 ${PARSING}  parsing
 ${NO TESTS}  ${PARSING}${/}notests
-${EMPTY TC TABLE} =  ${PARSING}${/}empty_testcase_table.txt
+${EMPTY TC TABLE} =  ${PARSING}${/}empty_testcase_table.robot
 ${EMPTY TC TABLE MSG} =  File has no test case table.
 
 
@@ -18,10 +18,6 @@ Malformed HTML
 
 HTML File Not Containing Tests
     Check Parsing Error  invalid.html  ${EMPTY TC TABLE MSG}  ${HTMLDIR}${/}invalid.html
-
-Empty Directory
-    Run Tests Without Processing Output  ${EMPTY}  ${NO TESTS}${/}empty
-    Check Stderr Contains  [ ERROR ] Suite 'Empty' contains no tests.${USAGE_TIP}
 
 Directory Containing No Test Cases
     Run Tests Without Processing Output  ${EMPTY}  ${NO TESTS}

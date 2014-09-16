@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Tests for libraries using getKeywordNames and runKeyword functionality. In these tests libraries are implemented with Java.
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_java.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_java.robot
 Force Tags      regression  jybot
 Resource        atest_resource.robot
 

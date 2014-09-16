@@ -1,9 +1,7 @@
 *** Setting ***
-Suite Setup       Run Tests    \    standard_libraries/builtin/replace_variables.html
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/replace_variables.robot
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
-
-*** Variable ***
 
 *** Test Case ***
 Replace Variables
@@ -23,5 +21,3 @@ Replace Variables With Scalar Object
 
 Replace Variables With List Variable
     Check Test Case    ${TESTNAME}
-
-*** Keyword ***

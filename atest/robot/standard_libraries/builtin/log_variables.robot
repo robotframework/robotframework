@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation   Tests for Log Variables keyword
-Suite Setup     Run Tests  --variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3  standard_libraries/builtin/log_variables.html
+Suite Setup     Run Tests  --variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3
+...             standard_libraries/builtin/log_variables.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

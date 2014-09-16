@@ -101,7 +101,7 @@ class TestRunning(unittest.TestCase):
 class TestTestSetupAndTeardown(unittest.TestCase):
 
     def setUp(self):
-        self.tests = run(build('setups_and_teardowns.txt')).tests
+        self.tests = run(build('setups_and_teardowns.robot')).tests
 
     def test_passing_setup_and_teardown(self):
         assert_test(self.tests[0], 'Test with setup and teardown', 'PASS')
@@ -122,7 +122,7 @@ class TestTestSetupAndTeardown(unittest.TestCase):
 class TestSuiteSetupAndTeardown(unittest.TestCase):
 
     def setUp(self):
-        self.suite = build('setups_and_teardowns.txt')
+        self.suite = build('setups_and_teardowns.robot')
 
     def test_passing_setup_and_teardown(self):
         suite = run(self.suite)

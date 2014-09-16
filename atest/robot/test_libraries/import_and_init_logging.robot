@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Tests for libs logging during import and in init/constructor.
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/import_and_init_logging.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/import_and_init_logging.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot

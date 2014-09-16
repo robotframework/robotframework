@@ -7,7 +7,7 @@ Resource          rebot_resource.robot
 Variables         unicode_vars.py
 
 *** Variables ***
-${TESTDATA_TEST}    misc${/}unicode.txt
+${TESTDATA_TEST}    misc${/}unicode.robot
 ${TESTDATA_SUITES}  misc${/}suites
 ${MYOUTDIR}         %{TEMPDIR}${/}robot-test-xunit
 ${INPUT FILE}       %{TEMPDIR}${/}robot-test-xunit-file.xml

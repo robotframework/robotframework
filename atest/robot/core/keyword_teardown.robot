@@ -1,7 +1,7 @@
 *** Settings ***
 Resource     atest_resource.robot
 Force Tags   regression  pybot  jybot
-Suite Setup  Run Tests  ${EMPTY}  core/keyword_teardown.txt
+Suite Setup  Run Tests  ${EMPTY}  core/keyword_teardown.robot
 
 *** Test Cases ***
 Passing Keyword with Teardown

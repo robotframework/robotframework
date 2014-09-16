@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     Handling valid and invalid arguments with Java keywords.
-...               Related tests also in test_libraries/java_libraries.txt.
-Suite Setup       Run Tests    ${EMPTY}    keywords/java_arguments.txt
+...               Related tests also in test_libraries/java_libraries.robot.
+Suite Setup       Run Tests    ${EMPTY}    keywords/java_arguments.robot
 Force Tags        regression    jybot
 Resource          atest_resource.robot
 

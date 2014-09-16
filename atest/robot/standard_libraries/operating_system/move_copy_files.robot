@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/move_copy_files.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/move_copy_files.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 

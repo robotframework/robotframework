@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/hybrid_library.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/hybrid_library.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

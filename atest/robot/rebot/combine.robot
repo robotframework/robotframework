@@ -168,11 +168,11 @@ Create inputs for Rebot
     Prevent accidental usage of ${SUITE} variable
 
 Create first input for Rebot
-    Create Output With Robot  ${TEMP OUT 1}  --critical pass  misc/pass_and_fail.txt
+    Create Output With Robot  ${TEMP OUT 1}  --critical pass  misc/pass_and_fail.robot
     Set Suite Variable  $MILLIS1  ${ORIG_ELAPSED}
 
 Create second input for Rebot
-    Create Output With Robot  ${TEMP OUT 2}  -c f1 -c nonex --noncritical notag  misc/normal.txt
+    Create Output With Robot  ${TEMP OUT 2}  -c f1 -c nonex --noncritical notag  misc/normal.robot
     Set Suite Variable  $MILLIS2  ${ORIG_ELAPSED}
 
 Combine without options

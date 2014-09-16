@@ -1,8 +1,8 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}
-...      test_libraries/as_listener/suite_scope.txt
-...      test_libraries/as_listener/test_scope.txt
-...      test_libraries/as_listener/global_scope.txt
+...      test_libraries/as_listener/suite_scope.robot
+...      test_libraries/as_listener/test_scope.robot
+...      test_libraries/as_listener/global_scope.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

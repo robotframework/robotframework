@@ -31,7 +31,7 @@ Recursive Argument File
     Should Be Equal  ${SUITE.metadata['Second']}  2
 
 Argument File with Non-ASCII Characters
-    Copy File  ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.txt  %{TEMPDIR}/testäö.txt
+    Copy File  ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.robot  %{TEMPDIR}/testäö.txt
     ${path} =  Normalize Path  %{TEMPDIR}/testäö.txt
     Create Argument File  ${ARGFILE 3}  -D äëïöüÿ  -C off  ${path}
     ${output} =  Run Robot Directly  --argumentfile ${ARGFILE 3}
@@ -40,8 +40,8 @@ Argument File with Non-ASCII Characters
 
 Arguments From Stdin
     ${test dir} =  Normalize Path  ${DATADIR}/misc/
-    Create Argument File Without BOM  ${ARG FILE}  --name My Name with Nön Äscii  ${test dir}${/}normal.txt
-    ${output}=  Run Robot Directly  --doc from_command_line --argumentfile stdin ${test dir}${/}pass_and_fail.txt < ${ARG FILE}
+    Create Argument File Without BOM  ${ARG FILE}  --name My Name with Nön Äscii  ${test dir}${/}normal.robot
+    ${output}=  Run Robot Directly  --doc from_command_line --argumentfile stdin ${test dir}${/}pass_and_fail.robot < ${ARG FILE}
     Should Contain  ${output}  Normal
     Should Contain  ${output}  Pass And Fail
     Should Contain  ${output}  My Name with N

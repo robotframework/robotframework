@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_and_continue_on_failure.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_and_continue_on_failure.robot
 Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run tests  ${EMPTY}  variables/variable_table_in_resource_file.txt
+Suite Setup     Run tests  ${EMPTY}  variables/variable_table_in_resource_file.robot
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.robot
 
@@ -76,7 +76,7 @@ Using variable created from non-existing variable in imports fails
 *** Keywords ***
 Creating Variable Should Have Failed
     [Arguments]    ${error}    ${name}    @{message}
-    ${path} =    Normalize Path    ${DATADIR}/variables/resource_for_variable_table_in_resource_file.txt
+    ${path} =    Normalize Path    ${DATADIR}/variables/resource_for_variable_table_in_resource_file.robot
     ${msg} =    Catenate
     ...    Error in file '${path}':
     ...    Setting variable '${name}' failed:
@@ -85,7 +85,7 @@ Creating Variable Should Have Failed
 
 Import Should Have Failed
     [Arguments]    ${error}    ${name}    @{message}
-    ${path} =    Normalize Path    ${DATADIR}/variables/resource_for_variable_table_in_resource_file.txt
+    ${path} =    Normalize Path    ${DATADIR}/variables/resource_for_variable_table_in_resource_file.robot
     ${msg} =    Catenate
     ...    Error in file '${path}':
     ...    Replacing variables from setting '${name}' failed:

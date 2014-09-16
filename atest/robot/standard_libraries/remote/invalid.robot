@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    invalid.txt    invalid.py
+Suite Setup      Run Remote Tests    invalid.robot    invalid.py
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.robot
 

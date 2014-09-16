@@ -10,7 +10,7 @@ Test Criticality Should Be Serialized Inside Status Tag
 
 *** Keywords ***
 Run some tests and parse XML
-    Run Tests   --noncritical fail  misc${/}pass_and_fail.txt
+    Run Tests   --noncritical fail  misc${/}pass_and_fail.robot
     ${SUITE}=  Get Element  ${OUTFILE}  suite
     Set Suite Variable  ${SUITE}
 

@@ -1,9 +1,7 @@
 *** Setting ***
-Suite Setup       Run Tests    \    test_libraries${/}deprecated_keywords.html
+Suite Setup       Run Tests    ${EMPTY}    test_libraries/deprecated_keywords.robot
 Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
-
-*** Variable ***
 
 *** Test Case ***
 Deprecated Library Keyword

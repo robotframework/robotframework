@@ -14,6 +14,8 @@ if len(sys.argv) not in [2, 3] or not all(a.endswith('.robot') for a in sys.argv
     sys.exit(1)
 
 INPATH = abspath(sys.argv[1])
+if join('atest', 'testdata') not in INPATH:
+    sys.exit("Input not under 'atest/testdata'.")
 if len(sys.argv) == 2:
     OUTPATH = INPATH.replace(join('atest', 'testdata'), join('atest', 'robot'))
 else:
@@ -39,7 +41,7 @@ with open(OUTPATH, 'wb') as output:
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    %(path)s
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         atest_resource.robot
 
 *** Test Cases ***
 """ % locals())

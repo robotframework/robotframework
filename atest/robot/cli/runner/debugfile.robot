@@ -42,7 +42,7 @@ Debugfile Log Level Should Always Be Debug
 
 Debugfile timestamps are accurate
     Run Tests    --outputdir ${CLI OUTDIR} -b debug.txt -t LibraryAddsTimestampAsInteger
-    ...    test_libraries/timestamps_for_stdout_messages.txt
+    ...    test_libraries/timestamps_for_stdout_messages.robot
     ${tc} =    Check Test Case    LibraryAddsTimestampAsInteger
     ${content} =     Get file     ${CLI OUTDIR}/debug.txt
     Debug file should contain    ${content}

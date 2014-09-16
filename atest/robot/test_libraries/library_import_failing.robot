@@ -1,12 +1,11 @@
 *** Settings ***
-Documentation   Tests for checking that failing library imports will produce tracebacks to the log file.
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_failing.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_failing.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
-Not a Library
+Invalid Library
     ${path} =  Normalize Path  ${DATADIR}/test_libraries/MyInvalidLibFile.py
     Import Should Have Failed  0
     ...  Importing test library '${path}' failed: ImportError: I'm not really a library!
@@ -26,9 +25,29 @@ Initializing Fails Due To Too Many Arguments
     Import Should Have Failed  3
     ...  Test Library 'InitializationFailLibrary' expected 0 to 2 arguments, got 3.
 
+Initializing Fails Due To Invalid Named Argument Usage
+    Import Should Have Failed  4
+    ...  Test Library 'InitializationFailLibrary' got positional argument after named arguments.
+
+Non-existing Library
+    Import Should Have Failed  5
+    ...  Importing test library 'NonExistingLibrary' failed: ImportError:
+
+Non-existing Variable In Library Name
+    Import Should Have Failed  6
+    ...  Replacing variables from setting 'Library' failed: Non-existing variable '\${non existing nön äscii}'.
+
+Non-existing Variable In Library Arguments
+    Import Should Have Failed  7
+    ...  Non-existing variable '\${nön existing}'.
+
+Library Import Without Name
+    Import Should Have Failed  8
+    ...  Library setting requires a name
+
 Initializing Java Library Fails
     [Tags]  jybot
-    Import Should Have Failed  4
+    Import Should Have Failed  9
     ...  Initializing test library 'InitializationFailJavaLibrary' with no arguments failed: Initialization failed!
     ...  at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)
 
@@ -36,6 +55,6 @@ Initializing Java Library Fails
 Import Should Have Failed
     [Arguments]  ${index}  ${expected message}  ${expected traceback}=
     ${message} =  Set Variable  ${ERRORS.msgs[${index}].message}
-    ${path} =   Normalize Path  ${DATADIR}/test_libraries/library_import_failing.txt
+    ${path} =   Normalize Path  ${DATADIR}/test_libraries/library_import_failing.robot
     Should Start With  ${message}  Error in file '${path}': ${expected message}
     Should Contain  ${message}  ${expected traceback}

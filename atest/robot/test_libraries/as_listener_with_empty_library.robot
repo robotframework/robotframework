@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}
-...      test_libraries/as_listener/empty_library.txt
+...      test_libraries/as_listener/empty_library.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

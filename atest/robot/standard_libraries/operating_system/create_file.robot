@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/create_file.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/create_file.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 

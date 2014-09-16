@@ -1,1 +1,1 @@
-RESOURCE_PATH = 'resource.txt'
+RESOURCE_PATH_FROM_VARS = 'resource.robot'

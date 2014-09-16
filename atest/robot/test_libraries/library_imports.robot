@@ -3,7 +3,7 @@ Documentation   Importing test libraries normally, using variable in library nam
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_normal.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_normal.robot
 
 
 *** Test Cases ***
@@ -38,17 +38,17 @@ Namespace is initialized during library init
     Check Test Case   ${TEST NAME}
 
 Library Import With Variables
-    Run Tests  ${EMPTY}  test_libraries/library_import_with_variable.txt
+    Run Tests  ${EMPTY}  test_libraries/library_import_with_variable.robot
     Check Test Case  Verify Library Import With Variable In Name
     Check Test Case  Verify Library Import With List Variable
 
 Library Import With Variables From Resource File
-    Run Tests  ${EMPTY}  test_libraries/library_import_with_variable_from_resource.txt
+    Run Tests  ${EMPTY}  test_libraries/library_import_with_variable_from_resource.robot
     Check Test Case  Verify Library Import With Variable In Name
     Check Test Case  Verify Library Import With List Variable
 
 Arguments To Library
-    Run Tests  ${EMPTY}  test_libraries/library_with_0_parameters.txt  test_libraries/library_with_1_parameters.txt  test_libraries/library_with_2_parameters.txt
+    Run Tests  ${EMPTY}  test_libraries/library_with_0_parameters.robot  test_libraries/library_with_1_parameters.robot  test_libraries/library_with_2_parameters.robot
     Check Test Case  Two Default Parameters
     Check Test Case  One Default and One Set Parameter
     Check Test Case  Two Set Parameters

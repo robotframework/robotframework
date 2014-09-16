@@ -7,7 +7,7 @@ Suite Setup       Run Keywords
 Suite Teardown    Delete Environment Variable    REBOT_OPTIONS
 
 *** Variables ***
-${TESTS}          misc/pass_and_fail.txt
+${TESTS}          misc/pass_and_fail.robot
 ${INPUT}          %{TEMPDIR}${/}rebot_options.xml
 
 *** Test Cases ***

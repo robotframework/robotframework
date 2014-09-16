@@ -6,8 +6,8 @@ Suite Teardown    Remove Directory     ${TEMP}    recursive=True
 
 *** Test cases ***
 Empty test case file
-    Run tidy and check result    ${EMPTY}    testsuite_with_empty_tables.txt
+    Run tidy and check result    ${EMPTY}    testsuite_with_empty_tables.robot
 
 Empty resource file
-    Run tidy and check result    ${EMPTY}    resource_with_empty_tables.txt
+    Run tidy and check result    ${EMPTY}    resource_with_empty_tables.robot
 

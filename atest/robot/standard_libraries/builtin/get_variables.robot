@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags  regression  pybot  jybot
-Suite Setup  Run Tests  --variable cmd_line:cmd_value  standard_libraries/builtin/get_variables.txt
+Suite Setup  Run Tests  --variable cmd_line:cmd_value  standard_libraries/builtin/get_variables.robot
 Resource    atest_resource.robot
 
 *** Test Cases ***

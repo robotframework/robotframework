@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/as_listener/suite_scope_java.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/as_listener/suite_scope_java.robot
 Force Tags      regression  jybot
 Resource        atest_resource.robot
 

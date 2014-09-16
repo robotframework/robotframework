@@ -42,14 +42,14 @@ Create input data and run tests
 Create input data
   [Documentation]  Mercurial doesn't seem to handle non-ASCII file names too well.
   ...  Need to store files with ASCII names and rename them during execution.
-  Move File  ${BASEDIR}/test-auml-ouml.txt  ${BASEDIR}/testäö.txt
+  Move File  ${BASEDIR}/test-auml-ouml.robot  ${BASEDIR}/testäö.txt
   Move Directory  ${BASEDIR}/Ty-ouml  ${BASEDIR}/Työ
-  Move File  ${BASEDIR}/Työ/tyhj-auml.txt  ${BASEDIR}/Työ/tyhjä.txt
-  Move File  ${BASEDIR}/Työ/sect-test-sect.txt  ${BASEDIR}/Työ/§test§.txt
+  Move File  ${BASEDIR}/Työ/tyhj-auml.robot  ${BASEDIR}/Työ/tyhjä.txt
+  Move File  ${BASEDIR}/Työ/sect-test-sect.robot  ${BASEDIR}/Työ/§test§.txt
 
 Revert input data
   [Documentation]  Revert ASCII -> non-ASCII conversion done by `Create input data`.
-  Move File  ${BASEDIR}/Työ/§test§.txt  ${BASEDIR}/Työ/sect-test-sect.txt
-  Move File  ${BASEDIR}/Työ/tyhjä.txt  ${BASEDIR}/Työ/tyhj-auml.txt
+  Move File  ${BASEDIR}/Työ/§test§.txt  ${BASEDIR}/Työ/sect-test-sect.robot
+  Move File  ${BASEDIR}/Työ/tyhjä.txt  ${BASEDIR}/Työ/tyhj-auml.robot
   Move Directory  ${BASEDIR}/Työ  ${BASEDIR}/Ty-ouml
-  Move File  ${BASEDIR}/testäö.txt  ${BASEDIR}/test-auml-ouml.txt
+  Move File  ${BASEDIR}/testäö.txt  ${BASEDIR}/test-auml-ouml.robot

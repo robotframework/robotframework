@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    special_errors.txt    specialerrors.py
+Suite Setup      Run Remote Tests    special_errors.robot    specialerrors.py
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.robot
 

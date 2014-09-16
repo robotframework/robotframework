@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    keywords/java_argument_type_coercion.txt
+Suite Setup       Run Tests    ${EMPTY}    keywords/java_argument_type_coercion.robot
 Force Tags        regression    jybot
 Resource          atest_resource.robot
 

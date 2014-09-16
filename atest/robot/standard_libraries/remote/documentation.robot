@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    documentation.txt    documentation.py
+Suite Setup      Run Remote Tests    documentation.robot    documentation.py
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.robot
 

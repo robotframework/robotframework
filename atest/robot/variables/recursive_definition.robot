@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    variables/recursive_definition.txt
+Suite Setup      Run Tests    ${EMPTY}    variables/recursive_definition.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
@@ -27,7 +27,7 @@ Recursive list variable
 *** Keywords ***
 Recursion error
     [Arguments]    ${variable}    ${index}
-    ${path} =    Normalize Path    ${DATADIR}/variables/recursive_definition.txt
+    ${path} =    Normalize Path    ${DATADIR}/variables/recursive_definition.robot
     ${message} =    Catenate
     ...    Error in file '${path}':
     ...    Setting variable '${variable}' failed:
@@ -36,7 +36,7 @@ Recursion error
 
 Non-existing error
     [Arguments]    ${variable1}    ${variable2}    ${index}
-    ${path} =    Normalize Path    ${DATADIR}/variables/recursive_definition.txt
+    ${path} =    Normalize Path    ${DATADIR}/variables/recursive_definition.robot
     ${message} =    Catenate
     ...    Error in file '${path}':
     ...    Setting variable '${variable1}' failed:

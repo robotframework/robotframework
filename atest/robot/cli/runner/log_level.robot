@@ -4,7 +4,7 @@ Default Tags    regression  pybot  jybot
 Resource        atest_resource.robot
 
 *** Variables ***
-${TESTDATA}  misc/pass_and_fail.txt
+${TESTDATA}  misc/pass_and_fail.robot
 ${LOG NAME}   logfile.html
 
 *** Test Cases ***

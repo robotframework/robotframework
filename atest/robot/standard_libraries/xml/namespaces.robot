@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation    Tests for XML library's default namespace handling.
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/namespaces.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/namespaces.robot
 Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 
@@ -17,7 +17,10 @@ xmlns attributes with default namespaces are added when needed
 Saved XML is semantically same as original
     Check Test Case    ${TESTNAME}
 
-Saved XML is has same content as original but only default namespaces
+Saved XML has same content as original but only default namespaces
+    Check Test Case    ${TESTNAME}
+
+Element without namepace inside element with namespace
     Check Test Case    ${TESTNAME}
 
 Attribute namespaces are not handled

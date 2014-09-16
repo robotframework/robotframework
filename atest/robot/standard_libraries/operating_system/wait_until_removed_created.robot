@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/wait_until_removed_created.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/wait_until_removed_created.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 

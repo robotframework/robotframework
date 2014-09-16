@@ -2,7 +2,7 @@
 Resource  ../runner/cli_resource.robot
 
 *** Variables ***
-${TEST FILE}      misc${/}normal.txt
+${TEST FILE}      misc${/}normal.robot
 ${MYOUTDIR}       %{TEMPDIR}${/}rebot-cli-output
 ${MYINPUT}        %{TEMPDIR}${/}rebot-cli-input.xml
 ${M_211_211}      2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
