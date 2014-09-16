@@ -64,7 +64,7 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
 
 .. note:: All setting names can optionally include a colon at the end, for
-      example :opt:`Documentation:`. This can make reading the settings easier
+      example :setting:`Documentation:`. This can make reading the settings easier
       especially when using the plain text format. This is a
       new feature in Robot Framework 2.5.5.
 

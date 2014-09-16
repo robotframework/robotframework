@@ -404,35 +404,28 @@ table.messages td.warn {
     border: 0;
 }
 
-/* Roles -- these are defined in roles.rst file */
+/* Roles -- explained in roles.rst file */
 
-.var {
+code, .codesc, .option {
     background: #f4f4f4;
-    font-size: 0.9em;
+    font-family: monospace;
 }
-.opt {
+.file {
+    font-style: italic;
+}
+.setting {
     font-style: italic;
     white-space: nowrap;
-}
-.prog, .code, .cli, .gui {
-    background: #f4f4f4;
-    font-family: monospace;
-}
-.msg {
-    font-family: monospace;
 }
 .name {
     font-style: italic;
 }
-.path {
-    font-style: italic;
-}
-.misc, .literal {
-    background: #f4f4f4;
-}
 
 /* Overridden and modified styles */
 
+col.option, kbd .option {
+    background: inherit;
+}
 h1 {
     font-size: 2em;
 }

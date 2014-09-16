@@ -15,6 +15,8 @@
 
 __ http://creativecommons.org/licenses/by/3.0/
 
+.. default-role:: code
+
 .. contents:: Table of Contents
    :depth: 2
 

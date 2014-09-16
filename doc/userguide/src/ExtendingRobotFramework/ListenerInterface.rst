@@ -15,7 +15,7 @@ communicating with other systems.
 Taking listeners into use
 -------------------------
 
-Listeners are taken into use from the command line with the :opt:`--listener`
+Listeners are taken into use from the command line with the :option:`--listener`
 option, so that the name of the listener is given to it as an argument. The
 listener name is got from the name of the class or module implementing the
 listener interface, similarly as `test library names`_ are got from classes
@@ -49,7 +49,7 @@ Robot Framework creates an instance of the listener class with given arguments
 when test execution starts. During the test execution, Robot Framework calls
 listeners' methods when test suites, test cases and keywords start and end. It
 also calls the appropriate methods when output files are ready, and finally at
-the end it calls the :code:`close` method. A listener is not required to
+the end it calls the `close` method. A listener is not required to
 implement any official interface, and it only needs to have the methods it
 actually needs.
 
@@ -64,22 +64,22 @@ all new listeners should be implemented with signatures described in the table
 below. The most recent detailed description of the old listener interface can
 be found in User Guide of Robot Framework 2.0.4.
 
-.. note:: A listener must have attribute :code:`ROBOT_LISTENER_API_VERSION`
+.. note:: A listener must have attribute `ROBOT_LISTENER_API_VERSION`
   defined in order to be recognized as a new style listener. Value of the
-  :code:`ROBOT_LISTENER_API_VERSION` attribute must be 2, either as a string or
+  `ROBOT_LISTENER_API_VERSION` attribute must be 2, either as a string or
   as an integer. The examples below are implemented as new style listeners.
 
 Listener interface method signatures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All listener methods related to test execution progress have the same
-signature :code:`method(name, attributes)`, where :code:`attributes`
+signature `method(name, attributes)`, where `attributes`
 is a dictionary containing details of the event. The following table
 lists all the available methods in the listener interface and the
-contents of the :code:`attributes` dictionary, where applicable. Keys
+contents of the `attributes` dictionary, where applicable. Keys
 of the dictionary are strings. All of these methods have also
-`camelCase` aliases.  Thus, for example, :code:`startSuite` is a
-synonym to :code:`start_suite`.
+`camelCase` aliases.  Thus, for example, `startSuite` is a
+synonym to `start_suite`.
 
 .. table:: Available methods in the listener interface
    :class: tabular
@@ -122,7 +122,7 @@ synonym to :code:`start_suite`.
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
    |               |                  |   as an integer                                  |
-   |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
+   |               |                  | * status: either `PASS` or `FAIL`                |
    |               |                  | * statistics: suite statistics (number of passed |
    |               |                  |   and failed tests in the suite) as a string     |
    |               |                  | * message: error message if the suite setup or   |
@@ -136,7 +136,7 @@ synonym to :code:`start_suite`.
    |               |                  | * longname: test name including parent suites    |
    |               |                  | * doc: test case documentation                   |
    |               |                  | * tags: test case tags as a list of strings      |
-   |               |                  | * critical: :code:`yes` or :code:`no` depending  |
+   |               |                  | * critical: `yes` or `no` depending              |
    |               |                  |   is test considered critical or not (new in 2.6)|
    |               |                  | * template: contains the name of the template    |
    |               |                  |   used for the test. If the test is not templated|
@@ -151,7 +151,7 @@ synonym to :code:`start_suite`.
    |               |                  | * longname: test name including parent suites    |
    |               |                  | * doc: test case documentation                   |
    |               |                  | * tags: test case tags as a list of strings      |
-   |               |                  | * critical: :code:`yes` or :code:`no` depending  |
+   |               |                  | * critical: `yes` or `no` depending              |
    |               |                  |   is test considered critical or not (new in 2.6)|
    |               |                  | * template: contains the name of the template    |
    |               |                  |   used for the test. If the test is not templated|
@@ -160,15 +160,15 @@ synonym to :code:`start_suite`.
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
    |               |                  |   as an integer                                  |
-   |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
+   |               |                  | * status: either `PASS` or `FAIL`                |
    |               |                  | * message: status message, normally an error     |
    |               |                  |   message or an empty string                     |
    +---------------+------------------+--------------------------------------------------+
    | start_keyword | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
-   |               |                  | * type: string :code:`Keyword` for normal        |
-   |               |                  |   keywords and :code:`Test Setup`, :code:`Test   |
-   |               |                  |   Teardown`, :code:`Suite Setup` or :code:`Suite |
+   |               |                  | * type: string `Keyword` for normal              |
+   |               |                  |   keywords and `Test Setup`, `Test               |
+   |               |                  |   Teardown`, `Suite Setup` or `Suite             |
    |               |                  |   Teardown` for keywords used in suite/test      |
    |               |                  |   setup/teardown (new in 2.6)                    |
    |               |                  | * doc: keyword documentation                     |
@@ -177,30 +177,30 @@ synonym to :code:`start_suite`.
    +---------------+------------------+--------------------------------------------------+
    | end_keyword   | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
-   |               |                  | * type: same as with :code:`start_keyword`       |
+   |               |                  | * type: same as with `start_keyword`             |
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * args: keyword's arguments as a list of strings |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
    |               |                  |   as an integer                                  |
-   |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
+   |               |                  | * status: either `PASS` or `FAIL`                |
    +---------------+------------------+--------------------------------------------------+
    | log_message   | message          | Called when an executed keyword writes a log     |
-   |               |                  | message. :code:`message` is a dictionary with    |
+   |               |                  | message. `message` is a dictionary with          |
    |               |                  | the following keys:                              |
    |               |                  |                                                  |
    |               |                  | * message: the content of the message            |
    |               |                  | * level: `log level`_ used in logging the message|
    |               |                  | * timestamp: message creation time, format is    |
-   |               |                  |   :code:`YYYY-MM-DD hh:mm:ss.mil`                |
-   |               |                  | * html: string :code:`yes` or :code:`no` denoting|
+   |               |                  |   `YYYY-MM-DD hh:mm:ss.mil`                      |
+   |               |                  | * html: string `yes` or `no` denoting            |
    |               |                  |   whether the message should be interpreted as   |
    |               |                  |   HTML or not                                    |
    +---------------+------------------+--------------------------------------------------+
    | message       | message          | Called when the framework itself writes a syslog_|
-   |               |                  | message. :code:`message` is a dictionary with    |
-   |               |                  | same keys as with :code:`log_message` method.    |
+   |               |                  | message. `message` is a dictionary with          |
+   |               |                  | same keys as with `log_message` method.          |
    +---------------+------------------+--------------------------------------------------+
    | output_file   | path             | Called when writing to an output file is         |
    |               |                  | finished. The path is an absolute path to the    |
@@ -223,7 +223,7 @@ synonym to :code:`start_suite`.
    +---------------+------------------+--------------------------------------------------+
 
 The available methods and their arguments are also shown in a formal Java
-interface specification below. Contents of the :code:`java.util.Map attributes` are
+interface specification below. Contents of the `java.util.Map attributes` are
 as in the table above.  It should be remembered that a listener *does not* need
 to implement any explicit interface or have all these methods.
 
@@ -276,7 +276,7 @@ table below.
    +----------------------+---------------------------------------------------+
 
 .. note:: To avoid recursion, messages logged by listeners are not sent to
-          listener methods :code:`log_message` and :code:`message`.
+          listener methods `log_message` and `message`.
 
 .. warning:: There were severe problems with listeners logging prior
              to Robot Framework 2.6.2. Using this functionality with
@@ -308,7 +308,7 @@ The second example, which still uses Python, is slightly more complicated. It
 writes all the information it gets into a text file in a temporary directory
 without much formatting. The filename may be given from the command line, but
 also has a default value. Note that in real usage, the `debug file`_
-functionality available through the command line option :opt:`--debugfile` is
+functionality available through the command line option :option:`--debugfile` is
 probably more useful than this example.
 
 .. sourcecode:: python
@@ -415,13 +415,13 @@ activities automatically when a test suite or the whole test execution ends.
 Registering listener
 ~~~~~~~~~~~~~~~~~~~~
 
-A test library can register a listener by using :code:`ROBOT_LIBRARY_LISTENER`
+A test library can register a listener by using `ROBOT_LIBRARY_LISTENER`
 attribute. The value of this attribute should be an instance of the listener
 to use. It may be a totally independent listener or the library itself can
 act as a listener. To avoid listener methods to be exposed as keywords in
 the latter case, it is possible to prefix them with an underscore.
-For example, instead of using :code:`end_suite` or :code:`endSuite`, it is
-possible to use :code:`_end_suite` or :code:`_endSuite`.
+For example, instead of using `end_suite` or `endSuite`, it is
+possible to use `_end_suite` or `_endSuite`.
 
 Following examples illustrates using an external listener as well as library
 acting as a listener itself:
@@ -452,22 +452,22 @@ acting as a listener itself:
        # actual library code here ...
 
 As the seconds example above already demonstrated, library listeners can
-specify `listener interface versions`_ using :code:`ROBOT_LISTENER_API_VERSION`
+specify `listener interface versions`_ using `ROBOT_LISTENER_API_VERSION`
 attribute exactly like any other listener.
 
 Called listener methods
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Library's listener will get notifications about all events in suites where
-the library is imported. In practice this means that :code:`start_suite`,
-:code:`end_suite`, :code:`start_test`, :code:`end_test`, :code:`start_keyword`,
-:code:`end_keyword`, :code:`log_message`, and :code:`message` methods are
+the library is imported. In practice this means that `start_suite`,
+`end_suite`, `start_test`, `end_test`, `start_keyword`,
+`end_keyword`, `log_message`, and `message` methods are
 called inside those suites.
 
 If the library creates a new listener instance every time when the library
 itself is instantiated, the actual listener instance to use will change
 according to the `test library scope`_.
-In addition to the previously listed listener methods, :code:`close`
+In addition to the previously listed listener methods, `close`
 method is called when the library goes out of the scope.
 
 See `Listener interface method signatures`_ section above

@@ -23,18 +23,18 @@ Resource files
 Taking resource files into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Resource files are imported using the :opt:`Resource` setting in the
+Resource files are imported using the :setting:`Resource` setting in the
 Settings table. The path to the resource file is given in the cell
 after the setting name.
 
 If the path is given in an absolute format, it is used directly. In other
 cases, the resource file is first searched relatively to the directory
 where the importing file is located. If the file is not found there,
-it is then searched from the directories in :code:`PYTHONPATH`. The path can
+it is then searched from the directories in ``PYTHONPATH``. The path can
 contain variables, and it is recommended to use them to make paths
-system-independent (for example, :path:`${RESOURCES}/login_resources.html` or
-:path:`${RESOURCE_PATH}`). Additionally, slashes ("/") in the path
-are automatically changed to backslashes ("\\") on Windows.
+system-independent (for example, :file:`${RESOURCES}/login_resources.html` or
+:file:`${RESOURCE_PATH}`). Additionally, slashes (`/`) in the path
+are automatically changed to backslashes (:codesc:`\\`) on Windows.
 
 .. table:: Importing resource files
    :class: example
@@ -59,8 +59,8 @@ Resource file structure
 The higher-level structure of resource files is the same as that of
 test case files otherwise, but, of course, they cannot contain Test
 Case tables. Additionally, the Setting table in resource files can
-contain only import settings (:opt:`Library`, :opt:`Resource`,
-:opt:`Variables`) and :opt:`Documentation`. The Variable table and
+contain only import settings (:setting:`Library`, :setting:`Resource`,
+:setting:`Variables`) and :setting:`Documentation`. The Variable table and
 Keyword table are used exactly the same way as in test case files.
 
 If several resource files have a user keyword with the same name, they
@@ -76,8 +76,8 @@ Documenting resource files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Keywords created in a resource file can be documented__ using
-:opt:`[Documentation]` setting. Starting from Robot Framework 2.1 also
-the resource file itself can have :opt:`Documentation` in the Setting
+:setting:`[Documentation]` setting. Starting from Robot Framework 2.1 also
+the resource file itself can have :setting:`Documentation` in the Setting
 table similarly as `test suites`__.
 
 Both `libdoc`_ and `RIDE`_ use these documentations, and they
@@ -146,12 +146,12 @@ two different approaches for creating variables:
 `Creating variables directly`_
    Variables are specified as module attributes. In simple cases, the
    syntax is so simple that no real programming is needed. For example,
-   :code:`MY_VAR = 'my value'` creates a variable
-   :var:`${MY_VAR}` with the specified text as the value.
+   `MY_VAR = 'my value'` creates a variable
+   `${MY_VAR}` with the specified text as the value.
 
 `Getting variables from a special function`_
-   Variable files can have a special :code:`get_variables`
-   (or :code:`getVariables`) method that returns variables as a mapping.
+   Variable files can have a special `get_variables`
+   (or `getVariables`) method that returns variables as a mapping.
    Because the method can take arguments this approach is very flexible.
 
 Alternatively variable files can be implemented as `Python or Java classes`__
@@ -167,12 +167,12 @@ Setting table
 '''''''''''''
 
 All test data files can import variables using the
-:opt:`Variables` setting in the Setting table, in the same way as
-`resource files are imported`__ using the :opt:`Resource`
+:setting:`Variables` setting in the Setting table, in the same way as
+`resource files are imported`__ using the :setting:`Resource`
 setting. Similarly to resource files, the path to the imported
 variable file is considered relative to the directory where the
 importing file is, and if not found, it is searched from the
-directories in :code:`PYTHONPATH`. The path can also contain variables, and
+directories in ``PYTHONPATH``. The path can also contain variables, and
 slashes are converted to backslashes on Windows. If an `argument file takes
 arguments`__, they are specified in the cells after the path and also they
 can contain variables.
@@ -202,8 +202,8 @@ Command line
 ''''''''''''
 
 Another way to take variable files into use is using the command line option
-:opt:`--variablefile`. Variable files are referenced using a path to them, and
-possible arguments are joined to the path with a colon (:opt:`:`)::
+:option:`--variablefile`. Variable files are referenced using a path to them, and
+possible arguments are joined to the path with a colon (`:`)::
 
    --variablefile myvariables.py
    --variablefile path/variables.py
@@ -211,15 +211,15 @@ possible arguments are joined to the path with a colon (:opt:`:`)::
    --variablefile taking_arguments.py:arg1:arg2
 
 Starting from Robot Framework 2.8.2, variable files taken into use from the
-command line are also searched from the :code:`PYTHONPATH` similarly as
+command line are also searched from the ``PYTHONPATH`` similarly as
 variable files imported in the Setting table.
 
 Variables in these variable files are globally available in all test data
 files, similarly as `individual variables`__ set with the
-:opt:`--variable` option. If both :opt:`--variablefile` and
-:opt:`--variable` options are used and there are variables with same
+:option:`--variable` option. If both :option:`--variablefile` and
+:option:`--variable` options are used and there are variables with same
 names, those that are set individually with
-:opt:`--variable` option take precedence.
+:option:`--variable` option take precedence.
 
 __ `Setting variables in command line`_
 
@@ -231,7 +231,7 @@ Basic syntax
 
 When variable files are taken into use, they are imported as Python
 modules and all their global attributes that do not start with an
-underscore (:code:`_`) are considered to be variables. Because variable
+underscore (`_`) are considered to be variables. Because variable
 names are case-insensitive, both lower- and upper-case names are
 possible, but in general, capital letters are recommended for global
 variables and attributes.
@@ -244,12 +244,12 @@ variables and attributes.
    STRINGS = ["one", "two", "kolme", "four"]
    NUMBERS = [1, INTEGER, 3.14]
 
-In the example above, variables :var:`${VARIABLE}`,
-:var:`${ANOTHER VARIABLE}`, and so on, are created. The first two
+In the example above, variables `${VARIABLE}`,
+`${ANOTHER VARIABLE}`, and so on, are created. The first two
 variables are strings, the third one is an integer and the last two are lists.
 All these variables are `scalar variables`_, even the ones containing
 lists as values. To create `list variables`_, the variable name must
-be prefixed with :code:`LIST__` (note the two underscores).
+be prefixed with `LIST__` (note the two underscores).
 
 .. sourcecode:: python
 
@@ -275,9 +275,9 @@ Variable table below.
    ===================  ====================  ==========  =========  =========
 
 .. note:: Variables are not replaced in strings got from variable files.
-          For example, :code:`VAR = "an ${example}"` would create
-          variable :var:`${VAR}` with a literal string value
-          :var:`an ${example}` regardless would variable :var:`${example}`
+          For example, `VAR = "an ${example}"` would create
+          variable `${VAR}` with a literal string value
+          `an ${example}` regardless would variable `${example}`
           exist or not.
 
 Using objects as values
@@ -286,7 +286,7 @@ Using objects as values
 Variables in variable files are not limited to having only strings or
 other base types as values like variable tables. Instead, their
 variables can contain any objects. In the example below, the variable
-:var:`${MAPPING}` contains a Java Hashtable with two values (this
+`${MAPPING}` contains a Java Hashtable with two values (this
 example works only when running tests on Jython).
 
 .. sourcecode:: python
@@ -297,7 +297,7 @@ example works only when running tests on Jython).
     MAPPING.put("one", 1)
     MAPPING.put("two", 2)
 
-The second example creates :var:`${MAPPING}` as a Python dictionary
+The second example creates `${MAPPING}` as a Python dictionary
 and also has two variables created from a custom object implemented in
 the same file.
 
@@ -357,9 +357,9 @@ When Robot Framework processes variable files, all their attributes
 that do not start with an underscore are expected to be
 variables. This means that even functions or classes created in the
 variable file or imported from elsewhere are considered variables. For
-example, the last example would contain the variables :var:`${math}`
-and :var:`${get_area}` in addition to :var:`${AREA1}` and
-:var:`${AREA2}`.
+example, the last example would contain the variables `${math}`
+and `${get_area}` in addition to `${AREA1}` and
+`${AREA2}`.
 
 Normally the extra variables do not cause problems, but they
 could override some other variables and cause hard-to-debug
@@ -380,7 +380,7 @@ with an underscore:
 
 If there is a large number of other attributes, instead of prefixing
 them all, it is often easier to use a special attribute
-:code:`__all__` and give it a list of attribute names to be processed
+`__all__` and give it a list of attribute names to be processed
 as variables.
 
 .. sourcecode:: python
@@ -397,20 +397,20 @@ as variables.
     AREA1 = get_area(1)
     AREA2 = get_area(2)
 
-.. Note:: The :code:`__all__` attribute is also, and originally, used
+.. Note:: The `__all__` attribute is also, and originally, used
           by Python to decide which attributes to import
-          when using the syntax :code:`from modulename import *`.
+          when using the syntax `from modulename import *`.
 
 Getting variables from a special function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An alternative approach for getting variables is having a special
-:code:`get_variables` function (also camelCase syntax
-:code:`getVariables` is possible) in a variable file. If such a function
+`get_variables` function (also camelCase syntax
+`getVariables` is possible) in a variable file. If such a function
 exists, Robot Framework calls it and expects to receive variables as
-a Python dictionary or a Java :code:`Map` with variable names as keys
+a Python dictionary or a Java `Map` with variable names as keys
 and variable values as values. Variables are considered to be scalars,
-unless prefixed with :code:`LIST__`, and values can contain
+unless prefixed with `LIST__`, and values can contain
 anything. The example below is functionally identical to the first examples of
 `creating variables directly`_ above.
 
@@ -427,7 +427,7 @@ anything. The example below is functionally identical to the first examples of
         return variables
 
 
-:code:`get_variables` can also take arguments, which facilitates changing
+`get_variables` can also take arguments, which facilitates changing
 what variables actually are created. Arguments to the function are set just
 as any other arguments for a Python function. When `taking variable files
 into use`_ in the test data, arguments are specified in cells after the path
@@ -466,14 +466,14 @@ them as classes has some restrictions:
 
   - Python classes must have the same name as the module they are located.
   - Java classes must live in the default package.
-  - Paths to Java classes must end with either :path:`.java` or :path:`.class`.
+  - Paths to Java classes must end with either :file:`.java` or :file:`.class`.
     The class file must exists in both cases.
 
 Regardless the implementation language, the framework will create an instance
 of the class using no arguments and variables will be gotten from the instance.
 Similarly as with modules, variables can be defined as attributes directly
-in the instance or gotten from a special :code:`get_variables`
-(or :code:`getVariables`) method.
+in the instance or gotten from a special `get_variables`
+(or `getVariables`) method.
 
 When variables are defined directly in an instance, all attributes containing
 callable values are ignored to avoid creating variables from possible methods
@@ -484,8 +484,8 @@ Examples
 ''''''''
 
 The first examples create variables from attributes using both Python and Java.
-Both of them create variables :var:`${VARIABLE}` and :var:`@{LIST}` from class
-attributes and :var:`${ANOTHER VARIABLE}` from an instance attribute.
+Both of them create variables `${VARIABLE}` and `@{LIST}` from class
+attributes and `${ANOTHER VARIABLE}` from an instance attribute.
 
 .. sourcecode:: python
 
@@ -511,7 +511,7 @@ attributes and :var:`${ANOTHER VARIABLE}` from an instance attribute.
     }
 
 The second examples utilizes dynamic approach for getting variables. Both of
-them create only one variable :var:`${DYNAMIC VARIABLE}`.
+them create only one variable `${DYNAMIC VARIABLE}`.
 
 .. sourcecode:: python
 
