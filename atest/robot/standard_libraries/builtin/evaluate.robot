@@ -12,3 +12,9 @@ Evaluate With Modules
 
 Evaluate With Namespace
     Check Test Case    ${TEST NAME}
+
+Evaluate Empty
+    Check Test Case    ${TEST NAME}
+
+Evaluate Nonstring
+    Check Test Case    ${TEST NAME}
