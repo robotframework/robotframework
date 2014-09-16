@@ -7,11 +7,11 @@ ${MESSAGE}        Suite teardown message
 
 *** Test Case ***
 Passing Critical
-    Noop
+    No Operation
 
 Passing Non-critical
     [Tags]    non-critical
-    Noop
+    No Operation
 
 *** Keyword ***
 My Teardown

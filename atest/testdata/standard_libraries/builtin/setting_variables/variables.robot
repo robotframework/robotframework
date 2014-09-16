@@ -33,7 +33,7 @@ Set Test Variable - Scalars
     Should Be Equal    ${scalar}    Hi tellus
     Set Test Variable    $scalar    Hello    world
     Should Be True    ${scalar} == ['Hello', 'world']    Hello world
-    ${scalar} =    Set    Moi maailma
+    ${scalar} =    Set Variable    Moi maailma
     Set Test Variable    \${scalar}
     Should Be Equal    ${scalar}    Moi maailma
     Set Test Variable    $new    Previously non-existing
@@ -55,11 +55,11 @@ Set Test Variable - Lists
 Set Test Variable Needing Escaping
     Set Test Variable    $var1    One backslash \\ and \${notvar}
     Should Be Equal    ${var1}    One backslash \\ and \${notvar}
-    ${var2} =    Set    \ \\ \\\ \\\\ \\\\\ \\\\\\
+    ${var2} =    Set Variable    \ \\ \\\ \\\\ \\\\\ \\\\\\
     Should Be Equal    ${var2}    \ \\ \\\ \\\\ \\\\\ \\\\\\    Sanity check
     Set Test Variable    $var2
     Should Be Equal    ${var2}    \ \\ \\\ \\\\ \\\\\ \\\\\\
-    ${var3} =    Set    \    \\    \\\
+    ${var3} =    Set Variable    \    \\    \\\
     Should Be True    ${var3} == ['', '\\\\', '\\\\']
     Set Test Variable    $var3
     Should Be True    ${var3} == ['', '\\\\', '\\\\']
@@ -77,7 +77,7 @@ Set Test Variable Needing Escaping
     Should Be Equal    @{var5}[2]    \\\\
 
 Set Test Variable In User Keyword
-    ${new_var} =    Set    Value of new var
+    ${new_var} =    Set Variable    Value of new var
     Variable Should Not Exist    $uk_var_1
     Variable Should Not Exist    $uk_var_2
     Variable Should Not Exist    @uk_var_3
@@ -122,7 +122,7 @@ Set Suite Variable 1
     Set Suite Variable    \${non_existing}
 
 Set Suite Variable 2
-    [Documentation]    FAIL Invalid variable syntax 'invalid'
+    [Documentation]    FAIL Invalid variable syntax 'invalid'.
     Should Be Equal    ${test_level_suite_var}    Suite var set in test
     Should Be True    @{test_level_suite_var} == [ 'Suite var set in', 'test' ]
     Should Be Equal    ${suite_var_needing_escaping}    One backslash \\ and \${notvar}
@@ -154,7 +154,7 @@ Set Global Variable 1
     Set Global Variable    @non_existing
 
 Set Global Variable 2
-    [Documentation]    FAIL Invalid variable syntax 'invalid syntax'
+    [Documentation]    FAIL Invalid variable syntax 'invalid syntax'.
     Should Be Equal    ${test_level_global_var}    Global var set in test
     Should Be True    @{test_level_global_var} == [ 'Global var set in', 'test' ]
     Should Be Equal    ${uk_level_global_var}    Global var set in user keyword
@@ -307,10 +307,10 @@ Set Test Variables In UK
     Should Be Equal    ${scalar}    Hi tellus
     Should Be Equal    ${new_var}    Value of new var
     Set Test Variable    \${uk_var_1}    Value of uk var 1
-    ${uk_var_2} =    Set    Value of uk var 2
+    ${uk_var_2} =    Set Variable    Value of uk var 2
     Set Test Variable    $uk_var_2
     Set Test Variable    @uk_var_3    Value of    uk var 3
-    ${uk_var_4} =    Set    This is a private variable for this user keyword
+    ${uk_var_4} =    Set Variable    This is a private variable for this user keyword
 
 Check Test Variables Available In UK
     Should Be Equal    ${scalar}    Hi tellus

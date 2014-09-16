@@ -69,9 +69,9 @@ Check Repeated Messages
     [Arguments]    ${kw}    ${count}    ${msg}=${None}
     Should Be Equal As Integers    ${kw.kw_count}    ${count}
     : FOR    ${i}    IN RANGE    ${count}
-    \    Check Log Message    ${kw.msgs[${i}]}    Repeating keyword, round ${i+1}/${count}
+    \    Check Log Message    ${kw.msgs[${i}]}    Repeating keyword, round ${i+1}/${count}.
     \    Check Log Message    ${kw.kws[${i}].msgs[0]}    ${msg}
-    Run Keyword If    ${count} == 0    Check Log Message    ${kw.msgs[0]}    Keyword 'This is not executed' repeated zero times
+    Run Keyword If    ${count} == 0    Check Log Message    ${kw.msgs[0]}    Keyword 'This is not executed' repeated zero times.
     Run Keyword If    ${count} != 0    Should Be Equal As Integers    ${kw.msg_count}    ${count}
 
 Check Repeated Keyword Name

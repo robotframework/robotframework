@@ -58,7 +58,7 @@ Run Keyword If Timeout Occurred When Keyword Timeout Did Not Occur In Setup
     No Operation
 
 Run Keyword If Timeout Occurred Used Outside Teardown
-    [Documentation]    FAIL Keyword 'Run Keyword If Timeout Occurred' can only be used in test teardown
+    [Documentation]    FAIL Keyword 'Run Keyword If Timeout Occurred' can only be used in test teardown.
     Fail If Timeout Occurred
 
 Run Keyword If Timeout Occurred Used When No Timeout Is Set

@@ -462,7 +462,7 @@ class _Verify:
         how `msg` can be used to override the default error message.
         """
         if not msg:
-            msg = "'%s' should not be true" % condition
+            msg = "'%s' should not be true." % condition
         asserts.fail_if(self._is_true(condition), msg)
 
     def should_be_true(self, condition, msg=None):
@@ -494,7 +494,7 @@ class _Verify:
         | Should Be True | sys.platform.startswith('java') | # Jython  |
         """
         if not msg:
-            msg = "'%s' should be true" % condition
+            msg = "'%s' should be true." % condition
         asserts.fail_unless(self._is_true(condition), msg)
 
     def should_be_equal(self, first, second, msg=None, values=True):
@@ -724,7 +724,7 @@ class _Verify:
         | Should Contain X Times | ${some list} | value  | 3 |
         """
         if not msg:
-            msg = "'%s' does not contain '%s' %s times" \
+            msg = "'%s' does not contain '%s' %s times." \
                     % (utils.unic(item1), utils.unic(item2), count)
         self.should_be_equal_as_integers(self.get_count(item1, item2),
                                          count, msg, values=False)
@@ -873,7 +873,7 @@ class _Verify:
                     try: return item.length
                     except utils.RERAISED_EXCEPTIONS: raise
                     except:
-                        raise RuntimeError("Could not get length of '%s'" % item)
+                        raise RuntimeError("Could not get length of '%s'." % item)
 
     def length_should_be(self, item, length, msg=None):
         """Verifies that the length of the given item is correct.
@@ -884,7 +884,7 @@ class _Verify:
         length = self._convert_to_integer(length)
         actual = self.get_length(item)
         if actual != length:
-            raise AssertionError(msg or "Length of '%s' should be %d but is %d"
+            raise AssertionError(msg or "Length of '%s' should be %d but is %d."
                                         % (item, length, actual))
 
     def should_be_empty(self, item, msg=None):
@@ -894,7 +894,7 @@ class _Verify:
         default error message can be overridden with the `msg` argument.
         """
         if self.get_length(item) > 0:
-            raise AssertionError(msg or "'%s' should be empty" % item)
+            raise AssertionError(msg or "'%s' should be empty." % item)
 
     def should_not_be_empty(self, item, msg=None):
         """Verifies that the given item is not empty.
@@ -903,7 +903,7 @@ class _Verify:
         default error message can be overridden with the `msg` argument.
         """
         if self.get_length(item) == 0:
-            raise AssertionError(msg or "'%s' should not be empty" % item)
+            raise AssertionError(msg or "'%s' should not be empty." % item)
 
     def _get_string_msg(self, str1, str2, msg, values, delim):
         default = "'%s' %s '%s'" % (utils.unic(str1), delim, utils.unic(str2))
@@ -987,7 +987,7 @@ class _Variables:
         """
         name = self._get_var_name(name)
         msg = self._variables.replace_string(msg) if msg \
-            else "Variable %s does not exist" % name
+            else "Variable %s does not exist." % name
         asserts.fail_unless(name in self._variables, msg)
 
     @run_keyword_variant(resolve=0)
@@ -1004,7 +1004,7 @@ class _Variables:
         """
         name = self._get_var_name(name)
         msg = self._variables.replace_string(msg) if msg \
-            else "Variable %s exists" % name
+            else "Variable %s exists." % name
         asserts.fail_if(name in self._variables, msg)
 
     def replace_variables(self, text):
@@ -1141,7 +1141,7 @@ class _Variables:
         try:
             return self._unescape_variable_if_needed(name)
         except ValueError:
-            raise RuntimeError("Invalid variable syntax '%s'" % orig)
+            raise RuntimeError("Invalid variable syntax '%s'." % orig)
 
     def _resolve_possible_variable(self, name):
         try:
@@ -1439,10 +1439,10 @@ class _RunKeyword:
             if err.dont_continue:
                 raise
         else:
-            raise AssertionError("Expected error '%s' did not occur"
+            raise AssertionError("Expected error '%s' did not occur."
                                  % expected_error)
         if not self._matches(unicode(err), expected_error):
-            raise AssertionError("Expected error '%s' but got '%s'"
+            raise AssertionError("Expected error '%s' but got '%s'."
                                  % (expected_error, err))
         return unicode(err)
 
@@ -1477,9 +1477,9 @@ class _RunKeyword:
 
     def _yield_repeated_keywords(self, times, name, args):
         if times <= 0:
-            self.log("Keyword '%s' repeated zero times" % name)
+            self.log("Keyword '%s' repeated zero times." % name)
         for i in xrange(times):
-            self.log("Repeating keyword, round %d/%d" % (i+1, times))
+            self.log("Repeating keyword, round %d/%d." % (i+1, times))
             yield name, args
 
     def wait_until_keyword_succeeds(self, timeout, retry_interval, name, *args):
@@ -1629,7 +1629,7 @@ class _RunKeyword:
         ctx = self._context
         if ctx.test and ctx.in_test_teardown:
             return ctx.test
-        raise RuntimeError("Keyword '%s' can only be used in test teardown"
+        raise RuntimeError("Keyword '%s' can only be used in test teardown."
                            % kwname)
 
     def run_keyword_if_all_critical_tests_passed(self, name, *args):
@@ -1688,7 +1688,7 @@ class _RunKeyword:
 
     def _get_suite_in_teardown(self, kwname):
         if not self._context.in_suite_teardown:
-            raise RuntimeError("Keyword '%s' can only be used in suite teardown"
+            raise RuntimeError("Keyword '%s' can only be used in suite teardown."
                                % kwname)
         return self._context.suite
 
@@ -2420,7 +2420,7 @@ class _Misc:
         try:
             method = getattr(object, method_name)
         except AttributeError:
-            raise RuntimeError("Object '%s' does not have a method '%s'"
+            raise RuntimeError("Object '%s' does not have a method '%s'."
                                % (object, method_name))
         return method(*args)
 
@@ -2472,7 +2472,7 @@ class _Misc:
         test = self._namespace.test
         if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
-                               "suite setup or teardown")
+                               "suite setup or teardown.")
         test.message = self._get_possibly_appended_value(test.message, message, append)
         message, level = self._get_logged_test_message_and_level(test.message)
         self.log('Set test message to:\n%s' % message, level)
@@ -2502,8 +2502,8 @@ class _Misc:
         """
         test = self._namespace.test
         if not test:
-            raise RuntimeError("'Set Test Documentation' keyword cannot be used in "
-                               "suite setup or teardown")
+            raise RuntimeError("'Set Test Documentation' keyword cannot be "
+                               "used in suite setup or teardown.")
         test.doc = self._get_possibly_appended_value(test.doc, doc, append)
         self._variables.set_test('${TEST_DOCUMENTATION}', test.doc)
         self.log('Set test documentation to:\n%s' % test.doc)

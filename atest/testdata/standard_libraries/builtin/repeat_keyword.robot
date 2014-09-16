@@ -54,7 +54,7 @@ Repeated Keyword Failing Immediately
     Repeat Keyword    1000 times    Fail    Immediate failure
 
 Repeated Keyword Failing On Third Round
-    [Documentation]    FAIL '3 < 3' should be true
+    [Documentation]    FAIL '3 < 3' should be true.
     Repeat Keyword    1000 times    Keyword Failing On Third Run
 
 Repeat Keyword With Continuable Failure

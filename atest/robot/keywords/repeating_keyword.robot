@@ -22,7 +22,7 @@ Repeat Keyword Name and Arguments
 Repeat Keyword Messages
     ${test} =  Check Test Case  Repeat With Messages
     Verify Deprecation Messages  ${test.kws[0].msgs[0]}  1 x
-    Check Log Message  ${test.kws[0].msgs[1]}  Repeating keyword, round 1/1
+    Check Log Message  ${test.kws[0].msgs[1]}  Repeating keyword, round 1/1.
     Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Hello, world
     Verify Deprecation Messages  ${test.kws[1].msgs[0]}  33 x
     Check Log Message  ${test.kws[1].kws[0].msgs[0]}  Hi, tellus
