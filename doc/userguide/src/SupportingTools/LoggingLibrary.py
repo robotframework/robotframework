@@ -13,13 +13,13 @@ class LoggingLibrary:
     = Usage =
 
     This library has several keyword, for example `Log Message`, for logging
-    messages. In reality the library is used only for _libdoc_ demonstration
+    messages. In reality the library is used only for _Libdoc_ demonstration
     purposes.
 
     = Valid log levels =
 
-    Valid log levels are `INFO`, `DEBUG`, and `TRACE`. The default log level
-    can be set during `importing`.
+    Valid log levels are ``INFO``, ``DEBUG``, and ``TRACE``. The default log
+    level can be set during `importing`.
 
     = Examples =
 
@@ -39,9 +39,9 @@ class LoggingLibrary:
 
         Examples:
 
-        | *Setting* | *Value*        | *Value* | *Comment*                    |
-        | Library   | LoggingLibrary |         | # Use default level (`INFO`) |
-        | Library   | LoggingLibrary | DEBUG   | # Use the given level        |
+        | =Setting= |     =Value=    | =Value= |          =Comment=         |
+        | Library   | LoggingLibrary |         | # Use default level (INFO) |
+        | Library   | LoggingLibrary | DEBUG   | # Use the given level      |
         """
         self.default_level = self._verify_level(default_level)
 
@@ -55,7 +55,10 @@ class LoggingLibrary:
     def log_message(self, message, level=None):
         """Writes given message to the log file using the specified log level.
 
-        If no level is given, the default level given during `library
+        The message to log and the log level to use are defined using
+        ``message`` and ``level`` arguments, respectively.
+
+        If no log level is given, the default level given during `library
         importing` is used.
         """
         level = self._verify_level(level) if level else self.default_level
