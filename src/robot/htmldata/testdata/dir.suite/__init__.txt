@@ -29,10 +29,10 @@ Documentation  Documentation for the whole test suite. All this forms a single
 ...            - first list item has snowman \u2603 and monkey face \U0001F435
 ...            - second list item
 ...            \ is continued \
-...            using *two* different approaches
+...            using *two* different approaches (``1 + 1 == 2``)
 Metadata       URL       http://robotframework.org
 Metadata       Image     http://code.google.com/p/robotframework/logo?ext.png
-Metadata       Formatting  *Bold* and _italics_
+Metadata       Formatting  *Bold* and _italics_ and ``code``
 Metadata       </script>      < &lt; </script>
 Suite Setup    Log  higher level suite setup
 Force Tags     i1  i2

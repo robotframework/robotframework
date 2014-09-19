@@ -176,29 +176,34 @@ will be formatted in HTML as:
   </div>
 
 .. note:: Prior to 2.7.2 handling paragraphs was inconsistent. In documentation
-          generated with libdoc_ lines were combined to paragraphs but in
+          generated with Libdoc_ lines were combined to paragraphs but in
           documentations shown in log and report they were not.
 
-Bold and italic
----------------
+Inline styles
+-------------
 
+The documentation syntax supports inline styles **bold**, *italic* and `code`.
 Bold text can be created by having an asterisk before and after the
 selected word or words, for example `*this is bold*`. Italic
 style works similarly, but the special character to use is an
 underscore, for example, `_italic_`. It is also possible to have
 bold italic with the syntax `_*bold italic*_`.
 
-An asterisk or an underscore alone, or in the middle of a word, does
-not start formatting, but punctuation characters before or after them
-are allowed. When multiple lines form a paragraph__, both bold and italic
-can span over multiple lines.
+The code style is created using double backticks like :codesc:`\`\`code\`\``.
+The result is monospaced text with light gray background. Support for code
+style is new in Robot Framework 2.8.6.
+
+Asterisks, underscores or double backticks alone, or in the middle of a word,
+do not start formatting, but punctuation characters before or after them
+are allowed. When multiple lines form a paragraph__, all inline styles can
+span over multiple lines.
 
 __ paragraphs_
 
 .. raw:: html
 
    <table class="tabular docutils">
-     <caption>Bold and italic examples</caption>
+     <caption>Inline style examples</caption>
      <tr>
        <th>Unformatted</th>
        <th>Formatted</th>
@@ -212,12 +217,16 @@ __ paragraphs_
        <td><i>italic</i></td>
      </tr>
      <tr>
-       <td>*bold* and then _italic_</td>
-       <td><b>bold</b> and then <i>italic</i></td>
+       <td>_*bold italic*_</td>
+       <td><i><b>bold italic</b></i></td>
      </tr>
      <tr>
-       <td>_*bold italic*_, _italic_, nothing</td>
-       <td><i><b>bold italic</b></i>, <i>italic</i>, nothing</td>
+       <td>``code``</td>
+       <td><code>code</code></td>
+     </tr>
+     <tr>
+       <td>*bold*, then _italic_ and finally ``some code``</td>
+       <td><b>bold</b>, then <i>italic</i> and finally <code>some code</code></td>
      </tr>
      <tr>
        <td>This is *bold\n<br>on multiple\n<br>lines*.</td>
@@ -361,7 +370,7 @@ The above documentation is formatted like this in HTML:
   </div>
 
 .. note:: Support for formatting lists was added in 2.7.2. Prior to that,
-          the same syntax prevented ``libdoc`` from combining lines to
+          the same syntax prevented Libdoc_ from combining lines to
           paragraphs, so the end result was similar. Support for splitting
           list items into multiple lines was added in 2.7.4.
 
