@@ -264,7 +264,7 @@ like `arg2=override`.
 Using normal positional arguments after named arguments like, for example,
 `| Keyword | arg=value | positional |`, does not work.
 Starting from Robot Framework 2.8 this causes an explicit error.
-Otherwise the order of the named arguments does not matter.
+The relative order of the named arguments does not matter.
 
 .. note:: Prior to Robot Framework 2.8 it was not possible to name arguments
           that did not have a default value.
@@ -272,16 +272,20 @@ Otherwise the order of the named arguments does not matter.
 Named arguments with variables
 ''''''''''''''''''''''''''''''
 
-It is possible to use `variables`_ in named argument values.
-As when using `scalar variables`_, if the value is a single variable,
-it is passed to the keyword as-is. This allows using any objects, not only
-strings, as values also when using the named argument syntax. For example,
-calling a keyword like `arg=${object}` will pass
-the variable `${object}` to the keyword without converting it to a string.
+It is possible to use `variables`_ in both named argument names and values.
+If the value is a single `scalar variable`_, it is passed to the keyword as-is.
+This allows using any objects, not only strings, as values also when using
+the named argument syntax. For example, calling a keyword like `arg=${object}`
+will pass the variable `${object}` to the keyword without converting it to
+a string.
 
-Using variables that contain a value like `name=value` does not
-trigger the named argument usage. This is because named argument syntax requires
-the argument name to be written in the keyword call. This is important to
+If variables are used in named argument names, variables are resolved before
+matching them against argument names. This is a new feature in Robot Framework
+2.8.6.
+
+The named argument syntax requires the equal sign to be written literally
+in the keyword call. This means that if a variable has value like `foo=bar`,
+it can never trigger the named argument syntax. This is important to
 remember especially when wrapping keywords into other keywords. If, for example,
 a keyword takes a `variable number of arguments`_ like `@{args}`
 and passes all of them to another keyword using the same `@{args}`
@@ -293,7 +297,7 @@ syntax, the values are not recognized as named. See the example below:
    =============  ================  ============  ============
      Test Case          Action        Argument      Argument
    =============  ================  ============  ============
-   Example        wrapper           shell=True    # This will not come as a named argument to Start process
+   Example        Wrapper           shell=True    # This will not come as a named argument to Start process
    =============  ================  ============  ============
 
 .. table::
@@ -318,8 +322,9 @@ there is a syntax error.
 
 In these rare cases where there are accidental matches, it is possible to
 use the backslash character to escape__ the syntax like `foo\=quux`.
-Now the argument will get a literal value `foo=quux`. Note that
-escaping is not needed if there are no arguments with name `foo`.
+Now the argument will get a literal value `foo=quux`. Note that escaping
+is not needed if there are no arguments with name `foo`, but because it
+makes the situation more explicit, it may nevertheless be a good idea.
 
 __ Escaping_
 
@@ -331,7 +336,7 @@ addition to that, it also works when `taking test libraries into use`_.
 
 Naming arguments is supported by `user keywords`_ and by most `test libraries`_.
 The only exception are Java based libraries that use the `static library API`_.
-Library documentation generated with `Libdoc`_ has a note, does the library
+Library documentation generated with `Libdoc`_ has a note does the library
 support named arguments or not.
 
 .. note:: Prior to Robot Framework 2.8 named argument syntax did not work
@@ -380,6 +385,15 @@ Robot Framework 2.8 added support for `Python style free keyword arguments`__
 (`**kwargs`). What this means is that keywords can receive all arguments
 at the end of the keyword call that use the `name=value` syntax, and
 do not match any other arguments, as kwargs.
+
+Free keyword arguments support variables similarly as `named arguments
+<Named arguments with variables_>`__. In practice that means that variables
+can be used both in names and values, but the escape sign must always be
+visible literally. For example, both `foo=${bar}` and `${foo}=${bar}` are
+valid, as long as the variables that are used exist. An extra limitation is
+that free keyword argument names must always be strings. Support for variables
+in names is a new feature in Robot Framework 2.8.6, prior to that possible
+variables were left un-resolved.
 
 Initially free keyword arguments only worked with Python based libraries, but
 Robot Framework 2.8.2 extended the support to the `dynamic library API`_
