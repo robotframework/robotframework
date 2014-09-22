@@ -14,9 +14,9 @@ Named arg name as variable
     Should Be Equal    ${result}    1, 2, 3
 
 Named arg containing variable
-    ${result} =    User Keyword    first ${a}rg=required
+    ${result} =    User Keyword    first ${A}rg=required
     Should Be Equal    ${result}    required, default
-    ${result} =    User Keyword    first ${a}rg=1    ${a}-${b}-${c}=2
+    ${result} =    User Keyword    first ${A}rg=1    ${A}-${B}-${C}=2
     Should Be Equal    ${result}    1, 2
 
 Kwargs with variables in names
