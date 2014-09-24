@@ -85,7 +85,8 @@ function drawErrorsRecursively(errors, target) {
         setTimeout(function () { drawErrorsRecursively(errors, target); }, 0);
     else {
         // Errors may have moved scroll position. Resetting location re-scrolls.
-        window.location.replace(window.location.hash);
+        if (window.location.hash)
+            window.location.replace(window.location.hash);
         highlightLinkTarget();
     }
 }
