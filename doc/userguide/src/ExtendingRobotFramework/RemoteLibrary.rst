@@ -64,13 +64,13 @@ descriptive name, you can import it using the `WITH NAME syntax`_.
 .. table:: Importing Remote library
    :class: example
 
-   =========  ===========  =========================  =========  =========
-    Setting      Value                Value             Value      Value
-   =========  ===========  =========================  =========  =========
+   =========  ===========  =========================  =========  =========  =========
+    Setting      Value                Value             Value      Value      Value
+   =========  ===========  =========================  =========  =========  =========
    Library    Remote       \http://127.0.0.1:8270     WITH NAME  Example1
    Library    Remote       \http://example.com:8080/  WITH NAME  Example2
-   Library    Remote       \http://10.0.0.2/example   WITH NAME  Example3
-   =========  ===========  =========================  =========  =========
+   Library    Remote       \http://10.0.0.2/example   1 minute   WITH NAME  Example3
+   =========  ===========  =========================  =========  =========  =========
 
 The URL used by the first example above is also the default address
 that the Remote library uses if no address is given. Similarly port
@@ -92,6 +92,19 @@ that the Remote library uses if no address is given. Similarly port
           the address has a path even if the path is just `/`. For
           example, neither `http://127.0.0.1:8270/` nor
           `http://127.0.0.1:8270/my/path` will be modified.
+
+The last example above shows how to give a custom timeout to the Remote library
+as an optional second argument. The timeout is used when initially connecting
+to the server and if a connection accidentally closes. Timeout can be
+given in Robot Framework `time format`_ like `60s` or `2 minutes 10 seconds`.
+
+The default timeout is typically several minutes, but it depends on
+the operating system and its configuration. Notice that setting
+a timeout that is shorter than keyword execution time will interrupt
+the keyword.
+
+.. note:: Support for timeouts is a new feature in Robot Framework 2.8.6.
+          Timeouts do not work with Python/Jython 2.5 nor with IronPython.
 
 __ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
 __ https://docs.python.org/2/library/xmlrpclib.html

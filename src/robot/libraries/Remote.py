@@ -35,6 +35,21 @@ class Remote(object):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
     def __init__(self, uri='http://127.0.0.1:8270', timeout=None):
+        """Connects to a remote server at ``uri``.
+
+        Optional ``timeout`` can be used to specify a timeout to wait when
+        initially connecting to the server and if a connection accidentally
+        closes. Timeout can be given as seconds (e.g. ``60``) or using
+        Robot Framework time format (e.g. ``60s``, ``2 minutes 10 seconds``).
+
+        The default timeout is typically several minutes, but it depends on
+        the operating system and its configuration. Notice that setting
+        a timeout that is shorter than keyword execution time will interrupt
+        the keyword.
+
+        Support for timeouts is a new feature in Robot Framework 2.8.6.
+        Timeouts do not work with Python/Jython 2.5 nor with IronPython.
+        """
         if '://' not in uri:
             uri = 'http://' + uri
         if timeout:
