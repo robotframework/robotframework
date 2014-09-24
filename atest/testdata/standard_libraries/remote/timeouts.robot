@@ -3,16 +3,17 @@ Library           DateTime
 
 *** Variables ***
 ${PORT}           8270
+${SUPPORTED}      sys.version_info >= (2, 6) and sys.platform != 'cli'
 
 *** Test Cases ***
 Initial connection failure
-    Run Keyword If    sys.version_info >= (2, 6)
+    Run Keyword If    ${SUPPORTED}
     ...    Test initial connection failure
     ...    ELSE
     ...    Timeouts are not supported on Python 2.5
 
 Too long keyword execution time
-    Run Keyword If    sys.version_info >= (2, 6)
+    Run Keyword If    ${SUPPORTED}
     ...    Test too long keyword execution time
 
 *** Keywords ***

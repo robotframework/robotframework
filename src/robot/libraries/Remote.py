@@ -242,7 +242,7 @@ if sys.version_info[:2] == (2, 6):
             self._setup(self._connection_class(host, port, strict, timeout=timeout))
 
 
-if sys.version_info[:2] == (2, 5):
+if sys.version_info[:2] == (2, 5) or sys.platform == 'cli':
 
     class TimeoutTransport(xmlrpclib.Transport):
 
