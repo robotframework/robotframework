@@ -4,7 +4,7 @@ Library           LibDocLib.py    ${INTERPRETER}
 Library           OperatingSystem
 
 *** Variables ***
-${TESTDATADIR}    ${CURDIR}/../../testdata/libdoc
+${TESTDATADIR}    ${DATADIR}/libdoc
 ${OUTPREFIX}      %{TEMPDIR}${/}robot-libdoc-test-file
 ${OUTXML}         ${OUTPREFIX}.xml
 ${OUTHTML}        ${OUTPREFIX}.html
@@ -83,7 +83,15 @@ Should Have No Init
 
 Init Doc Should Start With
     [Arguments]    ${index}    @{doc}
-    Init or Keyword Doc Should Start With    ${index}    init    @{doc}
+    ${kws}=   Get Elements    ${LIBDOC}   init
+    ${doc}=    Catenate     SEPARATOR=    @{doc}
+    Element Text Should Match    ${kws[${index}]}    ${doc}*    doc
+
+Init Doc Should Be
+    [Arguments]    ${index}    @{doc}
+    ${kws}=   Get Elements    ${LIBDOC}    init
+    ${doc}=    Catenate     SEPARATOR=    @{doc}
+    Element Text Should Be    ${kws[${index}]}    ${doc}    doc
 
 Init Arguments Should Be
     [Arguments]    ${index}   @{expected}
@@ -102,11 +110,7 @@ Keyword Arguments Should Be
 
 Keyword Doc Should Start With
     [Arguments]    ${index}    @{doc}
-    Init or Keyword Doc Should Start With    ${index}    kw    @{doc}
-
-Init or Keyword Doc Should Start With
-    [Arguments]    ${index}    ${type}    @{doc}
-    ${kws}=   Get Elements    ${LIBDOC}   ${type}
+    ${kws}=   Get Elements    ${LIBDOC}   kw
     ${doc}=    Catenate     SEPARATOR=    @{doc}
     Element Text Should Match    ${kws[${index}]}    ${doc}*    doc
 
