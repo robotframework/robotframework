@@ -28,7 +28,6 @@
 .element-header {
     border: 1px solid transparent;
     border-radius: 2px;
-    padding: 3px;
     background-repeat: no-repeat;
     background-position: left center;
     background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxUShvPU1ZroHTlYWlJi1LAQA7);
@@ -43,13 +42,13 @@
     background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxwXls3VJpDGpiRlKfyS1LAQA7);
 }
 .element-header-left {
-    margin-left: 1.3em;
-    padding-right: 80px;
+    padding: 3px 80px 3px 20px;
 }
 .element-header-right {
     position: absolute;
     right: 0;
     top: 0;
+    padding: 3px;
 }
 .name {
     font-weight: bold;
@@ -74,7 +73,7 @@
     visibility: hidden;
     height: 12px;
     width: 12px;
-    margin: 3px 4px;
+    margin: 0 4px;
     background-repeat: no-repeat;
     background-size: 12px 12px;
     background-position: center;

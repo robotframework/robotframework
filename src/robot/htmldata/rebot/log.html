@@ -195,20 +195,15 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
-    <div class="element-header closed" onclick="toggleSuite('${id}')" title="{{html fullName}}">
-      <div class="element-header-left">
+    <div class="element-header closed" onclick="toggleSuite('${id}')">
+      <div class="element-header-left" title="{{html fullName}}">
         <span class="${status.toLowerCase()}">TEST SUITE: </span>
         <span class="name">{{html name}}</span>
       </div>
-      <div class="element-header-right">
-        <a class="expand" title="Expand all"
-           href="javascript:expandAll('${id}')"
-           onclick="stopPropagation(event)"></a>
-        <a class="collapse" title="Collapse all"
-           href="javascript:collapseAll('${id}')"
-           onclick="stopPropagation(event)"></a>
-        <a class="link" title="Link to this suite" href="#${id}"
-           onclick="makeElementVisible('${id}'); stopPropagation(event)"></a>
+      <div class="element-header-right" onclick="stopPropagation(event)" title="">
+        <a class="expand" title="Expand all" href="javascript:expandAll('${id}')"></a>
+        <a class="collapse" title="Collapse all" href="javascript:collapseAll('${id}')"></a>
+        <a class="link" title="Link to this suite" href="#${id}" onclick="makeElementVisible('${id}')"></a>
       </div>
     </div>
     <div class="children">
@@ -260,21 +255,16 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
-    <div class="element-header closed" onclick="toggleTest('${id}')" title="{{html fullName}}">
-      <div class="element-header-left">
+    <div class="element-header closed" onclick="toggleTest('${id}')">
+      <div class="element-header-left" title="{{html fullName}}">
         <span class="${status.toLowerCase()}">TEST CASE: </span>
         <span class="name">{{html name}}</span>
         {{if !isCritical}}(non-critical){{/if}}
       </div>
-      <div class="element-header-right">
-        <a class="expand" title="Expand all"
-           href="javascript:expandAll('${id}')"
-           onclick="stopPropagation(event)"></a>
-        <a class="collapse" title="Collapse all"
-           href="javascript:collapseAll('${id}')"
-           onclick="stopPropagation(event)"></a>
-        <a class="link" title="Link to this test" href="#${id}"
-           onclick="makeElementVisible('${id}'); stopPropagation(event)"></a>
+      <div class="element-header-right" onclick="stopPropagation(event)" title="">
+        <a class="expand" title="Expand all" href="javascript:expandAll('${id}')"></a>
+        <a class="collapse" title="Collapse all" href="javascript:collapseAll('${id}')"></a>
+        <a class="link" title="Link to this test" href="#${id}" onclick="makeElementVisible('${id}')"></a>
       </div>
     </div>
     <div class="children">
@@ -322,21 +312,16 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
   <div id="${id}" class="keyword">
-    <div class="element-header closed" onclick="toggleKeyword('${id}')" title="${name}">
-      <div class="element-header-left">
+    <div class="element-header closed" onclick="toggleKeyword('${id}')">
+      <div class="element-header-left" title="{{html name}}">
         <span class="${status.toLowerCase()}">${type}: </span>
         <span class="name">{{html name}}</span>
         <span class="arg">{{html arguments}}</span>
       </div>
-      <div class="element-header-right">
-        <a class="expand" title="Expand all"
-           href="javascript:expandAll('${id}')"
-           onclick="stopPropagation(event)"></a>
-        <a class="collapse" title="Collapse all"
-           href="javascript:collapseAll('${id}')"
-           onclick="stopPropagation(event)"></a>
-        <a class="link" title="Link to this keyword" href="#${id}"
-           onclick="makeElementVisible('${id}'); stopPropagation(event)"></a>
+      <div class="element-header-right" onclick="stopPropagation(event)">
+        <a class="expand" title="Expand all" href="javascript:expandAll('${id}')"></a>
+        <a class="collapse" title="Collapse all" href="javascript:collapseAll('${id}')"></a>
+        <a class="link" title="Link to this keyword" href="#${id}" onclick="makeElementVisible('${id}')"></a>
       </div>
     </div>
     <div class="children">
