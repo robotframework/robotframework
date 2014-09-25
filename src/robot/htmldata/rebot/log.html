@@ -201,11 +201,14 @@ function addTestExecutionLog(main) {
         <span class="name">{{html name}}</span>
       </div>
       <div class="element-header-right">
-        <a class="expand" title="Expand this suite fully"
+        <a class="expand" title="Expand all"
            href="javascript:expandAllChildren('${id}')"
-           onclick="stopPropagation(event)">Expand All</a>
-        <a class="ext-link" title="Link to this suite" href="#${id}"
-           onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
+           onclick="stopPropagation(event)"></a>
+        <a class="collapse" title="Collapse all"
+           href="javascript:toggleSuite('${id}')"
+           onclick="stopPropagation(event)"></a>
+        <a class="link" title="Link to this suite" href="#${id}"
+           onclick="makeElementVisible('${id}'); stopPropagation(event)"></a>
       </div>
     </div>
     <div class="children">
@@ -264,11 +267,14 @@ function addTestExecutionLog(main) {
         {{if !isCritical}}(non-critical){{/if}}
       </div>
       <div class="element-header-right">
-        <a class="expand" title="Expand this test fully"
+        <a class="expand" title="Expand all"
            href="javascript:expandAllChildren('${id}')"
-           onclick="stopPropagation(event)">Expand All</a>
-        <a class="ext-link" title="Link to this test" href="#${id}"
-           onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
+           onclick="stopPropagation(event)"></a>
+        <a class="collapse" title="Collapse all"
+           href="javascript:toggleTest('${id}')"
+           onclick="stopPropagation(event)"></a>
+        <a class="link" title="Link to this test" href="#${id}"
+           onclick="makeElementVisible('${id}'); stopPropagation(event)"></a>
       </div>
     </div>
     <div class="children">
@@ -323,11 +329,14 @@ function addTestExecutionLog(main) {
         <span class="arg">{{html arguments}}</span>
       </div>
       <div class="element-header-right">
-        <a class="expand" title="Expand this keyword fully"
+        <a class="expand" title="Expand all"
            href="javascript:expandAllChildren('${id}')"
-           onclick="stopPropagation(event)">Expand All</a>
-        <a class="ext-link" title="Link to this keyword" href="#${id}"
-           onclick="makeElementVisible('${id}'); stopPropagation(event)">&para;</a>
+           onclick="stopPropagation(event)"></a>
+        <a class="collapse" title="Collapse all"
+           href="javascript:toggleKeyword('${id}')"
+           onclick="stopPropagation(event)"></a>
+        <a class="link" title="Link to this keyword" href="#${id}"
+           onclick="makeElementVisible('${id}'); stopPropagation(event)"></a>
       </div>
     </div>
     <div class="children">
