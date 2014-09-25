@@ -49,6 +49,7 @@
     right: 0;
     top: 0;
     padding: 3px;
+    cursor: default;
 }
 .name {
     font-weight: bold;
