@@ -42,6 +42,42 @@ function drawCallback(element, childElement, childrenNames) {
     }
 }
 
+function expandSuite(suite) {
+    if (suite.status == "PASS")
+        expandElement(suite);
+    else
+        expandCriticalFailed(suite);
+}
+
+function expandElement(item) {
+    var element = $('#' + item.id);
+    var children = element.children('.children');
+    // .css is faster than .show and .show w/ callback is terribly slow
+    children.css({'display': 'block'});
+    populateChildren(item.id, children, item.childrenNames);
+    element.children('.element-header').removeClass('closed');
+}
+
+function expandElementWithId(elementid) {
+    expandElement(window.testdata.findLoaded(elementid));
+}
+
+function expandCriticalFailed(element) {
+    if (element.status == "FAIL") {
+        window.elementsToExpand = [element];
+        window.expandDecider = function (e) {
+            return e.status == "FAIL" && (e.isCritical === undefined || e.isCritical);
+        };
+        expandRecursively();
+    }
+}
+
+function expandAllChildren(elementId) {
+    window.elementsToExpand = [window.testdata.findLoaded(elementId)];
+    window.expandDecider = function () { return true; };
+    expandRecursively();
+}
+
 function expandRecursively() {
     if (!window.elementsToExpand.length)
         return;
@@ -62,45 +98,9 @@ function expandRecursively() {
     });
 }
 
-function expandElement(item) {
-    var element = $('#' + item.id);
-    var children = element.children('.children');
-    // .css is faster than .show and .show w/ callback is terribly slow
-    children.css({'display': 'block'});
-    populateChildren(item.id, children, item.childrenNames);
-    element.children('.element-header').removeClass('closed');
-}
-
-function expandElementWithId(elementid) {
-    expandElement(window.testdata.findLoaded(elementid));
-}
-
 function elementHiddenByUser(elementId) {
     var element = $("#"+elementId);
     return !element.is(":visible");
-}
-
-function expandAllChildren(elementId) {
-    window.elementsToExpand = [window.testdata.findLoaded(elementId)];
-    window.expandDecider = function () { return true; };
-    expandRecursively();
-}
-
-function expandCriticalFailed(element) {
-    if (element.status == "FAIL") {
-        window.elementsToExpand = [element];
-        window.expandDecider = function (e) {
-            return e.status == "FAIL" && (e.isCritical === undefined || e.isCritical);
-        };
-        expandRecursively();
-    }
-}
-
-function expandSuite(suite) {
-    if (suite.status == "PASS")
-        expandElement(suite);
-    else
-        expandCriticalFailed(suite);
 }
 
 function logLevelSelected(level) {
