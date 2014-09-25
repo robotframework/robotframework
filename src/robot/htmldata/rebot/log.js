@@ -72,7 +72,7 @@ function expandCriticalFailed(element) {
     }
 }
 
-function expandAllChildren(elementId) {
+function expandAll(elementId) {
     window.elementsToExpand = [window.testdata.findLoaded(elementId)];
     window.expandDecider = function () { return true; };
     expandRecursively();
@@ -98,9 +98,15 @@ function expandRecursively() {
     });
 }
 
-function elementHiddenByUser(elementId) {
-    var element = $("#"+elementId);
+function elementHiddenByUser(id) {
+    var element = $('#' + id);
     return !element.is(":visible");
+}
+
+function collapseAll(id) {
+    var element = $('#' + id);
+    element.find('.children').css({'display': 'none'});
+    element.find('.element-header').addClass('closed');
 }
 
 function logLevelSelected(level) {

@@ -202,10 +202,10 @@ function addTestExecutionLog(main) {
       </div>
       <div class="element-header-right">
         <a class="expand" title="Expand all"
-           href="javascript:expandAllChildren('${id}')"
+           href="javascript:expandAll('${id}')"
            onclick="stopPropagation(event)"></a>
         <a class="collapse" title="Collapse all"
-           href="javascript:toggleSuite('${id}')"
+           href="javascript:collapseAll('${id}')"
            onclick="stopPropagation(event)"></a>
         <a class="link" title="Link to this suite" href="#${id}"
            onclick="makeElementVisible('${id}'); stopPropagation(event)"></a>
@@ -268,10 +268,10 @@ function addTestExecutionLog(main) {
       </div>
       <div class="element-header-right">
         <a class="expand" title="Expand all"
-           href="javascript:expandAllChildren('${id}')"
+           href="javascript:expandAll('${id}')"
            onclick="stopPropagation(event)"></a>
         <a class="collapse" title="Collapse all"
-           href="javascript:toggleTest('${id}')"
+           href="javascript:collapseAll('${id}')"
            onclick="stopPropagation(event)"></a>
         <a class="link" title="Link to this test" href="#${id}"
            onclick="makeElementVisible('${id}'); stopPropagation(event)"></a>
@@ -330,10 +330,10 @@ function addTestExecutionLog(main) {
       </div>
       <div class="element-header-right">
         <a class="expand" title="Expand all"
-           href="javascript:expandAllChildren('${id}')"
+           href="javascript:expandAll('${id}')"
            onclick="stopPropagation(event)"></a>
         <a class="collapse" title="Collapse all"
-           href="javascript:toggleKeyword('${id}')"
+           href="javascript:collapseAll('${id}')"
            onclick="stopPropagation(event)"></a>
         <a class="link" title="Link to this keyword" href="#${id}"
            onclick="makeElementVisible('${id}'); stopPropagation(event)"></a>
