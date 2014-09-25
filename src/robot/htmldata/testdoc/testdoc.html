@@ -98,7 +98,7 @@ function toggleElement(elementId) {
     });
 }
 
-function expandAllChildren(elementId) {
+function expandAll(elementId) {
     var element = $('#' + elementId);
     element.find('.children').show();
     element.find('.element-header').removeClass('closed');
@@ -117,7 +117,7 @@ function stopPropagation(event) {
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
     <div class="element-header closed" onclick="toggleElement('${id}')" title="${fullName}">
-      <a class="expand" href="javascript:expandAllChildren('${id}')"
+      <a class="expand" href="javascript:expandAll('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
       <span class="not-run">TEST SUITE: </span>
       <span class="name">{{html name}}</span>
@@ -162,7 +162,7 @@ function stopPropagation(event) {
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
     <div class="element-header closed" onclick="toggleElement('${id}')" title="${fullName}">
-      <a class="expand" href="javascript:expandAllChildren('${id}')"
+      <a class="expand" href="javascript:expandAll('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
       <span class="not-run">TEST CASE: </span>
       <span class="name">{{html name}}</span>
