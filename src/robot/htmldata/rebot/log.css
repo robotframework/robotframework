@@ -13,9 +13,6 @@
     width: 100%;
     border-spacing: 0;
 }
-#errors td, .messages td, .metadata th, .metadata td {
-    padding: 0.2em;
-}
 .children {
     display: none;
     margin-left: 1.4em;
@@ -111,7 +108,7 @@
     font-size: 1.1em;
 }
 .message-row {
-    height: 17px;
+    height: 20px;
 }
 .time {
     width: 8em;
@@ -124,16 +121,26 @@
     width: 4.5em;
     text-align: center;
 }
-.select-text {
-    width: 2em;
-    background-position: top right;
+.select-message {
+    width: 24px;
+}
+.select-message > div {
+    float: right;
+    margin-right: 2px;
+    height: 12px;
+    width: 12px;
+    padding: 2px 2px 1px 2px;
     background-repeat: no-repeat;
+    background-size: 12px 12px;
+    background-position: center;
 }
-.message-row:hover .select-text {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAV1BMVEXq7/atw9u6zOHS3uvA0eP3+fvZ4+7g6PHO2+n5+vz1+PvAwMC+z+KQkJDx9fm1yd/s8ffa5O/I1+fU4Oz////t8vf6+/3c5fC4y+Dj6vPv8/ju8/fd5vA594LsAAAAXklEQVQYlW3PVxKAIAwE0NhLRGxY0Puf05hRCIzvjx2yAVAYUIBLAAFNKhgKIBHoiP3klU10Y3s6zs47uHR3Zt4iRmoORGlWFX9rbS5YCgbNLvf0d2R0wQqs/YL4+ze2IArI2yb6sQAAAABJRU5ErkJggg==);
+.message-row:hover .select-message div {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2MWg4di0xaC04em0wIDJ2MWg2di0xaC02em0wIDJ2MWg4di0xaC04em0wIDJ2MWg2di0xaC02eiIgLz4KPC9zdmc+), none;
+    border: 1px solid black;
+    border-radius: 2px;
 }
-.message-row:hover .select-text:hover {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAV1BMVEXv833O26y1yc+tw9v5+m/c5Zjq74T1+HTx9Xrt8oDU4KPAwE3//2b3+XLa5JvS3qfs8YHg6JOQkDrd5pbZ45zj6o6+z8O6zMnu8376+27I17TA0cC4y8w8SaSaAAAAXklEQVQYlW3PWQ6AIAwE0LpVsSqK+3L/c4qNQiG+PyZ0CmAoYICaAAGpVVA2wExAG1SHN+XRjeLp2BZv5tLLqXmLGEk4EKV6aP/WwinYI/UpG93T35HOBTuy8gvi798gGQzuN7QrSQAAAABJRU5ErkJggg==);
+.select-message:hover div {
+    background-color: yellow;
     cursor: pointer;
 }
 /* Message tables - these MUST NOT be combined together because otherwise
@@ -149,6 +156,10 @@
     width: 12.5em;
     text-align: left;
     white-space: nowrap;
+    padding: 0;
+}
+.metadata td {
+    padding: 0.2em;
 }
 .keyword-metadata {
     font-size: 0.9em;
