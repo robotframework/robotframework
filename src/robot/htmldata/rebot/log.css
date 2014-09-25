@@ -28,10 +28,11 @@
 .element-header {
     border: 1px solid transparent;
     border-radius: 2px;
-    padding: 0.3em 6.5em 0.3em 1.4em;
+    padding: 0.3em;
     background-repeat: no-repeat;
     background-position: left center;
     background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxUShvPU1ZroHTlYWlJi1LAQA7);
+    position: relative;
 }
 .element-header:hover {
     cursor: pointer;
@@ -41,12 +42,19 @@
 .closed {
     background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxwXls3VJpDGpiRlKfyS1LAQA7);
 }
+.element-header-left {
+    margin-left: 1.3em;
+    padding-right: 80px;
+}
+.element-header-right {
+    position: absolute;
+    right: 0;
+    top: 0.3em;
+}
 .name {
     font-weight: bold;
 }
 .expand {
-    float: right;
-    margin-right: -6em;
     font-size: 0.8em;
     width: 7em;
     padding: 0.3em 0 0.1em 0;
@@ -60,8 +68,6 @@
     color: black !important;
 }
 .ext-link, .ext-link:link, .ext-link:visited {
-    float: right;
-    margin-right: -7em;
     padding: 0 0.3em;
     color: #C60F0F;
     text-decoration: none;
