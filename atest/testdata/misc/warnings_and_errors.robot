@@ -3,7 +3,7 @@ Suite Setup        Warning in    suite setup
 Suite Teardown     Warning in    suite teardown
 Non-Existing       Causes error
 
-*** Test cases ***
+*** Test Cases ***
 Warning in test case
     Warning in    test case
 

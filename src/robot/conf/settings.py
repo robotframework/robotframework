@@ -380,6 +380,7 @@ class RobotSettings(_BaseSettings):
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
+                       'ExitOnError'        : ('exitonerror', False),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunMode'            : ('runmode', []),
@@ -452,6 +453,10 @@ class RobotSettings(_BaseSettings):
     def exit_on_failure(self):
         return (self['ExitOnFailure'] or
                 any(mode == 'exitonfailure' for mode in self['RunMode']))
+
+    @property
+    def exit_on_error(self):
+        return self['ExitOnError']
 
     @property
     def skip_teardown_on_exit(self):

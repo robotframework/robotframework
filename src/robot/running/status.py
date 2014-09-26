@@ -19,13 +19,18 @@ class _ExecutionStatus(object):
 
     def __init__(self, parent=None):
         self.parent = parent
+        self.children = []
         self.setup_failure = None
         self.test_failure = None
         self.teardown_failure = None
         self._teardown_allowed = False
         self.exiting_on_failure = parent.exiting_on_failure if parent else False
         self.exiting_on_fatal = parent.exiting_on_fatal if parent else False
+        self.exiting_on_error = parent.exiting_on_error if parent else False
+        self.exit_on_error_mode = parent.exit_on_error_mode if parent else False
         self.skip_teardown_on_exit_mode = parent.skip_teardown_on_exit_mode if parent else False
+        if parent:
+            parent.children.append(self)
 
     def setup_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
@@ -38,10 +43,17 @@ class _ExecutionStatus(object):
             self.teardown_failure = unicode(failure)
             self._handle_possible_fatal(failure)
 
+    def error_occurred(self):
+        if self.exit_on_error_mode:
+            self.exiting_on_error = True
+            for child in self.children:
+                child.error_occurred()
+
     @property
     def teardown_allowed(self):
         if self.skip_teardown_on_exit_mode and (self.exiting_on_failure or
-                                                self.exiting_on_fatal):
+                                                self.exiting_on_fatal or
+                                                self.exiting_on_error):
             return False
         return self._teardown_allowed
 
@@ -57,7 +69,8 @@ class _ExecutionStatus(object):
                     self.teardown_failure or
                     self.test_failure or
                     self.exiting_on_failure or
-                    self.exiting_on_fatal)
+                    self.exiting_on_fatal or
+                    self.exiting_on_error)
 
     @property
     def status(self):
@@ -87,9 +100,11 @@ class _ExecutionStatus(object):
 class SuiteStatus(_ExecutionStatus):
 
     def __init__(self, parent, exit_on_failure_mode=False,
+                 exit_on_error_mode=False,
                  skip_teardown_on_exit_mode=False):
         _ExecutionStatus.__init__(self, parent)
         self.exit_on_failure_mode = exit_on_failure_mode
+        self.exit_on_error_mode = exit_on_error_mode
         self.skip_teardown_on_exit_mode = skip_teardown_on_exit_mode
 
     def critical_failure(self):
@@ -158,11 +173,13 @@ class TestMessage(_Message):
     exit_on_fatal_message = 'Test execution stopped due to a fatal error.'
     exit_on_failure_message = \
         'Critical failure occurred and exit-on-failure mode is in use.'
+    exit_on_error_message = 'Error occurred and exit-on-error mode is in use.'
 
     def __init__(self, status):
         _Message.__init__(self, status)
         self.exiting_on_failure = status.exiting_on_failure
         self.exiting_on_fatal = status.exiting_on_fatal
+        self.exiting_on_error = status.exiting_on_error
 
     @property
     def message(self):
@@ -173,6 +190,8 @@ class TestMessage(_Message):
             return self.exit_on_failure_message
         if self.exiting_on_fatal:
             return self.exit_on_fatal_message
+        if self.exiting_on_error:
+            return self.exit_on_error_message
         return ''
 
 
