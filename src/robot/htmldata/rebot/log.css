@@ -41,10 +41,9 @@
     background-repeat: no-repeat;
     background-position: center;
     background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2Mmg4di0yaC04eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAzKSIgLz4KPC9zdmc+), none;
-    height: 6px;
-    width: 6px;
+    height: 10px;
+    width: 10px;
     background-size: 6px 6px;
-    padding: 2px;
     border: 1px solid black;
     border-radius: 2px;
 }
@@ -90,15 +89,17 @@
     float: left;
     display: block;
     visibility: hidden;
-    height: 12px;
-    width: 12px;
     margin: 0 4px;
-    background-repeat: no-repeat;
+    height: 14px;
+    width: 14px;
     background-size: 12px 12px;
+    background-repeat: no-repeat;
     background-position: center;
-    padding: 1px;
     border: 1px solid black;
     border-radius: 2px;
+}
+.link {
+    background-size: 10px 10px;
 }
 .element-header:hover a {
     visibility: visible;
@@ -131,11 +132,10 @@
 .select-message > div {
     float: right;
     margin-right: 2px;
-    height: 12px;
-    width: 12px;
-    padding: 2px 2px 1px 2px;
-    background-repeat: no-repeat;
+    height: 16px;
+    width: 16px;
     background-size: 12px 12px;
+    background-repeat: no-repeat;
     background-position: center;
 }
 .message-row:hover .select-message div {
