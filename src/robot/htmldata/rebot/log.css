@@ -80,11 +80,11 @@
 }
 .expand {
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAABLAAAASwAJArFzAAAABvSURBVBjThc8xCsJQEITh78UoYjqx9H45QvAMdvYexyMELHwnsLBPMM/CQALx4VTL/sPsbJD8VOkC0sxQQBjHg1JCMHh6T57aXRQ9nKznkZWzzuBq/12sRtC72Wg1XssiWzv/FRxzIOZA5vMid+MDhJMVPbBAJAoAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTQtMDktMjVUMTY6NTE6MjYrMDM6MDDGwXi9AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE0LTA5LTI1VDE2OjUxOjI2KzAzOjAwt5zAAQAAAABJRU5ErkJggg==);
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2MWg4di0xaC04em0yIDJsMiAyIDItMmgtNHptLTIgNHYyaDh2LTJoLTh6IiAvPgo8L3N2Zz4=), none;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0xLjUgMGwtMS41IDEuNSA0IDQgNC00LTEuNS0xLjUtMi41IDIuNS0yLjUtMi41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAxKSIgLz4KPC9zdmc+), none;
 }
 .collapse {
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAABLAAAASwAJArFzAAAABeSURBVBjTY2T4z4AVsDBMYqABUGXQxSaswXCU4QqDObqwDsNxhv8M/xmuMVjDXMXAwMDAzKDHcI7hNAMDAzODDsMZhp8MDIwMMlA9/6A0E4RiZLiL3SWMuHzOhMvtANlbDqKyc6S4AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE0LTA5LTI1VDE2OjUxOjE1KzAzOjAweaZlwwAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNC0wOS0yNVQxNjo1MToxNSswMzowMAj73X8AAAAASUVORK5CYII=);
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2MWg4di0xaC04em00IDNsLTIgMmg0bC0yLTJ6bS00IDN2Mmg4di0yaC04eiIgLz4KPC9zdmc+), none;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik00IDBsLTQgNCAxLjUgMS41IDIuNS0yLjUgMi41IDIuNSAxLjUtMS41LTQtNHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgMSkiIC8+Cjwvc3ZnPg==), none;
 }
 .expand, .collapse, .link {
     float: left;
@@ -93,7 +93,7 @@
     margin: 0 4px;
     height: 14px;
     width: 14px;
-    background-size: 12px 12px;
+    background-size: 8px 8px;
     background-repeat: no-repeat;
     background-position: center;
     border: 1px solid black;
