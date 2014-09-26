@@ -2,16 +2,30 @@
 
 import sys
 import os
-from os.path import join, dirname
+from os.path import abspath, join, dirname
 from distutils.core import setup
 
 if 'develop' in sys.argv or 'bdist_wheel' in sys.argv:
     import setuptools    # support setuptools development mode and wheels
 
-execfile(join(dirname(__file__), 'src', 'robot', 'version.py'))
+CURDIR = dirname(abspath(__file__))
 
+execfile(join(CURDIR, 'src', 'robot', 'version.py'))
+VERSION = get_version(sep='')
+with open(join(CURDIR, 'README.rst')) as readme:
+    install = 'https://github.com/robotframework/robotframework/blob/master/INSTALL.rst'
+    LONG_DESCRIPTION = readme.read().replace(
+        '`<INSTALL.rst>`__', '`INSTALL.rst <%s>`__' % install)
+CLASSIFIERS = """
+Development Status :: 5 - Production/Stable
+License :: OSI Approved :: Apache Software License
+Operating System :: OS Independent
+Programming Language :: Python
+Topic :: Software Development :: Testing
+""".strip().splitlines()
+KEYWORDS = 'robotframework testing testautomation acceptancetesting atdd bdd'
 # Maximum width in Windows installer seems to be 70 characters -------|
-DESCRIPTION = """
+WINDOWS_DESCRIPTION = """
 Robot Framework is a generic test automation framework for acceptance
 testing and acceptance test-driven development (ATDD). It has
 easy-to-use tabular test data syntax and utilizes the keyword-driven
@@ -20,13 +34,6 @@ libraries implemented either with Python or Java, and users can create
 new keywords from existing ones using the same syntax that is used for
 creating test cases.
 """.strip()
-CLASSIFIERS = """
-Development Status :: 5 - Production/Stable
-License :: OSI Approved :: Apache Software License
-Operating System :: OS Independent
-Programming Language :: Python
-Topic :: Software Development :: Testing
-""".strip().splitlines()
 PACKAGES = ['robot', 'robot.api', 'robot.conf',
             'robot.htmldata', 'robot.libdocpkg', 'robot.libraries',
             'robot.model', 'robot.output', 'robot.parsing',
@@ -47,18 +54,19 @@ if os.sep == '\\':
     SCRIPTS = [s+'.bat' for s in SCRIPTS]
 if 'bdist_wininst' in sys.argv:
     SCRIPTS.append('robot_postinstall.py')
+    LONG_DESCRIPTION = WINDOWS_DESCRIPTION
 
 setup(
     name         = 'robotframework',
-    version      = get_version(sep=''),
+    version      = VERSION,
     author       = 'Robot Framework Developers',
     author_email = 'robotframework@gmail.com',
     url          = 'http://robotframework.org',
     download_url = 'https://pypi.python.org/pypi/robotframework',
     license      = 'Apache License 2.0',
     description  = 'A generic test automation framework',
-    long_description = DESCRIPTION,
-    keywords     = 'robotframework testing testautomation atdd bdd',
+    long_description = LONG_DESCRIPTION,
+    keywords     = KEYWORDS,
     platforms    = 'any',
     classifiers  = CLASSIFIERS,
     package_dir  = {'': 'src'},
