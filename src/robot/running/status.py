@@ -15,62 +15,77 @@
 from robot.errors import PassExecution
 
 
+class Failure(object):
+
+    def __init__(self):
+        self.setup = None
+        self.test = None
+        self.teardown = None
+
+    def __nonzero__(self):
+        return bool(self.setup or self.test or self.teardown)
+
+
+class Exit(object):
+
+    def __init__(self, failure_mode=False, error_mode=False,
+                 skip_teardown_mode=False):
+        self.failure_mode = failure_mode
+        self.error_mode = error_mode
+        self.skip_teardown_mode = skip_teardown_mode
+        self.failure = False
+        self.error = False
+        self.fatal = False
+
+    @property
+    def teardown_allowed(self):
+        return not (self.skip_teardown_mode and self)
+
+    def __nonzero__(self):
+        return self.failure or self.error or self.fatal
+
+
 class _ExecutionStatus(object):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, *exit_modes):
         self.parent = parent
         self.children = []
-        self.setup_failure = None
-        self.test_failure = None
-        self.teardown_failure = None
+        self.failure = Failure()
+        self.exit = parent.exit if parent else Exit(*exit_modes)
         self._teardown_allowed = False
-        self.exiting_on_failure = parent.exiting_on_failure if parent else False
-        self.exiting_on_fatal = parent.exiting_on_fatal if parent else False
-        self.exiting_on_error = parent.exiting_on_error if parent else False
-        self.exit_on_error_mode = parent.exit_on_error_mode if parent else False
-        self.skip_teardown_on_exit_mode = parent.skip_teardown_on_exit_mode if parent else False
         if parent:
             parent.children.append(self)
 
     def setup_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
-            self.setup_failure = unicode(failure)
+            self.failure.setup = unicode(failure)
             self._handle_possible_fatal(failure)
         self._teardown_allowed = True
 
+    def _handle_possible_fatal(self, failure):
+        if getattr(failure, 'exit', False):
+            self.exit.fatal = True
+
     def teardown_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
-            self.teardown_failure = unicode(failure)
+            self.failure.teardown = unicode(failure)
             self._handle_possible_fatal(failure)
 
     def error_occurred(self):
-        if self.exit_on_error_mode:
-            self.exiting_on_error = True
-            for child in self.children:
-                child.error_occurred()
+        if self.exit.error_mode:
+            self.exit.error = True
 
     @property
     def teardown_allowed(self):
-        if self.skip_teardown_on_exit_mode and (self.exiting_on_failure or
-                                                self.exiting_on_fatal or
-                                                self.exiting_on_error):
-            return False
-        return self._teardown_allowed
+        return self.exit.teardown_allowed and self._teardown_allowed
 
     @property
     def failures(self):
-        return bool(self._parent_failures() or self._my_failures())
+        return bool(self.parent and self.parent.failures or
+                    self.failure or self.exit)
 
     def _parent_failures(self):
         return self.parent and self.parent.failures
-
-    def _my_failures(self):
-        return bool(self.setup_failure or
-                    self.teardown_failure or
-                    self.test_failure or
-                    self.exiting_on_failure or
-                    self.exiting_on_fatal or
-                    self.exiting_on_error)
 
     @property
     def status(self):
@@ -78,9 +93,9 @@ class _ExecutionStatus(object):
 
     @property
     def message(self):
-        if self._my_failures():
+        if self.failure or self.exit:
             return self._my_message()
-        if self._parent_failures():
+        if self.parent and self.parent.failures:
             return self._parent_message()
         return ''
 
@@ -90,33 +105,22 @@ class _ExecutionStatus(object):
     def _parent_message(self):
         return ParentMessage(self.parent).message
 
-    def _handle_possible_fatal(self, failure):
-        if getattr(failure, 'exit', False):
-            if self.parent:
-                self.parent.fatal_failure()
-            self.exiting_on_fatal = True
-
 
 class SuiteStatus(_ExecutionStatus):
 
-    def __init__(self, parent, exit_on_failure_mode=False,
+    def __init__(self, parent=None, exit_on_failure_mode=False,
                  exit_on_error_mode=False,
                  skip_teardown_on_exit_mode=False):
-        _ExecutionStatus.__init__(self, parent)
-        self.exit_on_failure_mode = exit_on_failure_mode
-        self.exit_on_error_mode = exit_on_error_mode
-        self.skip_teardown_on_exit_mode = skip_teardown_on_exit_mode
+        _ExecutionStatus.__init__(self, parent, exit_on_failure_mode,
+                                  exit_on_error_mode,
+                                  skip_teardown_on_exit_mode)
 
     def critical_failure(self):
-        if self.exit_on_failure_mode:
-            self.exiting_on_failure = True
-        if self.parent:
-            self.parent.critical_failure()
+        if self.exit.failure_mode:
+            self.exit.failure = True
 
     def fatal_failure(self):
-        self.exiting_on_fatal = True
-        if self.parent:
-            self.parent.fatal_failure()
+        self.exit.fatal = True
 
     def _my_message(self):
         return SuiteMessage(self).message
@@ -124,14 +128,14 @@ class SuiteStatus(_ExecutionStatus):
 
 class TestStatus(_ExecutionStatus):
 
-    def __init__(self, suite_status):
-        _ExecutionStatus.__init__(self, suite_status)
+    def __init__(self, parent):
+        _ExecutionStatus.__init__(self, parent)
+        self.exit = parent.exit
 
     def test_failed(self, failure, critical):
-        self.test_failure = unicode(failure)
-        if critical:
-            self.parent.critical_failure()
-            self.exiting_on_failure = self.parent.exit_on_failure_mode
+        self.failure.test = unicode(failure)
+        if critical and self.exit.failure_mode:
+            self.exit.failure = True
         self._handle_possible_fatal(failure)
 
     def _my_message(self):
@@ -144,9 +148,7 @@ class _Message(object):
     also_teardown_message = NotImplemented
 
     def __init__(self, status):
-        self.setup_failure = status.setup_failure
-        self.test_failure = status.test_failure or ''
-        self.teardown_failure = status.teardown_failure
+        self.failure = status.failure
 
     @property
     def message(self):
@@ -154,16 +156,16 @@ class _Message(object):
         return self._get_message_after_teardown(msg)
 
     def _get_message_before_teardown(self):
-        if self.setup_failure:
-            return self.setup_message % self.setup_failure
-        return self.test_failure
+        if self.failure.setup:
+            return self.setup_message % self.failure.setup
+        return self.failure.test or ''
 
     def _get_message_after_teardown(self, msg):
-        if not self.teardown_failure:
+        if not self.failure.teardown:
             return msg
         if not msg:
-            return self.teardown_message % self.teardown_failure
-        return self.also_teardown_message % (msg, self.teardown_failure)
+            return self.teardown_message % self.failure.teardown
+        return self.also_teardown_message % (msg, self.failure.teardown)
 
 
 class TestMessage(_Message):
@@ -177,20 +179,18 @@ class TestMessage(_Message):
 
     def __init__(self, status):
         _Message.__init__(self, status)
-        self.exiting_on_failure = status.exiting_on_failure
-        self.exiting_on_fatal = status.exiting_on_fatal
-        self.exiting_on_error = status.exiting_on_error
+        self.exit = status.exit
 
     @property
     def message(self):
         message = super(TestMessage, self).message
         if message:
             return message
-        if self.exiting_on_failure:
+        if self.exit.failure:
             return self.exit_on_failure_message
-        if self.exiting_on_fatal:
+        if self.exit.fatal:
             return self.exit_on_fatal_message
-        if self.exiting_on_error:
+        if self.exit.error:
             return self.exit_on_error_message
         return ''
 
