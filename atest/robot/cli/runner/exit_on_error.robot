@@ -6,20 +6,27 @@ Resource          atest_resource.robot
 ${MESSAGE}        Error occurred and exit-on-error mode is in use.
 
 *** Test Cases ***
-Error during parsing
+Parsing error
     [Setup]    Run Tests    --exitonerror    misc/pass_and_fail.robot
     ...    cli/error/parsing_error.robot    misc/normal.robot
     Failed due to error    Pass    Fail    Parsing Error   First One    Second One
     Teardowns not executed    Parsing Error
 
-Error in imports
+Import error
     [Setup]    Run Tests    --exitonerror    misc/pass_and_fail.robot
     ...    cli/error/import_error.robot    misc/normal.robot
     Executed normally    Pass    Fail
     Failed due to error    Import Error   First One    Second One
     Teardowns not executed    Import Error
 
-Error during execution
+Parsing error in imported resource
+    [Setup]    Run Tests    --exitonerror    misc/pass_and_fail.robot
+    ...    cli/error/resource_error.robot    misc/normal.robot
+    Executed normally    Pass    Fail
+    Failed due to error    Resource Error   First One    Second One
+    Teardowns not executed    Resource Error
+
+Runtime error
     [Setup]    Run Tests    --exitonerror    misc/pass_and_fail.robot
     ...    cli/error/runtime_error.robot    misc/normal.robot
     Executed normally    Pass    Fail    Before Error
