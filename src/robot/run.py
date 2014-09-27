@@ -263,7 +263,7 @@ Options
                           keywords are not executed.
     --exitonfailure       Stops test execution if any critical test fails.
     --exitonerror         Stops test execution if any error occurs when parsing
-                          test data or running tests.
+                          test data, importing libraries, and so on.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is
                           stopped prematurely.
     --randomize all|suites|tests|none  Randomizes the test execution order.

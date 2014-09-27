@@ -63,7 +63,10 @@ Command line options for test execution
   --dryrun                In the `dry run`_ mode tests are run without executing
                           keywords originating from test libraries. Useful for
                           validating test data syntax.
-  --exitonfailure         `Stops execution`_ immediately if a critical test fails.
+  --exitonfailure         `Stops test execution <Stopping when first test case fails_>`__
+                          if any critical test fails.
+  --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
+                          if any error occurs when parsing test data, importing libraries, and so on.
   --skipteardownonexit    `Skips teardowns`_ is test execution is prematurely stopped.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
   --runmode <mode>        Deprecated in Robot Framework 2.8. Use separate
@@ -143,7 +146,6 @@ Command line options for post-processing outputs
 .. _considered critical: `Setting criticality`_
 .. _not critical: `considered critical`_
 .. _ContinueOnFailure: `Continue on failure`_
-.. _Stops execution: `Stopping when first test case fails`_
 .. _Skips teardowns: `Handling Teardowns`_
 .. _SkipTeardownOnExit: `Handling Teardowns`_
 .. _DryRun: `Dry run`_
