@@ -294,6 +294,22 @@ are marked as failed.
           using :option:`--runmode exitonfailure`. Option :option:`--runmode`
           was deprecated in 2.8 and will be removed in the future.
 
+Stopping on parsing or execution error
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework separates *failures* caused by failing keywords from *errors*
+caused by, for example, invalid settings or failed test library imports.
+By default these errors are reported as `test execution errors`__, but errors
+themselves do not fail tests or affect execution otherwise. If
+:option:`--exitonerror` option is used, however, all such errors are considered
+fatal and execution stopped so that remaining tests are marked failed. With
+parsing errors encountered before execution even starts, this means that no
+tests are actually run.
+
+.. note:: :option:`--exitonerror` is new in Robot Framework 2.8.6.
+
+__ `Errors and warnings during execution`_
+
 Handling teardowns
 ~~~~~~~~~~~~~~~~~~
 
