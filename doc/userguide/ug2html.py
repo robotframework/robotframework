@@ -132,15 +132,13 @@ try:
 except:
     pass
 
+
 def create_userguide():
     from docutils.core import publish_cmdline
 
     print 'Creating user guide ...'
-    sys.path.insert(0, os.path.join(CURDIR, '..', '..', 'src', 'robot'))
-    from version import get_version
-    print 'Version:', get_version()
-    with open(os.path.join(CURDIR, 'src', 'version.rst'), 'w') as vfile:
-        vfile.write('.. |version| replace:: %s\n' % get_version())
+    version, version_file = _update_version()
+    install_file = _copy_installation_instructions()
 
     description = 'HTML generator for Robot Framework User Guide.'
     arguments = ['--time',
@@ -149,10 +147,36 @@ def create_userguide():
                  'RobotFrameworkUserGuide.html']
     os.chdir(CURDIR)
     publish_cmdline(writer_name='html', description=description, argv=arguments)
-    os.unlink(vfile.name)
+    os.unlink(version_file)
+    os.unlink(install_file)
     ugpath = os.path.abspath(arguments[-1])
     print ugpath
-    return ugpath, get_version(sep='-')
+    return ugpath, version
+
+
+def _update_version():
+    sys.path.insert(0, os.path.join(CURDIR, '..', '..', 'src', 'robot'))
+    from version import get_version
+    print 'Version:', get_version()
+    with open(os.path.join(CURDIR, 'src', 'version.rst'), 'w') as vfile:
+        vfile.write('.. |version| replace:: %s\n' % get_version())
+    return get_version(sep='-'), vfile.name
+
+
+def _copy_installation_instructions():
+    source = os.path.join(CURDIR, '..', '..', 'INSTALL.rst')
+    target = os.path.join(CURDIR, 'src', 'GettingStarted', 'INSTALL.rst')
+    include = True
+    with open(source) as source_file:
+        with open(target, 'w') as target_file:
+            for line in source_file:
+                if 'START USER GUIDE IGNORE' in line:
+                    include = False
+                if include:
+                    target_file.write(line)
+                if 'END USER GUIDE IGNORE' in line:
+                    include = True
+    return target
 
 
 #
