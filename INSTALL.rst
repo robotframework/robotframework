@@ -186,7 +186,7 @@ but the basic approach should still be the same.
 
   2. To edit an existing ``PATH`` value, select `Edit` and add
      `;<InstallationDir>;<ScriptsDir>` at the end of the value
-     (e.g. `;C:\Python27;C:\Python27\Scripts`).
+     (e.g. `;C:\\Python27;C:\\Python27\\Scripts`).
      Note that the semicolons (`;`) are important as they separate
      the different entries. To add a new ``PATH`` value, select `New` and set
      both the name and the value, this time without the leading semicolon.
@@ -199,10 +199,10 @@ Notice that if you have multiple Python versions installed, the executed
 ``pybot`` script will always use the one that is *first* in ``PATH``
 regardless under what Python version that script is installed. To avoid that,
 you can always use the `direct entry points`_ with the interpreter of choice
-like `C:\Python26\python.exe -m robot.run`.
+like `C:\\Python26\\python.exe -m robot.run`.
 
 Notice also that you should not add quotes around directories you add into
-``PATH`` (e.g. `"C:\Python27\Scripts"`). Quotes `can cause problems with
+``PATH`` (e.g. `"C:\\Python27\\Scripts"`). Quotes `can cause problems with
 Python programs <http://bugs.python.org/issue17023>`_ and they are not needed
 with ``PATH`` even if the directory path would contain spaces.
 
