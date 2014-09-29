@@ -2,8 +2,8 @@ Installation instructions
 =========================
 
 These instructions cover installing and uninstalling Robot Framework and its
-preconditions on different operating systems. For anyone with pip_ installed
-it is enough to run::
+preconditions on different operating systems. If you already have `pip
+<http://pip-installer.org>`_ installed, it is enough to run::
 
     pip install robotframework
 
@@ -11,7 +11,7 @@ it is enough to run::
    :depth: 2
    :local:
 
-.. USER GUIDE IGNORE
+.. START USER GUIDE IGNORE
 .. These instructions are included also in the User Guide. Following role
 .. and link definitions are excluded when UG is built.
 .. role:: file(emphasis)
@@ -23,10 +23,11 @@ it is enough to run::
 Introduction
 ------------
 
-Robot Framework is implemented with Python_ and also runs on Jython_ (JVM) and
-IronPython_ (.NET). Before installing the framework, an obvious precondition_
-is installing at least one of these interpreters. Notice that Python 3.x
-versions are not yet supported, but there is an `un-official Python 3 port
+Robot Framework is implemented with `Python <http://python.org>`_ and also runs
+on `Jython <http://jython.org>`_ (JVM) and `IronPython <http://ironpython.net>`_
+(.NET). Before installing the framework, an obvious precondition_ is installing
+at least one of these interpreters. Notice that Python 3.x versions are not yet
+supported, but there is an `un-official Python 3 port
 <https://pypi.python.org/pypi/robotframework-python3>`__ available.
 
 Different ways to install Robot Framework itself are listed below and explained
@@ -38,19 +39,21 @@ more thoroughly in subsequent sections.
 
 `Installing from source`_
     This approach works regardless the operating system and the Python
-    interpreter used. You can get the source code either by downloading
-    and extracting a source distribution from PyPI_ or by cloning the
-    GitHub_ repository.
+    interpreter used. You can get the source code either by downloading and
+    extracting a source distribution from `PyPI
+    <https://pypi.python.org/pypi/robotframework>`_ or by cloning the
+    `GitHub <https://github.com/robotframework/robotframework>`_ repository.
 
 `Using Windows installer`_
     There are graphical installers for both 32 bit and 64 bit Windows systems,
     both available on PyPI_.
 
-`Standalone jar distribution`_
+`Standalone JAR distribution`_
     If running tests with Jython is enough, the easiest approach is downloading
-    the standalone ``robotframework-<version>.jar`` from `Maven central`_.
-    The jar distribution contains both Jython and Robot Framework and thus
-    only requires having Java_ installed.
+    the standalone ``robotframework-<version>.jar`` from `Maven central
+    <http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework>`_.
+    The JAR distribution contains both Jython and Robot Framework and thus
+    only requires having `Java <http://java.com>`_ installed.
 
 `Manual installation`_
     If you have special needs and nothing else works, you can always do
@@ -60,8 +63,8 @@ Preconditions
 -------------
 
 Robot Framework is supported on Python_, Jython_ (JVM) and IronPython_ (.NET)
-and runs also on PyPy_. The interpreter you want to use should be installed
-before installing the framework.
+and runs also on `PyPy <http://pypy.org>`_. The interpreter you want to use
+should be installed before installing the framework.
 
 Which interpreter to use depends on the needed test libraries and test
 environment in general. Some libraries use tools or modules that only work
@@ -302,7 +305,10 @@ Getting source code
 '''''''''''''''''''
 
 You typically get the source by downloading a *source distribution package*
-in `.tar.gz` format from PyPI_. You need to extract the package somewhere and,
+in `.tar.gz`. Newer packages are available on PyPI_, but Robot Framework
+2.8.1 and older can be found from the old `Google Code download page
+<https://code.google.com/p/robotframework/downloads/list?can=1>`_.
+Once you have downloaded the package you need to extract it somewhere and,
 as a result, you get a directory named `robotframework-<version>`. The
 directory contains the source code and scripts needed for installing it.
 
@@ -336,11 +342,12 @@ rights. It is also used for creating different distribution packages. Run
 Using Windows installer
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-There are separate graphical installers for 32 bit and 64 bit Windows systems.
-Both are available on PyPI_ and they have names in format
-``robotframework-<version>.win32.exe`` and
-``robotframework-<version>.win-amd64.exe``, respectively. Running the installer
-requires double-clicking it and following the simple instructions.
+There are separate graphical installers for 32 bit and 64 bit Windows systems
+with names in format ``robotframework-<version>.win32.exe`` and
+``robotframework-<version>.win-amd64.exe``, respectively. Newer installers
+are on PyPI_ and Robot Framework 2.8.1 and older on the old `Google Code
+download page`_. Running the installer requires double-clicking it and
+following the simple instructions.
 
 Windows installers always run on Python and create the standard ``pybot`` and
 ``rebot`` `runner scripts`_. Unlike the other provided installers, these
@@ -358,7 +365,7 @@ Standalone JAR distribution
 Robot Framework is also distributed as a standalone Java archive that contains
 both Jython_ and Robot Framework and only requires Java_ a dependency. It is
 an easy way to get everything in one package that  requires no installation,
-but has a downside that it does not work with Python.
+but has a downside that it does not work with the normal Python_ interpreter.
 
 The package is named ``robotframework-<version>.jar`` and it is available
 on the `Maven central`_. After downloading the package, you can execute tests
@@ -550,15 +557,6 @@ Python, and examples below illustrate using them also with other interpreters.
    python path/to/robot/rebot.py
 
 
-.. _Python: http://python.org
-.. _Jython: http://jython.org
-.. _IronPython: http://ironpython.net
-.. _PyPy: http://pypy.org
-.. _Java: http://java.com
-.. _pip: http://pip-installer.org
-.. _PyPI: https://pypi.python.org/pypi/robotframework
-.. _Maven central: http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework
-.. _GitHub: https://github.com/robotframework/robotframework
 .. _runner script: `runner scripts`_
 .. _precondition: preconditions_
 .. _configure PATH: `Configuring PATH`_
