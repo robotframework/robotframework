@@ -8,7 +8,7 @@
    http://docutils.sourceforge.net/docs/ref/rst/roles.html
 
    code       Code, CLI examples, GUI entries, variables, etc. Alias `example`
-              configured separately.
+              configured below.
    literal    Program and environment variable names (e.g. :literel:`rebot`).
               Alias ``example``.
    emphasis   In practice italics. Used with some terms. Alias *example*.
@@ -35,6 +35,7 @@
               For example, output of :codesc:`\`example\`` is `example`, not
               \`example\`.
 
+.. default-role:: code
 .. role:: option
 .. role:: file
 .. role:: setting

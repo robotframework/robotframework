@@ -14,6 +14,7 @@ preconditions on different operating systems. If you already have `pip
 .. START USER GUIDE IGNORE
 .. These instructions are included also in the User Guide. Following role
 .. and link definitions are excluded when UG is built.
+.. default-role:: code
 .. role:: file(emphasis)
 .. role:: option(code)
 .. _supporting tools: http://robotframework.org/robotframework/#built-in-tools
@@ -178,18 +179,17 @@ On Windows you can configure ``PATH`` by following the steps below. Notice
 that the exact setting names may be different on different Windows versions,
 but the basic approach should still be the same.
 
-  1. Open `Start > Settings > Control Panel > System > Advanced >
-     Environment Variables`.  There are `User variables` and
-     `System variables`, and the difference between them is that user
-     variables affect only the current users, whereas system variables
-     affect all users.
+  1. Open `Start > Settings > Control Panel > System > Advanced > Environment
+     Variables`. There are `User variables` and `System variables`, and the
+     difference between them is that user variables affect only the current
+     users, whereas system variables affect all users.
 
   2. To edit an existing ``PATH`` value, select `Edit` and add
-     `;<InstallationDir>;<ScriptsDir>` at the end of the value
-     (e.g. `;C:\\Python27;C:\\Python27\\Scripts`).
-     Note that the semicolons (`;`) are important as they separate
-     the different entries. To add a new ``PATH`` value, select `New` and set
-     both the name and the value, this time without the leading semicolon.
+     `;<InstallationDir>;<ScriptsDir>` at the end of the value (e.g.
+     `;C:\Python27;C:\Python27\Scripts`). Note that the semicolons (`;`) are
+     important as they separate the different entries. To add a new ``PATH``
+     value, select `New` and set both the name and the value, this time without
+     the leading semicolon.
 
   3. Exit the dialog with `Ok` to save the changes.
 
@@ -199,10 +199,10 @@ Notice that if you have multiple Python versions installed, the executed
 ``pybot`` script will always use the one that is *first* in ``PATH``
 regardless under what Python version that script is installed. To avoid that,
 you can always use the `direct entry points`_ with the interpreter of choice
-like `C:\\Python26\\python.exe -m robot.run`.
+like `C:\Python26\python.exe -m robot.run`.
 
 Notice also that you should not add quotes around directories you add into
-``PATH`` (e.g. `"C:\\Python27\\Scripts"`). Quotes `can cause problems with
+``PATH`` (e.g. `"C:\Python27\Scripts"`). Quotes `can cause problems with
 Python programs <http://bugs.python.org/issue17023>`_ and they are not needed
 with ``PATH`` even if the directory path would contain spaces.
 
