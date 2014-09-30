@@ -18,9 +18,11 @@ Too long keyword execution time
 
 *** Keywords ***
 Test initial connection failure
+    # Would be better to test the actual error, but it depends on network
+    # configuation etc.
     ${error} =    Catenate
     ...    Calling dynamic method 'get_keyword_names' failed:
-    ...    Connecting remote server at http://1.2.3.4:666 failed: timed out
+    ...    Connecting remote server at http://1.2.3.4:666 failed: *
     ${start} =    Get Current Date
     Run Keyword And Expect Error    ${error}
     ...    Import Library    Remote    1.2.3.4:666    timeout=0.2 seconds
