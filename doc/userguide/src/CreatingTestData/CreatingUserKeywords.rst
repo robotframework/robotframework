@@ -156,9 +156,10 @@ support default values, and the needed new syntax does not add very much
 to the already discussed basic syntax.
 
 In short, default values are added to arguments, so that first there is
-the equals sign (`=`) and then the value, for example
-`${arg}=default`. There can be many arguments with defaults, but they
-all must be given after the normal positional arguments.
+the equals sign (`=`) and then the value, for example `${arg}=default`.
+There can be many arguments with defaults, but they all must be given after
+the normal positional arguments. The default value can contain a variable_
+created on `suite or global scope`__.
 
 .. note:: The syntax for default values is space sensitive. Spaces
           before the `=` sign are not allowed, and possible spaces
@@ -174,7 +175,7 @@ all must be given after the normal positional arguments.
    \                                  [Documentation]  This keyword takes     0-1 arguments
    \                                  Log              Got argument ${arg}
    \
-   Two Arguments With Defaults        [Arguments]      ${arg1}=default 1      ${arg2}=default 2
+   Two Arguments With Defaults        [Arguments]      ${arg1}=default 1      ${arg2}=${VARIABLE}
    \                                  [Documentation]  This keyword takes     0-2 arguments
    \                                  Log              1st argument ${arg1}
    \                                  Log              2nd argument ${arg2}
@@ -204,6 +205,8 @@ below and `${arg1}` would still get its default value.
 As all Pythonistas must have already noticed, the syntax for
 specifying default arguments is heavily inspired by Python syntax for
 function default values.
+
+__ `Variable priorities and scopes`_
 
 Varargs with user keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
