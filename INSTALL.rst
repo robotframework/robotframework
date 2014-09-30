@@ -73,7 +73,7 @@ with Python, while others may use Java tools that require Jython or need
 .NET and thus IronPython. There are also many tools and libraries that run
 fine with all interpreters.
 
-If you you do not have special needs or just want to try out the framework,
+If you do not have special needs or just want to try out the framework,
 it is recommended to use Python. It is the most mature implementation,
 considerably faster than Jython or IronPython (especially start-up time is
 faster), and also readily available on most UNIX-like operating systems.
@@ -89,7 +89,7 @@ a good place to start is http://python.org. There you can download a suitable
 installer and get more information about the installation process and Python
 in general.
 
-Robot Framework currently supports Python versions 2.5, 2.6 and 2.7. The plan
+Robot Framework currently supports Python versions 2.5, 2.6, and 2.7. The plan
 is to support also Python 3 in the future and at the same time Python 2.5
 support will be dropped. Robot Framework 2.0 and 2.1 support Python 2.3 and 2.4.
 
