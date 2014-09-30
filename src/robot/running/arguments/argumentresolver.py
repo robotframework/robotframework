@@ -74,18 +74,10 @@ class NamedArgumentResolver(object):
 
     def _add_named(self, arg, named):
         name, value = arg.split('=', 1)
-        name = self._convert_to_str_if_possible(name)
+        name = kwarg_to_str_if_possible(name)
         if name in named:
             self._raise_multiple_values(name)
         named[name] = value
-
-    def _convert_to_str_if_possible(self, name):
-        # Python 2.5 doesn't handle Unicode kwargs at all, so we will try to
-        # support it by converting to str if possible
-        try:
-            return str(name)
-        except UnicodeError:
-            return name
 
     def _raise_multiple_values(self, name):
         raise DataError("%s '%s' got multiple values for argument '%s'."
@@ -138,4 +130,12 @@ class VariableReplacer(object):
             name = replacer(name)
             if not isinstance(name, basestring):
                 raise DataError('Argument names must be strings.')
-            yield name, replacer(value)
+            yield kwarg_to_str_if_possible(name), replacer(value)
+
+
+def kwarg_to_str_if_possible(name):
+    # Python 2.5 accept only str, not unicode, as kwargs.
+    try:
+        return str(name)
+    except UnicodeError:
+        return name

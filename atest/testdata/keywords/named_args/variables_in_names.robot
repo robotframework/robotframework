@@ -5,6 +5,8 @@ Library           python_library.py
 ${A}              a
 ${B}              b
 ${C}              c
+${Ä}              ä
+${SNOWMAN}        \u2603
 
 *** Test Cases ***
 Named arg name as variable
@@ -24,6 +26,10 @@ Kwargs with variables in names
     Should Be Equal    ${result}    a:A Value, b:2 (int)
     ${result} =    Lib Mandatory Named And Kwargs    mandatory    ${C}=A Value
     Should Be Equal    ${result}    mandatory, 2 (int), c:A Value
+
+Kwargs with variables with non-ASCII value in names
+    ${result} =    Lib Kwargs    ${Ä}=1    ${SNOWMAN}=2
+    Should Be Equal    ${result}    ${Ä}:1, ${SNOWMAN}:2
 
 Escaping variable syntax in kwarg names
     ${result} =    Lib Kwargs    \${A}=A Value    \${non}=existing
