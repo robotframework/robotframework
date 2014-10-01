@@ -56,8 +56,9 @@ respectively. Alternatively, it is possible to directly execute `robot.rebot`
 module (e.g. `python -m robot.rebot`) or `robot/rebot.py` script using a
 selected interpreter. Finally, there is also a standalone JAR distribution.
 
-For more information about Robot Framework run, for example, `pybot --help` or
-go to http://robotframework.org.
+For more information about Rebot and other built-in tools, see
+http://robotframework.org/robotframework/#built-in-tools. For more details
+about Robot Framework in general, go to http://robotframework.org.
 
 Options
 =======

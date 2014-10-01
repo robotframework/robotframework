@@ -30,17 +30,20 @@ class Matcher(object):
     _pattern_tokenizer = re.compile('(\*|\?)')
     _wildcards = {'*': '.*', '?': '.'}
 
-    def __init__(self, pattern, ignore=(), caseless=True, spaceless=True):
+    def __init__(self, pattern, ignore=(), caseless=True, spaceless=True,
+                 regexp=False):
         self.pattern = pattern
         self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
                                   spaceless=spaceless)
-        self._regexp = self._get_and_compile_regexp(self._normalize(pattern))
+        self._regexp = self._get_and_compile_regexp(self._normalize(pattern),
+                                                    regexp=regexp)
 
-    def _get_and_compile_regexp(self, pattern):
-        pattern = '^%s$' % ''.join(self._yield_regexp(pattern))
+    def _get_and_compile_regexp(self, pattern, regexp=False):
+        if not regexp:
+            pattern = '^%s$' % ''.join(self._glob_pattern_to_regexp(pattern))
         return re.compile(pattern, re.DOTALL)
 
-    def _yield_regexp(self, pattern):
+    def _glob_pattern_to_regexp(self, pattern):
         for token in self._pattern_tokenizer.split(pattern):
             if token in self._wildcards:
                 yield self._wildcards[token]
@@ -57,8 +60,8 @@ class Matcher(object):
 class MultiMatcher(object):
 
     def __init__(self, patterns=None, ignore=(), caseless=True, spaceless=True,
-                 match_if_no_patterns=False):
-        self._matchers = [Matcher(pattern, ignore, caseless, spaceless)
+                 match_if_no_patterns=False, regexp=False):
+        self._matchers = [Matcher(pattern, ignore, caseless, spaceless, regexp)
                           for pattern in self._ensure_list(patterns)]
         self._match_if_no_patterns = match_if_no_patterns
 

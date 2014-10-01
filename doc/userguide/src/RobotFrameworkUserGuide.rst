@@ -2,13 +2,13 @@
 .. include:: version.rst
 .. include:: roles.rst
 
-=============================
+==============================
   Robot Framework User Guide
-=============================
+==============================
 
---------------------
+---------------------
   Version |version|
---------------------
+---------------------
 
 | Copyright |copy| Nokia Solutions and Networks 2008-2014
 | Licensed under the `Creative Commons Attribution 3.0 Unported`__ license
@@ -21,8 +21,9 @@ __ http://creativecommons.org/licenses/by/3.0/
 .. sectnum::
    :depth: 3
 
-Getting started
-===============
+~~~~~~~~~~~~~~~~~~~
+  Getting started
+~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -33,8 +34,9 @@ Getting started
 .. include:: GettingStarted/Installation.rst
 .. include:: GettingStarted/Demonstration.rst
 
-Creating test data
-==================
+~~~~~~~~~~~~~~~~~~~~~~
+  Creating test data
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -49,8 +51,9 @@ Creating test data
 .. include:: CreatingTestData/ResourceAndVariableFiles.rst
 .. include:: CreatingTestData/AdvancedFeatures.rst
 
-Executing test cases
-====================
+~~~~~~~~~~~~~~~~~~~~~~~~
+  Executing test cases
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -62,8 +65,9 @@ Executing test cases
 .. include:: ExecutingTestCases/ConfiguringExecution.rst
 .. include:: ExecutingTestCases/OutputFiles.rst
 
-Extending Robot Framework
-=========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Extending Robot Framework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -74,8 +78,9 @@ Extending Robot Framework
 .. include:: ExtendingRobotFramework/ListenerInterface.rst
 .. include:: ExtendingRobotFramework/ExtendingRobotFrameworkJar.rst
 
-Supporting Tools
-================
+~~~~~~~~~~~~~~~~~~~~
+  Supporting Tools
+~~~~~~~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -86,8 +91,9 @@ Supporting Tools
 .. include:: SupportingTools/Tidy.rst
 .. include:: SupportingTools/OtherTools.rst
 
-Appendices
-==========
+~~~~~~~~~~~~~~
+  Appendices
+~~~~~~~~~~~~~~
 
 .. contents::
    :depth: 1
@@ -155,7 +161,7 @@ Appendices
 .. _`With Name syntax`: `Setting custom name to test library`_
 .. _SeleniumLibrary: http://code.google.com/p/robotframework-seleniumlibrary
 .. _Selenium2Library: https://github.com/rtomac/robotframework-selenium2library/wiki
-.. _SwingLibrary: http://code.google.com/p/robotframework-swinglibrary
+.. _SwingLibrary: https://github.com/robotframework/SwingLibrary
 
 .. 3. Executing test cases
 
@@ -202,21 +208,12 @@ Appendices
 .. 6. Misc
 
 .. _download page: http://downloads.robotframework.org
-.. _project page: http://robotframework.org
 .. _version control system: http://source.robotframework.org
-.. _issue tracker: http://issues.robotframework.org
-.. _previous User Guides: http://code.google.com/p/robotframework/wiki/UserGuide
+.. _previous User Guides: http://robotframework.org/robotframework/#user-guide
 .. _API documentation: http://robot-framework.readthedocs.org
-.. _BitBucket: https://bitbucket.org/robotframework
 
 .. External link targets
 
-.. _Python: http://www.python.org/
-.. _Jython: http://www.jython.org/
-.. _IronPython: http://ironpython.codeplex.com
-.. _PyPy: http://pypy.org
-.. _Java: http://java.com/
-.. _.NET: http://www.microsoft.com/NET/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _docutils: https://pypi.python.org/pypi/docutils
 .. _Sphinx: http://sphinx-doc.org/
@@ -229,3 +226,4 @@ Appendices
 .. _Read the Docs: http://readthedocs.org
 .. _AutoIT: http://www.autoitscript.com/autoit3
 .. _XML-RPC: http://www.xmlrpc.com/
+.. _RIDE: https://github.com/robotframework/RIDE

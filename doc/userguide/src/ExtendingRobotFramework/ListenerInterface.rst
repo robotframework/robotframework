@@ -1,5 +1,5 @@
 Using listener interface
-------------------------
+========================
 
 Robot Framework has a listener interface that can be used to receive
 notifications about test execution. Listeners are classes or modules
@@ -13,7 +13,7 @@ communicating with other systems.
    :local:
 
 Taking listeners into use
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 Listeners are taken into use from the command line with the :opt:`--listener`
 option, so that the name of the listener is given to it as an argument. The
@@ -43,7 +43,7 @@ Examples::
    pybot --listener path/to/MyListener.java:argument tests.html
 
 Available listener interface methods
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 Robot Framework creates an instance of the listener class with given arguments
 when test execution starts. During the test execution, Robot Framework calls
@@ -54,7 +54,7 @@ implement any official interface, and it only needs to have the methods it
 actually needs.
 
 Listener interface versions
-'''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The signatures of methods related to test execution progress were changed in
 Robot Framework 2.1. This change was made so that new information can be added
@@ -70,7 +70,7 @@ be found in User Guide of Robot Framework 2.0.4.
   as an integer. The examples below are implemented as new style listeners.
 
 Listener interface method signatures
-''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All listener methods related to test execution progress have the same
 signature :code:`method(name, attributes)`, where :code:`attributes`
@@ -247,7 +247,7 @@ to implement any explicit interface or have all these methods.
    }
 
 Listeners logging
-~~~~~~~~~~~~~~~~~
+-----------------
 
 Robot Framework 2.6 introduced new `programmatic logging APIs`_ that
 also listeners can utilize. There are some limitations, however, and
@@ -283,7 +283,7 @@ table below.
              earlier versions is thus not recommended.
 
 Listener examples
-~~~~~~~~~~~~~~~~~
+-----------------
 
 The first simple example is implemented in a Python module. It mainly
 illustrates that using the listener interface is not very complicated.
@@ -404,7 +404,7 @@ The third example implements the same functionality as the previous one, but use
    }
 
 Test libraries as listeners
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 Sometimes it is useful also for `test libraries`_ to get notifications about
 test execution. This allows them, for example, to perform certain clean-up
@@ -413,7 +413,7 @@ activities automatically when a test suite or the whole test execution ends.
 .. note:: This functionality is new in Robot Framework 2.8.5.
 
 Registering listener
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 A test library can register a listener by using :code:`ROBOT_LIBRARY_LISTENER`
 attribute. The value of this attribute should be an instance of the listener
@@ -456,7 +456,7 @@ specify `listener interface versions`_ using :code:`ROBOT_LISTENER_API_VERSION`
 attribute exactly like any other listener.
 
 Called listener methods
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Library's listener will get notifications about all events in suites where
 the library is imported. In practice this means that :code:`start_suite`,

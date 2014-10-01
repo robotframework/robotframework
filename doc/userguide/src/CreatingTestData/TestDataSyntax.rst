@@ -1,5 +1,5 @@
 Test data syntax
-----------------
+================
 
 This section covers Robot Framework's overall test data
 syntax. The following sections will explain how to actually create test
@@ -10,7 +10,7 @@ cases, test suites and so on.
    :local:
 
 Files and directories
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 The hierarchical structure for arranging test cases is built as follows:
 
@@ -32,7 +32,7 @@ In addition to this, there are:
   than resource files.
 
 Supported file formats
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 Robot Framework test data is defined in tabular format, using either
 hypertext markup language (HTML), tab-separated values (TSV),
@@ -54,7 +54,7 @@ formats to make it easier to get started writing tests.
           supported starting from Robot Framework 2.7.6.
 
 HTML format
-'''''''''''
+~~~~~~~~~~~
 
 HTML files support formatting and free text around tables. This makes it
 possible to add additional information into test case files and allows creating
@@ -113,7 +113,7 @@ tables is ignored.
    ============  ======================  ============  ==========
 
 Editing test data
-`````````````````
+'''''''''''''''''
 
 Test data in HTML files can be edited with whichever editor you
 prefer, but a graphic editor, where you can actually see the tables,
@@ -122,7 +122,7 @@ it loses all HTML formatting and also possible data outside test case
 tables.
 
 Encoding and entity references
-``````````````````````````````
+''''''''''''''''''''''''''''''
 
 HTML entity references (for example, :code:`&auml;`) are
 supported. Additionally, any encoding can be used, assuming that it is
@@ -138,7 +138,7 @@ XHTML files should use the XML preamble as in this example::
 If no encoding is specified, Robot Framework uses ISO-8859-1 by default.
 
 TSV format
-''''''''''
+~~~~~~~~~~
 
 TSV files can be edited in spreadsheet programs and, because the syntax is
 so simple, they are easy to generate programmatically. They are also pretty
@@ -178,7 +178,7 @@ similarly as data outside tables in HTML data.
    ============  =======================  =============  =============
 
 Editing test data
-`````````````````
+'''''''''''''''''
 
 You can create and edit TSV files in any spreadsheet program, such as
 Microsoft Excel. Select the tab-separated format when you save the
@@ -202,13 +202,13 @@ programmatically, you have to follow the same quoting conventions as
 spreadsheets.
 
 Encoding
-````````
+''''''''
 
 TSV files are always expected to use UTF-8 encoding. Because ASCII is
 a subset of UTF-8, plain ASCII is naturally supported too.
 
 Plain text format
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~
 
 The plain texts format is very easy to edit using any text editor and
 they also work very well in version control. Because of these benefits
@@ -232,7 +232,7 @@ multiple tabs are considered to be a single separator whereas in the
 TSV format every tab would be a separator.
 
 Space separated format
-``````````````````````
+''''''''''''''''''''''
 
 The number of spaces used as separator can vary, as long as there are
 at least two spaces, and it is thus possible to align the data nicely.
@@ -274,7 +274,7 @@ __ Escaping_
 .. _pipe separated format:
 
 Pipe and space separated format
-```````````````````````````````
+'''''''''''''''''''''''''''''''
 
 The biggest problem of the space delimited format is that visually
 separating keywords form arguments can be tricky. This is a problem
@@ -322,7 +322,7 @@ in the actual test data must be escaped with a backslash:
 __ Escaping_
 
 Editing and encoding
-````````````````````
+''''''''''''''''''''
 
 One of the biggest benefit of the plain text format over HTML and TSV
 is that editing it using normal text editors is very easy. Many editors
@@ -335,7 +335,7 @@ Similarly as with the TSV test data, plain text files are always expected
 to use UTF-8 encoding. As a consequence also ASCII files are supported.
 
 Recognized extensions
-`````````````````````
+'''''''''''''''''''''
 
 Starting from Robot Framework 2.7.6, it is possible to save plain text
 test data files using a special :path:`.robot` extension in addition to
@@ -343,7 +343,7 @@ the normal :path:`.txt` extension. The new extension makes it easier to
 distinguish test data files from other plain text files.
 
 reStructuredText format
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 reStructuredText_ (reST) is an easy-to-read plain text markup syntax that
 is commonly used for documentation of Python projects (including
@@ -367,7 +367,7 @@ __ `Using code blocks`_
 __ `Using tables`_
 
 Using code blocks
-`````````````````
+'''''''''''''''''
 
 reStructuredText documents can contain code examples in so called code blocks.
 When these documents are compiled into HTML or other formats, the code blocks
@@ -441,7 +441,7 @@ supported:
           Robot Framework 2.8.2.
 
 Using tables
-````````````
+''''''''''''
 
 If a reStructuredText document contains no code blocks with Robot Framework
 data, it is expected to contain the data in tables similarly as in
@@ -513,7 +513,7 @@ reST files to HTML using external tools separately, and let Robot Framework
 use the generated files only.
 
 Editing and encoding
-````````````````````
+''''''''''''''''''''
 
 Test data in reStructuredText files can be edited with any text editor, and
 many editors also provide automatic syntax highlighting for it. reST format
@@ -523,7 +523,7 @@ Robot Framework requires reST files containing non-ASCII characters to be
 saved using UTF-8 encoding.
 
 Syntax errors in reST source files
-``````````````````````````````````
+''''''''''''''''''''''''''''''''''
 
 If a reStructuredText document is not syntactically correct (a malformed table
 for example), parsing it will fail and no test cases can be found from that
@@ -532,7 +532,7 @@ on the console. When executing a directory, such parsing errors will
 generally be ignored.
 
 Test data tables
-~~~~~~~~~~~~~~~~
+----------------
 
 Test data is structured in four types of tables listed below. These
 test data tables are identified by the first cell of the table, and
@@ -562,12 +562,12 @@ used as a table name.
    +--------------+-------------------------------------------+-------------------+
 
 Rules for parsing the data
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 .. _comment:
 
 Ignored data
-''''''''''''
+~~~~~~~~~~~~
 
 When Robot Framework parses the test data, it ignores:
 
@@ -595,7 +595,7 @@ __ `Test data tables`_
 __ `Prevent ignoring empty cells`_
 
 Handling whitespace
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 Robot Framework handles whitespace the same way as they are handled in HTML
 source code:
@@ -616,7 +616,7 @@ created using `escape sequences`_ :code:`\\n`, :code:`\\r`, :code:`\\t`, and
 __ `Prevent ignoring spaces`_
 
 Escaping
-''''''''
+~~~~~~~~
 
 The escape character in Robot Framework test data is the backslash (:code:`\\`)
 and additionally `built-in variables`_ :var:`${EMPTY}` and :var:`${SPACE}`
@@ -624,7 +624,7 @@ can often be used for escaping. Different escaping mechanisms are
 discussed in the sections below.
 
 Escaping special characters
-```````````````````````````
+'''''''''''''''''''''''''''
 
 The backslash character can be used to escape special characters
 so that their literal values are used.
@@ -648,7 +648,7 @@ so that their literal values are used.
 .. _escape sequences:
 
 Forming escape sequences
-````````````````````````
+''''''''''''''''''''''''
 
 The backslash character also allows creating special escape sequences that are
 recognized as characters that would otherwise be hard or impossible to create
@@ -698,7 +698,7 @@ in the test data.
           Robot Framework 2.8.2.
 
 Prevent ignoring empty cells
-````````````````````````````
+''''''''''''''''''''''''''''
 
 If empty values are needed as arguments for keywords or otherwise, they often
 need to be escaped to prevent them from being ignored__. Empty trailing cells
@@ -741,7 +741,7 @@ examples first in HTML and then in the space separated plain text format:
 __ `Ignored data`_
 
 Prevent ignoring spaces
-```````````````````````
+'''''''''''''''''''''''
 
 Because leading, trailing, and consecutive spaces in cells are ignored__, they
 need to be escaped if they are needed as arguments to keywords or otherwise.
@@ -768,7 +768,7 @@ the `extended variable syntax`_ when more than one space is needed.
 __ `Handling whitespace`_
 
 Dividing test data to several rows
-''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If there is more data than readily fits a row, it possible to use ellipsis
 (:code:`...`) to continue the previous line. In test case and user keyword tables,

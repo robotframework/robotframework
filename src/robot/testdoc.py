@@ -75,6 +75,9 @@ Examples:
   python -m robot.testdoc my_test.html testdoc.html
   jython -m robot.testdoc -N smoke_tests -i smoke path/to/my_tests smoke.html
   ipy path/to/robot/testdoc.py first_suite.txt second_suite.txt output.html
+
+For more information about Testdoc and other built-in tools, see
+http://robotframework.org/robotframework/#built-in-tools.
 """
 
 import os.path

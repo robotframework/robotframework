@@ -414,7 +414,7 @@ table.messages td.warn {
     font-style: italic;
     white-space: nowrap;
 }
-.prog, .code, .cli {
+.prog, .code, .cli, .gui {
     background: #f4f4f4;
     font-family: monospace;
 }

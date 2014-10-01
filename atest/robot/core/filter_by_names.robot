@@ -1,0 +1,186 @@
+*** Settings ***
+Documentation   Tests for --test and --suite options
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.robot
+
+*** Variables ***
+${TESTDATA_TEST}  misc/many_tests.robot
+${TESTDATA_SUITES}  misc/suites
+${ESCAPES}  --escape star:STAR --escape quest:QUEST --escape space:SPACE
+
+*** Test Cases ***
+One Call To Test
+    Run And Check Tests  --test First  First
+
+Test Name With Spaces, Underscores And Mixed Case
+    [Documentation]  Testing that spaces, underscores and case are ignored in suite names.
+    Run And Check Tests  --test sec_SPACE_ondONE  Second One
+
+One Call To Test With Normalized Test Name
+    Run And Check Tests  --test secondone  Second One
+
+Two Calls To Test
+    Run And Check Tests  --test First --test thirdone  First  Third One
+
+Non-Existing Test
+    Run Failing Test
+    ...  Suite 'Many Tests' contains no tests named 'notexists'.
+    ...  --test notexists  ${TESTDATA_TEST}
+
+Non-Existing Test When Running Multiple Suites
+    Run Failing Test
+    ...  Suite 'Many Tests & Suites' contains no tests named 'notexists'.
+    ...  --test notexists  ${TESTDATA_TEST}  ${TESTDATA_SUITES}
+    Run Failing Test
+    ...  Suite 'My Name' contains no tests named 'notexists'.
+    ...  --name My_Name --test notexists  ${TESTDATA_TEST}  ${TESTDATA_SUITES}
+
+Two Calls To Test With One Nonexisting Test Name
+    Run And Check Tests  --test notexists --test First  First
+
+One Call To Test With Pattern
+    Run And Check Tests  --test STARoneSTAR  Second One  Third One  Fourth One With More Complex Name
+
+Two Calls To Test With Patterns
+    Run And Check Tests  --test STARone --test FiQUESTst  First  Second One  Third One
+
+Suite With One Arg
+    Run Suites  --suite tsuite1
+    Should Contain Suites   ${SUITE}  TSuite1
+    Should Contain Tests    ${SUITE}   Suite1 First  Suite1 Second  Third in Suite1
+
+Suite Name With Spaces, Underscores And Mixed Case
+    [Documentation]  Testing that spaces, underscores and case are ignored in suite names.
+    Run Suites  --suite t_SPACE_SuiTe_1
+    Should Contain Suites   ${SUITE}  TSuite1
+    Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third in Suite1
+
+Suite Name With Dot
+    Run Suites  --suite suites.subsuites2.sub.suite.4
+    Should Contain Suites  ${SUITE}  Subsuites2
+    Should Contain Tests   ${SUITE}  Test From Sub Suite 4
+    Should Not Contain Tests    ${SUITE}   SubSuite3 First    SubSuite3 Second
+
+Suite With Two Args
+    Run Suites  --suite tsuite1 --suite TSuite2
+    Should Contain Suites  ${SUITE}  Tsuite1   Tsuite2
+    Should Contain Tests  ${SUITE}   Suite1 First  Suite1 Second  Third in Suite1  Suite2 First
+
+Correct Files Processed With --suite Matches Files
+    [Documentation]  Testing that only files matching to --suite are processed Using data from previous test case.
+    ${suitedir} =  Join Path  ${DATADIR}  ${TESTDATA_SUITES}
+    ${subsuitedir} =  Join Path  ${suitedir}  subsuites
+    Check syslog contains  Parsing test data directory '${suitedir}'
+    Check Syslog Contains  Ignoring file or directory 'fourth.robot'
+    Check Syslog Contains  Ignoring file or directory 'tsuite3.robot'
+    Check Syslog Contains  Parsing test data directory '${subsuitedir}'
+    Check Syslog Contains  Ignoring file or directory 'sub1.robot'
+    Check Syslog Contains  Ignoring file or directory 'sub2.robot'
+    Check Syslog Contains  Parsing file '${suitedir}${/}tsuite1.robot
+    Check Syslog Contains  Parsing file '${suitedir}${/}tsuite2.robot
+
+Non-Existing Suite
+    Run Failing Test
+    ...  Suite 'Suites' contains no tests in suite 'notexists'.
+    ...  --suite notexists  ${TESTDATA_SUITES}
+
+Non-Existing Suite When Running Multiple Suites
+    Run Failing Test
+    ...  Suite 'Suites & Many Tests' contains no tests in suite 'notexists'.
+    ...  --suite notexists  ${TESTDATA_SUITES}  ${TESTDATA_TEST}
+    Run Failing Test
+    ...  Suite 'Custom' contains no tests in suite 'xxx'.
+    ...  --suite xxx -N Custom  ${TESTDATA_SUITES}  ${TESTDATA_TEST}
+
+Suite With Matching And NonMatching Args
+    Run Suites  --suite tsuite1 --suite notexists
+    Should Contain Suites   ${SUITE}  TSuite1
+    Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third in Suite1
+
+Suite With Pattern In Arg
+    Run Suites  --suite tSTAR
+    Should Contain Suites  ${SUITE}  Tsuite1  Tsuite2  Tsuite3
+    Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third in Suite1  Suite2 First  Suite3 First
+
+Selecting Directory Suite
+    Run And Check Suites Within Subdirs  --suite subsuites  Sub1  Sub2
+    Should Contain Tests   ${SUITE.suites[0]}  SubSuite1 First  SubSuite2 First
+
+Correct Files Processed When --suite Matches Directory
+    [Documentation]  Testing that only files matching to --suite are processed. This time --suite matches directory so all suites under it should be processed. Using data from previous test case.
+    ${suitedir} =  Join Path  ${DATADIR}  ${TESTDATA_SUITES}
+    ${subsuitedir} =  Join Path  ${suitedir}  subsuites
+    Check Syslog Contains  Parsing test data directory '${suitedir}'
+    Check Syslog Contains  Ignoring file or directory 'fourth.robot'
+    Check Syslog Contains  Ignoring file or directory 'tsuite1.robot'
+    Check Syslog Contains  Ignoring file or directory 'tsuite2.robot'
+    Check Syslog Contains  Ignoring file or directory 'tsuite3.robot'
+    Check Syslog Contains  Parsing test data directory '${subsuitedir}'
+    Check Syslog Contains  Parsing file '${subsuitedir}${/}sub1.robot'
+    Check Syslog Contains  Parsing file '${subsuitedir}${/}sub2.robot'
+
+Suite Under Subdirectory Using Pattern
+    Run And Check Suites Within Subdirs  --suite subQUEST  Sub1  Sub2
+    Should Contain Tests   ${SUITE.suites[0]}  SubSuite1 First  SubSuite2 First
+
+Suite And Test Together
+    [Documentation]  Testing that only tests matching --test which are under suite matching --suite are run.
+    Run Suites  --suite subsuites --suite tsuite3 --test SubSuite1First
+    Should Contain Suites  ${SUITE}  Subsuites
+    Should Contain Tests   ${SUITE}  SubSuite1First
+
+Suite With Include And Exclude
+    Run Suites  --suite tsuiteQUEST --include tSTAR --exclude t2
+    Should Contain Suites  ${SUITE}  Tsuite1  Tsuite2  Tsuite3
+    Should Contain Tests  ${SUITE}  Suite1 First  Suite2 First  Suite3 First
+
+Suite, Test Include And Exclude Together
+    Run Suites  --suite subSTAR --test STARfirst -s nosuite -t notest --include t1 --exclude sub3
+    Should Contain Suites   ${SUITE}  Subsuites
+    Should Contain Tests    ${SUITE}  SubSuite1 First
+
+Filter Using Suite Long Name
+    Run Suites  --suite suites.fourth
+    Should Contain Suites  ${SUITE}  Fourth
+    Should Contain Tests   ${SUITE}  Suite4 First
+    Run Suites  --suite Subsuites.Sub1
+    Should Contain Suites  ${SUITE}  Subsuites
+    Should Contain Tests   ${SUITE}   SubSuite1 First
+
+Filter Using Long Suite Name WIth Pattern
+    Run Suites  --suite suites.*.SUB?
+    Should Contain Suites  ${SUITE}   Subsuites
+    Should Contain Tests   ${SUITE}   SubSuite1 First  SubSuite2 First
+
+Filter Using Long Suite Name And Other Filters
+    Run Suites  --suite suites.fourth --suite tsuite1 -s Subsuites.Sub1 --test *first* --exclude none
+    Should Contain Suites  ${SUITE}   Fourth  Subsuites  Tsuite1
+    Should Contain Tests   ${SUITE}  Suite4 First  Suite1 First  SubSuite1 First
+
+Filter Suite When Suites Are Ordered With Prefix
+    Run Suites  --suite ?Sui*2?  ${DATADIR}/misc/multiple_suites
+    Should Contain Suites   ${SUITE}   Sub.Suite.1
+    Should Contain Suites   ${SUITE.suites[0]}  .Sui.te.2.
+
+*** Keywords ***
+Run And Check Tests
+    [Arguments]  ${params}  @{tests}
+    Run Tests  ${params} ${ESCAPES}  ${TESTDATA_TEST}
+    Stderr Should Be Empty
+    Should Contain Tests  ${suite}  @{tests}
+
+Run And Check Suites Within Subdirs
+    [Arguments]  ${params}  @{suites}
+    Run Suites  ${params}
+    Should Contain Suites  ${SUITE.suites[0]}  @{suites}
+
+Run Suites
+    [Arguments]  ${params}  ${testdata}=${TESTDATA_SUITES}
+    Run Tests  ${params} ${ESCAPES}  ${testdata}
+    Stderr Should Be Empty
+
+Run Failing Test
+    [Arguments]  ${error}  ${params}  @{inputs}
+    Run Tests Without Processing Output  ${params} ${ESCAPES}  @{inputs}
+    Stderr Should Be Equal To  [ ERROR ] ${error}${USAGE TIP}\n
+

@@ -1,5 +1,5 @@
 Test data templates
--------------------
+===================
 
 These templates can be used when `creating test data`_ for Robot
 Framework. There are templates both for `test case`_ and `resource
@@ -7,14 +7,14 @@ files`_, and resource templates can also be used to create `test suite
 initialization files`_. Templates are available both in `HTML and TSV
 format`__ and they can be customized freely.
 
-`testcase_template.html`__ 
+`testcase_template.html`__
    Test case file template in HTML format.
 
 `testcase_template.tsv`__
    Test case file template in TSV format.
 
 `resource_template.html`__
-   Resource file template in HTML format. 
+   Resource file template in HTML format.
 
 `resource_template.tsv`__
    Resource file template in TSV format.

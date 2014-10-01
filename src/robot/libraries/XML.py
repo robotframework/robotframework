@@ -443,9 +443,18 @@ class XML(object):
         """
         with ETSource(source) as source:
             root = self.etree.parse(source).getroot()
+        if self.lxml_etree:
+            self._remove_comments(root)
         if not keep_clark_notation:
             NameSpaceStripper().strip(root)
         return root
+
+    def _remove_comments(self, node):
+        for comment in node.xpath('//comment()'):
+            parent = comment.getparent()
+            if parent:
+                self._preserve_tail(comment, parent)
+                parent.remove(comment)
 
     def get_element(self, source, xpath='.'):
         """Returns an element in the `source` matching the `xpath`.
@@ -872,7 +881,7 @@ class XML(object):
         comparator.compare(self.get_element(source), self.get_element(expected))
 
     def set_element_tag(self, source, tag, xpath='.'):
-        """Sets the tag of the specified element to `tag`.
+        """Sets the tag of the specified element.
 
         The element whose tag to set is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
@@ -885,11 +894,25 @@ class XML(object):
         | Element Should Exist | ${XML}     | second/xxx |
         | Element Should Not Exist | ${XML} | second/child |
 
+        Can only set the tag of a single element. Use `Set Elements Tag` to set
+        the tag of multiple elements in one call.
+
         New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         self.get_element(source, xpath).tag = tag
         return source
+
+    def set_elements_tag(self, source, tag, xpath='.'):
+        """Sets the tag of the specified elements.
+
+        Like `Set Element Tag` but sets the tag of all elements matching
+        the given `xpath`.
+
+        New in Robot Framework 2.8.6.
+        """
+        for elem in self.get_elements(source, xpath):
+            self.set_element_tag(elem, tag)
 
     def set_element_text(self, source, text=None, tail=None, xpath='.'):
         """Sets text and/or tail text of the specified element.
@@ -910,6 +933,9 @@ class XML(object):
         | Set Element Text       | ${XML} | slanted  | !! | xpath=html/p/i |
         | Element Text Should Be | ${XML} | Text with bold&slanted!! | xpath=html/p  | normalize_whitespace=yes |
 
+        Can only set the text/tail of a single element. Use `Set Elements Text`
+        to set the text/tail of multiple elements in one call.
+
         New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
@@ -920,8 +946,19 @@ class XML(object):
             element.tail = tail
         return source
 
+    def set_elements_text(self, source, text=None, tail=None, xpath='.'):
+        """Sets text and/or tail text of the specified elements.
+
+        Like `Set Element Text` but sets the text or tail of all elements
+        matching the given `xpath`.
+
+        New in Robot Framework 2.8.6.
+        """
+        for elem in self.get_elements(source, xpath):
+            self.set_element_text(elem, text, tail)
+
     def set_element_attribute(self, source, name, value, xpath='.'):
-        """Sets attribute `name` of the specified element to `value`
+        """Sets attribute `name` of the specified element to `value`.
 
         The element whose attribute to set is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
@@ -937,6 +974,9 @@ class XML(object):
         | Set Element Attribute       | ${XML} | id   | new   | xpath=first |
         | Element Attribute Should Be | ${XML} | id   | new   | xpath=first |
 
+        Can only set an attribute of a single element. Use `Set Elements
+        Attribute` to set an attribute of multiple elements in one call.
+
         New in Robot Framework 2.7.5.
         """
         if not name:
@@ -944,6 +984,17 @@ class XML(object):
         source = self.get_element(source)
         self.get_element(source, xpath).attrib[name] = value
         return source
+
+    def set_elements_attribute(self, source, name, value, xpath='.'):
+        """Sets attribute `name` of the specified elements to `value`.
+
+        Like `Set Element Attribute` but sets the attribute of all elements
+        matching the given `xpath`.
+
+        New in Robot Framework 2.8.6.
+        """
+        for elem in self.get_elements(source, xpath):
+            self.set_element_attribute(elem, name, value)
 
     def remove_element_attribute(self, source, name, xpath='.'):
         """Removes attribute `name` from the specified element.
@@ -960,6 +1011,9 @@ class XML(object):
         | Remove Element Attribute          | ${XML} | id | xpath=first |
         | Element Should Not Have Attribute | ${XML} | id | xpath=first |
 
+        Can only remove an attribute from a single element. Use `Remove Elements
+        Attribute` to remove an attribute of multiple elements in one call.
+
         New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
@@ -967,6 +1021,17 @@ class XML(object):
         if name in attrib:
             attrib.pop(name)
         return source
+
+    def remove_elements_attribute(self, source, name, xpath='.'):
+        """Removes attribute `name` from the specified elements.
+
+        Like `Remove Element Attribute` but removes the attribute of all
+        elements matching the given `xpath`.
+
+        New in Robot Framework 2.8.6.
+        """
+        for elem in self.get_elements(source, xpath):
+            self.remove_element_attribute(elem, name)
 
     def remove_element_attributes(self, source, xpath='.'):
         """Removes all attributes from the specified element.
@@ -982,11 +1047,25 @@ class XML(object):
         | Remove Element Attributes         | ${XML} | xpath=first |
         | Element Should Not Have Attribute | ${XML} | id | xpath=first |
 
+        Can only remove attributes from a single element. Use `Remove Elements
+        Attributes` to remove all attributes of multiple elements in one call.
+
         New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         self.get_element(source, xpath).attrib.clear()
         return source
+
+    def remove_elements_attributes(self, source, xpath='.'):
+        """Removes all attributes from the specified elements.
+
+        Like `Remove Element Attributes` but removes all attributes of all
+        elements matching the given `xpath`.
+
+        New in Robot Framework 2.8.6.
+        """
+        for elem in self.get_elements(source, xpath):
+            self.remove_element_attributes(elem)
 
     def add_element(self, source, element, index=None, xpath='.'):
         """Adds a child element to the specified element.
@@ -1079,7 +1158,7 @@ class XML(object):
 
     def _remove_element(self, root, element, remove_tail=False):
         parent = self._find_parent(root, element)
-        if element.tail and not remove_tail:
+        if not remove_tail:
             self._preserve_tail(element, parent)
         parent.remove(element)
 
@@ -1091,6 +1170,8 @@ class XML(object):
         raise RuntimeError('Cannot remove root element.')
 
     def _preserve_tail(self, element, parent):
+        if not element.tail:
+            return
         index = list(parent).index(element)
         if index == 0:
             parent.text = (parent.text or '') + element.tail
@@ -1245,6 +1326,9 @@ class NameSpaceStripper(object):
             if ns != current_ns:
                 elem.attrib['xmlns'] = ns
                 current_ns = ns
+        elif current_ns:
+            elem.attrib['xmlns'] = ''
+            current_ns = None
         for child in elem:
             self.strip(child, current_ns)
 

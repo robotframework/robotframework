@@ -67,7 +67,7 @@ if PY3 and do2to3:
           join(PY3ATESTDIR, dirname)
           ):
             for filename in filenames:
-                if filename.endswith('.txt'):
+                if any(filename.endswith(ext) for ext in ['.txt', '.robot']):
                     path = join(dirpath, filename)
                     try:
                         with open(path) as f:

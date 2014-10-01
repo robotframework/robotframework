@@ -302,7 +302,7 @@ def get_current_date(time_zone='local', increment=0,
     """Returns current local or UTC time with an optional increment.
 
     Arguments:
-    - _time_zone:_     Get the current time on this time zone. Currently only
+    - _time_zone:_      Get the current time on this time zone. Currently only
                         'local' (default) and 'UTC' are supported.
     - _increment:_      Optional time increment to add to the returned date in
                         one of the supported `time formats`. Can be negative.
@@ -570,10 +570,14 @@ class Date(object):
         return '%s%06d' % (dt.strftime(format), micro)
 
     def _convert_to_timestamp(self, seconds, millis=True):
+        milliseconds = int(round(seconds % 1 * 1000))
+        if milliseconds == 1000:
+            seconds = round(seconds)
+            milliseconds = 0
         dt = self._datetime_from_seconds(seconds)
         ts = dt.strftime('%Y-%m-%d %H:%M:%S')
         if millis:
-            ts += '.%03d' % round(seconds % 1 * 1000)
+            ts += '.%03d' % milliseconds
         return ts
 
     def _datetime_from_seconds(self, ts):

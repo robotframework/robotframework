@@ -145,7 +145,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr class="row-${$item.index}">
-    <td class="stats-col-name" title="${doc}">
+    <td class="stats-col-name" title="{{html doc}}">
       <div class="stat-name">
         <span>{{html label}}</span>
         {{if info}}(${info}){{/if}}
@@ -162,7 +162,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
   <tr onclick="makeElementVisible('${id}')" class="row-${$item.index}">
-    <td class="stats-col-name" title="${label}">
+    <td class="stats-col-name" title="{{html label}}">
       <div class="stat-name">
         <a href="#${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a>
       </div>

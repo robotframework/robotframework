@@ -16,6 +16,7 @@
 
 from six import PY2, PY3, integer_types, string_types, text_type as unicode
 
+import pprint
 import re
 import time
 import sys
@@ -1242,8 +1243,11 @@ class _RunKeyword:
         string as argument, you can either use variables or escape it with
         a backslash like `\\AND`.
         """
+        self._run_keywords(self._split_run_keywords(list(keywords)))
+
+    def _run_keywords(self, iterable):
         errors = []
-        for kw, args in self._split_run_keywords(list(keywords)):
+        for kw, args in iterable:
             try:
                 self.run_keyword(kw, *args)
             except ExecutionPassed as err:
@@ -1476,17 +1480,23 @@ class _RunKeyword:
         | Repeat Keyword | 5 times | Goto Previous Page |
         | Repeat Keyword | ${var}  | Some Keyword | arg1 | arg2 |
         """
+        times = self._get_times_to_repeat(times)
+        self._run_keywords(self._yield_repeated_keywords(times, name, args))
+
+    def _get_times_to_repeat(self, times):
         times = utils.normalize(str(times))
         if times.endswith('times'):
             times = times[:-5]
         elif times.endswith('x'):
             times = times[:-1]
-        times = self._convert_to_integer(times)
+        return self._convert_to_integer(times)
+
+    def _yield_repeated_keywords(self, times, name, args):
         if times <= 0:
             self.log("Keyword '%s' repeated zero times" % name)
         for i in range(times):
             self.log("Repeating keyword, round %d/%d" % (i+1, times))
-            self.run_keyword(name, *args)
+            yield name, args
 
     def wait_until_keyword_succeeds(self, timeout, retry_interval, name, *args):
         """Waits until the specified keyword succeeds or the given timeout expires.
@@ -2064,9 +2074,9 @@ class _Misc:
         instead if either of these is undesirable,
 
         If the `repr` argument is true, the given item will be passed through
-        Python's `repr()` function before logging it. This is useful, for
-        example, when working with strings or bytes containing invisible
-        characters.
+        Python's `pprint.pformat()` function before logging it. This is useful,
+        for example, when working with strings or bytes containing invisible
+        characters, or when working with nested data structures.
 
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
@@ -2082,9 +2092,12 @@ class _Misc:
 
         Arguments `html`, `console`, and `repr` are new in Robot Framework
         2.8.2.
+
+        Pprint support when `repr` is true is new in Robot Framework 2.8.6.
         """
         if repr:
-            message = utils.safe_repr(message)
+            message = utils.safe_repr(message) if utils.is_str_like(message) \
+                else pprint.pformat(message)
         logger.write(message, level, html)
         if console:
             logger.console(message)
@@ -2225,7 +2238,7 @@ class _Misc:
         except DataError as err:
             raise RuntimeError(unicode(err))
 
-    def set_library_search_order(self, *libraries):
+    def set_library_search_order(self, *search_order):
         """Sets the resolution order to use when a name matches multiple keywords.
 
         The library search order is used to resolve conflicts when a keyword
@@ -2264,9 +2277,7 @@ class _Misc:
         - Starting from RF 2.6.2, library and resource names in the search order
           are both case and space insensitive.
         """
-        old_order = self._namespace.library_search_order
-        self._namespace.library_search_order = libraries
-        return old_order
+        return self._namespace.set_search_order(search_order)
 
     def keyword_should_exist(self, name, msg=None):
         """Fails unless the given keyword exists in the current scope.
@@ -2280,9 +2291,7 @@ class _Misc:
         New in Robot Framework 2.6. See also `Variable Should Exist`.
         """
         try:
-            handler = self._namespace._get_handler(name)
-            if not handler:
-                raise DataError("No keyword with name '%s' found." % name)
+            handler = self._namespace.get_handler(name)
             if isinstance(handler, UserErrorHandler):
                 handler.run()
         except DataError as err:

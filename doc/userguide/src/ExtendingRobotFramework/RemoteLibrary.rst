@@ -1,5 +1,5 @@
 Remote library interface
-------------------------
+========================
 
 The remote library interface provides means for having test libraries
 on different machines than where Robot Framework itself is running,
@@ -16,7 +16,7 @@ __ `Creating test libraries`_
    :local:
 
 Introduction
-~~~~~~~~~~~~
+------------
 
 There are two main reasons for using the remote library API:
 
@@ -50,10 +50,10 @@ __ https://code.google.com/p/robotframework/wiki/RemoteLibrary#Available_remote_
 __ http://docs.python.org/2/library/xmlrpclib.html
 
 Taking Remote library into use
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Importing Remote library
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Remote library needs to know the address of the remote server but
 otherwise importing it and using keywords that it provides is no
@@ -97,7 +97,7 @@ __ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one
 __ https://docs.python.org/2/library/xmlrpclib.html
 
 Starting and stopping remote servers
-''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Before the Remote library can be imported, the remote server providing
 the actual keywords must be started.  If the server is started before
@@ -126,7 +126,7 @@ implemented. Typically servers support the following methods:
 __ `Using Import Library keyword`_
 
 Supported argument and return value types
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------
 
 Because the XML-RPC protocol does not support all possible object
 types, the values transferred between the Remote library and remote
@@ -159,7 +159,7 @@ according to the following rules. Other remote servers should behave similarly.
 __ http://docs.python.org/2/library/xmlrpclib.html#binary-objects
 
 Remote protocol
-~~~~~~~~~~~~~~~
+---------------
 
 This section explains the protocol that is used between the Remote
 library and remote servers. This information is mainly targeted for
@@ -172,7 +172,7 @@ mainstream languages (Python, Java, C, Ruby, Perl, Javascript, PHP,
 ...) have a support for XML-RPC either built-in or as an extension.
 
 Required methods
-''''''''''''''''
+~~~~~~~~~~~~~~~~
 
 A remote server is an XML-RPC server that must have the same methods
 in its public interface as the `dynamic library API`_ has. Only
@@ -199,7 +199,7 @@ The provided Python remote server can be used as a reference
 implementation.
 
 Getting remote keyword names and other information
-''''''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Remote library gets a list of keywords that the remote server
 provides using :code:`get_keyword_names` method. This method must
@@ -221,7 +221,7 @@ __ `Getting keyword documentation`_
 __ `Getting general library documentation`_
 
 Executing remote keywords
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When the Remote library wants the server to execute some keyword, it
 calls remote server's :code:`run_keyword` method and passes it the
@@ -275,7 +275,7 @@ __ `Continue on failure`_
 __ `Stopping test execution gracefully`_
 
 Different argument syntaxes
-'''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Remote library is a `dynamic library`_, and in general it handles
 different argument syntaxes `according to the same rules`__ as any other

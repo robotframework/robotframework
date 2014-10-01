@@ -1,12 +1,12 @@
 Variables
----------
+=========
 
 .. contents::
    :depth: 2
    :local:
 
 Introduction
-~~~~~~~~~~~~
+------------
 
 Variables are an integral feature of Robot Framework, and they can be
 used in most places in test data. Most commonly, they are used in
@@ -57,7 +57,7 @@ __ `Setting variables in command line`_
 __ Escaping_
 
 Variable types
-~~~~~~~~~~~~~~
+--------------
 
 Different variable types are briefly described in this section. The
 creation and usage of variables is described in more detail in the
@@ -82,7 +82,7 @@ even a requirement for using the `extended variable syntax`_.
 .. _scalar variable:
 
 Scalar variables
-''''''''''''''''
+~~~~~~~~~~~~~~~~
 
 When scalar variables are used in the test data, they are replaced
 with the value they are assigned to. While scalar variables are most
@@ -169,7 +169,7 @@ the arguments as explained below:
 .. _list variable:
 
 List variables
-''''''''''''''
+~~~~~~~~~~~~~~
 
 List variables are compound variables that can have several
 values assigned to them. In short, they are always lists and can
@@ -200,7 +200,7 @@ are equivalent.
    =============  ========  ===========  ==========
 
 Accessing individual list variable items
-````````````````````````````````````````
+''''''''''''''''''''''''''''''''''''''''
 
 It is also possible to access a certain value from the list variable
 with the syntax :var:`@{NAME}[i]`, where :var:`i` is the index of the
@@ -221,7 +221,7 @@ manner can be used similarly as scalar variables:
    =============  ===============  ===================  ==========
 
 Using list variables with settings
-``````````````````````````````````
+''''''''''''''''''''''''''''''''''
 
 List variables can be used only with some of the settings__. They can
 be used in arguments to imported libraries and variable files, but
@@ -249,7 +249,7 @@ those places where list variables are not supported.
 __ `All available settings in test data`_
 
 Using list variables as scalars
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to use list variables as scalar variables containing
 lists simply by replacing :var:`@` with :var:`$`. This makes it
@@ -285,7 +285,7 @@ variable has precedence and its value is used instead.
 __ `Variable scopes`_
 
 Using scalar variables as lists
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.8, it is also possible to use scalar variables
 as list variables. If a scalar variable contains any list-like object, it can
@@ -315,7 +315,7 @@ is no list variable with the same base name.
 .. _environment variable:
 
 Environment variables
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework allows using environment variables in the test
 data using the syntax :var:`%{ENV_VAR_NAME}`. They are limited to string
@@ -341,7 +341,7 @@ not effective after the test execution.
    =============  ========  =====================  ==========
 
 Java system properties
-''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~
 
 When running tests with Jython, it is possible to access `Java system properties`__
 using same syntax as `environment variables`_. If an environment variable and a
@@ -360,13 +360,13 @@ Support for accessing Java system properties was added in Robot Framework 2.6.
 __ http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
 Creating variables
-~~~~~~~~~~~~~~~~~~
+------------------
 
 Variables can spring into existence from different sources as
 described in the subsections below.
 
 Variable table
-''''''''''''''
+~~~~~~~~~~~~~~
 
 The most common source for variables are Variable tables in `test case
 files`_ and `resource files`_. Variable tables are convenient, because they
@@ -376,7 +376,7 @@ that values are always strings and they cannot be created dynamically.
 If either of these is a problem, `variable files`_ can be used instead.
 
 Creating scalar variables
-`````````````````````````
+'''''''''''''''''''''''''
 
 The simplest possible variable assignment is setting a string into a
 scalar variable. This is done by giving the variable name (including
@@ -410,7 +410,7 @@ variables slightly more explicit.
    ============  ===============  =========
 
 Creating list variables
-```````````````````````
+'''''''''''''''''''''''
 
 Creating list variables is as easy as creating scalar variables. Again, the
 variable name is in the first column of the Variable table and
@@ -435,7 +435,7 @@ __ `Dividing test data to several rows`_
    ============  =========  =========  =========
 
 Variable file
-'''''''''''''
+~~~~~~~~~~~~~
 
 Variable files are the most powerful mechanism for creating different
 kind of variables. It is possible to assign variables to any object
@@ -444,7 +444,7 @@ variable file syntax and taking variable files into use is explained
 in section `Resource and variable files`_.
 
 Setting variables in command line
-'''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Variables can be set from the command line either individually with
 the :opt:`--variable (-v)` option or using a variable file with the
@@ -488,7 +488,7 @@ the latter have `higher priority`__.
 __ `Variable priorities and scopes`_
 
 Return values from keywords
-'''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return values from keywords can also be set into variables. This
 allows communication between different keywords even in different test
@@ -557,7 +557,7 @@ setting a variable in one test case and using it in another, it is
 possible to use BuiltIn_ keywords as explained in the next section.
 
 Using :name:`Set Test/Suite/Global Variable` keywords
-'''''''''''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The BuiltIn_ library has keywords :name:`Set Test Variable`,
 :name:`Set Suite Variable` and :name:`Set Global Variable` which can
@@ -599,13 +599,13 @@ __ `Return values from keywords`_
 .. _built-in variable:
 
 Built-in variables
-~~~~~~~~~~~~~~~~~~
+------------------
 
 Robot Framework provides some built-in variables that are available
 automatically.
 
 Operating-system variables
-''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Built-in variables related to the operating system ease making the test data
 operating-system-agnostic.
@@ -647,7 +647,7 @@ operating-system-agnostic.
    =============  ========================  =======================  ==================================
 
 Number variables
-''''''''''''''''
+~~~~~~~~~~~~~~~~
 
 The variable syntax can be used for creating both integers and
 floating point numbers, as illustrated in the example below. This is
@@ -682,7 +682,7 @@ and :var:`0x` prefixes, respectively. The syntax is case insensitive.
    ===========  ===============  ==========  ==========
 
 Boolean and None/null variables
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Also Boolean values and Python :code:`None` and Java :code:`null` can
 be created using the variable syntax similarly as numbers.
@@ -707,7 +707,7 @@ interpreter, Jython automatically converts :code:`None` and
 :code:`null` to the correct format when necessary.
 
 Space and empty variables
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to create spaces and empty strings using variables
 :var:`${SPACE}` and :var:`${EMPTY}`, respectively. These variables are
@@ -755,7 +755,7 @@ __ Escaping_
 __ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5
 
 Automatic variables
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 Some automatic variables can also be used in the test data. These
 variables can have different values during the test execution and some
@@ -845,13 +845,13 @@ Possible variables in these automatic variables are not yet resolved
 at the import time, though.
 
 Variable priorities and scopes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Variables coming from different sources have different priorities and
 are available in different scopes.
 
 Variable priorities
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 *Variables from the command line*
 
@@ -922,13 +922,13 @@ __ `Creating start-up scripts`_
    is special because it is replaced already during the test data processing time.
 
 Variable scopes
-'''''''''''''''
+~~~~~~~~~~~~~~~
 
 Depending on where and how they are created, variables can have a
 global, test suite, test case or user keyword scope.
 
 Global scope
-````````````
+''''''''''''
 
 Global variables are available everywhere in the test data. These
 variables are normally `set from the command line`__ with the
@@ -940,7 +940,7 @@ the test data. Additionally also `built-in variables`_ are global.
 It is recommended to use capital letters with all global variables.
 
 Test suite scope
-````````````````
+''''''''''''''''
 
 Variables with the test suite scope are available anywhere in the
 test suite where they are defined or imported. They can be created
@@ -957,7 +957,7 @@ Since these variables can be considered global in the test suite where
 they are used, it is recommended to use capital letters also with them.
 
 Test case scope
-```````````````
+'''''''''''''''
 
 Variables created in test cases from the `return values from keywords`_
 have a test case scope and they are available only in that test
@@ -966,7 +966,7 @@ case. Another possibility to create them is using the BuiltIn_ keyword
 case variables are local and should use lower-case letters.
 
 User keyword scope
-``````````````````
+''''''''''''''''''
 
 User keywords get their own variables from `arguments passed to them`__
 and `return values from keywords`_ they use. Also these variables
@@ -976,10 +976,10 @@ __ `Setting variables in command line`_
 __ `User keyword arguments`_
 
 Advanced variable features
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 Extended variable syntax
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Extended variable syntax allows accessing attributes of an object assigned
 to a variable (for example, :var:`${object.attribute}`) and even calling
@@ -1122,7 +1122,7 @@ an attribute :code:`attribute` that contains a list as a value, it can be
 used as a list variable :var:`@{EXTENDED.attribute}`.
 
 Extended variable assignment
-''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.7, it is possible to set attributes of
 objects stored to scalar variables using `keyword return values`__ and
@@ -1190,7 +1190,7 @@ following rules:
           keywords that see that variable will also see the changes.
 
 Variables inside variables
-''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Variables are allowed also inside variables, and when this syntax is
 used, variables are resolved from the inside out. For example, if you

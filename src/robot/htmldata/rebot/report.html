@@ -452,7 +452,7 @@ function hideHiddenDetailsColumns(elem) {
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr onclick="tagDetailSelected('${label}')" class="row-${$item.index}">
-    <td class="stats-col-name" title="${doc}">
+    <td class="stats-col-name" title="{{html doc}}">
       <div class="stat-name">
         <a href="#tags?${label}">{{html label}}</a>
         {{if info}}(${info}){{/if}}
@@ -470,7 +470,7 @@ function hideHiddenDetailsColumns(elem) {
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
   <tr onclick="suiteDetailSelected('${id}')" class="row-${$item.index}">
-    <td class="stats-col-name" title="${label}">
+    <td class="stats-col-name" title="{{html label}}">
       <div class="stat-name">
         <a href="#suites?${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
@@ -658,7 +658,7 @@ function hideHiddenDetailsColumns(elem) {
               precedence, from highest to lowest, is <em>AND</em>, <em>OR</em>,
               <em>NOT</em>. See <em>Simple patterns</em> and
               <em>Tag patterns</em> sections in
-              <a href="https://code.google.com/p/robotframework/wiki/UserGuide">Robot
+              <a href="http://robotframework.org/robotframework/#user-guide">Robot
               Framework User Guide</a> version 2.8.4 or newer for more details.
             </p>
             <table class="search-help-examples">

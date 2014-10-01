@@ -17,7 +17,7 @@ from six import PY3, string_types, text_type as unicode
 import sys
 
 from robot.api import logger
-from robot.utils import plural_or_not, seq2str, seq2str2, unic
+from robot.utils import plural_or_not, seq2str, seq2str2, unic, Matcher
 from robot.utils.asserts import assert_equals
 from robot.version import get_version
 
@@ -456,9 +456,11 @@ class _Dictionary:
         return self.set_to_dictionary({}, *key_value_pairs, **items)
 
     def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
-        """Adds the given `key_value_pairs` and `items`to the `dictionary`.
+        """Adds the given `key_value_pairs` and `items` to the `dictionary`.
 
         See `Create Dictionary` for information about giving items.
+        If the given `key` already exist in the `dictionary`, its value
+        is updated.
 
         Example:
         | Set To Dictionary | ${D1} | key | value |
@@ -764,6 +766,104 @@ class Collections(_List, _Dictionary):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
+    def should_contain_match(self, list, pattern, msg=None,
+                             case_insensitive=False,
+                             whitespace_insensitive=False):
+        """Fails if `pattern` is not found in `list`.
+
+        See `List Should Contain Value` for an explanation of `msg`.
+
+        By default, pattern matching is similar to matching files in a shell
+        and is case-sensitive and whitespace-sensitive. In the pattern syntax,
+        '*' matches to anything and '?' matches to any single character. You
+        can also prepend 'glob=' to your pattern to explicitly use this pattern
+        matching behavior.
+
+        If you prepend 'regexp=' to your pattern, your pattern will be used
+        according to the Python
+        [http://docs.python.org/2/library/re.html|re module] regular expression
+        syntax. Important note: Backslashes are an escape character, and must
+        be escaped with another backslash (e.g. 'regexp=\\\\d{6}' to search for
+        '\\d{6}'). See `BuiltIn.Should Match Regexp` for more details.
+
+        If `case_insensitive` is True, the pattern matching will ignore case.
+
+        If `whitespace_insensitive` is True, the pattern matching will ignore
+        whitespace.
+
+        Non-string values in lists are ignored when matching patterns.
+
+        The given list is never altered by this keyword.
+
+        See also `Should Not Contain Match`.
+
+        Examples:
+        | Should Contain Match | ${list} | a* | # List should contain any string beginning with 'a' |
+        | Should Contain Match | ${list} | regexp=a.* | # List should contain any string beginning with 'a' (regexp version) |
+        | Should Contain Match | ${list} | regexp=\\\\d{6} | # List should contain any string which contains six decimal digits |
+        | Should Contain Match | ${list} | a* | case_insensitive=${True} | # List should contain any string beginning with 'a' or 'A' |
+        | Should Contain Match | ${list} | ab* | whitespace_insensitive=${True} | # List should contain any string beginning with 'ab' or 'a b' or any other combination of whitespace |
+        | Should Contain Match | ${list} | ab* | whitespace_insensitive=${True} | case_insensitive=${True} | # List should contain any string beginning with 'ab' or 'a b' or 'AB' or 'A B' or any other combination of whitespace and upper/lower case 'a' and 'b' |
+
+        New in Robot Framework 2.8.6.
+        """
+        default = "%s does not contain match for pattern '%s'." % (
+            seq2str2(list), pattern)
+        _verify_condition(
+            _get_matches_in_iterable(list, pattern, case_insensitive,
+                                     whitespace_insensitive), default, msg)
+
+    def should_not_contain_match(self, list, pattern, msg=None,
+                                 case_insensitive=False,
+                                 whitespace_insensitive=False):
+        """Fails if `pattern` is found in `list`.
+
+        See `List Should Contain Value` for an explanation of `msg`.
+
+        See `Should Contain Match` for usage details and examples.
+
+        New in Robot Framework 2.8.6.
+        """
+        default = "%s contains match for pattern '%s'." % (
+            seq2str2(list), pattern)
+        _verify_condition(
+            not _get_matches_in_iterable(list, pattern, case_insensitive,
+                                         whitespace_insensitive), default, msg)
+
+    def get_matches(self, list, pattern, case_insensitive=False,
+                    whitespace_insensitive=False):
+        """Returns a list of matches to `pattern` in `list`.
+
+        For more information on `pattern`, `case_insensitive`, and
+        `whitespace_insensitive`, see `Should Contain Match`.
+
+        Examples:
+        | ${matches}= | Get Matches | ${list} | a* | # ${matches} will contain any string beginning with 'a' |
+        | ${matches}= | Get Matches | ${list} | regexp=a.* | # ${matches} will contain any string beginning with 'a' (regexp version) |
+        | ${matches}= | Get Matches | ${list} | a* | case_insensitive=${True} | # ${matches} will contain any string beginning with 'a' or 'A' |
+
+        New in Robot Framework 2.8.6.
+        """
+        return _get_matches_in_iterable(list, pattern, case_insensitive,
+                                        whitespace_insensitive)
+
+    def get_match_count(self, list, pattern, case_insensitive=False,
+                        whitespace_insensitive=False):
+        """Returns the count of matches to `pattern` in `list`.
+
+        For more information on `pattern`, `case_insensitive`, and
+        `whitespace_insensitive`, see `Should Contain Match`.
+
+        Examples:
+        | ${count}= | Get Match Count | ${list} | a* | # ${count} will be the count of strings beginning with 'a' |
+        | ${count}= | Get Match Count | ${list} | regexp=a.* | # ${matches} will be the count of strings beginning with 'a' (regexp version) |
+        | ${count}= | Get Match Count | ${list} | a* | case_insensitive=${True} | # ${matches} will be the count of strings beginning with 'a' or 'A' |
+
+        New in Robot Framework 2.8.6.
+        """
+        return len(self.get_matches(list, pattern, case_insensitive,
+                                    whitespace_insensitive))
+
 
 def _verify_condition(condition, default_msg, given_msg, include_default=False):
     if not condition:
@@ -777,3 +877,23 @@ def _include_default_message(include):
     if isinstance(include, string_types):
         return include.lower() not in ['no values', 'false']
     return bool(include)
+
+
+def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
+                             whitespace_insensitive=False):
+    if not iterable:
+        return []
+    regexp = False
+    if not isinstance(pattern, string_types):
+        raise TypeError(
+            "Pattern must be string, got '%s'." % type(pattern).__name__)
+    if pattern.startswith('regexp='):
+        pattern = pattern[7:]
+        regexp = True
+    elif pattern.startswith('glob='):
+        pattern = pattern[5:]
+    matcher = Matcher(pattern, caseless=case_insensitive,
+                      spaceless=whitespace_insensitive, regexp=regexp)
+    return [string for string in iterable
+            if isinstance(string, string_types)
+            and matcher.match(string)]

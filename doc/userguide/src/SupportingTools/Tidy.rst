@@ -1,7 +1,7 @@
 .. _tidy:
 
 Test data clean-up tool (:prog:`tidy`)
---------------------------------------
+======================================
 
 .. contents::
    :depth: 1
@@ -17,10 +17,10 @@ Files can also be modified in-place using :opt:`--inplace` or
 :opt:`--recursive` options.
 
 General usage
-~~~~~~~~~~~~~
+-------------
 
 Synopsis
-''''''''
+~~~~~~~~
 
 ::
 
@@ -30,7 +30,7 @@ Synopsis
     python -m robot.tidy --recursive [options] directory
 
 Options
-'''''''
+~~~~~~~
 
  -i, --inplace    Tidy given file(s) so that original file(s) are overwritten
                   (or removed, if the format is changed). When this option is
@@ -61,7 +61,7 @@ Options
  -h, --help       Show this help.
 
 Alternative execution
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 Although :prog:`tidy` is used only with Python in the synopsis above, it works
 also with Jython and IronPython. In the synopsis :prog:`tidy` is executed as
@@ -75,13 +75,13 @@ or otherwise just have the :path:`robot` directory with the source code
 somewhere in your system.
 
 Output encoding
-'''''''''''''''
+~~~~~~~~~~~~~~~
 
 All output files are written using UTF-8 encoding. Outputs written to the
 console use the current console encoding.
 
 Cleaning up test data
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 Test case files created with HTML editors or written by hand can be normalized
 using tidy. :prog:`tidy` always writes consistent headers, consistent order for
@@ -93,7 +93,7 @@ Examples::
     python -m robot.tidy --inplace tests.txt
 
 Changing test data format
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 Robot Framework supports test data in HTML, TSV and TXT formats and :prog:`tidy`
 makes changing between the formats trivial. Input format is always determined

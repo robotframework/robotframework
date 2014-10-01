@@ -1,7 +1,7 @@
 .. _rebot:
 
 Post-processing outputs
------------------------
+=======================
 
 `XML output files`_ that are generated during the test execution can be
 post-processed afterwards by the :prog:`rebot` tool, which is an integral
@@ -14,10 +14,10 @@ are also good grounds for using it separately after the execution.
    :local:
 
 Using :prog:`rebot` tool
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 Synopsis
-''''''''
+~~~~~~~~
 
 ::
 
@@ -34,7 +34,7 @@ faster than the alternatives. In addition to using these scripts, it is possible
 any interpreter, or use the `standalone JAR distribution`_.
 
 Specifying options and arguments
-''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The basic syntax for using :prog:`rebot` is exactly the same as when
 `starting test execution`_ and also most of the command line options are
@@ -42,14 +42,14 @@ identical. The main difference is that arguments to :prog:`rebot` are
 `XML output files`_ instead of test data files or directories.
 
 Return codes with :prog:`rebot`
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return codes from :prog:`rebot` are exactly same as when `running tests`__.
 
 __ `Return codes`_
 
 Creating different reports and logs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 You can use :prog:`rebot` for creating the same reports and logs that
 are created automatically during the test execution. Of course, it is
@@ -71,7 +71,7 @@ running tests on Jython. Disabling log and report generation and generating
 them later with :prog:`rebot` can save a lot of time and use less memory.
 
 Combining outputs
-~~~~~~~~~~~~~~~~~
+-----------------
 
 The most important feature of :prog:`rebot` is its ability to combine
 outputs from different test execution rounds. This capability allows,
@@ -98,7 +98,7 @@ meaningful name::
 __ `Specifying test data to be executed`_
 
 Merging re-executed output
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 There is often a need to re-execute a subset of tests, for example, after
 fixing a bug in the system under test or in the tests themselves. This can be

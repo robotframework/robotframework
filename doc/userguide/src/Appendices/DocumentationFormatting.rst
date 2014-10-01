@@ -1,7 +1,7 @@
 .. _Documentation syntax:
 
 Documentation formatting
-------------------------
+========================
 
 It is possible to use simple HTML formatting with `test suite`__,
 `test case`__ and `user keyword`__ documentation and `free test suite
@@ -20,10 +20,10 @@ __ `Documenting libraries`_
    :local:
 
 Representing newlines
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 Adding newlines manually in test data
-'''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The documentation of test suites, test cases and keywords as well as
 the test suite metadata are subject to `general parsing rules`__ of the
@@ -60,7 +60,7 @@ __ `Handling whitespace`_
    </table>
 
 Automatic newlines in test data
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Adding newlines manually to a long documentation takes some effort and
 extra characters also make the documentation in the test data slightly
@@ -128,7 +128,7 @@ __ Escaping_
    =========  ===============  ================  ==============  ==============
 
 Documentation in test libraries
-'''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With library documentations normal newlines are enough, and for
 example the following keyword documentation would create same end result
@@ -146,7 +146,7 @@ as the test suite documentation in the previous section.
 
 
 Paragraphs
-~~~~~~~~~~
+----------
 
 Starting from Robot Framework 2.7.2, all regular text in the formatted HTML
 documentation is represented as paragraphs. In practice, lines separated
@@ -180,7 +180,7 @@ will be formatted in HTML as:
           documentations shown in log and report they were not.
 
 Bold and italic
-~~~~~~~~~~~~~~~
+---------------
 
 Bold text can be created by having an asterisk before and after the
 selected word or words, for example :code:`\*this is bold*`. Italic
@@ -226,7 +226,7 @@ __ paragraphs_
    </table>
 
 URLs
-~~~~
+----
 
 All strings that look like URLs are automatically converted into
 clickable links. Additionally, URLs that end with extension
@@ -241,7 +241,7 @@ in logs and reports, but creating images is done only for test suite,
 test case and keyword documentation, and for test suite metadata.
 
 Custom links and images
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Starting from Robot Framework 2.7, it is possible to create custom links
 and embed images using special syntax :code:`[link|content]`. This creates
@@ -251,7 +251,7 @@ special with URLs_. The surrounding square brackets and the pipe character
 between the parts are mandatory in all cases.
 
 Link with text content
-''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~
 
 If neither :code:`link` nor :code:`content` is an image, the end result is
 a normal link where :code:`link` is the link target and :code:`content`
@@ -261,7 +261,7 @@ the visible text::
     [http://host|that host] -> <a href="http://host">that host</a>
 
 Link with image content
-'''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~
 
 If :code:`content` is an image, you get a link where the link content is an
 image. Link target is created by :code:`link` and it can be either text or image::
@@ -270,7 +270,7 @@ image. Link target is created by :code:`link` and it can be either text or image
     [image.jpg|thumb.jpg] -> <a href="image.jpg"><img src="thumb.jpg"></a>
 
 Image with title text
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~
 
 If :code:`link` is an image but :code:`content` is not, the syntax creates an
 image where the :code:`content` is the title text shown when mouse is over
@@ -279,7 +279,7 @@ the image::
     [robot.jpeg|Robot rocks!] -> <img src="robot.jpeg" title="Robot rocks!">
 
 Section titles
-~~~~~~~~~~~~~~
+--------------
 
 If documentation gets longer, it is often a good idea to split it into
 sections. Starting from Robot Framework 2.7.5, it is possible to separate
@@ -304,7 +304,7 @@ Notice that only three title levels are supported and that spaces between
 equal signs and the title text are mandatory.
 
 Tables
-~~~~~~
+------
 
 Tables are created using pipe characters with spaces around them
 as column separators and newlines as row separators. Header
@@ -334,7 +334,7 @@ formatted like this in HTML:
 .. note:: Support for table headers is a new feature in Robot Framework 2.8.2.
 
 Lists
-~~~~~
+-----
 
 Lists are created by starting a line with a hyphen and space ('- '). List items
 can be split into multiple lines by indenting continuing lines with one or more
@@ -366,7 +366,7 @@ The above documentation is formatted like this in HTML:
           list items into multiple lines was added in 2.7.4.
 
 Preformatted text
-~~~~~~~~~~~~~~~~~
+-----------------
 
 Starting from Robot Framework 2.7, it is possible to embed blocks of
 preformatted text in the documentation. Preformatted block is created by
@@ -394,7 +394,7 @@ The above documentation is formatted like this:
   </div>
 
 Horizontal ruler
-~~~~~~~~~~~~~~~~
+----------------
 
 Horizontal rulers (the <hr> tag) make it possible to separate larger
 sections from each others, and they can be created by having three or more

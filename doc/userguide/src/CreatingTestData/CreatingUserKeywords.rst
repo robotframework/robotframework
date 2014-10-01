@@ -1,5 +1,5 @@
 Creating user keywords
-----------------------
+======================
 
 Keyword tables are used to create new higher-level keywords by
 combining existing keywords together. These keywords are called *user
@@ -13,10 +13,10 @@ makes it easy to learn.
    :local:
 
 User keyword syntax
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 Basic syntax
-''''''''''''
+~~~~~~~~~~~~
 
 In many ways, the overall user keyword syntax is identical to the
 `test case syntax`_.  User keywords are created in keyword tables
@@ -54,7 +54,7 @@ files are available for files using them, whereas other keywords are
 only available in the files where they are created.
 
 Settings in the Keyword table
-'''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 User keywords can have similar settings as `test cases`__, and they
 have the same square bracket syntax separating them from keyword
@@ -82,7 +82,7 @@ __ `Settings in the test case table`_
 .. _User keyword documentation:
 
 User keyword name and documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 The user keyword name is defined in the first column of the user
 keyword table. Of course, the name should be descriptive, and it is
@@ -105,7 +105,7 @@ cause a warning when the keyoword is used. For more information, see
 `Deprecating keywords`_ section.
 
 User keyword arguments
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 Most user keywords need to take some arguments. The syntax for
 specifying them is probably the most complicated feature normally
@@ -115,7 +115,7 @@ the :opt:`[Arguments]` setting, and argument names use the same
 syntax as variables_, for example :code:`${arg}`.
 
 Positional arguments
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 The simplest way to specify arguments (apart from not having them at all)
 is using only positional arguments. In most cases, this is all
@@ -147,7 +147,7 @@ to use lower-case letters in variable names, either as
    ===============  ===========  ========================  ==========  ==========
 
 Default values with user keywords
-'''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When creating user keywords, positional arguments are sufficient in
 most situations. It is, however, sometimes useful that keywords have
@@ -206,7 +206,7 @@ specifying default arguments is heavily inspired by Python syntax for
 function default values.
 
 Varargs with user keywords
-''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes even default values are not enough and there is a need
 for a keyword accepting `variable number of arguments`_. User keywords
@@ -255,7 +255,7 @@ __ `for loops`_
 .. _Embedded argument syntax:
 
 Embedding arguments into keyword name
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------
 
 Robot Framework has also another approach to pass arguments to user
 keywords than specifying them in cells after the keyword name as
@@ -264,7 +264,7 @@ the arguments directly into the keyword name, and its main benefit is
 making it easier to use real and clear sentences as keywords.
 
 Basic syntax
-''''''''''''
+~~~~~~~~~~~~
 
 It has always been possible to use keywords like :name:`Select dog
 from list` and :name:`Selects cat from list`, but all such keywords
@@ -304,7 +304,7 @@ calling these keywords is possible but that can reduce readability.
 Notice also that embedded arguments only work with user keywords.
 
 Embedded arguments matching too much
-''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 One tricky part in using embedded arguments is making sure that the
 values used when calling the keyword match the correct arguments. This
@@ -333,7 +333,7 @@ easily.
 __ `Ignoring Given/When/Then/And prefixes`_
 
 Using custom regular expressions
-''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 When keywords with embedded arguments are called, the values are
 matched internally using `regular expressions`__
 (regexps for short). The default logic goes so that every argument in
@@ -414,7 +414,7 @@ other :name:`I execute` variant.
          closing quote.
 
 Supported regular expression syntax
-```````````````````````````````````
+'''''''''''''''''''''''''''''''''''
 
 Being implemented with Python, Robot Framework naturally uses Python's
 :name:`re` module that has pretty standard `regular expressions
@@ -426,7 +426,7 @@ creating the keyword fails with an error visible in `test execution
 errors`__.
 
 Escaping special characters
-```````````````````````````
+'''''''''''''''''''''''''''
 
 There are some special characters that need to be escaped when used in
 the custom embedded arguments regexp. First of all, possible closing
@@ -448,7 +448,7 @@ rules`__. This means that, for example, backslashes in expressions
 like :var:`${name:\\w+}` should not be escaped.
 
 Using variables with custom embedded argument regular expressions
-`````````````````````````````````````````````````````````````````
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Whenever custom embedded argument regular expressions are used, Robot
 Framework automatically enhances the specified regexps so that they
@@ -489,7 +489,7 @@ __ `Errors and warnings during execution`_
 __ Escaping_
 
 Behavior-driven development example
-'''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The biggest benefit of having arguments as part of the keyword name is that it
 makes it easier to use higher-level sentence-like keywords when writing test
@@ -537,7 +537,7 @@ __ `Ignoring Given/When/Then/And prefixes`_
 __ http://cukes.info
 
 User keyword return values
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 Similarly as library keywords, also user keywords can return
 values. Typically return values are defined with the :opt:`[Return]`
@@ -549,7 +549,7 @@ in test cases and in other user keywords.
 __ `Return values from keywords`_
 
 Using :opt:`[Return]` setting
-'''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The most common case is that  a user keyword returns one value and it is
 assigned to a scalar variable. When using the :opt:`[Return]` setting, this is
@@ -589,7 +589,7 @@ specifying those values in different cells after the :opt:`[Return]` setting.
    ===================  ============  ==============  ===========  ==========
 
 Using special keywords to return
-''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 BuiltIn_ keywords :name:`Return From Keyword` and :name:`Return From Keyword If`
 allow returning from a user keyword conditionally in the middle of the keyword.
@@ -640,7 +640,7 @@ demonstrates returning conditionally inside a `for loop`_.
           are available since Robot Framework 2.8.
 
 User keyword teardown
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 Starting from Robot Framework 2.6, also user keywords may have a teardown.
 It is defined using :opt:`[Teardown]` setting.

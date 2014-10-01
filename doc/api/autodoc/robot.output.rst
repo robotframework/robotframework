@@ -28,6 +28,14 @@ robot.output.highlighting module
     :undoc-members:
     :show-inheritance:
 
+robot.output.librarylisteners module
+------------------------------------
+
+.. automodule:: robot.output.librarylisteners
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.output.librarylogger module
 ---------------------------------
 

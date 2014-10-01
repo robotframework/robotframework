@@ -192,7 +192,7 @@ class TestInvalidImportPath(unittest.TestCase):
             Importer('file').import_class_or_module_by_path, path)
 
     def test_invalid_format(self):
-        path = join(CURDIR, '..', '..', 'README.txt')
+        path = join(CURDIR, '..', '..', 'README.rst')
         assert_raises_with_msg(DataError,
             "Importing '%s' failed: Not a valid file or directory to import." % path,
             Importer().import_class_or_module_by_path, path)

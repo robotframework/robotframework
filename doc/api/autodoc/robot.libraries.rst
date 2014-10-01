@@ -20,6 +20,14 @@ robot.libraries.Collections module
     :undoc-members:
     :show-inheritance:
 
+robot.libraries.DateTime module
+-------------------------------
+
+.. automodule:: robot.libraries.DateTime
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.libraries.DeprecatedBuiltIn module
 ----------------------------------------
 

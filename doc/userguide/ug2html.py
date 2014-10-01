@@ -5,12 +5,12 @@
 Usage:  ug2html.py [ cr(eate) | dist | zip ]
 
 create .. Creates the user guide so that it has relative links to images,
-          library docs, etc. This version is stored in the version control
-          and distributed with the source distribution.
+          library docs, etc. Mainly used to test how changes look in HTML.
 
 dist .... Creates the user guide under 'robotframework-userguide-<version>'
           directory and also copies all needed images and other link targets
-          there. The created output directory can thus be distributed
+          there. Also compiles library docs to ensure latest versions are
+          included. The created output directory can thus be distributed
           independently.
 
 zip ..... Uses 'dist' to create a stand-alone distribution and then packages
@@ -123,6 +123,9 @@ directives.register_directive('sourcecode', pygments_directive)
 #
 # This code is based on rst2html.py distributed with docutils
 #
+
+CURDIR = os.path.dirname(os.path.abspath(__file__))
+
 try:
     import locale
     locale.setlocale(locale.LC_ALL, '')
@@ -133,20 +136,18 @@ def create_userguide():
     from docutils.core import publish_cmdline
 
     print 'Creating user guide ...'
-    ugdir = os.path.dirname(os.path.abspath(__file__))
-    sys.path.insert(0, os.path.join(ugdir, '..', '..', 'src', 'robot'))
+    sys.path.insert(0, os.path.join(CURDIR, '..', '..', 'src', 'robot'))
     from version import get_version
     print 'Version:', get_version()
-    vfile = open(os.path.join(ugdir, 'src', 'version.rst'), 'w')
-    vfile.write('.. |version| replace:: %s\n' % get_version())
-    vfile.close()
+    with open(os.path.join(CURDIR, 'src', 'version.rst'), 'w') as vfile:
+        vfile.write('.. |version| replace:: %s\n' % get_version())
 
     description = 'HTML generator for Robot Framework User Guide.'
     arguments = ['--time',
                  '--stylesheet-path', ['src/userguide.css'],
                  'src/RobotFrameworkUserGuide.rst',
                  'RobotFrameworkUserGuide.html']
-    os.chdir(ugdir)
+    os.chdir(CURDIR)
     publish_cmdline(writer_name='html', description=description, argv=arguments)
     os.unlink(vfile.name)
     ugpath = os.path.abspath(arguments[-1])
@@ -163,7 +164,6 @@ def create_distribution():
 
     ugpath, version = create_userguide()  # we are in doc/userguide after this
     outdir = 'robotframework-userguide-%s' % version
-    tools = os.path.join(outdir, 'tools')
     templates = os.path.join(outdir, 'templates')
     libraries = os.path.join(outdir, 'libraries')
     images = os.path.join(outdir, 'images')
@@ -173,7 +173,12 @@ def create_distribution():
         print 'Removing previous user guide distribution'
         shutil.rmtree(outdir)
 
-    for dirname in [outdir, tools, templates, libraries, images]:
+    print 'Recompiling library docs'
+    sys.path.insert(0, os.path.join(CURDIR, '..', 'libraries'))
+    import lib2html
+    lib2html.create_all()
+
+    for dirname in [outdir, templates, libraries, images]:
         print "Creating output directory '%s'" % dirname
         os.mkdir(dirname)
 
@@ -185,11 +190,7 @@ def create_distribution():
             return res.group(0)
         replaced_link = '%s %s="%%s/%s"' % (res.group(1), res.group(4),
                                             os.path.basename(path))
-        if path.startswith('../../tools'):
-            copy(path, tools)
-            copy_tool_images(path)
-            replaced_link = replaced_link % 'tools'
-        elif path.startswith('../../templates'):
+        if path.startswith('../../templates'):
             copy(path, templates)
             replaced_link = replaced_link % 'templates'
         elif path.startswith('../libraries'):
@@ -207,12 +208,6 @@ def create_distribution():
     def copy(source, dest):
         print "Copying '%s' -> '%s'" % (source, dest)
         shutil.copy(source, dest)
-
-    def copy_tool_images(path):
-        indir = os.path.dirname(path)
-        for line in open(os.path.splitext(path)[0]+'.txt').readlines():
-            if line.startswith('.. figure::'):
-                copy(os.path.join(indir, line.strip().split()[-1]), tools)
 
     link_regexp = re.compile('''
 (<(a|img)\s+.*?)

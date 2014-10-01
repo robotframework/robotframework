@@ -2,18 +2,20 @@
 
 """Script to generate atest runners based on plain text data files.
 
-Usage:  %s testdata/path/data.txt [robot/path/runner.txt]
+Usage:  %s testdata/path/data.robot [robot/path/runner.robot]
 """
 
 from os.path import abspath, basename, dirname, exists, join, splitext
 import os
 import sys
 
-if len(sys.argv) not in [2, 3] or not all(a.endswith('.txt') for a in sys.argv[1:]):
+if len(sys.argv) not in [2, 3] or not all(a.endswith('.robot') for a in sys.argv[1:]):
     print(__doc__ % basename(sys.argv[0]))
     sys.exit(1)
 
 INPATH = abspath(sys.argv[1])
+if join('atest', 'testdata') not in INPATH:
+    sys.exit("Input not under 'atest/testdata'.")
 if len(sys.argv) == 2:
     OUTPATH = INPATH.replace(join('atest', 'testdata'), join('atest', 'robot'))
 else:
@@ -39,7 +41,7 @@ with open(OUTPATH, 'wb') as output:
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    %(path)s
 Force Tags       regression    pybot    jybot
-Resource         atest_resource.txt
+Resource         atest_resource.robot
 
 *** Test Cases ***
 """ % locals())

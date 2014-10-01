@@ -29,7 +29,7 @@ from robot.api import logger
 
 
 if os.sep == '/' and sys.platform.startswith('java'):
-    encode_to_system = lambda string: string
+    encode_to_system = lambda string: unicode(string)
 
 
 class Process(object):
@@ -78,6 +78,9 @@ class Process(object):
     Examples:
     | `Run Process` | ${progdir}${/}prog.py        | first arg | second         |
     | `Run Process` | script1.sh arg && script2.sh | shell=yes | cwd=${progdir} |
+
+    Starting from Robot Framework 2.8.6, possible non-string arguments are
+    converted to strings automatically.
 
     = Process configuration =
 
@@ -849,7 +852,8 @@ class ProcessConfig(object):
                        for k, v in env.items())
         for key in extra:
             if not key.startswith('env:'):
-                raise RuntimeError("'%s' is not supported by this keyword." % key)
+                raise RuntimeError("Keyword argument '%s' is not supported by "
+                                   "this keyword." % key)
             if env is None:
                 env = os.environ.copy()
             env[encode_to_system(key[4:])] = encode_to_system(extra[key])
