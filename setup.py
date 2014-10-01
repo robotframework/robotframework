@@ -11,7 +11,7 @@ if 'develop' in sys.argv or 'bdist_wheel' in sys.argv:
 CURDIR = dirname(abspath(__file__))
 
 execfile(join(CURDIR, 'src', 'robot', 'version.py'))
-VERSION = get_version(sep='')
+VERSION = get_version()
 with open(join(CURDIR, 'README.rst')) as readme:
     install = 'https://github.com/robotframework/robotframework/blob/master/INSTALL.rst'
     LONG_DESCRIPTION = readme.read().replace(

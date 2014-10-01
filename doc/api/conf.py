@@ -18,7 +18,7 @@ import sys, os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath(os.path.join('.', '..', '..', 'src')))
 
-from robot.version import VERSION, get_version
+from robot.version import get_version
 
 # -- General configuration -----------------------------------------------------
 
@@ -51,7 +51,7 @@ copyright = u'2008-2014, Nokia Solutions and Networks'
 # built documents.
 #
 # The short X.Y version.
-version = VERSION
+version = get_version(naked=True)
 # The full version, including alpha/beta/rc tags.
 release = get_version()
 

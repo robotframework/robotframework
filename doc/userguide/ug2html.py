@@ -155,13 +155,17 @@ def create_userguide():
 
 
 def _update_version():
-    sys.path.insert(0, os.path.join(CURDIR, '..', '..', 'src', 'robot'))
-    from version import get_version
-    print 'Version:', get_version()
+    version = _get_version()
+    print 'Version:', version
     with open(os.path.join(CURDIR, 'src', 'version.rst'), 'w') as vfile:
-        vfile.write('.. |version| replace:: %s\n' % get_version())
-    return get_version(sep='-'), vfile.name
+        vfile.write('.. |version| replace:: %s\n' % version)
+    return version, vfile.name
 
+def _get_version():
+    namespace = {}
+    execfile(os.path.join(CURDIR, '..', '..', 'src', 'robot', 'version.py'),
+             namespace)
+    return namespace['get_version']()
 
 def _copy_installation_instructions():
     source = os.path.join(CURDIR, '..', '..', 'INSTALL.rst')
