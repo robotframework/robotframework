@@ -12,7 +12,7 @@ if 'develop' in sys.argv or 'bdist_wheel' in sys.argv:
 with open(join(dirname(__file__), 'src', 'robot', 'version.py')) as py:
     exec(py.read())
 
-README = open(join(dirname(__file__), 'README.txt')).read()
+README = open(join(dirname(__file__), 'README.rst')).read()
 # Maximum width in Windows installer seems to be 70 characters -------|
 DESCRIPTION = re.match(
   r"(.|\n)*Robot Framework\n"
