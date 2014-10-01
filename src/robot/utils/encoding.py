@@ -60,8 +60,8 @@ def encode_to_system(string, errors='replace'):
 
     Non-Unicode strings are first converted to Unicode.
     """
-    if PY3:
-        return string
     if not isinstance(string, unicode):
         string = unicode(string)
+    if PY3:
+        return string
     return string.encode(SYSTEM_ENCODING, errors)
