@@ -77,7 +77,7 @@ if PY3 and do2to3:
                     else:
                         print("Preparing for Python 3: %s" % path)
                         # Remove u prefixes from unicode literals:
-                        text = re.sub(r'([\[(= ])u\'', r'\1\'', text)
+                        text = re.sub(r'([\[(=} ])u\'', r'\1\'', text)
                         # Replace hex codes in strings
                         # with actual unicode characters,
                         # if not used to create bytes objects:
