@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 #  Copyright 2008-2014 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +15,8 @@
 import re
 import sys
 
-# Version format depends on the release:
-# - stable version in 'X.Y' or 'X.Y.Z' format (e.g. 2.8, 2.8.6)
-# - pre-releases with 'aN', 'bN' or 'rcN' postfix (e.g. 2.8a1, 2.8.6rc2)
-# - development releases with '.devYYYYMMDD' postfix (e.g. 2.8.6.dev20141001)
-# This is compatible with http://legacy.python.org/dev/peps/pep-0440/.
+# Version number typically updated by running `invoke set_version <version>`.
+# Run `invoke --help set_version` or see tasks.py for details.
 VERSION = '2.8.6.dev20141001'
 
 

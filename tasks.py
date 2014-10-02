@@ -1,3 +1,9 @@
+"""Tasks to help Robot Framework packaging and other development.
+
+Executed by Invoke <http://pyinvoke.org>. Install it with `pip install invoke`
+and run `invoke --help` and `invode --list` for details how to execute tasks.
+"""
+
 import os
 import os.path
 import shutil
@@ -15,8 +21,26 @@ VERSION_FILE = os.path.join('src', 'robot', 'version.py')
 JYTHON_VERSION = '2.5.3'
 
 
+@task(default=True)
+def help():
+    """Show help, basically an alias for --help.
+
+    Needed as a default task due to https://github.com/pyinvoke/invoke/issues/180
+    """
+    run('invoke --help')
+
+
 @task
 def set_version(version):
+    """Set version in `src/robot/version.py`.
+
+    Given version must be in one of these PEP-440 compatible formats:
+    - stable version in 'X.Y' or 'X.Y.Z' format (e.g. 2.8, 2.8.6)
+    - pre-releases with 'aN', 'bN' or 'rcN' postfix (e.g. 2.8a1, 2.8.6rc2)
+    - development releases with '.devYYYYMMDD' postfix (e.g. 2.8.6.dev20141001)
+      or with '.dev' alone (e.g. 2.8.6.dev) in which case date is added
+      automatically
+    """
     if version and version != 'keep':
         version = validate_version(version)
         write_version_file(version)
@@ -54,6 +78,15 @@ def get_version_from_file():
 
 @task
 def clean(remove_dist=True, create_dirs=False):
+    """Clean workspace.
+
+    By default deletes 'build' and 'dist' directories and removes '*.pyc'
+    and '$py.class' files.
+
+    Args:
+        remove_dist:  Remove also 'dist'.
+        create_dirs:  Re-create 'build' and 'dist' after removing them.
+    """
     directories = ['build', 'dist']
     for name in directories:
         if os.path.isdir(name) and (name != 'dist' or remove_dist):
@@ -68,6 +101,13 @@ def clean(remove_dist=True, create_dirs=False):
 
 @task
 def sdist(version=None, deploy=False, remove_dist=False):
+    """Create source distribution.
+
+    Args:
+        version:      Update version information using `set_version` task.
+        deploy:       Register and upload sdist to PyPI.
+        remove_dist:  Control is 'dist' directory initially removed or not.
+    """
     clean(remove_dist)
     set_version(version)
     run('python setup.py sdist --force-manifest'
@@ -83,6 +123,12 @@ def announce():
 
 @task
 def wininst(version=None, remove_dist=False):
+    """Create Windows installer.
+
+    Args:
+        version:      Update version information using `set_version` task.
+        remove_dist:  Control is 'dist' directory initially removed or not.
+    """
     clean(remove_dist)
     set_version(version)
     run('python setup.py bdist_wininst '
@@ -92,6 +138,14 @@ def wininst(version=None, remove_dist=False):
 
 @task
 def jar(version=None, remove_dist=False):
+    """Create JAR distribution.
+
+    Downloads Jython JAR if needed.
+
+    Args:
+        version:      Update version information using `set_version` task.
+        remove_dist:  Control is 'dist' directory initially removed or not.
+    """
     clean(remove_dist, create_dirs=True)
     version = set_version(version)
     jython_jar = get_jython_jar(JYTHON_VERSION)
@@ -143,8 +197,8 @@ def compile_python_files(jython_jar, build_dir='build'):
 
 def create_robot_jar(version, source='build'):
     write_manifest(version, source)
-    jar = os.path.join('dist', 'robotframework-{}.jar'.format(version))
-    run('jar cvfM {} -C {} .'.format(jar, source))
+    target = os.path.join('dist', 'robotframework-{}.jar'.format(version))
+    run('jar cvfM {} -C {} .'.format(target, source))
 
 def write_manifest(version, build_dir='build'):
     with open(os.path.join(build_dir, 'META-INF', 'MANIFEST.MF'), 'w') as mf:
