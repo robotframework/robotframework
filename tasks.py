@@ -141,16 +141,14 @@ def clean(remove_dist=True, create_dirs=False):
 
 
 @task
-def sdist(version=None, deploy=False, remove_dist=False):
+def sdist(deploy=False, remove_dist=False):
     """Create source distribution.
 
     Args:
-        version:      Update version information using `set_version` task.
         deploy:       Register and upload sdist to PyPI.
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
     clean(remove_dist)
-    set_version(version)
     run('python setup.py sdist --force-manifest'
         + (' register upload' if deploy else ''))
     announce()
@@ -163,39 +161,35 @@ def announce():
 
 
 @task
-def wininst(version=None, remove_dist=False):
+def wininst(remove_dist=False):
     """Create Windows installer.
 
     Args:
-        version:      Update version information using `set_version` task.
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
     clean(remove_dist)
-    set_version(version)
     run('python setup.py bdist_wininst '
         '--bitmap robot.bmp --install-script robot_postinstall.py')
     announce()
 
 
 @task
-def jar(version=None, remove_dist=False):
+def jar(remove_dist=False):
     """Create JAR distribution.
 
     Downloads Jython JAR if needed.
 
     Args:
-        version:      Update version information using `set_version` task.
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
     clean(remove_dist, create_dirs=True)
-    version = set_version(version)
     jython_jar = get_jython_jar(JYTHON_VERSION)
     print 'Using {}'.format(jython_jar)
     compile_java_files(jython_jar)
     unzip_jar(jython_jar)
     copy_robot_files()
     compile_python_files(jython_jar)
-    create_robot_jar(version)
+    create_robot_jar(get_version_from_file())
     announce()
 
 def get_jython_jar(version):
