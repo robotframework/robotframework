@@ -31,8 +31,8 @@ class Keyword(ModelObject):
     message_class = Message
 
     def __init__(self, name='', doc='', args=(), type='kw', timeout=None):
-        #: :class:`~.testsuite.TestSuite` or
-        #: :class:`~.testcase.TestCase` that contains this keyword.
+        #: :class:`~.model.testsuite.TestSuite` or
+        #: :class:`~.model.testcase.TestCase` that contains this keyword.
         self.parent = None
         #: Keyword name.
         self.name = name
@@ -44,10 +44,11 @@ class Keyword(ModelObject):
         self.type = type
         #: Keyword timeout.
         self.timeout = timeout
-        #: Keyword messages, a list of
-        #: :class:`~robot.model.message.Messages` instances.
+        #: Keyword messages, a list of :class:`~.model.message.Messages`
+        #: instances.
         self.messages = None
-        #: Child keyword results, a list of class:`~.Keyword`. instances
+        #: Child keyword results, a list of :class:`~.model.keyword.Keyword`
+        #: instances.
         self.keywords = None
 
     @setter

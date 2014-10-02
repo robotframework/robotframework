@@ -42,12 +42,12 @@ class TestSuite(ModelObject):
         self.metadata = metadata
         #: Path to the source file or directory.
         self.source = source
-        #: A list of child :class:`~.testsuite.TestSuite` instances.
+        #: A list of child :class:`~.model.testsuite.TestSuite` instances.
         self.suites = None
-        #: A list of :class:`~.testcase.TestCase` instances.
+        #: A list of :class:`~.model.testcase.TestCase` instances.
         self.tests = None
         #: A list containing setup and teardown as
-        #: :class:`~keyword.Keyword` instances.
+        #: :class:`~.model.keyword.Keyword` instances.
         self.keywords = None
         self._my_visitors = []
 
