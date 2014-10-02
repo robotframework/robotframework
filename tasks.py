@@ -125,7 +125,7 @@ def clean(remove_dist=True, create_dirs=False):
     and '$py.class' files.
 
     Args:
-        remove_dist:  Remove also 'dist'.
+        remove_dist:  Remove also 'dist' (default).
         create_dirs:  Re-create 'build' and 'dist' after removing them.
     """
     directories = ['build', 'dist']
@@ -148,7 +148,7 @@ def sdist(deploy=False, remove_dist=False):
         deploy:       Register and upload sdist to PyPI.
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
-    clean(remove_dist)
+    clean(remove_dist, create_dirs=True)
     run('python setup.py sdist --force-manifest'
         + (' register upload' if deploy else ''))
     announce()
@@ -167,7 +167,7 @@ def wininst(remove_dist=False):
     Args:
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
-    clean(remove_dist)
+    clean(remove_dist, create_dirs=True)
     run('python setup.py bdist_wininst '
         '--bitmap robot.bmp --install-script robot_postinstall.py')
     announce()
