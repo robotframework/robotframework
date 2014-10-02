@@ -35,8 +35,13 @@ Different ways to install Robot Framework itself are listed below and explained
 more thoroughly in subsequent sections.
 
 `Package managers (e.g. pip)`_
-    Python package managers such as pip_ make installation trivial. Using them
-    adds a precondition to install the package manager itself first, though.
+    Python package managers make installation trivial. For example, pip_ users
+    just need to execute::
+
+        pip install robotframework
+
+    Using package managers adds a precondition to install the package manager
+    itself first, though.
 
 `Installing from source`_
     This approach works regardless the operating system and the Python
