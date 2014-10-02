@@ -190,8 +190,9 @@ def create_distribution():
     import re
     from urlparse import urlparse
 
+    dist = os.path.normpath(os.path.join(CURDIR, '..', '..', 'dist'))
     ugpath, version = create_userguide()  # we are in doc/userguide after this
-    outdir = 'robotframework-userguide-%s' % version
+    outdir = os.path.join(dist, 'robotframework-userguide-%s' % version)
     templates = os.path.join(outdir, 'templates')
     libraries = os.path.join(outdir, 'libraries')
     images = os.path.join(outdir, 'images')
@@ -200,6 +201,8 @@ def create_distribution():
     if os.path.exists(outdir):
         print 'Removing previous user guide distribution'
         shutil.rmtree(outdir)
+    elif not os.path.exists(dist):
+        os.mkdir(dist)
 
     print 'Recompiling library docs'
     sys.path.insert(0, os.path.join(CURDIR, '..', 'libraries'))
@@ -242,11 +245,10 @@ def create_distribution():
 (\s+(href|src)="(.*?)"|>)
 ''', re.VERBOSE | re.DOTALL | re.IGNORECASE)
 
-    content = open(ugpath).read()
-    content = link_regexp.sub(replace_links, content)
-    outfile = open(os.path.join(outdir, os.path.basename(ugpath)), 'wb')
-    outfile.write(content)
-    outfile.close()
+    with open(ugpath) as infile:
+        content = link_regexp.sub(replace_links, infile.read())
+    with open(os.path.join(outdir, os.path.basename(ugpath)), 'wb') as outfile:
+        outfile.write(content)
     print os.path.abspath(outfile.name)
     return outdir
 
@@ -255,14 +257,17 @@ def create_distribution():
 #
 def create_zip():
     ugdir = create_distribution()
-    zip_distribution(ugdir)
+    print 'Creating zip package ...'
+    zip_path = zip_distribution(ugdir)
+    print 'Removing distribution directory', ugdir
+    shutil.rmtree(ugdir)
+    print zip_path
 
 
 def zip_distribution(dirpath):
     """Generic zipper. Used also by qs2html.py """
     from zipfile import ZipFile, ZIP_DEFLATED
 
-    print 'Creating zip package ...'
     zippath = os.path.normpath(dirpath) + '.zip'
     zipfile = ZipFile(zippath, 'w', compression=ZIP_DEFLATED)
     for root, _, files in os.walk(dirpath):
@@ -271,9 +276,7 @@ def zip_distribution(dirpath):
             print "Adding '%s'" % path
             zipfile.write(path)
     zipfile.close()
-    print 'Removing distribution directory', dirpath
-    shutil.rmtree(dirpath)
-    print os.path.abspath(zippath)
+    return os.path.abspath(zippath)
 
 
 if __name__ == '__main__':
