@@ -43,8 +43,8 @@ class GenerateApiDocs(object):
     def create_javadoc(self):
         self._clean_directory(self.JAVA_TARGET)
         print 'Generating javadoc'
-        call(['javadoc', '-sourcepath', self.JAVA_SRC, '-d', self.JAVA_TARGET,
-              '-notimestamp', 'org.robotframework'])
+        call(['javadoc', '-locale', 'en_US', '-sourcepath', self.JAVA_SRC,
+              '-d', self.JAVA_TARGET, '-notimestamp',  'org.robotframework'])
 
     def _clean_directory(self, dirname):
         if os.path.exists(dirname):
