@@ -6,8 +6,8 @@ and run `invoke --help` and `invode --list` for details how to execute tasks.
 
 import os
 import os.path
-import shutil
 import re
+import shutil
 import time
 import urllib
 import zipfile
@@ -17,6 +17,7 @@ from invoke import task, run
 
 assert os.getcwd() == os.path.dirname(__file__)
 
+VERSION_RE = re.compile('^((2\.\d+)(\.\d+)?)((a|b|rc|.dev)\d+)?$')
 VERSION_FILE = os.path.join('src', 'robot', 'version.py')
 JYTHON_VERSION = '2.5.3'
 
@@ -25,21 +26,44 @@ JYTHON_VERSION = '2.5.3'
 def help():
     """Show help, basically an alias for --help.
 
-    Needed as a default task due to https://github.com/pyinvoke/invoke/issues/180
+    This task can be removed once the fix to this issue is released:
+    https://github.com/pyinvoke/invoke/issues/180
     """
     run('invoke --help')
 
 
 @task
-def set_version(version):
+def tag_release(version):
+    """Tag specified release.
+
+    Updates version using `set_version`, creates tag, and pushes changes.
+    """
+    version = set_version(version, push=True)
+    run("git tag -a {0} -m 'Release {0}'".format(version))
+    run("git push --tags")
+
+
+@task
+def set_version(version, push=False):
     """Set version in `src/robot/version.py`.
 
+    Version can have these values:
+    - Actual version number to use. See below for supported formats.
+    - String 'dev' to update version to latest development version
+      (e.g. 2.8 -> 2.8.1.dev, 2.8.1 -> 2.8.2.dev, 2.8a1 -> 2.8.dev) with
+      the current date added or updated.
+    - String 'keep' to keep using the previously set version.
+
     Given version must be in one of these PEP-440 compatible formats:
-    - stable version in 'X.Y' or 'X.Y.Z' format (e.g. 2.8, 2.8.6)
-    - pre-releases with 'aN', 'bN' or 'rcN' postfix (e.g. 2.8a1, 2.8.6rc2)
-    - development releases with '.devYYYYMMDD' postfix (e.g. 2.8.6.dev20141001)
+    - Stable version in 'X.Y' or 'X.Y.Z' format (e.g. 2.8, 2.8.6)
+    - Pre-releases with 'aN', 'bN' or 'rcN' postfix (e.g. 2.8a1, 2.8.6rc2)
+    - Development releases with '.devYYYYMMDD' postfix (e.g. 2.8.6.dev20141001)
       or with '.dev' alone (e.g. 2.8.6.dev) in which case date is added
-      automatically
+      automatically.
+
+    Args:
+        version:  Version to use. See above for supported values and formats.
+        push:     Commit and push changes to the remote repository.
     """
     if version and version != 'keep':
         version = validate_version(version)
@@ -47,14 +71,26 @@ def set_version(version):
         write_pom_file(version)
     version = get_version_from_file()
     print 'Version:', version
+    if push:
+        git_commit(VERSION_FILE, 'Updated version to {}'.format(version),
+                   push=True)
     return version
 
 def validate_version(version):
+    if version == 'dev':
+        version = get_dev_version()
     if version.endswith('.dev'):
         version += time.strftime('%Y%m%d')
-    if not re.match('^2\.\d+(\.\d+)?((a|b|rc|.dev)\d+)?$', version):
+    if not VERSION_RE.match(version):
         raise ValueError("Invalid version '{}'.".format(version))
     return version
+
+def get_dev_version():
+    previous = get_version_from_file()
+    major, minor, pre = VERSION_RE.match(previous).groups()[1:4]
+    if not pre:
+        minor = '.{}'.format(int(minor[1:]) + 1 if minor else 1)
+    return '{}{}.dev'.format(major, minor)
 
 def write_version_file(version):
     update_file(VERSION_FILE, "VERSION = '.*'", version)
@@ -74,6 +110,11 @@ def get_version_from_file():
     namespace = {}
     execfile(VERSION_FILE, namespace)
     return namespace['get_version']()
+
+def git_commit(path, message, push=False):
+    run("git commit -m '{}' {}".format(message, path))
+    if push:
+        run('git push')
 
 
 @task
