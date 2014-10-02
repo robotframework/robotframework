@@ -72,8 +72,8 @@ def set_version(version, push=False):
     version = get_version_from_file()
     print 'Version:', version
     if push:
-        git_commit(VERSION_FILE, 'Updated version to {}'.format(version),
-                   push=True)
+        git_commit([VERSION_FILE, 'pom.xml'],
+                   'Updated version to {}'.format(version), push=True)
     return version
 
 def validate_version(version):
@@ -111,8 +111,9 @@ def get_version_from_file():
     execfile(VERSION_FILE, namespace)
     return namespace['get_version']()
 
-def git_commit(path, message, push=False):
-    run("git commit -m '{}' {}".format(message, path))
+def git_commit(paths, message, push=False):
+    paths = paths if isinstance(paths, basestring) else ' '.join(paths)
+    run("git commit -m '{}' {}".format(message, paths))
     if push:
         run('git push')
 
