@@ -32,7 +32,7 @@ Validate Log
     \   Should Not Contain    ${LOG}    -${item}
 
 Validate Tests
-    Check Suite Contains Tests    ${SUITE}    Passing    Failing
+    Should Contain Tests    ${SUITE}    Passing    Failing
     ...    For when test fails    For when test passes
     ...    WUKS when test fails    WUKS when test passes
     ...    NAME when test fails    NAME when test passes

@@ -111,33 +111,45 @@ class TestCheckerLibrary:
                              "Expected:\n%s\n\nActual:\n%s\n"
                              % (test.exp_message, test.message))
 
-    def check_suite_contains_tests(self, suite, *expected_names, **statuses):
-        actual_tests = [test for test in self.get_tests_from_suite(suite)]
-        tests_msg = """
-Expected tests : %s
-Actual tests   : %s""" % (str(list(expected_names)), str(actual_tests))
-        expected_names = [utils.normalize(name) for name in expected_names]
-        statuses = dict((utils.normalize(k), v) for k, v in statuses.items())
-        if len(actual_tests) != len(expected_names):
+    def should_contain_tests(self, suite, *names, **names_and_statuses):
+        """Verify that specified tests exists in suite.
+
+        'names' contains test names to check. These tests are expected to
+        pass/fail as their documentation says. Is same name is given multiple
+        times, test ought to be executed multiple times too.
+
+        'names_and_statuses' contains test names with associated custom status
+        in format `STATUS:Message`. Test is given both in 'names' and in
+        'names_and_statuses', only the latter has an effect.
+        """
+        tests = self.get_tests_from_suite(suite)
+        expected = [(n, None) for n in names if n not in names_and_statuses]
+        expected.extend((n, s) for n, s in names_and_statuses.items())
+        tests_msg = "\nExpected tests : %s\nActual tests   : %s" \
+                    % (', '.join(sorted([e[0] for e in expected], key=lambda s: s.lower())),
+                       ', '.join(sorted([t.name for t in tests], key=lambda s: s.lower())))
+        if len(tests) != len(expected):
             raise AssertionError("Wrong number of tests." + tests_msg)
-        for test in actual_tests:
-            norm_name = utils.normalize(test.name)
-            if utils.MultiMatcher(expected_names).match(test.name):
-                print "Verifying test '%s'" % test.name
-                status = statuses.get(norm_name)
-                if status and ':' in status:
-                    status, message = status.split(':', 1)
-                else:
-                    message = None
-                self.check_test_status(test, status, message)
-                expected_names.remove(norm_name)
-            else:
+        for test in tests:
+            print "Verifying test '%s'" % test.name
+            try:
+                status = self._find_expected_status(test.name, expected)
+            except IndexError:
                 raise AssertionError("Test '%s' was not expected to be run.%s"
                                      % (test.name, tests_msg))
-        assert not expected_names
+            expected.pop(expected.index((test.name, status)))
+            if status and ':' in status:
+                status, message = status.split(':', 1)
+            else:
+                message = None
+            self.check_test_status(test, status, message)
+        assert not expected
 
-    def should_contain_tests(self, suite, *test_names):
-        self.check_suite_contains_tests(suite, *test_names)
+    def _find_expected_status(self, test, expected):
+        for name, status in expected:
+            if name == test:
+                return status
+        raise IndexError
 
     def should_not_contain_tests(self, suite, *test_names):
         actual_names = [t.name for t in suite.tests]
@@ -145,13 +157,19 @@ Actual tests   : %s""" % (str(list(expected_names)), str(actual_tests))
             if name in actual_names:
                 raise AssertionError('Suite should not have contained test "%s"' % name)
 
-    def should_contain_suites(self, suite, *expected_names):
+    def should_contain_suites(self, suite, *expected):
         print 'Suite has suites', suite.suites
-        actual_names = [s.name for s in suite.suites]
-        assert_equals(len(actual_names), len(expected_names), 'Wrong number of subsuites')
-        for expected in expected_names:
-            if not utils.Matcher(expected).match_any(actual_names):
-                raise AssertionError('Suite %s not found' % expected)
+        expected = sorted(expected)
+        actual = sorted(s.name for s in suite.suites)
+        if len(actual) != len(expected):
+            raise AssertionError("Wrong number of suites.\n"
+                                 "Expected (%d): %s\n"
+                                 "Actual   (%d): %s"
+                                 % (len(expected), ', '.join(expected),
+                                    len(actual), ', '.join(actual)))
+        for name in expected:
+            if not utils.Matcher(name).match_any(actual):
+                raise AssertionError('Suite %s not found' % name)
 
     def should_contain_tags(self, test, *tags):
         print 'Test has tags', test.tags

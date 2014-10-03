@@ -118,7 +118,7 @@ Run and check Tests
     [Arguments]  ${params}  @{tests}
     Run Rebot  ${params} ${ESCAPES}  ${INPUT FILE}
     Stderr Should Be Empty
-    Check Suite Contains Tests  ${SUITE}  @{tests}
+    Should Contain Tests  ${SUITE}  @{tests}
     Should Be True  ${SUITE.statistics.all.passed} == len(@{tests})
     Check Stats
 
@@ -145,7 +145,7 @@ Run And Check Suites and Tests
     [Arguments]  ${params}  ${subsuite}  @{tests}
     Run Suites  ${params}
     Should Contain Suites  ${SUITE.suites[0]}   ${subsuite}
-    Check Suite Contains Tests  ${SUITE}  @{tests}
+    Should Contain Tests  ${SUITE}  @{tests}
     Should Be True  ${SUITE.statistics.all.passed} == len(@{tests})
     Check Stats
 

@@ -14,7 +14,7 @@ ${INPUT FILE 2}    %{TEMPDIR}/robot-tags-input-2.xml
 @{INPUT FILES}    ${INPUT FILE}
 ${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
-@{EXCL_ALL}       Excl-1    Excl-12    Excl-123
+@{EXCL_ALL}       excl-1    Excl-12    Excl-123
 @{ALL}            @{INCL_ALL}    @{EXCL_ALL}
 
 *** Test Cases ***
@@ -50,18 +50,18 @@ One Exclude
     --exclude excl1    @{INCL_ALL}
 
 Matching And Non Matching Excludes
-    -e EXCL3 -e nonexisting    @{INCL_ALL}    Excl-1    Excl-12
+    -e EXCL3 -e nonexisting    @{INCL_ALL}    excl-1    Excl-12
 
 More Excludes
-    --exclude excl3 -e excl2    @{INCL_ALL}    Excl-1
+    --exclude excl3 -e excl2    @{INCL_ALL}    excl-1
 
 Exclude With AND
-    --exclude excl1AMPexcl2    @{INCL_ALL}    Excl-1
-    -e excl1AMPexcl2ANDexcl3    @{INCL_ALL}    Excl-1    Excl-12
+    --exclude excl1AMPexcl2    @{INCL_ALL}    excl-1
+    -e excl1AMPexcl2ANDexcl3    @{INCL_ALL}    excl-1    Excl-12
 
 Exclude With OR
-    --exclude nonexORexcl2    @{INCL_ALL}    Excl-1
-    --exclude excl3ORexcl2    @{INCL_ALL}    Excl-1
+    --exclude nonexORexcl2    @{INCL_ALL}    excl-1
+    --exclude excl3ORexcl2    @{INCL_ALL}    excl-1
 
 Exclude With Patterns
     --exclude exc??    @{INCL_ALL}
@@ -70,7 +70,7 @@ Exclude With Patterns
 
 Include And Exclude
     [Documentation]    Include and exclude together with and without patterns and ANDing
-    -i force --exclude excl2    @{INCL_ALL}    Excl-1
+    -i force --exclude excl2    @{INCL_ALL}    excl-1
     --include STARcl2 -i nonex -e e???2 -i forceANDi*1    @{INCL_ALL}
 
 Include with NOT
@@ -152,7 +152,7 @@ Run And Check Include And Exclude
     [Arguments]    ${params}    @{tests}
     Run Rebot    ${params} ${ESCAPES}    @{INPUT FILES}
     Stderr Should Be Empty
-    Check Suite Contains Tests    ${SUITE}    @{tests}
+    Should Contain Tests    ${SUITE}    @{tests}
     Should Be True    ${SUITE.statistics.all.passed} == len(@{tests})
     Should Be True    ${SUITE.statistics.all.failed} == 0
     ${exp start} =    Set Variable If    "${params}"    ${NONE}    ${ORIG START}

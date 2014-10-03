@@ -33,7 +33,7 @@ Run Sample File And Check Tests
     Should Be Equal  ${SUITE.doc}  A complex testdata file in ${type} format.
     Check Log Message  ${SUITE.setup.messages[0]}  Setup
     Should Be Equal  ${SUITE.teardown}  ${None}
-    Check Suite Contains Tests  ${SUITE}  @{sample_tests}
+    Should Contain Tests  ${SUITE}  @{sample_tests}
     Check Test Tags  Own Tags  force1  force2  own1  own2
     Check Test Tags  Default Tags  default1  force1  force2
     ${test} =  Check Test Case  Test Timeout
@@ -56,7 +56,7 @@ Run Suite Dir And Check Results
     Should Be Equal  ${SUITE.doc}  ${EMPTY}
     Should Contain Suites  ${SUITE}  Sample  With Init
     Should Contain Suites  ${SUITE.suites[1]}   Sub Suite1  Sub Suite2
-    Check Suite Contains Tests  ${SUITE}  @{SAMPLE_TESTS}  @{SUBSUITE_TESTS}
+    Should Contain Tests  ${SUITE}  @{SAMPLE_TESTS}  @{SUBSUITE_TESTS}
     ${invalid} =  Join Path  ${DATADIR}  ${path}  invalid.${type}
     Check Syslog Contains  Parsing data source '${invalid}' failed:  File has no test case table.
     ${empty} =  Join Path  ${DATADIR}  ${path}  empty.${type}
@@ -69,7 +69,7 @@ Check Suite With Init
     Check Log Message  ${suite.setup.kws[0].messages[0]}  Running suite setup
     Should Be Equal  ${suite.teardown}  ${None}
     Should Contain Suites  ${suite}   Sub Suite1  Sub Suite2
-    Check Suite Contains Tests  ${suite}  @{SUBSUITE_TESTS}
+    Should Contain Tests  ${suite}  @{SUBSUITE_TESTS}
 
 Check Is Docutils Installed
     ${output} =  Run  ${INTERPRETER} -c "import docutils"

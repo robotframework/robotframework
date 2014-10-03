@@ -24,28 +24,28 @@ ${SUITE4}  Combined from SUITE2 (recombine) and Times
 Combining Two
     Should Contain Suites  ${SUITE1}  Pass And Fail  Normal
     Should Contain Suites  ${SUITE2}  Pass And Fail  Normal
-    Check Suite Contains Tests  ${SUITE1}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
-    Check Suite Contains Tests  ${SUITE1.suites[0]}  @{PASS_FAIL_TESTS}
-    Check Suite Contains Tests  ${SUITE1.suites[1]}  @{NORMAL_TESTS}
-    Check Suite Contains Tests  ${SUITE2}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
-    Check Suite Contains Tests  ${SUITE2.suites[0]}  @{PASS_FAIL_TESTS}
-    Check Suite Contains Tests  ${SUITE2.suites[1]}  @{NORMAL_TESTS}
+    Should Contain Tests  ${SUITE1}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
+    Should Contain Tests  ${SUITE1.suites[0]}  @{PASS_FAIL_TESTS}
+    Should Contain Tests  ${SUITE1.suites[1]}  @{NORMAL_TESTS}
+    Should Contain Tests  ${SUITE2}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
+    Should Contain Tests  ${SUITE2.suites[0]}  @{PASS_FAIL_TESTS}
+    Should Contain Tests  ${SUITE2.suites[1]}  @{NORMAL_TESTS}
 
 Combining Three
     Should Contain Suites  ${SUITE3}  Pass And Fail  Normal  Times
-    Check Suite Contains Tests  ${SUITE3}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}  @{TIMES_TESTS}
-    Check Suite Contains Tests  ${SUITE3.suites[0]}  @{PASS_FAIL_TESTS}
-    Check Suite Contains Tests  ${SUITE3.suites[1]}  @{NORMAL_TESTS}
-    Check Suite Contains Tests  ${SUITE3.suites[2]}  @{TIMES_TESTS}
+    Should Contain Tests  ${SUITE3}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}  @{TIMES_TESTS}
+    Should Contain Tests  ${SUITE3.suites[0]}  @{PASS_FAIL_TESTS}
+    Should Contain Tests  ${SUITE3.suites[1]}  @{NORMAL_TESTS}
+    Should Contain Tests  ${SUITE3.suites[2]}  @{TIMES_TESTS}
 
 Recombining
     Should Contain Suites  ${SUITE4}   Times   New Name
     Should Contain Suites  ${SUITE4.suites[1]}  Pass And Fail  Normal
-    Check Suite Contains Tests  ${SUITE4}  @{TIMES_TESTS}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
-    Check Suite Contains Tests  ${SUITE4.suites[0]}  @{TIMES_TESTS}
-    Check Suite Contains Tests  ${SUITE4.suites[1]}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
-    Check Suite Contains Tests  ${SUITE4.suites[1].suites[0]}  @{PASS_FAIL_TESTS}
-    Check Suite Contains Tests  ${SUITE4.suites[1].suites[1]}  @{NORMAL_TESTS}
+    Should Contain Tests  ${SUITE4}  @{TIMES_TESTS}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
+    Should Contain Tests  ${SUITE4.suites[0]}  @{TIMES_TESTS}
+    Should Contain Tests  ${SUITE4.suites[1]}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
+    Should Contain Tests  ${SUITE4.suites[1].suites[0]}  @{PASS_FAIL_TESTS}
+    Should Contain Tests  ${SUITE4.suites[1].suites[1]}  @{NORMAL_TESTS}
 
 Default Suite Name When Combining Two
     Check Names  ${SUITE1}  Pass And Fail & Normal

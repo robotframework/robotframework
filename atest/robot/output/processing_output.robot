@@ -14,7 +14,7 @@ Test Case File Suite
     Check Normal Suite Defaults  ${SUITE}
     Should Be Equal  ${SUITE.full_message}  2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
     Should Be Equal  ${SUITE.statistics.message}  2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
-    Check Suite Contains Tests  ${SUITE}  First One  Second One
+    Should Contain Tests  ${SUITE}  First One  Second One
 
 Directory Suite
     [Documentation]  Testing suite created from a test suite directory. Also testing metadata from cli.
@@ -37,7 +37,7 @@ Minimal hand-created output
     Check Minimal Suite Defaults  ${SUITE}
     Check Minimal Suite Defaults  ${SUITE.suites[0]}
     Check Minimal Suite Defaults  ${SUITE.suites[1]}
-    Check Suite Contains Tests  ${SUITE}  Test 1.1  Test 1.2  Test 2.1
+    Should Contain Tests  ${SUITE}  Test 1.1  Test 1.2  Test 2.1
     Check Names  ${SUITE.suites[0].tests[0]}  Test 1.1  Root.Sub 1.
     Check Names  ${SUITE.suites[0].tests[1]}  Test 1.2  Root.Sub 1.
     Check Names  ${SUITE.suites[1].tests[0]}  Test 2.1  Root.Sub 2.
@@ -90,7 +90,7 @@ Check Suite Got From Misc/suites/ Directory
     Should Be Empty  ${SUITE.tests}
     Should Contain Suites  ${SUITE.suites[1]}  Sub1  Sub2
     Should Be True  ${SUITE.suites[0].suites} + ${SUITE.suites[1].suites[0].suites}+ ${SUITE.suites[1].suites[1].suites}+ ${SUITE.suites[2].suites[0].suites}+ ${SUITE.suites[3].suites} + ${SUITE.suites[4].suites} + ${SUITE.suites[5].suites}== []
-    Check Suite Contains Tests  ${SUITE}  SubSuite1 First  SubSuite2 First  SubSuite3 First  SubSuite3 Second  Suite1 First  Suite1 Second
+    Should Contain Tests  ${SUITE}  SubSuite1 First  SubSuite2 First  SubSuite3 First  SubSuite3 Second  Suite1 First  Suite1 Second
     ...  Third In Suite1  Suite2 First  Suite3 First  Suite4 First  Test From Sub Suite 4
     Check Normal Suite Defaults  ${SUITE.suites[0]}  ${EMPTY}  []  teardown=BuiltIn.Log
     Check Normal Suite Defaults  ${SUITE.suites[1]}

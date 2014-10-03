@@ -85,10 +85,10 @@ Verify Directory With Mixed Data With ReST
     Should Be Equal  ${SUITE.suites[1].doc}  Test suite in ReST file
     Should Be Equal  ${SUITE.suites[2].doc}  Test suite in TSV file
     Should Be Equal  ${SUITE.suites[3].doc}  Test suite in TXT file
-    Check Suite Contains Tests  ${SUITE.suites[0]}  @{HTML TESTS}
-    Check Suite Contains Tests  ${SUITE.suites[1]}  @{REST TESTS}
-    Check Suite Contains Tests  ${SUITE.suites[2]}  @{TSV TESTS}
-    Check Suite Contains Tests  ${SUITE.suites[3]}  @{TXT TESTS}
+    Should Contain Tests  ${SUITE.suites[0]}  @{HTML TESTS}
+    Should Contain Tests  ${SUITE.suites[1]}  @{REST TESTS}
+    Should Contain Tests  ${SUITE.suites[2]}  @{TSV TESTS}
+    Should Contain Tests  ${SUITE.suites[3]}  @{TXT TESTS}
 
 Verify Directory With Mixed Data Without ReST
     Should Be Equal  ${SUITE.name}  Mixed Data
@@ -100,16 +100,16 @@ Verify Directory With Mixed Data Without ReST
 Verify Multiple Data Sources With ReST
     Should Be Equal  ${SUITE.name}  Sample & Sample & Sample & Sample & Mixed Data
     Should Contain Suites  ${SUITE}  Sample  Sample  Sample  Sample  Mixed Data
-    Check Suite Contains Tests  ${SUITE.suites[0]}  @{SAMPLE_TESTS}
-    Check Suite Contains Tests  ${SUITE.suites[1]}  @{SAMPLE_TESTS}
-    Check Suite Contains Tests  ${SUITE.suites[2]}  @{SAMPLE_TESTS}
-    Check Suite Contains Tests  ${SUITE.suites[3]}  @{SAMPLE_TESTS}
-    Check Suite Contains Tests  ${SUITE.suites[4]}  @{HTML TESTS}  @{REST TESTS}  @{TSV TESTS}  @{TXT TESTS}
+    Should Contain Tests  ${SUITE.suites[0]}  @{SAMPLE_TESTS}
+    Should Contain Tests  ${SUITE.suites[1]}  @{SAMPLE_TESTS}
+    Should Contain Tests  ${SUITE.suites[2]}  @{SAMPLE_TESTS}
+    Should Contain Tests  ${SUITE.suites[3]}  @{SAMPLE_TESTS}
+    Should Contain Tests  ${SUITE.suites[4]}  @{HTML TESTS}  @{REST TESTS}  @{TSV TESTS}  @{TXT TESTS}
 
 Verify Multiple Data Sources Without ReST
     Should Be Equal  ${SUITE.name}  Sample & Sample & Sample & Mixed Data
     Should Contain Suites  ${SUITE}   Sample  Sample  Sample  Mixed Data
-    Check Suite Contains Tests  ${SUITE.suites[0]}  @{SAMPLE_TESTS}
-    Check Suite Contains Tests  ${SUITE.suites[1]}  @{SAMPLE_TESTS}
-    Check Suite Contains Tests  ${SUITE.suites[2]}  @{SAMPLE_TESTS}
+    Should Contain Tests  ${SUITE.suites[0]}  @{SAMPLE_TESTS}
+    Should Contain Tests  ${SUITE.suites[1]}  @{SAMPLE_TESTS}
+    Should Contain Tests  ${SUITE.suites[2]}  @{SAMPLE_TESTS}
 
