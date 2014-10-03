@@ -19,7 +19,7 @@ from robot.utils import ET, ETSource, get_error_message
 
 from .executionresult import Result, CombinedResult
 from .flattenkeywordmatcher import FlattenKeywordMatcher
-from .rerunmerger import ReRunMerger
+from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
 
 
@@ -46,7 +46,7 @@ def ExecutionResult(*sources, **options):
 
 def _merge_results(original, merged, options):
     result = ExecutionResult(original, **options)
-    merger = ReRunMerger(result)
+    merger = Merger(result)
     for path in merged:
         merged = ExecutionResult(path, **options)
         merger.merge(merged)

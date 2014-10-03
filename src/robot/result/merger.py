@@ -16,7 +16,7 @@ from robot.errors import DataError
 from robot.model import SuiteVisitor
 
 
-class ReRunMerger(SuiteVisitor):
+class Merger(SuiteVisitor):
 
     def __init__(self, result):
         self.root = result.suite
