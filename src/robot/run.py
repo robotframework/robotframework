@@ -79,10 +79,10 @@ Options
                           Underscores in the documentation are converted to
                           spaces and it may also contain simple HTML formatting
                           (e.g. *bold* and http://url/).
- -M --metadata name:value *  Set metadata of the top level test suite.
-                          Underscores in the name and value are converted to
-                          spaces. Value can contain same HTML formatting as
-                          --doc. Example: `--metadata version:1.2`
+ -M --metadata name:value *  Set metadata of the top level suite. Underscores
+                          in the name and value are converted to spaces. Value
+                          can contain same HTML formatting as --doc.
+                          Example: --metadata version:1.2
  -G --settag tag *        Sets given tag(s) to all executed test cases.
  -t --test name *         Select test cases to run by name or long name. Name
                           is case and space insensitive and it can also be a
