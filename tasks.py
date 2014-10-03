@@ -13,11 +13,6 @@ import re
 from invoke import task, run
 
 
-def dryrun(command):
-    print command
-
-
-
 assert os.getcwd() == os.path.dirname(__file__)
 
 
@@ -95,7 +90,7 @@ def update_index(version):
 
 @task
 def push_changes(version):
-    """Commit and push changes."""
+    """Gives instructions to commit and push changes."""
     print "\nRun the following commands:\n"
     print "git add {} index.html latest".format(version)
     print "git commit -m 'Updated to {}'".format(version)
