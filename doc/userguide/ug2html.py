@@ -270,11 +270,13 @@ def zip_distribution(dirpath):
 
     zippath = os.path.normpath(dirpath) + '.zip'
     zipfile = ZipFile(zippath, 'w', compression=ZIP_DEFLATED)
+    arcroot = os.path.dirname(dirpath)
     for root, _, files in os.walk(dirpath):
         for name in files:
             path = os.path.join(root, name)
-            print "Adding '%s'" % path
-            zipfile.write(path)
+            arcpath = os.path.relpath(path, arcroot)
+            print "Adding '%s'" % arcpath
+            zipfile.write(path, arcpath)
     zipfile.close()
     return os.path.abspath(zippath)
 
