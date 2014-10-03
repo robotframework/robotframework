@@ -162,10 +162,10 @@ Any Character Escaped
     Should Be Equal    \ä    ä
 
 Escaping Variables
-    [Documentation]    FAIL Non-existing variable '\${bar}'.
+    [Documentation]    FAIL Variable '\${foobar}' not found.
     Should Be Equal    \${foo}    $\{foo}
     Should Be Equal    \\${var}    \\\${non_existing}
-    Should Be Equal    \${bar}    ${bar}
+    Should Be Equal    \${foobar}    ${foobar}
 
 Escaping Variables With User Keywords
     ${ret} =    User Keyword    \${foo}    foo

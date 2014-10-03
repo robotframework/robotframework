@@ -38,9 +38,9 @@ Failing Repeat Keyword and Teardown
     100 x  Fail  Failing, again, instead of repeating
     [Teardown]  Fail  Teardown is executed but fails
 
-Non-Exising Variable In Repeat Keyword
-    [Documentation]  FAIL Resolving variable '${non-exiting-variable}' failed: Non-existing variable '${non}'.
-    1000x  Log  ${non-exiting-variable}
+Non-Existing Variable In Repeat Keyword
+    [Documentation]  FAIL Resolving variable '${nonexisting-variable}' failed: Variable '${nonexisting}' not found.
+    1000x  Log  ${nonexisting-variable}
 
 Non Existing Keyword In Repeat
     [Documentation]  FAIL No keyword with name 'Non Existing Keyword' found.
@@ -83,7 +83,7 @@ No Repeat With Variable value 2x
     Equals  ${foo}  String
 
 Repeat With Non Existing Variable Fails
-    [Documentation]  FAIL Non-existing variable '\${foo}'.
+    [Documentation]  FAIL Variable '\${foo}' not found.
     ${foo} x  Noop
 
 Non Existing Keyword In Repeat With Variable

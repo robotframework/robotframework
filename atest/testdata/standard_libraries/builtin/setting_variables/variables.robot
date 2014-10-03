@@ -29,7 +29,7 @@ Set Variable With More Or Less Than One Value
     Should Be Equal    ${emp}    ${EMPTY}
 
 Set Test Variable - Scalars
-    [Documentation]    FAIL Non-existing variable '\${non_existing}'.
+    [Documentation]    FAIL Variable '\${non_existing}' not found.
     Should Be Equal    ${scalar}    Hi tellus
     Set Test Variable    $scalar    Hello    world
     Should Be True    ${scalar} == ['Hello', 'world']    Hello world
@@ -100,7 +100,7 @@ Set Test Variable Not Affecting Other Tests
     Check Test Variables Not Available In UK
 
 Set Suite Variable 1
-    [Documentation]    FAIL Non-existing variable '\${non_existing}'.
+    [Documentation]    FAIL Variable '\${non_existing}' not found.
     Variable Should Not Exist    $parent_suite_setup_suite_var
     Set Suite Variable    $parent_suite_setup_suite_var    Parent should not see this value
     Variable Should Not Exist    $suite_setup_local_var
@@ -134,7 +134,7 @@ Set Suite Variable 2
     Set Suite Variable    invalid
 
 Set Global Variable 1
-    [Documentation]    FAIL Non-existing variable '\@{non_existing}'.
+    [Documentation]    FAIL Variable '\@{non_existing}' not found.
     Should Be Equal    ${parent_suite_setup_global_var}    Set in __init__
     Should Be Equal    ${suite_setup_global_var}    Global var set in suite setup
     Should Be True    @{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]
@@ -240,7 +240,7 @@ Setting Test/Suite/Global Variable Which Value Is In Variable Syntax
     Should Be Equal    ${variable}    bar
 
 Set Test/Suite/Global Variable With Internal Variables In Name
-    [Documentation]    This obscure test is here to prevent this bug from reappearing:\n http://code.google.com/p/robotframework/issues/detail?id=397\n FAIL Non-existing variable '\${nonex}'.
+    [Documentation]    This obscure test is here to prevent this bug from reappearing:\n http://code.google.com/p/robotframework/issues/detail?id=397\n FAIL Variable '\${nonexisting}' not found.
     ${x} =    Set Variable    bar
     Set Test Variable    \${foo ${x}}    value
     Should Be Equal    ${foo bar}    value
@@ -248,7 +248,7 @@ Set Test/Suite/Global Variable With Internal Variables In Name
     Should Be Equal    ${barbaari}    conan
     Set Global Variable    $${x}    pub
     Should Be Equal    ${bar}    pub
-    Set Test Variable    ${xxx ${nonex}}    whatever
+    Set Test Variable    ${xxx ${nonexisting}}    whatever
 
 Using @{EMPTY} to with `Set Test/Suite/Global Variable` keywords
     Set Test Variable    @{LIST}    @{EMPTY}

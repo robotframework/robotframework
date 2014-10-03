@@ -39,11 +39,11 @@ Keyword Name in ELSE as list variable
     Should Be Equal    ${ret}    1 2 \${escaped} c:\\temp foo
 
 Keyword Name in ELSE as non-existing variable 1
-    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    [Documentation]    FAIL Variable '\${NON EXISTING}' not found.
     Run Keyword If    ${1}    ${NON EXISTING}    ELSE    ${FAIL}
 
 Keyword Name in ELSE as non-existing variable 2
-    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    [Documentation]    FAIL Variable '\${NON EXISTING}' not found.
     Run Keyword If    ${0}    ${FAIL}    ELSE    ${NON EXISTING}
 
 ELSE without keyword is invalid 1
@@ -111,15 +111,15 @@ Keyword Name in ELSE IF as list variable
     Should Be Equal    ${ret}    1 2 \${escaped} c:\\temp foo
 
 Keyword Name in ELSE IF as non-existing variable 1
-    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    [Documentation]    FAIL Variable '\${NON EXISTING}' not found.
     Run Keyword If    ${1}    ${NON EXISTING}    ELSE IF    ${1}    ${FAIL}
 
 Keyword Name in ELSE If as non-existing variable 2
-    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    [Documentation]    FAIL Variable '\${NON EXISTING}' not found.
     Run Keyword If    ${0}    ${FAIL}    ELSE IF    ${1}    ${NON EXISTING}
 
 Keyword Name in ELSE If as non-existing variable 3
-    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    [Documentation]    FAIL Variable '\${NON EXISTING}' not found.
     Run Keyword If    ${0}    ${FAIL}    ELSE IF    ${0}    ${NON EXISTING}
 
 ELSE IF without keyword is invalid 1

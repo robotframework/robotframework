@@ -46,7 +46,7 @@ Return List Variable Containing Multiple Items
     Equals  ${ret2}  ${42}
 
 Return Non-Existing Variable
-    [Documentation]  FAIL  Replacing variables from keyword return value failed: Non-existing variable '\${nonex}'.
+    [Documentation]  FAIL  Replacing variables from keyword return value failed: Variable '\${nonexisting}' not found.
     Return Non-Existing Variable
 
 
@@ -76,4 +76,4 @@ Return List Variable
     [Return]  @{args}
 
 Return Non-Existing Variable
-    [Return]  ${nonex}
+    [Return]  ${nonexisting}

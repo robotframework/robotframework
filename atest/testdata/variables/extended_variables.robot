@@ -61,16 +61,16 @@ Accessing Java Lists and Maps
     Should Be Equal  ${list[1]}  two
 
 Failing When Base Name Does Not Exist
-    [Documentation]  FAIL Resolving variable '\${nonex.whatever}' failed: Non-existing variable '\${nonex}'.
-    Log  ${nonex.whatever}
+    [Documentation]  FAIL Resolving variable '\${nonexisting.whatever}' failed: Variable '\${nonexisting}' not found.
+    Log  ${nonexisting.whatever}
 
 Failing When Base Name Starts With Existing Variable 1
-    [Documentation]  FAIL Non-existing variable '\${nonex}'.
+    [Documentation]  FAIL Variable '\${nonexisting}' not found.
     Log  ${None}
-    Log  ${nonex}
+    Log  ${nonexisting}
 
 Failing When Base Name Starts With Existing Variable 2
-    [Documentation]  FAIL Non-existing variable '\${lista}'.
+    [Documentation]  FAIL STARTS: Variable '\${lista}' not found.
     Log  ${list}
     Log  ${lista}
 

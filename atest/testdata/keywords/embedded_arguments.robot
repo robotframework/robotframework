@@ -34,7 +34,7 @@ Embedded Arguments as Variables
     Should Be True  ${item} == []
 
 Non-Existing Variable in Embedded Arguments
-    [Documentation]  FAIL Non-existing variable '${non existing}'.
+    [Documentation]  FAIL Variable '${non existing}' not found.
     User ${non existing} Selects ${variables} From Webshop
 
 Non-Existing Variable in Embedded Arguments and Positional Arguments
@@ -42,7 +42,7 @@ Non-Existing Variable in Embedded Arguments and Positional Arguments
     User ${non existing} Selects ${variables} From Webshop    invalid    args
 
 Non-Existing Variable in Embedded Arguments and in Positional Arguments
-    [Documentation]  FAIL Non-existing variable '\${nonex pos}'.
+    [Documentation]  FAIL Variable '\${nonex pos}' not found.
     User ${nonex emb} Selects ${variables} From Webshop    ${nonex pos}
 
 Custom Embedded Argument Regexp
@@ -120,7 +120,7 @@ Keyword with normal arguments cannot have embedded arguments
     Keyword with value and normal args  foo  bar
 
 Keyword with embedded args can be used as "normal" keyword
-    [Documentation]  FAIL Replacing variables from keyword return value failed: Non-existing variable '${user}'.
+    [Documentation]  FAIL Replacing variables from keyword return value failed: Variable '${user}' not found.
     Normal keyword with ${variable} in name
     User ${user} Selects ${item} From Webshop
 

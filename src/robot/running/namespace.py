@@ -14,7 +14,6 @@
 
 import os
 import copy
-import difflib
 
 from robot import utils
 from robot.errors import DataError
@@ -244,11 +243,8 @@ class KeywordStore(object):
         finder = KeywordRecommendationFinder(self.user_keywords,
                                              self.libraries,
                                              self.resources)
-        recommendations = finder.find_recommendations(name)
-        if recommendations:
-            msg += " Did you mean:"
-            for rec in recommendations:
-                msg += "\n    %s" % rec
+        recommendations = finder.recommend_similar_keywords(name)
+        msg = finder.format_recommendations(msg, recommendations)
         raise DataError(msg)
 
     def _get_handler(self, name):
@@ -400,23 +396,25 @@ class KeywordRecommendationFinder(object):
         self.libraries = libraries
         self.resources = resources
 
-    def find_recommendations(self, name):
-        """Get recommendations of handlers similar to `name`."""
-        candidates = self._get_candidates(use_full_name='.' in name)
-        return self._get_close_matches(name, candidates)
+    def recommend_similar_keywords(self, name):
+        """Return keyword names similar to `name`."""
+        candidates = self._get_candidates('.' in name)
+        normalizer = lambda name: candidates.get(name, name).lower().replace(
+            '_', ' ')
+        finder = utils.RecommendationFinder(normalizer)
+        return finder.find_recommendations(name, candidates)
 
-    def _normalize(self, name):
-        """Normalize to lowercase and replace underscores with spaces."""
-        return name.lower().replace('_', ' ')
+    @staticmethod
+    def format_recommendations(msg, recommendations):
+        return utils.RecommendationFinder.format_recommendations(
+            msg, recommendations)
 
     def _get_candidates(self, use_full_name):
-        """Return a dictionary mapping normalized names to names."""
-        candidates = {}
+        names = {}
         for owner, name in self._get_all_handler_names():
             full_name = '%s.%s' % (owner, name) if owner else name
-            norm_name = self._normalize(full_name if use_full_name else name)
-            candidates.setdefault(norm_name, []).append(full_name)
-        return candidates
+            names[full_name] = full_name if use_full_name else name
+        return names
 
     def _get_all_handler_names(self):
         """Return a list of (library name, handler name) tuples.
@@ -438,26 +436,6 @@ class KeywordRecommendationFinder(object):
                      for handler_name in library.handlers))
         # sort handlers to ensure consistent ordering between Jython and Python
         return sorted(handlers)
-
-    def _get_close_matches(self, name, candidates):
-        """Return a list of close matches to `name` from `handler_names`."""
-        if not name or not candidates:
-            return []
-        norm_name = self._normalize(name)
-        cutoff = self._calculate_cutoff(norm_name)
-        norm_matches = difflib.get_close_matches(norm_name,
-                                                 candidates,
-                                                 n=10,
-                                                 cutoff=cutoff)
-        matches = []
-        for match in norm_matches:
-            matches.extend(candidates[match])
-        return matches
-
-    def _calculate_cutoff(self, name, min_cutoff=.5, max_cutoff=.85, step=.03):
-        """Calculate a cutoff depending on name length. Hand-tuned defaults."""
-        cutoff = min_cutoff + len(name) * step
-        return min(cutoff, max_cutoff)
 
 
 class _VariableScopes:

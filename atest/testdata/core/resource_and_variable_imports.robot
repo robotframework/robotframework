@@ -69,7 +69,7 @@ Normal Variable Import
     Should Be True  @{valid_list} == ['This','is','a','list']
 
 Not Included in __all__
-    [Documentation]  FAIL Non-existing variable '\${not included}'.
+    [Documentation]  FAIL Variable '\${not included}' not found.
     Log  ${not included}
 
 Variable Import With Variables

@@ -184,7 +184,7 @@ For With Non Existing Keyword
     \  Non Existing
 
 For With Non Existing Variable
-    [Documentation]  FAIL Non-existing variable '\${nonexisting}'.
+    [Documentation]  FAIL Variable '\${nonexisting}' not found.
     :FOR  ${i}  IN  1  3
     \  Log  ${nonexisting}
 
@@ -288,7 +288,7 @@ For In Range With Wrong Number Of Variables
     \  Fail  Not executed
 
 For In Range With Non-Existing Variables In Arguments
-    [Documentation]  FAIL Non-existing variable '\@{non existing}'.
+    [Documentation]  FAIL Variable '\@{non existing}' not found.
     :FOR  ${i}  IN RANGE  @{non existing}
     \  Fail  Not executed
 
