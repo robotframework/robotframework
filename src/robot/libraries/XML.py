@@ -1122,8 +1122,9 @@ class XML(object):
         """Removes the element matching ``xpath`` from the ``source`` structure.
 
         The element to remove from the ``source`` is specified with ``xpath``
-        using the same semantics as with `Get Element` keyword. The given
-        ``source`` structure  is modified and also returned.
+        using the same semantics as with `Get Element` keyword. The resulting
+        XML structure is returned, and if the ``source`` is an already parsed
+        XML structure, it is also modified in place.
 
         The keyword fails if ``xpath`` does not match exactly one element.
         Use `Remove Elements` to remove all matched elements.
@@ -1149,12 +1150,12 @@ class XML(object):
         """Removes all elements matching ``xpath`` from the ``source`` structure.
 
         The elements to remove from the ``source`` are specified with ``xpath``
-        using the same semantics as with `Get Elements` keyword. The given
-        ``source`` structure  is modified and also returned.
+        using the same semantics as with `Get Elements` keyword. The resulting
+        XML structure is returned, and if the ``source`` is an already parsed
+        XML structure, it is also modified in place.
 
         It is not a failure if ``xpath`` matches no elements. Use `Remove
-        Element` to remove exactly one element and `Add Element` to add new
-        ones.
+        Element` to remove exactly one element.
 
         Element's tail text is not removed by default, but that can be changed
         by using ``remove_tail`` argument similarly as with `Remove Element`.
