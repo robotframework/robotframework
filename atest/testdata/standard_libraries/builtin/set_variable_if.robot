@@ -45,7 +45,7 @@ Fails Without Values 2
     Set Variable If  False
 
 Non-Existing Variables In Values 1
-    [Documentation]  FAIL Non-existing variable '\${now this breaks}'.
+    [Documentation]  FAIL Variable '\${now this breaks}' not found.
     ${existing} =  Set Variable  ${42}
     ${var} =  Set Variable If  True  ${existing}*2 = ${existing*2}  ${nonex}
     Should Be Equal  ${var}  42*2 = 84
@@ -54,11 +54,11 @@ Non-Existing Variables In Values 1
     ${var} =  Set Variable If  ${existing}  ${now this breaks}  Not used
 
 Non-Existing Variables In Values 2
-    [Documentation]  FAIL Resolving variable '${nonex.extended}' failed: Non-existing variable '${nonex}'.
-    ${var} =  Set Variable If  False is True  ${not used}  ${nonex.extended}
+    [Documentation]  FAIL Resolving variable '${nonexisting.extended}' failed: Variable '${nonexisting}' not found.
+    ${var} =  Set Variable If  False is True  ${not used}  ${nonexisting.extended}
 
 Non-Existing Variables In Values 3
-    [Documentation]  FAIL Non-existing variable '\${ooooops}'.
+    [Documentation]  FAIL Variable '\${ooooops}' not found.
     Set Variable If  False  ${not used}  True  ${ooooops}
 
 Non-Existing Variables In Values 4
@@ -66,8 +66,8 @@ Non-Existing Variables In Values 4
     Set Variable If  False  ${not used}  False  ${not used}  ${SPACE.nonex}
 
 Non-Existing Variables In Values 5
-    [Documentation]  FAIL Non-existing variable '\${nonex}'.
-    Set Variable If  False  ${not used}  False  ${not used}  True  This is ${nonex} is enough
+    [Documentation]  FAIL Variable '\${nonexisting}' not found.
+    Set Variable If  False  ${not used}  False  ${not used}  True  This is ${nonexisting} is enough
 
 Extra Values Are Ignored If First Expression Is True
     ${var} =  Set Variable If  True  This ${1} is set!!  Other  values  are  ${not}

@@ -83,8 +83,8 @@ No Details For Non Existing Keywords
 
 No Details For Non Existing Variables
     [Template]    Verify Test Case, Error In Log And No Details
-    Non Existing Scalar Variable    Non-existing variable '\${non existing}'.
-    Non Existing List Variable    Non-existing variable '\@{non existing}'.
+    Non Existing Scalar Variable    Variable '\${non existing}' not found.
+    Non Existing List Variable    Variable '\@{non existing}' not found.
 
 *** Keyword ***
 Verify Test Case And Error In Log

@@ -64,7 +64,7 @@ Ignore Error When Syntax Error In Setting Variables
     Run Keyword And Ignore Error    Invalid Syntax When Setting Variable
 
 Ignore Error When Syntax Error In For Loop
-    [Documentation]    FAIL Non-existing variable '\${nonex}'.
+    [Documentation]    FAIL  Variable '\${nonexisting}' not found.
     Run Keyword And Ignore Error    For Loop With Syntax Error
 
 Expect Error When Error Occurs
@@ -131,7 +131,7 @@ Expect Error When Syntax Error In Setting Variables
     Run Keyword And Expect Error    *    Invalid Syntax When Setting Variable
 
 Expect Error When Syntax Error In For Loop
-    [Documentation]    FAIL Non-existing variable '\${nonex}'.
+    [Documentation]    FAIL  Variable '\${nonexisting}' not found.
     Run Keyword And Expect Error    *    For Loop With Syntax Error
 
 *** Keywords ***
@@ -154,7 +154,7 @@ Invalid Syntax When Setting Variable
     @{incompatible} =    Set Variable    string
 
 For Loop With Syntax Error
-    : FOR    ${a}    IN    ${nonex}
+    : FOR    ${a}    IN    ${nonexisting}
     \    Whatever
 
 Broken User Keyword

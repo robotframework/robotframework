@@ -59,19 +59,19 @@ Using Scalar List Should Fail
 Creating variable using non-existing variable fails
     Check Test Case    ${TEST NAME}
     Creating Variable Should Have Failed    ${ERRORS[4]}    \${NONEX 1}
-    ...    Non-existing variable '\${NON EXISTING}'.
+    ...    Variable '\${NON EXISTING}' not found.
     Creating Variable Should Have Failed    ${ERRORS[5]}    \${NONEX 2A}
-    ...    Non-existing variable '\${NON EX}'.
+    ...    Variable '\${NON EX}' not found.*
     Creating Variable Should Have Failed    ${ERRORS[6]}    \${NONEX 2B}
-    ...    Non-existing variable '\${NONEX 2A}'.
+    ...    Variable '\${NONEX 2A}' not found.*
 
 Using variable created from non-existing variable in imports fails
     Creating Variable Should Have Failed    ${ERRORS[1]}    \${NONEX 3}
-    ...    Non-existing variable '\${NON EXISTING VARIABLE}'.
+    ...    Variable '\${NON EXISTING VARIABLE}' not found.
     Import Should Have Failed    ${ERRORS[2]}    Resource
-    ...    Non-existing variable '\${NONEX 3}'.
+    ...    Variable '\${NONEX 3}' not found.*
     Import Should Have Failed    ${ERRORS[3]}    Library
-    ...    Non-existing variable '\${NONEX 3}'.
+    ...    Variable '\${NONEX 3}' not found.*
 
 *** Keywords ***
 Creating Variable Should Have Failed
@@ -81,7 +81,7 @@ Creating Variable Should Have Failed
     ...    Error in file '${path}':
     ...    Setting variable '${name}' failed:
     ...    @{message}
-    Check Log Message    ${error}    ${msg}    ERROR
+    Check Log Message    ${error}    ${msg}    ERROR    pattern=${TRUE}
 
 Import Should Have Failed
     [Arguments]    ${error}    ${name}    @{message}
@@ -90,4 +90,4 @@ Import Should Have Failed
     ...    Error in file '${path}':
     ...    Replacing variables from setting '${name}' failed:
     ...    @{message}
-    Check Log Message    ${error}    ${msg}    ERROR
+    Check Log Message    ${error}    ${msg}    ERROR    pattern=${TRUE}

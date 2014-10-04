@@ -62,7 +62,7 @@ Non-Existing Variable In Arguments To Dynamic Variable File
     ${path} =  Normalize Path  ${RESDIR}/dynamicVariables.py
     Stderr Should Contain Error    ${DATAFILE}
     ...  Replacing variables from setting 'Variables' failed:
-    ...  Non-existing variable '\${non_existing_var_as_arg}'
+    ...  Variable '\${non_existing_var_as_arg}' not found.
 
 Resource Importing Resources
     [Documentation]  Test that resource file can import more resources.

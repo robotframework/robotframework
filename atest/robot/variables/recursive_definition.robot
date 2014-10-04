@@ -40,5 +40,5 @@ Non-existing error
     ${message} =    Catenate
     ...    Error in file '${path}':
     ...    Setting variable '${variable1}' failed:
-    ...    Non-existing variable '${variable2}'.
+    ...    Variable '${variable2}' not found.
     Check Log Message    ${ERRORS[${index}]}    ${message}    ERROR

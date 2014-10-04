@@ -42,12 +42,12 @@ Named args and kwargs with variables
     Should Be Equal    ${result}    A, B, \${D}:D, c:C
 
 Non-existing variable as named arg name
-    [Documentation]    FAIL Non-existing variable '${nonex}'.
-    Lib Mandatory And Named    ${nonex}=non-existing
+    [Documentation]    FAIL Variable '${nonexisting}' not found.
+    Lib Mandatory And Named    ${nonexisting}=non-existing
 
 Non-existing variable as kwargs name
-    [Documentation]    FAIL Non-existing variable '${nonex}'.
-    Lib Kwargs    ${nonex}=non-existing
+    [Documentation]    FAIL Variable '${nonexisting}' not found.
+    Lib Kwargs    ${nonexisting}=non-existing
 
 Variable with non-string value as named arg name
     ${result} =    Lib Mandatory And Named    ${1}=non-string

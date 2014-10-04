@@ -12,7 +12,7 @@ ${HELLO}          Hello
 
 *** Test Case ***
 Not registered Keyword Fails With Content That Should Not Be Evaluated Twice
-    [Documentation]    FAIL Non-existing variable '\${not variable}'.
+    [Documentation]    FAIL STARTS: Variable '\${not variable}' not found.
     ${var} =    Set Variable    \${not variable}
     Should Be Equal    ${var}    \${not variable}
     My Run Keyword    Log    ${HELLO}

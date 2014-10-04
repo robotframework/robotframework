@@ -28,7 +28,7 @@ Library    libswithargs.Varargs
 Library    libswithargs.Mandatory  too  many  args  here
 Library    libswithargs.Defaults   too  many  args  here  too
 
-Library    libswithargs.Mandatory  ${NONEX}    ${NONEX}
+Library    libswithargs.Mandatory  ${NONEXISTING}    ${NONEXISTING}
 
 Library    Collections
 

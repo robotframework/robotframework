@@ -166,7 +166,7 @@ Should not resolve variables if condition false
     Fail    this should execute
 
 Should fail if non-existing variable if condition true
-    [Documentation]    FAIL Non-existing variable '${not exist}'.
+    [Documentation]    FAIL Variable '${not exist}' not found.
     Pass Execution If    ${True}    my message    ${not exist}
     Fail    this should not execute
 
