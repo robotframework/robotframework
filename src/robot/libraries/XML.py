@@ -79,7 +79,10 @@ class XML(object):
     returned by keywords such as `Get Element`, can be used as the `source`
     argument with other keywords. In addition to an already parsed XML
     structure, other keywords also accept paths to XML files and strings
-    containing XML similarly as `Parse XML`.
+    containing XML similarly as `Parse XML`. Notice that keywords that modify
+    XML do not write those changes back to disk even if the source would be
+    given as a path to a fike. Changes must always saved explicitly using
+    `Save XML` keyword.
 
     When the source is given as a path to a file, the forward slash character
     (`/`) can be used as the path separator regardless the operating system.
@@ -437,7 +440,7 @@ class XML(object):
 
         Use `Get Element` keyword if you want to get a certain element and not
         the whole structure. See `Parsing XML` section for more details and
-        examples
+        examples.
 
         Stripping namespaces is a new feature in Robot Framework 2.7.5.
         """
@@ -885,7 +888,8 @@ class XML(object):
 
         The element whose tag to set is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` structure  is modified and also returned.
+        keyword. The resulting XML structure is returned, and if the `source`
+        is an already parsed XML structure, it is also modified in place.
 
         Examples using `${XML}` structure from `Example`:
         | Set Element Tag      | ${XML}     | newTag     |
@@ -919,7 +923,8 @@ class XML(object):
 
         The element whose text to set is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` structure  is modified and also returned.
+        keyword. The resulting XML structure is returned, and if the `source`
+        is an already parsed XML structure, it is also modified in place.
 
         Element's text and tail text are changed only if new `text` and/or
         `tail` values are given. See `Element attributes` section for more
@@ -962,7 +967,8 @@ class XML(object):
 
         The element whose attribute to set is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` structure  is modified and also returned.
+        keyword. The resulting XML structure is returned, and if the `source`
+        is an already parsed XML structure, it is also modified in place.
 
         It is possible to both set new attributes and to overwrite existing.
         Use `Remove Element Attribute` or `Remove Element Attributes` for
@@ -1001,7 +1007,8 @@ class XML(object):
 
         The element whose attribute to remove is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` structure  is modified and also returned.
+        keyword. The resulting XML structure is returned, and if the `source`
+        is an already parsed XML structure, it is also modified in place.
 
         It is not a failure to remove a non-existing attribute. Use `Remove
         Element Attributes` to remove all attributes and `Set Element Attribute`
@@ -1038,7 +1045,8 @@ class XML(object):
 
         The element whose attributes to remove is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` structure  is modified and also returned.
+        keyword. The resulting XML structure is returned, and if the `source`
+        is an already parsed XML structure, it is also modified in place.
 
         Use `Remove Element Attribute` to remove a single attribute and
         `Set Element Attribute` to set them.
@@ -1072,7 +1080,8 @@ class XML(object):
 
         The element to whom to add the new element is specified using `source`
         and `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` structure  is modified and also returned.
+        keyword. The resulting XML structure is returned, and if the `source`
+        is an already parsed XML structure, it is also modified in place.
 
         The `element` to add can be specified as a path to an XML file or
         as a string containing XML, or it can be an already parsed XML element.
@@ -1184,7 +1193,8 @@ class XML(object):
 
         The element to clear is specified using `source` and `xpath`. They
         have exactly the same semantics as with `Get Element` keyword.
-        The given `source` structure  is modified and also returned.
+        The resulting XML structure is returned, and if the `source` is
+        an already parsed XML structure, it is also modified in place.
 
         Clearing the element means removing its text, attributes, and children.
         Element's tail text is not removed by default, but that can be changed
