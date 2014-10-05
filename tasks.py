@@ -182,7 +182,7 @@ def jar(jython_version='2.5.3', remove_dist=False):
     Args:
         remove_dist:  Control is 'dist' directory initially removed or not.
         jython_version: Jython version to use as a base. Must match version in
-            `jython-standalone-<version>.jar` found from Maven central
+            `jython-standalone-<version>.jar` found from Maven central.
             Currently `2.5.3` by default.
     """
     clean(remove_dist, create_dirs=True)
