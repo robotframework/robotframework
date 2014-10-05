@@ -19,7 +19,6 @@ assert os.getcwd() == os.path.dirname(__file__)
 
 VERSION_RE = re.compile('^((2\.\d+)(\.\d+)?)((a|b|rc|.dev)\d+)?$')
 VERSION_FILE = os.path.join('src', 'robot', 'version.py')
-JYTHON_VERSION = '2.5.3'
 
 
 @task(default=True)
@@ -175,16 +174,19 @@ def wininst(remove_dist=False):
 
 
 @task
-def jar(remove_dist=False):
+def jar(jython_version='2.5.3', remove_dist=False):
     """Create JAR distribution.
 
     Downloads Jython JAR if needed.
 
     Args:
         remove_dist:  Control is 'dist' directory initially removed or not.
+        jython_version: Jython version to use as a base. Must match version in
+            `jython-standalone-<version>.jar` found from Maven central
+            Currently `2.5.3` by default.
     """
     clean(remove_dist, create_dirs=True)
-    jython_jar = get_jython_jar(JYTHON_VERSION)
+    jython_jar = get_jython_jar(jython_version)
     print 'Using {}'.format(jython_jar)
     compile_java_files(jython_jar)
     unzip_jar(jython_jar)
