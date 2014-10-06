@@ -33,7 +33,8 @@ Keyword From Custom Library Overrides Keywords From Standard Library
 
 Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     ${tc} =    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS.msgs[2]}    ${tc.kws[0].msgs[0]}    Replace String    String    Std Lib With Custom Name
+    Verify Override Message    ${ERRORS.msgs[2]}    ${tc.kws[0].msgs[0]}    Replace String
+    ...    String    MyLibrary2    Std With Name    My With Name
 
 No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
     Check Test Case    ${TEST NAME}
@@ -45,12 +46,16 @@ Keyword In More Than One Custom Library And Standard Library
 
 *** Keywords ***
 Verify override message
-    [Arguments]    ${error msg}    ${kw msg}    ${kw}    ${stdlib}    ${custom}=
-    ${stdlib2} =    Set Variable If    "${custom}"    ${custom}    ${stdlib}
+    [Arguments]    ${error msg}    ${kw msg}    ${kw}    ${standard}    ${custom}=MyLibrary1
+    ...    ${std with name}=    ${ctm with name}=
+    ${std imported as} =    Set Variable If    "${std with name}"    ${SPACE}imported as '${std with name}'    ${EMPTY}
+    ${ctm imported as} =    Set Variable If    "${ctm with name}"    ${SPACE}imported as '${ctm with name}'    ${EMPTY}
+    ${std long} =    Set Variable If    "${std with name}"    ${std with name}    ${standard}
+    ${ctm long} =    Set Variable If    "${ctm with name}"    ${ctm with name}    ${custom}
     ${expected} =    Catenate
-    ...    Keyword '${kw}' found both from a custom test library 'MyLibrary1'
-    ...    and a standard library '${stdlib}'. The custom keyword is used.
-    ...    To select explicitly, and to get rid of this warning, use either
-    ...    'MyLibrary1.${kw}' or '${stdlib2}.${kw}'.
+    ...    Keyword '${kw}' found both from a custom test library '${custom}'${ctm imported as}
+    ...    and a standard library '${standard}'${std imported as}. The custom keyword is used.
+    ...    To select explicitly, and to get rid of this warning, use either '${ctm long}.${kw}'
+    ...    or '${std long}.${kw}'.
     Check Log Message    ${error msg}    ${expected}    WARN
     Check Log Message    ${kw msg}    ${expected}    WARN

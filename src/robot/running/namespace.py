@@ -356,13 +356,19 @@ class KeywordStore(object):
         return [custom]
 
     def _custom_and_standard_keyword_conflict_warning(self, custom, standard):
+        custom_with_name = standard_with_name = ''
+        if custom.library.name != custom.library.orig_name:
+            custom_with_name = " imported as '%s'" % custom.library.name
+        if standard.library.name != standard.library.orig_name:
+            standard_with_name = " imported as '%s'" % standard.library.name
         warning = Message("Keyword '%s' found both from a custom test library "
-                          "'%s' and a standard library '%s'. The custom "
+                          "'%s'%s and a standard library '%s'%s. The custom "
                           "keyword is used. To select explicitly, and to get "
                           "rid of this warning, use either '%s' or '%s'."
-                          % (standard.name, custom.library.orig_name,
-                             standard.library.orig_name, custom.longname,
-                             standard.longname), level='WARN')
+                          % (standard.name,
+                             custom.library.orig_name, custom_with_name,
+                             standard.library.orig_name, standard_with_name,
+                             custom.longname, standard.longname), level='WARN')
         if custom.pre_run_messages:
             custom.pre_run_messages.append(warning)
         else:

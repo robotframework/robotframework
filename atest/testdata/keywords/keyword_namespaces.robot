@@ -2,9 +2,9 @@
 Resource          resources/my_resource_1.robot
 Resource          resources/my_resource_2.robot
 Library           resources/MyLibrary1.py
-Library           resources/MyLibrary2.py
+Library           resources/MyLibrary2.py    WITH NAME    My With Name
 Library           OperatingSystem
-Library           String    WITH NAME    Std Lib With Custom Name
+Library           String    WITH NAME    Std With Name
 
 *** Test Cases ***
 Keywords With Unique Name Are Ok
@@ -22,11 +22,11 @@ Full Name Works With Non-Unique Keyword Names
     MY _ RES ource _ 1 . Keyword Every WHERE
     my_ resource_2.keyword everywhere
     MyLibrary1.Keyword In Both Libraries
-    My Library 2.Keyword In Both Libraries
+    My With Name.Keyword In Both Libraries
     MYLIBRARY1. Keyword in ALL Resources and Libraries
-    MYLIBRARY2. Keyword In All Resources And Libraries
+    MYWITHNAME. Keyword In All Resources And Libraries
     My Lib Rar Y1. Keyword Everywhere
-    mylibrary2.keywordeverywhere
+    mywithname.keywordeverywhere
 
 Non-Unique Keywords Without Full Name Fails 1
     [Documentation]    FAIL Multiple keywords with name 'Keyword In Both Resources' found.
@@ -37,7 +37,7 @@ Non-Unique Keywords Without Full Name Fails 1
 Non-Unique Keywords Without Full Name Fails 2
     [Documentation]    FAIL Multiple keywords with name 'Keyword In Both Libraries' found.
     ...    Give the full name of the keyword you want to use.
-    ...    Found: 'MyLibrary1.Keyword In Both Libraries' and 'MyLibrary2.Keyword In Both Libraries'
+    ...    Found: 'My With Name.Keyword In Both Libraries' and 'MyLibrary1.Keyword In Both Libraries'
     Keyword In Both Libraries
 
 Non-Unique Keywords Without Full Name Fails 3
@@ -60,9 +60,9 @@ Keyword From Custom Library Overrides Keywords From Standard Library
 Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     ${ret} =    Replace String
     Should Be Equal    ${ret}    I replace nothing!
-    ${ret} =    MyLibrary1.Replace String
+    ${ret} =    My With Name.Replace String
     Should Be Equal    ${ret}    I replace nothing!
-    ${ret} =    Std Lib With Custom Name.Replace String    I replace this!    this    that
+    ${ret} =    Std With Name.Replace String    I replace this!    this    that
     Should Be Equal    ${ret}    I replace that!
 
 No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
@@ -71,7 +71,7 @@ No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And I
 Keyword In More Than One Custom Library And Standard Library
     [Documentation]    FAIL Multiple keywords with name 'No Operation' found.
     ...    Give the full name of the keyword you want to use.
-    ...    Found: 'BuiltIn.No Operation', 'MyLibrary1.No Operation' and 'MyLibrary2.No Operation'
+    ...    Found: 'BuiltIn.No Operation', 'My With Name.No Operation' and 'MyLibrary1.No Operation'
     No Operation
 
 *** Keywords ***

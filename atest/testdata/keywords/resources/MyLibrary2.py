@@ -8,7 +8,7 @@ class MyLibrary2:
 
     def keyword_in_both_libraries(self):
         print "Keyword from library 2"
-        
+
     def keyword_in_all_resources_and_libraries(self):
         print "Keyword from library 2"
 
@@ -23,7 +23,11 @@ class MyLibrary2:
 
     def no_operation(self):
         print "Overrides keyword from BuiltIn library"
-        
+
+    def replace_string(self):
+        print "Overrides keyword from String library"
+        return "I replace nothing!"
+
     def run_keyword_if(self, expression, name, *args):
         return BuiltIn().run_keyword_if(expression, name, *args)
 
