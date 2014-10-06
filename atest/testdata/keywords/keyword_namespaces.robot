@@ -53,11 +53,11 @@ Keyword From Test Case File Overrides Keywords From Resources And Libraries
 Keyword From Resource Overrides Keywords From Libraries
     Keyword In Resource Overrides Libraries
 
-Keyword From User Library Overrides Keywords From Standard Library
+Keyword From Custom Library Overrides Keywords From Standard Library
     Comment
     Copy Directory
 
-Keyword From User Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
+Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     ${ret} =    Replace String
     Should Be Equal    ${ret}    I replace nothing!
     ${ret} =    MyLibrary1.Replace String
@@ -65,10 +65,10 @@ Keyword From User Library Overrides Keywords From Standard Library Even When Std
     ${ret} =    Std Lib With Custom Name.Replace String    I replace this!    this    that
     Should Be Equal    ${ret}    I replace that!
 
-No Warning When User Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
+No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
     Run Keyword If    ${TRUE}    Log    Hello
 
-Keyword In More Than One User Library And Standard Library
+Keyword In More Than One Custom Library And Standard Library
     [Documentation]    FAIL Multiple keywords with name 'No Operation' found.
     ...    Give the full name of the keyword you want to use.
     ...    Found: 'BuiltIn.No Operation', 'MyLibrary1.No Operation' and 'MyLibrary2.No Operation'

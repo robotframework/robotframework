@@ -18,7 +18,7 @@ import copy
 from robot import utils
 from robot.errors import DataError
 from robot.variables import GLOBAL_VARIABLES, is_scalar_var
-from robot.output import LOGGER
+from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
 
 from .usererrorhandler import UserErrorHandler
@@ -346,21 +346,27 @@ class KeywordStore(object):
 
     def _filter_stdlib_handler(self, handler1, handler2):
         if handler1.library.orig_name in STDLIB_NAMES:
-            standard, external = handler1, handler2
+            standard, custom = handler1, handler2
         elif handler2.library.orig_name in STDLIB_NAMES:
-            standard, external = handler2, handler1
+            standard, custom = handler2, handler1
         else:
             return [handler1, handler2]
-        if not RUN_KW_REGISTER.is_run_keyword(external.library.orig_name, external.name):
-            LOGGER.warn(
-                "Keyword '%s' found both from a user created test library "
-                "'%s' and Robot Framework standard library '%s'. The user "
-                "created keyword is used. To select explicitly, and to get "
-                "rid of this warning, use either '%s' or '%s'."
-                % (standard.name,
-                   external.library.orig_name, standard.library.orig_name,
-                   external.longname, standard.longname))
-        return [external]
+        if not RUN_KW_REGISTER.is_run_keyword(custom.library.orig_name, custom.name):
+            self._custom_and_standard_keyword_conflict_warning(custom, standard)
+        return [custom]
+
+    def _custom_and_standard_keyword_conflict_warning(self, custom, standard):
+        warning = Message("Keyword '%s' found both from a custom test library "
+                          "'%s' and a standard library '%s'. The custom "
+                          "keyword is used. To select explicitly, and to get "
+                          "rid of this warning, use either '%s' or '%s'."
+                          % (standard.name, custom.library.orig_name,
+                             standard.library.orig_name, custom.longname,
+                             standard.longname), level='WARN')
+        if custom.pre_run_messages:
+            custom.pre_run_messages.append(warning)
+        else:
+            custom.pre_run_messages = [warning]
 
     def _get_explicit_handler(self, name):
         found = []
