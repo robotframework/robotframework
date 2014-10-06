@@ -1,9 +1,28 @@
+| *** Settings *** |
+| Library | OperatingSystem |
+|
+| Library | String
+|
+|
+
 ***Test Cases***
 | Minimum Pipes 
 | | No Operation
 
 |  Pipes All Around  |  No Operation  | 
 |                    |  Log  |  New Line  |
+
+|
+|
+| Empty line with pipe
+|
+| | Directory Should Exist | . |
+|
+|
+|
+| | Convert To Upper Case | Using keywords from imported libraries
+|
+|
 
 | Pipes In Data | 
 |               | Should Be Equal | |foo\| | |foo| |

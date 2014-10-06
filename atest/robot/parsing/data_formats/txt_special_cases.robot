@@ -28,6 +28,10 @@ Minimum Pipes
 Pipes All Around
     Check Test Case  ${TEST NAME}
 
+Empty line with pipe
+    Stderr Should Be Empty
+    Check Test Case  ${TEST NAME}
+
 Pipes In Data
     Check Test Case  ${TEST NAME}
 
