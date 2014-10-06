@@ -246,3 +246,70 @@ Main-Class: org.robotframework.RobotFramework
 Specification-Version: 2
 Implementation-Version: {version}
 '''.format(version=version))
+
+@task
+def get_issues(version=get_version_from_file(), login=None, password=None):
+    """Get issues from Github.
+
+    Requires for you to have PyGithub installed.
+    https://github.com/jacquev6/PyGithub
+    pip install PyGithub
+
+    Args:
+        version:  Version to get the issues for. By default the current version.
+        login:    Github login. If not given anonymous login is used. There is 60
+                  request maximum/hour at github api if you dont authenticate.
+        password: The password for github login
+    """
+    try:
+        from github import Github
+    except ImportError:
+        print "You need to install PyGithub:\npip install PyGithub\n\n"
+    repo = Github(login_or_token=login, password=password).get_repo("robotframework/robotframework")
+    issues = sorted([Issue(issue) for issue in repo.get_issues(milestone=_get_milestone(repo, version), state="all")])
+    print "ID  | Type | Priority | Summary"
+    print "--- | ---- | -------- | -------"
+    for issue in issues:
+        print " #{} | {} | {} | {} ".format(issue.number, issue.type, issue.prio, issue.summary )
+    print "Altogether {} issues.".format(len(issues))
+    _print_bwic(issues)
+
+def _get_milestone(repo, milestone):
+    for m in repo.get_milestones():
+        if m.title == milestone:
+            return m
+    raise AssertionError("Milestone {} not found from repository {}!".format(milestone, repo.name))
+
+def _print_bwic(issues):
+    bwics = [issue for issue in issues if issue.bwic]
+    if bwics:
+        print "\n\nBackwards incompatible issues"
+        for issue in bwics:
+            print "#{} {}".format(issue.number, issue.summary)
+
+
+class Issue(object):
+
+    PRIORITIES= ["prio-critical", "prio-high", "prio-medium", "prio-low"]
+
+    def __init__(self, issue):
+        self.number = issue.number
+        self.labels = [label.name for label in issue.get_labels()]
+        self.type = self._get_label("bug", "enhancement")
+        self._priority = self._get_label
+        self.sort_table = [self.PRIORITIES.index(self._priority), 0 if self.type=="bug" else 1, self.number]
+        self.summary = issue.title
+        self.bwic = self._get_label("bwic")
+
+    @property
+    def prio(self):
+        return self._priority.split('-')[1]
+
+    def _get_label(self, *values):
+        for value in values:
+            if value in self.labels:
+                return value
+        return None
+
+    def __cmp__(self, other):
+        return cmp(self.sort_table, other.sort_table)
