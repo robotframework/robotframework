@@ -344,3 +344,7 @@ Run on python 2.5
 Make test non-critical if
     [Arguments]    ${condition}
     Run Keyword If    ${condition}    Remove Tags    regression
+
+Make test non-critical on IronPython
+    # This test isn't 100% safe. Should come up with better.
+    Make test non-critical if    os.sep != '/' and 'ipy' in '${INTERPRETER}'

@@ -16,6 +16,7 @@ Multi
     Multi    Multi\nline\ndocumentation    1
 
 Nön-ÄSCII
+    [Setup]    Make test non-critical on IronPython
     Nön-ÄSCII documentation    Nön-ÄSCII documentation    2
 
 Intro documentation
