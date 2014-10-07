@@ -124,7 +124,9 @@ Creating distributions
 Release notes
 -------------
 
-TODO
+Generate a template for the release notes with invoke::
+
+   invoke release_notes --login <github login> --password <github password>
 
 Announcements
 -------------
