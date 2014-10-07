@@ -152,20 +152,29 @@ __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Us
    - Update docs at http://robotframework.org/robotframework/::
 
         git checkout gh-pages
+        invoke add_docs $version --push
+        git checkout master
 
 
 Release notes
 -------------
 
-Generate a template for the release notes with invoke::
+- Generate a template for the release notes with invoke::
 
    invoke release_notes --login <github login> --password <github password>
+
+- Create a new release at https://github.com/robotframework/robotframework/releases
+
 
 Announcements
 -------------
 
-TODO.
+- Twitter http://twitter.com/robotframework
+- Users and announcements mailing lists
+- Robot Framework LinkedIn group https://www.linkedin.com/groups/Robot-Framework-3710899
+- With major releases can also consider:
 
-Not all places listed on the `old instructions
-<https://code.google.com/p/robotframework/wiki/Releasing#Announce_Release>`_
-are valid anymore.
+  - http://opensourcetesting.org
+  - http://tech.groups.yahoo.com/group/agile-testing
+  - http://lists.idyll.org/listinfo/testing-in-python
+  - etc.
