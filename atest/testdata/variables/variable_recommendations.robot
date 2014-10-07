@@ -83,11 +83,10 @@ Misspelled Env Var
     Log    %{THISS_ENV_VAR_IS_SET}
 
 Misspelled Env Var With Internal Variables
-    [Documentation]    FAIL    Environment variable '%{yyet_another_env_var}' not found. Did you mean:
-    ...    ${INDENT}\%{yet_another_env_var}
-    Set Environment Variable  yet_another_env_var  THIS_ENV_VAR
-    ${normal_var} =  Set Variable  IS_SET
-    Log  %{%{yyet_another_env_var}_${normal_var}}
+    [Documentation]    FAIL    Environment variable '%{YET_ANOTHER_ENV_VAR}' not found. Did you mean:
+    ...    ${INDENT}\%{ANOTHER_ENV_VAR}
+    Set Environment Variable    ANOTHER_ENV_VAR    ANOTHER_ENV_VAR
+    Log    %{YET_%{ANOTHER_ENV_VAR}}
 
 Misspelled List Variable With Period
     [Documentation]    FAIL    Resolving variable '${list.nnew}' failed: AttributeError: 'list' object has no attribute 'nnew'
