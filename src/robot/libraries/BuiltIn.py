@@ -1500,8 +1500,9 @@ class _RunKeyword:
         | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | argument |
         | ${result} = | Wait Until Keyword Succeeds | 30 s | 1 s | My keyword |
 
-        Errors caused by invalid syntax, test or keyword timeouts, or fatal
-        exceptions are not caught by this keyword.
+        All normal failures are caught by this keyword. Errors caused by
+        invalid syntax, test or keyword timeouts, or fatal exceptions (caused
+        e.g. by `Fatal Error`) are not caught.
 
         Running the same keyword multiple times inside this keyword can create
         lots of output and considerably increase the size of the generated
