@@ -1,0 +1,16 @@
+tmp
+build
+dist
+MANIFEST
+atest/results
+utest/jasmine-results
+.idea
+.*project
+*.pyc
+*$py.class
+ext-lib
+*.iml
+.DS_Store
+doc/api/_build
+doc/libraries/*.html
+doc/userguide/RobotFrameworkUserGuide.html
