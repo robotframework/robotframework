@@ -250,7 +250,67 @@ Implementation-Version: {version}
 '''.format(version=version))
 
 @task
-def get_issues(version=get_version_from_file(), login=None, password=None):
+def release_notes(version=get_version_from_file(), login=None, password=None):
+    """Get template for release notes from Github.
+
+    Requires for you to have PyGithub installed.
+    https://github.com/jacquev6/PyGithub
+    pip install PyGithub
+
+    Args:
+        version:  Version to get the issues for. By default the current version.
+        login:    Github login. If not given anonymous login is used. There is 60
+                  request maximum/hour at github api if you dont authenticate.
+        password: The password for github login
+    """
+    issues = _get_issues(version, login, password)
+    _print_header("Robot Framework {}".format(version), level=1)
+    _print_if_label("Most important enhancements", issues, "prio-critical", "prio-high")
+    _print_if_label("Backwards incompatible changes", issues, "bwic")
+    _print_if_label("Deprected features", issues, "depr")
+    _print_header("Acknowledgements")
+    print("_See AUTHORS.txt_")
+    _print_issue_table(issues, version)
+
+def _get_issues(version, login=None, password=None):
+    try:
+        from github import Github
+    except ImportError:
+        sys.exit("You need to install PyGithub:\n\tpip install PyGithub\n")
+    repo = Github(login_or_token=login, password=password).get_repo("robotframework/robotframework")
+    return sorted(Issue(issue) for issue in repo.get_issues(milestone=_get_milestone(repo, version), state="all"))
+
+def _get_milestone(repo, milestone):
+    for m in repo.get_milestones(state="all"):
+        if m.title == milestone:
+            return m
+    raise AssertionError("Milestone {} not found from repository {}!".format(milestone, repo.name))
+
+def _print_header(header, level=2):
+    if level > 1:
+        print
+    print "{} {}\n".format('#'*level, header)
+
+def _print_if_label(header, issues, *labels):
+    filtered = [issue for issue in issues
+                if any(label in issue.labels for label in labels)]
+    if filtered:
+        _print_header(header)
+        for issue in filtered:
+            print "* {} {}".format(issue.id, issue.summary)
+
+def _print_issue_table(issues, version):
+    _print_header("Full list of fixes and enhancements")
+    print "ID  | Type | Priority | Summary"
+    print "--- | ---- | -------- | -------"
+    for issue in issues:
+        print "{} | {} | {} | {} ".format(issue.id, issue.type, issue.priority, issue.summary )
+    print "Altogether {} issues.".format(len(issues)),
+    print "See on [issue tracker](https://github.com/robotframework/robotframework/issues?q=milestone%3A{}).".format(version)
+
+
+@task
+def print_issues(version=get_version_from_file(), login=None, password=None):
     """Get issues from Github.
 
     Requires for you to have PyGithub installed.
@@ -263,49 +323,26 @@ def get_issues(version=get_version_from_file(), login=None, password=None):
                   request maximum/hour at github api if you dont authenticate.
         password: The password for github login
     """
-    try:
-        from github import Github
-    except ImportError:
-        print "You need to install PyGithub:\npip install PyGithub\n\n"
-    repo = Github(login_or_token=login, password=password).get_repo("robotframework/robotframework")
-    issues = sorted([Issue(issue) for issue in repo.get_issues(milestone=_get_milestone(repo, version), state="all")])
-    print "ID  | Type | Priority | Summary"
-    print "--- | ---- | -------- | -------"
+    issues = _get_issues(version, login, password)
+    print "{:4}  {:11}  {:8}  {}".format("id", "type", "priority", "summary")
     for issue in issues:
-        print " #{} | {} | {} | {} ".format(issue.number, issue.type, issue.prio, issue.summary )
-    print "Altogether {} issues.".format(len(issues))
-    _print_bwic(issues)
-
-def _get_milestone(repo, milestone):
-    for m in repo.get_milestones():
-        if m.title == milestone:
-            return m
-    raise AssertionError("Milestone {} not found from repository {}!".format(milestone, repo.name))
-
-def _print_bwic(issues):
-    bwics = [issue for issue in issues if issue.bwic]
-    if bwics:
-        print "\n\nBackwards incompatible issues"
-        for issue in bwics:
-            print "#{} {}".format(issue.number, issue.summary)
+        print "{:4}  {:11}  {:8}  {}".format(issue.id, issue.type, issue.priority, issue.summary)
 
 
 class Issue(object):
-
     PRIORITIES= ["prio-critical", "prio-high", "prio-medium", "prio-low"]
 
     def __init__(self, issue):
-        self.number = issue.number
+        self.id = "#{}".format(issue.number)
+        self.summary = issue.title
         self.labels = [label.name for label in issue.get_labels()]
         self.type = self._get_label("bug", "enhancement")
-        self._priority = self._get_label
-        self.sort_table = [self.PRIORITIES.index(self._priority), 0 if self.type=="bug" else 1, self.number]
-        self.summary = issue.title
-        self.bwic = self._get_label("bwic")
+        self.priority = self._get_label(*self.PRIORITIES).split('-')[1]
 
     @property
-    def prio(self):
-        return self._priority.split('-')[1]
+    def order(self):
+        return (self.PRIORITIES.index('prio-' + self.priority),
+                0 if self.type == 'bug' else 1, self.id)
 
     def _get_label(self, *values):
         for value in values:
@@ -314,4 +351,4 @@ class Issue(object):
         return None
 
     def __cmp__(self, other):
-        return cmp(self.sort_table, other.sort_table)
+        return cmp(self.order, other.order)
