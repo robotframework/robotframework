@@ -27,16 +27,22 @@ def help():
 
 
 @task
-def add_docs(version):
+def add_docs(version, push=False):
     """Add documentation of given version.
 
     Uses other tasks to do everything.
+
+    Args:
+        version:   Version of userguide. Must be precompiled in dist.
+        push:      Whether to push changes to git. Defaults to False.
     """
     copy_ug(version)
     extract_ug(version)
     update_latest(version)
     update_index(version)
-    push_changes(version)
+    add_changes(version)
+    if push:
+        push_changes(version)
 
 
 @task
@@ -87,11 +93,15 @@ def update_index(version):
                 out.write(row)
     print "Updated 'index.html' with links to {}".format(version)
 
+@task
+def add_changes(version):
+    """Adds changes to git."""
+    print "Staging files to git."
+    run("git add {0} robotframework-userguide-{0}.zip index.html latest".format(version))
 
 @task
 def push_changes(version):
-    """Gives instructions to commit and push changes."""
-    print "\nRun the following commands:\n"
-    print "git add {} index.html latest".format(version)
-    print "git commit -m 'Updated to {}'".format(version)
-    print "git push"
+    """Commit and push changes."""
+    print "Pushing changes to gh-pages."
+    run("git commit -m 'Updated to {}'".format(version))
+    run("git push")
