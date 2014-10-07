@@ -107,32 +107,74 @@ Creating distributions
 
        invoke jar
 
-   - Upload to Sonatype
 
-     - TODO
+5. Upload JAR to Sonatype
 
-5. User Guide
+   - Sonatype offers a service where users can upload JARs and they will be synced
+     to the maven central repository. Below are the instructions to upload the JAR.
+
+   - Prequisites:
+
+      - Install maven
+      - Create a `Sonatype account`__
+      - Add these lines (filled with the Sonatype account information) to your ``settings.xml``::
+
+            <servers>
+                <server>
+                    <id>sonatype-nexus-staging</id>
+                    <username></username>
+                    <password></password>
+                </server>
+            </servers>
+
+      - Create `a PGP key`__
+      - Apply for `publish rights`__ to org.robotframework project. This will
+        take some time from them to accept.
+
+
+   - Run command::
+
+        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$version.jar -DpomFile=pom.xml -Durl=http://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
+
+   - Go to https://oss.sonatype.org/index.html#welcome, log in with Sonatype credentials, find the staging repository and do close & release
+   - After that, the released JAR is synced to Maven central within an hour.
+
+__ https://issues.sonatype.org/secure/Dashboard.jspa
+__ https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven#HowToGeneratePGPSignaturesWithMaven-MavenGPGPlugin
+__ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
+
+6. User Guide
 
    - Create package (updates also library docs)::
 
        doc/userguide/ug2html.py zip
 
-   - Update docs at http://robotframework.org/robotframework/.
+   - Update docs at http://robotframework.org/robotframework/::
 
-     - TODO
+        git checkout gh-pages
+        invoke add_docs $version --push
+        git checkout master
+
 
 Release notes
 -------------
 
-Generate a template for the release notes with invoke::
+- Generate a template for the release notes with invoke::
 
    invoke release_notes --login <github login> --password <github password>
+
+- Create a new release at https://github.com/robotframework/robotframework/releases
+
 
 Announcements
 -------------
 
-TODO.
+- Twitter http://twitter.com/robotframework
+- Users and announcements mailing lists
+- Robot Framework LinkedIn group https://www.linkedin.com/groups/Robot-Framework-3710899
+- With major releases can also consider:
 
-Not all places listed on the `old instructions
-<https://code.google.com/p/robotframework/wiki/Releasing#Announce_Release>`_
-are valid anymore.
+  - http://opensourcetesting.org
+  - http://tech.groups.yahoo.com/group/agile-testing
+  - http://lists.idyll.org/listinfo/testing-in-python
+  - etc.
