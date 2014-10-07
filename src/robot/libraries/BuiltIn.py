@@ -434,6 +434,10 @@ class _Verify:
         | Fail | OS not supported | -regression | | # Removes tag 'regression'.        |
         | Fail | My message       | tag    | -t*  | # Removes all tags starting with 't' except the newly added 'tag'. |
 
+        If `Fail` is called from a keyword, the failure can be caught by
+        the caller (e.g. with `Wait Until Keyword Succeeds`) and test will
+        continue.
+        
         See `Fatal Error` if you need to stop the whole test execution.
 
         Support for modifying tags was added in Robot Framework 2.7.4 and
@@ -1501,7 +1505,10 @@ class _RunKeyword:
         | ${result} = | Wait Until Keyword Succeeds | 30 s | 1 s | My keyword |
 
         Errors caused by invalid syntax, test or keyword timeouts, or fatal
-        exceptions are not caught by this keyword.
+        exceptions are not caught by this keyword. 
+        
+        Errors caused by `fail` keyword are caught whereas those caused by
+        `fatal error` are not.
 
         Running the same keyword multiple times inside this keyword can create
         lots of output and considerably increase the size of the generated
