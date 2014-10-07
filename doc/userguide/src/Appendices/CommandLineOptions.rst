@@ -86,6 +86,8 @@ Command line options for test execution
 Command line options for post-processing outputs
 ------------------------------------------------
 
+  -R, --merge             Changes result combining behavior to `merging <merging outputs_>`__.
+  --rerunmerge            Deprecated. Use :option:`--merge` instead.
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.
@@ -94,7 +96,6 @@ Command line options for post-processing outputs
   -s, --suite <name>      `Selects the test suites`_ by name.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
-  -R, --rerunmerge        `Merges together`_ re-execution results and original results.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_.
   -d, --outputdir <dir>   Defines where to `create output files`_.
@@ -178,7 +179,6 @@ Command line options for post-processing outputs
 .. _usage instructions: `Getting help and version information`_
 .. _version information: `usage instructions`_
 
-.. _Merges together: `Merging re-executed output`_
 .. _Removes keyword data: `Removing and flattening keywords`_
 .. _Flattens keywords: `Removes keyword data`_
 .. _starting time: `Setting start and end time of execution`_

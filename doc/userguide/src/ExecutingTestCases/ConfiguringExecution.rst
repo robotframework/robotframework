@@ -135,13 +135,13 @@ contains no failed tests. Using a special value `NONE` as the output
 is same as not specifying this option at all.
 
 .. tip:: Re-execution results and original results can be `merged together`__
-         using the :option:`--rerunmerge` command line option.
+         using the :option:`--merge` command line option.
 
 .. note:: Re-executing failed tests is a new feature in Robot Framework 2.8.
           Prior Robot Framework 2.8.4 the option was named :option:`--runfailed`.
           The old name still works, but it will be removed in the future.
 
-__ `Merging re-executed output`_
+__ `Merging outputs`_
 
 When no tests match selection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

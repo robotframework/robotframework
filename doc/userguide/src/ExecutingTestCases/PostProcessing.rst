@@ -6,8 +6,9 @@ Post-processing outputs
 `XML output files`_ that are generated during the test execution can be
 post-processed afterwards by the ``rebot`` tool, which is an integral
 part of Robot Framework. It is used automatically when test
-reports and logs are generated during the test execution, but there
-are also good grounds for using it separately after the execution.
+reports and logs are generated during the test execution, and using it
+separately allows creating custom reports and logs as well as combining
+and merging results.
 
 .. contents::
    :depth: 2
@@ -73,7 +74,7 @@ them later with ``rebot`` can save a lot of time and use less memory.
 Combining outputs
 -----------------
 
-The most important feature of ``rebot`` is its ability to combine
+An important feature in ``rebot`` is its ability to combine
 outputs from different test execution rounds. This capability allows,
 for example, running the same test cases on different environments and
 generating an overall report from all outputs. Combining outputs is
@@ -97,40 +98,69 @@ meaningful name::
 
 __ `Specifying test data to be executed`_
 
-Merging re-executed output
---------------------------
+Merging outputs
+---------------
+
+If same tests are re-executed or a single test suite executed in pieces,
+combining results like discussed above creates an unnecessary top-level
+test suite. In these cases it is typically better to merge results instead.
+Merging is done by using :option:`--merge` option which changes the way how
+``rebot`` combines two or more output files. This option itself takes no
+arguments and all other command line options can be used with it normally::
+
+   rebot --merge --name Example --critical regression original.xml merged.xml
+
+How merging works in practice is explained in the following sections discussing
+its two main use cases.
+
+Merging re-executed tests
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There is often a need to re-execute a subset of tests, for example, after
 fixing a bug in the system under test or in the tests themselves. This can be
 accomplished by `selecting test cases`_ by names (:option:`--test` and
-:option:`--suite` options), tags (:option:`--include` and :option:`--exclude`), or
-by previous status (:option:`--rerunfailed`).
+:option:`--suite` options), tags (:option:`--include` and :option:`--exclude`),
+or by previous status (:option:`--rerunfailed`).
 
 Combining re-execution results with the original results using the default
 `combining outputs`_ approach does not work too well. The main problem is
 that you get separate test suites and possibly already fixed failures are
-also shown. In this situation it is often better to use :option:`--rerunmerge (-R)`
+also shown. In this situation it is better to use :option:`--merge (-R)`
 option to tell ``rebot`` to merge the results instead. In practice this
 means that tests from the latter test runs replace tests in the original.
-The usage is best illustrated by a practical example using :option:`--rerunfailed`
-and :option:`--rerunmerge` together::
+The usage is best illustrated by a practical example using
+:option:`--rerunfailed` and :option:`--merge` together::
 
-  pybot --output original.xml tests                            # first execute all tests
-  pybot --rerunfailed original.xml --output rerun.xml tests    # then re-execute failing
-  rebot --rerunmerge original.xml rerun.xml                    # finally merge results
-
-The :option:`--rerunmerge` option itself does not take any arguments. Just using
-the option alone changes the way how ``rebot`` combines two or more output
-files. All other command line options can be used with :option:`--rerunmerge`
-normally::
-
-  rebot --rerunmerge --name Merged --critical regression original.xml rerun1.xml rerun2.xml
+  pybot --output original.xml tests                          # first execute all tests
+  pybot --rerunfailed original.xml --output rerun.xml tests  # then re-execute failing
+  rebot --merge original.xml rerun.xml                       # finally merge results
 
 The message of the merged tests contains a note that results have been
 replaced. The message also shows the old status and message of the test.
 
-Merging results requires that the original result contains all same suites
-and tests as the merged results. Suites and tests tests not found from the
-original are ignored and an error printed to the console.
+Merged results must always have same top-level test suite. Tests and suites
+in merged outputs that are not found from the original output are added into
+the resulting output. How this works in practice is discussed in the next
+section.
 
 .. note:: Merging re-executed results is a new feature in Robot Framework 2.8.4.
+          Prior to Robot Framework 2.8.6 new tests or suites in merged outputs
+          were skipped and merging was done using nowadays deprecated
+          :option:`--rerunmerge` option.
+
+Merging suites executed in pieces
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Another important use case for the :option:`--merge` option is merging results
+got when running a test suite in pieces using, for example, :option:`--include`
+and :option:`--exclude` options::
+
+    pybot --include smoke --output smoke.xml tests   # first run some tests
+    pybot --exclude smoke --output others.xml tests  # then run others
+    rebot --merge smoke.xml others.xml               # finally merge results
+
+When merging outputs like this, the resulting output contains all tests and
+suites found from all given output files. If some test is found from multiple
+outputs, latest results replace the earlier ones like explained in the previous
+section. Also this merging strategy requires the top-level test suites to
+be same in all outputs.
