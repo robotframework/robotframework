@@ -152,7 +152,7 @@ __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Us
    - Update docs at http://robotframework.org/robotframework/::
 
         git checkout gh-pages
-        invoke add_docs $version --push
+        invoke add_docs $VERSION --push
         git checkout master
 
 
