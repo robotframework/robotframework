@@ -2,6 +2,8 @@
 
 Executed by Invoke <http://pyinvoke.org>. Install it with `pip install invoke`
 and run `invoke --help` and `invode --list` for details how to execute tasks.
+
+See BUILD.rst for packaging and releasing instructions.
 """
 
 import os
