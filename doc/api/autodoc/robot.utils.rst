@@ -156,6 +156,14 @@ robot.utils.normalizing module
     :undoc-members:
     :show-inheritance:
 
+robot.utils.recommendations module
+----------------------------------
+
+.. automodule:: robot.utils.recommendations
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.utils.robotenv module
 ---------------------------
 
