@@ -10,6 +10,7 @@ import os
 import os.path
 import re
 import shutil
+import sys
 import time
 import urllib
 import zipfile
@@ -249,6 +250,7 @@ Specification-Version: 2
 Implementation-Version: {version}
 '''.format(version=version))
 
+
 @task
 def release_notes(version=get_version_from_file(), login=None, password=None):
     """Get template for release notes from Github.
@@ -265,11 +267,12 @@ def release_notes(version=get_version_from_file(), login=None, password=None):
     """
     issues = _get_issues(version, login, password)
     _print_header("Robot Framework {}".format(version), level=1)
+    _print_intro(version)
     _print_if_label("Most important enhancements", issues, "prio-critical", "prio-high")
     _print_if_label("Backwards incompatible changes", issues, "bwic")
     _print_if_label("Deprected features", issues, "depr")
     _print_header("Acknowledgements")
-    print("_See AUTHORS.txt_")
+    print("*UPDATE* based on AUTHORS.txt.")
     _print_issue_table(issues, version)
 
 def _get_issues(version, login=None, password=None):
@@ -296,15 +299,31 @@ def _print_if_label(header, issues, *labels):
                 if any(label in issue.labels for label in labels)]
     if filtered:
         _print_header(header)
+        print '*EXPLAIN* or remove these.\n'
         for issue in filtered:
             print "* {} {}".format(issue.id, issue.summary)
+
+def _print_intro(version):
+    print """
+Robot Framework {version} is a new release with *UPDATE* \
+enhancements and bug fixes. It was released on {date}.
+
+Questions and comments related to the release can be sent to the \
+[robotframework-users](http://groups.google.com/group/robotframework-users) and \
+possible bugs submitted to the \
+[issue tracker](https://github.com/robotframework/robotframework/issues).
+
+If you have pip just run `pip install --update robotframework`. Otherwise see \
+[installation instructions](https://github.com/robotframework/robotframework/blob/master/INSTALL.rst).
+""".format(version=version, date=time.strftime("%A %B %d, %Y")).strip()
 
 def _print_issue_table(issues, version):
     _print_header("Full list of fixes and enhancements")
     print "ID  | Type | Priority | Summary"
     print "--- | ---- | -------- | -------"
     for issue in issues:
-        print "{} | {} | {} | {} ".format(issue.id, issue.type, issue.priority, issue.summary )
+        print "{} | {} | {} | {} ".format(issue.id, issue.type, issue.priority, issue.summary)
+    print
     print "Altogether {} issues.".format(len(issues)),
     print "See on [issue tracker](https://github.com/robotframework/robotframework/issues?q=milestone%3A{}).".format(version)
 
