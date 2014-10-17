@@ -190,3 +190,5 @@ Post-actions
 
 2. Close `issue tracker milestone
    <https://github.com/robotframework/robotframework/milestones>`__.
+
+3. Update API doc version at https://readthedocs.org/projects/robot-framework/.
