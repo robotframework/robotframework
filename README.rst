@@ -1,6 +1,9 @@
 Robot Framework
 ===============
 
+.. contents::
+   :local:
+
 Introduction
 ------------
 
@@ -102,6 +105,20 @@ Run ``pybot --help`` and ``rebot --help`` for more information about the command
 line usage. For a complete reference manual see `Robot Framework User Guide`__.
 
 __ http://robotframework.org/robotframework/#user-guide
+
+Documentation
+-------------
+
+- `User Guide
+  <http://robotframework.org/robotframework/#user-guide>`__
+- `Standard libraries
+  <http://robotframework.org/robotframework/#standard-libraries>`__
+- `Built-in tools
+  <http://robotframework.org/robotframework/#built-in-tools>`__
+- `API documentation
+  <http://robot-framework.readthedocs.org>`__
+- `General documentation and demos
+  <http://robotframework.org/#documentation>`__
 
 License
 -------
