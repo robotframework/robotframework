@@ -29,6 +29,18 @@ PyPI_, except for the standalone JAR distribution that is in `Maven central`_.
 .. _Maven central: http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework
 .. _pip: http://pip-installer.org
 
+.. image:: https://pypip.in/version/robotframework/badge.png?text=version
+   :target: https://pypi.python.org/pypi/robotframework/
+   :alt: Latest version
+
+.. image:: https://pypip.in/download/robotframework/badge.png
+   :target: https://pypi.python.org/pypi/robotframework/
+   :alt: Number of downloads
+
+.. image:: https://pypip.in/license/robotframework/badge.png
+   :target: http://www.apache.org/licenses/LICENSE-2.0.html
+   :alt: License
+
 Installation
 ------------
 
