@@ -265,7 +265,6 @@ def create_zip():
 
 
 def zip_distribution(dirpath):
-    """Generic zipper. Used also by qs2html.py """
     from zipfile import ZipFile, ZIP_DEFLATED
 
     zippath = os.path.normpath(dirpath) + '.zip'
