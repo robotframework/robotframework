@@ -49,6 +49,9 @@ Get Lines Matching Regexp When Input Is Empty
 Get Lines Matching Regexp When Pattern Is Empty
     Test Get Lines Matching Regexp    ${INPUT}    ${EMPTY}    ${EMPTY}
 
+Get Lines Matching Regexp Matching Two Words
+    Test Get Lines Matching Regexp    ${INPUT}    more|row    ${EMPTY}
+
 Get Lines Matching Regexp Matching One Line
     Test Get Lines Matching Regexp    ${INPUT}    Third.*    Third line
     Test Get Lines Matching Regexp    ${INPUT}    [LMNOPQ]in. 1+    Line 1
@@ -64,6 +67,27 @@ Get Lines Matching Regexp With Case-Insensitive
     Test Get Lines Matching Regexp    ${INPUT}    (?i).*LINE    Third line
     Test Get Lines Matching Regexp    ${INPUT}    .*LINE.*    ${EMPTY}
 
+Get Lines Containing Regexp Matching Two Words
+    Test Get Lines Containing Regexp    ${INPUT}    more|row    One more row here
+
+Get Lines Containing Regexp Matching One Line
+    Test Get Lines Containing Regexp    ${INPUT}    One    One more row here
+    Test Get Lines Containing Regexp    ${INPUT}    .*here    One more row here
+    Test Get Lines Containing Regexp    ${INPUT}    1    Line 1
+
+Get Lines Containing Regexp Matching Some Lines
+    Test Get Lines Containing Regexp    ${INPUT}    .* \\d    Line 1\nLine 2
+    Test Get Lines Containing Regexp    ${INPUT}    (Line|Wine) [1-9]    Line 1\nLine 2
+    Test Get Lines Containing Regexp    ${INPUT}    1|2    Line 1\nLine 2
+    Test Get Lines Containing Regexp    ${INPUT}    ^.*e$    Third line\nOne more row here
+    Test Get Lines Containing Regexp    ${INPUT}    .{6}    Line 1\nLine 2\nThird line\nOne more row here
+    Test Get Lines Containing Regexp    ${INPUT}    .*    ${INPUT}
+
+Get Lines Containing Regexp With Case-Insensitive
+    Test Get Lines Containing Regexp    ${INPUT}    (?i).*line.*    Line 1\nLine 2\nThird line
+    Test Get Lines Containing Regexp    ${INPUT}    (?i).*LINE    Line 1\nLine 2\nThird line
+    Test Get Lines Containing Regexp    ${INPUT}    .*LINE.*    ${EMPTY}
+
 *** Keywords ***
 Test Get Lines Containing String
     [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=false
@@ -78,4 +102,9 @@ Test Get Lines Matching Pattern
 Test Get Lines Matching Regexp
     [Arguments]    ${input}    ${pattern}    ${expected}
     ${actual} =    Get Lines Matching Regexp    ${input}    ${pattern}
+    Should Be Equal    ${actual}    ${expected}
+
+Test Get Lines Containing Regexp
+    [Arguments]    ${input}    ${pattern}    ${expected}
+    ${actual} =    Get Lines Containing Regexp    ${input}    ${pattern}
     Should Be Equal    ${actual}    ${expected}

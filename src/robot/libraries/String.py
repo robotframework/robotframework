@@ -261,6 +261,33 @@ class String(object):
         regexp = re.compile('^%s$' % pattern)
         return self._get_matching_lines(string, regexp.match)
 
+    def get_lines_containing_regexp(self, string, pattern):
+        """Returns lines of the given `string` containing the regexp `pattern`.
+
+        See `BuiltIn.Should Match Regexp` for more information about
+        Python regular expression syntax in general and how to use it
+        in Robot Framework test data in particular. Unlike `Get Lines 
+        Matching Regexp` this keyword uses the matching pattern without
+        the '^' and '$' positional markers, making possible to match
+        content within the input lines. Notice that to make the match
+        case-insensitive, you need to embed case-insensitive
+        flag into the pattern.
+
+        Lines are returned as one string catenated back together with
+        newlines. Possible trailing newline is never returned. The
+        number of matching lines is automatically logged.
+
+        Examples:
+        | ${lines} = | Get Lines Containing Regexp | ${result} | Reg\\\\w{3} example |
+        | ${ret} = | Get Lines Containing Regexp | ${ret} | (?i)FAIL: .* |
+
+        See `Get Lines Matching Pattern` and `Get Lines Containing
+        String` if you do not need full regular expression powers (and
+        complexity).
+        """
+        regexp = re.compile('%s' % pattern)
+        return self._get_matching_lines(string, regexp.search)
+
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
