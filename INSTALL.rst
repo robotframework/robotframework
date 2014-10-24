@@ -29,7 +29,7 @@ Introduction
 `IronPython <http://ironpython.net>`_ (.NET). Before installing the framework,
 an obvious precondition_ is installing at least one of these interpreters. Note
 that Python 3 is not yet supported, but there is an `un-official Python 3 port
-<https://pypi.python.org/pypi/robotframework-python3>`__ available.
+<https://pypi.python.org/pypi/robotframework-python3>`_ available.
 
 Different ways to install Robot Framework itself are listed below and explained
 more thoroughly in subsequent sections.
@@ -95,8 +95,10 @@ installer and get more information about the installation process and Python
 in general.
 
 Robot Framework currently supports Python versions 2.5, 2.6, and 2.7. The plan
-is to support also Python 3 in the future and at the same time Python 2.5
-support will be dropped. Robot Framework 2.0 and 2.1 support Python 2.3 and 2.4.
+is to support also Python 3 in the future, and Python 2.5 support will be
+dropped latest then. If you need Python 3 support earlier, you can use the
+`un-official Python 3 port`_. If you need to use really old Python versions,
+Robot Framework 2.0 and 2.1 support Python 2.3 and 2.4.
 
 On Windows it is recommended to install Python to all users and to run the
 installer as an administrator. Additionally, environment variable
