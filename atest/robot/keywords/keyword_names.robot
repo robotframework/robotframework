@@ -60,6 +60,12 @@ User Keyword Name Containing Dots
 User Keyword Name Ending With Dot
     Check Test And Three Keyword Names    User Keyword Name Ending With Dot    User Keyword.
 
+Name Set Using 'robot_name' Attribute
+    Check Test Case  ${TESTNAME}
+
+Old Name Doesn't Work If Name Set Using 'robot_name'
+    Check Test Case  ${TESTNAME}
+
 *** Keywords ***
 Check Test And Three Keyword Names
     [Arguments]    ${test_name}    ${exp_kw_name}

@@ -1,3 +1,5 @@
+from robot.api import deco
+
 class MyLibrary1:
 
     def keyword_only_in_library_1(self):
@@ -26,3 +28,7 @@ class MyLibrary1:
 
     def no_operation(self):
         print "Overrides keyword from BuiltIn library"
+
+    @deco.keyword('Name Set Using Robot Name Attribute')
+    def name_set_in_method_signature(self):
+        pass

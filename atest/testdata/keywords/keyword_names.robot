@@ -51,6 +51,13 @@ User Keyword Name Ending With Dot
     USER KEYWORD.
     _US_er_ K EY_word .
 
+Name Set Using 'robot_name' Attribute
+    Name Set Using Robot Name Attribute
+
+Old Name Doesn't Work If Name Set Using 'robot_name'
+    [Documentation]  FAIL No keyword with name 'Name Set In Method Signature' found.
+    Name Set In Method Signature
+
 *** Keywords ***
 Keyword Only In Test Case File
     Log  Keyword from test case file
