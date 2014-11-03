@@ -182,6 +182,14 @@ from highest to lowest, is `AND`, `OR` and `NOT`::
     --include xORyNOTz      # Matches tests containing either tag 'x' or 'y', but not tag 'z'.
     --include xNOTyANDz     # Matches tests containing tag 'x', but not tags 'y' and 'z'.
 
+Although tag matching itself is case-insensitive, all operators are
+case-sensitive and must be written with upper case letters. If tags themselves
+happen to contain upper case `AND`, `OR` or `NOT`, they need to specified
+using lower case letters to avoid accidental operator usage::
+
+    --include port          # Matches tests containing tag 'port', case-insensitively
+    --include PORT          # Matches tests containing tag 'P' or 'T', case-insensitively
+    --exclude handoverORportNOTnotification
 
 .. note:: `OR` operator is new in Robot Framework 2.8.4.
 
