@@ -368,32 +368,39 @@ Starting from Robot Framework 2.5.5, it is possible to use simple arithmetics
 such as addition and subtraction with the range limits. This is especially
 useful when the limits are specified with variables.
 
+Starting from Robot Framework 2.8.7, it is possible to use float values for
+lower limit, upper limit and step.
+
 .. table:: For in range examples
    :class: example
 
-   ================  ===============  ===========  ==========  ========  ========  ========
-      Test Case          Action        Argument     Argument     Arg       Arg       Arg
-   ================  ===============  ===========  ==========  ========  ========  ========
-   Only upper limit  [Documentation]  Loops over   values      from 0    to 9
-   \                 :FOR             ${index}     IN RANGE    10
+   ================  ===============  ===========  =========  ===========  ========  =======
+      Test Case          Action        Argument     Argument    Arg          Arg       Arg
+   ================  ===============  ===========  =========  ===========  ========  =======
+   Only upper limit  [Documentation]  Loops over   values     from 0       to 9
+   \                 :FOR             ${index}     IN RANGE   10
    \                                  Log          ${index}
    \
-   Start and end     [Documentation]  Loops over   values      from 1    to 10
-   \                 :FOR             ${index}     IN RANGE    1         11
+   Start and end     [Documentation]  Loops over   values     from 1       to 10
+   \                 :FOR             ${index}     IN RANGE   1            11
    \                                  Log          ${index}
    \
-   Also step given   [Documentation]  Loops over   values      5, 15,    and 25
-   \                 :FOR             ${index}     IN RANGE    5         26        10
+   Also step given   [Documentation]  Loops over   values     5, 15,       and 25
+   \                 :FOR             ${index}     IN RANGE   5            26        10
    \                                  Log          ${index}
    \
-   Negative step     [Documentation]  Loops over   values      13, 3,    and -7
-   \                 :FOR             ${index}     IN RANGE    13        -13       -10
+   Negative step     [Documentation]  Loops over   values     13, 3,       and -7
+   \                 :FOR             ${index}     IN RANGE   13           -13       -10
    \                                  Log          ${index}
    \
-   Arithmetics       [Documentation]  Arithmetics  with        variable
-   \                 :FOR             ${index}     IN RANGE    ${var}+1
+   Arithmetics       [Documentation]  Arithmetics  with       variable
+   \                 :FOR             ${index}     IN RANGE   ${var}+1
    \                                  Log          ${index}
-   ================  ===============  ===========  ==========  ========  ========  ========
+   \
+   Float parameters  [Documentation]  Loops over   values     3.14, 4.34,  and 5.34
+   \                 :FOR             ${index}     IN RANGE   3.14         6.09      1.2
+   \                                  Log          ${index}
+   ================  ===============  ===========  =========  ===========  ========  =======
 
 Exiting for loop
 ~~~~~~~~~~~~~~~~

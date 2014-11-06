@@ -51,3 +51,4 @@ Michael Walle                  Telnet.Write Control Character keyword (2.8.5)
                                Telnet.Read Until Prompt strip_prompt option (2.8.7)
 Tero Kinnunen                  BDD 'But' prefix ignored (2.8.7)
 Heiko Thiery                   Enable log level config option for TelnetLibrary (2.8.7)
+Nicolae Chedea                 Float parameters in FOR IN RANGE
