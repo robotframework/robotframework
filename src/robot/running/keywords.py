@@ -279,22 +279,10 @@ class ForLoop(_BaseKeyword):
                         % (len(self.vars), len(items), plural_or_not(items)))
 
     def _get_range_items(self, items):
-        try:
-            items = [self._to_int_with_arithmetics(item) for item in items]
-        except:
-            raise DataError('Converting argument of FOR IN RANGE failed: %s'
-                            % get_error_message())
         if not 1 <= len(items) <= 3:
             raise DataError('FOR IN RANGE expected 1-3 arguments, '
                             'got %d instead.' % len(items))
-        return range(*items)
-
-    def _to_int_with_arithmetics(self, item):
-        item = str(item)
-        try:
-            return int(item)
-        except ValueError:
-            return int(eval(item))
+        return frange(*items)
 
 
 class _ForItem(_BaseKeyword):
@@ -309,3 +297,52 @@ class _ForItem(_BaseKeyword):
         self.status = status
         self.endtime = get_timestamp()
         self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
+
+def numberOfDigits(number):
+    digits = 0
+    import re
+    from locale import localeconv
+    convertedNumber = str(number)
+    dec_pt = localeconv()['decimal_point']
+    #split the string in 2 parts if necessary
+    list_of_strings = convertedNumber.split(dec_pt)
+    if len(list_of_strings) == 1:
+        #there was no decimal point
+        digits = 0
+    elif len(list_of_strings) == 2:
+        #regular float number
+        digits = len(list_of_strings[1])
+    else:
+        #invalid input
+        raise ValueError, "input is not a number"
+    return digits    
+
+def frange(*args):
+    result = []
+    #find out the arguments
+    if len(args) == 1:
+        start = 0
+        stop = num(args[0])
+        step = 1
+    elif len(args) == 2:
+        start = num(args[0])
+        stop = num(args[1])
+        step = 1
+    elif len(args) == 3:
+        start = num(args[0])
+        stop = num(args[1])
+        step = num(args[2])
+    else:
+        raise ValueError, "invalid number of arguments"
+    #find out maximum number of decimals
+    powerOf10 = max(numberOfDigits(start),numberOfDigits(stop),numberOfDigits(step))    
+    if powerOf10 == 0:
+        result = range(start, stop, step)
+    else:
+        #multiply each argument to avoid rounding errors if necessary
+        factor = pow(10,powerOf10)    
+        result = [x / float(factor) for x in range(int(start*factor),int(stop*factor),int(step*factor))]
+    return result
+
+def num(s):
+    return float(s) if '.' in str(s) else int(s)
