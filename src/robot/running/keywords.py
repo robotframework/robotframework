@@ -322,16 +322,16 @@ def frange(*args):
     #find out the arguments
     if len(args) == 1:
         start = 0
-        stop = num(args[0])
+        stop = eval(args[0])
         step = 1
     elif len(args) == 2:
-        start = num(args[0])
-        stop = num(args[1])
+        start = eval(args[0])
+        stop = eval(args[1])
         step = 1
     elif len(args) == 3:
-        start = num(args[0])
-        stop = num(args[1])
-        step = num(args[2])
+        start = eval(args[0])
+        stop = eval(args[1])
+        step = eval(args[2])
     else:
         raise ValueError, "invalid number of arguments"
     #find out maximum number of decimals
@@ -343,6 +343,3 @@ def frange(*args):
         factor = pow(10,powerOf10)    
         result = [x / float(factor) for x in range(int(start*factor),int(stop*factor),int(step*factor))]
     return result
-
-def num(s):
-    return float(s) if '.' in str(s) else int(s)
