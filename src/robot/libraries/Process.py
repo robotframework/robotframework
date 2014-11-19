@@ -729,12 +729,11 @@ class Process(object):
         self._processes.switch(handle)
 
     def _process_is_stopped(self, process, timeout):
+        stopped = lambda: process.poll() is not None
         max_time = time.time() + timeout
-        while time.time() <= max_time:
-            if process.poll() is not None:
-                return True
-            time.sleep(min(0.1, timeout/3))
-        return False
+        while time.time() <= max_time and not stopped():
+            time.sleep(min(0.1, timeout))
+        return stopped()
 
 
 class ExecutionResult(object):
