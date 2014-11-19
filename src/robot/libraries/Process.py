@@ -733,7 +733,7 @@ class Process(object):
         while time.time() <= max_time:
             if process.poll() is not None:
                 return True
-            time.sleep(0.1)
+            time.sleep(min(0.1, timeout/3))
         return False
 
 
