@@ -33,3 +33,7 @@ Keyword
     Keyword Name Should Be         0    Keyword
     Keyword Arguments Should Be    0    *varargs
     Keyword Doc Should Be          0    ${EMPTY}
+
+Documentation set in __init__
+    Run Libdoc And Parse Output    ${TESTDATADIR}/DynamicLibraryWithoutGetKwArgsAndDoc.py::New
+    Doc Should Be    New

@@ -74,7 +74,7 @@ class _BaseTestLibrary(BaseLibrary):
         self.has_listener = None  # Set when first instance is created
         self._libinst = None
         if libcode is not None:
-            self._doc = getdoc(libcode)
+            self._doc = None
             self.doc_format = self._get_doc_format(libcode)
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
@@ -84,6 +84,8 @@ class _BaseTestLibrary(BaseLibrary):
 
     @property
     def doc(self):
+        if self._doc is None:
+            self._doc = getdoc(self.get_instance())
         return self._doc
 
     @property
@@ -297,13 +299,12 @@ class _DynamicLibrary(_BaseTestLibrary):
 
     def __init__(self, libcode, name, args, variables=None):
         _BaseTestLibrary.__init__(self, libcode, name, args, variables)
-        self._doc_get = False
 
     @property
     def doc(self):
-        if not self._doc_get:
-            self._doc = self._get_kw_doc('__intro__') or self._doc
-            self._doc_get = True
+        if self._doc is None:
+            self._doc = (self._get_kw_doc('__intro__') or
+                         _BaseTestLibrary.doc.fget(self))
         return self._doc
 
     def _get_kw_doc(self, name, instance=None):

@@ -62,3 +62,7 @@ KwArgs and VarArgs
     Run Libdoc And Parse Output    Process
     Keyword Name Should Be         6    Run Process
     Keyword Arguments Should Be    6    command    *arguments    **configuration
+
+Documentation set in __init__
+    Run Libdoc And Parse Output    ${TESTDATADIR}/DocSetInInit.py
+    Doc Should Be    Doc set in __init__!!
