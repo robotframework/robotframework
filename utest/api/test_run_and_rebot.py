@@ -131,12 +131,16 @@ class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_importer_caches_are_cleared_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot')
-        run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO())
+        self._run(data)
         lib = self._import_library()
         res = self._import_resource()
-        run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO())
+        self._run(data)
         assert_true(lib is not self._import_library())
         assert_true(res is not self._import_resource())
+
+    def _run(self, data, **config):
+        return run_without_outputs(data, stdout=StringIO(), stderr=StringIO(),
+                                   outputdir=TEMP, **config)
 
     def _import_library(self):
         return namespace.IMPORTER.import_library('BuiltIn', None, None, None)
@@ -147,11 +151,9 @@ class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_clear_namespace_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.robot')
-        rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),
-                 test=['NormalText'], variable=['NormalText:Hello'])
+        rc = self._run(data, test=['NormalText'], variable=['NormalText:Hello'])
         assert_equals(rc, 0)
-        rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),
-                 test=['NormalText'])
+        rc = self._run(data, test=['NormalText'])
         assert_equals(rc, 1)
 
 
