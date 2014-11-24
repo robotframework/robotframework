@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from contextlib import contextmanager
 import logging
 
 from robot import utils
@@ -25,10 +26,27 @@ LEVELS = {'TRACE': logging.NOTSET,
           'WARN': logging.WARNING}
 
 
+# TODO: Remove in RF 2.9 because register_handler used instead since 2.8.7.
+# https://github.com/robotframework/robotframework/issues/1821
 def initialize(level):
     logging.raiseExceptions = False
     logging.getLogger().addHandler(RobotHandler())
     set_level(level)
+
+
+@contextmanager
+def register_handler(level, handler=None):
+    root = logging.getLogger()
+    handler = handler or RobotHandler()
+    old_raise = logging.raiseExceptions
+    root.addHandler(handler)
+    logging.raiseExceptions = False
+    set_level(level)
+    try:
+        yield
+    finally:
+        root.removeHandler(handler)
+        logging.raiseExceptions = old_raise
 
 
 def set_level(level):

@@ -156,6 +156,14 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         rc = self._run(data, test=['NormalText'])
         assert_equals(rc, 1)
 
+    def test_reset_logging_conf(self):
+        import logging
+        assert_equals(logging.getLogger().handlers, [])
+        assert_equals(logging.raiseExceptions, 1)
+        self._run(join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot'))
+        assert_equals(logging.getLogger().handlers, [])
+        assert_equals(logging.raiseExceptions, 1)
+
 
 class TestPreservingSignalHandlers(unittest.TestCase):
 
