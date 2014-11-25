@@ -34,9 +34,7 @@ Examples
 --------
 
 First, let's assume we have the following test suite in file
-``activate_skynet.txt``:
-
-.. sourcecode:: RobotFramework
+``activate_skynet.robot``::
 
     *** Settings ***
     Library    OperatingSystem
@@ -52,7 +50,7 @@ using the :class:`~robot.running.builder.TestSuiteBuilder` class as follows::
 
     from robot.api import TestSuiteBuilder
 
-    suite = TestSuiteBuilder().build('path/to/activate_skynet.txt')
+    suite = TestSuiteBuilder().build('path/to/activate_skynet.robot')
 
 That was easy. Let's next generate the same test suite from scratch
 using the :class:`~robot.running.model.TestSuite` class::
@@ -91,7 +89,7 @@ the results is possible using the
 
     from robot.api import ResultWriter
 
-    # Report and xUnit files can be generated based on the  result object.
+    # Report and xUnit files can be generated based on the result object.
     ResultWriter(result).write_results(report='skynet.html', log=None)
     # Generating log files requires processing the earlier generated output XML.
     ResultWriter('skynet.xml').write_results()
@@ -128,4 +126,3 @@ def UserLibrary(path):
             handler.doc = '*Creating keyword failed: %s*' % handler.error
     ret.doc = resource.setting_table.doc.value
     return ret
-
