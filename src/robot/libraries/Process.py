@@ -64,19 +64,22 @@ class Process(object):
 
     = Specifying command and arguments =
 
-    Both `Run Process` and `Start Process` accept the command to execute
-    and all arguments passed to it as separate arguments. This is convenient
-    to use and also allows these keywords to automatically escape possible
-    spaces and other special characters in the command or arguments.
+    Both `Run Process` and `Start Process` accept the command to execute and
+    all arguments passed to the command as separate arguments. This makes usage
+    convenient and also allows these keywords to automatically escape possible
+    spaces and other special characters in commands and arguments. Notice that
+    if a command accepts options that themselves accept values, these options
+    and their values must be given as separate arguments.
 
-    When `running processes in shell`, it is also possible to give the
-    whole command to execute as a single string. The command can then
-    contain multiple commands, for example, connected with pipes. When
-    using this approach the caller is responsible on escaping.
+    When `running processes in shell`, it is also possible to give the whole
+    command to execute as a single string. The command can then contain
+    multiple commands to be run together. When using this approach, the caller
+    is responsible on escaping.
 
     Examples:
-    | `Run Process` | ${progdir}${/}prog.py        | first arg | second         |
-    | `Run Process` | script1.sh arg && script2.sh | shell=yes | cwd=${progdir} |
+    | `Run Process` | ${tools}${/}prog.py | argument | second arg with spaces |
+    | `Run Process` | java | -jar | ${jars}${/}example.jar | --option | value |
+    | `Run Process` | prog.py "one arg" && tool.sh | shell=yes | cwd=${tools} |
 
     Starting from Robot Framework 2.8.6, possible non-string arguments are
     converted to strings automatically.
