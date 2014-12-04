@@ -104,6 +104,12 @@ function expandAll(elementId) {
     element.find('.element-header').removeClass('closed');
 }
 
+function collapseAll(id) {
+    var element = $('#' + id);
+    element.find('.children').css({'display': 'none'});
+    element.find('.element-header').addClass('closed');
+}
+
 // For complete cross-browser experience..
 // http://www.quirksmode.org/js/events_order.html
 function stopPropagation(event) {
@@ -116,11 +122,17 @@ function stopPropagation(event) {
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
-    <div class="element-header closed" onclick="toggleElement('${id}')" title="${fullName}">
-      <a class="expand" href="javascript:expandAll('${id}')"
-         onclick="stopPropagation(event)">Expand All</a>
-      <span class="not-run">TEST SUITE: </span>
-      <span class="name">{{html name}}</span>
+    <div class="element-header closed" onclick="toggleElement('${id}')">
+      <div class="element-header-left" title="{{html fullName}}">
+        <span class="not-run">TEST SUITE: </span>
+        <span class="name">{{html name}}</span>
+      </div>
+      <div class="element-header-right" onclick="stopPropagation(event)" title="">
+        <a class="expand" title="Expand all" href="javascript:expandAll('${id}')"></a>
+        <a class="collapse" title="Collapse all" href="javascript:collapseAll('${id}')"></a>
+        <a class="link" title="Link to this suite" href="#${id}" onclick="makeElementVisible('${id}')"></a>
+      </div>
+      <div class="element-header-toggle" title="Toggle visibility"></div>
     </div>
     <div class="children">
       <table class="metadata">
@@ -161,11 +173,15 @@ function stopPropagation(event) {
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
-    <div class="element-header closed" onclick="toggleElement('${id}')" title="${fullName}">
-      <a class="expand" href="javascript:expandAll('${id}')"
-         onclick="stopPropagation(event)">Expand All</a>
-      <span class="not-run">TEST CASE: </span>
-      <span class="name">{{html name}}</span>
+    <div class="element-header closed" onclick="toggleElement('${id}')">
+      <div class="element-header-left" title="{{html fullName}}">
+        <span class="not-run">TEST CASE: </span>
+        <span class="name">{{html name}}</span>
+      </div>
+      <div class="element-header-right" onclick="stopPropagation(event)" title="">
+        <a class="link" title="Link to this test" href="#${id}" onclick="makeElementVisible('${id}')"></a>
+      </div>
+      <div class="element-header-toggle" title="Toggle visibility"></div>
     </div>
     <div class="children">
       <table class="metadata">
