@@ -41,7 +41,11 @@ $(document).ready(function(){
     addTitle(window.testdoc.title);
     addGenerated(window.testdoc.generated, window.testdoc.generatedMillis);
     addSuite(window.testdoc.suite, 'body');
-    toggleElement(window.testdoc.suite.id);
+    if (window.location.hash) {
+        makeElementVisible(window.location.hash.substring(1));
+    } else {
+        makeElementVisible(window.testdoc.suite.id, true);
+    }
 });
 
 function parseTemplates() {
@@ -91,15 +95,44 @@ function addKeywords(parent) {
     });
 }
 
-function toggleElement(elementId) {
-    var element = $('#' + elementId);
+function makeElementVisible(id, noHighlight) {
+    var ids = id.split('-');
+    var current = [];
+    while (ids.length) {
+        current.push(ids.shift());
+        openElement(current.join('-'));
+    }
+    if (!noHighlight) {
+        highlight($('#' + id));
+    }
+}
+
+function highlight(element, color) {
+    if (color === undefined)
+        color = 242;
+    if (color < 255) {
+        element.css({'background-color': 'rgb('+color+','+color+','+color+')'});
+        setTimeout(function () { highlight(element, color+1); }, 300);
+    } else {
+        element.css({'background-color': ''});
+    }
+}
+
+function openElement(id) {
+    var element = $('#' + id);
+    element.children('.children').show();
+    element.children('.element-header').removeClass('closed');
+}
+
+function toggleElement(id) {
+    var element = $('#' + id);
     element.children('.children').toggle(100, '', function () {
         element.children('.element-header').toggleClass('closed');
     });
 }
 
-function expandAll(elementId) {
-    var element = $('#' + elementId);
+function expandAll(id) {
+    var element = $('#' + id);
     element.find('.children').show();
     element.find('.element-header').removeClass('closed');
 }
