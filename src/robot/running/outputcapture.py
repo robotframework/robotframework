@@ -78,11 +78,17 @@ class PythonCapturer(object):
             return self._get_value(self._stream)
         finally:
             self._stream.close()
+            # Avoid ValueError at program exit when logging module tries to
+            # flush an already closed stream it has intercepted. For details
+            # see http://bugs.python.org/issue6333
+            if sys.version_info < (2, 7):
+                self._stream.flush = lambda: None
 
     def _get_value(self, stream):
         try:
             return decode_output(stream.getvalue())
         except UnicodeError:
+            # Error occurs if non-ASCII chars logged both as str and unicode.
             stream.buf = decode_output(stream.buf)
             stream.buflist = [decode_output(item) for item in stream.buflist]
             return stream.getvalue()
