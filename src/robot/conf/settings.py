@@ -464,6 +464,10 @@ class RobotSettings(_BaseSettings):
                 any(mode == 'skipteardownonexit' for mode in self['RunMode']))
 
     @property
+    def log_level(self):
+        return self['LogLevel']
+
+    @property
     def console_logger_config(self):
         return {
             'width':   self['MonitorWidth'],
