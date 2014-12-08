@@ -1,5 +1,6 @@
 import unittest
 import sys
+import threading
 import tempfile
 import signal
 from os.path import abspath, dirname, join, exists, curdir
@@ -180,6 +181,15 @@ class TestSignalHandlers(unittest.TestCase):
         finally:
             signal.signal(signal.SIGINT, orig_sigint)
             signal.signal(signal.SIGTERM, orig_sigterm)
+
+    def test_dont_register_signal_handlers_then_run_on_thread(self):
+        stream = StringIO()
+        thread = threading.Thread(target=run_without_outputs, args=(self.data,),
+                                  kwargs=dict(stdout=stream, stderr=stream))
+        thread.start()
+        thread.join()
+        output = stream.getvalue()
+        assert_true('ERROR' not in output.upper(), 'Errors:\n%s' % output)
 
 
 class TestRelativeImportsFromPythonpath(RunningTestCase):
