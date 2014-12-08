@@ -41,13 +41,6 @@ class Variables(utils.NormalizedDict):
     %{environment} variables.
     """
 
-    _extended_var_re = re.compile(r'''
-    ^\${         # start of the string and "${"
-    (.+?)        # base name (group 1)
-    ([^\s\w].+)  # extended part (group 2)
-    }$           # "}" and end of the string
-    ''', re.UNICODE|re.VERBOSE)
-
     def __init__(self, identifiers=('$', '@', '%', '&', '*')):
         utils.NormalizedDict.__init__(self, ignore='_')
         self._identifiers = identifiers
@@ -139,20 +132,7 @@ class Variables(utils.NormalizedDict):
         return value
 
     def _get_extended_var(self, name):
-        err_pre = "Resolving variable '%s' failed: " % name
-        res = self._extended_var_re.search(name)
-        if res is None:
-            raise ValueError
-        base_name = res.group(1)
-        expression = res.group(2)
-        try:
-            variable = self['${%s}' % base_name]
-        except DataError, err:
-            raise DataError(err_pre + unicode(err))
-        try:
-            return eval('_BASE_VAR_' + expression, {'_BASE_VAR_': variable})
-        except:
-            raise DataError(err_pre + utils.get_error_message())
+        return ExtendedVariableFinder(self).find(name)
 
     def _get_number_var(self, name):
         if name[0] != '$':
@@ -422,6 +402,35 @@ class Variables(utils.NormalizedDict):
         if extended:
             return self.has_key(variable)
         return utils.NormalizedDict.has_key(self, variable)
+
+
+class ExtendedVariableFinder(object):
+    _extended_var_re = re.compile(r'''
+    ^\${         # start of the string and "${"
+    (.+?)        # base name (group 1)
+    ([^\s\w].+)  # extended part (group 2)
+    }$           # "}" and end of the string
+    ''', re.UNICODE|re.VERBOSE)
+
+    def __init__(self, variables):
+        self.variables = variables
+
+    def find(self, name):
+        res = self._extended_var_re.search(name)
+        if res is None:
+            raise ValueError
+        base_name = res.group(1)
+        expression = res.group(2)
+        try:
+            variable = self.variables['${%s}' % base_name]
+        except DataError, err:
+            raise DataError("Resolving variable '%s' failed: %s"
+                            % (name, unicode(err)))
+        try:
+            return eval('_BASE_VAR_' + expression, {'_BASE_VAR_': variable})
+        except:
+            raise DataError("Resolving variable '%s' failed: %s"
+                            % (name, utils.get_error_message()))
 
 
 class DelayedVariable(object):
