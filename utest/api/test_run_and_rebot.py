@@ -18,7 +18,7 @@ LOG = 'Log:     %s' % LOG_PATH
 
 
 def run_without_outputs(*args, **kwargs):
-    kwargs.update(output='NONE', log='NoNe', report='none')
+    kwargs.update(output='NONE', log='NoNe', report=None)
     return run(*args, **kwargs)
 
 
@@ -165,23 +165,21 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         assert_equals(logging.raiseExceptions, 1)
 
 
-class TestPreservingSignalHandlers(unittest.TestCase):
-
-    def setUp(self):
-        self.orig_sigint = signal.getsignal(signal.SIGINT)
-        self.orig_sigterm = signal.getsignal(signal.SIGTERM)
-
-    def tearDown(self):
-        signal.signal(signal.SIGINT, self.orig_sigint)
-        signal.signal(signal.SIGTERM, self.orig_sigterm)
+class TestSignalHandlers(unittest.TestCase):
+    data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot')
 
     def test_original_signal_handlers_are_restored(self):
+        orig_sigint = signal.getsignal(signal.SIGINT)
+        orig_sigterm = signal.getsignal(signal.SIGTERM)
         my_sigterm = lambda signum, frame: None
         signal.signal(signal.SIGTERM, my_sigterm)
-        run(join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot'),
-            stdout=StringIO(), output=None, log=None, report=None)
-        assert_equals(signal.getsignal(signal.SIGINT), self.orig_sigint)
-        assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
+        try:
+            run_without_outputs(self.data, stdout=StringIO())
+            assert_equals(signal.getsignal(signal.SIGINT), orig_sigint)
+            assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
+        finally:
+            signal.signal(signal.SIGINT, orig_sigint)
+            signal.signal(signal.SIGTERM, orig_sigterm)
 
 
 class TestRelativeImportsFromPythonpath(RunningTestCase):
