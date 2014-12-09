@@ -1,4 +1,6 @@
 import unittest
+import time
+import glob
 import sys
 import threading
 import tempfile
@@ -164,6 +166,43 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         self._run(join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot'))
         assert_equals(logging.getLogger().handlers, [])
         assert_equals(logging.raiseExceptions, 1)
+
+
+class TestTimestampOutputs(RunningTestCase):
+    output = join(TEMP, 'output-ts-*.xml')
+    report = join(TEMP, 'report-ts-*.html')
+    log = join(TEMP, 'log-ts-*.html')
+    remove_files = [output, report, log]
+
+    def test_different_timestamps_when_run_multiple_times(self):
+        self.run_tests()
+        output1, = self.find_results(self.output, 1)
+        report1, = self.find_results(self.report, 1)
+        log1, = self.find_results(self.log, 1)
+        self.wait_until_next_second()
+        self.run_tests()
+        output21, output22 = self.find_results(self.output, 2)
+        report21, report22 = self.find_results(self.report, 2)
+        log21, log22 = self.find_results(self.log, 2)
+        assert_equals(output1, output21)
+        assert_equals(report1, report21)
+        assert_equals(log1, log21)
+
+    def run_tests(self):
+        data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot')
+        assert_equals(run(data, timestampoutputs=True, outputdir=TEMP,
+                          output='output-ts.xml', report='report-ts.html',
+                          log='log-ts'), 1)
+
+    def find_results(self, pattern, expected):
+        matches = glob.glob(pattern)
+        assert_equals(len(matches), expected)
+        return sorted(matches)
+
+    def wait_until_next_second(self):
+        start = time.localtime()[5]
+        while time.localtime()[5] == start:
+            time.sleep(0.01)
 
 
 class TestSignalHandlers(unittest.TestCase):

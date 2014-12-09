@@ -3,6 +3,7 @@ from os import remove
 from os.path import exists
 import unittest
 from StringIO import StringIO
+from glob import glob
 
 
 class RunningTestCase(unittest.TestCase):
@@ -51,6 +52,7 @@ class RunningTestCase(unittest.TestCase):
                                  % (content, count, output))
 
     def _remove_files(self):
-        for path in self.remove_files:
-            if exists(path):
-                remove(path)
+        for pattern in self.remove_files:
+            for path in glob(pattern):
+                if exists(path):
+                    remove(path)

@@ -15,6 +15,7 @@
 import os
 import random
 import sys
+import time
 
 from robot import utils
 from robot.errors import DataError, FrameworkError
@@ -65,6 +66,7 @@ class _BaseSettings(object):
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
+        self.start_timestamp = utils.format_time(time.time(), '', '-', '')
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
         self._cli_opts.update(self._extra_cli_opts)
@@ -211,7 +213,7 @@ class _BaseSettings(object):
     def _process_output_name(self, option, name):
         base, ext = os.path.splitext(name)
         if self['TimestampOutputs']:
-            base = '%s-%s' % (base, utils.get_start_timestamp('', '-', ''))
+            base = '%s-%s' % (base, self.start_timestamp)
         ext = self._get_output_extension(ext, option)
         return base + ext
 
