@@ -12,6 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from itertools import chain
+from operator import attrgetter
+
 from robot.utils import setter
 
 from .itemlist import ItemList
@@ -21,7 +24,8 @@ from .modelobject import ModelObject
 
 class Keyword(ModelObject):
     """Base model for single keyword."""
-    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout']
+    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout',
+                 '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE = 'kw'
     SETUP_TYPE = 'setup'
     TEARDOWN_TYPE = 'teardown'
@@ -49,6 +53,19 @@ class Keyword(ModelObject):
         self.messages = None
         #: Child keywords as :class:`~.model.keyword.Keyword` instances.
         self.keywords = None
+        self._sort_key = -1
+        self._next_child_sort_key = 0
+
+    @setter
+    def parent(self, parent):
+        if parent and parent is not self.parent:
+            self._sort_key = getattr(parent, '_child_sort_key', -1)
+        return parent
+
+    @property
+    def _child_sort_key(self):
+        self._next_child_sort_key += 1
+        return self._next_child_sort_key
 
     @setter
     def keywords(self, keywords):
@@ -57,6 +74,15 @@ class Keyword(ModelObject):
     @setter
     def messages(self, messages):
         return Messages(self.message_class, self, messages)
+
+    @property
+    def children(self):
+        """Child keywords and messages in creation order."""
+        # It would be cleaner to store keywords/messages in same `children`
+        # list and turn `keywords` and `messages` to properties that pick items
+        # from it. That would require bigger changes to the model, though.
+        return sorted(chain(self.keywords, self.messages),
+                      key=attrgetter('_sort_key'))
 
     @property
     def id(self):
@@ -91,3 +117,8 @@ class Keywords(ItemList):
         for kw in self:
             if kw.type not in ('setup', 'teardown'):
                 yield kw
+
+    def __setitem__(self, index, item):
+        old = self[index]
+        ItemList.__setitem__(self, index, item)
+        self[index]._sort_key = old._sort_key

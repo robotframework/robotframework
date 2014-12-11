@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import html_escape
+from robot.utils import html_escape, setter
 
 from .itemlist import ItemList
 from .modelobject import ModelObject
@@ -24,7 +24,7 @@ class Message(ModelObject):
     The message can be a log message triggered by a keyword, or a warning
     or an error occurred during the test execution.
     """
-    __slots__ = ['message', 'level', 'html', 'timestamp', 'parent']
+    __slots__ = ['message', 'level', 'html', 'timestamp', 'parent', '_sort_key']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  parent=None):
@@ -37,8 +37,15 @@ class Message(ModelObject):
         self.html = html
         #: Timestamp in format ``%Y%m%d %H:%M:%S.%f``.
         self.timestamp = timestamp
+        self._sort_key = -1
         #: The object this message was triggered by.
         self.parent = parent
+
+    @setter
+    def parent(self, parent):
+        if parent and parent is not getattr(self, 'parent', None):
+            self._sort_key = getattr(parent, '_child_sort_key', -1)
+        return parent
 
     @property
     def html_message(self):
@@ -58,3 +65,7 @@ class Messages(ItemList):
     def __init__(self, message_class=Message, parent=None, messages=None):
         ItemList.__init__(self, message_class, {'parent': parent}, messages)
 
+    def __setitem__(self, index, item):
+        old = self[index]
+        ItemList.__setitem__(self, index, item)
+        self[index]._sort_key = old._sort_key
