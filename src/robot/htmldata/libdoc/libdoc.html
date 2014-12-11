@@ -11,6 +11,7 @@
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
 <link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
+<script type="text/javascript" src="../rebot/util.js"></script> <!-- TODO: Should util.js be moved under common? -->
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/libdoc.js"></script>
@@ -36,13 +37,13 @@
     $(document).ready(function() {
         parseTemplates();
         document.title = libdoc.name;
-        $.tmpl('start_template', libdoc).appendTo($('body'));
+        $.tmpl('base-template', libdoc).appendTo($('body'));
         if (libdoc.inits.length > 0) {
-            $.tmpl('importing_template', libdoc).appendTo($('body'));
+            renderTemplate('importing', libdoc);
         }
-        $.tmpl('shortcuts_template', libdoc).appendTo($('body'));
-        $.tmpl('keywords_template', libdoc).appendTo($('body'));
-        $.tmpl('footer_template', libdoc).appendTo($('body'));
+        renderTemplate('shortcuts', libdoc);
+        renderTemplate('keywords', libdoc);
+        renderTemplate('footer', libdoc);
         scrollToHash();
     });
 
@@ -52,26 +53,72 @@
         });
     }
 
+    function renderTemplate(name, argument) {
+        var container = $('#' + name + '-container');
+        container.empty();
+        $.tmpl(name + '-template', argument).appendTo(container);
+    }
+
     function scrollToHash() {
         if (window.location.hash) {
             var hash = window.location.hash.substring(1).replace('+', ' ');
             window.location.hash = hash;
         }
     }
+
+    function search(pattern, includeName, includeArgs, includeDoc) {
+        var result = $.extend({}, libdoc);
+        var matcher = util.Matcher('*' + pattern + '*');
+        result.keywords = util.filter(result.keywords, function (kw) {
+            console.log(kw.doc);
+            return (includeName && matcher.matches(kw.name) ||
+                    includeArgs && matcher.matches(kw.args) ||
+                    includeDoc && matcher.matches(kw.doc));
+        });
+        renderTemplate('shortcuts', result);
+        renderTemplate('keywords', result);
+    }
 </script>
 
-<script type="text/x-jquery-tmpl" id="start_template">
+<script type="text/x-jquery-tmpl" id="base-template">
     <h1>${name}</h1>
     <table class="metadata">
     {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
     {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
     <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
     </table>
-    <h2 id="Introduction">Introduction</h2>
-    <div class="doc">{{html doc}}</div>
+    <form action="javascript:void(0)">
+        <fieldset>
+            <legend>Search</legend>
+            <label for="search-pattern">Pattern</label>
+            <input type="text" id="search-pattern">
+            <fieldset>
+                <legend>Include</legend>
+                <label for="include-name">Name</label>
+                <input type="checkbox" id="include-name" checked>
+                <label for="include-args">Arguments</label>
+                <input type="checkbox" id="include-args" checked>
+                <label for="include-doc">Documentation</label>
+                <input type="checkbox" id="include-doc" checked>
+            </fieldset>
+            <input type="submit" id="search-button" value="Search"
+                    onclick="search($('#search-pattern').val(),
+                                    $('#include-name').prop('checked'),
+                                    $('#include-args').prop('checked'),
+                                    $('#include-doc').prop('checked'))">
+        </fieldset>
+    </form>
+    <div id="introduction-container">
+        <h2 id="Introduction">Introduction</h2>
+        <div class="doc">{{html doc}}</div>
+    </div>
+    <div id="importing-container"></div>
+    <div id="shortcuts-container"></div>
+    <div id="keywords-container"></div>
+    <div id="footer-container"></div>
 </script>
 
-<script type="text/x-jquery-tmpl" id="importing_template">
+<script type="text/x-jquery-tmpl" id="importing-template">
     <h2 id="Importing">Importing</h2>
     <table border="1" class="keywords">
         <tr>
@@ -87,7 +134,7 @@
     </table>
 </script>
 
-<script type="text/x-jquery-tmpl" id="shortcuts_template">
+<script type="text/x-jquery-tmpl" id="shortcuts-template">
     <h2 id="Shortcuts">Shortcuts</h2>
     <div class='shortcuts'>
         {{each keywords}}
@@ -97,7 +144,7 @@
     </div>
 </script>
 
-<script type="text/x-jquery-tmpl" id="keywords_template">
+<script type="text/x-jquery-tmpl" id="keywords-template">
     <h2 id="Keywords">Keywords</h2>
     <table border="1" class="keywords">
         <tr>
@@ -114,7 +161,7 @@
         {{/each}}
     </table>
 </script>
-<script type="text/x-jquery-tmpl" id="footer_template">
+<script type="text/x-jquery-tmpl" id="footer-template">
     <p class="footer">
         Altogether ${keywords.length} keywords.<br>
         Generated by
