@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.utils import (format_assign_message, get_elapsed_time,
-                         get_error_message, get_timestamp, plural_or_not)
+                         get_error_message, get_timestamp, plural_or_not, frange)
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           HandlerExecutionFailed)
