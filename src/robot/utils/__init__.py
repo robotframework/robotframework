@@ -42,14 +42,16 @@ from .error import (get_error_message, get_error_details, ErrorDetails,
                     RERAISED_EXCEPTIONS)
 from .escaping import escape, unescape
 from .etreewrapper import ET, ETSource
+from .frange import frange
 from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .islike import is_dict_like, is_list_like, is_str_like
 from .match import eq, Matcher, MultiMatcher
 from .misc import (isatty, getdoc, plural_or_not, printable_name,
-                   seq2str, seq2str2, frange)
+                   seq2str, seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
+from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method
 from .robotpath import abspath, find_file, get_link_path, normpath

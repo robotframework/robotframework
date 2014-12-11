@@ -94,46 +94,6 @@ def seq2str2(sequence):
         return '[ ]'
     return '[ %s ]' % ' | '.join(unic(item) for item in sequence)
 
-def _digits(number):
-    digits = 0
-    convertedNumber = str(number)
-    list_of_strings = convertedNumber.split('.')
-    if len(list_of_strings) == 1:
-        digits = 0
-    elif len(list_of_strings) == 2:
-        digits = len(list_of_strings[1])
-    else:
-        raise ValueError("input is not a number")
-    return digits
-
-
-def frange(*args):
-    result = []
-    if len(args) == 1:
-        start = 0
-        stop = eval(str(args[0]))
-        step = 1
-    elif len(args) == 2:
-        start = eval(str(args[0]))
-        stop = eval(str(args[1]))
-        step = 1
-    elif len(args) == 3:
-        start = eval(str(args[0]))
-        stop = eval(str(args[1]))
-        step = eval(str(args[2]))
-    else:
-        raise ValueError("invalid number of arguments")
-    powerOf10 = max(_digits(start), _digits(stop), _digits(step))    
-    if powerOf10 == 0:
-        result = range(start, stop, step)
-    else:
-        factor = pow(10, powerOf10)
-        begin = int(start*factor)
-        end = int(stop*factor)
-        step2 = int(step*factor)
-        result = [x/float(factor) for x in range(begin,end,step2)]
-    return result
-
 
 def getdoc(item):
     doc = inspect.getdoc(item) or u''
