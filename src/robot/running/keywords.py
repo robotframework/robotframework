@@ -294,7 +294,7 @@ class ForLoop(_BaseKeyword):
         try:
             return int(item)
         except ValueError:
-            return eval(item)
+            return float(eval(item))
 
 
 class _ForItem(_BaseKeyword):
