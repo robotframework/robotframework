@@ -61,6 +61,18 @@ Erroring Suite Setup
     Should Be Empty    ${td.kws[0].kws}
     Should Be Equal    ${td.kws[1].name}    BuiltIn.No Operation
 
+Failing Higher Level Suite Setup
+    Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite setup failed:\nExpected failure in higher level setup\n\n${2 FAIL MSG}
+    ...    Test 1    Test 2
+    Check Suite Status    ${SUITE.suites[0]}    FAIL
+    ...    Parent suite setup failed:\nExpected failure in higher level setup\n\n${1 FAIL MSG}
+    ...    Test 1
+    Check Suite Status    ${SUITE.suites[1]}    FAIL
+    ...    Parent suite setup failed:\nExpected failure in higher level setup\n\n${1 FAIL MSG}
+    ...    Test 2
+
 Failing Suite Teardown When All Tests Pass
     Run Tests    ${EMPTY}    core/failing_suite_teardown.robot
     ${error} =    Catenate    SEPARATOR=\n\n
@@ -126,18 +138,6 @@ Failing Higher Level Suite Teardown
     Check Suite Status    Ftd Failing Teardown    FAIL
     ...    Suite teardown failed:\nFailure in suite teardown\n\n${2 FAIL MSG}
     ...    FTD FTD Passing    FTD FTD Failing
-
-Failing Higher Level Suite Setup
-    Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup
-    Check Suite Status    ${SUITE}    FAIL
-    ...    Suite setup failed:\nExpected failure in higher level setup\n\n${2 FAIL MSG}
-    ...    Test 1    Test 2
-    Check Suite Status    ${SUITE.suites[0]}    FAIL
-    ...    Parent suite setup failed:\nExpected failure in higher level setup\n\n${1 FAIL MSG}
-    ...    Test 1
-    Check Suite Status    ${SUITE.suites[1]}    FAIL
-    ...    Parent suite setup failed:\nExpected failure in higher level setup\n\n${1 FAIL MSG}
-    ...    Test 2
 
 Long Error Messages
     Run Tests    ${EMPTY}    core/long_suite_setup_and_teardown_errors.robot

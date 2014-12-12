@@ -36,12 +36,14 @@ Run Robot Directly
 
 Run Tests
     [Arguments]  ${options}  @{data list}
-    Run Tests Helper  ${options}  @{data list}
+    ${rc} =  Run Tests Helper  ${options}  @{data list}
     Process Output  ${OUTFILE}
+    [Return]  ${rc}
 
 Run Tests Without Processing Output
     [Arguments]  ${options}  @{data list}
-    Run Tests Helper  ${options}  @{data list}
+    ${rc} =  Run Tests Helper  ${options}  @{data list}
+    [Return]  ${rc}
 
 Run Tests Helper
     [Arguments]  ${user options}  @{data list}
@@ -52,18 +54,21 @@ Run Tests Helper
     ...    --variable interpreter:${INTERPRETER}
     ...    --pythonpath ${LIBPATH1}
     ...    --pythonpath ${LIBPATH2}
-    Run Helper  ${ROBOT}  ${options}  ${data string}
+    ${rc} =  Run Helper  ${ROBOT}  ${options}  ${data string}
+    [Return]  ${rc}
 
 Run Rebot
     [Arguments]  ${options}  @{data list}
     ${data string} =  Set Variables And Get Datasources  @{data list}
-    Run Helper  ${REBOT}  ${options}  ${data string}
+    ${rc} =  Run Helper  ${REBOT}  ${options}  ${data string}
     Process Output  ${OUTFILE}
+    [Return]  ${rc}
 
 Run Rebot Without Processing Output
     [Arguments]  ${options}  @{data list}
     ${data string} =  Set Variables And Get Datasources  @{data list}
-    Run Helper  ${REBOT}  ${options}  ${data string}
+    ${rc} =  Run Helper  ${REBOT}  ${options}  ${data string}
+    [Return]  ${rc}
 
 Run Helper
     [Arguments]  ${runner}  ${options}  ${data string}
@@ -76,6 +81,7 @@ Run Helper
     Log  <a href="file://${STDOUTFILE}">${STDOUTFILE}</a>  HTML
     Log  <a href="file://${STDERRFILE}">${STDERRFILE}</a>  HTML
     Log  <a href="file://${SYSLOGFILE}">${SYSLOGFILE}</a>  HTML
+    [Return]  ${rc}
 
 Set Variables And Get Datasources
     [Arguments]  @{data list}
