@@ -47,7 +47,7 @@ class TestMiscUtils(unittest.TestCase):
                          ('foo-bar', 'Foo-bar'),
                          ('', '')]:
             assert_equals(printable_name(inp, code_style=True), exp)
-			
+
 
 class TestGetdoc(unittest.TestCase):
 

@@ -279,10 +279,22 @@ class ForLoop(_BaseKeyword):
                         % (len(self.vars), len(items), plural_or_not(items)))
 
     def _get_range_items(self, items):
+        try:
+            items = [self._to_float_with_arithmetics(item) for item in items]
+        except:
+            raise DataError('Converting argument of FOR IN RANGE failed: %s'
+                            % get_error_message())
         if not 1 <= len(items) <= 3:
             raise DataError('FOR IN RANGE expected 1-3 arguments, '
                             'got %d instead.' % len(items))
         return frange(*items)
+
+    def _to_float_with_arithmetics(self, item):
+        item = str(item)
+        try:
+            return float(item)
+        except ValueError:
+            return float(eval(item))
 
 
 class _ForItem(_BaseKeyword):

@@ -30,16 +30,16 @@ def frange(*args):
     result = []
     if len(args) == 1:
         start = 0
-        stop = eval(str(args[0]))
+        stop = args[0]
         step = 1
     elif len(args) == 2:
-        start = eval(str(args[0]))
-        stop = eval(str(args[1]))
+        start = args[0]
+        stop = args[1]
         step = 1
     elif len(args) == 3:
-        start = eval(str(args[0]))
-        stop = eval(str(args[1]))
-        step = eval(str(args[2]))
+        start = args[0]
+        stop = args[1]
+        step = args[2]
     else:
         raise ValueError("invalid number of arguments")
     powerOf10 = max(_digits(start), _digits(stop), _digits(step))    
