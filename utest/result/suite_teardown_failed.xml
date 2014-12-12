@@ -35,6 +35,22 @@
 </tags>
 <status status="FAIL" endtime="20111031 13:06:46.977" critical="yes" starttime="20111031 13:06:46.972">Message</status>
 </test>
+<test name="Teardowns">
+<kw type="kw" name="Kw With Teardown">
+<kw type="teardown" name="Teardown Kw">
+<status status="PASS" endtime="20111031 13:06:46.971" starttime="20111031 13:06:46.970"></status>
+</kw>
+<status status="PASS" endtime="20111031 13:06:46.971" starttime="20111031 13:06:46.970"></status>
+</kw>
+<kw type="teardown" name="Kw With Teardown">
+<kw type="teardown" name="Teardown Kw">
+<status status="PASS" endtime="20111031 13:06:46.971" starttime="20111031 13:06:46.970"></status>
+</kw>
+<status status="PASS" endtime="20111031 13:06:46.971" starttime="20111031 13:06:46.970"></status>
+</kw><tags>
+</tags>
+<status status="PASS" endtime="20111031 13:06:46.972" critical="yes" starttime="20111031 13:06:46.969"></status>
+</test>
 <kw type="teardown" name="BuiltIn.Fail">
 <doc>Fails the test immediately with the given (optional) message.</doc>
 <arguments>

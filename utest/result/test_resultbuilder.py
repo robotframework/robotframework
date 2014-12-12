@@ -165,32 +165,40 @@ class TestSuiteTeardownFailed(unittest.TestCase):
 
     def test_already_processed(self):
         inp = SUITE_TEARDOWN_FAILED.replace('generator="Robot', 'generator="Rebot')
-        tc1, tc2 = ExecutionResult(StringIO(inp)).suite.tests
-        assert_equals(tc1.status, 'PASS')
-        assert_equals(tc1.message, '')
-        assert_equals(tc2.status, 'FAIL')
-        assert_equals(tc2.message, 'Message')
+        passed, failed, teardowns = ExecutionResult(StringIO(inp)).suite.tests
+        assert_equals(passed.status, 'PASS')
+        assert_equals(passed.message, '')
+        assert_equals(failed.status, 'FAIL')
+        assert_equals(failed.message, 'Message')
+        assert_equals(teardowns.status, 'PASS')
+        assert_equals(teardowns.message, '')
 
     def test_excluding_keywords(self):
         suite = ExecutionResult(StringIO(SUITE_TEARDOWN_FAILED),
                                 include_keywords=False).suite
-        tc1, tc2 = suite.tests
-        assert_equals(tc1.status, 'FAIL')
-        assert_equals(tc1.message, 'Parent suite teardown failed:\nXXX')
-        assert_equals(tc2.status, 'FAIL')
-        assert_equals(tc2.message, 'Message\n\n'
-                                   'Also parent suite teardown failed:\nXXX')
-        assert_equals(list(suite.keywords), [])
+        passed, failed, teardowns = suite.tests
+        assert_equals(passed.status, 'FAIL')
+        assert_equals(passed.message, 'Parent suite teardown failed:\nXXX')
+        assert_equals(failed.status, 'FAIL')
+        assert_equals(failed.message, 'Message\n\n'
+                                      'Also parent suite teardown failed:\nXXX')
+        assert_equals(teardowns.status, 'FAIL')
+        assert_equals(teardowns.message, 'Parent suite teardown failed:\nXXX')
+        for item in suite, passed, failed, teardowns:
+            assert_equals(list(item.keywords), [])
 
     def test_excluding_keywords_and_already_processed(self):
         inp = SUITE_TEARDOWN_FAILED.replace('generator="Robot', 'generator="Rebot')
         suite = ExecutionResult(StringIO(inp), include_keywords=False).suite
-        tc1, tc2 = suite.tests
-        assert_equals(tc1.status, 'PASS')
-        assert_equals(tc1.message, '')
-        assert_equals(tc2.status, 'FAIL')
-        assert_equals(tc2.message, 'Message')
-        assert_equals(list(suite.keywords), [])
+        passed, failed, teardowns = suite.tests
+        assert_equals(passed.status, 'PASS')
+        assert_equals(passed.message, '')
+        assert_equals(failed.status, 'FAIL')
+        assert_equals(failed.message, 'Message')
+        assert_equals(teardowns.status, 'PASS')
+        assert_equals(teardowns.message, '')
+        for item in suite, passed, failed, teardowns:
+            assert_equals(list(item.keywords), [])
 
 
 class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
