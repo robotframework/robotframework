@@ -134,6 +134,43 @@ Set Default Log Level Keyword
     Read Until Prompt
     Set Default log Level    Invalid
 
+Default Telnetlib Log Level In Init
+    Telnetlib Log Level Should Be    TRACE
+    Write    pwd
+    Read Until Prompt
+
+Default Telnetlib Log Level In Open Connection
+    [setup]   Open Connection    ${HOST}
+    Telnetlib Log Level Should Be    TRACE
+    Write    pwd
+    Read Until Prompt
+
+Telnetlib Log Level NONE In Open Connection
+    [setup]   Open Connection    ${HOST}  telnetlib_log_level=NONE
+    Telnetlib Log Level Should Be    NONE
+    Write    pwd
+    Read Until Prompt
+
+Telnetlib Log Level DEBUG In Open Connection
+    [setup]   Open Connection    ${HOST}  telnetlib_log_level=DEBUG
+    Telnetlib Log Level Should Be    DEBUG
+    Write    pwd
+    Read Until Prompt
+
+Set Telnetlib Log Level Keyword
+    [Documentation]    FAIL Invalid log level 'Invalid'
+    [Setup]    Login And Set Prompt
+    Set Telnetlib Log Level    TRACE
+    Write    pwd
+    Read Until Prompt
+    Set Telnetlib Log Level    NONE
+    Write    pwd
+    Read Until Prompt
+    Set Telnetlib Log Level    DEBUG
+    Write    pwd
+    Read Until Prompt
+    Set Telnetlib log Level    Invalid
+
 Configuration fails if there is no connection
     [Setup]    NONE
     [Template]    Should fail because no connection
@@ -142,6 +179,7 @@ Configuration fails if there is no connection
     Set Newline    LF
     Set Encoding    ASCII
     Set Default Log Level    DEBUG
+    Set Telnetlib Log Level    DEBUG
 
 Default configuration
     [Setup]    NONE
@@ -162,6 +200,14 @@ Telnetlib's Debug Messages Are Logged On Trace Level
     ${out} =    Read Until Prompt
     Should Start With    ${out}    hyvä
     [Teardown]    Set Log Level    DEBUG
+
+Telnetlib's Debug Messages Are Not Logged On Log Level None
+    [Setup]    Login And Set Prompt    encoding=UTF-8
+    Set Telnetlib Log Level    NONE
+    Write    echo hyvä
+    ${out} =    Read Until Prompt
+    Should Start With    ${out}    hyvä
+    [Teardown]    Set Telnetlib Log Level    TRACE
 
 *** Keywords ***
 Prompt Should Be
@@ -201,6 +247,13 @@ Default Log Level Should Be
     ${level} =    Set Default Log Level    WARN
     Should Be Equal    ${level}    ${expected}
     ${level} =    Set Default Log Level    ${level}
+    Should Be Equal    ${level}    WARN
+
+Telnetlib Log Level Should Be
+    [Arguments]    ${expected}
+    ${level} =    Set Telnetlib Log Level    WARN
+    Should Be Equal    ${level}    ${expected}
+    ${level} =    Set Telnetlib Log Level    ${level}
     Should Be Equal    ${level}    WARN
 
 Window Size Should Be

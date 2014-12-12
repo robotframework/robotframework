@@ -94,8 +94,8 @@ class Telnet:
     globally or per connection basis. Global configuration is done when
     [#Importing|library is imported], and these values can be overridden per
     connection by `Open Connection` or with setting specific keywords
-    `Set Timeout`, `Set Newline`, `Set Prompt`, `Set Encoding`, and
-    `Set Default Log Level`
+    `Set Timeout`, `Set Newline`, `Set Prompt`, `Set Encoding`,
+    `Set Default Log Level` and `Set Telnetlib Log Level`.
 
     Values of `environ_user`, `window_size`, `terminal_emulation`, and
     `terminal_type` can not be changed after opening the connection.
@@ -243,6 +243,11 @@ class Telnet:
     sends and receives. Starting from Robot Framework 2.7.7, these low level
     log messages are forwarded to Robot's log file using `TRACE` level.
 
+    Starting with Robot Framework 2.8.7 this behavior is configurable with
+    the `telnetlib_log_level` option either in the library initialization,
+    to the `Open Connection` or by using the `Set Telnetlib Log Level`
+    keyword to the active connection.
+
     = Time string format =
 
     Timeouts and other times used must be given as a time string using format
@@ -259,7 +264,7 @@ class Telnet:
                  encoding='UTF-8', encoding_errors='ignore',
                  default_log_level='INFO', window_size=None,
                  environ_user=None, terminal_emulation=False,
-                 terminal_type=None):
+                 terminal_type=None, telnetlib_log_level='TRACE'):
         """Telnet library can be imported with optional configuration parameters.
 
         Configuration parameters are used as default values when new
@@ -268,7 +273,11 @@ class Telnet:
         `Set Newline`, `Set Prompt`, `Set Encoding`, and `Set Default Log Level`
         keywords. See these keywords as well as `Configuration` and
         `Terminal emulation` sections above for more information about these
-        parameters and their possible values.
+        parameters and their possible values. Starting with Robot Framework 2.8.7
+        the parameter 'telnetlib_log_level' is added. With this parameter the
+        log level of the used Python telnetlib can be configured.
+
+        See `Logging` section for more information about log levels.
 
         Examples (use only one of these):
 
@@ -281,6 +290,7 @@ class Telnet:
         | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
         | Library | Telnet | 2.0 | LF | (> |# ) | True | # set prompt as a regular expression |
         | Library | Telnet | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 | | # use terminal emulation with defined window size and terminal type |
+        | Library | Telnet | telnetlib_log_level=NONE |   |     |    | # disable the logging of the underlying telnetlib |
         """
         self._timeout = timeout or 3.0
         self._newline = newline or 'CRLF'
@@ -292,6 +302,7 @@ class Telnet:
         self._environ_user = environ_user
         self._terminal_emulation = self._parse_terminal_emulation(terminal_emulation)
         self._terminal_type = terminal_type
+        self._default_telnetlib_log_level = telnetlib_log_level
         self._cache = utils.ConnectionCache()
         self._conn = None
         self._conn_kws = self._lib_kws = None
@@ -335,15 +346,15 @@ class Telnet:
                         encoding=None, encoding_errors=None,
                         default_log_level=None, window_size=None,
                         environ_user=None, terminal_emulation=False,
-                        terminal_type=None):
+                        terminal_type=None, telnetlib_log_level=None):
         """Opens a new Telnet connection to the given host and port.
 
         The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
         `default_log_level`, `window_size`, `environ_user`,
-        `terminal_emulation`, and `terminal_type` arguments get default values
-        when the library is [#Importing|imported]. Setting them here overrides
-        those values for the opened connection. See `Configuration` and
-        `Terminal emulation` sections for more information.
+        `terminal_emulation`, `terminal_type` and 'telnetlib_log_level'
+        arguments get default values when the library is [#Importing|imported].
+        Setting them here overrides those values for the opened connection.
+        See `Configuration` and `Terminal emulation` sections for more information.
 
         Possible already opened connections are cached and it is possible to
         switch back to them using `Switch Connection` keyword. It is possible
@@ -360,6 +371,7 @@ class Telnet:
         environ_user = environ_user or self._environ_user
         terminal_emulation = self._get_terminal_emulation_with_default(terminal_emulation)
         terminal_type = terminal_type or self._terminal_type
+        telnetlib_log_level = telnetlib_log_level or self._default_telnetlib_log_level
         if not prompt:
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
@@ -369,7 +381,7 @@ class Telnet:
                                           encoding, encoding_errors,
                                           default_log_level, window_size,
                                           environ_user, terminal_emulation,
-                                          terminal_type)
+                                          terminal_type, telnetlib_log_level)
         return self._cache.register(self._conn, alias)
 
     def _get_terminal_emulation_with_default(self, terminal_emulation):
@@ -459,7 +471,8 @@ class TelnetConnection(telnetlib.Telnet):
                  prompt=None, prompt_is_regexp=False,
                  encoding='UTF-8', encoding_errors='ignore',
                  default_log_level='INFO', window_size=None, environ_user=None,
-                 terminal_emulation=False, terminal_type=None):
+                 terminal_emulation=False, terminal_type=None,
+                 telnetlib_log_level='TRACE'):
         telnetlib.Telnet.__init__(self, host, int(port) if port else 23)
         self._set_timeout(timeout)
         self._set_newline(newline)
@@ -471,6 +484,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._terminal_emulator = self._check_terminal_emulation(terminal_emulation)
         self._terminal_type = str(terminal_type) if terminal_type else None
         self.set_option_negotiation_callback(self._negotiate_options)
+        self._set_telnetlib_log_level(telnetlib_log_level)
 
     def set_timeout(self, timeout):
         """Sets the timeout used for waiting output in the current connection.
@@ -601,6 +615,26 @@ class TelnetConnection(telnetlib.Telnet):
         if self._encoding[0] == 'NONE':
             return bytes
         return bytes.decode(*self._encoding)
+
+    def set_telnetlib_log_level(self, level):
+        """Sets the log level used for `logging` in the underlying Python telnetlib.
+
+        Note that the telnetlib can be very noisy thus using the level 'NONE'
+        can shutdown the messages generated by this library.
+
+        New in Robot Framework 2.8.7.
+        """
+        self._verify_connection()
+        old = self._telnetlib_log_level
+        self._set_telnetlib_log_level(level)
+        return old
+
+    def _set_telnetlib_log_level(self, level):
+        if level.upper() == 'NONE':
+            self._telnetlib_log_level = 'NONE'
+        elif self._is_valid_log_level(level) is False:
+            raise AssertionError("Invalid log level '%s'" % level)
+        self._telnetlib_log_level = level.upper()
 
     def set_default_log_level(self, level):
         """Sets the default log level used for `logging` in the current connection.
@@ -1041,7 +1075,8 @@ class TelnetConnection(telnetlib.Telnet):
 
     def msg(self, msg, *args):
         # Forward telnetlib's debug messages to log
-        logger.trace(msg % args)
+        if self._telnetlib_log_level != 'NONE':
+            logger.write(msg % args, self._telnetlib_log_level)
 
     def _check_terminal_emulation(self, terminal_emulation):
         if not terminal_emulation:

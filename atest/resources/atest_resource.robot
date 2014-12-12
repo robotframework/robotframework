@@ -159,6 +159,11 @@ Check Log Message
     Should Be Equal  ${item.level}  ${level}  Wrong log level
     Should Be Equal  ${item.html}  ${html}  Wrong HTML status
 
+Message Count Should Be
+    [Arguments]  ${expectedCount}  ${messages}
+    ${count}=  Get Length  ${messages}
+    Should Be Equal As Integers  ${expectedCount}  ${count}
+
 Get Output File
     [Arguments]  ${path}
     [Documentation]  Output encoding avare helper
