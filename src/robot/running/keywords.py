@@ -292,9 +292,9 @@ class ForLoop(_BaseKeyword):
     def _to_float_with_arithmetics(self, item):
         item = str(item)
         try:
-            return float(item)
+            return int(item)
         except ValueError:
-            return float(eval(item))
+            return eval(item)
 
 
 class _ForItem(_BaseKeyword):
