@@ -74,3 +74,33 @@ table.keywords td.arg {
 .doc div > *:last-child {    /* Does not work with IE8. */
     margin-bottom: 0;
 }
+#search, #open-search {
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    z-index: 1000;
+}
+#search {
+    width:30em;
+    display: none;
+}
+#open-search {
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 30px;
+    text-align: center;
+    border: 2px solid black;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    background: white;
+}
+#open-search:hover {
+    background: yellow;
+}
+fieldset {
+    background: white;
+}
+#search-pattern {
+    width: 20em;
+}

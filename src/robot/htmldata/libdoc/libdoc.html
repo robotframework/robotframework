@@ -37,14 +37,19 @@
     $(document).ready(function() {
         parseTemplates();
         document.title = libdoc.name;
-        $.tmpl('base-template', libdoc).appendTo($('body'));
+        renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length > 0) {
             renderTemplate('importing', libdoc);
         }
-        renderTemplate('shortcuts', libdoc);
-        renderTemplate('keywords', libdoc);
-        renderTemplate('footer', libdoc);
-        scrollToHash();
+        if (window.location.hash.indexOf('search?') == 1) {
+            searchByHash();
+            openSearch();
+        } else {
+            renderTemplate('shortcuts', libdoc);
+            renderTemplate('keywords', libdoc);
+            renderTemplate('footer', libdoc);
+            scrollToHash();
+        }
     });
 
     function parseTemplates() {
@@ -53,9 +58,11 @@
         });
     }
 
-    function renderTemplate(name, argument) {
-        var container = $('#' + name + '-container');
-        container.empty();
+    function renderTemplate(name, argument, container) {
+        if (!container) {
+            container = $('#' + name + '-container');
+            container.empty();
+        }
         $.tmpl(name + '-template', argument).appendTo(container);
     }
 
@@ -66,17 +73,44 @@
         }
     }
 
+    function searchByHash() {
+        // Cannot use window.location.hash because Firefox incorrectly decodes it:
+        // http://stackoverflow.com/questions/1703552/encoding-of-window-location-hash
+        var hash = window.location.href.split('#').splice(1).join('#');
+        var query = hash.slice('search?'.length);
+        var params = util.parseQueryString(query);
+        $('#search-pattern').val(params.pattern);
+        $('#include-name').prop('checked', params.name || false);
+        $('#include-args').prop('checked', params.args || false);
+        $('#include-doc').prop('checked', params.doc || false);
+        $('#search-button').click();
+    }
+
     function search(pattern, includeName, includeArgs, includeDoc) {
         var result = $.extend({}, libdoc);
         var matcher = util.Matcher('*' + pattern + '*');
         result.keywords = util.filter(result.keywords, function (kw) {
-            console.log(kw.doc);
             return (includeName && matcher.matches(kw.name) ||
                     includeArgs && matcher.matches(kw.args) ||
                     includeDoc && matcher.matches(kw.doc));
         });
         renderTemplate('shortcuts', result);
         renderTemplate('keywords', result);
+        var anchor = 'search?pattern=' + encodeURIComponent(pattern);
+        if (includeName) anchor += '&name=true';
+        if (includeArgs) anchor += '&args=true';
+        if (includeDoc) anchor += '&doc=true';
+        window.location.hash = anchor;
+    }
+
+    function openSearch() {
+        $('#search').show();
+        $('#open-search').hide();
+    }
+
+    function closeSearch() {
+        $('#search').hide();
+        $('#open-search').show();
     }
 </script>
 
@@ -87,27 +121,6 @@
     {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
     <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
     </table>
-    <form action="javascript:void(0)">
-        <fieldset>
-            <legend>Search</legend>
-            <label for="search-pattern">Pattern</label>
-            <input type="text" id="search-pattern">
-            <fieldset>
-                <legend>Include</legend>
-                <label for="include-name">Name</label>
-                <input type="checkbox" id="include-name" checked>
-                <label for="include-args">Arguments</label>
-                <input type="checkbox" id="include-args" checked>
-                <label for="include-doc">Documentation</label>
-                <input type="checkbox" id="include-doc" checked>
-            </fieldset>
-            <input type="submit" id="search-button" value="Search"
-                    onclick="search($('#search-pattern').val(),
-                                    $('#include-name').prop('checked'),
-                                    $('#include-args').prop('checked'),
-                                    $('#include-doc').prop('checked'))">
-        </fieldset>
-    </form>
     <div id="introduction-container">
         <h2 id="Introduction">Introduction</h2>
         <div class="doc">{{html doc}}</div>
@@ -116,6 +129,30 @@
     <div id="shortcuts-container"></div>
     <div id="keywords-container"></div>
     <div id="footer-container"></div>
+    <form id="search" action="javascript:void(0)">
+        <fieldset>
+            <legend>Search</legend>
+            <label for="search-pattern">Pattern</label>
+            <input type="text" id="search-pattern">
+            <fieldset>
+                <legend>Include</legend>
+                <input type="checkbox" id="include-name" checked>
+                <label for="include-name">Name</label>
+                <input type="checkbox" id="include-args" checked>
+                <label for="include-args">Arguments</label>
+                <input type="checkbox" id="include-doc" checked>
+                <label for="include-doc">Documentation</label>
+            </fieldset>
+            <input type="submit" id="search-button" value="Search"
+                    onclick="search($('#search-pattern').val(),
+                                    $('#include-name').prop('checked'),
+                                    $('#include-args').prop('checked'),
+                                    $('#include-doc').prop('checked'))">
+            <input type="button" value="Close" onclick="closeSearch()">
+        </fieldset>
+    </form>
+    <!-- TODO: Placefolder until we get real icon -->
+    <div id="open-search" onclick="openSearch()">&#8981;</div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="importing-template">
