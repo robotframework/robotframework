@@ -29,6 +29,9 @@ Excluded failing is not executed
 Non-existing failing from output file is not executed
     Test Should Not Have Been Executed    Only in one suite
 
+Suite teardown failures are noticed
+    Test Should Have Been Executed    Test passed but suite teardown fails
+
 --runfailed still works without warnings
     [Documentation]    --runfailed should be deprecated in RF 2.9 and removed later
     Run Tests    --runfailed ${RUN FAILED FROM} --test Selected --exclude tag    ${SUITE DIR}

@@ -15,6 +15,7 @@
 from __future__ import with_statement
 
 from robot.errors import DataError
+from robot.model import SuiteVisitor
 from robot.utils import ET, ETSource, get_error_message
 
 from .executionresult import Result, CombinedResult
@@ -89,6 +90,8 @@ class ExecutionResultBuilder(object):
         with self._source as source:
             self._parse(source, handler.start, handler.end)
         result.handle_suite_teardown_failures()
+        if not self._include_keywords:
+            result.suite.visit(RemoveKeywords())
         return result
 
     def _parse(self, source, start, end):
@@ -108,7 +111,7 @@ class ExecutionResultBuilder(object):
         started_kws = 0
         for event, elem in context:
             start = event == 'start'
-            kw = elem.tag == 'kw'
+            kw = elem.tag == 'kw' and elem.get('type') != 'teardown'
             if kw and start:
                 started_kws += 1
             if not started_kws:
@@ -137,3 +140,12 @@ class ExecutionResultBuilder(object):
                 elem.clear()
             if started >= 0 and event == 'end' and tag == 'kw':
                 started -= 1
+
+
+class RemoveKeywords(SuiteVisitor):
+
+    def start_suite(self, suite):
+        suite.keywords = []
+
+    def visit_test(self, test):
+        test.keywords = []

@@ -139,6 +139,19 @@ Failing Higher Level Suite Teardown
     ...    Suite teardown failed:\nFailure in suite teardown\n\n${2 FAIL MSG}
     ...    FTD FTD Passing    FTD FTD Failing
 
+Failed teardown is noticed when generating only report with Robot
+    ${rc} =    Run Tests Without Processing Output
+    ...    --report report.html --output NONE    core/failing_suite_teardown.robot
+    Should Be Equal As Integers    ${rc}    2
+
+Failed teardown is noticed when generating only report with Rebot
+    ${rc} =    Run Tests Without Processing Output
+    ...    --report report.html    core/failing_suite_teardown.robot
+    Should Be Equal As Integers    ${rc}    2
+    ${rc} =    Run Rebot Without Processing Output
+    ...    --report report.html --output NONE    ${OUTFILE}
+    Should Be Equal As Integers    ${rc}    2
+
 Long Error Messages
     Run Tests    ${EMPTY}    core/long_suite_setup_and_teardown_errors.robot
     ${setup} =    Evaluate    'setup\\n' * 20

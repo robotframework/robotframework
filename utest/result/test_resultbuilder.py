@@ -171,6 +171,27 @@ class TestSuiteTeardownFailed(unittest.TestCase):
         assert_equals(tc2.status, 'FAIL')
         assert_equals(tc2.message, 'Message')
 
+    def test_excluding_keywords(self):
+        suite = ExecutionResult(StringIO(SUITE_TEARDOWN_FAILED),
+                                include_keywords=False).suite
+        tc1, tc2 = suite.tests
+        assert_equals(tc1.status, 'FAIL')
+        assert_equals(tc1.message, 'Parent suite teardown failed:\nXXX')
+        assert_equals(tc2.status, 'FAIL')
+        assert_equals(tc2.message, 'Message\n\n'
+                                   'Also parent suite teardown failed:\nXXX')
+        assert_equals(list(suite.keywords), [])
+
+    def test_excluding_keywords_and_already_processed(self):
+        inp = SUITE_TEARDOWN_FAILED.replace('generator="Robot', 'generator="Rebot')
+        suite = ExecutionResult(StringIO(inp), include_keywords=False).suite
+        tc1, tc2 = suite.tests
+        assert_equals(tc1.status, 'PASS')
+        assert_equals(tc1.message, '')
+        assert_equals(tc2.status, 'FAIL')
+        assert_equals(tc2.message, 'Message')
+        assert_equals(list(suite.keywords), [])
+
 
 class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
 
