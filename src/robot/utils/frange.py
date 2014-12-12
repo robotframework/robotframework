@@ -13,19 +13,6 @@
 #  limitations under the License.
 
 
-def _digits(number):
-    digits = 0
-    convertedNumber = str(number)
-    list_of_strings = convertedNumber.split('.')
-    if len(list_of_strings) == 1:
-        digits = 0
-    elif len(list_of_strings) == 2:
-        digits = len(list_of_strings[1])
-    else:
-        raise ValueError("input is not a number")
-    return digits
-
-
 def frange(*args):
     result = []
     if len(args) == 1:
@@ -52,3 +39,16 @@ def frange(*args):
         step2 = int(step*factor)
         result = [x/float(factor) for x in range(begin,end,step2)]
     return result
+
+#algorithm inspired by http://stackoverflow.com/questions/6189956/easy-way-of-finding-decimal-places	
+def _digits(number):
+    digits = 0
+    convertedNumber = str(number)
+    list_of_strings = convertedNumber.split('.')
+    if len(list_of_strings) == 1:
+        digits = 0
+    elif len(list_of_strings) == 2:
+        digits = len(list_of_strings[1])
+    else:
+        raise ValueError("input is not a number")
+    return digits
