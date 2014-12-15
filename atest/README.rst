@@ -139,5 +139,6 @@ from ideal nowadays.
 Telnet tests
 ------------
 
-Telnet test are not critical by default. Instructions how to tun them
-cab be found from `testdata/standard_libraries/telnet/README.rst <https://github.com/robotframework/robotframework/blob/master/atest/testdata/standard_libraries/telnet/README.rst>`_.
+Telnet test are not critical by default and running them requires some
+extra setup. Instructions how to run them can be found from 
+`testdata/standard_libraries/telnet/README.rst <https://github.com/robotframework/robotframework/blob/master/atest/testdata/standard_libraries/telnet/README.rst>`_.
