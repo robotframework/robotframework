@@ -132,9 +132,9 @@
 <script type="text/x-jquery-tmpl" id="base-template">
     <h1>${name}</h1>
     <table class="metadata">
-    {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
-    {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
-    <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
+        {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
+        {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
+        <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
     </table>
     <div id="introduction-container">
         <h2 id="Introduction">Introduction</h2>
@@ -186,8 +186,8 @@
     <h2 id="Shortcuts">Shortcuts</h2>
     <div class='shortcuts'>
         {{each keywords}}
-            <a href="#${encodeURIComponent($value.name)}" title="${$value.shortdoc}">${$value.name}</a>
-            {{if $index < keywords.length-1}} &middot; {{/if}}
+        <a href="#${encodeURIComponent($value.name)}" title="${$value.shortdoc}">${$value.name}</a>
+        {{if $index < keywords.length-1}} &middot; {{/if}}
         {{/each}}
     </div>
 </script>
