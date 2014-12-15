@@ -327,13 +327,13 @@ is explained in the next section. Finally, if things get complicated,
 it might be a better idea to use normal positional arguments instead.
 
 The problem of arguments matching too much occurs often when creating
-keywords that `ignore given/when/then/and prefixes`__ . For example,
+keywords that `ignore given/when/then/and/but prefixes`__ . For example,
 :name:`${name} goes home` matches :name:`Given Janne goes home` so
 that `${name}` gets value `Given Janne`. Quotes around the
 argument, like in :name:`"${name}" goes home`, resolve this problem
 easily.
 
-__ `Ignoring Given/When/Then/And prefixes`_
+__ `Ignoring Given/When/Then/And/But prefixes`_
 
 Using custom regular expressions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -534,7 +534,7 @@ of the keyword definitions`__.
 .. note:: Embedded arguments feature in Robot Framework is inspired by
           how *step definitions* are created in a popular BDD tool Cucumber__.
 
-__ `Ignoring Given/When/Then/And prefixes`_
+__ `Ignoring Given/When/Then/And/But prefixes`_
 __ http://cukes.info
 
 User keyword return values
