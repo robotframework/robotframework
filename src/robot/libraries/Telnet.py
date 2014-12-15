@@ -934,17 +934,25 @@ class TelnetConnection(telnetlib.Telnet):
             raise NoMatchError(expected, self._timeout, output)
         return output
 
-    def read_until_prompt(self, loglevel=None):
+    def read_until_prompt(self, loglevel=None, strip_prompt=False):
         """Reads output until the prompt is encountered.
 
         This keyword requires the prompt to be [#Configuration|configured]
         either in `importing` or with `Open Connection` or `Set Prompt` keyword.
 
-        Text up to and including the prompt is returned and logged. If no prompt
-        is found, this keyword fails. How much to wait for the output depends
-        on the [#Configuration|configured timeout].
+        By default, text up to and including the prompt is returned and logged.
+        If no prompt is found, this keyword fails. How much to wait for the
+        output depends on the [#Configuration|configured timeout].
+
+        If you want to exclude the prompt from the returned output, set
+        `strip_prompt` to any true value, such as a non-empty string. If your
+        prompt is a regular expression, make sure that the expression spans the
+        whole prompt, because only the part of the output that matches the
+        regular expression is stripped away.
 
         See `Logging` section for more information about log levels.
+
+        Optionally stripping prompt is a new feature in Robot Framework 2.8.7.
         """
         if not self._prompt_is_set():
             raise RuntimeError('Prompt is not set.')
@@ -955,6 +963,8 @@ class TelnetConnection(telnetlib.Telnet):
             raise AssertionError("Prompt '%s' not found in %s."
                     % (prompt if not regexp else prompt.pattern,
                        utils.secs_to_timestr(self._timeout)))
+        if strip_prompt:
+            output = self._strip_prompt(output)
         return output
 
     def _read_until_prompt(self):
@@ -962,7 +972,16 @@ class TelnetConnection(telnetlib.Telnet):
         read_until = self._read_until_regexp if regexp else self._read_until
         return read_until(prompt)
 
-    def execute_command(self, command, loglevel=None):
+    def _strip_prompt(self, output):
+        prompt, regexp = self._prompt
+        if not regexp:
+            length = len(prompt)
+        else:
+            match = prompt.search(output)
+            length = match.end() - match.start()
+        return output[:-length]
+
+    def execute_command(self, command, loglevel=None, strip_prompt=False):
         """Executes the given `command` and reads, logs, and returns everything until the prompt.
 
         This keyword requires the prompt to be [#Configuration|configured]
@@ -976,10 +995,11 @@ class TelnetConnection(telnetlib.Telnet):
         | `Write`  | pwd                 |
         | ${out} = | `Read Until Prompt` |
 
-        See `Logging` section for more information about log levels.
+        See `Logging` section for more information about log levels and `Read
+        Until Prompt` for more information about the `strip_prompt` parameter.
         """
         self.write(command, loglevel)
-        return self.read_until_prompt(loglevel)
+        return self.read_until_prompt(loglevel, strip_prompt)
 
     @contextmanager
     def _custom_timeout(self, timeout):
