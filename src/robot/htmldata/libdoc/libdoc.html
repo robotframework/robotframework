@@ -41,13 +41,13 @@
         if (libdoc.inits.length > 0) {
             renderTemplate('importing', libdoc);
         }
+        renderTemplate('footer', libdoc);
         if (window.location.hash.indexOf('search?') == 1) {
             searchByHash();
             openSearch();
         } else {
             renderTemplate('shortcuts', libdoc);
             renderTemplate('keywords', libdoc);
-            renderTemplate('footer', libdoc);
             scrollToHash();
         }
     });
@@ -83,7 +83,14 @@
         $('#include-name').prop('checked', params.name || false);
         $('#include-args').prop('checked', params.args || false);
         $('#include-doc').prop('checked', params.doc || false);
-        $('#search-button').click();
+        doSearch();
+    }
+
+    function doSearch() {
+        search($('#search-pattern').val(),
+               $('#include-name').prop('checked'),
+               $('#include-args').prop('checked'),
+               $('#include-doc').prop('checked'));
     }
 
     function search(pattern, includeName, includeArgs, includeDoc) {
@@ -112,6 +119,14 @@
         $('#search').hide();
         $('#open-search').show();
     }
+
+    function resetSearch() {
+        $('#search-pattern').val('');
+        $('#include-name').prop('checked', true);
+        $('#include-args').prop('checked', true);
+        $('#include-doc').prop('checked', true);
+        doSearch();
+    }
 </script>
 
 <script type="text/x-jquery-tmpl" id="base-template">
@@ -133,21 +148,17 @@
         <fieldset>
             <legend>Search</legend>
             <label for="search-pattern">Pattern</label>
-            <input type="text" id="search-pattern">
+            <input type="text" id="search-pattern" onkeyup="doSearch()">
             <fieldset>
                 <legend>Include</legend>
-                <input type="checkbox" id="include-name" checked>
+                <input type="checkbox" id="include-name" onclick="doSearch()" checked>
                 <label for="include-name">Name</label>
-                <input type="checkbox" id="include-args" checked>
+                <input type="checkbox" id="include-args" onclick="doSearch()" checked>
                 <label for="include-args">Arguments</label>
-                <input type="checkbox" id="include-doc" checked>
+                <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
                 <label for="include-doc">Documentation</label>
             </fieldset>
-            <input type="submit" id="search-button" value="Search"
-                    onclick="search($('#search-pattern').val(),
-                                    $('#include-name').prop('checked'),
-                                    $('#include-args').prop('checked'),
-                                    $('#include-doc').prop('checked'))">
+            <input type="button" value="Reset" onclick="resetSearch()">
             <input type="button" value="Close" onclick="closeSearch()">
         </fieldset>
     </form>
@@ -198,6 +209,7 @@
         {{/each}}
     </table>
 </script>
+
 <script type="text/x-jquery-tmpl" id="footer-template">
     <p class="footer">
         Altogether ${keywords.length} keywords.<br>
