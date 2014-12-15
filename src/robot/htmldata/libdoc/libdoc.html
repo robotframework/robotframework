@@ -94,9 +94,9 @@
     }
 
     function search(pattern, includeName, includeArgs, includeDoc) {
-        var result = $.extend({}, libdoc);
         var matcher = util.Matcher('*' + pattern + '*');
-        result.keywords = util.filter(result.keywords, function (kw) {
+        var result = {};
+        result.keywords = util.filter(libdoc.keywords, function (kw) {
             return (includeName && matcher.matches(kw.name) ||
                     includeArgs && matcher.matches(kw.args) ||
                     includeDoc && matcher.matches(kw.doc));
