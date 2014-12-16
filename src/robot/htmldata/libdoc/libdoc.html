@@ -80,7 +80,7 @@
         var hash = window.location.href.split('#').splice(1).join('#');
         var query = hash.slice('search?'.length);
         var params = util.parseQueryString(query);
-        $('#search-pattern').val(params.pattern);
+        $('#search-string').val(params.pattern);
         $('#include-name').prop('checked', params.name || false);
         $('#include-args').prop('checked', params.args || false);
         $('#include-doc').prop('checked', params.doc || false);
@@ -91,7 +91,7 @@
         var include = {name: $('#include-name').prop('checked'),
                        args: $('#include-args').prop('checked'),
                        doc: $('#include-doc').prop('checked')};
-        search($('#search-pattern').val(), include);
+        search($('#search-string').val(), include);
     }
 
     function search(string, include) {
@@ -138,7 +138,7 @@
     function openSearch() {
         $('#search').show();
         $('#open-search').hide();
-        $('#search-pattern').focus().select();
+        $('#search-string').focus().select();
     }
 
     function closeSearch() {
@@ -147,7 +147,7 @@
     }
 
     function resetSearch() {
-        $('#search-pattern').val('');
+        $('#search-string').val('');
         $('#include-name').prop('checked', true);
         $('#include-args').prop('checked', true);
         $('#include-doc').prop('checked', true);
@@ -172,11 +172,10 @@
     <div id="footer-container"></div>
     <form id="search" action="javascript:void(0)">
         <fieldset>
-            <legend>Search</legend>
-            <label for="search-pattern">Pattern</label>
-            <input type="text" id="search-pattern" onkeyup="doSearch()">
+            <legend id="search-title">Search keywords</legend>
+            <input type="text" id="search-string" onkeyup="doSearch()">
             <fieldset>
-                <legend>Include</legend>
+                <legend>Search from</legend>
                 <input type="checkbox" id="include-name" onclick="doSearch()" checked>
                 <label for="include-name">Name</label>
                 <input type="checkbox" id="include-args" onclick="doSearch()" checked>
@@ -189,7 +188,7 @@
         </fieldset>
     </form>
     <!-- TODO: Placefolder until we get real icon -->
-    <div id="open-search" onclick="openSearch()">&#8981;</div>
+    <div id="open-search" onclick="openSearch()"></div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="importing-template">
