@@ -1466,9 +1466,34 @@ crash or a corrupted output file. If a keyword starts something on
 background, there should be another keyword that checks the status of
 the worker thread and reports gathered information accordingly.
 
-.. note:: Messages logged by non-main threads using the `programmatic
-          logging APIs`_ are silently ignored starting from Robot
-          Framework 2.6.2.
+Messages logged by non-main threads using the normal logging methods from
+`programmatic logging APIs`_  are silently ignored starting from Robot
+Framework 2.6.2.
+
+In Robot Framework 2.8.7 and later there is also a new `BackgroundLogger`
+object with a similar API as the standard `robot.api.logger`. Normal logging
+methods will ignore messages from other than main thread, but the
+`BackgroundLogger` will save the background messages so that they can be later
+logged to Robot's log.
+
+For use with earlier versions of Robot Framework, there is a standalone
+version of the `BackgroundLogger` in separate robotbackgroundlogger__ project.
+
+__ https://github.com/robotframework/robotbackgroundlogger
+
+Example:
+
+.. sourcecode:: python
+
+   from robot.api.logger import BackgroundLogger
+
+   logger = BackgroundLogger()
+
+   logger.debug("You can use BackgroundLogger like normal robot logger.")
+
+   # Messages from background threads can be later logged from main thread.
+   logger.log_background_messages()
+
 
 Distributing test libraries
 ---------------------------
