@@ -104,6 +104,7 @@ fieldset {
     background: white;
     border: 2px solid black;
     border-radius: 4px;
+    padding: 6px 8px;
 }
 
 fieldset fieldset {
