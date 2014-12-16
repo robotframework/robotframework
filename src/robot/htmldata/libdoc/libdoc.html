@@ -51,6 +51,7 @@
             renderTemplate('keywords', libdoc);
             scrollToHash();
         }
+        $(document).bind('keydown', handleKeydown);
     });
 
     function parseTemplates() {
@@ -65,6 +66,15 @@
             container.empty();
         }
         $.tmpl(name + '-template', argument).appendTo(container);
+    }
+
+    function handleKeydown(event) {
+        event = event || window.event;
+        var keyCode = event.keyCode || event.which;
+        if (keyCode === 27)  // esc
+            setTimeout(closeSearch, 0);
+        if (keyCode === 83 && $('#search').is(':hidden'))  // s
+            setTimeout(openSearch, 0);
     }
 
     function scrollToHash() {
@@ -183,12 +193,13 @@
                 <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
                 <label for="include-doc">Documentation</label>
             </fieldset>
-            <input type="button" value="Reset" onclick="resetSearch()">
-            <input type="button" value="Close" onclick="closeSearch()">
+            <input type="button" value="Reset" onclick="resetSearch()"
+                   title="Reset search">
+            <input type="button" value="Close" onclick="closeSearch()"
+                   title="Close search (shortcut: <Esc>)">
         </fieldset>
     </form>
-    <!-- TODO: Placefolder until we get real icon -->
-    <div id="open-search" onclick="openSearch()"></div>
+    <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="importing-template">
