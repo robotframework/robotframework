@@ -1279,9 +1279,7 @@ messages to the log file and to the console. Test libraries can use
 this API like `logger.info('My message')` instead of logging
 through the standard output like `print '*INFO* My message'`. In
 addition to a programmatic interface being a lot cleaner to use, this
-API has a benefit that the log messages have accurate timestamps_. An
-obvious limitation is that test libraries using this logging API have
-a dependency to Robot Framework.
+API has a benefit that the log messages have accurate timestamps_.
 
 The public logging API `is thoroughly documented`__ as part of the API
 documentation at https://robot-framework.readthedocs.org. Below is
@@ -1297,7 +1295,14 @@ a simple usage example:
        logger.info('<i>This</i> is a boring example', html=True)
        logger.console('Hello, console!')
 
+An obvious limitation is that test libraries using this logging API have
+a dependency to Robot Framework. Before version 2.8.7 Robot also had
+to be running for the logging to work. Starting from Robot Framework 2.8.7
+if Robot is not running the messages are redirected automatically to Python's
+standard logging__ module.
+
 __ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.api.html#module-robot.api.logger
+__ http://docs.python.org/library/logging.html
 
 Using Python's standard `logging` module
 ''''''''''''''''''''''''''''''''''''''''
