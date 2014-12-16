@@ -280,7 +280,7 @@ class ForLoop(_BaseKeyword):
 
     def _get_range_items(self, items):
         try:
-            items = [self._to_float_with_arithmetics(item) for item in items]
+            items = [self._to_number_with_arithmetics(item) for item in items]
         except:
             raise DataError('Converting argument of FOR IN RANGE failed: %s'
                             % get_error_message())
@@ -289,12 +289,18 @@ class ForLoop(_BaseKeyword):
                             'got %d instead.' % len(items))
         return frange(*items)
 
-    def _to_float_with_arithmetics(self, item):
+    def _to_number_with_arithmetics(self, item):
         item = str(item)
         try:
-            return int(item)
+            try:
+                return int(item)
+            except ValueError:
+                return float(item)
         except ValueError:
-            return float(eval(item))
+            number = eval(item)
+            if not isinstance(number, (int, long, float)):
+                raise TypeError("Expected number, got '%s' instead." % item)
+            return number
 
 
 class _ForItem(_BaseKeyword):
