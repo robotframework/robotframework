@@ -1,6 +1,7 @@
 import unittest
 import sys
 import logging
+import threading
 
 from robot.utils.asserts import assert_equals, assert_true
 from robot.api import logger
@@ -77,6 +78,26 @@ class TestRedirectToPythonLogging(unittest.TestCase):
         logger.debug("Boo")
         logger.trace("Goo")
         self.assertEquals(self.handler.messages, ['Foo', 'Boo', 'Goo'])
+
+    def test_background_to_python(self):
+        log = logger.BackgroundLogger()
+        log.info("Fii")
+        log.debug("Bii")
+        log.trace("Gii")
+        self.assertEquals(self.handler.messages, ['Fii', 'Bii', 'Gii'])
+
+    def test_background_logging_messages_fails_from_non_main_thread(self):
+        log = logger.BackgroundLogger()
+        log.info("Fii")
+        t = threading.Thread(target=self._expect_runtime_error, args=(log.log_background_messages,))
+        t.start()
+        t.join()
+        self.assertTrue(self.error_raised)
+
+    def _expect_runtime_error(self, method):
+        self.error_raised=False
+        self.assertRaises(RuntimeError, method)
+        self.error_raised=True
 
 
 if __name__ == '__main__':
