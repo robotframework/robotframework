@@ -88,37 +88,51 @@
     }
 
     function doSearch() {
-        search($('#search-pattern').val(),
-               $('#include-name').prop('checked'),
-               $('#include-args').prop('checked'),
-               $('#include-doc').prop('checked'));
+        var include = {name: $('#include-name').prop('checked'),
+                       args: $('#include-args').prop('checked'),
+                       doc: $('#include-doc').prop('checked')};
+        search($('#search-pattern').val(), include);
     }
 
-    function search(string, includeName, includeArgs, includeDoc) {
+    function search(string, include) {
+        searchKeywords(string, include);
+        highlightSearchResults(string, include);
+        updateSearchHash(string, include);
+    }
+
+    function searchKeywords(string, include) {
         var regexp = new RegExp(util.regexpEscape(string), 'gi');
         var result = {};
         result.keywords = util.filter(libdoc.keywords, function (kw) {
-            return (includeName && regexp.test(kw.name) ||
-                    includeArgs && regexp.test(kw.args) ||
-                    includeDoc && regexp.test($(kw.doc).text()));
+            return (include.name && regexp.test(kw.name) ||
+                    include.args && regexp.test(kw.args) ||
+                    include.doc && regexp.test($(kw.doc).text()));
         });
         renderTemplate('shortcuts', result);
         renderTemplate('keywords', result);
+    }
+
+    function highlightSearchResults(string, include) {
+        var shortcuts = $('#shortcuts-container').find('a');
+        var keywords = $('#keywords-container').find('td');
+        if (include.name) {
+            shortcuts.highlight(string);
+            keywords.filter('.kw').highlight(string);
+        }
+        if (include.args) {
+            keywords.filter('.args').highlight(string);
+        }
+        if (include.doc) {
+            keywords.filter('.doc').highlight(string);
+        }
+    }
+
+    function updateSearchHash(string, include) {
         var anchor = 'search?pattern=' + encodeURIComponent(string);
-        if (includeName) anchor += '&name=true';
-        if (includeArgs) anchor += '&args=true';
-        if (includeDoc) anchor += '&doc=true';
+        if (include.name) anchor += '&name=true';
+        if (include.args) anchor += '&args=true';
+        if (include.doc) anchor += '&doc=true';
         window.location.hash = anchor;
-        if (includeName) {
-            $('#shortcuts-container a').highlight(string);
-            $('#keywords-container td.kw').highlight(string);
-        }
-        if (includeArgs) {
-            $('#keywords-container td.arg').highlight(string);
-        }
-        if (includeDoc) {
-            $('#keywords-container td.doc').highlight(string);
-        }
     }
 
     function openSearch() {
@@ -181,12 +195,12 @@
     <h2 id="Importing">Importing</h2>
     <table border="1" class="keywords">
         <tr>
-            <th class="arg">Arguments</th>
+            <th class="args">Arguments</th>
             <th class="doc">Documentation</th>
         </tr>
         {{each inits}}
         <tr>
-            <td class="arg">${$value.args}</td>
+            <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
         </tr>
         {{/each}}
@@ -208,13 +222,13 @@
     <table border="1" class="keywords">
         <tr>
             <th class="kw">Keyword</th>
-            <th class="arg">Arguments</th>
+            <th class="args">Arguments</th>
             <th class="doc">Documentation</th>
         </tr>
         {{each keywords}}
         <tr>
             <td class="kw"><a name="${$value.name}"></a>${$value.name}</td>
-            <td class="arg">${$value.args}</td>
+            <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
         </tr>
         {{/each}}
