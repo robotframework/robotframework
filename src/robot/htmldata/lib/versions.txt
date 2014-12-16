@@ -21,3 +21,9 @@ jquery.tablesorter.min
 ----------------------
 version 2.7.8
 https://github.com/Mottie/tablesorter
+
+jquery.highlight.min
+--------------------
+https://github.com/bartaz/sandbox.js/blob/master/jquery.highlight.js
+Date: 2010-12-01
+Minimized using http://jscompress.com/

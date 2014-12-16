@@ -104,3 +104,6 @@ fieldset {
 #search-pattern {
     width: 20em;
 }
+.highlight {
+    background: yellow;
+}

@@ -200,6 +200,7 @@ window.util = function () {
         escape: escape,
         unescape: unescape,
         normalize: normalize,
+        regexpEscape: regexpEscape,
         Matcher: Matcher,
         formatParentName: formatParentName,
         timeFromDate: timeFromDate,

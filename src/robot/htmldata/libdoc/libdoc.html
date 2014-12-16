@@ -14,6 +14,7 @@
 <script type="text/javascript" src="../rebot/util.js"></script> <!-- TODO: Should util.js be moved under common? -->
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="../lib/jquery.highlight.min.js"></script>
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/libdoc.js"></script>
 <title></title>
 </head>
@@ -93,21 +94,31 @@
                $('#include-doc').prop('checked'));
     }
 
-    function search(pattern, includeName, includeArgs, includeDoc) {
-        var matcher = util.Matcher('*' + pattern + '*');
+    function search(string, includeName, includeArgs, includeDoc) {
+        var regexp = new RegExp(util.regexpEscape(string), 'gi');
         var result = {};
         result.keywords = util.filter(libdoc.keywords, function (kw) {
-            return (includeName && matcher.matches(kw.name) ||
-                    includeArgs && matcher.matches(kw.args) ||
-                    includeDoc && matcher.matches(kw.doc));
+            return (includeName && regexp.test(kw.name) ||
+                    includeArgs && regexp.test(kw.args) ||
+                    includeDoc && regexp.test($(kw.doc).text()));
         });
         renderTemplate('shortcuts', result);
         renderTemplate('keywords', result);
-        var anchor = 'search?pattern=' + encodeURIComponent(pattern);
+        var anchor = 'search?pattern=' + encodeURIComponent(string);
         if (includeName) anchor += '&name=true';
         if (includeArgs) anchor += '&args=true';
         if (includeDoc) anchor += '&doc=true';
         window.location.hash = anchor;
+        if (includeName) {
+            $('#shortcuts-container a').highlight(string);
+            $('#keywords-container td.kw').highlight(string);
+        }
+        if (includeArgs) {
+            $('#keywords-container td.arg').highlight(string);
+        }
+        if (includeDoc) {
+            $('#keywords-container td.doc').highlight(string);
+        }
     }
 
     function openSearch() {
