@@ -87,7 +87,7 @@
     function searchByHash() {
         // Cannot use window.location.hash because Firefox incorrectly decodes it:
         // http://stackoverflow.com/questions/1703552/encoding-of-window-location-hash
-        var hash = window.location.href.split('#').splice(1).join('#');
+        var hash = window.location.href.split('#').slice(1).join('#');
         var query = hash.slice('search?'.length);
         var params = util.parseQueryString(query);
         $('#search-string').val(params.pattern);
