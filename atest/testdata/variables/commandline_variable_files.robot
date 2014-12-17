@@ -12,7 +12,11 @@ Arguments To Variable Files
     Should Be Equal  ${ANOTHER SCALAR}  Variable from CLI var file with get_variables
     Should Be True  @{ANOTHER LIST} == ['List variable from CLI var file', 'with get_variables']
     Should Be Equal  ${ARG}  default value
-    Should Be Equal  ${ARG 2}  given
+    Should Be Equal  ${ARG 2}  value;with;semi;colons
+
+Arguments To Variable Files Using Semicolon Separator
+    Should Be Equal  ${SEMICOLON}  separator
+    Should Be Equal  ${SEMI:COLON}  separator:with:colons
 
 Variable File From PYTHONPATH
     Should Be Equal  ${PYTHONPATH VAR 0}  Varfile found from PYTHONPATH
