@@ -87,7 +87,7 @@
     function searchByHash() {
         // Cannot use window.location.hash because Firefox incorrectly decodes it:
         // http://stackoverflow.com/questions/1703552/encoding-of-window-location-hash
-        var hash = window.location.href.split('#').splice(1).join('#');
+        var hash = window.location.href.split('#').slice(1).join('#');
         var query = hash.slice('search?'.length);
         var params = util.parseQueryString(query);
         $('#search-string').val(params.pattern);
@@ -164,6 +164,16 @@
         openSearch();
         doSearch();
     }
+
+    // http://stackoverflow.com/a/18484799
+    var delay = (function () {
+        var timer = 0;
+        return function(callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
 </script>
 
 <script type="text/x-jquery-tmpl" id="base-template">
@@ -184,7 +194,7 @@
     <form id="search" action="javascript:void(0)">
         <fieldset>
             <legend id="search-title">Search keywords</legend>
-            <input type="text" id="search-string" onkeyup="doSearch()">
+            <input type="text" id="search-string" onkeyup="delay(doSearch, 300)">
             <fieldset>
                 <legend>Search from</legend>
                 <input type="checkbox" id="include-name" onclick="doSearch()" checked>
