@@ -200,12 +200,14 @@
                 <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
                 <label for="include-doc">Documentation</label>
             </fieldset>
-            <input type="button" value="Reset" onclick="resetSearch()"
-                   title="Reset search">
-            <input type="button" value="Close" onclick="closeSearch()"
-                   title="Close search (shortcut: <Esc>)">
             <input type="checkbox" id="hide-unmatched" onclick="hideUnmatched()">
             <label for="hide-unmatched">Hide unmatched keywords</label>
+            <div id="search-buttons">
+                <input type="button" value="Reset" onclick="resetSearch()"
+                       title="Reset search">
+                <input type="button" value="Close" onclick="closeSearch()"
+                       title="Close search (shortcut: <Esc>)">
+            </div>
         </fieldset>
     </form>
     <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>

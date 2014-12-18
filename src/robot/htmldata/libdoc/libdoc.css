@@ -99,19 +99,16 @@ table.keywords td.args {
 #open-search:hover {
     background-color: yellow;
 }
-
 fieldset {
     background: white;
     border: 2px solid black;
     border-radius: 4px;
     padding: 6px 8px;
 }
-
 fieldset fieldset {
     border: 1px solid black;
     margin: 4px 0;
 }
-
 #search-title {
     font-size: 1.1em;
     font-weight: bold;
@@ -120,6 +117,12 @@ fieldset fieldset {
 #search-string {
     box-sizing: border-box;
     width: 100%;
+}
+#hide-unmatched {
+    margin: 0.5em 0 0 1em;
+}
+#search-buttons {
+    float: right;
 }
 .highlight {
     background: yellow;
