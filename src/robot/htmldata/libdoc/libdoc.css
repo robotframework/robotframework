@@ -124,3 +124,9 @@ fieldset fieldset {
 .highlight {
     background: yellow;
 }
+.no-match {
+    color: gray !important;
+}
+tr.no-match.hide-unmatched {
+    display: none;
+}

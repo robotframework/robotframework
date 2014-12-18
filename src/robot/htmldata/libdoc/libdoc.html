@@ -43,14 +43,9 @@
             renderTemplate('importing', libdoc);
         }
         renderTemplate('footer', libdoc);
-        if (window.location.hash.indexOf('search?') == 1) {
-            searchByHash();
-            openSearch();
-        } else {
-            renderTemplate('shortcuts', libdoc);
-            renderTemplate('keywords', libdoc);
-            scrollToHash();
-        }
+        renderTemplate('shortcuts', libdoc);
+        renderTemplate('keywords', libdoc);
+        scrollToHash();
         $(document).bind('keydown', handleKeydown);
     });
 
@@ -87,46 +82,24 @@
         }
     }
 
-    function searchByHash() {
-        // Cannot use window.location.hash because Firefox incorrectly decodes it:
-        // http://stackoverflow.com/questions/1703552/encoding-of-window-location-hash
-        var hash = window.location.href.split('#').slice(1).join('#');
-        var query = hash.slice('search?'.length);
-        var params = util.parseQueryString(query);
-        $('#search-string').val(params.pattern);
-        $('#include-name').prop('checked', params.name || false);
-        $('#include-args').prop('checked', params.args || false);
-        $('#include-doc').prop('checked', params.doc || false);
-        doSearch();
-    }
-
     function doSearch() {
+        var string = $('#search-string').val();
         var include = {name: $('#include-name').prop('checked'),
                        args: $('#include-args').prop('checked'),
                        doc: $('#include-doc').prop('checked')};
-        search($('#search-string').val(), include);
+        resetSearchResults();
+        if (string) {
+            highlightMatches(string, include);
+            markUnmatched();
+        }
     }
 
-    function search(string, include) {
-        searchKeywords(string, include);
-        highlightSearchResults(string, include);
-        updateSearchHash(string, include);
+    function resetSearchResults() {
+        $('.highlight').parent().unhighlight();
+        $('.no-match').removeClass('no-match');
     }
 
-    function searchKeywords(string, include) {
-        var regexp = new RegExp(util.regexpEscape(string), 'gi');
-        var result = {generated: libdoc.generated, search: true};
-        result.keywords = util.filter(libdoc.keywords, function (kw) {
-            return (include.name && regexp.test(kw.name) ||
-                    include.args && regexp.test(kw.args) ||
-                    include.doc && regexp.test($(kw.doc).text()));
-        });
-        renderTemplate('shortcuts', result);
-        renderTemplate('keywords', result);
-        renderTemplate('footer', result);
-    }
-
-    function highlightSearchResults(string, include) {
+    function highlightMatches(string, include) {
         var shortcuts = $('#shortcuts-container').find('a');
         var keywords = $('#keywords-container').find('td');
         if (include.name) {
@@ -141,12 +114,23 @@
         }
     }
 
-    function updateSearchHash(string, include) {
-        var anchor = 'search?pattern=' + encodeURIComponent(string);
-        if (include.name) anchor += '&name=true';
-        if (include.args) anchor += '&args=true';
-        if (include.doc) anchor += '&doc=true';
-        window.location.hash = anchor;
+    function markUnmatched() {
+        var noMatchIds = [];
+        var matchCount = 0;
+        $('#keywords-container').find('.kw-row').not(':has(.highlight)').each(function () {
+            noMatchIds.push(this.id);
+            $(this).addClass('no-match');
+        });
+        $('#shortcuts-container').find('a').each(function () {
+            if ($.inArray(this.text, noMatchIds) != -1) {
+                $(this).addClass('no-match');
+            } else {
+                matchCount++;
+            }
+        });
+        var ending = matchCount != 1 ? 's.' : '.';
+        $('#match-count').show().text(matchCount + ' matched keyword' + ending);
+        $('#altogether-count').hide();
     }
 
     function openSearch() {
@@ -161,12 +145,20 @@
     }
 
     function resetSearch() {
+        resetSearchResults();
         $('#search-string').val('');
         $('#include-name').prop('checked', true);
         $('#include-args').prop('checked', true);
         $('#include-doc').prop('checked', true);
-        openSearch();
-        doSearch();
+        $('#hide-unmatched').prop('checked', false);
+        $('#match-count').hide();
+        $('#altogether-count').show();
+    }
+
+    function hideUnmatched() {
+        var kws = $('#keywords-container').find('.kw-row');
+        var hide = $('#hide-unmatched').prop('checked');
+        kws.toggleClass('hide-unmatched', hide);
     }
 
     // http://stackoverflow.com/a/18484799
@@ -212,6 +204,8 @@
                    title="Reset search">
             <input type="button" value="Close" onclick="closeSearch()"
                    title="Close search (shortcut: <Esc>)">
+            <input type="checkbox" id="hide-unmatched" onclick="hideUnmatched()">
+            <label for="hide-unmatched">Hide unmatched keywords</label>
         </fieldset>
     </form>
     <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>
@@ -225,7 +219,7 @@
             <th class="doc">Documentation</th>
         </tr>
         {{each inits}}
-        <tr>
+        <tr class="kw-row">
             <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
         </tr>
@@ -252,8 +246,8 @@
             <th class="doc">Documentation</th>
         </tr>
         {{each keywords}}
-        <tr>
-            <td class="kw"><a name="${$value.name}"></a>${$value.name}</td>
+        <tr id="${$value.name}" class="kw-row">
+            <td class="kw">${$value.name}</td>
             <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
         </tr>
@@ -263,7 +257,9 @@
 
 <script type="text/x-jquery-tmpl" id="footer-template">
     <p class="footer">
-        {{if !search}}Altogether ${keywords.length} keywords.{{else}}${keywords.length} matched keywords.{{/if}}<br>
+        <span id="altogether-count">Altogether ${keywords.length} keywords.</span>
+        <span id="match-count"></span>
+        <br>
         Generated by <a href="http://robotframework.org/robotframework/#built-in-tools">Libdoc</a> on ${generated}.
     </p>
 </script>
