@@ -84,9 +84,7 @@
 
     function doSearch() {
         var string = $('#search-string').val();
-        var include = {name: $('#include-name').prop('checked'),
-                       args: $('#include-args').prop('checked'),
-                       doc: $('#include-doc').prop('checked')};
+        var include = getIncludesAndDisableIfOnlyOneLeft();
         resetSearchResults();
         if (string) {
             highlightMatches(string, include);
@@ -97,6 +95,27 @@
     function resetSearchResults() {
         $('.highlight').parent().unhighlight();
         $('.no-match').removeClass('no-match');
+    }
+
+    function getIncludesAndDisableIfOnlyOneLeft() {
+        var name = $('#include-name');
+        var args = $('#include-args');
+        var doc = $('#include-doc');
+        var include = {name: name.prop('checked'),
+                       args: args.prop('checked'),
+                       doc: doc.prop('checked')};
+        if ((!include.name) && (!include.args)) {
+            doc.prop('disabled', true);
+        } else if ((!include.name) && (!include.doc)) {
+            args.prop('disabled', true);
+        } else if ((!include.args) && (!include.doc)) {
+            name.prop('disabled', true);
+        } else {
+            name.prop('disabled', false);
+            args.prop('disabled', false);
+            doc.prop('disabled', false);
+        }
+        return include;
     }
 
     function highlightMatches(string, include) {
