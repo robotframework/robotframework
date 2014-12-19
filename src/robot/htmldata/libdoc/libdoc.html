@@ -219,7 +219,7 @@
                 <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
                 <label for="include-doc">Documentation</label>
             </fieldset>
-            <input type="checkbox" id="hide-unmatched" onclick="hideUnmatched()">
+            <input type="checkbox" id="hide-unmatched" onclick="hideUnmatched()" checked>
             <label for="hide-unmatched">Hide unmatched keywords</label>
             <div id="search-buttons">
                 <input type="button" value="Reset" onclick="resetSearch()"
@@ -267,7 +267,7 @@
             <th class="doc">Documentation</th>
         </tr>
         {{each keywords}}
-        <tr id="${$value.name}" class="kw-row">
+        <tr id="${$value.name}" class="kw-row hide-unmatched">
             <td class="kw">${$value.name}</td>
             <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
