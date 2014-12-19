@@ -89,12 +89,6 @@ Telnetlib Log Level DEBUG In Open Connection
 
 Set Telnetlib Log Level Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    pwd    DEBUG
-    Check Log Message    ${tc.kws[2].msgs[0]}    ${HOME}\n${FULL PROMPT}    DEBUG
-
-    Check Log Message    ${tc.kws[4].msgs[0]}    pwd    DEBUG
-    Check Log Message    ${tc.kws[5].msgs[0]}    ${HOME}\n${FULL PROMPT}    DEBUG
-
     Check Log Message    ${tc.kws[7].msgs[0]}    send 'pwd\\r\\n'    DEBUG
 
 Configuration fails if there is no connection
@@ -107,9 +101,9 @@ Telnetlib's Debug Messages Are Logged On Trace Level
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[1].msgs[1]}    send 'echo hyv\\xc3\\xa4\\r\\n'    TRACE
     Check Log Message    ${tc.kws[1].msgs[2]}    recv 'e*'    TRACE    pattern=yep
-    Message Count Should Be  6  ${tc.kws[1].msgs}
+    Length Should Be    ${tc.kws[1].msgs}    6
 
 Telnetlib's Debug Messages Are Not Logged On Log Level None
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    echo hyvä    DEBUG
-    Message Count Should Be  1  ${tc.kws[1].msgs}
+    Length Should Be    ${tc.kws[1].msgs}    1

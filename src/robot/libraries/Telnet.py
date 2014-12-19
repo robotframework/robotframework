@@ -240,13 +240,12 @@ class Telnet:
 
     The [http://docs.python.org/2/library/telnetlib.html|telnetlib module]
     used by this library has a custom logging system for logging content it
-    sends and receives. Starting from Robot Framework 2.7.7, these low level
-    log messages are forwarded to Robot's log file using `TRACE` level.
-
-    Starting with Robot Framework 2.8.7 this behavior is configurable with
-    the `telnetlib_log_level` option either in the library initialization,
+    sends and receives. By default these messages are written using `TRACE`
+    level. Starting with Robot Framework 2.8.7 the level is configurable
+    with the `telnetlib_log_level` option either in the library initialization,
     to the `Open Connection` or by using the `Set Telnetlib Log Level`
-    keyword to the active connection.
+    keyword to the active connection. Special level `NONE` con be used to
+    disable the logging altogether.
 
     = Time string format =
 
