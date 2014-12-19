@@ -134,14 +134,14 @@
     }
 
     function markUnmatched() {
-        var noMatchIds = [];
+        var nonMatched = [];
         var matchCount = 0;
         $('#keywords-container').find('.kw-row').not(':has(.highlight)').each(function () {
-            noMatchIds.push(this.id);
+            nonMatched.push(this.id);
             $(this).addClass('no-match');
         });
         $('#shortcuts-container').find('a').each(function () {
-            if ($.inArray(this.text, noMatchIds) != -1) {
+            if ($.inArray(this.text, nonMatched) != -1) {
                 $(this).addClass('no-match');
             } else {
                 matchCount++;
