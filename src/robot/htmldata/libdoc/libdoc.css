@@ -57,11 +57,13 @@ table.keywords th {
     color: black;
 }
 table.keywords td.kw {
-    width: 150px;
+    min-width: 100px;
+    max-width: 20%;
     font-weight: bold;
 }
 table.keywords td.args {
-    width: 300px;
+    min-width: 100px;
+    max-width: 20%;
     font-style: italic;
 }
 .footer {
