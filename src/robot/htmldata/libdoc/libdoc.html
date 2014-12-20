@@ -95,6 +95,17 @@
     function resetSearchResults() {
         $('.highlight').parent().unhighlight();
         $('.no-match').removeClass('no-match');
+        reRenderKeywordsWithIe8();
+    }
+
+    function reRenderKeywordsWithIe8 () {
+        // For some reason unhighlight messes up name cell with IE8. As a
+        // workaround we re-render keywords altogether. Notice that version
+        // check below doesn't work anymore in jQuery 1.9+. Hope we simply
+        // can drop IE8 support soon altogether.
+        if ($.browser.msie && parseInt($.browser.version, 10) < 9) {
+            renderTemplate('keywords', libdoc);
+        }
     }
 
     function getIncludesAndDisableIfOnlyOneLeft() {
@@ -141,7 +152,7 @@
             $(this).addClass('no-match');
         });
         $('#shortcuts-container').find('a').each(function () {
-            if ($.inArray(this.text, nonMatched) != -1) {
+            if ($.inArray($(this).text(), nonMatched) != -1) {
                 $(this).addClass('no-match');
             } else {
                 matchCount++;
