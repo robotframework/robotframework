@@ -120,6 +120,15 @@ Read Until Prompt
     Write    pwd
     Read Until Prompt
 
+Read Until Prompt And Strip Prompt
+    Set Prompt  ${FULL PROMPT}
+    Write    pwd
+    ${out} =    Read Until Prompt    strip_prompt=${True}
+    Should Be Equal    ${out}    ${HOME}\r\n
+    Write    pwd
+    ${out} =    Read Until Prompt    DEbug    non-empty-string
+    Should Be Equal    ${out}    ${HOME}\r\n
+
 Read Until Regexp Prompt
     [Documentation]    FAIL Prompt 'No match' not found in ${TIMEOUT}.
     Set Prompt    \\$\\s    REGEXP
@@ -130,6 +139,12 @@ Read Until Regexp Prompt
     Write    pwd
     Read Until Prompt
 
+Read Until Regexp Prompt And Strip Prompt
+    Set Prompt    ${USERNAME}.*\\$\\s    REGEXP
+    Write    pwd
+    ${out} =    Read Until Prompt  strip_prompt=${True}
+    Should Be Equal    ${out}    ${HOME}\r\n
+
 Write Until Expected Output
     [Documentation]    FAIL No match found for 'Not found' in 300 milliseconds.
     Write    a=10
@@ -139,6 +154,13 @@ Write Until Expected Output
 Execute Command
     ${output} =    Execute Command    pwd
     Should Be Equal    ${output}    ${HOME}\r\n${FULL PROMPT}
+
+Execute Command And Strip Prompt
+    Set Prompt  ${FULL PROMPT}
+    ${output} =    Execute Command    pwd    strip_prompt=${True}
+    Should Be Equal    ${output}    ${HOME}\r\n
+    ${output} =    Execute Command    pwd    debUG    ${True}
+    Should Be Equal    ${output}    ${HOME}\r\n
 
 Writing and reading fails if there is no connection
     [Setup]    NONE
