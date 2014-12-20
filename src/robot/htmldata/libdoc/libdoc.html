@@ -42,9 +42,9 @@
         if (libdoc.inits.length > 0) {
             renderTemplate('importing', libdoc);
         }
-        renderTemplate('footer', libdoc);
         renderTemplate('shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
+        renderTemplate('footer', libdoc);
         scrollToHash();
         $(document).bind('keydown', handleKeydown);
     });
@@ -145,14 +145,14 @@
     }
 
     function markUnmatched() {
-        var nonMatched = [];
+        var unmatched = [];
         var matchCount = 0;
         $('#keywords-container').find('.kw-row').not(':has(.highlight)').each(function () {
-            nonMatched.push(this.id);
+            unmatched.push(this.id);
             $(this).addClass('no-match');
         });
         $('#shortcuts-container').find('a').each(function () {
-            if ($.inArray($(this).text(), nonMatched) != -1) {
+            if ($.inArray($(this).text(), unmatched) != -1) {
                 $(this).addClass('no-match');
             } else {
                 matchCount++;
