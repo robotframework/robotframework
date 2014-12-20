@@ -315,6 +315,11 @@ For word can have many colons
     \  ${result} =  Set Variable  ${result}${i}
     Should Be Equal  ${result}  0123456789
 
+For In Range With Float Start, Stop And Step
+    @{var} =  List
+    :FOR  ${myvar}  IN RANGE  10.99  2.11  -3.04
+    \  @{var} =  List  @{var}  ${myvar}
+    Fail Unless  @{var} == [10.99, 7.95, 4.91]
 
 *** Keywords ***
 My UK

@@ -255,6 +255,12 @@ For loops are case and space insensitive
 For word can have many colons
     Check Test Case  ${TESTNAME}
 
+For In Range With Float Start, Stop And Step
+    ${test} =  Check Test Case  For In Range With Float Start, Stop and Step
+    Should Be For In Range Keyword  ${test.kws[1]}  3
+    Should Be For Item  ${test.kws[1].kws[0]}  \${myvar} = 10.99
+    Should Be For Item  ${test.kws[1].kws[1]}  \${myvar} = 7.95
+    Should Be For Item  ${test.kws[1].kws[2]}  \${myvar} = 4.91
 
 *** Keywords ***
 Should Be For Keyword
