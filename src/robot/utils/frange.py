@@ -29,11 +29,11 @@ def frange(*args):
         step = args[2]
     else:
         raise ValueError("invalid number of arguments")
-    powerOf10 = max(_digits(start), _digits(stop), _digits(step))    
-    if powerOf10 == 0:
-        result = range(start, stop, step)
+    power_of_10 = max(_digits(start), _digits(stop), _digits(step))
+    if power_of_10 == 0:
+        result = range(int(start), int(stop), int(step))
     else:
-        factor = pow(10, powerOf10)
+        factor = pow(10, power_of_10)
         begin = int(start*factor)
         end = int(stop*factor)
         step2 = int(step*factor)
@@ -43,12 +43,20 @@ def frange(*args):
 #algorithm inspired by http://stackoverflow.com/questions/6189956/easy-way-of-finding-decimal-places	
 def _digits(number):
     digits = 0
-    convertedNumber = str(number)
-    list_of_strings = convertedNumber.split('.')
-    if len(list_of_strings) == 1:
-        digits = 0
-    elif len(list_of_strings) == 2:
-        digits = len(list_of_strings[1])
+    if 'e' in str(number):
+        digits2string = str(number).split('e')[1]
+        digits2int = int(digits2string)
+        digits1int = _digits(str(number).split('e')[0])
+        digits = max(0,digits1int-digits2int)
     else:
-        raise ValueError("input is not a number")
+        list_of_strings = str(number).split('.')
+        if len(list_of_strings) == 1:
+            digits = 0
+        elif len(list_of_strings) == 2:
+            if int(eval(str(number))) == float(number):
+                digits = 0
+            else:
+                digits = len(list_of_strings[1])
+        else:
+            raise ValueError("input is not a number")
     return digits
