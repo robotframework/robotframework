@@ -80,7 +80,10 @@ class Runner(SuiteVisitor):
                                          self._settings.exit_on_failure,
                                          self._settings.exit_on_error,
                                          self._settings.skip_teardown_on_exit)
-        self._output.start_suite(ModelCombiner(suite, self._suite))
+        self._output.start_suite(ModelCombiner(result, suite,
+                                               tests=suite.tests,
+                                               suites=suite.suites,
+                                               test_count=suite.test_count))
         self._output.register_error_listener(self._suite_status.error_occurred)
         self._run_setup(suite.keywords.setup, self._suite_status)
         self._executed_tests = NormalizedDict(ignore='_')
@@ -192,10 +195,13 @@ class Runner(SuiteVisitor):
 
 class ModelCombiner(object):
 
-    def __init__(self, *models):
+    def __init__(self, *models, **priority):
         self.models = models
+        self.priority = priority
 
     def __getattr__(self, name):
+        if name in self.priority:
+            return self.priority[name]
         for model in self.models:
             if hasattr(model, name):
                 return getattr(model, name)

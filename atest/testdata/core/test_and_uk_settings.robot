@@ -32,9 +32,9 @@ Test Case Documentation in Multiple Columns
     No Operation
 
 Test Case Documentation in Multiple Lines
-    [DOCUMENTATION]    Documentation
-    [DOCUMENT]         for this test case
-    ...                in\nmultiple\nlines
+    [DOCUMENTATION]    ${1}st line is shortdoc.
+    ...                Documentation for this test case
+    [DOCUMENT]         in\nmultiple\nlines
     No Operation
 
 Test Case Documentation With Variables
