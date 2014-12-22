@@ -104,6 +104,7 @@
         // check below doesn't work anymore in jQuery 1.9+. Hope we simply
         // can drop IE8 support soon altogether.
         if ($.browser.msie && parseInt($.browser.version, 10) < 9) {
+            renderTemplate('shortcuts', libdoc);
             renderTemplate('keywords', libdoc);
         }
     }
