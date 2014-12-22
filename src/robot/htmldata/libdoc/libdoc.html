@@ -88,6 +88,8 @@
         if (string) {
             markMatches(string, include);
             highlightMatches(string, include);
+        } else {
+            resetKeywords();
         }
     }
 
@@ -164,6 +166,10 @@
         $('#include-args').prop('checked', true);
         $('#include-doc').prop('checked', true);
         $('#hide-unmatched').prop('checked', false);
+        resetKeywords();
+    }
+
+    function resetKeywords() {
         renderTemplate('shortcuts', libdoc);
         renderTemplate('keywords', libdoc);
         $('#match-count').hide();
