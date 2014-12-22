@@ -85,27 +85,9 @@
     function doSearch() {
         var string = $('#search-string').val();
         var include = getIncludesAndDisableIfOnlyOneLeft();
-        resetSearchResults();
         if (string) {
+            markMatches(string, include);
             highlightMatches(string, include);
-            markUnmatched();
-        }
-    }
-
-    function resetSearchResults() {
-        $('.highlight').parent().unhighlight();
-        $('.no-match').removeClass('no-match');
-        reRenderKeywordsWithIe8();
-    }
-
-    function reRenderKeywordsWithIe8 () {
-        // For some reason unhighlight messes up name cell with IE8. As a
-        // workaround we re-render keywords altogether. Notice that version
-        // check below doesn't work anymore in jQuery 1.9+. Hope we simply
-        // can drop IE8 support soon altogether.
-        if ($.browser.msie && parseInt($.browser.version, 10) < 9) {
-            renderTemplate('shortcuts', libdoc);
-            renderTemplate('keywords', libdoc);
         }
     }
 
@@ -130,38 +112,39 @@
         return include;
     }
 
-    function highlightMatches(string, include) {
-        var shortcuts = $('#shortcuts-container').find('a');
-        var keywords = $('#keywords-container').find('td');
-        if (include.name) {
-            shortcuts.highlight(string);
-            keywords.filter('.kw').highlight(string);
-        }
-        if (include.args) {
-            keywords.filter('.args').highlight(string);
-        }
-        if (include.doc) {
-            keywords.filter('.doc').highlight(string);
-        }
-    }
-
-    function markUnmatched() {
-        var unmatched = [];
+    function markMatches(string, include) {
+        var regexp = new RegExp(util.regexpEscape(string), 'i');
+        var result = {};
         var matchCount = 0;
-        $('#keywords-container').find('.kw-row').not(':has(.highlight)').each(function () {
-            unmatched.push(this.id);
-            $(this).addClass('no-match');
-        });
-        $('#shortcuts-container').find('a').each(function () {
-            if ($.inArray($(this).text(), unmatched) != -1) {
-                $(this).addClass('no-match');
-            } else {
+        result.keywords = util.map(libdoc.keywords, function (kw) {
+            kw = $.extend({}, kw);
+            kw.matched = (include.name && regexp.test(kw.name) ||
+                          include.args && regexp.test(kw.args) ||
+                          include.doc && regexp.test($(kw.doc).text()));
+            if (kw.matched)
                 matchCount++;
-            }
+            return kw
         });
+        renderTemplate('shortcuts', result);
+        renderTemplate('keywords', result);
         var ending = matchCount != 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
         $('#altogether-count').hide();
+    }
+
+    function highlightMatches(string, include) {
+        var shortcuts = $('#shortcuts-container').find('.match');
+        var keywords = $('#keywords-container').find('.match');
+        if (include.name) {
+            shortcuts.highlight(string);
+            keywords.find('.kw').highlight(string);
+        }
+        if (include.args) {
+            keywords.find('.args').highlight(string);
+        }
+        if (include.doc) {
+            keywords.find('.doc').highlight(string);
+        }
     }
 
     function openSearch() {
@@ -176,12 +159,13 @@
     }
 
     function resetSearch() {
-        resetSearchResults();
         $('#search-string').val('');
         $('#include-name').prop('checked', true);
         $('#include-args').prop('checked', true);
         $('#include-doc').prop('checked', true);
         $('#hide-unmatched').prop('checked', false);
+        renderTemplate('shortcuts', libdoc);
+        renderTemplate('keywords', libdoc);
         $('#match-count').hide();
         $('#altogether-count').show();
     }
@@ -221,7 +205,7 @@
     <form id="search" action="javascript:void(0)">
         <fieldset>
             <legend id="search-title">Search keywords</legend>
-            <input type="text" id="search-string" onkeyup="delay(doSearch, 300)">
+            <input type="text" id="search-string" onkeyup="delay(doSearch, 500)">
             <fieldset>
                 <legend>Search from</legend>
                 <input type="checkbox" id="include-name" onclick="doSearch()" checked>
@@ -264,7 +248,9 @@
     <h2 id="Shortcuts">Shortcuts</h2>
     <div class='shortcuts'>
         {{each keywords}}
-        <a href="#${encodeURIComponent($value.name)}" title="${$value.shortdoc}">${$value.name}</a>
+        <a href="#${encodeURIComponent($value.name)}"
+           class="{{if $value.matched === false}}no-{{/if}}match"
+           title="${$value.shortdoc}">${$value.name}</a>
         {{if $index < keywords.length-1}} &middot; {{/if}}
         {{/each}}
     </div>
@@ -279,7 +265,8 @@
             <th class="doc">Documentation</th>
         </tr>
         {{each keywords}}
-        <tr id="${$value.name}" class="kw-row hide-unmatched">
+        <tr id="${$value.name}"
+            class="kw-row hide-unmatched {{if $value.matched === false}}no-{{/if}}match">
             <td class="kw">${$value.name}</td>
             <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
