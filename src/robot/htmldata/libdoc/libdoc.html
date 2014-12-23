@@ -132,6 +132,8 @@
         var ending = matchCount != 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
         $('#altogether-count').hide();
+        if (matchCount == 0)
+            $('#keywords-container').find('table').empty();
     }
 
     function highlightMatches(string, include) {
