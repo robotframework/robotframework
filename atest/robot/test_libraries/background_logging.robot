@@ -10,8 +10,8 @@ Log main
 
 Log from Background
     ${tc}=   Check Test Case      ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[1]}    Bar    INFO
+    Check Log Message    ${tc.kws[2].msgs[1]}    Bar    INFO
 
 Log from specific thread
     ${tc}=   Check Test Case      ${TEST NAME}
-    Check Log Message    ${tc.kws[4].msgs[0]}    Huu    INFO
+    Check Log Message    ${tc.kws[5].msgs[0]}    Huu    INFO
