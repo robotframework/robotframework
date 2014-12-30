@@ -43,20 +43,24 @@ def frange(*args):
 #algorithm inspired by http://stackoverflow.com/questions/6189956/easy-way-of-finding-decimal-places	
 def _digits(number):
     digits = 0
-    if 'e' in str(number):
-        digits2string = str(number).split('e')[1]
-        digits2int = int(digits2string)
-        digits1int = _digits(str(number).split('e')[0])
-        digits = max(0,digits1int-digits2int)
+    converted_number = repr(number)
+    if 'e' in converted_number:
+        exponent = int(converted_number.split('e')[1])
+        if exponent < 0:
+            exponent_digits = abs(exponent)
+            mantissa_digits = _digits(converted_number.split('e')[0])
+            digits = exponent_digits + mantissa_digits
+        else:
+            digits = 0
     else:
-        list_of_strings = str(number).split('.')
+        list_of_strings = converted_number.split('.')
         if len(list_of_strings) == 1:
             digits = 0
         elif len(list_of_strings) == 2:
             if int(eval(str(number))) == float(number):
                 digits = 0
             else:
-                digits = len(list_of_strings[1])
+                digits = len(list_of_strings[1].replace("'",""))
         else:
             raise ValueError("input is not a number")
     return digits

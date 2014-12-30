@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-from robot.utils.frange import frange
+from robot.utils.frange import frange, _digits
 from robot.utils.asserts import assert_equals
 
 
@@ -17,6 +17,13 @@ class TestFrangeUtils(unittest.TestCase):
                                 ([-5.0145, 12.2132, 3.999],[-5.0145, -1.0155, 2.9835, 6.9825, 10.9815]),
                                 ([0.1, 11.2, 4.6],[0.1, 4.7, 9.3])]:
             assert_equals(frange(*input), expected)
+    def test_digits(self):
+        for input, expected in [(10, 0),
+                                (5.00, 0),
+                                (-2.458, 3),
+                                (1.345e6, 0),
+                                (-5.205e-20, 23)]:
+            assert_equals(_digits(input), expected)
     
     def test_integers_only(self):
         for input in [(10,), (-10,), (1, 10), (1, 10, 2), (10, -5, -2)]:
