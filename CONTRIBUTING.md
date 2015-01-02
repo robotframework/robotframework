@@ -26,6 +26,7 @@ Github has a [good article describing pull requests](https://help.github.com/art
 ### Style guidelines
 
 As with most Python projects, Robot Framework mostly follows [PEP-8](https://www.python.org/dev/peps/pep-0008/).
+When possible, write code that's easy to understand without requiring comments.
 Any new files you add should include the Apache License header.
 
 ### Testing your changes
@@ -67,3 +68,11 @@ job not to run.
 ### AUTHORS.txt
 
 Add yourself to `AUTHORS.txt` if you'd like credit for your changes.
+
+### Squashing and resolving conflicts
+
+When your pull request has been accepted for merging by the project owners, if
+you have a lot of commits, you should 
+[squash your commits](http://eli.thegreenplace.net/2014/02/19/squashing-github-pull-requests-into-a-single-commit).
+If your pull request has conflicts with master, rebase your changes with master
+to allow for an easy merge.
