@@ -22,6 +22,8 @@ class RowSplitter(object):
     _setting_table = 'setting'
     _tc_table = 'test case'
     _kw_table = 'keyword'
+    _else = 'ELSE'
+    _else_if = 'ELSE IF'
 
     def __init__(self, cols=8, split_multiline_doc=True):
         self._cols = cols
@@ -73,9 +75,29 @@ class RowSplitter(object):
                 row = self._indent(row, indent)
 
     def _split(self, data):
-        row, rest = data[:self._cols], data[self._cols:]
+        row, rest = self._split_else_else_if(data)
+        if not rest:
+            row, rest = data[:self._cols], data[self._cols:]
         self._in_comment = any(c.startswith(self._comment_mark) for c in row)
         rest = self._add_line_continuation(rest)
+        return row, rest
+
+    def _split_else_else_if(self, data):
+        row, rest = data, []
+        if self._else in data or self._else_if in data:
+            try:
+                try:
+                    i = data.index(self._else_if)
+                except ValueError:
+                    i = data.index(self._else)
+                if data[i - 1] == self._line_continuation:
+                    try:
+                        i += data[i + 1:].index(self._else_if) + 1
+                    except ValueError:
+                        i += data[i + 1:].index(self._else) + 1
+                row, rest = data[:i], data[i:]
+            except ValueError:
+                pass
         return row, rest
 
     def _add_line_continuation(self, data):
