@@ -83,22 +83,18 @@ class RowSplitter(object):
         return row, rest
 
     def _split_else_else_if(self, data):
-        row, rest = data, []
-        if self._else in data or self._else_if in data:
-            try:
-                try:
-                    i = data.index(self._else_if)
-                except ValueError:
-                    i = data.index(self._else)
-                if data[i - 1] == self._line_continuation:
-                    try:
-                        i += data[i + 1:].index(self._else_if) + 1
-                    except ValueError:
-                        i += data[i + 1:].index(self._else) + 1
-                row, rest = data[:i], data[i:]
-            except ValueError:
-                pass
-        return row, rest
+        i = 0
+        if self._line_continuation in data:
+            cont_index = data.index(self._line_continuation)
+            if data[cont_index + 1] in (self._else, self._else_if):
+                i = cont_index + 2
+        if self._else_if in data[i:]:
+            i += data[i:].index(self._else_if)
+        elif self._else in data[i:]:
+            i += data[i:].index(self._else)
+        else:
+            return data, []
+        return data[:i], data[i:]
 
     def _add_line_continuation(self, data):
         if data:
