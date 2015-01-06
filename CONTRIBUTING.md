@@ -69,6 +69,17 @@ job not to run.
 
 Add yourself to `AUTHORS.txt` if you'd like credit for your changes.
 
+### Documentation
+
+If your changes modify Robot Framework's behavior in any way, or if you're
+contributing documentation, see the 
+[documentation README](doc/userguide/README.rst).
+The libraries that come with Robot Framework (`BuiltIn`, `Collections`, etc.
+have keyword docstrings that serve as their documentation. Make sure to update 
+these if necessary. Functions and methods intended for internal use only
+generally do not require docstrings as long as they are written clearly enough
+that their purpose can be understood by reading their code.
+
 ### Squashing and resolving conflicts
 
 When your pull request has been accepted for merging by the project owners, if
