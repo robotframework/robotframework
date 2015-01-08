@@ -274,9 +274,8 @@
             <th class="doc">Documentation</th>
         </tr>
         {{each keywords}}
-        <tr id="${$value.name}"
-            class="kw-row {{if $value.matched === false}}no-{{/if}}match">
-            <td class="kw">${$value.name}</td>
+        <tr class="kw-row {{if $value.matched === false}}no-{{/if}}match">
+            <td class="kw"><a name="${encodeURIComponent($value.name)}"></a>${$value.name}</td>
             <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
         </tr>
