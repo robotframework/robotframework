@@ -1,7 +1,7 @@
 How to contribute
 =================
 
-Reporting bugs or requesting enhancements
+Creating issues: reporting bugs and requesting enhancements
 -----------------------------------------
 
 Bugs and enhancements are tracked in `Github's issue
