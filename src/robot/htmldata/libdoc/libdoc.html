@@ -88,6 +88,7 @@
         if (string) {
             markMatches(string, include);
             highlightMatches(string, include);
+            setMatchVisibility();
         } else {
             resetKeywords();
         }
@@ -178,7 +179,7 @@
         $('#altogether-count').show();
     }
 
-    function hideUnmatched() {
+    function setMatchVisibility() {
         var kws = $('#keywords-container').find('.kw-row');
         var hide = $('#hide-unmatched').prop('checked');
         kws.toggleClass('hide-unmatched', hide);
@@ -223,7 +224,7 @@
                 <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
                 <label for="include-doc">Documentation</label>
             </fieldset>
-            <input type="checkbox" id="hide-unmatched" onclick="hideUnmatched()" checked>
+            <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
             <label for="hide-unmatched">Hide unmatched keywords</label>
             <div id="search-buttons">
                 <input type="button" value="Reset" onclick="resetSearch()"
@@ -274,7 +275,7 @@
         </tr>
         {{each keywords}}
         <tr id="${$value.name}"
-            class="kw-row hide-unmatched {{if $value.matched === false}}no-{{/if}}match">
+            class="kw-row {{if $value.matched === false}}no-{{/if}}match">
             <td class="kw">${$value.name}</td>
             <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
