@@ -848,7 +848,7 @@ Argument types
 Normally keyword arguments come to Robot Framework as strings. If
 keywords require some other types, it is possible to either use
 variables_ or convert strings to required types inside keywords. With
-`Java keywords`__ base types are also coerced automatically.
+`Java keywords`__ base types are also conversed automatically.
 
 __ `Argument types with Java`_
 
@@ -873,15 +873,15 @@ Argument types with Java
 
 Arguments to Java methods have types, and all the base types are
 handled automatically. This means that arguments that are normal
-strings in the test data are coerced to correct type at runtime. The
-types that can be coerced are:
+strings in the test data are conversed to correct type at runtime. The
+types that can be conversed are:
 
 - integer types (`byte`, `short`, `int`, `long`)
 - floating point types (`float` and `double`)
 - the `boolean` type
 - object versions of the above types e.g. `java.lang.Integer`
 
-The coercion is done for arguments that have the same or compatible
+The conversion is done for arguments that have the same or compatible
 type across all the signatures of the keyword method. In the following
 example, the conversion can be done for keywords `doubleArgument`
 and `compatibleTypes`, but not for `conflictingTypes`.
@@ -896,7 +896,7 @@ and `compatibleTypes`, but not for `conflictingTypes`.
    public void conflictingTypes(String arg1, int arg2) {}
    public void conflictingTypes(int arg1, String arg2) {}
 
-The coercion works with the numeric types if the test data has a
+The conversion works with the numeric types if the test data has a
 string containing a number, and with the boolean type the data must
 contain either string `true` or `false`. Coercion is only
 done if the original value was a string from the test data, but it is
@@ -904,7 +904,7 @@ of course still possible to use variables containing correct types with
 these keywords. Using variables is the only option if keywords have
 conflicting signatures.
 
-.. table:: Using automatic type coercion
+.. table:: Using automatic type conversion
    :class: example
 
    ===========  =================  =============  ==========  =====================
@@ -920,7 +920,7 @@ conflicting signatures.
    \            Conflicting Types  ${1}           2
    ===========  =================  =============  ==========  =====================
 
-Starting from Robot Framework 2.8, argument type coercion works also with
+Starting from Robot Framework 2.8, argument type conversion works also with
 `Java library constructors`__.
 
 __ `Providing arguments to test libraries`_

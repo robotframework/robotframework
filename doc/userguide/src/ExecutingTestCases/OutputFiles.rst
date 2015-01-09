@@ -340,7 +340,7 @@ Configuring displayed suite statistics
 
 When a deeper suite structure is executed, showing all the test suite
 levels in the :name:`Statistics by Suite` table may make the table
-somewhat difficult to read. Bt default all suites are shown, but you can
+somewhat difficult to read. By default all suites are shown, but you can
 control this with the command line option :option:`--suitestatlevel` which
 takes the level of suites to show as an argument::
 
