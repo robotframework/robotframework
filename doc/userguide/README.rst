@@ -24,7 +24,7 @@ Run it without arguments to get the usage::
 
     python ug2html.py
 
-Source files are under `src` directory. `<src/RobotFrameworkUserGuide.rst>`__
+Source files are under `<src>`__ directory. `<src/RobotFrameworkUserGuide.rst>`__
 includes other section specific files.
 
 Section style principles of reST
