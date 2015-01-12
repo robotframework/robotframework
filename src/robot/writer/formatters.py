@@ -22,9 +22,10 @@ from .rowsplitter import RowSplitter
 class _DataFileFormatter(object):
     _whitespace = re.compile('\s{2,}')
     _split_multiline_doc = True
+    _character_count = 0
 
     def __init__(self, column_count):
-        self._splitter = RowSplitter(column_count, self._split_multiline_doc)
+        self._splitter = RowSplitter(column_count, self._character_count, self._split_multiline_doc)
         self._column_count = column_count
         self._extractor = DataExtractor(self._want_names_on_first_content_row)
 
@@ -97,6 +98,7 @@ class TsvFormatter(_DataFileFormatter):
 class TxtFormatter(_DataFileFormatter):
     _test_or_keyword_name_width = 18
     _setting_and_variable_name_width = 14
+    _character_count = 80
 
     def _format_row(self, row, table=None):
         row = self._escape(row)

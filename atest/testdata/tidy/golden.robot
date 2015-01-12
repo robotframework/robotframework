@@ -15,6 +15,8 @@ My Test Case
     [Documentation]    This is a long comment that spans several columns
     My TC Step 1    my step arg    # step 1 comment
     My TC Step 2    my step 2 arg    second \ arg    # step 2 comment
+    Really really really really really really long keyword
+    ...    ${really really really really really really really long arg}
     [Teardown]    1 minute    args
 
 Another Test
