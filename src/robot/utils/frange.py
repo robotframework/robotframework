@@ -14,53 +14,45 @@
 
 
 def frange(*args):
-    result = []
-    if len(args) == 1:
-        start = 0
-        stop = args[0]
-        step = 1
-    elif len(args) == 2:
-        start = args[0]
-        stop = args[1]
-        step = 1
-    elif len(args) == 3:
-        start = args[0]
-        stop = args[1]
-        step = args[2]
-    else:
-        raise ValueError("invalid number of arguments")
-    power_of_10 = max(_digits(start), _digits(stop), _digits(step))
-    if power_of_10 == 0:
-        result = range(int(start), int(stop), int(step))
-    else:
-        factor = pow(10, power_of_10)
-        begin = int(start*factor)
-        end = int(stop*factor)
-        step2 = int(step*factor)
-        result = [x/float(factor) for x in range(begin,end,step2)]
-    return result
+    """Like ``range()`` but accepts float arguments."""
+    if all(isinstance(arg, (int, long)) for arg in args):
+        return range(*args)
+    start, stop, step = _get_start_stop_step(args)
+    digits = max(_digits(start), _digits(stop), _digits(step))
+    factor = pow(10, digits)
+    return [x/float(factor) for x in
+            xrange(int(start*factor), int(stop*factor), int(step*factor))]
 
-#algorithm inspired by http://stackoverflow.com/questions/6189956/easy-way-of-finding-decimal-places	
+
+def _get_start_stop_step(args):
+    if len(args) == 1:
+        return 0, args[0], 1
+    if len(args) == 2:
+        return args[0], args[1], 1
+    if len(args) == 3:
+        return args
+    raise TypeError('frange expected 1-3 arguments, got %d' % len(args))
+
+
 def _digits(number):
-    digits = 0
-    converted_number = repr(number)
-    if 'e' in converted_number:
-        exponent = int(converted_number.split('e')[1])
-        if exponent < 0:
-            exponent_digits = abs(exponent)
-            mantissa_digits = _digits(converted_number.split('e')[0])
-            digits = exponent_digits + mantissa_digits
-        else:
-            digits = 0
-    else:
-        list_of_strings = converted_number.split('.')
-        if len(list_of_strings) == 1:
-            digits = 0
-        elif len(list_of_strings) == 2:
-            if int(eval(str(number))) == float(number):
-                digits = 0
-            else:
-                digits = len(list_of_strings[1].replace("'",""))
-        else:
-            raise ValueError("input is not a number")
-    return digits
+    if not isinstance(number, str):
+        number = repr(number)
+    if 'e' in number:
+        return _digits_with_exponent(number)
+    if '.' in number:
+        return _digits_with_fractional(number)
+    return 0
+
+
+def _digits_with_exponent(number):
+    mantissa, exponent = number.split('e')
+    mantissa_digits = _digits(mantissa)
+    exponent_digits = int(exponent) * -1
+    return max(mantissa_digits + exponent_digits, 0)
+
+
+def _digits_with_fractional(number):
+    fractional = number.split('.')[1]
+    if fractional == '0':
+        return 0
+    return len(fractional)

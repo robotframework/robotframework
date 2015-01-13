@@ -290,17 +290,12 @@ class ForLoop(_BaseKeyword):
         return frange(*items)
 
     def _to_number_with_arithmetics(self, item):
-        item = str(item)
-        try:
-            try:
-                return int(item)
-            except ValueError:
-                return float(item)
-        except ValueError:
-            number = eval(item)
-            if not isinstance(number, (int, long, float)):
-                raise TypeError("Expected number, got '%s' instead." % item)
-            return number
+        if isinstance(item, (int, long, float)):
+            return item
+        number = eval(str(item))
+        if not isinstance(number, (int, long, float)):
+            raise TypeError("Expected number, got '%s' instead." % item)
+        return number
 
 
 class _ForItem(_BaseKeyword):

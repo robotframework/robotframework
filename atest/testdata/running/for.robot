@@ -247,6 +247,36 @@ For In Range With Start, Stop And Step
     \  @{var} =  List  @{var}  ${myvar}
     Fail Unless  @{var} == [10, 7, 4]
 
+For In Range With Float Stop 1
+    @{var} =  List
+    :FOR  ${item}  IN RANGE  3.14
+    \  @{var} =  List  @{var}  ${item}
+    Fail Unless  @{var} == [0, 1, 2, 3]
+
+For In Range With Float Stop 2
+    @{var} =  List
+    :FOR  ${item}  IN RANGE  3.0
+    \  @{var} =  List  @{var}  ${item}
+    Fail Unless  @{var} == [0, 1, 2]
+
+For In Range With Float Start And Stop 1
+    @{var} =  List
+    :FOR  ${item}  IN RANGE  -1.5  1.5
+    \  @{var} =  List  @{var}  ${item}
+    Fail Unless  @{var} == [-1.5, -0.5, 0.5]
+
+For In Range With Float Start And Stop 2
+    @{var} =  List
+    :FOR  ${item}  IN RANGE  -1.5  1.500001
+    \  @{var} =  List  @{var}  ${item}
+    Fail Unless  @{var} == [-1.5, -0.5, 0.5, 1.5]
+
+For In Range With Float Start, Stop And Step
+    @{var} =  List
+    :FOR  ${item}  IN RANGE  10.99  2.11  -3.04
+    \  @{var} =  List  @{var}  ${item}
+    Fail Unless  @{var} == [10.99, 7.95, 4.91]
+
 For In Range With Variables In Arguments
     @{var} =  List
     :FOR  ${i}  IN RANGE  ${1}  ${3}
@@ -255,11 +285,17 @@ For In Range With Variables In Arguments
     :FOR  ${j}  IN RANGE  @{var}
     \  Equals  ${j}  ${1}
 
-For In Range With Expressions in Arguments
+For In Range With Expressions
     @{var} =  List
     :FOR  ${i}  IN RANGE  ${3}-2  (3+${6})/3
     \  @{var} =  List  @{var}  ${i}
     Fail Unless  @{var} == [1,2]
+
+For In Range With Expressions Containing Floats
+    @{var} =  List
+    :FOR    ${i}    IN RANGE    3 + 0.14    1.5 - 2.5    2 * -1
+    \  @{var} =  List  @{var}  ${i}
+    Fail Unless  @{var} == [3.14, 1.14, -0.86]
 
 For In Range With Multiple Variables
     @{var} =  List
@@ -314,12 +350,6 @@ For word can have many colons
     :::f:o:r:::  ${i}  inrange  4  10
     \  ${result} =  Set Variable  ${result}${i}
     Should Be Equal  ${result}  0123456789
-
-For In Range With Float Start, Stop And Step
-    @{var} =  List
-    :FOR  ${myvar}  IN RANGE  10.99  2.11  -3.04
-    \  @{var} =  List  @{var}  ${myvar}
-    Fail Unless  @{var} == [10.99, 7.95, 4.91]
 
 *** Keywords ***
 My UK

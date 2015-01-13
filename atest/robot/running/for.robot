@@ -216,11 +216,38 @@ For In Range With Start, Stop And Step
     Should Be For Item  ${test.kws[1].kws[1]}  \${myvar} = 7
     Should Be For Item  ${test.kws[1].kws[2]}  \${myvar} = 4
 
+For In Range With Float Stop
+    ${tc} =    Check Test Case  ${TEST NAME} 1
+    Should Be For In Range Keyword  ${tc.kws[1]}  4
+    Should Be For Item  ${tc.kws[1].kws[0]}  \${item} = 0.0
+    Should Be For Item  ${tc.kws[1].kws[1]}  \${item} = 1.0
+    Should Be For Item  ${tc.kws[1].kws[2]}  \${item} = 2.0
+    Should Be For Item  ${tc.kws[1].kws[3]}  \${item} = 3.0
+    ${tc} =    Check Test Case  ${TEST NAME} 2
+    Should Be For In Range Keyword  ${tc.kws[1]}  3
+    Should Be For Item  ${tc.kws[1].kws[0]}  \${item} = 0.0
+    Should Be For Item  ${tc.kws[1].kws[1]}  \${item} = 1.0
+    Should Be For Item  ${tc.kws[1].kws[2]}  \${item} = 2.0
+
+For In Range With Float Start And Stop
+    Check Test Case  ${TEST NAME} 1
+    Check Test Case  ${TEST NAME} 2
+
+For In Range With Float Start, Stop And Step
+    ${test} =  Check Test Case  ${TEST NAME}
+    Should Be For In Range Keyword  ${test.kws[1]}  3
+    Should Be For Item  ${test.kws[1].kws[0]}  \${item} = 10.99
+    Should Be For Item  ${test.kws[1].kws[1]}  \${item} = 7.95
+    Should Be For Item  ${test.kws[1].kws[2]}  \${item} = 4.91
+
 For In Range With Variables In Arguments
     Check Test Case  For In Range With Variables In Arguments
 
-For In Range With Expressions in Arguments
-    Check Test Case  For In Range With Expressions in Arguments
+For In Range With Expressions
+    Check Test Case  ${TEST NAME}
+
+For In Range With Expressions Containing Floats
+    Check Test Case  ${TEST NAME}
 
 For In Range With Multiple Variables
     ${test} =  Check Test Case  For In Range With Multiple Variables
@@ -254,13 +281,6 @@ For loops are case and space insensitive
 
 For word can have many colons
     Check Test Case  ${TESTNAME}
-
-For In Range With Float Start, Stop And Step
-    ${test} =  Check Test Case  For In Range With Float Start, Stop and Step
-    Should Be For In Range Keyword  ${test.kws[1]}  3
-    Should Be For Item  ${test.kws[1].kws[0]}  \${myvar} = 10.99
-    Should Be For Item  ${test.kws[1].kws[1]}  \${myvar} = 7.95
-    Should Be For Item  ${test.kws[1].kws[2]}  \${myvar} = 4.91
 
 *** Keywords ***
 Should Be For Keyword
@@ -344,4 +364,3 @@ Check KW "Nested For In UK"
     Check KW "For In UK"  ${nested2.kws[0].kws[0].kws[0]}
     Check Log Message  ${nested2.kws[0].kws[0].kws[1].msgs[0]}  Got arg: ${first_arg}
     Check Log Message  ${nested2.kws[1].msgs[0]}  This ought to be enough    FAIL
-
