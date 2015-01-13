@@ -20,8 +20,9 @@ def frange(*args):
     start, stop, step = _get_start_stop_step(args)
     digits = max(_digits(start), _digits(stop), _digits(step))
     factor = pow(10, digits)
-    return [x/float(factor) for x in
-            xrange(int(start*factor), int(stop*factor), int(step*factor))]
+    return [x/float(factor) for x in range(int(round(start*factor)),
+                                           int(round(stop*factor)),
+                                           int(round(step*factor)))]
 
 
 def _get_start_stop_step(args):
