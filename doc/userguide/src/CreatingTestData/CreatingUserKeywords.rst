@@ -101,7 +101,7 @@ first row of the documentation is shown as a keyword documentation in
 Sometimes keywords need to be removed, replaced with new ones, or
 deprecated for other reasons.  User keywords can be marked deprecated
 by starting the documentation with `*DEPRECATED*`, which will
-cause a warning when the keyoword is used. For more information, see
+cause a warning when the keyword is used. For more information, see
 `Deprecating keywords`_ section.
 
 User keyword arguments
@@ -126,7 +126,7 @@ given and then argument names are defined in the subsequent
 cells. Each argument is in its own cell, using the same syntax as with
 variables. The keyword must be used with as many arguments as there
 are argument names in its signature. The actual argument names do not
-matter to the framework, but from users' perspective they should should
+matter to the framework, but from users' perspective they should
 be as descriptive as possible. It is recommended
 to use lower-case letters in variable names, either as
 `${my_arg}`, `${my arg}` or `${myArg}`.
