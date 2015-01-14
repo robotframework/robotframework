@@ -85,11 +85,15 @@ class RowSplitter(object):
         return current, rest
 
     def _get_split_index(self, data):
+        else_index = self._get_else_index(data)
+        return min(else_index, self._cols) if else_index else self._cols
+
+    def _get_else_index(self, data):
         min_index = self._get_first_non_empty_index(data, indented=True) + 1
         for marker in self._else_if, self._else:
             if marker in data[min_index:]:
                 return data[min_index:].index(marker) + min_index
-        return self._cols
+        return None
 
     def _comment_rest_if_needed(self, current, rest):
         if rest and any(c.startswith(self._comment_mark) for c in current) \
