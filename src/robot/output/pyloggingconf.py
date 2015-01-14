@@ -14,6 +14,7 @@
 
 from contextlib import contextmanager
 import logging
+import sys
 
 from robot import utils
 
@@ -49,7 +50,9 @@ def robot_handler_enabled(level):
         yield
     finally:
         root.removeHandler(handler)
-        logging.raiseExceptions = old_raise
+        # Avoid errors at exit: http://bugs.jython.org/issue2253
+        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
+            logging.raiseExceptions = old_raise
 
 
 def set_level(level):

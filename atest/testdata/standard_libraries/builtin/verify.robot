@@ -337,7 +337,8 @@ Length With Length Attribute
     Should Be Empty    ${LENGTH_ATTRIBUTE}
 
 Length Of Java Types
-    [Documentation]    FAIL Length of '{a=1}' should be 3 but is 1.
+    # HashTable str changed from {foo=bar} to {foo: bar} in Jython 2.7b4
+    [Documentation]    FAIL REGEXP: Length of '{a(=|: )1}' should be 3 but is 1.
     : FOR    ${type}    IN    STRING    HASHTABLE    VECTOR    ARRAY
     \    Verify Length Of Java Type    ${type}
     Length Should Be    ${HASHTABLE 1}    3
