@@ -26,6 +26,9 @@ Test Case With Long Internal Lines
     ...  ELSE IF  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18
     ...  ELSE     1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18
 
+Escaping
+    Log Many    \ELSE    \ELSE IF    \AND
+
 *** Keywords ***
 Keyword With ELSE
     Run Keyword If    expression    No Operation    ELSE    No Operation

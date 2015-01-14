@@ -48,6 +48,9 @@ Test Case With Long Internal Lines
     ...    12    13    14    15    16    17
     ...    18
 
+Escaping
+    Log Many    \ELSE    \ELSE IF    \AND
+
 *** Keywords ***
 Keyword With ELSE
     Run Keyword If    expression    No Operation
