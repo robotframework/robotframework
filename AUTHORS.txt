@@ -38,6 +38,7 @@ Guy Kisel                      How-to use decorators when creating libraries (2.
                                BuiltIn.Log pprint support (2.8.6)
                                New pattern matching keywords in Collections (2.8.6)
                                Keyword/variable not found recommendations (2.8.6)
+                               Tidy ELSE and ELSE IF onto separate lines (2.8.7)
 Mike Terzo                     Better connection errors to Remote library (2.7.7)
 Asko Soukka                    reST (plain text) support (2.8.2)
 Vivek Kumar Verma              reST (plain text) support (2.8.2)
