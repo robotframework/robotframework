@@ -6,32 +6,33 @@ from robot.utils.asserts import assert_equals
 
 class TestRowSplitter(unittest.TestCase):
 
-    def setUp(self):
-        self._cols = 3
-        self._formatter = RowSplitter(cols=self._cols)
-
-    def _split(self, data):
-        return list(self._formatter.split(data, 'whatever'))
+    def _test(self, data, expected, cols=3, table_type='settings'):
+        splitter = RowSplitter(cols=cols)
+        actual = list(splitter.split(data, table_type))
+        assert_equals(actual, expected)
 
     def test_escaping_empty_cells_at_eol(self):
-        assert_equals(self._split(['Some', 'text', '', 'with empty']),
-            [['Some', 'text', '${EMPTY}'],
-                ['...', 'with empty']])
+        self._test(['Some', 'text', '', 'with empty'],
+                   [['Some', 'text', '${EMPTY}'],
+                    ['...', 'with empty']])
 
     def test_splitting_inside_comment(self):
-        assert_equals(self._split(['Kw', 'Arg', '#Comment in', 'many cells']),
-            [['Kw', 'Arg', '#Comment in'], ['...', '#many cells']])
+        self._test(['Kw', 'Arg', '#Comment in', 'many cells'],
+                   [['Kw', 'Arg', '#Comment in'],
+                    ['...', '#many cells']])
 
     def test_splitting_whitespace_rows(self):
-        # Checking loop border case conditions in row splitting mechanism
-        # Based on
-        assert_equals(self._split(['']*(self._cols+1)+['foo', '#Some random comment']),
-            [['', '', '${EMPTY}'],
-             ['...', '', 'foo'],
-             ['...', '#Some random comment']])
-        assert_equals(self._split(['']*self._cols+['foo', '#Some random comment']),
-            [['', '', '${EMPTY}'],
-             ['...', 'foo', '#Some random comment']])
-        assert_equals(self._split(['']*(self._cols-1)+['foo', '#Some random comment']),
-            [['', '', 'foo'],
-             ['...', '#Some random comment']])
+        self._test([''] * 4 + ['foo', '#Some random comment'],
+                   [['', '', '${EMPTY}'],
+                    ['...', '', 'foo'],
+                    ['...', '#Some random comment']])
+        self._test([''] * 3 + ['foo', '#Some random comment'],
+                   [['', '', '${EMPTY}'],
+                    ['...', 'foo', '#Some random comment']])
+        self._test([''] * 2 + ['foo', '#Some random comment'],
+                   [['', '', 'foo'],
+                    ['...', '#Some random comment']])
+
+
+if __name__ == '__main__':
+    unittest.main()
