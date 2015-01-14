@@ -25,16 +25,16 @@ class TestRowSplitter(unittest.TestCase):
     def test_splitting_inside_comment(self):
         self._test(['Kw', 'Arg', '#Comment in', 'many cells'],
                    [['Kw', 'Arg', '#Comment in'],
-                    ['...', '#many cells']])
+                    ['...', '# many cells']])
         self._test(['Kw', 'Arg', '# Comment', 'in', 'very', 'many', 'cells', '!'],
                    [['Kw', 'Arg', '# Comment'],
-                    ['...', '#in', 'very'],
-                    ['...', '#many', 'cells'],
-                    ['...', '#!']])
+                    ['...', '# in', 'very'],
+                    ['...', '# many', 'cells'],
+                    ['...', '# !']])
         self._test(['Kw', 'Arg', '# Comment in', 'many cells'],
                    [['Kw', 'Arg'],
                     ['...', '# Comment in'],
-                    ['...', '#many cells']], cols=2)
+                    ['...', '# many cells']], cols=2)
 
     def test_no_extra_comment_marker(self):
         self._test(['1', '2', '3', '# Comment'],

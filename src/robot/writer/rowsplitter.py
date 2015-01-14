@@ -20,8 +20,7 @@ class RowSplitter(object):
     _empty_cell_escape = '${EMPTY}'
     _line_continuation = '...'
     _setting_table = 'setting'
-    _tc_table = 'test case'
-    _kw_table = 'keyword'
+    _indented_tables = ('test case', 'keyword')
     _split_from = ('ELSE', 'ELSE IF', 'AND')
 
     def __init__(self, cols=8, split_multiline_doc=True):
@@ -41,7 +40,7 @@ class RowSplitter(object):
 
     def _get_indent(self, row, table_type):
         indent = self._get_first_non_empty_index(row)
-        min_indent = 1 if table_type in [self._tc_table, self._kw_table] else 0
+        min_indent = 1 if table_type in self._indented_tables else 0
         return max(indent, min_indent)
 
     def _get_first_non_empty_index(self, row, indented=False):
@@ -51,7 +50,7 @@ class RowSplitter(object):
     def _is_doc_row(self, row, table_type):
         if table_type == self._setting_table:
             return len(row) > 1 and row[0] == 'Documentation'
-        if table_type in [self._tc_table, self._kw_table]:
+        if table_type in self._indented_tables:
             return len(row) > 2 and row[1] == '[Documentation]'
         return False
 
@@ -93,7 +92,7 @@ class RowSplitter(object):
     def _comment_rest_if_needed(self, current, rest):
         if rest and any(c.startswith(self._comment_mark) for c in current) \
                 and not rest[0].startswith(self._comment_mark):
-            rest = [self._comment_mark + rest[0]] + rest[1:]
+            rest = [self._comment_mark + ' ' + rest[0]] + rest[1:]
         return rest
 
     def _escape_last_cell_if_empty(self, row):
