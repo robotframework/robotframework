@@ -79,15 +79,28 @@ class TestRowSplitter(unittest.TestCase):
                      ['...', 'ELSE IF', '5'],
                      ['...', 'ELSE', '6']], cols=100)
 
-    def test_dont_split_else_in_first_cell(self):
-        for else_ in (['ELSE', '1', '2'],
-                      ['ELSE IF', '1', '2']):
-            for no_split in (else_,
-                             [''] + else_,
-                             ['', '', ''] + else_,
-                             ['...'] + else_,
-                             ['', '...'] + else_,
-                             ['', '', '', '...'] + else_):
+    def test_split_also_and(self):
+        self._test(['Run Keywords', 'k1', 'AND', 'k2', 'a', 'b', 'AND', 'k3'],
+                   [['Run Keywords', 'k1'],
+                    ['...', 'AND', 'k2', 'a', 'b'],
+                    ['...', 'AND', 'k3']], cols=100)
+        self._test(['', '1', 'AND', '2', 'ELSE', '3', 'ELSE IF', '4', 'AND', '5'],
+                   [['', '1'],
+                    ['', '...', 'AND', '2'],
+                    ['', '...', 'ELSE', '3'],
+                    ['', '...', 'ELSE IF', '4'],
+                    ['', '...', 'AND', '5']], cols=100)
+
+    def test_dont_split_else_or_and_in_first_cell(self):
+        for data in (['ELSE', '1', '2'],
+                     ['ELSE IF', '1', '2'],
+                     ['AND', '1', '2']):
+            for no_split in (data,
+                             [''] + data,
+                             ['', '', ''] + data,
+                             ['...'] + data,
+                             ['', '...'] + data,
+                             ['', '', '', '...'] + data):
                 self._test(no_split, [no_split], cols=100)
 
     def test_split_internal_else_lines(self):

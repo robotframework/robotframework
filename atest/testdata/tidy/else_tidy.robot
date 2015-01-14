@@ -1,3 +1,11 @@
+*** Settings ***
+Suite Setup       Run Keywords    Run Keyword If    e1    kw1
+...               ELSE IF    e2    kw2
+...               ELSE    kw3
+...               AND    Run Keyword If    e1    kw1
+...               ELSE IF    e2    kw2
+...               ELSE    kw3
+
 *** Test Cases ***
 Test Case With ELSE
     Run Keyword If    expression    No Operation

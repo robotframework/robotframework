@@ -22,8 +22,7 @@ class RowSplitter(object):
     _setting_table = 'setting'
     _tc_table = 'test case'
     _kw_table = 'keyword'
-    _else = 'ELSE'
-    _else_if = 'ELSE IF'
+    _split_from = ('ELSE', 'ELSE IF', 'AND')
 
     def __init__(self, cols=8, split_multiline_doc=True):
         self._cols = cols
@@ -79,21 +78,17 @@ class RowSplitter(object):
                 row = self._continue_row(row, indent)
 
     def _split(self, data):
-        index = self._get_split_index(data)
+        index = min(self._get_possible_split_indices(data))
         current, rest = data[:index], data[index:]
         rest = self._comment_rest_if_needed(current, rest)
         return current, rest
 
-    def _get_split_index(self, data):
-        else_index = self._get_else_index(data)
-        return min(else_index, self._cols) if else_index else self._cols
-
-    def _get_else_index(self, data):
+    def _get_possible_split_indices(self, data):
         min_index = self._get_first_non_empty_index(data, indented=True) + 1
-        for marker in self._else_if, self._else:
+        for marker in self._split_from:
             if marker in data[min_index:]:
-                return data[min_index:].index(marker) + min_index
-        return None
+                yield data[min_index:].index(marker) + min_index
+        yield self._cols
 
     def _comment_rest_if_needed(self, current, rest):
         if rest and any(c.startswith(self._comment_mark) for c in current) \
