@@ -41,9 +41,13 @@ class RowSplitter(object):
         yield []
 
     def _get_indent(self, row, table_type):
-        indent = len(list(itertools.takewhile(lambda x: x == '', row)))
+        indent = self._get_first_non_empty_index(row)
         min_indent = 1 if table_type in [self._tc_table, self._kw_table] else 0
         return max(indent, min_indent)
+
+    def _get_first_non_empty_index(self, row, indented=False):
+        ignore = ['', '...'] if indented else ['']
+        return len(list(itertools.takewhile(lambda x: x in ignore, row)))
 
     def _is_doc_row(self, row, table_type):
         if table_type == self._setting_table:
@@ -57,8 +61,8 @@ class RowSplitter(object):
         yield row[:indent+1] + [first] + row[indent+2:]
         while rest:
             current, rest = self._split_doc(rest)
-            current = [self._line_continuation, current] if current else [self._line_continuation]
-            yield self._indent(current, indent)
+            row = [current] if current else []
+            yield self._continue_row(row, indent)
 
     def _split_doc(self, doc):
         if '\\n' not in doc:
@@ -70,43 +74,36 @@ class RowSplitter(object):
     def _split_row(self, row, indent):
         while row:
             current, row = self._split(row)
-            yield self._escape_last_empty_cell(current)
-            if row and indent + 1 < self._cols:
-                row = self._indent(row, indent)
+            yield self._escape_last_cell_if_empty(current)
+            if row:
+                row = self._continue_row(row, indent)
 
     def _split(self, data):
-        row, rest = self._split_else_else_if(data)
-        if not rest:
-            row, rest = data[:self._cols], data[self._cols:]
-        self._in_comment = any(c.startswith(self._comment_mark) for c in row)
-        rest = self._add_line_continuation(rest)
-        return row, rest
+        index = self._get_split_index(data)
+        current, rest = data[:index], data[index:]
+        rest = self._comment_rest_if_needed(current, rest)
+        return current, rest
 
-    def _split_else_else_if(self, data):
-        i = 0
-        if self._line_continuation in data:
-            cont_index = data.index(self._line_continuation)
-            if data[cont_index + 1] in (self._else, self._else_if):
-                i = cont_index + 2
-        if self._else_if in data[i:]:
-            i += data[i:].index(self._else_if)
-        elif self._else in data[i:]:
-            i += data[i:].index(self._else)
-        else:
-            return data, []
-        return data[:i], data[i:]
+    def _get_split_index(self, data):
+        min_index = self._get_first_non_empty_index(data, indented=True) + 1
+        for marker in self._else_if, self._else:
+            if marker in data[min_index:]:
+                return data[min_index:].index(marker) + min_index
+        return self._cols
 
-    def _add_line_continuation(self, data):
-        if data:
-            if self._in_comment and not data[0].startswith(self._comment_mark):
-                data[0] = self._comment_mark + data[0]
-            data = [self._line_continuation] + data
-        return data
+    def _comment_rest_if_needed(self, current, rest):
+        if rest and any(c.startswith(self._comment_mark) for c in current) \
+                and not rest[0].startswith(self._comment_mark):
+            rest = [self._comment_mark + rest[0]] + rest[1:]
+        return rest
 
-    def _escape_last_empty_cell(self, row):
-        if not row[-1].strip():
-            row[-1] = self._empty_cell_escape
+    def _escape_last_cell_if_empty(self, row):
+        if row and not row[-1].strip():
+            row = row[:-1] + [self._empty_cell_escape]
         return row
 
-    def _indent(self, row, indent):
-        return [''] * indent + row
+    def _continue_row(self, row, indent):
+        row = [self._line_continuation] + row
+        if indent + 1 < self._cols:
+            row = [''] * indent + row
+        return row
