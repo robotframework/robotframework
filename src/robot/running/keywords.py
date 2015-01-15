@@ -292,7 +292,16 @@ class ForLoop(_BaseKeyword):
     def _to_number_with_arithmetics(self, item):
         if isinstance(item, (int, long, float)):
             return item
-        number = eval(str(item))
+        item = str(item)
+        # eval() would also convert to int or float, but it sometimes very
+        # mysteriously fails with IronPython (seems to be related to timeouts)
+        # and thus it's better to avoid it.
+        for converter in int, float:
+            try:
+                return converter(item)
+            except ValueError:
+                pass
+        number = eval(item, {})
         if not isinstance(number, (int, long, float)):
             raise TypeError("Expected number, got '%s' instead." % item)
         return number
