@@ -12,28 +12,28 @@ Finish before timeout
 
 On timeout process is terminated by default (w/ default streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
-    ${result} =    Run Process    @{COMMAND}    timeout=30ms
+    ${result} =    Run Process    @{COMMAND}    timeout=200ms
     Should be terminated    ${result}
 
 On timeout process is terminated by default (w/ custom streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
-    ${result} =    Run Process    @{COMMAND}    timeout=30ms
+    ${result} =    Run Process    @{COMMAND}    timeout=200ms
     ...    stdout=${STDOUT}    stderr=${STDERR}
     Should be terminated    ${result}    default streams=False
 
 On timeout process can be killed (w/ default streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
-    ${result} =    Run Process    @{COMMAND}    timeout=0.03    on_timeout=kill
+    ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=kill
     Should be terminated    ${result}
 
 On timeout process can be killed (w/ custom streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
-    ${result} =    Run Process    @{COMMAND}    timeout=0.03    on_timeout=KiLL
+    ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=KiLL
     ...    stdout=${STDOUT}    stderr=${STDERR}
     Should be terminated    ${result}    default streams=False
 
 On timeout process can be left running
-    ${result} =    Run Process    @{COMMAND}    timeout=0.03
+    ${result} =    Run Process    @{COMMAND}    timeout=0.2
     ...    on_timeout=CONTINUE    alias=exceed
     Should Be Equal    ${result}    ${None}
     ${result} =    Wait For Process    handle=exceed
