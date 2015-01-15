@@ -162,10 +162,14 @@ class TestStateBetweenTestRuns(unittest.TestCase):
     def test_reset_logging_conf(self):
         import logging
         assert_equals(logging.getLogger().handlers, [])
-        assert_equals(logging.raiseExceptions, 1)
+        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
+            assert_equals(logging.raiseExceptions, 1)
         self._run(join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot'))
         assert_equals(logging.getLogger().handlers, [])
-        assert_equals(logging.raiseExceptions, 1)
+        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
+            assert_equals(logging.raiseExceptions, 1)
+        else:
+            assert_equals(logging.raiseExceptions, False)
 
 
 class TestTimestampOutputs(RunningTestCase):
