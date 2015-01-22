@@ -88,6 +88,12 @@ class RowSplitter(object):
         for marker in self._split_from:
             if marker in data[min_index:]:
                 yield data[min_index:].index(marker) + min_index
+        if self._chars:
+            chars = 0
+            for i, cell in enumerate(data):
+                chars += len(cell) + 4
+                if chars > self._chars:
+                    yield i
         yield self._cols
 
     def _comment_rest_if_needed(self, current, rest):
@@ -106,12 +112,3 @@ class RowSplitter(object):
         if indent + 1 < self._cols:
             row = [''] * indent + row
         return row
-
-    def _split_chars(self, data):
-        row = []
-        data_copy = data[:]
-        while (data_copy and len('    '.join(row) + data_copy[0]) < self._chars
-               and len(row) < self._cols):
-            row.append(data_copy.pop(0))
-        rest = data_copy
-        return row, rest
