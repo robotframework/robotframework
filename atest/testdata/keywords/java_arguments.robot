@@ -107,19 +107,19 @@ Varargs Work Also With Lists
 
 Kwargs
    ${res} =       javaKWArgs    foo=one   bar=two
-   Should be equal    ${res}    javaKWArgs: foo:one bar:two
+   Should be equal    ${res}    javaKWArgs: bar:two foo:one
 
 Normal and Kwargs
    ${res} =       javaNormalAndKWArgs    hello   foo=one   bar=two
-   Should be equal    ${res}    javaNormalAndKWArgs: hello foo:one bar:two
+   Should be equal    ${res}    javaNormalAndKWArgs: hello bar:two foo:one
 
 Varargs and Kwargs
    ${res} =       javaVarArgsAndKWArgs    hello   kitty  foo=one   bar=two
-   Should be equal    ${res}    javaVarArgsAndKWArgs: hello kitty foo:one bar:two
+   Should be equal    ${res}    javaVarArgsAndKWArgs: hello kitty bar:two foo:one
 
 All args
    ${res} =       javaAllArgs    arg   hello   kitty  foo=one   bar=two
-   Should be equal    ${res}    javaAllArgs: arg hello kitty foo:one bar:two
+   Should be equal    ${res}    javaAllArgs: arg hello kitty bar:two foo:one
 
 Too many positional with kwargs 1
     [Documentation]     FAIL Keyword 'ArgumentsJava.Java KW Args' expected 0 non-keyword arguments, got 3.
@@ -136,18 +136,18 @@ Java kwargs wont be interpreted as values for positional arguments
 Map can be given as an argument still
    ${map} =       getJavaMap    foo=one   bar=two
    ${res} =       javaKWArgs    ${map}
-   Should be equal    ${res}    javaKWArgs: foo:one bar:two
+   Should be equal    ${res}    javaKWArgs: bar:two foo:one
 
 Dict can be given as an argument still
    ${dict} =      Create dictionary     foo=one   bar=two
    ${res} =       javaKWArgs    ${dict}
-   Should be equal    ${res}    javaKWArgs: foo:one bar:two
+   Should be equal    ${res}    javaKWArgs: bar:two foo:one
 
 Hashmap is not kwargs
     [Documentation]    FAIL Keyword 'ArgumentsJava.Hashmap Arg' expected 1 argument, got 2.
     ${map} =       getJavaMap    foo=one   bar=two
     ${res} =       hashmapArg    ${map}
-    Should be equal    ${res}    hashmapArg: foo:one bar:two
+    Should be equal    ${res}    hashmapArg: bar:two foo:one
     hashmapArg    foo=bar   doo=daa
 
 Valid Arguments For Keyword Expecting Non String Scalar Arguments

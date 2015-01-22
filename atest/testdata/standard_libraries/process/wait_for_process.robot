@@ -36,12 +36,8 @@ Wait For Process Kill On Timeout
 Wait for process uses minimum of timeout or internal timeout for polling
     ${process} =   Start Python Process    while True: pass
     Process Should Be Running    ${process}
-    Should take less than    0.01   Wait For Process    ${process}    0.001
-
-*** Keywords ***
-Should take less than   [Arguments]    ${max time}    ${keyword}   @{arguments}
-    ${start}=    Get Current Date
-    Run keyword    ${keyword}    @{arguments}
+    ${start} =    Get Current Date
+    Wait For Process    ${process}    0.001
     ${now}=      Get Current Date
-    ${result}=   Subtract Date From Date    ${now}    ${start}
-    Should be true   ${result} < ${max time}   Maximum time of ${max time} exceeded. Took ${result}
+    ${result} =   Subtract Date From Date    ${now}    ${start}
+    Should be true   ${result} < 0.1   Maximum time of 0.1s exceeded. Took ${result}s.

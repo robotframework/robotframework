@@ -36,5 +36,6 @@ Call Java Method
     Should Not Be True    ${isempty}
 
 Call Non Existing Java Method
-    [Documentation]    FAIL Object '{myname=myvalue}' does not have a method 'nonExisting'.
+    # HashTable str changed from {foo=bar} to {foo: bar} in Jython 2.7b4
+    [Documentation]    FAIL REGEXP: Object '{myname(=|: )myvalue}' does not have a method 'nonExisting'.
     Call Method    ${hashtable}    nonExisting

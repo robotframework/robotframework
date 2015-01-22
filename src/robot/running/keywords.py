@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.utils import (format_assign_message, get_elapsed_time,
-                         get_error_message, get_timestamp, plural_or_not)
+                         get_error_message, get_timestamp, plural_or_not, frange)
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           HandlerExecutionFailed)
@@ -280,21 +280,31 @@ class ForLoop(_BaseKeyword):
 
     def _get_range_items(self, items):
         try:
-            items = [self._to_int_with_arithmetics(item) for item in items]
+            items = [self._to_number_with_arithmetics(item) for item in items]
         except:
             raise DataError('Converting argument of FOR IN RANGE failed: %s'
                             % get_error_message())
         if not 1 <= len(items) <= 3:
             raise DataError('FOR IN RANGE expected 1-3 arguments, '
                             'got %d instead.' % len(items))
-        return range(*items)
+        return frange(*items)
 
-    def _to_int_with_arithmetics(self, item):
+    def _to_number_with_arithmetics(self, item):
+        if isinstance(item, (int, long, float)):
+            return item
         item = str(item)
-        try:
-            return int(item)
-        except ValueError:
-            return int(eval(item))
+        # eval() would also convert to int or float, but it sometimes very
+        # mysteriously fails with IronPython (seems to be related to timeouts)
+        # and thus it's better to avoid it.
+        for converter in int, float:
+            try:
+                return converter(item)
+            except ValueError:
+                pass
+        number = eval(item, {})
+        if not isinstance(number, (int, long, float)):
+            raise TypeError("Expected number, got '%s' instead." % item)
+        return number
 
 
 class _ForItem(_BaseKeyword):

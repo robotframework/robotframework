@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    Tests for different file and directory names.
-...    These are, for most parts, tested also elsewhere.
-...    Tests with non-ASCII chars having ordinal over 255 fail on Jython due to
+...    These are, for most parts, tested also elsewhere. On Windows tests with
+...    non-ASCII chars having ordinal over 255 fail on Jython due to
 ...    http://bugs.jython.org/issue1658
 Resource          os_resource.robot
 Test Setup        Create Base Test Directory
@@ -18,7 +18,7 @@ Non-ASCII file name with ordinals < 255
     Test File Operations    nön-äscïi
 
 Non-ASCII file name with ordinals > 255
-    Test File Operations    ŋöñ-äßçíï
+    Test File Operations    ŋöñ-äßçíï-€
 
 ASCII only directory name
     Test Directory Operations    ascii
@@ -30,7 +30,7 @@ Non-ASCII directory name with ordinals < 255
     Test Directory Operations    nön-äscïi
 
 Non-ASCII directory name with ordinals > 255
-    Test Directory Operations    ŋöñ-äßçíï
+    Test Directory Operations    ŋöñ-äßçíï-€
 
 *** Keywords ***
 Test File Operations

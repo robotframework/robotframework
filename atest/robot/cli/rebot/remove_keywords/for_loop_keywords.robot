@@ -42,7 +42,7 @@ Steps From Nested Loops Are Removed
     Should Be Equal     ${tc.kws[0].kws[0].kws[0].kws[1].kws[0].doc}    ${1 REMOVED}
 
 Empty Loops Are Handled Correctly
-    ${tc}=    Check Test Case    Empty For
+    ${tc}=    Check Test Case    Empty For Body Fails
     Should Be Empty    ${tc.kws[0].kws}
     Should Be Equal    ${tc.kws[0].doc}    ${0 REMOVED}
 
@@ -50,4 +50,3 @@ Empty Loops Are Handled Correctly
 Remove For Loop Keywords With Rebot
     Create Output With Robot    ${INPUTFILE}    ${EMPTY}    running/for.robot
     Run Rebot    --removekeywords fOr    ${INPUTFILE}
-

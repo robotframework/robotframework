@@ -81,6 +81,7 @@ def write(msg, level, html=False):
         level = {'TRACE': logging.DEBUG/2,
                  'DEBUG': logging.DEBUG,
                  'INFO': logging.INFO,
+                 'HTML': logging.INFO,
                  'WARN': logging.WARN}[level]
         logger.log(level, msg)
 
