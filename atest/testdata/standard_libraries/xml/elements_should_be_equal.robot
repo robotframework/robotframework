@@ -14,7 +14,7 @@ Elements should be equal
 Tail text is not checked with root element
     [Template]    NONE
     ${elem} =    Get Element    ${TEST}    another/child
-    Elements should be equal    ${elem}    <child>text</child>
+    Elements should be equal    ${elem}    <child>nöŋ-äŝĉíï tëxt</child>
 
 Different tag names
     <tag/>   <täg/>    Different tag name: tag != täg

@@ -9,7 +9,7 @@ Tag
     another    another
 
 Path
-    another/child    child    text
+    another/child    child    nöŋ-äŝĉíï tëxt
 
 Path matching multiple elements
     [Template]    Xpath should match elements
@@ -17,7 +17,7 @@ Path matching multiple elements
     child/grandchild    grand child text    ${EMPTY}
 
 '*'
-    */child    child    text
+    */child    child    nöŋ-äŝĉíï tëxt
 
 '.'
     .    test
@@ -31,7 +31,7 @@ Path matching multiple elements
 
 '//' matching multiple elements
     [Template]    Xpath should match elements
-    .//child               child 1 text    child 2 text grand child text more text    ${EMPTY}    text
+    .//child               child 1 text    child 2 text grand child text more text    ${EMPTY}    nöŋ-äŝĉíï tëxt
     .//child/grandchild    grand child text    ${EMPTY}
 
 '..'
@@ -82,7 +82,7 @@ Advanced xpath supported by lxml
     child[position() > 1 and not(position() >= 3)]    child    \n${SPACE*8}child 2 text\n${SPACE*8}
     child[last()]                      child         ${NONE}
     child[last()]/grandchild           grandchild    ${NONE}
-    (//child)[last()]                  child         text
+    (//child)[last()]                  child         nöŋ-äŝĉíï tëxt
     (child/grandchild)[last()]         grandchild    ${NONE}
     (child | another | xxx)[last()]    another
     self::test                         test
@@ -92,8 +92,8 @@ Advanced xpath supported by lxml
 
 Advanced xpath supported by lxml matching multiple elements
     [Template]    Xpath should match elements
-    //child[last()]            ${EMPTY}    text
-    (child | another | xxx)    child 1 text    child 2 text grand child text more text    ${EMPTY}    text
+    //child[last()]            ${EMPTY}    nöŋ-äŝĉíï tëxt
+    (child | another | xxx)    child 1 text    child 2 text grand child text more text    ${EMPTY}    nöŋ-äŝĉíï tëxt
     child[starts-with(normalize-space(text()), 'child')]
     ...                        child 1 text    child 2 text grand child text more text
 
