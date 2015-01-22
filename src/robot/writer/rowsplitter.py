@@ -22,6 +22,7 @@ class RowSplitter(object):
     _setting_table = 'setting'
     _indented_tables = ('test case', 'keyword')
     _split_from = ('ELSE', 'ELSE IF', 'AND')
+    _spacecount = 4
 
     def __init__(self, cols=8, character_count=80, split_multiline_doc=True):
         self._cols = cols
@@ -88,12 +89,13 @@ class RowSplitter(object):
         for marker in self._split_from:
             if marker in data[min_index:]:
                 yield data[min_index:].index(marker) + min_index
-        if self._chars:
+        if (self._chars
+                and len((' ' * self._spacecount).join(data)) > self._chars):
             chars = 0
-            for i, cell in enumerate(data):
-                chars += len(cell) + 4
-                if chars > self._chars:
-                    yield i
+            for index, cell in enumerate(data):
+                chars += len(cell) + self._spacecount
+                if chars > self._chars and index >= min_index:
+                    yield index
         yield self._cols
 
     def _comment_rest_if_needed(self, current, rest):
