@@ -346,7 +346,8 @@ class Process(object):
 
         Starting from Robot Framework 2.8.5, processes are started so that
         they create a new process group. This allows sending signals to and
-        terminating also possible child processes.
+        terminating also possible child processes. This is not supported by
+        Jython in general nor by Python versions prior to 2.7 on Windows.
         """
         config = ProcessConfig(**configuration)
         executable_command = self._cmd(command, arguments, config.shell)
@@ -472,40 +473,35 @@ class Process(object):
 
         If `handle` is not given, uses the current `active process`.
 
-        Waits for the process to stop after terminating it. Returns
-        a `result object` containing information about the execution
-        similarly as `Wait For Process`.
+        By default first tries to stop the process gracefully. If the process
+        does not stop in 30 seconds, or `kill` argument is given a true value,
+        (see `Boolean arguments`) kills the process forcefully. Stops also all
+        the child processes of the originally started process.
 
-        On Unix-like machines, by default, first tries to terminate the process
-        group gracefully, but forcefully kills it if it does not stop in 30
-        seconds. Kills the process group immediately if the `kill` argument is
-        given any value considered true. See `Boolean arguments` section for
-        more details about true and false values.
+        Waits for the process to stop after terminating it. Returns a `result
+        object` containing information about the execution similarly as `Wait
+        For Process`.
 
-        Termination is done using `TERM (15)` signal and killing using
-        `KILL (9)`. Use `Send Signal To Process` instead if you just want to
-        send either of these signals without waiting for the process to stop.
+        On Unix-like machines graceful termination is done using `TERM (15)`
+        signal and killing using `KILL (9)`. Use `Send Signal To Process`
+        instead if you just want to send either of these signals without
+        waiting for the process to stop.
 
-        On Windows, by default, sends `CTRL_BREAK_EVENT` signal to the process
-        group. If that does not stop the process in 30 seconds, or `kill`
-        argument is given a true value, uses Win32 API function
-        `TerminateProcess()` to kill the process forcefully. Note that
-        `TerminateProcess()` does not kill possible child processes.
+        On Windows graceful termination is done using `CTRL_BREAK_EVENT` event
+        and killing using Win32 API function `TerminateProcess()`.
 
+        Examples:
         | ${result} =                 | Terminate Process |     |
         | Should Be Equal As Integers | ${result.rc}      | -15 | # On Unixes |
         | Terminate Process           | myproc            | kill=true |
 
-        *NOTE:* Stopping processes requires the
-        [http://docs.python.org/2/library/subprocess.html|subprocess]
-        module to have working `terminate` and `kill` functions. They were
-        added in Python 2.6 and are thus missing from earlier versions.
-
-        With Jython termination is supported starting from Jython 2.7 beta 3
-        with some limitations. One problem is that everything written to the
-        `standard output and error streams` before termination can be lost
-        unless custom streams are used. A bigger problem is that at least
-        beta 3 does not support killing the process
+        Limitations:
+        - Graceful termination is not supported on Windows by Jython nor by
+          Python versions prior to 2.7. Process is killed instead.
+        - Stopping the whole process group is not supported by Jython at all
+          nor by Python versions prior to 2.7 on Windows.
+        - On Windows forceful kill only stops the main process, not possible
+          child processes.
 
         Automatically killing the process if termination fails as well as
         returning a result object are new features in Robot Framework 2.8.2.
@@ -573,16 +569,16 @@ class Process(object):
 
         If `handle` is not given, uses the current `active process`.
 
-        Signal can be specified either as an integer, or anything that can
-        be converted to an integer, or as a signal name. In the latter case it
-        is possible to give the name both with or without a `SIG` prefix,
-        but names are case-sensitive. For example, all the examples below
-        send signal `INT (2)`:
+        Signal can be specified either as an integer as a signal name. In the
+        latter case it is possible to give the name both with or without `SIG`
+        prefix, but names are case-sensitive. For example, all the examples
+        below send signal `INT (2)`:
 
         | Send Signal To Process | 2      |        | # Send to active process |
         | Send Signal To Process | INT    |        |                          |
         | Send Signal To Process | SIGINT | myproc | # Send to named process  |
 
+        This keyword is only supported on Unix-like machines, not on Windows.
         What signals are supported depends on the system. For a list of
         existing signals on your system, see the Unix man pages related to
         signal handling (typically `man signal` or `man 7 signal`).
@@ -591,19 +587,10 @@ class Process(object):
         child processes started by it. Notice that when `running processes in
         shell`, the shell is the parent process and it depends on the system
         does the shell propagate the signal to the actual started process.
+
         To send the signal to the whole process group, `group` argument can
-        be set to any true value:
-
-        | Send Signal To Process | TERM  | group=yes |
-
-        If you are stopping a process, it is often easier and safer to use
-        `Terminate Process` keyword instead.
-
-        *NOTE:* Sending signals requires the
-        [http://docs.python.org/2/library/subprocess.html|subprocess]
-        module to have working `send_signal` function. It was added
-        in Python 2.6 and are thus missing from earlier versions.
-        How well it will work with forthcoming Jython 2.7 is unknown.
+        be set to any true value (see `Boolean arguments`). This is not
+        supported by Jython, however.
 
         New in Robot Framework 2.8.2. Support for `group` argument is new
         in Robot Framework 2.8.5.
@@ -635,21 +622,17 @@ class Process(object):
             raise RuntimeError("Unsupported signal '%s'." % name)
 
     def get_process_id(self, handle=None):
-        """Returns the process ID (pid) of the process.
+        """Returns the process ID (pid) of the process as an integer.
 
         If `handle` is not given, uses the current `active process`.
 
-        Returns the pid assigned by the operating system as an integer.
-        Note that with Jython, at least with the 2.5 version, the returned
-        pid seems to always be `None`.
-
-        The pid is not the same as the identifier returned by
+        Notice that the pid is not the same as the handle returned by
         `Start Process` that is used internally by this library.
         """
         return self._processes[handle].pid
 
     def get_process_object(self, handle=None):
-        """Return the underlying `subprocess.Popen`  object.
+        """Return the underlying `subprocess.Popen` object.
 
         If `handle` is not given, uses the current `active process`.
         """
@@ -865,11 +848,15 @@ class ProcessConfig(object):
                   'cwd': self.cwd,
                   'env': self.env,
                   'universal_newlines': True}
-        if hasattr(os, 'setsid') and not sys.platform.startswith('java'):
+        if not sys.platform.startswith('java'):
+            self._add_process_group_config(config)
+        return config
+
+    def _add_process_group_config(self, config):
+        if hasattr(os, 'setsid'):
             config['preexec_fn'] = os.setsid
         if hasattr(subprocess, 'CREATE_NEW_PROCESS_GROUP'):
             config['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
-        return config
 
     def __str__(self):
         return encode_to_system("""\
