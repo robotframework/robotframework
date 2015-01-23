@@ -60,11 +60,6 @@ class Namespace:
         self._import_default_libraries()
         self._handle_imports(self._imports)
 
-    def _create_variables(self, suite, parent_vars, suite_variables=None):
-        if suite_variables is None:
-            suite_variables = suite.variables
-        return _VariableScopes(suite_variables, parent_vars)
-
     def _import_default_libraries(self):
         for name in self._default_libraries:
             self.import_library(name)
@@ -453,12 +448,8 @@ class KeywordRecommendationFinder(object):
 class _VariableScopes:
 
     def __init__(self, suite_variables, parent_variables):
-        # suite and parent are None only when used by copy_all
-        if suite_variables is not None:
-            suite_variables.update(GLOBAL_VARIABLES)
-            self._suite = self.current = suite_variables
-        else:
-            self._suite = self.current = None
+        suite_variables.update(GLOBAL_VARIABLES)
+        self._suite = self.current = suite_variables
         self._parents = []
         if parent_variables is not None:
             self._parents.append(parent_variables.current)
@@ -467,18 +458,7 @@ class _VariableScopes:
         self._uk_handlers = []
 
     def __len__(self):
-        if self.current:
-            return len(self.current)
-        return 0
-
-    def copy_all(self):
-        vs = _VariableScopes(None, None)
-        vs._suite = self._suite
-        vs._test = self._test
-        vs._uk_handlers = self._uk_handlers[:]
-        vs._parents = self._parents[:]
-        vs.current = self.current
-        return vs
+        return len(self.current)
 
     def replace_list(self, items, replace_until=None):
         return self.current.replace_list(items, replace_until)
