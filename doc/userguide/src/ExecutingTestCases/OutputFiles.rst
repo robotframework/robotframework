@@ -52,12 +52,12 @@ name for the output file, when tests are run, is :file:`output.xml`.
 When post-processing outputs with Rebot, new output files are not created
 unless :option:`--output` option is explicitly used.
 
-Starting from Robot Framework 2.6, it is possible to disable creation of
-the output file when running tests with a special value `NONE`.
-In Robot Framework 2.6 and 2.7 versions this automatically disabled also
-creating log and report files, but starting from the 2.8 version this is
-not done anymore. If no outputs are needed, they should all be explicitly
-disabled using `--output NONE --report NONE --log NONE`.
+Tt is possible to disable creation of the output file when running tests
+with a special value `NONE`. In Robot Framework 2.6 and 2.7 versions this
+automatically disabled also creating log and report files, but starting
+from the 2.8 version this is not done anymore. If no outputs are needed,
+they should all be explicitly disabled using `--output NONE --report NONE
+--log NONE`.
 
 Log file
 ~~~~~~~~
@@ -264,13 +264,12 @@ available log levels as an argument, and that level becomes the new
 threshold level. A special value `NONE` can also be used to
 disable logging altogether.
 
-Starting from Robot Framework 2.5.2, it is possible to use the
-:option:`--loglevel` option also when `post-processing outputs`_ with
-``rebot``. This allows, for example, running tests initially with
-the `TRACE` level, and generating smaller log files for normal
-viewing later with the `INFO` level. By default all the messages
-included during execution will be included also with ``rebot``.
-Messages ignored during the execution cannot be recovered.
+It is possible to use the :option:`--loglevel` option also when
+`post-processing outputs`_ with ``rebot``. This allows, for example,
+running tests initially with the `TRACE` level, and generating smaller
+log files for normal viewing later with the `INFO` level. By default
+all the messages included during execution will be included also with
+ ``rebot``. Messages ignored during the execution cannot be recovered.
 
 Another possibility to change the log level is using the BuiltIn_
 keyword :name:`Set Log Level` in the test data. It takes the same
@@ -308,10 +307,9 @@ Splitting logs
 
 Normally the log file is just a single HTML file. When the amount of he test
 cases increases, the size of the file can grow so large that opening it into
-a browser is inconvenient or even impossible. Starting from Robot Framework
-2.6, it is possible to use the :option:`--splitlog` option to split parts of
-the log into external files that are loaded transparently into the browser
-when needed.
+a browser is inconvenient or even impossible. Hence, it is possible to use
+the :option:`--splitlog` option to split parts of the log into external files
+that are loaded transparently into the browser when needed.
 
 The main benefit of splitting logs is that individual log parts are so small
 that opening and browsing the log file is possible even if the amount
@@ -548,10 +546,9 @@ combined suites do not have these values. When both the start and end time are
 given, the elapsed time is also calculated based on them. Otherwise the elapsed
 time is got by adding the elapsed times of the child test suites together.
 
-Starting from Robot Framework 2.5.6, it is also possible to use the above
-mentioned options to set start and end times for a single suite when using
-``rebot``.  Using these options with a single output always affects the
-elapsed time of the suite.
+It is also possible to use the above mentioned options to set start and end
+times for a single suite when using ``rebot``.  Using these options with a
+single output always affects the elapsed time of the suite.
 
 Times must be given as timestamps in the format `YYYY-MM-DD
 hh:mm:ss.mil`, where all separators are optional and the parts from

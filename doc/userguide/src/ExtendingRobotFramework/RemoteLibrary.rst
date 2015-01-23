@@ -225,9 +225,8 @@ keywords get the name of the keyword as an argument. Arguments must be
 returned as a list of strings in the `same format as with dynamic
 libraries`__, and documentation must be returned `as a string`__.
 
-Starting from Robot Framework 2.6.2, remote servers can also provide
-`general library documentation`__ to be used when generating
-documenation with `libdoc`_ tool.
+Remote servers can also provide `general library documentation`__ to
+be used when generating documenation with `libdoc`_ tool
 
 __ `Getting keyword arguments`_
 __ `Getting keyword documentation`_

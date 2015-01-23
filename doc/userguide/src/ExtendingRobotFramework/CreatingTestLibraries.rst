@@ -462,9 +462,6 @@ accidentally exposed as keywords.
    def not_exposed_as_keyword():
        pass
 
-.. note:: Support for the `__all__` attribute is available from
-          Robot Framework 2.5.5 onwards.
-
 Keyword names
 ~~~~~~~~~~~~~
 
@@ -1018,10 +1015,10 @@ good idea to run tests using `--loglevel DEBUG`.
 Stopping test execution
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.5, it is possible to fail a test case so that
-`the whole test execution is stopped`__. This is done simply by having a special
-`ROBOT_EXIT_ON_FAILURE` attribute with `True` value set on the
-exception raised from the keyword. This is illustrated in the examples below.
+It is possible to fail a test case so that `the whole test execution is
+stopped`__. This is done simply by having a special `ROBOT_EXIT_ON_FAILURE`
+attribute with `True` value set on the exception raised from the keyword.
+This is illustrated in the examples below.
 
 Python:
 
@@ -1043,11 +1040,10 @@ __ `Stopping test execution gracefully`_
 Continuing test execution despite of failures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.5, it is possible to `continue test
-execution even when there are failures`__. The way to signal this from
-test libraries is adding a special `ROBOT_CONTINUE_ON_FAILURE`
-attribute with `True` value to the exception used to communicate
-the failure. This is demonstrated by the examples below.
+It is possible to `continue test execution even when there are failures`__.
+The way to signal this from test libraries is adding a special
+`ROBOT_CONTINUE_ON_FAILURE` attribute with `True` value to the exception
+used to communicate the failure. This is demonstrated by the examples below.
 
 Python:
 
@@ -1130,10 +1126,10 @@ get their timestamps when the executed keyword ends. This means that
 the timestamps are not accurate and debugging problems especially with
 longer running keywords can be problematic.
 
-Starting from Robot Framework 2.6, keywords have a possibility to add
-an accurate timestamp to the messages they log if there is a need. The
-timestamp must be given as milliseconds since the `Unix epoch`__ and it
-must be placed after the `log level`__ separated from it with a colon::
+Keywords have a possibility to add an accurate timestamp to the messages
+they log if there is a need. The timestamp must be given as milliseconds
+since the `Unix epoch`__ and it must be placed after the `log level`__
+separated from it with a colon::
 
    *INFO:1308435758660* Message with timestamp
    *HTML:1308435758661* <b>HTML</b> message with timestamp
@@ -1274,7 +1270,7 @@ interfaces are available only to Python bases test libraries.
 Public logging API
 ''''''''''''''''''
 
-Robot Framework 2.6 has a new Python based logging API for writing
+Robot Framework has a Python based logging API for writing
 messages to the log file and to the console. Test libraries can use
 this API like `logger.info('My message')` instead of logging
 through the standard output like `print '*INFO* My message'`. In
@@ -1307,8 +1303,8 @@ __ http://docs.python.org/library/logging.html
 Using Python's standard `logging` module
 ''''''''''''''''''''''''''''''''''''''''
 
-In addition to the new `public logging API`_, Robot Framework 2.6 also
-added a built-in support to Python's standard logging__ module. This
+In addition to the new `public logging API`_, Robot Framework offers a
+built-in support to Python's standard logging__ module. This
 works so that all messages that are received by the root logger of the
 module are automatically propagated to Robot Framework's log
 file. Also this API produces log messages with accurate timestamps_,
@@ -1378,9 +1374,6 @@ Python library logging using the logging API during import:
 .. note:: If you log something during initialization, i.e. in Python
           `__init__` or in Java constructor, the messages may be
           logged multiple times depending on the `test library scope`_.
-
-.. note:: The support for writing log messages to the syslog during the
-          library initialization is a new feature in Robot Framework 2.6.
 
 __ `Logging information`_
 
@@ -1472,8 +1465,7 @@ background, there should be another keyword that checks the status of
 the worker thread and reports gathered information accordingly.
 
 Messages logged by non-main threads using the normal logging methods from
-`programmatic logging APIs`_  are silently ignored starting from Robot
-Framework 2.6.2.
+`programmatic logging APIs`_  are silently ignored.
 
 There is also a `BackgroundLogger` in separate robotbackgroundlogger__ project,
 with a similar API as the standard `robot.api.logger`. Normal logging
@@ -1892,9 +1884,6 @@ class and its `__init__` method. If a non-empty documentation is
 got both directly from the code and from the
 `get_keyword_documentation` method, the latter has precedence.
 
-.. note:: Getting general library documentation is supported in Robot
-          Framework 2.6.2 and newer.
-
 Named argument syntax with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2258,16 +2247,15 @@ __ `Using Robot Framework's internal modules`_
 Getting active library instance from Robot Framework
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework 2.5.2 added new BuiltIn_ keyword :name:`Get Library
-Instance` that can be used to get the currently active library
-instance from the framework itself. The library instance returned by
-this keyword is the same as the framework itself uses, and thus
-there is no problem seeing the correct library state. Although this
-functionality is available as a keyword, it is typically used in test
-libraries directly by importing the :name:`BuiltIn` library class `as
-discussed earlier`__. The following example illustrates how to
-implement the same :name:`Title Should Start With` keyword as in the
-earlier example about `using inheritance`_.
+BuiltIn_ keyword :name:`Get Library Instance` can be used to get the
+currently active library instance from the framework itself. The
+library instance returned by this keyword is the same as the framework
+itself uses, and thus there is no problem seeing the correct library
+state. Although this functionality is available as a keyword, it is
+typically used in test libraries directly by importing the :name:`BuiltIn`
+library class `as discussed earlier`__. The following example illustrates
+how to implement the same :name:`Title Should Start With` keyword as in
+the earlier example about `using inheritance`_.
 
 __ `Using Robot Framework's internal modules`_
 

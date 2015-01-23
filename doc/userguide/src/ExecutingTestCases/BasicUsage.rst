@@ -290,11 +290,10 @@ variable `$?`, and in Windows it is in `%ERRORLEVEL%`
 variable. If you use some external tool for running tests, consult its
 documentation for how to get the return code.
 
-Starting from Robot Framework 2.5.7, the return code can be set to 0 even if
-there are critical failures using the :option:`--NoStatusRC` command line option.
-This might be useful, for example, in continuous integration servers where
-post-processing of results is needed before the overall status of test
-execution can be determined.
+The return code can be set to 0 even if there are critical failures using
+the :option:`--NoStatusRC` command line option. This might be useful, for
+example, in continuous integration servers where post-processing of results
+is needed before the overall status of test execution can be determined.
 
 .. note:: Same return codes are also used with rebot_.
 
@@ -446,9 +445,9 @@ to use :option:`--argumentfile` option multiple times or even recursively::
 Reading argument files from standard input
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.5.6, special argument file name `STDIN`
-can be used to read arguments from the standard input stream instead of a file.
-This can be useful when generating arguments with a script::
+Special argument file name `STDIN` can be used to read arguments from the
+standard input stream instead of a file. This can be useful when generating
+arguments with a script::
 
    generate_arguments.sh | pybot --argumentfile STDIN
    generate_arguments.sh | pybot --name Example --argumentfile STDIN tests.txt

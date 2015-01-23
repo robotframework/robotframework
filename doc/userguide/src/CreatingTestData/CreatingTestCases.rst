@@ -584,15 +584,14 @@ approaches can naturally be used together.
 
 `Default Tags`:setting: in the Setting table
    Test cases that do not have a :setting:`[Tags]` setting of their own
-   get these tags. Starting from Robot Framework version 2.5 default
-   tags are no longer supported in test suite initialization files.
+   get these tags. Default tags are not supported in test suite initialization
+   files.
 
 `[Tags]`:setting: in the Test Case table
    A test case always gets these tags. Additionally, it does not get the
    possible tags specified with :setting:`Default Tags`, so it is possible
-   to override the :setting:`Default Tags` by using empty value. Starting
-   from Robot Framework 2.5.6, is also possible to use value `NONE`
-   to override default tags.
+   to override the :setting:`Default Tags` by using empty value. It is
+   also possible to use value `NONE` to override default tags.
 
 `--settag`:option: command line option
    All executed test cases get tags set with this option in addition
@@ -686,15 +685,14 @@ normal keywords with possible arguments.
 Setup and teardown are always a single keyword. If they need to take care
 of multiple separate tasks, it is possible to create higher-level `user
 keywords`_ for that purpose. An alternative solution is executing multiple
-keywords using the BuiltIn_ keyword :name:`Run Keywords` that was added
-in Robot Framework 2.5.
+keywords using the BuiltIn_ keyword :name:`Run Keywords`.
 
 The test teardown is special in two ways. First of all, it is executed also
 when a test case fails, so it can be used for clean-up activities that must be
-done regardless of the test case status. Starting from Robot Framework 2.5, all
-the keywords in the teardown are also executed even if one of them fails. This
-`continue on failure`_ functionality can be used also with normal keywords, but
-inside teardowns it is on by default.
+done regardless of the test case status. In addition, all the keywords in the
+teardown are also executed even if one of them fails. This `continue on failure`_
+functionality can be used also with normal keywords, but inside teardowns it is
+on by default.
 
 The easiest way to specify a setup or a teardown for test cases in a
 test case file is using the :setting:`Test Setup` and :setting:`Test
@@ -704,8 +702,8 @@ also have their own setup or teardown. They are defined with the
 table and they override possible :setting:`Test Setup` and
 :setting:`Test Teardown` settings. Having no keyword after a
 :setting:`[Setup]` or :setting:`[Teardown]` setting means having no
-setup or teardown. Starting from Robot Framework 2.5.6, it is also possible
-to use value `NONE` to indicate that a test has no setup/teardown.
+setup or teardown. It is also possible to use value `NONE` to indicate that
+a test has no setup/teardown.
 
 .. table:: Test setup and teardown examples
    :class: example
@@ -734,7 +732,7 @@ to use value `NONE` to indicate that a test has no setup/teardown.
    \                   Do Something
    \                   [Teardown]
    \
-   No teardown 2       [Documentation]  Using special NONE,  works with 2.5.6
+   No teardown 2       [Documentation]  Using special NONE,  works as well
    \                   Do Something
    \                   [Teardown]       NONE
    \
@@ -810,9 +808,8 @@ setting in the Setting table, in which case the template is applied
 for all test cases in that test case file. The :setting:`[Template]`
 setting overrides the possible template set in the Setting table, and
 an empty value for :setting:`[Template]` means that the test has no
-template even when :setting:`Test Template` is used. Starting from Robot Framework
-2.5.6, it is also possible to use value `NONE` to indicate that a test
-has no template.
+template even when :setting:`Test Template` is used. It is also possible
+to use value `NONE` to indicate that a test has no template.
 
 If a templated test case has multiple data rows in its body, the template
 is applied for all the rows one by one. This

@@ -33,8 +33,7 @@ test suite:
 
 .. note:: All setting names can optionally include a colon at the end, for
       example :setting:`Documentation:`. This can make reading the settings easier
-      especially when using the plain text format. This is a
-      new feature in Robot Framework 2.5.5.
+      especially when using the plain text format.
 
 __ `Test case syntax`_
 
@@ -70,9 +69,9 @@ Warning on invalid files
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Normally files that do not have a valid test case table are silently ignored
-with a message written to the syslog_. As of Robot Framework 2.5.5 it is
-possible to use a command line option :option:`--warnonskippedfiles`, which turns
-the message into a warning shown in `test execution errors`__.
+with a message written to the syslog_. It is possible to use a command line
+option :option:`--warnonskippedfiles`, which turns the message into a warning
+shown in `test execution errors`__.
 
 __ `Errors and warnings during execution`_
 
@@ -156,9 +155,6 @@ replaced with spaces, and names fully in lower case are title cased. For
 example, :file:`some_tests.html` becomes :name:`Some Tests` and
 :file:`My_test_directory` becomes :name:`My test directory`.
 
-.. note:: The rules for creating test suite names changed slightly in
-          Robot Framework 2.5.
-
 The file or directory name can contain a prefix to control the `execution
 order`_ of the suites. The prefix is separated from the base name by two
 underscores and, when constructing the actual test suite name, both
@@ -220,11 +216,6 @@ For top-level test suites, it is possible to set metadata also with the
 :option:`--metadata` command line option. This is discussed in more
 detail in section `Setting metadata`_.
 
-Prior to Robot Framework 2.5 the free metadata was specified with syntax like
-:setting:`Meta: <name>`, where :setting:`<name>` was the metadata name and the value
-was defined in subsequent column. Robot Framework 2.5 still supports this old
-format but it will be deprecated in the future.
-
 Suite setup and teardown
 ------------------------
 
@@ -254,8 +245,8 @@ A suite teardown is normally used for cleaning up after all the test
 cases have been executed. It is executed even if the setup of the same
 suite fails. If the suite teardown fails, all test cases in the
 suite are marked failed, regardless of their original execution status.
-Starting from Robot Framework 2.5, all the keywords in suite teardowns
-are executed even if one of them fails.
+Note that all the keywords in suite teardowns are executed even if one
+of them fails.
 
 The name of the keyword to be executed as a setup or a teardown can be
 a variable. This facilitates having different setups or teardowns
