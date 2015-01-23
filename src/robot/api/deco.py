@@ -14,41 +14,31 @@
 
 
 def keyword(name=None):
-    """Keyword decorator which sets a custom name attribute
+    """Decorator to set custom keyword names to functions and methods.
 
     This decorator creates the ``robot_name`` attribute on the decorated
-    keyword method.  Robot checks for this attribute when determining the
-    keyword's name.
+    keyword method or function.  Robot Framework checks for this attribute when
+    determining the keyword's name.
 
-    Example
-    -------
+    library.py::
 
-    ::
+        @keyword(name='Login Via User Panel')
+        def login(username, password):
+            # ...
 
-        myuserlibrary.py:
-        ...
-        class MyUserLibrary:
-            ...
-            @keyword('Login Via User Panel')
-            def login(username, password):
-               ...
+    tests.robot::
 
-        mytest.robot:
-        ...
-        Login Via User Panel  myusername  mypassword
-        ...
+        Login Via User Panel    myusername    mypassword
 
-    If ``name`` is not given or is None or '', the
-    name of the keyword will not be affected, but the ``robot_name`` attribute
-    will still be created.  This can be useful for marking methods as keywords
-    in a dynamic library.
-
-    ::
+    If ``name`` is not given, the actual name of the keyword will not be
+    affected, but the ``robot_name`` attribute will still be created.
+    This can be useful for marking methods as keywords in a dynamic library.
+    In this usage it is possible to also omit parenthesis when using the
+    decorator::
 
         @keyword
         def func():
             # ...
-
     """
     if callable(name):
         return keyword()(name)
