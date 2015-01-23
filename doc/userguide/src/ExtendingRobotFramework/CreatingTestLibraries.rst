@@ -524,6 +524,36 @@ in the `library search path`_.
    \            Hello        world
    ===========  ===========  ============  ============
 
+Using a custom keyword name
+'''''''''''''''''''''''''''
+It is possible to expose a different name for a keyword instead of the
+default keyword name which maps to the method name.  This can be accomplished
+by setting the `robot_name` attribute on the method to the desired custom name.
+The decorator `robot.api.deco.keyword` may be used as a shortcut for setting
+this attribute when used as follows:
+
+.. sourcecode:: python
+
+  from robot.api.deco import keyword
+
+  @keyword('Login Via User Panel')
+  def login(username, password):
+      ...
+
+.. table::
+   :class: example
+
+   ===========  ====================  ============  ============
+   Test Case    Action                Argument      Argument
+   ===========  ====================  ============  ============
+   My Test      Login Via User Panel  ${username}   ${password}
+   ===========  ====================  ============  ============
+
+Using this decorator without an argument will have no effect on the exposed
+keyword name, but will still create the `robot_name` attribute.  This can be useful
+for `Marking methods to expose as keywords`_ without actually changing
+keyword names.
+
 Keyword arguments
 ~~~~~~~~~~~~~~~~~
 
@@ -1744,6 +1774,34 @@ example, `['first keyword', 'second keyword']`,
 Dynamic libraries must always have this method. If it is missing, or
 if calling it fails for some reason, the library is considered a
 static library.
+
+Marking methods to expose as keywords
+'''''''''''''''''''''''''''''''''''''
+
+If a dynamic library should contain both methods which are meant to be keywords
+and methods which are meant to be private helper methods, it may be wise to
+mark the keyword methods as such so it is easier to implement `get_keyword_names`.
+The `robot.api.deco.keyword` decorator allows an easy way to do this since it
+creates an attribute on the decorated method which is not normally there (`robot_name`).
+This allows generating the list of keywords just by checking for the `robot_name`
+attribute on every method in the library during `get_keyword_names`.  See
+`Using a custom keyword name`_ for more about this decorator.
+
+.. sourcecode:: python
+
+   from robot.api.deco import keyword
+
+   class DynamicExample:
+
+       def get_keyword_names(self):
+           return [name for name in dir(self) if hasattr(getattr(self, name), 'robot_name')]
+
+       def helper_method(self):
+           ...
+
+       @keyword
+       def keyword_method(self):
+           ....
 
 .. _`Running dynamic keywords`:
 

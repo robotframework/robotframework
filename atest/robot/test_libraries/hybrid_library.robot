@@ -23,3 +23,11 @@ Named Keyword Is Not Method
     Check Test Case  ${TESTNAME}
     Check Log Message  ${ERRORS.msgs[1]}  Adding keyword 'this_is_not_keyword' to library 'GetKeywordNamesLibrary' failed: Not a method or function  WARN
 
+Name Set Using 'robot_name' Attribute
+    Check Test Case  ${TESTNAME}
+
+Old Name Doesn't Work If Name Set Using 'robot_name'
+    Check Test Case  ${TESTNAME}
+
+'robot_name' Attribute Set To None
+    Check Test Case  ${TESTNAME}

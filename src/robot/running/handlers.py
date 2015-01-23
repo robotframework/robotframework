@@ -57,7 +57,8 @@ class _RunnableHandler(object):
 
     def __init__(self, library, handler_name, handler_method):
         self.library = library
-        self.name = utils.printable_name(handler_name, code_style=True)
+        name = getattr(handler_method, 'robot_name', None) or handler_name
+        self.name = utils.printable_name(name, code_style=True)
         self.arguments = self._parse_arguments(handler_method)
         self.pre_run_messages = None
         self._handler_name = handler_name

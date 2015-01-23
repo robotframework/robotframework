@@ -179,7 +179,7 @@ class _BaseTestLibrary(BaseLibrary):
             if method:
                 handler = self._try_to_create_handler(name, method)
                 if handler:
-                    handlers[name] = handler
+                    handlers[handler.name] = handler
                     self._log_success("Created keyword '%s'" % handler.name)
         return handlers
 
