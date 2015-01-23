@@ -13,24 +13,24 @@ Finish before timeout
 On timeout process is terminated by default (w/ default streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
     ${result} =    Run Process    @{COMMAND}    timeout=200ms
-    Should be terminated    ${result}
+    Should be terminated    ${result}    empty output=os.sep == '/' and sys.platform.startswith('java')
 
 On timeout process is terminated by default (w/ custom streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
     ${result} =    Run Process    @{COMMAND}    timeout=200ms
     ...    stdout=${STDOUT}    stderr=${STDERR}
-    Should be terminated    ${result}    default streams=False
+    Should be terminated    ${result}
 
 On timeout process can be killed (w/ default streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
     ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=kill
-    Should be terminated    ${result}
+    Should be terminated    ${result}    empty output=os.sep == '/' and sys.platform.startswith('java1.8')
 
 On timeout process can be killed (w/ custom streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
     ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=KiLL
     ...    stdout=${STDOUT}    stderr=${STDERR}
-    Should be terminated    ${result}    default streams=False
+    Should be terminated    ${result}
 
 On timeout process can be left running
     ${result} =    Run Process    @{COMMAND}    timeout=0.2
@@ -47,10 +47,10 @@ Should not be terminated
     Should Be Equal    ${result.stderr}    start stderr\nend stderr
 
 Should be terminated
-    [Arguments]    ${result}    ${default streams}=True
+    [Arguments]    ${result}    ${empty output}=False
     Should Not Be Equal    ${result.rc}    ${0}
     ${expected stdout}    ${expected stderr} =
-    ...    Run Keyword If    not (${default streams} and os.sep == '/' and sys.platform.startswith('java'))
+    ...    Run Keyword If    not (${empty output})
     ...    Create List    start stdout    start stderr
     ...    ELSE
     ...    Create List    ${EMPTY}    ${EMPTY}

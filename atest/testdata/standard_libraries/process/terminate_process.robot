@@ -30,21 +30,25 @@ Kill process
 
 Terminate process running on shell
     Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
+    Check Precondition    not sys.platform.startswith('java')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
     Terminate should stop countdown
 
 Kill process running on shell
     Check Precondition    os.sep == '/'
+    Check Precondition    not sys.platform.startswith('java')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    shell=True
     Terminate should stop countdown    kill=yes
 
 Also child processes are terminated
     Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
+    Check Precondition    not sys.platform.startswith('java')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    3
     Terminate should stop countdown
 
 Also child processes are killed
     Check Precondition    os.sep == '/'
+    Check Precondition    not sys.platform.startswith('java')
     Start Process    python    ${COUNTDOWN}    ${TEMPFILE}    3
     Terminate should stop countdown    kill=${True}
 
@@ -52,8 +56,7 @@ Kill process when terminate fails
     Check Precondition    os.sep == '/' or hasattr(signal, 'CTRL_BREAK_EVENT')
     ${lib} =    Get Library Instance    Process
     ${lib.TERMINATE_TIMEOUT} =    Set Variable    ${2}
-    ${lib.KILL_TIMEOUT} =    Set Variable    ${1}
-    ${process} =    Start Process    python    ${NONTERM}    ${TEMPFILE}    stderr=STDOUT
+    ${process} =    Start Process    python    ${NONTERM}    ${TEMPFILE}    stdout=${STDOUT}   stderr=STDOUT
     Wait Until Created    ${TEMPFILE}
     ${result} =    Terminate Process    ${process}    kill=false
     Should Not Be Equal As Integers    ${result.rc}    0
