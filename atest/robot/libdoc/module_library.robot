@@ -31,10 +31,12 @@ Has No Inits
 Keyword Names
     Keyword Name Should Be     0    Get Hello
     Keyword Name Should Be     1    Keyword
+    Keyword Name Should Be     5    Set Name Using Robot Name Attribute
 
 Keyword Arguments
     Keyword Arguments Should Be     0
     Keyword Arguments Should Be     1    a1=d    *a2
+    Keyword Arguments Should Be     5    a    b    *args    **kwargs
 
 Keyword Documentation
     Keyword Doc Should Start With    0   Get the intialization variables

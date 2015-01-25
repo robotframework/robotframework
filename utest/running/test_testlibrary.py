@@ -436,7 +436,7 @@ class TestHandlers(unittest.TestCase):
 
         def test_overridden_getName(self):
             handlers = TestLibrary('OverrideGetName').handlers
-            assert_equals(sorted(handlers.keys()), ['doNothing', 'getName'])
+            assert_equals(sorted(handlers.keys()), ['Do Nothing', 'Get Name'])
 
         def test_extending_java_lib_in_python(self):
             handlers = TestLibrary('extendingjava.ExtendJavaLib').handlers

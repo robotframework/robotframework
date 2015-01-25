@@ -2,8 +2,9 @@
 
 """Module test library."""
 
-__version__ = '0.1-alpha'
+from robot.api import deco
 
+__version__ = '0.1-alpha'
 
 def keyword(a1='d', *a2):
     """A keyword
@@ -28,3 +29,10 @@ def non_ascii_doc_with_bytes():
 
 def non_ascii_doc_with_declared_utf_8():
     """Hyvää yötä."""
+
+@deco.keyword('Set Name Using Robot Name Attribute')
+def name_set_in_method_signature(a, b, *args, **kwargs):
+    """
+    This makes sure that @deco.robot_name decorated kws don't lose their signatures
+    """
+    pass

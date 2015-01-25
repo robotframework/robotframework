@@ -1,4 +1,4 @@
-from robot import utils
+from robot.api import deco
 
 
 def passing_handler(*args):
@@ -20,9 +20,11 @@ class GetKeywordNamesLibrary:
         self.this_is_not_keyword = 'This is just an attribute!!'
     
     def get_keyword_names(self):
-        return ['Get Keyword That Passes', 'Get Keyword That Fails',
-                'keyword_in_library_itself', 'non_existing_kw',
-                'this_is_not_keyword']
+        marked_keywords = [name for name in dir(self) if hasattr(getattr(self, name), 'robot_name')]
+        other_keywords = ['Get Keyword That Passes', 'Get Keyword That Fails',
+                        'keyword_in_library_itself', 'non_existing_kw',
+                        'this_is_not_keyword']
+        return marked_keywords + other_keywords
     
     def __getattr__(self, name):
         if name == 'Get Keyword That Passes':
@@ -35,3 +37,11 @@ class GetKeywordNamesLibrary:
         msg = 'No need for __getattr__ here!!'
         print msg
         return msg
+
+    @deco.keyword('Name Set Using Robot Name Attribute')
+    def name_set_in_method_signature(self):
+        pass
+
+    @deco.keyword
+    def keyword_name_should_not_change(self):
+        pass

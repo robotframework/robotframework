@@ -1,3 +1,8 @@
+# coding=UTF-8
+
+from robot.api.deco import keyword
+
+
 class MyLibrary1:
 
     def keyword_only_in_library_1(self):
@@ -26,3 +31,24 @@ class MyLibrary1:
 
     def no_operation(self):
         print "Overrides keyword from BuiltIn library"
+
+    def method(self):
+        print "My name was set using 'robot_name' attribute!"
+
+    method.robot_name = "Name set using 'robot_name' attribute"
+
+    @keyword("Name set using 'robot.api.deco.keyword' decorator")
+    def name_set_in_method_signature(self):
+        print "My name was set using 'robot.api.deco.keyword' decorator!"
+
+    @keyword(name=u'Custom nön-ÄSCII name')
+    def non_ascii_would_not_work_here(self):
+        pass
+
+    @keyword()
+    def no_custom_name_given_1(self):
+        pass
+
+    @keyword
+    def no_custom_name_given_2(self):
+        pass

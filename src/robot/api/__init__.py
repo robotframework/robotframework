@@ -21,6 +21,8 @@ Currently exposed APIs are:
 
 * :mod:`.logger` module for test libraries' logging purposes.
 
+* :mod:`.deco` module with decorators test libraries can utilize.
+
 * :class:`~robot.parsing.model.TestCaseFile`,
   :class:`~robot.parsing.model.TestDataDirectory`, and
   :class:`~robot.parsing.model.ResourceFile` classes for parsing test
