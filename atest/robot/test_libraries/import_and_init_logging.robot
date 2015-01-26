@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Tests for libs logging during import and in init/constructor.
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/import_and_init_logging.robot
+Suite Setup     Run Tests  --PYTHONPATH "${DATADIR}/test_libraries"  test_libraries/import_and_init_logging.robot
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.robot
@@ -50,3 +50,10 @@ Java library logging in constructor via stdout and stderr
     Check stderr contains  [ WARN ] Warning via stdout in constructor 2\n
     Check stderr contains  \nInfo via stderr in constructor 1
     Check stderr contains  \nInfo via stderr in constructor 2
+
+Importing and initializing libraries in init
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check log message  ${tc.kws[0].msgs[0]}  Keyword from library with importing __init__.
+    Check log message  ${tc.kws[2].msgs[0]}  Keyword from library with initting __init__.
+    Check log message  ${tc.kws[2].msgs[1]}  Keyword from library initted by __init__ (id: 42).
+    Check log message  ${tc.kws[3].msgs[0]}  Keyword from library initted by __init__ (id: 42).

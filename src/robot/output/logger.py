@@ -41,6 +41,7 @@ class Logger(AbstractLogger):
         self._started_keywords = 0
         self._error_occurred = False
         self._error_listener = None
+        self._prev_log_message_handlers = []
         if register_console_logger:
             self.register_console_logger()
 
@@ -128,11 +129,11 @@ class Logger(AbstractLogger):
             self.log_message(msg)
 
     def enable_library_import_logging(self):
-        self._prev_log_message = self.log_message
+        self._prev_log_message_handlers.append(self.log_message)
         self.log_message = self.message
 
     def disable_library_import_logging(self):
-        self.log_message = self._prev_log_message
+        self.log_message = self._prev_log_message_handlers.pop()
 
     def output_file(self, name, path):
         """Finished output, report, log, debug, or xunit file"""
