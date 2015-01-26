@@ -92,7 +92,7 @@ class NormalizedDict(UserDict):
     def update(self, dict=None, **kwargs):
         if dict:
             for key in dict:
-                self.set(key, dict[key])
+                self[key] = dict[key]
         if kwargs:
             self.update(kwargs)
 
@@ -101,17 +101,14 @@ class NormalizedDict(UserDict):
         self._keys.setdefault(nkey, key)
         return nkey
 
-    def set(self, key, value):
+    def __setitem__(self, key, value):
         nkey = self._add_key(key)
         self.data[nkey] = value
 
-    __setitem__ = set
-
     def get(self, key, default=None):
-        try:
-            return self.__getitem__(key)
-        except KeyError:
-            return default
+        if key in self:
+            return self[key]
+        return default
 
     def __getitem__(self, key):
         return self.data[self._normalize(key)]
