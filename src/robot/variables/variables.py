@@ -14,21 +14,18 @@
 
 from __future__ import with_statement
 import re
-import inspect
 from functools import partial
-from contextlib import contextmanager
 try:
     from java.lang.System import getProperty as getJavaSystemProperty
-    from java.util import Map
 except ImportError:
     getJavaSystemProperty = lambda name: None
-    class Map: pass
 
 from robot import utils
 from robot.errors import DataError
 from robot.output import LOGGER
 
-from .isvar import is_var, is_scalar_var, is_list_var
+from .isvar import is_scalar_var, is_list_var, validate_var
+from .readers import VariableFileReader, VariableTableReader, DelayedVariable
 from .store import VariableStore
 from .variablesplitter import VariableSplitter
 
@@ -43,22 +40,19 @@ class Variables(object):
 
     def __init__(self, identifiers=('$', '@', '%', '&', '*')):
         self._identifiers = identifiers
-        importer = utils.Importer('variable file').import_class_or_module_by_path
-        self._import_variable_file = partial(importer, instantiate_with_args=())
         self._store = VariableStore()
 
     def __setitem__(self, name, value):
-        self._validate_var_name(name)
+        validate_var(name)
         self._store[name] = value
 
     def update(self, dict=None, **kwargs):
-        if dict:
-            self._validate_var_dict(dict)
-        self._validate_var_dict(kwargs)
+        for name in list(dict or []) + list(kwargs):
+            validate_var(name)
         self._store.update(dict, **kwargs)
 
     def __getitem__(self, name):
-        self._validate_var_name(name)
+        validate_var(name)
         try:
             return self._find_variable(name)
         except KeyError:
@@ -85,7 +79,7 @@ class Variables(object):
 
     def _solve_delayed(self, name, value):
         if isinstance(value, DelayedVariable):
-            return value.resolve(name, self)
+            return value.resolve(name, self, _raise_not_found)
         return value
 
     def resolve_delayed(self):
@@ -95,15 +89,6 @@ class Variables(object):
                 self[var]  # getting variable resolves it if needed
             except DataError:
                 pass
-
-    def _validate_var_name(self, name):
-        if not is_var(name):
-            msg = "Variable name '%s' is invalid." % name
-            self._raise_non_existing_variable(name, msg=msg)
-
-    def _validate_var_dict(self, dict):
-        for name in dict:
-            self._validate_var_name(name)
 
     def _get_list_var_as_scalar(self, name):
         if not is_scalar_var(name):
@@ -287,103 +272,12 @@ class Variables(object):
 
 
     def set_from_file(self, path, args=None, overwrite=False):
-        LOGGER.info("Importing variable file '%s' with args %s" % (path, args))
-        var_file = self._import_variable_file(path)
-        try:
-            variables = self._get_variables_from_var_file(var_file, args)
-            self._set_from_file(variables, overwrite)
-        except:
-            amsg = 'with arguments %s ' % utils.seq2str2(args) if args else ''
-            raise DataError("Processing variable file '%s' %sfailed: %s"
-                            % (path, amsg, utils.get_error_message()))
-        return variables
-
-    # This can be used with variables got from set_from_file directly to
-    # prevent importing same file multiple times
-    def _set_from_file(self, variables, overwrite=False):
-        list_prefix = 'LIST__'
-        for name, value in variables:
-            if name.startswith(list_prefix):
-                name = '@{%s}' % name[len(list_prefix):]
-                try:
-                    if isinstance(value, basestring):
-                        raise TypeError
-                    value = list(value)
-                except TypeError:
-                    raise DataError("List variable '%s' cannot get a non-list "
-                                    "value '%s'" % (name, utils.unic(value)))
-            else:
-                name = '${%s}' % name
-            if overwrite or not self.contains(name):
-                self[name] = value
+        reader = VariableFileReader(path, args)
+        reader.update(self._store, overwrite)
+        return reader.variables
 
     def set_from_variable_table(self, variables, overwrite=False):
-        for var in variables:
-            if not var:
-                continue
-            try:
-                name, value = self._get_var_table_name_and_value(
-                    var.name, var.value, var.report_invalid_syntax)
-                if overwrite or not self.contains(name):
-                    self[name] = value
-            except DataError, err:
-                var.report_invalid_syntax(err)
-
-    def _get_var_table_name_and_value(self, name, value, error_reporter):
-        self._validate_var_name(name)
-        if is_scalar_var(name) and isinstance(value, basestring):
-            value = [value]
-        else:
-            self._validate_var_is_not_scalar_list(name, value)
-        value = [self._unescape_leading_trailing_spaces(cell) for cell in value]
-        return name, DelayedVariable(value, error_reporter)
-
-    def _unescape_leading_trailing_spaces(self, item):
-        if item.endswith(' \\'):
-            item = item[:-1]
-        if item.startswith('\\ '):
-            item = item[1:]
-        return item
-
-    def _validate_var_is_not_scalar_list(self, name, value):
-        if is_scalar_var(name) and len(value) > 1:
-            raise DataError("Creating a scalar variable with a list value in "
-                            "the Variable table is no longer possible. "
-                            "Create a list variable '@%s' and use it as a "
-                            "scalar variable '%s' instead." % (name[1:], name))
-
-    def _get_variables_from_var_file(self, var_file, args):
-        variables = self._get_dynamical_variables(var_file, args or ())
-        if variables is not None:
-            return variables
-        names = self._get_static_variable_names(var_file)
-        return self._get_static_variables(var_file, names)
-
-    def _get_dynamical_variables(self, var_file, args):
-        get_variables = getattr(var_file, 'get_variables', None)
-        if not get_variables:
-            get_variables = getattr(var_file, 'getVariables', None)
-        if not get_variables:
-            return None
-        variables = get_variables(*args)
-        if utils.is_dict_like(variables):
-            return variables.items()
-        if isinstance(variables, Map):
-            return [(entry.key, entry.value) for entry in variables.entrySet()]
-        raise DataError("Expected mapping but %s returned %s."
-                        % (get_variables.__name__, type(variables).__name__))
-
-    def _get_static_variable_names(self, var_file):
-        names = [attr for attr in dir(var_file) if not attr.startswith('_')]
-        if hasattr(var_file, '__all__'):
-            names = [name for name in names if name in var_file.__all__]
-        return names
-
-    def _get_static_variables(self, var_file, names):
-        variables = [(name, getattr(var_file, name)) for name in names]
-        if not inspect.ismodule(var_file):
-            variables = [var for var in variables if not callable(var[1])]
-        return variables
+        VariableTableReader(variables).update(self._store, overwrite)
 
     def has_key(self, variable):
         try:
@@ -405,6 +299,9 @@ class Variables(object):
 
     def keys(self):
         return self._store.keys()
+
+    def items(self):
+        return self._store.items()
 
     def copy(self):
         variables = Variables(self._identifiers)
@@ -448,42 +345,6 @@ class ExtendedVariableFinder(object):
         except:
             raise DataError("Resolving variable '%s' failed: %s"
                             % (name, utils.get_error_message()))
-
-
-class DelayedVariable(object):
-
-    def __init__(self, value, error_reporter):
-        self._value = value
-        self._error_reporter = error_reporter
-        self._resolving = False
-
-    def resolve(self, name, variables):
-        try:
-            value = self._resolve(name, variables)
-        except DataError, err:
-            variables.pop(name)
-            self._error_reporter(unicode(err))
-            msg = "Variable '%s' not found." % name
-            _raise_not_found(name, variables, msg)
-        variables[name] = value
-        return value
-
-    def _resolve(self, name, variables):
-        with self._avoid_recursion:
-            if is_list_var(name):
-                return variables.replace_list(self._value)
-            return variables.replace_scalar(self._value[0])
-
-    @property
-    @contextmanager
-    def _avoid_recursion(self):
-        if self._resolving:
-            raise DataError('Recursive variable definition.')
-        self._resolving = True
-        try:
-            yield
-        finally:
-            self._resolving = False
 
 
 def _raise_not_found(name, candidates, msg=None, env_vars=False):

@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
+
 from .variablesplitter import VariableIterator
 
 
@@ -34,3 +36,8 @@ def is_list_var(string):
 def contains_var(string):
     return bool(isinstance(string, basestring) and
                 VariableIterator(string, '$@'))
+
+
+def validate_var(string):
+    if not is_var(string):
+        raise DataError("Invalid variable name '%s'." % string)
