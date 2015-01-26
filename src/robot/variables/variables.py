@@ -17,7 +17,6 @@ import re
 import inspect
 from functools import partial
 from contextlib import contextmanager
-from UserDict import UserDict
 try:
     from java.lang.System import getProperty as getJavaSystemProperty
     from java.util import Map
@@ -30,10 +29,11 @@ from robot.errors import DataError
 from robot.output import LOGGER
 
 from .isvar import is_var, is_scalar_var, is_list_var
+from .store import VariableStore
 from .variablesplitter import VariableSplitter
 
 
-class Variables(utils.NormalizedDict):
+class Variables(object):
     """Represents a set of variables including both ${scalars} and @{lists}.
 
     Contains methods for replacing variables from list, scalars, and strings.
@@ -42,23 +42,20 @@ class Variables(utils.NormalizedDict):
     """
 
     def __init__(self, identifiers=('$', '@', '%', '&', '*')):
-        utils.NormalizedDict.__init__(self, ignore='_')
         self._identifiers = identifiers
         importer = utils.Importer('variable file').import_class_or_module_by_path
         self._import_variable_file = partial(importer, instantiate_with_args=())
+        self._store = VariableStore()
 
     def __setitem__(self, name, value):
         self._validate_var_name(name)
-        utils.NormalizedDict.__setitem__(self, name, value)
+        self._store[name] = value
 
     def update(self, dict=None, **kwargs):
         if dict:
             self._validate_var_dict(dict)
-            UserDict.update(self, dict)
-            for key in dict:
-                self._add_key(key)
-        if kwargs:
-            self.update(kwargs)
+        self._validate_var_dict(kwargs)
+        self._store.update(dict, **kwargs)
 
     def __getitem__(self, name):
         self._validate_var_name(name)
@@ -80,11 +77,11 @@ class Variables(utils.NormalizedDict):
                             self._raise_non_existing_variable(name)
 
     def _find_variable(self, name):
-        variable = utils.NormalizedDict.__getitem__(self, name)
+        variable = self._store[name]
         return self._solve_delayed(name, variable)
 
     def _raise_non_existing_variable(self, name, msg=None, env_vars=False):
-        _raise_not_found(name, self.keys(), msg, env_vars=env_vars)
+        _raise_not_found(name, self._store.keys(), msg, env_vars=env_vars)
 
     def _solve_delayed(self, name, value):
         if isinstance(value, DelayedVariable):
@@ -93,7 +90,7 @@ class Variables(utils.NormalizedDict):
 
     def resolve_delayed(self):
         # cannot iterate over `self` here because loop changes the state.
-        for var in self.keys():
+        for var in self._store.keys():
             try:
                 self[var]  # getting variable resolves it if needed
             except DataError:
@@ -137,7 +134,7 @@ class Variables(utils.NormalizedDict):
     def _get_number_var(self, name):
         if name[0] != '$':
             raise ValueError
-        number = self._normalize(name)[2:-1]
+        number = utils.normalize(name)[2:-1]
         try:
             return self._get_int_var(number)
         except ValueError:
@@ -318,7 +315,7 @@ class Variables(utils.NormalizedDict):
             else:
                 name = '${%s}' % name
             if overwrite or not self.contains(name):
-                self.set(name, value)
+                self[name] = value
 
     def set_from_variable_table(self, variables, overwrite=False):
         for var in variables:
@@ -328,7 +325,7 @@ class Variables(utils.NormalizedDict):
                 name, value = self._get_var_table_name_and_value(
                     var.name, var.value, var.report_invalid_syntax)
                 if overwrite or not self.contains(name):
-                    self.set(name, value)
+                    self[name] = value
             except DataError, err:
                 var.report_invalid_syntax(err)
 
@@ -400,8 +397,28 @@ class Variables(utils.NormalizedDict):
 
     def contains(self, variable, extended=False):
         if extended:
-            return self.has_key(variable)
-        return utils.NormalizedDict.has_key(self, variable)
+            return variable in self
+        return variable in self._store
+
+    def clear(self):
+        self._store.clear()
+
+    def keys(self):
+        return self._store.keys()
+
+    def copy(self):
+        variables = Variables(self._identifiers)
+        variables._store = self._store.copy()
+        return variables
+
+    def __iter__(self):
+        return iter(self._store)
+
+    def __len__(self):
+        return len(self._store)
+
+    def pop(self, key=None, *default):
+        return self._store.pop(key, *default)
 
 
 class ExtendedVariableFinder(object):
