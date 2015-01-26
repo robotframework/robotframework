@@ -336,12 +336,11 @@ class _List:
           'False' or 'No Values', the error message is simply `msg`.
         - Otherwise the error message is `msg` + 'new line' + default.
 
-        Optional `names` argument (new in 2.6) can be used for naming
-        the indices shown in the default error message. It can either
-        be a list of names matching the indices in the lists or a
-        dictionary where keys are indices that need to be named. It is
-        not necessary to name all of the indices.  When using a
-        dictionary, keys can be either integers or strings that can be
+        Optional `names` argument can be used for naming the indices shown in
+        the default error message. It can either be a list of names matching
+        the indices in the lists or a dictionary where keys are indices that
+        need to be named. It is not necessary to name all of the indices.  When
+        using a dictionary, keys can be either integers or strings that can be
         converted to integers.
 
         Examples:

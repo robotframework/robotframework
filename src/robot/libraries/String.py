@@ -527,7 +527,6 @@ class String(object):
         `msg` argument.
 
         See also `Should Be Uppercase` and `Should Be Titlecase`.
-        All these keywords were added in Robot Framework 2.1.2.
         """
         if not string.islower():
             self._fail(msg, "'%s' is not lowercase.", string)
@@ -542,7 +541,6 @@ class String(object):
         `msg` argument.
 
         See also `Should Be Titlecase` and `Should Be Lowercase`.
-        All these keywords were added in Robot Framework 2.1.2.
         """
         if not string.isupper():
             self._fail(msg, "'%s' is not uppercase.", string)
@@ -561,7 +559,6 @@ class String(object):
         `msg` argument.
 
         See also `Should Be Uppercase` and `Should Be Lowercase`.
-        All theses keyword were added in Robot Framework 2.1.2.
         """
         if not string.istitle():
             self._fail(msg, "'%s' is not titlecase.", string)
