@@ -13,8 +13,6 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-import re
-from functools import partial
 try:
     from java.lang.System import getProperty as getJavaSystemProperty
 except ImportError:
@@ -25,9 +23,11 @@ from robot.errors import DataError
 from robot.output import LOGGER
 
 from .filesetter import VariableFileSetter
-from .isvar import is_scalar_var, is_list_var, validate_var
+from .finder import VariableFinder
+from .isvar import validate_var
+from .notfound import raise_not_found
 from .store import VariableStore
-from .tablesetter import VariableTableSetter, DelayedVariable
+from .tablesetter import VariableTableSetter
 from .variablesplitter import VariableSplitter
 
 
@@ -41,96 +41,28 @@ class Variables(object):
 
     def __init__(self, identifiers=('$', '@', '%', '&', '*')):
         self._identifiers = identifiers
-        self._store = VariableStore()
+        self.store = VariableStore()
 
     def __setitem__(self, name, value):
         validate_var(name)
-        self._store[name] = value
+        self.store[name] = value
 
     def update(self, dict=None, **kwargs):
         for name in list(dict or []) + list(kwargs):
             validate_var(name)
-        self._store.update(dict, **kwargs)
+        self.store.update(dict, **kwargs)
 
     def __getitem__(self, name):
-        validate_var(name)
-        try:
-            return self._find_variable(name)
-        except KeyError:
-            try:
-                return self._get_number_var(name)
-            except ValueError:
-                try:
-                    return self._get_list_var_as_scalar(name)
-                except ValueError:
-                    try:
-                        return self._get_scalar_var_as_list(name)
-                    except ValueError:
-                        try:
-                            return self._get_extended_var(name)
-                        except ValueError:
-                            self._raise_non_existing_variable(name)
-
-    def _find_variable(self, name):
-        variable = self._store[name]
-        return self._solve_delayed(name, variable)
-
-    def _raise_non_existing_variable(self, name, msg=None, env_vars=False):
-        _raise_not_found(name, self._store.keys(), msg, env_vars=env_vars)
-
-    def _solve_delayed(self, name, value):
-        if isinstance(value, DelayedVariable):
-            return value.resolve(name, self, _raise_not_found)
-        return value
+        return VariableFinder(self).find(name)
 
     def resolve_delayed(self):
-        # cannot iterate over `self` here because loop changes the state.
-        for var in self._store.keys():
+        # cannot iterate over `self.store` here because loop changes its state.
+        # TODO: This belongs to store
+        for var in self.store.keys():
             try:
                 self[var]  # getting variable resolves it if needed
             except DataError:
                 pass
-
-    def _get_list_var_as_scalar(self, name):
-        if not is_scalar_var(name):
-            raise ValueError
-        name = '@'+name[1:]
-        try:
-            return self._find_variable(name)
-        except KeyError:
-            return self._get_extended_var(name)
-
-    def _get_scalar_var_as_list(self, name):
-        if not is_list_var(name):
-            raise ValueError
-        name = '$'+name[1:]
-        try:
-            value = self._find_variable(name)
-        except KeyError:
-            value = self._get_extended_var(name)
-        if not utils.is_list_like(value):
-            raise DataError("Using scalar variable '%s' as list variable '@%s' "
-                            "requires its value to be list or list-like."
-                            % (name, name[1:]))
-        return value
-
-    def _get_extended_var(self, name):
-        return ExtendedVariableFinder(self).find(name)
-
-    def _get_number_var(self, name):
-        if name[0] != '$':
-            raise ValueError
-        number = utils.normalize(name)[2:-1]
-        try:
-            return self._get_int_var(number)
-        except ValueError:
-            return float(number)
-
-    def _get_int_var(self, number):
-        bases = {'0b': 2, '0o': 8, '0x': 16}
-        if number.startswith(tuple(bases)):
-            return int(number[2:], bases[number[:2]])
-        return int(number)
 
     def replace_list(self, items, replace_until=None):
         """Replaces variables from a list of items.
@@ -165,6 +97,7 @@ class Variables(object):
     def _escape(self, item):
         item = utils.escape(item)
         # Escape also special syntax used by Run Kw If and Run Kws.
+        # TODO: Move to utils.escape. Can be configurable if needed.
         if item in ('ELSE', 'ELSE IF', 'AND'):
             item = '\\' + item
         return item
@@ -251,9 +184,9 @@ class Variables(object):
             value = getJavaSystemProperty(name)
             if value is not None:
                 return value
-            msg = "Environment variable '%%{%s}' not found." % name
-            self._raise_non_existing_variable('%%{%s}' % name, msg,
-                                              env_vars=True)
+            raise_not_found('%%{%s}' % name, self.store.keys(),
+                            "Environment variable '%%{%s}' not found." % name,
+                            env_vars=True)
 
         # 3) Handle ${scalar} variables and @{list} variables without index
         elif var.index is None:
@@ -267,17 +200,17 @@ class Variables(object):
                 name = '@{%s}' % var.get_replaced_base(self)
                 return self[name][index]
             except (ValueError, DataError, IndexError):
-                msg = ("Variable '@{%s}[%s]' not found."
-                       % (var.base, var.index))
-                self._raise_non_existing_variable(var.base, msg)
+                raise_not_found(var.base, self.store.keys(),
+                                "Variable '@{%s}[%s]' not found."
+                                % (var.base, var.index))
 
 
     def set_from_file(self, path_or_variables, args=None, overwrite=False):
-        setter = VariableFileSetter(self._store)
+        setter = VariableFileSetter(self.store)
         return setter.set(path_or_variables, args, overwrite)
 
     def set_from_variable_table(self, variables, overwrite=False):
-        setter = VariableTableSetter(self._store)
+        setter = VariableTableSetter(self.store)
         setter.set(variables, overwrite)
 
     def has_key(self, variable):
@@ -293,74 +226,27 @@ class Variables(object):
     def contains(self, variable, extended=False):
         if extended:
             return variable in self
-        return variable in self._store
+        return variable in self.store
 
     def clear(self):
-        self._store.clear()
+        self.store.clear()
 
     def keys(self):
-        return self._store.keys()
+        return self.store.keys()
 
     def items(self):
-        return self._store.items()
+        return self.store.items()
 
     def copy(self):
         variables = Variables(self._identifiers)
-        variables._store = self._store.copy()
+        variables.store = self.store.copy()
         return variables
 
     def __iter__(self):
-        return iter(self._store)
+        return iter(self.store)
 
     def __len__(self):
-        return len(self._store)
+        return len(self.store)
 
     def pop(self, key=None, *default):
-        return self._store.pop(key, *default)
-
-
-class ExtendedVariableFinder(object):
-    _extended_var_re = re.compile(r'''
-    ^\${         # start of the string and "${"
-    (.+?)        # base name (group 1)
-    ([^\s\w].+)  # extended part (group 2)
-    }$           # "}" and end of the string
-    ''', re.UNICODE|re.VERBOSE)
-
-    def __init__(self, variables):
-        self.variables = variables
-
-    def find(self, name):
-        res = self._extended_var_re.search(name)
-        if res is None:
-            raise ValueError
-        base_name = res.group(1)
-        expression = res.group(2)
-        try:
-            variable = self.variables['${%s}' % base_name]
-        except DataError, err:
-            raise DataError("Resolving variable '%s' failed: %s"
-                            % (name, unicode(err)))
-        try:
-            return eval('_BASE_VAR_' + expression, {'_BASE_VAR_': variable})
-        except:
-            raise DataError("Resolving variable '%s' failed: %s"
-                            % (name, utils.get_error_message()))
-
-
-def _raise_not_found(name, candidates, msg=None, env_vars=False):
-    """Raise DataError for missing variable name.
-
-    Return recommendations for similar variable names if any are found.
-    """
-    if msg is None:
-        msg = "Variable '%s' not found." % name
-    if env_vars:
-        candidates += ['%%{%s}' % var for var in
-                       utils.get_env_vars()]
-    normalizer = partial(utils.normalize, ignore='$@%&*{}_', caseless=True,
-                         spaceless=True)
-    finder = utils.RecommendationFinder(normalizer)
-    recommendations = finder.find_recommendations(name, candidates)
-    msg = finder.format_recommendations(msg, recommendations)
-    raise DataError(msg)
+        return self.store.pop(key, *default)

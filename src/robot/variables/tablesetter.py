@@ -17,6 +17,7 @@ from contextlib import contextmanager
 from robot.errors import DataError
 
 from .isvar import is_list_var, is_scalar_var, validate_var
+from .notfound import raise_not_found
 
 
 class VariableTableSetter(object):
@@ -74,17 +75,17 @@ class DelayedVariable(object):
         self._error_reporter = error_reporter
         self._resolving = False
 
-    def resolve(self, name, variables, error_reporter):
-        # TODO: Move error reported to importable util
+    def resolve(self, name, variables):
         try:
             value = self._resolve(name, variables)
         except DataError, err:
             variables.pop(name)
             self._error_reporter(unicode(err))
             msg = "Variable '%s' not found." % name
-            error_reporter(name, variables, msg)
-        variables[name] = value
-        return value
+            raise_not_found(name, list(variables), msg)
+        else:
+            variables[name] = value
+            return value
 
     def _resolve(self, name, variables):
         with self._avoid_recursion:
