@@ -154,3 +154,11 @@ class VariableIterator(object):
 
     def __len__(self):
         return sum(1 for _ in self)
+
+    def __nonzero__(self):
+        try:
+            iter(self).next()
+        except StopIteration:
+            return False
+        else:
+            return True

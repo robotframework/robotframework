@@ -163,11 +163,13 @@ class TestVariableIterator(unittest.TestCase):
     def test_no_variables(self):
         iterator = VariableIterator('no vars here', identifiers='$')
         assert_equals(list(iterator), [])
+        assert_equals(bool(iterator), False)
         assert_equals(len(iterator), 0)
 
     def test_one_variable(self):
         iterator = VariableIterator('one ${var} here', identifiers='$')
         assert_equals(list(iterator), [('one ', '${var}', ' here')])
+        assert_equals(bool(iterator), True)
         assert_equals(len(iterator), 1)
 
     def test_multiple_variables(self):
@@ -175,12 +177,15 @@ class TestVariableIterator(unittest.TestCase):
         assert_equals(list(iterator), [('', '${1}', ' @{2} and %{3}'),
                                        (' ', '@{2}', ' and %{3}'),
                                        (' and ', '%{3}', '')])
+        assert_equals(bool(iterator), True)
         assert_equals(len(iterator), 3)
 
     def test_can_be_iterated_many_times(self):
         iterator = VariableIterator('one ${var} here', identifiers='$')
         assert_equals(list(iterator), [('one ', '${var}', ' here')])
         assert_equals(list(iterator), [('one ', '${var}', ' here')])
+        assert_equals(bool(iterator), True)
+        assert_equals(bool(iterator), True)
         assert_equals(len(iterator), 1)
         assert_equals(len(iterator), 1)
 
