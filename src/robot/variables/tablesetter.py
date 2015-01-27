@@ -21,22 +21,28 @@ from .isvar import is_list_var, is_scalar_var, validate_var
 
 class VariableTableSetter(object):
 
-    def __init__(self, table):
-        self.table = table
+    def __init__(self, store):
+        self._store = store
 
-    def update(self, store, overwrite=False):
-        for var in self.table:
+    def set(self, variables, overwrite=False):
+        for name, value in VariableTableReader().read(variables):
+            if overwrite or name not in self._store:
+                self._store[name] = value
+
+
+class VariableTableReader(object):
+
+    def read(self, variables):
+        for var in variables:
             if not var:
                 continue
             try:
-                name, value = self._get_var_table_name_and_value(
-                    var.name, var.value, var.report_invalid_syntax)
-                if overwrite or name not in store:
-                    store[name] = value
+                yield self._get_name_and_value(var.name, var.value,
+                                               var.report_invalid_syntax)
             except DataError, err:
                 var.report_invalid_syntax(err)
 
-    def _get_var_table_name_and_value(self, name, value, error_reporter):
+    def _get_name_and_value(self, name, value, error_reporter):
         validate_var(name)
         if is_scalar_var(name) and isinstance(value, basestring):
             value = [value]
@@ -53,6 +59,7 @@ class VariableTableSetter(object):
         return item
 
     def _validate_var_is_not_scalar_list(self, name, value):
+        # TODO: Should we catenate values in RF 2.9 instead?
         if is_scalar_var(name) and len(value) > 1:
             raise DataError("Creating a scalar variable with a list value in "
                             "the Variable table is no longer possible. "

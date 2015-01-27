@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from functools import partial
 import inspect
 try:
     from java.util import Map
@@ -27,17 +26,37 @@ from robot.utils import (get_error_message, is_dict_like, is_list_like,
 
 class VariableFileSetter(object):
 
-    def __init__(self, path_or_variables, args=None):
-        importer = Importer('variable file').import_class_or_module_by_path
-        self._import_variable_file = partial(importer, instantiate_with_args=())
-        if isinstance(path_or_variables, basestring):
-            self.variables = self._import_file(path_or_variables, args)
-        else:
-            self.variables = path_or_variables
+    def __init__(self, store):
+        self._store = store
 
-    def _import_file(self, path, args):
+    def set(self, path_or_variables, args=None, overwrite=False):
+        variables = self._import_if_needed(path_or_variables, args)
+        self._set(variables, overwrite)
+        return variables
+
+    def _import_if_needed(self, path_or_variables, args=None):
+        if isinstance(path_or_variables, basestring):
+            importer = VariableFileImporter()
+            return importer.import_variables(path_or_variables, args)
+        return path_or_variables
+
+    def _set(self, variables, overwrite=False):
+        for name, value in variables:
+            if name.startswith('LIST__'):
+                name = '@{%s}' % name[len('LIST__'):]
+                value = list(value)
+            else:
+                name = '${%s}' % name
+            if overwrite or name not in self._store:
+                self._store[name] = value
+
+
+class VariableFileImporter(object):
+
+    def import_variables(self, path, args=None):
         LOGGER.info("Importing variable file '%s' with args %s" % (path, args))
-        var_file = self._import_variable_file(path)
+        importer = Importer('variable file').import_class_or_module_by_path
+        var_file = importer(path, instantiate_with_args=())
         try:
             return self._get_variables(var_file, args)
         except:
@@ -45,7 +64,7 @@ class VariableFileSetter(object):
             raise DataError("Processing variable file '%s' %sfailed: %s"
                             % (path, amsg, get_error_message()))
 
-    def _get_variables(self, var_file, args):
+    def _get_variables(self, var_file, args=None):
         variables = self._get_dynamical_variables(var_file, args or ())
         if variables is None:
             names = self._get_static_variable_names(var_file)
@@ -62,6 +81,7 @@ class VariableFileSetter(object):
         variables = get_variables(*args)
         if is_dict_like(variables):
             return variables.items()
+        # TODO: This shouldn't be needed after Jython 2.7 beta 4
         if isinstance(variables, Map):
             return [(entry.key, entry.value) for entry in variables.entrySet()]
         raise DataError("Expected mapping but %s returned %s."
@@ -85,13 +105,3 @@ class VariableFileSetter(object):
                 name = '@{%s}' % name[len('LIST__'):]
                 raise DataError("List variable '%s' cannot get a non-list "
                                 "value '%s'" % (name, unic(value)))
-
-    def update(self, store, overwrite=False):
-        for name, value in self.variables:
-            if name.startswith('LIST__'):
-                name = '@{%s}' % name[len('LIST__'):]
-                value = list(value)
-            else:
-                name = '${%s}' % name
-            if overwrite or name not in store:
-                store[name] = value

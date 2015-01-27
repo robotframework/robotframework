@@ -272,13 +272,13 @@ class Variables(object):
                 self._raise_non_existing_variable(var.base, msg)
 
 
-    def set_from_file(self, path, args=None, overwrite=False):
-        reader = VariableFileSetter(path, args)
-        reader.update(self._store, overwrite)
-        return reader.variables
+    def set_from_file(self, path_or_variables, args=None, overwrite=False):
+        setter = VariableFileSetter(self._store)
+        return setter.set(path_or_variables, args, overwrite)
 
     def set_from_variable_table(self, variables, overwrite=False):
-        VariableTableSetter(variables).update(self._store, overwrite)
+        setter = VariableTableSetter(self._store)
+        setter.set(variables, overwrite)
 
     def has_key(self, variable):
         try:
