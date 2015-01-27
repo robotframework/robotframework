@@ -24,9 +24,10 @@ from robot import utils
 from robot.errors import DataError
 from robot.output import LOGGER
 
+from .filesetter import VariableFileSetter
 from .isvar import is_scalar_var, is_list_var, validate_var
-from .readers import VariableFileReader, VariableTableReader, DelayedVariable
 from .store import VariableStore
+from .tablesetter import VariableTableSetter, DelayedVariable
 from .variablesplitter import VariableSplitter
 
 
@@ -272,12 +273,12 @@ class Variables(object):
 
 
     def set_from_file(self, path, args=None, overwrite=False):
-        reader = VariableFileReader(path, args)
+        reader = VariableFileSetter(path, args)
         reader.update(self._store, overwrite)
         return reader.variables
 
     def set_from_variable_table(self, variables, overwrite=False):
-        VariableTableReader(variables).update(self._store, overwrite)
+        VariableTableSetter(variables).update(self._store, overwrite)
 
     def has_key(self, variable):
         try:
