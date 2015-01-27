@@ -16,8 +16,8 @@ Suite Documentation
     ...    Text from multiple columns is catenated with spaces,
     ...    and line continuation creates a new line.
     ...    Newlines can also be added literally "\n\n".
-    ...    Variables work since Robot 1.2 and doc_from_cli works too.
-    ...    Starting from RF 2.1 \${nonexisting} variables are left unchanged.
+    ...    Variables works as well as doc_from_cli.
+    ...    \${nonexisting} variables are left unchanged.
     ...    Escaping (e.g. '\${non-existing}', 'c:\\temp', '\\n') works too.
     ...    For backwards compatibility reasons we still support 'Document'
     ...    setting name and continuing the doc by just repeating the setting multiple times.

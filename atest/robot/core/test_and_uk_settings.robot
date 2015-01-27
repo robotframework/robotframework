@@ -20,13 +20,13 @@ Test Case Documentation in Multiple Lines
     Verify Test Documentation    ${1}st line is shortdoc.\nDocumentation for this test case in\nmultiple\nlines
 
 Test Case Documentation With Variables
-    Verify Test Documentation    Variables work in documentation since Robot 1.2
+    Verify Test Documentation    String variables like Robot and number ones like 42 work in documentation
 
 Test Case Documentation With Non-Existing Variables
     Verify Test Documentation
-    ...    Starting from RF 2.1 \${NONEX} variables are just
-    ...    left unchanged in all documentations. Existing ones
-    ...    are replaced: "10 milliseconds"
+    ...    \${NONEX} variables are just left unchanged in all
+    ...    documentations. Existing ones are replaced:
+    ...    "10 milliseconds" and 42
 
 Test Case Name and Documentation On Console
     Check Stdout Contains    Test Case Documentation in Multiple Lines :: 1st line is shortdoc.${SPACE * 4}| PASS |
@@ -104,11 +104,11 @@ User Keyword Short Documentation
 
 User Keyword Documentation With Variables
     ${test} =    Check Test Case    User Keyword Documentation With Variables
-    Should Be Equal    ${test.keywords[0].doc}    Variables work in documentation since Robot 1.2
+    Should Be Equal    ${test.keywords[0].doc}    Variables work in documentation. For example: Robot and 42
 
 User Keyword Documentation With Non Existing Variables
     ${tc} =    Check Test Case    User Keyword Documentation with non Existing Variables
-    Should Be Equal    ${tc.kws[0].doc}    Starting from RF 2.1 \@{non_existing} variables are left unchanged in docs.
+    Should Be Equal    ${tc.kws[0].doc}    \@{non_existing} variables are left unchanged in docs.
 
 User Keyword Arguments
     ${test} =    Check Test Case    User Keyword Arguments
