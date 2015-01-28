@@ -21,6 +21,7 @@ class VariableSplitter(object):
         self.index = None
         self.start = -1
         self.end = -1
+        self._max_end = len(string)
         self._identifiers = identifiers
         self._may_have_internal_variables = False
         try:
@@ -34,6 +35,10 @@ class VariableSplitter(object):
         if self._may_have_internal_variables:
             return variables.replace_string(self.base)
         return self.base
+
+    def is_one_variable(self):
+        return bool(self.identifier and self.base and
+                    self.start == 0 and self.end == self._max_end)
 
     def _finalize(self):
         self.identifier = self._variable_chars[0]

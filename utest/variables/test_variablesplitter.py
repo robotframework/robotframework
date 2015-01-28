@@ -1,11 +1,11 @@
 import unittest
 
 from robot.variables import VariableSplitter, VariableIterator
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equals, assert_false, assert_true
 
 
 class TestVariableSplitter(unittest.TestCase):
-    _identifiers = ['$','@','%','&','*']
+    _identifiers = ['$', '@', '%', '&', '*']
 
     def test_empty(self):
         self._test('')
@@ -71,7 +71,7 @@ class TestVariableSplitter(unittest.TestCase):
                 ('\\${esc} ${not}', '${not}', len('\\${esc} ')),
                 ('\\\\\\${esc} \\\\${not}', '${not}',
                  len('\\\\\\${esc} \\\\')),
-                ('\\${esc}\\\\${not}${n2}', '${not}', len('\\${esc}\\\\')) ]:
+                ('\\${esc}\\\\${not}${n2}', '${not}', len('\\${esc}\\\\'))]:
             self._test(inp, var, start)
 
     def test_internal_vars(self):
@@ -84,7 +84,7 @@ class TestVariableSplitter(unittest.TestCase):
                 ('${xx} ${${hi${hi}}}', '${xx}', 0),
                 ('${\\${hi${hi}}}', '${\\${hi${hi}}}', 0),
                 ('\\${${hi${hi}}}', '${hi${hi}}', len('\\${')),
-                ('\\${\\${hi\\\\${hi}}}', '${hi}', len('\\${\\${hi\\\\')) ]:
+                ('\\${\\${hi\\\\${hi}}}', '${hi}', len('\\${\\${hi\\\\'))]:
             self._test(inp, var, start, internal=var.count('{') > 1)
 
     def test_index(self):
@@ -99,7 +99,7 @@ class TestVariableSplitter(unittest.TestCase):
         self._test('*{x}[0]', '*{x}')
         self._test('&{x}[0]', '&{x}')
 
-    def test_index_with_iternal_vars(self):
+    def test_index_with_internal_vars(self):
         self._test('@{x}[${i}]', '@{x}', index='${i}')
         self._test('xx @{x}[${i}] ${xyz}', '@{x}', start=3, index='${i}')
         self._test('@@@@@{X{X}[${${i}-${${${i}}}}]', '@{X{X}', start=4,
@@ -152,10 +152,18 @@ class TestVariableSplitter(unittest.TestCase):
         assert_equals(res.base, base, "'%s' base" % inp)
         assert_equals(res.start, start, "'%s' start" % inp)
         assert_equals(res.end, end, "'%s' end" % inp)
-        assert_equals(res.identifier, identifier, "'%s' indentifier" % inp)
+        assert_equals(res.identifier, identifier, "'%s' identifier" % inp)
         assert_equals(res.index, index, "'%s' index" % inp)
         assert_equals(res._may_have_internal_variables, internal,
                       "'%s' internal" % inp)
+
+    def test_is_one_variable(self):
+        for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',
+                   '${var}xx}', '${x}${y}']:
+            assert_false(VariableSplitter(no, '$@').is_one_variable())
+        for yes in ['${var}', '${var${}', '${var${internal}}', '@{var}',
+                    '@{var}[0]']:
+            assert_true(VariableSplitter(yes, '$@').is_one_variable())
 
 
 class TestVariableIterator(unittest.TestCase):

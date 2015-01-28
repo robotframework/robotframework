@@ -83,24 +83,15 @@ class Variables(object):
 
     def _replace_list_until(self, items, replace_until):
         # @{list} variables can contain more or less arguments than needed.
-        # Therefore we need to go through arguments one by one.
-        processed = []
-        while len(processed) < replace_until and items:
-            processed.extend(self._replace_list([items.pop(0)]))
-        # If @{list} variable is opened, arguments going further must be
-        # escaped to prevent them being un-escaped twice.
-        if len(processed) > replace_until:
-            processed[replace_until:] = [self._escape(item)
-                                         for item in processed[replace_until:]]
-        return processed + items
-
-    def _escape(self, item):
-        item = utils.escape(item)
-        # Escape also special syntax used by Run Kw If and Run Kws.
-        # TODO: Move to utils.escape. Can be configurable if needed.
-        if item in ('ELSE', 'ELSE IF', 'AND'):
-            item = '\\' + item
-        return item
+        # Therefore we need to go through items one by one, and escape possible
+        # extra items we got.
+        replaced = []
+        while len(replaced) < replace_until and items:
+            replaced.extend(self._replace_list([items.pop(0)]))
+        if len(replaced) > replace_until:
+            replaced[replace_until:] = [utils.escape(item)
+                                        for item in replaced[replace_until:]]
+        return replaced + items
 
     def _replace_list(self, items):
         results = []
@@ -117,7 +108,7 @@ class Variables(object):
                 item.startswith('@{') and item.endswith('}')):
             return None
         var = VariableSplitter(item, self._identifiers)
-        if var.start != 0 or var.end != len(item):
+        if not var.is_one_variable():
             return None
         return '@{%s}' % var.get_replaced_base(self)
 
@@ -131,7 +122,9 @@ class Variables(object):
         if self._cannot_have_variables(item):
             return utils.unescape(item)
         var = VariableSplitter(item, self._identifiers)
-        if var.identifier and var.base and var.start == 0 and var.end == len(item):
+        if not var.identifier:
+            return utils.unescape(item)
+        if var.is_one_variable():
             return self._get_variable(var)
         return self.replace_string(item, var)
 
@@ -161,8 +154,7 @@ class Variables(object):
             result.append(value)
             string = string[splitter.end:]
             splitter = VariableSplitter(string, self._identifiers)
-        result = ''.join(result)
-        return result
+        return ''.join(result)
 
     def _get_variable(self, var):
         """'var' is an instance of a VariableSplitter"""
