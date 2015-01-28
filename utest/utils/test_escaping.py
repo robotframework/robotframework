@@ -157,6 +157,13 @@ class TestEscape(unittest.TestCase):
                          ('named=arg', 'named\\=arg')]:
             assert_equals(escape(inp), exp, inp)
 
+    def test_escape_control_words(self):
+        for inp in ['ELSE', 'ELSE IF', 'AND']:
+            assert_equals(escape(inp), '\\' + inp)
+            assert_equals(escape(inp.lower()), inp.lower())
+            assert_equals(escape('other' + inp), 'other' + inp)
+            assert_equals(escape(inp + ' '), inp + ' ')
+
 
 if __name__ == '__main__':
     unittest.main()

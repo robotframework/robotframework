@@ -15,13 +15,16 @@
 import re
 
 
-_SEQS_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
+_CONTROL_WORDS_TO_BE_ESCAPED = ('ELSE', 'ELSE IF', 'AND')
+_SEQUENCES_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
 
 
 def escape(item):
     if not isinstance(item, basestring):
         return item
-    for seq in _SEQS_TO_BE_ESCAPED:
+    if item in _CONTROL_WORDS_TO_BE_ESCAPED:
+        return '\\' + item
+    for seq in _SEQUENCES_TO_BE_ESCAPED:
         if seq in item:
             item = item.replace(seq, '\\' + seq)
     return item
