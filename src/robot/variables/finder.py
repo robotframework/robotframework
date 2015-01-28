@@ -19,7 +19,6 @@ from robot.utils import get_error_message, is_list_like, normalize
 
 from .isvar import is_list_var, is_scalar_var, validate_var
 from .notfound import raise_not_found
-from .tablesetter import DelayedVariable
 
 
 class VariableFinder(object):
@@ -30,7 +29,7 @@ class VariableFinder(object):
     def find(self, name):
         validate_var(name)
         try:
-            return self._find_variable(name)
+            return self._variables.store.find(name, self._variables)
         except KeyError:
             try:
                 return self._get_number_var(name)
@@ -47,13 +46,7 @@ class VariableFinder(object):
                             raise_not_found(name, self._variables.store.keys())
 
     def _find_variable(self, name):
-        variable = self._variables.store[name]
-        return self._solve_delayed(name, variable)
-
-    def _solve_delayed(self, name, value):
-        if isinstance(value, DelayedVariable):
-            return value.resolve(name, self._variables)
-        return value
+        return self._variables.store.find(name, self._variables)
 
     def _get_list_var_as_scalar(self, name):
         if not is_scalar_var(name):

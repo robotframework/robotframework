@@ -56,13 +56,7 @@ class Variables(object):
         return VariableFinder(self).find(name)
 
     def resolve_delayed(self):
-        # cannot iterate over `self.store` here because loop changes its state.
-        # TODO: This belongs to store
-        for var in self.store.keys():
-            try:
-                self[var]  # getting variable resolves it if needed
-            except DataError:
-                pass
+        self.store.resolve_delayed(self)
 
     def replace_list(self, items, replace_until=None):
         """Replaces variables from a list of items.

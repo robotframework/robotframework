@@ -77,15 +77,14 @@ class DelayedVariable(object):
 
     def resolve(self, name, variables):
         try:
-            value = self._resolve(name, variables)
+            return self._resolve(name, variables)
         except DataError, err:
-            variables.pop(name)
-            self._error_reporter(unicode(err))
-            msg = "Variable '%s' not found." % name
-            raise_not_found(name, list(variables), msg)
-        else:
-            variables[name] = value
-            return value
+            # Recursive resolving may have already removed variable.
+            if name in variables.store:
+                variables.store.pop(name)
+                self._error_reporter(unicode(err))
+            raise_not_found(name, list(variables.store),
+                            "Variable '%s' not found." % name)
 
     def _resolve(self, name, variables):
         with self._avoid_recursion:

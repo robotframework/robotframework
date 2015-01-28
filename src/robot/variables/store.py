@@ -12,10 +12,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
 from robot.utils import NormalizedDict
+
+from .tablesetter import DelayedVariable
 
 
 class VariableStore(NormalizedDict):
 
     def __init__(self):
         NormalizedDict.__init__(self, ignore='_')
+
+    def resolve_delayed(self, variables):
+        for name, value in self.items():
+            try:
+                self._resolve_delayed(name, value, variables)
+            except DataError:
+                pass
+
+    def _resolve_delayed(self, name, value, variables):
+        if not isinstance(value, DelayedVariable):
+            return value
+        self[name] = value.resolve(name, variables)
+        return self[name]
+
+    def find(self, name, variables):
+        return self._resolve_delayed(name, self[name], variables)
