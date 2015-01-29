@@ -1143,17 +1143,17 @@ class _Variables:
 
     def _resolve_possible_variable(self, name):
         try:
-            resolved = self._variables[name]
+            resolved = self._variables.replace_string(name)
             return self._unescape_variable_if_needed(resolved)
         except (KeyError, ValueError, DataError):
             return name
 
     def _unescape_variable_if_needed(self, name):
-        if not (isinstance(name, basestring) and len(name) > 1):
-            raise ValueError
         if name.startswith('\\'):
             name = name[1:]
-        elif name[0] in '$@' and name[1] != '{':
+        if len(name) < 2:
+            raise ValueError
+        if name[0] in '$@' and name[1] != '{':
             name = '%s{%s}' % (name[0], name[1:])
         if is_var(name):
             return name

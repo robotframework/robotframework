@@ -58,6 +58,5 @@ Environment Variables In User Keyword Metadata
 Escaping Environment Variables
     Check Test Case  ${TESTNAME}
 
-Empty Environment Variable Is No Recognized
+Empty Environment Variable
     Check Test Case  ${TESTNAME}
-

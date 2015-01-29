@@ -42,6 +42,6 @@ def contains_var(string, identifiers='$@'):
             bool(VariableIterator(string, identifiers)))
 
 
-def validate_var(string):
-    if not is_var(string):
+def validate_var(string, identifiers='$@'):
+    if not is_var(string, identifiers):
         raise DataError("Invalid variable name '%s'." % string)

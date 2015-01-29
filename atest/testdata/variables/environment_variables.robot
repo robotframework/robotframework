@@ -80,9 +80,9 @@ Environment Variables In User Keyword Metadata
 Escaping Environment Variables
     Should Be Equal  \%{THIS_IS_NOT_ENV_VAR}  %\{THIS_IS_NOT_ENV_VAR}
 
-Empty Environment Variable Is No Recognized
-    Should Be Equal  %{}  \%{}
-    Should Be Equal  %{ }  \%{ }
+Empty Environment Variable
+    [Documentation]    FAIL    Invalid variable name '%{}'.
+    Log  %{}
 
 *** Keywords ***
 UK With Environment Variables In Metadata
@@ -90,4 +90,3 @@ UK With Environment Variables In Metadata
     [Documentation]  %{THIS_ENV_VAR_IS_SET} in a uk doc
     Should Contain  ${mypath}  ${:}
     [Return]  %{THIS_ENV_VAR_IS_SET}
-

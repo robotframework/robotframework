@@ -20,6 +20,9 @@ Variable Should Exist Using $name format
 Variable Should Exist Using Escaped format
     Check Test Case    ${TEST NAME}
 
+Variable Should Exist With Variables
+    Check Test Case    ${TEST NAME}
+
 Variable Should Exist With Built In Variables
     Check Test Case    ${TEST NAME}
 
@@ -30,7 +33,8 @@ Variable Should Exist With Extended Variable Syntax And Missing Object
     Check Test Case    ${TEST NAME}
 
 Variable Should Exist With Invalid name
-    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 Variable Should Not Exist With Default error message
     Check Test Case    ${TEST NAME}
@@ -47,6 +51,9 @@ Variable Should Not Exist Using $name format
 Variable Should Not Exist Using Escaped format
     Check Test Case    ${TEST NAME}
 
+Variable Should Not Exist With Variables
+    Check Test Case    ${TEST NAME}
+
 Variable Should Not Exist With Built In Variables
     Check Test Case    ${TEST NAME}
 
@@ -57,7 +64,8 @@ Variable Should Not Exist With Extended Variable Syntax And Missing Object
     Check Test Case    ${TEST NAME}
 
 Variable Should Not Exist With Invalid name
-    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 Variable Should Exist In User Keyword When Variable Name Is Argument And Variable Exists
     Check Test Case    ${TEST NAME}

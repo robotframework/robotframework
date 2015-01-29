@@ -12,19 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
-try:
-    from java.lang.System import getProperty as getJavaSystemProperty
-except ImportError:
-    getJavaSystemProperty = lambda name: None
-
 from robot import utils
 from robot.errors import DataError
 from robot.output import LOGGER
 
 from .filesetter import VariableFileSetter
-from .finders import (ExtendedFinder, ListAsScalarFinder, NumberFinder,
-                      ScalarAsListFinder, StoredFinder)
+from .finders import (EnvironmentFinder, ExtendedFinder, ListAsScalarFinder,
+                      NumberFinder, ScalarAsListFinder, StoredFinder)
 from .isvar import validate_var
 from .notfound import raise_not_found
 from .store import VariableStore
@@ -52,10 +46,11 @@ class Variables(object):
             self.store.add(name, variables[name])
 
     def __getitem__(self, name):
-        validate_var(name)
+        validate_var(name, identifiers='$@%')
         stored = StoredFinder(self)
         extended = ExtendedFinder(self)
-        for finder in (stored,
+        for finder in (EnvironmentFinder(self.store),
+                       stored,
                        NumberFinder(),
                        ListAsScalarFinder(stored.find, extended.find),
                        ScalarAsListFinder(stored.find, extended.find),
@@ -169,21 +164,6 @@ class Variables(object):
             LOGGER.warn("Syntax '%s' is reserved for future use. Please "
                         "escape it like '\\%s'." % (value, value))
             return value
-
-        # 2) Handle environment variables and Java system properties
-        elif var.identifier == '%':
-            name = var.get_replaced_base(self).strip()
-            if not name:
-                return '%%{%s}' % var.base
-            value = utils.get_env_var(name)
-            if value is not None:
-                return value
-            value = getJavaSystemProperty(name)
-            if value is not None:
-                return value
-            raise_not_found('%%{%s}' % name, self.store,
-                            "Environment variable '%%{%s}' not found." % name,
-                            env_vars=True)
 
         # 3) Handle ${scalar} variables and @{list} variables without index
         elif var.index is None:

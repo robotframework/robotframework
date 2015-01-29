@@ -34,10 +34,10 @@ class TestVariables(unittest.TestCase):
 
     def test_set(self):
         for var in SCALARS + LISTS:
-            assert not self.varz.has_key(var)
+            assert var not in self.varz
             self.varz[var] = ['value']
-            assert self.varz.has_key(var), var
-            assert self.varz.has_key(var.lower().replace(' ',''))
+            assert var in self.varz
+            assert var.lower().replace(' ', '') in self.varz
             self.varz.clear()
 
     def test_set_invalid(self):
@@ -74,13 +74,6 @@ class TestVariables(unittest.TestCase):
     def test_getitem_invalid(self):
         for var in NOKS:
             self.assertRaises(DataError, self.varz.__getitem__, var)
-
-    def test_has_key(self):
-        self.varz['${k}'] = 'v'
-        assert self.varz.has_key('${k}')
-        assert self.varz.has_key('${1}')
-        assert self.varz.has_key('${k.upper()}')
-        assert not self.varz.has_key('${non-existing}')
 
     def test__contains__(self):
         self.varz['${k}'] = 'v'
@@ -257,7 +250,7 @@ class TestVariables(unittest.TestCase):
         assert_equal(self.varz.replace_scalar('${name}'), exp)
         assert_equal(self.varz.replace_list(['${name}', 42]), [exp, 42])
         assert_equal(self.varz.replace_string('${name}'), str(exp))
-        assert_true(self.varz.has_key('${name}'))
+        assert_true('${name}' in self.varz)
 
     def test_copy(self):
         varz = Variables(identifiers=['$'])

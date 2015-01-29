@@ -14,10 +14,16 @@
 
 import re
 
+try:
+    from java.lang.System import getProperty as get_java_property
+except ImportError:
+    get_java_property = lambda name: None
+
 from robot.errors import DataError
-from robot.utils import get_error_message, is_list_like, normalize
+from robot.utils import get_env_var, get_error_message, is_list_like, normalize
 
 from .isvar import is_list_var, is_scalar_var
+from .notfound import raise_not_found
 
 
 class StoredFinder(object):
@@ -114,3 +120,22 @@ class ExtendedFinder(object):
         except:
             raise DataError("Resolving variable '%s' failed: %s"
                             % (name, get_error_message()))
+
+
+class EnvironmentFinder(object):
+
+    def __init__(self, store):
+        self._store = store
+
+    def find(self, name):
+        if name[0] != '%':
+            raise ValueError
+        name = name[2:-1].strip()
+        for getter in get_env_var, get_java_property:
+            value = getter(name)
+            if value is not None:
+                return value
+        name = '%%{%s}' % name
+        raise_not_found(name, self._store,
+                        "Environment variable '%s' not found." % name,
+                        env_vars=True)
