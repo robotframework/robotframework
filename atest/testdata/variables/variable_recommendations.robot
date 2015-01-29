@@ -130,7 +130,7 @@ Multiple Missing Variables
     Log Many    ${SSTRING}    @{LLIST}
 
 Empty Variable Name
-    [Documentation]    FAIL    Invalid variable name '${}'.
+    [Documentation]    FAIL    Variable '${}' not found.
     Log    ${}
 
 Environment Variable With Misspelled Internal Variables

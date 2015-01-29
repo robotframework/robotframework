@@ -527,11 +527,12 @@ class _VariableScopes:
             varz.__setitem__(name, value)
         self.current.__setitem__(name, value)
 
-    def keys(self):
-        return self.current.keys()
+    def __iter__(self):
+        return iter(self.current)
 
     def __contains__(self, name):
         return name in self.current
 
-    def contains(self, name, extended=False):
-        return self.current.contains(name, extended)
+    @property
+    def store(self):
+        return self.current.store

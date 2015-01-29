@@ -51,18 +51,6 @@ class TestVariables(unittest.TestCase):
                 self.varz[var] = value
                 assert_equal(self.varz[var], value)
 
-    def test_update(self):
-        self.varz['${a}'] = 1
-        self.varz.update({'${b}': 2})
-        for k, v in [('${a}', 1), ('${b}', 2)]:
-            assert_true(k in self.varz)
-            assert_true(k in self.varz.keys())
-            assert_equal(self.varz[k], v)
-
-    def test_update_invalid(self):
-        self.varz['${a}'] = 1
-        assert_raises(DataError, self.varz.update, {'invalid variable name': 2})
-
     def test_set_list(self):
         for var in LISTS:
             for value in [[], [''], ['str'], [10], ['hi', 'u'], ['hi', 2],
@@ -71,27 +59,12 @@ class TestVariables(unittest.TestCase):
                 assert_equal(self.varz[var], value)
                 self.varz.clear()
 
-    def test_getitem_invalid(self):
-        for var in NOKS:
-            self.assertRaises(DataError, self.varz.__getitem__, var)
-
     def test__contains__(self):
         self.varz['${k}'] = 'v'
         assert '${k}' in self.varz
         assert '${-3}' in self.varz
         assert '${k.upper()}' in self.varz
         assert '${nok}' not in self.varz
-
-    def test_contains_(self):
-        self.varz['${k}'] = 'v'
-        assert self.varz.contains('${k}')
-        assert self.varz.contains('${ K }')
-        assert not self.varz.contains('${-3}')
-        assert self.varz.contains('${-3}', extended=True)
-        assert not self.varz.contains('${k.upper()}')
-        assert self.varz.contains('${k.upper()}', extended=True)
-        assert not self.varz.contains('${nok}')
-        assert not self.varz.contains('${nok)}', extended=True)
 
     def test_replace_scalar(self):
         self.varz['${foo}'] = 'bar'

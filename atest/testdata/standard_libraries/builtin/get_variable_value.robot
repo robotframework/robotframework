@@ -32,13 +32,23 @@ Use escaped variable syntaxes
     Should be equal    ${z}    default
 
 List variables
-    @{x} =    Get Variable Value    ${LIST}
-    Should be true    ${x} == ['1', '2']
-    @{y} =    Get Variable Value    ${nonex}    ${x}
-    Should be equal    ${y}    ${x}
-    @{z} =    Get Variable Value    ${nonex}
-    Should be empty    ${z}
+    @{x} =    Get Variable Value    @{LIST}
+    Should be true    ${x}    ${LIST}
+    @{x} =    Get Variable Value    @{nonex}    @{LIST}
+    Should be true    ${x}    ${LIST}
+    @{x} =    Get Variable Value    @{nonex}
+    Should be empty    ${x}
 
-Invalid variable syntax
+Extended variable syntax
+    ${x} =    Get Variable Value    ${VAR.upper()}
+    Should Be Equal    ${x}    VAR TABLE
+    ${x} =    Get Variable Value    ${VAR.nonex}    default
+    Should Be Equal    ${x}    default
+
+Invalid variable syntax 1
     [Documentation]    FAIL Invalid variable syntax 'notvar'.
     Get Variable Value    notvar
+
+Invalid variable syntax 2
+    [Documentation]    FAIL Invalid variable syntax ''.
+    Get Variable Value    \

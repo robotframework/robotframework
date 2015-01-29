@@ -41,13 +41,13 @@ class VariableAssigner(object):
             context.info(format_assign_message(name, value))
 
     def _extended_assign(self, name, value, variables):
-        if '.' not in name or name.startswith('@') \
-                or variables.contains(name, extended=False):
+        if '.' not in name or name in variables.store or name.startswith('@'):
             return False
         base, attr = self._split_extended_assign(name)
-        if not variables.contains(base, extended=True):
+        try:
+            var = variables[base]
+        except DataError:
             return False
-        var = variables[base]
         if not (self._variable_supports_extended_assign(var) and
                 self._is_valid_extended_attribute(attr)):
             return False

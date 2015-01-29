@@ -21,24 +21,25 @@ from .tablesetter import DelayedVariable
 
 class VariableStore(object):
 
-    def __init__(self):
+    def __init__(self, variables):
         self.store = NormalizedDict(ignore='_')
+        self._variables = variables
 
-    def resolve_delayed(self, variables):
+    def resolve_delayed(self):
         for name, value in self.store.items():
             try:
-                self._resolve_delayed(name, value, variables)
+                self._resolve_delayed(name, value)
             except DataError:
                 pass
 
-    def _resolve_delayed(self, name, value, variables):
+    def _resolve_delayed(self, name, value):
         if not isinstance(value, DelayedVariable):
             return value
-        self.store[name] = value.resolve(name, variables)
+        self.store[name] = value.resolve(name, self._variables)
         return self.store[name]
 
-    def find(self, name, variables):
-        return self._resolve_delayed(name, self.store[name], variables)
+    def find(self, name):
+        return self._resolve_delayed(name, self.store[name])
 
     def clear(self):
         self.store.clear()

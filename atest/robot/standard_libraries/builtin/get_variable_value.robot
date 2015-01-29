@@ -4,7 +4,6 @@ Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Get value when variable exists
     Check Test Case  ${TESTNAME}
 
@@ -20,6 +19,9 @@ Use escaped variable syntaxes
 List variables
     Check Test Case  ${TESTNAME}
 
-Invalid variable syntax
+Extended variable syntax
     Check Test Case  ${TESTNAME}
 
+Invalid variable syntax
+    Check Test Case  ${TESTNAME} 1
+    Check Test Case  ${TESTNAME} 2

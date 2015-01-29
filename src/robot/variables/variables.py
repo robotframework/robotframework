@@ -18,8 +18,7 @@ from robot.output import LOGGER
 
 from .filesetter import VariableFileSetter
 from .finders import (EnvironmentFinder, ExtendedFinder, ListAsScalarFinder,
-                      NumberFinder, ScalarAsListFinder, StoredFinder)
-from .isvar import validate_var
+                      NumberFinder, ScalarAsListFinder)
 from .notfound import raise_not_found
 from .store import VariableStore
 from .tablesetter import VariableTableSetter
@@ -36,33 +35,31 @@ class Variables(object):
 
     def __init__(self, identifiers=('$', '@', '%', '&', '*')):
         self._identifiers = identifiers
-        self.store = VariableStore()
+        self.store = VariableStore(self)
 
     def __setitem__(self, name, value):
         self.store.add(name, value)
 
     def update(self, variables):
-        for name in variables:
-            self.store.add(name, variables[name])
+        # TODO: Fugly!
+        self.store.store.update(variables.store.store)
 
     def __getitem__(self, name):
-        validate_var(name, identifiers='$@%')
-        stored = StoredFinder(self)
         extended = ExtendedFinder(self)
         for finder in (EnvironmentFinder(self.store),
-                       stored,
+                       self.store,
                        NumberFinder(),
-                       ListAsScalarFinder(stored.find, extended.find),
-                       ScalarAsListFinder(stored.find, extended.find),
+                       ListAsScalarFinder(self.store.find, extended.find),
+                       ScalarAsListFinder(self.store.find, extended.find),
                        extended):
             try:
                 return finder.find(name)
-            except ValueError:
+            except (KeyError, ValueError):
                 pass
         raise_not_found(name, self.store)
 
     def resolve_delayed(self):
-        self.store.resolve_delayed(self)
+        self.store.resolve_delayed()
 
     def replace_list(self, items, replace_until=None):
         """Replaces variables from a list of items.
@@ -198,19 +195,8 @@ class Variables(object):
         else:
             return True
 
-    def contains(self, variable, extended=False):
-        if extended:
-            return variable in self
-        return variable in self.store
-
     def clear(self):
         self.store.clear()
-
-    def keys(self):
-        return list(self.store)
-
-    def items(self):
-        return self.store.store.items()
 
     def copy(self):
         # TODO: This is fugly!

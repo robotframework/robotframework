@@ -936,7 +936,8 @@ class _Variables:
         Note: Prior to Robot Framework 2.7.4 variables were returned as
         a custom object that did not support all dictionary methods.
         """
-        return utils.NormalizedDict(self._variables.current, ignore='_')
+        variables = ((name, self._variables[name]) for name in self._variables)
+        return utils.NormalizedDict(variables, ignore='_')
 
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):
@@ -966,7 +967,7 @@ class _Variables:
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
-        for name in sorted(variables.keys(), key=lambda s: s.lower()):
+        for name in sorted(variables, key=lambda s: s.lower()):
             msg = utils.format_assign_message(name, variables[name],
                                               cut_long=False)
             self.log(msg, level)

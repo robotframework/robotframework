@@ -26,18 +26,6 @@ from .isvar import is_list_var, is_scalar_var
 from .notfound import raise_not_found
 
 
-class StoredFinder(object):
-
-    def __init__(self, variables):
-        self._variables = variables
-
-    def find(self, name):
-        try:
-            return self._variables.store.find(name, self._variables)
-        except KeyError:
-            raise ValueError
-
-
 class NumberFinder(object):
 
     def find(self, name):
@@ -68,7 +56,7 @@ class ListAsScalarFinder(object):
         name = '@'+name[1:]
         try:
             return self._find_stored(name)
-        except ValueError:
+        except KeyError:
             return self._find_extended(name)
 
 
@@ -84,7 +72,7 @@ class ScalarAsListFinder(object):
         name = '$'+name[1:]
         try:
             value = self._find_stored(name)
-        except ValueError:
+        except KeyError:
             value = self._find_extended(name)
         if not is_list_like(value):
             raise DataError("Using scalar variable '%s' as list variable '@%s' "
