@@ -28,70 +28,88 @@ class VariableFinder(object):
 
     def find(self, name):
         validate_var(name)
+        stored = StoredFinder(self._variables)
+        extended = ExtendedFinder(self._variables)
+        for finder in (stored,
+                       NumberFinder(),
+                       ListAsScalarFinder(stored.find, extended.find),
+                       ScalarAsListFinder(stored.find, extended.find),
+                       extended):
+            try:
+                return finder.find(name)
+            except ValueError:
+                pass
+        raise_not_found(name, self._variables.store.keys())
+
+
+class StoredFinder(object):
+
+    def __init__(self, variables):
+        self._variables = variables
+
+    def find(self, name):
         try:
             return self._variables.store.find(name, self._variables)
         except KeyError:
-            try:
-                return self._get_number_var(name)
-            except ValueError:
-                try:
-                    return self._get_list_var_as_scalar(name)
-                except ValueError:
-                    try:
-                        return self._get_scalar_var_as_list(name)
-                    except ValueError:
-                        try:
-                            return self._get_extended_var(name)
-                        except ValueError:
-                            raise_not_found(name, self._variables.store.keys())
-
-    def _find_variable(self, name):
-        return self._variables.store.find(name, self._variables)
-
-    def _get_list_var_as_scalar(self, name):
-        if not is_scalar_var(name):
             raise ValueError
-        name = '@'+name[1:]
-        try:
-            return self._find_variable(name)
-        except KeyError:
-            return self._get_extended_var(name)
 
-    def _get_scalar_var_as_list(self, name):
-        if not is_list_var(name):
-            raise ValueError
-        name = '$'+name[1:]
-        try:
-            value = self._find_variable(name)
-        except KeyError:
-            value = self._get_extended_var(name)
-        if not is_list_like(value):
-            raise DataError("Using scalar variable '%s' as list variable '@%s' "
-                            "requires its value to be list or list-like."
-                            % (name, name[1:]))
-        return value
 
-    def _get_extended_var(self, name):
-        # TODO: Should be able to use self, not self._variables here.
-        return ExtendedVariableFinder(self._variables).find(name)
+class NumberFinder(object):
 
-    def _get_number_var(self, name):
+    def find(self, name):
         if name[0] != '$':
             raise ValueError
         number = normalize(name)[2:-1]
         try:
-            return self._get_int_var(number)
+            return self._get_int(number)
         except ValueError:
             return float(number)
 
-    def _get_int_var(self, number):
+    def _get_int(self, number):
         bases = {'0b': 2, '0o': 8, '0x': 16}
         if number.startswith(tuple(bases)):
             return int(number[2:], bases[number[:2]])
         return int(number)
 
 
-class ExtendedVariableFinder(object):
+class ListAsScalarFinder(object):
+
+    def __init__(self, find_stored, find_extended):
+        self._find_stored = find_stored
+        self._find_extended = find_extended
+
+    def find(self, name):
+        if not is_scalar_var(name):
+            raise ValueError
+        name = '@'+name[1:]
+        try:
+            return self._find_stored(name)
+        except ValueError:
+            return self._find_extended(name)
+
+
+class ScalarAsListFinder(object):
+
+    def __init__(self, find_stored, find_extended):
+        self._find_stored = find_stored
+        self._find_extended = find_extended
+
+    def find(self, name):
+        if not is_list_var(name):
+            raise ValueError
+        name = '$'+name[1:]
+        try:
+            value = self._find_stored(name)
+        except ValueError:
+            value = self._find_extended(name)
+        if not is_list_like(value):
+            raise DataError("Using scalar variable '%s' as list variable '@%s' "
+                            "requires its value to be list or list-like."
+                            % (name, name[1:]))
+        return value
+
+
+class ExtendedFinder(object):
     _extended_var_re = re.compile(r'''
     ^\${         # start of the string and "${"
     (.+?)        # base name (group 1)
@@ -100,7 +118,7 @@ class ExtendedVariableFinder(object):
     ''', re.UNICODE|re.VERBOSE)
 
     def __init__(self, variables):
-        self.variables = variables
+        self._variables = variables
 
     def find(self, name):
         res = self._extended_var_re.search(name)
@@ -109,7 +127,7 @@ class ExtendedVariableFinder(object):
         base_name = res.group(1)
         expression = res.group(2)
         try:
-            variable = self.variables['${%s}' % base_name]
+            variable = self._variables['${%s}' % base_name]
         except DataError, err:
             raise DataError("Resolving variable '%s' failed: %s"
                             % (name, unicode(err)))
