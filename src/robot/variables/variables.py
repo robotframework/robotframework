@@ -23,7 +23,8 @@ from robot.errors import DataError
 from robot.output import LOGGER
 
 from .filesetter import VariableFileSetter
-from .finder import VariableFinder
+from .finders import (ExtendedFinder, ListAsScalarFinder, NumberFinder,
+                      ScalarAsListFinder, StoredFinder)
 from .isvar import validate_var
 from .notfound import raise_not_found
 from .store import VariableStore
@@ -51,7 +52,19 @@ class Variables(object):
             self.store.add(name, variables[name])
 
     def __getitem__(self, name):
-        return VariableFinder(self).find(name)
+        validate_var(name)
+        stored = StoredFinder(self)
+        extended = ExtendedFinder(self)
+        for finder in (stored,
+                       NumberFinder(),
+                       ListAsScalarFinder(stored.find, extended.find),
+                       ScalarAsListFinder(stored.find, extended.find),
+                       extended):
+            try:
+                return finder.find(name)
+            except ValueError:
+                pass
+        raise_not_found(name, self.store)
 
     def resolve_delayed(self):
         self.store.resolve_delayed(self)

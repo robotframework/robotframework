@@ -17,29 +17,7 @@ import re
 from robot.errors import DataError
 from robot.utils import get_error_message, is_list_like, normalize
 
-from .isvar import is_list_var, is_scalar_var, validate_var
-from .notfound import raise_not_found
-
-
-class VariableFinder(object):
-
-    def __init__(self, variables):
-        self._variables = variables
-
-    def find(self, name):
-        validate_var(name)
-        stored = StoredFinder(self._variables)
-        extended = ExtendedFinder(self._variables)
-        for finder in (stored,
-                       NumberFinder(),
-                       ListAsScalarFinder(stored.find, extended.find),
-                       ScalarAsListFinder(stored.find, extended.find),
-                       extended):
-            try:
-                return finder.find(name)
-            except ValueError:
-                pass
-        raise_not_found(name, self._variables.store)
+from .isvar import is_list_var, is_scalar_var
 
 
 class StoredFinder(object):
