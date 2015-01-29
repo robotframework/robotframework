@@ -27,8 +27,7 @@ class VariableTableSetter(object):
 
     def set(self, variables, overwrite=False):
         for name, value in VariableTableReader().read(variables):
-            if overwrite or name not in self._store:
-                self._store[name] = value
+            self._store.add(name, value, overwrite)
 
 
 class VariableTableReader(object):
@@ -81,7 +80,7 @@ class DelayedVariable(object):
         except DataError, err:
             # Recursive resolving may have already removed variable.
             if name in variables.store:
-                variables.store.pop(name)
+                variables.store.remove(name)
                 self._error_reporter(unicode(err))
             raise_not_found(name, list(variables.store),
                             "Variable '%s' not found." % name)

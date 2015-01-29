@@ -44,13 +44,11 @@ class Variables(object):
         self.store = VariableStore()
 
     def __setitem__(self, name, value):
-        validate_var(name)
-        self.store[name] = value
+        self.store.add(name, value)
 
-    def update(self, dict=None, **kwargs):
-        for name in list(dict or []) + list(kwargs):
-            validate_var(name)
-        self.store.update(dict, **kwargs)
+    def update(self, variables):
+        for name in variables:
+            self.store.add(name, variables[name])
 
     def __getitem__(self, name):
         return VariableFinder(self).find(name)
@@ -170,7 +168,7 @@ class Variables(object):
             value = getJavaSystemProperty(name)
             if value is not None:
                 return value
-            raise_not_found('%%{%s}' % name, self.store.keys(),
+            raise_not_found('%%{%s}' % name, self.store,
                             "Environment variable '%%{%s}' not found." % name,
                             env_vars=True)
 
@@ -186,7 +184,7 @@ class Variables(object):
                 name = '@{%s}' % var.get_replaced_base(self)
                 return self[name][index]
             except (ValueError, DataError, IndexError):
-                raise_not_found(var.base, self.store.keys(),
+                raise_not_found(var.base, self.store,
                                 "Variable '@{%s}[%s]' not found."
                                 % (var.base, var.index))
 
@@ -199,15 +197,13 @@ class Variables(object):
         setter = VariableTableSetter(self.store)
         setter.set(variables, overwrite)
 
-    def has_key(self, variable):
+    def __contains__(self, name):
         try:
-            self[variable]
+            self[name]
         except DataError:
             return False
         else:
             return True
-
-    __contains__ = has_key
 
     def contains(self, variable, extended=False):
         if extended:
@@ -218,14 +214,15 @@ class Variables(object):
         self.store.clear()
 
     def keys(self):
-        return self.store.keys()
+        return list(self.store)
 
     def items(self):
-        return self.store.items()
+        return self.store.store.items()
 
     def copy(self):
+        # TODO: This is fugly!
         variables = Variables(self._identifiers)
-        variables.store = self.store.copy()
+        variables.store.store = self.store.store.copy()
         return variables
 
     def __iter__(self):
@@ -233,6 +230,3 @@ class Variables(object):
 
     def __len__(self):
         return len(self.store)
-
-    def pop(self, key=None, *default):
-        return self.store.pop(key, *default)

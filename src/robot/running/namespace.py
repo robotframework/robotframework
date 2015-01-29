@@ -530,10 +530,8 @@ class _VariableScopes:
     def keys(self):
         return self.current.keys()
 
-    def has_key(self, key):
-        return self.current.has_key(key)
-
-    __contains__ = has_key
+    def __contains__(self, name):
+        return name in self.current
 
     def contains(self, name, extended=False):
         return self.current.contains(name, extended)

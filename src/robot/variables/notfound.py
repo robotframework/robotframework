@@ -26,7 +26,7 @@ def raise_not_found(name, candidates, msg=None, env_vars=False):
     if msg is None:
         msg = "Variable '%s' not found." % name
     if env_vars:
-        candidates += ['%%{%s}' % var for var in get_env_vars()]
+        candidates = list(candidates) + ['%%{%s}' % ev for ev in get_env_vars()]
     normalizer = partial(normalize, ignore='$@%&*{}_', caseless=True,
                          spaceless=True)
     finder = RecommendationFinder(normalizer)

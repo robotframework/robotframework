@@ -39,7 +39,7 @@ class VariableFinder(object):
                 return finder.find(name)
             except ValueError:
                 pass
-        raise_not_found(name, self._variables.store.keys())
+        raise_not_found(name, self._variables.store)
 
 
 class StoredFinder(object):

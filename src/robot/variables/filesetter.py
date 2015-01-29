@@ -47,8 +47,7 @@ class VariableFileSetter(object):
                 value = list(value)
             else:
                 name = '${%s}' % name
-            if overwrite or name not in self._store:
-                self._store[name] = value
+            self._store.add(name, value, overwrite)
 
 
 class VariableFileImporter(object):
