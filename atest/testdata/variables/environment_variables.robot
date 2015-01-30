@@ -6,8 +6,8 @@ Meta: PATH      %{PATH}
 Library         OperatingSystem
 
 *** Variables ***
-${PATH}  %{PATH}
-@{PATH}  %{PATH}
+${SCALAR PATH}  %{PATH}
+@{LIST PATH}    %{PATH}
 
 *** Test Cases ***
 Environment Variables In Keyword Argument
@@ -59,10 +59,10 @@ Environment Variables Are Underscore Sensitive
     Log  %{TH_IS_ENVVAR_IS_SET}
 
 Environment Variables In Variable Table
-    Should Contain  ${PATH}  ${:}
-    Should Contain  @{PATH}[0]  ${:}
-    Should Be Equal  ${PATH}  %{PATH}
-    Should Be Equal  @{PATH}[0]  %{PATH}
+    Should Contain  ${SCALAR PATH}  ${:}
+    Should Contain  @{LIST PATH}[0]  ${:}
+    Should Be Equal  ${SCALAR PATH}  %{PATH}
+    Should Be Equal  @{LIST PATH}[0]  %{PATH}
 
 Environment Variables In Settings Table
     Should Contain  @{TEST_TAGS}[0]  ${:}

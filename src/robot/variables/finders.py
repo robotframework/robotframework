@@ -22,8 +22,18 @@ except ImportError:
 from robot.errors import DataError
 from robot.utils import get_env_var, get_error_message, is_list_like, normalize
 
-from .isvar import is_list_var, is_scalar_var
 from .notfound import raise_not_found
+
+
+class StoredFinder(object):
+
+    def __init__(self, store):
+        self._store = store
+
+    def find(self, name):
+        if name[0] not in '$@':
+            raise ValueError
+        return self._store.find(name[2:-1])
 
 
 class NumberFinder(object):
@@ -44,46 +54,9 @@ class NumberFinder(object):
         return int(number)
 
 
-class ListAsScalarFinder(object):
-
-    def __init__(self, find_stored, find_extended):
-        self._find_stored = find_stored
-        self._find_extended = find_extended
-
-    def find(self, name):
-        if not is_scalar_var(name):
-            raise ValueError
-        name = '@'+name[1:]
-        try:
-            return self._find_stored(name)
-        except KeyError:
-            return self._find_extended(name)
-
-
-class ScalarAsListFinder(object):
-
-    def __init__(self, find_stored, find_extended):
-        self._find_stored = find_stored
-        self._find_extended = find_extended
-
-    def find(self, name):
-        if not is_list_var(name):
-            raise ValueError
-        name = '$'+name[1:]
-        try:
-            value = self._find_stored(name)
-        except KeyError:
-            value = self._find_extended(name)
-        if not is_list_like(value):
-            raise DataError("Using scalar variable '%s' as list variable '@%s' "
-                            "requires its value to be list or list-like."
-                            % (name, name[1:]))
-        return value
-
-
 class ExtendedFinder(object):
     _extended_var_re = re.compile(r'''
-    ^\${         # start of the string and "${"
+    ^[\$@]{      # start of the string and "${" or "@{"
     (.+?)        # base name (group 1)
     ([^\s\w].+)  # extended part (group 2)
     }$           # "}" and end of the string

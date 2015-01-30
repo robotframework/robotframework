@@ -43,7 +43,7 @@ def init_global_variables(settings):
                          ('${\\n}', os.linesep),
                          ('${SPACE}', ' '),
                          ('${EMPTY}', ''),
-                         ('@{EMPTY}', ()),
+                # TODO   ('@{EMPTY}', ()),
                          ('${True}', True),
                          ('${False}', False),
                          ('${None}', None),

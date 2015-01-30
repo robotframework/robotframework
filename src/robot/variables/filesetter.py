@@ -43,10 +43,7 @@ class VariableFileSetter(object):
     def _set(self, variables, overwrite=False):
         for name, value in variables:
             if name.startswith('LIST__'):
-                name = '@{%s}' % name[len('LIST__'):]
-                value = list(value)
-            else:
-                name = '${%s}' % name
+                name = name[len('LIST__'):]
             self._store.add(name, value, overwrite)
 
 
@@ -101,6 +98,7 @@ class VariableFileImporter(object):
     def _validate_variables(self, variables):
         for name, value in variables:
             if name.startswith('LIST__') and not is_list_like(value):
+                # TODO: what to do with this error
                 name = '@{%s}' % name[len('LIST__'):]
                 raise DataError("List variable '%s' cannot get a non-list "
                                 "value '%s'" % (name, unic(value)))

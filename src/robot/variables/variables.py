@@ -13,10 +13,12 @@
 #  limitations under the License.
 
 from robot.errors import DataError
+from robot.utils import is_list_like
 
 from .filesetter import VariableFileSetter
-from .finders import (EnvironmentFinder, ExtendedFinder, ListAsScalarFinder,
-                      NumberFinder, ScalarAsListFinder)
+from .finders import (EnvironmentFinder, ExtendedFinder, NumberFinder,
+                      StoredFinder)
+from .isvar import validate_var
 from .notfound import raise_not_found
 from .replacer import VariableReplacer
 from .store import VariableStore
@@ -36,20 +38,26 @@ class Variables(object):
         self.replacer = VariableReplacer(self)
 
     def __setitem__(self, name, value):
-        self.store.add(name, value)
+        validate_var(name)
+        if name[0] == '@' and not is_list_like(value):
+            raise DataError('TODO')
+        self.store.add(name[2:-1], value)
 
     def __getitem__(self, name):
+        stored = StoredFinder(self.store)
         extended = ExtendedFinder(self)
         for finder in (EnvironmentFinder(self.store),
-                       self.store,
+                       stored,
                        NumberFinder(),
-                       ListAsScalarFinder(self.store.find, extended.find),
-                       ScalarAsListFinder(self.store.find, extended.find),
                        extended):
             try:
-                return finder.find(name)
+                value = finder.find(name)
             except (KeyError, ValueError):
-                pass
+                continue
+            if name[0] == '@' and not is_list_like(value):
+                raise DataError("Value of variable '%s' is not list or "
+                                "list-like." % name)
+            return value
         raise_not_found(name, self.store)
 
     def resolve_delayed(self):

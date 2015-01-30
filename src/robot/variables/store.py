@@ -15,7 +15,6 @@
 from robot.errors import DataError
 from robot.utils import NormalizedDict
 
-from .isvar import validate_var
 from .tablesetter import DelayedVariable
 
 
@@ -45,7 +44,6 @@ class VariableStore(object):
         self.store.clear()
 
     def add(self, name, value, overwrite=True):
-        validate_var(name)
         if overwrite or name not in self.store:
             self.store[name] = value
 
