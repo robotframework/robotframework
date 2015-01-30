@@ -8,7 +8,10 @@ Simple Typo
     Check Test Case    ${TESTNAME} Scalar
     Check Test Case    ${TESTNAME} List
 
-Access Scalar In List With Typo
+Access Scalar In List With Typo In Variable
+    Check Test Case    ${TESTNAME}
+
+Access Scalar In List With Typo In Index
     Check Test Case    ${TESTNAME}
 
 Long Garbage Variable

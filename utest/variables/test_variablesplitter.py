@@ -157,13 +157,19 @@ class TestVariableSplitter(unittest.TestCase):
         assert_equals(res._may_have_internal_variables, internal,
                       "'%s' internal" % inp)
 
-    def test_is_one_variable(self):
+    def test_is_variable(self):
         for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',
                    '${var}xx}', '${x}${y}']:
-            assert_false(VariableSplitter(no, '$@').is_one_variable())
+            assert_false(VariableSplitter(no).is_variable())
         for yes in ['${var}', '${var${}', '${var${internal}}', '@{var}',
                     '@{var}[0]']:
-            assert_true(VariableSplitter(yes, '$@').is_one_variable())
+            assert_true(VariableSplitter(yes).is_variable())
+
+    def test_is_list_variable(self):
+        for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',
+                   '${var}xx}', '${x}${y}', '@{list}[0]']:
+            assert_false(VariableSplitter(no).is_list_variable())
+        assert_true(VariableSplitter('@{list}').is_list_variable())
 
 
 class TestVariableIterator(unittest.TestCase):

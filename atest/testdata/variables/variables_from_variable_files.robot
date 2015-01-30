@@ -63,11 +63,9 @@ List With Escapes
     Test List With Escapes    @{LIST WITH ESCAPES}
 
 List With No Items
-    [Documentation]    FAIL STARTS: Variable '\@{EMPTY LIST}[0]' not found.
     Should Be True    @{EMPTY LIST} == []
     ${ret} =    Catenate    @{EMPTY LIST}    @{EMPTY LIST}    only value    @{EMPTY LIST}
     Should Be Equal    ${ret}    only value
-    Log    @{EMPTY LIST}[0]
 
 List With Objects
     Should Be Equal    @{objects}[0]    Hello world!

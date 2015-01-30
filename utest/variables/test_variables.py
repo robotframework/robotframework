@@ -226,11 +226,10 @@ class TestVariables(unittest.TestCase):
         assert_true('${name}' in self.varz)
 
     def test_copy(self):
-        varz = Variables(identifiers=['$'])
+        varz = Variables()
         varz['${foo}'] = 'bar'
         copy = varz.copy()
         assert_equal(copy['${foo}'], 'bar')
-        assert_equal(copy._identifiers, ['$'])
 
     if sys.platform.startswith('java'):
 

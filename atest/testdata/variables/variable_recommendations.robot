@@ -11,7 +11,7 @@ ${SIMILAR VAR 1}
 ${SIMILAR VAR 2}
 ${SIMILAR VAR 3}
 ${Cäersŵs}
-${INDENT}    ${SPACE * 4}
+${INDENT}         ${SPACE * 4}
 
 *** Test Cases ***
 Simple Typo Scalar
@@ -24,10 +24,15 @@ Simple Typo List
     ...    ${INDENT}\@{LIST}
     Log    @{LLIST}
 
-Access Scalar In List With Typo
-    [Documentation]    FAIL    Variable '@{LLIST}[0]' not found. Did you mean:
+Access Scalar In List With Typo In Variable
+    [Documentation]    FAIL    Variable '@{LLIST}' not found. Did you mean:
     ...    ${INDENT}\@{LIST}
     Log    @{LLIST}[0]
+
+Access Scalar In List With Typo In Index
+    [Documentation]    FAIL    Variable '${STRENG}' not found. Did you mean:
+    ...    ${INDENT}\${STRING}
+    Log    @{LIST}[${STRENG}]
 
 Long Garbage Variable
     [Documentation]    FAIL    Variable '${dEnOKkgGlYBHwotU2bifJ56w487jD2NJxCrcM62g}' not found.

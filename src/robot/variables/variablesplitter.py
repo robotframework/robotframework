@@ -15,7 +15,7 @@
 
 class VariableSplitter(object):
 
-    def __init__(self, string, identifiers):
+    def __init__(self, string, identifiers='$@%&*'):
         self.identifier = None
         self.base = None
         self.index = None
@@ -31,14 +31,22 @@ class VariableSplitter(object):
         else:
             self._finalize()
 
-    def get_replaced_base(self, variables):
+    def get_replaced_variable(self, replacer):
         if self._may_have_internal_variables:
-            return variables.replace_string(self.base)
-        return self.base
+            base = replacer.replace_string(self.base)
+        else:
+            base = self.base
+        # This omits possible list variable index.
+        return '%s{%s}' % (self.identifier, base)
 
-    def is_one_variable(self):
+    def is_variable(self):
         return bool(self.identifier and self.base and
                     self.start == 0 and self.end == self._max_end)
+
+    def is_list_variable(self):
+        return bool(self.identifier == '@' and self.base and
+                    self.start == 0 and self.end == self._max_end and
+                    not self.index)
 
     def _finalize(self):
         self.identifier = self._variable_chars[0]
@@ -142,7 +150,7 @@ class VariableSplitter(object):
 
 class VariableIterator(object):
 
-    def __init__(self, string, identifiers):
+    def __init__(self, string, identifiers='$@%&*'):
         self._string = string
         self._identifiers = identifiers
 

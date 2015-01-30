@@ -67,11 +67,9 @@ List Created From List With Escapes
     Should Be Equal    ${LIST WITH ESCAPES}    ${LIST CREATED FROM LIST WITH ESCAPES}
 
 List With No Items
-    [Documentation]    FAIL STARTS: Variable '\@{EMPTY LIST}[0]' not found.
     Should Be True    @{EMPTY LIST} == []
     ${ret} =    Catenate    @{EMPTY LIST}    @{EMPTY LIST}    only value    @{EMPTY LIST}
     Should Be Equal    ${ret}    only value
-    Log    @{EMPTY LIST}[0]
 
 Scalar Variable Containing List Is Different Than List Variable
     ${LIST}=    Set Variable    Hello    world    !
