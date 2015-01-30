@@ -72,6 +72,9 @@ class Variables(object):
         setter = VariableTableSetter(self.store)
         setter.set(variables, overwrite)
 
+    # TODO: Try to get rid of all/most of the methods below.
+    # __iter__ and __len__ may be useful.
+
     def __contains__(self, name):
         try:
             self[name]
