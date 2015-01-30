@@ -16,7 +16,7 @@ from robot.errors import DataError
 from robot.output import LOGGER
 from robot.utils import escape, unescape, unic
 
-from .variablesplitter import VariableSplitter
+from .splitter import VariableSplitter
 
 
 class VariableReplacer(object):

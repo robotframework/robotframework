@@ -14,7 +14,7 @@
 
 from robot.errors import DataError
 
-from .variablesplitter import VariableIterator
+from .splitter import VariableIterator
 
 
 def is_var(string, identifiers='$@'):

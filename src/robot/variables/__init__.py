@@ -26,8 +26,8 @@ from robot.output import LOGGER
 
 from .isvar import contains_var, is_var, is_scalar_var, is_list_var
 from .variables import Variables
-from .variableassigner import VariableAssigner
-from .variablesplitter import VariableSplitter, VariableIterator
+from .assigner import VariableAssigner
+from .splitter import VariableSplitter, VariableIterator
 
 
 GLOBAL_VARIABLES = Variables()

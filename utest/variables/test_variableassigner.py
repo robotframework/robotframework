@@ -1,7 +1,7 @@
 import unittest
 
 from robot.errors import DataError
-from robot.variables.variableassigner import VariableAssigner
+from robot.variables import VariableAssigner
 from robot.utils.asserts import assert_equals, assert_raises_with_msg
 
 
