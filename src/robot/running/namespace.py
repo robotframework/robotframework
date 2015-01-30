@@ -530,9 +530,6 @@ class _VariableScopes:
     def __iter__(self):
         return iter(self.current)
 
-    def __contains__(self, name):
-        return name in self.current
-
     @property
     def store(self):
         return self.current.store

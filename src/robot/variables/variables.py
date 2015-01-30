@@ -75,14 +75,6 @@ class Variables(object):
     # TODO: Try to get rid of all/most of the methods below.
     # __iter__ and __len__ may be useful.
 
-    def __contains__(self, name):
-        try:
-            self[name]
-        except DataError:
-            return False
-        else:
-            return True
-
     def clear(self):
         self.store.clear()
 

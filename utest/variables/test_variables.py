@@ -33,11 +33,11 @@ class TestVariables(unittest.TestCase):
         self.varz = Variables()
 
     def test_set(self):
+        value = ['value']
         for var in SCALARS + LISTS:
-            assert var not in self.varz
-            self.varz[var] = ['value']
-            assert var in self.varz
-            assert var.lower().replace(' ', '') in self.varz
+            self.varz[var] = value
+            assert_equal(self.varz[var], value)
+            assert_equal(self.varz[var.lower().replace(' ', '')] , value)
             self.varz.clear()
 
     def test_set_invalid(self):
@@ -58,13 +58,6 @@ class TestVariables(unittest.TestCase):
                 self.varz[var] = value
                 assert_equal(self.varz[var], value)
                 self.varz.clear()
-
-    def test__contains__(self):
-        self.varz['${k}'] = 'v'
-        assert '${k}' in self.varz
-        assert '${-3}' in self.varz
-        assert '${k.upper()}' in self.varz
-        assert '${nok}' not in self.varz
 
     def test_replace_scalar(self):
         self.varz['${foo}'] = 'bar'
@@ -223,7 +216,6 @@ class TestVariables(unittest.TestCase):
         assert_equal(self.varz.replace_scalar('${name}'), exp)
         assert_equal(self.varz.replace_list(['${name}', 42]), [exp, 42])
         assert_equal(self.varz.replace_string('${name}'), str(exp))
-        assert_true('${name}' in self.varz)
 
     def test_copy(self):
         varz = Variables()

@@ -987,7 +987,10 @@ class _Variables:
         name = self._get_var_name(name)
         msg = self._variables.replace_string(msg) if msg \
             else "Variable %s does not exist." % name
-        asserts.fail_unless(name in self._variables, msg)
+        try:
+            self._variables[name]
+        except DataError:
+            raise AssertionError(msg)
 
     @run_keyword_variant(resolve=0)
     def variable_should_not_exist(self, name, msg=None):
@@ -1004,7 +1007,12 @@ class _Variables:
         name = self._get_var_name(name)
         msg = self._variables.replace_string(msg) if msg \
             else "Variable %s exists." % name
-        asserts.fail_if(name in self._variables, msg)
+        try:
+            self._variables[name]
+        except DataError:
+            pass
+        else:
+            raise AssertionError(msg)
 
     def replace_variables(self, text):
         """Replaces variables in the given text with their current values.
