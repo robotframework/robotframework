@@ -97,13 +97,12 @@ class EnvironmentFinder(object):
     def find(self, name):
         if name[0] != '%':
             raise ValueError
-        name = name[2:-1].strip()
         for getter in get_env_var, get_java_property:
-            value = getter(name)
+            value = getter(name[2:-1])
             if value is not None:
                 return value
-        raise_not_found('%%{%s}' % name, self._get_candidates(),
-                        "Environment variable '%%{%s}' not found." % name)
+        raise_not_found(name, self._get_candidates(),
+                        "Environment variable '%s' not found." % name)
 
     def _get_candidates(self):
         candidates = dict(get_java_properties())
