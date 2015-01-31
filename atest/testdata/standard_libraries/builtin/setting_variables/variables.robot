@@ -1,5 +1,5 @@
 *** Setting ***
-Documentation     See also variables2.html
+Documentation     See also variables2.robot
 Suite Setup       My Suite Setup
 Suite Teardown    My Suite Teardown
 Library           OperatingSystem
@@ -66,7 +66,7 @@ Set Test Variable Needing Escaping
     Should Be Equal    ${var3[0]}    ${EMPTY}
     Should Be Equal    ${var3[1]}    \\
     Should Be Equal    ${var3[2]}    \\
-    @{var4} =    List    \    \\    \\\
+    @{var4} =    Create List    \    \\    \\\
     Set Test Variable    @var4
     Should Be Equal    @{var4}[0]    ${EMPTY}
     Should Be Equal    @{var4}[1]    \\
@@ -105,31 +105,31 @@ Set Suite Variable 1
     Set Suite Variable    $parent_suite_setup_suite_var    Parent should not see this value
     Variable Should Not Exist    $suite_setup_local_var
     Should Be Equal    ${suite_setup_suite_var}    Suite var set in suite setup
-    Should Be True    @{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]
+    Should Be True    @{suite_setup_suite_var_list} == [ 'Suite var set in', 'suite setup' ]
     Set Suite Variable    $test_level_suite_var    Suite var set in test
-    @{test_level_suite_var} =    Create List    Suite var set in    test
-    Set Suite Variable    @test_level_suite_var
+    @{test_level_suite_var_list} =    Create List    Suite var set in    test
+    Set Suite Variable    @test_level_suite_var_list
     Set Suite Variable    $suite_var_needing_escaping    One backslash \\ and \${notvar}
     Should Be Equal    ${test_level_suite_var}    Suite var set in test
-    Should Be True    @{test_level_suite_var} == [ 'Suite var set in', 'test' ]
+    Should Be True    @{test_level_suite_var_list} == [ 'Suite var set in', 'test' ]
     Should Be Equal    ${suite_var_needing_escaping}    One backslash \\ and \${notvar}
     Set Suite Variables In UK
     Should Be Equal    ${uk_level_suite_var}    Suite var set in user keyword
-    Should Be True    @{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]
+    Should Be True    @{uk_level_suite_var_list} == [ 'Suite var set in', 'user keyword' ]
     Should Be Equal    ${sub_uk_level_suite_var}    Suite var set in sub user keyword
-    Should Be True    @{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_suite_var_list} == [ 'Suite var set in', 'sub user keyword' ]
     Check Suite Variables Available In UK
     Set Suite Variable    \${non_existing}
 
 Set Suite Variable 2
     [Documentation]    FAIL Invalid variable syntax 'invalid'.
     Should Be Equal    ${test_level_suite_var}    Suite var set in test
-    Should Be True    @{test_level_suite_var} == [ 'Suite var set in', 'test' ]
+    Should Be True    @{test_level_suite_var_list} == [ 'Suite var set in', 'test' ]
     Should Be Equal    ${suite_var_needing_escaping}    One backslash \\ and \${notvar}
     Should Be Equal    ${uk_level_suite_var}    Suite var set in user keyword
-    Should Be True    @{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]
+    Should Be True    @{uk_level_suite_var_list} == [ 'Suite var set in', 'user keyword' ]
     Should Be Equal    ${sub_uk_level_suite_var}    Suite var set in sub user keyword
-    Should Be True    @{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_suite_var_list} == [ 'Suite var set in', 'sub user keyword' ]
     Check Suite Variables Available In UK
     Set Suite Variable    invalid
 
@@ -137,30 +137,30 @@ Set Global Variable 1
     [Documentation]    FAIL Variable '\@{non_existing}' not found.
     Should Be Equal    ${parent_suite_setup_global_var}    Set in __init__
     Should Be Equal    ${suite_setup_global_var}    Global var set in suite setup
-    Should Be True    @{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]
+    Should Be True    @{suite_setup_global_var_list} == [ 'Global var set in', 'suite setup' ]
     Set Global Variable    $test_level_global_var    Global var set in test
-    @{test_level_global_var} =    Create List    Global var set in    test
-    Set Global Variable    @test_level_global_var
+    @{test_level_global_var_list} =    Create List    Global var set in    test
+    Set Global Variable    @test_level_global_var_list
     Set Global Variable    $global_var_needing_escaping    Four backslashes \\\\\\\\ and \\\${notvar}
     Should Be Equal    ${test_level_global_var}    Global var set in test
-    Should Be True    @{test_level_global_var} == [ 'Global var set in', 'test' ]
+    Should Be True    @{test_level_global_var_list} == [ 'Global var set in', 'test' ]
     Should Be Equal    ${global_var_needing_escaping}    Four backslashes \\\\\\\\ and \\\${notvar}
     Set Global Variables In UK
     Should Be Equal    ${uk_level_global_var}    Global var set in user keyword
-    Should Be True    @{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]
+    Should Be True    @{uk_level_global_var_list} == [ 'Global var set in', 'user keyword' ]
     Should Be Equal    ${sub_uk_level_global_var}    Global var set in sub user keyword
-    Should Be True    @{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_global_var_list} == [ 'Global var set in', 'sub user keyword' ]
     Check Global Variables Available In UK
     Set Global Variable    @non_existing
 
 Set Global Variable 2
     [Documentation]    FAIL Invalid variable syntax 'invalid syntax'.
     Should Be Equal    ${test_level_global_var}    Global var set in test
-    Should Be True    @{test_level_global_var} == [ 'Global var set in', 'test' ]
+    Should Be True    @{test_level_global_var_list} == [ 'Global var set in', 'test' ]
     Should Be Equal    ${uk_level_global_var}    Global var set in user keyword
-    Should Be True    @{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]
+    Should Be True    @{uk_level_global_var_list} == [ 'Global var set in', 'user keyword' ]
     Should Be Equal    ${sub_uk_level_global_var}    Global var set in sub user keyword
-    Should Be True    @{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_global_var_list} == [ 'Global var set in', 'sub user keyword' ]
     Check Global Variables Available In UK
     Set Global Variable    invalid syntax
 
@@ -179,10 +179,10 @@ Set Test/Suite/Global Variables With Normal Variable Syntax 2
     Should Be Equal    @{new global var 1}[1]    /home/peke/Devel/robotframework/atest/testdata/standard_libraries/builtin/setting_variables ${TEMPDIR} \${escaped and not a var}
 
 It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 1
-    @{empty} =    Create List
-    Set Test Variable    ${new test var 2}    @{empty}
-    Set Suite Variable    @{new suite var 2}    @{empty}
-    Set Global Variable    ${new global var 2}    @{empty}
+    @{empty list} =    Create List
+    Set Test Variable    ${new test var 2}    @{empty list}
+    Set Suite Variable    @{new suite var 2}    @{empty list}
+    Set Global Variable    ${new global var 2}    @{empty list}
     Should Be True    ${new test var 2} == []
     Should Be True    @{new suite var 2} == []
     Should Be True    ${new global var 2} == []
@@ -274,16 +274,16 @@ Using @{EMPTY} to with `Set Test/Suite/Global Variable` keywords 2
 My Suite Setup
     ${suite_setup_local_var} =    Set Variable    Variable available only locally    in suite setup
     Set Suite Variable    $suite_setup_suite_var    Suite var set in suite setup
-    @{suite_setup_suite_var} =    Create List    Suite var set in    suite setup
-    Set Suite Variable    @suite_setup_suite_var
+    @{suite_setup_suite_var_list} =    Create List    Suite var set in    suite setup
+    Set Suite Variable    @suite_setup_suite_var_list
     ${suite_setup_global_var} =    Set Variable    Global var set in suite setup
     Set Global Variable    $suite_setup_global_var
-    Set Global Variable    @suite_setup_global_var    Global var set in    suite setup
+    Set Global Variable    @suite_setup_global_var_list    Global var set in    suite setup
     Should Be True    ${suite_setup_local_var} == [ 'Variable available only locally', 'in suite setup' ]
     Should Be Equal    ${suite_setup_suite_var}    Suite var set in suite setup
-    Should Be True    @{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]
+    Should Be True    @{suite_setup_suite_var_list} == [ 'Suite var set in', 'suite setup' ]
     Should Be Equal    ${suite_setup_global_var}    Global var set in suite setup
-    Should Be True    @{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]
+    Should Be True    @{suite_setup_global_var_list} == [ 'Global var set in', 'suite setup' ]
     Variable Should Not Exist    $parent_suite_setup_suite_var
     Should Be Equal    ${parent_suite_setup_global_var}    Set in __init__
 
@@ -318,71 +318,71 @@ Check Test Variables Available In UK
     Should Be Equal    ${uk_var_1}    Value of uk var 1
     Should Be Equal    ${uk_var_2}    Value of uk var 2
     Should Be True    @{uk_var_3} == ['Value of', 'uk var 3']
-    Fail If Variable Exists    $uk_var_4
+    Variable Should Not Exist    $uk_var_4
 
 Check Test Variables Not Available In UK
-    Equals    ${scalar}    Hi tellus
+    Should Be Equal    ${scalar}    Hi tellus
     Should Be True    @{list} == ['Hello', 'world']
-    Fail If Variable Exists    $new_var
-    Fail If Variable Exists    $uk_var_1
-    Fail If Variable Exists    $uk_var_2
-    Fail If Variable Exists    @uk_var_3
-    Fail If Variable Exists    $uk_var_4
+    Variable Should Not Exist    $new_var
+    Variable Should Not Exist    $uk_var_1
+    Variable Should Not Exist    $uk_var_2
+    Variable Should Not Exist    @uk_var_3
+    Variable Should Not Exist    $uk_var_4
 
 Set Suite Variables In UK
     ${uk_level_suite_var} =    String    Suite var set in user keyword
     Set Suite Variable    \${uk_level_suite_var}
-    Set Suite Variable    \@{uk_level_suite_var}    Suite var set in    user keyword
+    Set Suite Variable    \@{uk_level_suite_var_list}    Suite var set in    user keyword
     Should Be Equal    ${uk_level_suite_var}    Suite var set in user keyword
-    Should Be True    @{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]
+    Should Be True    @{uk_level_suite_var_list} == [ 'Suite var set in', 'user keyword' ]
     Set Suite Variables In Sub UK
     Should Be Equal    ${sub_uk_level_suite_var}    Suite var set in sub user keyword
-    Should Be True    @{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_suite_var_list} == [ 'Suite var set in', 'sub user keyword' ]
 
 Set Suite Variables In Sub UK
     Set Suite Variable    \${sub_uk_level_suite_var}    Suite var set in sub user keyword
-    Set Suite Variable    \@{sub_uk_level_suite_var}    Suite var set in    sub user keyword
+    Set Suite Variable    \@{sub_uk_level_suite_var_list}    Suite var set in    sub user keyword
     Should Be Equal    ${sub_uk_level_suite_var}    Suite var set in sub user keyword
-    Should Be True    @{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_suite_var_list} == [ 'Suite var set in', 'sub user keyword' ]
 
 Check Suite Variables Available In UK
-    Fail If Variable Exists    $suite_setup_local_var
+    Variable Should Not Exist    $suite_setup_local_var
     Should Be Equal    ${suite_setup_suite_var}    Suite var set in suite setup
-    Should Be True    @{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]
+    Should Be True    @{suite_setup_suite_var_list} == [ 'Suite var set in', 'suite setup' ]
     Should Be Equal    ${test_level_suite_var}    Suite var set in test
-    Should Be True    @{test_level_suite_var} == [ 'Suite var set in', 'test' ]
+    Should Be True    @{test_level_suite_var_list} == [ 'Suite var set in', 'test' ]
     Should Be Equal    ${suite_var_needing_escaping}    One backslash \\ and \${notvar}
     Should Be Equal    ${uk_level_suite_var}    Suite var set in user keyword
-    Should Be True    @{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]
+    Should Be True    @{uk_level_suite_var_list} == [ 'Suite var set in', 'user keyword' ]
     Should Be Equal    ${sub_uk_level_suite_var}    Suite var set in sub user keyword
-    Should Be True    @{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_suite_var_list} == [ 'Suite var set in', 'sub user keyword' ]
 
 Set Global Variables In UK
     ${uk_level_global_var} =    String    Global var set in user keyword
     Set Global Variable    \${uk_level_global_var}
-    Set Global Variable    \@{uk_level_global_var}    Global var set in    user keyword
+    Set Global Variable    \@{uk_level_global_var_list}    Global var set in    user keyword
     Should Be Equal    ${uk_level_global_var}    Global var set in user keyword
-    Should Be True    @{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]
+    Should Be True    @{uk_level_global_var_list} == [ 'Global var set in', 'user keyword' ]
     Set Global Variables In Sub UK
     Should Be Equal    ${sub_uk_level_global_var}    Global var set in sub user keyword
-    Should Be True    @{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_global_var_list} == [ 'Global var set in', 'sub user keyword' ]
 
 Set Global Variables In Sub UK
     Set Global Variable    \${sub_uk_level_global_var}    Global var set in sub user keyword
-    Set Global Variable    \@{sub_uk_level_global_var}    Global var set in    sub user keyword
+    Set Global Variable    \@{sub_uk_level_global_var_list}    Global var set in    sub user keyword
     Should Be Equal    ${sub_uk_level_global_var}    Global var set in sub user keyword
-    Should Be True    @{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_global_var_list} == [ 'Global var set in', 'sub user keyword' ]
 
 Check Global Variables Available In UK
     Should Be Equal    ${suite_setup_global_var}    Global var set in suite setup
-    Should Be True    @{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]
+    Should Be True    @{suite_setup_global_var_list} == [ 'Global var set in', 'suite setup' ]
     Should Be Equal    ${test_level_global_var}    Global var set in test
-    Should Be True    @{test_level_global_var} == [ 'Global var set in', 'test' ]
+    Should Be True    @{test_level_global_var_list} == [ 'Global var set in', 'test' ]
     Should Be Equal    ${global_var_needing_escaping}    Four backslashes \\\\\\\\ and \\\${notvar}
     Should Be Equal    ${uk_level_global_var}    Global var set in user keyword
-    Should Be True    @{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]
+    Should Be True    @{uk_level_global_var_list} == [ 'Global var set in', 'user keyword' ]
     Should Be Equal    ${sub_uk_level_global_var}    Global var set in sub user keyword
-    Should Be True    @{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]
+    Should Be True    @{sub_uk_level_global_var_list} == [ 'Global var set in', 'sub user keyword' ]
 
 Test Setting Variable In User Keyword
     [Arguments]    ${arg}    ${type}

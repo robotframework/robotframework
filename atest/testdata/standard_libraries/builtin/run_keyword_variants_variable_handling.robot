@@ -7,10 +7,10 @@ Variables         variable.py
 @{KEYWORD AND ARG WHICH NEEDS ESCAPING}    \\Log Many    \${notvar}
 @{KEYWORD AND ARGS WHICH NEEDS ESCAPING}    \\Log Many    @{NEEDS ESCAPING}
 @{EMPTY}
-@{KEYWORD}        \\Log Many
 @{EXPRESSION}     ${TRUE}
 @{ARGS}           @{NEEDS ESCAPING}
 ${KEYWORD}        \\Log Many
+@{KEYWORD LIST}   ${KEYWORD}
 
 *** Test Case ***
 Variable Values Should Not Be Visible As Keyword's Arguments
@@ -21,10 +21,10 @@ Run Keyword When Keyword and Arguments Are in List Variable
     Run Keyword    @{KEYWORD AND ARG WHICH NEEDS ESCAPING}
 
 Run Keyword If When Arguments are In Multiple List
-    Run Keyword If    @{EXPRESSION}    @{KEYWORD}    @{ARGS}
+    Run Keyword If    @{EXPRESSION}    @{KEYWORD LIST}    @{ARGS}
 
 Run Keyword When Arguments are Not In First Lists
-    Run Keyword    @{EMPTY}    @{EMPTY}    @{EMPTY}    @{KEYWORD}    @{ARGS}
+    Run Keyword    @{EMPTY}    @{EMPTY}    @{EMPTY}    @{KEYWORD LIST}    @{ARGS}
 
 Run Keyword When Keyword And Arguments In Scalar After Empty Lists
     Run Keyword    @{EMPTY}    @{EMPTY}    ${KEYWORD}    @{ARGS}

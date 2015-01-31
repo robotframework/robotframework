@@ -17,9 +17,9 @@ Evaluate
     Should Be True    ${dict['a']} + ${dict['b']} == ${dict['c']}
     ${len} =    Evaluate    len(@{HELLO})
     Should Be Equal    ${len}    ${2}
-    ${hello} =    Evaluate    'hello'.capitalize() + ' ' + 'world'
-    Should Be Equal    ${hello}    Hello world
-    ${stat} =    Evaluate    "${hello}" == ' '.join(@{HELLO})
+    ${hello2} =    Evaluate    'hello'.capitalize() + ' ' + 'world'
+    Should Be Equal    ${hello2}    Hello world
+    ${stat} =    Evaluate    "${hello2}" == ' '.join(@{HELLO})
     Should Be Equal    ${stat}    ${True}
     Evaluate    INVALID
 

@@ -44,6 +44,7 @@ class Variables(object):
         self.store.add(name[2:-1], value)
 
     def __getitem__(self, name):
+        validate_var(name, '$@%')
         stored = StoredFinder(self.store)
         extended = ExtendedFinder(self)
         for finder in (EnvironmentFinder(),
@@ -100,6 +101,7 @@ class Variables(object):
         self.store.store.update(variables.store.store)
 
     def __iter__(self):
+        # TODO: Returns names w/o decoration -- cannot be used w/ __getitem__
         return iter(self.store)
 
     def __len__(self):
