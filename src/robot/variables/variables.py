@@ -46,7 +46,7 @@ class Variables(object):
     def __getitem__(self, name):
         stored = StoredFinder(self.store)
         extended = ExtendedFinder(self)
-        for finder in (EnvironmentFinder(self.store),
+        for finder in (EnvironmentFinder(),
                        stored,
                        EmptyFinder(),
                        NumberFinder(),

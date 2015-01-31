@@ -15,22 +15,17 @@
 from functools import partial
 
 from robot.errors import DataError
-from robot.utils import (get_env_vars, is_list_like, normalize,
-                         RecommendationFinder)
-
-from .isvar import is_list_var
+from robot.utils import is_list_like, normalize, RecommendationFinder
 
 
-def raise_not_found(name, candidates, msg=None, env_vars=False):
+def raise_not_found(name, candidates, msg=None):
     """Raise DataError for missing variable name.
 
     Return recommendations for similar variable names if any are found.
     """
     if msg is None:
         msg = "Variable '%s' not found." % name
-    candidates = _decorate_candidates(name, candidates)
-    if env_vars:
-        candidates = ['%%{%s}' % ev for ev in get_env_vars()]
+    candidates = _decorate_candidates(name[0], candidates)
     normalizer = partial(normalize, ignore='$@%&*{}_', caseless=True,
                          spaceless=True)
     finder = RecommendationFinder(normalizer)
@@ -38,7 +33,7 @@ def raise_not_found(name, candidates, msg=None, env_vars=False):
     msg = finder.format_recommendations(msg, recommendations)
     raise DataError(msg)
 
-def _decorate_candidates(name, candidates):
-    if is_list_var(name):
-        return ['@{%s}' % c for c in candidates if is_list_like(candidates[c])]
-    return ['${%s}' % c for c in candidates]
+def _decorate_candidates(identifier, candidates):
+    condition = is_list_like if identifier == '@' else lambda name: True
+    return ['%s{%s}' % (identifier, name)
+            for name in candidates if condition(candidates[name])]

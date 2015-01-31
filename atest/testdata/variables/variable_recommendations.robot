@@ -85,6 +85,7 @@ Misspelled Env Var
     [Documentation]    FAIL    Environment variable '%{THISS_ENV_VAR_IS_SET}' not found. Did you mean:
     ...    ${INDENT}\%{THIS_ENV_VAR_IS_SET}
     Set Environment Variable  THIS_ENV_VAR_IS_SET    Env var value
+    ${THISS_ENV_VAR_IS_SET} =    Set Variable    Not env var and thus not recommended
     Log    %{THISS_ENV_VAR_IS_SET}
 
 Misspelled Env Var With Internal Variables

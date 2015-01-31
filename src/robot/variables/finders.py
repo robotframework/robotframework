@@ -20,8 +20,8 @@ except ImportError:
     get_java_property = lambda name: None
 
 from robot.errors import DataError
-from robot.utils import (get_env_var, get_error_message, normalize,
-                         NormalizedDict)
+from robot.utils import (get_env_var, get_env_vars, get_error_message,
+                         normalize, NormalizedDict)
 
 from .notfound import raise_not_found
 
@@ -92,9 +92,6 @@ class ExtendedFinder(object):
 
 class EnvironmentFinder(object):
 
-    def __init__(self, store):
-        self._store = store
-
     def find(self, name):
         if name[0] != '%':
             raise ValueError
@@ -103,7 +100,5 @@ class EnvironmentFinder(object):
             value = getter(name)
             if value is not None:
                 return value
-        name = '%%{%s}' % name
-        raise_not_found(name, self._store,
-                        "Environment variable '%s' not found." % name,
-                        env_vars=True)
+        raise_not_found('%%{%s}' % name, get_env_vars(),
+                        "Environment variable '%%{%s}' not found." % name)
