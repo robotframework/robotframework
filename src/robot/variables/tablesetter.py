@@ -84,7 +84,7 @@ class DelayedVariable(object):
             if name in variables.store:
                 variables.store.remove(name)
                 self._error_reporter(unicode(err))
-            raise_not_found(name, variables.store,
+            raise_not_found('${%s}' % name, variables.store.store,
                             "Variable '${%s}' not found." % name)
 
     def _resolve(self, variables):

@@ -10,19 +10,19 @@ Direct recursion
 
 Indirect recursion
     Check Test Case    ${TESTNAME}
-    Recursion error    \${VAR 1}    5
-    Non-existing error    \${VAR 3}    \${VAR 1}    6    \${VAR 3}    \${VAR 2}
-    Non-existing error    \${VAR 2}    \${VAR 3}    7    \${VAR 2}
+    Recursion error    \${VAR 1}    8
+    Non-existing error    \${VAR 3}    \${VAR 1}    9    \${VAR 3}    \${VAR 2}
+    Non-existing error    \${VAR 2}    \${VAR 3}    10    \${VAR 2}
 
 Case-insensitive recursion
     Check Test Case    ${TESTNAME}
-    Recursion error    \${xxx}    8
+    Recursion error    \${xxx}    11
 
 Recursive list variable
     Check Test Case    ${TESTNAME}
-    Recursion error    \@{LIST}    11
-    Recursion error    \@{LIST 1}    9
-    Non-existing error    \@{LIST 2}    \@{LIST 1}    10    \@{LIST}    \@{LIST 2}
+    Recursion error    \@{LIST}    5
+    Recursion error    \@{LIST 1}    6
+    Non-existing error    \@{LIST 2}    \${LIST 1}    7    \${LIST 2}
 
 Recursion with variables used in imports
     Check Test Case    ${TESTNAME}

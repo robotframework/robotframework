@@ -61,7 +61,7 @@ class Variables(object):
                                     "list-like." % name)
                 return list(value)
             return value
-        raise_not_found(name, self.store)
+        raise_not_found(name, self.store.store)
 
     def resolve_delayed(self):
         self.store.resolve_delayed()
