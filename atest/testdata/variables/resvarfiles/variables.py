@@ -19,17 +19,16 @@ LIST_WITH_ESCAPES = ['one \\', 'two \\\\', 'three \\\\\\', '${non_existing}']
 OBJECT = _Object('dude')
 
 LIST__ONE_ITEM = ['Hello again?']
-LIST__LIST = ['Hello', 'again', '?']
-LIST__LIST_WITH_ESCAPES = LIST_WITH_ESCAPES[:]
+LIST__LIST_2 = ['Hello', 'again', '?']
+LIST__LIST_WITH_ESCAPES_2 = LIST_WITH_ESCAPES[:]
 LIST__EMPTY_LIST = []
 LIST__OBJECTS = [STRING, INTEGER, LIST, OBJECT]
 
 lowercase = 'Variable name in lower case'
-LIST__lowercase = [lowercase]
+LIST__lowercase_list = [lowercase]
 Und_er__scores_____ = 'Variable name with under scores'
-LIST________UN__der__SCO__r_e_s__ = [Und_er__scores_____]
+LIST________UN__der__SCO__r_e_s__liST__ = [Und_er__scores_____]
 
 
 PRIORITIES_1 = PRIORITIES_2 = PRIORITIES_3 = PRIORITIES_4 = PRIORITIES_4B \
                = 'Variable File'
-

@@ -43,9 +43,6 @@ List With No Items
 List With Objects
     Check Test Case    ${TEST NAME}
 
-Scalar Variable Containing List Is Different Than List Variable
-    Check Test Case    ${TEST NAME}
-
 Variable Names Are Case Insensitive
     Check Test Case    ${TEST NAME}
 

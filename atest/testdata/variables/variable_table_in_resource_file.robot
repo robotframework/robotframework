@@ -52,30 +52,30 @@ Variable Names Are Case Insensitive
     Should Be Equal    ${lowercase}    Variable name in lower case
     Should Be Equal    ${LOWERCASE}    Variable name in lower case
     Should Be Equal    ${LoWerCAse}    Variable name in lower case
-    Should Be Equal    @{lowercase}[0]    Variable name in lower case
-    Should Be Equal    @{LOWERCASE}[0]    Variable name in lower case
-    Should Be Equal    @{lOWErcasE}[0]    Variable name in lower case
+    Should Be Equal    @{lowercaselist}[0]    Variable name in lower case
+    Should Be Equal    @{LOWERCASE LIST}[0]    Variable name in lower case
+    Should Be Equal    @{lOWErcasE List}[0]    Variable name in lower case
 
 Variable Names Are Space Insensitive
     Should Be Equal    ${SPACES}    Variable name with spaces
     Should Be Equal    ${ s P a C e s }    Variable name with spaces
-    Should Be Equal    @{spaces}[0]    Variable name with spaces
-    Should Be Equal    @{SP a c es }[0]    Variable name with spaces
+    Should Be Equal    @{spaceslist}[0]    Variable name with spaces
+    Should Be Equal    @{SP a c es LI st}[0]    Variable name with spaces
 
 Variable Names Are Underscore Insensitive
     Should Be Equal    ${underscores}    Variable name with under scores
     Should Be Equal    ${_U N D_er_Scores__}    Variable name with under scores
-    Should Be Equal    @{underscores}[0]    Variable name with under scores
-    Should Be Equal    @{ _u_N_de__r _S C ores__ }[0]    Variable name with under scores
+    Should Be Equal    @{underscoreslist}[0]    Variable name with under scores
+    Should Be Equal    @{ _u_N_de__r _S C ores__ ___L_I_S_T__}[0]    Variable name with under scores
 
 Assign Mark With Scalar variable
     Should Be Equal    ${ASSING MARK}    This syntax works starting from 1.8
 
 Assign Mark With List variable
-    Should Be Equal    @{ASSIGN MARK}[0]    This syntax works
-    Should Be Equal    @{ASSIGN MARK}[1]    starting
-    Should Be Equal    @{ASSIGN MARK}[2]    from
-    Should Be Equal    @{ASSIGN MARK}[3]    ${1.8}
+    Should Be Equal    @{ASSIGN MARK LIST}[0]    This syntax works
+    Should Be Equal    @{ASSIGN MARK LIST}[1]    starting
+    Should Be Equal    @{ASSIGN MARK LIST}[2]    from
+    Should Be Equal    @{ASSIGN MARK LIST}[3]    ${1.8}
 
 Three dots on the same line should be interpreted as string
     Should Be Equal    ${THREE DOTS}    ...
