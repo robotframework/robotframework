@@ -1,6 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/variable_recommendations.robot
-Force Tags       regression    pybot    jybot
+Force Tags       regression
+Default Tags     pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -34,6 +35,10 @@ Misspelled Scalar Accessed As List
     Check Test Case    ${TESTNAME}
 
 Misspelled Env Var
+    Check Test Case    ${TESTNAME}
+
+Misspelled Java System Property
+    [Tags]    jybot
     Check Test Case    ${TESTNAME}
 
 Misspelled Env Var With Internal Variables

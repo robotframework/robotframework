@@ -15,9 +15,11 @@
 import re
 
 try:
-    from java.lang.System import getProperty as get_java_property
+    from java.lang.System import (getProperty as get_java_property,
+                                  getProperties as get_java_properties)
 except ImportError:
     get_java_property = lambda name: None
+    get_java_properties = lambda: {}
 
 from robot.errors import DataError
 from robot.utils import (get_env_var, get_env_vars, get_error_message,
@@ -100,5 +102,10 @@ class EnvironmentFinder(object):
             value = getter(name)
             if value is not None:
                 return value
-        raise_not_found('%%{%s}' % name, get_env_vars(),
+        raise_not_found('%%{%s}' % name, self._get_candidates(),
                         "Environment variable '%%{%s}' not found." % name)
+
+    def _get_candidates(self):
+        candidates = dict(get_java_properties())
+        candidates.update(get_env_vars())
+        return candidates
