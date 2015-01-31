@@ -45,6 +45,9 @@ Misspelled List Variable With Period
 Misspelled Extended Variable Parent
     Check Test Case    ${TESTNAME}
 
+Misspelled Extended Variable Parent As List
+    Check Test Case    ${TESTNAME}
+
 Misspelled Extended Variable Child
     Check Test Case    ${TESTNAME}
 

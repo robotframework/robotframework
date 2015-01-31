@@ -68,12 +68,12 @@ Misspelled Camel Case
 
 Misspelled List Accessed As Scalar
     [Documentation]    FAIL    Variable '${LLIST}' not found. Did you mean:
-    ...    ${INDENT}\@{LIST}
+    ...    ${INDENT}\${LIST}
     Log    ${LLIST}
 
 Misspelled Scalar Accessed As List
-    [Documentation]    FAIL    Variable '@{SSTRING}' not found. Did you mean:
-    ...    ${INDENT}\${STRING}
+    [Documentation]    \${STRING} is not recommended because it is not list-like.
+    ...    FAIL    Variable '@{SSTRING}' not found.
     Log    @{SSTRING}
 
 Misspelled Whitespace
@@ -102,6 +102,12 @@ Misspelled Extended Variable Parent
     [Documentation]    FAIL    Resolving variable '${OBJJ.name}' failed: Variable '${OBJJ}' not found. Did you mean:
     ...    ${INDENT}\${OBJ}
     Log    ${OBJJ.name}
+
+Misspelled Extended Variable Parent As List
+    [Documentation]    Extended variables are always searched as scalars.
+    ...    FAIL    Resolving variable '@{OBJJ.name}' failed: Variable '${OBJJ}' not found. Did you mean:
+    ...    ${INDENT}\${OBJ}
+    Log    @{OBJJ.name}
 
 Misspelled Extended Variable Child
     [Documentation]    FAIL    Resolving variable '${OBJ.nmame}' failed: AttributeError: ExampleObject instance has no attribute 'nmame'

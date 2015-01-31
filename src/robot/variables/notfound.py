@@ -15,7 +15,10 @@
 from functools import partial
 
 from robot.errors import DataError
-from robot.utils import get_env_vars, normalize, RecommendationFinder
+from robot.utils import (get_env_vars, is_list_like, normalize,
+                         RecommendationFinder)
+
+from .isvar import is_list_var
 
 
 def raise_not_found(name, candidates, msg=None, env_vars=False):
@@ -25,11 +28,17 @@ def raise_not_found(name, candidates, msg=None, env_vars=False):
     """
     if msg is None:
         msg = "Variable '%s' not found." % name
+    candidates = _decorate_candidates(name, candidates)
     if env_vars:
-        candidates = list(candidates) + ['%%{%s}' % ev for ev in get_env_vars()]
+        candidates = ['%%{%s}' % ev for ev in get_env_vars()]
     normalizer = partial(normalize, ignore='$@%&*{}_', caseless=True,
                          spaceless=True)
     finder = RecommendationFinder(normalizer)
     recommendations = finder.find_recommendations(name, candidates)
     msg = finder.format_recommendations(msg, recommendations)
     raise DataError(msg)
+
+def _decorate_candidates(name, candidates):
+    if is_list_var(name):
+        return ['@{%s}' % c for c in candidates if is_list_like(candidates[c])]
+    return ['${%s}' % c for c in candidates]

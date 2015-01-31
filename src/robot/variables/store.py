@@ -40,6 +40,9 @@ class VariableStore(object):
     def find(self, name):
         return self._resolve_delayed(name, self.store[name])
 
+    def __getitem__(self, name):
+        return self.find(name)    # TODO: __getitem__ vs find
+
     def clear(self):
         self.store.clear()
 
