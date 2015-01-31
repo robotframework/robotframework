@@ -55,9 +55,11 @@ class Variables(object):
                 value = finder.find(name)
             except (KeyError, ValueError):
                 continue
-            if name[0] == '@' and not is_list_like(value):
-                raise DataError("Value of variable '%s' is not list or "
-                                "list-like." % name)
+            if name[0] == '@':
+                if not is_list_like(value):
+                    raise DataError("Value of variable '%s' is not list or "
+                                    "list-like." % name)
+                return list(value)
             return value
         raise_not_found(name, self.store)
 

@@ -19,12 +19,13 @@ Properties in Python Class
 
 Dynamic Python Class
     Should Be Equal    ${DYNAMIC PYTHON STRING}    hello world
-    Should Be True    ${DYNAMIC PYTHON LIST} == ['hello', 'world']
+    Should Be True    @{DYNAMIC PYTHON LIST} == ['hello', 'world']
+    Should Be True    ${DYNAMIC PYTHON LIST} == ('hello', 'world')
 
 Java Class
     Should Be Equal    ${JAVA STRING}    hi
     Should Be Equal    ${JAVA INTEGER}    ${-1}
-    Should Be True    ${JAVA LIST} == ['x', 'y', 'z']
+    Should Be True    @{JAVA LIST} == ['x', 'y', 'z']
 
 Methods in Java Class Do Not Create Variables
     Variable Should Not Exist    ${javaMethod}
@@ -37,4 +38,4 @@ Properties in Java Class
 
 Dynamic Java Class
     Should Be Equal    ${DYNAMIC JAVA STRING}    hi tellus
-    Should Be True    ${DYNAMIC JAVA LIST} == ['hi', 'tellus']
+    Should Be True    @{DYNAMIC JAVA LIST} == ['hi', 'tellus']
