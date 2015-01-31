@@ -42,8 +42,6 @@ def init_global_variables(settings):
                          ('${:}', os.pathsep),
                          ('${\\n}', os.linesep),
                          ('${SPACE}', ' '),
-                         ('${EMPTY}', ''),
-                # TODO   ('@{EMPTY}', ()),
                          ('${True}', True),
                          ('${False}', False),
                          ('${None}', None),

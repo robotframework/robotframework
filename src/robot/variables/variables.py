@@ -16,8 +16,8 @@ from robot.errors import DataError
 from robot.utils import is_list_like
 
 from .filesetter import VariableFileSetter
-from .finders import (EnvironmentFinder, ExtendedFinder, NumberFinder,
-                      StoredFinder)
+from .finders import (EnvironmentFinder, EmptyFinder, ExtendedFinder,
+                      NumberFinder, StoredFinder)
 from .isvar import validate_var
 from .notfound import raise_not_found
 from .replacer import VariableReplacer
@@ -48,6 +48,7 @@ class Variables(object):
         extended = ExtendedFinder(self)
         for finder in (EnvironmentFinder(self.store),
                        stored,
+                       EmptyFinder(),
                        NumberFinder(),
                        extended):
             try:

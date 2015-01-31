@@ -20,7 +20,8 @@ except ImportError:
     get_java_property = lambda name: None
 
 from robot.errors import DataError
-from robot.utils import get_env_var, get_error_message, is_list_like, normalize
+from robot.utils import (get_env_var, get_error_message, normalize,
+                         NormalizedDict)
 
 from .notfound import raise_not_found
 
@@ -52,6 +53,12 @@ class NumberFinder(object):
         if number.startswith(tuple(bases)):
             return int(number[2:], bases[number[:2]])
         return int(number)
+
+
+class EmptyFinder(object):
+
+    def find(self, name):
+        return NormalizedDict({'${EMPTY}': '', '@{EMPTY}': ()})[name]
 
 
 class ExtendedFinder(object):
