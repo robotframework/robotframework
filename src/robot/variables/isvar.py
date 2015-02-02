@@ -17,7 +17,7 @@ from robot.errors import DataError
 from .splitter import VariableIterator
 
 
-def is_var(string, identifiers='$@'):
+def is_var(string, identifiers='$@&'):
     if not isinstance(string, basestring):
         return False
     length = len(string)
@@ -35,13 +35,17 @@ def is_list_var(string):
     return is_var(string, identifiers='@')
 
 
-def contains_var(string, identifiers='$@'):
+def is_dict_var(string):
+    return is_var(string, identifiers='&')
+
+
+def contains_var(string, identifiers='$@&'):
     return (isinstance(string, basestring) and
             any(i in string for i in identifiers) and
             '{' in string and '}' in string and
             bool(VariableIterator(string, identifiers)))
 
 
-def validate_var(string, identifiers='$@'):
+def validate_var(string, identifiers='$@&'):
     if not is_var(string, identifiers):
         raise DataError("Invalid variable name '%s'." % string)

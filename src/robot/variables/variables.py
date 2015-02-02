@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import is_list_like
+from robot.utils import is_dict_like, is_list_like
 
 from .filesetter import VariableFileSetter
 from .finders import (EnvironmentFinder, EmptyFinder, ExtendedFinder,
@@ -41,17 +41,17 @@ class Variables(object):
         validate_var(name)
         if name[0] == '@' and not is_list_like(value):
             raise DataError('TODO')
+        # TODO: Validate '&' variables. Tests.
         self.store.add(name[2:-1], value)
 
     def __getitem__(self, name):
-        validate_var(name, '$@%')
-        stored = StoredFinder(self.store)
-        extended = ExtendedFinder(self)
-        for finder in (EnvironmentFinder(),
-                       stored,
-                       EmptyFinder(),
+        # TODO: Move to finder module
+        validate_var(name, '$@&%')
+        for finder in (StoredFinder(self.store),
                        NumberFinder(),
-                       extended):
+                       EmptyFinder(),
+                       EnvironmentFinder(),
+                       ExtendedFinder(self)):
             try:
                 value = finder.find(name)
             except (KeyError, ValueError):
@@ -61,6 +61,11 @@ class Variables(object):
                     raise DataError("Value of variable '%s' is not list or "
                                     "list-like." % name)
                 return list(value)
+            if name[0] == '&':
+                if not is_dict_like(value):
+                    raise DataError("Value of variable '%s' is not dictionary "
+                                    "or dictionary-like." % name)
+                return dict(value)
             return value
         raise_not_found(name, self.store.store)
 

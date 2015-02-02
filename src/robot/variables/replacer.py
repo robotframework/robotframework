@@ -117,7 +117,7 @@ class VariableReplacer(object):
         yield unescape(string)
 
     def _get_variable(self, splitter):
-        if splitter.identifier not in '$@%':
+        if splitter.identifier not in '$@&%':
             return self._get_reserved_variable(splitter)
         if splitter.index:
             return self._get_list_variable_item(splitter)

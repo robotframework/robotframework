@@ -33,7 +33,9 @@ def raise_not_found(name, candidates, msg=None):
     msg = finder.format_recommendations(msg, recommendations)
     raise DataError(msg)
 
+
 def _decorate_candidates(identifier, candidates):
     condition = is_list_like if identifier == '@' else lambda name: True
+    # TODO: handle dict variables
     return ['%s{%s}' % (identifier, name)
             for name in candidates if condition(candidates[name])]

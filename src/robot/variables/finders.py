@@ -34,7 +34,7 @@ class StoredFinder(object):
         self._store = store
 
     def find(self, name):
-        if name[0] not in '$@':
+        if name[0] not in '$@&':
             raise ValueError
         return self._store.find(name[2:-1])
 

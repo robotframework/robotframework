@@ -17,7 +17,7 @@ from contextlib import contextmanager
 
 from robot.errors import DataError
 
-from .isvar import is_list_var, is_scalar_var, validate_var
+from .isvar import is_dict_var, is_scalar_var, validate_var
 from .notfound import raise_not_found
 
 
@@ -49,6 +49,8 @@ class VariableTableReader(object):
             value = [self._unescape_spaces(cell) for cell in value]
             if is_scalar_var(name):
                 value = self._get_scalar_value(name, value)
+            if is_dict_var(name):
+                value = dict(self._yield_dict_items(value))
         return name[2:-1], DelayedVariable(value, error_reporter)
 
     def _unescape_spaces(self, item):
@@ -67,6 +69,27 @@ class VariableTableReader(object):
                         "the Variable table is no longer possible. "
                         "Create a list variable '@%s' and use it as a "
                         "scalar variable '%s' instead." % (name[1:], name))
+
+    def _yield_dict_items(self, value):
+        for item in value:
+            try:
+                index = self._get_dict_separator_index(item)
+            except ValueError:
+                raise DataError("Dictionary item '%s' does not contain '=' "
+                                "separator." % item)
+            yield item[:index], item[index+1:]
+
+    def _get_dict_separator_index(self, item):
+        index = 0
+        while True:
+            index += item[index:].index('=')
+            if self._not_escaping(item[:index]):
+                return index
+            index += 1
+
+    def _not_escaping(self, name):
+        backslashes = len(name) - len(name.rstrip('\\'))
+        return backslashes % 2 == 0
 
 
 class DelayedVariable(object):
@@ -91,7 +114,15 @@ class DelayedVariable(object):
         with self._avoid_recursion:
             if isinstance(self._value, basestring):
                 return variables.replace_scalar(self._value)
-            return variables.replace_list(self._value)
+            if isinstance(self._value, list):
+                return variables.replace_list(self._value)
+            try:
+                # TODO: Should this be moved to variables?
+                return dict((variables.replace_scalar(k),
+                             variables.replace_scalar(v))
+                            for k, v in self._value.items())
+            except TypeError, err:
+                raise DataError('Creating dictionary failed: %s' % err)
 
     @property
     @contextmanager

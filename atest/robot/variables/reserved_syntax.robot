@@ -4,9 +4,6 @@ Force Tags        pybot    jybot    regression
 Resource          atest_resource.robot
 
 *** Test Case ***
-Reserved Syntax &{var}
-    Check Test Case    ${TEST NAME}
-
 Reserved Syntax *{var}
     Check Test Case    ${TEST NAME}
 
@@ -14,9 +11,8 @@ Reserved With Variable Indise
     Check Test Case    ${TEST NAME}
 
 There should Be A Warning About Using Reserved Syntax In Stderr
-    Validate Reserved Warning    \&{this_causes_warning}    0
-    Validate Reserved Warning    \*{this_causes_warning}    1
-    Validate Reserved Warning    \*{Hello, world!}    2
+    Validate Reserved Warning    \*{this_causes_warning}    0
+    Validate Reserved Warning    \*{Hello, world!}    1
 
 *** Keywords ***
 Validate Reserved Warning
