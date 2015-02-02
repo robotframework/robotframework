@@ -5,11 +5,13 @@ ${FLOAT}          ${-1.2}
 ${BOOLEAN}        ${True}
 ${NONE VALUE}     ${None}
 ${ESCAPES}        one \\ two \\\\ \${non_existing}
+${SPACE ESC}      \ 1 leading, \ 2 middle, 3 trailing \ \ \
 ${NO VALUE}       ${EMPTY}
 @{ONE ITEM}       Hello again?
 @{LIST}           Hello    again    ?
 @{LIST WITH ESCAPES}    one \\    two \\\\    three \\\\\\    \${non_existing}
 @{LIST CREATED FROM LIST WITH ESCAPES}    @{LIST WITH ESCAPES}
+@{SPACE ESC LIST}    \ lead    trail \    \ \ 2 \ \    \ \ \ 3 \ \ \
 @{EMPTY LIST}
 Invalid Name      Decoration missing
 ${}               Body missing
@@ -46,6 +48,7 @@ Scalar Non-Strings
 
 Scalar String With Escapes
     Should Be Equal    ${ESCAPES}    one \\ two \\\\ \${non_existing}
+    Should Be Equal    ${SPACE ESC}    ${SPACE}1 leading,${SPACE*2}2 middle, 3 trailing${SPACE*3}
 
 Empty Scalar String
     Should Be Equal    ${NO VALUE}    ${EMPTY}
@@ -66,6 +69,10 @@ List With Escapes
     Should Be Equal    @{LIST WITH ESCAPES}[1]    two \\\\
     Should Be Equal    @{LIST WITH ESCAPES}[2]    three \\\\\\
     Should Be Equal    @{LIST WITH ESCAPES}[3]    \${non_existing}
+    Should Be Equal    @{SPACE ESC LIST}[0]    ${SPACE}lead
+    Should Be Equal    @{SPACE ESC LIST}[1]    trail${SPACE}
+    Should Be Equal    @{SPACE ESC LIST}[2]    ${SPACE*2}2${SPACE*2}
+    Should Be Equal    @{SPACE ESC LIST}[3]    ${SPACE*3}3${SPACE*3}
 
 List Created From List With Escapes
     Should Be Equal    @{LIST CREATED FROM LIST WITH ESCAPES}[0]    one \\

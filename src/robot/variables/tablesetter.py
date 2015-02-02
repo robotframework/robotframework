@@ -45,63 +45,26 @@ class VariableTableReader(object):
 
     def _get_name_and_value(self, name, value, error_reporter):
         validate_var(name)
-        if not isinstance(value, basestring):
-            value = [self._unescape_spaces(cell) for cell in value]
-            if is_scalar_var(name):
-                value = self._get_scalar_value(name, value)
-            if is_dict_var(name):
-                value = dict(self._yield_dict_items(value))
-        return name[2:-1], DelayedVariable(value, error_reporter)
-
-    def _unescape_spaces(self, item):
-        # TODO: Is this still needed? Why here?
-        if item.endswith(' \\'):
-            item = item[:-1]
-        if item.startswith('\\ '):
-            item = item[1:]
-        return item
-
-    def _get_scalar_value(self, name, value):
-        # TODO: Should we catenate values in RF 2.9 instead?
-        if len(value) == 1:
-            return value[0]
-        raise DataError("Creating a scalar variable with a list value in "
-                        "the Variable table is no longer possible. "
-                        "Create a list variable '@%s' and use it as a "
-                        "scalar variable '%s' instead." % (name[1:], name))
-
-    def _yield_dict_items(self, value):
-        for item in value:
-            try:
-                index = self._get_dict_separator_index(item)
-            except ValueError:
-                raise DataError("Dictionary item '%s' does not contain '=' "
-                                "separator." % item)
-            yield item[:index], item[index+1:]
-
-    def _get_dict_separator_index(self, item):
-        index = 0
-        while True:
-            index += item[index:].index('=')
-            if self._not_escaping(item[:index]):
-                return index
-            index += 1
-
-    def _not_escaping(self, name):
-        backslashes = len(name) - len(name.rstrip('\\'))
-        return backslashes % 2 == 0
+        DelayedVariable = {'$': DelayedScalarVariable,
+                           '@': DelayedListVariable,
+                           '&': DelayedDictVariable}[name[0]]
+        return name[2:-1], DelayedVariable(value, name, error_reporter)
 
 
 class DelayedVariable(object):
 
-    def __init__(self, value, error_reporter):
-        self._value = value
+    def __init__(self, value, name, error_reporter):
+        self._value = self._format_value(value, name)
         self._error_reporter = error_reporter
         self._resolving = False
 
+    def _format_value(self, value, name):
+        return value
+
     def resolve(self, name, variables):
         try:
-            return self._resolve(variables)
+            with self._avoid_recursion:
+                return self._replace_variables(self._value, variables)
         except DataError, err:
             # Recursive resolving may have already removed variable.
             if name in variables.store:
@@ -109,20 +72,6 @@ class DelayedVariable(object):
                 self._error_reporter(unicode(err))
             raise_not_found('${%s}' % name, variables.store.store,
                             "Variable '${%s}' not found." % name)
-
-    def _resolve(self, variables):
-        with self._avoid_recursion:
-            if isinstance(self._value, basestring):
-                return variables.replace_scalar(self._value)
-            if isinstance(self._value, list):
-                return variables.replace_list(self._value)
-            try:
-                # TODO: Should this be moved to variables?
-                return dict((variables.replace_scalar(k),
-                             variables.replace_scalar(v))
-                            for k, v in self._value.items())
-            except TypeError, err:
-                raise DataError('Creating dictionary failed: %s' % err)
 
     @property
     @contextmanager
@@ -134,3 +83,77 @@ class DelayedVariable(object):
             yield
         finally:
             self._resolving = False
+
+    def _replace_variables(self, value, variables):
+        raise NotImplementedError
+
+
+class DelayedScalarVariable(DelayedVariable):
+
+    def _format_value(self, value, name):
+        if isinstance(value, basestring):
+            return value
+        # TODO: Should we catenate values in RF 2.9 instead?
+        if len(value) == 1:
+            return value[0]
+        raise DataError("Creating a scalar variable with a list value in "
+                        "the Variable table is no longer possible. "
+                        "Create a list variable '@%s' and use it as a "
+                        "scalar variable '%s' instead." % (name[1:], name))
+
+    def _replace_variables(self, value, variables):
+        return variables.replace_scalar(value)
+
+
+class DelayedListVariable(DelayedVariable):
+
+    def _replace_variables(self, value, variables):
+        return variables.replace_list(value)
+
+
+class DelayedDictVariable(DelayedVariable):
+
+    def _format_value(self, value, name):
+        return list(self._yield_items(value))
+
+    def _yield_items(self, value):
+        for item in value:
+            if is_dict_var(item):
+                yield item
+            else:
+                yield self._split_item(item)
+
+    def _split_item(self, item):
+        try:
+            index = self._get_split_index(item)
+        except ValueError:
+            raise DataError("Dictionary item '%s' does not contain '=' "
+                            "separator." % item)
+        return item[:index], item[index+1:]
+
+    def _get_split_index(self, item):
+        index = 0
+        while True:
+            index += item[index:].index('=')
+            if self._not_escaping(item[:index]):
+                return index
+            index += 1
+
+    def _not_escaping(self, name):
+        backslashes = len(name) - len(name.rstrip('\\'))
+        return backslashes % 2 == 0
+
+    def _replace_variables(self, value, variables):
+        try:
+            return dict(self._yield_replaced(value, variables.replace_scalar))
+        except TypeError, err:
+            raise DataError('Creating dictionary failed: %s' % err)
+
+    def _yield_replaced(self, value, replace_scalar):
+        for item in value:
+            if isinstance(item, tuple):
+                key, value = item
+                yield replace_scalar(key), replace_scalar(value)
+            else:
+                for key, value in replace_scalar(item).items():
+                    yield key, value
