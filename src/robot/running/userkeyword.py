@@ -15,17 +15,16 @@
 from __future__ import with_statement
 
 import os
-import re
 
 from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
                           PassExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed)
-from robot.variables import is_list_var, VariableIterator
+from robot.variables import is_list_var
 from robot.output import LOGGER
 from robot import utils
 
 from .arguments import (ArgumentMapper, ArgumentResolver,
-                        UserKeywordArgumentParser)
+                        EmbeddedArguments, UserKeywordArgumentParser)
 from .handlerstore import HandlerStore
 from .keywords import Keywords, Keyword
 from .timeouts import KeywordTimeout
@@ -50,10 +49,11 @@ class UserLibrary(object):
             self.handlers.add(handler, embedded)
 
     def _create_handler(self, kw):
-        try:
-            return EmbeddedArgsTemplate(kw, self.name), True
-        except TypeError:
-            return UserKeywordHandler(kw, self.name), False
+        if not kw.args:
+            embedded = EmbeddedArguments(kw.name)
+            if embedded:
+                return EmbeddedArgsTemplate(kw, self.name, embedded), True
+        return UserKeywordHandler(kw, self.name), False
 
     def _get_name_for_resource_file(self, path):
         if path is None:
@@ -208,70 +208,15 @@ class UserKeywordHandler(object):
 
 
 class EmbeddedArgsTemplate(UserKeywordHandler):
-    _regexp_extension = re.compile(r'(?<!\\)\(\?.+\)')
-    _regexp_group_start = re.compile(r'(?<!\\)\((.*?)\)')
-    _regexp_group_escape = r'(?:\1)'
-    _default_pattern = '.*?'
-    _variable_pattern = r'\$\{[^\}]+\}'
 
-    def __init__(self, keyword, libname):
-        if keyword.args:
-            raise TypeError('Cannot have normal arguments')
-        self.embedded_args, self.name_regexp \
-                = self._read_embedded_args_and_regexp(keyword.name)
-        if not self.embedded_args:
-            raise TypeError('Must have embedded arguments')
+    def __init__(self, keyword, libname, embedded):
         UserKeywordHandler.__init__(self, keyword, libname)
         self.keyword = keyword
-
-    def _read_embedded_args_and_regexp(self, string):
-        args = []
-        full_pattern = ['^']
-        for before, variable, string in VariableIterator(string, identifiers='$'):
-            variable, pattern = self._get_regexp_pattern(variable[2:-1])
-            args.append('${%s}' % variable)
-            full_pattern.extend([re.escape(before), '(%s)' % pattern])
-        full_pattern.extend([re.escape(string), '$'])
-        return args, self._compile_regexp(full_pattern)
-
-    def _get_regexp_pattern(self, variable):
-        if ':' not in variable:
-            return variable, self._default_pattern
-        variable, pattern = variable.split(':', 1)
-        return variable, self._format_custom_regexp(pattern)
-
-    def _format_custom_regexp(self, pattern):
-        for formatter in (self._regexp_extensions_are_not_allowed,
-                          self._make_groups_non_capturing,
-                          self._unescape_closing_curly,
-                          self._add_automatic_variable_pattern):
-            pattern = formatter(pattern)
-        return pattern
-
-    def _regexp_extensions_are_not_allowed(self, pattern):
-        if not self._regexp_extension.search(pattern):
-            return pattern
-        raise DataError('Regexp extensions are not allowed in embedded '
-                        'arguments.')
-
-    def _make_groups_non_capturing(self, pattern):
-        return self._regexp_group_start.sub(self._regexp_group_escape, pattern)
-
-    def _unescape_closing_curly(self, pattern):
-        return pattern.replace('\\}', '}')
-
-    def _add_automatic_variable_pattern(self, pattern):
-        return '%s|%s' % (pattern, self._variable_pattern)
-
-    def _compile_regexp(self, pattern):
-        try:
-            return re.compile(''.join(pattern), re.IGNORECASE)
-        except:
-            raise DataError("Compiling embedded arguments regexp failed: %s"
-                            % utils.get_error_message())
+        self.embedded_name = embedded.name
+        self.embedded_args = embedded.args
 
     def matches(self, name):
-        return self.name_regexp.match(name) is not None
+        return self.embedded_name.match(name) is not None
 
     def create(self, name):
         return EmbeddedArgs(name, self)
@@ -280,7 +225,7 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
 class EmbeddedArgs(UserKeywordHandler):
 
     def __init__(self, name, template):
-        match = template.name_regexp.match(name)
+        match = template.embedded_name.match(name)
         if not match:
             raise ValueError('Does not match given name')
         UserKeywordHandler.__init__(self, template.keyword, template.libname)
@@ -293,5 +238,5 @@ class EmbeddedArgs(UserKeywordHandler):
             variables = context.variables
             self._resolve_arguments(args, variables)  # validates no args given
             for name, value in self.embedded_args:
-                variables[name] = variables.replace_scalar(value)
+                variables['${%s}' % name] = variables.replace_scalar(value)
         return UserKeywordHandler._run(self, context, args)

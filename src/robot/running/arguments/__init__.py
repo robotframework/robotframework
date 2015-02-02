@@ -19,6 +19,7 @@ from .argumentparser import (PythonArgumentParser, UserKeywordArgumentParser,
                              DynamicArgumentParser, JavaArgumentParser)
 from .argumentresolver import ArgumentResolver
 from .argumentvalidator import ArgumentValidator
+from .embedded import EmbeddedArguments
 if sys.platform.startswith('java'):
     from .javaargumentcoercer import JavaArgumentCoercer
 else:

@@ -18,7 +18,7 @@ class UserHandlerStub:
 
 class EmbeddedArgsTemplateStub:
 
-    def __init__(self, kwdata, library):
+    def __init__(self, kwdata, library, embedded):
         self.name = kwdata.name
         if kwdata.name != 'Embedded ${arg}':
             raise TypeError
