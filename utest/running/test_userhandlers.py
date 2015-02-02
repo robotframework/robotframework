@@ -71,7 +71,7 @@ class TestEmbeddedArgs(unittest.TestCase):
                       '^(.*?)\\ \\*\\ (.*?)\\ from\\ \\"(.*?)\\"$')
 
     def test_create_handler_when_no_match(self):
-        assert_raises(TypeError, EmbeddedArgs, 'Not matching', self.tmp1)
+        assert_raises(ValueError, EmbeddedArgs, 'Not matching', self.tmp1)
 
     def test_create_handler_with_one_embedded_arg(self):
         handler = EmbeddedArgs('User selects book from list', self.tmp1)

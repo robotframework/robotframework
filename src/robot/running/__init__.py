@@ -118,7 +118,7 @@ def UserLibrary(path):
 
     resource = ResourceFile(path).populate()
     ret = RuntimeUserLibrary(resource.keyword_table.keywords, path)
-    for handler in ret.handlers.values():
+    for handler in ret.handlers:
         if handler.type != 'error':
             handler.doc = utils.unescape(handler._doc)
         else:

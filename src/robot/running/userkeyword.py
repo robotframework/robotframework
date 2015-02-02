@@ -26,21 +26,20 @@ from robot import utils
 
 from .arguments import (ArgumentMapper, ArgumentResolver,
                         UserKeywordArgumentParser)
-from .baselibrary import BaseLibrary
+from .handlerstore import HandlerStore
 from .keywords import Keywords, Keyword
 from .timeouts import KeywordTimeout
 from .usererrorhandler import UserErrorHandler
 
 
-class UserLibrary(BaseLibrary):
+class UserLibrary(object):
 
     def __init__(self, user_keywords, path=None):
         self.name = self._get_name_for_resource_file(path)
-        self.handlers = utils.NormalizedDict(ignore=['_'])
-        self.embedded_arg_handlers = []
+        self.handlers = HandlerStore(self.name)
         for kw in user_keywords:
             try:
-                handler = self._create_handler(kw)
+                handler, embedded = self._create_handler(kw)
             except DataError, err:
                 LOGGER.error("Creating user keyword '%s' failed: %s"
                              % (kw.name, unicode(err)))
@@ -48,62 +47,18 @@ class UserLibrary(BaseLibrary):
             if handler.name in self.handlers:
                 error = "Keyword '%s' defined multiple times." % handler.name
                 handler = UserErrorHandler(handler.name, error)
-            self.handlers[handler.name] = handler
+            self.handlers.add(handler, embedded)
 
     def _create_handler(self, kw):
         try:
-            handler = EmbeddedArgsTemplate(kw, self.name)
+            return EmbeddedArgsTemplate(kw, self.name), True
         except TypeError:
-            handler = UserKeywordHandler(kw, self.name)
-        else:
-            self.embedded_arg_handlers.append(handler)
-        return handler
+            return UserKeywordHandler(kw, self.name), False
 
     def _get_name_for_resource_file(self, path):
         if path is None:
             return None
         return os.path.splitext(os.path.basename(path))[0]
-
-    def has_handler(self, name):
-        if BaseLibrary.has_handler(self, name):
-            return True
-        for template in self.embedded_arg_handlers:
-            try:
-                EmbeddedArgs(name, template)
-            except TypeError:
-                pass
-            else:
-                return True
-        return False
-
-    def get_handler(self, name):
-        try:
-            return BaseLibrary.get_handler(self, name)
-        except DataError, error:
-            found = self._get_embedded_arg_handlers(name)
-            if not found:
-                raise error
-            if len(found) == 1:
-                return found[0]
-            self._raise_multiple_matching_keywords_found(name, found)
-
-    def _get_embedded_arg_handlers(self, name):
-        found = []
-        for template in self.embedded_arg_handlers:
-            try:
-                found.append(EmbeddedArgs(name, template))
-            except TypeError:
-                pass
-        return found
-
-    def _raise_multiple_matching_keywords_found(self, name, found):
-        names = utils.seq2str([f.orig_name for f in found])
-        if self.name is None:
-            where = "Test case file"
-        else:
-            where = "Resource file '%s'" % self.name
-        raise DataError("%s contains multiple keywords matching name '%s'\n"
-                        "Found: %s" % (where, name, names))
 
 
 class UserKeywordHandler(object):
@@ -315,13 +270,19 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
             raise DataError("Compiling embedded arguments regexp failed: %s"
                             % utils.get_error_message())
 
+    def matches(self, name):
+        return self.name_regexp.match(name) is not None
+
+    def create(self, name):
+        return EmbeddedArgs(name, self)
+
 
 class EmbeddedArgs(UserKeywordHandler):
 
     def __init__(self, name, template):
         match = template.name_regexp.match(name)
         if not match:
-            raise TypeError('Does not match given name')
+            raise ValueError('Does not match given name')
         UserKeywordHandler.__init__(self, template.keyword, template.libname)
         self.embedded_args = zip(template.embedded_args, match.groups())
         self.name = name

@@ -296,12 +296,12 @@ class KeywordStore(object):
         return None
 
     def _get_handler_from_test_case_file_user_keywords(self, name):
-        if self.user_keywords.has_handler(name):
-            return self.user_keywords.get_handler(name)
+        if name in self.user_keywords.handlers:
+            return self.user_keywords.handlers[name]
 
     def _get_handler_from_resource_file_user_keywords(self, name):
-        found = [lib.get_handler(name) for lib in self.resources.values()
-                 if lib.has_handler(name)]
+        found = [lib.handlers[name] for lib in self.resources.values()
+                 if name in lib.handlers]
         if not found:
             return None
         if len(found) > 1:
@@ -311,8 +311,8 @@ class KeywordStore(object):
         self._raise_multiple_keywords_found(name, found)
 
     def _get_handler_from_library_keywords(self, name):
-        found = [lib.get_handler(name) for lib in self.libraries.values()
-                 if lib.has_handler(name)]
+        found = [lib.handlers[name] for lib in self.libraries.values()
+                 if name in lib.handlers]
         if not found:
             return None
         if len(found) > 1:
@@ -383,9 +383,9 @@ class KeywordStore(object):
             yield '.'.join(tokens[:i]), '.'.join(tokens[i:])
 
     def _find_keywords(self, owner_name, name):
-        return [owner.get_handler(name)
+        return [owner.handlers[name]
                 for owner in self.libraries.values() + self.resources.values()
-                if utils.eq(owner.name, owner_name) and owner.has_handler(name)]
+                if utils.eq(owner.name, owner_name) and name in owner.handlers]
 
     def _raise_multiple_keywords_found(self, name, found, implicit=True):
         error = "Multiple keywords with name '%s' found.\n" % name
@@ -433,14 +433,14 @@ class KeywordRecommendationFinder(object):
         """
         excluded = ['DeprecatedBuiltIn', 'DeprecatedOperatingSystem',
                     'Reserved']
-        handlers = [(None, utils.printable_name(handler_name, True))
-                    for handler_name in self.user_keywords.handlers.keys()]
+        handlers = [(None, utils.printable_name(handler.name, True))
+                    for handler in self.user_keywords.handlers]
         for library in (self.libraries.values() + self.resources.values()):
             if library.name not in excluded:
                 handlers.extend(
                     ((library.name,
-                      utils.printable_name(handler_name, code_style=True))
-                     for handler_name in library.handlers))
+                      utils.printable_name(handler.name, code_style=True))
+                     for handler in library.handlers))
         # sort handlers to ensure consistent ordering between Jython and Python
         return sorted(handlers)
 

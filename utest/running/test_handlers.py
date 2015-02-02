@@ -62,8 +62,7 @@ class TestPythonHandler(unittest.TestCase):
             assert_equals(handler.arguments.maxargs, exp_maxa)
 
     def test_getarginfo_getattr(self):
-        testlib = TestLibrary('classes.GetattrLibrary')
-        handlers = testlib.handlers.values()
+        handlers = TestLibrary('classes.GetattrLibrary').handlers
         assert_equals(len(handlers), 3)
         for handler in handlers:
             assert_true(handler.name in ['Foo','Bar','Zap'])

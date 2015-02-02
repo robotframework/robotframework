@@ -87,7 +87,7 @@ class ResourceDocBuilder(object):
 class KeywordDocBuilder(object):
 
     def build_keywords(self, lib):
-        return [self.build_keyword(kw) for kw in lib.handlers.values()]
+        return [self.build_keyword(kw) for kw in lib.handlers]
 
     def build_keyword(self, kw):
         return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),

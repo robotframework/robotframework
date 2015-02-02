@@ -158,7 +158,7 @@ class TestImports(unittest.TestCase):
     def _verify_lib(self, lib, libname, keywords):
         assert_equals(libname, lib.name)
         for name, _ in keywords:
-            handler = lib.get_handler(name)
+            handler = lib.handlers[name]
             exp = "%s.%s" % (libname, name)
             assert_equals(utils.normalize(handler.longname),
                           utils.normalize(exp))
@@ -378,18 +378,17 @@ class TestHandlers(unittest.TestCase):
 
     def test_get_handlers(self):
         for lib in [NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary, SynonymLibrary]:
-            testlib = TestLibrary('classes.%s' % lib.__name__)
-            handlers = testlib.handlers.values()
+            handlers = TestLibrary('classes.%s' % lib.__name__).handlers
             assert_equals(lib.handler_count, len(handlers), lib.__name__)
             for handler in handlers:
                 assert_false(handler._handler_name.startswith('_'))
-                assert_equals(handler._handler_name.count('skip'), 0)
+                assert_true('skip' not in handler._handler_name)
 
     def test_non_global_dynamic_handlers(self):
         lib = TestLibrary("RunKeywordLibrary")
         assert_equals(len(lib.handlers), 2)
-        assert_true(lib.handlers.has_key('Run Keyword That Passes'))
-        assert_true(lib.handlers.has_key('Run Keyword That Fails'))
+        assert_true('Run Keyword That Passes' in lib.handlers)
+        assert_true('Run Keyword That Fails' in lib.handlers)
         assert_none(lib.handlers['Run Keyword That Passes']._method)
         assert_none(lib.handlers['Run Keyword That Fails']._method)
 
@@ -405,7 +404,7 @@ class TestHandlers(unittest.TestCase):
     def test_synonym_handlers(self):
         testlib = TestLibrary('classes.SynonymLibrary')
         names = ['handler', 'synonym_handler', 'another_synonym']
-        for handler in testlib.handlers.values():
+        for handler in testlib.handlers:
             # test 'handler_name' -- raises ValueError if it isn't in 'names'
             names.remove(handler._handler_name)
         assert_equals(len(names), 0, 'handlers %s not created' % names, False)
@@ -427,16 +426,16 @@ class TestHandlers(unittest.TestCase):
         def test_get_java_handlers(self):
             for lib in [ArgumentTypes, MultipleArguments, MultipleSignatures,
                         NoHandlers, Extended]:
-                testlib = TestLibrary(lib.__name__)
-                handlers = testlib.handlers.values()
+                handlers = TestLibrary(lib.__name__).handlers
                 assert_equals(len(handlers), lib().handler_count, lib.__name__)
                 for handler in handlers:
                     assert_false(handler._handler_name.startswith('_'))
-                    assert_equals(handler._handler_name.count('skip'), 0)
+                    assert_true('skip' not in handler._handler_name)
 
         def test_overridden_getName(self):
             handlers = TestLibrary('OverrideGetName').handlers
-            assert_equals(sorted(handlers.keys()), ['Do Nothing', 'Get Name'])
+            assert_equals(sorted(handler.name for handler in handlers),
+                          ['Do Nothing', 'Get Name'])
 
         def test_extending_java_lib_in_python(self):
             handlers = TestLibrary('extendingjava.ExtendJavaLib').handlers

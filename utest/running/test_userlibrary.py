@@ -3,8 +3,9 @@ import os
 
 from robot.running import userkeyword
 from robot.errors import DataError
-from robot.utils.asserts import *
 from robot.parsing.model import UserKeyword
+from robot.utils.asserts import (assert_equals, assert_none,
+                                 assert_raises_with_msg, assert_true)
 
 
 class UserHandlerStub:
@@ -21,6 +22,9 @@ class EmbeddedArgsTemplateStub:
         self.name = kwdata.name
         if kwdata.name != 'Embedded ${arg}':
             raise TypeError
+
+    def matches(self, name):
+        return True
 
 
 class TestUserLibrary(unittest.TestCase):
@@ -47,9 +51,9 @@ class TestUserLibrary(unittest.TestCase):
 
     def test_creating_keyword(self):
         lib = self._get_userlibrary('source', 'kw 1', 'kw 2')
-        assert_equals(len(lib.handlers.keys()), 2)
-        assert_true(lib.handlers.has_key('kw 1'))
-        assert_true(lib.handlers.has_key('kw 2'))
+        assert_equals(len(lib.handlers), 2)
+        assert_true('kw 1' in lib.handlers)
+        assert_true('kw 2' in lib.handlers)
 
     def test_creating_keyword_when_kw_name_has_embedded_arg(self):
         lib = self._get_userlibrary('source', 'Embedded ${arg}')
@@ -57,58 +61,57 @@ class TestUserLibrary(unittest.TestCase):
 
     def test_creating_keywords_when_normal_and_embedded_arg_kws(self):
         lib = self._get_userlibrary('source', 'kw1', 'Embedded ${arg}', 'kw2')
-        assert_equals(len(lib.handlers.keys()), 3)
-        assert_true(lib.handlers.has_key('kw1'))
-        assert_true(lib.handlers.has_key('kw 2'))
+        assert_equals(len(lib.handlers), 3)
+        assert_true('kw1' in lib.handlers)
+        assert_true('kw 2' in lib.handlers)
         self._lib_has_embedded_arg_keyword(lib)
 
     def test_creating_duplicate_embedded_arg_keyword_in_resource_file(self):
         lib = self._get_userlibrary('source', 'Embedded ${arg}',
                                     'kw', 'Embedded ${arg}')
-        assert_equals(len(lib.handlers.keys()), 2)
-        assert_true(lib.handlers.has_key('kw'))
+        assert_equals(len(lib.handlers), 2)
+        assert_true('kw' in lib.handlers)
 
     def test_creating_duplicate_keyword_in_resource_file(self):
         lib = self._get_userlibrary('source', 'kw', 'kw', 'kw 2')
-        assert_equals(len(lib.handlers.keys()), 2)
-        assert_true(lib.handlers.has_key('kw'))
-        assert_true(lib.handlers.has_key('kw 2'))
+        assert_equals(len(lib.handlers), 2)
+        assert_true('kw' in lib.handlers)
+        assert_true('kw 2' in lib.handlers)
         assert_equals(lib.handlers['kw'].error,
                       "Keyword 'kw' defined multiple times.")
 
     def test_creating_duplicate_keyword_in_test_case_file(self):
         lib = self._get_userlibrary('NOT_RESOURCE', 'MYKW', 'my kw')
-        assert_equals(len(lib.handlers.keys()), 1)
-        assert_true(lib.handlers.has_key('mykw'))
+        assert_equals(len(lib.handlers), 1)
+        assert_true('mykw' in lib.handlers)
         assert_equals(lib.handlers['mykw'].error,
                       "Keyword 'my kw' defined multiple times.")
 
-    def test_has_handler_with_non_existing_keyword(self):
+    def test_handlers_contains(self):
         lib = self._get_userlibrary('source', 'kw')
-        assert_false(lib.has_handler('non existing kw'))
+        assert_true('kw' in lib.handlers)
+        assert_true('nonex' not in lib.handlers)
 
-    def test_has_handler_with_normal_keyword(self):
+    def test_handlers_getitem_with_non_existing_keyword(self):
         lib = self._get_userlibrary('source', 'kw')
-        assert_true(lib.has_handler('kw'))
+        assert_raises_with_msg(
+            DataError,
+            "Test case file contains no keywords matching name 'non existing'.",
+            lib.handlers.__getitem__, 'non existing')
 
-    def test_get_handler_with_non_existing_keyword(self):
+    def test_handlers_getitem_with_existing_keyword(self):
         lib = self._get_userlibrary('source', 'kw')
-        err = "No keyword handler with name 'non existing' found"
-        assert_raises_with_msg(DataError, err, lib.get_handler, 'non existing')
-
-    def test_get_handler_with_normal_keyword(self):
-        lib = self._get_userlibrary('source', 'kw')
-        handler = lib.get_handler('kw')
-        assert_equals(handler, lib.handlers['kw'])
+        handler = lib.handlers['kw']
         assert_true(isinstance(handler, UserHandlerStub))
 
     def _get_userlibrary(self, source, *keyword_names):
         return userkeyword.UserLibrary([UserKeyword(None, name) for name in keyword_names])
 
     def _lib_has_embedded_arg_keyword(self, lib):
-        assert_true(lib.handlers.has_key('Embedded ${arg}'))
-        assert_equals(len(lib.embedded_arg_handlers), 1)
-        assert_equals(lib.embedded_arg_handlers[0].name, 'Embedded ${arg}')
+        assert_true('Embedded ${arg}' in lib.handlers)
+        embedded = lib.handlers._embedded
+        assert_equals(len(embedded), 1)
+        assert_equals(embedded[0].name, 'Embedded ${arg}')
 
 
 if __name__ == '__main__':

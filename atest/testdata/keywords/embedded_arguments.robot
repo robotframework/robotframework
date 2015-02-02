@@ -125,7 +125,7 @@ Keyword with embedded args can be used as "normal" keyword
     User ${user} Selects ${item} From Webshop
 
 Keyword Matching Multiple Keywords In Test Case File
-    [Documentation]    FAIL Test case file contains multiple keywords matching name 'foo+tc+bar-tc-zap'
+    [Documentation]    FAIL Test case file contains multiple keywords matching name 'foo+tc+bar-tc-zap'.
     ...    Found: '${a}-tc-${b}' and '${a}+tc+${b}'
     foo+tc+bar
     foo-tc-bar
@@ -133,7 +133,7 @@ Keyword Matching Multiple Keywords In Test Case File
     foo+tc+bar-tc-zap
 
 Keyword Matching Multiple Keywords In One Resource File
-    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name 'foo+r1+bar-r1-zap'
+    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name 'foo+r1+bar-r1-zap'.
     ...    Found: '${a}-r1-${b}' and '${a}+r1+${b}'
     foo+r1+bar
     foo-r1-bar
@@ -148,7 +148,7 @@ Keyword Matching Multiple Keywords In Different Resource Files
     foo-r1-bar-r2-zap
 
 Keyword Matching Multiple Keywords In One And Different Resource Files
-    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name '-r1-r2-+r1+'
+    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name '-r1-r2-+r1+'.
     ...    Found: '${a}-r1-${b}' and '${a}+r1+${b}'
     -r1-r2-+r1+
 
