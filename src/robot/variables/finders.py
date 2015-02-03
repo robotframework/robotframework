@@ -58,9 +58,8 @@ class NumberFinder(object):
 
 
 class EmptyFinder(object):
-
-    def find(self, name):
-        return NormalizedDict({'${EMPTY}': '', '@{EMPTY}': ()})[name]
+    find = NormalizedDict({'${EMPTY}': '', '@{EMPTY}': (), '&{EMPTY}': {}},
+                          ignore='_').__getitem__
 
 
 class ExtendedFinder(object):

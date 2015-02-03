@@ -31,7 +31,7 @@ Suite Metadata
     Check Test Case    ${TEST NAME}
     Should Be Equal    ${SUITE.suites[0].metadata['Meta2']}    variable value
 
-Modifying ${SUITE METADATA} does not affect actual metadata suite has
+Modifying &{SUITE METADATA} does not affect actual metadata suite has
     Check Test Case    ${TEST NAME}
     Should Be Equal    ${SUITE.suites[0].metadata['MeTa1']}    Value
     Dictionary Should Not Contain Key    ${SUITE.suites[0].metadata}    NotSet
