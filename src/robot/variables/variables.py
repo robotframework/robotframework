@@ -57,6 +57,7 @@ class Variables(object):
             except (KeyError, ValueError):
                 continue
             if name[0] == '@':
+                # TODO: Should we also allow dicts here?
                 if not is_list_like(value):
                     raise DataError("Value of variable '%s' is not list or "
                                     "list-like." % name)

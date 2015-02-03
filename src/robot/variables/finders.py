@@ -65,10 +65,10 @@ class EmptyFinder(object):
 
 class ExtendedFinder(object):
     _extended_var_re = re.compile(r'''
-    ^[\$@]{      # start of the string and "${" or "@{"
+    ^[\$@&]{     # variable start
     (.+?)        # base name (group 1)
     ([^\s\w].+)  # extended part (group 2)
-    }$           # "}" and end of the string
+    }$           # variable end
     ''', re.UNICODE|re.VERBOSE)
 
     def __init__(self, variables):

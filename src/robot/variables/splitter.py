@@ -48,6 +48,11 @@ class VariableSplitter(object):
                     self.start == 0 and self.end == self._max_end and
                     not self.index)
 
+    def is_dict_variable(self):
+        return bool(self.identifier == '&' and self.base and
+                    self.start == 0 and self.end == self._max_end and
+                    not self.index)
+
     def _finalize(self):
         self.identifier = self._variable_chars[0]
         self.base = ''.join(self._variable_chars[2:-1])

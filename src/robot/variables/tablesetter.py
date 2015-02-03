@@ -18,8 +18,9 @@ from contextlib import contextmanager
 from robot.errors import DataError
 from robot.utils import split_from_equals
 
-from .isvar import is_dict_var, validate_var
+from .isvar import validate_var
 from .notfound import raise_not_found
+from .splitter import VariableSplitter
 
 
 class VariableTableSetter(object):
@@ -119,7 +120,7 @@ class DelayedDictVariable(DelayedVariable):
 
     def _yield_items(self, items):
         for item in items:
-            if is_dict_var(item):
+            if VariableSplitter(item).is_dict_variable():
                 yield item
             else:
                 name, value = split_from_equals(item)

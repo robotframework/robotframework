@@ -18,6 +18,12 @@ Dict items must contain equal sign
 Variables in key and value
     Check Test Case    ${TESTNAME}
 
+Extended variables
+    Check Test Case    ${TESTNAME}
+
+Internal variables
+    Check Test Case    ${TESTNAME}
+
 Last item overrides
     Check Test Case    ${TESTNAME}
 
@@ -32,10 +38,13 @@ Invalid key
 Non-dict cannot be used as dict variable
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
     Variable creation should have failed    2    \&{NON DICT DICT 1}
     ...    Value of variable '\&{LIST}' is not dictionary or dictionary-like.
     Variable creation should have failed    3    \&{NON DICT DICT 2}
     ...    Value of variable '\&{SPACE}' is not dictionary or dictionary-like.
+    Variable creation should have failed    4    \&{NON DICT DICT 3}
+    ...    Value of variable '\&{EMPTY DICT.keys()}' is not dictionary or dictionary-like.
 
 *** Keywords ***
 Variable creation should have failed

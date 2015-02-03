@@ -66,10 +66,6 @@ Non-existing argument does not trigger named usage
     ${ret}=    One Named    ä=ö
     Should Be Equal    ${ret}    ä=ö
 
-Naming twice
-    [Documentation]    FAIL Keyword 'KwargsLibrary.Two Named' got multiple values for argument 'fst'.
-    ${ret}=    Two Named    fst=foo    fst=foo
-
 Run Keyword's own named arguments are not resolved
     [Documentation]    FAIL No keyword with name 'name=No Operation' found.
     Run Keyword    name=No Operation
@@ -186,14 +182,18 @@ Illegal combinations with all argument types
     got multiple values for argument 'a'.               a      a=a
     got multiple values for argument 'a'.               a      b       a=a
     got multiple values for argument 'a'.               a      b=b     a=a
-    got multiple values for argument 'a'.               a=a    a=a
     got positional argument after named arguments.      a=a    b
     got multiple values for argument 'b'.               a      b       b=b
     got multiple values for argument 'a'.               a      b       a=a
     got multiple values for argument 'a'.               a      b       c1      a=a
-    got positional argument after named arguments.      a=a    b=b     d1=d    foo
-    got multiple values for argument 'b'.               a      b=b     b=b
-    got multiple values for argument 'a'.               a=a    d1=d    d2=d    a=a
+    got positional argument after named arguments.      a=a    b=b     d=d     foo
+
+Multiple named with same name is allowed and last has precedence
+    [Setup]    Set Test Variable    ${b}    b
+    [Template]    Execute working combinations with everything
+    c, default    a=a    a=b       a=c
+    a, 3          a      b=1       b=2    ${b}=3
+    b, 3, c:2     a=a    ${b}=1    c=1    ${b}=2    c=2    b=3    a=${b}
 
 List variable with multiple values for same variable
     [Documentation]    FAIL Keyword 'python_library.Lib Mandatory And Named 2' got multiple values for argument 'b'.
