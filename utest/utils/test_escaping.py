@@ -1,8 +1,8 @@
 import unittest
 
 
-from robot.utils.asserts import assert_equals
-from robot.utils.escaping import escape, unescape
+from robot.utils.asserts import assert_equals, assert_raises
+from robot.utils.escaping import escape, unescape, split_from_equals
 
 
 def assert_unescape(inp, exp):
@@ -163,6 +163,25 @@ class TestEscape(unittest.TestCase):
             assert_equals(escape(inp.lower()), inp.lower())
             assert_equals(escape('other' + inp), 'other' + inp)
             assert_equals(escape(inp + ' '), inp + ' ')
+
+
+class TestSplitFromEquals(unittest.TestCase):
+
+    def test_basics(self):
+        for inp in 'foo=bar', '=', 'split=from=first', '===':
+            self._test(inp, inp.split('=', 1))
+
+    def test_escaped(self):
+        self._test(r'a\=b=c', (r'a\=b', 'c'))
+        self._test(r'\=====', (r'\=', '==='))
+        self._test(r'\=\\\=\\=', (r'\=\\\=\\', ''))
+
+    def test_no_unescaped_equal(self):
+        for inp in '', 'xxx', r'\=', r'\\\=', r'\\\\\=\\\\\\\=\\\\\\\\\=':
+            self._test(inp, (inp, None))
+
+    def _test(self, inp, exp):
+        assert_equals(split_from_equals(inp), tuple(exp))
 
 
 if __name__ == '__main__':

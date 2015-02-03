@@ -96,6 +96,16 @@ Kwargs alone
     ${result} =    Lib Kwargs    foo=1    bar=${2}
     Should Be Equal    ${result}    bar:2 (int), foo:1
 
+Kwargs with escaped equal sign 1
+    ${result} =    Lib Kwargs    a\=b=c=d    \===
+    Should Be Equal    ${result}    =:=, a=b:c=d
+    ${result} =    Lib Kwargs    1\\=x\=y    2\=x\\=y    3\\\\\=x\\\\=y
+    Should Be Equal    ${result}    1\\:x=y, 2=x\\:y, 3\\\\=x\\\\:y
+
+Kwargs with escaped equal sign 2
+    [Documentation]    FAIL Keyword 'python_library.Lib Kwargs' expected 0 non-keyword arguments, got 1.
+    Lib Kwargs    a\=b\\\=c\\\\\=d\\\\\\\=e
+
 Kwargs with positional and named
     ${result} =    Lib Mandatory Named And Kwargs    mandatory
     Should Be Equal    ${result}    mandatory, 2 (int)
@@ -164,7 +174,8 @@ Working combinations with all argument types
 Test escaping with all argument types
     [Template]    Execute working combinations with everything
     # double escaping because of template
-    a, b=bar=foo               a        b\\=bar=foo
+    a, default, b=bar:foo      a        b\\=bar=foo
+    a, b=bar=foo               a        b\\=bar\\=foo
     a, foo=bar                 a        b=foo\\=bar
     a, default, foo:foo=bar    a        foo=foo\\=bar
     a=a, b=b                   a\\=a    b\\=b

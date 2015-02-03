@@ -16,8 +16,9 @@ from __future__ import with_statement
 from contextlib import contextmanager
 
 from robot.errors import DataError
+from robot.utils import split_from_equals
 
-from .isvar import is_dict_var, is_scalar_var, validate_var
+from .isvar import is_dict_var, validate_var
 from .notfound import raise_not_found
 
 
@@ -116,32 +117,16 @@ class DelayedDictVariable(DelayedVariable):
     def _format_value(self, value, name):
         return list(self._yield_items(value))
 
-    def _yield_items(self, value):
-        for item in value:
+    def _yield_items(self, items):
+        for item in items:
             if is_dict_var(item):
                 yield item
             else:
-                yield self._split_item(item)
-
-    def _split_item(self, item):
-        try:
-            index = self._get_split_index(item)
-        except ValueError:
-            raise DataError("Dictionary item '%s' does not contain '=' "
-                            "separator." % item)
-        return item[:index], item[index+1:]
-
-    def _get_split_index(self, item):
-        index = 0
-        while True:
-            index += item[index:].index('=')
-            if self._not_escaping(item[:index]):
-                return index
-            index += 1
-
-    def _not_escaping(self, name):
-        backslashes = len(name) - len(name.rstrip('\\'))
-        return backslashes % 2 == 0
+                name, value = split_from_equals(item)
+                if value is None:
+                    raise DataError("Dictionary item '%s' does not contain "
+                                    "'=' separator." % item)
+                yield name, value
 
     def _replace_variables(self, value, variables):
         try:

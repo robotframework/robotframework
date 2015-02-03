@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import is_dict_like
+from robot.utils import is_dict_like, split_from_equals
 
 from .argumentvalidator import ArgumentValidator
 
@@ -58,8 +58,8 @@ class NamedArgumentResolver(object):
     def _is_named(self, arg, variables=None):
         if not isinstance(arg, basestring) or '=' not in arg:
             return False
-        name = arg.split('=')[0]
-        if self._is_escaped(name):
+        name, value = split_from_equals(arg)
+        if value is None:
             return False
         if self._argspec.kwargs:
             return True
@@ -69,11 +69,8 @@ class NamedArgumentResolver(object):
             name = variables.replace_scalar(name)
         return name in self._argspec.positional
 
-    def _is_escaped(self, name):
-        return name.endswith('\\')
-
     def _add_named(self, arg, named):
-        name, value = arg.split('=', 1)
+        name, value = split_from_equals(arg)
         name = kwarg_to_str_if_possible(name)
         if name in named:
             self._raise_multiple_values(name)

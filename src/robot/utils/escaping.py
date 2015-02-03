@@ -117,3 +117,23 @@ class EscapeFinder(object):
         self.escaped = bool(escape_chars % 2)
         self.text = res.group(2)
         self.after = string[res.end():]
+
+
+def split_from_equals(string):
+    index = _get_split_index(string)
+    if index == -1:
+        return string, None
+    return string[:index], string[index+1:]
+
+def _get_split_index(string):
+    index = 0
+    while '=' in string[index:]:
+        index += string[index:].index('=')
+        if _not_escaping(string[:index]):
+            return index
+        index += 1
+    return -1
+
+def _not_escaping(name):
+    backslashes = len(name) - len(name.rstrip('\\'))
+    return backslashes % 2 == 0

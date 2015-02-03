@@ -55,6 +55,10 @@ Named combinations with varargs
 Kwargs alone
     Check Test Case    ${TESTNAME}
 
+Kwargs with escaped equal sign
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
 Kwargs with positional and named
     Check Test Case    ${TESTNAME}
 
