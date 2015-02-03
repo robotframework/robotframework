@@ -16,10 +16,8 @@ from robot.errors import DataError
 from robot.utils import is_dict_like, is_list_like
 
 from .filesetter import VariableFileSetter
-from .finders import (EnvironmentFinder, EmptyFinder, ExtendedFinder,
-                      NumberFinder, StoredFinder)
+from .finders import VariableFinder
 from .isvar import validate_var
-from .notfound import raise_not_found
 from .replacer import VariableReplacer
 from .store import VariableStore
 from .tablesetter import VariableTableSetter
@@ -35,52 +33,33 @@ class Variables(object):
 
     def __init__(self):
         self.store = VariableStore(self)
-        self.replacer = VariableReplacer(self)
+        self._replacer = VariableReplacer(self)
+        self._finder = VariableFinder(self.store)
 
     def __setitem__(self, name, value):
         validate_var(name)
+        # TODO: Error messages, tests.
         if name[0] == '@' and not is_list_like(value):
             raise DataError('TODO')
-        # TODO: Validate '&' variables. Tests.
+        if name[0] == '%' and not is_dict_like(value):
+            raise DataError('TODO')
         self.store.add(name[2:-1], value)
 
     def __getitem__(self, name):
-        # TODO: Move to finder module
         validate_var(name, '$@&%')
-        for finder in (StoredFinder(self.store),
-                       NumberFinder(),
-                       EmptyFinder(),
-                       EnvironmentFinder(),
-                       ExtendedFinder(self)):
-            try:
-                value = finder.find(name)
-            except (KeyError, ValueError):
-                continue
-            if name[0] == '@':
-                # TODO: Should we also allow dicts here?
-                if not is_list_like(value):
-                    raise DataError("Value of variable '%s' is not list or "
-                                    "list-like." % name)
-                return list(value)
-            if name[0] == '&':
-                if not is_dict_like(value):
-                    raise DataError("Value of variable '%s' is not dictionary "
-                                    "or dictionary-like." % name)
-                return dict(value)
-            return value
-        raise_not_found(name, self.store.store)
+        return self._finder.find(name)
 
     def resolve_delayed(self):
         self.store.resolve_delayed()
 
     def replace_list(self, items, replace_until=None):
-        return self.replacer.replace_list(items, replace_until)
+        return self._replacer.replace_list(items, replace_until)
 
     def replace_scalar(self, item):
-        return self.replacer.replace_scalar(item)
+        return self._replacer.replace_scalar(item)
 
     def replace_string(self, item, ignore_errors=False):
-        return self.replacer.replace_string(item, ignore_errors)
+        return self._replacer.replace_string(item, ignore_errors)
 
     def set_from_file(self, path_or_variables, args=None, overwrite=False):
         setter = VariableFileSetter(self.store)
@@ -99,12 +78,12 @@ class Variables(object):
     def copy(self):
         # TODO: This is fugly!
         variables = Variables()
-        variables.store.store = self.store.store.copy()
+        variables.store.data = self.store.data.copy()
         return variables
 
     def update(self, variables):
         # TODO: Fugly!
-        self.store.store.update(variables.store.store)
+        self.store.data.update(variables.store.data)
 
     def __iter__(self):
         # TODO: Returns names w/o decoration -- cannot be used w/ __getitem__

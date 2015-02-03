@@ -21,11 +21,11 @@ from .tablesetter import DelayedVariable
 class VariableStore(object):
 
     def __init__(self, variables):
-        self.store = NormalizedDict(ignore='_')
+        self.data = NormalizedDict(ignore='_')
         self._variables = variables
 
     def resolve_delayed(self):
-        for name, value in self.store.items():
+        for name, value in self.data.items():
             try:
                 self._resolve_delayed(name, value)
             except DataError:
@@ -34,31 +34,31 @@ class VariableStore(object):
     def _resolve_delayed(self, name, value):
         if not isinstance(value, DelayedVariable):
             return value
-        self.store[name] = value.resolve(name, self._variables)
-        return self.store[name]
+        self.data[name] = value.resolve(name, self._variables)
+        return self.data[name]
 
     def find(self, name):
-        return self._resolve_delayed(name, self.store[name])
+        return self._resolve_delayed(name, self.data[name])
 
     def __getitem__(self, name):
         return self.find(name)    # TODO: __getitem__ vs find
 
     def clear(self):
-        self.store.clear()
+        self.data.clear()
 
     def add(self, name, value, overwrite=True):
-        if overwrite or name not in self.store:
-            self.store[name] = value
+        if overwrite or name not in self.data:
+            self.data[name] = value
 
     def remove(self, name):
-        if name in self.store:
-            self.store.pop(name)
+        if name in self.data:
+            self.data.pop(name)
 
     def __len__(self):
-        return len(self.store)
+        return len(self.data)
 
     def __iter__(self):
-        return iter(self.store)
+        return iter(self.data)
 
     def __contains__(self, name):
-        return name in self.store
+        return name in self.data

@@ -939,7 +939,7 @@ class _Variables:
         # TODO: Support also returning variables w/o decoration
         identifier = lambda value: '@' if utils.is_list_like(value) else '$'
         variables = (('%s{%s}' % (identifier(value), name), value)
-                     for name, value in self._variables.store.store.items())
+                     for name, value in self._variables.store.data.items())
         return utils.NormalizedDict(variables, ignore='_')
 
     @run_keyword_variant(resolve=0)
