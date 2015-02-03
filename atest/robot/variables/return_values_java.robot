@@ -44,6 +44,9 @@ Set List Variable Using String Iterator
     ${tc} =    Check Test Case    ${TEST NAME}
     Verify List Variable Assigment    ${tc}    Get String Iterator
 
+List Variable From Mapping
+    Check Test Case    ${TEST NAME}
+
 Set Scalar Variables With More Values Than Variables Using Array
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = a

@@ -5,7 +5,7 @@ Variables    dict_vars.py
 *** Variables ***
 &{DICT}      a=1    b=${2}    c=3
 &{ESCAPED}   \${a}=c:\\temp    b=\${2}    ${/}=${\n}    4\=5\\\=6=value
-&{ONE}       ${1}=${1}
+&{ONE}       ${1}=${2}
 @{LIST}      one    two    three
 
 
@@ -65,16 +65,24 @@ Extended variables
     Dictionaries Should Be Equal    ${result}    ${ESCAPED}
 
 Converted to string if not alone
-    Should Be Equal    ---&{ONE}---    ---{1: 1}---
-    Should Be Equal    &{ONE}${ONE}    {1: 1}{1: 1}
-    Should Be Equal    &{ONE}}}}}}}    {1: 1}}}}}}}
-    Should Be Equal    &&&&&&&{ONE}    &&&&&\&{1: 1}
-    Should Be Equal    &&&&{ONE}}}}    &&\&{1: 1}}}}
+    Should Be Equal    ---&{ONE}---    ---{1: 2}---
+    Should Be Equal    &{ONE}${ONE}    {1: 2}{1: 2}
+    Should Be Equal    &{ONE}}}}}}}    {1: 2}}}}}}}
+    Should Be Equal    &&&&&&&{ONE}    &&&&&\&{1: 2}
+    Should Be Equal    &&&&{ONE}}}}    &&\&{1: 2}}}}
     ${result} =    Create Dictionary    &{ONE}}=&{ONE}    &{ONE}\==&{ONE}}
     ${value1} =    Get From Dictionary    ${result}    &{ONE}}
     ${value2} =    Get From Dictionary    ${result}    &{ONE}=
     Should Be Equal    ${value1}    ${ONE}
     Should Be Equal    ${value2}    &{ONE}}
+
+Use as list
+    Should Be Equal    @{ONE}    ${1}
+    @{keys} =    Create List    @{DICT}
+    Length Should be    ${keys}    3
+    Should Contain    ${keys}    a
+    Should Contain    ${keys}    b
+    Should Contain    ${keys}    c
 
 Non-existing
     [Documentation]    FAIL Variable '&{non existing}' not found.

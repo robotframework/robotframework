@@ -51,7 +51,6 @@ class VariableFinder(object):
 
     def _validate_value(self, value, identifier, name):
         if identifier == '@':
-            # TODO: Should we also allow dicts here?
             if not is_list_like(value):
                 raise DataError("Value of variable '%s' is not list or "
                                 "list-like." % name)

@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation     NO RIDE because it would sanitize formatting too much.
 Library           ExampleLibrary
+Library           Collections
 
 *** Test Cases ***
 Simple Scalar Variable
@@ -74,6 +75,13 @@ List Variable From List Subclass
     @{listvar} =    Return List Subclass    Keijo    Mela
     Should Be Equal    @{listvar}[0]    Keijo
     Should Be Equal    @{listvar}[1]    Mela
+
+List Variable From Dictionary
+    @{list} =    Create Dictionary    name=value
+    Should Be Equal    @{list}    name
+    Should Be True    ${list} == ['name']
+    @{list} =    Create Dictionary    a=1    b=2    c=3
+    Should Be True    set(${list}) == set(['a', 'b', 'c'])
 
 Long String To Scalar Variable
     ${var_300} =    Set Variable    123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890

@@ -44,6 +44,10 @@ Set List Variable Using String Iterator
     Should Be Equal    @{listvar}[0]    v1
     Should Be True    @{listvar} == ['v1', 'v2', 'v3']
 
+List Variable From Mapping
+    @{list} =    Get Hashtable
+    Should Be True    ${list} == []
+
 Set Scalar Variables With More Values Than Variables Using Array
     ${a}    ${b}    ${c} =    Get String Array    a    b    c    d    e    f
     Should Be Equal    ${a}    a

@@ -7,7 +7,13 @@ Resource    atest_resource.robot
 Automatic and Command Line Variables
     Check test Case  ${TEST NAME}
 
-Variable Table
+Variable Table Scalar
+    Check test Case  ${TEST NAME}
+
+Variable Table List
+    Check test Case  ${TEST NAME}
+
+Variable Table Dict
     Check test Case  ${TEST NAME}
 
 Global Variables

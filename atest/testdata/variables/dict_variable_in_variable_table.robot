@@ -13,6 +13,7 @@ Test Template         Dict Variable Should Be Equal
 &{VARIABLES}          a=${1}    ${2}=b    ${True}=${False}
 @{LIST}               ${1}    ${2}    ${3}
 &{LIST VALUES}        scalar=${LIST}    list=@{LIST}
+&{DICT AS LIST}       first=@{EMPTY DICT}    second=@{${NAME}}
 &{DICT VALUES}        scalar=${FIRST DICT EVER}    dict=&{EMPTY DICT}
 &{EXTENDED}           extended 1=&{FIRST DICT EVER.copy()}
 ...                   extended 2=&{FIRST DICT EVER.fromkeys([1, 2], 42)}
@@ -47,6 +48,7 @@ Dict items must contain equal sign
 Variables in key and value
     ${VARIABLES}          {'a': 1, 2: 'b', True: False}
     ${LIST VALUES}        {'scalar': [1, 2, 3], 'list': [1, 2, 3]}
+    ${DICT AS LIST}       {'first': [], 'second': @{FIRST DICT EVER}}
     ${DICT VALUES}        {'scalar': ${FIRST DICT EVER}, 'dict': {}}
 
 Extended variables

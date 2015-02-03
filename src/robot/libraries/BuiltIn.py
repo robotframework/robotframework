@@ -937,10 +937,16 @@ class _Variables:
         a custom object that did not support all dictionary methods.
         """
         # TODO: Support also returning variables w/o decoration
-        identifier = lambda value: '@' if utils.is_list_like(value) else '$'
-        variables = (('%s{%s}' % (identifier(value), name), value)
+        variables = ((self._decorate_variable(name, value), value)
                      for name, value in self._variables.store.data.items())
         return utils.NormalizedDict(variables, ignore='_')
+
+    def _decorate_variable(self, name, value):
+        if utils.is_dict_like(value):
+            return '&{%s}' % name
+        if utils.is_list_like(value):
+            return '@{%s}' % name
+        return '${%s}' % name
 
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):

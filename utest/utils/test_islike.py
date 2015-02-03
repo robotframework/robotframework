@@ -41,17 +41,17 @@ class TestListlike(unittest.TestCase):
         for thing in ['str', u'unicode', UserString('user')]:
             assert_equals(is_list_like(thing), False, thing)
 
-    def test_dict_likes_are_not_list_like(self):
+    def test_dict_likes_are_list_like(self):
         for thing in [dict(), UserDict(), MyMapping()]:
-            assert_equals(is_list_like(thing), False, thing)
+            assert_equals(is_list_like(thing), True, thing)
 
     if sys.platform.startswith('java'):
 
         def test_java_strings_are_not_list_like(self):
             assert_equals(is_list_like(String()), False)
 
-        def test_java_dict_likes_are_not_list_like(self):
-            assert_equals(is_list_like(HashMap()), False)
+        def test_java_dict_likes_are_list_like(self):
+            assert_equals(is_list_like(HashMap()), True)
 
     def test_other_iterables_are_list_like(self):
         for thing in [[], (), set(), xrange(1), generator(), array('i'), UserList()]:

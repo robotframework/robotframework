@@ -32,7 +32,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${SCALAR} = Hi tellus
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
-    Check Variable Message    \${SUITE_METADATA} = {}
+    Check Variable Message    \&{SUITE_METADATA} = [ ]
     Check Variable Message    \${SUITE_NAME} = *    pattern=yes
     Check Variable Message    \${suite_setup_global_var} = Global var set in suite setup
     Check Variable Message    \@{suite_setup_global_var_list} = [ Global var set in | suite setup ]
@@ -72,7 +72,7 @@ Log Variables In Test
     Check Variable Message    \${SCALAR} = Hi tellus
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
-    Check Variable Message    \${SUITE_METADATA} = {}
+    Check Variable Message    \&{SUITE_METADATA} = [ ]
     Check Variable Message    \${SUITE_NAME} = *    pattern=yes
     Check Variable Message    \${suite_setup_global_var} = Global var set in suite setup
     Check Variable Message    \@{suite_setup_global_var_list} = [ Global var set in | suite setup ]
@@ -116,7 +116,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \${SCALAR} = Hi tellus    DEBUG
     Check Variable Message    \${SPACE} =    DEBUG
     Check Variable Message    \${SUITE_DOCUMENTATION} =    DEBUG
-    Check Variable Message    \${SUITE_METADATA} = {}    DEBUG
+    Check Variable Message    \&{SUITE_METADATA} = [ ]    DEBUG
     Check Variable Message    \${SUITE_NAME} = *    DEBUG    pattern=yes
     Check Variable Message    \${suite_setup_global_var} = Global var set in suite setup    DEBUG
     Check Variable Message    \@{suite_setup_global_var_list} = [ Global var set in | suite setup ]    DEBUG
@@ -161,7 +161,7 @@ Log Variables In User Keyword
     Check Variable Message    \${SCALAR} = Hi tellus
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
-    Check Variable Message    \${SUITE_METADATA} = {}
+    Check Variable Message    \&{SUITE_METADATA} = [ ]
     Check Variable Message    \${SUITE_NAME} = *    pattern=yes
     Check Variable Message    \${suite_setup_global_var} = Global var set in suite setup
     Check Variable Message    \@{suite_setup_global_var_list} = [ Global var set in | suite setup ]

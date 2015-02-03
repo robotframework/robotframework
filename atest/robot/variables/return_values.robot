@@ -62,6 +62,10 @@ List Variable From List Subclass
     Should Be Equal    ${tc.kws[0].name}    \@{listvar} = ExampleLibrary.Return List Subclass
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{listvar} = [ Keijo | Mela ]
 
+List Variable From Dictionary
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \@{list} = [ name ]
+
 Long String To Scalar Variable
     [Documentation]    Long assing messages should be cut.
     ${tc} =    Check Test Case    ${TEST NAME}

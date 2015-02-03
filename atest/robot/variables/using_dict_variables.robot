@@ -34,6 +34,9 @@ Extended variables
 Converted to string if not alone
     Check Test Case    ${TESTNAME}
 
+Use as list
+    Check Test Case    ${TESTNAME}
+
 Non-existing
     Check Test Case    ${TESTNAME}
 

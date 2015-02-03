@@ -32,7 +32,7 @@ def is_str_like(item, allow_java=False):
 
 
 def is_list_like(item):
-    if is_str_like(item, allow_java=True) or is_dict_like(item, allow_java=True):
+    if is_str_like(item, allow_java=True):
         return False
     try:
         iter(item)

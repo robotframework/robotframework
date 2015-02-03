@@ -97,8 +97,8 @@ class ArgumentCoercer(object):
     def coerce(self, argument):
         for handles, handle in [(self._is_string, self._handle_string),
                                 (self._is_number, self._pass_through),
-                                (is_list_like, self._coerce_list),
                                 (is_dict_like, self._coerce_dict),
+                                (is_list_like, self._coerce_list),
                                 (lambda arg: True, self._to_string)]:
             if handles(argument):
                 return handle(argument)
@@ -173,10 +173,10 @@ class RemoteResult(object):
     def _handle_binary(self, value):
         if isinstance(value, xmlrpclib.Binary):
             return str(value)
-        if is_list_like(value):
-            return [self._handle_binary(v) for v in value]
         if is_dict_like(value):
             return dict((k, self._handle_binary(v)) for k, v in value.items())
+        if is_list_like(value):
+            return [self._handle_binary(v) for v in value]
         return value
 
 

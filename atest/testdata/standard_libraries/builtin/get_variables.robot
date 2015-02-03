@@ -5,14 +5,22 @@ Variables  vars_for_get_variables.py
 Suite Setup  Set Some Variables
 
 *** Variables ***
-${MY VARIABLE}  dhrfad
+${SCALAR}  dhrfad
+@{LIST}    first    second
+&{DICT}    a=1    b=2
 
 *** Test Cases ***
 Automatic and Command Line Variables
   Variables Should Contain  \${/}  \${cmd line}
 
-Variable Table
-  Variables Should Contain  \${MY VARIABLE}
+Variable Table Scalar
+  Variables Should Contain  \${SCALAR}
+
+Variable Table List
+  Variables Should Contain  \@{LIST}
+
+Variable Table Dict
+  Variables Should Contain  \&{DICT}
 
 Global Variables
   Set Global In Resource
@@ -46,11 +54,11 @@ Set Variable in User Keyword
 Variables Are Returned as NormalizedDict
   ${variables}=   Get Variables
   Should Be Equal  ${variables.__class__.__name__}  NormalizedDict
-  Dictionary Should Contain Key  ${variables}  \${MY VARIABLE}
-  Dictionary Should Contain Key  ${variables}  \${_MY_ vAriab LE}
+  Dictionary Should Contain Key  ${variables}  \${SCALAR}
+  Dictionary Should Contain Key  ${variables}  \${__Scala__ R}
   ${copy}=  Copy Dictionary  ${variables}
-  Dictionary Should Contain Key  ${copy}  \${MY VARIABLE}
-  Dictionary Should Contain Key  ${copy}  \${_MY_ vAriab LE}
+  Dictionary Should Contain Key  ${copy}  \${SCALAR}
+  Dictionary Should Contain Key  ${copy}  \${__Scala__ R}
 
 Modifying Returned Variables Has No Effect On Real Variables
   ${variables}=   Get Variables
