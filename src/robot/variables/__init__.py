@@ -14,8 +14,7 @@
 
 """Implements storing and resolving variables.
 
-This package is for internal usage only, and also subject to heavy refactoring
-in the future.
+This package is mainly for internal usage.
 """
 
 import os
@@ -24,7 +23,7 @@ import tempfile
 from robot import utils
 from robot.output import LOGGER
 
-from .isvar import contains_var, is_var, is_scalar_var, is_list_var
+from .isvar import contains_var, is_var, is_scalar_var, is_list_var, is_dict_var
 from .variables import Variables
 from .assigner import VariableAssigner
 from .splitter import VariableSplitter, VariableIterator
