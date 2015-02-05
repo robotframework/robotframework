@@ -7,6 +7,9 @@ Test Template         Dict Variable Should Be Equal
 &{EMPTY DICT}
 &{NÖN ÄSCII}          nön=äscii    snowman=\u2603
 &{SPACES}             \ lead=    =trail \    \ \ 2 \ = \ \ 3 \ \ \
+&{MANY ITEMS}         a=1     b=2     c=3     d=4     1=5     2=6     3=7
+...                   e=8     f=9     g=10    X=11    Y=12    Z=13    h=14
+...                   i=15    j=16    k=17    l=18    m=19    n=20    .=21
 &{EQUALS}             key=value with=sign        empty value=    =    ===
 &{ESCAPING EQUALS}    esc\=key=esc\=value    bs\\=\\    bs\\\=\\=    \===
 &{NO EQUAL}           haz equal=here    but not here
@@ -36,6 +39,7 @@ Dict variable
     ${EMPTY DICT}         {}
     ${NÖN ÄSCII}          {u'nön': u'äscii', 'snowman': u'\\u2603'}
     ${SPACES}             {' lead': '', '': 'trail ', ' \ 2 \ ': ' \ \ 3 \ \ '}
+    ${MANY ITEMS}         dict((k, str(i+1)) for i, k in enumerate('abcd123efgXYZhijklmn.'))
 
 First non-escaped equal sign is separator
     ${EQUALS}             {'key': 'value with=sign', 'empty value': '', '': '', '': '=='}
@@ -61,10 +65,57 @@ Last item overrides
     ${OVERRIDE}           {'a': '5', 'b': '3'}
     ${OVERRIDE W/ VARS}   {1: 'f'}
 
-Items from dict variable
+Create from dict variable
     ${USE DICT}           {'key': 'value', 'foo': 'that', 'new': 'this'}
     ${USE DICT EXTENDED}  {'key': 'value', 'foo': None, 'new': None}
     ${USE DICT INTERNAL}  {'key': 'value', 'foo': 42, 'new': 42}
+
+Dict from variable table should be ordered 1
+    [Template]    NONE
+    @{expected keys} =    Evaluate    list('abcd123efgXYZhijklmn.')
+    @{expected values} =    Evaluate    [str(i+1) for i in range(21)]
+    ${keys} =    Create List    @{MANY ITEMS}
+    Should Be Equal    ${keys}    ${expected keys}
+    Should Be Equal    ${MANY ITEMS.values()}    ${expected values}
+    Set To Dictionary    ${MANY ITEMS}    a    new value
+    Set To Dictionary    ${MANY ITEMS}    z    new item
+    Append To List    ${expected keys}    z
+    Set List Value    ${expected values}    0    new value
+    Append To List    ${expected values}    new item
+    Should Be Equal    ${MANY ITEMS.keys()}    ${expected keys}
+    Should Be Equal    ${MANY ITEMS.values()}    ${expected values}
+
+Dict from variable table should be ordered 2
+    [Template]    NONE
+    Should Be Equal    @{MANY ITEMS}[0]     a
+    Should Be Equal    @{MANY ITEMS}[1]     b
+    Should Be Equal    @{MANY ITEMS}[-1]    z
+    Should Be Equal    ${MANY ITEMS.values()[0]}     new value
+    Should Be Equal    ${MANY ITEMS.values()[1]}     2
+    Should Be Equal    ${MANY ITEMS.values()[-1]}    new item
+
+Dict from variable table should be dot-accessible
+    [Template]    NONE
+    Should Be Equal    ${FIRST DICT EVER.key}    value
+    Should Be Equal    ${NÖN ÄSCII.snowman}    \u2603
+
+Dict from variable table should be dot-assignable 1
+    [Template]    NONE
+    ${FIRST DICT EVER.key} =    Set Variable    new value
+    ${NÖN ÄSCII.new_key} =    Set Variable    hyvä
+    Should Be Equal    ${FIRST DICT EVER.key}    new value
+    Should Be Equal    ${FIRST DICT EVER['key']}    new value
+    Should Be Equal    ${NÖN ÄSCII.new_key}    hyvä
+    Length Should Be    ${FIRST DICT EVER}    2
+    Length Should Be    ${NÖN ÄSCII}    3
+
+Dict from variable table should be dot-assignable 2
+    [Template]    NONE
+    Should Be Equal    ${FIRST DICT EVER.key}    new value
+    Should Be Equal    ${FIRST DICT EVER['key']}    new value
+    Should Be Equal    ${NÖN ÄSCII.new_key}    hyvä
+    Length Should Be    ${FIRST DICT EVER}    2
+    Length Should Be    ${NÖN ÄSCII}    3
 
 Invalid key
     [Template]    NONE

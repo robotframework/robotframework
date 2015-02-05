@@ -27,8 +27,19 @@ Internal variables
 Last item overrides
     Check Test Case    ${TESTNAME}
 
-Items from dict variable
+Create from dict variable
     Check Test Case    ${TESTNAME}
+
+Dict from variable table should be ordered
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
+Dict from variable table should be dot-accessible
+    Check Test Case    ${TESTNAME}
+
+Dict from variable table should be dot-assignable
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
 Invalid key
     Check Test Case    ${TESTNAME}

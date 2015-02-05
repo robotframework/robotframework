@@ -16,7 +16,7 @@ from __future__ import with_statement
 from contextlib import contextmanager
 
 from robot.errors import DataError
-from robot.utils import split_from_equals
+from robot.utils import split_from_equals, DotDict
 
 from .isvar import validate_var
 from .notfound import raise_not_found
@@ -131,7 +131,7 @@ class DelayedDictVariable(DelayedVariable):
 
     def _replace_variables(self, value, variables):
         try:
-            return dict(self._yield_replaced(value, variables.replace_scalar))
+            return DotDict(self._yield_replaced(value,variables.replace_scalar))
         except TypeError, err:
             raise DataError('Creating dictionary failed: %s' % err)
 
