@@ -28,7 +28,7 @@ ${NAME}               first dict ever
 &{USE DICT}           key=not    &{FIRST DICT EVER}    &{EMPTY DICT}    new=this    foo=that
 &{USE DICT EXTENDED}  &{FIRST DICT EVER.copy()}    &{EMPTY DICT.fromkeys(['foo', 'new'])}
 &{USE DICT INTERNAL}  &{${NAME}}    &{${NAME.upper()}.fromkeys(['foo', 'new'], ${40+2})}
-&{INVALID KEY}        ${LIST}=doesn't work
+&{NON HASHABLE KEY}   ${LIST}=doesn't work
 &{NON DICT DICT 1}    name=&{LIST}
 &{NON DICT DICT 2}    &{SPACE}
 &{NON DICT DICT 3}    &{EMPTY DICT.keys()}
@@ -42,7 +42,7 @@ Dict variable
     ${MANY ITEMS}         dict((k, str(i+1)) for i, k in enumerate('abcd123efgXYZhijklmn.'))
 
 First non-escaped equal sign is separator
-    ${EQUALS}             {'key': 'value with=sign', 'empty value': '', '': '', '': '=='}
+    ${EQUALS}             {'key': 'value with=sign', 'empty value': '', '': '=='}
     ${ESCAPING EQUALS}    {'esc=key': 'esc=value', 'bs\\\\': '\\\\', 'bs\\\\=\\\\': '', '=': '='}
 
 Dict items must contain equal sign
@@ -119,7 +119,7 @@ Dict from variable table should be dot-assignable 2
 
 Invalid key
     [Template]    NONE
-    Variable Should Not Exist    ${INVALID KEY}
+    Variable Should Not Exist    ${NON HASHABLE KEY}
 
 Non-dict cannot be used as dict variable 1
     [Template]    NONE

@@ -521,6 +521,7 @@ class _Dictionary:
         =>
         - ${keys} = ['a', 'b', 'c']
         """
+        # TODO: Possibility to disable sorting. Can be handy with OrderedDicts.
         return sorted(dictionary)
 
     def get_dictionary_values(self, dictionary):

@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
+
 
 class ArgumentMapper(object):
 
@@ -51,7 +53,7 @@ class KeywordCallTemplate(object):
             elif self._supports_kwargs:
                 self.kwargs[name] = value
             else:
-                raise ValueError("Non-existing named argument '%s'" % name)
+                raise DataError("Non-existing named argument '%s'." % name)
 
     def prune_trailing_defaults(self):
         while self.args and isinstance(self.args[-1], Default):

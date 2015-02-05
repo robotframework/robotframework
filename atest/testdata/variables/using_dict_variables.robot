@@ -84,6 +84,34 @@ Use as list
     Should Contain    ${keys}    b
     Should Contain    ${keys}    c
 
+Using with named
+    ${args} =    Create Dictionary    arg1=Urho
+    Keyword    &{args}
+    ${args} =    Create Dictionary    arg1=Urho    arg2=Kekkonen
+    Keyword    &{args}
+    Keyword    &{EMPTY}    &{args}    &{EMPTY}
+
+Using with non-existing keys
+    [Documentation]    FAIL Non-existing named argument 'nonex'.
+    ${args} =    Create Dictionary    arg1=Urho    nonex=Not accepted
+    Keyword    &{args}
+
+Using when no named or kwargs accepted 1
+    [Documentation]    FAIL Non-existing named argument 'not_accepted'.
+    No args    &{EMPTY}
+    ${args} =    Create Dictionary    not_accepted=
+    No args    &{args}
+
+Using when no named or kwargs accepted 2
+    [Documentation]    FAIL Non-existing named argument 'not_accepted'.
+    Varargs    &{EMPTY}
+    ${args} =    Create Dictionary    not_accepted=
+    Varargs    &{args}
+
+Positional after
+    [Documentation]    FAIL Keyword 'Collections.Create Dictionary' got positional argument after named arguments.
+    Create Dictionary    &{EMPTY}    positional     values
+
 Non-existing
     [Documentation]    FAIL Variable '&{non existing}' not found.
     Create Dictionary    &{non existing}
@@ -96,3 +124,15 @@ Non-string keys
     [Documentation]    FAIL Argument names must be strings.
     ${ints} =    Evaluate    {1: 2, 3: 4}
     Create Dictionary    &{ints}
+
+*** Keywords ***
+Keyword
+    [Arguments]    ${arg1}    ${arg2}=Kekkonen
+    Should Be Equal    ${arg1} ${arg2}    Urho Kekkonen
+
+No args
+    No Operation
+
+Varargs
+    [Arguments]    @{varargs}
+    No Operation

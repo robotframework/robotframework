@@ -37,6 +37,19 @@ Converted to string if not alone
 Use as list
     Check Test Case    ${TESTNAME}
 
+Using with named
+    Check Test Case    ${TESTNAME}
+
+Using with non-existing keys
+    Check Test Case    ${TESTNAME}
+
+Using when no named or kwargs accepted
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
+Positional after
+    Check Test Case    ${TESTNAME}
+
 Non-existing
     Check Test Case    ${TESTNAME}
 
