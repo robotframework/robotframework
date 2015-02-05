@@ -7,6 +7,10 @@ Suite Setup       Run Tests    ${EMPTY}    variables/return_values.robot
 Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 
+*** Variables ***
+${UNREPR STR}     <Unrepresentable object 'FailiningStr'. Error: *>
+${UNREPR UNIC}    <Unrepresentable object 'FailiningUnicode'. Error: *>
+
 *** Test Cases ***
 Simple Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -21,24 +25,6 @@ List To Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${setvar} = [*'a', 2]    pattern=yep
 
-Multible Scalar Variables
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].name}    \${var1}, \${var2} = BuiltIn.Create List
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${var1} = one
-    Check Log Message    ${tc.kws[0].msgs[1]}    \${var2} = two
-
-= Mark Without Space
-    Check Test Case    ${TEST NAME}
-
-No = Mark
-    Check Test Case    ${TEST NAME}
-
-Optional = Mark With Multiple Variables
-    Check Test Case    ${TEST NAME}
-
-= Can Be Used Only With The Last Variable
-    Check Test Case    ${TEST NAME}
-
 Python Object To Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = This is my name
@@ -46,6 +32,34 @@ Python Object To Scalar Variable
 None To Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = None
+
+Unrepresentable object to scalar variable
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = ${UNREPR STR}    pattern=yes
+
+Multible Scalar Variables
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].name}    \${var1}, \${var2} = BuiltIn.Create List
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${var1} = one
+    Check Log Message    ${tc.kws[0].msgs[1]}    \${var2} = 2
+
+Unrepresentable objects to scalar variables
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${o1} = ${UNREPR STR}    pattern=yes
+    Check Log Message    ${tc.kws[0].msgs[1]}    \${o2} = ${UNREPR UNIC}    pattern=yes
+
+Multiple Scalars With Too Few Values
+    Check Test Case    ${TESTNAME}
+
+Scalar Variables With More Values Than Variables
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = a
+    Check Log Message    ${tc.kws[0].msgs[1]}    \${b} = b
+    Check Log Message    ${tc.kws[0].msgs[2]}    \${c} = [*'c', 4]    pattern=yes
+
+Multiple Scalars When No List Returned
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
 List Variable
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -66,48 +80,38 @@ List Variable From Dictionary
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{list} = [ name ]
 
-Long String To Scalar Variable
-    [Documentation]    Long assing messages should be cut.
+Unrepresentable objects to list variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${var_300} = 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890...
-
-Long Values To List Variable
-    [Documentation]    Long assing messages should be cut.
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    \@{listvar} = [ 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890 | 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 12345...
-
-Scalar Variables With More Values Than Variables
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = a
-    Check Log Message    ${tc.kws[0].msgs[1]}    \${b} = b
-    Check Log Message    ${tc.kws[0].msgs[2]}    \${c} = [*'c', 4]    pattern=yes
-
-Multiple Scalars With Too Few Values
-    Check Test Case    ${TEST NAME}
-
-Multiple Scalars When No List Returned
-    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = [ ${UNREPR STR} | ${UNREPR UNIC} ]    pattern=yes
+    Check Log Message    ${tc.kws[0].msgs[0]}    \@{unrepr} = [ ${UNREPR STR} | ${UNREPR UNIC} ]    pattern=yes
+    Should Match         ${tc.kws[2].kws[0].name}    \${obj} = ${UNREPR STR}
+    Check Log Message    ${tc.kws[2].kws[0].kws[1].msgs[0]}    $\{var} = ${UNREPR STR}    pattern=yes
+    Should Match         ${tc.kws[2].kws[1].name}    \${obj} = ${UNREPR UNIC}
+    Check Log Message    ${tc.kws[2].kws[1].kws[1].msgs[0]}    $\{var} = ${UNREPR UNIC}    pattern=yes
 
 List When No List Returned
-    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TESTNAME}
 
-List To Scalar And List Variables
+Scalars And And List
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].name}    \${a}, \${b}, \@{c} = BuiltIn.Create List
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = 1
-    Check Log Message    ${tc.kws[0].msgs[1]}    \${b} = 2
-    Check Log Message    ${tc.kws[0].msgs[2]}    \@{c} = [ c | d | e | f ]
+    Should Be Equal    ${tc.kws[0].name}    \${first}, \@{rest} = BuiltIn.Evaluate
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${first} = 0
+    Check Log Message    ${tc.kws[0].msgs[1]}    \@{rest} = [ 1 | 2 | 3 | 4 ]
+    Should Be Equal    ${tc.kws[3].name}    \${a}, \${b}, \@{c} = BuiltIn.Create List
+    Check Log Message    ${tc.kws[3].msgs[0]}    \${a} = 1
+    Check Log Message    ${tc.kws[3].msgs[1]}    \${b} = 2
+    Check Log Message    ${tc.kws[3].msgs[2]}    \@{c} = [ c | d | e | f ]
 
-One None To Multiple Variables
+None To Multiple Scalar Variables
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${x} = None
     Check Log Message    ${tc.kws[0].msgs[1]}    \${y} = None
 
-One None To List Variable
+None To List Variable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[1]}    \@{list} = [ ]
 
-One None To Scalar Variables And List Variable
+None To Scalar Variables And List Variable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = None
     Check Log Message    ${tc.kws[0].msgs[1]}    \${b} = None
@@ -120,17 +124,35 @@ List Variable Can Be Only Last
     ${tc} =    Check Test Case    ${TEST NAME} 2
     Should Be Equal    ${tc.kws[0].name}    \@{list}, \${scalar} = BuiltIn.Set Variable
 
+Long String To Scalar Variable
+    [Documentation]    Long assing messages should be cut.
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${v300} = 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 ...
+
+Long Values To List Variable
+    [Documentation]    Long assing messages should be cut.
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[1].msgs[0]}    \@{long} = [ 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 | 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456...
+
 No Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.kws[0].name}    \${nokeyword} = None
 
-Failing keyword
+Failing Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.kws[0].name}    \${ret} = BuiltIn.Fail
 
-Failing keyword and teardown
-    Check Test Case    ${TEST NAME}
+Failing Keyword And Teardown
+    Check Test Case    ${TESTNAME}
 
-Return Unrepresentable Objects
-    [Documentation]    See http://code.google.com/p/robotframework/issues/detail?id=967
-    Check Test Case    ${TEST NAME}
+Assign Mark Without Space
+    Check Test Case    ${TESTNAME}
+
+No Assign Mark
+    Check Test Case    ${TESTNAME}
+
+Optional Assign Mark With Multiple Variables
+    Check Test Case    ${TESTNAME}
+
+Assign Mark Can Be Used Only With The Last Variable
+    Check Test Case    ${TESTNAME}

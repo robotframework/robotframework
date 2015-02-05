@@ -145,12 +145,21 @@ class ExampleLibrary:
     def return_list_subclass(self, *values):
         return _MyList(values)
 
-    def return_unrepresentable_objects(self):
+    def return_unrepresentable_objects(self, identifier=None, just_one=False):
         class FailiningStr(object):
-            def __str__(self): raise RuntimeError
-            def __unicode__(self): raise UnicodeError()
+            def __init__(self, identifier=identifier):
+                self.identifier = identifier
+            def __str__(self):
+                raise RuntimeError
+            def __unicode__(self):
+                raise UnicodeError
         class FailiningUnicode(object):
-            def __unicode__(self): raise RuntimeError
+            def __init__(self, identifier=identifier):
+                self.identifier = identifier
+            def __unicode__(self):
+                raise ValueError
+        if just_one:
+            return FailiningStr()
         return FailiningStr(), FailiningUnicode()
 
     def fail_with_suppressed_exception_name(self, msg):
