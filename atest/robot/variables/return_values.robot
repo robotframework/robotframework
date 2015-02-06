@@ -29,13 +29,13 @@ Python Object To Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = This is my name
 
-None To Scalar Variable
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = None
-
 Unrepresentable object to scalar variable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = ${UNREPR STR}    pattern=yes
+
+None To Scalar Variable
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = None
 
 Multible Scalar Variables
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -48,10 +48,15 @@ Unrepresentable objects to scalar variables
     Check Log Message    ${tc.kws[0].msgs[0]}    \${o1} = ${UNREPR STR}    pattern=yes
     Check Log Message    ${tc.kws[0].msgs[1]}    \${o2} = ${UNREPR UNIC}    pattern=yes
 
+None To Multiple Scalar Variables
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${x} = None
+    Check Log Message    ${tc.kws[0].msgs[1]}    \${y} = None
+
 Multiple Scalars With Too Few Values
     Check Test Case    ${TESTNAME}
 
-Scalar Variables With More Values Than Variables Fails
+Multiple Scalars With Too Many Values
     Check Test Case    ${TEST NAME}
 
 Multiple Scalars When No List Returned
@@ -86,9 +91,17 @@ Unrepresentable objects to list variables
     Should Match         ${tc.kws[2].kws[1].name}    \${obj} = ${UNREPR UNIC}
     Check Log Message    ${tc.kws[2].kws[1].kws[1].msgs[0]}    $\{var} = ${UNREPR UNIC}    pattern=yes
 
+None To List Variable
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[1]}    \@{list} = [ ]
+
 List When Non-List Returned
     Check Test Case    ${TESTNAME} 1
     Check Test Case    ${TESTNAME} 2
+
+Only One List Variable Allowed
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 List After Scalars
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -113,24 +126,6 @@ List Between Scalars
     Check Log Message    ${tc.kws[0].msgs[1]}    \@{list} = [ 2 | 3 ]
     Check Log Message    ${tc.kws[0].msgs[2]}    \${last} = 4
 
-List and scalars with not enough values
-    Check Test Case    ${TEST NAME} 1
-    Check Test Case    ${TEST NAME} 2
-    Check Test Case    ${TEST NAME} 3
-
-Only One List Variable Allowed
-    Check Test Case    ${TEST NAME} 1
-    Check Test Case    ${TEST NAME} 2
-
-None To Multiple Scalar Variables
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${x} = None
-    Check Log Message    ${tc.kws[0].msgs[1]}    \${y} = None
-
-None To List Variable
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[1]}    \@{list} = [ ]
-
 None To Scalar Variables And List Variable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = None
@@ -138,13 +133,24 @@ None To Scalar Variables And List Variable
     Check Log Message    ${tc.kws[0].msgs[2]}    \${c} = None
     Check Log Message    ${tc.kws[0].msgs[3]}    \@{d} = [ ]
 
-None to Scalar Variables and List Variable in the Middle
-    Check Test Case    ${TEST NAME}
-
-None To Dict
-    ${tc} =    Check Test Case    ${TEST NAME}
+List and scalars with not enough values
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
 
 Dictionary return value
+    ${tc} =    Check Test Case    ${TEST NAME}
+    #TODO check messages
+
+Dictionary is dot-accessible
+    ${tc} =    Check Test Case    ${TEST NAME}
+    #TODO check messages
+
+Scalar dictionary is not dot-accessible
+    ${tc} =    Check Test Case    ${TEST NAME}
+    #TODO check messages
+
+None To Dict
     ${tc} =    Check Test Case    ${TEST NAME}
     #TODO check messages
 

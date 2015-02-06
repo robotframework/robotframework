@@ -23,20 +23,16 @@ class VariableAssigner(object):
 
     def __init__(self, assignment):
         validator = AssignmentValidator()
-        self._assignment = [validator.validate(var) for var in assignment]
+        assignment = [validator.validate(var) for var in assignment]
+        self._return_resolver = ReturnValueResolver(assignment)
 
     def assign(self, context, return_value):
         context.trace(lambda: 'Return: %s' % safe_repr(return_value))
-        if self._assignment:
-            resolver = ReturnValueResolver(self._assignment)
-            self._assign(context, resolver.resolve(return_value))
-
-    def _assign(self, context, return_value):
-        for name, value in return_value:
+        for name, value in self._return_resolver.resolve(return_value):
             if not self._extended_assign(name, value, context.variables):
                 value = self._normal_assign(name, value, context.variables)
             if name[0] == '&':
-                continue   # TODO: .....
+                continue   # TODO: Implement and test logging &{dict} assigns
             context.info(format_assign_message(name, value))
 
     def _extended_assign(self, name, value, variables):
@@ -82,84 +78,131 @@ class AssignmentValidator(object):
 
     def validate(self, variable):
         variable = self._validate_assign_mark(variable)
-        self._validate_state(variable[0])
+        self._validate_state(is_list=variable[0] == '@',
+                             is_dict=variable[0] == '&')
         return variable
 
     def _validate_assign_mark(self, variable):
         if self._seen_assign_mark:
-            raise DataError("Assign mark '=' can be used only with the last variable.")
+            raise DataError("Assign mark '=' can be used only with the last "
+                            "variable.")
         self._seen_assign_mark = variable.endswith('=')
         return variable.rstrip('= ')
 
-    def _validate_state(self, identifier):
-        if self._seen_dict:
-            raise DataError('Dictionary variable cannot be assigned with other variables.')
-        elif identifier == '@':
-            if self._seen_list:
-                raise DataError('Assignment can contain only one list variable.')
-            self._seen_list = True
-        elif identifier == '&':
-            if self._seen_any_var:
-                raise DataError('Dictionary variable cannot be assigned with other variables.')
-            self._seen_dict = True
+    def _validate_state(self, is_list, is_dict):
+        if is_list and self._seen_list:
+            raise DataError('Assignment can contain only one list variable.')
+        if self._seen_dict or is_dict and self._seen_any_var:
+            raise DataError('Dictionary variable cannot be assigned with '
+                            'other variables.')
+        self._seen_list += is_list
+        self._seen_dict += is_dict
         self._seen_any_var = True
 
 
-class ReturnValueResolver(object):
+def ReturnValueResolver(assignment):
+    if not assignment:
+        return NoReturnValueResolver()
+    if len(assignment) == 1:
+        return OneReturnValueResolver(assignment[0])
+    if any(a[0] == '@' for a in assignment):
+        return ScalarsAndListReturnValueResolver(assignment)
+    return ScalarsOnlyReturnValueResolver(assignment)
 
-    def __init__(self, assignment):
-        self._assignment = assignment
-        identifiers = [a[0] for a in assignment]
-        self._list_index = identifiers.index('@') if '@' in identifiers else -1
+
+class NoReturnValueResolver(object):
 
     def resolve(self, return_value):
-        if len(self._assignment) == 1:
-            return self._one_variable(self._assignment[0], return_value)
-        return self._multiple_variables(self._assignment, return_value)
+        return []
 
-    def _one_variable(self, variable, ret):
-        if ret is None:
-            ret = {'$': None, '@': [], '&': {}}[variable[0]]
-        return [(variable, ret)]
 
-    def _multiple_variables(self, variables, ret):
-        min_count = len(variables)
-        if self._list_index != -1:
-            min_count -= 1
-        if ret is None:
-            ret = [None] * min_count
-        else:
-            ret = self._convert_to_list(ret)
-        if self._list_index == -1 and len(ret) != min_count:
-            raise DataError('Expected %d return values, got %d.'
-                            % (min_count, len(ret)))
-        if len(ret) < min_count:
-            raise DataError('Expected at least %d return values, got %d.'
-                            % (min_count, len(ret)))
-        if self._list_index == -1:
-            return zip(variables, ret)
-        before_vars = variables[:self._list_index]
-        after_vars = variables[self._list_index+1:]
-        before_items = zip(before_vars, ret)
-        list_items = (variables[self._list_index],
-                      ret[len(before_vars):len(ret)-len(after_vars)])
-        after_items = zip(after_vars, ret[-len(after_vars):])
-        return before_items + [list_items] + after_items
+class OneReturnValueResolver(object):
 
-    def _convert_to_list(self, ret):
-        if isinstance(ret, basestring):
-            self._raise_expected_list(ret)
+    def __init__(self, variable):
+        self._variable = variable
+
+    def resolve(self, return_value):
+        if return_value is None:
+            identifier = self._variable[0]
+            return_value = {'$': None, '@': [], '&': {}}[identifier]
+        return [(self._variable, return_value)]
+
+
+class _MultiReturnValueResolver(object):
+
+    def __init__(self, variables):
+        self._variables = variables
+        self._min_count = len(variables)
+
+    def resolve(self, return_value):
+        return_value = self._convert_to_list(return_value)
+        self._validate(len(return_value))
+        return self._resolve(return_value)
+
+    def _convert_to_list(self, return_value):
+        if return_value is None:
+            return [None] * self._min_count
+        if isinstance(return_value, basestring):
+            self._raise_expected_list(return_value)
         try:
-            return list(ret)
+            return list(return_value)
         except TypeError:
-            self._raise_expected_list(ret)
+            self._raise_expected_list(return_value)
 
     def _raise_expected_list(self, ret):
-        typ = 'string' if isinstance(ret, basestring) else type(ret).__name__
-        self._raise('Expected list-like object, got %s instead.' % typ)
-
-    def _raise_too_few_arguments(self, ret):
-        self._raise('Need more values than %d.' % len(ret))
+        self._raise('Expected list-like value, got %s instead.'
+                    % type(ret).__name__)
 
     def _raise(self, error):
-        raise DataError('Cannot assign return values: %s' % error)
+        raise DataError('Cannot set variables: %s' % error)
+
+    def _validate(self, return_count):
+        raise NotImplementedError
+
+    def _resolve(self, return_value):
+        raise NotImplementedError
+
+
+class ScalarsOnlyReturnValueResolver(_MultiReturnValueResolver):
+
+    def _validate(self, return_count):
+        if return_count != self._min_count:
+            self._raise('Expected %d return values, got %d.'
+                        % (self._min_count, return_count))
+
+    def _resolve(self, return_value):
+        return zip(self._variables, return_value)
+
+
+class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
+
+    def __init__(self, variables):
+        _MultiReturnValueResolver.__init__(self, variables)
+        self._min_count -= 1
+
+    def _validate(self, return_count):
+        if return_count < self._min_count:
+            self._raise('Expected %d or more return values, got %d.'
+                        % (self._min_count, return_count))
+
+    def _resolve(self, return_value):
+        before_vars, list_var, after_vars \
+            = self._split_variables(self._variables)
+        before_items, list_items, after_items \
+            = self._split_return(return_value, before_vars, after_vars)
+        return (zip(before_vars, before_items) +
+                [(list_var, list_items)] +
+                zip(after_vars, after_items))
+
+    def _split_variables(self, variables):
+        list_index = [v[0] for v in variables].index('@')
+        return (variables[:list_index],
+                variables[list_index],
+                variables[list_index+1:])
+
+    def _split_return(self, return_value, before_vars, after_vars):
+        list_start = len(before_vars)
+        list_end = len(return_value) - len(after_vars)
+        return (return_value[:list_start],
+                return_value[list_start:list_end],
+                return_value[list_end:])

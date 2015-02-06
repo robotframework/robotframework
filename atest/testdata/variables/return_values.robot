@@ -24,14 +24,14 @@ Python Object To Scalar Variable
     ${var} =    Return Object    This is my name
     Should Be Equal    ${var.name}    This is my name
 
+Unrepresentable object to scalar variable
+    ${var} =    Return Unrepresentable Objects    identifier=xxx    just_one=True
+    Should Be Equal    ${var.identifier}    xxx
+
 None To Scalar Variable
     ${var} =    Evaluate    None
     Should Be True    ${var} is None
     Should Not Be Equal    ${var}    None
-
-Unrepresentable object to scalar variable
-    ${var} =    Return Unrepresentable Objects    identifier=xxx    just_one=True
-    Should Be Equal    ${var.identifier}    xxx
 
 Multible Scalar Variables
     ${var1}    ${var2} =    Create List    one    ${2}
@@ -45,20 +45,25 @@ Unrepresentable objects to scalar variables
     Should Be Equal    ${o1.identifier}    123
     Should Be Equal    ${o2.identifier}    123
 
+None To Multiple Scalar Variables
+    ${x}    ${y} =    Run Keyword If    False    Not Executed
+    Should Be Equal    ${x}    ${None}
+    Should Be Equal    ${y}    ${None}
+
 Multiple Scalars With Too Few Values
-    [Documentation]    FAIL Expected 3 return values, got 2.
+    [Documentation]    FAIL Cannot set variables: Expected 3 return values, got 2.
     ${a}    ${b}    ${c} =    Create List    a    b
 
-Scalar Variables With More Values Than Variables Fails
-    [Documentation]    FAIL Expected 3 return values, got 4.
+Multiple Scalars With Too Many Values
+    [Documentation]    FAIL Cannot set variables: Expected 3 return values, got 4.
     ${a}    ${b}    ${c} =    Create List    a    b    c    ${4}
 
 Multiple Scalars When No List Returned 1
-    [Documentation]    FAIL Cannot assign return values: Expected list-like object, got string instead.
+    [Documentation]    FAIL Cannot set variables: Expected list-like value, got unicode instead.
     ${a}    ${b} =    Set Variable    This is not list
 
 Multiple Scalars When No List Returned 2
-    [Documentation]    FAIL Cannot assign return values: Expected list-like object, got int instead.
+    [Documentation]    FAIL Cannot set variables: Expected list-like value, got int instead.
     ${a}    ${b} =    Set Variable    ${42}
 
 List Variable
@@ -96,13 +101,25 @@ Unrepresentable objects to list variables
     \    ${var} =    Set Variable    ${obj}
     \    Should Be Equal    ${var}    ${obj}
 
+None To List Variable
+    @{list} =    Log    This returns None
+    Should Be True    @{list} == []
+
 List When Non-List Returned 1
-    [Documentation]    FAIL Variable '\@{list}' expected list value, got unicode instead.
+    [Documentation]    FAIL Cannot set variable '\@{list}': Expected list-like value, got unicode instead.
     @{list} =    Set Variable    kekkonen
 
 List When Non-List Returned 2
-    [Documentation]    FAIL Variable '\@{list}' expected list value, got int instead.
+    [Documentation]    FAIL Cannot set variable '\@{list}': Expected list-like value, got int instead.
     @{list} =    Set Variable    ${42}
+
+Only One List Variable Allowed 1
+    [Documentation]    FAIL Assignment can contain only one list variable.
+    @{list}    @{list2} =    Fail    Not executed
+
+Only One List Variable Allowed 2
+    [Documentation]    FAIL Assignment can contain only one list variable.
+    @{list}    ${scalar}    @{list2} =    Fail    Not executed
 
 List After Scalars
     ${first}    @{rest} =    Evaluate    range(5)
@@ -133,88 +150,78 @@ List Between Scalars
     Should be true       ${list} == []
     Should be equal      ${last}    3
 
-List and scalars with not enough values 1
-    [Documentation]     FAIL Expected at least 2 return values, got 1.
-    ${first}    ${second}    @{list} =    Create List    1
-
-List and scalars with not enough values 2
-    [Documentation]     FAIL Expected at least 2 return values, got 1.
-    ${first}    @{list}    ${last} =    Create List    1
-
-List and scalars with not enough values 3
-    [Documentation]     FAIL Expected at least 1 return values, got 0.
-    @{list}    ${last} =    Create List
-
-Only One List Variable Allowed 1
-    [Documentation]    FAIL Assignment can contain only one list variable.
-    @{list}    @{list2} =    Set Variable    1    2
-
-Only One List Variable Allowed 2
-    [Documentation]    FAIL Assignment can contain only one list variable.
-    @{list}    ${scalar}    @{list2} =    Set Variable    1    2
-
-None To Multiple Scalar Variables
-    ${x}    ${y} =    Run Keyword If    False    Not Executed
-    Should Be Equal    ${x}    ${None}
-    Should Be Equal    ${y}    ${None}
-
-None To List Variable
-    @{list} =    Log    This returns None
-    Should Be True    @{list} == []
-
 None To Scalar Variables And List Variable
     ${a}    ${b}    ${c}    @{d} =    No Operation
     Should Be Equal    ${a}    ${None}
     Should Be Equal    ${b}    ${None}
     Should Be Equal    ${c}    ${None}
     Should Be True    @{d} == []
+    @{list}    ${scalar} =    No Operation
+    Should Be Equal    @{list}-${scalar}    []-None
+    ${first}    @{rest}    ${last} =    No Operation
+    Should Be Equal    ${first}-@{rest}-${last}    None-[]-None
 
-None to Scalar Variables and List Variable in the Middle
-    ${a}    ${b}    @{c}    ${d} =    No Operation
-    Should Be Equal    ${a}    ${None}
-    Should Be Equal    ${b}    ${None}
-    Should Be True     @{c} == []
-    Should Be Equal    ${d}    ${None}
+List and scalars with not enough values 1
+    [Documentation]     FAIL Cannot set variables: Expected 2 or more return values, got 1.
+    ${first}    ${second}    @{list} =    Create List    1
 
-None To Dict
-    &{ret} =    No Operation
-    &{empty dict} =      Create dictionary
-    Should be equal    ${ret}    ${empty dict}
+List and scalars with not enough values 2
+    [Documentation]     FAIL Cannot set variables: Expected 2 or more return values, got 1.
+    ${first}    @{list}    ${last} =    Create List    1
+
+List and scalars with not enough values 3
+    [Documentation]     FAIL Cannot set variables: Expected 1 or more return values, got 0.
+    @{list}    ${last} =    Create List
 
 Dictionary return value
     &{ret} =     Create dictionary    foo=bar   muu=mi
     Dictionaries Should Be Equal    ${ret}    ${DICT}
 
+None To Dict
+    &{ret} =    No Operation
+    Should Be True    &{ret} == {}
+
+Dictionary is dot-accessible
+    &{dotted} =    Evaluate    {'key': 'value'}
+    Should Be Equal    ${dotted['key']}    value
+    Should Be Equal    ${dotted.key}    value
+
+Scalar dictionary is not dot-accessible
+    [Documentation]     FAIL STARTS: Resolving variable '${normal.key}' failed: AttributeError:
+    ${normal} =    Evaluate    {'key': 'value'}
+    Should Be Equal    ${normal['key']}    value
+    Should Be Equal    ${normal.key}    value
+
 Dictionary only allowed alone 1
     [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
-    ${s}    &{d} =    Create List    1    ${DICT}
+    ${s}    &{d} =    Fail    Not executed
 
 Dictionary only allowed alone 2
     [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
-    &{d}    ${s} =    Create List    ${DICT}    2
+    &{d}    ${s} =    Fail    Not executed
 
 Dictionary only allowed alone 3
     [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
-    &{d}    @{l} =    Create List    ${DICT}    2    3
+    &{d}    @{l} =    Fail    Not executed
 
 Dictionary only allowed alone 4
     [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
-    @{l}    &{d} =    Create List    1    2    ${DICT}
+    @{l}    &{d} =    Fail    Not executed
 
 Dictionary only allowed alone 5
     [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
-    &{d1}    &{d2} =    Create List    ${DICT}    ${DICT}
+    &{d1}    &{d2} =    Fail    Not executed
 
 Dict when non-dict returned 1
-    [Documentation]    FAIL Variable '\&{ret}' expected dictionary value, got list instead.
+    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got list instead.
     &{ret} =     Create List
 
 Dict when non-dict returned 2
-    [Documentation]    FAIL Variable '\&{ret}' expected dictionary value, got unicode instead.
+    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got unicode instead.
     &{ret} =     Set variable   foo
 
 Dict when non-dict returned 3
-    [Documentation]    FAIL Variable '\&{ret}' expected dictionary value, got int instead.
+    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got int instead.
     &{ret} =     Set variable    ${5}
 
 Long String To Scalar Variable

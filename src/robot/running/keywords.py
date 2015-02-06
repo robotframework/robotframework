@@ -135,6 +135,7 @@ class Keyword(_BaseKeyword):
 
     def _run(self, handler, context):
         try:
+            self._variable_assigner = VariableAssigner(self.assign)
             return handler.run(context, self.args[:])
         except ExecutionFailed:
             raise
@@ -156,7 +157,7 @@ class Keyword(_BaseKeyword):
         if error:
             return_value = error.return_value
         try:
-            VariableAssigner(self.assign).assign(context, return_value)
+            self._variable_assigner.assign(context, return_value)
         except DataError, err:
             self.status = 'FAIL'
             msg = unicode(err)

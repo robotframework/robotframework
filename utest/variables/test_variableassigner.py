@@ -43,7 +43,9 @@ class TestResolveAssignment(unittest.TestCase):
     def _verify_valid(self, assign):
         assigner = VariableAssigner(assign)
         assign[-1] = assign[-1].rstrip('= ')
-        assert_equals(assigner._assignment, assign)
+        resolver = assigner._return_resolver
+        variables = resolver._variables if len(assign) > 1 else [resolver._variable]
+        assert_equals(variables, assign)
 
     def _verify_invalid(self, assign):
         assert_raises(DataError, VariableAssigner, assign)

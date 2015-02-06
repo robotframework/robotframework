@@ -131,7 +131,7 @@ For With Assign
     Should Be True    @{list} == [1, 2, 3, 'z']
 
 For With Invalid Assign
-    [Documentation]    FAIL     Cannot assign return values: Expected list-like object, got string instead.
+    [Documentation]    FAIL     Cannot set variables: Expected list-like value, got unicode instead.
     : FOR    ${i}    IN    1    2    3
     \    ${x}    ${y} =    Set Variable    Only one value
     \    Fail    Not executed

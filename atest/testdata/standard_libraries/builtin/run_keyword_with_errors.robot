@@ -60,7 +60,7 @@ Ignore Error When Syntax Error At Run Time
     Run Keyword And Ignore Error    No Operation    wrong    number    of    arguments
 
 Ignore Error When Syntax Error In Setting Variables
-    [Documentation]    FAIL Cannot assign return values: Expected list-like object, got string instead.
+    [Documentation]    FAIL Cannot set variable '\@{incompatible}': Expected list-like value, got unicode instead.
     Run Keyword And Ignore Error    Invalid Syntax When Setting Variable
 
 Ignore Error When Syntax Error In For Loop
@@ -127,7 +127,7 @@ Expect Error When Syntax Error At Run Time
     Run Keyword And Expect Error    *    Non existing keyword
 
 Expect Error When Syntax Error In Setting Variables
-    [Documentation]    FAIL Cannot assign return values: Expected list-like object, got string instead.
+    [Documentation]    FAIL Cannot set variable '\@{incompatible}': Expected list-like value, got unicode instead.
     Run Keyword And Expect Error    *    Invalid Syntax When Setting Variable
 
 Expect Error When Syntax Error In For Loop

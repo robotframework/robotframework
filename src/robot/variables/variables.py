@@ -41,15 +41,17 @@ class Variables(object):
         # TODO: Error messages, tests.
         if name[0] == '@':
             if not is_list_like(value):
-                raise DataError("Variable '%s' expected list value, got "
-                                "%s instead." % (name, type(value).__name__))
+                self._raise_cannot_set_type(name, value, 'list')
             value = list(value)
         if name[0] == '&':
             if not is_dict_like(value):
-                raise DataError("Variable '%s' expected dictionary value, got "
-                                "%s instead." % (name, type(value).__name__))
+                self._raise_cannot_set_type(name, value, 'dictionary')
             value = DotDict(value)
         self.store.add(name[2:-1], value)
+
+    def _raise_cannot_set_type(self, name, value, expected):
+        raise DataError("Cannot set variable '%s': Expected %s-like value, got "
+                        "%s instead." % (name, expected, type(value).__name__))
 
     def __getitem__(self, name):
         validate_var(name, '$@&%')
