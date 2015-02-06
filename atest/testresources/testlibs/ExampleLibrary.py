@@ -139,8 +139,8 @@ class ExampleLibrary:
                 break
             time.sleep(min(remaining, 0.1))
 
-    def return_custom_iterable(self, *values):
-        return _MyIterable(*values)
+    def return_consumable_iterable(self, *values):
+        return iter(values)
 
     def return_list_subclass(self, *values):
         return _MyList(values)
@@ -164,13 +164,6 @@ class ExampleLibrary:
 
     def fail_with_suppressed_exception_name(self, msg):
         raise MyException(msg)
-
-
-class _MyIterable(object):
-    def __init__(self, *values):
-        self._list = list(values)
-    def __iter__(self):
-        return iter(self._list)
 
 
 class _MyList(list):

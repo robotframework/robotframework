@@ -3,6 +3,9 @@ Documentation     NO RIDE because it would sanitize formatting too much.
 Library           ExampleLibrary
 Library           Collections
 
+*** Variables ***
+&{DICT}           foo=bar    muu=mi
+
 *** Test Cases ***
 Simple Scalar Variable
     ${setvar} =    Set Variable    this value is set
@@ -43,15 +46,12 @@ Unrepresentable objects to scalar variables
     Should Be Equal    ${o2.identifier}    123
 
 Multiple Scalars With Too Few Values
-    [Documentation]    FAIL Cannot assign return values: Need more values than 2.
+    [Documentation]    FAIL Expected 3 return values, got 2.
     ${a}    ${b}    ${c} =    Create List    a    b
 
-Scalar Variables With More Values Than Variables
-    [Documentation]    Extra string variables are added to last scalar variable as list
+Scalar Variables With More Values Than Variables Fails
+    [Documentation]    FAIL Expected 3 return values, got 4.
     ${a}    ${b}    ${c} =    Create List    a    b    c    ${4}
-    Should Be Equal    ${a}    a
-    Should Be Equal    ${b}    b
-    Should Be True    ${c} == ['c', 4]
 
 Multiple Scalars When No List Returned 1
     [Documentation]    FAIL Cannot assign return values: Expected list-like object, got string instead.
@@ -70,10 +70,11 @@ List Variable
     @{list} =    Create List
     Should Be Empty    ${list}
 
-List Variable From Custom Iterable
-    @{listvar} =    Return Custom Iterable    Keijo    Mela
+List Variable From Consumable Iterable
+    @{listvar} =    Return Consumable Iterable    Keijo    Mela
     Should Be Equal    @{listvar}[0]    Keijo
     Should Be Equal    @{listvar}[1]    Mela
+    Length Should Be    ${listvar}    2
 
 List Variable From List Subclass
     @{listvar} =    Return List Subclass    Keijo    Mela
@@ -95,17 +96,62 @@ Unrepresentable objects to list variables
     \    ${var} =    Set Variable    ${obj}
     \    Should Be Equal    ${var}    ${obj}
 
-List When No List Returned
-    [Documentation]    FAIL Cannot assign return values: Expected list-like object, got int instead.
+List When Non-List Returned 1
+    [Documentation]    FAIL Variable '\@{list}' expected list value, got unicode instead.
+    @{list} =    Set Variable    kekkonen
+
+List When Non-List Returned 2
+    [Documentation]    FAIL Variable '\@{list}' expected list value, got int instead.
     @{list} =    Set Variable    ${42}
 
-Scalars And And List
+List After Scalars
     ${first}    @{rest} =    Evaluate    range(5)
     Should Be Equal    ${first}    ${0}
     Should Be True    @{rest} == [1, 2, 3, 4]
     ${a}    ${b}    @{c} =    Create List    1    2    c    d    e    f
-    Should Be Equal   ${a} + ${b}    1 + 2
+    Should Be Equal   ${a}-${b}    1-2
     Should Be True    @{c} == ['c', 'd', 'e', 'f']
+    ${a}    ${b}    @{c} =    Create List    1    2
+    Should Be Equal   ${a}-${b}-@{c}    1-2-[]
+
+List Before Scalars
+    @{list}    ${scalar} =    Set Variable    ${1}    2
+    Should be equal      @{list}-${scalar}     [1]-2
+    @{list}    ${x}    ${y}    ${z} =    Set Variable    ${1}    ${2}    x    y    z
+    Should be equal      @{list}-${x}-${y}-${z}     [1, 2]-x-y-z
+    @{list}    ${x}    ${y}    ${z} =    Set Variable    x    y    z
+    Should be equal      @{list}-${x}-${y}-${z}     []-x-y-z
+
+List Between Scalars
+    ${first}    @{list}    ${last} =    Set Variable    1    2    3    4
+    Should be equal      ${first}    1
+    Should be true       ${list} == ['2', '3']
+    Should be equal      ${last}    4
+    ${first}    ${second}   @{list}    ${last} =    Set Variable    1    2    3
+    Should be equal      ${first}     1
+    Should be equal      ${second}    2
+    Should be true       ${list} == []
+    Should be equal      ${last}    3
+
+List and scalars with not enough values 1
+    [Documentation]     FAIL Expected at least 2 return values, got 1.
+    ${first}    ${second}    @{list} =    Create List    1
+
+List and scalars with not enough values 2
+    [Documentation]     FAIL Expected at least 2 return values, got 1.
+    ${first}    @{list}    ${last} =    Create List    1
+
+List and scalars with not enough values 3
+    [Documentation]     FAIL Expected at least 1 return values, got 0.
+    @{list}    ${last} =    Create List
+
+Only One List Variable Allowed 1
+    [Documentation]    FAIL Assignment can contain only one list variable.
+    @{list}    @{list2} =    Set Variable    1    2
+
+Only One List Variable Allowed 2
+    [Documentation]    FAIL Assignment can contain only one list variable.
+    @{list}    ${scalar}    @{list2} =    Set Variable    1    2
 
 None To Multiple Scalar Variables
     ${x}    ${y} =    Run Keyword If    False    Not Executed
@@ -123,13 +169,53 @@ None To Scalar Variables And List Variable
     Should Be Equal    ${c}    ${None}
     Should Be True    @{d} == []
 
-List Variable Can Be Only Last 1
-    [Documentation]    FAIL Only the last variable to assign can be a list variable.
-    @{list}    @{list2} =    Set Variable    1    2
+None to Scalar Variables and List Variable in the Middle
+    ${a}    ${b}    @{c}    ${d} =    No Operation
+    Should Be Equal    ${a}    ${None}
+    Should Be Equal    ${b}    ${None}
+    Should Be True     @{c} == []
+    Should Be Equal    ${d}    ${None}
 
-List Variable Can Be Only Last 2
-    [Documentation]    FAIL Only the last variable to assign can be a list variable.
-    @{list}    ${scalar} =    Set Variable    1    2
+None To Dict
+    &{ret} =    No Operation
+    &{empty dict} =      Create dictionary
+    Should be equal    ${ret}    ${empty dict}
+
+Dictionary return value
+    &{ret} =     Create dictionary    foo=bar   muu=mi
+    Dictionaries Should Be Equal    ${ret}    ${DICT}
+
+Dictionary only allowed alone 1
+    [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
+    ${s}    &{d} =    Create List    1    ${DICT}
+
+Dictionary only allowed alone 2
+    [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
+    &{d}    ${s} =    Create List    ${DICT}    2
+
+Dictionary only allowed alone 3
+    [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
+    &{d}    @{l} =    Create List    ${DICT}    2    3
+
+Dictionary only allowed alone 4
+    [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
+    @{l}    &{d} =    Create List    1    2    ${DICT}
+
+Dictionary only allowed alone 5
+    [Documentation]     FAIL Dictionary variable cannot be assigned with other variables.
+    &{d1}    &{d2} =    Create List    ${DICT}    ${DICT}
+
+Dict when non-dict returned 1
+    [Documentation]    FAIL Variable '\&{ret}' expected dictionary value, got list instead.
+    &{ret} =     Create List
+
+Dict when non-dict returned 2
+    [Documentation]    FAIL Variable '\&{ret}' expected dictionary value, got unicode instead.
+    &{ret} =     Set variable   foo
+
+Dict when non-dict returned 3
+    [Documentation]    FAIL Variable '\&{ret}' expected dictionary value, got int instead.
+    &{ret} =     Set variable    ${5}
 
 Long String To Scalar Variable
     ${v300} =    Evaluate    '123456789 ' * 30
@@ -141,6 +227,12 @@ Long Values To List Variable
     Should Be Equal    @{long}[0]    ${v99}
     Should Be Equal    @{long}[1]    ${v99}
     Should Be Equal    @{long}[2]    ${v99}
+
+Big Items In Dictionary
+    ${v100} =    Evaluate    '1234567890' * 10
+    &{big} =    Create Dictionary    _${v100}=${v100}    second=${v100}
+    Should Be Equal    ${big._${v100}}    ${v100}
+    Should Be Equal    ${big.second}    ${v100}
 
 No Keyword
     [Documentation]    FAIL Keyword name cannot be empty.

@@ -51,11 +51,8 @@ Unrepresentable objects to scalar variables
 Multiple Scalars With Too Few Values
     Check Test Case    ${TESTNAME}
 
-Scalar Variables With More Values Than Variables
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = a
-    Check Log Message    ${tc.kws[0].msgs[1]}    \${b} = b
-    Check Log Message    ${tc.kws[0].msgs[2]}    \${c} = [*'c', 4]    pattern=yes
+Scalar Variables With More Values Than Variables Fails
+    Check Test Case    ${TEST NAME}
 
 Multiple Scalars When No List Returned
     Check Test Case    ${TESTNAME} 1
@@ -66,9 +63,9 @@ List Variable
     Should Be Equal    ${tc.kws[0].name}    \@{listvar} = BuiltIn.Create List
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{listvar} = [ h | e | ll | o ]
 
-List Variable From Custom Iterable
+List Variable From Consumable Iterable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].name}    \@{listvar} = ExampleLibrary.Return Custom Iterable
+    Should Be Equal    ${tc.kws[0].name}    \@{listvar} = ExampleLibrary.Return Consumable Iterable
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{listvar} = [ Keijo | Mela ]
 
 List Variable From List Subclass
@@ -89,10 +86,11 @@ Unrepresentable objects to list variables
     Should Match         ${tc.kws[2].kws[1].name}    \${obj} = ${UNREPR UNIC}
     Check Log Message    ${tc.kws[2].kws[1].kws[1].msgs[0]}    $\{var} = ${UNREPR UNIC}    pattern=yes
 
-List When No List Returned
-    Check Test Case    ${TESTNAME}
+List When Non-List Returned
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
-Scalars And And List
+List After Scalars
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.kws[0].name}    \${first}, \@{rest} = BuiltIn.Evaluate
     Check Log Message    ${tc.kws[0].msgs[0]}    \${first} = 0
@@ -101,6 +99,28 @@ Scalars And And List
     Check Log Message    ${tc.kws[3].msgs[0]}    \${a} = 1
     Check Log Message    ${tc.kws[3].msgs[1]}    \${b} = 2
     Check Log Message    ${tc.kws[3].msgs[2]}    \@{c} = [ c | d | e | f ]
+
+List Before Scalars
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].name}    \@{list}, \${scalar} = BuiltIn.Set Variable
+    Check Log Message    ${tc.kws[0].msgs[0]}    \@{list} = [ 1 ]
+    Check Log Message    ${tc.kws[0].msgs[1]}    \${scalar} = 2
+
+List Between Scalars
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].name}    \${first}, \@{list}, \${last} = BuiltIn.Set Variable
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${first} = 1
+    Check Log Message    ${tc.kws[0].msgs[1]}    \@{list} = [ 2 | 3 ]
+    Check Log Message    ${tc.kws[0].msgs[2]}    \${last} = 4
+
+List and scalars with not enough values
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+
+Only One List Variable Allowed
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 None To Multiple Scalar Variables
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -118,21 +138,41 @@ None To Scalar Variables And List Variable
     Check Log Message    ${tc.kws[0].msgs[2]}    \${c} = None
     Check Log Message    ${tc.kws[0].msgs[3]}    \@{d} = [ ]
 
-List Variable Can Be Only Last
-    ${tc} =    Check Test Case    ${TEST NAME} 1
-    Should Be Equal    ${tc.kws[0].name}    \@{list}, \@{list2} = BuiltIn.Set Variable
-    ${tc} =    Check Test Case    ${TEST NAME} 2
-    Should Be Equal    ${tc.kws[0].name}    \@{list}, \${scalar} = BuiltIn.Set Variable
+None to Scalar Variables and List Variable in the Middle
+    Check Test Case    ${TEST NAME}
+
+None To Dict
+    ${tc} =    Check Test Case    ${TEST NAME}
+
+Dictionary return value
+    ${tc} =    Check Test Case    ${TEST NAME}
+    #TODO check messages
+
+Dictionary only allowed alone
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+    Check Test Case    ${TEST NAME} 4
+    Check Test Case    ${TEST NAME} 5
+
+Dict when non-dict returned
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
 
 Long String To Scalar Variable
-    [Documentation]    Long assing messages should be cut.
+    [Documentation]    Long assign messages should be cut.
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${v300} = 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 ...
 
 Long Values To List Variable
-    [Documentation]    Long assing messages should be cut.
+    [Documentation]    Long assign messages should be cut.
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    \@{long} = [ 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 | 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456...
+
+Big Items In Dictionary
+    ${tc} =    Check Test Case    ${TEST NAME}
+    #TODO check messages
 
 No Keyword
     ${tc} =    Check Test Case    ${TEST NAME}

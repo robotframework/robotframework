@@ -48,16 +48,10 @@ List Variable From Mapping
     Check Test Case    ${TEST NAME}
 
 Set Scalar Variables With More Values Than Variables Using Array
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = a
-    Check Log Message    ${tc.kws[0].msgs[1]}    \${b} = b
-    Check Log Message    ${tc.kws[0].msgs[2]}    \${c} = [u'c', u'd', u'e', u'f']
-    Check Log Message    ${tc.kws[4].msgs[0]}    \${i1} = 1
-    Check Log Message    ${tc.kws[4].msgs[1]}    \${i2&42} = [2, 42]
+    Check Test Case    ${TEST NAME}
 
 Set Multiple Scalars With Too Few Values Using Array
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Cannot assign return values: Need more values than 3.    FAIL
+    Check Test Case    ${TEST NAME}
 
 Set List To Scalar And List Variables Using Array
     ${tc} =    Check Test Case    ${TEST NAME}

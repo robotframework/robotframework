@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import is_dict_like, is_list_like
+from robot.utils import is_dict_like, is_list_like, DotDict
 
 from .filesetter import VariableFileSetter
 from .finders import VariableFinder
@@ -39,10 +39,16 @@ class Variables(object):
     def __setitem__(self, name, value):
         validate_var(name)
         # TODO: Error messages, tests.
-        if name[0] == '@' and not is_list_like(value):
-            raise DataError('TODO')
-        if name[0] == '%' and not is_dict_like(value):
-            raise DataError('TODO')
+        if name[0] == '@':
+            if not is_list_like(value):
+                raise DataError("Variable '%s' expected list value, got "
+                                "%s instead." % (name, type(value).__name__))
+            value = list(value)
+        if name[0] == '&':
+            if not is_dict_like(value):
+                raise DataError("Variable '%s' expected dictionary value, got "
+                                "%s instead." % (name, type(value).__name__))
+            value = DotDict(value)
         self.store.add(name[2:-1], value)
 
     def __getitem__(self, name):

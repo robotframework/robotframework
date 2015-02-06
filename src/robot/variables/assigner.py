@@ -17,31 +17,30 @@ import re
 from robot.errors import DataError
 from robot.utils import safe_repr, format_assign_message, get_error_message
 
-from .isvar import is_list_var, is_scalar_var
-
 
 class VariableAssigner(object):
     _valid_extended_attr = re.compile('^[_a-zA-Z]\w*$')
 
-    def __init__(self, assign):
-        ap = AssignParser(assign)
-        self.scalar_vars = ap.scalar_vars
-        self.list_var = ap.list_var
+    def __init__(self, assignment):
+        validator = AssignmentValidator()
+        self._assignment = [validator.validate(var) for var in assignment]
 
     def assign(self, context, return_value):
         context.trace(lambda: 'Return: %s' % safe_repr(return_value))
-        if self.scalar_vars or self.list_var:
-            self._assign(context, ReturnValue(self.scalar_vars, self.list_var,
-                                              return_value))
+        if self._assignment:
+            resolver = ReturnValueResolver(self._assignment)
+            self._assign(context, resolver.resolve(return_value))
 
     def _assign(self, context, return_value):
-        for name, value in return_value.get_variables_to_set():
+        for name, value in return_value:
             if not self._extended_assign(name, value, context.variables):
-                self._normal_assign(name, value, context.variables)
+                value = self._normal_assign(name, value, context.variables)
+            if name[0] == '&':
+                continue   # TODO: .....
             context.info(format_assign_message(name, value))
 
     def _extended_assign(self, name, value, variables):
-        if '.' not in name or name in variables.store or name.startswith('@'):
+        if name[0] != '$' or '.' not in name or name in variables.store:
             return False
         base, attr = self._split_extended_assign(name)
         try:
@@ -70,67 +69,82 @@ class VariableAssigner(object):
 
     def _normal_assign(self, name, value, variables):
         variables[name] = value
+        return variables[name]
 
 
-class AssignParser(object):
+class AssignmentValidator(object):
 
-    def __init__(self, assign):
-        self.scalar_vars = []
-        self.list_var = None
-        self._assign_mark_used = False
-        for var in assign:
-            self._verify_items_allowed_only_on_last_round()
-            var = self._strip_possible_assign_mark(var)
-            self._set(var)
+    def __init__(self):
+        self._seen_list = False
+        self._seen_dict = False
+        self._seen_any_var = False
+        self._seen_assign_mark = False
 
-    def _verify_items_allowed_only_on_last_round(self):
-        if self._assign_mark_used:
+    def validate(self, variable):
+        variable = self._validate_assign_mark(variable)
+        self._validate_state(variable[0])
+        return variable
+
+    def _validate_assign_mark(self, variable):
+        if self._seen_assign_mark:
             raise DataError("Assign mark '=' can be used only with the last variable.")
-        if self.list_var:
-            raise DataError('Only the last variable to assign can be a list variable.')
-
-    def _strip_possible_assign_mark(self, variable):
-        if not variable.endswith('='):
-            return variable
-        self._assign_mark_used = True
+        self._seen_assign_mark = variable.endswith('=')
         return variable.rstrip('= ')
 
-    def _set(self, variable):
-        if is_scalar_var(variable):
-            self.scalar_vars.append(variable)
-        elif is_list_var(variable):
-            self.list_var = variable
-        else:
-            raise DataError('Invalid variable to assign: %s' % variable)
+    def _validate_state(self, identifier):
+        if self._seen_dict:
+            raise DataError('Dictionary variable cannot be assigned with other variables.')
+        elif identifier == '@':
+            if self._seen_list:
+                raise DataError('Assignment can contain only one list variable.')
+            self._seen_list = True
+        elif identifier == '&':
+            if self._seen_any_var:
+                raise DataError('Dictionary variable cannot be assigned with other variables.')
+            self._seen_dict = True
+        self._seen_any_var = True
 
 
-class ReturnValue(object):
+class ReturnValueResolver(object):
 
-    def __init__(self, scalar_vars, list_var, return_value):
-        self._scalars = scalar_vars
-        self._list = list_var
-        self._return = return_value
+    def __init__(self, assignment):
+        self._assignment = assignment
+        identifiers = [a[0] for a in assignment]
+        self._list_index = identifiers.index('@') if '@' in identifiers else -1
 
-    def get_variables_to_set(self):
-        if self._return is None:
-            return self._return_value_is_none(self._scalars, self._list)
-        if len(self._scalars) == 1 and not self._list:
-            return self._only_one_variable(self._scalars[0], self._return)
-        ret = self._convert_to_list(self._return)
-        if not self._list:
-            return self._only_scalars(self._scalars, ret)
-        if not self._scalars:
-            return self._only_one_variable(self._list, ret)
-        return self._scalars_and_list(self._scalars, self._list, ret)
+    def resolve(self, return_value):
+        if len(self._assignment) == 1:
+            return self._one_variable(self._assignment[0], return_value)
+        return self._multiple_variables(self._assignment, return_value)
 
-    def _return_value_is_none(self, scalars, list_):
-        ret = [(var, None) for var in scalars]
-        if self._list:
-            ret.append((list_, []))
-        return ret
-
-    def _only_one_variable(self, variable, ret):
+    def _one_variable(self, variable, ret):
+        if ret is None:
+            ret = {'$': None, '@': [], '&': {}}[variable[0]]
         return [(variable, ret)]
+
+    def _multiple_variables(self, variables, ret):
+        min_count = len(variables)
+        if self._list_index != -1:
+            min_count -= 1
+        if ret is None:
+            ret = [None] * min_count
+        else:
+            ret = self._convert_to_list(ret)
+        if self._list_index == -1 and len(ret) != min_count:
+            raise DataError('Expected %d return values, got %d.'
+                            % (min_count, len(ret)))
+        if len(ret) < min_count:
+            raise DataError('Expected at least %d return values, got %d.'
+                            % (min_count, len(ret)))
+        if self._list_index == -1:
+            return zip(variables, ret)
+        before_vars = variables[:self._list_index]
+        after_vars = variables[self._list_index+1:]
+        before_items = zip(before_vars, ret)
+        list_items = (variables[self._list_index],
+                      ret[len(before_vars):len(ret)-len(after_vars)])
+        after_items = zip(after_vars, ret[-len(after_vars):])
+        return before_items + [list_items] + after_items
 
     def _convert_to_list(self, ret):
         if isinstance(ret, basestring):
@@ -139,19 +153,6 @@ class ReturnValue(object):
             return list(ret)
         except TypeError:
             self._raise_expected_list(ret)
-
-    def _only_scalars(self, scalars, ret):
-        needed = len(scalars)
-        if len(ret) < needed:
-            self._raise_too_few_arguments(ret)
-        if len(ret) == needed:
-            return zip(scalars, ret)
-        return zip(scalars[:-1], ret) + [(scalars[-1], ret[needed-1:])]
-
-    def _scalars_and_list(self, scalars, list_, ret):
-        if len(ret) < len(scalars):
-            self._raise_too_few_arguments(ret)
-        return zip(scalars, ret) + [(list_, ret[len(scalars):])]
 
     def _raise_expected_list(self, ret):
         typ = 'string' if isinstance(ret, basestring) else type(ret).__name__

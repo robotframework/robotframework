@@ -49,16 +49,11 @@ List Variable From Mapping
     Should Be True    ${list} == []
 
 Set Scalar Variables With More Values Than Variables Using Array
+    [Documentation]    FAIL Expected 3 return values, got 6.
     ${a}    ${b}    ${c} =    Get String Array    a    b    c    d    e    f
-    Should Be Equal    ${a}    a
-    Should Be True    '${b}' == 'b'
-    Should Be True    ${c} == ['c', 'd', 'e', 'f']
-    ${i1}    ${i2&42} =    Get Array Of Three Ints
-    Should Be Equal    ${i1}    ${1}
-    Should Be True    ${i2&42} == [2, 42]
 
 Set Multiple Scalars With Too Few Values Using Array
-    [Documentation]    FAIL Cannot assign return values: Need more values than 3.
+    [Documentation]    FAIL Expected 4 return values, got 3.
     ${i1}    ${i2}    ${i3}    ${i4} =    Get Array Of Three Ints
 
 Set List To Scalar And List Variables Using Array
