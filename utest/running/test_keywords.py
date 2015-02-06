@@ -146,9 +146,6 @@ class TestSettingVariables(unittest.TestCase):
     def test_set_too_few_scalars_raises(self):
         assert_raises(ExecutionFailed, self._run_kw, ['${v1}','${v2}'], ['x'])
 
-    def test_set_list_but_no_list_raises(self):
-        assert_raises(ExecutionFailed, self._run_kw, ['@{list}'], 'not a list')
-
     def test_set_too_few_scalars_with_list_raises(self):
         assert_raises(ExecutionFailed, self._run_kw, ['${v1}','${v2}','@{list}'], ['x'])
 
