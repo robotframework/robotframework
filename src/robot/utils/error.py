@@ -39,14 +39,14 @@ def get_error_message():
     return ErrorDetails().message
 
 
-def get_error_details():
+def get_error_details(exclude_robot_traces=True):
     """Returns error message and details of the last occurred exception.
     """
-    details = ErrorDetails()
+    details = ErrorDetails(exclude_robot_traces)
     return details.message, details.traceback
 
 
-def ErrorDetails():
+def ErrorDetails(exclude_robot_traces=True):
     """This factory returns an object that wraps the last occurred exception
 
     It has attributes `message`, `traceback` and `error`, where `message`
@@ -58,7 +58,7 @@ def ErrorDetails():
         raise exc_value
     details = PythonErrorDetails \
             if not isinstance(exc_value, Throwable) else JavaErrorDetails
-    return details(exc_type, exc_value, exc_traceback)
+    return details(exc_type, exc_value, exc_traceback, exclude_robot_traces)
 
 
 class _ErrorDetails(object):
@@ -66,11 +66,13 @@ class _ErrorDetails(object):
                            'Error', 'RuntimeError', 'RuntimeException',
                            'DataError', 'TimeoutError', 'RemoteError')
 
-    def __init__(self, exc_type, exc_value, exc_traceback):
+    def __init__(self, exc_type, exc_value, exc_traceback,
+                 exclude_robot_traces=True):
         self.error = exc_value
         self._exc_value = exc_value
         self._exc_type = exc_type
         self._exc_traceback = exc_traceback
+        self._exclude_robot_traces = exclude_robot_traces
         self._message = None
         self._traceback = None
 
@@ -132,6 +134,8 @@ class PythonErrorDetails(_ErrorDetails):
         return ''.join(traceback.format_tb(tb)).rstrip() or '  None'
 
     def _is_excluded_traceback(self, traceback):
+        if not self._exclude_robot_traces:
+            return False
         module = traceback.tb_frame.f_globals.get('__name__')
         return module and module.startswith('robot.')
 
