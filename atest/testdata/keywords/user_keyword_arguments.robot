@@ -1,3 +1,6 @@
+*** Settings ***
+Library           Collections
+
 *** Variables ***
 ${VAR}            Variable value
 @{LIST}           With    three    values
@@ -110,6 +113,24 @@ Calling Using List Variables
     A 3    @{LIST}    @{EMPTY}
     A 0 1    @{LIST}    @{EMPTY}
 
+Calling Using Dict Variables
+    &{arg} =    Create Dictionary    arg=value
+    &{args} =    Create Dictionary    arg1=v1    arg3=v3
+    A 0    &{EMPTY}
+    ${ret} =    A 1    &{arg}
+    Should Be Equal    ${ret}    a_1: value
+    ${ret} =    A 3    &{args}    arg2=v2
+    Should Be Equal    ${ret}    a_3: v1 v2 v3
+    ${ret} =    A 1 3    &{args}
+    Should Be Equal    ${ret}    a_1_3: v1 default v3
+
+Caller does not see modifications to varargs
+    @{v1} =    Create List    list1
+    @{v2} =    Create List    list2
+    Mutate Lists    ${v1}    @{v2}
+    Should Be True    @{v1} == ['list1', 'list1.2']
+    Should Be True    @{v2} == ['list2']
+
 Invalid Arguments Spec - Invalid argument syntax
     [Documentation]    FAIL No keyword with name 'Invalid argument syntax' found.
     Invalid argument syntax
@@ -175,6 +196,15 @@ Default With Number Variable
 Default With Extended Variable Syntax
     [Arguments]    ${arg}=${VAR.upper()}
     [Return]    ${arg}
+
+Mutate Lists
+    [Arguments]    ${list1}    @{list2}
+    Should Be True    @{list1} == ['list1']
+    Should Be True    @{list2} == ['list2']
+    Append To List    ${list1}    list1.2
+    Append To List    ${list2}    list2.2
+    Should Be True    @{list1} == ['list1', 'list1.2']
+    Should Be True    @{list2} == ['list2', 'list2.2']
 
 Invalid argument syntax
     [Arguments]    no deco

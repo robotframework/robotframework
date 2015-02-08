@@ -51,6 +51,12 @@ Default With Extended Variable Syntax
 Calling Using List Variables
     Check Test Case    ${TESTNAME}
 
+Calling Using Dict Variables
+    Check Test Case    ${TESTNAME}
+
+Caller does not see modifications to varargs
+    Check Test Case    ${TESTNAME}
+
 Invalid Arguments Spec
     [Template]    Verify Invalid Argument Spec
     0    Invalid argument syntax    Invalid argument 'no deco'.
