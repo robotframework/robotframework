@@ -87,24 +87,39 @@ class TestVariableSplitter(unittest.TestCase):
                 ('\\${\\${hi\\\\${hi}}}', '${hi}', len('\\${\\${hi\\\\'))]:
             self._test(inp, var, start, internal=var.count('{') > 1)
 
-    def test_index(self):
+    def test_list_index(self):
         self._test('@{x}[0]', '@{x}', index='0')
         self._test('.@{x}[42]..', '@{x}', start=1, index='42')
         self._test('@{x}[]', '@{x}', index='')
         self._test('@{x}[inv]', '@{x}', index='inv')
         self._test('@{x}[0', '@{x}')
         self._test('@{x}}[0]', '@{x}')
-        self._test('${x}[0]', '${x}')
-        self._test('%{x}[0]', '%{x}')
-        self._test('*{x}[0]', '*{x}')
-        self._test('&{x}[0]', '&{x}')
 
-    def test_index_with_internal_vars(self):
+    def test_list_index_with_internal_vars(self):
         self._test('@{x}[${i}]', '@{x}', index='${i}')
         self._test('xx @{x}[${i}] ${xyz}', '@{x}', start=3, index='${i}')
         self._test('@@@@@{X{X}[${${i}-${${${i}}}}]', '@{X{X}', start=4,
                    index='${${i}-${${${i}}}}')
         self._test('@{${i}}[${j{}]', '@{${i}}', index='${j{}', internal=True)
+
+    def test_dict_index(self):
+        self._test('&{x}[key]', '&{x}', index='key')
+        self._test('.&{x}[42]..', '&{x}', start=1, index='42')
+        self._test('&{x}[]', '&{x}', index='')
+        self._test('&{x}[k', '&{x}')
+        self._test('&{x}}[0]', '&{x}')
+
+    def test_dict_index_with_internal_vars(self):
+        self._test('&{x}[${i}]', '&{x}', index='${i}')
+        self._test('xx &{x}[${i}] ${xyz}', '&{x}', start=3, index='${i}')
+        self._test('&&&&&{X{X}[${${i}-${${${i}}}}]', '&{X{X}', start=4,
+                   index='${${i}-${${${i}}}}')
+        self._test('&{${i}}[${j{}]', '&{${i}}', index='${j{}', internal=True)
+
+    def test_no_index_with_others_vars(self):
+        self._test('${x}[0]', '${x}')
+        self._test('%{x}[0]', '%{x}')
+        self._test('*{x}[0]', '*{x}')
 
     def test_custom_identifiers(self):
         for inp, start in [('@{x}${y}', 4),

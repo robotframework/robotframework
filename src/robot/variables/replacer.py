@@ -119,9 +119,11 @@ class VariableReplacer(object):
     def _get_variable(self, splitter):
         if splitter.identifier not in '$@&%':
             return self._get_reserved_variable(splitter)
-        if splitter.index:
+        if splitter.index is None:
+            return self._get_normal_variable(splitter)
+        if splitter.identifier == '@':
             return self._get_list_variable_item(splitter)
-        return self._get_normal_variable(splitter)
+        return self._get_dict_variable_item(splitter)
 
     def _get_reserved_variable(self, splitter):
         value = splitter.get_replaced_variable(self)
@@ -147,3 +149,16 @@ class VariableReplacer(object):
         except IndexError:
             raise DataError("List variable '%s' has no item in index %d."
                             % (name, index))
+
+    def _get_dict_variable_item(self, splitter):
+        name = splitter.get_replaced_variable(self)
+        variable = self._variables[name]
+        key = self.replace_scalar(splitter.index)
+        try:
+            return variable[key]
+        except KeyError:
+            raise DataError("Dictionary variable '%s' has no key '%s'."
+                            % (name, key))
+        except TypeError, err:
+            raise DataError("Dictionary variable '%s' used with invalid key: %s"
+                            % (name, err))

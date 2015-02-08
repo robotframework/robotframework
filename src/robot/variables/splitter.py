@@ -46,12 +46,12 @@ class VariableSplitter(object):
     def is_list_variable(self):
         return bool(self.identifier == '@' and self.base and
                     self.start == 0 and self.end == self._max_end and
-                    not self.index)
+                    self.index is None)
 
     def is_dict_variable(self):
         return bool(self.identifier == '&' and self.base and
                     self.start == 0 and self.end == self._max_end and
-                    not self.index)
+                    self.index is None)
 
     def _finalize(self):
         self.identifier = self._variable_chars[0]
@@ -123,14 +123,14 @@ class VariableSplitter(object):
         if char == '}' and not self._is_escaped(self._string, index):
             self._open_curly -= 1
             if self._open_curly == 0:
-                if not self._is_list_variable():
+                if not self._can_contain_index():
                     raise StopIteration
                 self._state = self._waiting_list_variable_index_state
         elif char in self._identifiers:
             self._state = self._internal_variable_start_state
 
-    def _is_list_variable(self):
-        return self._variable_chars[0] == '@'
+    def _can_contain_index(self):
+        return self._variable_chars[0] in '@&'
 
     def _internal_variable_start_state(self, char, index):
         self._state = self._variable_state

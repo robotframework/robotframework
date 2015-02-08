@@ -22,13 +22,21 @@ Invalid index using variable
     [Documentation]    FAIL List variable '\@{LIST}' has no item in index 12.
     Log    @{LIST}[${ONE}${2}]
 
-Non-string index
+Non-int index
     [Documentation]    FAIL List variable '\@{LIST}' used with invalid index 'invalid'.
     Log    @{LIST}[invalid]
 
-Non-string index using variable
+Non-int index using variable 1
     [Documentation]    FAIL List variable '\@{LIST}' used with invalid index 'xxx'.
     Log    @{LIST}[${INVALID}]
+
+Non-int index using variable 2
+    [Documentation]    FAIL List variable '\@{LIST}' used with invalid index '1.1'.
+    Log    @{LIST}[${1.1}]
+
+Empty index
+    [Documentation]    FAIL List variable '\@{LIST}' used with invalid index ''.
+    Log    @{LIST}[]
 
 Non-existing list variable
     [Documentation]    FAIL Variable '\@{nonex list}' not found.

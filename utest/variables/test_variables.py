@@ -99,6 +99,11 @@ class TestVariables(unittest.TestCase):
         assert_equal(self.varz.replace_scalar('@{L2}[1]'), ['v11', 'v12'])
         assert_equal(self.varz.replace_list(['@{L}[0]', '@{L2}[1]']), ['v0', ['v11', 'v12']])
 
+    def test_replace_dict_item(self):
+        self.varz['&{D}'] = {'a': 1, 2: 'b'}
+        assert_equal(self.varz.replace_list(['&{D}[a]']), [1])
+        assert_equal(self.varz.replace_scalar('&{D}[${2}]'), 'b')
+
     def test_replace_non_strings(self):
         self.varz['${d}'] = {'a': 1, 'b': 2}
         self.varz['${n}'] = None
