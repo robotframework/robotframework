@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import is_dict_like, split_from_equals
+from robot.utils import is_dict_like, split_from_equals, DotDict
 from robot.variables import VariableSplitter
 
 from .argumentvalidator import ArgumentValidator
@@ -113,10 +113,10 @@ class VariableReplacer(object):
         # `variables` is None in dry-run mode and when using Libdoc
         if variables:
             positional = variables.replace_list(positional, self._resolve_until)
-            named = dict(self._replace_named(named, variables.replace_scalar))
+            named = DotDict(self._replace_named(named, variables.replace_scalar))
         else:
             positional = list(positional)
-            named = dict(item for item in named if isinstance(item, tuple))
+            named = DotDict(item for item in named if isinstance(item, tuple))
         return positional, named
 
     def _replace_named(self, named, replace_scalar):

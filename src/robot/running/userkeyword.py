@@ -102,15 +102,15 @@ class UserKeywordHandler(object):
         return self._normal_run(context, arguments)
 
     def _dry_run(self, context, arguments):
-        arguments = self._resolve_arguments(arguments)
-        error, return_ = self._execute(context, arguments)
+        positional, kwargs = self._resolve_arguments(arguments)
+        error, return_ = self._execute(context, positional, kwargs)
         if error:
             raise error
         return None
 
     def _normal_run(self, context, arguments):
-        arguments = self._resolve_arguments(arguments, context.variables)
-        error, return_ = self._execute(context, arguments)
+        positional, kwargs = self._resolve_arguments(arguments, context.variables)
+        error, return_ = self._execute(context, positional, kwargs)
         if error and not error.can_continue(context.in_teardown):
             raise error
         return_value = self._get_return_value(context.variables, return_)
@@ -123,11 +123,11 @@ class UserKeywordHandler(object):
         resolver = ArgumentResolver(self.arguments)
         mapper = ArgumentMapper(self.arguments)
         positional, named = resolver.resolve(arguments, variables)
-        arguments, _ = mapper.map(positional, named, variables)
-        return arguments
+        positional, kwargs = mapper.map(positional, named, variables)
+        return positional, kwargs
 
-    def _execute(self, context, arguments):
-        self._set_variables(arguments, context.variables)
+    def _execute(self, context, positional, kwargs):
+        self._set_variables(positional, kwargs, context.variables)
         context.output.trace(lambda: self._log_args(context.variables))
         self._verify_keyword_is_valid()
         self.timeout.start()
@@ -148,12 +148,14 @@ class UserKeywordHandler(object):
             error = UserKeywordExecutionFailed(error, td_error)
         return error or pass_, return_
 
-    def _set_variables(self, arguments, variables):
-        before_varargs, varargs = self._split_args_and_varargs(arguments)
+    def _set_variables(self, positional, kwargs, variables):
+        before_varargs, varargs = self._split_args_and_varargs(positional)
         for name, value in zip(self.arguments.positional, before_varargs):
             variables['${%s}' % name] = value
         if self.arguments.varargs:
             variables['@{%s}' % self.arguments.varargs] = varargs
+        if self.arguments.kwargs:
+            variables['&{%s}' % self.arguments.kwargs] = kwargs
 
     def _split_args_and_varargs(self, args):
         if not self.arguments.varargs:

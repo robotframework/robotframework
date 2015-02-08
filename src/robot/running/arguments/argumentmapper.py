@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
+from robot.utils import DotDict
 
 
 class ArgumentMapper(object):
@@ -40,7 +41,7 @@ class KeywordCallTemplate(object):
         self._supports_kwargs = bool(argspec.kwargs)
         self._supports_named = argspec.supports_named
         self.args = [None] * argspec.minargs + [Default(d) for d in defaults]
-        self.kwargs = {}
+        self.kwargs = DotDict()
 
     def fill_positional(self, positional):
         self.args[:len(positional)] = positional

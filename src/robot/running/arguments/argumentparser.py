@@ -16,7 +16,7 @@ if sys.platform.startswith('java'):
     from java.util import List, Map
 
 from robot.errors import DataError
-from robot.variables import is_list_var, is_scalar_var
+from robot.variables import is_dict_var, is_list_var, is_scalar_var
 
 from .argumentspec import ArgumentSpec
 
@@ -167,10 +167,13 @@ class DynamicArgumentParser(_ArgumentSpecParser):
 class UserKeywordArgumentParser(_ArgumentSpecParser):
 
     def _is_kwargs(self, arg):
-        return False
+        return is_dict_var(arg)
 
     def _is_varargs(self, arg):
         return is_list_var(arg)
+
+    def _format_kwargs(self, kwargs):
+        return kwargs[2:-1]
 
     def _format_varargs(self, varargs):
         return varargs[2:-1]
