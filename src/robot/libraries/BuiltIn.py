@@ -22,7 +22,7 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           PassExecution, ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
-from robot.variables import is_var, is_list_var
+from robot.variables import is_var, is_list_var, VariableTableValue
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
@@ -1171,7 +1171,7 @@ class _Variables:
             name = name[1:]
         if len(name) < 2:
             raise ValueError
-        if name[0] in '$@' and name[1] != '{':
+        if name[0] in '$@&' and name[1] != '{':
             name = '%s{%s}' % (name[0], name[1:])
         if is_var(name):
             return name
@@ -1184,10 +1184,11 @@ class _Variables:
     def _get_var_value(self, name, values):
         if not values:
             return self._variables[name]
-        values = self._variables.replace_list(values)
-        if len(values) == 1 and name[0] == '$':
-            return values[0]
-        return list(values)
+        # TODO: Unify variable handling: use VariableTableValue w/ all vars.
+        if name[0] == '$':
+            values = self._variables.replace_list(values)
+            return values[0] if len(values) == 1 else values
+        return VariableTableValue(name, values).resolve(self._variables)
 
     def _log_set_variable(self, name, value):
         self.log(utils.format_assign_message(name, value))

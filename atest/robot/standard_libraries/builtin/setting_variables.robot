@@ -19,6 +19,13 @@ Set Test Variable - Scalars
 Set Test Variable - Lists
     Check Test Case    ${TESTNAME}
 
+Set Test Variable - Dicts
+    Check Test Case    ${TESTNAME}
+
+Dict Set To Scalar Is Dot Accessible
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
 Set Test Variable Needing Escaping
     Check Test Case    ${TESTNAME}
 
@@ -60,8 +67,12 @@ Set Test/Suite/Global Variables With Normal Variable Syntax
     Check Test Case    Set Test/Suite/Global Variables With Normal Variable Syntax 2
 
 It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable
-    Check Test Case    It Should Be Possible To Set Test/Suite/Global Variable using Empty List Variable 1
-    Check Test Case    It Should Be Possible To Set Test/Suite/Global Variable using Empty List Variable 2
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+
+It Should Be Possible To Set Test/Suite/Global Variable Using Empty Dict Variable
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
 
 Set Test/Suite/Global Variable In User Keyword When Variable Name Is Used As Argument
     Check Test Case    ${TEST NAME}
@@ -77,7 +88,22 @@ Set Test/Suite/Global Variable With Internal Variables In Name
     ...                http://code.google.com/p/robotframework/issues/detail?id=397
     Check Test Case    ${TEST NAME}
 
-Using @{EMPTY} to with `Set Test/Suite/Global Variable` keywords
+Mutating scalar variable set using `Set Test/Suite/Global Variable` keywords
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+
+Mutating list variable set using `Set Test/Suite/Global Variable` keywords
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+
+Mutating dict variable set using `Set Test/Suite/Global Variable` keywords
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+
+Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords
     Check Test Case    ${TEST NAME}
     Check Test Case    ${TEST NAME} 2
 

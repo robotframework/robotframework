@@ -23,7 +23,8 @@ except ImportError:
 
 from robot.errors import DataError
 from robot.utils import (get_env_var, get_env_vars, get_error_message,
-                         is_dict_like, is_list_like, normalize, NormalizedDict)
+                         is_dict_like, is_list_like, normalize, DotDict,
+                         NormalizedDict)
 
 from .notfound import raise_not_found
 
@@ -59,7 +60,7 @@ class VariableFinder(object):
             if not is_dict_like(value):
                 raise DataError("Value of variable '%s' is not dictionary "
                                 "or dictionary-like." % name)
-            return dict(value)
+            return DotDict(value)
         return value
 
 

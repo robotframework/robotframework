@@ -46,16 +46,20 @@ class VariableTableReader(object):
                 var.report_invalid_syntax(err)
 
     def _get_name_and_value(self, name, value, error_reporter):
-        validate_var(name)
-        DelayedVariable = {'$': DelayedScalarVariable,
-                           '@': DelayedListVariable,
-                           '&': DelayedDictVariable}[name[0]]
-        return name[2:-1], DelayedVariable(value, name, error_reporter)
+        return name[2:-1], VariableTableValue(name, value, error_reporter)
 
 
-class DelayedVariable(object):
+def VariableTableValue(name, value, error_reporter=None):
+    VariableTableValue = {'$': ScalarVariableTableValue,
+                          '@': ListVariableTableValue,
+                          '&': DictVariableTableValue}[name[0]]
+    return VariableTableValue(name, value, error_reporter)
 
-    def __init__(self, value, name, error_reporter):
+
+class VariableTableValueBase(object):
+
+    def __init__(self, name, value, error_reporter=None):
+        self._name = name
         self._value = self._format_value(value, name)
         self._error_reporter = error_reporter
         self._resolving = False
@@ -63,7 +67,9 @@ class DelayedVariable(object):
     def _format_value(self, value, name):
         return value
 
-    def resolve(self, name, variables):
+    def resolve(self, variables, name=None):
+        if not name:
+            name = self._name
         try:
             with self._avoid_recursion:
                 return self._replace_variables(self._value, variables)
@@ -71,7 +77,8 @@ class DelayedVariable(object):
             # Recursive resolving may have already removed variable.
             if name in variables.store:
                 variables.store.remove(name)
-                self._error_reporter(unicode(err))
+                if self._error_reporter:
+                    self._error_reporter(unicode(err))
             raise_not_found('${%s}' % name, variables.store.data,
                             "Variable '${%s}' not found." % name)
 
@@ -90,7 +97,7 @@ class DelayedVariable(object):
         raise NotImplementedError
 
 
-class DelayedScalarVariable(DelayedVariable):
+class ScalarVariableTableValue(VariableTableValueBase):
 
     def _format_value(self, value, name):
         if isinstance(value, basestring):
@@ -107,13 +114,13 @@ class DelayedScalarVariable(DelayedVariable):
         return variables.replace_scalar(value)
 
 
-class DelayedListVariable(DelayedVariable):
+class ListVariableTableValue(VariableTableValueBase):
 
     def _replace_variables(self, value, variables):
         return variables.replace_list(value)
 
 
-class DelayedDictVariable(DelayedVariable):
+class DictVariableTableValue(VariableTableValueBase):
 
     def _format_value(self, value, name):
         return list(self._yield_items(value))

@@ -23,10 +23,11 @@ import tempfile
 from robot import utils
 from robot.output import LOGGER
 
-from .isvar import contains_var, is_var, is_scalar_var, is_list_var, is_dict_var
-from .variables import Variables
 from .assigner import VariableAssigner
+from .isvar import contains_var, is_var, is_scalar_var, is_list_var, is_dict_var
 from .splitter import VariableSplitter, VariableIterator
+from .tablesetter import VariableTableValue
+from .variables import Variables
 
 
 GLOBAL_VARIABLES = Variables()

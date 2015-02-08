@@ -38,7 +38,6 @@ class Variables(object):
 
     def __setitem__(self, name, value):
         validate_var(name)
-        # TODO: Error messages, tests.
         if name[0] == '@':
             if not is_list_like(value):
                 self._raise_cannot_set_type(name, value, 'list')

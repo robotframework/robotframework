@@ -510,22 +510,30 @@ class _VariableScopes:
         self.current = self._uk_handlers.pop()
 
     def set_global(self, name, value):
-        GLOBAL_VARIABLES.__setitem__(name, value)
+        name, value = self._set_global_suite_or_test(GLOBAL_VARIABLES, name, value)
         for ns in EXECUTION_CONTEXTS.namespaces:
             ns.variables.set_suite(name, value)
 
     def set_suite(self, name, value):
-        self._suite.__setitem__(name, value)
+        name, value = self._set_global_suite_or_test(self._suite, name, value)
         self.set_test(name, value, False)
 
     def set_test(self, name, value, fail_if_no_test=True):
         if self._test is not None:
-            self._test.__setitem__(name, value)
+            name, value = self._set_global_suite_or_test(self._test, name, value)
         elif fail_if_no_test:
             raise DataError("Cannot set test variable when no test is started")
         for varz in self._uk_handlers:
             varz.__setitem__(name, value)
         self.current.__setitem__(name, value)
+
+    def _set_global_suite_or_test(self, variables, name, value):
+        variables[name] = value
+        # Avoid creating new list/dict objects in different scopes.
+        if name[0] != '$':
+            name = '$' + name[1:]
+            value = variables[name]
+        return name, value
 
     def __iter__(self):
         return iter(self.current)

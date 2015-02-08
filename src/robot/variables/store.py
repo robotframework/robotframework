@@ -15,7 +15,7 @@
 from robot.errors import DataError
 from robot.utils import NormalizedDict
 
-from .tablesetter import DelayedVariable
+from .tablesetter import VariableTableValueBase
 
 
 class VariableStore(object):
@@ -32,9 +32,9 @@ class VariableStore(object):
                 pass
 
     def _resolve_delayed(self, name, value):
-        if not isinstance(value, DelayedVariable):
+        if not isinstance(value, VariableTableValueBase):
             return value
-        self.data[name] = value.resolve(name, self._variables)
+        self.data[name] = value.resolve(self._variables, name)
         return self.data[name]
 
     def find(self, name):

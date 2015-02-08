@@ -6,8 +6,9 @@ Library           OperatingSystem
 Library           Collections
 
 *** Variable ***
-@{LIST}           Hello    world
 ${SCALAR}         Hi tellus
+@{LIST}           Hello    world
+&{DICT}           key=value    foo=bar
 
 *** Test Case ***
 Set Variable
@@ -52,6 +53,31 @@ Set Test Variable - Lists
     Set Test Variable    @new    This    is    ok
     Should Be True    @{new} == ['This','is','ok']
 
+Set Test Variable - Dicts
+    Should Be True    &{DICT} == {'key': 'value', 'foo': 'bar'}
+    Set Test Variable    \&{DICT}    hello=world
+    Should Be True    &{DICT} == {'hello': 'world'}
+    Should Be Equal    ${DICT.hello}    world
+    Set Test Variable    &dict    a=${1}    ${2}=b
+    Should Be True    &{DICT} == {'a': 1, 2: 'b'}
+    &{dict} =    Create Dictionary
+    Set Test Variable    &{DICT}
+    Should Be True    &{DICT} == {}
+    Set Test Variable    &new    new=dict
+    Should Be True    &{new} == {'new': 'dict'}
+    Should Be Equal    ${new.new}    dict
+
+Dict Set To Scalar Is Dot Accessible 1
+    Set Suite Variable    ${SCALAR DICT}    &{DICT}
+    Should Be Equal    ${SCALAR DICT.key}    value
+    ${SCALAR DICT.new} =    Set Variable   item
+    Should Be Equal    ${SCALAR DICT.new}    item
+    Variable Should Not Exist    ${DICT.new}
+
+Dict Set To Scalar Is Dot Accessible 2
+    Should Be Equal    ${SCALAR DICT.key}    value
+    Should Be Equal    ${SCALAR DICT.new}    item
+
 Set Test Variable Needing Escaping
     Set Test Variable    $var1    One backslash \\ and \${notvar}
     Should Be Equal    ${var1}    One backslash \\ and \${notvar}
@@ -75,6 +101,8 @@ Set Test Variable Needing Escaping
     Should Be Equal    @{var5}[0]    \\
     Should Be Equal    @{var5}[1]    \\
     Should Be Equal    @{var5}[2]    \\\\
+    Set Test Variable    &{var5}    this\=is\=key=value    path=c:\\temp    not var=\${nv}
+    Should Be True    &{var5} == {'this=is=key': 'value', 'path': 'c:\\\\temp', 'not var': '\${nv}'}
 
 Set Test Variable In User Keyword
     ${new_var} =    Set Variable    Value of new var
@@ -191,6 +219,18 @@ It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variabl
     Should Be True    @{new suite var 2} == []
     Should Be True    ${new global var 2} == []
 
+It Should Be Possible To Set Test/Suite/Global Variable Using Empty Dict Variable 1
+    Set Test Variable    &{new test var 3}    &{EMPTY}
+    Set Suite Variable    ${new suite var 3}    &{EMPTY}
+    Set Global Variable    &{new global var 3}    &{EMPTY}
+    Should Be True    ${new test var 3} == {}
+    Should Be True    @{new suite var 3} == []
+    Should Be True    &{new global var 3} == {}
+
+It Should Be Possible To Set Test/Suite/Global Variable Using Empty Dict Variable 2
+    Should Be True    &{new suite var 3} == {}
+    Should Be True    &{new global var 3} == {}
+
 Scopes And Overriding 1
     Should Be Equal    ${cli_var_1}    CLI1
     Should Be Equal    ${cli_var_2}    CLI2
@@ -240,7 +280,9 @@ Setting Test/Suite/Global Variable Which Value Is In Variable Syntax
     Should Be Equal    ${variable}    bar
 
 Set Test/Suite/Global Variable With Internal Variables In Name
-    [Documentation]    This obscure test is here to prevent this bug from reappearing:\n http://code.google.com/p/robotframework/issues/detail?id=397\n FAIL Variable '\${nonexisting}' not found.
+    [Documentation]    This obscure test is here to prevent this bug from reappearing:
+    ...                http://code.google.com/p/robotframework/issues/detail?id=397\
+    ...                FAIL    Variable '\${nonexisting}' not found.
     ${x} =    Set Variable    bar
     Set Test Variable    \${foo ${x}}    value
     Should Be Equal    ${foo bar}    value
@@ -250,7 +292,70 @@ Set Test/Suite/Global Variable With Internal Variables In Name
     Should Be Equal    ${bar}    pub
     Set Test Variable    ${xxx ${nonexisting}}    whatever
 
-Using @{EMPTY} to with `Set Test/Suite/Global Variable` keywords
+Mutating scalar variable set using `Set Test/Suite/Global Variable` keywords 1
+    ${mutating} =    Create List
+    Set Test Variable      ${MUTANT TEST}      ${mutating}
+    Set Suite Variable     ${MUTANT SUITE}     ${mutating}
+    Set Global Variable    ${MUTANT GLOBAL}    ${mutating}
+    Mutating user keyword    ${mutating}
+    # Using same instance in all scopes
+    Should Be True    ${mutating} == list('atsg')
+    Should Be True    ${MUTANT TEST} == list('atsg')
+    Should Be True    ${MUTANT SUITE} == list('atsg')
+    Should Be True    ${MUTANT GLOBAL} == list('atsg')
+
+Mutating scalar variable set using `Set Test/Suite/Global Variable` keywords 2
+    Mutating user keyword 2
+    Should Be True    ${MUTANT SUITE} == list('atsg') + ['s2', 'g2']
+    Should Be True    ${MUTANT GLOBAL} == list('atsg') + ['s2', 'g2']
+
+Mutating scalar variable set using `Set Test/Suite/Global Variable` keywords 3
+    Should Be True    ${MUTANT SUITE} == list('atsg') + ['s2', 'g2']
+    Should Be True    ${MUTANT GLOBAL} == list('atsg') + ['s2', 'g2']
+
+Mutating list variable set using `Set Test/Suite/Global Variable` keywords 1
+    @{mutating} =    Create List
+    Set Test Variable      @{MUTANT TEST}      @{mutating}
+    Set Suite Variable     @{MUTANT SUITE}     @{mutating}
+    Set Global Variable    @{MUTANT GLOBAL}    @{mutating}
+    Mutating user keyword    ${mutating}
+    # Using different instance in all scope
+    Should Be True    @{mutating} == ['a']
+    Should Be True    @{MUTANT TEST} == ['t']
+    Should Be True    @{MUTANT SUITE} == ['s']
+    Should Be True    @{MUTANT GLOBAL} == ['g']
+
+Mutating list variable set using `Set Test/Suite/Global Variable` keywords 2
+    Mutating user keyword 2
+    Should Be True    @{MUTANT SUITE} == ['s', 's2']
+    Should Be True    @{MUTANT GLOBAL} == ['g', 'g2']
+
+Mutating list variable set using `Set Test/Suite/Global Variable` keywords 3
+    Should Be True    @{MUTANT SUITE} == ['s', 's2']
+    Should Be True    @{MUTANT GLOBAL} == ['g', 'g2']
+
+Mutating dict variable set using `Set Test/Suite/Global Variable` keywords 1
+    &{mutating} =    Create Dictionary
+    Set Test Variable      &{MUTANT TEST}      &{mutating}
+    Set Suite Variable     &{MUTANT SUITE}     &{mutating}
+    Set Global Variable    &{MUTANT GLOBAL}    &{mutating}
+    Dict mutating user keyword    ${mutating}
+    # Using different instance in all scope
+    Should Be True    &{mutating} == {'a': 1}
+    Should Be True    &{MUTANT TEST} == {'t': 1}
+    Should Be True    &{MUTANT SUITE} == {'s': 1}
+    Should Be True    &{MUTANT GLOBAL} == {'g': 1}
+
+Mutating dict variable set using `Set Test/Suite/Global Variable` keywords 2
+    Dict mutating user keyword 2
+    Should Be True    &{MUTANT SUITE} == {'s': 1, 's2': 2}
+    Should Be True    &{MUTANT GLOBAL} == {'g': 1, 'g2': 2}
+
+Mutating dict variable set using `Set Test/Suite/Global Variable` keywords 3
+    Should Be True    &{MUTANT SUITE} == {'s': 1, 's2': 2}
+    Should Be True    &{MUTANT GLOBAL} == {'g': 1, 'g2': 2}
+
+Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords
     Set Test Variable    @{LIST}    @{EMPTY}
     Should Be Empty    ${LIST}
     Append To List    ${LIST}    test
@@ -259,13 +364,14 @@ Using @{EMPTY} to with `Set Test/Suite/Global Variable` keywords
     Set Suite Variable    @{LIST}    @{EMPTY}
     Should Be Empty    ${LIST}
     Append To List    ${LIST}    suite
+    Should Be True    ${LIST} == ['suite']
     Verify @{EMPTY} is still empty
     Set Global Variable    @{NEW}    @{EMPTY}
     Should Be Empty    ${NEW}
     Append To List    ${NEW}    global
     Verify @{EMPTY} is still empty
 
-Using @{EMPTY} to with `Set Test/Suite/Global Variable` keywords 2
+Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords 2
     Should Be True    ${LIST} == ['suite']
     Should Be True    ${NEW} == ['global']
 
@@ -389,6 +495,28 @@ Test Setting Variable In User Keyword
     Run Keyword    Set ${type} Variable    ${arg}    value
     Should Not Be Equal    ${arg}    value    Value is set to variable \${arg} even it should be set to variable \${variable}    False
     Should Be Equal    ${variable}    value    Value is not set to variable \${variable} even it should
+
+Mutating user keyword
+    [Arguments]    ${mutant argument}
+    Append To List    ${mutant argument}    a
+    Append To List    ${MUTANT TEST}        t
+    Append To List    ${MUTANT SUITE}       s
+    Append To List    ${MUTANT GLOBAL}      g
+
+Mutating user keyword 2
+    Append To List    ${MUTANT SUITE}       s2
+    Append To List    ${MUTANT GLOBAL}      g2
+
+Dict mutating user keyword
+    [Arguments]    ${mutant argument}
+    Set To Dictionary    ${mutant argument}    a    ${1}
+    Set To Dictionary    ${MUTANT TEST}        t    ${1}
+    Set To Dictionary    ${MUTANT SUITE}       s    ${1}
+    Set To Dictionary    ${MUTANT GLOBAL}      g    ${1}
+
+Dict mutating user keyword 2
+    Set To Dictionary    ${MUTANT SUITE}       s2    ${2}
+    Set To Dictionary    ${MUTANT GLOBAL}      g2    ${2}
 
 Verify @{EMPTY} is still empty
     No Operation    @{EMPTY}
