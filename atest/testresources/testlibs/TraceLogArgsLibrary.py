@@ -12,6 +12,12 @@ class TraceLogArgsLibrary(object):
     def mandatory_and_varargs(self, mand, *varargs):
         pass
 
+    def kwargs(self, **kwargs):
+        pass
+
+    def all_args(self, positional, *varargs, **kwargs):
+        pass
+
     def return_object_with_invalid_repr(self):
         return InvalidRepr()
 

@@ -6,6 +6,7 @@ Library           TraceLogArgsLibrary
 *** Variables ***
 @{VALUES}         a    b    c    d
 ${NON ASCII}      Hyvää Päivää
+&{DICT}           a=1    c=3
 
 *** Test Cases ***
 Only Mandatory Arguments
@@ -35,6 +36,16 @@ Variable Number of Arguments
     Mandatory and Varargs    mandatory    @{VALUES}
     Mandatory and Varargs UK    mandatory
     Mandatory and Varargs    mandatory
+
+Kwargs
+    Kwargs UK
+    Kwargs
+    Kwargs UK    a=override    b=${2}    &{DICT}
+    Kwargs    a=override    b=${2}    &{DICT}
+
+All args
+    All args UK    1    2    3    d=4
+    All args    1    2    3    d=4
 
 Non String Object as Argument
     Mandatory and Default UK    ${TRUE}    default=${1.0}
@@ -83,4 +94,12 @@ Multiple Default Values UK
 
 Mandatory and Varargs UK
     [Arguments]    ${mand}    @{vargs}
+    No Operation
+
+Kwargs UK
+    [Arguments]    &{kwargs}
+    No Operation
+
+All args UK
+    [Arguments]    ${positional}    @{varargs}    &{kwargs}
     No Operation
