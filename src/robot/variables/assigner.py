@@ -31,8 +31,6 @@ class VariableAssigner(object):
         for name, value in self._return_resolver.resolve(return_value):
             if not self._extended_assign(name, value, context.variables):
                 value = self._normal_assign(name, value, context.variables)
-            if name[0] == '&':
-                continue   # TODO: Implement and test logging &{dict} assigns
             context.info(format_assign_message(name, value))
 
     def _extended_assign(self, name, value, variables):

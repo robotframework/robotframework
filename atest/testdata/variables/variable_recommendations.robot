@@ -7,11 +7,16 @@ ${STRING}         Hello world!
 ${INTEGER}        ${42}
 @{ONE ITEM}       Hello again?
 @{LIST}           Hello    again    ?
+${S LIST}         Not recommended as list
+&{D LIST}         Recommended=as list
 ${SIMILAR VAR 1}
 ${SIMILAR VAR 2}
 ${SIMILAR VAR 3}
 ${Cäersŵs}
 ${INDENT}         ${SPACE * 4}
+&{DICTIONARY}     key=value
+${S DICTIONARY}   Not recommended as dict
+@{L DICTIONARY}   Not recommended as dict
 
 *** Test Cases ***
 Simple Typo Scalar
@@ -19,14 +24,35 @@ Simple Typo Scalar
     ...    ${INDENT}\${STRING}
     Log    ${SSTRING}
 
-Simple Typo List
-    [Documentation]    FAIL    Variable '@{LLIST}' not found. Did you mean:
+Simple Typo List - Only List-likes Are Recommended
+    [Documentation]    FAIL    Variable '@{GIST}' not found. Did you mean:
     ...    ${INDENT}\@{LIST}
-    Log    @{LLIST}
+    ...    ${INDENT}\@{D LIST}
+    Log    @{GIST}
+
+Simple Typo Dict - Only Dicts Are Recommended
+    [Documentation]    FAIL    Variable '&{BICTIONARY}' not found. Did you mean:
+    ...    ${INDENT}\&{DICTIONARY}
+    Log    &{BICTIONARY}
+
+All Types Are Recommended With Scalars 1
+   [Documentation]    FAIL    Variable '${MIST}' not found. Did you mean:
+    ...    ${INDENT}\${LIST}
+    ...    ${INDENT}\${S LIST}
+    ...    ${INDENT}\${D LIST}
+   Log    ${MIST}
+
+All Types Are Recommended With Scalars 2
+   [Documentation]    FAIL    Variable '${BICTIONARY}' not found. Did you mean:
+   ...    ${INDENT}\${DICTIONARY}
+   ...    ${INDENT}\${S DICTIONARY}
+   ...    ${INDENT}\${L DICTIONARY}
+   Log    ${BICTIONARY}
 
 Access Scalar In List With Typo In Variable
     [Documentation]    FAIL    Variable '@{LLIST}' not found. Did you mean:
     ...    ${INDENT}\@{LIST}
+    ...    ${INDENT}\@{D LIST}
     Log    @{LLIST}[0]
 
 Access Scalar In List With Typo In Index
@@ -65,16 +91,6 @@ Misspelled Camel Case
     [Documentation]    FAIL    Variable '@{OneeItem}' not found. Did you mean:
     ...    ${INDENT}\@{ONE ITEM}
     Log    @{OneeItem}
-
-Misspelled List Accessed As Scalar
-    [Documentation]    FAIL    Variable '${LLIST}' not found. Did you mean:
-    ...    ${INDENT}\${LIST}
-    Log    ${LLIST}
-
-Misspelled Scalar Accessed As List
-    [Documentation]    \${STRING} is not recommended because it is not list-like.
-    ...    FAIL    Variable '@{SSTRING}' not found.
-    Log    @{SSTRING}
 
 Misspelled Whitespace
     [Documentation]    FAIL    Variable '${S STRI NG}' not found. Did you mean:

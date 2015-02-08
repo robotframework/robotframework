@@ -15,6 +15,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${cli_var_2} = CLI2
     Check Variable Message    \${cli_var_3} = CLI3
     Check Variable Message    \${DEBUG_FILE} = NONE
+    Check Variable Message    \&{DICT} = { key=value | two=2 }
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
     Check Variable Message    \${interpreter} = *    pattern=yes
@@ -32,7 +33,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${SCALAR} = Hi tellus
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
-    Check Variable Message    \&{SUITE_METADATA} = [ ]
+    Check Variable Message    \&{SUITE_METADATA} = { }
     Check Variable Message    \${SUITE_NAME} = *    pattern=yes
     Check Variable Message    \${suite_setup_global_var} = Global var set in suite setup
     Check Variable Message    \@{suite_setup_global_var_list} = [ Global var set in | suite setup ]
@@ -42,7 +43,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${SUITE_SOURCE} = *    pattern=yes
     Check Variable Message    \${TEMPDIR} = *    pattern=yes
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    34    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    35    Wrong total message count
 
 Log Variables In Test
     ${test} =    Check Test Case    Log Variables
@@ -55,6 +56,7 @@ Log Variables In Test
     Check Variable Message    \${cli_var_2} = CLI2
     Check Variable Message    \${cli_var_3} = CLI3
     Check Variable Message    \${DEBUG_FILE} = NONE
+    Check Variable Message    \&{DICT} = { key=value | two=2 }
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
     Check Variable Message    \${interpreter} = *    pattern=yes
@@ -72,7 +74,7 @@ Log Variables In Test
     Check Variable Message    \${SCALAR} = Hi tellus
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
-    Check Variable Message    \&{SUITE_METADATA} = [ ]
+    Check Variable Message    \&{SUITE_METADATA} = { }
     Check Variable Message    \${SUITE_NAME} = *    pattern=yes
     Check Variable Message    \${suite_setup_global_var} = Global var set in suite setup
     Check Variable Message    \@{suite_setup_global_var_list} = [ Global var set in | suite setup ]
@@ -84,7 +86,7 @@ Log Variables In Test
     Check Variable Message    \${TEST_NAME} = Log Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    38    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    39    Wrong total message count
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
@@ -97,6 +99,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \${cli_var_2} = CLI2    DEBUG
     Check Variable Message    \${cli_var_3} = CLI3    DEBUG
     Check Variable Message    \${DEBUG_FILE} = NONE    DEBUG
+    Check Variable Message    \&{DICT} = { key=value | two=2 }    DEBUG
     Check Variable Message    \${EXECDIR} = *    DEBUG    pattern=yes
     Check Variable Message    \${False} = *    DEBUG    pattern=yes
     Check Variable Message    \@{int_list_1} = [ 0 | 1 | 2 | 3 ]    DEBUG
@@ -116,7 +119,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \${SCALAR} = Hi tellus    DEBUG
     Check Variable Message    \${SPACE} =    DEBUG
     Check Variable Message    \${SUITE_DOCUMENTATION} =    DEBUG
-    Check Variable Message    \&{SUITE_METADATA} = [ ]    DEBUG
+    Check Variable Message    \&{SUITE_METADATA} = { }    DEBUG
     Check Variable Message    \${SUITE_NAME} = *    DEBUG    pattern=yes
     Check Variable Message    \${suite_setup_global_var} = Global var set in suite setup    DEBUG
     Check Variable Message    \@{suite_setup_global_var_list} = [ Global var set in | suite setup ]    DEBUG
@@ -129,7 +132,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]    DEBUG
     Check Variable Message    \${True} = *    DEBUG    pattern=yes
     Check Variable Message    \${var} = Hello    DEBUG
-    Should Be Equal As Integers    ${kw.message_count}    41    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    42    Wrong total message count
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
@@ -142,6 +145,7 @@ Log Variables In User Keyword
     Check Variable Message    \${cli_var_2} = CLI2
     Check Variable Message    \${cli_var_3} = CLI3
     Check Variable Message    \${DEBUG_FILE} = NONE
+    Check Variable Message    \&{DICT} = { key=value | two=2 }
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
     Check Variable Message    \@{int_list_1} = [ 0 | 1 | 2 | 3 ]
@@ -161,7 +165,7 @@ Log Variables In User Keyword
     Check Variable Message    \${SCALAR} = Hi tellus
     Check Variable Message    \${SPACE} =
     Check Variable Message    \${SUITE_DOCUMENTATION} =
-    Check Variable Message    \&{SUITE_METADATA} = [ ]
+    Check Variable Message    \&{SUITE_METADATA} = { }
     Check Variable Message    \${SUITE_NAME} = *    pattern=yes
     Check Variable Message    \${suite_setup_global_var} = Global var set in suite setup
     Check Variable Message    \@{suite_setup_global_var_list} = [ Global var set in | suite setup ]
@@ -175,7 +179,7 @@ Log Variables In User Keyword
     Check Variable Message    \${True} = *    pattern=yes
     Check Variable Message    \${ukvar} = Value of an uk variable
     Check Variable Message    \${var} = Hello
-    Should Be Equal As Integers    ${kw.message_count}    42    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    43    Wrong total message count
 
 *** Keywords ***
 Check Variable Message

@@ -15,7 +15,8 @@
 from functools import partial
 
 from robot.errors import DataError
-from robot.utils import is_list_like, normalize, RecommendationFinder
+from robot.utils import (is_dict_like, is_list_like, normalize,
+                         RecommendationFinder)
 
 
 def raise_not_found(name, candidates, msg=None):
@@ -35,7 +36,9 @@ def raise_not_found(name, candidates, msg=None):
 
 
 def _decorate_candidates(identifier, candidates):
-    condition = is_list_like if identifier == '@' else lambda name: True
-    # TODO: handle dict variables
+    is_included = {'$': lambda value: True,
+                   '@': is_list_like,
+                   '&': is_dict_like,
+                   '%': lambda value: True}[identifier]
     return ['%s{%s}' % (identifier, name)
-            for name in candidates if condition(candidates[name])]
+            for name in candidates if is_included(candidates[name])]

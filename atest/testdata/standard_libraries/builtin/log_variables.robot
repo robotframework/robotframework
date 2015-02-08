@@ -4,6 +4,7 @@ Suite Setup       My Suite Setup
 *** Variable ***
 @{LIST}           Hello    world
 ${SCALAR}         Hi tellus
+&{DICT}           key=value    two=${2}
 
 *** Test Case ***
 Previous Test

@@ -140,19 +140,19 @@ List and scalars with not enough values
 
 Dictionary return value
     ${tc} =    Check Test Case    ${TEST NAME}
-    #TODO check messages
-
-Dictionary is dot-accessible
-    ${tc} =    Check Test Case    ${TEST NAME}
-    #TODO check messages
-
-Scalar dictionary is not dot-accessible
-    ${tc} =    Check Test Case    ${TEST NAME}
-    #TODO check messages
+    Check Log Message    ${tc.kws[0].msgs[0]}    \&{ret} = { muu=mi | foo=bar }
 
 None To Dict
     ${tc} =    Check Test Case    ${TEST NAME}
-    #TODO check messages
+    Check Log Message    ${tc.kws[0].msgs[0]}    \&{ret} = { }
+
+Dictionary is dot-accessible
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \&{dotted} = { key=value }
+
+Scalar dictionary is not dot-accessible
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${normal} = {'key': 'value'}
 
 Dictionary only allowed alone
     Check Test Case    ${TEST NAME} 1
@@ -178,7 +178,8 @@ Long Values To List Variable
 
 Big Items In Dictionary
     ${tc} =    Check Test Case    ${TEST NAME}
-    #TODO check messages
+    ${v100} =    Evaluate    '1234567890' * 10
+    Check Log Message    ${tc.kws[1].msgs[0]}    \&{big} = { _${v100}=${v100[:96]}...
 
 No Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
