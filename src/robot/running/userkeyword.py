@@ -164,6 +164,7 @@ class UserKeywordHandler(object):
         return args[:positional], args[positional:]
 
     def _log_args(self, variables):
+        # TODO: Trace log &{kwargs} too.
         args = ['${%s}' % arg for arg in self.arguments.positional]
         if self.arguments.varargs:
             args.append('@{%s}' % self.arguments.varargs)
