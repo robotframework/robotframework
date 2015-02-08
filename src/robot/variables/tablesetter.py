@@ -50,6 +50,7 @@ class VariableTableReader(object):
 
 
 def VariableTableValue(name, value, error_reporter=None):
+    validate_var(name)
     VariableTableValue = {'$': ScalarVariableTableValue,
                           '@': ListVariableTableValue,
                           '&': DictVariableTableValue}[name[0]]
