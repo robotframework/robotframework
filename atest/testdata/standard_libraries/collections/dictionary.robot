@@ -4,21 +4,6 @@ Resource        collections_resources.robot
 Library         CollectionsHelperLibrary.py
 
 *** Test Cases ***
-Create Dictionary
-    ${dict} =  Create Dictionary
-    Compare To Expected String  ${dict}  {}
-    ${dict} =  Create Dictionary  a  1  b  2  ${3}  ${3.1}
-    ...  ${True}  ${dict}
-    Compare To Expected String  ${dict}  {'a': '1', 'b': '2', 3: 3.1, True: {}}
-
-Create Dictionary with wrong number of arguments
-    [Documentation]  FAIL ValueError: Creating a dictionary failed. There should be even number of key-value-pairs.
-    Create Dictionary  a  1  b
-
-Create Dictionary With **kwargs
-    ${dict} =  Create Dictionary  k1  ${1}  over  write  k2=${2}  over=written
-    Compare To Expected String  ${dict}  {'k1': 1, 'k2': 2, 'over': 'written'}
-
 Set To Dictionary
     Set To Dictionary  ${D0}  a  ${1}
     Should Be Equal  ${D0}  ${D1}

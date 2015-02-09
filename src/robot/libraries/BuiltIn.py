@@ -22,7 +22,8 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           PassExecution, ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
-from robot.variables import is_var, is_list_var, VariableTableValue
+from robot.variables import (is_list_var, is_var, DictVariableTableValue,
+                             VariableTableValue, VariableSplitter)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
@@ -399,6 +400,62 @@ class _Converter:
         | ${ints} =   | Create List | ${1} | ${2} | ${3} |
         """
         return list(items)
+
+    @run_keyword_variant(resolve=0)
+    def create_dictionary(self, *items):
+        """Creates and returns a dictionary based on given items.
+
+        Items are given using ``key=value`` syntax same way as ``&{dictionary}``
+        variables are created in the Variable table. Both keys and values
+        can contain variables, and possible equal sign in key can be escaped
+        with a backslash like ``escaped\\=key=value``. It is also possible to
+        get items from existing dictionaries by simply using them like
+        ``&{dict}``.
+
+        If same key is used multiple times, the last value has precedence.
+        The returned dictionary is ordered, and values with strings as keys
+        can also be accessed using convenient dot-access syntax like
+        ``${dict.key}``.
+
+        Examples:
+        | &{dict} = | Create Dictionary | key=value | foo=bar |
+        | Should Be True | ${dict} == {'key': 'value', 'foo': 'bar'} |
+        | &{dict} = | Create Dictionary | ${1}=${2} | &{x} | foo=new |
+        | Should Be True | ${dict} == {1: 2, 'key': 'value', 'foo': 'new'} |
+        | Should Be Equal | ${dict.key} | value |
+
+        This keyword was changed in Robot Framework 2.9 in many ways:
+        - Moved from ``Collections`` library to ``BuiltIn``.
+        - Support also non-string keys in ``key=value`` syntax.
+        - Deprecated old syntax to give keys and values separately.
+        - Returned dictionary is ordered and dot-accessible.
+        """
+        separate, combined = self._split_dict_items(items)
+        if separate:
+            self.log("Giving keys and values separately to 'Create Dictionary' "
+                     "keyword is deprecated. Use 'key=value' syntax instead.",
+                     level='WARN')
+        separate = self._format_separate_dict_items(separate)
+        combined = DictVariableTableValue(combined).resolve(self._variables)
+        result = utils.DotDict(separate)
+        result.update(combined)
+        return result
+
+    def _split_dict_items(self, items):
+        separate = []
+        for item in items:
+            name, value = utils.split_from_equals(item)
+            if value is not None or VariableSplitter(item).is_dict_variable():
+                break
+            separate.append(item)
+        return separate, items[len(separate):]
+
+    def _format_separate_dict_items(self, separate):
+        separate = self._variables.replace_list(separate)
+        if len(separate) % 2 != 0:
+            raise DataError('Expected even number of keys and values, got %d.'
+                            % len(separate))
+        return [separate[i:i+2] for i in range(0, len(separate), 2)]
 
 
 class _Verify:
@@ -1188,7 +1245,7 @@ class _Variables:
         if name[0] == '$':
             values = self._variables.replace_list(values)
             return values[0] if len(values) == 1 else values
-        return VariableTableValue(name, values).resolve(self._variables)
+        return VariableTableValue(values, name).resolve(self._variables)
 
     def _log_set_variable(self, name, value):
         self.log(utils.format_assign_message(name, value))

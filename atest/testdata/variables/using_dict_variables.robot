@@ -109,8 +109,8 @@ Using when no named or kwargs accepted 2
     Varargs    &{args}
 
 Positional after
-    [Documentation]    FAIL Keyword 'Collections.Create Dictionary' got positional argument after named arguments.
-    Create Dictionary    &{EMPTY}    positional     values
+    [Documentation]    FAIL Keyword 'Kwargs' got positional argument after named arguments.
+    Kwargs    &{EMPTY}    positional     values
 
 Non-existing
     [Documentation]    FAIL Variable '&{non existing}' not found.
@@ -123,7 +123,7 @@ Non-dictionary
 Non-string keys
     [Documentation]    FAIL Argument names must be strings.
     ${ints} =    Evaluate    {1: 2, 3: 4}
-    Create Dictionary    &{ints}
+    Kwargs    &{ints}
 
 *** Keywords ***
 Keyword
@@ -135,4 +135,8 @@ No args
 
 Varargs
     [Arguments]    @{varargs}
+    No Operation
+
+Kwargs
+    [Arguments]    &{kwargs}
     No Operation

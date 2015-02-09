@@ -6,15 +6,6 @@ Default Tags    jybot  pybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
-Create Dictionary
-    Check Test Case  ${TEST NAME}
-
-Create Dictionary with wrong number of arguments
-    Check Test Case  ${TEST NAME}
-
-Create Dictionary With **kwargs
-    Check Test Case  ${TEST NAME}
-
 Set To Dictionary
     Check Test Case  ${TEST NAME}
 

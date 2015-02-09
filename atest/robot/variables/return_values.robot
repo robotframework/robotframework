@@ -140,7 +140,7 @@ List and scalars with not enough values
 
 Dictionary return value
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    \&{ret} = { muu=mi | foo=bar }
+    Check Log Message    ${tc.kws[0].msgs[0]}    \&{ret} = { foo=bar | muu=mi }
 
 None To Dict
     ${tc} =    Check Test Case    ${TEST NAME}
