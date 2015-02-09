@@ -375,6 +375,27 @@ Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords 2
     Should Be True    ${LIST} == ['suite']
     Should Be True    ${NEW} == ['global']
 
+If setting test/suite/global variable fails, old value is preserved 1
+    [Documentation]    FAIL Variable '\${SETTING NONEX FAILS}' not found.
+    Set Test Variable    ${VALID TEST}    valid test
+    Set Suite Variable    @{VALID SUITE}    valid suite
+    Set Global Variable    &{VALID GLOBAL}    valid=global
+    Set Test Variable    ${VALID TEST}    ${SETTING NONEX FAILS}
+    [Teardown]    Should Be Equal    ${VALID TEST}    valid test
+
+If setting test/suite/global variable fails, old value is preserved 2
+    [Documentation]    FAIL Variable '\@{SETTING NONEX FAILS}' not found.
+    Set Suite Variable    @{VALID SUITE}    @{SETTING NONEX FAILS}
+    [Teardown]    Should Be Equal    @{VALID SUITE}    valid suite
+
+If setting test/suite/global variable fails, old value is preserved 3
+    [Documentation]    FAIL Variable '\&{SETTING NONEX FAILS}' not found.
+    Set Global Variable    &{VALID GLOBAL}    &{SETTING NONEX FAILS}
+    [Teardown]    Should Be Equal    ${VALID GLOBAL.valid}    global
+
+If setting test/suite/global variable fails, old value is preserved 4
+    Should Be Equal    @{VALID SUITE}    valid suite
+    Should Be Equal    &{VALID GLOBAL}[valid]    global
 
 *** Keyword ***
 My Suite Setup

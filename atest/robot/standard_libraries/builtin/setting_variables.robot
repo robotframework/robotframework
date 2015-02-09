@@ -107,6 +107,12 @@ Using @{EMPTY} with `Set Test/Suite/Global Variable` keywords
     Check Test Case    ${TEST NAME}
     Check Test Case    ${TEST NAME} 2
 
+If setting test/suite/global variable fails, old value is preserved
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+    Check Test Case    ${TEST NAME} 3
+    Check Test Case    ${TEST NAME} 4
+
 *** Keyword ***
 Check Suite Teardown Passed
     ${suite} =    Get Test Suite    Variables

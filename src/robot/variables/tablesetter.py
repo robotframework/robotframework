@@ -60,12 +60,11 @@ def VariableTableValue(value, name, error_reporter=None):
 class VariableTableValueBase(object):
 
     def __init__(self, value, name=None, error_reporter=None):
-        self._name = name
-        self._value = self._format_value(value)
+        self._value = self._format_value(value, name)
         self._error_reporter = error_reporter
         self._resolving = False
 
-    def _format_value(self, value):
+    def _format_value(self, value, name):
         return value
 
     def resolve(self, variables, name=None):
@@ -73,7 +72,6 @@ class VariableTableValueBase(object):
             with self._avoid_recursion:
                 return self._replace_variables(self._value, variables)
         except DataError, err:
-            name = name or self._name
             if not name:
                 raise
             # Recursive resolving may have already removed variable.
@@ -101,13 +99,12 @@ class VariableTableValueBase(object):
 
 class ScalarVariableTableValue(VariableTableValueBase):
 
-    def _format_value(self, value):
+    def _format_value(self, value, name):
         if isinstance(value, basestring):
             return value
         # TODO: Should we catenate values in RF 2.9 instead?
         if len(value) == 1:
             return value[0]
-        name = self._name
         raise DataError("Creating a scalar variable with a list value in "
                         "the Variable table is no longer possible. "
                         "Create a list variable '@%s' and use it as a "
@@ -125,7 +122,7 @@ class ListVariableTableValue(VariableTableValueBase):
 
 class DictVariableTableValue(VariableTableValueBase):
 
-    def _format_value(self, value):
+    def _format_value(self, value, name):
         return list(self._yield_items(value))
 
     def _yield_items(self, items):
