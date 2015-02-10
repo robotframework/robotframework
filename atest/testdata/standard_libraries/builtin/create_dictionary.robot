@@ -77,6 +77,16 @@ Separate keys and values with invalid key
     [Documentation]    FAIL STARTS: Creating dictionary failed:
     Create Dictionary    ${DICT}=non-hashable
 
+`key=value` syntax without equals
+    [Documentation]    FAIL Dictionary item 'no' does not contain '=' separator.
+    Create Dictionary    a=1   no   equals
+
+Separate keys and values and 'key=value' syntax
+    &{d} =    Create Dictionary   a    ${1}    b    foo    c=3
+    Verify Dictionary    ${d}    {'a': 1, 'b': 'foo', 'c': '3'}
+    &{d} =    Create Dictionary    k    1    k    2    k=3    k=4
+    Verify Dictionary    ${d}    {'k': '4'}
+
 `&{dict}` variable
     &{d} =    Create Dictionary    &{EMPTY}
     Verify Dictionary    ${d}    {}
