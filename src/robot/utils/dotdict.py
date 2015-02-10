@@ -38,6 +38,9 @@ class DotDict(OrderedDict):
         except KeyError:
             OrderedDict.__delattr__(self, key)
 
+    def __eq__(self, other):
+        return dict.__eq__(self, other)
+
     def __str__(self):
         return '{%s}' % ', '.join('%r: %r' % item for item in self.iteritems())
 

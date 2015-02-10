@@ -125,6 +125,13 @@ Non-string keys
     ${ints} =    Evaluate    {1: 2, 3: 4}
     Kwargs    &{ints}
 
+Dicts are ordered but order does not affect equality
+    &{dict 2} =    Create Dictionary    b=${2}    c=3    a=1
+    @{keys 2} =    Create List    @{dict 2}
+    @{keys} =    Create List    @{DICT}
+    Should Not Be Equal    ${keys}    ${keys 2}
+    Should Be Equal    ${DICT}    ${dict 2}
+
 *** Keywords ***
 Keyword
     [Arguments]    ${arg1}    ${arg2}=Kekkonen

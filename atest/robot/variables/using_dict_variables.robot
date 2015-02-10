@@ -58,3 +58,6 @@ Non-dictionary
 
 Non-string keys
     Check Test Case    ${TESTNAME}
+
+Dicts are ordered but order does not affect equality
+    Check Test Case    ${TESTNAME}

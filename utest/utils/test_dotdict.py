@@ -1,7 +1,7 @@
 import unittest
 
-from robot.utils.asserts import assert_equal, assert_raises
-from robot.utils import DotDict
+from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises
+from robot.utils import DotDict, OrderedDict
 
 
 class TestDotDict(unittest.TestCase):
@@ -48,6 +48,18 @@ class TestDotDict(unittest.TestCase):
         self.dd.x = 'last'
         assert_equal(self.dd.items(), [('z', 'new value'), (2, 'y'),
                                        ('a_new_item', 'last'), ('x', 'last')])
+
+    def test_order_does_not_affect_equality(self):
+        d = dict(a=1, b=2)
+        od1 = OrderedDict(sorted(d.items()))
+        od2 = OrderedDict(reversed(d.items()))
+        dd1 = DotDict(sorted(d.items()))
+        dd2 = DotDict(reversed(d.items()))
+        for d1, d2 in [(dd1, d), (dd2, d), (dd1, od1), (dd1, od2),
+                       (dd2, od1), (dd2, od2), (dd1, dd2)]:
+            assert_equal(d1, d2)
+            assert_equal(d2, d1)
+        assert_not_equal(od1, od2)
 
 
 if __name__ == '__main__':
