@@ -49,11 +49,11 @@ List Variable From Mapping
     Should Be True    ${list} == []
 
 Set Scalar Variables With More Values Than Variables Using Array
-    [Documentation]    FAIL Expected 3 return values, got 6.
+    [Documentation]    FAIL Cannot set variables: Expected 3 return values, got 6.
     ${a}    ${b}    ${c} =    Get String Array    a    b    c    d    e    f
 
 Set Multiple Scalars With Too Few Values Using Array
-    [Documentation]    FAIL Expected 4 return values, got 3.
+    [Documentation]    FAIL Cannot set variables: Expected 4 return values, got 3.
     ${i1}    ${i2}    ${i3}    ${i4} =    Get Array Of Three Ints
 
 Set List To Scalar And List Variables Using Array
