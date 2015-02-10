@@ -36,7 +36,7 @@ class VariableSplitter(object):
             base = replacer.replace_string(self.base)
         else:
             base = self.base
-        # This omits possible list variable index.
+        # This omits possible list/dict variable index.
         return '%s{%s}' % (self.identifier, base)
 
     def is_variable(self):
@@ -57,13 +57,12 @@ class VariableSplitter(object):
         self.identifier = self._variable_chars[0]
         self.base = ''.join(self._variable_chars[2:-1])
         self.end = self.start + len(self._variable_chars)
-        if self._has_list_variable_index():
-            self.index = ''.join(self._list_variable_index_chars[1:-1])
-            self.end += len(self._list_variable_index_chars)
+        if self._has_index():
+            self.index = ''.join(self._index_chars[1:-1])
+            self.end += len(self._index_chars)
 
-    def _has_list_variable_index(self):
-        return self._list_variable_index_chars \
-            and self._list_variable_index_chars[-1] == ']'
+    def _has_index(self):
+        return self._index_chars and self._index_chars[-1] == ']'
 
     def _split(self, string):
         start_index, max_index = self._find_variable(string)
@@ -71,7 +70,7 @@ class VariableSplitter(object):
         self._open_curly = 1
         self._state = self._variable_state
         self._variable_chars = [string[start_index], '{']
-        self._list_variable_index_chars = []
+        self._index_chars = []
         self._string = string
         start_index += 2
         for index, char in enumerate(string[start_index:]):
@@ -80,12 +79,11 @@ class VariableSplitter(object):
                 self._state(char, index)
             except StopIteration:
                 return
-            if index == max_index and not self._scanning_list_variable_index():
+            if index == max_index and not self._scanning_index():
                 return
 
-    def _scanning_list_variable_index(self):
-        return self._state in [self._waiting_list_variable_index_state,
-                               self._list_variable_index_state]
+    def _scanning_index(self):
+        return self._state in (self._waiting_index_state, self._index_state)
 
     def _find_variable(self, string):
         max_end_index = string.rfind('}')
@@ -125,7 +123,7 @@ class VariableSplitter(object):
             if self._open_curly == 0:
                 if not self._can_contain_index():
                     raise StopIteration
-                self._state = self._waiting_list_variable_index_state
+                self._state = self._waiting_index_state
         elif char in self._identifiers:
             self._state = self._internal_variable_start_state
 
@@ -141,14 +139,14 @@ class VariableSplitter(object):
         else:
             self._variable_state(char, index)
 
-    def _waiting_list_variable_index_state(self, char, index):
+    def _waiting_index_state(self, char, index):
         if char != '[':
             raise StopIteration
-        self._list_variable_index_chars.append(char)
-        self._state = self._list_variable_index_state
+        self._index_chars.append(char)
+        self._state = self._index_state
 
-    def _list_variable_index_state(self, char, index):
-        self._list_variable_index_chars.append(char)
+    def _index_state(self, char, index):
+        self._index_chars.append(char)
         if char == ']':
             raise StopIteration
 
