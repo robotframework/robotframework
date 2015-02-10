@@ -19,7 +19,6 @@ from robot.errors import DataError
 from robot.utils import split_from_equals, DotDict
 
 from .isvar import validate_var
-from .notfound import raise_not_found
 from .splitter import VariableSplitter
 
 
@@ -67,20 +66,9 @@ class VariableTableValueBase(object):
     def _format_value(self, value, name):
         return value
 
-    def resolve(self, variables, name=None):
-        try:
-            with self._avoid_recursion:
-                return self._replace_variables(self._value, variables)
-        except DataError, err:
-            if not name:
-                raise
-            # Recursive resolving may have already removed variable.
-            if name in variables.store:
-                variables.store.remove(name)
-                if self._error_reporter:
-                    self._error_reporter(unicode(err))
-            raise_not_found('${%s}' % name, variables.store.data,
-                            "Variable '${%s}' not found." % name)
+    def resolve(self, variables):
+        with self._avoid_recursion:
+            return self._replace_variables(self._value, variables)
 
     @property
     @contextmanager
@@ -95,6 +83,10 @@ class VariableTableValueBase(object):
 
     def _replace_variables(self, value, variables):
         raise NotImplementedError
+
+    def report_error(self, error):
+        if self._error_reporter:
+            self._error_reporter(unicode(error))
 
 
 class ScalarVariableTableValue(VariableTableValueBase):

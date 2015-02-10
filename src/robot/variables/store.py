@@ -15,6 +15,7 @@
 from robot.errors import DataError
 from robot.utils import NormalizedDict
 
+from .notfound import raise_not_found
 from .tablesetter import VariableTableValueBase
 
 
@@ -34,7 +35,15 @@ class VariableStore(object):
     def _resolve_delayed(self, name, value):
         if not isinstance(value, VariableTableValueBase):
             return value
-        self.data[name] = value.resolve(self._variables, name)
+        try:
+            self.data[name] = value.resolve(self._variables)
+        except DataError, err:
+            # Recursive resolving may have already removed variable.
+            if name in self:
+                self.remove(name)
+                value.report_error(err)
+            raise_not_found('${%s}' % name, self.data,
+                            "Variable '${%s}' not found." % name)
         return self.data[name]
 
     def find(self, name):
