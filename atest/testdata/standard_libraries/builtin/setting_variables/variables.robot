@@ -319,7 +319,7 @@ Mutating list variable set using `Set Test/Suite/Global Variable` keywords 1
     Set Suite Variable     @{MUTANT SUITE}     @{mutating}
     Set Global Variable    @{MUTANT GLOBAL}    @{mutating}
     Mutating user keyword    ${mutating}
-    # Using different instance in all scope
+    # Using different instance in all scopes
     Should Be True    @{mutating} == ['a']
     Should Be True    @{MUTANT TEST} == ['t']
     Should Be True    @{MUTANT SUITE} == ['s']
@@ -396,6 +396,18 @@ If setting test/suite/global variable fails, old value is preserved 3
 If setting test/suite/global variable fails, old value is preserved 4
     Should Be Equal    @{VALID SUITE}    valid suite
     Should Be Equal    &{VALID GLOBAL}[valid]    global
+
+Setting non-dict value to test/suite/global level dict variable - test
+    [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
+    Set Test Variable    &{DICT}    invalid    values
+
+Setting non-dict value to test/suite/global level dict variable - suite
+    [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
+    Set Suite Variable    &{DICT}    invalid    values
+
+Setting non-dict value to test/suite/global level dict variable - global
+    [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
+    Set Global Variable    &{DICT}    invalid    values
 
 *** Keyword ***
 My Suite Setup

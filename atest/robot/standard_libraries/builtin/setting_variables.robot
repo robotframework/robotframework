@@ -113,6 +113,11 @@ If setting test/suite/global variable fails, old value is preserved
     Check Test Case    ${TEST NAME} 3
     Check Test Case    ${TEST NAME} 4
 
+Setting non-dict value to test/suite/global level dict variable
+    Check Test Case    ${TEST NAME} - test
+    Check Test Case    ${TEST NAME} - suite
+    Check Test Case    ${TEST NAME} - global
+
 *** Keyword ***
 Check Suite Teardown Passed
     ${suite} =    Get Test Suite    Variables
