@@ -19,6 +19,14 @@ Valid index using variable
     Should Be Equal    &{DICT}[${NONE}]     ${NONE}
     Should Be Equal    &{DICT}[${EMPTY}]    ${EMPTY}
 
+Integer key cannot be accessed as string
+    [Documentation]    FAIL Dictionary variable '\&{DICT}' has no key '1'.
+    Log    &{DICT}[1]
+
+String key cannot be accessed as integer
+    [Documentation]    FAIL Dictionary variable '\&{DICT}' has no key '3'.
+    Log    &{DICT}[${3}]
+
 Invalid key
     [Documentation]    FAIL Dictionary variable '\&{DICT}' has no key 'nonex'.
     Log    &{DICT}[nonex]

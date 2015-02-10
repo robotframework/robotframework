@@ -10,6 +10,12 @@ Valid key
 Valid index using variable
     Check Test Case    ${TESTNAME}
 
+Integer key cannot be accessed as string
+    Check Test Case    ${TESTNAME}
+
+String key cannot be accessed as integer
+    Check Test Case    ${TESTNAME}
+
 Invalid key
     Check Test Case    ${TESTNAME}
 
