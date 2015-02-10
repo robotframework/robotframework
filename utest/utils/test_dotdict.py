@@ -50,11 +50,11 @@ class TestDotDict(unittest.TestCase):
                                        ('a_new_item', 'last'), ('x', 'last')])
 
     def test_order_does_not_affect_equality(self):
-        d = dict(a=1, b=2)
+        d = dict(a=1, b=2, c=3, d=4, e=5, f=6, g=7)
         od1 = OrderedDict(sorted(d.items()))
-        od2 = OrderedDict(reversed(d.items()))
+        od2 = OrderedDict(reversed(od1.items()))
         dd1 = DotDict(sorted(d.items()))
-        dd2 = DotDict(reversed(d.items()))
+        dd2 = DotDict(reversed(dd1.items()))
         for d1, d2 in [(dd1, d), (dd2, d), (dd1, od1), (dd1, od2),
                        (dd2, od1), (dd2, od2), (dd1, dd2)]:
             assert_equal(d1, d2)
