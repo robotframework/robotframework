@@ -13,7 +13,7 @@ Separate keys and values
     ...    Dictionary' keyword is deprecated. Use 'key=value' syntax instead.
     Check Log Message    ${tc.kws[0].msgs[0]}    ${deprecated}    WARN
     Check Log Message    ${tc.kws[2].msgs[0]}    ${deprecated}    WARN
-    Length Should Be    ${ERRORS}    11
+    Length Should Be    ${ERRORS}    13
     :FOR    ${err}    IN    @{ERRORS}
     \    Check Log Message    ${err}    ${deprecated}    WARN
 
@@ -56,6 +56,12 @@ Separate keys and values with invalid key
     Check Test Case    ${TESTNAME} 2
 
 `key=value` syntax with invalid key
+    Check Test Case    ${TESTNAME}
+
+`key=value` syntax without equals
+    Check Test Case    ${TESTNAME}
+
+Separate keys and values and 'key=value' syntax
     Check Test Case    ${TESTNAME}
 
 `&{dict}` variable
