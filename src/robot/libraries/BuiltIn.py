@@ -420,7 +420,7 @@ class _Converter:
         Examples:
         | &{dict} = | Create Dictionary | key=value | foo=bar |
         | Should Be True | ${dict} == {'key': 'value', 'foo': 'bar'} |
-        | &{dict} = | Create Dictionary | ${1}=${2} | &{x} | foo=new |
+        | &{dict} = | Create Dictionary | ${1}=${2} | &{dict} | foo=new |
         | Should Be True | ${dict} == {1: 2, 'key': 'value', 'foo': 'new'} |
         | Should Be Equal | ${dict.key} | value |
 
