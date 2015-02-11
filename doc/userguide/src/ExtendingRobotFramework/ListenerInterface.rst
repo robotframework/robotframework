@@ -56,6 +56,22 @@ the end it calls the `close` method. A listener is not required to
 implement any official interface, and it only needs to have the methods it
 actually needs.
 
+Listener interface versions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The signatures of methods related to test execution progress were changed in
+Robot Framework 2.1. This change was made so that new information can be added
+to listener interface without breaking existing listeners. The old signatures
+will continue to work, but they will be deprecated in some future version, so
+all new listeners should be implemented with signatures described in the table
+below. The most recent detailed description of the old listener interface can
+be found in User Guide of Robot Framework 2.0.4.
+
+.. note:: A listener must have attribute `ROBOT_LISTENER_API_VERSION`
+  defined in order to be recognized as a new style listener. Value of the
+  `ROBOT_LISTENER_API_VERSION` attribute must be 2, either as a string or
+  as an integer. The examples below are implemented as new style listeners.
+
 Listener interface method signatures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -68,12 +84,7 @@ of the dictionary are strings. All of these methods have also
 `camelCase` aliases.  Thus, for example, `startSuite` is a
 synonym to `start_suite`.
 
-.. note:: A listener must have attribute `ROBOT_LISTENER_API_VERSION`
-  defined in order to be recognized as a new style listener. Value of the
-  `ROBOT_LISTENER_API_VERSION` attribute must be 2, either as a string or
-  as an integer. The examples below are implemented as new style listeners.
-
-  .. table:: Available methods in the listener interface
+.. table:: Available methods in the listener interface
    :class: tabular
 
    +---------------+------------------+--------------------------------------------------+
