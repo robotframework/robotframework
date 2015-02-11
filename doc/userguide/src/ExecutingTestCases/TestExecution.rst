@@ -179,15 +179,17 @@ fail. This behavior shortens test execution time and prevents
 subsequent keywords hanging or otherwise causing problems if the
 system under test is in unstable state. This has the drawback that often
 subsequent keywords would give more information about the state of the
-system.
+system. Hence Robot Framework offers several features to continue after
+failures.
 
-Before Robot Framework 2.5 the only way to handle failures so that
-test execution is not terminated immediately was using BuiltIn_ keywords
-:name:`Run Keyword And Ignore Error` and :name:`Run Keyword
-And Expect Error`. Using these keywords for this purpose often added
-extra complexity to test cases, and in Robot Framework 2.5 the
-following features were added to make continuing after failures
-easier.
+:name:`Run Keyword And Ignore Error` and :name:`Run Keyword And Expect Error` keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+BuiltIn_ keywords :name:`Run Keyword And Ignore Error` and :name:`Run
+Keyword And Expect Error` handle failures so that test execution is not
+terminated immediately. Though, using these keywords for this purpose
+often adds extra complexity to test cases, so the following features are
+worth considering to make continuing after failures easier.
 
 Special failures from keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -249,8 +251,6 @@ Sometimes there is a need to stop the test execution before all the tests
 have finished, but so that logs and reports are created. Different ways how
 to accomplish this are explained below. In all these cases the remaining
 test cases are marked failed.
-
-.. Note:: Most of these features are new in Robot Framework 2.5.
 
 Pressing `Ctrl-C`
 ~~~~~~~~~~~~~~~~~

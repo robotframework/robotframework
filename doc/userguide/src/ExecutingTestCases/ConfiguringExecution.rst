@@ -41,9 +41,6 @@ with matching names are selected.
   --suite example-??
   --suite mysuite --test mytest --test your*
 
-.. note:: Selecting test cases using long name (e.g. `mysuite.mytest`)
-          works with Robot Framework 2.5.6 and newer.
-
 Using the :option:`--suite` option is more or less the same as executing only
 the appropriate test case file or directory. One major benefit is the
 possibility to select the suite based on its parent suite. The syntax
@@ -166,8 +163,7 @@ the output file contained no tests to begin with. By default executing
 In practice this option works the same way as :option:`--RunEmptySuite` when
 running tests.
 
-.. note:: :option:`--RunEmptySuite` option was added Robot Framework 2.6
-          and :option:`--ProcessEmptySuite` in 2.7.2.
+.. note:: :option:`--ProcessEmptySuite` option was added in Robot Framework 2.7.2.
 
 Setting criticality
 -------------------
@@ -467,13 +463,6 @@ This option supports the following case-insensitive values:
 
 `off`
     Colors are disabled.
-
-`force`
-    Backwards compatibility with Robot Framework 2.5.5 and older.
-    Should not be used.
-
-.. note:: Support for colors on Windows and the `auto` mode were
-          added in Robot Framework 2.5.6.
 
 __ http://en.wikipedia.org/wiki/ANSI_escape_code
 

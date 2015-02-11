@@ -76,9 +76,9 @@ Documenting resource files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Keywords created in a resource file can be documented__ using
-:setting:`[Documentation]` setting. Starting from Robot Framework 2.1 also
-the resource file itself can have :setting:`Documentation` in the Setting
-table similarly as `test suites`__.
+:setting:`[Documentation]` setting. The resource file itself can have
+:setting:`Documentation` in the Setting table similarly as
+`test suites`__.
 
 Both `libdoc`_ and `RIDE`_ use these documentations, and they
 are naturally available for anyone opening resource files.  The

@@ -346,7 +346,6 @@ Java system properties
 When running tests with Jython, it is possible to access `Java system properties`__
 using same syntax as `environment variables`_. If an environment variable and a
 system property with same name exist, the environment variable will be used.
-Support for accessing Java system properties was added in Robot Framework 2.6.
 
 .. table:: Using Java system properties
    :class: example
@@ -665,9 +664,9 @@ string that just looks like a number, as an argument.
    Example 2    Do X      ${3.14}      ${-1e-4}    # Do X gets floating point numbers 3.14 and -0.0001
    ===========  ========  ===========  ==========  ===================================================
 
-Starting from Robot Framework 2.6, it is possible to create integers
-also from binary, octal, and hexadecimal values using `0b`, `0o`
-and `0x` prefixes, respectively. The syntax is case insensitive.
+It is possible to create integers also from binary, octal, and
+hexadecimal values using `0b`, `0o` and `0x` prefixes, respectively.
+The syntax is case insensitive.
 
 .. table:: Using integer variables with base
    :class: example
@@ -796,8 +795,7 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE NAME}          | The full name of the current test suite.              | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
-   | ${SUITE SOURCE}        | An absolute path to the suite file or directory. New  | Everywhere |
-   |                        | in Robot Framework 2.5.                               |            |
+   | ${SUITE SOURCE}        | An absolute path to the suite file or directory.      | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE DOCUMENTATION} | The documentation of the current test suite. Can be   | Everywhere |
    |                        | set dynamically using using :name:`Set Suite          |            |
