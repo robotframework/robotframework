@@ -16,6 +16,10 @@ class TestVariableSplitter(unittest.TestCase):
                     '${hello', '$hello}', 'a bit longer sting here']:
             self._test(inp)
 
+    def test_not_string(self):
+        self._test(42)
+        self._test([1, 2, 3])
+
     def test_backslashes(self):
         for inp in ['\\', '\\\\', '\\\\\\\\\\', '\\hello\\\\world\\\\\\']:
             self._test(inp)
@@ -157,12 +161,17 @@ class TestVariableSplitter(unittest.TestCase):
         if variable is None:
             identifier = base = None
             start = end = -1
+            is_var = is_list_var = is_dict_var = False
         else:
             identifier = variable[0]
             base = variable[2:-1]
             end = start + len(variable)
+            is_var = inp == variable
+            is_list_var = is_var and inp[0] == '@'
+            is_dict_var = is_var and inp[0] == '&'
             if index is not None:
                 end += len(index) + 2
+                is_var = inp == '%s[%s]' % (variable, index)
         res = VariableSplitter(inp, identifiers)
         assert_equals(res.base, base, "'%s' base" % inp)
         assert_equals(res.start, start, "'%s' start" % inp)
@@ -171,6 +180,9 @@ class TestVariableSplitter(unittest.TestCase):
         assert_equals(res.index, index, "'%s' index" % inp)
         assert_equals(res._may_have_internal_variables, internal,
                       "'%s' internal" % inp)
+        assert_equals(res.is_variable(), is_var)
+        assert_equals(res.is_list_variable(), is_list_var)
+        assert_equals(res.is_dict_variable(), is_dict_var)
 
     def test_is_variable(self):
         for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',

@@ -21,9 +21,12 @@ class VariableSplitter(object):
         self.index = None
         self.start = -1
         self.end = -1
-        self._max_end = len(string)
         self._identifiers = identifiers
         self._may_have_internal_variables = False
+        if not isinstance(string, basestring):
+            self._max_end = -1
+            return
+        self._max_end = len(string)
         try:
             self._split(string)
         except ValueError:
