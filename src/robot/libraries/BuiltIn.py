@@ -2476,7 +2476,7 @@ class _Misc:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
                                % (expression, utils.get_error_message()))
 
-    def call_method(self, object, method_name, *args):
+    def call_method(self, object, method_name, *args, **kwargs):
         """Calls the named method of the given object with the provided arguments.
 
         The possible return value from the method is returned and can be
@@ -2484,19 +2484,29 @@ class _Misc:
         a method with the given name or if executing the method raises an
         exception.
 
+        Support for ``**kwargs`` is new in Robot Framework 2.9. Since that
+        possible equal signs in other arguments must be escaped with a
+        backslash like ``\\=``.
+
         Examples:
         | Call Method      | ${hashtable} | put          | myname  | myvalue |
         | ${isempty} =     | Call Method  | ${hashtable} | isEmpty |         |
         | Should Not Be True | ${isempty} |              |         |         |
         | ${value} =       | Call Method  | ${hashtable} | get     | myname  |
         | Should Be Equal  | ${value}     | myvalue      |         |         |
+        | Call Method      | ${object}    | kwargs    | name=value | foo=bar |
+        | Call Method      | ${object}    | positional   | escaped\\=equals  |
         """
         try:
             method = getattr(object, method_name)
         except AttributeError:
             raise RuntimeError("Object '%s' does not have a method '%s'."
                                % (object, method_name))
-        return method(*args)
+        try:
+            return method(*args, **kwargs)
+        except:
+            raise RuntimeError("Calling method '%s' failed: %s"
+                               % (method_name, utils.get_error_message()))
 
     def regexp_escape(self, *patterns):
         """Returns each argument string escaped for use as a regular expression.
