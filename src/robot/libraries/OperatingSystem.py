@@ -338,8 +338,6 @@ class OperatingSystem:
 
         This keyword reads the specified file and returns the contents as is.
         See also `Get File`.
-
-        New in Robot Framework 2.5.5.
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'", path)

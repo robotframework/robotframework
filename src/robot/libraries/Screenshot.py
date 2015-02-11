@@ -50,10 +50,6 @@ class Screenshot(object):
     Notice that successfully taking screenshots requires tests to be run with
     a physical or virtual display.
 
-    This library was heavily enhanced in Robot Framework 2.5.5 release. Old
-    keywords for taking screenshots were deprecated and they have since been
-    removed.
-
     = Using with Python =
 
     With Python you need to have one of the following modules installed to be

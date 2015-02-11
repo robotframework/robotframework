@@ -64,8 +64,7 @@ class _Converter:
         """Converts the given item to an integer number.
 
         If the given item is a string, it is by default expected to be an
-        integer in base 10. Starting from Robot Framework 2.6 there are two
-        ways to convert from other bases:
+        integer in base 10. There are two ways to convert from other bases:
 
         - Give base explicitly to the keyword as `base` argument.
 
@@ -142,8 +141,7 @@ class _Converter:
         | ${result} = | Convert To Binary | F  | base=16 | prefix=0b | # Result is 0b1111 |
         | ${result} = | Convert To Binary | -2 | prefix=B | length=4 | # Result is -B0010 |
 
-        This keyword was added in Robot Framework 2.6. See also
-        `Convert To Integer`, `Convert To Octal` and `Convert To Hex`.
+        See also `Convert To Integer`, `Convert To Octal` and `Convert To Hex`.
         """
         return self._convert_to_bin_oct_hex(bin, item, base, prefix, length)
 
@@ -165,8 +163,7 @@ class _Converter:
         | ${result} = | Convert To Octal | -F | base=16    | prefix=0 | # Result is -017    |
         | ${result} = | Convert To Octal | 16 | prefix=oct | length=4 | # Result is oct0020 |
 
-        This keyword was added in Robot Framework 2.6. See also
-        `Convert To Integer`, `Convert To Binary` and `Convert To Hex`.
+        See also `Convert To Integer`, `Convert To Binary` and `Convert To Hex`.
         """
         return self._convert_to_bin_oct_hex(oct, item, base, prefix, length)
 
@@ -193,8 +190,7 @@ class _Converter:
         | ${result} = | Convert To Hex | -10 | prefix=0x | length=2     | # Result is -0x0A |
         | ${result} = | Convert To Hex | 255 | prefix=X | lowercase=yes | # Result is Xff   |
 
-        This keyword was added in Robot Framework 2.6. See also
-        `Convert To Integer`, `Convert To Binary` and `Convert To Octal`.
+        See also `Convert To Integer`, `Convert To Binary` and `Convert To Octal`.
         """
         return self._convert_to_bin_oct_hex(hex, item, base, prefix, length,
                                             lowercase)
@@ -222,8 +218,7 @@ class _Converter:
         If the optional `precision` is positive or zero, the returned number
         is rounded to that number of decimal digits. Negative precision means
         that the number is rounded to the closest multiple of 10 to the power
-        of the absolute precision. The support for precision was added in
-        Robot Framework 2.6.
+        of the absolute precision.
 
         Examples:
         | ${result} = | Convert To Number | 42.512 |    | # Result is 42.512 |
@@ -636,8 +631,7 @@ class _Verify:
         """Fails if objects are equal after converting them to real numbers.
 
         The conversion is done with `Convert To Number` keyword using the
-        given `precision`. The support for giving precision was added in
-        Robot Framework 2.6, in earlier versions it was hard-coded to 6.
+        given `precision`.
 
         See `Should Be Equal As Numbers` for examples on how to use
         `precision` and why it does not always work as expected. See also
@@ -654,8 +648,7 @@ class _Verify:
         """Fails if objects are unequal after converting them to real numbers.
 
         The conversion is done with `Convert To Number` keyword using the
-        given `precision`. The support for giving precision was added in
-        Robot Framework 2.6, in earlier versions it was hard-coded to 6.
+        given `precision`.
 
         Examples:
         | Should Be Equal As Numbers | ${x} | 1.1 | | # Passes if ${x} is 1.1 |
@@ -1022,8 +1015,7 @@ class _Variables:
         | ${y} gets value of ${a} if ${a} exists and value of ${b} otherwise
         | ${z} is set to Python `None` if it does not exist previously
 
-        This keyword was added in Robot Framework 2.6. See `Set Variable If`
-        for another keyword to set variables dynamically.
+        See `Set Variable If` for another keyword to set variables dynamically.
         """
         try:
             return self._variables[self._get_var_name(name)]
@@ -1437,8 +1429,8 @@ class _RunKeyword:
         The keyword name and arguments work as in `Run Keyword`. See
         `Run Keyword If` for a usage example.
 
-        Starting from Robot Framework 2.5 errors caused by invalid syntax,
-        timeouts, or fatal exceptions are not caught by this keyword.
+        Errors caused by invalid syntax, timeouts, or fatal exceptions are not
+        caught by this keyword.
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
@@ -1475,9 +1467,8 @@ class _RunKeyword:
         | Run Keyword And Continue On Failure | Fail | This is a stupid example |
         | Log | This keyword is executed |
 
-        This keyword was added in Robot Framework 2.5. The execution is not
-        continued if the failure is caused by invalid syntax, timeout, or
-        fatal exception.
+        The execution is not continued if the failure is caused by invalid syntax,
+        timeout, or fatal exception.
         """
         try:
             return self.run_keyword(name, *args)
@@ -1504,8 +1495,8 @@ class _RunKeyword:
         | ${msg} = | Run Keyword And Expect Error | * | My KW |
         | Should Start With | ${msg} | Once upon a time in |
 
-        Starting from Robot Framework 2.5 errors caused by invalid syntax,
-        timeouts, or fatal exceptions are not caught by this keyword.
+        Errors caused by invalid syntax, timeouts, or fatal exceptions are not
+        caught by this keyword.
         """
         try:
             self.run_keyword(name, *args)
@@ -1693,8 +1684,6 @@ class _RunKeyword:
 
         Otherwise, this keyword works exactly like `Run Keyword`, see its
         documentation for more details.
-
-        Available in Robot Framework 2.5 and newer.
         """
         self._get_test_in_teardown('Run Keyword If Timeout Occurred')
         if self._context.timeout_occurred:
@@ -1820,8 +1809,6 @@ class _Control:
 
         See `Exit For Loop If` to conditionally exit a for loop without
         using `Run Keyword If` or other wrapper keywords.
-
-        New in Robot Framework 2.5.2.
         """
         self.log("Exiting for loop altogether.")
         raise ExitForLoop()
@@ -2269,8 +2256,6 @@ class _Misc:
         Examples:
         | Import Variables | ${CURDIR}/variables.py   |      |      |
         | Import Variables | ${CURDIR}/../vars/env.py | arg1 | arg2 |
-
-        New in Robot Framework 2.5.4.
         """
         try:
             self._namespace.import_variables(path, list(args), overwrite=True)
@@ -2322,9 +2307,9 @@ class _Misc:
         | Another Keyword |
         | Keyword | xxx |
 
-        Starting from Robot Framework 2.6.2 this keyword can be used also to
-        set the order of keywords in different resource files. In this case
-        resource names must be given without paths or extensions like:
+        This keyword can be used also to set the order of keywords in different
+        resource files. In this case resource names must be given without paths
+        or extensions like:
 
         | Set Library Search Order | resource | another_resource |
 
@@ -2333,8 +2318,8 @@ class _Misc:
         - Keywords in resources always have higher priority than
           keywords in libraries regardless the search order.
         - The old order is returned and can be used to reset the search order later.
-        - Starting from RF 2.6.2, library and resource names in the search order
-          are both case and space insensitive.
+        - Library and resource names in the search order are both case and space
+          insensitive.
         """
         return self._namespace.set_search_order(search_order)
 
@@ -2347,7 +2332,7 @@ class _Misc:
 
         The default error message can be overridden with the `msg` argument.
 
-        New in Robot Framework 2.6. See also `Variable Should Exist`.
+        See also `Variable Should Exist`.
         """
         try:
             handler = self._namespace.get_handler(name)
@@ -2546,8 +2531,7 @@ class _Misc:
 
         This keyword can not be used in suite setup or suite teardown.
 
-        New in Robot Framework 2.5. Support for `append` was added in 2.7.7
-        and HTML support in 2.8.
+        Support for `append` was added in Robot Framework 2.7.7 and for support in 2.8.
         """
         test = self._namespace.test
         if not test:
@@ -2793,9 +2777,8 @@ def register_run_keyword(library, keyword, args_to_process=None):
     there is a warning in such cases unless the keyword is used in long
     format (e.g. MyLib.Keyword).
 
-    Starting from Robot Framework 2.5.2, keywords executed by registered run
-    keywords can be tested in dry-run mode they have 'name' argument which
-    takes the name of the executed keyword.
+    Keywords executed by registered run keywords can be tested in dry-run
+    mode they have 'name' argument which takes the name of the executed keyword.
 
     2) How to use this method
 
