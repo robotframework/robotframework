@@ -82,8 +82,9 @@ Three dots on the same line should be interpreted as string
     ${sos} =    Catenate    SEPARATOR=---    @{3DOTS LIST}
     Should Be Equal    ${sos}    ...---...
 
-Using Scalar List Should Fail
-    Variable Should Not Exist    ${SCALAR LIST}
+Scalar catenated from multile values
+    Should Be Equal    ${CATENATED}      I am a scalar catenated from many items
+    Should Be Equal    ${CATENATED W/ SEP}    I-can-haz-custom-separator
 
 Creating variable using non-existing variable fails
     Variable Should Not Exist    ${NONEX 1}

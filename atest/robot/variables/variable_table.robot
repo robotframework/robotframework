@@ -55,28 +55,24 @@ Invalid variable name
     Creating Variable Should Have Failed    ${ERRORS[1]}    \${}
     ...    Invalid variable name '\${}'.
 
-Using Scalar List Should Fail
+Scalar catenated from multile values
     Check Test Case     ${TEST NAME}
-    Creating Variable Should Have Failed    ${ERRORS[2]}    \${SCALAR LIST}
-    ...    Creating a scalar variable with a list value in the Variable table
-    ...    is no longer possible. Create a list variable '\@{SCALAR LIST}'
-    ...    and use it as a scalar variable '\${SCALAR LIST}' instead.
 
 Creating variable using non-existing variable fails
     Check Test Case    ${TEST NAME}
-    Creating Variable Should Have Failed    ${ERRORS[6]}    \${NONEX 1}
+    Creating Variable Should Have Failed    ${ERRORS[5]}    \${NONEX 1}
     ...    Variable '\${NON EXISTING}' not found.
-    Creating Variable Should Have Failed    ${ERRORS[7]}    \${NONEX 2A}
+    Creating Variable Should Have Failed    ${ERRORS[6]}    \${NONEX 2A}
     ...    Variable '\${NON EX}' not found.*
-    Creating Variable Should Have Failed    ${ERRORS[8]}    \${NONEX 2B}
+    Creating Variable Should Have Failed    ${ERRORS[7]}    \${NONEX 2B}
     ...    Variable '\${NONEX 2A}' not found.*
 
 Using variable created from non-existing variable in imports fails
-    Creating Variable Should Have Failed    ${ERRORS[3]}    \${NONEX 3}
+    Creating Variable Should Have Failed    ${ERRORS[2]}    \${NONEX 3}
     ...    Variable '\${NON EXISTING VARIABLE}' not found.
-    Import Should Have Failed    ${ERRORS[4]}    Resource
+    Import Should Have Failed    ${ERRORS[3]}    Resource
     ...    Variable '\${NONEX 3}' not found.*
-    Import Should Have Failed    ${ERRORS[5]}    Library
+    Import Should Have Failed    ${ERRORS[4]}    Library
     ...    Variable '\${NONEX 3}' not found.*
 
 *** Keywords ***

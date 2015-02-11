@@ -25,7 +25,8 @@ ${ASSING MARK} =  This syntax works starting from 1.8
 @{ASSIGN MARK LIST}=   This syntax works    starting    from    ${1.8}
 ${THREE DOTS}     ...
 @{3DOTS LIST}     ...   ...
-${SCALAR LIST}    I    am    a    scalar     list     with    many     items
+${CATENATED}      I    am    a    scalar     catenated     from    many     items
+${CATENATED W/ SEP}    SEPARATOR=-    I    can    haz    custom    separator
 ${NONEX 1}        Creating variable based on ${NON EXISTING} variable fails.
 ${NONEX 2A}       This ${NON EX} is used for creating another variable.
 ${NONEX 2B}       ${NONEX 2A}
@@ -121,8 +122,9 @@ Three dots on the same line should be interpreted as string
     ${sos} =    Catenate    SEPARATOR=---    @{3DOTS LIST}
     Should Be Equal    ${sos}    ...---...
 
-Using Scalar List Should Fail
-    Variable Should Not Exist    ${SCALAR LIST}
+Scalar catenated from multile values
+    Should Be Equal    ${CATENATED}      I am a scalar catenated from many items
+    Should Be Equal    ${CATENATED W/ SEP}    I-can-haz-custom-separator
 
 Creating variable using non-existing variable fails
     Variable Should Not Exist    ${NONEX 1}
