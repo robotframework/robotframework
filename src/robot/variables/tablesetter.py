@@ -16,7 +16,7 @@ from __future__ import with_statement
 from contextlib import contextmanager
 
 from robot.errors import DataError
-from robot.utils import split_from_equals, DotDict
+from robot.utils import split_from_equals, unic, DotDict
 
 from .isvar import validate_var
 from .splitter import VariableSplitter
@@ -53,17 +53,17 @@ def VariableTableValue(value, name, error_reporter=None):
     VariableTableValue = {'$': ScalarVariableTableValue,
                           '@': ListVariableTableValue,
                           '&': DictVariableTableValue}[name[0]]
-    return VariableTableValue(value, name, error_reporter)
+    return VariableTableValue(value, error_reporter)
 
 
 class VariableTableValueBase(object):
 
-    def __init__(self, value, name=None, error_reporter=None):
-        self._value = self._format_value(value, name)
+    def __init__(self, values, error_reporter=None):
+        self._value = self._format_value(values)
         self._error_reporter = error_reporter
         self._resolving = False
 
-    def _format_value(self, value, name):
+    def _format_value(self, value):
         return value
 
     def resolve(self, variables):
@@ -91,19 +91,22 @@ class VariableTableValueBase(object):
 
 class ScalarVariableTableValue(VariableTableValueBase):
 
-    def _format_value(self, value, name):
+    def _format_value(self, value):
         if isinstance(value, basestring):
-            return value
-        # TODO: Should we catenate values in RF 2.9 instead?
-        if len(value) == 1:
-            return value[0]
-        raise DataError("Creating a scalar variable with a list value in "
-                        "the Variable table is no longer possible. "
-                        "Create a list variable '@%s' and use it as a "
-                        "scalar variable '%s' instead." % (name[1:], name))
+            value = [value]
+            separator = ' '
+        elif value and value[0].startswith('SEPARATOR='):
+            separator = value[0][10:]
+            value = value[1:]
+        else:
+            separator = ' '
+        return separator, value
 
     def _replace_variables(self, value, variables):
-        return variables.replace_scalar(value)
+        separator, items = value
+        separator = variables.replace_string(separator)
+        items = variables.replace_list(items)
+        return separator.join(unic(item) for item in items)
 
 
 class ListVariableTableValue(VariableTableValueBase):
@@ -114,7 +117,7 @@ class ListVariableTableValue(VariableTableValueBase):
 
 class DictVariableTableValue(VariableTableValueBase):
 
-    def _format_value(self, value, name):
+    def _format_value(self, value):
         return list(self._yield_items(value))
 
     def _yield_items(self, items):
@@ -130,7 +133,7 @@ class DictVariableTableValue(VariableTableValueBase):
 
     def _replace_variables(self, value, variables):
         try:
-            return DotDict(self._yield_replaced(value,variables.replace_scalar))
+            return DotDict(self._yield_replaced(value, variables.replace_scalar))
         except TypeError, err:
             raise DataError('Creating dictionary failed: %s' % err)
 
