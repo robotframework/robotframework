@@ -51,6 +51,15 @@ except NameError:
         return prefix + ''.join(reversed(bins))
 
 
+# TODO: The name of this decorator should be changed. It is used for avoiding
+# arguments to be resolved by many other keywords than run keyword variants.
+# Should also consider:
+# - Exposing this functionality to external libraries. Would require doc
+#   enhancements and clean way to expose variables to make resolving them
+#   based on needs easier.
+# - Removing the functionality that run keyword variants can be overridded
+#   by custom keywords without a warning.
+
 def run_keyword_variant(resolve):
     def decorator(method):
         RUN_KW_REGISTER.register_run_keyword('BuiltIn', method.__name__, resolve)
@@ -2531,7 +2540,8 @@ class _Misc:
 
         This keyword can not be used in suite setup or suite teardown.
 
-        Support for `append` was added in Robot Framework 2.7.7 and for support in 2.8.
+        Support for `append` was added in Robot Framework 2.7.7 and support
+        for HTML format in 2.8.
         """
         test = self._namespace.test
         if not test:
@@ -2777,8 +2787,8 @@ def register_run_keyword(library, keyword, args_to_process=None):
     there is a warning in such cases unless the keyword is used in long
     format (e.g. MyLib.Keyword).
 
-    Keywords executed by registered run keywords can be tested in dry-run
-    mode they have 'name' argument which takes the name of the executed keyword.
+    Keywords executed by registered run keywords can be tested in dry-run mode
+    if they have 'name' argument which takes the name of the executed keyword.
 
     2) How to use this method
 
