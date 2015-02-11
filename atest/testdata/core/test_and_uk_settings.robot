@@ -7,7 +7,7 @@ Test Timeout      ${test_timeout}
 
 
 *** Variable ***
-${version}        1.2
+${product}        Robot
 @{default_tags}    default-1    default-2    # default-3 added separately
 ${test_tag_base}    test
 @{test_tags}      ${test_tag_base}-1    ${test_tag_base}-2    ${test_tag_base}-3
@@ -38,13 +38,13 @@ Test Case Documentation in Multiple Lines
     No Operation
 
 Test Case Documentation With Variables
-    [Documentation]    Variables work in documentation since Robot ${version}
+    [Documentation]    String variables like ${product} and number ones like ${42} work in documentation
     No Operation
 
 Test Case Documentation With Non-Existing Variables
-    [Documentation]    Starting from RF ${2}.1 ${NONEX} variables are just
-    ...                left unchanged in all documentations. Existing ones
-    ...                are replaced: "${10ms}"
+    [Documentation]    ${NONEX} variables are just left unchanged in all
+    ...                documentations. Existing ones are replaced:
+    ...                "${10ms}" and ${42}
     No Operation
 
 Test Case Tags
@@ -196,11 +196,11 @@ UK With Short Documentation
     No Operation
 
 UK Documentation With Variables
-    [Documentation]    Variables work in documentation since Robot ${version}
+    [Documentation]    Variables work in documentation. For example: ${product} and ${42}
     No Operation
 
 UK Documentation With Non-Existing Variables
-    [Documentation]    Starting from RF ${2}.1 @{non_existing} variables are left unchanged in docs.
+    [Documentation]    @{non_existing} variables are left unchanged in docs.
     ...    Also after ${short doc}.
     No Operation
 

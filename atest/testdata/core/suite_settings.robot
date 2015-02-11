@@ -3,8 +3,8 @@ Documentation    ${1}st line is shortdoc.
 ...              Text from     multiple    columns    is catenated with spaces,
 ...              and line continuation creates a new line.
 ...              Newlines can also be added literally "\n\n".
-...  Variables work since Robot ${version} and ${SUITE_DOC_FROM_CLI} works too.
-...  Starting from RF 2.1  ${nonexisting} variables are         left unchanged.
+...  Variables ${status} as well as ${SUITE_DOC_FROM_CLI}.
+...  ${nonexisting} variables are         left unchanged.
 ...  Escaping    (e.g. '\${non-existing}', 'c:\\temp', '\\n')    works too.
 ...
 Document    For backwards compatibility reasons we still support 'Document'
@@ -23,7 +23,7 @@ Suite Tear down  Default suite teardown
 Invalid Setting    Yes, this is invalid.
 
 *** Variables ***
-${version}  1.2
+${status}  works
 ${default}  Default
 @{Default_tags}  default-1O  default-2  # default-3 added separately
 
