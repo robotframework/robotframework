@@ -49,15 +49,14 @@ The command line option :option:`--output (-o)` determines the path where
 the output file is created relative to the `output directory`_. The default
 name for the output file, when tests are run, is :file:`output.xml`.
 
-When post-processing outputs with Rebot, new output files are not created
-unless :option:`--output` option is explicitly used.
+When `post-processing outputs`_ with Rebot, new output files are not created
+unless the :option:`--output` option is explicitly used.
 
-Tt is possible to disable creation of the output file when running tests
-with a special value `NONE`. In Robot Framework 2.6 and 2.7 versions this
-automatically disabled also creating log and report files, but starting
-from the 2.8 version this is not done anymore. If no outputs are needed,
-they should all be explicitly disabled using `--output NONE --report NONE
---log NONE`.
+It is possible to disable creation of the output file when running tests by
+giving a special value `NONE` to the :option:`--output` option. Prior to Robot
+Framework 2.8 this also automatically disabled creating log and report files,
+but nowadays that is not done anymore. If no outputs are needed, they should
+all be explicitly disabled using `--output NONE --report NONE --log NONE`.
 
 Log file
 ~~~~~~~~
@@ -269,7 +268,7 @@ It is possible to use the :option:`--loglevel` option also when
 running tests initially with the `TRACE` level, and generating smaller
 log files for normal viewing later with the `INFO` level. By default
 all the messages included during execution will be included also with
- ``rebot``. Messages ignored during the execution cannot be recovered.
+``rebot``. Messages ignored during the execution cannot be recovered.
 
 Another possibility to change the log level is using the BuiltIn_
 keyword :name:`Set Log Level` in the test data. It takes the same
