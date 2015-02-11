@@ -13,23 +13,33 @@ ${NONEX IN SEP}    SEPARATOR=${NON EXISTING}    This fails
 ${VARIABLE VALUE}  ${EMPTY SEP}    ${SPACE}    ...
 ${NON STRING 1}    ${0}    1    ${2.0}    ${True}
 ${NON STRING 2}    SEPARATOR=-    ${0}    1    ${2.0}    ${True}
-@{VALUES}          1    2    ${3}    4    5
-${@VAR VALUE 1}    @{VALUES}
-${@VAR VALUE 2}    SEPARATOR=${EMPTY}    0    @{VALUES}    6    ${7}    8    9
+@{VALUES}          1    2    ${3}    ${4}    5
+${LIST VALUES}     @{VALUES}
+${LIST EMPTY}      @{EMPTY}
+${LIST EXTENDED}   @{VALUES[1:-1]}
+${LIST INTERNAL}   @{${DEFAULT SEP.split()[${0}]}[${1}:${-1}]}
+${LIST W/ SEP 1}   SEPARATOR=${EMPTY}    0    @{VALUES}    6    ${7}    8    9
 ...                ${SPACE}    ${0}    @{VALUES}    6789
-${@VAR VALUE 3}    SEPARATOR=@{SEPARATOR.split()}[0]    @{NON STRING 1.split()}
-${@VAR VALUE 4}    @{EMPTY}
+${LIST W/ SEP 2}   SEPARATOR=@{SEPARATOR.split()}[0]    @{NON STRING 1.split()}
 ${NONEX IN VALUE}  Having    ${NON EXISTING}    variable    causes    failure
 ${ESCAPED}         \SEPARATOR=Default    separator    used
 ${NON UPPER 1}     separator=not    upper
 ${NON UPPER 2}     Separator=Not    upper
-${NOT FIRST 1}     This    SEPARATOR=is not    used
+${NOT FIRST 1}     This    SEPARATOR=is not    first    and    thus    not used
 ${NOT FIRST 2}     SEPARATOR==    Only    first    SEPARATOR=    is    used
 @{NOT SEPARATOR}   SEPARATOR=This    is    not    separator
 ${NO SEPARATOR 1}  @{NOT SEPARATOR}
 ${NO SEPARATOR 2}  @{NOT SEPARATOR}[0]    not    separator    either
 ${NO SEPARATOR 3}  ${NOT SEPARATOR[0]}    neither
 ${NO VALUES}
+# Testint that one scalar variable alone is not converted to string.
+${NON STRING RESULT 1}    ${42}
+${NON STRING RESULT 2}    ${VALUES}
+${NON STRING RESULT 3}    @{VALUES}[2]
+${STRING RESULT 1}        SEPARATOR=    ${42}
+${STRING RESULT 2}        SEPARATOR=whatever    ${VALUES[2:4]}
+${STRING RESULT 3}        ${42}    @{VALUES}[2]
+
 
 *** Test Cases ***
 Default separator is space
@@ -54,10 +64,14 @@ Value containing variables
     ${VARIABLE VALUE}    Emptystringas separator${SPACE*3}...
     ${NON STRING 1}      0 1 2.0 True
     ${NON STRING 2}      0-1-2.0-True
-    ${@VAR VALUE 1}      1 2 3 4 5
-    ${@VAR VALUE 2}      0123456789 0123456789
-    ${@VAR VALUE 3}      0---1---2.0---True
-    ${@VAR VALUE 4}      ${EMPTY}
+
+Value containing list variables
+    ${LIST VALUES}       1 2 3 4 5
+    ${LIST EMPTY}        ${EMPTY}
+    ${LIST EXTENDED}     2 3 4
+    ${LIST INTERNAL}     2 3 4
+    ${LIST W/ SEP 1}     0123456789 0123456789
+    ${LIST W/ SEP 2}     0---1---2.0---True
 
 Non-existing variable in value
     [Template]    Variable should not exist
@@ -71,7 +85,7 @@ Non-existing variable in value
     ${NON UPPER 2}       Separator=Not upper
 
 'SEPARATOR=' must be first
-    ${NOT FIRST 1}       This SEPARATOR=is not used
+    ${NOT FIRST 1}       This SEPARATOR=is not first and thus not used
     ${NOT FIRST 2}       Only=first=SEPARATOR==is=used
 
 'SEPARATOR=' cannot come from variable
@@ -81,3 +95,13 @@ Non-existing variable in value
 
 Having no values creates empty string
     ${NO VALUES}         ${EMPTY}
+
+One scalar variable is not converted to string
+    ${NON STRING RESULT 1}    ${42}
+    ${NON STRING RESULT 2}    ${VALUES}
+    ${NON STRING RESULT 3}    ${3}
+
+With separator even one scalar variable is converted to string
+    ${STRING RESULT 1}        42
+    ${STRING RESULT 2}        [3, 4]
+    ${STRING RESULT 3}        42 3

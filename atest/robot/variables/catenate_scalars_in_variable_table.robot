@@ -24,6 +24,9 @@ Non-existing variable in separator
 Value containing variables
     Check Test Case    ${TESTNAME}
 
+Value containing list variables
+    Check Test Case    ${TESTNAME}
+
 Non-existing variable in value
     Check Test Case    ${TESTNAME}
     Verify error    @{ERRORS}[1]
@@ -42,6 +45,12 @@ Non-existing variable in value
     Check Test Case    ${TESTNAME}
 
 Having no values creates empty string
+    Check Test Case    ${TESTNAME}
+
+One scalar variable is not converted to string
+    Check Test Case    ${TESTNAME}
+
+With separator even one scalar variable is converted to string
     Check Test Case    ${TESTNAME}
 
 *** Keywords ***

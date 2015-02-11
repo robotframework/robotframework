@@ -59,16 +59,16 @@ def VariableTableValue(value, name, error_reporter=None):
 class VariableTableValueBase(object):
 
     def __init__(self, values, error_reporter=None):
-        self._value = self._format_value(values)
+        self._values = self._format_values(values)
         self._error_reporter = error_reporter
         self._resolving = False
 
-    def _format_value(self, value):
-        return value
+    def _format_values(self, values):
+        return values
 
     def resolve(self, variables):
         with self._avoid_recursion:
-            return self._replace_variables(self._value, variables)
+            return self._replace_variables(self._values, variables)
 
     @property
     @contextmanager
@@ -91,37 +91,39 @@ class VariableTableValueBase(object):
 
 class ScalarVariableTableValue(VariableTableValueBase):
 
-    def _format_value(self, value):
-        if isinstance(value, basestring):
-            value = [value]
-            separator = ' '
-        elif value and value[0].startswith('SEPARATOR='):
-            separator = value[0][10:]
-            value = value[1:]
-        else:
-            separator = ' '
-        return separator, value
+    def _format_values(self, values):
+        separator = None
+        if isinstance(values, basestring):
+            values = [values]
+        elif values and values[0].startswith('SEPARATOR='):
+            separator = values.pop(0)[10:]
+        return separator, values
 
-    def _replace_variables(self, value, variables):
-        separator, items = value
+    def _replace_variables(self, values, variables):
+        separator, values = values
+        if (separator is None and len(values) == 1 and
+                not VariableSplitter(values[0]).is_list_variable()):
+            return variables.replace_scalar(values[0])
+        if separator is None:
+            separator = ' '
         separator = variables.replace_string(separator)
-        items = variables.replace_list(items)
-        return separator.join(unic(item) for item in items)
+        values = variables.replace_list(values)
+        return separator.join(unic(item) for item in values)
 
 
 class ListVariableTableValue(VariableTableValueBase):
 
-    def _replace_variables(self, value, variables):
-        return variables.replace_list(value)
+    def _replace_variables(self, values, variables):
+        return variables.replace_list(values)
 
 
 class DictVariableTableValue(VariableTableValueBase):
 
-    def _format_value(self, value):
-        return list(self._yield_items(value))
+    def _format_values(self, values):
+        return list(self._yield_formatted(values))
 
-    def _yield_items(self, items):
-        for item in items:
+    def _yield_formatted(self, values):
+        for item in values:
             if VariableSplitter(item).is_dict_variable():
                 yield item
             else:
@@ -131,17 +133,18 @@ class DictVariableTableValue(VariableTableValueBase):
                                     "'=' separator." % item)
                 yield name, value
 
-    def _replace_variables(self, value, variables):
+    def _replace_variables(self, values, variables):
         try:
-            return DotDict(self._yield_replaced(value, variables.replace_scalar))
+            return DotDict(self._yield_replaced(values,
+                                                variables.replace_scalar))
         except TypeError, err:
             raise DataError('Creating dictionary failed: %s' % err)
 
-    def _yield_replaced(self, value, replace_scalar):
-        for item in value:
+    def _yield_replaced(self, values, replace_scalar):
+        for item in values:
             if isinstance(item, tuple):
-                key, value = item
-                yield replace_scalar(key), replace_scalar(value)
+                key, values = item
+                yield replace_scalar(key), replace_scalar(values)
             else:
-                for key, value in replace_scalar(item).items():
-                    yield key, value
+                for key, values in replace_scalar(item).items():
+                    yield key, values
