@@ -9,6 +9,9 @@ Library           Collections
 ${SCALAR}         Hi tellus
 @{LIST}           Hello    world
 &{DICT}           key=value    foo=bar
+${SCALAR LIST ERROR}
+...               Setting list value to scalar variable '\${SCALAR}' is not
+...               supported anymore. Create list variable '\@{SCALAR}' instead.
 
 *** Test Case ***
 Set Variable
@@ -32,8 +35,8 @@ Set Variable With More Or Less Than One Value
 Set Test Variable - Scalars
     [Documentation]    FAIL Variable '\${non_existing}' not found.
     Should Be Equal    ${scalar}    Hi tellus
-    Set Test Variable    $scalar    Hello    world
-    Should Be True    ${scalar} == ['Hello', 'world']    Hello world
+    Set Test Variable    $scalar    Hello world
+    Should Be Equal    ${scalar}    Hello world
     ${scalar} =    Set Variable    Moi maailma
     Set Test Variable    \${scalar}
     Should Be Equal    ${scalar}    Moi maailma
@@ -208,9 +211,9 @@ Set Test/Suite/Global Variables With Normal Variable Syntax 2
 
 It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 1
     @{empty list} =    Create List
-    Set Test Variable    ${new test var 2}    @{empty list}
+    Set Test Variable    @{new test var 2}    @{empty list}
     Set Suite Variable    @{new suite var 2}    @{empty list}
-    Set Global Variable    ${new global var 2}    @{empty list}
+    Set Global Variable    @{new global var 2}    @{empty list}
     Should Be True    ${new test var 2} == []
     Should Be True    @{new suite var 2} == []
     Should Be True    ${new global var 2} == []
@@ -408,6 +411,30 @@ Setting non-dict value to test/suite/global level dict variable - suite
 Setting non-dict value to test/suite/global level dict variable - global
     [Documentation]    FAIL Dictionary item 'invalid' does not contain '=' separator.
     Set Global Variable    &{DICT}    invalid    values
+
+Setting scalar test variable with list value is not possible 1
+    [Documentation]    FAIL ${SCALAR LIST ERROR}
+    Set Test Variable    ${SCALAR}    This    does    not    work
+
+Setting scalar test variable with list value is not possible 2
+    [Documentation]    FAIL ${SCALAR LIST ERROR}
+    Set Test Variable    ${SCALAR}    @{EMPTY}
+
+Setting scalar suite variable with list value is not possible 1
+    [Documentation]    FAIL ${SCALAR LIST ERROR}
+    Set Suite Variable    ${SCALAR}    This    does    not    work
+
+Setting scalar suite variable with list value is not possible 2
+    [Documentation]    FAIL ${SCALAR LIST ERROR}
+    Set Suite Variable    ${SCALAR}    @{EMPTY}
+
+Setting scalar global variable with list value is not possible 1
+    [Documentation]    FAIL ${SCALAR LIST ERROR}
+    Set Global Variable    ${SCALAR}    This    does    not    work
+
+Setting scalar global variable with list value is not possible 2
+    [Documentation]    FAIL ${SCALAR LIST ERROR}
+    Set Global Variable    ${SCALAR}    @{EMPTY}
 
 *** Keyword ***
 My Suite Setup

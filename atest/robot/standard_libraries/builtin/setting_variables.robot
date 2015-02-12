@@ -118,6 +118,18 @@ Setting non-dict value to test/suite/global level dict variable
     Check Test Case    ${TEST NAME} - suite
     Check Test Case    ${TEST NAME} - global
 
+Setting scalar test variable with list value is not possible
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+
+Setting scalar suite variable with list value is not possible
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+
+Setting scalar global variable with list value is not possible
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+
 *** Keyword ***
 Check Suite Teardown Passed
     ${suite} =    Get Test Suite    Variables

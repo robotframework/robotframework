@@ -1242,10 +1242,14 @@ class _Variables:
     def _get_var_value(self, name, values):
         if not values:
             return self._variables[name]
-        # TODO: Unify variable handling: use VariableTableValue w/ all vars.
+        # TODO: In RF 2.10/3.0 the if branch below can be removed and
+        # VariableTableValue used with all variables. See issue #1919.
         if name[0] == '$':
-            values = self._variables.replace_list(values)
-            return values[0] if len(values) == 1 else values
+            if len(values) != 1 or VariableSplitter(values[0]).is_list_variable():
+                raise DataError("Setting list value to scalar variable '%s' "
+                                "is not supported anymore. Create list "
+                                "variable '@%s' instead." % (name, name[1:]))
+            return self._variables.replace_scalar(values[0])
         return VariableTableValue(values, name).resolve(self._variables)
 
     def _log_set_variable(self, name, value):
