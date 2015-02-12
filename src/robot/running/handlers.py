@@ -341,23 +341,6 @@ class _RunKeywordHandler(_PythonHandler):
         return [Keyword(given_args[index], given_args[index+1:])]
 
 
-class _XTimesHandler(_RunKeywordHandler):
-
-    def __init__(self, handler, name):
-        _RunKeywordHandler.__init__(self, handler.library, handler.name,
-                                    handler._handler_method)
-        self.name = name
-        self._doc = "*DEPRECATED* Replace X times syntax with 'Repeat Keyword'."
-
-    def run(self, context, args):
-        resolved_times = context.namespace.variables.replace_string(self.name)
-        _RunnableHandler.run(self, context, (resolved_times,) + tuple(args))
-
-    @property
-    def longname(self):
-        return self.name
-
-
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
     _parse_arguments = _RunKeywordHandler._parse_arguments
     _get_timeout = _RunKeywordHandler._get_timeout
