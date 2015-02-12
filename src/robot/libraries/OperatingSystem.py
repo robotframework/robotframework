@@ -103,10 +103,13 @@ class OperatingSystem:
 
     = Process library =
 
-    Process library replaces old process keywords (`Start Process` and
-    `Switch Process`) from OperatingSystem library. These keywords in the
-    OperatingSystem library might be deprecated in the future. This library is
-    new in Robot Framework 2.8.
+    [http://robotframework.org/robotframework/latest/libraries/Process.html|
+    Process library] that was added in Robot Framework 2.8 provides much more
+    flexible keywords than this library for running processes in general and
+    for starting processes on background in particular. Keywords provided
+    by the Process library are thus recommended instead of `Run`, `Start
+    Process`, and other related keywords in this library. `Start Process` was
+    even deprecated in Robot Framework 2.9 and will be removed in the future.
 
     = Example =
 
@@ -155,6 +158,10 @@ class OperatingSystem:
         | ${stdout} =        | Run       | /opt/script.sh 2>/tmp/stderr.txt |
         | Should Be Equal    | ${stdout} | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
+
+        *TIP:* `Run Process` keyword provided by the `Process library` supports
+        better process configuration and is generally recommended as a
+        replacement for this keyword.
         """
         return self._run(command)[1]
 
@@ -177,6 +184,10 @@ class OperatingSystem:
 
         See `Run` and `Run And Return RC And Output` if you need to get the
         output of the executed command.
+
+        *TIP:* `Run Process` keyword provided by the `Process library` supports
+        better process configuration and is generally recommended as a
+        replacement for this keyword.
         """
         return self._run(command)[0]
 
@@ -194,6 +205,10 @@ class OperatingSystem:
         | Should Be True       | ${rc} > 42      |
         | Should Be Equal      | ${stdout}       | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
+
+        *TIP:* `Run Process` keyword provided by the `Process library` supports
+        better process configuration and is generally recommended as a
+        replacement for this keyword.
         """
         return self._run(command)
 
@@ -205,7 +220,13 @@ class OperatingSystem:
         return rc, stdout
 
     def start_process(self, command, stdin=None, alias=None):
-        """It is recommended to use same keyword from Process library instead.
+        """*DEPRECATED* Use `Process.Start Process` instead.
+
+        Also related keywords `Read Process Output`, `Switch Process`, `Stop
+        Process`, and `Stop All Processes` have been deprecated in favor of
+        more flexible keywords in the Process library.
+
+        ---
 
         Starts the given command as a background process.
 
@@ -243,7 +264,9 @@ class OperatingSystem:
         return PROCESSES.register(process, alias)
 
     def switch_process(self, index_or_alias):
-        """It is recommended to use same keyword from Process library instead.
+        """*Deprecated.* See `Start Process` for details.
+
+        ---
 
         Switches the active process to the specified process.
 
@@ -264,7 +287,11 @@ class OperatingSystem:
         PROCESSES.switch(index_or_alias)
 
     def read_process_output(self):
-        """Waits for a process to finish and returns its output.
+        """*Deprecated.* See `Start Process` for details.
+
+        ---
+
+        Waits for a process to finish and returns its output.
 
         This keyword waits for a process started with `Start Process` to end
         and then returns all output it has produced. The returned output
@@ -283,7 +310,11 @@ class OperatingSystem:
         return output
 
     def stop_process(self):
-        """Closes the standard output stream of the process.
+        """*Deprecated.* See `Start Process` for details.
+
+        ---
+
+        Closes the standard output stream of the process.
 
         This keyword does not actually stop the process nor even wait for it
         to terminate. Only thing it does is closing the standard output stream
@@ -297,7 +328,12 @@ class OperatingSystem:
         PROCESSES.current.close()
 
     def stop_all_processes(self):
-        """Closes the standard output of all the processes and resets the process list.
+        """*Deprecated.* See `Start Process` for details.
+
+        ---
+
+        Closes the standard output of all the processes and resets the process
+        list.
 
         Exactly like `Stop Process`, this keyword does not actually stop
         processes nor even wait for them to terminate.
