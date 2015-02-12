@@ -1157,6 +1157,8 @@ class _Variables:
 
         The name of the variable can be given either as a normal variable name
         (e.g. `${NAME}`) or in escaped format as `\\${NAME}` or `$NAME`.
+        Variable value can be given using the same syntax as when variables
+        are created in the Variable table.
 
         If a variable already exists within the new scope, its value will be
         overwritten. Otherwise a new variable is created. If a variable already
@@ -1164,27 +1166,30 @@ class _Variables:
         variable within the new scope gets the value within the current scope.
 
         Examples:
-        | Set Suite Variable | ${GREET} | Hello, world! |
-        | Set Suite Variable | @{LIST}  | First item    | Second item |
-        | ${ID} =            | Get ID   |
-        | Set Suite Variable | ${ID}    |
+        | Set Suite Variable | ${SCALAR} | Hello, world! |
+        | Set Suite Variable | @{LIST}   | First item    | Second item |
+        | Set Suite Variable | &{DICT}   | key=value     | foo=bar     |
+        | ${ID} =            | Get ID    |
+        | Set Suite Variable | ${ID}     |
 
         To override an existing value with an empty value, use built-in
-        variables `${EMPTY}` or `@{EMPTY}`:
+        variables `${EMPTY}`, `@{EMPTY}` or `&{EMPTY}`:
 
-        | Set Suite Variable | ${GREET} | ${EMPTY} |
+        | Set Suite Variable | ${SCALAR} | ${EMPTY} |
         | Set Suite Variable | @{LIST}  | @{EMPTY} | # New in RF 2.7.4 |
+        | Set Suite Variable | &{DICT}  | &{EMPTY} | # New in RF 2.9   |
 
         *NOTE:* If the variable has value which itself is a variable (escaped
-        or not), you must always use the escaped format to reset the variable:
+        or not), you must always use the escaped format to set the variable:
 
         Example:
-        | ${NAME} =          | Set Variable | \${var} |
+        | ${NAME} =          | Set Variable | \\${var} |
         | Set Suite Variable | ${NAME}      | value | # Sets variable ${var}  |
-        | Set Suite Variable | \${NAME}     | value | # Sets variable ${NAME} |
+        | Set Suite Variable | \\${NAME}    | value | # Sets variable ${NAME} |
 
-        This limitation applies also to `Set Test/Suite/Global Variable`,
-        `Variable Should (Not) Exist`, and `Get Variable Value` keywords.
+        This limitation applies also to `Set Test Variable`, `Set Global
+        Variable`, `Variable Should Exist`, `Variable Should Not Exist` and
+        `Get Variable Value` keywords.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
