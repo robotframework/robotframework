@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation   Tests using test case and user keyword timeouts. It seems that on Cygwin Python tests now and then fail with an error message "error: can't allocate lock"
+Documentation   Tests using test case and user keyword timeouts.
 Suite Setup     Clean Up Timeout Temp
 Test Timeout    4 seconds
 Library         ExampleLibrary
@@ -146,7 +146,7 @@ Timeouted Setup Timeouts
 Timeouted Teardown Passes
     [Documentation]  PASS
     [Setup]  Timeouted Keyword Passes  0
-    NOOP
+    No Operation
     [Teardown]  Timeouted Keyword Passes  0.001
 
 Timeouted Teardown Timeouts
@@ -174,7 +174,7 @@ Shortest Test Or UK Timeout Should Be Applied
 Timeouted Set Keyword
     [Documentation]  FAIL Keyword timeout 99 milliseconds exceeded.
     ${msg} =  Timeouted Keyword Passes  0.01
-    Equals  ${msg}  Slept 0.01s
+    Should Be Equal  ${msg}  Slept 0.01s
     ${msg} =  Timeouted Keyword Timeouts
     Fail  This should not be executed
 
@@ -203,8 +203,8 @@ Timeouted Keyword Called With Wrong Number of Arguments with Run Keyword
 
 *** Keywords ***
 Clean Up Timeout Temp
-    Remove Dir  ${timeout_temp}  recursive
-    Create Dir  ${timeout_temp}
+    Remove Directory  ${timeout_temp}  recursive
+    Create Directory  ${timeout_temp}
 
 Timeouted Keyword Passes
     [Arguments]  ${secs}=0.1

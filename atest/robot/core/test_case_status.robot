@@ -13,9 +13,8 @@ Test Passes
 Test Fails
     Check Testcase    Test Fail
 
-Test Errors
-    Check Testcase    Test Error
-    Check Testcase    Test Error Non Existing KW
+Non-Existing Keyword Error
+    Check Testcase    Non-Existing Keyword Error
 
 Test Setup Passes
     Check Testcase    Tests Setup Pass
@@ -25,7 +24,6 @@ Test Setup Fails
     Check Testcase    Tests Setup Fail
 
 Test Setup Errors
-    Check Testcase    Tests Setup Error
     Check Testcase    Tests Setup Error Non Existing KW
 
 Test Teardown Passes
@@ -35,7 +33,6 @@ Test Teardown Fails
     Check Testcase    Tests Teardown Fail
 
 Test Teardown Errors
-    Check Testcase    Tests Teardown Error
     Check Testcase    Tests Teardown Error Non Existing KW
 
 Test And Teardown Fails
@@ -46,11 +43,11 @@ Test Setup And Teardown Pass
 
 Test Teardown is Run When Setup Fails
     ${test}    Check Testcase    Test Teardown is Run When Setup Fails
-    ${td} =    Set    ${test.teardown}
-    Fail If Equal    ${td}    ${None}    Teardown not run    No values
-    Ints Equal    ${td.message_count}    1
-    Check Log Message    ${td.messages[0]}    Hello from teardown!
-    Ints Equal    ${td.keyword_count}    0
+    ${td} =    Set Variable    ${test.teardown}
+    Should Not Be Equal    ${td}    ${None}    Teardown not run    No values
+    Length Should Be   ${td.msgs}    1
+    Check Log Message    ${td.msgs[0]}    Hello from teardown!
+    Length Should Be   ${td.kws}    0
 
 Test Setup And Teardown Fails
     Check Testcase    Test Setup And Teardown Fails

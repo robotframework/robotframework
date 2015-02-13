@@ -141,7 +141,7 @@ class TestJsonConverter(unittest.TestCase):
                      arguments='Setup',
                      type='SETUP')
         test_convert(self.suite['suites'][3]['keywords'][1],
-                     name='Noop',
+                     name='No operation',
                      arguments='',
                      type='TEARDOWN')
 

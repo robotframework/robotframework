@@ -10,7 +10,8 @@ Print Bytes
     [Documentation]  Check that bytes 0-255, incl. control chars, can be printed ok.
     ...  The actual result depends on the interpreter and operating system.
     ${tc} =  Check Test Case  ${TESTNAME}
-    Message  First check some printable bytes and control chars.  Control chars should result to an empty string.
+    # First check some printable bytes and control chars.
+    # Control chars should result to an empty string.
     :FOR  ${index}  ${exp}  IN
     ...  0    ${EMPTY}
     ...  1    ${EMPTY}

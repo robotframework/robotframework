@@ -1,7 +1,7 @@
 *** Setting ***
 Documentation     Normal test cases
 Suite Setup       Log    Setup
-Suite Teardown    Noop
+Suite Teardown    No operation
 Force Tags        f1
 Default Tags      d1    d2
 Metadata          Something    My Value

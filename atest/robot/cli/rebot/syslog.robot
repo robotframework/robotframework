@@ -11,14 +11,14 @@ Setting Syslog File
     Rebot Something
     File Should Not Be Empty  ${MYOUTDIR}${/}syslog.txt
     Remove File  ${MYOUTDIR}${/}syslog.txt
-    Delete Environment Variable  ROBOT_SYSLOG_FILE
+    Remove Environment Variable  ROBOT_SYSLOG_FILE
     Log Environment Variables
     Rebot Something
     File Should Not Exist  ${MYOUTDIR}${/}syslog.txt
     Set Environment Variable  ROBOT_SYSLOG_FILE  none
     Rebot Something
     File Should Not Exist  ${MYOUTDIR}${/}syslog.txt
-    [Teardown]  Delete syslog environment variables
+    [Teardown]  Remove syslog environment variables
 
 Setting Syslog Level
     Set Environment Variable  ROBOT_SYSLOG_FILE  ${MYOUTDIR}${/}syslog.txt
@@ -32,15 +32,12 @@ Setting Syslog Level
     Set Environment Variable  ROBOT_SYSLOG_LEVEL  warn
     Rebot Something
     File Should Be Empty  ${MYOUTDIR}${/}syslog.txt
-    [Teardown]  Delete syslog environment variables
-
+    [Teardown]  Remove syslog environment variables
 
 *** Keywords ***
-Delete syslog environment variables
-    Delete environment variable  ROBOT_SYSLOG_FILE
-    Delete environment variable  ROBOT_SYSLOG_LEVEL
+Remove syslog environment variables
+    Remove Environment Variable  ROBOT_SYSLOG_FILE
+    Remove Environment Variable  ROBOT_SYSLOG_LEVEL
 
 Rebot Something
     Run  ${REBOT} --outputdir ${MYOUTDIR} ${MYINPUT}
-
-

@@ -5,6 +5,6 @@ Library         ParameterLibrary  myhost  1000
 Two Set Parameters
     [Documentation]  Checks that parameters can be given to library PASS
     ${host}  ${port} =  parameters
-    equals  ${host}  myhost
-    equals  ${port}  1000
+    should be equal  ${host}  myhost
+    should be equal  ${port}  1000
 

@@ -1,7 +1,3 @@
-*** Setting ***
-
-*** Variable ***
-
 *** Test Case ***
 Check Test Vars Set In One Suite Are Not Available In Another
     [Documentation]    Also checks that variables created in the variable table of the other suite are not available here.
@@ -38,5 +34,3 @@ Scopes And Overriding 3
     Should Be Equal    ${cli_var_1}    CLI1
     Should Be Equal    ${cli_var_2}    CLI2
     Should Be Equal    ${cli_var_3}    New value 3
-
-*** Keyword ***

@@ -4,11 +4,11 @@ S2TC2 No Metadata
 
 S2TC2 Tags
     [Tags]
-    NOOP
+    No Operation
 
 S2TC2 Fixture
     [Setup]    Log    Setup defined in test
-    NOOP
+    No Operation
     [Teardown]    Log    Teardown defined in test
 
 S2TC2 Timeout

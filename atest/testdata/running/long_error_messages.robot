@@ -50,7 +50,7 @@ Fail With Long Message
     [Arguments]  ${line_length}=80  ${line_count}=1
     ${msg} =  Get Long Message  ${line_length}  ${line_count}
     Comment  Sanity check.  Must have triple quotes because  ${msg} contains newlines.
-    Fail Unless  len("""${msg}""") == ${line_length} * ${line_count}  Wrong length
+    Should Be True  len("""${msg}""") == ${line_length} * ${line_count}  Wrong length
     Fail  ${msg}
 
 Get Long Message

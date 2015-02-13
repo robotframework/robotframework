@@ -3,4 +3,4 @@
 
 
 | *Keyword                     |  Action  |  Argument  |  Argument  |  Argument |
-| Keyword from TXT resource 2  |  Noop    |
+| Keyword from TXT resource 2  |  No operation    |

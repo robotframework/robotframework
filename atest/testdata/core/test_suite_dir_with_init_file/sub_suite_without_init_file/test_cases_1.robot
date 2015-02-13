@@ -9,15 +9,15 @@ Test Timeout      7 hour 8 minutes 9 seconds
 
 *** Test Case ***
 S2TC1 No metadata
-    NOOP
+    No Operation
 
 S2TC1 Tags
     [Tags]    test tag 1    test tag 2    test tag 3
-    NOOP
+    No Operation
 
 S2TC1 Fixture
     [Setup]    Log    Setup defined in test
-    NOOP
+    No Operation
     [Teardown]    Log    Teardown defined in test
 
 S2TC1 Timeout

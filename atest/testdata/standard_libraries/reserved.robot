@@ -5,7 +5,7 @@ For
 
 Continue
     [Documentation]    FAIL 'Continue' is a reserved keyword
-    Noop
+    No Operation
     Continue
 
 Reserved in User Keyword

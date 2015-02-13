@@ -1,24 +1,20 @@
 *** Test Case ***
 Test Pass
     [Documentation]    PASS
-    NOOP
+    No Operation
 
 Test Fail
     [Documentation]    FAIL failure
     Fail    failure
 
-Test Error
-    [Documentation]    FAIL error
-    Error    error
-
-Test Error Non Existing KW
+Non-Existing Keyword Error
     [Documentation]    FAIL No keyword with name 'Non Existing KW' found.
     Non Existing KW
 
 Tests Setup Pass
     [Documentation]    PASS
-    [Setup]    Noop
-    NOOP
+    [Setup]    No operation
+    No Operation
 
 Tests Setup Fail
     [Documentation]    FAIL Setup failed:
@@ -26,39 +22,27 @@ Tests Setup Fail
     [Setup]    Fail    failure
     Fail    This should not be executed
 
-Tests Setup Error
-    [Documentation]    FAIL Setup failed:
-    ...    error
-    [Setup]    Error    error
-    Fail    This should not be executed
-
 Tests Setup Error Non Existing KW
     [Documentation]    FAIL Setup failed:
     ...    No keyword with name 'Non Existing KW' found.
     [Setup]    Non Existing KW
-    NOOP
+    No Operation
 
 Tests Teardown Pass
     [Documentation]    PASS
-    NOOP
-    [Teardown]    Noop
+    No Operation
+    [Teardown]    No operation
 
 Tests Teardown Fail
     [Documentation]    FAIL Teardown failed:
     ...    failure
-    NOOP
+    No Operation
     [Teardown]    Fail    failure
-
-Tests Teardown Error
-    [Documentation]    FAIL Teardown failed:
-    ...    error
-    NOOP
-    [Teardown]    Error    error
 
 Tests Teardown Error Non Existing KW
     [Documentation]    FAIL Teardown failed:
     ...    No keyword with name 'Non Existing KW' found.
-    NOOP
+    No Operation
     [Teardown]    Non Existing KW
 
 Test And Teardown Fails
@@ -71,7 +55,7 @@ Test And Teardown Fails
 
 Test Setup And Teardown Pass
     [Documentation]    PASS
-    [Setup]    Noop
+    [Setup]    No operation
     Log    Hello, world
     [Teardown]    Do Nothing
 
@@ -94,4 +78,4 @@ Test Setup And Teardown Fails
 
 *** Keyword ***
 Do Nothing
-    Noop
+    No operation

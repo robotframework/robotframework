@@ -496,7 +496,7 @@ Check Test Variables Not Available In UK
     Variable Should Not Exist    $uk_var_4
 
 Set Suite Variables In UK
-    ${uk_level_suite_var} =    String    Suite var set in user keyword
+    ${uk_level_suite_var} =    Set Variable    Suite var set in user keyword
     Set Suite Variable    \${uk_level_suite_var}
     Set Suite Variable    \@{uk_level_suite_var_list}    Suite var set in    user keyword
     Should Be Equal    ${uk_level_suite_var}    Suite var set in user keyword
@@ -524,7 +524,7 @@ Check Suite Variables Available In UK
     Should Be True    @{sub_uk_level_suite_var_list} == [ 'Suite var set in', 'sub user keyword' ]
 
 Set Global Variables In UK
-    ${uk_level_global_var} =    String    Global var set in user keyword
+    ${uk_level_global_var} =    Set Variable    Global var set in user keyword
     Set Global Variable    \${uk_level_global_var}
     Set Global Variable    \@{uk_level_global_var_list}    Global var set in    user keyword
     Should Be Equal    ${uk_level_global_var}    Global var set in user keyword

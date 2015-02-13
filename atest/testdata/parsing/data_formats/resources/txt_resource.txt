@@ -8,4 +8,4 @@ ${txt_resource_var}  TXT Resource Variable
 
 
 *User Keywords  Action  Argument  Argument  Argument
-Keyword from TXT resource  Noop      
+Keyword from TXT resource  No operation      

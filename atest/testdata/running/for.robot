@@ -77,7 +77,7 @@ Many Fors In One Test
     Log    Outside for loop
     : FOR    ${z}    IN    a    b
     \    Log    Third for loop
-    \    Noop
+    \    No operation
     \    Log    Value: ${z}
     Log    End of the test
 

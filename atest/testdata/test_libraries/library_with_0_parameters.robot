@@ -4,6 +4,6 @@ Library         ParameterLibrary
 *** Test Cases ***
 Two Default Parameters
     ${host}  ${port} =  parameters
-    equals  ${host}  localhost
-    equals  ${port}  8080
+    should be equal  ${host}  localhost
+    should be equal  ${port}  8080
 

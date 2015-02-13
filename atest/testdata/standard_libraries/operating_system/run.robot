@@ -13,11 +13,11 @@ Run
 
 Run With RC And Stdout Checks
     ${rc}  ${stdout} =  Run And Return Rc And Output  ${PROG} 42 hello
-    Fail Unless Equal  ${stdout}  hello
-    Fail Unless Ints Equal  ${rc}  42
+    Should Be Equal  ${stdout}  hello
+    Should Be Equal As Integers  ${rc}  42
     ${rc}  ${stdout} =  Run And Return Rc And Output  ${PROG}
-    Fail Unless Ints Equal  ${rc}  0
-    Fail Unless Equal  ${stdout}  \
+    Should Be Equal As Integers  ${rc}  0
+    Should Be Equal  ${stdout}  \
 
 Run With RC Checks
     Run and Check RC  ${PROG} 42 hello  42
@@ -39,20 +39,20 @@ Run With Stdout Checks
 Run With Stderr
     [Documentation]  Possible stderr from executed command is redirected to stdout with "2>&1" unless the command has it's own redirect.
     ${output} =  Run  ${PROG} 42 hello world
-    Fail Unless Regexp Matches  ${output}  ^(hello\nworld|world\nhello)$
+    Should Match Regexp  ${output}  ^(hello\nworld|world\nhello)$
 
 Run With Stderr Redirected To Stdout
     [Documentation]  Explicit redirect i.e. exactly same end results as with above test
     ${output} =  Run  ${PROG} 42 hello world 2>&1
-    Fail Unless Regexp Matches  ${output}  ^(hello\nworld|world\nhello)$
+    Should Match Regexp  ${output}  ^(hello\nworld|world\nhello)$
 
 Run With Stderr Redirected To File
     [Documentation]  Stderr is redirected to a file using syntax "2>stderr.txt"
     ${temp} =  Join Path  %{TEMPDIR}  robot_test_stderr.txt
     ${stdout} =  Run  ${PROG} 42 hello world 2>${temp}
-    Equals  ${stdout}  hello
+    Should Be Equal  ${stdout}  hello
     ${stderr} =  Get File  ${temp}
-    Equals  ${stderr}  world\n
+    Should Be Equal  ${stderr}  world\n
     [Teardown]  Remove File  ${temp}
 
 Run When Command Writes Lot Of Stdout And Stderr
@@ -61,12 +61,12 @@ Run When Command Writes Lot Of Stdout And Stderr
 
 Run And Return RC
     ${rc} =  Run And Return RC  ${PROG} 42 hello
-    Equals  ${rc}  ${42}
+    Should Be Equal  ${rc}  ${42}
 
 Run And Return RC And Output
     ${rc}  ${output} =  Run And Return RC And Output  ${PROG} 42 hello
-    Equals  ${rc}  ${42}
-    Equals  ${output}  hello
+    Should Be Equal  ${rc}  ${42}
+    Should Be Equal  ${output}  hello
 
 Run Non-ascii Command Returning Non-ascii Output
     ${output} =  Run  echo ${result}
@@ -88,4 +88,3 @@ Run And Check RC
     ${rc} =  Run And Return Rc  ${command}
     ${expected} =  Convert To Integer  ${expected}
     Should Be Equal  ${rc}  ${expected}
-

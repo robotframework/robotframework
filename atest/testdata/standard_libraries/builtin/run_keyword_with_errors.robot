@@ -95,7 +95,7 @@ Expected Error Is Multiline
 
 Expected Error Should Be Returned
     ${error} =    Run Keyword And Expect Error    *    Fail    Critical error
-    Equals    ${error}    Critical error
+    Should Be Equal    ${error}    Critical error
 
 Expect Error With User Keyword When Keywords Pass
     [Documentation]    FAIL Expected error 'My error' did not occur.
@@ -137,7 +137,7 @@ Expect Error When Syntax Error In For Loop
 *** Keywords ***
 Passing UK
     Log    Hello world
-    Noop
+    No Operation
     ${ret} =    Evaluate    1+2
     [Return]    ${ret}
 

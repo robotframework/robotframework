@@ -30,7 +30,7 @@ Ignore Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}    Hello world
     Check Log Message    ${tc.kws[0].kws[0].kws[1].msgs[0]}    Expected failure in UK    FAIL
-    Ints Equal    ${tc.kws[0].kws[0].keyword_count}    2
+    Should Be Equal As Integers    ${tc.kws[0].kws[0].keyword_count}    2
 
 Ignore Error With Arguments That Needs To Be Escaped
     Check Test Case    ${TEST NAME}
@@ -85,7 +85,7 @@ Expect Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}    Hello world
     Check Log Message    ${tc.kws[0].kws[0].kws[1].msgs[0]}    Expected failure in UK    FAIL
-    Ints Equal    ${tc.kws[0].kws[0].keyword_count}    2
+    Should Be Equal As Integers    ${tc.kws[0].kws[0].keyword_count}    2
 
 Expect Error With Arguments That Needs To Be Escaped
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -114,4 +114,3 @@ Expect Error When Syntax Error In For Loop
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Ignore Error With Arguments That Needs To be Escaped
     Check KW Arguments    ${tc.kws[3].kws[0]}    \@{NEEDS ESCAPING}
-
