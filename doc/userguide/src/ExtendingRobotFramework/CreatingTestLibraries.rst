@@ -1654,19 +1654,24 @@ runtime. To support that, Robot Framework has a capability to mark
 keywords *deprecated*. This makes it easier to find old keywords from
 the test data and remove or replace them.
 
-Keywords are deprecated by starting their documentation with
-`*DEPRECATED*`. When these keywords are executed, a warning
-containing rest of the `short documentation`__ is written both into
-`the console and into separate Test Execution Errors section`__ in log
-files.  For example, if following keyword is executed there will be a
-warning like shown below in the log file.
+Keywords can be deprecated by starting their documentation with text
+`*DEPRECATED`, case-sensitive, and having a closing `*` also on the first
+line of the documentation. For example, `*DEPRECATED*`, `*DEPRECATED.*`, and
+`*DEPRECATED in version 1.5.*` are all valid markers.
+
+When a deprecated keyword is executed, a deprecation warning is logged and
+the warning is shown also in `the console and the Test Execution Errors
+section in log files`__. The deprecation warning starts with text `Keyword
+'<name>' is deprecated.` and has rest of the `short documentation`__ after
+the deprecation marker, if any, afterwards. For example, if the following
+keyword is executed, there will be a warning like shown below in the log file.
 
 .. sourcecode:: python
 
     def example_keyword(argument):
-        """*DEPRECATED* Use keyword `Other Keyword` instead.
+        """*DEPRECATED!!* Use keyword `Other Keyword` instead.
 
-        This keyword does something to given `argument` and returns the result.
+        This keyword does something to given ``argument`` and returns results.
         """
         return do_something(argument)
 
@@ -1686,16 +1691,12 @@ Java test library that uses the `static library interface`__ because
 their documentation is not available at runtime. With such keywords,
 it possible to use user keywords as wrappers and deprecate them.
 
-There is a plan to implement a tool that can use the deprecation
-information for automatically replacing deprecated keywords. The tool
-will most likely get the name of the new keyword from the
-documentation so that it searches words inside backticks
-(:codesc:`\``). Thus it would find :name:`Other Keyword` from the
-earlier example. Note that Libdoc_ also automatically creates
-internal links using the same syntax.
+.. note:: Prior to Robot Framework 2.9 the documentation must start with
+          `*DEPRECATED*` exactly without any extra content before the
+          closing `*`.
 
-__ `Documenting libraries`_
 __ `Errors and warnings during execution`_
+__ `Documenting libraries`_
 __ `User keyword name and documentation`_
 __ `Creating static keywords`_
 

@@ -2,38 +2,51 @@
 Library           DeprecatedKeywords.py
 
 *** Test Case ***
-Deprecated Library Keyword
+Deprecated keywords
     Deprecated Library Keyword
-
-Deprecated User Keyword
     Deprecated User Keyword
 
-Deprecated User Keyword Without Extra Doc
+Deprecated keywords without extra doc
+    Deprecated Library Keyword Without Extra Doc
     Deprecated User Keyword Without Extra Doc
 
-Variable Names Are removed From SetKeyword Names
+Text between `*DEPRECATED` and closing `*` is ignored
+    Deprecated Library Keyword With Stuff To Ignore
+    Deprecated User Keyword With Stuff To Ignore
+
+Assignment is not included in keyword name
     ${var} =    Deprecated Keyword Returning
     Should Be Equal As Numbers    ${var}    42
 
-Not Deprecated Keywords
+Not deprecated keywords
     Not Deprecated With Doc
     Not Deprecated Without Doc
+    Not Deprecated With Deprecated Prefix
     Not Deprecated User Keyword
     Not Deprecated User Keyword Without Documentation
+    Not Deprecated User Keyword With `*Deprecated` Prefix
 
 *** Keyword ***
 Deprecated User Keyword
     [Documentation]    *DEPRECATED* Use keyword `Not Deprecated User Keyword` instead.
     ...    ignore this
-    Comment
+    No Operation
+
+Deprecated User Keyword With Stuff To Ignore
+    [Documentation]    *DEPRECATED Ignore this!!* Keep this!!
+    No Operation
 
 Deprecated User Keyword Without Extra Doc
     [Documentation]    *DEPRECATED*
-    Comment
+    No Operation
 
 Not Deprecated User Keyword
     [Documentation]    Some documentation
-    Comment
+    No Operation
 
 Not Deprecated User Keyword Without Documentation
-    Comment
+    No Operation
+
+Not Deprecated User Keyword With `*Deprecated` Prefix
+    [Documentation]    *DEPRECATED ... just kidding!!
+    No Operation

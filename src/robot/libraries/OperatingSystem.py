@@ -220,7 +220,7 @@ class OperatingSystem:
         return rc, stdout
 
     def start_process(self, command, stdin=None, alias=None):
-        """*DEPRECATED* Use `Process.Start Process` instead.
+        """*DEPRECATED.* Use `Process.Start Process` instead.
 
         Also related keywords `Read Process Output`, `Switch Process`, `Stop
         Process`, and `Stop All Processes` have been deprecated in favor of

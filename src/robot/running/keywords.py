@@ -121,11 +121,13 @@ class Keyword(_BaseKeyword):
         self.timeout = getattr(handler, 'timeout', '')
         self.starttime = get_timestamp()
         context.start_keyword(self)
-        if self.doc.startswith('*DEPRECATED*'):
-            msg = self.doc.replace('*DEPRECATED*', '', 1).strip()
-            name = self.name.split('} = ', 1)[-1]  # Remove possible variable
-            context.warn("Keyword '%s' is deprecated. %s" % (name, msg))
+        self._warn_if_deprecated(handler.longname, handler.shortdoc, context)
         return handler
+
+    def _warn_if_deprecated(self, name, doc, context):
+        if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
+            message = ' ' + doc.split('*', 2)[-1].strip()
+            context.warn("Keyword '%s' is deprecated.%s" % (name, message))
 
     def _get_name(self, handler_longname):
         if not self.assign:
