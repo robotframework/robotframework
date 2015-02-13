@@ -285,7 +285,7 @@ class ScreenshotTaker(object):
 
     def _wx_screenshot(self, path):
         if not self._wx_app_reference:
-            self._wx_app_reference = wx.PySimpleApp()
+            self._wx_app_reference = wx.App(False)
         context = wx.ScreenDC()
         width, height = context.GetSize()
         bitmap = wx.EmptyBitmap(width, height, -1)
