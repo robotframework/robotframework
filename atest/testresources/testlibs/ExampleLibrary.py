@@ -51,7 +51,7 @@ class ExampleLibrary:
     def exception(self, name, msg=""):
         """Raise exception with given name and message"""
         exception = getattr(exceptions, name)
-        raise exception, msg
+        raise exception(msg)
 
     def external_exception(self, name, msg):
         ObjectToReturn('failure').exception(name, msg)

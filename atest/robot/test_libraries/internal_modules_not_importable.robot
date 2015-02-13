@@ -16,3 +16,14 @@ Internal modules cannot be imported directly
 
 Internal modules can be imported through `robot.`
     Check Test Case    ${TESTNAME}
+
+Standard libraries cannot be imported directly
+    Check Test Case    ${TESTNAME}
+
+Standard libraries can be imported through `robot.libraries.`
+    Check Test Case    ${TESTNAME}
+
+In test data standard libraries can be imported directly
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].name}    OperatingSystem.Directory Should Exist
+    Should Be Equal    ${tc.kws[1].name}    OperatingSystem.Directory Should Exist

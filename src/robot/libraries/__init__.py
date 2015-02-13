@@ -24,3 +24,9 @@ syntax, the generated API docs are not that well formed. It is thus better
 to find the generated library documentations, for example, via
 the http://robotframework.org web site.
 """
+
+STDLIBS = set(('BuiltIn', 'Collections', 'DateTime', 'Dialogs', 'Easter',
+               'OperatingSystem', 'Process', 'Remote', 'Reserved',
+               'Screenshot', 'String', 'Telnet', 'XML'))
+DEPRECATED_STDLIBS = set(('DeprecatedBuiltIn', 'DeprecatedOperatingSystem'))
+STDLIB_TO_DEPRECATED_MAP = dict((name[10:], name) for name in DEPRECATED_STDLIBS)

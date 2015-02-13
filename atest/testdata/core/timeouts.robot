@@ -26,7 +26,7 @@ Failing Before Timeout
 Show Correct Trace Back When Failing Before Timeout
     [Documentation]  FAIL Failure before timeout
     [Setup]   Set Log Level   DEBUG
-    Fail  Failure before timeout
+    Exception  RuntimeError  Failure before timeout
     [Teardown]   Set Log Level   INFO
 
 Show Correct Trace Back When Failing In Java Before Timeout

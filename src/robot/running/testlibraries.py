@@ -18,6 +18,7 @@ import os
 import sys
 
 from robot.errors import DataError
+from robot.libraries import STDLIBS, DEPRECATED_STDLIBS
 from robot.output import LOGGER
 from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
                          is_java_method, normalize, seq2str2, unic)
@@ -35,9 +36,13 @@ else:
 
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True):
+    if name in STDLIBS or name in DEPRECATED_STDLIBS:
+        import_name = 'robot.libraries.' + name
+    else:
+        import_name = name
     with OutputCapturer(library_import=True):
         importer = Importer('test library')
-        libcode = importer.import_class_or_module(name)
+        libcode = importer.import_class_or_module(import_name)
     libclass = _get_lib_class(libcode)
     lib = libclass(libcode, name, args or [], variables)
     if create_handlers:

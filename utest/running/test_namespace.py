@@ -13,4 +13,4 @@ class TestNamespace(unittest.TestCase):
         module_path = os.path.dirname(libraries.__file__)
         exp_libs = (name for _, name, _ in pkgutil.iter_modules([module_path])
                     if name[0].isupper() and not name.startswith('Deprecated'))
-        assert_equals(set(exp_libs), namespace.STDLIB_NAMES)
+        assert_equals(set(exp_libs), namespace.STDLIBS)

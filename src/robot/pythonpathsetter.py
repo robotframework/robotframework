@@ -40,8 +40,7 @@ def remove_path(path):
 add_path(dirname(ROBOTDIR))
 remove_path(ROBOTDIR)
 
-# Default library search locations.
-add_path(join(ROBOTDIR, 'libraries'))
+# Always add current directory.
 add_path('.', end=True)
 
 # Support libraries/resources in PYTHONPATH also with Jython and IronPython.
