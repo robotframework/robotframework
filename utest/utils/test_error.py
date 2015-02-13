@@ -16,19 +16,29 @@ class TestGetErrorDetails(unittest.TestCase):
     def test_get_error_details_python(self):
         for exception, msg, exp_msg in [
                     (AssertionError, 'My Error', 'My Error'),
-                    (AssertionError, None, 'AssertionError'),
+                    (AssertionError, None, 'None'),
                     (Exception, 'Another Error', 'Another Error'),
-                    (Exception, None, 'Exception'),
                     (ValueError, 'Something', 'ValueError: Something'),
-                    (ValueError, None, 'ValueError'),
                     (AssertionError, 'Msg\nin 3\nlines', 'Msg\nin 3\nlines'),
                     (ValueError, '2\nlines', 'ValueError: 2\nlines')]:
             try:
-                raise exception, msg
+                raise exception(msg)
             except:
                 message, details = get_error_details()
                 assert_equals(message, get_error_message())
             assert_equals(message, exp_msg)
+            assert_true(details.startswith('Traceback'))
+            assert_true(exp_msg not in details)
+
+    def test_get_error_details_python_class(self):
+        for exception in [AssertionError, ValueError, ZeroDivisionError]:
+            try:
+                raise exception
+            except:
+                message, details = get_error_details()
+                assert_equals(message, get_error_message())
+            exp_msg = exception.__name__
+            assert_equals(message, exception.__name__)
             assert_true(details.startswith('Traceback'))
             assert_true(exp_msg not in details)
 

@@ -19,7 +19,7 @@ def returning(arg):
     return arg
 
 def failing(msg='xxx'):
-    raise MyException, msg
+    raise MyException(msg)
 
 if os.name == 'java':
     from java.lang import Error

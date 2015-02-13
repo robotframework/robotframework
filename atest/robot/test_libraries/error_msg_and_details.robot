@@ -23,6 +23,10 @@ Exception Type is Removed with Exception Attribute in Java
 Exception Type is Included In Non-Generic Failures
     Non Generic Failure    FloatingPointError: Too Large A Number !!
 
+Message Contains Only Class Name When Raising Only Class
+    Generic Python class    RuntimeError
+    Non-Generic Python class    ZeroDivisionError
+
 Exception Type is Included In Non-Generic Java Failures
     [Tags]    jybot
     Non Generic Failure In Java    ArrayStoreException: My message
@@ -31,7 +35,7 @@ Message Is Got Correctly If Python Exception Has Non-String Message
     Python Exception With Non-String Message    ValueError: ['a', 'b', (1, 2), None, {'a': 1}]    1
 
 Message Is Got Correctly If Python Exception Has 'None' Message
-    Python Exception With 'None' Message    AssertionError
+    Python Exception With 'None' Message    None
 
 Multiline Error
     ${TESTNAME}   First line\n2nd\n3rd and last
@@ -50,9 +54,9 @@ Message Is Got Correctly If Java Exception Has 'null' Message
 Message And Internal Trace Are Removed From Details When Exception In Library
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    Generic Failure    foo != bar
-    Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception, msg
+    Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception(msg)
     ${tc} =    Verify Test Case And Error In Log    Non Generic Failure    FloatingPointError: Too Large A Number !!
-    Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception, msg
+    Verify Python Traceback    ${tc.kws[0].msgs[1]}    exception    raise exception(msg)
 
 Message And Internal Trace Are Removed From Details When Exception In Java Library
     [Tags]    jybot
@@ -65,7 +69,7 @@ Message And Internal Trace Are Removed From Details When Exception In Java Libra
 Message and Internal Trace Are Removed From Details When Exception In External Code
     [Template]    NONE
     ${tc} =    Verify Test Case And Error In Log    External Failure    UnboundLocalError: Raised from an external object!
-    Verify Python Traceback    ${tc.kws[0].msgs[1]}    external_exception    ObjectToReturn('failure').exception(name, msg)    exception    raise exception, msg
+    Verify Python Traceback    ${tc.kws[0].msgs[1]}    external_exception    ObjectToReturn('failure').exception(name, msg)    exception    raise exception(msg)
 
 Message and Internal Trace Are Removed From Details When Exception In External Java Code
     [Tags]    jybot

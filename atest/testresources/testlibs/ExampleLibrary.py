@@ -48,9 +48,11 @@ class ExampleLibrary:
         """
         pass
 
-    def exception(self, name, msg=""):
+    def exception(self, name, msg="", class_only=False):
         """Raise exception with given name and message"""
         exception = getattr(exceptions, name)
+        if class_only:
+            raise exception
         raise exception(msg)
 
     def external_exception(self, name, msg):
@@ -84,14 +86,14 @@ class ExampleLibrary:
         try:
             actual = getattr(self, utils.normalize(name))
         except AttributeError:
-            raise AssertionError, "Attribute '%s' not set" % name
+            raise AssertionError("Attribute '%s' not set" % name)
         if not utils.eq(actual, expected):
-            raise AssertionError, "Attribute '%s' was '%s', expected '%s'" \
-                    % (name, actual, expected)
+            raise AssertionError("Attribute '%s' was '%s', expected '%s'"
+                                 % (name, actual, expected))
 
     def check_attribute_not_set(self, name):
         if hasattr(self, utils.normalize(name)):
-            raise AssertionError, "Attribute '%s' should not be set" % name
+            raise AssertionError("Attribute '%s' should not be set" % name)
 
     def backslashes(self, count=1):
         return '\\' * int(count)

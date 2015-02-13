@@ -13,7 +13,7 @@ class UserHandlerStub:
     def __init__(self, kwdata, library):
         self.name = kwdata.name
         if kwdata.name == 'FAIL':
-            raise Exception, 'Expected failure'
+            raise Exception('Expected failure')
 
 
 class EmbeddedArgsTemplateStub:

@@ -25,7 +25,7 @@ class MyEqual(object):
 
 def func(msg=None):
     if msg is not None:
-        raise ValueError, msg
+        raise ValueError(msg)
 
 
 class TestAsserts(unittest.TestCase):
