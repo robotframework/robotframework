@@ -36,10 +36,6 @@ def _float_secs_to_secs_and_millis(secs):
     return (isecs, millis) if millis < 1000 else (isecs+1, 0)
 
 
-# TODO: Remove this and get_start_timetamp in 2.9. Not used since 2.8.7.
-START_TIME = _get_timetuple()
-
-
 def timestr_to_secs(timestr, round_to=3):
     """Parses time like '1h 10s', '01:00:10' or '42' and returns seconds."""
     if isinstance(timestr, (basestring, int, long, float)):

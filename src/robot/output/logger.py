@@ -82,10 +82,6 @@ class Logger(AbstractLogger):
         self._console_logger = None
         return logger
 
-    # TODO: Remove in RF 2.9. Not used outside utests since 2.8.4 but may
-    # be used by external tools. Need to check that before removal.
-    disable_automatic_console_logger = unregister_console_logger
-
     def register_file_logger(self, path=None, level='INFO'):
         if not path:
             path = os.environ.get('ROBOT_SYSLOG_FILE', 'NONE')
@@ -192,10 +188,6 @@ class LoggerCollection(object):
     def register_context_changing_logger(self, logger):
         self._context_changing_loggers.append(_LoggerProxy(logger))
         return self._context_changing_loggers[-1]
-
-    # TODO: Remove in RF 2.9. Doesn't seem to be used anywhere since 2.8.4.
-    def remove_first_regular_logger(self):
-        return self._regular_loggers.pop(0)
 
     def unregister_logger(self, logger):
         self._regular_loggers = [proxy for proxy in self._regular_loggers

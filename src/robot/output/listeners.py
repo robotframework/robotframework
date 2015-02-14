@@ -262,8 +262,3 @@ class ListenerProxy(AbstractLoggerProxy):
         for key, value in dictionary.iteritems():
             map.put(key, value)
         return map
-
-
-# TODO: Remove in 2.9, left here in 2.8.5 for backwards compatibility.
-# Consider also decoupling importing from __init__ to ease extending.
-_ListenerProxy = ListenerProxy

@@ -27,14 +27,6 @@ LEVELS = {'TRACE': logging.NOTSET,
           'WARN': logging.WARNING}
 
 
-# TODO: Remove in RF 2.9. robot_handler_enabled used instead since 2.8.7.
-# https://github.com/robotframework/robotframework/issues/1821
-def initialize(level):
-    logging.raiseExceptions = False
-    logging.getLogger().addHandler(RobotHandler())
-    set_level(level)
-
-
 @contextmanager
 def robot_handler_enabled(level):
     root = logging.getLogger()

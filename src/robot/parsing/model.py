@@ -468,7 +468,7 @@ class Variable(object):
         if name.startswith('$') and value == []:
             value = ''
         if isinstance(value, basestring):
-            value = [value]  # Must support scalar lists until RF 2.8 (issue 939)
+            value = [value]
         self.value = value
         self.comment = Comment(comment)
 
