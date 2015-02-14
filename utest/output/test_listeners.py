@@ -6,7 +6,9 @@ from robot.utils.asserts import *
 from robot import utils
 from robot.running.outputcapture import OutputCapturer
 
-LOGGER.disable_automatic_console_logger()
+
+LOGGER.unregister_console_logger()
+
 
 class _Mock:
     def __getattr__(self, name):

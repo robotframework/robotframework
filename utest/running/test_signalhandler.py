@@ -11,7 +11,7 @@ from robot.utils.asserts import assert_equal
 from robot.running.signalhandler import _StopSignalMonitor
 
 
-LOGGER.disable_automatic_console_logger()
+LOGGER.unregister_console_logger()
 
 
 class LoggerStub(AbstractLogger):

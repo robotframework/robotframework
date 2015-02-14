@@ -7,7 +7,8 @@ from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 from robot.output import LOGGER
 
-LOGGER.disable_automatic_console_logger()
+
+LOGGER.unregister_console_logger()
 
 
 class _MockLogger(object):

@@ -323,10 +323,6 @@ def secs_to_timestamp(secs, seps=None, millis=False):
     return format_time(ttuple, *seps)
 
 
-def get_start_timestamp(daysep='', daytimesep=' ', timesep=':', millissep=None):
-    return format_time(START_TIME, daysep, daytimesep, timesep, millissep)
-
-
 def get_elapsed_time(start_time, end_time):
     """Returns the time between given timestamps in milliseconds."""
     if start_time == end_time or not (start_time and end_time):
