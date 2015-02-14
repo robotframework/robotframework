@@ -154,13 +154,13 @@ Fail Unless Dir Empty
     Create File    ${TESTDIR}${/}f3.txt
     Fail Unless Dir Empty    ${TESTDIR}    # Fails
 
-Directory Should Not Be Empty
+Fail If Dir Empty
     [Documentation]    FAIL Directory '${TESTDIR}' is empty.
     Create Dir    ${TESTDIR}
     Create File    ${TESTDIR}${/}file.txt
-    Directory Should Not Be Empty    ${TESTDIR}
+    Fail If Dir Empty    ${TESTDIR}
     Remove File    ${TESTDIR}${/}file.txt
-    Directory Should Not Be Empty    ${TESTDIR}    # Fails
+    Fail If Dir Empty    ${TESTDIR}    # Fails
 
 Fail Unless File Empty
     [Documentation]    FAIL File '${TESTFILE}' is not empty. Size: 12 bytes
@@ -215,7 +215,7 @@ Empty Dir
     Create File    ${TESTDIR}${/}bar.txt
     Create Dir    ${TESTDIR}${/}subdir
     Create File    ${TESTDIR}${/}subdir${/}sub.txt
-    Directory Should Not Be Empty    ${TESTDIR}
+    Fail If Dir Empty    ${TESTDIR}
     Empty Dir    ${TESTDIR}
     Fail Unless Dir Empty    ${TESTDIR}
 
