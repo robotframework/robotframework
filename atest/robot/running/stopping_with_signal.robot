@@ -72,7 +72,7 @@ One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardow
     ${ts} =  Get Test Suite  With Teardown
     Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Logging Suite Teardown
 
-One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
+Skip Teardowns After Stopping Gracefully
     Start And Send Signal  with_teardown.robot  One SIGINT  0s  --SkipTeardownOnExit
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly

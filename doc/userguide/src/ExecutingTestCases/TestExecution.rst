@@ -290,10 +290,6 @@ If option :option:`--exitonfailure` is used, test execution stops
 immediately if any `critical test`_ fails. Also the remaining tests
 are marked as failed.
 
-.. note:: Prior to Robot Framework 2.8, this behaviour was achieved by
-          using :option:`--runmode exitonfailure`. Option :option:`--runmode`
-          was deprecated in 2.8 and will be removed in the future.
-
 Stopping on parsing or execution error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -321,7 +317,3 @@ ends.
 It is also possible to skip teardowns when execution is stopped by using
 :option:`--skipteardownonexit` option. This can be useful if, for example,
 clean-up tasks take a lot of time.
-
-.. note:: Prior to Robot Framework 2.8, this behaviour was achieved by
-          using :option:`--runmode skipteardownonexit`. Option :option:`--runmode`
-          was deprecated in 2.8 and will be removed in the future.

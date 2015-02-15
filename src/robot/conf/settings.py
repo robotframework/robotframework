@@ -43,7 +43,7 @@ class _BaseSettings(object):
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
                  'XUnit'            : ('xunit', None),
-                 'DeprecatedXUnit'  : ('xunitfile', None),
+                 'DeprecatedXUnit'  : ('xunitfile', None),  # TODO: Remove in 2.9
                  'SplitLog'         : ('splitlog', False),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
@@ -123,10 +123,6 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'Randomize':
             return self._process_randomize_value(value)
-        if name == 'RunMode':
-            LOGGER.warn('Option --runmode is deprecated in Robot Framework 2.8 '
-                        'and will be removed in the future.')
-            return [self._process_runmode_value(v) for v in value]
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
@@ -177,14 +173,6 @@ class _BaseSettings(object):
     def _raise_invalid_option_value(self, option_name, given_value):
         raise DataError("Option '%s' does not support value '%s'."
                         % (option_name, given_value))
-
-    def _process_runmode_value(self, original_value):
-        formatted_value = original_value.lower()
-        if formatted_value not in ('exitonfailure', 'skipteardownonexit',
-                                   'dryrun', 'random:test', 'random:suite',
-                                   'random:all'):
-            self._raise_invalid_option_value('--runmode', original_value)
-        return formatted_value
 
     def __getitem__(self, name):
         if name not in self._opts:
@@ -396,7 +384,6 @@ class RobotSettings(_BaseSettings):
                        'ExitOnError'        : ('exitonerror', False),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
-                       'RunMode'            : ('runmode', []),
                        'RunEmptySuite'      : ('runemptysuite', False),
                        'WarnOnSkipped'      : ('warnonskippedfiles', False),
                        'Variables'          : ('variable', []),
@@ -449,23 +436,18 @@ class RobotSettings(_BaseSettings):
 
     @property
     def randomize_suites(self):
-        return (self['Randomize'][0] in ('suites', 'all') or
-                any(mode in ('random:suite', 'random:all') for mode in self['RunMode']))
+        return self['Randomize'][0] in ('suites', 'all')
 
     @property
     def randomize_tests(self):
-        return (self['Randomize'][0] in ('tests', 'all') or
-                any(mode in ('random:test', 'random:all') for mode in self['RunMode']))
+        return self['Randomize'][0] in ('tests', 'all')
 
     @property
     def dry_run(self):
-        return (self['DryRun'] or
-                any(mode == 'dryrun' for mode in self['RunMode']))
-
+        return self['DryRun']
     @property
     def exit_on_failure(self):
-        return (self['ExitOnFailure'] or
-                any(mode == 'exitonfailure' for mode in self['RunMode']))
+        return self['ExitOnFailure']
 
     @property
     def exit_on_error(self):
@@ -473,8 +455,7 @@ class RobotSettings(_BaseSettings):
 
     @property
     def skip_teardown_on_exit(self):
-        return (self['SkipTeardownOnExit'] or
-                any(mode == 'skipteardownonexit' for mode in self['RunMode']))
+        return self['SkipTeardownOnExit']
 
     @property
     def log_level(self):

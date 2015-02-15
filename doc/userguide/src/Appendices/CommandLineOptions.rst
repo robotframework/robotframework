@@ -69,10 +69,6 @@ Command line options for test execution
                           if any error occurs when parsing test data, importing libraries, and so on.
   --skipteardownonexit    `Skips teardowns`_ is test execution is prematurely stopped.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
-  --runmode <mode>        Deprecated in Robot Framework 2.8. Use separate
-                          :option:`--dryrun`, :option:`--exitonfailure`,
-                          :option:`--skipteardownonexit` and :option:`--randomize`
-                          options instead.
   -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used on the console.
   -K, --monitormarkers <on|off|force>  Specifies are `console markers`_

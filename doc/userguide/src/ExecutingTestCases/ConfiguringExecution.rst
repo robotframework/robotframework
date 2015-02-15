@@ -377,10 +377,6 @@ resolved.
 .. note:: The dry run mode does not validate variables. This
           limitation may be lifted in the future releases.
 
-.. note:: Prior to Robot Framework 2.8, the dry run mode was activate using
-          option :option:`--runmode dryrun`. Option :option:`--runmode` was
-          deprecated in 2.8 and will be removed in the future.
-
 __ `Errors and warnings during execution`_
 
 Randomizing execution order
@@ -416,13 +412,6 @@ Examples::
 
     pybot --randomize tests my_test.txt
     pybot --randomize all:12345 path/to/tests
-
-.. note:: Prior to Robot Framework 2.8, randomization is triggered using option
-          :option:`--runmode <mode>`, where `<mode>` is either `Random:Test`,
-          `Random:Suite` or `Random:All`. These values work the
-          same way as matching values for :option:`--randomize`.
-          Option :option:`--runmode` was deprecated in 2.8 and will be removed
-          in the future.
 
 __ `Free test suite metadata`_
 

@@ -277,9 +277,6 @@ Options
                           The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
-    --runmode mode *      Deprecated in version 2.8. Use individual options
-                          --dryrun, --exitonfailure, --skipteardownonexit, or
-                          --randomize instead.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
