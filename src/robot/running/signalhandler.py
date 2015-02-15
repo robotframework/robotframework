@@ -14,10 +14,7 @@
 
 import sys
 from threading import currentThread
-try:
-    import signal
-except ImportError:
-    signal = None  # IronPython 2.6 doesn't have signal module by default
+import signal
 if sys.platform.startswith('java'):
     from java.lang import IllegalArgumentException
 else:
@@ -47,11 +44,6 @@ class _StopSignalMonitor(object):
 
     def _stop_execution_gracefully(self):
         raise ExecutionFailed('Execution terminated by signal', exit=True)
-
-    def start(self):
-        # TODO: Remove start() in favor of __enter__ in RF 2.9. Refactoring
-        # the whole signal handler at that point would be a good idea.
-        self.__enter__()
 
     def __enter__(self):
         if self._can_register_signal:

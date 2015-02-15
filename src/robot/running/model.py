@@ -224,7 +224,7 @@ class Timeout(object):
 
 
 class UserKeyword(object):
-    # TODO: In 2.9:
+    # TODO: In RF 2.9 (or some later major release):
     # - Teardown should be handled as a keyword like with tests and suites.
     # - Timeout should be handled consistently with tests.
     # - Also resource files should use these model objects.

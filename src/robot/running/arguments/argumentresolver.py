@@ -134,8 +134,7 @@ class VariableReplacer(object):
 
 
 def kwarg_to_str_if_possible(name):
-    # TODO: Remove in 2.9.
-    # Python 2.5 accept only str, not unicode, as kwargs.
+    # Python 2.5 accept only str, not unicode, as kwargs. TODO: Remove in 2.9.
     try:
         return str(name)
     except UnicodeError:
