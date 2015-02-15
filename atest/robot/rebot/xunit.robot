@@ -56,13 +56,6 @@ Invalid XUnit File
     Check Stderr Matches Regexp
     ...  \\[ ERROR \\] Writing xunit file '${path}' failed: .*
 
---xunitfile is deprecated
-    Run Rebot    --xunitfile xunit.xml    ${INPUT FILE}
-    Check Stdout Contains  XUnit:
-    File Should Exist  ${OUTDIR}/xunit.xml
-    Check Stderr Matches Regexp
-    ...  \\[ WARN \\] Option --xunitfile is deprecated. Use --xunit instead.
-
 *** Keywords ***
 Create Input File
     Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTDATA_TEST}  ${TESTDATA_SUITES}

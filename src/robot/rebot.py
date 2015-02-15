@@ -123,7 +123,6 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitfile file      Deprecated. Use --xunit instead.
     --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           `YYYYMMDD-hhmmss` is added to all generated output

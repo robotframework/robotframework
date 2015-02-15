@@ -156,7 +156,6 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitfile file      Deprecated. Use --xunit instead.
     --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.

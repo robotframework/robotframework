@@ -43,7 +43,6 @@ class _BaseSettings(object):
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
                  'XUnit'            : ('xunit', None),
-                 'DeprecatedXUnit'  : ('xunitfile', None),  # TODO: Remove in 2.9
                  'SplitLog'         : ('splitlog', False),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
@@ -79,8 +78,6 @@ class _BaseSettings(object):
                 value = [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
-        if self['DeprecatedXUnit']:
-            self['XUnit'] = self['DeprecatedXUnit']
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
@@ -106,9 +103,6 @@ class _BaseSettings(object):
             return [self._format_tag_patterns(v) for v in value]
         if name in self._output_opts and (not value or value.upper() == 'NONE'):
             return None
-        if name == 'DeprecatedXUnit':
-            LOGGER.warn('Option --xunitfile is deprecated. Use --xunit instead.')
-            return self._process_value('XUnit', value)
         if name == 'OutputDir':
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:

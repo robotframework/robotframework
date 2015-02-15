@@ -66,14 +66,6 @@ Skipping all tests
     Should be equal  ${skipped[1].text}  FAIL: Expected failure
     Length Should Be    ${skipped}    2
 
---xunitfile is deprecated
-    Run tests    --xUnitFile xunit.xml    ${PASS AND FAIL}
-    Check Stdout Contains  XUnit:
-    File Should Exist  ${OUTDIR}/xunit.xml
-    ${root} =  Get XUnit Node
-    Stats Should Be    ${root}    2    1    0
-    Check Log Message    ${ERRORS[0]}    Option --xunitfile is deprecated. Use --xunit instead.    WARN
-
 *** Keywords ***
 Get XUnit Node
     [Arguments]  ${xpath}=.
