@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation     Server has only get_kw_names and run_kw methods and returns minimal result dictionary.
 Library           Remote    127.0.0.1:${PORT}
+Library           Conflict.py
 Suite Setup       Set Log Level    DEBUG
 
 *** Variables ***
@@ -34,3 +35,12 @@ Logging
 
 Extra stuff in result dictionary is ignored
     Extra stuff in result dictionary
+
+Keyword name conflict with custom library
+    [Documentation]    FAIL Multiple keywords with name 'Conflict' found.
+    ...    Give the full name of the keyword you want to use.
+    ...    Found: 'Conflict.Conflict' and 'Remote.Conflict'
+    Conflict
+
+Keyword name conflict with standard library
+    Should Be True    False

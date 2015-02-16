@@ -25,8 +25,8 @@ to find the generated library documentations, for example, via
 the http://robotframework.org web site.
 """
 
-STDLIBS = set(('BuiltIn', 'Collections', 'DateTime', 'Dialogs', 'Easter',
-               'OperatingSystem', 'Process', 'Remote', 'Reserved',
-               'Screenshot', 'String', 'Telnet', 'XML'))
-DEPRECATED_STDLIBS = set(('DeprecatedBuiltIn', 'DeprecatedOperatingSystem'))
+STDLIBS = frozenset(('BuiltIn', 'Collections', 'DateTime', 'Dialogs', 'Easter',
+                     'OperatingSystem', 'Process', 'Remote', 'Reserved',
+                     'Screenshot', 'String', 'Telnet', 'XML'))
+DEPRECATED_STDLIBS = frozenset(('DeprecatedBuiltIn', 'DeprecatedOperatingSystem'))
 STDLIB_TO_DEPRECATED_MAP = dict((name[10:], name) for name in DEPRECATED_STDLIBS)

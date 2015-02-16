@@ -312,9 +312,10 @@ class KeywordStore(object):
         return [handler1, handler2]
 
     def _filter_stdlib_handler(self, handler1, handler2):
-        if handler1.library.orig_name in STDLIBS:
+        stdlibs_without_remote = STDLIBS - set(['Remote'])
+        if handler1.library.orig_name in stdlibs_without_remote:
             standard, custom = handler1, handler2
-        elif handler2.library.orig_name in STDLIBS:
+        elif handler2.library.orig_name in stdlibs_without_remote:
             standard, custom = handler2, handler1
         else:
             return [handler1, handler2]
