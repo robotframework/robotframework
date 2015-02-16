@@ -29,7 +29,7 @@ class VariableTableSetter(object):
 
     def set(self, variables, overwrite=False):
         for name, value in VariableTableReader().read(variables):
-            self._store.add(name, value, overwrite)
+            self._store.add(name, value, overwrite, decorated=False)
 
 
 class VariableTableReader(object):

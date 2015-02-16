@@ -21,7 +21,7 @@ except ImportError:
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.utils import (get_error_message, is_dict_like, is_list_like,
-                         seq2str2, unic, Importer)
+                         seq2str2, Importer)
 
 
 class VariableFileSetter(object):
@@ -35,15 +35,12 @@ class VariableFileSetter(object):
         return variables
 
     def _import_if_needed(self, path_or_variables, args=None):
-        if isinstance(path_or_variables, basestring):
-            importer = VariableFileImporter()
-            return importer.import_variables(path_or_variables, args)
-        return path_or_variables
+        if not isinstance(path_or_variables, basestring):
+            return path_or_variables
+        return VariableFileImporter().import_variables(path_or_variables, args)
 
     def _set(self, variables, overwrite=False):
         for name, value in variables:
-            if name.startswith('LIST__'):
-                name = name[len('LIST__'):]
             self._store.add(name, value, overwrite)
 
 
@@ -56,49 +53,59 @@ class VariableFileImporter(object):
         try:
             return self._get_variables(var_file, args)
         except:
-            amsg = 'with arguments %s ' % seq2str2(args) if args else ''
+            args = 'with arguments %s ' % seq2str2(args) if args else ''
             raise DataError("Processing variable file '%s' %sfailed: %s"
-                            % (path, amsg, get_error_message()))
+                            % (path, args, get_error_message()))
 
-    def _get_variables(self, var_file, args=None):
-        variables = self._get_dynamical_variables(var_file, args or ())
-        if variables is None:
-            names = self._get_static_variable_names(var_file)
-            variables = self._get_static_variables(var_file, names)
-        self._validate_variables(variables)
-        return variables
+    def _get_variables(self, var_file, args):
+        if self._is_dynamic(var_file):
+            variables = self._get_dynamic(var_file, args)
+        else:
+            variables = self._get_static(var_file)
+        return list(self._decorate_and_validate(variables))
 
-    def _get_dynamical_variables(self, var_file, args):
-        get_variables = getattr(var_file, 'get_variables', None)
-        if not get_variables:
-            get_variables = getattr(var_file, 'getVariables', None)
-        if not get_variables:
-            return None
+    def _is_dynamic(self, var_file):
+        return (hasattr(var_file, 'get_variables') or
+                hasattr(var_file, 'getVariables'))
+
+    def _get_dynamic(self, var_file, args):
+        get_variables = (getattr(var_file, 'get_variables', None) or
+                         getattr(var_file, 'getVariables'))
         variables = get_variables(*args)
         if is_dict_like(variables):
             return variables.items()
         # TODO: This shouldn't be needed after Jython 2.7 beta 4
         if isinstance(variables, Map):
             return [(entry.key, entry.value) for entry in variables.entrySet()]
-        raise DataError("Expected mapping but %s returned %s."
+        raise DataError("Expected '%s' to return dict-like value, got %s."
                         % (get_variables.__name__, type(variables).__name__))
 
-    def _get_static_variable_names(self, var_file):
+    def _get_static(self, var_file):
         names = [attr for attr in dir(var_file) if not attr.startswith('_')]
         if hasattr(var_file, '__all__'):
             names = [name for name in names if name in var_file.__all__]
-        return names
-
-    def _get_static_variables(self, var_file, names):
         variables = [(name, getattr(var_file, name)) for name in names]
         if not inspect.ismodule(var_file):
-            variables = [var for var in variables if not callable(var[1])]
+            variables = [(n, v) for n, v in variables if not callable(v)]
         return variables
 
-    def _validate_variables(self, variables):
+    def _decorate_and_validate(self, variables):
         for name, value in variables:
-            if name.startswith('LIST__') and not is_list_like(value):
-                # TODO: what to do with this error
-                name = '@{%s}' % name[len('LIST__'):]
-                raise DataError("List variable '%s' cannot get a non-list "
-                                "value '%s'" % (name, unic(value)))
+            name = self._decorate(name)
+            self._validate(name, value)
+            yield name, value
+
+    def _decorate(self, name):
+        if name.startswith('LIST__'):
+            return '@{%s}' % name[6:]
+        if name.startswith('DICT__'):
+            return '&{%s}' % name[6:]
+        return '${%s}' % name
+
+    def _validate(self, name, value):
+        if name[0] == '@' and not is_list_like(value):
+            raise DataError("Invalid variable '%s': Expected list-like value, "
+                            "got %s." % (name, type(value).__name__))
+        if name[0] == '&' and not is_dict_like(value):
+            raise DataError("Invalid variable '%s': Expected dict-like value, "
+                            "got %s." % (name, type(value).__name__))

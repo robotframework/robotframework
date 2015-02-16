@@ -26,6 +26,7 @@ from robot.utils import (get_env_var, get_env_vars, get_error_message,
                          is_dict_like, is_list_like, normalize, DotDict,
                          NormalizedDict)
 
+from .isvar import validate_var
 from .notfound import raise_not_found
 
 
@@ -40,6 +41,7 @@ class VariableFinder(object):
         self._store = variable_store
 
     def find(self, name):
+        validate_var(name, '$@&%')
         identifier = name[0]
         for finder in self._finders:
             if identifier in finder.identifiers:

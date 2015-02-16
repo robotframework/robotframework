@@ -12,12 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
-from robot.utils import is_dict_like, is_list_like, DotDict
-
 from .filesetter import VariableFileSetter
 from .finders import VariableFinder
-from .isvar import validate_var
 from .replacer import VariableReplacer
 from .store import VariableStore
 from .tablesetter import VariableTableSetter
@@ -37,23 +33,9 @@ class Variables(object):
         self._finder = VariableFinder(self.store)
 
     def __setitem__(self, name, value):
-        validate_var(name)
-        if name[0] == '@':
-            if not is_list_like(value):
-                self._raise_cannot_set_type(name, value, 'list')
-            value = list(value)
-        if name[0] == '&':
-            if not is_dict_like(value):
-                self._raise_cannot_set_type(name, value, 'dictionary')
-            value = DotDict(value)
-        self.store.add(name[2:-1], value)
-
-    def _raise_cannot_set_type(self, name, value, expected):
-        raise DataError("Cannot set variable '%s': Expected %s-like value, got "
-                        "%s instead." % (name, expected, type(value).__name__))
+        self.store.add(name, value)
 
     def __getitem__(self, name):
-        validate_var(name, '$@&%')
         return self._finder.find(name)
 
     def resolve_delayed(self):

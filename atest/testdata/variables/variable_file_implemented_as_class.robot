@@ -20,7 +20,7 @@ Properties in Python Class
 Dynamic Python Class
     Should Be Equal    ${DYNAMIC PYTHON STRING}    hello world
     Should Be True    @{DYNAMIC PYTHON LIST} == ['hello', 'world']
-    Should Be True    ${DYNAMIC PYTHON LIST} == ('hello', 'world')
+    Should Be True    ${DYNAMIC PYTHON LIST} == ['hello', 'world']
 
 Java Class
     Should Be Equal    ${JAVA STRING}    hi
