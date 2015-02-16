@@ -46,4 +46,3 @@ Fail If Variable Exists 4
 Fail If Variable Exists 5
     [Documentation]    Empty name FAIL Invalid variable syntax ''.
     Fail If Variable Exists    ${EMPTY}
-    Equals    ${cli_var_3}    New value 3

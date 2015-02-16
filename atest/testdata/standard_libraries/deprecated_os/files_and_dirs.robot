@@ -26,7 +26,7 @@ Fail Unless Exists With Pattern
     [Documentation]    FAIL REGEXP: Path '.*\\*non\\*existing\\*' does not match any file or directory
     Create File    ${TESTFILE}
     Create File    ${TESTFILE2}
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Fail Unless Exists    ${CURDIR}${/}*
     Fail Unless Exists    ${CURDIR}${/}*.txt
     Fail Unless Exists    ${CURDIR}${/}R*
@@ -47,7 +47,7 @@ Fail If Exists With Pattern
     [Documentation]    FAIL Path '${CURDIR}${/}R-*' matches '${CURDIR}${/}R-D' and '${CURDIR}${/}R-F.txt'
     Fail If Exists    *non?existing*
     Create File    ${TESTFILE}
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Fail If Exists    ${CURDIR}${/}R-*
 
 Fail Unless File Exists
@@ -67,7 +67,7 @@ Fail Unless File Exists With Non Default Message
 Fail Unless File Exists With Pattern
     [Documentation]    FAIL Path '${CURDIR}${/}robot_temp_d??' does not match any file
     Create File    ${TESTFILE}    whatever
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Fail Unless File Exists    ${CURDIR}${/}R-*
     Fail Unless File Exists    ${CURDIR}${/}R[!abcd][FD].t?t
     Fail Unless File Exists    ${CURDIR}${/}robot_temp_d??
@@ -87,7 +87,7 @@ Fail If File Exists With Non Default Message
 Fail If File Exists With Pattern Matching One File
     [Documentation]    FAIL Path '${CURDIR}${/}R-*.txt' matches file '${CURDIR}${/}R-F.txt'
     Create File    ${TESTFILE}    whatever
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Fail If File Exists    *non?existing*
     Fail If File Exists    ${CURDIR}${/}R-D
     Fail If File Exists    ${CURDIR}${/}R-*.txt
@@ -115,7 +115,7 @@ Fail Unless Dir Exists Exists With Non Default Message
 Fail Unless Dir Exists With Pattern
     [Documentation]    FAIL Path '${CURDIR}${/}R-F.txt' does not match any directory
     Create File    ${TESTFILE}
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Fail Unless Dir Exists    ${CURDIR}${/}R-*
     Fail Unless Dir Exists    ${CURDIR}${/}R[!whatever][DB]*
     Fail Unless Dir Exists    ${CURDIR}${/}R-F.txt
@@ -134,20 +134,20 @@ Fail If Dir Exists With Non Default Message
 Fail If Dir Exists With Pattern Matching One Dir
     [Documentation]    FAIL Path '${CURDIR}${/}R-*' matches directory '${TESTDIR}'
     Create File    ${TESTFILE}
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Fail If Dir Exists    *non?existing*
     Fail If Dir Exists    ${CURDIR}${/}R-F.txt
     Fail If Dir Exists    ${CURDIR}${/}R-*
 
 Fail If Dir Exists With Pattern Matching Multiple Dirs
     [Documentation]    FAIL Path '${CURDIR}${/}R-[DF]*' matches directories '${TESTDIR}' and '${TESTDIR2}'
-    Create Dir    ${TESTDIR}
-    Create Dir    ${TESTDIR2}
+    Create Directory    ${TESTDIR}
+    Create Directory    ${TESTDIR2}
     Fail If Dir Exists    ${CURDIR}${/}R-[DF]*
 
 Fail Unless Dir Empty
     [Documentation]    FAIL Directory '${TESTDIR}' is not empty. Contents: 'f1.txt', 'f2.txt', 'f3.txt'
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Fail Unless Dir Empty    ${TESTDIR}
     Create File    ${TESTDIR}${/}f1.txt
     Create File    ${TESTDIR}${/}f2.txt
@@ -156,7 +156,7 @@ Fail Unless Dir Empty
 
 Fail If Dir Empty
     [Documentation]    FAIL Directory '${TESTDIR}' is empty.
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Create File    ${TESTDIR}${/}file.txt
     Fail If Dir Empty    ${TESTDIR}
     Remove File    ${TESTDIR}${/}file.txt
@@ -189,12 +189,12 @@ Creating Dir Over existing File Fails
     Create Dir    ${TESTFILE}
 
 Remove Dir
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Remove Dir    ${TESTDIR}
     Fail If Exists    ${TESTDIR}
 
 Remove Dir Recursively
-    Create Dir    ${TESTDIR}${/}sub
+    Create Directory    ${TESTDIR}${/}sub
     Create File    ${TESTDIR}${/}file.txt
     Create File    ${TESTDIR}${/}sub${/}file2.txt
     Remove Dir    ${TESTDIR}    Recursive
@@ -205,15 +205,15 @@ Removing Non-Existing Dir Is Ok
 
 Removing Non-Empty Dir when not Recursive Fails
     [Documentation]    FAIL Directory '${TESTDIR}' is not empty.
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Create File    ${TESTDIR}${/}file.txt
     Remove Dir    ${TESTDIR}
 
 Empty Dir
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Create File    ${TESTDIR}${/}foo.txt
     Create File    ${TESTDIR}${/}bar.txt
-    Create Dir    ${TESTDIR}${/}subdir
+    Create Directory    ${TESTDIR}${/}subdir
     Create File    ${TESTDIR}${/}subdir${/}sub.txt
     Fail If Dir Empty    ${TESTDIR}
     Empty Dir    ${TESTDIR}
@@ -230,7 +230,7 @@ Emptying Dir When Dir is File Fails
 
 Move Dir
     [Documentation]    Moving directory around. Moving to excisting and non-existing directory should pass. PASS
-    Create Dir    ${TESTDIR}${/}sub
+    Create Directory    ${TESTDIR}${/}sub
     Create File    ${TESTDIR}${/}world.txt    world
     Create File    ${TESTDIR}${/}tellus.txt    tellus
     Create File    ${TESTDIR}${/}sub${/}marine.txt    sub\nmarine
@@ -241,7 +241,7 @@ Move Dir
     Get and Check File    ${TESTDIR2}${/}foo${/}tellus.txt    tellus
     Get and Check File    ${TESTDIR2}${/}foo${/}sub${/}marine.txt    sub\nmarine
     # Move to existing dir
-    Create Dir    ${TESTDIR}
+    Create Directory    ${TESTDIR}
     Move Dir    ${TESTDIR2}${/}foo    ${TESTDIR}
     Fail If Exists    ${TESTDIR2}${/}foo
     Get and Check File    ${TESTDIR}${/}foo${/}world.txt    world
@@ -262,21 +262,9 @@ Moving Non-Existing Dir Fails
 Get And Check File
     [Arguments]    ${path}    ${expected}
     ${content}    Get File    ${path}
-    Fail Unless Equal    ${content}    ${expected}
+    Should Be Equal    ${content}    ${expected}
 
 Remove Temps
     Remove Files    ${TESTFILE}    ${TESTFILE2}
-    Remove Dir    ${TESTDIR}    recursive
-    Remove Dir    ${TESTDIR2}    recursive
-
-Sleep And Remove File And Dir
-    [Arguments]    ${path_to_file}    ${path_to_dir}
-    Sleep    1s 500 ms
-    Remove File    ${path_to_file}
-    Remove Dir    ${path_to_dir}
-
-Sleep And Create File And Dir
-    [Arguments]    ${path_to_file}    ${path_to_dir}
-    Sleep    1s 500 ms
-    Create File    ${path_to_file}
-    Create Dir    ${path_to_dir}
+    Remove Directory    ${TESTDIR}    recursive
+    Remove Directory    ${TESTDIR2}    recursive

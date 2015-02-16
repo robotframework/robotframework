@@ -16,4 +16,3 @@ List Dir With Absolute
 List And Count Files And Dirs In Dir
     [Documentation]  Tests 'List Files In Dir', 'List Dirs In Dir', 'Count Files In Dir', 'Count Dirs In Dir' and 'Count Items In Dir'
     Check testcase  List And Count Files And Dirs In Dir
-
