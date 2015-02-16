@@ -32,7 +32,7 @@ class _BaseSettings(object):
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
                  'ReRunFailed'      : ('rerunfailed', 'NONE'),
-                 'DeprecatedRunFailed': ('runfailed', 'NONE'),
+                 'DeprecatedRunFailed': ('runfailed', 'NONE'),  # TODO: Remove in RF 2.10/3.0.
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -85,7 +85,12 @@ class _BaseSettings(object):
         self._opts[name] = value
 
     def _process_value(self, name, value):
-        if name in ['ReRunFailed', 'DeprecatedRunFailed']:
+        if name == 'ReRunFailed':
+            return gather_failed_tests(value)
+        if name == 'DeprecatedRunFailed':
+            if value.upper() != 'NONE':
+                LOGGER.warn('Option --runfailed is deprecated and will be '
+                            'removed in the future. Use --rerunfailed instead.')
             return gather_failed_tests(value)
         if name == 'LogLevel':
             return self._process_log_level(value)

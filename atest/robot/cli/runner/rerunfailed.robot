@@ -32,16 +32,18 @@ Non-existing failing from output file is not executed
 Suite teardown failures are noticed
     Test Should Have Been Executed    Test passed but suite teardown fails
 
---runfailed still works without warnings
-    [Documentation]    --runfailed should be deprecated in RF 2.9 and removed later
+--runfailed is deprecated
+    [Documentation]    --rerunfailed added in 2.8.4, --runfailed deprecated with warning in 2.9
     Run Tests    --runfailed ${RUN FAILED FROM} --test Selected --exclude tag    ${SUITE DIR}
-    Should Be Empty    ${ERRORS}
-    Run Keyword And Expect Error    No test 'Passing' found*    Check Test Case    Passing
-    Check Test Case    Failing
-    Check Test Case    Really Failing
-    Check Test Case    Selected
-    Run Keyword And Expect Error    No test 'Failing with tag' found*    Check Test Case    Failing with tag
-    Run Keyword And Expect Error    No test 'Only in one suite' found*    Check Test Case    Only in one suite
+    Length Should Be    ${ERRORS}    1
+    Check Log Message    @{ERRORS}[0]     Option --runfailed is deprecated and will be removed in the future. Use --rerunfailed instead.    WARN
+    Test Should Not Have Been Executed    Passing
+    Test Should Have Been Executed    Failing
+    Test Should Have Been Executed    Really Failing
+    Test Should Have Been Executed    Selected
+    Test Should Not Have Been Executed    Failing with tag
+    Test Should Not Have Been Executed    Only in one suite
+    Test Should Have Been Executed    Test passed but suite teardown fails
 
 *** Keywords ***
 Suite initialization
