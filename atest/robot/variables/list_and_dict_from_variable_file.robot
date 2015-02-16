@@ -29,6 +29,18 @@ Invalid dict
     Verify Error    1    [ DICT__inv_dict | [u'1', u'2', 3] ]    \&{inv_dict}
     ...    Expected dict-like value, got list.
 
+Scalar list likes can be used as list
+    Check Test Case    ${TESTNAME}
+
+Scalar list likes are not converted to lists
+    Check Test Case    ${TESTNAME}
+
+Scalar dicts can be used as dicts
+    Check Test Case    ${TESTNAME}
+
+Scalar dicts are not converted to DotDicts
+    Check Test Case    ${TESTNAME}
+
 *** Keywords ***
 Verify Error
     [Arguments]    ${index}    ${args}    ${var}    ${error}
