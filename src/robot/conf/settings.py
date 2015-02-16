@@ -92,6 +92,9 @@ class _BaseSettings(object):
                 LOGGER.warn('Option --runfailed is deprecated and will be '
                             'removed in the future. Use --rerunfailed instead.')
             return gather_failed_tests(value)
+        if name == 'DeprecatedMerge' and value is True:
+            LOGGER.warn('Option --rerunmerge is deprecated and will be '
+                        'removed in the future. Use --merge instead.')
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):
@@ -477,8 +480,8 @@ class RebotSettings(_BaseSettings):
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
-                       'ReRunMerge'        : ('rerunmerge', False),
-                       'Merge'             : ('merge', False)}
+                       'Merge'             : ('merge', False),
+                       'DeprecatedMerge'   : ('rerunmerge', False)}
 
     def _output_disabled(self):
         return False
@@ -535,7 +538,7 @@ class RebotSettings(_BaseSettings):
 
     @property
     def merge(self):
-        return self['Merge'] or self['ReRunMerge']
+        return self['Merge'] or self['DeprecatedMerge']
 
     @property
     def console_logger_config(self):

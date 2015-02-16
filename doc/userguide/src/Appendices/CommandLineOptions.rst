@@ -21,7 +21,7 @@ Command line options for test execution
   -t, --test <name>       `Selects the test cases by name`_.
   -s, --suite <name>      `Selects the test suites`_ by name.
   -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_ to be re-executed.
-  --runfailed <file>      Deprecated. Use :option:`--rerunfailed` instead.
+  --runfailed <file>      Deprecated since RF 2.8.4. Use :option:`--rerunfailed` instead.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
@@ -82,7 +82,7 @@ Command line options for post-processing outputs
 ------------------------------------------------
 
   -R, --merge             Changes result combining behavior to `merging <merging outputs_>`__.
-  --rerunmerge            Deprecated. Use :option:`--merge` instead.
+  --rerunmerge            Deprecated since RF 2.8.6. Use :option:`--merge` instead.
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.

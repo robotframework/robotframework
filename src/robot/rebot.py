@@ -67,7 +67,7 @@ Options
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
-    --rerunmerge          Deprecated. Use --merge instead.
+    --rerunmerge          Deprecated since RF 2.8.6. Use --merge instead.
  -N --name name           Set the name of the top level test suite. Underscores
                           in the name are converted to spaces. Default name is
                           created from the name of the executed data source.

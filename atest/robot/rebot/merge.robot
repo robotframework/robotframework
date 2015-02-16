@@ -52,12 +52,20 @@ Non-matching root suite
 
 Using other options
     [Documentation]  Test that other command line options works normally with
-    ...              --rerunmerge. Most importantly verify that options handled
+    ...              --merge. Most importantly verify that options handled
     ...              by ExecutionResult (--flattenkeyword) work correctly.
     Re-run tests
     Run merge    --log log.html --flattenkeyword name:BuiltIn.Log --name Custom
     Test merge should have been successful    suite name=Custom
     Log should have been created with all Log keywords flattened
+
+--rerunmerge is deprecated
+    Re-run tests
+    Run Rebot    --rerunmerge    ${ORIGINAL}    ${MERGE 1}
+    Test merge should have been successful
+    Stderr Should Be Equal To    [ WARN ]
+    ...    Option --rerunmerge is deprecated and will be removed in the future.
+    ...    Use --merge instead.\n
 
 *** Keywords ***
 Run original tests
@@ -93,7 +101,7 @@ Run incompatible suite
 
 Run merge
     [Arguments]    ${options}=
-    Run Rebot    --rerunmerge ${options}    ${ORIGINAL}    ${MERGE 1}
+    Run Rebot    --merge ${options}    ${ORIGINAL}    ${MERGE 1}
     Stderr Should Be Empty
 
 Run multi-merge
@@ -101,7 +109,7 @@ Run multi-merge
     Stderr Should Be Empty
 
 Run incompatible merge
-    Run Rebot Without Processing Output    --rerunmerge    ${ORIGINAL}    ${MERGE 1}
+    Run Rebot Without Processing Output    --merge    ${ORIGINAL}    ${MERGE 1}
 
 Test merge should have been successful
     [Arguments]    ${suite name}=Suites    ${status 1}=FAIL    ${message 1}=
