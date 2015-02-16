@@ -38,7 +38,7 @@ class TestSignalHandlerRegisteringFailures(unittest.TestCase):
         def raise_value_error(signum, handler):
             raise ValueError("Got signal %d" % signum)
         signal.signal = raise_value_error
-        _StopSignalMonitor().start()
+        _StopSignalMonitor().__enter__()
         assert_equal(len(self.logger.messages), 2)
         self._verify_warning(self.logger.messages[0], 'INT',
                              'Got signal %d' % signal.SIGINT)
@@ -54,7 +54,7 @@ class TestSignalHandlerRegisteringFailures(unittest.TestCase):
         assert_equal(msg.level, 'WARN')
 
     def test_failure_but_no_warning_when_not_in_main_thread(self):
-        t = Thread(target=_StopSignalMonitor().start)
+        t = Thread(target=_StopSignalMonitor().__enter__)
         t.start()
         t.join()
         assert_equal(len(self.logger.messages), 0)
@@ -69,7 +69,7 @@ class TestSignalHandlerRegisteringFailures(unittest.TestCase):
                 if signum == signal.SIGINT:
                     raise IllegalArgumentException('xxx')
             signal.signal = raise_iae_for_sigint
-            _StopSignalMonitor().start()
+            _StopSignalMonitor().__enter__()
             assert_equal(len(self.logger.messages), 1)
             self._verify_warning(self.logger.messages[0], 'INT',
                                  'java.lang.IllegalArgumentException: xxx')
