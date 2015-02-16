@@ -8,21 +8,21 @@ Test Template   Listener Import Message Should Be In Syslog
 
 *** Test Cases ***
 Python Class Listener From Module With Same Name
-    class    OldListenAll    OldListenAll
+    class    OldListenAll    OldListenAll    deprecated=0
 
 Python Class Listener From A Module With Different Name
-    class    old_listeners.ListenSome    old_listeners
+    class    old_listeners.ListenSome    old_listeners    deprecated=1
 
 Python Module Listener
-    module    old_module_listener    old_module_listener
+    module    old_module_listener    old_module_listener    deprecated=2
 
 Listener With Arguments
-    class    old_listeners.WithArgs    old_listeners    4
+    class    old_listeners.WithArgs    old_listeners    4    deprecated=3
     [Teardown]    Check Listener File  ${ARGS_FILE}
     ...    I got arguments 'value' and 'default'    I got arguments 'a1' and 'a2'
 
 Listener With Path
-    class    ${LISTENERS}${/}OldListenAll.py    OldListenAll
+    class    ${LISTENERS}${/}OldListenAll.py    OldListenAll    deprecated=5
     [Teardown]    File Should Exist  %{TEMPDIR}${/}${ALL_FILE2}
 
 Listener With Wrong Number Of Arguments
@@ -42,11 +42,11 @@ Non Existing Listener
 
 Java Listener
     [Tags]  jybot
-    class    OldJavaListener
+    class    OldJavaListener    deprecated=8
 
 Java Listener With Arguments
     [Tags]  jybot
-    class    OldJavaListenerWithArgs    count=3
+    class    OldJavaListenerWithArgs    count=3    deprecated=9
     [Teardown]    Check Listener File    ${JAVA_ARGS_FILE}
     ...    I got arguments 'Hello' and 'world'
 
@@ -61,7 +61,6 @@ Java Listener With Wrong Number Of Arguments
     ...    Importing listener 'OldJavaListenerWithArgs' failed:
     ...    Creating instance failed:
     ...    TypeError: OldJavaListenerWithArgs(): expected 2 args; got 3${EMPTY TB}
-
 
 *** Keywords ***
 

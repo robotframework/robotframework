@@ -19,12 +19,15 @@ ${EMPTY TB}     \nTraceback (most recent call last):\n${SPACE*2}None\n
 *** Keywords ***
 
 Listener Import Message Should Be In Syslog
-    [Arguments]  ${type}  ${name or path}  ${source}=    ${count}=1
+    [Arguments]  ${type}  ${name or path}  ${source}=    ${count}=1    ${deprecated}=None
     ${name or path} =    Normalize Path    ${name or path}
     ${module_path} =    Join Path  ${LISTENERS}  ${source}
     ${location} =    Set Variable If    '${source}'    '${module_path}    unknown location.
     ${syslog} =    Get syslog
     Should Contain X Times    ${syslog}    Imported listener ${type} '${name or path}' from ${location}    ${count}
+    Run Keyword If    ${deprecated} is not None
+    ...    Check Log Message    @{ERRORS}[${deprecated}]
+    ...    Listener '${name or path}' uses deprecated API version 1. Switch to API version 2 instead.    WARN
 
 Remove Listener Files
     Remove Files

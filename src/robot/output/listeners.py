@@ -229,8 +229,11 @@ class ListenerProxy(AbstractLoggerProxy):
         listener = self._import_listener(name, args)
         AbstractLoggerProxy.__init__(self, listener)
         self.name = name
-        self.version = self._get_version(listener)
         self.is_java = self._is_java(listener)
+        self.version = self._get_version(listener)
+        if self.version == 1:
+            LOGGER.warn("Listener '%s' uses deprecated API version 1. "
+                        "Switch to API version 2 instead." % self.name)
 
     def _is_java(self, listener):
         return utils.is_jython and isinstance(listener, Object)

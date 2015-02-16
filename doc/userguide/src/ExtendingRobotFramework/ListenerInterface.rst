@@ -60,17 +60,19 @@ Listener interface versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The signatures of methods related to test execution progress were changed in
-Robot Framework 2.1. This change was made so that new information can be added
-to listener interface without breaking existing listeners. The old signatures
-will continue to work, but they will be deprecated in some future version, so
-all new listeners should be implemented with signatures described in the table
-below. The most recent detailed description of the old listener interface can
-be found in User Guide of Robot Framework 2.0.4.
+Robot Framework 2.1. This change was made to allow new information to be added
+to the listener interface without breaking existing listeners.
+A listener must have attribute `ROBOT_LISTENER_API_VERSION` with value 2,
+either as a string or as an integer, to be recognized as a new style listener.
+The old listener interface has been deprecated in Robot Framework 2.9 and
+will be removed in the next major release.
 
-.. note:: A listener must have attribute `ROBOT_LISTENER_API_VERSION`
-  defined in order to be recognized as a new style listener. Value of the
-  `ROBOT_LISTENER_API_VERSION` attribute must be 2, either as a string or
-  as an integer. The examples below are implemented as new style listeners.
+All new listeners should be implemented as new style listeners with method
+signatures described in the next section. Also all following examples
+are implemented as new style listeners. Documentation of the old listener
+interface API can be found from `Robot Framework User Guide`__ version 2.0.4.
+
+__ http://robotframework.org/robotframework/#user-guide
 
 Listener interface method signatures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
