@@ -361,12 +361,11 @@ class KeywordStore(object):
                 if utils.eq(owner.name, owner_name) and name in owner.handlers]
 
     def _raise_multiple_keywords_found(self, name, found, implicit=True):
-        error = "Multiple keywords with name '%s' found.\n" % name
+        error = "Multiple keywords with name '%s' found" % name
         if implicit:
-            error += "Give the full name of the keyword you want to use.\n"
+            error += ". Give the full name of the keyword you want to use"
         names = sorted(handler.longname for handler in found)
-        error += "Found: %s" % utils.seq2str(names)
-        raise DataError(error)
+        raise DataError('\n    '.join([error+':'] + names))
 
 
 class KeywordRecommendationFinder(object):

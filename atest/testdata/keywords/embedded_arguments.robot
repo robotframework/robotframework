@@ -2,6 +2,9 @@
 Resource          resources/embedded_args_in_uk_1.robot
 Resource          resources/embedded_args_in_uk_2.robot
 
+*** Variables ***
+${INDENT}         ${SPACE * 4}
+
 *** Test Cases ***
 Embedded Arguments In User Keyword Name
     ${name}    ${book} =    User Peke Selects Advanced Python From Webshop
@@ -115,7 +118,7 @@ Embedded Arguments In Resource File Used Explicitly
 
 Keyword with normal arguments cannot have embedded arguments
     [Documentation]    FAIL No keyword with name 'Keyword with value and normal args' found. Did you mean:
-    ...    ${SPACE * 4}Keyword With ${variable} And Normal Args
+    ...    ${INDENT}Keyword With \${variable} And Normal Args
     Keyword with ${variable} and normal args    foo    bar
     Keyword with value and normal args    foo    bar
 
@@ -125,31 +128,35 @@ Keyword with embedded args can be used as "normal" keyword
     User ${user} Selects ${item} From Webshop
 
 Keyword Matching Multiple Keywords In Test Case File
-    [Documentation]    FAIL Test case file contains multiple keywords matching name 'foo+tc+bar-tc-zap'.
-    ...    Found: '${a}-tc-${b}' and '${a}+tc+${b}'
+    [Documentation]    FAIL Test case file contains multiple keywords matching name 'foo+tc+bar-tc-zap':
+    ...    ${INDENT}\${a}+tc+\${b}
+    ...    ${INDENT}\${a}-tc-\${b}
     foo+tc+bar
     foo-tc-bar
     foo+tc+bar+tc+zap
     foo+tc+bar-tc-zap
 
 Keyword Matching Multiple Keywords In One Resource File
-    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name 'foo+r1+bar-r1-zap'.
-    ...    Found: '${a}-r1-${b}' and '${a}+r1+${b}'
+    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name 'foo+r1+bar-r1-zap':
+    ...    ${INDENT}\${a}+r1+\${b}
+    ...    ${INDENT}\${a}-r1-\${b}
     foo+r1+bar
     foo-r1-bar
     foo+r1+bar-r1-zap
 
 Keyword Matching Multiple Keywords In Different Resource Files
-    [Documentation]    FAIL Multiple keywords with name 'foo-r1-bar-r2-zap' found.
-    ...    Give the full name of the keyword you want to use.
-    ...    Found: 'embedded_args_in_uk_1.foo-r1-bar-r2-zap' and 'embedded_args_in_uk_2.foo-r1-bar-r2-zap'
+    [Documentation]    FAIL Multiple keywords with name 'foo-r1-bar-r2-zap' found.\
+    ...    Give the full name of the keyword you want to use:
+    ...    ${INDENT}embedded_args_in_uk_1.foo-r1-bar-r2-zap
+    ...    ${INDENT}embedded_args_in_uk_2.foo-r1-bar-r2-zap
     foo-r1-bar
     foo-r2-bar
     foo-r1-bar-r2-zap
 
 Keyword Matching Multiple Keywords In One And Different Resource Files
-    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name '-r1-r2-+r1+'.
-    ...    Found: '${a}-r1-${b}' and '${a}+r1+${b}'
+    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name '-r1-r2-+r1+':
+    ...    ${INDENT}\${a}+r1+\${b}
+    ...    ${INDENT}\${a}-r1-\${b}
     -r1-r2-+r1+
 
 *** Keywords ***

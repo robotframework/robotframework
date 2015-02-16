@@ -37,9 +37,10 @@ Extra stuff in result dictionary is ignored
     Extra stuff in result dictionary
 
 Keyword name conflict with custom library
-    [Documentation]    FAIL Multiple keywords with name 'Conflict' found.
-    ...    Give the full name of the keyword you want to use.
-    ...    Found: 'Conflict.Conflict' and 'Remote.Conflict'
+    [Documentation]    FAIL Multiple keywords with name 'Conflict' found.\
+    ...    Give the full name of the keyword you want to use:
+    ...    ${SPACE*4}Conflict.Conflict
+    ...    ${SPACE*4}Remote.Conflict
     Conflict
 
 Keyword name conflict with standard library

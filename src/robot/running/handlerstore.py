@@ -63,8 +63,7 @@ class HandlerStore(object):
         if not found:
             raise DataError("%s contains no keywords matching name '%s'."
                             % (where, name))
-        names = seq2str([f.orig_name for f in found])
-        # TODO: List found on separate lines like kw/var recommendations.
-        # Both here and in namespace when multiple keywords match.
-        raise DataError("%s contains multiple keywords matching name '%s'.\n"
-                        "Found: %s" % (where, name, names))
+        error = ["%s contains multiple keywords matching name '%s':"
+                 % (where, name)]
+        names = sorted(handler.orig_name for handler in found)
+        raise DataError('\n    '.join(error + names))

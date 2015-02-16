@@ -67,8 +67,9 @@ Dots in library name and keyword name with full name
 
 Conflicting names with dots
     [Documentation]    This conflict cannot be resolved    FAIL
-    ...    Multiple keywords with name 'library.with.dots.in.name.Conflict' found.
-    ...    Found: 'library.with.dots.In.name.conflict' and 'library.with.dots.in.name.Conflict'
+    ...    Multiple keywords with name 'library.with.dots.in.name.Conflict' found:
+    ...    ${SPACE*4}library.with.dots.In.name.conflict
+    ...    ${SPACE*4}library.with.dots.in.name.Conflict
     Conflict                              # in 'library.with.dots.in.name'
     in.name.Conflict                      # in 'library.with.dots'
     library.with.dots.in.name.Conflict    # matches both of the above
