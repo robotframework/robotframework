@@ -532,7 +532,7 @@ class TestPopulatingComments(_PopulatorTest):
                                         ['Variables', 'varz.py'],
                                         ['# between values'],
                                         ['...', 'arg'],
-                                        ['Meta: metaname', 'metavalue'],
+                                        ['Metadata', 'metaname', 'metavalue'],
                                         ['### last line is commented'],
                                         ])
         self._assert_no_parsing_errors()

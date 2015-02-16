@@ -14,6 +14,8 @@
 
 import re
 
+from robot.output import LOGGER
+
 
 class DataRow(object):
     _row_continuation_marker = '...'
@@ -76,6 +78,10 @@ class DataRow(object):
         return value.lower().startswith(self._ye_olde_metadata_prefix)
 
     def _convert_to_new_style_metadata(self):
+        # TODO: Remove support for olde style metadata in RF 2.10.
+        LOGGER.warn("Setting suite metadata using '%s' syntax is deprecated. "
+                    "Use 'Metadata' setting with name and value in separate "
+                    "cells instead." % self.head)
         return ['Metadata'] + [self.head.split(':', 1)[1].strip()] + self.tail
 
     def starts_for_loop(self):

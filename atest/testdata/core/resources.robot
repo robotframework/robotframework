@@ -1,6 +1,3 @@
-*** Setting ***
-Variables         variables2.py
-
 *** Variable ***
 ${resource_file_var}    Variable from a resource file
 ${resource_file_var_2}    Another variable from a resource file
