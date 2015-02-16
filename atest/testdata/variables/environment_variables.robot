@@ -2,7 +2,7 @@
 Documentation   %{PATH} used in suite documentation
 Suite Setup     Set Environment Variable  THIS_ENV_VAR_IS_SET  Env var value
 Default Tags    %{PATH}
-Meta: PATH      %{PATH}
+Metadata        PATH    %{PATH}
 Library         OperatingSystem
 
 *** Variables ***
