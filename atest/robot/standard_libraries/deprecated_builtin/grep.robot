@@ -16,8 +16,9 @@ Grep Simple Pattern
 Grep Regexp
     Check Test Case  Grep Regexp
 
-No Deprecation Warning Is Shown When Grep Is Used
-    Length Should Be  ${ERRORS.msgs}  0
-
-Regexp Escape
-    Check Test Case  Regexp Escape
+Grep Is Deprecated
+    Length Should Be  ${ERRORS.msgs}  18
+    :FOR    ${error}    IN    @{ERRORS}
+    \    Check Log Message    ${error}
+    ...    Keyword 'DeprecatedBuiltIn.Grep' is deprecated. Use 'String.Get Lines Containing/Matching' keywords instead.
+    ...    WARN

@@ -12,12 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from .DeprecatedBuiltIn import deprecator
+from .OperatingSystem import OperatingSystem
 
-import OperatingSystem
 
-OPSYS = OperatingSystem.OperatingSystem()
+OPSYS = OperatingSystem()
 
-class DeprecatedOperatingSystem:
+
+class DeprecatedOperatingSystem(object):
+    __metaclass__ = deprecator
+
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
     delete_environment_variable = OPSYS.remove_environment_variable
