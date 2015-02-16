@@ -25,7 +25,8 @@ except ImportError:   # No expat in IronPython 2.7
         pass
 
 from robot.errors import RemoteError
-from robot.utils import is_list_like, is_dict_like, timestr_to_secs, unic
+from robot.utils import (is_list_like, is_dict_like, timestr_to_secs, unic,
+                         DotDict)
 
 
 IRONPYTHON = sys.platform == 'cli'
@@ -174,7 +175,7 @@ class RemoteResult(object):
         if isinstance(value, xmlrpclib.Binary):
             return str(value)
         if is_dict_like(value):
-            return dict((k, self._handle_binary(v)) for k, v in value.items())
+            return DotDict((k, self._handle_binary(v)) for k, v in value.items())
         if is_list_like(value):
             return [self._handle_binary(v) for v in value]
         return value
