@@ -236,7 +236,8 @@ class TidyCommandLine(Application):
 
     def validate(self, opts, args):
         validator = ArgumentValidator()
-        validator.mode_and_arguments(args, **opts)
+        opts['recursive'], opts['inplace'] \
+            = validator.mode_and_arguments(args, **opts)
         opts['format'] = validator.format(args, **opts)
         opts['lineseparator'] = validator.line_sep(**opts)
         if not opts['spacecount']:
@@ -249,11 +250,14 @@ class TidyCommandLine(Application):
 class ArgumentValidator(object):
 
     def mode_and_arguments(self, args, recursive, inplace, **others):
+        recursive, inplace = bool(recursive), bool(inplace)
         validators = {(True, True): self._recursive_and_inplace_together,
                       (True, False): self._recursive_mode_arguments,
                       (False, True): self._inplace_mode_arguments,
                       (False, False): self._default_mode_arguments}
-        validators[(recursive, inplace)](args)
+        validator = validators[(recursive, inplace)]
+        validator(args)
+        return recursive, inplace
 
     def _recursive_and_inplace_together(self, args):
         raise DataError('--recursive and --inplace can not be used together.')

@@ -55,7 +55,7 @@ Using other options
     ...              --merge. Most importantly verify that options handled
     ...              by ExecutionResult (--flattenkeyword) work correctly.
     Re-run tests
-    Run merge    --log log.html --flattenkeyword name:BuiltIn.Log --name Custom
+    Run merge    --nomerge --log log.html --merge --flattenkeyword name:BuiltIn.Log --name Custom
     Test merge should have been successful    suite name=Custom
     Log should have been created with all Log keywords flattened
 

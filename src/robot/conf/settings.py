@@ -57,7 +57,7 @@ class _BaseSettings(object):
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
-                 'NoStatusRC'       : ('nostatusrc', False),
+                 'StatusRC'         : ('statusrc', True),
                  'MonitorColors'    : ('monitorcolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
@@ -344,7 +344,7 @@ class _BaseSettings(object):
 
     @property
     def status_rc(self):
-        return not self['NoStatusRC']
+        return self['StatusRC']
 
     @property
     def xunit_skip_noncritical(self):
