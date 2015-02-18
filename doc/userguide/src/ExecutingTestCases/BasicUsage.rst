@@ -129,6 +129,19 @@ Some options can be specified several times. For example,
 variables. If the options that take only one value are used several
 times, the value given last is effective.
 
+Disabling options accepting no values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Options accepting no values can be disabled by using the same option again
+with `no` prefix added or dropped. The last option has precedence regardless
+of how many times options are used. For example, `--dryrun --dryrun --nodryrun
+--nostatusrc --statusrc` would not activate the dry-run mode and would return
+normal status rc.
+
+.. note:: Support for adding or dropping `no` prefix is a new feature in
+          Robot Framework 2.9. In earlier versions options accepting no
+          values could be disabled by using the exact same option again.
+
 Simple patterns
 ~~~~~~~~~~~~~~~
 
