@@ -10,7 +10,7 @@
   Version |version|
 ---------------------
 
-| Copyright |copy| Nokia Solutions and Networks 2008-2014
+| Copyright |copy| 2008-2015 Nokia Solutions and Networks
 | Licensed under the `Creative Commons Attribution 3.0 Unported`__ license
 
 __ http://creativecommons.org/licenses/by/3.0/
