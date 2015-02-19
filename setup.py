@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import with_statement
 import sys
 import os
 from os.path import abspath, join, dirname

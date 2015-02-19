@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
 from os.path import basename, splitext
 
 from robot.htmldata import HtmlFileWriter, ModelWriter, LOG, REPORT

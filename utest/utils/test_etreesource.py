@@ -1,11 +1,9 @@
-from __future__ import with_statement
 import os
 import sys
 import unittest
 
 from robot.utils.asserts import assert_equals, assert_raises, assert_true
 from robot.utils.etreewrapper import ETSource, ET
-from robot.errors import DataError
 
 IRONPYTHON = sys.platform == 'cli'
 PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
@@ -19,7 +17,7 @@ class TestETSource(unittest.TestCase):
             if IRONPYTHON:
                 assert_equals(src, PATH)
             else:
-                assert_true(src.read().startswith('from __future__'))
+                assert_true(src.read().startswith('import os'))
         self._verify_string_representation(source, PATH)
         if IRONPYTHON:
             assert_true(source._opened is None)
@@ -29,7 +27,7 @@ class TestETSource(unittest.TestCase):
     def test_opened_file_object(self):
         source = ETSource(open(PATH))
         with source as src:
-            assert_true(src.read().startswith('from __future__'))
+            assert_true(src.read().startswith('import os'))
         assert_true(src.closed is False)
         self._verify_string_representation(source, PATH)
         assert_true(source._opened is None)

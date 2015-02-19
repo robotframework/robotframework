@@ -30,8 +30,6 @@ This module also provides :func:`run` and :func:`run_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
 
-from __future__ import with_statement
-
 USAGE = """Robot Framework -- A generic test automation framework
 
 Version:  <VERSION>

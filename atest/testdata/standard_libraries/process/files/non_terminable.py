@@ -1,4 +1,3 @@
-from __future__ import with_statement
 import signal
 import time
 import sys

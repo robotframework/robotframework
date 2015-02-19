@@ -1,5 +1,3 @@
-from __future__ import with_statement
-
 import os
 import re
 from os.path import abspath, dirname, join

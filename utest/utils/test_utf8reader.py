@@ -1,4 +1,3 @@
-from __future__ import with_statement
 from codecs import BOM_UTF8
 from StringIO import StringIO
 import os

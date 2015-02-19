@@ -12,8 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
-
 from robot import utils
 from robot.errors import DataError
 from robot.variables import contains_var, is_list_var
@@ -25,8 +23,6 @@ from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
 from .signalhandler import STOP_SIGNAL_MONITOR
-
-
 
 
 def Handler(library, name, method):

@@ -7,7 +7,6 @@ For more details:
 http://docs.python.org/distutils/builtdist.html#postinstallation-script
 """
 
-from __future__ import with_statement
 from os.path import join
 import os
 import sys

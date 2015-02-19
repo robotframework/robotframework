@@ -28,8 +28,6 @@ This module also provides :func:`testdoc` and :func:`testdoc_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
 
-from __future__ import with_statement
-
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool
 
 Version:  <VERSION>
