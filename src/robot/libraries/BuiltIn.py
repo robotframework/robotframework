@@ -1321,10 +1321,10 @@ class _RunKeyword:
         for kw, args in iterable:
             try:
                 self.run_keyword(kw, *args)
-            except ExecutionPassed, err:
+            except ExecutionPassed as err:
                 err.set_earlier_failures(errors)
                 raise err
-            except ExecutionFailed, err:
+            except ExecutionFailed as err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(self._context.in_teardown):
                     break
@@ -1452,7 +1452,7 @@ class _RunKeyword:
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             if err.dont_continue:
                 raise
             return 'FAIL', unicode(err)
@@ -1490,7 +1490,7 @@ class _RunKeyword:
         """
         try:
             return self.run_keyword(name, *args)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             if not err.dont_continue:
                 err.continue_on_failure = True
             raise err
@@ -1518,7 +1518,7 @@ class _RunKeyword:
         """
         try:
             self.run_keyword(name, *args)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             if err.dont_continue:
                 raise
         else:
@@ -1600,7 +1600,7 @@ class _RunKeyword:
         while not error:
             try:
                 return self.run_keyword(name, *args)
-            except ExecutionFailed, err:
+            except ExecutionFailed as err:
                 if err.dont_continue:
                     raise
                 if time.time() > maxtime:
@@ -2223,7 +2223,7 @@ class _Misc:
         """
         try:
             old = self._context.output.set_log_level(level)
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
         self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
         self.log('Log level changed from %s to %s' % (old, level.upper()))
@@ -2255,7 +2255,7 @@ class _Misc:
         """
         try:
             self._namespace.import_library(name, list(args))
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
 
     @run_keyword_variant(resolve=0)
@@ -2277,7 +2277,7 @@ class _Misc:
         """
         try:
             self._namespace.import_variables(path, list(args), overwrite=True)
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
 
     @run_keyword_variant(resolve=0)
@@ -2297,7 +2297,7 @@ class _Misc:
         """
         try:
             self._namespace.import_resource(path)
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
 
     def set_library_search_order(self, *search_order):
@@ -2356,7 +2356,7 @@ class _Misc:
             handler = self._namespace.get_handler(name)
             if isinstance(handler, UserErrorHandler):
                 handler.run()
-        except DataError, err:
+        except DataError as err:
             raise AssertionError(msg or unicode(err))
 
     def get_time(self, format='timestamp', time_='NOW'):
@@ -2729,7 +2729,7 @@ class _Misc:
         """
         try:
             return self._namespace.get_library_instance(name)
-        except DataError, err:
+        except DataError as err:
             raise RuntimeError(unicode(err))
 
 

@@ -70,7 +70,7 @@ class Listeners(object):
         for name, args in listener_data:
             try:
                 listeners.append(ListenerProxy(name, args))
-            except DataError, err:
+            except DataError as err:
                 if args:
                     name += ':' + ':'.join(args)
                 LOGGER.error("Taking listener '%s' into use failed: %s"

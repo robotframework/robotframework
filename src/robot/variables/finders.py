@@ -116,7 +116,7 @@ class ExtendedFinder(object):
         base_name, extended = match.groups()
         try:
             variable = self._find_variable('${%s}' % base_name)
-        except DataError, err:
+        except DataError as err:
             raise DataError("Resolving variable '%s' failed: %s"
                             % (name, unicode(err)))
         try:

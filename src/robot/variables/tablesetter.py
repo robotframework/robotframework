@@ -40,7 +40,7 @@ class VariableTableReader(object):
             try:
                 yield self._get_name_and_value(var.name, var.value,
                                                var.report_invalid_syntax)
-            except DataError, err:
+            except DataError as err:
                 var.report_invalid_syntax(err)
 
     def _get_name_and_value(self, name, value, error_reporter):
@@ -136,7 +136,7 @@ class DictVariableTableValue(VariableTableValueBase):
         try:
             return DotDict(self._yield_replaced(values,
                                                 variables.replace_scalar))
-        except TypeError, err:
+        except TypeError as err:
             raise DataError('Creating dictionary failed: %s' % err)
 
     def _yield_replaced(self, values, replace_scalar):

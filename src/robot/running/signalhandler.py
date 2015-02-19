@@ -65,7 +65,7 @@ class _StopSignalMonitor(object):
     def _register_signal_handler(self, signum):
         try:
             signal.signal(signum, self)
-        except (ValueError, IllegalArgumentException), err:
+        except (ValueError, IllegalArgumentException) as err:
             # IllegalArgumentException due to http://bugs.jython.org/issue1729
             self._warn_about_registeration_error(signum, err)
 

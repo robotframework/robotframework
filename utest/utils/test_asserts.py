@@ -42,12 +42,12 @@ class TestAsserts(unittest.TestCase):
         try:
             assert_raises_with_msg(ValueError, 'msg', func)
             error('No AssertionError raised')
-        except AE, err:
+        except AE as err:
             assert_equal(str(err), 'ValueError not raised')
         try:
             assert_raises_with_msg(ValueError, 'msg1', func, 'msg2')
             error('No AssertionError raised')
-        except AE, err:
+        except AE as err:
             expected = "Correct exception but wrong message: msg1 != msg2"
             assert_equal(str(err), expected)
 

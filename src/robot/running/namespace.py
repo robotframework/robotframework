@@ -65,7 +65,7 @@ class Namespace:
                 if not item.name:
                     raise DataError('%s setting requires a name' % item.type)
                 self._import(item)
-            except DataError, err:
+            except DataError as err:
                 item.report_invalid_syntax(unicode(err))
 
     def _import(self, import_setting):
@@ -135,7 +135,7 @@ class Namespace:
         name = import_setting.name
         try:
             name = self.variables.replace_string(name)
-        except DataError, err:
+        except DataError as err:
             self._raise_replacing_vars_failed(import_setting, err)
         return self._get_name(name, import_setting.directory, import_setting.type)
 
@@ -154,7 +154,7 @@ class Namespace:
     def _resolve_args(self, import_setting):
         try:
             return self.variables.replace_list(import_setting.args)
-        except DataError, err:
+        except DataError as err:
             self._raise_replacing_vars_failed(import_setting, err)
 
     def set_search_order(self, new_order):
@@ -195,7 +195,7 @@ class Namespace:
     def get_handler(self, name):
         try:
             handler = self._kw_store.get_handler(name)
-        except DataError, err:
+        except DataError as err:
             handler = UserErrorHandler(name, unicode(err))
         self._replace_variables_from_user_handlers(handler)
         return handler

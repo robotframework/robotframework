@@ -33,7 +33,7 @@ class XmlLogger(ResultVisitor):
             return NullMarkupWriter()
         try:
             writer = XmlWriter(path, encoding='UTF-8')
-        except EnvironmentError, err:
+        except EnvironmentError as err:
             raise DataError("Opening output file '%s' failed: %s" %
                             (path, err.strerror))
         writer.start('robot', {'generator': get_full_version(generator),

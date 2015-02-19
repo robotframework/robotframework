@@ -24,7 +24,7 @@ def DebugFile(path):
         return None
     try:
         outfile = open(path, 'w')
-    except EnvironmentError, err:
+    except EnvironmentError as err:
         LOGGER.error("Opening debug file '%s' failed: %s" % (path, err.strerror))
         return None
     else:

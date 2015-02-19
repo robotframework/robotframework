@@ -31,7 +31,7 @@ def windows_install():
     try:
         _create_script('jybot.bat', 'jython')
         _create_script('ipybot.bat', 'ipy')
-    except Exception, err:
+    except Exception as err:
         print 'Running post-install script failed: %s' % err
         print 'Robot Framework start-up scripts may not work correctly.'
         return

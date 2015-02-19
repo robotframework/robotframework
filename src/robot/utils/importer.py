@@ -59,7 +59,7 @@ class Importer(object):
             imported, source = self._import_class_or_module(name)
             self._log_import_succeeded(imported, name, source)
             return self._instantiate_if_needed(imported, instantiate_with_args)
-        except DataError, err:
+        except DataError as err:
             self._raise_import_failed(name, err)
 
     def _import_class_or_module(self, name):
@@ -82,7 +82,7 @@ class Importer(object):
             imported, source = self._by_path_importer.import_(path)
             self._log_import_succeeded(imported, imported.__name__, source)
             return self._instantiate_if_needed(imported, instantiate_with_args)
-        except DataError, err:
+        except DataError as err:
             self._raise_import_failed(path, err)
 
     def _raise_import_failed(self, name, error):

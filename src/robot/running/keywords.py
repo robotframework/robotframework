@@ -46,10 +46,10 @@ class Keywords(object):
         for kw in self._keywords:
             try:
                 kw.run(context)
-            except ExecutionPassed, exception:
+            except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
-            except ExecutionFailed, exception:
+            except ExecutionFailed as exception:
                 errors.extend(exception.get_errors())
                 if not exception.can_continue(context.in_teardown,
                                               self._templated,
@@ -103,7 +103,7 @@ class Keyword(_BaseKeyword):
         handler = self._start(context)
         try:
             return_value = self._run(handler, context)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             self.status = self._get_status(err)
             self._end(context, error=err)
             raise
@@ -160,7 +160,7 @@ class Keyword(_BaseKeyword):
             return_value = error.return_value
         try:
             self._variable_assigner.assign(context, return_value)
-        except DataError, err:
+        except DataError as err:
             self.status = 'FAIL'
             msg = unicode(err)
             context.output.fail(msg)
@@ -205,9 +205,9 @@ class ForLoop(_BaseKeyword):
     def _run_with_error_handling(self, runnable, context):
         try:
             runnable(context)
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             return err
-        except DataError, err:
+        except DataError as err:
             msg = unicode(err)
             context.output.fail(msg)
             return ExecutionFailed(msg, syntax=True)

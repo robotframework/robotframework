@@ -37,7 +37,7 @@ class UserLibrary(object):
         for kw in user_keywords:
             try:
                 handler, embedded = self._create_handler(kw)
-            except DataError, err:
+            except DataError as err:
                 LOGGER.error("Creating user keyword '%s' failed: %s"
                              % (kw.name, unicode(err)))
                 continue
@@ -132,13 +132,13 @@ class UserKeywordHandler(object):
         error = return_ = pass_ = None
         try:
             self.keywords.run(context)
-        except ReturnFromKeyword, exception:
+        except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures
-        except ExecutionPassed, exception:
+        except ExecutionPassed as exception:
             pass_ = exception
             error = exception.earlier_failures
-        except ExecutionFailed, exception:
+        except ExecutionFailed as exception:
             error = exception
         with context.keyword_teardown(error):
             td_error = self._run_teardown(context)
@@ -176,7 +176,7 @@ class UserKeywordHandler(object):
             return None
         try:
             name = context.variables.replace_string(self.teardown.name)
-        except DataError, err:
+        except DataError as err:
             return ExecutionFailed(unicode(err), syntax=True)
         if name.upper() in ('', 'NONE'):
             return None
@@ -185,7 +185,7 @@ class UserKeywordHandler(object):
             kw.run(context)
         except PassExecution:
             return None
-        except ExecutionFailed, err:
+        except ExecutionFailed as err:
             return err
         return None
 
@@ -201,7 +201,7 @@ class UserKeywordHandler(object):
         contains_list_var = any(is_list_var(item) for item in ret)
         try:
             ret = variables.replace_list(ret)
-        except DataError, err:
+        except DataError as err:
             raise DataError('Replacing variables from keyword return value '
                             'failed: %s' % unicode(err))
         if len(ret) != 1 or contains_list_var:

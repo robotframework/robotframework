@@ -38,7 +38,7 @@ class RemoteServer(SimpleXMLRPCServer):
     def run_keyword(self, name, args, kwargs=None):
         try:
             result = getattr(self.library, name)(*args, **(kwargs or {}))
-        except AssertionError, err:
+        except AssertionError as err:
             return {'status': 'FAIL', 'error': str(err)}
         else:
             return {'status': 'PASS',

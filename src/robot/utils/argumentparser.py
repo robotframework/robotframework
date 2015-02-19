@@ -155,7 +155,7 @@ class ArgumentParser(object):
         args = [self._lowercase_long_option(a) for a in args]
         try:
             opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
-        except getopt.GetoptError, err:
+        except getopt.GetoptError as err:
             raise DataError(err.msg)
         return self._process_opts(opts), self._glob_args(args)
 
@@ -408,7 +408,7 @@ class ArgFileParser(object):
         try:
             with Utf8Reader(path) as reader:
                 return reader.read()
-        except (IOError, UnicodeError), err:
+        except (IOError, UnicodeError) as err:
             raise DataError("Opening argument file '%s' failed: %s"
                             % (path, err))
 

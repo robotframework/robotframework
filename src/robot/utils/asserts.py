@@ -151,7 +151,7 @@ def fail_unless_raises(exc_class, callable_obj, *args, **kwargs):
     """
     try:
         callable_obj(*args, **kwargs)
-    except exc_class, err:
+    except exc_class as err:
         return err
     else:
         if hasattr(exc_class,'__name__'):
@@ -165,7 +165,7 @@ def fail_unless_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
     """Similar to fail_unless_raises but also checks the exception message."""
     try:
         callable_obj(*args, **kwargs)
-    except exc_class, err:
+    except exc_class as err:
         assert_equal(expected_msg, unic(err), 'Correct exception but wrong message')
     else:
         if hasattr(exc_class,'__name__'):

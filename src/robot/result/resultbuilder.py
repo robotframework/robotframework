@@ -60,7 +60,7 @@ def _single_result(source, options):
     ets = ETSource(source)
     try:
         return ExecutionResultBuilder(ets, **options).build(Result(source))
-    except IOError, err:
+    except IOError as err:
         error = err.strerror
     except:
         error = get_error_message()

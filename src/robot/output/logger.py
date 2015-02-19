@@ -90,7 +90,7 @@ class Logger(AbstractLogger):
             return
         try:
             logger = FileLogger(path, level)
-        except DataError, err:
+        except DataError as err:
             self.error("Opening syslog file '%s' failed: %s" % (path, unicode(err)))
         else:
             self.register_logger(logger)

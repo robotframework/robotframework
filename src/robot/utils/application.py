@@ -59,9 +59,9 @@ class Application(object):
     def _parse_arguments(self, cli_args):
         try:
             options, arguments = self.parse_arguments(cli_args)
-        except Information, msg:
+        except Information as msg:
             self._report_info(unicode(msg))
-        except DataError, err:
+        except DataError as err:
             self._report_error(unicode(err), help=True, exit=True)
         else:
             self._logger.info('Arguments: %s' % ','.join(arguments))
@@ -84,7 +84,7 @@ class Application(object):
     def _execute(self, arguments, options):
         try:
             rc = self.main(arguments, **options)
-        except DataError, err:
+        except DataError as err:
             return self._report_error(unicode(err), help=True)
         except (KeyboardInterrupt, SystemExit):
             return self._report_error('Execution stopped by user.',

@@ -49,7 +49,7 @@ class JarRunner(RobotRunner):
     def run(self, args):
         try:
             self._run(args)
-        except SystemExit, err:
+        except SystemExit as err:
             return err.code
 
     def _run(self, args):

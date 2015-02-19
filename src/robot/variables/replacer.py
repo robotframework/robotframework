@@ -159,6 +159,6 @@ class VariableReplacer(object):
         except KeyError:
             raise DataError("Dictionary variable '%s' has no key '%s'."
                             % (name, key))
-        except TypeError, err:
+        except TypeError as err:
             raise DataError("Dictionary variable '%s' used with invalid key: %s"
                             % (name, err))

@@ -1332,7 +1332,7 @@ class OperatingSystem:
             if not os.path.isfile(path):
                 raise ValueError('Modified time can only be set to regular files')
             mtime = parse_time(mtime)
-        except ValueError, err:
+        except ValueError as err:
             raise RuntimeError("Setting modified time of '%s' failed: %s"
                                % (path, unicode(err)))
         os.utime(path, (mtime, mtime))

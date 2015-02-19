@@ -60,7 +60,7 @@ class TestSuiteBuilder(object):
             return TestData(source=abspath(path),
                             include_suites=self.include_suites,
                             warn_on_skipped=self.warn_on_skipped)
-        except DataError, err:
+        except DataError as err:
             raise DataError("Parsing '%s' failed: %s" % (path, unicode(err)))
 
     def _build_suite(self, data, parent_defaults=None):

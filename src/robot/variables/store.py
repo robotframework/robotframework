@@ -38,7 +38,7 @@ class VariableStore(object):
             return value
         try:
             self.data[name] = value.resolve(self._variables)
-        except DataError, err:
+        except DataError as err:
             # Recursive resolving may have already removed variable.
             if name in self:
                 self.remove(name)

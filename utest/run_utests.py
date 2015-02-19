@@ -61,7 +61,7 @@ def parse_args(argv):
                                       ['help', 'verbose', 'quiet', 'doc'])
         if args:
             raise getopt.error('no arguments accepted, got %s' % list(args))
-    except getopt.error, err:
+    except getopt.error as err:
         usage_exit(err)
     for opt, value in options:
         if opt in ('-h','-H','-?','--help'):

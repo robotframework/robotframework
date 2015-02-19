@@ -3,7 +3,7 @@ from robot.libraries.BuiltIn import BuiltIn
 def get_result_or_error(*args):
     try:
         return BuiltIn().run_keyword(*args)
-    except Exception, err:
+    except Exception as err:
         return err.message
 
 def pretty(*args, **kwargs):

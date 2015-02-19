@@ -222,7 +222,7 @@ class _BaseSettings(object):
         try:
             if not os.path.exists(path):
                 os.makedirs(path)
-        except EnvironmentError, err:
+        except EnvironmentError as err:
             raise DataError("Creating %s file directory '%s' failed: %s"
                             % (type_.lower(), path, err.strerror))
 
@@ -305,14 +305,14 @@ class _BaseSettings(object):
         for value in values:
             try:
                 KeywordRemover(value)
-            except DataError, err:
+            except DataError as err:
                 raise DataError("Invalid value for option '--removekeywords'. %s" % err)
 
     def _validate_flatten_keywords(self, values):
         for value in values:
             try:
                 FlattenKeywordMatcher(value)
-            except DataError, err:
+            except DataError as err:
                 raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
     def __contains__(self, setting):

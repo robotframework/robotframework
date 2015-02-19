@@ -16,7 +16,7 @@ if __name__ == '__main__':
     args = sys.argv[1:]
     try:
         rc = run(*args)
-    except Exception, err:
+    except Exception as err:
         output("Running failed with args %s for exception: %s" % (args, err))
         rc = 255
     sys.exit(rc)

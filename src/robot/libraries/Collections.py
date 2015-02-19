@@ -374,7 +374,7 @@ class _List:
             name = ' (%s)' % names[index] if index in names else ''
             try:
                 assert_equals(item1, item2, msg='Index %d%s' % (index, name))
-            except AssertionError, err:
+            except AssertionError as err:
                 yield unic(err)
 
     def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
@@ -677,7 +677,7 @@ class _Dictionary:
         for key in keys:
             try:
                 assert_equals(dict1[key], dict2[key], msg='Key %s' % (key,))
-            except AssertionError, err:
+            except AssertionError as err:
                 yield unic(err)
 
 
