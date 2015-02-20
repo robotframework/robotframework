@@ -1524,11 +1524,12 @@ class _Process:
         enc = sys.getfilesystemencoding()
         return string.encode(enc) if enc else string
 
-    def _process_output(self, stdout):
-        stdout = stdout.replace('\r\n', '\n') # http://bugs.jython.org/issue1566
-        if stdout.endswith('\n'):
-            stdout = stdout[:-1]
-        return decode_output(stdout, force=True)
+    def _process_output(self, output):
+        if '\r\n' in output:
+            output = output.replace('\r\n', '\n')
+        if output.endswith('\n'):
+            output = output[:-1]
+        return decode_output(output, force=True)
 
 
 class _Process2(_Process):

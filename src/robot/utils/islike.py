@@ -12,27 +12,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-if sys.platform.startswith('java'):
-    from java.lang import String
-    from java.util import Map
-else:
-    String = Map = ()
-try:
-    from collections import Mapping
-except ImportError:  # New in 2.6
-    Mapping = dict
+from collections import Mapping
 from UserDict import UserDict
 from UserString import UserString
+try:
+    from java.lang import String
+except ImportError:
+    String = ()
 
 
-def is_str_like(item, allow_java=False):
-    return (isinstance(item, (basestring, UserString)) or
-            allow_java and isinstance(item, String))
+def is_str_like(item):
+    return isinstance(item, (basestring, UserString, String))
 
 
 def is_list_like(item):
-    if is_str_like(item, allow_java=True):
+    if is_str_like(item):
         return False
     try:
         iter(item)
@@ -42,8 +36,5 @@ def is_list_like(item):
         return True
 
 
-def is_dict_like(item, allow_java=False):
-    # TODO: allow_java is meaningless since Jython 2.7b4 because java.util.Map
-    # implement collections.Mapping. Can remove that in RF 2.9.
-    return (isinstance(item, (Mapping, UserDict)) or
-            allow_java and isinstance(item, Map))
+def is_dict_like(item):
+    return isinstance(item, (Mapping, UserDict))

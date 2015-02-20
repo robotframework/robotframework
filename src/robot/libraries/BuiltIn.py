@@ -32,24 +32,6 @@ from robot.version import get_version
 if utils.is_jython:
     from java.lang import String, Number
 
-try:
-    bin  # available since Python 2.6
-except NameError:
-    def bin(integer):
-        if not isinstance(integer, (int, long)):
-            raise TypeError
-        if integer >= 0:
-            prefix = '0b'
-        else:
-            prefix = '-0b'
-            integer = abs(integer)
-        bins = []
-        while integer > 1:
-            integer, remainder = divmod(integer, 2)
-            bins.append(str(remainder))
-        bins.append(str(integer))
-        return prefix + ''.join(reversed(bins))
-
 
 # TODO: The name of this decorator should be changed. It is used for avoiding
 # arguments to be resolved by many other keywords than run keyword variants.

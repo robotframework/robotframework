@@ -25,10 +25,6 @@ from robot.version import get_version
 from robot.api import logger
 
 
-if os.sep == '/' and sys.platform.startswith('java'):
-    encode_to_system = lambda string: unicode(string)
-
-
 class Process(object):
     """Robot Framework test library for running processes.
 

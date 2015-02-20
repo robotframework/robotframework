@@ -14,40 +14,8 @@
 
 import sys
 
-# Need different unic implementations for different Pythons because:
-# 1) Importing unicodedata module on Jython takes a very long time, and doesn't
-# seem to be necessary as Java probably already handles normalization.
-# Furthermore, Jython on Java 1.5 doesn't even have unicodedata.normalize.
-# 2) IronPython 2.6 doesn't have unicodedata and probably doesn't need it.
-# 3) CPython doesn't automatically normalize Unicode strings.
 
-if sys.platform.startswith('java'):
-
-    from java.lang import Object, Class
-
-    def unic(item, *args):
-        # http://bugs.jython.org/issue1564
-        if isinstance(item, Object) and not isinstance(item, Class):
-            try:
-                item = item.toString()  # http://bugs.jython.org/issue1563
-            except:
-                return _unrepresentable_object(item)
-        return _unic(item, *args)
-
-elif sys.platform == 'cli':
-
-    def unic(item, *args):
-        return _unic(item, *args)
-
-else:
-
-    from unicodedata import normalize
-
-    def unic(item, *args):
-        return normalize('NFC', _unic(item, *args))
-
-
-def _unic(item, *args):
+def unic(item, *args):
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
         return unicode(item, *args)
@@ -61,6 +29,17 @@ def _unic(item, *args):
         return _unrepresentable_object(item)
 
 
+# JVM and .NET seem to handle Unicode normalization automatically. Importing
+# unicodedata on Jython also takes some time so it's better to avoid it.
+if not (sys.platform.startswith('java') or sys.platform == 'cli'):
+
+    from unicodedata import normalize
+    _unic = unic
+
+    def unic(item, *args):
+        return normalize('NFC', _unic(item, *args))
+
+
 def safe_repr(item):
     try:
         return unic(repr(item))
@@ -69,9 +48,10 @@ def safe_repr(item):
     except:
         return _unrepresentable_object(item)
 
+
+# IronPython omits `u` prefix from `repr(u'foo')`. We add it back to have
+# consistent and easier to test log messages.
 if sys.platform == 'cli':
-    # IronPython omits `u` prefix from `repr(u'foo')`. We add it back to have
-    # consistent and easier to test log messages.
     _safe_repr = safe_repr
 
     def safe_repr(item):

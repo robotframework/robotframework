@@ -22,10 +22,6 @@ from robot.model import Tags
 from .loggerhelper import AbstractLoggerProxy
 from .logger import LOGGER
 
-if utils.is_jython:
-    from java.lang import Object
-    from java.util import HashMap
-
 
 class _RecursionAvoidingMetaclass(type):
     """Metaclass to wrap listener methods so that they cannot cause recursion.
@@ -229,14 +225,10 @@ class ListenerProxy(AbstractLoggerProxy):
         listener = self._import_listener(name, args)
         AbstractLoggerProxy.__init__(self, listener)
         self.name = name
-        self.is_java = self._is_java(listener)
         self.version = self._get_version(listener)
         if self.version == 1:
             LOGGER.warn("Listener '%s' uses deprecated API version 1. "
                         "Switch to API version 2 instead." % self.name)
-
-    def _is_java(self, listener):
-        return utils.is_jython and isinstance(listener, Object)
 
     def _import_listener(self, name, args):
         importer = utils.Importer('listener')
@@ -250,18 +242,10 @@ class ListenerProxy(AbstractLoggerProxy):
             return 1
 
     def call_method(self, method, *args):
-        if self.is_java:
-            args = [self._to_map(a) if isinstance(a, dict) else a for a in args]
         try:
             method(*args)
         except:
             message, details = utils.get_error_details()
-            LOGGER.error("Calling listener method '%s' of listener '%s' failed: %s"
-                     % (method.__name__, self.name, message))
+            LOGGER.error("Calling listener method '%s' of listener '%s' "
+                         "failed: %s" % (method.__name__, self.name, message))
             LOGGER.info("Details:\n%s" % details)
-
-    def _to_map(self, dictionary):
-        map = HashMap()
-        for key, value in dictionary.iteritems():
-            map.put(key, value)
-        return map

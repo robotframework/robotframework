@@ -78,7 +78,7 @@ Epoch time is float regardless are millis included or not
 
 Formatted with %f in middle
     [Template]    NONE
-    Run Keyword If    sys.version_info < (2, 6) or sys.platform == 'cli' or sys.platform.startswith('java')
+    Run Keyword If    sys.platform == 'cli'
     ...   Run Keyword And Expect Error    ValueError: %f directive is supported only at the end of the format string on this Python interpreter.
     ...   Date Conversion Should Succeed    2014-04-24 21:45:12.123    %H:%M:%S.%f %Y-%m-%d    21:45:12.123000 2014-04-24
     ...   ELSE

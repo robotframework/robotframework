@@ -72,10 +72,6 @@ def _get_unixy_encoding():
 
 
 def _get_stream_output_encoding():
-    # http://bugs.jython.org/issue1568
-    if WINDOWS and JYTHON:
-        if sys.platform.startswith('java1.5') or sys.version_info < (2, 5, 2):
-            return None
     # Stream may not have encoding attribute if it is intercepted outside RF
     # in Python. Encoding is None if process's outputs are redirected.
     for stream in sys.__stdout__, sys.__stderr__, sys.__stdin__:

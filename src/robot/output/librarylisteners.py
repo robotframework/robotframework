@@ -63,7 +63,6 @@ class _LibraryListenerProxy(ListenerProxy):
         AbstractLoggerProxy.__init__(self, library.listener)
         self.name = type(library).__name__
         self.version = self._get_version(library.listener)
-        self.is_java = self._is_java(library.listener)
         self.library_scope = library.scope
 
     def _get_method_names(self, name):

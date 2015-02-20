@@ -41,8 +41,6 @@ import sys
 
 if 'pythonpathsetter' not in sys.modules:
     from robot import pythonpathsetter as _
-if sys.platform.startswith('java'):
-    from robot import jythonworkarounds as _
 
 from robot.rebot import rebot, rebot_cli
 from robot.run import run, run_cli

@@ -59,6 +59,7 @@ def abspath(path):
     return os.path.normpath(path)
 
 
+# TODO: Investigate could this be replaced with os.path.relpath in RF 2.9.
 def get_link_path(target, base):
     """Returns a relative path to a target from a base.
 

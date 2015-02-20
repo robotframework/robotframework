@@ -19,6 +19,7 @@ import time
 from robot import utils
 from robot.errors import TimeoutError, DataError, FrameworkError
 
+# TODO: Check are all timeout modules still needed w/o Python/Jython 2.5.
 if sys.platform == 'cli':
     from .timeoutthread import Timeout
 elif os.name == 'nt':

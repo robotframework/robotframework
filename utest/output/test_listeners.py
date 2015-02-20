@@ -186,7 +186,6 @@ class TestOldStyleListeners(_BaseListenerTest, unittest.TestCase):
 
     def test_importing(self):
         assert_equals(self.listener.version, 1)
-        assert_false(self.listener.is_java)
 
 
 class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
@@ -195,7 +194,6 @@ class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
 
     def test_importing(self):
         assert_equals(self.listener.version, 2)
-        assert_false(self.listener.is_java)
 
 
 class TestInvalidOldStyleListener(unittest.TestCase):
@@ -216,13 +214,11 @@ class TestInvalidOldStyleListener(unittest.TestCase):
 if utils.is_jython:
 
     class TestJavaListener(_BaseListenerTest, unittest.TestCase):
-
         listener_name = 'NewStyleJavaListener'
         stat_message = 'stat message'
 
         def test_importing(self):
             assert_equals(self.listener.version, 2)
-            assert_true(self.listener.is_java)
 
 
 if __name__ == '__main__':

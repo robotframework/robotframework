@@ -42,22 +42,26 @@ def encode_output(string, errors='replace'):
     return string.encode(OUTPUT_ENCODING, errors)
 
 
-def decode_from_system(string, can_be_from_java=True):
-    """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
-    if sys.platform == 'cli':
-        return string
-    if sys.platform.startswith('java') and can_be_from_java:
-        # http://bugs.jython.org/issue1592
-        from java.lang import String
-        string = String(string)
-    return unic(string, SYSTEM_ENCODING)
+# Jython and IronPython handle communication with system APIs using Unicode.
+if sys.platform == 'cli' or sys.platform.startswith('java'):
 
+    def decode_from_system(string):
+        return string if isinstance(string, unicode) else unic(string)
 
-def encode_to_system(string, errors='replace'):
-    """Encodes Unicode to system encoding (e.g. cli args and env vars).
+    def encode_to_system(string, errors='replace'):
+        return string if isinstance(string, unicode) else unic(string)
 
-    Non-Unicode strings are first converted to Unicode.
-    """
-    if not isinstance(string, unicode):
-        string = unicode(string)
-    return string.encode(SYSTEM_ENCODING, errors)
+else:
+
+    def decode_from_system(string):
+        """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
+        return unic(string, SYSTEM_ENCODING)
+
+    def encode_to_system(string, errors='replace'):
+        """Encodes Unicode to system encoding (e.g. cli args and env vars).
+
+        Non-Unicode values are first converted to Unicode.
+        """
+        if not isinstance(string, unicode):
+            string = unic(string)
+        return string.encode(SYSTEM_ENCODING, errors)

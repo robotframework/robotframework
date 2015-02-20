@@ -5,6 +5,7 @@ import sys
 import threading
 import tempfile
 import signal
+import logging
 from os.path import abspath, dirname, join, exists, curdir
 from os import chdir
 from StringIO import StringIO
@@ -160,16 +161,11 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         assert_equals(rc, 1)
 
     def test_reset_logging_conf(self):
-        import logging
         assert_equals(logging.getLogger().handlers, [])
-        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
-            assert_equals(logging.raiseExceptions, 1)
+        assert_equals(logging.raiseExceptions, 1)
         self._run(join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot'))
         assert_equals(logging.getLogger().handlers, [])
-        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
-            assert_equals(logging.raiseExceptions, 1)
-        else:
-            assert_equals(logging.raiseExceptions, False)
+        assert_equals(logging.raiseExceptions, 1)
 
 
 class TestTimestampOutputs(RunningTestCase):

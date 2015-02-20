@@ -46,12 +46,12 @@ Kwargs
     Check Argument Value Trace
     ...    \&{kwargs}={}
     ...    ${EMPTY}
-    ...    \&{kwargs}={'a': u'1', 'b': 2, 'c': u'3'}
+    ...    \&{kwargs}={u'a': u'1', u'b': 2, u'c': u'3'}
     ...    a=u'1' | b=2 | c=u'3'
 
 All args
     Check Argument Value Trace
-    ...    \${positional}=u'1' | \@{varargs}=[u'2', u'3'] | \&{kwargs}={'d': u'4'}
+    ...    \${positional}=u'1' | \@{varargs}=[u'2', u'3'] | \&{kwargs}={u'd': u'4'}
     ...    u'1' | u'2' | u'3' | d=u'4'
 
 Non String Object as Argument

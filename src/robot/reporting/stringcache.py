@@ -18,13 +18,7 @@ from robot.utils import compress_text
 
 
 class StringIndex(long):
-    # Methods below are needed due to http://bugs.jython.org/issue1828
-
-    def __str__(self):
-        return long.__str__(self).rstrip('L')
-
-    def __nonzero__(self):
-        return bool(long(self))
+    pass
 
 
 class StringCache(object):

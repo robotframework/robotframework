@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises
@@ -55,10 +56,14 @@ class TestDotDict(unittest.TestCase):
         od2 = OrderedDict(reversed(od1.items()))
         dd1 = DotDict(sorted(d.items()))
         dd2 = DotDict(reversed(dd1.items()))
-        for d1, d2 in [(dd1, d), (dd2, d), (dd1, od1), (dd1, od2),
-                       (dd2, od1), (dd2, od2), (dd1, dd2)]:
+        for d1, d2 in [(dd1, dd2), (dd1, d), (dd2, d), (dd1, od1), (dd2, od2)]:
             assert_equal(d1, d2)
             assert_equal(d2, d1)
+        if sys.platform != 'cli':
+            # https://github.com/IronLanguages/main/issues/1168
+            for d1, d2 in [(dd1, od2), (dd2, od1)]:
+                assert_equal(d1, d2)
+                assert_equal(d2, d1)
         assert_not_equal(od1, od2)
 
 

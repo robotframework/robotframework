@@ -7,7 +7,7 @@ except ImportError:
     Mapping = dict
 try:
     from java.lang import String
-    from java.util import HashMap
+    from java.util import HashMap, Hashtable
 except ImportError:
     pass
 from array import array
@@ -35,7 +35,7 @@ def generator():
     yield 'generated'
 
 
-class TestListlike(unittest.TestCase):
+class TestListLike(unittest.TestCase):
 
     def test_strings_are_not_list_like(self):
         for thing in ['str', u'unicode', UserString('user')]:
@@ -52,6 +52,7 @@ class TestListlike(unittest.TestCase):
 
         def test_java_dict_likes_are_list_like(self):
             assert_equals(is_list_like(HashMap()), True)
+            assert_equals(is_list_like(Hashtable()), True)
 
     def test_other_iterables_are_list_like(self):
         for thing in [[], (), set(), xrange(1), generator(), array('i'), UserList()]:
@@ -70,7 +71,7 @@ class TestListlike(unittest.TestCase):
         assert_equals(is_list_like(g), True)
 
 
-class TestDictlike(unittest.TestCase):
+class TestDictLike(unittest.TestCase):
 
     def test_dict_likes(self):
         for thing in [dict(), UserDict(), MyMapping()]:
@@ -80,17 +81,14 @@ class TestDictlike(unittest.TestCase):
         for thing in ['', u'', 1, None, True, object(), [], (), set()]:
             assert_equals(is_dict_like(thing), False, thing)
 
-    def test_allow_java(self):
-        assert_equals(is_dict_like({}, allow_java=True), True)
-        assert_equals(is_dict_like([], allow_java=True), False)
-        if sys.platform.startswith('java'):
-            assert_equals(is_dict_like(HashMap()),
-                          sys.version_info >= (2, 7, 0, 'beta', 4))
-            assert_equals(is_dict_like(HashMap(), allow_java=True), True)
-            assert_equals(is_dict_like([], allow_java=True), False)
+    if sys.platform.startswith('java'):
+
+        def test_java_maps(self):
+            assert_equals(is_dict_like(HashMap()), True)
+            assert_equals(is_dict_like(Hashtable()), True)
 
 
-class TestStringlike(unittest.TestCase):
+class TestStringLike(unittest.TestCase):
 
     def test_string_likes(self):
         for thing in ['', 'a', u'\xe4', UserString('us'), MutableString('ms')]:
@@ -100,13 +98,11 @@ class TestStringlike(unittest.TestCase):
         for thing in [1, None, True, object(), [], (), {}]:
             assert_equals(is_str_like(thing), False, thing)
 
-    def test_allow_java(self):
-        assert_equals(is_str_like('', allow_java=True), True)
-        assert_equals(is_str_like([], allow_java=True), False)
-        if sys.platform.startswith('java'):
-            assert_equals(is_str_like(String()), False)
-            assert_equals(is_str_like(String(), allow_java=True), True)
-            assert_equals(is_str_like([], allow_java=True), False)
+    if sys.platform.startswith('java'):
+
+        def test_java_string(self):
+            assert_equals(is_str_like(String()), True)
+            assert_equals(is_str_like(String('xxx')), True)
 
 
 if __name__ == "__main__":

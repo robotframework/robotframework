@@ -66,7 +66,7 @@ class FromFilePopulator(object):
             raise DataError("Data source does not exist.")
         try:
             # IronPython handles BOM incorrectly if not using binary mode:
-            # http://code.google.com/p/robotframework/issues/detail?id=1580
+            # https://ironpython.codeplex.com/workitem/34655
             return open(path, 'rb')
         except:
             raise DataError(get_error_message())

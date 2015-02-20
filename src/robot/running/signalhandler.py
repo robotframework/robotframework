@@ -18,7 +18,7 @@ import signal
 if sys.platform.startswith('java'):
     from java.lang import IllegalArgumentException
 else:
-    IllegalArgumentException = None
+    IllegalArgumentException = ValueError
 
 from robot.errors import ExecutionFailed
 from robot.output import LOGGER

@@ -36,10 +36,6 @@ class RobotError(Exception):
     def message(self):
         return self.__unicode__()
 
-    def __unicode__(self):
-        # Needed to handle exceptions w/ Unicode correctly on Python 2.5
-        return unicode(self.args[0]) if self.args else u''
-
 
 class FrameworkError(RobotError):
     """Can be used when the core framework goes to unexpected state.

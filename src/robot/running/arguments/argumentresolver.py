@@ -101,7 +101,7 @@ class DictToKwargs(object):
     def _extra_arg_has_kwargs(self, positional, named):
         if named or len(positional) != self._maxargs + 1:
             return False
-        return is_dict_like(positional[-1], allow_java=True)
+        return is_dict_like(positional[-1])
 
 
 class VariableReplacer(object):
@@ -124,18 +124,10 @@ class VariableReplacer(object):
             for name, value in self._get_replaced_named(item, replace_scalar):
                 if not isinstance(name, basestring):
                     raise DataError('Argument names must be strings.')
-                yield kwarg_to_str_if_possible(name), value
+                yield name, value
 
     def _get_replaced_named(self, item, replace_scalar):
         if not isinstance(item, tuple):
             return replace_scalar(item).items()
         name, value = item
         return [(replace_scalar(name), replace_scalar(value))]
-
-
-def kwarg_to_str_if_possible(name):
-    # Python 2.5 accept only str, not unicode, as kwargs. TODO: Remove in 2.9.
-    try:
-        return str(name)
-    except UnicodeError:
-        return name

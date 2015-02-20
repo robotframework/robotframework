@@ -14,13 +14,8 @@
 
 import re
 import sys
+from collections import Mapping
 from UserDict import UserDict
-try:
-    from collections import Mapping
-except ImportError:  # Pre Python 2.6 support
-    mappings = (dict, UserDict)
-else:
-    mappings = (Mapping, UserDict)
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
@@ -43,27 +38,13 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     return string
 
 
-# IronPython fails to lowercase non-ASCII characters:
 # http://ironpython.codeplex.com/workitem/33133
-if sys.platform != 'cli':
+if sys.platform == 'cli' and sys.version_info < (2, 7, 5):
     def lower(string):
-        return string.lower()
-
+        return ('A' + string).lower()[1:]
 else:
     def lower(string):
-        if string.islower():
-            return string
-        if string.isupper():
-            return string.swapcase()
-        if not _has_uppercase_non_ascii_chars(string):
-            return string.lower()
-        return ''.join(c if not c.isupper() else c.swapcase() for c in string)
-
-    def _has_uppercase_non_ascii_chars(string):
-        for c in string:
-            if c >= u'\x80' and c.isupper():
-                return True
-        return False
+        return string.lower()
 
 
 class NormalizedDict(UserDict):
@@ -165,6 +146,7 @@ class NormalizedDict(UserDict):
         return str(dict(self.items()))
 
     def __cmp__(self, other):
-        if not isinstance(other, NormalizedDict) and isinstance(other, mappings):
+        if (isinstance(other, (Mapping, UserDict)) and
+                not isinstance(other, NormalizedDict)):
             other = NormalizedDict(other)
         return UserDict.__cmp__(self, other)

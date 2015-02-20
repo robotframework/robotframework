@@ -28,6 +28,8 @@ if not sys.platform.startswith('java'):
         return zlib.compress(text, 9)
 
 else:
+    # TODO: This Jython bug ought to be fixed. Must be verified!
+
     # Custom compress implementation needed to avoid memory leak:
     # http://bugs.jython.org/issue1775
     # This is based on the zlib.compress in Jython 2.5.2 but has a memory
