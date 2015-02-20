@@ -12,10 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-
 from .encodingsniffer import get_output_encoding, get_system_encoding
 from .unic import unic
+from .platform import JYTHON, IRONPYTHON
 
 
 OUTPUT_ENCODING = get_output_encoding()
@@ -37,13 +36,13 @@ def decode_output(string, force=False):
 def encode_output(string, errors='replace'):
     """Encodes Unicode to bytes in console encoding."""
     # http://ironpython.codeplex.com/workitem/29487
-    if sys.platform == 'cli':
+    if IRONPYTHON:
         return string
     return string.encode(OUTPUT_ENCODING, errors)
 
 
 # Jython and IronPython handle communication with system APIs using Unicode.
-if sys.platform == 'cli' or sys.platform.startswith('java'):
+if JYTHON or IRONPYTHON:
 
     def decode_from_system(string):
         return string if isinstance(string, unicode) else unic(string)

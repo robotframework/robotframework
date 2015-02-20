@@ -1,4 +1,3 @@
-import sys
 import signal
 import unittest
 from threading import Thread
@@ -6,6 +5,7 @@ from threading import Thread
 from robot.output import LOGGER
 from robot.output.loggerhelper import AbstractLogger
 from robot.utils.asserts import assert_equal
+from robot.utils import JYTHON
 
 from robot.running.signalhandler import _StopSignalMonitor
 
@@ -58,9 +58,9 @@ class TestSignalHandlerRegisteringFailures(unittest.TestCase):
         t.join()
         assert_equal(len(self.logger.messages), 0)
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
-        # signal.signal may raise IllegalArgumentException with Jython 2.5.2:
+        # signal.signal may raise IllegalArgumentException on Jython:
         # http://bugs.jython.org/issue1729
         def test_illegal_argument_exception(self):
             from java.lang import IllegalArgumentException

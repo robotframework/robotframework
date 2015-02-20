@@ -29,7 +29,7 @@ from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.version import get_version
 
-if utils.is_jython:
+if utils.JYTHON:
     from java.lang import String, Number
 
 
@@ -92,7 +92,7 @@ class _Converter:
                                % (orig, utils.get_error_message()))
 
     def _handle_java_numbers(self, item):
-        if not utils.is_jython:
+        if not utils.JYTHON:
             return item
         if isinstance(item, String):
             return utils.unic(item)
@@ -238,7 +238,7 @@ class _Converter:
 
     def _convert_to_number_without_precision(self, item):
         try:
-            if utils.is_jython:
+            if utils.JYTHON:
                 item = self._handle_java_numbers(item)
             return float(item)
         except:

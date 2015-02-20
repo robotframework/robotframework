@@ -12,24 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .platform import JYTHON
+import os
+import sys
 
 
-if JYTHON:
-
-    from org.python.core import PyReflectedFunction, PyReflectedConstructor
-
-    def is_java_init(init):
-        return isinstance(init, PyReflectedConstructor)
-
-    def is_java_method(method):
-        func = method.im_func if hasattr(method, 'im_func') else method
-        return isinstance(func, PyReflectedFunction)
-
-else:
-
-    def is_java_init(init):
-        return False
-
-    def is_java_method(method):
-        return False
+JYTHON = sys.platform.startswith('java')
+IRONPYTHON = sys.platform == 'cli'
+UNIXY = os.sep == '/'
+WINDOWS = not UNIXY

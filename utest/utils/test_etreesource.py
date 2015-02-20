@@ -1,11 +1,11 @@
 import os
-import sys
 import unittest
 
 from robot.utils.asserts import assert_equals, assert_raises, assert_true
 from robot.utils.etreewrapper import ETSource, ET
+from robot.utils import IRONPYTHON
 
-IRONPYTHON = sys.platform == 'cli'
+
 PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
 
 

@@ -15,7 +15,7 @@ from UserDict import UserDict
 from UserList import UserList
 from UserString import UserString, MutableString
 
-from robot.utils import is_dict_like, is_list_like, is_str_like
+from robot.utils import is_dict_like, is_list_like, is_str_like, JYTHON
 from robot.utils.asserts import assert_equals
 
 
@@ -45,7 +45,7 @@ class TestListLike(unittest.TestCase):
         for thing in [dict(), UserDict(), MyMapping()]:
             assert_equals(is_list_like(thing), True, thing)
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_java_strings_are_not_list_like(self):
             assert_equals(is_list_like(String()), False)
@@ -81,7 +81,7 @@ class TestDictLike(unittest.TestCase):
         for thing in ['', u'', 1, None, True, object(), [], (), set()]:
             assert_equals(is_dict_like(thing), False, thing)
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_java_maps(self):
             assert_equals(is_dict_like(HashMap()), True)
@@ -98,7 +98,7 @@ class TestStringLike(unittest.TestCase):
         for thing in [1, None, True, object(), [], (), {}]:
             assert_equals(is_str_like(thing), False, thing)
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_java_string(self):
             assert_equals(is_str_like(String()), True)

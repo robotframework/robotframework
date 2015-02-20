@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+from .platform import IRONPYTHON, JYTHON
 
 
 def unic(item, *args):
@@ -31,7 +31,7 @@ def unic(item, *args):
 
 # JVM and .NET seem to handle Unicode normalization automatically. Importing
 # unicodedata on Jython also takes some time so it's better to avoid it.
-if not (sys.platform.startswith('java') or sys.platform == 'cli'):
+if not (JYTHON or IRONPYTHON):
 
     from unicodedata import normalize
     _unic = unic
@@ -51,7 +51,7 @@ def safe_repr(item):
 
 # IronPython omits `u` prefix from `repr(u'foo')`. We add it back to have
 # consistent and easier to test log messages.
-if sys.platform == 'cli':
+if IRONPYTHON:
     _safe_repr = safe_repr
 
     def safe_repr(item):

@@ -15,14 +15,16 @@
 import os
 import sys
 import inspect
-if sys.platform.startswith('java'):
-    from java.lang.System import getProperty
 
 from robot.errors import DataError
 
 from .encoding import decode_from_system
 from .error import get_error_details
 from .robotpath import abspath, normpath
+from .platform import JYTHON
+
+if JYTHON:
+    from java.lang.System import getProperty
 
 
 class Importer(object):
@@ -92,7 +94,7 @@ class Importer(object):
             raise DataError(msg)
         msg = [msg, error.details]
         msg.extend(self._get_items_in('PYTHONPATH', sys.path))
-        if sys.platform.startswith('java'):
+        if JYTHON:
             classpath = getProperty('java.class.path').split(os.path.pathsep)
             msg.extend(self._get_items_in('CLASSPATH', classpath))
         raise DataError('\n'.join(msg))
@@ -140,7 +142,7 @@ class _Importer(object):
                 # Hack to support standalone Jython. For more information, see:
                 # http://code.google.com/p/robotframework/issues/detail?id=515
                 # http://bugs.jython.org/issue1778514
-                if sys.platform.startswith('java') and fromlist and retry:
+                if JYTHON and fromlist and retry:
                     __import__('%s.%s' % (name, fromlist[0]))
                     return self._import(name, fromlist, retry=False)
                 # Cannot use plain raise due to

@@ -16,6 +16,7 @@ import inspect
 import sys
 
 from .unic import unic
+from .platform import IRONPYTHON
 
 
 def printable_name(string, code_style=False):
@@ -106,7 +107,7 @@ def getdoc(item):
 
 
 # On IronPython sys.stdxxx.isatty() always returns True
-if sys.platform != 'cli':
+if not IRONPYTHON:
 
     def isatty(stream):
         return hasattr(stream, 'isatty') and stream.isatty()

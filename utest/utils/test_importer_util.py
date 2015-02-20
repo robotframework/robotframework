@@ -8,6 +8,7 @@ import re
 from os.path import abspath, basename, dirname, exists, join, normpath
 
 from robot.errors import DataError
+from robot.utils import JYTHON
 from robot.utils.importer import Importer, ByPathImporter
 from robot.utils.asserts import (assert_equals, assert_true, assert_raises,
                                  assert_raises_with_msg)
@@ -109,7 +110,7 @@ class TestImportByPath(unittest.TestCase):
         error = assert_raises(DataError, self._import_and_verify, path, remove='test')
         assert_prefix(error, "Importing '%s' failed: SyntaxError:" % path)
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_java_class_with_java_extension(self):
             path = join(CURDIR, 'ImportByPath.java')
@@ -287,7 +288,7 @@ class TestImportClassOrModule(unittest.TestCase):
         logger.assert_message("Imported class 'ExampleLibrary' from '%s'."
                               % join(LIBDIR, 'ExampleLibrary'))
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_import_java_class(self):
             klass = self._import_class('ExampleJavaLibrary')
@@ -364,7 +365,7 @@ class TestErrorDetails(unittest.TestCase):
         last_line = self._get_pythonpath(error).splitlines()[-1].strip()
         assert_true(last_line.startswith('hyv'))
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_classpath(self):
             error = self._failing_import('NoneExisting')

@@ -219,7 +219,7 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(['x', 'y']))
         assert_true(patterns.match(['x', 'Y', 'z']))
 
-    if sys.platform != 'cli':  # eval below sometimes fails on IronPython
+    if not utils.IRONPYTHON:  # eval below sometimes fails on IronPython
 
         def test_ands_and_ors(self):
             for pattern in AndOrPatternGenerator(max_length=5):

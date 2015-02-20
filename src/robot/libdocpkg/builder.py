@@ -12,15 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 import os
 
-from robot.parsing import VALID_EXTENSIONS as RESOURCE_EXTENSIONS
 from robot.errors import DataError
+from robot.parsing import VALID_EXTENSIONS as RESOURCE_EXTENSIONS
+from robot.utils import JYTHON
 
 from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
 from .specbuilder import SpecDocBuilder
-if sys.platform.startswith('java'):
+if JYTHON:
     from .javabuilder import JavaDocBuilder
 else:
     def JavaDocBuilder():

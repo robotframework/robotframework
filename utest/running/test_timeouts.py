@@ -3,9 +3,11 @@ import sys
 import time
 import os
 
-from robot.utils.asserts import *
-from robot.errors import *
+from robot.errors import TimeoutError
 from robot.running.timeouts import TestTimeout, KeywordTimeout
+from robot.utils.asserts import (assert_equals, assert_false, assert_true,
+                                 assert_raises, assert_raises_with_msg)
+from robot.utils import JYTHON
 
 # thread_resources is here
 sys.path.append(os.path.join(os.path.dirname(__file__),'..','utils'))
@@ -110,7 +112,7 @@ class TestRun(unittest.TestCase):
         self.tout.start()
 
     def test_passing(self):
-        assert_none(self.tout.run(passing))
+        assert_equals(self.tout.run(passing), None)
 
     def test_returning(self):
         for arg in [ 10, 'hello', ['l','i','s','t'], unittest]:
@@ -121,7 +123,8 @@ class TestRun(unittest.TestCase):
         assert_raises_with_msg(MyException, 'hello world',
                                self.tout.run, failing, ('hello world',))
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
+
         def test_java_failing(self):
             from java.lang import Error
             from thread_resources import java_failing
@@ -166,7 +169,7 @@ class TestRun(unittest.TestCase):
 class TestMessage(unittest.TestCase):
 
     def test_non_active(self):
-        assert_equal(TestTimeout().get_message(), 'Test timeout not active.')
+        assert_equals(TestTimeout().get_message(), 'Test timeout not active.')
 
     def test_active(self):
         tout = KeywordTimeout('42s', variables=VariableMock())
@@ -178,12 +181,12 @@ class TestMessage(unittest.TestCase):
     def test_failed_default(self):
         tout = TestTimeout('1s', variables=VariableMock())
         tout.starttime = time.time() - 2
-        assert_equal(tout.get_message(), 'Test timeout 1 second exceeded.')
+        assert_equals(tout.get_message(), 'Test timeout 1 second exceeded.')
 
     def test_failed_custom(self):
         tout = KeywordTimeout('1s', 'Custom message', VariableMock())
         tout.starttime = time.time() - 2
-        assert_equal(tout.get_message(), 'Custom message')
+        assert_equals(tout.get_message(), 'Custom message')
 
 
 if __name__ == '__main__':

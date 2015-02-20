@@ -15,12 +15,12 @@
 import ctypes
 import os
 import subprocess
-import sys
 import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
-                         decode_output, secs_to_timestr, timestr_to_secs)
+                         decode_output, secs_to_timestr, timestr_to_secs,
+                         IRONPYTHON, JYTHON)
 from robot.version import get_version
 from robot.api import logger
 
@@ -536,7 +536,7 @@ class Process(object):
         if hasattr(os, 'killpg'):
             os.killpg(process.pid, signal_module.SIGTERM)
         elif hasattr(signal_module, 'CTRL_BREAK_EVENT'):
-            if sys.platform == 'cli':
+            if IRONPYTHON:
                 # https://ironpython.codeplex.com/workitem/35020
                 ctypes.windll.kernel32.GenerateConsoleCtrlEvent(
                     signal_module.CTRL_BREAK_EVENT, process.pid)
@@ -847,7 +847,7 @@ class ProcessConfig(object):
                   'cwd': self.cwd,
                   'env': self.env,
                   'universal_newlines': True}
-        if not sys.platform.startswith('java'):
+        if not JYTHON:
             self._add_process_group_config(config)
         return config
 

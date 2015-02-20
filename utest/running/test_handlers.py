@@ -12,7 +12,7 @@ from robot.errors import DataError
 
 from classes import NameLibrary, DocLibrary, ArgInfoLibrary
 from ArgumentsPython import ArgumentsPython
-if utils.is_jython:
+if utils.JYTHON:
     import ArgumentsJava
 
 
@@ -84,7 +84,8 @@ class TestDynamicHandlerCreation(unittest.TestCase):
     def test_non_ascii_doc(self):
         self._assert_doc(u'P\xe4iv\xe4\xe4')
 
-    if sys.platform != 'cli':
+    if not utils.IRONPYTHON:
+
         def test_with_utf8_doc(self):
             doc = u'P\xe4iv\xe4\xe4'
             self._assert_doc(doc.encode('UTF-8'), doc)
@@ -197,7 +198,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         return DynamicHandler(lib, 'mock', RunKeyword(lib), doc, argspec)
 
 
-if utils.is_jython:
+if utils.JYTHON:
 
     handlers = dict((method.__name__, method) for method in
                     _get_java_handler_methods(ArgumentsJava('Arg', ['varargs'])))

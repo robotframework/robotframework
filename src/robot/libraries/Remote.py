@@ -26,10 +26,7 @@ except ImportError:   # No expat in IronPython 2.7
 
 from robot.errors import RemoteError
 from robot.utils import (is_list_like, is_dict_like, timestr_to_secs, unic,
-                         DotDict)
-
-
-IRONPYTHON = sys.platform == 'cli'
+                         DotDict, IRONPYTHON)
 
 
 class Remote(object):
@@ -258,11 +255,11 @@ if sys.version_info[:2] == (2, 6):
             self._setup(self._connection_class(host, port, strict, timeout=timeout))
 
 
-if sys.version_info[:2] == (2, 5) or sys.platform == 'cli':
+if IRONPYTHON:
 
     class TimeoutTransport(xmlrpclib.Transport):
 
         def __init__(self, use_datetime=0, timeout=None):
             xmlrpclib.Transport.__init__(self, use_datetime)
             if timeout:
-                raise RuntimeError('This Python version does not support timeouts.')
+                raise RuntimeError('Timeouts are not supported on IronPython.')

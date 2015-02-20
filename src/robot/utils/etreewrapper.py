@@ -12,16 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 import os.path
 from StringIO import StringIO
 
+from .platform import IRONPYTHON
 
-_IRONPYTHON = sys.platform == 'cli'
+
 _ERROR = 'No valid ElementTree XML parser module found'
 
 
-if not _IRONPYTHON:
+if not IRONPYTHON:
     try:
         from xml.etree import cElementTree as ET
     except ImportError:
@@ -83,7 +83,7 @@ class ETSource(object):
             return self._open_string_io(self._source)
         return None
 
-    if not _IRONPYTHON:
+    if not IRONPYTHON:
 
         # File is opened, and later closed, because ElementTree had a bug that
         # it didn't close files it had opened. This caused problems with Jython

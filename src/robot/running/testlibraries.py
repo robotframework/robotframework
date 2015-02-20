@@ -14,13 +14,12 @@
 
 import inspect
 import os
-import sys
 
 from robot.errors import DataError
 from robot.libraries import STDLIBS, DEPRECATED_STDLIBS
 from robot.output import LOGGER
 from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
-                         is_java_method, normalize, seq2str2, unic)
+                         is_java_method, JYTHON, normalize, seq2str2, unic)
 
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              GetKeywordNames, RunKeyword)
@@ -28,7 +27,7 @@ from .handlers import Handler, InitHandler, DynamicHandler
 from .handlerstore import HandlerStore
 from .outputcapture import OutputCapturer
 
-if sys.platform.startswith('java'):
+if JYTHON:
     from java.lang import Object
 else:
     Object = None

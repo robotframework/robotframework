@@ -1,12 +1,10 @@
 import unittest
 import sys
 
-from robot.utils import unic, safe_repr
+from robot.utils import unic, safe_repr, JYTHON, IRONPYTHON
 from robot.utils.asserts import assert_equals, assert_true
 
 
-JYTHON = sys.platform.startswith('java')
-IPY = sys.platform == 'cli'
 UNREPR = u"<Unrepresentable object '%s'. Error: %s>"
 
 
@@ -44,7 +42,7 @@ if JYTHON:
 
 class TestUnic(unittest.TestCase):
 
-    if not (JYTHON or IPY):
+    if not (JYTHON or IRONPYTHON):
         def test_unicode_nfc_and_nfd_decomposition_equality(self):
             import unicodedata
             text = u'Hyv\xe4'
@@ -53,7 +51,7 @@ class TestUnic(unittest.TestCase):
             # This is to check that unic normalizes all strings to NFC
             assert_equals(unic(unicodedata.normalize('NFD', text)), text)
 
-    if not IPY:
+    if not IRONPYTHON:
         def test_encoding(self):
             good = u'hyv\xe4'
             assert_equals(unic(good.encode('UTF-8'), 'UTF-8'), good)
@@ -68,7 +66,7 @@ class TestUnic(unittest.TestCase):
         if JYTHON:
             # This is actually wrong behavior
             assert_equals(result, '[Hyv\\xe4, Hyv\\xe4]')
-        elif IPY:
+        elif IRONPYTHON:
             # And so is this.
             assert_equals(result, '[Hyv\xe4, Hyv\xe4]')
         else:
@@ -78,7 +76,7 @@ class TestUnic(unittest.TestCase):
     def test_bytes_below_128(self):
         assert_equals(unic('\x00-\x01-\x02-\x7f'), u'\x00-\x01-\x02-\x7f')
 
-    if not IPY:
+    if not IRONPYTHON:
 
         def test_bytes_above_128(self):
             assert_equals(unic('hyv\xe4'), u'hyv\\xe4')

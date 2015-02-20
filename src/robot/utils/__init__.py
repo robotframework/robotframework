@@ -52,6 +52,7 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import (isatty, getdoc, plural_or_not, printable_name,
                    seq2str, seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
+from .platform import IRONPYTHON, JYTHON, UNIXY, WINDOWS
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method
@@ -65,10 +66,6 @@ from .text import (cut_long_message, format_assign_message,
                    pad_console_length, get_console_length)
 from .unic import unic, safe_repr
 from .utf8reader import Utf8Reader
-
-import sys
-is_jython = sys.platform.startswith('java')
-del sys
 
 
 # Still used by old SeleniumLibrary. Cannot be removed until that library is

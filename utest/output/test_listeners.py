@@ -3,7 +3,7 @@ import unittest
 from robot.output.listeners import Listeners
 from robot.output import LOGGER
 from robot.utils.asserts import *
-from robot import utils
+from robot.utils import JYTHON
 from robot.running.outputcapture import OutputCapturer
 
 
@@ -211,7 +211,7 @@ class TestInvalidOldStyleListener(unittest.TestCase):
             getattr(listenres, name)(*args)
 
 
-if utils.is_jython:
+if JYTHON:
 
     class TestJavaListener(_BaseListenerTest, unittest.TestCase):
         listener_name = 'NewStyleJavaListener'
@@ -223,4 +223,3 @@ if utils.is_jython:
 
 if __name__ == '__main__':
     unittest.main()
-

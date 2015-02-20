@@ -15,11 +15,9 @@
 import sys
 import os
 
+from .platform import JYTHON, WINDOWS, UNIXY
 
-ANY = True
-UNIXY = os.sep == '/'
-WINDOWS = not UNIXY
-JYTHON = sys.platform.startswith('java')
+
 if UNIXY:
     DEFAULT_SYSTEM_ENCODING = 'UTF-8'
     DEFAULT_OUTPUT_ENCODING = 'UTF-8'
@@ -29,7 +27,7 @@ else:
 
 
 def get_system_encoding():
-    platform_getters = [(ANY, _get_python_system_encoding),
+    platform_getters = [(True, _get_python_system_encoding),
                         (JYTHON, _get_java_system_encoding),
                         (UNIXY, _get_unixy_encoding),
                         (WINDOWS, _get_windows_system_encoding)]
@@ -37,7 +35,7 @@ def get_system_encoding():
 
 
 def get_output_encoding():
-    platform_getters = [(ANY, _get_stream_output_encoding),
+    platform_getters = [(True, _get_stream_output_encoding),
                         (UNIXY, _get_unixy_encoding),
                         (WINDOWS, _get_windows_output_encoding)]
     return _get_encoding(platform_getters, DEFAULT_OUTPUT_ENCODING)

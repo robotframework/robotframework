@@ -4,12 +4,12 @@ import sys
 from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
                                          _ModuleLibrary, _DynamicLibrary)
 from robot.utils.asserts import *
-from robot import utils
+from robot.utils import JYTHON, normalize
 from robot.errors import DataError
 
 from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
                      GetattrLibrary, SynonymLibrary)
-if utils.is_jython:
+if JYTHON:
     import ArgumentTypes, Extended, MultipleArguments, MultipleSignatures, \
             NoHandlers
 
@@ -52,7 +52,7 @@ class TestLibraryTypes(unittest.TestCase):
         lib = TestLibrary("RunKeywordLibrary")
         assert_equals(lib.__class__, _DynamicLibrary)
 
-    if utils.is_jython:
+    if JYTHON:
         def test_java_library(self):
             lib = TestLibrary("ExampleJavaLibrary")
             assert_equals(lib.__class__, _ClassLibrary)
@@ -123,7 +123,7 @@ class TestImports(unittest.TestCase):
             lib = TestLibrary(libname)
             assert_equals(lib.scope, 'TESTCASE')
 
-    if utils.is_jython:
+    if JYTHON:
 
         def test_import_java(self):
             lib = TestLibrary("ExampleJavaLibrary")
@@ -160,8 +160,7 @@ class TestImports(unittest.TestCase):
         for name, _ in keywords:
             handler = lib.handlers[name]
             exp = "%s.%s" % (libname, name)
-            assert_equals(utils.normalize(handler.longname),
-                          utils.normalize(exp))
+            assert_equals(normalize(handler.longname), normalize(exp))
 
 
 class TestLibraryInit(unittest.TestCase):
@@ -188,7 +187,7 @@ class TestLibraryInit(unittest.TestCase):
         assert_equals(lib.init.arguments.maxargs, max)
         return lib
 
-    if utils.is_jython:
+    if JYTHON:
 
         def test_java_library_without_constructor(self):
             self._test_init_handler('ExampleJavaLibrary', None, 0, 0)
@@ -221,7 +220,7 @@ class TestVersion(unittest.TestCase):
     def test_version_in_module_library(self):
         self._verify_version('module_library', 'test')
 
-    if utils.is_jython:
+    if JYTHON:
 
         def test_no_version_in_java_library(self):
             self._verify_version('ExampleJavaLibrary', '')
@@ -241,7 +240,7 @@ class TestDocFormat(unittest.TestCase):
     def test_doc_format_in_python_libarary(self):
         self._verify_doc_format('classes.VersionLibrary', 'HTML')
 
-    if utils.is_jython:
+    if JYTHON:
 
         def test_no_doc_format_in_java_library(self):
             self._verify_doc_format('ExampleJavaLibrary', '')
@@ -421,7 +420,7 @@ class TestHandlers(unittest.TestCase):
         assert_equals(instance.kw_accessed, 1)
         assert_equals(instance.kw_called, 5)
 
-    if utils.is_jython:
+    if JYTHON:
 
         def test_get_java_handlers(self):
             for lib in [ArgumentTypes, MultipleArguments, MultipleSignatures,
@@ -492,7 +491,7 @@ def assert_handler_args(handler, minargs=0, maxargs=0, kwargs=False):
     assert_equals(bool(handler.arguments.kwargs), kwargs)
 
 
-if utils.is_jython:
+if JYTHON:
 
     class TestDynamicLibraryJava(unittest.TestCase):
 
@@ -551,7 +550,7 @@ class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
     def _assert_intro_doc(self, library_name, expected_doc):
         assert_equals(TestLibrary(library_name).doc, expected_doc)
 
-    if utils.is_jython:
+    if JYTHON:
 
         def test_dynamic_init_doc_from_java_library(self):
             self._assert_intro_doc('ArgDocDynamicJavaLibrary',
@@ -577,7 +576,7 @@ class TestDynamicLibraryInitDocumentation(unittest.TestCase):
     def _assert_init_doc(self, library_name, expected_doc):
         assert_equals(TestLibrary(library_name).init.doc, expected_doc)
 
-    if utils.is_jython:
+    if JYTHON:
         def test_dynamic_init_doc_from_java_library(self):
             self._assert_init_doc('ArgDocDynamicJavaLibrary',
                                   'Dynamic Java init doc.')

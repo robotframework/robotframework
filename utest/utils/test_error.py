@@ -4,7 +4,7 @@ import re
 
 from robot.utils.asserts import assert_equals, assert_true, assert_raises
 from robot import utils
-if utils.is_jython:
+if utils.JYTHON:
     import JavaExceptions
     java_exceptions = JavaExceptions()
 
@@ -42,7 +42,7 @@ class TestGetErrorDetails(unittest.TestCase):
             assert_true(details.startswith('Traceback'))
             assert_true(exp_msg not in details)
 
-    if utils.is_jython:
+    if utils.JYTHON:
 
         def test_get_error_details_java(self):
             for exception, msg, expected in [

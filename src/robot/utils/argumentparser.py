@@ -413,10 +413,7 @@ class ArgFileParser(object):
                             % (path, err))
 
     def _read_from_stdin(self):
-        content = sys.__stdin__.read()
-        if sys.platform != 'cli':
-            content = decode_output(content)
-        return content
+        return decode_output(sys.__stdin__.read())
 
     def _process_file(self, content):
         args = []

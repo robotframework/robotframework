@@ -3,7 +3,8 @@ import sys
 
 from robot.variables import Variables
 from robot.errors import DataError
-from robot.utils.asserts import assert_equal, assert_raises, assert_true
+from robot.utils.asserts import assert_equal, assert_raises
+from robot.utils import JYTHON
 
 
 SCALARS = ['${var}', '${  v A  R }']
@@ -23,7 +24,7 @@ class PythonObject:
         return '(%s, %s)' % (self.a, self.b)
     __repr__ = __str__
 
-if sys.platform.startswith('java'):
+if JYTHON:
     import JavaObject
 
 
@@ -228,7 +229,7 @@ class TestVariables(unittest.TestCase):
         copy = varz.copy()
         assert_equal(copy['${foo}'], 'bar')
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_variable_as_object_in_java(self):
             obj = JavaObject('hello')
