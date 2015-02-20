@@ -167,7 +167,7 @@ class UserKeywordHandler(object):
             args.append('@{%s}' % self.arguments.varargs)
         if self.arguments.kwargs:
             args.append('&{%s}' % self.arguments.kwargs)
-        args = ['%s=%s' % (name, utils.safe_repr(variables[name]))
+        args = ['%s=%s' % (name, utils.prepr(variables[name]))
                 for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 

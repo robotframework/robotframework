@@ -1,11 +1,8 @@
 import unittest
-import sys
+import re
 
-from robot.utils import unic, safe_repr, JYTHON, IRONPYTHON
+from robot.utils import unic, prepr, DotDict, JYTHON, IRONPYTHON
 from robot.utils.asserts import assert_equals, assert_true
-
-
-UNREPR = u"<Unrepresentable object '%s'. Error: %s>"
 
 
 if JYTHON:
@@ -13,6 +10,7 @@ if JYTHON:
     from java.lang import String, Object, RuntimeException
     import JavaObject
     import UnicodeJavaLibrary
+
 
     class TestJavaUnic(unittest.TestCase):
 
@@ -33,11 +31,11 @@ if JYTHON:
             assert_true('Circle is 360' in iterator.next())
 
         def test_failure_in_toString(self):
-            class ToStringFails(Object):
+            class ToStringFails(Object, UnRepr):
                 def toString(self):
-                    raise RuntimeException('failure in toString')
-            assert_equals(unic(ToStringFails()),
-                          UNREPR % ('ToStringFails', 'failure in toString'))
+                    raise RuntimeException(self.error)
+            failing = ToStringFails()
+            assert_equals(unic(failing), failing.unrepr)
 
 
 class TestUnic(unittest.TestCase):
@@ -70,7 +68,7 @@ class TestUnic(unittest.TestCase):
             # And so is this.
             assert_equals(result, '[Hyv\xe4, Hyv\xe4]')
         else:
-            expected = UNREPR[:-1] % ('list', 'UnicodeEncodeError: ')
+            expected = UnRepr.format('list', 'UnicodeEncodeError: ')[:-1]
             assert_true(result.startswith(expected))
 
     def test_bytes_below_128(self):
@@ -97,50 +95,136 @@ class TestUnic(unittest.TestCase):
             assert_equals(unic("\x00\xe4\n\t\r\\'"), u"\x00\xe4\n\t\r\\'")
 
     def test_failure_in_unicode(self):
-        assert_equals(unic(UnicodeFails()),
-                      UNREPR % ('UnicodeFails', 'Failure in __unicode__'))
+        failing = UnicodeFails()
+        assert_equals(unic(failing), failing.unrepr)
 
     def test_failure_in_str(self):
-        assert_equals(unic(StrFails()),
-                      UNREPR % ('StrFails', 'Failure in __str__'))
+        failing = StrFails()
+        assert_equals(unic(failing), failing.unrepr)
 
 
-class TestSafeRepr(unittest.TestCase):
+class TestPrettyRepr(unittest.TestCase):
 
-    def test_failure_in_repr(self):
-        assert_equals(safe_repr(ReprFails()),
-                      UNREPR % ('ReprFails', 'Failure in __repr__'))
+    def _verify(self, item, expected=None):
+        if not expected:
+            expected = repr(item)
+        elif IRONPYTHON and "b'" in expected:
+            expected = expected.replace("b'", "'")
+        assert_equals(prepr(item), expected)
 
-    def test_repr_of_unicode_has_u_prefix(self):
-        assert_equals(safe_repr(u'foo'), "u'foo'")
-        assert_equals(safe_repr(u"f'o'o"), "u\"f'o'o\"")
+    def test_no_u_prefix(self):
+        self._verify(u'foo', "'foo'")
+        self._verify(u"f'o'o", "\"f'o'o\"")
+        self._verify(u'hyv\xe4', "'hyv\\xe4'")
 
-    def test_unicode_items_in_list_repr_have_u_prefix(self):
-        assert_equals(safe_repr([]), '[]')
-        assert_equals(safe_repr([u'foo']), "[u'foo']")
-        assert_equals(safe_repr([u'a', 1, u"'"]), "[u'a', 1, u\"'\"]")
+    def test_b_prefix(self):
+        self._verify('foo', "b'foo'")
+        self._verify('hyv\xe4', "b'hyv\\xe4'")
+
+    def test_non_strings(self):
+        for inp in [1, -2.0, True, None, -2.0, (), [], {},
+                    StrFails(), UnicodeFails()]:
+            self._verify(inp)
+
+    def test_failing_repr(self):
+        failing = ReprFails()
+        self._verify(failing, failing.unrepr)
+
+    def test_unicode_repr(self):
+        invalid = UnicodeRepr()
+        if JYTHON or IRONPYTHON:
+            expected = u'Hyv\xe4'
+        else:
+            expected = invalid.unrepr  # This is correct behavior.
+        self._verify(invalid, expected)
+
+    def test_non_ascii_repr(self):
+        non_ascii = NonAsciiRepr()
+        self._verify(non_ascii, "Hyv\\xe4")
+
+    def test_collections(self):
+        self._verify([u'foo', 'bar', 3], "['foo', b'bar', 3]")
+        self._verify([u'foo', 'bar', (u'u', 'b')], "['foo', b'bar', ('u', b'b')]")
+        inp1, inp2 = ReprFails(), StrFails()
+        exp1, exp2 = inp1.unrepr, repr(inp2)
+        self._verify((inp1, inp2, [inp1]),
+                     '(%s, %s, [%s])' % (exp1, exp2, exp1))
+        self._verify({'a': 1, 2: u'b'},
+                     "{2: 'b', b'a': 1}")
+        self._verify({1: inp1, None: ()},
+                     '{None: (), 1: %s}' % exp1)
+
+    def test_dotdict(self):
+        self._verify(DotDict({'a': 1, 2: u'b'}),
+                     "{2: 'b', b'a': 1}")
+
+    def test_recursive(self):
+        x = [1, 2]
+        x.append(x)
+        match = re.match(r'\[1, 2. <Recursion on list with id=\d+>\]', prepr(x))
+        assert_true(match is not None)
+
+    def test_split_big_collections(self):
+        self._verify(range(100))
+        self._verify([u'Hello, world!'] * 10,
+                     '[%s]' % ', '.join(["'Hello, world!'"] * 10))
+        self._verify(range(300),
+                     '[%s]' % ',\n '.join(str(i) for i in range(300)))
+        self._verify([u'Hello, world!'] * 30,
+                     '[%s]' % ',\n '.join(["'Hello, world!'"] * 30))
 
 
-class UnicodeRepr(object):
+class UnRepr(object):
+    error = 'This, of course, should never happen...'
+
+    @property
+    def unrepr(self):
+        return self.format(type(self).__name__, self.error)
+
+    @staticmethod
+    def format(name, error):
+        return "<Unrepresentable object %s. Error: %s>" % (name, error)
+
+
+class UnicodeFails(UnRepr):
+    def __unicode__(self):
+        raise RuntimeError(self.error)
+
+
+class StrFails(UnRepr):
+    def __unicode__(self):
+        raise UnicodeError()
+    def __str__(self):
+        raise RuntimeError(self.error)
+
+
+class ReprFails(UnRepr):
+    def __repr__(self):
+        raise RuntimeError(self.error)
+
+
+class UnicodeRepr(UnRepr):
+
+    def __init__(self):
+        try:
+            repr(self)
+        except UnicodeEncodeError, err:
+            self.error = 'UnicodeEncodeError: %s' % err
+
     def __repr__(self):
         return u'Hyv\xe4'
 
 
-class UnicodeFails(object):
-    def __unicode__(self):
-        raise RuntimeError('Failure in __unicode__')
+class NonAsciiRepr(UnRepr):
 
+    def __init__(self):
+        try:
+            repr(self)
+        except UnicodeEncodeError, err:
+            self.error = 'UnicodeEncodeError: %s' % err
 
-class StrFails(object):
-    def __unicode__(self):
-        raise UnicodeError()
-    def __str__(self):
-        raise RuntimeError('Failure in __str__')
-
-
-class ReprFails(object):
     def __repr__(self):
-        raise RuntimeError('Failure in __repr__')
+        return 'Hyv\xe4'
 
 
 if __name__ == '__main__':

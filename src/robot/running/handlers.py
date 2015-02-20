@@ -118,8 +118,8 @@ class _RunnableHandler(object):
         return self._run_with_output_captured_and_signal_monitor(runner, context)
 
     def _log_args(self, positional, named):
-        positional = [utils.safe_repr(arg) for arg in positional]
-        named = ['%s=%s' % (utils.unic(name), utils.safe_repr(value))
+        positional = [utils.prepr(arg) for arg in positional]
+        named = ['%s=%s' % (utils.unic(name), utils.prepr(value))
                  for name, value in named.items()]
         return 'Arguments: [ %s ]' % ' | '.join(positional + named)
 

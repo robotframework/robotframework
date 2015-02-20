@@ -64,7 +64,7 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
 from .setter import setter
 from .text import (cut_long_message, format_assign_message,
                    pad_console_length, get_console_length)
-from .unic import unic, safe_repr
+from .unic import prepr, unic
 from .utf8reader import Utf8Reader
 
 

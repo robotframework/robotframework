@@ -8,8 +8,8 @@ Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 
 *** Variables ***
-${UNREPR STR}     <Unrepresentable object 'FailiningStr'. Error: *>
-${UNREPR UNIC}    <Unrepresentable object 'FailiningUnicode'. Error: *>
+${UNREPR STR}     <Unrepresentable object FailiningStr. Error: *>
+${UNREPR UNIC}    <Unrepresentable object FailiningUnicode. Error: *>
 
 *** Test Cases ***
 Simple Scalar Variable

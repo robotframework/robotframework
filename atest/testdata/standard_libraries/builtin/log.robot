@@ -53,17 +53,17 @@ Log repr
     Log    ${list}    repr=yes    console=please
 
 Log pprint
-    ${dict} =    Evaluate    {'a long string': 1, 'a longer string!': 2, 'a much, much, much, much, much, much longer string': 3, 'list': ['a long string', 'a longer string!', 'a much, much, much, much, much, much longer string']}
+    ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']}
     Log    ${dict}    repr=yes    console=please
-    ${list} =    Evaluate    ['One', 'Two', 3]
+    ${list} =    Evaluate    ['One', u'Two', 3]
     Log    ${list}    repr=yes    console=please
-    ${list} =    Evaluate    ['a long string', 'a longer string!', 'a much, much, much, much, much, much longer string']
+    ${list} =    Evaluate    ['a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']
     Log    ${list}    repr=yes    console=please
-    ${dict} =    Evaluate    {'a long string': 1, 'a longer string!': 2, 'a much, much, much, much, much, much longer string': 3, 'list': ['a long string', 'a longer string!', 'a much, much, much, much, much, much longer string']}
+    ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']}
     Log    ${dict}    repr=yes
-    ${list} =    Evaluate    ['One', 'Two', 3]
+    ${list} =    Evaluate    [u'One', 'Two', 3]
     Log    ${list}    repr=yes
-    ${dict} =    Evaluate    {'a long string': 1, 'a longer string!': 2, 'a much, much, much, much, much, much longer string': 3, 'list': ['a long string', ${42}, u'Hyvää yötä \u2603!', 'a much, much, much, much, much, much longer string', '\\x00\\xff']}
+    ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', ${42}, u'Hyvää yötä \u2603!', u'a much, much, much, much, much, much longer string', '\\x00\\xff']}
     Log    ${dict}    repr=yes    console=please
 
 Log callable

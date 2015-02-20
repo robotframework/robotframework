@@ -44,4 +44,5 @@ class DotDict(OrderedDict):
     def __str__(self):
         return '{%s}' % ', '.join('%r: %r' % item for item in self.iteritems())
 
-    __repr__ = __str__
+    # Must use original dict.__repr__ to allow customising PrettyPrinter.
+    __repr__ = dict.__repr__

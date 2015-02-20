@@ -15,7 +15,7 @@
 import re
 
 from robot.errors import DataError
-from robot.utils import safe_repr, format_assign_message, get_error_message
+from robot.utils import format_assign_message, get_error_message, prepr
 
 
 class VariableAssigner(object):
@@ -27,7 +27,7 @@ class VariableAssigner(object):
         self._return_resolver = ReturnValueResolver(assignment)
 
     def assign(self, context, return_value):
-        context.trace(lambda: 'Return: %s' % safe_repr(return_value))
+        context.trace(lambda: 'Return: %s' % prepr(return_value))
         for name, value in self._return_resolver.resolve(return_value):
             if not self._extended_assign(name, value, context.variables):
                 value = self._normal_assign(name, value, context.variables)

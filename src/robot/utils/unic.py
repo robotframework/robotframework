@@ -12,6 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from pprint import PrettyPrinter
+
+from .dotdict import DotDict
 from .platform import IRONPYTHON, JYTHON
 
 
@@ -40,30 +43,24 @@ if not (JYTHON or IRONPYTHON):
         return normalize('NFC', _unic(item, *args))
 
 
-def safe_repr(item):
-    try:
-        return unic(repr(item))
-    except UnicodeError:
-        return repr(unic(item))
-    except:
-        return _unrepresentable_object(item)
+def prepr(item, width=400):
+    return unic(PrettyRepr(width=width).pformat(item))
 
 
-# IronPython omits `u` prefix from `repr(u'foo')`. We add it back to have
-# consistent and easier to test log messages.
-if IRONPYTHON:
-    _safe_repr = safe_repr
+class PrettyRepr(PrettyPrinter):
 
-    def safe_repr(item):
-        if isinstance(item, list):
-            return '[%s]' % ', '.join(safe_repr(i) for i in item)
-        ret = _safe_repr(item)
-        if isinstance(item, unicode) and not ret.startswith('u'):
-            ret = 'u' + ret
-        return ret
+    def format(self, object, context, maxlevels, level):
+        if isinstance(object, unicode):
+            return repr(object).lstrip('u'), True, False
+        if isinstance(object, str):
+            return 'b' + repr(object), True, False
+        try:
+            return PrettyPrinter.format(self, object, context, maxlevels, level)
+        except:
+            return _unrepresentable_object(object), True, False
 
 
 def _unrepresentable_object(item):
-    from robot.utils.error import get_error_message
-    return u"<Unrepresentable object '%s'. Error: %s>" \
+    from .error import get_error_message
+    return u"<Unrepresentable object %s. Error: %s>" \
            % (item.__class__.__name__, get_error_message())

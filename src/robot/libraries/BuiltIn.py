@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import pprint
 import re
 import time
 
@@ -2120,9 +2119,12 @@ class _Misc:
         instead if either of these is undesirable,
 
         If the `repr` argument is true, the given item will be passed through
-        Python's `pprint.pformat()` function before logging it. This is useful,
-        for example, when working with strings or bytes containing invisible
-        characters, or when working with nested data structures.
+        a custom version of Python's `pprint.pformat()` function before
+        logging it. This is useful, for example, when working with strings or
+        bytes containing invisible characters, or when working with nested data
+        structures. The custom version differs from the standard one so that it
+        omits the `u` prefix from Unicode strings and adds `b` prefix to
+        byte strings.
 
         Examples:
         | Log | Hello, world!        |          |   | # Normal INFO message.   |
@@ -2131,7 +2133,7 @@ class _Misc:
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
         | Log | Hello, console!   | console=yes | | # Log also to the console. |
-        | Log | Hyv\xe4 \\x00     | repr=yes    | | # Log `u'Hyv\\xe4 \\x00'`. |
+        | Log | Hyv\xe4 \\x00     | repr=yes    | | # Log `'Hyv\\xe4 \\x00'`.  |
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
@@ -2139,11 +2141,12 @@ class _Misc:
         Arguments `html`, `console`, and `repr` are new in Robot Framework
         2.8.2.
 
-        Pprint support when `repr` is true is new in Robot Framework 2.8.6.
+        Pprint support when `repr` is used is new in Robot Framework 2.8.6,
+        and it was changed to drop the `u` prefix and add the `b` prefix
+        in Robot Framework 2.9.
         """
         if repr:
-            message = utils.safe_repr(message) if utils.is_str_like(message) \
-                else pprint.pformat(message)
+            message = utils.prepr(message, width=80)
         logger.write(message, level, html)
         if console:
             logger.console(message)

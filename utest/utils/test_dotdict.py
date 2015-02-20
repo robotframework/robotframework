@@ -33,10 +33,12 @@ class TestDotDict(unittest.TestCase):
         assert_raises(KeyError, self.dd.__delitem__, 'nonex')
         assert_raises(AttributeError, self.dd.__delattr__, 'nonex')
 
-    def test_same_str_and_repr_as_with_normal_dict(self):
-        d = {'foo': 'bar', '"\'': '"\'', '\n': '\r', 1: 2, (): {}, True: False}
-        assert_equal(str(DotDict(d)), str(d))
-        assert_equal(repr(DotDict(d)), repr(d))
+    def test_same_str_and_repr_format_as_with_normal_dict(self):
+        D = {'foo': 'bar', '"\'': '"\'', '\n': '\r', 1: 2, (): {}, True: False}
+        for d in {}, {'a': 1}, D:
+            for formatter in str, repr:
+                result = formatter(DotDict(d))
+                assert_equal(eval(result, {}), d)
 
     def test_is_ordered(self):
         assert_equal(list(self.dd), ['z', 2, 'x'])
