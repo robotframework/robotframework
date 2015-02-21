@@ -132,31 +132,37 @@ class TestPrettyRepr(unittest.TestCase):
 
     def test_unicode_repr(self):
         invalid = UnicodeRepr()
-        if JYTHON or IRONPYTHON:
+        if JYTHON:
+            expected = 'Hyv\\xe4'
+        elif IRONPYTHON:
             expected = u'Hyv\xe4'
         else:
-            expected = invalid.unrepr  # This is correct behavior.
+            expected = invalid.unrepr  # This is correct.
         self._verify(invalid, expected)
 
     def test_non_ascii_repr(self):
         non_ascii = NonAsciiRepr()
-        self._verify(non_ascii, "Hyv\\xe4")
+        if IRONPYTHON:
+            expected = u'Hyv\xe4'
+        else:
+            expected = 'Hyv\\xe4'  # This is correct.
+        self._verify(non_ascii, expected)
 
     def test_collections(self):
         self._verify([u'foo', 'bar', 3], "['foo', b'bar', 3]")
-        self._verify([u'foo', 'bar', (u'u', 'b')], "['foo', b'bar', ('u', b'b')]")
+        self._verify([u'foo', 'bar', (u'x', 'y')], "['foo', b'bar', ('x', b'y')]")
         inp1, inp2 = ReprFails(), StrFails()
         exp1, exp2 = inp1.unrepr, repr(inp2)
         self._verify((inp1, inp2, [inp1]),
                      '(%s, %s, [%s])' % (exp1, exp2, exp1))
-        self._verify({'a': 1, 2: u'b'},
-                     "{2: 'b', b'a': 1}")
+        self._verify({'x': 1, 2: u'y'},
+                     "{2: 'y', b'x': 1}")
         self._verify({1: inp1, None: ()},
                      '{None: (), 1: %s}' % exp1)
 
     def test_dotdict(self):
-        self._verify(DotDict({'a': 1, 2: u'b'}),
-                     "{2: 'b', b'a': 1}")
+        self._verify(DotDict({'x': 1, 2: u'y'}),
+                     "{2: 'y', b'x': 1}")
 
     def test_recursive(self):
         x = [1, 2]
