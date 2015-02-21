@@ -1,5 +1,4 @@
 import unittest
-import sys
 
 try:
     from collections import Mapping
