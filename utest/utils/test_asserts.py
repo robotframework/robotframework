@@ -62,10 +62,12 @@ class TestAsserts(unittest.TestCase):
         assert_raises(AE, assert_equals, None, True)
 
     def test_fail_unless_equal_with_values_having_same_string_repr(self):
-        for val, type_ in [(1, 'number'), (1L, 'number'), (MyEqual(1), 'MyEqual')]:
+        for val, type_ in [(1, 'integer'),
+                           (1L, 'integer'),
+                           (MyEqual(1), 'MyEqual')]:
             assert_raises_with_msg(AE, '1 (string) != 1 (%s)' % type_,
                                    fail_unless_equal, '1', val)
-        assert_raises_with_msg(AE, '1.0 (number) != 1.0 (string)',
+        assert_raises_with_msg(AE, '1.0 (float) != 1.0 (string)',
                                fail_unless_equal, 1.0, u'1.0')
         assert_raises_with_msg(AE, 'True (string) != True (boolean)',
                                fail_unless_equal, 'True', True)

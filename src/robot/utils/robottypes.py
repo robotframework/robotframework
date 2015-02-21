@@ -21,6 +21,12 @@ except ImportError:
     String = ()
 
 
+def type_name(val):
+    named_types = {str: 'string', unicode: 'string', bool: 'boolean',
+                   int: 'integer', long: 'integer'}
+    return named_types.get(type(val), type(val).__name__)
+
+
 def is_str_like(item):
     return isinstance(item, (basestring, UserString, String))
 
