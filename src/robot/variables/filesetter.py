@@ -74,9 +74,6 @@ class VariableFileImporter(object):
         variables = get_variables(*args)
         if is_dict_like(variables):
             return variables.items()
-        # TODO: This shouldn't be needed after Jython 2.7 beta 4
-        if isinstance(variables, Map):
-            return [(entry.key, entry.value) for entry in variables.entrySet()]
         raise DataError("Expected '%s' to return dict-like value, got %s."
                         % (get_variables.__name__, type(variables).__name__))
 

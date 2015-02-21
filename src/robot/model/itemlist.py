@@ -44,12 +44,8 @@ class ItemList(object):
             self._check_type_and_set_attrs(item)
         self._items += tuple(items)
 
-    if hasattr(tuple, 'index'):  # tuples got index method in Python 2.6
-        def index(self, item):
-            return self._items.index(item)
-    else:
-        def index(self, item):
-            return list(self._items).index(item)
+    def index(self, item):
+        return self._items.index(item)
 
     def clear(self):
         self._items = ()
