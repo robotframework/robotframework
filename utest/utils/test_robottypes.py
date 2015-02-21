@@ -1,20 +1,19 @@
 import unittest
 
-try:
-    from collections import Mapping
-except ImportError:
-    Mapping = dict
-try:
-    from java.lang import String
-    from java.util import HashMap, Hashtable
-except ImportError:
-    pass
+from collections import Mapping
 from array import array
 from UserDict import UserDict
 from UserList import UserList
 from UserString import UserString, MutableString
+try:
+    import java
+    from java.lang import String
+    from java.util import HashMap, Hashtable
+except ImportError:
+    pass
 
-from robot.utils import is_dict_like, is_list_like, is_str_like, JYTHON
+from robot.utils import (is_dict_like, is_list_like, is_str_like, type_name,
+                         JYTHON)
 from robot.utils.asserts import assert_equals
 
 
@@ -104,5 +103,29 @@ class TestStringLike(unittest.TestCase):
             assert_equals(is_str_like(String('xxx')), True)
 
 
-if __name__ == "__main__":
+class TestTypeName(unittest.TestCase):
+
+    def test_base_types(self):
+        for item, exp in [('bytes', 'string'), (u'unicode', 'string'),
+                          (1, 'integer'), (1L, 'integer'), (1.0, 'float'),
+                          (True, 'boolean'), (None, 'None'), (set(), 'set'),
+                          ([], 'list'), ((), 'tuple'), ({}, 'dictionary')]:
+            assert_equals(type_name(item), exp)
+
+    def test_custom_objects(self):
+        class NewStyle(object): pass
+        class OldStyle: pass
+        for item, exp in [(NewStyle(), 'NewStyle'), (OldStyle(), 'OldStyle'),
+                          (NewStyle, 'type'), (OldStyle, 'classobj')]:
+            assert_equals(type_name(item), exp)
+
+    if JYTHON:
+
+        def test_java_object(self):
+            for item, exp in [(String(), 'String'), (String, 'Class'),
+                              (java.lang, 'javapackage'), (java, 'javapackage')]:
+                assert_equals(type_name(item), exp)
+
+
+if __name__ == '__main__':
     unittest.main()

@@ -45,6 +45,6 @@ Evaluate Empty
     Evaluate    ${EMPTY}
 
 Evaluate Nonstring
-    [Documentation]    FAIL Evaluating expression '5' failed: TypeError: Expression must be a string, not 'int'.
+    [Documentation]    FAIL Evaluating expression '5' failed: TypeError: Expression must be string, got integer.
     ${nonstring}=    Evaluate    5
     Evaluate    ${nonstring}

@@ -33,8 +33,9 @@ class ItemList(object):
 
     def _check_type_and_set_attrs(self, item):
         if not isinstance(item, self._item_class):
-            raise TypeError("Only '%s' objects accepted, got '%s'."
-                            % (self._item_class.__name__, type(item).__name__))
+            raise TypeError("Only %s objects accepted, got %s."
+                            % (self._item_class.__name__,
+                               item.__class__.__name__))
         if self._common_attrs:
             for attr in self._common_attrs:
                 setattr(item, attr, self._common_attrs[attr])
@@ -59,13 +60,13 @@ class ItemList(object):
 
     def __getitem__(self, index):
         if isinstance(index, slice):
-            raise TypeError("'%s' objects do not support slicing."
+            raise TypeError("%s instances do not support slicing."
                             % type(self).__name__)
         return self._items[index]
 
     def __setitem__(self, index, item):
         if isinstance(index, slice):
-            raise TypeError("'%s' objects do not support slicing."
+            raise TypeError("%s instances do not support slicing."
                             % type(self).__name__)
         self._check_type_and_set_attrs(item)
         items = list(self._items)

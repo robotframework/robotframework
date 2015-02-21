@@ -43,7 +43,7 @@ Call Method From Module
     Should Be Equal    ${path}    ${CURDIR}${/}foo${/}bar.txt
 
 Call Non Existing Method
-    [Documentation]    FAIL Object 'String presentation of MyObject' does not have a method 'non_existing'.
+    [Documentation]    FAIL Object 'String presentation of MyObject' does not have method 'non_existing'.
     Call Method    ${obj}    non_existing
 
 Call Java Method

@@ -13,7 +13,8 @@
 #  limitations under the License.
 
 from robot.api import logger
-from robot.utils import plural_or_not, seq2str, seq2str2, unic, Matcher
+from robot.utils import (plural_or_not, seq2str, seq2str2, type_name, unic,
+                         Matcher)
 from robot.utils.asserts import assert_equals
 from robot.version import get_version
 
@@ -849,8 +850,8 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
         return []
     regexp = False
     if not isinstance(pattern, basestring):
-        raise TypeError(
-            "Pattern must be string, got '%s'." % type(pattern).__name__)
+        raise TypeError("Pattern must be string, got '%s'."
+                        % type_name(pattern))
     if pattern.startswith('regexp='):
         pattern = pattern[7:]
         regexp = True

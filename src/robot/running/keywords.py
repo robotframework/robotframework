@@ -12,8 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import (format_assign_message, get_elapsed_time,
-                         get_error_message, get_timestamp, plural_or_not, frange)
+from robot.utils import (format_assign_message, frange, get_elapsed_time,
+                         get_error_message, get_timestamp, plural_or_not,
+                         type_name)
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           HandlerExecutionFailed)
@@ -288,8 +289,8 @@ class ForLoop(_BaseKeyword):
             raise DataError('Converting argument of FOR IN RANGE failed: %s'
                             % get_error_message())
         if not 1 <= len(items) <= 3:
-            raise DataError('FOR IN RANGE expected 1-3 arguments, '
-                            'got %d instead.' % len(items))
+            raise DataError('FOR IN RANGE expected 1-3 arguments, got %d.'
+                            % len(items))
         return frange(*items)
 
     def _to_number_with_arithmetics(self, item):
@@ -306,7 +307,7 @@ class ForLoop(_BaseKeyword):
                 pass
         number = eval(item, {})
         if not isinstance(number, (int, long, float)):
-            raise TypeError("Expected number, got '%s' instead." % item)
+            raise TypeError("Expected number, got %s." % type_name(item))
         return number
 
 

@@ -134,7 +134,7 @@ Dictionaries Should Be Equal With Different Keys And Own And Default Error Messa
 Dictionaries Should Be Equal With Different Values
     [Documentation]  FAIL
     ...    Following keys have different values:
-    ...    Key a: 1 (number) != 1 (string)
+    ...    Key a: 1 (integer) != 1 (string)
     ...    Key b: 2 != x
     Dictionaries Should Be Equal  ${D2}  ${D2B}
 
@@ -146,7 +146,7 @@ Dictionaries Should Be Equal With Different Values And Own And Default Error Mes
     [Documentation]  FAIL
     ...    My error message!
     ...    Following keys have different values:
-    ...    Key a: 1 (number) != 1 (string)
+    ...    Key a: 1 (integer) != 1 (string)
     ...    Key b: 2 != x
     Dictionaries Should Be Equal  ${D2}  ${D2B}  My error message!
 
@@ -171,7 +171,7 @@ Dictionary Should Contain Sub Dictionary With Missing Keys And Own And Default E
 Dictionary Should Contain Sub Dictionary With Different Value
     [Documentation]  FAIL
     ...    Following keys have different values:
-    ...    Key a: 1 (number) != 1 (string)
+    ...    Key a: 1 (integer) != 1 (string)
     ...    Key b: 2 != x
     Dictionary Should Contain Sub Dictionary  ${D3}  ${D2B}
 
@@ -183,7 +183,7 @@ Dictionary Should Contain Sub Dictionary With Different Value And Own And Defaul
     [Documentation]  FAIL
     ...    My error message!
     ...    Following keys have different values:
-    ...    Key a: 1 (number) != 1 (string)
+    ...    Key a: 1 (integer) != 1 (string)
     ...    Key b: 2 != x
     Dictionary Should Contain Sub Dictionary  ${D3}  ${D2B}  My error message!
 

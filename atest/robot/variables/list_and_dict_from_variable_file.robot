@@ -22,7 +22,7 @@ Dict is ordered
 Invalid list
     Check Test Case    ${TESTNAME}
     Verify Error    0    [ LIST__inv_list | not a list ]    \@{inv_list}
-    ...    Expected list-like value, got unicode.
+    ...    Expected list-like value, got string.
 
 Invalid dict
     Check Test Case    ${TESTNAME}

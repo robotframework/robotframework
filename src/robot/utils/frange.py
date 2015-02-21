@@ -32,7 +32,7 @@ def _get_start_stop_step(args):
         return args[0], args[1], 1
     if len(args) == 3:
         return args
-    raise TypeError('frange expected 1-3 arguments, got %d' % len(args))
+    raise TypeError('frange expected 1-3 arguments, got %d.' % len(args))
 
 
 def _digits(number):

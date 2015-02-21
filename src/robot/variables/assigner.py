@@ -15,7 +15,8 @@
 import re
 
 from robot.errors import DataError
-from robot.utils import format_assign_message, get_error_message, prepr
+from robot.utils import (format_assign_message, get_error_message, prepr,
+                         type_name)
 
 
 class VariableAssigner(object):
@@ -148,8 +149,7 @@ class _MultiReturnValueResolver(object):
             self._raise_expected_list(return_value)
 
     def _raise_expected_list(self, ret):
-        self._raise('Expected list-like value, got %s instead.'
-                    % type(ret).__name__)
+        self._raise('Expected list-like value, got %s.' % type_name(ret))
 
     def _raise(self, error):
         raise DataError('Cannot set variables: %s' % error)

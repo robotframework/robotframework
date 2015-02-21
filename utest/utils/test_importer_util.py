@@ -126,7 +126,7 @@ class TestImportByPath(unittest.TestCase):
             path = join(LIBDIR, 'javapkg')
             assert_raises_with_msg(DataError,
                                    "Importing '%s' failed: Expected class or "
-                                   "module, got <javapackage>." % path,
+                                   "module, got javapackage." % path,
                                    self._import, path, remove='javapkg')
 
         def test_removing_from_sys_modules_when_importing_multiple_times(self):
@@ -243,11 +243,11 @@ class TestImportClassOrModule(unittest.TestCase):
     def test_invalid_item_from_existing_module(self):
         assert_raises_with_msg(DataError,
                                "Importing 'pythonmodule.some_string' failed: "
-                               "Expected class or module, got <str>.",
+                               "Expected class or module, got string.",
                                self._import, 'pythonmodule.some_string')
         assert_raises_with_msg(DataError,
                                "Importing xxx 'pythonmodule.submodule.attribute' failed: "
-                               "Expected class or module, got <int>.",
+                               "Expected class or module, got integer.",
                                self._import, 'pythonmodule.submodule.attribute', 'xxx')
 
     def test_item_from_non_existing_module(self):
@@ -308,7 +308,7 @@ class TestImportClassOrModule(unittest.TestCase):
         def test_importing_java_package_fails(self):
             assert_raises_with_msg(DataError,
                                    "Importing test library 'javapkg' failed: "
-                                   "Expected class or module, got <javapackage>.",
+                                   "Expected class or module, got javapackage.",
                                    self._import, 'javapkg', 'test library')
 
         def test_logging_when_importing_java_class(self):

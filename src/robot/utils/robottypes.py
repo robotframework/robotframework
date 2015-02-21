@@ -21,10 +21,12 @@ except ImportError:
     String = ()
 
 
-def type_name(val):
+def type_name(item):
+    cls = item.__class__ if hasattr(item, '__class__') else type(item)
     named_types = {str: 'string', unicode: 'string', bool: 'boolean',
-                   int: 'integer', long: 'integer'}
-    return named_types.get(type(val), type(val).__name__)
+                   int: 'integer', long: 'integer', type(None): 'None',
+                   dict: 'dictionary'}
+    return named_types.get(cls, cls.__name__)
 
 
 def is_str_like(item):

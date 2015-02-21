@@ -59,11 +59,11 @@ Multiple Scalars With Too Many Values
     ${a}    ${b}    ${c} =    Create List    a    b    c    ${4}
 
 Multiple Scalars When No List Returned 1
-    [Documentation]    FAIL Cannot set variables: Expected list-like value, got unicode instead.
+    [Documentation]    FAIL Cannot set variables: Expected list-like value, got string.
     ${a}    ${b} =    Set Variable    This is not list
 
 Multiple Scalars When No List Returned 2
-    [Documentation]    FAIL Cannot set variables: Expected list-like value, got int instead.
+    [Documentation]    FAIL Cannot set variables: Expected list-like value, got integer.
     ${a}    ${b} =    Set Variable    ${42}
 
 List Variable
@@ -106,11 +106,11 @@ None To List Variable
     Should Be True    @{list} == []
 
 List When Non-List Returned 1
-    [Documentation]    FAIL Cannot set variable '\@{list}': Expected list-like value, got unicode instead.
+    [Documentation]    FAIL Cannot set variable '\@{list}': Expected list-like value, got string.
     @{list} =    Set Variable    kekkonen
 
 List When Non-List Returned 2
-    [Documentation]    FAIL Cannot set variable '\@{list}': Expected list-like value, got int instead.
+    [Documentation]    FAIL Cannot set variable '\@{list}': Expected list-like value, got integer.
     @{list} =    Set Variable    ${42}
 
 Only One List Variable Allowed 1
@@ -213,15 +213,15 @@ Dictionary only allowed alone 5
     &{d1}    &{d2} =    Fail    Not executed
 
 Dict when non-dict returned 1
-    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got list instead.
+    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got list.
     &{ret} =     Create List
 
 Dict when non-dict returned 2
-    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got unicode instead.
+    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got string.
     &{ret} =     Set variable   foo
 
 Dict when non-dict returned 3
-    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got int instead.
+    [Documentation]    FAIL Cannot set variable '\&{ret}': Expected dictionary-like value, got integer.
     &{ret} =     Set variable    ${5}
 
 Long String To Scalar Variable

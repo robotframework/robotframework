@@ -21,6 +21,7 @@ from robot.errors import DataError
 from .encoding import decode_from_system
 from .error import get_error_details
 from .robotpath import abspath, normpath
+from .robottypes import type_name
 from .platform import JYTHON
 
 if JYTHON:
@@ -154,7 +155,8 @@ class _Importer(object):
     def _verify_type(self, imported):
         if inspect.isclass(imported) or inspect.ismodule(imported):
             return imported
-        raise DataError('Expected class or module, got <%s>.' % type(imported).__name__)
+        raise DataError('Expected class or module, got %s.'
+                        % type_name(imported))
 
     def _get_class_from_module(self, module, name=None):
         klass = getattr(module, name or module.__name__, None)

@@ -288,7 +288,8 @@ import sys
 import re
 
 from robot.version import get_version
-from robot.utils import elapsed_time_to_string, secs_to_timestr, timestr_to_secs
+from robot.utils import (elapsed_time_to_string, secs_to_timestr,
+                         timestr_to_secs, type_name)
 
 __version__ = get_version()
 __all__ = ['convert_time', 'convert_date', 'subtract_date_from_date',
@@ -591,8 +592,7 @@ class Date(object):
     def __add__(self, other):
         if isinstance(other, Time):
             return Date(self.seconds + other.seconds)
-        raise TypeError('Can only add Time to Date, not %s.'
-                        % type(other).__name__)
+        raise TypeError('Can only add Time to Date, not %s.' % type_name(other))
 
     def __sub__(self, other):
         if isinstance(other, Date):
@@ -600,7 +600,7 @@ class Date(object):
         if isinstance(other, Time):
             return Date(self.seconds - other.seconds)
         raise TypeError('Can only subtract Date or Time from Date, not %s.'
-                        % type(other).__name__)
+                        % type_name(other))
 
 
 class Time(object):
@@ -641,11 +641,10 @@ class Time(object):
     def __add__(self, other):
         if isinstance(other, Time):
             return Time(self.seconds + other.seconds)
-        raise TypeError('Can only add Time to Time, not %s.'
-                        % type(other).__name__)
+        raise TypeError('Can only add Time to Time, not %s.' % type_name(other))
 
     def __sub__(self, other):
         if isinstance(other, Time):
             return Time(self.seconds - other.seconds)
         raise TypeError('Can only subtract Time from Time, not %s.'
-                        % type(other).__name__)
+                        % type_name(other))

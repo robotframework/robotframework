@@ -92,12 +92,12 @@ class TestImports(unittest.TestCase):
                                TestLibrary, 'pythonmodule.NonExisting')
 
     def test_import_invalid_type(self):
-        msg = "Importing test library '%s' failed: Expected class or module, got <%s>."
+        msg = "Importing test library '%s' failed: Expected class or module, got %s."
         assert_raises_with_msg(DataError,
-                               msg % ('pythonmodule.some_string', 'str'),
+                               msg % ('pythonmodule.some_string', 'string'),
                                TestLibrary, 'pythonmodule.some_string')
         assert_raises_with_msg(DataError,
-                               msg % ('pythonmodule.some_object', 'instance'),
+                               msg % ('pythonmodule.some_object', 'SomeObject'),
                                TestLibrary, 'pythonmodule.some_object')
 
     def test_import_with_unicode_name(self):

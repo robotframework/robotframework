@@ -1258,7 +1258,7 @@ class _RunKeyword:
         another keyword or from the command line.
         """
         if not isinstance(name, basestring):
-            raise RuntimeError('Keyword name must be a string.')
+            raise RuntimeError('Keyword name must be string.')
         kw = Keyword(name, list(args))
         return kw.run(self._context)
 
@@ -2461,8 +2461,8 @@ class _Misc:
         namespace.update((m, __import__(m)) for m in modules if m)
         try:
             if not isinstance(expression, basestring):
-                raise TypeError("Expression must be a string, not '%s'."
-                                % type(expression).__name__)
+                raise TypeError("Expression must be string, got %s."
+                                % utils.type_name(expression))
             if not expression:
                 raise ValueError("Expression cannot be empty.")
             return eval(expression, namespace)
@@ -2494,7 +2494,7 @@ class _Misc:
         try:
             method = getattr(object, method_name)
         except AttributeError:
-            raise RuntimeError("Object '%s' does not have a method '%s'."
+            raise RuntimeError("Object '%s' does not have method '%s'."
                                % (object, method_name))
         try:
             return method(*args, **kwargs)

@@ -61,11 +61,10 @@ class _LibraryListenerProxy(ListenerProxy):
 
     def __init__(self, library):
         AbstractLoggerProxy.__init__(self, library.listener)
-        self.name = type(library).__name__
+        self.name = library.__class__.__name__
         self.version = self._get_version(library.listener)
         self.library_scope = library.scope
 
     def _get_method_names(self, name):
         names = ListenerProxy._get_method_names(self, name)
         return names + ['_' + name for name in names]
-

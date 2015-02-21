@@ -21,7 +21,7 @@ except ImportError:
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.utils import (get_error_message, is_dict_like, is_list_like,
-                         seq2str2, Importer)
+                         seq2str2, type_name, Importer)
 
 
 class VariableFileSetter(object):
@@ -75,7 +75,7 @@ class VariableFileImporter(object):
         if is_dict_like(variables):
             return variables.items()
         raise DataError("Expected '%s' to return dict-like value, got %s."
-                        % (get_variables.__name__, type(variables).__name__))
+                        % (get_variables.__name__, type_name(variables)))
 
     def _get_static(self, var_file):
         names = [attr for attr in dir(var_file) if not attr.startswith('_')]
@@ -102,7 +102,7 @@ class VariableFileImporter(object):
     def _validate(self, name, value):
         if name[0] == '@' and not is_list_like(value):
             raise DataError("Invalid variable '%s': Expected list-like value, "
-                            "got %s." % (name, type(value).__name__))
+                            "got %s." % (name, type_name(value)))
         if name[0] == '&' and not is_dict_like(value):
             raise DataError("Invalid variable '%s': Expected dict-like value, "
-                            "got %s." % (name, type(value).__name__))
+                            "got %s." % (name, type_name(value)))
