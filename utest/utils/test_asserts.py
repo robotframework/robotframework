@@ -1,15 +1,14 @@
-import unittest, sys
-
-if __name__ == "__main__":
-    sys.path.insert(0, "../../../src")
+import unittest
 
 from robot.utils.asserts import *
 
 
 AE = AssertionError
 
+
 class MyExc(Exception):
     pass
+
 
 class MyEqual(object):
     def __init__(self, attr=None):
@@ -22,6 +21,7 @@ class MyEqual(object):
     def __str__(self):
         return str(self.attr)
     __repr__ = __str__
+
 
 def func(msg=None):
     if msg is not None:
@@ -138,4 +138,3 @@ class TestAsserts(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
