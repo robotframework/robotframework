@@ -47,7 +47,6 @@ from .frange import frange
 from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
-from .islike import is_dict_like, is_list_like, is_str_like
 from .match import eq, Matcher, MultiMatcher
 from .misc import (isatty, getdoc, plural_or_not, printable_name,
                    seq2str, seq2str2)
@@ -61,6 +60,7 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
+from .robottypes import is_dict_like, is_list_like, is_str_like
 from .setter import setter
 from .text import (cut_long_message, format_assign_message,
                    pad_console_length, get_console_length)
