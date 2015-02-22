@@ -79,13 +79,13 @@ Integer Array Arg
     Integer 2 Array  ${int_array_args}  # fails because args is int[] and not java.lang.Integer[]
 
 Return Integer
-    [Documentation]  FAIL 2 (number) != 2 (string)
+    [Documentation]  FAIL 2 (integer) != 2 (string)
     ${int} =  Return integer
     Should Be Equal  ${int}  ${2}
     Should Be Equal  ${int}  2
 
 Return Double
-    [Documentation]  FAIL 3.14 (number) != 3.14 (string)
+    [Documentation]  FAIL 3.14 (float) != 3.14 (string)
     ${double} =  Return double
     Should Be Equal  ${double}  ${3.14}
     Should Be Equal  ${double}  3.14

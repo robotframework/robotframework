@@ -61,10 +61,10 @@ Run Keyword With Test Timeout Passing
     Run Keyword  Log  Timeout is not exceeded
 
 Run Keyword With Test Timeout Exceeded
-    [Documentation]  FAIL Test timeout 600 milliseconds exceeded.
-    [Timeout]  600 milliseconds
+    [Documentation]  FAIL Test timeout 1 second 234 milliseconds exceeded.
+    [Timeout]  1234 milliseconds
     Run Keyword  Log  Before Timeout
-    Run Keyword  Sleep  700 ms
+    Run Keyword  Sleep  1.3s
 
 Run Keyword With KW Timeout Passing
     Run Keyword  Timeoutted UK Passing

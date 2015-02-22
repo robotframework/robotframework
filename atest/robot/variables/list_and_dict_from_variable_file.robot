@@ -26,7 +26,7 @@ Invalid list
 
 Invalid dict
     Check Test Case    ${TESTNAME}
-    Verify Error    1    [ DICT__inv_dict | [u'1', u'2', 3] ]    \&{inv_dict}
+    Verify Error    1    [ DICT__inv_dict | [*'1', *'2', 3] ]    \&{inv_dict}
     ...    Expected dict-like value, got list.
 
 Scalar list likes can be used as list
@@ -49,4 +49,4 @@ Verify Error
     ${error} =    Catenate    Error in file '${p1}':
     ...    Processing variable file '${p2}' with arguments ${args} failed:
     ...    Invalid variable '${var}': ${error}
-    Check Log Message    @{ERRORS}[${index}]    ${error}    ERROR
+    Check Log Message    @{ERRORS}[${index}]    ${error}    ERROR    pattern=yes
