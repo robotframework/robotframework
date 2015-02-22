@@ -46,7 +46,7 @@ class Remote(object):
         the keyword.
 
         Support for timeouts is a new feature in Robot Framework 2.8.6.
-        Timeouts do not work with Python/Jython 2.5 nor with IronPython.
+        They do not work with IronPython.
         """
         if '://' not in uri:
             uri = 'http://' + uri

@@ -289,7 +289,7 @@ import re
 
 from robot.version import get_version
 from robot.utils import (elapsed_time_to_string, secs_to_timestr,
-                         timestr_to_secs, type_name)
+                         timestr_to_secs, type_name, IRONPYTHON)
 
 __version__ = get_version()
 __all__ = ['convert_time', 'convert_date', 'subtract_date_from_date',
@@ -515,13 +515,6 @@ class Date(object):
             return self._handle_un_supported_f_directive(ts, input_format)
         return self._mktime_with_millis(datetime.strptime(ts, input_format))
 
-    def _need_to_handle_f_directive(self, format):
-        if '%f' not in format:
-            return False
-        # TODO: This IronPython bug ought to be fixed but apparently it isn't.
-        # https://ironpython.codeplex.com/workitem/34706
-        return sys.platform == 'cli'
-
     def _normalize_timestamp(self, date):
         ts = ''.join(d for d in date if d.isdigit())
         if len(ts) < 8:
@@ -529,6 +522,10 @@ class Date(object):
         ts = ts.ljust(20, '0')
         return '%s-%s-%s %s:%s:%s.%s' % (ts[:4], ts[4:6], ts[6:8], ts[8:10],
                                          ts[10:12], ts[12:14], ts[14:])
+
+    def _need_to_handle_f_directive(self, format):
+        # https://github.com/IronLanguages/main/issues/1169
+        return IRONPYTHON and '%f' in format
 
     def _handle_un_supported_f_directive(self, ts, input_format):
         input_format = self._remove_f_from_format(input_format)
@@ -558,7 +555,6 @@ class Date(object):
         return result_converter(seconds, millis)
 
     def _convert_to_custom_timestamp(self, seconds, format):
-        format = str(format)  # Needed by Python 2.5
         dt = self._datetime_from_seconds(seconds)
         if not self._need_to_handle_f_directive(format):
             return dt.strftime(format)
@@ -578,8 +574,9 @@ class Date(object):
         return ts
 
     def _datetime_from_seconds(self, ts):
-        # Jython and IronPython handle floats incorrectly. For example:
-        # datetime.fromtimestamp(1399410716.123).microsecond == 122999
+        # Workaround microsecond rounding errors with IronPython:
+        # https://github.com/IronLanguages/main/issues/1170
+        # Also Jython had similar problems, but they seem to be fixed in 2.7.
         dt = datetime.fromtimestamp(ts)
         return dt.replace(microsecond=int(round(ts % 1 * 10**6)))
 
