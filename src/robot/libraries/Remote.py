@@ -14,7 +14,7 @@
 
 from six import PY3, integer_types, string_types
 
-import httplib
+from six.moves.http_client import HTTPConnection
 import re
 import socket
 import sys
@@ -251,7 +251,7 @@ class TimeoutTransport(xmlrpclib.Transport):
         if self._connection and host == self._connection[0]:
             return self._connection[1]
         chost, self._extra_headers, x509 = self.get_host_info(host)
-        self._connection = host, httplib.HTTPConnection(chost, timeout=self.timeout)
+        self._connection = host, HTTPConnection(chost, timeout=self.timeout)
         return self._connection[1]
 
 
@@ -263,7 +263,7 @@ if sys.version_info[:2] == (2, 6):
             host, extra_headers, x509 = self.get_host_info(host)
             return TimeoutHTTP(host, timeout=self.timeout)
 
-    class TimeoutHTTP(httplib.HTTP):
+    class TimeoutHTTP(HTTPConnection):
 
         def __init__(self, host='', port=None, strict=None, timeout=None):
             if port == 0:
