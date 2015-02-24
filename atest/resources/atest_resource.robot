@@ -360,3 +360,11 @@ Make test non-critical if
 Make test non-critical on IronPython
     # This test isn't 100% safe. Should come up with better.
     Make test non-critical if    os.sep != '/' and 'ipy' in '${INTERPRETER}'
+
+Make test non-critical on Python 3
+    # This test isn't 100% safe. Should come up with better.
+    Make test non-critical if    sys.version_info[0] == 3
+
+Make test non-critical on Python 3 and IronPython
+    # This test isn't 100% safe. Should come up with better.
+    Make test non-critical if    sys.version_info[0] == 3 or os.sep != '/' and 'ipy' in '${INTERPRETER}'
