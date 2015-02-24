@@ -67,6 +67,21 @@ class OperatingSystem:
     (e.g. `File Should Exist`, `Directory Should Be Empty`) and
     manipulate environment variables (e.g. `Set Environment Variable`).
 
+    = Path separators =
+
+    Because Robot Framework uses the backslash (``\\``) as an escape character
+    in the test data, using a literal backslash requires duplicating it like
+    in ``c:\\\\path\\\\file.txt``. That can be inconvenient especially with
+    longer Windows paths, and thus all keywords expecting paths as arguments
+    convert forward slashes to backslashes automatically on Windows. This also
+    means that paths like ``${CURDIR}/path/file.txt`` are operating system
+    independent.
+
+    Notice that the automatic path separator conversion does not work if
+    the path is only a part of an argument like with `Run` and `Start Process`
+    keywords. In these cases the built-in variable ``${/}`` that contains
+    ``\\`` or ``/``, dependiong on the operationg system, can be used instead.
+
     = Pattern matching =
 
     Some keywords allow their arguments to be specified as _glob patterns_
@@ -80,15 +95,6 @@ class OperatingSystem:
     case-insensitive operating systems such as Windows. Pattern
     matching is implemented using
     [http://docs.python.org/library/fnmatch.html|fnmatch module].
-
-    = Path separators =
-
-    All keywords expecting paths as arguments accept a forward slash
-    (``/``) as a path separator regardless the operating system. Notice
-    that this *does not work when the path is part of an argument*,
-    like it often is with `Run` and `Start Process` keywords. In such
-    cases the built-in variable ``${/}`` can be used to keep the test
-    data platform independent.
 
     = Tilde expansion =
 
