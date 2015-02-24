@@ -76,7 +76,7 @@ if PY3:
             return item.decode('ascii')
         try:
             return str(item, *args)
-        except (UnicodeError, TypeError):
+        except:
             return _unrepresentable_object(item)
 
 
