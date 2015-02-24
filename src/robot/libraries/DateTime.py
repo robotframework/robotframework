@@ -542,7 +542,7 @@ class Date(object):
         return format[:-2]
 
     def _mktime_with_millis(self, dt):
-        return time.mktime(dt.timetuple()) + dt.microsecond / 10.0**6
+        return time.mktime(dt.timetuple()) + dt.microsecond / 1e6
 
     def convert(self, format, millis=True):
         seconds = self.seconds if millis else round(self.seconds)
@@ -559,7 +559,7 @@ class Date(object):
         if not self._need_to_handle_f_directive(format):
             return dt.strftime(format)
         format = self._remove_f_from_format(format)
-        micro = round(seconds % 1 * 10**6)
+        micro = round(seconds % 1 * 1e6)
         return '%s%06d' % (dt.strftime(format), micro)
 
     def _convert_to_timestamp(self, seconds, millis=True):
@@ -578,7 +578,7 @@ class Date(object):
         # https://github.com/IronLanguages/main/issues/1170
         # Also Jython had similar problems, but they seem to be fixed in 2.7.
         dt = datetime.fromtimestamp(ts)
-        return dt.replace(microsecond=int(round(ts % 1 * 10**6)))
+        return dt.replace(microsecond=int(round(ts % 1 * 1e6)))
 
     def _convert_to_epoch(self, seconds, millis=True):
         return seconds
@@ -589,14 +589,14 @@ class Date(object):
     def __add__(self, other):
         if isinstance(other, Time):
             return Date(self.seconds + other.seconds)
-        raise TypeError('Can only add Time to Date, not %s.' % type_name(other))
+        raise TypeError('Can only add Time to Date, got %s.' % type_name(other))
 
     def __sub__(self, other):
         if isinstance(other, Date):
             return Time(self.seconds - other.seconds)
         if isinstance(other, Time):
             return Date(self.seconds - other.seconds)
-        raise TypeError('Can only subtract Date or Time from Date, not %s.'
+        raise TypeError('Can only subtract Date or Time from Date, got %s.'
                         % type_name(other))
 
 
@@ -608,8 +608,9 @@ class Time(object):
     def _convert_time_to_seconds(self, time):
         if isinstance(time, timedelta):
             # timedelta.total_seconds() is new in Python 2.7
-            return (time.days * 24 * 60 * 60 + time.seconds +
-                    time.microseconds / 1000000.0)
+            return (time.days * 24 * 60 * 60 +
+                    time.seconds +
+                    time.microseconds / 1e6)
         return timestr_to_secs(time, round_to=None)
 
     def convert(self, format, millis=True):
@@ -638,10 +639,10 @@ class Time(object):
     def __add__(self, other):
         if isinstance(other, Time):
             return Time(self.seconds + other.seconds)
-        raise TypeError('Can only add Time to Time, not %s.' % type_name(other))
+        raise TypeError('Can only add Time to Time, got %s.' % type_name(other))
 
     def __sub__(self, other):
         if isinstance(other, Time):
             return Time(self.seconds - other.seconds)
-        raise TypeError('Can only subtract Time from Time, not %s.'
+        raise TypeError('Can only subtract Time from Time, got %s.'
                         % type_name(other))
