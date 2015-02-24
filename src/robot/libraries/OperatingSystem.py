@@ -58,7 +58,7 @@ except ImportError:
 class OperatingSystem:
     """A test library providing keywords for OS related tasks.
 
-    `OperatingSystem` is Robot Framework's standard library that
+    ``OperatingSystem`` is Robot Framework's standard library that
     enables various operating system related tasks to be performed in
     the system where Robot Framework is running. It can, among other
     things, execute commands (e.g. `Run`), create and remove files and
@@ -71,10 +71,10 @@ class OperatingSystem:
 
     Some keywords allow their arguments to be specified as _glob patterns_
     where:
-    | *        | matches anything, even an empty string |
-    | ?        | matches any single character |
-    | [chars]  | matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c') |
-    | [!chars] | matches any character not inside square brackets |
+    | ``*``        | matches anything, even an empty string |
+    | ``?``        | matches any single character |
+    | ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |
+    | ``[!chars]`` | matches any character not inside square brackets |
 
     Unless otherwise noted, matching is case-insensitive on
     case-insensitive operating systems such as Windows. Pattern
@@ -84,21 +84,22 @@ class OperatingSystem:
     = Path separators =
 
     All keywords expecting paths as arguments accept a forward slash
-    (`/`) as a path separator regardless the operating system. Notice
+    (``/``) as a path separator regardless the operating system. Notice
     that this *does not work when the path is part of an argument*,
     like it often is with `Run` and `Start Process` keywords. In such
-    cases the built-in variable `${/}` can be used to keep the test
+    cases the built-in variable ``${/}`` can be used to keep the test
     data platform independent.
 
     = Tilde expansion =
 
-    Paths beginning with `~` or `~username` are expanded to the current or
+    Paths beginning with ``~`` or ``~username`` are expanded to the current or
     specified user's home directory, respectively. The resulting path is
-    operating system dependent, but typically e.g. `~/robot` is expanded to
-    `C:\\Users\\<user>\\robot` on Windows and `/home/<user>/robot` on Linuxes.
+    operating system dependent, but typically e.g. ``~/robot`` is expanded to
+    ``C:\\Users\\<user>\\robot`` on Windows and ``/home/<user>/robot`` on
+    Unixes.
 
-    Notice that the `~username` form does not work on Jython or on Windows
-    python 2.5. Tilde expansion is a new feature in Robot Framework 2.8.
+    Tilde expansion is a new feature in Robot Framework 2.8. The ``~username``
+    form does not work on Jython
 
     = Process library =
 
@@ -112,13 +113,13 @@ class OperatingSystem:
 
     = Example =
 
-    |  *Setting*  |     *Value*     |
+    |  =Setting=  |     =Value=     |
     | Library     | OperatingSystem |
 
-    | *Variable*  |       *Value*         |
+    | =Variable=  |       =Value=         |
     | ${PATH}     | ${CURDIR}/example.txt |
 
-    | *Test Case* |     *Action*      | *Argument* |    *Argument*        |
+    | =Test Case= |     =Action=      | =Argument= |    =Argument=        |
     | Example     | Create File       | ${PATH}    | Some text            |
     |             | File Should Exist | ${PATH}    |                      |
     |             | Copy File         | ${PATH}    | ~/file.txt           |
@@ -136,16 +137,16 @@ class OperatingSystem:
         And Return RC` or `Run And Return RC And Output` can be used.
 
         The standard error stream is automatically redirected to the standard
-        output stream by adding `2>&1` after the executed command. This
+        output stream by adding ``2>&1`` after the executed command. This
         automatic redirection is done only when the executed command does not
         contain additional output redirections. You can thus freely forward
         the standard error somewhere else, for example, like
-        `my_command 2>stderr.txt`.
+        ``my_command 2>stderr.txt``.
 
         The returned output contains everything written into the standard
         output or error streams by the command (unless either of them
         is redirected explicitly). Many commands add an extra newline
-        (`\\n`) after the output to make it easier to read in the
+        (``\\n``) after the output to make it easier to read in the
         console. To ease processing the returned output, this possible
         trailing newline is stripped by this keyword.
 
@@ -234,22 +235,22 @@ class OperatingSystem:
         unless `Switch Process` is used in between.
 
         If the command needs input through the standard input stream,
-        it can be defined with the `stdin` argument.  It is not
+        it can be defined with the ``stdin`` argument.  It is not
         possible to give input to the command later. Possible command
         line arguments must be given as part of the command like
-        '/tmp/script.sh arg1 arg2'.
+        ``/tmp/script.sh arg1 arg2``.
 
         Returns the index of this process. Indexing starts from 1, and indices
         can be used to switch between processes using `Switch Process` keyword.
         `Stop All Processes` can be used to reset indexing.
 
-        The optional `alias` is a name for this process that may be used with
+        The optional ``alias`` is a name for this process that may be used with
         `Switch Process` instead of the returned index.
 
         The standard error stream is redirected to the standard input
         stream automatically. This is done for the same reasons as with `Run`
         keyword, but redirecting is done when the process is started and not
-        by adding '2>&1' to the command.
+        by adding ``2>&1`` to the command.
 
         Example:
         | Start Process  | /path/longlasting.sh |
@@ -350,20 +351,20 @@ class OperatingSystem:
         Line breaks in content are converted to platform independent form.
         See also `Get Binary File`.
 
-        `encoding` defines the encoding of the file. By default the value is
-        'UTF-8', which means that UTF-8 and ASCII-encoded files are read
+        ``encoding`` defines the encoding of the file. The default value is
+        UTF-8, which means that UTF-8 and ASCII-encoded files are read
         correctly.
 
-        `encoding_errors` argument controls what to do if decoding some bytes
-        fails. All values accepted by `decode` method in Python are valid, but
+        ``encoding_errors`` argument controls what to do if decoding some bytes
+        fails. All values accepted by ``decode`` method in Python are valid, but
         in practice the following values are most useful:
 
-        - `strict`: fail if characters cannot be decoded (default)
-        - `ignore`: ignore characters that cannot be decoded
-        - `replace`: replace characters that cannot be decoded with
+        - ``strict``: fail if characters cannot be decoded (default)
+        - ``ignore``: ignore characters that cannot be decoded
+        - ``replace``: replace characters that cannot be decoded with
           a replacement character
 
-        `encoding_errors` argument is new in Robot Framework 2.8.5.
+        ``encoding_errors`` argument is new in Robot Framework 2.8.5.
         """
         content = self.get_binary_file(path)
         return unicode(content, encoding, encoding_errors).replace('\r\n', '\n')
@@ -380,16 +381,16 @@ class OperatingSystem:
             return f.read()
 
     def grep_file(self, path, pattern, encoding='UTF-8', encoding_errors='strict'):
-        """Returns the lines of the specified file that match the `pattern`.
+        """Returns the lines of the specified file that match the ``pattern``.
 
         This keyword reads a file from the file system using the defined
-        `path`, `encoding` and `encoding_errors` similarly as `Get File`. A
-        difference is that only the lines that match the given `pattern` are
+        ``path``, ``encoding`` and ``encoding_errors`` similarly as `Get File`.
+        A difference is that only the lines that match the given ``pattern`` are
         returned. Lines are returned as a single string catenated back together
         with newlines and the number of matched lines is automatically logged.
         Possible trailing newline is never returned.
 
-        A line matches if it contains the `pattern` anywhere in it and
+        A line matches if it contains the ``pattern`` anywhere in it and
         it *does not need to match the pattern fully*. The pattern
         matching syntax is explained in `introduction`, and in this
         case matching is case-sensitive.
@@ -402,7 +403,7 @@ class OperatingSystem:
         `Get File` in combination with String library keywords like `Get
         Lines Matching Regexp`.
 
-        `encoding_errors` argument is new in Robot Framework 2.8.5.
+        ``encoding_errors`` argument is new in Robot Framework 2.8.5.
         """
         pattern = '*%s*' % pattern
         path = self._absnorm(path)
@@ -425,7 +426,7 @@ class OperatingSystem:
         just use `Get File` and the built-in keyword `Log` with the desired
         level.
 
-        `encoding_errors` argument is new in Robot Framework 2.8.5.
+        ``encoding_errors`` argument is new in Robot Framework 2.8.5.
         """
         content = self.get_file(path, encoding, encoding_errors)
         self._info(content)
@@ -438,7 +439,7 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         The pattern matching syntax is explained in `introduction`.
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         if not glob.glob(path):
@@ -450,7 +451,7 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         The pattern matching syntax is explained in `introduction`.
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         matches = glob.glob(path)
@@ -466,11 +467,11 @@ class OperatingSystem:
         raise AssertionError(msg)
 
     def file_should_exist(self, path, msg=None):
-        """Fails unless the given `path` points to an existing file.
+        """Fails unless the given ``path`` points to an existing file.
 
         The path can be given as an exact path or as a glob pattern.
         The pattern matching syntax is explained in `introduction`.
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         matches = [p for p in glob.glob(path) if os.path.isfile(p)]
@@ -483,7 +484,7 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         The pattern matching syntax is explained in `introduction`.
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         matches = [p for p in glob.glob(path) if os.path.isfile(p)]
@@ -504,7 +505,7 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         The pattern matching syntax is explained in `introduction`.
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         matches = [p for p in glob.glob(path) if os.path.isdir(p)]
@@ -517,7 +518,7 @@ class OperatingSystem:
 
         The path can be given as an exact path or as a glob pattern.
         The pattern matching syntax is explained in `introduction`.
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         matches = [p for p in glob.glob(path) if os.path.isdir(p)]
@@ -546,9 +547,9 @@ class OperatingSystem:
         If the path is a pattern, the keyword waits until all matching
         items are removed.
 
-        The optional `timeout` can be used to control the maximum time of
+        The optional ``timeout`` can be used to control the maximum time of
         waiting. The timeout is given as a timeout string, e.g. in a format
-        '15 seconds', '1min 10s' or just '10'. The time string format is
+        ``15 seconds``, ``1min 10s`` or just ``10``. The time string format is
         described in an appendix of Robot Framework User Guide.
 
         If the timeout is negative, the keyword is never timed-out. The keyword
@@ -572,9 +573,9 @@ class OperatingSystem:
         If the path is a pattern, the keyword returns when an item matching
         it is created.
 
-        The optional `timeout` can be used to control the maximum time of
+        The optional ``timeout`` can be used to control the maximum time of
         waiting. The timeout is given as a timeout string, e.g. in a format
-        '15 seconds', '1min 10s' or just '10'. The time string format is
+        ``15 seconds``, ``1min 10s`` or just ``10``. The time string format is
         described in an appendix of Robot Framework User Guide.
 
         If the timeout is negative, the keyword is never timed-out. The keyword
@@ -595,7 +596,7 @@ class OperatingSystem:
     def directory_should_be_empty(self, path, msg=None):
         """Fails unless the specified directory is empty.
 
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         items = self._list_dir(path)
@@ -609,7 +610,7 @@ class OperatingSystem:
     def directory_should_not_be_empty(self, path, msg=None):
         """Fails if the specified directory is empty.
 
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         count = len(self._list_dir(path))
@@ -622,7 +623,7 @@ class OperatingSystem:
     def file_should_be_empty(self, path, msg=None):
         """Fails unless the specified file is empty.
 
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         if not os.path.isfile(path):
@@ -635,7 +636,7 @@ class OperatingSystem:
     def file_should_not_be_empty(self, path, msg=None):
         """Fails if the specified directory is empty.
 
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
         if not os.path.isfile(path):
@@ -769,14 +770,14 @@ class OperatingSystem:
         self._link("Created directory '%s'", path)
 
     def remove_directory(self, path, recursive=False):
-        """Removes the directory pointed to by the given `path`.
+        """Removes the directory pointed to by the given ``path``.
 
-        If the second argument `recursive` is set to any non-empty string,
+        If the second argument ``recursive`` is set to any non-empty string,
         the directory is removed recursively. Otherwise removing fails if
         the directory is not empty.
 
-        If the directory pointed to by the `path` does not exist, the keyword
-        passes, but it fails, if the `path` points to a file.
+        If the directory pointed to by the ``path`` does not exist, the keyword
+        passes, but it fails, if the ``path`` points to a file.
         """
         path = self._absnorm(path)
         if not os.path.exists(path):
@@ -809,7 +810,7 @@ class OperatingSystem:
         overwritten.
 
         3) If the destination does not exist and it ends with a path
-        separator ('/' or '\\'), it is considered a directory. That
+        separator (``/`` or ``\\``), it is considered a directory. That
         directory is created and a source file copied into it.
         Possible missing intermediate directories are also created.
 
@@ -964,8 +965,8 @@ class OperatingSystem:
     def move_directory(self, source, destination):
         """Moves the source directory into a destination.
 
-        Uses `Copy Directory` keyword internally, and `source` and
-        `destination` arguments have exactly same semantics as with
+        Uses `Copy Directory` keyword internally, and ``source`` and
+        ``destination`` arguments have exactly same semantics as with
         that keyword.
         """
         source, destination = self._prepare_copy_or_move_dir(source, destination)
@@ -1007,7 +1008,7 @@ class OperatingSystem:
         decoded to Unicode using the system encoding.
 
         Note that you can also access environment variables directly using
-        the variable syntax `%{ENV_VAR_NAME}`.
+        the variable syntax ``%{ENV_VAR_NAME}``.
         """
         value = get_env_var(name, default)
         if value is None:
@@ -1025,17 +1026,17 @@ class OperatingSystem:
         self._info("Environment variable '%s' set to value '%s'" % (name, value))
 
     def append_to_environment_variable(self, name, *values, **config):
-        """Appends given `values` to environment variable `name`.
+        """Appends given ``values`` to environment variable ``name``.
 
         If the environment variable already exists, values are added after it,
         and otherwise a new environment variable is created.
 
         Values are, by default, joined together using the operating system
-        path separator (';' on Windows, ':' elsewhere). This can be changed
-        by giving a separator after the values like `separator=value`. No
+        path separator (``;`` on Windows, ``:`` elsewhere). This can be changed
+        by giving a separator after the values like ``separator=value``. No
         other configuration parameters are accepted.
 
-        Examples (assuming `NAME` and `NAME2` do not exist initially):
+        Examples (assuming ``NAME`` and ``NAME2`` do not exist initially):
         | Append To Environment Variable | NAME     | first  |       |
         | Should Be Equal                | %{NAME}  | first  |       |
         | Append To Environment Variable | NAME     | second | third |
@@ -1076,7 +1077,7 @@ class OperatingSystem:
     def environment_variable_should_be_set(self, name, msg=None):
         """Fails if the specified environment variable is not set.
 
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         value = get_env_var(name)
         if not value:
@@ -1086,7 +1087,7 @@ class OperatingSystem:
     def environment_variable_should_not_be_set(self, name, msg=None):
         """Fails if the specified environment variable is set.
 
-        The default error message can be overridden with the `msg` argument.
+        The default error message can be overridden with the ``msg`` argument.
         """
         value = get_env_var(name)
         if value:
@@ -1122,7 +1123,7 @@ class OperatingSystem:
     def join_path(self, base, *parts):
         """Joins the given path part(s) to the given base path.
 
-        The path separator ('/' or '\\') is inserted when needed and
+        The path separator (``/`` or ``\\``) is inserted when needed and
         the possible absolute paths handled as expected. The resulted
         path is also normalized.
 
@@ -1179,10 +1180,10 @@ class OperatingSystem:
         return path or '.'
 
     def split_path(self, path):
-        """Splits the given path from the last path separator ('/' or '\\').
+        """Splits the given path from the last path separator (``/`` or ``\\``).
 
         The given path is first normalized (e.g. a possible trailing
-        path separator is removed, special directories '..' and '.'
+        path separator is removed, special directories ``..`` and ``.``
         removed). The parts that are split are returned as separate
         components.
 
@@ -1201,7 +1202,7 @@ class OperatingSystem:
         """Splits the extension from the given path.
 
         The given path is first normalized (e.g. possible trailing
-        path separators removed, special directories '..' and '.'
+        path separators removed, special directories ``..`` and ``.``
         removed). The base path and extension are returned as separate
         components so that the dot used as an extension separator is
         removed. If the path contains no extension, an empty string is
@@ -1247,25 +1248,25 @@ class OperatingSystem:
     def get_modified_time(self, path, format='timestamp'):
         """Returns the last modification time of a file or directory.
 
-        How time is returned is determined based on the given `format`
+        How time is returned is determined based on the given ``format``
         string as follows. Note that all checks are case-insensitive.
         Returned time is also automatically logged.
 
-        1) If `format` contains the word 'epoch', the time is returned
+        1) If ``format`` contains the word ``epoch``, the time is returned
            in seconds after the UNIX epoch. The return value is always
            an integer.
 
-        2) If `format` contains any of the words 'year', 'month',
-           'day', 'hour', 'min' or 'sec', only the selected parts are
+        2) If ``format`` contains any of the words ``year``, ``month``,
+           ``day``, ``hour``, ``min`` or ``sec``, only the selected parts are
            returned. The order of the returned parts is always the one
            in the previous sentence and the order of the words in
-           `format` is not significant. The parts are returned as
-           zero-padded strings (e.g. May -> '05').
+           ``format`` is not significant. The parts are returned as
+           zero-padded strings (e.g. May -> ``05``).
 
         3) Otherwise, and by default, the time is returned as a
-           timestamp string in the format '2006-02-24 15:08:31'.
+           timestamp string in the format ``2006-02-24 15:08:31``.
 
-        Examples (when the modified time of the ${CURDIR} is
+        Examples (when the modified time of ``${CURDIR}`` is
         2006-03-29 15:06:21):
         | ${time} = | Get Modified Time | ${CURDIR} |
         | ${secs} = | Get Modified Time | ${CURDIR} | epoch |
@@ -1291,28 +1292,29 @@ class OperatingSystem:
         """Sets the file modification and access times.
 
         Changes the modification and access times of the given file to
-        the value determined by `mtime`. The time can be given in
+        the value determined by ``mtime``. The time can be given in
         different formats described below. Note that all checks
         involving strings are case-insensitive.
 
-        1) If `mtime` is a number, or a string that can be converted
+        1) If ``mtime`` is a number, or a string that can be converted
            to a number, it is interpreted as seconds since the UNIX
            epoch (1970-01-01 00:00:00 UTC). This documentation was
            originally written about 1177654467 seconds after the epoch.
 
-        2) If `mtime` is a timestamp, that time will be used. Valid
-           timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
+        2) If ``mtime`` is a timestamp, that time will be used. Valid
+           timestamp formats are ``YYYY-MM-DD hh:mm:ss`` and
+           ``YYYYMMDD hhmmss``.
 
-        3) If `mtime` is equal to 'NOW', the current local time is used.
-           This time is got using Python's 'time.time()' function.
+        3) If ``mtime`` is equal to ``NOW``, the current local time is used.
+           This time is got using Python's ``time.time()`` function.
 
-        4) If `mtime` is equal to 'UTC', the current time in
+        4) If ``mtime`` is equal to ``UTC``, the current time in
            [http://en.wikipedia.org/wiki/Coordinated_Universal_Time|UTC]
-           is used. This time is got using 'time.time() + time.altzone'
+           is used. This time is got using ``time.time() + time.altzone``
            in Python.
 
-        5) If `mtime` is in the format like 'NOW - 1 day' or 'UTC + 1
-           hour 30 min', the current local/UTC time plus/minus the time
+        5) If ``mtime`` is in the format like ``NOW - 1 day`` or ``UTC + 1
+           hour 30 min``, the current local/UTC time plus/minus the time
            specified with the time string is used. The time string format
            is described in an appendix of Robot Framework User Guide.
 
@@ -1351,19 +1353,19 @@ class OperatingSystem:
         return size
 
     def list_directory(self, path, pattern=None, absolute=False):
-        """Returns and logs items in a directory, optionally filtered with `pattern`.
+        """Returns and logs items in a directory, optionally filtered with ``pattern``.
 
         File and directory names are returned in case-sensitive alphabetical
-        order, e.g. ['A Name', 'Second', 'a lower case name', 'one more'].
-        Implicit directories '.' and '..' are not returned. The returned items
-        are automatically logged.
+        order, e.g. ``['A Name', 'Second', 'a lower case name', 'one more']``.
+        Implicit directories ``.`` and ``..`` are not returned. The returned
+        items are automatically logged.
 
         By default, the file and directory names are returned relative to the
-        given path (e.g. 'file.txt'). If you want them be returned in the
-        absolute format (e.g. '/home/robot/file.txt'), set the `absolute`
+        given path (e.g. ``'file.txt'``). If you want them be returned in the
+        absolute format (e.g. ``'/home/robot/file.txt'``), set the ``absolute``
         argument to any non-empty string.
 
-        If `pattern` is given, only items matching it are returned. The pattern
+        If ``pattern`` is given, only items matching it are returned. The pattern
         matching syntax is explained in `introduction`, and in this case
         matching is case-sensitive.
 
@@ -1391,7 +1393,7 @@ class OperatingSystem:
     def count_items_in_directory(self, path, pattern=None):
         """Returns and logs the number of all items in the given directory.
 
-        The argument `pattern` has the same semantics as in the `List Directory`
+        The argument ``pattern`` has the same semantics as with `List Directory`
         keyword. The count is returned as an integer, so it must be checked e.g.
         with the built-in keyword `Should Be Equal As Integers`.
         """

@@ -14,14 +14,14 @@
 
 """A test library providing dialogs for interacting with users.
 
-`Dialogs` is Robot Framework's standard library that provides means
+``Dialogs`` is Robot Framework's standard library that provides means
 for pausing the test execution and getting input from users. The
 dialogs are slightly different depending on are tests run on Python or
 Jython but they provide the same functionality.
 
 Long lines in the provided messages are wrapped automatically since
 Robot Framework 2.8. If you want to wrap lines manually, you can add
-newlines using the `\\n` character sequence.
+newlines using the ``\\n`` character sequence.
 
 The library has following two limitations:
 - It is not compatible with IronPython.
@@ -49,9 +49,9 @@ __all__ = ['execute_manual_step', 'get_value_from_user',
 
 
 def pause_execution(message='Test execution paused. Press OK to continue.'):
-    """Pauses test execution until user clicks `Ok` button.
+    """Pauses test execution until user clicks ``Ok`` button.
 
-    `message` is the message shown in the dialog.
+    ``message`` is the message shown in the dialog.
     """
     MessageDialog(message).show()
 
@@ -59,11 +59,11 @@ def pause_execution(message='Test execution paused. Press OK to continue.'):
 def execute_manual_step(message, default_error=''):
     """Pauses test execution until user sets the keyword status.
 
-    User can press either `PASS` or `FAIL` button. In the latter case execution
+    User can press either ``PASS`` or ``FAIL`` button. In the latter case execution
     fails and an additional dialog is opened for defining the error message.
 
-    `message` is the instruction shown in the initial dialog and
-    `default_error` is the default value shown in the possible error message
+    ``message`` is the instruction shown in the initial dialog and
+    ``default_error`` is the default value shown in the possible error message
     dialog.
     """
     if not PassFailDialog(message).show():
@@ -75,13 +75,14 @@ def get_value_from_user(message, default_value='', hidden=False):
     """Pauses test execution and asks user to input a value.
 
     Value typed by the user, or the possible default value, is returned.
-    Returning an empty value is fine, but pressing `Cancel` fails the keyword.
+    Returning an empty value is fine, but pressing ``Cancel`` fails the keyword.
 
-    `message` is the instruction shown in the dialog and `default_value` is
+    ``message`` is the instruction shown in the dialog and ``default_value`` is
     the possible default value shown in the input field.
 
-    If `hidden` is given any true value, such as any non-empty string, the value
-    typed by the user is hidden. This is a new feature in Robot Framework 2.8.4.
+    If ``hidden`` is given any true value, such as any non-empty string,
+    the value typed by the user is hidden. This is a new feature in Robot
+    Framework 2.8.4.
 
     Example:
     | ${username} = | Get Value From User | Input user name | default    |
@@ -93,9 +94,9 @@ def get_value_from_user(message, default_value='', hidden=False):
 def get_selection_from_user(message, *values):
     """Pauses test execution and asks user to select a value.
 
-    The selected value is returned. Pressing `Cancel` fails the keyword.
+    The selected value is returned. Pressing ``Cancel`` fails the keyword.
 
-    `message` is the instruction shown in the dialog and `values` are
+    ``message`` is the instruction shown in the dialog and ``values`` are
     the options given to the user.
 
     Example:

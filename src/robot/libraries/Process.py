@@ -259,7 +259,7 @@ class Process(object):
     if both libraries are imported, the keywords in the Process library are
     used by default. If there is a need to use the OperatingSystem variants,
     it is possible to use `OperatingSystem.Start Process` syntax or use
-    the `BuiltIn` keyword `Set Library Search Order` to change the priority.
+    the BuiltIn keyword `Set Library Search Order` to change the priority.
 
     Other keywords in the OperatingSystem library can be used freely with
     keywords in the Process library.

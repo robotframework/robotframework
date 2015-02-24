@@ -25,11 +25,11 @@ from robot.version import get_version
 class String(object):
     """A test library for string manipulation and verification.
 
-    `String` is Robot Framework's standard library for manipulating
+    ``String`` is Robot Framework's standard library for manipulating
     strings (e.g. `Replace String Using Regexp`, `Split To Lines`) and
     verifying their contents (e.g. `Should Be String`).
 
-    Following keywords from `BuiltIn` library can also be used with strings:
+    Following keywords from ``BuiltIn`` library can also be used with strings:
 
     - `Catenate`
     - `Get Length`
@@ -75,40 +75,40 @@ class String(object):
         return string.upper()
 
     def encode_string_to_bytes(self, string, encoding, errors='strict'):
-        """Encodes the given Unicode `string` to bytes using the given `encoding`.
+        """Encodes the given Unicode ``string`` to bytes using the given ``encoding``.
 
-        `errors` argument controls what to do if encoding some characters fails.
-        All values accepted by `encode` method in Python are valid, but in
+        ``errors`` argument controls what to do if encoding some characters fails.
+        All values accepted by ``encode`` method in Python are valid, but in
         practice the following values are most useful:
 
-        - `strict`: fail if characters cannot be encoded (default)
-        - `ignore`: ignore characters that cannot be encoded
-        - `replace`: replace characters that cannot be encoded with
+        - ``strict``: fail if characters cannot be encoded (default)
+        - ``ignore``: ignore characters that cannot be encoded
+        - ``replace``: replace characters that cannot be encoded with
           a replacement character
 
         Examples:
         | ${bytes} = | Encode String To Bytes | ${string} | UTF-8 |
         | ${bytes} = | Encode String To Bytes | ${string} | ASCII | errors=ignore |
 
-        Use `Convert To Bytes` in `BuiltIn` if you want to create bytes based
+        Use `Convert To Bytes` in ``BuiltIn`` if you want to create bytes based
         on character or integer sequences. Use `Decode Bytes To String` if you
         need to convert byte strings to Unicode strings and `Convert To String`
-        in `BuiltIn` if you need to convert arbitrary objects to Unicode.
+        in ``BuiltIn`` if you need to convert arbitrary objects to Unicode.
 
         New in Robot Framework 2.7.7.
         """
         return string.encode(encoding, errors)
 
     def decode_bytes_to_string(self, bytes, encoding, errors='strict'):
-        """Decodes the given `bytes` to a Unicode string using the given `encoding`.
+        """Decodes the given ``bytes`` to a Unicode string using the given ``encoding``.
 
-        `errors` argument controls what to do if decoding some bytes fails.
-        All values accepted by `decode` method in Python are valid, but in
+        ``errors`` argument controls what to do if decoding some bytes fails.
+        All values accepted by ``decode`` method in Python are valid, but in
         practice the following values are most useful:
 
-        - `strict`: fail if characters cannot be decoded (default)
-        - `ignore`: ignore characters that cannot be decoded
-        - `replace`: replace characters that cannot be decoded with
+        - ``strict``: fail if characters cannot be decoded (default)
+        - ``ignore``: ignore characters that cannot be decoded
+        - ``replace``: replace characters that cannot be decoded with
           a replacement character
 
         Examples:
@@ -116,7 +116,7 @@ class String(object):
         | ${string} = | Decode Bytes To String | ${bytes} | ASCII | errors=ignore |
 
         Use `Encode String To Bytes` if you need to convert Unicode strings to
-        byte strings, and `Convert To String` in `BuiltIn` if you need to
+        byte strings, and `Convert To String` in ``BuiltIn`` if you need to
         convert arbitrary objects to Unicode strings.
 
         New in Robot Framework 2.7.7.
@@ -124,16 +124,16 @@ class String(object):
         return bytes.decode(encoding, errors)
 
     def get_line_count(self, string):
-        """Returns and logs the number of lines in the given `string`."""
+        """Returns and logs the number of lines in the given string."""
         count = len(string.splitlines())
         logger.info('%d lines' % count)
         return count
 
     def split_to_lines(self, string, start=0, end=None):
-        """Converts the `string` into a list of lines.
+        """Splits the given string to lines.
 
-        It is possible to get only a selection of lines from `start`
-        to `end` so that `start` index is inclusive and `end` is
+        It is possible to get only a selection of lines from ``start``
+        to ``end`` so that ``start`` index is inclusive and ``end`` is
         exclusive. Line numbering starts from 0, and it is possible to
         use negative indices to refer to lines from the end.
 
@@ -157,7 +157,7 @@ class String(object):
         return lines
 
     def get_line(self, string, line_number):
-        """Returns the specified line from the given `string`.
+        """Returns the specified line from the given ``string``.
 
         Line numbering starts from 0 and it is possible to use
         negative indices to refer to lines from the end. The line is
@@ -166,17 +166,19 @@ class String(object):
         Examples:
         | ${first} =    | Get Line | ${string} | 0  |
         | ${2nd last} = | Get Line | ${string} | -2 |
+
+        Use `Split To Lines` if all lines are needed.
         """
         line_number = self._convert_to_integer(line_number, 'line_number')
         return string.splitlines()[line_number]
 
     def get_lines_containing_string(self, string, pattern, case_insensitive=False):
-        """Returns lines of the given `string` that contain the `pattern`.
+        """Returns lines of the given ``string`` that contain the ``pattern``.
 
-        The `pattern` is always considered to be a normal string and a
-        line matches if the `pattern` is found anywhere in it. By
+        The ``pattern`` is always considered to be a normal string and a
+        line matches if the ``pattern`` is found anywhere in it. By
         default the match is case-sensitive, but setting
-        `case_insensitive` to any value makes it case-insensitive.
+        ``case_insensitive`` to any value makes it case-insensitive.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -197,17 +199,17 @@ class String(object):
         return self._get_matching_lines(string, contains)
 
     def get_lines_matching_pattern(self, string, pattern, case_insensitive=False):
-        """Returns lines of the given `string` that match the `pattern`.
+        """Returns lines of the given ``string`` that match the ``pattern``.
 
-        The `pattern` is a _glob pattern_ where:
-        | *        | matches everything |
-        | ?        | matches any single character |
-        | [chars]  | matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c') |
-        | [!chars] | matches any character not inside square brackets |
+        The ``pattern`` is a _glob pattern_ where:
+        | ``*``        | matches everything |
+        | ``?``        | matches any single character |
+        | ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |
+        | ``[!chars]`` | matches any character not inside square brackets |
 
-        A line matches only if it matches the `pattern` fully.  By
+        A line matches only if it matches the ``pattern`` fully.  By
         default the match is case-sensitive, but setting
-        `case_insensitive` to any value makes it case-insensitive.
+        ``case_insensitive`` to any value makes it case-insensitive.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -229,12 +231,12 @@ class String(object):
         return self._get_matching_lines(string, matches)
 
     def get_lines_matching_regexp(self, string, pattern):
-        """Returns lines of the given `string` that match the regexp `pattern`.
+        """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
         Python regular expression syntax in general and how to use it
         in Robot Framework test data in particular. A line matches
-        only if it matches the `pattern` fully. Notice that to make
+        only if it matches the ``pattern`` fully. Notice that to make
         the match case-insensitive, you need to embed case-insensitive
         flag into the pattern.
 
@@ -246,9 +248,8 @@ class String(object):
         | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |
         | ${ret} = | Get Lines Matching Regexp | ${ret} | (?i)FAIL: .* |
 
-        See `Get Lines Matching Pattern` and `Get Lines Containing
-        String` if you do not need full regular expression powers (and
-        complexity).
+        See `Get Lines Matching Pattern` and `Get Lines Containing String` if
+        you do not need full regular expression powers (and complexity).
         """
         regexp = re.compile('^%s$' % pattern)
         return self._get_matching_lines(string, regexp.match)
@@ -260,14 +261,14 @@ class String(object):
         return '\n'.join(matching)
 
     def replace_string(self, string, search_for, replace_with, count=-1):
-        """Replaces `search_for` in the given `string` with `replace_with`.
+        """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
 
-        `search_for` is used as a literal string. See `Replace String
+        ``search_for`` is used as a literal string. See `Replace String
         Using Regexp` if more powerful pattern matching is needed.
         If you need to just remove a string see `Remove String`.
 
-        If the optional argument `count` is given, only that many
-        occurrences from left are replaced. Negative `count` means
+        If the optional argument ``count`` is given, only that many
+        occurrences from left are replaced. Negative ``count`` means
         that all occurrences are replaced (default behaviour) and zero
         means that nothing is done.
 
@@ -284,10 +285,10 @@ class String(object):
         return string.replace(search_for, replace_with, count)
 
     def replace_string_using_regexp(self, string, pattern, replace_with, count=-1):
-        """Replaces `pattern` in the given `string` with `replace_with`.
+        """Replaces ``pattern`` in the given ``string`` with ``replace_with``.
 
         This keyword is otherwise identical to `Replace String`, but
-        the `pattern` to search for is considered to be a regular
+        the ``pattern`` to search for is considered to be a regular
         expression.  See `BuiltIn.Should Match Regexp` for more
         information about Python regular expression syntax in general
         and how to use it in Robot Framework test data in particular.
@@ -305,9 +306,9 @@ class String(object):
         return re.sub(pattern, replace_with, string, max(count, 0))
 
     def remove_string(self, string, *removables):
-        """Removes all `removables` from the given `string`.
+        """Removes all ``removables`` from the given ``string``.
 
-        `removables` are used as literal strings. Each removable will be
+        ``removables`` are used as literal strings. Each removable will be
         matched to a temporary string from which preceding removables have
         been already removed. See second example below.
 
@@ -331,10 +332,10 @@ class String(object):
         return string
 
     def remove_string_using_regexp(self, string, *patterns):
-        """Removes `patterns` from the given `string`.
+        """Removes ``patterns`` from the given ``string``.
 
         This keyword is otherwise identical to `Remove String`, but
-        the `patterns` to search for are considered to be a regular
+        the ``patterns`` to search for are considered to be a regular
         expression. See `Replace String Using Regexp` for more information
         about the regular expression syntax. That keyword can also be
         used if there is a need to remove only a certain number of
@@ -347,15 +348,15 @@ class String(object):
         return string
 
     def split_string(self, string, separator=None, max_split=-1):
-        """Splits the `string` using `separator` as a delimiter string.
+        """Splits the ``string`` using ``separator`` as a delimiter string.
 
-        If a `separator` is not given, any whitespace string is a
+        If a ``separator`` is not given, any whitespace string is a
         separator. In that case also possible consecutive whitespace
         as well as leading and trailing whitespace is ignored.
 
         Split words are returned as a list. If the optional
-        `max_split` is given, at most `max_split` splits are done, and
-        the returned list will have maximum `max_split + 1` elements.
+        ``max_split`` is given, at most ``max_split`` splits are done, and
+        the returned list will have maximum ``max_split + 1`` elements.
 
         Examples:
         | @{words} =         | Split String | ${string} |
@@ -372,10 +373,10 @@ class String(object):
         return string.split(separator, max_split)
 
     def split_string_from_right(self, string, separator=None, max_split=-1):
-        """Splits the `string` using `separator` starting from right.
+        """Splits the ``string`` using ``separator`` starting from right.
 
         Same as `Split String`, but splitting is started from right. This has
-        an effect only when `max_split` is given.
+        an effect only when ``max_split`` is given.
 
         Examples:
         | ${first} | ${rest} = | Split String            | ${string} | - | 1 |
@@ -387,7 +388,7 @@ class String(object):
         return string.rsplit(separator, max_split)
 
     def split_string_to_characters(self, string):
-        """Splits the given `string` to characters.
+        """Splits the given ``string`` to characters.
 
         Example:
         | @{characters} = | Split String To Characters | ${string} |
@@ -397,9 +398,9 @@ class String(object):
         return list(string)
 
     def fetch_from_left(self, string, marker):
-        """Returns contents of the `string` before the first occurrence of `marker`.
+        """Returns contents of the ``string`` before the first occurrence of ``marker``.
 
-        If the `marker` is not found, whole string is returned.
+        If the ``marker`` is not found, whole string is returned.
 
         See also `Fetch From Right`, `Split String` and `Split String
         From Right`.
@@ -407,9 +408,9 @@ class String(object):
         return string.split(marker)[0]
 
     def fetch_from_right(self, string, marker):
-        """Returns contents of the `string` after the last occurrence of `marker`.
+        """Returns contents of the ``string`` after the last occurrence of ``marker``.
 
-        If the `marker` is not found, whole string is returned.
+        If the ``marker`` is not found, whole string is returned.
 
         See also `Fetch From Left`, `Split String` and `Split String
         From Right`.
@@ -417,18 +418,18 @@ class String(object):
         return string.split(marker)[-1]
 
     def generate_random_string(self, length=8, chars='[LETTERS][NUMBERS]'):
-        """Generates a string with a desired `length` from the given `chars`.
+        """Generates a string with a desired ``length`` from the given ``chars``.
 
-        The population sequence `chars` contains the characters to use
+        The population sequence ``chars`` contains the characters to use
         when generating the random string. It can contain any
         characters, and it is possible to use special markers
         explained in the table below:
 
-        | = Marker =  |              = Explanation =                |
-        | _[LOWER]_   | Lowercase ASCII characters from 'a' to 'z'. |
-        | _[UPPER]_   | Uppercase ASCII characters from 'A' to 'Z'. |
-        | _[LETTERS]_ | Lowercase and uppercase ASCII characters.   |
-        | _[NUMBERS]_ | Numbers from 0 to 9. |
+        |  = Marker =   |               = Explanation =                   |
+        | ``[LOWER]``   | Lowercase ASCII characters from ``a`` to ``z``. |
+        | ``[UPPER]``   | Uppercase ASCII characters from ``A`` to ``Z``. |
+        | ``[LETTERS]`` | Lowercase and uppercase ASCII characters.       |
+        | ``[NUMBERS]`` | Numbers from 0 to 9.                            |
 
         Examples:
         | ${ret} = | Generate Random String |
@@ -448,9 +449,9 @@ class String(object):
         return ''.join(chars[randint(0, maxi)] for _ in xrange(length))
 
     def get_substring(self, string, start, end=None):
-        """Returns a substring from `start` index to `end` index.
+        """Returns a substring from ``start`` index to ``end`` index.
 
-        The `start` index is inclusive and `end` is exclusive.
+        The ``start`` index is inclusive and ``end`` is exclusive.
         Indexing starts from 0, and it is possible to use
         negative indices to refer to characters from the end.
 
@@ -466,36 +467,36 @@ class String(object):
         return string[start:end]
 
     def should_be_string(self, item, msg=None):
-        """Fails if the given `item` is not a string.
+        """Fails if the given ``item`` is not a string.
 
-        This keyword passes regardless is the `item` is a Unicode string or
+        This keyword passes regardless is the ``item`` is a Unicode string or
         a byte string. Use `Should Be Unicode String` or `Should Be Byte
         String` if you want to restrict the string type.
 
         The default error message can be overridden with the optional
-        `msg` argument.
+        ``msg`` argument.
         """
         if not isinstance(item, basestring):
             self._fail(msg, "'%s' is not a string.", item)
 
     def should_not_be_string(self, item, msg=None):
-        """Fails if the given `item` is a string.
+        """Fails if the given ``item`` is a string.
 
         The default error message can be overridden with the optional
-        `msg` argument.
+        ``msg`` argument.
         """
         if isinstance(item, basestring):
             self._fail(msg, "'%s' is a string.", item)
 
     def should_be_unicode_string(self, item, msg=None):
-        """Fails if the given `item` is not a Unicode string.
+        """Fails if the given ``item`` is not a Unicode string.
 
-        Use `Should Be Byte String` if you want to verify the `item` is a
+        Use `Should Be Byte String` if you want to verify the ``item`` is a
         byte string, or `Should Be String` if both Unicode and byte strings
         are fine.
 
         The default error message can be overridden with the optional
-        `msg` argument.
+        ``msg`` argument.
 
         New in Robot Framework 2.7.7.
         """
@@ -503,14 +504,14 @@ class String(object):
             self._fail(msg, "'%s' is not a Unicode string.", item)
 
     def should_be_byte_string(self, item, msg=None):
-        """Fails if the given `item` is not a byte string.
+        """Fails if the given ``item`` is not a byte string.
 
-        Use `Should Be Unicode String` if you want to verify the `item` is a
+        Use `Should Be Unicode String` if you want to verify the ``item`` is a
         Unicode string, or `Should Be String` if both Unicode and byte strings
         are fine.
 
         The default error message can be overridden with the optional
-        `msg` argument.
+        ``msg`` argument.
 
         New in Robot Framework 2.7.7.
         """
@@ -518,13 +519,13 @@ class String(object):
             self._fail(msg, "'%s' is not a byte string.", item)
 
     def should_be_lowercase(self, string, msg=None):
-        """Fails if the given `string` is not in lowercase.
+        """Fails if the given ``string`` is not in lowercase.
 
-        For example 'string' and 'with specials!' would pass, and 'String', ''
-        and ' ' would fail.
+        For example, ``'string'`` and ``'with specials!'`` would pass, and
+        ``'String'``, ``''`` and ``' '`` would fail.
 
         The default error message can be overridden with the optional
-        `msg` argument.
+        ``msg`` argument.
 
         See also `Should Be Uppercase` and `Should Be Titlecase`.
         """
@@ -532,13 +533,13 @@ class String(object):
             self._fail(msg, "'%s' is not lowercase.", string)
 
     def should_be_uppercase(self, string, msg=None):
-        """Fails if the given `string` is not in uppercase.
+        """Fails if the given ``string`` is not in uppercase.
 
-        For example 'STRING' and 'WITH SPECIALS!' would pass, and 'String', ''
-        and ' ' would fail.
+        For example, ``'STRING'`` and ``'WITH SPECIALS!'`` would pass, and
+        ``'String'``, ``''`` and ``' '`` would fail.
 
         The default error message can be overridden with the optional
-        `msg` argument.
+        ``msg`` argument.
 
         See also `Should Be Titlecase` and `Should Be Lowercase`.
         """
@@ -546,17 +547,17 @@ class String(object):
             self._fail(msg, "'%s' is not uppercase.", string)
 
     def should_be_titlecase(self, string, msg=None):
-        """Fails if given `string` is not title.
+        """Fails if given ``string`` is not title.
 
-        `string` is a titlecased string if there is at least one
+        ``string`` is a titlecased string if there is at least one
         character in it, uppercase characters only follow uncased
         characters and lowercase characters only cased ones.
 
-        For example 'This Is Title' would pass, and 'Word In UPPER',
-        'Word In lower', '' and ' ' would fail.
+        For example, ``'This Is Title'`` would pass, and ``'Word In UPPER'``,
+        ``'Word In lower'``, ``''`` and ``' '`` would fail.
 
         The default error message can be overridden with the optional
-        `msg` argument.
+        ``msg`` argument.
 
         See also `Should Be Uppercase` and `Should Be Lowercase`.
         """

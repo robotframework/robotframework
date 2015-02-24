@@ -33,7 +33,7 @@ from robot import utils
 class Telnet:
     """A test library providing communication over Telnet connections.
 
-    `Telnet` is Robot Framework's standard library that makes it possible to
+    ``Telnet`` is Robot Framework's standard library that makes it possible to
     connect to Telnet servers and execute commands on the opened connections.
 
     == Table of contents ==
@@ -50,7 +50,7 @@ class Telnet:
 
     = Connections =
 
-    The first step of using `Telnet` is opening a connection with `Open
+    The first step of using ``Telnet`` is opening a connection with `Open
     Connection` keyword. Typically the next step is logging in with `Login`
     keyword, and in the end the opened connection can be closed with `Close
     Connection`.
@@ -96,8 +96,8 @@ class Telnet:
     `Set Timeout`, `Set Newline`, `Set Prompt`, `Set Encoding`,
     `Set Default Log Level` and `Set Telnetlib Log Level`.
 
-    Values of `environ_user`, `window_size`, `terminal_emulation`, and
-    `terminal_type` can not be changed after opening the connection.
+    Values of ``environ_user``, ``window_size``, ``terminal_emulation``, and
+    ``terminal_type`` can not be changed after opening the connection.
 
     == Timeout ==
 
@@ -108,10 +108,10 @@ class Telnet:
     == Newline ==
 
     Newline defines which line separator `Write` keyword should use. The
-    default value is `CRLF` that is typically used by Telnet connections.
+    default value is ``CRLF`` that is typically used by Telnet connections.
 
-    Newline can be given either in escaped format using '\\n' and '\\r' or
-    with special 'LF' and 'CR' syntax.
+    Newline can be given either in escaped format using ``\\n`` and ``\\r`` or
+    with special ``LF`` and ``CR`` syntax.
 
     Examples:
     | `Set Newline` | \\n  |
@@ -132,7 +132,7 @@ class Telnet:
     To ease handling text containing non-ASCII characters, all written text is
     encoded and read text decoded by default. The default encoding is UTF-8
     that works also with ASCII. Encoding can be disabled by using a special
-    encoding value `NONE`. This is mainly useful if you need to get the bytes
+    encoding value ``NONE``. This is mainly useful if you need to get the bytes
     received from the connection as-is.
 
     Notice that when writing to the connection, only Unicode strings are
@@ -145,9 +145,9 @@ class Telnet:
     functions in Python strings accept. In practice the following values are
     the most useful:
 
-    - `ignore`: ignore characters that cannot be encoded (default)
-    - `strict`: fail if characters cannot be encoded
-    - `replace`: replace characters that cannot be encoded with a replacement
+    - ``ignore``: ignore characters that cannot be encoded (default)
+    - ``strict``: fail if characters cannot be encoded
+    - ``replace``: replace characters that cannot be encoded with a replacement
       character
 
     Examples:
@@ -165,8 +165,8 @@ class Telnet:
     == Default log level ==
 
     Default log level specifies the log level keywords use for `logging` unless
-    they are given an explicit log level. The default value is `INFO`, and
-    changing it, for example, to `DEBUG` can be a good idea if there is lot
+    they are given an explicit log level. The default value is ``INFO``, and
+    changing it, for example, to ``DEBUG`` can be a good idea if there is lot
     of unnecessary output that makes log files big.
 
     Configuring default log level in `importing` and with `Open Connection`
@@ -176,8 +176,8 @@ class Telnet:
     == Terminal type ==
 
     By default the Telnet library does not negotiate any specific terminal type
-    with the server. If a specific terminal type, for example `vt100`, is desired,
-    the terminal type can be configured in `importing` and with
+    with the server. If a specific terminal type, for example ``vt100``, is
+    desired, the terminal type can be configured in `importing` and with
     `Open Connection`.
 
     New in Robot Framework 2.8.2.
@@ -191,10 +191,10 @@ class Telnet:
 
     == USER environment variable ==
 
-    Telnet protocol allows the `USER` environment variable to be sent when
+    Telnet protocol allows the ``USER`` environment variable to be sent when
     connecting to the server. On some servers it may happen that there is no
     login prompt, and on those cases this configuration option will allow still
-    to define the desired username. The option `environ_user` can be used in
+    to define the desired username. The option ``environ_user`` can be used in
     `importing` and with `Open Connection`.
 
     New in Robot Framework 2.8.2.
@@ -207,13 +207,13 @@ class Telnet:
     codes, like cursor movements, and also control characters, like
     carriage returns and backspaces, have the same effect on the result as they
     would have on a normal terminal screen. For example the sequence
-    'acdc\\x1b[3Dbba' will result in output 'abba'.
+    ``acdc\\x1b[3Dbba`` will result in output ``abba``.
 
     Terminal emulation is taken into use with option terminal_emulation=True,
     either in the library initialization, or as a option to `Open Connection`.
 
     As Pyte approximates vt-style terminal, you may also want to set the
-    terminal type as `vt100`. We also recommend that you increase the window
+    terminal type as ``vt100``. We also recommend that you increase the window
     size, as the terminal emulation will break all lines that are longer than
     the window row length.
 
@@ -222,7 +222,7 @@ class Telnet:
 
     As a prequisite for using terminal emulation you need to have [https://github.com/selectel/pyte|Pyte]
     installed. This is easiest done with [http://pip-installer.org|pip] by
-    running `pip install pyte`.
+    running ``pip install pyte``.
 
     Examples:
     | `Open Connection` | lolcathost | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 |
@@ -233,24 +233,24 @@ class Telnet:
     log level to use as an optional argument, and if no log level is specified
     they use the [#Configuration|configured] default value.
 
-    The valid log levels to use are `TRACE`, `DEBUG`, `INFO` (default), and
-    `WARN`. Levels below `INFO` are not shown in log files by default whereas
-    warnings are shown more prominently.
+    The valid log levels to use are ``TRACE``, ``DEBUG``, ``INFO`` (default),
+    and ``WARN``. Levels below ``INFO`` are not shown in log files by default
+    whereas warnings are shown more prominently.
 
     The [http://docs.python.org/2/library/telnetlib.html|telnetlib module]
     used by this library has a custom logging system for logging content it
-    sends and receives. By default these messages are written using `TRACE`
+    sends and receives. By default these messages are written using ``TRACE``
     level. Starting with Robot Framework 2.8.7 the level is configurable
-    with the `telnetlib_log_level` option either in the library initialization,
+    with the ``telnetlib_log_level`` option either in the library initialization,
     to the `Open Connection` or by using the `Set Telnetlib Log Level`
-    keyword to the active connection. Special level `NONE` con be used to
+    keyword to the active connection. Special level ``NONE`` con be used to
     disable the logging altogether.
 
     = Time string format =
 
     Timeouts and other times used must be given as a time string using format
-    in format like '15 seconds' or '1min 10s'. If the timeout is given as
-    just a number, for example, '10' or '1.5', it is considered to be seconds.
+    like ``15 seconds`` or ``1min 10s``. If the timeout is given as just
+    a number, for example, ``10`` or ``1.5``, it is considered to be seconds.
     The time string format is described in more detail in an appendix of
     [http://robotframework.org/robotframework/#user-guide|Robot Framework User Guide].
     """
@@ -272,7 +272,7 @@ class Telnet:
         keywords. See these keywords as well as `Configuration` and
         `Terminal emulation` sections above for more information about these
         parameters and their possible values. Starting with Robot Framework 2.8.7
-        the parameter 'telnetlib_log_level' is added. With this parameter the
+        the parameter ``telnetlib_log_level`` is added. With this parameter the
         log level of the used Python telnetlib can be configured.
 
         See `Logging` section for more information about log levels.
@@ -347,16 +347,16 @@ class Telnet:
                         terminal_type=None, telnetlib_log_level=None):
         """Opens a new Telnet connection to the given host and port.
 
-        The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
-        `default_log_level`, `window_size`, `environ_user`,
-        `terminal_emulation`, `terminal_type` and 'telnetlib_log_level'
+        The ``timeout``, ``newline``, ``prompt``, ``prompt_is_regexp``,
+        ``encoding``, ``default_log_level``, ``window_size``, ``environ_user``,
+        ``terminal_emulation``, ``terminal_type`` and ``telnetlib_log_level``
         arguments get default values when the library is [#Importing|imported].
         Setting them here overrides those values for the opened connection.
         See `Configuration` and `Terminal emulation` sections for more information.
 
         Possible already opened connections are cached and it is possible to
-        switch back to them using `Switch Connection` keyword. It is possible
-        to switch either using explicitly given `alias` or using index returned
+        switch back to them using `Switch Connection` keyword. It is possible to
+        switch either using explicitly given ``alias`` or using index returned
         by this keyword. Indexing starts from 1 and is reset back to it by
         `Close All Connections` keyword.
         """
@@ -432,7 +432,7 @@ class Telnet:
 
         The example above expects that there were no other open
         connections when opening the first one, because it used index
-        '1' when switching to the connection later. If you are not
+        ``1`` when switching to the connection later. If you are not
         sure about that, you can store the index into a variable as
         shown below.
 
@@ -491,8 +491,8 @@ class TelnetConnection(telnetlib.Telnet):
         Until Regexp`, `Read Until Prompt`, `Login`) use this timeout and fail
         if the expected output does not appear before this timeout expires.
 
-        The `timeout` must be given in `time string format`. The old timeout is
-        returned and can be used to restore the timeout later.
+        The ``timeout`` must be given in `time string format`. The old timeout
+        is returned and can be used to restore the timeout later.
 
         Example:
         | ${old} =       | `Set Timeout` | 2 minute 30 seconds |
@@ -535,8 +535,8 @@ class TelnetConnection(telnetlib.Telnet):
     def set_prompt(self, prompt, prompt_is_regexp=False):
         """Sets the prompt used by `Read Until Prompt` and `Login` in the current connection.
 
-        If `prompt_is_regexp` is given any true value, including any non-empty
-        string, the given `prompt` is considered to be a regular expression.
+        If ``prompt_is_regexp`` is given any true value, including any non-empty
+        string, the given ``prompt`` is considered to be a regular expression.
 
         The old prompt is returned and can be used to restore the prompt later.
 
@@ -546,7 +546,7 @@ class TelnetConnection(telnetlib.Telnet):
         | `Set Prompt` | ${prompt} | ${regexp} |
 
         See the documentation of
-        [http://docs.python.org/2/library/re.html|Python `re` module]
+        [http://docs.python.org/2/library/re.html|Python re module]
         for more information about the supported regular expression syntax.
         Notice that possible backslashes need to be escaped in Robot Framework
         test data.
@@ -573,10 +573,10 @@ class TelnetConnection(telnetlib.Telnet):
     def set_encoding(self, encoding=None, errors=None):
         """Sets the encoding to use for `writing and reading` in the current connection.
 
-        The given `encoding` specifies the encoding to use when written/read
-        text is encoded/decoded, and `errors` specifies the error handler to
+        The given ``encoding`` specifies the encoding to use when written/read
+        text is encoded/decoded, and ``errors`` specifies the error handler to
         use if encoding/decoding fails. Either of these can be omitted and in
-        that case the old value is not affected. Use string `NONE` to disable
+        that case the old value is not affected. Use string ``NONE`` to disable
         encoding altogether.
 
         See `Configuration` section for more information about encoding and
@@ -615,9 +615,9 @@ class TelnetConnection(telnetlib.Telnet):
         return bytes.decode(*self._encoding)
 
     def set_telnetlib_log_level(self, level):
-        """Sets the log level used for `logging` in the underlying Python telnetlib.
+        """Sets the log level used for `logging` in the underlying ``telnetlib``.
 
-        Note that the telnetlib can be very noisy thus using the level 'NONE'
+        Note that ``telnetlib`` can be very noisy thus using the level ``NONE``
         can shutdown the messages generated by this library.
 
         New in Robot Framework 2.8.7.
@@ -681,9 +681,9 @@ class TelnetConnection(telnetlib.Telnet):
               login_incorrect='Login incorrect'):
         """Logs in to the Telnet server with the given user information.
 
-        This keyword reads from the connection until the `login_prompt` is
-        encountered and then types the given `username`. Then it reads until
-        the `password_prompt` and types the given `password`. In both cases
+        This keyword reads from the connection until the ``login_prompt`` is
+        encountered and then types the given ``username``. Then it reads until
+        the ``password_prompt`` and types the given ``password``. In both cases
         a newline is appended automatically and the connection specific
         timeout used when waiting for outputs.
 
@@ -693,11 +693,11 @@ class TelnetConnection(telnetlib.Telnet):
         1) If the prompt is set, this keyword reads the output until the prompt
         is found using the normal timeout. If no prompt is found, login is
         considered failed and also this keyword fails. Note that in this case
-        both `login_timeout` and `login_incorrect` arguments are ignored.
+        both ``login_timeout`` and ``login_incorrect`` arguments are ignored.
 
-        2) If the prompt is not set, this keywords sleeps until `login_timeout`
+        2) If the prompt is not set, this keywords sleeps until ``login_timeout``
         and then reads all the output available on the connection. If the
-        output contains `login_incorrect` text, login is considered failed
+        output contains ``login_incorrect`` text, login is considered failed
         and also this keyword fails. Both of these configuration parameters
         were added in Robot Framework 2.7.6. In earlier versions they were
         hard coded.
@@ -737,7 +737,7 @@ class TelnetConnection(telnetlib.Telnet):
         """Writes the given text plus a newline into the connection.
 
         The newline character sequence to use can be [#Configuration|configured]
-        both globally and per connection basis. The default value is `CRLF`.
+        both globally and per connection basis. The default value is ``CRLF``.
 
         This keyword consumes the written text, until the added newline, from
         the output and logs and returns it. The given text itself must not
@@ -768,26 +768,26 @@ class TelnetConnection(telnetlib.Telnet):
 
     def write_until_expected_output(self, text, expected, timeout,
                                     retry_interval, loglevel=None):
-        """Writes the given `text` repeatedly, until `expected` appears in the output.
+        """Writes the given ``text`` repeatedly, until ``expected`` appears in the output.
 
-        `text` is written without appending a newline and it is consumed from
-        the output before trying to find `expected`. If `expected` does not
-        appear in the output within `timeout`, this keyword fails.
+        ``text`` is written without appending a newline and it is consumed from
+        the output before trying to find ``expected``. If ``expected`` does not
+        appear in the output within ``timeout``, this keyword fails.
 
-        `retry_interval` defines the time to wait `expected` to appear before
-        writing the `text` again. Consuming the written `text` is subject to
+        ``retry_interval`` defines the time to wait ``expected`` to appear before
+        writing the ``text`` again. Consuming the written ``text`` is subject to
         the normal [#Configuration|configured timeout].
 
-        Both `timeout` and `retry_interval` must be given in `time string
+        Both ``timeout`` and ``retry_interval`` must be given in `time string
         format`. See `Logging` section for more information about log levels.
 
         Example:
         | Write Until Expected Output | ps -ef| grep myprocess\\r\\n | myprocess |
         | ...                         | 5 s                          | 0.5 s     |
 
-        The above example writes command `ps -ef | grep myprocess\\r\\n` until
-        `myprocess` appears in the output. The command is written every 0.5
-        seconds and the keyword fails if `myprocess` does not appear in
+        The above example writes command ``ps -ef | grep myprocess\\r\\n`` until
+        ``myprocess`` appears in the output. The command is written every 0.5
+        seconds and the keyword fails if ``myprocess`` does not appear in
         the output in 5 seconds.
         """
         timeout = utils.timestr_to_secs(timeout)
@@ -858,7 +858,7 @@ class TelnetConnection(telnetlib.Telnet):
         return output
 
     def read_until(self, expected, loglevel=None):
-        """Reads output until `expected` text is encountered.
+        """Reads output until ``expected`` text is encountered.
 
         Text up to and including the match is returned and logged. If no match
         is found, this keyword fails. How much to wait for the output depends
@@ -929,7 +929,7 @@ class TelnetConnection(telnetlib.Telnet):
         return index != -1, self._decode(output)
 
     def read_until_regexp(self, *expected):
-        """Reads output until any of the `expected` regular expressions match.
+        """Reads output until any of the ``expected`` regular expressions match.
 
         This keyword accepts any number of regular expressions patterns or
         compiled Python regular expression objects as arguments. Text up to
@@ -938,10 +938,10 @@ class TelnetConnection(telnetlib.Telnet):
         to wait for the output depends on the [#Configuration|configured timeout].
 
         If the last given argument is a [#Logging|valid log level], it is used
-        as `loglevel` similarly as with `Read Until` keyword.
+        as ``loglevel`` similarly as with `Read Until` keyword.
 
         See the documentation of
-        [http://docs.python.org/2/library/re.html|Python `re` module]
+        [http://docs.python.org/2/library/re.html|Python re module]
         for more information about the supported regular expression syntax.
         Notice that possible backslashes need to be escaped in Robot Framework
         test data.
@@ -977,7 +977,7 @@ class TelnetConnection(telnetlib.Telnet):
         output depends on the [#Configuration|configured timeout].
 
         If you want to exclude the prompt from the returned output, set
-        `strip_prompt` to any true value, such as a non-empty string. If your
+        ``strip_prompt`` to any true value, such as a non-empty string. If your
         prompt is a regular expression, make sure that the expression spans the
         whole prompt, because only the part of the output that matches the
         regular expression is stripped away.
@@ -1014,7 +1014,7 @@ class TelnetConnection(telnetlib.Telnet):
         return output[:-length]
 
     def execute_command(self, command, loglevel=None, strip_prompt=False):
-        """Executes the given `command` and reads, logs, and returns everything until the prompt.
+        """Executes the given ``command`` and reads, logs, and returns everything until the prompt.
 
         This keyword requires the prompt to be [#Configuration|configured]
         either in `importing` or with `Open Connection` or `Set Prompt` keyword.
@@ -1028,7 +1028,7 @@ class TelnetConnection(telnetlib.Telnet):
         | ${out} = | `Read Until Prompt` |
 
         See `Logging` section for more information about log levels and `Read
-        Until Prompt` for more information about the `strip_prompt` parameter.
+        Until Prompt` for more information about the ``strip_prompt`` parameter.
         """
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel, strip_prompt)

@@ -77,9 +77,9 @@ class Screenshot(object):
     into the directory where the XML output file is written.
 
     It is possible to specify a custom location for screenshots using
-   `screenshot_directory` argument in `importing` and `Set Screenshot Directory`
-    keyword during execution. It is also possible to save screenshots using
-    an absolute path.
+   ``screenshot_directory`` argument when `importing` the library and
+    using `Set Screenshot Directory` keyword during execution. It is also
+    possible to save screenshots using an absolute path.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
@@ -88,7 +88,7 @@ class Screenshot(object):
     def __init__(self, screenshot_directory=None):
         """Configure where screenshots are saved.
 
-        If `screenshot_directory` is not given, screenshots are saved into
+        If ``screenshot_directory`` is not given, screenshots are saved into
         same directory as the log file. The directory can also be set using
         `Set Screenshot Directory` keyword.
 
@@ -121,8 +121,8 @@ class Screenshot(object):
     def set_screenshot_directory(self, path):
         """Sets the directory where screenshots are saved.
 
-        It is possible to use `/` as a path separator in all operating systems.
-        Path to the old directory is returned.
+        It is possible to use ``/`` as a path separator in all operating
+        systems. Path to the old directory is returned.
 
         The directory can also be set in `importing`.
         """
@@ -137,16 +137,16 @@ class Screenshot(object):
         """Takes a screenshot in JPEG format and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from the
-        given `name`. If the `name` ends with extension `.jpg` or `.jpeg`,
-        the screenshot will be stored with that exact name. Otherwise a unique
-        name is created by adding an underscore, a running index and
-        an extension to the `name`.
+        given ``name``. If the ``name`` ends with extension ``.jpg`` or
+        ``.jpeg``, the screenshot will be stored with that exact name.
+        Otherwise a unique name is created by adding an underscore, a running
+        index and an extension to the ``name``.
 
         The name will be interpreted to be relative to the directory where
         the log file is written. It is also possible to use absolute paths.
-        Using `/` as a path separator works in all operating systems.
+        Using ``/`` as a path separator works in all operating systems.
 
-        `width` specifies the size of the screenshot in the log file.
+        ``width`` specifies the size of the screenshot in the log file.
 
         Examples: (LOGDIR is determined automatically by the library)
         | Take Screenshot |                  |     | # LOGDIR/screenshot_1.jpg (index automatically incremented) |
