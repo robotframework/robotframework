@@ -56,7 +56,7 @@ Static API
   `keyword names`_. Keywords also take the same `arguments`__ as
   the methods implementing them.  Keywords `report failures`__ with
   exceptions, `log`__ by writing to standard output and can `return
-  values`__ using the :code:`return` statement.
+  values`__ using the `return` statement.
 
 Dynamic API
 
@@ -101,24 +101,24 @@ Test library names
 
 The name of a test library that is used when a library is imported is
 the same as the name of the module or class implementing it. For
-example, if you have a Python module :code:`MyLibrary` (that is,
-file :path:`MyLibrary.py`), it will create a library with name
-:name:`MyLibrary`. Similarly, a Java class :code:`YourLibrary`, when
+example, if you have a Python module `MyLibrary` (that is,
+file :file:`MyLibrary.py`), it will create a library with name
+:name:`MyLibrary`. Similarly, a Java class `YourLibrary`, when
 it is not in any package, creates a library with exactly that name.
 
 Python classes are always inside a module. If the name of a class
 implementing a library is the same as the name of the module, Robot
 Framework allows dropping the class name when importing the
-library. For example, class :code:`MyLib` in :path:`MyLib.py`
+library. For example, class `MyLib` in :file:`MyLib.py`
 file can be used as a library with just name :name:`MyLib`. This also
-works with submodules so that if, for example, :code:`parent.MyLib` module
-has class :code:`MyLib`, importing it using just :name:`parent.MyLib`
+works with submodules so that if, for example, `parent.MyLib` module
+has class `MyLib`, importing it using just :name:`parent.MyLib`
 works. If the module name and class name are different, libraries must be
 taken into use using both module and class names, such as
 :name:`mymodule.MyLibrary` or :name:`parent.submodule.MyLib`.
 
 Java classes in a non-default package must be taken into use with the
-full name. For example, class :code:`MyLib` in :code:`com.mycompany.myproject`
+full name. For example, class `MyLib` in `com.mycompany.myproject`
 package must be imported with name :name:`com.mycompany.myproject.MyLib`.
 
 .. note:: Dropping class names with submodules works only in Robot Framework
@@ -208,20 +208,20 @@ state. Additionally, all libraries do not have a state and creating
 new instances of them is simply not needed.
 
 Test libraries can control when new libraries are created with a
-class attribute :code:`ROBOT_LIBRARY_SCOPE` . This attribute must be
+class attribute `ROBOT_LIBRARY_SCOPE` . This attribute must be
 a string and it can have the following three values:
 
-`TEST CASE`:code:
+`TEST CASE`
   A new instance is created for every test case. A possible suite setup
   and suite teardown share yet another instance. This is the default.
 
-`TEST SUITE`:code:
+`TEST SUITE`
   A new instance is created for every test suite. The lowest-level test
   suites, created from test case files and containing test cases, have
   instances of their own, and higher-level suites all get their own instances
   for their possible setups and teardowns.
 
-`GLOBAL`:code:
+`GLOBAL`
   Only one instance is created during the whole test execution and it
   is shared by all test cases and test suites. Libraries created from
   modules are always global.
@@ -229,17 +229,17 @@ a string and it can have the following three values:
 .. note:: If a library is imported multiple times with different arguments__,
           a new instance is created every time regardless the scope.
 
-When the :code:`TEST SUITE` or :code:`GLOBAL` scopes are used with test
+When the `TEST SUITE` or `GLOBAL` scopes are used with test
 libraries that have a state, it is recommended that libraries have some
 special keyword for cleaning up the state. This keyword can then be
 used, for example, in a suite setup or teardown to ensure that test
 cases in the next test suites can start from a known state. For example,
-:name:`SeleniumLibrary` uses the :code:`GLOBAL` scope to enable
+:name:`SeleniumLibrary` uses the `GLOBAL` scope to enable
 using the same browser in different test cases without having to
 reopen it, and it also has the :name:`Close All Browsers` keyword for
 easily closing all opened browsers.
 
-Example Python library using the :code:`TEST SUITE` scope:
+Example Python library using the `TEST SUITE` scope:
 
 .. sourcecode:: python
 
@@ -257,7 +257,7 @@ Example Python library using the :code:`TEST SUITE` scope:
         def clear_counter(self):
             self._counter = 0
 
-Example Java library using the :code:`GLOBAL` scope:
+Example Java library using the `GLOBAL` scope:
 
 .. sourcecode:: java
 
@@ -289,15 +289,15 @@ Libdoc_ also writes this information into the keyword
 documentations it generates.
 
 Version information is read from attribute
-:code:`ROBOT_LIBRARY_VERSION`, similarly as `test library scope`_ is
-read from :code:`ROBOT_LIBRARY_SCOPE`. If
-:code:`ROBOT_LIBRARY_VERSION` does not exist, information is tried to
-be read from :code:`__version__` attribute. These attributes must be
+`ROBOT_LIBRARY_VERSION`, similarly as `test library scope`_ is
+read from `ROBOT_LIBRARY_SCOPE`. If
+`ROBOT_LIBRARY_VERSION` does not exist, information is tried to
+be read from `__version__` attribute. These attributes must be
 class or module attributes, depending whether the library is
 implemented as a class or a module.  For Java libraries the version
-attribute must be declared as :code:`static final`.
+attribute must be declared as `static final`.
 
-An example Python module using :code:`__version__`:
+An example Python module using `__version__`:
 
 .. sourcecode:: python
 
@@ -306,7 +306,7 @@ An example Python module using :code:`__version__`:
     def keyword():
         pass
 
-A Java class using :code:`ROBOT_LIBRARY_VERSION`:
+A Java class using `ROBOT_LIBRARY_VERSION`:
 
 .. sourcecode:: java
 
@@ -324,13 +324,13 @@ Specifying documentation format
 Starting from Robot Framework 2.7.5, library documentation tool Libdoc_
 supports documentation in multiple formats. If you want to use something
 else than Robot Framework's own `documentation formatting`_, you can specify
-the format in the source code using  :code:`ROBOT_LIBRARY_DOC_FORMAT` attribute
+the format in the source code using  `ROBOT_LIBRARY_DOC_FORMAT` attribute
 similarly as scope__ and version__ are set with their own
-:code:`ROBOT_LIBRARY_*` attributes.
+`ROBOT_LIBRARY_*` attributes.
 
 The possible case-insensitive values for documentation format are
-:code:`ROBOT` (default), :code:`HTML`, :code:`TEXT` (plain text),
-and :code:`reST` (reStructuredText_). Using the :code:`reST` format requires
+`ROBOT` (default), `HTML`, `TEXT` (plain text),
+and `reST` (reStructuredText_). Using the `reST` format requires
 the docutils_ module to be installed when documentation is generated.
 
 Setting the documentation format is illustrated by the following Python and
@@ -343,7 +343,7 @@ about documenting test libraries in general.
     """A library for *documentation format* demonstration purposes.
 
     This documentation is created using reStructuredText__. Here is a link
-    to the only \\`Keyword\\`.
+    to the only \`Keyword\`.
 
     __ http://docutils.sourceforge.net
     """
@@ -394,7 +394,7 @@ Library acting as listener
 test execution. They are called, for example, when suites, tests, and keywords
 start and end. Sometimes getting such notifications is also useful for test
 libraries, and they can register a custom listener by using
-:code:`ROBOT_LIBRARY_LISTENER` attribute. The value of this attribute
+`ROBOT_LIBRARY_LISTENER` attribute. The value of this attribute
 should be an instance of the listener to use, possibly the library itself.
 For more information and examples see `Test libraries as listeners`_ section.
 
@@ -408,7 +408,7 @@ When the static library API is used, Robot Framework uses reflection
 to find out what public methods the library class or module
 implements. It will exclude all methods starting with an underscore,
 and with Java libraries also methods that are implemented only in
-:code:`java.lang.Object` are ignored. All the methods that are not
+`java.lang.Object` are ignored. All the methods that are not
 ignored are considered keywords. For example, the Python and Java
 libraries below implement single keyword :name:`My Keyword`.
 
@@ -437,13 +437,13 @@ libraries below implement single keyword :name:`My Keyword`.
 
 When the library is implemented as a Python module, it is also
 possible to limit what methods are keywords by using Python's
-:code:`__all__` attribute. If :code:`__all__` is used, only methods
+`__all__` attribute. If `__all__` is used, only methods
 listed in it can be keywords. For example, the library below
 implements keywords :name:`Example Keyword` and :name:`Second
-Example`. Without :code:`__all__`, it would implement also keywords
+Example`. Without `__all__`, it would implement also keywords
 :name:`Not Exposed As Keyword` and :name:`Current Thread`. The most
-important usage for :code:`__all__` is making sure imported helper
-methods, such as :code:`current_thread` in the example below, are not
+important usage for `__all__` is making sure imported helper
+methods, such as `current_thread` in the example below, are not
 accidentally exposed as keywords.
 
 .. sourcecode:: python
@@ -462,7 +462,7 @@ accidentally exposed as keywords.
    def not_exposed_as_keyword():
        pass
 
-.. note:: Support for the :code:`__all__` attribute is available from
+.. note:: Support for the `__all__` attribute is available from
           Robot Framework 2.5.5 onwards.
 
 Keyword names
@@ -471,12 +471,12 @@ Keyword names
 Keyword names used in the test data are compared with method names to
 find the method implementing these keywords. Name comparison is
 case-insensitive, and also spaces and underscores are ignored. For
-example, the method :code:`hello` maps to the keyword name
+example, the method `hello` maps to the keyword name
 :name:`Hello`, :name:`hello` or even :name:`h e l l o`. Similarly both the
-:code:`do_nothing` and :code:`doNothing` methods can be used as the
+`do_nothing` and `doNothing` methods can be used as the
 :name:`Do Nothing` keyword in the test data.
 
-Example Python library implemented as a module in the :path:`MyLibrary.py` file:
+Example Python library implemented as a module in the :file:`MyLibrary.py` file:
 
 .. sourcecode:: python
 
@@ -486,7 +486,7 @@ Example Python library implemented as a module in the :path:`MyLibrary.py` file:
   def do_nothing():
       pass
 
-Example Java library implemented as a class in the :path:`MyLibrary.java` file:
+Example Java library implemented as a class in the :file:`MyLibrary.java` file:
 
 .. sourcecode:: java
 
@@ -581,8 +581,8 @@ which is familiar to all Python programmers, is illustrated below:
        print "Got arguments %s, %s and %s" % (arg1, arg2, arg3)
 
 The first example keyword above can be used either with zero or one
-arguments. If no arguments are given, :code:`arg` gets the value
-:code:`default`. If there is one argument, :code:`arg` gets that value,
+arguments. If no arguments are given, `arg` gets the value
+`default`. If there is one argument, `arg` gets that value,
 and calling the keyword with more than one argument fails. In the
 second example, one argument is always required, but the second and
 the third one have default values, so it is possible to use the keyword
@@ -633,8 +633,8 @@ the earlier Python example:
        multipleDefaults(arg1, "default 1");
    }
 
-Variable number of arguments (:code:`*varargs`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Variable number of arguments (`*varargs`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework supports also keywords that take any number of
 arguments. Similarly as with the default values, the actual syntax to use
@@ -705,7 +705,7 @@ to the above Python examples with same names:
 
 It is also possible to use variable number of arguments also by
 having an array or, starting from Robot Framework 2.8.3,
-:code:`java.util.List` as the last argument, or second to last
+`java.util.List` as the last argument, or second to last
 if `free keyword arguments (**kwargs)`_ are used. This is illustrated
 by the following examples that are functionally identical to
 the previous ones:
@@ -726,7 +726,7 @@ the previous ones:
       }
   }
 
-.. note:: Only :code:`java.util.List` is supported as varargs, not any of
+.. note:: Only `java.util.List` is supported as varargs, not any of
           its sub types.
 
 The support for variable number of arguments with Java keywords has one
@@ -738,11 +738,11 @@ varargs with `library constructors`__.
 __ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
 __ `Providing arguments to test libraries`_
 
-Free keyword arguments (:code:`**kwargs`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Free keyword arguments (`**kwargs`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework 2.8 added the support for free keyword arguments using Python's
-:code:`**kwargs` syntax. How to use the syntax in the test data is discussed
+`**kwargs` syntax. How to use the syntax in the test data is discussed
 in `Free keyword arguments`_ section under `Creating test cases`_. In this
 section we take a look at how to actually use it in custom test libraries.
 
@@ -759,7 +759,7 @@ below shows the basic functionality:
         for name, value in stuff.items():
             print name, value
 
-.. table:: Using keywords with :code:`**kwargs`
+.. table:: Using keywords with `**kwargs`
    :class: example
 
    ====================  ================  ==============  ==============  ============================
@@ -770,10 +770,10 @@ below shows the basic functionality:
    ====================  ================  ==============  ==============  ============================
 
 Basically, all arguments at the end of the keyword call that use the
-`named argument syntax`_ :code:`name=value`, and that do not match any
+`named argument syntax`_ `name=value`, and that do not match any
 other arguments, are passed to the keyword as kwargs. To avoid using a literal
-value like :code:`foo=quux` as a free keyword argument, it must be escaped__
-like :code:`foo\\=quux`.
+value like `foo=quux` as a free keyword argument, it must be escaped__
+like `foo\=quux`.
 
 The following example illustrates how normal arguments, varargs, and kwargs
 work together:
@@ -813,12 +813,12 @@ Free keyword arguments with Java
 
 Starting from Robot Framework 2.8.3, also Java libraries support the free
 keyword arguments syntax. Java itself has no kwargs syntax, but keywords
-can have :code:`java.util.Map` as the last argument to specify that they
+can have `java.util.Map` as the last argument to specify that they
 accept kwargs.
 
 If a Java keyword accepts kwargs, Robot Framework will automatically pack
-all arguments in :code:`name=value` syntax at the end of the keyword call
-into a :code:`Map` and pass it to the keyword. For example, following
+all arguments in `name=value` syntax at the end of the keyword call
+into a `Map` and pass it to the keyword. For example, following
 example keywords can be used exactly like the previous Python examples:
 
 .. sourcecode:: java
@@ -834,7 +834,7 @@ example keywords can be used exactly like the previous Python examples:
         for (String key: kwargs.keySet())
             System.out.println("kwarg: " + key + " " + kwargs.get(key));
 
-.. note:: The type of the kwargs argument must be exactly :code:`java.util.Map`,
+.. note:: The type of the kwargs argument must be exactly `java.util.Map`,
           not any of its sub types.
 
 .. note:: Similarly as with the `varargs support`__, a keyword supporting
@@ -876,15 +876,15 @@ handled automatically. This means that arguments that are normal
 strings in the test data are coerced to correct type at runtime. The
 types that can be coerced are:
 
-- integer types (:code:`byte`, :code:`short`, :code:`int`, :code:`long`)
-- floating point types (:code:`float` and :code:`double`)
-- the :code:`boolean` type
-- object versions of the above types e.g. :code:`java.lang.Integer`
+- integer types (`byte`, `short`, `int`, `long`)
+- floating point types (`float` and `double`)
+- the `boolean` type
+- object versions of the above types e.g. `java.lang.Integer`
 
 The coercion is done for arguments that have the same or compatible
 type across all the signatures of the keyword method. In the following
-example, the conversion can be done for keywords :code:`doubleArgument`
-and :code:`compatibleTypes`, but not for :code:`conflictingTypes`.
+example, the conversion can be done for keywords `doubleArgument`
+and `compatibleTypes`, but not for `conflictingTypes`.
 
 .. sourcecode:: java
 
@@ -898,7 +898,7 @@ and :code:`compatibleTypes`, but not for :code:`conflictingTypes`.
 
 The coercion works with the numeric types if the test data has a
 string containing a number, and with the boolean type the data must
-contain either string :code:`true` or :code:`false`. Coercion is only
+contain either string `true` or `false`. Coercion is only
 done if the original value was a string from the test data, but it is
 of course still possible to use variables containing correct types with
 these keywords. Using variables is the only option if keywords have
@@ -951,20 +951,20 @@ Reporting keyword status
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Reporting keyword status is done simply using exceptions. If an executed
-method raises an exception, the keyword status is :msg:`FAIL`, and if it
-returns normally, the status is :msg:`PASS`.
+method raises an exception, the keyword status is `FAIL`, and if it
+returns normally, the status is `PASS`.
 
 The error message shown in logs, reports and the console is created
 from the exception type and its message. With generic exceptions (for
-example, :code:`AssertionError`, :code:`Exception`, and
-:code:`RuntimeError`), only the exception message is used, and with
-others, the message is created in the format :msg:`ExceptionType:
+example, `AssertionError`, `Exception`, and
+`RuntimeError`), only the exception message is used, and with
+others, the message is created in the format `ExceptionType:
 Actual message`.
 
 Starting from Robot Framework 2.8.2, it is possible to avoid adding the
 exception type as a prefix to failure message also with non generic exceptions.
-This is done by adding a special :code:`ROBOT_SUPPRESS_NAME` attribute with
-value :code:`True` to your exception.
+This is done by adding a special `ROBOT_SUPPRESS_NAME` attribute with
+value `True` to your exception.
 
 Python:
 
@@ -988,7 +988,7 @@ HTML in error messages
 ''''''''''''''''''''''
 
 Starting from Robot Framework 2.8, it is also possible have HTML formatted
-error messages by starting the message with text :msg:`*HTML*`:
+error messages by starting the message with text `*HTML*`:
 
 .. sourcecode:: python
 
@@ -1010,17 +1010,17 @@ message of the failed keyword.
 Tracebacks
 ''''''''''
 
-The traceback of the exception is also logged using :msg:`DEBUG` `log level`_.
+The traceback of the exception is also logged using `DEBUG` `log level`_.
 These messages are not visible in log files by default because they are very
 rarely interesting for normal users. When developing libraries, it is often a
-good idea to run tests using :cli:`--loglevel DEBUG`.
+good idea to run tests using `--loglevel DEBUG`.
 
 Stopping test execution
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.5, it is possible to fail a test case so that
 `the whole test execution is stopped`__. This is done simply by having a special
-:code:`ROBOT_EXIT_ON_FAILURE` attribute with :code:`True` value set on the
+`ROBOT_EXIT_ON_FAILURE` attribute with `True` value set on the
 exception raised from the keyword. This is illustrated in the examples below.
 
 Python:
@@ -1045,8 +1045,8 @@ Continuing test execution despite of failures
 
 Starting from Robot Framework 2.5, it is possible to `continue test
 execution even when there are failures`__. The way to signal this from
-test libraries is adding a special :code:`ROBOT_CONTINUE_ON_FAILURE`
-attribute with :code:`True` value to the exception used to communicate
+test libraries is adding a special `ROBOT_CONTINUE_ON_FAILURE`
+attribute with `True` value to the exception used to communicate
 the failure. This is demonstrated by the examples below.
 
 Python:
@@ -1078,7 +1078,7 @@ the `programmatic logging APIs`_.
 
 By default, everything written by a method into the standard output is
 written to the log file as a single entry with the log level
-:msg:`INFO`. Messages written into the standard error are handled
+`INFO`. Messages written into the standard error are handled
 similarly otherwise, but they are echoed back to the original stderr
 after the keyword execution has finished. It is thus possible to use
 the stderr if you need some messages to be visible on the console where
@@ -1087,17 +1087,17 @@ tests are executed.
 Using log levels
 ''''''''''''''''
 
-To use other log levels than :msg:`INFO`, or to create several
+To use other log levels than `INFO`, or to create several
 messages, specify the log level explicitly by embedding the level into
-the message in the format :code:`*LEVEL* Actual log message`, where
-:code:`*LEVEL*` must be in the beginning of a line and :msg:`LEVEL` is
-one of the available logging levels :msg:`TRACE`, :msg:`DEBUG`,
-:msg:`INFO`, :msg:`WARN`,:msg:`FAIL`  and :msg:`HTML`.
+the message in the format `*LEVEL* Actual log message`, where
+`*LEVEL*` must be in the beginning of a line and `LEVEL` is
+one of the available logging levels `TRACE`, `DEBUG`,
+`INFO`, `WARN`, `FAIL` and `HTML`.
 
 Warnings
 ''''''''
 
-Messages with :msg:`WARN` level are automatically written into `the
+Messages with `WARN` level are automatically written into `the
 console and into separate Test Execution Errors section`__ in log
 files. This makes warnings more visible than other messages and allows
 using them for reporting important but non-critical problems to users.
@@ -1109,17 +1109,17 @@ Logging HTML
 
 Everything normally logged by the library will be converted into a
 format that can be safely represented as HTML. For example,
-:code:`<b>foo</b>` will be displayed in the log exactly like that and
+`<b>foo</b>` will be displayed in the log exactly like that and
 not as **foo**. If libraries want to use formatting, links, display
 images and so on, they can use a special pseudo log level
-:msg:`HTML`. Robot Framework will write these messages directly into
-the log with the :msg:`INFO` level, so they can use any HTML syntax
+`HTML`. Robot Framework will write these messages directly into
+the log with the `INFO` level, so they can use any HTML syntax
 they want. Notice that this feature needs to be used with care,
-because, for example, one badly placed :code:`</table>` tag can ruin
+because, for example, one badly placed `</table>` tag can ruin
 the log file quite badly.
 
 When using the `public logging API`_, various logging methods
-have optional :code:`html` attribute that can be set to :code:`True`
+have optional `html` attribute that can be set to `True`
 to enable logging in HTML format.
 
 Timestamps
@@ -1176,7 +1176,7 @@ finishes. A bonus is that these approaches work both with Python and
 Java based libraries.
 
 Another option, that is only available with Python, is writing
-messages to :code:`sys.__stdout__` or :code:`sys.__stderr__`. When
+messages to `sys.__stdout__` or `sys.__stderr__`. When
 using this approach, messages are written to the console immediately
 and are not written to the log file at all:
 
@@ -1202,16 +1202,16 @@ The final option is using the `public logging API`_:
 Logging example
 '''''''''''''''
 
-In most cases, the :msg:`INFO` level is adequate. The levels below it,
-:msg:`DEBUG` and :msg:`TRACE`, are useful for writing debug information.
+In most cases, the `INFO` level is adequate. The levels below it,
+`DEBUG` and `TRACE`, are useful for writing debug information.
 These messages are normally not shown, but they can facilitate debugging
-possible problems in the library itself. The :msg:`WARN` level can
-be used to make messages more visible and :msg:`HTML` is useful if any
+possible problems in the library itself. The `WARN` level can
+be used to make messages more visible and `HTML` is useful if any
 kind of formatting is needed.
 
 The following examples clarify how logging with different levels
-works. Java programmers should regard the code :code:`print 'message'`
-as pseudocode meaning :code:`System.out.println("message");`.
+works. Java programmers should regard the code `print 'message'`
+as pseudocode meaning `System.out.println("message");`.
 
 .. sourcecode:: python
 
@@ -1276,8 +1276,8 @@ Public logging API
 
 Robot Framework 2.6 has a new Python based logging API for writing
 messages to the log file and to the console. Test libraries can use
-this API like :code:`logger.info('My message')` instead of logging
-through the standard output like :code:`print '*INFO* My message'`. In
+this API like `logger.info('My message')` instead of logging
+through the standard output like `print '*INFO* My message'`. In
 addition to a programmatic interface being a lot cleaner to use, this
 API has a benefit that the log messages have accurate timestamps_. An
 obvious limitation is that test libraries using this logging API have
@@ -1299,8 +1299,8 @@ a simple usage example:
 
 __ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.api.html#module-robot.api.logger
 
-Using Python's standard :code:`logging` module
-''''''''''''''''''''''''''''''''''''''''''''''
+Using Python's standard `logging` module
+''''''''''''''''''''''''''''''''''''''''
 
 In addition to the new `public logging API`_, Robot Framework 2.6 also
 added a built-in support to Python's standard logging__ module. This
@@ -1321,12 +1321,12 @@ Framework.
        do_something()
        logging.info('This is a boring example')
 
-The :code:`logging` module has slightly different log levels than
-Robot Framework. Its levels :msg:`DEBUG` and :msg:`INFO` are mapped
-directly to the matching Robot Framework log levels and :msg:`WARNING`
-and everything above is mapped to :msg:`WARN`. Custom levels below
-:msg:`DEBUG` are mapped to :msg:`DEBUG` and everything between
-:msg:`DEBUG` and :msg:`WARNING` is mapped to :msg:`INFO`.
+The `logging` module has slightly different log levels than
+Robot Framework. Its levels `DEBUG` and `INFO` are mapped
+directly to the matching Robot Framework log levels and `WARNING`
+and everything above is mapped to `WARN`. Custom levels below
+`DEBUG` are mapped to `DEBUG` and everything between
+`DEBUG` and `WARNING` is mapped to `INFO`.
 
 __ http://docs.python.org/library/logging.html
 
@@ -1337,7 +1337,7 @@ Libraries can also log during the test library import and initialization.
 These messages do not appear in the `log file`_ like the normal log messages,
 but are instead written to the `syslog`_. This allows logging any kind of
 useful debug information about the library initialization. Messages logged
-using the :msg:`WARN` level are also visible in the `test execution errors`_
+using the `WARN` level are also visible in the `test execution errors`_
 section in the log file.
 
 Logging during the import and initialization is possible both using the
@@ -1371,7 +1371,7 @@ Python library logging using the logging API during import:
        # ...
 
 .. note:: If you log something during initialization, i.e. in Python
-          :code:`__init__` or in Java constructor, the messages may be
+          `__init__` or in Java constructor, the messages may be
           logged multiple times depending on the `test library scope`_.
 
 .. note:: The support for writing log messages to the syslog during the
@@ -1388,7 +1388,7 @@ generated by some other means. The returned values can be `assigned to
 variables`__ in the test data and then used as inputs for other keywords,
 even from different test libraries.
 
-Values are returned using the :code:`return` statement both from
+Values are returned using the `return` statement both from
 the Python and Java methods. Normally, one value is assigned into one
 `scalar variable`__, as illustrated in the example below. This example
 also illustrates that it is possible to return any objects and to use
@@ -1542,7 +1542,7 @@ at runtime.
 
 By default documentation is considered to follow Robot Framework's
 `documentation formatting`_ rules. This simple format allows often used
-styles like :code:`*bold*` and :code:`_italic_`, tables, lists, links, etc.
+styles like `*bold*` and `_italic_`, tables, lists, links, etc.
 Starting from Robot Framework 2.7.5, it is possible to use also HTML, plain
 text and reStructuredText_ formats. See `Specifying documentation format`_
 section for information how to set the format in the library source code and
@@ -1619,7 +1619,7 @@ keywords *deprecated*. This makes it easier to find old keywords from
 the test data and remove or replace them.
 
 Keywords are deprecated by starting their documentation with
-:code:`*DEPRECATED*`. When these keywords are executed, a warning
+`*DEPRECATED*`. When these keywords are executed, a warning
 containing rest of the `short documentation`__ is written both into
 `the console and into separate Test Execution Errors section`__ in log
 files.  For example, if following keyword is executed there will be a
@@ -1654,7 +1654,7 @@ There is a plan to implement a tool that can use the deprecation
 information for automatically replacing deprecated keywords. The tool
 will most likely get the name of the new keyword from the
 documentation so that it searches words inside backticks
-(:code:`\``). Thus it would find :name:`Other Keyword` from the
+(:codesc:`\``). Thus it would find :name:`Other Keyword` from the
 earlier example. Note that Libdoc_ also automatically creates
 internal links using the same syntax.
 
@@ -1701,7 +1701,7 @@ when new keywords are added to the actual library.
 This section explains how the dynamic API works between Robot
 Framework and dynamic libraries. It does not matter for Robot
 Framework how these libraries are actually implemented (for example,
-how calls to the :code:`run_keyword` method are mapped to a correct
+how calls to the `run_keyword` method are mapped to a correct
 keyword implementation), and many different approaches are
 possible. However, if you use Java, you may want to examine
 `JavalibCore <https://github.com/robotframework/JavalibCore>`__
@@ -1715,16 +1715,16 @@ Getting keyword names
 ~~~~~~~~~~~~~~~~~~~~~
 
 Dynamic libraries tell what keywords they implement with the
-:code:`get_keyword_names` method. The method also has the alias
-:code:`getKeywordNames` that is recommended when using Java. This
+`get_keyword_names` method. The method also has the alias
+`getKeywordNames` that is recommended when using Java. This
 method cannot take any arguments, and it must return a list or array
 of strings containing the names of the keywords that the library implements.
 
 If the returned keyword names contain several words, they can be returned
 separated with spaces or underscores, or in the camelCase format. For
-example, :code:`['first keyword', 'second keyword']`,
-:code:`['first_keyword', 'second_keyword']`, and
-:code:`['firstKeyword', 'secondKeyword']` would all be mapped to keywords
+example, `['first keyword', 'second keyword']`,
+`['first_keyword', 'second_keyword']`, and
+`['firstKeyword', 'secondKeyword']` would all be mapped to keywords
 :name:`First Keyword` and :name:`Second Keyword`.
 
 Dynamic libraries must always have this method. If it is missing, or
@@ -1736,17 +1736,17 @@ static library.
 Running keywords
 ~~~~~~~~~~~~~~~~
 
-Dynamic libraries have a special :code:`run_keyword` (alias
-:code:`runKeyword`) method for executing their keywords. When a
+Dynamic libraries have a special `run_keyword` (alias
+`runKeyword`) method for executing their keywords. When a
 keyword from a dynamic library is used in the test data, Robot
-Framework uses the library's :code:`run_keyword` method to get it
+Framework uses the library's `run_keyword` method to get it
 executed. This method takes two or three arguments. The first argument is a
 string containing the name of the keyword to be executed in the same
-format as returned by :code:`get_keyword_names`. The second argument is
+format as returned by `get_keyword_names`. The second argument is
 a list or array of arguments given to the keyword in the test data.
 
 The optional third argument is a dictionary (map in Java) that gets
-possible `free keyword arguments`_ (:code:`**kwargs`) passed to the
+possible `free keyword arguments`_ (`**kwargs`) passed to the
 keyword. See `free keyword arguments with dynamic libraries`_ section
 for more details about using kwargs with dynamic test libraries.
 
@@ -1755,10 +1755,10 @@ the keyword freely, but it must use the same mechanism to
 communicate with the framework as static libraries. This means using
 exceptions for reporting keyword status, logging by writing to
 the standard output or by using provided logging APIs, and using
-the return statement in :code:`run_keyword` for returning something.
+the return statement in `run_keyword` for returning something.
 
-Every dynamic library must have both the :code:`get_keyword_names` and
-:code:`run_keyword` methods but rest of the methods in the dynamic
+Every dynamic library must have both the `get_keyword_names` and
+`run_keyword` methods but rest of the methods in the dynamic
 API are optional. The example below shows a working, albeit
 trivial, dynamic library implemented in Python.
 
@@ -1775,8 +1775,8 @@ trivial, dynamic library implemented in Python.
 Getting keyword arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If a dynamic library only implements the :code:`get_keyword_names` and
-:code:`run_keyword` methods, Robot Framework does not have any information
+If a dynamic library only implements the `get_keyword_names` and
+`run_keyword` methods, Robot Framework does not have any information
 about the arguments that the implemented keywords need. For example,
 both :name:`First Keyword` and :name:`Second Keyword` in the example above
 could be used with any number of arguments. This is problematic,
@@ -1785,8 +1785,8 @@ under these circumstances they would need to check the argument counts
 themselves.
 
 Dynamic libraries can tell Robot Framework what arguments the keywords
-it implements expect by using the :code:`get_keyword_arguments`
-(alias :code:`getKeywordArguments`) method. This method takes the name
+it implements expect by using the `get_keyword_arguments`
+(alias `getKeywordArguments`) method. This method takes the name
 of a keyword as an argument, and returns a list or array of strings
 containing the arguments accepted by that keyword.
 
@@ -1797,46 +1797,46 @@ all these different variables is explained in the following table.
 Note that the examples use Python syntax for lists, but Java developers
 should use Java lists or String arrays instead.
 
-.. table:: Representing different arguments with :code:`get_keyword_arguments`
+.. table:: Representing different arguments with `get_keyword_arguments`
    :class: tabular
 
-   +--------------------+-----------------------------+---------------------------------+-----------------+
-   |    Expected        |      How to represent       |            Examples             | Argument limits |
-   |    arguments       |                             |                                 | (min/max)       |
-   +====================+=============================+=================================+=================+
-   | No arguments       | Empty list.                 | :code:`[]`                      | 0/0             |
-   +--------------------+-----------------------------+---------------------------------+-----------------+
-   | One or more        | List of strings containing  | :code:`['one_argument']`,       | 1/1, 3/3        |
-   | argument           | argument names.             | :code:`['a1', 'a2', 'a3']`      |                 |
-   +--------------------+-----------------------------+---------------------------------+-----------------+
-   | Default values     | Default values separated    | :code:`['arg=default value']`,  | 0/1, 1/3        |
-   | for arguments      | from names with :code:`=`.  | :code:`['a', 'b=1', 'c=2']`     |                 |
-   |                    | Default values are always   |                                 |                 |
-   |                    | considered to be strings.   |                                 |                 |
-   +--------------------+-----------------------------+---------------------------------+-----------------+
-   | Variable number    | Last (or second last)       | :code:`['*varargs']`,           | 0/any, 1/any    |
-   | of arguments       | argument has :code:`*`      | :code:`['a', 'b=42', '*rest']`  |                 |
-   | (:code:`*varargs`) | before its name.            |                                 |                 |
-   +--------------------+-----------------------------+---------------------------------+-----------------+
-   | Free keyword       | Last arguments has          | :code:`['**kwargs']`,           | 0/0, 1/2, 0/any,|
-   | arguments          | :code:`**` before its name. | :code:`['a', 'b=42', '**kws']`, | all accept also |
-   | (:code:`**kwargs`) |                             | :code:`['*varargs', '**kwargs']`| any kwargs      |
-   +--------------------+-----------------------------+---------------------------------+-----------------+
+   +--------------------+----------------------------+------------------------------+----------+
+   |    Expected        |      How to represent      |            Examples          | Limits   |
+   |    arguments       |                            |                              | (min/max)|
+   +====================+============================+==============================+==========+
+   | No arguments       | Empty list.                | | `[]`                       | | 0/0    |
+   +--------------------+----------------------------+------------------------------+----------+
+   | One or more        | List of strings containing | | `['one_argument']`         | | 1/1    |
+   | argument           | argument names.            | | `['a1', 'a2', 'a3']`       | | 3/3    |
+   +--------------------+----------------------------+------------------------------+----------+
+   | Default values     | Default values separated   | | `['arg=default value']`    | | 0/1    |
+   | for arguments      | from names with `=`.       | | `['a', 'b=1', 'c=2']`      | | 1/3    |
+   |                    | Default values are always  |                              |          |
+   |                    | considered to be strings.  |                              |          |
+   +--------------------+----------------------------+------------------------------+----------+
+   | Variable number    | Last (or second last with  | | `['*varargs']`             | | 0/any  |
+   | of arguments       | kwargs) argument has `*`   | | `['a', 'b=42', '*rest']`   | | 1/any  |
+   | (varargs)          | before its name.           |                              |          |
+   +--------------------+----------------------------+------------------------------+----------+
+   | Free keyword       | Last arguments has         | | `['**kwargs']`             | | 0/0    |
+   | arguments (kwargs) | `**` before its name.      | | `['a', 'b=42', '**kws']`   | | 1/2    |
+   |                    |                            | | `['*varargs', '**kwargs']` | | 0/any  |
+   +--------------------+----------------------------+------------------------------+----------+
 
-When the :code:`get_keyword_arguments` is used, Robot Framework automatically
+When the `get_keyword_arguments` is used, Robot Framework automatically
 calculates how many positional arguments the keyword requires and does it
 support free keyword arguments or not. If a keyword is used with invalid
-arguments, an error occurs and :code:`run_keyword` is not even called.
+arguments, an error occurs and `run_keyword` is not even called.
 
 The actual argument names and default values that are returned are also
 important. They are needed for `named argument support`__ and the Libdoc_
 tool needs them to be able to create a meaningful library documentation.
 
-If :code:`get_keyword_arguments` is missing or returns :code:`None` or
-:code:`null` for a certain keyword, that keyword gets an argument specification
+If `get_keyword_arguments` is missing or returns `None` or
+`null` for a certain keyword, that keyword gets an argument specification
 accepting all arguments. This automatic argument spec is either
-:code:`[*varargs, **kwargs]` or :code:`[*varargs]`, depending does
-:code:`run_keyword` `support kwargs`__ by having three arguments or not.
+`[*varargs, **kwargs]` or `[*varargs]`, depending does
+`run_keyword` `support kwargs`__ by having three arguments or not.
 
 __ `Named argument syntax with dynamic libraries`_
 __ `Free keyword arguments with dynamic libraries`_
@@ -1845,8 +1845,8 @@ Getting keyword documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The final special method that dynamic libraries can implement is
-:code:`get_keyword_documentation` (alias
-:code:`getKeywordDocumentation`). It takes a keyword name as an
+`get_keyword_documentation` (alias
+`getKeywordDocumentation`). It takes a keyword name as an
 argument and, as the method name implies, returns its documentation as
 a string.
 
@@ -1854,29 +1854,29 @@ The returned documentation is used similarly as the keyword
 documentation string with static libraries implemented with
 Python. The main use case is getting keywords' documentations into a
 library documentation generated by Libdoc_. Additionally,
-the first line of the documentation (until the first :code:`\\n`) is
+the first line of the documentation (until the first `\n`) is
 shown in test logs.
 
 Getting general library documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The :code:`get_keyword_documentation` method can also be used for
+The `get_keyword_documentation` method can also be used for
 specifying overall library documentation. This documentation is not
 used when tests are executed, but it can make the documentation
 generated by Libdoc_ much better.
 
 Dynamic libraries can provide both general library documentation and
 documentation related to taking the library into use. The former is
-got by calling :code:`get_keyword_documentation` with special value
-:code:`__intro__`, and the latter is got using value
-:code:`__init__`. How the documentation is presented is best tested
+got by calling `get_keyword_documentation` with special value
+`__intro__`, and the latter is got using value
+`__init__`. How the documentation is presented is best tested
 with Libdoc_ in practice.
 
 Python based dynamic libraries can also specify the general library
 documentation directly in the code as the docstring of the library
-class and its :code:`__init__` method. If a non-empty documentation is
+class and its `__init__` method. If a non-empty documentation is
 got both directly from the code and from the
-:code:`get_keyword_documentation` method, the latter has precedence.
+`get_keyword_documentation` method, the latter has precedence.
 
 .. note:: Getting general library documentation is supported in Robot
           Framework 2.6.2 and newer.
@@ -1887,19 +1887,19 @@ Named argument syntax with dynamic libraries
 Starting from Robot Framework 2.8, also the dynamic library API supports
 the `named argument syntax`_. Using the syntax works based on the
 argument names and default values `got from the library`__ using the
-:code:`get_keyword_arguments` method.
+`get_keyword_arguments` method.
 
 For the most parts, the named arguments syntax works with dynamic keywords
 exactly like it works with any other keyword supporting it. The only special
 case is the situation where a keyword has multiple arguments with default
 values, and only some of the latter ones are given. In that case the framework
 fills the skipped optional arguments based on the default values returned
-by the :code:`get_keyword_arguments` method.
+by the `get_keyword_arguments` method.
 
 Using the named argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
 that has been specified to have argument specification
-:code:`[arg1, arg2=xxx, arg3=yyy]`.
+`[arg1, arg2=xxx, arg3=yyy]`.
 The last column shows the arguments that the keyword is actually called with.
 
 .. table:: Using named argument syntax with a dynamic keyword
@@ -1924,19 +1924,19 @@ Free keyword arguments with dynamic libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.8.2, dynamic libraries can also support
-`free keyword arguments`_ (:code:`**kwargs`). A mandatory precondition for
-this support is that the :code:`run_keyword` method `takes three arguments`__:
+`free keyword arguments`_ (`**kwargs`). A mandatory precondition for
+this support is that the `run_keyword` method `takes three arguments`__:
 the third one will get kwargs when they are used. Kwargs are passed to the
 keyword as a dictionary (Python) or Map (Java).
 
-What arguments a keyword accepts depends on what :code:`get_keyword_arguments`
-`returns for it`__. If the last argument starts with :code:`**`, that keyword is
+What arguments a keyword accepts depends on what `get_keyword_arguments`
+`returns for it`__. If the last argument starts with `**`, that keyword is
 recognized to accept kwargs.
 
 Using the free keyword argument syntax with dynamic libraries is illustrated
 by the following examples. All the examples use a keyword :name:`Dynamic`
 that has been specified to have argument specification
-:code:`[arg1=xxx, arg2=yyy, **kwargs]`.
+`[arg1=xxx, arg2=yyy, **kwargs]`.
 The last column shows the arguments that the keyword is actually called with.
 
 .. table:: Using free keyword arguments with a dynamic keyword
@@ -1969,14 +1969,14 @@ camelCase aliases work exactly the same way.
 .. table:: All special methods in the dynamic API
    :class: tabular
 
-   =================================  ===============================  =======================================================
-                 Name                           Arguments                                       Purpose
-   =================================  ===============================  =======================================================
-   :code:`get_keyword_names`                                           `Return names`__ of the implemented keywords.
-   :code:`run_keyword`                :code:`name, arguments, kwargs`  `Execute the specified keyword`__ with given arguments. :code:`kwargs` is optional.
-   :code:`get_keyword_arguments`      :code:`name`                     Return keywords' `argument specifications`__. Optional method.
-   :code:`get_keyword_documentation`  :code:`name`                     Return keywords' and library's `documentation`__. Optional method.
-   =================================  ===============================  =======================================================
+   ===========================  =========================  =======================================================
+               Name                    Arguments                                  Purpose
+   ===========================  =========================  =======================================================
+   `get_keyword_names`                                     `Return names`__ of the implemented keywords.
+   `run_keyword`                `name, arguments, kwargs`  `Execute the specified keyword`__ with given arguments. `kwargs` is optional.
+   `get_keyword_arguments`      `name`                     Return keywords' `argument specifications`__. Optional method.
+   `get_keyword_documentation`  `name`                     Return keywords' and library's `documentation`__. Optional method.
+   ===========================  =========================  =======================================================
 
 __ `Getting dynamic keyword names`_
 __ `Running dynamic keywords`_
@@ -1986,9 +1986,9 @@ __ `Getting keyword documentation`_
 It is possible to write a formal interface specification in Java as
 below. However, remember that libraries *do not need* to implement
 any explicit interface, because Robot Framework directly checks with
-reflection if the library has the required :code:`get_keyword_names` and
-:code:`run_keyword` methods or their camelCase aliases. Additionally,
-:code:`get_keyword_arguments` and :code:`get_keyword_documentation`
+reflection if the library has the required `get_keyword_names` and
+`run_keyword` methods or their camelCase aliases. Additionally,
+`get_keyword_arguments` and `get_keyword_documentation`
 are completely optional.
 
 .. sourcecode:: java
@@ -2007,8 +2007,8 @@ are completely optional.
 
    }
 
-.. note:: In addition to using :code:`List`, it is possible to use also arrays
-          like :code:`Object[]` or :code:`String[]`.
+.. note:: In addition to using `List`, it is possible to use also arrays
+          like `Object[]` or `String[]`.
 
 A good example of using the dynamic API is Robot Framework's own
 `Remote library`_.
@@ -2025,20 +2025,20 @@ Getting keyword names
 
 Keyword names are got in the exactly same way as with the dynamic
 API. In practice, the library needs to have the
-:code:`get_keyword_names` or :code:`getKeywordNames` method returning
+`get_keyword_names` or `getKeywordNames` method returning
 a list of keyword names that the library implements.
 
 Running keywords
 ~~~~~~~~~~~~~~~~
 
-In the hybrid API, there is no :code:`run_keyword` method for executing
+In the hybrid API, there is no `run_keyword` method for executing
 keywords. Instead, Robot Framework uses reflection to find methods
 implementing keywords, similarly as with the static API. A library
 using the hybrid API can either have those methods implemented
 directly or, more importantly, it can handle them dynamically.
 
 In Python, it is easy to handle missing methods dynamically with the
-:code:`__getattr__` method. This special method is probably familiar
+`__getattr__` method. This special method is probably familiar
 to most Python programmers and they can immediately understand the
 following example. Others may find it easier to consult `Python Reference
 Manual`__ first.
@@ -2062,17 +2062,17 @@ __ http://docs.python.org/reference/datamodel.html#attribute-access
                return external_keyword
            raise AttributeError("Non-existing attribute '%s'" % name)
 
-Note that :code:`__getattr__` does not execute the actual keyword like
-:code:`run_keyword` does with the dynamic API. Instead, it only
+Note that `__getattr__` does not execute the actual keyword like
+`run_keyword` does with the dynamic API. Instead, it only
 returns a callable object that is then executed by Robot Framework.
 
 Another point to be noted is that Robot Framework uses the same names that
-are returned from :code:`get_keyword_names` for finding the methods
+are returned from `get_keyword_names` for finding the methods
 implementing them. Thus the names of the methods that are implemented in
 the class itself must be returned in the same format as they are
 defined. For example, the library above would not work correctly, if
-:code:`get_keyword_names` returned :code:`My Keyword` instead of
-:code:`my_keyword`.
+`get_keyword_names` returned `My Keyword` instead of
+`my_keyword`.
 
 The hybrid API is not very useful with Java, because it is not
 possible to handle missing methods with it. Of course, it is possible
@@ -2096,7 +2096,7 @@ When implementing a test library in Python, the hybrid API has the same
 dynamic capabilities as the actual dynamic API. A great benefit with it is
 that there is no need to have special methods for getting keyword
 arguments and documentation. It is also often practical that the only real
-dynamic keywords need to be handled in :code:`__getattr__` and others
+dynamic keywords need to be handled in `__getattr__` and others
 can be implemented directly in the main library class.
 
 Because of the clear benefits and equal capabilities, the hybrid API
@@ -2134,12 +2134,12 @@ Using BuiltIn library
 The safest API to use are methods implementing keywords in the
 BuiltIn_ library. Changes to keywords are rare and they are always
 done so that old usage is first deprecated. One of the most useful
-methods is :code:`replace_variables` which allows accessing currently
+methods is `replace_variables` which allows accessing currently
 available variables. The following example demonstrates how to get
-:var:`${OUTPUT_DIR}` which is one of the many handy `automatic
+`${OUTPUT_DIR}` which is one of the many handy `automatic
 variables`_. It is also possible to set new variables from libraries
-using :code:`set_test_variable`, :code:`set_suite_variable` and
-:code:`set_global_variable`.
+using `set_test_variable`, `set_suite_variable` and
+`set_global_variable`.
 
 .. sourcecode:: python
 
@@ -2155,11 +2155,11 @@ using :code:`set_test_variable`, :code:`set_suite_variable` and
        f.close()
        print '*HTML* Output written to <a href="results.txt">results.txt</a>'
 
-The only catch with using methods from :code:`BuiltIn` is that all
-:code:`run_keyword` method variants must be handled specially.
-Methods that use :code:`run_keyword` methods have to be registered
-as *run keywords* themselves using :code:`register_run_keyword`
-method in :code:`BuiltIn` module. This method's documentation explains
+The only catch with using methods from `BuiltIn` is that all
+`run_keyword` method variants must be handled specially.
+Methods that use `run_keyword` methods have to be registered
+as *run keywords* themselves using `register_run_keyword`
+method in `BuiltIn` module. This method's documentation explains
 why this needs to be done and obviously also how to do it.
 
 Extending existing test libraries

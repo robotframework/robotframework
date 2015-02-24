@@ -16,13 +16,12 @@ from six import string_types, text_type as unicode
 
 import os
 import copy
-import difflib
 from itertools import chain
 
 from robot import utils
 from robot.errors import DataError
 from robot.variables import GLOBAL_VARIABLES, is_scalar_var
-from robot.output import LOGGER
+from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
 
 from .usererrorhandler import UserErrorHandler
@@ -247,11 +246,8 @@ class KeywordStore(object):
         finder = KeywordRecommendationFinder(self.user_keywords,
                                              self.libraries,
                                              self.resources)
-        recommendations = finder.find_recommendations(name)
-        if recommendations:
-            msg += " Did you mean:"
-            for rec in recommendations:
-                msg += "\n    %s" % rec
+        recommendations = finder.recommend_similar_keywords(name)
+        msg = finder.format_recommendations(msg, recommendations)
         raise DataError(msg)
 
     def _get_handler(self, name):
@@ -353,21 +349,33 @@ class KeywordStore(object):
 
     def _filter_stdlib_handler(self, handler1, handler2):
         if handler1.library.orig_name in STDLIB_NAMES:
-            standard, external = handler1, handler2
+            standard, custom = handler1, handler2
         elif handler2.library.orig_name in STDLIB_NAMES:
-            standard, external = handler2, handler1
+            standard, custom = handler2, handler1
         else:
             return [handler1, handler2]
-        if not RUN_KW_REGISTER.is_run_keyword(external.library.orig_name, external.name):
-            LOGGER.warn(
-                "Keyword '%s' found both from a user created test library "
-                "'%s' and Robot Framework standard library '%s'. The user "
-                "created keyword is used. To select explicitly, and to get "
-                "rid of this warning, use either '%s' or '%s'."
-                % (standard.name,
-                   external.library.orig_name, standard.library.orig_name,
-                   external.longname, standard.longname))
-        return [external]
+        if not RUN_KW_REGISTER.is_run_keyword(custom.library.orig_name, custom.name):
+            self._custom_and_standard_keyword_conflict_warning(custom, standard)
+        return [custom]
+
+    def _custom_and_standard_keyword_conflict_warning(self, custom, standard):
+        custom_with_name = standard_with_name = ''
+        if custom.library.name != custom.library.orig_name:
+            custom_with_name = " imported as '%s'" % custom.library.name
+        if standard.library.name != standard.library.orig_name:
+            standard_with_name = " imported as '%s'" % standard.library.name
+        warning = Message("Keyword '%s' found both from a custom test library "
+                          "'%s'%s and a standard library '%s'%s. The custom "
+                          "keyword is used. To select explicitly, and to get "
+                          "rid of this warning, use either '%s' or '%s'."
+                          % (standard.name,
+                             custom.library.orig_name, custom_with_name,
+                             standard.library.orig_name, standard_with_name,
+                             custom.longname, standard.longname), level='WARN')
+        if custom.pre_run_messages:
+            custom.pre_run_messages.append(warning)
+        else:
+            custom.pre_run_messages = [warning]
 
     def _get_explicit_handler(self, name):
         found = []
@@ -403,23 +411,25 @@ class KeywordRecommendationFinder(object):
         self.libraries = libraries
         self.resources = resources
 
-    def find_recommendations(self, name):
-        """Get recommendations of handlers similar to `name`."""
-        candidates = self._get_candidates(use_full_name='.' in name)
-        return self._get_close_matches(name, candidates)
+    def recommend_similar_keywords(self, name):
+        """Return keyword names similar to `name`."""
+        candidates = self._get_candidates('.' in name)
+        normalizer = lambda name: candidates.get(name, name).lower().replace(
+            '_', ' ')
+        finder = utils.RecommendationFinder(normalizer)
+        return finder.find_recommendations(name, candidates)
 
-    def _normalize(self, name):
-        """Normalize to lowercase and replace underscores with spaces."""
-        return name.lower().replace('_', ' ')
+    @staticmethod
+    def format_recommendations(msg, recommendations):
+        return utils.RecommendationFinder.format_recommendations(
+            msg, recommendations)
 
     def _get_candidates(self, use_full_name):
-        """Return a dictionary mapping normalized names to names."""
-        candidates = {}
+        names = {}
         for owner, name in self._get_all_handler_names():
             full_name = '%s.%s' % (owner, name) if owner else name
-            norm_name = self._normalize(full_name if use_full_name else name)
-            candidates.setdefault(norm_name, []).append(full_name)
-        return candidates
+            names[full_name] = full_name if use_full_name else name
+        return names
 
     def _get_all_handler_names(self):
         """Return a list of (library name, handler name) tuples.
@@ -443,26 +453,6 @@ class KeywordRecommendationFinder(object):
         #PY3: can't compare None with str
         #     ==> also libnames must at least be empty strings for sorting
         return sorted(handlers, key=lambda h: (h[0] or '', h[1]))
-
-    def _get_close_matches(self, name, candidates):
-        """Return a list of close matches to `name` from `handler_names`."""
-        if not name or not candidates:
-            return []
-        norm_name = self._normalize(name)
-        cutoff = self._calculate_cutoff(norm_name)
-        norm_matches = difflib.get_close_matches(norm_name,
-                                                 candidates,
-                                                 n=10,
-                                                 cutoff=cutoff)
-        matches = []
-        for match in norm_matches:
-            matches.extend(candidates[match])
-        return matches
-
-    def _calculate_cutoff(self, name, min_cutoff=.5, max_cutoff=.85, step=.03):
-        """Calculate a cutoff depending on name length. Hand-tuned defaults."""
-        cutoff = min_cutoff + len(name) * step
-        return min(cutoff, max_cutoff)
 
 
 class _VariableScopes:

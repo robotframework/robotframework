@@ -15,7 +15,7 @@ Library    DefaultArgs
 Library    MandatoryArgs  too  many  args  here
 Library    DefaultArgs    too  many  args  here  too
 
-Library    MandatoryArgs  ${NONEX}  hello
+Library    MandatoryArgs  ${NON EXISTING}  hello
 
 
 *** Test Cases ***

@@ -26,30 +26,36 @@ Keyword From Test Case File Overrides Keywords From Resources And Libraries
 Keyword From Resource Overrides Keywords From Libraries
     Check Test Case    ${TEST NAME}
 
-Keyword From User Library Overrides Keywords From Standard Library
-    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS.msgs[0]}    Comment    BuiltIn
-    Verify Override Message    ${ERRORS.msgs[1]}    Copy Directory    OperatingSystem
+Keyword From Custom Library Overrides Keywords From Standard Library
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Verify Override Message    ${ERRORS.msgs[0]}    ${tc.kws[0].msgs[0]}    Comment    BuiltIn
+    Verify Override Message    ${ERRORS.msgs[1]}    ${tc.kws[1].msgs[0]}    Copy Directory    OperatingSystem
 
-Keyword From User Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
-    Check Test Case    ${TEST NAME}
-    Verify Override Message    ${ERRORS.msgs[2]}    Replace String    String    Std Lib With Custom Name
+Keyword From Custom Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Verify Override Message    ${ERRORS.msgs[2]}    ${tc.kws[0].msgs[0]}    Replace String
+    ...    String    MyLibrary2    Std With Name    My With Name
 
-No Warning When User Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
+No Warning When Custom Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
     Check Test Case    ${TEST NAME}
     Check Stderr Does Not Contain    Run Keyword If
 
-Keyword In More Than One User Library And Standard Library
+Keyword In More Than One Custom Library And Standard Library
     Check Test Case    ${TEST NAME}
     Check Syslog Does Not Contain    BuiltIn.No Operation
 
 *** Keywords ***
 Verify override message
-    [Arguments]    ${msg}    ${kw}    ${stdlib}    ${custom}=
-    ${stdlib2} =    Set Variable If    "${custom}"    ${custom}    ${stdlib}
+    [Arguments]    ${error msg}    ${kw msg}    ${kw}    ${standard}    ${custom}=MyLibrary1
+    ...    ${std with name}=    ${ctm with name}=
+    ${std imported as} =    Set Variable If    "${std with name}"    ${SPACE}imported as '${std with name}'    ${EMPTY}
+    ${ctm imported as} =    Set Variable If    "${ctm with name}"    ${SPACE}imported as '${ctm with name}'    ${EMPTY}
+    ${std long} =    Set Variable If    "${std with name}"    ${std with name}    ${standard}
+    ${ctm long} =    Set Variable If    "${ctm with name}"    ${ctm with name}    ${custom}
     ${expected} =    Catenate
-    ...    Keyword '${kw}' found both from a user created test library
-    ...    'MyLibrary1' and Robot Framework standard library '${stdlib}'.
-    ...    The user created keyword is used. To select explicitly, and to get
-    ...    rid of this warning, use either 'MyLibrary1.${kw}' or '${stdlib2}.${kw}'.
-    Check Log Message    ${msg}    ${expected}    WARN
+    ...    Keyword '${kw}' found both from a custom test library '${custom}'${ctm imported as}
+    ...    and a standard library '${standard}'${std imported as}. The custom keyword is used.
+    ...    To select explicitly, and to get rid of this warning, use either '${ctm long}.${kw}'
+    ...    or '${std long}.${kw}'.
+    Check Log Message    ${error msg}    ${expected}    WARN
+    Check Log Message    ${kw msg}    ${expected}    WARN

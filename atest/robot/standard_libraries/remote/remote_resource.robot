@@ -7,10 +7,12 @@ ${STDOUT FILE}    %{TEMPDIR}${/}remote_output.txt
 
 *** Keywords ***
 Run Remote Tests
-    [Arguments]    ${tests}    ${server}
+    [Arguments]    ${tests}    ${server}    ${stop server}=yes
     ${port} =    Start Remote Server    ${server}
     Run Tests    --variable PORT:${port}    standard_libraries/remote/${tests}
-    Stop Remote Server    ${server}
+    Run Keyword If    '${stop server}' == 'yes'
+    ...    Stop Remote Server    ${server}
+    [Return]    ${port}
 
 Start Remote Server
     [Arguments]    ${server}    ${port}=0

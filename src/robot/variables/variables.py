@@ -88,11 +88,14 @@ class Variables(utils.NormalizedDict):
                         try:
                             return self._get_extended_var(name)
                         except ValueError:
-                            raise DataError("Non-existing variable '%s'." % name)
+                            self._raise_non_existing_variable(name)
 
     def _find_variable(self, name):
         variable = utils.NormalizedDict.__getitem__(self, name)
         return self._solve_delayed(name, variable)
+
+    def _raise_non_existing_variable(self, name, msg=None, env_vars=False):
+        _raise_not_found(name, self.keys(), msg, env_vars=env_vars)
 
     def _solve_delayed(self, name, value):
         if isinstance(value, DelayedVariable):
@@ -109,7 +112,8 @@ class Variables(utils.NormalizedDict):
 
     def _validate_var_name(self, name):
         if not is_var(name):
-            raise DataError("Invalid variable name '%s'." % name)
+            msg = "Variable name '%s' is invalid." % name
+            self._raise_non_existing_variable(name, msg=msg)
 
     def _validate_var_dict(self, dict):
         for name in dict:
@@ -288,7 +292,9 @@ class Variables(utils.NormalizedDict):
             value = getJavaSystemProperty(name)
             if value is not None:
                 return value
-            raise DataError("Environment variable '%s' does not exist" % name)
+            msg = "Environment variable '%%{%s}' not found." % name
+            self._raise_non_existing_variable('%%{%s}' % name, msg,
+                                              env_vars=True)
 
         # 3) Handle ${scalar} variables and @{list} variables without index
         elif var.index is None:
@@ -302,8 +308,10 @@ class Variables(utils.NormalizedDict):
                 name = '@{%s}' % var.get_replaced_base(self)
                 return self[name][index]
             except (ValueError, DataError, IndexError):
-                raise DataError("Non-existing variable '@{%s}[%s]'"
-                                % (var.base, var.index))
+                msg = ("Variable '@{%s}[%s]' not found."
+                       % (var.base, var.index))
+                self._raise_non_existing_variable(var.base, msg)
+
 
     def set_from_file(self, path, args=None, overwrite=False):
         LOGGER.info("Importing variable file '%s' with args %s" % (path, args))
@@ -433,7 +441,8 @@ class DelayedVariable(object):
         except DataError as err:
             variables.pop(name)
             self._error_reporter(unicode(err))
-            raise DataError("Non-existing variable '%s'." % name)
+            msg = "Variable '%s' not found." % name
+            _raise_not_found(name, variables, msg)
         variables[name] = value
         return value
 
@@ -453,3 +462,21 @@ class DelayedVariable(object):
             yield
         finally:
             self._resolving = False
+
+
+def _raise_not_found(name, candidates, msg=None, env_vars=False):
+    """Raise DataError for missing variable name.
+
+    Return recommendations for similar variable names if any are found.
+    """
+    if msg is None:
+        msg = "Variable '%s' not found." % name
+    if env_vars:
+        candidates += ['%%{%s}' % var for var in
+                       utils.get_env_vars()]
+    normalizer = partial(utils.normalize, ignore='$@%&*{}_', caseless=True,
+                         spaceless=True)
+    finder = utils.RecommendationFinder(normalizer)
+    recommendations = finder.find_recommendations(name, candidates)
+    msg = finder.format_recommendations(msg, recommendations)
+    raise DataError(msg)

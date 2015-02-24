@@ -52,6 +52,14 @@ robot.result.keywordremover module
     :undoc-members:
     :show-inheritance:
 
+robot.result.merger module
+--------------------------
+
+.. automodule:: robot.result.merger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.result.message module
 ---------------------------
 
@@ -64,14 +72,6 @@ robot.result.messagefilter module
 ---------------------------------
 
 .. automodule:: robot.result.messagefilter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-robot.result.rerunmerger module
--------------------------------
-
-.. automodule:: robot.result.rerunmerger
     :members:
     :undoc-members:
     :show-inheritance:

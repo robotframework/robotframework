@@ -26,7 +26,7 @@ class TestCase(ModelObject):
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=None):
-        #: :class:`~.testsuite.TestSuite` that contains this test.
+        #: :class:`~.model.testsuite.TestSuite` that contains this test.
         self.parent = None
         #: Test case name.
         self.name = name
@@ -36,7 +36,7 @@ class TestCase(ModelObject):
         self.tags = tags
         #: Test case timeout.
         self.timeout = timeout
-        #: Keyword results, a list of :class:`~.keyword.Keyword`
+        #: Keyword results, a list of :class:`~.model.keyword.Keyword`
         #: instances and contains also possible setup and teardown keywords.
         self.keywords = None
 

@@ -63,7 +63,7 @@ used also in the full keyword name.
 Resource files are specified in the full keyword name, similarly as
 library names. The name of the resource is derived from the basename
 of the resource file without the file extension. For example, the
-keyword :name:`Example` in a resource file :path:`myresources.html` can
+keyword :name:`Example` in a resource file :file:`myresources.html` can
 be used as :name:`myresources.Example`. Note that this syntax does not
 work, if several resource files have the same basename. In such
 cases, either the files or the keywords must be renamed. The full name
@@ -80,7 +80,7 @@ depending on which libraries or resources are available. A solution to both of
 these problems is specifying the keyword priorities explicitly using the keyword
 :name:`Set Library Search Order` from the BuiltIn_ library.
 
- .. note:: Although the keyword has the word `library` in its name, it works
+ .. note:: Although the keyword has the word *library* in its name, it works
            also with resource files starting from Robot Framework 2.6.2.
            As discussed above, keywords in resources always have higher
            priority than keywords in libraries, though.
@@ -111,28 +111,28 @@ they have their own timeout mechanism, if necessary.
 Test case timeout
 ~~~~~~~~~~~~~~~~~
 
-The test case timeout can be set either by using the :opt:`Test
-Timeout` setting in the Setting table or the :opt:`[Timeout]`
-setting in the Test Case table. :opt:`Test Timeout` in the Setting
+The test case timeout can be set either by using the :setting:`Test
+Timeout` setting in the Setting table or the :setting:`[Timeout]`
+setting in the Test Case table. :setting:`Test Timeout` in the Setting
 table defines a default test timeout value for all the test cases in
-the test suite, whereas :opt:`[Timeout]` in the Test Case table
+the test suite, whereas :setting:`[Timeout]` in the Test Case table
 applies a timeout to an individual test case and overrides the
 possible default value.
 
-Using an empty :opt:`[Timeout]` means that the test has no
-timeout even when :opt:`Test Timeout` is used. Starting from Robot Framework
-2.5.6, it is also possible to use value :misc:`NONE` for this purpose.
+Using an empty :setting:`[Timeout]` means that the test has no
+timeout even when :setting:`Test Timeout` is used. Starting from Robot Framework
+2.5.6, it is also possible to use value `NONE` for this purpose.
 
 Regardless of where the test timeout is defined, the first cell after
 the setting name contains the duration of the timeout. The duration
 must be given in Robot Framework's `time format`_, that is,
-either directly in seconds or in a format like :code:`1 minute
+either directly in seconds or in a format like `1 minute
 30 seconds`. It must be noted that there is always some overhead by the
 framework, and timeouts shorter than one second are thus not
 recommended.
 
 The default error message displayed when a test timeout occurs is
-:msg:`Test timeout <time> exceeded`. It is also possible to use custom
+`Test timeout <time> exceeded`. It is also possible to use custom
 error messages, and these messages are written into the cells
 after the timeout duration. The message can be split into multiple
 cells, similarly as documentations. Both the timeout value and the
@@ -187,11 +187,11 @@ keywords with `user keyword timeouts`_.
 User keyword timeout
 ~~~~~~~~~~~~~~~~~~~~
 
-A timeout can be set for a user keyword using the :opt:`[Timeout]`
+A timeout can be set for a user keyword using the :setting:`[Timeout]`
 setting in the Keyword table. The syntax for setting it, including how
 timeout values and possible custom messages are given, is
 identical to the syntax used with `test case timeouts`_. If no custom
-message is provided, the default error message :msg:`Keyword timeout
+message is provided, the default error message `Keyword timeout
 <time> exceeded` is used if a timeout occurs.
 
 .. table:: User keyword timeout examples
@@ -240,7 +240,7 @@ different libraries.
 For loops can be used with both test cases and user keywords. Except for
 really simple cases, user keywords are better, because they hide the
 complexity introduced by for loops. The basic for loop syntax,
-:code:`FOR item IN sequence`, is derived from Python, but similar
+`FOR item IN sequence`, is derived from Python, but similar
 syntax is possible also in shell scripts or Perl.
 
 Normal for loop
@@ -276,8 +276,8 @@ inside a for loop and have another for loop there.
    ===========  ========  ============  ===========  ==========  ===========
 
 The for loop in :name:`Example 1` above is executed twice, so that first
-the loop variable :var:`${animal}` has the value :code:`cat` and then
-:code:`dog`. The loop consists of two :name:`Log` keywords. In the
+the loop variable `${animal}` has the value `cat` and then
+`dog`. The loop consists of two :name:`Log` keywords. In the
 second example, loop values are `split into two rows`__ and the
 loop is run altogether five times.
 
@@ -294,7 +294,7 @@ loop is run altogether five times.
                   Log    Outside loop
 
 It is often convenient to use for loops with `list variables`_. This is
-illustrated by the example below, where :var:`@{ELEMENTS}` contains
+illustrated by the example below, where `@{ELEMENTS}` contains
 an arbitrarily long list of elements and keyword :name:`Start Element` is
 used with all of them one by one. It is also possible to iterate over values
 of a scalar variable containing a list by `using it as a list variable`__.
@@ -347,7 +347,7 @@ For in range
 Earlier for loops always iterated over a sequence, and this is also the most
 common use case. Sometimes it is still convenient to have a for loop
 that is executed a certain number of times, and Robot Framework has a
-special :code:`FOR index IN RANGE limit` syntax for this purpose. This
+special `FOR index IN RANGE limit` syntax for this purpose. This
 syntax is derived from the similar Python idiom.
 
 Similarly as other for loops, the for in range loop starts with
@@ -401,7 +401,7 @@ Exiting for loop
 Normally for loops are executed until all the loop values have been iterated
 or a keyword used inside the loop fails. If there is a need to exit the loop
 earlier,  BuiltIn_ keywords :name:`Exit For Loop` and :name:`Exit For Loop If`
-can be used to accomplish that. They works similarly as :code:`break`
+can be used to accomplish that. They works similarly as `break`
 statement in Python, Java, and many other programming languages.
 
 :name:`Exit For Loop` and :name:`Exit For Loop If` keywords can be used
@@ -436,7 +436,7 @@ Continuing for loop
 In addition to exiting a for loop prematurely, it is also possible to
 continue to the next iteration of the loop before all keywords have been
 executed. This can be done using BuiltIn_ keywords :name:`Continue For Loop`
-and :name:`Continue For Loop If`, that work like :code:`continue` statement
+and :name:`Continue For Loop If`, that work like `continue` statement
 in many programming languages.
 
 :name:`Continue For Loop` and :name:`Continue For Loop If` keywords can be used
@@ -471,7 +471,7 @@ Removing unnecessary keywords from outputs
 For loops with multiple iterations often create lots of output and
 considerably increase the size of the generated output_ and log_ files.
 Starting from Robot Framework 2.7, it is possible to `remove unnecessary
-keywords`__ from the outputs using :opt:`--RemoveKeywords FOR` command line
+keywords`__ from the outputs using :option:`--RemoveKeywords FOR` command line
 option.
 
 __ `Removing and flattening keywords`_
@@ -483,8 +483,8 @@ For loops can be excessive in situations where there is only a need to
 repeat a single keyword. In these cases it is often easier to use
 BuiltIn_ keyword :name:`Repeat Keyword`.  This keyword takes a
 keyword and how many times to repeat it as arguments. The times to
-repeat the keyword can have an optional postfix `times` or `x` to make
-the syntax easier to read.
+repeat the keyword can have an optional postfix `times` or `x`
+to make the syntax easier to read.
 
 .. table:: Repeat Keyword examples
    :class: example

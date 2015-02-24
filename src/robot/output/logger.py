@@ -41,6 +41,8 @@ class Logger(AbstractLogger):
         self._message_cache = []
         self._console_logger = None
         self._started_keywords = 0
+        self._error_occurred = False
+        self._error_listener = None
         if register_console_logger:
             self.register_console_logger()
 
@@ -98,12 +100,21 @@ class Logger(AbstractLogger):
         else:
             self.register_logger(logger)
 
+    def register_error_listener(self, listener):
+        self._error_listener = listener
+        if self._error_occurred:
+            listener()
+
     def message(self, msg):
         """Messages about what the framework is doing, warnings, errors, ..."""
         for logger in self._loggers.all_loggers():
             logger.message(msg)
         if self._message_cache is not None:
             self._message_cache.append(msg)
+        if msg.level == 'ERROR':
+            self._error_occurred = True
+            if self._error_listener:
+                self._error_listener()
 
     def _log_message(self, msg):
         """Log messages written (mainly) by libraries"""

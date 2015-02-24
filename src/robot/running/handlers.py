@@ -59,6 +59,7 @@ class _RunnableHandler(object):
         self.library = library
         self.name = utils.printable_name(handler_name, code_style=True)
         self.arguments = self._parse_arguments(handler_method)
+        self.pre_run_messages = None
         self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
@@ -98,6 +99,9 @@ class _RunnableHandler(object):
         pass
 
     def run(self, context, args):
+        if self.pre_run_messages:
+            for message in self.pre_run_messages:
+                context.output.message(message)
         if context.dry_run:
             return self._dry_run(context, args)
         return self._run(context, args)

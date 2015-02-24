@@ -207,7 +207,7 @@ Stderr Should Match
 
 Stderr Should Be Empty
     ${stderr} =  Get Stderr
-    Should Be Empty  ${stderr}  Errors in test execution
+    Should Be Empty  ${stderr}  Errors in test execution:\n${stderr}
 
 Check Stderr Contains
     [Arguments]  @{expected}
@@ -277,6 +277,7 @@ Check Names
 Is Valid Timestamp
     [Arguments]  ${time}
     Log  ${time}
+    Should Not Be Equal    ${time}    ${None}
     Should Match Regexp  ${time}  20\\d{6} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}  Not valid timestamp
 
 Is Valid Elapsed Time
@@ -355,3 +356,7 @@ Run on python 2.x
 Make test non-critical if
     [Arguments]    ${condition}
     Run Keyword If    ${condition}    Remove Tags    regression
+
+Make test non-critical on IronPython
+    # This test isn't 100% safe. Should come up with better.
+    Make test non-critical if    os.sep != '/' and 'ipy' in '${INTERPRETER}'

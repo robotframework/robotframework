@@ -47,13 +47,13 @@ Two Calls To Test With Patterns
 Suite With One Arg
     Run Suites  --suite tsuite1
     Should Contain Suites   ${SUITE}  TSuite1
-    Should Contain Tests    ${SUITE}   Suite1 First  Suite1 Second  Third in Suite1
+    Should Contain Tests    ${SUITE}   Suite1 First  Suite1 Second  Third In Suite1
 
 Suite Name With Spaces, Underscores And Mixed Case
     [Documentation]  Testing that spaces, underscores and case are ignored in suite names.
     Run Suites  --suite t_SPACE_SuiTe_1
     Should Contain Suites   ${SUITE}  TSuite1
-    Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third in Suite1
+    Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third In Suite1
 
 Suite Name With Dot
     Run Suites  --suite suites.subsuites2.sub.suite.4
@@ -64,7 +64,7 @@ Suite Name With Dot
 Suite With Two Args
     Run Suites  --suite tsuite1 --suite TSuite2
     Should Contain Suites  ${SUITE}  Tsuite1   Tsuite2
-    Should Contain Tests  ${SUITE}   Suite1 First  Suite1 Second  Third in Suite1  Suite2 First
+    Should Contain Tests  ${SUITE}   Suite1 First  Suite1 Second  Third In Suite1  Suite2 First
 
 Correct Files Processed With --suite Matches Files
     [Documentation]  Testing that only files matching to --suite are processed Using data from previous test case.
@@ -95,12 +95,12 @@ Non-Existing Suite When Running Multiple Suites
 Suite With Matching And NonMatching Args
     Run Suites  --suite tsuite1 --suite notexists
     Should Contain Suites   ${SUITE}  TSuite1
-    Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third in Suite1
+    Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third In Suite1
 
 Suite With Pattern In Arg
     Run Suites  --suite tSTAR
     Should Contain Suites  ${SUITE}  Tsuite1  Tsuite2  Tsuite3
-    Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third in Suite1  Suite2 First  Suite3 First
+    Should Contain Tests   ${SUITE}  Suite1 First  Suite1 Second  Third In Suite1  Suite2 First  Suite3 First
 
 Selecting Directory Suite
     Run And Check Suites Within Subdirs  --suite subsuites  Sub1  Sub2
@@ -127,7 +127,7 @@ Suite And Test Together
     [Documentation]  Testing that only tests matching --test which are under suite matching --suite are run.
     Run Suites  --suite subsuites --suite tsuite3 --test SubSuite1First
     Should Contain Suites  ${SUITE}  Subsuites
-    Should Contain Tests   ${SUITE}  SubSuite1First
+    Should Contain Tests   ${SUITE}  SubSuite1 First
 
 Suite With Include And Exclude
     Run Suites  --suite tsuiteQUEST --include tSTAR --exclude t2

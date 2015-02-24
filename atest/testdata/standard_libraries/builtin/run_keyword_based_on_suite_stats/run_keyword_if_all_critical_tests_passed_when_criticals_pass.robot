@@ -7,10 +7,10 @@ ${MESSAGE}        Suite teardown message
 
 *** Test Case ***
 Passing Critical Test
-    Noop
+    No Operation
 
 Another Passing Critical Test
-    Message    Hello, world
+    Comment    Hello, world
 
 Failing non-critical Test
     [Tags]    non-critical

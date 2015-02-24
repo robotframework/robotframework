@@ -27,6 +27,12 @@
 }
 .doc pre {
     font-size: 1.1em;
+    letter-spacing: 0.05em;
+    background: #F4F4FF;
+}
+.doc code {
+    padding: 0 0.2em;
+    letter-spacing: 0.05em;
     background: #F4F4FF;
 }
 .doc li {

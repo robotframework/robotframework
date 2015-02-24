@@ -1,19 +1,19 @@
 .. _testdoc:
 
-Test data documentation tool (:prog:`testdoc`)
-==============================================
+Test data documentation tool (``testdoc``)
+==========================================
 
 .. contents::
    :depth: 1
    :local:
 
-:prog:`testdoc` is tool for generating high level documentation based
+``testdoc`` is tool for generating high level documentation based
 on Robot Framework test cases. The created documentation is in HTML
 format and it includes name, documentation and other metadata of each
 test suite and test case, as well as the top-level keywords and their
 arguments.
 
-:prog:`testdoc` is built-in into Robot Framework and automatically included
+``testdoc`` is built-in into Robot Framework and automatically included
 in the installation starting from version 2.7. With earlier versions you
 need to download `testdoc.py script`__ separately. The command line usage
 has changed slightly between these versions.
@@ -46,7 +46,7 @@ Options
  -e, --exclude <tag>           Exclude tests by tags.
  -h, --help                    Print this help in the console.
 
-All options except :opt:`--title` have exactly the same semantics as same
+All options except :option:`--title` have exactly the same semantics as same
 options have when `executing test cases`__.
 
 __ `Configuring execution`_
@@ -60,7 +60,7 @@ to write the output.
 
 Testdoc works with all interpreters supported by Robot Framework (Python,
 Jython and IronPython). It can be executed as an installed module like
-:cli:`python -m robot.testdoc` or as a script like :cli:`python path/robot/testdoc.py`.
+`python -m robot.testdoc` or as a script like `python path/robot/testdoc.py`.
 
 Examples::
 

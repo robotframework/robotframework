@@ -160,7 +160,7 @@ Check Suite Status
     ...    ELSE    Set Variable    ${suite or name}
     Should Be Equal    ${suite.status}    ${status}    Wrong suite status
     Should Be Equal    ${suite.full_message}    ${message}    Wrong suite message
-    Check Suite Contains Tests    ${suite}    @{tests}
+    Should Contain Tests    ${suite}    @{tests}
 
 Output should contain teardown error
     [Arguments]    ${error}

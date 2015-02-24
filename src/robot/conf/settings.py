@@ -382,6 +382,7 @@ class RobotSettings(_BaseSettings):
                        'LogLevel'           : ('loglevel', 'INFO'),
                        'DryRun'             : ('dryrun', False),
                        'ExitOnFailure'      : ('exitonfailure', False),
+                       'ExitOnError'        : ('exitonerror', False),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
                        'RunMode'            : ('runmode', []),
@@ -456,6 +457,10 @@ class RobotSettings(_BaseSettings):
                 any(mode == 'exitonfailure' for mode in self['RunMode']))
 
     @property
+    def exit_on_error(self):
+        return self['ExitOnError']
+
+    @property
     def skip_teardown_on_exit(self):
         return (self['SkipTeardownOnExit'] or
                 any(mode == 'skipteardownonexit' for mode in self['RunMode']))
@@ -477,7 +482,8 @@ class RebotSettings(_BaseSettings):
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
-                       'ReRunMerge'        : ('rerunmerge', False)}
+                       'ReRunMerge'        : ('rerunmerge', False),
+                       'Merge'             : ('merge', False)}
 
     def _output_disabled(self):
         return False
@@ -533,8 +539,8 @@ class RebotSettings(_BaseSettings):
         return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
 
     @property
-    def rerun_merge(self):
-        return self['ReRunMerge']
+    def merge(self):
+        return self['Merge'] or self['ReRunMerge']
 
     @property
     def console_logger_config(self):

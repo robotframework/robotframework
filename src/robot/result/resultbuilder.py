@@ -19,7 +19,7 @@ from robot.utils import ET, ETSource, get_error_message
 
 from .executionresult import Result, CombinedResult
 from .flattenkeywordmatcher import FlattenKeywordMatcher
-from .rerunmerger import ReRunMerger
+from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
 
 
@@ -37,16 +37,16 @@ def ExecutionResult(*sources, **options):
     """
     if not sources:
         raise DataError('One or more data source needed.')
-    if options.pop('rerun_merge', False):
-        return _rerun_merge_results(sources[0], sources[1:], options)
+    if options.pop('merge', False):
+        return _merge_results(sources[0], sources[1:], options)
     if len(sources) > 1:
         return _combine_results(sources, options)
     return _single_result(sources[0], options)
 
 
-def _rerun_merge_results(original, merged, options):
+def _merge_results(original, merged, options):
     result = ExecutionResult(original, **options)
-    merger = ReRunMerger(result)
+    merger = Merger(result)
     for path in merged:
         merged = ExecutionResult(path, **options)
         merger.merge(merged)

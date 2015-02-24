@@ -10,7 +10,7 @@ def get_result_or_error(*args):
 
 def pretty(*args, **kwargs):
     args = [to_str(a) for a in args]
-    kwargs = sorted('%s:%s' % (n, to_str(v)) for n, v in kwargs.items())
+    kwargs = ['%s:%s' % (k, to_str(v)) for k, v in sorted(kwargs.items())]
     return ', '.join(args + kwargs)
 
 def to_str(arg):

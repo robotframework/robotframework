@@ -31,7 +31,7 @@ Too Many Arguments
 
 Non-existing variables
     [Template]
-    Check syslog contains  Non-existing variable '\${NONEX}'.
+    Check syslog contains  Variable '\${NON EXISTING}' not found.
 
 
 ***Keywords***

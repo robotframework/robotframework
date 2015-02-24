@@ -2,8 +2,8 @@ All command line options
 ========================
 
 This appendix lists all the command line options that are available
-when `executing test cases`__ with :prog:`pybot` or :prog:`jybot`, and when
-`post-processing outputs`_ with :prog:`rebot`.
+when `executing test cases`__ with ``pybot`` or ``jybot``, and when
+`post-processing outputs`_ with ``rebot``.
 
 __ `Starting test execution`_
 
@@ -21,7 +21,7 @@ Command line options for test execution
   -t, --test <name>       `Selects the test cases by name`_.
   -s, --suite <name>      `Selects the test suites`_ by name.
   -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_ to be re-executed.
-  --runfailed <file>      Deprecated. Use :opt:`--rerunfailed` instead.
+  --runfailed <file>      Deprecated. Use :option:`--rerunfailed` instead.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
@@ -33,7 +33,7 @@ Command line options for test execution
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
-  --xunitfile <file>      Deprecated. Use :opt:`--xunit` instead.
+  --xunitfile <file>      Deprecated. Use :option:`--xunit` instead.
   --xunitskipnoncritical  Mark non-critical tests on `xUnit compatible result file`_ as skipped.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
@@ -46,15 +46,12 @@ Command line options for test execution
                           the default `visible log level`_ can be given
                           separated with a colon (:).
   --suitestatlevel <level>  Defines how many `levels to show`_ in the
-                           :name:`Statistics by Suite` table in outputs.
-  --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics
-                          by Tag` table.
-  --tagstatexclude <tag>  `Excludes these tags`_ from the :name:`Statistics
-                          by Tag` table.
+                           *Statistics by Suite* table in outputs.
+  --tagstatinclude <tag>  `Includes only these tags`_ in the *Statistics by Tag* table.
+  --tagstatexclude <tag>  `Excludes these tags`_ from the *Statistics by Tag* table.
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
-  --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
-                          Tag` table.
+  --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
   --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the
                           generated log file.
   --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated log file.
@@ -66,17 +63,20 @@ Command line options for test execution
   --dryrun                In the `dry run`_ mode tests are run without executing
                           keywords originating from test libraries. Useful for
                           validating test data syntax.
-  --exitonfailure         `Stops execution`_ immediately if a critical test fails.
+  --exitonfailure         `Stops test execution <Stopping when first test case fails_>`__
+                          if any critical test fails.
+  --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
+                          if any error occurs when parsing test data, importing libraries, and so on.
   --skipteardownonexit    `Skips teardowns`_ is test execution is prematurely stopped.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
   --runmode <mode>        Deprecated in Robot Framework 2.8. Use separate
-                          :opt:`--dryrun`, :opt:`--exitonfailure`,
-                          :opt:`--skipteardownonexit` and :opt:`--randomize`
+                          :option:`--dryrun`, :option:`--exitonfailure`,
+                          :option:`--skipteardownonexit` and :option:`--randomize`
                           options instead.
   -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used on the console.
   -K, --monitormarkers <on|off|force>  Specifies are `console markers`_
-                          (:cli:`.` and :cli:`F`) used.
+                          (`.` and `F`) used.
   -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
   -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
@@ -86,6 +86,8 @@ Command line options for test execution
 Command line options for post-processing outputs
 ------------------------------------------------
 
+  -R, --merge             Changes result combining behavior to `merging <merging outputs_>`__.
+  --rerunmerge            Deprecated. Use :option:`--merge` instead.
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.
@@ -94,7 +96,6 @@ Command line options for post-processing outputs
   -s, --suite <name>      `Selects the test suites`_ by name.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
-  -R, --rerunmerge        `Merges together`_ re-execution results and original results.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_.
   -d, --outputdir <dir>   Defines where to `create output files`_.
@@ -102,7 +103,7 @@ Command line options for post-processing outputs
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
   -x, --xunit <file>      Sets the path to the generated `xUnit compatible result file`_.
-  --xunitfile <file>      Deprecated. Use :opt:`--xunit` instead.
+  --xunitfile <file>      Deprecated. Use :option:`--xunit` instead.
   --xunitskipnoncritical  Mark non-critical tests on `xUnit compatible result file`_ as skipped.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
@@ -114,15 +115,12 @@ Command line options for post-processing outputs
                           Optionally the default `visible log level`_ can be given
                           separated with a colon (:).
   --suitestatlevel <level>  Defines how many `levels to show`_ in the
-                           :name:`Statistics by Suite` table in outputs.
-  --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics
-                          by Tag` table.
-  --tagstatexclude <tag>  `Excludes these tags`_ from the :name:`Statistics
-                          by Tag` table.
+                           *Statistics by Suite* table in outputs.
+  --tagstatinclude <tag>  `Includes only these tags`_ in the *Statistics by Tag* table.
+  --tagstatexclude <tag>  `Excludes these tags`_ from the *Statistics by Tag* table.
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
-  --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
-                          Tag` table.
+  --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
   --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the generated outputs.
   --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated outputs.
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
@@ -149,7 +147,6 @@ Command line options for post-processing outputs
 .. _considered critical: `Setting criticality`_
 .. _not critical: `considered critical`_
 .. _ContinueOnFailure: `Continue on failure`_
-.. _Stops execution: `Stopping when first test case fails`_
 .. _Skips teardowns: `Handling Teardowns`_
 .. _SkipTeardownOnExit: `Handling Teardowns`_
 .. _DryRun: `Dry run`_
@@ -182,9 +179,7 @@ Command line options for post-processing outputs
 .. _usage instructions: `Getting help and version information`_
 .. _version information: `usage instructions`_
 
-.. _Merges together: `Merging re-executed output`_
 .. _Removes keyword data: `Removing and flattening keywords`_
 .. _Flattens keywords: `Removes keyword data`_
 .. _starting time: `Setting start and end time of execution`_
 .. _ending time: `starting time`_
-

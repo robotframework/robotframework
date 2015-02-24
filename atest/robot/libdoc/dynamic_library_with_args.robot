@@ -46,8 +46,13 @@ Keyword Documentation
     Keyword Doc Should Start With    1   Dummy documentation for `Keyword 1`.
     Keyword Doc Should Start With    2   Dummy documentation for `KW2`.
 
-Non ASCII
-    Keyword Doc Should Be    4    Hyvää yötä.\n\nСпасибо!
+Non-ASCII Unicode
+    Keyword Name Should Be    4    Nön-äscii Ünicöde
+    Keyword Doc Should Be     4    Hyvää yötä.\n\nСпасибо! (Unicode)
+
+Non-ASCII UTF-8
+    Keyword Name Should Be    5    Nön-äscii ÜTF-8
+    Keyword Doc Should Be     5    Hyvää yötä.\n\nСпасибо! (UTF-8)
 
 No Argspec
     Keyword Arguments Should be     3     *varargs   **kwargs

@@ -21,7 +21,7 @@ from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
-from robot.utils import unic
+from robot.utils import unic, lower
 from robot.version import get_version
 
 
@@ -50,7 +50,7 @@ class String(object):
     ROBOT_LIBRARY_VERSION = get_version()
 
     def convert_to_lowercase(self, string):
-        """Converts string to lowercase. 
+        """Converts string to lowercase.
 
         Examples:
         | ${str1} = | Convert To Lowercase | ABC |
@@ -60,20 +60,22 @@ class String(object):
 
         New in Robot Framework 2.8.6.
         """
-        return string.lower()
+        # Custom `lower` needed due to IronPython bug. See its code and
+        # comments for more details.
+        return lower(string)
 
     def convert_to_uppercase(self, string):
-        """Converts string to uppercase. 
+        """Converts string to uppercase.
 
         Examples:
         | ${str1} = | Convert To Uppercase | abc |
         | ${str2} = | Convert To Uppercase | 1a2C3d |
         | Should Be Equal | ${str1} | ABC |
         | Should Be Equal | ${str2} | 1A2C3D |
-        
+
         New in Robot Framework 2.8.6.
         """
-        return string.upper()   
+        return string.upper()
 
     def encode_string_to_bytes(self, string, encoding, errors='strict'):
         """Encodes the given Unicode `string` to bytes using the given `encoding`.

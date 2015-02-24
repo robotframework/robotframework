@@ -19,10 +19,12 @@ ${10ms}              10 milliseconds
 
 *** Test Case ***
 lower case test case name
+    [Timeout]    5 seconds    First tests are sometimes slooow with IronPython
     No Operation
 
 Test Case Documentation
     [Documentation]    Documentation for this test case
+    [Timeout]    5 seconds    First tests are sometimes slooow with IronPython
     No Operation
 
 Test Case Documentation in Multiple Columns
@@ -55,7 +57,7 @@ Test Case Tags With Variables
     No Operation
 
 Test Case Tags With Non-Existing Variables
-    [Documentation]    FAIL Replacing variables from test tags failed: Non-existing variable '\${non_existing}'.
+    [Documentation]    FAIL Replacing variables from test tags failed: Variable '\${non_existing}' not found.
     [t a g s]    @{non_existing}    ${non_existing}
     Fail    Not executed
 

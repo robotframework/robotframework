@@ -1,20 +1,20 @@
 .. _tidy:
 
-Test data clean-up tool (:prog:`tidy`)
-======================================
+Test data clean-up tool (``tidy``)
+==================================
 
 .. contents::
    :depth: 1
    :local:
 
-:prog:`tidy` is a tool for cleaning up and changing the format of Robot
+``tidy`` is a tool for cleaning up and changing the format of Robot
 Framework test data files. It is built-in into Robot Framework and
 automatically included in the installation starting from version 2.7.
 
 The output is written into the standard output stream by default, but
 an optional output file can be given starting from Robot Framework 2.7.5.
-Files can also be modified in-place using :opt:`--inplace` or
-:opt:`--recursive` options.
+Files can also be modified in-place using :option:`--inplace` or
+:option:`--recursive` options.
 
 General usage
 -------------
@@ -40,7 +40,7 @@ Options
                       python -m robot.tidy --inplace --format txt *.html
 
  -r, --recursive  Process given directory recursively. Files in the directory
-                  are processed in place similarly as when :opt:`--inplace`
+                  are processed in place similarly as when :option:`--inplace`
                   option is used.
  -f, --format <txt|html|tsv>
                   Output file format. If the output file is given explicitly,
@@ -63,15 +63,15 @@ Options
 Alternative execution
 ~~~~~~~~~~~~~~~~~~~~~
 
-Although :prog:`tidy` is used only with Python in the synopsis above, it works
-also with Jython and IronPython. In the synopsis :prog:`tidy` is executed as
-an installed module (:cli:`python -m robot.tidy`), but it can be run also as
+Although ``tidy`` is used only with Python in the synopsis above, it works
+also with Jython and IronPython. In the synopsis ``tidy`` is executed as
+an installed module (`python -m robot.tidy`), but it can be run also as
 a script::
 
     python path/robot/tidy.py [options] arguments
 
 Executing as a script can be useful if you have done `manual installation`_
-or otherwise just have the :path:`robot` directory with the source code
+or otherwise just have the :file:`robot` directory with the source code
 somewhere in your system.
 
 Output encoding
@@ -84,7 +84,7 @@ Cleaning up test data
 ---------------------
 
 Test case files created with HTML editors or written by hand can be normalized
-using tidy. :prog:`tidy` always writes consistent headers, consistent order for
+using tidy. ``tidy`` always writes consistent headers, consistent order for
 settings, and consistent amount of whitespace between cells and tables.
 
 Examples::
@@ -95,10 +95,10 @@ Examples::
 Changing test data format
 -------------------------
 
-Robot Framework supports test data in HTML, TSV and TXT formats and :prog:`tidy`
+Robot Framework supports test data in HTML, TSV and TXT formats and ``tidy``
 makes changing between the formats trivial. Input format is always determined
 based on the extension of the input file. Output format can be set using
-the :opt:`--format` option, and the default value is got from the extension
+the :option:`--format` option, and the default value is got from the extension
 of the possible output file.
 
 Examples::

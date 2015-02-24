@@ -14,6 +14,7 @@
 
 from six import PY3, integer_types, string_types
 
+import httplib
 import re
 import socket
 import sys
@@ -26,7 +27,7 @@ except ImportError:   # No expat in IronPython 2.7
         pass
 
 from robot.errors import RemoteError
-from robot.utils import is_list_like, is_dict_like, unic
+from robot.utils import is_list_like, is_dict_like, timestr_to_secs, unic
 
 
 IRONPYTHON = sys.platform == 'cli'
@@ -35,18 +36,35 @@ IRONPYTHON = sys.platform == 'cli'
 class Remote(object):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
-    def __init__(self, uri='http://127.0.0.1:8270'):
+    def __init__(self, uri='http://127.0.0.1:8270', timeout=None):
+        """Connects to a remote server at ``uri``.
+
+        Optional ``timeout`` can be used to specify a timeout to wait when
+        initially connecting to the server and if a connection accidentally
+        closes. Timeout can be given as seconds (e.g. ``60``) or using
+        Robot Framework time format (e.g. ``60s``, ``2 minutes 10 seconds``).
+
+        The default timeout is typically several minutes, but it depends on
+        the operating system and its configuration. Notice that setting
+        a timeout that is shorter than keyword execution time will interrupt
+        the keyword.
+
+        Support for timeouts is a new feature in Robot Framework 2.8.6.
+        Timeouts do not work with Python/Jython 2.5 nor with IronPython.
+        """
         if '://' not in uri:
             uri = 'http://' + uri
+        if timeout:
+            timeout = timestr_to_secs(timeout)
         self._uri = uri
-        self._client = XmlRpcRemoteClient(uri)
+        self._client = XmlRpcRemoteClient(uri, timeout)
 
-    def get_keyword_names(self, attempts=5):
+    def get_keyword_names(self, attempts=2):
         for i in range(attempts):
             try:
                 return self._client.get_keyword_names()
             except TypeError as err:
-                time.sleep(1)
+                time.sleep(i)
                 # To make err accessible after this except block in Python 3:
                 # (`err` will be deleted)
                 exc = err
@@ -178,16 +196,15 @@ class RemoteResult(object):
 
 class XmlRpcRemoteClient(object):
 
-    def __init__(self, uri):
-        self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8')
+    def __init__(self, uri, timeout=None):
+        transport = TimeoutTransport(timeout=timeout)
+        self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8',
+                                             transport=transport)
 
     def get_keyword_names(self):
         try:
             return self._server.get_keyword_names()
-        except socket.error as err:
-            errno, err = err.args
-            raise TypeError(err)
-        except xmlrpclib.Error as err:
+        except (socket.error, xmlrpclib.Error) as err:
             raise TypeError(err)
 
     def get_keyword_arguments(self, name):
@@ -216,3 +233,49 @@ class XmlRpcRemoteClient(object):
                        'contains characters that are not valid in XML. '
                        'Original error was: ExpatError: %s' % err)
         raise RuntimeError(message)
+
+
+# Custom XML-RPC timeouts based on
+# http://stackoverflow.com/questions/2425799/timeout-for-xmlrpclib-client-requests
+
+
+class TimeoutTransport(xmlrpclib.Transport):
+
+    def __init__(self, use_datetime=0, timeout=None):
+        xmlrpclib.Transport.__init__(self, use_datetime)
+        if not timeout:
+            timeout = socket._GLOBAL_DEFAULT_TIMEOUT
+        self.timeout = timeout
+
+    def make_connection(self, host):
+        if self._connection and host == self._connection[0]:
+            return self._connection[1]
+        chost, self._extra_headers, x509 = self.get_host_info(host)
+        self._connection = host, httplib.HTTPConnection(chost, timeout=self.timeout)
+        return self._connection[1]
+
+
+if sys.version_info[:2] == (2, 6):
+
+    class TimeoutTransport(TimeoutTransport):
+
+        def make_connection(self, host):
+            host, extra_headers, x509 = self.get_host_info(host)
+            return TimeoutHTTP(host, timeout=self.timeout)
+
+    class TimeoutHTTP(httplib.HTTP):
+
+        def __init__(self, host='', port=None, strict=None, timeout=None):
+            if port == 0:
+                port = None
+            self._setup(self._connection_class(host, port, strict, timeout=timeout))
+
+
+if sys.version_info[:2] == (2, 5) or sys.platform == 'cli':
+
+    class TimeoutTransport(xmlrpclib.Transport):
+
+        def __init__(self, use_datetime=0, timeout=None):
+            xmlrpclib.Transport.__init__(self, use_datetime)
+            if timeout:
+                raise RuntimeError('This Python version does not support timeouts.')

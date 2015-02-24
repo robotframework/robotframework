@@ -8,8 +8,13 @@ ${PORT}           8270
 Empty
     Empty
 
-Single line
-    Single line
+Single
+    Single    1
 
-Multi line
-    Multi line
+Multi
+    Multi    1
+    Multi    1    2
+    Multi    1    2    3    4
+
+Nön-ÄSCII
+    Nön-ÄSCII

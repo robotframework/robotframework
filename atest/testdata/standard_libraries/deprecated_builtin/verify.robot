@@ -14,7 +14,7 @@ Error With Message
     Error    Error message
 
 Fail If 1
-    [Documentation]    FAIL '0 < 1' should not be true
+    [Documentation]    FAIL '0 < 1' should not be true.
     Fail If    0 > 1
     Is False    ${int0} < ${int1}
 
@@ -23,7 +23,7 @@ Fail If 2
     Fail If    True    My message
 
 Fail Unless 1
-    [Documentation]    FAIL '1 != 1 and True or False' should be true
+    [Documentation]    FAIL '1 != 1 and True or False' should be true.
     Fail Unless    -1 <= ${str1} <= 1
     Is True    -${str1} < ${str0} < ${str1}
     Fail Unless    1 != 1 and True or False

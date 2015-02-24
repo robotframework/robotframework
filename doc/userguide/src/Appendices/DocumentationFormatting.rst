@@ -29,7 +29,7 @@ The documentation of test suites, test cases and keywords as well as
 the test suite metadata are subject to `general parsing rules`__ of the
 test data. This means that normal newlines are not preserved and
 dividing documentation into lines and paragraphs generally requires
-using a `literal newline character sequence`__ (:code:`\\n`). This is
+using a `literal newline character sequence`__ (`\n`). This is
 shown in the example below.
 
 __ `Test data syntax`_
@@ -176,29 +176,34 @@ will be formatted in HTML as:
   </div>
 
 .. note:: Prior to 2.7.2 handling paragraphs was inconsistent. In documentation
-          generated with libdoc_ lines were combined to paragraphs but in
+          generated with Libdoc_ lines were combined to paragraphs but in
           documentations shown in log and report they were not.
 
-Bold and italic
----------------
+Inline styles
+-------------
 
+The documentation syntax supports inline styles **bold**, *italic* and `code`.
 Bold text can be created by having an asterisk before and after the
-selected word or words, for example :code:`\*this is bold*`. Italic
+selected word or words, for example `*this is bold*`. Italic
 style works similarly, but the special character to use is an
-underscore, for example, :code:`\_italic_`. It is also possible to have
-bold italic with the syntax :code:`\_*bold italic*_`.
+underscore, for example, `_italic_`. It is also possible to have
+bold italic with the syntax `_*bold italic*_`.
 
-An asterisk or an underscore alone, or in the middle of a word, does
-not start formatting, but punctuation characters before or after them
-are allowed. When multiple lines form a paragraph__, both bold and italic
-can span over multiple lines.
+The code style is created using double backticks like :codesc:`\`\`code\`\``.
+The result is monospaced text with light gray background. Support for code
+style is new in Robot Framework 2.8.6.
+
+Asterisks, underscores or double backticks alone, or in the middle of a word,
+do not start formatting, but punctuation characters before or after them
+are allowed. When multiple lines form a paragraph__, all inline styles can
+span over multiple lines.
 
 __ paragraphs_
 
 .. raw:: html
 
    <table class="tabular docutils">
-     <caption>Bold and italic examples</caption>
+     <caption>Inline style examples</caption>
      <tr>
        <th>Unformatted</th>
        <th>Formatted</th>
@@ -212,12 +217,16 @@ __ paragraphs_
        <td><i>italic</i></td>
      </tr>
      <tr>
-       <td>*bold* and then _italic_</td>
-       <td><b>bold</b> and then <i>italic</i></td>
+       <td>_*bold italic*_</td>
+       <td><i><b>bold italic</b></i></td>
      </tr>
      <tr>
-       <td>_*bold italic*_, _italic_, nothing</td>
-       <td><i><b>bold italic</b></i>, <i>italic</i>, nothing</td>
+       <td>``code``</td>
+       <td><code>code</code></td>
+     </tr>
+     <tr>
+       <td>*bold*, then _italic_ and finally ``some code``</td>
+       <td><b>bold</b>, then <i>italic</i> and finally <code>some code</code></td>
      </tr>
      <tr>
        <td>This is *bold\n<br>on multiple\n<br>lines*.</td>
@@ -230,10 +239,10 @@ URLs
 
 All strings that look like URLs are automatically converted into
 clickable links. Additionally, URLs that end with extension
-:path:`.jpg`, :path:`.jpeg`, :path:`.png`, :path:`.gif` or
-:path:`.bmp` (case-insensitive) will automatically create images. For
-example, URLs like :code:`http://example.com` are turned into links, and
-:code:`http:///host/image.jpg` and :code:`file:///path/chart.png`
+:file:`.jpg`, :file:`.jpeg`, :file:`.png`, :file:`.gif` or
+:file:`.bmp` (case-insensitive) will automatically create images. For
+example, URLs like `http://example.com` are turned into links, and
+`http:///host/image.jpg` and `file:///path/chart.png`
 into images.
 
 The automatic conversion of URLs to links is applied to all the data
@@ -244,8 +253,8 @@ Custom links and images
 -----------------------
 
 Starting from Robot Framework 2.7, it is possible to create custom links
-and embed images using special syntax :code:`[link|content]`. This creates
-a link or image depending are :code:`link` and :code:`content` images.
+and embed images using special syntax `[link|content]`. This creates
+a link or image depending are `link` and `content` images.
 They are considered images if they have the same image extensions that are
 special with URLs_. The surrounding square brackets and the pipe character
 between the parts are mandatory in all cases.
@@ -253,8 +262,8 @@ between the parts are mandatory in all cases.
 Link with text content
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If neither :code:`link` nor :code:`content` is an image, the end result is
-a normal link where :code:`link` is the link target and :code:`content`
+If neither `link` nor `content` is an image, the end result is
+a normal link where `link` is the link target and `content`
 the visible text::
 
     [file.html|this file] -> <a href="file.html">this file</a>
@@ -263,8 +272,8 @@ the visible text::
 Link with image content
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-If :code:`content` is an image, you get a link where the link content is an
-image. Link target is created by :code:`link` and it can be either text or image::
+If `content` is an image, you get a link where the link content is an
+image. Link target is created by `link` and it can be either text or image::
 
     [robot.html|robot.png] -> <a href="robot.html"><img src="robot.png"></a>
     [image.jpg|thumb.jpg] -> <a href="image.jpg"><img src="thumb.jpg"></a>
@@ -272,8 +281,8 @@ image. Link target is created by :code:`link` and it can be either text or image
 Image with title text
 ~~~~~~~~~~~~~~~~~~~~~
 
-If :code:`link` is an image but :code:`content` is not, the syntax creates an
-image where the :code:`content` is the title text shown when mouse is over
+If `link` is an image but `content` is not, the syntax creates an
+image where the `content` is the title text shown when mouse is over
 the image::
 
     [robot.jpeg|Robot rocks!] -> <img src="robot.jpeg" title="Robot rocks!">
@@ -283,7 +292,7 @@ Section titles
 
 If documentation gets longer, it is often a good idea to split it into
 sections. Starting from Robot Framework 2.7.5, it is possible to separate
-sections with titles using syntax :code:`= My Title =`, where the number of
+sections with titles using syntax `= My Title =`, where the number of
 equal signs denotes the level of the title::
 
     = First section =
@@ -309,7 +318,7 @@ Tables
 Tables are created using pipe characters with spaces around them
 as column separators and newlines as row separators. Header
 cells can be created by surrounding the cell content with equal signs
-and optional spaces like :code:`= Header =` or :code:`=Header=`. Tables
+and optional spaces like `= Header =` or `=Header=`. Tables
 cells can also contain links and formatting such as bold and italic::
 
    | =A= |  =B=  | = C =  |
@@ -361,7 +370,7 @@ The above documentation is formatted like this in HTML:
   </div>
 
 .. note:: Support for formatting lists was added in 2.7.2. Prior to that,
-          the same syntax prevented :prog:`libdoc` from combining lines to
+          the same syntax prevented Libdoc_ from combining lines to
           paragraphs, so the end result was similar. Support for splitting
           list items into multiple lines was added in 2.7.4.
 

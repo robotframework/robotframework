@@ -18,9 +18,11 @@ Non-ASCII keyword name works when Unicode
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name works when UTF-8 bytes
+    [Setup]    Make test non-critical on IronPython
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name fails when other bytes
+    [Setup]    Make test non-critical on IronPython
     Check Test Case  ${TESTNAME}
 
 Run Keyword in Static Library

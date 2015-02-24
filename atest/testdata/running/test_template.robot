@@ -169,9 +169,9 @@ Templates, timeouts, and for loops
     \    0.05 seconds
 
 Templates and syntax errors
-    [Documentation]  FAIL  Non-existing variable '\${nonex}'.
+    [Documentation]  FAIL  Variable '\${nonexisting}' not found.
     [Template]  Should be equal
-    ${nonex}      something
+    ${nonexisting}      something
     not compared  anymore
 
 Templates and fatal errors 1

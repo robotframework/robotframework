@@ -1,17 +1,53 @@
 *** Settings ***
-Suite Setup      Run Remote Tests    documentation.robot    documentation.py
+Suite Setup      Run Remote Tests And Libdoc
 Force Tags       regression    pybot    jybot
 Resource         remote_resource.robot
+Resource         ../../libdoc/libdoc_resource.robot
+Test Template    Verify executed short doc and full Libdoc
 
 *** Test Cases ***
 Empty
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].doc}    ${EMPTY}
+    ${EMPTY}    ${EMPTY}    0
 
-Single line
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].doc}    Single line documentation
+Single
+    Single line documentation    Single line documentation    3
 
-Multi line
+Multi
+    Multi    Multi\nline\ndocumentation    1
+
+Nön-ÄSCII
+    [Setup]    Make test non-critical on IronPython
+    Nön-ÄSCII documentation    Nön-ÄSCII documentation    2
+
+Intro documentation
+    [Template]    Doc Should Be
+    Remote library for documentation testing purposes
+
+Init documentation
+    [Template]    Init Doc Should Start With
+    0    Connects to a remote server at ``uri``.
+
+Keyword arguments
+    [Template]    Keyword Arguments Should Be
+    0
+    3    arg
+    1    a1    a2=d    *varargs
+
+Init arguments
+    [Template]    Init Arguments Should Be
+    0    uri=http://127.0.0.1:8270    timeout=None
+
+*** Keywords ***
+Run Remote Tests And Libdoc
+    ${port} =    Run Remote Tests    documentation.robot    documentation.py    stop server=no
+    Run Libdoc And Parse Output    Remote::http://127.0.0.1:${port}
+    [Teardown]      Run Keywords
+    ...    Stop Remote Server    documentation.py    AND
+    ...    Remove Output Files
+
+Verify executed short doc and full Libdoc
+    [Arguments]    ${short}    ${full}    ${index}
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].doc}    Multi
+    Should Be Equal    ${tc.kws[0].doc}    ${short}
+    Keyword Name Should Be    ${index}    ${TEST NAME}
+    Keyword Doc Should Be     ${index}    ${full}

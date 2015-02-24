@@ -22,7 +22,7 @@ Repeat Keyword Name and Arguments
 Repeat Keyword Messages
     ${test} =  Check Test Case  Repeat With Messages
     Verify Deprecation Messages  ${test.kws[0].msgs[0]}  1 x
-    Check Log Message  ${test.kws[0].msgs[1]}  Repeating keyword, round 1/1
+    Check Log Message  ${test.kws[0].msgs[1]}  Repeating keyword, round 1/1.
     Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Hello, world
     Verify Deprecation Messages  ${test.kws[1].msgs[0]}  33 x
     Check Log Message  ${test.kws[1].kws[0].msgs[0]}  Hi, tellus
@@ -66,8 +66,8 @@ Failing Repeat Keyword
     Check Log Message  ${test.kws[0].kws[9].kws[2].msgs[1]}  Recursion limit exceeded  FAIL
     ${test} =  Check Test Case  Failing Repeat Keyword and Teardown
     Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Failing, again, instead of repeating  FAIL
-    ${test} =  Check Test Case  Non-Exising Variable In Repeat Keyword
-    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Resolving variable '\${non-exiting-variable}' failed: Non-existing variable '\${non}'.  FAIL
+    ${test} =  Check Test Case  Non-Existing Variable In Repeat Keyword
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Resolving variable '\${nonexisting-variable}' failed: Variable '\${nonexisting}' not found.  FAIL
 
 Non Existing Keyword In Repeat
     Check Test Case  Non Existing Keyword In Repeat
@@ -114,7 +114,7 @@ No Repeat With Variable value 2x
 
 Repeat With Non Existing Variable Fails
     ${test} =  Check Test Case  Repeat With Non Existing Variable Fails
-    Check Log Message  ${test.kws[0].messages[1]}  Non-existing variable '\${foo}'.  FAIL
+    Check Log Message  ${test.kws[0].messages[1]}  Variable '\${foo}' not found.  FAIL
 
 Non Existing Keyword In Repeat With Variable
     Check Test Case  Non Existing Keyword In Repeat With Variable

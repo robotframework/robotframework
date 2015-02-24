@@ -4,7 +4,7 @@ Basic usage
 Robot Framework test cases are executed from the command line, and the
 end result is, by default, an `output file`_ in XML format and an HTML
 report_ and log_. After the execution, output files can be combined and
-otherwise `post-processed`__ with the :prog:`rebot` tool.
+otherwise `post-processed`__ with the ``rebot`` tool.
 
 __ `Post-processing outputs`_
 
@@ -25,11 +25,11 @@ Synopsis
     python|jython|ipy path/to/robot/run.py [options] data_sources
     java -jar robotframework.jar [options] data_sources
 
-Test execution is normally started using :prog:`pybot`, :prog:`jybot`
-or :prog:`ipybot` `runner script`_. These scripts are otherwise identical, but
+Test execution is normally started using ``pybot``, ``jybot``
+or ``ipybot`` `runner script`_. These scripts are otherwise identical, but
 the first one executes tests using Python_, the second using Jython_, and the
 last one using IronPython_. Alternatively it is possible to use
-:prog:`robot.run` `entry point`_ either as a module or a script using
+``robot.run`` `entry point`_ either as a module or a script using
 any interpreter, or use the `standalone JAR distribution`_.
 
 Regardless of execution approach, the path (or paths) to the test data to be
@@ -45,10 +45,10 @@ and they are executed by giving the path to the file or directory in
 question to the selected runner script. The path can be absolute or,
 more commonly, relative to the directory where tests are executed
 from. The given file or directory creates the top-level test suite,
-which gets its name, unless overridden with the :opt:`--name` option__,
+which gets its name, unless overridden with the :option:`--name` option__,
 from the `file or directory name`__. Different execution possibilities
 are illustrated in the examples below. Note that in these examples, as
-well as in other examples in this section, only the :prog:`pybot` script
+well as in other examples in this section, only the ``pybot`` script
 is used, but other execution approaches could be used similarly.
 
 __ `Test case files`_
@@ -71,7 +71,7 @@ catenating them together with an ampersand (&) and spaces. For example,
 the name of the top-level suite in the first example below is
 :name:`My Tests & Your Tests`. These automatically created names are
 often quite long and complicated. In most cases, it is thus better to
-use the :opt:`--name` option for overriding it, as in the second
+use the :option:`--name` option for overriding it, as in the second
 example below::
 
    pybot my_tests.html your_tests.html
@@ -98,12 +98,12 @@ script and the data sources. For example::
 Short and long options
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Options always have a long name, such as :opt:`--name`, and the
+Options always have a long name, such as :option:`--name`, and the
 most frequently needed options also have a short name, such as
-:opt:`-N`. In addition to that, long options can be shortened as
-long as they are unique. For example, :cli:`--logle DEBUG` works,
-while :cli:`--lo log.html` does not, because the former matches only
-:opt:`--loglevel`, but the latter matches several options. Short
+:option:`-N`. In addition to that, long options can be shortened as
+long as they are unique. For example, `--logle DEBUG` works,
+while `--lo log.html` does not, because the former matches only
+:option:`--loglevel`, but the latter matches several options. Short
 and shortened options are practical when executing test cases
 manually, but long options are recommended in `start-up scripts`__,
 because they are easier to understand.
@@ -111,21 +111,21 @@ because they are easier to understand.
 __ `Creating start-up scripts`_
 
 The long option format is case-insensitive, which facilitates writing option
-names in an easy-to-read format. For example, :opt:`--SuiteStatLevel`
-is equivalent to, but easier to read than :opt:`--suitestatlevel`.
+names in an easy-to-read format. For example, :option:`--SuiteStatLevel`
+is equivalent to, but easier to read than :option:`--suitestatlevel`.
 
 Setting option values
 ~~~~~~~~~~~~~~~~~~~~~
 
 Most of the options require a value, which is given after the option
 name. Both short and long options accept the value separated
-from the option name with a space, as in :cli:`--include tag`
-or :cli:`-i tag`. With long options, the separator can also be the
-equals sign, for example :cli:`--include=tag`, and with short options the
-separator can be omitted, as in :cli:`-itag`.
+from the option name with a space, as in `--include tag`
+or `-i tag`. With long options, the separator can also be the
+equals sign, for example `--include=tag`, and with short options the
+separator can be omitted, as in `-itag`.
 
 Some options can be specified several times. For example,
-:cli:`--variable VAR1:value --variable VAR2:another` sets two
+`--variable VAR1:value --variable VAR2:another` sets two
 variables. If the options that take only one value are used several
 times, the value given last is effective.
 
@@ -135,8 +135,8 @@ Simple patterns
 Many command line options take arguments as *simple patterns*. These
 `glob-like patterns`__ are matched according to the following rules:
 
-- :code:`*` is a wildcard matching any string, even an empty string.
-- :code:`?` is a wildcard matching any single character.
+- `*` is a wildcard matching any string, even an empty string.
+- `?` is a wildcard matching any single character.
 - Unless noted otherwise, pattern matching is case, space, and underscore insensitive.
 
 Examples::
@@ -150,20 +150,20 @@ Tag patterns
 ~~~~~~~~~~~~
 
 Most tag related options accept arguments as *tag patterns*. They have all the
-same characteristics as `simple patterns`_, but they also support :code:`AND`,
-:code:`OR` and :code:`NOT` operators explained below. These operators can be
+same characteristics as `simple patterns`_, but they also support `AND`,
+`OR` and `NOT` operators explained below. These operators can be
 used for combining two or more individual tags or patterns together.
 
-:code:`AND` or :code:`&`
-   The whole pattern matches if all individual patterns match. :code:`AND` and
-   :code:`&` are equivalent.
+`AND` or `&`
+   The whole pattern matches if all individual patterns match. `AND` and
+   `&` are equivalent.
 
    ::
 
       --include fooANDbar     # Matches tests containing tags 'foo' and 'bar'.
       --exclude xx&yy&zz      # Matches tests containing tags 'xx', 'yy', and 'zz'.
 
-:code:`OR`
+`OR`
    The whole pattern matches if any individual pattern matches.
 
    ::
@@ -171,10 +171,10 @@ used for combining two or more individual tags or patterns together.
       --include fooORbar      # Matches tests containing either tag 'foo' or tag 'bar'.
       --exclude xxORyyORzz    # Matches tests containing any of tags 'xx', 'yy', or 'zz'.
 
-:code:`NOT`
+`NOT`
    The whole pattern matches if the pattern on the left side matches but
    the one on the right side does not. If used multiple times, none of
-   the patterns after the first :code:`NOT` must not match.
+   the patterns after the first `NOT` must not match.
 
    ::
 
@@ -183,7 +183,7 @@ used for combining two or more individual tags or patterns together.
 
 Mixed
    The above operators can also be used together. The operator precedence,
-   from highest to lowest, is :code:`AND`, :code:`OR` and :code:`NOT`.
+   from highest to lowest, is `AND`, `OR` and `NOT`.
 
    ::
 
@@ -194,18 +194,18 @@ Mixed
 .. note:: All operators are case-sensitive and must be written with capital
           letters.
 
-.. note:: :code:`OR` operator is new in Robot Framework 2.8.4.
+.. note:: `OR` operator is new in Robot Framework 2.8.4.
 
-:var:`ROBOT_OPTIONS` and :var:`REBOT_OPTIONS` environment variables
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Environment variables :var:`ROBOT_OPTIONS` and :var:`REBOT_OPTIONS` can be
+Environment variables ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` can be
 used to specify default options for `test execution`_ and `result
 post-processing`__, respectively. The options and their values must be
 defined as a space separated list and they are placed in front of any
 explicit options on the command line. The main use case for these
 environment variables is setting global default values for certain options to
-avoid the need to repeat them every time tests are run or :prog:`rebot` used.
+avoid the need to repeat them every time tests are run or ``rebot`` used.
 
 .. sourcecode:: bash
 
@@ -214,7 +214,7 @@ avoid the need to repeat them every time tests are run or :prog:`rebot` used.
    export REBOT_OPTIONS="--reportbackground green:yellow:red"
    rebot --name example output.xml
 
-.. note:: Support for :var:`ROBOT_OPTIONS` and :var:`REBOT_OPTIONS` environment
+.. note:: Support for ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment
           variables was added in Robot Framework 2.8.2.
 
 __ `Post-processing outputs`_
@@ -289,12 +289,12 @@ All possible return codes are explained in the table below.
 Return codes should always be easily available after the execution,
 which makes it easy to automatically determine the overall execution
 status. For example, in bash shell the return code is in special
-variable :code:`$?`, and in Windows it is in :code:`%ERRORLEVEL%`
+variable `$?`, and in Windows it is in `%ERRORLEVEL%`
 variable. If you use some external tool for running tests, consult its
 documentation for how to get the return code.
 
 Starting from Robot Framework 2.5.7, the return code can be set to 0 even if
-there are critical failures using the :opt:`--NoStatusRC` command line option.
+there are critical failures using the :option:`--NoStatusRC` command line option.
 This might be useful, for example, in continuous integration servers where
 post-processing of results is needed before the overall status of test
 execution can be determined.
@@ -338,7 +338,7 @@ Escaping complicated characters
 
 Because spaces are used for separating options from each other, it is
 problematic to use them in option values.  Some options, such as
-:opt:`--name`, automatically convert underscores to spaces, but
+:option:`--name`, automatically convert underscores to spaces, but
 with others spaces must be escaped. Additionally, many special
 characters are complicated to use on the command line.
 Because escaping complicated characters with a backslash or quoting
@@ -351,10 +351,10 @@ tools have the same or similar capabilities.
 
 In Robot Framework's command line escaping mechanism,
 problematic characters are escaped with freely selected text. The
-command line option to use is :opt:`--escape` (short version
-:opt:`-E`), which takes an argument in the format :opt:`what:with`,
-where :opt:`what` is the name of the character to escape and
-:opt:`with` is the string to escape it with. Characters that can
+command line option to use is :option:`--escape (-E)`,
+which takes an argument in the format `what:with`,
+where `what` is the name of the character to escape and
+`with` is the string to escape it with. Characters that can
 be escaped are listed in the table below:
 
 .. table:: Available escapes
@@ -366,7 +366,7 @@ be escaped are listed in the table below:
    &          amp            (          paren1
    '          apos           )          paren2
    @          at             %          percent
-   \\         blash          \|         pipe
+   \\         bslash         \|         pipe
    :          colon          ?          quest
    ,          comma          "          quot
    {          curly1         ;          semic
@@ -379,9 +379,9 @@ be escaped are listed in the table below:
    =========  =============  =========  =============
 
 The following examples make the syntax more clear. In the
-first example, the metadata :opt:`X` gets the value :code:`Value with
-spaces`, and in the second example variable :var:`${VAR}` is assigned to
-:code:`"Hello, world!"`::
+first example, the metadata `X` gets the value `Value with
+spaces`, and in the second example variable `${VAR}` is assigned to
+`"Hello, world!"`::
 
     --escape space:_ --metadata X:Value_with_spaces
     -E space:SP -E quot:QU -E comma:CO -E exclam:EX -v VAR:QUHelloCOSPworldEXQU
@@ -399,8 +399,8 @@ characters that are problematic on the command line. If lot of options or
 arguments are needed, argument files also prevent the command that is used on
 the command line growing too long.
 
-Argument files are taken into use with :opt:`--argumentfile` option
-(short option :opt:`-A`) along with possible other command line options.
+Argument files are taken into use with :option:`--argumentfile (-A)` option
+along with possible other command line options.
 
 Argument file syntax
 ~~~~~~~~~~~~~~~~~~~~
@@ -439,7 +439,7 @@ an argument file is used with other arguments, its contents are placed into
 the original list of arguments to the same place where the argument file
 option was. This means that options in argument files can override options
 before it, and its options can be overridden by options after it. It is possible
-to use :opt:`--argumentfile` option multiple times or even recursively::
+to use :option:`--argumentfile` option multiple times or even recursively::
 
    pybot --argumentfile all_arguments.txt
    pybot --name Example --argumentfile other_options_and_paths.txt
@@ -449,7 +449,7 @@ to use :opt:`--argumentfile` option multiple times or even recursively::
 Reading argument files from standard input
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.5.6, special argument file name :opt:`STDIN`
+Starting from Robot Framework 2.5.6, special argument file name `STDIN`
 can be used to read arguments from the standard input stream instead of a file.
 This can be useful when generating arguments with a script::
 
@@ -460,12 +460,12 @@ Getting help and version information
 ------------------------------------
 
 Both when executing test cases and when post-processing outputs, it is possible
-to get command line help with the option :opt:`--help` and its short version
-:opt:`-h`. These help texts have a short general overview and
+to get command line help with the option :option:`--help (-h)`.
+These help texts have a short general overview and
 briefly explain the available command line options.
 
 All runner scripts also support getting the version information with
-the option :opt:`--version`. This information also contains Python
+the option :option:`--version`. This information also contains Python
 or Jython version and the platform type::
 
    $ pybot --version
@@ -510,8 +510,8 @@ another:
 
 Implementing the above example with Windows batch files is not very
 complicated, either. The most important thing to remember is that
-because :prog:`pybot` and :prog:`rebot` are implemented as batch
-files, :prog:`call` must be used when running them from another batch
+because ``pybot`` and ``rebot`` are implemented as batch
+files, ``call`` must be used when running them from another batch
 file. Otherwise execution would end when the first batch file is
 finished.
 
@@ -522,8 +522,8 @@ finished.
    call pybot --variable BROWSER:IE --name IE --log none --report none --output out\ie.xml login
    call rebot --name Login --outputdir out --output login.xml out\fx.xml out\ie.xml
 
-In the next examples, JAR files under the :path:`lib` directory are
-put into CLASSPATH before starting the test execution. In these
+In the next examples, jar files under the :file:`lib` directory are
+put into ``CLASSPATH`` before starting the test execution. In these
 examples, start-up scripts require that paths to the executed test
 data are given as arguments. It is also possible to use command line
 options freely, even though some options have already been set in the
@@ -573,13 +573,13 @@ The most common use case is increasing the JVM maximum memory size as the
 default value may not be enough for creating reports and logs when
 outputs are very big. There are several ways to configure JVM options:
 
-1. Modify Jython start-up script (:prog:`jython` shell script or
-   :prog:`jython.bat` batch file) directly. This is a permanent configuration.
+1. Modify Jython start-up script (``jython`` shell script or
+   ``jython.bat`` batch file) directly. This is a permanent configuration.
 
-2. Set :var:`JYTHON_OPTS` environment variable. This can be done permanently
+2. Set ``JYTHON_OPTS`` environment variable. This can be done permanently
    in operating system level or per execution in a custom start-up script.
 
-3. Pass the needed Java parameters wit :opt:`-J` option to Jython start-up
+3. Pass the needed Java parameters wit :option:`-J` option to Jython start-up
    script that will pass them forward to Java. This is especially easy when
    using `direct entry points`_::
 
@@ -615,7 +615,7 @@ may well explain why a test has failed due to a missing keyword.
 If the log file does not provide enough information by default, it is
 possible to execute tests with a lower `log level`_. For example
 tracebacks showing where in the code the failure occurred are logged
-using the :msg:`DEBUG` level, and this information is invaluable when
+using the `DEBUG` level, and this information is invaluable when
 the problem is in an individual keyword.
 
 If the log file still does not have enough information, it is a good

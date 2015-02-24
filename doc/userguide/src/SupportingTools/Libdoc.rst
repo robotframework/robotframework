@@ -1,16 +1,16 @@
 .. _libdoc:
 
-Library documentation tool (:prog:`libdoc`)
-===========================================
+Library documentation tool (``libdoc``)
+=======================================
 
 .. contents::
    :depth: 1
    :local:
 
-:prog:`libdoc` is a tool for generating keyword documentation for test
+Libdoc is a tool for generating keyword documentation for test
 libraries and resource files in HTML and XML formats. The former
 format is suitable for humans and the latter for RIDE_ and other
-tools. :prog:`libdoc` also has few special commands to show library or
+tools. Libdoc also has few special commands to show library or
 resource information on the console.
 
 Documentation can be created for:
@@ -20,10 +20,10 @@ Documentation can be created for:
 - test libraries using the `dynamic API`__, including remote libraries, and
 - `resource files`_.
 
-Additionally it is possible to use XML spec created by :prog:`libdoc`
+Additionally it is possible to use XML spec created by Libdoc
 earlier as an input.
 
-:prog:`libdoc` is built-in into Robot Framework and automatically included
+Libdoc is built-in into Robot Framework and automatically included
 in the installation starting from version 2.7. With earlier versions you
 need to download `libdoc.py script`__ separately. The command line usage
 has changed slightly between these versions but the documentation syntax
@@ -56,7 +56,7 @@ Options
                            values are Robot Framework's documentation format,
                            HTML, plain text, and reStructuredText. Default value
                            can be specified in test library source code and
-                           the initial default value is :opt:`robot`.
+                           the initial default value is `robot`.
                            New in Robot Framework 2.7.5.
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
@@ -65,9 +65,9 @@ Options
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
   -E, --escape <what:with>  Escapes characters which are problematic in console.
-                           :opt:`what` is the name of the character to escape
-                           and :opt:`with` is the string to escape it with.
-                           Available escapes are listed in the :opt:`--help`
+                           `what` is the name of the character to escape
+                           and `with` is the string to escape it with.
+                           Available escapes are listed in the :option:`--help`
                            output.
   -h, --help               Prints this help.
 
@@ -77,18 +77,18 @@ __ `Using --pythonpath option`_
 Alternative execution
 ~~~~~~~~~~~~~~~~~~~~~
 
-Although :prog:`libdoc` is used only with Python in the synopsis above, it works
+Although Libdoc is used only with Python in the synopsis above, it works
 also with Jython and IronPython. When documenting Java libraries, Jython is
 actually required.
 
-In the synopsis :prog:`libdoc` is executed as an installed module
-(:cli:`python -m robot.libdoc`). In addition to that, it can be run also as
+In the synopsis Libdoc is executed as an installed module
+(`python -m robot.libdoc`). In addition to that, it can be run also as
 a script::
 
     python path/robot/libdoc.py [options] arguments
 
 Executing as a script can be useful if you have done `manual installation`_
-or otherwise just have the :path:`robot` directory with the source code
+or otherwise just have the :file:`robot` directory with the source code
 somewhere in your system.
 
 Specifying library or resource file
@@ -105,18 +105,18 @@ and its name must be in the same format as in Robot Framework test data.
 
 If these libraries require arguments when they are imported, the arguments
 must be catenated with the library name or path using two colons like
-:cli:`MyLibrary::arg1::arg2`. If arguments change what keywords the library
+`MyLibrary::arg1::arg2`. If arguments change what keywords the library
 provides or otherwise alter its documentation, it might be a good idea to use
-:opt:`--name` option to also change the library name accordingly.
+:option:`--name` option to also change the library name accordingly.
 
 Java libraries with path
 ''''''''''''''''''''''''
 
 A Java test library implemented using the `static library API`_ can be
 specified by giving the path to the source code file containing the
-library implementation. Additionally, :path:`tools.jar`, which is part
-of the Java JDK distribution, must be found from CLASSPATH when
-:prog:`libdoc` is executed. Notice that generating documentation for Java
+library implementation. Additionally, :file:`tools.jar`, which is part
+of the Java JDK distribution, must be found from ``CLASSPATH`` when
+Libdoc is executed. Notice that generating documentation for Java
 libraries works only with Jython.
 
 Resource files with path
@@ -124,7 +124,7 @@ Resource files with path
 
 Resource files must always be specified using a path. If the path does
 not exist, resource files are also searched from all directories in
-PYTHONPATH similarly as when executing test cases.
+``PYTHONPATH`` similarly as when executing test cases.
 
 Generating documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,7 +132,7 @@ Generating documentation
 When generating documentation in HTML or XML format, the output file must
 be specified as the second argument after the library/resource name or path.
 Output format is got automatically from the extension but can also be set
-using the :opt:`--format` option.
+using the :option:`--format` option.
 
 Examples::
 
@@ -145,24 +145,24 @@ Examples::
 Viewing information on console
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:prog:`libdoc` has three special commands to show information on the console.
+Libdoc has three special commands to show information on the console.
 These commands are used instead of the name of the output file, and they can
 also take additional arguments.
 
-:opt:`list`
+`list`
     List names of the keywords the library/resource contains. Can be
     limited to show only certain keywords by passing optional patterns
     as arguments. Keyword is listed if its name contains given pattern.
-:opt:`show`
+`show`
     Show library/resource documentation. Can be limited to show only
     certain keywords by passing names as arguments. Keyword is shown if
-    its name matches any given name. Special argument :opt:`intro` will show
+    its name matches any given name. Special argument `intro` will show
     only the library introduction and importing sections.
-:opt:`version`
+`version`
     Show library version
 
-Optional patterns given to :opt:`list` and :opt:`show` are case and space
-insensitive. Both also accept :opt:`*` and :opt:`?` as wildcards.
+Optional patterns given to `list` and `show` are case and space
+insensitive. Both also accept `*` and `?` as wildcards.
 
 Examples::
 
@@ -235,9 +235,9 @@ Java libraries
 
 Documentation for Java libraries that use the `static library API`_ is written
 as normal `Javadoc comments`__ for the library class and methods. In this case
-:prog:`libdoc` actually uses the Javadoc tool internally, and thus
-:path:`tools.jar` containing it must be in CLASSPATH. This jar file is part
-of the normal Java SDK distribution and ought to be found from :path:`bin`
+Libdoc actually uses the Javadoc tool internally, and thus
+:file:`tools.jar` containing it must be in ``CLASSPATH``. This jar file is part
+of the normal Java SDK distribution and ought to be found from :file:`bin`
 directory under the Java SDK installation.
 
 The following simple example has exactly same documentation (and functionality)
@@ -276,11 +276,11 @@ Dynamic libraries
 
 To be able to generate meaningful documentation for dynamic libraries,
 the libraries must return keyword argument names and documentation using
-:code:`get_keyword_arguments` and :code:`get_keyword_documentation`
-methods (or using their camelCase variants :code:`getKeywordArguments`
-and :code:`getKeywordDocumentation`). Libraries can also support
-general library documentation via special :code:`__intro__` and
-:code:`__init__` values to the :code:`get_keyword_documentation` method.
+`get_keyword_arguments` and `get_keyword_documentation`
+methods (or using their camelCase variants `getKeywordArguments`
+and `getKeywordDocumentation`). Libraries can also support
+general library documentation via special `__intro__` and
+`__init__` values to the `get_keyword_documentation` method.
 
 See the `Dynamic library API`_ section for more information about how to
 create these methods.
@@ -289,8 +289,8 @@ Importing section
 ~~~~~~~~~~~~~~~~~
 
 A separate section about how the library is imported is created based on its
-initialization methods. For a Python library, if it has an  :code:`__init__`
-method that takes arguments in addition to :code:`self`, its documentation and
+initialization methods. For a Python library, if it has an  `__init__`
+method that takes arguments in addition to `self`, its documentation and
 arguments are shown. For a Java library, if it has a public constructor that
 accepts arguments, all its public constructors are shown.
 
@@ -314,12 +314,12 @@ Resource file documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Keywords in resource files can have documentation using
-:opt:`[Documentation]` setting, and this documentation is also used by
-:prog:`libdoc`. First line of the documentation (until the first
-`implicit newline`__ or explicit :code:`\\n`) is considered to be the short
+:setting:`[Documentation]` setting, and this documentation is also used by
+Libdoc. First line of the documentation (until the first
+`implicit newline`__ or explicit `\n`) is considered to be the short
 documentation similarly as with test libraries.
 
-Also the resource file itself can have :opt:`Documentation` in the
+Also the resource file itself can have :setting:`Documentation` in the
 Setting table for documenting the whole resource file.
 
 Possible variables in resource files are not documented.
@@ -361,15 +361,12 @@ __ `Automatic newlines in test data`_
 Documentation syntax
 --------------------
 
-Available documentation formats
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-:prog:`libdoc` supports documentation in Robot Framework's own `documentation
+Libdoc supports documentation in Robot Framework's own `documentation
 syntax`_, HTML, plain text, and reStructuredText_. The format to use can be
-specified in `test library source code`__ using :code:`ROBOT_LIBRARY_DOC_FORMAT`
-attribute or given from the command line using :opt:`--docformat (-F)` option.
-In both cases the possible case-insensitive values are :code:`ROBOT` (default),
-:code:`HTML`, :code:`TEXT` and :code:`reST`.
+specified in `test library source code`__ using `ROBOT_LIBRARY_DOC_FORMAT`
+attribute or given from the command line using :option:`--docformat (-F)` option.
+In both cases the possible case-insensitive values are `ROBOT` (default),
+`HTML`, `TEXT` and `reST`.
 
 Robot Framework's own documentation format is the default and generally
 recommended format. Other formats are especially useful when using existing
@@ -378,11 +375,11 @@ was added in Robot Framework 2.7.5.
 
 __ `Specifying documentation format`_
 
-Robot Framework documentation format
-''''''''''''''''''''''''''''''''''''
+Robot Framework documentation syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Most important features in Robot Framework's `documentation syntax`_ are
-formatting using :code:`*bold*` and :code:`_italic_`, custom links and
+formatting using `*bold*` and `_italic_`, custom links and
 automatic conversion of URLs to links, and the possibility to create tables and
 pre-formatted text blocks (useful for examples) simply with pipe character.
 If documentation gets longer, support for section titles (new in Robot
@@ -390,7 +387,7 @@ Framework 2.7.5) can also be handy.
 
 Some of the most important formatting features are illustrated in the example
 below. Notice that since this is the default format, there is no need to use
-:code:`ROBOT_LIBRARY_DOC_FORMAT` attribute nor give the format from the command
+`ROBOT_LIBRARY_DOC_FORMAT` attribute nor give the format from the command
 line.
 
 .. sourcecode:: python
@@ -406,19 +403,19 @@ line.
     def my_keyword():
         """Nothing more to see here."""
 
-HTML documentation format
-'''''''''''''''''''''''''
+HTML documentation syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When using HTML format, you can create documentation pretty much freely using
 any syntax. The main drawback is that HTML markup is not that human friendly,
 and that can make the documentation in the source code hard to maintain and read.
-Documentation in HTML format is used by :prog:`libdoc` directly without any
+Documentation in HTML format is used by Libdoc directly without any
 transformation or escaping. The special syntax for `linking to keywords`_ using
-syntax like :code:`\`My Keyword\`` is supported, however.
+syntax like :codesc:`\`My Keyword\`` is supported, however.
 
 Example below contains the same formatting examples as the previous example.
-Now :code:`ROBOT_LIBRARY_DOC_FORMAT` attribute must be used or format given
-on the command line like :opt:`--docformat HTML`.
+Now `ROBOT_LIBRARY_DOC_FORMAT` attribute must be used or format given
+on the command line like `--docformat HTML`.
 
 .. sourcecode:: python
 
@@ -436,14 +433,14 @@ on the command line like :opt:`--docformat HTML`.
     def my_keyword():
         """Nothing more to see here."""
 
-Plain text documentation format
-'''''''''''''''''''''''''''''''
+Plain text documentation syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When the plain text format is used, :prog:`libdoc` uses the documentation as-is.
+When the plain text format is used, Libdoc uses the documentation as-is.
 Newlines and other whitespace are preserved except for indentation, and
-HTML special characters (:code:`<>&`) escaped. The only formatting done is
+HTML special characters (`<>&`) escaped. The only formatting done is
 turning URLs into clickable links and supporting `internal linking`_
-like :code:`\`My Keyword\``.
+like :codesc:`\`My Keyword\``.
 
 .. sourcecode:: python
 
@@ -459,15 +456,15 @@ like :code:`\`My Keyword\``.
     def my_keyword():
         """Nothing more to see here"""
 
-reStructuredText documentation format
-'''''''''''''''''''''''''''''''''''''
+reStructuredText documentation syntax
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 reStructuredText_ is simple yet powerful markup syntax used widely in Python
 projects (including this User Guide) and elsewhere. The main limitation
 is that you need to have the docutils_ module installed to be able to generate
 documentation using it. Because backtick characters have special meaning in
 reStructuredText, `linking to keywords`_ requires them to be escaped like
-:code:`\\\`My Keyword\\\``.
+:codesc:`\\\`My Keyword\\\``.
 
 .. sourcecode:: python
 
@@ -487,25 +484,35 @@ reStructuredText, `linking to keywords`_ requires them to be escaped like
 
 .. _internal linking:
 
-Internal linking and argument formatting
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Internal linking
+----------------
 
-:prog:`libdoc` supports internal linking to keywords and different
+Libdoc supports internal linking to keywords and different
 sections in the documentation. Linking is done by surrounding the
-target name with backtick characters like :code:`\`target\``. Target
+target name with backtick characters like :codesc:`\`target\``. Target
 names are case-insensitive and possible targets are explained in the
-subsequent sections. The same syntax can also be used for formatting
-arguments or other data.
+subsequent sections.
+
+There is no error or warning if a link target is not found, but instead Libdoc
+just formats the text in italics. Earlier this formatting was recommended to
+be used when referring to keyword arguments, but that was problematic because
+it could accidentally create internal links. Nowadays it is recommended to
+use `inline code style <inline styles_>`__ with double backticks like
+:codesc:`\`\`argument\`\`` instead. The old formatting of single backticks
+may even be removed in the future in favor of giving an error when a link
+target is not found.
 
 In addition to the examples in the following sections, internal linking
-and argument formatting is shown also in the longer `example` at the
+and argument formatting is shown also in the `longer example`__ at the
 end of this chapter.
 
+__ `Libdoc example`_
+
 Linking to keywords
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 All keywords the library have automatically create link targets and they can
-be linked using syntax :code:`\`Keyword Name\``. This is illustrated with
+be linked using syntax :codesc:`\`Keyword Name\``. This is illustrated with
 the example below where both keywords have links to each others.
 
 .. sourcecode:: python
@@ -526,13 +533,13 @@ the example below where both keywords have links to each others.
        """
        # ...
 
-.. note:: When using `reStructuredText documentation format`_, backticks must
-          be escaped like :code:`\\\`Keyword Name\\\``.
+.. note:: When using `reStructuredText documentation syntax`_, backticks must
+          be escaped like :codesc:`\\\`Keyword Name\\\``.
 
 Linking to automatic sections
-'''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The documentation generated by :prog:`libdoc` always contains sections
+The documentation generated by Libdoc always contains sections
 for overall library introduction, shortcuts to keywords, and for
 actual keywords.  If a library itself takes arguments, there is also
 separate `importing section`_.
@@ -544,17 +551,17 @@ shown in the example of the next section.
 .. table:: Automatic section link targets
    :class: tabular
 
-   ================  =============================================================
-        Section                                 Target
-   ================  =============================================================
-   Introduction      :code:`\`introduction\`` and :code:`\`library introduction\``
-   Importing         :code:`\`importing\`` and :code:`\`library importing\``
-   Shortcuts         :code:`\`shortcuts\`` (New in Robot Framework 2.7.5.)
-   Keywords          :code:`\`keywords\`` (New in Robot Framework 2.7.5.)
-   ================  =============================================================
+   ================  ===========================================================
+        Section                               Target
+   ================  ===========================================================
+   Introduction      :codesc:`\`introduction\`` and :codesc:`\`library introduction\``
+   Importing         :codesc:`\`importing\`` and :codesc:`\`library importing\``
+   Shortcuts         :codesc:`\`shortcuts\`` (New in Robot Framework 2.7.5.)
+   Keywords          :codesc:`\`keywords\`` (New in Robot Framework 2.7.5.)
+   ================  ===========================================================
 
 Linking to custom sections
-''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from version 2.7.5, Robot Framework's `documentation syntax`_
 supports custom `section titles`_, and the titles used in the
@@ -582,28 +589,49 @@ custom sections:
        pass
 
 .. note:: Linking to custom sections works only when using `Robot Framework
-          documentation format`_.
+          documentation syntax`_.
 
 .. note:: Prior to Robot Framework 2.8, only the first level section
           titles were linkable.
 
-Argument formatting
-'''''''''''''''''''
+Representing arguments
+----------------------
 
-If the text between backticks does not match any target,
-:prog:`libdoc` will not create a link but instead formats the text
-specially. This formatting works very well with keyword arguments
-referenced in keyword documentations, but can also be used with other
-special data.
-
-Keywords' arguments
-~~~~~~~~~~~~~~~~~~~
-
-:prog:`libdoc` handles keywords' arguments automatically so that
+Libdoc handles keywords' arguments automatically so that
 arguments specified for methods in libraries or user keywords in
 resource files are listed in a separate column. User keyword arguments
-are shown without :var:`${}` or :var:`@{}` to make arguments look
+are shown without `${}` or `@{}` to make arguments look
 the same regardless where keywords originated from.
+
+Regardless how keywords are actually implemented, Libdoc shows arguments
+similarly as when creating keywords in Python. This formatting is explained
+more thoroughly in the table below.
+
+.. table:: How Libdoc represents arguments
+   :class: tabular
+
+   +--------------------+----------------------------+------------------------+
+   |      Arguments     |      Now represented       |        Examples        |
+   +====================+============================+========================+
+   | No arguments       | Empty column.              |                        |
+   +--------------------+----------------------------+------------------------+
+   | One or more        | List of strings containing | | `one_argument`       |
+   | argument           | argument names.            | | `a1, a2, a3`         |
+   +--------------------+----------------------------+------------------------+
+   | Default values     | Default values separated   | | `arg=default value`  |
+   | for arguments      | from names with `=`.       | | `a, b=1, c=2`        |
+   +--------------------+----------------------------+------------------------+
+   | Variable number    | Last (or second last with  | | `*varargs`           |
+   | of arguments       | kwargs) argument has `*`   | | `a, b=42, *rest`     |
+   | (varargs)          | before its name.           |                        |
+   +--------------------+----------------------------+------------------------+
+   | Free keyword       | Last arguments has         | | `**kwargs`           |
+   | arguments (kwargs) | `**` before its name.      | | `a, b=42, **kws`     |
+   |                    |                            | | `*varargs, **kwargs` |
+   +--------------------+----------------------------+------------------------+
+
+When referring to arguments in keyword documentation, it is recommended to
+use `inline code style <inline styles_>`__ like :codesc:`\`\`argument\`\``.
 
 Libdoc example
 --------------
@@ -617,8 +645,7 @@ on. `Click here`__ to see how the generated documentation looks like.
    src/SupportingTools/LoggingLibrary.py
 
 All `standard libraries`_ have documentation generated by
-:prog:`libdoc` and their documentation (and source code) act as a more
+Libdoc and their documentation (and source code) act as a more
 realistic examples.
 
 __ src/SupportingTools/LoggingLibrary.html
-

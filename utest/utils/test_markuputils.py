@@ -151,9 +151,9 @@ class TestFormatParagraph(unittest.TestCase):
         assert_format('P\n| PRE \n', '<p>P</p>\n<pre>\nPRE\n</pre>')
 
 
-class TestHtmlFormatBoldAndItalic(unittest.TestCase):
+class TestHtmlFormatInlineStyles(unittest.TestCase):
 
-    def test_one_word_bold(self):
+    def test_bold_once(self):
         for inp, exp in [('*bold*', '<b>bold</b>'),
                          ('*b*', '<b>b</b>'),
                          ('*many bold words*', '<b>many bold words</b>'),
@@ -166,7 +166,7 @@ class TestHtmlFormatBoldAndItalic(unittest.TestCase):
                          ('*****', '<b>***</b>')]:
             assert_format(inp, exp, p=True)
 
-    def test_multiple_word_bold(self):
+    def test_bold_multiple_times(self):
         for inp, exp in [('*bold* *b* not bold *b3* not',
                           '<b>bold</b> <b>b</b> not bold <b>b3</b> not'),
                          ('not b *this is b* *more b words here*',
@@ -204,7 +204,7 @@ class TestHtmlFormatBoldAndItalic(unittest.TestCase):
                           '<b>bold </b> not*not* <b>b</b>')]:
             assert_format(inp, exp, p=True)
 
-    def test_one_word_italic(self):
+    def test_italic_once(self):
         for inp, exp in [('_italic_', '<i>italic</i>'),
                          ('_i_', '<i>i</i>'),
                          ('_many italic words_', '<i>many italic words</i>'),
@@ -214,7 +214,7 @@ class TestHtmlFormatBoldAndItalic(unittest.TestCase):
                          ('_italic_ xx', '<i>italic</i> xx')]:
             assert_format(inp, exp, p=True)
 
-    def test_multiple_word_italic(self):
+    def test_italic_multiple_times(self):
         for inp, exp in [('_italic_ _i_ not italic _i3_ not',
                           '<i>italic</i> <i>i</i> not italic <i>i3</i> not'),
                          ('not i _this is i_ _more i words here_',
@@ -232,7 +232,7 @@ class TestHtmlFormatBoldAndItalic(unittest.TestCase):
         for inp, exp in [('aa_notitalic_bbb', None),
                          ('_ital_still ital_', '<i>ital_still ital</i>'),
                          ('a_not_b c_still not_d', None),
-                         ('_b_b2_ -_n_- _b3_', '<i>b_b2</i> -_n_- <i>b3</i>')]:
+                         ('_i_i2_ -_n_- _i3_', '<i>i_i2</i> -_n_- <i>i3</i>')]:
             assert_format(inp, exp, p=True)
 
     def test_underscore_alone_does_not_start_italicing(self):
@@ -242,10 +242,10 @@ class TestHtmlFormatBoldAndItalic(unittest.TestCase):
                          (' _ not _ ', '_ not _'),
                          ('_ not_', None),
                          ('_italic _', '<i>italic </i>'),
-                         ('_ _b_ _', '_ <i>b</i> _'),
+                         ('_ _i_ _', '_ <i>i</i> _'),
                          ('_italic _ not_', '<i>italic </i> not_'),
-                         ('_italic _ not_not_ _b_',
-                          '<i>italic </i> not_not_ <i>b</i>')]:
+                         ('_italic _ not_not_ _i_',
+                          '<i>italic </i> not_not_ <i>i</i>')]:
             assert_format(inp, exp, p=True)
 
     def test_bold_and_italic(self):
@@ -268,6 +268,50 @@ class TestHtmlFormatBoldAndItalic(unittest.TestCase):
                          ('_*bi_ b*', '<i><b>bi</i> b</b>'),
                          ('_i *bi*_', '<i>i <b>bi</b></i>'),
                          ('*b _bi*_', '<b>b <i>bi</b></i>')]:
+            assert_format(inp, exp, p=True)
+
+    def test_code_once(self):
+        for inp, exp in [('``code``', '<code>code</code>'),
+                         ('``c``', '<code>c</code>'),
+                         ('``many code words``', '<code>many code words</code>'),
+                         (' ``leading space``', '<code>leading space</code>'),
+                         ('``trailing space`` ', '<code>trailing space</code>'),
+                         ('xx ``code``', 'xx <code>code</code>'),
+                         ('``code`` xx', '<code>code</code> xx')]:
+            assert_format(inp, exp, p=True)
+
+    def test_code_multiple_times(self):
+        for inp, exp in [('``code`` ``c`` not ``c3`` not',
+                          '<code>code</code> <code>c</code> not <code>c3</code> not'),
+                         ('not c ``this is c`` ``more c words here``',
+                          'not c <code>this is c</code> <code>more c words here</code>')]:
+            assert_format(inp, exp, p=True)
+
+    def test_not_coded_if_no_content(self):
+        assert_format('````', p=True)
+
+    def test_not_codeed_many_underlines(self):
+        for inp in ['``````', '````````', '``````````````````', '````len````']:
+            assert_format(inp, p=True)
+
+    def test_backtics_in_the_middle_of_word_are_ignored(self):
+        for inp, exp in [('aa``notcode``bbb', None),
+                         ('``code``still code``', '<code>code``still code</code>'),
+                         ('a``not``b c``still not``d', None),
+                         ('``c``c2`` -``n``- ``c3``', '<code>c``c2</code> -``n``- <code>c3</code>')]:
+            assert_format(inp, exp, p=True)
+
+    def test_backtics_alone_do_not_start_codeing(self):
+        for inp, exp in [('``', None),
+                         (' `` ', '``'),
+                         ('`` not ``', None),
+                         (' `` not `` ', '`` not ``'),
+                         ('`` not``', None),
+                         ('``code ``', '<code>code </code>'),
+                         ('`` ``b`` ``', '`` <code>b</code> ``'),
+                         ('``code `` not``', '<code>code </code> not``'),
+                         ('``code `` not``not`` ``c``',
+                          '<code>code </code> not``not`` <code>c</code>')]:
             assert_format(inp, exp, p=True)
 
 

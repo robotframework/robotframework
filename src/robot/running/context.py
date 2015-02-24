@@ -63,8 +63,6 @@ class _ExecutionContext(object):
         self.in_test_teardown = False
         self.in_keyword_teardown = 0
         self._started_keywords = 0
-        # Set by Runner, checked by Builtin. Should be moved to TestStatus,
-        # but currently BuiltIn doesn't have access to it.
         self.timeout_occurred = False
 
     # TODO: namespace should not have suite, test, or uk_handlers.

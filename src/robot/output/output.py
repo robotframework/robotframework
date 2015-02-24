@@ -37,6 +37,9 @@ class Output(AbstractLogger):
                 LOGGER.register_logger(logger)
         LOGGER.disable_message_cache()
 
+    def register_error_listener(self, listener):
+        LOGGER.register_error_listener(listener)
+
     def close(self, result):
         self._xmllogger.visit_statistics(result.statistics)
         self._xmllogger.close()

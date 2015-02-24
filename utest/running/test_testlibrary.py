@@ -597,13 +597,15 @@ class _FakeNamespace:
 class _FakeVariableScope:
     def __init__(self):
         self.variables = {}
+    def replace_scalar(self, variable):
+        return variable
     def replace_list(self, args, replace_until=None):
         return []
     def replace_string(self, variable):
         try:
-            var = variable.replace('$', '').replace('{', '').replace('}', '')
-            return int(var)
-        except:
+            number = variable.replace('$', '').replace('{', '').replace('}', '')
+            return int(number)
+        except ValueError:
             pass
         try:
             return self.variables[variable]

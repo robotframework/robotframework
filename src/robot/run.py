@@ -80,10 +80,10 @@ Options
                           Underscores in the documentation are converted to
                           spaces and it may also contain simple HTML formatting
                           (e.g. *bold* and http://url/).
- -M --metadata name:value *  Set metadata of the top level test suite.
-                          Underscores in the name and value are converted to
-                          spaces. Value can contain same HTML formatting as
-                          --doc. Example: `--metadata version:1.2`
+ -M --metadata name:value *  Set metadata of the top level suite. Underscores
+                          in the name and value are converted to spaces. Value
+                          can contain same HTML formatting as --doc.
+                          Example: --metadata version:1.2
  -G --settag tag *        Sets given tag(s) to all executed test cases.
  -t --test name *         Select test cases to run by name or long name. Name
                           is case and space insensitive and it can also be a
@@ -263,6 +263,8 @@ Options
     --dryrun              Verifies test data and runs tests so that library
                           keywords are not executed.
     --exitonfailure       Stops test execution if any critical test fails.
+    --exitonerror         Stops test execution if any error occurs when parsing
+                          test data, importing libraries, and so on.
     --skipteardownonexit  Causes teardowns to be skipped if test execution is
                           stopped prematurely.
     --randomize all|suites|tests|none  Randomizes the test execution order.

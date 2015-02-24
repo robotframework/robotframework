@@ -22,7 +22,7 @@ subsections below.
 Using Library setting
 ~~~~~~~~~~~~~~~~~~~~~
 
-Test libraries are normally imported using the :opt:`Library`
+Test libraries are normally imported using the :setting:`Library`
 setting in the Setting table and having the library name in the
 subsequent column. The library name is case-sensitive (it is the name
 of the module or class implementing the library and must be exactly
@@ -62,7 +62,7 @@ Using Import Library keyword
 Another possibility to take a test library into use is using the
 keyword :name:`Import Library` from the BuiltIn_ library. This keyword
 takes the library name and possible arguments similarly as the
-:opt:`Library` setting. Keywords from the imported library are
+:setting:`Library` setting. Keywords from the imported library are
 available in the test suite where the :name:`Import Library` keyword was
 used. This approach is useful in cases where the library is not
 available when the test execution starts and only some other keywords
@@ -87,8 +87,8 @@ name, like it has been done in all the examples in this section. In
 these cases Robot Framework tries to find the class or module
 implementing the library from the *library search path*. Basically,
 this means that the library code and all its possible dependencies
-must be in :code:`PYTHONPATH` or, when running tests on Jython, in a
-:code:`CLASSPATH`. `Setting the library search path`__ is explained in
+must be in ``PYTHONPATH`` or, when running tests on Jython, in a
+``CLASSPATH``. `Setting the library search path`__ is explained in
 a section of its own. Libraries can also set the search path
 automatically or have special instructions on how to do it. All
 `standard libraries`_, for example, are in the library search path
@@ -114,12 +114,11 @@ to `resource and variable files`_. The main benefit of this approach
 is that there is no need to configure the library search path.
 
 If the library is a file, the path to it must contain extension. For
-Python libraries the extension is naturally :path:`.py` and for Java
-libraries it can either be :path:`.class` or :path:`.java`, but the
+Python libraries the extension is naturally :file:`.py` and for Java
+libraries it can either be :file:`.class` or :file:`.java`, but the
 class file must always be available. If Python library is implemented
-as a directory, the path to it must have a trailing forward slash
-(:path:`/`). Following examples demonstrate these different
-usages.
+as a directory, the path to it must have a trailing forward slash (`/`).
+Following examples demonstrate these different usages.
 
 .. table:: Importing test libraries using physical paths to them
    :class: example
@@ -164,7 +163,7 @@ __ `Handling keywords with same names`_
 
 
 The basic syntax for specifying the new name is having the text
-:code:`WITH NAME` (case-insensitive) after the library name and then
+`WITH NAME` (case-insensitive) after the library name and then
 having the new name in the next cell. The specified name is shown in
 logs and must be used in the test data when using keywords' full name
 (:name:`LibraryName.Keyword Name`).
@@ -180,7 +179,7 @@ logs and must be used in the test data when using keywords' full name
    =========  ===================  =========  =========
 
 Possible arguments to the library are placed into cells between the
-original library name and the :code:`WITH NAME` text. The following example
+original library name and the `WITH NAME` text. The following example
 illustrates how the same library can be imported several times with
 different arguments:
 

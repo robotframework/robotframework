@@ -12,10 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
 from robot.model import SuiteVisitor
 
 
-class ReRunMerger(SuiteVisitor):
+class Merger(SuiteVisitor):
 
     def __init__(self, result):
         self.root = result.suite
@@ -26,30 +27,32 @@ class ReRunMerger(SuiteVisitor):
 
     def start_suite(self, suite):
         try:
-            if not self.current:
-                self.current = self._find_root(suite)
-            else:
-                self.current = self._find(self.current.suites, suite.name)
-        except ValueError:
-            self._report_ignored(suite)
+            self.current = self._find_suite(self.current, suite.name)
+        except IndexError:
+            suite.message = self._create_add_message(suite, test=False)
+            self.current.suites.append(suite)
             return False
 
-    def _find_root(self, suite):
-        if self.root.name != suite.name:
-            raise ValueError
-        return self.root
+    def _find_suite(self, parent, name):
+        if not parent:
+            suite = self._find_root(name)
+        else:
+            suite = self._find(parent.suites, name)
+        suite.starttime = suite.endtime = None
+        return suite
+
+    def _find_root(self, name):
+        if self.root.name == name:
+            return self.root
+        raise DataError("Cannot merge outputs containing different root "
+                        "suites. Original suite is '%s' and merged is '%s'."
+                        % (self.root.name, name))
 
     def _find(self, items, name):
         for item in items:
             if item.name == name:
                 return item
-        raise ValueError
-
-    def _report_ignored(self, item, test=False):
-        from robot.output import LOGGER
-        type = 'suite' if not test else 'test'
-        LOGGER.error("Merged %s '%s' is ignored because it is not found from "
-                     "original result." % (type, item.longname))
+        raise IndexError
 
     def end_suite(self, suite):
         self.current = self.current.parent
@@ -57,15 +60,22 @@ class ReRunMerger(SuiteVisitor):
     def visit_test(self, test):
         try:
             old = self._find(self.current.tests, test.name)
-        except ValueError:
-            self._report_ignored(test, test=True)
+        except IndexError:
+            test.message = self._create_add_message(test)
+            self.current.tests.append(test)
         else:
             test.message = self._create_merge_message(test, old)
             index = self.current.tests.index(old)
             self.current.tests[index] = test
 
+    def _create_add_message(self, item, test=True):
+        prefix = '%s added from merged output.' % ('Test' if test else 'Suite')
+        if not item.message:
+            return prefix
+        return '\n'.join([prefix, '-  -  -', item.message])
+
     def _create_merge_message(self, new, old):
-        return '\n'.join(['Test has been re-run and results replaced.',
+        return '\n'.join(['Re-executed test has been merged.',
                           '-  -  -',
                           'New status:  %s' % new.status,
                           'New message:  %s' % new.message,

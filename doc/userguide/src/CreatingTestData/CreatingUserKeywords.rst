@@ -61,19 +61,19 @@ have the same square bracket syntax separating them from keyword
 names. All available settings are listed below and explained later in
 this section.
 
-`[Documentation]`:opt:
+`[Documentation]`:setting:
    Used for setting a `user keyword documentation`_.
 
-`[Arguments]`:opt:
+`[Arguments]`:setting:
    Specifies `user keyword arguments`_.
 
-`[Return]`:opt:
+`[Return]`:setting:
    Specifies `user keyword return values`_.
 
-`[Teardown]`:opt:
+`[Teardown]`:setting:
    Specify `user keyword teardown`_. Available from Robot Framework 2.6 onwards.
 
-`[Timeout]`:opt:
+`[Timeout]`:setting:
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
    in a section of their own.
 
@@ -91,7 +91,7 @@ use-case-like test cases, the highest-level keywords are often
 formulated as sentences or even paragraphs.
 
 User keywords can have a documentation that is set with the
-:opt:`[Documentation]` setting, exactly as `test case
+:setting:`[Documentation]` setting, exactly as `test case
 documentation`_. This setting documents the user keyword in the test
 data. It is also shown in a more formal keyword documentation, which
 the `libdoc`_ tool can create from `resource files`_. Finally, the
@@ -100,7 +100,7 @@ first row of the documentation is shown as a keyword documentation in
 
 Sometimes keywords need to be removed, replaced with new ones, or
 deprecated for other reasons.  User keywords can be marked deprecated
-by starting the documentation with :code:`*DEPRECATED*`, which will
+by starting the documentation with `*DEPRECATED*`, which will
 cause a warning when the keyoword is used. For more information, see
 `Deprecating keywords`_ section.
 
@@ -111,8 +111,8 @@ Most user keywords need to take some arguments. The syntax for
 specifying them is probably the most complicated feature normally
 needed with Robot Framework, but even that is relatively easy,
 particularly in most common cases. Arguments are normally specified with
-the :opt:`[Arguments]` setting, and argument names use the same
-syntax as variables_, for example :code:`${arg}`.
+the :setting:`[Arguments]` setting, and argument names use the same
+syntax as variables_, for example `${arg}`.
 
 Positional arguments
 ~~~~~~~~~~~~~~~~~~~~
@@ -121,7 +121,7 @@ The simplest way to specify arguments (apart from not having them at all)
 is using only positional arguments. In most cases, this is all
 that is needed.
 
-The syntax is such that first the :opt:`[Arguments]` setting is
+The syntax is such that first the :setting:`[Arguments]` setting is
 given and then argument names are defined in the subsequent
 cells. Each argument is in its own cell, using the same syntax as with
 variables. The keyword must be used with as many arguments as there
@@ -129,7 +129,7 @@ are argument names in its signature. The actual argument names do not
 matter to the framework, but from users' perspective they should should
 be as descriptive as possible. It is recommended
 to use lower-case letters in variable names, either as
-:code:`${my_arg}`, :code:`${my arg}` or :code:`${myArg}`.
+`${my_arg}`, `${my arg}` or `${myArg}`.
 
 .. table:: User keyword taking different number of arguments
    :class: example
@@ -156,12 +156,13 @@ support default values, and the needed new syntax does not add very much
 to the already discussed basic syntax.
 
 In short, default values are added to arguments, so that first there is
-the equals sign (:code:`=`) and then the value, for example
-:code:`${arg}=default`. There can be many arguments with defaults, but they
-all must be given after the normal positional arguments.
+the equals sign (`=`) and then the value, for example `${arg}=default`.
+There can be many arguments with defaults, but they all must be given after
+the normal positional arguments. The default value can contain a variable_
+created on `suite or global scope`__.
 
 .. note:: The syntax for default values is space sensitive. Spaces
-          before the :code:`=` sign are not allowed, and possible spaces
+          before the `=` sign are not allowed, and possible spaces
           after it are considered part of the default value itself.
 
 .. table:: User keyword with default values for arguments
@@ -174,7 +175,7 @@ all must be given after the normal positional arguments.
    \                                  [Documentation]  This keyword takes     0-1 arguments
    \                                  Log              Got argument ${arg}
    \
-   Two Arguments With Defaults        [Arguments]      ${arg1}=default 1      ${arg2}=default 2
+   Two Arguments With Defaults        [Arguments]      ${arg1}=default 1      ${arg2}=${VARIABLE}
    \                                  [Documentation]  This keyword takes     0-2 arguments
    \                                  Log              1st argument ${arg1}
    \                                  Log              2nd argument ${arg2}
@@ -188,9 +189,9 @@ all must be given after the normal positional arguments.
 When a keyword accepts several arguments with default values and only
 some of them needs to be overridden, it is often handy to use the
 `named arguments`_ syntax. When this syntax is used with user
-keywords, the arguments are specified without the :var:`${}`
+keywords, the arguments are specified without the `${}`
 decoration. For example, the second keyword above could be used like
-below and :code:`${arg1}` would still get its default value.
+below and `${arg1}` would still get its default value.
 
 .. table:: User keyword and named arguments syntax
    :class: example
@@ -205,13 +206,15 @@ As all Pythonistas must have already noticed, the syntax for
 specifying default arguments is heavily inspired by Python syntax for
 function default values.
 
+__ `Variable priorities and scopes`_
+
 Varargs with user keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes even default values are not enough and there is a need
 for a keyword accepting `variable number of arguments`_. User keywords
 support also this feature. All that is needed is having `list variable`__
-such as :code:`@{varargs}` as the last argument in the keyword signature.
+such as `@{varargs}` as the last argument in the keyword signature.
 This syntax can be combined with the previously described positional
 arguments and default values, and at the end the list variable gets all
 the leftover arguments that do not match other arguments. The list
@@ -240,7 +243,7 @@ __ `list variables`_
    ===========================  ===========  ================  ==========  ==========
 
 Notice that if the last keyword above is used with more than one
-argument, the second argument :code:`${opt}` always gets the given
+argument, the second argument `${opt}` always gets the given
 value instead of the default value. This happens even if the given
 value is empty. The last example also illustrates how a variable
 number of arguments accepted by a user keyword can be used in a `for
@@ -283,11 +286,11 @@ into the keyword name is that all you need is a keyword with name like
    ===========================  =====================  =============  ============
 
 Keywords using embedded arguments cannot take any "normal" arguments
-(specified with :opt:`[Arguments]` setting) but otherwise they are
+(specified with :setting:`[Arguments]` setting) but otherwise they are
 created just like other user keywords. The arguments used in the name
 will naturally be available inside the keyword and they have different
 value depending on how the keyword is called. For example,
-:var:`${animal}` in the previous has value :code:`dog` if the keyword
+`${animal}` in the previous has value `dog` if the keyword
 is used like :name:`Select dog from list`. Obviously it is not
 mandatory to use all these arguments inside the keyword, and they can
 thus be used as wildcards.
@@ -326,7 +329,7 @@ it might be a better idea to use normal positional arguments instead.
 The problem of arguments matching too much occurs often when creating
 keywords that `ignore given/when/then/and prefixes`__ . For example,
 :name:`${name} goes home` matches :name:`Given Janne goes home` so
-that :var:`${name}` gets value :code:`Given Janne`. Quotes around the
+that `${name}` gets value `Given Janne`. Quotes around the
 argument, like in :name:`"${name}" goes home`, resolve this problem
 easily.
 
@@ -337,7 +340,7 @@ Using custom regular expressions
 When keywords with embedded arguments are called, the values are
 matched internally using `regular expressions`__
 (regexps for short). The default logic goes so that every argument in
-the name is replaced with a pattern :code:`.*?` that basically matches
+the name is replaced with a pattern `.*?` that basically matches
 any string. This logic works fairly well normally, but as just
 discussed above, sometimes keywords `match more than
 intended`__. Quoting or otherwise separating arguments from the other
@@ -374,7 +377,7 @@ least the basics of the regular expression syntax.
 A custom embedded argument regular expression is defined after the
 base name of the argument so that the argument and the regexp are
 separated with a colon. For example, an argument that should match
-only numbers can be defined like :var:`${arg:\\d+}`. Using custom
+only numbers can be defined like `${arg:\d+}`. Using custom
 regular expressions is illustrated by the examples below.
 
 .. table:: Using custom regular expressions with embedded arguments
@@ -404,12 +407,12 @@ regular expressions is illustrated by the examples below.
 
 In the above example keyword :name:`I execute "ls" with "-lh"` matches
 only :name:`I execute "${cmd}" with "${opts}"`. That is guaranteed
-because the custom regular expression :code:`[^"]+` in :name:`I execute
+because the custom regular expression `[^"]+` in :name:`I execute
 "${cmd:[^"]}"` means that a matching argument cannot contain any
 quotes. In this case there is no need to add custom regexps to the
 other :name:`I execute` variant.
 
-.. tip:: If you quote arguments, using regular expression :code:`[^"]+`
+.. tip:: If you quote arguments, using regular expression `[^"]+`
          guarantees that the argument matches only until the first
          closing quote.
 
@@ -419,7 +422,7 @@ Supported regular expression syntax
 Being implemented with Python, Robot Framework naturally uses Python's
 :name:`re` module that has pretty standard `regular expressions
 syntax`__. This syntax is otherwise fully supported with embedded
-arguments, but regexp extensions in format :code:`(?...)` cannot be
+arguments, but regexp extensions in format `(?...)` cannot be
 used. Notice also that matching embedded arguments is done
 case-insensitively. If the regular expression syntax is invalid,
 creating the keyword fails with an error visible in `test execution
@@ -430,22 +433,21 @@ Escaping special characters
 
 There are some special characters that need to be escaped when used in
 the custom embedded arguments regexp. First of all, possible closing
-curly braces (:code:`}`) in the pattern need to be escaped with a
-single backslash (:code:`\\}`) because otherwise the argument would
-end already there. Escaping closing burly braces is illustrated in the
-previous example with keyword :name:`Today is
-${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}`.
+curly braces (`}`) in the pattern need to be escaped with a single backslash
+(`\}`) because otherwise the argument would end already there. This is
+illustrated in the previous example with keyword
+:name:`Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}`.
 
-Backslash (:code:`\\`) is a special character in Python regular
+Backslash (:codesc:`\\`) is a special character in Python regular
 expression syntax and thus needs to be escaped if you want to have a
 literal backslash character. The safest escape sequence in this case
-is four backslashes (:code:`\\\\\\\\`) but, depending on the next
+is four backslashes (`\\\\`) but, depending on the next
 character, also two backslashes may be enough.
 
 Notice also that keyword names and possible embedded arguments in them
 should *not* be escaped using the normal `test data escaping
 rules`__. This means that, for example, backslashes in expressions
-like :var:`${name:\\w+}` should not be escaped.
+like `${name:\w+}` should not be escaped.
 
 Using variables with custom embedded argument regular expressions
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -479,12 +481,12 @@ using the keywords from the earlier example.
 A drawback of variables automatically matching custom regular
 expressions is that it is possible that the value the keyword gets
 does not actually match the specified regexp. For example, variable
-:var:`${DATE}` in the above example could contain any value and
+`${DATE}` in the above example could contain any value and
 :name:`Today is ${DATE}` would still match the same keyword.
 
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching too much`_
-__ http://docs.python.org/library/re.html
+__ https://docs.python.org/2/library/re.html
 __ `Errors and warnings during execution`_
 __ Escaping_
 
@@ -530,8 +532,7 @@ of the keyword definitions`__.
    ======================================  ===============  ============  ============
 
 .. note:: Embedded arguments feature in Robot Framework is inspired by
-          how `step definitions` are created in a popular BDD tool
-          called Cucumber__.
+          how *step definitions* are created in a popular BDD tool Cucumber__.
 
 __ `Ignoring Given/When/Then/And prefixes`_
 __ http://cukes.info
@@ -540,7 +541,7 @@ User keyword return values
 --------------------------
 
 Similarly as library keywords, also user keywords can return
-values. Typically return values are defined with the :opt:`[Return]`
+values. Typically return values are defined with the :setting:`[Return]`
 setting, but it is also possible to use BuiltIn_ keywords
 :name:`Return From Keyword` and :name:`Return From Keyword If`.
 Regardless how values are returned, they can be `assigned to variables`__
@@ -548,19 +549,19 @@ in test cases and in other user keywords.
 
 __ `Return values from keywords`_
 
-Using :opt:`[Return]` setting
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using :setting:`[Return]` setting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The most common case is that  a user keyword returns one value and it is
-assigned to a scalar variable. When using the :opt:`[Return]` setting, this is
+assigned to a scalar variable. When using the :setting:`[Return]` setting, this is
 done by having the return value in the next cell after the setting.
 
 User keywords can also return several values, which can then be assigned into
 several scalar variables at once, to a list variable, or to scalar variables
 and a list variable. Several values can be returned simply by
-specifying those values in different cells after the :opt:`[Return]` setting.
+specifying those values in different cells after the :setting:`[Return]` setting.
 
-.. table:: User keywords returning values using :opt:`[Return]` setting
+.. table:: User keywords returning values using :setting:`[Return]` setting
    :class: example
 
    ================  ============  ===================  ===================  ===================
@@ -594,10 +595,10 @@ Using special keywords to return
 BuiltIn_ keywords :name:`Return From Keyword` and :name:`Return From Keyword If`
 allow returning from a user keyword conditionally in the middle of the keyword.
 Both of them also accept optional return values that are handled exactly like
-with the :opt:`[Return]` setting discussed above.
+with the :setting:`[Return]` setting discussed above.
 
 The first example below is functionally identical to the previous
-:opt:`[Return]` setting example. The second, and more advanced, example
+:setting:`[Return]` setting example. The second, and more advanced, example
 demonstrates returning conditionally inside a `for loop`_.
 
 .. table:: User keywords returning values using special keywords
@@ -643,7 +644,7 @@ User keyword teardown
 ---------------------
 
 Starting from Robot Framework 2.6, also user keywords may have a teardown.
-It is defined using :opt:`[Teardown]` setting.
+It is defined using :setting:`[Teardown]` setting.
 
 Keyword teardown works much in the same way as a `test case
 teardown`__.  Most importantly, the teardown is always a single

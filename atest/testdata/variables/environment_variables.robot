@@ -36,11 +36,12 @@ Leading And Trailing Spaces Are Ignored Environment Variable Name
     Should Be Equal  %{ THIS_ENV_VAR_IS_SET }  Env var value
 
 Non-Existing Environment Variable
-    [Documentation]  FAIL Environment variable 'NON_EXISTING' does not exist
+    [Documentation]  FAIL Environment variable '%{NON_EXISTING}' not found.
     Log  %{NON_EXISTING}
 
 Environment Variables Are Case Sensitive
-    [Documentation]  FAIL Environment variable 'this_env_var_is_set' does not exist
+    [Documentation]  FAIL Environment variable '%{this_env_var_is_set}' not found. Did you mean:
+    ...    ${SPACE * 4}\%{THIS_ENV_VAR_IS_SET}
     Log  %{this_env_var_is_set}
 
 Environment Variables Are Not Case Sensitive On Windows
@@ -48,11 +49,13 @@ Environment Variables Are Not Case Sensitive On Windows
     Log  %{this_env_var_is_set}
 
 Environment Variables Are Space Sensitive
-    [Documentation]  FAIL Environment variable 'THIS ENV VAR IS SET' does not exist
+    [Documentation]  FAIL Environment variable '%{THIS ENV VAR IS SET}' not found. Did you mean:
+    ...    ${SPACE * 4}\%{THIS_ENV_VAR_IS_SET}
     Log  %{THIS ENV VAR IS SET}
 
 Environment Variables Are Underscore Sensitive
-    [Documentation]  FAIL Environment variable 'TH_IS_ENVVAR_IS_SET' does not exist
+    [Documentation]  FAIL Environment variable '%{TH_IS_ENVVAR_IS_SET}' not found. Did you mean:
+    ...    ${SPACE * 4}\%{THIS_ENV_VAR_IS_SET}
     Log  %{TH_IS_ENVVAR_IS_SET}
 
 Environment Variables In Variable Table

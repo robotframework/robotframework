@@ -45,7 +45,7 @@ Keyword cannot have only teardown
     Keyword cannot have only teardown
 
 Replacing Variables in Keyword Teardown Fails
-    [Documentation]  FAIL Keyword teardown failed:\nNon-existing variable '${NON EXISTING}'.
+    [Documentation]  FAIL Keyword teardown failed:\nVariable '${NON EXISTING}' not found.
     Replacing Variables in Keyword Teardown Fails
 
 

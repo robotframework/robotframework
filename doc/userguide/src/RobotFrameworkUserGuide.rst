@@ -31,7 +31,8 @@ __ http://creativecommons.org/licenses/by/3.0/
 
 .. include:: GettingStarted/Introduction.rst
 .. include:: GettingStarted/CopyrightAndLicense.rst
-.. include:: GettingStarted/Installation.rst
+.. INSTALL.rst is copied from project root by ug2html.py
+.. include:: GettingStarted/INSTALL.rst
 .. include:: GettingStarted/Demonstration.rst
 
 ~~~~~~~~~~~~~~~~~~~~~~

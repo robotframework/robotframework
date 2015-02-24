@@ -171,6 +171,8 @@ class Keyword(_BaseKeyword):
 
     def _report_failure(self, context):
         failure = HandlerExecutionFailed()
+        if failure.timeout:
+            context.timeout_occurred = True
         context.output.fail(failure.full_message)
         if failure.traceback:
             context.output.debug(failure.traceback)

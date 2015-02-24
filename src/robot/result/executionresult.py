@@ -30,7 +30,7 @@ class Result(object):
         #: Path to the XML file where results are read from.
         self.source = source
         #: Hierarchical execution results as a
-        #: :class:`~.testsuite.TestSuite` object.
+        #: :class:`~.result.testsuite.TestSuite` object.
         self.suite = root_suite or TestSuite()
         #: Execution errors as a
         #: :class:`~.executionerrors.ExecutionErrors` object.
@@ -81,8 +81,8 @@ class Result(object):
         :param status_rc: If set to ``False``, :attr:`return_code` always
             returns 0.
         :param suite_config: A dictionary of configuration options passed
-            to :meth:`~.testsuite.TestSuite.configure` method of the contained
-            ``suite``.
+            to :meth:`~.result.testsuite.TestSuite.configure` method of
+            the contained ``suite``.
         :param stat_config: A dictionary of configuration options used when
             creating :attr:`statistics`.
         """

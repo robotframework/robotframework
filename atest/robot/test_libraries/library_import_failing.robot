@@ -35,11 +35,11 @@ Non-existing Library
 
 Non-existing Variable In Library Name
     Import Should Have Failed  6
-    ...  Replacing variables from setting 'Library' failed: Non-existing variable '\${non existing nön äscii}'.
+    ...  Replacing variables from setting 'Library' failed: Variable '\${non existing nön äscii}' not found.
 
 Non-existing Variable In Library Arguments
     Import Should Have Failed  7
-    ...  Non-existing variable '\${nön existing}'.
+    ...  Variable '\${nön existing}' not found.
 
 Library Import Without Name
     Import Should Have Failed  8

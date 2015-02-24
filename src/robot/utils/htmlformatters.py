@@ -92,18 +92,34 @@ _                          # start of italic
 _                          # end of italic
 (?= ["').,!?:;]* ($|\ ) )  # opt. any char "').,!?:; and end of line or space
 ''', re.VERBOSE)
+    _code = re.compile('''
+( (^|\ ) ["'(]* )          # same as above with _ changed to ``
+``
+([^\ `].*?)
+``
+(?= ["').,!?:;]* ($|\ ) )
+''', re.VERBOSE)
 
     def __init__(self):
-        self._format_link = LinkFormatter().format_link
+        self._formatters = [('*', self._format_bold),
+                            ('_', self._format_italic),
+                            ('``', self._format_code),
+                            ('', LinkFormatter().format_link)]
 
     def format(self, line):
-        return self._format_link(self._format_italic(self._format_bold(line)))
+        for marker, formatter in self._formatters:
+            if marker in line:
+                line = formatter(line)
+        return line
 
     def _format_bold(self, line):
-        return self._bold.sub('\\1<b>\\3</b>', line) if '*' in line else line
+        return self._bold.sub('\\1<b>\\3</b>', line)
 
     def _format_italic(self, line):
-        return self._italic.sub('\\1<i>\\3</i>', line) if '_' in line else line
+        return self._italic.sub('\\1<i>\\3</i>', line)
+
+    def _format_code(self, line):
+        return self._code.sub('\\1<code>\\3</code>', line)
 
 
 class HtmlFormatter(object):

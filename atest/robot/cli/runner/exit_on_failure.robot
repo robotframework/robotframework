@@ -1,33 +1,33 @@
 *** Settings ***
-Force Tags      pybot  jybot  regression
-Resource        atest_resource.robot
+Force Tags        pybot    jybot    regression
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Exit On Failure
-    [Setup]  Run Tests  --exitonfailure  misc/pass_and_fail.robot  misc/suites  running/fatal_exception/02__irrelevant.robot
-    Check Test Case  Pass
-    Check Test Case  Fail
-    Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and exit-on-failure mode is in use.
-    Check Test Case  Suite3 First  FAIL  Critical failure occurred and exit-on-failure mode is in use.
+    [Setup]    Run Tests    --exitonfailure    misc/pass_and_fail.robot    misc/suites    running/fatal_exception/02__irrelevant.robot
+    Check Test Case    Pass
+    Check Test Case    Fail
+    Check Test Case    SubSuite1 First    FAIL    Critical failure occurred and exit-on-failure mode is in use.
+    Check Test Case    Suite3 First    FAIL    Critical failure occurred and exit-on-failure mode is in use.
 
 Imports Are Skipped On Exit
-    Previous test should have passed  Exit On Failure
-    Should be empty  ${ERRORS.messages}
+    Previous test should have passed    Exit On Failure
+    Should be empty    ${ERRORS.messages}
 
-Correct Suite Teardown Is Executed When Exitonfailure Is Used
-    [Setup]  Run Tests  --exitonfailure  misc/suites
-    ${tsuite} =  Get Test Suite  Suites
-    Should Be Equal  ${tsuite.teardown.name}  BuiltIn.Log
-    ${tsuite} =  Get Test Suite  Fourth
-    Should Be Equal  ${tsuite.teardown.name}  BuiltIn.Log
-    ${tsuite} =  Get Test Suite  Tsuite3
-    Should Be Equal  ${tsuite.teardown}  ${None}
+Correct Suite Teardown Is Executed When ExitOnFailure Is Used
+    [Setup]    Run Tests    --exitonfailure    misc/suites
+    ${tsuite} =    Get Test Suite    Suites
+    Should Be Equal    ${tsuite.teardown.name}    BuiltIn.Log
+    ${tsuite} =    Get Test Suite    Fourth
+    Should Be Equal    ${tsuite.teardown.name}    BuiltIn.Log
+    ${tsuite} =    Get Test Suite    Tsuite3
+    Should Be Equal    ${tsuite.teardown}    ${None}
 
 Exit On Failure With Skip Teardown On Exit
-    [Setup]  Run Tests  --ExitOnFailure --SkipTeardownOnExit  misc/suites
-    ${tcase} =  Check Test Case  Suite4 First
-    Should Be Equal  ${tcase.teardown}  ${None}
-    ${tsuite} =  Get Test Suite  Fourth
-    Should Be Equal  ${tsuite.teardown}  ${None}
-    Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and exit-on-failure mode is in use.
-    Check Test Case  Suite3 First  FAIL  Critical failure occurred and exit-on-failure mode is in use.
+    [Setup]    Run Tests    --ExitOnFailure --SkipTeardownOnExit    misc/suites
+    ${tcase} =    Check Test Case    Suite4 First
+    Should Be Equal    ${tcase.teardown}    ${None}
+    ${tsuite} =    Get Test Suite    Fourth
+    Should Be Equal    ${tsuite.teardown}    ${None}
+    Check Test Case    SubSuite1 First    FAIL    Critical failure occurred and exit-on-failure mode is in use.
+    Check Test Case    Suite3 First    FAIL    Critical failure occurred and exit-on-failure mode is in use.

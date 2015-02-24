@@ -1,11 +1,30 @@
+| *** Settings *** |
+| Library | OperatingSystem |
+|
+| Library | String
+|
+|
+
 ***Test Cases***
-| Minimum Pipes 
+| Minimum Pipes
 | | No Operation
 
-|  Pipes All Around  |  No Operation  | 
+|  Pipes All Around  |  No Operation  |
 |                    |  Log  |  New Line  |
 
-| Pipes In Data | 
+|
+|
+| Empty line with pipe
+|
+| | Directory Should Exist | . |
+|
+|
+|
+| | Convert To Upper Case | Using keywords from imported libraries
+|
+|
+
+| Pipes In Data |
 |               | Should Be Equal | |foo\| | |foo| |
 |               | Should Be Equal | |foo|  | |foo\|
 |               | Should Be Equal | \|     | \|    |
@@ -13,6 +32,7 @@
 
 
 |  Extra Pipes At The End  |       |                      |       |        |
+|                          |  Log  | Also spaces after the last pipe. Don't let your IDE eat them!
 |                          |  Log  |  Line Ends to \|  |    |       |
 |                          |  Log  |  Line Ends to \| + 1 space   |       |        | 
 |                          |  Log  |  Line Ends to \| + 2 space   |       |        |  
@@ -44,7 +64,7 @@
 |         |  :FOR  |  ${value}  |  IN   |  a    |   a   |   for loop executed   |  for loop not executed  |
 |         |        |  Should Be Equal  |  ${value}  |  a   |  ${value}  |  no values  |
 
-| *Keywords* | A | r | g | u | m | e | n | t | s | 
+| *Keywords* | A | r | g | u | m | e | n | t | s |
 |  Cells Should Be Empty  |
 |       | [Arguments]     | @{args}          |
 |       | :FOR            | ${arg}           |  IN      |  @{args}   |

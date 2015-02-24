@@ -64,34 +64,47 @@ descriptive name, you can import it using the `WITH NAME syntax`_.
 .. table:: Importing Remote library
    :class: example
 
-   =========  ===========  =========================  =========  =========
-    Setting      Value                Value             Value      Value
-   =========  ===========  =========================  =========  =========
+   =========  ===========  =========================  =========  =========  =========
+    Setting      Value                Value             Value      Value      Value
+   =========  ===========  =========================  =========  =========  =========
    Library    Remote       \http://127.0.0.1:8270     WITH NAME  Example1
    Library    Remote       \http://example.com:8080/  WITH NAME  Example2
-   Library    Remote       \http://10.0.0.2/example   WITH NAME  Example3
-   =========  ===========  =========================  =========  =========
+   Library    Remote       \http://10.0.0.2/example   1 minute   WITH NAME  Example3
+   =========  ===========  =========================  =========  =========  =========
 
 The URL used by the first example above is also the default address
 that the Remote library uses if no address is given. Similarly port
-:code:`8270` is the port that remote servers are expected to use by default.
+`8270` is the port that remote servers are expected to use by default.
 (82 and 70 are the ASCII codes of letters `R` and `F`, respectively.)
 
 .. note:: When connecting to the local machine, it is recommended to use
-          address :code:`127.0.0.1` instead of :code:`localhost`. This avoids
+          address `127.0.0.1` instead of `localhost`. This avoids
           address resolution that can be extremely slow `at least on Windows`__.
           Prior to Robot Framework 2.8.4 the Remote library itself used the
-          potentially slow :code:`localhost` by default.
+          potentially slow `localhost` by default.
 
 .. note:: Notice that if the URI contains no path after the server address,
           `xmlrpclib module`__ used by the Remote library will use
-          :code:`/RPC2` path by default. In practice using
-          :code:`http://127.0.0.1:8270` is thus identical to using
-          :code:`http://127.0.0.1:8270/RPC2`. Depending on the remote server
+          `/RPC2` path by default. In practice using
+          `http://127.0.0.1:8270` is thus identical to using
+          `http://127.0.0.1:8270/RPC2`. Depending on the remote server
           this may or may not be a problem. No extra path is appended if
-          the address has a path even if the path is just :code:`/`. For
-          example, neither :code:`http://127.0.0.1:8270/` nor
-          :code:`http://127.0.0.1:8270/my/path` will be modified.
+          the address has a path even if the path is just `/`. For
+          example, neither `http://127.0.0.1:8270/` nor
+          `http://127.0.0.1:8270/my/path` will be modified.
+
+The last example above shows how to give a custom timeout to the Remote library
+as an optional second argument. The timeout is used when initially connecting
+to the server and if a connection accidentally closes. Timeout can be
+given in Robot Framework `time format`_ like `60s` or `2 minutes 10 seconds`.
+
+The default timeout is typically several minutes, but it depends on
+the operating system and its configuration. Notice that setting
+a timeout that is shorter than keyword execution time will interrupt
+the keyword.
+
+.. note:: Support for timeouts is a new feature in Robot Framework 2.8.6.
+          Timeouts do not work with Python/Jython 2.5 nor with IronPython.
 
 __ http://stackoverflow.com/questions/14504450/pythons-xmlrpc-extremely-slow-one-second-per-call
 __ https://docs.python.org/2/library/xmlrpclib.html
@@ -102,7 +115,7 @@ Starting and stopping remote servers
 Before the Remote library can be imported, the remote server providing
 the actual keywords must be started.  If the server is started before
 launching the test execution, it is possible to use the normal
-:opt:`Library` setting like in the above example. Alternatively other
+:setting:`Library` setting like in the above example. Alternatively other
 keywords, for example from OperatingSystem or SSH libraries, can start
 the server up, but then you may need to use `Import Library keyword`__
 because the library is not available when the test execution starts.
@@ -112,15 +125,15 @@ implemented. Typically servers support the following methods:
 
 * Regardless of the library used, remote servers should provide :name:`Stop
   Remote Server` keyword that can be easily used by executed tests.
-* Remote servers should have :code:`stop_remote_server` method in their
+* Remote servers should have `stop_remote_server` method in their
   XML-RPC interface.
-* Hitting :code:`Ctrl-C` on the console where the server is running should
+* Hitting `Ctrl-C` on the console where the server is running should
   stop the server.
 * The server process can be terminated using tools provided by the
-  operating system (e.g. :prog:`kill`).
+  operating system (e.g. ``kill``).
 
 .. note:: Servers may be configured so that users cannot stop it with
-          :name:`Stop Remote Server` keyword or :code:`stop_remote_server`
+          :name:`Stop Remote Server` keyword or `stop_remote_server`
           method.
 
 __ `Using Import Library keyword`_
@@ -138,7 +151,7 @@ Both the Remote library and the Python remote server handle Python values
 according to the following rules. Other remote servers should behave similarly.
 
 * Strings, numbers and Boolean values are passed without modifications.
-* Python :code:`None` is converted to an empty string.
+* Python `None` is converted to an empty string.
 * All lists, tuples, and other iterable objects (except strings and
   dictionaries) are passed as lists so that their contents are converted
   recursively.
@@ -176,23 +189,23 @@ Required methods
 
 A remote server is an XML-RPC server that must have the same methods
 in its public interface as the `dynamic library API`_ has. Only
-:code:`get_keyword_names` and :code:`run_keyword` are actually
-required, but :code:`get_keyword_arguments` and
-:code:`get_keyword_documentation` are also recommended. Notice that
+`get_keyword_names` and `run_keyword` are actually
+required, but `get_keyword_arguments` and
+`get_keyword_documentation` are also recommended. Notice that
 using camelCase format in method names is not possible currently. How
 the actual keywords are implemented is not relevant for the Remote
 library.  A remote server can either act as a wrapper for real test
 libraries, like the provided Python and Ruby servers do, or it can
 implement keywords itself.
 
-Remote servers should additionally have :code:`stop_remote_server`
+Remote servers should additionally have `stop_remote_server`
 method in their public interface to ease stopping them. They should
 also automatically expose this method as :name:`Stop Remote Server`
 keyword to allow using it in the test data regardless of the test
 library. Allowing users to stop the server is not always desirable,
 and servers may support disabling this functionality somehow.
-The method, and also the exposed keyword, should return :code:`True`
-or :code:`False` depending was stopping allowed or not. That makes it
+The method, and also the exposed keyword, should return `True`
+or `False` depending was stopping allowed or not. That makes it
 possible for external tools to know did stopping the server succeed.
 
 The provided Python remote server can be used as a reference
@@ -202,11 +215,11 @@ Getting remote keyword names and other information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Remote library gets a list of keywords that the remote server
-provides using :code:`get_keyword_names` method. This method must
+provides using `get_keyword_names` method. This method must
 return the keyword names as a list of strings.
 
 Remote servers can, and should, also implement
-:code:`get_keyword_arguments` and :code:`get_keyword_documentation`
+`get_keyword_arguments` and `get_keyword_documentation`
 methods to provide more information about the keywords. Both of these
 keywords get the name of the keyword as an argument. Arguments must be
 returned as a list of strings in the `same format as with dynamic
@@ -224,7 +237,7 @@ Executing remote keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When the Remote library wants the server to execute some keyword, it
-calls remote server's :code:`run_keyword` method and passes it the
+calls remote server's `run_keyword` method and passes it the
 keyword name, a list of arguments, and possibly a dictionary of
 `free keyword arguments`__. Base types can be used as
 arguments directly, but more complex types are `converted to supported
@@ -232,7 +245,7 @@ types`__.
 
 The server must return results of the execution in a result dictionary
 (or map, depending on terminology) containing items explained in the
-following table. Notice that only the :code:`status` entry is mandatory,
+following table. Notice that only the `status` entry is mandatory,
 others can be omitted if they are not applicable.
 
 .. table:: Entries in the remote result dictionary
@@ -245,10 +258,10 @@ others can be omitted if they are not applicable.
    +------------+-------------------------------------------------------------+
    | output     | Possible output to write into the log file. Must be given   |
    |            | as a single string but can contain multiple messages and    |
-   |            | different `log levels`__ in format :msg:`*INFO* First       |
-   |            | message\\n*HTML* <b>2nd</b>\\n*WARN* Another message`. It   |
+   |            | different `log levels`__ in format `*INFO* First            |
+   |            | message\n*HTML* <b>2nd</b>\n*WARN* Another message`. It     |
    |            | is also possible to embed timestamps_ to the log messages   |
-   |            | like :msg:`*INFO:1308435758660* Message with timestamp`.    |
+   |            | like `*INFO:1308435758660* Message with timestamp`.         |
    +------------+-------------------------------------------------------------+
    | return     | Possible return value. Must be one of the `supported        |
    |            | types`__.                                                   |
@@ -258,11 +271,11 @@ others can be omitted if they are not applicable.
    | traceback  | Possible stack trace to `write into the log file`__ using   |
    |            | DEBUG level when the execution fails.                       |
    +------------+-------------------------------------------------------------+
-   | continuable| When set to :code:`True`, or any value considered           |
-   |            | :code:`True` in Python, the occurred failure is considered  |
+   | continuable| When set to `True`, or any value considered                 |
+   |            | `True` in Python, the occurred failure is considered        |
    |            | continuable__. New in Robot Framework 2.8.4.                |
    +------------+-------------------------------------------------------------+
-   | fatal      | Like :code:`continuable`, but denotes that the occurred     |
+   | fatal      | Like `continuable`, but denotes that the occurred           |
    |            | failure is fatal__. Also new in Robot Framework 2.8.4.      |
    +------------+-------------------------------------------------------------+
 
@@ -283,17 +296,17 @@ dynamic library.
 This includes mandatory arguments, default values, varargs, as well
 as `named argument syntax`__.
 
-Also free keyword arguments (:code:`**kwargs`) works mostly the `same way
+Also free keyword arguments (`**kwargs`) works mostly the `same way
 as with other dynamic libraries`__. First of all, the
-:code:`get_keyword_arguments` must return an argument specification that
-contains :code:`**kwargs` exactly like with any other dynamic library.
+`get_keyword_arguments` must return an argument specification that
+contains `**kwargs` exactly like with any other dynamic library.
 The main difference is that
-remote servers' :code:`run_keyword` method must have optional third argument
+remote servers' `run_keyword` method must have optional third argument
 that gets the kwargs specified by the user. The third argument must be optional
 because, for backwards-compatibility reasons, the Remote library passes kwargs
-to the :code:`run_keyword` method only when they have been used in the test data.
+to the `run_keyword` method only when they have been used in the test data.
 
-In practice :code:`run_keyword` should look something like the following
+In practice `run_keyword` should look something like the following
 Python and Java examples, depending on how the language handles optional
 arguments.
 
@@ -313,7 +326,7 @@ arguments.
         // ...
     }
 
-.. note:: Remote library supports :code:`**kwargs` starting from
+.. note:: Remote library supports `**kwargs` starting from
           Robot Framework 2.8.3.
 
 __ `Getting keyword arguments`_

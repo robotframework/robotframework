@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from six import string_types
+
 import sys
 import os
 import tempfile
@@ -19,7 +21,7 @@ class DataBase(object):
 
     def _read_users(self, dbfile):
         users = {}
-        if isinstance(dbfile, basestring):
+        if isinstance(dbfile, string_types):
             if not os.path.isfile(dbfile):
                 return open(dbfile, 'w'), users
             else:

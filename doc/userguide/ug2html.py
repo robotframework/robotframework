@@ -19,6 +19,7 @@ zip ..... Uses 'dist' to create a stand-alone distribution and then packages
 Version number to use is got automatically from 'src/robot/version.py' file
 created by 'package.py'.
 """
+from __future__ import print_function
 
 import os
 import sys
@@ -132,15 +133,13 @@ try:
 except:
     pass
 
+
 def create_userguide():
     from docutils.core import publish_cmdline
 
-    print 'Creating user guide ...'
-    sys.path.insert(0, os.path.join(CURDIR, '..', '..', 'src', 'robot'))
-    from version import get_version
-    print 'Version:', get_version()
-    with open(os.path.join(CURDIR, 'src', 'version.rst'), 'w') as vfile:
-        vfile.write('.. |version| replace:: %s\n' % get_version())
+    print('Creating user guide ...')
+    version, version_file = _update_version()
+    install_file = _copy_installation_instructions()
 
     description = 'HTML generator for Robot Framework User Guide.'
     arguments = ['--time',
@@ -149,10 +148,40 @@ def create_userguide():
                  'RobotFrameworkUserGuide.html']
     os.chdir(CURDIR)
     publish_cmdline(writer_name='html', description=description, argv=arguments)
-    os.unlink(vfile.name)
+    os.unlink(version_file)
+    os.unlink(install_file)
     ugpath = os.path.abspath(arguments[-1])
-    print ugpath
-    return ugpath, get_version(sep='-')
+    print(ugpath)
+    return ugpath, version
+
+
+def _update_version():
+    version = _get_version()
+    print('Version:', version)
+    with open(os.path.join(CURDIR, 'src', 'version.rst'), 'w') as vfile:
+        vfile.write('.. |version| replace:: %s\n' % version)
+    return version, vfile.name
+
+def _get_version():
+    namespace = {}
+    execfile(os.path.join(CURDIR, '..', '..', 'src', 'robot', 'version.py'),
+             namespace)
+    return namespace['get_version']()
+
+def _copy_installation_instructions():
+    source = os.path.join(CURDIR, '..', '..', 'INSTALL.rst')
+    target = os.path.join(CURDIR, 'src', 'GettingStarted', 'INSTALL.rst')
+    include = True
+    with open(source) as source_file:
+        with open(target, 'w') as target_file:
+            for line in source_file:
+                if 'START USER GUIDE IGNORE' in line:
+                    include = False
+                if include:
+                    target_file.write(line)
+                if 'END USER GUIDE IGNORE' in line:
+                    include = True
+    return target
 
 
 #
@@ -162,24 +191,27 @@ def create_distribution():
     import re
     from urlparse import urlparse
 
+    dist = os.path.normpath(os.path.join(CURDIR, '..', '..', 'dist'))
     ugpath, version = create_userguide()  # we are in doc/userguide after this
-    outdir = 'robotframework-userguide-%s' % version
+    outdir = os.path.join(dist, 'robotframework-userguide-%s' % version)
     templates = os.path.join(outdir, 'templates')
     libraries = os.path.join(outdir, 'libraries')
     images = os.path.join(outdir, 'images')
-    print 'Creating distribution directory ...'
+    print('Creating distribution directory ...')
 
     if os.path.exists(outdir):
-        print 'Removing previous user guide distribution'
+        print('Removing previous user guide distribution')
         shutil.rmtree(outdir)
+    elif not os.path.exists(dist):
+        os.mkdir(dist)
 
-    print 'Recompiling library docs'
+    print('Recompiling library docs')
     sys.path.insert(0, os.path.join(CURDIR, '..', 'libraries'))
     import lib2html
     lib2html.create_all()
 
     for dirname in [outdir, templates, libraries, images]:
-        print "Creating output directory '%s'" % dirname
+        print("Creating output directory '%s'" % dirname)
         os.mkdir(dirname)
 
     def replace_links(res):
@@ -202,11 +234,11 @@ def create_distribution():
         else:
             raise ValueError('Invalid link target: %s (context: %s)'
                              % (path, res.group(0)))
-        print "Modified link '%s' -> '%s'" % (res.group(0), replaced_link)
+        print("Modified link '%s' -> '%s'" % (res.group(0), replaced_link))
         return replaced_link
 
     def copy(source, dest):
-        print "Copying '%s' -> '%s'" % (source, dest)
+        print("Copying '%s' -> '%s'" % (source, dest))
         shutil.copy(source, dest)
 
     link_regexp = re.compile('''
@@ -214,12 +246,11 @@ def create_distribution():
 (\s+(href|src)="(.*?)"|>)
 ''', re.VERBOSE | re.DOTALL | re.IGNORECASE)
 
-    content = open(ugpath).read()
-    content = link_regexp.sub(replace_links, content)
-    outfile = open(os.path.join(outdir, os.path.basename(ugpath)), 'wb')
-    outfile.write(content)
-    outfile.close()
-    print os.path.abspath(outfile.name)
+    with open(ugpath) as infile:
+        content = link_regexp.sub(replace_links, infile.read())
+    with open(os.path.join(outdir, os.path.basename(ugpath)), 'wb') as outfile:
+        outfile.write(content)
+    print(os.path.abspath(outfile.name))
     return outdir
 
 #
@@ -227,25 +258,29 @@ def create_distribution():
 #
 def create_zip():
     ugdir = create_distribution()
-    zip_distribution(ugdir)
+    print('Creating zip package ...')
+    zip_path = zip_distribution(ugdir)
+    print('Removing distribution directory', ugdir)
+    shutil.rmtree(ugdir)
+    print(zip_path)
 
 
 def zip_distribution(dirpath):
     """Generic zipper. Used also by qs2html.py """
     from zipfile import ZipFile, ZIP_DEFLATED
 
-    print 'Creating zip package ...'
     zippath = os.path.normpath(dirpath) + '.zip'
-    zipfile = ZipFile(zippath, 'w', compression=ZIP_DEFLATED)
-    for root, _, files in os.walk(dirpath):
-        for name in files:
-            path = os.path.join(root, name)
-            print "Adding '%s'" % path
-            zipfile.write(path)
-    zipfile.close()
-    print 'Removing distribution directory', dirpath
-    shutil.rmtree(dirpath)
-    print os.path.abspath(zippath)
+    arcroot = os.path.dirname(dirpath)
+
+    with ZipFile(zippath, 'w', compression=ZIP_DEFLATED) as zipfile:
+        for root, _, files in os.walk(dirpath):
+            for name in files:
+                path = os.path.join(root, name)
+                arcpath = os.path.relpath(path, arcroot)
+                print("Adding '%s'" % arcpath)
+                zipfile.write(path, arcpath)
+
+    return os.path.abspath(zippath)
 
 
 if __name__ == '__main__':
@@ -254,4 +289,4 @@ if __name__ == '__main__':
     try:
         actions[sys.argv[1]](*sys.argv[2:])
     except (KeyError, IndexError, TypeError):
-        print __doc__
+        print(__doc__)

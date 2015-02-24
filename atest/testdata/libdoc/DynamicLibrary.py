@@ -10,7 +10,8 @@ class DynamicLibrary(object):
         """This is overwritten and not shown in docs"""
 
     def get_keyword_names(self):
-        return ['0', 'Keyword 1', 'KW2', 'non ascii doc 42', 'no arg spec']
+        return ['0', 'Keyword 1', 'KW2', 'nön-äscii ÜTF-8',
+                u'nön-äscii Ünicöde', 'no arg spec']
 
     def run_keyword(self, name, args, kwargs):
         print(name, args)
@@ -18,11 +19,14 @@ class DynamicLibrary(object):
     def get_keyword_arguments(self, name):
         if name == 'no arg spec':
             return None
-        return ['arg%d' % (i+1) for i in range(int(name[-1]))]
+        count = int(name[-1]) if name[-1].isdigit() else 0
+        return ['arg%d' % (i+1) for i in range(count)]
 
     def get_keyword_documentation(self, name):
-        if name == 'non ascii doc 42':
-            return 'Hyvää yötä.\n\nСпасибо!'
+        if name == u'nön-äscii ÜTF-8':
+            return 'Hyvää yötä.\n\nСпасибо! (UTF-8)'
+        if name == u'nön-äscii Ünicöde':
+            return u'Hyvää yötä.\n\nСпасибо! (Unicode)'
         short = 'Dummy documentation for `%s`.' % name
         if name.startswith('__'):
             return short

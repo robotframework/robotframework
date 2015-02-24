@@ -75,13 +75,6 @@ Any suggestions? :)
 Robot Framework
 ===============
 
-.. note::  This repository is currently under migration from `Google Code`__.
-           Code and issues have already been moved, but it will take some tim
-           before `old wiki pages`__ are migrated.
-
-__ http://code.google.com/p/robotframework/
-__ http://code.google.com/p/robotframework/wiki/DocumentationIndex?tm=6
-
 Introduction
 ------------
 
@@ -103,11 +96,12 @@ http://robotframework.org.
 
 Robot Framework project is hosted on GitHub_ where you can find source code,
 an issue tracker, and some further documentation.  Downloads are hosted at
-PyPI_, except for the standalone jar distribution that is in `Maven central`_.
+PyPI_, except for the standalone JAR distribution that is in `Maven central`_.
 
 .. _GitHub: https://github.com/robotframework/robotframework
 .. _PyPI: https://pypi.python.org/pypi/robotframework
 .. _Maven central: http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework
+.. _pip: http://pip-installer.org
 
 Installation
 ------------
@@ -123,11 +117,9 @@ install the framework with::
     python setup.py install
 
 For more detailed installation instructions, including installing
-Python, Jython and IronPython, see `INSTALL.rst`_.
+Python, Jython and IronPython, see `<INSTALL.rst>`__.
 
-.. Using an absolute URL here to make this work also on PyPI.
-.. _INSTALL.rst: https://github.com/robotframework/robotframework/blob/master/INSTALL.rst
-.. _pip: http://pip-installer.org
+.. setup.py replaces the above `<INSTALL.rst>`__ with an absolute URL
 
 Example
 -------

@@ -47,7 +47,7 @@ Keyword Timeout In Teardown
 
 Syntax Error in Teardown
     [documentation]  FAIL Teardown failed:\nSeveral failures occurred:\n\n
-    ...  1) Non-existing variable '${non existing variable}'.\n\n
+    ...  1) Variable '${non existing variable}' not found.\n\n
     ...  2) No keyword with name 'Keyword Missing' found.\n\n
     ...  ${SUITE TEARDOWN FAILED}
     No Operation
@@ -55,9 +55,9 @@ Syntax Error in Teardown
 
 Syntax Error in For Loop in Teardown
     [documentation]  FAIL Teardown failed:\nSeveral failures occurred:\n\n
-    ...  1) Non-existing variable '${non existing variable}'.\n\n
+    ...  1) Variable '${non existing variable}' not found.\n\n
     ...  2) This should be executed\n\n
-    ...  3) Non-existing variable '${non existing variable}'.\n\n
+    ...  3) Variable '${non existing variable}' not found.\n\n
     ...  4) This should be executed\n\n
     ...  ${SUITE TEARDOWN FAILED}
     No Operation

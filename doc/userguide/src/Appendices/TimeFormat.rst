@@ -18,15 +18,15 @@ Time as time string
 -------------------
 
 Representing the time as a time string means using a format such as
-:code:`2 minutes 42 seconds`, which is normally easier to understand than
+`2 minutes 42 seconds`, which is normally easier to understand than
 just having the value as seconds. It is, for example, not so easy to
-understand how long a time :code:`4200` is in seconds, but
-:code:`1 hour 10 minutes` is clear immediately.
+understand how long a time `4200` is in seconds, but
+`1 hour 10 minutes` is clear immediately.
 
 The basic idea of this format is having first a number and then a text
 specifying what time that number represents. Numbers can be either
 integers or floating point numbers, the whole format is case and space
-insensitive, and it is possible to add :code:`-` prefix to specify negative
+insensitive, and it is possible to add `-` prefix to specify negative
 times. The available time specifiers are:
 
 * days, day, d
@@ -48,9 +48,9 @@ Time as "timer" string
 ----------------------
 
 Starting from Robot Framework 2.8.5, time can also be given in timer like
-format :code:`hh:mm:ss.mil`. In this format  both hour and millisecond parts
+format `hh:mm:ss.mil`. In this format  both hour and millisecond parts
 are optional, leading and trailing zeros can be left out when they are not
-meaningful, and negative times can be represented by adding the :code:`-`
+meaningful, and negative times can be represented by adding the `-`
 prefix. For example, following timer and time string values are identical:
 
 .. table:: Timer and time string examples

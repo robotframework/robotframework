@@ -1,3 +1,5 @@
+/* Icons are from Open Iconic <https://useiconic.com/open/>.
+   Licensed under the MIT License. */
 /* Containers */
 .suite, .test, #errors {
     border: 1px solid gray;
@@ -10,9 +12,6 @@
 #errors, .messages, .metadata {
     width: 100%;
     border-spacing: 0;
-}
-#errors td, .messages td, .metadata th, .metadata td {
-    padding: 0.2em;
 }
 .children {
     display: none;
@@ -28,51 +27,88 @@
 .element-header {
     border: 1px solid transparent;
     border-radius: 2px;
-    padding: 0.3em 6.5em 0.3em 1.4em;
-    background-repeat: no-repeat;
-    background-position: left center;
-    background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxUShvPU1ZroHTlYWlJi1LAQA7);
+    position: relative;
 }
 .element-header:hover {
     cursor: pointer;
     background-color: #ECECF7;
     border-color: #BCBCD7;
 }
-.closed {
-    background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxwXls3VJpDGpiRlKfyS1LAQA7);
+.element-header-toggle {
+    position: absolute;
+    left: 3px;
+    top: 4px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAQAAABKxSfDAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfeCR0JChSkZz20AAAAGklEQVQI12NgQAKMDKzInP8IDhOqMk4G7AAANQwBE427PYUAAAAASUVORK5CYII=);
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2Mmg4di0yaC04eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAzKSIgLz4KPC9zdmc+), none;
+    height: 10px;
+    width: 10px;
+    background-size: 6px 6px;
+    border: 1px solid black;
+    border-radius: 2px;
+}
+.closed > .element-header-toggle {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAQAAABKxSfDAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfeCR0JCDHdVYtxAAAAM0lEQVQI103MMQqAMBQFwVHyITaB3P+W1sKzSBC3mW6hRFw0pUB5DvF1bu9FN0RM3X/wAk98CUnvFTakAAAAAElFTkSuQmCC);
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0zIDB2M2gtM3YyaDN2M2gydi0zaDN2LTJoLTN2LTNoLTJ6IiAvPgo8L3N2Zz4=), none;
+}
+.element-header:hover > .element-header-toggle {
+    background-color: yellow;
+}
+.element-header-right:hover ~ .element-header-toggle {
+    background-color: transparent;
+}
+.element-header-left {
+    padding: 3px 80px 3px 20px;
+}
+.element-header-right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 3px;
+    cursor: default;
 }
 .name {
     font-weight: bold;
 }
+.elapsed {
+    float: right;
+    color: #808080;
+    padding-left: 1em;
+}
+.link {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAHlJREFUGJVtzrEJwmAQBtCn6ASuIKTIBhY2gmghBiJYB1udwk10B8FJbKMBcQFbtbkfJHrVwfu+4/idJR64Y9H7E3higj5O3S8Y44ApLnjhnXCNGhV2yNGggDJwiC02gavUbpDFvscRo4QdXOMKDHBufz3HLYKzNn4AbSkV3fncGQYAAAAASUVORK5CYII=);
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik01Ljg4LjAzYy0uMTguMDEtLjM2LjAzLS41My4wOS0uMjcuMS0uNTMuMjUtLjc1LjQ3YS41LjUgMCAxIDAgLjY5LjY5Yy4xMS0uMTEuMjQtLjE3LjM4LS4yMi4zNS0uMTIuNzgtLjA3IDEuMDYuMjIuMzkuMzkuMzkgMS4wNCAwIDEuNDRsLTEuNSAxLjVjLS40NC40NC0uOC40OC0xLjA2LjQ3LS4yNi0uMDEtLjQxLS4xMy0uNDEtLjEzYS41LjUgMCAxIDAtLjUuODhzLjM0LjIyLjg0LjI1Yy41LjAzIDEuMi0uMTYgMS44MS0uNzhsMS41LTEuNWMuNzgtLjc4Ljc4LTIuMDQgMC0yLjgxLS4yOC0uMjgtLjYxLS40NS0uOTctLjUzLS4xOC0uMDQtLjM4LS4wNC0uNTYtLjAzem0tMiAyLjMxYy0uNS0uMDItMS4xOS4xNS0xLjc4Ljc1bC0xLjUgMS41Yy0uNzguNzgtLjc4IDIuMDQgMCAyLjgxLjU2LjU2IDEuMzYuNzIgMi4wNi40Ny4yNy0uMS41My0uMjUuNzUtLjQ3YS41LjUgMCAxIDAtLjY5LS42OWMtLjExLjExLS4yNC4xNy0uMzguMjItLjM1LjEyLS43OC4wNy0xLjA2LS4yMi0uMzktLjM5LS4zOS0xLjA0IDAtMS40NGwxLjUtMS41Yy40LS40Ljc1LS40NSAxLjAzLS40NC4yOC4wMS40Ny4wOS40Ny4wOWEuNS41IDAgMSAwIC40NC0uODhzLS4zNC0uMi0uODQtLjIyeiIKICAvPgo8L3N2Zz4=), none;
+}
 .expand {
-    float: right;
-    margin-right: -6em;
-    font-size: 0.8em;
-    width: 7em;
-    padding: 0.3em 0 0.1em 0;
-    text-align: center;
-    color: #808080 !important;
-    border-radius: 8px;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAADtJREFUGJVjYCACKDAwMByA0ljFDjAwMPxnYGB4ABVQgLL/Q+VQBB6gseGmIivCkERXhFUSWRFOSawAAEl7E3uv1iMcAAAAAElFTkSuQmCC);
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0xLjUgMGwtMS41IDEuNSA0IDQgNC00LTEuNS0xLjUtMi41IDIuNS0yLjUtMi41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAxKSIgLz4KPC9zdmc+), none;
 }
-.expand:hover {
-    text-decoration: none;
-    background-color: #BBBBFF;
-    color: black !important;
+.collapse {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAC5JREFUGJVjYCARNEAxTsn/UIyhCFkSQxG6ThQ+C5IpjWhG1yNb4YDFTdjEMAEACi8Q++9Y9TAAAAAASUVORK5CYII=);
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik00IDBsLTQgNCAxLjUgMS41IDIuNS0yLjUgMi41IDIuNSAxLjUtMS41LTQtNHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgMSkiIC8+Cjwvc3ZnPg==), none;
 }
-.ext-link, .ext-link:link, .ext-link:visited {
-    float: right;
-    margin-right: -7em;
-    padding: 0 0.3em;
-    color: #C60F0F;
-    text-decoration: none;
+.expand, .collapse, .link {
+    float: left;
+    display: block;
     visibility: hidden;
+    margin: 0 4px;
+    height: 14px;
+    width: 14px;
+    background-size: 8px 8px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 1px solid black;
+    border-radius: 2px;
 }
-.element-header:hover .ext-link {
+.link {
+    background-size: 10px 10px;
+}
+.element-header:hover a {
     visibility: visible;
 }
-.ext-link:hover {
-    background: #C60F0F;
-    color: #ECECF7;
+.expand:hover, .collapse:hover, .link:hover {
+    background-color: yellow;
 }
 /* Messages and errors */
 .messages {
@@ -80,7 +116,7 @@
     font-size: 1.1em;
 }
 .message-row {
-    height: 17px;
+    height: 20px;
 }
 .time {
     width: 8em;
@@ -93,16 +129,26 @@
     width: 4.5em;
     text-align: center;
 }
-.select-text {
-    width: 2em;
-    background-position: top right;
+.select-message {
+    width: 24px;
+}
+.select-message > div {
+    float: right;
+    margin-right: 2px;
+    height: 16px;
+    width: 16px;
+    background-size: 12px 12px;
     background-repeat: no-repeat;
+    background-position: center;
 }
-.message-row:hover .select-text {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAV1BMVEXq7/atw9u6zOHS3uvA0eP3+fvZ4+7g6PHO2+n5+vz1+PvAwMC+z+KQkJDx9fm1yd/s8ffa5O/I1+fU4Oz////t8vf6+/3c5fC4y+Dj6vPv8/ju8/fd5vA594LsAAAAXklEQVQYlW3PVxKAIAwE0NhLRGxY0Puf05hRCIzvjx2yAVAYUIBLAAFNKhgKIBHoiP3klU10Y3s6zs47uHR3Zt4iRmoORGlWFX9rbS5YCgbNLvf0d2R0wQqs/YL4+ze2IArI2yb6sQAAAABJRU5ErkJggg==);
+.message-row:hover .select-message div {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfeCR0MOzhWKZQOAAAASUlEQVQY032PsRHAIAwDX9BkicD+W8UMEqegAQJWKZ/+3sLZJhFGQEZzNaIa4ibh66En867VNaIeoP5WppNuIGoAlOm3g5VC1AdYeQv1BZPRSgAAAABJRU5ErkJggg==);
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2MWg4di0xaC04em0wIDJ2MWg2di0xaC02em0wIDJ2MWg4di0xaC04em0wIDJ2MWg2di0xaC02eiIgLz4KPC9zdmc+), none;
+    border: 1px solid black;
+    border-radius: 2px;
 }
-.message-row:hover .select-text:hover {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAV1BMVEXv833O26y1yc+tw9v5+m/c5Zjq74T1+HTx9Xrt8oDU4KPAwE3//2b3+XLa5JvS3qfs8YHg6JOQkDrd5pbZ45zj6o6+z8O6zMnu8376+27I17TA0cC4y8w8SaSaAAAAXklEQVQYlW3PWQ6AIAwE0LpVsSqK+3L/c4qNQiG+PyZ0CmAoYICaAAGpVVA2wExAG1SHN+XRjeLp2BZv5tLLqXmLGEk4EKV6aP/WwinYI/UpG93T35HOBTuy8gvi798gGQzuN7QrSQAAAABJRU5ErkJggg==);
+.select-message:hover div {
+    background-color: yellow;
     cursor: pointer;
 }
 /* Message tables - these MUST NOT be combined together because otherwise
@@ -118,6 +164,10 @@
     width: 12.5em;
     text-align: left;
     white-space: nowrap;
+    padding: 0;
+}
+.metadata td {
+    padding: 0.2em;
 }
 .keyword-metadata {
     font-size: 0.9em;

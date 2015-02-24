@@ -20,8 +20,8 @@ created from a `test case file`_ has tests directly, whereas suites
 created from directories__ have child test suites which either have
 tests or their own child suites. By default all the tests in an
 executed suite are run, but it is possible to `select tests`__ using
-options :opt:`--test`, :opt:`--suite`, :opt:`--include` and
-:opt:`--exclude`. Suites containing no tests are ignored.
+options :option:`--test`, :option:`--suite`, :option:`--include` and
+:option:`--exclude`. Suites containing no tests are ignored.
 
 The execution starts from the top-level test suite. If the suite has
 tests they are executed one-by-one, and if it has suites they are
@@ -115,8 +115,8 @@ name. If multiple files and/or directories are given from the command line,
 they are executed in the order they are given.
 
 If there is a need to use certain test suite execution order inside a
-directory, it is possible to add prefixes like :path:`01` and
-:path:`02` into file and directory names. Such prefixes are not
+directory, it is possible to add prefixes like :file:`01` and
+:file:`02` into file and directory names. Such prefixes are not
 included in the generated test suite name if they are separated from
 the base name of the suite with two underscores::
 
@@ -129,7 +129,7 @@ required order. This easily leads to overly long start-up commands,
 but `argument files`_ allow listing files nicely one file per line.
 
 It is also possible to `randomize the execution order`__ using
-the :opt:`--randomize` option.
+the :option:`--randomize` option.
 
 __ `Randomizing execution order`_
 
@@ -212,7 +212,7 @@ failures. Also in that case all the failures will be listed in the
 final error message.
 
 The return value from failed keywords, possibly assigned to a
-variable, is always the Python :code:`None`.
+variable, is always the Python `None`.
 
 __ `Continuing test execution despite of failures`_
 
@@ -252,26 +252,26 @@ test cases are marked failed.
 
 .. Note:: Most of these features are new in Robot Framework 2.5.
 
-Pressing :code:`Ctrl-C`
-~~~~~~~~~~~~~~~~~~~~~~~
+Pressing `Ctrl-C`
+~~~~~~~~~~~~~~~~~
 
-The execution is stopped when :code:`Ctrl-C` is pressed in the console
+The execution is stopped when `Ctrl-C` is pressed in the console
 where the tests are running. When running the tests on Python, the
 execution is stopped immediately, but with Jython it ends only after
 the currently executing keyword ends.
 
-If :code:`Ctrl-C` is pressed again, the execution ends immediately and
+If `Ctrl-C` is pressed again, the execution ends immediately and
 reports and logs are not created.
 
 Using signals
 ~~~~~~~~~~~~~
 
 On Unix-like machines it is possible to terminate test execution
-using signals :code:`INT` and :code:`TERM`. These signals can be sent
-from the command line using :prog:`kill` command, and sending signals can
+using signals `INT` and `TERM`. These signals can be sent
+from the command line using ``kill`` command, and sending signals can
 also be easily automated.
 
-Signals have the same limitation on Jython as pressing :code:`Ctrl-C`.
+Signals have the same limitation on Jython as pressing `Ctrl-C`.
 Similarly also the second signal stops the execution forcefully.
 
 Using keywords
@@ -286,13 +286,29 @@ __ `Stopping test execution`_
 Stopping when first test case fails
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If option :opt:`--exitonfailure` is used, test execution stops
+If option :option:`--exitonfailure` is used, test execution stops
 immediately if any `critical test`_ fails. Also the remaining tests
 are marked as failed.
 
 .. note:: Prior to Robot Framework 2.8, this behaviour was achieved by
-          using :opt:`--runmode exitonfailure`. Option :opt:`--runmode`
+          using :option:`--runmode exitonfailure`. Option :option:`--runmode`
           was deprecated in 2.8 and will be removed in the future.
+
+Stopping on parsing or execution error
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework separates *failures* caused by failing keywords from *errors*
+caused by, for example, invalid settings or failed test library imports.
+By default these errors are reported as `test execution errors`__, but errors
+themselves do not fail tests or affect execution otherwise. If
+:option:`--exitonerror` option is used, however, all such errors are considered
+fatal and execution stopped so that remaining tests are marked failed. With
+parsing errors encountered before execution even starts, this means that no
+tests are actually run.
+
+.. note:: :option:`--exitonerror` is new in Robot Framework 2.8.6.
+
+__ `Errors and warnings during execution`_
 
 Handling teardowns
 ~~~~~~~~~~~~~~~~~~
@@ -303,9 +319,9 @@ above. This allows clean-up activities to be run regardless how execution
 ends.
 
 It is also possible to skip teardowns when execution is stopped by using
-:opt:`--skipteardownonexit` option. This can be useful if, for example,
+:option:`--skipteardownonexit` option. This can be useful if, for example,
 clean-up tasks take a lot of time.
 
 .. note:: Prior to Robot Framework 2.8, this behaviour was achieved by
-          using :opt:`--runmode skipteardownonexit`. Option :opt:`--runmode`
+          using :option:`--runmode skipteardownonexit`. Option :option:`--runmode`
           was deprecated in 2.8 and will be removed in the future.

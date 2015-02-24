@@ -1,3 +1,5 @@
+# coding=UTF-8
+
 from six import PY3
 
 import sys
@@ -15,19 +17,25 @@ class Documentation(SimpleXMLRPCServer):
         SimpleXMLRPCServer.__init__(self, ('127.0.0.1', int(port)))
         self.register_function(self.get_keyword_names)
         self.register_function(self.get_keyword_documentation)
+        self.register_function(self.get_keyword_arguments)
         self.register_function(self.run_keyword)
         announce_port(self.socket, port_file)
         self.serve_forever()
 
     def get_keyword_names(self):
-        return ['Empty', 'Single line', 'Multi line']
+        return ['Empty', 'Single', 'Multi', u'Nön-ÄSCII']
 
     def get_keyword_documentation(self, name):
-        if name == 'Single line':
-            return 'Single line documentation'
-        if name == 'Multi line':
-            return 'Multi\nline\ndocumentation\n'
-        return ''
+        return {'__intro__': 'Remote library for documentation testing purposes',
+                'Empty': '',
+                'Single': 'Single line documentation',
+                'Multi': 'Multi\nline\ndocumentation',
+                u'Nön-ÄSCII': u'Nön-ÄSCII documentation'}.get(name)
+
+    def get_keyword_arguments(self, name):
+        return {'Empty': (),
+                'Single': ['arg'],
+                'Multi': ['a1', 'a2=d', '*varargs']}.get(name)
 
     def run_keyword(self, name, args):
         return {'status': 'PASS'}

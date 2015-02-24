@@ -14,12 +14,12 @@ Run Keyword If test Failed When Test Does Not Fail
 
 Run Keyword If Test Failed Can't Be Used In Setup
     [Documentation]    FAIL Setup failed:
-    ...    Keyword 'Run Keyword If Test Failed' can only be used in test teardown
+    ...    Keyword 'Run Keyword If Test Failed' can only be used in test teardown.
     [Setup]    Run Keyword If Test Failed    Fail    ${NOT EXECUTED}
     No Operation
 
 Run Keyword If Test Failed Can't Be Used in Test
-    [Documentation]    FAIL Keyword 'Run Keyword If Test Failed' can only be used in test teardown
+    [Documentation]    FAIL Keyword 'Run Keyword If Test Failed' can only be used in test teardown.
     Run Keyword If Test Failed    Fail    ${NOT EXECUTED}
 
 Run Keyword If Test Failed Uses User Keyword
@@ -46,12 +46,12 @@ Run Keyword If Test Passed When Test Fails
 
 Run Keyword If Test Passed Can't Be used In Setup
     [Documentation]    FAIL Setup failed:
-    ...    Keyword 'Run Keyword If Test Passed' can only be used in test teardown
+    ...    Keyword 'Run Keyword If Test Passed' can only be used in test teardown.
     [Setup]    Run Keyword If Test Passed    Fail    ${NOT EXECUTED}
     No Operation
 
 Run Keyword If Test Passed Can't Be used In Test
-    [Documentation]    FAIL Keyword 'Run Keyword If Test Passed' can only be used in test teardown
+    [Documentation]    FAIL Keyword 'Run Keyword If Test Passed' can only be used in test teardown.
     Run Keyword If Test Passed    Fail    ${NOT EXECUTED}
 
 Run Keyword If Test Passes Uses User Keyword
@@ -59,7 +59,7 @@ Run Keyword If Test Passes Uses User Keyword
     [Teardown]    Run Keyword If Test Passed    Teardown UK    ${TEARDOWN MESSAGE}
 
 Run Keyword If Test Passed Fails
-    [Documentation]    FAIL Teardown failed:
+    [Documentation]    FAIL Teardown failed:\n
     ...    Expected failure
     No Operation
     [Teardown]    Run Keyword If Test Passed    Fail    ${EXPECTED FAILURE}

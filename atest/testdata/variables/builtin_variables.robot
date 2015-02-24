@@ -11,7 +11,7 @@ ${-4.1}  Can be overridden
 
 *** Test Cases ***
 Integer Variables
-    [Documentation]  FAIL  Non-existing variable '${FF}'.
+    [Documentation]  FAIL  Variable '${FF}' not found.
     ${one} =  Convert To Integer  1
     ${minus_two} =  Convert To Integer  -2
     Should Be Equal  ${1}  ${one}
@@ -22,7 +22,7 @@ Integer Variables
     Log  No automatic hex conversion ${FF}
 
 Integer Variables With Base
-    [Documentation]  FAIL  Non-existing variable '${0b123}'.
+    [Documentation]  FAIL STARTS:  Variable '${0b123}' not found.
     Should Be Equal  ${0xFF}    ${255}
     Should Be Equal  ${ 0 X A}  ${10}
     Should Be Equal  ${0b1010}  ${10}

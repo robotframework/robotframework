@@ -78,8 +78,10 @@ class Runner(SuiteVisitor):
         self._suite = result
         self._suite_status = SuiteStatus(self._suite_status,
                                          self._settings.exit_on_failure,
+                                         self._settings.exit_on_error,
                                          self._settings.skip_teardown_on_exit)
         self._output.start_suite(ModelCombiner(suite, self._suite))
+        self._output.register_error_listener(self._suite_status.error_occurred)
         self._run_setup(suite.keywords.setup, self._suite_status)
         self._executed_tests = NormalizedDict(ignore='_')
 
@@ -135,8 +137,6 @@ class Runner(SuiteVisitor):
                 result.message = exception.message
         except ExecutionFailed as err:
             status.test_failed(err, result.critical)
-            if err.timeout:
-                self._context.timeout_occurred = True
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
@@ -187,8 +187,6 @@ class Runner(SuiteVisitor):
         try:
             kw.run(self._context)
         except ExecutionFailed as err:
-            if err.timeout:
-                self._context.timeout_occurred = True
             return err
 
 

@@ -27,8 +27,7 @@ class DataFileWriter(object):
 
     def __init__(self, **options):
         """
-        :param `**options`: A :class:`.WritingContext` is created based
-            on these.
+        :param `**options`: A :class:`.WritingContext` is created based on these.
         """
         self._options = options
 

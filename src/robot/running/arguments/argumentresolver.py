@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from six import string_types
+from six import string_types, iteritems
 
 from robot.errors import DataError
 from robot.utils import is_dict_like
@@ -31,7 +31,7 @@ class ArgumentResolver(object):
         self._argument_validator = ArgumentValidator(argspec)
 
     def resolve(self, arguments, variables=None):
-        positional, named = self._named_resolver.resolve(arguments)
+        positional, named = self._named_resolver.resolve(arguments, variables)
         positional, named = self._variable_replacer.replace(positional, named,
                                                             variables)
         positional, named = self._dict_to_kwargs.handle(positional, named)
@@ -45,11 +45,11 @@ class NamedArgumentResolver(object):
     def __init__(self, argspec):
         self._argspec = argspec
 
-    def resolve(self, arguments):
+    def resolve(self, arguments, variables=None):
         positional = []
         named = {}
         for arg in arguments:
-            if self._is_named(arg):
+            if self._is_named(arg, variables):
                 self._add_named(arg, named)
             elif named:
                 self._raise_positional_after_named()
@@ -57,33 +57,29 @@ class NamedArgumentResolver(object):
                 positional.append(arg)
         return positional, named
 
-    def _is_named(self, arg):
+    def _is_named(self, arg, variables=None):
         if not isinstance(arg, string_types) or '=' not in arg:
             return False
         name = arg.split('=')[0]
         if self._is_escaped(name):
             return False
+        if self._argspec.kwargs:
+            return True
         if not self._argspec.supports_named:
-            return self._argspec.kwargs
-        return name in self._argspec.positional or self._argspec.kwargs
+            return False
+        if variables:
+            name = variables.replace_scalar(name)
+        return name in self._argspec.positional
 
     def _is_escaped(self, name):
         return name.endswith('\\')
 
     def _add_named(self, arg, named):
         name, value = arg.split('=', 1)
-        name = self._convert_to_str_if_possible(name)
+        name = kwarg_to_str_if_possible(name)
         if name in named:
             self._raise_multiple_values(name)
         named[name] = value
-
-    def _convert_to_str_if_possible(self, name):
-        # Python 2.5 doesn't handle Unicode kwargs at all, so we will try to
-        # support it by converting to str if possible
-        try:
-            return str(name)
-        except UnicodeError:
-            return name
 
     def _raise_multiple_values(self, name):
         raise DataError("%s '%s' got multiple values for argument '%s'."
@@ -96,7 +92,7 @@ class NamedArgumentResolver(object):
 
 class NullNamedArgumentResolver(object):
 
-    def resolve(self, arguments):
+    def resolve(self, arguments, variables=None):
         return arguments, {}
 
 
@@ -126,8 +122,22 @@ class VariableReplacer(object):
         # `variables` is None in dry-run mode and when using Libdoc
         if variables:
             positional = variables.replace_list(positional, self._resolve_until)
-            named = dict((name, variables.replace_scalar(value))
-                         for name, value in named.items())
+            named = dict(self._replace_named(named, variables.replace_scalar))
         else:
             positional = list(positional)
         return positional, named
+
+    def _replace_named(self, named, replacer):
+        for name, value in iteritems(named):
+            name = replacer(name)
+            if not isinstance(name, string_types):
+                raise DataError('Argument names must be strings.')
+            yield kwarg_to_str_if_possible(name), replacer(value)
+
+
+def kwarg_to_str_if_possible(name):
+    # Python 2.5 accept only str, not unicode, as kwargs.
+    try:
+        return str(name)
+    except UnicodeError:
+        return name

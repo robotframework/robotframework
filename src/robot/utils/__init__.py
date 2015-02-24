@@ -50,6 +50,7 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import (isatty, getdoc, plural_or_not, printable_name,
                    seq2str, seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
+from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method
 from .robotpath import abspath, find_file, get_link_path, normpath
