@@ -55,6 +55,7 @@ if PY3 and do2to3:
 
     shutil.rmtree((PY3DIR), ignore_errors=True)
     os.makedirs(join(PY3DIR, 'src'))
+    shutil.copy(join(CURDIR, '..', 'robot.bmp'), PY3DIR) # needed for 1 test
     shutil.copytree(ROBOTDIR, join(PY3DIR, 'src', 'robot'), symlinks=True)
     shutil.copytree(
       CURDIR, join(PY3ATESTDIR), symlinks=True,
