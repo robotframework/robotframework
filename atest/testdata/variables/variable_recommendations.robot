@@ -99,7 +99,7 @@ Misspelled Extended Variable Parent
     Log    ${OBJJ.name}
 
 Misspelled Extended Variable Child
-    [Documentation]    FAIL    Resolving variable '${OBJ.nmame}' failed: AttributeError: ExampleObject instance has no attribute 'nmame'
+    [Documentation]    FAIL REGEXP:    Resolving variable '\\${OBJ.nmame}' failed: AttributeError: ('ExampleObject' object|ExampleObject instance) has no attribute 'nmame'
     Log    ${OBJ.nmame}
 
 Existing Non ASCII Variable Name
