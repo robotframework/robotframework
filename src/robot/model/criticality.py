@@ -38,5 +38,6 @@ class Criticality(object):
     def __bool__(self):
         return bool(self.critical_tags or self.non_critical_tags)
 
+    #PY2
     def __nonzero__(self):
         return self.__bool__()

@@ -99,5 +99,6 @@ class Filter(EmptySuiteRemover):
         return bool(self.include_suites or self.include_tests or
                     self.include_tags or self.exclude_tags)
 
+    #PY2
     def __nonzero__(self):
         return self.__bool__()

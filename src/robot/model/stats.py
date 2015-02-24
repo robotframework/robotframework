@@ -93,6 +93,7 @@ class Stat(object):
     def __bool__(self):
         return not self.failed
 
+    #PY2
     def __nonzero__(self):
         return self.__bool__()
 

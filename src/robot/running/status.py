@@ -29,7 +29,7 @@ class Failure(object):
 
     #PY2
     def __nonzero__(self):
-        return self.__bool__(self)
+        return self.__bool__()
 
 
 class Exit(object):
@@ -52,7 +52,7 @@ class Exit(object):
 
     #PY2
     def __nonzero__(self):
-        return self.__bool__(self)
+        return self.__bool__()
 
 
 class _ExecutionStatus(object):

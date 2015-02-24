@@ -235,6 +235,7 @@ class ScreenshotTaker(object):
     def __bool__(self):
         return self.module != 'no'
 
+    #PY2
     def __nonzero__(self):
         return self.__bool__()
 
