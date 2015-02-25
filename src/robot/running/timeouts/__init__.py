@@ -18,7 +18,9 @@ from robot.utils import (secs_to_timestr, timestr_to_secs,
                          IRONPYTHON, JYTHON, WINDOWS)
 from robot.errors import TimeoutError, DataError, FrameworkError
 
-if IRONPYTHON or JYTHON:
+if IRONPYTHON:
+    from .ironpython import Timeout
+elif JYTHON:
     from .timeoutthread import Timeout
 elif WINDOWS:
     from .timeoutwin import Timeout
