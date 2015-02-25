@@ -12,15 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from six import PY3, add_metaclass
+from six import PY3, with_metaclass
 
 import sys
 
 from robot.utils.setter import SetterAwareType
 
 
-@add_metaclass(SetterAwareType)
-class ModelObject(object):
+class ModelObject(with_metaclass(SetterAwareType, object)):
     __slots__ = []
 
     def __unicode__(self):

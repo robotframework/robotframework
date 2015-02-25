@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from six import add_metaclass, text_type as unicode
+from six import with_metaclass, text_type as unicode
 
 import inspect
 import os.path
@@ -53,8 +53,7 @@ class _RecursionAvoidingMetaclass(type):
         return wrapped
 
 
-@add_metaclass(_RecursionAvoidingMetaclass)
-class Listeners(object):
+class Listeners(with_metaclass(_RecursionAvoidingMetaclass, object)):
     _start_attrs = ('id', 'doc', 'starttime', 'longname')
     _end_attrs = _start_attrs + ('endtime', 'elapsedtime', 'status', 'message')
     _kw_extra_attrs = ('args', '-id', '-longname', '-message')
