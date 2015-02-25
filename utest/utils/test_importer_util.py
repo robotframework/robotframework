@@ -5,10 +5,10 @@ import shutil
 import sys
 import os
 import re
-from os.path import abspath, basename, dirname, exists, join, normpath
+from os.path import basename, dirname, exists, join, normpath
 
 from robot.errors import DataError
-from robot.utils import JYTHON
+from robot.utils import abspath, JYTHON
 from robot.utils.importer import Importer, ByPathImporter
 from robot.utils.asserts import (assert_equals, assert_true, assert_raises,
                                  assert_raises_with_msg)
