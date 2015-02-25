@@ -4,7 +4,7 @@ from os.path import abspath
 
 from robot.conf.settings import _BaseSettings, RobotSettings, RebotSettings
 from robot.errors import DataError
-from robot.utils.asserts import assert_equals, assert_false
+from robot.utils.asserts import assert_equals
 
 
 class SettingWrapper(_BaseSettings):
@@ -34,16 +34,35 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
         assert_equals(self.method('bar:arg1::arg3'), ('bar', ['arg1', '', 'arg3']))
         assert_equals(self.method('3:'), ('3', ['']))
 
-    def test_with_windows_path_without_args(self):
+    def test_semicolon_as_separator(self):
+        assert_equals(self.method('name;arg'), ('name', ['arg']))
+        assert_equals(self.method('name;1;2;3'), ('name', ['1', '2', '3']))
+        assert_equals(self.method('name;'), ('name', ['']))
+
+    def test_alternative_separator_in_value(self):
+        assert_equals(self.method('name;v:1;v:2'), ('name', ['v:1', 'v:2']))
+        assert_equals(self.method('name:v;1:v;2'), ('name', ['v;1', 'v;2']))
+
+    def test_windows_path_without_args(self):
         assert_equals(self.method('C:\\name.py'), ('C:\\name.py', []))
         assert_equals(self.method('X:\\APPS\\listener'), ('X:\\APPS\\listener', []))
         assert_equals(self.method('C:/varz.py'), ('C:/varz.py', []))
 
-    def test_with_windows_path_with_args(self):
+    def test_windows_path_with_args(self):
         assert_equals(self.method('C:\\name.py:arg1'), ('C:\\name.py', ['arg1']))
         assert_equals(self.method('D:\\APPS\\listener:v1:b2:z3'),
                       ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
         assert_equals(self.method('C:/varz.py:arg'), ('C:/varz.py', ['arg']))
+        assert_equals(self.method('C:\\file.py:arg;with;alternative;separator'),
+                      ('C:\\file.py', ['arg;with;alternative;separator']))
+
+    def test_windows_path_with_semicolon_separator(self):
+        assert_equals(self.method('C:\\name.py;arg1'), ('C:\\name.py', ['arg1']))
+        assert_equals(self.method('D:\\APPS\\listener;v1;b2;z3'),
+                      ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
+        assert_equals(self.method('C:/varz.py;arg'), ('C:/varz.py', ['arg']))
+        assert_equals(self.method('C:\\file.py;arg:with:alternative:separator'),
+                      ('C:\\file.py', ['arg:with:alternative:separator']))
 
     def test_existing_paths_are_made_absolute(self):
         path = 'robot-framework-unit-test-file-12q3405909qasf'

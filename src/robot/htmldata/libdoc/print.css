@@ -6,3 +6,6 @@ body {
 a {
     text-decoration: none;
 }
+#search, #open-search {
+    display: none;
+}

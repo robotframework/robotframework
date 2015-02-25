@@ -90,7 +90,8 @@ class TestDictlike(unittest.TestCase):
         assert_equals(is_dict_like({}, allow_java=True), True)
         assert_equals(is_dict_like([], allow_java=True), False)
         if sys.platform.startswith('java'):
-            assert_equals(is_dict_like(HashMap()), False)
+            assert_equals(is_dict_like(HashMap()),
+                          sys.version_info >= (2, 7, 0, 'beta', 4))
             assert_equals(is_dict_like(HashMap(), allow_java=True), True)
             assert_equals(is_dict_like([], allow_java=True), False)
 

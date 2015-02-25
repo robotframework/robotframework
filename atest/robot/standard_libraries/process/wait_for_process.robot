@@ -29,3 +29,6 @@ Wait For Process Kill On Timeout
     Check Log Message    ${tc.kws[2].msgs[1]}    Process did not complete in 1 second.
     Check Log Message    ${tc.kws[2].msgs[2]}    Forcefully killing process.
     Check Log Message    ${tc.kws[2].msgs[3]}    Process completed.
+
+Wait for process uses minimum of timeout or internal timeout for polling
+    Check Test Case    ${TESTNAME}

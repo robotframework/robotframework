@@ -11,8 +11,10 @@
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
 <link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
+<script type="text/javascript" src="../rebot/util.js"></script> <!-- TODO: Should util.js be moved under common? -->
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="../lib/jquery.highlight.min.js"></script>
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/libdoc.js"></script>
 <title></title>
 </head>
@@ -36,14 +38,15 @@
     $(document).ready(function() {
         parseTemplates();
         document.title = libdoc.name;
-        $.tmpl('start_template', libdoc).appendTo($('body'));
+        renderTemplate('base', libdoc, $('body'));
         if (libdoc.inits.length > 0) {
-            $.tmpl('importing_template', libdoc).appendTo($('body'));
+            renderTemplate('importing', libdoc);
         }
-        $.tmpl('shortcuts_template', libdoc).appendTo($('body'));
-        $.tmpl('keywords_template', libdoc).appendTo($('body'));
-        $.tmpl('footer_template', libdoc).appendTo($('body'));
+        renderTemplate('shortcuts', libdoc);
+        renderTemplate('keywords', libdoc);
+        renderTemplate('footer', libdoc);
         scrollToHash();
+        $(document).bind('keydown', handleKeydown);
     });
 
     function parseTemplates() {
@@ -52,74 +55,241 @@
         });
     }
 
+    function renderTemplate(name, arguments, container) {
+        if (!container) {
+            container = $('#' + name + '-container');
+            container.empty();
+        }
+        if (!arguments.search) {
+            arguments.search = false;
+        }
+        $.tmpl(name + '-template', arguments).appendTo(container);
+    }
+
+    function handleKeydown(event) {
+        event = event || window.event;
+        var keyCode = event.keyCode || event.which;
+        if (keyCode === 27)  // esc
+            setTimeout(closeSearch, 0);
+        if (keyCode === 83 && $('#search').is(':hidden'))  // s
+            setTimeout(openSearch, 0);
+    }
+
     function scrollToHash() {
         if (window.location.hash) {
             var hash = window.location.hash.substring(1).replace('+', ' ');
             window.location.hash = hash;
         }
     }
+
+    function doSearch() {
+        var string = $('#search-string').val();
+        var include = getIncludesAndDisableIfOnlyOneLeft();
+        if (string) {
+            markMatches(string, include);
+            highlightMatches(string, include);
+            setMatchVisibility();
+        } else {
+            resetKeywords();
+        }
+    }
+
+    function getIncludesAndDisableIfOnlyOneLeft() {
+        var name = $('#include-name');
+        var args = $('#include-args');
+        var doc = $('#include-doc');
+        var include = {name: name.prop('checked'),
+                       args: args.prop('checked'),
+                       doc: doc.prop('checked')};
+        if ((!include.name) && (!include.args)) {
+            doc.prop('disabled', true);
+        } else if ((!include.name) && (!include.doc)) {
+            args.prop('disabled', true);
+        } else if ((!include.args) && (!include.doc)) {
+            name.prop('disabled', true);
+        } else {
+            name.prop('disabled', false);
+            args.prop('disabled', false);
+            doc.prop('disabled', false);
+        }
+        return include;
+    }
+
+    function markMatches(string, include) {
+        var regexp = new RegExp(util.regexpEscape(string), 'i');
+        var result = {};
+        var matchCount = 0;
+        result.keywords = util.map(libdoc.keywords, function (kw) {
+            kw = $.extend({}, kw);
+            kw.matched = (include.name && regexp.test(kw.name) ||
+                          include.args && regexp.test(kw.args) ||
+                          include.doc && regexp.test($(kw.doc).text()));
+            if (kw.matched)
+                matchCount++;
+            return kw
+        });
+        renderTemplate('shortcuts', result);
+        renderTemplate('keywords', result);
+        var ending = matchCount != 1 ? 's.' : '.';
+        $('#match-count').show().text(matchCount + ' matched keyword' + ending);
+        $('#altogether-count').hide();
+        if (matchCount == 0)
+            $('#keywords-container').find('table').empty();
+    }
+
+    function highlightMatches(string, include) {
+        var shortcuts = $('#shortcuts-container').find('.match');
+        var keywords = $('#keywords-container').find('.match');
+        if (include.name) {
+            shortcuts.highlight(string);
+            keywords.find('.kw').highlight(string);
+        }
+        if (include.args) {
+            keywords.find('.args').highlight(string);
+        }
+        if (include.doc) {
+            keywords.find('.doc').highlight(string);
+        }
+    }
+
+    function openSearch() {
+        $('#search').show();
+        $('#open-search').hide();
+        $('#search-string').focus().select();
+        $(document).scrollTop($("#Shortcuts").offset().top);
+    }
+
+    function closeSearch() {
+        $('#search').hide();
+        $('#open-search').show();
+    }
+
+    function resetSearch() {
+        $('#search-string').val('');
+        $('#include-name').prop('checked', true);
+        $('#include-args').prop('checked', true);
+        $('#include-doc').prop('checked', true);
+        $('#hide-unmatched').prop('checked', false);
+        resetKeywords();
+    }
+
+    function resetKeywords() {
+        renderTemplate('shortcuts', libdoc);
+        renderTemplate('keywords', libdoc);
+        $('#match-count').hide();
+        $('#altogether-count').show();
+    }
+
+    function setMatchVisibility() {
+        var kws = $('#keywords-container').find('.kw-row');
+        var hide = $('#hide-unmatched').prop('checked');
+        kws.toggleClass('hide-unmatched', hide);
+    }
+
+    // http://stackoverflow.com/a/18484799
+    var delay = (function () {
+        var timer = 0;
+        return function(callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
 </script>
 
-<script type="text/x-jquery-tmpl" id="start_template">
+<script type="text/x-jquery-tmpl" id="base-template">
     <h1>${name}</h1>
     <table class="metadata">
-    {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
-    {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
-    <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
+        {{if version}}<tr><th>Library version:</th><td>${version}</td></tr>{{/if}}
+        {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
+        <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
     </table>
-    <h2 id="Introduction">Introduction</h2>
-    <div class="doc">{{html doc}}</div>
+    <div id="introduction-container">
+        <h2 id="Introduction">Introduction</h2>
+        <div class="doc">{{html doc}}</div>
+    </div>
+    <div id="importing-container"></div>
+    <div id="shortcuts-container"></div>
+    <div id="keywords-container"></div>
+    <div id="footer-container"></div>
+    <form id="search" action="javascript:void(0)">
+        <fieldset>
+            <legend id="search-title">Search keywords</legend>
+            <input type="text" id="search-string" onkeyup="delay(doSearch, 500)">
+            <fieldset>
+                <legend>Search from</legend>
+                <input type="checkbox" id="include-name" onclick="doSearch()" checked>
+                <label for="include-name">Name</label>
+                <input type="checkbox" id="include-args" onclick="doSearch()" checked>
+                <label for="include-args">Arguments</label>
+                <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
+                <label for="include-doc">Documentation</label>
+            </fieldset>
+            <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
+            <label for="hide-unmatched">Hide unmatched keywords</label>
+            <div id="search-buttons">
+                <input type="button" value="Reset" onclick="resetSearch()"
+                       title="Reset search">
+                <input type="button" value="Close" onclick="closeSearch()"
+                       title="Close search (shortcut: <Esc>)">
+            </div>
+        </fieldset>
+    </form>
+    <div id="open-search" onclick="openSearch()" title="Search keywords (shortcut: s)"></div>
 </script>
 
-<script type="text/x-jquery-tmpl" id="importing_template">
+<script type="text/x-jquery-tmpl" id="importing-template">
     <h2 id="Importing">Importing</h2>
     <table border="1" class="keywords">
         <tr>
-            <th class="arg">Arguments</th>
+            <th class="args">Arguments</th>
             <th class="doc">Documentation</th>
         </tr>
         {{each inits}}
-        <tr>
-            <td class="arg">${$value.args}</td>
+        <tr class="kw-row">
+            <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
         </tr>
         {{/each}}
     </table>
 </script>
 
-<script type="text/x-jquery-tmpl" id="shortcuts_template">
+<script type="text/x-jquery-tmpl" id="shortcuts-template">
     <h2 id="Shortcuts">Shortcuts</h2>
     <div class='shortcuts'>
         {{each keywords}}
-            <a href="#${encodeURIComponent($value.name)}" title="${$value.shortdoc}">${$value.name}</a>
-            {{if $index < keywords.length-1}} &middot; {{/if}}
+        <a href="#${encodeURIComponent($value.name)}"
+           class="{{if $value.matched === false}}no-{{/if}}match"
+           title="${$value.shortdoc}">${$value.name}</a>
+        {{if $index < keywords.length-1}} &middot; {{/if}}
         {{/each}}
     </div>
 </script>
 
-<script type="text/x-jquery-tmpl" id="keywords_template">
+<script type="text/x-jquery-tmpl" id="keywords-template">
     <h2 id="Keywords">Keywords</h2>
     <table border="1" class="keywords">
         <tr>
             <th class="kw">Keyword</th>
-            <th class="arg">Arguments</th>
+            <th class="args">Arguments</th>
             <th class="doc">Documentation</th>
         </tr>
         {{each keywords}}
-        <tr>
-            <td class="kw"><a name="${$value.name}"></a>${$value.name}</td>
-            <td class="arg">${$value.args}</td>
+        <tr class="kw-row {{if $value.matched === false}}no-{{/if}}match">
+            <td class="kw"><a name="${encodeURIComponent($value.name)}"></a>${$value.name}</td>
+            <td class="args">${$value.args}</td>
             <td class="doc">{{html $value.doc}}</td>
         </tr>
         {{/each}}
     </table>
 </script>
-<script type="text/x-jquery-tmpl" id="footer_template">
+
+<script type="text/x-jquery-tmpl" id="footer-template">
     <p class="footer">
-        Altogether ${keywords.length} keywords.<br>
-        Generated by
-        <a href="http://robotframework.org/robotframework/#built-in-tools">Libdoc</a>
-        on ${generated}.
+        <span id="altogether-count">Altogether ${keywords.length} keywords.</span>
+        <span id="match-count"></span>
+        <br>
+        Generated by <a href="http://robotframework.org/robotframework/#built-in-tools">Libdoc</a> on ${generated}.
     </p>
 </script>
 

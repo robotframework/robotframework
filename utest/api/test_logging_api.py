@@ -1,5 +1,6 @@
 import unittest
 import sys
+import logging
 
 from robot.utils.asserts import assert_equals, assert_true
 from robot.api import logger
@@ -48,6 +49,41 @@ class TestConsole(unittest.TestCase):
     def _verify(self, stdout='', stderr=''):
         assert_equals(self.stdout.text, stdout)
         assert_equals(self.stderr.text, stderr)
+
+
+class MockHandler(logging.Handler):
+
+    def __init__(self):
+        logging.Handler.__init__(self)
+        self.messages = []
+
+    def emit(self, record):
+        self.messages.append(record.getMessage())
+
+
+class TestRedirectToPythonLogging(unittest.TestCase):
+
+    def setUp(self):
+        self.handler = MockHandler()
+        root = logging.getLogger()
+        root.addHandler(self.handler)
+        root.setLevel(logging.NOTSET)
+
+    def tearDown(self):
+        logging.getLogger().removeHandler(self.handler)
+
+    def test_logged_to_python(self):
+        logger.info("Foo")
+        logger.debug("Boo")
+        logger.trace("Goo")
+        logger.write("Doo", 'INFO')
+        self.assertEquals(self.handler.messages, ['Foo', 'Boo', 'Goo', 'Doo'])
+
+    def test_logger_to_python_with_html(self):
+        logger.info("Foo", html=True)
+        logger.write("Doo", 'INFO', html=True)
+        logger.write("Joo", 'HTML')
+        self.assertEquals(self.handler.messages, ['Foo', 'Doo', 'Joo'])
 
 
 if __name__ == '__main__':

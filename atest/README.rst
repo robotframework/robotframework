@@ -135,3 +135,10 @@ these tests in the future. The first step would be reorganizing the
 structure of ``robot`` and ``testdata`` folders. Their current structure
 follows Robot Framework's old internal module structure and it is far
 from ideal nowadays.
+
+Telnet tests
+------------
+
+Telnet test are not critical by default and running them requires some
+extra setup. Instructions how to run them can be found from 
+`testdata/standard_libraries/telnet/README.rst <https://github.com/robotframework/robotframework/blob/master/atest/testdata/standard_libraries/telnet/README.rst>`_.

@@ -17,7 +17,7 @@ Test Case Documentation in Multiple Columns
     Verify Test Documentation    Documentation for this test case in multiple columns
 
 Test Case Documentation in Multiple Lines
-    Verify Test Documentation    Documentation for this test case\nin\nmultiple\nlines
+    Verify Test Documentation    ${1}st line is shortdoc.\nDocumentation for this test case in\nmultiple\nlines
 
 Test Case Documentation With Variables
     Verify Test Documentation    Variables work in documentation since Robot 1.2
@@ -27,6 +27,9 @@ Test Case Documentation With Non-Existing Variables
     ...    Starting from RF 2.1 \${NONEX} variables are just
     ...    left unchanged in all documentations. Existing ones
     ...    are replaced: "10 milliseconds"
+
+Test Case Name and Documentation On Console
+    Check Stdout Contains    Test Case Documentation in Multiple Lines :: 1st line is shortdoc.${SPACE * 4}| PASS |
 
 Test Case Tags
     [Documentation]    Check that test case tags can be set in one and multiple lines and that they override Default Tags but not Force Tags

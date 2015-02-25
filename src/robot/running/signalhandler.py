@@ -58,7 +58,7 @@ class _StopSignalMonitor(object):
         self.__enter__()
 
     def __enter__(self):
-        if signal:
+        if self._can_register_signal:
             self._orig_sigint = signal.getsignal(signal.SIGINT)
             self._orig_sigterm = signal.getsignal(signal.SIGTERM)
             for signum in signal.SIGINT, signal.SIGTERM:
@@ -66,18 +66,20 @@ class _StopSignalMonitor(object):
         return self
 
     def __exit__(self, *exc_info):
-        if signal:
+        if self._can_register_signal:
             signal.signal(signal.SIGINT, self._orig_sigint)
             signal.signal(signal.SIGTERM, self._orig_sigterm)
+
+    @property
+    def _can_register_signal(self):
+        return signal and currentThread().getName() == 'MainThread'
 
     def _register_signal_handler(self, signum):
         try:
             signal.signal(signum, self)
         except (ValueError, IllegalArgumentException) as err:
-            # ValueError occurs e.g. if Robot doesn't run on main thread.
-            # IllegalArgumentException is http://bugs.jython.org/issue1729
-            if currentThread().getName() == 'MainThread':
-                self._warn_about_registeration_error(signum, err)
+            # IllegalArgumentException due to http://bugs.jython.org/issue1729
+            self._warn_about_registeration_error(signum, err)
 
     def _warn_about_registeration_error(self, signum, err):
         name, ctrlc = {signal.SIGINT: ('INT', 'or with Ctrl-C '),

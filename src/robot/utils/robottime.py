@@ -38,6 +38,7 @@ def _float_secs_to_secs_and_millis(secs):
     return (isecs, millis) if millis < 1000 else (isecs+1, 0)
 
 
+# TODO: Remove this and get_start_timetamp in 2.9. Not used since 2.8.7.
 START_TIME = _get_timetuple()
 
 

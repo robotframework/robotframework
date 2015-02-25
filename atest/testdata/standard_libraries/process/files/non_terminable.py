@@ -1,8 +1,10 @@
-from __future__ import with_statement
 import signal
 import time
 import sys
+import os.path
 
+
+notify_path = sys.argv[1]
 
 def log(msg, *extra_streams):
     for stream in (sys.stdout,) + extra_streams:
@@ -16,7 +18,7 @@ signal.signal(signal.SIGTERM, ignorer)
 if hasattr(signal, 'SIGBREAK'):
     signal.signal(signal.SIGBREAK, ignorer)
 
-with open(sys.argv[1], 'w') as notify:
+with open(notify_path, 'w') as notify:
     log('Starting non-terminable process.', notify)
 
 
@@ -25,3 +27,5 @@ while True:
         time.sleep(0.1)
     except IOError:
         pass
+    if not os.path.exists(notify_path):
+        log('Stopping non-terminable process.')

@@ -101,7 +101,7 @@ first row of the documentation is shown as a keyword documentation in
 Sometimes keywords need to be removed, replaced with new ones, or
 deprecated for other reasons.  User keywords can be marked deprecated
 by starting the documentation with `*DEPRECATED*`, which will
-cause a warning when the keyoword is used. For more information, see
+cause a warning when the keyword is used. For more information, see
 `Deprecating keywords`_ section.
 
 User keyword arguments
@@ -126,7 +126,7 @@ given and then argument names are defined in the subsequent
 cells. Each argument is in its own cell, using the same syntax as with
 variables. The keyword must be used with as many arguments as there
 are argument names in its signature. The actual argument names do not
-matter to the framework, but from users' perspective they should should
+matter to the framework, but from users' perspective they should
 be as descriptive as possible. It is recommended
 to use lower-case letters in variable names, either as
 `${my_arg}`, `${my arg}` or `${myArg}`.
@@ -327,13 +327,13 @@ is explained in the next section. Finally, if things get complicated,
 it might be a better idea to use normal positional arguments instead.
 
 The problem of arguments matching too much occurs often when creating
-keywords that `ignore given/when/then/and prefixes`__ . For example,
+keywords that `ignore given/when/then/and/but prefixes`__ . For example,
 :name:`${name} goes home` matches :name:`Given Janne goes home` so
 that `${name}` gets value `Given Janne`. Quotes around the
 argument, like in :name:`"${name}" goes home`, resolve this problem
 easily.
 
-__ `Ignoring Given/When/Then/And prefixes`_
+__ `Ignoring Given/When/Then/And/But prefixes`_
 
 Using custom regular expressions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -534,7 +534,7 @@ of the keyword definitions`__.
 .. note:: Embedded arguments feature in Robot Framework is inspired by
           how *step definitions* are created in a popular BDD tool Cucumber__.
 
-__ `Ignoring Given/When/Then/And prefixes`_
+__ `Ignoring Given/When/Then/And/But prefixes`_
 __ http://cukes.info
 
 User keyword return values

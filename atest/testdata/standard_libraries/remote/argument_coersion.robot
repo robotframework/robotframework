@@ -40,7 +40,7 @@ Binary with too big Unicode characters
 Unrepresentable Unicode
     [Template]  Run Keyword And Expect Error
     *    One Argument    \uFFFF
-    *    One Argument    \uD800
+    *    One Argument    \x00
 
 Integer
     0

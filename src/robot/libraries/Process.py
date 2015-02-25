@@ -65,19 +65,22 @@ class Process(object):
 
     = Specifying command and arguments =
 
-    Both `Run Process` and `Start Process` accept the command to execute
-    and all arguments passed to it as separate arguments. This is convenient
-    to use and also allows these keywords to automatically escape possible
-    spaces and other special characters in the command or arguments.
+    Both `Run Process` and `Start Process` accept the command to execute and
+    all arguments passed to the command as separate arguments. This makes usage
+    convenient and also allows these keywords to automatically escape possible
+    spaces and other special characters in commands and arguments. Notice that
+    if a command accepts options that themselves accept values, these options
+    and their values must be given as separate arguments.
 
-    When `running processes in shell`, it is also possible to give the
-    whole command to execute as a single string. The command can then
-    contain multiple commands, for example, connected with pipes. When
-    using this approach the caller is responsible on escaping.
+    When `running processes in shell`, it is also possible to give the whole
+    command to execute as a single string. The command can then contain
+    multiple commands to be run together. When using this approach, the caller
+    is responsible on escaping.
 
     Examples:
-    | `Run Process` | ${progdir}${/}prog.py        | first arg | second         |
-    | `Run Process` | script1.sh arg && script2.sh | shell=yes | cwd=${progdir} |
+    | `Run Process` | ${tools}${/}prog.py | argument | second arg with spaces |
+    | `Run Process` | java | -jar | ${jars}${/}example.jar | --option | value |
+    | `Run Process` | prog.py "one arg" && tool.sh | shell=yes | cwd=${tools} |
 
     Starting from Robot Framework 2.8.6, possible non-string arguments are
     converted to strings automatically.
@@ -154,9 +157,10 @@ class Process(object):
     By default processes are run so that their standard output and standard
     error streams are kept in the memory. This works fine normally,
     but if there is a lot of output, the output buffers may get full and
-    the program can hang.
+    the program can hang. Additionally on Jython, everything written to
+    these in-memory buffers can be lost if the process is terminated.
 
-    To avoid output buffers getting full, it is possible to use `stdout`
+    To avoid the above mentioned problems, it is possible to use `stdout`
     and `stderr` arguments to specify files on the file system where to
     redirect the outputs. This can also be useful if other processes or
     other keywords need to read or manipulate the outputs somehow.
@@ -507,8 +511,12 @@ class Process(object):
         [http://docs.python.org/2/library/subprocess.html|subprocess]
         module to have working `terminate` and `kill` functions. They were
         added in Python 2.6 and are thus missing from earlier versions.
-        Unfortunately at least beta releases of Jython 2.7
-        [http://bugs.jython.org/issue1898|do not seem to support them either].
+
+        With Jython termination is supported starting from Jython 2.7 beta 3
+        with some limitations. One problem is that everything written to the
+        `standard output and error streams` before termination can be lost
+        unless custom streams are used. A bigger problem is that at least
+        beta 3 does not support killing the process
 
         Automatically killing the process if termination fails as well as
         returning a result object are new features in Robot Framework 2.8.2.
@@ -735,12 +743,11 @@ class Process(object):
         self._processes.switch(handle)
 
     def _process_is_stopped(self, process, timeout):
+        stopped = lambda: process.poll() is not None
         max_time = time.time() + timeout
-        while time.time() <= max_time:
-            if process.poll() is not None:
-                return True
-            time.sleep(0.1)
-        return False
+        while time.time() <= max_time and not stopped():
+            time.sleep(min(0.1, timeout))
+        return stopped()
 
 
 class ExecutionResult(object):
@@ -786,6 +793,8 @@ class ExecutionResult(object):
             return ''
         try:
             return self._format_output(stream.read())
+        except IOError:  # http://bugs.jython.org/issue2218
+            return ''
         finally:
             if stream_path:
                 stream.close()

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 #  Copyright 2008-2014 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -305,7 +303,7 @@ class _Converter:
         return bool(item)
 
     def convert_to_bytes(self, input, input_type='text'):
-        """Converts the given `input` to bytes according to the `input_type`.
+        u"""Converts the given `input` to bytes according to the `input_type`.
 
         Valid input types are listed below:
 
@@ -333,7 +331,7 @@ class _Converter:
         they cannot contain extra spaces.
 
         Examples (last column shows returned bytes):
-        | ${bytes} = | Convert To Bytes | hyvä       |     | # hyv\\xe4        |
+        | ${bytes} = | Convert To Bytes | hyv\xe4    |     | # hyv\\xe4        |
         | ${bytes} = | Convert To Bytes | \\xff\\x07 |     | # \\xff\\x07      |
         | ${bytes} = | Convert To Bytes | 82 70      | int | # RF              |
         | ${bytes} = | Convert To Bytes | 0b10 0x10  | int | # \\x02\\x10      |
@@ -2050,7 +2048,7 @@ class _Misc:
         return sep.join(items)
 
     def log(self, message, level='INFO', html=False, console=False, repr=False):
-        """Logs the given message with the given level.
+        u"""Logs the given message with the given level.
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML, and WARN.
         Messages below the current active log level are ignored. See
@@ -2086,8 +2084,8 @@ class _Misc:
         | Log | <b>Hello</b>, world! | html=yes |   | # INFO message as HTML.  |
         | Log | <b>Hello</b>, world! | HTML     |   | # Same as above.         |
         | Log | <b>Hello</b>, world! | DEBUG    | html=true | # DEBUG as HTML. |
-        | Log | Hello, console! | console=yes | | # Write also to the console. |
-        | Log | Hyvä \\x00      | repr=yes    | | # Logs `u'Hyv\\xe4 \\x00'`   |
+        | Log | Hello, console!   | console=yes | | # Log also to the console. |
+        | Log | Hyv\xe4 \\x00     | repr=yes    | | # Log `u'Hyv\\xe4 \\x00'`. |
 
         See `Log Many` if you want to log multiple messages in one go, and
         `Log To Console` if you only want to write to the console.
@@ -2394,11 +2392,11 @@ class _Misc:
 
         Examples (expecting `${result}` is 3.14):
         | ${status} = | Evaluate | 0 < ${result} < 10    |
-        | ${down}   = | Evaluate | int(${result})        |
-        | ${up}     = | Evaluate | math.ceil(${result})  | math |
-        | ${random} = | Evaluate | random.randint(0, sys.maxsize) | random,sys |
-        | ${ns} =     | Create Dictionary | x=${4} | y=${2} |
-        | ${result} = | Evaluate | x*10 + y              | namespace=${ns} |
+        | ${down} =   | Evaluate | int(${result})        |
+        | ${up} =     | Evaluate | math.ceil(${result})  | math                 |
+        | ${random} = | Evaluate | random.randint(0, sys.maxsize) | random, sys |
+        | ${ns} =     | Create Dictionary | x=${4}       | y=${2}               |
+        | ${result} = | Evaluate | x*10 + y              | namespace=${ns}      |
         =>
         | ${status} = True
         | ${down} = 3

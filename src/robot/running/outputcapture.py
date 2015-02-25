@@ -83,14 +83,25 @@ class PythonCapturer(object):
             return self._get_value(self._stream)
         finally:
             self._stream.close()
+            self._avoid_at_exit_errors(self._stream)
 
     def _get_value(self, stream):
         try:
             return decode_output(stream.getvalue())
         except UnicodeError:
+            # Error occurs if non-ASCII chars logged both as str and unicode.
             stream.buf = decode_output(stream.buf)
             stream.buflist = [decode_output(item) for item in stream.buflist]
             return stream.getvalue()
+
+    def _avoid_at_exit_errors(self, stream):
+        # Avoid ValueError at program exit when logging module tries to call
+        # methods of streams it has intercepted that are already closed.
+        # Which methods are called, and does logging silence possible errors,
+        # depends on Python/Jython version. For related discussion see
+        # http://bugs.python.org/issue6333
+        stream.write = lambda s: None
+        stream.flush = lambda: None
 
 
 if not sys.platform.startswith('java'):

@@ -59,7 +59,9 @@ class TidyLib(object):
         expected = self._read(expected)
         result_lines = result.splitlines()
         expected_lines = expected.splitlines()
-        msg = "Actual:\n%r\n\nExpected:\n%r\n\n" % (result, expected)
+        msg = "Actual:\n%s\n\nExpected:\n%s\n\n" \
+              % (repr(result).replace('\\n', '\\n\n'),
+                 repr(expected).replace('\\n', '\\n\n'))
         assert_equals(len(result_lines), len(expected_lines), msg)
         for res, exp in zip(result_lines, expected_lines):
             filter = self._filter_matches(filters, exp)

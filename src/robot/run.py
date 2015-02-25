@@ -384,7 +384,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     pythonpathsetter = __import__('pythonpathsetter')
 
 from robot.conf import RobotSettings
-from robot.output import LOGGER
+from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
 from robot.running import TestSuiteBuilder
 from robot.utils import Application
@@ -404,12 +404,14 @@ class RobotFramework(Application):
                                  settings['WarnOnSkipped'],
                                  settings['RunEmptySuite']).build(*datasources)
         suite.configure(**settings.suite_config)
-        result = suite.run(settings)
-        LOGGER.info("Tests execution ended. Statistics:\n%s"
-                    % result.suite.stat_message)
-        if settings.log or settings.report or settings.xunit:
-            writer = ResultWriter(settings.output if settings.log else result)
-            writer.write_results(settings.get_rebot_settings())
+        with pyloggingconf.robot_handler_enabled(settings.log_level):
+            result = suite.run(settings)
+            LOGGER.info("Tests execution ended. Statistics:\n%s"
+                        % result.suite.stat_message)
+            if settings.log or settings.report or settings.xunit:
+                writer = ResultWriter(settings.output if settings.log
+                                      else result)
+                writer.write_results(settings.get_rebot_settings())
         return result.return_code
 
     def validate(self, options, arguments):

@@ -13,7 +13,7 @@ ${test_tag_base}    test
 @{test_tags}      ${test_tag_base}-1    ${test_tag_base}-2    ${test_tag_base}-3
 ${default}        Default
 ${log}            Log
-${test_timeout}    500 milliseconds
+${test_timeout}    999 milliseconds
 ${keyword_timeout}    ${test_timeout}
 ${10ms}              10 milliseconds
 
@@ -32,9 +32,9 @@ Test Case Documentation in Multiple Columns
     No Operation
 
 Test Case Documentation in Multiple Lines
-    [DOCUMENTATION]    Documentation
-    [DOCUMENT]         for this test case
-    ...                in\nmultiple\nlines
+    [DOCUMENTATION]    ${1}st line is shortdoc.
+    ...                Documentation for this test case
+    [DOCUMENT]         in\nmultiple\nlines
     No Operation
 
 Test Case Documentation With Variables
@@ -97,7 +97,7 @@ Test Case Timeout
 
 Test Case Timeout 2
     [ timeout ]
-    Sleep    600 ms
+    Sleep    1111 ms
 
 Test Case Timeout With Variables
     [Documentation]    FAIL Test timeout 10 milliseconds exceeded.

@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation   How variables from CLI override other variables is tested in variable_priorities.html
+Documentation   How variables from CLI override other variables is tested in variable_priorities.robot
 Suite Setup     Run Test Data
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.robot
@@ -12,6 +12,9 @@ Variables From Variable File
     Check Test Case  ${TEST NAME}
 
 Arguments To Variable Files
+    Check Test Case  ${TEST NAME}
+
+Arguments To Variable Files Using Semicolon Separator
     Check Test Case  ${TEST NAME}
 
 Variable File From PYTHONPATH
@@ -42,7 +45,9 @@ Run Test Data
     ${options} =  Catenate
     ...  --variablefile ${VF1}
     ...  -V ${VF2}:arg
-    ...  -V ${VF2}:arg2:given
+    ...  -V "${VF2}:arg2:value;with;semi;colons"
+    ...  -V "${VF2};semicolon;separator"
+    ...  -V "${VF2};semi:colon;separator:with:colons"
     ...  --VariableFile ${VF2}
     ...  -V ${VF2}:FAIL
     ...  -V ${VF2}:too:many:args

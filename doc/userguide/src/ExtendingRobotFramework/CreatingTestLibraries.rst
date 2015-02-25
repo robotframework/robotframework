@@ -1279,9 +1279,7 @@ messages to the log file and to the console. Test libraries can use
 this API like `logger.info('My message')` instead of logging
 through the standard output like `print '*INFO* My message'`. In
 addition to a programmatic interface being a lot cleaner to use, this
-API has a benefit that the log messages have accurate timestamps_. An
-obvious limitation is that test libraries using this logging API have
-a dependency to Robot Framework.
+API has a benefit that the log messages have accurate timestamps_.
 
 The public logging API `is thoroughly documented`__ as part of the API
 documentation at https://robot-framework.readthedocs.org. Below is
@@ -1297,7 +1295,14 @@ a simple usage example:
        logger.info('<i>This</i> is a boring example', html=True)
        logger.console('Hello, console!')
 
+An obvious limitation is that test libraries using this logging API have
+a dependency to Robot Framework. Before version 2.8.7 Robot also had
+to be running for the logging to work. Starting from Robot Framework 2.8.7
+if Robot is not running the messages are redirected automatically to Python's
+standard logging__ module.
+
 __ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.api.html#module-robot.api.logger
+__ http://docs.python.org/library/logging.html
 
 Using Python's standard `logging` module
 ''''''''''''''''''''''''''''''''''''''''
@@ -1466,9 +1471,18 @@ crash or a corrupted output file. If a keyword starts something on
 background, there should be another keyword that checks the status of
 the worker thread and reports gathered information accordingly.
 
-.. note:: Messages logged by non-main threads using the `programmatic
-          logging APIs`_ are silently ignored starting from Robot
-          Framework 2.6.2.
+Messages logged by non-main threads using the normal logging methods from
+`programmatic logging APIs`_  are silently ignored starting from Robot
+Framework 2.6.2.
+
+There is also a `BackgroundLogger` in separate robotbackgroundlogger__ project,
+with a similar API as the standard `robot.api.logger`. Normal logging
+methods will ignore messages from other than main thread, but the
+`BackgroundLogger` will save the background messages so that they can be later
+logged to Robot's log.
+
+__ https://github.com/robotframework/robotbackgroundlogger
+
 
 Distributing test libraries
 ---------------------------

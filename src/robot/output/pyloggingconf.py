@@ -12,7 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from contextlib import contextmanager
 import logging
+import sys
 
 from robot import utils
 
@@ -25,10 +27,32 @@ LEVELS = {'TRACE': logging.NOTSET,
           'WARN': logging.WARNING}
 
 
+# TODO: Remove in RF 2.9. robot_handler_enabled used instead since 2.8.7.
+# https://github.com/robotframework/robotframework/issues/1821
 def initialize(level):
     logging.raiseExceptions = False
     logging.getLogger().addHandler(RobotHandler())
     set_level(level)
+
+
+@contextmanager
+def robot_handler_enabled(level):
+    root = logging.getLogger()
+    if any(isinstance(h, RobotHandler) for h in root.handlers):
+        yield
+        return
+    handler = RobotHandler()
+    old_raise = logging.raiseExceptions
+    root.addHandler(handler)
+    logging.raiseExceptions = False
+    set_level(level)
+    try:
+        yield
+    finally:
+        root.removeHandler(handler)
+        # Avoid errors at exit: http://bugs.jython.org/issue2253
+        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
+            logging.raiseExceptions = old_raise
 
 
 def set_level(level):

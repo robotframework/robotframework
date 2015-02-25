@@ -1034,8 +1034,8 @@ popularized by `Behavior Driven Development`__ (BDD). When writing test cases in
 this style, the initial state is usually expressed with a keyword starting with
 word :name:`Given`, the actions are described with keyword starting with
 :name:`When` and the expectations with a keyword starting with :name:`Then`.
-Keyword starting with :name:`And` may be used if a step has more than one
-action.
+Keyword starting with :name:`And` or :name:`But` may be used if a step has more
+than one action.
 
 .. table:: Example test cases using behavior-driven style
    :class: example
@@ -1053,17 +1053,19 @@ __ http://testobsessed.com/2008/12/08/acceptance-test-driven-development-atdd-an
 __ http://en.wikipedia.org/wiki/Specification_by_example
 __ http://en.wikipedia.org/wiki/Behavior_Driven_Development
 
-Ignoring :name:`Given/When/Then/And` prefixes
-'''''''''''''''''''''''''''''''''''''''''''''
+Ignoring :name:`Given/When/Then/And/But` prefixes
+'''''''''''''''''''''''''''''''''''''''''''''''''
 
-Prefixes :name:`Given`, :name:`When`, :name:`Then` and :name:`And` are dropped
-when matching keywords are searched, if no match with the full name is
-found. This works for both user keywords and library keywords. For example,
+Prefixes :name:`Given`, :name:`When`, :name:`Then`, :name:`And` and :name:`But`
+are dropped when matching keywords are searched, if no match with the full name
+is found. This works for both user keywords and library keywords. For example,
 :name:`Given login page is open` in the above example can be implemented as
 user keyword either with or without the word :name:`Given`. Ignoring prefixes
 also allows using the same keyword with different prefixes. For example
 :name:`Welcome page should be open` could also used as :name:`And welcome page
 should be open`.
+
+.. note:: Ignoring :name:`But` prefix is new in Robot Framework 2.8.7.
 
 Embedding data to keywords
 ''''''''''''''''''''''''''

@@ -2,7 +2,9 @@
 Test Setup        Run Keywords
 ...               Check Precondition    sys.version_info >= (2,6)    AND
 ...               Remove File    ${TEMPFILE}
-Test Teardown     Terminate All Processes    kill=True
+Test Teardown     Run Keywords
+...               Remove File    ${TEMPFILE}    AND
+...               Terminate All Processes    kill=True
 Library           Collections
 Resource          process_resource.robot
 

@@ -238,5 +238,22 @@ class TestPreservingSignalHandlers(unittest.TestCase):
         assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
 
 
+class TestStateBetweenTestRuns(unittest.TestCase):
+
+    def test_reset_logging_conf(self):
+        import logging
+        assert_equals(logging.getLogger().handlers, [])
+        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
+            assert_equals(logging.raiseExceptions, 1)
+        suite = TestSuite(name='My Suite')
+        suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
+        run(suite)
+        assert_equals(logging.getLogger().handlers, [])
+        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
+            assert_equals(logging.raiseExceptions, 1)
+        else:
+            assert_equals(logging.raiseExceptions, False)
+
+
 if __name__ == '__main__':
     unittest.main()

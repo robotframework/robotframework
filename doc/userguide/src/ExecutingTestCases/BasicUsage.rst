@@ -156,17 +156,13 @@ used for combining two or more individual tags or patterns together.
 
 `AND` or `&`
    The whole pattern matches if all individual patterns match. `AND` and
-   `&` are equivalent.
-
-   ::
+   `&` are equivalent::
 
       --include fooANDbar     # Matches tests containing tags 'foo' and 'bar'.
       --exclude xx&yy&zz      # Matches tests containing tags 'xx', 'yy', and 'zz'.
 
 `OR`
-   The whole pattern matches if any individual pattern matches.
-
-   ::
+   The whole pattern matches if any individual pattern matches::
 
       --include fooORbar      # Matches tests containing either tag 'foo' or tag 'bar'.
       --exclude xxORyyORzz    # Matches tests containing any of tags 'xx', 'yy', or 'zz'.
@@ -174,25 +170,26 @@ used for combining two or more individual tags or patterns together.
 `NOT`
    The whole pattern matches if the pattern on the left side matches but
    the one on the right side does not. If used multiple times, none of
-   the patterns after the first `NOT` must not match.
-
-   ::
+   the patterns after the first `NOT` must not match::
 
       --include fooNOTbar     # Matches tests containing tag 'foo' but not tag 'bar'.
       --exclude xxNOTyyNOTzz  # Matches tests containing tag 'xx' but not tag 'yy' or tag 'zz'.
 
-Mixed
-   The above operators can also be used together. The operator precedence,
-   from highest to lowest, is `AND`, `OR` and `NOT`.
+The above operators can also be used together. The operator precedence,
+from highest to lowest, is `AND`, `OR` and `NOT`::
 
-   ::
+    --include xANDyORz      # Matches tests containing either tags 'x' and 'y', or tag 'z'.
+    --include xORyNOTz      # Matches tests containing either tag 'x' or 'y', but not tag 'z'.
+    --include xNOTyANDz     # Matches tests containing tag 'x', but not tags 'y' and 'z'.
 
-      --include xANDyORz      # Matches tests that contain either tags 'x' and 'y', or tag 'z'.
-      --include xORyNOTz      # Matches tests that contain either tag 'x' or 'y', but not tag 'z'.
-      --include xNOTyANDz     # Matches tests that contain tag 'x', but not tags 'y' and 'z'.
+Although tag matching itself is case-insensitive, all operators are
+case-sensitive and must be written with upper case letters. If tags themselves
+happen to contain upper case `AND`, `OR` or `NOT`, they need to specified
+using lower case letters to avoid accidental operator usage::
 
-.. note:: All operators are case-sensitive and must be written with capital
-          letters.
+    --include port          # Matches tests containing tag 'port', case-insensitively
+    --include PORT          # Matches tests containing tag 'P' or 'T', case-insensitively
+    --exclude handoverORportNOTnotification
 
 .. note:: `OR` operator is new in Robot Framework 2.8.4.
 

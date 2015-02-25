@@ -92,6 +92,14 @@ robot.utils.etreewrapper module
     :undoc-members:
     :show-inheritance:
 
+robot.utils.frange module
+-------------------------
+
+.. automodule:: robot.utils.frange
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.utils.htmlformatters module
 ---------------------------------
 

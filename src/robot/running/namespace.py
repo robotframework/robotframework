@@ -285,7 +285,7 @@ class KeywordStore(object):
             return True
 
     def _get_bdd_style_handler(self, name):
-        for prefix in ['given ', 'when ', 'then ', 'and ']:
+        for prefix in ['given ', 'when ', 'then ', 'and ', 'but ']:
             if name.lower().startswith(prefix):
                 handler = self._get_handler(name[len(prefix):])
                 if handler:

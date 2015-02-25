@@ -37,6 +37,7 @@ Init Arguments
     ...    prompt=None    prompt_is_regexp=False    encoding=UTF-8
     ...    encoding_errors=ignore    default_log_level=INFO     window_size=None
     ...    environ_user=None    terminal_emulation=False    terminal_type=None
+    ...    telnetlib_log_level=TRACE
 
 Keyword Names
     Keyword Name Should Be     0    Close All Connections
@@ -62,3 +63,7 @@ KwArgs and VarArgs
     Run Libdoc And Parse Output    Process
     Keyword Name Should Be         6    Run Process
     Keyword Arguments Should Be    6    command    *arguments    **configuration
+
+Documentation set in __init__
+    Run Libdoc And Parse Output    ${TESTDATADIR}/DocSetInInit.py
+    Doc Should Be    Doc set in __init__!!

@@ -35,6 +35,12 @@ describe("Testing Matcher", function () {
         expect(matches('aaa')).not.toBeTruthy();
     });
 
+    it("should match multi line string", function () {
+        var matches = util.Matcher('first*last').matches;
+        expect(matches('first line\nand last')).toBeTruthy();
+        expect(matches('first\nsecond\nthird\nlast')).toBeTruthy();
+    });
+
     it("should support matching any", function () {
         var matchesAny = util.Matcher('ab?d*').matchesAny;
         expect(matchesAny(['xxx', 'abcd'])).toBeTruthy();

@@ -5,6 +5,7 @@ Resource        resources/optional_given_when_then.robot
 In user keyword name with normal arguments
     Given we don't drink too many beers
     When we are in  museum  cafe
+    But we don't drink too many beers
     And time  does  not  run  out
     Then we get this feature ready today
     and we don't drink too many beers
@@ -14,17 +15,19 @@ In user keyword name with embedded arguments
     When it does not rain
     And we get this feature implemented
     Then we go to walking tour
-    and it does not rain
+    but it does not rain
 
 In library keyword name
     Given Should Be Equal  1  1
     And Should Not Match  foo  bar
+    But Should Match  foo  foo
     When set test variable  $foo  bar
     THEN should be equal  ${foo}  bar
 
 In user keyword in resource file
     Given Keyword Is In Resource File
     and another resource file  keyword
+    but another resource file  keyword
 
 Correct Name Shown In Keyword Not Found Error
     [Documentation]  FAIL No keyword with name 'Given this keyword does not exist' found.

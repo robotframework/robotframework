@@ -55,12 +55,14 @@ Looping Forever And Timeouting
     Fail  This should not be executed
 
 Stopped After Test Timeout
-    [Documentation]  Keyword that is stopped after test timeout should not write to a file FAIL Test timeout 500 milliseconds exceeded.
+    [Documentation]  Keyword that is stopped after test timeout should not write to a file.
+    ...              FAIL Test timeout 500 milliseconds exceeded.
     [Timeout]  0.5s
     Write To File After Sleeping  ${TEST STOPPED}  2
 
 Stopped After Keyword Timeout
-    [Documentation]  Keyword that is stopped after keyword timeout should not write to a file FAIL Keyword timeout 100 milliseconds exceeded.
+    [Documentation]  Keyword that is stopped after keyword timeout should not write to a file.
+    ...              FAIL Keyword timeout 200 milliseconds exceeded.
     [Timeout]  1 minute
     Timeouted Write To File After Sleeping  ${KW STOPPED}  2
 
@@ -229,7 +231,7 @@ Timeouted Keyword Timeouts Due To Total Time
 
 Timeouted Write To File After Sleeping
     [Arguments]  ${path}  ${secs}
-    [Timeout]  100 milliseconds
+    [Timeout]  200 milliseconds
     Write To File After Sleeping  ${path}  ${secs}
     Fail  This should not be executed
 

@@ -21,7 +21,7 @@ import zipfile
 from invoke import task, run
 
 
-assert os.getcwd() == os.path.dirname(__file__)
+assert os.getcwd() == os.path.dirname(os.path.abspath(__file__))
 
 VERSION_RE = re.compile('^((2\.\d+)(\.\d+)?)((a|b|rc|.dev)\d+)?$')
 VERSION_FILE = os.path.join('src', 'robot', 'version.py')
@@ -256,17 +256,16 @@ Implementation-Version: {version}
 
 @task
 def release_notes(version=get_version_from_file(), login=None, password=None):
-    """Get template for release notes from Github.
+    """Create release notes template based on issues on GitHub.
 
-    Requires for you to have PyGithub installed.
-    https://github.com/jacquev6/PyGithub
-    pip install PyGithub
+    Requires PyGithub <https://github.com/jacquev6/PyGithub>. Install it with:
+        pip install PyGithub
 
     Args:
         version:  Version to get the issues for. By default the current version.
-        login:    Github login. If not given anonymous login is used. There is 60
-                  request maximum/hour at github api if you dont authenticate.
-        password: The password for github login
+        login:    GitHub login. If not given, anonymous login is used. GitHub
+                  API has 60 request/hour limit in that case.
+        password: The password for GitHub login.
     """
     issues = _get_issues(version, login, password)
     _print_header("Robot Framework {}".format(version), level=1)
@@ -333,17 +332,16 @@ def _print_issue_table(issues, version):
 
 @task
 def print_issues(version=get_version_from_file(), login=None, password=None):
-    """Get issues from Github.
+    """Get issues from GitHub issue tracker.
 
-    Requires for you to have PyGithub installed.
-    https://github.com/jacquev6/PyGithub
-    pip install PyGithub
+    Requires PyGithub <https://github.com/jacquev6/PyGithub>. Install it with:
+        pip install PyGithub
 
     Args:
         version:  Version to get the issues for. By default the current version.
-        login:    Github login. If not given anonymous login is used. There is 60
-                  request maximum/hour at github api if you dont authenticate.
-        password: The password for github login
+        login:    GitHub login. If not given, anonymous login is used. GitHub
+                  API has 60 request/hour limit in that case.
+        password: The password for GitHub login.
     """
     issues = _get_issues(version, login, password)
     print("{:4}  {:11}  {:8}  {}".format("id", "type", "priority", "summary"))
@@ -352,7 +350,7 @@ def print_issues(version=get_version_from_file(), login=None, password=None):
 
 
 class Issue(object):
-    PRIORITIES= ["prio-critical", "prio-high", "prio-medium", "prio-low"]
+    PRIORITIES = ["prio-critical", "prio-high", "prio-medium", "prio-low"]
 
     def __init__(self, issue):
         self.id = "#{}".format(issue.number)
@@ -364,7 +362,8 @@ class Issue(object):
     @property
     def order(self):
         return (self.PRIORITIES.index('prio-' + self.priority),
-                0 if self.type == 'bug' else 1, self.id)
+                0 if self.type == 'bug' else 1,
+                self.id)
 
     def _get_label(self, *values):
         for value in values:

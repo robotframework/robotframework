@@ -1,5 +1,8 @@
 import unittest
+import time
+import glob
 import sys
+import threading
 import tempfile
 import signal
 from os.path import abspath, dirname, join, exists, curdir
@@ -18,7 +21,7 @@ LOG = 'Log:     %s' % LOG_PATH
 
 
 def run_without_outputs(*args, **kwargs):
-    kwargs.update(output='NONE', log='NoNe', report='none')
+    kwargs.update(output='NONE', log='NoNe', report=None)
     return run(*args, **kwargs)
 
 
@@ -131,12 +134,16 @@ class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_importer_caches_are_cleared_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot')
-        run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO())
+        self._run(data)
         lib = self._import_library()
         res = self._import_resource()
-        run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO())
+        self._run(data)
         assert_true(lib is not self._import_library())
         assert_true(res is not self._import_resource())
+
+    def _run(self, data, **config):
+        return run_without_outputs(data, stdout=StringIO(), stderr=StringIO(),
+                                   outputdir=TEMP, **config)
 
     def _import_library(self):
         return namespace.IMPORTER.import_library('BuiltIn', None, None, None)
@@ -147,31 +154,85 @@ class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_clear_namespace_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.robot')
-        rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),
-                 test=['NormalText'], variable=['NormalText:Hello'])
+        rc = self._run(data, test=['NormalText'], variable=['NormalText:Hello'])
         assert_equals(rc, 0)
-        rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),
-                 test=['NormalText'])
+        rc = self._run(data, test=['NormalText'])
         assert_equals(rc, 1)
 
+    def test_reset_logging_conf(self):
+        import logging
+        assert_equals(logging.getLogger().handlers, [])
+        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
+            assert_equals(logging.raiseExceptions, 1)
+        self._run(join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot'))
+        assert_equals(logging.getLogger().handlers, [])
+        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
+            assert_equals(logging.raiseExceptions, 1)
+        else:
+            assert_equals(logging.raiseExceptions, False)
 
-class TestPreservingSignalHandlers(unittest.TestCase):
 
-    def setUp(self):
-        self.orig_sigint = signal.getsignal(signal.SIGINT)
-        self.orig_sigterm = signal.getsignal(signal.SIGTERM)
+class TestTimestampOutputs(RunningTestCase):
+    output = join(TEMP, 'output-ts-*.xml')
+    report = join(TEMP, 'report-ts-*.html')
+    log = join(TEMP, 'log-ts-*.html')
+    remove_files = [output, report, log]
 
-    def tearDown(self):
-        signal.signal(signal.SIGINT, self.orig_sigint)
-        signal.signal(signal.SIGTERM, self.orig_sigterm)
+    def test_different_timestamps_when_run_multiple_times(self):
+        self.run_tests()
+        output1, = self.find_results(self.output, 1)
+        report1, = self.find_results(self.report, 1)
+        log1, = self.find_results(self.log, 1)
+        self.wait_until_next_second()
+        self.run_tests()
+        output21, output22 = self.find_results(self.output, 2)
+        report21, report22 = self.find_results(self.report, 2)
+        log21, log22 = self.find_results(self.log, 2)
+        assert_equals(output1, output21)
+        assert_equals(report1, report21)
+        assert_equals(log1, log21)
+
+    def run_tests(self):
+        data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot')
+        assert_equals(run(data, timestampoutputs=True, outputdir=TEMP,
+                          output='output-ts.xml', report='report-ts.html',
+                          log='log-ts'), 1)
+
+    def find_results(self, pattern, expected):
+        matches = glob.glob(pattern)
+        assert_equals(len(matches), expected)
+        return sorted(matches)
+
+    def wait_until_next_second(self):
+        start = time.localtime()[5]
+        while time.localtime()[5] == start:
+            time.sleep(0.01)
+
+
+class TestSignalHandlers(unittest.TestCase):
+    data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot')
 
     def test_original_signal_handlers_are_restored(self):
+        orig_sigint = signal.getsignal(signal.SIGINT)
+        orig_sigterm = signal.getsignal(signal.SIGTERM)
         my_sigterm = lambda signum, frame: None
         signal.signal(signal.SIGTERM, my_sigterm)
-        run(join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot'),
-            stdout=StringIO(), output=None, log=None, report=None)
-        assert_equals(signal.getsignal(signal.SIGINT), self.orig_sigint)
-        assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
+        try:
+            run_without_outputs(self.data, stdout=StringIO())
+            assert_equals(signal.getsignal(signal.SIGINT), orig_sigint)
+            assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
+        finally:
+            signal.signal(signal.SIGINT, orig_sigint)
+            signal.signal(signal.SIGTERM, orig_sigterm)
+
+    def test_dont_register_signal_handlers_then_run_on_thread(self):
+        stream = StringIO()
+        thread = threading.Thread(target=run_without_outputs, args=(self.data,),
+                                  kwargs=dict(stdout=stream, stderr=stream))
+        thread.start()
+        thread.join()
+        output = stream.getvalue()
+        assert_true('ERROR' not in output.upper(), 'Errors:\n%s' % output)
 
 
 class TestRelativeImportsFromPythonpath(RunningTestCase):

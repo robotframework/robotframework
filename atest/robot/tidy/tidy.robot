@@ -56,6 +56,11 @@ Custom headers are preserved and tables aligned accordingly
 Running Tidy as a script
     Run tidy as a script and check result    ${EMPTY}    golden.robot
 
+Tidy tests and keywords containing ELSE and ELSE IF
+    [Setup]    Copy File    ${DATA}/else_untidy.robot    ${TEMP}/else_untidy.robot
+    Run tidy    --inplace     ${TEMP}/else_untidy.robot
+    Compare tidy results    ${TEMP}/else_untidy.robot    ${DATA}/else_tidy.robot
+
 
 *** Keywords ***
 Files Should Have $CURDIR

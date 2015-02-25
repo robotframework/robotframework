@@ -71,7 +71,16 @@ Read Until Prompt
     Check Log Message    ${tc.kws[1].msgs[0]}    ${HOME}\n${FULL PROMPT}
     Check Log Message    ${tc.kws[4].msgs[0]}    ${HOME}\n${FULL PROMPT}    DEBUG
 
+Read Until Prompt And Strip Prompt
+    ${tc}=     Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[2].msgs[0]}    ${HOME}\n${FULL PROMPT}
+    Check Log Message    ${tc.kws[5].msgs[0]}    ${HOME}\n${FULL PROMPT}    DEBUG
+
 Read Until Regexp Prompt
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[2].msgs[0]}    ${HOME}\n${FULL PROMPT}
+
+Read Until Regexp Prompt And Strip Prompt
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[2].msgs[0]}    ${HOME}\n${FULL PROMPT}
 
@@ -83,6 +92,11 @@ Write Until Expected Output
 
 Execute Command
     Check Test Case    ${TEST NAME}
+
+Execute Command And Strip Prompt
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[1].msgs[1]}    ${HOME}\n${FULL PROMPT}
+    Check Log Message    ${tc.kws[3].msgs[1]}    ${HOME}\n${FULL PROMPT}    DEBUG
 
 Writing and reading fails if there is no connection
     Check Test Case    ${TEST NAME}

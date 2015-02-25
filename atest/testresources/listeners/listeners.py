@@ -34,7 +34,7 @@ class SuiteAndTestCounts(object):
     ROBOT_LISTENER_API_VERSION = '2'
     exp_data = {
         'Subsuites & Subsuites2': ([], ['Subsuites', 'Subsuites2'], 5),
-        'Subsuites':               ([], ['Sub1', 'Sub2'], 2),
+        'Subsuites':              ([], ['Sub1', 'Sub2'], 2),
         'Sub1':                   (['SubSuite1 First'], [], 1),
         'Sub2':                   (['SubSuite2 First'], [], 1),
         'Subsuites2':             ([], ['Sub.Suite.4', 'Subsuite3'], 3),
@@ -44,7 +44,7 @@ class SuiteAndTestCounts(object):
 
     def start_suite(self, name, attrs):
         data = attrs['tests'], attrs['suites'], attrs['totaltests']
-        if not data == self.exp_data[name]:
+        if data != self.exp_data[name]:
             raise RuntimeError('Wrong tests or suites in %s, %s != %s' %
                                (name, self.exp_data[name], data))
 

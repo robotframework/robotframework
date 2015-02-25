@@ -17,6 +17,7 @@ from six import string_types
 import os
 import random
 import sys
+import time
 
 from robot import utils
 from robot.errors import DataError, FrameworkError
@@ -67,6 +68,7 @@ class _BaseSettings(object):
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
+        self.start_timestamp = utils.format_time(time.time(), '', '-', '')
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
         self._cli_opts.update(self._extra_cli_opts)
@@ -213,7 +215,7 @@ class _BaseSettings(object):
     def _process_output_name(self, option, name):
         base, ext = os.path.splitext(name)
         if self['TimestampOutputs']:
-            base = '%s-%s' % (base, utils.get_start_timestamp('', '-', ''))
+            base = '%s-%s' % (base, self.start_timestamp)
         ext = self._get_output_extension(ext, option)
         return base + ext
 
@@ -288,17 +290,28 @@ class _BaseSettings(object):
         return self._cli_opts[name][1]
 
     def _split_args_from_name_or_path(self, name):
-        if ':' not in name or os.path.exists(name):
-            args = []
-        else:
-            args = name.split(':')
-            name = args.pop(0)
-            # Handle absolute Windows paths with arguments
-            if len(name) == 1 and args[0].startswith(('/', '\\')):
-                name = name + ':' + args.pop(0)
+        if os.path.exists(name):
+            return os.path.abspath(name), []
+        index = self._get_arg_separator_index_from_name_or_path(name)
+        if index == -1:
+            return name, []
+        args = name[index+1:].split(name[index])
+        name = name[:index]
         if os.path.exists(name):
             name = os.path.abspath(name)
         return name, args
+
+    def _get_arg_separator_index_from_name_or_path(self, name):
+        colon_index = name.find(':')
+        # Handle absolute Windows paths
+        if colon_index == 1 and name[2:3] in ('/', '\\'):
+            colon_index = name.find(':', colon_index+1)
+        semicolon_index = name.find(';')
+        if colon_index == -1:
+            return semicolon_index
+        if semicolon_index == -1:
+            return colon_index
+        return min(colon_index, semicolon_index)
 
     def _validate_remove_keywords(self, values):
         for value in values:
@@ -464,6 +477,10 @@ class RobotSettings(_BaseSettings):
     def skip_teardown_on_exit(self):
         return (self['SkipTeardownOnExit'] or
                 any(mode == 'skipteardownonexit' for mode in self['RunMode']))
+
+    @property
+    def log_level(self):
+        return self['LogLevel']
 
     @property
     def console_logger_config(self):

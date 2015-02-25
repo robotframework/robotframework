@@ -66,14 +66,16 @@ public class ArgumentsJava {
 
     public String javaKWArgs(Map<String,Object> kwargs) {
         String ret = "javaKWArgs:";
-        for (String key: kwargs.keySet())
+        SortedSet<String> keys = new TreeSet<String>(kwargs.keySet());
+        for (String key: keys)
             ret += " " + key + ":" + kwargs.get(key);
         return ret;
     }
 
     public String javaNormalAndKWArgs(String arg, Map<String,Object> kwargs) {
         String ret = "javaNormalAndKWArgs: "+arg;
-        for (String key: kwargs.keySet())
+        SortedSet<String> keys = new TreeSet<String>(kwargs.keySet());
+        for (String key: keys)
             ret += " " + key + ":" + kwargs.get(key);
         return ret;
     }
@@ -82,7 +84,8 @@ public class ArgumentsJava {
         String ret = "javaVarArgsAndKWArgs:";
         for (String arg: varargs)
             ret += " " + arg;
-        for (String key: kwargs.keySet())
+        SortedSet<String> keys = new TreeSet<String>(kwargs.keySet());
+        for (String key: keys)
             ret += " " + key + ":" + kwargs.get(key);
         return ret;
     }
@@ -91,21 +94,24 @@ public class ArgumentsJava {
         String ret = "javaAllArgs: "+arg;
         for (String a: varargs)
             ret += " " + a;
-        for (String key: kwargs.keySet())
+        SortedSet<String> keys = new TreeSet<String>(kwargs.keySet());
+        for (String key: keys)
             ret += " " + key + ":" + kwargs.get(key);
         return ret;
     }
 
     public String javaManyNormalArgs(String arg, String arg2, Map<String,Object> kwargs) {
         String ret = "javaManyNormalArgs: "+arg+" "+arg2;
-        for (String key: kwargs.keySet())
+        SortedSet<String> keys = new TreeSet<String>(kwargs.keySet());
+        for (String key: keys)
             ret += " " + key + ":" + kwargs.get(key);
         return ret;
     }
 
     public String hashmapArg(HashMap<String, Object> map) {
         String ret = "hashmapArg:";
-        for (String key: map.keySet())
+        SortedSet<String> keys = new TreeSet<String>(map.keySet());
+        for (String key: keys)
             ret += " " + key + ":" + map.get(key);
         return ret;
     }

@@ -1,5 +1,6 @@
 *** Settings ***
-Documentation    Text from     multiple    columns    is catenated with spaces,
+Documentation    ${1}st line is shortdoc.
+...              Text from     multiple    columns    is catenated with spaces,
 ...              and line continuation creates a new line.
 ...              Newlines can also be added literally "\n\n".
 ...  Variables work since Robot ${version} and ${SUITE_DOC_FROM_CLI} works too.

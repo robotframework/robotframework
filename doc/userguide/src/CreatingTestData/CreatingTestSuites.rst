@@ -82,23 +82,23 @@ Initialization files
 A test suite created from a directory can have similar settings as a suite
 created from a test case file. Because a directory alone cannot have that
 kind of information, it must be placed into a special test suite initialization
-file. Initialization files have the same structure and syntax as
-test case files, except that they cannot have test case tables and not all
-settings are supported.
+file. An initialization file name must always be of the format
+:file:`__init__.ext`, where the extension must be one of the `supported
+file formats`_ (for example, :file:`__init__.robot` or :file:`__init__.html`).
+The name format is borrowed from Python, where files named in this manner
+denote that a directory is a module.
 
-An initialization file name must always be of the format :file:`__init__.ext`,
-where the extension must match one of the `supported file formats`_ (for example,
-:file:`__init__.html` or :file:`__init__.txt`). The name format is borrowed
-from Python, where files named in this manner denote that a directory is a module.
+Initialization files have the same structure and syntax as test case files,
+except that they cannot have test case tables and not all settings are
+supported. Variables and keywords created or imported in initialization files
+*are not* available in the lower level test suites. If you need to share
+variables or keywords, you can put them into `resource files`_ that can be
+imported both by initialization and test case files.
 
 The main usage for initialization files is specifying test suite related
 settings similarly as in `test case files`_, but setting some `test case
-related settings`__ is also possible. Variables and keywords created or
-imported in initialization files *are not* available in the lower level
-test suites, but `resource files`_ can be used if there is a need to
-share them.
-
-How to use different settings in the initialization files:
+related settings`__ is also possible. How to use different settings in the
+initialization files is explained below.
 
 `Documentation`:setting:, `Metadata`:setting:, `Suite Setup`:setting:, `Suite Teardown`:setting:
    These test suite specific settings work the same way as in test case files.
@@ -157,7 +157,7 @@ example, :file:`some_tests.html` becomes :name:`Some Tests` and
 :file:`My_test_directory` becomes :name:`My test directory`.
 
 .. note:: The rules for creating test suite names changed slightly in
-   	  Robot Framework 2.5.
+          Robot Framework 2.5.
 
 The file or directory name can contain a prefix to control the `execution
 order`_ of the suites. The prefix is separated from the base name by two

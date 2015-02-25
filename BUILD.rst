@@ -107,6 +107,10 @@ Creating distributions
 
        invoke jar
 
+   - Test that JAR is not totally borken::
+
+       java -jar dist/robotframework-$VERSION.jar --version
+       java -jar dist/robotframework-$VERSION.jar atest/testdata/misc/pass_and_fail.robot
 
 5. Upload JAR to Sonatype
 
@@ -134,7 +138,7 @@ Creating distributions
 
    - Run command::
 
-        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$version.jar -DpomFile=pom.xml -Durl=http://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
+        mvn gpg:sign-and-deploy-file -Dfile=dist/robotframework-$VERSION.jar -DpomFile=pom.xml -Durl=http://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
 
    - Go to https://oss.sonatype.org/index.html#welcome, log in with Sonatype credentials, find the staging repository and do close & release
    - After that, the released JAR is synced to Maven central within an hour.
@@ -152,19 +156,17 @@ __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Us
    - Update docs at http://robotframework.org/robotframework/::
 
         git checkout gh-pages
-        invoke add_docs $version --push
+        invoke add_docs $VERSION --push
         git checkout master
-
 
 Release notes
 -------------
 
-- Generate a template for the release notes with invoke::
+- Generate a template for the release notes::
 
    invoke release_notes --login <github login> --password <github password>
 
 - Create a new release at https://github.com/robotframework/robotframework/releases
-
 
 Announcements
 -------------
@@ -178,3 +180,15 @@ Announcements
   - http://tech.groups.yahoo.com/group/agile-testing
   - http://lists.idyll.org/listinfo/testing-in-python
   - etc.
+
+Post-actions
+------------
+
+1. Set version back to ``dev`` if you did not do it as part of `tagging`_::
+
+     invoke set_version --push dev
+
+2. Close `issue tracker milestone
+   <https://github.com/robotframework/robotframework/milestones>`__.
+
+3. Update API doc version at https://readthedocs.org/projects/robot-framework/.

@@ -15,6 +15,7 @@
 from six import text_type as unicode
 
 from robot.errors import DataError
+from robot.model import SuiteVisitor
 from robot.utils import ET, ETSource, get_error_message
 
 from .executionresult import Result, CombinedResult
@@ -89,6 +90,8 @@ class ExecutionResultBuilder(object):
         with self._source as source:
             self._parse(source, handler.start, handler.end)
         result.handle_suite_teardown_failures()
+        if not self._include_keywords:
+            result.suite.visit(RemoveKeywords())
         return result
 
     def _parse(self, source, start, end):
@@ -105,18 +108,19 @@ class ExecutionResultBuilder(object):
                 elem.clear()
 
     def _omit_keywords(self, context):
-        started_kws = 0
+        omitted_kws = 0
         for event, elem in context:
+            # Teardowns aren't omitted to allow checking suite teardown status.
+            omit = elem.tag == 'kw' and elem.get('type') != 'teardown'
             start = event == 'start'
-            kw = elem.tag == 'kw'
-            if kw and start:
-                started_kws += 1
-            if not started_kws:
+            if omit and start:
+                omitted_kws += 1
+            if not omitted_kws:
                 yield event, elem
             elif not start:
                 elem.clear()
-            if kw and not start:
-                started_kws -= 1
+            if omit and not start:
+                omitted_kws -= 1
 
     def _flatten_keywords(self, context, flattened):
         match = FlattenKeywordMatcher(flattened).match
@@ -137,3 +141,12 @@ class ExecutionResultBuilder(object):
                 elem.clear()
             if started >= 0 and event == 'end' and tag == 'kw':
                 started -= 1
+
+
+class RemoveKeywords(SuiteVisitor):
+
+    def start_suite(self, suite):
+        suite.keywords = []
+
+    def visit_test(self, test):
+        test.keywords = []

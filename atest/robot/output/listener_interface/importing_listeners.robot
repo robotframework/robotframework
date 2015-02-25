@@ -17,9 +17,11 @@ Python Module Listener
     module    module_listener    module_listener
 
 Listener With Arguments
-    class    listeners.WithArgs    listeners    4
+    class    listeners.WithArgs    listeners    5
     [Teardown]    Check Listener File    ${ARGS_FILE}
-    ...    I got arguments 'value' and 'default'    I got arguments 'a1' and 'a2'
+    ...    I got arguments 'value' and 'default'
+    ...    I got arguments 'a1' and 'a;2'
+    ...    I got arguments 'semi' and 'colons:here'
 
 Listener With Path
     class    ${LISTENERS}${/}ListenAll.py   ListenAll
@@ -79,7 +81,8 @@ Run Tests With Listeners
     ...    --listener listeners.ListenSome
     ...    --listener module_listener
     ...    --listener listeners.WithArgs:value
-    ...    --listener listeners.WithArgs:a1:a2
+    ...    --listener "listeners.WithArgs:a1:a;2"
+    ...    --listener "listeners.WithArgs;semi;colons:here"
     ...    --listener ${LISTENERS}${/}ListenAll.py:%{TEMPDIR}${/}${ALL_FILE2}
     ...    --listener listeners.WithArgs
     ...    --listener listeners.WithArgs:1:2:3

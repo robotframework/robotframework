@@ -42,6 +42,7 @@ from .error import (get_error_message, get_error_details, ErrorDetails,
                     RERAISED_EXCEPTIONS)
 from .escaping import escape, unescape
 from .etreewrapper import ET, ETSource
+from .frange import frange
 from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer

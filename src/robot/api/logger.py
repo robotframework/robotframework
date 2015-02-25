@@ -26,6 +26,10 @@ instead of logging through the standard output like::
 In addition to a programmatic interface being cleaner to use, this API
 has a benefit that the log messages have accurate timestamps.
 
+If the logging methods are used when Robot Framework is not running,
+the messages are redirected to the standard Python ``logging`` module
+using logger named ``RobotFramework``. This feature was added in RF 2.8.7.
+
 Log levels
 ----------
 
@@ -57,8 +61,10 @@ Example
         do_something()
         logger.info('<i>This</i> is a boring example.', html=True)
 """
+import logging
 
 from robot.output import librarylogger
+from robot.running.context import EXECUTION_CONTEXTS
 
 
 def write(msg, level, html=False):
@@ -68,17 +74,26 @@ def write(msg, level, html=False):
     Instead of using this method, it is generally better to use the level
     specific methods such as ``info`` and ``debug``.
     """
-    librarylogger.write(msg, level, html)
+    if EXECUTION_CONTEXTS.current is not None:
+        librarylogger.write(msg, level, html)
+    else:
+        logger = logging.getLogger("RobotFramework")
+        level = {'TRACE': logging.DEBUG/2,
+                 'DEBUG': logging.DEBUG,
+                 'INFO': logging.INFO,
+                 'HTML': logging.INFO,
+                 'WARN': logging.WARN}[level]
+        logger.log(level, msg)
 
 
 def trace(msg, html=False):
     """Writes the message to the log file using the ``TRACE`` level."""
-    librarylogger.trace(msg, html)
+    write(msg, 'TRACE', html)
 
 
 def debug(msg, html=False):
     """Writes the message to the log file using the ``DEBUG`` level."""
-    librarylogger.debug(msg, html)
+    write(msg, 'DEBUG', html)
 
 
 def info(msg, html=False, also_console=False):
@@ -87,12 +102,14 @@ def info(msg, html=False, also_console=False):
     If ``also_console`` argument is set to ``True``, the message is
     written both to the log file and to the console.
     """
-    librarylogger.info(msg, html, also_console)
+    write(msg, 'INFO', html)
+    if also_console:
+        console(msg)
 
 
 def warn(msg, html=False):
     """Writes the message to the log file using the ``WARN`` level."""
-    librarylogger.warn(msg, html)
+    write(msg, 'WARN', html)
 
 
 def console(msg, newline=True, stream='stdout'):

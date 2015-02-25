@@ -1,30 +1,58 @@
 *** Settings ***
 Resource          process_resource.robot
+Suite Teardown    Remove Files    ${STDOUT}    ${STDERR}
+
+*** Variables ***
+@{COMMAND}        python    ${CURDIR}/files/timeout.py
 
 *** Test Cases ***
 Finish before timeout
-    ${result} =    Run Process    python    -c    print('Hello, world!')    timeout=10s
-    Should Be Equal    ${result.rc}    ${0}
-    Should Be Equal    ${result.stdout}    Hello, world!
+    ${result} =    Run Process    @{COMMAND}
+    Should not be terminated    ${result}
 
-On timeout process is terminated by default
+On timeout process is terminated by default (w/ default streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
-    ${result} =    Run Process    python    -c    import time; time.sleep(1); print('done')
-    ...    timeout=3ms    stderr=STDOUT
-    Should Not Be Equal    ${result.rc}    ${0}
-    Should Be Equal    ${result.stdout}    ${EMPTY}
+    ${result} =    Run Process    @{COMMAND}    timeout=200ms
+    Should be terminated    ${result}
 
-On timeout process can be killed
+On timeout process is terminated by default (w/ custom streams)
     [Setup]    Check Precondition    sys.version_info >= (2,6)
-    ${result} =    Run Process    python    -c    import time; time.sleep(1); print('done')
-    ...    timeout=0.002s    on_timeout=kill    stderr=STDOUT
-    Should Not Be Equal    ${result.rc}    ${0}
-    Should Be Equal    ${result.stdout}    ${EMPTY}
+    ${result} =    Run Process    @{COMMAND}    timeout=200ms
+    ...    stdout=${STDOUT}    stderr=${STDERR}
+    Should be terminated    ${result}    default streams=False
+
+On timeout process can be killed (w/ default streams)
+    [Setup]    Check Precondition    sys.version_info >= (2,6)
+    ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=kill
+    Should be terminated    ${result}
+
+On timeout process can be killed (w/ custom streams)
+    [Setup]    Check Precondition    sys.version_info >= (2,6)
+    ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=KiLL
+    ...    stdout=${STDOUT}    stderr=${STDERR}
+    Should be terminated    ${result}    default streams=False
 
 On timeout process can be left running
-    ${result} =    Run Process    python    -c    import time; time.sleep(0.1); print('done')
-    ...    timeout=0.001    alias=exceed    on_timeout=CONTINUE
+    ${result} =    Run Process    @{COMMAND}    timeout=0.2
+    ...    on_timeout=CONTINUE    alias=exceed
     Should Be Equal    ${result}    ${None}
     ${result} =    Wait For Process    handle=exceed
+    Should not be terminated    ${result}
+
+*** Keywords ***
+Should not be terminated
+    [Arguments]    ${result}
     Should Be Equal    ${result.rc}    ${0}
-    Should Be Equal    ${result.stdout}    done
+    Should Be Equal    ${result.stdout}    start stdout\nend stdout
+    Should Be Equal    ${result.stderr}    start stderr\nend stderr
+
+Should be terminated
+    [Arguments]    ${result}    ${default streams}=True
+    Should Not Be Equal    ${result.rc}    ${0}
+    ${expected stdout}    ${expected stderr} =
+    ...    Run Keyword If    not (${default streams} and os.sep == '/' and sys.platform.startswith('java'))
+    ...    Create List    start stdout    start stderr
+    ...    ELSE
+    ...    Create List    ${EMPTY}    ${EMPTY}
+    Should Be Equal    ${result.stdout}    ${expected stdout}
+    Should Be Equal    ${result.stderr}    ${expected stderr}

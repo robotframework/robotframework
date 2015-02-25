@@ -21,9 +21,11 @@ Documentation  *URL:*    http://robotframework.org
 
 *** Keywords ***
 One paragraph
+    [Arguments]    ${one}
     [Documentation]    Hello, world!
 
 Multiple paragraps
+    [Arguments]    ${one}    ${two}    ${three}=default
     [Documentation]    Hell, world!
     ...
     ...    Second paragraph *has formatting* and [http://example.com|link].
@@ -46,6 +48,7 @@ Preformatted
     ...    | Second has only one
 
 Lists
+    [Arguments]    @{list}
     [Documentation]
     ...    - first
     ...    - second
@@ -76,6 +79,7 @@ Images
     ...    [http://code.google.com/p/robotframework/logo?ext.png|http://code.google.com/p/robotframework/logo?ext.png]
 
 Nön-ÄSCÏÏ
+    [Arguments]    ${ärg}=öööööööö
     [Documentation]
     ...    Älsö döc häs nön-äscïï stüff. Ïnclüdïng \u2603.
 

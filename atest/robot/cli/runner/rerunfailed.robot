@@ -12,22 +12,25 @@ ${RUN FAILED FROM}    ${RERUN DIR}/rerun-output.xml
 
 *** Test Cases ***
 Passing is not re-executed
-    Run Keyword And Expect Error    No test 'Passing' found*    Check Test Case    Passing
+    Test Should Not Have Been Executed    Passing
 
 Failing is re-executed
-    Check Test Case    Failing
+    Test Should Have Been Executed    Failing
 
 Failing from subsuite is executed
-    Check Test Case    Really Failing
+    Test Should Have Been Executed    Really Failing
 
 Explicitly selected is executed
-    Check Test Case    Selected
+    Test Should Have Been Executed    Selected
 
 Excluded failing is not executed
-    Run Keyword And Expect Error    No test 'Failing with tag' found*    Check Test Case    Failing with tag
+    Test Should Not Have Been Executed    Failing with tag
 
 Non-existing failing from output file is not executed
-    Run Keyword And Expect Error    No test 'Only in one suite' found*    Check Test Case    Only in one suite
+    Test Should Not Have Been Executed    Only in one suite
+
+Suite teardown failures are noticed
+    Test Should Have Been Executed    Test passed but suite teardown fails
 
 --runfailed still works without warnings
     [Documentation]    --runfailed should be deprecated in RF 2.9 and removed later
@@ -48,3 +51,11 @@ Suite initialization
     Copy File    ${OUTFILE}    ${RUN FAILED FROM}
     Copy File    ${ORIG DIR}/runfailed2.robot    ${SUITE DIR}/runfailed.txt
     Run Tests    --rerunfailed ${RUN FAILED FROM} --test Selected --exclude tag    ${SUITE DIR}
+
+Test Should Have Been Executed
+    [Arguments]    ${name}
+    Check Test Case    ${name}
+
+Test Should Not Have Been Executed
+    [Arguments]    ${name}
+    Run Keyword And Expect Error    No test '${name}' found*    Check Test Case    ${name}
