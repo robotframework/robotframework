@@ -4,6 +4,7 @@ import re
 import sys
 import os
 from os.path import abspath, join, dirname
+from io import open
 from setuptools import setup
 
 if 'develop' in sys.argv or 'bdist_wheel' in sys.argv:
