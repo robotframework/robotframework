@@ -78,7 +78,7 @@ def write(msg, level, html=False):
         librarylogger.write(msg, level, html)
     else:
         logger = logging.getLogger("RobotFramework")
-        level = {'TRACE': logging.DEBUG/2,
+        level = {'TRACE': logging.DEBUG//2,
                  'DEBUG': logging.DEBUG,
                  'INFO': logging.INFO,
                  'HTML': logging.INFO,
