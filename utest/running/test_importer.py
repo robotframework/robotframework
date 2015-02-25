@@ -50,7 +50,7 @@ class TestImportCache(unittest.TestCase):
         value = object()
         cache[path] = value
         assert_equals(cache[path], value)
-        assert_equals(cache._keys[0], normpath(path))
+        assert_equals(cache._keys[0], normpath(path, case_normalize=True))
 
     def test_existing_non_absolute_paths_are_not_normalized(self):
         cache = ImportCache()
