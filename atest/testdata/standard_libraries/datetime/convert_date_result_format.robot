@@ -60,14 +60,14 @@ Should exclude milliseconds
                       2014-04-24 21:45:12.99999  timestamp            2014-04-24 21:45:13
                       ${DATE}                    timestamp            2014-04-24 21:45:12
                       ${EPOCH + 0.123}           %Y-%m-%d %H:%M:%S    2014-04-24 21:45:12
-                      ${EPOCH + 0.500}           %Y-%m-%d %H:%M:%S    2014-04-24 21:45:13
+                      ${EPOCH + 1.500}           %Y-%m-%d %H:%M:%S    2014-04-24 21:45:14
                       ${DATE}                    datetime             ${datetime(2014, 4, 24, 21, 45, 12)}
                       ${DATE w/ MILLIS}          datetime             ${datetime(2014, 4, 24, 21, 45, 12)}
                       ${DATE w/ MICRO}           datetime             ${datetime(2014, 4, 24, 21, 45, 12)}
                       ${EPOCH + 0.123}           datetime             ${datetime(2014, 4, 24, 21, 45, 12)}
-                      ${EPOCH + 0.500}           datetime             ${datetime(2014, 4, 24, 21, 45, 13)}
+                      ${EPOCH + 1.500}           datetime             ${datetime(2014, 4, 24, 21, 45, 14)}
                       ${EPOCH + 0.123}           epoch                ${EPOCH}
-                      ${EPOCH + 0.500}           epoch                ${EPOCH + 1}
+                      ${EPOCH + 1.500}           epoch                ${EPOCH + 2}
 
 Epoch time is float regardless are millis included or not
                       [Template]    Epoch time format should be
