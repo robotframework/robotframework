@@ -8,7 +8,7 @@ import re
 from os.path import basename, dirname, exists, join, normpath
 
 from robot.errors import DataError
-from robot.utils import abspath, JYTHON
+from robot.utils import abspath, JYTHON, WINDOWS
 from robot.utils.importer import Importer, ByPathImporter
 from robot.utils.asserts import (assert_equals, assert_true, assert_raises,
                                  assert_raises_with_msg)
@@ -27,6 +27,7 @@ def assert_prefix(error, expected):
     prefix = ':'.join(message.split(':')[:count]) + ':'
     assert_equals(prefix, expected)
 
+
 def create_temp_file(name, attr=42, extra_content=''):
     if not exists(TESTDIR):
         os.mkdir(TESTDIR)
@@ -36,6 +37,7 @@ def create_temp_file(name, attr=42, extra_content=''):
         file.write('def func():\n  return attr\n')
         file.write(extra_content)
     return path
+
 
 class LoggerStub(object):
 
@@ -47,10 +49,15 @@ class LoggerStub(object):
         if self.remove_extension:
             for ext in '$py.class', '.pyc', '.py':
                 msg = msg.replace(ext, '')
-        self.messages.append(msg)
+        self.messages.append(self._normalize_drive_letter(msg))
 
     def assert_message(self, msg, index=0):
-        assert_equals(self.messages[index], msg)
+        assert_equals(self.messages[index], self._normalize_drive_letter(msg))
+
+    def _normalize_drive_letter(self, msg):
+        if not WINDOWS:
+            return msg
+        return re.sub("'\\w:", lambda match: match.group().upper(), msg)
 
 
 class TestImportByPath(unittest.TestCase):
