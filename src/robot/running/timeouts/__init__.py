@@ -18,14 +18,14 @@ from robot.utils import (secs_to_timestr, timestr_to_secs,
                          IRONPYTHON, JYTHON, WINDOWS)
 from robot.errors import TimeoutError, DataError, FrameworkError
 
-if IRONPYTHON:
-    from .ironpython import Timeout
-elif JYTHON:
+if JYTHON:
     from .jython import Timeout
+elif IRONPYTHON:
+    from .ironpython import Timeout
 elif WINDOWS:
-    from .timeoutwin import Timeout
+    from .windows import Timeout
 else:
-    from .timeoutsignaling import Timeout
+    from .posix import Timeout
 
 
 class _Timeout(object):
