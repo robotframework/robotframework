@@ -144,7 +144,8 @@ Reserve List
 
 Sort List
     Sort List  ${STRINGS}
-    Compare To Expected String  ${STRINGS}  ['1', '1' , '1', '41', '43', '44']
+    Compare To Expected String  ${STRINGS}
+    ...  [u'!@#$%^&*()_+-=', u'\${cmd list}', u'1', u'2', u'3', u'B', u'WOrd', u'a', u'b', u'glob=test', u'regexp=blah', u'wOrD', u'äö']
 
 Get From List
     ${value} =  Get From List  ${L4}  1
