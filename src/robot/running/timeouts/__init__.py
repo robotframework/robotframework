@@ -21,7 +21,7 @@ from robot.errors import TimeoutError, DataError, FrameworkError
 if IRONPYTHON:
     from .ironpython import Timeout
 elif JYTHON:
-    from .timeoutthread import Timeout
+    from .jython import Timeout
 elif WINDOWS:
     from .timeoutwin import Timeout
 else:

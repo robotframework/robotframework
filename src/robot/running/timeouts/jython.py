@@ -13,9 +13,8 @@
 #  limitations under the License.
 
 import sys
-import threading
 
-from System.Threading import Thread, ThreadStart
+from java.lang import Thread, Runnable
 
 from robot.errors import TimeoutError
 
@@ -28,24 +27,24 @@ class Timeout(object):
 
     def execute(self, runnable):
         runner = Runner(runnable)
-        thread = Thread(ThreadStart(runner))
-        thread.IsBackground = True
-        thread.Start()
-        if not thread.Join(self._timeout * 1000):
-            thread.Abort()
+        thread = Thread(runner, name='RobotFrameworkTimeoutThread')
+        thread.setDaemon(True)
+        thread.start()
+        thread.join(int(self._timeout * 1000))
+        if thread.isAlive():
+            thread.stop()
             raise TimeoutError(self._error)
         return runner.get_result()
 
 
-class Runner(object):
+class Runner(Runnable):
 
     def __init__(self, runnable):
         self._runnable = runnable
         self._result = None
         self._error = None
 
-    def __call__(self):
-        threading.currentThread().setName('RobotFrameworkTimeoutThread')
+    def run(self):
         try:
             self._result = self._runnable()
         except:
