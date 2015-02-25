@@ -12,25 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-import os
 import time
 
-from robot import utils
+from robot.utils import (secs_to_timestr, timestr_to_secs,
+                         IRONPYTHON, JYTHON, WINDOWS)
 from robot.errors import TimeoutError, DataError, FrameworkError
 
-# TODO: Check are all timeout modules still needed w/o Python/Jython 2.5.
-if sys.platform == 'cli':
+if IRONPYTHON or JYTHON:
     from .timeoutthread import Timeout
-elif os.name == 'nt':
+elif WINDOWS:
     from .timeoutwin import Timeout
 else:
-    try:
-        # python 2.6 or newer in *nix or mac
-        from .timeoutsignaling import Timeout
-    except ImportError:
-        # python < 2.6 and jython don't have complete signal module
-        from .timeoutthread import Timeout
+    from .timeoutsignaling import Timeout
 
 
 class _Timeout(object):
@@ -53,8 +46,8 @@ class _Timeout(object):
             self.string = variables.replace_string(self.string)
             if not self:
                 return
-            self.secs = utils.timestr_to_secs(self.string)
-            self.string = utils.secs_to_timestr(self.secs)
+            self.secs = timestr_to_secs(self.string)
+            self.string = secs_to_timestr(self.secs)
             self.message = variables.replace_string(self.message)
         except (DataError, ValueError) as err:
             self.secs = 0.000001 # to make timeout active
