@@ -20,9 +20,9 @@ from robot.errors import DataError
 
 from .encoding import decode_from_system
 from .error import get_error_details
+from .platform import JYTHON
 from .robotpath import abspath, normpath
 from .robottypes import type_name
-from .platform import JYTHON
 
 if JYTHON:
     from java.lang.System import getProperty
@@ -204,15 +204,15 @@ class ByPathImporter(_Importer):
         return module_dir, module_name
 
     def _wrong_module_imported(self, name, importing_from, importing_package):
-        module = sys.modules.get(name)
-        if not module:
+        if name not in sys.modules:
             return False
-        source = getattr(module, '__file__', None)
+        source = getattr(sys.modules[name], '__file__', None)
         if not source:  # play safe (occurs at least with java based modules)
             return True
         imported_from, imported_package = self._get_import_information(source)
-        return ((normpath(importing_from), importing_package) !=
-                (normpath(imported_from), imported_package))
+        return (normpath(importing_from, case_normalize=True) !=
+                normpath(imported_from, case_normalize=True) or
+                importing_package != imported_package)
 
     def _get_import_information(self, source):
         imported_from, imported_file = self._split_path_to_module(source)

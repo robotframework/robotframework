@@ -1,16 +1,24 @@
 import unittest
 import os
+import os.path
 
-from robot.utils import abspath, normpath, get_link_path
+from robot.utils import abspath, normpath, get_link_path, WINDOWS
+from robot.utils.robotpath import CASE_INSENSITIVE_FILESYSTEM
 from robot.utils.asserts import assert_equal, assert_true
 
 
-class TestAbspath(unittest.TestCase):
+class TestAbspathNormpath(unittest.TestCase):
 
     def test_abspath(self):
-        path = abspath('xxx')
-        assert_equal(path, os.path.abspath('xxx'))
-        assert_true(isinstance(path, unicode))
+        for inp, exp in self._get_inputs():
+            exp = os.path.abspath(exp)
+            path = abspath(inp)
+            assert_equal(path, exp, inp)
+            assert_true(isinstance(path, unicode), inp)
+            exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
+            path = abspath(inp, case_normalize=True)
+            assert_equal(path, exp, inp)
+            assert_true(isinstance(path, unicode), inp)
 
     def test_abspath_when_cwd_is_non_ascii(self):
         orig = abspath('.')
@@ -23,7 +31,7 @@ class TestAbspath(unittest.TestCase):
             os.chdir('..')
             os.rmdir(nonasc)
 
-    if os.sep != '/':
+    if WINDOWS:
         unc_path = r'\\server\D$\dir\.\f1\..\\f2'
         unc_exp = r'\\server\D$\dir\f2'
 
@@ -38,39 +46,68 @@ class TestAbspath(unittest.TestCase):
             finally:
                 os.chdir(orig)
 
-
-class TestNormpath(unittest.TestCase):
-
     def test_normpath(self):
-        inputs = self._posix_inputs if os.sep == '/' else self._windows_inputs
+        for inp, exp in self._get_inputs():
+            path = normpath(inp)
+            assert_equal(path, exp, inp)
+            assert_true(isinstance(path, unicode), inp)
+            exp = exp.lower() if CASE_INSENSITIVE_FILESYSTEM else exp
+            path = normpath(inp, case_normalize=True)
+            assert_equal(path, exp, inp)
+            assert_true(isinstance(path, unicode), inp)
+
+    def _get_inputs(self):
+        inputs = self._windows_inputs if WINDOWS else self._posix_inputs
         for inp, exp in inputs():
-            assert_equal(normpath(inp), exp, inp)
+            yield inp, exp
+            if inp not in ['', os.sep]:
+                for ext in [os.sep, os.sep+'.', os.sep+'.'+os.sep]:
+                    yield inp + ext, exp
+            if inp.endswith(os.sep):
+                for ext in ['.', '.'+os.sep, '.'+os.sep+'.']:
+                    yield inp + ext, exp
+                yield inp + 'foo' + os.sep + '..', exp
 
     def _posix_inputs(self):
         return [('/tmp/', '/tmp'),
-                ('/tmp', '/tmp'),
-                ('/tmp/foo/..', '/tmp'),
-                ('/tmp//', '/tmp'),
-                ('/tmp/./', '/tmp'),
                 ('/var/../opt/../tmp/.', '/tmp'),
                 ('/non/Existing/..', '/non'),
-                ('/', '/')]
+                ('/', '/')] + self._generic_inputs()
 
     def _windows_inputs(self):
         inputs = [('c:\\temp', 'c:\\temp'),
-                  ('C:\\TEMP\\', 'c:\\temp'),
-                  ('c:\\Temp\\foo\..', 'c:\\temp'),
-                  ('c:\\temp\\\\', 'c:\\temp'),
-                  ('c:\\temp\\.\\', 'c:\\temp'),
-                  ('C:\\xxx\\..\\yyy\\..\\temp\\.', 'c:\\temp'),
-                  ('c:\\Non\\Existing\\..', 'c:\\non')]
+                  ('C:\\TEMP\\', 'C:\\TEMP'),
+                  ('C:\\xxx\\..\\yyy\\..\\temp\\.', 'C:\\temp'),
+                  ('c:\\Non\\Existing\\..', 'c:\\Non')]
         for x in 'ABCDEFGHIJKLMNOPQRSTUVXYZ':
             base = '%s:\\' % x
-            expected = base.lower()
-            inputs.append((base, expected))
-            inputs.append((base[:2], expected))
-            inputs.append((base+'\\foo\\..\\.\\BAR\\\\', expected+'bar'))
+            inputs.append((base, base))
+            inputs.append((base.lower(), base.lower()))
+            inputs.append((base[:2], base))
+            inputs.append((base[:2].lower(), base.lower()))
+            inputs.append((base+'\\foo\\..\\.\\BAR\\\\', base+'BAR'))
+        inputs += [(inp.replace('/', '\\'), exp) for inp, exp in inputs]
+        for inp, exp in self._generic_inputs():
+            exp = exp.replace('/', '\\')
+            inputs.extend([(inp, exp), (inp.replace('/', '\\'), exp)])
         return inputs
+
+    def _generic_inputs(self):
+        return [('', '.'),
+                ('.', '.'),
+                ('./', '.'),
+                ('..', '..'),
+                ('../', '..'),
+                ('../..', '../..'),
+                ('foo', 'foo'),
+                ('foo/bar', 'foo/bar'),
+                (u'\xe4', u'\xe4'),
+                (u'\xe4/\xf6', u'\xe4/\xf6'),
+                ('./foo', 'foo'),
+                ('foo/.', 'foo'),
+                ('foo/..', '.'),
+                ('foo/../bar', 'bar'),
+                ('foo/bar/zap/..', 'foo/bar')]
 
 
 class TestGetLinkPath(unittest.TestCase):

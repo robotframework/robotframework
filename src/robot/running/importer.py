@@ -12,13 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
 import copy
+import os.path
 
 from robot.output import LOGGER
 from robot.parsing import ResourceFile
 from robot.errors import FrameworkError
-from robot import utils
+from robot.utils import normpath, seq2str2
 
 from .handlerstore import HandlerStore
 from .testlibraries import TestLibrary
@@ -56,7 +56,7 @@ class Importer(object):
         key = (name, positional, named)
         if key in self._library_cache:
             LOGGER.info("Found test library '%s' with arguments %s from cache"
-                        % (name, utils.seq2str2(args)))
+                        % (name, seq2str2(args)))
             return self._library_cache[key]
         lib.create_handlers()
         self._library_cache[key] = lib
@@ -68,7 +68,7 @@ class Importer(object):
         listener = ', with listener' if lib.has_listener else ''
         LOGGER.info("Imported library '%s' with arguments %s "
                     "(version %s, %s type, %s scope, %d keywords%s)"
-                    % (name, utils.seq2str2(args), lib.version or '<unknown>',
+                    % (name, seq2str2(args), lib.version or '<unknown>',
                        type, lib.scope.lower(), len(lib), listener))
         if not lib and not lib.has_listener:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
@@ -125,7 +125,7 @@ class ImportCache:
 
     def _norm_path_key(self, key):
         if self._is_path(key):
-            return utils.normpath(key)
+            return normpath(key, case_normalize=True)
         if isinstance(key, tuple):
             return tuple(self._norm_path_key(k) for k in key)
         return key

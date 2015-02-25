@@ -13,15 +13,17 @@
 #  limitations under the License.
 
 import os
+import os.path
 import sys
 import urllib
 
 from robot.errors import DataError
 
 from .encoding import decode_from_system
+from .platform import WINDOWS
 
 
-if os.sep == '\\':
+if WINDOWS:
     CASE_INSENSITIVE_FILESYSTEM = True
 else:
     try:
@@ -30,33 +32,41 @@ else:
         CASE_INSENSITIVE_FILESYSTEM = False
 
 
-def normpath(path):
-    """Returns path in normalized and absolute format.
+def normpath(path, case_normalize=False):
+    """Replacement for os.path.normpath with some enhancements.
 
-    On case-insensitive file systems the path is also case normalized.
-    If that is not desired, abspath should be used instead.
-    """
-    path = abspath(path)
-    if CASE_INSENSITIVE_FILESYSTEM:
-        path = path.lower()
-    return path
-
-
-def abspath(path):
-    """Replacement for os.path.abspath with some bug fixes and enhancements.
-
-    1) Converts non-Unicode paths to Unicode using file system encoding
-    2) At least Jython 2.5.1 on Windows returns wrong path with 'c:'.
-    3) Python until 2.6.5 and at least Jython 2.5.1 don't handle non-ASCII
-       characters in the working directory: http://bugs.python.org/issue3426
+    1. Non-Unicode paths are converted to Unicode using file system encoding.
+    2. Optionally lower-case paths on case-insensitive file systems.
+       That includes Windows and also OSX in default configuration.
+    3. Turn ``c:`` into ``c:\\`` on Windows instead of keeping it as ``c:``.
     """
     if not isinstance(path, unicode):
         path = decode_from_system(path)
-    if os.sep == '\\' and len(path) == 2 and path[1] == ':':
+    path = os.path.normpath(path)
+    if not isinstance(path, unicode):
+        # http://bugs.jython.org/issue2274
+        path = unicode(path)
+    if case_normalize and CASE_INSENSITIVE_FILESYSTEM:
+        path = path.lower()
+    if WINDOWS and len(path) == 2 and path[1] == ':':
         return path + '\\'
-    if not os.path.isabs(path):
-        path = os.path.join(os.getcwdu(), path)
-    return os.path.normpath(path)
+    return path
+
+
+def abspath(path, case_normalize=False):
+    """Replacement for os.path.abspath with some enhancements and bug fixes.
+
+    1. Non-Unicode paths are converted to Unicode using file system encoding.
+    2. Optionally lower-case paths on case-insensitive file systems.
+       That includes Windows and also OSX in default configuration.
+    3. Turn ``c:`` into ``c:\\`` on Windows instead of ``c:\\current\\path``.
+    4. Handle non-ASCII characters on working directory with Python < 2.6.5:
+       http://bugs.python.org/issue3426
+    """
+    path = normpath(path, case_normalize)
+    if os.path.isabs(path):
+        return path
+    return normpath(os.path.join(os.getcwdu(), path), case_normalize)
 
 
 # TODO: Investigate could this be replaced with os.path.relpath in RF 2.9.
