@@ -46,7 +46,7 @@ class Remote(object):
         the keyword.
 
         Support for timeouts is a new feature in Robot Framework 2.8.6.
-        They do not work with IronPython.
+        Timeouts do not work with IronPython.
         """
         if '://' not in uri:
             uri = 'http://' + uri
@@ -57,12 +57,13 @@ class Remote(object):
 
     def get_keyword_names(self, attempts=2):
         for i in range(attempts):
+            time.sleep(i)
             try:
                 return self._client.get_keyword_names()
             except TypeError as err:
-                time.sleep(i)
+                error = err
         raise RuntimeError('Connecting remote server at %s failed: %s'
-                           % (self._uri, err))
+                           % (self._uri, error))
 
     def get_keyword_arguments(self, name):
         try:
@@ -166,15 +167,15 @@ class RemoteResult(object):
 
     def _get(self, result, key, default=''):
         value = result.get(key, default)
-        return self._handle_binary(value)
+        return self._convert(value)
 
-    def _handle_binary(self, value):
+    def _convert(self, value):
         if isinstance(value, xmlrpclib.Binary):
             return str(value)
         if is_dict_like(value):
-            return DotDict((k, self._handle_binary(v)) for k, v in value.items())
+            return DotDict((k, self._convert(v)) for k, v in value.items())
         if is_list_like(value):
-            return [self._handle_binary(v) for v in value]
+            return [self._convert(v) for v in value]
         return value
 
 
