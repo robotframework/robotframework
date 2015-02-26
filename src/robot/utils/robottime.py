@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -36,10 +36,6 @@ def _float_secs_to_secs_and_millis(secs):
     isecs = int(secs)
     millis = int(round((secs - isecs) * 1000))
     return (isecs, millis) if millis < 1000 else (isecs+1, 0)
-
-
-# TODO: Remove this and get_start_timetamp in 2.9. Not used since 2.8.7.
-START_TIME = _get_timetuple()
 
 
 def timestr_to_secs(timestr, round_to=3):
@@ -327,10 +323,6 @@ def secs_to_timestamp(secs, seps=None, millis=False):
         millis = (secs - int(secs)) * 1000
         ttuple = ttuple + (int(round(millis)),)
     return format_time(ttuple, *seps)
-
-
-def get_start_timestamp(daysep='', daytimesep=' ', timesep=':', millissep=None):
-    return format_time(START_TIME, daysep, daytimesep, timesep, millissep)
 
 
 def get_elapsed_time(start_time, end_time):

@@ -16,16 +16,20 @@ Scalar Variable As List With Extended Syntax
     ${list} =    Evaluate    [[21]]
     Test Scalar As List    @{hyvää.split(',')}    @{list[0]}
 
+Extended syntax with non-list value
+    [Documentation]    FAIL Value of variable '\@{EXTENDED.string}' is not list or list-like.
+    Log Many    @{EXTENDED.string}
+
 Non-alphanumeric characters in name
     ${"spëciäl" ch@rs?!} =    Copy List    ${LIST}
     Test Scalar As List    @{"spëciäl" ch@rs?!}
 
 String Cannot Be Used As List Variable
-    [Documentation]    FAIL Using scalar variable '\${TEST NAME}' as list variable '\@{TEST NAME}' requires its value to be list or list-like.
+    [Documentation]    FAIL Value of variable '\@{TEST NAME}' is not list or list-like.
     Log Many    @{TEST NAME}
 
 Non-Iterables Cannot Be Used As List Variable
-    [Documentation]    FAIL Using scalar variable '\${INTEGER}' as list variable '\@{INTEGER}' requires its value to be list or list-like.
+    [Documentation]    FAIL Value of variable '\@{INTEGER}' is not list or list-like.
     ${integer} =    Set Variable    ${42}
     Log Many    @{INTEGER}
 

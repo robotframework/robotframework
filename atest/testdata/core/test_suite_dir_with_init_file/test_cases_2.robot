@@ -4,11 +4,11 @@ TC2 No Metadata
 
 TC2 Tags
     [Tags]
-    NOOP
+    No Operation
 
 TC2 Fixture
     [Setup]    Log    Setup defined in test
-    NOOP
+    No Operation
     [Teardown]    Log    Teardown defined in test
 
 TC2 Timeout

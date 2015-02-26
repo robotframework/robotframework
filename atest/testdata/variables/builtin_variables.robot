@@ -1,5 +1,6 @@
 *** Settings ***
 Library         OperatingSystem
+Library         Collections
 
 *** Variables ***
 ${TEMPDIR}  Cannot be overridden
@@ -67,14 +68,29 @@ ${SPACE}
 ${EMPTY}
     Should Be Equal  ${EMPTY}  \
     Should Be Equal  ${EMPTY * 5}  \
-    Should Be Equal  -${EMPTY}-${EMPTY*2}-${EMPTY}-  ----
+    Should Be Equal  -${empty}-${emp_ty*2}-${EMP ty}-  ----
 
 @{EMPTY}
-    Should Be True   @{EMPTY} == ()
-    Should Be True   @{EMPTY}+@{EMPTY} == ()
-    Should Be Equal  @{EMPTY}  value  @{EMPTY}  value  @{EMPTY}
+    Should Be True   @{EMPTY} == []
+    Should Be True   @{EMPTY}+@{EMPTY} == []
+    Should Be Equal  @{empty}  value  @{emp_ty}  value  @{EMP ty}
     ${value} =  Catenate  @{EMPTY}  @{EMPTY}
     Should Be Equal  ${value}    ${EMPTY}
+
+&{EMPTY}
+    Should Be True   &{EMPTY} == {}
+    Should Be Equal  value  value  &{empty}  &{emp_ty}  &{EMP ty}
+
+@{EMPTY} and &{EMPTY} cannot be modified
+    ${result} =    Create Dictionary    list=@{EMPTY}    dict=&{EMPTY}
+    ${list} =    Get From Dictionary    ${result}    list
+    ${dict} =    Get From Dictionary    ${result}    dict
+    Append To List       ${list}    value
+    Set To Dictionary    ${dict}    key=value
+    Should Be True   @{list} == ['value']
+    Should Be True   &{dict} == {'key': 'value'}
+    Should Be True   @{EMPTY} == []
+    Should Be True   &{EMPTY} == {}
 
 ${/}
     ${exp} =  Evaluate  os.sep  modules=os

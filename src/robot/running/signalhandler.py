@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
 
 import sys
 from threading import currentThread
-try:
-    import signal
-except ImportError:
-    signal = None  # IronPython 2.6 doesn't have signal module by default
+import signal
 if sys.platform.startswith('java'):
     from java.lang import IllegalArgumentException
 else:
-    ## IllegalArgumentException = None
-    # `None` doesn't work in Python 3 if used in `except` statement
-    # (in _register_signal_handler)
-    class IllegalArgumentException(Exception):
-        pass
+    IllegalArgumentException = ValueError
 
 from robot.errors import ExecutionFailed
 from robot.output import LOGGER
@@ -51,11 +44,6 @@ class _StopSignalMonitor(object):
 
     def _stop_execution_gracefully(self):
         raise ExecutionFailed('Execution terminated by signal', exit=True)
-
-    def start(self):
-        # TODO: Remove start() in favor of __enter__ in RF 2.9. Refactoring
-        # the whole signal handler at that point would be a good idea.
-        self.__enter__()
 
     def __enter__(self):
         if self._can_register_signal:

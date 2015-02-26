@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ This module also provides :func:`run` and :func:`run_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
 from six import text_type as unicode
+
 
 USAGE = """Robot Framework -- A generic test automation framework
 
@@ -155,7 +156,6 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitfile file      Deprecated. Use --xunit instead.
     --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
@@ -276,9 +276,6 @@ Options
                           The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
-    --runmode mode *      Deprecated in version 2.8. Use individual options
-                          --dryrun, --exitonfailure, --skipteardownonexit, or
-                          --randomize instead.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
@@ -328,7 +325,13 @@ Options
 
 Options that are marked with an asterisk (*) can be specified multiple times.
 For example, `--test first --test third` selects test cases with name `first`
-and `third`. If other options are given multiple times, the last value is used.
+and `third`. If an option accepts a value but is not marked with an asterisk,
+the last given value has precedence. For example, `--log A.html --log B.html`
+creates log file `B.html`. Options accepting no values can be disabled by
+using the same option again with `no` prefix added or dropped. The last option
+has precedence regardless of how many times options are used. For example,
+`--dryrun --dryrun --nodryrun --nostatusrc --statusrc` would not activate the
+dry-run mode and would return normal status rc.
 
 Long option format is case-insensitive. For example, --SuiteStatLevel is
 equivalent to but easier to read than --suitestatlevel. Long options can
@@ -379,9 +382,7 @@ import sys
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
 if 'robot' not in sys.modules and __name__ == '__main__':
-    ## import pythonpathsetter
-    #HACK: Prevent 2to3 from converting to relative import
-    pythonpathsetter = __import__('pythonpathsetter')
+    import pythonpathsetter
 
 from robot.conf import RobotSettings
 from robot.output import LOGGER, pyloggingconf
@@ -418,7 +419,8 @@ class RobotFramework(Application):
         return self._filter_options_without_value(options), arguments
 
     def _filter_options_without_value(self, options):
-        return dict((name, value) for name, value in options.items() if value)
+        return dict((name, value) for name, value in options.items()
+                    if value not in (None, []))
 
 
 def run_cli(arguments):

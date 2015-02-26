@@ -10,9 +10,8 @@ from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
 
 from robot.utils.robottime import (timestr_to_secs, secs_to_timestr, get_time,
                                    parse_time, format_time, get_elapsed_time,
-                                   get_timestamp, get_start_timestamp,
-                                   timestamp_to_secs, elapsed_time_to_string,
-                                   _get_timetuple)
+                                   get_timestamp, timestamp_to_secs,
+                                   elapsed_time_to_string, _get_timetuple)
 
 
 EXAMPLE_TIME = time.mktime(datetime.datetime(2007, 9, 20, 16, 15, 14).timetuple())
@@ -196,11 +195,6 @@ class TestTime(unittest.TestCase):
             ts = get_timestamp(*seps)
             assert_not_none(re.search(pattern, ts),
                             "'%s' didn't match '%s'" % (ts, pattern), False)
-
-    def test_get_start_timestamp(self):
-        start = get_start_timestamp(millissep='.')
-        time.sleep(0.002)
-        assert_equal(get_start_timestamp(millissep='.'), start)
 
     def test_timestamp_to_secs_with_default(self):
         assert_equal(timestamp_to_secs('20070920 16:15:14.123'), EXAMPLE_TIME+0.123)

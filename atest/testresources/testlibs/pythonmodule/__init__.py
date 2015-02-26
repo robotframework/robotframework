@@ -1,6 +1,5 @@
-some_string = 'Hello, World!'
-
-class _SomeObject:
+class SomeObject:
     pass
 
-some_object = _SomeObject()
+some_object = SomeObject()
+some_string = 'Hello, World!'

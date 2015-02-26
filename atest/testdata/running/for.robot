@@ -77,7 +77,7 @@ Many Fors In One Test
     Log    Outside for loop
     : FOR    ${z}    IN    a    b
     \    Log    Third for loop
-    \    Noop
+    \    No operation
     \    Log    Value: ${z}
     Log    End of the test
 
@@ -131,7 +131,7 @@ For With Assign
     Should Be True    @{list} == [1, 2, 3, 'z']
 
 For With Invalid Assign
-    [Documentation]    FAIL     Cannot assign return values: Expected list-like object, got string instead.
+    [Documentation]    FAIL     Cannot set variables: Expected list-like value, got string.
     : FOR    ${i}    IN    1    2    3
     \    ${x}    ${y} =    Set Variable    Only one value
     \    Fail    Not executed
@@ -323,7 +323,7 @@ For In Range With Multiple Variables
     Should Be True    @{result} == ['-1-0-1', '2-3-4', '5-6-7', '8-9-10']
 
 For In Range With Too Many Arguments
-    [Documentation]    FAIL    FOR IN RANGE expected 1-3 arguments, got 4 instead.
+    [Documentation]    FAIL    FOR IN RANGE expected 1-3 arguments, got 4.
     : FOR    ${i}    IN RANGE    1    2    3    4
     \    Fail    Not executed
     Fail    Not executed

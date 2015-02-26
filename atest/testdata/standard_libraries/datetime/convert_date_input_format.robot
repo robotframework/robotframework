@@ -45,7 +45,7 @@ Rounding milliseconds
 
 Formatted with %f in middle
     [Template]     NONE
-    Run Keyword If    sys.version_info < (2, 6) or sys.platform == 'cli' or sys.platform.startswith('java')
+    Run Keyword If    sys.platform == 'cli'
     ...   Run Keyword And Expect Error    ValueError: %f directive is supported only at the end of the format string on this Python interpreter.
     ...   Date Conversion Should Succeed    21:45:12.123 24.04.2014    2014-04-24 21:45:12.123    %H:%M:%S.%f %d.%m.%Y
     ...   ELSE

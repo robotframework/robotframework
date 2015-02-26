@@ -18,12 +18,32 @@ Call Method Returns
     Should Be Equal    ${b}    b
     Should Be Equal    ${c}    c
 
+Called Method Fails
+    [Documentation]    FAIL Calling method 'my_method' failed: Expected failure
+    Call Method    ${obj}    my_method    FAIL!
+
+Call Method With Kwargs
+    ${ret} =    Call Method    ${obj}    kwargs    first    arg3=new
+    Should Be Equal    ${ret}    first, default, arg3: new
+    ${ret} =    Call Method    ${obj}    kwargs    arg1=first    arg3=new
+    Should Be Equal    ${ret}    first, default, arg3: new
+    ${ret} =    Call Method    ${obj}    kwargs    k1=override    arg1=override
+    ...    k2=2    k3=3   arg2=2    k4=4    arg1=1    k5=5    k1=1
+    Should Be Equal    ${ret}    1, 2, k1: 1, k2: 2, k3: 3, k4: 4, k5: 5
+
+Equals in non-kwargs must be escaped
+    [Documentation]    FAIL STARTS: Calling method 'my_method' failed: TypeError:
+    ${ret} =    Call Method    ${obj}    kwargs    arg1\=here    arg2\\\=\=
+    ...    arg3\\=    arg4====
+    Should Be Equal    ${ret}    arg1=here, arg2\\==, arg3\\: , arg4: ===
+    Call Method    ${obj}    my_method    this=fails
+
 Call Method From Module
     ${path} =    Call Method    ${os.path}    join    ${CURDIR}    foo    bar.txt
     Should Be Equal    ${path}    ${CURDIR}${/}foo${/}bar.txt
 
 Call Non Existing Method
-    [Documentation]    FAIL Object 'String presentation of MyObject' does not have a method 'non_existing'.
+    [Documentation]    FAIL Object 'String presentation of MyObject' does not have method 'non_existing'.
     Call Method    ${obj}    non_existing
 
 Call Java Method
@@ -36,6 +56,5 @@ Call Java Method
     Should Not Be True    ${isempty}
 
 Call Non Existing Java Method
-    # HashTable str changed from {foo=bar} to {foo: bar} in Jython 2.7b4
-    [Documentation]    FAIL REGEXP: Object '{myname(=|: )myvalue}' does not have a method 'nonExisting'.
+    [Documentation]    FAIL Object '{myname: myvalue}' does not have method 'nonExisting'.
     Call Method    ${hashtable}    nonExisting

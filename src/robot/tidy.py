@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -122,9 +122,7 @@ else:
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
 if 'robot' not in sys.modules and __name__ == '__main__':
-    ## import pythonpathsetter
-    #HACK: Prevent 2to3 from converting to relative import
-    pythonpathsetter = __import__('pythonpathsetter')
+    import pythonpathsetter
 
 from robot.errors import DataError
 from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
@@ -248,7 +246,8 @@ class TidyCommandLine(Application):
 
     def validate(self, opts, args):
         validator = ArgumentValidator()
-        validator.mode_and_arguments(args, **opts)
+        opts['recursive'], opts['inplace'] \
+            = validator.mode_and_arguments(args, **opts)
         opts['format'] = validator.format(args, **opts)
         opts['lineseparator'] = validator.line_sep(**opts)
         if not opts['spacecount']:
@@ -261,11 +260,14 @@ class TidyCommandLine(Application):
 class ArgumentValidator(object):
 
     def mode_and_arguments(self, args, recursive, inplace, **others):
+        recursive, inplace = bool(recursive), bool(inplace)
         validators = {(True, True): self._recursive_and_inplace_together,
                       (True, False): self._recursive_mode_arguments,
                       (False, True): self._inplace_mode_arguments,
                       (False, False): self._default_mode_arguments}
-        validators[(recursive, inplace)](args)
+        validator = validators[(recursive, inplace)]
+        validator(args)
+        return recursive, inplace
 
     def _recursive_and_inplace_together(self, args):
         raise DataError('--recursive and --inplace can not be used together.')

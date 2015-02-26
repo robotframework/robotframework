@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,24 +14,20 @@
 
 from six import PY3, text_type as unicode
 
-import sys
-import os
 import time
 
-from robot import utils
+from robot.utils import (secs_to_timestr, timestr_to_secs,
+                         IRONPYTHON, JYTHON, WINDOWS)
 from robot.errors import TimeoutError, DataError, FrameworkError
 
-if sys.platform == 'cli':
-    from .timeoutthread import Timeout
-elif os.name == 'nt':
-    from .timeoutwin import Timeout
+if JYTHON:
+    from .jython import Timeout
+elif IRONPYTHON:
+    from .ironpython import Timeout
+elif WINDOWS:
+    from .windows import Timeout
 else:
-    try:
-        # python 2.6 or newer in *nix or mac
-        from .timeoutsignaling import Timeout
-    except ImportError:
-        # python < 2.6 and jython don't have complete signal module
-        from .timeoutthread import Timeout
+    from .posix import Timeout
 
 
 class _Timeout(object):
@@ -54,8 +50,8 @@ class _Timeout(object):
             self.string = variables.replace_string(self.string)
             if not self:
                 return
-            self.secs = utils.timestr_to_secs(self.string)
-            self.string = utils.secs_to_timestr(self.secs)
+            self.secs = timestr_to_secs(self.string)
+            self.string = secs_to_timestr(self.secs)
             self.message = variables.replace_string(self.message)
         except (DataError, ValueError) as err:
             self.secs = 0.000001 # to make timeout active

@@ -33,4 +33,4 @@ Copy Deeper Structure
     ${xml} =    Parse XML    ${TEST}
     ${copy} =    Copy Element    ${xml}    xpath=another
     Set Element Text    ${copy}    new    xpath=child
-    Element Text Should Be    ${xml}    text    xpath=another/child
+    Element Text Should Be    ${xml}    nöŋ-äŝĉíï tëxt    xpath=another/child

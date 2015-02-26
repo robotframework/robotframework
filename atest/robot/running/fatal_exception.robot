@@ -47,14 +47,14 @@ Multiple Suite Aware Exiting From Suite Setup With Skip Teardowns
     ${ts2} =  Get Test Suite  Irrelevant
     Should Be Equal  ${ts2.teardown}  ${None}
 
-Fatal Exception and Runmode Exit on Failure
+Fatal Exception and Exit on Failure
     Run Tests  --exitonfailure  running/fatal_exception/01__python_library_kw.robot
     Check Test Case  Test That Should Not Be Run 1  FAIL
     ...  Critical failure occurred and exit-on-failure mode is in use.
 
-Fatal Exception and Runmodes Exit On Failure And Skip Teardown On Exit
+Fatal Exception And Skip Teardown On Exit
     Run Tests  --SkipTeardownOnExit  running/fatal_exception
-    ${tcase} =  Check Test Case  Exit From Python Keyword
-    Should Be Equal  ${tcase.teardown}  ${None}
-    ${tsuite}  Get Test Suite  Python Library Kw
-    Should Be Equal  ${tsuite.teardown}  ${None}
+    ${tc} =  Check Test Case  Exit From Python Keyword
+    Should Be Equal  ${tc.teardown}  ${None}
+    ${ts} =  Get Test Suite  Python Library Kw
+    Should Be Equal  ${ts.teardown}  ${None}

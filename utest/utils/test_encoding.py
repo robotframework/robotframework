@@ -1,17 +1,14 @@
-from six import text_type as unicode
+from six import PY3, text_type as unicode
 
 import unittest
-import sys
 
+from robot.utils import IRONPYTHON
 from robot.utils.asserts import assert_equals
 from robot.utils.encoding import decode_output, OUTPUT_ENCODING
 
 
 UNICODE = u'hyv\xe4'
 ENCODED = UNICODE.encode(OUTPUT_ENCODING)
-IRONPYTHON = sys.platform == 'cli'
-
-PY3 = sys.version_info[0] == 3
 
 
 class TestDecodeOutput(unittest.TestCase):

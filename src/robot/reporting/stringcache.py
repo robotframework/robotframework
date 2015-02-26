@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -24,17 +24,7 @@ if PY3:
     long = int
 #TODO: Still needed?
 class StringIndex(long):
-    # Methods below are needed due to http://bugs.jython.org/issue1828
-
-    def __str__(self):
-        return long.__str__(self).rstrip('L')
-
-    def __bool__(self):
-        return bool(long(self))
-
-    #PY2
-    def __nonzero__(self):
-        return self.__bool__()
+    pass
 
 
 class StringCache(object):

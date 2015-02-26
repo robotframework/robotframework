@@ -88,10 +88,13 @@ Import Library Keyword
     BuiltIn.Should Be Equal  ${a2}  second arg
 
 Correct Error When Using Keyword From Same Library With Different Names Without Prefix 2
-    [Documentation]  FAIL
-    ...  Multiple keywords with name 'Parameters' found.
-    ...  Give the full name of the keyword you want to use.
-    ...  Found: 'MyParamLib.Parameters', 'Param1.Parameters', 'Param2.Parameters', 'ParameterLibrary.Parameters' and 'VAR.Parameters'
+    [Documentation]  FAIL Multiple keywords with name 'Parameters' found.\
+    ...  Give the full name of the keyword you want to use:
+    ...  ${SPACE*4}MyParamLib.Parameters
+    ...  ${SPACE*4}Param1.Parameters
+    ...  ${SPACE*4}Param2.Parameters
+    ...  ${SPACE*4}ParameterLibrary.Parameters
+    ...  ${SPACE*4}VAR.Parameters
     Parameters
 
 Dynamic Library
@@ -127,4 +130,3 @@ Register And Test Registered
     [Arguments]  ${scope}  ${reg}  @{exp}
     Run Keyword  ${scope}.Register  ${reg}
     Run Keyword  ${scope}.Should Be Registered  ${reg}  @{exp}
-

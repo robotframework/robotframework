@@ -75,3 +75,7 @@ Named combinations with varargs and kwargs
 
 Non working named combinations with varargs and kwargs
     Check Test Case    ${TESTNAME}
+
+Multiple named with same name is allowed and last has precedence
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2

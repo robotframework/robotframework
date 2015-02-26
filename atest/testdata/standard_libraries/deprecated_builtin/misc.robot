@@ -4,20 +4,20 @@ Noop
 
 Set
     ${var}    Set    Hello
-    Fail Unless    '${var}' == 'Hello'
+    Should Be True    '${var}' == 'Hello'
     ${var1}    ${var2}    Set    Hello    world
-    Fail Unless    '${var1}' == 'Hello'
-    Fail Unless    '${var2}' == 'world'
+    Should Be True    '${var1}' == 'Hello'
+    Should Be True    '${var2}' == 'world'
     @{list}    Set    Hi    again
-    Equals    '@{list}[0]'    'Hi'
-    Equals    '@{list}[1]'    'again'
+    Should Be Equal    '@{list}[0]'    'Hi'
+    Should Be Equal    '@{list}[1]'    'again'
     ${scal}    Set    Hi    again
-    Equals    '${scal[0]}'    'Hi'
-    Equals    '${scal[1]}'    'again'
+    Should Be Equal    '${scal[0]}'    'Hi'
+    Should Be Equal    '${scal[1]}'    'again'
     ${scal2}    Set    ${scal}
-    Equals    ${scal}    ${scal2}
+    Should Be Equal    ${scal}    ${scal2}
     ${empty}    Set
-    Equals    ${empty}    ${EMPTY}
+    Should Be Equal    ${empty}    ${EMPTY}
 
 Message
     Message    This text is shown    as keyword arguments    but ignored otherwise

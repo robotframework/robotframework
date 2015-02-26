@@ -5,23 +5,28 @@ ${FLOAT}          ${-1.2}
 ${BOOLEAN}        ${True}
 ${NONE VALUE}     ${None}
 ${ESCAPES}        one \\ two \\\\ \${non_existing}
+${SPACE ESC}      \ 1 leading, \ 2 middle, 3 trailing \ \ \
 ${NO VALUE}       ${EMPTY}
 @{ONE ITEM}       Hello again?
 @{LIST}           Hello    again    ?
 @{LIST WITH ESCAPES}    one \\    two \\\\    three \\\\\\    \${non_existing}
 @{LIST CREATED FROM LIST WITH ESCAPES}    @{LIST WITH ESCAPES}
+@{SPACE ESC LIST}    \ lead    trail \    \ \ 2 \ \    \ \ \ 3 \ \ \
 @{EMPTY LIST}
+Invalid Name      Decoration missing
+${}               Body missing
 ${lowercase}      Variable name in lower case
-@{lowercase}      Variable name in lower case
+@{lowercaselist}      Variable name in lower case
 ${S P a c e s }    Variable name with spaces
-@{s P a c es }    Variable name with spaces
+@{s P a c es li S T}    Variable name with spaces
 ${UNDER_scores}    Variable name with under scores
-@{_u_n_d_e_r___s_c_o_r_e_s_}    Variable name with under scores
-${ASSING MARK}    This syntax works starting from 1.8
-@{ASSIGN MARK}    This syntax works    starting    from    ${1.8}
+@{_u_n_d_e_r___s_c_o_r_e_s__li_ST}    Variable name with under scores
+${ASSING MARK} =  This syntax works starting from 1.8
+@{ASSIGN MARK LIST}=   This syntax works    starting    from    ${1.8}
 ${THREE DOTS}     ...
 @{3DOTS LIST}     ...   ...
-${SCALAR LIST}    I    am    a    scalar     list     with    many     items
+${CATENATED}      I    am    a    scalar     catenated     from    many     items
+${CATENATED W/ SEP}    SEPARATOR=-    I    can    haz    custom    separator
 ${NONEX 1}        Creating variable based on ${NON EXISTING} variable fails.
 ${NONEX 2A}       This ${NON EX} is used for creating another variable.
 ${NONEX 2B}       ${NONEX 2A}
@@ -44,6 +49,7 @@ Scalar Non-Strings
 
 Scalar String With Escapes
     Should Be Equal    ${ESCAPES}    one \\ two \\\\ \${non_existing}
+    Should Be Equal    ${SPACE ESC}    ${SPACE}1 leading,${SPACE*2}2 middle, 3 trailing${SPACE*3}
 
 Empty Scalar String
     Should Be Equal    ${NO VALUE}    ${EMPTY}
@@ -64,6 +70,10 @@ List With Escapes
     Should Be Equal    @{LIST WITH ESCAPES}[1]    two \\\\
     Should Be Equal    @{LIST WITH ESCAPES}[2]    three \\\\\\
     Should Be Equal    @{LIST WITH ESCAPES}[3]    \${non_existing}
+    Should Be Equal    @{SPACE ESC LIST}[0]    ${SPACE}lead
+    Should Be Equal    @{SPACE ESC LIST}[1]    trail${SPACE}
+    Should Be Equal    @{SPACE ESC LIST}[2]    ${SPACE*2}2${SPACE*2}
+    Should Be Equal    @{SPACE ESC LIST}[3]    ${SPACE*3}3${SPACE*3}
 
 List Created From List With Escapes
     Should Be Equal    @{LIST CREATED FROM LIST WITH ESCAPES}[0]    one \\
@@ -74,48 +84,47 @@ List Created From List With Escapes
     Should Be Equal    ${LIST WITH ESCAPES}    ${LIST CREATED FROM LIST WITH ESCAPES}
 
 List With No Items
-    [Documentation]    FAIL STARTS: Variable '\@{EMPTY LIST}[0]' not found.
     Should Be True    @{EMPTY LIST} == []
     ${ret} =    Catenate    @{EMPTY LIST}    @{EMPTY LIST}    only value    @{EMPTY LIST}
     Should Be Equal    ${ret}    only value
-    Log    @{EMPTY LIST}[0]
 
 Variable Names Are Case Insensitive
     Should Be Equal    ${lowercase}    Variable name in lower case
     Should Be Equal    ${LOWERCASE}    Variable name in lower case
     Should Be Equal    ${LoWerCAse}    Variable name in lower case
-    Should Be Equal    @{lowercase}[0]    Variable name in lower case
-    Should Be Equal    @{LOWERCASE}[0]    Variable name in lower case
-    Should Be Equal    @{lOWErcasE}[0]    Variable name in lower case
+    Should Be Equal    @{lowercaselist}[0]    Variable name in lower case
+    Should Be Equal    @{LOWERCASELIST}[0]    Variable name in lower case
+    Should Be Equal    @{lOWErcasE List}[0]    Variable name in lower case
 
 Variable Names Are Space Insensitive
     Should Be Equal    ${SPACES}    Variable name with spaces
     Should Be Equal    ${ s P a C e s }    Variable name with spaces
-    Should Be Equal    @{spaces}[0]    Variable name with spaces
-    Should Be Equal    @{SP a c es }[0]    Variable name with spaces
+    Should Be Equal    @{spaceslist}[0]    Variable name with spaces
+    Should Be Equal    @{SP a c es L I S t}[0]    Variable name with spaces
 
 Variable Names Are Underscore Insensitive
     Should Be Equal    ${underscores}    Variable name with under scores
     Should Be Equal    ${_U N D_er_Scores__}    Variable name with under scores
-    Should Be Equal    @{underscores}[0]    Variable name with under scores
-    Should Be Equal    @{ _u_N_de__r _S C ores__ }[0]    Variable name with under scores
+    Should Be Equal    @{underscoreslist}[0]    Variable name with under scores
+    Should Be Equal    @{ _u_N_de__r _S C ores__ _L__ISt__}[0]    Variable name with under scores
 
 Assign Mark With Scalar variable
     Should Be Equal    ${ASSING MARK}    This syntax works starting from 1.8
 
 Assign Mark With List variable
-    Should Be Equal    @{ASSIGN MARK}[0]    This syntax works
-    Should Be Equal    @{ASSIGN MARK}[1]    starting
-    Should Be Equal    @{ASSIGN MARK}[2]    from
-    Should Be Equal    @{ASSIGN MARK}[3]    ${1.8}
+    Should Be Equal    @{ASSIGN MARK LIST}[0]    This syntax works
+    Should Be Equal    @{ASSIGN MARK LIST}[1]    starting
+    Should Be Equal    @{ASSIGN MARK LIST}[2]    from
+    Should Be Equal    @{ASSIGN MARK LIST}[3]    ${1.8}
 
 Three dots on the same line should be interpreted as string
     Should Be Equal    ${THREE DOTS}    ...
     ${sos} =    Catenate    SEPARATOR=---    @{3DOTS LIST}
     Should Be Equal    ${sos}    ...---...
 
-Using Scalar List Should Fail
-    Variable Should Not Exist    ${SCALAR LIST}
+Scalar catenated from multile values
+    Should Be Equal    ${CATENATED}      I am a scalar catenated from many items
+    Should Be Equal    ${CATENATED W/ SEP}    I-can-haz-custom-separator
 
 Creating variable using non-existing variable fails
     Variable Should Not Exist    ${NONEX 1}

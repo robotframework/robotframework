@@ -1,14 +1,27 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/variable_recommendations.robot
-Force Tags       regression    pybot    jybot
+Force Tags       regression
+Default Tags     pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
-Simple Typo
-    Check Test Case    ${TESTNAME} Scalar
-    Check Test Case    ${TESTNAME} List
+Simple Typo Scalar
+    Check Test Case    ${TESTNAME}
 
-Access Scalar In List With Typo
+Simple Typo List - Only List-likes Are Recommended
+    Check Test Case    ${TESTNAME}
+
+Simple Typo Dict - Only Dicts Are Recommended
+    Check Test Case    ${TESTNAME}
+
+All Types Are Recommended With Scalars
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
+Access Scalar In List With Typo In Variable
+    Check Test Case    ${TESTNAME}
+
+Access Scalar In List With Typo In Index
     Check Test Case    ${TESTNAME}
 
 Long Garbage Variable
@@ -24,13 +37,11 @@ Misspelled
     Check Test Case    ${TESTNAME} Camel Case
     Check Test Case    ${TESTNAME} Whitespace
 
-Misspelled List Accessed As Scalar
-    Check Test Case    ${TESTNAME}
-
-Misspelled Scalar Accessed As List
-    Check Test Case    ${TESTNAME}
-
 Misspelled Env Var
+    Check Test Case    ${TESTNAME}
+
+Misspelled Java System Property
+    [Tags]    jybot
     Check Test Case    ${TESTNAME}
 
 Misspelled Env Var With Internal Variables
@@ -40,6 +51,9 @@ Misspelled List Variable With Period
     Check Test Case    ${TESTNAME}
 
 Misspelled Extended Variable Parent
+    Check Test Case    ${TESTNAME}
+
+Misspelled Extended Variable Parent As List
     Check Test Case    ${TESTNAME}
 
 Misspelled Extended Variable Child

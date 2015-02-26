@@ -4,7 +4,7 @@ import re
 
 from robot.utils.asserts import assert_equals, assert_true, assert_raises
 from robot import utils
-if utils.is_jython:
+if utils.JYTHON:
     import JavaExceptions
     java_exceptions = JavaExceptions()
 
@@ -16,16 +16,12 @@ class TestGetErrorDetails(unittest.TestCase):
     def test_get_error_details_python(self):
         for exception, msg, exp_msg in [
                     (AssertionError, 'My Error', 'My Error'),
-                    (AssertionError, None, 'AssertionError'),
+                    (AssertionError, None, 'None'),
                     (Exception, 'Another Error', 'Another Error'),
-                    (Exception, None, 'Exception'),
                     (ValueError, 'Something', 'ValueError: Something'),
-                    (ValueError, None, 'ValueError'),
                     (AssertionError, 'Msg\nin 3\nlines', 'Msg\nin 3\nlines'),
                     (ValueError, '2\nlines', 'ValueError: 2\nlines')]:
             try:
-                if not msg:
-                    raise exception
                 raise exception(msg)
             except:
                 message, details = get_error_details()
@@ -34,7 +30,19 @@ class TestGetErrorDetails(unittest.TestCase):
             assert_true(details.startswith('Traceback'))
             assert_true(exp_msg not in details)
 
-    if utils.is_jython:
+    def test_get_error_details_python_class(self):
+        for exception in [AssertionError, ValueError, ZeroDivisionError]:
+            try:
+                raise exception
+            except:
+                message, details = get_error_details()
+                assert_equals(message, get_error_message())
+            exp_msg = exception.__name__
+            assert_equals(message, exception.__name__)
+            assert_true(details.startswith('Traceback'))
+            assert_true(exp_msg not in details)
+
+    if utils.JYTHON:
 
         def test_get_error_details_java(self):
             for exception, msg, expected in [

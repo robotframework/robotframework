@@ -9,10 +9,10 @@ ${LOG NAME}   logfile.html
 
 By default all messages are included
     ${tc} =  Rebot
-    Check Log Message  ${tc.kws[0].msgs[0]}  Arguments: [ u'Test 1' ]  TRACE
+    Check Log Message  ${tc.kws[0].msgs[0]}  Arguments: [ 'Test 1' ]  TRACE
     Check Log Message  ${tc.kws[0].msgs[1]}  Test 1  INFO
     Check Log Message  ${tc.kws[0].msgs[2]}  Return: None  TRACE
-    Check Log Message  ${tc.kws[1].msgs[0]}  Arguments: [ u'Logging with debug level' | u'DEBUG' ]  TRACE
+    Check Log Message  ${tc.kws[1].msgs[0]}  Arguments: [ 'Logging with debug level' | 'DEBUG' ]  TRACE
     Check Log Message  ${tc.kws[1].msgs[1]}  Logging with debug level  DEBUG
     Check Log Message  ${tc.kws[1].msgs[2]}  Return: None  TRACE
     Min level should be 'TRACE' and default 'TRACE'

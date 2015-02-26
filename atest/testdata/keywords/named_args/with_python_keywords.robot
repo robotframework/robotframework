@@ -66,10 +66,6 @@ Non-existing argument does not trigger named usage
     ${ret}=    One Named    ä=ö
     Should Be Equal    ${ret}    ä=ö
 
-Naming twice
-    [Documentation]    FAIL Keyword 'KwargsLibrary.Two Named' got multiple values for argument 'fst'.
-    ${ret}=    Two Named    fst=foo    fst=foo
-
 Run Keyword's own named arguments are not resolved
     [Documentation]    FAIL No keyword with name 'name=No Operation' found.
     Run Keyword    name=No Operation
@@ -95,6 +91,16 @@ Kwargs alone
     Should Be Equal    ${result}    ${EMPTY}
     ${result} =    Lib Kwargs    foo=1    bar=${2}
     Should Be Equal    ${result}    bar:2 (int), foo:1
+
+Kwargs with escaped equal sign 1
+    ${result} =    Lib Kwargs    a\=b=c=d    \===
+    Should Be Equal    ${result}    =:=, a=b:c=d
+    ${result} =    Lib Kwargs    1\\=x\=y    2\=x\\=y    3\\\\\=x\\\\=y
+    Should Be Equal    ${result}    1\\:x=y, 2=x\\:y, 3\\\\=x\\\\:y
+
+Kwargs with escaped equal sign 2
+    [Documentation]    FAIL Keyword 'python_library.Lib Kwargs' expected 0 non-keyword arguments, got 1.
+    Lib Kwargs    a\=b\\\=c\\\\\=d\\\\\\\=e
 
 Kwargs with positional and named
     ${result} =    Lib Mandatory Named And Kwargs    mandatory
@@ -164,7 +170,8 @@ Working combinations with all argument types
 Test escaping with all argument types
     [Template]    Execute working combinations with everything
     # double escaping because of template
-    a, b=bar=foo               a        b\\=bar=foo
+    a, default, b=bar:foo      a        b\\=bar=foo
+    a, b=bar=foo               a        b\\=bar\\=foo
     a, foo=bar                 a        b=foo\\=bar
     a, default, foo:foo=bar    a        foo=foo\\=bar
     a=a, b=b                   a\\=a    b\\=b
@@ -175,14 +182,18 @@ Illegal combinations with all argument types
     got multiple values for argument 'a'.               a      a=a
     got multiple values for argument 'a'.               a      b       a=a
     got multiple values for argument 'a'.               a      b=b     a=a
-    got multiple values for argument 'a'.               a=a    a=a
     got positional argument after named arguments.      a=a    b
     got multiple values for argument 'b'.               a      b       b=b
     got multiple values for argument 'a'.               a      b       a=a
     got multiple values for argument 'a'.               a      b       c1      a=a
-    got positional argument after named arguments.      a=a    b=b     d1=d    foo
-    got multiple values for argument 'b'.               a      b=b     b=b
-    got multiple values for argument 'a'.               a=a    d1=d    d2=d    a=a
+    got positional argument after named arguments.      a=a    b=b     d=d     foo
+
+Multiple named with same name is allowed and last has precedence
+    [Setup]    Set Test Variable    ${b}    b
+    [Template]    Execute working combinations with everything
+    c, default    a=a    a=b       a=c
+    a, 3          a      b=1       b=2    ${b}=3
+    b, 3, c:2     a=a    ${b}=1    c=1    ${b}=2    c=2    b=3    a=${b}
 
 List variable with multiple values for same variable
     [Documentation]    FAIL Keyword 'python_library.Lib Mandatory And Named 2' got multiple values for argument 'b'.

@@ -34,9 +34,11 @@ By default signal is sent only to parent process
     Countdown should not have stopped
 
 Signal can be sent to process running in shell
+    Check Precondition    not sys.platform.startswith('java')
     Killer signal    TERM    shell=True    group=yes
 
 Signal can be sent to child processes
+    Check Precondition    not sys.platform.startswith('java')
     Killer signal    TERM    children=3    group=${True}
 
 Sending an unknown signal

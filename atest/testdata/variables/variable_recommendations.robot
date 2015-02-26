@@ -7,11 +7,16 @@ ${STRING}         Hello world!
 ${INTEGER}        ${42}
 @{ONE ITEM}       Hello again?
 @{LIST}           Hello    again    ?
+${S LIST}         Not recommended as list
+&{D LIST}         Recommended=as list
 ${SIMILAR VAR 1}
 ${SIMILAR VAR 2}
 ${SIMILAR VAR 3}
 ${Cäersŵs}
-${INDENT}    ${SPACE * 4}
+${INDENT}         ${SPACE * 4}
+&{DICTIONARY}     key=value
+${S DICTIONARY}   Not recommended as dict
+@{L DICTIONARY}   Not recommended as dict
 
 *** Test Cases ***
 Simple Typo Scalar
@@ -19,15 +24,41 @@ Simple Typo Scalar
     ...    ${INDENT}\${STRING}
     Log    ${SSTRING}
 
-Simple Typo List
+Simple Typo List - Only List-likes Are Recommended
+    [Documentation]    FAIL    Variable '@{GIST}' not found. Did you mean:
+    ...    ${INDENT}\@{LIST}
+    ...    ${INDENT}\@{D LIST}
+    Log    @{GIST}
+
+Simple Typo Dict - Only Dicts Are Recommended
+    [Documentation]    FAIL    Variable '&{BICTIONARY}' not found. Did you mean:
+    ...    ${INDENT}\&{DICTIONARY}
+    Log    &{BICTIONARY}
+
+All Types Are Recommended With Scalars 1
+   [Documentation]    FAIL    Variable '${MIST}' not found. Did you mean:
+    ...    ${INDENT}\${LIST}
+    ...    ${INDENT}\${S LIST}
+    ...    ${INDENT}\${D LIST}
+   Log    ${MIST}
+
+All Types Are Recommended With Scalars 2
+   [Documentation]    FAIL    Variable '${BICTIONARY}' not found. Did you mean:
+   ...    ${INDENT}\${DICTIONARY}
+   ...    ${INDENT}\${S DICTIONARY}
+   ...    ${INDENT}\${L DICTIONARY}
+   Log    ${BICTIONARY}
+
+Access Scalar In List With Typo In Variable
     [Documentation]    FAIL    Variable '@{LLIST}' not found. Did you mean:
     ...    ${INDENT}\@{LIST}
-    Log    @{LLIST}
-
-Access Scalar In List With Typo
-    [Documentation]    FAIL    Variable '@{LLIST}[0]' not found. Did you mean:
-    ...    ${INDENT}\@{LIST}
+    ...    ${INDENT}\@{D LIST}
     Log    @{LLIST}[0]
+
+Access Scalar In List With Typo In Index
+    [Documentation]    FAIL    Variable '${STRENG}' not found. Did you mean:
+    ...    ${INDENT}\${STRING}
+    Log    @{LIST}[${STRENG}]
 
 Long Garbage Variable
     [Documentation]    FAIL    Variable '${dEnOKkgGlYBHwotU2bifJ56w487jD2NJxCrcM62g}' not found.
@@ -61,16 +92,6 @@ Misspelled Camel Case
     ...    ${INDENT}\@{ONE ITEM}
     Log    @{OneeItem}
 
-Misspelled List Accessed As Scalar
-    [Documentation]    FAIL    Variable '${LLIST}' not found. Did you mean:
-    ...    ${INDENT}\@{LIST}
-    Log    ${LLIST}
-
-Misspelled Scalar Accessed As List
-    [Documentation]    FAIL    Variable '@{SSTRING}' not found. Did you mean:
-    ...    ${INDENT}\${STRING}
-    Log    @{SSTRING}
-
 Misspelled Whitespace
     [Documentation]    FAIL    Variable '${S STRI NG}' not found. Did you mean:
     ...    ${INDENT}\${STRING}
@@ -80,7 +101,13 @@ Misspelled Env Var
     [Documentation]    FAIL    Environment variable '%{THISS_ENV_VAR_IS_SET}' not found. Did you mean:
     ...    ${INDENT}\%{THIS_ENV_VAR_IS_SET}
     Set Environment Variable  THIS_ENV_VAR_IS_SET    Env var value
+    ${THISS_ENV_VAR_IS_SET} =    Set Variable    Not env var and thus not recommended
     Log    %{THISS_ENV_VAR_IS_SET}
+
+Misspelled Java System Property
+    [Documentation]    FAIL    Environment variable '%{user.hima}' not found. Did you mean:
+    ...    ${INDENT}\%{user.home}
+    Log    %{user.hima}
 
 Misspelled Env Var With Internal Variables
     [Documentation]    FAIL    Environment variable '%{YET_ANOTHER_ENV_VAR}' not found. Did you mean:
@@ -97,6 +124,12 @@ Misspelled Extended Variable Parent
     [Documentation]    FAIL    Resolving variable '${OBJJ.name}' failed: Variable '${OBJJ}' not found. Did you mean:
     ...    ${INDENT}\${OBJ}
     Log    ${OBJJ.name}
+
+Misspelled Extended Variable Parent As List
+    [Documentation]    Extended variables are always searched as scalars.
+    ...    FAIL    Resolving variable '@{OBJJ.name}' failed: Variable '${OBJJ}' not found. Did you mean:
+    ...    ${INDENT}\${OBJ}
+    Log    @{OBJJ.name}
 
 Misspelled Extended Variable Child
     [Documentation]    FAIL REGEXP:    Resolving variable '\\${OBJ.nmame}' failed: AttributeError: ('ExampleObject' object|ExampleObject instance) has no attribute 'nmame'
@@ -130,7 +163,7 @@ Multiple Missing Variables
     Log Many    ${SSTRING}    @{LLIST}
 
 Empty Variable Name
-    [Documentation]    FAIL    Variable name '${}' is invalid.
+    [Documentation]    FAIL    Invalid variable name '${}'.
     Log    ${}
 
 Environment Variable With Misspelled Internal Variables

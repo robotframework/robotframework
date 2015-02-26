@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ class Logger(AbstractLogger):
         self._started_keywords = 0
         self._error_occurred = False
         self._error_listener = None
+        self._prev_log_message_handlers = []
         if register_console_logger:
             self.register_console_logger()
 
@@ -82,10 +83,6 @@ class Logger(AbstractLogger):
         self._loggers.unregister_logger(logger)
         self._console_logger = None
         return logger
-
-    # TODO: Remove in RF 2.9. Not used outside utests since 2.8.4 but may
-    # be used by external tools. Need to check that before removal.
-    disable_automatic_console_logger = unregister_console_logger
 
     def register_file_logger(self, path=None, level='INFO'):
         if not path:
@@ -130,11 +127,11 @@ class Logger(AbstractLogger):
             self.log_message(msg)
 
     def enable_library_import_logging(self):
-        self._prev_log_message = self.log_message
+        self._prev_log_message_handlers.append(self.log_message)
         self.log_message = self.message
 
     def disable_library_import_logging(self):
-        self.log_message = self._prev_log_message
+        self.log_message = self._prev_log_message_handlers.pop()
 
     def output_file(self, name, path):
         """Finished output, report, log, debug, or xunit file"""
@@ -193,10 +190,6 @@ class LoggerCollection(object):
     def register_context_changing_logger(self, logger):
         self._context_changing_loggers.append(_LoggerProxy(logger))
         return self._context_changing_loggers[-1]
-
-    # TODO: Remove in RF 2.9. Doesn't seem to be used anywhere since 2.8.4.
-    def remove_first_regular_logger(self):
-        return self._regular_loggers.pop(0)
 
     def unregister_logger(self, logger):
         self._regular_loggers = [proxy for proxy in self._regular_loggers

@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ if not sys.platform.startswith('java'):
         return zlib.compress(text, 9)
 
 else:
-    # Custom compress implementation needed to avoid memory leak:
-    # http://bugs.jython.org/issue1775
-    # This is based on the zlib.compress in Jython 2.5.2 but has a memory
-    # leak fix and is also a little faster.
+
+    # Custom compress implementation was originally used to avoid memory leak
+    # (http://bugs.jython.org/issue1775). Kept around still because it is a bit
+    # faster than Jython's standard zlib.compress.
 
     from java.util.zip import Deflater
     import jarray

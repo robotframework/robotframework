@@ -3,7 +3,7 @@ Library           XML
 Resource          xml_resource.robot
 Test Template     Elements should not match
 
-*** Test cases ***
+*** Test Cases ***
 Elements should match
     [Template]    Match Elements
     <tag>content</tag>    <tag>c*</tag>
@@ -13,7 +13,7 @@ Elements should match
 Tail text is not checked with root element
     [Template]    NONE
     ${elem} =    Get Element    ${TEST}    another/child
-    Elements should match    ${elem}    <child>t??t</child>
+    Elements should match    ${elem}    <child>nöŋ-* t??t</child>
 
 Different tag names
     <tag/>   <täg/>    Different tag name: tag != täg

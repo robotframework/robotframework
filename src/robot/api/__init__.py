@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ and thus safe to use when building external tools on top of Robot Framework.
 Currently exposed APIs are:
 
 * :mod:`.logger` module for test libraries' logging purposes.
+
+* :mod:`.deco` module with decorators test libraries can utilize.
 
 * :class:`~robot.parsing.model.TestCaseFile`,
   :class:`~robot.parsing.model.TestDataDirectory`, and

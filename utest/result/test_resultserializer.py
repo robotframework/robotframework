@@ -1,6 +1,5 @@
 from six import PY3
 
-import sys
 import unittest
 
 from six.moves import StringIO

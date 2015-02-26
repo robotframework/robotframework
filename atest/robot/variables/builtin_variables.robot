@@ -28,6 +28,12 @@ ${EMPTY}
 @{EMPTY}
     Check Test Case  ${TESTNAME}
 
+&{EMPTY}
+    Check Test Case  ${TESTNAME}
+
+@{EMPTY} and &{EMPTY} cannot be modified
+    Check Test Case  ${TESTNAME}
+
 ${/}
     Check Test Case  ${TESTNAME}
 

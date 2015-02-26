@@ -1,4 +1,3 @@
-import sys
 import signal
 import unittest
 from threading import Thread
@@ -6,11 +5,12 @@ from threading import Thread
 from robot.output import LOGGER
 from robot.output.loggerhelper import AbstractLogger
 from robot.utils.asserts import assert_equal
+from robot.utils import JYTHON
 
 from robot.running.signalhandler import _StopSignalMonitor
 
 
-LOGGER.disable_automatic_console_logger()
+LOGGER.unregister_console_logger()
 
 
 class LoggerStub(AbstractLogger):
@@ -37,7 +37,7 @@ class TestSignalHandlerRegisteringFailures(unittest.TestCase):
         def raise_value_error(signum, handler):
             raise ValueError("Got signal %d" % signum)
         signal.signal = raise_value_error
-        _StopSignalMonitor().start()
+        _StopSignalMonitor().__enter__()
         assert_equal(len(self.logger.messages), 2)
         self._verify_warning(self.logger.messages[0], 'INT',
                              'Got signal %d' % signal.SIGINT)
@@ -53,14 +53,14 @@ class TestSignalHandlerRegisteringFailures(unittest.TestCase):
         assert_equal(msg.level, 'WARN')
 
     def test_failure_but_no_warning_when_not_in_main_thread(self):
-        t = Thread(target=_StopSignalMonitor().start)
+        t = Thread(target=_StopSignalMonitor().__enter__)
         t.start()
         t.join()
         assert_equal(len(self.logger.messages), 0)
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
-        # signal.signal may raise IllegalArgumentException with Jython 2.5.2:
+        # signal.signal may raise IllegalArgumentException on Jython:
         # http://bugs.jython.org/issue1729
         def test_illegal_argument_exception(self):
             from java.lang import IllegalArgumentException
@@ -68,7 +68,7 @@ class TestSignalHandlerRegisteringFailures(unittest.TestCase):
                 if signum == signal.SIGINT:
                     raise IllegalArgumentException('xxx')
             signal.signal = raise_iae_for_sigint
-            _StopSignalMonitor().start()
+            _StopSignalMonitor().__enter__()
             assert_equal(len(self.logger.messages), 1)
             self._verify_warning(self.logger.messages[0], 'INT',
                                  'java.lang.IllegalArgumentException: xxx')

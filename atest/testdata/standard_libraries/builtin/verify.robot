@@ -78,7 +78,7 @@ Should Be Equal with unicode and bytes with non-ascii characters
     Should be equal    ${BYTES WITH NON ASCII}    this fails
 
 Should Be Equal When Types Differ But String Representations Are Same
-    [Documentation]    FAIL 1 (string) != 1 (number)
+    [Documentation]    FAIL 1 (string) != 1 (integer)
     Should Be Equal    ${STR1}    ${INT1}
 
 Should Not Be Equal As Integers

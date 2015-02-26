@@ -4,6 +4,14 @@ robot.api package
 Submodules
 ----------
 
+robot.api.deco module
+---------------------
+
+.. automodule:: robot.api.deco
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.api.logger module
 -----------------------
 

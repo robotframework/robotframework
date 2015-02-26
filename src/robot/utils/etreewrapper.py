@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 from six import PY3, string_types
 
-import sys
 import os.path
 
 if PY3:
@@ -22,12 +21,13 @@ if PY3:
 else:
     from StringIO import StringIO
 
+from .platform import IRONPYTHON
 
-_IRONPYTHON = sys.platform == 'cli'
+
 _ERROR = 'No valid ElementTree XML parser module found'
 
 
-if not _IRONPYTHON:
+if not IRONPYTHON:
     try:
         from xml.etree import cElementTree as ET
     except ImportError:
@@ -91,7 +91,7 @@ class ETSource(object):
             return self._open_bytes_io(self._source)
         return None
 
-    if not _IRONPYTHON:
+    if not IRONPYTHON:
 
         # File is opened, and later closed, because ElementTree had a bug that
         # it didn't close files it had opened. This caused problems with Jython

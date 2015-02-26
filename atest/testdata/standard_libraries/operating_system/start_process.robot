@@ -11,12 +11,12 @@ ${TEMP FILE}  ${CURDIR}${/}robot-start-process.tmp
 *** Test Cases ***
 Start Process
     ${index} =  Start Process  ${PROG} 0 hello
-    Equals  ${index}  ${2}
+    Should Be Equal  ${index}  ${2}
     ${out} =  Read Process Output
-    Equals  ${out}  hello
+    Should Be Equal  ${out}  hello
     Start Process  ${PROG} 0 hi
     ${out} =  Read Process Output
-    Equals  ${out}  hi
+    Should Be Equal  ${out}  hi
 
 Stderr Is Redirected To Stdout
     Start Process  ${PROG} 0 hey error
@@ -31,7 +31,7 @@ It Should Be Possble To Start Background Process
 Start Writable Process
     Start Process  ${WRITABLE_PROG}  hello world
     ${output} =  Read Process Output
-    Equals  ${output}  HELLO WORLD
+    Should Be Equal  ${output}  HELLO WORLD
 
 Cannot Read From A Stopped Process
     [Documentation]  FAIL Cannot read from a closed process
@@ -45,16 +45,16 @@ Switch Process
     Start Process  ${WRITABLE_PROG}  hello world  alias
     Start Process  ${PROG} 0 olleh
     ${output} =  Read Process Output
-    Equals  ${output}  olleh
+    Should Be Equal  ${output}  olleh
     Switch Process  ${first}
     ${output} =  Read Process Output
-    Equals  ${output}  hello
+    Should Be Equal  ${output}  hello
     Switch Process  \ ${second} \
     ${output} =  Read Process Output
-    Equals  ${output}  world
+    Should Be Equal  ${output}  world
     Switch Process  alias
     ${output} =  Read Process Output
-    Equals  ${output}  HELLO WORLD
+    Should Be Equal  ${output}  HELLO WORLD
 
 Lives Between Tests Setup
     [Documentation]  Starts a process used in next test case
@@ -64,13 +64,13 @@ Lives Between Tests
     [Setup]  Start Process  ${PROG} 0 from_test_setup  ${EMPTY}  test setup process
     Switch Process  suite setup process
     ${output} =  Read Process Output
-    Equals  ${output}  from_suite_setup
+    Should Be Equal  ${output}  from_suite_setup
     Switch Process  test setup process
     ${output} =  Read Process Output
-    Equals  ${output}  from_test_setup
+    Should Be Equal  ${output}  from_test_setup
     Switch Process  test case process
     ${output} =  Read Process Output
-    Equals  ${output}  from_test_case
+    Should Be Equal  ${output}  from_test_case
 
 Stop All
     [Documentation]  FAIL No active processes
@@ -78,7 +78,7 @@ Stop All
     Start Process  ${PROG} 0 hello
     Stop All Processes
     ${index} =  Start Process  ${PROG} 0 hello
-    Equals  ${index}  ${1}
+    Should Be Equal  ${index}  ${1}
     Stop All Processes
     Read Process Output
 
@@ -113,7 +113,7 @@ Reading Output With Lot Of Data In Stdout And Stderr
 *** Keywords ***
 My Setup
     ${index} =  Start Process  ${PROG} 0 from_suite_setup  ${EMPTY}  suite setup process
-    Equals  ${index}  ${1}
+    Should Be Equal  ${index}  ${1}
 
 Output And Temp File Should Be
     [Arguments]  ${exp_out}  ${exp_file}

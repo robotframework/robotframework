@@ -38,7 +38,7 @@ Fail If Equal
     Not Equal    ${str1}    1
 
 Fail Unless Equal
-    [Documentation]    FAIL Error message: 1 (string) != 1 (number)
+    [Documentation]    FAIL Error message: 1 (string) != 1 (integer)
     Fail Unless Equal    ${str1}    1
     Equals    ${str1}    ${int1}    Error message
 

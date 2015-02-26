@@ -72,22 +72,22 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
    |              |              |
    | Default Tags | No Operation |
 
-   Variable Table   Equals   ${table_var}   foo
-      Equals   @{table_listvar}[0]   bar
-      Equals   @{table_listvar}[1]   foo
+   Variable Table   Should Be Equal   ${table_var}   foo
+      Should Be Equal   @{table_listvar}[0]   bar
+      Should Be Equal   @{table_listvar}[1]   foo
 
    Resource File   Keyword from ReST resource
       Keyword from ReST resource 2
-      Equals   ${rest_resource_var}   ReST Resource Variable
-      Equals   ${rest_resource_var2}   ReST Resource Variable From Recursive Resource
+      Should Be Equal   ${rest_resource_var}   ReST Resource Variable
+      Should Be Equal   ${rest_resource_var2}   ReST Resource Variable From Recursive Resource
 
-   Variable File   Equals   @{file_listvar}[0]   ${True}
-      Equals   @{file_listvar}[1]   ${3.14}
-      Equals   @{file_listvar}[2]   Hello, world!!
-      Equals   ${file_var1}   ${-314}
-      Equals   ${file_var2}   file variable 2
+   Variable File   Should Be Equal   @{file_listvar}[0]   ${True}
+      Should Be Equal   @{file_listvar}[1]   ${3.14}
+      Should Be Equal   @{file_listvar}[2]   Hello, world!!
+      Should Be Equal   ${file_var1}   ${-314}
+      Should Be Equal   ${file_var2}   file variable 2
 
-   Library Import   Fail If Dir Empty   ${CURDIR}
+   Library Import   Directory Should Not Be Empty   ${CURDIR}
 
    Test Timeout   [Timeout]   0.01s
       [Document]   FAIL   Test timeout 10 milliseconds exceeded.
@@ -99,22 +99,22 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
    Empty Rows
       [Document]   Testing that empty rows are ignored.   FAIL Expected failure.
 
-      Noop
+      No operation
 
       Fail   Expected failure.
 
    Document   [Document]   Testing the metadata parsing.
-      noop
+      no operation
 
-   Default Fixture   Noop
+   Default Fixture   No operation
 
    Overridden Fixture   [Teardown]   Fail   Failing Teardown
       [Setup]   Log   Own Setup
       [Document]   FAIL   Teardown failed:\n Failing Teardown
-      NOOP
+      No Operation
 
-   Quotes   Equals   ${quoted}   """this has """"many "" quotes """""
-      Equals   ${single_quoted}   s'ingle'qu'ot'es''
+   Quotes   Should Be Equal   ${quoted}   """this has """"many "" quotes """""
+      Should Be Equal   ${single_quoted}   s'ingle'qu'ot'es''
 
    Escaping
       Should Be Equal    -c:\\temp-\t-\x00-\${x}-    ${ESCAPING}
@@ -128,7 +128,7 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
       Another Keyword   ${arg1}
 
    Another Keyword   [Arguments]   ${arg1}   ${arg2}=something
-      Equals   ${arg1}   ${arg2}
+      Should Be Equal   ${arg1}   ${arg2}
 
    Timeouted Keyword   [Timeout]   2ms
       Sleep   2

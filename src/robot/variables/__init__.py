@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,8 +14,7 @@
 
 """Implements storing and resolving variables.
 
-This package is for internal usage only, and also subject to heavy refactoring
-in the future.
+This package is mainly for internal usage.
 """
 
 import os
@@ -24,10 +23,11 @@ import tempfile
 from robot import utils
 from robot.output import LOGGER
 
-from .isvar import contains_var, is_var, is_scalar_var, is_list_var
+from .assigner import VariableAssigner
+from .isvar import contains_var, is_var, is_scalar_var, is_list_var, is_dict_var
+from .splitter import VariableSplitter, VariableIterator
+from .tablesetter import VariableTableValue, DictVariableTableValue
 from .variables import Variables
-from .variableassigner import VariableAssigner
-from .variablesplitter import VariableSplitter, VariableIterator
 
 
 GLOBAL_VARIABLES = Variables()
@@ -42,8 +42,6 @@ def init_global_variables(settings):
                          ('${:}', os.pathsep),
                          ('${\\n}', os.linesep),
                          ('${SPACE}', ' '),
-                         ('${EMPTY}', ''),
-                         ('@{EMPTY}', ()),
                          ('${True}', True),
                          ('${False}', False),
                          ('${None}', None),

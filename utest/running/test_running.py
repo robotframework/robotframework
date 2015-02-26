@@ -1,6 +1,7 @@
+import logging
+import signal
 import sys
 import unittest
-import signal
 from six.moves import StringIO
 from os.path import abspath, dirname, normpath, join
 
@@ -241,18 +242,13 @@ class TestPreservingSignalHandlers(unittest.TestCase):
 class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_reset_logging_conf(self):
-        import logging
         assert_equals(logging.getLogger().handlers, [])
-        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
-            assert_equals(logging.raiseExceptions, 1)
+        assert_equals(logging.raiseExceptions, 1)
         suite = TestSuite(name='My Suite')
         suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
         run(suite)
         assert_equals(logging.getLogger().handlers, [])
-        if not (sys.platform.startswith('java') and sys.version_info >= (2, 7)):
-            assert_equals(logging.raiseExceptions, 1)
-        else:
-            assert_equals(logging.raiseExceptions, False)
+        assert_equals(logging.raiseExceptions, 1)
 
 
 if __name__ == '__main__':

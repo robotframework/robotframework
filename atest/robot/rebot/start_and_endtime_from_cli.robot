@@ -31,7 +31,7 @@ Combine With Only Endtime Should Only Affect Endtime
 Recombining Should Work
     Run Rebot Without Processing Output  --starttime 2007:09:25:21:51 --endtime 2007:09:26:01:12:30:200 --output once_combined.xml  ${INPUT1}  ${INPUT2}
     Run Rebot  ${EMPTY}  ${INPUT1}  ${INPUT2}  ${OUTDIR}${/}once_combined.xml
-    Fail Unless  '${SUITE.elapsedtime}' > '03:21:30.200'
+    Should Be True  '${SUITE.elapsedtime}' > '03:21:30.200'
 
 It should Be possible to Omit Time Altogether
     Run Rebot  --starttime 2007-10-01 --endtime 20071006  ${INPUT1}  ${INPUT2}

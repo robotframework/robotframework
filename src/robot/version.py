@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ import sys
 
 # Version number typically updated by running `invoke set_version <version>`.
 # Run `invoke --help set_version` or see tasks.py for details.
-VERSION = '2.8.7'
+VERSION = '2.9.dev20150202'
 
 
 def get_version(naked=False):

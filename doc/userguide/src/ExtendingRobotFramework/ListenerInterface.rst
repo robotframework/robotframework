@@ -60,17 +60,19 @@ Listener interface versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The signatures of methods related to test execution progress were changed in
-Robot Framework 2.1. This change was made so that new information can be added
-to listener interface without breaking existing listeners. The old signatures
-will continue to work, but they will be deprecated in some future version, so
-all new listeners should be implemented with signatures described in the table
-below. The most recent detailed description of the old listener interface can
-be found in User Guide of Robot Framework 2.0.4.
+Robot Framework 2.1. This change was made to allow new information to be added
+to the listener interface without breaking existing listeners.
+A listener must have attribute `ROBOT_LISTENER_API_VERSION` with value 2,
+either as a string or as an integer, to be recognized as a new style listener.
+The old listener interface has been deprecated in Robot Framework 2.9 and
+will be removed in the next major release.
 
-.. note:: A listener must have attribute `ROBOT_LISTENER_API_VERSION`
-  defined in order to be recognized as a new style listener. Value of the
-  `ROBOT_LISTENER_API_VERSION` attribute must be 2, either as a string or
-  as an integer. The examples below are implemented as new style listeners.
+All new listeners should be implemented as new style listeners with method
+signatures described in the next section. Also all following examples
+are implemented as new style listeners. Documentation of the old listener
+interface API can be found from `Robot Framework User Guide`__ version 2.0.4.
+
+__ http://robotframework.org/robotframework/#user-guide
 
 Listener interface method signatures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,16 +100,15 @@ synonym to `start_suite`.
    |               |                  | * longname: suite name including parent suites   |
    |               |                  | * doc: test suite documentation                  |
    |               |                  | * metadata: dictionary/map containing `free test |
-   |               |                  |   suite metadata`_ (new in 2.5)                  |
+   |               |                  |   suite metadata`_                               |
    |               |                  | * source: absolute path of the file/directory    |
    |               |                  |   test suite was created from (new in 2.7)       |
    |               |                  | * suites: names of suites directly in this suite |
-   |               |                  |   as a list of strings (new in 2.5)              |
+   |               |                  |   as a list of strings                           |
    |               |                  | * tests: names of tests directly in this suite   |
-   |               |                  |   as a list of strings (new in 2.5)              |
+   |               |                  |   as a list of strings                           |
    |               |                  | * totaltests: total number of tests in this suite|
-   |               |                  |   and all its sub-suites as an integer (new in   |
-   |               |                  |   2.5)                                           |
+   |               |                  |   and all its sub-suites as an integer           |
    |               |                  | * starttime: execution start time                |
    +---------------+------------------+--------------------------------------------------+
    | end_suite     | name, attributes | Keys in the attribute dictionary:                |
@@ -118,7 +119,7 @@ synonym to `start_suite`.
    |               |                  | * longname: test suite name including parents    |
    |               |                  | * doc: test suite documentation                  |
    |               |                  | * metadata: dictionary/map containing `free test |
-   |               |                  |   suite metadata`_ (new in 2.6)                  |
+   |               |                  |   suite metadata`_                               |
    |               |                  | * source: absolute path of the file/directory    |
    |               |                  |   test suite was created from (new in 2.7)       |
    |               |                  | * starttime: execution start time                |
@@ -140,10 +141,10 @@ synonym to `start_suite`.
    |               |                  | * doc: test case documentation                   |
    |               |                  | * tags: test case tags as a list of strings      |
    |               |                  | * critical: `yes` or `no` depending              |
-   |               |                  |   is test considered critical or not (new in 2.6)|
+   |               |                  |   is test considered critical or not             |
    |               |                  | * template: contains the name of the template    |
    |               |                  |   used for the test. If the test is not templated|
-   |               |                  |   it will be an empty string (new in 2.6)        |
+   |               |                  |   it will be an empty string                     |
    |               |                  | * starttime: execution start time                |
    +---------------+------------------+--------------------------------------------------+
    | end_test      | name, attributes | Keys in the attribute dictionary:                |
@@ -155,10 +156,10 @@ synonym to `start_suite`.
    |               |                  | * doc: test case documentation                   |
    |               |                  | * tags: test case tags as a list of strings      |
    |               |                  | * critical: `yes` or `no` depending              |
-   |               |                  |   is test considered critical or not (new in 2.6)|
+   |               |                  |   is test considered critical or not             |
    |               |                  | * template: contains the name of the template    |
    |               |                  |   used for the test. If the test is not templated|
-   |               |                  |   it will be an empty string (new in 2.6)        |
+   |               |                  |   it will be an empty string                     |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
@@ -173,7 +174,7 @@ synonym to `start_suite`.
    |               |                  |   keywords and `Test Setup`, `Test               |
    |               |                  |   Teardown`, `Suite Setup` or `Suite             |
    |               |                  |   Teardown` for keywords used in suite/test      |
-   |               |                  |   setup/teardown (new in 2.6)                    |
+   |               |                  |   setup/teardown                                 |
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * args: keyword's arguments as a list of strings |
    |               |                  | * starttime: execution start time                |
@@ -252,10 +253,9 @@ to implement any explicit interface or have all these methods.
 Listeners logging
 -----------------
 
-Robot Framework 2.6 introduced new `programmatic logging APIs`_ that
-also listeners can utilize. There are some limitations, however, and
-how different listener methods can log messages is explained in the
-table below.
+Robot Framework offers a `programmatic logging APIs`_ that listeners can
+utilize. There are some limitations, however, and how different listener
+methods can log messages is explained in the table below.
 
 .. table:: How listener methods can log
    :class: tabular
@@ -280,10 +280,6 @@ table below.
 
 .. note:: To avoid recursion, messages logged by listeners are not sent to
           listener methods `log_message` and `message`.
-
-.. warning:: There were severe problems with listeners logging prior
-             to Robot Framework 2.6.2. Using this functionality with
-             earlier versions is thus not recommended.
 
 Listener examples
 -----------------

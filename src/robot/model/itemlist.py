@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -37,8 +37,9 @@ class ItemList(object):
 
     def _check_type_and_set_attrs(self, item):
         if not isinstance(item, self._item_class):
-            raise TypeError("Only '%s' objects accepted, got '%s'."
-                            % (self._item_class.__name__, type(item).__name__))
+            raise TypeError("Only %s objects accepted, got %s."
+                            % (self._item_class.__name__,
+                               item.__class__.__name__))
         if self._common_attrs:
             for attr in self._common_attrs:
                 setattr(item, attr, self._common_attrs[attr])
@@ -48,12 +49,8 @@ class ItemList(object):
             self._check_type_and_set_attrs(item)
         self._items += tuple(items)
 
-    if hasattr(tuple, 'index'):  # tuples got index method in Python 2.6
-        def index(self, item):
-            return self._items.index(item)
-    else:
-        def index(self, item):
-            return list(self._items).index(item)
+    def index(self, item):
+        return self._items.index(item)
 
     def clear(self):
         self._items = ()
@@ -67,13 +64,13 @@ class ItemList(object):
 
     def __getitem__(self, index):
         if isinstance(index, slice):
-            raise TypeError("'%s' objects do not support slicing."
+            raise TypeError("%s instances do not support slicing."
                             % type(self).__name__)
         return self._items[index]
 
     def __setitem__(self, index, item):
         if isinstance(index, slice):
-            raise TypeError("'%s' objects do not support slicing."
+            raise TypeError("%s instances do not support slicing."
                             % type(self).__name__)
         self._check_type_and_set_attrs(item)
         items = list(self._items)

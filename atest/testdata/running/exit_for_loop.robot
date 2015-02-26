@@ -1,6 +1,3 @@
-*** Settings ***
-Library    ForLoop.py
-
 *** Test Cases ***
 Simple Exit For Loop
     :FOR    ${var}    IN    one    two
@@ -46,12 +43,6 @@ Exit For Loop Without For Loop Should Fail
 Exit For Loop In User Keyword Without For Loop Should Fail
    [Documentation]    FAIL Invalid 'Exit For Loop' usage.
    With Only Exit For Loop
-
-Custom Exception with ROBOT_EXIT_FOR_LOOP Works But Is Deprecated
-    :FOR    ${var}    IN    one    two
-    \    Raise Exit For Loop
-    \    Fail    Should not be executed
-    Should BE Equal    ${var}    one
 
 Exit For Loop In Test Teardown
     No Operation

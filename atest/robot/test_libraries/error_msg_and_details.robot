@@ -23,6 +23,10 @@ Exception Type is Removed with Exception Attribute in Java
 Exception Type is Included In Non-Generic Failures
     Non Generic Failure    FloatingPointError: Too Large A Number !!
 
+Message Contains Only Class Name When Raising Only Class
+    Generic Python class    RuntimeError
+    Non-Generic Python class    ZeroDivisionError
+
 Exception Type is Included In Non-Generic Java Failures
     [Tags]    jybot
     Non Generic Failure In Java    ArrayStoreException: My message
@@ -31,7 +35,7 @@ Message Is Got Correctly If Python Exception Has Non-String Message
     Python Exception With Non-String Message    ValueError: ['a', 'b', (1, 2), None, {'a': 1}]    1
 
 Message Is Got Correctly If Python Exception Has 'None' Message
-    Python Exception With 'None' Message    AssertionError
+    Python Exception With 'None' Message    None
 
 Multiline Error
     ${TESTNAME}   First line\n2nd\n3rd and last

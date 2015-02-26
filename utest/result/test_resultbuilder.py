@@ -6,9 +6,11 @@ from robot.errors import DataError
 from robot.result import ExecutionResult
 from robot.utils.asserts import assert_equals, assert_true, assert_raises
 
+
 def _read_file(name):
     with open(join(dirname(__file__), name)) as f:
         return f.read()
+
 
 GOLDEN_XML = _read_file('golden.xml')
 GOLDEN_XML_TWICE = _read_file('goldenTwice.xml')

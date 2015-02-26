@@ -1,78 +1,94 @@
 *** Settings ***
-Suite Setup     Run Tests  --loglevel TRACE  keywords/trace_log_keyword_arguments.robot
-Force Tags      regression  pybot  jybot
-Resource        atest_resource.robot
-
+Suite Setup       Run Tests    --loglevel TRACE    keywords/trace_log_keyword_arguments.robot
+Force Tags        regression    pybot    jybot
+Resource          atest_resource.robot
 
 *** Variables ***
-${NON ASCII}  u'Hyv\\xe4\\xe4 P\\xe4iv\\xe4\\xe4'
-${OBJECT REPR}  u'Circle is 360\\xb0, Hyv\\xe4\\xe4 \\xfc\\xf6t\\xe4, \\u0989\\u09c4 \\u09f0 \\u09fa \\u099f \\u09eb \\u09ea \\u09b9'
+${NON ASCII}      'Hyv\\xe4\\xe4 P\\xe4iv\\xe4\\xe4'
+${OBJECT REPR}    u'Circle is 360\\xb0, Hyv\\xe4\\xe4 \\xfc\\xf6t\\xe4,
+...               \\u0989\\u09c4 \\u09f0 \\u09fa \\u099f \\u09eb \\u09ea \\u09b9'
 
 *** Test Cases ***
-
 Only Mandatory Arguments
-    Check Argument Value Trace  \${mand1}=u'arg1' | \${mand2}=u'arg2'
-    ...  u'arg1' | u'arg2'
+    Check Argument Value Trace
+    ...    \${mand1}='arg1' | \${mand2}='arg2'
+    ...    'arg1' | 'arg2'
 
 Mandatory And Default Arguments
-    Check Argument Value Trace  \${mand}=u'mandatory' | \${default}=u'default value'
-    ...  u'mandatory'
+    Check Argument Value Trace
+    ...    \${mand}='mandatory' | \${default}='default value'
+    ...   'mandatory'
 
 Multiple Default Values
-    Check Argument Value Trace  \${a1}=u'10' | \${a2}=u'2' | \${a3}=u'30' | \${a4}=4
-    ...  u'10' | a3=u'30'
+    Check Argument Value Trace
+    ...    \${a1}='10' | \${a2}='2' | \${a3}='30' | \${a4}=4
+    ...    '10' | a3='30'
 
 Named Arguments
-    Check Argument Value Trace  \${mand}=u'mandatory' | \${default}=u'bar'
-    ...  u'mandatory' | default=u'bar'
+    Check Argument Value Trace
+    ...    \${mand}='mandatory' | \${default}='bar'
+    ...    'mandatory' | default='bar'
 
 Named Arguments when Name Is Not Matching
-    Check Argument Value Trace  \${mand}=u'mandatory' | \${default}=u'foo=bar'
-    ...  u'mandatory' | u'foo=bar'
+    Check Argument Value Trace
+    ...    \${mand}='mandatory' | \${default}='foo=bar'
+    ...    'mandatory' | 'foo=bar'
 
-Variable Number of Arguments with UK
-    Check Argument Value Trace  \${mand}=u'a' | \@{vargs}=[u'b', u'c', u'd']
-    ...  \${mand}=u'mandatory' | \@{vargs}=[u'a', u'b', u'c', u'd']
-    ...  \${mand}=u'mandatory' | \@{vargs}=[]
+Variable Number of Arguments
+    Check Argument Value Trace
+    ...    \${mand}='a' | \@{vargs}=['b', 'c', 'd']
+    ...    'a' | 'b' | 'c' | 'd'
+    ...    \${mand}='mandatory' | \@{vargs}=['a', 'b', 'c', 'd']
+    ...    'mandatory' | 'a' | 'b' | 'c' | 'd'
+    ...    \${mand}='mandatory' | \@{vargs}=[]
+    ...    'mandatory'
 
-Variable Number of Arguments with Library Keyword
-    Check Argument Value Trace  u'a' | u'b' | u'c' | u'd'
-    ...  u'mandatory' | u'a' | u'b' | u'c' | u'd'
-    ...  u'mandatory'
+Kwargs
+    Check Argument Value Trace
+    ...    \&{kwargs}={}
+    ...    ${EMPTY}
+    ...    \&{kwargs}={'a': '1', 'b': 2, 'c': '3'}
+    ...    a='1' | b=2 | c='3'
 
-Arguments With Run Keyword
-    ${tc}=  Check Test Case  ${TEST NAME}
-    Check Log Message  ${tc.kws[1].msgs[0]}  Arguments: [ u'Log Many' | u'\@{VALUES}' ]  TRACE
-    Check Log Message  ${tc.kws[1].kws[0].msgs[0]}  Arguments: [ u'a' | u'b' | u'c' | u'd' ]  TRACE
+All args
+    Check Argument Value Trace
+    ...    \${positional}='1' | \@{varargs}=['2', '3'] | \&{kwargs}={'d': '4'}
+    ...    '1' | '2' | '3' | d='4'
 
 Non String Object as Argument
-    Check Argument Value Trace  \${mand}=True | \${default}=1.0
-    ...  True | default=1.0
-    ...  \${mand}=-123 | \@{vargs}=[1.0]
-    ...  -123 | 1.0
+    Check Argument Value Trace
+    ...    \${mand}=True | \${default}=1.0
+    ...    True | default=1.0
+    ...    \${mand}=-123 | \@{vargs}=[1.0]
+    ...    -123 | 1.0
 
 None as Argument
-    Check UK Default, Library KW Default, UK Varargs and Library KW Varargs  None
+    Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs    None
 
 Non Ascii String as Argument
-    Check UK Default, Library KW Default, UK Varargs and Library KW Varargs  ${NON ASCII}
+    Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs    ${NON ASCII}
 
 Object With Unicode Repr as Argument
-    Check UK Default, Library KW Default, UK Varargs and Library KW Varargs  ${OBJECT REPR}
+    Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs    ${OBJECT REPR}
+
+Arguments With Run Keyword
+    ${tc}=    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[1].msgs[0]}    Arguments: [ 'Log Many' | '\@{VALUES}' ]    TRACE
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Arguments: [ 'a' | 'b' | 'c' | 'd' ]    TRACE
 
 *** Keywords ***
 Check Argument Value Trace
-    [Arguments]  @{expected}
-    ${tc} =  Check Test Case  ${TEST NAME}
-    ${length} =  Get Length  ${expected}
-    :FOR  ${index}  IN RANGE  0  ${length}
-    \    Check Log Message  ${tc.kws[${index}].msgs[0]}  
-    \    ...  Arguments: [ @{expected}[${index}] ]  TRACE
+    [Arguments]    @{expected}
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${length} =    Get Length    ${expected}
+    : FOR    ${index}    IN RANGE    0    ${length}
+    \    Check Log Message    ${tc.kws[${index}].msgs[0]}
+    ...    Arguments: [ @{expected}[${index}] ]    TRACE
 
-Check UK Default, Library KW Default, UK Varargs and Library KW Varargs
-    [Arguments]  ${value}
-    Check Argument Value Trace  \${mand}=${value} | \${default}=${value}
-    ...  ${value} | default=${value}
-    ...  \${mand}=${value} | \@{vargs}=[${value}]
-    ...  ${value} | ${value}
-    
+Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs
+    [Arguments]    ${value}
+    Check Argument Value Trace
+    ...    \${mand}=${value} | \${default}=${value}
+    ...    ${value} | default=${value}
+    ...    \${mand}=${value} | \@{vargs}=[${value}]
+    ...    ${value} | ${value}

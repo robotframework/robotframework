@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@ from six import PY3, string_types, text_type as unicode
 import sys
 
 from robot.api import logger
-from robot.utils import plural_or_not, seq2str, seq2str2, unic, Matcher
+from robot.utils import (plural_or_not, seq2str, seq2str2, type_name, unic,
+                         Matcher)
 from robot.utils.asserts import assert_equals
 from robot.version import get_version
 
@@ -25,7 +26,7 @@ from robot.version import get_version
 class _List:
 
     def convert_to_list(self, item):
-        """Converts the given `item` to a list.
+        """Converts the given ``item`` to a list.
 
         Mainly useful for converting tuples and other iterable to lists.
         Use `Create List` from the BuiltIn library for constructing new lists.
@@ -33,24 +34,24 @@ class _List:
         return list(item)
 
     def append_to_list(self, list_, *values):
-        """Adds `values` to the end of `list`.
+        """Adds ``values`` to the end of ``list``.
 
         Example:
         | Append To List | ${L1} | xxx |   |   |
         | Append To List | ${L2} | x   | y | z |
         =>
-        - ${L1} = ['a', 'xxx']
-        - ${L2} = ['a', 'b', 'x', 'y', 'z']
+        | ${L1} = ['a', 'xxx']
+        | ${L2} = ['a', 'b', 'x', 'y', 'z']
         """
         for value in values:
             list_.append(value)
 
     def insert_into_list(self, list_, index, value):
-        """Inserts `value` into `list` to the position specified with `index`.
+        """Inserts ``value`` into ``list`` to the position specified with ``index``.
 
-        Index '0' adds the value into the first position, '1' to the second,
+        Index ``0`` adds the value into the first position, ``1`` to the second,
         and so on. Inserting from right works with negative indices so that
-        '-1' is the second last position, '-2' third last, and so on. Use
+        ``-1`` is the second last position, ``-2`` third last, and so on. Use
         `Append To List` to add items to the end of the list.
 
         If the absolute value of the index is greater than
@@ -63,13 +64,13 @@ class _List:
         | Insert Into List | ${L1} | 0     | xxx |
         | Insert Into List | ${L2} | ${-1} | xxx |
         =>
-        - ${L1} = ['xxx', 'a']
-        - ${L2} = ['a', 'xxx', 'b']
+        | ${L1} = ['xxx', 'a']
+        | ${L2} = ['a', 'xxx', 'b']
         """
         list_.insert(self._index_to_int(index), value)
 
     def combine_lists(self, *lists):
-        """Combines the given `lists` together and returns the result.
+        """Combines the given ``lists`` together and returns the result.
 
         The given lists are not altered by this keyword.
 
@@ -77,9 +78,9 @@ class _List:
         | ${x} = | Combine List | ${L1} | ${L2} |       |
         | ${y} = | Combine List | ${L1} | ${L2} | ${L1} |
         =>
-        - ${x} = ['a', 'a', 'b']
-        - ${y} = ['a', 'a', 'b', 'a']
-        - ${L1} and ${L2} are not changed.
+        | ${x} = ['a', 'a', 'b']
+        | ${y} = ['a', 'a', 'b', 'a']
+        | ${L1} and ${L2} are not changed.
         """
         ret = []
         for item in lists:
@@ -87,10 +88,10 @@ class _List:
         return ret
 
     def set_list_value(self, list_, index, value):
-        """Sets the value of `list` specified by `index` to the given `value`.
+        """Sets the value of ``list`` specified by ``index`` to the given ``value``.
 
-        Index '0' means the first position, '1' the second and so on.
-        Similarly, '-1' is the last position, '-2' second last, and so on.
+        Index ``0`` means the first position, ``1`` the second and so on.
+        Similarly, ``-1`` is the last position, ``-2`` second last, and so on.
         Using an index that does not exist on the list causes an error.
         The index can be either an integer or a string that can be converted to
         an integer.
@@ -99,7 +100,7 @@ class _List:
         | Set List Value | ${L3} | 1  | xxx |
         | Set List Value | ${L3} | -1 | yyy |
         =>
-        - ${L3} = ['a', 'xxx', 'yyy']
+        | ${L3} = ['a', 'xxx', 'yyy']
         """
         try:
             list_[self._index_to_int(index)] = value
@@ -107,24 +108,24 @@ class _List:
             self._index_error(list_, index)
 
     def remove_values_from_list(self, list_, *values):
-        """Removes all occurences of given `values` from `list`.
+        """Removes all occurrences of given ``values`` from ``list``.
 
         It is not an error is a value does not exist in the list at all.
 
         Example:
         | Remove Values From List | ${L4} | a | c | e | f |
         =>
-        - ${L4} = ['b', 'd']
+        | ${L4} = ['b', 'd']
         """
         for value in values:
             while value in list_:
                 list_.remove(value)
 
     def remove_from_list(self, list_, index):
-        """Removes and returns the value specified with an `index` from `list`.
+        """Removes and returns the value specified with an ``index`` from ``list``.
 
-        Index '0' means the first position, '1' the second and so on.
-        Similarly, '-1' is the last position, '-2' the second last, and so on.
+        Index ``0`` means the first position, ``1`` the second and so on.
+        Similarly, ``-1`` is the last position, ``-2`` the second last, and so on.
         Using an index that does not exist on the list causes an error.
         The index can be either an integer or a string that can be converted
         to an integer.
@@ -132,8 +133,8 @@ class _List:
         Example:
         | ${x} = | Remove From List | ${L2} | 0 |
         =>
-        - ${x} = 'a'
-        - ${L2} = ['b']
+        | ${x} = 'a'
+        | ${L2} = ['b']
         """
         try:
             return list_.pop(self._index_to_int(index))
@@ -141,7 +142,7 @@ class _List:
             self._index_error(list_, index)
 
     def remove_duplicates(self, list_):
-        """Returns a list without duplicates based on the given `list`.
+        """Returns a list without duplicates based on the given ``list``.
 
         Creates and returns a new list that contains all items in the given
         list so that one item can appear only once. Order of the items in
@@ -159,12 +160,12 @@ class _List:
         return ret
 
     def get_from_list(self, list_, index):
-        """Returns the value specified with an `index` from `list`.
+        """Returns the value specified with an ``index`` from ``list``.
 
         The given list is never altered by this keyword.
 
-        Index '0' means the first position, '1' the second, and so on.
-        Similarly, '-1' is the last position, '-2' the second last, and so on.
+        Index ``0`` means the first position, ``1`` the second, and so on.
+        Similarly, ``-1`` is the last position, ``-2`` the second last, and so on.
         Using an index that does not exist on the list causes an error.
         The index can be either an integer or a string that can be converted
         to an integer.
@@ -173,9 +174,9 @@ class _List:
         | ${x} = | Get From List | ${L5} | 0  | # L5[0]  |
         | ${y} = | Get From List | ${L5} | -2 | # L5[-2] |
         =>
-        - ${x} = 'a'
-        - ${y} = 'd'
-        - ${L5} is not changed
+        | ${x} = 'a'
+        | ${y} = 'd'
+        | ${L5} is not changed
         """
         try:
             return list_[self._index_to_int(index)]
@@ -183,29 +184,28 @@ class _List:
             self._index_error(list_, index)
 
     def get_slice_from_list(self, list_, start=0, end=None):
-        """Returns a slice of the given list between `start` and `end` indexes.
+        """Returns a slice of the given list between ``start`` and ``end`` indexes.
 
         The given list is never altered by this keyword.
 
-        If both `start` and `end` are given, a sublist containing values from
-        `start` to `end` is returned. This is the same as 'list[start:end]' in
-        Python. To get all items from the beginning, use 0 as the start value,
-        and to get all items until the end, use 'None' as the end value. 'None'
-        is also a default value, so in this case, it is enough to give only
-        `start`. If only `end` is given, `start` gets the value 0.
+        If both ``start`` and ``end`` are given, a sublist containing values
+        from ``start`` to ``end`` is returned. This is the same as
+        ``list[start:end]`` in Python. To get all items from the beginning,
+        use 0 as the start value, and to get all items until and including
+        the end, use ``None`` (default) as the end value.
 
-        Using `start` or `end` not found on the list is the same as using the
-        largest (or smallest) available index.
+        Using ``start`` or ``end`` not found on the list is the same as using
+        the largest (or smallest) available index.
 
-        Examples (incl. Python equivelants in comments):
+        Examples (incl. Python equivalents in comments):
         | ${x} = | Get Slice From List | ${L5} | 2 | 4  | # L5[2:4]    |
         | ${y} = | Get Slice From List | ${L5} | 1 |    | # L5[1:None] |
         | ${z} = | Get Slice From List | ${L5} |   | -2 | # L5[0:-2]   |
         =>
-        - ${x} = ['c', 'd']
-        - ${y} = ['b', 'c', 'd', 'e']
-        - ${z} = ['a', 'b', 'c']
-        - ${L5} is not changed
+        | ${x} = ['c', 'd']
+        | ${y} = ['b', 'c', 'd', 'e']
+        | ${z} = ['a', 'b', 'c']
+        | ${L5} is not changed
         """
         start = self._index_to_int(start, True)
         if end is not None:
@@ -213,33 +213,33 @@ class _List:
         return list_[start:end]
 
     def count_values_in_list(self, list_, value, start=0, end=None):
-        """Returns the number of occurrences of the given `value` in `list`.
+        """Returns the number of occurrences of the given ``value`` in ``list``.
 
-        The search can be narrowed to the selected sublist by the `start` and
-        `end` indexes having the same semantics as in the `Get Slice From List`
+        The search can be narrowed to the selected sublist by the ``start`` and
+        ``end`` indexes having the same semantics as with `Get Slice From List`
         keyword. The given list is never altered by this keyword.
 
         Example:
         | ${x} = | Count Values In List | ${L3} | b |
         =>
-        - ${x} = 1
-        - ${L3} is not changed
+        | ${x} = 1
+        | ${L3} is not changed
         """
         return self.get_slice_from_list(list_, start, end).count(value)
 
     def get_index_from_list(self, list_, value, start=0, end=None):
-        """Returns the index of the first occurrence of the `value` on the list.
+        """Returns the index of the first occurrence of the ``value`` on the list.
 
-        The search can be narrowed to the selected sublist by the `start` and
-        `end` indexes having the same semantics as in the `Get Slice From List`
+        The search can be narrowed to the selected sublist by the ``start`` and
+        ``end`` indexes having the same semantics as with `Get Slice From List`
         keyword. In case the value is not found, -1 is returned. The given list
         is never altered by this keyword.
 
         Example:
         | ${x} = | Get Index From List | ${L5} | d |
         =>
-        - ${x} = 3
-        - ${L5} is not changed
+        | ${x} = 3
+        | ${L5} is not changed
         """
         if start == '':
             start = 0
@@ -264,7 +264,7 @@ class _List:
 
         | Reverse List | ${L3} |
         =>
-        - ${L3} = ['c', 'b', 'a']
+        | ${L3} = ['c', 'b', 'a']
         """
         list_.reverse()
 
@@ -279,34 +279,34 @@ class _List:
         ${L} = [2,1,'a','c','b']
         | Sort List | ${L} |
         =>
-        - ${L} = [1, 2, 'a', 'b', 'c']
+        | ${L} = [1, 2, 'a', 'b', 'c']
         """
         list_.sort()
 
     def list_should_contain_value(self, list_, value, msg=None):
-        """Fails if the `value` is not found from `list`.
+        """Fails if the ``value`` is not found from ``list``.
 
-        If `msg` is not given, the default error message "[ a | b | c ] does
-        not contain the value 'x'" is shown in case of a failure. Otherwise,
-        the given `msg` is used in case of a failure.
+        If the keyword fails, the default error messages is ``<list> does
+        not contain value '<value>'``. A custom message can be given using
+        the ``msg`` argument.
         """
         default = "%s does not contain value '%s'." % (seq2str2(list_), value)
         _verify_condition(value in list_, default, msg)
 
     def list_should_not_contain_value(self, list_, value, msg=None):
-        """Fails if the `value` is not found from `list`.
+        """Fails if the ``value`` is not found from ``list``.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of ``msg``.
         """
         default = "%s contains value '%s'." % (seq2str2(list_), value)
         _verify_condition(value not in list_, default, msg)
 
     def list_should_not_contain_duplicates(self, list_, msg=None):
-        """Fails if any element in the `list` is found from it more than once.
+        """Fails if any element in the ``list`` is found from it more than once.
 
         The default error message lists all the elements that were found
-        from the `list` multiple times, but it can be overridden by giving
-        a custom `msg`. All multiple times found items and their counts are
+        from the ``list`` multiple times, but it can be overridden by giving
+        a custom ``msg``. All multiple times found items and their counts are
         also logged.
 
         This keyword works with all iterables that can be converted to a list.
@@ -331,32 +331,34 @@ class _List:
 
         The keyword first verifies that the lists have equal lengths, and then
         it checks are all their values equal. Possible differences between the
-        values are listed in the default error message like `Index 4: ABC !=
-        Abc`.
+        values are listed in the default error message like ``Index 4: ABC !=
+        Abc``.
 
-        The error message can be configured using `msg` and `values` arguments:
-        - If `msg` is not given, the default error message is used.
-        - If `msg` is given and `values` is either Boolean False or a string
-          'False' or 'No Values', the error message is simply `msg`.
-        - Otherwise the error message is `msg` + 'new line' + default.
+        The error message can be configured using ``msg`` and ``values``
+        arguments:
+        - If ``msg`` is not given, the default error message is used.
+        - If ``msg`` is given and ``values`` is either Boolean ``False`` or
+           a string ``'False'`` or ``'No Values'``, the error message is simply
+           ``msg``.
+        - Otherwise the error message starts with ``msg`` followed by a newline
+          character and the default message.
 
-        Optional `names` argument (new in 2.6) can be used for naming
-        the indices shown in the default error message. It can either
-        be a list of names matching the indices in the lists or a
-        dictionary where keys are indices that need to be named. It is
-        not necessary to name all of the indices.  When using a
-        dictionary, keys can be either integers or strings that can be
+        Optional ``names`` argument can be used for naming the indices shown in
+        the default error message. It can either be a list of names matching
+        the indices in the lists or a dictionary where keys are indices that
+        need to be named. It is not necessary to name all of the indices.  When
+        using a dictionary, keys can be either integers or strings that can be
         converted to integers.
 
         Examples:
         | ${names} = | Create List | First Name | Family Name | Email |
         | Lists Should Be Equal | ${people1} | ${people2} | names=${names} |
-        | ${names} = | Create Dictionary | 0 | First Name | 2 | Email |
+        | ${names} = | Create Dictionary | 0=First Name | 2=Email |
         | Lists Should Be Equal | ${people1} | ${people2} | names=${names} |
 
         If the items in index 2 would differ in the above examples, the error
-        message would contain a row like `Index 2 (email): name@foo.com !=
-        name@bar.com`.
+        message would contain a row like ``Index 2 (email): name@foo.com !=
+        name@bar.com``.
         """
         len1 = len(list1)
         len2 = len(list2)
@@ -383,12 +385,12 @@ class _List:
                 yield unic(err)
 
     def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
-        """Fails if not all of the elements in `list2` are found in `list1`.
+        """Fails if not all of the elements in ``list2`` are found in ``list1``.
 
         The order of values and the number of values are not taken into
         account.
 
-        See the use of `msg` and `values` from the `Lists Should Be Equal`
+        See the use of ``msg`` and ``values`` from the `Lists Should Be Equal`
         keyword.
         """
         diffs = ', '.join(unic(item) for item in list2 if item not in list1)
@@ -396,7 +398,7 @@ class _List:
         _verify_condition(not diffs, default, msg, values)
 
     def log_list(self, list_, level='INFO'):
-        """Logs the length and contents of the `list` using given `level`.
+        """Logs the length and contents of the ``list`` using given ``level``.
 
         Valid levels are TRACE, DEBUG, INFO (default), and WARN.
 
@@ -430,42 +432,25 @@ class _List:
 
 class _Dictionary:
 
-    def create_dictionary(self, *key_value_pairs, **items):
-        """Creates and returns a dictionary based on given items.
+    def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
+        """Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.
 
-        Giving items as `key_value_pairs` means giving keys and values
+        Giving items as ``key_value_pairs`` means giving keys and values
         as separate arguments:
 
-        | ${x} = | Create Dictionary | name | value |   |      |
-        | ${y} = | Create Dictionary | a    | 1     | b | ${2} |
+        | Set To Dictionary | ${D1} | key | value | second | ${2} |
         =>
-        - ${x} = {'name': 'value'}
-        - ${y} = {'a': '1', 'b': 2}
+        | ${D1} = {'a': 1, 'key': 'value', 'second': 2}
 
-        Starting from Robot Framework 2.8.1, items can also be given as kwargs:
+        Starting from Robot Framework 2.8.1, items can also be given as kwargs
+        using ``key=value`` syntax:
 
-        | ${x} = | Create Dictionary | name=value |        |
-        | ${y} = | Create Dictionary | a=1        | b=${2} |
+        | Set To Dictionary | ${D1} | key=value | second=${2} |
 
         The latter syntax is typically more convenient to use, but it has
         a limitation that keys must be strings.
-        """
-        if len(key_value_pairs) % 2 != 0:
-            raise ValueError("Creating a dictionary failed. There should be "
-                             "even number of key-value-pairs.")
-        return self.set_to_dictionary({}, *key_value_pairs, **items)
 
-    def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
-        """Adds the given `key_value_pairs` and `items` to the `dictionary`.
-
-        See `Create Dictionary` for information about giving items.
-        If the given `key` already exist in the `dictionary`, its value
-        is updated.
-
-        Example:
-        | Set To Dictionary | ${D1} | key | value |
-        =>
-        - ${D1} = {'a': 1, 'key': 'value'}
+        If given keys already exist in the dictionary, their values are updated.
         """
         if len(key_value_pairs) % 2 != 0:
             raise ValueError("Adding data to a dictionary failed. There "
@@ -476,15 +461,15 @@ class _Dictionary:
         return dictionary
 
     def remove_from_dictionary(self, dictionary, *keys):
-        """Removes the given `keys` from the `dictionary`.
+        """Removes the given ``keys`` from the ``dictionary``.
 
-        If the given `key` cannot be found from the `dictionary`, it
+        If the given ``key`` cannot be found from the ``dictionary``, it
         is ignored.
 
         Example:
         | Remove From Dictionary | ${D3} | b | x | y |
         =>
-        - ${D3} = {'a': 1, 'c': 3}
+        | ${D3} = {'a': 1, 'c': 3}
         """
         for key in keys:
             if key in dictionary:
@@ -494,15 +479,15 @@ class _Dictionary:
                 logger.info("Key '%s' not found." % key)
 
     def keep_in_dictionary(self, dictionary, *keys):
-        """Keeps the given `keys` in the `dictionary` and removes all other.
+        """Keeps the given ``keys`` in the ``dictionary`` and removes all other.
 
-        If the given `key` cannot be found from the `dictionary`, it
+        If the given ``key`` cannot be found from the ``dictionary``, it
         is ignored.
 
         Example:
         | Keep In Dictionary | ${D5} | b | x | d |
         =>
-        - ${D5} = {'b': 2, 'd': 4}
+        | ${D5} = {'b': 2, 'd': 4}
         """
         remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
@@ -515,9 +500,9 @@ class _Dictionary:
         return dictionary.copy()
 
     def get_dictionary_keys(self, dictionary):
-        """Returns `keys` of the given `dictionary`.
+        """Returns keys of the given ``dictionary``.
 
-        `Keys` are returned in sorted order. The given `dictionary` is never
+        Keys are returned in sorted order. The given ``dictionary`` is never
         altered by this keyword.
 
         In *Python 3* keys are not sorted,
@@ -528,13 +513,14 @@ class _Dictionary:
         Example:
         | ${keys} = | Get Dictionary Keys | ${D3} |
         =>
-        - ${keys} = ['a', 'b', 'c']
+        | ${keys} = ['a', 'b', 'c']
         """
         #TODO: Sorting causes problems when key types are not comparable,
         # especially in Python 3 where even basic types like int and str
         # are not comparable to each other.
         if PY3:
             return list(dictionary)
+        # TODO: Possibility to disable sorting. Can be handy with OrderedDicts.
         return sorted(dictionary)
 
     def get_dictionary_values(self, dictionary):
@@ -549,14 +535,14 @@ class _Dictionary:
         Example:
         | ${values} = | Get Dictionary Values | ${D3} |
         =>
-        - ${values} = [1, 2, 3]
+        | ${values} = [1, 2, 3]
         """
         return [dictionary[k] for k in self.get_dictionary_keys(dictionary)]
 
     def get_dictionary_items(self, dictionary):
-        """Returns items of the given `dictionary`.
+        """Returns items of the given ``dictionary``.
 
-        Items are returned sorted by keys. The given `dictionary` is not
+        Items are returned sorted by keys. The given ``dictionary`` is not
         altered by this keyword.
 
         In *Python 3* items are not sorted.
@@ -565,7 +551,7 @@ class _Dictionary:
         Example:
         | ${items} = | Get Dictionary Items | ${D3} |
         =>
-        - ${items} = ['a', 1, 'b', 2, 'c', 3]
+        | ${items} = ['a', 1, 'b', 2, 'c', 3]
         """
         ret = []
         for key in self.get_dictionary_keys(dictionary):
@@ -573,17 +559,17 @@ class _Dictionary:
         return ret
 
     def get_from_dictionary(self, dictionary, key):
-        """Returns a value from the given `dictionary` based on the given `key`.
+        """Returns a value from the given ``dictionary`` based on the given ``key``.
 
-        If the given `key` cannot be found from the `dictionary`, this keyword
-        fails.
+        If the given ``key`` cannot be found from the ``dictionary``, this
+        keyword fails.
 
         The given dictionary is never altered by this keyword.
 
         Example:
         | ${value} = | Get From Dictionary | ${D3} | b |
         =>
-        - ${value} = 2
+        | ${value} = 2
         """
         try:
             return dictionary[key]
@@ -591,9 +577,9 @@ class _Dictionary:
             raise RuntimeError("Dictionary does not contain key '%s'." % key)
 
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
-        """Fails if `key` is not found from `dictionary`.
+        """Fails if ``key`` is not found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of ``msg``.
 
         The given dictionary is never altered by this keyword.
         """
@@ -601,9 +587,9 @@ class _Dictionary:
         _verify_condition(key in dictionary, default, msg)
 
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
-        """Fails if `key` is found from `dictionary`.
+        """Fails if ``key`` is found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of ``msg``.
 
         The given dictionary is never altered by this keyword.
         """
@@ -611,11 +597,11 @@ class _Dictionary:
         _verify_condition(key not in dictionary, default, msg)
 
     def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
-        """An item of `key`/`value` must be found in a `dictionary`.
+        """An item of ``key``/``value`` must be found in a `dictionary`.
 
         Value is converted to unicode for comparison.
 
-        See `Lists Should Be Equal` for an explanation of `msg`.
+        See `Lists Should Be Equal` for an explanation of ``msg``.
         The given dictionary is never altered by this keyword.
         """
         self.dictionary_should_contain_key(dictionary, key, msg)
@@ -624,9 +610,9 @@ class _Dictionary:
         _verify_condition(actual == expected, default, msg)
 
     def dictionary_should_contain_value(self, dictionary, value, msg=None):
-        """Fails if `value` is not found from `dictionary`.
+        """Fails if ``value`` is not found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of ``msg``.
 
         The given dictionary is never altered by this keyword.
         """
@@ -634,9 +620,9 @@ class _Dictionary:
         _verify_condition(value in dictionary.values(), default, msg)
 
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None):
-        """Fails if `value` is found from `dictionary`.
+        """Fails if ``value`` is found from ``dictionary``.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of ``msg``.
 
         The given dictionary is never altered by this keyword.
         """
@@ -650,7 +636,7 @@ class _Dictionary:
         the key value pairs. If there are differences between the values, those
         are listed in the error message.
 
-        See `Lists Should Be Equal` for an explanation of `msg`.
+        See `Lists Should Be Equal` for an explanation of ``msg``.
         The given dictionaries are never altered by this keyword.
         """
         keys = self._keys_should_be_equal(dict1, dict2, msg, values)
@@ -658,9 +644,9 @@ class _Dictionary:
 
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None,
                                                  values=True):
-        """Fails unless all items in `dict2` are found from `dict1`.
+        """Fails unless all items in ``dict2`` are found from ``dict1``.
 
-        See `Lists Should Be Equal` for an explanation of `msg`.
+        See `Lists Should Be Equal` for an explanation of ``msg``.
         The given dictionaries are never altered by this keyword.
         """
         keys = self.get_dictionary_keys(dict2)
@@ -671,7 +657,7 @@ class _Dictionary:
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
 
     def log_dictionary(self, dictionary, level='INFO'):
-        """Logs the size and contents of the `dictionary` using given `level`.
+        """Logs the size and contents of the ``dictionary`` using given ``level``.
 
         Valid levels are TRACE, DEBUG, INFO (default), and WARN.
 
@@ -722,7 +708,7 @@ class Collections(_List, _Dictionary):
 
     """A test library providing keywords for handling lists and dictionaries.
 
-    `Collections` is Robot Framework's standard library that provides a
+    ``Collections`` is Robot Framework's standard library that provides a
     set of keywords for handling Python lists and dictionaries. This
     library has keywords, for example, for modifying and getting
     values from lists and dictionaries (e.g. `Append To List`, `Get
@@ -731,21 +717,18 @@ class Collections(_List, _Dictionary):
 
     Following keywords from the BuiltIn library can also be used with
     lists and dictionaries:
-    | *Keyword Name*               | *Applicable With* |
+    | = Keyword Name =             | = Applicable With = | = Comment = |
     | `Create List`                | lists |
+    | `Create Dictionary`          | dicts | Was in Collections until RF 2.9. |
     | `Get Length`                 | both  |
     | `Length Should Be`           | both  |
     | `Should Be Empty`            | both  |
     | `Should Not Be Empty`        | both  |
-    | `Should Contain`             | lists |
-    | `Should Not Contain`         | lists |
+    | `Should Contain`             | both  |
+    | `Should Not Contain`         | both  |
     | `Should Contain X Times`     | lists |
     | `Should Not Contain X Times` | lists |
     | `Get Count`                  | lists |
-
-    All list keywords expect a scalar variable (e.g. ${list}) as an
-    argument.  It is, however, possible to use list variables
-    (e.g. @{list}) as scalars simply by replacing '@' with '$'.
 
     List keywords that do not alter the given list can also be used
     with tuples, and to some extend also with other iterables.
@@ -754,12 +737,13 @@ class Collections(_List, _Dictionary):
 
     -------
 
-    List related keywords use variables in format ${Lx} in their examples,
-    which means a list with as many alphabetic characters as specified by 'x'.
-    For example ${L1} means ['a'] and ${L3} means ['a', 'b', 'c'].
+    List related keywords use variables in format ``${Lx}`` in their examples.
+    They mean lists with as many alphabetic characters as specified by ``x``.
+    For example, ``${L1}`` means ``['a']`` and ``${L3}`` means
+    ``['a', 'b', 'c']``.
 
-    Dictionary keywords use similar ${Dx} variables. For example ${D1} means
-    {'a': 1} and ${D3} means {'a': 1, 'b': 2, 'c': 3}.
+    Dictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``
+    means ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.
 
     --------
     """
@@ -769,33 +753,33 @@ class Collections(_List, _Dictionary):
     def should_contain_match(self, list, pattern, msg=None,
                              case_insensitive=False,
                              whitespace_insensitive=False):
-        """Fails if `pattern` is not found in `list`.
+        """Fails if ``pattern`` is not found in ``list``.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of ``msg``.
 
         By default, pattern matching is similar to matching files in a shell
         and is case-sensitive and whitespace-sensitive. In the pattern syntax,
-        '*' matches to anything and '?' matches to any single character. You
-        can also prepend 'glob=' to your pattern to explicitly use this pattern
+        ``*`` matches to anything and ``?`` matches to any single character. You
+        can also prepend ``glob=`` to your pattern to explicitly use this pattern
         matching behavior.
 
-        If you prepend 'regexp=' to your pattern, your pattern will be used
+        If you prepend ``regexp=`` to your pattern, your pattern will be used
         according to the Python
         [http://docs.python.org/2/library/re.html|re module] regular expression
         syntax. Important note: Backslashes are an escape character, and must
-        be escaped with another backslash (e.g. 'regexp=\\\\d{6}' to search for
-        '\\d{6}'). See `BuiltIn.Should Match Regexp` for more details.
+        be escaped with another backslash (e.g. ``regexp=\\\\d{6}`` to search for
+        ``\\d{6}``). See `BuiltIn.Should Match Regexp` for more details.
 
-        If `case_insensitive` is True, the pattern matching will ignore case.
+        If ``case_insensitive`` is True, the pattern matching will ignore case.
 
-        If `whitespace_insensitive` is True, the pattern matching will ignore
+        If ``whitespace_insensitive`` is True, the pattern matching will ignore
         whitespace.
 
         Non-string values in lists are ignored when matching patterns.
 
         The given list is never altered by this keyword.
 
-        See also `Should Not Contain Match`.
+        See also ``Should Not Contain Match``.
 
         Examples:
         | Should Contain Match | ${list} | a* | # List should contain any string beginning with 'a' |
@@ -816,9 +800,9 @@ class Collections(_List, _Dictionary):
     def should_not_contain_match(self, list, pattern, msg=None,
                                  case_insensitive=False,
                                  whitespace_insensitive=False):
-        """Fails if `pattern` is found in `list`.
+        """Fails if ``pattern`` is found in ``list``.
 
-        See `List Should Contain Value` for an explanation of `msg`.
+        See `List Should Contain Value` for an explanation of ``msg``.
 
         See `Should Contain Match` for usage details and examples.
 
@@ -832,10 +816,10 @@ class Collections(_List, _Dictionary):
 
     def get_matches(self, list, pattern, case_insensitive=False,
                     whitespace_insensitive=False):
-        """Returns a list of matches to `pattern` in `list`.
+        """Returns a list of matches to ``pattern`` in ``list``.
 
-        For more information on `pattern`, `case_insensitive`, and
-        `whitespace_insensitive`, see `Should Contain Match`.
+        For more information on ``pattern``, ``case_insensitive``, and
+        ``whitespace_insensitive``, see `Should Contain Match`.
 
         Examples:
         | ${matches}= | Get Matches | ${list} | a* | # ${matches} will contain any string beginning with 'a' |
@@ -849,10 +833,10 @@ class Collections(_List, _Dictionary):
 
     def get_match_count(self, list, pattern, case_insensitive=False,
                         whitespace_insensitive=False):
-        """Returns the count of matches to `pattern` in `list`.
+        """Returns the count of matches to ``pattern`` in ``list``.
 
-        For more information on `pattern`, `case_insensitive`, and
-        `whitespace_insensitive`, see `Should Contain Match`.
+        For more information on ``pattern``, ``case_insensitive``, and
+        ``whitespace_insensitive``, see `Should Contain Match`.
 
         Examples:
         | ${count}= | Get Match Count | ${list} | a* | # ${count} will be the count of strings beginning with 'a' |
@@ -885,8 +869,8 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
         return []
     regexp = False
     if not isinstance(pattern, string_types):
-        raise TypeError(
-            "Pattern must be string, got '%s'." % type(pattern).__name__)
+        raise TypeError("Pattern must be string, got '%s'."
+                        % type_name(pattern))
     if pattern.startswith('regexp='):
         pattern = pattern[7:]
         regexp = True

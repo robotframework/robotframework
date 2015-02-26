@@ -9,15 +9,15 @@ Test Timeout      1 hour 2 minutes 3 seconds
 
 *** Test Case ***
 TC1 No metadata
-    NOOP
+    No Operation
 
 TC1 Tags
     [Tags]    test tag 1    test tag 2
-    NOOP
+    No Operation
 
 TC1 Fixture
     [Setup]    Log    Setup defined in test
-    NOOP
+    No Operation
     [Teardown]    Log    Teardown defined in test
 
 TC1 Timeout

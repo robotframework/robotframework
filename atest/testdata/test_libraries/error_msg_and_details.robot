@@ -35,12 +35,20 @@ Python Exception With Non-String Message
     Exception    ValueError    ${msg}
 
 Python Exception With 'None' Message
-    [Documentation]    FAIL AssertionError
+    [Documentation]    FAIL None
     Exception    AssertionError    ${None}
 
 Java Exception With 'null' Message
     [Documentation]    FAIL ArrayStoreException
     Java Exception
+
+Generic Python class
+    [Documentation]    FAIL RuntimeError
+    Exception    RuntimeError    class_only=True
+
+Non-Generic Python class
+    [Documentation]    FAIL ZeroDivisionError
+    Exception    ZeroDivisionError    class_only=True
 
 Multiline Error
     [Documentation]    FAIL First line\n2nd\n3rd and last

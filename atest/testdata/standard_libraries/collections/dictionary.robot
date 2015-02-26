@@ -4,21 +4,6 @@ Resource        collections_resources.robot
 Library         CollectionsHelperLibrary.py
 
 *** Test Cases ***
-Create Dictionary
-    ${dict} =  Create Dictionary
-    Compare To Expected String  ${dict}  {}
-    ${dict} =  Create Dictionary  a  1  b  2  ${3}  ${3.1}
-    ...  ${True}  ${dict}
-    Compare To Expected String  ${dict}  {'a': '1', 'b': '2', 3: 3.1, True: {}}
-
-Create Dictionary with wrong number of arguments
-    [Documentation]  FAIL ValueError: Creating a dictionary failed. There should be even number of key-value-pairs.
-    Create Dictionary  a  1  b
-
-Create Dictionary With **kwargs
-    ${dict} =  Create Dictionary  k1  ${1}  over  write  k2=${2}  over=written
-    Compare To Expected String  ${dict}  {'k1': 1, 'k2': 2, 'over': 'written'}
-
 Set To Dictionary
     Set To Dictionary  ${D0}  a  ${1}
     Should Be Equal  ${D0}  ${D1}
@@ -149,7 +134,7 @@ Dictionaries Should Be Equal With Different Keys And Own And Default Error Messa
 Dictionaries Should Be Equal With Different Values
     [Documentation]  FAIL
     ...    Following keys have different values:
-    ...    Key a: 1 (number) != 1 (string)
+    ...    Key a: 1 (integer) != 1 (string)
     ...    Key b: 2 != x
     Dictionaries Should Be Equal  ${D2}  ${D2B}
 
@@ -161,7 +146,7 @@ Dictionaries Should Be Equal With Different Values And Own And Default Error Mes
     [Documentation]  FAIL
     ...    My error message!
     ...    Following keys have different values:
-    ...    Key a: 1 (number) != 1 (string)
+    ...    Key a: 1 (integer) != 1 (string)
     ...    Key b: 2 != x
     Dictionaries Should Be Equal  ${D2}  ${D2B}  My error message!
 
@@ -186,7 +171,7 @@ Dictionary Should Contain Sub Dictionary With Missing Keys And Own And Default E
 Dictionary Should Contain Sub Dictionary With Different Value
     [Documentation]  FAIL
     ...    Following keys have different values:
-    ...    Key a: 1 (number) != 1 (string)
+    ...    Key a: 1 (integer) != 1 (string)
     ...    Key b: 2 != x
     Dictionary Should Contain Sub Dictionary  ${D3}  ${D2B}
 
@@ -198,7 +183,7 @@ Dictionary Should Contain Sub Dictionary With Different Value And Own And Defaul
     [Documentation]  FAIL
     ...    My error message!
     ...    Following keys have different values:
-    ...    Key a: 1 (number) != 1 (string)
+    ...    Key a: 1 (integer) != 1 (string)
     ...    Key b: 2 != x
     Dictionary Should Contain Sub Dictionary  ${D3}  ${D2B}  My error message!
 

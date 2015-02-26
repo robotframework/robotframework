@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
 
 from six import string_types
 
-import os.path
 import copy
+import os.path
 
 from robot.output import LOGGER
 from robot.parsing import ResourceFile
 from robot.errors import FrameworkError
-from robot import utils
+from robot.utils import normpath, seq2str2
 
+from .handlerstore import HandlerStore
 from .testlibraries import TestLibrary
 
 
@@ -57,7 +58,7 @@ class Importer(object):
         key = (name, positional, named)
         if key in self._library_cache:
             LOGGER.info("Found test library '%s' with arguments %s from cache"
-                        % (name, utils.seq2str2(args)))
+                        % (name, seq2str2(args)))
             return self._library_cache[key]
         lib.create_handlers()
         self._library_cache[key] = lib
@@ -69,20 +70,22 @@ class Importer(object):
         listener = ', with listener' if lib.has_listener else ''
         LOGGER.info("Imported library '%s' with arguments %s "
                     "(version %s, %s type, %s scope, %d keywords%s)"
-                    % (name, utils.seq2str2(args), lib.version or '<unknown>',
+                    % (name, seq2str2(args), lib.version or '<unknown>',
                        type, lib.scope.lower(), len(lib), listener))
         if not lib and not lib.has_listener:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
 
     def _copy_library(self, lib, newname):
+        # TODO: This won't work if lib.handlers has kws w/ embedded args.
+        # Need better way to re-initialize libs when imported using WITH NAME.
         libcopy = copy.copy(lib)
         libcopy.name = newname
         libcopy.init_scope_handling()
-        libcopy.handlers = utils.NormalizedDict(ignore=['_'])
-        for handler in lib.handlers.values():
+        libcopy.handlers = HandlerStore(lib.handlers._source)
+        for handler in lib.handlers:
             handcopy = copy.copy(handler)
             handcopy.library = libcopy
-            libcopy.handlers[handler.name] = handcopy
+            libcopy.handlers.add(handcopy)
         return libcopy
 
 
@@ -124,7 +127,7 @@ class ImportCache:
 
     def _norm_path_key(self, key):
         if self._is_path(key):
-            return utils.normpath(key)
+            return normpath(key, case_normalize=True)
         if isinstance(key, tuple):
             return tuple(self._norm_path_key(k) for k in key)
         return key

@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class Utf8Reader(object):
             self._file = path_or_file
             self._close = False
         # IronPython handles BOM incorrectly if file not opened in binary mode:
-        # http://code.google.com/p/robotframework/issues/detail?id=1580
+        # https://ironpython.codeplex.com/workitem/34655
         if hasattr(self._file, 'mode') and self._file.mode != 'rb':
             raise ValueError('Only files in binary mode accepted.')
 

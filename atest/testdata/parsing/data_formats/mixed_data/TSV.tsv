@@ -8,21 +8,21 @@ Resource	../resources/txt_resource.txt
 ${msg}	*ERROR*
 
 *Test Case	
-TSV Passing	Noop
+TSV Passing	No operation
 TSV Failing	[Document]	FAIL	**ERROR**
 	Failing	*${msg}*
 HTML Resource	Keyword from HTML resource		
 	Keyword from HTML resource 2		
-	Equals	${html_resource_var}	HTML Resource Variable
-	Equals	${html_resource_var2}	HTML Resource Variable From Recursive Resource
+	Should Be Equal	${html_resource_var}	HTML Resource Variable
+	Should Be Equal	${html_resource_var2}	HTML Resource Variable From Recursive Resource
 ReST Resource	Keyword from ReST resource		
 	Keyword from ReST resource 2		
-	Equals	${rest_resource_var}	ReST Resource Variable
-	Equals	${rest_resource_var2}	ReST Resource Variable From Recursive Resource
+	Should Be Equal	${rest_resource_var}	ReST Resource Variable
+	Should Be Equal	${rest_resource_var2}	ReST Resource Variable From Recursive Resource
 TXT Resource	Keyword from TXT resource		
 	Keyword from TXT resource 2		
-	Equals	${txt_resource_var}	TXT Resource Variable
-	Equals	${txt_resource_var2}	TXT Resource Variable From Recursive Resource
+	Should Be Equal	${txt_resource_var}	TXT Resource Variable
+	Should Be Equal	${txt_resource_var2}	TXT Resource Variable From Recursive Resource
 
 
 *Keyword

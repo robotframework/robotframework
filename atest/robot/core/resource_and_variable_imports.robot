@@ -37,8 +37,8 @@ Invalid List Variable
     Check Test Case  ${TEST NAME}
     ${path} =  Normalize Path  ${RESDIR}/invalid_list_variable.py
     Stderr Should Contain Error    ${DATAFILE}
-    ...  Processing variable file '${path}' failed:  List variable '\@{invalid_list}'
-    ...  cannot get a non-list value 'This is not a list and thus importing this file fails'
+    ...  Processing variable file '${path}' failed:
+    ...  Invalid variable '\@{invalid_list}': Expected list-like value, got string.
 
 Dynamic Variable File
     [Documentation]  Test for getting variables dynamically from a variable file
@@ -53,7 +53,7 @@ Invalid Arguments To Dynamic Variable File
     ${path} =  Normalize Path  ${RESDIR}/dynamic_variables.py
     Stderr Should Contain Error    ${DATAFILE}
     ...  Processing variable file '${path}' with arguments [ Two args | returns invalid ] failed:
-    ...  Expected mapping but get_variables returned NoneType.
+    ...  Expected 'get_variables' to return dict-like value, got None.
     Stderr Should Contain Error    ${DATAFILE}
     ...  Processing variable file '${path}' with arguments [ More | args | raises | exception ] failed:
     ...  Invalid arguments for get_variables

@@ -40,9 +40,6 @@ Equals Sign In Named Value
 Non-existing argument does not trigger named usage
     Check Test Case    ${TESTNAME}
 
-Naming twice
-    Check Test Case    ${TESTNAME}
-
 Run Keyword's own named arguments are not resolved
     Check Test Case    ${TESTNAME}
 
@@ -54,6 +51,10 @@ Named combinations with varargs
 
 Kwargs alone
     Check Test Case    ${TESTNAME}
+
+Kwargs with escaped equal sign
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
 Kwargs with positional and named
     Check Test Case    ${TESTNAME}
@@ -77,6 +78,9 @@ Test escaping with all argument types
     Check Test Case    ${TESTNAME}
 
 Illegal combinations with all argument types
+    Check Test Case    ${TESTNAME}
+
+Multiple named with same name is allowed and last has precedence
     Check Test Case    ${TESTNAME}
 
 List variable with multiple values for same variable

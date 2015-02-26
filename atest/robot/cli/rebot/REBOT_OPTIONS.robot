@@ -4,7 +4,7 @@ Resource          rebot_cli_resource.robot
 Suite Setup       Run Keywords
 ...               Run tests to create input file for Rebot    ${TESTS}    ${INPUT}    AND
 ...               Set Environment Variable    REBOT_OPTIONS    --name Default --settag default
-Suite Teardown    Delete Environment Variable    REBOT_OPTIONS
+Suite Teardown    Remove Environment Variable    REBOT_OPTIONS
 
 *** Variables ***
 ${TESTS}          misc/pass_and_fail.robot

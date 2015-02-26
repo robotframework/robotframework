@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ class ResourceDocBuilder(object):
 class KeywordDocBuilder(object):
 
     def build_keywords(self, lib):
-        return [self.build_keyword(kw) for kw in lib.handlers.values()]
+        return [self.build_keyword(kw) for kw in lib.handlers]
 
     def build_keyword(self, kw):
         return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),

@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,14 +17,17 @@ from six import reraise, text_type as unicode
 import os
 import sys
 import inspect
-if sys.platform.startswith('java'):
-    from java.lang.System import getProperty
 
 from robot.errors import DataError
 
 from .encoding import decode_from_system
 from .error import get_error_details
+from .platform import JYTHON
 from .robotpath import abspath, normpath
+from .robottypes import type_name
+
+if JYTHON:
+    from java.lang.System import getProperty
 
 
 class Importer(object):
@@ -94,7 +97,7 @@ class Importer(object):
             raise DataError(msg)
         msg = [msg, error.details]
         msg.extend(self._get_items_in('PYTHONPATH', sys.path))
-        if sys.platform.startswith('java'):
+        if JYTHON:
             classpath = getProperty('java.class.path').split(os.path.pathsep)
             msg.extend(self._get_items_in('CLASSPATH', classpath))
         raise DataError('\n'.join(msg))
@@ -142,7 +145,7 @@ class _Importer(object):
                 # Hack to support standalone Jython. For more information, see:
                 # http://code.google.com/p/robotframework/issues/detail?id=515
                 # http://bugs.jython.org/issue1778514
-                if sys.platform.startswith('java') and fromlist and retry:
+                if JYTHON and fromlist and retry:
                     __import__('%s.%s' % (name, fromlist[0]))
                     return self._import(name, fromlist, retry=False)
                 # Cannot use plain raise due to
@@ -154,7 +157,8 @@ class _Importer(object):
     def _verify_type(self, imported):
         if inspect.isclass(imported) or inspect.ismodule(imported):
             return imported
-        raise DataError('Expected class or module, got <%s>.' % type(imported).__name__)
+        raise DataError('Expected class or module, got %s.'
+                        % type_name(imported))
 
     def _get_class_from_module(self, module, name=None):
         klass = getattr(module, name or module.__name__, None)
@@ -202,15 +206,15 @@ class ByPathImporter(_Importer):
         return module_dir, module_name
 
     def _wrong_module_imported(self, name, importing_from, importing_package):
-        module = sys.modules.get(name)
-        if not module:
+        if name not in sys.modules:
             return False
-        source = getattr(module, '__file__', None)
+        source = getattr(sys.modules[name], '__file__', None)
         if not source:  # play safe (occurs at least with java based modules)
             return True
         imported_from, imported_package = self._get_import_information(source)
-        return ((normpath(importing_from), importing_package) !=
-                (normpath(imported_from), imported_package))
+        return (normpath(importing_from, case_normalize=True) !=
+                normpath(imported_from, case_normalize=True) or
+                importing_package != imported_package)
 
     def _get_import_information(self, source):
         imported_from, imported_file = self._split_path_to_module(source)

@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -99,8 +99,7 @@ Example output::
     FAILED (failures=2)
 """
 
-from six import PY3, text_type as unicode
-
+from .robottypes import type_name
 from .unic import unic
 
 
@@ -249,14 +248,6 @@ def _get_default_message(obj1, obj2, delim):
     str1 = unic(obj1)
     str2 = unic(obj2)
     if delim == '!=' and str1 == str2:
-        return '%s (%s) != %s (%s)' % (str1, _type_name(obj1),
-                                       str2, _type_name(obj2))
+        return '%s (%s) != %s (%s)' % (str1, type_name(obj1),
+                                       str2, type_name(obj2))
     return '%s %s %s' % (str1, delim, str2)
-
-if PY3:
-    long = int
-
-def _type_name(val):
-    known_types = {int: 'number', long: 'number', float: 'number',
-                   str: 'string', unicode: 'string', bool: 'boolean'}
-    return known_types.get(type(val), type(val).__name__)

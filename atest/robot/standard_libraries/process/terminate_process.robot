@@ -27,9 +27,9 @@ Also child processes are killed
 
 Kill process when terminate fails
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[6].msgs[0]}    Gracefully terminating process.
-    Check Log Message    ${tc.kws[6].msgs[1]}    Graceful termination failed.
-    Check Log Message    ${tc.kws[6].msgs[2]}    Forcefully killing process.
+    Check Log Message    ${tc.kws[5].msgs[0]}    Gracefully terminating process.
+    Check Log Message    ${tc.kws[5].msgs[1]}    Graceful termination failed.
+    Check Log Message    ${tc.kws[5].msgs[2]}    Forcefully killing process.
     Should Be True    ${tc.elapsedtime} >= 2000
 
 Terminating already terminated process is ok

@@ -21,9 +21,6 @@ Environment Variable With Backslashes
 Environment Variable With Internal Variables
     Check Test Case  ${TESTNAME}
 
-Leading And Trailing Spaces Are Ignored Environment Variable Name
-    Check Test Case  ${TESTNAME}
-
 Non-Existing Environment Variable
     Check Test Case  ${TESTNAME}
 
@@ -32,7 +29,8 @@ Environment Variables Are Case Sensitive Except On Windows
     Run Keyword Unless  '${:}' == ':'  Check Test Case  Environment Variables Are Not Case Sensitive On Windows
 
 Environment Variables Are Space Sensitive
-    Check Test Case  ${TEST_NAME}
+    Check Test Case  ${TEST_NAME} 1
+    Check Test Case  ${TEST_NAME} 2
 
 Environment Variables Are Underscore Sensitive
     Check Test Case  ${TEST_NAME}
@@ -58,6 +56,5 @@ Environment Variables In User Keyword Metadata
 Escaping Environment Variables
     Check Test Case  ${TESTNAME}
 
-Empty Environment Variable Is No Recognized
+Empty Environment Variable
     Check Test Case  ${TESTNAME}
-

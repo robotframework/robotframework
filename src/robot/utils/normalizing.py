@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,16 +14,8 @@
 
 import re
 import sys
-try:
-    from collections import UserDict
-except ImportError:
-    from UserDict import UserDict
-try:
-    from collections import Mapping
-except ImportError:  # Pre Python 2.6 support
-    mappings = (dict, UserDict)
-else:
-    mappings = (Mapping, UserDict)
+from collections import Mapping
+from six.moves import UserDict
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
@@ -46,27 +38,13 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     return string
 
 
-# IronPython fails to lowercase non-ASCII characters:
 # http://ironpython.codeplex.com/workitem/33133
-if sys.platform != 'cli':
+if sys.platform == 'cli' and sys.version_info < (2, 7, 5):
     def lower(string):
-        return string.lower()
-
+        return ('A' + string).lower()[1:]
 else:
     def lower(string):
-        if string.islower():
-            return string
-        if string.isupper():
-            return string.swapcase()
-        if not _has_uppercase_non_ascii_chars(string):
-            return string.lower()
-        return ''.join(c if not c.isupper() else c.swapcase() for c in string)
-
-    def _has_uppercase_non_ascii_chars(string):
-        for c in string:
-            if c >= u'\x80' and c.isupper():
-                return True
-        return False
+        return string.lower()
 
 
 class NormalizedDict(UserDict):
@@ -95,7 +73,7 @@ class NormalizedDict(UserDict):
     def update(self, dict=None, **kwargs):
         if dict:
             for key in dict:
-                self.set(key, dict[key])
+                self[key] = dict[key]
         if kwargs:
             self.update(kwargs)
 
@@ -104,17 +82,14 @@ class NormalizedDict(UserDict):
         self._keys.setdefault(nkey, key)
         return nkey
 
-    def set(self, key, value):
+    def __setitem__(self, key, value):
         nkey = self._add_key(key)
         self.data[nkey] = value
 
-    __setitem__ = set
-
     def get(self, key, default=None):
-        try:
-            return self.__getitem__(key)
-        except KeyError:
-            return default
+        if key in self:
+            return self[key]
+        return default
 
     def __getitem__(self, key):
         return self.data[self._normalize(key)]
@@ -171,11 +146,13 @@ class NormalizedDict(UserDict):
         return str(dict(self.items()))
 
     def __cmp__(self, other):
-        if not isinstance(other, NormalizedDict) and isinstance(other, mappings):
+        if (isinstance(other, (Mapping, UserDict)) and
+                not isinstance(other, NormalizedDict)):
             other = NormalizedDict(other)
         return UserDict.__cmp__(self, other)
 
     def __eq__(self, other):
-        if not isinstance(other, NormalizedDict) and isinstance(other, mappings):
+        if (isinstance(other, (Mapping, UserDict)) and
+                not isinstance(other, NormalizedDict)):
             other = NormalizedDict(other).data
         return self.data == other

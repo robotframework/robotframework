@@ -1,14 +1,13 @@
 from six import PY3, text_type as unicode
 
 import os
-import sys
 import unittest
 
 from robot.utils.asserts import assert_equals, assert_raises, assert_true
 from robot.utils.etreewrapper import ETSource, ET
-from robot.errors import DataError
+from robot.utils import IRONPYTHON
 
-IRONPYTHON = sys.platform == 'cli'
+
 PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
 STARTSWITH = 'from six import'
 

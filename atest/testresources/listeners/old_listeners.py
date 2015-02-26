@@ -2,6 +2,7 @@ import os
 
 
 class ListenSome:
+    ROBOT_LISTENER_API_VERSION = 1
 
     def __init__(self):
         outpath = os.path.join(os.getenv('TEMPDIR'), 'listen_some.txt')

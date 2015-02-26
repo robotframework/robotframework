@@ -21,6 +21,7 @@ Binary with too big Unicode characters
     Check Test Case    ${TESTNAME}
 
 Unrepresentable Unicode
+    [Tags]    x-fails-on-ipy
     Check Test Case    ${TESTNAME}
 
 Integer

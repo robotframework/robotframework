@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ def _get_start_stop_step(args):
         return args[0], args[1], 1
     if len(args) == 3:
         return args
-    raise TypeError('frange expected 1-3 arguments, got %d' % len(args))
+    raise TypeError('frange expected 1-3 arguments, got %d.' % len(args))
 
 
 def _digits(number):

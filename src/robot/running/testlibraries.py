@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,30 +14,33 @@
 
 import inspect
 import os
-import sys
 
 from robot.errors import DataError
+from robot.libraries import STDLIBS, DEPRECATED_STDLIBS
 from robot.output import LOGGER
-from robot.utils import (getdoc, get_error_details, Importer,
-                         is_java_init, is_java_method, normalize,
-                         NormalizedDict, seq2str2, unic)
+from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
+                         is_java_method, JYTHON, normalize, seq2str2, unic)
 
-from .baselibrary import BaseLibrary
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              GetKeywordNames, RunKeyword)
 from .handlers import Handler, InitHandler, DynamicHandler
+from .handlerstore import HandlerStore
 from .outputcapture import OutputCapturer
 
-if sys.platform.startswith('java'):
+if JYTHON:
     from java.lang import Object
 else:
     Object = None
 
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True):
+    if name in STDLIBS or name in DEPRECATED_STDLIBS:
+        import_name = 'robot.libraries.' + name
+    else:
+        import_name = name
     with OutputCapturer(library_import=True):
         importer = Importer('test library')
-        libcode = importer.import_class_or_module(name)
+        libcode = importer.import_class_or_module(import_name)
     libclass = _get_lib_class(libcode)
     lib = libclass(libcode, name, args or [], variables)
     if create_handlers:
@@ -56,7 +59,7 @@ def _get_lib_class(libcode):
     return _ClassLibrary
 
 
-class _BaseTestLibrary(BaseLibrary):
+class _BaseTestLibrary(object):
     _log_success = LOGGER.debug
     _log_failure = LOGGER.info
     _log_failure_details = LOGGER.debug
@@ -66,20 +69,21 @@ class _BaseTestLibrary(BaseLibrary):
             name = os.path.splitext(os.path.basename(os.path.abspath(name)))[0]
         self.version = self._get_version(libcode)
         self.name = name
-        self.orig_name = name # Stores original name also after copying
-        self.positional_args = []
-        self.named_args = {}
+        self.orig_name = name  # Stores original name when importing WITH NAME
+        self.handlers = HandlerStore(self.name)
         self._instance_cache = []
         self.has_listener = None  # Set when first instance is created
+        self._doc = None
+        self.doc_format = self._get_doc_format(libcode)
+        self.scope = self._get_scope(libcode)
+        self.init = self._create_init_handler(libcode)
+        self.positional_args, self.named_args \
+            = self.init.resolve_arguments(args, variables)
+        self._libcode = libcode
         self._libinst = None
-        if libcode is not None:
-            self._doc = None
-            self.doc_format = self._get_doc_format(libcode)
-            self.scope = self._get_scope(libcode)
-            self._libcode = libcode
-            self.init = self._create_init_handler(libcode)
-            self.positional_args, self.named_args \
-                = self.init.resolve_arguments(args, variables)
+
+    def __len__(self):
+        return len(self.handlers)
 
     @property
     def doc(self):
@@ -97,9 +101,8 @@ class _BaseTestLibrary(BaseLibrary):
         return getattr(inst, 'ROBOT_LIBRARY_LISTENER', None)
 
     def create_handlers(self):
-        if self._libcode:
-            self.handlers = self._create_handlers(self.get_instance())
-            self.init_scope_handling()
+        self._create_handlers(self.get_instance())
+        self.init_scope_handling()
 
     def start_suite(self):
         pass
@@ -162,28 +165,26 @@ class _BaseTestLibrary(BaseLibrary):
 
     def get_instance(self):
         if self._libinst is None:
-            self._libinst = self._get_instance()
+            self._libinst = self._get_instance(self._libcode)
         if self.has_listener is None:
             self.has_listener = self._get_listener(self._libinst) is not None
         return self._libinst
 
-    def _get_instance(self):
+    def _get_instance(self, libcode):
         with OutputCapturer(library_import=True):
             try:
-                return self._libcode(*self.positional_args, **self.named_args)
+                return libcode(*self.positional_args, **self.named_args)
             except:
                 self._raise_creating_instance_failed()
 
     def _create_handlers(self, libcode):
-        handlers = NormalizedDict(ignore='_')
         for name in self._get_handler_names(libcode):
             method = self._try_to_get_handler_method(libcode, name)
             if method:
                 handler = self._try_to_create_handler(name, method)
                 if handler:
-                    handlers[name] = handler
+                    self.handlers.add(handler)
                     self._log_success("Created keyword '%s'" % handler.name)
-        return handlers
 
     def _get_handler_names(self, libcode):
         return [name for name in dir(libcode)

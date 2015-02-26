@@ -5,7 +5,7 @@ Variables         resvarfiles/variables.py
 ${DEFINITION IN VARIABLE FILE 1}    ${STRING}
 ${DEFINITION IN VARIABLE FILE 2}    ${LIST[0]}! ${ONE ITEM[0]}
 ${DEFINITION IN VARIABLE FILE 3}    ${LIST WITH ESCAPES}
-@{DEFINITION IN VARIABLE FILE 4}    @{LIST WITH ESCAPES}
+@{DEFINITION IN VARIABLE FILE 4}    @{LIST WITH ESCAPES 2}
 
 *** Test Case ***
 Scalar String
@@ -54,20 +54,18 @@ List with One Item
     Should Be Equal    @{ONE ITEM}[0]    Hello again?
 
 List With Multiple Items
-    Should Be Equal    @{LIST}[0]    Hello
-    Should Be Equal    @{LIST}[1]    again
-    Should Be Equal    @{LIST}[2]    ?
-    Should Be True    @{LIST} == ['Hello', 'again', '?']
+    Should Be Equal    @{LIST 2}[0]    Hello
+    Should Be Equal    @{LIST 2}[1]    again
+    Should Be Equal    @{LIST 2}[2]    ?
+    Should Be True    @{LIST 2} == ['Hello', 'again', '?']
 
 List With Escapes
     Test List With Escapes    @{LIST WITH ESCAPES}
 
 List With No Items
-    [Documentation]    FAIL STARTS: Variable '\@{EMPTY LIST}[0]' not found.
     Should Be True    @{EMPTY LIST} == []
     ${ret} =    Catenate    @{EMPTY LIST}    @{EMPTY LIST}    only value    @{EMPTY LIST}
     Should Be Equal    ${ret}    only value
-    Log    @{EMPTY LIST}[0]
 
 List With Objects
     Should Be Equal    @{objects}[0]    Hello world!
@@ -77,25 +75,19 @@ List With Objects
     Should Be Equal    -- @{objects} --    -- ['${STRING}', ${INTEGER}, ${LIST}, '${OBJECT}'] --
     Should Be Equal    -- @{objects} --    -- ['Hello world!', 42, ['Hello', 'world', '!'], 'dude'] --
 
-Scalar Variable Containing List Is Different Than List Variable
-    ${ret} =    Catenate    ${LIST}
-    Should Be Equal    ${ret}    ['Hello', 'world', '!']
-    ${ret} =    Catenate    @{LIST}
-    Should Be Equal    ${ret}    Hello again ?
-
 Variable Names Are Case Insensitive
     Should Be Equal    ${lowercase}    Variable name in lower case
     Should Be Equal    ${LOWERCASE}    Variable name in lower case
     Should Be Equal    ${LoWerCAse}    Variable name in lower case
-    Should Be Equal    @{lowercase}[0]    Variable name in lower case
-    Should Be Equal    @{LOWERCASE}[0]    Variable name in lower case
-    Should Be Equal    @{lOWErcasE}[0]    Variable name in lower case
+    Should Be Equal    @{lowercase list}[0]    Variable name in lower case
+    Should Be Equal    @{LOWERCASE list}[0]    Variable name in lower case
+    Should Be Equal    @{lOWErcasE List}[0]    Variable name in lower case
 
 Variable Names Are Underscore Insensitive
     Should Be Equal    ${underscores}    Variable name with under scores
     Should Be Equal    ${_U N D_er_Scores__}    Variable name with under scores
-    Should Be Equal    @{underscores}[0]    Variable name with under scores
-    Should Be Equal    @{ _u_N_de__r _S C ores__ }[0]    Variable name with under scores
+    Should Be Equal    @{underscores list}[0]    Variable name with under scores
+    Should Be Equal    @{ _u_N_de__r _S C ores__ _L__ist___}[0]    Variable name with under scores
 
 Variables From Variable Files Can Be Used In Local Variable Table
     Should Be Equal    ${DEFINITION IN VARIABLE FILE 1}    Hello world!

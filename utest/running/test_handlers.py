@@ -1,3 +1,5 @@
+from six import PY3
+
 import unittest
 import sys
 import inspect
@@ -12,7 +14,7 @@ from robot.errors import DataError
 
 from classes import NameLibrary, DocLibrary, ArgInfoLibrary
 from ArgumentsPython import ArgumentsPython
-if utils.is_jython:
+if utils.JYTHON:
     import ArgumentsJava
 
 
@@ -62,8 +64,7 @@ class TestPythonHandler(unittest.TestCase):
             assert_equals(handler.arguments.maxargs, exp_maxa)
 
     def test_getarginfo_getattr(self):
-        testlib = TestLibrary('classes.GetattrLibrary')
-        handlers = testlib.handlers.values()
+        handlers = TestLibrary('classes.GetattrLibrary').handlers
         assert_equals(len(handlers), 3)
         for handler in handlers:
             assert_true(handler.name in ['Foo','Bar','Zap'])
@@ -85,7 +86,8 @@ class TestDynamicHandlerCreation(unittest.TestCase):
     def test_non_ascii_doc(self):
         self._assert_doc(u'P\xe4iv\xe4\xe4')
 
-    if sys.platform != 'cli' and sys.version_info[0] < 3:
+    if not (utils.IRONPYTHON or PY3):
+
         def test_with_utf8_doc(self):
             doc = u'P\xe4iv\xe4\xe4'
             self._assert_doc(doc.encode('UTF-8'), doc)
@@ -198,7 +200,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         return DynamicHandler(lib, 'mock', RunKeyword(lib), doc, argspec)
 
 
-if utils.is_jython:
+if utils.JYTHON:
 
     handlers = dict((method.__name__, method) for method in
                     _get_java_handler_methods(ArgumentsJava('Arg', ['varargs'])))

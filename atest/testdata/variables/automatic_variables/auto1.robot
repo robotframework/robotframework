@@ -57,9 +57,13 @@ Suite Documentation
 Suite Metadata
     [Setup]    Suite Metadata Should Be Correct    ${EXP_SUITE_META}
     Suite Metadata Should Be Correct    ${EXP_SUITE_META}
+    ${expected} =    Evaluate    ${EXP_SUITE_META}
+    Should Be Equal    ${SUITE METADATA}    ${expected}
+    ${result} =    Create Dictionary    &{SUITE METADATA}
+    Should Be Equal    ${result}    ${expected}
     [Teardown]    Suite Metadata Should Be Correct    ${EXP_SUITE_META}
 
-Modifying ${SUITE METADATA} does not affect actual metadata suite has
+Modifying &{SUITE METADATA} does not affect actual metadata suite has
     [Documentation]    The variable is changed but not "real" metadata
     Set To Dictionary    ${SUITE METADATA}    Meta1    not really set
     Set To Dictionary    ${SUITE METADATA}    NotSet    not really set

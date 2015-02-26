@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,32 +15,30 @@
 from six import text_type as unicode
 
 import os
-import re
 
 from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
                           PassExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed)
-from robot.variables import is_list_var, VariableIterator
+from robot.variables import is_list_var
 from robot.output import LOGGER
 from robot import utils
 
 from .arguments import (ArgumentMapper, ArgumentResolver,
-                        UserKeywordArgumentParser)
-from .baselibrary import BaseLibrary
+                        EmbeddedArguments, UserKeywordArgumentParser)
+from .handlerstore import HandlerStore
 from .keywords import Keywords, Keyword
 from .timeouts import KeywordTimeout
 from .usererrorhandler import UserErrorHandler
 
 
-class UserLibrary(BaseLibrary):
+class UserLibrary(object):
 
     def __init__(self, user_keywords, path=None):
         self.name = self._get_name_for_resource_file(path)
-        self.handlers = utils.NormalizedDict(ignore=['_'])
-        self.embedded_arg_handlers = []
+        self.handlers = HandlerStore(self.name)
         for kw in user_keywords:
             try:
-                handler = self._create_handler(kw)
+                handler, embedded = self._create_handler(kw)
             except DataError as err:
                 LOGGER.error("Creating user keyword '%s' failed: %s"
                              % (kw.name, unicode(err)))
@@ -48,62 +46,19 @@ class UserLibrary(BaseLibrary):
             if handler.name in self.handlers:
                 error = "Keyword '%s' defined multiple times." % handler.name
                 handler = UserErrorHandler(handler.name, error)
-            self.handlers[handler.name] = handler
+            self.handlers.add(handler, embedded)
 
     def _create_handler(self, kw):
-        try:
-            handler = EmbeddedArgsTemplate(kw, self.name)
-        except TypeError:
-            handler = UserKeywordHandler(kw, self.name)
-        else:
-            self.embedded_arg_handlers.append(handler)
-        return handler
+        if not kw.args:
+            embedded = EmbeddedArguments(kw.name)
+            if embedded:
+                return EmbeddedArgsTemplate(kw, self.name, embedded), True
+        return UserKeywordHandler(kw, self.name), False
 
     def _get_name_for_resource_file(self, path):
         if path is None:
             return None
         return os.path.splitext(os.path.basename(path))[0]
-
-    def has_handler(self, name):
-        if BaseLibrary.has_handler(self, name):
-            return True
-        for template in self.embedded_arg_handlers:
-            try:
-                EmbeddedArgs(name, template)
-            except TypeError:
-                pass
-            else:
-                return True
-        return False
-
-    def get_handler(self, name):
-        try:
-            return BaseLibrary.get_handler(self, name)
-        except DataError as error:
-            found = self._get_embedded_arg_handlers(name)
-            if not found:
-                raise error
-            if len(found) == 1:
-                return found[0]
-            self._raise_multiple_matching_keywords_found(name, found)
-
-    def _get_embedded_arg_handlers(self, name):
-        found = []
-        for template in self.embedded_arg_handlers:
-            try:
-                found.append(EmbeddedArgs(name, template))
-            except TypeError:
-                pass
-        return found
-
-    def _raise_multiple_matching_keywords_found(self, name, found):
-        names = utils.seq2str([f.orig_name for f in found])
-        if self.name is None:
-            where = "Test case file"
-        else:
-            where = "Resource file '%s'" % self.name
-        raise DataError("%s contains multiple keywords matching name '%s'\n"
-                        "Found: %s" % (where, name, names))
 
 
 class UserKeywordHandler(object):
@@ -147,15 +102,15 @@ class UserKeywordHandler(object):
         return self._normal_run(context, arguments)
 
     def _dry_run(self, context, arguments):
-        arguments = self._resolve_arguments(arguments)
-        error, return_ = self._execute(context, arguments)
+        positional, kwargs = self._resolve_arguments(arguments)
+        error, return_ = self._execute(context, positional, kwargs)
         if error:
             raise error
         return None
 
     def _normal_run(self, context, arguments):
-        arguments = self._resolve_arguments(arguments, context.variables)
-        error, return_ = self._execute(context, arguments)
+        positional, kwargs = self._resolve_arguments(arguments, context.variables)
+        error, return_ = self._execute(context, positional, kwargs)
         if error and not error.can_continue(context.in_teardown):
             raise error
         return_value = self._get_return_value(context.variables, return_)
@@ -168,11 +123,11 @@ class UserKeywordHandler(object):
         resolver = ArgumentResolver(self.arguments)
         mapper = ArgumentMapper(self.arguments)
         positional, named = resolver.resolve(arguments, variables)
-        arguments, _ = mapper.map(positional, named, variables)
-        return arguments
+        positional, kwargs = mapper.map(positional, named, variables)
+        return positional, kwargs
 
-    def _execute(self, context, arguments):
-        self._set_variables(arguments, context.variables)
+    def _execute(self, context, positional, kwargs):
+        self._set_variables(positional, kwargs, context.variables)
         context.output.trace(lambda: self._log_args(context.variables))
         self._verify_keyword_is_valid()
         self.timeout.start()
@@ -193,12 +148,14 @@ class UserKeywordHandler(object):
             error = UserKeywordExecutionFailed(error, td_error)
         return error or pass_, return_
 
-    def _set_variables(self, arguments, variables):
-        before_varargs, varargs = self._split_args_and_varargs(arguments)
+    def _set_variables(self, positional, kwargs, variables):
+        before_varargs, varargs = self._split_args_and_varargs(positional)
         for name, value in zip(self.arguments.positional, before_varargs):
             variables['${%s}' % name] = value
         if self.arguments.varargs:
             variables['@{%s}' % self.arguments.varargs] = varargs
+        if self.arguments.kwargs:
+            variables['&{%s}' % self.arguments.kwargs] = kwargs
 
     def _split_args_and_varargs(self, args):
         if not self.arguments.varargs:
@@ -210,7 +167,9 @@ class UserKeywordHandler(object):
         args = ['${%s}' % arg for arg in self.arguments.positional]
         if self.arguments.varargs:
             args.append('@{%s}' % self.arguments.varargs)
-        args = ['%s=%s' % (name, utils.safe_repr(variables[name]))
+        if self.arguments.kwargs:
+            args.append('&{%s}' % self.arguments.kwargs)
+        args = ['%s=%s' % (name, utils.prepr(variables[name]))
                 for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
@@ -253,75 +212,26 @@ class UserKeywordHandler(object):
 
 
 class EmbeddedArgsTemplate(UserKeywordHandler):
-    _regexp_extension = re.compile(r'(?<!\\)\(\?.+\)')
-    _regexp_group_start = re.compile(r'(?<!\\)\((.*?)\)')
-    _regexp_group_escape = r'(?:\1)'
-    _default_pattern = '.*?'
-    _variable_pattern = r'\$\{[^\}]+\}'
 
-    def __init__(self, keyword, libname):
-        if keyword.args:
-            raise TypeError('Cannot have normal arguments')
-        self.embedded_args, self.name_regexp \
-                = self._read_embedded_args_and_regexp(keyword.name)
-        if not self.embedded_args:
-            raise TypeError('Must have embedded arguments')
+    def __init__(self, keyword, libname, embedded):
         UserKeywordHandler.__init__(self, keyword, libname)
         self.keyword = keyword
+        self.embedded_name = embedded.name
+        self.embedded_args = embedded.args
 
-    def _read_embedded_args_and_regexp(self, string):
-        args = []
-        full_pattern = ['^']
-        for before, variable, string in VariableIterator(string, identifiers='$'):
-            variable, pattern = self._get_regexp_pattern(variable[2:-1])
-            args.append('${%s}' % variable)
-            full_pattern.extend([re.escape(before), '(%s)' % pattern])
-        full_pattern.extend([re.escape(string), '$'])
-        return args, self._compile_regexp(full_pattern)
+    def matches(self, name):
+        return self.embedded_name.match(name) is not None
 
-    def _get_regexp_pattern(self, variable):
-        if ':' not in variable:
-            return variable, self._default_pattern
-        variable, pattern = variable.split(':', 1)
-        return variable, self._format_custom_regexp(pattern)
-
-    def _format_custom_regexp(self, pattern):
-        for formatter in (self._regexp_extensions_are_not_allowed,
-                          self._make_groups_non_capturing,
-                          self._unescape_closing_curly,
-                          self._add_automatic_variable_pattern):
-            pattern = formatter(pattern)
-        return pattern
-
-    def _regexp_extensions_are_not_allowed(self, pattern):
-        if not self._regexp_extension.search(pattern):
-            return pattern
-        raise DataError('Regexp extensions are not allowed in embedded '
-                        'arguments.')
-
-    def _make_groups_non_capturing(self, pattern):
-        return self._regexp_group_start.sub(self._regexp_group_escape, pattern)
-
-    def _unescape_closing_curly(self, pattern):
-        return pattern.replace('\\}', '}')
-
-    def _add_automatic_variable_pattern(self, pattern):
-        return '%s|%s' % (pattern, self._variable_pattern)
-
-    def _compile_regexp(self, pattern):
-        try:
-            return re.compile(''.join(pattern), re.IGNORECASE)
-        except:
-            raise DataError("Compiling embedded arguments regexp failed: %s"
-                            % utils.get_error_message())
+    def create(self, name):
+        return EmbeddedArgs(name, self)
 
 
 class EmbeddedArgs(UserKeywordHandler):
 
     def __init__(self, name, template):
-        match = template.name_regexp.match(name)
+        match = template.embedded_name.match(name)
         if not match:
-            raise TypeError('Does not match given name')
+            raise ValueError('Does not match given name')
         UserKeywordHandler.__init__(self, template.keyword, template.libname)
         self.embedded_args = list(zip(template.embedded_args, match.groups()))
         self.name = name
@@ -332,5 +242,5 @@ class EmbeddedArgs(UserKeywordHandler):
             variables = context.variables
             self._resolve_arguments(args, variables)  # validates no args given
             for name, value in self.embedded_args:
-                variables[name] = variables.replace_scalar(value)
+                variables['${%s}' % name] = variables.replace_scalar(value)
         return UserKeywordHandler._run(self, context, args)

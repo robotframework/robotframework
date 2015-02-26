@@ -116,7 +116,7 @@ Before the Remote library can be imported, the remote server providing
 the actual keywords must be started.  If the server is started before
 launching the test execution, it is possible to use the normal
 :setting:`Library` setting like in the above example. Alternatively other
-keywords, for example from OperatingSystem or SSH libraries, can start
+keywords, for example from Process_ or SSH__ libraries, can start
 the server up, but then you may need to use `Import Library keyword`__
 because the library is not available when the test execution starts.
 
@@ -136,6 +136,7 @@ implemented. Typically servers support the following methods:
           :name:`Stop Remote Server` keyword or `stop_remote_server`
           method.
 
+__ https://github.com/robotframework/SSHLibrary
 __ `Using Import Library keyword`_
 
 Supported argument and return value types
@@ -151,23 +152,33 @@ Both the Remote library and the Python remote server handle Python values
 according to the following rules. Other remote servers should behave similarly.
 
 * Strings, numbers and Boolean values are passed without modifications.
+
 * Python `None` is converted to an empty string.
+
 * All lists, tuples, and other iterable objects (except strings and
   dictionaries) are passed as lists so that their contents are converted
   recursively.
+
 * Dictionaries and other mappings are passed as dicts so that their keys are
   converted to strings and values converted to supported types recursively.
+
+* Returned dictionaries are converted to so called *dot-accessible dicts*
+  that allow accessing keys as attributes using the `extended variable syntax`_
+  like `${result.key}`. This works also with nested dictionaries like
+  `${root.child.leaf}`.
+
 * Strings containing bytes in the ASCII range that cannot be represented in
   XML (e.g. the null byte) are sent as `Binary objects`__ that internally use
   XML-RPC base64 data type. Received Binary objects are automatically converted
   to byte strings.
+
 * Other types are converted to strings.
 
 .. note:: Prior to Robot Framework 2.8.3, only lists, tuples, and dictionaries
-          were handled according to the above rules. General iterables
-          and mappings were not supported.
-
-          Binary support is new in Robot Framework 2.8.4.
+          were handled according to the above rules. General iterables and
+          mappings were not supported. Additionally binary support is new in
+          Robot Framework 2.8.4 and returning dot-accessible dictionaries new
+          in Robot Framework 2.9.
 
 __ http://docs.python.org/2/library/xmlrpclib.html#binary-objects
 
@@ -225,9 +236,8 @@ keywords get the name of the keyword as an argument. Arguments must be
 returned as a list of strings in the `same format as with dynamic
 libraries`__, and documentation must be returned `as a string`__.
 
-Starting from Robot Framework 2.6.2, remote servers can also provide
-`general library documentation`__ to be used when generating
-documenation with `libdoc`_ tool.
+Remote servers can also provide `general library documentation`__ to
+be used when generating documenation with `libdoc`_ tool
 
 __ `Getting keyword arguments`_
 __ `Getting keyword documentation`_

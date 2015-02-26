@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -24,3 +24,9 @@ syntax, the generated API docs are not that well formed. It is thus better
 to find the generated library documentations, for example, via
 the http://robotframework.org web site.
 """
+
+STDLIBS = frozenset(('BuiltIn', 'Collections', 'DateTime', 'Dialogs', 'Easter',
+                     'OperatingSystem', 'Process', 'Remote', 'Reserved',
+                     'Screenshot', 'String', 'Telnet', 'XML'))
+DEPRECATED_STDLIBS = frozenset(('DeprecatedBuiltIn', 'DeprecatedOperatingSystem'))
+STDLIB_TO_DEPRECATED_MAP = dict((name[10:], name) for name in DEPRECATED_STDLIBS)

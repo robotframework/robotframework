@@ -10,7 +10,7 @@ from robot.result.testsuite import TestSuite
 from robot.utils.asserts import assert_true, assert_equals
 
 
-LOGGER.disable_automatic_console_logger()
+LOGGER.unregister_console_logger()
 
 
 class TestReporting(unittest.TestCase):

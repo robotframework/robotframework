@@ -140,16 +140,11 @@ class TestSettingVariables(unittest.TestCase):
         assert_equals(variables['${scal}'], 'a')
         assert_equals(variables['@{list}'], [])
 
-    def test_set_more_values_than_variables(self):
-        variables = self._run_kw(['${v1}','${v2}'], ['x','y','z'])
-        assert_equals(variables['${v1}'], 'x')
-        assert_equals(variables['${v2}'], ['y','z'])
+    def test_set_more_values_than_variables_raises(self):
+        assert_raises(ExecutionFailed, self._run_kw, ['${v1}','${v2}'], ['x', 'y', 'z'])
 
     def test_set_too_few_scalars_raises(self):
         assert_raises(ExecutionFailed, self._run_kw, ['${v1}','${v2}'], ['x'])
-
-    def test_set_list_but_no_list_raises(self):
-        assert_raises(ExecutionFailed, self._run_kw, ['@{list}'], 'not a list')
 
     def test_set_too_few_scalars_with_list_raises(self):
         assert_raises(ExecutionFailed, self._run_kw, ['${v1}','${v2}','@{list}'], ['x'])

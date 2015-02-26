@@ -1,16 +1,10 @@
+from six import PY3
+
 import unittest
-import sys
 
 from robot.utils.misc import getdoc, printable_name, seq2str
 from robot.utils.asserts import assert_equals
-
-if sys.platform.startswith('java'):
-    import JavaExceptions
-
-
-IPY = sys.platform == 'cli'
-
-PY3 = sys.version_info[0] == 3
+from robot.utils import IRONPYTHON
 
 
 class TestMiscUtils(unittest.TestCase):
@@ -75,15 +69,15 @@ class TestGetdoc(unittest.TestCase):
     def test_non_ascii_doc_in_utf8(self):
         def func():
             """Hyv\xc3\xa4 \xc3\xa4iti!"""
-        expected = (u'Hyv\xe4 \xe4iti!' if not (IPY or PY3)
-                    else u'Hyv\xc3\xa4 \xc3\xa4iti!')
+        expected = u'Hyv\xe4 \xe4iti!' \
+            if not (IRONPYTHON or PY3) else u'Hyv\xc3\xa4 \xc3\xa4iti!'
         assert_equals(getdoc(func), expected)
 
     def test_non_ascii_doc_not_in_utf8(self):
         def func():
             """Hyv\xe4 \xe4iti!"""
-        expected = ('Hyv\\xe4 \\xe4iti!' if not (IPY or PY3)
-                    else u'Hyv\xe4 \xe4iti!')
+        expected = 'Hyv\\xe4 \\xe4iti!' \
+            if not (IRONPYTHON or PY3) else u'Hyv\xe4 \xe4iti!'
         assert_equals(getdoc(func), expected)
 
     def test_unicode_doc(self):

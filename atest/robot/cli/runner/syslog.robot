@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup      Create Output Directory
-Suite Teardown  Delete Environment Variable  ROBOT_SYSLOG_FILE
+Suite Teardown  Remove Environment Variable  ROBOT_SYSLOG_FILE
 Default Tags    regression  pybot  jybot
 Resource        cli_resource.robot
 
@@ -8,7 +8,7 @@ Resource        cli_resource.robot
 *** Test Cases ***
 
 No syslog environment variable file
-    Delete Environment Variable  ROBOT_SYSLOG_FILE
+    Remove Environment Variable  ROBOT_SYSLOG_FILE
     Run Some Tests
     File Should Not Exist  ${CLI OUTDIR}/syslog.txt
 
@@ -43,10 +43,10 @@ Setting syslog Level
     Set Environment Variable  ROBOT_SYSLOG_LEVEL  warn
     Run Some Tests
     File Should Be Empty  ${CLI OUTDIR}/syslog.txt
-    [Teardown]  Delete Environment Variable  ROBOT_SYSLOG_LEVEL
+    [Teardown]  Remove Environment Variable  ROBOT_SYSLOG_LEVEL
 
 Invalid syslog level
     Set Environment Variable  ROBOT_SYSLOG_LEVEL  invalid
     ${output} =  Run Some Tests
     Should Start With  ${output}  [ ERROR ] Opening syslog file '${CLI OUTDIR}${/}syslog.txt' failed: Invalid log level 'invalid'
-    [Teardown]  Delete Environment Variable  ROBOT_SYSLOG_LEVEL
+    [Teardown]  Remove Environment Variable  ROBOT_SYSLOG_LEVEL

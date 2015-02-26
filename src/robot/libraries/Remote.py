@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -27,10 +27,8 @@ except ImportError:   # No expat in IronPython 2.7
         pass
 
 from robot.errors import RemoteError
-from robot.utils import is_list_like, is_dict_like, timestr_to_secs, unic
-
-
-IRONPYTHON = sys.platform == 'cli'
+from robot.utils import (is_list_like, is_dict_like, timestr_to_secs, unic,
+                         DotDict, IRONPYTHON)
 
 
 class Remote(object):
@@ -50,7 +48,7 @@ class Remote(object):
         the keyword.
 
         Support for timeouts is a new feature in Robot Framework 2.8.6.
-        Timeouts do not work with Python/Jython 2.5 nor with IronPython.
+        Timeouts do not work with IronPython.
         """
         if '://' not in uri:
             uri = 'http://' + uri
@@ -61,15 +59,13 @@ class Remote(object):
 
     def get_keyword_names(self, attempts=2):
         for i in range(attempts):
+            time.sleep(i)
             try:
                 return self._client.get_keyword_names()
             except TypeError as err:
-                time.sleep(i)
-                # To make err accessible after this except block in Python 3:
-                # (`err` will be deleted)
-                exc = err
+                error = err
         raise RuntimeError('Connecting remote server at %s failed: %s'
-                           % (self._uri, exc))
+                           % (self._uri, error))
 
     def get_keyword_arguments(self, name):
         try:
@@ -103,8 +99,8 @@ class ArgumentCoercer(object):
         for handles, handle in [(self._is_string, self._handle_string),
                                 (self._is_bytes, self._handle_binary), #PY3
                                 (self._is_number, self._pass_through),
-                                (is_list_like, self._coerce_list),
                                 (is_dict_like, self._coerce_dict),
+                                (is_list_like, self._coerce_list),
                                 (lambda arg: True, self._to_string)]:
             if handles(argument):
                 return handle(argument)
@@ -182,15 +178,15 @@ class RemoteResult(object):
 
     def _get(self, result, key, default=''):
         value = result.get(key, default)
-        return self._handle_binary(value)
+        return self._convert(value)
 
-    def _handle_binary(self, value):
+    def _convert(self, value):
         if isinstance(value, xmlrpclib.Binary):
             return value.data
-        if is_list_like(value):
-            return [self._handle_binary(v) for v in value]
         if is_dict_like(value):
-            return dict((k, self._handle_binary(v)) for k, v in value.items())
+            return DotDict((k, self._convert(v)) for k, v in value.items())
+        if is_list_like(value):
+            return [self._convert(v) for v in value]
         return value
 
 
@@ -256,6 +252,7 @@ class TimeoutTransport(xmlrpclib.Transport):
 
 
 if sys.version_info[:2] == (2, 6):
+    from httplib import HTTP
 
     class TimeoutTransport(TimeoutTransport):
 
@@ -263,7 +260,7 @@ if sys.version_info[:2] == (2, 6):
             host, extra_headers, x509 = self.get_host_info(host)
             return TimeoutHTTP(host, timeout=self.timeout)
 
-    class TimeoutHTTP(HTTPConnection):
+    class TimeoutHTTP(HTTP):
 
         def __init__(self, host='', port=None, strict=None, timeout=None):
             if port == 0:
@@ -271,11 +268,11 @@ if sys.version_info[:2] == (2, 6):
             self._setup(self._connection_class(host, port, strict, timeout=timeout))
 
 
-if sys.version_info[:2] == (2, 5) or sys.platform == 'cli':
+if IRONPYTHON:
 
     class TimeoutTransport(xmlrpclib.Transport):
 
         def __init__(self, use_datetime=0, timeout=None):
             xmlrpclib.Transport.__init__(self, use_datetime)
             if timeout:
-                raise RuntimeError('This Python version does not support timeouts.')
+                raise RuntimeError('Timeouts are not supported on IronPython.')

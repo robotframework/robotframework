@@ -8,4 +8,4 @@ ${ROBOT RESOURCE VAR}  ROBOT Resource Variable
 
 
 *User Keywords  Action  Argument  Argument  Argument
-Keyword from ROBOT resource  Noop      
+Keyword from ROBOT resource  No operation      

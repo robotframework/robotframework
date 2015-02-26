@@ -7,18 +7,18 @@ messages = [ u'Circle is 360\u00B0',
 
 
 class UnicodeLibrary:
-    
+
     def print_unicode_strings(self):
         """Prints message containing unicode characters"""
         for msg in messages:
             print('*INFO*' + msg)
-    
+
     def print_and_return_unicode_object(self):
         """Prints unicode object and returns it."""
         object = UnicodeObject()
         print(unicode(object))
         return object
-    
+
     def raise_unicode_error(self):
         raise AssertionError(', '.join(messages))
 

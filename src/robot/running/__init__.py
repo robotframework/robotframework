@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ def UserLibrary(path):
 
     resource = ResourceFile(path).populate()
     ret = RuntimeUserLibrary(resource.keyword_table.keywords, path)
-    for handler in ret.handlers.values():
+    for handler in ret.handlers:
         if handler.type != 'error':
             handler.doc = utils.unescape(handler._doc)
         else:

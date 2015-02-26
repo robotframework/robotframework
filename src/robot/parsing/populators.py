@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ class FromFilePopulator(object):
             raise DataError("Data source does not exist.")
         try:
             # IronPython handles BOM incorrectly if not using binary mode:
-            # http://code.google.com/p/robotframework/issues/detail?id=1580
+            # https://ironpython.codeplex.com/workitem/34655
             return open(path, 'rb')
         except:
             raise DataError(get_error_message())

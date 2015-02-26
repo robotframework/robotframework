@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Teardown  Delete Environment Variable  ROBOT_SYSLOG_FILE
+Suite Teardown  Remove Environment Variable  ROBOT_SYSLOG_FILE
 Test Setup      Create Output Directory and Set Variables
 Default Tags    regression  pybot  jybot
 Resource        cli_resource.robot

@@ -12,26 +12,30 @@ ${REPORT}          %{TEMPDIR}${/}robot-testing-report.html
 ${NO OUTPUTS}      [ ERROR ] No outputs created.\n\nTry --help for usage information.
 
 *** Test Cases ***
-
 Zero RC when all tests pass
-    ${PASSING}                    rc=0
+    ${PASSING}                       rc=0
 
 Zero RC when all critical tests pass
-    --critical pass ${FAILING}    rc=0
+    --critical pass ${FAILING}       rc=0
+    --statusrc -c pass ${FAILING}    rc=0
 
 Non-zero RC when critical tests fail
-    ${FAILING}                    rc=1
+    ${FAILING}                       rc=1
+    --status ${FAILING}              rc=1
 
 Zero RC when all tests pass with --NoStatusRC
-    --NoStatusRC ${PASSING}       rc=0
+    --NoStatusRC ${PASSING}          rc=0
 
 Zero RC when critical tests fail with --NoStatusRC
-    --nostatusrc ${FAILING}       rc=0
+    --nostatusrc ${FAILING}          rc=0
 
 Error when no output is created
-    ${PASSING}                    rc=252    output=${NO OUTPUTS}  report=NONE
-    --nostatusrc ${FAILING}       rc=252    output=${NO OUTPUTS}  report=NONE
+    ${PASSING}                       rc=252    output=${NO OUTPUTS}  report=NONE
+    --nostatusrc ${FAILING}          rc=252    output=${NO OUTPUTS}  report=NONE
 
+--StatusRC and --NoStatusRC together
+    --nostatusrc --statusrc ${FAILING}                        rc=1
+    --Status --NoStatus --Status --NoStatus ${FAILING}        rc=0
 
 *** Keywords ***
 Generate input files

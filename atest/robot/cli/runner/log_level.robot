@@ -75,9 +75,9 @@ Should Log On Debug Level
     Check Log Message  ${SUITE.tests[1].kws[1].msgs[0]}  Expected failure  FAIL
 
 Should Log On Trace Level
-    Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[0]}  Arguments: [ u'Hello says "Pass"!' | u'INFO' ]  TRACE
+    Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[0]}  Arguments: [ 'Hello says "Pass"!' | 'INFO' ]  TRACE
     Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[1]}  Hello says "Pass"!  INFO
     Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[2]}  Return: None  TRACE
     Check Log Message  ${SUITE.tests[0].kws[0].kws[1].msgs[1]}  Debug message  DEBUG
-    Check Log Message  ${SUITE.tests[1].kws[1].msgs[0]}  Arguments: [ u'Expected failure' ]  TRACE
+    Check Log Message  ${SUITE.tests[1].kws[1].msgs[0]}  Arguments: [ 'Expected failure' ]  TRACE
     Check Log Message  ${SUITE.tests[1].kws[1].msgs[1]}  Expected failure  FAIL

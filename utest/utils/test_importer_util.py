@@ -1,6 +1,5 @@
-from six import text_type as unicode
+from six import PY3, text_type as unicode
 
-import time
 import unittest
 import tempfile
 import inspect
@@ -8,12 +7,10 @@ import shutil
 import sys
 import os
 import re
-from os.path import abspath, basename, dirname, exists, join, normpath
-from itertools import repeat
-
-PY3 = sys.version_info[0] == 3
+from os.path import basename, dirname, exists, join, normpath
 
 from robot.errors import DataError
+from robot.utils import abspath, JYTHON, WINDOWS
 from robot.utils.importer import Importer, ByPathImporter
 from robot.utils.asserts import (assert_equals, assert_true, assert_raises,
                                  assert_raises_with_msg)
@@ -32,6 +29,7 @@ def assert_prefix(error, expected):
     prefix = ':'.join(message.split(':')[:count]) + ':'
     assert_equals(prefix, expected)
 
+
 def create_temp_file(name, attr=42, extra_content=''):
     if not exists(TESTDIR):
         os.mkdir(TESTDIR)
@@ -41,6 +39,7 @@ def create_temp_file(name, attr=42, extra_content=''):
         file.write('def func():\n  return attr\n')
         file.write(extra_content)
     return path
+
 
 class LoggerStub(object):
 
@@ -52,10 +51,15 @@ class LoggerStub(object):
         if self.remove_extension:
             for ext in '$py.class', '.pyc', '.py':
                 msg = msg.replace(ext, '')
-        self.messages.append(msg)
+        self.messages.append(self._normalize_drive_letter(msg))
 
     def assert_message(self, msg, index=0):
-        assert_equals(self.messages[index], msg)
+        assert_equals(self.messages[index], self._normalize_drive_letter(msg))
+
+    def _normalize_drive_letter(self, msg):
+        if not WINDOWS:
+            return msg
+        return re.sub("'\\w:", lambda match: match.group().upper(), msg)
 
 
 class TestImportByPath(unittest.TestCase):
@@ -115,7 +119,7 @@ class TestImportByPath(unittest.TestCase):
         error = assert_raises(DataError, self._import_and_verify, path, remove='test')
         assert_prefix(error, "Importing '%s' failed: SyntaxError:" % path)
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_java_class_with_java_extension(self):
             path = join(CURDIR, 'ImportByPath.java')
@@ -131,7 +135,7 @@ class TestImportByPath(unittest.TestCase):
             path = join(LIBDIR, 'javapkg')
             assert_raises_with_msg(DataError,
                                    "Importing '%s' failed: Expected class or "
-                                   "module, got <javapackage>." % path,
+                                   "module, got javapackage." % path,
                                    self._import, path, remove='javapkg')
 
         def test_removing_from_sys_modules_when_importing_multiple_times(self):
@@ -248,11 +252,11 @@ class TestImportClassOrModule(unittest.TestCase):
     def test_invalid_item_from_existing_module(self):
         assert_raises_with_msg(DataError,
                                "Importing 'pythonmodule.some_string' failed: "
-                               "Expected class or module, got <str>.",
+                               "Expected class or module, got string.",
                                self._import, 'pythonmodule.some_string')
         assert_raises_with_msg(DataError,
                                "Importing xxx 'pythonmodule.submodule.attribute' failed: "
-                               "Expected class or module, got <int>.",
+                               "Expected class or module, got integer.",
                                self._import, 'pythonmodule.submodule.attribute', 'xxx')
 
     def test_item_from_non_existing_module(self):
@@ -293,7 +297,7 @@ class TestImportClassOrModule(unittest.TestCase):
         logger.assert_message("Imported class 'ExampleLibrary' from '%s'."
                               % join(LIBDIR, 'ExampleLibrary'))
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_import_java_class(self):
             klass = self._import_class('ExampleJavaLibrary')
@@ -313,7 +317,7 @@ class TestImportClassOrModule(unittest.TestCase):
         def test_importing_java_package_fails(self):
             assert_raises_with_msg(DataError,
                                    "Importing test library 'javapkg' failed: "
-                                   "Expected class or module, got <javapackage>.",
+                                   "Expected class or module, got javapackage.",
                                    self._import, 'javapkg', 'test library')
 
         def test_logging_when_importing_java_class(self):
@@ -370,7 +374,7 @@ class TestErrorDetails(unittest.TestCase):
         last_line = self._get_pythonpath(error).splitlines()[-1].strip()
         assert_true(last_line.startswith('hyv'))
 
-    if sys.platform.startswith('java'):
+    if JYTHON:
 
         def test_classpath(self):
             error = self._failing_import('NoneExisting')

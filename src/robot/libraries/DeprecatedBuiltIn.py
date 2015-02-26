@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,21 +12,43 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import re
 import fnmatch
 
+from robot.utils import asserts, printable_name
 
-from robot.utils import asserts
-
-## import BuiltIn
-#HACK: Prevent 2to3 from converting to relative import
-BuiltIn = __import__('BuiltIn')
+from .BuiltIn import BuiltIn
 
 
-BUILTIN = BuiltIn.BuiltIn()
+BUILTIN = BuiltIn()
 
-class DeprecatedBuiltIn:
+
+class deprecator(type):
+    def __new__(cls, class_name, bases, dct):
+        use_instead_library = class_name[len('Deprecated'):]
+        for name, func in dct.items():
+            if cls._should_be_deprecated(name, func):
+                dct[name] = cls._deprecate(func, use_instead_library)
+        return type.__new__(cls, class_name, bases, dct)
+
+    @classmethod
+    def _should_be_deprecated(cls, name, func):
+        return (name[0] != '_' and callable(func) and
+                not (func.__doc__ or '').startswith('*DEPRECATED!*'))
+
+    @classmethod
+    def _deprecate(cls, func, use_instead_library):
+        def deprecated(self, *args):
+            return func(*args)
+        use_instead_keyword = printable_name(func.__name__, code_style=True)
+        deprecated.__doc__ = ("*DEPRECATED!* Use '%s.%s' instead."
+                              % (use_instead_library, use_instead_keyword))
+        return deprecated
+
+
+class DeprecatedBuiltIn(object):
+    __metaclass__ = deprecator
+
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
     integer = BUILTIN.convert_to_integer
@@ -62,10 +84,11 @@ class DeprecatedBuiltIn:
     variable_does_not_exist = fail_if_variable_exists = BUILTIN.variable_should_not_exist
 
     def error(self, msg=None):
-        """Errors the test immediately with the given message."""
+        """*DEPRECATED!* Use 'BuiltIn.Fail' instead."""
         asserts.error(msg)
 
     def grep(self, text, pattern, pattern_type='literal string'):
+        """*DEPRECATED!* Use 'String.Get Lines Containing/Matching' keywords instead."""
         lines = self._filter_lines(text.splitlines(), pattern, pattern_type)
         return '\n'.join(lines)
 
@@ -88,4 +111,3 @@ class DeprecatedBuiltIn:
         else:
             filtr = lambda line: pattern in line
         return [ line for line in lines if filtr(line) ]
-

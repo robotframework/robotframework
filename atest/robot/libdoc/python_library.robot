@@ -10,7 +10,7 @@ Name
 Documentation
     Doc Should Start With
     ...    A test library providing communication over Telnet connections.\n\n
-    ...    `Telnet` is Robot Framework's standard library that makes it possible to\n
+    ...    ``Telnet`` is Robot Framework's standard library that makes it possible to\n
 
 Version
     Version Should Match    *
@@ -50,7 +50,7 @@ Keyword Arguments
 Keyword Documentation
     Keyword Doc Should Start With    0   Closes all open connections
     Keyword Doc Should Start With    2
-    ...    Executes the given `command` and reads, logs, and returns everything until the prompt.\n\n
+    ...    Executes the given ``command`` and reads, logs, and returns everything until the prompt.\n\n
     ...    This keyword requires the prompt to be [#Configuration|configured]\n
     ...    either in `importing` or with `Open Connection` or `Set Prompt` keyword.\n\n
     ...    This is a convenience keyword that uses `Write` and `Read Until Prompt`\n

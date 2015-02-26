@@ -88,15 +88,15 @@ Dynamic Variable File With No Args
     Log Variables
     Should Be Equal  ${dyn_no_args_get_var}  Dyn var got with no args from get_variables
     Should Be Equal  ${dyn_no_args_get_var_2}  ${2}
-    Should Be Equal  @{dyn_no_args_get_var}[0]  one
-    Should Be Equal  @{dyn_no_args_get_var}[1]  ${2}
+    Should Be Equal  @{dyn_no_args_get_var_list}[0]  one
+    Should Be Equal  @{dyn_no_args_get_var_list}[1]  ${2}
 
 Dynamic Variable File With One Arg
     Should Be Equal  ${dyn_one_arg_get_var}  Dyn var got with one arg from get_variables
     Should Be Equal  ${dyn_one_arg_get_var_False}  ${False}
-    Should Be Equal  @{dyn_one_arg_get_var}[0]  one
-    Should Be Equal  @{dyn_one_arg_get_var}[1]  ${False}
-    ${dict} =  Set  @{dyn_one_arg_get_var}[2]
+    Should Be Equal  @{dyn_one_arg_get_var_list}[0]  one
+    Should Be Equal  @{dyn_one_arg_get_var_list}[1]  ${False}
+    ${dict} =  Set Variable  @{dyn_one_arg_get_var_list}[2]
     Should Be Equal  ${dict['dyn_no_args_get_var_2']}  ${2}
 
 Dynamic Variable File With Variables And Backslashes In Args
@@ -125,7 +125,6 @@ Resource File In PYTHONPATH
 Variable File In PYTHONPATH
     Should Be Equal  ${PPATH_VARFILE}  Variable from variable file in PYTHONPATH
     Should Be Equal  ${PPATH_VARFILE_2}  Variable from variable file in PYTHONPATH (version 2)
-    Should Be Equal  @{PPATH_VARFILE_2}[0]  Variable from variable file
-    Should Be Equal  @{PPATH_VARFILE_2}[1]  in PYTHONPATH
-    Should Be Equal  @{PPATH_VARFILE_2}[2]  (version 2)
-
+    Should Be Equal  @{PPATH_VARFILE_2_LIST}[0]  Variable from variable file
+    Should Be Equal  @{PPATH_VARFILE_2_LIST}[1]  in PYTHONPATH
+    Should Be Equal  @{PPATH_VARFILE_2_LIST}[2]  (version 2)

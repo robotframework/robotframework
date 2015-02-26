@@ -3,6 +3,9 @@ Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/start_p
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 
+*** Variables ***
+${DEPRECATED}   Keyword 'OperatingSystem.Start Process' is deprecated. Use `Process.Start Process` instead.
+
 *** Test Cases ***
 Start Process
     Check Test Case  Start Process
@@ -11,6 +14,7 @@ Stderr Is Redirected To Stdout
     Check Test Case  Stderr Is Redirected To Stdout
 
 It Should Be Possble To Start Background Process
+    Run Keyword If    "${JYTHON}"    Remove Tags    regression
     Check Test Case  It should Be Possble To Start Background Process
 
 Start Writable Process
@@ -43,3 +47,9 @@ Redirecting Stderr To Stdout
 Reading Output With Lot Of Data In Stdout And Stderr
     Check Test Case  Reading Output With Lot Of Data In Stdout And Stderr
 
+Start Process keyword is deprecated
+    ${tc} =    Check Test Case    Start Process
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${DEPRECATED}    WARN
+    Length Should Be    ${ERRORS}    22
+    :FOR    ${error}    IN    @{ERRORS}
+    \    Check Log Message    ${error}    ${DEPRECATED}    WARN

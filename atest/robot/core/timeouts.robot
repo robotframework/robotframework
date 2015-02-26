@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation   Tests for test case and user keyword timeouts. Using timeouts with variables and invalid timeouts is tested in 'metadata.html'. It seems that on Cygwin Python tests now and then fail with an error message "error: can't allocate lock"
 Suite Setup     Run Tests  ${EMPTY}  core/timeouts.robot
 Suite Teardown  Remove Directory  ${TIMEOUT TEMP}  recursive
 Force Tags      regression
@@ -23,7 +22,11 @@ Show Correct Trace Back When Failing Before Timeout
     [Documentation]    For some reason IronPython loses the traceback in this case.
     Run Keyword If    "${IRONPYTHON}"    Remove Tags    regression
     ${tc} =   Check Test Case    ${TEST NAME}
-    Should Contain    ${tc.kws[0].msgs[-1].message}    raise AssertionError(msg) if msg else AssertionError()
+    ${expected} =    Catenate    SEPARATOR=\n
+    ...    Traceback (most recent call last):
+    ...    ${SPACE*2}File "*", line *, in exception
+    ...    ${SPACE*4}raise exception(msg)
+    Check Log Message    ${tc.kws[0].msgs[-1]}    ${expected}    pattern=yes    level=DEBUG
 
 Show Correct Trace Back When Failing In Java Before Timeout
     [tags]  jybot

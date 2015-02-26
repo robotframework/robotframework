@@ -14,7 +14,7 @@ Tag
     another    another
 
 Path
-    another/child    child    text
+    another/child    child    nöŋ-äŝĉíï tëxt
 
 Path matching multiple elements
     [Template]    Xpath should match elements
@@ -22,7 +22,7 @@ Path matching multiple elements
     child/grandchild    grand child text    ${EMPTY}
 
 '*'
-    */child    child    text
+    */child    child    nöŋ-äŝĉíï tëxt
 
 '.'
     .    test
@@ -36,7 +36,7 @@ Path matching multiple elements
 
 '//' matching multiple elements
     [Template]    Xpath should match elements
-    .//child               child 1 text    child 2 text grand child text more text    ${EMPTY}    text
+    .//child               child 1 text    child 2 text grand child text more text    ${EMPTY}    nöŋ-äŝĉíï tëxt
     .//child/grandchild    grand child text    ${EMPTY}
 
 '..'

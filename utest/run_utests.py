@@ -58,9 +58,9 @@ def parse_args(argv):
     verbosity = 1
     try:
         options, args = getopt.getopt(argv, 'hH?vqd',
-                                      ['help','verbose','quiet','doc'])
-        if len(args) != 0:
-            raise getopt.error('no arguments accepted, got %s' % (args))
+                                      ['help', 'verbose', 'quiet', 'doc'])
+        if args:
+            raise getopt.error('no arguments accepted, got %s' % list(args))
     except getopt.error as err:
         usage_exit(err)
     for opt, value in options:

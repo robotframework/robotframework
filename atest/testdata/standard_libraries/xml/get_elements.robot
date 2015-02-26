@@ -14,7 +14,7 @@ Get element from xml file
     ${child}=    Get Element    ${TEST}    another
     Should Be Equal    ${child.tag}    another
     ${child}=    Get Element    ${TEST}    another/child
-    Should Be Equal    ${child.text}    text
+    Should Be Equal    ${child.text}    nöŋ-äŝĉíï tëxt
 
 Get element from xml string
     ${child}=    Get Element    <root><tag>text</tag></root>    tag

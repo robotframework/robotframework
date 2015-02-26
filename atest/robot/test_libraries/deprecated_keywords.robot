@@ -4,26 +4,43 @@ Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Case ***
-Deprecated Library Keyword
-    Verify Test and Deprecation Warnings    Deprecated Library Keyword    Keyword 'DeprecatedKeywords.Deprecated Library Keyword' is deprecated. Use keyword `Not Deprecated With Doc` instead!
+Deprecated keywords
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Verify Deprecation Warning    ${tc.kws[0]}    DeprecatedKeywords.Deprecated Library Keyword
+    ...    Use keyword `Not Deprecated With Doc` instead!
+    Verify Deprecation Warning    ${tc.kws[1]}    Deprecated User Keyword
+    ...    Use keyword `Not Deprecated User Keyword` instead.
     Check Syslog Does Not Contain    ignore this
 
-Deprecated User Keyword
-    Verify Test and Deprecation Warnings    Deprecated User Keyword    Keyword 'Deprecated User Keyword' is deprecated. Use keyword `Not Deprecated User Keyword` instead.
 
-Deprecated User Keyword Without Extra Doc
-    Verify Test and Deprecation Warnings    Deprecated User Keyword Without Extra Doc    Keyword 'Deprecated User Keyword Without Extra Doc' is deprecated.
+Deprecated keywords without extra doc
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Verify Deprecation Warning    ${tc.kws[0]}    DeprecatedKeywords.Deprecated Library Keyword Without Extra Doc
+    Verify Deprecation Warning    ${tc.kws[1]}    Deprecated User Keyword Without Extra Doc
 
-Variable Names Are removed From SetKeyword Names
-    Verify Test and Deprecation Warnings    Variable Names Are removed From SetKeyword Names    Keyword 'DeprecatedKeywords.Deprecated Keyword Returning' is deprecated. But still returning a value!
+Text between `*DEPRECATED` and closing `*` is ignored
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Verify Deprecation Warning    ${tc.kws[0]}    DeprecatedKeywords.Deprecated Library Keyword With Stuff To Ignore
+    Verify Deprecation Warning    ${tc.kws[1]}    Deprecated User Keyword With Stuff To Ignore    Keep this!!
+
+Assignment is not included in keyword name
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Verify Deprecation Warning    ${tc.kws[0]}    DeprecatedKeywords.Deprecated Keyword Returning    But still returning a value!
 
 Not Deprecated Keywords
     Check Test Case    Not Deprecated Keywords
-    Check Syslog Does Not Contain    Not Deprecated With Doc' is deprecated.    Not Deprecated Without Doc' is deprecated.    Not Deprecated User Keyword' is deprecated.    Not Deprecated User Keyword Without Documentation' is deprecated.    Comment' is deprecated.
+    :FOR    ${name}    IN
+    ...    Not Deprecated With Doc
+    ...    Not Deprecated Without Doc
+    ...    Not Deprecated With Deprecated Prefix
+    ...    Not Deprecated User Keyword
+    ...    Not Deprecated User Keyword Without Documentation
+    ...    Not Deprecated User Keyword With `*Deprecated` Prefix
+    \    Check Syslog Does Not Contain    ${name}' is deprecated
 
 *** Keyword ***
-Verify Test and Deprecation Warnings
-    [Arguments]    ${testname}    ${expmsg}
-    ${tc} =    Check Test Case    ${testname}
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${expmsg}    WARN
-    Check Syslog Contains    | WARN \ |    ${expmsg}
+Verify Deprecation Warning
+    [Arguments]    ${kw}    ${name}    @{extra}
+    ${message} =    Catenate    Keyword '${name}' is deprecated.    @{extra}
+    Check Log Message    ${kw.msgs[0]}    ${message}    WARN
+    Check Syslog Contains    | WARN \ |    ${message}

@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,10 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from six import string_types, iteritems
+from six import string_types
 
 from robot.errors import DataError
-from robot.utils import is_dict_like
+from robot.utils import is_dict_like, split_from_equals, DotDict
+from robot.variables import VariableSplitter
 
 from .argumentvalidator import ArgumentValidator
 
@@ -47,21 +48,27 @@ class NamedArgumentResolver(object):
 
     def resolve(self, arguments, variables=None):
         positional = []
-        named = {}
+        named = []
         for arg in arguments:
-            if self._is_named(arg, variables):
-                self._add_named(arg, named)
+            if self._is_dict_var(arg):
+                named.append(arg)
+            elif self._is_named(arg, variables):
+                named.append(split_from_equals(arg))
             elif named:
                 self._raise_positional_after_named()
             else:
                 positional.append(arg)
         return positional, named
 
+    def _is_dict_var(self, arg):
+        return (isinstance(arg, string_types) and
+                VariableSplitter(arg).is_dict_variable())
+
     def _is_named(self, arg, variables=None):
-        if not isinstance(arg, string_types) or '=' not in arg:
+        if not (isinstance(arg, string_types) and '=' in arg):
             return False
-        name = arg.split('=')[0]
-        if self._is_escaped(name):
+        name, value = split_from_equals(arg)
+        if value is None:
             return False
         if self._argspec.kwargs:
             return True
@@ -70,20 +77,6 @@ class NamedArgumentResolver(object):
         if variables:
             name = variables.replace_scalar(name)
         return name in self._argspec.positional
-
-    def _is_escaped(self, name):
-        return name.endswith('\\')
-
-    def _add_named(self, arg, named):
-        name, value = arg.split('=', 1)
-        name = kwarg_to_str_if_possible(name)
-        if name in named:
-            self._raise_multiple_values(name)
-        named[name] = value
-
-    def _raise_multiple_values(self, name):
-        raise DataError("%s '%s' got multiple values for argument '%s'."
-                        % (self._argspec.type, self._argspec.name, name))
 
     def _raise_positional_after_named(self):
         raise DataError("%s '%s' got positional argument after named arguments."
@@ -110,7 +103,7 @@ class DictToKwargs(object):
     def _extra_arg_has_kwargs(self, positional, named):
         if named or len(positional) != self._maxargs + 1:
             return False
-        return is_dict_like(positional[-1], allow_java=True)
+        return is_dict_like(positional[-1])
 
 
 class VariableReplacer(object):
@@ -122,22 +115,21 @@ class VariableReplacer(object):
         # `variables` is None in dry-run mode and when using Libdoc
         if variables:
             positional = variables.replace_list(positional, self._resolve_until)
-            named = dict(self._replace_named(named, variables.replace_scalar))
+            named = DotDict(self._replace_named(named, variables.replace_scalar))
         else:
             positional = list(positional)
+            named = DotDict(item for item in named if isinstance(item, tuple))
         return positional, named
 
-    def _replace_named(self, named, replacer):
-        for name, value in iteritems(named):
-            name = replacer(name)
-            if not isinstance(name, string_types):
-                raise DataError('Argument names must be strings.')
-            yield kwarg_to_str_if_possible(name), replacer(value)
+    def _replace_named(self, named, replace_scalar):
+        for item in named:
+            for name, value in self._get_replaced_named(item, replace_scalar):
+                if not isinstance(name, string_types):
+                    raise DataError('Argument names must be strings.')
+                yield name, value
 
-
-def kwarg_to_str_if_possible(name):
-    # Python 2.5 accept only str, not unicode, as kwargs.
-    try:
-        return str(name)
-    except UnicodeError:
-        return name
+    def _get_replaced_named(self, item, replace_scalar):
+        if not isinstance(item, tuple):
+            return replace_scalar(item).items()
+        name, value = item
+        return [(replace_scalar(name), replace_scalar(value))]

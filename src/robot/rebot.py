@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ Options
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
-    --rerunmerge          Deprecated. Use --merge instead.
+    --rerunmerge          Deprecated since RF 2.8.6. Use --merge instead.
  -N --name name           Set the name of the top level test suite. Underscores
                           in the name are converted to spaces. Default name is
                           created from the name of the executed data source.
@@ -123,7 +123,6 @@ Options
                           similarly as --log. Default: report.html
  -x --xunit file          xUnit compatible result file. Not created unless this
                           option is specified.
-    --xunitfile file      Deprecated. Use --xunit instead.
     --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           `YYYYMMDD-hhmmss` is added to all generated output
@@ -259,7 +258,13 @@ Options
 
 Options that are marked with an asterisk (*) can be specified multiple times.
 For example, `--test first --test third` selects test cases with name `first`
-and `third`. If other options are given multiple times, the last value is used.
+and `third`. If an option accepts a value but is not marked with an asterisk,
+the last given value has precedence. For example, `--log A.html --log B.html`
+creates log file `B.html`. Options accepting no values can be disabled by
+using the same option again with `no` prefix added or dropped. The last option
+has precedence regardless of how many times options are used. For example,
+`--merge --merge --nomerge --nostatusrc --statusrc` would not activate the
+merge mode and would return normal status rc.
 
 Long option format is case-insensitive. For example, --SuiteStatLevel is
 equivalent to but easier to read than --suitestatlevel. Long options can
@@ -303,9 +308,7 @@ import sys
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
 if 'robot' not in sys.modules and __name__ == '__main__':
-    ## import pythonpathsetter
-    #HACK: Prevent 2to3 from converting to relative import
-    pythonpathsetter = __import__('pythonpathsetter')
+    import pythonpathsetter
 
 from robot.conf import RebotSettings
 from robot.errors import DataError

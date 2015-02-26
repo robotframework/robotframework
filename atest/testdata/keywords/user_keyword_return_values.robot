@@ -3,47 +3,47 @@
 *** Test Cases ***
 Return Nothing
     ${ret} =  No Return At All
-    Equals  ${ret}  ${None}
+    Should Be Equal  ${ret}  ${None}
     ${ret} =  Empty Return
-    Equals  ${ret}  ${None}
+    Should Be Equal  ${ret}  ${None}
 
 Return One String
     ${ret} =  Return One String
-    Equals  ${ret}  one string
+    Should Be Equal  ${ret}  one string
 
 Return Multiple Strings
     ${ret1}  ${ret2}  ${ret3} =  Return Multiple Strings
-    Equals  ${ret1}  string 1
-    Equals  ${ret2}  string 2
-    Equals  ${ret3}  string 3
+    Should Be Equal  ${ret1}  string 1
+    Should Be Equal  ${ret2}  string 2
+    Should Be Equal  ${ret3}  string 3
 
 Return One Scalar Variable
     ${ret} =  Return One Scalar Variable  ret value
-    Equals  ${ret}  ret value
+    Should Be Equal  ${ret}  ret value
     ${ret} =  Return One Scalar Variable  ${42}
-    Equals  ${ret}  ${42}
+    Should Be Equal  ${ret}  ${42}
 
 Return Multiple Scalar Variables
     ${ret1}  ${ret2} =  Return Multiple Scalar Variables  ret value  ${42}
-    Equals  ${ret1}  ret value
-    Equals  ${ret2}  ${42}
+    Should Be Equal  ${ret1}  ret value
+    Should Be Equal  ${ret2}  ${42}
 
 Return Empty List Variable
     @{ret} =  Return List Variable
-    Fail Unless  @{ret} == []
+    Should Be True  @{ret} == []
 
 Return List Variable Containing One Item
     @{ret} =  Return List Variable  one string
-    Fail Unless  @{ret} == ['one string']
+    Should Be True  @{ret} == ['one string']
     ${ret} =  Return List Variable  one string
-    Fail Unless  ${ret} == ['one string']
+    Should Be True  ${ret} == ['one string']
 
 Return List Variable Containing Multiple Items
     @{ret} =  Return List Variable  string  ${42}  ${True}
-    Fail Unless  @{ret} == ['string', 42, True]
+    Should Be True  @{ret} == ['string', 42, True]
     ${ret1}  ${ret2} =  Return List Variable  string  ${42}
-    Equals  ${ret1}  string
-    Equals  ${ret2}  ${42}
+    Should Be Equal  ${ret1}  string
+    Should Be Equal  ${ret2}  ${42}
 
 Return Non-Existing Variable
     [Documentation]  FAIL  Replacing variables from keyword return value failed: Variable '\${nonexisting}' not found.
@@ -52,10 +52,11 @@ Return Non-Existing Variable
 
 *** Keywords ***
 No Return At All
-    NOOP
+    No Operation
 
 Empty Return
-    NOOP
+    [Return]
+    No Operation
 
 Return One String
     [Return]  one string

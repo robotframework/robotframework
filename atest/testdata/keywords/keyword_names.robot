@@ -51,6 +51,23 @@ User Keyword Name Ending With Dot
     USER KEYWORD.
     _US_er_ K EY_word .
 
+Name Set Using 'robot_name' Attribute
+    Name set using 'robot_name' attribute
+
+Name Set Using 'robot.api.deco.keyword' decorator
+    Name set using 'robot.api.deco.keyword' decorator
+
+Custom non-ASCII name
+    Custom nön-ÄSCII name
+
+Old Name Doesn't Work If Name Set Using 'robot_name'
+    [Documentation]  FAIL No keyword with name 'Name Set In Method Signature' found.
+    Name Set In Method Signature
+
+Keyword can just be marked without changing its name
+    No Custom Name Given 1
+    No Custom Name Given 2
+
 *** Keywords ***
 Keyword Only In Test Case File
     Log  Keyword from test case file

@@ -5,10 +5,12 @@ import unittest
 from robot.output.listeners import Listeners
 from robot.output import LOGGER
 from robot.utils.asserts import *
-from robot import utils
+from robot.utils import JYTHON
 from robot.running.outputcapture import OutputCapturer
 
-LOGGER.disable_automatic_console_logger()
+
+LOGGER.unregister_console_logger()
+
 
 class _Mock:
     def __getattr__(self, name):
@@ -186,7 +188,6 @@ class TestOldStyleListeners(_BaseListenerTest, unittest.TestCase):
 
     def test_importing(self):
         assert_equals(self.listener.version, 1)
-        assert_false(self.listener.is_java)
 
 
 class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
@@ -195,7 +196,6 @@ class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
 
     def test_importing(self):
         assert_equals(self.listener.version, 2)
-        assert_false(self.listener.is_java)
 
 
 class TestInvalidOldStyleListener(unittest.TestCase):
@@ -213,18 +213,15 @@ class TestInvalidOldStyleListener(unittest.TestCase):
             getattr(listenres, name)(*args)
 
 
-if utils.is_jython:
+if JYTHON:
 
     class TestJavaListener(_BaseListenerTest, unittest.TestCase):
-
         listener_name = 'NewStyleJavaListener'
         stat_message = 'stat message'
 
         def test_importing(self):
             assert_equals(self.listener.version, 2)
-            assert_true(self.listener.is_java)
 
 
 if __name__ == '__main__':
     unittest.main()
-

@@ -26,15 +26,6 @@ Grep Regexp
     ...  regexp  ${TEXT}  Should Match  regular expression  ${EMPTY}
     \  Verify grep  ${pattern}  ${type}  ${exp}
 
-Regexp Escape
-    ${escaped} =  Regexp Escape  f$o^o$b[a]r()?\\
-    Should Be Equal  ${escaped}  f\\$o\\^o\\$b\\[a\\]r\\(\\)\\?\\\\
-    Should Match Regexp  f$o^o$b[a]r()?\\  ${escaped}
-    @{patterns} =  Create List  $  ^  $  [  ]  so%me&te[]?*x*t
-    @{escaped} =  Regexp Escape  @{patterns}
-    Should Be True  @{escaped} == ['\\$', '\\^', '\\$', '\\[', '\\]', 'so\\%me\\&te\\[\\]\\?\\*x\\*t']
-
-
 *** Keywords ***
 Verify Grep
     [Arguments]  ${pattern}  ${pattern_type}  ${exp_result}  ${grep_text}=${TEXT}

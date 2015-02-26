@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -20,28 +20,23 @@ from itertools import chain
 
 from robot import utils
 from robot.errors import DataError
-from robot.variables import GLOBAL_VARIABLES, is_scalar_var
+from robot.libraries import STDLIBS, STDLIB_TO_DEPRECATED_MAP
 from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
+from robot.variables import GLOBAL_VARIABLES
 
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
 from .importer import Importer, ImportCache
 from .runkwregister import RUN_KW_REGISTER
-from .handlers import _XTimesHandler
 from .context import EXECUTION_CONTEXTS
 
 
-STDLIB_NAMES = set(('BuiltIn', 'Collections', 'DateTime', 'Dialogs', 'Easter',
-                    'OperatingSystem', 'Process', 'Remote', 'Reserved',
-                    'Screenshot', 'String', 'Telnet', 'XML'))
 IMPORTER = Importer()
 
 
 class Namespace:
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
-    _deprecated_libraries = {'BuiltIn': 'DeprecatedBuiltIn',
-                             'OperatingSystem': 'DeprecatedOperatingSystem'}
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
     def __init__(self, suite, variables, parent_variables, user_keywords,
@@ -62,11 +57,6 @@ class Namespace:
     def handle_imports(self):
         self._import_default_libraries()
         self._handle_imports(self._imports)
-
-    def _create_variables(self, suite, parent_vars, suite_variables=None):
-        if suite_variables is None:
-            suite_variables = suite.variables
-        return _VariableScopes(suite_variables, parent_vars)
 
     def _import_default_libraries(self):
         for name in self._default_libraries:
@@ -141,7 +131,8 @@ class Namespace:
         lib.start_suite()
         if self.test:
             lib.start_test()
-        self._import_deprecated_standard_libs(lib.name)
+        if name in STDLIB_TO_DEPRECATED_MAP:
+            self.import_library(STDLIB_TO_DEPRECATED_MAP[name])
 
     def _resolve_name(self, import_setting):
         name = import_setting.name
@@ -149,13 +140,13 @@ class Namespace:
             name = self.variables.replace_string(name)
         except DataError as err:
             self._raise_replacing_vars_failed(import_setting, err)
-        return self._get_path(name, import_setting.directory, import_setting.type)
+        return self._get_name(name, import_setting.directory, import_setting.type)
 
     def _raise_replacing_vars_failed(self, import_setting, err):
         raise DataError("Replacing variables from setting '%s' failed: %s"
                         % (import_setting.type, unicode(err)))
 
-    def _get_path(self, name, basedir, import_type):
+    def _get_name(self, name, basedir, import_type):
         if import_type == 'Library' and not self._is_library_by_path(name):
             return name.replace(' ', '')
         return utils.find_file(name, basedir, file_type=import_type)
@@ -168,10 +159,6 @@ class Namespace:
             return self.variables.replace_list(import_setting.args)
         except DataError as err:
             self._raise_replacing_vars_failed(import_setting, err)
-
-    def _import_deprecated_standard_libs(self, name):
-        if name in self._deprecated_libraries:
-            self.import_library(self._deprecated_libraries[name])
 
     def set_search_order(self, new_order):
         old_order = self._kw_store.search_order
@@ -262,27 +249,7 @@ class KeywordStore(object):
             handler = self._get_implicit_handler(name)
         if not handler:
             handler = self._get_bdd_style_handler(name)
-        if not handler:
-            handler = self._get_x_times_handler(name)
         return handler
-
-    def _get_x_times_handler(self, name):
-        if not self._is_old_x_times_syntax(name):
-            return None
-        return _XTimesHandler(self._get_handler('Repeat Keyword'), name)
-
-    def _is_old_x_times_syntax(self, name):
-        if not name.lower().endswith('x'):
-            return False
-        times = name[:-1].strip()
-        if is_scalar_var(times):
-            return True
-        try:
-            int(times)
-        except ValueError:
-            return False
-        else:
-            return True
 
     def _get_bdd_style_handler(self, name):
         for prefix in ['given ', 'when ', 'then ', 'and ', 'but ']:
@@ -304,12 +271,12 @@ class KeywordStore(object):
         return None
 
     def _get_handler_from_test_case_file_user_keywords(self, name):
-        if self.user_keywords.has_handler(name):
-            return self.user_keywords.get_handler(name)
+        if name in self.user_keywords.handlers:
+            return self.user_keywords.handlers[name]
 
     def _get_handler_from_resource_file_user_keywords(self, name):
-        found = [lib.get_handler(name) for lib in self.resources.values()
-                 if lib.has_handler(name)]
+        found = [lib.handlers[name] for lib in self.resources.values()
+                 if name in lib.handlers]
         if not found:
             return None
         if len(found) > 1:
@@ -319,8 +286,8 @@ class KeywordStore(object):
         self._raise_multiple_keywords_found(name, found)
 
     def _get_handler_from_library_keywords(self, name):
-        found = [lib.get_handler(name) for lib in self.libraries.values()
-                 if lib.has_handler(name)]
+        found = [lib.handlers[name] for lib in self.libraries.values()
+                 if name in lib.handlers]
         if not found:
             return None
         if len(found) > 1:
@@ -348,9 +315,10 @@ class KeywordStore(object):
         return [handler1, handler2]
 
     def _filter_stdlib_handler(self, handler1, handler2):
-        if handler1.library.orig_name in STDLIB_NAMES:
+        stdlibs_without_remote = STDLIBS - set(['Remote'])
+        if handler1.library.orig_name in stdlibs_without_remote:
             standard, custom = handler1, handler2
-        elif handler2.library.orig_name in STDLIB_NAMES:
+        elif handler2.library.orig_name in stdlibs_without_remote:
             standard, custom = handler2, handler1
         else:
             return [handler1, handler2]
@@ -391,17 +359,16 @@ class KeywordStore(object):
             yield '.'.join(tokens[:i]), '.'.join(tokens[i:])
 
     def _find_keywords(self, owner_name, name):
-        return [owner.get_handler(name)
+        return [owner.handlers[name]
                 for owner in chain(self.libraries.values(), self.resources.values())
-                if utils.eq(owner.name, owner_name) and owner.has_handler(name)]
+                if utils.eq(owner.name, owner_name) and name in owner.handlers]
 
     def _raise_multiple_keywords_found(self, name, found, implicit=True):
-        error = "Multiple keywords with name '%s' found.\n" % name
+        error = "Multiple keywords with name '%s' found" % name
         if implicit:
-            error += "Give the full name of the keyword you want to use.\n"
+            error += ". Give the full name of the keyword you want to use"
         names = sorted(handler.longname for handler in found)
-        error += "Found: %s" % utils.seq2str(names)
-        raise DataError(error)
+        raise DataError('\n    '.join([error+':'] + names))
 
 
 class KeywordRecommendationFinder(object):
@@ -441,14 +408,14 @@ class KeywordRecommendationFinder(object):
         """
         excluded = ['DeprecatedBuiltIn', 'DeprecatedOperatingSystem',
                     'Reserved']
-        handlers = [(None, utils.printable_name(handler_name, True))
-                    for handler_name in self.user_keywords.handlers.keys()]
+        handlers = [(None, utils.printable_name(handler.name, True))
+                    for handler in self.user_keywords.handlers]
         for library in chain(self.libraries.values(), self.resources.values()):
             if library.name not in excluded:
                 handlers.extend(
                     ((library.name,
-                      utils.printable_name(handler_name, code_style=True))
-                     for handler_name in library.handlers))
+                      utils.printable_name(handler.name, code_style=True))
+                     for handler in library.handlers))
         # sort handlers to ensure consistent ordering between Jython and Python
         #PY3: can't compare None with str
         #     ==> also libnames must at least be empty strings for sorting
@@ -458,12 +425,8 @@ class KeywordRecommendationFinder(object):
 class _VariableScopes:
 
     def __init__(self, suite_variables, parent_variables):
-        # suite and parent are None only when used by copy_all
-        if suite_variables is not None:
-            suite_variables.update(GLOBAL_VARIABLES)
-            self._suite = self.current = suite_variables
-        else:
-            self._suite = self.current = None
+        suite_variables.update(GLOBAL_VARIABLES)
+        self._suite = self.current = suite_variables
         self._parents = []
         if parent_variables is not None:
             self._parents.append(parent_variables.current)
@@ -472,18 +435,7 @@ class _VariableScopes:
         self._uk_handlers = []
 
     def __len__(self):
-        if self.current:
-            return len(self.current)
-        return 0
-
-    def copy_all(self):
-        vs = _VariableScopes(None, None)
-        vs._suite = self._suite
-        vs._test = self._test
-        vs._uk_handlers = self._uk_handlers[:]
-        vs._parents = self._parents[:]
-        vs.current = self.current
-        return vs
+        return len(self.current)
 
     def replace_list(self, items, replace_until=None):
         return self.current.replace_list(items, replace_until)
@@ -497,11 +449,11 @@ class _VariableScopes:
     def set_from_file(self, path, args, overwrite=False):
         variables = self._suite.set_from_file(path, args, overwrite)
         if self._test is not None:
-            self._test._set_from_file(variables, overwrite=True)
+            self._test.set_from_file(variables, overwrite=True)
         for varz in self._uk_handlers:
-            varz._set_from_file(variables, overwrite=True)
+            varz.set_from_file(variables, overwrite=True)
         if self._uk_handlers:
-            self.current._set_from_file(variables, overwrite=True)
+            self.current.set_from_file(variables, overwrite=True)
 
     def set_from_variable_table(self, rawvariables, overwrite=False):
         self._suite.set_from_variable_table(rawvariables, overwrite)
@@ -535,30 +487,34 @@ class _VariableScopes:
         self.current = self._uk_handlers.pop()
 
     def set_global(self, name, value):
-        GLOBAL_VARIABLES.__setitem__(name, value)
+        name, value = self._set_global_suite_or_test(GLOBAL_VARIABLES, name, value)
         for ns in EXECUTION_CONTEXTS.namespaces:
             ns.variables.set_suite(name, value)
 
     def set_suite(self, name, value):
-        self._suite.__setitem__(name, value)
+        name, value = self._set_global_suite_or_test(self._suite, name, value)
         self.set_test(name, value, False)
 
     def set_test(self, name, value, fail_if_no_test=True):
         if self._test is not None:
-            self._test.__setitem__(name, value)
+            name, value = self._set_global_suite_or_test(self._test, name, value)
         elif fail_if_no_test:
             raise DataError("Cannot set test variable when no test is started")
         for varz in self._uk_handlers:
             varz.__setitem__(name, value)
         self.current.__setitem__(name, value)
 
-    def keys(self):
-        return self.current.keys()
+    def _set_global_suite_or_test(self, variables, name, value):
+        variables[name] = value
+        # Avoid creating new list/dict objects in different scopes.
+        if name[0] != '$':
+            name = '$' + name[1:]
+            value = variables[name]
+        return name, value
 
-    def has_key(self, key):
-        return key in self.current
+    def __iter__(self):
+        return iter(self.current)
 
-    __contains__ = has_key
-
-    def contains(self, name, extended=False):
-        return self.current.contains(name, extended)
+    @property
+    def store(self):
+        return self.current.store

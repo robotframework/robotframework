@@ -179,15 +179,17 @@ fail. This behavior shortens test execution time and prevents
 subsequent keywords hanging or otherwise causing problems if the
 system under test is in unstable state. This has the drawback that often
 subsequent keywords would give more information about the state of the
-system.
+system. Hence Robot Framework offers several features to continue after
+failures.
 
-Before Robot Framework 2.5 the only way to handle failures so that
-test execution is not terminated immediately was using BuiltIn_ keywords
-:name:`Run Keyword And Ignore Error` and :name:`Run Keyword
-And Expect Error`. Using these keywords for this purpose often added
-extra complexity to test cases, and in Robot Framework 2.5 the
-following features were added to make continuing after failures
-easier.
+:name:`Run Keyword And Ignore Error` and :name:`Run Keyword And Expect Error` keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+BuiltIn_ keywords :name:`Run Keyword And Ignore Error` and :name:`Run
+Keyword And Expect Error` handle failures so that test execution is not
+terminated immediately. Though, using these keywords for this purpose
+often adds extra complexity to test cases, so the following features are
+worth considering to make continuing after failures easier.
 
 Special failures from keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -250,8 +252,6 @@ have finished, but so that logs and reports are created. Different ways how
 to accomplish this are explained below. In all these cases the remaining
 test cases are marked failed.
 
-.. Note:: Most of these features are new in Robot Framework 2.5.
-
 Pressing `Ctrl-C`
 ~~~~~~~~~~~~~~~~~
 
@@ -290,10 +290,6 @@ If option :option:`--exitonfailure` is used, test execution stops
 immediately if any `critical test`_ fails. Also the remaining tests
 are marked as failed.
 
-.. note:: Prior to Robot Framework 2.8, this behaviour was achieved by
-          using :option:`--runmode exitonfailure`. Option :option:`--runmode`
-          was deprecated in 2.8 and will be removed in the future.
-
 Stopping on parsing or execution error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -321,7 +317,3 @@ ends.
 It is also possible to skip teardowns when execution is stopped by using
 :option:`--skipteardownonexit` option. This can be useful if, for example,
 clean-up tasks take a lot of time.
-
-.. note:: Prior to Robot Framework 2.8, this behaviour was achieved by
-          using :option:`--runmode skipteardownonexit`. Option :option:`--runmode`
-          was deprecated in 2.8 and will be removed in the future.

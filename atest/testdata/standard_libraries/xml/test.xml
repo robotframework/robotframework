@@ -10,7 +10,7 @@
     </child>
     <child id="3" a2="xxx" a3="y"><grandchild><!-- c --><ggc/></grandchild></child>
     <another attr="value">
-        <child>text<!-- with comment --></child>
+        <child>nöŋ-äŝĉíï tëxt<!-- with cömmënt --></child>
     </another>
 </test>
 <!-- comment -->

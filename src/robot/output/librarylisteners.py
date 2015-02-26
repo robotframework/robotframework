@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -65,12 +65,10 @@ class _LibraryListenerProxy(ListenerProxy):
 
     def __init__(self, library):
         AbstractLoggerProxy.__init__(self, library.listener)
-        self.name = type(library).__name__
+        self.name = library.__class__.__name__
         self.version = self._get_version(library.listener)
-        self.is_java = self._is_java(library.listener)
         self.library_scope = library.scope
 
     def _get_method_names(self, name):
         names = ListenerProxy._get_method_names(self, name)
         return names + ['_' + name for name in names]
-

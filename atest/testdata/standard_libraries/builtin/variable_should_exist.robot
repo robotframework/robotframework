@@ -3,6 +3,7 @@ Variables         variables_to_verify.py
 
 *** Variables ***
 ${scalar}         Hi tellus
+${scalar 2}       Hello world
 
 *** Test Cases ***
 Variable Should Exist With Default Error Message
@@ -29,6 +30,11 @@ Variable Should Exist Using Escaped format
     Variable Should Exist    \${scalar}
     Variable Should Exist    \${non-existing}
 
+Variable Should Exist With Variables
+    ${name} =    Set Variable    scalar
+    Variable Should Exist    $${name}
+    Variable Should Exist    $${name} ${2}
+
 Variable Should Exist With Built In Variables
     Variable Should Exist    \${TEMPDIR}
     Variable Should Exist    \${/}
@@ -45,9 +51,13 @@ Variable Should Exist With Extended Variable Syntax And Missing Object
     [Documentation]    FAIL Variable \${missing.missing} does not exist.
     Variable Should Exist    \${missing.missing}
 
-Variable Should Exist With Invalid name
+Variable Should Exist With Invalid name 1
     [Documentation]    FAIL Invalid variable syntax 'invalid'.
     Variable Should Exist    invalid
+
+Variable Should Exist With Invalid name 2
+    [Documentation]    FAIL Invalid variable syntax ''.
+    Variable Should Exist    \
 
 Variable Should Not Exist With Default error message
     [Documentation]    FAIL Variable \${scalar} exists.
@@ -85,9 +95,18 @@ Variable Should Not Exist Using Escaped format
     Variable Should Not Exist    \${non-existing}
     Variable Should Not Exist    \${scalar}
 
-Variable Should Not Exist With Invalid name
+Variable Should Not Exist With Variables
+    ${name} =    Set Variable    nonex
+    Variable Should Not Exist    $${name}
+    Variable Should Not Exist    $${name}${name}${42}
+
+Variable Should Not Exist With Invalid name 1
     [Documentation]    FAIL Invalid variable syntax 'invalid'.
     Variable Should Not Exist    invalid
+
+Variable Should Not Exist With Invalid name 2
+    [Documentation]    FAIL Invalid variable syntax ''.
+    Variable Should Not Exist    \
 
 Variable Should Exist In User Keyword When Variable Name Is Argument And Variable Exists
     Set Test Variable    ${foo}    \${bar}

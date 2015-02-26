@@ -9,7 +9,8 @@ from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 from robot.output import LOGGER
 
-LOGGER.disable_automatic_console_logger()
+
+LOGGER.unregister_console_logger()
 
 
 class _MockLogger(object):
@@ -533,7 +534,7 @@ class TestPopulatingComments(_PopulatorTest):
                                         ['Variables', 'varz.py'],
                                         ['# between values'],
                                         ['...', 'arg'],
-                                        ['Meta: metaname', 'metavalue'],
+                                        ['Metadata', 'metaname', 'metavalue'],
                                         ['### last line is commented'],
                                         ])
         self._assert_no_parsing_errors()

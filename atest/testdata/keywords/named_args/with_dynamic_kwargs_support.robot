@@ -27,8 +27,6 @@ Non working named combinations with kwargs
     got multiple values for argument 'b'.             a      b      b=b
     expected 1 to 2 non-keyword arguments, got 3.     a      b      c
     got multiple values for argument 'a'.             a      a=a
-    got multiple values for argument 'c'.             a      b      c=c    c=c
-    got multiple values for argument 'd'.             a      c=c    d=d    d=d
 
 Named combinations with varargs and kwargs
     [template]    Execute working named vararg and kwarg combination with result
@@ -57,8 +55,22 @@ Non working named combinations with varargs and kwargs
     got multiple values for argument 'a'.             a      b      c      a=a
     got multiple values for argument 'a'.             a      b      c=c    a=a
     got multiple values for argument 'b'.             a      b      c=c    b=b
-    got multiple values for argument 'c'.             a      b      c=c    c=c
-    got multiple values for argument 'd'.             a      c=c    d=d    d=d
+
+Multiple named with same name is allowed and last has precedence 1
+    [setup]    Set Test Variable    ${c}    c
+    [template]    Execute working named kwarg combination with result
+    a, b, c:e          a    c=c       b=b       c=d       c=e
+    a, c:2, d:3        a    c=1       d=1       d=2       d=3       c=2
+    a, c:5             a    ${c}=1    ${c}=2    ${c}=3    ${c}=4    c=5
+    a, c:5             a    c=1       c=2       c=3       c=4       ${c.lower()}=5
+
+Multiple named with same name is allowed and last has precedence 2
+    [setup]    Set Test Variable    ${c}    c
+    [template]    Execute working named vararg and kwarg combination with result
+    a, b, c:d          a    b      c=c    c=d
+    a, c:2, d:3        a    c=1    d=1    d=2    c=2    d=3
+    a, c:5             a    ${c}=1    ${c}=2    ${c}=3    ${c}=4    c=5
+    a, c:5             a    c=1       c=2       c=3       ${c}=4    ${c + '${TESTNAME}'[${100}:]}=5
 
 *** Keywords ***
 Execute working named kwarg combination with result

@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -72,10 +72,17 @@ def _count_virtual_line_length(line):
 
 
 def format_assign_message(variable, value, cut_long=True):
-    value = unic(value) if variable.startswith('$') else seq2str2(value)
+    formatter = {'$': unic, '@': seq2str2, '&': _dict_to_str}[variable[0]]
+    value = formatter(value)
     if cut_long and len(value) > _MAX_ASSIGN_LENGTH:
         value = value[:_MAX_ASSIGN_LENGTH] + '...'
     return '%s = %s' % (variable, value)
+
+def _dict_to_str(d):
+    if not d:
+        return '{ }'
+    return '{ %s }' % ' | '.join('%s=%s' % (unic(k), unic(v))
+                                 for k, v in d.items())
 
 
 def get_console_length(text):

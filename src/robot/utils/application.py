@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ class Application(object):
             return self._report_error('Execution stopped by user.',
                                       rc=STOPPED_BY_USER)
         except:
-            error, details = get_error_details()
+            error, details = get_error_details(exclude_robot_traces=False)
             return self._report_error('Unexpected error: %s' % error,
                                       details, rc=FRAMEWORK_ERROR)
         else:

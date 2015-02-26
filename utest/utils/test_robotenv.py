@@ -4,8 +4,8 @@ import unittest
 import os
 
 from robot.utils.asserts import assert_equals, assert_not_none, assert_none, assert_true
-from robot.utils import (get_env_var, set_env_var, del_env_var, get_env_vars,
-                         decode_from_system, encode_to_system)
+from robot.utils import get_env_var, set_env_var, del_env_var, get_env_vars
+
 
 TEST_VAR = 'TeST_EnV_vAR'
 TEST_VAL = 'original value'
@@ -40,8 +40,6 @@ class TestRobotEnv(unittest.TestCase):
 
     def test_get_set_del_non_ascii_vars(self):
         set_env_var(NON_ASCII_VAR, NON_ASCII_VAL)
-        for k, v in os.environ.items():
-            assert_true(isinstance(k, str) and isinstance(v, str))
         assert_equals(get_env_var(NON_ASCII_VAR), NON_ASCII_VAL)
         assert_equals(del_env_var(NON_ASCII_VAR), NON_ASCII_VAL)
         assert_none(get_env_var(NON_ASCII_VAR))

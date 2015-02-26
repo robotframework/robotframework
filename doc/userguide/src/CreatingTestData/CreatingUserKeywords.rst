@@ -71,7 +71,7 @@ this section.
    Specifies `user keyword return values`_.
 
 `[Teardown]`:setting:
-   Specify `user keyword teardown`_. Available from Robot Framework 2.6 onwards.
+   Specify `user keyword teardown`_.
 
 `[Timeout]`:setting:
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
@@ -643,8 +643,7 @@ demonstrates returning conditionally inside a `for loop`_.
 User keyword teardown
 ---------------------
 
-Starting from Robot Framework 2.6, also user keywords may have a teardown.
-It is defined using :setting:`[Teardown]` setting.
+User keywords may have a teardown defined using :setting:`[Teardown]` setting.
 
 Keyword teardown works much in the same way as a `test case
 teardown`__.  Most importantly, the teardown is always a single

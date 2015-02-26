@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class _BaseSettings(object):
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
                  'ReRunFailed'      : ('rerunfailed', 'NONE'),
-                 'DeprecatedRunFailed': ('runfailed', 'NONE'),
+                 'DeprecatedRunFailed': ('runfailed', 'NONE'),  # TODO: Remove in RF 2.10/3.0.
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -45,7 +45,6 @@ class _BaseSettings(object):
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
                  'XUnit'            : ('xunit', None),
-                 'DeprecatedXUnit'  : ('xunitfile', None),
                  'SplitLog'         : ('splitlog', False),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
@@ -60,7 +59,7 @@ class _BaseSettings(object):
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
-                 'NoStatusRC'       : ('nostatusrc', False),
+                 'StatusRC'         : ('statusrc', True),
                  'MonitorColors'    : ('monitorcolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
@@ -81,8 +80,6 @@ class _BaseSettings(object):
                 value = [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
-        if self['DeprecatedXUnit']:
-            self['XUnit'] = self['DeprecatedXUnit']
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
@@ -90,8 +87,16 @@ class _BaseSettings(object):
         self._opts[name] = value
 
     def _process_value(self, name, value):
-        if name in ['ReRunFailed', 'DeprecatedRunFailed']:
+        if name == 'ReRunFailed':
             return gather_failed_tests(value)
+        if name == 'DeprecatedRunFailed':
+            if value.upper() != 'NONE':
+                LOGGER.warn('Option --runfailed is deprecated and will be '
+                            'removed in the future. Use --rerunfailed instead.')
+            return gather_failed_tests(value)
+        if name == 'DeprecatedMerge' and value is True:
+            LOGGER.warn('Option --rerunmerge is deprecated and will be '
+                        'removed in the future. Use --merge instead.')
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):
@@ -108,9 +113,6 @@ class _BaseSettings(object):
             return [self._format_tag_patterns(v) for v in value]
         if name in self._output_opts and (not value or value.upper() == 'NONE'):
             return None
-        if name == 'DeprecatedXUnit':
-            LOGGER.warn('Option --xunitfile is deprecated. Use --xunit instead.')
-            return self._process_value('XUnit', value)
         if name == 'OutputDir':
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
@@ -125,10 +127,6 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'Randomize':
             return self._process_randomize_value(value)
-        if name == 'RunMode':
-            LOGGER.warn('Option --runmode is deprecated in Robot Framework 2.8 '
-                        'and will be removed in the future.')
-            return [self._process_runmode_value(v) for v in value]
         if name == 'RemoveKeywords':
             self._validate_remove_keywords(value)
         if name == 'FlattenKeywords':
@@ -179,14 +177,6 @@ class _BaseSettings(object):
     def _raise_invalid_option_value(self, option_name, given_value):
         raise DataError("Option '%s' does not support value '%s'."
                         % (option_name, given_value))
-
-    def _process_runmode_value(self, original_value):
-        formatted_value = original_value.lower()
-        if formatted_value not in ('exitonfailure', 'skipteardownonexit',
-                                   'dryrun', 'random:test', 'random:suite',
-                                   'random:all'):
-            self._raise_invalid_option_value('--runmode', original_value)
-        return formatted_value
 
     def __getitem__(self, name):
         if name not in self._opts:
@@ -356,7 +346,7 @@ class _BaseSettings(object):
 
     @property
     def status_rc(self):
-        return not self['NoStatusRC']
+        return self['StatusRC']
 
     @property
     def xunit_skip_noncritical(self):
@@ -398,7 +388,6 @@ class RobotSettings(_BaseSettings):
                        'ExitOnError'        : ('exitonerror', False),
                        'SkipTeardownOnExit' : ('skipteardownonexit', False),
                        'Randomize'          : ('randomize', 'NONE'),
-                       'RunMode'            : ('runmode', []),
                        'RunEmptySuite'      : ('runemptysuite', False),
                        'WarnOnSkipped'      : ('warnonskippedfiles', False),
                        'Variables'          : ('variable', []),
@@ -451,23 +440,18 @@ class RobotSettings(_BaseSettings):
 
     @property
     def randomize_suites(self):
-        return (self['Randomize'][0] in ('suites', 'all') or
-                any(mode in ('random:suite', 'random:all') for mode in self['RunMode']))
+        return self['Randomize'][0] in ('suites', 'all')
 
     @property
     def randomize_tests(self):
-        return (self['Randomize'][0] in ('tests', 'all') or
-                any(mode in ('random:test', 'random:all') for mode in self['RunMode']))
+        return self['Randomize'][0] in ('tests', 'all')
 
     @property
     def dry_run(self):
-        return (self['DryRun'] or
-                any(mode == 'dryrun' for mode in self['RunMode']))
-
+        return self['DryRun']
     @property
     def exit_on_failure(self):
-        return (self['ExitOnFailure'] or
-                any(mode == 'exitonfailure' for mode in self['RunMode']))
+        return self['ExitOnFailure']
 
     @property
     def exit_on_error(self):
@@ -475,8 +459,7 @@ class RobotSettings(_BaseSettings):
 
     @property
     def skip_teardown_on_exit(self):
-        return (self['SkipTeardownOnExit'] or
-                any(mode == 'skipteardownonexit' for mode in self['RunMode']))
+        return self['SkipTeardownOnExit']
 
     @property
     def log_level(self):
@@ -499,8 +482,8 @@ class RebotSettings(_BaseSettings):
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
-                       'ReRunMerge'        : ('rerunmerge', False),
-                       'Merge'             : ('merge', False)}
+                       'Merge'             : ('merge', False),
+                       'DeprecatedMerge'   : ('rerunmerge', False)}
 
     def _output_disabled(self):
         return False
@@ -557,7 +540,7 @@ class RebotSettings(_BaseSettings):
 
     @property
     def merge(self):
-        return self['Merge'] or self['ReRunMerge']
+        return self['Merge'] or self['DeprecatedMerge']
 
     @property
     def console_logger_config(self):

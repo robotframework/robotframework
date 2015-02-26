@@ -1,11 +1,11 @@
 import unittest
 
 from robot.variables import VariableSplitter, VariableIterator
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equals, assert_false, assert_true
 
 
 class TestVariableSplitter(unittest.TestCase):
-    _identifiers = ['$','@','%','&','*']
+    _identifiers = ['$', '@', '%', '&', '*']
 
     def test_empty(self):
         self._test('')
@@ -15,6 +15,10 @@ class TestVariableSplitter(unittest.TestCase):
         for inp in ['hello world', '$hello', '{hello}', '$\\{hello}',
                     '${hello', '$hello}', 'a bit longer sting here']:
             self._test(inp)
+
+    def test_not_string(self):
+        self._test(42)
+        self._test([1, 2, 3])
 
     def test_backslashes(self):
         for inp in ['\\', '\\\\', '\\\\\\\\\\', '\\hello\\\\world\\\\\\']:
@@ -71,7 +75,7 @@ class TestVariableSplitter(unittest.TestCase):
                 ('\\${esc} ${not}', '${not}', len('\\${esc} ')),
                 ('\\\\\\${esc} \\\\${not}', '${not}',
                  len('\\\\\\${esc} \\\\')),
-                ('\\${esc}\\\\${not}${n2}', '${not}', len('\\${esc}\\\\')) ]:
+                ('\\${esc}\\\\${not}${n2}', '${not}', len('\\${esc}\\\\'))]:
             self._test(inp, var, start)
 
     def test_internal_vars(self):
@@ -84,27 +88,42 @@ class TestVariableSplitter(unittest.TestCase):
                 ('${xx} ${${hi${hi}}}', '${xx}', 0),
                 ('${\\${hi${hi}}}', '${\\${hi${hi}}}', 0),
                 ('\\${${hi${hi}}}', '${hi${hi}}', len('\\${')),
-                ('\\${\\${hi\\\\${hi}}}', '${hi}', len('\\${\\${hi\\\\')) ]:
+                ('\\${\\${hi\\\\${hi}}}', '${hi}', len('\\${\\${hi\\\\'))]:
             self._test(inp, var, start, internal=var.count('{') > 1)
 
-    def test_index(self):
+    def test_list_index(self):
         self._test('@{x}[0]', '@{x}', index='0')
         self._test('.@{x}[42]..', '@{x}', start=1, index='42')
         self._test('@{x}[]', '@{x}', index='')
         self._test('@{x}[inv]', '@{x}', index='inv')
         self._test('@{x}[0', '@{x}')
         self._test('@{x}}[0]', '@{x}')
-        self._test('${x}[0]', '${x}')
-        self._test('%{x}[0]', '%{x}')
-        self._test('*{x}[0]', '*{x}')
-        self._test('&{x}[0]', '&{x}')
 
-    def test_index_with_iternal_vars(self):
+    def test_list_index_with_internal_vars(self):
         self._test('@{x}[${i}]', '@{x}', index='${i}')
         self._test('xx @{x}[${i}] ${xyz}', '@{x}', start=3, index='${i}')
         self._test('@@@@@{X{X}[${${i}-${${${i}}}}]', '@{X{X}', start=4,
                    index='${${i}-${${${i}}}}')
         self._test('@{${i}}[${j{}]', '@{${i}}', index='${j{}', internal=True)
+
+    def test_dict_index(self):
+        self._test('&{x}[key]', '&{x}', index='key')
+        self._test('.&{x}[42]..', '&{x}', start=1, index='42')
+        self._test('&{x}[]', '&{x}', index='')
+        self._test('&{x}[k', '&{x}')
+        self._test('&{x}}[0]', '&{x}')
+
+    def test_dict_index_with_internal_vars(self):
+        self._test('&{x}[${i}]', '&{x}', index='${i}')
+        self._test('xx &{x}[${i}] ${xyz}', '&{x}', start=3, index='${i}')
+        self._test('&&&&&{X{X}[${${i}-${${${i}}}}]', '&{X{X}', start=4,
+                   index='${${i}-${${${i}}}}')
+        self._test('&{${i}}[${j{}]', '&{${i}}', index='${j{}', internal=True)
+
+    def test_no_index_with_others_vars(self):
+        self._test('${x}[0]', '${x}')
+        self._test('%{x}[0]', '%{x}')
+        self._test('*{x}[0]', '*{x}')
 
     def test_custom_identifiers(self):
         for inp, start in [('@{x}${y}', 4),
@@ -142,20 +161,42 @@ class TestVariableSplitter(unittest.TestCase):
         if variable is None:
             identifier = base = None
             start = end = -1
+            is_var = is_list_var = is_dict_var = False
         else:
             identifier = variable[0]
             base = variable[2:-1]
             end = start + len(variable)
+            is_var = inp == variable
+            is_list_var = is_var and inp[0] == '@'
+            is_dict_var = is_var and inp[0] == '&'
             if index is not None:
                 end += len(index) + 2
+                is_var = inp == '%s[%s]' % (variable, index)
         res = VariableSplitter(inp, identifiers)
         assert_equals(res.base, base, "'%s' base" % inp)
         assert_equals(res.start, start, "'%s' start" % inp)
         assert_equals(res.end, end, "'%s' end" % inp)
-        assert_equals(res.identifier, identifier, "'%s' indentifier" % inp)
+        assert_equals(res.identifier, identifier, "'%s' identifier" % inp)
         assert_equals(res.index, index, "'%s' index" % inp)
         assert_equals(res._may_have_internal_variables, internal,
                       "'%s' internal" % inp)
+        assert_equals(res.is_variable(), is_var)
+        assert_equals(res.is_list_variable(), is_list_var)
+        assert_equals(res.is_dict_variable(), is_dict_var)
+
+    def test_is_variable(self):
+        for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',
+                   '${var}xx}', '${x}${y}']:
+            assert_false(VariableSplitter(no).is_variable())
+        for yes in ['${var}', '${var${}', '${var${internal}}', '@{var}',
+                    '@{var}[0]']:
+            assert_true(VariableSplitter(yes).is_variable())
+
+    def test_is_list_variable(self):
+        for no in ['', 'xxx', '${var} not alone', '\\${notvat}', '\\\\${var}',
+                   '${var}xx}', '${x}${y}', '@{list}[0]']:
+            assert_false(VariableSplitter(no).is_list_variable())
+        assert_true(VariableSplitter('@{list}').is_list_variable())
 
 
 class TestVariableIterator(unittest.TestCase):
@@ -163,11 +204,13 @@ class TestVariableIterator(unittest.TestCase):
     def test_no_variables(self):
         iterator = VariableIterator('no vars here', identifiers='$')
         assert_equals(list(iterator), [])
+        assert_equals(bool(iterator), False)
         assert_equals(len(iterator), 0)
 
     def test_one_variable(self):
         iterator = VariableIterator('one ${var} here', identifiers='$')
         assert_equals(list(iterator), [('one ', '${var}', ' here')])
+        assert_equals(bool(iterator), True)
         assert_equals(len(iterator), 1)
 
     def test_multiple_variables(self):
@@ -175,12 +218,15 @@ class TestVariableIterator(unittest.TestCase):
         assert_equals(list(iterator), [('', '${1}', ' @{2} and %{3}'),
                                        (' ', '@{2}', ' and %{3}'),
                                        (' and ', '%{3}', '')])
+        assert_equals(bool(iterator), True)
         assert_equals(len(iterator), 3)
 
     def test_can_be_iterated_many_times(self):
         iterator = VariableIterator('one ${var} here', identifiers='$')
         assert_equals(list(iterator), [('one ', '${var}', ' here')])
         assert_equals(list(iterator), [('one ', '${var}', ' here')])
+        assert_equals(bool(iterator), True)
+        assert_equals(bool(iterator), True)
         assert_equals(len(iterator), 1)
         assert_equals(len(iterator), 1)
 

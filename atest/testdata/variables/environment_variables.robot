@@ -2,12 +2,12 @@
 Documentation   %{PATH} used in suite documentation
 Suite Setup     Set Environment Variable  THIS_ENV_VAR_IS_SET  Env var value
 Default Tags    %{PATH}
-Meta: PATH      %{PATH}
+Metadata        PATH    %{PATH}
 Library         OperatingSystem
 
 *** Variables ***
-${PATH}  %{PATH}
-@{PATH}  %{PATH}
+${SCALAR PATH}  %{PATH}
+@{LIST PATH}    %{PATH}
 
 *** Test Cases ***
 Environment Variables In Keyword Argument
@@ -32,9 +32,6 @@ Environment Variable With Internal Variables
     ${normal_var} =  Set Variable  IS_SET
     Should Be Equal  %{%{yet_another_env_var}_${normal_var}}  Env var value
 
-Leading And Trailing Spaces Are Ignored Environment Variable Name
-    Should Be Equal  %{ THIS_ENV_VAR_IS_SET }  Env var value
-
 Non-Existing Environment Variable
     [Documentation]  FAIL Environment variable '%{NON_EXISTING}' not found.
     Log  %{NON_EXISTING}
@@ -48,10 +45,15 @@ Environment Variables Are Not Case Sensitive On Windows
     [Documentation]  On Windows case is not sensitive.
     Log  %{this_env_var_is_set}
 
-Environment Variables Are Space Sensitive
+Environment Variables Are Space Sensitive 1
     [Documentation]  FAIL Environment variable '%{THIS ENV VAR IS SET}' not found. Did you mean:
     ...    ${SPACE * 4}\%{THIS_ENV_VAR_IS_SET}
     Log  %{THIS ENV VAR IS SET}
+
+Environment Variables Are Space Sensitive 2
+    [Documentation]  FAIL Environment variable '%{ THIS_ENV_VAR_IS_SET }' not found. Did you mean:
+    ...    ${SPACE * 4}\%{THIS_ENV_VAR_IS_SET}
+    Log  %{ THIS_ENV_VAR_IS_SET }
 
 Environment Variables Are Underscore Sensitive
     [Documentation]  FAIL Environment variable '%{TH_IS_ENVVAR_IS_SET}' not found. Did you mean:
@@ -59,10 +61,10 @@ Environment Variables Are Underscore Sensitive
     Log  %{TH_IS_ENVVAR_IS_SET}
 
 Environment Variables In Variable Table
-    Should Contain  ${PATH}  ${:}
-    Should Contain  @{PATH}[0]  ${:}
-    Should Be Equal  ${PATH}  %{PATH}
-    Should Be Equal  @{PATH}[0]  %{PATH}
+    Should Contain  ${SCALAR PATH}  ${:}
+    Should Contain  @{LIST PATH}[0]  ${:}
+    Should Be Equal  ${SCALAR PATH}  %{PATH}
+    Should Be Equal  @{LIST PATH}[0]  %{PATH}
 
 Environment Variables In Settings Table
     Should Contain  @{TEST_TAGS}[0]  ${:}
@@ -80,9 +82,9 @@ Environment Variables In User Keyword Metadata
 Escaping Environment Variables
     Should Be Equal  \%{THIS_IS_NOT_ENV_VAR}  %\{THIS_IS_NOT_ENV_VAR}
 
-Empty Environment Variable Is No Recognized
-    Should Be Equal  %{}  \%{}
-    Should Be Equal  %{ }  \%{ }
+Empty Environment Variable
+    [Documentation]    FAIL    Invalid variable name '%{}'.
+    Log  %{}
 
 *** Keywords ***
 UK With Environment Variables In Metadata
@@ -90,4 +92,3 @@ UK With Environment Variables In Metadata
     [Documentation]  %{THIS_ENV_VAR_IS_SET} in a uk doc
     Should Contain  ${mypath}  ${:}
     [Return]  %{THIS_ENV_VAR_IS_SET}
-

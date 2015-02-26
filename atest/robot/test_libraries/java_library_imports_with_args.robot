@@ -17,7 +17,7 @@ Default values
 
 Variables containing objects
     MandatoryArgs  42  The name of the JavaObject
-    MandatoryArgs  {key=value}  True
+    MandatoryArgs  {key: value}  True
 
 Too Few Arguments
     [Template]  Library import should have failed

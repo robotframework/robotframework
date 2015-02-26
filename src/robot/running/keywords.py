@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,8 +14,11 @@
 
 from six import integer_types, text_type as unicode
 
-from robot.utils import (format_assign_message, get_elapsed_time,
-                         get_error_message, get_timestamp, plural_or_not, frange)
+from six.moves import range
+
+from robot.utils import (format_assign_message, frange, get_elapsed_time,
+                         get_error_message, get_timestamp, plural_or_not,
+                         type_name)
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           HandlerExecutionFailed)
@@ -127,11 +130,13 @@ class Keyword(_BaseKeyword):
         self.timeout = getattr(handler, 'timeout', '')
         self.starttime = get_timestamp()
         context.start_keyword(self)
-        if self.doc.startswith('*DEPRECATED*'):
-            msg = self.doc.replace('*DEPRECATED*', '', 1).strip()
-            name = self.name.split('} = ', 1)[-1]  # Remove possible variable
-            context.warn("Keyword '%s' is deprecated. %s" % (name, msg))
+        self._warn_if_deprecated(handler.longname, handler.shortdoc, context)
         return handler
+
+    def _warn_if_deprecated(self, name, doc, context):
+        if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
+            message = ' ' + doc.split('*', 2)[-1].strip()
+            context.warn("Keyword '%s' is deprecated.%s" % (name, message))
 
     def _get_name(self, handler_longname):
         if not self.assign:
@@ -141,6 +146,7 @@ class Keyword(_BaseKeyword):
 
     def _run(self, handler, context):
         try:
+            self._variable_assigner = VariableAssigner(self.assign)
             return handler.run(context, self.args[:])
         except ExecutionFailed:
             raise
@@ -162,7 +168,7 @@ class Keyword(_BaseKeyword):
         if error:
             return_value = error.return_value
         try:
-            VariableAssigner(self.assign).assign(context, return_value)
+            self._variable_assigner.assign(context, return_value)
         except DataError as err:
             self.status = 'FAIL'
             msg = unicode(err)
@@ -291,8 +297,8 @@ class ForLoop(_BaseKeyword):
             raise DataError('Converting argument of FOR IN RANGE failed: %s'
                             % get_error_message())
         if not 1 <= len(items) <= 3:
-            raise DataError('FOR IN RANGE expected 1-3 arguments, '
-                            'got %d instead.' % len(items))
+            raise DataError('FOR IN RANGE expected 1-3 arguments, got %d.'
+                            % len(items))
         return frange(*items)
 
     def _to_number_with_arithmetics(self, item):
@@ -309,7 +315,7 @@ class ForLoop(_BaseKeyword):
                 pass
         number = eval(item, {})
         if not isinstance(number, integer_types + (float, )):
-            raise TypeError("Expected number, got '%s' instead." % item)
+            raise TypeError("Expected number, got %s." % type_name(item))
         return number
 
 

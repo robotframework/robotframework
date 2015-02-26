@@ -1,28 +1,27 @@
 class _BaseLib:
 
     def __init__(self):
-        self.registered = {}
+        self.registered = set()
 
     def register(self, name):
-        self.registered[name] = None
+        self.registered.add(name)
 
     def should_be_registered(self, *expected):
-        exp = dict([ (name, None) for name in expected ])
-        if self.registered != exp:
-            raise AssertionError('Wrong registered: %s != %s' \
-                % (list(self.registered.keys()), list(exp.keys())))
+        if self.registered != set(expected):
+            raise AssertionError('Wrong registered: %s != %s'
+                                 % (sorted(self.registered), sorted(expected)))
 
 
 class Global(_BaseLib):
     ROBOT_LIBRARY_SCOPE = 'global'
-    count = 0
+    initializations = 0
 
     def __init__(self):
-        Global.count += 1
+        Global.initializations += 1
         _BaseLib.__init__(self)
 
     def should_be_registered(self, *expected):
-        if self.count != 1:
+        if self.initializations != 1:
             raise AssertionError("Global library initialized more than once.")
         _BaseLib.should_be_registered(self, *expected)
 

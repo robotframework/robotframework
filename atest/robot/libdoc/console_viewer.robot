@@ -30,9 +30,9 @@ Show whole library
     Should Contain Keyword    Get Value From User    message, default_value=, hidden=False
     ...    Pauses test execution and asks user to input a value.
     Should Contain Keyword    Pause Execution    message=Test execution paused. Press OK to continue.
-    ...   Pauses test execution until user clicks `Ok` button.
+    ...   Pauses test execution until user clicks ``Ok`` button.
     ...   ${EMPTY}
-    ...   `message` is the message shown in the dialog.
+    ...   ``message`` is the message shown in the dialog.
 
 Show intro only
     ${output}=    Run Libdoc    Telnet SHOW intro

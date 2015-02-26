@@ -57,19 +57,33 @@ class TestArgumentParserInit(unittest.TestCase):
     def setUp(self):
         self.ap = ArgumentParser(USAGE)
 
+    def assert_long_opts(self, expected, ap=None):
+        expected += ['no' + e for e in expected if not e.endswith('=')]
+        long_opts = (ap or self.ap)._long_opts
+        assert_equals(sorted(long_opts), sorted(expected))
+
+    def assert_short_opts(self, expected, ap=None):
+        assert_equals((ap or self.ap)._short_opts, expected)
+
+    def assert_multi_opts(self, expected, ap=None):
+        assert_equals((ap or self.ap)._multi_opts, expected)
+
+    def assert_flag_opts(self, expected, ap=None):
+        assert_equals((ap or self.ap)._flag_opts, expected)
+
     def test_short_options(self):
-        assert_equals(self.ap._short_opts, 'd:r:E:v:N:tTh?')
+        self.assert_short_opts('d:r:E:v:N:tTh?')
 
     def test_long_options(self):
-        expected = ['reportdir=', 'reportfile=', 'escape=', 'variable=',
-                    'name=', 'toggle', 'help', 'version']
-        assert_equals(self.ap._long_opts, expected)
+        self.assert_long_opts(['reportdir=', 'reportfile=', 'escape=',
+                               'variable=', 'name=', 'toggle', 'help',
+                               'version'])
 
     def test_multi_options(self):
-        assert_equals(self.ap._multi_opts, ['escape', 'variable'])
+        self.assert_multi_opts(['escape', 'variable'])
 
-    def test_toggle_options(self):
-        assert_equals(self.ap._toggle_opts, ['toggle', 'help', 'version'])
+    def test_flag_options(self):
+        self.assert_flag_opts(['toggle', 'help', 'version'])
 
     def test_options_must_be_indented_by_1_to_four_spaces(self):
         ap = ArgumentParser('''Name
@@ -82,22 +96,30 @@ class TestArgumentParserInit(unittest.TestCase):
      -i --ignored
                      --not-in-either
     --included  back in four space indentation''')
-        assert_equals(ap._long_opts, ['opt1', 'opt2', 'opt3=', 'included'])
+        self.assert_long_opts(['opt1', 'opt2', 'opt3=', 'included'], ap)
 
     def test_case_insensitive_long_options(self):
         ap = ArgumentParser(' -f --foo\n -B --BAR\n')
-        assert_equals(ap._short_opts, 'fB')
-        assert_equals(ap._long_opts, ['foo','bar'])
+        self.assert_short_opts('fB', ap)
+        self.assert_long_opts(['foo', 'bar'], ap)
 
     def test_same_option_multiple_times(self):
-        for my_usage in [' --foo\n --foo\n',
-                         ' --foo\n -f --Foo\n',
-                         ' -x --foo xxx\n -y --Foo yyy\n',
-                         ' -f --foo\n -f --bar\n']:
-            assert_raises(FrameworkError, ArgumentParser, my_usage)
+        for usage in [' --foo\n --foo\n',
+                      ' --foo\n -f --Foo\n',
+                      ' -x --foo xxx\n -y --Foo yyy\n',
+                      ' -f --foo\n -f --bar\n']:
+            assert_raises(FrameworkError, ArgumentParser, usage)
         ap = ArgumentParser(' -f --foo\n -F --bar\n')
-        assert_equals(ap._short_opts, 'fF')
-        assert_equals(ap._long_opts, ['foo','bar'])
+        self.assert_short_opts('fF', ap)
+        self.assert_long_opts(['foo', 'bar'], ap)
+
+    def test_same_option_multiple_times_with_no_prefix(self):
+        for usage in [' --foo\n --nofoo\n',
+                      ' --nofoo\n --foo\n'
+                      ' --nose size\n --se\n']:
+            assert_raises(FrameworkError, ArgumentParser, usage)
+        ap = ArgumentParser(' --foo value\n --nofoo value\n')
+        self.assert_long_opts(['foo=', 'nofoo='], ap)
 
 
 class TestArgumentParserParseArgs(unittest.TestCase):
@@ -110,26 +132,49 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         self.assertRaises(DataError, self.ap.parse_args, inargs)
 
     def test_single_options(self):
-        inargs = '-d reports --reportfile report.html -T arg'.split()
+        inargs = '-d reports --reportfile reps.html -T arg'.split()
         opts, args = self.ap.parse_args(inargs)
-        assert_equals(opts, {'reportdir':'reports', 'reportfile':'report.html',
-                             'variable':[], 'name':None, 'toggle': True})
+        assert_equals(opts, {'reportdir': 'reports', 'reportfile': 'reps.html',
+                             'variable': [], 'name': None, 'toggle': True})
 
     def test_multi_options(self):
         inargs = '-v a:1 -v b:2 --name my_name --variable c:3 arg'.split()
         opts, args = self.ap.parse_args(inargs)
-        assert_equals(opts, {'variable':['a:1','b:2','c:3'], 'name':'my_name',
-                             'reportdir':None, 'reportfile':None,
-                             'toggle': False})
+        assert_equals(opts, {'variable': ['a:1','b:2','c:3'], 'name':'my_name',
+                             'reportdir': None, 'reportfile': None,
+                             'toggle': None})
         assert_equals(args, ['arg'])
 
-    def test_toggle_options(self):
-        for inargs, exp in [('arg', False),
-                            ('--toggle arg', True),
-                            ('--toggle --name whatever -t arg', False),
-                            ('-t -T --toggle arg', True)]:
-            opts, args = self.ap.parse_args(inargs.split())
-            assert_equals(opts['toggle'], exp)
+    def test_flag_options(self):
+        for inargs, exp in [('', None),
+                            ('--name whatever', None),
+                            ('--toggle', True),
+                            ('-T', True),
+                            ('--toggle --name whatever -t', True),
+                            ('-t -T --toggle', True),
+                            ('--notoggle', False),
+                            ('--notoggle --name xxx --notoggle', False),
+                            ('--toggle --notoggle', False),
+                            ('-t -t -T -T --toggle -T --notoggle', False),
+                            ('--notoggle --toggle --notoggle', False),
+                            ('--notoggle --toggle', True),
+                            ('--notoggle --notoggle -T', True)]:
+            opts, args = self.ap.parse_args(inargs.split() + ['arg'])
+            assert_equals(opts['toggle'], exp, inargs)
+            assert_equals(args, ['arg'])
+
+    def test_flag_option_with_no_prefix(self):
+        ap = ArgumentParser(' -S --nostatusrc\n --name name')
+        for inargs, exp in [('', None),
+                            ('--name whatever', None),
+                            ('--nostatusrc', False),
+                            ('-S', False),
+                            ('--nostatusrc -S --nostatusrc -S -S', False),
+                            ('--statusrc', True),
+                            ('--statusrc --statusrc -S', False),
+                            ('--nostatusrc --nostatusrc -S --statusrc', True)]:
+            opts, args = ap.parse_args(inargs.split() + ['arg'])
+            assert_equals(opts['statusrc'], exp, inargs)
             assert_equals(args, ['arg'])
 
     def test_single_option_multiple_times(self):
@@ -227,7 +272,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
  -m --multi multi *
 ''')
         opts, args = ap.parse_args(())
-        assert_equals(opts, {'toggle': False,
+        assert_equals(opts, {'toggle': None,
                              'value': None,
                              'multi': []})
         assert_equals(args, [])
@@ -251,10 +296,12 @@ class TestDefaultsFromEnvironmentVariables(unittest.TestCase):
     def tearDown(self):
         os.environ.pop('ROBOT_TEST_OPTIONS')
 
-    def test_toggle(self):
+    def test_flag(self):
         opts, args = self.ap.parse_args([])
         assert_equals(opts['toggle'], True)
         opts, args = self.ap.parse_args(['--toggle'])
+        assert_equals(opts['toggle'], True)
+        opts, args = self.ap.parse_args(['--notoggle'])
         assert_equals(opts['toggle'], False)
 
     def test_value(self):
@@ -282,18 +329,6 @@ class TestDefaultsFromEnvironmentVariables(unittest.TestCase):
         opts, args = ap.parse_args(['arg'])
         assert_equals(opts['opt'], None)
         assert_equals(args, ['arg'])
-
-    def test_non_list_args(self):
-        opts, args = self.ap.parse_args(())
-        assert_equals(opts, {'toggle': True,
-                             'value': 'default',
-                             'multi': ['1', '2']})
-        assert_equals(args, [])
-        opts, args = self.ap.parse_args(('-t', '-v', 'given', '-m3', 'a', 'b'))
-        assert_equals(opts, {'toggle': False,
-                             'value': 'given',
-                             'multi': ['1', '2', '3']})
-        assert_equals(args, ['a', 'b'])
 
 
 class TestArgumentValidation(unittest.TestCase):

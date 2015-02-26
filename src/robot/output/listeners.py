@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -23,10 +23,6 @@ from robot.model import Tags
 
 from .loggerhelper import AbstractLoggerProxy
 from .logger import LOGGER
-
-if utils.is_jython:
-    from java.lang import Object
-    from java.util import HashMap
 
 
 class _RecursionAvoidingMetaclass(type):
@@ -235,10 +231,9 @@ class ListenerProxy(AbstractLoggerProxy):
         AbstractLoggerProxy.__init__(self, listener)
         self.name = name
         self.version = self._get_version(listener)
-        self.is_java = self._is_java(listener)
-
-    def _is_java(self, listener):
-        return utils.is_jython and isinstance(listener, Object)
+        if self.version == 1:
+            LOGGER.warn("Listener '%s' uses deprecated API version 1. "
+                        "Switch to API version 2 instead." % self.name)
 
     def _import_listener(self, name, args):
         importer = utils.Importer('listener')
@@ -252,23 +247,10 @@ class ListenerProxy(AbstractLoggerProxy):
             return 1
 
     def call_method(self, method, *args):
-        if self.is_java:
-            args = [self._to_map(a) if isinstance(a, dict) else a for a in args]
         try:
             method(*args)
         except:
             message, details = utils.get_error_details()
-            LOGGER.error("Calling listener method '%s' of listener '%s' failed: %s"
-                     % (method.__name__, self.name, message))
+            LOGGER.error("Calling listener method '%s' of listener '%s' "
+                         "failed: %s" % (method.__name__, self.name, message))
             LOGGER.info("Details:\n%s" % details)
-
-    def _to_map(self, dictionary):
-        map = HashMap()
-        for key, value in dictionary.iteritems():
-            map.put(key, value)
-        return map
-
-
-# TODO: Remove in 2.9, left here in 2.8.5 for backwards compatibility.
-# Consider also decoupling importing from __init__ to ease extending.
-_ListenerProxy = ListenerProxy

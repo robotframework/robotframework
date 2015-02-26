@@ -54,10 +54,10 @@ class ExampleLibrary:
         """
         pass
 
-    def exception(self, name, msg=""):
+    def exception(self, name, msg="", class_only=False):
         """Raise exception with given name and message"""
         exception = getattr(exceptions, name)
-        if msg is None:
+        if class_only:
             raise exception
         raise exception(msg)
 
@@ -94,8 +94,8 @@ class ExampleLibrary:
         except AttributeError:
             raise AssertionError("Attribute '%s' not set" % name)
         if not utils.eq(actual, expected):
-            raise AssertionError("Attribute '%s' was '%s', expected '%s'" \
-                    % (name, actual, expected))
+            raise AssertionError("Attribute '%s' was '%s', expected '%s'"
+                                 % (name, actual, expected))
 
     def check_attribute_not_set(self, name):
         if hasattr(self, utils.normalize(name)):
@@ -147,29 +147,31 @@ class ExampleLibrary:
                 break
             time.sleep(min(remaining, 0.1))
 
-    def return_custom_iterable(self, *values):
-        return _MyIterable(*values)
+    def return_consumable_iterable(self, *values):
+        return iter(values)
 
     def return_list_subclass(self, *values):
         return _MyList(values)
 
-    def return_unrepresentable_objects(self):
+    def return_unrepresentable_objects(self, identifier=None, just_one=False):
         class FailiningStr(object):
-            def __str__(self): raise RuntimeError
-            def __unicode__(self): raise UnicodeError()
+            def __init__(self, identifier=identifier):
+                self.identifier = identifier
+            def __str__(self):
+                raise RuntimeError
+            def __unicode__(self):
+                raise UnicodeError
         class FailiningUnicode(object):
-            def __unicode__(self): raise RuntimeError
+            def __init__(self, identifier=identifier):
+                self.identifier = identifier
+            def __unicode__(self):
+                raise ValueError
+        if just_one:
+            return FailiningStr()
         return FailiningStr(), FailiningUnicode()
 
     def fail_with_suppressed_exception_name(self, msg):
         raise MyException(msg)
-
-
-class _MyIterable(object):
-    def __init__(self, *values):
-        self._list = list(values)
-    def __iter__(self):
-        return iter(self._list)
 
 
 class _MyList(list):

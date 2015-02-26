@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,11 +15,9 @@
 import sys
 import os
 
+from .platform import JYTHON, WINDOWS, UNIXY
 
-ANY = True
-UNIXY = os.sep == '/'
-WINDOWS = not UNIXY
-JYTHON = sys.platform.startswith('java')
+
 if UNIXY:
     DEFAULT_SYSTEM_ENCODING = 'UTF-8'
     DEFAULT_OUTPUT_ENCODING = 'UTF-8'
@@ -29,7 +27,7 @@ else:
 
 
 def get_system_encoding():
-    platform_getters = [(ANY, _get_python_system_encoding),
+    platform_getters = [(True, _get_python_system_encoding),
                         (JYTHON, _get_java_system_encoding),
                         (UNIXY, _get_unixy_encoding),
                         (WINDOWS, _get_windows_system_encoding)]
@@ -37,7 +35,7 @@ def get_system_encoding():
 
 
 def get_output_encoding():
-    platform_getters = [(ANY, _get_stream_output_encoding),
+    platform_getters = [(True, _get_stream_output_encoding),
                         (UNIXY, _get_unixy_encoding),
                         (WINDOWS, _get_windows_output_encoding)]
     return _get_encoding(platform_getters, DEFAULT_OUTPUT_ENCODING)
@@ -72,10 +70,6 @@ def _get_unixy_encoding():
 
 
 def _get_stream_output_encoding():
-    # http://bugs.jython.org/issue1568
-    if WINDOWS and JYTHON:
-        if sys.platform.startswith('java1.5') or sys.version_info < (2, 5, 2):
-            return None
     # Stream may not have encoding attribute if it is intercepted outside RF
     # in Python. Encoding is None if process's outputs are redirected.
     for stream in sys.__stdout__, sys.__stderr__, sys.__stdin__:

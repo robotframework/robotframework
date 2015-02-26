@@ -3,4 +3,4 @@
 
 
 | *Keyword                     |  Action  |  Argument  |  Argument  |  Argument |
-| Keyword from ROBOT resource 2  |  Noop    |
+| Keyword from ROBOT resource 2  |  No operation    |

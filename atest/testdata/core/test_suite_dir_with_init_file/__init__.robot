@@ -22,7 +22,7 @@ My Teardown
     [Arguments]    @{msg_parts}
     ${msg} =    Create Message    @{msg_parts}
     Log    ${msg}
-    Fail If Dir Empty    ${CURDIR}    Test that OS lib was imported
+    Directory Should Not Be Empty    ${CURDIR}    Test that OS lib was imported
 
 Create Message
     [Arguments]    @{msg_parts}

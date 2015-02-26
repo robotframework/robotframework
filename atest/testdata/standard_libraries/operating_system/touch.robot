@@ -33,11 +33,11 @@ Touching Directory Fails
 
 Touch When Parent Does Not Exist Fails
     [Documentation]  FAIL Cannot touch '${TESTDIR}${/}file.txt' because its parent directory does not exist
-    Fail If Dir Exists  ${TESTDIR}
+    Directory Should Not Exist  ${TESTDIR}
     Touch  ${TESTDIR}/file.txt
 
 *** Keywords ***
 Remove Temps
     Remove File  ${TESTFILE}
-    Remove Dir  ${TESTDIR}  recursive
+    Remove Directory  ${TESTDIR}  recursive
 

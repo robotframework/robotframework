@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,13 +17,16 @@ from six import string_types, unichr
 import re
 
 
-_SEQS_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
+_CONTROL_WORDS_TO_BE_ESCAPED = ('ELSE', 'ELSE IF', 'AND')
+_SEQUENCES_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
 
 
 def escape(item):
     if not isinstance(item, string_types):
         return item
-    for seq in _SEQS_TO_BE_ESCAPED:
+    if item in _CONTROL_WORDS_TO_BE_ESCAPED:
+        return '\\' + item
+    for seq in _SEQUENCES_TO_BE_ESCAPED:
         if seq in item:
             item = item.replace(seq, '\\' + seq)
     return item
@@ -116,3 +119,23 @@ class EscapeFinder(object):
         self.escaped = bool(escape_chars % 2)
         self.text = res.group(2)
         self.after = string[res.end():]
+
+
+def split_from_equals(string):
+    index = _get_split_index(string)
+    if index == -1:
+        return string, None
+    return string[:index], string[index+1:]
+
+def _get_split_index(string):
+    index = 0
+    while '=' in string[index:]:
+        index += string[index:].index('=')
+        if _not_escaping(string[:index]):
+            return index
+        index += 1
+    return -1
+
+def _not_escaping(name):
+    backslashes = len(name) - len(name.rstrip('\\'))
+    return backslashes % 2 == 0

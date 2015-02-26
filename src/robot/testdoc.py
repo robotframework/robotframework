@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ This module also provides :func:`testdoc` and :func:`testdoc_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
 from six import string_types
+
 
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool
 
@@ -87,9 +88,7 @@ import time
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
 if 'robot' not in sys.modules and __name__ == '__main__':
-    ## import pythonpathsetter
-    #HACK: Prevent 2to3 from converting to relative import
-    pythonpathsetter = __import__('pythonpathsetter')
+    import pythonpathsetter
 
 from robot import utils
 from robot.conf import RobotSettings
