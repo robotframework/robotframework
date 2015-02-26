@@ -77,8 +77,8 @@ setup(
     author_email = 'robotframework@gmail.com',
     maintainer   = 'Stefan Zimmermann',
     maintainer_email =    'zimmermann.code@gmail.com',
-    url          = 'https://bitbucket.org/userzimmermann'
-                   '/robotframework-python3',
+    url          = 'https://github.com/userzimmermann'
+                   '/robotframework/tree/python3',
     download_url = 'https://pypi.python.org/pypi/robotframework-python3',
     license      = 'Apache License 2.0',
     description  = 'Python 3 compatible generic test automation framework',
