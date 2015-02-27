@@ -78,13 +78,11 @@ Grep File with empty file
     Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    0 out of 0 lines matched
 
 Grep File non Ascii
-    Make test non-critical if    "${IRONPYTHON}" or "python25\\python" in "${PYTHON}"
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
     Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    1 out of 5 lines matched
 
 Grep File with UTF-16 files
-    Make test non-critical if    "${IRONPYTHON}" or "python25\\python" in "${PYTHON}"
     ${tc}=    Check testcase    ${TESTNAME}
     Log    ${tc.kws[0].kws[0].msgs}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}   3 out of 4 lines matched
@@ -93,12 +91,12 @@ Grep File with UTF-16 files
     Check Log Message    ${tc.kws[3].kws[0].msgs[1]}   2 out of 3 lines matched
 
 Grep File with 'ignore' Error Handler
-    Make test non-critical if    "${IRONPYTHON}" or "python25\\python" in "${PYTHON}"
+    Make test non-critical if    "${IRONPYTHON}"
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
 
 Grep File with 'replace' Error Handler
-    Make test non-critical if    "${IRONPYTHON}" or "python25\\python" in "${PYTHON}"
+    Make test non-critical if    "${IRONPYTHON}"
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
 
