@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, string_types, text_type as unicode
+
+import sys
+
 from robot.api import logger
 from robot.utils import (plural_or_not, seq2str, seq2str2, type_name, unic,
                          Matcher)
@@ -501,11 +505,21 @@ class _Dictionary:
         Keys are returned in sorted order. The given ``dictionary`` is never
         altered by this keyword.
 
+        In *Python 3* keys are not sorted,
+        because most builtin types are not comparable to each other.
+        This issue needs a better solution in future releases...
+        Maybe imitate Python 2 sorting? Any suggestions? :)
+
         Example:
         | ${keys} = | Get Dictionary Keys | ${D3} |
         =>
         | ${keys} = ['a', 'b', 'c']
         """
+        #TODO: Sorting causes problems when key types are not comparable,
+        # especially in Python 3 where even basic types like int and str
+        # are not comparable to each other.
+        if PY3:
+            return list(dictionary)
         # TODO: Possibility to disable sorting. Can be handy with OrderedDicts.
         return sorted(dictionary)
 
@@ -514,6 +528,9 @@ class _Dictionary:
 
         Values are returned sorted according to keys. The given dictionary is
         never altered by this keyword.
+
+        In *Python 3* values are not sorted.
+        See `Get Dictionary Keys` for more details.
 
         Example:
         | ${values} = | Get Dictionary Values | ${D3} |
@@ -527,6 +544,9 @@ class _Dictionary:
 
         Items are returned sorted by keys. The given ``dictionary`` is not
         altered by this keyword.
+
+        In *Python 3* items are not sorted.
+        See `Get Dictionary Keys` for more details.
 
         Example:
         | ${items} = | Get Dictionary Items | ${D3} |
@@ -838,7 +858,7 @@ def _verify_condition(condition, default_msg, given_msg, include_default=False):
         raise AssertionError(given_msg)
 
 def _include_default_message(include):
-    if isinstance(include, basestring):
+    if isinstance(include, string_types):
         return include.lower() not in ['no values', 'false']
     return bool(include)
 
@@ -848,7 +868,7 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
     if not iterable:
         return []
     regexp = False
-    if not isinstance(pattern, basestring):
+    if not isinstance(pattern, string_types):
         raise TypeError("Pattern must be string, got '%s'."
                         % type_name(pattern))
     if pattern.startswith('regexp='):
@@ -859,5 +879,5 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
     matcher = Matcher(pattern, caseless=case_insensitive,
                       spaceless=whitespace_insensitive, regexp=regexp)
     return [string for string in iterable
-            if isinstance(string, basestring)
+            if isinstance(string, string_types)
             and matcher.match(string)]

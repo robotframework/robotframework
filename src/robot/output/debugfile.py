@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
+import sys
+
 from robot import utils
 
 from .logger import LOGGER
@@ -107,6 +111,10 @@ class _DebugFileWriter:
         if not separator:
             text = '%s - %s - %s' % (timestamp or utils.get_timestamp(),
                                      level, text)
-        self._outfile.write(text.encode('UTF-8').rstrip() + '\n')
+        text = text.rstrip() + '\n'
+        if PY3 and hasattr(self._outfile, 'encoding'):
+            self._outfile.write(text)
+        else:
+            self._outfile.write(text.encode('UTF-8'))
         self._outfile.flush()
         self._separator_written_last = separator

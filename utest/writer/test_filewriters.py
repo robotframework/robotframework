@@ -1,6 +1,6 @@
 import os
 import unittest
-from StringIO import StringIO
+from six.moves import StringIO
 
 from robot.parsing import TestCaseFile
 from robot.parsing.model import TestCaseTable

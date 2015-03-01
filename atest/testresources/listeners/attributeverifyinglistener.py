@@ -1,3 +1,5 @@
+from six import integer_types, string_types
+
 import os
 
 ROBOT_LISTENER_API_VERSION = '2'
@@ -5,7 +7,7 @@ ROBOT_LISTENER_API_VERSION = '2'
 OUTFILE = open(os.path.join(os.getenv('TEMPDIR'), 'listener_attrs.txt'), 'w')
 START_ATTRS = 'doc starttime '
 END_ATTRS = START_ATTRS + 'endtime elapsedtime status '
-EXPECTED_TYPES = {'elapsedtime': (int, long), 'tags': list, 'args': list,
+EXPECTED_TYPES = {'elapsedtime': integer_types, 'tags': list, 'args': list,
                   'metadata': dict, 'tests': list, 'suites': list,
                   'totaltests': int}
 
@@ -37,11 +39,11 @@ def _verify_attrs(method_name, attrs, names):
     OUTFILE.write(method_name + '\n')
     if len(names) != len(attrs):
         OUTFILE.write('FAILED: wrong number of attributes\n')
-        OUTFILE.write('Expected: %s\nActual: %s\n' % (names, attrs.keys()))
+        OUTFILE.write('Expected: %s\nActual: %s\n' % (names, list(attrs.keys())))
         return
     for name in names:
         value = attrs[name]
-        exp_type = EXPECTED_TYPES.get(name, basestring)
+        exp_type = EXPECTED_TYPES.get(name, string_types)
         if isinstance(value, exp_type):
             OUTFILE.write('PASSED | %s: %s\n' % (name, value))
         else:

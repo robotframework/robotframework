@@ -109,5 +109,9 @@ class DataRow(object):
     def is_commented(self):
         return bool(not self.cells and self.comments)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.cells or self.comments)
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()

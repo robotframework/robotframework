@@ -6,6 +6,7 @@ and during un-installation started from `Add/Remote Programs`.
 For more details:
 http://docs.python.org/distutils/builtdist.html#postinstallation-script
 """
+from __future__ import print_function
 
 from os.path import join
 import os
@@ -32,13 +33,13 @@ def windows_install():
         _create_script('jybot.bat', 'jython')
         _create_script('ipybot.bat', 'ipy')
     except Exception as err:
-        print 'Running post-install script failed: %s' % err
-        print 'Robot Framework start-up scripts may not work correctly.'
+        print('Running post-install script failed: %s' % err)
+        print('Robot Framework start-up scripts may not work correctly.')
         return
     # Avoid "close failed in file object destructor" error when UAC disabled
     # http://code.google.com/p/robotframework/issues/detail?id=1331
     if sys.stdout.fileno() != -2:
-        print SUCCESS
+        print(SUCCESS)
 
 
 def _create_script(name, interpreter):

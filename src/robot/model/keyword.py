@@ -24,7 +24,7 @@ from .modelobject import ModelObject
 
 class Keyword(ModelObject):
     """Base model for single keyword."""
-    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout',
+    __slots__ = ['name', 'doc', 'args', 'type', 'timeout',
                  '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE = 'kw'
     SETUP_TYPE = 'setup'

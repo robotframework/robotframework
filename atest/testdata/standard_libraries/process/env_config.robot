@@ -3,7 +3,7 @@ Suite Setup       Set Environment Variable    v1    system
 Resource          process_resource.robot
 
 *** Variables ***
-@{COMMAND}        python    -c    import os; print os.getenv('v1', '-'), os.getenv('v2', '-'), os.getenv('v3', '-')
+@{COMMAND}        python    -c    import os; print(" ".join([os.getenv('v1', '-'), os.getenv('v2', '-'), os.getenv('v3', '-')]))
 
 *** Test Cases ***
 By default environ is got from system

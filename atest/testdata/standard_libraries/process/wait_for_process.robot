@@ -7,7 +7,7 @@ Resource          process_resource.robot
 
 *** Test Cases ***
 Wait For Process
-    ${process} =    Start Python Process    print 'Robot Framework'
+    ${process} =    Start Python Process    print('Robot Framework')
     ${result} =    Wait For Process    ${process}
     Process Should Be Stopped    ${process}
     Should Be Equal As Integers    ${result.rc}    0

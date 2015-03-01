@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import with_metaclass, text_type as unicode
+
 import inspect
 import os.path
 
@@ -47,8 +49,7 @@ class _RecursionAvoidingMetaclass(type):
         return wrapped
 
 
-class Listeners(object):
-    __metaclass__ = _RecursionAvoidingMetaclass
+class Listeners(with_metaclass(_RecursionAvoidingMetaclass, object)):
     _start_attrs = ('id', 'doc', 'starttime', 'longname')
     _end_attrs = _start_attrs + ('endtime', 'elapsedtime', 'status', 'message')
     _kw_extra_attrs = ('args', '-id', '-longname', '-message')
@@ -58,8 +59,12 @@ class Listeners(object):
         self._running_test = False
         self._setup_or_teardown_type = None
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._listeners)
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def _import_listeners(self, listener_data):
         listeners = []

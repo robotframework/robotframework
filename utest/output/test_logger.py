@@ -127,7 +127,7 @@ class TestLogger(unittest.TestCase):
 
     def test_console_logger_is_automatically_registered(self):
         logger = Logger()
-        assert_true(logger._loggers.all_loggers()[0].start_suite.im_class is CommandLineMonitor)
+        assert_true(logger._loggers.all_loggers()[0].start_suite.__self__.__class__ is CommandLineMonitor)
 
     def test_loggercollection_is_iterable(self):
         logger = Logger()
@@ -151,7 +151,7 @@ class TestLogger(unittest.TestCase):
         logger.register_logger(mock)
         logger.unregister_console_logger()
         self._number_of_registered_loggers_should_be(1, logger)
-        assert_true(logger._loggers.all_loggers()[0].message.im_class is LoggerMock)
+        assert_true(logger._loggers.all_loggers()[0].message.__self__.__class__ is LoggerMock)
 
     def test_disabling_automatic_logger_multiple_times_has_no_effect(self):
         logger = Logger()
@@ -168,7 +168,7 @@ class TestLogger(unittest.TestCase):
         logger = Logger()
         logger.register_console_logger(width=42)
         self._number_of_registered_loggers_should_be(1, logger)
-        assert_equals(logger._loggers.all_loggers()[0].start_suite.im_self._writer._width, 42)
+        assert_equals(logger._loggers.all_loggers()[0].start_suite.__self__._writer._width, 42)
 
     def test_unregister_logger(self):
         logger1, logger2, logger3 = LoggerMock(), LoggerMock(), LoggerMock()

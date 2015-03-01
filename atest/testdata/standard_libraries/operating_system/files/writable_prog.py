@@ -1,5 +1,5 @@
 import sys
 
 
-print sys.stdin.read().upper()
+print(sys.stdin.read().upper())
     

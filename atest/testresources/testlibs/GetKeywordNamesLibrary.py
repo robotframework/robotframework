@@ -1,9 +1,11 @@
+from __future__ import print_function
+
 from robot.api import deco
 
 
 def passing_handler(*args):
     for arg in args:
-        print arg,
+        print(arg, end=' ')
     return ', '.join(args)
 
 def failing_handler(*args):
@@ -35,7 +37,7 @@ class GetKeywordNamesLibrary:
         
     def keyword_in_library_itself(self):
         msg = 'No need for __getattr__ here!!'
-        print msg
+        print(msg)
         return msg
 
     @deco.keyword('Name Set Using Robot Name Attribute')

@@ -1,5 +1,9 @@
+from six import PY3
+
 import unittest
-from StringIO import StringIO
+
+from six.moves import StringIO
+from io import BytesIO
 
 from robot.result import ExecutionResult
 from robot.reporting.outputwriter import OutputWriter
@@ -39,13 +43,13 @@ class TestResultSerializer(unittest.TestCase):
     def _xml_lines(self, text):
         with ETSource(text) as source:
             tree = ET.parse(source)
-        output = StringIO()
+        output = BytesIO()
         tree.write(output)
         return output.getvalue().splitlines()
 
     def _assert_xml_content(self, actual, expected):
         assert_equals(len(actual), len(expected))
-        for index, (act, exp) in enumerate(zip(actual, expected)[2:]):
+        for index, (act, exp) in enumerate(list(zip(actual, expected))[2:]):
             assert_equals(act, exp.strip(), 'Different values on line %d' % index)
 
     def test_combining_results(self):

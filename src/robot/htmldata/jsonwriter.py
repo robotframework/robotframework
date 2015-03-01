@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, integer_types
+
+import sys
+
 
 class JsonWriter(object):
 
@@ -43,6 +47,7 @@ class JsonDumper(object):
                          IntegerDumper(self),
                          TupleListDumper(self),
                          StringDumper(self),
+                         BytesDumper(self), # Only Python 3
                          NoneDumper(self),
                          DictDumper(self))
 
@@ -72,7 +77,7 @@ class _Dumper(object):
 
 
 class StringDumper(_Dumper):
-    _handled_types = basestring
+    _handled_types = str if PY3 else basestring
     _search_and_replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
                            ('\n', '\\n'), ('\r', '\\r'), ('</', '\\x3c/')]
 
@@ -83,11 +88,23 @@ class StringDumper(_Dumper):
         for search, replace in self._search_and_replace:
             if search in string:
                 string = string.replace(search, replace)
+        if PY3:
+            return string
         return string.encode('UTF-8')
+
+# For Python 3
+class BytesDumper(StringDumper):
+    try:
+        _handled_types = bytes
+    except NameError:
+        pass
+
+    def _encode(self, string):
+        return StringDumper._encode(self, string.decode())
 
 
 class IntegerDumper(_Dumper):
-    _handled_types = (int, long, bool)
+    _handled_types = integer_types + (bool,)
 
     def dump(self, data, mapping):
         self._write(str(data).lower())

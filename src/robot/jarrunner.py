@@ -54,7 +54,7 @@ class JarRunner(RobotRunner):
 
     def _run(self, args):
         if not args or args[0] in ('-h', '--help'):
-            print USAGE
+            print(USAGE)
             raise SystemExit(0)
         command, args = self._parse_command_line(args)
         command(args) # Always calls sys.exit()

@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import integer_types, string_types
+
 import datetime
 import time
 import re
@@ -38,7 +40,7 @@ def _float_secs_to_secs_and_millis(secs):
 
 def timestr_to_secs(timestr, round_to=3):
     """Parses time like '1h 10s', '01:00:10' or '42' and returns seconds."""
-    if isinstance(timestr, (basestring, int, long, float)):
+    if isinstance(timestr, string_types + integer_types + (float,)):
         for converter in _number_to_secs, _timer_to_secs, _time_string_to_secs:
             secs = converter(timestr)
             if secs is not None:
@@ -175,7 +177,7 @@ def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
 
     Seconds after epoch can be either an integer or a float.
     """
-    if isinstance(timetuple_or_epochsecs, (int, long, float)):
+    if isinstance(timetuple_or_epochsecs, integer_types + (float,)):
         timetuple = _get_timetuple(timetuple_or_epochsecs)
     else:
         timetuple = timetuple_or_epochsecs

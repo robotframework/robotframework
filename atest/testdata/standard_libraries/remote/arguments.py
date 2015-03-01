@@ -1,5 +1,7 @@
+from six import string_types
+
 import sys
-from xmlrpclib import Binary
+from six.moves.xmlrpc_client import Binary
 
 from remoteserver import RemoteServer
 
@@ -18,7 +20,7 @@ class Arguments(object):
         if isinstance(arg, dict):
             return self._handle_binary_in_dict(arg)
         assert isinstance(arg, Binary) or not required, 'Non-binary argument'
-        return str(arg) if isinstance(arg, Binary) else arg
+        return arg.data if isinstance(arg, Binary) else arg
 
     def _handle_binary_in_list(self, arg):
         assert any(isinstance(a, Binary) for a in arg)
@@ -74,7 +76,7 @@ class Arguments(object):
         return ', '.join(self._type(a) for a in args)
 
     def _type(self, arg):
-        if not isinstance(arg, basestring):
+        if not isinstance(arg, string_types):
             return '%s (%s)' % (arg, type(arg).__name__)
         return arg
 

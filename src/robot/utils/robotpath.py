@@ -12,10 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, text_type as unicode
+
 import os
 import os.path
 import sys
-import urllib
+from six.moves.urllib.request import pathname2url
 
 from robot.errors import DataError
 
@@ -66,7 +68,8 @@ def abspath(path, case_normalize=False):
     path = normpath(path, case_normalize)
     if os.path.isabs(path):
         return path
-    return normpath(os.path.join(os.getcwdu(), path), case_normalize)
+    return normpath(os.path.join(os.getcwd() if PY3 else os.getcwdu(), path),
+                    case_normalize)
 
 
 # TODO: Investigate could this be replaced with os.path.relpath in RF 2.9.
@@ -79,7 +82,8 @@ def get_link_path(target, base):
     Rationale: os.path.relpath is not available before Python 2.6
     """
     path =  _get_pathname(target, base)
-    url = urllib.pathname2url(path.encode('UTF-8'))
+    # Windows Python 3 pathname2url doesn't accept bytes
+    url = pathname2url(path if PY3 else path.encode('UTF-8'))
     if os.path.isabs(path):
         url = 'file:' + url
     # At least Jython seems to use 'C|/Path' and not 'C:/Path'

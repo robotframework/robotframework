@@ -1,3 +1,5 @@
+from six import PY3
+
 import unittest
 import re
 
@@ -28,7 +30,7 @@ if JYTHON:
         def test_with_iterator(self):
             iterator = UnicodeJavaLibrary().javaIterator()
             assert_true('java.util' in unic(iterator))
-            assert_true('Circle is 360' in iterator.next())
+            assert_true('Circle is 360' in next(iterator))
 
         def test_failure_in_toString(self):
             class ToStringFails(Object, UnRepr):
@@ -64,7 +66,7 @@ class TestUnic(unittest.TestCase):
         if JYTHON:
             # This is actually wrong behavior
             assert_equals(result, '[Hyv\\xe4, Hyv\\xe4]')
-        elif IRONPYTHON:
+        elif IRONPYTHON or PY3:
             # And so is this.
             assert_equals(result, '[Hyv\xe4, Hyv\xe4]')
         else:
@@ -74,7 +76,7 @@ class TestUnic(unittest.TestCase):
     def test_bytes_below_128(self):
         assert_equals(unic('\x00-\x01-\x02-\x7f'), u'\x00-\x01-\x02-\x7f')
 
-    if not IRONPYTHON:
+    if not (IRONPYTHON or PY3):
 
         def test_bytes_above_128(self):
             assert_equals(unic('hyv\xe4'), u'hyv\\xe4')
@@ -94,9 +96,10 @@ class TestUnic(unittest.TestCase):
             # 'string_escape' escapes some chars we don't want to be escaped
             assert_equals(unic("\x00\xe4\n\t\r\\'"), u"\x00\xe4\n\t\r\\'")
 
-    def test_failure_in_unicode(self):
-        failing = UnicodeFails()
-        assert_equals(unic(failing), failing.unrepr)
+    if not PY3:
+        def test_failure_in_unicode(self):
+            failing = UnicodeFails()
+            assert_equals(unic(failing), failing.unrepr)
 
     def test_failure_in_str(self):
         failing = StrFails()
@@ -108,7 +111,7 @@ class TestPrettyRepr(unittest.TestCase):
     def _verify(self, item, expected=None):
         if not expected:
             expected = repr(item)
-        elif IRONPYTHON and "b'" in expected:
+        elif (IRONPYTHON or PY3) and "b'" in expected:
             expected = expected.replace("b'", "'")
         assert_equals(prepr(item), expected)
 
@@ -134,7 +137,7 @@ class TestPrettyRepr(unittest.TestCase):
         invalid = UnicodeRepr()
         if JYTHON:
             expected = 'Hyv\\xe4'
-        elif IRONPYTHON:
+        elif IRONPYTHON or PY3:
             expected = u'Hyv\xe4'
         else:
             expected = invalid.unrepr  # This is correct.
@@ -142,7 +145,7 @@ class TestPrettyRepr(unittest.TestCase):
 
     def test_non_ascii_repr(self):
         non_ascii = NonAsciiRepr()
-        if IRONPYTHON:
+        if IRONPYTHON or PY3:
             expected = u'Hyv\xe4'
         else:
             expected = 'Hyv\\xe4'  # This is correct.
@@ -214,7 +217,7 @@ class UnicodeRepr(UnRepr):
     def __init__(self):
         try:
             repr(self)
-        except UnicodeEncodeError, err:
+        except UnicodeEncodeError as err:
             self.error = 'UnicodeEncodeError: %s' % err
 
     def __repr__(self):
@@ -226,7 +229,7 @@ class NonAsciiRepr(UnRepr):
     def __init__(self):
         try:
             repr(self)
-        except UnicodeEncodeError, err:
+        except UnicodeEncodeError as err:
             self.error = 'UnicodeEncodeError: %s' % err
 
     def __repr__(self):

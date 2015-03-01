@@ -23,8 +23,12 @@ class LibraryListeners(Listeners):
         self._setup_or_teardown_type = None
         self._global_listeners = {}
 
-    def __nonzero__(self):
+    def __bool__(self):
         return True
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def _notify_end_test(self, listener, test):
         Listeners._notify_end_test(self, listener, test)

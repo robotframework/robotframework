@@ -1,5 +1,10 @@
+from six import PY3
+
 import unittest
-from UserDict import UserDict
+if PY3:
+    from collections import UserDict
+else:
+    from UserDict import UserDict
 
 from robot.utils import normalize, NormalizedDict
 from robot.utils.asserts import (assert_equals, assert_true, assert_false,
@@ -243,8 +248,8 @@ class TestNormalizedDict(unittest.TestCase):
         for i, c in enumerate('abcdefghijklmnopqrstuvwxyz0123456789!"#%&/()=?'):
             nd[c.upper()] = i
             nd[c+str(i)] = 1
-        assert_equals(nd.items(), zip(nd.keys(), nd.values()))
-        assert_equals(list(nd.iteritems()), zip(nd.iterkeys(), nd.itervalues()))
+        assert_equals(nd.items(), list(zip(nd.keys(), nd.values())))
+        assert_equals(list(nd.iteritems()), list(zip(nd.iterkeys(), nd.itervalues())))
 
     def test_cmp(self):
         self._verify_cmp(NormalizedDict(), NormalizedDict())

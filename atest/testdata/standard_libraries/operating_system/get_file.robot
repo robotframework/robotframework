@@ -85,7 +85,8 @@ Log File with 'replace' Error Handler
 Get Binary File preserves CRLF line endings
     Create File  ${TESTFILE}  hello world\r\nbinary
     ${file}=  Get Binary File  ${TESTFILE}
-    Should Be Equal  ${file}  hello world\r\nbinary
+    ${expected}=  Convert To Bytes  hello world\r\nbinary
+    Should Be Equal  ${file}  ${expected}
 
 Get Binary File returns bytes as-is
     ${file}=  Get Binary File  ${LATIN-1 FILE}

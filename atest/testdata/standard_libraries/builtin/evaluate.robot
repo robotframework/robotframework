@@ -24,12 +24,12 @@ Evaluate
     Evaluate    INVALID
 
 Evaluate With Modules
-    [Documentation]    FAIL REGEXP: ImportError: [Nn]o module named nonex_module
+    [Documentation]    FAIL REGEXP: ImportError: [Nn]o module named '?nonex_module'?
     ${ceil} =    Evaluate    math.ceil(1.001)    math
     Should Be Equal    ${ceil}    ${2}
-    ${random} =    Evaluate    random.randint(0, sys.maxint)    modules=random,sys
-    ${maxint}    ${sep}    ${x}    ${y} =    Evaluate    sys.maxint, os.sep, re.escape('+'), '\\+'    sys, re,,,,, glob, os,robot,,,
-    Should Be True    0 <= ${random} <= ${maxint}
+    ${random} =    Evaluate    random.randint(0, sys.maxsize)    modules=random,sys
+    ${maxsize}    ${sep}    ${x}    ${y} =    Evaluate    sys.maxsize, os.sep, re.escape('+'), '\\+'    sys, re,,,,, glob, os,robot,,,
+    Should Be True    0 <= ${random} <= ${maxsize}
     Should Be Equal    ${x}    ${y}
     Evaluate    1    nonex_module
 

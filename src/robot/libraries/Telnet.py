@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 from contextlib import contextmanager
 import telnetlib
 import time
@@ -390,7 +392,7 @@ class Telnet:
     def _parse_terminal_emulation(self, terminal_emulation):
         if not terminal_emulation:
             return False
-        if isinstance(terminal_emulation, basestring):
+        if isinstance(terminal_emulation, string_types):
             return terminal_emulation.lower() == 'true'
         return bool(terminal_emulation)
 
@@ -656,7 +658,7 @@ class TelnetConnection(telnetlib.Telnet):
     def _is_valid_log_level(self, level):
         if level is None:
             return True
-        if not isinstance(level, basestring):
+        if not isinstance(level, string_types):
             return False
         return level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
 
@@ -961,7 +963,7 @@ class TelnetConnection(telnetlib.Telnet):
         success, output = self._read_until_regexp(*expected)
         self._log(output, loglevel)
         if not success:
-            expected = [exp if isinstance(exp, basestring) else exp.pattern
+            expected = [exp if isinstance(exp, string_types) else exp.pattern
                         for exp in expected]
             raise NoMatchError(expected, self._timeout, output)
         return output
@@ -1186,7 +1188,7 @@ class NoMatchError(AssertionError):
 
     def _get_message(self):
         expected = "'%s'" % self.expected \
-                   if isinstance(self.expected, basestring) \
+                   if isinstance(self.expected, string_types) \
                    else utils.seq2str(self.expected, lastsep=' or ')
         msg = "No match found for %s in %s." % (expected, self.timeout)
         if self.output is not None:

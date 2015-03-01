@@ -8,7 +8,7 @@ import signal
 import logging
 from os.path import abspath, dirname, join, exists, curdir
 from os import chdir
-from StringIO import StringIO
+from six.moves import StringIO
 
 from robot.utils.asserts import assert_equals, assert_true
 from robot.running import namespace

@@ -1,3 +1,5 @@
+from six import PY3, text_type as unicode
+
 import unittest
 
 from robot.utils import IRONPYTHON
@@ -18,7 +20,7 @@ class TestDecodeOutput(unittest.TestCase):
     if not IRONPYTHON:
 
         def test_decode(self):
-            assert isinstance(ENCODED, str)
+            assert isinstance(ENCODED, bytes if PY3 else str)
             assert_equals(decode_output(ENCODED), UNICODE)
 
     else:

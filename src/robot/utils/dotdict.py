@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import iteritems
+
 try:
     from collections import OrderedDict
 except ImportError:  # New in Python 2.7
@@ -42,7 +44,7 @@ class DotDict(OrderedDict):
         return dict.__eq__(self, other)
 
     def __str__(self):
-        return '{%s}' % ', '.join('%r: %r' % item for item in self.iteritems())
+        return '{%s}' % ', '.join('%r: %r' % item for item in iteritems(self))
 
     # Must use original dict.__repr__ to allow customising PrettyPrinter.
     __repr__ = dict.__repr__

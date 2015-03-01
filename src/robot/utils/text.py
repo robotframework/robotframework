@@ -38,7 +38,8 @@ def _prune_excess_lines(lines, lengths, from_end=False):
         lengths.reverse()
     ret = []
     total = 0
-    limit = _MAX_ERROR_LINES/2
+    # Use // (explicit int div) for Python 3 compatibility:
+    limit = _MAX_ERROR_LINES//2
     for line, length in zip(lines[:limit], lengths[:limit]):
         if total + length >= limit:
             ret.append(_cut_long_line(line, total, from_end))
@@ -50,7 +51,8 @@ def _prune_excess_lines(lines, lengths, from_end=False):
     return ret
 
 def _cut_long_line(line, used, from_end):
-    available_lines = _MAX_ERROR_LINES/2 - used
+    # Use // (explicit int div) for Python 3 compatibility:
+    available_lines = _MAX_ERROR_LINES//2 - used
     available_chars = available_lines * _MAX_ERROR_LINE_LENGTH - 3
     if len(line) > available_chars:
         if not from_end:

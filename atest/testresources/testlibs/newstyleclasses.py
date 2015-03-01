@@ -1,3 +1,6 @@
+from six import add_metaclass
+
+
 class NewStyleClassLibrary(object):
     
     def mirror(self, arg):
@@ -27,8 +30,8 @@ class _MyMetaClass(type):
         pass
 
 
+@add_metaclass(_MyMetaClass)
 class MetaClassLibrary(object):
-    __metaclass__ = _MyMetaClass
 
     def greet(self, name):
         return 'Hello %s!' % name

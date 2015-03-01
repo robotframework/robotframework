@@ -1,7 +1,12 @@
 # coding=UTF-8
 
+from six import PY3
+
 import sys
-from SimpleXMLRPCServer import SimpleXMLRPCServer
+if PY3:
+    from xmlrpc.server import SimpleXMLRPCServer
+else:
+    from SimpleXMLRPCServer import SimpleXMLRPCServer
 
 from remoteserver import announce_port
 

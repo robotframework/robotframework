@@ -12,8 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from HTMLParser import HTMLParser
-from htmlentitydefs import entitydefs
+from six import PY3, text_type as unicode, unichr
+
+import sys
+
+from six.moves.html_parser import HTMLParser
+from six.moves.html_entities import entitydefs
 
 
 NON_BREAKING_SPACE = u'\xA0'
@@ -44,7 +48,11 @@ class HtmlReader(HTMLParser):
         self.current_row = None
         self.current_cell = None
         for line in htmlfile.readlines():
-            self.feed(self._decode(line))
+            # Only decode if not already unicode (Python 3 str).
+            # 2to3 changes `unicode` to `str`.
+            if type(line) is not unicode:
+                line = self._decode(line)
+            self.feed(line)
         # Calling close is required by the HTMLParser but may cause problems
         # if the same instance of our HtmlParser is reused. Currently it's
         # used only once so there's no problem.
@@ -84,7 +92,11 @@ class HtmlReader(HTMLParser):
             return '&'+name+';'
         if value.startswith('&#'):
             return unichr(int(value[2:-1]))
-        return value.decode('ISO-8859-1')
+        # Only decode if not already unicode (Python 3 str).
+        # 2to3 changes `unicode` to `str`.
+        if type(value) is not unicode:
+            value = value.decode('ISO-8859-1')
+        return value
 
     def handle_charref(self, number):
         value = self._handle_charref(number)

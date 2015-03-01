@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 from robot.errors import DataError
 from robot.parsing import TestData
 from robot.running.defaults import TestDefaults

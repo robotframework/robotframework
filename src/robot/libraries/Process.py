@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 import ctypes
 import os
 import subprocess
@@ -86,14 +88,15 @@ class Process(object):
     use syntax like ``name=value``. Available configuration arguments are
     listed below and discussed further in sections afterwards.
 
-    |  = Name =  |                  = Explanation =                      |
-    | shell      | Specifies whether to run the command in shell or not  |
-    | cwd        | Specifies the working directory.                      |
-    | env        | Specifies environment variables given to the process. |
-    | env:<name> | Overrides the named environment variable(s) only.     |
-    | stdout     | Path of a file where to write standard output.        |
-    | stderr     | Path of a file where to write standard error.         |
-    | alias      | Alias given to the process.                           |
+    |  = Name =   |                  = Explanation =                            |
+    | shell       | Specifies whether to run the command in shell or not        |
+    | cwd         | Specifies the working directory.                            |
+    | env         | Specifies environment variables given to the process.       |
+    | env:<name>  | Overrides the named environment variable(s) only.           |
+    | stdout      | Path of a file where to write standard output.              |
+    | stderr      | Path of a file where to write standard error.               |
+    | binary_mode | Specifies whether streams are opened in binary or text mode |
+    | alias       | Alias given to the process.                                 |
 
     Note that because ``**configuration`` is passed using ``name=value`` syntax,
     possible equal signs in other arguments passed to `Run Process` and
@@ -175,6 +178,15 @@ class Process(object):
 
     Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
+
+    == Text or binary streams ==
+
+    The `binary_mode` argument specifies whether stdin, stdout and stderr
+    are opened in binary or text mode. By default they are opened in text mode.
+
+    Starting with Python 3 text streams only work with strings, binary streams
+    only with bytes. If you want to send or receive bytes instead of strings,
+    give `binary_mode` any non-false value, such as `binary_mode=True`.
 
     == Alias ==
 
@@ -799,11 +811,12 @@ class ExecutionResult(object):
 class ProcessConfig(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
-                 alias=None, env=None, **rest):
+                 binary_mode=False, alias=None, env=None, **rest):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.shell = is_true(shell)
+        self.binary_mode = is_true(binary_mode)
         self.alias = alias
         self.env = self._construct_env(env, rest)
 
@@ -846,7 +859,7 @@ class ProcessConfig(object):
                   'shell': self.shell,
                   'cwd': self.cwd,
                   'env': self.env,
-                  'universal_newlines': True}
+                  'universal_newlines': not self.binary_mode}
         if not JYTHON:
             self._add_process_group_config(config)
         return config
@@ -869,6 +882,6 @@ env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
 
 
 def is_true(argument):
-    if isinstance(argument, basestring) and argument.upper() == 'FALSE':
+    if isinstance(argument, string_types) and argument.upper() == 'FALSE':
         return False
     return bool(argument)

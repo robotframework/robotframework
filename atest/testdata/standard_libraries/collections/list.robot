@@ -143,8 +143,9 @@ Reserve List
     Compare To Expected String  ${LONG}  [2, '1', '44', '43', 42, '41', 2, '1', '1']
 
 Sort List
-    Sort List  ${LONG}
-    Compare To Expected String  ${LONG}  [ 2, 2, 42, '1', '1' , '1', '41', '43', '44']
+    Sort List  ${STRINGS}
+    Compare To Expected String  ${STRINGS}
+    ...  [u'!@#$%^&*()_+-=', u'\${cmd list}', u'1', u'2', u'3', u'B', u'WOrd', u'a', u'b', u'glob=test', u'regexp=blah', u'wOrD', u'äö']
 
 Get From List
     ${value} =  Get From List  ${L4}  1
@@ -205,7 +206,7 @@ List Should Not Contain Value, Value Found And Own Error Message
     List Should Not Contain Value  ${L1}  1  My error message!
 
 List Should Not Contain Duplicates With No Duplicates
-    ${iterable}  ${tuple} =  Evaluate  xrange(100), (0, 1, 2, '0', '1', '2')
+    ${iterable}  ${tuple} =  Evaluate  iter(range(100)), (0, 1, 2, '0', '1', '2')
     : FOR  ${list}  IN  ${L0}  ${L1}  ${L2}  ${L3}  ${L4}
     ...  ${iterable}  ${tuple}
     \  List Should Not Contain Duplicates  ${list}

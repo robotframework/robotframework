@@ -1,3 +1,5 @@
+include requirements.txt
+
 include src/bin/*ybot src/bin/*rebot src/bin/*.bat
 include src/robot/htmldata/*/*.html src/robot/htmldata/*/*.js src/robot/htmldata/*/*.css
 include MANIFEST.in LICENSE.txt COPYRIGHT.txt README.rst INSTALL.rst AUTHORS.txt BUILD.rst tasks.py

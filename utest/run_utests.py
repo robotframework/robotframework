@@ -77,11 +77,11 @@ def parse_args(argv):
 
 
 def usage_exit(msg=None):
-    print __doc__
+    print(__doc__)
     if msg is None:
         rc = 251
     else:
-        print '\nError:', msg
+        print('\nError: %s' % msg)
         rc = 252
     sys.exit(rc)
 

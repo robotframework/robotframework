@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, text_type as unicode
+
 import codecs
 import fnmatch
 import glob
@@ -695,7 +697,7 @@ class OperatingSystem:
         New in Robot Framework 2.8.5.
         """
         if isinstance(content, unicode):
-            content = ''.join(chr(ord(c)) for c in content)
+            content = bytearray(map(ord, content))
         path = self._write_to_file(path, content)
         self._link("Created binary file '%s'", path)
 
@@ -1488,7 +1490,7 @@ class OperatingSystem:
         if logger:
             logger.write(msg, level)
         else:
-            print '*%s* %s' % (level, msg)
+            print('*%s* %s' % (level, msg))
 
 
 class _Process:
@@ -1526,6 +1528,8 @@ class _Process:
                 command = command[:-1] + ' 2>&1 &'
             else:
                 command += ' 2>&1'
+        if PY3:
+            return command
         return self._encode_to_file_system(command)
 
     def _encode_to_file_system(self, string):
@@ -1546,7 +1550,8 @@ class _Process2(_Process):
         self._command = self._process_command(command)
         p = subprocess.Popen(self._command, shell=True, stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             close_fds=os.sep=='/')
+                             close_fds=os.sep=='/',
+                             universal_newlines=True)
         stdin, self.stdout = p.stdin, p.stdout
         if input_:
             stdin.write(input_)

@@ -1,3 +1,5 @@
+from six import PY3, text_type as unicode
+
 import os
 import unittest
 
@@ -7,6 +9,7 @@ from robot.utils import IRONPYTHON
 
 
 PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
+STARTSWITH = 'from six import'
 
 
 class TestETSource(unittest.TestCase):
@@ -17,7 +20,7 @@ class TestETSource(unittest.TestCase):
             if IRONPYTHON:
                 assert_equals(src, PATH)
             else:
-                assert_true(src.read().startswith('import os'))
+                assert_true(src.read().startswith(STARTSWITH.encode()))
         self._verify_string_representation(source, PATH)
         if IRONPYTHON:
             assert_true(source._opened is None)
@@ -27,13 +30,13 @@ class TestETSource(unittest.TestCase):
     def test_opened_file_object(self):
         source = ETSource(open(PATH))
         with source as src:
-            assert_true(src.read().startswith('import os'))
+            assert_true(src.read().startswith(STARTSWITH))
         assert_true(src.closed is False)
         self._verify_string_representation(source, PATH)
         assert_true(source._opened is None)
 
     def test_byte_string(self):
-        self._test_string('\n<tag>content</tag>\n')
+        self._test_string('\n<tag>content</tag>\n'.encode())
 
     def test_unicode_string(self):
         self._test_string(u'\n<tag>hyv\xe4</tag>\n')
@@ -42,7 +45,7 @@ class TestETSource(unittest.TestCase):
         source = ETSource(xml)
         with source as src:
             content = src.read()
-            if not IRONPYTHON:
+            if not (IRONPYTHON or PY3):
                 content = content.decode('UTF-8')
             assert_equals(content, xml)
         self._verify_string_representation(source, '<in-memory file>')

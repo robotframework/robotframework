@@ -1,4 +1,4 @@
-﻿*** Settings ***
+*** Settings ***
 Suite Setup     Run Tests  --loglevel TRACE  keywords/trace_log_return_value.robot
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
@@ -39,7 +39,7 @@ Return Object with Invalid Unicode Repr
     [Documentation]  How the return value is logged depends on the interpreter.
     ${test} =    Check Test Case  ${TESTNAME}
     ${path}    ${base} =    Split Path    ${INTERPRETER}
-    ${ret} =    Set Variable If    'python' in '${base}'
+    ${ret} =    Set Variable If    'python' in '${base}' and not '${PYTHON3}'
     ...    <Unrepresentable object InvalidRepr. Error: UnicodeEncodeError: *    Hyv*
     Check Log Message    ${test.kws[0].msgs[1]}    Return: ${ret}    TRACE    pattern=yes
 

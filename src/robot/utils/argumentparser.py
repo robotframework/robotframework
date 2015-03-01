@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 import getopt     # optparse was not supported by Jython 2.2
 import os
 import re
@@ -288,7 +290,7 @@ class ArgumentParser(object):
             self._raise_option_multiple_times_in_usage('--' + opt)
 
     def _get_pythonpath(self, paths):
-        if isinstance(paths, basestring):
+        if isinstance(paths, string_types):
             paths = [paths]
         temp = []
         for path in self._split_pythonpath(paths):
@@ -312,7 +314,7 @@ class ArgumentParser(object):
             if drive:
                 ret.append(drive)
                 drive = ''
-            if len(item) == 1 and item in string.letters:
+            if len(item) == 1 and item in string.ascii_letters:
                 drive = item
             else:
                 ret.append(item)
@@ -350,11 +352,11 @@ class ArgLimitValidator(object):
 
     def _parse_arg_limits(self, arg_limits):
         if arg_limits is None:
-            return 0, sys.maxint
+            return 0, sys.maxsize
         if isinstance(arg_limits, int):
             return arg_limits, arg_limits
         if len(arg_limits) == 1:
-            return arg_limits[0], sys.maxint
+            return arg_limits[0], sys.maxsize
         return arg_limits[0], arg_limits[1]
 
     def __call__(self, args):
@@ -365,7 +367,7 @@ class ArgLimitValidator(object):
         min_end = plural_or_not(min_args)
         if min_args == max_args:
             expectation = "%d argument%s" % (min_args, min_end)
-        elif max_args != sys.maxint:
+        elif max_args != sys.maxsize:
             expectation = "%d to %d arguments" % (min_args, max_args)
         else:
             expectation = "at least %d argument%s" % (min_args, min_end)

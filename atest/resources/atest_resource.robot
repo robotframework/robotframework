@@ -95,7 +95,7 @@ Set Variables And Get Datasources
 Set Variables
     [Arguments]  ${name}
     ${OUTDIR} =  Join Path  ${OUTPUTDIR}  output  ${name}
-    Set Global Variable  $OUTDIR  ${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}
+    Set Global Variable  $OUTDIR  ${OUTDIR.encode('ascii', 'ignore').decode().replace('?', '_') .replace('*', '_')}
     Create Directory  ${OUTDIR}
     Set Suite Variable  $OUTFILE  ${OUTDIR}${/}output.xml
     Set Suite Variable  $STDOUT_FILE  ${OUTDIR}${/}stdout.txt
@@ -347,6 +347,18 @@ Run on python 2.5
     ${is 25} =   is 25    ${interpreter}
     Run keyword if    ${is 25}    ${kw}   @{args}
 
+Run on python 3.x
+    [arguments]     ${kw}   @{args}
+    ${interpreter} =    Get interpreter    ${OUTFILE}
+    ${is 3x} =   is 3x    ${interpreter}
+    Run keyword if    ${is 3x}    ${kw}   @{args}
+
+Run on python 2.x
+    [arguments]     ${kw}   @{args}
+    ${interpreter} =    Get interpreter    ${OUTFILE}
+    ${is 2x} =   is 2x    ${interpreter}
+    Run keyword if    ${is 2x}    ${kw}   @{args}
+
 Make test non-critical if
     [Arguments]    ${condition}
     Run Keyword If    ${condition}    Remove Tags    regression
@@ -354,3 +366,11 @@ Make test non-critical if
 Make test non-critical on IronPython
     # This test isn't 100% safe. Should come up with better.
     Make test non-critical if    os.sep != '/' and 'ipy' in '${INTERPRETER}'
+
+Make test non-critical on Python 3
+    # This test isn't 100% safe. Should come up with better.
+    Make test non-critical if    sys.version_info[0] == 3
+
+Make test non-critical on Python 3 and IronPython
+    # This test isn't 100% safe. Should come up with better.
+    Make test non-critical if    sys.version_info[0] == 3 or os.sep != '/' and 'ipy' in '${INTERPRETER}'

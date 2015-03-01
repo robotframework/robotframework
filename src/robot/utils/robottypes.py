@@ -12,9 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, string_types, text_type as unicode
+if PY3:
+    long = int
+
 from collections import Mapping
-from UserDict import UserDict
-from UserString import UserString
+from six.moves import UserDict, UserString
 try:
     from java.lang import String
 except ImportError:
@@ -30,7 +33,7 @@ def type_name(item):
 
 
 def is_str_like(item):
-    return isinstance(item, (basestring, UserString, String))
+    return isinstance(item, string_types + (UserString, String))
 
 
 def is_list_like(item):

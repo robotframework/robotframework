@@ -1,3 +1,6 @@
+from six import PY2, text_type as unicode
+
+import sys
 import unittest
 from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
@@ -81,10 +84,17 @@ class TestStringRepresentation(unittest.TestCase):
         assert_equal(unicode(self.ascii), 'Kekkonen')
         assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
 
-    def test_str(self):
-        assert_equal(str(self.empty), '')
-        assert_equal(str(self.ascii), 'Kekkonen')
-        assert_equal(str(self.non_ascii), 'hyv? nimi')
+    if PY2:
+        def test_str(self):
+            assert_equal(str(self.empty), '')
+            assert_equal(str(self.ascii), 'Kekkonen')
+            assert_equal(str(self.non_ascii), 'hyv? nimi')
+
+    else:
+        def test_bytes(self):
+            assert_equal(bytes(self.empty), ''.encode())
+            assert_equal(bytes(self.ascii), 'Kekkonen'.encode())
+            assert_equal(bytes(self.non_ascii), 'hyv? nimi'.encode())
 
 
 class TestKeywords(unittest.TestCase):

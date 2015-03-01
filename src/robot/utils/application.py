@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 import sys
 from contextlib import contextmanager
 
@@ -45,7 +47,7 @@ class Application(object):
 
     def console(self, msg):
         if msg:
-            print encode_output(msg)
+            print(encode_output(msg))
 
     @contextmanager
     def _logging(self):
@@ -124,7 +126,7 @@ class DefaultLogger(object):
         pass
 
     def error(self, message):
-        print encode_output(message)
+        print(encode_output(message))
 
     def close(self):
         pass

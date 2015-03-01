@@ -1,3 +1,5 @@
+import sys
+
 class ArgumentsPython:
     
     # method docs are used in unit tests as expected min and max args
@@ -25,12 +27,21 @@ class ArgumentsPython:
     def a_0_n(self, *args):
         """(0,sys.maxint)"""
         return ' '.join(['a_0_n:', ' '.join(args)])
+
+    if sys.version_info[0] == 3:
+        a_0_n.__doc__ = """(0,sys.maxsize)"""
     
     def a_1_n(self, arg, *args):
         """(1,sys.maxint)"""
         return ' '.join(['a_1_n:', arg, ' '.join(args)])
 
+    if sys.version_info[0] == 3:
+        a_1_n.__doc__ = """(1,sys.maxsize)"""
+
     def a_1_2_n(self, arg1, arg2='default', *args):
         """(1,sys.maxint)"""
         return ' '.join(['a_1_2_n:', arg1, arg2, ' '.join(args)])
+
+    if sys.version_info[0] == 3:
+        a_1_2_n.__doc__ = """(1,sys.maxsize)"""
     

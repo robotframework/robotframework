@@ -12,11 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
+import sys
 from operator import itemgetter
 
 from robot.utils import compress_text
 
 
+if PY3:
+    long = int
+#TODO: Still needed?
 class StringIndex(long):
     pass
 
@@ -50,5 +56,5 @@ class StringCache(object):
         return '*'+text
 
     def dump(self):
-        return tuple(item[0] for item in sorted(self._cache.iteritems(),
+        return tuple(item[0] for item in sorted(self._cache.items(),
                                                 key=itemgetter(1)))

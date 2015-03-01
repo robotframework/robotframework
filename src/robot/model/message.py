@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
+import sys
+
 from robot.utils import html_escape, setter
 
 from .itemlist import ItemList
@@ -24,7 +28,7 @@ class Message(ModelObject):
     The message can be a log message triggered by a keyword, or a warning
     or an error occurred during the test execution.
     """
-    __slots__ = ['message', 'level', 'html', 'timestamp', 'parent', '_sort_key']
+    __slots__ = ['message', 'level', 'html', 'timestamp', '_sort_key']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  parent=None):
@@ -57,6 +61,10 @@ class Message(ModelObject):
 
     def __unicode__(self):
         return self.message
+
+    if PY3:
+        def __str__(self):
+            return self.__unicode__()
 
 
 class Messages(ItemList):

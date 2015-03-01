@@ -24,8 +24,12 @@ class EmbeddedArguments(object):
     def __init__(self, name):
         self.name, self.args = EmbeddedArgumentParser().parse(name)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.args)
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
 
 class EmbeddedArgumentParser(object):

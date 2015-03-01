@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 from robot.errors import DataError
 from robot.utils import is_dict_like, split_from_equals, DotDict
 from robot.variables import VariableSplitter
@@ -59,11 +61,11 @@ class NamedArgumentResolver(object):
         return positional, named
 
     def _is_dict_var(self, arg):
-        return (isinstance(arg, basestring) and
+        return (isinstance(arg, string_types) and
                 VariableSplitter(arg).is_dict_variable())
 
     def _is_named(self, arg, variables=None):
-        if not (isinstance(arg, basestring) and '=' in arg):
+        if not (isinstance(arg, string_types) and '=' in arg):
             return False
         name, value = split_from_equals(arg)
         if value is None:
@@ -122,7 +124,7 @@ class VariableReplacer(object):
     def _replace_named(self, named, replace_scalar):
         for item in named:
             for name, value in self._get_replaced_named(item, replace_scalar):
-                if not isinstance(name, basestring):
+                if not isinstance(name, string_types):
                     raise DataError('Argument names must be strings.')
                 yield name, value
 

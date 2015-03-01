@@ -280,6 +280,7 @@ Additionally helper classes ``Date`` and ``Time`` can be used directly:
 |     interval = Time(interval).convert('number')
 |     # ...
 """
+from six import integer_types, string_types
 
 from datetime import datetime, timedelta
 import time
@@ -497,11 +498,11 @@ class Date(object):
         self.seconds = self._convert_date_to_seconds(date, input_format)
 
     def _convert_date_to_seconds(self, date, input_format):
-        if isinstance(date, basestring):
+        if isinstance(date, string_types):
             return self._string_to_epoch(date, input_format)
         elif isinstance(date, datetime):
             return self._mktime_with_millis(date)
-        elif isinstance(date, (int, long, float)):
+        elif isinstance(date, integer_types + (float,)):
             return float(date)
         raise ValueError("Unsupported input '%s'." % date)
 
@@ -543,7 +544,8 @@ class Date(object):
         return time.mktime(dt.timetuple()) + dt.microsecond / 1e6
 
     def convert(self, format, millis=True):
-        seconds = self.seconds if millis else round(self.seconds)
+        #PY3: round() needs explicit ndigits arg to return float
+        seconds = self.seconds if millis else round(self.seconds, 0)
         if '%' in format:
             return self._convert_to_custom_timestamp(seconds, format)
         try:
@@ -616,7 +618,8 @@ class Time(object):
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
-        seconds = self.seconds if millis else round(self.seconds)
+        #PY3: round() needs explicit ndigits arg to return float
+        seconds = self.seconds if millis else round(self.seconds, 0)
         return result_converter(seconds, millis)
 
     def _convert_to_number(self, seconds, millis=True):

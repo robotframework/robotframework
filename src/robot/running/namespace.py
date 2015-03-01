@@ -12,8 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 import os
 import copy
+from itertools import chain
 
 from robot import utils
 from robot.errors import DataError
@@ -238,7 +241,7 @@ class KeywordStore(object):
         handler = None
         if not name:
             raise DataError('Keyword name cannot be empty.')
-        if not isinstance(name, basestring):
+        if not isinstance(name, string_types):
             raise DataError('Keyword name must be a string.')
         if '.' in name:
             handler = self._get_explicit_handler(name)
@@ -357,7 +360,7 @@ class KeywordStore(object):
 
     def _find_keywords(self, owner_name, name):
         return [owner.handlers[name]
-                for owner in self.libraries.values() + self.resources.values()
+                for owner in chain(self.libraries.values(), self.resources.values())
                 if utils.eq(owner.name, owner_name) and name in owner.handlers]
 
     def _raise_multiple_keywords_found(self, name, found, implicit=True):
@@ -407,14 +410,16 @@ class KeywordRecommendationFinder(object):
                     'Reserved']
         handlers = [(None, utils.printable_name(handler.name, True))
                     for handler in self.user_keywords.handlers]
-        for library in (self.libraries.values() + self.resources.values()):
+        for library in chain(self.libraries.values(), self.resources.values()):
             if library.name not in excluded:
                 handlers.extend(
                     ((library.name,
                       utils.printable_name(handler.name, code_style=True))
                      for handler in library.handlers))
         # sort handlers to ensure consistent ordering between Jython and Python
-        return sorted(handlers)
+        #PY3: can't compare None with str
+        #     ==> also libnames must at least be empty strings for sorting
+        return sorted(handlers, key=lambda h: (h[0] or '', h[1]))
 
 
 class _VariableScopes:

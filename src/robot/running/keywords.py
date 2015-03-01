@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import integer_types, text_type as unicode
+
+from six.moves import range
+
 from robot.utils import (format_assign_message, frange, get_elapsed_time,
                          get_error_message, get_timestamp, plural_or_not,
                          type_name)
@@ -59,8 +63,12 @@ class Keywords(object):
         if errors:
             raise ExecutionFailures(errors)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._keywords)
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def __iter__(self):
         return iter(self._keywords)
@@ -260,7 +268,7 @@ class ForLoop(_BaseKeyword):
         if context.dry_run:
             return self.vars, [0]
         items = self._replace_vars_from_items(context.variables)
-        return items, range(0, len(items), len(self.vars))
+        return items, list(range(0, len(items), len(self.vars)))
 
     def _run_one_round(self, context, variables, values):
         foritem = _ForItem(variables, values)
@@ -294,7 +302,7 @@ class ForLoop(_BaseKeyword):
         return frange(*items)
 
     def _to_number_with_arithmetics(self, item):
-        if isinstance(item, (int, long, float)):
+        if isinstance(item, integer_types + (float, )):
             return item
         item = str(item)
         # eval() would also convert to int or float, but it sometimes very
@@ -306,7 +314,7 @@ class ForLoop(_BaseKeyword):
             except ValueError:
                 pass
         number = eval(item, {})
-        if not isinstance(number, (int, long, float)):
+        if not isinstance(number, integer_types + (float, )):
             raise TypeError("Expected number, got %s." % type_name(item))
         return number
 

@@ -15,10 +15,11 @@ Global Dynamic Library
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name works when Unicode
+    [Setup]    Make test non-critical on Python 3
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name works when UTF-8 bytes
-    [Setup]    Make test non-critical on IronPython
+    [Setup]    Make test non-critical on Python 3 and IronPython
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name fails when other bytes

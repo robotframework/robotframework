@@ -12,7 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import integer_types, string_types
+
 import re
+from six.moves import zip
+from itertools import chain
 
 from robot.errors import DataError
 from robot.utils import (format_assign_message, get_error_message, prepr,
@@ -57,7 +61,7 @@ class VariableAssigner(object):
         return base.strip() + '}', attr[:-1].strip()
 
     def _variable_supports_extended_assign(self, var):
-        return not isinstance(var, (basestring, int, long, float))
+        return not isinstance(var, string_types + integer_types + (float, ))
 
     def _is_valid_extended_attribute(self, attr):
         return self._valid_extended_attr.match(attr) is not None
@@ -141,7 +145,7 @@ class _MultiReturnValueResolver(object):
     def _convert_to_list(self, return_value):
         if return_value is None:
             return [None] * self._min_count
-        if isinstance(return_value, basestring):
+        if isinstance(return_value, string_types):
             self._raise_expected_list(return_value)
         try:
             return list(return_value)
@@ -188,9 +192,9 @@ class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
             = self._split_variables(self._variables)
         before_items, list_items, after_items \
             = self._split_return(return_value, before_vars, after_vars)
-        return (zip(before_vars, before_items) +
-                [(list_var, list_items)] +
-                zip(after_vars, after_items))
+        return list(chain(zip(before_vars, before_items),
+                          [(list_var, list_items)],
+                          zip(after_vars, after_items)))
 
     def _split_variables(self, variables):
         list_index = [v[0] for v in variables].index('@')

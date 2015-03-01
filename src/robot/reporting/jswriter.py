@@ -53,7 +53,7 @@ class JsResultWriter(object):
         prefix = '%s = %s.concat(' % (variable, variable)
         postfix = ');\n'
         threshold = self._split_threshold
-        for index in xrange(0, len(strings), threshold):
+        for index in range(0, len(strings), threshold):
             self._write_json(prefix, strings[index:index+threshold], postfix)
 
     def _write_data(self, data):

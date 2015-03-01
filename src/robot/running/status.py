@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import text_type as unicode
+
 from robot.errors import PassExecution
 
 
@@ -22,8 +24,12 @@ class Failure(object):
         self.test = None
         self.teardown = None
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.setup or self.test or self.teardown)
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
 
 class Exit(object):
@@ -41,8 +47,12 @@ class Exit(object):
     def teardown_allowed(self):
         return not (self.skip_teardown_mode and self)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.failure or self.error or self.fatal
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
 
 class _ExecutionStatus(object):

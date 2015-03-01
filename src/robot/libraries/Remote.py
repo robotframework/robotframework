@@ -12,12 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import httplib
+from six import PY3, integer_types, string_types
+
+from six.moves.http_client import HTTPConnection
 import re
 import socket
 import sys
 import time
-import xmlrpclib
+import six.moves.xmlrpc_client as xmlrpclib
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:   # No expat in IronPython 2.7
@@ -82,7 +84,7 @@ class Remote(object):
         args = coercer.coerce(args)
         kwargs = coercer.coerce(kwargs)
         result = RemoteResult(self._client.run_keyword(name, args, kwargs))
-        sys.stdout.write(result.output)
+        sys.stdout.write(unic(result.output))
         if result.status != 'PASS':
             raise RemoteError(result.error, result.traceback, result.fatal,
                               result.continuable)
@@ -95,6 +97,7 @@ class ArgumentCoercer(object):
 
     def coerce(self, argument):
         for handles, handle in [(self._is_string, self._handle_string),
+                                (self._is_bytes, self._handle_binary), #PY3
                                 (self._is_number, self._pass_through),
                                 (is_dict_like, self._coerce_dict),
                                 (is_list_like, self._coerce_list),
@@ -103,10 +106,14 @@ class ArgumentCoercer(object):
                 return handle(argument)
 
     def _is_string(self, arg):
-        return isinstance(arg, basestring)
+        return isinstance(arg, string_types)
+
+    #PY3:
+    def _is_bytes(self, arg):
+        return isinstance(arg, bytes)
 
     def _is_number(self, arg):
-        return isinstance(arg, (int, long, float))
+        return isinstance(arg, integer_types + (float,))
 
     def _handle_string(self, arg):
         if self._contains_binary(arg):
@@ -115,12 +122,16 @@ class ArgumentCoercer(object):
 
     def _contains_binary(self, arg):
         return (self.binary.search(arg) or
-                isinstance(arg, str) and not IRONPYTHON and
+                isinstance(arg, str) and not (PY3 or IRONPYTHON) and
                 self.non_ascii.search(arg))
 
     def _handle_binary(self, arg):
         try:
-            arg = str(arg)
+            if PY3:
+                if not isinstance(arg, bytes):
+                    arg = bytes(arg, 'ascii')
+            else:
+                arg = str(arg)
         except UnicodeError:
             raise ValueError('Cannot represent %r as binary.' % arg)
         return xmlrpclib.Binary(arg)
@@ -171,7 +182,7 @@ class RemoteResult(object):
 
     def _convert(self, value):
         if isinstance(value, xmlrpclib.Binary):
-            return str(value)
+            return value.data
         if is_dict_like(value):
             return DotDict((k, self._convert(v)) for k, v in value.items())
         if is_list_like(value):
@@ -236,11 +247,12 @@ class TimeoutTransport(xmlrpclib.Transport):
         if self._connection and host == self._connection[0]:
             return self._connection[1]
         chost, self._extra_headers, x509 = self.get_host_info(host)
-        self._connection = host, httplib.HTTPConnection(chost, timeout=self.timeout)
+        self._connection = host, HTTPConnection(chost, timeout=self.timeout)
         return self._connection[1]
 
 
 if sys.version_info[:2] == (2, 6):
+    from httplib import HTTP
 
     class TimeoutTransport(TimeoutTransport):
 
@@ -248,7 +260,7 @@ if sys.version_info[:2] == (2, 6):
             host, extra_headers, x509 = self.get_host_info(host)
             return TimeoutHTTP(host, timeout=self.timeout)
 
-    class TimeoutHTTP(httplib.HTTP):
+    class TimeoutHTTP(HTTP):
 
         def __init__(self, host='', port=None, strict=None, timeout=None):
             if port == 0:

@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
+import sys
+
 from robot.utils import NormalizedDict
 
 
@@ -24,4 +28,10 @@ class Metadata(NormalizedDict):
         return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)
 
     def __str__(self):
+        if PY3:
+            return self.__unicode__()
         return unicode(self).encode('ASCII', 'replace')
+
+    #PY3
+    def __bytes__(self):
+        return str(self).encode('ASCII', 'replace')

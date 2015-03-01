@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, text_type as unicode
+
 import time
 
 from robot.utils import (secs_to_timestr, timestr_to_secs,
@@ -72,6 +74,8 @@ class _Timeout(object):
         return self.active and self.time_left() <= 0
 
     def __str__(self):
+        if PY3:
+            return self.__unicode__()
         return unicode(self).encode('utf-8')
 
     def __unicode__(self):
@@ -81,8 +85,21 @@ class _Timeout(object):
         return cmp(not self.active, not other.active) \
             or cmp(self.time_left(), other.time_left())
 
-    def __nonzero__(self):
+    def __lt__(self, other):
+        key = (not self.active, self.time_left())
+        other_key = (not other.active, other.time_left())
+        return key < other_key
+
+    #TODO: Necessary? Are _Timeouts ever compared with other than < ?
+    ## def __eq__(self, other):
+    ##     ...
+
+    def __bool__(self):
         return bool(self.string and self.string.upper() != 'NONE')
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def run(self, runnable, args=None, kwargs=None):
         if self.error:

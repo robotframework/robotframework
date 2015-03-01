@@ -5,7 +5,7 @@ Force Tags      smoke  regression
 Resource        atest_resource.robot
 
 *** Variables ***
-${TESTPATH}  ${CURDIR}${/}..${/}..${/}..${/}utest${/}run_utests.py
+${TESTPATH}  ${CURDIR}${/}${PY3REL}..${/}..${/}..${/}utest${/}run_utests.py
 
 *** Test Cases ***
 Unit Tests With Python

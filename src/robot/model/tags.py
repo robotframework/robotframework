@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, string_types
+
+import sys
+
 from robot.utils import Matcher, NormalizedDict, setter
 
 
@@ -24,7 +28,7 @@ class Tags(object):
     def _tags(self, tags):
         if not tags:
             return ()
-        if isinstance(tags, basestring):
+        if isinstance(tags, string_types):
             tags = (tags,)
         return self._normalize(tags)
 
@@ -61,7 +65,13 @@ class Tags(object):
         return repr(list(self))
 
     def __str__(self):
+        if PY3:
+            return self.__unicode__()
         return unicode(self).encode('UTF-8')
+
+    #PY3
+    def __bytes__(self):
+        return str(self).encode('UTF-8')
 
     def __getitem__(self, index):
         item = self._tags[index]
@@ -113,6 +123,10 @@ class _SingleTagPattern(object):
 
     def __unicode__(self):
         return self._matcher.pattern
+
+    if PY3:
+        def __str__(self):
+            return self.__unicode__()
 
 
 class _AndTagPattern(object):

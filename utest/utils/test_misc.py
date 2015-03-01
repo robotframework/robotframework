@@ -1,3 +1,5 @@
+from six import PY3
+
 import unittest
 
 from robot.utils.misc import getdoc, printable_name, seq2str
@@ -68,14 +70,14 @@ class TestGetdoc(unittest.TestCase):
         def func():
             """Hyv\xc3\xa4 \xc3\xa4iti!"""
         expected = u'Hyv\xe4 \xe4iti!' \
-            if not IRONPYTHON else u'Hyv\xc3\xa4 \xc3\xa4iti!'
+            if not (IRONPYTHON or PY3) else u'Hyv\xc3\xa4 \xc3\xa4iti!'
         assert_equals(getdoc(func), expected)
 
     def test_non_ascii_doc_not_in_utf8(self):
         def func():
             """Hyv\xe4 \xe4iti!"""
         expected = 'Hyv\\xe4 \\xe4iti!' \
-            if not IRONPYTHON else u'Hyv\xe4 \xe4iti!'
+            if not (IRONPYTHON or PY3) else u'Hyv\xe4 \xe4iti!'
         assert_equals(getdoc(func), expected)
 
     def test_unicode_doc(self):

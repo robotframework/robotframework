@@ -1,3 +1,5 @@
+from six import text_type as unicode
+
 import unittest
 from robot.utils.asserts import assert_equal, assert_raises, assert_true, assert_false
 

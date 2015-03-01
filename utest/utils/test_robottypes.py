@@ -1,10 +1,16 @@
+from six import PY2, PY3
+if PY3:
+    long = int
+
 import unittest
 
 from collections import Mapping
 from array import array
-from UserDict import UserDict
-from UserList import UserList
-from UserString import UserString, MutableString
+from six.moves import UserDict, UserList, UserString
+if PY3:
+    MutableString = UserString
+else:
+    from UserString import MutableString
 try:
     import java
     from java.lang import String
@@ -53,7 +59,7 @@ class TestListLike(unittest.TestCase):
             assert_equals(is_list_like(Hashtable()), True)
 
     def test_other_iterables_are_list_like(self):
-        for thing in [[], (), set(), xrange(1), generator(), array('i'), UserList()]:
+        for thing in [[], (), set(), (range if PY3 else xrange)(1), generator(), array('i'), UserList()]:
             assert_equals(is_list_like(thing), True, thing)
 
     def test_others_are_not_list_like(self):
@@ -107,7 +113,7 @@ class TestTypeName(unittest.TestCase):
 
     def test_base_types(self):
         for item, exp in [('bytes', 'string'), (u'unicode', 'string'),
-                          (1, 'integer'), (1L, 'integer'), (1.0, 'float'),
+                          (1, 'integer'), (long(1), 'integer'), (1.0, 'float'),
                           (True, 'boolean'), (None, 'None'), (set(), 'set'),
                           ([], 'list'), ((), 'tuple'), ({}, 'dictionary')]:
             assert_equals(type_name(item), exp)

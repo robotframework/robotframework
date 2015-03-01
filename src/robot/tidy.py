@@ -27,6 +27,7 @@ Instead of ``python`` it is possible to use also other Python interpreters.
 This module also provides :class:`Tidy` class and :func:`tidy_cli` function
 that can be used programmatically. Other code is for internal usage.
 """
+from six import PY3, string_types, text_type as unicode
 
 USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
@@ -113,7 +114,10 @@ http://robotframework.org/robotframework/#built-in-tools.
 
 import os
 import sys
-from StringIO import StringIO
+if PY3:
+    from io import StringIO
+else:
+    from StringIO import StringIO
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
@@ -150,11 +154,17 @@ class Tidy(object):
         Use :func:`inplace` to tidy files in-place.
         """
         data = self._parse_data(path)
-        outfile = open(output, 'wb') if output else StringIO()
+        mode = 'w' if PY3 else 'wb'
+        outfile = open(output, mode) if output else StringIO()
         try:
             self._save_file(data, outfile)
             if not output:
-                return outfile.getvalue().replace('\r\n', '\n').decode('UTF-8')
+                value = outfile.getvalue().replace('\r\n', '\n')
+                # Only decode if not already unicode (Python 3 str).
+                # 2to3 changes `unicode` to `str`.
+                if type(value) is not unicode:
+                    value = value.decode('UTF-8')
+                return value
         finally:
             outfile.close()
 

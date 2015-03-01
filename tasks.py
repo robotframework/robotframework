@@ -5,6 +5,9 @@ and run `invoke --help` and `invode --list` for details how to execute tasks.
 
 See BUILD.rst for packaging and releasing instructions.
 """
+from __future__ import print_function
+
+from six import string_types
 
 import os
 import os.path
@@ -72,7 +75,7 @@ def set_version(version, push=False):
         write_version_file(version)
         write_pom_file(version)
     version = get_version_from_file()
-    print 'Version:', version
+    print('Version:', version)
     if push:
         git_commit([VERSION_FILE, 'pom.xml'],
                    'Updated version to {}'.format(version), push=True)
@@ -114,7 +117,7 @@ def get_version_from_file():
     return namespace['get_version']()
 
 def git_commit(paths, message, push=False):
-    paths = paths if isinstance(paths, basestring) else ' '.join(paths)
+    paths = paths if isinstance(paths, string_types) else ' '.join(paths)
     run("git commit -m '{}' {}".format(message, paths))
     if push:
         run('git push')
@@ -157,10 +160,10 @@ def sdist(deploy=False, remove_dist=False):
     announce()
 
 def announce():
-    print
-    print 'Distributions:'
+    print()
+    print('Distributions:')
     for name in os.listdir('dist'):
-        print os.path.join('dist', name)
+        print(os.path.join('dist', name))
 
 
 @task
@@ -190,7 +193,7 @@ def jar(jython_version='2.5.3', remove_dist=False):
     """
     clean(remove_dist, create_dirs=True)
     jython_jar = get_jython_jar(jython_version)
-    print 'Using {}'.format(jython_jar)
+    print('Using {}'.format(jython_jar))
     compile_java_files(jython_jar)
     unzip_jar(jython_jar)
     copy_robot_files()
@@ -205,7 +208,7 @@ def get_jython_jar(version):
         return jar
     url = ('http://search.maven.org/remotecontent?filepath=org/python/'
            'jython-standalone/{0}/jython-standalone-{0}.jar').format(version)
-    print 'Jython not found, downloading it from {}.'.format(url)
+    print('Jython not found, downloading it from {}.'.format(url))
     if not os.path.exists(lib):
         os.mkdir(lib)
     urllib.urlretrieve(url, jar)
@@ -215,7 +218,7 @@ def compile_java_files(jython_jar, build_dir='build'):
     root = os.path.join('src', 'java', 'org', 'robotframework')
     files = [os.path.join(root, name) for name in os.listdir(root)
              if name.endswith('.java')]
-    print 'Compiling {} Java files.'.format(len(files))
+    print('Compiling {} Java files.'.format(len(files)))
     run('javac -d {target} -target 1.5 -source 1.5 -cp {cp} {files}'.format(
         target=build_dir, cp=jython_jar, files=' '.join(files)))
 
@@ -290,20 +293,20 @@ def _get_milestone(repo, milestone):
 
 def _print_header(header, level=2):
     if level > 1:
-        print
-    print "{} {}\n".format('#'*level, header)
+        print()
+    print("{} {}\n".format('#'*level, header))
 
 def _print_if_label(header, issues, *labels):
     filtered = [issue for issue in issues
                 if any(label in issue.labels for label in labels)]
     if filtered:
         _print_header(header)
-        print '*EXPLAIN* or remove these.\n'
+        print('*EXPLAIN* or remove these.\n')
         for issue in filtered:
-            print "* {} {}".format(issue.id, issue.summary)
+            print("* {} {}".format(issue.id, issue.summary))
 
 def _print_intro(version):
-    print """
+    print("""
 Robot Framework {version} is a new release with *UPDATE* \
 enhancements and bug fixes. It was released on {date}.
 
@@ -314,17 +317,17 @@ possible bugs submitted to the \
 
 If you have pip just run `pip install --update robotframework`. Otherwise see \
 [installation instructions](https://github.com/robotframework/robotframework/blob/master/INSTALL.rst).
-""".format(version=version, date=time.strftime("%A %B %d, %Y")).strip()
+""".format(version=version, date=time.strftime("%A %B %d, %Y")).strip())
 
 def _print_issue_table(issues, version):
     _print_header("Full list of fixes and enhancements")
-    print "ID  | Type | Priority | Summary"
-    print "--- | ---- | -------- | -------"
+    print("ID  | Type | Priority | Summary")
+    print("--- | ---- | -------- | -------")
     for issue in issues:
-        print "{} | {} | {} | {} ".format(issue.id, issue.type, issue.priority, issue.summary)
-    print
-    print "Altogether {} issues.".format(len(issues)),
-    print "See on [issue tracker](https://github.com/robotframework/robotframework/issues?q=milestone%3A{}).".format(version)
+        print("{} | {} | {} | {} ".format(issue.id, issue.type, issue.priority, issue.summary))
+    print()
+    print("Altogether {} issues.".format(len(issues)), end="")
+    print("See on [issue tracker](https://github.com/robotframework/robotframework/issues?q=milestone%3A{}).".format(version))
 
 
 @task
@@ -341,9 +344,9 @@ def print_issues(version=get_version_from_file(), login=None, password=None):
         password: The password for GitHub login.
     """
     issues = _get_issues(version, login, password)
-    print "{:4}  {:11}  {:8}  {}".format("id", "type", "priority", "summary")
+    print("{:4}  {:11}  {:8}  {}".format("id", "type", "priority", "summary"))
     for issue in issues:
-        print "{:4}  {:11}  {:8}  {}".format(issue.id, issue.type, issue.priority, issue.summary)
+        print("{:4}  {:11}  {:8}  {}".format(issue.id, issue.type, issue.priority, issue.summary))
 
 
 class Issue(object):

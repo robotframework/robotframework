@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 import copy
 import re
 
@@ -521,7 +523,7 @@ class XML(object):
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if isinstance(source, basestring):
+        if isinstance(source, string_types):
             source = self.parse_xml(source)
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)
@@ -1301,7 +1303,9 @@ class XML(object):
         xml_declaration = {'xml_declaration': True} if self.modern_etree else {}
         # Need to explicitly open/close files because older ET versions don't
         # close files they open and Jython/IPY don't close them implicitly.
-        with open(path, 'w') as output:
+        # Opening in binary mode is important for Python 3,
+        # because the ElementTree writes encoded bytes.
+        with open(path, 'wb') as output:
             tree.write(output, encoding=encoding, **xml_declaration)
 
     def evaluate_xpath(self, source, expression, context='.'):

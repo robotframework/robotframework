@@ -95,6 +95,10 @@ class Filter(EmptySuiteRemover):
     def _not_excluded_by_tags(self, test):
         return not self.exclude_tags.match(test.tags)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.include_suites or self.include_tests or
                     self.include_tags or self.exclude_tags)
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()

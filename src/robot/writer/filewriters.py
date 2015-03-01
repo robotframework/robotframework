@@ -12,6 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3
+
+import sys
 try:
     import csv
 except ImportError:
@@ -86,7 +89,10 @@ class SpaceSeparatedTxtWriter(_DataFileWriter):
 
     def _write_row(self, row):
         line = self._separator.join(row).rstrip() + self._line_separator
-        self._output.write(self._encode(line))
+        if PY3 and hasattr(self._output, 'encoding'):
+            self._output.write(line)
+        else:
+            self._output.write(self._encode(line))
 
 
 class PipeSeparatedTxtWriter(_DataFileWriter):
@@ -100,7 +106,11 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
         row = self._separator.join(row)
         if row:
             row = '| ' + row + ' |'
-        self._output.write(self._encode(row + self._line_separator))
+        row += self._line_separator
+        if PY3 and hasattr(self._output, 'encoding'):
+            self._output.write(row)
+        else:
+            self._output.write(self._encode(row))
 
 
 class TsvFileWriter(_DataFileWriter):
@@ -121,7 +131,10 @@ class TsvFileWriter(_DataFileWriter):
         return csv.writer(configuration.output, dialect=dialect)
 
     def _write_row(self, row):
-        self._writer.writerow([self._encode(c) for c in row])
+        if PY3:
+            self._writer.writerow(list(row))
+        else:
+            self._writer.writerow([self._encode(c) for c in row])
 
 
 class HtmlFileWriter(_DataFileWriter):

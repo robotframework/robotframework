@@ -12,7 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from cStringIO import StringIO
+from six import PY3
+
+if PY3:
+    from io import BytesIO
+else:
+    from cStringIO import StringIO as BytesIO
 
 from .htmlreader import HtmlReader
 from .txtreader import TxtReader
@@ -34,11 +39,12 @@ def RestReader():
             return self._read_html(doctree, rawdata)
 
         def _read_text(self, data, rawdata):
-            txtfile = StringIO(data.encode('UTF-8'))
+            data = data.encode('UTF-8')
+            txtfile = BytesIO(data)
             return TxtReader().read(txtfile, rawdata)
 
         def _read_html(self, doctree, rawdata):
-            htmlfile = StringIO()
+            htmlfile = BytesIO()
             htmlfile.write(publish_from_doctree(
                 doctree, writer_name='html',
                 settings_overrides={'output_encoding': 'UTF-8'}))

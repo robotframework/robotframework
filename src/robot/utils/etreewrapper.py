@@ -12,8 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, string_types
+
 import os.path
-from StringIO import StringIO
+
+if PY3:
+    from io import BytesIO, StringIO
+else:
+    from StringIO import StringIO
 
 from .platform import IRONPYTHON
 
@@ -73,14 +79,16 @@ class ETSource(object):
         return '<in-memory file>'
 
     def _source_is_file_name(self):
-        return isinstance(self._source, basestring) \
+        return isinstance(self._source, string_types) \
                 and not self._source.lstrip().startswith('<')
 
     def _open_source_if_necessary(self):
         if self._source_is_file_name():
             return self._open_file(self._source)
-        if isinstance(self._source, basestring):
+        if isinstance(self._source, string_types):
             return self._open_string_io(self._source)
+        if PY3 and isinstance(self._source, bytes):
+            return self._open_bytes_io(self._source)
         return None
 
     if not IRONPYTHON:
@@ -92,8 +100,16 @@ class ETSource(object):
         def _open_file(self, source):
             return open(source, 'rb')
 
-        def _open_string_io(self, source):
-            return StringIO(source.encode('UTF-8'))
+        if PY3:
+            def _open_string_io(self, source):
+                return StringIO(source)
+
+            def _open_bytes_io(self, source):
+                return BytesIO(source)
+
+        else:
+            def _open_string_io(self, source):
+                return StringIO(source.encode('UTF-8'))
 
     else:
 

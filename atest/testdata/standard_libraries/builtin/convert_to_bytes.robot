@@ -153,7 +153,9 @@ Correct bytes should be created
 
 Bytes should be equal to
     [Arguments]    ${bytes}    ${expected}
-    ${expected} =    Evaluate    ''.join(chr(int(i)) for i in [${expected}])
+    ${python3} =    Evaluate    __import__('sys').version_info[0] == 3
+    ${expected} =    Run Keyword If    ${python3}    Evaluate    bytes([${expected}])
+    ...    ELSE    Evaluate    ''.join(chr(int(i)) for i in [${expected}])
     Should Be Equal    ${bytes}   ${expected}
     Should Be Byte String    ${bytes}
 

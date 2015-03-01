@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import reraise, text_type as unicode
+
 import os
 import sys
 import inspect
@@ -148,7 +150,7 @@ class _Importer(object):
                     return self._import(name, fromlist, retry=False)
                 # Cannot use plain raise due to
                 # http://ironpython.codeplex.com/workitem/32332
-                raise sys.exc_type, sys.exc_value, sys.exc_traceback
+                reraise(*sys.exc_info())
         except:
             raise DataError(*get_error_details())
 

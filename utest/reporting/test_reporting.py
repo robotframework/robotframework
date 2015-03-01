@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from six.moves import StringIO
 import os
 import unittest
 
@@ -140,6 +140,8 @@ class StubSettings(object):
 
 
 class ClosableOutput(object):
+
+    encoding = None
 
     def __init__(self, path):
         self._output = StringIO()

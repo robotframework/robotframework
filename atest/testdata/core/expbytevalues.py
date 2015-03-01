@@ -13,7 +13,7 @@ VARIABLES = dict(exp_return_value='ty\xf6paikka',
 
 def get_variables(interpreter=None):
     variables = VARIABLES.copy()
-    if _running_on_iron_python(interpreter):
+    if sys.version_info[0] == 3 or _running_on_iron_python(interpreter):
         variables.update(exp_return_msg=u'ty\xf6paikka',
                          exp_error_msg=u'hyv\xe4',
                          exp_log_msg=u'\xe4iti',

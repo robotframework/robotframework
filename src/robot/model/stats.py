@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 from robot.utils import elapsed_time_to_string, html_escape, normalize
 
 from .tags import TagPatterns
@@ -59,7 +61,7 @@ class Stat(object):
         return {}
 
     def _html_escape(self, item):
-        return html_escape(item) if isinstance(item, basestring) else item
+        return html_escape(item) if isinstance(item, string_types) else item
 
     @property
     def total(self):
@@ -81,8 +83,19 @@ class Stat(object):
     def __cmp__(self, other):
         return cmp(self._norm_name, other._norm_name)
 
-    def __nonzero__(self):
+    def __lt__(self, other):
+        return self._norm_name < other._norm_name
+
+    #TODO: Necessary? Are Stats ever compared with other than < ?
+    ## def __eq__(self, other):
+    ##     ...
+
+    def __bool__(self):
         return not self.failed
+
+    #PY2
+    def __nonzero__(self):
+        return self.__bool__()
 
     def visit(self, visitor):
         visitor.visit_stat(self)
@@ -166,6 +179,17 @@ class TagStat(Stat):
             or cmp(other.non_critical, self.non_critical) \
             or cmp(bool(other.combined), bool(self.combined)) \
             or Stat.__cmp__(self, other)
+
+    def __lt__(self, other):
+        key = (other.critical, other.non_critical, bool(other.combined),
+               self._norm_name)
+        other_key = (self.critical, self.non_critical, bool(self.combined),
+                     other._norm_name)
+        return key < other_key
+
+    #TODO: Necessary? See commented Stat.__eq__
+    ## def __eq__(self, other):
+    ##     ...
 
 
 class CombinedTagStat(TagStat):

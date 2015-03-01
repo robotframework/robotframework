@@ -1,3 +1,77 @@
+Robot Framework with Python 3.3+ compatibility
+==============================================
+
+https://github.com/userzimmermann/robotframework/tree/python3
+
+- Forked from https://github.com/robotframework/robotframework
+- Compatible with **Python 2.7**
+
+Please report any issues to:
+
+https://github.com/userzimmermann/robotframework/issues
+
+You can look at this URL for a complete code diff:
+
+https://github.com/userzimmermann/robotframework/compare/master...python3
+
+
+Installation
+------------
+
+::
+
+    python setup.py install
+
+Or with `pip <http://www.pip-installer.org>`_::
+
+    pip install .
+
+Or from `PyPI <https://pypi.python.org/pypi/robotframework-python3>`_::
+
+    pip install robotframework-python3
+
+Requirements
+............
+
+* `six <https://pypi.python.org/pypi/six>`_
+
+
+Differences in Python 3
+-----------------------
+
+Python 3 makes a clear distinction between *str* for textual data
+and *bytes* for binary data.
+This affects the Standard Test Libraries and their Keywords:
+
+- *str* arguments don't work where *bytes* are expected,
+  like writing to binary file streams or comparing with other *bytes*.
+- *bytes* don't work where *str* is expected,
+  like writing to text mode streams or comparing with another *str*.
+- Reading from binary streams always returns *bytes*.
+- Reading from text streams always returns *str*.
+
+You can use the following keywords to explicitly create *bytes*:
+
+- **BuiltIn.Convert To Bytes**
+- **String.Encode String To Bytes**
+
+I extended **Process.Start Process** with a *binary_mode* argument.
+By default the process streams are opened in text mode.
+You can change this with::
+
+    binary_mode=True
+
+**Collections.Get Dictionary Keys** normally sorts the keys.
+I disabled key sorting in Python 3,
+because most builtin types are not comparable to each other.
+This further affects **Get Dictionary Values** and **Get Dictionary Items**.
+I still need to find a better solution... Maybe imitate Python 2 sorting?
+Any suggestions? :)
+
+
+-- **Stefan Zimmermann**
+
+
 Robot Framework
 ===============
 

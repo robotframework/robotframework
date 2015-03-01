@@ -1,6 +1,6 @@
 from os.path import join, dirname
 import unittest
-from StringIO import StringIO
+from six.moves import StringIO
 from robot.errors import DataError
 
 from robot.result import ExecutionResult

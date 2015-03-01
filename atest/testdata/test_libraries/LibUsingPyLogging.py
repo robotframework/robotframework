@@ -1,3 +1,5 @@
+from six import PY3, text_type as unicode
+
 import logging
 import time
 import sys
@@ -23,6 +25,8 @@ class Message(object):
     def __unicode__(self):
         return self.msg
     def __str__(self):
+        if PY3:
+            return self.__unicode__()
         return unicode(self).encode('UTF-8')
     def __repr__(self):
         return repr(str(self))

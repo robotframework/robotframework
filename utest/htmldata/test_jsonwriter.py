@@ -1,4 +1,6 @@
-from StringIO import StringIO
+from six import PY2
+
+from six.moves import StringIO
 try:
     import json
 except ImportError:
@@ -28,7 +30,10 @@ class TestJsonDumper(unittest.TestCase):
         self._test('123', '"123"')
 
     def test_dump_non_ascii_string(self):
-        self._test(u'hyv\xe4', u'"hyv\xe4"'.encode('UTF-8'))
+        expected = u'"hyv\xe4"'
+        if PY2:
+            expected = expected.encode('UTF-8')
+        self._test(u'hyv\xe4', expected)
 
     def test_escape_string(self):
         self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')
@@ -47,8 +52,9 @@ class TestJsonDumper(unittest.TestCase):
         self._test(1, '1')
 
     def test_dump_long(self):
-        self._test(12345678901234567890L, '12345678901234567890')
-        self._test(0L, '0')
+        self._test(12345678901234567890, '12345678901234567890')
+        if PY2:
+            self._test(long(0), '0')
 
     def test_dump_list(self):
         self._test([1, 2, True, 'hello', 'world'], '[1,2,true,"hello","world"]')
@@ -60,7 +66,7 @@ class TestJsonDumper(unittest.TestCase):
 
     def test_dump_dictionary(self):
         self._test({'key': 1}, '{"key":1}')
-        self._test({'nested': [-1L, {42: None}]}, '{"nested":[-1,{42:null}]}')
+        self._test({'nested': [-1, {42: None}]}, '{"nested":[-1,{42:null}]}')
 
     def test_dictionaries_are_sorted(self):
         self._test({'key': 1, 'hello': ['wor', 'ld'], 'z': 'a', 'a': 'z'},
@@ -81,7 +87,7 @@ class TestJsonDumper(unittest.TestCase):
 
     if json:
         def test_against_standard_json(self):
-            data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in xrange(32, 127)),
+            data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in range(32, 127)),
                     {'A': 1, 'b': 2, 'C': ()}, None, (1, 2, 3)]
             try:
                 expected = json.dumps(data, sort_keys=True,

@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 
+import re
 import sys
 import os
 from os.path import abspath, join, dirname
-from distutils.core import setup
+from io import open
+from setuptools import setup
 
 if 'develop' in sys.argv or 'bdist_wheel' in sys.argv:
     import setuptools    # support setuptools development mode and wheels
 
 CURDIR = dirname(abspath(__file__))
 
-execfile(join(CURDIR, 'src', 'robot', 'version.py'))
+with open(join(CURDIR, 'src', 'robot', 'version.py')) as py:
+    exec(py.read())
 VERSION = get_version()
 with open(join(CURDIR, 'README.rst')) as readme:
     install = 'https://github.com/robotframework/robotframework/blob/master/INSTALL.rst'
@@ -21,11 +24,20 @@ Development Status :: 5 - Production/Stable
 License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
 Programming Language :: Python
+Programming Language :: Python :: 2
+Programming Language :: Python :: 2.7
+Programming Language :: Python :: 3
+Programming Language :: Python :: 3.3
+Programming Language :: Python :: 3.4
 Topic :: Software Development :: Testing
 """.strip().splitlines()
 KEYWORDS = 'robotframework testing testautomation acceptancetesting atdd bdd'
 # Maximum width in Windows installer seems to be 70 characters -------|
-WINDOWS_DESCRIPTION = """
+WINDOWS_DESCRIPTION = re.match( # prepend Python 3 info from README
+  r"(.|\n)*Robot Framework\n"
+          "===============\n\n",
+  LONG_DESCRIPTION
+  ).group(0) + """
 Robot Framework is a generic test automation framework for acceptance
 testing and acceptance test-driven development (ATDD). It has
 easy-to-use tabular test data syntax and utilizes the keyword-driven
@@ -41,8 +53,8 @@ PACKAGES = ['robot', 'robot.api', 'robot.conf',
             'robot.running.arguments', 'robot.running.timeouts',
             'robot.utils', 'robot.variables', 'robot.writer']
 PACKAGE_DATA = [join('htmldata', directory, pattern)
-                for directory in 'rebot', 'libdoc', 'testdoc', 'lib', 'common'
-                for pattern in '*.html', '*.css', '*.js']
+                for directory in ['rebot', 'libdoc', 'testdoc', 'lib', 'common']
+                for pattern in ['*.html', '*.css', '*.js']]
 if sys.platform.startswith('java'):
     SCRIPTS = ['jybot', 'jyrebot']
 elif sys.platform == 'cli':
@@ -56,15 +68,20 @@ if 'bdist_wininst' in sys.argv:
     SCRIPTS.append('robot_postinstall.py')
     LONG_DESCRIPTION = WINDOWS_DESCRIPTION
 
+REQUIRES = open('requirements.txt').read()
+
 setup(
-    name         = 'robotframework',
+    name         = 'robotframework-python3',
     version      = VERSION,
     author       = 'Robot Framework Developers',
     author_email = 'robotframework@gmail.com',
-    url          = 'http://robotframework.org',
-    download_url = 'https://pypi.python.org/pypi/robotframework',
+    maintainer   = 'Stefan Zimmermann',
+    maintainer_email =    'zimmermann.code@gmail.com',
+    url          = 'https://github.com/userzimmermann'
+                   '/robotframework/tree/python3',
+    download_url = 'https://pypi.python.org/pypi/robotframework-python3',
     license      = 'Apache License 2.0',
-    description  = 'A generic test automation framework',
+    description  = 'Python 3 compatible generic test automation framework',
     long_description = LONG_DESCRIPTION,
     keywords     = KEYWORDS,
     platforms    = 'any',
@@ -73,4 +90,5 @@ setup(
     package_data = {'robot': PACKAGE_DATA},
     packages     = PACKAGES,
     scripts      = SCRIPTS,
+    install_requires=REQUIRES,
 )

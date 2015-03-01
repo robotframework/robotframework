@@ -12,11 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import integer_types
+
+from six.moves import range
+
 
 def frange(*args):
     """Like ``range()`` but accepts float arguments."""
-    if all(isinstance(arg, (int, long)) for arg in args):
-        return range(*args)
+    if all(isinstance(arg, (integer_types)) for arg in args):
+        return list(range(*args))
     start, stop, step = _get_start_stop_step(args)
     digits = max(_digits(start), _digits(stop), _digits(step))
     factor = pow(10, digits)

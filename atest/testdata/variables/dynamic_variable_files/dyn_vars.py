@@ -1,4 +1,7 @@
-from UserDict import UserDict
+try:
+    from UserDict import UserDict
+except ImportError: # Python 3
+    from collections import UserDict
 try:
     from collections import Mapping
 except ImportError:

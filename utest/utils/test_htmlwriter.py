@@ -1,6 +1,11 @@
+from six import PY3
+
+import sys
 import os
 import unittest
-from StringIO import StringIO
+
+from six.moves import StringIO
+from io import BytesIO
 
 from robot.utils import HtmlWriter
 from robot.utils.asserts import assert_equals
@@ -115,7 +120,7 @@ class TestHtmlWriter(unittest.TestCase):
         self._test_encoding('ISO-8859-1')
 
     def _test_encoding(self, encoding):
-        self.output = StringIO()
+        self.output = BytesIO()
         writer = HtmlWriter(self.output, encoding=encoding)
         writer.start(u'p', attrs={'name': u'hyv\xe4\xe4'}, newline=False)
         writer.content(u'y\xf6')

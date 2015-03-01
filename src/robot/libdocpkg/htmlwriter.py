@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 import re
-import urllib
+from six.moves.urllib_parse import quote as urlquote
 
 from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
@@ -107,11 +107,11 @@ class DocFormatter(object):
 
     def _escape_and_encode_targets(self, targets):
         return NormalizedDict((html_escape(key), self._encode_uri_component(value))
-                              for key, value in targets.iteritems())
+                              for key, value in targets.items())
 
     def _encode_uri_component(self, value):
         # Emulates encodeURIComponent javascript function
-        return urllib.quote(value.encode('UTF-8'), safe="-_.!~*'()")
+        return urlquote(value.encode('UTF-8'), safe="-_.!~*'()")
 
     def html(self, doc, intro=False):
         doc = self._doc_to_html(doc)

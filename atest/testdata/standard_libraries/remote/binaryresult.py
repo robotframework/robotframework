@@ -1,5 +1,7 @@
+from six import PY3
+
 import sys
-from xmlrpclib import Binary
+from six.moves.xmlrpc_client import Binary
 
 from remoteserver import DirectResultRemoteServer
 
@@ -32,6 +34,8 @@ class BinaryResult(object):
                             traceback=self._binary(ordinals, 'Traceback: '))
 
     def _binary(self, ordinals, extra=''):
+        if PY3:
+            return Binary(bytes(map(ord, extra)) + bytes(map(int, ordinals)))
         return Binary(extra + ''.join(chr(int(o)) for o in ordinals))
 
     def _result(self, return_='', output='', error='', traceback=''):

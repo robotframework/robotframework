@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 import os
 import random
 import sys
@@ -74,7 +76,7 @@ class _BaseSettings(object):
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             value = opts[cli_name] if cli_name in opts else default
-            if default == [] and isinstance(value, basestring):
+            if default == [] and isinstance(value, string_types):
                 value = [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
@@ -161,7 +163,7 @@ class _BaseSettings(object):
         if ':' in value:
             value, seed = value.split(':', 1)
         else:
-            seed = random.randint(0, sys.maxint)
+            seed = random.randint(0, sys.maxsize)
         if value in ('test', 'suite'):
             value += 's'
         if value not in ('tests', 'suites', 'none', 'all'):

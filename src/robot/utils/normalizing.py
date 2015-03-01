@@ -15,7 +15,7 @@
 import re
 import sys
 from collections import Mapping
-from UserDict import UserDict
+from six.moves import UserDict
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
@@ -106,7 +106,7 @@ class NormalizedDict(UserDict):
         self._keys.clear()
 
     def has_key(self, key):
-        return self.data.has_key(self._normalize(key))
+        return self._normalize(key) in self.data
 
     __contains__ = has_key
 
@@ -134,7 +134,7 @@ class NormalizedDict(UserDict):
     def popitem(self):
         if not self:
             raise KeyError('dictionary is empty')
-        key = self.iterkeys().next()
+        key = next(self.iterkeys())
         return key, self.pop(key)
 
     def copy(self):
@@ -150,3 +150,9 @@ class NormalizedDict(UserDict):
                 not isinstance(other, NormalizedDict)):
             other = NormalizedDict(other)
         return UserDict.__cmp__(self, other)
+
+    def __eq__(self, other):
+        if (isinstance(other, (Mapping, UserDict)) and
+                not isinstance(other, NormalizedDict)):
+            other = NormalizedDict(other).data
+        return self.data == other

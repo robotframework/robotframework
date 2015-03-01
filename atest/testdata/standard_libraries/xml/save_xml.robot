@@ -35,7 +35,7 @@ Save Non-ASCII XML Using Custom Encoding
     XML Content Should Be    ${NON-ASCII}    iso-8859-1
 
 Save to Invalid File
-    [Documentation]    FAIL STARTS: IOError:
+    [Documentation]    FAIL REGEXP: (IO|IsADirectory)Error: .*
     Save XML    ${SIMPLE}    %{TEMPDIR}
 
 Save Using Invalid Encoding
@@ -52,4 +52,7 @@ Save Non-ASCII Using ASCII
 XML Content Should Be
     [Arguments]    ${expected}    ${encoding}=UTF-8
     ${actual} =    Get File    ${OUTPUT}    ${encoding}
-    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding}'?>\n${expected}
+    ${passed} =    Run Keyword And Return Status
+    ...    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding}'?>\n${expected}
+    Run Keyword Unless    ${passed}
+    ...    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding.lower()}'?>\n${expected}

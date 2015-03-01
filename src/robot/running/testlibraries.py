@@ -141,7 +141,10 @@ class _BaseTestLibrary(object):
         return init_method if self._valid_init(init_method) else lambda: None
 
     def _valid_init(self, method):
-        return inspect.ismethod(method) or is_java_init(method)
+        # Python 3 has no unbound methods, they are just functions,
+        # so both tests are needed for compatibility:
+        return (inspect.isfunction(method) or inspect.ismethod(method)
+                ) or is_java_init(method)
 
     def init_scope_handling(self):
         if self.scope == 'GLOBAL':

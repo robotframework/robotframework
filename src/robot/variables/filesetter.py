@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 import inspect
 try:
     from java.util import Map
@@ -35,7 +37,7 @@ class VariableFileSetter(object):
         return variables
 
     def _import_if_needed(self, path_or_variables, args=None):
-        if not isinstance(path_or_variables, basestring):
+        if not isinstance(path_or_variables, string_types):
             return path_or_variables
         return VariableFileImporter().import_variables(path_or_variables, args)
 

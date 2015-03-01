@@ -1,14 +1,16 @@
+from __future__ import print_function
+
 import sys
 
 
 def print_one_html_line():
-    print '*HTML* <a href="http://www.google.com">Google</a>'
+    print('*HTML* <a href="http://www.google.com">Google</a>')
 
 def print_many_html_lines():
-    print '*HTML* <table border=1>\n<tr><td>0,0</td><td>0,1</td></tr>'
-    print '<tr><td>1,0</td><td>1,1</td></tr>\n</table>'
-    print '*HTML*This is html <hr>'
-    print '*INFO*This is not html <br>'
+    print('*HTML* <table border=1>\n<tr><td>0,0</td><td>0,1</td></tr>')
+    print('<tr><td>1,0</td><td>1,1</td></tr>\n</table>')
+    print('*HTML*This is html <hr>')
+    print('*INFO*This is not html <br>')
 
 def print_html_to_stderr():
-    print >> sys.stderr, '*HTML* <i>Hello, stderr!!</i>'
+    print('*HTML* <i>Hello, stderr!!</i>', file=sys.stderr)

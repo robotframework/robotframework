@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY2, PY3, text_type as unicode
+
 from pprint import PrettyPrinter
 
 from .dotdict import DotDict
@@ -30,6 +32,23 @@ def unic(item, *args):
             return _unrepresentable_object(item)
     except:
         return _unrepresentable_object(item)
+
+if PY3:
+    def _unic(item, *args):
+        if isinstance(item, str):
+            return item
+        if isinstance(item, (bytes, bytearray)) and not args:
+            #TODO: Somehow nicer(?)
+            # First map byte values to unicode:
+            item = item.decode('latin')
+            # Then PY3 string_escape (==> bytes):
+            item = item.encode('unicode_escape')
+            # Finally to unicode again:
+            return item.decode('ascii')
+        try:
+            return str(item, *args)
+        except:
+            return _unrepresentable_object(item)
 
 
 # JVM and .NET seem to handle Unicode normalization automatically. Importing
@@ -50,10 +69,11 @@ def prepr(item, width=400):
 class PrettyRepr(PrettyPrinter):
 
     def format(self, object, context, maxlevels, level):
-        if isinstance(object, unicode):
-            return repr(object).lstrip('u'), True, False
-        if isinstance(object, str):
-            return 'b' + repr(object), True, False
+        if PY2:
+            if isinstance(object, unicode):
+                return repr(object).lstrip('u'), True, False
+            if isinstance(object, str):
+                return 'b' + repr(object), True, False
         try:
             return PrettyPrinter.format(self, object, context, maxlevels, level)
         except:

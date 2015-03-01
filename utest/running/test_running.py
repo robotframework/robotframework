@@ -2,7 +2,7 @@ import logging
 import signal
 import sys
 import unittest
-from StringIO import StringIO
+from six.moves import StringIO
 from os.path import abspath, dirname, normpath, join
 
 from robot.utils.asserts import assert_equals

@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, string_types
+
+import sys
+
 from .markuputils import html_escape, xml_escape, attribute_escape
 
 
@@ -26,11 +30,16 @@ class _MarkupWriter(object):
         :param encoding: Encoding to be used to encode all text written to the
             output file. If `None`, text will not be encoded.
         """
-        if isinstance(output, basestring):
-            output = open(output, 'w')
+        if isinstance(output, string_types):
+            if PY3:
+                output = open(output, 'w', encoding=encoding)
+            else:
+                output = open(output, 'w')
+        self._encode_output = encoding and not (
+          PY3 and hasattr(output, 'encoding'))
         self.output = output
-        self._line_separator = line_separator
         self._encoding = encoding
+        self._line_separator = self._encode(line_separator)
         self._preamble()
 
     def _preamble(self):
@@ -76,7 +85,7 @@ class _MarkupWriter(object):
             self.output.write(self._line_separator)
 
     def _encode(self, text):
-        return text.encode(self._encoding) if self._encoding else text
+        return text.encode(self._encoding) if self._encode_output else text
 
 
 class HtmlWriter(_MarkupWriter):

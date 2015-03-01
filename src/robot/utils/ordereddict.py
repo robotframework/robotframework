@@ -20,7 +20,12 @@
 #     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #     OTHER DEALINGS IN THE SOFTWARE.
 
-from UserDict import DictMixin
+from six import PY3
+
+if PY3:
+    from collections import MutableMapping as DictMixin
+else:
+    from UserDict import DictMixin
 
 class OrderedDict(dict, DictMixin):
 
@@ -94,9 +99,14 @@ class OrderedDict(dict, DictMixin):
     pop = DictMixin.pop
     values = DictMixin.values
     items = DictMixin.items
-    iterkeys = DictMixin.iterkeys
-    itervalues = DictMixin.itervalues
-    iteritems = DictMixin.iteritems
+    if PY3:
+        iterkeys = DictMixin.keys
+        itervalues = DictMixin.values
+        iteritems = DictMixin.items
+    else:
+        iterkeys = DictMixin.iterkeys
+        itervalues = DictMixin.itervalues
+        iteritems = DictMixin.iteritems
 
     def __repr__(self):
         if not self:

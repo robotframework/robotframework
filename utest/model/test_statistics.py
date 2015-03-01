@@ -1,4 +1,7 @@
 import unittest
+import sys
+
+PY3 = sys.version_info[0] == 3
 
 from robot.utils.asserts import assert_equals, assert_true
 from robot.model.statistics import Statistics
@@ -202,7 +205,8 @@ class TestElapsedTime(unittest.TestCase):
     def test_elapsed_from_get_attributes(self):
         for time, expected in [('00:00:00.000', '00:00:00'),
                                ('00:00:00.001', '00:00:00'),
-                               ('00:00:00.500', '00:00:01'),
+                               ('00:00:00.500', '00:00:00' if PY3
+                                                else '00:00:01'),
                                ('00:00:00.999', '00:00:01'),
                                ('00:00:01.000', '00:00:01'),
                                ('00:00:01.001', '00:00:01'),

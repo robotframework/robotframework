@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types, text_type as unicode
+
 import os
 
 from .encoding import decode_from_system as decode, encode_to_system as encode

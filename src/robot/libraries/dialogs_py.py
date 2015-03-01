@@ -14,8 +14,8 @@
 
 import sys
 from threading import currentThread
-from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
-                     BOTH, END, LEFT, W)
+from six.moves.tkinter import (
+  Tk, Toplevel, Frame, Listbox, Label, Button, Entry, BOTH, END, LEFT, W)
 
 
 class _TkDialog(Toplevel):

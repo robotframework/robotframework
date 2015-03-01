@@ -10,24 +10,27 @@ ${PORT}           8270
 
 *** Test Cases ***
 String
+    b'Hello, world!'
     'Hello, world!'
     u'hyv\\xe4 \\u2603'
+    b'\\x7f'
     '\\x7f'
     u'\\x7f\\x80\\xff'
+    b''
     ''
 
 Newline and tab
     '\\t\\n\\r'    '\\t\\n\\n'
 
 Binary
-    '\\x00\\x01\\x02'    binary=yes
-    'foo\\x00bar'        binary=yes
-    u'\\x00\\x01'        binary=yes
+    b'\\x00\\x01\\x02'    binary=yes
+    b'foo\\x00bar'        binary=yes
+    u'\\x00\\x01'         b'\\x00\\x01'    binary=yes
 
 Binary in non-ASCII range
-    '\\x00\\x01\\xe4'    binary=yes
-    '\\x80'              binary=yes
-    '\\xff'              binary=yes
+    b'\\x00\\x01\\xe4'    binary=yes
+    b'\\x80'              binary=yes
+    b'\\xff'              binary=yes
 
 Binary with too big Unicode characters
     [Template]  Run Keyword And Expect Error
@@ -65,7 +68,7 @@ Custom object with non-ASCII representation
     MyObject(u'hyv\\xe4')    u'hyv\\xe4'
 
 Custom object with binary representation
-    MyObject('\\x00\\x01')    '\\x00\\x01'
+    MyObject('\\x00\\x01')    b'\\x00\\x01'    binary=yes
 
 List
     \[]
@@ -79,10 +82,10 @@ List with non-ASCII values
     \[u'\\xe4', u'\\u2603']
 
 List with non-ASCII byte values
-    \['\\x80', '\\xe4']    binary=yes
+    \[b'\\x80', b'\\xe4']    binary=yes
 
 List with binary values
-    \['\\x00', u'\\x01']
+    \['\\x00', u'\\x01']    [b'\\x00', b'\\x01']    binary=yes
 
 Nested list
     \[['a', 'b'], 3, [[[4], True]]]
@@ -92,7 +95,7 @@ List-like
     ('a', 'b', 'c')    ['a', 'b', 'c']
     ('One', -2, False, (None,), u'\\xe4')    ['One', -2, False, [''], u'\\xe4']
     set()    []
-    xrange(5)    [0, 1, 2, 3, 4]
+    range(5) if __import__('sys').version_info[0] == 3 else xrange(5)    [0, 1, 2, 3, 4]
 
 Dictionary
     {}
@@ -111,22 +114,22 @@ Dictionary with non-ASCII values
     {'2': u'\\u2603'}
 
 Dictionary with non-ASCII byte keys and values
-    {'\\x80': '\\x80'}    {'\\\\x80': '\\x80'}    binary=yes
-    {'\\xe4': '\\xe4'}    {'\\\\xe4': '\\xe4'}    binary=yes
+    {b'\\x80': b'\\x80'}    {'\\\\x80': b'\\x80'}    binary=yes
+    {b'\\xe4': b'\\xe4'}    {'\\\\xe4': b'\\xe4'}    binary=yes
 
 Dictionary with binary keys is not supported
-    [Documentation]    FAIL TypeError: unhashable instance
+    [Documentation]    FAIL REGEXP: TypeError: unhashable (instance|type: 'Binary')
     {'\\x00': 'value'}
 
 Dictionary with binary values
-    {0: '\\x00', 1: u'\\x01'}    {'0': '\\x00', '1': '\\x01'}
+    {0: '\\x00', 1: u'\\x01'}    {'0': b'\\x00', '1': b'\\x01'}    binary=yes
 
 Nested dictionary
     {'a': 0, 'b': True, 'c': {'x': [1, 2, 3]}, '\\x7f': '\\x7f'}
 
 Mapping
     MyMapping()    {}
-    MyMapping(a=1, b='\\x01')    {'a': 1, 'b': '\\x01'}
+    MyMapping(a=1, b='\\x01')    {'a': 1, 'b': b'\\x01'}    binary=yes
     MyMapping(a='one', b=2, c=[None, True])    {'a': 'one', 'b': 2, 'c': ['', True]}
 
 *** Keywords ***

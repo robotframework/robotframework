@@ -140,7 +140,7 @@ Elapsed Time Should Be Written To Output When Start And End Time Are Not Known
     ${originals} =  Get Elements  ${COMB OUT 1}  suite/suite/status
     Should Not Be Equal  ${originals[0].attrib['starttime']}  N/A
     Should Not Be Equal  ${originals[0].attrib['endtime']}  N/A
-    Should Not Be True   ${originals[0].attrib.has_key('elapsedtime')}
+    Should Not Be True   ${originals[0].attrib.__contains__('elapsedtime')}
 
 Combined Suite Names Are Correct In Statistics
     ${suites} =  Get Suite Stat Nodes  ${COMB OUT 1}

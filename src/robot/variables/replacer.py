@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import string_types
+
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.utils import escape, unescape, unic
@@ -87,11 +89,11 @@ class VariableReplacer(object):
         return self._replace_string(item, splitter)
 
     def _cannot_have_variables(self, item):
-        return not (isinstance(item, basestring) and '{' in item)
+        return not (isinstance(item, string_types) and '{' in item)
 
     def replace_string(self, string, ignore_errors=False):
         """Replaces variables from a string. Result is always a string."""
-        if not isinstance(string, basestring):
+        if not isinstance(string, string_types):
             return unic(string)
         if self._cannot_have_variables(string):
             return unescape(string)

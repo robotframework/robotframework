@@ -1,3 +1,5 @@
+from six import PY3
+
 import unittest
 import sys
 
@@ -203,19 +205,23 @@ class TestVariables(unittest.TestCase):
         assert_equal(self.varz.replace_scalar('${${1}+${2}}'), 3)
         assert_equal(self.varz.replace_scalar('${${1}-${2}}'), -1)
         assert_equal(self.varz.replace_scalar('${${1}*${2}}'), 2)
-        assert_equal(self.varz.replace_scalar('${${1}/${2}}'), 0)
+        assert_equal(self.varz.replace_scalar('${${1}/${2}}'),
+                      0.5 if PY3 else 0)
+        assert_equal(self.varz.replace_scalar('${${1}//${2}}'), 0)
 
     def test_math_with_internal_vars_with_spaces(self):
         assert_equal(self.varz.replace_scalar('${${1} + ${2.5}}'), 3.5)
         assert_equal(self.varz.replace_scalar('${${1} - ${2} + 1}'), 0)
         assert_equal(self.varz.replace_scalar('${${1} * ${2} - 1}'), 1)
         assert_equal(self.varz.replace_scalar('${${1} / ${2.0}}'), 0.5)
+        assert_equal(self.varz.replace_scalar('${${1} // ${2.0}}'), 0.0)
 
     def test_math_with_internal_vars_does_not_work_if_first_var_is_float(self):
         assert_raises(DataError, self.varz.replace_scalar, '${${1.1}+${2}}')
         assert_raises(DataError, self.varz.replace_scalar, '${${1.1} - ${2}}')
         assert_raises(DataError, self.varz.replace_scalar, '${${1.1} * ${2}}')
         assert_raises(DataError, self.varz.replace_scalar, '${${1.1}/${2}}')
+        assert_raises(DataError, self.varz.replace_scalar, '${${1.1}//${2}}')
 
     def test_list_variable_as_scalar(self):
         self.varz['@{name}'] = exp = ['spam', 'eggs']

@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from six.moves import StringIO
 import unittest
 
 from robot.utils.asserts import assert_equals, assert_true

@@ -1,3 +1,5 @@
+from six import PY3
+
 import os
 import unittest
 import tempfile
@@ -101,10 +103,11 @@ class TestXmlWriter(unittest.TestCase):
         assert_raises(IOError, XmlWriter, os.path.dirname(__file__))
 
     def test_custom_encoding(self):
+        encoding='ISO-8859-1'
         self.writer.close()
-        self.writer = XmlWriter(PATH, encoding='ISO-8859-1')
+        self.writer = XmlWriter(PATH, encoding=encoding)
         self.writer.element('test', u'hyv\xe4')
-        self._verify_content('encoding="ISO-8859-1"')
+        self._verify_content('encoding="ISO-8859-1"', encoding=encoding)
         self._verify_node(None, 'test', u'hyv\xe4')
 
     def _verify_node(self, node, name, text=None, attrs={}):
@@ -115,8 +118,8 @@ class TestXmlWriter(unittest.TestCase):
             assert_equals(node.text, text)
         assert_equals(node.attrib, attrs)
 
-    def _verify_content(self, expected):
-        content = self._get_content()
+    def _verify_content(self, expected, encoding='UTF-8'):
+        content = self._get_content(encoding)
         assert_true(expected in content,
                     'Failed to find:\n%s\n\nfrom:\n%s' % (expected, content))
 
@@ -125,9 +128,9 @@ class TestXmlWriter(unittest.TestCase):
         with ETSource(PATH) as source:
             return ET.parse(source).getroot()
 
-    def _get_content(self):
+    def _get_content(self, encoding='UTF-8'):
         self.writer.close()
-        with open(PATH) as f:
+        with open(PATH, encoding=encoding) if PY3 else open(PATH) as f:
             return f.read()
 
 

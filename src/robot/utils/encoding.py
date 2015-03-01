@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from six import PY3, text_type as unicode
+
 from .encodingsniffer import get_output_encoding, get_system_encoding
 from .unic import unic
 from .platform import JYTHON, IRONPYTHON
@@ -26,9 +28,9 @@ def decode_output(string, force=False):
 
     By default returns Unicode strings as-is. `force` argument can be used
     on IronPython where all strings are `unicode` and caller knows decoding
-    is needed.
+    is needed. On Python 3 `force` is ignored.
     """
-    if isinstance(string, unicode) and not force:
+    if isinstance(string, unicode) and (not force or PY3):
         return string
     return unic(string, OUTPUT_ENCODING)
 
@@ -36,13 +38,14 @@ def decode_output(string, force=False):
 def encode_output(string, errors='replace'):
     """Encodes Unicode to bytes in console encoding."""
     # http://ironpython.codeplex.com/workitem/29487
-    if IRONPYTHON:
+    if PY3 or IRONPYTHON:
         return string
     return string.encode(OUTPUT_ENCODING, errors)
 
 
-# Jython and IronPython handle communication with system APIs using Unicode.
-if JYTHON or IRONPYTHON:
+# Python 3, Jython and IronPython
+# handle communication with system APIs using Unicode.
+if PY3 or JYTHON or IRONPYTHON:
 
     def decode_from_system(string):
         return string if isinstance(string, unicode) else unic(string)
