@@ -167,6 +167,9 @@ def atests(interpreter_path, *params):
         args += ' --exclude x-exclude-on-osx-python'
     if PY3:
         args += ' --exclude x-exclude-on-py3'
+        args += ' --variable PY3REL:../../' # required in unit_tests.robot
+    else:
+        args += ' --variable PY3REL:'
     if 'ipy' in interpreter:
         args += ' --noncritical x-fails-on-ipy'
     command = '%s %s %s %s' % (sys.executable, RUNNER, args, ' '.join(params))
