@@ -60,3 +60,12 @@ Keyword matching multiple keywords in library file
 
 Keyword matching multiple keywords in different library files
     ${tc} =    Check Test Case    ${TEST NAME}
+
+Embedded Args Don't Match Keyword Args
+    Check Test Case    ${TESTNAME}
+
+Optional Non-Embedded Args Are Okay
+    Check Test Case    ${TESTNAME}
+
+Star Args With Embedded Args Are Okay
+    Check Test Case    ${TESTNAME}

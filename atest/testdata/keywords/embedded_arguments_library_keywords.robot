@@ -108,3 +108,15 @@ Keyword Matching Multiple Keywords In Different Library Files
     ...    ${INDENT}embedded_args_in_lk_1.\${a}*lib*\${b}
     ...    ${INDENT}embedded_args_in_lk_2.\${a}*lib*\${b}
     foo*lib*bar
+
+Embedded Args Don't Match Keyword Args
+    [Documentation]  FAIL Keyword 'embedded_args_in_lk_1.Embedded ${args} Are ${great}' expected 1 argument, got 2.
+    Embedded Args Are Great
+
+Optional Non-Embedded Args Are Okay
+    Optional Non-Embedded Args Are Okay
+
+Star Args With Embedded Args Are Okay
+    @{ret} =    Star Args With Embedded Args are Okay
+    @{args} =    Create List    Embedded    Okay
+    Should Be Equal    ${ret}    ${args}

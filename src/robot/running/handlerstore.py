@@ -65,5 +65,5 @@ class HandlerStore(object):
                             % (where, name))
         error = ["%s contains multiple keywords matching name '%s':"
                  % (where, name)]
-        names = sorted([handler.orig_name for handler in found])
+        names = sorted(handler.orig_name for handler in found)
         raise DataError('\n    '.join(error + names))

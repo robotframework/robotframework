@@ -330,7 +330,12 @@ class _DynamicLibrary(_BaseTestLibrary):
     def _create_handler(self, name, method):
         doc = self._get_kw_doc(name)
         argspec = self._get_kw_args(name)
-        return DynamicHandler(self, name, method, doc, argspec)
+        handler = DynamicHandler(self, name, method, doc, argspec)
+        if '$' in handler.name:
+            embedded = EmbeddedArguments(handler.name)
+            if embedded:
+                handler = EmbeddedArgsTemplate(embedded, handler)
+        return handler
 
     def _create_init_handler(self, libcode):
         docgetter = lambda: self._get_kw_doc('__init__')

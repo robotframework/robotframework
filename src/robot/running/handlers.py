@@ -385,15 +385,18 @@ class EmbeddedArgsTemplate(object):
     def __init__(self, embedded, orig_handler):
         self.orig_handler = orig_handler
         orig_handler.orig_run = orig_handler._run
-        self.name = orig_handler.name
         self.embedded_name = embedded.name
         self.embedded_args = embedded.args
+
+    def __getattr__(self, item):
+        return getattr(self.orig_handler, item)
 
     def matches(self, name):
         return self.embedded_name.match(name) is not None
 
     def create(self, name):
         return EmbeddedArgs(name, self)
+
 
 class EmbeddedArgs(object):
 

@@ -78,3 +78,15 @@ def custom_regexp_with(pattern):
 @keyword(name="Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}")
 def grouping(x, y):
     return "%s-%s" % (x, y)
+
+@keyword(name="Embedded ${args} are ${great}")
+def too_may_args(arg):
+    pass
+
+@keyword(name="Optional ${nonembedded} Args Are ${okay}")
+def optional_args_are_okay(nonembedded=1, okay=2, indeed=3):
+    pass
+
+@keyword(name="Star Args With ${embedded} Args Are ${okay}")
+def star_args_are_okay(*args):
+    return args
