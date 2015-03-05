@@ -20,14 +20,14 @@ br {
 }
 a, a:link, a:visited {
     text-decoration: none;
-    color: blue;
+    color: #428bca;
 }
 a > img {
-    border: 1px solid blue !important;
+    border: 1px solid #ddd !important;
 }
 a:hover, a:active {
     text-decoration: underline;
-    color: purple;
+    color: #2a6496;
 }
 .parent-name {
     font-size: 0.7em;
@@ -35,6 +35,8 @@ a:hover, a:active {
 }
 .message {
     white-space: pre-wrap;
+    font-family: Consolas,"Courier New",monospace;
+    font-size: 0.9em;
 }
 /* Headers */
 #header {
@@ -67,16 +69,41 @@ h2 {
     font-size: 1.0em;
 }
 /* Status text colors -- !important allows using them in links */
+.label {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
 .error, .fail {
-    color: red !important;
-    font-weight: bold;
+    color: #d9534f !important;
+    font-weight: bold
+}
+.label.error, .label.fail {
+    color: #fff;
+    background-color: #d9534f;
 }
 .pass {
-    color: #009900 !important;
+    color: #5cb85c !important;
+    font-weight: bold
+}
+.label.pass {
+    color: #fff;
+    background-color: #5cb85c;
 }
 .warn {
-    color: #FFCC00 !important;
-    font-weight: bold;
+    color: #f0ad4e !important;
+    font-weight: bold
+}
+.label.warn {
+    color: #fff;
+    background-color: #f0ad4e;
 }
 .not-run {
     color: #444444 !important;
@@ -100,7 +127,7 @@ h2 {
     border-bottom-left-radius: 4px;
 }
 #report-or-log-link a:hover {
-    color: yellow;
+    color: #ddd;
 }
 #log-level-selector {
     padding: 0.3em 0;
@@ -116,15 +143,15 @@ h2 {
     margin-bottom: 1em;
 }
 .statistics tr:hover {
-    background: #ECECF7;
+    background: #eee;
     cursor: pointer;
 }
 .statistics th, .statistics td {
-    border: 1px solid black;
+    border: 1px solid #ddd;
     padding: 0.1em 0.3em;
 }
 .statistics th {
-    background-color: #DCDCF0;
+    background-color: #ddd;
     padding: 0.2em 0.3em;
 }
 .statistics td {
@@ -160,11 +187,11 @@ th.stats-col-graph:hover {
 }
 /* Statistics graph */
 .graph, .empty-graph {
-    border: 1px solid black;
+    border: 1px solid #ddd;
     width: auto;
     height: 7px;
     padding: 0;
-    background: red;
+    background: #D9534F;
 }
 .empty-graph {
     background: #E9E9E9;
@@ -174,7 +201,7 @@ th.stats-col-graph:hover {
     height: 100%;
 }
 .pass-bar {
-    background: #00F000;
+    background: #5cb85c;
 }
 /* Tablesorter - adapted from provided Blue Skin */
 .tablesorter-header {
@@ -184,20 +211,20 @@ th.stats-col-graph:hover {
     cursor: pointer;
 }
 .tablesorter-header:hover {
-    background-color: #B8C8E3;
+    background-color: #ccc;
 }
 .tablesorter-headerAsc {
     background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlBWnFr3cnIr0WQOyBmvzp13CpxQAOw==);
-    background-color: #B8C8E3 !important;
+    background-color: #ccc !important;
 }
 .tablesorter-headerDesc {
     background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlAWnBr3cnIr0WROyDmvzp13CpxQAOw==);
-    background-color: #B8C8E3 !important;
+    background-color: #ccc !important;
 }
 .sorter-false {
     background-image: none;
     cursor: default;
 }
 .sorter-false:hover {
-    background-color: #DCDCF0;
+    background-color: #ddd;
 }
