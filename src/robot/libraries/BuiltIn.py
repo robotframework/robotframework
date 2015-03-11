@@ -1371,14 +1371,16 @@ class _RunKeyword:
         | ${status} | ${value} = | `Run Keyword And Ignore Error` | My Keyword |
         | `Run Keyword If` | '${status}' == 'PASS' | `Some Action` | arg | ELSE | `Another Action` |
 
-        Using ELSE and/or ELSE IF branches is especially handy if you are
-        interested in the return value. This is illustrated by the example
-        below that also demonstrates using ELSE IF and ELSE together:
+        The Keyword return value can be assigned to a variable.
+        Examples:
+        | ${x} = | `Run Keyword If` | ${rc} == 0  | `Set Variable` | `Success` |
+        | ...    | ELSE IF          | 0 < ${rc} < 42 | `Set Variable` | `Error` |
+        | ...    | ELSE             | `Set Variable` | `Abnormal` |
+        | ${y} = | `Run Keyword If` | ${rc} == 0  | `Set Variable` | `OK` |
 
-        | ${result} = | `Run Keyword If` | ${rc} == 0  | `Zero return value` |
-        | ...         | ELSE IF          | 0 < ${rc} < 42 | `Normal return value` |
-        | ...         | ELSE IF          | ${rc} < 0      | `Negative return value` | ${rc} | arg2 |
-        | ...         | ELSE             | `Abnormal return value` | ${rc} |
+        =>
+        | ${x} gets value of a string 'Success' if ${rc} equals zero, string 'Error' if ${rc} has a value between 1-41 and string 'Abnormal' otherwise
+        | ${y} gets value of a string 'OK' if ${rc} equals zero, Python None otherwise
 
         Notice that ``ELSE`` and ``ELSE IF`` control words must be used
         explicitly and thus cannot come from variables. If you need to use
