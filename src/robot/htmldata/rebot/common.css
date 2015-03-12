@@ -86,7 +86,7 @@ h2 {
     font-weight: bold
 }
 .label.error, .label.fail {
-    color: #fff;
+    color: #fff !important;
     background-color: #d9534f;
 }
 .pass {
@@ -94,7 +94,7 @@ h2 {
     font-weight: bold
 }
 .label.pass {
-    color: #fff;
+    color: #fff !important;
     background-color: #5cb85c;
 }
 .warn {
@@ -102,7 +102,7 @@ h2 {
     font-weight: bold
 }
 .label.warn {
-    color: #fff;
+    color: #fff !important;
     background-color: #f0ad4e;
 }
 .not-run {
