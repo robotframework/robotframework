@@ -1371,14 +1371,20 @@ class _RunKeyword:
         | ${status} | ${value} = | `Run Keyword And Ignore Error` | My Keyword |
         | `Run Keyword If` | '${status}' == 'PASS' | `Some Action` | arg | ELSE | `Another Action` |
 
-        Using ELSE and/or ELSE IF branches is especially handy if you are
-        interested in the return value. This is illustrated by the example
-        below that also demonstrates using ELSE IF and ELSE together:
+        The return value is the one of the keyword that was executed or None if
+        no keyword was executed (i.e. if ``condition`` was false). Hence, it is
+        recommended to use ELSE and/or ELSE IF branches to conditionally assign
+        return values from keyword to variables (to conditionally assign fixed
+        values to variables, see `Set Variable If`). This is illustrated by the
+        example below:
 
-        | ${result} = | `Run Keyword If` | ${rc} == 0  | `Zero return value` |
-        | ...         | ELSE IF          | 0 < ${rc} < 42 | `Normal return value` |
-        | ...         | ELSE IF          | ${rc} < 0      | `Negative return value` | ${rc} | arg2 |
-        | ...         | ELSE             | `Abnormal return value` | ${rc} |
+        | ${var1} =   | `Run Keyword If` | ${rc} == 0     | `Some keyword returning a value` |
+        | ...         | ELSE IF          | 0 < ${rc} < 42 | `Another keyword` |
+        | ...         | ELSE IF          | ${rc} < 0      | `Another keyword with args` | ${rc} | arg2 |
+        | ...         | ELSE             | `Final keyword to handle abnormal cases` | ${rc} |
+        | ${var2} =   | `Run Keyword If` | ${condition}  | `Some keyword` |
+
+        In this example, ${var2} will be set to None if ${condition} is false.
 
         Notice that ``ELSE`` and ``ELSE IF`` control words must be used
         explicitly and thus cannot come from variables. If you need to use
