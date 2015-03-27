@@ -132,13 +132,7 @@ robotframework-announce__
 robotframework-devel__
    Discussion about Robot Framework development.
 
-robotframework-commit__
-   Automatically generated mails about commits to the version control
-   system, build results, new and edited issues, and so on. Can be used to
-   follow Robot Framework development.
-
 __ http://www.catb.org/~esr/faqs/smart-questions.html
 __ http://groups.google.com/group/robotframework-users
 __ http://groups.google.com/group/robotframework-announce
 __ http://groups.google.com/group/robotframework-devel
-__ http://groups.google.com/group/robotframework-commit
