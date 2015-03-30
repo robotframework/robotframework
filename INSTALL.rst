@@ -40,8 +40,8 @@ more thoroughly in subsequent sections.
 
         pip install robotframework
 
-    Using package managers adds a precondition to install the package manager
-    itself first, though.
+    As the standard Python package manager, pip is bundled in with the latest
+    Python, Jython and IronPython installers.
 
 `Installing from source`_
     This approach works regardless the operating system and the Python
