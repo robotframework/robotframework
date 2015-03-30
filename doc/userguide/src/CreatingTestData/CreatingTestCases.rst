@@ -284,31 +284,37 @@ matching them against argument names. This is a new feature in Robot Framework
 2.8.6.
 
 The named argument syntax requires the equal sign to be written literally
-in the keyword call. This means that if a variable has value like `foo=bar`,
-it can never trigger the named argument syntax. This is important to
-remember especially when wrapping keywords into other keywords. If, for example,
-a keyword takes a `variable number of arguments`_ like `@{args}`
-and passes all of them to another keyword using the same `@{args}`
-syntax, the values are not recognized as named. See the example below:
+in the keyword call. This means that variable alone can never trigger the
+named argument syntax, not even if it has a value like like `foo=bar`. This is
+important to remember especially when wrapping keywords into other keywords.
+If, for example, a keyword takes a `variable number of arguments`_ like
+`@{args}` and passes all of them to another keyword using the same `@{args}`
+syntax, possible `named=arg` syntax used in the calling side is not recognized.
+This is illustrated by the example below.
 
 .. table:: Named arguments are not recognized from variable values
    :class: example
 
-   =============  ================  ============  ============
-     Test Case          Action        Argument      Argument
-   =============  ================  ============  ============
-   Example        Wrapper           shell=True    # This will not come as a named argument to Start process
-   =============  ================  ============  ============
+   =============  ============  ============  ============
+     Test Case       Action       Argument      Argument
+   =============  ============  ============  ============
+   Example        Run Program   shell=True    # This will not come as a named argument to Run Process
+   =============  ============  ============  ============
 
 .. table::
    :class: example
 
-   =============  =================  =====================  ============  ============
-     Keyword            Action              Argument          Argument      Argument
-   =============  =================  =====================  ============  ============
-   Wrapper        [Arguments]        @{args}
-   \              Start process      MyProcess              @{args}       # named arguments are not recognized from inside @{args}
-   =============  =================  =====================  ============  ============
+   =============  ============  ============  ============  ============
+      Keyword        Action       Argument      Argument      Argument
+   =============  ============  ============  ============  ============
+   Run Program    [Arguments]   @{args}
+   \              Run Process   program.py    @{args}       # Named arguments are not recognized from inside @{args}
+   =============  ============  ============  ============  ============
+
+If keyword needs to accept and pass forward any named arguments, it must be
+changed to accept `free keyword arguments`_. See `kwargs examples`_ for
+a wrapper keyword version that can pass both positional and named arguments
+forward.
 
 Escaping named arguments syntax
 '''''''''''''''''''''''''''''''
@@ -382,9 +388,8 @@ Free keyword arguments
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework 2.8 added support for `Python style free keyword arguments`__
-(`**kwargs`). What this means is that keywords can receive all arguments
-at the end of the keyword call that use the `name=value` syntax, and
-do not match any other arguments, as kwargs.
+(`**kwargs`). What this means is that keywords can receive all arguments that
+use the `name=value` syntax and do not match any other arguments as kwargs.
 
 Free keyword arguments support variables similarly as `named arguments
 <Named arguments with variables_>`__. In practice that means that variables
@@ -398,37 +403,63 @@ variables were left un-resolved.
 Initially free keyword arguments only worked with Python based libraries, but
 Robot Framework 2.8.2 extended the support to the `dynamic library API`_
 and Robot Framework 2.8.3 extended it further to Java based libraries and to
-the `remote library interface`_. In other
-words, all libraries nowadays support kwargs. Unfortunately user keywords
-no not support them yet, but that support is planned for
-`Robot Framework 2.9`__.
+the `remote library interface`_. Finally, user keywords got `kwargs support
+<Kwargs with user keywords_>`__ in Robot Framework 2.9. In other words,
+all keywords can nowadays support kwargs.
 
-For a real life example of using kwargs, let's take a look at
+__ http://docs.python.org/2/tutorial/controlflow.html#keyword-arguments
+
+Kwargs examples
+'''''''''''''''
+
+As the first example of using kwargs, let's take a look at
 :name:`Run Process` keyword in the Process_ library. It has a signature
-`command, *arguments, **configuration`, which means that it takes
-the command to execute, its arguments as `variable number of arguments`_,
-and finally optional configuration parameters as free keyword arguments
-`**configuration`.
+`command, *arguments, **configuration`, which means that it takes the command
+to execute (`command`), its arguments as `variable number of arguments`_
+(`*arguments`) and finally optional configuration parameters as free keyword
+arguments (`**configuration`). The example below also shows that variables
+work with free keyword arguments exactly like when `using the named argument
+syntax`__.
 
-.. table:: Using free keyword arguments
+.. table:: Free keyword arguments with library keyword
    :class: example
 
    =============  ============  ============  ============  ============  ==============
      Test Case       Action       Argument      Argument      Argument       Argument
    =============  ============  ============  ============  ============  ==============
-   Using Kwargs   Run Process   command.exe   arg1          arg2          cwd=/home/user
-   \              Run Process   command.exe   argument      shell=True    env=${ENVIRON}
+   Using Kwargs   Run Process   program.py    arg1          arg2          cwd=/home/user
+   \              Run Process   program.py    argument      shell=True    env=${ENVIRON}
    =============  ============  ============  ============  ============  ==============
-
-As the above example illustrates, using variables with free keyword arguments
-works exactly like when `using the named argument syntax`__.
 
 See `Free keyword arguments (**kwargs)`_ section under `Creating test
 libraries`_ for more information about using the kwargs syntax in
 your custom test libraries.
 
-__ http://docs.python.org/2/tutorial/controlflow.html#keyword-arguments
-__ http://code.google.com/p/robotframework/issues/detail?id=1561
+As the second example, let's create a wrapper `user keyword`_ for running the
+`program.py` in the above example. The wrapper keyword :name:`Run Program`
+accepts any number of arguments and kwargs, and passes them forward for
+:name:`Run Process` along with the name of the command to execute.
+
+.. table:: Free keyword arguments with user keyword
+   :class: example
+
+   =============  ============  ============  ============  ==============
+     Test Case       Action       Argument      Argument      Argument
+   =============  ============  ============  ============  ==============
+   Using Kwargs   Run Program   arg1          arg2          cwd=/home/user
+   \              Run Program   argument      shell=True    env=${ENVIRON}
+   =============  ============  ============  ============  ==============
+
+.. table::
+   :class: example
+
+   =============  =================  ================  ================  ================
+      Keyword          Action            Argument          Argument          Argument
+   =============  =================  ================  ================  ================
+   Run Program    [Arguments]        @{arguments}      &{configuration}
+   \              Run Process        program.py        @{arguments}      &{configuration}
+   =============  =================  ================  ================  ================
+
 __ `Named arguments with variables`_
 
 Arguments embedded to keyword names
