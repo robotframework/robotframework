@@ -260,6 +260,12 @@ class String(object):
         logger.info('%d out of %d lines matched' % (len(matching), len(lines)))
         return '\n'.join(matching)
 
+    def _get_non_matching_lines(self, string, matches):
+        lines = string.splitlines()
+        nonmatching = [line for line in lines if not matches(line)]
+        logger.info('%d out of %d lines not matched' % (len(nonmatching), len(lines)))
+        return '\n'.join(nonmatching)
+
     def replace_string(self, string, search_for, replace_with, count=-1):
         """Replaces ``search_for`` in the given ``string`` with ``replace_with``.
 
@@ -346,6 +352,28 @@ class String(object):
         for pattern in patterns:
             string = self.replace_string_using_regexp(string, pattern, '')
         return string
+		
+    def remove_lines_containing_string(self, string, pattern, case_insensitive=False):
+        """Remove lines of the given ``string`` that contain the ``pattern``.
+
+        The ``pattern`` is always considered to be a normal string and a
+        line matches if the ``pattern`` is found anywhere in it. By
+        default the match is case-sensitive, but setting
+        ``case_insensitive`` to any value makes it case-insensitive.
+
+        Non matching lines are returned as one string catenated back together with
+        newlines. Possible trailing newline is never returned. The
+        number of non matching lines is automatically logged.
+
+		This does exact opposite functionality of Get Lines Containing String
+        """
+        if case_insensitive:
+            pattern = pattern.lower()
+            contains = lambda line: pattern in line.lower()
+        else:
+            contains = lambda line: pattern in line
+        return self._get_non_matching_lines(string, contains)
+
 
     def split_string(self, string, separator=None, max_split=-1):
         """Splits the ``string`` using ``separator`` as a delimiter string.
