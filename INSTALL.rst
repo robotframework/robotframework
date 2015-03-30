@@ -94,11 +94,12 @@ a good place to start is http://python.org. There you can download a suitable
 installer and get more information about the installation process and Python
 in general.
 
-Robot Framework currently supports Python versions 2.5, 2.6, and 2.7. The plan
-is to support also Python 3 in the future, and Python 2.5 support will be
-dropped latest then. If you need Python 3 support earlier, you can use the
-`un-official Python 3 port`_. If you need to use really old Python versions,
-Robot Framework 2.0 and 2.1 support Python 2.3 and 2.4.
+Robot Framework 2.8 and older support Python 2.5, 2.6, and 2.7, but
+Robot Framework 2.9 will drop Python 2.5 support. The plan is to support
+also Python 3 in the future, latest with Robot Framework 3.0. If you need
+Python 3 support earlier, you can use the `un-official Python 3 port`_. If
+you need to use really old Python versions, Robot Framework 2.0 and 2.1
+support Python 2.3 and 2.4.
 
 On Windows it is recommended to install Python to all users and to run the
 installer as an administrator. Additionally, environment variable
@@ -126,10 +127,10 @@ package, which you can run from the command line like `java -jar
 jython_installer-<version>.jar`. Depending on the  system configuration,
 it may also be possible to just double-click the installer.
 
-The minimum supported Jython version is 2.5 which requires Java 5 (a.k.a.
-Java 1.5) or newer. The forthcoming Jython 2.7 will require minimum Java 7,
-and that will also be the minimum for Robot Framework when support for Jython
-2.5 is dropped in the future. Robot Framework 2.0 and 2.1 support Jython 2.2.
+Robot Framework 2.8 and older support Jython 2.5 (requires Java 5 or newer)
+and Jython 2.7 (requires Java 7 or newer). The forthcoming Robot Framework
+2.9 will require Jython 2.7. If ancient Jython versions are needed, Robot
+Framework 2.0 and 2.1 support Jython 2.2.
 
 After installing Jython, you probably still want to `configure PATH`_ to make
 the ``jybot`` `runner script`_ executable on the command prompt.
