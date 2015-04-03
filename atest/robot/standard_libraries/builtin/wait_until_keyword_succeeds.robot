@@ -46,6 +46,21 @@ Wait Until With Longer Keyword Timeout
 Wait Until With Shorter Keyword Timeout
     Check Test Case    ${TESTNAME}
 
+Retry as count
+    Check Test Case    ${TESTNAME}
+
+Retry as count failing
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
+Retry count must be integer
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
+Retry count must be positive
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+
 Invalid Number Of Arguments Inside Wait Until Keyword Succeeds
     Check Test Case    ${TESTNAME}
 

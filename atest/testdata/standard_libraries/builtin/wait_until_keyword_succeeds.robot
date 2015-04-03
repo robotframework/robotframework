@@ -7,7 +7,7 @@ ${HELLO}          Used to test that variable name, not value, is shown in argume
 
 *** Test Cases ***
 Fail Because Timeout exceeded
-    [Documentation]    FAIL Timeout 1 second 100 milliseconds exceeded. The last error was: Still 0 times to fail!
+    [Documentation]    FAIL Keyword 'Fail Until Retried Often Enough' failed after retrying for 1 second 100 milliseconds. The last error was: Still 0 times to fail!
     Wait Until Keyword Succeeds    1.1 seconds    555 ms    Fail Until Retried Often Enough
 
 Pass with first Try
@@ -33,7 +33,7 @@ Wait Until In User Keyword
     Wait Until Inside User Keyword
 
 Failing User Keyword with Wait Until
-    [Documentation]    FAIL REGEXP: Timeout 123 milliseconds exceeded. The last error was: Still \\d times to fail!
+    [Documentation]    FAIL REGEXP: Keyword 'User Keyword' failed after retrying for 123 milliseconds. The last error was: Still \\d times to fail!
     Set Times To Fail    10
     Wait Until Keyword Succeeds    ${0.12345}    0.02    User Keyword
 
@@ -42,7 +42,7 @@ Passing User Keyword with Wait Until
     Should Be Equal    ${return value}    From User Keyword    Returned value should be the one defined in user keyword.
 
 Wait Until With Longer Test Timeout
-    [Documentation]    FAIL Timeout 50 milliseconds exceeded. The last error was: My error
+    [Documentation]    FAIL Keyword 'Fail' failed after retrying for 50 milliseconds. The last error was: My error
     [Timeout]    10 seconds
     Wait Until Keyword Succeeds    0.05s    0.01s    Fail    My error
 
@@ -52,7 +52,7 @@ Wait Until With Shorter Test Timeout
     Wait Until Keyword Succeeds    1minute    0.1s    Fail    This won't be the final error
 
 Wait Until With Longer Keyword Timeout
-    [Documentation]    FAIL Timeout 100 milliseconds exceeded. The last error was: Error in timeouted UK
+    [Documentation]    FAIL Keyword 'Fail' failed after retrying for 100 milliseconds. The last error was: Error in timeouted UK
     ${timeout} =    Set Variable    1 hour
     Timeouted UK with Wait Until KW
 
@@ -60,6 +60,36 @@ Wait Until With Shorter Keyword Timeout
     [Documentation]    FAIL Keyword timeout 40 milliseconds exceeded.
     ${timeout} =    Set Variable    40 milliseconds
     Timeouted UK with Wait Until KW
+
+Retry as count
+    Wait Until Keyword Succeeds    4 times    0 s    Fail Until Retried Often Enough
+    Wait Until Keyword Succeeds    99999TIMES    42ms    No Operation
+    Wait Until Keyword Succeeds    10 x    -1    Fail Until Retried Often Enough
+    Wait Until Keyword Succeeds    ${1}X    1 minute 2 seconds    No Operation
+
+Retry as count failing 1
+    [Documentation]    FAIL Keyword 'Fail Until Retried Often Enough' failed after retrying 3 times. The last error was: Still 0 times to fail!
+    Wait Until Keyword Succeeds    3 times    2 ms    Fail Until Retried Often Enough
+
+Retry as count failing 2
+    [Documentation]    FAIL Keyword 'Fail Until Retried Often Enough' failed after retrying 1 time. The last error was: Still 2 times to fail!
+    Wait Until Keyword Succeeds    1X    1 day    Fail Until Retried Often Enough
+
+Retry count must be integer 1
+    [Documentation]    FAIL STARTS: 'xx' cannot be converted to an integer: ValueError:
+    Wait Until Keyword Succeeds    XXX    0    No Operation
+
+Retry count must be integer 2
+    [Documentation]    FAIL STARTS: '3.14' cannot be converted to an integer: ValueError:
+    Wait Until Keyword Succeeds    3.14 times    1s    No Operation
+
+Retry count must be positive 1
+    [Documentation]    FAIL ValueError: Retry count 0 is not positive.
+    Wait Until Keyword Succeeds    0 Times    1s    No Operation
+
+Retry count must be positive 2
+    [Documentation]    FAIL ValueError: Retry count -8 is not positive.
+    Wait Until Keyword Succeeds    -8x    1s    No Operation
 
 Invalid Number Of Arguments Inside Wait Until Keyword Succeeds
     [Documentation]    FAIL Keyword 'BuiltIn.No Operation' expected 0 arguments, got 3.
