@@ -4,6 +4,8 @@ Variables         objects_for_call_method.py
 
 *** Variables ***
 ${HTML}           <a href="http://robotframework.org">Robot Framework</a>
+@{LIST}           1    2    ${3}    ${OBJ}
+&{DICT}           a=1    b=2    ${3}=c    obj=${OBJ}
 
 *** Test Cases ***
 Log
@@ -70,10 +72,36 @@ Log callable
     Log    ${MyObject}
 
 Log Many
-    Log Many    Log Many says:    Hello    from    tests!
+    Log Many    Log Many says:    1    2    ${3}    ${OBJ}
     Log Many    Log Many says: Hi!!
+    Log Many    @{LIST}
+    Log Many
+    Log Many    @{EMPTY}
+    Log Many    -${EMPTY}-    -@{EMPTY}-    -&{EMPTY}-
+    Log Many    @{LIST}[0]    &{DICT}[b]
 
-Log to console
+Log Many with named and dict arguments
+    Log Many    a=1    b=2    ${3}=c    obj=${OBJ}
+    Log Many    &{DICT}
+    Log Many    &{DICT}    b=no override    &{EMPTY}    ${3}=three
+
+Log Many with positional, named and dict arguments
+    Log Many    1    ${2}    three=3    &{EMPTY}    ${4}=four
+    Log Many    @{LIST}    &{DICT}    @{LIST}    &{DICT}
+
+Log Many with non-existing variable
+    [Documentation]    FAIL Variable '${no such variable}' not found.
+    Log Many    ${no such variable}
+
+Log Many with list variable containing non-list
+    [Documentation]    FAIL Value of variable '@{HTML}' is not list or list-like.
+    Log Many    @{HTML}
+
+Log Many with dict variable containing non-dict
+    [Documentation]    FAIL Value of variable '&{LIST}' is not dictionary or dictionary-like.
+    Log Many    &{LIST}
+
+Log To Console
     Log To Console    stdout äö w/ newline
     Log To Console    stdout äö w/o new...    no_newline=true
     Log To Console    stderr äö w/ newline    stdERR

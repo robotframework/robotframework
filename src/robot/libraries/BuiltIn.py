@@ -2184,14 +2184,34 @@ class _Misc:
         if console:
             logger.console(message)
 
+    @run_keyword_variant(resolve=0)
     def log_many(self, *messages):
         """Logs the given messages as separate entries using the INFO level.
+
+        Supports also logging list and dictionary variable items individually.
+
+        Examples:
+        | Log Many | Hello   | ${var}  |
+        | Log Many | @{list} | &{dict} |
 
         See `Log` and `Log To Console` keywords if you want to use alternative
         log levels, use HTML, or log to the console.
         """
-        for msg in messages:
+        for msg in self._yield_logged_messages(messages):
             self.log(msg)
+
+    def _yield_logged_messages(self, messages):
+        for msg in messages:
+            var = VariableSplitter(msg)
+            value = self._variables.replace_scalar(msg)
+            if var.is_list_variable():
+                for item in value:
+                    yield item
+            elif var.is_dict_variable():
+                for name, value in value.items():
+                    yield '%s=%s' % (name, value)
+            else:
+                yield value
 
     def log_to_console(self, message, stream='STDOUT', no_newline=False):
         """Logs the given message to the console.
