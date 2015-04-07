@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 RESERVED_KEYWORDS = ['for', 'while', 'break', 'continue', 'end',
                      'if', 'else', 'elif', 'else if', 'return']
 
@@ -23,4 +25,7 @@ class Reserved(object):
         return RESERVED_KEYWORDS
 
     def run_keyword(self, name, args):
-        raise Exception("'%s' is a reserved keyword" % name.title())
+        error = "'%s' is a reserved keyword." % name
+        if name in ['else', 'else if']:
+            error += " Thus '%s' must be in all-caps (%s) when used as a marker with 'Run Keyword'." %(name,name.upper())
+        raise Exception(error)
