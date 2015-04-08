@@ -32,8 +32,9 @@ from .usererrorhandler import UserErrorHandler
 class UserLibrary(object):
 
     def __init__(self, user_keywords, path=None):
-        self.name = self._get_name_for_resource_file(path)
-        self.handlers = HandlerStore(self.name)
+        basename = os.path.basename(path) if path else None
+        self.name = os.path.splitext(basename)[0] if path else None
+        self.handlers = HandlerStore(basename)
         for kw in user_keywords:
             try:
                 handler, embedded = self._create_handler(kw)
@@ -52,11 +53,6 @@ class UserLibrary(object):
             if embedded:
                 return EmbeddedArgsTemplate(kw, self.name, embedded), True
         return UserKeywordHandler(kw, self.name), False
-
-    def _get_name_for_resource_file(self, path):
-        if path is None:
-            return None
-        return os.path.splitext(os.path.basename(path))[0]
 
 
 class UserKeywordHandler(object):
