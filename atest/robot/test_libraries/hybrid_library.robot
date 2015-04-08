@@ -31,3 +31,6 @@ Old Name Doesn't Work If Name Set Using 'robot_name'
 
 'robot_name' Attribute Set To None
     Check Test Case  ${TESTNAME}
+
+Embedded Keyword Arguments
+    Check Test Case  ${TESTNAME}

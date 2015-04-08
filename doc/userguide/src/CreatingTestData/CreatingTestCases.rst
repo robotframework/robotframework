@@ -466,9 +466,10 @@ Arguments embedded to keyword names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A totally different approach to specify arguments is embedding them
-into keyword names. This syntax is, at least currently, only supported
-by `user keywords`__.
+into keyword names. This syntax is supported by both `test library keywords`__
+and `user keywords`__.
 
+__ `Embedding arguments into keyword names`_
 __ `Embedding arguments into keyword name`_
 
 Failures

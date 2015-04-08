@@ -23,7 +23,8 @@ from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
 
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              GetKeywordNames, RunKeyword)
-from .handlers import Handler, InitHandler, DynamicHandler
+from .handlers import Handler, InitHandler, DynamicHandler, EmbeddedArgsTemplate
+from .arguments import EmbeddedArguments
 from .handlerstore import HandlerStore
 from .outputcapture import OutputCapturer
 
@@ -180,7 +181,7 @@ class _BaseTestLibrary(object):
             if method:
                 handler = self._try_to_create_handler(name, method)
                 if handler:
-                    self.handlers.add(handler)
+                    self.handlers.add(handler, embedded=isinstance(handler, EmbeddedArgsTemplate))
                     self._log_success("Created keyword '%s'" % handler.name)
 
     def _get_handler_names(self, libcode):
@@ -213,7 +214,12 @@ class _BaseTestLibrary(object):
             self._report_adding_keyword_failed(name)
 
     def _create_handler(self, handler_name, handler_method):
-        return Handler(self, handler_name, handler_method)
+        handler = Handler(self, handler_name, handler_method)
+        if '$' in handler.name:
+            embedded = EmbeddedArguments(handler.name)
+            if embedded:
+                handler = EmbeddedArgsTemplate(embedded, handler)
+        return handler
 
     def _raise_creating_instance_failed(self):
         msg, details = get_error_details()
@@ -324,7 +330,12 @@ class _DynamicLibrary(_BaseTestLibrary):
     def _create_handler(self, name, method):
         doc = self._get_kw_doc(name)
         argspec = self._get_kw_args(name)
-        return DynamicHandler(self, name, method, doc, argspec)
+        handler = DynamicHandler(self, name, method, doc, argspec)
+        if '$' in handler.name:
+            embedded = EmbeddedArguments(handler.name)
+            if embedded:
+                handler = EmbeddedArgsTemplate(embedded, handler)
+        return handler
 
     def _create_init_handler(self, libcode):
         docgetter = lambda: self._get_kw_doc('__init__')

@@ -41,3 +41,6 @@ Dynamic libraries should work without argument specification
 Dynamic libraries should match named arguments same way as with user keywords
     ${tc}=    Check Test Case  ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    x y=1 z=2
+
+Embedded Keyword Arguments
+    Check Test Case  ${TESTNAME}

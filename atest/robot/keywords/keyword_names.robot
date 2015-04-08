@@ -77,6 +77,9 @@ Old Name Doesn't Work If Name Set Using 'robot_name'
 Keyword can just be marked without changing its name
     Check Test Case    ${TESTNAME}
 
+Embedded Args Don't Match Keyword Args
+    Check Test Case    ${TESTNAME}
+
 *** Keywords ***
 Check Test And Three Keyword Names
     [Arguments]    ${test_name}    ${exp_kw_name}
