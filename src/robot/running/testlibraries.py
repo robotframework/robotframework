@@ -61,9 +61,7 @@ def _get_lib_class(libcode):
 
 
 class _BaseTestLibrary(object):
-    _log_success = LOGGER.debug
-    _log_failure = LOGGER.info
-    _log_failure_details = LOGGER.debug
+    _failure_level = 'INFO'
 
     def __init__(self, libcode, name, args, variables):
         if os.path.exists(name):
@@ -182,7 +180,7 @@ class _BaseTestLibrary(object):
                 handler, embedded = self._try_to_create_handler(name, method)
                 if handler:
                     self.handlers.add(handler, embedded)
-                    self._log_success("Created keyword '%s'" % handler.name)
+                    LOGGER.debug("Created keyword '%s'" % handler.name)
 
     def _get_handler_names(self, libcode):
         return [name for name in dir(libcode)
@@ -195,12 +193,14 @@ class _BaseTestLibrary(object):
             self._report_adding_keyword_failed(name)
             return None
 
-    def _report_adding_keyword_failed(self, name):
-        msg, details = get_error_details()
-        self._log_failure("Adding keyword '%s' to library '%s' failed: %s"
-                          % (name, self.name, msg))
+    def _report_adding_keyword_failed(self, name, message=None, details=None,
+                                      level=None):
+        if not message:
+            message, details = get_error_details()
+        LOGGER.write("Adding keyword '%s' to library '%s' failed: %s"
+                     % (name, self.name, message), level or self._failure_level)
         if details:
-            self._log_failure_details('Details:\n%s' % details)
+            LOGGER.debug('Details:\n%s' % details)
 
     def _get_handler_method(self, libcode, name):
         method = getattr(libcode, name)
@@ -211,20 +211,30 @@ class _BaseTestLibrary(object):
     def _try_to_create_handler(self, name, method):
         try:
             handler = self._create_handler(name, method)
-            return self._get_possible_embedded_args_handler(handler)
         except:
             self._report_adding_keyword_failed(name)
+            return None, False
+        try:
+            return self._get_possible_embedded_args_handler(handler)
+        except DataError as err:
+            self._report_adding_keyword_failed(handler.name, unicode(err),
+                                               level='ERROR')
             return None, False
 
     def _create_handler(self, handler_name, handler_method):
         return Handler(self, handler_name, handler_method)
 
     def _get_possible_embedded_args_handler(self, handler):
-        if '$' in handler.name:
-            embedded = EmbeddedArguments(handler.name)
-            if embedded:
-                return EmbeddedArgsTemplate(embedded, handler), True
+        embedded = EmbeddedArguments(handler.name)
+        if embedded:
+            self._validate_embedded_count(embedded, handler.arguments)
+            return EmbeddedArgsTemplate(embedded, handler), True
         return handler, False
+
+    def _validate_embedded_count(self, embedded, arguments):
+        if not (arguments.minargs <= len(embedded.args) <= arguments.maxargs):
+            raise DataError('Embedded argument count does not match number of '
+                            'accepted arguments.')
 
     def _raise_creating_instance_failed(self):
         msg, details = get_error_details()
@@ -296,7 +306,7 @@ class _ModuleLibrary(_BaseTestLibrary):
 
 
 class _HybridLibrary(_BaseTestLibrary):
-    _log_failure = LOGGER.warn
+    _failure_level = 'ERROR'
 
     def _get_handler_names(self, instance):
         try:
@@ -306,7 +316,7 @@ class _HybridLibrary(_BaseTestLibrary):
 
 
 class _DynamicLibrary(_BaseTestLibrary):
-    _log_failure = LOGGER.warn
+    _failure_level = 'ERROR'
 
     def __init__(self, libcode, name, args, variables=None):
         _BaseTestLibrary.__init__(self, libcode, name, args, variables)

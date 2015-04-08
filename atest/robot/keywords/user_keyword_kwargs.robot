@@ -56,4 +56,4 @@ Verify Invalid Argument Spec
     [Arguments]    ${index}    ${name}    ${error}
     Check Test Case    ${TEST NAME}: ${name}
     Check Log Message    ${ERRORS[${index}]}
-    ...    Creating user keyword '${name}' failed: ${error}    ERROR
+    ...    Creating user keyword '${name}' failed: Invalid argument specification: ${error}    ERROR

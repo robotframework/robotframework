@@ -91,4 +91,4 @@ Check Creating Keyword Failed Due To Invalid Args Message
 Check Creating Keyword Failed Message
     [Arguments]  ${index}  ${kw}  ${lib}  ${error}
     ${msg} =  Set Variable  Adding keyword '${kw}' to library '${lib}' failed: ${error} *
-    Check Log Message  ${ERRORS.msgs[${index}]}  ${msg}  WARN  pattern=yes
+    Check Log Message  ${ERRORS.msgs[${index}]}  ${msg}  ERROR  pattern=yes

@@ -109,9 +109,13 @@ Keyword Matching Multiple Keywords In Different Library Files
     ...    ${INDENT}embedded_args_in_lk_2.\${a}*lib*\${b}
     foo*lib*bar
 
-Embedded Args Don't Match Keyword Args
-    [Documentation]  FAIL Keyword 'embedded_args_in_lk_1.Embedded ${args} Are ${great}' expected 1 argument, got 2.
-    Embedded Args Are Great
+Keyword with embedded args cannot be used as "normal" keyword
+    [Documentation]    FAIL Variable '\${user}' not found.
+    User ${user} Selects ${item} From Webshop
+
+Embedded argument count must match accepted arguments
+    [Documentation]  FAIL No keyword with name 'Wrong number of embedded args' found.
+    Wrong number of embedded args
 
 Optional Non-Embedded Args Are Okay
     Optional Non-Embedded Args Are Okay

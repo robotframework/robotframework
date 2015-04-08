@@ -9,7 +9,6 @@ Resource        atest_resource.robot
 Test Template   Check TC And UK Name
 
 *** Test Cases ***
-
 Quotes
     "Quotes"
 
@@ -25,12 +24,13 @@ Backslashes
 Variable
     Variable \${var}
 
+Escaped variable
+    Escaped \\\${var}
+
 Newline And Tab
     Newline \\n and Tab \\t
 
-
 *** Keywords ***
-
 Check TC And UK Name
     [Arguments]  ${name}
     ${tc} =  Check Test Case  ${name}

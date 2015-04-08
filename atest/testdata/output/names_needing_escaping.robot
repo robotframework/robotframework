@@ -1,3 +1,6 @@
+*** Variables ***
+${var}     value
+
 *** Test Case ***
 "Quotes"
     "Quotes"
@@ -13,6 +16,9 @@ Backslashes \ \\ \\\ \\\\
 
 Variable ${var}
     Variable ${var}
+
+Escaped \${var}
+    Escaped \${var}
 
 Newline \n and Tab \t
     Newline \n and Tab \t
@@ -31,6 +37,9 @@ Backslashes \ \\ \\\ \\\\
     No Operation
 
 Variable ${var}
+    No Operation
+
+Escaped \${var}
     No Operation
 
 Newline \n and Tab \t

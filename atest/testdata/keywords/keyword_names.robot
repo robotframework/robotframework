@@ -72,10 +72,6 @@ Embedded Args Keyword
     ${count}  ${item} =  Add 7 Copies of Coffee To Cart
     Should Be Equal  ${count}-${item}  7-Coffee
 
-Embedded Args Don't Match Keyword Args
-    [Documentation]  FAIL Keyword 'MyLibrary1.Embedded ${args} Are ${great}' expected 0 arguments, got 2.
-    Embedded Args Are Great
-
 *** Keywords ***
 Keyword Only In Test Case File
     Log  Keyword from test case file

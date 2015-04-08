@@ -24,7 +24,7 @@ class EmbeddedArgsTemplateStub:
             raise TypeError
 
     def matches(self, name):
-        return True
+        return name == self.name
 
 
 class TestUserLibrary(unittest.TestCase):
@@ -67,10 +67,11 @@ class TestUserLibrary(unittest.TestCase):
         self._lib_has_embedded_arg_keyword(lib)
 
     def test_creating_duplicate_embedded_arg_keyword_in_resource_file(self):
-        lib = self._get_userlibrary('Embedded ${arg}',
-                                    'kw', 'Embedded ${arg}')
+        lib = self._get_userlibrary('Embedded ${arg}', 'kw', 'Embedded ${arg}')
         assert_equals(len(lib.handlers), 2)
-        assert_true('kw' in lib.handlers)
+        assert_equals(lib.handlers['Embedded ${arg}'].error,
+                      "Keyword with same name defined multiple times.")
+        assert_true(not hasattr(lib.handlers['kw'], 'error'))
 
     def test_creating_duplicate_keyword_in_resource_file(self):
         lib = self._get_userlibrary('kw', 'kw', 'kw 2')
@@ -78,14 +79,14 @@ class TestUserLibrary(unittest.TestCase):
         assert_true('kw' in lib.handlers)
         assert_true('kw 2' in lib.handlers)
         assert_equals(lib.handlers['kw'].error,
-                      "Keyword 'kw' defined multiple times.")
+                      "Keyword with same name defined multiple times.")
 
     def test_creating_duplicate_keyword_in_test_case_file(self):
         lib = self._get_userlibrary('MYKW', 'my kw')
         assert_equals(len(lib.handlers), 1)
         assert_true('mykw' in lib.handlers)
         assert_equals(lib.handlers['mykw'].error,
-                      "Keyword 'my kw' defined multiple times.")
+                      "Keyword with same name defined multiple times.")
 
     def test_handlers_contains(self):
         lib = self._get_userlibrary('kw')

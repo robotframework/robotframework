@@ -16,9 +16,9 @@ from robot import utils
 from robot.errors import DataError
 from robot.variables import contains_var, is_list_var
 
-from .arguments import (PythonArgumentParser, JavaArgumentParser,
-                        DynamicArgumentParser, ArgumentResolver,
-                        ArgumentMapper, JavaArgumentCoercer)
+from .arguments import (ArgumentResolver, ArgumentSpec, ArgumentMapper,
+                        DynamicArgumentParser, JavaArgumentCoercer,
+                        JavaArgumentParser, PythonArgumentParser)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -386,6 +386,7 @@ class EmbeddedArgsTemplate(object):
         self.orig_handler = orig_handler
         self.embedded_name = embedded.name
         self.embedded_args = embedded.args
+        self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
 
     def __getattr__(self, item):
         return getattr(self.orig_handler, item)
@@ -405,14 +406,14 @@ class EmbeddedArgs(object):
             raise ValueError('Does not match given name')
         self.name = name
         self.orig_name = template.name
-        self.embedded_args = match.groups()
-        self.orig_handler = template.orig_handler
+        self._embedded_args = match.groups()
+        self._orig_handler = template.orig_handler
 
     def __getattr__(self, item):
-        return getattr(self.orig_handler, item)
+        return getattr(self._orig_handler, item)
 
     def run(self, context, args):
         if args:
             raise DataError("Positional arguments are not allowed when using "
                             "embedded arguments.")
-        return self.orig_handler.run(context, self.embedded_args)
+        return self._orig_handler.run(context, self._embedded_args)

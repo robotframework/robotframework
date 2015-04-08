@@ -79,8 +79,8 @@ def custom_regexp_with(pattern):
 def grouping(x, y):
     return "%s-%s" % (x, y)
 
-@keyword(name="Embedded ${args} are ${great}")
-def too_may_args(arg):
+@keyword(name="Wrong ${number} of embedded ${args}")
+def too_few_args_here(arg):
     pass
 
 @keyword(name="Optional ${nonembedded} Args Are ${okay}")

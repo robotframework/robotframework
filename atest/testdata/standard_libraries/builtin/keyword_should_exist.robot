@@ -52,8 +52,8 @@ Duplicate keywords
     ...  ${SPACE*4}keyword_should_exist_resource_2.Duplicated Keyword
     Duplicated keyword
 
-Duplicate keywords in same resourc
-    [Documentation]  FAIL Keyword 'Duplicate keyword in same resource' defined multiple times.
+Duplicate keywords in same resource
+    [Documentation]  FAIL Keyword with same name defined multiple times.
     Duplicate keyword in same resource
 
 Higher priority keyword overrides

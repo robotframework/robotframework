@@ -44,12 +44,9 @@ kw 5  [Documentation]   foo bar `kw`.
       ...  | *1* | *2* |
       ...  | foo | bar |
 
+Embedded ${arguments}
+
 curdir  [Documentation]  ${CURDIR}
 
 non ascii doc
     [Documentation]    Hyvää yötä.\n\nСпасибо!
-
-Same Twice
-    [Documentation]    Having same keyword twice is an error.
-
-Same Twice

@@ -22,10 +22,13 @@ from robot.variables import VariableIterator
 class EmbeddedArguments(object):
 
     def __init__(self, name):
-        self.name, self.args = EmbeddedArgumentParser().parse(name)
+        if '${' in name:
+            self.name, self.args = EmbeddedArgumentParser().parse(name)
+        else:
+            self.name, self.args = None, []
 
     def __nonzero__(self):
-        return bool(self.args)
+        return self.name is not None
 
 
 class EmbeddedArgumentParser(object):
@@ -43,7 +46,8 @@ class EmbeddedArgumentParser(object):
             args.append(name)
             name_regexp.extend([re.escape(before), '(%s)' % pattern])
         name_regexp.extend([re.escape(string), '$'])
-        return self._compile_regexp(name_regexp), args
+        name = self._compile_regexp(name_regexp) if args else None
+        return name, args
 
     def _get_name_and_pattern(self, name):
         if ':' not in name:

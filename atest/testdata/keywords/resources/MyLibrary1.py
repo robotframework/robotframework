@@ -56,8 +56,3 @@ class MyLibrary1:
     @keyword('Add ${number:\d+} Copies Of ${product:\w+} To Cart')
     def add_copies_to_cart(self, num, thing):
         return num, thing
-
-    @keyword('Embedded ${args} are ${great}')
-    def ea_keyword(self):
-        pass
-

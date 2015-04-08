@@ -11,6 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
+from operator import attrgetter
 from os.path import splitext
 
 from robot.errors import DataError
@@ -22,31 +24,35 @@ class HandlerStore(object):
 
     def __init__(self, source):
         self._source = source
-        self._handlers = NormalizedDict(ignore='_')
+        self._normal = NormalizedDict(ignore='_')
         self._embedded = []
 
     def add(self, handler, embedded=False):
-        self._handlers[handler.name] = handler
         if embedded:
             self._embedded.append(handler)
+        else:
+            self._normal[handler.name] = handler
+
+    def remove(self, name):
+        if name in self._normal:
+            self._normal.pop(name)
+        self._embedded = [e for e in self._embedded if not e.matches(name)]
 
     def __iter__(self):
-        return self._handlers.itervalues()
+        return iter(sorted(self._normal.values() + self._embedded,
+                           key=attrgetter('name')))
 
     def __len__(self):
-        return len(self._handlers)
+        return len(self._normal) + len(self._embedded)
 
     def __contains__(self, name):
-        if name in self._handlers:
+        if name in self._normal:
             return True
-        for template in self._embedded:
-            if template.matches(name):
-                return True
-        return False
+        return any(template.matches(name) for template in self._embedded)
 
     def __getitem__(self, name):
         try:
-            return self._handlers[name]
+            return self._normal[name]
         except KeyError:
             return self._find_embedded(name)
 

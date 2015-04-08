@@ -59,10 +59,17 @@ Keyword matching multiple keywords in library file
     Check Log Message    ${tc.kws[2].msgs[0]}    foo+lib+bar+lib+zap
 
 Keyword matching multiple keywords in different library files
-    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
-Embedded Args Don't Match Keyword Args
+Keyword with embedded args cannot be used as "normal" keyword
+    Check Test Case    ${TEST NAME}
+
+Embedded argument count must match accepted arguments
     Check Test Case    ${TESTNAME}
+    ${msg} =    Catenate
+    ...    Adding keyword 'Wrong \${number} Of Embedded \${args}' to library 'embedded_args_in_lk_1' failed:
+    ...    Embedded argument count does not match number of accepted arguments.
+    Check Log Message    ${ERRORS[0]}    ${msg}    ERROR
 
 Optional Non-Embedded Args Are Okay
     Check Test Case    ${TESTNAME}

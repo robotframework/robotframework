@@ -119,11 +119,11 @@ Caller does not see modifications to kwargs
     Variable Should Not Exist    ${d2.new}
 
 Invalid arguments spec: Positional after kwargs
-    [Documentation]    FAIL STARTS: No keyword with name 'Positional after kwargs' found.
+    [Documentation]    FAIL Invalid argument specification: Only last argument can be kwargs.
     Positional after kwargs
 
 Invalid arguments spec: Varargs after kwargs
-    [Documentation]    FAIL No keyword with name 'Varargs after kwargs' found.
+    [Documentation]    FAIL Invalid argument specification: Only last argument can be kwargs.
     Varargs after kwargs
 
 *** Keywords ***

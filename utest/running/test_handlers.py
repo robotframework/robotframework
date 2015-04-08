@@ -139,19 +139,22 @@ class TestDynamicHandlerCreation(unittest.TestCase):
 
     def test_mandatory_arg_after_default_arg(self):
         for argspec in [['d=v', 'arg'], ['a', 'b', 'c=v', 'd']]:
-            self._assert_fails('Non-default argument after default arguments.',
+            self._assert_fails('Invalid argument specification: '
+                               'Non-default argument after default arguments.',
                                argspec)
 
     def test_positional_after_vararg(self):
         for argspec in [['*foo', 'arg'], ['arg', '*var', 'arg'],
                         ['a', 'b=d', '*var', 'c'], ['*var', '*vararg']]:
-            self._assert_fails('Positional argument after varargs.', argspec)
+            self._assert_fails('Invalid argument specification: '
+                               'Positional argument after varargs.', argspec)
 
     def test_kwarg_not_last(self):
         for argspec in [['**foo', 'arg'], ['arg', '**kw', 'arg'],
                         ['a', 'b=d', '**kw', 'c'], ['**kw', '*vararg'],
                         ['**kw', '**kwarg']]:
-            self._assert_fails('Only last argument can be kwargs.', argspec)
+            self._assert_fails('Invalid argument specification: '
+                               'Only last argument can be kwargs.', argspec)
 
     def test_missing_kwargs_support(self):
         self._assert_fails("Too few 'run_keyword' method parameters"

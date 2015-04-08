@@ -75,13 +75,13 @@ Non-existing keyword name
     Does not exist
 
 Invalid syntax in UK
-    [Documentation]  FAIL No keyword with name 'Invalid Syntax UK' found.
+    [Documentation]  FAIL Invalid argument specification: Invalid argument syntax '${arg'.
     Invalid Syntax UK
 
 Multiple Failures
     [Documentation]  FAIL Several failures occurred:\n\n
     ...  1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.\n\n
-    ...  2) No keyword with name 'Invalid Syntax UK' found.\n\n
+    ...  2) Invalid argument specification: Invalid argument syntax '${arg'.\n\n
     ...  3) Keyword 'BuiltIn.Log' expected 1 to 5 arguments, got 6.\n\n
     ...  4) No keyword with name 'Yet another non-existing keyword' found.\n\n
     ...  5) No keyword with name 'Does not exist' found.

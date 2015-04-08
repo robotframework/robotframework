@@ -38,21 +38,27 @@ class UserLibrary(object):
         for kw in user_keywords:
             try:
                 handler, embedded = self._create_handler(kw)
+                self._validate_not_duplicate(handler)
             except DataError as err:
                 LOGGER.error("Creating user keyword '%s' failed: %s"
                              % (kw.name, unicode(err)))
-                continue
-            if handler.name in self.handlers:
-                error = "Keyword '%s' defined multiple times." % handler.name
-                handler = UserErrorHandler(handler.name, error)
+                handler = UserErrorHandler(kw.name, unicode(err))
+                embedded = False
             self.handlers.add(handler, embedded)
 
     def _create_handler(self, kw):
-        if not kw.args:
-            embedded = EmbeddedArguments(kw.name)
-            if embedded:
-                return EmbeddedArgsTemplate(kw, self.name, embedded), True
+        embedded = EmbeddedArguments(kw.name)
+        if embedded:
+            if kw.args:
+                raise DataError('Keyword cannot have both normal and embedded '
+                                'arguments.')
+            return EmbeddedArgsTemplate(kw, self.name, embedded), True
         return UserKeywordHandler(kw, self.name), False
+
+    def _validate_not_duplicate(self, handler):
+        if handler.name in self.handlers:
+            self.handlers.remove(handler.name)
+            raise DataError('Keyword with same name defined multiple times.')
 
 
 class UserKeywordHandler(object):
