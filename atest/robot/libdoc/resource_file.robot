@@ -43,7 +43,7 @@ Keyword Names
 Keyword Arguments
     Keyword Arguments Should Be     0
     Keyword Arguments Should Be     1    a1    a2
-    Keyword Arguments Should Be     4    a1=d    *a2
+    Keyword Arguments Should Be     4    positional=default    *varargs    **kwargs
 
 Keyword Documentation
     Keyword Doc Should Be    0    $\{CURDIR}

@@ -27,7 +27,7 @@ kw 3
     [Documentation]   literal\nnewline
     [Arguments]  ${a1}   @{a2}
 
-kw 4  [Arguments]  ${a1}=d  @{a2}
+kw 4  [Arguments]  ${positional}=default  @{varargs}  &{kwargs}
 
 kw 5  [Documentation]   foo bar `kw`.
       ...
