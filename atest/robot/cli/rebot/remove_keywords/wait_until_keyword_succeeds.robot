@@ -4,7 +4,7 @@ Force Tags        regression    pybot    jybot
 Resource          remove_keywords_resource.robot
 
 *** Variables ***
-${DOC}            Waits until the specified keyword succeeds or the given timeout expires.
+${DOC}            Runs the specified keyword and retries if it fails.
 
 *** Test Cases ***
 Last failing Step is not removed
