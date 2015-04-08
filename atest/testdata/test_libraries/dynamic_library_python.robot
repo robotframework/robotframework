@@ -67,3 +67,5 @@ Dynamic libraries should match named arguments same way as with user keywords
 Embedded Keyword Arguments
     ${count}  ${item} =  Add 7 Copies Of Coffee To Cart
     Should Be Equal  ${count}-${item}  7-Coffee
+    ${count}  ${item} =  add 42 copies of foobar to cart
+    Should Be Equal  ${count}-${item}  42-foobar
