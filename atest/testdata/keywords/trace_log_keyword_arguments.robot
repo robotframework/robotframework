@@ -72,8 +72,9 @@ Object With Unicode Repr as Argument
     Mandatory and Varargs    ${object}    ${object}
 
 Arguments With Run Keyword
-    ${keyword name}=    Set Variable    Log Many
-    Run Keyword    ${keyword name}    @{VALUES}
+    ${keyword name}=    Set Variable    Catenate
+    ${result} =    Run Keyword    ${keyword name}    @{VALUES}
+    Should Be Equal    ${result}    a b c d
 
 *** Keywords ***
 Set Unicode Repr Object As Variable
