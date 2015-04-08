@@ -11,9 +11,11 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from os.path import splitext
 
 from robot.errors import DataError
-from robot.utils import NormalizedDict, seq2str
+from robot.parsing import VALID_EXTENSIONS as RESOURCE_EXTENSIONS
+from robot.utils import NormalizedDict
 
 
 class HandlerStore(object):
@@ -58,8 +60,10 @@ class HandlerStore(object):
     def _raise_no_single_match(self, name, found):
         if self._source is None:
             where = "Test case file"
-        else:
+        elif self._is_resource(self._source):
             where = "Resource file '%s'" % self._source
+        else:
+            where = "Test library '%s'" % self._source
         if not found:
             raise DataError("%s contains no keywords matching name '%s'."
                             % (where, name))
@@ -67,3 +71,7 @@ class HandlerStore(object):
                  % (where, name)]
         names = sorted(handler.orig_name for handler in found)
         raise DataError('\n    '.join(error + names))
+
+    def _is_resource(self, source):
+        extension = splitext(source)[1][1:].lower()
+        return extension in RESOURCE_EXTENSIONS

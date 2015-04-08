@@ -13,7 +13,7 @@ Embedded Arguments In Library Keyword Name
     Should Be Equal  ${name}-${book}  Juha-Playboy
 
 Embedded And Positional Arguments Do Not Work Together
-    [Documentation]    FAIL Positional arguments are not allowed when using embedded arguments
+    [Documentation]    FAIL Positional arguments are not allowed when using embedded arguments.
     Given this "usage" with @{EMPTY} works    @{EMPTY}
     Then User Invalid Selects Invalid From Webshop    invalid
 
@@ -94,7 +94,7 @@ Embedded Arguments Syntax is Underscore Sensitive
     User Janne Selects x from_webshop
 
 Keyword Matching Multiple Keywords In Library File
-    [Documentation]    FAIL Resource file 'embedded_args_in_lk_1' contains multiple keywords matching name 'foo+lib+bar-lib-zap':
+    [Documentation]    FAIL Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'foo+lib+bar-lib-zap':
     ...    ${INDENT}\${a}+lib+\${b}
     ...    ${INDENT}\${a}-lib-\${b}
     foo+lib+bar

@@ -384,7 +384,6 @@ class EmbeddedArgsTemplate(object):
 
     def __init__(self, embedded, orig_handler):
         self.orig_handler = orig_handler
-        orig_handler.orig_run = orig_handler._run
         self.embedded_name = embedded.name
         self.embedded_args = embedded.args
 
@@ -404,16 +403,16 @@ class EmbeddedArgs(object):
         match = template.embedded_name.match(name)
         if not match:
             raise ValueError('Does not match given name')
-        self.template = template
         self.name = name
         self.orig_name = template.name
         self.embedded_args = match.groups()
-        self.template.orig_handler._run = self._run
+        self.orig_handler = template.orig_handler
 
     def __getattr__(self, item):
-        return getattr(self.template.orig_handler, item)
+        return getattr(self.orig_handler, item)
 
-    def _run(self, context, args):
+    def run(self, context, args):
         if args:
-            raise DataError("Positional arguments are not allowed when using embedded arguments")
-        return self.template.orig_handler.orig_run(context, self.embedded_args)
+            raise DataError("Positional arguments are not allowed when using "
+                            "embedded arguments.")
+        return self.orig_handler.run(context, self.embedded_args)
