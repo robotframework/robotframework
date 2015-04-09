@@ -38,11 +38,16 @@ def add_docs(version, push=False):
     """
     copy_ug(version)
     extract_ug(version)
-    update_latest(version)
+    if not is_preview(version):
+        update_latest(version)
     update_index(version)
     add_changes(version)
     if push:
         push_changes(version)
+
+
+def is_preview(version):
+    return any(c not in '1234567890.' for c in version)
 
 
 @task
@@ -80,15 +85,22 @@ def update_latest(version):
 def update_index(version):
     """Add information about the new release index.html."""
     contents = []
-    matcher = re.compile(r'(\s+)<option value="latest".+')
+    preview_matcher = re.compile(r'(\s+)<option class="preview".+')
+    latest_matcher = re.compile(r'(\s+)<option value="latest".+')
+    preview = is_preview(version)
     with open('index.html', 'r') as original:
         contents = original.readlines()
     with open('index.html', 'w') as out:
         for row in contents:
-            match = matcher.match(row)
+            if preview_matcher.match(row):
+                continue
+            match = latest_matcher.match(row)
             if match:
+                if preview:
+                    out.write('{indent}<option class="preview" value="{version}">{version}</option>\n'.format(indent=match.groups()[0], version=version))
                 out.write(row)
-                out.write('{indent}<option value="{version}">{version}</option>\n'.format(indent=match.groups()[0], version=version))
+                if not preview:
+                    out.write('{indent}<option value="{version}">{version}</option>\n'.format(indent=match.groups()[0], version=version))
             else:
                 out.write(row)
     print "Updated 'index.html' with links to {}".format(version)
