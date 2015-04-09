@@ -20,7 +20,7 @@ from invoke import task, run
 
 assert os.getcwd() == os.path.dirname(os.path.abspath(__file__))
 
-VERSION_RE = re.compile('^((2\.\d+)(\.\d+)?)((a|b|rc|.dev)\d+)?$')
+VERSION_RE = re.compile('^((2\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
 VERSION_FILE = os.path.join('src', 'robot', 'version.py')
 
 
@@ -269,7 +269,7 @@ def release_notes(version=get_version_from_file(), login=None, password=None):
     _print_intro(version)
     _print_if_label("Most important enhancements", issues, "prio-critical", "prio-high")
     _print_if_label("Backwards incompatible changes", issues, "bwic")
-    _print_if_label("Deprected features", issues, "depr")
+    _print_if_label("Deprecated features", issues, "depr")
     _print_header("Acknowledgements")
     print("*UPDATE* based on AUTHORS.txt.")
     _print_issue_table(issues, version)
@@ -279,8 +279,20 @@ def _get_issues(version, login=None, password=None):
         from github import Github
     except ImportError:
         sys.exit("You need to install PyGithub:\n\tpip install PyGithub\n")
+    match = VERSION_RE.match(version)
+    if not match:
+        raise ValueError("Invalid version '{}'".format(version))
+    milestone, _, _, _, preview, preview_number = match.groups()
+    if preview:
+        preview = {'a': 'alpha', 'b': 'beta', 'rc': 'rc'}[preview]
+        preview_label = '{} {}'.format(preview, preview_number)
+    else:
+        preview_label = None
     repo = Github(login_or_token=login, password=password).get_repo("robotframework/robotframework")
-    return sorted(Issue(issue) for issue in repo.get_issues(milestone=_get_milestone(repo, version), state="all"))
+    issues = [Issue(issue) for issue in repo.get_issues(milestone=_get_milestone(repo, milestone), state="all")]
+    if preview_label:
+        issues = [issue for issue in issues if preview_label in issue.labels]
+    return sorted(issues)
 
 def _get_milestone(repo, milestone):
     for m in repo.get_milestones(state="all"):
@@ -324,6 +336,7 @@ def _print_issue_table(issues, version):
         print "{} | {} | {} | {} ".format(issue.id, issue.type, issue.priority, issue.summary)
     print
     print "Altogether {} issues.".format(len(issues)),
+    version = VERSION_RE.match(version).group(1)
     print "See on [issue tracker](https://github.com/robotframework/robotframework/issues?q=milestone%3A{}).".format(version)
 
 
