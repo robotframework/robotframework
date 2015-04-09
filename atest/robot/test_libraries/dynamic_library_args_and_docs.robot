@@ -56,17 +56,17 @@ Documentation And Argument Boundaries Work With Varargs In Java
 Keyword With Kwargs Not Created And Warning Shown When No Run Keyword With Kwargs Support In Java
     [Tags]  jybot
     [Template]  NONE
-    Check Log Message  ${ERRORS.msgs[12]}  Adding keyword 'Unsupported Java Kwargs' to library 'ArgDocDynamicJavaLibrary' failed: Too few 'runKeyword' method parameters for **kwargs support.  WARN
+    Check Log Message  ${ERRORS.msgs[12]}  Adding keyword 'Unsupported Java Kwargs' to library 'ArgDocDynamicJavaLibrary' failed: Too few 'runKeyword' method parameters for **kwargs support.  ERROR
 
 Keyword Not Created And Warning Shown When Getting Documentation Fails In Java
     [Tags]  jybot
     [Template]  NONE
-    Check Log Message  ${ERRORS.msgs[13]}  Adding keyword 'Invalid Java Args' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordArguments' failed: Get args failure  WARN
+    Check Log Message  ${ERRORS.msgs[13]}  Adding keyword 'Invalid Java Args' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordArguments' failed: Get args failure  ERROR
 
 Keyword Not Created And Warning Shown When Getting Arguments Fails In Java
     [Tags]  jybot
     [Template]  NONE
-    Check Log Message  ${ERRORS.msgs[14]}  Adding keyword 'Invalid Java Doc' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordDocumentation' failed: Get doc failure  WARN
+    Check Log Message  ${ERRORS.msgs[14]}  Adding keyword 'Invalid Java Doc' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordDocumentation' failed: Get doc failure  ERROR
 
 
 *** Keywords ***
