@@ -113,6 +113,7 @@ Disable Encoding
     Set Encoding    none    whatever
     Encoding Should Be    NONE    whatever
     Write    hello
+    Set Timeout    0.6 seconds    # this specific test is flickering sometimes
     ${out} =    Read Until Prompt
     Should Be Byte String    ${out}
 
