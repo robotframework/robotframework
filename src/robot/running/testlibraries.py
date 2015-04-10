@@ -228,7 +228,7 @@ class _BaseTestLibrary(object):
         embedded = EmbeddedArguments(handler.name)
         if embedded:
             self._validate_embedded_count(embedded, handler.arguments)
-            return EmbeddedArgsTemplate(embedded, handler), True
+            return EmbeddedArgsTemplate(embedded.name, handler), True
         return handler, False
 
     def _validate_embedded_count(self, embedded, arguments):

@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import copy
+
 from robot import utils
 from robot.errors import DataError
 from robot.variables import contains_var, is_list_var
@@ -382,32 +384,29 @@ class _JavaInitHandler(_JavaHandler):
 
 class EmbeddedArgsTemplate(object):
 
-    def __init__(self, embedded, orig_handler):
-        self.orig_handler = orig_handler
-        self.embedded_name = embedded.name
-        self.embedded_args = embedded.args
+    def __init__(self, name_regexp, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
+        self._orig_handler = orig_handler
+        self._name_regexp = name_regexp
 
     def __getattr__(self, item):
-        return getattr(self.orig_handler, item)
+        return getattr(self._orig_handler, item)
 
     def matches(self, name):
-        return self.embedded_name.match(name) is not None
+        return self._name_regexp.match(name) is not None
 
     def create(self, name):
-        return EmbeddedArgs(name, self)
+        args = self._name_regexp.match(name).groups()
+        return EmbeddedArgs(name, self.name, args, self._orig_handler)
 
 
 class EmbeddedArgs(object):
 
-    def __init__(self, name, template):
-        match = template.embedded_name.match(name)
-        if not match:
-            raise ValueError('Does not match given name')
+    def __init__(self, name, orig_name, embedded_args, orig_handler):
         self.name = name
-        self.orig_name = template.name
-        self._embedded_args = match.groups()
-        self._orig_handler = template.orig_handler
+        self.orig_name = orig_name
+        self._embedded_args = embedded_args
+        self._orig_handler = orig_handler
 
     def __getattr__(self, item):
         return getattr(self._orig_handler, item)
@@ -417,3 +416,8 @@ class EmbeddedArgs(object):
             raise DataError("Positional arguments are not allowed when using "
                             "embedded arguments.")
         return self._orig_handler.run(context, self._embedded_args)
+
+    def __copy__(self):
+        # Needed due to https://github.com/IronLanguages/main/issues/1192
+        return EmbeddedArgs(self.name, self.orig_name, self._embedded_args,
+                            copy.copy(self._orig_handler))
