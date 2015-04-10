@@ -92,6 +92,8 @@ def get_dev_version():
     major, minor, pre = VERSION_RE.match(previous).groups()[1:4]
     if not pre:
         minor = '.{}'.format(int(minor[1:]) + 1 if minor else 1)
+    if not minor:
+        minor = ''
     return '{}{}.dev'.format(major, minor)
 
 def write_version_file(version):
