@@ -40,14 +40,6 @@ robot.jarrunner module
     :undoc-members:
     :show-inheritance:
 
-robot.jythonworkarounds module
-------------------------------
-
-.. automodule:: robot.jythonworkarounds
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 robot.libdoc module
 -------------------
 
