@@ -9,18 +9,20 @@ ${INDENT}         ${SPACE * 4}
 Embedded Arguments In Library Keyword Name
     ${name}  ${book} =  User Peke Selects Advanced Python From Webshop
     Should Be Equal  ${name}-${book}  Peke-Advanced Python
-    ${name}  ${book} =  User Juha Selects Playboy From Webshop
+    ${name}  ${book} =  User Juha selects Playboy from webshop
     Should Be Equal  ${name}-${book}  Juha-Playboy
 
-Embedded And Positional Arguments Do Not Work Together
-    [Documentation]    FAIL Positional arguments are not allowed when using embedded arguments.
-    Given this "usage" with @{EMPTY} works    @{EMPTY}
-    Then User Invalid Selects Invalid From Webshop    invalid
-
 Complex Embedded Arguments
+    # Notice that Given/When/Then is part of the keyword name
     Given this "feature" works
     When this "test case" is *executed*
     Then this "issue" is about to be done!
+
+Embedded Arguments with BDD Prefixes
+    Given user x selects y from webshop
+    When user x selects y from webshop
+    ${x}    ${y} =    Then user x selects y from webshop
+    Should Be Equal    ${x}-${y}    x-y
 
 Argument Namespaces with Embedded Arguments
     ${var}=    Set Variable    hello
@@ -105,9 +107,14 @@ Keyword Matching Multiple Keywords In Library File
 Keyword Matching Multiple Keywords In Different Library Files
     [Documentation]    FAIL Multiple keywords with name 'foo*lib*bar' found.\
     ...    Give the full name of the keyword you want to use:
-    ...    ${INDENT}embedded_args_in_lk_1.\${a}*lib*\${b}
-    ...    ${INDENT}embedded_args_in_lk_2.\${a}*lib*\${b}
+    ...    ${INDENT}embedded_args_in_lk_1.foo*lib*bar
+    ...    ${INDENT}embedded_args_in_lk_2.foo*lib*bar
     foo*lib*bar
+
+Embedded And Positional Arguments Do Not Work Together
+    [Documentation]    FAIL Positional arguments are not allowed when using embedded arguments.
+    Given this "usage" with @{EMPTY} works    @{EMPTY}
+    Then User Invalid Selects Invalid From Webshop    invalid
 
 Keyword with embedded args cannot be used as "normal" keyword
     [Documentation]    FAIL Variable '\${user}' not found.

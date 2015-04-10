@@ -6,8 +6,8 @@ def user_selects_from_webshop(user, item):
     print "This is always executed"
     return user, item
 
-@keyword(name="this \"${item}\" ${no good name for this arg ...}")
-def this(item, somearg):
+@keyword(name="${prefix:Given|When|Then} this \"${item}\" ${no good name for this arg ...}")
+def this(ignored_prefix, item, somearg):
     print "%s-%s" % (item, somearg)
 
 @keyword(name="My embedded ${var}")

@@ -408,6 +408,10 @@ class EmbeddedArgs(object):
         self._embedded_args = embedded_args
         self._orig_handler = orig_handler
 
+    @property
+    def longname(self):
+        return '%s.%s' % (self.library.name, self.name)
+
     def __getattr__(self, item):
         return getattr(self._orig_handler, item)
 
