@@ -11,14 +11,17 @@ Embedded Arguments In User Keyword Name
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    This is always executed
     Should Be Equal    ${tc.kws[2].name}    \${name}, \${book} = User Juha Selects Playboy From Webshop
 
-Embedded And Positional Arguments Do Not Work Together
-    Check Test Case    ${TEST NAME}
-
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    feature-works
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    test case-is *executed*
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    issue-is about to be done!
+
+Embedded Arguments with BDD Prefixes
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].name}    Given user x selects y from webshop
+    Should Be Equal    ${tc.kws[1].name}    When user x selects y from webshop
+    Should Be Equal    ${tc.kws[2].name}    \${x}, \${y} = Then user x selects y from webshop
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
@@ -92,6 +95,9 @@ Embedded Arguments In Resource File
 Embedded Arguments In Resource File Used Explicitly
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.kws[0].name}    \${ret} = embedded_args_in_uk_1.peke uses resource file
+
+Embedded And Positional Arguments Do Not Work Together
+    Check Test Case    ${TEST NAME}
 
 Keyword with embedded args cannot be used as "normal" keyword
     Check Test Case    ${TEST NAME}

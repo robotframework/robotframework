@@ -12,15 +12,17 @@ Embedded Arguments In User Keyword Name
     ${name}    ${book} =    User Juha Selects Playboy From Webshop
     Should Be Equal    ${name}-${book}    Juha-Playboy
 
-Embedded And Positional Arguments Do Not Work Together
-    [Documentation]    FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 1.
-    Given this "usage" with @{EMPTY} works    @{EMPTY}
-    Then User Invalid Selects Invalid From Webshop    invalid
-
 Complex Embedded Arguments
+    # Notice that Given/When/Then is part of the keyword name
     Given this "feature" works
     When this "test case" is *executed*
     Then this "issue" is about to be done!
+
+Embedded Arguments with BDD Prefixes
+    Given user x selects y from webshop
+    When user x selects y from webshop
+    ${x}    ${y} =    Then user x selects y from webshop
+    Should Be Equal    ${x}-${y}    x-y
 
 Argument Namespaces with Embedded Arguments
     ${var}=    Set Variable    hello
@@ -123,6 +125,11 @@ Embedded Arguments In Resource File Used Explicitly
     ${ret} =    embedded_args_in_uk_1.peke uses resource file
     Should Be Equal    ${ret}    peke-resource
     embedded_args_in_uk_2.-r1-r2-+r1+
+
+Embedded And Positional Arguments Do Not Work Together
+    [Documentation]    FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 1.
+    Given this "usage" with @{EMPTY} works    @{EMPTY}
+    Then User Invalid Selects Invalid From Webshop    invalid
 
 Keyword with embedded args cannot be used as "normal" keyword
     [Documentation]    FAIL Variable '${user}' not found.
