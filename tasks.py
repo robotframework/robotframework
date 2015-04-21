@@ -80,6 +80,10 @@ def update_latest(version):
     shutil.rmtree('latest')
     print "Copying '{}' to 'latest'".format(version)
     shutil.copytree(version, 'latest')
+    print "Removing 'robotframework-userguide-latest.zip'"
+    os.remove('robotframework-userguide-latest.zip')
+    print "Copying 'robotframework-userguide-{}.zip' to 'robotframework-userguide-latest.zip'".format(version)
+    shutil.copy('robotframework-userguide-{}.zip'.format(version), 'robotframework-userguide-latest.zip')
 
 
 def update_index(version):
@@ -109,7 +113,7 @@ def update_index(version):
 def add_changes(version):
     """Adds changes to git."""
     print "Staging files to git."
-    run("git add {0} robotframework-userguide-{0}.zip index.html latest".format(version))
+    run("git add {0} robotframework-userguide-{0}.zip index.html latest robotframework-userguide-latest.zip".format(version))
 
 @task
 def push_changes(version):
