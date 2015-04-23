@@ -22,9 +22,9 @@ class Keyword(model.Keyword):
     __slots__ = ['status', 'starttime', 'endtime', 'message']
     message_class = Message
 
-    def __init__(self, name='', doc='', args=(), type='kw', timeout='',
-                 status='FAIL', starttime=None, endtime=None):
-        model.Keyword.__init__(self, name, doc, args, type, timeout)
+    def __init__(self, name='', doc='', args=(), assign=(), timeout='',
+                 type='kw', status='FAIL', starttime=None, endtime=None):
+        model.Keyword.__init__(self, name, doc, args, assign, timeout, type)
         #: String 'PASS' of 'FAIL'.
         self.status = status
         #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
