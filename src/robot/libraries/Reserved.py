@@ -1,4 +1,4 @@
-#  Copyright 2008-2015 Nokia Solutions and Networks
+# Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,8 +11,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
-import re
 
 RESERVED_KEYWORDS = ['for', 'while', 'break', 'continue', 'end',
                      'if', 'else', 'elif', 'else if', 'return']
@@ -27,5 +25,6 @@ class Reserved(object):
     def run_keyword(self, name, args):
         error = "'%s' is a reserved keyword." % name
         if name in ['else', 'else if']:
-            error += " Thus '%s' must be in all-caps (%s) when used as a marker with 'Run Keyword'." %(name,name.upper())
+            error += " '%s' must be in uppercase (%s) when used as a marker with 'Run Keyword'." % (
+                name, name.upper())
         raise Exception(error)
