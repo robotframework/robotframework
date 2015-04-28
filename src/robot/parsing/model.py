@@ -595,20 +595,33 @@ class UserKeyword(TestCase):
 
 
 class ForLoop(_WithSteps):
+    """
+    Properties:
+
+    - flavor: The value of the 'IN' item, with spaces removed.
+              Typically 'IN', 'INRANGE', 'INZIP', 'INEUMERATE', etc.(?)
+    - range:  True if flavor is 'INRANGE'
+    - vars:   Variables set per-iteration by this loop
+    - items:  Items to loop over (or otherwise parameters, like with INRANGE)
+    - comment: a comment, or None.
+    - steps:  A list of steps in the loop.
+    """
 
     def __init__(self, declaration, comment=None):
-        self.range, index = self._get_range_and_index(declaration)
+        self.flavor, index = self._get_flavor_and_index(declaration)
+        # self.range is preserved for backwards-compatibility
+        self.range = self.flavor == 'INRANGE'
         self.vars = declaration[:index]
         self.items = declaration[index+1:]
         self.comment = Comment(comment)
         self.steps = []
 
-    def _get_range_and_index(self, declaration):
+    def _get_flavor_and_index(self, declaration):
         for index, item in enumerate(declaration):
             item = item.upper().replace(' ', '')
-            if item in ['IN', 'INRANGE']:
-                return item == 'INRANGE', index
-        return False, len(declaration)
+            if item.startswith('IN'):
+                return item, index
+        return 'IN', len(declaration)
 
     def is_comment(self):
         return False
