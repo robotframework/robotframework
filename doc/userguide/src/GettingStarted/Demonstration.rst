@@ -4,7 +4,7 @@ Demonstrations
 There are several demo projects that introduce Robot Framework and help getting
 started with it.
 
-`Quick Start Guide <http://code.google.com/p/robotframework/wiki/QuickStartGuide>`__
+`Quick Start Guide <https://github.com/robotframework/QuickStartGuide/blob/master/QuickStart.rst>`__
     Introduces the most important features of Robot Framework and acts as
     an executable demo.
 
