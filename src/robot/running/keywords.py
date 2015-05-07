@@ -36,7 +36,7 @@ class Keywords(object):
         if step.is_for_loop():
             keyword = ForLoop(step, self._templated)
         else:
-            keyword = Keyword(step.keyword, step.args, step.assign)
+            keyword = Keyword(step.name, step.args, step.assign)
         self.add_keyword(keyword)
 
     def add_keyword(self, keyword):
@@ -80,10 +80,6 @@ class _BaseKeyword:
     @property
     def passed(self):
         return self.status == 'PASS'
-
-    def serialize(self, serializer):
-        serializer.start_keyword(self)
-        serializer.end_keyword(self)
 
     def _get_status(self, error):
         if not error:

@@ -1371,14 +1371,20 @@ class _RunKeyword:
         | ${status} | ${value} = | `Run Keyword And Ignore Error` | My Keyword |
         | `Run Keyword If` | '${status}' == 'PASS' | `Some Action` | arg | ELSE | `Another Action` |
 
-        Using ELSE and/or ELSE IF branches is especially handy if you are
-        interested in the return value. This is illustrated by the example
-        below that also demonstrates using ELSE IF and ELSE together:
+        The return value is the one of the keyword that was executed or None if
+        no keyword was executed (i.e. if ``condition`` was false). Hence, it is
+        recommended to use ELSE and/or ELSE IF branches to conditionally assign
+        return values from keyword to variables (to conditionally assign fixed
+        values to variables, see `Set Variable If`). This is illustrated by the
+        example below:
 
-        | ${result} = | `Run Keyword If` | ${rc} == 0  | `Zero return value` |
-        | ...         | ELSE IF          | 0 < ${rc} < 42 | `Normal return value` |
-        | ...         | ELSE IF          | ${rc} < 0      | `Negative return value` | ${rc} | arg2 |
-        | ...         | ELSE             | `Abnormal return value` | ${rc} |
+        | ${var1} =   | `Run Keyword If` | ${rc} == 0     | `Some keyword returning a value` |
+        | ...         | ELSE IF          | 0 < ${rc} < 42 | `Another keyword` |
+        | ...         | ELSE IF          | ${rc} < 0      | `Another keyword with args` | ${rc} | arg2 |
+        | ...         | ELSE             | `Final keyword to handle abnormal cases` | ${rc} |
+        | ${var2} =   | `Run Keyword If` | ${condition}  | `Some keyword` |
+
+        In this example, ${var2} will be set to None if ${condition} is false.
 
         Notice that ``ELSE`` and ``ELSE IF`` control words must be used
         explicitly and thus cannot come from variables. If you need to use
@@ -1540,12 +1546,14 @@ class _RunKeyword:
         times = self._get_times_to_repeat(times)
         self._run_keywords(self._yield_repeated_keywords(times, name, args))
 
-    def _get_times_to_repeat(self, times):
+    def _get_times_to_repeat(self, times, require_postfix=False):
         times = utils.normalize(str(times))
         if times.endswith('times'):
             times = times[:-5]
         elif times.endswith('x'):
             times = times[:-1]
+        elif require_postfix:
+            raise ValueError
         return self._convert_to_integer(times)
 
     def _yield_repeated_keywords(self, times, name, args):
@@ -1555,24 +1563,28 @@ class _RunKeyword:
             self.log("Repeating keyword, round %d/%d." % (i+1, times))
             yield name, args
 
-    def wait_until_keyword_succeeds(self, timeout, retry_interval, name, *args):
-        """Waits until the specified keyword succeeds or the given timeout expires.
+    def wait_until_keyword_succeeds(self, retry, retry_interval, name, *args):
+        """Runs the specified keyword and retries if it fails.
 
-        ``name`` and ``args`` define the keyword that is executed
-        similarly as with `Run Keyword`. If the specified keyword does
-        not succeed within ``timeout``, this keyword fails.
+        ``name`` and ``args`` define the keyword that is executed similarly
+        as with `Run Keyword`. How long to retry running the keyword is
+        defined using ``retry`` argument either as timeout or count.
         ``retry_interval`` is the time to wait before trying to run the
         keyword again after the previous run has failed.
 
-        Both ``timeout`` and ``retry_interval`` must be given in Robot
-        Framework's time format (e.g. ``1 minute``, ``2 min 3 s``, ``4.5``)
-        that is explained in an appendix of Robot Framework User Guide.
+        If ``retry`` is given as timeout, it must be in Robot Framework's
+        time format (e.g. ``1 minute``, ``2 min 3 s``, ``4.5``) that is
+        explained in an appendix of Robot Framework User Guide. If it is
+        given as count, it must have ``times`` or ``x`` postfix (e.g.
+        ``5 times``, ``10 x``). ``retry_interval`` must always be given in
+        Robot Framework's time format.
 
-        If the executed keyword passes, returns its return value.
+        If the keyword does not succeed regardless of retries, this keyword
+        fails. If the executed keyword passes, its return value is returned.
 
         Examples:
         | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | argument |
-        | ${result} = | Wait Until Keyword Succeeds | 30 s | 1 s | My keyword |
+        | ${result} = | Wait Until Keyword Succeeds | 3x | 200ms | My keyword |
 
         All normal failures are caught by this keyword. Errors caused by
         invalid syntax, test or keyword timeouts, or fatal exceptions (caused
@@ -1583,23 +1595,34 @@ class _RunKeyword:
         output files. Starting from Robot Framework 2.7, it is possible to
         remove unnecessary keywords from the outputs using
         ``--RemoveKeywords WUKS`` command line option.
+
+        Support for specifying ``retry`` as a number of times to retry is
+        a new feature in Robot Framework 2.9.
         """
-        timeout = utils.timestr_to_secs(timeout)
+        maxtime = count = -1
+        try:
+            count = self._get_times_to_repeat(retry, require_postfix=True)
+        except ValueError:
+            timeout = utils.timestr_to_secs(retry)
+            maxtime = time.time() + timeout
+            message = 'for %s' % utils.secs_to_timestr(timeout)
+        else:
+            if count <= 0:
+                raise ValueError('Retry count %d is not positive.' % count)
+            message = '%d time%s' % (count, utils.plural_or_not(count))
         retry_interval = utils.timestr_to_secs(retry_interval)
-        maxtime = time.time() + timeout
-        error = None
-        while not error:
+        while True:
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed as err:
                 if err.dont_continue:
                     raise
-                if time.time() > maxtime:
-                    error = unicode(err)
-                else:
-                    time.sleep(retry_interval)
-        raise AssertionError("Timeout %s exceeded. The last error was: %s"
-                             % (utils.secs_to_timestr(timeout), error))
+                count -= 1
+                if time.time() > maxtime > 0 or count == 0:
+                    raise AssertionError("Keyword '%s' failed after retrying "
+                                         "%s. The last error was: %s"
+                                         % (name, message, err))
+                self._sleep_in_parts(retry_interval)
 
     def set_variable_if(self, condition, *values):
         """Sets variable based on the given condition.
@@ -2161,14 +2184,34 @@ class _Misc:
         if console:
             logger.console(message)
 
+    @run_keyword_variant(resolve=0)
     def log_many(self, *messages):
         """Logs the given messages as separate entries using the INFO level.
+
+        Supports also logging list and dictionary variable items individually.
+
+        Examples:
+        | Log Many | Hello   | ${var}  |
+        | Log Many | @{list} | &{dict} |
 
         See `Log` and `Log To Console` keywords if you want to use alternative
         log levels, use HTML, or log to the console.
         """
-        for msg in messages:
+        for msg in self._yield_logged_messages(messages):
             self.log(msg)
+
+    def _yield_logged_messages(self, messages):
+        for msg in messages:
+            var = VariableSplitter(msg)
+            value = self._variables.replace_scalar(msg)
+            if var.is_list_variable():
+                for item in value:
+                    yield item
+            elif var.is_dict_variable():
+                for name, value in value.items():
+                    yield '%s=%s' % (name, value)
+            else:
+                yield value
 
     def log_to_console(self, message, stream='STDOUT', no_newline=False):
         """Logs the given message to the console.

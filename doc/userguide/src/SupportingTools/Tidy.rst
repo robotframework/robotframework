@@ -42,7 +42,7 @@ Options
  -r, --recursive  Process given directory recursively. Files in the directory
                   are processed in place similarly as when :option:`--inplace`
                   option is used.
- -f, --format <txt|html|tsv>
+ -f, --format <robot|txt|html|tsv>
                   Output file format. If the output file is given explicitly,
                   the default value is got from its extension. Otherwise
                   the format is not changed.

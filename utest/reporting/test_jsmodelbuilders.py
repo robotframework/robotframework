@@ -61,7 +61,8 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_keyword(Keyword())
 
     def test_keyword_with_values(self):
-        kw = Keyword('Name', 'http://doc', ['a1', 'a2'], 'setup', '1 second', 'PASS',
+        kw = Keyword('Name', 'http://doc', ['a1', 'a2'], (), '1 second',
+                     'setup', 'PASS',
                      '20111204 19:42:42.000', '20111204 19:42:42.042')
         self._verify_keyword(kw, 1, 'Name', '<a href="http://doc">http://doc</a>',
                              'a1, a2', '1 second', 1, 0, 42)

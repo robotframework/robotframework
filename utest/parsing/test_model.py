@@ -221,7 +221,7 @@ class TestTestCaseTable(unittest.TestCase):
     def test_add_step(self):
         step = self.test.add_step(['Keyword', 'arg1', 'arg2'])
         assert_equal(self.test.steps, [step])
-        assert_equal(step.keyword, 'Keyword')
+        assert_equal(step.name, 'Keyword')
         assert_equal(step.args, ['arg1', 'arg2'])
 
     def test_add_for_loop(self):
@@ -271,7 +271,7 @@ class TestKeywordTable(unittest.TestCase):
     def test_add_step(self):
         step = self.kw.add_step(['Keyword', 'arg1', 'arg2'])
         assert_equal(self.kw.steps, [step])
-        assert_equal(step.keyword, 'Keyword')
+        assert_equal(step.name, 'Keyword')
         assert_equal(step.args, ['arg1', 'arg2'])
 
     def test_add_for_loop(self):
@@ -321,7 +321,7 @@ class TestStep(unittest.TestCase):
 
     def _test(self, content, kw='KW', args=[], assign=[]):
         step = Step(content)
-        assert_equal(step.keyword, kw)
+        assert_equal(step.name, kw)
         assert_equal(step.args, args)
         assert_equal(step.assign, assign)
 

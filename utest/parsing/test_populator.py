@@ -362,7 +362,7 @@ class TestCaseTablePopulatingTest(_PopulatorTest):
         assert_equals(len(self._datafile.testcase_table.tests), 2)
         test = self._first_test()
         assert_equals(len(test.steps), 1)
-        assert_equals(test.steps[0].keyword, 'No operation')
+        assert_equals(test.steps[0].name, 'No operation')
         assert_equals(len(self._first_test().steps), 1)
 
     def test_case_name_and_first_step_on_same_row(self):
@@ -383,7 +383,7 @@ class TestCaseTablePopulatingTest(_PopulatorTest):
                                           ['', 'Log', 'barness']])
         self._number_of_steps_should_be((self._first_test()), 1)
         self._number_of_steps_should_be(self._nth_test(2), 2)
-        assert_equals(self._nth_test(2).steps[0].keyword, 'Log Many')
+        assert_equals(self._nth_test(2).steps[0].name, 'Log Many')
         assert_equals(self._nth_test(2).steps[0].args, ['quux', 'fooness', 'and more'])
 
     def test_unnamed_testcase(self):
@@ -397,7 +397,7 @@ class TestCaseTablePopulatingTest(_PopulatorTest):
     def test_unnamed_test_and_line_continuation(self):
         self._create_table('test cases', [['', '...', 'foo', '# comment']])
         assert_equals(self._first_test().name, '')
-        assert_equals(self._first_test().steps[0].keyword, 'foo')
+        assert_equals(self._first_test().steps[0].name, 'foo')
         assert_equals(self._first_test().steps[0].comment.as_list(), ['# comment'])
 
     def test_test_settings(self):

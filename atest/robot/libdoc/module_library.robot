@@ -38,6 +38,10 @@ Keyword Arguments
     Keyword Arguments Should Be     1    a1=d    *a2
     Keyword Arguments Should Be     5    a    b    *args    **kwargs
 
+Embedded Arguments
+    Keyword Name Should Be     6    Takes \${embedded} \${args}
+    Keyword Arguments Should Be     6
+
 Keyword Documentation
     Keyword Doc Should Start With    0   Get the intialization variables
     Keyword Doc Should Be    1   A keyword\n\nSee `get hello` for details

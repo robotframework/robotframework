@@ -3,7 +3,7 @@ ${COUNTER}        ${0}
 
 *** Test Cases ***
 Fail until the end
-    [Documentation]    FAIL Timeout 200 milliseconds exceeded. The last error was: Not gonna happen
+    [Documentation]    FAIL Keyword 'Fail' failed after retrying for 200 milliseconds. The last error was: Not gonna happen
     Wait Until Keyword Succeeds    0.2    0.05    Fail    Not gonna happen
 
 Passes before timeout
@@ -13,11 +13,11 @@ Warnings
     Wait Until Keyword Succeeds    2    0.01    Warn And Fail Two Times
 
 One Warning
-    [Documentation]    FAIL Timeout 200 milliseconds exceeded. The last error was: Until the end
+    [Documentation]    FAIL Keyword 'Warn On First And Fail Two Times' failed after retrying for 200 milliseconds. The last error was: Until the end
     Wait Until Keyword Succeeds    0.2    0.01    Warn On First And Fail Two Times
 
 Nested
-    [Documentation]    FAIL Timeout 300 milliseconds exceeded. The last error was: Timeout 50 milliseconds exceeded. The last error was: Always
+    [Documentation]    FAIL Keyword 'Nested Wait' failed after retrying for 300 milliseconds. The last error was: Keyword 'Fail' failed after retrying for 50 milliseconds. The last error was: Always
     Wait Until Keyword Succeeds    0.3    0.01    Nested Wait
 
 *** Keywords ***

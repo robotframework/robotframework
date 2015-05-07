@@ -256,18 +256,35 @@ variables and attributes.
    INTEGER = 42
    STRINGS = ["one", "two", "kolme", "four"]
    NUMBERS = [1, INTEGER, 3.14]
+   MAPPING = {"one": 1, "two": 2, "three": 3}
 
-In the example above, variables `${VARIABLE}`,
-`${ANOTHER VARIABLE}`, and so on, are created. The first two
-variables are strings, the third one is an integer and the last two are lists.
-All these variables are `scalar variables`_, even the ones containing
-lists as values. To create `list variables`_, the variable name must
-be prefixed with `LIST__` (note the two underscores).
+In the example above, variables `${VARIABLE}`, `${ANOTHER VARIABLE}`, and
+so on, are created. The first two variables are strings, the third one is
+an integer, then there are two lists, and the final value is a dictionary.
+All these variables can be used as a `scalar variable`_, lists and the
+dictionary also a `list variable`_ like `@{STRINGS}` (in the dictionary's case
+that variable would only contain keys), and the dictionary also as a
+`dictionary variable`_ like `&{MAPPING}`.
+
+To make creating a list variable or a dictionary variable more explicit,
+it is possible to prefix the variable name with `LIST__` or `DICT__`,
+respectively:
 
 .. sourcecode:: python
 
-   LIST__STRINGS = ["list", "of", "strings"]
-   LIST__MIXED = ["first value", -1.1, None, True]
+   from collections import OrderedDict
+
+   LIST__ANIMALS = ["cat", "dog"]
+   DICT__FINNISH = OrderedDict([("cat", "kissa"), ("dog", "koira")])
+
+These prefixes will not be part of the final variable name, but they cause
+Robot Framework to validate that the value actually is list-like or
+dictionary-like. With dictionaries the actual stored value is also turned
+into a special dictionary that is used also when `creating dictionary
+variables`_ in the Variable table. Values of these dictionaries are accessible
+as attributes like `${FINNISH.cat}`. These dictionaries are also ordered, but
+preserving the source order requires also the original dictionary to be
+ordered.
 
 The variables in both the examples above could be created also using the
 Variable table below.
@@ -275,17 +292,18 @@ Variable table below.
 .. table::
    :class: example
 
-   ===================  ====================  ==========  =========  =========
-         Variable              Value            Value       Value      Value
-   ===================  ====================  ==========  =========  =========
+   ===================  ====================  ==========  ==========  =========
+         Variable              Value            Value       Value       Value
+   ===================  ====================  ==========  ==========  =========
    ${VARIABLE}          An example string
    ${ANOTHER_VARIABLE}  This is pretty easy!
    ${INTEGER}           ${42}
-   ${STRINGS}           one                   two         kolme      four
-   ${NUMBERS}           ${1}                  ${INTEGER}  ${3.14}
-   @{STRINGS}           list                  of          strings
-   @{MIXED}             first value           ${-1.1}     ${None}    ${True}
-   ===================  ====================  ==========  =========  =========
+   @{STRINGS}           one                   two         kolme       four
+   @{NUMBERS}           ${1}                  ${INTEGER}  ${3.14}
+   &{MAPPING}           one=${1}              two=${2}    three=${3}
+   @{ANIMALS}           cat                   dog
+   &{FINNISH}           cat=kissa             dog=koira
+   ===================  ====================  ==========  ==========  =========
 
 .. note:: Variables are not replaced in strings got from variable files.
           For example, `VAR = "an ${example}"` would create
@@ -422,10 +440,11 @@ An alternative approach for getting variables is having a special
 `getVariables` is possible) in a variable file. If such a function
 exists, Robot Framework calls it and expects to receive variables as
 a Python dictionary or a Java `Map` with variable names as keys
-and variable values as values. Variables are considered to be scalars,
-unless prefixed with `LIST__`, and values can contain
-anything. The example below is functionally identical to the first examples of
-`creating variables directly`_ above.
+and variable values as values. Created variables can be used as scalars,
+lists, and dictionaries exactly like when `creating variables directly`_,
+and it is possible to use `LIST__` and `DICT__` prefixes to make creating
+list and dictionary variables more explicit. The example below is functionally
+identical to the first `creating variables directly`_ example.
 
 .. sourcecode:: python
 
@@ -435,17 +454,15 @@ anything. The example below is functionally identical to the first examples of
                      "INTEGER": 42,
                      "STRINGS": ["one", "two", "kolme", "four"],
                      "NUMBERS": [1, 42, 3.14],
-                     "LIST__STRINGS": ["list", "of", "strings"],
-                     "LIST__MIXED": ["first value", -1.1, None, True]}
+                     "MAPPING": {"one": 1, "two": 2, "three": 3}}
         return variables
-
 
 `get_variables` can also take arguments, which facilitates changing
 what variables actually are created. Arguments to the function are set just
 as any other arguments for a Python function. When `taking variable files
 into use`_ in the test data, arguments are specified in cells after the path
 to the variable file, and in the command line they are separated from the
-path with a colon.
+path with a colon or a semicolon.
 
 The dummy example below shows how to use arguments with variable files. In a
 more realistic example, the argument could be a path to an external text file

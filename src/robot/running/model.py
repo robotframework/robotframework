@@ -31,24 +31,20 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 
 class Keyword(model.Keyword):
     """Running model for single keyword."""
-    __slots__ = ['assign']
+    __slots__ = []
     message_class = None  # TODO: Remove from base model?
 
     def __init__(self, name='', args=(), assign=(), type='kw'):
-        model.Keyword.__init__(self, name=name, args=args, type=type)
-        #: Variables to be assigned.
-        self.assign = assign
+        model.Keyword.__init__(self, name=name, args=args, assign=assign,
+                               type=type)
+
+    # Compatibility with parsing.model.Step. Should not be needed.
 
     def is_for_loop(self):
         return False
 
     def is_comment(self):
         return False
-
-    @property
-    def keyword(self):
-        """Name of the keyword."""
-        return self.name
 
 
 class ForLoop(Keyword):

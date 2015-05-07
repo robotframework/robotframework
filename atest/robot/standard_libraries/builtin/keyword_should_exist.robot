@@ -35,7 +35,7 @@ Keyword does not exist with custom message
 Duplicate keywords
     Check Test Case  ${TESTNAME}
 
-Duplicate keywords in same resourc
+Duplicate keywords in same resource
     Check Test Case  ${TESTNAME}
 
 Higher priority keyword overrides

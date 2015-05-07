@@ -36,3 +36,9 @@ def name_set_in_method_signature(a, b, *args, **kwargs):
     This makes sure that @deco.robot_name decorated kws don't lose their signatures
     """
     pass
+
+@deco.keyword('Takes ${embedded} ${args}')
+def takes_embedded_args(a=1, b=2, c=3):
+    """A keyword which uses embedded args
+    """
+    pass

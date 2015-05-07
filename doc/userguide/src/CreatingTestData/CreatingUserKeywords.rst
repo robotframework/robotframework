@@ -213,34 +213,31 @@ Varargs with user keywords
 
 Sometimes even default values are not enough and there is a need
 for a keyword accepting `variable number of arguments`_. User keywords
-support also this feature. All that is needed is having `list variable`__
-such as `@{varargs}` as the last argument in the keyword signature.
-This syntax can be combined with the previously described positional
-arguments and default values, and at the end the list variable gets all
-the leftover arguments that do not match other arguments. The list
-variable can thus have any number of items, even zero.
-
-__ `list variables`_
+support also this feature. All that is needed is having `list variable`_ such
+as `@{varargs}` after possible positional arguments in the keyword signature.
+This syntax can be combined with the previously described default values, and
+at the end the list variable gets all the leftover arguments that do not match
+other arguments. The list variable can thus have any number of items, even zero.
 
 .. table:: User keywords accepting variable number of arguments
    :class: example
 
-   ===========================  ===========  ================  ==========  ==========
-              Keyword             Action         Argument       Argument    Argument
-   ===========================  ===========  ================  ==========  ==========
-   Any Number Of Arguments      [Arguments]  @{varargs}
-   \                            Log Many     @{varargs}
+   ===========================  =============  ================  ============  ============
+              Keyword               Action         Argument        Argument      Argument
+   ===========================  =============  ================  ============  ============
+   Any Number Of Arguments      [Arguments]    @{varargs}
+   \                            Log Many       @{varargs}
    \
-   One Or More Arguments        [Arguments]  ${required}       @{rest}
-   \                            Log Many     ${required}       @{rest}
+   One Or More Arguments        [Arguments]    ${required}       @{rest}
+   \                            Log Many       ${required}       @{rest}
    \
-   Required, Default, Varargs   [Arguments]  ${req}            ${opt}=42   @{others}
-   \                            Log          Required: ${req}
-   \                            Log          Optional: ${opt}
-   \                            Log          Others:
-   \                            : FOR        ${item}           IN          @{others}
-   \                                         Log               ${item}
-   ===========================  ===========  ================  ==========  ==========
+   Required, Default, Varargs   [Arguments]    ${req}            ${opt}=42     @{others}
+   \                            Log            Required: ${req}
+   \                            Log            Optional: ${opt}
+   \                            Log            Others:
+   \                            : FOR          ${item}           IN            @{others}
+   \                                           Log               ${item}
+   ===========================  =============  ================  ============  ============
 
 Notice that if the last keyword above is used with more than one
 argument, the second argument `${opt}` always gets the given
@@ -254,6 +251,40 @@ Again, Pythonistas probably notice that the variable number of
 arguments syntax is very close to the one in Python.
 
 __ `for loops`_
+
+Kwargs with user keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+User keywords can also accept `free keyword arguments`_ by having a `dictionary
+variable`_ like `&{kwargs}` as the last argument after possible positional
+arguments and varargs. When the keyword is called, this variable will get all
+`named arguments`_ that do not match any positional argument in the keyword
+signature.
+
+.. table:: User keywords accepting free keyword arguments
+   :class: example
+
+   ===========================  =============  ============  ============  ============
+              Keyword               Action       Argument      Argument      Argument
+   ===========================  =============  ============  ============  ============
+   Kwargs Only                  [Arguments]    &{kwargs}
+   \                            Log            ${kwargs}
+   \                            Log Many       @{kwargs}
+   \
+   Positional And Kwargs        [Arguments]    ${required}   &{extra}
+   \                            Log Many       ${required}   @{extra}
+   \
+   Run Program                  [Arguments]    @{varargs}    &{kwargs}
+   \                            Run Process    program.py    @{varargs}    &{kwargs}
+   ===========================  =============  ============  ============  ============
+
+The last example above shows how to create a wrapper keyword that
+accepts any positional or named argument and passes them forward.
+See `kwargs examples`_ for a full example with same keyword.
+
+Also kwargs support with user keywords works very similarly as kwargs work
+in Python. In the signature and also when passing arguments forward,
+`&{kwargs}` is pretty much the same as Python's `**kwargs`.
 
 .. _Embedded argument syntax:
 

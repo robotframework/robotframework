@@ -22,8 +22,8 @@ class GetKeywordNamesLibrary:
     def get_keyword_names(self):
         marked_keywords = [name for name in dir(self) if hasattr(getattr(self, name), 'robot_name')]
         other_keywords = ['Get Keyword That Passes', 'Get Keyword That Fails',
-                        'keyword_in_library_itself', 'non_existing_kw',
-                        'this_is_not_keyword']
+                          'keyword_in_library_itself', 'non_existing_kw',
+                          'this_is_not_keyword']
         return marked_keywords + other_keywords
     
     def __getattr__(self, name):
@@ -45,3 +45,7 @@ class GetKeywordNamesLibrary:
     @deco.keyword
     def keyword_name_should_not_change(self):
         pass
+
+    @deco.keyword('Add ${count} Copies Of ${item} To Cart')
+    def add_copies_to_cart(self, count, item):
+        return count, item

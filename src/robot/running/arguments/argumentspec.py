@@ -17,8 +17,8 @@ import sys
 
 class ArgumentSpec(object):
 
-    def __init__(self, name, type='Keyword', positional=None, defaults=None,
-                 varargs=None, kwargs=None, supports_named=True):
+    def __init__(self, name=None, type='Keyword', positional=None,
+                 defaults=None, varargs=None, kwargs=None, supports_named=True):
         self.name = name
         self.type = type
         self.positional = positional or []

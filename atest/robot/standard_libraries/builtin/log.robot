@@ -79,11 +79,72 @@ Log callable
 
 Log Many
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Log Many says:    INFO
-    Check Log Message    ${tc.kws[0].msgs[1]}    Hello    INFO
-    Check Log Message    ${tc.kws[0].msgs[2]}    from    INFO
-    Check Log Message    ${tc.kws[0].msgs[3]}    tests!    INFO
-    Check Log Message    ${tc.kws[1].msgs[0]}    Log Many says: Hi!!    INFO
+    Check Log Message    ${tc.kws[0].msgs[0]}    Log Many says:
+    Check Log Message    ${tc.kws[0].msgs[1]}    1
+    Check Log Message    ${tc.kws[0].msgs[2]}    2
+    Check Log Message    ${tc.kws[0].msgs[3]}    3
+    Check Log Message    ${tc.kws[0].msgs[4]}    String presentation of MyObject
+    Check Log Message    ${tc.kws[1].msgs[0]}    Log Many says: Hi!!
+    Check Log Message    ${tc.kws[2].msgs[0]}    1
+    Check Log Message    ${tc.kws[2].msgs[1]}    2
+    Check Log Message    ${tc.kws[2].msgs[2]}    3
+    Check Log Message    ${tc.kws[2].msgs[3]}    String presentation of MyObject
+    Should Be Empty    ${tc.kws[3].msgs}
+    Should Be Empty    ${tc.kws[4].msgs}
+    Check Log Message    ${tc.kws[5].msgs[0]}    --
+    Check Log Message    ${tc.kws[5].msgs[1]}    -[]-
+    Check Log Message    ${tc.kws[5].msgs[2]}    -{}-
+    Check Log Message    ${tc.kws[6].msgs[0]}    1
+    Check Log Message    ${tc.kws[6].msgs[1]}    2
+
+Log Many with named and dict arguments
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    a=1
+    Check Log Message    ${tc.kws[0].msgs[1]}    b=2
+    Check Log Message    ${tc.kws[0].msgs[2]}    3=c
+    Check Log Message    ${tc.kws[0].msgs[3]}    obj=String presentation of MyObject
+    Check Log Message    ${tc.kws[1].msgs[0]}    a=1
+    Check Log Message    ${tc.kws[1].msgs[1]}    b=2
+    Check Log Message    ${tc.kws[1].msgs[2]}    3=c
+    Check Log Message    ${tc.kws[1].msgs[3]}    obj=String presentation of MyObject
+    Check Log Message    ${tc.kws[2].msgs[0]}    a=1
+    Check Log Message    ${tc.kws[2].msgs[1]}    b=2
+    Check Log Message    ${tc.kws[2].msgs[2]}    3=c
+    Check Log Message    ${tc.kws[2].msgs[3]}    obj=String presentation of MyObject
+    Check Log Message    ${tc.kws[2].msgs[4]}    b=no override
+    Check Log Message    ${tc.kws[2].msgs[5]}    3=three
+
+Log Many with positional, named and dict arguments
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    1
+    Check Log Message    ${tc.kws[0].msgs[1]}    2
+    Check Log Message    ${tc.kws[0].msgs[2]}    three=3
+    Check Log Message    ${tc.kws[0].msgs[3]}    4=four
+    Check Log Message    ${tc.kws[1].msgs[0]}    1
+    Check Log Message    ${tc.kws[1].msgs[1]}    2
+    Check Log Message    ${tc.kws[1].msgs[2]}    3
+    Check Log Message    ${tc.kws[1].msgs[3]}    String presentation of MyObject
+    Check Log Message    ${tc.kws[1].msgs[4]}    a=1
+    Check Log Message    ${tc.kws[1].msgs[5]}    b=2
+    Check Log Message    ${tc.kws[1].msgs[6]}    3=c
+    Check Log Message    ${tc.kws[1].msgs[7]}    obj=String presentation of MyObject
+    Check Log Message    ${tc.kws[1].msgs[8]}    1
+    Check Log Message    ${tc.kws[1].msgs[9]}    2
+    Check Log Message    ${tc.kws[1].msgs[10]}    3
+    Check Log Message    ${tc.kws[1].msgs[11]}    String presentation of MyObject
+    Check Log Message    ${tc.kws[1].msgs[12]}    a=1
+    Check Log Message    ${tc.kws[1].msgs[13]}    b=2
+    Check Log Message    ${tc.kws[1].msgs[14]}    3=c
+    Check Log Message    ${tc.kws[1].msgs[15]}    obj=String presentation of MyObject
+
+Log Many with non-existing variable
+    Check Test Case    ${TEST NAME}
+
+Log Many with list variable containing non-list
+    Check Test Case    ${TEST NAME}
+
+Log Many with dict variable containing non-dict
+    Check Test Case    ${TEST NAME}
 
 Log To Console
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -93,4 +154,3 @@ Log To Console
     Check Stdout Contains    stdout äö w/o new......line äö
     Check Stderr Contains    stderr äö w/ newline\n
     Check Stdout Contains    42
-

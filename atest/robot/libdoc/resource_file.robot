@@ -38,18 +38,22 @@ Resource Has No Inits
 
 Keyword Names
     Keyword Name Should Be     0    curdir
-    Keyword Name Should Be     1    Keyword with some "stuff" to <escape>
+    Keyword Name Should Be     2    Keyword with some "stuff" to <escape>
 
 Keyword Arguments
     Keyword Arguments Should Be     0
-    Keyword Arguments Should Be     1    a1    a2
-    Keyword Arguments Should Be     4    a1=d    *a2
+    Keyword Arguments Should Be     2    a1    a2
+    Keyword Arguments Should Be     5    positional=default    *varargs    **kwargs
+
+Embedded Arguments
+    Keyword Name Should Be     1    Embedded \${arguments}
+    Keyword Arguments Should Be     1
 
 Keyword Documentation
     Keyword Doc Should Be    0    $\{CURDIR}
-    Keyword Doc Should Be    1    foo bar `kw` & some "stuff" to <escape> .\n\n baa `\${a1}`
-    Keyword Doc Should Be    3    literal\nnewline
-    Keyword Doc Should Be    5
+    Keyword Doc Should Be    2    foo bar `kw` & some "stuff" to <escape> .\n\n baa `\${a1}`
+    Keyword Doc Should Be    4    literal\nnewline
+    Keyword Doc Should Be    6
     ...    foo bar `kw`.\n\n
     ...    baa `\${a1}` alskdj alskdjlajd\n
     ...    askf laskdjf asldkfj alsdkfj alsdkfjasldkfj\n
@@ -65,7 +69,4 @@ Keyword Documentation
     ...    | foo | bar |
 
 Non ASCII
-    Keyword Doc Should Be    6    Hyvää yötä.\n\nСпасибо!
-
-Same keyword name multiple times
-    Keyword Doc Should Be    -1    *Creating keyword failed: Keyword 'Same Twice' defined multiple times.*
+    Keyword Doc Should Be    7    Hyvää yötä.\n\nСпасибо!

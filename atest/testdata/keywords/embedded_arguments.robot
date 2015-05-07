@@ -12,15 +12,17 @@ Embedded Arguments In User Keyword Name
     ${name}    ${book} =    User Juha Selects Playboy From Webshop
     Should Be Equal    ${name}-${book}    Juha-Playboy
 
-Embedded And Positional Arguments Do Not Work Together
-    [Documentation]    FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 1.
-    Given this "usage" with @{EMPTY} works    @{EMPTY}
-    Then User Invalid Selects Invalid From Webshop    invalid
-
 Complex Embedded Arguments
+    # Notice that Given/When/Then is part of the keyword name
     Given this "feature" works
     When this "test case" is *executed*
     Then this "issue" is about to be done!
+
+Embedded Arguments with BDD Prefixes
+    Given user x selects y from webshop
+    When user x selects y from webshop
+    ${x}    ${y} =    Then user x selects y from webshop
+    Should Be Equal    ${x}-${y}    x-y
 
 Argument Namespaces with Embedded Arguments
     ${var}=    Set Variable    hello
@@ -85,6 +87,14 @@ Custom Regexp Matching Variables When Regexp Does No Match Them
     ${s42} =    Set Variable    42
     I want ${42} and ${s42} as variables
 
+Regexp Extensions Are Not Supported
+    [Documentation]    FAIL Regexp extensions are not allowed in embedded arguments.
+    Regexp extensions like ${x:(?x)re} are not supported
+
+Invalid Custom Regexp
+    [Documentation]    FAIL STARTS: Compiling embedded arguments regexp failed:
+    Invalid ${x:(} Regexp
+
 Escaping Values Given As Embedded Arguments
     ${name}    ${item} =    User \${nonex} Selects \\ From Webshop
     Should Be Equal    ${name}-${item}    \${nonex}-\\
@@ -116,16 +126,18 @@ Embedded Arguments In Resource File Used Explicitly
     Should Be Equal    ${ret}    peke-resource
     embedded_args_in_uk_2.-r1-r2-+r1+
 
-Keyword with normal arguments cannot have embedded arguments
-    [Documentation]    FAIL No keyword with name 'Keyword with value and normal args' found. Did you mean:
-    ...    ${INDENT}Keyword With \${variable} And Normal Args
-    Keyword with ${variable} and normal args    foo    bar
-    Keyword with value and normal args    foo    bar
+Embedded And Positional Arguments Do Not Work Together
+    [Documentation]    FAIL Keyword 'User \${user} Selects \${item} From Webshop' expected 0 arguments, got 1.
+    Given this "usage" with @{EMPTY} works    @{EMPTY}
+    Then User Invalid Selects Invalid From Webshop    invalid
 
-Keyword with embedded args can be used as "normal" keyword
-    [Documentation]    FAIL Replacing variables from keyword return value failed: Variable '${user}' not found.
-    Normal keyword with ${variable} in name
+Keyword with embedded args cannot be used as "normal" keyword
+    [Documentation]    FAIL Variable '${user}' not found.
     User ${user} Selects ${item} From Webshop
+
+Creating keyword with both normal and embedded arguments fails
+    [Documentation]    FAIL Keyword cannot have both normal and embedded arguments.
+    Keyword with ${embedded} and normal args is invalid    arg1    arg2
 
 Keyword Matching Multiple Keywords In Test Case File
     [Documentation]    FAIL Test case file contains multiple keywords matching name 'foo+tc+bar-tc-zap':
@@ -137,7 +149,7 @@ Keyword Matching Multiple Keywords In Test Case File
     foo+tc+bar-tc-zap
 
 Keyword Matching Multiple Keywords In One Resource File
-    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name 'foo+r1+bar-r1-zap':
+    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1.robot' contains multiple keywords matching name 'foo+r1+bar-r1-zap':
     ...    ${INDENT}\${a}+r1+\${b}
     ...    ${INDENT}\${a}-r1-\${b}
     foo+r1+bar
@@ -154,7 +166,7 @@ Keyword Matching Multiple Keywords In Different Resource Files
     foo-r1-bar-r2-zap
 
 Keyword Matching Multiple Keywords In One And Different Resource Files
-    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1' contains multiple keywords matching name '-r1-r2-+r1+':
+    [Documentation]    FAIL Resource file 'embedded_args_in_uk_1.robot' contains multiple keywords matching name '-r1-r2-+r1+':
     ...    ${INDENT}\${a}+r1+\${b}
     ...    ${INDENT}\${a}-r1-\${b}
     -r1-r2-+r1+
@@ -173,14 +185,9 @@ My embedded ${var}
 ${x:x} gets ${y:\w} from the ${z:.}
     Should Be Equal    ${x}-${y}-${z}    x-y-z
 
-Keyword with ${variable} and normal args
+Keyword with ${embedded} and normal args is invalid
     [Arguments]    ${arg1}    ${arg2}
-    Variable Should Not Exist    ${variable}
-    Should Be Equal    ${arg1}    foo
-    Should Be Equal    ${arg2}    bar
-
-Normal keyword with ${variable} in name
-    Variable Should Not Exist    ${variable}
+    Fail    Creating keyword should fail. This should never be executed
 
 ${a}-tc-${b}
     Log    ${a}-tc-${b}

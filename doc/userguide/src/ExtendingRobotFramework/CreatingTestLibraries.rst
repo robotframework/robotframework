@@ -551,6 +551,11 @@ keyword name, but will still create the `robot_name` attribute.  This can be use
 for `Marking methods to expose as keywords`_ without actually changing
 keyword names.
 
+Setting a custom keyword name can also enable library keywords to accept
+arguments using `Embedded Arguments`__ syntax.
+
+__ `Embedding arguments into keyword names`_
+
 Keyword arguments
 ~~~~~~~~~~~~~~~~~
 
@@ -964,6 +969,34 @@ issue, either do not use decorators, or use the handy `decorator module`__
 to create signature-preserving decorators.
 
 __ http://micheles.googlecode.com/hg/decorator/documentation.html
+
+Embedding arguments into keyword names
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Library keywords can also accept arguments which are passed using
+`Embedded Argument syntax`__.  The `robot.api.deco.keyword` decorator
+can be used to create a `custom keyword name`__ for the keyword
+which includes the desired syntax.
+
+__ `Embedding arguments into keyword name`_
+__ `Using a custom keyword name`_
+
+.. sourcecode:: python
+
+    from robot.api.deco import keyword
+
+    @keyword('Add ${quantity:\d+} Copies Of ${item} To Cart')
+    def add_copies_to_cart(quantity, item):
+        ...
+
+.. table:: Using embedded arguments with library keyword
+   :class: example
+
+   ===========  ==============================  =============
+    Test Case         Action                    Argument
+   ===========  ==============================  =============
+   My Test      Add 7 Copies Of Coffee To Cart
+   ===========  ==============================  =============
 
 Communicating with Robot Framework
 ----------------------------------

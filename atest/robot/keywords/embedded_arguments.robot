@@ -11,14 +11,17 @@ Embedded Arguments In User Keyword Name
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    This is always executed
     Should Be Equal    ${tc.kws[2].name}    \${name}, \${book} = User Juha Selects Playboy From Webshop
 
-Embedded And Positional Arguments Do Not Work Together
-    Check Test Case    ${TEST NAME}
-
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    feature-works
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    test case-is *executed*
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    issue-is about to be done!
+
+Embedded Arguments with BDD Prefixes
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.kws[0].name}    Given user x selects y from webshop
+    Should Be Equal    ${tc.kws[1].name}    When user x selects y from webshop
+    Should Be Equal    ${tc.kws[2].name}    \${x}, \${y} = Then user x selects y from webshop
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
@@ -57,10 +60,17 @@ Custom Regexp Matching Variables When Regexp Does No Match Them
     Check Test Case    ${TEST NAME}
 
 Regexp Extensions Are Not Supported
-    Check Log Message    ${ERRORS.msgs[0]}    Creating user keyword 'Regexp extensions like \${x:(?x)re} are not supported' failed: Regexp extensions are not allowed in embedded arguments.    ERROR
+    Check Test Case    ${TEST NAME}
+    Creating Keyword Failed    1
+    ...    Regexp extensions like \${x:(?x)re} are not supported
+    ...    Regexp extensions are not allowed in embedded arguments.
 
 Invalid Custom Regexp
-    Check Log Message    ${ERRORS.msgs[1]}    Creating user keyword 'Invalid \${x:(} Regexp' failed: Compiling embedded arguments regexp failed: *    ERROR    pattern=yes
+    Check Test Case    ${TEST NAME}
+    Creating Keyword Failed    2
+    ...    Invalid \${x:(} Regexp
+    ...    Compiling embedded arguments regexp failed: *
+    ...    pattern=yes
 
 Escaping Values Given As Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -86,12 +96,17 @@ Embedded Arguments In Resource File Used Explicitly
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal    ${tc.kws[0].name}    \${ret} = embedded_args_in_uk_1.peke uses resource file
 
-Keyword with normal arguments cannot have embedded arguments
+Embedded And Positional Arguments Do Not Work Together
     Check Test Case    ${TEST NAME}
 
-Keyword with embedded args can be used as "normal" keyword
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    This is always executed
+Keyword with embedded args cannot be used as "normal" keyword
+    Check Test Case    ${TEST NAME}
+
+Creating keyword with both normal and embedded arguments fails
+    Creating Keyword Failed    0
+    ...    Keyword with \${embedded} and normal args is invalid
+    ...    Keyword cannot have both normal and embedded arguments.
+    Check Test Case    ${TEST NAME}
 
 Keyword matching multiple keywords in test case file
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -110,4 +125,10 @@ Keyword matching multiple keywords in different resource files
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    foo-r2-bar
 
 Keyword matching multiple keywords in one and different resource files
-    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
+
+*** Keywords ***
+Creating Keyword Failed
+    [Arguments]    ${index}    ${name}    ${error}    ${pattern}=
+    Check Log Message    ${ERRORS.msgs[${index}]}
+    ...    Creating user keyword '${name}' failed: ${error}    ERROR    pattern=${pattern}

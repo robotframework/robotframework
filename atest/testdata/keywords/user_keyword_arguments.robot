@@ -132,15 +132,15 @@ Caller does not see modifications to varargs
     Should Be True    @{v2} == ['list2']
 
 Invalid Arguments Spec - Invalid argument syntax
-    [Documentation]    FAIL No keyword with name 'Invalid argument syntax' found.
+    [Documentation]    FAIL Invalid argument specification: Invalid argument syntax 'no deco'.
     Invalid argument syntax
 
 Invalid Arguments Spec - Non-default after defaults
-    [Documentation]    FAIL No keyword with name 'Non-default after defaults' found.
+    [Documentation]    FAIL Invalid argument specification: Non-default argument after default arguments.
     Non-default after defaults
 
 Invalid Arguments Spec - Varargs not last
-    [Documentation]    FAIL No keyword with name 'Varargs not last' found.
+    [Documentation]    FAIL Invalid argument specification: Positional argument after varargs.
     Varargs not last
 
 *** Keywords ***
