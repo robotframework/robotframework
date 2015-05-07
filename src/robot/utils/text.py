@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os.path
 import re
 
 from .charwidth import get_char_width
@@ -108,6 +109,32 @@ def _lose_width(text, diff):
         lost += get_console_length(text[-1])
         text = text[:-1]
     return text
+
+
+def split_args_from_name_or_path(name):
+    if os.path.exists(name):
+        return os.path.abspath(name), []
+    index = _get_arg_separator_index_from_name_or_path(name)
+    if index == -1:
+        return name, []
+    args = name[index+1:].split(name[index])
+    name = name[:index]
+    if os.path.exists(name):
+        name = os.path.abspath(name)
+    return name, args
+
+
+def _get_arg_separator_index_from_name_or_path(name):
+    colon_index = name.find(':')
+    # Handle absolute Windows paths
+    if colon_index == 1 and name[2:3] in ('/', '\\'):
+        colon_index = name.find(':', colon_index+1)
+    semicolon_index = name.find(';')
+    if colon_index == -1:
+        return semicolon_index
+    if semicolon_index == -1:
+        return colon_index
+    return min(colon_index, semicolon_index)
 
 
 def split_tags_from_doc(doc):
