@@ -14,13 +14,15 @@
 
 import re
 
+from .robottypes import is_string
+
 
 _CONTROL_WORDS_TO_BE_ESCAPED = ('ELSE', 'ELSE IF', 'AND')
 _SEQUENCES_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
 
 
 def escape(item):
-    if not isinstance(item, basestring):
+    if not is_string(item):
         return item
     if item in _CONTROL_WORDS_TO_BE_ESCAPED:
         return '\\' + item
@@ -31,7 +33,7 @@ def escape(item):
 
 
 def unescape(item):
-    if not (isinstance(item, basestring) and '\\' in item):
+    if not (is_string(item) and '\\' in item):
         return item
     return Unescaper().unescape(item)
 

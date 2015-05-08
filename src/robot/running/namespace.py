@@ -16,6 +16,7 @@ import os
 import copy
 
 from robot import utils
+from robot.utils import is_string
 from robot.errors import DataError
 from robot.libraries import STDLIBS, STDLIB_TO_DEPRECATED_MAP
 from robot.output import LOGGER, Message
@@ -238,7 +239,7 @@ class KeywordStore(object):
         handler = None
         if not name:
             raise DataError('Keyword name cannot be empty.')
-        if not isinstance(name, basestring):
+        if not is_string(name):
             raise DataError('Keyword name must be a string.')
         if '.' in name:
             handler = self._get_explicit_handler(name)

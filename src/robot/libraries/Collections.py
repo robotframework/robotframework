@@ -14,7 +14,7 @@
 
 from robot.api import logger
 from robot.utils import (plural_or_not, seq2str, seq2str2, type_name, unic,
-                         Matcher)
+                         is_string, Matcher)
 from robot.utils.asserts import assert_equals
 from robot.version import get_version
 
@@ -838,7 +838,7 @@ def _verify_condition(condition, default_msg, given_msg, include_default=False):
         raise AssertionError(given_msg)
 
 def _include_default_message(include):
-    if isinstance(include, basestring):
+    if is_string(include):
         return include.lower() not in ['no values', 'false']
     return bool(include)
 
@@ -848,7 +848,7 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
     if not iterable:
         return []
     regexp = False
-    if not isinstance(pattern, basestring):
+    if not is_string(pattern):
         raise TypeError("Pattern must be string, got '%s'."
                         % type_name(pattern))
     if pattern.startswith('regexp='):
@@ -859,5 +859,5 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
     matcher = Matcher(pattern, caseless=case_insensitive,
                       spaceless=whitespace_insensitive, regexp=regexp)
     return [string for string in iterable
-            if isinstance(string, basestring)
+            if is_string(string)
             and matcher.match(string)]

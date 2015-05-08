@@ -28,6 +28,7 @@ except ImportError:
 from robot.api import logger
 from robot.version import get_version
 from robot import utils
+from robot.utils import is_string, is_unicode
 
 
 class Telnet:
@@ -390,7 +391,7 @@ class Telnet:
     def _parse_terminal_emulation(self, terminal_emulation):
         if not terminal_emulation:
             return False
-        if isinstance(terminal_emulation, basestring):
+        if is_string(terminal_emulation):
             return terminal_emulation.lower() == 'true'
         return bool(terminal_emulation)
 
@@ -604,7 +605,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._encoding = (encoding.upper(), errors)
 
     def _encode(self, text):
-        if isinstance(text, str):
+        if is_bytes(text):
             return text
         if self._encoding[0] == 'NONE':
             return str(text)
@@ -657,7 +658,7 @@ class TelnetConnection(telnetlib.Telnet):
     def _is_valid_log_level(self, level):
         if level is None:
             return True
-        if not isinstance(level, basestring):
+        if not is_string(level):
             return False
         return level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
 
@@ -904,7 +905,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._verify_connection()
         if self._terminal_emulator:
             return self._terminal_read_until_regexp(expected)
-        expected = [self._encode(exp) if isinstance(exp, unicode) else exp
+        expected = [self._encode(exp) if is_unicode(exp) else exp
                     for exp in expected]
         return self._telnet_read_until_regexp(expected)
 
@@ -962,7 +963,7 @@ class TelnetConnection(telnetlib.Telnet):
         success, output = self._read_until_regexp(*expected)
         self._log(output, loglevel)
         if not success:
-            expected = [exp if isinstance(exp, basestring) else exp.pattern
+            expected = [exp if is_string(exp) else exp.pattern
                         for exp in expected]
             raise NoMatchError(expected, self._timeout, output)
         return output
@@ -1196,7 +1197,7 @@ class NoMatchError(AssertionError):
 
     def _get_message(self):
         expected = "'%s'" % self.expected \
-                   if isinstance(self.expected, basestring) \
+                   if is_string(self.expected) \
                    else utils.seq2str(self.expected, lastsep=' or ')
         msg = "No match found for %s in %s." % (expected, self.timeout)
         if self.output is not None:

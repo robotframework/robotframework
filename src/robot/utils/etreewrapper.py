@@ -15,6 +15,7 @@
 import os.path
 from StringIO import StringIO
 
+from .robottypes import is_string
 from .platform import IRONPYTHON
 
 
@@ -73,13 +74,13 @@ class ETSource(object):
         return '<in-memory file>'
 
     def _source_is_file_name(self):
-        return isinstance(self._source, basestring) \
+        return is_string(self._source) \
                 and not self._source.lstrip().startswith('<')
 
     def _open_source_if_necessary(self):
         if self._source_is_file_name():
             return self._open_file(self._source)
-        if isinstance(self._source, basestring):
+        if is_string(self._source):
             return self._open_string_io(self._source)
         return None
 

@@ -22,7 +22,7 @@ from .encoding import decode_from_system
 from .error import get_error_details
 from .platform import JYTHON
 from .robotpath import abspath, normpath
-from .robottypes import type_name
+from .robottypes import type_name, is_unicode
 
 if JYTHON:
     from java.lang.System import getProperty
@@ -104,7 +104,7 @@ class Importer(object):
         yield '%s:' % type
         for item in items:
             if item:
-                yield '  %s' % (item if isinstance(item, unicode)
+                yield '  %s' % (item if is_unicode(item)
                                 else decode_from_system(item))
 
     def _instantiate_if_needed(self, imported, args):

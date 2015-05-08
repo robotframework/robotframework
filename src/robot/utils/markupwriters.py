@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from .markuputils import html_escape, xml_escape, attribute_escape
+from .robottypes import is_string
 
 
 class _MarkupWriter(object):
@@ -26,7 +27,7 @@ class _MarkupWriter(object):
         :param encoding: Encoding to be used to encode all text written to the
             output file. If `None`, text will not be encoded.
         """
-        if isinstance(output, basestring):
+        if is_string(output):
             output = open(output, 'w')
         self.output = output
         self._line_separator = line_separator

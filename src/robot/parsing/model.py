@@ -20,6 +20,7 @@ from robot.variables import is_var
 from robot.output import LOGGER
 from robot import utils
 from robot.writer import DataFileWriter
+from robot.utils import is_string
 
 from .comments import Comment
 from .populators import FromFilePopulator, FromDirectoryPopulator
@@ -467,7 +468,7 @@ class Variable(object):
         self.name = name.rstrip('= ')
         if name.startswith('$') and value == []:
             value = ''
-        if isinstance(value, basestring):
+        if is_string(value):
             value = [value]
         self.value = value
         self.comment = Comment(comment)

@@ -21,7 +21,7 @@ except ImportError:
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.utils import (get_error_message, is_dict_like, is_list_like,
-                         seq2str2, type_name, Importer)
+                         seq2str2, type_name, is_string, Importer)
 
 
 class VariableFileSetter(object):
@@ -35,7 +35,7 @@ class VariableFileSetter(object):
         return variables
 
     def _import_if_needed(self, path_or_variables, args=None):
-        if not isinstance(path_or_variables, basestring):
+        if not is_string(path_or_variables):
             return path_or_variables
         return VariableFileImporter().import_variables(path_or_variables, args)
 

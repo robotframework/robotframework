@@ -18,7 +18,7 @@ import os.path
 from robot.output import LOGGER
 from robot.parsing import ResourceFile
 from robot.errors import FrameworkError
-from robot.utils import normpath, seq2str2
+from robot.utils import normpath, seq2str2, is_string
 
 from .handlerstore import HandlerStore
 from .testlibraries import TestLibrary
@@ -99,7 +99,7 @@ class ImportCache:
         self._items = []
 
     def __setitem__(self, key, item):
-        if not isinstance(key, (basestring, tuple)):
+        if not is_string(key) and not isinstance(key, tuple):
             raise FrameworkError('Invalid key for ImportCache')
         key = self._norm_path_key(key)
         if key not in self._keys:
@@ -131,4 +131,4 @@ class ImportCache:
         return key
 
     def _is_path(self, key):
-        return isinstance(key, basestring) and os.path.isabs(key) and os.path.exists(key)
+        return is_string(key) and os.path.isabs(key) and os.path.exists(key)

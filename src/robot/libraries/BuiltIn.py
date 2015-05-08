@@ -20,7 +20,7 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           PassExecution, ReturnFromKeyword)
 from robot import utils
-from robot.utils import asserts
+from robot.utils import asserts, is_integer, is_string, is_unicode
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter)
 from robot.running import Keyword, RUN_KW_REGISTER
@@ -100,7 +100,7 @@ class _Converter:
         return item
 
     def _get_base(self, item, base):
-        if not isinstance(item, basestring):
+        if not is_string(item):
             return item, base
         item = utils.normalize(item)
         if item.startswith(('-', '+')):
@@ -274,7 +274,7 @@ class _Converter:
         using Python's ``bool()`` method.
         """
         self._log_types(item)
-        if isinstance(item, basestring):
+        if is_string(item):
             if utils.eq(item, 'True'):
                 return True
             if utils.eq(item, 'False'):
@@ -347,9 +347,9 @@ class _Converter:
                            % (type, original))
 
     def _get_ordinals_from_int(self, input):
-        if isinstance(input, basestring):
+        if is_string(input):
             input = input.split()
-        elif isinstance(input, (int, long)):
+        elif is_integer(input):
             input = [input]
         for integer in input:
             ordinal = self._convert_to_integer(integer)
@@ -366,7 +366,7 @@ class _Converter:
             yield self._test_ordinal(ordinal, token, 'Binary value')
 
     def _input_to_tokens(self, input, length):
-        if not isinstance(input, basestring):
+        if not is_string(input):
             return input
         input = ''.join(input.split())
         if len(input) % length != 0:
@@ -559,12 +559,12 @@ class _Verify:
 
     def _get_type(self, arg):
         # In IronPython type(u'x') is str. We want to report unicode anyway.
-        if isinstance(arg, unicode):
+        if is_unicode(arg):
             return "<type 'unicode'>"
         return str(type(arg))
 
     def _include_values(self, values):
-        if isinstance(values, basestring):
+        if is_string(values):
             return values.lower() not in ['no values', 'false']
         return bool(values)
 
@@ -1266,7 +1266,7 @@ class _RunKeyword:
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
-        if not isinstance(name, basestring):
+        if not is_string(name):
             raise RuntimeError('Keyword name must be string.')
         kw = Keyword(name, list(args))
         return kw.run(self._context)
@@ -2514,7 +2514,7 @@ class _Misc:
         modules = modules.replace(' ', '').split(',') if modules else []
         namespace.update((m, __import__(m)) for m in modules if m)
         try:
-            if not isinstance(expression, basestring):
+            if not is_string(expression):
                 raise TypeError("Expression must be string, got %s."
                                 % utils.type_name(expression))
             if not expression:
@@ -2610,7 +2610,7 @@ class _Misc:
         self.log('Set test message to:\n%s' % message, level)
 
     def _get_possibly_appended_value(self, initial, new, append):
-        if not isinstance(new, unicode):
+        if not is_unicode(new):
             new = utils.unic(new)
         return '%s %s' % (initial, new) if append and initial else new
 
@@ -2683,7 +2683,7 @@ class _Misc:
         New in Robot Framework 2.7.4. Support for ``append`` and ``top`` were
         added in 2.7.7.
         """
-        if not isinstance(name, unicode):
+        if not is_unicode(name):
             name = utils.unic(name)
         ns = self._get_namespace(top)
         metadata = ns.suite.metadata
@@ -2815,7 +2815,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
         return matcher.match(string)
 
     def _is_true(self, condition):
-        if isinstance(condition, basestring):
+        if is_string(condition):
             condition = self.evaluate(condition, modules='os,sys')
         return bool(condition)
 

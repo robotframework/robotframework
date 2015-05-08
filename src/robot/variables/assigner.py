@@ -16,7 +16,7 @@ import re
 
 from robot.errors import DataError
 from robot.utils import (format_assign_message, get_error_message, prepr,
-                         type_name)
+                         type_name, is_number, is_string)
 
 
 class VariableAssigner(object):
@@ -57,7 +57,7 @@ class VariableAssigner(object):
         return base.strip() + '}', attr[:-1].strip()
 
     def _variable_supports_extended_assign(self, var):
-        return not isinstance(var, (basestring, int, long, float))
+        return not (is_string(var) or is_number(var))
 
     def _is_valid_extended_attribute(self, attr):
         return self._valid_extended_attr.match(attr) is not None
@@ -141,7 +141,7 @@ class _MultiReturnValueResolver(object):
     def _convert_to_list(self, return_value):
         if return_value is None:
             return [None] * self._min_count
-        if isinstance(return_value, basestring):
+        if is_string(return_value):
             self._raise_expected_list(return_value)
         try:
             return list(return_value)

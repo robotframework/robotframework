@@ -20,7 +20,7 @@ import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
                          decode_output, secs_to_timestr, timestr_to_secs,
-                         IRONPYTHON, JYTHON)
+                         is_string, IRONPYTHON, JYTHON)
 from robot.version import get_version
 from robot.api import logger
 
@@ -869,6 +869,6 @@ env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
 
 
 def is_true(argument):
-    if isinstance(argument, basestring) and argument.upper() == 'FALSE':
+    if is_string(argument) and argument.upper() == 'FALSE':
         return False
     return bool(argument)

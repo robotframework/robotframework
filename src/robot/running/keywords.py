@@ -14,7 +14,7 @@
 
 from robot.utils import (format_assign_message, frange, get_elapsed_time,
                          get_error_message, get_timestamp, plural_or_not,
-                         type_name)
+                         type_name, is_number)
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           HandlerExecutionFailed)
@@ -290,7 +290,7 @@ class ForLoop(_BaseKeyword):
         return frange(*items)
 
     def _to_number_with_arithmetics(self, item):
-        if isinstance(item, (int, long, float)):
+        if is_number(item):
             return item
         item = str(item)
         # eval() would also convert to int or float, but it sometimes very
@@ -302,7 +302,7 @@ class ForLoop(_BaseKeyword):
             except ValueError:
                 pass
         number = eval(item, {})
-        if not isinstance(number, (int, long, float)):
+        if not is_number(number):
             raise TypeError("Expected number, got %s." % type_name(item))
         return number
 

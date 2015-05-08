@@ -16,6 +16,7 @@ import re
 from functools import partial
 
 from .normalizing import normalize
+from .robottypes import is_string
 
 
 def eq(str1, str2, ignore=(), caseless=True, spaceless=True):
@@ -66,7 +67,7 @@ class MultiMatcher(object):
     def _ensure_list(self, patterns):
         if patterns is None:
             return []
-        if isinstance(patterns, basestring):
+        if is_string(patterns):
             return [patterns]
         return patterns
 

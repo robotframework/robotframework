@@ -21,6 +21,7 @@ from robot.errors import DataError
 
 from .encoding import decode_from_system
 from .platform import WINDOWS
+from .robottypes import is_unicode
 
 
 if WINDOWS:
@@ -40,10 +41,10 @@ def normpath(path, case_normalize=False):
        That includes Windows and also OSX in default configuration.
     3. Turn ``c:`` into ``c:\\`` on Windows instead of keeping it as ``c:``.
     """
-    if not isinstance(path, unicode):
+    if not is_unicode(path):
         path = decode_from_system(path)
     path = os.path.normpath(path)
-    if not isinstance(path, unicode):
+    if not is_unicode(path):
         # http://bugs.jython.org/issue2274
         path = unicode(path)
     if case_normalize and CASE_INSENSITIVE_FILESYSTEM:
@@ -128,7 +129,7 @@ def find_file(path, basedir='.', file_type=None):
     for base in [basedir] + sys.path:
         if not (base and os.path.isdir(base)):
             continue
-        if not isinstance(base, unicode):
+        if not is_unicode(base):
             base = decode_from_system(base)
         ret = os.path.abspath(os.path.join(base, path))
         if os.path.isfile(ret):

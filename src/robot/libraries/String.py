@@ -18,7 +18,7 @@ from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
-from robot.utils import unic, lower
+from robot.utils import unic, lower, is_bytes, is_string, is_unicode
 from robot.version import get_version
 
 
@@ -476,7 +476,7 @@ class String(object):
         The default error message can be overridden with the optional
         ``msg`` argument.
         """
-        if not isinstance(item, basestring):
+        if not is_string(item):
             self._fail(msg, "'%s' is not a string.", item)
 
     def should_not_be_string(self, item, msg=None):
@@ -485,7 +485,7 @@ class String(object):
         The default error message can be overridden with the optional
         ``msg`` argument.
         """
-        if isinstance(item, basestring):
+        if is_string(item):
             self._fail(msg, "'%s' is a string.", item)
 
     def should_be_unicode_string(self, item, msg=None):
@@ -500,7 +500,7 @@ class String(object):
 
         New in Robot Framework 2.7.7.
         """
-        if not isinstance(item, unicode):
+        if not is_unicode(item):
             self._fail(msg, "'%s' is not a Unicode string.", item)
 
     def should_be_byte_string(self, item, msg=None):
@@ -515,7 +515,7 @@ class String(object):
 
         New in Robot Framework 2.7.7.
         """
-        if not isinstance(item, str):
+        if not is_bytes(item):
             self._fail(msg, "'%s' is not a byte string.", item)
 
     def should_be_lowercase(self, string, msg=None):

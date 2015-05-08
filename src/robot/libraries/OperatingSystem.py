@@ -29,7 +29,7 @@ try:
                              secs_to_timestr, plural_or_not, get_time, abspath,
                              secs_to_timestamp, parse_time, unic, decode_output,
                              get_env_var, set_env_var, del_env_var, get_env_vars,
-                             decode_from_system)
+                             is_unicode, decode_from_system)
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
     del ConnectionCache, get_version
@@ -694,7 +694,7 @@ class OperatingSystem:
 
         New in Robot Framework 2.8.5.
         """
-        if isinstance(content, unicode):
+        if is_unicode(content):
             content = ''.join(chr(ord(c)) for c in content)
         path = self._write_to_file(path, content)
         self._link("Created binary file '%s'", path)

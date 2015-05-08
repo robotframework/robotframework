@@ -89,6 +89,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot import utils
+from robot.utils import is_string
 from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 from robot.parsing import disable_curdir_processing
@@ -115,7 +116,7 @@ class TestDoc(utils.Application):
 @disable_curdir_processing
 def TestSuiteFactory(datasources, **options):
     settings = RobotSettings(options)
-    if isinstance(datasources, basestring):
+    if is_string(datasources):
         datasources = [datasources]
     suite = TestSuiteBuilder().build(*datasources)
     suite.configure(**settings.suite_config)
