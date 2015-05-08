@@ -12,15 +12,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .platform import PYTHON3, IRONPYTHON
+import sys
+
+PY3 = sys.version_info[0] == 3
+
+from .platform import IRONPYTHON
 from collections import Mapping
-if PYTHON3:
+if PY3:
     from collections import UserList, UserDict, UserString
 else:
     from UserList import UserList
     from UserDict import UserDict
     from UserString import UserString, MutableString
-if PYTHON3:
+if PY3:
     long = int
     bytes = bytes
     unicode = str
@@ -46,7 +50,7 @@ def is_str_like(item):
     return isinstance(item, (basestring, UserString, String))
 
 
-if PYTHON3:
+if PY3:
     _integer = int
     _number = int, float
     _bytes = bytes
@@ -80,7 +84,7 @@ def is_string(item):
 def is_string_like(item):
     return isinstance(item, _string_like)
 
-if PYTHON3:
+if PY3:
     is_unicode = is_string
     is_unicode_like = is_string_like
 else:

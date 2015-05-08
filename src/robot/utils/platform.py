@@ -16,8 +16,6 @@ import os
 import sys
 
 
-PYTHON2 = sys.version_info[0] == 2
-PYTHON3 = not PYTHON2
 JYTHON = sys.platform.startswith('java')
 IRONPYTHON = sys.platform == 'cli'
 UNIXY = os.sep == '/'
