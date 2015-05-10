@@ -177,20 +177,27 @@ class Keyword(_BaseKeyword):
         raise failure
 
 
-class ForLoop(_BaseKeyword):
+class BasicForLoop(_BaseKeyword):
+    """A basic For Loop.
+
+    To make a new kind of For loop, subclass this and override
+    _flavor_name() and _transform_items(items)."""
 
     def __init__(self, forstep, templated=False):
         _BaseKeyword.__init__(self, self._get_name(forstep), type='for')
         self.vars = forstep.vars
         self.items = forstep.items
-        self.range = forstep.range
+        self.flavor = forstep.flavor
         self.keywords = Keywords(forstep.steps, templated)
         self._templated = templated
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.vars),
-                                 'IN' if not data.range else 'IN RANGE',
+                                 self._flavor_name(),
                                  ' | '.join(data.items))
+
+    def _flavor_name(self):
+        return 'IN'
 
     def run(self, context):
         self.starttime = get_timestamp()
@@ -274,13 +281,27 @@ class ForLoop(_BaseKeyword):
 
     def _replace_vars_from_items(self, variables):
         items = variables.replace_list(self.items)
-        if self.range:
-            items = self._get_range_items(items)
+        items = self._transform_items(items)
         if len(items) % len(self.vars) == 0:
             return items
         raise DataError('Number of FOR loop values should be multiple of '
                         'variables. Got %d variables but %d value%s.'
                         % (len(self.vars), len(items), plural_or_not(items)))
+
+    def _transform_items(self, items):
+        return items
+
+
+class ForInRangeLoop(BasicForLoop):
+
+    def __init__(self, forstep, templated=False):
+        BasicForLoop.__init__(self, forstep, templated)
+
+    def _flavor_name(self):
+        return 'IN RANGE'
+
+    def _transform_items(self, items):
+        return self._get_range_items(items)
 
     def _get_range_items(self, items):
         try:
@@ -309,6 +330,35 @@ class ForLoop(_BaseKeyword):
         if not isinstance(number, (int, long, float)):
             raise TypeError("Expected number, got %s." % type_name(item))
         return number
+
+
+class ForInZipLoop(BasicForLoop):
+
+    def __init__(self, forstep, templated=False):
+        BasicForLoop.__init__(self, forstep, templated)
+
+    def _flavor_name(self):
+        return 'IN ZIP'
+
+    def _transform_items(self, items):
+        answer = list()
+        for zipped_item in zip(*items):
+            answer.extend(zipped_item)
+        return answer
+
+
+
+FOR_LOOP_CLASS_FROM_TYPE = dict(
+    INRANGE=ForInRangeLoop,
+    INZIP=ForInZipLoop,
+    )
+
+def ForLoop(forstep, templated=False):
+    try:
+        answer_class = FOR_LOOP_CLASS_FROM_TYPE[forstep.flavor]
+    except KeyError:
+        answer_class = BasicForLoop
+    return answer_class(forstep, templated)
 
 
 class _ForItem(_BaseKeyword):

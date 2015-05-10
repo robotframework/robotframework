@@ -317,6 +317,13 @@ For In Range With Expressions Containing Floats
     \    @{result} =    Create List    @{result}    ${i}
     Should Be True    @{result} == [3.14, 1.14, -0.86]
 
+For In Zip
+    @{items}=    Create List    a    b    c    d
+    @{things}=    Create List    e    f    g    h
+    : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
+    \    @{result} =    Create List    @{result}    ${item}:${thing}
+    Should Be True    @{result} == ['a:e', 'b:f', 'c:g', 'd:h']
+
 For In Range With Multiple Variables
     : FOR    ${i}    ${j}    ${k}    IN RANGE    -1    11
     \    @{result} =    Create List    @{result}    ${i}-${j}-${k}

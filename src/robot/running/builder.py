@@ -165,6 +165,7 @@ class TestSuiteBuilder(object):
     def _create_for_loop(self, parent, data, template):
         loop = parent.keywords.append(ForLoop(vars=data.vars,
                                               items=data.items,
-                                              range=data.range))
+                                              range=data.range,
+                                              flavor=data.flavor))
         for step in data.steps:
             self._create_step(loop, step, template=template)

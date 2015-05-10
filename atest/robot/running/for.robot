@@ -254,6 +254,15 @@ For In Range With Multiple Variables
     Should Be For Item    ${tc.kws[0].kws[2]}    \${i} = 5, \${j} = 6, \${k} = 7
     Should Be For Item    ${tc.kws[0].kws[3]}    \${i} = 8, \${j} = 9, \${k} = 10
 
+For In Zip
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${for_loop}=    Set Variable    ${tc.kws[2]}
+    Should Be For In Zip Keyword    ${for_loop}    4
+    Should Be For Item    ${for_loop.kws[0]}    \${item} = a, \${thing} = e
+    Should Be For Item    ${for_loop.kws[1]}    \${item} = b, \${thing} = f
+    Should Be For Item    ${for_loop.kws[2]}    \${item} = c, \${thing} = g
+    Should Be For Item    ${for_loop.kws[3]}    \${item} = d, \${thing} = h
+
 For In Range With Too Many Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be For In Range Keyword    ${tc.kws[0]}    0
@@ -288,6 +297,11 @@ Should Be For In Range Keyword
     [Arguments]    ${kw}    ${subcount}
     Should Be For Keyword    ${kw}    ${subcount}
     Should Contain    ${kw.name}    IN RANGE    Not FOR IN RANGE keyword
+
+Should Be For In Zip Keyword
+    [Arguments]    ${kw}    ${subcount}
+    Should Be For Keyword    ${kw}    ${subcount}
+    Should Contain    ${kw.name}    IN ZIP    Not FOR IN RANGE keyword
 
 Should Be For Item
     [Arguments]    ${kw}    ${name}
