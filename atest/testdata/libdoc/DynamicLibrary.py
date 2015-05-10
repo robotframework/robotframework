@@ -9,7 +9,8 @@ class DynamicLibrary(object):
 
     def get_keyword_names(self):
         return ['0', 'Keyword 1', 'KW2', 'nön-äscii ÜTF-8',
-                u'nön-äscii Ünicöde', 'no arg spec']
+                u'nön-äscii Ünicöde', 'no arg spec', 'Embedded ${args} 1',
+                'Em${bed}ed ${args} 2']
 
     def run_keyword(self, name, args, kwargs):
         print name, args

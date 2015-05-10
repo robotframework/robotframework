@@ -4,6 +4,7 @@ Library         RunKeywordLibrary.RunKeywordButNoGetKeywordNamesLibrary
 Library         RunKeywordLibrary.GlobalRunKeywordLibrary
 Library         dynamic_libraries/DynamicLibraryWithoutArgspec.py
 Library         dynamic_libraries/NonAsciiKeywordNames.py
+Library         dynamic_libraries/EmbeddedArgs.py
 
 
 *** Test Cases ***
@@ -62,3 +63,9 @@ Dynamic libraries should match named arguments same way as with user keywords
     ...                positional arguments.
     ...                e.g. this should print strings 'x', 'y=1' and 'z=2'
     Do something third    x    y=1    z=2
+
+Embedded Keyword Arguments
+    ${count}  ${item} =  Add 7 Copies Of Coffee To Cart
+    Should Be Equal  ${count}-${item}  7-Coffee
+    ${count}  ${item} =  add 42 copies of foobar to cart
+    Should Be Equal  ${count}-${item}  42-foobar

@@ -40,8 +40,8 @@ more thoroughly in subsequent sections.
 
         pip install robotframework
 
-    Using package managers adds a precondition to install the package manager
-    itself first, though.
+    As the standard Python package manager, pip is bundled in with the latest
+    Python, Jython and IronPython installers.
 
 `Installing from source`_
     This approach works regardless the operating system and the Python
@@ -94,11 +94,12 @@ a good place to start is http://python.org. There you can download a suitable
 installer and get more information about the installation process and Python
 in general.
 
-Robot Framework currently supports Python versions 2.5, 2.6, and 2.7. The plan
-is to support also Python 3 in the future, and Python 2.5 support will be
-dropped latest then. If you need Python 3 support earlier, you can use the
-`un-official Python 3 port`_. If you need to use really old Python versions,
-Robot Framework 2.0 and 2.1 support Python 2.3 and 2.4.
+Robot Framework 2.8 and older support Python 2.5, 2.6, and 2.7, but
+Robot Framework 2.9 will drop Python 2.5 support. The plan is to support
+also Python 3 in the future, latest with Robot Framework 3.0. If you need
+Python 3 support earlier, you can use the `un-official Python 3 port`_. If
+you need to use really old Python versions, Robot Framework 2.0 and 2.1
+support Python 2.3 and 2.4.
 
 On Windows it is recommended to install Python to all users and to run the
 installer as an administrator. Additionally, environment variable
@@ -106,6 +107,10 @@ installer as an administrator. Additionally, environment variable
 
 After installing Python, you probably still want to `configure PATH`_ to make
 the ``pybot`` `runner script`_ executable on the command prompt.
+
+.. tip:: Latest Python Windows installers allow setting ``PATH`` as part of
+         the installation. This is disabled by default, but `Add python.exe
+         to Path` can be enabled on the `Customize Python` screen.
 
 Jython installation
 ~~~~~~~~~~~~~~~~~~~
@@ -122,10 +127,10 @@ package, which you can run from the command line like `java -jar
 jython_installer-<version>.jar`. Depending on the  system configuration,
 it may also be possible to just double-click the installer.
 
-The minimum supported Jython version is 2.5 which requires Java 5 (a.k.a.
-Java 1.5) or newer. The forthcoming Jython 2.7 will require minimum Java 7,
-and that will also be the minimum for Robot Framework when support for Jython
-2.5 is dropped in the future. Robot Framework 2.0 and 2.1 support Jython 2.2.
+Robot Framework 2.8 and older support Jython 2.5 (requires Java 5 or newer)
+and Jython 2.7 (requires Java 7 or newer). The forthcoming Robot Framework
+2.9 will require Jython 2.7. If ancient Jython versions are needed, Robot
+Framework 2.0 and 2.1 support Jython 2.2.
 
 After installing Jython, you probably still want to `configure PATH`_ to make
 the ``jybot`` `runner script`_ executable on the command prompt.
@@ -163,6 +168,12 @@ installed with should be automatically in the ``PATH`` and no extra actions
 needed. On Windows and with other interpreters the ``PATH`` must be configured
 separately.
 
+.. tip:: Latest Python Windows installers allow setting ``PATH`` as part of
+         the installation. This is disabled by default, but `Add python.exe
+         to Path` can be enabled on the `Customize Python` screen. It will
+         set both Python installation directory and :file:`Scripts` directory
+         to ``PATH``.
+
 What directories to add to ``PATH``
 '''''''''''''''''''''''''''''''''''
 
@@ -185,10 +196,10 @@ On Windows you can configure ``PATH`` by following the steps below. Notice
 that the exact setting names may be different on different Windows versions,
 but the basic approach should still be the same.
 
-1. Open `Start > Settings > Control Panel > System > Advanced > Environment
-   Variables`. There are `User variables` and `System variables`, and the
-   difference between them is that user variables affect only the current
-   users, whereas system variables affect all users.
+1. Open `Control Panel > System > Advanced > Environment Variables`. There
+   are `User variables` and `System variables`, and the difference between
+   them is that user variables affect only the current users, whereas system
+   variables affect all users.
 
 2. To edit an existing ``PATH`` value, select `Edit` and add
    `;<InstallationDir>;<ScriptsDir>` at the end of the value (e.g.
@@ -238,28 +249,76 @@ Installing Robot Framework
 Package managers (e.g. pip)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The most popular Python package manager is pip_, but there are also other
+The standard Python package manager is pip_, but there are also other
 alternatives such as `Buildout <http://buildout.org>`__ and `easy_install
 <http://peak.telecommunity.com/DevCenter/EasyInstall>`__. These instructions
 only cover using pip, but other package managers ought be able to install
 Robot Framework as well, at least if they search packages from PyPI_.
 
-Installing pip
-''''''''''''''
+Latest Python, Jython and IronPython versions contain pip bundled in. Which
+versions contain it and how to possibly activate it is discussed in sections
+below. If you need to install pip separately, latest installation instructions
+can be found from pip_ project pages.
 
-The hardest part of using pip is installing the tool itself, but luckily that
-is not too complicated either. You can find the latest installation
-instructions from pip_ project pages. Just remember that if you are
-behind a proxy, you need to `set https_proxy`_ environment variable before
-installing and using pip.
+.. note:: If you are behind a proxy, you need to `set https_proxy`_ environment
+          variable before installing and using pip.
 
-A bigger problem with pip is that at the time of this writing only Python
-supports it. The forthcoming Jython 2.7 ought to support it and even have it
-bundled in, though, but it is unclear when it will be supported by  IronPython.
+          Only Robot Framework 2.7 and newer can be installed using pip. If you
+          need an older version, you must use other installation approaches.
 
-Another small limitation is that only Robot Framework 2.7 and newer can be
-installed using pip. If you need to install an older version, you must use
-other installation approaches.
+Installing pip for Python
+'''''''''''''''''''''''''
+
+Starting from Python 2.7.9, the standard Windows installer by default installs
+and activates pip. Assuming you also have `configured PATH`__ and possibly
+`set https_proxy`_, you can run `pip install robotframework` right after
+Python installation.
+
+Outside Windows and with older Python versions you need to install pip yourself.
+You may be able to do it using system package managers like `apt` on Linux, but
+you can always use manual installation instructions found from pip_ project
+pages.
+
+.. tip:: You can also run pip like `python -m pip install robotframework`. This
+         is especially useful if you have pip installed also for other Python
+         interpreters.
+
+__ `Configuring PATH`_
+
+Installing pip for Jython
+'''''''''''''''''''''''''
+
+Latest preview releases of the forthcoming Jython 2.7 contain pip bundled in.
+It just needs to be activated by running the following command before using it::
+
+    jython -m ensurepip
+
+Jython installs its own version of pip into `<JythonInstallation>/bin`
+directory. Does executing `pip` actually run it or possibly some other pip
+version depends on how ``PATH`` is configured. It can thus be safer to use
+`jython -m pip install robotframework` instead.
+
+Older Jython versions do not officially support pip.
+
+Installing pip for IronPython
+'''''''''''''''''''''''''''''
+
+IronPython contains bundled pip starting from `version 2.7.5`__. Similarly as
+with Jython, it needs to be activated first::
+
+    ipy -X:Frames -m ensurepip
+
+Notice that with IronPython `-X:Frames` command line option is needed both
+when activating and using pip.
+
+IronPython installs its own version of pip into `<IronPythonInstallation>/Scripts`
+directory. Does executing `pip` actually run it or possibly some other pip
+version depends on how ``PATH`` is configured. It can thus be safer to use
+`ipy -X:Frames -m pip install robotframework` instead.
+
+Older IronPython versions do not officially support pip.
+
+__ http://blog.ironpython.net/2014/12/pip-in-ironpython-275.html
 
 Using pip
 '''''''''

@@ -12,13 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import copy
+
 from robot import utils
 from robot.errors import DataError
 from robot.variables import contains_var, is_list_var
 
-from .arguments import (PythonArgumentParser, JavaArgumentParser,
-                        DynamicArgumentParser, ArgumentResolver,
-                        ArgumentMapper, JavaArgumentCoercer)
+from .arguments import (ArgumentResolver, ArgumentSpec, ArgumentMapper,
+                        DynamicArgumentParser, JavaArgumentCoercer,
+                        JavaArgumentParser, PythonArgumentParser)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -378,3 +380,48 @@ class _JavaInitHandler(_JavaHandler):
         parser = JavaArgumentParser(type='Test Library')
         signatures = self._get_signatures(handler_method)
         return parser.parse(signatures, self.library.name)
+
+
+class EmbeddedArgsTemplate(object):
+
+    def __init__(self, name_regexp, orig_handler):
+        self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
+        self._orig_handler = orig_handler
+        self._name_regexp = name_regexp
+
+    def __getattr__(self, item):
+        return getattr(self._orig_handler, item)
+
+    def matches(self, name):
+        return self._name_regexp.match(name) is not None
+
+    def create(self, name):
+        args = self._name_regexp.match(name).groups()
+        return EmbeddedArgs(name, self.name, args, self._orig_handler)
+
+
+class EmbeddedArgs(object):
+
+    def __init__(self, name, orig_name, embedded_args, orig_handler):
+        self.name = name
+        self.orig_name = orig_name
+        self._embedded_args = embedded_args
+        self._orig_handler = orig_handler
+
+    @property
+    def longname(self):
+        return '%s.%s' % (self.library.name, self.name)
+
+    def __getattr__(self, item):
+        return getattr(self._orig_handler, item)
+
+    def run(self, context, args):
+        if args:
+            raise DataError("Positional arguments are not allowed when using "
+                            "embedded arguments.")
+        return self._orig_handler.run(context, self._embedded_args)
+
+    def __copy__(self):
+        # Needed due to https://github.com/IronLanguages/main/issues/1192
+        return EmbeddedArgs(self.name, self.orig_name, self._embedded_args,
+                            copy.copy(self._orig_handler))

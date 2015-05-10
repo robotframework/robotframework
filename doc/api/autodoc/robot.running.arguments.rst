@@ -44,6 +44,14 @@ robot.running.arguments.argumentvalidator module
     :undoc-members:
     :show-inheritance:
 
+robot.running.arguments.embedded module
+---------------------------------------
+
+.. automodule:: robot.running.arguments.embedded
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.running.arguments.javaargumentcoercer module
 --------------------------------------------------
 

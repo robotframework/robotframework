@@ -59,7 +59,7 @@ Caller does not see modifications to varargs
 
 Invalid Arguments Spec
     [Template]    Verify Invalid Argument Spec
-    0    Invalid argument syntax    Invalid argument 'no deco'.
+    0    Invalid argument syntax    Invalid argument syntax 'no deco'.
     1    Non-default after defaults    Non-default argument after default arguments.
     2    Varargs not last    Positional argument after varargs.
 
@@ -68,4 +68,4 @@ Verify Invalid Argument Spec
     [Arguments]    ${index}    ${name}    ${error}
     Check Test Case    ${TEST NAME} - ${name}
     Check Log Message    ${ERRORS[${index}]}
-    ...    Creating user keyword '${name}' failed: ${error}    ERROR
+    ...    Creating user keyword '${name}' failed: Invalid argument specification: ${error}    ERROR

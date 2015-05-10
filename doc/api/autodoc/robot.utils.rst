@@ -52,6 +52,14 @@ robot.utils.connectioncache module
     :undoc-members:
     :show-inheritance:
 
+robot.utils.dotdict module
+--------------------------
+
+.. automodule:: robot.utils.dotdict
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.utils.encoding module
 ---------------------------
 
@@ -116,14 +124,6 @@ robot.utils.importer module
     :undoc-members:
     :show-inheritance:
 
-robot.utils.islike module
--------------------------
-
-.. automodule:: robot.utils.islike
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 robot.utils.markuputils module
 ------------------------------
 
@@ -164,6 +164,22 @@ robot.utils.normalizing module
     :undoc-members:
     :show-inheritance:
 
+robot.utils.ordereddict module
+------------------------------
+
+.. automodule:: robot.utils.ordereddict
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.utils.platform module
+---------------------------
+
+.. automodule:: robot.utils.platform
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.utils.recommendations module
 ----------------------------------
 
@@ -200,6 +216,14 @@ robot.utils.robottime module
 ----------------------------
 
 .. automodule:: robot.utils.robottime
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.utils.robottypes module
+-----------------------------
+
+.. automodule:: robot.utils.robottypes
     :members:
     :undoc-members:
     :show-inheritance:

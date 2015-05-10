@@ -24,7 +24,7 @@ class EmbeddedArgsTemplateStub:
             raise TypeError
 
     def matches(self, name):
-        return True
+        return name == self.name
 
 
 class TestUserLibrary(unittest.TestCase):
@@ -47,65 +47,67 @@ class TestUserLibrary(unittest.TestCase):
             assert_equals(lib.name, exp)
 
     def test_name_from_test_case_file(self):
-        assert_none(self._get_userlibrary('NOT_RESOURCE').name)
+        assert_none(self._get_userlibrary().name)
 
     def test_creating_keyword(self):
-        lib = self._get_userlibrary('source', 'kw 1', 'kw 2')
+        lib = self._get_userlibrary('kw 1', 'kw 2')
         assert_equals(len(lib.handlers), 2)
         assert_true('kw 1' in lib.handlers)
         assert_true('kw 2' in lib.handlers)
 
     def test_creating_keyword_when_kw_name_has_embedded_arg(self):
-        lib = self._get_userlibrary('source', 'Embedded ${arg}')
+        lib = self._get_userlibrary('Embedded ${arg}')
         self._lib_has_embedded_arg_keyword(lib)
 
     def test_creating_keywords_when_normal_and_embedded_arg_kws(self):
-        lib = self._get_userlibrary('source', 'kw1', 'Embedded ${arg}', 'kw2')
+        lib = self._get_userlibrary('kw1', 'Embedded ${arg}', 'kw2')
         assert_equals(len(lib.handlers), 3)
         assert_true('kw1' in lib.handlers)
         assert_true('kw 2' in lib.handlers)
         self._lib_has_embedded_arg_keyword(lib)
 
     def test_creating_duplicate_embedded_arg_keyword_in_resource_file(self):
-        lib = self._get_userlibrary('source', 'Embedded ${arg}',
-                                    'kw', 'Embedded ${arg}')
+        lib = self._get_userlibrary('Embedded ${arg}', 'kw', 'Embedded ${arg}')
         assert_equals(len(lib.handlers), 2)
-        assert_true('kw' in lib.handlers)
+        assert_equals(lib.handlers['Embedded ${arg}'].error,
+                      "Keyword with same name defined multiple times.")
+        assert_true(not hasattr(lib.handlers['kw'], 'error'))
 
     def test_creating_duplicate_keyword_in_resource_file(self):
-        lib = self._get_userlibrary('source', 'kw', 'kw', 'kw 2')
+        lib = self._get_userlibrary('kw', 'kw', 'kw 2')
         assert_equals(len(lib.handlers), 2)
         assert_true('kw' in lib.handlers)
         assert_true('kw 2' in lib.handlers)
         assert_equals(lib.handlers['kw'].error,
-                      "Keyword 'kw' defined multiple times.")
+                      "Keyword with same name defined multiple times.")
 
     def test_creating_duplicate_keyword_in_test_case_file(self):
-        lib = self._get_userlibrary('NOT_RESOURCE', 'MYKW', 'my kw')
+        lib = self._get_userlibrary('MYKW', 'my kw')
         assert_equals(len(lib.handlers), 1)
         assert_true('mykw' in lib.handlers)
         assert_equals(lib.handlers['mykw'].error,
-                      "Keyword 'my kw' defined multiple times.")
+                      "Keyword with same name defined multiple times.")
 
     def test_handlers_contains(self):
-        lib = self._get_userlibrary('source', 'kw')
+        lib = self._get_userlibrary('kw')
         assert_true('kw' in lib.handlers)
         assert_true('nonex' not in lib.handlers)
 
     def test_handlers_getitem_with_non_existing_keyword(self):
-        lib = self._get_userlibrary('source', 'kw')
+        lib = self._get_userlibrary('kw')
         assert_raises_with_msg(
             DataError,
             "Test case file contains no keywords matching name 'non existing'.",
             lib.handlers.__getitem__, 'non existing')
 
     def test_handlers_getitem_with_existing_keyword(self):
-        lib = self._get_userlibrary('source', 'kw')
+        lib = self._get_userlibrary('kw')
         handler = lib.handlers['kw']
         assert_true(isinstance(handler, UserHandlerStub))
 
-    def _get_userlibrary(self, source, *keyword_names):
-        return userkeyword.UserLibrary([UserKeyword(None, name) for name in keyword_names])
+    def _get_userlibrary(self, *keyword_names):
+        return userkeyword.UserLibrary([UserKeyword(None, name)
+                                        for name in keyword_names])
 
     def _lib_has_embedded_arg_keyword(self, lib):
         assert_true('Embedded ${arg}' in lib.handlers)

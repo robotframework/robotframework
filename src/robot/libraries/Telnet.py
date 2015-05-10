@@ -483,6 +483,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._terminal_type = str(terminal_type) if terminal_type else None
         self.set_option_negotiation_callback(self._negotiate_options)
         self._set_telnetlib_log_level(telnetlib_log_level)
+        self._opt_responses = list()
 
     def set_timeout(self, timeout):
         """Sets the timeout used for waiting output in the current connection.
@@ -1051,6 +1052,15 @@ class TelnetConnection(telnetlib.Telnet):
             logger.write(msg, level or self._default_log_level)
 
     def _negotiate_options(self, sock, cmd, opt):
+        # We don't have state changes in our accepted telnet options.
+        # Therefore, we just track if we've already responded to an option. If
+        # this is the case, we must not send any response.
+        if cmd in (telnetlib.DO, telnetlib.DONT, telnetlib.WILL, telnetlib.WONT):
+            if (cmd, opt) in self._opt_responses:
+                return
+            else:
+                self._opt_responses.append((cmd, opt))
+
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
             self._opt_echo_on(opt)

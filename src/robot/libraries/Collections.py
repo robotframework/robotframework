@@ -106,7 +106,7 @@ class _List:
     def remove_values_from_list(self, list_, *values):
         """Removes all occurrences of given ``values`` from ``list``.
 
-        It is not an error is a value does not exist in the list at all.
+        It is not an error if a value does not exist in the list at all.
 
         Example:
         | Remove Values From List | ${L4} | a | c | e | f |

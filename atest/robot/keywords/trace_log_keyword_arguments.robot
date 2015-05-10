@@ -73,7 +73,7 @@ Object With Unicode Repr as Argument
 
 Arguments With Run Keyword
     ${tc}=    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    Arguments: [ 'Log Many' | '\@{VALUES}' ]    TRACE
+    Check Log Message    ${tc.kws[1].msgs[0]}    Arguments: [ 'Catenate' | '\@{VALUES}' ]    TRACE
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Arguments: [ 'a' | 'b' | 'c' | 'd' ]    TRACE
 
 *** Keywords ***

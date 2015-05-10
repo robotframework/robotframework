@@ -68,6 +68,10 @@ Keyword can just be marked without changing its name
     No Custom Name Given 1
     No Custom Name Given 2
 
+Embedded Args Keyword
+    ${count}  ${item} =  Add 7 Copies of Coffee To Cart
+    Should Be Equal  ${count}-${item}  7-Coffee
+
 *** Keywords ***
 Keyword Only In Test Case File
     Log  Keyword from test case file

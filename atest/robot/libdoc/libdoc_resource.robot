@@ -18,7 +18,7 @@ Run Libdoc And Set Output
 Run Libdoc And Parse Output
     [Arguments]    ${arguments}
     Remove File    ${OUTXML}
-    ${output}=    Run Libdoc     ${arguments} ${OUTXML}
+    Run Libdoc And Set Output    ${arguments} ${OUTXML}
     Should Not Contain    ${output}    --help    Execution failed:\n\n${output}    no values
     Log File    ${OUTXML}
     ${LIBDOC}=    Parse Xml    ${OUTXML}

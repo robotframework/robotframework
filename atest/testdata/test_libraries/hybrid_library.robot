@@ -31,3 +31,7 @@ Old Name Doesn't Work If Name Set Using 'robot_name'
 
 'robot_name' Attribute Set To None
     Keyword Name Should Not Change
+
+Embedded Keyword Arguments
+    ${count}  ${item} =  Add 7 Copies Of Coffee To Cart
+    Should Be Equal  ${count}-${item}  7-Coffee

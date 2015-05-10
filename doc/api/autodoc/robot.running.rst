@@ -12,14 +12,6 @@ Subpackages
 Submodules
 ----------
 
-robot.running.baselibrary module
---------------------------------
-
-.. automodule:: robot.running.baselibrary
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 robot.running.builder module
 ----------------------------
 
@@ -56,6 +48,14 @@ robot.running.handlers module
 -----------------------------
 
 .. automodule:: robot.running.handlers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.running.handlerstore module
+---------------------------------
+
+.. automodule:: robot.running.handlerstore
     :members:
     :undoc-members:
     :show-inheritance:

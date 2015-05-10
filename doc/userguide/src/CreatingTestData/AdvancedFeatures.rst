@@ -295,8 +295,7 @@ loop is run altogether five times.
 It is often convenient to use for loops with `list variables`_. This is
 illustrated by the example below, where `@{ELEMENTS}` contains
 an arbitrarily long list of elements and keyword :name:`Start Element` is
-used with all of them one by one. It is also possible to iterate over values
-of a scalar variable containing a list by `using it as a list variable`__.
+used with all of them one by one.
 
 .. table:: For loop with a list variable
    :class: example
@@ -310,7 +309,6 @@ of a scalar variable containing a list by `using it as a list variable`__.
 
 __ `Dividing test data to several rows`_
 __ Escaping_
-__ `Using scalar variables as lists`_
 
 Using several loop variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

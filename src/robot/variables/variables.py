@@ -18,6 +18,8 @@ from .replacer import VariableReplacer
 from .store import VariableStore
 from .tablesetter import VariableTableSetter
 
+from robot.utils import is_list_like
+
 
 class Variables(object):
     """Represents a set of variables including both ${scalars} and @{lists}.
@@ -42,6 +44,8 @@ class Variables(object):
         self.store.resolve_delayed()
 
     def replace_list(self, items, replace_until=None):
+        if not is_list_like(items):
+            raise ValueError("'replace_list' requires list-like input.")
         return self._replacer.replace_list(items, replace_until)
 
     def replace_scalar(self, item):

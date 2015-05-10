@@ -646,9 +646,9 @@ class Step(object):
     def __init__(self, content, comment=None):
         self.assign = list(self._get_assigned_vars(content))
         try:
-            self.keyword = content[len(self.assign)]
+            self.name = content[len(self.assign)]
         except IndexError:
-            self.keyword = None
+            self.name = None
         self.args = content[len(self.assign)+1:]
         self.comment = Comment(comment)
 
@@ -659,7 +659,7 @@ class Step(object):
             yield item
 
     def is_comment(self):
-        return not (self.assign or self.keyword or self.args)
+        return not (self.assign or self.name or self.args)
 
     def is_for_loop(self):
         return False
@@ -668,7 +668,7 @@ class Step(object):
         return True
 
     def as_list(self, indent=False, include_comment=True):
-        kw = [self.keyword] if self.keyword is not None else []
+        kw = [self.name] if self.name is not None else []
         comments = self.comment.as_list() if include_comment else []
         data = self.assign + kw + self.args + comments
         if indent:

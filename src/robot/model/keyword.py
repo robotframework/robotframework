@@ -24,7 +24,7 @@ from .modelobject import ModelObject
 
 class Keyword(ModelObject):
     """Base model for single keyword."""
-    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout',
+    __slots__ = ['parent', 'name', 'doc', 'args', 'assign', 'timeout', 'type',
                  '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE = 'kw'
     SETUP_TYPE = 'setup'
@@ -34,7 +34,8 @@ class Keyword(ModelObject):
     keyword_class = None
     message_class = Message
 
-    def __init__(self, name='', doc='', args=(), type='kw', timeout=None):
+    def __init__(self, name='', doc='', args=(), assign=(), timeout=None,
+                 type='kw'):
         #: :class:`~.model.testsuite.TestSuite` or
         #: :class:`~.model.testcase.TestCase` or
         #: :class:`~.model.keyword.Keyword` that contains this keyword.
@@ -43,12 +44,14 @@ class Keyword(ModelObject):
         self.name = name
         #: Keyword documentation.
         self.doc = doc
-        #: Keyword arguments, a list of strings.
+        #: Keyword arguments as a list of strings.
         self.args = args
-        #: 'SETUP', 'TEARDOWN' or 'KW'.
-        self.type = type
+        #: Assigned variables as a list of strings.
+        self.assign = assign
         #: Keyword timeout.
         self.timeout = timeout
+        #: Keyword type as a string. See class level ``XXX_TYPE`` constants.
+        self.type = type
         #: Keyword messages as :class:`~.model.message.Message` instances.
         self.messages = None
         #: Child keywords as :class:`~.model.keyword.Keyword` instances.
@@ -110,7 +113,7 @@ class Keywords(ItemList):
 
     @property
     def all(self):
-        return self
+        return iter(self)
 
     @property
     def normal(self):
