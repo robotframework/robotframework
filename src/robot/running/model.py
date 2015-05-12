@@ -55,6 +55,8 @@ class ForLoop(Keyword):
         Keyword.__init__(self, assign=vars, args=items, type='for')
         self.range = range
 
+    # TODO: Remove compatibility w/ parsing, consider renaming properties
+
     @property
     def vars(self):
         return self.assign

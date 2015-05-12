@@ -19,7 +19,7 @@ from robot.variables import GLOBAL_VARIABLES
 from robot.utils import get_timestamp, NormalizedDict
 
 from .context import EXECUTION_CONTEXTS
-from .keywords import Keywords, Keyword
+from .keywordrunner import KeywordRunner
 from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
@@ -113,8 +113,8 @@ class Runner(SuiteVisitor):
                                           tags=test.tags,
                                           starttime=get_timestamp(),
                                           timeout=self._get_timeout(test))
-        keywords = Keywords(test.keywords.normal, bool(test.template))
         status = TestStatus(self._suite_status)
+        keywords = list(test.keywords.normal)
         if not status.failures and not test.name:
             status.test_failed('Test case name cannot be empty.', result.critical)
         if not status.failures and not keywords:
@@ -129,7 +129,8 @@ class Runner(SuiteVisitor):
         self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failures:
-                keywords.run(self._context)
+                runner = KeywordRunner(self._context, bool(test.template))
+                runner.run_keywords(keywords)
         except PassExecution as exception:
             err = exception.earlier_failures
             if err:
@@ -161,21 +162,21 @@ class Runner(SuiteVisitor):
 
     def _run_setup(self, setup, status, result=None):
         if not status.failures:
-            exception = self._run_setup_or_teardown(setup, 'setup')
+            exception = self._run_setup_or_teardown(setup)
             status.setup_executed(exception)
             if result and isinstance(exception, PassExecution):
                 result.message = exception.message
 
     def _run_teardown(self, teardown, status, result=None):
         if status.teardown_allowed:
-            exception = self._run_setup_or_teardown(teardown, 'teardown')
+            exception = self._run_setup_or_teardown(teardown)
             status.teardown_executed(exception)
             failed = not isinstance(exception, PassExecution)
             if result and exception:
                 result.message = status.message if failed else exception.message
             return exception if failed else None
 
-    def _run_setup_or_teardown(self, data, kw_type):
+    def _run_setup_or_teardown(self, data):
         if not data:
             return None
         try:
@@ -184,9 +185,9 @@ class Runner(SuiteVisitor):
             return err
         if name.upper() in ('', 'NONE'):
             return None
-        kw = Keyword(name, data.args, type=kw_type)
+        runner = KeywordRunner(self._context)
         try:
-            kw.run(self._context)
+            runner.run_keyword(data, name=name)
         except ExecutionFailed as err:
             return err
 
