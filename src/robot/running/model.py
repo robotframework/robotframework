@@ -21,53 +21,28 @@ from robot.variables import init_global_variables
 from .randomizer import Randomizer
 
 
-# TODO: This module should be turned into a package with submodules.
-# No time for that prior to 2.8, but it ought to be safe also in 2.8.x.
-# Important to check that references in API docs don't break.
-
-
 class Keyword(model.Keyword):
     """Running model for single keyword."""
     __slots__ = []
     message_class = None  # TODO: Remove from base model?
-
-    def __init__(self, name='', args=(), assign=(), type='kw'):
-        model.Keyword.__init__(self, name=name, args=args, assign=assign,
-                               type=type)
-
-    # Compatibility with parsing.model.Step. Should not be needed.
-
-    def is_for_loop(self):
-        return False
-
-    def is_comment(self):
-        return False
 
 
 class ForLoop(Keyword):
     __slots__ = ['range']
     keyword_class = Keyword
 
-    def __init__(self, vars, items, range):
-        Keyword.__init__(self, assign=vars, args=items, type='for')
+    def __init__(self, variables, values, range):
+        Keyword.__init__(self, assign=variables, args=values,
+                         type=Keyword.FOR_LOOP_TYPE)
         self.range = range
 
-    # TODO: Remove compatibility w/ parsing, consider renaming properties
-
     @property
-    def vars(self):
+    def variables(self):
         return self.assign
 
     @property
-    def items(self):
+    def values(self):
         return self.args
-
-    def is_for_loop(self):
-        return True
-
-    @property
-    def steps(self):
-        return self.keywords
 
 
 class TestCase(model.TestCase):

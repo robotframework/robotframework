@@ -189,8 +189,8 @@ class StepBuilder(object):
         return ''.join(temp), ()
 
     def _create_for_loop(self, parent, data, template):
-        loop = parent.keywords.append(ForLoop(vars=data.vars,
-                                              items=data.items,
+        loop = parent.keywords.append(ForLoop(variables=data.vars,
+                                              values=data.items,
                                               range=data.range))
         for step in data.steps:
             self.build(loop, step, template=template)

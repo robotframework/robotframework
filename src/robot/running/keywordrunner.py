@@ -12,10 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.model import SuiteVisitor
-from robot.errors import ExecutionFailed, DataError, HandlerExecutionFailed, ExecutionPassed, ExitForLoop, ContinueForLoop, ExecutionFailures
-from robot.utils import get_timestamp, get_error_message, frange, type_name, plural_or_not, format_assign_message
+from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
+                          ExitForLoop, ContinueForLoop, DataError,
+                          HandlerExecutionFailed)
 from robot.result.keyword import Keyword as KeywordResult
+from robot.utils import (format_assign_message, frange, get_error_message,
+                         get_timestamp, plural_or_not, type_name)
 from robot.variables import is_scalar_var, VariableAssigner
 
 
@@ -24,7 +26,6 @@ class KeywordRunner(object):
     def __init__(self, context, templated=False):
         self._context = context
         self._templated = templated
-
 
     def run_keywords(self, keywords):
         errors = []
@@ -51,16 +52,14 @@ class KeywordRunner(object):
         runner.run(kw, name=name)
 
 
-
 class NormalRunner(object):
 
     def __init__(self, context):
         self._context = context
 
     def run(self, kw, name=None):
-        context = self._context
-        handler = context.get_handler(name or kw.name)
-        handler.init_keyword(context.variables)
+        handler = self._context.get_handler(name or kw.name)
+        handler.init_keyword(self._context.variables)
         result = KeywordResult(name=self._get_name(kw.assign, handler.longname),
                                doc=handler.shortdoc,
                                args=kw.args,
@@ -69,23 +68,23 @@ class NormalRunner(object):
                                type=kw.type,
                                status='NOT_RUN',
                                starttime=get_timestamp())
-        context.start_keyword(result)
-        self._warn_if_deprecated(handler.longname, handler.shortdoc, context)
+        self._context.start_keyword(result)
+        self._warn_if_deprecated(handler.longname, handler.shortdoc)
         try:
-            return_value = self._run(handler, kw, context)
+            return_value = self._run(handler, kw)
         except ExecutionFailed as err:
             result.status = self._get_status(err)
-            self._end(result, context, error=err)
+            self._end(result, error=err)
             raise
         else:
-            if not (context.dry_run and handler.type == 'library'):
+            if not (self._context.dry_run and handler.type == 'library'):
                 result.status = 'PASS'
-            self._end(result, context, return_value)
+            self._end(result, return_value)
 
-    def _warn_if_deprecated(self, name, doc, context):
+    def _warn_if_deprecated(self, name, doc):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
             message = ' ' + doc.split('*', 2)[-1].strip()
-            context.warn("Keyword '%s' is deprecated.%s" % (name, message))
+            self._context.warn("Keyword '%s' is deprecated.%s" % (name, message))
 
     def _get_name(self, assign, handler_longname):
         if not assign:
@@ -93,15 +92,15 @@ class NormalRunner(object):
         return '%s = %s' % (', '.join(a.rstrip('= ') for a in assign),
                             handler_longname)
 
-    def _run(self, handler, kw, context):
+    def _run(self, handler, kw):
         try:
             # TODO clean this away from self
             self._variable_assigner = VariableAssigner(kw.assign)
-            return handler.run(context, kw.args[:])
+            return handler.run(self._context, kw.args[:])
         except ExecutionFailed:
             raise
         except:
-            self._report_failure(context)
+            self._report_failure()
 
     def _get_status(self, error):
         if not error:
@@ -110,34 +109,34 @@ class NormalRunner(object):
             return 'PASS'
         return 'FAIL'
 
-    def _end(self, result, context, return_value=None, error=None):
+    def _end(self, result, return_value=None, error=None):
         result.endtime = get_timestamp()
         if error and result.type == 'teardown':
             result.message = unicode(error)
         try:
-            if not error or error.can_continue(context.in_teardown):
-                self._set_variables(result, context, return_value, error)
+            if not error or error.can_continue(self._context.in_teardown):
+                self._set_variables(result, return_value, error)
         finally:
-            context.end_keyword(result)
+            self._context.end_keyword(result)
 
-    def _set_variables(self, result, context, return_value, error):
+    def _set_variables(self, result, return_value, error):
         if error:
             return_value = error.return_value
         try:
-            self._variable_assigner.assign(context, return_value)
+            self._variable_assigner.assign(self._context, return_value)
         except DataError as err:
             result.status = 'FAIL'
             msg = unicode(err)
-            context.output.fail(msg)
+            self._context.output.fail(msg)
             raise ExecutionFailed(msg, syntax=True)
 
-    def _report_failure(self, context):
+    def _report_failure(self):
         failure = HandlerExecutionFailed()
         if failure.timeout:
-            context.timeout_occurred = True
-        context.output.fail(failure.full_message)
+            self._context.timeout_occurred = True
+        self._context.output.fail(failure.full_message)
         if failure.traceback:
-            context.output.debug(failure.traceback)
+            self._context.output.debug(failure.traceback)
         raise failure
 
 
@@ -148,24 +147,21 @@ class ForLoopRunner(object):
         self._templated = templated
 
     def run(self, kw, name=None):
-        context = self._context
         result = KeywordResult(name=self._get_name(kw),
-                               args=kw.args,
-                               assign=kw.assign,
                                type=kw.FOR_LOOP_TYPE,
                                starttime=get_timestamp())
-        context.start_keyword(result)
-        error = self._run_with_error_handling(self._validate_and_run, context, kw)
+        self._context.start_keyword(result)
+        error = self._run_with_error_handling(self._validate_and_run, kw)
         result.status = self._get_status(error)
         result.endtime = get_timestamp()
-        context.end_keyword(result)
+        self._context.end_keyword(result)
         if error:
             raise error
 
     def _get_name(self, data):
-        return '%s %s [ %s ]' % (' | '.join(data.vars),
+        return '%s %s [ %s ]' % (' | '.join(data.variables),
                                  'IN' if not data.range else 'IN RANGE',
-                                 ' | '.join(data.items))
+                                 ' | '.join(data.values))
 
     def _run_with_error_handling(self, runnable, *args):
         try:
@@ -179,27 +175,27 @@ class ForLoopRunner(object):
         else:
             return None
 
-    def _validate_and_run(self, context, data):
+    def _validate_and_run(self, data):
         self._validate(data)
-        self._run(context, data)
+        self._run(data)
 
     def _validate(self, data):
-        if not data.vars:
+        if not data.variables:
             raise DataError('FOR loop has no loop variables.')
-        for var in data.vars:
+        for var in data.variables:
             if not is_scalar_var(var):
                 raise DataError("Invalid FOR loop variable '%s'." % var)
-        if not data.items:
+        if not data.values:
             raise DataError('FOR loop has no loop values.')
         if not data.keywords:
             raise DataError('FOR loop contains no keywords.')
 
-    def _run(self, context, data):
+    def _run(self, data):
         errors = []
-        items, iteration_steps = self._get_items_and_iteration_steps(context, data)
+        items, iteration_steps = self._get_items_and_iteration_steps(data)
         for i in iteration_steps:
-            values = items[i:i+len(data.vars)]
-            exception = self._run_one_round(context, data, values)
+            values = items[i:i+len(data.variables)]
+            exception = self._run_one_round(data, values)
             if exception:
                 if isinstance(exception, ExitForLoop):
                     if exception.earlier_failures:
@@ -213,28 +209,28 @@ class ForLoopRunner(object):
                     exception.set_earlier_failures(errors)
                     raise exception
                 errors.extend(exception.get_errors())
-                if not exception.can_continue(context.in_teardown,
+                if not exception.can_continue(self._context.in_teardown,
                                               self._templated,
-                                              context.dry_run):
+                                              self._context.dry_run):
                     break
         if errors:
             raise ExecutionFailures(errors)
 
-    def _get_items_and_iteration_steps(self, context, data):
-        if context.dry_run:
-            return data.vars, [0]
-        items = self._replace_vars_from_items(context.variables, data)
-        return items, range(0, len(items), len(data.vars))
+    def _get_items_and_iteration_steps(self, data):
+        if self._context.dry_run:
+            return data.variables, [0]
+        items = self._replace_vars_from_items(self._context.variables, data)
+        return items, range(0, len(items), len(data.variables))
 
     def _replace_vars_from_items(self, variables, data):
-        items = variables.replace_list(data.items)
+        items = variables.replace_list(data.values)
         if data.range:
             items = self._get_range_items(items)
-        if len(items) % len(data.vars) == 0:
+        if len(items) % len(data.variables) == 0:
             return items
         raise DataError('Number of FOR loop values should be multiple of '
                         'variables. Got %d variables but %d value%s.'
-                        % (len(data.vars), len(items), plural_or_not(items)))
+                        % (len(data.variables), len(items), plural_or_not(items)))
 
     def _get_range_items(self, items):
         try:
@@ -251,6 +247,7 @@ class ForLoopRunner(object):
         if isinstance(item, (int, long, float)):
             return item
         item = str(item)
+        # TODO: Below IronPython timeout workaround should not be needed anymore
         # eval() would also convert to int or float, but it sometimes very
         # mysteriously fails with IronPython (seems to be related to timeouts)
         # and thus it's better to avoid it.
@@ -264,19 +261,20 @@ class ForLoopRunner(object):
             raise TypeError("Expected number, got %s." % type_name(item))
         return number
 
-    def _run_one_round(self, context, data, values):
-        result = KeywordResult(name=', '.join(format_assign_message(var, item)
-                                              for var, item in zip(data.vars, values)),
+    def _run_one_round(self, data, values):
+        name = ', '.join(format_assign_message(var, item)
+                         for var, item in zip(data.variables, values))
+        result = KeywordResult(name=name,
                                type=data.FOR_ITEM_TYPE,
                                starttime=get_timestamp())
-        context.start_keyword(result)
-        for var, value in zip(data.vars, values):
-            context.variables[var] = value
+        self._context.start_keyword(result)
+        for var, value in zip(data.variables, values):
+            self._context.variables[var] = value
         runner = KeywordRunner(self._context, self._templated)
         error = self._run_with_error_handling(runner.run_keywords, data.keywords)
         result.status = self._get_status(error)
         result.endtime = get_timestamp()
-        context.end_keyword(result)
+        self._context.end_keyword(result)
         return error
 
     def _get_status(self, error):

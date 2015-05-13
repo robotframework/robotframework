@@ -114,10 +114,9 @@ class Runner(SuiteVisitor):
                                           starttime=get_timestamp(),
                                           timeout=self._get_timeout(test))
         status = TestStatus(self._suite_status)
-        keywords = list(test.keywords.normal)
         if not status.failures and not test.name:
             status.test_failed('Test case name cannot be empty.', result.critical)
-        if not status.failures and not keywords:
+        if not status.failures and not test.keywords.normal:
             status.test_failed('Test case contains no keywords.', result.critical)
         try:
             result.tags = self._context.variables.replace_list(result.tags)
@@ -130,7 +129,7 @@ class Runner(SuiteVisitor):
         try:
             if not status.failures:
                 runner = KeywordRunner(self._context, bool(test.template))
-                runner.run_keywords(keywords)
+                runner.run_keywords(test.keywords.normal)
         except PassExecution as exception:
             err = exception.earlier_failures
             if err:
