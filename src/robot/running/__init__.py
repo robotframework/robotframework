@@ -98,7 +98,7 @@ Package methods
 ---------------
 """
 
-from .builder import TestSuiteBuilder
+from .builder import TestSuiteBuilder, ResourceFileBuilder
 from .context import EXECUTION_CONTEXTS
 from .keywords import Keyword
 from .model import TestSuite, TestCase
@@ -111,18 +111,17 @@ def UserLibrary(path):
 
     This is used by Libdoc.
     """
-    from robot.parsing import ResourceFile
     from robot import utils
-    from .arguments.argumentspec import ArgumentSpec
+    from .arguments import ArgumentSpec
     from .userkeyword import UserLibrary as RuntimeUserLibrary
 
-    resource = ResourceFile(path).populate()
-    ret = RuntimeUserLibrary(resource.keyword_table.keywords, path)
+    resource = ResourceFileBuilder().build(path)
+    ret = RuntimeUserLibrary(resource.keywords, path)
     for handler in ret.handlers:
         if handler.type != 'error':
             handler.doc = utils.unescape(handler._doc)
         else:
             handler.arguments = ArgumentSpec(handler.longname)
             handler.doc = '*Creating keyword failed: %s*' % handler.error
-    ret.doc = resource.setting_table.doc.value
+    ret.doc = resource.doc
     return ret

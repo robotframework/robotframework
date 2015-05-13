@@ -48,7 +48,7 @@ class Runner(SuiteVisitor):
 
     def start_suite(self, suite):
         variables = GLOBAL_VARIABLES.copy()
-        variables.set_from_variable_table(suite.variables)
+        variables.set_from_variable_table(suite.resource.variables)
         result = TestSuite(source=suite.source,
                            name=suite.name,
                            doc=suite.doc,
@@ -63,7 +63,7 @@ class Runner(SuiteVisitor):
         else:
             self._suite.suites.append(result)
         ns = Namespace(result, variables, self._variables,
-                       suite.user_keywords, suite.imports)
+                       suite.resource.keywords, suite.resource.imports)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
         self._context.set_suite_variables(result)
         if not (self._suite_status and self._suite_status.failures):

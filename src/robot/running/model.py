@@ -18,10 +18,7 @@ from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import setter
 from robot.variables import init_global_variables
 
-from .namespace import IMPORTER
 from .randomizer import Randomizer
-from .runner import Runner
-from .signalhandler import STOP_SIGNAL_MONITOR
 
 
 # TODO: This module should be turned into a package with submodules.
@@ -94,33 +91,13 @@ class TestCase(model.TestCase):
 
 class TestSuite(model.TestSuite):
     """Running model for single test suite."""
-    __slots__ = []
+    __slots__ = ['resource']
     test_class = TestCase
     keyword_class = Keyword
 
     def __init__(self,  name='', doc='', metadata=None, source=None):
-
         model.TestSuite.__init__(self, name, doc, metadata, source)
-        #: Imports the suite contains.
-        self.imports = []
-        #: User keywords defined in the same file as the suite.
-        #: **Likely to change or to be removed.**
-        self.user_keywords = []
-        #: Variables defined in the same file as the suite.
-        #: **Likely to change or to be removed.**
-        self.variables = []
-
-    @setter
-    def imports(self, imports):
-        return model.Imports(self.source, imports)
-
-    @setter
-    def user_keywords(self, keywords):
-        return model.ItemList(UserKeyword, items=keywords)
-
-    @setter
-    def variables(self, variables):
-        return model.ItemList(Variable, {'source': self.source}, items=variables)
+        self.resource = ResourceFile(source=source)
 
     def configure(self, randomize_suites=False, randomize_tests=False,
                   randomize_seed=None, **options):
@@ -182,6 +159,10 @@ class TestSuite(model.TestSuite):
         See the :func:`robot.run <robot.run.run>` function for a higher-level
         API for executing tests in files or directories.
         """
+        from .namespace import IMPORTER
+        from .signalhandler import STOP_SIGNAL_MONITOR
+        from .runner import Runner
+
         if not settings:
             settings = RobotSettings(options)
             LOGGER.register_console_logger(**settings.console_logger_config)
@@ -219,28 +200,45 @@ class Timeout(object):
         return self.value
 
 
-class UserKeyword(object):
-    # TODO: In RF 2.9 (or some later major release):
-    # - Teardown should be handled as a keyword like with tests and suites.
-    # - Timeout should be handled consistently with tests.
-    # - Also resource files should use these model objects.
+class ResourceFile(object):
 
-    def __init__(self, name, args=(), doc='', return_=None, timeout=None,
-                 teardown=None):
+    def __init__(self, doc='', source=None):
+        self.doc = doc
+        self.source = source
+        self.imports = []
+        self.keywords = []
+        self.variables = []
+
+    @setter
+    def imports(self, imports):
+        return model.Imports(self.source, imports)
+
+    @setter
+    def keywords(self, keywords):
+        return model.ItemList(UserKeyword, items=keywords)
+
+    @setter
+    def variables(self, variables):
+        return model.ItemList(Variable, {'source': self.source}, items=variables)
+
+
+class UserKeyword(object):
+
+    def __init__(self, name, args=(), doc='', return_=None, timeout=None):
         self.name = name
         self.args = args
         self.doc = doc
         self.return_ = return_ or ()
-        self.teardown = None
         self.timeout = timeout
-        self.teardown = teardown
         self.keywords = []
 
     @setter
     def keywords(self, keywords):
-        return model.ItemList(Keyword, items=keywords)
+        return model.Keywords(Keyword, self, keywords)
 
-    # Compatibility with parsing model. Should be removed in 2.9.
-    @property
-    def steps(self):
-        return self.keywords
+    @setter
+    def timeout(self, timeout):
+        """Timeout limit of the keyword as an instance of
+        :class:`~.Timeout.
+        """
+        return Timeout(*timeout) if timeout else None

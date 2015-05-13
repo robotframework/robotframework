@@ -16,10 +16,10 @@ import copy
 import os.path
 
 from robot.output import LOGGER
-from robot.parsing import ResourceFile
 from robot.errors import FrameworkError
 from robot.utils import normpath, seq2str2
 
+from .builder import ResourceFileBuilder
 from .handlerstore import HandlerStore
 from .testlibraries import TestLibrary
 
@@ -47,7 +47,7 @@ class Importer(object):
         if path in self._resource_cache:
             LOGGER.info("Found resource file '%s' from cache" % path)
         else:
-            resource = ResourceFile(path).populate()
+            resource = ResourceFileBuilder().build(path)
             self._resource_cache[path] = resource
         return self._resource_cache[path]
 
