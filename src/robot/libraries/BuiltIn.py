@@ -1268,7 +1268,7 @@ class _RunKeyword:
         """
         if not isinstance(name, basestring):
             raise RuntimeError('Keyword name must be string.')
-        kw = Keyword(name, list(args))
+        kw = Keyword(name, args=args)
         return kw.run(self._context)
 
     def run_keywords(self, *keywords):

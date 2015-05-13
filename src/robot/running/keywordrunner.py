@@ -49,7 +49,7 @@ class KeywordRunner(object):
             runner = ForLoopRunner(self._context, self._templated)
         else:
             runner = NormalRunner(self._context)
-        runner.run(kw, name=name)
+        return runner.run(kw, name=name)
 
 
 class NormalRunner(object):
@@ -80,6 +80,7 @@ class NormalRunner(object):
             if not (self._context.dry_run and handler.type == 'library'):
                 result.status = 'PASS'
             self._end(result, return_value)
+            return return_value
 
     def _warn_if_deprecated(self, name, doc):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:

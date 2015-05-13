@@ -100,8 +100,7 @@ Package methods
 
 from .builder import TestSuiteBuilder, ResourceFileBuilder
 from .context import EXECUTION_CONTEXTS
-from .keywords import Keyword
-from .model import TestSuite, TestCase
+from .model import Keyword, TestCase, TestSuite
 from .testlibraries import TestLibrary
 from .runkwregister import RUN_KW_REGISTER
 

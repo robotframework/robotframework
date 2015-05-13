@@ -26,6 +26,10 @@ class Keyword(model.Keyword):
     __slots__ = []
     message_class = None  # TODO: Remove from base model?
 
+    def run(self, context):
+        from .keywordrunner import KeywordRunner
+        return KeywordRunner(context).run_keyword(self)
+
 
 class ForLoop(Keyword):
     __slots__ = ['range']
