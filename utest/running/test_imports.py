@@ -57,7 +57,7 @@ class TestImports(unittest.TestCase):
         suite.resource.imports.variables('variables_file.py')
         suite.tests.create(name='Test').keywords.create(
             'Should Be Equal As Strings',
-            ['${MY_VARIABLE}', 'An example string']
+            args=['${MY_VARIABLE}', 'An example string']
         )
         result = run(suite)
         assert_suite(result, 'Suite', 'PASS')
