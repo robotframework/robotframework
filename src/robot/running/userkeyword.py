@@ -24,7 +24,7 @@ from robot import utils
 from .arguments import (ArgumentMapper, ArgumentResolver,
                         EmbeddedArguments, UserKeywordArgumentParser)
 from .handlerstore import HandlerStore
-from .keywords import Keywords, Keyword
+from .keywordrunner import KeywordRunner
 from .timeouts import KeywordTimeout
 from .usererrorhandler import UserErrorHandler
 
@@ -66,9 +66,9 @@ class UserKeywordHandler(object):
 
     def __init__(self, keyword, libname):
         self.name = keyword.name
-        self.keywords = Keywords(keyword.steps)
+        self.keywords = keyword.keywords.normal
         self.return_value = tuple(keyword.return_)
-        self.teardown = keyword.teardown
+        self.teardown = keyword.keywords.teardown
         self.libname = libname
         self.doc = self._doc = unicode(keyword.doc)
         self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
@@ -84,10 +84,15 @@ class UserKeywordHandler(object):
         return self.doc.splitlines()[0] if self.doc else ''
 
     def init_keyword(self, variables):
+        # TODO: Should use runner and not change internal state like this.
+        # Timeouts should also be cleaned up in general.
         self.doc = variables.replace_string(self._doc, ignore_errors=True)
-        timeout = (self._timeout.value, self._timeout.message) if self._timeout else ()
-        self.timeout = KeywordTimeout(*timeout)
-        self.timeout.replace_variables(variables)
+        if self._timeout:
+            self.timeout = KeywordTimeout(self._timeout.value,
+                                          self._timeout.message,
+                                          variables)
+        else:
+            self.timeout = KeywordTimeout()
 
     def run(self, context, arguments):
         context.start_user_keyword(self)
@@ -132,8 +137,9 @@ class UserKeywordHandler(object):
         self._verify_keyword_is_valid()
         self.timeout.start()
         error = return_ = pass_ = None
+        runner = KeywordRunner(context)
         try:
-            self.keywords.run(context)
+            runner.run_keywords(self.keywords)
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures
@@ -182,9 +188,9 @@ class UserKeywordHandler(object):
             return ExecutionFailed(unicode(err), syntax=True)
         if name.upper() in ('', 'NONE'):
             return None
-        kw = Keyword(name, self.teardown.args, type='teardown')
+        runner = KeywordRunner(context)
         try:
-            kw.run(context)
+            runner.run_keyword(self.teardown, name)
         except PassExecution:
             return None
         except ExecutionFailed as err:

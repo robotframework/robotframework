@@ -16,12 +16,14 @@ import copy
 
 from robot import utils
 from robot.errors import DataError
+from robot.model import Keywords
 from robot.variables import contains_var, is_list_var
 
 from .arguments import (ArgumentResolver, ArgumentSpec, ArgumentMapper,
                         DynamicArgumentParser, JavaArgumentCoercer,
                         JavaArgumentParser, PythonArgumentParser)
-from .keywords import Keywords, Keyword
+from .model import Keyword
+from .keywordrunner import KeywordRunner
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
 from .signalhandler import STOP_SIGNAL_MONITOR
@@ -264,15 +266,15 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _dry_run(self, context, args):
         _RunnableHandler._dry_run(self, context, args)
-        keywords = self._get_runnable_dry_run_keywords(context, args)
-        keywords.run(context)
+        keywords = self._get_runnable_dry_run_keywords(args)
+        KeywordRunner(context).run_keywords(keywords)
 
-    def _get_runnable_dry_run_keywords(self, context, args):
-        keywords = Keywords([])
+    def _get_runnable_dry_run_keywords(self, args):
+        keywords = Keywords()
         for keyword in self._get_dry_run_keywords(args):
             if contains_var(keyword.name):
                 continue
-            keywords.add_keyword(keyword)
+            keywords.append(keyword)
         return keywords
 
     def _get_dry_run_keywords(self, args):
@@ -287,7 +289,7 @@ class _RunKeywordHandler(_PythonHandler):
     def _get_run_kw_if_keywords(self, given_args):
         for kw_call in self._get_run_kw_if_calls(given_args):
             if kw_call:
-                yield Keyword(kw_call[0], kw_call[1:])
+                yield Keyword(name=kw_call[0], args=kw_call[1:])
 
     def _get_run_kw_if_calls(self, given_args):
         while 'ELSE IF' in given_args:
@@ -320,7 +322,7 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _get_run_kws_keywords(self, given_args):
         for kw_call in self._get_run_kws_calls(given_args):
-            yield Keyword(kw_call[0], kw_call[1:])
+            yield Keyword(name=kw_call[0], args=kw_call[1:])
 
     def _get_run_kws_calls(self, given_args):
         if 'AND' not in given_args:
@@ -336,7 +338,7 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _get_default_run_kw_keywords(self, given_args):
         index = list(self.arguments.positional).index('name')
-        return [Keyword(given_args[index], given_args[index+1:])]
+        return [Keyword(name=given_args[index], args=given_args[index+1:])]
 
 
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):

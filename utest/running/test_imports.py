@@ -27,7 +27,7 @@ class TestImports(unittest.TestCase):
 
     def test_imports(self):
         suite = TestSuite(name='Suite')
-        suite.imports.create('Library', 'OperatingSystem')
+        suite.resource.imports.create('Library', 'OperatingSystem')
         suite.tests.create(name='Test').keywords.create('Directory Should Exist',
                                                         args=['.'])
         result = run(suite)
@@ -36,7 +36,7 @@ class TestImports(unittest.TestCase):
 
     def test_library_imports(self):
         suite = TestSuite(name='Suite')
-        suite.imports.library('OperatingSystem')
+        suite.resource.imports.library('OperatingSystem')
         suite.tests.create(name='Test').keywords.create('Directory Should Exist',
                                                         args=['.'])
         result = run(suite)
@@ -45,7 +45,7 @@ class TestImports(unittest.TestCase):
 
     def test_resource_imports(self):
         suite = TestSuite(name='Suite')
-        suite.imports.resource('test_resource.txt')
+        suite.resource.imports.resource('test_resource.txt')
         suite.tests.create(name='Test').keywords.create('My Test Keyword')
         assert_equals(suite.tests[0].keywords[0].name, 'My Test Keyword')
         result = run(suite)
@@ -54,10 +54,10 @@ class TestImports(unittest.TestCase):
 
     def test_variable_imports(self):
         suite = TestSuite(name='Suite')
-        suite.imports.variables('variables_file.py')
+        suite.resource.imports.variables('variables_file.py')
         suite.tests.create(name='Test').keywords.create(
             'Should Be Equal As Strings',
-            ['${MY_VARIABLE}', 'An example string']
+            args=['${MY_VARIABLE}', 'An example string']
         )
         result = run(suite)
         assert_suite(result, 'Suite', 'PASS')
@@ -67,7 +67,7 @@ class TestImports(unittest.TestCase):
         assert_raises_with_msg(ValueError,
                                "Invalid import type 'InvalidType'. Should be "
                                "one of 'Library', 'Resource' or 'Variables'.",
-                               TestSuite().imports.create,
+                               TestSuite().resource.imports.create,
                                'InvalidType', 'Name')
 
 

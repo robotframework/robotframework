@@ -81,7 +81,7 @@ class TestRunning(unittest.TestCase):
     def test_user_keywords(self):
         suite = TestSuite(name='Suite')
         suite.tests.create(name='Test').keywords.create('User keyword', args=['From uk'])
-        uk = suite.user_keywords.create(name='User keyword', args=['${msg}'])
+        uk = suite.resource.keywords.create(name='User keyword', args=['${msg}'])
         uk.keywords.create(name='Fail', args=['${msg}'])
         result = run(suite)
         assert_suite(result, 'Suite', 'FAIL')
@@ -89,8 +89,8 @@ class TestRunning(unittest.TestCase):
 
     def test_variables(self):
         suite = TestSuite(name='Suite')
-        suite.variables.create('${ERROR}', 'Error message')
-        suite.variables.create('@{LIST}', ['Error', 'added tag'])
+        suite.resource.variables.create('${ERROR}', 'Error message')
+        suite.resource.variables.create('@{LIST}', ['Error', 'added tag'])
         suite.tests.create(name='T1').keywords.create('Fail', args=['${ERROR}'])
         suite.tests.create(name='T2').keywords.create('Fail', args=['@{LIST}'])
         result = run(suite)
@@ -155,7 +155,7 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
 
     def test_nested_setups_and_teardowns(self):
         root = TestSuite(name='Root')
-        root.keywords.create('Fail', ['Top level'], type='teardown')
+        root.keywords.create('Fail', args=['Top level'], type='teardown')
         root.suites.append(self.suite)
         suite = run(root, variable=['SUITE SETUP:Fail', 'SUITE TEARDOWN:Fail'])
         assert_suite(suite, 'Root', 'FAIL',
@@ -211,7 +211,7 @@ class TestCustomStreams(RunningTestCase):
 
     def _run(self, stdout=None, stderr=None, **options):
         suite = TestSuite(name='My Suite')
-        suite.variables.create('${MESSAGE}', 'Hello, world!')
+        suite.resource.variables.create('${MESSAGE}', 'Hello, world!')
         suite.tests.create(name='My Test').keywords.create('Log', args=['${MESSAGE}', 'WARN'])
         run(suite, stdout=stdout, stderr=stderr, **options)
 

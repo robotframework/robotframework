@@ -113,13 +113,12 @@ class Keywords(ItemList):
 
     @property
     def all(self):
-        return iter(self)
+        return self
 
     @property
     def normal(self):
-        for kw in self:
-            if kw.type not in ('setup', 'teardown'):
-                yield kw
+        kws = [kw for kw in self if kw.type not in ('setup', 'teardown')]
+        return Keywords(self._item_class, self._common_attrs['parent'], kws)
 
     def __setitem__(self, index, item):
         old = self[index]
