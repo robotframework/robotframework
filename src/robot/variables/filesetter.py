@@ -37,25 +37,54 @@ class VariableFileSetter(object):
     def _import_if_needed(self, path_or_variables, args=None):
         if not isinstance(path_or_variables, basestring):
             return path_or_variables
-        return VariableFileImporter().import_variables(path_or_variables, args)
+        LOGGER.info("Importing variable file '%s' with args %s"
+                    % (path_or_variables, args))
+        if path_or_variables.lower().endswith('.yaml'):
+            importer = YamlImporter()
+        else:
+            importer = PythonImporter()
+        try:
+            return importer.import_variables(path_or_variables, args)
+        except:
+            args = 'with arguments %s ' % seq2str2(args) if args else ''
+            raise DataError("Processing variable file '%s' %sfailed: %s"
+                            % (path_or_variables, args, get_error_message()))
 
     def _set(self, variables, overwrite=False):
         for name, value in variables:
             self._store.add(name, value, overwrite)
 
 
-class VariableFileImporter(object):
+class YamlImporter(object):
 
     def import_variables(self, path, args=None):
-        LOGGER.info("Importing variable file '%s' with args %s" % (path, args))
+        if args:
+            raise DataError('TODO')
+        variables = self._import(path)
+        return [self._decorate(name, value) for name, value in variables]
+
+    def _import(self, path):
+        import yaml
+        with open(path) as stream:
+            variables = yaml.load(stream)
+        if not is_dict_like(variables):
+            raise DataError('TODO')
+        return variables.items()
+
+    def _decorate(self, name, value):
+        if is_dict_like(value):
+            return '&{%s}' % name, value
+        if is_list_like(value):
+            return '@{%s}' % name, value
+        return '${%s}' % name, value
+
+
+class PythonImporter(object):
+
+    def import_variables(self, path, args=None):
         importer = Importer('variable file').import_class_or_module_by_path
         var_file = importer(path, instantiate_with_args=())
-        try:
-            return self._get_variables(var_file, args)
-        except:
-            args = 'with arguments %s ' % seq2str2(args) if args else ''
-            raise DataError("Processing variable file '%s' %sfailed: %s"
-                            % (path, args, get_error_message()))
+        return self._get_variables(var_file, args)
 
     def _get_variables(self, var_file, args):
         if self._is_dynamic(var_file):
