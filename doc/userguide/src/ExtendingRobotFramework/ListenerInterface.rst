@@ -177,6 +177,8 @@ synonym to `start_suite`.
    |               |                  |   setup/teardown                                 |
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * args: keyword's arguments as a list of strings |
+   |               |                  | * assign: list of variable names that keyword's  |
+   |               |                  |   return value is assigned to (new in 2.9)       |
    |               |                  | * starttime: execution start time                |
    +---------------+------------------+--------------------------------------------------+
    | end_keyword   | name, attributes | Keys in the attribute dictionary:                |
@@ -184,6 +186,8 @@ synonym to `start_suite`.
    |               |                  | * type: same as with `start_keyword`             |
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * args: keyword's arguments as a list of strings |
+   |               |                  | * assign: list of variable names that keyword's  |
+   |               |                  |   return value is assigned to (new in 2.9)       |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |

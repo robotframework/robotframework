@@ -24,7 +24,11 @@ class ListenAll:
 
     def start_keyword(self, name, attrs):
         args = [str(arg) for arg in attrs['args']]
-        self.outfile.write("KW START: %s %s\n" % (name, args))
+        if attrs['assign']:
+            assign = '%s = ' % ', '.join(attrs['assign'])
+        else:
+            assign = ''
+        self.outfile.write("KW START: %s%s %s\n" % (assign, name, args))
 
     def log_message(self, message):
         msg, level = self._check_message_validity(message)

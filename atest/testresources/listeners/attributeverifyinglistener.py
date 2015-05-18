@@ -6,8 +6,8 @@ OUTFILE = open(os.path.join(os.getenv('TEMPDIR'), 'listener_attrs.txt'), 'w')
 START_ATTRS = 'doc starttime '
 END_ATTRS = START_ATTRS + 'endtime elapsedtime status '
 EXPECTED_TYPES = {'elapsedtime': (int, long), 'tags': list, 'args': list,
-                  'metadata': dict, 'tests': list, 'suites': list,
-                  'totaltests': int}
+                  'assign': list, 'metadata': dict, 'tests': list,
+                  'suites': list, 'totaltests': int}
 
 
 def start_suite(name, attrs):
@@ -27,10 +27,10 @@ def end_test(name, attrs):
                   END_ATTRS + 'id longname tags critical message template')
 
 def start_keyword(name, attrs):
-    _verify_attrs('START KEYWORD', attrs, START_ATTRS + 'args type')
+    _verify_attrs('START KEYWORD', attrs, START_ATTRS + 'args assign type')
 
 def end_keyword(name, attrs):
-    _verify_attrs('END KEYWORD', attrs, END_ATTRS + 'args type')
+    _verify_attrs('END KEYWORD', attrs, END_ATTRS + 'args assign type')
 
 def _verify_attrs(method_name, attrs, names):
     names = names.split()

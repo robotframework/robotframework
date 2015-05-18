@@ -44,7 +44,7 @@ Correct start/end warnings should be shown in execution errors
     ${msgs} =  Get start/end messages  ${ERRORS.msgs}
     ${index} =  Set Variable  ${0}
     @{kw} =  Create List  start_keyword  end_keyword
-    @{uk} =  Create List  start_keyword  @{kw}  @{kw}  end_keyword
+    @{uk} =  Create List  start_keyword  @{kw}  @{kw}  @{kw}  end_keyword
     :FOR  ${method}  IN  start_suite  @{uk}  start_test  @{uk}  end_test
     ...  start_test  @{uk}  @{kw}  end_test  end_suite
     \    Check Log Message  ${msgs[${index}]}  ${method}  WARN

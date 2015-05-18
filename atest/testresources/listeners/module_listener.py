@@ -17,7 +17,11 @@ def start_test(name, attrs):
 
 def start_keyword(name, attrs):
     args = [str(arg) for arg in attrs['args']]
-    OUTFILE.write("KW START: %s %s\n" % (name, args))
+    if attrs['assign']:
+        assign = '%s = ' % ', '.join(attrs['assign'])
+    else:
+        assign = ''
+    OUTFILE.write("KW START: %s%s %s\n" % (assign, name, args))
 
 def log_message(message):
     msg, level = message['message'], message['level']

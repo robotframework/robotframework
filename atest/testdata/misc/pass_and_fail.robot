@@ -24,3 +24,4 @@ My Keyword
     [Arguments]    ${who}
     Log    Hello says "${who}"!    ${LEVEL1}
     Log    Debug message    ${LEVEL2}
+    ${assign} =    Set Variable    Just testing...
