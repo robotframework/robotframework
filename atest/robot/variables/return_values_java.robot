@@ -10,10 +10,10 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Set Multiple Scalar Variables Using Array
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].name}    \${var1}, \${var2} = ExampleJavaLibrary.Get String Array
+    Keyword Data Should Be    ${tc.kws[0]}    ExampleJavaLibrary.Get String Array    \${var1}, \${var2}    first value, second value
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var1} = first value
     Check Log Message    ${tc.kws[0].msgs[1]}    \${var2} = second value
-    Should Be Equal    ${tc.kws[3].name}    \${i1}, \${i2}, \${i42} = ExampleJavaLibrary.Get Array Of Three Ints
+    Keyword Data Should Be    ${tc.kws[3]}    ExampleJavaLibrary.Get Array Of Three Ints    \${i1}, \${i2}, \${i42}
     Check Log Message    ${tc.kws[3].msgs[0]}    \${i1} = 1
     Check Log Message    ${tc.kws[3].msgs[1]}    \${i2} = 2
     Check Log Message    ${tc.kws[3].msgs[2]}    \${i42} = 42
@@ -25,7 +25,7 @@ Set Object To Scalar Variable
 Set List Variable Using Array
     ${tc} =    Check Test Case    ${TEST NAME}
     Verify List Variable Assigment    ${tc}    Get String Array
-    Should Be Equal    ${tc.kws[3].name}    \@{listvar} = ExampleJavaLibrary.Get Array Of Three Ints
+    Keyword Data Should Be    ${tc.kws[3]}    ExampleJavaLibrary.Get Array Of Three Ints    \@{listvar}
     Check Log Message    ${tc.kws[3].msgs[0]}    \@{listvar} = [ 1 | 2 | 42 ]
 
 Set List Variable Using Vector
@@ -55,7 +55,7 @@ Set Multiple Scalars With Too Few Values Using Array
 
 Set List To Scalar And List Variables Using Array
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].name}    \${a}, \${b}, \@{c} = ExampleJavaLibrary.Get Array Of Three Ints
+    Keyword Data Should Be    ${tc.kws[0]}    ExampleJavaLibrary.Get Array Of Three Ints    \${a}, \${b}, \@{c}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${a} = 1
     Check Log Message    ${tc.kws[0].msgs[1]}    \${b} = 2
     Check Log Message    ${tc.kws[0].msgs[2]}    \@{c} = [ 42 ]
@@ -67,5 +67,5 @@ Return Unrepresentable Object
 *** Keywords ***
 Verify List Variable Assigment
     [Arguments]    ${tc}    ${kw name}
-    Should Be Equal    ${tc.kws[0].name}    \@{listvar} = ExampleJavaLibrary.${kw name}
+    Keyword Data Should Be    ${tc.kws[0]}    ExampleJavaLibrary.${kw name}    \@{listvar}    v1, v2, v3
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{listvar} = [ v1 | v2 | v3 ]

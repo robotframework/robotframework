@@ -6,6 +6,8 @@
 <doc></doc>
 <arguments>
 </arguments>
+<assign>
+</assign>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-s1-t1" name="First One">
@@ -14,6 +16,8 @@
 <arguments>
 <arg>Test 1</arg>
 </arguments>
+<assign>
+</assign>
 <msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
 <status status="PASS" endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926"></status>
 </kw>
@@ -21,12 +25,17 @@
 <doc></doc>
 <arguments>
 </arguments>
+<assign>
+<var>${not really in source}</var>
+</assign>
 <kw type="kw" name="BuiltIn.Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Log on ${TEST NAME}</arg>
 <arg>TRACE</arg>
 </arguments>
+<assign>
+</assign>
 <status status="PASS" endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931"></status>
 </kw>
 <status status="PASS" endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930"></status>
@@ -48,6 +57,8 @@
 <doc></doc>
 <arguments>
 </arguments>
+<assign>
+</assign>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-s2-t1" name="First One">
@@ -56,6 +67,8 @@
 <arguments>
 <arg>Test 1</arg>
 </arguments>
+<assign>
+</assign>
 <msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
 <status status="PASS" endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926"></status>
 </kw>
@@ -63,12 +76,17 @@
 <doc></doc>
 <arguments>
 </arguments>
+<assign>
+<var>${not really in source}</var>
+</assign>
 <kw type="kw" name="BuiltIn.Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Log on ${TEST NAME}</arg>
 <arg>TRACE</arg>
 </arguments>
+<assign>
+</assign>
 <status status="PASS" endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931"></status>
 </kw>
 <status status="PASS" endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930"></status>

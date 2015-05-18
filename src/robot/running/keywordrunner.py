@@ -60,10 +60,10 @@ class NormalRunner(object):
     def run(self, kw, name=None):
         handler = self._context.get_handler(name or kw.name)
         handler.init_keyword(self._context.variables)
-        result = KeywordResult(name=self._get_name(kw.assign, handler.longname),
+        result = KeywordResult(name=handler.longname or '',
                                doc=handler.shortdoc,
                                args=kw.args,
-                               assign=kw.assign,
+                               assign=self._get_assign(kw.assign),
                                timeout=getattr(handler, 'timeout', ''),
                                type=kw.type,
                                status='NOT_RUN',
@@ -82,16 +82,14 @@ class NormalRunner(object):
             self._end(result, return_value)
             return return_value
 
+    def _get_assign(self, assign):
+        # TODO: Should use VariableAssigner/Validator here instead
+        return tuple(item.rstrip('= ') for item in assign)
+
     def _warn_if_deprecated(self, name, doc):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
             message = ' ' + doc.split('*', 2)[-1].strip()
             self._context.warn("Keyword '%s' is deprecated.%s" % (name, message))
-
-    def _get_name(self, assign, handler_longname):
-        if not assign:
-            return handler_longname
-        return '%s = %s' % (', '.join(a.rstrip('= ') for a in assign),
-                            handler_longname)
 
     def _run(self, handler, kw):
         try:

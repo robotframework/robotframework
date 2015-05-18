@@ -143,6 +143,7 @@ window.model = (function () {
         var kw = createModelObject(data);
         kw.type = data.type;
         kw.arguments = data.args;
+        kw.assign = data.assign + (data.assign ? ' =' : '');
         kw.timeout = data.timeout;
         kw.populateMessages = createIterablePopulator('Message');
         kw.populateKeywords = createIterablePopulator('Keyword');

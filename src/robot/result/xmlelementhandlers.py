@@ -117,8 +117,8 @@ class KeywordHandler(_Handler):
                                       type=elem.get('type'))
 
     def _children(self):
-        return [DocHandler(), ArgumentsHandler(), KeywordStatusHandler(),
-                MessageHandler(), self]
+        return [DocHandler(), ArgumentsHandler(), AssignHandler(),
+                KeywordStatusHandler(), MessageHandler(), self]
 
 
 class MessageHandler(_Handler):
@@ -202,6 +202,20 @@ class TagHandler(_Handler):
 
     def end(self, elem, result):
         result.tags.add(elem.text or '')
+
+
+class AssignHandler(_Handler):
+    tag = 'assign'
+
+    def _children(self):
+        return [AssignVarHandler()]
+
+
+class AssignVarHandler(_Handler):
+    tag = 'var'
+
+    def end(self, elem, result):
+        result.assign += (elem.text or '',)
 
 
 class ArgumentsHandler(_Handler):

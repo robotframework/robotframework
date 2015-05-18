@@ -21,7 +21,6 @@ UTF-8 In Keyword Arguments
 
 UTF-8 In Test Case And UK Names
     ${tc} =  Check Test Case  UTF-8 Name Äöå §½€"
-    Should Be Equal  ${tc.kws[0].name}  \${ret} = Äöå §½€
+    Keyword data should be  ${tc.kws[0]}  Äöå §½€  \${ret}
     Check Log Message  ${tc.kws[1].msgs[0]}  äöå §½€
     Check Log Message  ${tc.kws[3].msgs[0]}  value
-

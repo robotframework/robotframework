@@ -54,17 +54,18 @@ window.testdata = function () {
             name: strings.get(element[1]),
             timeout: strings.get(element[2]),
             args: strings.get(element[4]),
+            assign: strings.get(element[5]),
             doc: function () {
                 var doc = strings.get(element[3]);
                 this.doc = function () { return doc; };
                 return doc;
             },
-            status: parseStatus(element[5], strings),
-            times: model.Times(times(element[5])),
-            isChildrenLoaded: typeof(element[6]) !== 'number'
+            status: parseStatus(element[6], strings),
+            times: model.Times(times(element[6])),
+            isChildrenLoaded: typeof(element[7]) !== 'number'
         });
-        lazyPopulateKeywordsFromFile(kw, element[6], strings);
-        kw.populateMessages(Populator(element[7], strings, message));
+        lazyPopulateKeywordsFromFile(kw, element[7], strings);
+        kw.populateMessages(Populator(element[8], strings, message));
         return kw;
     }
 
