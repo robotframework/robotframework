@@ -52,20 +52,21 @@ window.testdata = function () {
             type: KEYWORDS[element[0]],
             id: 'k' + (index + 1),
             name: strings.get(element[1]),
-            timeout: strings.get(element[2]),
-            args: strings.get(element[4]),
-            assign: strings.get(element[5]),
+            libname: strings.get(element[2]),
+            timeout: strings.get(element[3]),
+            args: strings.get(element[5]),
+            assign: strings.get(element[6]),
             doc: function () {
-                var doc = strings.get(element[3]);
+                var doc = strings.get(element[4]);
                 this.doc = function () { return doc; };
                 return doc;
             },
-            status: parseStatus(element[6], strings),
-            times: model.Times(times(element[6])),
-            isChildrenLoaded: typeof(element[7]) !== 'number'
+            status: parseStatus(element[7], strings),
+            times: model.Times(times(element[7])),
+            isChildrenLoaded: typeof(element[8]) !== 'number'
         });
-        lazyPopulateKeywordsFromFile(kw, element[7], strings);
-        kw.populateMessages(Populator(element[8], strings, message));
+        lazyPopulateKeywordsFromFile(kw, element[8], strings);
+        kw.populateMessages(Populator(element[9], strings, message));
         return kw;
     }
 

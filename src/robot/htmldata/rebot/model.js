@@ -141,6 +141,7 @@ window.model = (function () {
 
     function Keyword(data) {
         var kw = createModelObject(data);
+        kw.libname = data.libname;
         kw.type = data.type;
         kw.arguments = data.args;
         kw.assign = data.assign + (data.assign ? ' =' : '');
