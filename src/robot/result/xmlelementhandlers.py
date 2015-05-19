@@ -112,7 +112,8 @@ class KeywordHandler(_Handler):
     tag = 'kw'
 
     def start(self, elem, result):
-        return result.keywords.create(name=elem.get('name'),
+        return result.keywords.create(kwname=elem.get('name'),
+                                      libname=elem.get('library', ''),
                                       timeout=elem.get('timeout'),
                                       type=elem.get('type'))
 

@@ -61,10 +61,10 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_keyword(Keyword())
 
     def test_keyword_with_values(self):
-        kw = Keyword('Name', 'http://doc', ('arg1', 'arg2'), ('${v1}', '${v2}'),
+        kw = Keyword('Name', 'library', 'http://doc', ('arg1', 'arg2'), ('${v1}', '${v2}'),
                      '1 second', 'setup', 'PASS',
                      '20111204 19:42:42.000', '20111204 19:42:42.042')
-        self._verify_keyword(kw, 1, 'Name', '<a href="http://doc">http://doc</a>',
+        self._verify_keyword(kw, 1, 'library.Name', '<a href="http://doc">http://doc</a>',
                              'arg1, arg2', '${v1}, ${v2}', '1 second', 1, 0, 42)
 
     def test_default_message(self):
@@ -156,12 +156,12 @@ class TestBuildTestSuite(unittest.TestCase):
         return self._build_and_verify(TestBuilder, test, name, timeout,
                                       critical, doc, tags, status, keywords)
 
-    def _verify_keyword(self, keyword, type=0, name='', doc='', args='',
+    def _verify_keyword(self, keyword, type=0, kwname='', doc='', args='',
                         assign='', timeout='', status=0, start=None, elapsed=0,
                         keywords=(), messages=()):
         status = (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
-        return self._build_and_verify(KeywordBuilder, keyword, type, name, timeout,
+        return self._build_and_verify(KeywordBuilder, keyword, type, kwname, timeout,
                                       doc, args, assign, status, keywords, messages)
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):

@@ -60,7 +60,8 @@ class NormalRunner(object):
     def run(self, kw, name=None):
         handler = self._context.get_handler(name or kw.name)
         handler.init_keyword(self._context.variables)
-        result = KeywordResult(name=handler.longname or '',
+        result = KeywordResult(kwname=handler.name or '',
+                               libname=handler.libname or '',
                                doc=handler.shortdoc,
                                args=kw.args,
                                assign=self._get_assign(kw.assign),
@@ -146,7 +147,7 @@ class ForLoopRunner(object):
         self._templated = templated
 
     def run(self, kw, name=None):
-        result = KeywordResult(name=self._get_name(kw),
+        result = KeywordResult(kwname=self._get_name(kw),
                                type=kw.FOR_LOOP_TYPE,
                                starttime=get_timestamp())
         self._context.start_keyword(result)
@@ -263,7 +264,7 @@ class ForLoopRunner(object):
     def _run_one_round(self, data, values):
         name = ', '.join(format_assign_message(var, item)
                          for var, item in zip(data.variables, values))
-        result = KeywordResult(name=name,
+        result = KeywordResult(kwname=name,
                                type=data.FOR_ITEM_TYPE,
                                starttime=get_timestamp())
         self._context.start_keyword(result)
