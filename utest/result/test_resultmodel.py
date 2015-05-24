@@ -166,5 +166,20 @@ class TestCriticality(unittest.TestCase):
         assert_equal([unicode(t) for t in suite.criticality.non_critical_tags], non_crit)
 
 
+class TestModel(unittest.TestCase):
+
+    def test_keyword_name(self):
+        kw = Keyword('keyword')
+        assert_equal(kw.name, 'keyword')
+        kw = Keyword('keyword', 'lib')
+        assert_equal(kw.name, 'lib.keyword')
+        kw.kwname = 'Kekkonen'
+        kw.libname = 'Urho'
+        assert_equal(kw.name, 'Urho.Kekkonen')
+
+    def test_keyword_name_cannot_be_set_directly(self):
+        assert_raises(AttributeError, setattr, Keyword(), 'name', 'value')
+
+
 if __name__ == '__main__':
     unittest.main()

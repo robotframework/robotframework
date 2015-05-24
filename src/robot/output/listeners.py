@@ -51,7 +51,8 @@ class Listeners(object):
     __metaclass__ = _RecursionAvoidingMetaclass
     _start_attrs = ('id', 'doc', 'starttime', 'longname')
     _end_attrs = _start_attrs + ('endtime', 'elapsedtime', 'status', 'message')
-    _kw_extra_attrs = ('args', '-id', '-longname', '-message')
+    _kw_extra_attrs = ('args', 'assign', 'kwname', 'libname',
+                       '-id', '-longname', '-message')
 
     def __init__(self, listeners):
         self._listeners = self._import_listeners(listeners)

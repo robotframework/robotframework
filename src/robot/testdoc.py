@@ -201,11 +201,11 @@ class JsonConverter(object):
 
     def _convert_keywords(self, item):
         for kw in getattr(item, 'keywords', []):
-            if kw.type == 'setup':
+            if kw.type == kw.SETUP_TYPE:
                 yield self._convert_keyword(kw, 'SETUP')
-            elif kw.type == 'teardown':
+            elif kw.type == kw.TEARDOWN_TYPE:
                 yield self._convert_keyword(kw, 'TEARDOWN')
-            elif kw.is_for_loop():
+            elif kw.type == kw.FOR_LOOP_TYPE:
                 yield self._convert_for_loop(kw)
             else:
                 yield self._convert_keyword(kw, 'KEYWORD')
@@ -231,7 +231,7 @@ class JsonConverter(object):
 
     def _get_for_loop(self, kw):
         joiner = ' IN RANGE ' if kw.range else ' IN '
-        return ', '.join(kw.vars) + joiner + utils.seq2str2(kw.items)
+        return ', '.join(kw.variables) + joiner + utils.seq2str2(kw.values)
 
     def _get_timeout(self, timeout):
         if timeout is None:

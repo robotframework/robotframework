@@ -129,10 +129,12 @@ class KeywordBuilder(_Builder):
     def build(self, kw, split=False):
         with self._context.prune_input(kw.messages, kw.keywords):
             return (self._types[kw.type],
-                    self._string(kw.name),
+                    self._string(kw.kwname),
+                    self._string(kw.libname),
                     self._string(kw.timeout),
                     self._html(kw.doc),
                     self._string(', '.join(kw.args)),
+                    self._string(', '.join(kw.assign)),
                     self._get_status(kw),
                     self._build_keywords(kw.keywords, split),
                     tuple(self._build_message(m) for m in kw.messages))

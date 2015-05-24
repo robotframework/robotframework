@@ -7,17 +7,17 @@ Resource          atest_resource.robot
 Run Keyword
     ${tc} =    Check test Case    ${TEST NAME}
     Check Run Keyword    ${tc.kws[0]}    BuiltIn.Log    This is logged with Run Keyword
-    Should Be Equal    ${tc.kws[1].kws[0].name}    BuiltIn.No Operation
+    Keyword Data Should Be    ${tc.kws[1].kws[0]}    BuiltIn.No Operation
     Check Run Keyword    ${tc.kws[2]}    BuiltIn.Log Many    1    2    3    4    5
     Check Run Keyword    ${tc.kws[4]}    BuiltIn.Log    Run keyword with variable: Log
     Check Run Keyword    ${tc.kws[6]}    BuiltIn.Log Many    one    two
 
 Run Keyword Returning Value
     ${tc} =    Check test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].name}    \${ret} = BuiltIn.Run Keyword
-    Should Be Equal    ${tc.kws[0].kws[0].name}    BuiltIn.Set Variable
-    Should Be Equal    ${tc.kws[2].name}    \${ret} = BuiltIn.Run Keyword
-    Should Be Equal    ${tc.kws[2].kws[0].name}    BuiltIn.Evaluate
+    Keyword Data Should Be    ${tc.kws[0]}    BuiltIn.Run Keyword    \${ret}    Set Variable, hello world
+    Keyword Data Should Be    ${tc.kws[0].kws[0]}    BuiltIn.Set Variable    args=hello world
+    Keyword Data Should Be    ${tc.kws[2]}    BuiltIn.Run Keyword    \${ret}    Evaluate, 1+2
+    Keyword Data Should Be    ${tc.kws[2].kws[0]}    BuiltIn.Evaluate    args=1+2
 
 Run Keyword With Arguments That Needs To Be Escaped
     ${tc} =    Check test Case    ${TEST NAME}
@@ -70,4 +70,3 @@ Check Run Keyword In Uk
     Should Be Equal    ${kw.name}    BuiltIn.Run Keyword
     Should Be Equal    ${kw.kws[0].name}    My UK
     Check Run Keyword    ${kw.kws[0].kws[0]}    ${subkw_name}    @{msgs}
-

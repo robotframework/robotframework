@@ -26,6 +26,7 @@ class UserErrorHandler:
 
     def __init__(self, name, error):
         self.name = self.longname = name
+        self.libname = ''
         self.doc = self.shortdoc = ''
         self.error = error
         self.timeout = ''

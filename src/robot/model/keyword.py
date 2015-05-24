@@ -24,7 +24,7 @@ from .modelobject import ModelObject
 
 class Keyword(ModelObject):
     """Base model for single keyword."""
-    __slots__ = ['parent', 'name', 'doc', 'args', 'assign', 'timeout', 'type',
+    __slots__ = ['parent', '_name', 'doc', 'args', 'assign', 'timeout', 'type',
                  '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE = 'kw'
     SETUP_TYPE = 'setup'
@@ -40,8 +40,7 @@ class Keyword(ModelObject):
         #: :class:`~.model.testcase.TestCase` or
         #: :class:`~.model.keyword.Keyword` that contains this keyword.
         self.parent = None
-        #: Keyword name.
-        self.name = name
+        self._name = name
         #: Keyword documentation.
         self.doc = doc
         #: Keyword arguments as a list of strings.
@@ -58,6 +57,14 @@ class Keyword(ModelObject):
         self.keywords = None
         self._sort_key = -1
         self._next_child_sort_key = 0
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
 
     @setter
     def parent(self, parent):
@@ -113,13 +120,12 @@ class Keywords(ItemList):
 
     @property
     def all(self):
-        return iter(self)
+        return self
 
     @property
     def normal(self):
-        for kw in self:
-            if kw.type not in ('setup', 'teardown'):
-                yield kw
+        kws = [kw for kw in self if kw.type not in ('setup', 'teardown')]
+        return Keywords(self._item_class, self._common_attrs['parent'], kws)
 
     def __setitem__(self, index, item):
         old = self[index]

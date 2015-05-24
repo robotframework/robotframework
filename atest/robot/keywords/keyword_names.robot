@@ -77,6 +77,21 @@ Old Name Doesn't Work If Name Set Using 'robot_name'
 Keyword can just be marked without changing its name
     Check Test Case    ${TESTNAME}
 
+Assignment is not part of name
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Keyword name and assign should be    ${tc.kws[0]}    BuiltIn.Log
+    Keyword name and assign should be    ${tc.kws[1]}    BuiltIn.Set Variable    \${var}
+    Keyword name and assign should be    ${tc.kws[2]}    BuiltIn.Set Variable    \${v1}    \${v2}
+    Keyword name and assign should be    ${tc.kws[3]}    BuiltIn.Evaluate    \${first}    \@{rest}
+
+Library name and keyword name are separate
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Keyword and library names should be    ${tc.kws[0]}    Keyword Only In Test Case File
+    Keyword and library names should be    ${tc.kws[1]}    Keyword Only In Resource 1    my_resource_1
+    Keyword and library names should be    ${tc.kws[2]}    Keyword Only In Resource 1    my_resource_1
+    Keyword and library names should be    ${tc.kws[3]}    Log    BuiltIn
+    Keyword and library names should be    ${tc.kws[4]}    Log    BuiltIn
+
 *** Keywords ***
 Check Test And Three Keyword Names
     [Arguments]    ${test_name}    ${exp_kw_name}
@@ -93,3 +108,17 @@ Check Three Keyword Names
     Should Be Equal    ${item.keywords[0].name}    ${exp_kw_name}
     Should Be Equal    ${item.keywords[1].name}    ${exp_kw_name}
     Should Be Equal    ${item.keywords[2].name}    ${exp_kw_name}
+
+Keyword name and assign should be
+    [Arguments]    ${kw}    ${name}    @{assign}
+    Should Be Equal    ${kw.name}    ${name}
+    Lists Should Be Equal    ${kw.assign}    ${assign}
+
+Keyword and library names should be
+    [Arguments]    ${kw}    ${kwname}    ${libname}=
+    Should Be Equal    ${kw.kwname}    ${kwname}
+    Should Be Equal    ${kw.libname}    ${libname}
+    Run Keyword If    "${libname}"
+    ...    Should Be Equal    ${kw.name}    ${libname}.${kwname}
+    ...    ELSE
+    ...    Should Be Equal    ${kw.name}    ${kwname}

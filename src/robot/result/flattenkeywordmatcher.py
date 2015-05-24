@@ -36,5 +36,9 @@ class FlattenKeywordMatcher(object):
                 raise DataError("Expected 'FOR', 'FORITEM', or "
                                 "'NAME:<pattern>' but got '%s'." % flat)
 
-    def match(self, name, type):
-        return self._name_matcher.match(name) or type in self._types
+    def match_name(self, kwname, libname=None):
+        name = '%s.%s' % (libname, kwname) if libname else kwname
+        return self._name_matcher.match(name)
+
+    def match_type(self, kwtype):
+        return kwtype in self._types

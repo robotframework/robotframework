@@ -24,7 +24,7 @@ Ignore Error Returns When Keyword Fails
 Ignore Error With User Keyword When Keywords Pass
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Should Be Equal    ${tc.kws[0].kws[0].kws[2].name}    \${ret} = BuiltIn.Evaluate
+    Keyword data should be    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
 
 Ignore Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -79,7 +79,7 @@ Expected Error Should Be Returned
 Expect Error With User Keyword When Keywords Pass
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Should Be Equal    ${tc.kws[0].kws[0].kws[2].name}    \${ret} = BuiltIn.Evaluate
+    Keyword data should be    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
 
 Expect Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}

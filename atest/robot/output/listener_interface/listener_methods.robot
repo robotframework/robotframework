@@ -31,12 +31,16 @@ Java Listener
     ...  LOG MESSAGE: [INFO] Hello says "Suite Setup"!
     ...  START KW: BuiltIn.Log [Debug message\${LEVEL2}]
     ...  LOG MESSAGE: [DEBUG] Debug message
+    ...  START KW: BuiltIn.Set Variable [Just testing...]
+    ...  LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...  START TEST: Pass '' [forcepass]
     ...  START KW: My Keyword [Pass]
     ...  START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...  LOG MESSAGE: [INFO] Hello says "Pass"!
     ...  START KW: BuiltIn.Log [Debug message\${LEVEL2}]
     ...  LOG MESSAGE: [DEBUG] Debug message
+    ...  START KW: BuiltIn.Set Variable [Just testing...]
+    ...  LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...  END TEST: PASS
     ...  START TEST: Fail 'FAIL Expected failure' [failforce]
     ...  START KW: My Keyword [Fail]
@@ -44,6 +48,8 @@ Java Listener
     ...  LOG MESSAGE: [INFO] Hello says "Fail"!
     ...  START KW: BuiltIn.Log [Debug message\${LEVEL2}]
     ...  LOG MESSAGE: [DEBUG] Debug message
+    ...  START KW: BuiltIn.Set Variable [Just testing...]
+    ...  LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...  START KW: BuiltIn.Fail [Expected failure]
     ...  LOG MESSAGE: [FAIL] Expected failure
     ...  END TEST: FAIL: Expected failure
@@ -56,14 +62,14 @@ Correct Attributes To Listener Methods
     ${status} =  Log File  %{TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  attributeverifyinglistener
     Should Not Contain  ${status}  FAILED
-    Should Contain X Times  ${status}  PASSED  169
+    Should Contain X Times  ${status}  PASSED  280
 
 Correct Attributes To Java Listener Methods
     [Tags]  jybot
     ${status} =  Log File  %{TEMPDIR}/${JAVA_ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  JavaAttributeVerifyingListener
     Should Not Contain  ${status}  FAILED
-    Should Contain X Times  ${status}  PASSED  169
+    Should Contain X Times  ${status}  PASSED  280
 
 Suite And Test Counts
     Run Tests  --listener listeners.SuiteAndTestCounts  misc/suites/sub*
@@ -115,6 +121,9 @@ Check Listen All File
     ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
     ...  LOG MESSAGE: [DEBUG] Debug message
     ...  KW END: PASS
+    ...  KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
+    ...  LOG MESSAGE: [INFO] \${assign} = Just testing...
+    ...  KW END: PASS
     ...  KW END: PASS
     ...  TEST START: Pass (s1-t1) '' ['force', 'pass'] crit: yes
     ...  KW START: My Keyword ['Pass']
@@ -123,6 +132,9 @@ Check Listen All File
     ...  KW END: PASS
     ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
     ...  LOG MESSAGE: [DEBUG] Debug message
+    ...  KW END: PASS
+    ...  KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
+    ...  LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...  KW END: PASS
     ...  KW END: PASS
     ...  TEST END: PASS crit: yes
@@ -133,6 +145,9 @@ Check Listen All File
     ...  KW END: PASS
     ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
     ...  LOG MESSAGE: [DEBUG] Debug message
+    ...  KW END: PASS
+    ...  KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
+    ...  LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...  KW END: PASS
     ...  KW END: PASS
     ...  KW START: BuiltIn.Fail ['Expected failure']

@@ -9,7 +9,7 @@ Passing keywords
     ${tc}=  Check Test Case  ${TESTNAME}
     Should have correct number of keywords  ${tc}  3
     Name and status should be  ${tc.kws[0]}  BuiltIn.Log  NOT_RUN
-    Name and status should be  ${tc.kws[1]}  \${contents} = OperatingSystem.List Directory  NOT_RUN
+    Name and status should be  ${tc.kws[1]}  OperatingSystem.List Directory  NOT_RUN  \${contents}
     Name and status should be  ${tc.kws[2]}  resource.Simple UK  PASS
     Name and status should be  ${tc.kws[2].kws[0]}  BuiltIn.Log  NOT_RUN
 
@@ -95,6 +95,7 @@ Should have correct number of keywords
     Should Be Equal As Integers  ${test or uk.kw_count}  ${exp number of kws}
 
 Name and status should be
-    [Arguments]  ${kw}  ${name}  ${status}
+    [Arguments]  ${kw}  ${name}  ${status}  @{assign}
     Should Be Equal  ${kw.name}    ${name}
     Should Be Equal  ${kw.status}  ${status}
+    Lists should be equal  ${kw.assign}  ${assign}

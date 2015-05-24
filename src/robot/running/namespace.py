@@ -83,11 +83,10 @@ class Namespace:
         self._validate_not_importing_init_file(path)
         if overwrite or path not in self._kw_store.resources:
             resource = IMPORTER.import_resource(path)
-            self.variables.set_from_variable_table(resource.variable_table,
-                                                   overwrite)
-            self._kw_store.resources[path] \
-                = UserLibrary(resource.keyword_table.keywords, resource.source)
-            self._handle_imports(resource.setting_table.imports)
+            self.variables.set_from_variable_table(resource.variables, overwrite)
+            self._kw_store.resources[path] = UserLibrary(resource.keywords,
+                                                         resource.source)
+            self._handle_imports(resource.imports)
         else:
             LOGGER.info("Resource file '%s' already imported by suite '%s'"
                         % (path, self.suite.longname))

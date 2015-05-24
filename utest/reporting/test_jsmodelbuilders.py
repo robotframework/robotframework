@@ -61,11 +61,12 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_keyword(Keyword())
 
     def test_keyword_with_values(self):
-        kw = Keyword('Name', 'http://doc', ['a1', 'a2'], (), '1 second',
-                     'setup', 'PASS',
+        kw = Keyword('KW Name', 'libname', 'http://doc', ('arg1', 'arg2'), ('${v1}', '${v2}'),
+                     '1 second', 'setup', 'PASS',
                      '20111204 19:42:42.000', '20111204 19:42:42.042')
-        self._verify_keyword(kw, 1, 'Name', '<a href="http://doc">http://doc</a>',
-                             'a1, a2', '1 second', 1, 0, 42)
+        self._verify_keyword(kw, 1, 'KW Name', 'libname',
+                             '<a href="http://doc">http://doc</a>',
+                             'arg1, arg2', '${v1}, ${v2}', '1 second', 1, 0, 42)
 
     def test_default_message(self):
         self._verify_message(Message())
@@ -127,7 +128,7 @@ class TestBuildTestSuite(unittest.TestCase):
         context = JsBuildingContext()
         model = SuiteBuilder(context).build(suite)
         self._verify_status(model[5], start=0)
-        self._verify_status(model[-2][0][5], start=1)
+        self._verify_status(model[-2][0][7], start=1)
         self._verify_mapped(model[-2][0][-1], context.strings,
                             ((10, 2, 'Message'), (11, 1, '')))
         self._verify_status(model[-3][0][5], start=1000)
@@ -156,12 +157,14 @@ class TestBuildTestSuite(unittest.TestCase):
         return self._build_and_verify(TestBuilder, test, name, timeout,
                                       critical, doc, tags, status, keywords)
 
-    def _verify_keyword(self, keyword, type=0, name='', doc='', args='',  timeout='',
-                        status=0, start=None, elapsed=0, keywords=(), messages=()):
+    def _verify_keyword(self, keyword, type=0, kwname='', libname='', doc='',
+                        args='', assign='', timeout='', status=0, start=None,
+                        elapsed=0, keywords=(), messages=()):
         status = (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
-        return self._build_and_verify(KeywordBuilder, keyword, type, name, timeout,
-                                      doc, args, status, keywords, messages)
+        return self._build_and_verify(KeywordBuilder, keyword, type, kwname,
+                                      libname, timeout, doc, args, assign,
+                                      status, keywords, messages)
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):
         return self._build_and_verify(MessageBuilder, msg, timestamp, level, message)

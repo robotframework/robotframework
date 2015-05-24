@@ -33,20 +33,20 @@ class TestBuilding(unittest.TestCase):
         assert_equals(suite.metadata, {})
 
     def test_imports(self):
-        imp = build('dummy_lib_test.robot').imports[0]
+        imp = build('dummy_lib_test.robot').resource.imports[0]
         assert_equals(imp.type, 'Library')
         assert_equals(imp.name, 'DummyLib')
         assert_equals(imp.args, ())
 
     def test_variables(self):
-        variables = build('pass_and_fail.robot').variables
+        variables = build('pass_and_fail.robot').resource.variables
         assert_equals(variables[0].name, '${LEVEL1}')
         assert_equals(variables[0].value, ['INFO'])
         assert_equals(variables[1].name, '${LEVEL2}')
         assert_equals(variables[1].value, ['DEBUG'])
 
     def test_user_keywords(self):
-        uk = build('pass_and_fail.robot').user_keywords[0]
+        uk = build('pass_and_fail.robot').resource.keywords[0]
         assert_equals(uk.name, 'My Keyword')
         assert_equals(uk.args, ('${who}',))
 
@@ -106,7 +106,7 @@ class TestBuilding(unittest.TestCase):
 
     def test_keyword_timeout(self):
         # TODO: Tests and uks have inconsistent timeout types.
-        kw = build('timeouts.robot').user_keywords[0]
+        kw = build('timeouts.robot').resource.keywords[0]
         assert_equals(kw.timeout.value, '42')
         assert_equals(kw.timeout.message, 'My message')
 
