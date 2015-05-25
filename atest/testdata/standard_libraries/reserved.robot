@@ -13,11 +13,11 @@ Reserved in User Keyword
     User keyword with reserved keyword
 
 Else should be capitalized
-    [Documentation]     FAIL 'else' is a reserved keyword. 'else' must be in uppercase (ELSE) when used as a marker with 'Run Keyword'.
+    [Documentation]     FAIL 'else' is a reserved keyword. 'else' must be in uppercase (ELSE) when used as a marker with 'Run Keyword If'.
     ELSE    log   log something
 
 Else If should be capitalized
-    [Documentation]     FAIL 'else if' is a reserved keyword. 'else if' must be in uppercase (ELSE IF) when used as a marker with 'Run Keyword'.
+    [Documentation]     FAIL 'else if' is a reserved keyword. 'else if' must be in uppercase (ELSE IF) when used as a marker with 'Run Keyword If'.
     ELSE IF    log   log something
 
 *** Keyword ***
