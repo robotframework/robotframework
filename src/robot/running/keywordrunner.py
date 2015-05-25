@@ -60,84 +60,69 @@ class NormalRunner(object):
     def run(self, kw, name=None):
         handler = self._context.get_handler(name or kw.name)
         handler.init_keyword(self._context.variables)
+        assigner = VariableAssigner(kw.assign)
         result = KeywordResult(kwname=handler.name or '',
                                libname=handler.libname or '',
                                doc=handler.shortdoc,
                                args=kw.args,
-                               assign=self._get_assign(kw.assign),
+                               assign=assigner.assignment,
                                timeout=getattr(handler, 'timeout', ''),
                                type=kw.type,
-                               status='NOT_RUN',
                                starttime=get_timestamp())
         self._context.start_keyword(result)
         self._warn_if_deprecated(handler.longname, handler.shortdoc)
         try:
-            return_value = self._run(handler, kw)
+            return_value = self._run_and_assign(handler, kw, assigner)
         except ExecutionFailed as err:
-            result.status = self._get_status(err)
-            self._end(result, error=err)
+            result.status = err.status
+            if result.type == result.TEARDOWN_TYPE:
+                result.message = unicode(err)
             raise
         else:
-            if not (self._context.dry_run and handler.type == 'library'):
-                result.status = 'PASS'
-            self._end(result, return_value)
+            dry_run_lib_kw = self._context.dry_run and handler.type == 'library'
+            result.status = 'PASS' if not dry_run_lib_kw else 'NOT_RUN'
             return return_value
-
-    def _get_assign(self, assign):
-        # TODO: Should use VariableAssigner/Validator here instead
-        return tuple(item.rstrip('= ') for item in assign)
+        finally:
+            result.endtime = get_timestamp()
+            self._context.end_keyword(result)
 
     def _warn_if_deprecated(self, name, doc):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
             message = ' ' + doc.split('*', 2)[-1].strip()
             self._context.warn("Keyword '%s' is deprecated.%s" % (name, message))
 
+    def _run_and_assign(self, handler, kw, assigner):
+        syntax_error_reporter = SyntaxErrorReporter(self._context)
+        with syntax_error_reporter:
+            assigner.validate_assignment()
+        return_value, exception = self._run(handler, kw)
+        if not exception or exception.can_continue(self._context.in_teardown):
+            with syntax_error_reporter:
+                assigner.assign(self._context, return_value)
+        if exception:
+            raise exception
+        return return_value
+
     def _run(self, handler, kw):
+        return_value = exception = None
         try:
-            # TODO clean this away from self
-            self._variable_assigner = VariableAssigner(kw.assign)
-            return handler.run(self._context, kw.args[:])
-        except ExecutionFailed:
-            raise
+            return_value = handler.run(self._context, kw.args[:])
+        except ExecutionFailed as err:
+            exception = err
         except:
-            self._report_failure()
+            exception = self._get_and_report_failure()
+        if exception:
+            return_value = exception.return_value
+        return return_value, exception
 
-    def _get_status(self, error):
-        if not error:
-            return 'PASS'
-        if isinstance(error, ExecutionPassed) and not error.earlier_failures:
-            return 'PASS'
-        return 'FAIL'
-
-    def _end(self, result, return_value=None, error=None):
-        result.endtime = get_timestamp()
-        if error and result.type == 'teardown':
-            result.message = unicode(error)
-        try:
-            if not error or error.can_continue(self._context.in_teardown):
-                self._set_variables(result, return_value, error)
-        finally:
-            self._context.end_keyword(result)
-
-    def _set_variables(self, result, return_value, error):
-        if error:
-            return_value = error.return_value
-        try:
-            self._variable_assigner.assign(self._context, return_value)
-        except DataError as err:
-            result.status = 'FAIL'
-            msg = unicode(err)
-            self._context.output.fail(msg)
-            raise ExecutionFailed(msg, syntax=True)
-
-    def _report_failure(self):
+    def _get_and_report_failure(self):
         failure = HandlerExecutionFailed()
         if failure.timeout:
             self._context.timeout_occurred = True
-        self._context.output.fail(failure.full_message)
+        self._context.fail(failure.full_message)
         if failure.traceback:
-            self._context.output.debug(failure.traceback)
-        raise failure
+            self._context.debug(failure.traceback)
+        return failure
 
 
 class ForLoopRunner(object):
@@ -170,7 +155,7 @@ class ForLoopRunner(object):
             return err
         except DataError as err:
             msg = unicode(err)
-            self._context.output.fail(msg)
+            self._context.fail(msg)
             return ExecutionFailed(msg, syntax=True)
         else:
             return None
@@ -273,3 +258,18 @@ class ForLoopRunner(object):
         if isinstance(error, ExecutionPassed) and not error.earlier_failures:
             return 'PASS'
         return 'FAIL'
+
+
+class SyntaxErrorReporter(object):
+
+    def __init__(self, context):
+        self._context = context
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is DataError:
+            msg = unicode(exc_val)
+            self._context.fail(msg)
+            raise ExecutionFailed(msg, syntax=True)

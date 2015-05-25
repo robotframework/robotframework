@@ -110,6 +110,10 @@ class ExecutionFailed(RobotError):
     def get_errors(self):
         return [self]
 
+    @property
+    def status(self):
+        return 'FAIL'
+
 
 class HandlerExecutionFailed(ExecutionFailed):
 
@@ -200,6 +204,10 @@ class ExecutionPassed(ExecutionFailed):
         if not self._earlier_failures:
             return None
         return ExecutionFailures(self._earlier_failures)
+
+    @property
+    def status(self):
+        return 'PASS' if not self._earlier_failures else 'FAIL'
 
 
 class PassExecution(ExecutionPassed):
