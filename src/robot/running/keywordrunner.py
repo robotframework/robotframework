@@ -67,35 +67,22 @@ class NormalRunner(object):
                                args=kw.args,
                                assign=assigner.assignment,
                                timeout=getattr(handler, 'timeout', ''),
-                               type=kw.type,
-                               starttime=get_timestamp())
-        self._context.start_keyword(result)
-        self._warn_if_deprecated(handler.longname, handler.shortdoc)
-        try:
-            return_value = self._run_and_assign(handler, kw, assigner)
-        except ExecutionFailed as err:
-            result.status = err.status
-            if result.type == result.TEARDOWN_TYPE:
-                result.message = unicode(err)
-            raise
-        else:
-            dry_run_lib_kw = self._context.dry_run and handler.type == 'library'
-            result.status = 'PASS' if not dry_run_lib_kw else 'NOT_RUN'
-            return return_value
-        finally:
-            result.endtime = get_timestamp()
-            self._context.end_keyword(result)
+                               type=kw.type)
+        dry_run_lib_kw = self._context.dry_run and handler.type == 'library'
+        with StatusReporter(self._context, result, dry_run_lib_kw):
+            self._warn_if_deprecated(result.name, result.doc)
+            return self._run_and_assign(handler, kw.args, assigner)
 
     def _warn_if_deprecated(self, name, doc):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
             message = ' ' + doc.split('*', 2)[-1].strip()
             self._context.warn("Keyword '%s' is deprecated.%s" % (name, message))
 
-    def _run_and_assign(self, handler, kw, assigner):
+    def _run_and_assign(self, handler, args, assigner):
         syntax_error_reporter = SyntaxErrorReporter(self._context)
         with syntax_error_reporter:
             assigner.validate_assignment()
-        return_value, exception = self._run(handler, kw)
+        return_value, exception = self._run(handler, args)
         if not exception or exception.can_continue(self._context.in_teardown):
             with syntax_error_reporter:
                 assigner.assign(self._context, return_value)
@@ -103,10 +90,10 @@ class NormalRunner(object):
             raise exception
         return return_value
 
-    def _run(self, handler, kw):
+    def _run(self, handler, args):
         return_value = exception = None
         try:
-            return_value = handler.run(self._context, kw.args[:])
+            return_value = handler.run(self._context, args)
         except ExecutionFailed as err:
             exception = err
         except:
@@ -133,21 +120,11 @@ class ForLoopRunner(object):
 
     def run(self, data, name=None):
         result = KeywordResult(kwname=self._get_name(data),
-                               type=data.FOR_LOOP_TYPE,
-                               starttime=get_timestamp())
-        self._context.start_keyword(result)
-        try:
+                               type=data.FOR_LOOP_TYPE)
+        with StatusReporter(self._context, result):
             with SyntaxErrorReporter(self._context):
                 self._validate(data)
                 self._run(data)
-        except ExecutionFailed as err:
-            result.status = err.status
-            raise
-        else:
-            result.status = 'PASS'
-        finally:
-            result.endtime = get_timestamp()
-            self._context.end_keyword(result)
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.variables),
@@ -232,22 +209,34 @@ class ForLoopRunner(object):
         name = ', '.join(format_assign_message(var, item)
                          for var, item in zip(data.variables, values))
         result = KeywordResult(kwname=name,
-                               type=data.FOR_ITEM_TYPE,
-                               starttime=get_timestamp())
-        self._context.start_keyword(result)
+                               type=data.FOR_ITEM_TYPE)
         for var, value in zip(data.variables, values):
             self._context.variables[var] = value
         runner = KeywordRunner(self._context, self._templated)
-        try:
+        with StatusReporter(self._context, result):
             runner.run_keywords(data.keywords)
-        except ExecutionFailed as exception:
-            result.status = exception.status
-            raise
-        else:
-            result.status = 'PASS'
-        finally:
-            result.endtime = get_timestamp()
-            self._context.end_keyword(result)
+
+
+class StatusReporter(object):
+
+    def __init__(self, context, result, dry_run_lib_kw=False):
+        self._context = context
+        self._result = result
+        self._pass_status = 'PASS' if not dry_run_lib_kw else 'NOT_RUN'
+
+    def __enter__(self):
+        self._result.starttime = get_timestamp()
+        self._context.start_keyword(self._result)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_val is None:
+            self._result.status = self._pass_status
+        elif isinstance(exc_val, ExecutionFailed):
+            self._result.status = exc_val.status
+            if self._result.type == self._result.TEARDOWN_TYPE:
+                self._result.message = unicode(exc_val)
+        self._result.endtime = get_timestamp()
+        self._context.end_keyword(self._result)
 
 
 class SyntaxErrorReporter(object):
@@ -259,7 +248,7 @@ class SyntaxErrorReporter(object):
         pass
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is DataError:
+        if isinstance(exc_val, DataError):
             msg = unicode(exc_val)
             self._context.fail(msg)
             raise ExecutionFailed(msg, syntax=True)
