@@ -14,8 +14,9 @@
 
 import re
 import sys
-from collections import Mapping
-from UserDict import UserDict
+from collections import MutableMapping
+
+from .robottypes import is_dict_like
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
@@ -47,7 +48,7 @@ else:
         return string.lower()
 
 
-class NormalizedDict(UserDict):
+class NormalizedDict(MutableMapping):
     """Custom dictionary implementation automatically normalizing keys."""
 
     def __init__(self, initial=None, ignore=(), caseless=True, spaceless=True):
@@ -58,95 +59,54 @@ class NormalizedDict(UserDict):
 
         Normalizing spec has exact same semantics as with `normalize` method.
         """
-        UserDict.__init__(self)
+        self._data = {}
         self._keys = {}
         self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
         if initial:
             self._add_initial(initial)
 
-    def _add_initial(self, items):
-        if hasattr(items, 'items'):
-            items = items.items()
+    def _add_initial(self, initial):
+        items = initial.items() if hasattr(initial, 'items') else initial
         for key, value in items:
             self[key] = value
 
-    def update(self, dict=None, **kwargs):
-        if dict:
-            for key in dict:
-                self[key] = dict[key]
-        if kwargs:
-            self.update(kwargs)
-
-    def _add_key(self, key):
-        nkey = self._normalize(key)
-        self._keys.setdefault(nkey, key)
-        return nkey
+    def __getitem__(self, key):
+        return self._data[self._normalize(key)]
 
     def __setitem__(self, key, value):
-        nkey = self._add_key(key)
-        self.data[nkey] = value
+        norm_key = self._normalize(key)
+        self._data[norm_key] = value
+        self._keys.setdefault(norm_key, key)
 
-    def get(self, key, default=None):
-        if key in self:
-            return self[key]
-        return default
-
-    def __getitem__(self, key):
-        return self.data[self._normalize(key)]
-
-    def pop(self, key, *default):
-        nkey = self._normalize(key)
-        self._keys.pop(nkey, *default)
-        return self.data.pop(nkey, *default)
-
-    __delitem__ = pop
-
-    def clear(self):
-        UserDict.clear(self)
-        self._keys.clear()
-
-    def has_key(self, key):
-        return self.data.has_key(self._normalize(key))
-
-    __contains__ = has_key
+    def __delitem__(self, key):
+        norm_key = self._normalize(key)
+        del self._data[norm_key]
+        del self._keys[norm_key]
 
     def __iter__(self):
         return (self._keys[norm_key] for norm_key in sorted(self._keys))
 
-    def keys(self):
-        return list(self)
-
-    def iterkeys(self):
-        return iter(self)
-
-    def values(self):
-        return list(self.itervalues())
-
-    def itervalues(self):
-        return (self[key] for key in self)
-
-    def items(self):
-        return list(self.iteritems())
-
-    def iteritems(self):
-        return ((key, self[key]) for key in self)
-
-    def popitem(self):
-        if not self:
-            raise KeyError('dictionary is empty')
-        key = self.iterkeys().next()
-        return key, self.pop(key)
-
-    def copy(self):
-        copy = UserDict.copy(self)
-        copy._keys = self._keys.copy()
-        return copy
+    def __len__(self):
+        return len(self._data)
 
     def __str__(self):
         return str(dict(self.items()))
 
-    def __cmp__(self, other):
-        if (isinstance(other, (Mapping, UserDict)) and
-                not isinstance(other, NormalizedDict)):
+    def __eq__(self, other):
+        if not is_dict_like(other):
+            return False
+        if not isinstance(other, NormalizedDict):
             other = NormalizedDict(other)
-        return UserDict.__cmp__(self, other)
+        return self._data == other._data
+
+    def copy(self):
+        copy = NormalizedDict()
+        copy._data = self._data.copy()
+        copy._keys = self._keys.copy()
+        copy._normalize = self._normalize
+        return copy
+
+    def clear(self):
+        # Faster than default implementation of MutableMapping.clear
+        self._data.clear()
+        self._keys.clear()
