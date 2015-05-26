@@ -15,17 +15,18 @@
 from itertools import chain
 from operator import attrgetter
 
-from robot.utils import setter
+from robot.utils import setter, unic
 
 from .itemlist import ItemList
 from .message import Message, Messages
 from .modelobject import ModelObject
+from .tags import Tags
 
 
 class Keyword(ModelObject):
     """Base model for single keyword."""
-    __slots__ = ['parent', '_name', 'doc', 'args', 'assign', 'timeout', 'type',
-                 '_sort_key', '_next_child_sort_key']
+    __slots__ = ['parent', '_name', 'doc', 'args', 'assign', 'tags', 'timeout',
+                 'type', '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE = 'kw'
     SETUP_TYPE = 'setup'
     TEARDOWN_TYPE = 'teardown'
@@ -34,8 +35,8 @@ class Keyword(ModelObject):
     keyword_class = None
     message_class = Message
 
-    def __init__(self, name='', doc='', args=(), assign=(), timeout=None,
-                 type='kw'):
+    def __init__(self, name='', doc='', args=(), assign=(), tags=(),
+                 timeout=None, type='kw'):
         #: :class:`~.model.testsuite.TestSuite` or
         #: :class:`~.model.testcase.TestCase` or
         #: :class:`~.model.keyword.Keyword` that contains this keyword.
@@ -47,6 +48,8 @@ class Keyword(ModelObject):
         self.args = args
         #: Assigned variables as a list of strings.
         self.assign = assign
+        #: Keyword tags as a list like :class:`~.model.tags.Tags` object.
+        self.tags = tags
         #: Keyword timeout.
         self.timeout = timeout
         #: Keyword type as a string. See class level ``XXX_TYPE`` constants.
@@ -76,6 +79,10 @@ class Keyword(ModelObject):
     def _child_sort_key(self):
         self._next_child_sort_key += 1
         return self._next_child_sort_key
+
+    @setter
+    def tags(self, tags):
+        return Tags(tags)
 
     @setter
     def keywords(self, keywords):

@@ -23,9 +23,9 @@ class Keyword(model.Keyword):
     message_class = Message
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
-                 timeout='', type='kw',  status='FAIL', starttime=None,
+                 tags=(), timeout='', type='kw',  status='FAIL', starttime=None,
                  endtime=None):
-        model.Keyword.__init__(self, '', doc, args, assign, timeout, type)
+        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
         #: Name of the keyword without library or resource name.
         self.kwname = kwname
         #: Name of library or resource containing this keyword.

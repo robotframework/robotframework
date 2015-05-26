@@ -30,6 +30,7 @@ class UserErrorHandler:
         self.doc = self.shortdoc = ''
         self.error = error
         self.timeout = ''
+        self.tags = ()
 
     def init_keyword(self, varz):
         pass

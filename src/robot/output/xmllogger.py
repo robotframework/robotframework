@@ -73,6 +73,7 @@ class XmlLogger(ResultVisitor):
         self._writer.element('doc', kw.doc)
         self._write_list('arguments', 'arg', (unic(a) for a in kw.args))
         self._write_list('assign', 'var', kw.assign)
+        self._write_list('tags', 'tag', (unic(t) for t in kw.tags))
 
     def end_keyword(self, kw):
         self._write_status(kw)

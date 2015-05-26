@@ -65,6 +65,7 @@ class NormalRunner(object):
                                doc=handler.shortdoc,
                                args=kw.args,
                                assign=self._get_assign(kw.assign),
+                               tags=handler.tags,
                                timeout=getattr(handler, 'timeout', ''),
                                type=kw.type,
                                status='NOT_RUN',

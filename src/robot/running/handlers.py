@@ -60,6 +60,7 @@ class _RunnableHandler(object):
         name = getattr(handler_method, 'robot_name', None) or handler_name
         self.name = utils.printable_name(name, code_style=True)
         self.arguments = self._parse_arguments(handler_method)
+        self.tags = self._get_tags(handler_method)
         self.pre_run_messages = None
         self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
@@ -68,6 +69,9 @@ class _RunnableHandler(object):
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError
+
+    def _get_tags(self, handler_method):
+        return list(getattr(handler_method, 'robot_tags', ()))
 
     def _get_argument_resolver(self, argspec):
         return ArgumentResolver(argspec)

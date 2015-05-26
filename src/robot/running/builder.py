@@ -146,6 +146,7 @@ class ResourceFileBuilder(object):
         kw = target.keywords.create(name=data.name,
                                     args=tuple(data.args),
                                     doc=unicode(data.doc),
+                                    tags=tuple(data.tags),
                                     return_=tuple(data.return_),
                                     timeout=self._get_timeout(data.timeout))
         for step_data in data.steps:
