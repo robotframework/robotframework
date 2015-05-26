@@ -68,5 +68,9 @@ Keyword Documentation
     ...    | *1* | *2* |\n
     ...    | foo | bar |
 
+Keyword tags
+    Keyword Tags Should Be   4
+    Keyword Tags Should Be   5    ?!?!??    Has    kw4    tags
+
 Non ASCII
     Keyword Doc Should Be    7    Hyvää yötä.\n\nСпасибо!

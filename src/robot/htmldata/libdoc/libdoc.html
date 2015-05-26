@@ -272,12 +272,14 @@
         <tr>
             <th class="kw">Keyword</th>
             <th class="args">Arguments</th>
+            {{if contains_tags}}<th class="tags">Tags</th>{{/if}}
             <th class="doc">Documentation</th>
         </tr>
         {{each keywords}}
         <tr class="kw-row {{if $value.matched === false}}no-{{/if}}match">
             <td class="kw"><a name="${encodeURIComponent($value.name)}"></a>${$value.name}</td>
             <td class="args">${$value.args}</td>
+            {{if contains_tags}}<td class="tags">${$value.tags.join(', ')}</td>{{/if}}
             <td class="doc">{{html $value.doc}}</td>
         </tr>
         {{/each}}

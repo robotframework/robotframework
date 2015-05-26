@@ -55,5 +55,10 @@ Keyword Documentation
     Keyword Doc Should Start With    1
     ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
 
+Keyword Tags
+    Keyword Tags Should Be    0    tag1    tag2
+    Keyword Tags Should Be    1
+    Keyword Tags Should Be    2
+
 Non ASCII
     Keyword Doc Should Be    2    Hyvää yötä.\n\nСпасибо!

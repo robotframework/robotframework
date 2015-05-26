@@ -91,7 +91,7 @@ class KeywordDocBuilder(object):
 
     def build_keyword(self, kw):
         return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),
-                          doc=kw.doc)
+                          doc=kw.doc, tags=kw.tags)
 
     def _get_args(self, argspec):
         required = argspec.positional[:argspec.minargs]

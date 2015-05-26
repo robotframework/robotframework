@@ -53,10 +53,11 @@ class LibraryDoc(object):
 
 class KeywordDoc(object):
 
-    def __init__(self, name='', args=None, doc=''):
+    def __init__(self, name='', args=(), doc='', tags=()):
         self.name = name
-        self.args = args or []
+        self.args = args
         self.doc = doc
+        self.tags = tags
 
     @property
     def shortdoc(self):

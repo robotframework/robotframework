@@ -28,6 +28,7 @@ kw 3
     [Arguments]  ${a1}   @{a2}
 
 kw 4  [Arguments]  ${positional}=default  @{varargs}  &{kwargs}
+      [Tags]    kw4    Has    tags    ?!?!??
 
 kw 5  [Documentation]   foo bar `kw`.
       ...

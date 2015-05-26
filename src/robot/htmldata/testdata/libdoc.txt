@@ -23,8 +23,9 @@ Documentation  *URL:*    http://robotframework.org
 One paragraph
     [Arguments]    ${one}
     [Documentation]    Hello, world!
+    [Tags]    tag
 
-Multiple paragraps
+Multiple paragraphs
     [Arguments]    ${one}    ${two}    ${three}=default
     [Documentation]    Hell, world!
     ...
@@ -32,6 +33,7 @@ Multiple paragraps
     ...    This is still part of second paragraph.
     ...
     ...    Third paragraph is _short_.
+    [Tags]    tag    another tag
 
 Tables alone
     [Documentation]
@@ -82,6 +84,7 @@ Nön-ÄSCÏÏ
     [Arguments]    ${ärg}=öööööööö
     [Documentation]
     ...    Älsö döc häs nön-äscïï stüff. Ïnclüdïng \u2603.
+    [Tags]    Nön    äscïï    tägß
 
 Special ½!"#¤%&/()=?<|>+-_.!~*'() chars
     [Documentation]

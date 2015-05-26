@@ -17,6 +17,6 @@ def library_keyword_tags_with_documentation():
     pass
 
 
-@keyword(tags=None)
+@keyword(tags=42)
 def invalid_library_keyword_tags():
     pass

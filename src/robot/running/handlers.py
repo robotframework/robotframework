@@ -16,7 +16,7 @@ import copy
 
 from robot import utils
 from robot.errors import DataError
-from robot.model import Keywords
+from robot.model import Keywords, Tags
 from robot.variables import contains_var, is_list_var
 
 from .arguments import (ArgumentResolver, ArgumentSpec, ArgumentMapper,
@@ -71,7 +71,7 @@ class _RunnableHandler(object):
         raise NotImplementedError
 
     def _get_tags(self, handler_method):
-        return list(getattr(handler_method, 'robot_tags', ()))
+        return Tags(getattr(handler_method, 'robot_tags', ()))
 
     def _get_argument_resolver(self, argspec):
         return ArgumentResolver(argspec)

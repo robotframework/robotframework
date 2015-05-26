@@ -222,3 +222,7 @@ class UserKeyword(object):
         :class:`~.Timeout.
         """
         return Timeout(*timeout) if timeout else None
+
+    @setter
+    def tags(self, tags):
+        return model.Tags(tags)
