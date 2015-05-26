@@ -1,4 +1,4 @@
-# Copyright 2008-2015 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -25,6 +25,6 @@ class Reserved(object):
     def run_keyword(self, name, args):
         error = "'%s' is a reserved keyword." % name
         if name in ['else', 'else if']:
-            error += " '%s' must be in uppercase (%s) when used as a marker with 'Run Keyword  If'." % (
+            error += " It must be in uppercase (%s) when used as a marker with 'Run Keyword  If'." % (
                 name, name.upper())
         raise Exception(error)
