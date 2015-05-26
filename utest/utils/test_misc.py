@@ -1,8 +1,10 @@
+import io
+import sys
 import unittest
 
-from robot.utils.misc import getdoc, printable_name, seq2str
-from robot.utils.asserts import assert_equals
-from robot.utils import IRONPYTHON
+from robot.utils import IRONPYTHON, JYTHON
+from robot.utils.asserts import assert_equals, assert_false, assert_raises
+from robot.utils.misc import getdoc, isatty, printable_name, seq2str
 
 
 class TestMiscUtils(unittest.TestCase):
@@ -41,6 +43,31 @@ class TestMiscUtils(unittest.TestCase):
                          ('foo-bar', 'Foo-bar'),
                          ('', '')]:
             assert_equals(printable_name(inp, code_style=True), exp)
+
+    def test_isatty_with_stdout(self):
+        # file class based in PY2, io module based in PY3
+        assert_equals(isatty(sys.__stdout__), sys.__stdout__.isatty())
+
+    def test_isatty_with_io(self):
+        with io.StringIO() as stream:
+            assert_false(isatty(stream))
+            wrapper = io.TextIOWrapper(stream)
+            assert_false(isatty(wrapper))
+
+    def test_isatty_with_detached_io_buffer(self):
+        # make sure that isatty() checks for detached io stream buffers
+        # (otherwise it would raise an Exception)
+        with io.StringIO() as stream:
+            wrapper = io.TextIOWrapper(stream)
+            if sys.version_info >= (2, 7):
+                wrapper.detach() #==> wrapper.buffer is None
+                # Jython 2.7 behaves like CPython 2.6 in that case
+                exc_type = ValueError if not JYTHON else AttributeError
+            else: # no .detach and different behaviour if .buffer is None
+                wrapper.buffer = None
+                exc_type = AttributeError
+            assert_raises(exc_type, wrapper.isatty)
+            assert_false(isatty(wrapper))
 
 
 class TestGetdoc(unittest.TestCase):
