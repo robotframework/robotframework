@@ -98,32 +98,38 @@
         var name = $('#include-name');
         var args = $('#include-args');
         var doc = $('#include-doc');
+        var tags = $('#include-tags');
         var include = {name: name.prop('checked'),
                        args: args.prop('checked'),
-                       doc: doc.prop('checked')};
-        if ((!include.name) && (!include.args)) {
+                       doc: doc.prop('checked'),
+                       tags: tags.prop('checked')};
+        if ((!include.name) && (!include.args) && (!include.doc)) {
+            tags.prop('disabled', true);
+        } else if ((!include.name) && (!include.args) && (!include.tags)) {
             doc.prop('disabled', true);
-        } else if ((!include.name) && (!include.doc)) {
+        } else if ((!include.name) && (!include.doc) && (!include.tags)) {
             args.prop('disabled', true);
-        } else if ((!include.args) && (!include.doc)) {
+        } else if ((!include.args) && (!include.doc) && (!include.tags)) {
             name.prop('disabled', true);
         } else {
             name.prop('disabled', false);
             args.prop('disabled', false);
             doc.prop('disabled', false);
+            tags.prop('disabled', false);
         }
         return include;
     }
 
     function markMatches(string, include) {
         var regexp = new RegExp(util.regexpEscape(string), 'i');
-        var result = {};
+        var result = {contains_tags: libdoc.contains_tags};
         var matchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
             kw.matched = (include.name && regexp.test(kw.name) ||
                           include.args && regexp.test(kw.args) ||
-                          include.doc && regexp.test($(kw.doc).text()));
+                          include.doc && regexp.test($(kw.doc).text()) ||
+                          include.tags && regexp.test(kw.tags));
             if (kw.matched)
                 matchCount++;
             return kw
@@ -149,6 +155,9 @@
         }
         if (include.doc) {
             keywords.find('.doc').highlight(string);
+        }
+        if (include.tags) {
+            keywords.find('.tags').highlight(string);
         }
     }
 
@@ -224,6 +233,8 @@
                 <label for="include-args">Arguments</label>
                 <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
                 <label for="include-doc">Documentation</label>
+                <input type="checkbox" id="include-tags" onclick="doSearch()" checked>
+                <label for="include-tags">Tags</label>
             </fieldset>
             <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
             <label for="hide-unmatched">Hide unmatched keywords</label>
