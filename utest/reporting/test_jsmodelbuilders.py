@@ -66,7 +66,8 @@ class TestBuildTestSuite(unittest.TestCase):
                      'PASS', '20111204 19:42:42.000', '20111204 19:42:42.042')
         self._verify_keyword(kw, 1, 'KW Name', 'libname',
                              '<a href="http://doc">http://doc</a>',
-                             'arg1, arg2', '${v1}, ${v2}', '1 second', 1, 0, 42)
+                             'arg1, arg2', '${v1}, ${v2}', 'tag1, tag2',
+                             '1 second', 1, 0, 42)
 
     def test_default_message(self):
         self._verify_message(Message())
@@ -128,7 +129,7 @@ class TestBuildTestSuite(unittest.TestCase):
         context = JsBuildingContext()
         model = SuiteBuilder(context).build(suite)
         self._verify_status(model[5], start=0)
-        self._verify_status(model[-2][0][7], start=1)
+        self._verify_status(model[-2][0][8], start=1)
         self._verify_mapped(model[-2][0][-1], context.strings,
                             ((10, 2, 'Message'), (11, 1, '')))
         self._verify_status(model[-3][0][5], start=1000)
@@ -158,12 +159,12 @@ class TestBuildTestSuite(unittest.TestCase):
                                       critical, doc, tags, status, keywords)
 
     def _verify_keyword(self, keyword, type=0, kwname='', libname='', doc='',
-                        args='', assign='', timeout='', status=0, start=None,
-                        elapsed=0, keywords=(), messages=()):
+                        args='', assign='', tags='', timeout='', status=0,
+                        start=None, elapsed=0, keywords=(), messages=()):
         status = (status, start, elapsed)
         doc = '<p>%s</p>' % doc if doc else ''
         return self._build_and_verify(KeywordBuilder, keyword, type, kwname,
-                                      libname, timeout, doc, args, assign,
+                                      libname, timeout, doc, args, assign, tags,
                                       status, keywords, messages)
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):

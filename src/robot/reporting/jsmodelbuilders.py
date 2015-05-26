@@ -135,6 +135,7 @@ class KeywordBuilder(_Builder):
                     self._html(kw.doc),
                     self._string(', '.join(kw.args)),
                     self._string(', '.join(kw.assign)),
+                    self._string(', '.join(kw.tags)),
                     self._get_status(kw),
                     self._build_keywords(kw.keywords, split),
                     tuple(self._build_message(m) for m in kw.messages))

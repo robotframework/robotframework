@@ -340,6 +340,12 @@ function addTestExecutionLog(main) {
           <td class="doc">{{html doc()}}</td>
         </tr>
         {{/if}}
+        {{if tags}}
+        <tr>
+          <th>Tags:</th>
+          <td>{{html tags}}</td>
+        </tr>
+        {{/if}}
         {{if timeout}}
         <tr>
           <th>Timeout:</th>
