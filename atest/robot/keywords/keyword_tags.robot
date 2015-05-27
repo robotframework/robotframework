@@ -22,7 +22,7 @@ Invalid library keyword tags
     [Template]    NONE
     Check Test Case    ${TESTNAME}
     Check log message    ${ERRORS[0]}
-    ...    Adding keyword 'Invalid library keyword tags' to library 'LibraryWithKeywordTags' failed: DataError: xxxxx
+    ...    Adding keyword 'invalid_library_keyword_tags' to library 'LibraryWithKeywordTags' failed: Expected tags to list like, got integer.
     ...    level=ERROR
 
 User keyword tags with `[Tags]` setting
