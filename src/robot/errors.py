@@ -80,23 +80,22 @@ class ExecutionFailed(RobotError):
         self.timeout = timeout
         self.syntax = syntax
         self.exit = exit
-        self.continue_on_failure = continue_on_failure
+        self._continue_on_failure = continue_on_failure
         self.return_value = return_value
 
     @property
     def dont_continue(self):
         return self.timeout or self.syntax or self.exit
 
-    def _get_continue_on_failure(self):
+    @property
+    def continue_on_failure(self):
         return self._continue_on_failure
 
-    def _set_continue_on_failure(self, continue_on_failure):
+    @continue_on_failure.setter
+    def continue_on_failure(self, continue_on_failure):
         self._continue_on_failure = continue_on_failure
         for child in getattr(self, '_errors', []):
             child.continue_on_failure = continue_on_failure
-
-    continue_on_failure = property(_get_continue_on_failure,
-                                   _set_continue_on_failure)
 
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
@@ -109,6 +108,10 @@ class ExecutionFailed(RobotError):
 
     def get_errors(self):
         return [self]
+
+    @property
+    def status(self):
+        return 'FAIL'
 
 
 class HandlerExecutionFailed(ExecutionFailed):
@@ -200,6 +203,10 @@ class ExecutionPassed(ExecutionFailed):
         if not self._earlier_failures:
             return None
         return ExecutionFailures(self._earlier_failures)
+
+    @property
+    def status(self):
+        return 'PASS' if not self._earlier_failures else 'FAIL'
 
 
 class PassExecution(ExecutionPassed):

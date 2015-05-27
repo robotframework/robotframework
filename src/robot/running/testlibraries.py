@@ -211,6 +211,9 @@ class _BaseTestLibrary(object):
     def _try_to_create_handler(self, name, method):
         try:
             handler = self._create_handler(name, method)
+        except DataError as err:
+            self._report_adding_keyword_failed(name, unicode(err), level='ERROR')
+            return None, False
         except:
             self._report_adding_keyword_failed(name)
             return None, False

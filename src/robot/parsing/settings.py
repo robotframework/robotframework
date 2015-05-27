@@ -80,7 +80,7 @@ class Setting(object):
         return self.is_set()
 
     def __iter__(self):
-        return iter(self.value)
+        return iter(self.value or ())
 
     def __unicode__(self):
         return unicode(self.value or '')

@@ -43,6 +43,7 @@ class HandlerDataMock:
         self.doc = Fake()
         self.timeout = Fake()
         self.return_ = Fake()
+        self.tags = ()
         self.teardown = None
 
 

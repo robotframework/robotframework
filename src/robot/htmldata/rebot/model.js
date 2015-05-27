@@ -145,6 +145,7 @@ window.model = (function () {
         kw.type = data.type;
         kw.arguments = data.args;
         kw.assign = data.assign + (data.assign ? ' =' : '');
+        kw.tags = data.tags;
         kw.timeout = data.timeout;
         kw.populateMessages = createIterablePopulator('Message');
         kw.populateKeywords = createIterablePopulator('Keyword');

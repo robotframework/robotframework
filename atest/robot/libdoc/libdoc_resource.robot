@@ -120,6 +120,12 @@ Keyword Doc Should Be
     ${doc}=    Catenate     SEPARATOR=    @{doc}
     Element Text Should Be    ${kws[${index}]}    ${doc}    doc
 
+Keyword Tags Should Be
+    [Arguments]    ${index}    @{expected}
+    ${kws}=    Get Elements    ${LIBDOC}    kw
+    ${tags}=   Get Elements Texts    ${kws[${index}]}    tags/tag
+    Should Be Equal    ${tags}    ${expected}
+
 Get Keyword Arguments
     [Arguments]    ${index}   ${type}=kw
     ${kws}=    Get Elements    ${LIBDOC}    ${type}

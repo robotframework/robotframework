@@ -4,7 +4,7 @@ from robot.utils.asserts import *
 
 from robot.utils.text import cut_long_message, _count_line_lengths, \
     _MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN,\
-    get_console_length, pad_console_length
+    get_console_length, pad_console_length, split_tags_from_doc
 
 
 class NoCutting(unittest.TestCase):
@@ -159,6 +159,41 @@ class TestConsoleWidth(unittest.TestCase):
     def test_cut_east_asian(self):
         assert_equal(pad_console_length(self.len16_asian, 10), u'\u6c49\u5b57\u5e94... ')
         assert_equal(pad_console_length(self.mixed_26, 11), u'012345\u6c49...')
+
+
+class TestDocSplitter(unittest.TestCase):
+
+    def test_doc_without_tags(self):
+        docs = ["Single doc line.",
+                """Hello, we dont have tags here.
+
+                No sir. No tags.""",
+                "Now Tags: must, start from beginning of the row",
+                "   We strip  the trailing whitespace  \n \n"]
+        for doc in docs:
+            self._assert_doc_and_tags(doc, doc.rstrip(), [])
+
+    def _assert_doc_and_tags(self, original, expected_doc, expected_tags):
+        doc, tags = split_tags_from_doc(original)
+        assert_equal(doc, expected_doc)
+        assert_equal(tags, expected_tags)
+
+    def test_doc_with_tags(self):
+        sets = [
+            ('Tags: foo, bar',                  '',             ['foo', 'bar']),
+            ('  Tags: foo   ',                  '',             ['foo']),
+            ('Hello\nTags: foo, bar',           'Hello',        ['foo', 'bar']),
+            ('Tags: bar\n   Tags: foo   ',      'Tags: bar',    ['foo']),
+            ('Tags: bar, Tags:, foo   ',        '',             ['bar', 'Tags:', 'foo']),
+            ('tags: foo',                       '',             ['foo']),
+            ('   tags: foo ,  bar  ',           '',             ['foo', 'bar']),
+            ('Hello\n   taGS: foo, bar',        'Hello',        ['foo', 'bar']),
+            (' Hello\n   taGS: f, b \n\n \n',   ' Hello',       ['f', 'b']),
+            ('Hello\nNl  \n  \nTags: foo',      'Hello\nNl',    ['foo']),
+        ]
+        for original, exp_doc, exp_tags in sets:
+            self._assert_doc_and_tags(original, exp_doc, exp_tags)
+            self._assert_doc_and_tags(original+'\n', exp_doc, exp_tags)
 
 
 if __name__ == '__main__':

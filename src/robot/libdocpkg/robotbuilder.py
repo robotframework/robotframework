@@ -80,8 +80,7 @@ class ResourceDocBuilder(object):
         raise DataError("Resource file '%s' does not exist." % path)
 
     def _get_doc(self, res):
-        doc = res.doc or "Documentation for resource file `%s`." % res.name
-        return utils.unescape(doc)
+        return res.doc or "Documentation for resource file `%s`." % res.name
 
 
 class KeywordDocBuilder(object):
@@ -90,8 +89,9 @@ class KeywordDocBuilder(object):
         return [self.build_keyword(kw) for kw in lib.handlers]
 
     def build_keyword(self, kw):
+        doc, tags = utils.split_tags_from_doc(kw.doc)
         return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),
-                          doc=kw.doc)
+                          doc=doc, tags=kw.tags+tags)
 
     def _get_args(self, argspec):
         required = argspec.positional[:argspec.minargs]

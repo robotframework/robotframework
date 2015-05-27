@@ -67,6 +67,16 @@ Keyword Documentation
     ...    \n
     ...    | *1* | *2* |\n
     ...    | foo | bar |
+    Keyword Doc Should Be   7
+    ...    Summary line\n
+    ...    \n
+    ...    Another line.
+
+Keyword tags
+    Keyword Tags Should Be   4
+    Keyword Tags Should Be   5    ?!?!??    Has    kw4    tags
+    Keyword Tags Should Be   6    \${3}   a    b
+    Keyword Tags Should Be   7    bar    dar    foo
 
 Non ASCII
-    Keyword Doc Should Be    7    Hyvää yötä.\n\nСпасибо!
+    Keyword Doc Should Be    8    Hyvää yötä.\n\nСпасибо!

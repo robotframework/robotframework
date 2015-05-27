@@ -12,6 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from itertools import chain
+
+from robot.model import Tags
 from robot.utils import setter
 
 from .writer import LibdocWriter
@@ -46,6 +49,10 @@ class LibraryDoc(object):
     def keywords(self, kws):
         return sorted(kws)
 
+    @property
+    def all_tags(self):
+        return Tags(chain.from_iterable(kw.tags for kw in self.keywords))
+
     def save(self, output=None, format='HTML'):
         with LibdocOutput(output, format) as outfile:
             LibdocWriter(format).write(self, outfile)
@@ -53,10 +60,11 @@ class LibraryDoc(object):
 
 class KeywordDoc(object):
 
-    def __init__(self, name='', args=None, doc=''):
+    def __init__(self, name='', args=(), doc='', tags=()):
         self.name = name
-        self.args = args or []
+        self.args = args
         self.doc = doc
+        self.tags = Tags(tags)
 
     @property
     def shortdoc(self):

@@ -573,6 +573,7 @@ class UserKeyword(TestCase):
         self.return_ = Return('[Return]', self)
         self.timeout = Timeout('[Timeout]', self)
         self.teardown = Fixture('[Teardown]', self)
+        self.tags = Tags('[Tags]', self)
         self.steps = []
 
     _setters = {'documentation': lambda s: s.doc.populate,
@@ -580,17 +581,18 @@ class UserKeyword(TestCase):
                 'arguments': lambda s: s.args.populate,
                 'return': lambda s: s.return_.populate,
                 'timeout': lambda s: s.timeout.populate,
-                'teardown': lambda s: s.teardown.populate}
+                'teardown': lambda s: s.teardown.populate,
+                'tags': lambda s: s.tags.populate}
 
     def _add_to_parent(self, test):
         self.parent.keywords.append(test)
 
     @property
     def settings(self):
-        return [self.args, self.doc, self.timeout, self.teardown, self.return_]
+        return [self.args, self.doc, self.tags, self.timeout, self.teardown, self.return_]
 
     def __iter__(self):
-        for element in [self.args, self.doc, self.timeout] \
+        for element in [self.args, self.doc, self.tags, self.timeout] \
                         + self.steps + [self.teardown, self.return_]:
             yield element
 

@@ -24,12 +24,22 @@ class VariableAssigner(object):
 
     def __init__(self, assignment):
         validator = AssignmentValidator()
-        assignment = [validator.validate(var) for var in assignment]
-        self._return_resolver = ReturnValueResolver(assignment)
+        try:
+            self.assignment = [validator.validate(var) for var in assignment]
+            self.error = None
+        except DataError as err:
+            self.assignment = assignment
+            self.error = err
+
+    def validate_assignment(self):
+        if self.error:
+            raise self.error
 
     def assign(self, context, return_value):
+        self.validate_assignment()
         context.trace(lambda: 'Return: %s' % prepr(return_value))
-        for name, value in self._return_resolver.resolve(return_value):
+        resolver = ReturnValueResolver(self.assignment)
+        for name, value in resolver.resolve(return_value):
             if not self._extended_assign(name, value, context.variables):
                 value = self._normal_assign(name, value, context.variables)
             context.info(format_assign_message(name, value))

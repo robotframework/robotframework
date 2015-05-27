@@ -119,7 +119,7 @@ class KeywordHandler(_Handler):
 
     def _children(self):
         return [DocHandler(), ArgumentsHandler(), AssignHandler(),
-                KeywordStatusHandler(), MessageHandler(), self]
+                TagsHandler(), KeywordStatusHandler(), MessageHandler(), self]
 
 
 class MessageHandler(_Handler):

@@ -67,10 +67,12 @@ class JavaDocBuilder(object):
         return [self._keyword_doc(m) for m in doc.methods()]
 
     def _keyword_doc(self, method):
+        doc, tags = utils.split_tags_from_doc(self._get_doc(method))
         return KeywordDoc(
             name=utils.printable_name(method.name(), code_style=True),
             args=self._get_keyword_arguments(method),
-            doc=self._get_doc(method)
+            doc=doc,
+            tags=tags
         )
 
     def _get_keyword_arguments(self, method):

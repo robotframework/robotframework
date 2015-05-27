@@ -34,9 +34,7 @@ class TestSuite(ModelObject):
     def __init__(self, name='', doc='', metadata=None, source=None):
         #: Parent :class:`TestSuite` or `None`.
         self.parent = None
-        #: Test suite name.
-        self.name = name
-        #: Test suite documentation.
+        self._name = name
         self.doc = doc
         #: Test suite metadata as a dictionary.
         self.metadata = metadata
@@ -56,13 +54,13 @@ class TestSuite(ModelObject):
         parent_visitors = self.parent._visitors if self.parent else []
         return self._my_visitors + parent_visitors
 
-    def _get_name(self):
+    @property
+    def name(self):
         return self._name or ' & '.join(s.name for s in self.suites)
 
-    def _set_name(self, name):
+    @name.setter
+    def name(self, name):
         self._name = name
-
-    name = property(_get_name, _set_name)
 
     @setter
     def metadata(self, metadata):

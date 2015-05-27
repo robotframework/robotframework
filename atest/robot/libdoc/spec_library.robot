@@ -28,9 +28,9 @@ Named Args
     Named Args Should Be    no
 
 Init Documentation
-    Init Doc Should Start With    0   Creates new Example test library 1
-    Init Doc Should Start With    1   Creates new Example test library 2
-    Init Doc Should Start With    2   Creates new Example test library 3
+    Init Doc Should Be    0   Creates new Example test library 1
+    Init Doc Should Be    1   Creates new Example test library 2
+    Init Doc Should Be    2   Creates new Example test library 3
 
 Init Arguments
     Init Arguments Should Be    0
@@ -46,14 +46,20 @@ Keyword Arguments
     Keyword Arguments Should Be   1
 
 Keyword Documentation
-    Keyword Doc Should Start With    0
+    Keyword Doc Should Be    0
     ...    Takes one `arg` and *does nothing* with it.\n\n
     ...    Example:\n
     ...    | Your Keyword | xxx |\n
     ...    | Your Keyword | yyy |\n\n
     ...    See `My Keyword` for no more information.
-    Keyword Doc Should Start With    1
-    ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
+    Keyword Doc Should Be    1
+    ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation\n
+    ...    Tags: in spec these wont become tags
+
+Keyword Tags
+    Keyword Tags Should Be    0    tag1    tag2
+    Keyword Tags Should Be    1
+    Keyword Tags Should Be    2
 
 Non ASCII
     Keyword Doc Should Be    2    Hyvää yötä.\n\nСпасибо!
