@@ -41,6 +41,7 @@ Tables alone
     ...    | 1st | table | here |
     ...
     ...    | 2nd | table | has | only | one | row |
+    [Tags]    another tag
 
 Preformatted
     [Documentation]
@@ -48,6 +49,7 @@ Preformatted
     ...    | has two lines
     ...
     ...    | Second has only one
+    [Tags]    TAG
 
 Lists
     [Arguments]    @{list}

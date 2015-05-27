@@ -39,10 +39,13 @@
         parseTemplates();
         document.title = libdoc.name;
         renderTemplate('base', libdoc, $('body'));
-        if (libdoc.inits.length > 0) {
+        if (libdoc.inits.length) {
             renderTemplate('importing', libdoc);
         }
         renderTemplate('shortcuts', libdoc);
+        if (libdoc.contains_tags) {
+            renderTemplate('tags', libdoc);
+        }
         renderTemplate('keywords', libdoc);
         renderTemplate('footer', libdoc);
         scrollToHash();
@@ -80,6 +83,13 @@
             var hash = window.location.hash.substring(1).replace('+', ' ');
             window.location.hash = hash;
         }
+    }
+
+    function tagSearch(tag) {
+        var include = {tags: true, tagsExact: true};
+        markMatches(tag, include);
+        highlightMatches(tag, include);
+        $('#keywords-container').find('.kw-row').addClass('hide-unmatched');
     }
 
     function doSearch() {
@@ -120,22 +130,28 @@
         return include;
     }
 
-    function markMatches(string, include) {
-        var regexp = new RegExp(util.regexpEscape(string), 'i');
+    function markMatches(pattern, include) {
+        pattern = util.regexpEscape(pattern);
+        if (include.tagsExact) {
+            pattern = '^' + pattern + '$';
+        }
+        var regexp = new RegExp(pattern, 'i');
+        var test = regexp.test.bind(regexp);
         var result = {contains_tags: libdoc.contains_tags};
         var matchCount = 0;
         result.keywords = util.map(libdoc.keywords, function (kw) {
             kw = $.extend({}, kw);
-            kw.matched = (include.name && regexp.test(kw.name) ||
-                          include.args && regexp.test(kw.args) ||
-                          include.doc && regexp.test($(kw.doc).text()) ||
-                          include.tags && regexp.test(kw.tags));
+            kw.matched = (include.name && test(kw.name) ||
+                          include.args && test(kw.args) ||
+                          include.doc && test($(kw.doc).text()) ||
+                          include.tags && util.any(util.map(kw.tags, test)));
             if (kw.matched)
                 matchCount++;
             return kw
         });
         renderTemplate('shortcuts', result);
         renderTemplate('keywords', result);
+        renderTemplate('tags', libdoc);
         var ending = matchCount != 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
         $('#altogether-count').hide();
@@ -157,7 +173,14 @@
             keywords.find('.doc').highlight(string);
         }
         if (include.tags) {
-            keywords.find('.tags').highlight(string);
+            var matches = keywords.find('.tags').find('a').add(
+                    $('#tags-container').find('a'));
+            if (include.tagsExact) {
+                matches = matches.filter(function (index, tag) {
+                    return $(tag).text().toUpperCase() == string.toUpperCase();
+                });
+            }
+            matches.highlight(string);
         }
     }
 
@@ -184,6 +207,7 @@
 
     function resetKeywords() {
         renderTemplate('shortcuts', libdoc);
+        renderTemplate('tags', libdoc);
         renderTemplate('keywords', libdoc);
         $('#match-count').hide();
         $('#altogether-count').show();
@@ -219,6 +243,7 @@
     </div>
     <div id="importing-container"></div>
     <div id="shortcuts-container"></div>
+    <div id="tags-container"></div>
     <div id="keywords-container"></div>
     <div id="footer-container"></div>
     <form id="search" action="javascript:void(0)">
@@ -233,8 +258,10 @@
                 <label for="include-args">Arguments</label>
                 <input type="checkbox" id="include-doc" onclick="doSearch()" checked>
                 <label for="include-doc">Documentation</label>
+                {{if libdoc.contains_tags}}
                 <input type="checkbox" id="include-tags" onclick="doSearch()" checked>
                 <label for="include-tags">Tags</label>
+                {{/if}}
             </fieldset>
             <input type="checkbox" id="hide-unmatched" onclick="setMatchVisibility()" checked>
             <label for="hide-unmatched">Hide unmatched keywords</label>
@@ -277,25 +304,49 @@
     </div>
 </script>
 
+<script type="text/x-jquery-tmpl" id="tags-template">
+    <h2 id="Tags">Tags</h2>
+    <div class='shortcuts'>
+        {{each all_tags}}
+        <a href="javascript:tagSearch('${$value}')">${$value}</a> &middot;
+        {{/each}}
+        <a href="javascript:resetKeywords()" class="normal-first-letter"
+           title="Reset search">[Reset]</a>
+    </div>
+</script>
+
 <script type="text/x-jquery-tmpl" id="keywords-template">
     <h2 id="Keywords">Keywords</h2>
     <table border="1" class="keywords">
         <tr>
             <th class="kw">Keyword</th>
             <th class="args">Arguments</th>
-            {{if contains_tags}}<th class="tags">Tags</th>{{/if}}
+            {{if libdoc.contains_tags}}
+            <th class="tags">Tags</th>
+            {{/if}}
             <th class="doc">Documentation</th>
         </tr>
         {{each keywords}}
-        <tr class="kw-row {{if $value.matched === false}}no-{{/if}}match">
-            <td class="kw"><a name="${encodeURIComponent($value.name)}"></a>${$value.name}</td>
-            <td class="args">${$value.args}</td>
-            {{if contains_tags}}<td class="tags">${$value.tags.join(', ')}</td>{{/if}}
-            <td class="doc">{{html $value.doc}}</td>
-        </tr>
+            {{tmpl($value) 'keyword-template'}}
         {{/each}}
     </table>
 </script>
+
+<script type="text/x-jquery-tmpl" id="keyword-template">
+    <tr class="kw-row {{if matched === false}}no-{{/if}}match">
+        <td class="kw"><a name="${encodeURIComponent(name)}"></a>${name}</td>
+        <td class="args">${args}</td>
+        {{if libdoc.contains_tags}}
+        <td class="tags">
+            {{each tags}}
+            <a href="javascript:tagSearch('${$value}')">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
+            {{/each}}
+        </td>
+        {{/if}}
+        <td class="doc">{{html doc}}</td>
+    </tr>
+</script>
+
 
 <script type="text/x-jquery-tmpl" id="footer-template">
     <p class="footer">
