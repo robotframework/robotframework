@@ -30,6 +30,7 @@ Multiple paragraphs
     [Documentation]    Hell, world!
     ...
     ...    Second paragraph *has formatting* and [http://example.com|link].
+    ...    It also refers to argument ``one`` using ``code`` style.
     ...    This is still part of second paragraph.
     ...
     ...    Third paragraph is _short_.

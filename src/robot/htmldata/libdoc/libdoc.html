@@ -335,7 +335,11 @@
 <script type="text/x-jquery-tmpl" id="keyword-template">
     <tr class="kw-row {{if matched === false}}no-{{/if}}match">
         <td class="kw"><a name="${encodeURIComponent(name)}"></a>${name}</td>
-        <td class="args">${args}</td>
+        <td class="args">
+            {{each args}}
+            <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
+            {{/each}}
+        </td>
         {{if libdoc.contains_tags}}
         <td class="tags">
             {{each tags}}

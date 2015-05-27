@@ -69,7 +69,7 @@ class JsonConverter(object):
     def _convert_keyword(self, kw):
         return {
             'name': kw.name,
-            'args': ', '.join(kw.args),
+            'args': kw.args,
             'doc': self._doc_formatter.html(kw.doc),
             'shortdoc': kw.shortdoc,
             'tags': tuple(kw.tags),
