@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from .charwidth import get_char_width
 from .misc import seq2str2
 from .unic import unic
@@ -21,6 +23,7 @@ _MAX_ASSIGN_LENGTH = 200
 _MAX_ERROR_LINES = 40
 _MAX_ERROR_LINE_LENGTH = 78
 _ERROR_CUT_EXPLN = '    [ Message content over the limit has been removed. ]'
+_TAGS_RE = re.compile(r'\s*tags:(.*)', re.IGNORECASE)
 
 
 def cut_long_message(msg):
@@ -105,3 +108,16 @@ def _lose_width(text, diff):
         lost += get_console_length(text[-1])
         text = text[:-1]
     return text
+
+
+def split_tags_from_doc(doc):
+    doc = doc.rstrip()
+    tags = []
+    if not doc:
+        return doc, tags
+    lines = doc.splitlines()
+    match = _TAGS_RE.match(lines[-1])
+    if match:
+        doc = '\n'.join(lines[:-1]).rstrip()
+        tags = [tag.strip() for tag in match.group(1).split(',')]
+    return doc, tags

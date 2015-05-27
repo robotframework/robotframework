@@ -51,26 +51,27 @@ def InitHandler(library, method, docgetter=None):
 
 class _RunnableHandler(object):
     type = 'library'
-    _doc = ''
     _executed_in_dry_run = ('BuiltIn.Import Library',
                             'BuiltIn.Set Library Search Order')
 
-    def __init__(self, library, handler_name, handler_method):
+    def __init__(self, library, handler_name, handler_method, doc=''):
         self.library = library
         name = getattr(handler_method, 'robot_name', None) or handler_name
         self.name = utils.printable_name(name, code_style=True)
         self.arguments = self._parse_arguments(handler_method)
-        self.tags = self._get_tags(handler_method)
         self.pre_run_messages = None
         self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
         self._argument_resolver = self._get_argument_resolver(self.arguments)
+        doc, tags = utils.split_tags_from_doc(doc)
+        self._doc = doc
+        self.tags = self._get_tags_from_attribute(handler_method) + tags
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError
 
-    def _get_tags(self, handler_method):
+    def _get_tags_from_attribute(self, handler_method):
         return Tags(getattr(handler_method, 'robot_tags', ()))
 
     def _get_argument_resolver(self, argspec):
@@ -173,8 +174,8 @@ class _RunnableHandler(object):
 class _PythonHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
-        _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self._doc = utils.getdoc(handler_method)
+        _RunnableHandler.__init__(self, library, handler_name, handler_method,
+                                  utils.getdoc(handler_method))
 
     def _parse_arguments(self, handler_method):
         return PythonArgumentParser().parse(handler_method, self.longname)
@@ -211,9 +212,8 @@ class _DynamicHandler(_RunnableHandler):
                  argspec=None):
         self._argspec = argspec
         _RunnableHandler.__init__(self, library, handler_name,
-                                  dynamic_method.method)
+                                  dynamic_method.method, utils.unic(doc or ''))
         self._run_keyword_method_name = dynamic_method.name
-        self._doc = doc is not None and utils.unic(doc) or ''
         self._supports_kwargs = dynamic_method.supports_kwargs
         if argspec and argspec[-1].startswith('**'):
             if not self._supports_kwargs:

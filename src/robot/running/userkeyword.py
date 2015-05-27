@@ -87,9 +87,11 @@ class UserKeywordHandler(object):
     def init_keyword(self, variables):
         # TODO: Should use runner and not change internal state like this.
         # Timeouts should also be cleaned up in general.
-        self.doc = variables.replace_string(self._doc, ignore_errors=True)
+        doc = variables.replace_string(self._doc, ignore_errors=True)
+        doc, tags = utils.split_tags_from_doc(doc)
+        self.doc = doc
         self.tags = [variables.replace_string(tag, ignore_errors=True)
-                     for tag in self._tags]
+                     for tag in self._tags] + tags
         if self._timeout:
             self.timeout = KeywordTimeout(self._timeout.value,
                                           self._timeout.message,

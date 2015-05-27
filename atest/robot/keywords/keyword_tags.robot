@@ -12,8 +12,10 @@ Library keyword tags with `keyword` decorator
     2    one
 
 Library keyword tags with documentation
-    [Tags]    not ready
     one    two words
+
+Library keyword tags with documentation and attribute
+    2    one    two words
 
 Invalid library keyword tags
     [Tags]    not ready
@@ -27,8 +29,13 @@ User keyword tags with `[Tags]` setting
     2    first
 
 User keyword tags with documentation
-    [Tags]    not ready
     3    one    two words
+
+User keyword tags with documentation and setting
+    2    3    one    two words
+
+Dynamic library keyword with tags
+    bar    foo
 
 *** Keywords ***
 Keyword tags should be
