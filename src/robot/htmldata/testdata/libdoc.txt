@@ -30,6 +30,7 @@ Multiple paragraphs
     [Documentation]    Hell, world!
     ...
     ...    Second paragraph *has formatting* and [http://example.com|link].
+    ...    It also refers to argument ``one`` using ``code`` style.
     ...    This is still part of second paragraph.
     ...
     ...    Third paragraph is _short_.
@@ -41,6 +42,7 @@ Tables alone
     ...    | 1st | table | here |
     ...
     ...    | 2nd | table | has | only | one | row |
+    [Tags]    another tag
 
 Preformatted
     [Documentation]
@@ -48,6 +50,7 @@ Preformatted
     ...    | has two lines
     ...
     ...    | Second has only one
+    [Tags]    TAG
 
 Lists
     [Arguments]    @{list}
