@@ -22,49 +22,57 @@ a:hover, a:active {
     text-decoration: underline;
     color: black;
 }
-div.shortcuts {
+.shortcuts {
     margin: 1em 0;
     font-size: 0.9em;
 }
-div.shortcuts a {
+.shortcuts a {
     display: inline-block;
     text-decoration: none;
     white-space: nowrap;
     color: black;
 }
-div.shortcuts a::first-letter {
-    font-weight: bold;
-    font-size: 1.05em;
-    letter-spacing: 0.1em;
-}
-div.shortcuts a:hover {
+.shortcuts a:hover {
     text-decoration: underline;
 }
-table.keywords {
+.shortcuts a::first-letter {
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}
+.normal-first-letter::first-letter {
+    font-weight: normal !important;
+    letter-spacing: 0 !important;
+}
+.keywords {
     border: 2px solid black;
     border-collapse: collapse;
     empty-cells: show;
     margin: 0.3em 0;
     width: 100%;
 }
-table.keywords th, table.keywords td {
+.keywords th, .keywords td {
     border: 2px solid black;
     padding: 0.2em;
     vertical-align: top;
 }
-table.keywords th {
+.keywords th {
     background: #bbb;
     color: black;
 }
-table.keywords td.kw {
+.kw, .args, .tags {
     min-width: 100px;
     max-width: 20%;
+}
+td.kw {
     font-weight: bold;
 }
-table.keywords td.args {
-    min-width: 100px;
-    max-width: 20%;
+.args span {
     font-style: italic;
+    padding: 0 0.1em;
+}
+.tags a {
+    color: inherit;
+    padding: 0 0.1em;
 }
 .footer {
     font-size: 0.9em;
@@ -83,7 +91,7 @@ table.keywords td.args {
     z-index: 1000;
 }
 #search {
-    width:30em;
+    width: 30em;
     display: none;
 }
 #open-search {
