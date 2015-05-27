@@ -19,6 +19,7 @@ List some keywords
     ...   kw 3
     ...   kw 4
     ...   kw 5
+    ...   kw 6
 
 Show whole library
     Run Libdoc And Set Output    Dialogs show

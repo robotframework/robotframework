@@ -75,3 +75,6 @@ Only last list is varargs
 
 Last argument overrides
     Keyword Arguments Should Be     3    normalArray  normalMap  normal
+
+Keyword tags
+    Keyword Tags Should Be    4    bar    foo

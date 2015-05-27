@@ -44,6 +44,15 @@ kw 5  [Documentation]   foo bar `kw`.
       ...
       ...  | *1* | *2* |
       ...  | foo | bar |
+      ...
+      ...  tags: a, b, ${3}
+
+kw 6
+    [Documentation]    Summary line
+    ...
+    ...                 Another line.
+    ...                 Tags: foo, bar
+    [Tags]              foo    dar
 
 Embedded ${arguments}
 

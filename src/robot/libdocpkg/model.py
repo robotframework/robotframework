@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter
+from robot.model import Tags
+from robot.utils import setter, split_tags_from_doc
 
 from .writer import LibdocWriter
 from .output import LibdocOutput
@@ -57,7 +58,7 @@ class KeywordDoc(object):
         self.name = name
         self.args = args
         self.doc = doc
-        self.tags = tags
+        self.tags = Tags(tags)
 
     @property
     def shortdoc(self):

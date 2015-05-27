@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
+from robot.model import Tags
 
 
 class UserErrorHandler:
@@ -30,7 +31,7 @@ class UserErrorHandler:
         self.doc = self.shortdoc = ''
         self.error = error
         self.timeout = ''
-        self.tags = ()
+        self.tags = Tags()
 
     def init_keyword(self, varz):
         pass

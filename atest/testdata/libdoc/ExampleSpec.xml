@@ -42,7 +42,8 @@ See `My Keyword` for no more information.</doc>
 <kw name="My Keyword">
 <arguments>
 </arguments>
-<doc>Does nothing &amp; &lt;doc&gt; has "stuff" to 'escape'!! and ignored indentation</doc>
+<doc>Does nothing &amp; &lt;doc&gt; has "stuff" to 'escape'!! and ignored indentation
+Tags: in spec these wont become tags</doc>
 <tags></tags>
 </kw>
 <kw name="Non Ascii Doc">
