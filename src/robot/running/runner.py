@@ -94,7 +94,9 @@ class Runner(SuiteVisitor):
         self._context.report_suite_status(self._suite.status,
                                           self._suite.full_message)
         with self._context.suite_teardown():
-            failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
+            critical = bool(self._suite.statistics.critical.total)
+            failure = self._run_teardown(suite.keywords.teardown,
+                                         self._suite_status, critical=critical)
             if failure:
                 self._suite.suite_teardown_failed(unicode(failure))
         self._suite.endtime = get_timestamp()
@@ -125,11 +127,13 @@ class Runner(SuiteVisitor):
                                % unicode(err), result.critical)
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(result, test))
-        self._run_setup(test.keywords.setup, status, result)
+        self._run_setup(test.keywords.setup, status, result, result.critical)
         try:
             if not status.failures:
                 runner = KeywordRunner(self._context, bool(test.template))
                 runner.run_keywords(test.keywords.normal)
+            else:
+                status.test_failed(status.message, result.critical)
         except PassExecution as exception:
             err = exception.earlier_failures
             if err:
@@ -142,7 +146,8 @@ class Runner(SuiteVisitor):
         result.message = status.message or result.message
         if status.teardown_allowed:
             with self._context.test_teardown(result):
-                self._run_teardown(test.keywords.teardown, status, result)
+                self._run_teardown(test.keywords.teardown, status, result,
+                                   result.critical)
         if not status.failures and result.timeout and result.timeout.timed_out():
             status.test_failed(result.timeout.get_message(), result.critical)
             result.message = status.message
@@ -159,17 +164,17 @@ class Runner(SuiteVisitor):
         timeout.start()
         return timeout
 
-    def _run_setup(self, setup, status, result=None):
+    def _run_setup(self, setup, status, result=None, critical=False):
         if not status.failures:
             exception = self._run_setup_or_teardown(setup)
-            status.setup_executed(exception)
+            status.setup_executed(exception, critical)
             if result and isinstance(exception, PassExecution):
                 result.message = exception.message
 
-    def _run_teardown(self, teardown, status, result=None):
+    def _run_teardown(self, teardown, status, result=None, critical=False):
         if status.teardown_allowed:
             exception = self._run_setup_or_teardown(teardown)
-            status.teardown_executed(exception)
+            status.teardown_executed(exception, critical)
             failed = not isinstance(exception, PassExecution)
             if result and exception:
                 result.message = status.message if failed else exception.message

@@ -56,20 +56,24 @@ class _ExecutionStatus(object):
         if parent:
             parent.children.append(self)
 
-    def setup_executed(self, failure=None):
+    def setup_executed(self, failure=None, critical=False):
         if failure and not isinstance(failure, PassExecution):
             self.failure.setup = unicode(failure)
             self._handle_possible_fatal(failure)
+            if critical and self.exit.failure_mode:
+                self.exit.failure = True
         self._teardown_allowed = True
 
     def _handle_possible_fatal(self, failure):
         if getattr(failure, 'exit', False):
             self.exit.fatal = True
 
-    def teardown_executed(self, failure=None):
+    def teardown_executed(self, failure=None, critical=False):
         if failure and not isinstance(failure, PassExecution):
             self.failure.teardown = unicode(failure)
             self._handle_possible_fatal(failure)
+            if critical and self.exit.failure_mode:
+                self.exit.failure = True
 
     def error_occurred(self):
         if self.exit.error_mode:
@@ -134,9 +138,9 @@ class TestStatus(_ExecutionStatus):
 
     def test_failed(self, failure, critical):
         self.failure.test = unicode(failure)
+        self._handle_possible_fatal(failure)
         if critical and self.exit.failure_mode:
             self.exit.failure = True
-        self._handle_possible_fatal(failure)
 
     def _my_message(self):
         return TestMessage(self).message
