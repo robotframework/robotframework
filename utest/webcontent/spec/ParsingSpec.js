@@ -107,7 +107,8 @@ describe("Handling Suite", function () {
 
     it("should parse keyword", function () {
         var kw = nthKeyword(firstTest(window.testdata.suite()), 0);
-        expect(kw.name).toEqual("BuiltIn.Sleep");
+        expect(kw.name).toEqual("Sleep");
+        expect(kw.libname).toEqual("BuiltIn");
         expect(kw.id).toEqual("s1-t1-k1");
         expect(kw.status).toEqual("PASS");
         expect(kw.times).toBeDefined();
@@ -142,20 +143,21 @@ describe("Setups and teardowns", function () {
         window.output = window.setupsAndTeardownsOutput;
     });
 
-    function checkTypeNameArgs(kw, type, name, args) {
+    function checkTypeNameArgs(kw, type, name, libname, args) {
         expect(kw.type).toEqual(type);
         expect(kw.name).toEqual(name);
+        expect(kw.libname).toEqual(libname);
         expect(kw.arguments).toEqual(args);
     }
 
     it("should parse suite setup", function () {
         var suite = window.testdata.suite();
-        checkTypeNameArgs(suite.keywords()[0], "SETUP", "BuiltIn.Log", "suite setup");
+        checkTypeNameArgs(suite.keywords()[0], "SETUP", "Log", "BuiltIn", "suite setup");
     });
 
     it("should parse suite teardown", function () {
         var suite = window.testdata.suite();
-        checkTypeNameArgs(suite.keywords()[1], "TEARDOWN", "BuiltIn.Log", "suite teardown");
+        checkTypeNameArgs(suite.keywords()[1], "TEARDOWN", "Log", "BuiltIn", "suite teardown");
     });
 
     it("should give navigation uniqueId list for a suite teardown keyword", function () {
@@ -170,12 +172,12 @@ describe("Setups and teardowns", function () {
     });
 
     it("should parse test setup", function () {
-        checkTypeNameArgs(nthKeyword(firstTest(window.testdata.suite()), 0), "SETUP", "BuiltIn.Log", "test setup");
+        checkTypeNameArgs(nthKeyword(firstTest(window.testdata.suite()), 0), "SETUP", "Log", "BuiltIn", "test setup");
     });
 
     it("should parse test teardown", function () {
         var test = firstTest(window.testdata.suite());
-        checkTypeNameArgs(nthKeyword(test, 2), "TEARDOWN", "BuiltIn.Log", "test teardown");
+        checkTypeNameArgs(nthKeyword(test, 2), "TEARDOWN", "Log", "BuiltIn", "test teardown");
     });
 
     it("should give suite children in order", function () {
@@ -189,15 +191,15 @@ describe("Setups and teardowns", function () {
     it("should give test children in order", function () {
         var test = firstTest(window.testdata.suite());
         var children = test.children();
-        checkTypeNameArgs(children[0], "SETUP", "BuiltIn.Log", "test setup");
-        checkTypeNameArgs(children[1], "KEYWORD", "Keyword with teardown", "");
-        checkTypeNameArgs(children[2], "TEARDOWN", "BuiltIn.Log", "test teardown");
+        checkTypeNameArgs(children[0], "SETUP", "Log", "BuiltIn", "test setup");
+        checkTypeNameArgs(children[1], "KEYWORD", "Keyword with teardown", "", "");
+        checkTypeNameArgs(children[2], "TEARDOWN", "Log", "BuiltIn", "test teardown");
     });
 
     it("should parse keyword teardown", function () {
         var test = firstTest(window.testdata.suite());
         var children = test.children();
-        checkTypeNameArgs(children[1].children()[1], "TEARDOWN", "BuiltIn.Log", "keyword teardown");
+        checkTypeNameArgs(children[1].children()[1], "TEARDOWN", "Log", "BuiltIn", "keyword teardown");
     });
 });
 

@@ -25,6 +25,7 @@ public class JavaAttributeVerifyingListener {
                 put("elapsedtime", Integer.class);
                 put("tags", PyList.class);
                 put("args", PyList.class);
+                put("assign", PyList.class);
                 put("metadata", PyDictionary.class);
                 put("tests", PyList.class);
                 put("suites", PyList.class);
@@ -54,12 +55,12 @@ public class JavaAttributeVerifyingListener {
 
     public void startKeyword(String name, Map attrs) {
         verifyAttributes("START KEYWORD", attrs,
-                         new String[] {"doc", "starttime", "args", "type"});
+                         new String[] {"doc", "starttime", "args", "assign", "kwname", "libname", "type"});
     }
 
     public void endKeyword(String name, Map attrs) {
         verifyAttributes("END KEYWORD", attrs,
-                         new String[] {"doc", "starttime", "args", "type", "endtime", "elapsedtime", "status"});
+                         new String[] {"doc", "starttime", "args", "assign", "kwname", "libname", "type", "endtime", "elapsedtime", "status"});
     }
 
     public void close() throws IOException {

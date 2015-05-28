@@ -121,14 +121,17 @@ class ExecutionResultBuilder(object):
                 omitted_kws -= 1
 
     def _flatten_keywords(self, context, flattened):
-        match = FlattenKeywordMatcher(flattened).match
+        matcher = FlattenKeywordMatcher(flattened)
+        match_name = matcher.match_name
+        match_type = matcher.match_type
         started = -1
         for event, elem in context:
             tag = elem.tag
             if event == 'start' and tag == 'kw':
                 if started >= 0:
                     started += 1
-                elif match(elem.get('name'), elem.get('type')):
+                elif (match_name(elem.get('name'), elem.get('library'))
+                      or match_type(elem.get('type'))):
                     started = 0
             if started == 0 and event == 'end' and tag == 'doc':
                 elem.text = ('%s\n\n_*Keyword content flattened.*_'

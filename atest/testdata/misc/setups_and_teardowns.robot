@@ -3,43 +3,54 @@ Documentation   This suite was initially created for testing keyword types with
 ...             listeners but can be used for other purposes too.
 Suite Setup     ${SUITE SETUP}
 Suite Teardown  ${SUITE TEARDOWN}
-Test Setup      Test Setup
-Test Teardown   Test Teardown
+Test Setup      ${TEST SETUP}
+Test Teardown   ${TEST TEARDOWN}
 
 *** Variables ***
 ${SUITE SETUP}       Suite Setup
 ${SUITE TEARDOWN}    Suite Teardown
+${TEST SETUP}        Test Setup
+${TEST TEARDOWN}     Test Teardown
 
-***Test Cases***
-
+*** Test Cases ***
 Test with setup and teardown
     Keyword
 
 Test with failing setup
+    [Documentation]    FAIL
+    ...    Setup failed:
+    ...    Test Setup
     [Setup]    Fail    Test Setup
     Fail    Should not be executed
 
 Test with failing teardown
+    [Documentation]    FAIL
+    ...    Teardown failed:
+    ...    Test Teardown
     Keyword
     [Teardown]    Fail    Test Teardown
 
 Failing test with failing teardown
+    [Documentation]    FAIL
+    ...    Keyword
+    ...
+    ...    Also teardown failed:
+    ...    Test Teardown
     Fail    Keyword
     [Teardown]    Fail    Test Teardown
 
-***Keywords***
-
+*** Keywords ***
 Suite Setup
-    Log  Suite Setup
+    Log    Suite Setup
 
 Suite Teardown
-    Log  Suite Teardown
+    Log    Suite Teardown
 
 Test Setup
-    Log  Test Setup
+    Log    Test Setup
 
 Test Teardown
-    Log  Test Teardown
+    Log    Test Teardown
 
 Keyword
-    Log  Keyword
+    Log    Keyword

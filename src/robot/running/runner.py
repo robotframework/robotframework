@@ -97,6 +97,8 @@ class Runner(SuiteVisitor):
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
                 self._suite.suite_teardown_failed(unicode(failure))
+                if self._suite.statistics.critical.failed:
+                    self._suite_status.critical_failure_occurred()
         self._suite.endtime = get_timestamp()
         self._suite.message = self._suite_status.message
         self._context.end_suite(self._suite)
@@ -113,16 +115,16 @@ class Runner(SuiteVisitor):
                                           tags=test.tags,
                                           starttime=get_timestamp(),
                                           timeout=self._get_timeout(test))
-        status = TestStatus(self._suite_status)
+        status = TestStatus(self._suite_status, result.critical)
         if not status.failures and not test.name:
-            status.test_failed('Test case name cannot be empty.', result.critical)
+            status.test_failed('Test case name cannot be empty.')
         if not status.failures and not test.keywords.normal:
-            status.test_failed('Test case contains no keywords.', result.critical)
+            status.test_failed('Test case contains no keywords.')
         try:
             result.tags = self._context.variables.replace_list(result.tags)
         except DataError as err:
             status.test_failed('Replacing variables from test tags failed: %s'
-                               % unicode(err), result.critical)
+                               % unicode(err))
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(result, test))
         self._run_setup(test.keywords.setup, status, result)
@@ -130,21 +132,26 @@ class Runner(SuiteVisitor):
             if not status.failures:
                 runner = KeywordRunner(self._context, bool(test.template))
                 runner.run_keywords(test.keywords.normal)
+            else:
+                status.test_failed(status.message)
         except PassExecution as exception:
             err = exception.earlier_failures
             if err:
-                status.test_failed(err, result.critical)
+                status.test_failed(err)
             else:
                 result.message = exception.message
         except ExecutionFailed as err:
-            status.test_failed(err, result.critical)
+            status.test_failed(err)
         result.status = status.status
         result.message = status.message or result.message
         if status.teardown_allowed:
             with self._context.test_teardown(result):
-                self._run_teardown(test.keywords.teardown, status, result)
+                failure = self._run_teardown(test.keywords.teardown, status,
+                                             result)
+                if failure and result.critical:
+                    status.critical_failure_occurred()
         if not status.failures and result.timeout and result.timeout.timed_out():
-            status.test_failed(result.timeout.get_message(), result.critical)
+            status.test_failed(result.timeout.get_message())
             result.message = status.message
         result.status = status.status
         result.endtime = get_timestamp()

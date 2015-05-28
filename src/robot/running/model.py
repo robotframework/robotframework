@@ -203,10 +203,11 @@ class ResourceFile(object):
 
 class UserKeyword(object):
 
-    def __init__(self, name, args=(), doc='', return_=None, timeout=None):
+    def __init__(self, name, args=(), doc='', tags=(), return_=None, timeout=None):
         self.name = name
         self.args = args
         self.doc = doc
+        self.tags = tags
         self.return_ = return_ or ()
         self.timeout = timeout
         self.keywords = []
@@ -221,3 +222,7 @@ class UserKeyword(object):
         :class:`~.Timeout.
         """
         return Timeout(*timeout) if timeout else None
+
+    @setter
+    def tags(self, tags):
+        return model.Tags(tags)

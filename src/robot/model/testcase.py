@@ -32,7 +32,7 @@ class TestCase(ModelObject):
         self.name = name
         #: Test case documentation.
         self.doc = doc
-        #: Test case tags, a list of strings.
+        #: Test case tags as a list like :class:`~.model.tags.Tags` object.
         self.tags = tags
         #: Test case timeout.
         self.timeout = timeout

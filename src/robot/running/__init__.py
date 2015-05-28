@@ -122,5 +122,5 @@ def UserLibrary(path):
         else:
             handler.arguments = ArgumentSpec(handler.longname)
             handler.doc = '*Creating keyword failed: %s*' % handler.error
-    ret.doc = resource.doc
+    ret.doc = utils.unescape(resource.doc)
     return ret

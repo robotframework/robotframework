@@ -8,13 +8,13 @@ Resource        atest_resource.robot
 *** Test Cases ***
 Importing Python Library In File By Path
     ${test} =  Check Test Case  Importing Python Library In File By Path
-    Should Be Equal  ${test.kws[0].name}  MyLibFile.Keyword In My Lib File
-    Should Be Equal  ${test.kws[1].name}  \${ret} = MyLibFile2.Keyword In My Lib File 2
+    Keyword Data Should Be  ${test.kws[0]}  MyLibFile.Keyword In My Lib File
+    Keyword Data Should Be  ${test.kws[1]}  MyLibFile2.Keyword In My Lib File 2  \${ret}  world
 
 Importing Python Library In Dir By Path
     ${test} =  Check Test Case  Importing Python Library In Dir By Path
-    Should Be Equal  ${test.kws[0].name}  \${ret} = MyLibDir.Keyword In My Lib Dir
-    Should Be Equal  ${test.kws[2].name}  \${ret} = MyLibDir.Keyword In My Lib Dir
+    Keyword Data Should Be  ${test.kws[0]}  MyLibDir.Keyword In My Lib Dir  \${ret}
+    Keyword Data Should Be  ${test.kws[2]}  MyLibDir.Keyword In My Lib Dir  \${ret}  a1, a2
 
 Importing Library With Same Name
     ${tc} =  Check Test Case  ${TEST NAME}
@@ -23,17 +23,17 @@ Importing Library With Same Name
 
 Importing Python Library By Path With Variables
     ${test} =  Check Test Case  Importing Python Library By Path With Variables
-    Should Be Equal  ${test.kws[0].name}  \${sum} = MyLibDir2.Keyword In My Lib Dir 2
+    Keyword Data Should Be  ${test.kws[0]}  MyLibDir2.Keyword In My Lib Dir 2  \${sum}  1, 2, 3, 4, 5
 
 Importing Java Library File By Path With .java Extension
     [Tags]  jybot
     ${test} =  Check Test Case  Importing Java Library File By Path With .java Extension
-    Should Be Equal  ${test.kws[0].name}  \${ret} = MyJavaLib.Keyword In My Java Lib
+    Keyword Data Should Be  ${test.kws[0]}  MyJavaLib.Keyword In My Java Lib  \${ret}  tellus
 
 Importing Java Library File By Path With .class Extension
     [Tags]  jybot
     ${test} =  Check Test Case  Importing Java Library File By Path With .class Extension
-    Should Be Equal  ${test.kws[0].name}  \${ret} = MyJavaLib2.Keyword In My Java Lib 2
+    Keyword Data Should Be  ${test.kws[0]}  MyJavaLib2.Keyword In My Java Lib 2  \${ret}  maailma
 
 Importing By Path Having Spaces
     Check Test Case  Importing By Path Having Spaces

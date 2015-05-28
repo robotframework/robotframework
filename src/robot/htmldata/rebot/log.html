@@ -321,7 +321,8 @@ function addTestExecutionLog(main) {
       <div class="element-header-left" title="{{html name}}">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
         <span class="${status.toLowerCase()}">${type}: </span>
-        <span class="name">{{html name}}</span>
+        <span>{{html assign}}</span>
+        <span class="name"><span class="parent-name">{{html libname}}{{if libname}} . {{/if}}</span>{{html name}}</span>
         <span class="arg">{{html arguments}}</span>
       </div>
       <div class="element-header-right" onclick="stopPropagation(event)">
@@ -337,6 +338,12 @@ function addTestExecutionLog(main) {
         <tr>
           <th>Documentation:</th>
           <td class="doc">{{html doc()}}</td>
+        </tr>
+        {{/if}}
+        {{if tags}}
+        <tr>
+          <th>Tags:</th>
+          <td>{{html tags}}</td>
         </tr>
         {{/if}}
         {{if timeout}}

@@ -13,17 +13,21 @@
 #  limitations under the License.
 
 
-def keyword(name=None):
-    """Decorator to set custom keyword names to functions and methods.
+def keyword(name=None, tags=()):
+    """Decorator to set custom keyword names and tags to functions and methods.
 
-    This decorator creates the ``robot_name`` attribute on the decorated
-    keyword method or function.  Robot Framework checks for this attribute when
-    determining the keyword's name.
+    This decorator creates the ``robot_name`` and ``robot_tags`` attributes on
+    the decorated keyword method or function.  Robot Framework checks them to
+    determine the keyword's name and tags, respectively.
 
     library.py::
 
         @keyword(name='Login Via User Panel')
         def login(username, password):
+            # ...
+
+        @keyword(name='Logout Via User Panel', tags=['example', 'tags'])
+        def logout():
             # ...
 
     tests.robot::
@@ -44,5 +48,6 @@ def keyword(name=None):
         return keyword()(name)
     def _method_wrapper(func):
         func.robot_name = name
+        func.robot_tags = tags
         return func
     return _method_wrapper

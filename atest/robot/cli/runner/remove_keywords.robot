@@ -108,8 +108,9 @@ Test should contain NAME messages
     [Arguments]    ${name}
     ${tc}=    Check test case    ${name}
     Check log message    ${tc.kws[0].kws[0].msgs[0]}   ${REMOVED BY NAME MESSAGE}
-    Check log message    ${tc.kws[1].kws[0].kws[0].msgs[0]}   ${REMOVED BY NAME MESSAGE}
-    Check log message    ${tc.kws[1].kws[1].msgs[0]}   ${KEPT BY NAME MESSAGE}
+    Check log message    ${tc.kws[1].kws[0].msgs[0]}   ${REMOVED BY NAME MESSAGE}
+    Check log message    ${tc.kws[2].kws[0].kws[0].msgs[0]}   ${REMOVED BY NAME MESSAGE}
+    Check log message    ${tc.kws[2].kws[1].msgs[0]}   ${KEPT BY NAME MESSAGE}
 
 Output should contain NAME messages with patterns
     Test should contain NAME messages with * pattern    NAME with * pattern when test passes
@@ -122,8 +123,9 @@ Test should contain NAME messages with * pattern
     ${tc}=    Check test case    ${name}
     Check log message    ${tc.kws[0].kws[0].msgs[0]}   ${REMOVED BY PATTERN MESSAGE}
     Check log message    ${tc.kws[1].kws[0].msgs[0]}   ${REMOVED BY PATTERN MESSAGE}
-    Check log message    ${tc.kws[2].kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
-    Check log message    ${tc.kws[2].kws[1].msgs[0]}    ${KEPT BY PATTERN MESSAGE}
+    Check log message    ${tc.kws[2].kws[0].msgs[0]}   ${REMOVED BY PATTERN MESSAGE}
+    Check log message    ${tc.kws[3].kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
+    Check log message    ${tc.kws[3].kws[1].msgs[0]}    ${KEPT BY PATTERN MESSAGE}
 
 Test should contain NAME messages with ? pattern
     [Arguments]    ${name}

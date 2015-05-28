@@ -147,11 +147,11 @@ class TestJsonConverter(unittest.TestCase):
 
     def test_test_setup_and_teardown(self):
         test_convert(self.suite['suites'][7]['tests'][0]['keywords'][0],
-                     name='Test Setup',
+                     name='${TEST SETUP}',
                      arguments='',
                      type='SETUP')
         test_convert(self.suite['suites'][7]['tests'][0]['keywords'][2],
-                     name='Test Teardown',
+                     name='${TEST TEARDOWN}',
                      arguments='',
                      type='TEARDOWN')
 

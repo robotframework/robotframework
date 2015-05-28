@@ -89,10 +89,10 @@ class TestBuilding(unittest.TestCase):
 
     def test_test_setup_and_teardown(self):
         kws = build('setups_and_teardowns.robot').tests[0].keywords
-        assert_keyword(kws.setup, name='Test Setup', type='setup')
-        assert_keyword(kws.teardown, name='Test Teardown', type='teardown')
+        assert_keyword(kws.setup, name='${TEST SETUP}', type='setup')
+        assert_keyword(kws.teardown, name='${TEST TEARDOWN}', type='teardown')
         assert_equals([kw.name for kw in kws],
-                      ['Test Setup', 'Keyword', 'Test Teardown'])
+                      ['${TEST SETUP}', 'Keyword', '${TEST TEARDOWN}'])
         assert_equals([kw.name for kw in kws.normal], ['Keyword'])
 
     def test_test_timeout(self):
