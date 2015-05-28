@@ -563,3 +563,60 @@ them create only one variable `${DYNAMIC VARIABLE}`.
             return variables;
         }
     }
+
+Variable file as YAML
+~~~~~~~~~~~~~~~~~~~~~
+
+Variable files can also be implemented as `YAML <http://yaml.org>`_ files.
+YAML is a data serialization language with a simple and human-friendly syntax.
+The following example demonstrates a simple YAML file:
+
+.. sourcecode:: yaml
+
+    string:   Hello, world!
+    integer:  42
+    list:
+      - one
+      - two
+    dict:
+      one: yksi
+      two: kaksi
+
+.. note:: Using YAML files with Robot Framework requires `PyYAML
+          <http://pyyaml.org>`_ module to be installed. If you have
+          pip_ installed, you can install it simply by running
+          `pip install pyyaml`.
+
+          YAML support is new in Robot Framework 2.9.
+
+YAML variable files can be taken into use exactly like normal variable files
+from the command line using :option:`--variablefile` option, in the settings
+table using :setting:`Variables` setting, and dynamically using the
+:name:`Import Variables` keyword. The only thing to remember is that paths to
+YAML files must always end with :file:`.yaml` extension.
+
+If the above YAML file would be imported, it would create exactly same
+variables as the following variable table:
+
+.. table::
+   :class: example
+
+   ============  =============  =============  =============  =============
+     Variable        Value          Value          Value          Value
+   ============  =============  =============  =============  =============
+   ${STRING}     Hello, world!
+   ${INTEGER}    ${42}
+   @{LIST}       one            two
+   &{DICT}       one=yksi       two=kaksi
+   ============  =============  =============  =============  =============
+
+YAML files used as variable files must always be mappings in the top level.
+As the above example demonstrated, keys and values in the mapping become
+variable names and values, respectively. Variable values can be any data
+types supported by YAML syntax.
+
+Mappings used as values are automatically converted to special dictionaries
+that are used also when `creating dictionary variables`_ in the variable table.
+Values of these dictionaries are accessible as attributes like `${DICT.one}`.
+These dictionaries are also ordered, but with YAML files the original source
+order is unfortunately not preserved.

@@ -14,14 +14,14 @@
 
 import inspect
 try:
-    from java.util import Map
+    import yaml
 except ImportError:
-    class Map(object): pass
+    yaml = None
 
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.utils import (get_error_message, is_dict_like, is_list_like,
-                         seq2str2, type_name, Importer)
+                         seq2str2, type_name, DotDict, Importer)
 
 
 class VariableFileSetter(object):
@@ -57,26 +57,31 @@ class VariableFileSetter(object):
 
 class YamlImporter(object):
 
+    def __init__(self):
+        if not yaml:
+            raise DataError('Using YAML variable files requires PyYAML module '
+                            'to be installed. Typically you can install it '
+                            'by running `pip install pyyaml`.')
+
     def import_variables(self, path, args=None):
         if args:
-            raise DataError('TODO')
+            raise DataError('YAML variable files do not accept arguments.')
         variables = self._import(path)
-        return [self._decorate(name, value) for name, value in variables]
+        return [('${%s}' % name, self._dot_dict(value))
+                for name, value in variables]
 
     def _import(self, path):
-        import yaml
         with open(path) as stream:
             variables = yaml.load(stream)
         if not is_dict_like(variables):
-            raise DataError('TODO')
+            raise DataError('YAML variable file must be a mapping, got %s.'
+                            % type_name(variables))
         return variables.items()
 
-    def _decorate(self, name, value):
+    def _dot_dict(self, value):
         if is_dict_like(value):
-            return '&{%s}' % name, value
-        if is_list_like(value):
-            return '@{%s}' % name, value
-        return '${%s}' % name, value
+            value = DotDict((n, self._dot_dict(v)) for n, v in value.items())
+        return value
 
 
 class PythonImporter(object):
