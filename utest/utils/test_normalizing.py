@@ -176,11 +176,12 @@ class TestNormalizedDict(unittest.TestCase):
         for c in 'bcd':
             assert_equals(nd[c], 2)
             assert_equals(nd[c.upper()], 2)
-        assert_true('b' in nd.keys())
-        assert_true('c' in nd.keys())
-        assert_true('C' not in nd.keys())
-        assert_true('d' not in nd.keys())
-        assert_true('D' in nd.keys())
+        keys = list(nd)
+        assert_true('b' in keys)
+        assert_true('c' in keys)
+        assert_true('C' not in keys)
+        assert_true('d' not in keys)
+        assert_true('D' in keys)
 
     def test_update_using_another_norm_dict(self):
         nd = NormalizedDict({'a': 1, 'b': 1})
@@ -188,10 +189,11 @@ class TestNormalizedDict(unittest.TestCase):
         for c in 'bc':
             assert_equals(nd[c], 2)
             assert_equals(nd[c.upper()], 2)
-        assert_true('b' in nd.keys())
-        assert_true('B' not in nd.keys())
-        assert_true('c' not in nd.keys())
-        assert_true('C' in nd.keys())
+        keys = list(nd)
+        assert_true('b' in keys)
+        assert_true('B' not in keys)
+        assert_true('c' not in keys)
+        assert_true('C' in keys)
 
     def test_update_with_kwargs(self):
         nd = NormalizedDict({'a': 0, 'c': 1})
