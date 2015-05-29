@@ -18,6 +18,7 @@ from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import setter
 from robot.variables import init_global_variables
 
+from .prerunvisitors import PreRunVisitors
 from .randomizer import Randomizer
 
 
@@ -145,6 +146,8 @@ class TestSuite(model.TestSuite):
         if not settings:
             settings = RobotSettings(options)
             LOGGER.register_console_logger(**settings.console_logger_config)
+        if settings.pre_run_visitors:
+            self.visit(PreRunVisitors(settings.pre_run_visitors))
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             with STOP_SIGNAL_MONITOR:
                 IMPORTER.reset()
