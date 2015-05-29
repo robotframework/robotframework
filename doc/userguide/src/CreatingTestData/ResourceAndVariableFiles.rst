@@ -589,13 +589,13 @@ The following example demonstrates a simple YAML file:
 
           YAML support is new in Robot Framework 2.9.
 
-YAML variable files can be taken into use exactly like normal variable files
+YAML variable files can be used exactly like normal variable files
 from the command line using :option:`--variablefile` option, in the settings
 table using :setting:`Variables` setting, and dynamically using the
 :name:`Import Variables` keyword. The only thing to remember is that paths to
 YAML files must always end with :file:`.yaml` extension.
 
-If the above YAML file would be imported, it would create exactly same
+If the above YAML file is imported, it will create exactly the same
 variables as the following variable table:
 
 .. table::
@@ -611,7 +611,7 @@ variables as the following variable table:
    ============  =============  =============  =============  =============
 
 YAML files used as variable files must always be mappings in the top level.
-As the above example demonstrated, keys and values in the mapping become
+As the above example demonstrates, keys and values in the mapping become
 variable names and values, respectively. Variable values can be any data
 types supported by YAML syntax.
 
