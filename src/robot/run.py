@@ -238,7 +238,8 @@ Options
                           name:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords name:<pattern>`
-    --prerunvisitor class *
+    --prerunmodifier class *
+    --prerebotmodifier class *
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
                           Arguments to the listener class can be given after
