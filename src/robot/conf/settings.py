@@ -57,6 +57,7 @@ class _BaseSettings(object):
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
+                 'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
                  'MonitorColors'    : ('monitorcolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
@@ -115,7 +116,8 @@ class _BaseSettings(object):
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
-        if name in ['PreRunVisitors', 'Listeners', 'VariableFiles']:
+        if name in ['PreRunModifiers', 'PreRebotModifiers', 'Listeners',
+                    'VariableFiles']:
             return [self._split_args_from_name_or_path(item) for item in value]
         if name == 'ReportBackground':
             return self._process_report_background(value)
@@ -377,6 +379,10 @@ class _BaseSettings(object):
     def flatten_keywords(self):
         return self['FlattenKeywords']
 
+    @property
+    def pre_rebot_modifiers(self):
+        return self['PreRebotModifiers']
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
@@ -390,7 +396,7 @@ class RobotSettings(_BaseSettings):
                        'WarnOnSkipped'      : ('warnonskippedfiles', False),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
-                       'PreRunVisitors'     : ('prerunvisitor', []),
+                       'PreRunModifiers'    : ('prerunmodifier', []),
                        'Listeners'          : ('listener', []),
                        'MonitorWidth'       : ('monitorwidth', 78),
                        'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
@@ -475,8 +481,8 @@ class RobotSettings(_BaseSettings):
         }
 
     @property
-    def pre_run_visitors(self):
-        return self['PreRunVisitors']
+    def pre_run_modifiers(self):
+        return self['PreRunModifiers']
 
 
 class RebotSettings(_BaseSettings):

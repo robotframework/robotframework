@@ -1,7 +1,7 @@
 from robot.model import SuiteVisitor
 
 
-class PreRunVisitor(SuiteVisitor):
+class ModelModifier(SuiteVisitor):
 
     def __init__(self, *tags):
         self.tags = tags or ('visited',)
