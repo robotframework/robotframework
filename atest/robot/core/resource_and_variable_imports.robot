@@ -126,7 +126,9 @@ Invalid Setting In Resource File
 Invalid Variable File
     ${path} =  Normalize Path  ${RESDIR}/invalid_variable_file.py
     Stderr Should Contain Error    ${DATAFILE}
-    ...    Importing variable file '${path}' failed: This is an invalid variable file
+    ...    Processing variable file '${path}' failed:
+    ...    Importing variable file '${path}' failed:
+    ...    This is an invalid variable file
 
 Resource Import Without Path
     Stderr Should Contain Error    ${DATAFILE}
