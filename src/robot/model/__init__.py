@@ -32,6 +32,7 @@ from .testsuite import TestSuite
 from .testcase import TestCase
 from .keyword import Keyword, Keywords
 from .message import Message
+from .modifier import ModelModifier
 from .tags import Tags, TagPattern, TagPatterns
 from .criticality import Criticality
 from .namepatterns import SuiteNamePatterns, TestNamePatterns
