@@ -410,8 +410,7 @@ class RobotFramework(Application):
         LOGGER.register_console_logger(**settings.console_logger_config)
         LOGGER.info('Settings:\n%s' % unicode(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
-                                 settings['WarnOnSkipped'],
-                                 settings['RunEmptySuite']).build(*datasources)
+                                 settings['WarnOnSkipped']).build(*datasources)
         suite.configure(**settings.suite_config)
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             result = suite.run(settings)
