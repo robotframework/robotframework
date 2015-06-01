@@ -69,8 +69,16 @@ NAME with ? pattern when test passes
 
 NAME with ? pattern when test fails
     [Documentation]    FAIL this fails
+    [Tags]   these should not effect kw matching:   hello    kitty     remove
     RemoveYES
     RemoveNO
+    Fail    this fails
+
+TAGged keywords
+    [Documentation]    FAIL this fails
+    [Tags]   these should not effect kw matching:   hello    kitty     remove
+    Tag but no remove
+    Tag and remove
     Fail    this fails
 
 *** Keywords ***
@@ -114,3 +122,11 @@ RemoveYES
 RemoveNO
     RemoveYES
     Log    ${KEPT BY PATTERN MESSAGE}
+
+Tag but no remove
+    [Tags]   hello    kitty
+    Log   This is not removed by TAG
+
+Tag and remove
+    [Tags]   hello    kitty     remove
+    Log   This is removed by TAG

@@ -1,9 +1,12 @@
 *** Test Cases ***
 Flatten stuff
+    [Tags]    test case tags should not match    flatten
     Keyword 2
     Keyword 3
     Keyword calling others
     Log    Flatten me too!!
+    Keyword with tags not flatten
+    Keyword with fags flatten
 
 For loop
     :FOR    ${i}    IN RANGE    10
@@ -29,4 +32,14 @@ Keyword 1
 Keyword calling others
     Keyword 3
     Keyword 2
+    Keyword 1
+
+Keyword with tags not flatten
+    [Documentation]    Doc of keyword not flatten
+    [Tags]   hello    kitty
+    Keyword 1
+
+Keyword with fags flatten
+    [Documentation]    Doc of flat tag
+    [Tags]   hello    flatten
     Keyword 1

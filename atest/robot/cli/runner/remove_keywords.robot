@@ -45,6 +45,10 @@ NAME option with pattern
     Log should contain    ${KEPT BY PATTERN MESSAGE}
     Output should contain NAME messages with patterns
 
+TAGged keywords
+    Log should contain     This is not removed by TAG
+    Log should not contain    This is removed by TAG
+
 *** Keywords ***
 
 Run tests and remove keywords
@@ -55,6 +59,7 @@ Run tests and remove keywords
     ...    --removekeywords name:RemoveByName
     ...    --removekeywords name:Thisshouldbe*
     ...    --removekeywords name:Remove???
+    ...    --removekeywords tag:removeANDkitty
     ...    --log log.html
     Run tests    ${opts}    cli/remove_keywords/all_combinations.robot
     ${LOG} =    Get file    ${OUTDIR}/log.html

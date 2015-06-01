@@ -21,7 +21,7 @@ from robot import utils
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
-from robot.result.flattenkeywordmatcher import FlattenKeywordMatcher
+from robot.result.flattenkeywordmatcher import validate_flatten_keyword
 
 from .gatherfailed import gather_failed_tests
 
@@ -309,11 +309,10 @@ class _BaseSettings(object):
                 raise DataError("Invalid value for option '--removekeywords'. %s" % err)
 
     def _validate_flatten_keywords(self, values):
-        for value in values:
-            try:
-                FlattenKeywordMatcher(value)
-            except DataError as err:
-                raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
+        try:
+            validate_flatten_keyword(values)
+        except DataError as err:
+            raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
     def __contains__(self, setting):
         return setting in self._cli_opts

@@ -3,39 +3,41 @@
 <suite id="s1" name="Normal &amp; Normal">
 <suite id="s1-s1" source="normal.html" name="Normal">
 <kw type="setup" library="" name="my setup" timeout="1 year">
+<tags>
+</tags>
 <doc></doc>
 <arguments>
 </arguments>
 <assign>
 </assign>
-<tags>
-</tags>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-s1-t1" name="First One">
 <kw type="kw" library="BuiltIn" name="Log">
+<tags>
+</tags>
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Test 1</arg>
 </arguments>
 <assign>
 </assign>
-<tags>
-</tags>
 <msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
 <status status="PASS" endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926"></status>
 </kw>
 <kw type="kw" library="" name="logs on trace">
+<tags>
+<tag>tag not in source</tag>
+</tags>
 <doc></doc>
 <arguments>
 </arguments>
 <assign>
 <var>${not really in source}</var>
 </assign>
-<tags>
-<tag>tag not in source</tag>
-</tags>
 <kw type="kw" library="BuiltIn" name="Log">
+<tags>
+</tags>
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Log on ${TEST NAME}</arg>
@@ -43,8 +45,6 @@
 </arguments>
 <assign>
 </assign>
-<tags>
-</tags>
 <status status="PASS" endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931"></status>
 </kw>
 <status status="PASS" endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930"></status>
@@ -63,39 +63,41 @@
 </suite>
 <suite id="s1-s2" source="normal.html" name="Normal">
 <kw type="setup" name="my setup" timeout="1 year" library="">
+<tags>
+</tags>
 <doc></doc>
 <arguments>
 </arguments>
 <assign>
 </assign>
-<tags>
-</tags>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-s2-t1" name="First One">
 <kw type="kw" library="BuiltIn" name="Log">
+<tags>
+</tags>
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Test 1</arg>
 </arguments>
 <assign>
 </assign>
-<tags>
-</tags>
 <msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
 <status status="PASS" endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926"></status>
 </kw>
 <kw type="kw" library="" name="logs on trace">
+<tags>
+<tag>tag not in source</tag>
+</tags>
 <doc></doc>
 <arguments>
 </arguments>
 <assign>
 <var>${not really in source}</var>
 </assign>
-<tags>
-<tag>tag not in source</tag>
-</tags>
 <kw type="kw" library="BuiltIn" name="Log">
+<tags>
+</tags>
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Log on ${TEST NAME}</arg>
@@ -103,8 +105,6 @@
 </arguments>
 <assign>
 </assign>
-<tags>
-</tags>
 <status status="PASS" endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931"></status>
 </kw>
 <status status="PASS" endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930"></status>

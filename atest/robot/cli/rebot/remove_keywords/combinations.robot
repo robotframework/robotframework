@@ -38,6 +38,7 @@ Validate Tests
     ...    NAME when test fails    NAME when test passes
     ...    NAME with * pattern when test fails    NAME with * pattern when test passes
     ...    NAME with ? pattern when test fails    NAME with ? pattern when test passes
+    ...    TAGged keywords
 
 Create Output
     Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/all_combinations.robot

@@ -51,9 +51,10 @@ Command line options for test execution
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
-  --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the
-                          generated log file.
-  --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated log file.
+  --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
+                          from the generated log file.
+  --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
+                          in the generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
@@ -115,8 +116,10 @@ Command line options for post-processing outputs
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
-  --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the generated outputs.
-  --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated outputs.
+  --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
+                          from the generated outputs.
+  --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
+                          in the generated outputs.
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
                           reports.
   --endtime <timestamp>   Sets the `ending time`_ of test execution when creating reports.

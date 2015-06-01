@@ -488,11 +488,18 @@ are not removed except when using the `ALL` mode.
    underscore insensitive, and it supports `simple patterns`_ with `*`
    and `?` as wildcards.
 
+`TAG:<pattern>`
+   Remove data from keywords with tags that match the given pattern. Tags are
+   case and space insensitive and they can be specified using `tag patterns`_
+   where `*` and `?` are supported as wildcards and `AND`, `OR` and `NOT`
+   operators can be used for combining individual tags or patterns together.
+
 Examples::
 
    rebot --removekeywords all --output removed.xml output.xml
    pybot --removekeywords passed --removekeywords for tests.txt
    pybot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.txt
+   pybot --removekeywords tag:huge tests.txt
 
 Removing keywords is done after parsing the `output file`_ and generating
 an internal model based on it. Thus it does not reduce memory usage as much
@@ -502,7 +509,8 @@ as `flattening keywords`_.
           as well as `FOR` and `WUKS` modes were added in Robot
           Framework 2.7.
 
-.. note:: `NAME:<pattern>` mode was added in Robot Framework 2.8.2.
+.. note:: `NAME:<pattern>` mode was added in Robot Framework 2.8.2 and
+          `TAG:<pattern>` in 2.9.
 
 Flattening keywords
 ~~~~~~~~~~~~~~~~~~~
@@ -522,6 +530,10 @@ supports the following modes:
    Flatten keywords matching the given pattern. Pattern matching rules are
    same as when `removing keywords`_ using `NAME:<pattern>` mode.
 
+`TAG:<pattern>`
+   Flatten keywords with tags matching the given pattern. Pattern matching rules
+   are same as when `removing keywords`_ using `TAG:<pattern>` mode.
+
 Examples::
 
    pybot --flattenkeywords name:HugeKeyword --flattenkeywords name:resource.* tests.txt
@@ -531,9 +543,8 @@ Flattening keywords is done already when the `output file`_ is parsed
 initially. This can save a significant amount of memory especially with
 deeply nested keyword structures.
 
-.. note:: Flattening keywords is a new feature in Robot Framework 2.8.2, and
-          `FOR` and `FORITEM` modes were added in Robot Framework
-          2.8.5.
+.. note:: Flattening keywords is a new feature in Robot Framework 2.8.2, `FOR`
+          and `FORITEM` modes were added in 2.8.5 and `TAG:<pattern>` in 2.9.
 
 Setting start and end time of execution
 ---------------------------------------

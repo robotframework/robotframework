@@ -17,7 +17,8 @@ from robot.model import SuiteVisitor
 from robot.utils import ET, ETSource, get_error_message
 
 from .executionresult import Result, CombinedResult
-from .flattenkeywordmatcher import FlattenKeywordMatcher
+from .flattenkeywordmatcher import (FlattenByNameMatcher, FlattenByTypeMatcher,
+                                    FlattenByTagMatcher)
 from .merger import Merger
 from .xmlelementhandlers import XmlElementHandler
 
@@ -121,27 +122,47 @@ class ExecutionResultBuilder(object):
                 omitted_kws -= 1
 
     def _flatten_keywords(self, context, flattened):
-        matcher = FlattenKeywordMatcher(flattened)
-        match_name = matcher.match_name
-        match_type = matcher.match_type
+        name_match, by_name = self._get_matcher(FlattenByNameMatcher, flattened)
+        type_match, by_type = self._get_matcher(FlattenByTypeMatcher, flattened)
+        tags_match, by_tags = self._get_matcher(FlattenByTagMatcher, flattened)
         started = -1
+        tags = None
+        started_kws = 0
         for event, elem in context:
             tag = elem.tag
-            if event == 'start' and tag == 'kw':
+            start = event == 'start'
+            end = not start
+            if start and tag == 'kw':
+                started_kws += 1
                 if started >= 0:
                     started += 1
-                elif (match_name(elem.get('name'), elem.get('library'))
-                      or match_type(elem.get('type'))):
+                elif by_name and name_match(elem.get('name'), elem.get('library')):
                     started = 0
-            if started == 0 and event == 'end' and tag == 'doc':
+                elif by_type and type_match(elem.get('type')):
+                    started = 0
+            elif by_tags and started_kws:
+                if start and tag == 'tags':
+                    tags = []
+                elif end and tag == 'tag':
+                    tags.append(elem.text or '')
+                elif started < 0 and (end and tag == 'tags'):
+                    if tags_match(tags):
+                        started = 0
+            if end and tag == 'kw':
+                started_kws -= 1
+            if started == 0 and end and tag == 'doc':
                 elem.text = ('%s\n\n_*Keyword content flattened.*_'
                              % (elem.text or '')).strip()
             if started <= 0 or tag == 'msg':
                 yield event, elem
             else:
                 elem.clear()
-            if started >= 0 and event == 'end' and tag == 'kw':
+            if started >= 0 and end and tag == 'kw':
                 started -= 1
+
+    def _get_matcher(self, matcher_class, flattened):
+        matcher = matcher_class(flattened)
+        return matcher.match, bool(matcher)
 
 
 class RemoveKeywords(SuiteVisitor):
