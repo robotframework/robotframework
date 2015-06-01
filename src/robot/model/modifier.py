@@ -20,8 +20,9 @@ from .visitor import SuiteVisitor
 
 class ModelModifier(SuiteVisitor):
 
-    def __init__(self, visitors, logger):
+    def __init__(self, visitors, empty_suite_ok, logger):
         self._log_error = logger.error
+        self._empty_suite_ok = empty_suite_ok
         self._visitors = list(self._import_visitors(visitors))
 
     def visit_suite(self, suite):
@@ -32,6 +33,9 @@ class ModelModifier(SuiteVisitor):
                 message, details = get_error_details()
                 self._log_error("Executing model modifier '%s' failed: %s\n%s"
                                 % (type_name(visitor), message, details))
+        if not (suite.test_count or self._empty_suite_ok):
+            raise DataError("Suite '%s' contains no tests after model "
+                            "modifiers." % suite.name)
 
     def _import_visitors(self, visitors):
         importer = Importer('model modifier')

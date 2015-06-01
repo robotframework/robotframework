@@ -393,6 +393,8 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.conf import RobotSettings
+from robot.errors import DataError
+from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
 from robot.running import TestSuiteBuilder
@@ -412,6 +414,9 @@ class RobotFramework(Application):
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped']).build(*datasources)
         suite.configure(**settings.suite_config)
+        if settings.pre_run_modifiers:
+            suite.visit(ModelModifier(settings.pre_run_modifiers,
+                                      settings.run_empty_suite, LOGGER))
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             result = suite.run(settings)
             LOGGER.info("Tests execution ended. Statistics:\n%s"

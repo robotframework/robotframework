@@ -432,7 +432,7 @@ class RobotSettings(_BaseSettings):
             'exclude_tags': self['Exclude'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
-            'empty_suite_ok': self['RunEmptySuite'],
+            'empty_suite_ok': self.run_empty_suite,
             'randomize_suites': self.randomize_suites,
             'randomize_tests': self.randomize_tests,
             'randomize_seed': self.randomize_seed,
@@ -483,6 +483,10 @@ class RobotSettings(_BaseSettings):
     def pre_run_modifiers(self):
         return self['PreRunModifiers']
 
+    @property
+    def run_empty_suite(self):
+        return self['RunEmptySuite']
+
 
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'            : ('output', None),
@@ -507,7 +511,7 @@ class RebotSettings(_BaseSettings):
             'exclude_tags': self['Exclude'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
-            'empty_suite_ok': self['ProcessEmptySuite'],
+            'empty_suite_ok': self.process_empty_suite,
             'remove_keywords': self.remove_keywords,
             'log_level': self['LogLevel'],
             'critical_tags': self.critical_tags,
@@ -557,3 +561,7 @@ class RebotSettings(_BaseSettings):
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }
+
+    @property
+    def process_empty_suite(self):
+        return self['ProcessEmptySuite']

@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags        pybot    jybot    regression
-Suite Teardown    Remove File    ${LOG}
+Test Teardown     Remove File    ${LOG}
 Resource          ./modifier_resource.robot
 
 *** Test Cases ***
@@ -44,3 +44,16 @@ Invalid modifier
     ...    Message\nTraceback (most recent call last):\n*
     Output should not be modified
     Log should not be modified
+
+Error if all tests removed
+    Run Tests    --prerebot ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS -l ${LOG}    ${TEST DATA}
+    Stderr Should Match
+    ...    [ ERROR ] Suite 'Pass And Fail' contains no tests after model modifiers.${USAGE TIP}
+    Output should not be modified
+    File Should Not Exist    ${LOG}
+
+--RunEmptySuite when all tests removed
+    Run Tests    --RunEmptySuite --PreRebot ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS -l ${LOG}   ${TEST DATA}
+    Stderr Should Be Empty
+    Output should not be modified
+    Log Should Not Contain Strings    Hello says \\"Pass\\"!    Hello says \\"Fail\\"!
