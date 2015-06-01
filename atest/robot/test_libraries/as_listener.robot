@@ -3,6 +3,7 @@ Suite Setup     Run Tests  ${EMPTY}
 ...      test_libraries/as_listener/suite_scope.robot
 ...      test_libraries/as_listener/test_scope.robot
 ...      test_libraries/as_listener/global_scope.robot
+...      test_libraries/as_listener/multiple_listeners.robot
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 
@@ -23,10 +24,14 @@ Global scope library gets events
     Check Test Case  ${TESTNAME}
 New test gets previous global scope events
     Check Test Case  ${TESTNAME}
+Multiple library listeners gets events
+    Check Test Case  ${TESTNAME}
 Check closing
     Stderr Should Match
     ...     SEPARATOR=\n
     ...     *CLOSING TEST SUITE
+    ...     CLOSING TEST CASE
+    ...     CLOSING TEST CASE
     ...     CLOSING TEST CASE
     ...     CLOSING TEST CASE
     ...     CLOSING GLOBAL

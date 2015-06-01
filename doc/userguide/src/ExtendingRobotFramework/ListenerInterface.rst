@@ -476,6 +476,10 @@ As the seconds example above already demonstrated, library listeners can
 specify `listener interface versions`_ using `ROBOT_LISTENER_API_VERSION`
 attribute exactly like any other listener.
 
+Starting from version 2.9, you can also provide any list like object of
+instances in the `ROBOT_LIBRARY_LISTENER` attribute. This will cause all
+instances of the list to be registered as listeners.
+
 Called listener methods
 ~~~~~~~~~~~~~~~~~~~~~~~
 

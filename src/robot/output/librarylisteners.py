@@ -48,9 +48,10 @@ class LibraryListeners(Listeners):
         from robot.running import EXECUTION_CONTEXTS
         if not EXECUTION_CONTEXTS.current:
             return []
-        listeners = [_LibraryListenerProxy(library) for library in
-                     EXECUTION_CONTEXTS.current.namespace.libraries
-                     if library.has_listener]
+        listeners = [_LibraryListenerProxy(library, listener)
+                     for library in EXECUTION_CONTEXTS.current.namespace.libraries
+                     if library.has_listener
+                     for listener in library.listeners]
         for listener in listeners:
             if listener.library_scope == 'GLOBAL':
                 self._global_listeners[listener.logger] = listener
@@ -59,10 +60,10 @@ class LibraryListeners(Listeners):
 
 class _LibraryListenerProxy(ListenerProxy):
 
-    def __init__(self, library):
-        AbstractLoggerProxy.__init__(self, library.listener)
-        self.name = library.__class__.__name__
-        self.version = self._get_version(library.listener)
+    def __init__(self, library, listener):
+        AbstractLoggerProxy.__init__(self, listener)
+        self.name = listener.__class__.__name__
+        self.version = self._get_version(listener)
         self.library_scope = library.scope
 
     def _get_method_names(self, name):
