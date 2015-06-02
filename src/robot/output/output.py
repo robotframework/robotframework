@@ -49,6 +49,7 @@ class Output(AbstractLogger):
         for logger in self._registered_loggers:
             logger.close()
             LOGGER.unregister_logger(logger)
+        self._registered_loggers = []
 
     def start_suite(self, suite):
         LOGGER.start_suite(suite)
