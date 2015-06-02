@@ -26,15 +26,16 @@ class Output(AbstractLogger):
     def __init__(self, settings):
         AbstractLogger.__init__(self)
         self._xmllogger = XmlLogger(settings['Output'], settings['LogLevel'])
+        self._registered_loggers = []
         self._register_loggers(settings['Listeners'], settings['DebugFile'])
         self._settings = settings
 
     def _register_loggers(self, listeners, debugfile):
         LOGGER.register_context_changing_logger(self._xmllogger)
-        for logger in (Listeners(listeners), LibraryListeners(),
-                       DebugFile(debugfile)):
+        for logger in (Listeners(listeners), LibraryListeners(), DebugFile(debugfile)):
             if logger:
                 LOGGER.register_logger(logger)
+                self._registered_loggers.append(logger)
         LOGGER.disable_message_cache()
 
     def register_error_listener(self, listener):
@@ -45,6 +46,10 @@ class Output(AbstractLogger):
         self._xmllogger.close()
         LOGGER.unregister_logger(self._xmllogger)
         LOGGER.output_file('Output', self._settings['Output'])
+        for logger in self._registered_loggers:
+            logger.close()
+            LOGGER.unregister_logger(logger)
+        self._registered_loggers = []
 
     def start_suite(self, suite):
         LOGGER.start_suite(suite)
@@ -70,4 +75,3 @@ class Output(AbstractLogger):
     def set_log_level(self, level):
         pyloggingconf.set_level(level)
         return self._xmllogger.set_log_level(level)
-

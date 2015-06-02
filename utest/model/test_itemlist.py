@@ -87,6 +87,9 @@ class TestItemLists(unittest.TestCase):
         backwards = items[::-1]
         assert_true(isinstance(backwards, ItemList))
         assert_equal(list(backwards), list(reversed(items)))
+        empty = items[100:]
+        assert_true(isinstance(empty, ItemList))
+        assert_equal(list(empty), [])
 
     def test_index(self):
         items = ItemList(str, items=('first', 'second'))

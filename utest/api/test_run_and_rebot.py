@@ -90,6 +90,14 @@ class TestRun(RunningTestCase):
         assert_equals(run_without_outputs(self.data, exclude='fail'), 0)
         self._assert_outputs([('FAIL', 0)])
 
+    def test_listeners_unregistration(self):
+        module_file = join(ROOT, 'utest', 'resources', 'Listener.py')
+        assert_equals(run_without_outputs(self.data, listener=[module_file+":1"]), 1)
+        self._assert_outputs([("[from listener 1]", 1), ("[listener close]", 1)])
+        self._clear_outputs()
+        assert_equals(run_without_outputs(self.data), 1)
+        self._assert_outputs([("[from listener 1]", 0), ("[listener close]", 0)])
+
 
 class TestRebot(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'rebot', 'created_normal.xml')

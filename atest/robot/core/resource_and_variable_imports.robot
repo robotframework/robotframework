@@ -144,14 +144,14 @@ Resource File In PYTHONPATH
 Variable File In PYTHONPATH
     Check Test Case  ${TEST NAME}
 
-
 *** Keywords ***
-
 Run Tests With Non-ASCII Items In PYTHONPATH
     Create Directory    %{TEMPDIR}/nön-äscïï
-    Set Environment Variable  PYTHONPATH  %{TEMPDIR}/nön-äscïï${:}${PPATH_RESDIR}
+    Set PYTHONPATH    %{TEMPDIR}/nön-äscïï    ${PPATH_RESDIR}
     Run Tests  ${EMPTY}  ${DATAFILE}
-    [Teardown]  Remove Directory  %{TEMPDIR}/nön-äscïï
+    [Teardown]  Run Keywords
+    ...    Remove Directory  %{TEMPDIR}/nön-äscïï    AND
+    ...    Reset PYTHONPATH
 
 Stderr Should Contain Error
     [Arguments]    ${path}    @{error parts}
