@@ -18,5 +18,6 @@ import sys
 
 JYTHON = sys.platform.startswith('java')
 IRONPYTHON = sys.platform == 'cli'
+PYTHON = not (JYTHON or IRONPYTHON)
 UNIXY = os.sep == '/'
 WINDOWS = not UNIXY
