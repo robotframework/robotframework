@@ -23,4 +23,8 @@ class Reserved(object):
         return RESERVED_KEYWORDS
 
     def run_keyword(self, name, args):
-        raise Exception("'%s' is a reserved keyword" % name.title())
+        error = "'%s' is a reserved keyword." % name
+        if name in ['else', 'else if']:
+            error += " It must be in uppercase (%s) when used as a marker with 'Run Keyword  If'." % (
+                name, name.upper())
+        raise Exception(error)
