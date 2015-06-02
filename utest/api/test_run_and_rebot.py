@@ -94,6 +94,15 @@ class TestRun(RunningTestCase):
         assert_equals(run_without_outputs(self.data, exclude='fail'), 0)
         self._assert_outputs([('FAIL', 0)])
 
+    def test_listener_gets_notification_about_log_report_and_output(self):
+        listener = join(ROOT, 'utest', 'resources', 'Listener.py')
+        assert_equals(run(self.data, output=OUTPUT_PATH, report=REPORT_PATH,
+                          log=LOG_PATH, listener=listener), 1)
+        self._assert_outputs(stdout=[('[output {}]'.format(OUTPUT_PATH), 1),
+                                     ('[report {}]'.format(REPORT_PATH), 1),
+                                     ('[log {}]'.format(LOG_PATH), 1),
+                                     ('[listener close]', 1)])
+
 
 class TestRebot(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'rebot', 'created_normal.xml')
