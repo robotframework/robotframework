@@ -12,3 +12,12 @@ class Listener:
 
     def close(self):
         sys.__stdout__.write("[listener close]\n")
+
+    def report_file(self, path):
+        sys.__stdout__.write("[report {}]\n".format(path))
+
+    def log_file(self, path):
+        sys.__stdout__.write("[report {}]\n".format(path))
+
+    def output_file(self, path):
+        sys.__stdout__.write("[report {}]\n".format(path))
