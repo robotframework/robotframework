@@ -57,6 +57,14 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'), 1,
                           '1 minute', 1, 'Msg', 0, 111)
 
+    def test_name_escaping(self):
+        kw = Keyword('quote:"', 'and *url* https://url.com', '*"Doc"*',)
+        self._verify_keyword(kw, 0, 'quote:&quot;', 'and *url* https://url.com', '<b>"Doc"</b>')
+        test = TestCase('quote:" and *url* https://url.com', '*"Doc"*',)
+        self._verify_test(test, 'quote:&quot; and *url* https://url.com', '<b>"Doc"</b>')
+        suite = TestSuite('quote:" and *url* https://url.com', '*"Doc"*',)
+        self._verify_suite(suite, 'quote:&quot; and *url* https://url.com', '<b>"Doc"</b>')
+
     def test_default_keyword(self):
         self._verify_keyword(Keyword())
 

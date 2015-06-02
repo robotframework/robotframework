@@ -77,7 +77,7 @@ class SuiteBuilder(_Builder):
     def build(self, suite):
         with self._context.prune_input(suite.suites, suite.tests, suite.keywords):
             stats = self._get_statistics(suite)  # Must be done before pruning
-            return (self._string(suite.name),
+            return (self._string(suite.name, attr=True),
                     self._string(suite.source),
                     self._context.relative_source(suite.source),
                     self._html(suite.doc),
@@ -109,7 +109,7 @@ class TestBuilder(_Builder):
 
     def build(self, test):
         with self._context.prune_input(test.keywords):
-            return (self._string(test.name),
+            return (self._string(test.name, attr=True),
                     self._string(test.timeout),
                     int(test.critical),
                     self._html(test.doc),
@@ -129,8 +129,8 @@ class KeywordBuilder(_Builder):
     def build(self, kw, split=False):
         with self._context.prune_input(kw.messages, kw.keywords):
             return (self._types[kw.type],
-                    self._string(kw.kwname),
-                    self._string(kw.libname),
+                    self._string(kw.kwname, attr=True),
+                    self._string(kw.libname, attr=True),
                     self._string(kw.timeout),
                     self._html(kw.doc),
                     self._string(', '.join(kw.args)),
