@@ -362,3 +362,15 @@ Make test non-critical if
 Make test non-critical on IronPython
     # This test isn't 100% safe. Should come up with better.
     Make test non-critical if    os.sep != '/' and 'ipy' in '${INTERPRETER}'
+
+Set PYTHONPATH
+    [Arguments]    @{values}
+    ${value} =    Catenate    SEPARATOR=${:}    @{values}
+    Run Keyword If    "${PYTHON}"        Set Environment Variable    PYTHONPATH        ${value}
+    Run Keyword If    "${JYTHON}"        Set Environment Variable    JYTHONPATH        ${value}
+    Run Keyword If    "${IRONPYTHON}"    Set Environment Variable    IRONPYTHONPATH    ${value}
+
+Reset PYTHONPATH
+    Run Keyword If    "${PYTHON}"        Remove Environment Variable    PYTHONPATH
+    Run Keyword If    "${JYTHON}"        Remove Environment Variable    JYTHONPATH
+    Run Keyword If    "${IRONPYTHON}"    Remove Environment Variable    IRONPYTHONPATH

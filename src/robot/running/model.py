@@ -142,17 +142,18 @@ class TestSuite(model.TestSuite):
         from .signalhandler import STOP_SIGNAL_MONITOR
         from .runner import Runner
 
-        if not settings:
-            settings = RobotSettings(options)
-            LOGGER.register_console_logger(**settings.console_logger_config)
-        with pyloggingconf.robot_handler_enabled(settings.log_level):
-            with STOP_SIGNAL_MONITOR:
-                IMPORTER.reset()
-                init_global_variables(settings)
-                output = Output(settings)
-                runner = Runner(output, settings)
-                self.visit(runner)
-            output.close(runner.result)
+        with LOGGER:
+            if not settings:
+                settings = RobotSettings(options)
+                LOGGER.register_console_logger(**settings.console_logger_config)
+            with pyloggingconf.robot_handler_enabled(settings.log_level):
+                with STOP_SIGNAL_MONITOR:
+                    IMPORTER.reset()
+                    init_global_variables(settings)
+                    output = Output(settings)
+                    runner = Runner(output, settings)
+                    self.visit(runner)
+                output.close(runner.result)
         return runner.result
 
 

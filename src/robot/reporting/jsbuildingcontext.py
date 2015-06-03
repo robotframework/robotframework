@@ -16,8 +16,8 @@ from contextlib import contextmanager
 import os.path
 
 from robot.output.loggerhelper import LEVELS
-from robot.utils import (html_escape, html_format, get_link_path,
-                         timestamp_to_secs)
+from robot.utils import (html_attr_escape, html_escape, html_format,
+                         get_link_path, timestamp_to_secs)
 
 from .stringcache import StringCache
 
@@ -36,11 +36,12 @@ class JsBuildingContext(object):
         self.min_level = 'NONE'
         self._msg_links = {}
 
-    def string(self, string, escape=True):
+    def string(self, string, escape=True, attr=False):
         if escape and string:
             if not isinstance(string, unicode):
                 string = unicode(string)
-            string = html_escape(string)
+            escaper = html_escape if not attr else html_attr_escape
+            string = escaper(string)
         return self._strings.add(string)
 
     def html(self, string):

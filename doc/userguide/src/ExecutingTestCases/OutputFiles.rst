@@ -493,6 +493,7 @@ are not removed except when using the `ALL` mode.
    case and space insensitive and they can be specified using `tag patterns`_
    where `*` and `?` are supported as wildcards and `AND`, `OR` and `NOT`
    operators can be used for combining individual tags or patterns together.
+   Can be used both with `library keyword tags`__ and `user keyword tags`_.
 
 Examples::
 
@@ -504,6 +505,8 @@ Examples::
 Removing keywords is done after parsing the `output file`_ and generating
 an internal model based on it. Thus it does not reduce memory usage as much
 as `flattening keywords`_.
+
+__ `Keyword tags`_
 
 .. note:: The support for using :option:`--removekeywords` when executing tests
           as well as `FOR` and `WUKS` modes were added in Robot
@@ -531,8 +534,8 @@ supports the following modes:
    same as when `removing keywords`_ using `NAME:<pattern>` mode.
 
 `TAG:<pattern>`
-   Flatten keywords with tags matching the given pattern. Pattern matching rules
-   are same as when `removing keywords`_ using `TAG:<pattern>` mode.
+   Flatten keywords with tags matching the given pattern. Pattern matching
+   rules are same as when `removing keywords`_ using `TAG:<pattern>` mode.
 
 Examples::
 
