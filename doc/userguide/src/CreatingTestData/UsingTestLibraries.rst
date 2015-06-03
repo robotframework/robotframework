@@ -76,7 +76,7 @@ make it available.
    ===========  =================  ==========  ==========  ==========
    Example      Do Something       \           \           \
    \            Import Library     MyLibrary   arg1        arg2
-   \            KW From Mylibrary  \           \           \
+   \            KW From MyLibrary  \           \           \
    ===========  =================  ==========  ==========  ==========
 
 Library search path
