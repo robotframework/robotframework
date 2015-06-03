@@ -1061,12 +1061,11 @@ Variable priorities
    variables set using `variable files`_ (:option:`--variablefile` option).
    If you specify same individual variable multiple times, the one specified
    last will override earlier ones. This allows setting default values for
-   variables in a `start-up script`__ and overriding them from the command line.
+   variables in a `start-up script`_ and overriding them from the command line.
    Notice, though, that if multiple variable files have same variables, the
    ones in the file specified first have the highest priority.
 
 __ `Setting variables in command line`_
-__ `Creating start-up scripts`_
 
 *Variable table in a test case file*
 

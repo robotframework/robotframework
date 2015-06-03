@@ -1710,10 +1710,8 @@ search path`_.
 
 When using Java, it is natural to package libraries into a JAR
 archive. The JAR package must be put into the `library search path`_
-before running tests, but it is easy to `create a start-up`__ script that
+before running tests, but it is easy to create a `start-up script`_ that
 does that automatically.
-
-__ `Creating start-up scripts`_
 
 Deprecating keywords
 ~~~~~~~~~~~~~~~~~~~~

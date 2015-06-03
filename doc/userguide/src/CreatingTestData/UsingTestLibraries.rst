@@ -95,14 +95,13 @@ automatically or have special instructions on how to do it. All
 automatically.
 
 The biggest benefit of this approach is that when the library search
-path has been configured, often using a `custom start-up script`__,
+path has been configured, often using a custom `start-up script`_,
 normal users do not need to think where libraries actually are
 installed. The drawback is that getting your own, possible
 very simple, libraries into the search path may require some
 additional configuration.
 
 __ `Adjusting library search path`_
-__ `Creating start-up scripts`_
 
 Using physical path to library
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

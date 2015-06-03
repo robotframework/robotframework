@@ -105,10 +105,8 @@ long as they are unique. For example, `--logle DEBUG` works,
 while `--lo log.html` does not, because the former matches only
 :option:`--loglevel`, but the latter matches several options. Short
 and shortened options are practical when executing test cases
-manually, but long options are recommended in `start-up scripts`__,
+manually, but long options are recommended in `start-up scripts`_,
 because they are easier to understand.
-
-__ `Creating start-up scripts`_
 
 The long option format is case-insensitive, which facilitates writing option
 names in an easy-to-read format. For example, :option:`--SuiteStatLevel`
@@ -485,6 +483,9 @@ or Jython version and the platform type::
 
    C:\>rebot --version
    Rebot 2.7 (Python 2.7.1 on win32)
+
+.. _start-up script:
+.. _start-up scripts:
 
 Creating start-up scripts
 -------------------------
