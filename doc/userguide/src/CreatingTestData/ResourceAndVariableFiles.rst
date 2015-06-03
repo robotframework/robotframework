@@ -30,8 +30,8 @@ after the setting name.
 If the path is given in an absolute format, it is used directly. In other
 cases, the resource file is first searched relatively to the directory
 where the importing file is located. If the file is not found there,
-it is then searched from the directories in ``PYTHONPATH``. The path can
-contain variables, and it is recommended to use them to make paths
+it is then searched from the directories in Python's `module search path`_.
+The path can contain variables, and it is recommended to use them to make paths
 system-independent (for example, :file:`${RESOURCES}/login_resources.html` or
 :file:`${RESOURCE_PATH}`). Additionally, slashes (`/`) in the path
 are automatically changed to backslashes (:codesc:`\\`) on Windows.
@@ -172,8 +172,8 @@ All test data files can import variables using the
 setting. Similarly to resource files, the path to the imported
 variable file is considered relative to the directory where the
 importing file is, and if not found, it is searched from the
-directories in ``PYTHONPATH``. The path can also contain variables, and
-slashes are converted to backslashes on Windows. If an `argument file takes
+directories in the `module search path`_. The path can also contain variables,
+and slashes are converted to backslashes on Windows. If an `argument file takes
 arguments`__, they are specified in the cells after the path and also they
 can contain variables.
 
@@ -211,7 +211,7 @@ and possible arguments are joined to the path with a colon (`:`)::
    --variablefile taking_arguments.py:arg1:arg2
 
 Starting from Robot Framework 2.8.2, variable files taken into use from the
-command line are also searched from the ``PYTHONPATH`` similarly as
+command line are also searched from the `module search path`_ similarly as
 variable files imported in the Setting table.
 
 If a variable file is given as an absolute Windows path, the colon after the

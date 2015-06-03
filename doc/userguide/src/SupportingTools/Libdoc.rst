@@ -100,7 +100,7 @@ Python libraries and dynamic libraries with name or path
 When documenting libraries implemented with Python or that use the
 `dynamic library API`_, it is possible to specify the library either by
 using just the library name or path to the library source code.
-In the former case the library is searched using the `library search path`_
+In the former case the library is searched using the `module search path`_
 and its name must be in the same format as in Robot Framework test data.
 
 If these libraries require arguments when they are imported, the arguments
@@ -124,7 +124,7 @@ Resource files with path
 
 Resource files must always be specified using a path. If the path does
 not exist, resource files are also searched from all directories in
-``PYTHONPATH`` similarly as when executing test cases.
+the `module search path`_ similarly as when executing test cases.
 
 Generating documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~

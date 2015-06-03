@@ -85,23 +85,16 @@ Library search path
 The most common way to specify a test library to import is using its
 name, like it has been done in all the examples in this section. In
 these cases Robot Framework tries to find the class or module
-implementing the library from the *library search path*. Basically,
-this means that the library code and all its possible dependencies
-must be in ``PYTHONPATH`` or, when running tests on Jython, in a
-``CLASSPATH``. `Setting the library search path`__ is explained in
-a section of its own. Libraries can also set the search path
-automatically or have special instructions on how to do it. All
-`standard libraries`_, for example, are in the library search path
-automatically.
+implementing the library from the `module search path`_. Libraries that
+are installed somehow ought to be in the module search path automatically,
+but with other libraries the search path may need to be configured separately.
 
-The biggest benefit of this approach is that when the library search
+The biggest benefit of this approach is that when the module search
 path has been configured, often using a custom `start-up script`_,
 normal users do not need to think where libraries actually are
 installed. The drawback is that getting your own, possible
 very simple, libraries into the search path may require some
 additional configuration.
-
-__ `Adjusting library search path`_
 
 Using physical path to library
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -110,7 +103,7 @@ Another mechanism for specifying the library to import is using a
 path to it in the file system. This path is considered relative to the
 directory where current test data file is situated similarly as paths
 to `resource and variable files`_. The main benefit of this approach
-is that there is no need to configure the library search path.
+is that there is no need to configure the module search path.
 
 If the library is a file, the path to it must contain extension. For
 Python libraries the extension is naturally :file:`.py` and for Java

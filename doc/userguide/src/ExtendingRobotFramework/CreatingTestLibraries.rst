@@ -500,7 +500,7 @@ Example Java library implemented as a class in the :file:`MyLibrary.java` file:
 
 The example below illustrates how the example libraries above can be
 used. If you want to try this yourself, make sure that the library is
-in the `library search path`_.
+in the `module search path`_.
 
 .. table:: Using simple example library
    :class: example
@@ -1697,7 +1697,7 @@ Packaging libraries
 After a library is implemented, documented, and tested, it still needs
 to be distributed to the users. With simple libraries consisting of a
 single file, it is often enough to ask the users to copy that file
-somewhere and set the `library search path`_ accordingly. More
+somewhere and set the `module search path`_ accordingly. More
 complicated libraries should be packaged to make the installation
 easier.
 
@@ -1709,7 +1709,7 @@ installed into a location that is automatically in the `library
 search path`_.
 
 When using Java, it is natural to package libraries into a JAR
-archive. The JAR package must be put into the `library search path`_
+archive. The JAR package must be put into the `module search path`_
 before running tests, but it is easy to create a `start-up script`_ that
 does that automatically.
 

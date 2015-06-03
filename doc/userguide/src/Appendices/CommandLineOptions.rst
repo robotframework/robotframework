@@ -73,7 +73,7 @@ Command line options for test execution
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used on the console.
   -K, --monitormarkers <on|off|force>  Specifies are `console markers`_
                           (`.` and `F`) used.
-  -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
+  -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
   -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
@@ -170,7 +170,6 @@ Command line options for post-processing outputs
 .. _empty test suites: `test suites are empty`_
 .. _Sets the width: `Console width`_
 .. _Specifies are colors: `Console colors`_
-.. _search test libraries: `library search path`_
 .. _Escapes characters: `Escaping complicated characters`_
 .. _read more arguments: `Argument files`_
 .. _usage instructions: `Getting help and version information`_
