@@ -112,11 +112,11 @@ which they are defined.
    +-----------------+--------------------------------------------------------+
    |      Name       |                         Description                    |
    +=================+========================================================+
-   | [Arguments]     | Used for specifying `user keyword arguments`_.         |
-   +-----------------+--------------------------------------------------------+
    | [Documentation] | Used for specifying a `user keyword documentation`_.   |
    +-----------------+--------------------------------------------------------+
-   | [Tags]          | Used for specifying a `user keyword tags`_.            |
+   | [Tags]          | Used for specifying `user keyword tags`_.              |
+   +-----------------+--------------------------------------------------------+
+   | [Arguments]     | Used for specifying `user keyword arguments`_.         |
    +-----------------+--------------------------------------------------------+
    | [Return]        | Used for specifying `user keyword return values`_.     |
    +-----------------+--------------------------------------------------------+

@@ -588,6 +588,8 @@ instead of adding extra documentation. Finally, metadata, such as the
 environment and user information in the last example above, is often
 better specified using tags_.
 
+.. _test case tags:
+
 Tagging test cases
 ------------------
 
