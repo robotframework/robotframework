@@ -188,8 +188,6 @@ __ http://creativecommons.org/licenses/by/3.0/
 .. _test reports: report_
 .. _debug files: `Debug file`_
 .. _log level: `Log levels`_
-.. _library search path: `Adjusting library search path`_
-.. _module search path: `library search path`_
 .. _return code: `return codes`_
 .. _post-process outputs: `post-processing outputs`_
 

@@ -15,6 +15,7 @@ import time
 import urllib
 import zipfile
 
+from fnmatch import fnmatchcase
 from invoke import task, run
 
 
@@ -266,7 +267,8 @@ def release_notes(version=get_version_from_file(), login=None, password=None):
                   API has 60 request/hour limit in that case.
         password: The password for GitHub login.
     """
-    issues = _get_issues(version, login, password)
+    milestone, preview, preview_number = _split_version(version)
+    issues = _get_issues(milestone, preview, preview_number, login, password)
     _print_header("Robot Framework {}".format(version), level=1)
     _print_intro(version)
     _print_if_label("Most important enhancements", issues, "prio-critical", "prio-high")
@@ -274,26 +276,25 @@ def release_notes(version=get_version_from_file(), login=None, password=None):
     _print_if_label("Deprecated features", issues, "depr")
     _print_header("Acknowledgements")
     print("*UPDATE* based on AUTHORS.txt.")
-    _print_issue_table(issues, version)
+    _print_issue_table(issues, version, preview)
 
-def _get_issues(version, login=None, password=None):
-    try:
-        from github import Github
-    except ImportError:
-        sys.exit("You need to install PyGithub:\n\tpip install PyGithub\n")
+def _split_version(version):
     match = VERSION_RE.match(version)
     if not match:
         raise ValueError("Invalid version '{}'".format(version))
     milestone, _, _, _, preview, preview_number = match.groups()
-    if preview:
-        preview = {'a': 'alpha', 'b': 'beta', 'rc': 'rc'}[preview]
-        preview_label = '{} {}'.format(preview, preview_number)
-    else:
-        preview_label = None
+    return milestone, preview, preview_number
+
+def _get_issues(milestone, preview, preview_number, login=None, password=None):
+    try:
+        from github import Github
+    except ImportError:
+        sys.exit("You need to install PyGithub:\n\tpip install PyGithub\n")
     repo = Github(login_or_token=login, password=password).get_repo("robotframework/robotframework")
     issues = [Issue(issue) for issue in repo.get_issues(milestone=_get_milestone(repo, milestone), state="all")]
-    if preview_label:
-        issues = [issue for issue in issues if preview_label in issue.labels]
+    preview_matcher = PreviewMatcher(preview, preview_number)
+    if preview_matcher:
+        issues = [issue for issue in issues if preview_matcher.matches(issue.labels)]
     return sorted(issues)
 
 def _get_milestone(repo, milestone):
@@ -314,7 +315,8 @@ def _print_if_label(header, issues, *labels):
         _print_header(header)
         print '*EXPLAIN* or remove these.\n'
         for issue in filtered:
-            print "* {} {}".format(issue.id, issue.summary)
+            print "* {} {}".format(issue.id, issue.summary),
+            print " ({})".format(issue.preview) if issue.preview else ""
 
 def _print_intro(version):
     print """
@@ -330,12 +332,15 @@ If you have pip just run `pip install --update robotframework`. Otherwise see \
 [installation instructions](https://github.com/robotframework/robotframework/blob/master/INSTALL.rst).
 """.format(version=version, date=time.strftime("%A %B %d, %Y")).strip()
 
-def _print_issue_table(issues, version):
+def _print_issue_table(issues, version, preview):
     _print_header("Full list of fixes and enhancements")
-    print "ID  | Type | Priority | Summary"
-    print "--- | ---- | -------- | -------"
+    print "ID  | Type | Priority | Summary" + (" | Added In" if preview else "")
+    print "--- | ---- | -------- | -------" + (" | --------" if preview else "")
     for issue in issues:
-        print "{} | {} | {} | {} ".format(issue.id, issue.type, issue.priority, issue.summary)
+        info = [issue.id, issue.type, issue.priority, issue.summary]
+        if preview:
+            info.append(issue.preview)
+        print " | ".join(info)
     print
     print "Altogether {} issues.".format(len(issues)),
     version = VERSION_RE.match(version).group(1)
@@ -390,3 +395,32 @@ class Issue(object):
         return (self.PRIORITIES.index(self.priority),
                 0 if self.type == 'bug' else 1,
                 self.id)
+
+    @property
+    def preview(self):
+        for label in self.labels:
+            if label.startswith(('alpha ', 'beta ', 'rc ')):
+                return label
+        return ''
+
+
+class PreviewMatcher(object):
+
+    def __init__(self, preview, number):
+        self._patterns = self._get_patterns(preview, number)
+
+    def _get_patterns(self, preview, number):
+        if not preview:
+            return ()
+        return {'a': (self._range('alpha', number),),
+                'b': ('alpha ?', self._range('beta', number)),
+                'rc': ('alpha ?', 'beta ?', self._range('rc', number))}[preview]
+
+    def _range(self, name, number):
+        return '%s [%s]' % (name, ''.join(str(i) for i in range(1, int(number)+1)))
+
+    def matches(self, labels):
+        return any(fnmatchcase(l, p) for p in self._patterns for l in labels)
+
+    def __nonzero__(self):
+        return bool(self._patterns)
