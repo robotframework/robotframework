@@ -2273,6 +2273,22 @@ class _Misc:
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
 
+    def reload_library(self, name_or_instance):
+        """Rechecks what keywords the specified library provides.
+
+        Can be called explicitly in the test data or by a library itself
+        when keywords it provides have changed.
+
+        The library can be specified by its name or as the active instance of
+        the library. The latter is especially useful if the library itself
+        calls this keyword as a method.
+
+        New in Robot Framework 2.9.
+        """
+        library = self._namespace.reload_library(name_or_instance)
+        self.log('Reloaded library %s with %s keywords.' % (library.name,
+                                                            len(library)))
+
     @run_keyword_variant(resolve=0)
     def import_library(self, name, *args):
         """Imports a library with the given name and optional arguments.

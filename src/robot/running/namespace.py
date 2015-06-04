@@ -191,6 +191,11 @@ class Namespace:
     def get_library_instance(self, libname):
         return self._kw_store.get_library(libname).get_instance()
 
+    def reload_library(self, libname_or_instance):
+        library = self._kw_store.get_library(libname_or_instance)
+        library.reload()
+        return library
+
     def get_handler(self, name):
         try:
             handler = self._kw_store.get_handler(name)
@@ -212,11 +217,22 @@ class KeywordStore(object):
         self.resources = ImportCache()
         self.search_order = ()
 
-    def get_library(self, name):
+    def get_library(self, name_or_instance):
         try:
-            return self.libraries[name.replace(' ', '')]
+            if isinstance(name_or_instance, basestring):
+                return self.libraries[name_or_instance.replace(' ', '')]
+            else:
+                return self._get_lib_by_instance(name_or_instance)
         except KeyError:
-            raise DataError("No library with name '%s' found." % name)
+            raise DataError("No library '%s' found." % name_or_instance)
+
+    def _get_lib_by_instance(self, instance):
+        if instance is None:
+            raise KeyError
+        for lib in self.libraries.values():
+            if lib.get_instance(create=False) == instance:
+                return lib
+        raise KeyError
 
     def get_handler(self, name):
         handler = self._get_handler(name)

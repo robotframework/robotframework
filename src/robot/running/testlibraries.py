@@ -107,6 +107,10 @@ class _BaseTestLibrary(object):
         self._create_handlers(self.get_instance())
         self.init_scope_handling()
 
+    def reload(self):
+        self.handlers = HandlerStore(self.name)
+        self._create_handlers(self.get_instance())
+
     def start_suite(self):
         pass
 
@@ -163,7 +167,9 @@ class _BaseTestLibrary(object):
     def _restoring_end(self):
         self._libinst = self._instance_cache.pop()
 
-    def get_instance(self):
+    def get_instance(self, create=True):
+        if not create:
+            return self._libinst
         if self._libinst is None:
             self._libinst = self._get_instance(self._libcode)
         if self.has_listener is None:
@@ -303,7 +309,9 @@ class _ModuleLibrary(_BaseTestLibrary):
             raise DataError('Not exposed as a keyword')
         return method
 
-    def get_instance(self):
+    def get_instance(self, create=True):
+        if not create:
+            return self._libcode
         if self.has_listener is None:
             self.has_listener = self._get_listeners(self._libcode) is not None
         return self._libcode
