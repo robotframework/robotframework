@@ -68,10 +68,10 @@ robot.running.importer module
     :undoc-members:
     :show-inheritance:
 
-robot.running.keywords module
------------------------------
+robot.running.keywordrunner module
+----------------------------------
 
-.. automodule:: robot.running.keywords
+.. automodule:: robot.running.keywordrunner
     :members:
     :undoc-members:
     :show-inheritance:
