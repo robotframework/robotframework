@@ -224,7 +224,6 @@ Options
                           tag:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords tag:<pattern>`
-    --prerebotmodifier class *
     --starttime timestamp  Set starting time of test execution when creating
                           reports. Timestamp must be given in format
                           `2007-10-01 15:12:42.268` where all separators are
@@ -241,13 +240,16 @@ Options
                           of combined test suites together.
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
+    --prerebotmodifier class *  Class to programmatically modify the result
+                          model before creating outputs.
  -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
- -P --pythonpath path *
+ -P --pythonpath path *   Additional locations to add to the module search path
+                          that is used when importing Python based extensions.
  -E --escape what:with *  Escape characters which are problematic in console.
                           `what` is the name of the character to escape and
                           `with` is the string to escape it with. Note that

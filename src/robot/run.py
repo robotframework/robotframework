@@ -251,8 +251,6 @@ Options
                           tag:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords tag:<pattern>`
-    --prerunmodifier class *
-    --prerebotmodifier class *
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
                           Arguments to the listener class can be given after
@@ -284,6 +282,10 @@ Options
                           The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
+    --prerunmodifier class *  Class to programmatically modify the test suite
+                          structure before execution.
+    --prerebotmodifier class *  Class to programmatically modify the result
+                          model before creating reports and logs.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
@@ -295,11 +297,12 @@ Options
                           console when top level keywords in test cases end.
                           Values have same semantics as with --monitorcolors.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
-                          to search test libraries from when they are imported.
-                          Multiple paths can be given by separating them with a
-                          colon (`:`) or using this option several times. Given
-                          path can also be a glob pattern matching multiple
-                          paths but then it normally must be escaped or quoted.
+                          to search test libraries and other extensions when
+                          they are imported. Multiple paths can be given by
+                          separating them with a colon (`:`) or by using this
+                          option several times. Given path can also be a glob
+                          pattern matching multiple paths but then it normally
+                          must be escaped or quoted.
                           Examples:
                           --pythonpath libs/
                           --pythonpath /opt/testlibs:mylibs.zip:yourlibs
