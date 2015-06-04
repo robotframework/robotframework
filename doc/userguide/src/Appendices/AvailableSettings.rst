@@ -20,7 +20,7 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
    |       Name      |                         Description                    |
    +=================+========================================================+
-   | Library         | Used for `taking test libraries into use`_.            |
+   | Library         | Used for `importing libraries`_.                       |
    +-----------------+--------------------------------------------------------+
    | Resource        | Used for `taking resource files into use`_.            |
    +-----------------+--------------------------------------------------------+

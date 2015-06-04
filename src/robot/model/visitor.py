@@ -52,9 +52,9 @@ any :meth:`start_x` method.
 Examples
 --------
 
-The following example modifies the test suite structure so that it keeps only
-every Xth test. It could be used, for example, with Robot Framework's
-``--prerunmodifier`` option to modify test data before execution.
+The following example visitor modifies the test suite structure it visits.
+It could be used, for example, with Robot Framework's ``--prerunmodifier``
+option to modify test data before execution.
 
 .. literalinclude:: /../../doc/api/code_examples/select_every_xth_test.py
 

@@ -575,6 +575,51 @@ Examples::
    rebot --starttime 20080611-175920 --endtime 20080611-180242 *.xml
    rebot --starttime 20110302-1317 --endtime 20110302-11418 myoutput.xml
 
+Programmatic modification of results
+------------------------------------
+
+If the provided built-in features to modify results are are not enough,
+Robot Framework 2.9 and newer provide a possible to do custom modifications
+programmatically. This is accomplished by creating a model modifier and
+activating it using the :option:`--prerebotmodifier` option.
+
+This functionality works nearly exactly like `programmatic modification of
+test data`_ that can be enabled with the :option:`--prerunmodifier` option.
+The only difference is that the modified model is Robot Framework's
+result model and not the executable test suite model. For example, the
+following modifier marks all passed tests that have taken more time than
+allowed as failed:
+
+.. sourcecode:: python
+
+    from robot.api import SuiteVisitor
+
+
+    class ExecutionTimeChecker(SuiteVisitor):
+
+        def __init__(self, max_seconds):
+            self.max_milliseconds = float(max_seconds) * 1000
+
+        def visit_test(self, test):
+            if test.status == 'PASS' and test.elapsedtime > self.max_milliseconds:
+                test.status = 'FAIL'
+                test.message = 'Test execution took too long.'
+
+If the above modifier would be in file :file:`ExecutionTimeChecker.py`, it
+could be used, for example, like this::
+
+    # Specify modifier as a path when running tests. Maximum time is 42 seconds.
+    pybot --prerebotmodifier path/to/ExecutionTimeChecker.py:42 tests.robot
+
+    # Specify modifier as a name when using Rebot. Maximum time is 3.14 seconds.
+    # ExecutionTimeChecker.py must be in the module search path.
+    rebot --prerebotmodifier ExecutionTimeChecker:3.14 output.xml
+
+If more than one model modifier is needed, they can be specified by using
+the :option:`--prerebotmodifier` option multiple times. When executing tests,
+it is possible to use :option:`--prerunmodifier` and
+:option:`--prerebotmodifier` options together.
+
 System log
 ----------
 

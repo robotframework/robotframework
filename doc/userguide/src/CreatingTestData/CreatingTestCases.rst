@@ -338,7 +338,7 @@ Where named arguments are supported
 '''''''''''''''''''''''''''''''''''
 
 As already explained, the named argument syntax works with keywords. In
-addition to that, it also works when `taking test libraries into use`_.
+addition to that, it also works when `importing libraries`_.
 
 Naming arguments is supported by `user keywords`_ and by most `test libraries`_.
 The only exception are Java based libraries that use the `static library API`_.

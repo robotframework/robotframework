@@ -281,7 +281,7 @@ extensions are found is a requirement for successful test execution. If
 you need to customize it using approaches explained below, it is often
 a good idea to create a custom `start-up script`_.
 
-__ `Taking test libraries into use`_
+__ `Specifying library to import`_
 __ `Setting listeners`_
 
 Locations automatically in module search path
@@ -444,6 +444,57 @@ Examples::
 
 __ `Free test suite metadata`_
 
+Programmatic modification of test data
+--------------------------------------
+
+If the provided built-in features to modify test data before execution
+are not enough, Robot Framework 2.9 and newer provide a possible to do
+custom modifications programmatically. This is accomplished by creating
+a model modifier and activating it using the :option:`--prerunmodifier`
+option.
+
+Model modifiers should be implemented as visitors that can traverse through
+the executable test suite structure and modify it as needed. The visitor
+interface is explained as part of the `Robot Framework API documentation`__,
+and the example below ought to give an idea of how it can be used and how
+powerful this functionality is.
+
+.. sourcecode:: python
+
+   ../api/code_examples/select_every_xth_test.py
+
+When a model modifier is taken into use on the command line using the
+:option:`--prerunmodifier` option, it can be specified either as a name of
+the modifier class or a path to the modifier file. If the modifier is given
+as a class name, the module containing the class must be in the `module search
+path`_, and if the module name is different than the class name, the given
+name must include both like `module.ModifierClass`. If the modifier is given
+as a path, the class name must be same as the file name. For most parts this
+works exactly like when `specifying a test library to import`__.
+
+If a modifier requires arguments, like the example above does, they can be
+specified after the modifier name or path using either a colon (`:`) or a
+semicolon (`;`) as a separator. If both are used in the value, the one first
+is considered the actual separator.
+
+For example, if the above model modifier would be in a file
+:file:`SelectEveryXthTest.py`, it could be used like this::
+
+    # Specify the modifier as a path. Run every second test.
+    pybot --prerunmodifier path/to/SelectEveryXthTest.py:2 tests.robot
+
+    # Specify the modifier as a name. Run every third test, starting from the second.
+    # SelectEveryXthTest.py must be in the module search path.
+    pybot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
+
+If more than one model modifier is needed, they can be specified by using
+the :option:`--prerunmodifier` option multiple times. If similar modifying
+is needed before creating results, `programmatic modification of results`_
+can be enabled using the :option:`--prerebotmodifier` option.
+
+__ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.model.html#module-robot.model.visitor
+__ `Specifying library to import`_
+
 Controlling console output
 --------------------------
 
@@ -509,7 +560,8 @@ case-insensitive values:
 Setting listeners
 -----------------
 
-So-called listeners_ can be used for monitoring the test
-execution. They are taken into use with the command line option
-:option:`--listener`, and the specified listeners must be in the `module
-search path`_ similarly as test libraries.
+Listeners_ can be used to monitor the test execution. When they are taken into
+use from the command line, they are specified using the :option:`--listener`
+command line option. The value can either be a path to a listener or
+a listener name. See the `Using listener interface`_ section for more details
+about importing listeners and using them in general.

@@ -13,14 +13,14 @@ section.
    :depth: 2
    :local:
 
-Taking test libraries into use
-------------------------------
+Importing libraries
+-------------------
 
-Instructions for taking test libraries into use are given in the
-subsections below.
+Test libraries are typically imported using the :setting:`Library` setting,
+but it is also possible to use the :name:`Import Library` keyword.
 
-Using Library setting
-~~~~~~~~~~~~~~~~~~~~~
+Using `Library` setting
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Test libraries are normally imported using the :setting:`Library`
 setting in the Setting table and having the library name in the
@@ -56,8 +56,8 @@ cases, all the keywords in the imported library are available in that
 file. With resource files, those keywords are also available in other
 files using them.
 
-Using Import Library keyword
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using `Import Library` keyword
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Another possibility to take a test library into use is using the
 keyword :name:`Import Library` from the BuiltIn_ library. This keyword
@@ -79,8 +79,16 @@ make it available.
    \            KW From MyLibrary  \           \           \
    ===========  =================  ==========  ==========  ==========
 
-Library search path
-~~~~~~~~~~~~~~~~~~~
+Specifying library to import
+----------------------------
+
+Libraries to import can be specified either by using the library name
+or the path to the library. These approaches work the same way regardless
+is the library imported using the :setting:`Library` setting or the
+:name:`Import Library` keyword.
+
+Using library name
+~~~~~~~~~~~~~~~~~~
 
 The most common way to specify a test library to import is using its
 name, like it has been done in all the examples in this section. In

@@ -2,6 +2,7 @@ from robot.api import SuiteVisitor
 
 
 class SelectEveryXthTest(SuiteVisitor):
+    """Visitor that keeps only every Xth test in the visited suite structure."""
 
     def __init__(self, x, start=0):
         self.x = int(x)

@@ -1705,7 +1705,7 @@ Since libraries are normal programming code, they can be packaged
 using normal packaging tools. With Python, good options include
 distutils_, contained by Python's standard library, and the newer
 setuptools_. A benefit of these tools is that library modules are
-installed into a location that is automatically in the `library
+installed into a location that is automatically in the `module
 search path`_.
 
 When using Java, it is natural to package libraries into a JAR

@@ -68,6 +68,8 @@ Command line options for test execution
   --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
                           if any error occurs when parsing test data, importing libraries, and so on.
   --skipteardownonexit    `Skips teardowns`_ is test execution is prematurely stopped.
+  --prerunmodifier <name:args>    Activate `programmatic modification of test data`_.
+  --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
   -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used on the console.
@@ -127,6 +129,8 @@ Command line options for post-processing outputs
                           in test cases. Error codes are returned normally.
   --processemptysuite     Processes output files even if files contain
                           `empty test suites`_.
+  --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
+  -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
   -E, --escape <what:with>  `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
