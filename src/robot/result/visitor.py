@@ -12,37 +12,31 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Visitors can be used to easily travel test suites, test cases and keywords."""
+"""Visitors can be used to easily traverse result structures.
+
+This module contains :class:`ResultVisitor` for traversing the whole
+:class:`~robot.result.executionresult.Result` object. It extends
+:class:`~robot.model.visitor.SuiteVisitor` that contains visiting logic
+for the test suite structure.
+"""
 
 from robot.model import SuiteVisitor
 
 
 class ResultVisitor(SuiteVisitor):
-    """Abstract class to conveniently travel
-    :class:`~robot.result.executionresult.Result` objects.
+    """Abstract class to conveniently travel :class:`~robot.result.executionresult.Result` objects.
 
-    An implementation of visitor can be given to the visit method of result
-    object. This will cause the result object to be traversed and the visitor
-    object's ``visit_x``, ``start_x``, and ``end_x`` methods to be called for
-    each test suite, test case, and keyword, as well as for errors, statistics,
-    and other information in the result object. See methods below for a full
-    list of available visitor methods.
+    A visitor implementation can be given to the :meth:`visit` method of a
+    result object. This will cause the result object to be traversed and the
+    visitor's :meth:`visit_x`, :meth:`start_x`, and :meth:`end_x` methods to
+    be called for each suite, test, keyword and message, as well as for errors,
+    statistics, and other information in the result object. See methods below
+    for a full list of available visitor methods.
 
-    The start and end method are called for each element and their child
-    elements. The visitor implementation can override only those that it is
-    interested in. If any of the ``start_x`` methods returns False for
-    a certain element, its children are not visited.
-
-    If the visitor implements a ``visit_x`` method for element x, then the
-    children of that element will not be visited, unless the visitor calls them
-    explicitly. For example, if the visitor implements method :meth:`visit_test`,
-    the :meth:`start_test`, :meth:`end_test`, :meth:`visit_keyword`,
-    :meth:`start_keyword`, and :meth:`end_keyword` methods are not called for
-    tests at all.
-
-    See the package documentation for :mod:`a usage example <robot.result>`.
-    Visitors are also very widely used internally in Robot Framework. For
-    an example, see the source code of :class:`robot.model.tagsetter.TagSetter`.
+    See the :mod:`result package level <robot.result>` documentation for
+    more information about handling results and a concrete visitor example.
+    For more information about the visitor algorithm see documentation in
+    :mod:`robot.model.visitor` module.
     """
     def visit_result(self, result):
         if self.start_result(result) is not False:

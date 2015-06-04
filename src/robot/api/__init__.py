@@ -60,6 +60,7 @@ See documentations of the individual APIs for more details.
         via the :mod:`robot` root package.
 """
 
+from robot.model import SuiteVisitor
 from robot.parsing import TestCaseFile, TestDataDirectory, ResourceFile, TestData
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor

@@ -2,7 +2,7 @@ import unittest
 
 from os.path import abspath, join
 
-from robot import api, parsing, reporting, result, running
+from robot import api, model, parsing, reporting, result, running
 
 from robot.utils.asserts import assert_equals
 
@@ -29,6 +29,10 @@ class TestExposedApi(unittest.TestCase):
 
     def test_result_writer(self):
         assert_equals(api.ResultWriter, reporting.ResultWriter)
+
+    def test_visitors(self):
+        assert_equals(api.SuiteVisitor, model.SuiteVisitor)
+        assert_equals(api.ResultVisitor, result.ResultVisitor)
 
 
 class TestTestSuiteBuilder(unittest.TestCase):
