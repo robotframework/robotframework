@@ -334,7 +334,7 @@ If you have pip just run `pip install --update robotframework`. Otherwise see \
 
 def _print_issue_table(issues, version, preview):
     _print_header("Full list of fixes and enhancements")
-    print "ID  | Type | Priority | Summary" + (" | Added In" if preview else "")
+    print "ID  | Type | Priority | Summary" + (" | Added&nbsp;In" if preview else "")
     print "--- | ---- | -------- | -------" + (" | --------" if preview else "")
     for issue in issues:
         info = [issue.id, issue.type, issue.priority, issue.summary]
