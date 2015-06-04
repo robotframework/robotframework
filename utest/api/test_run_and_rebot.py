@@ -98,9 +98,9 @@ class TestRun(RunningTestCase):
         listener = join(ROOT, 'utest', 'resources', 'Listener.py')
         assert_equals(run(self.data, output=OUTPUT_PATH, report=REPORT_PATH,
                           log=LOG_PATH, listener=listener), 1)
-        self._assert_outputs(stdout=[('[output {}]'.format(OUTPUT_PATH), 1),
-                                     ('[report {}]'.format(REPORT_PATH), 1),
-                                     ('[log {}]'.format(LOG_PATH), 1),
+        self._assert_outputs(stdout=[('[output {0}]'.format(OUTPUT_PATH), 1),
+                                     ('[report {0}]'.format(REPORT_PATH), 1),
+                                     ('[log {0}]'.format(LOG_PATH), 1),
                                      ('[listener close]', 1)])
 
 

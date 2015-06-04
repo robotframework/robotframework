@@ -8,19 +8,19 @@ class Listener:
         self.name = name
 
     def start_suite(self, name, attrs):
-        self._log("from listener {}".format(self.name))
+        self._log("from listener {0}".format(self.name))
 
     def close(self):
         self._log("listener close")
 
     def report_file(self, path):
-        self._log("report {}".format(path))
+        self._log("report {0}".format(path))
 
     def log_file(self, path):
-        self._log("log {}".format(path))
+        self._log("log {0}".format(path))
 
     def output_file(self, path):
-        self._log("output {}".format(path))
+        self._log("output {0}".format(path))
 
     def _log(self, message):
-        sys.__stdout__.write("[{}]\n".format(message))
+        sys.__stdout__.write("[{0}]\n".format(message))
