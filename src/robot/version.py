@@ -17,7 +17,7 @@ import sys
 
 # Version number typically updated by running `invoke set_version <version>`.
 # Run `invoke --help set_version` or see tasks.py for details.
-VERSION = '2.9.dev20150410'
+VERSION = '2.9a2'
 
 
 def get_version(naked=False):
