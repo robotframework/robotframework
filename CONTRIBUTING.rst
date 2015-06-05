@@ -91,7 +91,7 @@ Documentation
 If your changes modify Robot Framework's behavior in any way, or if
 you're contributing documentation, see the `documentation
 README <doc/userguide/README.rst>`__. The libraries that come with Robot
-Framework (``BuiltIn``, ``Collections``, etc. have keyword docstrings
+Framework (``BuiltIn``, ``Collections``, etc.) have keyword docstrings
 that serve as their documentation. Make sure to update these if
 necessary. Functions and methods intended for internal use only
 generally do not require docstrings as long as they are written clearly
