@@ -254,6 +254,33 @@ class String(object):
         regexp = re.compile('^%s$' % pattern)
         return self._get_matching_lines(string, regexp.match)
 
+    def get_regexp_matches(self, string, regexp, group_name=None):
+        """Returns multiple match results of the given ``string`` that match the ``pattern``.
+        This keyword returns all matches(don't return on first match) and support group.
+
+        See the `Should Match Regexp` check how to use regex in Robot Framework.
+
+        If regexp doesn't match anything, return empty array. (Not Fail)
+        This will help you find in high volatility string.
+
+        Examples:
+        | ${no_match} | Get Regexp Matches | abcdefg123abcdefg123 | hijk |
+        | ${no_group} | Get Regexp Matches | abcdefg123abcdefg123 | abcdefg |
+        | ${group_regexp} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) |
+        | ${with_group_name} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | name |
+        =>
+        | ${no_match} = []
+        | ${no_group} = ['abcdefg', 'abcdefg']
+        | ${group_regexp} = ['abcdefg', 'abcdefg']
+        | ${with_group_name} = ['cd', 'cd']
+        """
+        c = re.compile(regexp)
+        if group_name:
+            results = [m.groupdict()[group_name] for m in c.finditer(string)]
+        else:
+            results = [m.group() for m in c.finditer(string)]
+        return results
+
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
