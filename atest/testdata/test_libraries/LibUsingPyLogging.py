@@ -36,15 +36,16 @@ def log_with_default_levels():
     logging.debug('debug message')
     logging.info('%s %s', 'info', 'message')
     logging.warning(Message('warning message'))
-    # error and critical are considered warnings
     logging.error('error message')
+    #critical is considered a warning
     logging.critical('critical message')
 
 def log_with_custom_levels():
     logging.log(logging.DEBUG-1, Message('below debug'))
     logging.log(logging.INFO-1, 'between debug and info')
     logging.log(logging.INFO+1, 'between info and warning')
-    logging.log(logging.WARNING*100, 'above warning')
+    logging.log(logging.WARNING+5, 'between warning and error')
+    logging.log(logging.ERROR*100,'above error')
 
 def log_invalid_message():
     logging.info(InvalidMessage())

@@ -58,6 +58,10 @@ def warn(msg, html=False):
     write(msg, 'WARN', html)
 
 
+def error(msg, html=False):
+    write(msg, 'ERROR', html)
+
+
 def console(msg, newline=True, stream='stdout'):
     msg = unic(msg)
     if newline:

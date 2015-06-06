@@ -39,3 +39,7 @@ Logging HTML
     Check Log Message    ${tc.kws[1].msgs[2]}    This is not html <br>    INFO
     Check Log Message    ${tc.kws[2].msgs[0]}    <i>Hello, stderr!!</i>    HTML
     Check Stderr Contains    *HTML* <i>Hello, stderr!!</i>
+
+Log Error With Print
+    ${tc} =   Check Test Case   ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    This is an error msg logged with print.    ERROR

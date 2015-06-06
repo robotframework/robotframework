@@ -2,7 +2,7 @@ import time
 from robot.api import logger
 
 def log_with_all_levels():
-    for level in 'trace debug info warn'.split():
+    for level in 'trace debug info warn error'.split():
         msg = '%s msg' % level
         logger.write(msg+' 1', level)
         getattr(logger, level)(msg+' 2', html=False)

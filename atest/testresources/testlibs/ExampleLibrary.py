@@ -167,6 +167,9 @@ class ExampleLibrary:
     def fail_with_suppressed_exception_name(self, msg):
         raise MyException(msg)
 
+    def print_error(self,msg):
+        print '*ERROR* {0}'.format(msg)
+
 
 class _MyList(list):
     pass

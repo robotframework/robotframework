@@ -94,6 +94,15 @@ class TestBuildTestSuite(unittest.TestCase):
         assert_equals(len(links), 1)
         key = (msg.message, msg.level, msg.timestamp)
         assert_equals(remap(links[key], self.context.strings), 't1-k1')
+        
+    def test_error_linking(self):
+        msg = Message('ERROR Message', 'ERROR', timestamp='20111204 22:04:03.210',
+                      parent=TestCase().keywords.create())
+        self._verify_message(msg, 'ERROR Message', 5, 0)
+        links = self.context._msg_links
+        assert_equals(len(links), 1)
+        key = (msg.message, msg.level, msg.timestamp)
+        assert_equals(remap(links[key], self.context.strings), 't1-k1')
 
     def test_message_with_html(self):
         self._verify_message(Message('<img>'), '&lt;img&gt;')

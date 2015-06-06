@@ -1189,15 +1189,18 @@ messages, specify the log level explicitly by embedding the level into
 the message in the format `*LEVEL* Actual log message`, where
 `*LEVEL*` must be in the beginning of a line and `LEVEL` is
 one of the available logging levels `TRACE`, `DEBUG`,
-`INFO`, `WARN`, `FAIL` and `HTML`.
+`INFO`, `WARN`, `ERROR` and `HTML`.
 
-Warnings
-''''''''
+Errors and Warnings
+'''''''''''''''''''
 
-Messages with `WARN` level are automatically written into `the
-console and into separate Test Execution Errors section`__ in log
-files. This makes warnings more visible than other messages and allows
+Messages with `ERROR` or `WARN` level are automatically written to the
+console and a separate `Test Execution Errors section`__ in the log
+files. This makes errors more visible than other messages and allows
 using them for reporting important but non-critical problems to users.
+
+.. note:: In Robot Framework 2.9, new functionality was added to automatically 
+          add ERRORs logged by keywords to the Test Execution Errors section.
 
 __ `Errors and warnings during execution`_
 
@@ -1302,7 +1305,7 @@ Logging example
 In most cases, the `INFO` level is adequate. The levels below it,
 `DEBUG` and `TRACE`, are useful for writing debug information.
 These messages are normally not shown, but they can facilitate debugging
-possible problems in the library itself. The `WARN` level can
+possible problems in the library itself. The `WARN` or `ERROR` level can
 be used to make messages more visible and `HTML` is useful if any
 kind of formatting is needed.
 
@@ -1314,6 +1317,7 @@ as pseudocode meaning `System.out.println("message");`.
 
    print 'Hello from a library.'
    print '*WARN* Warning from a library.'
+   print '*ERROR* Something unexpected happen that may indicate a problem in the test.'
    print '*INFO* Hello again!'
    print 'This will be part of the previous message.'
    print '*INFO* This is a new message.'
@@ -1333,6 +1337,11 @@ as pseudocode meaning `System.out.println("message");`.
        <td class="time">16:18:42.123</td>
        <td class="warn level">WARN</td>
        <td class="msg">Warning from a library.</td>
+     </tr>
+     <tr>
+       <td class="time">16:18:42.123</td>
+       <td class="error level">ERROR</td>
+       <td class="msg">Something unexpected happen that may indicate a problem in the test.</td>
      </tr>
      <tr>
        <td class="time">16:18:42.123</td>
@@ -1424,11 +1433,11 @@ Framework.
        logging.info('This is a boring example')
 
 The `logging` module has slightly different log levels than
-Robot Framework. Its levels `DEBUG` and `INFO` are mapped
-directly to the matching Robot Framework log levels and `WARNING`
-and everything above is mapped to `WARN`. Custom levels below
-`DEBUG` are mapped to `DEBUG` and everything between
-`DEBUG` and `WARNING` is mapped to `INFO`.
+Robot Framework. Its levels `DEBUG`, `ERROR`, and `INFO` are mapped
+directly to the matching Robot Framework log levels and `CRITICAL` 
+is mapped to `ERROR`. Custom log levels are mapped to the closest 
+standard level. For example, a custom level between INFO and WARNING 
+is mapped to the `INFO` log level.
 
 __ http://docs.python.org/library/logging.html
 
@@ -1439,7 +1448,7 @@ Libraries can also log during the test library import and initialization.
 These messages do not appear in the `log file`_ like the normal log messages,
 but are instead written to the `syslog`_. This allows logging any kind of
 useful debug information about the library initialization. Messages logged
-using the `WARN` level are also visible in the `test execution errors`_
+using the `WARN` or `ERROR` levels are also visible in the `test execution errors`_
 section in the log file.
 
 Logging during the import and initialization is possible both using the
