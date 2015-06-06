@@ -44,6 +44,10 @@ def trace(msg, html=False):
     write(msg, 'TRACE', html)
 
 
+def error(msg, html=False):
+    write(msg, 'ERROR', html)
+
+
 def debug(msg, html=False):
     write(msg, 'DEBUG', html)
 

@@ -33,9 +33,9 @@ using logger named ``RobotFramework``. This feature was added in RF 2.8.7.
 Log levels
 ----------
 
-It is possible to log messages using levels ``TRACE``, ``DEBUG``, ``INFO``
-and ``WARN`` either using the ``write`` method or, more commonly, with the
-log level specific ``trace``, ``debug``, ``info`` and ``warn`` methods.
+It is possible to log messages using levels ``TRACE``, ``DEBUG``, ``INFO``,
+``ERROR``, and ``WARN`` either using the ``write`` method or, more commonly, with the
+log level specific ``error``,``trace``, ``debug``, ``info`` and ``warn`` methods.
 
 By default the trace and debug messages are not logged but that can be
 changed with the ``--loglevel`` command line option. Warnings are
@@ -80,6 +80,7 @@ def write(msg, level, html=False):
         logger = logging.getLogger("RobotFramework")
         level = {'TRACE': logging.DEBUG/2,
                  'DEBUG': logging.DEBUG,
+                 'ERROR': logging.ERROR,
                  'INFO': logging.INFO,
                  'HTML': logging.INFO,
                  'WARN': logging.WARN}[level]
@@ -90,6 +91,11 @@ def trace(msg, html=False):
     """Writes the message to the log file using the ``TRACE`` level."""
     write(msg, 'TRACE', html)
 
+
+def error(msg, html=False):
+    """Writes the message to the log file using the ``ERROR`` level."""
+    write(msg, 'ERROR', html)
+            
 
 def debug(msg, html=False):
     """Writes the message to the log file using the ``DEBUG`` level."""
