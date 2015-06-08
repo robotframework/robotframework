@@ -29,3 +29,6 @@ Logging HTML
     Print One HTML Line
     Print Many HTML Lines
     Print HTML To Stderr
+
+Log Error With Print
+    Print Error   This is an error msg logged with print.
