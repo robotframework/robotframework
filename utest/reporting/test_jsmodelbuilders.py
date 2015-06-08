@@ -98,7 +98,7 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_error_linking(self):
         msg = Message('ERROR Message', 'ERROR', timestamp='20150609 01:02:03.004',
                       parent=TestCase().keywords.create().keywords.create())
-        self._verify_message(msg, 'ERROR Message', 5, 0)
+        self._verify_message(msg, 'ERROR Message', 4, 0)
         links = self.context._msg_links
         assert_equals(len(links), 1)
         key = (msg.message, msg.level, msg.timestamp)
@@ -397,7 +397,7 @@ class TestBuildErrors(unittest.TestCase):
         context = JsBuildingContext()
         model = ErrorsBuilder(context).build(self.errors)
         model = remap(model, context.strings)
-        assert_equals(model, ((0, 5, 'Error'), (42, 3, 'Warning')))
+        assert_equals(model, ((0, 4, 'Error'), (42, 3, 'Warning')))
 
     def test_linking(self):
         self.errors.messages.create('Linkable', 'WARN',
@@ -408,7 +408,7 @@ class TestBuildErrors(unittest.TestCase):
                                       timestamp='20111206 14:33:00.001'))
         model = ErrorsBuilder(context).build(self.errors)
         model = remap(model, context.strings)
-        assert_equals(model, ((-1, 5, 'Error'), (41, 3, 'Warning'),
+        assert_equals(model, ((-1, 4, 'Error'), (41, 3, 'Warning'),
                               (0, 3, 'Linkable', 's1-t1-k1')))
 
 

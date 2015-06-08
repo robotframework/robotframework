@@ -19,8 +19,8 @@ from robot.model import Message as BaseMessage
 
 LEVELS = {
   'NONE'  : 6,
-  'ERROR' : 5,
-  'FAIL'  : 4,
+  'FAIL'  : 5,
+  'ERROR' : 4,
   'WARN'  : 3,
   'INFO'  : 2,
   'DEBUG' : 1,
