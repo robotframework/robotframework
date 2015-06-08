@@ -1191,15 +1191,15 @@ the message in the format `*LEVEL* Actual log message`, where
 one of the available logging levels `TRACE`, `DEBUG`,
 `INFO`, `WARN`, `ERROR` and `HTML`.
 
-Errors and Warnings
+Errors and warnings
 '''''''''''''''''''
 
 Messages with `ERROR` or `WARN` level are automatically written to the
 console and a separate `Test Execution Errors section`__ in the log
-files. This makes errors more visible than other messages and allows
+files. This makes these messages more visible than others and allows
 using them for reporting important but non-critical problems to users.
 
-.. note:: In Robot Framework 2.9, new functionality was added to automatically 
+.. note:: In Robot Framework 2.9, new functionality was added to automatically
           add ERRORs logged by keywords to the Test Execution Errors section.
 
 __ `Errors and warnings during execution`_
@@ -1433,11 +1433,11 @@ Framework.
        logging.info('This is a boring example')
 
 The `logging` module has slightly different log levels than
-Robot Framework. Its levels `DEBUG`, `ERROR`, and `INFO` are mapped
-directly to the matching Robot Framework log levels and `CRITICAL` 
-is mapped to `ERROR`. Custom log levels are mapped to the closest 
-standard level. For example, a custom level between INFO and WARNING 
-is mapped to the `INFO` log level.
+Robot Framework. Its levels `DEBUG`, `INFO`, `WARNING` and `ERROR` are mapped
+directly to the matching Robot Framework log levels, and `CRITICAL`
+is mapped to `ERROR`. Custom log levels are mapped to the closest
+standard level smaller than the custom level. For example, a level
+between `INFO` and `WARNING` is mapped to Robot Framework's `INFO` level.
 
 __ http://docs.python.org/library/logging.html
 

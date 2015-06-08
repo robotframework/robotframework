@@ -86,7 +86,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_message(msg, 'Message', 1, 0)
         self._verify_min_message_level('DEBUG')
 
-    def test_message_linking(self):
+    def test_warning_linking(self):
         msg = Message('Message', 'WARN', timestamp='20111204 22:04:03.210',
                       parent=TestCase().keywords.create())
         self._verify_message(msg, 'Message', 3, 0)
@@ -94,15 +94,15 @@ class TestBuildTestSuite(unittest.TestCase):
         assert_equals(len(links), 1)
         key = (msg.message, msg.level, msg.timestamp)
         assert_equals(remap(links[key], self.context.strings), 't1-k1')
-        
+
     def test_error_linking(self):
-        msg = Message('ERROR Message', 'ERROR', timestamp='20111204 22:04:03.210',
-                      parent=TestCase().keywords.create())
+        msg = Message('ERROR Message', 'ERROR', timestamp='20150609 01:02:03.004',
+                      parent=TestCase().keywords.create().keywords.create())
         self._verify_message(msg, 'ERROR Message', 5, 0)
         links = self.context._msg_links
         assert_equals(len(links), 1)
         key = (msg.message, msg.level, msg.timestamp)
-        assert_equals(remap(links[key], self.context.strings), 't1-k1')
+        assert_equals(remap(links[key], self.context.strings), 't1-k1-k1')
 
     def test_message_with_html(self):
         self._verify_message(Message('<img>'), '&lt;img&gt;')
