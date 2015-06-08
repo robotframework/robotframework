@@ -48,6 +48,11 @@ class StatusHighlighter(object):
             if flush:
                 stream.flush()
 
+    def error(self, message, level, stream):
+        stream.write('[ ')
+        self.highlight(level, stream)
+        stream.write(' ] %s\n' % message)
+
     @contextmanager
     def _highlighting(self, status, stream):
         highlighter = self._highlighters[stream]

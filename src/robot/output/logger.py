@@ -67,9 +67,9 @@ class Logger(AbstractLogger):
         for log in loggers:
             self._loggers.unregister_logger(log)
 
-    def register_console_logger(self, width=78, colors='AUTO', markers='AUTO',
-                                stdout=None, stderr=None):
-        logger = ConsoleOutput(width, colors, markers, stdout, stderr)
+    def register_console_logger(self, type='verbose', width=78, colors='AUTO',
+                                markers='AUTO', stdout=None, stderr=None):
+        logger = ConsoleOutput(type, width, colors, markers, stdout, stderr)
         if self._console_logger:
             self._loggers.unregister_logger(self._console_logger)
         self._console_logger = logger
