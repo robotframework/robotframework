@@ -16,12 +16,50 @@
 # Andre Burgaud, licensed under the MIT License, and available here:
 # http://www.burgaud.com/bring-colors-to-the-windows-console-with-python/
 
+from contextlib import contextmanager
 import os
 import sys
 try:
     from ctypes import windll, Structure, c_short, c_ushort, byref
 except ImportError:  # Not on Windows or using Jython
     windll = None
+
+from robot.utils import isatty
+
+
+class StatusHighlighter(object):
+
+    def __init__(self, colors, *streams):
+        self._highlighters = dict((stream, self._get_highlighter(stream, colors))
+                                  for stream in streams)
+
+    def _get_highlighter(self, stream, colors):
+        auto = Highlighter if isatty(stream) else NoHighlighting
+        highlighter = {'AUTO': auto,
+                       'ON': Highlighter,
+                       'FORCE': Highlighter,   # compatibility with 2.5.5 and earlier
+                       'OFF': NoHighlighting,
+                       'ANSI': AnsiHighlighter}.get(colors.upper(), auto)
+        return highlighter(stream)
+
+    def highlight(self, status, stream, text=None, flush=False):
+        with self._highlighting(status, stream):
+            stream.write(text if text is not None else status)
+            if flush:
+                stream.flush()
+
+    @contextmanager
+    def _highlighting(self, status, stream):
+        highlighter = self._highlighters[stream]
+        start = {'PASS': highlighter.green,
+                 'FAIL': highlighter.red,
+                 'ERROR': highlighter.red,
+                 'WARN': highlighter.yellow}[status]
+        start()
+        try:
+            yield
+        finally:
+            highlighter.reset()
 
 
 def Highlighter(stream):
@@ -31,7 +69,7 @@ def Highlighter(stream):
 
 
 class AnsiHighlighter(object):
-    _ANSI_GREEN  = '\033[32m'
+    _ANSI_GREEN = '\033[32m'
     _ANSI_RED = '\033[31m'
     _ANSI_YELLOW = '\033[33m'
     _ANSI_RESET = '\033[0m'

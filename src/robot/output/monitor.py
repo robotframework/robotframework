@@ -14,9 +14,10 @@
 
 import sys
 
-from robot import utils
+from robot.utils import (encode_output, get_console_length, isatty,
+                         pad_console_length)
 
-from .highlighting import AnsiHighlighter, Highlighter, NoHighlighting
+from .highlighting import StatusHighlighter
 from .loggerhelper import IsLogged
 
 
@@ -93,10 +94,10 @@ class CommandLineWriter(object):
         return self._width - self._status_length - 1, ' '
 
     def _get_info(self, name, doc, width):
-        if utils.get_console_length(name) > width:
-            return utils.pad_console_length(name, width)
+        if get_console_length(name) > width:
+            return pad_console_length(name, width)
         info = name if not doc else '%s :: %s' % (name, doc.splitlines()[0])
-        return utils.pad_console_length(info, width)
+        return pad_console_length(info, width)
 
     def suite_separator(self):
         self._fill('=')
@@ -150,72 +151,36 @@ class CommandLineWriter(object):
         stream = self._stdout if not error else self._stderr
         if newline:
             text += '\n'
-        stream.write(utils.encode_output(text))
+        stream.write(encode_output(text))
         stream.flush()
 
     def _highlight(self, before, status, after, newline=True, error=False):
         stream = self._stdout if not error else self._stderr
         self._write(before, newline=False, error=error)
-        self._highlighter.highlight_status(status, stream)
+        self._highlighter.highlight(status, stream)
         self._write(after, newline=newline, error=error)
-
-
-class StatusHighlighter(object):
-
-    def __init__(self, colors, *streams):
-        self._highlighters = dict((stream, self._get_highlighter(stream, colors))
-                                  for stream in streams)
-
-    def _get_highlighter(self, stream, colors):
-        auto = Highlighter if utils.isatty(stream) else NoHighlighting
-        highlighter = {'AUTO': auto,
-                       'ON': Highlighter,
-                       'FORCE': Highlighter,   # compatibility with 2.5.5 and earlier
-                       'OFF': NoHighlighting,
-                       'ANSI': AnsiHighlighter}.get(colors.upper(), auto)
-        return highlighter(stream)
-
-    def highlight_status(self, status, stream):
-        highlighter = self._start_status_highlighting(status, stream)
-        stream.write(status)
-        highlighter.reset()
-
-    def _start_status_highlighting(self, status, stream):
-        highlighter = self._highlighters[stream]
-        {'PASS': highlighter.green,
-         'FAIL': highlighter.red,
-         'ERROR': highlighter.red,
-         'WARN': highlighter.yellow}[status]()
-        return highlighter
-
-    def highlight(self, text, color, stream):
-        highlighter = self._highlighters[stream]
-        getattr(highlighter, color)()
-        stream.write(text)
-        stream.flush()
-        highlighter.reset()
 
 
 class KeywordMarker(object):
 
-    def __init__(self, markers, stdout, highlighter):
-        self._stdout = stdout
+    def __init__(self, markers, stream, highlighter):
+        self._stream = stream
         self._highlighter = highlighter
-        self.marking_enabled = self._marking_enabled(markers, stdout)
+        self.marking_enabled = self._marking_enabled(markers, stream)
         self.marker_count = 0
 
     def _marking_enabled(self, markers, stdout):
-        auto = utils.isatty(stdout)
+        auto = isatty(stdout)
         return {'AUTO': auto,
                 'ON': True,
                 'OFF': False}.get(markers.upper(), auto)
 
     def mark(self, kw):
         if self.marking_enabled:
-            marker, color = ('.', 'green') if kw.passed else ('F', 'red')
-            self._highlighter.highlight(marker, color, self._stdout)
+            marker, status = ('.', 'PASS') if kw.passed else ('F', 'FAIL')
+            self._highlighter.highlight(status, self._stream, marker,
+                                        flush=True)
             self.marker_count += 1
 
     def reset_count(self):
         self.marker_count = 0
-
