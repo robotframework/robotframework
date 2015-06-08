@@ -43,3 +43,6 @@ Logging HTML
     Print One HTML Line
     Print Many HTML Lines
     Print HTML To Stderr
+
+FAIL is not valid log level
+    Print    *FAIL* is not failure

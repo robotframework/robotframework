@@ -23,11 +23,11 @@ Set Log Level
     Log  This is logged  ERROR
     Set Log Level  NONE
     Log  NOT logged
-    Log  NOT logged  FAIL
+    Log  NOT logged  ERROR
     [Teardown]  Set Log Level  INFO
 
 Invalid Log Level Failure Is Catchable
-    Run Keyword And Expect Error  Invalid log level 'INVALID'  Set Log Level  INVALID
+    Run Keyword And Expect Error  Invalid log level 'INVALID'.  Set Log Level  INVALID
 
 Log Level Goes To HTML
     Set Log Level  Trace

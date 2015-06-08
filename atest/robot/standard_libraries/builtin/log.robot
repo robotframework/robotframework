@@ -16,16 +16,15 @@ Log
 
 Log with different levels
     ${tc} =    Check Test Case    ${TEST NAME}
-    Comment    Test set log level to trace so    the logged message is second    and first contains resolved args
     Check Log Message    ${tc.kws[0].msgs[1]}    Log says: Hello from tests!    INFO
     Check Log Message    ${tc.kws[1].msgs[1]}    Trace level    TRACE
     Check Log Message    ${tc.kws[2].msgs[1]}    Debug level    DEBUG
-    Check Log Message    ${tc.kws[3].msgs[1]}    Info level    INFO
-    Check Log Message    ${tc.kws[4].msgs[1]}    Warn level    WARN
-    Length Should Be    ${tc.kws[4].msgs}    3
-    Check Log Message    ${ERRORS.msgs[0]}    Warn level    WARN
-    Check Log Message    ${tc.kws[5].msgs[1]}    Fail level    FAIL
-    Check Log Message    ${tc.kws[6].msgs[1]}    Error level    ERROR
+    Check Log Message    ${tc.kws[3].msgs[1]}    Info level     INFO
+    Check Log Message    ${tc.kws[4].msgs[1]}    Warn level     WARN
+    Check Log Message    ${tc.kws[5].msgs[1]}    Error level    ERROR
+    Check Log Message    ${ERRORS[0]}            Warn level     WARN
+    Check Log Message    ${ERRORS[1]}            Error level    ERROR
+    Length Should Be     ${ERRORS}               2
 
 HTML is escaped by default
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -42,6 +41,9 @@ Explicit HTML
     Check Log Message    ${tc.kws[0].msgs[0]}    <b>bold</b>    html=True
     Check Log Message    ${tc.kws[1].msgs[0]}    ${HTML}    DEBUG    html=True
     Check Log Message    ${tc.kws[2].msgs[0]}    ${HTML}    DEBUG
+
+FAIL is not valid log level
+    Check Test Case    ${TEST NAME}
 
 Log also to console
     ${tc} =    Check Test Case    ${TEST NAME}
