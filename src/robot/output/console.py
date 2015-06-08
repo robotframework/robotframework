@@ -21,11 +21,11 @@ from .highlighting import StatusHighlighter
 from .loggerhelper import IsLogged
 
 
-class CommandLineMonitor(object):
+class ConsoleOutput(object):
 
     def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
                  stderr=None):
-        self._writer = CommandLineWriter(width, colors, markers, stdout, stderr)
+        self._writer = ConsoleWriter(width, colors, markers, stdout, stderr)
         self._is_logged = IsLogged('WARN')
         self._started = False
         self._started_keywords = 0
@@ -70,7 +70,7 @@ class CommandLineMonitor(object):
         self._writer.output(name, path)
 
 
-class CommandLineWriter(object):
+class ConsoleWriter(object):
     _status_length = len('| PASS |')
 
     def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,

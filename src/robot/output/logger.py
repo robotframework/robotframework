@@ -16,9 +16,9 @@ import os
 
 from robot.errors import DataError
 
+from .console import ConsoleOutput
 from .filelogger import FileLogger
 from .loggerhelper import AbstractLogger, AbstractLoggerProxy
-from .monitor import CommandLineMonitor
 from .stdoutlogsplitter import StdoutLogSplitter
 
 
@@ -69,7 +69,7 @@ class Logger(AbstractLogger):
 
     def register_console_logger(self, width=78, colors='AUTO', markers='AUTO',
                                 stdout=None, stderr=None):
-        logger = CommandLineMonitor(width, colors, markers, stdout, stderr)
+        logger = ConsoleOutput(width, colors, markers, stdout, stderr)
         if self._console_logger:
             self._loggers.unregister_logger(self._console_logger)
         self._console_logger = logger
