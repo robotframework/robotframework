@@ -286,6 +286,7 @@ Options
                           structure before execution.
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating reports and logs.
+ -O --consoleoutput type  TODO: Doc, short opt, deprecate --monitorxxx
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
@@ -411,7 +412,7 @@ class RobotFramework(Application):
 
     def main(self, datasources, **options):
         settings = RobotSettings(options)
-        LOGGER.register_console_logger(**settings.console_logger_config)
+        LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info('Settings:\n%s' % unicode(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped']).build(*datasources)

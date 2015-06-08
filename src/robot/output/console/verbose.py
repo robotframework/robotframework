@@ -18,15 +18,13 @@ from robot.utils import (encode_output, get_console_length, isatty,
                          pad_console_length)
 
 from .highlighting import StatusHighlighter
-from .loggerhelper import IsLogged
 
 
-class ConsoleOutput(object):
+class VerboseOutput(object):
 
     def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
                  stderr=None):
-        self._writer = ConsoleWriter(width, colors, markers, stdout, stderr)
-        self._is_logged = IsLogged('WARN')
+        self._writer = VerboseWriter(width, colors, markers, stdout, stderr)
         self._started = False
         self._started_keywords = 0
         self._running_test = False
@@ -60,17 +58,17 @@ class ConsoleOutput(object):
     def end_keyword(self, kw):
         self._started_keywords -= 1
         if self._running_test and not self._started_keywords:
-            self._writer.keyword_marker(kw)
+            self._writer.keyword_marker(kw.status)
 
     def message(self, msg):
-        if self._is_logged(msg.level):
+        if msg.level in ('WARN', 'ERROR'):
             self._writer.error(msg.message, msg.level, clear=self._running_test)
 
     def output_file(self, name, path):
         self._writer.output(name, path)
 
 
-class ConsoleWriter(object):
+class VerboseWriter(object):
     _status_length = len('| PASS |')
 
     def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
@@ -111,7 +109,9 @@ class ConsoleWriter(object):
     def status(self, status, clear=False):
         if self._should_clear_markers(clear):
             self._clear_status()
-        self._highlight('| ', status, ' |')
+        self._write('| ', newline=False)
+        self._highlighter.highlight(status, self._stdout)
+        self._write(' |')
 
     def _should_clear_markers(self, clear):
         return clear and self._keyword_marker.marking_enabled
@@ -131,16 +131,16 @@ class ConsoleWriter(object):
         if message:
             self._write(message.strip())
 
-    def keyword_marker(self, kw):
+    def keyword_marker(self, status):
         if self._keyword_marker.marker_count == self._status_length:
             self._clear_status()
             self._keyword_marker.reset_count()
-        self._keyword_marker.mark(kw)
+        self._keyword_marker.mark(status)
 
     def error(self, message, level, clear=False):
         if self._should_clear_markers(clear):
             self._clear_info_line()
-        self._highlight('[ ', level, ' ] ' + message, error=True)
+        self._highlighter.error(message, level, self._stderr)
         if self._should_clear_markers(clear):
             self._rewrite_info()
 
@@ -153,12 +153,6 @@ class ConsoleWriter(object):
             text += '\n'
         stream.write(encode_output(text))
         stream.flush()
-
-    def _highlight(self, before, status, after, newline=True, error=False):
-        stream = self._stdout if not error else self._stderr
-        self._write(before, newline=False, error=error)
-        self._highlighter.highlight(status, stream)
-        self._write(after, newline=newline, error=error)
 
 
 class KeywordMarker(object):
@@ -175,9 +169,9 @@ class KeywordMarker(object):
                 'ON': True,
                 'OFF': False}.get(markers.upper(), auto)
 
-    def mark(self, kw):
+    def mark(self, status):
         if self.marking_enabled:
-            marker, status = ('.', 'PASS') if kw.passed else ('F', 'FAIL')
+            marker, status = ('.', 'PASS') if status != 'FAIL' else ('F', 'FAIL')
             self._highlighter.highlight(status, self._stream, marker,
                                         flush=True)
             self.marker_count += 1

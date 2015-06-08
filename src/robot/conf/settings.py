@@ -397,6 +397,7 @@ class RobotSettings(_BaseSettings):
                        'VariableFiles'      : ('variablefile', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),
                        'Listeners'          : ('listener', []),
+                       'ConsoleOutput'      : ('consoleoutput', 'verbose'),
                        'MonitorWidth'       : ('monitorwidth', 78),
                        'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
                        'DebugFile'          : ('debugfile', None)}
@@ -470,8 +471,9 @@ class RobotSettings(_BaseSettings):
         return self['LogLevel']
 
     @property
-    def console_logger_config(self):
+    def console_output_config(self):
         return {
+            'type':    self['ConsoleOutput'],
             'width':   self['MonitorWidth'],
             'colors':  self['MonitorColors'],
             'markers': self['MonitorMarkers'],
@@ -555,7 +557,7 @@ class RebotSettings(_BaseSettings):
         return self['Merge'] or self['DeprecatedMerge']
 
     @property
-    def console_logger_config(self):
+    def console_output_config(self):
         return {
             'colors':  self['MonitorColors'],
             'stdout':  self['StdOut'],
