@@ -54,6 +54,15 @@ Run Keyword If Test Passes Uses User Keyword
 Run Keyword If Test Passed Fails
     Check Test Case    ${TEST NAME}
 
+Run Keyword If Test Passed When Teardown Fails
+    Check Test Case    ${TEST NAME}
+
+Run Keyword If Test Failed When Teardown Fails
+    Check Test Case    ${TEST NAME}
+
+Continuable Failure In Teardown
+    Check Test Case    ${TEST NAME}
+
 Run Keyword If test Passed Can't Be Used In Suite Setup or Teardown
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${SUITE.suites[2].setup.msgs[0]}    Keyword 'Run Keyword If Test Passed' can only be used in test teardown.    FAIL

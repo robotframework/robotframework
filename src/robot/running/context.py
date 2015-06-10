@@ -62,6 +62,7 @@ class _ExecutionContext(object):
         self.in_keyword_teardown = 0
         self._started_keywords = 0
         self.timeout_occurred = False
+        self.failure_in_test_teardown = False
 
     # TODO: namespace should not have suite, test, or uk_handlers.
 
@@ -94,6 +95,7 @@ class _ExecutionContext(object):
             yield
         finally:
             self.in_test_teardown = False
+            self.failure_in_test_teardown = False
 
     @contextmanager
     def keyword_teardown(self, error):
@@ -160,6 +162,8 @@ class _ExecutionContext(object):
     def end_keyword(self, keyword):
         self.output.end_keyword(keyword)
         self._started_keywords -= 1
+        if self.in_test_teardown and not keyword.passed:
+            self.failure_in_test_teardown = True
 
     def start_user_keyword(self, kw):
         self.namespace.start_user_keyword(kw)
