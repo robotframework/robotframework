@@ -242,10 +242,15 @@ Scopes And Overriding 1
     Set Suite Variable    $cli_var_2    New value 2
     Set Global Variable    $cli_var_3    New value 3
     Set Global Variable    $parent_suite_setup_global_var_to_reset    Set in test!
+    Set Global Variable    $parent_suite_var_to_reset    Set using Set Global Variable
+    Set Suite Variable    $parent_suite_var_to_reset    This has no effect to parent suite
+    Set Global Variable    $NEW GLOBAL VAR    ${42}
     Should Be Equal    ${cli_var_1}    New value 1
     Should Be Equal    ${cli_var_2}    New value 2
     Should Be Equal    ${cli_var_3}    New value 3
     Should Be Equal    ${parent_suite_setup_global_var_to_reset}    Set in test!
+    Should Be Equal    ${parent_suite_var_to_reset}    This has no effect to parent suite
+    Should Be Equal    ${NEW GLOBAL VAR}    ${42}
 
 Scopes And Overriding 2
     Should Be Equal    ${cli_var_1}    CLI1

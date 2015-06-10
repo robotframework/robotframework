@@ -30,7 +30,9 @@ Check Global Vars Set In One Suite Are Available In Another
     Should Be Equal    ${global_var_needing_escaping}    Four backslashes \\\\\\\\ and \\\${notvar}
 
 Scopes And Overriding 3
-    [Documentation]    Parts 1 & 2 are in builtin_variables
     Should Be Equal    ${cli_var_1}    CLI1
     Should Be Equal    ${cli_var_2}    CLI2
     Should Be Equal    ${cli_var_3}    New value 3
+    Should Be Equal    ${parent_suite_setup_global_var_to_reset}    Set in test!
+    Should Be Equal    ${parent_suite_var_to_reset}    Set using Set Global Variable
+    Should Be Equal    ${NEW GLOBAL VAR}    ${42}
