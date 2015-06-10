@@ -34,9 +34,9 @@ libraries implemented either with Python or Java, and users can create
 new keywords from existing ones using the same syntax that is used for
 creating test cases.
 """.strip()
-PACKAGES = ['robot', 'robot.api', 'robot.conf',
-            'robot.htmldata', 'robot.libdocpkg', 'robot.libraries',
-            'robot.model', 'robot.output', 'robot.parsing',
+PACKAGES = ['robot', 'robot.api', 'robot.conf', 'robot.htmldata',
+            'robot.libdocpkg', 'robot.libraries', 'robot.model',
+            'robot.output', 'robot.output.console', 'robot.parsing',
             'robot.reporting', 'robot.result', 'robot.running',
             'robot.running.arguments', 'robot.running.timeouts',
             'robot.utils', 'robot.variables', 'robot.writer']
