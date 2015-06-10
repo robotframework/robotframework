@@ -72,6 +72,10 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.element(u'robot-log', None)
         self._verify_node(None, 'robot-log')
 
+    def test_none_and_empty_attrs(self):
+        self.writer.element('foo', attrs={'empty': '', 'none': None})
+        self._verify_node(None, 'foo', attrs={'empty': '', 'none': ''})
+
     def test_content_with_invalid_command_char(self):
         self.writer.element('robot-log', '\033[31m\033[32m\033[33m\033[m')
         self._verify_node(None, 'robot-log', '[31m[32m[33m[m')
@@ -106,6 +110,17 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.element('test', u'hyv\xe4')
         self._verify_content('encoding="ISO-8859-1"')
         self._verify_node(None, 'test', u'hyv\xe4')
+
+    def test_dont_write_empty(self):
+        self.tearDown()
+        class NoPreamble(XmlWriter):
+            def _preamble(self):
+                pass
+        self.writer = NoPreamble(PATH, write_empty=False)
+        self.writer.element('foo1', content='', attrs={})
+        self.writer.element('foo2', attrs={'bar': '', 'None': None})
+        self.writer.element('foo3', attrs={'bar': '', 'value': 'value'})
+        assert_equals(self._get_content(), '<foo3 value="value"></foo3>\n')
 
     def _verify_node(self, node, name, text=None, attrs={}):
         if node is None:
