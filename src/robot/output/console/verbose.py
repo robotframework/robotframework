@@ -14,10 +14,9 @@
 
 import sys
 
-from robot.utils import (encode_output, get_console_length, isatty,
-                         pad_console_length)
+from robot.utils import get_console_length, isatty, pad_console_length
 
-from .highlighting import StatusHighlighter
+from .highlighting import HighlightingStream
 
 
 class VerboseOutput(object):
@@ -74,16 +73,15 @@ class VerboseWriter(object):
     def __init__(self, width=78, colors='AUTO', markers='AUTO', stdout=None,
                  stderr=None):
         self._width = width
-        self._stdout = stdout or sys.__stdout__
-        self._stderr = stderr or sys.__stderr__
-        self._highlighter = StatusHighlighter(colors, self._stdout, self._stderr)
-        self._keyword_marker = KeywordMarker(markers, self._stdout, self._highlighter)
+        self._stdout = HighlightingStream(stdout or sys.__stdout__, colors)
+        self._stderr = HighlightingStream(stderr or sys.__stderr__, colors)
+        self._keyword_marker = KeywordMarker(self._stdout, markers)
         self._last_info = None
 
     def info(self, name, doc, start_suite=False):
         width, separator = self._get_info_width_and_separator(start_suite)
         self._last_info = self._get_info(name, doc, width) + separator
-        self._write(self._last_info, newline=False)
+        self._stdout.write(self._last_info)
         self._keyword_marker.reset_count()
 
     def _get_info_width_and_separator(self, start_suite):
@@ -104,14 +102,14 @@ class VerboseWriter(object):
         self._fill('-')
 
     def _fill(self, char):
-        self._write(char * self._width)
+        self._stdout.write('%s\n' % (char * self._width))
 
     def status(self, status, clear=False):
         if self._should_clear_markers(clear):
             self._clear_status()
-        self._write('| ', newline=False)
-        self._highlighter.highlight(status, self._stdout)
-        self._write(' |')
+        self._stdout.write('| ')
+        self._stdout.highlight(status)
+        self._stdout.write(' |\n')
 
     def _should_clear_markers(self, clear):
         return clear and self._keyword_marker.marking_enabled
@@ -121,15 +119,15 @@ class VerboseWriter(object):
         self._rewrite_info()
 
     def _clear_info_line(self):
-        self._write('\r' + ' ' * self._width + '\r', newline=False)
+        self._stdout.write('\r%s\r' % (' ' * self._width))
         self._keyword_marker.reset_count()
 
     def _rewrite_info(self):
-        self._write(self._last_info, newline=False)
+        self._stdout.write(self._last_info)
 
     def message(self, message):
         if message:
-            self._write(message.strip())
+            self._stdout.write(message.strip() + '\n')
 
     def keyword_marker(self, status):
         if self._keyword_marker.marker_count == self._status_length:
@@ -140,31 +138,23 @@ class VerboseWriter(object):
     def error(self, message, level, clear=False):
         if self._should_clear_markers(clear):
             self._clear_info_line()
-        self._highlighter.error(message, level, self._stderr)
+        self._stderr.error(message, level)
         if self._should_clear_markers(clear):
             self._rewrite_info()
 
     def output(self, name, path):
-        self._write('%-8s %s' % (name+':', path))
-
-    def _write(self, text, newline=True, error=False):
-        stream = self._stdout if not error else self._stderr
-        if newline:
-            text += '\n'
-        stream.write(encode_output(text))
-        stream.flush()
+        self._stdout.write('%-8s %s\n' % (name+':', path))
 
 
 class KeywordMarker(object):
 
-    def __init__(self, markers, stream, highlighter):
-        self._stream = stream
+    def __init__(self, highlighter, markers):
         self._highlighter = highlighter
-        self.marking_enabled = self._marking_enabled(markers, stream)
+        self.marking_enabled = self._marking_enabled(markers, highlighter)
         self.marker_count = 0
 
-    def _marking_enabled(self, markers, stdout):
-        auto = isatty(stdout)
+    def _marking_enabled(self, markers, highlighter):
+        auto = isatty(highlighter.stream)
         return {'AUTO': auto,
                 'ON': True,
                 'OFF': False}.get(markers.upper(), auto)
@@ -172,8 +162,8 @@ class KeywordMarker(object):
     def mark(self, status):
         if self.marking_enabled:
             marker, status = ('.', 'PASS') if status != 'FAIL' else ('F', 'FAIL')
-            self._highlighter.highlight(status, self._stream, marker,
-                                        flush=True)
+            self._highlighter.highlight(marker, status)
+            self._highlighter.flush()
             self.marker_count += 1
 
     def reset_count(self):

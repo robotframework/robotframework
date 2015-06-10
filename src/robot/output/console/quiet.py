@@ -14,18 +14,17 @@
 
 import sys
 
-from .highlighting import StatusHighlighter
+from .highlighting import HighlightingStream
 
 
 class QuietOutput(object):
 
     def __init__(self, colors='AUTO', stderr=None):
-        self._stderr = stderr or sys.__stderr__
-        self._highlighter = StatusHighlighter(colors, self._stderr)
+        self._stderr = HighlightingStream(stderr or sys.__stderr__, colors)
 
     def message(self, msg):
         if msg.level in ('WARN', 'ERROR'):
-            self._highlighter.error(msg.message, msg.level, self._stderr)
+            self._stderr.error(msg.message, msg.level)
 
 
 class NoOutput(object):

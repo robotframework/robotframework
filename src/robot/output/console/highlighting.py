@@ -24,14 +24,14 @@ try:
 except ImportError:  # Not on Windows or using Jython
     windll = None
 
-from robot.utils import isatty
+from robot.utils import encode_output, isatty
 
 
-class StatusHighlighter(object):
+class HighlightingStream(object):
 
-    def __init__(self, colors, *streams):
-        self._highlighters = dict((stream, self._get_highlighter(stream, colors))
-                                  for stream in streams)
+    def __init__(self, stream, colors='AUTO'):
+        self.stream = stream
+        self._highlighter = self._get_highlighter(stream, colors)
 
     def _get_highlighter(self, stream, colors):
         auto = Highlighter if isatty(stream) else NoHighlighting
@@ -42,20 +42,24 @@ class StatusHighlighter(object):
                        'ANSI': AnsiHighlighter}.get(colors.upper(), auto)
         return highlighter(stream)
 
-    def highlight(self, status, stream, text=None, flush=False):
-        with self._highlighting(status, stream):
-            stream.write(text if text is not None else status)
-            if flush:
-                stream.flush()
+    def write(self, text):
+        self.stream.write(encode_output(text))
 
-    def error(self, message, level, stream):
-        stream.write('[ ')
-        self.highlight(level, stream)
-        stream.write(' ] %s\n' % message)
+    def flush(self):
+        self.stream.flush()
+
+    def highlight(self, text, status=None):
+        with self._highlighting(status or text):
+            self.write(text)
+
+    def error(self, message, level):
+        self.write('[ ')
+        self.highlight(level)
+        self.write(' ] %s\n' % message)
 
     @contextmanager
-    def _highlighting(self, status, stream):
-        highlighter = self._highlighters[stream]
+    def _highlighting(self, status):
+        highlighter = self._highlighter
         start = {'PASS': highlighter.green,
                  'FAIL': highlighter.red,
                  'ERROR': highlighter.red,

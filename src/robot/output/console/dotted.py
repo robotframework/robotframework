@@ -17,16 +17,15 @@ import sys
 from robot.model import SuiteVisitor
 from robot.utils import plural_or_not, secs_to_timestr
 
-from .highlighting import StatusHighlighter
+from .highlighting import HighlightingStream
 
 
 class DottedOutput(object):
 
     def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
         self._width = width
-        self._stdout = stdout or sys.__stdout__
-        self._stderr = stderr or sys.__stderr__
-        self._highlighter = StatusHighlighter(colors, self._stdout, self._stderr)
+        self._stdout = HighlightingStream(stdout or sys.__stdout__, colors)
+        self._stderr = HighlightingStream(stderr or sys.__stderr__, colors)
 
     def end_test(self, test):
         if test.passed:
@@ -34,18 +33,18 @@ class DottedOutput(object):
         elif not test.critical:
             self._stdout.write('f')
         else:
-            self._highlighter.highlight('FAIL', self._stdout, 'F')
+            self._stdout.highlight('F', 'FAIL')
         self._stdout.flush()
 
     def end_suite(self, suite):
         if not suite.parent:
             self._stdout.write('\n')
-            StatusReporter(self._stdout, self._highlighter, self._width).report(suite)
+            StatusReporter(self._stdout, self._width).report(suite)
             self._stdout.write('\n')
 
     def message(self, msg):
         if msg.level in ('WARN', 'ERROR'):
-            self._highlighter.error(msg.message, msg.level, self._stderr)
+            self._stderr.error(msg.message, msg.level)
 
     def output_file(self, name, path):
         self._stdout.write('%-8s %s\n' % (name+':', path))
@@ -53,9 +52,8 @@ class DottedOutput(object):
 
 class StatusReporter(SuiteVisitor):
 
-    def __init__(self, stream, highlighter, width):
+    def __init__(self, stream, width):
         self._stream = stream
-        self._highlighter = highlighter
         self._width = width
 
     def report(self, suite):
@@ -65,12 +63,12 @@ class StatusReporter(SuiteVisitor):
                            % ('-' * self._width, stats.all.total,
                               plural_or_not(stats.all.total),
                               secs_to_timestr(suite.elapsedtime/1000.0)))
-        self._highlighter.highlight(suite.status, self._stream, suite.status + 'ED')
+        self._stream.highlight(suite.status + 'ED', suite.status)
         self._stream.write('\n%s\n' % stats.message)
 
     def visit_test(self, test):
         if not test.passed and test.critical:
             self._stream.write('%s\n' % ('=' * self._width))
-            self._highlighter.highlight('FAIL', self._stream)
+            self._stream.highlight('FAIL')
             self._stream.write(': %s\n%s\n%s\n\n'
                                % (test.longname, '-' * self._width, test.message))
