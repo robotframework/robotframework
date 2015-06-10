@@ -36,13 +36,12 @@ class Namespace:
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, suite, parent_variables, user_keywords,
-                 imports):
+    def __init__(self, suite, user_keywords, imports):
         LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.suite = suite
         self.test = None
         self.uk_handlers = []
-        self.variables = _VariableScopes(parent_variables)
+        self.variables = _VariableScopes()
         self._imports = imports
         self._kw_store = KeywordStore(user_keywords)
         self._imported_variable_files = ImportCache()
@@ -434,13 +433,9 @@ class KeywordRecommendationFinder(object):
 
 class _VariableScopes:
 
-    def __init__(self, parent_variables):
+    def __init__(self):
         variables = GLOBAL_VARIABLES.copy()
         self._suite = self.current = variables
-        self._parents = []
-        if parent_variables is not None:
-            self._parents.append(parent_variables.current)
-            self._parents.extend(parent_variables._parents)
         self._test = None
         self._uk_handlers = []
 

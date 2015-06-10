@@ -59,8 +59,7 @@ class Runner(SuiteVisitor):
                                   stat_config=self._settings.statistics_config)
         else:
             self._suite.suites.append(result)
-        ns = Namespace(result, self._variables,
-                       suite.resource.keywords, suite.resource.imports)
+        ns = Namespace(result, suite.resource.keywords, suite.resource.imports)
         ns.variables.set_from_variable_table(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
         self._context.set_suite_variables(result)
