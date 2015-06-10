@@ -16,18 +16,19 @@ Log with default levels
     Check log message  ${tc.kws[0].msgs[0]}  debug message     DEBUG
     Check log message  ${tc.kws[0].msgs[1]}  info message      INFO
     Check log message  ${tc.kws[0].msgs[2]}  warning message   WARN
-    Check log message  ${tc.kws[0].msgs[3]}  error message     WARN
-    Check log message  ${tc.kws[0].msgs[4]}  critical message  WARN
+    Check log message  ${tc.kws[0].msgs[3]}  error message     ERROR
+    Check log message  ${tc.kws[0].msgs[4]}  critical message  ERROR
     Check log message  ${ERRORS.msgs[0]}     warning message   WARN
-    Check log message  ${ERRORS.msgs[1]}     error message     WARN
-    Check log message  ${ERRORS.msgs[2]}     critical message  WARN
+    Check log message  ${ERRORS.msgs[1]}     error message     ERROR
+    Check log message  ${ERRORS.msgs[2]}     critical message  ERROR
 
 Log with custom levels
     ${tc} =  Check test case  ${TEST NAME}
     Check log message  ${tc.kws[0].msgs[1]}  below debug               TRACE
     Check log message  ${tc.kws[0].msgs[2]}  between debug and info    DEBUG
     Check log message  ${tc.kws[0].msgs[3]}  between info and warning  INFO
-    Check log message  ${tc.kws[0].msgs[4]}  above warning             WARN
+    Check log message  ${tc.kws[0].msgs[4]}  between warning and error  WARN
+    Check log message  ${tc.kws[0].msgs[5]}  above error  ERROR	
 
 Messages below threshold level are ignored fully
     ${tc}=  Check test case  ${TEST NAME}

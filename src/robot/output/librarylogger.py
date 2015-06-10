@@ -21,6 +21,7 @@ here to avoid cyclic imports.
 import sys
 import threading
 
+from robot.errors import DataError
 from robot.utils import unic, encode_output
 
 from .logger import LOGGER
@@ -36,6 +37,8 @@ def write(msg, level, html=False):
     # http://code.google.com/p/robotframework/issues/detail?id=1505
     if callable(msg):
         msg = unic(msg)
+    if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):
+        raise DataError("Invalid log level '%s'." % level)
     if threading.currentThread().getName() in LOGGING_THREADS:
         LOGGER.log_message(Message(msg, level, html))
 
@@ -56,6 +59,10 @@ def info(msg, html=False, also_console=False):
 
 def warn(msg, html=False):
     write(msg, 'WARN', html)
+
+
+def error(msg, html=False):
+    write(msg, 'ERROR', html)
 
 
 def console(msg, newline=True, stream='stdout'):

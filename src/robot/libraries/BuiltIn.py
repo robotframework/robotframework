@@ -2134,12 +2134,12 @@ class _Misc:
     def log(self, message, level='INFO', html=False, console=False, repr=False):
         u"""Logs the given message with the given level.
 
-        Valid levels are TRACE, DEBUG, INFO (default), HTML, and WARN.
+        Valid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.
         Messages below the current active log level are ignored. See
         `Set Log Level` keyword and ``--loglevel`` command line option
         for more details about setting the level.
 
-        Messages logged with the WARN level will be automatically visible
+        Messages logged with the WARN or ERROR levels will be automatically visible
         also in the console and in the Test Execution Errors section in
         the log file.
 
@@ -2262,7 +2262,7 @@ class _Misc:
         INFO, but it can be overridden with the command line option
         ``--loglevel``.
 
-        The available levels: TRACE, DEBUG, INFO (default), WARN and NONE (no
+        The available levels: TRACE, DEBUG, INFO (default), WARN, ERROR and NONE (no
         logging).
         """
         try:
