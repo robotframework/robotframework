@@ -122,7 +122,7 @@ class _BaseListenerTest:
     stat_message = ''
 
     def setUp(self):
-        self.listeners = Listeners([(self.listener_name, [])])
+        self.listeners = Listeners([self.listener_name])
         self.listener = self.listeners._listeners[0]
         self.capturer = OutputCapturer()
 

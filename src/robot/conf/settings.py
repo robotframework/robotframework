@@ -19,6 +19,7 @@ import time
 
 from robot import utils
 from robot.errors import DataError, FrameworkError
+from robot.utils import split_args_from_name_or_path
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
@@ -75,7 +76,7 @@ class _BaseSettings(object):
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             value = opts[cli_name] if cli_name in opts else default
-            if default == [] and isinstance(value, basestring):
+            if default == [] and not utils.is_list_like(value):
                 value = [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
@@ -116,9 +117,8 @@ class _BaseSettings(object):
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
-        if name in ['PreRunModifiers', 'PreRebotModifiers', 'Listeners',
-                    'VariableFiles']:
-            return [self._split_args_from_name_or_path(item) for item in value]
+        if name in ['PreRunModifiers', 'PreRebotModifiers', 'VariableFiles']:
+            return [split_args_from_name_or_path(item) for item in value]
         if name == 'ReportBackground':
             return self._process_report_background(value)
         if name == 'TagStatCombine':
@@ -278,30 +278,6 @@ class _BaseSettings(object):
 
     def _get_default_value(self, name):
         return self._cli_opts[name][1]
-
-    def _split_args_from_name_or_path(self, name):
-        if os.path.exists(name):
-            return os.path.abspath(name), []
-        index = self._get_arg_separator_index_from_name_or_path(name)
-        if index == -1:
-            return name, []
-        args = name[index+1:].split(name[index])
-        name = name[:index]
-        if os.path.exists(name):
-            name = os.path.abspath(name)
-        return name, args
-
-    def _get_arg_separator_index_from_name_or_path(self, name):
-        colon_index = name.find(':')
-        # Handle absolute Windows paths
-        if colon_index == 1 and name[2:3] in ('/', '\\'):
-            colon_index = name.find(':', colon_index+1)
-        semicolon_index = name.find(';')
-        if colon_index == -1:
-            return semicolon_index
-        if semicolon_index == -1:
-            return colon_index
-        return min(colon_index, semicolon_index)
 
     def _validate_remove_keywords(self, values):
         for value in values:
