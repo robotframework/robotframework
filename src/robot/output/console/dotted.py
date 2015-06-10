@@ -29,8 +29,12 @@ class DottedOutput(object):
         self._highlighter = StatusHighlighter(colors, self._stdout, self._stderr)
 
     def end_test(self, test):
-        marker = '.' if test.passed else ('F' if test.critical else 'f')
-        self._highlighter.highlight(test.status, self._stdout, marker)
+        if test.passed:
+            self._stdout.write('.')
+        elif not test.critical:
+            self._stdout.write('f')
+        else:
+            self._highlighter.highlight('FAIL', self._stdout, 'F')
         self._stdout.flush()
 
     def end_suite(self, suite):
