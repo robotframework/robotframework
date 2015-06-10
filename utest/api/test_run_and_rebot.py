@@ -14,6 +14,8 @@ from robot.utils.asserts import assert_equals, assert_true
 from robot.running import namespace
 from robot import run, rebot
 from resources.runningtestcase import RunningTestCase
+from resources.Listener import Listener
+
 
 ROOT = dirname(dirname(dirname(abspath(__file__))))
 TEMP = tempfile.gettempdir()
@@ -102,6 +104,20 @@ class TestRun(RunningTestCase):
                                      ('[report {0}]'.format(REPORT_PATH), 1),
                                      ('[log {0}]'.format(LOG_PATH), 1),
                                      ('[listener close]', 1)])
+
+    def test_pass_listener_as_instance(self):
+        assert_equals(run(self.data, outputdir=TEMP, report='none', listener=Listener(1)), 1)
+        self._assert_outputs([("[from listener 1]", 1)])
+
+    def test_pass_listener_as_string(self):
+        module_file = join(ROOT, 'utest', 'resources', 'Listener.py')
+        assert_equals(run(self.data, outputdir=TEMP, report='none', listener=module_file+":1"), 1)
+        self._assert_outputs([("[from listener 1]", 1)])
+
+    def test_pass_listener_as_list(self):
+        module_file = join(ROOT, 'utest', 'resources', 'Listener.py')
+        assert_equals(run(self.data, outputdir=TEMP, report='none', listener=[module_file+":1", Listener(2)]), 1)
+        self._assert_outputs([("[from listener 1]", 1), ("[from listener 2]", 1)])
 
 
 class TestRebot(RunningTestCase):

@@ -68,5 +68,5 @@ Node Should Be Correct
 Tag Node Should Be Correct
     [Arguments]    ${node}    ${name}    ${pass}    ${fail}    ${info}=    ${combined}=
     Node Should Be Correct    ${node}    ${name}    ${pass}    ${fail}
-    Element Attribute Should Be      ${node}      info      ${info}
-    Element Attribute Should Be      ${node}      combined      ${combined}
+    Should be equal    ${node.attrib.get('info', '')}    ${info}
+    Should be equal    ${node.attrib.get('combined', '')}    ${combined}

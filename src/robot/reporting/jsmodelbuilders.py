@@ -144,7 +144,7 @@ class KeywordBuilder(_Builder):
 class MessageBuilder(_Builder):
 
     def build(self, msg):
-        if msg.level == 'WARN':
+        if msg.level in ('WARN','ERROR'):
             self._context.create_link_target(msg)
         self._context.message_level(msg.level)
         return self._build(msg)

@@ -1,49 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot generated="20111024 13:41:20.873" generator="Robot trunk 20111007 (Python 2.7.2 on linux2)">
 <suite id="s1" source="normal.html" name="Normal">
-<kw type="setup" library="" name="my setup" timeout="1 year">
-<tags>
-</tags>
-<doc></doc>
-<arguments>
-</arguments>
-<assign>
-</assign>
+<kw type="setup" name="my setup" timeout="1 year">
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-t1" name="First One">
-<kw type="kw" library="BuiltIn" name="Log">
-<tags>
-</tags>
+<kw library="BuiltIn" name="Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Test 1</arg>
 </arguments>
-<assign>
-</assign>
 <msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
 <status status="PASS" endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926"></status>
 </kw>
-<kw type="kw" library="" name="logs on trace">
+<kw name="logs on trace">
 <tags>
 <tag>tag not in source</tag>
 </tags>
-<doc></doc>
-<arguments>
-</arguments>
 <assign>
 <var>${not really in source}</var>
 </assign>
-<kw type="kw" library="BuiltIn" name="Log">
-<tags>
-</tags>
+<kw library="BuiltIn" name="Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Log on ${TEST NAME}</arg>
 <arg>TRACE</arg>
 </arguments>
-<assign>
-</assign>
 <status status="PASS" endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931"></status>
 </kw>
 <status status="PASS" endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930"></status>
@@ -66,7 +48,7 @@
 <stat fail="0" pass="1">All Tests</stat>
 </total>
 <tag>
-<stat info="" links="" doc="" combined="" pass="1" fail="0">t1</stat>
+<stat pass="1" fail="0">t1</stat>
 </tag>
 <suite>
 <stat fail="0" name="Normal" id="s1" pass="1">Normal</stat>

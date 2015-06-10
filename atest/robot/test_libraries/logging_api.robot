@@ -4,7 +4,6 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Log levels
     ${tc} =  Check test case  ${TEST NAME}
     Check log message  ${tc.kws[1].msgs[1]}  trace msg 1  TRACE
@@ -15,22 +14,32 @@ Log levels
     Check log message  ${tc.kws[1].msgs[6]}  info msg 2   INFO
     Check log message  ${tc.kws[1].msgs[7]}  warn msg 1   WARN
     Check log message  ${tc.kws[1].msgs[8]}  warn msg 2   WARN
-    Check log message  ${ERRORS.msgs[0]}     warn msg 1   WARN
-    Check log message  ${ERRORS.msgs[1]}     warn msg 2   WARN
+    Check log message  ${tc.kws[1].msgs[9]}  error msg 1   ERROR
+    Check log message  ${tc.kws[1].msgs[10]}  error msg 2   ERROR
+    Check log message  ${ERRORS[0]}    warn msg 1   WARN
+    Check log message  ${ERRORS[1]}    warn msg 2   WARN
+    Check log message  ${ERRORS[2]}    error msg 1   ERROR
+    Check log message  ${ERRORS[3]}    error msg 2   ERROR
+
+Invalid level
+    Check test case  ${TEST NAME}
+
+FAIL is not valid log level
+    Check test case  ${TEST NAME}
 
 Timestamps are accurate
     ${tc} =  Check test case  ${TEST NAME}
-    ${msgs} =  Set variable  ${tc.kws[0].msgs}
-    Check log message  ${msgs[0]}  First message
-    Check log message  ${msgs[1]}  Second message 0.1 sec later
-    Should be true  '${msgs[0].timestamp}' < '${msgs[1].timestamp}'
+    ${msg1}    ${msg2} =  Set variable  ${tc.kws[0].msgs}
+    Check log message  ${msg1}  First message
+    Check log message  ${msg2}  Second message 0.1 sec later
+    Should be true  '${msg1.timestamp}' < '${msg2.timestamp}'
 
 Log HTML
     ${tc} =  Check test case  ${TEST NAME}
     Check log message  ${tc.kws[1].msgs[0]}  <b>debug</b>  DEBUG  html=True
     Check log message  ${tc.kws[1].msgs[1]}  <b>info</b>   INFO   html=True
     Check log message  ${tc.kws[1].msgs[2]}  <b>warn</b>   WARN   html=True
-    Check log message  ${ERRORS.msgs[2]}     <b>warn</b>   WARN   html=True
+    Check log message  ${ERRORS.msgs[4]}     <b>warn</b>   WARN   html=True
 
 Write messages to console
     ${tc} =  Check test case  ${TEST NAME}
@@ -43,7 +52,7 @@ Log Non-Strings
     ${tc} =  Check test case  ${TEST NAME}
     Check log message  ${tc.kws[0].msgs[0]}  42
     Check log message  ${tc.kws[0].msgs[1]}  True  WARN
-    Check log message  ${ERRORS.msgs[3]}  True  WARN
+    Check log message  ${ERRORS.msgs[5]}  True  WARN
 
 Log Callable
     ${tc} =  Check test case  ${TEST NAME}

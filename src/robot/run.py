@@ -468,6 +468,9 @@ def run(*datasources, **options):
     passed as lists like `include=['tag1', 'tag2']`. If such option is used
     only once, it can be given also as a single string like `include='tag'`.
 
+    Additionally listener option allows passing object directly instead of
+    listener name, e.g. `run('tests.robot', listener=Listener())`.
+
     To capture stdout and/or stderr streams, pass open file objects in as
     special keyword arguments `stdout` and `stderr`, respectively.
 

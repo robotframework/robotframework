@@ -105,6 +105,9 @@ class TestSuite(model.TestSuite):
         If such an option is used only once, it can be given also as a single
         string like ``variable='VAR:value'``.
 
+        Additionally listener option allows passing object directly instead of
+        listener name, e.g. `run('tests.robot', listener=Listener())`.
+
         To capture stdout and/or stderr streams, pass open file objects in as
         special keyword arguments `stdout` and `stderr`, respectively. Note
         that this works only in version 2.8.4 and newer.

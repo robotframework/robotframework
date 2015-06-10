@@ -36,13 +36,13 @@ class Namespace:
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, suite, variables, parent_variables, user_keywords,
+    def __init__(self, suite, parent_variables, user_keywords,
                  imports):
         LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.suite = suite
         self.test = None
         self.uk_handlers = []
-        self.variables = _VariableScopes(variables, parent_variables)
+        self.variables = _VariableScopes(parent_variables)
         self._imports = imports
         self._kw_store = KeywordStore(user_keywords)
         self._imported_variable_files = ImportCache()
@@ -434,9 +434,9 @@ class KeywordRecommendationFinder(object):
 
 class _VariableScopes:
 
-    def __init__(self, suite_variables, parent_variables):
-        suite_variables.update(GLOBAL_VARIABLES)
-        self._suite = self.current = suite_variables
+    def __init__(self, parent_variables):
+        variables = GLOBAL_VARIABLES.copy()
+        self._suite = self.current = variables
         self._parents = []
         if parent_variables is not None:
             self._parents.append(parent_variables.current)
@@ -473,6 +473,9 @@ class _VariableScopes:
             varz.set_from_variable_table(rawvariables, overwrite)
         if self._uk_handlers:
             self.current.set_from_variable_table(rawvariables, overwrite)
+
+    def resolve_delayed(self):
+        self.current.resolve_delayed()
 
     def __getitem__(self, name):
         return self.current[name]

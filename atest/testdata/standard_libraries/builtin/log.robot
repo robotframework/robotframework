@@ -15,14 +15,13 @@ Log
     Log    ${OBJ}
 
 Log with different levels
-    [Documentation]    FAIL Invalid log level 'INVALID'
+    [Documentation]    FAIL Invalid log level 'INVALID'.
     [Setup]    Set Log Level    TRACE
     Log    Log says: Hello from tests!
     Log    Trace level    TRACE
     Log    Debug level    debug
     Log    Info level    Info
     Log    Warn level    wArN
-    Log    Fail level    FAIL
     Log    Error level    ERROR
     Log    Invalid level    INVALID
 
@@ -39,6 +38,10 @@ Explicit HTML
     Log    <b>bold</b>    html=yep
     Log    ${HTML}    DEBUG    xxx
     Log    ${HTML}    html=${FALSE}    level=debug
+
+FAIL is not valid log level
+    [Documentation]    FAIL Invalid log level 'FAIL'.
+    Log    This fails    FAIL
 
 Log also to console
     [Setup]    Set Log Level    DEBUG

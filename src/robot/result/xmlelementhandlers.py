@@ -78,8 +78,8 @@ class SuiteHandler(_Handler):
     tag = 'suite'
 
     def start(self, elem, result):
-        return result.suites.create(name=elem.get('name'),
-                                    source=elem.get('source', ''))
+        return result.suites.create(name=elem.get('name', ''),
+                                    source=elem.get('source'))
 
     def _children(self):
         return [DocHandler(), MetadataHandler(), SuiteStatusHandler(),
@@ -89,7 +89,7 @@ class SuiteHandler(_Handler):
 class RootSuiteHandler(SuiteHandler):
 
     def start(self, elem, result):
-        result.suite.name = elem.get('name')
+        result.suite.name = elem.get('name', '')
         result.suite.source = elem.get('source')
         return result.suite
 
@@ -101,7 +101,7 @@ class TestCaseHandler(_Handler):
     tag = 'test'
 
     def start(self, elem, result):
-        return result.tests.create(name=elem.get('name'),
+        return result.tests.create(name=elem.get('name', ''),
                                    timeout=elem.get('timeout'))
 
     def _children(self):
@@ -112,10 +112,10 @@ class KeywordHandler(_Handler):
     tag = 'kw'
 
     def start(self, elem, result):
-        return result.keywords.create(kwname=elem.get('name'),
+        return result.keywords.create(kwname=elem.get('name', ''),
                                       libname=elem.get('library', ''),
                                       timeout=elem.get('timeout'),
-                                      type=elem.get('type'))
+                                      type=elem.get('type', 'kw'))
 
     def _children(self):
         return [DocHandler(), ArgumentsHandler(), AssignHandler(),
@@ -127,7 +127,7 @@ class MessageHandler(_Handler):
 
     def end(self, elem, result):
         result.messages.create(elem.text or '',
-                               elem.get('level'),
+                               elem.get('level', 'INFO'),
                                elem.get('html', 'no') == 'yes',
                                self._timestamp(elem, 'timestamp'))
 
@@ -188,7 +188,7 @@ class MetadataItemHandler(_Handler):
     tag = 'item'
 
     def end(self, elem, result):
-        result.metadata[elem.get('name')] = elem.text or ''
+        result.metadata[elem.get('name', '')] = elem.text or ''
 
 
 class TagsHandler(_Handler):

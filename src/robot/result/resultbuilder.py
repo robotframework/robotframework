@@ -122,35 +122,45 @@ class ExecutionResultBuilder(object):
                 omitted_kws -= 1
 
     def _flatten_keywords(self, context, flattened):
+        # Performance optimized. Do not change without profiling!
         name_match, by_name = self._get_matcher(FlattenByNameMatcher, flattened)
         type_match, by_type = self._get_matcher(FlattenByTypeMatcher, flattened)
         tags_match, by_tags = self._get_matcher(FlattenByTagMatcher, flattened)
-        started = -1
-        tags = None
-        started_kws = 0
+        started = -1  # if 0 or more, we are flattening
+        tags = []
+        inside_kw = 0  # to make sure we don't read tags from a test
+        seen_doc = False
         for event, elem in context:
             tag = elem.tag
             start = event == 'start'
             end = not start
             if start and tag == 'kw':
-                started_kws += 1
+                inside_kw += 1
                 if started >= 0:
                     started += 1
-                elif by_name and name_match(elem.get('name'), elem.get('library')):
+                elif by_name and name_match(elem.get('name', ''), elem.get('library')):
                     started = 0
-                elif by_type and type_match(elem.get('type')):
+                    seen_doc = False
+                elif by_type and type_match(elem.get('type', 'kw')):
                     started = 0
-            elif by_tags and started_kws:
-                if start and tag == 'tags':
-                    tags = []
-                elif end and tag == 'tag':
+                    seen_doc = False
+            elif started < 0 and by_tags and inside_kw:
+                if end and tag == 'tag':
                     tags.append(elem.text or '')
-                elif started < 0 and (end and tag == 'tags'):
+                elif end and tag == 'tags':
                     if tags_match(tags):
                         started = 0
+                        seen_doc = False
+                    tags = []
             if end and tag == 'kw':
-                started_kws -= 1
+                inside_kw -= 1
+                if started == 0 and not seen_doc:
+                    doc = ET.Element('doc')
+                    doc.text = '_*Keyword content flattened.*_'
+                    yield 'start', doc
+                    yield 'end', doc
             if started == 0 and end and tag == 'doc':
+                seen_doc = True
                 elem.text = ('%s\n\n_*Keyword content flattened.*_'
                              % (elem.text or '')).strip()
             if started <= 0 or tag == 'msg':
