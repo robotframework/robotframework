@@ -19,6 +19,10 @@ Subtraction between two dates should succeed
     2014.04.24 22:45:12.123    ${DATE1}               1 hour
     22:45:12 2014.04.24        2014-04-24 21.43.11    01:02:01.000            result_format=timer   date1_format=%H:%M:%S %Y.%m.%d     date2_format=%Y-%m-%d %H.%M.%S
 
+Date subtraction over DST boundary
+    2015-10-26                 2015-10-25               1 day
+    ${datetime(2015,11,1)}    ${datetime(2015,10,1)}    ${timedelta(days=31)}    result_format=timedelta
+
 *** Keywords ***
 Subtraction Should Succeed
     [Arguments]    ${latter_date}    ${former_date}    ${expected}    ${result_format}=verbose    ${date1_format}=${NONE}    ${date2_format}=${NONE}
