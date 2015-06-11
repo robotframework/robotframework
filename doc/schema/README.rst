@@ -1,19 +1,19 @@
-Schema of Robot Framework's output XML format
-=============================================
+Robot Framework output XML schema 
+=================================
 
 Introduction
 ------------
 
 While Robot Framework is running tests, it generates an XML output file containing all information about the execution. After execution is over it creates, by default, log and report files using `rebot tool <http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#rebot>`_ internally. The same ``rebot`` functionality can also be used externally afterwards both as a standalone tool and `programmatically <http://robot-framework.readthedocs.org/en/latest/autodoc/robot.html#robot.rebot.rebot>`_.
 
-This document describes the format of the output file in high level and in the same folder there are detailed XML schema files that can be used for validating that an XML file is Robot Framework compatible. The output file format can be useful both for people interested in parsing the output and for people interested to create Robot Framework compatible outputs.
+This document describes the format of the output file in high level and in the same folder there are detailed `XML schema definition <http://en.wikipedia.org/wiki/XML_Schema_(W3C)>`_ (XSD) files that can be used for validating that an XML file is Robot Framework compatible. The output file format can be useful both for people interested in parsing the output and for people interested to create Robot Framework compatible outputs.
 
 General structure
 -----------------
 
 These are the main elements of the XML output with descriptions of their sub-elements. Unless stated otherwise, all attributes are optional. Additionally ``rebot`` does not care of the order of the XML elements, except for the order of suite, test, and kw elements.
 
-Before Robot Framework 2.9 all elements were always written to output, regardsless whether they had a value. For example a keyword that didn't have a documentation would still have an empty ``<doc>`` element. Starting from version 2.9 Robot Framework no longer writes empty elements to the output XML.
+Before Robot Framework 2.9 all elements and attributes were always written to output, regardless whether they had a value. For example, a keyword that did not have a documentation would still have an empty ``<doc>`` element and every keyword without a timeout had an empty ``timeout`` attribute. Starting from version 2.9 Robot Framework no longer writes empty elements or attributes to the output XML.
 
 robot - root element
     * ``suite`` - root element always has one suite which contains the subsuites and tests
@@ -46,12 +46,12 @@ kw - keyword element, name is given as an attribute. Type attribute describes th
    
 For more details and full list of elements and attributes, please see the XML schema files below.
 
-XML Schema
-----------
+XML schema definition
+---------------------
 
 Available schema files:
 
-  * `<robot-xsd10.xsd>`__ - XML schema 1.0 compatible version
-  * `<robot-xsd11.xsd>`__ - XML schema 1.1 compatible version
+  * `<robot-xsd10.xsd>`__ - XSD 1.0 compatible version
+  * `<robot-xsd11.xsd>`__ - XSD 1.1 compatible version
 
-The latter schema file is more complete, but XML schema 1.1 is not as widely supported as 1.0 version.
+The latter schema file is more complete, but XSD 1.1 is not as widely supported as the 1.0 version.
