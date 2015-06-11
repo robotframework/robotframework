@@ -6,7 +6,7 @@ Introduction
 
 While Robot Framework is running tests, it generates an XML output file containing all information about the execution. After execution is over it creates, by default, log and report files using `rebot tool <http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#rebot>`_ internally. The same ``rebot`` functionality can also be used externally afterwards both as a standalone tool and `programmatically <http://robot-framework.readthedocs.org/en/latest/autodoc/robot.html#robot.rebot.rebot>`_.
 
-This document describes the format of the output file in high level and in the same folder there are detailed XML schema files that can be used for validating that an XML file is Robot Framework compatible. The output file format can be useful both for people interested in parsing the output and for people interested to create Robot Framework compatible outputs.
+This document describes the format of the output file in high level and in the same folder there are detailed XML schema definition (XSD) files that can be used for validating that an XML file is Robot Framework compatible. The output file format can be useful both for people interested in parsing the output and for people interested to create Robot Framework compatible outputs.
 
 General structure
 -----------------
@@ -46,12 +46,12 @@ kw - keyword element, name is given as an attribute. Type attribute describes th
    
 For more details and full list of elements and attributes, please see the XML schema files below.
 
-XML Schema
-----------
+XML schema definition
+---------------------
 
 Available schema files:
 
-  * `<robot-xsd10.xsd>`__ - XML schema 1.0 compatible version
-  * `<robot-xsd11.xsd>`__ - XML schema 1.1 compatible version
+  * `<robot-xsd10.xsd>`__ - XSD 1.0 compatible version
+  * `<robot-xsd11.xsd>`__ - XSD 1.1 compatible version
 
-The latter schema file is more complete, but XML schema 1.1 is not as widely supported as 1.0 version.
+The latter schema file is more complete, but XSD 1.1 is not as widely supported as the 1.0 version.
