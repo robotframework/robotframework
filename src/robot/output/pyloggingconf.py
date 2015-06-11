@@ -23,7 +23,8 @@ from . import librarylogger
 LEVELS = {'TRACE': logging.NOTSET,
           'DEBUG': logging.DEBUG,
           'INFO': logging.INFO,
-          'WARN': logging.WARNING}
+          'WARN': logging.WARNING,
+          'ERROR': logging.ERROR}
 
 
 @contextmanager
@@ -71,6 +72,8 @@ class RobotHandler(logging.Handler):
             return message, error
 
     def _get_logger_method(self, level):
+        if level >= logging.ERROR:
+            return librarylogger.error
         if level >= logging.WARNING:
             return librarylogger.warn
         if level >= logging.INFO:

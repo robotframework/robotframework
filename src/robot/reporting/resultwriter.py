@@ -14,6 +14,7 @@
 
 from robot.conf import RebotSettings
 from robot.errors import DataError
+from robot.model import ModelModifier
 from robot.output import LOGGER
 from robot.result import ExecutionResult, Result
 from robot.utils import unic
@@ -121,6 +122,10 @@ class Results(object):
             self._result.configure(self._settings.status_rc,
                                    self._settings.suite_config,
                                    self._settings.statistics_config)
+            modifier = ModelModifier(self._settings.pre_rebot_modifiers,
+                                     self._settings.process_empty_suite,
+                                     LOGGER)
+            self._result.suite.visit(modifier)
             self.return_code = self._result.return_code
         return self._result
 

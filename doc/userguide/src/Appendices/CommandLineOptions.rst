@@ -51,9 +51,10 @@ Command line options for test execution
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
-  --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the
-                          generated log file.
-  --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated log file.
+  --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
+                          from the generated log file.
+  --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
+                          in the generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
@@ -67,12 +68,14 @@ Command line options for test execution
   --exitonerror           `Stops test execution <Stopping on parsing or execution error_>`__
                           if any error occurs when parsing test data, importing libraries, and so on.
   --skipteardownonexit    `Skips teardowns`_ is test execution is prematurely stopped.
+  --prerunmodifier <name:args>    Activate `programmatic modification of test data`_.
+  --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
   -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used on the console.
   -K, --monitormarkers <on|off|force>  Specifies are `console markers`_
                           (`.` and `F`) used.
-  -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
+  -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
   -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
@@ -115,8 +118,10 @@ Command line options for post-processing outputs
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
-  --removekeywords <all|passed|name:pattern|for|wuks>  `Removes keyword data`_ from the generated outputs.
-  --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated outputs.
+  --removekeywords <all|passed|name:pattern|tag:pattern|for|wuks>  `Removes keyword data`_
+                          from the generated outputs.
+  --flattenkeywords <for|foritem|name:pattern|tag:pattern>  `Flattens keywords`_
+                          in the generated outputs.
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
                           reports.
   --endtime <timestamp>   Sets the `ending time`_ of test execution when creating reports.
@@ -124,6 +129,8 @@ Command line options for post-processing outputs
                           in test cases. Error codes are returned normally.
   --processemptysuite     Processes output files even if files contain
                           `empty test suites`_.
+  --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
+  -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
   -E, --escape <what:with>  `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
@@ -167,7 +174,6 @@ Command line options for post-processing outputs
 .. _empty test suites: `test suites are empty`_
 .. _Sets the width: `Console width`_
 .. _Specifies are colors: `Console colors`_
-.. _search test libraries: `library search path`_
 .. _Escapes characters: `Escaping complicated characters`_
 .. _read more arguments: `Argument files`_
 .. _usage instructions: `Getting help and version information`_

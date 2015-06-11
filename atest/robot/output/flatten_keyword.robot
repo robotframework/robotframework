@@ -4,10 +4,10 @@ Force Tags      regression  pybot  jybot
 Resource        atest_resource.robot
 
 *** Variables ***
-${FLATTEN}      --FlattenKeywords NAME:Keyword3 --flat name:key*others --FLAT name:builtin.* --log log.html
+${FLATTEN}      --FlattenKeywords NAME:Keyword3 --flat name:key*others --FLAT name:builtin.* --flat TAG:flattenNOTkitty --log log.html
 ${FLAT TEXT}    _*Keyword content flattened.*_
 ${FLAT HTML}    <p><i><b>Keyword content flattened.\\x3c/b>\\x3c/i>\\x3c/p>
-${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords'. Expected 'FOR', 'FORITEM', or 'NAME:<pattern>' but got 'invalid'.${USAGE TIP}\n
+${ERROR}        [ ERROR ] Invalid value for option '--flattenkeywords'. Expected 'FOR', 'FORITEM', 'TAG:<pattern>', or 'NAME:<pattern>' but got 'invalid'.${USAGE TIP}\n
 
 *** Test Cases ***
 Non-matching keyword is not flattened
@@ -36,6 +36,11 @@ Pattern match
     Check Log Message    ${TC.kws[2].msgs[4]}    1
     Check Log Message    ${TC.kws[2].msgs[5]}    1
 
+Tag match
+    Should Be Equal    ${TC.kws[5].doc}    Doc of flat tag\n\n${FLAT TEXT}
+    Length Should Be    ${TC.kws[5].kws}    0
+    Length Should Be    ${TC.kws[5].msgs}    1
+
 Match full name
     Should Be Equal    ${TC.kws[3].doc}    Logs the given message with the given level.\n\n${FLAT TEXT}
     Length Should Be    ${TC.kws[3].kws}    0
@@ -46,7 +51,7 @@ Flattened in log after execution
     Should Contain X Times    ${LOG}    Doc of keyword 3    1
     Should Contain X Times    ${LOG}    Doc of keyword 2    1
     Should Contain X Times    ${LOG}    Doc of keyword 1    1
-    Should Contain X Times    ${LOG}    Keyword content flattened    3
+    Should Contain X Times    ${LOG}    Keyword content flattened    4
     Should Contain    ${LOG}    *<p>Doc of keyword 3\\x3c/p>\\n${FLAT HTML}
     Should Contain    ${LOG}    *${FLAT HTML}
     Should Contain    ${LOG}    *<p>Logs the given message with the given level.\\x3c/p>\\n${FLAT HTML}

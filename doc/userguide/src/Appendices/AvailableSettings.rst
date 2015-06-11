@@ -20,7 +20,7 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
    |       Name      |                         Description                    |
    +=================+========================================================+
-   | Library         | Used for `taking test libraries into use`_.            |
+   | Library         | Used for `importing libraries`_.                       |
    +-----------------+--------------------------------------------------------+
    | Resource        | Used for `taking resource files into use`_.            |
    +-----------------+--------------------------------------------------------+
@@ -113,6 +113,8 @@ which they are defined.
    |      Name       |                         Description                    |
    +=================+========================================================+
    | [Documentation] | Used for specifying a `user keyword documentation`_.   |
+   +-----------------+--------------------------------------------------------+
+   | [Tags]          | Used for specifying `user keyword tags`_.              |
    +-----------------+--------------------------------------------------------+
    | [Arguments]     | Used for specifying `user keyword arguments`_.         |
    +-----------------+--------------------------------------------------------+

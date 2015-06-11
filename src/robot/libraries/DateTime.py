@@ -511,6 +511,10 @@ class Date(object):
             return float(date)
         raise ValueError("Unsupported input '%s'." % date)
 
+    @property
+    def datetime(self):
+        return self._datetime_from_seconds(self.seconds)
+
     def _string_to_epoch(self, ts, input_format):
         if not input_format:
             ts = self._normalize_timestamp(ts)
@@ -592,14 +596,14 @@ class Date(object):
 
     def __add__(self, other):
         if isinstance(other, Time):
-            return Date(self.seconds + other.seconds)
+            return Date(self.datetime + other.timedelta)
         raise TypeError('Can only add Time to Date, got %s.' % type_name(other))
 
     def __sub__(self, other):
         if isinstance(other, Date):
-            return Time(self.seconds - other.seconds)
+            return Time(self.datetime - other.datetime)
         if isinstance(other, Time):
-            return Date(self.seconds - other.seconds)
+            return Date(self.datetime - other.timedelta)
         raise TypeError('Can only subtract Date or Time from Date, got %s.'
                         % type_name(other))
 
@@ -616,6 +620,10 @@ class Time(object):
                     time.seconds +
                     time.microseconds / 1e6)
         return timestr_to_secs(time, round_to=None)
+
+    @property
+    def timedelta(self):
+        return timedelta(seconds=self.seconds)
 
     def convert(self, format, millis=True):
         try:

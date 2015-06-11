@@ -260,83 +260,112 @@ The command line option :option:`--settag (-G)` can be used to set
 the given tag to all executed test cases. This option may be used
 several times to set multiple tags.
 
-Adjusting library search path
------------------------------
+.. _module search path:
 
-When a `test library is taken into use`__, Robot Framework uses the Python
-or Jython interpreter to import a module implementing the library from
-the system. The location where these modules are searched from is called
-``PYTHONPATH``, and when running tests on Jython or using the jar distribution,
-also Java ``CLASSPATH`` is used.
+Configuring where to search libraries and other extensions
+----------------------------------------------------------
 
-Adjusting the library search path so that libraries are found is
-a requirement for successful test execution. In addition to
-find test libraries, the search path is also used to find `listeners
-set on the command line`__. There are various ways to alter
-``PYTHONPATH`` and ``CLASSPATH``, but regardless of the selected approach, it is
-recommended to use a `custom start-up script`__.
+When Robot Framework imports a `test library`__, `listener`__, or some other
+Python based extension, it uses the Python interpreter to import the module
+containing the extension from the system. The list of locations where modules
+are looked for is called *the module search path*, and its contents can be
+configured using different approaches explained in this section.
+When importing Java based libraries or other extensions on Jython, Java
+classpath is used in addition to the normal module search path.
 
-__ `Taking test libraries into use`_
+Robot Framework uses Python's module search path also when importing `resource
+and variable files`_ if the specified path does not match any file directly.
+
+The module search path being set correctly so that libraries and other
+extensions are found is a requirement for successful test execution. If
+you need to customize it using approaches explained below, it is often
+a good idea to create a custom `start-up script`_.
+
+__ `Specifying library to import`_
 __ `Setting listeners`_
-__ `Creating start-up scripts`_
 
-Locations automatically in ``PYTHONPATH``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Locations automatically in module search path
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Python and Jython installations put their own library directories into
-``PYTHONPATH`` automatically. This means that test libraries `packaged
-using Python's own packaging system`__ are automatically installed
-into a location that is in the library search path. Robot Framework
-also puts the directory containing its `standard libraries`_ and the
-directory where tests are executed from into ``PYTHONPATH``.
+Python interpreters have their own standard library as well as a directory
+where third party modules are installed automatically in the module search
+path. This means that test libraries `packaged using Python's own packaging
+system`__ are automatically installed so that they can be imported without
+any additional configuration.
 
 __ `Packaging libraries`_
 
-Setting ``PYTHONPATH``
-~~~~~~~~~~~~~~~~~~~~~~
+``PYTHONPATH``, ``JYTHONPATH`` and ``IRONPYTHONPATH``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are several ways to alter ``PYTHONPATH`` in the system, but the most
-common one is setting an environment variable with the same name
-before the test execution. Jython actually does not use ``PYTHONPATH``
-environment variable normally, but Robot Framework ensures that
-locations listed in it are added into the library search path
-regardless of the interpreter.
+Python, Jython and IronPython read additional locations to be added to
+the module search path from ``PYTHONPATH``, ``JYTHONPATH`` and
+``IRONPYTHONPATH`` environment variables, respectively. If you want to
+specify more than one location in any of them, you need to separate
+the locations with a colon on UNIX-like machines (e.g.
+`/opt/libs:$HOME/testlibs`) and with a semicolon on Windows (e.g.
+`D:\libs;%HOMEPATH%\testlibs`).
 
-Setting ``CLASSPATH``
-~~~~~~~~~~~~~~~~~~~~~
+Environment variables can be configured permanently system wide or so that
+they affect only a certain user. Alternatively they can be set temporarily
+before running a command, something that works extremely well in custom
+`start-up scripts`_.
 
-``CLASSPATH`` is used with Jython or when using the standalone jar.
+.. note:: Prior to Robot Framework 2.9, contents of ``PYTHONPATH`` environment
+          variable were added to the module search path by the framework itself
+          when running on Jython and IronPython. Nowadays that is not done
+          anymore and ``JYTHONPATH`` and ``IRONPYTHONPATH`` must be used with
+          these interpreters.
 
-When using Jython the most common way to alter ``CLASSPATH`` is setting an
-environment variable similarly as with ``PYTHONPATH``. Note that instead of
-``CLASSPATH``, it is always possible to use ``PYTHONPATH`` with Jython, even with
-libraries and listeners implemented with Java.
+Using `--pythonpath` option
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When using the standalone jar distribution, the ``CLASSPATH`` has to be set a
-bit differently, due to the fact that `java -jar` command does not read
-the ``CLASSPATH`` environment variable. In this case, there are two different
-ways to configure ``CLASSPATH``, which are shown in the examples below::
+Robot Framework has a separate command line option :option:`--pythonpath (-P)`
+for adding locations to the module search path. Although the option name has
+the word Python in it, it works also on Jython and IronPython.
 
-  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-2.7.1.jar org.robotframework.RobotFramework example.txt
-  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-2.7.1.jar example.txt
-
-Using --pythonpath option
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Robot Framework also has a separate command line option
-:option:`--pythonpath (-P)` for adding directories or archives into
-``PYTHONPATH``. Multiple paths can be given by separating them with a
-colon (:) or using this option several times. The given path can also be
-a glob pattern matching multiple paths, but then it normally must be
-escaped__.
+Multiple locations can be given by separating them with a colon, regardless
+the operating system, or by using this option several times. The given path
+can also be a glob pattern matching multiple paths, but then it typically
+needs to be escaped__.
 
 __ `Escaping complicated characters`_
 
 Examples::
 
-   --pythonpath libs/
+   --pythonpath libs
    --pythonpath /opt/testlibs:mylibs.zip:yourlibs
    --pythonpath mylib.jar --pythonpath lib/STAR.jar --escape star:STAR
+
+Configuring `sys.path` programmatically
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Python interpreters store the module search path they use as a list of strings
+in `sys.path <https://docs.python.org/2/library/sys.html#sys.path>`__
+attribute. This list can be updated dynamically during execution, and changes
+are taken into account next time when something is imported.
+
+Java classpath
+~~~~~~~~~~~~~~
+
+When libraries implemented in Java are imported with Jython, they can be
+either in Jython's normal module search path or in `Java classpath`__. The most
+common way to alter classpath is setting the ``CLASSPATH`` environment variable
+similarly as ``PYTHONPATH``, ``JYTHONPATH`` or ``IRONPYTHONPATH``.
+Alternatively it is possible to use Java's :option:`-cp` command line option.
+This option is not exposed to the ``jybot`` `runner script`_, but it is
+possible to use it with Jython by adding :option:`-J` prefix like
+`jython -J-cp example.jar -m robot.run tests.robot`.
+
+When using the standalone JAR distribution, the classpath has to be set a
+bit differently, due to the fact that `java -jar` command does support
+the ``CLASSPATH`` environment variable nor the :option:`-cp` option. There are
+two different ways to configure the classpath::
+
+  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-2.9.jar org.robotframework.RobotFramework tests.robot
+  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-2.9.jar tests.robot
+
+__ https://docs.oracle.com/javase/8/docs/technotes/tools/findingclasses.html
 
 Setting variables
 -----------------
@@ -415,6 +444,57 @@ Examples::
 
 __ `Free test suite metadata`_
 
+Programmatic modification of test data
+--------------------------------------
+
+If the provided built-in features to modify test data before execution
+are not enough, Robot Framework 2.9 and newer provide a possible to do
+custom modifications programmatically. This is accomplished by creating
+a model modifier and activating it using the :option:`--prerunmodifier`
+option.
+
+Model modifiers should be implemented as visitors that can traverse through
+the executable test suite structure and modify it as needed. The visitor
+interface is explained as part of the `Robot Framework API documentation`__,
+and the example below ought to give an idea of how it can be used and how
+powerful this functionality is.
+
+.. sourcecode:: python
+
+   ../api/code_examples/select_every_xth_test.py
+
+When a model modifier is taken into use on the command line using the
+:option:`--prerunmodifier` option, it can be specified either as a name of
+the modifier class or a path to the modifier file. If the modifier is given
+as a class name, the module containing the class must be in the `module search
+path`_, and if the module name is different than the class name, the given
+name must include both like `module.ModifierClass`. If the modifier is given
+as a path, the class name must be same as the file name. For most parts this
+works exactly like when `specifying a test library to import`__.
+
+If a modifier requires arguments, like the example above does, they can be
+specified after the modifier name or path using either a colon (`:`) or a
+semicolon (`;`) as a separator. If both are used in the value, the one first
+is considered the actual separator.
+
+For example, if the above model modifier would be in a file
+:file:`SelectEveryXthTest.py`, it could be used like this::
+
+    # Specify the modifier as a path. Run every second test.
+    pybot --prerunmodifier path/to/SelectEveryXthTest.py:2 tests.robot
+
+    # Specify the modifier as a name. Run every third test, starting from the second.
+    # SelectEveryXthTest.py must be in the module search path.
+    pybot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
+
+If more than one model modifier is needed, they can be specified by using
+the :option:`--prerunmodifier` option multiple times. If similar modifying
+is needed before creating results, `programmatic modification of results`_
+can be enabled using the :option:`--prerebotmodifier` option.
+
+__ https://robot-framework.readthedocs.org/en/latest/autodoc/robot.model.html#module-robot.model.visitor
+__ `Specifying library to import`_
+
 Controlling console output
 --------------------------
 
@@ -480,7 +560,8 @@ case-insensitive values:
 Setting listeners
 -----------------
 
-So-called listeners_ can be used for monitoring the test
-execution. They are taken into use with the command line option
-:option:`--listener`, and the specified listeners must be in the `module
-search path`_ similarly as test libraries.
+Listeners_ can be used to monitor the test execution. When they are taken into
+use from the command line, they are specified using the :option:`--listener`
+command line option. The value can either be a path to a listener or
+a listener name. See the `Using listener interface`_ section for more details
+about importing listeners and using them in general.

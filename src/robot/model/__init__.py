@@ -21,8 +21,7 @@ This package contains base classes, for example, for
 functionality, such as :mod:`visitors <robot.model.visitor>`.
 
 These classes are extended both in :mod:`robot.result` and :mod:`robot.running`
-packages and used also elsewhere. There should, however, be no need to
-externally use these classes directly, and they are not part of the public API.
+packages and used also elsewhere.
 
 This package is considered stable.
 """
@@ -32,10 +31,11 @@ from .testsuite import TestSuite
 from .testcase import TestCase
 from .keyword import Keyword, Keywords
 from .message import Message
-from .tags import Tags, TagPatterns
+from .modifier import ModelModifier
+from .tags import Tags, TagPattern, TagPatterns
 from .criticality import Criticality
 from .namepatterns import SuiteNamePatterns, TestNamePatterns
-from .visitor import SuiteVisitor, SkipAllVisitor
+from .visitor import SuiteVisitor
 from .totalstatistics import TotalStatisticsBuilder
 from .statistics import Statistics
 from .imports import Imports

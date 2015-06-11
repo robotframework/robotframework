@@ -13,13 +13,16 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.output import LOGGER
 from robot.utils import get_error_details, type_name, Importer
 
+from .visitor import SuiteVisitor
 
-class PreRunVisitors(object):
 
-    def __init__(self, visitors):
+class ModelModifier(SuiteVisitor):
+
+    def __init__(self, visitors, empty_suite_ok, logger):
+        self._log_error = logger.error
+        self._empty_suite_ok = empty_suite_ok
         self._visitors = list(self._import_visitors(visitors))
 
     def visit_suite(self, suite):
@@ -28,13 +31,16 @@ class PreRunVisitors(object):
                 suite.visit(visitor)
             except:
                 message, details = get_error_details()
-                LOGGER.error("Executing pre-run visitor '%s' failed: %s\n%s"
-                             % (type_name(visitor), message, details))
+                self._log_error("Executing model modifier '%s' failed: %s\n%s"
+                                % (type_name(visitor), message, details))
+        if not (suite.test_count or self._empty_suite_ok):
+            raise DataError("Suite '%s' contains no tests after model "
+                            "modifiers." % suite.name)
 
     def _import_visitors(self, visitors):
-        importer = Importer('pre-run visitor')
+        importer = Importer('model modifier')
         for visitor, args in visitors:
             try:
                 yield importer.import_class_or_module(visitor, args)
             except DataError as err:
-                LOGGER.error(unicode(err))
+                self._log_error(unicode(err))

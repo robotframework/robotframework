@@ -19,9 +19,10 @@ import time
 
 from robot import utils
 from robot.errors import DataError, FrameworkError
+from robot.utils import split_args_from_name_or_path
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
-from robot.result.flattenkeywordmatcher import FlattenKeywordMatcher
+from robot.result.flattenkeywordmatcher import validate_flatten_keyword
 
 from .gatherfailed import gather_failed_tests
 
@@ -57,6 +58,7 @@ class _BaseSettings(object):
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
                  'FlattenKeywords'  : ('flattenkeywords', []),
+                 'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
                  'MonitorColors'    : ('monitorcolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
@@ -74,7 +76,7 @@ class _BaseSettings(object):
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             value = opts[cli_name] if cli_name in opts else default
-            if default == [] and isinstance(value, basestring):
+            if default == [] and not utils.is_list_like(value):
                 value = [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
@@ -115,8 +117,8 @@ class _BaseSettings(object):
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
-        if name in ['PreRunVisitors', 'Listeners', 'VariableFiles']:
-            return [self._split_args_from_name_or_path(item) for item in value]
+        if name in ['PreRunModifiers', 'PreRebotModifiers', 'VariableFiles']:
+            return [split_args_from_name_or_path(item) for item in value]
         if name == 'ReportBackground':
             return self._process_report_background(value)
         if name == 'TagStatCombine':
@@ -277,30 +279,6 @@ class _BaseSettings(object):
     def _get_default_value(self, name):
         return self._cli_opts[name][1]
 
-    def _split_args_from_name_or_path(self, name):
-        if os.path.exists(name):
-            return os.path.abspath(name), []
-        index = self._get_arg_separator_index_from_name_or_path(name)
-        if index == -1:
-            return name, []
-        args = name[index+1:].split(name[index])
-        name = name[:index]
-        if os.path.exists(name):
-            name = os.path.abspath(name)
-        return name, args
-
-    def _get_arg_separator_index_from_name_or_path(self, name):
-        colon_index = name.find(':')
-        # Handle absolute Windows paths
-        if colon_index == 1 and name[2:3] in ('/', '\\'):
-            colon_index = name.find(':', colon_index+1)
-        semicolon_index = name.find(';')
-        if colon_index == -1:
-            return semicolon_index
-        if semicolon_index == -1:
-            return colon_index
-        return min(colon_index, semicolon_index)
-
     def _validate_remove_keywords(self, values):
         for value in values:
             try:
@@ -309,11 +287,10 @@ class _BaseSettings(object):
                 raise DataError("Invalid value for option '--removekeywords'. %s" % err)
 
     def _validate_flatten_keywords(self, values):
-        for value in values:
-            try:
-                FlattenKeywordMatcher(value)
-            except DataError as err:
-                raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
+        try:
+            validate_flatten_keyword(values)
+        except DataError as err:
+            raise DataError("Invalid value for option '--flattenkeywords'. %s" % err)
 
     def __contains__(self, setting):
         return setting in self._cli_opts
@@ -377,6 +354,10 @@ class _BaseSettings(object):
     def flatten_keywords(self):
         return self['FlattenKeywords']
 
+    @property
+    def pre_rebot_modifiers(self):
+        return self['PreRebotModifiers']
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
@@ -390,7 +371,7 @@ class RobotSettings(_BaseSettings):
                        'WarnOnSkipped'      : ('warnonskippedfiles', False),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
-                       'PreRunVisitors'     : ('prerunvisitor', []),
+                       'PreRunModifiers'    : ('prerunmodifier', []),
                        'Listeners'          : ('listener', []),
                        'MonitorWidth'       : ('monitorwidth', 78),
                        'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
@@ -427,7 +408,7 @@ class RobotSettings(_BaseSettings):
             'exclude_tags': self['Exclude'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
-            'empty_suite_ok': self['RunEmptySuite'],
+            'empty_suite_ok': self.run_empty_suite,
             'randomize_suites': self.randomize_suites,
             'randomize_tests': self.randomize_tests,
             'randomize_seed': self.randomize_seed,
@@ -475,8 +456,12 @@ class RobotSettings(_BaseSettings):
         }
 
     @property
-    def pre_run_visitors(self):
-        return self['PreRunVisitors']
+    def pre_run_modifiers(self):
+        return self['PreRunModifiers']
+
+    @property
+    def run_empty_suite(self):
+        return self['RunEmptySuite']
 
 
 class RebotSettings(_BaseSettings):
@@ -502,7 +487,7 @@ class RebotSettings(_BaseSettings):
             'exclude_tags': self['Exclude'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
-            'empty_suite_ok': self['ProcessEmptySuite'],
+            'empty_suite_ok': self.process_empty_suite,
             'remove_keywords': self.remove_keywords,
             'log_level': self['LogLevel'],
             'critical_tags': self.critical_tags,
@@ -552,3 +537,7 @@ class RebotSettings(_BaseSettings):
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }
+
+    @property
+    def process_empty_suite(self):
+        return self['ProcessEmptySuite']

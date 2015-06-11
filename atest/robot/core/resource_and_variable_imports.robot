@@ -126,7 +126,9 @@ Invalid Setting In Resource File
 Invalid Variable File
     ${path} =  Normalize Path  ${RESDIR}/invalid_variable_file.py
     Stderr Should Contain Error    ${DATAFILE}
-    ...    Importing variable file '${path}' failed: This is an invalid variable file
+    ...    Processing variable file '${path}' failed:
+    ...    Importing variable file '${path}' failed:
+    ...    This is an invalid variable file
 
 Resource Import Without Path
     Stderr Should Contain Error    ${DATAFILE}
@@ -142,14 +144,14 @@ Resource File In PYTHONPATH
 Variable File In PYTHONPATH
     Check Test Case  ${TEST NAME}
 
-
 *** Keywords ***
-
 Run Tests With Non-ASCII Items In PYTHONPATH
     Create Directory    %{TEMPDIR}/nön-äscïï
-    Set Environment Variable  PYTHONPATH  %{TEMPDIR}/nön-äscïï${:}${PPATH_RESDIR}
+    Set PYTHONPATH    %{TEMPDIR}/nön-äscïï    ${PPATH_RESDIR}
     Run Tests  ${EMPTY}  ${DATAFILE}
-    [Teardown]  Remove Directory  %{TEMPDIR}/nön-äscïï
+    [Teardown]  Run Keywords
+    ...    Remove Directory  %{TEMPDIR}/nön-äscïï    AND
+    ...    Reset PYTHONPATH
 
 Stderr Should Contain Error
     [Arguments]    ${path}    @{error parts}

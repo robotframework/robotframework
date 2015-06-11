@@ -32,7 +32,7 @@ class XmlLogger(ResultVisitor):
         if not path:
             return NullMarkupWriter()
         try:
-            writer = XmlWriter(path, encoding='UTF-8')
+            writer = XmlWriter(path, encoding='UTF-8', write_empty=False)
         except EnvironmentError as err:
             raise DataError("Opening output file '%s' failed: %s" %
                             (path, err.strerror))
@@ -66,14 +66,16 @@ class XmlLogger(ResultVisitor):
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        attrs = {'name': kw.kwname, 'library': kw.libname, 'type': kw.type}
+        attrs = {'name': kw.kwname, 'library': kw.libname}
+        if kw.type != 'kw':
+            attrs['type'] = kw.type
         if kw.timeout:
             attrs['timeout'] = unicode(kw.timeout)
         self._writer.start('kw', attrs)
+        self._write_list('tags', 'tag', [unic(t) for t in kw.tags])
         self._writer.element('doc', kw.doc)
-        self._write_list('arguments', 'arg', (unic(a) for a in kw.args))
+        self._write_list('arguments', 'arg', [unic(a) for a in kw.args])
         self._write_list('assign', 'var', kw.assign)
-        self._write_list('tags', 'tag', (unic(t) for t in kw.tags))
 
     def end_keyword(self, kw):
         self._write_status(kw)
@@ -92,19 +94,21 @@ class XmlLogger(ResultVisitor):
         self._writer.end('test')
 
     def start_suite(self, suite):
-        attrs = {'id': suite.id, 'name': suite.name}
-        if suite.source:
-            attrs['source'] = suite.source
+        attrs = {'id': suite.id, 'name': suite.name, 'source': suite.source}
         self._writer.start('suite', attrs)
 
     def end_suite(self, suite):
         self._writer.element('doc', suite.doc)
-        self._writer.start('metadata')
-        for name, value in suite.metadata.items():
-            self._writer.element('item', value, {'name': name})
-        self._writer.end('metadata')
+        if suite.metadata:
+            self._write_metadata(suite.metadata)
         self._write_status(suite)
         self._writer.end('suite')
+
+    def _write_metadata(self, metadata):
+        self._writer.start('metadata')
+        for name, value in metadata.items():
+            self._writer.element('item', value, {'name': name})
+        self._writer.end('metadata')
 
     def start_statistics(self, stats):
         self._writer.start('statistics')
@@ -141,10 +145,11 @@ class XmlLogger(ResultVisitor):
         self._writer.end('errors')
 
     def _write_list(self, container_tag, item_tag, items):
-        self._writer.start(container_tag)
-        for item in items:
-            self._writer.element(item_tag, item)
-        self._writer.end(container_tag)
+        if items:
+            self._writer.start(container_tag)
+            for item in items:
+                self._writer.element(item_tag, item)
+            self._writer.end(container_tag)
 
     def _write_status(self, item, extra_attrs=None):
         attrs = {'status': item.status, 'starttime': item.starttime or 'N/A',

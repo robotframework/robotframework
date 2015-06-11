@@ -185,9 +185,10 @@ Options
                           automatically converted to spaces.
                           Examples: --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
-    --removekeywords all|passed|for|wuks|name:<pattern> *  Remove keyword data
-                          from all generated outputs. Keywords containing
-                          warnings are not removed except in `all` mode.
+    --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
+                          Remove keyword data from all generated outputs.
+                          Keywords containing warnings are not removed except
+                          in `all` mode.
                           all:     remove data from all keywords
                           passed:  remove data only from keywords in passed
                                    test cases and suites
@@ -202,15 +203,27 @@ Options
                                    and may contain `*` and `?` as wildcards.
                                    Examples: --removekeywords name:Lib.HugeKw
                                              --removekeywords name:myresource.*
-    --flattenkeywords for|foritem|name:<pattern> *  Flattens matching keywords
-                          in all generated outputs. Matching keywords get all
-                          log messages from their child keywords and children
-                          are discarded otherwise.
+                          tag:<pattern>:  remove data from keywords that match
+                                   the given pattern. Tags are case and space
+                                   insensitive and it is possible to use
+                                   patterns with `*` and `?` as wildcards.
+                                   Tags and patterns can also be combined
+                                   together with `AND`, `OR`, and `NOT`
+                                   operators.
+                                   Examples: --removekeywords foo
+                                             --removekeywords fooANDbar*
+    --flattenkeywords for|foritem|name:<pattern>|tag:<pattern> *
+                          Flattens matching keywords in all generated outputs.
+                          Matching keywords get all log messages from their
+                          child keywords and children are discarded otherwise.
                           for:     flatten for loops fully
                           foritem: flatten individual for loop iterations
                           name:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords name:<pattern>`
+                          tag:<pattern>:  flatten matched keywords using same
+                                   matching rules as with
+                                   `--removekeywords tag:<pattern>`
     --starttime timestamp  Set starting time of test execution when creating
                           reports. Timestamp must be given in format
                           `2007-10-01 15:12:42.268` where all separators are
@@ -227,12 +240,16 @@ Options
                           of combined test suites together.
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
+    --prerebotmodifier class *  Class to programmatically modify the result
+                          model before creating outputs.
  -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
+ -P --pythonpath path *   Additional locations to add to the module search path
+                          that is used when importing Python based extensions.
  -E --escape what:with *  Escape characters which are problematic in console.
                           `what` is the name of the character to escape and
                           `with` is the string to escape it with. Note that

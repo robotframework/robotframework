@@ -212,9 +212,10 @@ Options
                           automatically converted to spaces.
                           Examples: --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
-    --removekeywords all|passed|for|wuks|name:<pattern> *  Remove keyword data
-                          from the generated log file. Keywords containing
-                          warnings are not removed except in `all` mode.
+    --removekeywords all|passed|for|wuks|name:<pattern>|tag:<pattern> *
+                          Remove keyword data from the generated log file.
+                          Keywords containing warnings are not removed except
+                          in `all` mode.
                           all:     remove data from all keywords
                           passed:  remove data only from keywords in passed
                                    test cases and suites
@@ -229,16 +230,27 @@ Options
                                    and may contain `*` and `?` as wildcards.
                                    Examples: --removekeywords name:Lib.HugeKw
                                              --removekeywords name:myresource.*
-    --flattenkeywords for|foritem|name:<pattern> *  Flattens matching keywords
-                          in the generated log file. Matching keywords get all
-                          log messages from their child keywords and children
-                          are discarded otherwise.
+                          tag:<pattern>:  remove data from keywords that match
+                                   the given pattern. Tags are case and space
+                                   insensitive and it is possible to use
+                                   patterns with `*` and `?` as wildcards.
+                                   Tags and patterns can also be combined
+                                   together with `AND`, `OR`, and `NOT`
+                                   operators.
+                                   Examples: --removekeywords foo
+                                             --removekeywords fooANDbar*
+    --flattenkeywords for|foritem|name:<pattern>|tag:<pattern> *
+                          Flattens matching keywords in the generated log file.
+                          Matching keywords get all log messages from their
+                          child keywords and children are discarded otherwise.
                           for:     flatten for loops fully
                           foritem: flatten individual for loop iterations
                           name:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords name:<pattern>`
-    --prerunvisitor class *
+                          tag:<pattern>:  flatten matched keywords using same
+                                   matching rules as with
+                                   `--removekeywords tag:<pattern>`
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
                           Arguments to the listener class can be given after
@@ -270,6 +282,10 @@ Options
                           The seed must be an integer.
                           Examples: --randomize all
                                     --randomize tests:1234
+    --prerunmodifier class *  Class to programmatically modify the test suite
+                          structure before execution.
+    --prerebotmodifier class *  Class to programmatically modify the result
+                          model before creating reports and logs.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
@@ -281,11 +297,12 @@ Options
                           console when top level keywords in test cases end.
                           Values have same semantics as with --monitorcolors.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
-                          to search test libraries from when they are imported.
-                          Multiple paths can be given by separating them with a
-                          colon (`:`) or using this option several times. Given
-                          path can also be a glob pattern matching multiple
-                          paths but then it normally must be escaped or quoted.
+                          to search test libraries and other extensions when
+                          they are imported. Multiple paths can be given by
+                          separating them with a colon (`:`) or by using this
+                          option several times. Given path can also be a glob
+                          pattern matching multiple paths but then it normally
+                          must be escaped or quoted.
                           Examples:
                           --pythonpath libs/
                           --pythonpath /opt/testlibs:mylibs.zip:yourlibs
@@ -379,6 +396,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.conf import RobotSettings
+from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
 from robot.running import TestSuiteBuilder
@@ -396,9 +414,11 @@ class RobotFramework(Application):
         LOGGER.register_console_logger(**settings.console_logger_config)
         LOGGER.info('Settings:\n%s' % unicode(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
-                                 settings['WarnOnSkipped'],
-                                 settings['RunEmptySuite']).build(*datasources)
+                                 settings['WarnOnSkipped']).build(*datasources)
         suite.configure(**settings.suite_config)
+        if settings.pre_run_modifiers:
+            suite.visit(ModelModifier(settings.pre_run_modifiers,
+                                      settings.run_empty_suite, LOGGER))
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             result = suite.run(settings)
             LOGGER.info("Tests execution ended. Statistics:\n%s"
@@ -446,6 +466,9 @@ def run(*datasources, **options):
     Options that can be given on the command line multiple times can be
     passed as lists like `include=['tag1', 'tag2']`. If such option is used
     only once, it can be given also as a single string like `include='tag'`.
+
+    Additionally listener option allows passing object directly instead of
+    listener name, e.g. `run('tests.robot', listener=Listener())`.
 
     To capture stdout and/or stderr streams, pass open file objects in as
     special keyword arguments `stdout` and `stderr`, respectively.

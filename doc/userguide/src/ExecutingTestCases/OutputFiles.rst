@@ -488,21 +488,32 @@ are not removed except when using the `ALL` mode.
    underscore insensitive, and it supports `simple patterns`_ with `*`
    and `?` as wildcards.
 
+`TAG:<pattern>`
+   Remove data from keywords with tags that match the given pattern. Tags are
+   case and space insensitive and they can be specified using `tag patterns`_
+   where `*` and `?` are supported as wildcards and `AND`, `OR` and `NOT`
+   operators can be used for combining individual tags or patterns together.
+   Can be used both with `library keyword tags`__ and `user keyword tags`_.
+
 Examples::
 
    rebot --removekeywords all --output removed.xml output.xml
    pybot --removekeywords passed --removekeywords for tests.txt
    pybot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.txt
+   pybot --removekeywords tag:huge tests.txt
 
 Removing keywords is done after parsing the `output file`_ and generating
 an internal model based on it. Thus it does not reduce memory usage as much
 as `flattening keywords`_.
 
+__ `Keyword tags`_
+
 .. note:: The support for using :option:`--removekeywords` when executing tests
           as well as `FOR` and `WUKS` modes were added in Robot
           Framework 2.7.
 
-.. note:: `NAME:<pattern>` mode was added in Robot Framework 2.8.2.
+.. note:: `NAME:<pattern>` mode was added in Robot Framework 2.8.2 and
+          `TAG:<pattern>` in 2.9.
 
 Flattening keywords
 ~~~~~~~~~~~~~~~~~~~
@@ -522,6 +533,10 @@ supports the following modes:
    Flatten keywords matching the given pattern. Pattern matching rules are
    same as when `removing keywords`_ using `NAME:<pattern>` mode.
 
+`TAG:<pattern>`
+   Flatten keywords with tags matching the given pattern. Pattern matching
+   rules are same as when `removing keywords`_ using `TAG:<pattern>` mode.
+
 Examples::
 
    pybot --flattenkeywords name:HugeKeyword --flattenkeywords name:resource.* tests.txt
@@ -531,9 +546,8 @@ Flattening keywords is done already when the `output file`_ is parsed
 initially. This can save a significant amount of memory especially with
 deeply nested keyword structures.
 
-.. note:: Flattening keywords is a new feature in Robot Framework 2.8.2, and
-          `FOR` and `FORITEM` modes were added in Robot Framework
-          2.8.5.
+.. note:: Flattening keywords is a new feature in Robot Framework 2.8.2, `FOR`
+          and `FORITEM` modes were added in 2.8.5 and `TAG:<pattern>` in 2.9.
 
 Setting start and end time of execution
 ---------------------------------------
@@ -560,6 +574,51 @@ Examples::
    rebot --starttime 20080611-17:59:20.495 output1.xml output2.xml
    rebot --starttime 20080611-175920 --endtime 20080611-180242 *.xml
    rebot --starttime 20110302-1317 --endtime 20110302-11418 myoutput.xml
+
+Programmatic modification of results
+------------------------------------
+
+If the provided built-in features to modify results are are not enough,
+Robot Framework 2.9 and newer provide a possible to do custom modifications
+programmatically. This is accomplished by creating a model modifier and
+activating it using the :option:`--prerebotmodifier` option.
+
+This functionality works nearly exactly like `programmatic modification of
+test data`_ that can be enabled with the :option:`--prerunmodifier` option.
+The only difference is that the modified model is Robot Framework's
+result model and not the executable test suite model. For example, the
+following modifier marks all passed tests that have taken more time than
+allowed as failed:
+
+.. sourcecode:: python
+
+    from robot.api import SuiteVisitor
+
+
+    class ExecutionTimeChecker(SuiteVisitor):
+
+        def __init__(self, max_seconds):
+            self.max_milliseconds = float(max_seconds) * 1000
+
+        def visit_test(self, test):
+            if test.status == 'PASS' and test.elapsedtime > self.max_milliseconds:
+                test.status = 'FAIL'
+                test.message = 'Test execution took too long.'
+
+If the above modifier would be in file :file:`ExecutionTimeChecker.py`, it
+could be used, for example, like this::
+
+    # Specify modifier as a path when running tests. Maximum time is 42 seconds.
+    pybot --prerebotmodifier path/to/ExecutionTimeChecker.py:42 tests.robot
+
+    # Specify modifier as a name when using Rebot. Maximum time is 3.14 seconds.
+    # ExecutionTimeChecker.py must be in the module search path.
+    rebot --prerebotmodifier ExecutionTimeChecker:3.14 output.xml
+
+If more than one model modifier is needed, they can be specified by using
+the :option:`--prerebotmodifier` option multiple times. When executing tests,
+it is possible to use :option:`--prerunmodifier` and
+:option:`--prerebotmodifier` options together.
 
 System log
 ----------

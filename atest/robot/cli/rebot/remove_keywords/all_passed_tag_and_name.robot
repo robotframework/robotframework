@@ -64,6 +64,19 @@ Name Mode
     Keyword Should Be Empty    ${tc2.kws[1]}    BuiltIn.Fail    Expected failure
     Keyword Should Contain Removal Message    ${tc2.kws[0]}
 
+Tag Mode
+    [Setup]    Run Rebot and Set My Suite    --removekeywords tag:force    0
+    Keyword Should Be Empty    ${MY SUITE.setup}    My Keyword    Suite Setup
+    Keyword Should Contain Removal Message    ${MY SUITE.setup}
+    ${tc1}    ${tc2} =    Set Variable    ${MY SUITE.tests}
+    Length Should Be    ${tc1.kws}    1
+    Keyword Should Be Empty    ${tc1.kws[0]}    My Keyword    Pass
+    Keyword Should Contain Removal Message    ${tc1.kws[0]}
+    Length Should Be    ${tc2.kws}    2
+    Keyword Should Be Empty    ${tc2.kws[0]}    My Keyword    Fail
+    Keyword Should Contain Removal Message    ${tc2.kws[0]}
+    Keyword Should Not Be Empty    ${tc2.kws[1]}    BuiltIn.Fail    Expected failure
+
 Warnings Are Not Removed In Name Mode
     [Setup]    Run Rebot and Set My Suite    --removekeywords NaMe:BuiltIn.Log --RemoveK NaMe:W*IN    1
     Keyword Should Not Be Empty    ${MY SUITE.setup}    Warning in    suite setup

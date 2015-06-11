@@ -42,6 +42,7 @@ class Logger(AbstractLogger):
         self._error_occurred = False
         self._error_listener = None
         self._prev_log_message_handlers = []
+        self._enabled = 0
         if register_console_logger:
             self.register_console_logger()
 
@@ -115,7 +116,7 @@ class Logger(AbstractLogger):
         """Log messages written (mainly) by libraries"""
         for logger in self._loggers.all_loggers():
             logger.log_message(msg)
-        if msg.level == 'WARN':
+        if msg.level in ('WARN', 'ERROR'):
             self.message(msg)
 
     log_message = message
@@ -173,6 +174,16 @@ class Logger(AbstractLogger):
 
     def __iter__(self):
         return iter(self._loggers)
+
+    def __enter__(self):
+        if not self._enabled:
+            self.register_file_logger()
+        self._enabled += 1
+
+    def __exit__(self, *exc_info):
+        self._enabled -= 1
+        if not self._enabled:
+            self.close()
 
 
 class LoggerCollection(object):

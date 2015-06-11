@@ -14,9 +14,13 @@ from robot.utils.asserts import assert_equals, assert_true
 from robot.running import namespace
 from robot import run, rebot
 from resources.runningtestcase import RunningTestCase
+from resources.Listener import Listener
+
 
 ROOT = dirname(dirname(dirname(abspath(__file__))))
 TEMP = tempfile.gettempdir()
+OUTPUT_PATH = join(TEMP, 'output.xml')
+REPORT_PATH = join(TEMP, 'report.html')
 LOG_PATH = join(TEMP, 'log.html')
 LOG = 'Log:     %s' % LOG_PATH
 
@@ -45,7 +49,7 @@ class TestRun(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.robot')
     warn = join(ROOT, 'atest', 'testdata', 'misc', 'warnings_and_errors.robot')
     nonex = join(TEMP, 'non-existing-file-this-is.robot')
-    remove_files = [LOG_PATH]
+    remove_files = [LOG_PATH, REPORT_PATH, OUTPUT_PATH]
 
     def test_run_once(self):
         assert_equals(run(self.data, outputdir=TEMP, report='none'), 1)
@@ -57,11 +61,13 @@ class TestRun(RunningTestCase):
         assert_equals(run_without_outputs(self.data, name='New Name'), 1)
         self._assert_outputs([('Pass And Fail', 2), ('New Name', 2), (LOG, 0)])
 
-    def test_run_fails(self):
-        assert_equals(run(self.nonex), 252)
+    def test_run_fail(self):
         assert_equals(run(self.data, outputdir=TEMP), 1)
-        self._assert_outputs(stdout=[('Pass And Fail', 2), (LOG, 1)],
-                             stderr=[('[ ERROR ]', 1), (self.nonex, 1),
+        self._assert_outputs(stdout=[('Pass And Fail', 2), (LOG, 1)])
+
+    def test_run_error(self):
+        assert_equals(run(self.nonex), 252)
+        self._assert_outputs(stderr=[('[ ERROR ]', 1), (self.nonex, 1),
                                      ('--help', 1)])
 
     def test_custom_stdout(self):
@@ -89,6 +95,29 @@ class TestRun(RunningTestCase):
     def test_multi_options_as_single_string(self):
         assert_equals(run_without_outputs(self.data, exclude='fail'), 0)
         self._assert_outputs([('FAIL', 0)])
+
+    def test_listener_gets_notification_about_log_report_and_output(self):
+        listener = join(ROOT, 'utest', 'resources', 'Listener.py')
+        assert_equals(run(self.data, output=OUTPUT_PATH, report=REPORT_PATH,
+                          log=LOG_PATH, listener=listener), 1)
+        self._assert_outputs(stdout=[('[output {0}]'.format(OUTPUT_PATH), 1),
+                                     ('[report {0}]'.format(REPORT_PATH), 1),
+                                     ('[log {0}]'.format(LOG_PATH), 1),
+                                     ('[listener close]', 1)])
+
+    def test_pass_listener_as_instance(self):
+        assert_equals(run(self.data, outputdir=TEMP, report='none', listener=Listener(1)), 1)
+        self._assert_outputs([("[from listener 1]", 1)])
+
+    def test_pass_listener_as_string(self):
+        module_file = join(ROOT, 'utest', 'resources', 'Listener.py')
+        assert_equals(run(self.data, outputdir=TEMP, report='none', listener=module_file+":1"), 1)
+        self._assert_outputs([("[from listener 1]", 1)])
+
+    def test_pass_listener_as_list(self):
+        module_file = join(ROOT, 'utest', 'resources', 'Listener.py')
+        assert_equals(run(self.data, outputdir=TEMP, report='none', listener=[module_file+":1", Listener(2)]), 1)
+        self._assert_outputs([("[from listener 1]", 1), ("[from listener 2]", 1)])
 
 
 class TestRebot(RunningTestCase):
@@ -120,7 +149,7 @@ class TestRebot(RunningTestCase):
         self._assert_output(stdout, [('Log:', 1), ('Report:', 0)])
         self._assert_outputs()
 
-    def test_custom_stdout_and_stderr_with_minumal_implementation(self):
+    def test_custom_stdout_and_stderr_with_minimal_implementation(self):
         output = StreamWithOnlyWriteAndFlush()
         assert_equals(rebot(self.data, log='NONE', report='NONE', stdout=output,
                             stderr=output), 252)
@@ -131,20 +160,19 @@ class TestRebot(RunningTestCase):
         self._assert_outputs()
 
 
-class TestStateBetweenTestRuns(unittest.TestCase):
+class TestStateBetweenTestRuns(RunningTestCase):
+    data = join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot')
 
     def test_importer_caches_are_cleared_between_runs(self):
-        data = join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot')
-        self._run(data)
+        self._run(self.data)
         lib = self._import_library()
         res = self._import_resource()
-        self._run(data)
+        self._run(self.data)
         assert_true(lib is not self._import_library())
         assert_true(res is not self._import_resource())
 
     def _run(self, data, **config):
-        return run_without_outputs(data, stdout=StringIO(), stderr=StringIO(),
-                                   outputdir=TEMP, **config)
+        return run_without_outputs(data, outputdir=TEMP, **config)
 
     def _import_library(self):
         return namespace.IMPORTER.import_library('BuiltIn', None, None, None)
@@ -166,6 +194,14 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         self._run(join(ROOT, 'atest', 'testdata', 'misc', 'normal.robot'))
         assert_equals(logging.getLogger().handlers, [])
         assert_equals(logging.raiseExceptions, 1)
+
+    def test_listener_unregistration(self):
+        listener = join(ROOT, 'utest', 'resources', 'Listener.py')
+        assert_equals(run_without_outputs(self.data, listener=listener+':1'), 0)
+        self._assert_outputs([("[from listener 1]", 1), ("[listener close]", 1)])
+        self._clear_outputs()
+        assert_equals(run_without_outputs(self.data), 0)
+        self._assert_outputs([("[from listener 1]", 0), ("[listener close]", 0)])
 
 
 class TestTimestampOutputs(RunningTestCase):
@@ -232,7 +268,7 @@ class TestSignalHandlers(unittest.TestCase):
 
 
 class TestRelativeImportsFromPythonpath(RunningTestCase):
-    _data = join(abspath(dirname(__file__)), 'import_test.robot')
+    data = join(abspath(dirname(__file__)), 'import_test.robot')
 
     def setUp(self):
         self._orig_path = abspath(curdir)
@@ -245,7 +281,7 @@ class TestRelativeImportsFromPythonpath(RunningTestCase):
 
     def test_importing_library_from_pythonpath(self):
         errors = StringIO()
-        run(self._data, outputdir=TEMP, stdout=StringIO(), stderr=errors)
+        run(self.data, outputdir=TEMP, stdout=StringIO(), stderr=errors)
         self._assert_output(errors, '')
 
 

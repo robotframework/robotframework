@@ -7,7 +7,6 @@ Resource        cli_resource.robot
 ${DUMMY_LIB_TEST}  misc${/}dummy_lib_test.robot
 
 *** Test Cases ***
-
 Tests fail when library not in pythonpath
     Run Tests  ${EMPTY}  ${DUMMY_LIB_TEST}
     Should Be Equal  ${SUITE.status}  FAIL
@@ -23,12 +22,11 @@ Pythonpath option as glob pattern
     Tests Should Pass Without Errors  --pythonpath %{TEMPDIR}${/}c*i --escape star:STAR  ${DUMMY_LIB_TEST}
 
 PYTHONPATH environment variable
-    Set Environment Variable  PYTHONPATH  ${CLI OUTDIR}${:}spam${:}eggs
+    Set PYTHONPATH  ${CLI OUTDIR}    spam    eggs
     Tests Should Pass Without Errors  ${EMPTY}  ${DUMMY_LIB_TEST}
-
+    [Teardown]  Reset PYTHONPATH
 
 *** Keywords ***
-
 Create Output Directory and Dymmy Library
     Create Output Directory
     Create File  ${CLI OUTDIR}/DummyLib.py  def dummykw():\n\tpass

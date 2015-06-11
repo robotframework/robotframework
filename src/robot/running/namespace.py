@@ -36,13 +36,13 @@ class Namespace:
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, suite, variables, parent_variables, user_keywords,
+    def __init__(self, suite, parent_variables, user_keywords,
                  imports):
         LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.suite = suite
         self.test = None
         self.uk_handlers = []
-        self.variables = _VariableScopes(variables, parent_variables)
+        self.variables = _VariableScopes(parent_variables)
         self._imports = imports
         self._kw_store = KeywordStore(user_keywords)
         self._imported_variable_files = ImportCache()
@@ -191,6 +191,11 @@ class Namespace:
     def get_library_instance(self, libname):
         return self._kw_store.get_library(libname).get_instance()
 
+    def reload_library(self, libname_or_instance):
+        library = self._kw_store.get_library(libname_or_instance)
+        library.reload()
+        return library
+
     def get_handler(self, name):
         try:
             handler = self._kw_store.get_handler(name)
@@ -212,11 +217,22 @@ class KeywordStore(object):
         self.resources = ImportCache()
         self.search_order = ()
 
-    def get_library(self, name):
+    def get_library(self, name_or_instance):
         try:
-            return self.libraries[name.replace(' ', '')]
+            if isinstance(name_or_instance, basestring):
+                return self.libraries[name_or_instance.replace(' ', '')]
+            else:
+                return self._get_lib_by_instance(name_or_instance)
         except KeyError:
-            raise DataError("No library with name '%s' found." % name)
+            raise DataError("No library '%s' found." % name_or_instance)
+
+    def _get_lib_by_instance(self, instance):
+        if instance is None:
+            raise KeyError
+        for lib in self.libraries.values():
+            if lib.get_instance(create=False) == instance:
+                return lib
+        raise KeyError
 
     def get_handler(self, name):
         handler = self._get_handler(name)
@@ -418,9 +434,9 @@ class KeywordRecommendationFinder(object):
 
 class _VariableScopes:
 
-    def __init__(self, suite_variables, parent_variables):
-        suite_variables.update(GLOBAL_VARIABLES)
-        self._suite = self.current = suite_variables
+    def __init__(self, parent_variables):
+        variables = GLOBAL_VARIABLES.copy()
+        self._suite = self.current = variables
         self._parents = []
         if parent_variables is not None:
             self._parents.append(parent_variables.current)
@@ -457,6 +473,9 @@ class _VariableScopes:
             varz.set_from_variable_table(rawvariables, overwrite)
         if self._uk_handlers:
             self.current.set_from_variable_table(rawvariables, overwrite)
+
+    def resolve_delayed(self):
+        self.current.resolve_delayed()
 
     def __getitem__(self, name):
         return self.current[name]

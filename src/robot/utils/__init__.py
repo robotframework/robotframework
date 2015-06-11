@@ -51,7 +51,7 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import (isatty, getdoc, plural_or_not, printable_name,
                    seq2str, seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
-from .platform import IRONPYTHON, JYTHON, UNIXY, WINDOWS
+from .platform import IRONPYTHON, JYTHON, PYTHON, UNIXY, WINDOWS
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method
@@ -63,7 +63,8 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
 from .robottypes import is_dict_like, is_list_like, is_str_like, type_name
 from .setter import setter
 from .text import (cut_long_message, format_assign_message,
-                   pad_console_length, get_console_length, split_tags_from_doc)
+                   pad_console_length, get_console_length, split_tags_from_doc,
+                   split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader
 

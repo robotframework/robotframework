@@ -15,7 +15,6 @@
 from robot.errors import ExecutionFailed, DataError, PassExecution
 from robot.model import SuiteVisitor
 from robot.result import TestSuite, Result
-from robot.variables import GLOBAL_VARIABLES
 from robot.utils import get_timestamp, NormalizedDict
 
 from .context import EXECUTION_CONTEXTS
@@ -47,8 +46,6 @@ class Runner(SuiteVisitor):
         return ctx.variables if ctx else None
 
     def start_suite(self, suite):
-        variables = GLOBAL_VARIABLES.copy()
-        variables.set_from_variable_table(suite.resource.variables)
         result = TestSuite(source=suite.source,
                            name=suite.name,
                            doc=suite.doc,
@@ -62,13 +59,14 @@ class Runner(SuiteVisitor):
                                   stat_config=self._settings.statistics_config)
         else:
             self._suite.suites.append(result)
-        ns = Namespace(result, variables, self._variables,
+        ns = Namespace(result, self._variables,
                        suite.resource.keywords, suite.resource.imports)
+        ns.variables.set_from_variable_table(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
         self._context.set_suite_variables(result)
         if not (self._suite_status and self._suite_status.failures):
             ns.handle_imports()
-        variables.resolve_delayed()
+        ns.variables.resolve_delayed()
         result.doc = self._resolve_setting(result.doc)
         result.metadata = [(self._resolve_setting(n), self._resolve_setting(v))
                            for n, v in result.metadata.items()]

@@ -22,7 +22,7 @@ class StreamXmlWriter(XmlWriter):
 class TestableOutputWriter(OutputWriter):
 
     def _get_writer(self, output, generator):
-        writer = StreamXmlWriter(output, encoding='UTF-8')
+        writer = StreamXmlWriter(output, encoding='UTF-8', write_empty=False)
         writer.start('robot')
         return writer
 

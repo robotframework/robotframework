@@ -18,7 +18,6 @@ from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import setter
 from robot.variables import init_global_variables
 
-from .prerunvisitors import PreRunVisitors
 from .randomizer import Randomizer
 
 
@@ -107,6 +106,9 @@ class TestSuite(model.TestSuite):
         If such an option is used only once, it can be given also as a single
         string like ``variable='VAR:value'``.
 
+        Additionally listener option allows passing object directly instead of
+        listener name, e.g. `run('tests.robot', listener=Listener())`.
+
         To capture stdout and/or stderr streams, pass open file objects in as
         special keyword arguments `stdout` and `stderr`, respectively. Note
         that this works only in version 2.8.4 and newer.
@@ -144,19 +146,18 @@ class TestSuite(model.TestSuite):
         from .signalhandler import STOP_SIGNAL_MONITOR
         from .runner import Runner
 
-        if not settings:
-            settings = RobotSettings(options)
-            LOGGER.register_console_logger(**settings.console_logger_config)
-        if settings.pre_run_visitors:
-            self.visit(PreRunVisitors(settings.pre_run_visitors))
-        with pyloggingconf.robot_handler_enabled(settings.log_level):
-            with STOP_SIGNAL_MONITOR:
-                IMPORTER.reset()
-                init_global_variables(settings)
-                output = Output(settings)
-                runner = Runner(output, settings)
-                self.visit(runner)
-            output.close(runner.result)
+        with LOGGER:
+            if not settings:
+                settings = RobotSettings(options)
+                LOGGER.register_console_logger(**settings.console_logger_config)
+            with pyloggingconf.robot_handler_enabled(settings.log_level):
+                with STOP_SIGNAL_MONITOR:
+                    IMPORTER.reset()
+                    init_global_variables(settings)
+                    output = Output(settings)
+                    runner = Runner(output, settings)
+                    self.visit(runner)
+                output.close(runner.result)
         return runner.result
 
 

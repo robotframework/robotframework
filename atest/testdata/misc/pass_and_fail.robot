@@ -22,7 +22,7 @@ Fail
 *** Keyword ***
 My Keyword
     [Arguments]    ${who}
-    [Tags]    keyword    tags
+    [Tags]    keyword    tags    force
     Log    Hello says "${who}"!    ${LEVEL1}
     Log    Debug message    ${LEVEL2}
     ${assign} =    Set Variable    Just testing...

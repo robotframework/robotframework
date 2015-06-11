@@ -31,17 +31,23 @@ Currently exposed APIs are:
   :func:`~robot.parsing.model.TestData` creates either
   :class:`~robot.parsing.model.TestCaseFile` or
   :class:`~robot.parsing.model.TestDataDirectory` objects based on the input.
-  **Note:** Test data parsing may be rewritten in Robot Framework 2.9 or later.
 
 * :class:`~robot.running.model.TestSuite` class for creating executable
   test suites programmatically and
   :class:`~robot.running.builder.TestSuiteBuilder` class
   for creating such suites based on existing test data on the file system.
 
+* :class:`~robot.model.visitor.SuiteVisitor` abstract class for processing testdata
+  before execution. This can be used as a base for implementing a pre run 
+  modifier that is taken into use with `--prerunmodifier` commandline option.
+
 * :func:`~robot.result.resultbuilder.ExecutionResult` factory method
   for reading execution results from XML output files and
   :class:`~robot.result.visitor.ResultVisitor` abstract class to ease
-  further processing the results.
+  further processing the results. 
+  :class:`~robot.result.visitor.ResultVisitor` can also be used as a base
+  for pre rebot modifier that is taken into use with `--prerebotmodifier` 
+  commandline option.
 
 * :class:`~robot.reporting.resultwriter.ResultWriter` class for writing
   reports, logs, XML outputs, and XUnit files. Can write results based on
@@ -60,6 +66,7 @@ See documentations of the individual APIs for more details.
         via the :mod:`robot` root package.
 """
 
+from robot.model import SuiteVisitor
 from robot.parsing import TestCaseFile, TestDataDirectory, ResourceFile, TestData
 from robot.reporting import ResultWriter
 from robot.result import ExecutionResult, ResultVisitor

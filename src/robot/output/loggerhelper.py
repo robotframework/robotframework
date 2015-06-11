@@ -19,8 +19,8 @@ from robot.model import Message as BaseMessage
 
 LEVELS = {
   'NONE'  : 6,
-  'ERROR' : 5,
-  'FAIL'  : 4,
+  'FAIL'  : 5,
+  'ERROR' : 4,
   'WARN'  : 3,
   'INFO'  : 2,
   'DEBUG' : 1,
@@ -88,7 +88,7 @@ class Message(BaseMessage):
         if level == 'HTML':
             return 'INFO', True
         if level not in LEVELS:
-            raise DataError("Invalid log level '%s'" % level)
+            raise DataError("Invalid log level '%s'." % level)
         return level, html
 
     @property
@@ -120,7 +120,7 @@ class IsLogged:
         try:
             return LEVELS[level.upper()]
         except KeyError:
-            raise DataError("Invalid log level '%s'" % level)
+            raise DataError("Invalid log level '%s'." % level)
 
 
 class AbstractLoggerProxy:

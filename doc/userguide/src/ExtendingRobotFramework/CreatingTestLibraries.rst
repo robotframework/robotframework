@@ -500,7 +500,7 @@ Example Java library implemented as a class in the :file:`MyLibrary.java` file:
 
 The example below illustrates how the example libraries above can be
 used. If you want to try this yourself, make sure that the library is
-in the `library search path`_.
+in the `module search path`_.
 
 .. table:: Using simple example library
    :class: example
@@ -523,6 +523,7 @@ in the `library search path`_.
 
 Using a custom keyword name
 '''''''''''''''''''''''''''
+
 It is possible to expose a different name for a keyword instead of the
 default keyword name which maps to the method name.  This can be accomplished
 by setting the `robot_name` attribute on the method to the desired custom name.
@@ -535,13 +536,13 @@ this attribute when used as follows:
 
   @keyword('Login Via User Panel')
   def login(username, password):
-      ...
+      # ...
 
 .. table::
    :class: example
 
    ===========  ====================  ============  ============
-   Test Case    Action                Argument      Argument
+    Test Case          Action           Argument      Argument
    ===========  ====================  ============  ============
    My Test      Login Via User Panel  ${username}   ${password}
    ===========  ====================  ============  ============
@@ -555,6 +556,43 @@ Setting a custom keyword name can also enable library keywords to accept
 arguments using `Embedded Arguments`__ syntax.
 
 __ `Embedding arguments into keyword names`_
+
+Keyword tags
+~~~~~~~~~~~~
+
+Starting from Robot Framework 2.9, library keywords and `user keywords`__ can
+have tags. Library keywords can define them by setting the `robot_tags`
+attribute on the method to a list of desired tags. The `robot.api.deco.keyword`
+decorator may be used as a shortcut for setting this attribute when used as
+follows:
+
+.. sourcecode:: python
+
+  from robot.api.deco import keyword
+
+  @keyword(tags=['tag1', 'tag2'])
+  def login(username, password):
+      # ...
+
+  @keyword('Custom name', ['tags', 'here'])
+  def another_example():
+      # ...
+
+Another option for setting tags is giving them on the last line of
+`keyword documentation`__ with `Tags:` prefix and separated by a comma. For
+example:
+
+.. sourcecode:: python
+
+  def login(username, password):
+      """Log user in to SUT.
+
+      Tags: tag1, tag2
+      """
+      # ...
+
+__ `User keyword tags`_
+__ `Documenting libraries`_
 
 Keyword arguments
 ~~~~~~~~~~~~~~~~~
@@ -987,7 +1025,7 @@ __ `Using a custom keyword name`_
 
     @keyword('Add ${quantity:\d+} Copies Of ${item} To Cart')
     def add_copies_to_cart(quantity, item):
-        ...
+        # ...
 
 .. table:: Using embedded arguments with library keyword
    :class: example
@@ -1151,15 +1189,18 @@ messages, specify the log level explicitly by embedding the level into
 the message in the format `*LEVEL* Actual log message`, where
 `*LEVEL*` must be in the beginning of a line and `LEVEL` is
 one of the available logging levels `TRACE`, `DEBUG`,
-`INFO`, `WARN`, `FAIL` and `HTML`.
+`INFO`, `WARN`, `ERROR` and `HTML`.
 
-Warnings
-''''''''
+Errors and warnings
+'''''''''''''''''''
 
-Messages with `WARN` level are automatically written into `the
-console and into separate Test Execution Errors section`__ in log
-files. This makes warnings more visible than other messages and allows
+Messages with `ERROR` or `WARN` level are automatically written to the
+console and a separate `Test Execution Errors section`__ in the log
+files. This makes these messages more visible than others and allows
 using them for reporting important but non-critical problems to users.
+
+.. note:: In Robot Framework 2.9, new functionality was added to automatically
+          add ERRORs logged by keywords to the Test Execution Errors section.
 
 __ `Errors and warnings during execution`_
 
@@ -1264,7 +1305,7 @@ Logging example
 In most cases, the `INFO` level is adequate. The levels below it,
 `DEBUG` and `TRACE`, are useful for writing debug information.
 These messages are normally not shown, but they can facilitate debugging
-possible problems in the library itself. The `WARN` level can
+possible problems in the library itself. The `WARN` or `ERROR` level can
 be used to make messages more visible and `HTML` is useful if any
 kind of formatting is needed.
 
@@ -1276,6 +1317,7 @@ as pseudocode meaning `System.out.println("message");`.
 
    print 'Hello from a library.'
    print '*WARN* Warning from a library.'
+   print '*ERROR* Something unexpected happen that may indicate a problem in the test.'
    print '*INFO* Hello again!'
    print 'This will be part of the previous message.'
    print '*INFO* This is a new message.'
@@ -1295,6 +1337,11 @@ as pseudocode meaning `System.out.println("message");`.
        <td class="time">16:18:42.123</td>
        <td class="warn level">WARN</td>
        <td class="msg">Warning from a library.</td>
+     </tr>
+     <tr>
+       <td class="time">16:18:42.123</td>
+       <td class="error level">ERROR</td>
+       <td class="msg">Something unexpected happen that may indicate a problem in the test.</td>
      </tr>
      <tr>
        <td class="time">16:18:42.123</td>
@@ -1386,11 +1433,11 @@ Framework.
        logging.info('This is a boring example')
 
 The `logging` module has slightly different log levels than
-Robot Framework. Its levels `DEBUG` and `INFO` are mapped
-directly to the matching Robot Framework log levels and `WARNING`
-and everything above is mapped to `WARN`. Custom levels below
-`DEBUG` are mapped to `DEBUG` and everything between
-`DEBUG` and `WARNING` is mapped to `INFO`.
+Robot Framework. Its levels `DEBUG`, `INFO`, `WARNING` and `ERROR` are mapped
+directly to the matching Robot Framework log levels, and `CRITICAL`
+is mapped to `ERROR`. Custom log levels are mapped to the closest
+standard level smaller than the custom level. For example, a level
+between `INFO` and `WARNING` is mapped to Robot Framework's `INFO` level.
 
 __ http://docs.python.org/library/logging.html
 
@@ -1401,7 +1448,7 @@ Libraries can also log during the test library import and initialization.
 These messages do not appear in the `log file`_ like the normal log messages,
 but are instead written to the `syslog`_. This allows logging any kind of
 useful debug information about the library initialization. Messages logged
-using the `WARN` level are also visible in the `test execution errors`_
+using the `WARN` or `ERROR` levels are also visible in the `test execution errors`_
 section in the log file.
 
 Logging during the import and initialization is possible both using the
@@ -1659,7 +1706,7 @@ Packaging libraries
 After a library is implemented, documented, and tested, it still needs
 to be distributed to the users. With simple libraries consisting of a
 single file, it is often enough to ask the users to copy that file
-somewhere and set the `library search path`_ accordingly. More
+somewhere and set the `module search path`_ accordingly. More
 complicated libraries should be packaged to make the installation
 easier.
 
@@ -1667,15 +1714,13 @@ Since libraries are normal programming code, they can be packaged
 using normal packaging tools. With Python, good options include
 distutils_, contained by Python's standard library, and the newer
 setuptools_. A benefit of these tools is that library modules are
-installed into a location that is automatically in the `library
+installed into a location that is automatically in the `module
 search path`_.
 
 When using Java, it is natural to package libraries into a JAR
-archive. The JAR package must be put into the `library search path`_
-before running tests, but it is easy to `create a start-up`__ script that
+archive. The JAR package must be put into the `module search path`_
+before running tests, but it is easy to create a `start-up script`_ that
 does that automatically.
-
-__ `Creating start-up scripts`_
 
 Deprecating keywords
 ~~~~~~~~~~~~~~~~~~~~
@@ -1808,7 +1853,7 @@ If a dynamic library should contain both methods which are meant to be keywords
 and methods which are meant to be private helper methods, it may be wise to
 mark the keyword methods as such so it is easier to implement `get_keyword_names`.
 The `robot.api.deco.keyword` decorator allows an easy way to do this since it
-creates an attribute on the decorated method which is not normally there (`robot_name`).
+creates a custom `robot_name` attribute on the decorated method.
 This allows generating the list of keywords just by checking for the `robot_name`
 attribute on every method in the library during `get_keyword_names`.  See
 `Using a custom keyword name`_ for more about this decorator.
@@ -1823,11 +1868,11 @@ attribute on every method in the library during `get_keyword_names`.  See
            return [name for name in dir(self) if hasattr(getattr(self, name), 'robot_name')]
 
        def helper_method(self):
-           ...
+           # ...
 
        @keyword
        def keyword_method(self):
-           ....
+           # ...
 
 .. _`Running dynamic keywords`:
 
@@ -1954,6 +1999,14 @@ Python. The main use case is getting keywords' documentations into a
 library documentation generated by Libdoc_. Additionally,
 the first line of the documentation (until the first `\n`) is
 shown in test logs.
+
+Getting keyword tags
+~~~~~~~~~~~~~~~~~~~~
+
+Dynamic libraries do not have any other way for defining `keyword tags`_
+than by specifying them on the last row of the documentation with `Tags:`
+prefix. Separate `get_keyword_tags` method can be added to the dynamic API
+later if there is a need.
 
 Getting general library documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

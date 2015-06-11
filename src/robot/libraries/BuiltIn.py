@@ -1696,9 +1696,12 @@ class _RunKeyword:
 
         Otherwise, this keyword works exactly like `Run Keyword`, see its
         documentation for more details.
+
+        Prior to Robot Framework 2.9 failures in test teardown itself were
+        not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Failed')
-        if not test.passed:
+        if not test.passed or self._context.failure_in_test_teardown:
             return self.run_keyword(name, *args)
 
     def run_keyword_if_test_passed(self, name, *args):
@@ -1709,9 +1712,12 @@ class _RunKeyword:
 
         Otherwise, this keyword works exactly like `Run Keyword`, see its
         documentation for more details.
+
+        Prior to Robot Framework 2.9 failures in test teardown itself were
+        not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Passed')
-        if test.passed:
+        if test.passed and not self._context.failure_in_test_teardown:
             return self.run_keyword(name, *args)
 
     def run_keyword_if_timeout_occurred(self, name, *args):
@@ -2134,12 +2140,12 @@ class _Misc:
     def log(self, message, level='INFO', html=False, console=False, repr=False):
         u"""Logs the given message with the given level.
 
-        Valid levels are TRACE, DEBUG, INFO (default), HTML, and WARN.
+        Valid levels are TRACE, DEBUG, INFO (default), HTML, WARN, and ERROR.
         Messages below the current active log level are ignored. See
         `Set Log Level` keyword and ``--loglevel`` command line option
         for more details about setting the level.
 
-        Messages logged with the WARN level will be automatically visible
+        Messages logged with the WARN or ERROR levels will be automatically visible
         also in the console and in the Test Execution Errors section in
         the log file.
 
@@ -2262,7 +2268,7 @@ class _Misc:
         INFO, but it can be overridden with the command line option
         ``--loglevel``.
 
-        The available levels: TRACE, DEBUG, INFO (default), WARN and NONE (no
+        The available levels: TRACE, DEBUG, INFO (default), WARN, ERROR and NONE (no
         logging).
         """
         try:
@@ -2272,6 +2278,22 @@ class _Misc:
         self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
+
+    def reload_library(self, name_or_instance):
+        """Rechecks what keywords the specified library provides.
+
+        Can be called explicitly in the test data or by a library itself
+        when keywords it provides have changed.
+
+        The library can be specified by its name or as the active instance of
+        the library. The latter is especially useful if the library itself
+        calls this keyword as a method.
+
+        New in Robot Framework 2.9.
+        """
+        library = self._namespace.reload_library(name_or_instance)
+        self.log('Reloaded library %s with %s keywords.' % (library.name,
+                                                            len(library)))
 
     @run_keyword_variant(resolve=0)
     def import_library(self, name, *args):

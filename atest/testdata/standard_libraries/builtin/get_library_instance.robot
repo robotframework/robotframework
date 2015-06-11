@@ -15,7 +15,7 @@ Library imported normally
     ${lib} =  Get Library Instance  BuiltIn
     Should Be Equal  ${lib.convert_to_integer('42')}  ${42}
     ${lib} =  Get Library Instance  Operating System
-    Should Not Be Empty  ${lib.list_directory('.')}    
+    Should Not Be Empty  ${lib.list_directory('.')}
 
 Module library
     ${lib} =  Get Library Instance  module_library
@@ -28,7 +28,7 @@ Java library
     Should Be Equal  ${lib.getCount()}  ${3}
 
 Library with alias
-    [Documentation]  FAIL  No library with name 'ParameterLibrary' found.
+    [Documentation]  FAIL  No library 'ParameterLibrary' found.
     ${lib} =  Get Library Instance  1st
     Should Be Equal  ${lib.parameters()[0]}  first
     ${lib} =  Get Library Instance  2nd
@@ -41,7 +41,7 @@ Library with alias
     Should Be Equal  ${lib.replace_string('Hello', 'e', 'i')}  Hillo
 
 Non-existing library should cause catchable error
-    Run Keyword And Expect Error  No library with name 'NonExisting' found.
+    Run Keyword And Expect Error  No library 'NonExisting' found.
     ...  Get Library Instance  NonExisting
 
 Library scopes 1

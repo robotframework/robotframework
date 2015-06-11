@@ -76,6 +76,14 @@ robot.model.modelobject module
     :undoc-members:
     :show-inheritance:
 
+robot.model.modifier module
+---------------------------
+
+.. automodule:: robot.model.modifier
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.model.namepatterns module
 -------------------------------
 

@@ -23,7 +23,7 @@ from .model import ForLoop, ResourceFile, TestSuite
 
 class TestSuiteBuilder(object):
 
-    def __init__(self, include_suites=None, warn_on_skipped=False, include_empty_suites=False):
+    def __init__(self, include_suites=None, warn_on_skipped=False):
         """Create programmatically executable
         :class:`~robot.running.model.TestSuite` objects based on existing data
         on the file system.
@@ -32,29 +32,22 @@ class TestSuiteBuilder(object):
         """
         self.include_suites = include_suites
         self.warn_on_skipped = warn_on_skipped
-        self.include_empty_suites = include_empty_suites
         self._create_step = StepBuilder().build
 
     def build(self, *paths):
         if not paths:
             raise DataError('One or more source paths required.')
         if len(paths) == 1:
-            return self._build_and_check_if_empty(paths[0])
+            return self._parse_and_build(paths[0])
         root = TestSuite()
         for path in paths:
-            root.suites.append(self._build_and_check_if_empty(path))
+            root.suites.append(self._parse_and_build(path))
         return root
 
-    def _build_and_check_if_empty(self, path):
-        builded = self._build_suite(self._parse(path))
-        if not self._empty_suites_allowed and not builded.test_count:
-                raise DataError("Suite '%s' contains no tests." % builded.name)
-        builded.remove_empty_suites()
-        return builded
-
-    @property
-    def _empty_suites_allowed(self):
-        return self.include_empty_suites or self.include_suites
+    def _parse_and_build(self, path):
+        suite = self._build_suite(self._parse(path))
+        suite.remove_empty_suites()
+        return suite
 
     def _parse(self, path):
         try:

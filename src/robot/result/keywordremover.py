@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.model import SuiteVisitor
+from robot.model import SuiteVisitor, TagPattern
 from robot.utils import Matcher, plural_or_not
 
 
@@ -21,6 +21,8 @@ def KeywordRemover(how):
     upper = how.upper()
     if upper.startswith('NAME:'):
         return ByNameKeywordRemover(pattern=how[5:])
+    if upper.startswith('TAG:'):
+        return ByTagKeywordRemover(pattern=how[4:])
     try:
         return {'ALL': AllKeywordsRemover,
                 'PASSED': PassedKeywordRemover,
@@ -82,6 +84,17 @@ class ByNameKeywordRemover(_KeywordRemover):
 
     def start_keyword(self, kw):
         if self._matcher.match(kw.name) and not self._contains_warning(kw):
+            self._clear_content(kw)
+
+
+class ByTagKeywordRemover(_KeywordRemover):
+
+    def __init__(self, pattern):
+        _KeywordRemover.__init__(self)
+        self._pattern = TagPattern(pattern)
+
+    def start_keyword(self, kw):
+        if self._pattern.match(kw.tags) and not self._contains_warning(kw):
             self._clear_content(kw)
 
 
