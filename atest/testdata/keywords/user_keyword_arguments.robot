@@ -94,6 +94,16 @@ Default With Variable
     ${ret} =    Default With Variable
     Should Be Equal    ${ret}    Variable value
 
+Local Variable Does Not Affect Variable In Default Value
+    ${var} =    Set Variable    not used as default
+    ${ret} =    Default With Variable
+    Should Be Equal    ${ret}    Variable value
+
+Explicitly Set Variable Affects Variable In Default Value
+    Set Test Variable    ${var}    This is used as default
+    ${ret} =    Default With Variable
+    Should Be Equal    ${ret}    This is used as default
+
 Default With Automatic Variable
     ${ret} =    Default With None Variable
     Should Be Equal    ${ret}    ${None}

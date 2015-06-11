@@ -39,17 +39,14 @@ Resource File
 Variable File
     Variables Should Contain    \${var_in_variable_file}
 
-Local Variables in Test Case Leak
+Local Variables in Test Case do not Leak
     Variables Should Not Contain    \${local}
     ${local}=    Set Variable    lolcat
-    Variables Should Contain    \${local}
+    Variables Should Not Contain    \${local}
 
 Test Case Variable
     Set Test Variable    ${tc var}    tc
     Variables Should Contain    \${tc var}
-
-Set Variable in User Keyword
-    Set Var In UK
 
 Variables Are Returned as NormalizedDict
     ${variables}=    Get Variables
@@ -69,10 +66,6 @@ Modifying Returned Variables Has No Effect On Real Variables
 Set Some Variables
     Set Suite Variable    ${Suite Var from suite setup}    Some value
     Set Global Variable    ${Global from Suite setup}    Some value
-
-Set Var In UK
-    ${uk var}=    Set Variable    foo
-    Variables Should Contain    \${uk var}
 
 Variables Should Contain
     [Arguments]    @{keys}

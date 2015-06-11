@@ -86,6 +86,6 @@ Create And Verify Binary File Using Unicode
     Verify Binary File    ${file}    ${expected}
 
 Verify Binary File
-    [Arguments]    ${path}    ${expected}
+    [Arguments]    ${file}    ${expected}
     ${content} =    Get Binary File    ${file}
     Should Be Equal    ${content}    ${expected}

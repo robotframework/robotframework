@@ -20,7 +20,7 @@ from robot.errors import DataError
 from robot.libraries import STDLIBS, STDLIB_TO_DEPRECATED_MAP
 from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
-from robot.variables import GLOBAL_VARIABLES
+from robot.variables import GLOBAL_VARIABLES, Variables as Varz
 
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
@@ -431,13 +431,17 @@ class KeywordRecommendationFinder(object):
         return sorted(handlers)
 
 
+# TODO: FIXME: ASAP: PLEASE: DOIT: Move to variables package and clean up.
+# Related to #532.
 class _VariableScopes:
 
     def __init__(self):
         variables = GLOBAL_VARIABLES.copy()
         self._suite = self.current = variables
         self._test = None
-        self._uk_handlers = []
+        self._uk_handlers = []    # FIXME: Better name
+        self._set_test_vars = Varz()
+        self._set_kw_vars = Varz()
 
     def __len__(self):
         return len(self.current)
@@ -455,7 +459,7 @@ class _VariableScopes:
         variables = self._suite.set_from_file(path, args, overwrite)
         if self._test is not None:
             self._test.set_from_file(variables, overwrite=True)
-        for varz in self._uk_handlers:
+        for varz, _ in self._uk_handlers:
             varz.set_from_file(variables, overwrite=True)
         if self._uk_handlers:
             self.current.set_from_file(variables, overwrite=True)
@@ -464,7 +468,7 @@ class _VariableScopes:
         self._suite.set_from_variable_table(rawvariables, overwrite)
         if self._test is not None:
             self._test.set_from_variable_table(rawvariables, overwrite)
-        for varz in self._uk_handlers:
+        for varz, _ in self._uk_handlers:
             varz.set_from_variable_table(rawvariables, overwrite)
         if self._uk_handlers:
             self.current.set_from_variable_table(rawvariables, overwrite)
@@ -486,13 +490,17 @@ class _VariableScopes:
 
     def end_test(self):
         self.current = self._suite
+        self._set_test_vars.clear()
 
     def start_uk(self):
-        self._uk_handlers.append(self.current)
-        self.current = self.current.copy()
+        self._uk_handlers.append((self.current, self._set_kw_vars))
+        self.current = self._suite.copy()
+        self.current.update(self._set_test_vars)
+        self.current.update(self._set_kw_vars)
+        self._set_kw_vars = self._set_kw_vars.copy()
 
     def end_uk(self):
-        self.current = self._uk_handlers.pop()
+        self.current, self._set_kw_vars = self._uk_handlers.pop()
 
     def set_global(self, name, value):
         name, value = self._set_global_suite_or_test(GLOBAL_VARIABLES, name, value)
@@ -508,9 +516,14 @@ class _VariableScopes:
             name, value = self._set_global_suite_or_test(self._test, name, value)
         elif fail_if_no_test:
             raise DataError("Cannot set test variable when no test is started")
-        for varz in self._uk_handlers:
-            varz.__setitem__(name, value)
-        self.current.__setitem__(name, value)
+        for varz, _ in self._uk_handlers:
+            varz[name] = value
+        self.current[name] = value
+        self._set_test_vars[name] = value
+
+    def set_keyword(self, name, value):
+        self.current[name] = value
+        self._set_kw_vars[name] = value
 
     def _set_global_suite_or_test(self, variables, name, value):
         variables[name] = value

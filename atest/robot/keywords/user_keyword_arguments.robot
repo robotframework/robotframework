@@ -42,6 +42,12 @@ Too Few Arguments With Defaults And Varargs
 Default With Variable
     Check Test Case    ${TESTNAME}
 
+Local Variable Does Not Affect Variable In Default Value
+    Check Test Case    ${TESTNAME}
+
+Explicitly Set Variable Affects Variable In Default Value
+    Check Test Case    ${TESTNAME}
+
 Default With Automatic Variable
     Check Test Case    ${TESTNAME}
 

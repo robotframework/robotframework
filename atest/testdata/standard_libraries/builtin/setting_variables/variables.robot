@@ -108,7 +108,7 @@ Set Test Variable Needing Escaping
     Should Be True    &{var5} == {'this=is=key': 'value', 'path': 'c:\\\\temp', 'not var': '\${nv}'}
 
 Set Test Variable In User Keyword
-    ${new_var} =    Set Variable    Value of new var
+    ${local} =    Set Variable    Does no leak to keywords
     Variable Should Not Exist    $uk_var_1
     Variable Should Not Exist    $uk_var_2
     Variable Should Not Exist    @uk_var_3
@@ -475,8 +475,8 @@ My Suite Teardown
     Check Global Variables Available In UK
 
 Set Test Variables In UK
+    Variable Should Not Exist    ${local}
     Should Be Equal    ${scalar}    Hi tellus
-    Should Be Equal    ${new_var}    Value of new var
     Set Test Variable    \${uk_var_1}    Value of uk var 1
     ${uk_var_2} =    Set Variable    Value of uk var 2
     Set Test Variable    $uk_var_2
@@ -484,8 +484,8 @@ Set Test Variables In UK
     ${uk_var_4} =    Set Variable    This is a private variable for this user keyword
 
 Check Test Variables Available In UK
+    Variable Should Not Exist    ${local}
     Should Be Equal    ${scalar}    Hi tellus
-    Should Be Equal    ${new_var}    Value of new var
     Should Be Equal    ${uk_var_1}    Value of uk var 1
     Should Be Equal    ${uk_var_2}    Value of uk var 2
     Should Be True    @{uk_var_3} == ['Value of', 'uk var 3']
