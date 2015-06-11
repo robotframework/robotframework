@@ -618,8 +618,7 @@ class ForLoop(_WithSteps):
     def _get_flavors_and_index(self, declaration):
         for index, item in enumerate(declaration):
             item = item.upper()
-            if item.startswith('IN'):
-                # This won't play nice with 'I NRANGE', but do we care?
+            if item.replace(' ', '').startswith('IN'):
                 return item, index
         return 'IN', len(declaration)
 
