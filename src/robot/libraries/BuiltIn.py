@@ -762,11 +762,14 @@ class _Verify:
         | Should Contain X Times | ${output}    | hello  | 2 |
         | Should Contain X Times | ${some list} | value  | 3 |
         """
+        count = self._convert_to_integer(count)
+        x = self.get_count(item1, item2)
         if not msg:
-            msg = "'%s' does not contain '%s' %s times." \
-                    % (utils.unic(item1), utils.unic(item2), count)
-        self.should_be_equal_as_integers(self.get_count(item1, item2),
-                                         count, msg, values=False)
+            msg = "'%s' contains '%s' %d time%s, not %d time%s." \
+                    % (utils.unic(item1), utils.unic(item2),
+                       x, utils.plural_or_not(x),
+                       count, utils.plural_or_not(count))
+        self.should_be_equal_as_integers(x, count, msg, values=False)
 
     def get_count(self, item1, item2):
         """Returns and logs how many times ``item2`` is found from ``item1``.
@@ -1268,7 +1271,7 @@ class _RunKeyword:
         """
         if not isinstance(name, basestring):
             raise RuntimeError('Keyword name must be string.')
-        kw = Keyword(name, list(args))
+        kw = Keyword(name, args=args)
         return kw.run(self._context)
 
     def run_keywords(self, *keywords):

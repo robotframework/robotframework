@@ -58,7 +58,9 @@ class JsonConverter(object):
             'scope': libdoc.scope,
             'generated': get_timestamp(daysep='-', millissep=None),
             'inits': self._get_keywords(libdoc.inits),
-            'keywords': self._get_keywords(libdoc.keywords)
+            'keywords': self._get_keywords(libdoc.keywords),
+            'all_tags': tuple(libdoc.all_tags),
+            'contains_tags': bool(libdoc.all_tags)
         }
 
     def _get_keywords(self, keywords):
@@ -67,9 +69,11 @@ class JsonConverter(object):
     def _convert_keyword(self, kw):
         return {
             'name': kw.name,
-            'args': ', '.join(kw.args),
+            'args': kw.args,
             'doc': self._doc_formatter.html(kw.doc),
-            'shortdoc': kw.shortdoc
+            'shortdoc': kw.shortdoc,
+            'tags': tuple(kw.tags),
+            'matched': True
         }
 
 

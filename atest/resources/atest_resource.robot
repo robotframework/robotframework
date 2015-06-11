@@ -150,6 +150,14 @@ Check KW Arguments
     [Arguments]  ${kw}  @{expected args}
     Lists Should Be Equal  ${kw.args}  ${expected args}
 
+Keyword data should be
+    [Arguments]  ${kw}  ${name}  ${assign}=  ${args}=
+    Should be equal  ${kw.name}  ${name}
+    ${kwassign}=  Catenate  SEPARATOR=,${SPACE}  @{kw.assign}
+    Should be equal  ${kwassign}  ${assign}
+    ${kwargs}=  Catenate  SEPARATOR=,${SPACE}  @{kw.args}
+    Should match  ${kwargs}  ${args}
+
 Check Log Message
     [Arguments]  ${item}  ${msg}  ${level}=INFO  ${html}=${False}  ${pattern}=
     ${html} =  Set Variable If  ${html} or '${level}' == 'HTML'  ${True}  ${False}

@@ -116,25 +116,19 @@ Options
  -n --noncritical tag *   Tests with given tag are not critical even if they
                           have a tag set with --critical. Tag can be a pattern.
  -v --variable name:value *  Set variables in the test data. Only scalar
-                          variables are supported and name is given without
-                          `${}`. See --escape for how to use special characters
-                          and --variablefile for a more powerful variable
-                          setting mechanism that allows also list variables.
+                          variables with string value are supported and name is
+                          given without `${}`. See --escape for how to use
+                          special characters and --variablefile for a more
+                          powerful variable setting mechanism.
                           Examples:
-                          --variable str:Hello  =>  ${str} = `Hello`
-                          -v str:Hi_World -E space:_  =>  ${str} = `Hi World`
-                          -v x: -v y:42  =>  ${x} = ``, ${y} = `42`
- -V --variablefile path *  File to read variables from (e.g. `path/vars.py`).
-                          Example file:
-                          |  import random
-                          |  __all__ = [`scalar`, `LIST__var`, `integer`]
-                          |  scalar = `Hello world!`
-                          |  LIST__var = [`Hello`, `list`, `world`]
-                          |  integer = random.randint(1,10)
-                          =>
-                          ${scalar} = `Hello world!`
-                          @{var} = [`Hello`,`list`,`world`]
-                          ${integer} = <random integer from 1 to 10>
+                          --variable str:Hello       =>  ${str} = `Hello`
+                          -v hi:Hi_World -E space:_  =>  ${hi} = `Hi World`
+                          -v x: -v y:42              =>  ${x} = ``, ${y} = `42`
+ -V --variablefile path *  Python or YAML file file to read variables from.
+                          Possible arguments to the variable file can be given
+                          after the path using colon or semicolon as separator.
+                          Examples: --variablefile path/vars.yaml
+                                    --variablefile environment.py:testing
  -d --outputdir dir       Where to create output files. The default is the
                           directory where tests are run from and the given path
                           is considered relative to that unless it is absolute.
@@ -244,11 +238,13 @@ Options
                           name:<pattern>:  flatten matched keywords using same
                                    matching rules as with
                                    `--removekeywords name:<pattern>`
+    --prerunvisitor class *
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
-                          Arguments to listener class can be given after class
-                          name, using colon as separator. For example:
-                          --listener MyListenerClass:arg1:arg2
+                          Arguments to the listener class can be given after
+                          the name using colon or semicolon as a separator.
+                          Examples: --listener MyListenerClass
+                                    --listener path/to/Listener.py:arg1:arg2
     --warnonskippedfiles  If this option is used, skipped test data files will
                           cause a warning that is visible in the console output
                           and the log file. By default skipped files only cause

@@ -59,6 +59,12 @@ using custom timestamps, in which case it needs to be given using
 ``date_format`` argument. Default result format is timestamp, but it can
 be overridden using ``result_format`` argument.
 
+The earliest date this library supports depends on the platform. Dates before
+the year 1900 are not supported at all, but the limit can also be much stricter.
+For example, on Windows only dates after 1970 are supported. These limitations
+are due to Python's [https://docs.python.org/2/library/time.html#time.mktime|
+time.mktime] function that this library uses internally.
+
 == Timestamp ==
 
 If a date is given as a string, it is always considered to be a timestamp.
@@ -86,7 +92,7 @@ Examples:
 It is possible to use custom timestamps in both input and output.
 The custom format is same as accepted by Python's
 [https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior|
-datatime.strptime() function]. For example, the default timestamp discussed
+datatime.strptime] function. For example, the default timestamp discussed
 in the previous section would match ``%Y-%m-%d %H:%M:%S.%f``.
 
 When using a custom timestamp in input, it must be specified using

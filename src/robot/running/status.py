@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import PassExecution
+from robot.errors import ExecutionFailed, PassExecution
 
 
 class Failure(object):
@@ -37,6 +37,16 @@ class Exit(object):
         self.error = False
         self.fatal = False
 
+    def failure_occurred(self, failure=None, critical=False):
+        if isinstance(failure, ExecutionFailed) and failure.exit:
+            self.fatal = True
+        if critical and self.failure_mode:
+            self.failure = True
+
+    def error_occurred(self):
+        if self.error_mode:
+            self.error = True
+
     @property
     def teardown_allowed(self):
         return not (self.skip_teardown_mode and self)
@@ -59,21 +69,19 @@ class _ExecutionStatus(object):
     def setup_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
             self.failure.setup = unicode(failure)
-            self._handle_possible_fatal(failure)
+            self.exit.failure_occurred(failure)
         self._teardown_allowed = True
-
-    def _handle_possible_fatal(self, failure):
-        if getattr(failure, 'exit', False):
-            self.exit.fatal = True
 
     def teardown_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
             self.failure.teardown = unicode(failure)
-            self._handle_possible_fatal(failure)
+            self.exit.failure_occurred(failure)
+
+    def critical_failure_occurred(self):
+        self.exit.failure_occurred(critical=True)
 
     def error_occurred(self):
-        if self.exit.error_mode:
-            self.exit.error = True
+        self.exit.error_occurred()
 
     @property
     def teardown_allowed(self):
@@ -115,28 +123,20 @@ class SuiteStatus(_ExecutionStatus):
                                   exit_on_error_mode,
                                   skip_teardown_on_exit_mode)
 
-    def critical_failure(self):
-        if self.exit.failure_mode:
-            self.exit.failure = True
-
-    def fatal_failure(self):
-        self.exit.fatal = True
-
     def _my_message(self):
         return SuiteMessage(self).message
 
 
 class TestStatus(_ExecutionStatus):
 
-    def __init__(self, parent):
+    def __init__(self, parent, critical):
         _ExecutionStatus.__init__(self, parent)
         self.exit = parent.exit
+        self._critical = critical
 
-    def test_failed(self, failure, critical):
+    def test_failed(self, failure):
         self.failure.test = unicode(failure)
-        if critical and self.exit.failure_mode:
-            self.exit.failure = True
-        self._handle_possible_fatal(failure)
+        self.exit.failure_occurred(failure, self._critical)
 
     def _my_message(self):
         return TestMessage(self).message

@@ -356,26 +356,20 @@ def print_issues(version=get_version_from_file(), login=None, password=None):
         password: The password for GitHub login.
     """
     issues = _get_issues(version, login, password)
-    print "{:4}  {:11}  {:8}  {}".format("id", "type", "priority", "summary")
+    print "{:5}  {:11}  {:8}  {}".format("id", "type", "priority", "summary")
     for issue in issues:
-        print "{:4}  {:11}  {:8}  {}".format(issue.id, issue.type, issue.priority, issue.summary)
+        print "{:5}  {:11}  {:8}  {}".format(issue.id, issue.type, issue.priority, issue.summary)
 
 
 class Issue(object):
-    PRIORITIES = ["prio-critical", "prio-high", "prio-medium", "prio-low"]
+    PRIORITIES = ["critical", "high", "medium", "low", ""]
 
     def __init__(self, issue):
         self.id = "#{}".format(issue.number)
         self.summary = issue.title
         self.labels = [label.name for label in issue.get_labels()]
         self.type = self._get_label("bug", "enhancement")
-        self.priority = self._get_label(*self.PRIORITIES).split('-')[1]
-
-    @property
-    def order(self):
-        return (self.PRIORITIES.index('prio-' + self.priority),
-                0 if self.type == 'bug' else 1,
-                self.id)
+        self.priority = self._get_priority()
 
     def _get_label(self, *values):
         for value in values:
@@ -383,5 +377,16 @@ class Issue(object):
                 return value
         return None
 
+    def _get_priority(self):
+        labels = ['prio-' + p for p in self.PRIORITIES if p]
+        priority = self._get_label(*labels)
+        return priority.split('-')[1] if priority else ''
+
     def __cmp__(self, other):
         return cmp(self.order, other.order)
+
+    @property
+    def order(self):
+        return (self.PRIORITIES.index(self.priority),
+                0 if self.type == 'bug' else 1,
+                self.id)

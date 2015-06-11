@@ -168,22 +168,44 @@ synonym to `start_suite`.
    |               |                  | * message: status message, normally an error     |
    |               |                  |   message or an empty string                     |
    +---------------+------------------+--------------------------------------------------+
-   | start_keyword | name, attributes | Keys in the attribute dictionary:                |
+   | start_keyword | name, attributes | `name` is the full keyword name containing       |
+   |               |                  | possible library or resource name as a prefix.   |
+   |               |                  | For example, `MyLibrary.Example Keyword`.        |
+   |               |                  |                                                  |
+   |               |                  | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
    |               |                  | * type: string `Keyword` for normal              |
    |               |                  |   keywords and `Test Setup`, `Test               |
    |               |                  |   Teardown`, `Suite Setup` or `Suite             |
    |               |                  |   Teardown` for keywords used in suite/test      |
    |               |                  |   setup/teardown                                 |
+   |               |                  | * kwname: name of the keyword without library or |
+   |               |                  |   resource prefix (new in 2.9)                   |
+   |               |                  | * libname: name of the library or resource the   |
+   |               |                  |   keyword belongs to, or an empty string when    |
+   |               |                  |   the keyword is in a test case file (new in 2.9)|
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * args: keyword's arguments as a list of strings |
+   |               |                  | * assign: list of variable names that keyword's  |
+   |               |                  |   return value is assigned to (new in 2.9)       |
    |               |                  | * starttime: execution start time                |
    +---------------+------------------+--------------------------------------------------+
-   | end_keyword   | name, attributes | Keys in the attribute dictionary:                |
+   | end_keyword   | name, attributes | `name` is the full keyword name containing       |
+   |               |                  | possible library or resource name as a prefix.   |
+   |               |                  | For example, `MyLibrary.Example Keyword`.        |
+   |               |                  |                                                  |
+   |               |                  | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
    |               |                  | * type: same as with `start_keyword`             |
+   |               |                  | * kwname: name of the keyword without library or |
+   |               |                  |   resource prefix (new in 2.9)                   |
+   |               |                  | * libname: name of the library or resource the   |
+   |               |                  |   keyword belongs to, or an empty string when    |
+   |               |                  |   the keyword is in a test case file (new in 2.9)|
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * args: keyword's arguments as a list of strings |
+   |               |                  | * assign: list of variable names that keyword's  |
+   |               |                  |   return value is assigned to (new in 2.9)       |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |

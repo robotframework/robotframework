@@ -62,3 +62,7 @@ Non-ASCII UTF-8
 
 No Argspec
     Keyword Arguments Should be     5     *varargs   **kwargs
+
+Keyword Tags
+    Keyword Tags Should Be    6    hyvää   yötä
+    Keyword Tags Should Be    7    hyvää   yötä

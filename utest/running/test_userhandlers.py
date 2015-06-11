@@ -1,6 +1,7 @@
 import unittest
 
 from robot.errors import DataError
+from robot.model import Keywords
 from robot.running.userkeyword import (EmbeddedArgs, EmbeddedArgsTemplate,
                                        UserKeywordHandler)
 from robot.running.arguments import EmbeddedArguments, UserKeywordArgumentParser
@@ -33,7 +34,7 @@ class HandlerDataMock:
         self.name = name
         self.args = FakeArgs(args)
         self.metadata = {}
-        self.steps = []
+        self.keywords = Keywords()
         self.defaults = []
         self.varargs = None
         self.minargs = 0
@@ -42,6 +43,7 @@ class HandlerDataMock:
         self.doc = Fake()
         self.timeout = Fake()
         self.return_ = Fake()
+        self.tags = ()
         self.teardown = None
 
 

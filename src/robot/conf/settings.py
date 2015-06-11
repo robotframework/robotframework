@@ -115,7 +115,7 @@ class _BaseSettings(object):
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
-        if name in ['Listeners', 'VariableFiles']:
+        if name in ['PreRunVisitors', 'Listeners', 'VariableFiles']:
             return [self._split_args_from_name_or_path(item) for item in value]
         if name == 'ReportBackground':
             return self._process_report_background(value)
@@ -390,6 +390,7 @@ class RobotSettings(_BaseSettings):
                        'WarnOnSkipped'      : ('warnonskippedfiles', False),
                        'Variables'          : ('variable', []),
                        'VariableFiles'      : ('variablefile', []),
+                       'PreRunVisitors'     : ('prerunvisitor', []),
                        'Listeners'          : ('listener', []),
                        'MonitorWidth'       : ('monitorwidth', 78),
                        'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
@@ -472,6 +473,10 @@ class RobotSettings(_BaseSettings):
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }
+
+    @property
+    def pre_run_visitors(self):
+        return self['PreRunVisitors']
 
 
 class RebotSettings(_BaseSettings):

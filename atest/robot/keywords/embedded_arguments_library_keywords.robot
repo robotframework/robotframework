@@ -5,11 +5,11 @@ Resource        atest_resource.robot
 
 *** Test Cases ***
 Embedded Arguments In Library Keyword Name
-    ${tc} =  Check Test Case  ${TEST NAME}
-    Check Log Message  ${tc.kws[0].msgs[0]}  This is always executed
-    Should Be Equal  ${tc.kws[0].name}  \${name}, \${book} = embedded_args_in_lk_1.User Peke Selects Advanced Python From Webshop
-    Check Log Message  ${tc.kws[2].msgs[0]}  This is always executed
-    Should Be Equal  ${tc.kws[2].name}  \${name}, \${book} = embedded_args_in_lk_1.User Juha selects Playboy from webshop
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}    This is always executed
+    Keyword Data Should Be    ${tc.kws[0]}    embedded_args_in_lk_1.User Peke Selects Advanced Python From Webshop    \${name}, \${book}
+    Check Log Message  ${tc.kws[2].msgs[0]}    This is always executed
+    Keyword Data Should Be    ${tc.kws[2]}    embedded_args_in_lk_1.User Juha selects Playboy from webshop    \${name}, \${book}
 
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -19,9 +19,9 @@ Complex Embedded Arguments
 
 Embedded Arguments with BDD Prefixes
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].name}    embedded_args_in_lk_1.Given user x selects y from webshop
-    Should Be Equal    ${tc.kws[1].name}    embedded_args_in_lk_1.When user x selects y from webshop
-    Should Be Equal    ${tc.kws[2].name}    \${x}, \${y} = embedded_args_in_lk_1.Then user x selects y from webshop
+    Keyword Data Should Be    ${tc.kws[0]}    embedded_args_in_lk_1.Given user x selects y from webshop
+    Keyword Data Should Be    ${tc.kws[1]}    embedded_args_in_lk_1.When user x selects y from webshop
+    Keyword Data Should Be    ${tc.kws[2]}    embedded_args_in_lk_1.Then user x selects y from webshop    \${x}, \${y}
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
@@ -31,7 +31,7 @@ Embedded Arguments as Variables
 
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Should Be Equal    ${tc.kws[0].name}    embedded_args_in_lk_1.User \${non existing} Selects \${variables} From Webshop
+    Keyword Data Should Be    ${tc.kws[0]}    embedded_args_in_lk_1.User \${non existing} Selects \${variables} From Webshop
 
 Custom Embedded Argument Regexp
     Check Test Case    ${TEST NAME}

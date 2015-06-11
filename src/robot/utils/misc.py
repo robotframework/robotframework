@@ -110,6 +110,9 @@ def getdoc(item):
 if not IRONPYTHON:
 
     def isatty(stream):
+        # first check if buffer was detached
+        if hasattr(stream, 'buffer') and stream.buffer is None:
+            return False
         return hasattr(stream, 'isatty') and stream.isatty()
 
 else:

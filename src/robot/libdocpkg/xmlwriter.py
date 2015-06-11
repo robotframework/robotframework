@@ -39,4 +39,8 @@ class LibdocXmlWriter(object):
                 writer.element('arg', arg)
             writer.end('arguments')
             writer.element('doc', kw.doc)
+            writer.start('tags')
+            for tag in kw.tags:
+                writer.element('tag', tag)
+            writer.end('tags')
             writer.end(type)

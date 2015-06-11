@@ -370,9 +370,17 @@ Should Contain X Times With Invalid Count
     [Documentation]    FAIL STARTS: 'invalid' cannot be converted to an integer: ValueError:
     Should Contain X Times    hello    l    invalid
 
-Should Contain X Times Failing With Default Message
-    [Documentation]    FAIL 'hello' does not contain 'l' 3 times.
+Should Contain X Times Failing With Default Message 1
+    [Documentation]    FAIL 'hello' contains 'l' 2 times, not 3 times.
     Should Contain X Times    hello    l    3
+
+Should Contain X Times Failing With Default Message 2
+    [Documentation]    FAIL 'hello' contains 'lo' 1 time, not 0 times.
+    Should Contain X Times    hello    lo    0
+
+Should Contain X Times Failing With Default Message 3
+    [Documentation]    FAIL 'hello' contains 'l' 2 times, not 1 time.
+    Should Contain X Times    hello    l    1
 
 Should Contain X Times Failing With Defined Message
     [Documentation]    FAIL My message

@@ -104,9 +104,8 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(nd2[u'\xe4'], 1)
         assert_true(u'\xc4' not in nd2)
 
-    def test_has_key_and_contains(self):
+    def test_contains(self):
         nd = NormalizedDict({'Foo': 'bar'})
-        assert_true(nd.has_key('Foo') and nd.has_key(' f O o '))
         assert_true('Foo' in nd and 'foo' in nd and 'FOO' in nd)
 
     def test_original_keys_are_preserved(self):
@@ -119,14 +118,14 @@ class TestNormalizedDict(unittest.TestCase):
         nd = NormalizedDict({'A': 1, 'b': 2})
         del nd['A']
         del nd['B']
-        assert_equals(nd.data, {})
+        assert_equals(nd._data, {})
         assert_equals(nd.keys(), [])
 
     def test_pop(self):
         nd = NormalizedDict({'A': 1, 'b': 2})
         assert_equals(nd.pop('A'), 1)
         assert_equals(nd.pop('B'), 2)
-        assert_equals(nd.data, {})
+        assert_equals(nd._data, {})
         assert_equals(nd.keys(), [])
 
     def test_pop_with_default(self):
@@ -137,7 +136,7 @@ class TestNormalizedDict(unittest.TestCase):
         nd = NormalizedDict(items)
         for i in range(9):
             assert_equals(nd.popitem(), items[i])
-        assert_equals(nd.data, {})
+        assert_equals(nd._data, {})
         assert_equals(nd.keys(), [])
 
     def test_popitem_empty(self):
@@ -157,15 +156,15 @@ class TestNormalizedDict(unittest.TestCase):
         nd = NormalizedDict({'a': 1, 'B': 1})
         cd = nd.copy()
         assert_equals(nd, cd)
-        assert_equals(nd.data, cd.data)
+        assert_equals(nd._data, cd._data)
         assert_equals(nd._keys, cd._keys)
         assert_equals(nd._normalize, cd._normalize)
         nd['C'] = 1
         cd['b'] = 2
         assert_equals(nd._keys, {'a': 'a', 'b': 'B', 'c': 'C'})
-        assert_equals(nd.data, {'a': 1, 'b': 1, 'c': 1})
+        assert_equals(nd._data, {'a': 1, 'b': 1, 'c': 1})
         assert_equals(cd._keys, {'a': 'a', 'b': 'B'})
-        assert_equals(cd.data, {'a': 1, 'b': 2})
+        assert_equals(cd._data, {'a': 1, 'b': 2})
 
     def test_str(self):
         nd = NormalizedDict({'a': 1, 'B': 1})
@@ -177,11 +176,12 @@ class TestNormalizedDict(unittest.TestCase):
         for c in 'bcd':
             assert_equals(nd[c], 2)
             assert_equals(nd[c.upper()], 2)
-        assert_true('b' in nd.keys())
-        assert_true('c' in nd.keys())
-        assert_true('C' not in nd.keys())
-        assert_true('d' not in nd.keys())
-        assert_true('D' in nd.keys())
+        keys = list(nd)
+        assert_true('b' in keys)
+        assert_true('c' in keys)
+        assert_true('C' not in keys)
+        assert_true('d' not in keys)
+        assert_true('D' in keys)
 
     def test_update_using_another_norm_dict(self):
         nd = NormalizedDict({'a': 1, 'b': 1})
@@ -189,10 +189,11 @@ class TestNormalizedDict(unittest.TestCase):
         for c in 'bc':
             assert_equals(nd[c], 2)
             assert_equals(nd[c.upper()], 2)
-        assert_true('b' in nd.keys())
-        assert_true('B' not in nd.keys())
-        assert_true('c' not in nd.keys())
-        assert_true('C' in nd.keys())
+        keys = list(nd)
+        assert_true('b' in keys)
+        assert_true('B' not in keys)
+        assert_true('c' not in keys)
+        assert_true('C' in keys)
 
     def test_update_with_kwargs(self):
         nd = NormalizedDict({'a': 0, 'c': 1})
@@ -246,16 +247,16 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(nd.items(), zip(nd.keys(), nd.values()))
         assert_equals(list(nd.iteritems()), zip(nd.iterkeys(), nd.itervalues()))
 
-    def test_cmp(self):
-        self._verify_cmp(NormalizedDict(), NormalizedDict())
+    def test_eq(self):
+        self._verify_eq(NormalizedDict(), NormalizedDict())
 
-    def test_cmp_with_normal_dict(self):
-        self._verify_cmp(NormalizedDict(), {})
+    def test_eq_with_normal_dict(self):
+        self._verify_eq(NormalizedDict(), {})
 
-    def test_cmp_with_user_dict(self):
-        self._verify_cmp(NormalizedDict(), UserDict())
+    def test_eq_with_user_dict(self):
+        self._verify_eq(NormalizedDict(), UserDict())
 
-    def _verify_cmp(self, d1, d2):
+    def _verify_eq(self, d1, d2):
         assert_true(d1 == d1 == d2 == d2)
         d1['a'] = 1
         assert_true(d1 == d1 != d2 == d2)
@@ -268,7 +269,7 @@ class TestNormalizedDict(unittest.TestCase):
         d1['D'] = d2['d'] = 1
         assert_true(d1 == d1 == d2 == d2)
 
-    def test_cmp_with_other_objects(self):
+    def test_eq_with_other_objects(self):
         nd = NormalizedDict()
         for other in ['string', 2, None, [], self.test_clear]:
             assert_true(nd != other, other)
@@ -276,7 +277,7 @@ class TestNormalizedDict(unittest.TestCase):
     def test_clear(self):
         nd = NormalizedDict({'a': 1, 'B': 2})
         nd.clear()
-        assert_equals(nd.data, {})
+        assert_equals(nd._data, {})
         assert_equals(nd._keys, {})
 
 

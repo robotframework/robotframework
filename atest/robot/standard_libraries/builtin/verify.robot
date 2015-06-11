@@ -213,7 +213,9 @@ Should Contain X Times With Invalid Count
     Check test case    ${TESTNAME}
 
 Should Contain X Times Failing With Default Message
-    Check test case    ${TESTNAME}
+    Check test case    ${TESTNAME} 1
+    Check test case    ${TESTNAME} 2
+    Check test case    ${TESTNAME} 3
 
 Should Contain X Times Failing With Defined Message
     Check test case    ${TESTNAME}

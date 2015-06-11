@@ -16,12 +16,14 @@ import copy
 
 from robot import utils
 from robot.errors import DataError
+from robot.model import Keywords, Tags
 from robot.variables import contains_var, is_list_var
 
 from .arguments import (ArgumentResolver, ArgumentSpec, ArgumentMapper,
                         DynamicArgumentParser, JavaArgumentCoercer,
                         JavaArgumentParser, PythonArgumentParser)
-from .keywords import Keywords, Keyword
+from .model import Keyword
+from .keywordrunner import KeywordRunner
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
 from .signalhandler import STOP_SIGNAL_MONITOR
@@ -49,11 +51,10 @@ def InitHandler(library, method, docgetter=None):
 
 class _RunnableHandler(object):
     type = 'library'
-    _doc = ''
     _executed_in_dry_run = ('BuiltIn.Import Library',
                             'BuiltIn.Set Library Search Order')
 
-    def __init__(self, library, handler_name, handler_method):
+    def __init__(self, library, handler_name, handler_method, doc=''):
         self.library = library
         name = getattr(handler_method, 'robot_name', None) or handler_name
         self.name = utils.printable_name(name, code_style=True)
@@ -63,9 +64,19 @@ class _RunnableHandler(object):
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
         self._argument_resolver = self._get_argument_resolver(self.arguments)
+        doc, tags = utils.split_tags_from_doc(doc)
+        self._doc = doc
+        self.tags = self._get_tags_from_attribute(handler_method) + tags
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError
+
+    def _get_tags_from_attribute(self, handler_method):
+        tags =  getattr(handler_method, 'robot_tags', ())
+        if not utils.is_list_like(tags):
+            raise DataError("Expected tags to list like, got %s."
+                            % utils.type_name(tags))
+        return Tags(tags)
 
     def _get_argument_resolver(self, argspec):
         return ArgumentResolver(argspec)
@@ -167,8 +178,8 @@ class _RunnableHandler(object):
 class _PythonHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
-        _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self._doc = utils.getdoc(handler_method)
+        _RunnableHandler.__init__(self, library, handler_name, handler_method,
+                                  utils.getdoc(handler_method))
 
     def _parse_arguments(self, handler_method):
         return PythonArgumentParser().parse(handler_method, self.longname)
@@ -205,9 +216,8 @@ class _DynamicHandler(_RunnableHandler):
                  argspec=None):
         self._argspec = argspec
         _RunnableHandler.__init__(self, library, handler_name,
-                                  dynamic_method.method)
+                                  dynamic_method.method, utils.unic(doc or ''))
         self._run_keyword_method_name = dynamic_method.name
-        self._doc = doc is not None and utils.unic(doc) or ''
         self._supports_kwargs = dynamic_method.supports_kwargs
         if argspec and argspec[-1].startswith('**'):
             if not self._supports_kwargs:
@@ -264,15 +274,15 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _dry_run(self, context, args):
         _RunnableHandler._dry_run(self, context, args)
-        keywords = self._get_runnable_dry_run_keywords(context, args)
-        keywords.run(context)
+        keywords = self._get_runnable_dry_run_keywords(args)
+        KeywordRunner(context).run_keywords(keywords)
 
-    def _get_runnable_dry_run_keywords(self, context, args):
-        keywords = Keywords([])
+    def _get_runnable_dry_run_keywords(self, args):
+        keywords = Keywords()
         for keyword in self._get_dry_run_keywords(args):
             if contains_var(keyword.name):
                 continue
-            keywords.add_keyword(keyword)
+            keywords.append(keyword)
         return keywords
 
     def _get_dry_run_keywords(self, args):
@@ -287,7 +297,7 @@ class _RunKeywordHandler(_PythonHandler):
     def _get_run_kw_if_keywords(self, given_args):
         for kw_call in self._get_run_kw_if_calls(given_args):
             if kw_call:
-                yield Keyword(kw_call[0], kw_call[1:])
+                yield Keyword(name=kw_call[0], args=kw_call[1:])
 
     def _get_run_kw_if_calls(self, given_args):
         while 'ELSE IF' in given_args:
@@ -320,7 +330,7 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _get_run_kws_keywords(self, given_args):
         for kw_call in self._get_run_kws_calls(given_args):
-            yield Keyword(kw_call[0], kw_call[1:])
+            yield Keyword(name=kw_call[0], args=kw_call[1:])
 
     def _get_run_kws_calls(self, given_args):
         if 'AND' not in given_args:
@@ -336,7 +346,7 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _get_default_run_kw_keywords(self, given_args):
         index = list(self.arguments.positional).index('name')
-        return [Keyword(given_args[index], given_args[index+1:])]
+        return [Keyword(name=given_args[index], args=given_args[index+1:])]
 
 
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):

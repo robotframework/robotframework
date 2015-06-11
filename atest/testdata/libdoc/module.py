@@ -4,7 +4,9 @@
 
 from robot.api import deco
 
+
 __version__ = '0.1-alpha'
+
 
 def keyword(a1='d', *a2):
     """A keyword
@@ -33,7 +35,7 @@ def non_ascii_doc_with_declared_utf_8():
 @deco.keyword('Set Name Using Robot Name Attribute')
 def name_set_in_method_signature(a, b, *args, **kwargs):
     """
-    This makes sure that @deco.robot_name decorated kws don't lose their signatures
+    This makes sure that @deco.keyword decorated kws don't lose their signatures
     """
     pass
 
@@ -41,4 +43,12 @@ def name_set_in_method_signature(a, b, *args, **kwargs):
 def takes_embedded_args(a=1, b=2, c=3):
     """A keyword which uses embedded args
     """
+    pass
+
+@deco.keyword(tags=['1', 1, 'one', 'yksi'])
+def keyword_with_tags_1():
+    pass
+
+@deco.keyword('Keyword with tags 2', ('2', 2, 'two', 'kaksi'))
+def setting_both_name_and_tags_by_decorator():
     pass

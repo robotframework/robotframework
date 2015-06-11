@@ -19,13 +19,18 @@ from .message import Message
 
 class Keyword(model.Keyword):
     """Results of a single keyword."""
-    __slots__ = ['status', 'starttime', 'endtime', 'message']
+    __slots__ = ['kwname', 'libname', 'status', 'starttime', 'endtime', 'message']
     message_class = Message
 
-    def __init__(self, name='', doc='', args=(), assign=(), timeout='',
-                 type='kw', status='FAIL', starttime=None, endtime=None):
-        model.Keyword.__init__(self, name, doc, args, assign, timeout, type)
-        #: String 'PASS' of 'FAIL'.
+    def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
+                 tags=(), timeout='', type='kw',  status='FAIL', starttime=None,
+                 endtime=None):
+        model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
+        #: Name of the keyword without library or resource name.
+        self.kwname = kwname
+        #: Name of library or resource containing this keyword.
+        self.libname = libname
+        #: String 'PASS' or 'FAIL'.
         self.status = status
         #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
         self.starttime = starttime
@@ -38,6 +43,12 @@ class Keyword(model.Keyword):
     def elapsedtime(self):
         """Elapsed execution time of the keyword in milliseconds."""
         return utils.get_elapsed_time(self.starttime, self.endtime)
+
+    @property
+    def name(self):
+        if not self.libname:
+            return self.kwname
+        return '%s.%s' % (self.libname, self.kwname)
 
     @property
     def passed(self):

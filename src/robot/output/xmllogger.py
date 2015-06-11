@@ -66,12 +66,14 @@ class XmlLogger(ResultVisitor):
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        attrs = {'name': kw.name, 'type': kw.type}
+        attrs = {'name': kw.kwname, 'library': kw.libname, 'type': kw.type}
         if kw.timeout:
             attrs['timeout'] = unicode(kw.timeout)
         self._writer.start('kw', attrs)
         self._writer.element('doc', kw.doc)
         self._write_list('arguments', 'arg', (unic(a) for a in kw.args))
+        self._write_list('assign', 'var', kw.assign)
+        self._write_list('tags', 'tag', (unic(t) for t in kw.tags))
 
     def end_keyword(self, kw):
         self._write_status(kw)
