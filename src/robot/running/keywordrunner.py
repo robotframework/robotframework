@@ -17,7 +17,8 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           HandlerExecutionFailed)
 from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import (format_assign_message, frange, get_error_message,
-                         get_timestamp, plural_or_not as s, type_name)
+                         get_timestamp, plural_or_not as s, type_name,
+                         is_list_like)
 from robot.variables import is_scalar_var, VariableAssigner
 
 
@@ -258,10 +259,14 @@ class ForInZipLoopRunner(BasicForLoopRunner):
 
     def _transform_items(self, items):
         answer = list()
+        for item in items:
+            if not is_list_like(item):
+                # Checking here because _validate() doesn't have access
+                # to the actual values.
+                raise DataError("For-In-Zip Loop items must all be List-like (but not Strings); got %s with value '%s'" % (item.__class__, item))
         for zipped_item in zip(*items):
             answer.extend(zipped_item)
         return answer
-
 
 class ForInEnumerateLoopRunner(BasicForLoopRunner):
     def __init__(self, forstep, templated=False):

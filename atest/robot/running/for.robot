@@ -263,6 +263,61 @@ For In Zip
     Should Be For Item    ${for_loop.kws[2]}    \${item} = c, \${thing} = g
     Should Be For Item    ${for_loop.kws[3]}    \${item} = d, \${thing} = h
 
+For In Zip With Uneven Lists
+    [Documentation]    Handling lists with different number of elements. Probably should work like in Python here and just stop when the shortest list is empty?
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${for_loop}=    Set Variable    ${tc.kws[2]}
+    Should Be For In Zip Keyword    ${for_loop}    3
+    Should Be For Item    ${for_loop.kws[0]}    \${item} = a, \${thing} = d
+    Should Be For Item    ${for_loop.kws[1]}    \${item} = b, \${thing} = e
+    Should Be For Item    ${for_loop.kws[2]}    \${item} = c, \${thing} = f
+
+For In Zip With 3 Lists
+    [Documentation]    Handling more than one list like :FOR ${a} ${b} ${c} IN ZIP ${x} ${y} ${z}.
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${for_loop}=    Set Variable    ${tc.kws[3]}
+    Should Be For In Zip Keyword    ${for_loop}    4
+    Should Be For Item    ${for_loop.kws[0]}    \${item} = a, \${thing} = e, \${stuff} = 1
+    Should Be For Item    ${for_loop.kws[1]}    \${item} = b, \${thing} = f, \${stuff} = 2
+    Should Be For Item    ${for_loop.kws[2]}    \${item} = c, \${thing} = g, \${stuff} = 3
+    Should Be For Item    ${for_loop.kws[3]}    \${item} = d, \${thing} = h, \${stuff} = 4
+
+For In Zip With Other Iterables
+    [Documentation]    Handling non-lists. Should accept anything iterable except strings and fail with a clear error message if invalid data given. You can use utils.is_list_like to verify inputs.
+    Comment
+
+For In Zip With String "Lists"
+    [Documentation]    FAIL
+    ${tc} =    Check Test Case    ${TEST NAME}    status=FAIL    message=For-In-Zip Loop items must all be List-like (but not Strings); got <type 'unicode'> with value 'NotAListButStillIterable'
+    ${for_loop}=    Set Variable    ${tc.kws[2]}
+    Should Be For In Zip Keyword    ${for_loop}    0    # This seems like it should be 1, but I haven't messed with anything that would break it and other failing tests don't even check it...
+    Should Be Equal    ${for_loop.status}    FAIL
+
+For In Zip With Non-list
+    [Documentation]    FAIL
+    ${tc} =    Check Test Case    ${TEST NAME}    status=FAIL    message=For-In-Zip Loop items must all be List-like (but not Strings); got <type 'int'> with value '42'
+    ${for_loop}=    Set Variable    ${tc.kws[2]}
+    Should Be For In Zip Keyword    ${for_loop}    0    # This seems like it should be 1, but I haven't messed with anything that would break it and other failing tests don't even check it...
+    Should Be Equal    ${for_loop.status}    FAIL
+
+For In Zip With Too Few Variables
+    Comment
+
+For In Zip With Too Many Variables
+    [Documentation]    Different number of variables than lists. Having just one variable works in Python (e.g. for i in zip(x, y)), but looking at the implementation it might be hard to support here. I'd be fine with a clear error if num(vars) != num(lists).
+    Comment
+
+For In Enumerate
+    Comment
+For In Enumerate With Too Many Variables
+    Comment
+For In Enumerate With Too Few Variables
+    Comment
+For In Enumerate With Other Iterables
+    Comment
+For In Enumerate With Extra Loop Variables
+    Comment
+
 For In Range With Too Many Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be For In Range Keyword    ${tc.kws[0]}    0

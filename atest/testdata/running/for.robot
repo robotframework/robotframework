@@ -324,6 +324,56 @@ For In Zip
     \    @{result} =    Create List    @{result}    ${item}:${thing}
     Should Be True    @{result} == ['a:e', 'b:f', 'c:g', 'd:h']
 
+For In Zip With Uneven Lists
+    [Documentation]    Handling lists with different number of elements. Probably should work like in Python here and just stop when the shortest list is empty?
+    @{items}=    Create List    a    b    c
+    @{things}=    Create List    d    e    f    g    h
+    : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
+    \    @{result} =    Create List    @{result}    ${item}:${thing}
+    Should Be True    @{result} == ['a:d', 'b:e', 'c:f']
+
+For In Zip With 3 Lists
+    [Documentation]    Handling more than one list like :FOR ${a} ${b} ${c} IN ZIP ${x} ${y} ${z}.
+    @{items}=    Create List    a    b    c    d
+    @{things}=    Create List    e    f    g    h
+    @{stuffs}=    Create List    1    2    3    4    5
+    : FOR    ${item}    ${thing}    ${stuff}    IN ZIP    ${items}    ${things}    ${stuffs}
+    \    @{result} =    Create List    @{result}    ${item}:${thing}:${stuff}
+    Should Be True    @{result} == ['a:e:1', 'b:f:2', 'c:g:3', 'd:h:4']
+
+For In Zip With Other Iterables
+    [Documentation]    Handling non-lists. Should accept anything iterable except strings and fail with a clear error message if invalid data given. You can use utils.is_list_like to verify inputs.
+
+For In Zip With String "Lists"
+    [Documentation]    FAIL
+    ${items}=    Set Variable    NotAListButStillIterable
+    @{things}=    Create List    e    f    g    h
+    : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
+    \    Fail    This test case should die before running this.
+
+For In Zip With Non-list
+    [Documentation]    FAIL
+    ${items}=    Set Variable    ${42}
+    @{things}=    Create List    e    f    g    h
+    : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
+    \    Fail    This test case should die before running this.
+
+For In Zip With Too Few Variables
+For In Zip With Too Many Variables
+    [Documentation]    Different number of variables than lists. Having just one variable works in Python (e.g. for i in zip(x, y)), but looking at the implementation it might be hard to support here. I'd be fine with a clear error if num(vars) != num(lists).
+
+For In Enumerate
+    Comment
+For In Enumerate With Too Many Variables
+    Comment
+For In Enumerate With Too Few Variables
+    Comment
+For In Enumerate With Other Iterables
+    Comment
+For In Enumerate With Extra Loop Variables
+    Comment
+
+
 For In Range With Multiple Variables
     : FOR    ${i}    ${j}    ${k}    IN RANGE    -1    11
     \    @{result} =    Create List    @{result}    ${i}-${j}-${k}
