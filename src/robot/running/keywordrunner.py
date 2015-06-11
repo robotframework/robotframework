@@ -304,7 +304,8 @@ _FOR_LOOP_FLAVORS = dict(
         INENUMERATE=ForInEnumerateLoopRunner,
         )
 def ForLoopRunner(context, templated=False, flavor='IN'):
-    runner_class = _FOR_LOOP_FLAVORS.get(flavor, BasicForLoopRunner)
+    flavor_key = flavor.replace(' ', '')
+    runner_class = _FOR_LOOP_FLAVORS.get(flavor_key, BasicForLoopRunner)
     return runner_class(context, templated)
 
 

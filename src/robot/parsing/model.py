@@ -600,9 +600,8 @@ class ForLoop(_WithSteps):
     """
     Properties:
 
-    - flavor: The value of the 'IN' item, with spaces removed.
-              Typically 'IN', 'INRANGE', 'INZIP', 'INEUMERATE', etc.(?)
-    - raw_flavor: Just like flavor, but without spaces removed.
+    - flavor: The value of the 'IN' item, uppercased.
+              Typically 'IN', 'IN RANGE', 'IN ZIP', 'IN EUMERATE', etc.(?)
     - vars:   Variables set per-iteration by this loop
     - items:  Items to loop over (or otherwise parameters, like with INRANGE)
     - comment: a comment, or None.
@@ -610,7 +609,7 @@ class ForLoop(_WithSteps):
     """
 
     def __init__(self, declaration, comment=None):
-        self.flavor, self.raw_flavor, index = self._get_flavors_and_index(declaration)
+        self.flavor, index = self._get_flavors_and_index(declaration)
         self.vars = declaration[:index]
         self.items = declaration[index+1:]
         self.comment = Comment(comment)
@@ -618,11 +617,11 @@ class ForLoop(_WithSteps):
 
     def _get_flavors_and_index(self, declaration):
         for index, item in enumerate(declaration):
-            upper_item = item.upper()
-            compact_item = upper_item.replace(' ', '')
-            if compact_item.startswith('IN'):
-                return compact_item, upper_item, index
-        return 'IN', 'IN', len(declaration)
+            item = item.upper()
+            if item.startswith('IN'):
+                # This won't play nice with 'I NRANGE', but do we care?
+                return item, index
+        return 'IN', len(declaration)
 
     def is_comment(self):
         return False
@@ -632,7 +631,7 @@ class ForLoop(_WithSteps):
 
     def as_list(self, indent=False, include_comment=True):
         comments = self.comment.as_list() if include_comment else []
-        return  [': FOR'] + self.vars + [self.raw_flavor] + self.items + comments
+        return  [': FOR'] + self.vars + [self.flavor] + self.items + comments
 
     def __iter__(self):
         return iter(self.steps)
