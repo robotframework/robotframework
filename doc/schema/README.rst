@@ -1,5 +1,5 @@
-Schema of Robot Framework's output XML format
-=============================================
+Robot Framework output XML schema 
+=================================
 
 Introduction
 ------------
