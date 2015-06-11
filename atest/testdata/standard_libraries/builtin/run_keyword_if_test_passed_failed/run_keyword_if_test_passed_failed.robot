@@ -59,12 +59,58 @@ Run Keyword If Test Passes Uses User Keyword
     [Teardown]    Run Keyword If Test Passed    Teardown UK    ${TEARDOWN MESSAGE}
 
 Run Keyword If Test Passed Fails
-    [Documentation]    FAIL Teardown failed:\n
+    [Documentation]    FAIL Teardown failed:
     ...    Expected failure
     No Operation
     [Teardown]    Run Keyword If Test Passed    Fail    ${EXPECTED FAILURE}
+
+Run Keyword If Test Passed When Teardown Fails
+    [Documentation]    FAIL Teardown failed:
+    ...    Executed
+    No Operation
+    [Teardown]    Run Keyword If Test Passed When Teardown Fails
+
+Run Keyword If Test Failed When Teardown Fails
+    [Documentation]    FAIL Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Deep failure
+    ...
+    ...    2) Executed
+    No Operation
+    [Teardown]    Run Keyword If Test Failed When Teardown Fails
+
+Continuable Failure In Teardown
+    [Documentation]    FAIL Teardown failed:
+    ...    Several failures occurred:
+    ...
+    ...    1) Continuable
+    ...
+    ...    2) Executed
+    No Operation
+    [Teardown]    Continuable Failure In Teardown
 
 *** Keyword ***
 Teardown UK
     [Arguments]    ${message}
     Log    ${message}
+
+Run Keyword If Test Passed When Teardown Fails
+    Run Keyword If Test Passed    Fail    Executed
+    Run Keyword If Test Passed    Fail    Not executed
+
+Run Keyword If Test Failed When Teardown Fails
+    Run Keyword If Test Failed    Fail    Not executed
+    Failure deeper
+    Run Keyword If Test Failed    Fail    Executed
+
+Failure deeper
+    Failure even deeper
+
+Failure even deeper
+    Fail    Deep failure
+
+Continuable Failure In Teardown
+    Run Keyword And Continue On Failure    Fail    Continuable
+    Run Keyword If Test Passed    Fail    Not executed
+    Run Keyword If Test Failed    Fail    Executed

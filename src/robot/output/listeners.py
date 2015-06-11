@@ -64,14 +64,14 @@ class Listeners(object):
 
     def _import_listeners(self, listener_data):
         listeners = []
-        for name, args in listener_data:
+        for listener in listener_data:
             try:
-                listeners.append(ListenerProxy(name, args))
+                listeners.append(ListenerProxy(listener))
             except DataError as err:
-                if args:
-                    name += ':' + ':'.join(args)
+                if not isinstance(listener, basestring):
+                    listener = utils.type_name(listener)
                 LOGGER.error("Taking listener '%s' into use failed: %s"
-                             % (name, unicode(err)))
+                             % (listener, unicode(err)))
         return listeners
 
     def start_suite(self, suite):
@@ -222,8 +222,12 @@ class ListenerProxy(AbstractLoggerProxy):
                 'output_file', 'report_file', 'log_file', 'debug_file',
                 'xunit_file', 'close']
 
-    def __init__(self, name, args):
-        listener = self._import_listener(name, args)
+    def __init__(self, listener):
+        if isinstance(listener, basestring):
+            name, args = utils.split_args_from_name_or_path(listener)
+            listener = self._import_listener(name, args)
+        else:
+            name = utils.type_name(listener)
         AbstractLoggerProxy.__init__(self, listener)
         self.name = name
         self.version = self._get_version(listener)

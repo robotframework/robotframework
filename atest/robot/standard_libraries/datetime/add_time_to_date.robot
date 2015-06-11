@@ -6,3 +6,6 @@ Resource         atest_resource.robot
 *** Test Cases ***
 Time addition to date should succeed
     Check Test Case    ${TESTNAME}
+
+Time addition to date over DST boundary
+    Check Test Case    ${TESTNAME}

@@ -63,7 +63,8 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
 from .robottypes import is_dict_like, is_list_like, is_str_like, type_name
 from .setter import setter
 from .text import (cut_long_message, format_assign_message,
-                   pad_console_length, get_console_length, split_tags_from_doc)
+                   pad_console_length, get_console_length, split_tags_from_doc,
+                   split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader
 
