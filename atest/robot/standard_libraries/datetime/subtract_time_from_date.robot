@@ -6,3 +6,6 @@ Resource         atest_resource.robot
 *** Test Cases ***
 Time subtraction from date should succeed
     Check Test Case    ${TESTNAME}
+
+Time subtraction over DTS boundary
+    Check Test Case    ${TESTNAME}

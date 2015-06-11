@@ -1696,9 +1696,12 @@ class _RunKeyword:
 
         Otherwise, this keyword works exactly like `Run Keyword`, see its
         documentation for more details.
+
+        Prior to Robot Framework 2.9 failures in test teardown itself were
+        not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Failed')
-        if not test.passed:
+        if not test.passed or self._context.failure_in_test_teardown:
             return self.run_keyword(name, *args)
 
     def run_keyword_if_test_passed(self, name, *args):
@@ -1709,9 +1712,12 @@ class _RunKeyword:
 
         Otherwise, this keyword works exactly like `Run Keyword`, see its
         documentation for more details.
+
+        Prior to Robot Framework 2.9 failures in test teardown itself were
+        not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Passed')
-        if test.passed:
+        if test.passed and not self._context.failure_in_test_teardown:
             return self.run_keyword(name, *args)
 
     def run_keyword_if_timeout_occurred(self, name, *args):
