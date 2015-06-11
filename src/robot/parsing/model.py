@@ -602,7 +602,7 @@ class ForLoop(_WithSteps):
 
     - flavor: The value of the 'IN' item, with spaces removed.
               Typically 'IN', 'INRANGE', 'INZIP', 'INEUMERATE', etc.(?)
-    - range:  True if flavor is 'INRANGE'
+    - raw_flavor: Just like flavor, but without spaces removed.
     - vars:   Variables set per-iteration by this loop
     - items:  Items to loop over (or otherwise parameters, like with INRANGE)
     - comment: a comment, or None.
@@ -610,20 +610,19 @@ class ForLoop(_WithSteps):
     """
 
     def __init__(self, declaration, comment=None):
-        self.flavor, index = self._get_flavor_and_index(declaration)
-        # self.range is preserved for backwards-compatibility
-        self.range = self.flavor == 'INRANGE'
+        self.flavor, self.raw_flavor, index = self._get_flavors_and_index(declaration)
         self.vars = declaration[:index]
         self.items = declaration[index+1:]
         self.comment = Comment(comment)
         self.steps = []
 
-    def _get_flavor_and_index(self, declaration):
+    def _get_flavors_and_index(self, declaration):
         for index, item in enumerate(declaration):
-            item = item.upper().replace(' ', '')
-            if item.startswith('IN'):
-                return item, index
-        return 'IN', len(declaration)
+            upper_item = item.upper()
+            compact_item = upper_item.replace(' ', '')
+            if compact_item.startswith('IN'):
+                return compact_item, upper_item, index
+        return 'IN', 'IN', len(declaration)
 
     def is_comment(self):
         return False
@@ -632,9 +631,8 @@ class ForLoop(_WithSteps):
         return True
 
     def as_list(self, indent=False, include_comment=True):
-        IN = ['IN RANGE' if self.range else 'IN']
         comments = self.comment.as_list() if include_comment else []
-        return  [': FOR'] + self.vars + IN + self.items + comments
+        return  [': FOR'] + self.vars + [self.raw_flavor] + self.items + comments
 
     def __iter__(self):
         return iter(self.steps)

@@ -475,7 +475,8 @@ class ForLoopPopulatingTest(_PopulatorTest):
         assert_equals(len(self._first_test().steps), 1)
         for_loop = self._first_test().steps[0]
         assert_equals(len(for_loop.steps), 1)
-        assert_true(not for_loop.range)
+        assert_equals(for_loop.flavor, 'IN')
+        assert_equals(for_loop.raw_flavor, 'IN')
         assert_equals(for_loop.vars, ['${i}'])
         assert_equals(for_loop.items, ['@{list}'])
 
@@ -489,7 +490,8 @@ class ForLoopPopulatingTest(_PopulatorTest):
         assert_equals(len(self._first_test().steps), 3)
         for_loop = self._first_test().steps[1]
         assert_equals(len(for_loop.steps), 2)
-        assert_true(for_loop.range)
+        assert_equals(for_loop.flavor, 'INRANGE')
+        assert_equals(for_loop.raw_flavor, 'IN RANGE')
         assert_equals(for_loop.vars, ['${i}', '${j}'])
 
     def test_line_continuation(self):
@@ -506,7 +508,8 @@ class ForLoopPopulatingTest(_PopulatorTest):
         assert_equals(len(self._first_test().steps), 3)
         for_loop = self._first_test().steps[1]
         assert_equals(len(for_loop.steps), 1)
-        assert_true(not for_loop.range)
+        assert_equals(for_loop.flavor, 'IN')
+        assert_equals(for_loop.raw_flavor, 'IN')
         assert_equals(for_loop.vars, ['${i}'])
         assert_equals(for_loop.items, ['10', '20', '30', '40', '50', '60'])
 

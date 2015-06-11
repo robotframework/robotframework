@@ -229,7 +229,7 @@ class JsonConverter(object):
         return kw.name
 
     def _get_for_loop(self, kw):
-        joiner = ' IN RANGE ' if kw.range else ' IN '
+        joiner = ' %s ' % kw.raw_flavor
         return ', '.join(kw.variables) + joiner + utils.seq2str2(kw.values)
 
     def _get_timeout(self, timeout):
