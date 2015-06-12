@@ -15,7 +15,6 @@
 from contextlib import contextmanager
 
 from robot.errors import DataError
-from robot.variables import GLOBAL_VARIABLES
 
 
 class ExecutionContexts(object):
@@ -128,10 +127,10 @@ class _ExecutionContext(object):
     # TODO: Move start_suite here from EXECUTION_CONTEXT
 
     def end_suite(self, suite):
-        for var in ['${PREV_TEST_NAME}',
-                    '${PREV_TEST_STATUS}',
-                    '${PREV_TEST_MESSAGE}']:
-            GLOBAL_VARIABLES[var] = self.variables[var]
+        for name in ['${PREV_TEST_NAME}',
+                     '${PREV_TEST_STATUS}',
+                     '${PREV_TEST_MESSAGE}']:
+            self.variables.set_global(name, self.variables[name])
         self.output.end_suite(suite)
         self.namespace.end_suite()
         EXECUTION_CONTEXTS.end_suite()

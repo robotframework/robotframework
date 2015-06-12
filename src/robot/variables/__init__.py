@@ -25,12 +25,10 @@ from robot.output import LOGGER
 
 from .assigner import VariableAssigner
 from .isvar import contains_var, is_var, is_scalar_var, is_list_var, is_dict_var
+from .scopes import GLOBAL_VARIABLES, VariableScopes
 from .splitter import VariableSplitter, VariableIterator
 from .tablesetter import VariableTableValue, DictVariableTableValue
 from .variables import Variables
-
-
-GLOBAL_VARIABLES = Variables()
 
 
 def init_global_variables(settings):
