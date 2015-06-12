@@ -359,7 +359,6 @@ For In Zip With Non-list
 
 For In Zip With Too Few Variables
     [Documentation]    FAIL    Expected 3 Loop variables, but found 1
-    [Tags]    Not Read
     @{items}=    Create List    a    b    c    d
     @{things}=    Create List    e    f    g    h
     @{stuffs}=    Create List    1    2    3    4    5
@@ -368,7 +367,6 @@ For In Zip With Too Few Variables
 
 For In Zip With Too Many Variables
     [Documentation]    FAIL    Expected 3 Loop variables, but found 4
-    [Tags]    Not Ready
     @{items}=    Create List    a    b    c    d
     @{things}=    Create List    e    f    g    h
     @{stuffs}=    Create List    1    2    3    4    5
