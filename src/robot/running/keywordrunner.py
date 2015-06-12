@@ -180,8 +180,8 @@ class BasicForLoopRunner(object):
     def _get_values_for_one_round(self, data):
         if not self._context.dry_run:
             values = self._replace_variables(data)
-            var_count = len(data.variables)
-            for i in range(0, self._original_values_per_iteration(values), var_count):
+            var_count = self._original_values_per_iteration(data.variables)
+            for i in range(0, len(values), var_count):
                 yield values[i:i+var_count]
         else:
             yield data.variables
@@ -189,7 +189,8 @@ class BasicForLoopRunner(object):
     def _replace_variables(self, data):
         values = self._context.variables.replace_list(data.values)
         values = self._transform_items(values)
-        if self._original_values_per_iteration(values) % len(data.variables) == 0:
+        values_per_iteration = self._original_values_per_iteration(data.variables)
+        if len(values) % values_per_iteration == 0:
             return values
         raise DataError('Number of FOR loop values should be multiple of '
                         'variables. Got %d variables but %d value%s.'
@@ -294,7 +295,6 @@ class ForInEnumerateLoopRunner(BasicForLoopRunner):
             answer.extend(zipped_item)
         return answer
 
-    @property
     def _original_values_per_iteration(self, values):
         """
         The number of values per iteration;
@@ -311,7 +311,7 @@ class ForInEnumerateLoopRunner(BasicForLoopRunner):
     def _get_values_for_one_round(self, data):
         for idx, values in enumerate(super(ForInEnumerateLoopRunner, self)
                 ._get_values_for_one_round(data)):
-            yield (idx,) + values
+            yield [idx] + values
 
 
 # Defining this dict here in for potentially easier extension by libraries...

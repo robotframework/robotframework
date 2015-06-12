@@ -373,9 +373,19 @@ For In Zip With Too Many Variables
     : FOR    ${item}    ${thing}    ${flotsam}    ${jetsam}    IN ZIP    ${items}    ${things}    ${stuffs}
     \    Fail    This test case should die before running this.
 
-For In Enumerate
-    [Tags]    Not Ready
-    Fail    Not Implemented
+For In Enumerate (with 4 items)
+    @{items}=    Create List    a    b    c    d
+    : FOR    ${index}    ${item}    IN ENUMERATE    @{items}
+    \    Should Be Equal    @{items}[${index}]    ${item}    Loop value ${item} should be item ${index} of ${items}
+    \    @{result}=     Create List    @{result}    ${index}:${item}
+    Should Be True    @{result} == ['0:a', '1:b', '2:c', '3:d']
+
+For In Enumerate (with 5 items)
+    @{items}=    Create List    a    b    c    d    e
+    : FOR    ${index}    ${item}    IN ENUMERATE    @{items}
+    \    Should Be Equal    @{items}[${index}]    ${item}    Loop value ${item} should be item ${index} of ${items}
+    \    @{result}=     Create List    @{result}    ${index}:${item}
+    Should Be True    @{result} == ['0:a', '1:b', '2:c', '3:d', '4:e']
 
 For In Enumerate With Too Many Variables
     [Tags]    Not Ready

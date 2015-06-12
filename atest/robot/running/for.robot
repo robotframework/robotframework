@@ -305,9 +305,14 @@ For In Zip With Too Many Variables
     [Documentation]    Different number of variables than lists. Having just one variable works in Python (e.g. for i in zip(x, y)), but looking at the implementation it might be hard to support here. I'd be fine with a clear error if num(vars) != num(lists).
     ${tc} =    Check Test Case    ${TEST NAME}
 
-For In Enumerate
-    [Tags]    Not Ready
-    Fail    Not Implemented
+For In Enumerate (with 4 items)
+    [Documentation]    This test is repeated with different lengths to expose subtle validation errors from development.
+    ${tc} =    Check Test Case    ${TEST NAME}
+
+For In Enumerate (with 5 items)
+    [Documentation]    This test is repeated with different lengths to expose subtle validation errors from development.
+    ${tc} =    Check Test Case    ${TEST NAME}
+
 
 For In Enumerate With Too Many Variables
     [Tags]    Not Ready
