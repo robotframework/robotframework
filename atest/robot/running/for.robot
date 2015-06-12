@@ -287,36 +287,45 @@ For In Zip With Other Iterables
     Comment
 
 For In Zip With String "Lists"
-    [Documentation]    FAIL
-    ${tc} =    Check Test Case    ${TEST NAME}    status=FAIL    message=For-In-Zip Loop items must all be List-like (but not Strings); got <type 'unicode'> with value 'NotAListButStillIterable'
-    ${for_loop}=    Set Variable    ${tc.kws[2]}
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${for_loop}=    Set Variable    ${tc.kws[1]}
     Should Be For In Zip Keyword    ${for_loop}    0    # This seems like it should be 1, but I haven't messed with anything that would break it and other failing tests don't even check it...
     Should Be Equal    ${for_loop.status}    FAIL
 
 For In Zip With Non-list
-    [Documentation]    FAIL
-    ${tc} =    Check Test Case    ${TEST NAME}    status=FAIL    message=For-In-Zip Loop items must all be List-like (but not Strings); got <type 'int'> with value '42'
+    ${tc} =    Check Test Case    ${TEST NAME}
     ${for_loop}=    Set Variable    ${tc.kws[2]}
     Should Be For In Zip Keyword    ${for_loop}    0    # This seems like it should be 1, but I haven't messed with anything that would break it and other failing tests don't even check it...
     Should Be Equal    ${for_loop.status}    FAIL
 
 For In Zip With Too Few Variables
-    Comment
+    [Tags]    Not Ready
+    Fail    Not Implemented
 
 For In Zip With Too Many Variables
     [Documentation]    Different number of variables than lists. Having just one variable works in Python (e.g. for i in zip(x, y)), but looking at the implementation it might be hard to support here. I'd be fine with a clear error if num(vars) != num(lists).
-    Comment
+    [Tags]    Not Ready
+    Fail    Not Implemented
 
 For In Enumerate
-    Comment
+    [Tags]    Not Ready
+    Fail    Not Implemented
+
 For In Enumerate With Too Many Variables
-    Comment
+    [Tags]    Not Ready
+    Fail    Not Implemented
+
 For In Enumerate With Too Few Variables
-    Comment
+    [Tags]    Not Ready
+    Fail    Not Implemented
+
 For In Enumerate With Other Iterables
-    Comment
+    [Tags]    Not Ready
+    Fail    Not Implemented
+
 For In Enumerate With Extra Loop Variables
-    Comment
+    [Tags]    Not Ready
+    Fail    Not Implemented
 
 For In Range With Too Many Arguments
     ${tc} =    Check Test Case    ${TEST NAME}

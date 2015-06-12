@@ -345,34 +345,46 @@ For In Zip With Other Iterables
     [Documentation]    Handling non-lists. Should accept anything iterable except strings and fail with a clear error message if invalid data given. You can use utils.is_list_like to verify inputs.
 
 For In Zip With String "Lists"
-    [Documentation]    FAIL
-    ${items}=    Set Variable    NotAListButStillIterable
+    [Documentation]    FAIL    For-In-Zip Loop items must all be List-like (but not Strings); got <type 'unicode'> with value 'NotAListButStillPythonIterable'
     @{things}=    Create List    e    f    g    h
-    : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
+    : FOR    ${item}    ${thing}    IN ZIP    NotAListButStillPythonIterable    ${things}
     \    Fail    This test case should die before running this.
 
 For In Zip With Non-list
-    [Documentation]    FAIL
+    [Documentation]    FAIL    For-In-Zip Loop items must all be List-like (but not Strings); got <type 'int'> with value '42'
     ${items}=    Set Variable    ${42}
     @{things}=    Create List    e    f    g    h
     : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
     \    Fail    This test case should die before running this.
 
 For In Zip With Too Few Variables
+    [Tags]    Not Ready
+    Fail    Not Implemented
+
 For In Zip With Too Many Variables
     [Documentation]    Different number of variables than lists. Having just one variable works in Python (e.g. for i in zip(x, y)), but looking at the implementation it might be hard to support here. I'd be fine with a clear error if num(vars) != num(lists).
+    [Tags]    Not Ready
+    Fail    Not Implemented
 
 For In Enumerate
-    Comment
-For In Enumerate With Too Many Variables
-    Comment
-For In Enumerate With Too Few Variables
-    Comment
-For In Enumerate With Other Iterables
-    Comment
-For In Enumerate With Extra Loop Variables
-    Comment
+    [Tags]    Not Ready
+    Fail    Not Implemented
 
+For In Enumerate With Too Many Variables
+    [Tags]    Not Ready
+    Fail    Not Implemented
+
+For In Enumerate With Too Few Variables
+    [Tags]    Not Ready
+    Fail    Not Implemented
+
+For In Enumerate With Other Iterables
+    [Tags]    Not Ready
+    Fail    Not Implemented
+
+For In Enumerate With Extra Loop Variables
+    [Tags]    Not Ready
+    Fail    Not Implemented
 
 For In Range With Multiple Variables
     : FOR    ${i}    ${j}    ${k}    IN RANGE    -1    11
