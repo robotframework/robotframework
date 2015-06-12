@@ -268,6 +268,7 @@ class ForInZipLoopRunner(BasicForLoopRunner):
             answer.extend(zipped_item)
         return answer
 
+
 class ForInEnumerateLoopRunner(BasicForLoopRunner):
     def __init__(self, forstep, templated=False):
         super(ForInEnumerateLoopRunner, self).__init__(forstep, templated)
@@ -291,7 +292,7 @@ class ForInEnumerateLoopRunner(BasicForLoopRunner):
         which add/remove items to the pool.
         """
         if len(values) < 2:
-            raise DataError('FOR IN ENUMERATE expected 2+ loop variables, got %d.'
+            raise DataError('FOR IN ENUMERATE expected 2 or more loop variables, got %d.'
                     % len(values))
         return len(values) - 1
 
@@ -303,15 +304,19 @@ class ForInEnumerateLoopRunner(BasicForLoopRunner):
 
 # Defining this dict here in for potentially easier extension by libraries...
 # ...unless that's a terrible idea?
-_FOR_LOOP_FLAVORS = dict(
-        INRANGE=ForInRangeLoopRunner,
-        INZIP=ForInZipLoopRunner,
-        INENUMERATE=ForInEnumerateLoopRunner,
-        )
 def ForLoopRunner(context, templated=False, flavor='IN'):
-    flavor_key = flavor.replace(' ', '')
-    runner_class = _FOR_LOOP_FLAVORS.get(flavor_key, BasicForLoopRunner)
-    return runner_class(context, templated)
+    FOR_LOOP_FLAVORS = dict(
+            IN=BasicForLoopRunner,
+            INRANGE=ForInRangeLoopRunner,
+            INZIP=ForInZipLoopRunner,
+            INENUMERATE=ForInEnumerateLoopRunner,
+            )
+    flavor_key = flavor.upper().replace(' ', '')
+    if flavor_key in FOR_LOOP_FLAVORS:
+        runner_class = FOR_LOOP_FLAVORS[flavor_key]
+        return runner_class(context, templated)
+    else:
+        raise DataError("Unexpected For-loop type %s (%s); expected one of %s (but with spaces)" % (flavor_key, flavor, repr(FOR_LOOP_FLAVORS.keys())))
 
 
 class StatusReporter(object):
