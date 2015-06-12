@@ -221,8 +221,8 @@ class BasicForLoopRunner(object):
 
 
 class ForInRangeLoopRunner(BasicForLoopRunner):
-    def __init__(self, forstep, templated=False):
-        super(ForInRangeLoopRunner, self).__init__(forstep, templated)
+    def __init__(self, context, templated=False):
+        super(ForInRangeLoopRunner, self).__init__(context, templated)
 
     def _flavor_name(self):
         return 'IN RANGE'
@@ -251,11 +251,23 @@ class ForInRangeLoopRunner(BasicForLoopRunner):
 
 
 class ForInZipLoopRunner(BasicForLoopRunner):
-    def __init__(self, forstep, templated=False):
-        super(ForInZipLoopRunner, self).__init__(forstep, templated)
+    def __init__(self, context, templated=False):
+        super(ForInZipLoopRunner, self).__init__(context, templated)
 
     def _flavor_name(self):
         return 'IN ZIP'
+
+    def _replace_variables(self, data):
+        """
+        Make sure we have as many loop-variables as zipped-iterables.
+
+        (Other than that, delegate to the superclass.)
+        """
+        values = super(ForInZipLoopRunner, self)._replace_variables(data)
+        if len(data.variables) == len(data.values):
+            return values
+        raise DataError("Expected %d Loop variables, but found %d"
+                % (len(data.values), len(data.variables)))
 
     def _transform_items(self, items):
         answer = list()
@@ -270,8 +282,8 @@ class ForInZipLoopRunner(BasicForLoopRunner):
 
 
 class ForInEnumerateLoopRunner(BasicForLoopRunner):
-    def __init__(self, forstep, templated=False):
-        super(ForInEnumerateLoopRunner, self).__init__(forstep, templated)
+    def __init__(self, context, templated=False):
+        super(ForInEnumerateLoopRunner, self).__init__(context, templated)
 
     def _flavor_name(self):
         return 'IN ENUMERATE'
@@ -316,7 +328,27 @@ def ForLoopRunner(context, templated=False, flavor='IN'):
         runner_class = FOR_LOOP_FLAVORS[flavor_key]
         return runner_class(context, templated)
     else:
-        raise DataError("Unexpected For-loop type %s (%s); expected one of %s (but with spaces)" % (flavor_key, flavor, repr(FOR_LOOP_FLAVORS.keys())))
+        return InvalidForLoopRunner(context, flavor_key, flavor, FOR_LOOP_FLAVORS.keys())
+
+
+class InvalidForLoopRunner(BasicForLoopRunner):
+    """
+    Used to send an error from ForLoopRunner() if it sees an unexpected error.
+
+    We can't simply throw a DataError from ForLoopRunner() because that happens
+    outside the "with StatusReporter(...)" blocks.
+
+    """
+    def __init__(self, context, flavor, pretty_flavor, expected):
+        super(InvalidForLoopRunner, self).__init__(context, False)
+        self.flavor = flavor
+        self.pretty_flavor = pretty_flavor
+        self.expected = repr(sorted(expected))
+
+    def _run(self, data, *args, **kwargs):
+        raise DataError(
+            "Unexpected For-loop type %s (%s); expected one of %s (but with spaces)" %
+            (self.flavor, self.pretty_flavor, self.expected))
 
 
 class StatusReporter(object):

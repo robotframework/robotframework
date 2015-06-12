@@ -299,13 +299,11 @@ For In Zip With Non-list
     Should Be Equal    ${for_loop.status}    FAIL
 
 For In Zip With Too Few Variables
-    [Tags]    Not Ready
-    Fail    Not Implemented
+    ${tc} =    Check Test Case    ${TEST NAME}
 
 For In Zip With Too Many Variables
     [Documentation]    Different number of variables than lists. Having just one variable works in Python (e.g. for i in zip(x, y)), but looking at the implementation it might be hard to support here. I'd be fine with a clear error if num(vars) != num(lists).
-    [Tags]    Not Ready
-    Fail    Not Implemented
+    ${tc} =    Check Test Case    ${TEST NAME}
 
 For In Enumerate
     [Tags]    Not Ready
@@ -326,6 +324,9 @@ For In Enumerate With Other Iterables
 For In Enumerate With Extra Loop Variables
     [Tags]    Not Ready
     Fail    Not Implemented
+
+For Loop Of Unexpected Name
+    ${tc} =    Check Test Case    ${TEST NAME}
 
 For In Range With Too Many Arguments
     ${tc} =    Check Test Case    ${TEST NAME}

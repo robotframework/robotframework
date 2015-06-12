@@ -358,13 +358,22 @@ For In Zip With Non-list
     \    Fail    This test case should die before running this.
 
 For In Zip With Too Few Variables
-    [Tags]    Not Ready
-    Fail    Not Implemented
+    [Documentation]    FAIL    Expected 3 Loop variables, but found 1
+    [Tags]    Not Read
+    @{items}=    Create List    a    b    c    d
+    @{things}=    Create List    e    f    g    h
+    @{stuffs}=    Create List    1    2    3    4    5
+    : FOR    ${item}    IN ZIP    ${items}    ${things}    ${stuffs}
+    \    Fail    This test case should die before running this.
 
 For In Zip With Too Many Variables
-    [Documentation]    Different number of variables than lists. Having just one variable works in Python (e.g. for i in zip(x, y)), but looking at the implementation it might be hard to support here. I'd be fine with a clear error if num(vars) != num(lists).
+    [Documentation]    FAIL    Expected 3 Loop variables, but found 4
     [Tags]    Not Ready
-    Fail    Not Implemented
+    @{items}=    Create List    a    b    c    d
+    @{things}=    Create List    e    f    g    h
+    @{stuffs}=    Create List    1    2    3    4    5
+    : FOR    ${item}    ${thing}    ${flotsam}    ${jetsam}    IN ZIP    ${items}    ${things}    ${stuffs}
+    \    Fail    This test case should die before running this.
 
 For In Enumerate
     [Tags]    Not Ready
@@ -385,6 +394,11 @@ For In Enumerate With Other Iterables
 For In Enumerate With Extra Loop Variables
     [Tags]    Not Ready
     Fail    Not Implemented
+
+For Loop Of Unexpected Name
+    [Documentation]    FAIL    Unexpected For-loop type INFANCYPANTS (IN FANCY PANTS); expected one of ['IN', 'INENUMERATE', 'INRANGE', 'INZIP'] (but with spaces)
+    : FOR    ${i}    In Fancy Pants    Mr. Fancypants
+    \    Fail    This shouldn't ever execute.
 
 For In Range With Multiple Variables
     : FOR    ${i}    ${j}    ${k}    IN RANGE    -1    11
