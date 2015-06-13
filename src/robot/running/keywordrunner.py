@@ -283,7 +283,7 @@ class ForInZipLoopRunner(BasicForLoopRunner):
                 # Checking here because _validate() doesn't have access
                 # to the actual values.
                 raise DataError("For-In-Zip Loop items must all be List-like (but not Strings); got %s with value '%s'" % (item.__class__, item))
-        for zipped_item in zip(*items):
+        for zipped_item in zip(*[list(item) for item in items]):
             answer.extend(zipped_item)
         return answer
 
@@ -294,12 +294,6 @@ class ForInEnumerateLoopRunner(BasicForLoopRunner):
 
     def _flavor_name(self):
         return 'IN ENUMERATE'
-
-    def _transform_items(self, items):
-        answer = list()
-        for zipped_item in zip(*items):
-            answer.extend(zipped_item)
-        return answer
 
     def _original_values_per_iteration(self, values):
         """

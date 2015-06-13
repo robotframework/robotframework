@@ -33,6 +33,9 @@ For Without Value Fails
 For Loop Over Empty List Variable Is Ok
     Check Test Case    ${TEST NAME}
 
+For Loop Over Generator
+    Check Test Case    ${TEST NAME}
+
 For Failing
     ${tc} =    Check Test Case    ${TEST NAME} 1
     Should Be For Keyword    ${tc.kws[0]}    1
@@ -284,7 +287,6 @@ For In Zip With 3 Lists
 
 For In Zip With Other Iterables
     [Documentation]    Handling non-lists. Should accept anything iterable except strings and fail with a clear error message if invalid data given. You can use utils.is_list_like to verify inputs.
-    [Tags]    Not Ready
     ${tc} =    Check Test Case    ${TEST NAME}
 
 For In Zip With String "Lists"
@@ -324,8 +326,7 @@ For In Enumerate With Too Few Variables
     ${tc} =    Check Test Case    ${TEST NAME}
 
 For In Enumerate With Other Iterables
-    [Tags]    Not Ready
-    Fail    Not Implemented
+    ${tc} =    Check Test Case    ${TEST NAME}
 
 For Loop Of Unexpected Name
     ${tc} =    Check Test Case    ${TEST NAME}

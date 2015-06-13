@@ -40,6 +40,13 @@ For Loop Over Empty List Variable Is Ok
     \    Fail    not executed
     Variable Should Not Exist    ${var}
 
+For Loop Over Generator
+    ${xrange}=    Evaluate    xrange(10)
+    ${answer}=    Set Variable    ${EMPTY}
+    : FOR     ${x}    IN    @{xrange}
+    \    ${answer}=    CATENATE    SEPARATOR=    ${answer}    ${x}
+    Should Be Equal    ${answer}    0123456789
+
 For Failing 1
     [Documentation]    FAIL    Here we fail!
     : FOR    ${num}    IN    @{NUMS}
@@ -325,7 +332,7 @@ For In Zip
     Should Be True    @{result} == ['a:e', 'b:f', 'c:g', 'd:h']
 
 For In Zip With Uneven Lists
-    [Documentation]    Handling lists with different number of elements. Probably should work like in Python here and just stop when the shortest list is empty?
+    [Documentation]    Handling lists with different number of elements.  This will ignore any elements after the shortest list ends, just like with Python's zip()
     @{items}=    Create List    a    b    c
     @{things}=    Create List    d    e    f    g    h
     : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
@@ -343,8 +350,13 @@ For In Zip With 3 Lists
 
 For In Zip With Other Iterables
     [Documentation]    Handling non-lists. Should accept anything iterable except strings and fail with a clear error message if invalid data given. You can use utils.is_list_like to verify inputs.
-    [Tags]    Not Ready
-    Fail    TODO
+    @{xrange}=    Evaluate    xrange(10)
+    @{xrange2}=    Evaluate    xrange(10,20)
+    : FOR     ${x}    ${y}    IN ZIP    ${xrange}    ${xrange2}
+    \    @{result}=    Create List    @{result}    ${x}:${y}
+    ${expected}=    Create List    0:10    1:11    2:12    3:13    4:14    5:15    6:16    7:17    8:18    9:19
+    Should Be Equal    ${result}    ${expected}
+
 
 For In Zip With String "Lists"
     [Documentation]    FAIL    For-In-Zip Loop items must all be List-like (but not Strings); got <type 'unicode'> with value 'NotAListButStillPythonIterable'
@@ -414,7 +426,12 @@ For In Enumerate With Too Few Variables
 
 For In Enumerate With Other Iterables
     [Tags]    Not Ready
-    Fail    Not Implemented
+    ${xrange}=    Evaluate    xrange(10)
+    ${answer}=    Set Variable    ${EMPTY}
+    : FOR     ${i}    ${x}    IN ENUMERATE    @{xrange}
+    \    ${answer}=    CATENATE    SEPARATOR=    ${answer}    ${x}
+    \    Should Be Equal    ${i}    ${x}
+    Should Be Equal    ${answer}    0123456789
 
 For Loop Of Unexpected Name
     [Documentation]    FAIL    Unexpected For-loop type INFANCYPANTS (IN FANCY PANTS); expected one of ['IN', 'INENUMERATE', 'INRANGE', 'INZIP'] (but with spaces)
