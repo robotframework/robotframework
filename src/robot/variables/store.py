@@ -54,6 +54,9 @@ class VariableStore(object):
     def __getitem__(self, name):
         return self.find(name)    # TODO: __getitem__ vs find
 
+    def update(self, store):
+        self.data.update(store.data)
+
     def clear(self):
         self.data.clear()
 
