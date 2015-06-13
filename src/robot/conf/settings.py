@@ -300,6 +300,10 @@ class _BaseSettings(object):
                          for name in sorted(self._opts))
 
     @property
+    def output_directory(self):
+        return self['OutputDir']
+
+    @property
     def output(self):
         return self['Output']
 
@@ -314,6 +318,10 @@ class _BaseSettings(object):
     @property
     def xunit(self):
         return self['XUnit']
+
+    @property
+    def log_level(self):
+        return self['LogLevel']
 
     @property
     def split_log(self):
@@ -398,6 +406,10 @@ class RobotSettings(_BaseSettings):
         return utils.escape(value)
 
     @property
+    def debug_file(self):
+        return self['DebugFile']
+
+    @property
     def suite_config(self):
         return {
             'name': self['Name'],
@@ -442,10 +454,6 @@ class RobotSettings(_BaseSettings):
         return self['SkipTeardownOnExit']
 
     @property
-    def log_level(self):
-        return self['LogLevel']
-
-    @property
     def console_logger_config(self):
         return {
             'width':   self['MonitorWidth'],
@@ -462,6 +470,14 @@ class RobotSettings(_BaseSettings):
     @property
     def run_empty_suite(self):
         return self['RunEmptySuite']
+
+    @property
+    def variables(self):
+        return self['Variables']
+
+    @property
+    def variable_files(self):
+        return self['VariableFiles']
 
 
 class RebotSettings(_BaseSettings):
