@@ -2686,10 +2686,9 @@ class _Misc:
         New in Robot Framework 2.7. Support for ``append`` and ``top`` were
         added in 2.7.7.
         """
-        ns = self._get_namespace(top)
-        suite = ns.suite
+        suite = self._get_namespace(top).suite
         suite.doc = self._get_possibly_appended_value(suite.doc, doc, append)
-        ns.variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc)
+        self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc, top)
         self.log('Set suite documentation to:\n%s' % suite.doc)
 
     def set_suite_metadata(self, name, value, append=False, top=False):
@@ -2713,10 +2712,10 @@ class _Misc:
         """
         if not isinstance(name, unicode):
             name = utils.unic(name)
-        ns = self._get_namespace(top)
-        metadata = ns.suite.metadata
-        metadata[name] = self._get_possibly_appended_value(metadata.get(name, ''), value, append)
-        ns.variables.set_suite('${SUITE_METADATA}', metadata.copy())
+        metadata = self._get_namespace(top).suite.metadata
+        original = metadata.get(name, '')
+        metadata[name] = self._get_possibly_appended_value(original, value, append)
+        self._variables.set_suite('${SUITE_METADATA}', metadata.copy(), top)
         self.log("Set suite metadata '%s' to value '%s'." % (name, metadata[name]))
 
     def set_tags(self, *tags):

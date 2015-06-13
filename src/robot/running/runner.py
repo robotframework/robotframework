@@ -16,6 +16,7 @@ from robot.errors import ExecutionFailed, DataError, PassExecution
 from robot.model import SuiteVisitor
 from robot.result import TestSuite, Result
 from robot.utils import get_timestamp, NormalizedDict
+from robot.variables import VariableScopes
 
 from .context import EXECUTION_CONTEXTS
 from .keywordrunner import KeywordRunner
@@ -32,6 +33,7 @@ class Runner(SuiteVisitor):
         self.result = None
         self._output = output
         self._settings = settings
+        self._variables = VariableScopes(settings)
         self._suite = None
         self._suite_status = None
         self._executed_tests = None
@@ -39,11 +41,6 @@ class Runner(SuiteVisitor):
     @property
     def _context(self):
         return EXECUTION_CONTEXTS.current
-
-    @property
-    def _variables(self):
-        ctx = self._context
-        return ctx.variables if ctx else None
 
     def start_suite(self, suite):
         result = TestSuite(source=suite.source,
@@ -59,7 +56,9 @@ class Runner(SuiteVisitor):
                                   stat_config=self._settings.statistics_config)
         else:
             self._suite.suites.append(result)
-        ns = Namespace(result, suite.resource.keywords, suite.resource.imports)
+        ns = Namespace(self._variables, result, suite.resource.keywords,
+                       suite.resource.imports)
+        ns.start_suite()
         ns.variables.set_from_variable_table(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
         self._context.set_suite_variables(result)

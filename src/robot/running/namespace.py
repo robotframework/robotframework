@@ -35,12 +35,12 @@ class Namespace(object):
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, suite, user_keywords, imports):
+    def __init__(self, variables, suite, user_keywords, imports):
         LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.suite = suite
         self.test = None
         self.uk_handlers = []
-        self.variables = VariableScopes()
+        self.variables = variables
         self._imports = imports
         self._kw_store = KeywordStore(user_keywords)
         self._imported_variable_files = ImportCache()
@@ -101,7 +101,7 @@ class Namespace(object):
         path = self._resolve_name(import_setting)
         args = self._resolve_args(import_setting)
         if overwrite or (path, args) not in self._imported_variable_files:
-            self._imported_variable_files.add((path,args))
+            self._imported_variable_files.add((path, args))
             self.variables.set_from_file(path, args, overwrite)
         else:
             msg = "Variable file '%s'" % path
@@ -172,6 +172,9 @@ class Namespace(object):
         for lib in self.libraries:
             lib.end_test()
 
+    def start_suite(self):
+        self.variables.start_suite()
+
     def end_suite(self):
         self.suite = None
         self.variables.end_suite()
@@ -179,11 +182,11 @@ class Namespace(object):
             lib.end_suite()
 
     def start_user_keyword(self, handler):
-        self.variables.start_uk()
+        self.variables.start_keyword()
         self.uk_handlers.append(handler)
 
     def end_user_keyword(self):
-        self.variables.end_uk()
+        self.variables.end_keyword()
         self.uk_handlers.pop()
 
     def get_library_instance(self, libname):

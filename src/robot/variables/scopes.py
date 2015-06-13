@@ -12,27 +12,79 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
+import tempfile
+
 from robot.errors import DataError
+from robot.output import LOGGER
+from robot.utils import abspath, find_file, get_error_details, NormalizedDict
 
 from .variables import Variables
 
 
-GLOBAL_VARIABLES = Variables()
-
-
 class VariableScopes(object):
 
-    def __init__(self):
-        variables = GLOBAL_VARIABLES.copy()
-        self._suite = self.current = variables
+    def __init__(self, settings):
+        self._global = GlobalVariables(settings)
+        self._suite = None
         self._test = None
-        self._uk_handlers = []    # FIXME: Better name
-        self._set_test_vars = Variables()
-        self._set_kw_vars = Variables()
-        self._set_global_vars = Variables()
+        self._scopes = [self._global]
+        self._variables_set = SetVariables()
 
-    def __len__(self):
-        return len(self.current)
+    @property
+    def current(self):
+        return self._scopes[-1]
+
+    @property
+    def _all_scopes(self):
+        return reversed(self._scopes)
+
+    @property
+    def _scopes_until_suite(self):
+        for scope in self._all_scopes:
+            yield scope
+            if scope is self._suite:
+                break
+
+    @property
+    def _scopes_until_test(self):
+        for scope in self._scopes_until_suite:
+            yield scope
+            if scope is self._test:
+                break
+
+    def start_suite(self):
+        self._suite = self._global.copy()
+        self._scopes.append(self._suite)
+
+    def end_suite(self):
+        self._scopes.pop()
+        self._suite = self._scopes[-1] if len(self._scopes) > 1 else None
+
+    def start_test(self):
+        self._test = self._suite.copy()
+        self._scopes.append(self._test)
+
+    def end_test(self):
+        self._scopes.pop()
+        self._test = None
+        self._variables_set.end_test()
+
+    def start_keyword(self):
+        kw = self._suite.copy()
+        self._variables_set.start_keyword()
+        self._variables_set.update_keyword(kw)
+        self._scopes.append(kw)
+
+    def end_keyword(self):
+        self._scopes.pop()
+        self._variables_set.end_keyword()
+
+    def __getitem__(self, name):
+        return self.current[name]
+
+    def __setitem__(self, name, value):
+        self.current[name] = value
 
     def replace_list(self, items, replace_until=None):
         return self.current.replace_list(items, replace_until)
@@ -44,88 +96,132 @@ class VariableScopes(object):
         return self.current.replace_string(string, ignore_errors=ignore_errors)
 
     def set_from_file(self, path, args, overwrite=False):
-        variables = self._suite.set_from_file(path, args, overwrite)
-        if self._test is not None:
-            self._test.set_from_file(variables, overwrite=True)
-        for varz, _ in self._uk_handlers:
-            varz.set_from_file(variables, overwrite=True)
-        if self._uk_handlers:
-            self.current.set_from_file(variables, overwrite=True)
+        variables = None
+        for scope in self._scopes_until_suite:
+            if variables is None:
+                variables = scope.set_from_file(path, args, overwrite)
+            else:
+                scope.set_from_file(variables, overwrite=overwrite)
 
-    def set_from_variable_table(self, rawvariables, overwrite=False):
-        self._suite.set_from_variable_table(rawvariables, overwrite)
-        if self._test is not None:
-            self._test.set_from_variable_table(rawvariables, overwrite)
-        for varz, _ in self._uk_handlers:
-            varz.set_from_variable_table(rawvariables, overwrite)
-        if self._uk_handlers:
-            self.current.set_from_variable_table(rawvariables, overwrite)
+    def set_from_variable_table(self, variables, overwrite=False):
+        for scope in self._scopes_until_suite:
+            scope.set_from_variable_table(variables, overwrite)
 
     def resolve_delayed(self):
-        self.current.resolve_delayed()
-
-    def __getitem__(self, name):
-        return self.current[name]
-
-    def __setitem__(self, name, value):
-        self.current[name] = value
-
-    def end_suite(self):
-        self._suite = self._test = self.current = None
-
-    def start_test(self):
-        self._test = self.current = self._suite.copy()
-
-    def end_test(self):
-        self.current = self._suite
-        self._set_test_vars.clear()
-
-    def start_uk(self):
-        self._uk_handlers.append((self.current, self._set_kw_vars))
-        self.current = self._suite.copy()
-        self.current.update(self._set_test_vars)
-        self.current.update(self._set_kw_vars)
-        self._set_kw_vars = self._set_kw_vars.copy()
-
-    def end_uk(self):
-        self.current, self._set_kw_vars = self._uk_handlers.pop()
+        for scope in self._scopes_until_suite:
+            scope.resolve_delayed()
 
     def set_global(self, name, value):
-        name, value = self._set_global_suite_or_test(GLOBAL_VARIABLES, name, value)
-        # TODO: This needs to be implemented otherwise...
-        from robot.running import EXECUTION_CONTEXTS
-        for ns in EXECUTION_CONTEXTS.namespaces:
-            ns.variables.set_suite(name, value)
+        for scope in self._all_scopes:
+            name, value = self._set_global_suite_or_test(scope, name, value)
 
-    def set_suite(self, name, value):
-        name, value = self._set_global_suite_or_test(self._suite, name, value)
-        self.set_test(name, value, False)
-
-    def set_test(self, name, value, fail_if_no_test=True):
-        if self._test is not None:
-            name, value = self._set_global_suite_or_test(self._test, name, value)
-        elif fail_if_no_test:
-            raise DataError("Cannot set test variable when no test is started")
-        for varz, _ in self._uk_handlers:
-            varz[name] = value
-        self.current[name] = value
-        self._set_test_vars[name] = value
-
-    def set_keyword(self, name, value):
-        self.current[name] = value
-        self._set_kw_vars[name] = value
-
-    def _set_global_suite_or_test(self, variables, name, value):
-        variables[name] = value
+    def _set_global_suite_or_test(self, scope, name, value):
+        scope[name] = value
         # Avoid creating new list/dict objects in different scopes.
         if name[0] != '$':
             name = '$' + name[1:]
-            value = variables[name]
+            value = scope[name]
         return name, value
+
+    def set_suite(self, name, value, top=False):
+        if top:
+            self._scopes[1][name] = value
+        else:
+            for scope in self._scopes_until_suite:
+                name, value = self._set_global_suite_or_test(scope, name, value)
+
+    def set_test(self, name, value):
+        if self._test is None:
+            raise DataError('Cannot set test variable when no test is started.')
+        for scope in self._scopes_until_test:
+            name, value = self._set_global_suite_or_test(scope, name, value)
+        self._variables_set.set_test(name, value)
+
+    def set_keyword(self, name, value):
+        self.current[name] = value
+        self._variables_set.set_keyword(name, value)
+
+    # TODO: Are iter/len needed??
 
     def __iter__(self):
         return iter(self.current)
 
+    def __len__(self):
+        return len(self.current)
+
     @property
     def store(self):
         return self.current.store
+
+
+class GlobalVariables(Variables):
+
+    def __init__(self, settings):
+        Variables.__init__(self)
+        self._set_cli_variables(settings)
+        self._set_built_in_variables(settings)
+
+    def _set_cli_variables(self, settings):
+        for path, args in settings.variable_files:
+            try:
+                path = find_file(path, file_type='Variable file')
+                self.set_from_file(path, args)
+            except:
+                msg, details = get_error_details()
+                LOGGER.error(msg)
+                LOGGER.info(details)
+        for varstr in settings.variables:
+            try:
+                name, value = varstr.split(':', 1)
+            except ValueError:
+                name, value = varstr, ''
+            self['${%s}' % name] = value
+
+    def _set_built_in_variables(self, settings):
+        for name, value in [('${TEMPDIR}', abspath(tempfile.gettempdir())),
+                            ('${EXECDIR}', abspath('.')),
+                            ('${/}', os.sep),
+                            ('${:}', os.pathsep),
+                            ('${\\n}', os.linesep),
+                            ('${SPACE}', ' '),
+                            ('${True}', True),
+                            ('${False}', False),
+                            ('${None}', None),
+                            ('${null}', None),
+                            ('${OUTPUT_DIR}', settings.output_directory),
+                            ('${OUTPUT_FILE}', settings.output or 'NONE'),
+                            ('${REPORT_FILE}', settings.report or 'NONE'),
+                            ('${LOG_FILE}', settings.log or 'NONE'),
+                            ('${DEBUG_FILE}', settings.debug_file or 'NONE'),
+                            ('${LOG_LEVEL}', settings.log_level),
+                            ('${PREV_TEST_NAME}', ''),
+                            ('${PREV_TEST_STATUS}', ''),
+                            ('${PREV_TEST_MESSAGE}', '')]:
+            self[name] = value
+
+
+class SetVariables(object):
+
+    def __init__(self):
+        self._test = NormalizedDict(ignore='_')
+        self._scopes = [self._test]
+
+    def end_test(self):
+        self._test.clear()
+
+    def start_keyword(self):
+        self._scopes.append(self._scopes[-1].copy())
+
+    def end_keyword(self):
+        self._scopes.pop()
+
+    def set_test(self, name, value):
+        for scope in self._scopes:
+            scope[name] = value
+
+    def set_keyword(self, name, value):
+        self._scopes[-1][name] = value
+
+    def update_keyword(self, kw):
+        for name, value in self._scopes[-1].items():
+            kw[name] = value
