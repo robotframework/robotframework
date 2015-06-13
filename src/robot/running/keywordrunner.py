@@ -192,9 +192,15 @@ class BasicForLoopRunner(object):
         values_per_iteration = self._original_values_per_iteration(data.variables)
         if len(values) % values_per_iteration == 0:
             return values
+        error_addendum = ""
+        if len(data.variables) != values_per_iteration:
+            # This is a bit awkward, but I'm not sure how else to phrase
+            # the impact of a non-value variable like from ForInEnumerate.
+            error_addendum = " (%d of which matter for this error)" % values_per_iteration
         raise DataError('Number of FOR loop values should be multiple of '
-                        'variables. Got %d variables but %d value%s.'
-                        % (len(data.variables), len(values), s(values)))
+                        'variables. Got %d variables%s but %d value%s.'
+                        % (len(data.variables), error_addendum,
+                            len(values), s(values)))
 
     def _run_one_round(self, data, values):
         name = ', '.join(format_assign_message(var, item)

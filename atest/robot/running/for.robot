@@ -284,7 +284,8 @@ For In Zip With 3 Lists
 
 For In Zip With Other Iterables
     [Documentation]    Handling non-lists. Should accept anything iterable except strings and fail with a clear error message if invalid data given. You can use utils.is_list_like to verify inputs.
-    Comment
+    [Tags]    Not Ready
+    ${tc} =    Check Test Case    ${TEST NAME}
 
 For In Zip With String "Lists"
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -313,20 +314,16 @@ For In Enumerate (with 5 items)
     [Documentation]    This test is repeated with different lengths to expose subtle validation errors from development.
     ${tc} =    Check Test Case    ${TEST NAME}
 
+For In Enumerate With 3 Variables
+    ${tc} =    Check Test Case    ${TEST NAME}
 
-For In Enumerate With Too Many Variables
-    [Tags]    Not Ready
-    Fail    Not Implemented
+For In Enumerate With not the right number of variables
+    ${tc} =    Check Test Case    ${TEST NAME}
 
 For In Enumerate With Too Few Variables
-    [Tags]    Not Ready
-    Fail    Not Implemented
+    ${tc} =    Check Test Case    ${TEST NAME}
 
 For In Enumerate With Other Iterables
-    [Tags]    Not Ready
-    Fail    Not Implemented
-
-For In Enumerate With Extra Loop Variables
     [Tags]    Not Ready
     Fail    Not Implemented
 

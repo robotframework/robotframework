@@ -343,6 +343,8 @@ For In Zip With 3 Lists
 
 For In Zip With Other Iterables
     [Documentation]    Handling non-lists. Should accept anything iterable except strings and fail with a clear error message if invalid data given. You can use utils.is_list_like to verify inputs.
+    [Tags]    Not Ready
+    Fail    TODO
 
 For In Zip With String "Lists"
     [Documentation]    FAIL    For-In-Zip Loop items must all be List-like (but not Strings); got <type 'unicode'> with value 'NotAListButStillPythonIterable'
@@ -387,19 +389,30 @@ For In Enumerate (with 5 items)
     \    @{result}=     Create List    @{result}    ${index}:${item}
     Should Be True    @{result} == ['0:a', '1:b', '2:c', '3:d', '4:e']
 
-For In Enumerate With Too Many Variables
-    [Tags]    Not Ready
-    Fail    Not Implemented
+For In Enumerate With 3 Variables
+    @{items}=    Create List    a    b    c    d    e    f
+    : FOR    ${index}    ${item}    ${another_item}    IN ENUMERATE    @{items}
+    \    Should Be Equal    @{items}[${index* 2 }]    ${item}    Loop value ${item} should be item ${index} of ${items}
+    \    Should Be Equal    @{items}[${index * 2 + 1}]    ${another_item}    Loop value ${another_item} should be item ${index} of ${items}
+    \    @{result}=     Create List    @{result}    ${index}:${item}:${another_item}
+    Should Be True    @{result} == ['0:a:b', '1:c:d', '2:e:f']
+
+For In Enumerate With not the right number of variables
+    [Documentation]    FAIL    Number of FOR loop values should be multiple of variables. Got 3 variables (2 of which matter for this error) but 7 values.
+    @{items}=    Create List    a    b    c    d    e    f    g
+    : FOR    ${index}    ${item}    ${another_item}    IN ENUMERATE    @{items}
+    \    Should Be Equal    @{items}[${index* 2 }]    ${item}    Loop value ${item} should be item ${index} of ${items}
+    \    Should Be Equal    @{items}[${index * 2 + 1}]    ${another_item}    Loop value ${another_item} should be item ${index} of ${items}
+    \    @{result}=     Create List    @{result}    ${index}:${item}:${another_item}
+    Should Be True    @{result} == ['0:a:b', '1:c:d', '2:e:f']
 
 For In Enumerate With Too Few Variables
     [Tags]    Not Ready
-    Fail    Not Implemented
+    [Documentation]    FAIL    FOR IN ENUMERATE expected 2 or more loop variables, got 1.
+    : FOR    ${index}    IN ENUMERATE    a    b    c    d    e    f
+    \    Fail    Should not reach this line.
 
 For In Enumerate With Other Iterables
-    [Tags]    Not Ready
-    Fail    Not Implemented
-
-For In Enumerate With Extra Loop Variables
     [Tags]    Not Ready
     Fail    Not Implemented
 
