@@ -18,10 +18,13 @@ import traceback
 
 from robot.errors import RobotError
 
+from .platform import JYTHON
 from .unic import unic
 
+
+EXCLUDE_ROBOT_TRACES = True    # Exclude internal traceback by default or not.
 RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
-if sys.platform.startswith('java'):
+if JYTHON:
     from java.io import StringWriter, PrintWriter
     from java.lang import Throwable, OutOfMemoryError
     RERAISED_EXCEPTIONS += (OutOfMemoryError,)
@@ -39,14 +42,13 @@ def get_error_message():
     return ErrorDetails().message
 
 
-def get_error_details(exclude_robot_traces=True):
-    """Returns error message and details of the last occurred exception.
-    """
+def get_error_details(exclude_robot_traces=EXCLUDE_ROBOT_TRACES):
+    """Returns error message and details of the last occurred exception."""
     details = ErrorDetails(exclude_robot_traces)
     return details.message, details.traceback
 
 
-def ErrorDetails(exclude_robot_traces=True):
+def ErrorDetails(exclude_robot_traces=EXCLUDE_ROBOT_TRACES):
     """This factory returns an object that wraps the last occurred exception
 
     It has attributes `message`, `traceback` and `error`, where `message`
