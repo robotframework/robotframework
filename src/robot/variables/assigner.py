@@ -45,7 +45,7 @@ class VariableAssigner(object):
             context.info(format_assign_message(name, value))
 
     def _extended_assign(self, name, value, variables):
-        if name[0] != '$' or '.' not in name or name in variables.store:
+        if name[0] != '$' or '.' not in name or name in variables:
             return False
         base, attr = self._split_extended_assign(name)
         try:

@@ -15,7 +15,6 @@
 from contextlib import contextmanager
 
 from robot.errors import DataError
-from robot.variables import GLOBAL_VARIABLES
 
 
 class ExecutionContexts(object):
@@ -88,8 +87,8 @@ class _ExecutionContext(object):
 
     @contextmanager
     def test_teardown(self, test):
-        self.variables['${TEST_STATUS}'] = test.status
-        self.variables['${TEST_MESSAGE}'] = test.message
+        self.variables.set_test('${TEST_STATUS}', test.status)
+        self.variables.set_test('${TEST_MESSAGE}', test.message)
         self.in_test_teardown = True
         try:
             yield
@@ -99,13 +98,21 @@ class _ExecutionContext(object):
 
     @contextmanager
     def keyword_teardown(self, error):
-        self.variables['${KEYWORD_STATUS}'] = 'FAIL' if error else 'PASS'
-        self.variables['${KEYWORD_MESSAGE}'] = unicode(error or '')
+        self.variables.set_keyword('${KEYWORD_STATUS}', 'FAIL' if error else 'PASS')
+        self.variables.set_keyword('${KEYWORD_MESSAGE}', unicode(error or ''))
         self.in_keyword_teardown += 1
         try:
             yield
         finally:
             self.in_keyword_teardown -= 1
+
+    @contextmanager
+    def user_keyword(self, kw):
+        self.namespace.start_user_keyword(kw)
+        try:
+            yield
+        finally:
+            self.namespace.end_user_keyword()
 
     @property
     def in_teardown(self):
@@ -120,10 +127,10 @@ class _ExecutionContext(object):
     # TODO: Move start_suite here from EXECUTION_CONTEXT
 
     def end_suite(self, suite):
-        for var in ['${PREV_TEST_NAME}',
-                    '${PREV_TEST_STATUS}',
-                    '${PREV_TEST_MESSAGE}']:
-            GLOBAL_VARIABLES[var] = self.variables[var]
+        for name in ['${PREV_TEST_NAME}',
+                     '${PREV_TEST_STATUS}',
+                     '${PREV_TEST_MESSAGE}']:
+            self.variables.set_global(name, self.variables[name])
         self.output.end_suite(suite)
         self.namespace.end_suite()
         EXECUTION_CONTEXTS.end_suite()
@@ -140,15 +147,15 @@ class _ExecutionContext(object):
 
     def start_test(self, test):
         self.namespace.start_test(test)
-        self.variables['${TEST_NAME}'] = test.name
-        self.variables['${TEST_DOCUMENTATION}'] = test.doc
-        self.variables['@{TEST_TAGS}'] = list(test.tags)
+        self.variables.set_test('${TEST_NAME}', test.name)
+        self.variables.set_test('${TEST_DOCUMENTATION}', test.doc)
+        self.variables.set_test('@{TEST_TAGS}', list(test.tags))
 
     def end_test(self, test):
         self.namespace.end_test()
-        self.variables['${PREV_TEST_NAME}'] = test.name
-        self.variables['${PREV_TEST_STATUS}'] = test.status
-        self.variables['${PREV_TEST_MESSAGE}'] = test.message
+        self.variables.set_suite('${PREV_TEST_NAME}', test.name)
+        self.variables.set_suite('${PREV_TEST_STATUS}', test.status)
+        self.variables.set_suite('${PREV_TEST_MESSAGE}', test.message)
         self.timeout_occurred = False
 
     # Should not need separate start/end_keyword and start/end_user_keyword
@@ -164,12 +171,6 @@ class _ExecutionContext(object):
         self._started_keywords -= 1
         if self.in_test_teardown and not keyword.passed:
             self.failure_in_test_teardown = True
-
-    def start_user_keyword(self, kw):
-        self.namespace.start_user_keyword(kw)
-
-    def end_user_keyword(self):
-        self.namespace.end_user_keyword()
 
     def get_handler(self, name):
         return self.namespace.get_handler(name)

@@ -989,16 +989,7 @@ class _Variables:
         a custom object that did not support all dictionary methods.
         """
         # TODO: Support also returning variables w/o decoration
-        variables = ((self._decorate_variable(name, value), value)
-                     for name, value in self._variables.store.data.items())
-        return utils.NormalizedDict(variables, ignore='_')
-
-    def _decorate_variable(self, name, value):
-        if utils.is_dict_like(value):
-            return '&{%s}' % name
-        if utils.is_list_like(value):
-            return '@{%s}' % name
-        return '${%s}' % name
+        return self._variables.as_dict()
 
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):
@@ -2686,10 +2677,9 @@ class _Misc:
         New in Robot Framework 2.7. Support for ``append`` and ``top`` were
         added in 2.7.7.
         """
-        ns = self._get_namespace(top)
-        suite = ns.suite
+        suite = self._get_namespace(top).suite
         suite.doc = self._get_possibly_appended_value(suite.doc, doc, append)
-        ns.variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc)
+        self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc, top)
         self.log('Set suite documentation to:\n%s' % suite.doc)
 
     def set_suite_metadata(self, name, value, append=False, top=False):
@@ -2713,10 +2703,10 @@ class _Misc:
         """
         if not isinstance(name, unicode):
             name = utils.unic(name)
-        ns = self._get_namespace(top)
-        metadata = ns.suite.metadata
-        metadata[name] = self._get_possibly_appended_value(metadata.get(name, ''), value, append)
-        ns.variables.set_suite('${SUITE_METADATA}', metadata.copy())
+        metadata = self._get_namespace(top).suite.metadata
+        original = metadata.get(name, '')
+        metadata[name] = self._get_possibly_appended_value(original, value, append)
+        self._variables.set_suite('${SUITE_METADATA}', metadata.copy(), top)
         self.log("Set suite metadata '%s' to value '%s'." % (name, metadata[name]))
 
     def set_tags(self, *tags):

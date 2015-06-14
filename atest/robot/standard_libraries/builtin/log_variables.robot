@@ -148,8 +148,6 @@ Log Variables In User Keyword
     Check Variable Message    \&{DICT} = { key=value | two=2 }
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
-    Check Variable Message    \@{int_list_1} = [ 0 | 1 | 2 | 3 ]
-    Check Variable Message    \@{int_list_2} = [ 0 | 1 | 2 | 3 ]
     Check Variable Message    \${interpreter} = *    pattern=yes
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \${LOG_FILE} = NONE
@@ -178,8 +176,7 @@ Log Variables In User Keyword
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
     Check Variable Message    \${ukvar} = Value of an uk variable
-    Check Variable Message    \${var} = Hello
-    Should Be Equal As Integers    ${kw.message_count}    43    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    40    Wrong total message count
 
 *** Keywords ***
 Check Variable Message

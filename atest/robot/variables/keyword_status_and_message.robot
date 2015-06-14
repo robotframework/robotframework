@@ -4,7 +4,6 @@ Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
-
 Pass status directly in teardown
     Check Test Case    ${TESTNAME}
 
@@ -32,6 +31,11 @@ Status and message when there are only continuable failures
 Status and message are not available if not in teardown
     Check Test Case    ${TESTNAME}
 
-Status and message always contain latest values
+Status and message are not available after teardown
     Check Test Case    ${TESTNAME}
 
+Previous status and message are not overwritten
+    Check Test Case    ${TESTNAME}
+
+Status and message always contain latest values
+    Check Test Case    ${TESTNAME}

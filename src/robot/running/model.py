@@ -16,7 +16,6 @@ from robot import model
 from robot.conf import RobotSettings
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import setter
-from robot.variables import init_global_variables
 
 from .randomizer import Randomizer
 
@@ -152,7 +151,6 @@ class TestSuite(model.TestSuite):
             with pyloggingconf.robot_handler_enabled(settings.log_level):
                 with STOP_SIGNAL_MONITOR:
                     IMPORTER.reset()
-                    init_global_variables(settings)
                     output = Output(settings)
                     runner = Runner(output, settings)
                     self.visit(runner)
