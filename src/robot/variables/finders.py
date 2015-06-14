@@ -73,7 +73,7 @@ class StoredFinder(object):
         self._store = store
 
     def find(self, name):
-        return self._store.find(name[2:-1])
+        return self._store[name[2:-1]]
 
 
 class NumberFinder(object):

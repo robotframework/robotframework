@@ -48,11 +48,8 @@ class VariableStore(object):
                             "Variable '${%s}' not found." % name)
         return self.data[name]
 
-    def find(self, name):
-        return self._resolve_delayed(name, self.data[name])
-
     def __getitem__(self, name):
-        return self.find(name)    # TODO: __getitem__ vs find
+        return self._resolve_delayed(name, self.data[name])
 
     def update(self, store):
         self.data.update(store.data)
@@ -94,3 +91,16 @@ class VariableStore(object):
 
     def __contains__(self, name):
         return name in self.data
+
+    def as_dict(self):
+        variables = (self._decorate(name, self[name]) for name in self)
+        return NormalizedDict(variables,  ignore='_')
+
+    def _decorate(self, name, value):
+        if is_dict_like(value):
+            name = '&{%s}' % name
+        elif is_list_like(value):
+            name = '@{%s}' % name
+        else:
+            name = '${%s}' % name
+        return name, value

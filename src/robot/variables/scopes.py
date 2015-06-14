@@ -86,6 +86,9 @@ class VariableScopes(object):
     def __setitem__(self, name, value):
         self.current[name] = value
 
+    def __contains__(self, name):
+        return name in self.current
+
     def replace_list(self, items, replace_until=None):
         return self.current.replace_list(items, replace_until)
 
@@ -141,17 +144,8 @@ class VariableScopes(object):
         self.current[name] = value
         self._variables_set.set_keyword(name, value)
 
-    # TODO: Are iter/len needed??
-
-    def __iter__(self):
-        return iter(self.current)
-
-    def __len__(self):
-        return len(self.current)
-
-    @property
-    def store(self):
-        return self.current.store
+    def as_dict(self):
+        return self.current.as_dict()
 
 
 class GlobalVariables(Variables):

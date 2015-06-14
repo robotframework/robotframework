@@ -40,6 +40,9 @@ class Variables(object):
     def __getitem__(self, name):
         return self._finder.find(name)
 
+    def __contains__(self, name):
+        return name in self.store
+
     def resolve_delayed(self):
         self.store.resolve_delayed()
 
@@ -73,11 +76,5 @@ class Variables(object):
     def update(self, variables):
         self.store.update(variables.store)
 
-    # TODO: Are __iter__ and __len__ needed? Notice that __iter__ yields
-    # items without decoration. Inconsistent e.g. w/ __getitem__.
-
-    def __iter__(self):
-        return iter(self.store)
-
-    def __len__(self):
-        return len(self.store)
+    def as_dict(self):
+        return self.store.as_dict()
