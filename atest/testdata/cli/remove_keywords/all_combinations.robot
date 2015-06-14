@@ -81,6 +81,9 @@ TAGged keywords
     Tag and remove
     Fail    this fails
 
+Warnings are preserved
+    This should be removed but contains warnings
+
 *** Keywords ***
 
 My FOR
@@ -130,3 +133,11 @@ Tag but no remove
 Tag and remove
     [Tags]   hello    kitty     remove
     Log   This is removed by TAG
+
+This should be removed but contains warnings
+    [Tags]   hello    kitty     remove
+    This should be removed but contains warnings 2
+
+This should be removed but contains warnings 2
+    [Tags]   hello    kitty     remove
+    Log    Keywords with warnings are not removed    WARN

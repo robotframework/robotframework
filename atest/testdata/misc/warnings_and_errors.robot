@@ -9,9 +9,14 @@ Warning in test case
 
 Warning in test case
     [Documentation]    Duplicate name causes warning
-    Log    No warnings here
+    No warning
 
 *** Keywords ***
 Warning in
     [Arguments]    ${where}
+    [Tags]    warn
     Log    Warning in ${where}    WARN
+
+No warning
+    [Tags]    warn
+    Log    No warnings here
