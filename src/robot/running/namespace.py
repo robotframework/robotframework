@@ -20,7 +20,6 @@ from robot.errors import DataError
 from robot.libraries import STDLIBS, STDLIB_TO_DEPRECATED_MAP
 from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
-from robot.variables import VariableScopes
 
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
