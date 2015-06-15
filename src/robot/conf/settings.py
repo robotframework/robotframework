@@ -381,7 +381,9 @@ class RobotSettings(_BaseSettings):
                        'VariableFiles'      : ('variablefile', []),
                        'PreRunModifiers'    : ('prerunmodifier', []),
                        'Listeners'          : ('listener', []),
-                       'ConsoleOutput'      : ('consoleoutput', 'verbose'),
+                       'ConsoleType'        : ('console', 'verbose'),
+                       'ConsoleTypeDotted'  : ('dotted', False),
+                       'ConsoleTypeQuiet'   : ('quiet', False),
                        'MonitorWidth'       : ('monitorwidth', 78),
                        'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
                        'DebugFile'          : ('debugfile', None)}
@@ -457,13 +459,20 @@ class RobotSettings(_BaseSettings):
     @property
     def console_output_config(self):
         return {
-            'type':    self['ConsoleOutput'],
+            'type':    self._get_console_type(),
             'width':   self['MonitorWidth'],
             'colors':  self['MonitorColors'],
             'markers': self['MonitorMarkers'],
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }
+
+    def _get_console_type(self):
+        if self['ConsoleTypeQuiet']:
+            return 'quiet'
+        if self['ConsoleTypeDotted']:
+            return 'dotted'
+        return self['ConsoleType']
 
     @property
     def pre_run_modifiers(self):

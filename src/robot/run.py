@@ -286,7 +286,15 @@ Options
                           structure before execution.
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating reports and logs.
- -O --consoleoutput type  TODO: Doc, short opt, deprecate --monitorxxx
+    --console type        How to report execution on the console.
+                          verbose:  report every suite and test (default)
+                          dotted:   only show '.' for passed test, 'f' for
+                                    failed non-critical tests, and 'F' for
+                                    failed critical tests
+                          quiet:    no output except for errors and warnings
+                          none:     no output whatsoever
+ -. --dotted              Shortcut for `--console dotted`.
+    --quiet               Shortcut for `--console quiet`.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
