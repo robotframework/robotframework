@@ -136,9 +136,26 @@ structure of ``robot`` and ``testdata`` folders. Their current structure
 follows Robot Framework's old internal module structure and it is far
 from ideal nowadays.
 
+Additional modules
+------------------
+
+Tests related to YAML variable files require `PyYAML <http://pyyaml.org/>`_
+module. You should be able to install it with ``pip install pyyaml``.
+The Python version of the module is enough so it is not a problem if
+installing the C version fails due to a missing compiler or otherwise.
+
+XML library tests verifying using `lxml <http://lxml.de/>`_ module naturally
+require having that module installed. Because installing it is not always
+trivial, these tests are not considered critical if it is not installed.
+
+Tests related to parsing reStructuredText test data files require
+`docutils <http://docutils.sourceforge.net/>`_ module. You can install it
+with ``pip install docutils``, but also these tests are non-critical if
+the module is not installed.
+
 Telnet tests
 ------------
 
 Telnet test are not critical by default and running them requires some
-extra setup. Instructions how to run them can be found from 
-`testdata/standard_libraries/telnet/README.rst <https://github.com/robotframework/robotframework/blob/master/atest/testdata/standard_libraries/telnet/README.rst>`_.
+extra setup. Instructions how to run them can be found from
+`<testdata/standard_libraries/telnet/README.rst>`_.
