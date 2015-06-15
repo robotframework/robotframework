@@ -126,7 +126,7 @@ class TestLogger(unittest.TestCase):
                 getattr(self.logger, stend + '_' + name)(name)
                 assert_equals(getattr(logger, stend + 'ed_' + name), name)
 
-    def test_verbosoe_console_output_is_automatically_registered(self):
+    def test_verbose_console_output_is_automatically_registered(self):
         logger = Logger()
         assert_true(logger._loggers.all_loggers()[0].start_suite.im_class is VerboseOutput)
 
