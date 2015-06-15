@@ -13,7 +13,8 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import get_error_details, type_name, Importer
+from robot.utils import (get_error_details, split_args_from_name_or_path,
+                         type_name, Importer)
 
 from .visitor import SuiteVisitor
 
@@ -23,7 +24,7 @@ class ModelModifier(SuiteVisitor):
     def __init__(self, visitors, empty_suite_ok, logger):
         self._log_error = logger.error
         self._empty_suite_ok = empty_suite_ok
-        self._visitors = list(self._import_visitors(visitors))
+        self._visitors = list(self._yield_visitors(visitors))
 
     def visit_suite(self, suite):
         for visitor in self._visitors:
@@ -37,10 +38,14 @@ class ModelModifier(SuiteVisitor):
             raise DataError("Suite '%s' contains no tests after model "
                             "modifiers." % suite.name)
 
-    def _import_visitors(self, visitors):
+    def _yield_visitors(self, visitors):
         importer = Importer('model modifier')
-        for visitor, args in visitors:
+        for visitor in visitors:
             try:
-                yield importer.import_class_or_module(visitor, args)
+                if not isinstance(visitor, basestring):
+                    yield visitor
+                else:
+                    name, args = split_args_from_name_or_path(visitor)
+                    yield importer.import_class_or_module(name, args)
             except DataError as err:
                 self._log_error(unicode(err))

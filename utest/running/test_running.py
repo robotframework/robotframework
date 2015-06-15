@@ -100,6 +100,14 @@ class TestRunning(unittest.TestCase):
         assert_test(result.tests[0], 'T1', 'FAIL', msg='Error message')
         assert_test(result.tests[1], 'T2', 'FAIL', ('added tag',), 'Error')
 
+    def test_modifiers_are_not_used(self):
+        # These options are valid but not used. Modifiers can be passed to
+        # suite.visit() explicitly if needed.
+        suite = TestSuite(name='Suite')
+        suite.tests.create(name='Test').keywords.create('No Operation')
+        result = run(suite, prerunmodifier='not used', prerebotmodifier=42)
+        assert_suite(result, 'Suite', 'PASS', tests=1)
+
 
 class TestTestSetupAndTeardown(unittest.TestCase):
 

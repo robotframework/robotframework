@@ -117,7 +117,7 @@ class _BaseSettings(object):
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
-        if name in ['PreRunModifiers', 'PreRebotModifiers', 'VariableFiles']:
+        if name == 'VariableFiles':
             return [split_args_from_name_or_path(item) for item in value]
         if name == 'ReportBackground':
             return self._process_report_background(value)
