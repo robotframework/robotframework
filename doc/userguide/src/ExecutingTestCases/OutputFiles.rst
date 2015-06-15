@@ -462,8 +462,8 @@ Removing keywords
 
 The :option:`--removekeywords` option removes keywords and their messages
 altogether. It has the following modes of operation, and it can be used
-multiple times to enable multiple modes. Keywords that contain warnings_
-are not removed except when using the `ALL` mode.
+multiple times to enable multiple modes. Keywords that contain `errors
+or warnings`__ are not removed except when using the `ALL` mode.
 
 `ALL`
    Remove data from all keywords unconditionally.
@@ -506,6 +506,7 @@ Removing keywords is done after parsing the `output file`_ and generating
 an internal model based on it. Thus it does not reduce memory usage as much
 as `flattening keywords`_.
 
+__ `Errors and warnings`_
 __ `Keyword tags`_
 
 .. note:: The support for using :option:`--removekeywords` when executing tests

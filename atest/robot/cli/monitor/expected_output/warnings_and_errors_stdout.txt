@@ -5,8 +5,10 @@ Warning in test case                                                  | PASS |
 ------------------------------------------------------------------------------
 Warning in test case :: Duplicate name causes warning                 | PASS |
 ------------------------------------------------------------------------------
+Error in test case                                                    | PASS |
+------------------------------------------------------------------------------
 Warnings And Errors                                                   | PASS |
-2 critical tests, 2 passed, 0 failed
-2 tests total, 2 passed, 0 failed
+3 critical tests, 3 passed, 0 failed
+3 tests total, 3 passed, 0 failed
 ==============================================================================
 Output:  *
