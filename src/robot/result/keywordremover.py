@@ -44,13 +44,13 @@ class _KeywordRemover(SuiteVisitor):
         kw.messages = []
         self._removal_message.set(kw)
 
-    def _failed_or_contains_warning(self, item):
-        return not item.passed or self._contains_warning(item)
+    def _failed_or_warning_or_error(self, item):
+        return not item.passed or self._warning_or_error(item)
 
-    def _contains_warning(self, item):
-        contains_warning = ContainsWarning()
-        item.visit(contains_warning)
-        return contains_warning.result
+    def _warning_or_error(self, item):
+        finder = WarningAndErrorFinder()
+        item.visit(finder)
+        return finder.found
 
 
 class AllKeywordsRemover(_KeywordRemover):
@@ -64,11 +64,11 @@ class PassedKeywordRemover(_KeywordRemover):
     def start_suite(self, suite):
         if not suite.statistics.all.failed:
             for keyword in suite.keywords:
-                if not self._contains_warning(keyword):
+                if not self._warning_or_error(keyword):
                     self._clear_content(keyword)
 
     def visit_test(self, test):
-        if not self._failed_or_contains_warning(test):
+        if not self._failed_or_warning_or_error(test):
             for keyword in test.keywords:
                 self._clear_content(keyword)
 
@@ -83,7 +83,7 @@ class ByNameKeywordRemover(_KeywordRemover):
         self._matcher = Matcher(pattern, ignore='_')
 
     def start_keyword(self, kw):
-        if self._matcher.match(kw.name) and not self._contains_warning(kw):
+        if self._matcher.match(kw.name) and not self._warning_or_error(kw):
             self._clear_content(kw)
 
 
@@ -94,7 +94,7 @@ class ByTagKeywordRemover(_KeywordRemover):
         self._pattern = TagPattern(pattern)
 
     def start_keyword(self, kw):
-        if self._pattern.match(kw.tags) and not self._contains_warning(kw):
+        if self._pattern.match(kw.tags) and not self._warning_or_error(kw):
             self._clear_content(kw)
 
 
@@ -109,7 +109,7 @@ class ForLoopItemsRemover(_KeywordRemover):
 
     def _remove_keywords(self, keywords):
         return [kw for kw in keywords
-                if self._failed_or_contains_warning(kw) or kw is keywords[-1]]
+                if self._failed_or_warning_or_error(kw) or kw is keywords[-1]]
 
 
 class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
@@ -127,26 +127,26 @@ class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
             + keywords[-include_from_end:]
 
     def _kws_with_warnings(self, keywords):
-        return [kw for kw in keywords if self._contains_warning(kw)]
+        return [kw for kw in keywords if self._warning_or_error(kw)]
 
 
-class ContainsWarning(SuiteVisitor):
+class WarningAndErrorFinder(SuiteVisitor):
 
     def __init__(self):
-        self.result = False
+        self.found = False
 
     def start_suite(self, suite):
-        return not self.result
+        return not self.found
 
     def start_test(self, test):
-        return not self.result
+        return not self.found
 
     def start_keyword(self, keyword):
-        return not self.result
+        return not self.found
 
     def visit_message(self, msg):
-        if msg.level == 'WARN':
-            self.result = True
+        if msg.level in ('WARN', 'ERROR'):
+            self.found = True
 
 
 class RemovalMessage(object):

@@ -80,14 +80,14 @@ class TestRun(RunningTestCase):
     def test_custom_stderr(self):
         stderr = StringIO()
         assert_equals(run_without_outputs(self.warn, stderr=stderr), 0)
-        self._assert_output(stderr, [('[ WARN ]', 4), ('[ ERROR ]', 1)])
+        self._assert_output(stderr, [('[ WARN ]', 4), ('[ ERROR ]', 2)])
         self._assert_outputs([('Warnings And Errors', 2), ('Output:', 1),
                               ('Log:', 0), ('Report:', 0)])
 
     def test_custom_stdout_and_stderr_with_minimal_implementation(self):
         output = StreamWithOnlyWriteAndFlush()
         assert_equals(run_without_outputs(self.warn, stdout=output, stderr=output), 0)
-        self._assert_output(output, [('[ WARN ]', 4), ('[ ERROR ]', 1),
+        self._assert_output(output, [('[ WARN ]', 4), ('[ ERROR ]', 2),
                                      ('Warnings And Errors', 3), ('Output:', 1),
                                      ('Log:', 0), ('Report:', 0)])
         self._assert_outputs()

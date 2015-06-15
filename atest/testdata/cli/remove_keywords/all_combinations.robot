@@ -81,8 +81,11 @@ TAGged keywords
     Tag and remove
     Fail    this fails
 
-*** Keywords ***
+Warnings and errors are preserved
+    This should be removed but contains warnings
+    This should be removed but contains error
 
+*** Keywords ***
 My FOR
     :FOR    ${item}    IN    one    two    three    LAST
     \    Run Keyword If    "${item}" == "LAST"
@@ -130,3 +133,15 @@ Tag but no remove
 Tag and remove
     [Tags]   hello    kitty     remove
     Log   This is removed by TAG
+
+This should be removed but contains warnings
+    [Tags]   hello    kitty     remove
+    This should be removed but contains warnings 2
+
+This should be removed but contains warnings 2
+    [Tags]   hello    kitty     remove
+    Log    Keywords with warnings are not removed    WARN
+
+This should be removed but contains error
+    [Tags]   hello    kitty     remove
+    Log    Keywords with errors are not removed    ERROR

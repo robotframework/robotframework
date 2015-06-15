@@ -4,9 +4,7 @@ Force Tags      regression   pybot  jybot
 Resource        monitor_resource.robot
 Library         expected_output/ExpectedOutputLibrary.py
 
-
 *** Test Cases ***
-
 Top Level Suite Start
     Check Stdout Contains  ${SEP_LINE1}\n Subsuites${SPACE * 69}\n ${SEP_LINE1}\n
 
