@@ -58,6 +58,11 @@ class Runner(SuiteVisitor):
             self._suite.suites.append(result)
         ns = Namespace(self._variables, result, suite.resource.keywords,
                        suite.resource.imports)
+
+        for resoure_or_library in suite.resource.imports:
+            # print('\nimport_resource_or_library(' + resoure_or_library.name + ')\n')
+            self._output.import_resource_or_library(resoure_or_library.name)
+
         ns.start_suite()
         ns.variables.set_from_variable_table(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
