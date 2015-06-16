@@ -2,38 +2,38 @@
 Documentation     On Windows colors are never actually written to output.
 ...               Testing colors thus really works only on other platforms
 Force Tags        regression    pybot    jybot
-Resource          monitor_resource.robot
+Resource          console_resource.robot
 
 *** Test Cases ***
-Monitor Colors Auto
-    Run Tests With Colors    --monitorcolors auto
+Console Colors Auto
+    Run Tests With Colors    --consolecolors auto
     Outputs should not have ANSI colors
 
-Monitor Colors Off
-    Run Tests With Colors    --monitorcolors OFF
+Console Colors Off
+    Run Tests With Colors    --consolecolors OFF
     Outputs should not have ANSI colors
 
-Monitor Colors Force
+Console Colors Force
     [Documentation]    Backwards compatibility with 2.5.5 and earlier
     Run Tests With Colors    -C force
     Outputs should have ANSI colors when not on Windows
 
-Monitor Colors On
-    Run Tests With Colors    --MonitorCol on
+Console Colors On
+    Run Tests With Colors    --ConsoleCol on
     Outputs should have ANSI colors when not on Windows
 
-Monitor Colors ANSI
-    Run Tests With Colors    --MonitorColors AnSi
+Console Colors ANSI
+    Run Tests With Colors    --ConsoleColors AnSi
     Outputs should have ANSI colors
 
-Invalid Monitor Colors
+Invalid Console Colors
     [Documentation]    Invalid color mapped to 'auto' (default)
     Run Tests With Colors    -C INVALID
     Outputs should not have ANSI colors
 
-Monitor Width
+Console Width
     ${name} =    Evaluate    'Start-' + '0123456789' * 9 + '-end'
-    Run Tests    --monitorwidth 105 --name ${name} --doc x    misc/pass_and_fail.robot
+    Run Tests    --consolewidth 105 --name ${name} --doc x    misc/pass_and_fail.robot
     Check Stdout Contains    ${SEP_CHAR1 * 105}\n ${name} :: x\n ${SEP_CHAR1 * 105}\n
     Check Stdout Contains    ${SEP_CHAR2 * 105}\n ${name[:-7]}... | FAIL |\n ${MSG_211}\n ${SEP_CHAR1 * 105}\n
     ${statuts} =    Create Status Line    Pass    93    PASS

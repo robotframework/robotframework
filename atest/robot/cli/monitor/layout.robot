@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  --variable FAIL:YES --log mylog.html --report myreport.html --debugfile mydebug.txt  misc/suites/subsuites
 Force Tags      regression   pybot  jybot
-Resource        monitor_resource.robot
+Resource        console_resource.robot
 Library         expected_output/ExpectedOutputLibrary.py
 
 *** Test Cases ***
