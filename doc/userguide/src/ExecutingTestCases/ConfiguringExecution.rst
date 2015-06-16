@@ -502,15 +502,19 @@ Console width
 ~~~~~~~~~~~~~
 
 The width of the test execution output in the console can be set using
-the option :option:`--monitorwidth (-W)`. The default width is 78 characters.
+the option :option:`--consolewidth (-W)`. The default width is 78 characters.
 
 .. tip:: On many UNIX-like machines you can use handy `$COLUMNS`
-         variable like `--monitorwidth $COLUMNS`.
+         environment variable like `--consolewidth $COLUMNS`.
+
+.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
+          :option:`--monitorwidth` option that is nowadays deprecated.
+          The short option :option:`-W` works the same way in all versions.
 
 Console colors
 ~~~~~~~~~~~~~~
 
-The :option:`--monitorcolors (-C)` option is used to control whether
+The :option:`--consolecolors (-C)` option is used to control whether
 colors should be used in the console output. Colors are implemented
 using `ANSI colors`__ except on Windows where, by default, Windows
 APIs are used instead. Accessing these APIs from Jython is not possible,
@@ -533,6 +537,10 @@ This option supports the following case-insensitive values:
 `off`
     Colors are disabled.
 
+.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
+          :option:`--monitorcolors` option that is nowadays deprecated.
+          The short option :option:`-C` works the same way in all versions.
+
 __ http://en.wikipedia.org/wiki/ANSI_escape_code
 
 Console markers
@@ -544,7 +552,7 @@ test cases end. The markers allow following the test execution in high level,
 and they are erased when test cases end.
 
 Starting from Robot Framework 2.7.4, it is possible to configure when markers
-are used with :option:`--monitormarkers (-K)` option. It supports the following
+are used with :option:`--consolemarkers (-K)` option. It supports the following
 case-insensitive values:
 
 `auto`
@@ -556,6 +564,10 @@ case-insensitive values:
 
 `off`
     Markers are disabled.
+
+.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
+          :option:`--monitormarkers` option that is nowadays deprecated.
+          The short option :option:`-K` works the same way in all versions.
 
 Setting listeners
 -----------------
