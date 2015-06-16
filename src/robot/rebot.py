@@ -242,12 +242,13 @@ Options
                           in test cases. Error codes are returned normally.
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating outputs.
- -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
+ -C --consolecolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
+    --monitorcolors colors  Deprecated. Use --consolecolors instead.
  -P --pythonpath path *   Additional locations to add to the module search path
                           that is used when importing Python based extensions.
  -E --escape what:with *  Escape characters which are problematic in console.

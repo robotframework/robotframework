@@ -288,23 +288,26 @@ Options
                           model before creating reports and logs.
     --console type        How to report execution on the console.
                           verbose:  report every suite and test (default)
-                          dotted:   only show '.' for passed test, 'f' for
-                                    failed non-critical tests, and 'F' for
+                          dotted:   only show `.` for passed test, `f` for
+                                    failed non-critical tests, and `F` for
                                     failed critical tests
                           quiet:    no output except for errors and warnings
                           none:     no output whatsoever
  -. --dotted              Shortcut for `--console dotted`.
     --quiet               Shortcut for `--console quiet`.
- -W --monitorwidth chars  Width of the monitor output. Default is 78.
- -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
+ -W --consolewidth chars  Width of the monitor output. Default is 78.
+ -C --consolecolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
- -K --monitormarkers auto|on|off  Show `.` (success) or `F` (failure) on
-                          console when top level keywords in test cases end.
-                          Values have same semantics as with --monitorcolors.
+ -K --consolemarkers auto|on|off  Show markers on the console when top level
+                          keywords in a test case end. Values have same
+                          semantics as with --consolecolors.
+    --monitorwidth chars  Deprecated. Use --consolewidth instead.
+    --monitorcolors colors  Deprecated. Use --consolecolors instead.
+    --monitormarkers value  Deprecated. Use --consolemarkers instead.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries and other extensions when
                           they are imported. Multiple paths can be given by
