@@ -81,8 +81,12 @@ class VerboseWriter(object):
     def info(self, name, doc, start_suite=False):
         width, separator = self._get_info_width_and_separator(start_suite)
         self._last_info = self._get_info(name, doc, width) + separator
-        self._stdout.write(self._last_info)
+        self._write_info()
         self._keyword_marker.reset_count()
+
+    def _write_info(self):
+        self._stdout.write(self._last_info)
+        self._stdout.flush()
 
     def _get_info_width_and_separator(self, start_suite):
         if start_suite:
@@ -115,15 +119,13 @@ class VerboseWriter(object):
         return clear and self._keyword_marker.marking_enabled
 
     def _clear_status(self):
-        self._clear_info_line()
-        self._rewrite_info()
+        self._clear_info()
+        self._write_info()
 
-    def _clear_info_line(self):
+    def _clear_info(self):
         self._stdout.write('\r%s\r' % (' ' * self._width))
+        self._stdout.flush()
         self._keyword_marker.reset_count()
-
-    def _rewrite_info(self):
-        self._stdout.write(self._last_info)
 
     def message(self, message):
         if message:
@@ -137,10 +139,10 @@ class VerboseWriter(object):
 
     def error(self, message, level, clear=False):
         if self._should_clear_markers(clear):
-            self._clear_info_line()
+            self._clear_info()
         self._stderr.error(message, level)
         if self._should_clear_markers(clear):
-            self._rewrite_info()
+            self._write_info()
 
     def output(self, name, path):
         self._stdout.write('%-8s %s\n' % (name+':', path))
