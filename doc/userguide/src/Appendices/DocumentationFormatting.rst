@@ -381,14 +381,15 @@ Starting from Robot Framework 2.7, it is possible to embed blocks of
 preformatted text in the documentation. Preformatted block is created by
 starting lines with '| ', one space being mandatory after the pipe character
 except on otherwise empty lines. The starting '| ' sequence will be removed
-from the resulting HTML, but all other whitespace is preserved.
+from the resulting HTML. Multiple whitespaces must be escaped with '\'.
 
 In the following documentation, the two middle lines form a preformatted
 block when converted to HTML::
 
   Doc before block:
   | inside block
-  |    some   additional whitespace
+  |    some   unescaped whitespaces
+  |    some\ \ \escaped whitespaces
   After block.
 
 The above documentation is formatted like this:
@@ -398,7 +399,8 @@ The above documentation is formatted like this:
   <div class="doc">
   <p>Doc before block:</p>
   <pre>inside block
-    some   additional whitespace</pre>
+    some unescaped whitespaces
+    some   escaped whitespaces</pre>
   <p>After block.</p>
   </div>
 
