@@ -4,7 +4,7 @@ Resource       console_resource.robot
 Suite Setup    Run Tests Without Processing Output   --consolemarkers on    ${TEST FILE}
 
 *** Variables ***
-${TEST FILE}    cli/monitor/markers.robot
+${TEST FILE}    cli/console/markers.robot
 ${SEPARATOR}    -
 
 *** Test Cases ***
