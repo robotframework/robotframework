@@ -76,4 +76,5 @@ class StatusReporter(SuiteVisitor):
         if not test.passed and test.critical:
             self._stream.write('-' * self._width + '\n')
             self._stream.highlight('FAIL')
-            self._stream.write(': %s\n%s\n' % (test.longname, test.message))
+            self._stream.write(': %s\n%s\n' % (test.longname,
+                                               test.message.strip()))
