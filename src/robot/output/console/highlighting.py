@@ -42,19 +42,21 @@ class HighlightingStream(object):
                        'ANSI': AnsiHighlighter}.get(colors.upper(), auto)
         return highlighter(stream)
 
-    def write(self, text):
+    def write(self, text, flush=True):
         self.stream.write(encode_output(text))
+        if flush:
+            self.flush()
 
     def flush(self):
         self.stream.flush()
 
-    def highlight(self, text, status=None):
+    def highlight(self, text, status=None, flush=True):
         with self._highlighting(status or text):
-            self.write(text)
+            self.write(text, flush)
 
     def error(self, message, level):
-        self.write('[ ')
-        self.highlight(level)
+        self.write('[ ', flush=False)
+        self.highlight(level, flush=False)
         self.write(' ] %s\n' % message)
 
     @contextmanager

@@ -40,7 +40,6 @@ class DottedOutput(object):
             self._stdout.write('f')
         else:
             self._stdout.highlight('F', 'FAIL')
-        self._stdout.flush()
 
     def end_suite(self, suite):
         if not suite.parent:

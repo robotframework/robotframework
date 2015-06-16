@@ -86,7 +86,6 @@ class VerboseWriter(object):
 
     def _write_info(self):
         self._stdout.write(self._last_info)
-        self._stdout.flush()
 
     def _get_info_width_and_separator(self, start_suite):
         if start_suite:
@@ -111,8 +110,8 @@ class VerboseWriter(object):
     def status(self, status, clear=False):
         if self._should_clear_markers(clear):
             self._clear_status()
-        self._stdout.write('| ')
-        self._stdout.highlight(status)
+        self._stdout.write('| ', flush=False)
+        self._stdout.highlight(status, flush=False)
         self._stdout.write(' |\n')
 
     def _should_clear_markers(self, clear):
@@ -124,7 +123,6 @@ class VerboseWriter(object):
 
     def _clear_info(self):
         self._stdout.write('\r%s\r' % (' ' * self._width))
-        self._stdout.flush()
         self._keyword_marker.reset_count()
 
     def message(self, message):
@@ -165,7 +163,6 @@ class KeywordMarker(object):
         if self.marking_enabled:
             marker, status = ('.', 'PASS') if status != 'FAIL' else ('F', 'FAIL')
             self._highlighter.highlight(marker, status)
-            self._highlighter.flush()
             self.marker_count += 1
 
     def reset_count(self):
