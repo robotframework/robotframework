@@ -33,7 +33,7 @@ class _BaseSettings(object):
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
                  'ReRunFailed'      : ('rerunfailed', 'NONE'),
-                 'DeprecatedRunFailed': ('runfailed', 'NONE'),  # TODO: Remove in RF 2.10/3.0.
+                 'DeprecatedRunFailed': ('runfailed', 'NONE'),  # TODO: Remove in RF 3.0
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -60,7 +60,8 @@ class _BaseSettings(object):
                  'FlattenKeywords'  : ('flattenkeywords', []),
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
-                 'MonitorColors'    : ('monitorcolors', 'AUTO'),
+                 'ConsoleColors'    : ('consolecolors', 'AUTO'),
+                 'MonitorColors'    : ('monitorcolors', None),  # TODO: Remove in RF 3.0
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
@@ -115,7 +116,7 @@ class _BaseSettings(object):
             return None
         if name == 'OutputDir':
             return utils.abspath(value)
-        if name in ['SuiteStatLevel', 'MonitorWidth']:
+        if name in ['SuiteStatLevel', 'MonitorWidth', 'ConsoleWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
         if name == 'VariableFiles':
             return [split_args_from_name_or_path(item) for item in value]
@@ -366,6 +367,10 @@ class _BaseSettings(object):
     def pre_rebot_modifiers(self):
         return self['PreRebotModifiers']
 
+    @property
+    def console_colors(self):
+        return self['MonitorColors'] or self['ConsoleColors']
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'             : ('output', 'output.xml'),
@@ -384,8 +389,10 @@ class RobotSettings(_BaseSettings):
                        'ConsoleType'        : ('console', 'verbose'),
                        'ConsoleTypeDotted'  : ('dotted', False),
                        'ConsoleTypeQuiet'   : ('quiet', False),
-                       'MonitorWidth'       : ('monitorwidth', 78),
-                       'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
+                       'ConsoleWidth'       : ('consolewidth', 78),
+                       'MonitorWidth'       : ('monitorwidth', 0),  # TODO: Remove in RF 3.0
+                       'ConsoleMarkers'     : ('consolemarkers', 'AUTO'),
+                       'MonitorMarkers'     : ('monitormarkers', None),  # TODO: Remove in RF 3.0
                        'DebugFile'          : ('debugfile', None)}
 
     def get_rebot_settings(self):
@@ -459,20 +466,29 @@ class RobotSettings(_BaseSettings):
     @property
     def console_output_config(self):
         return {
-            'type':    self._get_console_type(),
-            'width':   self['MonitorWidth'],
-            'colors':  self['MonitorColors'],
-            'markers': self['MonitorMarkers'],
+            'type':    self.console_type,
+            'width':   self.console_width,
+            'colors':  self.console_colors,
+            'markers': self.console_markers,
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }
 
-    def _get_console_type(self):
+    @property
+    def console_type(self):
         if self['ConsoleTypeQuiet']:
             return 'quiet'
         if self['ConsoleTypeDotted']:
             return 'dotted'
         return self['ConsoleType']
+
+    @property
+    def console_width(self):
+        return self['MonitorWidth'] or self['ConsoleWidth']
+
+    @property
+    def console_markers(self):
+        return self['MonitorMarkers'] or self['ConsoleMarkers']
 
     @property
     def pre_run_modifiers(self):
@@ -560,7 +576,7 @@ class RebotSettings(_BaseSettings):
     @property
     def console_output_config(self):
         return {
-            'colors':  self['MonitorColors'],
+            'colors':  self.console_colors,
             'stdout':  self['StdOut'],
             'stderr':  self['StdErr']
         }
