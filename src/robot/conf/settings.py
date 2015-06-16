@@ -116,6 +116,10 @@ class _BaseSettings(object):
             return None
         if name == 'OutputDir':
             return utils.abspath(value)
+        if name in ['MonitorWidth', 'MonitorColors', 'MonitorMarkers']:
+            option = '--' + name.lower()
+            LOGGER.warn("Option '%s' is deprecated. Use '%s' instead."
+                        % (option, option.replace('monitor', 'console')))
         if name in ['SuiteStatLevel', 'MonitorWidth', 'ConsoleWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
         if name == 'VariableFiles':
