@@ -1,7 +1,7 @@
 ﻿*** Settings ***
 Suite Setup  Run Tests  --name Hyvää_Üötä_€åppa  parsing/utf8_data.robot
 Force Tags   regression   pybot  jybot
-Resource     monitor_resource.robot
+Resource     console_resource.robot
 
 
 *** Test Cases ***

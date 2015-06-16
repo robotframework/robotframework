@@ -1,7 +1,7 @@
 *** Settings ***
-Force Tags     regression   pybot  jybot
-Resource       monitor_resource.robot
-Suite Setup    Run Tests Without Processing Output   --monitormarkers on    ${TEST FILE}
+Force Tags     regression    pybot    jybot
+Resource       console_resource.robot
+Suite Setup    Run Tests Without Processing Output   --consolemarkers on    ${TEST FILE}
 
 *** Variables ***
 ${TEST FILE}    cli/monitor/markers.robot
@@ -57,7 +57,7 @@ Markers Can Be Disabled
     Run Tests And Verify That Markers Are Disabled    -K OFF
 
 Markers Are Disabled By Default When Redirecting Output
-    Run Tests And Verify That Markers Are Disabled    --MonitorMarkers AuTo
+    Run Tests And Verify That Markers Are Disabled    --ConsoleMarkers AuTo
 
 *** Keywords ***
 Run Tests And Verify That Markers Are Disabled
