@@ -72,6 +72,9 @@ Command line options for test execution
   --prerunmodifier <name:args>    Activate `programmatic modification of test data`_.
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
+  --console <verbose|dotted|quiet|none>  `Console output type`_.
+  --dotted                Shortcut for `--console dotted`.
+  --quiet                 Shortcut for `--console quiet`.
   -W, --consolewidth <width>  `Sets the width`_ of the console output.
   -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
   -K, --consolemarkers <auto|on|off>  Show `markers on the console`_ when top level

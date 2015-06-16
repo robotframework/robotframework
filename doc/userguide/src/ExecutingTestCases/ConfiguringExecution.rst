@@ -498,6 +498,44 @@ __ `Specifying library to import`_
 Controlling console output
 --------------------------
 
+There are various command line options to control how test execution is
+reported on the console.
+
+Console output type
+~~~~~~~~~~~~~~~~~~~
+
+The overall console output type is set with the :option:`--console` option.
+It supports the following case-insensitive values:
+
+`verbose`
+    Every test suite and test case is reported individually. This is
+    the default.
+
+`dotted`
+    Only show `.` for passed test, `f` for failed non-critical tests, and `F`
+    for failed critical tests. Failed critical tests are listed separately
+    after execution. This output type makes it easy to see are there any
+    failures during execution even if there would be a lot of tests.
+
+`quiet`
+    No output except for `errors and warnings`_.
+
+`none`
+    No output whatsoever. Useful when creating a custom output using,
+    for example, listeners_.
+
+Separate convenience options :option:`--dotted (-.)` and :option:`--quiet`
+are shortcuts for `--console dotted` and `--console quiet`, respectively.
+
+Examples::
+
+    pybot --console quiet tests.robot
+    jybot --dotted tests.robot
+
+.. note:: :option:`--console`, :option:`--dotted` and :option:`--quiet`
+          are new options in Robot Framework 2.9. Prior to that the output
+          was always the same as in the current `verbose` mode.
+
 Console width
 ~~~~~~~~~~~~~
 
@@ -547,9 +585,9 @@ Console markers
 ~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.7, special markers `.` (success) and
-`F` (failure) are shown on the console when top level keywords in
-test cases end. The markers allow following the test execution in high level,
-and they are erased when test cases end.
+`F` (failure) are shown on the console when using the `verbose output`__
+and top level keywords in test cases end. The markers allow following
+the test execution in high level, and they are erased when test cases end.
 
 Starting from Robot Framework 2.7.4, it is possible to configure when markers
 are used with :option:`--consolemarkers (-K)` option. It supports the following
@@ -568,6 +606,8 @@ case-insensitive values:
 .. note:: Prior to Robot Framework 2.9 this functionality was enabled with
           :option:`--monitormarkers` option that is nowadays deprecated.
           The short option :option:`-K` works the same way in all versions.
+
+__ `Console output type`_
 
 Setting listeners
 -----------------
