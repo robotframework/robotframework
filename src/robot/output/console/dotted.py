@@ -36,7 +36,7 @@ class DottedOutput(object):
     def end_test(self, test):
         if test.passed:
             self._stdout.write('.')
-        elif 'rf-exit' in test.tags:
+        elif 'robot-exit' in test.tags:
             self._stdout.highlight('x', 'FAIL')
         elif not test.critical:
             self._stdout.write('f')

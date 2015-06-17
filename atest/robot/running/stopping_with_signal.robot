@@ -110,7 +110,7 @@ Check Test Cases Have Failed Correctly
     Check Test Case    Test    FAIL    Execution terminated by signal
     Check Test Tags    Test
     Check Test Case    Test2    FAIL    Test execution stopped due to a fatal error.
-    Check Test Tags    Test2    rf-exit
+    Check Test Tags    Test2    robot-exit
 
 Check Tests Have Been Forced To Shutdown
     ${stderr} =    ProcessManager.Get Stderr
