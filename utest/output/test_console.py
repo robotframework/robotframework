@@ -7,8 +7,8 @@ from robot.output.console.verbose import VerboseOutput
 # Overwrite IronPython's special utils.isatty with version using stream.isatty.
 # Otherwise our StreamStub.isatty would not really work.
 if sys.platform == 'cli':
-    from robot import utils
-    utils.isatty = lambda stream: hasattr(stream, 'isatty') and stream.isatty()
+    from robot.output.console import verbose
+    verbose.isatty = lambda stream: hasattr(stream, 'isatty') and stream.isatty()
 
 
 class TestKeywordNotification(unittest.TestCase):
