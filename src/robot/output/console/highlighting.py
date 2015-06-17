@@ -24,6 +24,7 @@ try:
 except ImportError:  # Not on Windows or using Jython
     windll = None
 
+from robot.errors import DataError
 from robot.utils import encode_output, isatty
 
 
@@ -34,12 +35,15 @@ class HighlightingStream(object):
         self._highlighter = self._get_highlighter(stream, colors)
 
     def _get_highlighter(self, stream, colors):
-        auto = Highlighter if isatty(stream) else NoHighlighting
-        highlighter = {'AUTO': auto,
-                       'ON': Highlighter,
-                       'FORCE': Highlighter,   # compatibility with 2.5.5 and earlier
-                       'OFF': NoHighlighting,
-                       'ANSI': AnsiHighlighter}.get(colors.upper(), auto)
+        options = {'AUTO': Highlighter if isatty(stream) else NoHighlighting,
+                   'ON': Highlighter,
+                   'OFF': NoHighlighting,
+                   'ANSI': AnsiHighlighter}
+        try:
+            highlighter = options[colors.upper()]
+        except KeyError:
+            raise DataError("Invalid console color value '%s'. Available "
+                            "'AUTO', 'ON', 'OFF' and 'ANSI'." % colors)
         return highlighter(stream)
 
     def write(self, text, flush=True):

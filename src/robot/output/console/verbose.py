@@ -14,6 +14,7 @@
 
 import sys
 
+from robot.errors import DataError
 from robot.utils import get_console_length, isatty, pad_console_length
 
 from .highlighting import HighlightingStream
@@ -154,10 +155,14 @@ class KeywordMarker(object):
         self.marker_count = 0
 
     def _marking_enabled(self, markers, highlighter):
-        auto = isatty(highlighter.stream)
-        return {'AUTO': auto,
-                'ON': True,
-                'OFF': False}.get(markers.upper(), auto)
+        options = {'AUTO': isatty(highlighter.stream),
+                   'ON': True,
+                   'OFF': False}
+        try:
+            return options[markers.upper()]
+        except KeyError:
+            raise DataError("Invalid console marker value '%s'. Available "
+                            "'AUTO', 'ON' and 'OFF'." % markers)
 
     def mark(self, status):
         if self.marking_enabled:

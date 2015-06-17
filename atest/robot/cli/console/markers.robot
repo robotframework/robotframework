@@ -59,6 +59,10 @@ Markers Can Be Disabled
 Markers Are Disabled By Default When Redirecting Output
     Run Tests And Verify That Markers Are Disabled    --ConsoleMarkers AuTo
 
+Invalid Markers
+    Run Tests Without Processing Output    -K InVaLid    ${TEST FILE}
+    Stderr Should Be Equal To    [ ERROR ] Invalid console marker value 'InVaLid'. Available 'AUTO', 'ON' and 'OFF'.${USAGE TIP}\n
+
 *** Keywords ***
 Run Tests And Verify That Markers Are Disabled
     [Arguments]    ${opt}
