@@ -137,6 +137,11 @@ class TestTagStatistics(unittest.TestCase):
             ('NOTtANDe', [], 1),
             ('NOTtANDe', ['t'], 1),
             ('NOTtANDe', ['t', 'e'], 0),
+            ('NOTtNOTe', ['t', 'e'], 0),
+            ('NOTtNOTe', ['t'], 0),
+            ('NOTtNOTe', ['e'], 0),
+            ('NOTtNOTe', ['d'], 1),
+            ('NOTtNOTe', [], 1),
             ('NOT*', ['t'], 0),
             ('NOT*', [], 1),
             ]:

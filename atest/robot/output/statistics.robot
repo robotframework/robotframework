@@ -28,8 +28,8 @@ Tag statistics should be Correct
     ...    5    1    info=combined    combined=f1 AND t1
     Tag Node Should Be Correct    ${stats[4]}    F1 NOT T1
     ...    4    0    info=combined    combined=F1 NOT T1
-    Tag Node Should Be Correct    ${stats[5]}    \ NOT t1
-    ...    5    0    info=combined    combined= NOT t1
+    Tag Node Should Be Correct    ${stats[5]}    NOT t1
+    ...    5    0    info=combined    combined=NOT t1
     Tag Node Should Be Correct    ${stats[6]}    d1
     ...    1    0    links=title:url
     Tag Node Should Be Correct    ${stats[7]}    d2
