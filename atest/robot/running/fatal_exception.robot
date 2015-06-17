@@ -27,6 +27,21 @@ Skip Imports On Exit
     Previous test should have passed  Multiple Suite Aware Exiting
     Should be empty  ${ERRORS.messages}
 
+Skipped tests get rf-exit tag
+    Previous test should have passed  Skip Imports On Exit
+    Check test and tags  Exit From Python Keyword  some tag
+    Check test and tags  Test That Should Not Be Run 1  rf-exit
+    Check test and tags  Test That Should Not Be Run 2.1  rf-exit
+    Check test and tags  Test That Should Not Be Run 2.2  rf-exit
+    Check test and tags  Test That Should Not Be Run 3  rf-exit  foo
+
+Skipping creates 'NOT rf-exit' combined tag statistics
+    Previous test should have passed  Skipped tests get rf-exit tag
+    ${stats} =    Get Element    ${OUTFILE}    statistics/tag
+    Should be equal    ${stats[0].text}    \ NOT rf-exit
+    Should be equal    ${stats[0].attrib['pass']}    0
+    Should be equal    ${stats[0].attrib['fail']}    1
+
 Multiple Suite Aware Exiting From Suite Setup
     Run Tests  ${EMPTY}  running/fatal_exception_suite_setup/
     Check Test Case  Test That Should Not Be Run 1
@@ -58,3 +73,9 @@ Fatal Exception And Skip Teardown On Exit
     Should Be Equal  ${tc.teardown}  ${None}
     ${ts} =  Get Test Suite  Python Library Kw
     Should Be Equal  ${ts.teardown}  ${None}
+
+*** Keywords ***
+Check test and tags
+    [Arguments]   ${test name}   @{tags}
+    Check Test Case  ${test name}
+    Check Test Tags  ${test name}   @{tags}

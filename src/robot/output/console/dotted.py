@@ -72,7 +72,7 @@ class StatusReporter(SuiteVisitor):
         self._stream.write('\n%s\n' % stats.message)
 
     def visit_test(self, test):
-        if not test.passed and test.critical:
+        if not test.passed and test.critical and 'rf-exit' not in test.tags:
             self._stream.write('-' * self._width + '\n')
             self._stream.highlight('FAIL')
             self._stream.write(': %s\n%s\n' % (test.longname,
