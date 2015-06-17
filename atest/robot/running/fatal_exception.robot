@@ -29,11 +29,11 @@ Skip Imports On Exit
 
 Skipped tests get robot-exit tag
     Previous test should have passed    Skip Imports On Exit
-    Check test and tags    Exit From Python Keyword    some tag
-    Check test and tags    Test That Should Not Be Run 1    robot-exit
-    Check test and tags    Test That Should Not Be Run 2.1    robot-exit
-    Check test and tags    Test That Should Not Be Run 2.2    robot-exit
-    Check test and tags    Test That Should Not Be Run 3    robot-exit    foo
+    Check Test Tags    Exit From Python Keyword    some tag
+    Check Test Tags    Test That Should Not Be Run 1    robot-exit
+    Check Test Tags    Test That Should Not Be Run 2.1    robot-exit
+    Check Test Tags    Test That Should Not Be Run 2.2    robot-exit
+    Check Test Tags    Test That Should Not Be Run 3    robot-exit    foo
 
 Skipping creates 'NOT robot-exit' combined tag statistics
     Previous test should have passed    Skipped tests get robot-exit tag
@@ -72,9 +72,3 @@ Fatal Exception And Skip Teardown On Exit
     Should Be Equal    ${tc.teardown}    ${None}
     ${ts} =    Get Test Suite    Python Library Kw
     Should Be Equal    ${ts.teardown}    ${None}
-
-*** Keywords ***
-Check test and tags
-    [Arguments]    ${test name}    @{tags}
-    Check Test Case    ${test name}
-    Check Test Tags    ${test name}    @{tags}

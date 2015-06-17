@@ -1,19 +1,21 @@
 *** Settings ***
-Library  Library.py
-Library  OperatingSystem
-Suite Teardown  My Suite Teardown
+Suite Teardown    My Suite Teardown
+Library           Library.py
+Library           OperatingSystem
 
 *** Test Case ***
 Test
-  Create File  ${TESTSIGNALFILE}
-  Busy Sleep  2
-  No Operation
-  [teardown]  Log  Logging Test Case Teardown
+    [Documentation]    FAIL Execution terminated by signal
+    Create File    ${TESTSIGNALFILE}
+    Busy Sleep    2
+    Fail    Should not be executed
+    [Teardown]    Log    Logging Test Case Teardown
 
 Test 2
-  No Operation
+    [Documentation]    FAIL Test execution stopped due to a fatal error.
+    Fail    Should not be executed
 
 *** Keywords ***
 My Suite Teardown
-    Log  Logging Suite Teardown
-    Sleep  ${TEARDOWN SLEEP}
+    Log    Logging Suite Teardown
+    Sleep    ${TEARDOWN SLEEP}
