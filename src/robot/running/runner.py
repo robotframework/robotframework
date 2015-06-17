@@ -123,6 +123,9 @@ class Runner(SuiteVisitor):
                                % unicode(err))
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(result, test))
+        if status.exit.fatal:
+            self._add_exit_combine()
+            result.tags.add('rf-exit')
         self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failures:
@@ -153,6 +156,11 @@ class Runner(SuiteVisitor):
         result.endtime = get_timestamp()
         self._output.end_test(ModelCombiner(result, test))
         self._context.end_test(result)
+
+    def _add_exit_combine(self):
+        exit_combine = (' NOT rf-exit', '')
+        if exit_combine not in self._settings['TagStatCombine']:
+            self._settings['TagStatCombine'].append(exit_combine)
 
     def _get_timeout(self, test):
         if not test.timeout:
