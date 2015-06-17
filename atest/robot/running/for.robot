@@ -267,7 +267,6 @@ For In Zip
     Should Be For Item    ${for_loop.kws[3]}    \${item} = d, \${thing} = h
 
 For In Zip With Uneven Lists
-    [Documentation]    Handling lists with different number of elements. Probably should work like in Python here and just stop when the shortest list is empty?
     ${tc} =    Check Test Case    ${TEST NAME}
     ${for_loop}=    Set Variable    ${tc.kws[2]}
     Should Be For In Zip Keyword    ${for_loop}    3
@@ -276,7 +275,6 @@ For In Zip With Uneven Lists
     Should Be For Item    ${for_loop.kws[2]}    \${item} = c, \${thing} = f
 
 For In Zip With 3 Lists
-    [Documentation]    Handling more than one list like :FOR ${a} ${b} ${c} IN ZIP ${x} ${y} ${z}.
     ${tc} =    Check Test Case    ${TEST NAME}
     ${for_loop}=    Set Variable    ${tc.kws[3]}
     Should Be For In Zip Keyword    ${for_loop}    4
@@ -286,50 +284,47 @@ For In Zip With 3 Lists
     Should Be For Item    ${for_loop.kws[3]}    \${item} = d, \${thing} = h, \${stuff} = 4
 
 For In Zip With Other Iterables
-    [Documentation]    Handling non-lists. Should accept anything iterable except strings and fail with a clear error message if invalid data given. You can use utils.is_list_like to verify inputs.
     ${tc} =    Check Test Case    ${TEST NAME}
 
-For In Zip With String "Lists"
+For In Zip Rejects Strings as iterable
     ${tc} =    Check Test Case    ${TEST NAME}
     ${for_loop}=    Set Variable    ${tc.kws[1]}
-    Should Be For In Zip Keyword    ${for_loop}    0    # This seems like it should be 1, but I haven't messed with anything that would break it and other failing tests don't even check it...
+    Should Be For In Zip Keyword    ${for_loop}    0
     Should Be Equal    ${for_loop.status}    FAIL
 
 For In Zip With Non-list
     ${tc} =    Check Test Case    ${TEST NAME}
     ${for_loop}=    Set Variable    ${tc.kws[2]}
-    Should Be For In Zip Keyword    ${for_loop}    0    # This seems like it should be 1, but I haven't messed with anything that would break it and other failing tests don't even check it...
+    Should Be For In Zip Keyword    ${for_loop}    0
     Should Be Equal    ${for_loop.status}    FAIL
 
 For In Zip With Too Few Variables
-    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
 For In Zip With Too Many Variables
-    [Documentation]    Different number of variables than lists. Having just one variable works in Python (e.g. for i in zip(x, y)), but looking at the implementation it might be hard to support here. I'd be fine with a clear error if num(vars) != num(lists).
-    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
-For In Enumerate (with 4 items)
-    [Documentation]    This test is repeated with different lengths to expose subtle validation errors from development.
-    ${tc} =    Check Test Case    ${TEST NAME}
-
-For In Enumerate (with 5 items)
-    [Documentation]    This test is repeated with different lengths to expose subtle validation errors from development.
-    ${tc} =    Check Test Case    ${TEST NAME}
+For In Enumerate
+    Check Test Case    ${TEST NAME} (with 4 items)
+    Check Test Case    ${TEST NAME} (with 5 items)
 
 For In Enumerate With 3 Variables
-    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
+
+For In Enumerate With 4 Variables
+    Check Test Case    ${TEST NAME}
 
 For In Enumerate With not the right number of variables
-    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
 For In Enumerate With Too Few Variables
-    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
 For In Enumerate With Other Iterables
-    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
 For Loop Of Unexpected Name
-    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME}
 
 For In Range With Too Many Arguments
     ${tc} =    Check Test Case    ${TEST NAME}

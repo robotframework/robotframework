@@ -18,7 +18,7 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
 from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import (format_assign_message, frange, get_error_message,
                          get_timestamp, plural_or_not as s, type_name,
-                         is_list_like)
+                         is_list_like, type_name)
 from robot.variables import is_scalar_var, VariableAssigner
 
 
@@ -47,7 +47,7 @@ class KeywordRunner(object):
 
     def run_keyword(self, kw, name=None):
         if kw.type == kw.FOR_LOOP_TYPE:
-            runner = ForLoopRunner(self._context, self._templated, kw.flavor)
+            runner = ForRunner(self._context, self._templated, kw.flavor)
         else:
             runner = NormalRunner(self._context)
         return runner.run(kw, name=name)
@@ -114,13 +114,22 @@ class NormalRunner(object):
         return failure
 
 
-class BasicForLoopRunner(object):
-    """A basic For Loop.
+def ForRunner(context, templated=False, flavor='IN'):
+    for_loop_flavors = dict(
+            IN=ForInRunner,
+            INRANGE=ForInRangeRunner,
+            INZIP=ForInZipRunner,
+            INENUMERATE=ForInEnumerateRunner,
+            )
+    flavor_key = flavor.upper().replace(' ', '')
+    if flavor_key in for_loop_flavors:
+        runner_class = for_loop_flavors[flavor_key]
+        return runner_class(context, templated)
+    else:
+        return InvalidForRunner(context, flavor_key, flavor, for_loop_flavors.keys())
 
-    To make a new kind of For loop, subclass this and override
-    _flavor_name() and _transform_items(items).
-    """
 
+class ForInRunner(object):
     def __init__(self, context, templated=False):
         self._context = context
         self._templated = templated
@@ -193,6 +202,7 @@ class BasicForLoopRunner(object):
         if len(values) % values_per_iteration == 0:
             return values
         error_addendum = ""
+        # FIXME "I think it would be better to have a separate method that raises the exception (or returns the error message) that ForInEnumerate can override."
         if len(data.variables) != values_per_iteration:
             # This is a bit awkward, but I'm not sure how else to phrase
             # the impact of a non-value variable like from ForInEnumerate.
@@ -227,21 +237,18 @@ class BasicForLoopRunner(object):
         return len(values)
 
 
-class ForInRangeLoopRunner(BasicForLoopRunner):
+class ForInRangeRunner(ForInRunner):
     def __init__(self, context, templated=False):
-        super(ForInRangeLoopRunner, self).__init__(context, templated)
+        super(ForInRangeRunner, self).__init__(context, templated)
 
     def _flavor_name(self):
         return 'IN RANGE'
 
     def _transform_items(self, items):
-        return self._get_range_items(items)
-
-    def _get_range_items(self, items):
         try:
             items = [self._to_number_with_arithmetics(item) for item in items]
         except:
-            raise DataError('Converting argument of FOR IN RANGE failed: %s'
+            raise DataError('Converting argument of FOR IN RANGE failed: %s.'
                             % get_error_message())
         if not 1 <= len(items) <= 3:
             raise DataError('FOR IN RANGE expected 1-3 arguments, got %d.'
@@ -257,97 +264,74 @@ class ForInRangeLoopRunner(BasicForLoopRunner):
         return number
 
 
-class ForInZipLoopRunner(BasicForLoopRunner):
+class ForInZipRunner(ForInRunner):
     def __init__(self, context, templated=False):
-        super(ForInZipLoopRunner, self).__init__(context, templated)
+        super(ForInZipRunner, self).__init__(context, templated)
 
     def _flavor_name(self):
         return 'IN ZIP'
 
     def _replace_variables(self, data):
-        """
-        Make sure we have as many loop-variables as zipped-iterables.
-
-        (Other than that, delegate to the superclass.)
-        """
-        values = super(ForInZipLoopRunner, self)._replace_variables(data)
+        values = super(ForInZipRunner, self)._replace_variables(data)
         if len(data.variables) == len(data.values):
             return values
-        raise DataError("Expected %d Loop variables, but found %d"
+        raise DataError("Expected %d loop variables, but got %d."
                 % (len(data.values), len(data.variables)))
 
     def _transform_items(self, items):
         answer = list()
         for item in items:
             if not is_list_like(item):
-                # Checking here because _validate() doesn't have access
-                # to the actual values.
-                raise DataError("For-In-Zip Loop items must all be List-like (but not Strings); got %s with value '%s'" % (item.__class__, item))
+                # Usually one would expect validation to happen in _validate(),
+                # but this particular validation relies on information that is
+                # not available to _validate().
+                # FIXME 'FOR IN ZIP expects equal number of variables and iterables. Got %d variable%s and %d iterable%s.' % (len(data.variables), s(data.variables), len(data.values), s(data.values)
+                # FIXME "FOR IN ZIP items must all be list-like, got %s." % type_name(item)
+                raise DataError("FOR IN ZIP Loop items must all be List-like;"
+                + " got %s with value '%s'." % (
+                    type_name(item), item))
         for zipped_item in zip(*[list(item) for item in items]):
             answer.extend(zipped_item)
         return answer
 
 
-class ForInEnumerateLoopRunner(BasicForLoopRunner):
+class ForInEnumerateRunner(ForInRunner):
     def __init__(self, context, templated=False):
-        super(ForInEnumerateLoopRunner, self).__init__(context, templated)
+        super(ForInEnumerateRunner, self).__init__(context, templated)
 
     def _flavor_name(self):
         return 'IN ENUMERATE'
 
     def _original_values_per_iteration(self, values):
-        """
-        The number of values per iteration;
-        used to check if we have (a multiple of this) values.
-
-        This is its own method to support loops like ForInEnumerate
-        which add/remove items to the pool.
-        """
         if len(values) < 2:
             raise DataError('FOR IN ENUMERATE expected 2 or more loop variables, got %d.'
                     % len(values))
         return len(values) - 1
 
     def _get_values_for_one_round(self, data):
-        for idx, values in enumerate(super(ForInEnumerateLoopRunner, self)
+        for idx, values in enumerate(super(ForInEnumerateRunner, self)
                 ._get_values_for_one_round(data)):
             yield [idx] + values
 
 
-# Defining this dict here in for potentially easier extension by libraries...
-# ...unless that's a terrible idea?
-def ForLoopRunner(context, templated=False, flavor='IN'):
-    FOR_LOOP_FLAVORS = dict(
-            IN=BasicForLoopRunner,
-            INRANGE=ForInRangeLoopRunner,
-            INZIP=ForInZipLoopRunner,
-            INENUMERATE=ForInEnumerateLoopRunner,
-            )
-    flavor_key = flavor.upper().replace(' ', '')
-    if flavor_key in FOR_LOOP_FLAVORS:
-        runner_class = FOR_LOOP_FLAVORS[flavor_key]
-        return runner_class(context, templated)
-    else:
-        return InvalidForLoopRunner(context, flavor_key, flavor, FOR_LOOP_FLAVORS.keys())
-
-
-class InvalidForLoopRunner(BasicForLoopRunner):
+class InvalidForRunner(ForInRunner):
     """
-    Used to send an error from ForLoopRunner() if it sees an unexpected error.
+    Used to send an error from ForRunner() if it sees an unexpected error.
 
-    We can't simply throw a DataError from ForLoopRunner() because that happens
+    We can't simply throw a DataError from ForRunner() because that happens
     outside the "with StatusReporter(...)" blocks.
 
     """
     def __init__(self, context, flavor, pretty_flavor, expected):
-        super(InvalidForLoopRunner, self).__init__(context, False)
+        super(InvalidForRunner, self).__init__(context, False)
         self.flavor = flavor
         self.pretty_flavor = pretty_flavor
         self.expected = repr(sorted(expected))
 
     def _run(self, data, *args, **kwargs):
+        # FIXME "Invalid FOR loop type '%s'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'." % self.flavor
         raise DataError(
-            "Unexpected For-loop type %s (%s); expected one of %s (but with spaces)" %
+            "Unexpected FOR loop type %s (%s); expected one of %s (but with spaces)." %
             (self.flavor, self.pretty_flavor, self.expected))
 
 
