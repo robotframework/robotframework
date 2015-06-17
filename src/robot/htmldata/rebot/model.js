@@ -66,6 +66,10 @@ window.model = (function () {
         var patterns;
         if (pattern.indexOf('NOT') != -1) {
             patterns = pattern.split('NOT');
+            if (!util.normalize(patterns[0]))
+                return util.all(util.map(patterns.slice(1), function (p) {
+                    return !containsTagPattern(testTags, p);
+                }));
             return containsTagPattern(testTags, patterns[0]) &&
                 util.all(util.map(patterns.slice(1), function (p) {
                     return !containsTagPattern(testTags, p);

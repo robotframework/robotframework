@@ -186,6 +186,12 @@ used for combining two or more individual tags or patterns together.
       --include fooNOTbar     # Matches tests containing tag 'foo' but not tag 'bar'.
       --exclude xxNOTyyNOTzz  # Matches tests containing tag 'xx' but not tag 'yy' or tag 'zz'.
 
+   Starting from Robot Framework 2.9 the pattern can also start with ``NOT``
+   in which case the pattern matches if the pattern after ``NOT`` does not match::
+
+      --include NOTfoo        # Matches tests which dont contain tag 'foo'
+      --include NOTfooANDbar  # Matches tests which dont contain both  tags 'foo' and 'bar'
+
 The above operators can also be used together. The operator precedence,
 from highest to lowest, is `AND`, `OR` and `NOT`::
 

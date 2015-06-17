@@ -114,6 +114,9 @@ class _SingleTagPattern(object):
     def __unicode__(self):
         return self._matcher.pattern
 
+    def __nonzero__(self):
+        return bool(self._matcher)
+
 
 class _AndTagPattern(object):
 
@@ -140,4 +143,6 @@ class _NotTagPattern(object):
         self._rest = _OrTagPattern(must_not_match)
 
     def match(self, tags):
+        if not self._first:
+            return not self._rest.match(tags)
         return self._first.match(tags) and not self._rest.match(tags)
