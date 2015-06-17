@@ -2,7 +2,6 @@
 Suite Setup     Run Tests  --variable FAIL:YES --log mylog.html --report myreport.html --debugfile mydebug.txt  misc/suites/subsuites
 Force Tags      regression   pybot  jybot
 Resource        console_resource.robot
-Library         expected_output/ExpectedOutputLibrary.py
 
 *** Test Cases ***
 Top Level Suite Start
@@ -48,5 +47,5 @@ Long Name Should Be Cut
 
 Layout Is Not Broken When There Are Warnings
     Run Tests    ${EMPTY}    misc/warnings_and_errors.robot
-    Verify Output    ${STDOUT FILE}    warnings_and_errors_stdout.txt
-    Verify Output    ${STDERR FILE}    warnings_and_errors_stderr.txt
+    Stdout Should Be    warnings_and_errors_stdout.txt
+    Stderr Should Be    warnings_and_errors_stderr.txt

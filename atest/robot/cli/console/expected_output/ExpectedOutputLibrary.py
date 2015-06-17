@@ -7,7 +7,7 @@ from robot.api import logger
 CURDIR = dirname(abspath(__file__))
 
 
-def verify_output(actual, expected):
+def output_should_be(actual, expected):
     actual = _read_file(actual, 'Actual')
     expected = _read_file(join(CURDIR, expected), 'Expected')
     if len(expected) != len(actual):
