@@ -13,11 +13,6 @@ Console Colors Off
     Run Tests With Colors    --consolecolors OFF
     Outputs should not have ANSI colors
 
-Console Colors Force
-    [Documentation]    Backwards compatibility with 2.5.5 and earlier
-    Run Tests With Colors    -C force
-    Outputs should have ANSI colors when not on Windows
-
 Console Colors On
     Run Tests With Colors    --ConsoleCol on
     Outputs should have ANSI colors when not on Windows
@@ -27,9 +22,8 @@ Console Colors ANSI
     Outputs should have ANSI colors
 
 Invalid Console Colors
-    [Documentation]    Invalid color mapped to 'auto' (default)
-    Run Tests With Colors    -C INVALID
-    Outputs should not have ANSI colors
+    Run Tests Without Processing Output    -C InVaLid    misc/pass_and_fail.robot
+    Stderr Should Be Equal To    [ ERROR ] Invalid console color value 'InVaLid'. Available 'AUTO', 'ON', 'OFF' and 'ANSI'.${USAGE TIP}\n
 
 Console Width
     ${name} =    Evaluate    'Start-' + '0123456789' * 9 + '-end'
@@ -45,6 +39,10 @@ Console Width
     Check Stdout Contains    ${SEP_CHAR2 * 20}\n Start-01... | FAIL |\n ${MSG_211}\n ${SEP_CHAR1 * 20}\n
     Check Stdout Contains    ${SEP_CHAR1 * 20}\n Pass${SPACE * 8}| PASS |\n ${SEP_CHAR2 * 20}\n
     Check Stdout Contains    ${SEP_CHAR2 * 20}\n Fail :: ... | FAIL |\n Expected failure\n ${SEP_CHAR2 * 20}\n
+
+Invalid Width
+    Run Tests Without Processing Output    -W InVaLid    misc/pass_and_fail.robot
+    Stderr Should Be Equal To    [ ERROR ] Option '--consolewidth' expected integer value but got 'InVaLid'.${USAGE TIP}\n
 
 *** Keywords ***
 Run Tests With Colors
