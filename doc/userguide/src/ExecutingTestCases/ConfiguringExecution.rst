@@ -512,8 +512,9 @@ It supports the following case-insensitive values:
     the default.
 
 `dotted`
-    Only show `.` for passed test, `f` for failed non-critical tests, and `F`
-    for failed critical tests. Failed critical tests are listed separately
+    Only show `.` for passed test, `f` for failed non-critical tests, `F`
+    for failed critical tests, and `x` for tests which are skipped because
+    `test execution exit`__. Failed critical tests are listed separately
     after execution. This output type makes it easy to see are there any
     failures during execution even if there would be a lot of tests.
 
@@ -523,6 +524,8 @@ It supports the following case-insensitive values:
 `none`
     No output whatsoever. Useful when creating a custom output using,
     for example, listeners_.
+
+__ `Stopping test execution gracefully`_
 
 Separate convenience options :option:`--dotted (-.)` and :option:`--quiet`
 are shortcuts for `--console dotted` and `--console quiet`, respectively.
