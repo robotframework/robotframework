@@ -54,6 +54,9 @@ class Matcher(object):
     def match_any(self, strings):
         return any(self.match(s) for s in strings)
 
+    def __nonzero__(self):
+        return bool(self._normalize(self.pattern))
+
 
 class MultiMatcher(object):
 
