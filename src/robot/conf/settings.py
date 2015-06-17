@@ -261,6 +261,8 @@ class _BaseSettings(object):
                 pattern = pattern.replace(search, replace)
         while '  ' in pattern:
             pattern = pattern.replace('  ', ' ')
+        if pattern.startswith(' NOT'):
+            pattern = pattern[1:]
         return pattern
 
     def _process_tag_stat_link(self, value):
