@@ -56,24 +56,24 @@ class Runner(SuiteVisitor):
                                   stat_config=self._settings.statistics_config)
         else:
             self._suite.suites.append(result)
+        self._suite = result
+        self._suite_status = SuiteStatus(self._suite_status,
+                                         self._settings.exit_on_failure,
+                                         self._settings.exit_on_error,
+                                         self._settings.skip_teardown_on_exit)
         ns = Namespace(self._variables, result, suite.resource.keywords,
                        suite.resource.imports)
         ns.start_suite()
         ns.variables.set_from_variable_table(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
         self._context.set_suite_variables(result)
-        if not (self._suite_status and self._suite_status.failures):
+        if not self._suite_status.failures:
             ns.handle_imports()
-        ns.variables.resolve_delayed()
+            ns.variables.resolve_delayed()
         result.doc = self._resolve_setting(result.doc)
         result.metadata = [(self._resolve_setting(n), self._resolve_setting(v))
                            for n, v in result.metadata.items()]
         self._context.set_suite_variables(result)
-        self._suite = result
-        self._suite_status = SuiteStatus(self._suite_status,
-                                         self._settings.exit_on_failure,
-                                         self._settings.exit_on_error,
-                                         self._settings.skip_teardown_on_exit)
         self._output.start_suite(ModelCombiner(result, suite,
                                                tests=suite.tests,
                                                suites=suite.suites,
