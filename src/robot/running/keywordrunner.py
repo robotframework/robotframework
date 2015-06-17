@@ -201,16 +201,12 @@ class ForInRunner(object):
         values_per_iteration = self._original_values_per_iteration(data.variables)
         if len(values) % values_per_iteration == 0:
             return values
-        error_addendum = ""
-        # FIXME "I think it would be better to have a separate method that raises the exception (or returns the error message) that ForInEnumerate can override."
-        if len(data.variables) != values_per_iteration:
-            # This is a bit awkward, but I'm not sure how else to phrase
-            # the impact of a non-value variable like from ForInEnumerate.
-            error_addendum = " (%d of which matter for this error)" % values_per_iteration
-        raise DataError('Number of FOR loop values should be multiple of '
-                        'variables. Got %d variables%s but %d value%s.'
-                        % (len(data.variables), error_addendum,
-                            len(values), s(values)))
+        raise DataError(self._replace_variables_error_message(data, values))
+
+    def _replace_variables_error_message(self, data, values):
+        return ('Number of FOR loop values should be multiple of '
+                + 'its variables. Got %d variables but %d value%s.'
+                % (len(data.variables), len(values), s(values)))
 
     def _run_one_round(self, data, values):
         name = ', '.join(format_assign_message(var, item)
@@ -275,8 +271,10 @@ class ForInZipRunner(ForInRunner):
         values = super(ForInZipRunner, self)._replace_variables(data)
         if len(data.variables) == len(data.values):
             return values
-        raise DataError("Expected %d loop variables, but got %d."
-                % (len(data.values), len(data.variables)))
+        raise DataError('FOR IN ZIP expects an equal number of variables and'
+                + ' iterables. Got %d variable%s and %d iterable%s.'
+                % (len(data.variables), s(data.variables),
+                    len(data.values), s(data.values)))
 
     def _transform_items(self, items):
         answer = list()
@@ -285,11 +283,8 @@ class ForInZipRunner(ForInRunner):
                 # Usually one would expect validation to happen in _validate(),
                 # but this particular validation relies on information that is
                 # not available to _validate().
-                # FIXME 'FOR IN ZIP expects equal number of variables and iterables. Got %d variable%s and %d iterable%s.' % (len(data.variables), s(data.variables), len(data.values), s(data.values)
-                # FIXME "FOR IN ZIP items must all be list-like, got %s." % type_name(item)
-                raise DataError("FOR IN ZIP Loop items must all be List-like;"
-                + " got %s with value '%s'." % (
-                    type_name(item), item))
+                raise DataError("FOR IN ZIP items must all be List-like, got %s."
+                    % type_name(item))
         for zipped_item in zip(*[list(item) for item in items]):
             answer.extend(zipped_item)
         return answer
@@ -313,6 +308,13 @@ class ForInEnumerateRunner(ForInRunner):
                 ._get_values_for_one_round(data)):
             yield [idx] + values
 
+    def _replace_variables_error_message(self, data, values):
+        return ('Number of FOR IN ENUMERATE loop values (excluding the counter)'
+                + ' should be multiple of its variables.'
+                + ' Got %d non-counting variable%s but %d value%s.'
+                % (len(data.variables), s(data.variables),
+                    len(values), s(values)))
+
 
 class InvalidForRunner(ForInRunner):
     """
@@ -329,10 +331,9 @@ class InvalidForRunner(ForInRunner):
         self.expected = repr(sorted(expected))
 
     def _run(self, data, *args, **kwargs):
-        # FIXME "Invalid FOR loop type '%s'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'." % self.flavor
         raise DataError(
-            "Unexpected FOR loop type %s (%s); expected one of %s (but with spaces)." %
-            (self.flavor, self.pretty_flavor, self.expected))
+            "Invalid FOR loop type '%s'." % self.pretty_flavor
+            + " Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.")
 
 
 class StatusReporter(object):

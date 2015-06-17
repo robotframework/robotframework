@@ -8,7 +8,7 @@ Variables   binary_list.py
 ${NO VALUES}      FOR loop has no loop values.
 ${NO KEYWORDS}    FOR loop contains no keywords.
 ${NO VARIABLES}   FOR loop has no loop variables.
-${WRONG VALUES}   Number of FOR loop values should be multiple of variables.
+${WRONG VALUES}   Number of FOR loop values should be multiple of its variables.
 
 *** Test Cases ***
 Simple For
@@ -358,20 +358,20 @@ For In Zip With Other Iterables
     Should Be Equal    ${result}    ${expected}
 
 For In Zip Rejects Strings as iterable
-    [Documentation]    FAIL    FOR IN ZIP Loop items must all be List-like; got string with value 'NotAListButStillPythonIterable'.
+    [Documentation]    FAIL    FOR IN ZIP items must all be List-like, got string.
     @{things}=    Create List    e    f    g    h
     : FOR    ${item}    ${thing}    IN ZIP    NotAListButStillPythonIterable    ${things}
     \    Fail    This test case should die before running this.
 
 For In Zip With Non-list
-    [Documentation]    FAIL    FOR IN ZIP Loop items must all be List-like; got integer with value '42'.
+    [Documentation]    FAIL    FOR IN ZIP items must all be List-like, got integer.
     ${items}=    Set Variable    ${42}
     @{things}=    Create List    e    f    g    h
     : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
     \    Fail    This test case should die before running this.
 
 For In Zip With Too Few Variables
-    [Documentation]    FAIL    Expected 3 loop variables, but got 1.
+    [Documentation]    FAIL    FOR IN ZIP expects an equal number of variables and iterables. Got 1 variable and 3 iterables.
     @{items}=    Create List    a    b    c    d
     @{things}=    Create List    e    f    g    h
     @{stuffs}=    Create List    1    2    3    4    5
@@ -379,7 +379,7 @@ For In Zip With Too Few Variables
     \    Fail    This test case should die before running this.
 
 For In Zip With Too Many Variables
-    [Documentation]    FAIL    Expected 3 loop variables, but got 4.
+    [Documentation]    FAIL    FOR IN ZIP expects an equal number of variables and iterables. Got 4 variables and 3 iterables.
     @{items}=    Create List    a    b    c    d
     @{things}=    Create List    e    f    g    h
     @{stuffs}=    Create List    1    2    3    4    5
@@ -418,7 +418,7 @@ For In Enumerate With 4 Variables
     Should Be True    @{result} == ['0:a:b:c', '1:d:e:f', '2:g:h:i']
 
 For In Enumerate With not the right number of variables
-    [Documentation]    FAIL    Number of FOR loop values should be multiple of variables. Got 3 variables (2 of which matter for this error) but 7 values.
+    [Documentation]    FAIL    Number of FOR IN ENUMERATE loop values (excluding the counter) should be multiple of its variables. Got 3 non-counting variables but 7 values.
     @{items}=    Create List    a    b    c    d    e    f    g
     : FOR    ${index}    ${item}    ${another_item}    IN ENUMERATE    @{items}
     \    Should Be Equal    @{items}[${index* 2 }]    ${item}    Loop value ${item} should be item ${index} of ${items}
@@ -440,7 +440,7 @@ For In Enumerate With Other Iterables
     Should Be Equal    ${answer}    0123456789
 
 For Loop Of Unexpected Name
-    [Documentation]    FAIL    Unexpected FOR loop type INFANCYPANTS (IN FANCY PANTS); expected one of ['IN', 'INENUMERATE', 'INRANGE', 'INZIP'] (but with spaces).
+    [Documentation]    FAIL    Invalid FOR loop type 'IN FANCY PANTS'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
     : FOR    ${i}    In Fancy Pants    Mr. Fancypants
     \    Fail    This shouldn't ever execute.
 
