@@ -13,11 +13,6 @@ Dotted
     Stdout Should Be    warnings_and_errors_stdout_dotted.txt
     Stderr Should Be    warnings_and_errors_stderr.txt
 
-Dotted does not show details for skipped
-    Run tests    -.    running/fatal_exception
-    Stdout Should Be    dotted_fatal_error.txt
-    Stderr Should Be    empty.txt
-
 Quiet
     Run and verify tests    --ConSole=QuiEt
     Stdout Should Be    empty.txt
@@ -41,6 +36,11 @@ Invalid
     Run and verify tests    --Quiet
     Stdout Should Be    empty.txt
     Stderr Should Be    warnings_and_errors_stderr.txt
+
+Dotted does not show details for skipped
+    Run tests    -.    running/fatal_exception
+    Stdout Should Be    dotted_fatal_error.txt
+    Stderr Should Be    empty.txt
 
 *** Keywords ***
 Run and verify tests

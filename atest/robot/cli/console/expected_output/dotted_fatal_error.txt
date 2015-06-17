@@ -5,7 +5,7 @@ Fxxxxx
 FAIL: Fatal Exception.Python Library Kw.Exit From Python Keyword
 FatalCatastrophyException
 ==============================================================================
-Run suite 'Fatal Exception' with *.
+Run suite 'Fatal Exception' with 6 tests in *.
 
 FAILED
 6 critical tests, 0 passed, 6 failed
