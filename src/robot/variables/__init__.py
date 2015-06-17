@@ -19,7 +19,7 @@ This package is mainly for internal usage.
 
 from .assigner import VariableAssigner
 from .isvar import contains_var, is_var, is_scalar_var, is_list_var, is_dict_var
-from .scopes import VariableScopes
+from .scopes import VariableScopes, GLOBAL_VARIABLES  # Selenium2Library compatibility
 from .splitter import VariableSplitter, VariableIterator
 from .tablesetter import VariableTableValue, DictVariableTableValue
 from .variables import Variables
