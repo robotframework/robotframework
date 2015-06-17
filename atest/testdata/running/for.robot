@@ -332,7 +332,8 @@ For In Zip
     Should Be True    @{result} == ['a:e', 'b:f', 'c:g', 'd:h']
 
 For In Zip With Uneven Lists
-    [Documentation]    Handling lists with different number of elements.  This will ignore any elements after the shortest list ends, just like with Python's zip()
+    [Documentation]    This will ignore any elements after the shortest
+    ...    list ends, just like with Python's zip()
     @{items}=    Create List    a    b    c
     @{things}=    Create List    d    e    f    g    h
     : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
@@ -340,7 +341,6 @@ For In Zip With Uneven Lists
     Should Be True    @{result} == ['a:d', 'b:e', 'c:f']
 
 For In Zip With 3 Lists
-    [Documentation]    Handling 3 lists like :FOR ${a} ${b} ${c} IN ZIP ${x} ${y} ${z}.
     @{items}=    Create List    a    b    c    d
     @{things}=    Create List    e    f    g    h
     @{stuffs}=    Create List    1    2    3    4    5
@@ -349,7 +349,9 @@ For In Zip With 3 Lists
     Should Be True    @{result} == ['a:e:1', 'b:f:2', 'c:g:3', 'd:h:4']
 
 For In Zip With Other Iterables
-    [Documentation]    Handling non-lists. Should accept anything iterable except strings and fail with a clear error message if invalid data given. You can use utils.is_list_like to verify inputs.
+    [Documentation]    Handling non-lists. Should accept anything iterable
+    ...    except strings and fail with a clear error message if invalid
+    ...    data given. You can use utils.is_list_like to verify inputs.
     @{range}=    Evaluate    (i for i in range(10))
     @{range2}=    Evaluate    (10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
     : FOR     ${x}    ${y}    IN ZIP    ${range}    ${range2}

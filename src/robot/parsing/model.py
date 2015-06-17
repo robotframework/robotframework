@@ -598,14 +598,17 @@ class UserKeyword(TestCase):
 
 class ForLoop(_WithSteps):
     """
-    Properties:
+    py:class:: ForLoop(declaration, comment=None)
 
-    - flavor: The value of the 'IN' item, uppercased.
-              Typically 'IN', 'IN RANGE', 'IN ZIP', 'IN EUMERATE', etc.(?)
-    - vars:   Variables set per-iteration by this loop
-    - items:  Items to loop over (or otherwise parameters, like with INRANGE)
-    - comment: a comment, or None.
-    - steps:  A list of steps in the loop.
+    :param list declaration: The literal cell values that declare the loop
+                             (excluding ":FOR").
+    :param str comment: A comment, default None.
+    :ivar str flavor: The value of the 'IN' item, uppercased.
+                      Typically 'IN', 'IN RANGE', 'IN ZIP', or 'IN EUMERATE'.
+    :ivar list vars: Variables set per-iteration by this loop.
+    :ivar list items: Loop values that come after the 'IN' item.
+    :ivar str comment: A comment, or None.
+    :ivar list steps: A list of steps in the loop.
     """
 
     def __init__(self, declaration, comment=None):
