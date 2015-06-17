@@ -1,5 +1,6 @@
 *** Settings ***
 Resource          atest_resource.robot
+Library           expected_output/ExpectedOutputLibrary.py
 
 *** Variables ***
 ${SEP_CHAR1}      =
@@ -13,3 +14,11 @@ ${MSG_110}        1 critical test, 1 passed, 0 failed\n 1 test total, 1 passed, 
 Create Status Line
     [Arguments]    ${name}    ${padding}    ${status}
     [Return]    ${name}${SPACE * ${padding}}| ${status} |
+
+Stdout Should Be
+    [Arguments]    ${expected}
+    Output Should Be     ${STDOUT FILE}    ${expected}
+
+Stderr Should Be
+    [Arguments]    ${expected}
+    Output Should Be     ${STDERR FILE}    ${expected}
