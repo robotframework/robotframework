@@ -1,6 +1,13 @@
 robot.output package
 ====================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    robot.output.console
+
 Submodules
 ----------
 
@@ -16,14 +23,6 @@ robot.output.filelogger module
 ------------------------------
 
 .. automodule:: robot.output.filelogger
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-robot.output.highlighting module
---------------------------------
-
-.. automodule:: robot.output.highlighting
     :members:
     :undoc-members:
     :show-inheritance:
@@ -64,14 +63,6 @@ robot.output.loggerhelper module
 --------------------------------
 
 .. automodule:: robot.output.loggerhelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-robot.output.monitor module
----------------------------
-
-.. automodule:: robot.output.monitor
     :members:
     :undoc-members:
     :show-inheritance:

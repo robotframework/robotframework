@@ -52,6 +52,14 @@ robot.variables.replacer module
     :undoc-members:
     :show-inheritance:
 
+robot.variables.scopes module
+-----------------------------
+
+.. automodule:: robot.variables.scopes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.variables.splitter module
 -------------------------------
 
