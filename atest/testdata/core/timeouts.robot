@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     Tests using test case and user keyword timeouts.
 Suite Setup       Clean Up Timeout Temp
-Test Timeout      4 seconds
+Test Timeout      1 second
 Library           ExampleLibrary
 Library           ExampleJavaLibrary
 Library           OperatingSystem
@@ -36,28 +36,28 @@ Show Correct Trace Back When Failing In Java Before Timeout
     [Teardown]    Set Log Level    INFO
 
 Sleeping And Timeouting
-    [Documentation]    FAIL Test timeout 4 seconds exceeded.
-    Sleep Without Logging    10
+    [Documentation]    FAIL Test timeout 1 second exceeded.
+    Sleep Without Logging    5
     Fail    This should not be executed
 
 Total Time Too Long
-    [Documentation]    FAIL Test timeout 500 milliseconds exceeded.
-    [Timeout]    500 milliseconds
+    [Documentation]    FAIL Test timeout 300 milliseconds exceeded.
+    [Timeout]    300 milliseconds
+    Sleep Without Logging    0.1
     Sleep Without Logging    0.2
-    Sleep Without Logging    0.2
-    Sleep Without Logging    0.2
+    Sleep Without Logging    0.3
     Fail    This should not be executed
 
 Looping Forever And Timeouting
-    [Documentation]    FAIL Test timeout 333 milliseconds exceeded.
-    [Timeout]    333 milliseconds
+    [Documentation]    FAIL Test timeout 123 milliseconds exceeded.
+    [Timeout]    123 milliseconds
     Loop Forever
     Fail    This should not be executed
 
 Stopped After Test Timeout
     [Documentation]    Keyword that is stopped after test timeout should not write to a file.
-    ...    FAIL Test timeout 500 milliseconds exceeded.
-    [Timeout]    0.5s
+    ...    FAIL Test timeout 200 milliseconds exceeded.
+    [Timeout]    0.2s
     Write To File After Sleeping    ${TEST STOPPED}    2
 
 Stopped After Keyword Timeout
@@ -87,57 +87,58 @@ Timeouted Keyword Timeouts
     Timeouted Keyword Timeouts
 
 Timeouted Keyword Timeouts Due To Total Time
-    [Documentation]    FAIL Keyword timeout 1 second exceeded.
+    [Documentation]    FAIL Keyword timeout 300 milliseconds exceeded.
     [Timeout]    2 seconds
     Timeouted Keyword Timeouts Due To Total Time
 
 Test Timeouts When Also Keywords Are Timeouted
-    [Documentation]    FAIL Test timeout 500 milliseconds exceeded.
-    [Timeout]    500 milliseconds
-    Timeouted Keyword Passes    0.3
-    Timeouted Keyword Passes    0.3
+    [Documentation]    FAIL Test timeout 300 milliseconds exceeded.
+    [Timeout]    300 milliseconds
+    Timeouted Keyword Passes    0.2
+    Timeouted Keyword Passes    0.2
+    Timeouted Keyword Passes    0.2
 
 Timeout Format
-    [Documentation]    This is thoroughly tested on unit level so here are only some sanity checks FAIL Keyword timeout 1 second exceeded.
+    [Documentation]    This is thoroughly tested on unit level so here are only some sanity checks
+    ...    FAIL Keyword timeout 1 second exceeded.
     [Timeout]    2 days 4 hours 56 minutes 18 seconds
     Timeout Format
 
 Test Timeout During Setup
     [Documentation]    FAIL Setup failed:
-    ...    Test timeout 1 second exceeded.
+    ...    Test timeout 100 milliseconds exceeded.
     [Setup]    Sleep Without Logging    60
-    [Timeout]    1 second
+    [Timeout]    0.1 seconds
     Fail    This should not be executed
 
 Teardown After Test Timeout
-    [Documentation]    FAIL Test timeout 500 milliseconds exceeded.
-    [Timeout]    500 milliseconds
+    [Documentation]    FAIL Test timeout 123 milliseconds exceeded.
+    [Timeout]    123 milliseconds
     Sleep Without Logging    1s
     [Teardown]    Log    Teardown executed
 
 Failing Teardown After Test Timeout
-    [Documentation]    FAIL Test timeout 1 second exceeded.
+    [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
     ...
     ...    Also teardown failed:
     ...    Failure before keyword timeout
-    [Timeout]    1 second
-    Sleep Without Logging    1.1
+    [Timeout]    0.1 second
+    Sleep Without Logging    1
     [Teardown]    Timeouted Keyword Fails Before Timeout
 
 Teardown With Sleep After Test Timeout
-    [Documentation]    FAIL Test timeout 1 second exceeded.
-    [Timeout]    1 second
-    Sleep Without Logging    1.1
+    [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
+    [Timeout]    100 ms
+    Sleep Without Logging    1
     [Teardown]    Sleep And Log    0.5    Teardown executed
 
 Test Timeout During Teardown
-    [Documentation]    FAIL Test timeout 2 seconds exceeded.
-    [Timeout]    2 seconds
+    [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
+    [Timeout]    0.1 seconds
     Comment    No timeout here
-    [Teardown]    Sleep And Log    2.1    Teardown executed
+    [Teardown]    Sleep And Log    0.5    Teardown executed
 
 Timeouted Setup Passes
-    [Documentation]    PASS
     [Setup]    Timeouted Keyword Passes    0.001
     Timeouted Keyword Passes    0
 
@@ -149,7 +150,6 @@ Timeouted Setup Timeouts
     Fail    This should not be executed
 
 Timeouted Teardown Passes
-    [Documentation]    PASS
     [Setup]    Timeouted Keyword Passes    0
     No Operation
     [Teardown]    Timeouted Keyword Passes    0.001
@@ -163,18 +163,18 @@ Timeouted Teardown Timeouts
     [Teardown]    Timeouted Keyword Timeouts
 
 Timeouted UK Using Non Timeouted UK
-    [Documentation]    FAIL Keyword timeout 2 seconds exceeded.
+    [Documentation]    FAIL Keyword timeout 222 milliseconds exceeded.
     [Timeout]
     Timeouted UK Using Non Timeouted UK
 
 Shortest UK Timeout Should Be Applied
-    [Documentation]    FAIL Keyword timeout 2 seconds exceeded.
+    [Documentation]    FAIL Keyword timeout 200 milliseconds exceeded.
     [Timeout]
     Timeouted UK Using Timeouted UK
 
 Shortest Test Or UK Timeout Should Be Applied
-    [Documentation]    FAIL Test timeout 1 second exceeded.
-    [Timeout]    1 second
+    [Documentation]    FAIL Test timeout 100 milliseconds exceeded.
+    [Timeout]    0.1 second
     Timeouted UK Using Timeouted UK
 
 Timeouted Set Keyword
@@ -228,11 +228,12 @@ Timeouted Keyword Timeouts
     [Return]    Nothing, really
 
 Timeouted Keyword Timeouts Due To Total Time
-    [Timeout]    1 second
-    Sleep Without Logging    0.3
-    Sleep Without Logging    0.3
-    Sleep Without Logging    0.3
-    Sleep Without Logging    0.3
+    [Timeout]    0.3 seconds
+    Sleep Without Logging    0.1
+    Sleep Without Logging    0.1
+    Sleep Without Logging    0.1
+    Sleep Without Logging    0.1
+    Sleep Without Logging    0.1
 
 Timeouted Write To File After Sleeping
     [Arguments]    ${path}    ${secs}
@@ -250,7 +251,7 @@ Sleep And Log
     Log    ${msg}
 
 Timeouted UK Using Non Timeouted UK
-    [Timeout]    2 seconds
+    [Timeout]    0.222
     Non Timeouted UK
 
 Timeouted UK Using Non Timeouted UK 2
@@ -261,7 +262,7 @@ Non Timeouted UK
     Sleep    10
 
 Timeouted UK Using Timeouted UK
-    [Timeout]    2 seconds
+    [Timeout]    0.2 seconds
     Timeouted UK Using Non Timeouted UK 2
 
 Run Keyword With Timeout
