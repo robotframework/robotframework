@@ -707,6 +707,20 @@ can be created using variables, assuming that those variables exist.
    |               | Remove Tags     | smoke               | req-*                  |
    +---------------+-----------------+---------------------+------------------------+
 
+Reserved tags
+~~~~~~~~~~~~~
+
+Users are generally free to use whatever tags that work in their context.
+There are, however, certain tags that have a predefined meaning for Robot
+Framework itself, and using them for other purposes can have unexpected
+results. All special tags Robot Framework has and will have in the future
+have a `robot-` prefix. To avoid problems, users should thus not use any
+tag with a `robot-` prefix unless actually activating the special functionality.
+
+At the time of writing, the only special tag is `robot-exit` that is
+automatically added to tests when `stopping test execution gracefully`_.
+More usages are likely to be added in the future, though.
+
 Test setup and teardown
 -----------------------
 
