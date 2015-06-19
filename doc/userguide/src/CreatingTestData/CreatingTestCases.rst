@@ -37,22 +37,20 @@ contain possible arguments to the specified keyword.
 .. _setting variables from keyword return values: `User keyword return values`_
 
 .. _example-tests:
-.. table:: Example test cases
-   :class: example
+.. sourcecode:: robotframework
 
-   ==================  ===========================  ==================  ===============
-       Test Case                  Action                 Argument          Argument
-   ==================  ===========================  ==================  ===============
-   Valid Login         Open Login Page
-   \                   Input Name                   demo
-   \                   Input Password               mode
-   \                   Submit Credentials
-   \                   Welcome Page Should Be Open
-   \
-   Setting Variables   Do Something                 first argument      second argument
-   \                   ${value} =                   Get Some Value      \
-   \                   Should Be Equal              ${value}            Expected value
-   ==================  ===========================  ==================  ===============
+   *** Test Cases ***
+   Valid Login
+       Open Login Page
+       Input Name        demo
+       Input Password    mode
+       Submit Credentials
+       Welcome Page Should Be Open
+  
+   Setting Variables
+       Do Something    first argument    second argument
+       ${value} =    Get Some Value
+       Should Be Equal    ${value}    Expected value 
 
 Settings in the Test Case table
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -82,17 +80,15 @@ below and explained later in this section.
    Used for setting a `test case timeout`_. Timeouts_ are discussed in
    their own section.
 
+Example test case with settings:
 
-.. table:: Example test case with settings
-   :class: example
+.. sourcecode:: robotframework
 
-   ==================  ===========================  ==================  ===============
-       Test Case                  Action                 Argument          Argument
-   ==================  ===========================  ==================  ===============
-   Test With Settings  [Documentation]              Another dummy test
-   \                   [Tags]                       dummy               owner-johndoe
-   \                   Log                          Hello, world!
-   ==================  ===========================  ==================  ===============
+   *** Test Cases ***
+   Test With Settings
+       [Documentation]    Another dummy test
+       [Tags]    dummy    owner-johndoe
+       Log    Hello, world!
 
 Test case related settings in the Setting table
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -155,16 +151,13 @@ specified as `path` and `source, destination`, which means
 that they take one and two arguments, respectively. The last keyword,
 :name:`No Operation` from BuiltIn_, takes no arguments.
 
-.. table:: Keywords with positional arguments
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ================  ==================  ==================
-     Test Case         Action            Argument            Argument
-   =============  ================  ==================  ==================
-   Example        Create Directory  ${TEMPDIR}/stuff
-   \              Copy File         ${CURDIR}/file.txt  ${TEMPDIR}/stuff
-   \              No Operation
-   =============  ================  ==================  ==================
+   *** Test Cases ***
+   Example
+       Create Directory    ${TEMPDIR}/stuff
+       Copy File    ${CURDIR}/file.txt    ${TEMPDIR}/stuff
+       No Operation
 
 Default values
 ~~~~~~~~~~~~~~
@@ -185,16 +178,13 @@ Using default values is illustrated by the example below that uses
 encoding=UTF-8`. Trying to use it without any arguments or more than
 three arguments would not work.
 
-.. table:: Keywords with arguments having default values
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ================  =========================  ====================  ============
-     Test Case         Action               Argument                 Argument          Argument
-   =============  ================  =========================  ====================  ============
-   Example        Create File       ${TEMPDIR}/empty.txt
-   \              Create File       ${TEMPDIR}/utf-8.txt       Hyvä esimerkki
-   \              Create File       ${TEMPDIR}/iso-8859-1.txt  Hyvä esimerkki        ISO-8859-1
-   =============  ================  =========================  ====================  ============
+   *** Test Cases ***
+   Example
+       Create File    ${TEMPDIR}/empty.txt
+       Create File    ${TEMPDIR}/utf-8.txt         Hyvä esimerkki
+       Create File    ${TEMPDIR}/iso-8859-1.txt    Hyvä esimerkki    ISO-8859-1
 
 .. _varargs:
 
@@ -215,16 +205,13 @@ example below have arguments `*paths` and `base, *parts`,
 respectively. The former can be used with any number of arguments, but
 the latter requires at least one argument.
 
-.. table:: Keywords with variable number of arguments
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ================  =================  =================  =================
-     Test Case         Action            Argument           Argument           Argument
-   =============  ================  =================  =================  =================
-   Example        Remove Files      ${TEMPDIR}/f1.txt  ${TEMPDIR}/f2.txt  ${TEMPDIR}/f3.txt
-   \              @{paths} =        Join Paths         ${TEMPDIR}         f1.txt
-   \              ...               f2.txt             f3.txt             f4.txt
-   =============  ================  =================  =================  =================
+   *** Test Cases ***
+   Example
+       Remove Files    ${TEMPDIR}/f1.txt    ${TEMPDIR}/f2.txt    ${TEMPDIR}/f3.txt
+       @{paths} =    Join Paths    ${TEMPDIR}    f1.txt
+       ...           f2.txt    f3.txt    f4.txt
 
 .. _Named argument syntax:
 
@@ -285,31 +272,23 @@ matching them against argument names. This is a new feature in Robot Framework
 
 The named argument syntax requires the equal sign to be written literally
 in the keyword call. This means that variable alone can never trigger the
-named argument syntax, not even if it has a value like like `foo=bar`. This is
+named argument syntax, not even if it has a value like `foo=bar`. This is
 important to remember especially when wrapping keywords into other keywords.
 If, for example, a keyword takes a `variable number of arguments`_ like
 `@{args}` and passes all of them to another keyword using the same `@{args}`
 syntax, possible `named=arg` syntax used in the calling side is not recognized.
 This is illustrated by the example below.
 
-.. table:: Named arguments are not recognized from variable values
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ============  ============  ============
-     Test Case       Action       Argument      Argument
-   =============  ============  ============  ============
-   Example        Run Program   shell=True    # This will not come as a named argument to Run Process
-   =============  ============  ============  ============
+   *** Test Cases ***
+   Example        
+       Run Program    shell=True    # This will not come as a named argument to Run Process
 
-.. table::
-   :class: example
-
-   =============  ============  ============  ============  ============
-      Keyword        Action       Argument      Argument      Argument
-   =============  ============  ============  ============  ============
-   Run Program    [Arguments]   @{args}
-   \              Run Process   program.py    @{args}       # Named arguments are not recognized from inside @{args}
-   =============  ============  ============  ============  ============
+   *** Keywords ***
+   Run Program    
+       [Arguments]    @{args}
+       Run Process    program.py    @{args}    # Named arguments are not recognized from inside @{args}
 
 If keyword needs to accept and pass forward any named arguments, it must be
 changed to accept `free keyword arguments`_. See `kwargs examples`_ for
@@ -354,35 +333,22 @@ Named arguments example
 The following example demonstrates using the named arguments syntax with
 library keywords, user keywords, and when importing the Telnet_ test library.
 
-.. table:: Named argument example
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ===========  ===========  =======================
-      Setting        Value        Value             Value
-   =============  ===========  ===========  =======================
-   Library        Telnet       prompt=$     default_log_level=DEBUG
-   =============  ===========  ===========  =======================
+   *** Settings ***
+   Library    Telnet    prompt=$    default_log_level=DEBUG
 
-.. table::
-   :class: example
+   *** Test Cases ***
+   Example
+       Open connection    10.0.0.42    port=${PORT}    alias=example
+       List files    options=-lh
+       List files    path=/tmp    options=-l
 
-   =============  ================  ============  ============  =============
-     Test Case          Action        Argument      Argument      Argument
-   =============  ================  ============  ============  =============
-   Example        Open connection   10.0.0.42     port=${PORT}  alias=example
-   \              List files        options=-lh
-   \              List files        path=/tmp     options=-l
-   =============  ================  ============  ============  =============
-
-.. table::
-   :class: example
-
-   =============  =================  =====================  ============  ============
-     Keyword            Action              Argument          Argument      Argument
-   =============  =================  =====================  ============  ============
-   List files     [Arguments]        ${path}=.              ${options}=
-   \              Execute command    ls ${options} ${path}
-   =============  =================  =====================  ============  ============
+   *** Keywords ***
+   List files
+       [Arguments]    ${path}=.    ${options}=
+       List files    options=-lh
+       Execute command    ls ${options} ${path}
 
 Free keyword arguments
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -421,15 +387,12 @@ arguments (`**configuration`). The example below also shows that variables
 work with free keyword arguments exactly like when `using the named argument
 syntax`__.
 
-.. table:: Free keyword arguments with library keyword
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ============  ============  ============  ============  ==============
-     Test Case       Action       Argument      Argument      Argument       Argument
-   =============  ============  ============  ============  ============  ==============
-   Using Kwargs   Run Process   program.py    arg1          arg2          cwd=/home/user
-   \              Run Process   program.py    argument      shell=True    env=${ENVIRON}
-   =============  ============  ============  ============  ============  ==============
+   *** Test Cases ***
+   Using Kwargs
+       Run Process    program.py    arg1        arg2          cwd=/home/user
+       Run Process    program.py    argument    shell=True    env=${ENVIRON}
 
 See `Free keyword arguments (**kwargs)`_ section under `Creating test
 libraries`_ for more information about using the kwargs syntax in
@@ -440,25 +403,17 @@ As the second example, let's create a wrapper `user keyword`_ for running the
 accepts any number of arguments and kwargs, and passes them forward for
 :name:`Run Process` along with the name of the command to execute.
 
-.. table:: Free keyword arguments with user keyword
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ============  ============  ============  ==============
-     Test Case       Action       Argument      Argument      Argument
-   =============  ============  ============  ============  ==============
-   Using Kwargs   Run Program   arg1          arg2          cwd=/home/user
-   \              Run Program   argument      shell=True    env=${ENVIRON}
-   =============  ============  ============  ============  ==============
+   *** Test Cases ***
+   Using Kwargs
+       Run Program    arg1        arg2          cwd=/home/user
+       Run Program    argument    shell=True    env=${ENVIRON}
 
-.. table::
-   :class: example
-
-   =============  =================  ================  ================  ================
-      Keyword          Action            Argument          Argument          Argument
-   =============  =================  ================  ================  ================
-   Run Program    [Arguments]        @{arguments}      &{configuration}
-   \              Run Process        program.py        @{arguments}      &{configuration}
-   =============  =================  ================  ================  ================
+   *** Keywords ***
+   Run Program
+       [Arguments]    @{arguments}    &{configuration}
+       Run Process    program.py    @{arguments}    &{configuration}
 
 __ `Named arguments with variables`_
 
@@ -503,20 +458,15 @@ is enabled by starting the error message with marker string `*HTML*`.
 This marker will be removed from the final error message shown in reports
 and logs. Using HTML in a custom message is shown in the second example below.
 
-.. table:: Keyword error messages
-   :class: example
+.. sourcecode:: robotframework
 
-   +--------------+-----------------+---------------------+----------+-------------------------+
-   |  Test Case   |     Action      |       Argument      | Argument |        Argument         |
-   +==============+=================+=====================+==========+=========================+
-   | Normal Error | Fail            | This is a rather    |          |                         |
-   |              |                 | boring example...   |          |                         |
-   +--------------+-----------------+---------------------+----------+-------------------------+
-   | HTML Error   | ${number}=      | Get Number          |          |                         |
-   +--------------+-----------------+---------------------+----------+-------------------------+
-   |              | Should Be Equal | ${number}           | 42       | \*HTML\* Number is not  |
-   |              |                 |                     |          | my <b>MAGIC</b> number. |
-   +--------------+-----------------+---------------------+----------+-------------------------+
+   *** Test Cases ***
+   Normal Error
+       Fail    This is a rather boring example...
+       
+   HTML Error
+       ${number} =    Get Number
+       Should Be Equal    ${number}    42    \*HTML\* Number is not my <b>MAGIC</b> number.
 
 __ `Continue on failure`_
 __ `HTML in error messages`_
@@ -548,37 +498,30 @@ __ `Dividing test data to several rows`_
 __ `Automatic newlines in test data`_
 __ `Escaping`_
 
-.. table:: Test case documentation examples
-   :class: example
+.. sourcecode:: robotframework
 
-   +--------------+-----------------+----------------------+----------------------------+
-   |  Test Case   |     Action      |       Argument       |           Argument         |
-   +==============+=================+======================+============================+
-   | Simple       | [Documentation] | Simple documentation |                            |
-   +--------------+-----------------+----------------------+----------------------------+
-   |              | No Operation    |                      |                            |
-   +--------------+-----------------+----------------------+----------------------------+
-   | Splitting    | [Documentation] | This documentation   | it has been split into     |
-   |              |                 | is a bit longer and  | several columns.           |
-   +--------------+-----------------+----------------------+----------------------------+
-   |              | No Operation    |                      |                            |
-   +--------------+-----------------+----------------------+----------------------------+
-   | Many lines   | [Documentation] | Here we have         |                            |
-   +--------------+-----------------+----------------------+----------------------------+
-   |              | ...             | an automatic newline |                            |
-   +--------------+-----------------+----------------------+----------------------------+
-   |              | No Operation    |                      |                            |
-   +--------------+-----------------+----------------------+----------------------------+
-   | Formatting   | [Documentation] | \*This is bold\*,    | here is a link:            |
-   |              |                 | \_this italic\_  and | \http://robotframework.org |
-   +--------------+-----------------+----------------------+----------------------------+
-   |              | No Operation    |                      |                            |
-   +--------------+-----------------+----------------------+----------------------------+
-   | Variables    | [Documentation] | Executed at ${HOST}  |                            |
-   |              |                 | by ${USER}           |                            |
-   +--------------+-----------------+----------------------+----------------------------+
-   |              | No Operation    |                      |                            |
-   +--------------+-----------------+----------------------+----------------------------+
+   *** Test Cases ***
+   Simple
+       [Documentation]    Simple documentation
+       No Operation
+
+   Splitting
+       [Documentation]    This documentation is a bit longer and    it has been split into several parts.
+       No Operation
+
+   Many lines
+       [Documentation]    Here we have 
+       ...                an automatic newline
+       No Operation
+
+   Formatting
+       [Documentation]    *This is bold*, _this is italic_  and here is a link: http://robotframework.org
+       No Operation
+
+   Variables
+       [Documentation]    Executed at ${HOST} by ${USER} 
+       No Operation
+
 
 It is important that test cases have clear and descriptive names, and
 in that case they normally do not need any documentation. If the logic
@@ -640,72 +583,39 @@ to lowercase and all spaces are removed. If a test case gets the same tag
 several times, other occurrences than the first one are removed. Tags
 can be created using variables, assuming that those variables exist.
 
-.. table:: Tagging example
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ==========  =======  =======
-     Setting       Value      Value    Value
-   ============  ==========  =======  =======
-   Force Tags    req-42
-   Default Tags  owner-john  smoke
-   ============  ==========  =======  =======
+   *** Settings ***
+   Force Tags      req-42
+   Default Tags    owner-john    smoke
 
-.. table::
-   :class: example
+   *** Variables ***
+   ${HOST}    10.0.1.42
 
-   ==========  =========  =======  =======
-    Variable     Value     Value    Value
-   ==========  =========  =======  =======
-   ${HOST}     10.0.1.42
-   ==========  =========  =======  =======
+   *** Test Cases ***
+   No own tags
+       [Documentation]    This test has tags    owner-john, smoke, req-42
+       No Operation
 
-.. table::
-   :class: example
+   With own tags
+       [Documentation]    This test has tags    not_ready, owner-mrx, req-42
+       [Tags]    owner-mrx    not_ready
+       No Operation
 
-   +---------------+-----------------+---------------------+------------------------+
-   |   Test Case   |     Action      |       Argument      |         Argument       |
-   +===============+=================+=====================+========================+
-   | No own tags   | [Documentation] | This test has tags  | owner-john, smoke,     |
-   |               |                 |                     | req-42                 |
-   +---------------+-----------------+---------------------+------------------------+
-   |               | No Operation    |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   |               |                 |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   | With own tags | [Documentation] | This test has tags  | not_ready, owner-mrx,  |
-   |               |                 |                     | req-42                 |
-   +---------------+-----------------+---------------------+------------------------+
-   |               | [Tags]          | owner-mrx           | not_ready              |
-   +---------------+-----------------+---------------------+------------------------+
-   |               | No Operation    |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   |               |                 |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   | Own tags with | [Documentation] | This test has tags  | host-10.0.1.42, req-42 |
-   | variables     |                 |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   |               | [Tags]          | host-${HOST}        |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   |               | No Operation    |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   |               |                 |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   | Empty own tags| [Documentation] | This test has tags  | req-42                 |
-   +---------------+-----------------+---------------------+------------------------+
-   |               | [Tags]          |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   |               | No Operation    |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   |               |                 |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   | Set Tags and  | [Documentation] | This test has tags  | mytag, owner-john      |
-   | Remove Tags   |                 |                     |                        |
-   | Keywords      |                 |                     |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   |               | Set Tags        | mytag               |                        |
-   +---------------+-----------------+---------------------+------------------------+
-   |               | Remove Tags     | smoke               | req-*                  |
-   +---------------+-----------------+---------------------+------------------------+
+   Own tags with variables
+       [Documentation]    This test has tags    host-10.0.1.42, req-42
+       [Tags]    host-${HOST}
+       No Operation
+
+   Empty own tags
+       [Documentation]    This test has tags    req-42
+       [Tags]
+       No Operation
+
+   Set Tags and Remove Tags Keywords
+       [Documentation]    This test has tags    mytag, owner-john
+       Set Tags    mytag
+       Remove Tags    smoke    req-*
 
 Reserved tags
 ~~~~~~~~~~~~~
@@ -753,42 +663,37 @@ table and they override possible :setting:`Test Setup` and
 setup or teardown. It is also possible to use value `NONE` to indicate that
 a test has no setup/teardown.
 
-.. table:: Test setup and teardown examples
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  =================  =======  =======
-      Setting            Value        Value    Value
-   =============  =================  =======  =======
-   Test Setup     Open Application   App A
-   Test Teardown  Close Application
-   =============  =================  =======  =======
+   *** Settings ***
+   Test Setup    Open Application    App A
+   Test Teardown    Close Application
 
-.. table::
-   :class: example
+   *** Test Cases ***
+   Default values
+       [Documentation]    Setup and teardown from setting table
+       Do Something
 
-   ==================  ===============  ===================  ==================
-       Test Case           Action            Argument            Argument
-   ==================  ===============  ===================  ==================
-   Default values      [Documentation]  Setup and teardown   from setting table
-   \                   Do Something
-   \
-   Overridden setup    [Documentation]  Own setup, teardown  from setting table
-   \                   [Setup]          Open Application     App B
-   \                   Do Something
-   \
-   No teardown         [Documentation]  Default setup, no    teardown at all
-   \                   Do Something
-   \                   [Teardown]
-   \
-   No teardown 2       [Documentation]  Using special NONE,  works as well
-   \                   Do Something
-   \                   [Teardown]       NONE
-   \
-   Using variables     [Documentation]  Setup and teardown   given as variables
-   \                   [Setup]          ${SETUP}
-   \                   Do Something
-   \                   [Teardown]       ${TEARDOWN}
-   ==================  ===============  ===================  ==================
+   Overridden setup
+       [Documentation]    Own setup, teardown from setting table
+       [Setup]    Open Application    App B
+       Do Something
+
+   No teardown
+       [Documentation]    Default setup, no teardown at all
+       Do Something
+       [Teardown]
+
+   No teardown 2
+       [Documentation]    Using special NONE, works as well
+       Do Something
+       [Teardown]    NONE
+
+   Using variables
+       [Documentation]    Setup and teardown  given as variables
+       [Setup]    ${SETUP}
+       Do Something
+       [Teardown]    ${TEARDOWN}
 
 Often when creating use-case-like test cases, the terms *precondition*
 and *postcondition* are preferred over the terms setup and
@@ -895,7 +800,7 @@ arguments. This is best illustrated with an example:
 
 .. sourcecode:: robotframework
 
-   *** Test Case ***
+   *** Test Cases ***
    Normal test case with embedded arguments
        The result of 1 + 1 should be 2
        The result of 1 + 2 should be 3
@@ -917,7 +822,7 @@ though, and it is also possible to use different arguments altogether:
 
 .. sourcecode:: robotframework
 
-   *** Test Case ***
+   *** Test Cases ***
    Different argument names
        [Template]    The result of ${foo} should be ${bar}
        1 + 1    2
@@ -946,18 +851,15 @@ all the steps inside the loop. The continue on failure mode is in use
 also in this case, which means that all the steps are executed with
 all the looped elements even if there are failures.
 
-.. table:: Using test template with for loops
-   :class: example
+.. sourcecode:: robotframework
 
-   ==================  ===============  ===============  ==========  ==========
-       Test Case            Action          Argument      Argument    Argument
-   ==================  ===============  ===============  ==========  ==========
-   Template and for    [Template]       Example keyword
-   \                   :FOR             ${item}          IN          @{ITEMS}
-   \                                    ${item}          2nd arg
-   \                   :FOR             ${index}         IN RANGE    42
-   \                                    1st arg          ${index}
-   ==================  ===============  ===============  ==========  ==========
+   *** Test Cases ***
+   Template and for
+       [Template]    Example keyword
+       :FOR    ${item}     IN    @{ITEMS}
+       \       ${item}     2nd arg
+       :FOR    ${index}    IN RANGE    42
+       \       1st arg     ${index}
 
 Different test case styles
 --------------------------
@@ -992,40 +894,18 @@ different input and/or output data. It would be possible to repeat the
 same keyword with every test, but the `test template`_ functionality
 allows specifying the keyword to use only once.
 
-.. table:: Data-driven testing example
-   :class: example
+.. sourcecode:: robotframework
 
-   +-------------------+-------------------------+---------+---------+
-   |     Setting       |           Value         |  Value  |  Value  |
-   +===================+=========================+=========+=========+
-   | Test Template     | Login with invalid      |         |         |
-   |                   | credentials should fail |         |         |
-   +-------------------+-------------------------+---------+---------+
+   *** Settings ***
+   Test Template    Login with invalid credentials should fail
 
-.. table::
-   :class: example
-
-   +-------------------+-----------+-----------+---------+
-   |     Test Case     | User Name | Password  |         |
-   +===================+===========+===========+=========+
-   | Invalid User Name | invalid   | ${VALID   |         |
-   |                   |           | PASSWORD} |         |
-   +-------------------+-----------+-----------+---------+
-   | Invalid Password  | ${VALID   | invalid   |         |
-   |                   | USER}     |           |         |
-   +-------------------+-----------+-----------+---------+
-   | Invalid User Name | invalid   | whatever  |         |
-   | And Password      |           |           |         |
-   +-------------------+-----------+-----------+---------+
-   | Empty User Name   | ${EMPTY}  | ${VALID   |         |
-   |                   |           | PASSWORD} |         |
-   +-------------------+-----------+-----------+---------+
-   | Empty Password    | ${VALID   | ${EMPTY}  |         |
-   |                   | USER}     |           |         |
-   +-------------------+-----------+-----------+---------+
-   | Empty User Name   | ${EMPTY}  | ${EMPTY}  |         |
-   | And Password      |           |           |         |
-   +-------------------+-----------+-----------+---------+
+   *** Test Cases ***
+   Invalid User Name                 invalid          ${VALID_PASSWORD}
+   Invalid Password                  ${VALID_USER}    invalid
+   Invalid User Name and Password    invalid          invalid
+   Empty User Name                   ${EMPTY}         ${VALID_PASSWORD}
+   Empty Password                    ${VALID_USER}    ${EMPTY}
+   Empty User Name and Password      ${EMPTY}         ${EMPTY}
 
 The above example has six separate tests, one for each invalid
 user/password combination, and the example below illustrates how to
@@ -1037,34 +917,17 @@ easier to see what they test, but having potentially large number of
 these tests may mess-up statistics. Which style to use depends on the
 context and personal preferences.
 
-.. table:: Data-driven test with multiple data variations
-   :class: example
+.. sourcecode:: robotframework
 
-   +-------------------+---------------+-------------------+---------+
-   |     Test Case     |   User Name   |      Password     |         |
-   +===================+===============+===================+=========+
-   | Invalid Password  | [Template]    | Login with invalid|         |
-   |                   |               | credentials should|         |
-   |                   |               | fail              |         |
-   +-------------------+---------------+-------------------+---------+
-   |                   | invalid       | ${VALID PASSWORD} |         |
-   +-------------------+---------------+-------------------+---------+
-   |                   | ${VALID USER} | invalid           |         |
-   +-------------------+---------------+-------------------+---------+
-   |                   | invalid       | whatever          |         |
-   +-------------------+---------------+-------------------+---------+
-   |                   | ${EMPTY}      | ${VALID PASSWORD} |         |
-   +-------------------+---------------+-------------------+---------+
-   |                   | ${VALID USER} | ${EMPTY}          |         |
-   +-------------------+---------------+-------------------+---------+
-   |                   | ${EMPTY}      | ${EMPTY}          |         |
-   +-------------------+---------------+-------------------+---------+
-
-.. tip:: In both of the above examples, column headers have been
-         changed to match the data. This is possible because on the
-         first row other cells except the first one `are ignored`__.
-
-__ `Ignored data`_
+   *** Test Cases ***
+   Invalid Password
+       [Template]    Login with invalid credentials should fail
+       invalid          ${VALID PASSWORD} 
+       ${VALID USER}    invalid   
+       invalid          whatever
+       ${EMPTY}         ${VALID PASSWORD} 
+       ${VALID USER}    ${EMPTY}       
+       ${EMPTY}         ${EMPTY}
 
 Behavior-driven style
 ~~~~~~~~~~~~~~~~~~~~~
@@ -1082,17 +945,14 @@ word :name:`Given`, the actions are described with keyword starting with
 Keyword starting with :name:`And` or :name:`But` may be used if a step has more
 than one action.
 
-.. table:: Example test cases using behavior-driven style
-   :class: example
+.. sourcecode:: robotframework
 
-   ==================  ===========================
-       Test Case                  Step
-   ==================  ===========================
-   Valid Login         Given login page is open
-   \                   When valid username and password are inserted
-   \                   and credentials are submitted
-   \                   Then welcome page should be open
-   ==================  ===========================
+   *** Test Cases ***
+   Valid Login
+       Given login page is open
+       When valid username and password are inserted
+       and credentials are submitted
+       Then welcome page should be open
 
 __ http://testobsessed.com/2008/12/08/acceptance-test-driven-development-atdd-an-overview
 __ http://en.wikipedia.org/wiki/Specification_by_example

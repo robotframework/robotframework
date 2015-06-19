@@ -36,16 +36,12 @@ system-independent (for example, :file:`${RESOURCES}/login_resources.html` or
 :file:`${RESOURCE_PATH}`). Additionally, slashes (`/`) in the path
 are automatically changed to backslashes (:codesc:`\\`) on Windows.
 
-.. table:: Importing resource files
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  =======================  =======
-    Setting            Value            Value
-   =========  =======================  =======
-   Resource   myresources.html
-   Resource   ../data/resources.html
-   Resource   ${RESOURCES}/common.tsv
-   =========  =======================  =======
+   *** Settings ***
+   Resource    myresources.html
+   Resource    ../data/resources.html
+   Resource    ${RESOURCES}/common.tsv
 
 The user keywords and variables defined in a resource file are
 available in the file that takes that resource file into
@@ -92,45 +88,32 @@ __ `Test suite name and documentation`_
 Example resource file
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. table::
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ========================  =======  =======
-      Setting               Value            Value    Value
-   =============  ========================  =======  =======
-   Documentation  An example resource file
-   Library        SeleniumLibrary
-   Resource       ${RESOURCES}/common.html
-   =============  ========================  =======  =======
+   *** Settings ***
+   Documentation    An example resource file
+   Library     SeleniumLibrary
+   Resource    ${RESOURCES}/common.html
 
-.. table::
-   :class: example
+   *** Variables ***
+   ${HOST}           localhost:7272
+   ${LOGIN_URL}      http://${HOST}/
+   ${WELCOME_URL}    http://${HOST}/welcome.html
+   ${BROWSER}        Firefox
 
-   ==============  ============================  =======  =======
-      Variable                Value               Value    Value
-   ==============  ============================  =======  =======
-   ${HOST}         localhost:7272
-   ${LOGIN_URL}    \http://${HOST}/
-   ${WELCOME_URL}  \http://${HOST}/welcome.html
-   ${BROWSER}      Firefox
-   ==============  ============================  =======  =======
-
-.. table::
-   :class: example
-
-   ===============  ===============  ==============  ==============  ========
-       Keyword         Action           Argument        Argument     Argument
-   ===============  ===============  ==============  ==============  ========
-   Open Login Page  [Documentation]  Opens browser   to login page
-   \                Open Browser     ${LOGIN_URL}    ${BROWSER}
-   \                Title Should Be  Login Page
-   \
-   Input Name       [Arguments]      ${name}
-   \                Input Text       username_field  ${name}
-   \
-   Input Password   [Arguments]      ${password}
-   \                Input Text       password_field  ${password}
-   ===============  ===============  ==============  ==============  ========
+   *** Keywords ***
+   Open Login Page
+       [Documentation]    Opens browser to login page
+       Open Browser    ${LOGIN_URL}    ${BROWSER}
+       Title Should Be    Login Page
+   
+   Input Name
+       [Arguments]    ${name}
+       Input Text    username_field    ${name}
+   
+   Input Password
+       [Arguments]    ${password}
+       Input Text    password_field    ${password}
 
 Variable files
 --------------
@@ -180,17 +163,13 @@ can contain variables.
 __ `Taking resource files into use`_
 __ `Getting variables from a special function`_
 
-.. table:: Importing a variable file
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  =======================  =======  =======
-    Setting             Value           Value    Value
-   =========  =======================  =======  =======
-   Variables  myvariables.py
-   Variables  ../data/variables.py
-   Variables   ${RESOURCES}/common.py
-   Variables  taking_arguments.py      arg1     ${ARG2}
-   =========  =======================  =======  =======
+   *** Settings ***
+   Variables    myvariables.py
+   Variables    ../data/variables.py
+   Variables    ${RESOURCES}/common.py
+   Variables    taking_arguments.py    arg1    ${ARG2}
 
 All variables from a variable file are available in the test data file
 that imports it. If several variable files are imported and they
@@ -289,21 +268,17 @@ ordered.
 The variables in both the examples above could be created also using the
 Variable table below.
 
-.. table::
-   :class: example
+.. sourcecode:: robotframework
 
-   ===================  ====================  ==========  ==========  =========
-         Variable              Value            Value       Value       Value
-   ===================  ====================  ==========  ==========  =========
-   ${VARIABLE}          An example string
-   ${ANOTHER_VARIABLE}  This is pretty easy!
-   ${INTEGER}           ${42}
-   @{STRINGS}           one                   two         kolme       four
-   @{NUMBERS}           ${1}                  ${INTEGER}  ${3.14}
-   &{MAPPING}           one=${1}              two=${2}    three=${3}
-   @{ANIMALS}           cat                   dog
-   &{FINNISH}           cat=kissa             dog=koira
-   ===================  ====================  ==========  ==========  =========
+   *** Variables ***
+   ${VARIABLE}            An example string
+   ${ANOTHER_VARIABLE}    This is pretty easy!
+   ${INTEGER}             ${42}
+   @{STRINGS}             one         two           kolme    four
+   @{NUMBERS}             ${1}        ${INTEGER}    ${3.14}
+   &{MAPPING}             one=${1}    two=${2}      three=${3}
+   @{ANIMALS}             cat         dog
+   &{FINNISH}             cat=kissa   dog=koira
 
 .. note:: Variables are not replaced in strings got from variable files.
           For example, `VAR = "an ${example}"` would create
@@ -598,17 +573,13 @@ YAML files must always end with :file:`.yaml` extension.
 If the above YAML file is imported, it will create exactly the same
 variables as the following variable table:
 
-.. table::
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  =============  =============  =============  =============
-     Variable        Value          Value          Value          Value
-   ============  =============  =============  =============  =============
+   *** Variables ***
    ${STRING}     Hello, world!
    ${INTEGER}    ${42}
-   @{LIST}       one            two
-   &{DICT}       one=yksi       two=kaksi
-   ============  =============  =============  =============  =============
+   @{LIST}       one         two
+   &{DICT}       one=yksi    two=kaksi
 
 YAML files used as variable files must always be mappings in the top level.
 As the above example demonstrates, keys and values in the mapping become
