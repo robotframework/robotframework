@@ -22,14 +22,10 @@ from robot.utils import abspath, find_file, get_error_details, NormalizedDict
 from .variables import Variables
 
 
-GLOBAL_VARIABLES = Variables()
-
-
 class VariableScopes(object):
 
     def __init__(self, settings):
         self._global = GlobalVariables(settings)
-        GLOBAL_VARIABLES.update(self._global)
         self._suite = None
         self._test = None
         self._scopes = [self._global]
