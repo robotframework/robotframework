@@ -151,7 +151,9 @@
         });
         renderTemplate('shortcuts', result);
         renderTemplate('keywords', result);
-        renderTemplate('tags', libdoc);
+        if (libdoc.contains_tags) {
+            renderTemplate('tags', libdoc);
+        }
         var ending = matchCount != 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
         $('#altogether-count').hide();
@@ -207,8 +209,10 @@
 
     function resetKeywords() {
         renderTemplate('shortcuts', libdoc);
-        renderTemplate('tags', libdoc);
         renderTemplate('keywords', libdoc);
+        if (libdoc.contains_tags) {
+            renderTemplate('tags', libdoc);
+        }
         $('#match-count').hide();
         $('#altogether-count').show();
     }
