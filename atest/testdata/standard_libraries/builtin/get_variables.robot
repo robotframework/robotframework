@@ -58,9 +58,21 @@ Variables Are Returned as NormalizedDict
     Dictionary Should Contain Key    ${copy}    \${__Scala__ R}
 
 Modifying Returned Variables Has No Effect On Real Variables
-    ${variables}=    Get Variables
+    ${variables}=    Get Variables    no_decoration=false
     Set To Dictionary    ${variables}    \${name}    value
     Variable Should Not Exist    ${name}
+
+Getting variables without decoration
+    ${variables} =    Get Variables    no_decoration=true
+    Should be equal   ${variables['SCALAR']}    ${SCALAR}
+
+Getting variables without decoration has no effect on real variables
+    ${original} =    Set variable  ${SCALAR}
+    ${variables} =    Get Variables    no_decoration=yes
+    Should be equal   ${variables['SCALAR']}    ${SCALAR}
+    Set to dictionary   ${variables}    scalar    MY_VALUE
+    Should be equal   ${variables['SCALAR']}    MY_VALUE
+    Should be equal   ${SCALAR}    ${original}
 
 *** Keywords ***
 Set Some Variables

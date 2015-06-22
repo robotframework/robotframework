@@ -144,8 +144,8 @@ class VariableScopes(object):
         self.current[name] = value
         self._variables_set.set_keyword(name, value)
 
-    def as_dict(self):
-        return self.current.as_dict()
+    def as_dict(self, decoration=True):
+        return self.current.as_dict(decoration=decoration)
 
 
 class GlobalVariables(Variables):

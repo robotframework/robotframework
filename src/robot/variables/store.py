@@ -92,8 +92,11 @@ class VariableStore(object):
     def __contains__(self, name):
         return name in self.data
 
-    def as_dict(self):
-        variables = (self._decorate(name, self[name]) for name in self)
+    def as_dict(self, decoration=True):
+        if decoration:
+            variables = (self._decorate(name, self[name]) for name in self)
+        else:
+            variables = self.data
         return NormalizedDict(variables,  ignore='_')
 
     def _decorate(self, name, value):
