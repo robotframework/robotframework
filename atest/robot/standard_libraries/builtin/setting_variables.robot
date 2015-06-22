@@ -46,6 +46,11 @@ Set Suite Variable
 Suite Variables Set In One Suite Are Not Available In Another
     Check Test Case    ${TESTNAME}
 
+Set Child Suite Variable
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
+
 Set Global Variables
     Check Test Case    Set Global Variable 1
     Check Test Case    Set Global Variable 2

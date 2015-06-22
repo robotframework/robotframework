@@ -9,6 +9,7 @@ Library           Collections
 ${SCALAR}         Hi tellus
 @{LIST}           Hello    world
 &{DICT}           key=value    foo=bar
+${PARENT SUITE SETUP CHILD SUITE VAR 1}    This is overridden by __init__
 ${SCALAR LIST ERROR}
 ...               Setting list value to scalar variable '\${SCALAR}' is not
 ...               supported anymore. Create list variable '\@{SCALAR}' instead.
@@ -163,6 +164,21 @@ Set Suite Variable 2
     Should Be True    @{sub_uk_level_suite_var_list} == [ 'Suite var set in', 'sub user keyword' ]
     Check Suite Variables Available In UK
     Set Suite Variable    invalid
+
+Set Child Suite Variable 1
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
+    Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 2} == ['Set in', '__init__']
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen in this suite
+    Set Global Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
+    Set Suite Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite    children=${TRUE}
+
+Set Child Suite Variable 2
+    [Documentation]    FAIL Variable '${NON EXISTING}' not found.
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite
+    Set Suite Variable    ${VAR}    value    children=${NON EXISTING}
 
 Set Global Variable 1
     [Documentation]    FAIL Variable '\@{non_existing}' not found.
@@ -456,7 +472,12 @@ My Suite Setup
     Should Be Equal    ${suite_setup_global_var}    Global var set in suite setup
     Should Be True    @{suite_setup_global_var_list} == [ 'Global var set in', 'suite setup' ]
     Variable Should Not Exist    $parent_suite_setup_suite_var
+    Variable Should Not Exist    $parent_suite_setup_suite_var_2
     Should Be Equal    ${parent_suite_setup_global_var}    Set in __init__
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
+    Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 2} == ['Set in', '__init__']
+    Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 3} == {'Set': 'in __init__'}
+    Set Suite Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen in this suite    children=true
 
 My Suite Teardown
     Set Suite Variable    $suite_teardown_suite_var    Suite var set in suite teardown
@@ -473,6 +494,9 @@ My Suite Teardown
     Should Be Equal    ${suite_teardown_global_var}    Global var set in suite teardown
     Check Suite Variables Available In UK
     Check Global Variables Available In UK
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite
 
 Set Test Variables In UK
     Variable Should Not Exist    ${local}
