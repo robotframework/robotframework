@@ -112,7 +112,7 @@
         var include = {name: name.prop('checked'),
                        args: args.prop('checked'),
                        doc: doc.prop('checked'),
-                       tags: tags.prop('checked')};
+                       tags: !!tags.prop('checked')};
         if ((!include.name) && (!include.args) && (!include.doc)) {
             tags.prop('disabled', true);
         } else if ((!include.name) && (!include.args) && (!include.tags)) {
