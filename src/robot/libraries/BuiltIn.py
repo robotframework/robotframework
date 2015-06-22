@@ -2541,7 +2541,7 @@ class _Misc:
 
         Support for ``namespace`` is a new feature in Robot Framework 2.8.4.
         """
-        namespace = namespace or {}
+        namespace = dict(namespace) if namespace else {}
         modules = modules.replace(' ', '').split(',') if modules else []
         namespace.update((m, __import__(m)) for m in modules if m)
         try:
