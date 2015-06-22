@@ -56,14 +56,18 @@ class VariableScopes(object):
     def start_suite(self):
         self._suite = self._global.copy()
         self._scopes.append(self._suite)
+        self._variables_set.start_suite()
+        self._variables_set.update(self._suite)
 
     def end_suite(self):
         self._scopes.pop()
         self._suite = self._scopes[-1] if len(self._scopes) > 1 else None
+        self._variables_set.end_suite()
 
     def start_test(self):
         self._test = self._suite.copy()
         self._scopes.append(self._test)
+        self._variables_set.start_test()
 
     def end_test(self):
         self._scopes.pop()
@@ -73,7 +77,7 @@ class VariableScopes(object):
     def start_keyword(self):
         kw = self._suite.copy()
         self._variables_set.start_keyword()
-        self._variables_set.update_keyword(kw)
+        self._variables_set.update(kw)
         self._scopes.append(kw)
 
     def end_keyword(self):
@@ -117,6 +121,7 @@ class VariableScopes(object):
     def set_global(self, name, value):
         for scope in self._all_scopes:
             name, value = self._set_global_suite_or_test(scope, name, value)
+        self._variables_set.set_global(name, value)
 
     def _set_global_suite_or_test(self, scope, name, value):
         scope[name] = value
@@ -126,12 +131,14 @@ class VariableScopes(object):
             value = scope[name]
         return name, value
 
-    def set_suite(self, name, value, top=False):
+    def set_suite(self, name, value, top=False, children=False):
         if top:
             self._scopes[1][name] = value
-        else:
-            for scope in self._scopes_until_suite:
-                name, value = self._set_global_suite_or_test(scope, name, value)
+            return
+        for scope in self._scopes_until_suite:
+            name, value = self._set_global_suite_or_test(scope, name, value)
+        if children:
+            self._variables_set.set_suite(name, value)
 
     def set_test(self, name, value):
         if self._test is None:
@@ -197,11 +204,28 @@ class GlobalVariables(Variables):
 class SetVariables(object):
 
     def __init__(self):
-        self._test = NormalizedDict(ignore='_')
-        self._scopes = [self._test]
+        self._suite = None
+        self._test = None
+        self._scopes = []
+
+    def start_suite(self):
+        if not self._scopes:
+            self._suite = NormalizedDict(ignore='_')
+        else:
+            self._suite = self._scopes[-1].copy()
+        self._scopes.append(self._suite)
+
+    def end_suite(self):
+        self._scopes.pop()
+        self._suite = self._scopes[-1] if self._scopes else None
+
+    def start_test(self):
+        self._test = self._scopes[-1].copy()
+        self._scopes.append(self._test)
 
     def end_test(self):
-        self._test.clear()
+        self._test = None
+        self._scopes.pop()
 
     def start_keyword(self):
         self._scopes.append(self._scopes[-1].copy())
@@ -209,13 +233,23 @@ class SetVariables(object):
     def end_keyword(self):
         self._scopes.pop()
 
-    def set_test(self, name, value):
+    def set_global(self, name, value):
         for scope in self._scopes:
+            if name in scope:
+                scope.pop(name)
+
+    def set_suite(self, name, value):
+        self._suite[name] = value
+
+    def set_test(self, name, value):
+        for scope in reversed(self._scopes):
             scope[name] = value
+            if scope is self._test:
+                break
 
     def set_keyword(self, name, value):
         self._scopes[-1][name] = value
 
-    def update_keyword(self, kw):
+    def update(self, variables):
         for name, value in self._scopes[-1].items():
-            kw[name] = value
+            variables[name] = value

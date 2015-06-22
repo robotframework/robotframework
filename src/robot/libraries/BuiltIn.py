@@ -1148,8 +1148,13 @@ class _Variables:
         scope of the currently executed test suite. Setting variables with this
         keyword thus has the same effect as creating them using the Variable
         table in the test data file or importing them from variable files.
-        Other test suites, including possible child test suites, will not see
-        variables set with this keyword.
+
+        Possible child test suites do not see variables set with this keyword
+        by default. Starting from Robot Framework 2.9, that can be controlled
+        by using ``children=<option>`` as the last argument. If the specified
+        ``<option>`` is a non-empty string or any other value considered true
+        in Python, the variable is set also to the child suites. Parent and
+        sibling suites will never see variables set with this keyword.
 
         The name of the variable can be given either as a normal variable name
         (e.g. ``${NAME}``) or in escaped format as ``\\${NAME}`` or ``$NAME``.
@@ -1163,8 +1168,9 @@ class _Variables:
 
         Examples:
         | Set Suite Variable | ${SCALAR} | Hello, world! |
-        | Set Suite Variable | @{LIST}   | First item    | Second item |
-        | Set Suite Variable | &{DICT}   | key=value     | foo=bar     |
+        | Set Suite Variable | ${SCALAR} | Hello, world! | children=true |
+        | Set Suite Variable | @{LIST}   | First item    | Second item   |
+        | Set Suite Variable | &{DICT}   | key=value     | foo=bar       |
         | ${ID} =            | Get ID    |
         | Set Suite Variable | ${ID}     |
 
@@ -1172,8 +1178,8 @@ class _Variables:
         variables ``${EMPTY}``, ``@{EMPTY}`` or ``&{EMPTY}``:
 
         | Set Suite Variable | ${SCALAR} | ${EMPTY} |
-        | Set Suite Variable | @{LIST}  | @{EMPTY} | # New in RF 2.7.4 |
-        | Set Suite Variable | &{DICT}  | &{EMPTY} | # New in RF 2.9   |
+        | Set Suite Variable | @{LIST}   | @{EMPTY} | # New in RF 2.7.4 |
+        | Set Suite Variable | &{DICT}   | &{EMPTY} | # New in RF 2.9   |
 
         *NOTE:* If the variable has value which itself is a variable (escaped
         or not), you must always use the escaped format to set the variable:
@@ -1188,8 +1194,15 @@ class _Variables:
         `Get Variable Value` keywords.
         """
         name = self._get_var_name(name)
+        if (values and isinstance(values[-1], basestring) and
+                values[-1].startswith('children=')):
+            children = self._variables.replace_scalar(values[-1][9:])
+            children = utils.is_truthy(children)
+            values = values[:-1]
+        else:
+            children = False
         value = self._get_var_value(name, values)
-        self._variables.set_suite(name, value)
+        self._variables.set_suite(name, value, children=children)
         self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)

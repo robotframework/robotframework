@@ -29,6 +29,11 @@ Global Variables Set In One Suite Are Not Available In Another
     Should Be Equal    ${suite_teardown_global_var}    Global var set in suite teardown
     Should Be Equal    ${global_var_needing_escaping}    Four backslashes \\\\\\\\ and \\\${notvar}
 
+Set Child Suite Variable 3
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
+    Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 3} == {'Set': 'in __init__'}
+
 Scopes And Overriding 3
     Should Be Equal    ${cli_var_1}    CLI1
     Should Be Equal    ${cli_var_2}    CLI2
