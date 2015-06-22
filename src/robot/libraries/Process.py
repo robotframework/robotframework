@@ -19,8 +19,8 @@ import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
-                         decode_output, secs_to_timestr, timestr_to_secs,
-                         IRONPYTHON, JYTHON)
+                         decode_output, is_truthy, secs_to_timestr,
+                         timestr_to_secs, IRONPYTHON, JYTHON)
 from robot.version import get_version
 from robot.api import logger
 
@@ -511,7 +511,7 @@ class Process(object):
         if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
                                'by this Python version.')
-        terminator = self._kill if is_true(kill) else self._terminate
+        terminator = self._kill if is_truthy(kill) else self._terminate
         try:
             terminator(process)
         except OSError:
@@ -599,7 +599,7 @@ class Process(object):
         process = self._processes[handle]
         signum = self._get_signal_number(signal)
         logger.info('Sending signal %s (%d).' % (signal, signum))
-        if is_true(group) and hasattr(os, 'killpg'):
+        if is_truthy(group) and hasattr(os, 'killpg'):
             os.killpg(process.pid, signum)
         elif hasattr(process, 'send_signal'):
             process.send_signal(signum)
@@ -695,7 +695,7 @@ class Process(object):
     def _get_result_attributes(self, result, *includes):
         attributes = (result.rc, result.stdout, result.stderr,
                       result.stdout_path, result.stderr_path)
-        includes = (is_true(incl) for incl in includes)
+        includes = (is_truthy(incl) for incl in includes)
         return tuple(attr for attr, incl in zip(attributes, includes) if incl)
 
     def switch_process(self, handle):
@@ -803,7 +803,7 @@ class ProcessConfig(object):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
-        self.shell = is_true(shell)
+        self.shell = is_truthy(shell)
         self.alias = alias
         self.env = self._construct_env(env, rest)
 
@@ -866,9 +866,3 @@ shell = %r
 alias = %s
 env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
                self.shell, self.alias, self.env))
-
-
-def is_true(argument):
-    if isinstance(argument, basestring) and argument.upper() == 'FALSE':
-        return False
-    return bool(argument)
