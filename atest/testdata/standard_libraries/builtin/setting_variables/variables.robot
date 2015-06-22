@@ -209,7 +209,7 @@ Set Test/Suite/Global Variables With Normal Variable Syntax 2
     Should Be Equal    @{new global var 1}[0]    global with \ escapes \\
     Should Be Equal    @{new global var 1}[1]    /home/peke/Devel/robotframework/atest/testdata/standard_libraries/builtin/setting_variables ${TEMPDIR} \${escaped and not a var}
 
-It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 1
+Set Test/Suite/Global Variable Using Empty List Variable 1
     @{empty list} =    Create List
     Set Test Variable    @{new test var 2}    @{empty list}
     Set Suite Variable    @{new suite var 2}    @{empty list}
@@ -218,11 +218,11 @@ It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variabl
     Should Be True    @{new suite var 2} == []
     Should Be True    ${new global var 2} == []
 
-It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 2
+Set Test/Suite/Global Variable Using Empty List Variable 2
     Should Be True    @{new suite var 2} == []
     Should Be True    ${new global var 2} == []
 
-It Should Be Possible To Set Test/Suite/Global Variable Using Empty Dict Variable 1
+Set Test/Suite/Global Variable Using Empty Dict Variable 1
     Set Test Variable    &{new test var 3}    &{EMPTY}
     Set Suite Variable    ${new suite var 3}    &{EMPTY}
     Set Global Variable    &{new global var 3}    &{EMPTY}
@@ -230,7 +230,7 @@ It Should Be Possible To Set Test/Suite/Global Variable Using Empty Dict Variabl
     Should Be True    @{new suite var 3} == []
     Should Be True    &{new global var 3} == {}
 
-It Should Be Possible To Set Test/Suite/Global Variable Using Empty Dict Variable 2
+Set Test/Suite/Global Variable Using Empty Dict Variable 2
     Should Be True    &{new suite var 3} == {}
     Should Be True    &{new global var 3} == {}
 
