@@ -966,7 +966,7 @@ class _Verify:
 
 class _Variables:
 
-    def get_variables(self):
+    def get_variables(self, no_decoration=False):
         """Returns a dictionary containing all variables in the current scope.
 
         Variables are returned as a special dictionary that allows accessing
@@ -977,6 +977,12 @@ class _Variables:
         returned dictionary has no effect on the variables available in the
         current scope.
 
+        By default variables are returned with ``${}``, ``@{}`` or ``&{}``
+        decoration based on variable types. Giving a true value, for example
+        any non-empty string, to the optional argument ``no_decoration`` will
+        return the variables without the decoration. This option is new in
+        Robot Framework 2.9.
+
         Example:
         | ${example_variable} =         | Set Variable | example value         |
         | ${variables} =                | Get Variables |                      |
@@ -984,12 +990,18 @@ class _Variables:
         | Dictionary Should Contain Key | ${variables} | \\${ExampleVariable}  |
         | Set To Dictionary             | ${variables} | \\${name} | value     |
         | Variable Should Not Exist     | \\${name}    |           |           |
+        | ${no decoration} =            | Get Variables | no_decoration=Yes |
+        | Dictionary Should Contain Key | ${no decoration} | example_variable |
 
         Note: Prior to Robot Framework 2.7.4 variables were returned as
         a custom object that did not support all dictionary methods.
         """
-        # TODO: Support also returning variables w/o decoration
-        return self._variables.as_dict()
+        # TODO: move to robot.utils
+        if isinstance(no_decoration, basestring) and no_decoration.upper() == 'FALSE':
+            no_decoration = False
+        else:
+            no_decoration = bool(no_decoration)
+        return self._variables.as_dict(decoration=not no_decoration)
 
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):

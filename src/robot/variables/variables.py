@@ -76,5 +76,5 @@ class Variables(object):
     def update(self, variables):
         self.store.update(variables.store)
 
-    def as_dict(self):
-        return self.store.as_dict()
+    def as_dict(self, decoration=True):
+        return self.store.as_dict(decoration=decoration)
