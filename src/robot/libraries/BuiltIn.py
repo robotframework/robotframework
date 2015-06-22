@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import __builtin__
 import re
 import time
 
@@ -2557,13 +2558,17 @@ class _Misc:
         namespace = dict(namespace) if namespace else {}
         modules = modules.replace(' ', '').split(',') if modules else []
         namespace.update((m, __import__(m)) for m in modules if m)
+        variables = self._variables.as_dict(decoration=False)
+        for key in dir(__builtin__) + list(namespace):
+            if key in variables:
+                variables.pop(key)
         try:
             if not isinstance(expression, basestring):
                 raise TypeError("Expression must be string, got %s."
                                 % utils.type_name(expression))
             if not expression:
                 raise ValueError("Expression cannot be empty.")
-            return eval(expression, namespace)
+            return eval(expression, namespace, variables)
         except:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
                                % (expression, utils.get_error_message()))

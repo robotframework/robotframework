@@ -26,6 +26,9 @@ Should Be True With Invalid Expression
 Should (Not) Be True is evaluated with os- and sys-modules
     Check test case    ${TESTNAME}
 
+Should (Not) Be True is evaluated with robot's variables
+    Check test case    ${TESTNAME}
+
 Should Not Be Equal
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    unicode
