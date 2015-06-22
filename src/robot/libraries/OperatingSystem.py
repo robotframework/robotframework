@@ -22,40 +22,18 @@ import sys
 import tempfile
 import time
 
-try:
-    from robot.version import get_version
-    from robot.api import logger
-    from robot.utils import (ConnectionCache, seq2str, timestr_to_secs,
-                             secs_to_timestr, plural_or_not, get_time, abspath,
-                             secs_to_timestamp, parse_time, unic, decode_output,
-                             get_env_var, set_env_var, del_env_var, get_env_vars,
-                             decode_from_system)
-    __version__ = get_version()
-    PROCESSES = ConnectionCache('No active processes')
-    del ConnectionCache, get_version
+from robot.version import get_version
+from robot.api import logger
+from robot.utils import (ConnectionCache, seq2str, timestr_to_secs,
+                         secs_to_timestr, plural_or_not, get_time, abspath,
+                         secs_to_timestamp, parse_time, unic, decode_output,
+                         get_env_var, set_env_var, del_env_var, get_env_vars)
 
-# Support for using this library without installed Robot Framework
-except ImportError:
-    from os.path import abspath
-    from os import (getenv as get_env_var, putenv as set_env_var,
-                    unsetenv as del_env_var, environ)
-    __version__ = '<unknown>'
-    get_env_vars = environ.copy
-    logger = None
-    seq2str = lambda items: ', '.join("'%s'" % item for item in items)
-    timestr_to_secs = int
-    plural_or_not = lambda count: '' if count == 1 else 's'
-    secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
-    unic = unicode
-    decode_output = decode_from_system = lambda string: string
-    class _NotImplemented:
-        def __getattr__(self, name):
-            raise NotImplementedError('This usage requires Robot Framework '
-                                      'to be installed.')
-    get_time = secs_to_timestamp = parse_time = PROCESSES = _NotImplemented()
+__version__ = get_version()
+PROCESSES = ConnectionCache('No active processes')
 
 
-class OperatingSystem:
+class OperatingSystem(object):
     """A test library providing keywords for OS related tasks.
 
     ``OperatingSystem`` is Robot Framework's standard library that
