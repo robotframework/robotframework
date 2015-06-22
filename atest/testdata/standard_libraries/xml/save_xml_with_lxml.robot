@@ -11,7 +11,6 @@ ${NON-ASCII}          <hyvää>yötä</hyvää>
 ${NON-ASCII SAVED}    <hyv&#228;&#228;>y&#246;t&#228;</hyv&#228;&#228;>
 
 *** Test Cases ***
-
 Save XML Element
     ${xml} =    Parse XML    ${SIMPLE}
     Save XML    ${xml}    ${OUTPUT}
@@ -50,7 +49,6 @@ Save Non-ASCII Using ASCII
     XML Content Should Be    ${NON-ASCII SAVED}   ASCII
 
 *** Keywords ***
-
 XML Content Should Be
     [Arguments]    ${expected}    ${encoding}=UTF-8
     ${actual} =    Get File    ${OUTPUT}    ${encoding}

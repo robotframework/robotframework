@@ -66,6 +66,8 @@ Differences in children with non-ASCII path
 
 Normalize whitespace
     [Template]    NONE
+    Elements should be equal    <p>Text with \ \ whitesapce\n.</p>    <p>Text with \ \ whitesapce\n.</p>
+    ...    normalize_whitespace=false
     Elements should be equal    <p>\n\tThis \ \ \ text\n<i>spaces \ has</i> also \ in\ttail!\n</p>
     ...   <p>This text <i>spaces has</i> also in tail!</p>    ${FALSE}    normalize
     Elements should not be equal    <tag>\ntext \ here\n</tag>    <tag>\twrong \ here\t</tag>
@@ -84,7 +86,7 @@ Element should be equal to itself
     Elements Should Be Equal    ${xml}    ${source}
 
 Elements should not be equal
-    [Arguments]    ${source}    ${expected}    ${error}    ${normalize}=${FALSE}
+    [Arguments]    ${source}    ${expected}    ${error}    ${normalize}=${FALSE}    ${exclude}=false
     Run Keyword and Expect Error    ${error}
     ...    Elements Should Be Equal    ${source}    ${expected}
-    ...    normalize_whitespace=${normalize}
+    ...    normalize_whitespace=${normalize}    exclude_children=${exclude}

@@ -8,7 +8,6 @@ Suite Teardown    Remove File    ${OUTPUT}
 ${NON-ASCII}    <hyvää>yötä</hyvää>
 
 *** Test Cases ***
-
 Save XML Element
     ${xml} =    Parse XML    ${SIMPLE}
     Save XML    ${xml}    ${OUTPUT}
@@ -46,9 +45,7 @@ Save Non-ASCII Using ASCII
     [Documentation]    FAIL STARTS: UnicodeEncodeError:
     Save XML    ${NON-ASCII}    ${OUTPUT}    ASCII
 
-
 *** Keywords ***
-
 XML Content Should Be
     [Arguments]    ${expected}    ${encoding}=UTF-8
     ${actual} =    Get File    ${OUTPUT}    ${encoding}
