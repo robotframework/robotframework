@@ -510,9 +510,9 @@ class _Verify:
         """Fails if the given condition is not true.
 
         If ``condition`` is a string (e.g. ``${rc} < 10``), it is evaluated as
-        a Python expression using the built-in ``eval`` function and the keyword
-        status is decided based on the result. If a non-string item is given,
-        the status is got directly from its
+        a Python expression using the `Evaluate` keyword internally and the
+        keyword status is decided based on the result. If a non-string item is
+        given, the status is got directly from its
         [http://docs.python.org/2/library/stdtypes.html#truth|truth value].
 
         The default error message (``<condition> should be true``) is not very
@@ -521,8 +521,16 @@ class _Verify:
         Examples:
         | Should Be True | ${rc} < 10  |
         | Should Be True | '${status}' == 'PASS' | # Strings must be quoted |
+        | Should Be True | 'foo' in '''${multiline text}''' | # Multiline strings must be in triple quotes |
         | Should Be True | ${number}   | # Passes if ${number} is not zero |
         | Should Be True | ${list}     | # Passes if ${list} is not empty  |
+
+        Starting from Robot Framework 2.9, all current variables are available
+        in the evaluation namespace automatically without the ``${}``
+        decoration:
+
+        | Should Be True | rc < 10  | # Passes if ${rc} is a number less than 10 |
+        | Should Be True | status == 'PASS' | # Expected string must be quoted |
 
         Starting from Robot Framework 2.8, `Should Be True` automatically
         imports Python's [http://docs.python.org/2/library/os.html|os] and
@@ -2523,8 +2531,15 @@ class _Misc:
         ``namespace`` argument can be used to pass a custom namespace as
         a dictionary. Possible ``modules`` are added to this namespace.
 
+        When variables are used in the expression with the normal variable
+        decoration (e.g. ``${var}``), they will be replaced by their string
+        representation before evaluation. Variables that are to be evaluated
+        as strings must thus be quoted with single or double quotes (e.g.
+        ``"${var}"``). If the variable may contain newlines or quotes, Python's
+        triple quoting can be used instead (e.g. ``'''${var}'''``).
+
         Examples (expecting ``${result}`` is 3.14):
-        | ${status} = | Evaluate | 0 < ${result} < 10    |
+        | ${status} = | Evaluate | 0 < ${result} < 10    | # Would also work with string '3.14' |
         | ${down} =   | Evaluate | int(${result})        |
         | ${up} =     | Evaluate | math.ceil(${result})  | math                |
         | ${random} = | Evaluate | random.randint(0, sys.maxint) | random, sys |
@@ -2537,10 +2552,27 @@ class _Misc:
         | ${random} = <random integer>
         | ${result} = 42
 
+        All current variables are available in the evaluation namespace
+        automatically also without the ``${}`` decoration (e.g. ``var``).
+        When used like this, variables are evaluated within the expression
+        with their actual value. They must not be quoted even if they would
+        contain strings. Variables do not override Python built-ins
+        (e.g. ``len``) nor the given ``modules`` or ``namespace``.
+
+        Examples (expecting ``${text}`` is ``'Hello Kitty'``):
+        | ${length} = | Evaluate | len(text)    |
+        | @{parts} =  | Evaluate | text.split() |
+        | ${comp} =   | Evaluate | text == '${text}' |
+        =>
+        | ${length} = 11
+        | ${parts} = ['Hello', 'Kitty']
+        | ${comp} = True
+
         Notice that instead of creating complicated expressions, it is
         recommended to move the logic into a test library.
 
-        Support for ``namespace`` is a new feature in Robot Framework 2.8.4.
+        Support for ``namespace`` is new in Robot Framework 2.8.4 and
+        variables without decoration in the evaluation namespace in 2.9.
         """
         namespace = dict(namespace) if namespace else {}
         modules = modules.replace(' ', '').split(',') if modules else []
