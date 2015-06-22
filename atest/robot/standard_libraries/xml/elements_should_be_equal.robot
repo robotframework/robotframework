@@ -4,7 +4,6 @@ Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 
 *** Test Cases ***
-
 Elements should be equal
     Check Test Case    ${TESTNAME}
 

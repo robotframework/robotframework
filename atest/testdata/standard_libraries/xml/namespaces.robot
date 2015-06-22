@@ -1,5 +1,5 @@
 *** Settings ***
-Library           XML
+Library           XML    use_lxml=false
 Resource          xml_resource.robot
 Test Setup        Remove File    ${OUTPUT}
 Suite Teardown    Remove File    ${OUTPUT}
@@ -72,7 +72,7 @@ Element without namepace inside element with namespace
     Element Text Should Be    ${NO NS IN NS}    .    xpath=no/yes/no
 
 Attribute namespaces are not handled
-    ${elem} =    Parse XML    ${ATTR NS}
+    ${elem} =    Parse XML    ${ATTR NS}    keep_clark_notation=false
     Test Attribute Namespace Parsing    ${elem}
 
 *** Keywords ***
