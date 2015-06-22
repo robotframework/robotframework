@@ -5,8 +5,10 @@ import os
 from os.path import abspath, join, dirname
 from distutils.core import setup
 
-if 'develop' in sys.argv or 'bdist_wheel' in sys.argv:
-    import setuptools    # support setuptools development mode and wheels
+try:
+    import setuptools    # use setuptools when available
+except ImportError:
+    pass
 
 CURDIR = dirname(abspath(__file__))
 
