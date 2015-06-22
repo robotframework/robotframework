@@ -13,6 +13,12 @@ Evaluate With Modules
 Evaluate With Namespace
     Check Test Case    ${TEST NAME}
 
+Evaluate with Get Variables Namespace
+    Check Test Case    ${TEST NAME}
+
+Evaluate with Non-dict Namespace
+    Check Test Case    ${TEST NAME}
+
 Evaluate Empty
     Check Test Case    ${TEST NAME}
 

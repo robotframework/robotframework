@@ -40,6 +40,17 @@ Evaluate With Namespace
     ${result} =    Evaluate    math.pow(b, 3)    math    ${ns}
     Should Be Equal    ${result}    ${8}
 
+Evaluate with Get Variables Namespace
+    ${foo} =    Set variable    value
+    ${ns} =    Get variables    no_decoration=Yes
+    ${res} =    Evaluate     foo == 'value'    namespace=${ns}
+    Should be True    ${res}
+
+Evaluate with Non-dict Namespace
+    ${ns} =    Evaluate    UserDict.UserDict(foo='value')    modules=UserDict
+    ${res} =    Evaluate     foo == 'value'    namespace=${ns}
+    Should be True    ${res}
+
 Evaluate Empty
     [Documentation]    FAIL Evaluating expression '' failed: ValueError: Expression cannot be empty.
     Evaluate    ${EMPTY}
