@@ -45,6 +45,9 @@ class Output(AbstractLogger):
         LOGGER.unregister_logger(self._xmllogger)
         LOGGER.output_file('Output', self._settings['Output'])
 
+    def import_resource_or_library(self, name):
+        LOGGER.import_resource_or_library(name)
+
     def start_suite(self, suite):
         LOGGER.start_suite(suite)
 

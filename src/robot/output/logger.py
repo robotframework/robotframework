@@ -143,6 +143,10 @@ class Logger(AbstractLogger):
         self._loggers = LoggerCollection()
         self._message_cache = []
 
+    def import_resource_or_library(self, name):
+        for logger in self._loggers.all_loggers():
+            logger.import_resource_or_library(name)
+
     def start_suite(self, suite):
         for logger in self._loggers.starting_loggers():
             logger.start_suite(suite)
@@ -223,7 +227,7 @@ class LoggerCollection(object):
 class _LoggerProxy(AbstractLoggerProxy):
     _methods = ['message', 'log_message', 'output_file', 'close',
                 'start_suite', 'end_suite', 'start_test', 'end_test',
-                'start_keyword', 'end_keyword']
+                'start_keyword', 'end_keyword', 'import_resource_or_library']
 
 
 LOGGER = Logger()
