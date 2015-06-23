@@ -386,8 +386,8 @@ class _List:
         The order of values and the number of values are not taken into
         account.
 
-        See the use of ``msg`` and ``values`` from the `Lists Should Be Equal`
-        keyword.
+        See `Lists Should Be Equal` for more information about configuring
+        the error message with ``msg`` and ``values`` arguments.
         """
         diffs = ', '.join(unic(item) for item in list2 if item not in list1)
         default = 'Following values were not found from first list: ' + diffs
@@ -627,7 +627,9 @@ class _Dictionary:
         the key value pairs. If there are differences between the values, those
         are listed in the error message.
 
-        See `Lists Should Be Equal` for an explanation of ``msg``.
+        See `Lists Should Be Equal` for more information about configuring
+        the error message with ``msg`` and ``values`` arguments.
+
         The given dictionaries are never altered by this keyword.
         """
         keys = self._keys_should_be_equal(dict1, dict2, msg, values)
@@ -637,7 +639,9 @@ class _Dictionary:
                                                  values=True):
         """Fails unless all items in ``dict2`` are found from ``dict1``.
 
-        See `Lists Should Be Equal` for an explanation of ``msg``.
+        See `Lists Should Be Equal` for more information about configuring
+        the error message with ``msg`` and ``values`` arguments.
+
         The given dictionaries are never altered by this keyword.
         """
         keys = self.get_dictionary_keys(dict2)
@@ -696,7 +700,6 @@ class _Dictionary:
 
 
 class Collections(_List, _Dictionary):
-
     """A test library providing keywords for handling lists and dictionaries.
 
     ``Collections`` is Robot Framework's standard library that provides a
@@ -706,8 +709,11 @@ class Collections(_List, _Dictionary):
     From Dictionary`) and for verifying their contents (e.g. `Lists
     Should Be Equal`, `Dictionary Should Contain Value`).
 
-    Following keywords from the BuiltIn library can also be used with
+    = Related keywords in BuiltIn =
+
+    Following keywords in the BuiltIn library can also be used with
     lists and dictionaries:
+
     | = Keyword Name =             | = Applicable With = | = Comment = |
     | `Create List`                | lists |
     | `Create Dictionary`          | dicts | Was in Collections until RF 2.9. |
@@ -721,12 +727,18 @@ class Collections(_List, _Dictionary):
     | `Should Not Contain X Times` | lists |
     | `Get Count`                  | lists |
 
+    = Using with list-like and dictionary-like objects =
+
     List keywords that do not alter the given list can also be used
     with tuples, and to some extend also with other iterables.
     `Convert To List` can be used to convert tuples and other iterables
-    to lists.
+    to Python ``list`` objects.
 
-    -------
+    Similarly dictionary keywords can, for most parts, be used with other
+    mappings. `Convert To Dictionary` can be used if real Python ``dict``
+    objects are needed.
+
+    = Data in examples =
 
     List related keywords use variables in format ``${Lx}`` in their examples.
     They mean lists with as many alphabetic characters as specified by ``x``.
@@ -735,8 +747,6 @@ class Collections(_List, _Dictionary):
 
     Dictionary keywords use similar ``${Dx}`` variables. For example, ``${D1}``
     means ``{'a': 1}`` and ``${D3}`` means ``{'a': 1, 'b': 2, 'c': 3}``.
-
-    --------
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -773,37 +783,36 @@ class Collections(_List, _Dictionary):
         See also ``Should Not Contain Match``.
 
         Examples:
-        | Should Contain Match | ${list} | a* | # List should contain any string beginning with 'a' |
-        | Should Contain Match | ${list} | regexp=a.* | # List should contain any string beginning with 'a' (regexp version) |
-        | Should Contain Match | ${list} | regexp=\\\\d{6} | # List should contain any string which contains six decimal digits |
-        | Should Contain Match | ${list} | a* | case_insensitive=${True} | # List should contain any string beginning with 'a' or 'A' |
-        | Should Contain Match | ${list} | ab* | whitespace_insensitive=${True} | # List should contain any string beginning with 'ab' or 'a b' or any other combination of whitespace |
-        | Should Contain Match | ${list} | ab* | whitespace_insensitive=${True} | case_insensitive=${True} | # List should contain any string beginning with 'ab' or 'a b' or 'AB' or 'A B' or any other combination of whitespace and upper/lower case 'a' and 'b' |
+        | Should Contain Match | ${list} | a*              | | | # Match strings beginning with 'a'. |
+        | Should Contain Match | ${list} | regexp=a.*      | | | # Same as the above but with regexp. |
+        | Should Contain Match | ${list} | regexp=\\\\d{6} | | | # Match strings containing six digits. |
+        | Should Contain Match | ${list} | a*  | case_insensitive=True       | | # Match strings beginning with 'a' or 'A'. |
+        | Should Contain Match | ${list} | ab* | whitespace_insensitive=yes  | | # Match strings beginning with 'ab' with possible whitespace ignored. |
+        | Should Contain Match | ${list} | ab* | whitespace_insensitive=true | case_insensitive=true | # Same as the above but also ignore case. |
 
         New in Robot Framework 2.8.6.
         """
-        default = "%s does not contain match for pattern '%s'." % (
-            seq2str2(list), pattern)
-        _verify_condition(
-            _get_matches_in_iterable(list, pattern, case_insensitive,
-                                     whitespace_insensitive), default, msg)
+        matches = _get_matches_in_iterable(list, pattern, case_insensitive,
+                                           whitespace_insensitive)
+        default = "%s does not contain match for pattern '%s'." \
+                  % (seq2str2(list), pattern)
+        _verify_condition(matches, default, msg)
 
     def should_not_contain_match(self, list, pattern, msg=None,
                                  case_insensitive=False,
                                  whitespace_insensitive=False):
         """Fails if ``pattern`` is found in ``list``.
 
-        See `List Should Contain Value` for an explanation of ``msg``.
-
-        See `Should Contain Match` for usage details and examples.
+        Exact opposite of `Should Contain Match` keyword. See that keyword
+        for information about arguments and usage in general.
 
         New in Robot Framework 2.8.6.
         """
-        default = "%s contains match for pattern '%s'." % (
-            seq2str2(list), pattern)
-        _verify_condition(
-            not _get_matches_in_iterable(list, pattern, case_insensitive,
-                                         whitespace_insensitive), default, msg)
+        matches = _get_matches_in_iterable(list, pattern, case_insensitive,
+                                           whitespace_insensitive)
+        default = "%s contains match for pattern '%s'." \
+                  % (seq2str2(list), pattern)
+        _verify_condition(not matches, default, msg)
 
     def get_matches(self, list, pattern, case_insensitive=False,
                     whitespace_insensitive=False):
@@ -856,12 +865,9 @@ def _include_default_message(include):
 
 def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
                              whitespace_insensitive=False):
-    if not iterable:
-        return []
-    regexp = False
     if not isinstance(pattern, basestring):
-        raise TypeError("Pattern must be string, got '%s'."
-                        % type_name(pattern))
+        raise TypeError("Pattern must be string, got '%s'." % type_name(pattern))
+    regexp = False
     if pattern.startswith('regexp='):
         pattern = pattern[7:]
         regexp = True
@@ -870,5 +876,4 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
     matcher = Matcher(pattern, caseless=case_insensitive,
                       spaceless=whitespace_insensitive, regexp=regexp)
     return [string for string in iterable
-            if isinstance(string, basestring)
-            and matcher.match(string)]
+            if isinstance(string, basestring) and matcher.match(string)]
