@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 from robot.api import logger
-from robot.utils import (plural_or_not, seq2str, seq2str2, type_name, unic,
-                         Matcher)
+from robot.utils import (is_truthy, plural_or_not, seq2str, seq2str2,
+                         type_name, unic, Matcher)
 from robot.utils.asserts import assert_equals
 from robot.version import get_version
 
@@ -333,11 +333,11 @@ class _List:
         The error message can be configured using ``msg`` and ``values``
         arguments:
         - If ``msg`` is not given, the default error message is used.
-        - If ``msg`` is given and ``values`` is either Boolean ``False`` or
-           a string ``'False'`` or ``'No Values'``, the error message is simply
-           ``msg``.
-        - Otherwise the error message starts with ``msg`` followed by a newline
-          character and the default message.
+        - If ``msg`` is given and ``values`` gets a value considered true
+          (see `Boolean arguments`), the error message starts with the given
+          ``msg`` followed by a newline and the default message.
+        - If ``msg`` is given and ``values``  is not given a true value,
+          the error message is just the given ``msg``.
 
         Optional ``names`` argument can be used for naming the indices shown in
         the default error message. It can either be a list of names matching
@@ -738,6 +738,31 @@ class Collections(_List, _Dictionary):
     mappings. `Convert To Dictionary` can be used if real Python ``dict``
     objects are needed.
 
+    = Boolean arguments =
+
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Other strings are considered true regardless their value, and other
+    argument types are tested using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
+
+    True examples:
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=True    | # Strings are generally true.    |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=yes     | # Same as above.                 |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${TRUE} | # Python ``True`` is true.       |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${42}   | # Numbers other than 0 are true. |
+
+    False examples:
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=False    | # String ``false`` is false.   |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=no       | # Also string ``no`` is false. |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${EMPTY} | # Empty string is false.       |
+    | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |
+
+    Note that prior to Robot Framework 2.9 some keywords considered all
+    non-empty strings, including ``False``, to be true.
+
     = Data in examples =
 
     List related keywords use variables in format ``${Lx}`` in their examples.
@@ -771,10 +796,11 @@ class Collections(_List, _Dictionary):
         be escaped with another backslash (e.g. ``regexp=\\\\d{6}`` to search for
         ``\\d{6}``). See `BuiltIn.Should Match Regexp` for more details.
 
-        If ``case_insensitive`` is True, the pattern matching will ignore case.
+        If ``case_insensitive`` is given a true value (see `Boolean arguments`),
+        the pattern matching will ignore case.
 
-        If ``whitespace_insensitive`` is True, the pattern matching will ignore
-        whitespace.
+        If ``whitespace_insensitive`` is given a true value (see `Boolean
+        arguments`), the pattern matching will ignore whitespace.
 
         Non-string values in lists are ignored when matching patterns.
 
@@ -849,18 +875,16 @@ class Collections(_List, _Dictionary):
                                     whitespace_insensitive))
 
 
-def _verify_condition(condition, default_msg, given_msg, include_default=False):
-    if not condition:
-        if not given_msg:
-            raise AssertionError(default_msg)
-        if _include_default_message(include_default):
-            raise AssertionError(given_msg + '\n' + default_msg)
-        raise AssertionError(given_msg)
-
-def _include_default_message(include):
-    if isinstance(include, basestring):
-        return include.lower() not in ['no values', 'false']
-    return bool(include)
+def _verify_condition(condition, default_msg, msg, values=False):
+    if isinstance(values, basestring) and values.upper() == 'NO VALUES':
+        values = False
+    if condition:
+        return
+    if not msg:
+        msg = default_msg
+    elif is_truthy(values):
+        msg += '\n' + default_msg
+    raise AssertionError(msg)
 
 
 def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
@@ -873,7 +897,9 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
         regexp = True
     elif pattern.startswith('glob='):
         pattern = pattern[5:]
-    matcher = Matcher(pattern, caseless=case_insensitive,
-                      spaceless=whitespace_insensitive, regexp=regexp)
+    matcher = Matcher(pattern,
+                      caseless=is_truthy(case_insensitive),
+                      spaceless=is_truthy(whitespace_insensitive),
+                      regexp=regexp)
     return [string for string in iterable
             if isinstance(string, basestring) and matcher.match(string)]
