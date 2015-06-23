@@ -50,5 +50,9 @@ def is_dict_like(item):
 
 def is_truthy(item):
     if isinstance(item, basestring):
-        return item.upper() not in ('', 'FALSE')
+        return item.upper() not in ('FALSE', 'NO', '')
     return bool(item)
+
+
+def is_falsy(item):
+    return not is_truthy(item)
