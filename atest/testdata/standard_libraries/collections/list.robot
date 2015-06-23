@@ -315,7 +315,7 @@ List Should Contain Sub List With Missing Values And Own Error Message
 List Should Contain Sub List With Missing Values And Own And Default Error Messages
     [Documentation]    FAIL My error message!
     ...    Following values were not found from first list: 1, 1, 2, 1, 2
-    List Should Contain Sub List    ${L4}    ${LONG}    My error message!
+    List Should Contain Sub List    ${L4}    ${LONG}    My error message!    values=please
 
 Log List With Different Log Levels
     Log List    ${L3}
@@ -343,8 +343,8 @@ Count Matches In List Case Insensitive
 Count Matches In List Whitespace Insensitive
     [Template]    Match Count Should Be
     4    ${WHITESPACE_STRINGS}    word     whitespace_insensitive=True    case_insensitive=True
-    3    ${WHITESPACE_STRINGS}    word     whitespace_insensitive=True
-    0    ${WHITESPACE_STRINGS}    words    whitespace_insensitive=True    case_insensitive=True
+    3    ${WHITESPACE_STRINGS}    word     whitespace_insensitive=yes
+    0    ${WHITESPACE_STRINGS}    words    whitespace_insensitive=${1}    case_insensitive=${2}
 
 Count Matches In List Regexp
     [Template]    Match Count Should Be
@@ -353,17 +353,17 @@ Count Matches In List Regexp
     2    ${STRINGS}    regexp=word     case_insensitive=True
     2    ${STRINGS}    regexp=wo.*     case_insensitive=True
     7    ${STRINGS}    regexp=[a-z]    case_insensitive=True
-    13   ${STRINGS}    regexp=.*
-    6    ${STRINGS}    regexp=.$
+    13   ${STRINGS}    regexp=.*       case_insensitive=False
+    6    ${STRINGS}    regexp=.$       case_insensitive=No
 
 Count Matches In List Glob
     [Template]    Match Count Should Be
     2    ${STRINGS}    glob=*a*
     1    ${STRINGS}    glob=wOrD
-    2    ${STRINGS}    glob=word    case_insensitive=True
-    2    ${STRINGS}    glob=wo*     case_insensitive=True
-    13   ${STRINGS}    glob=*
-    6    ${STRINGS}    glob=?
+    2    ${STRINGS}    glob=word    case_insensitive=yes
+    2    ${STRINGS}    glob=wo*     case_insensitive=please
+    13   ${STRINGS}    glob=*       case_insensitive=
+    6    ${STRINGS}    glob=?       case_insensitive=${FALSE}
 
 Get Matches In List Case Insensitive
     [Template]    List Should Equal Matches
@@ -413,12 +413,12 @@ List Should Contain Value Case Insensitive
 
 List Should Contain Value Whitespace Insensitive
     [Template]    Should Contain Match
-    ${WHITESPACE_STRINGS}    word           whitespace_insensitive=True
-    ${WHITESPACE_STRINGS}    wOrD           whitespace_insensitive=True    case_insensitive=True
-    ${WHITESPACE_STRINGS}    regexp=wo.*    whitespace_insensitive=True
-    ${WHITESPACE_STRINGS}    regexp=Wo.*    whitespace_insensitive=True    case_insensitive=True
-    ${WHITESPACE_STRINGS}    glob=wo*       whitespace_insensitive=True
-    ${WHITESPACE_STRINGS}    glob=Wo*       whitespace_insensitive=True    case_insensitive=True
+    ${WHITESPACE_STRINGS}    word           whitespace_insensitive=1    case_insensitive=${0}
+    ${WHITESPACE_STRINGS}    wOrD           whitespace_insensitive=2    case_insensitive=${1}
+    ${WHITESPACE_STRINGS}    regexp=wo.*    whitespace_insensitive=3
+    ${WHITESPACE_STRINGS}    regexp=Wo.*    whitespace_insensitive=4    case_insensitive=${2}
+    ${WHITESPACE_STRINGS}    glob=wo*       whitespace_insensitive=5
+    ${WHITESPACE_STRINGS}    glob=Wo*       whitespace_insensitive=6    case_insensitive=${3}
 
 List Should Contain Value Regexp
     [Template]    Should Contain Match

@@ -136,7 +136,7 @@ Dictionaries Should Be Equal With Different Keys And Own And Default Error Messa
     [Documentation]    FAIL
     ...    My error message!
     ...    Following keys missing from first dictionary: 3
-    Dictionaries Should Be Equal    ${D2}    ${D3}    My error message!
+    Dictionaries Should Be Equal    ${D2}    ${D3}    My error message!    values=yes
 
 Dictionaries Should Be Equal With Different Values
     [Documentation]    FAIL
