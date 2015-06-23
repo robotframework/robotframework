@@ -24,10 +24,11 @@ import time
 
 from robot.version import get_version
 from robot.api import logger
-from robot.utils import (ConnectionCache, seq2str, timestr_to_secs,
-                         secs_to_timestr, plural_or_not, get_time, abspath,
-                         secs_to_timestamp, parse_time, unic, decode_output,
-                         get_env_var, set_env_var, del_env_var, get_env_vars)
+from robot.utils import (abspath, ConnectionCache, decode_output, del_env_var,
+                         get_env_var, get_env_vars, get_time, is_truthy,
+                         parse_time, plural_or_not, secs_to_timestamp,
+                         secs_to_timestr, seq2str, set_env_var,
+                         timestr_to_secs, unic)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes')
@@ -44,6 +45,17 @@ class OperatingSystem(object):
     whether files or directories exists or contain something
     (e.g. `File Should Exist`, `Directory Should Be Empty`) and
     manipulate environment variables (e.g. `Set Environment Variable`).
+
+    == Table of contents ==
+
+    - `Path separators`
+    - `Pattern matching`
+    - `Tilde expansion`
+    - `Process library`
+    - `Boolean arguments`
+    - `Example`
+    - `Shortcuts`
+    - `Keywords`
 
     = Path separators =
 
@@ -94,6 +106,31 @@ class OperatingSystem(object):
     by the Process library are thus recommended instead of `Run`, `Start
     Process`, and other related keywords in this library. `Start Process` was
     even deprecated in Robot Framework 2.9 and will be removed in the future.
+
+    = Boolean arguments =
+
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Other strings are considered true regardless their value, and other
+    argument types are tested using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
+
+    True examples:
+    | `Remove Directory` | ${path} | recursive=True    | # Strings are generally true.    |
+    | `Remove Directory` | ${path} | recursive=yes     | # Same as the above.             |
+    | `Remove Directory` | ${path} | recursive=${TRUE} | # Python ``True`` is true.       |
+    | `Remove Directory` | ${path} | recursive=${42}   | # Numbers other than 0 are true. |
+
+    False examples:
+    | `Remove Directory` | ${path} | recursive=False    | # String ``false`` is false.   |
+    | `Remove Directory` | ${path} | recursive=no       | # Also string ``no`` is false. |
+    | `Remove Directory` | ${path} | recursive=${EMPTY} | # Empty string is false.       |
+    | `Remove Directory` | ${path} | recursive=${FALSE} | # Python ``False`` is false.   |
+
+    Note that prior to Robot Framework 2.9, all non-empty strings, including
+    ``false`` and ``no``, were considered true.
 
     = Example =
 
@@ -756,9 +793,9 @@ class OperatingSystem(object):
     def remove_directory(self, path, recursive=False):
         """Removes the directory pointed to by the given ``path``.
 
-        If the second argument ``recursive`` is set to any non-empty string,
-        the directory is removed recursively. Otherwise removing fails if
-        the directory is not empty.
+        If the second argument ``recursive`` is given a true value (see
+        `Boolean arguments`), the directory is removed recursively. Otherwise
+        removing fails if the directory is not empty.
 
         If the directory pointed to by the ``path`` does not exist, the keyword
         passes, but it fails, if the ``path`` points to a file.
@@ -769,7 +806,7 @@ class OperatingSystem(object):
             return
         if os.path.isfile(path):
             raise RuntimeError("Path '%s' is not a directory" % path)
-        if recursive:
+        if is_truthy(recursive):
             shutil.rmtree(path)
         else:
             msg = "Directory '%s' is not empty." % path
@@ -1344,10 +1381,10 @@ class OperatingSystem(object):
         Implicit directories ``.`` and ``..`` are not returned. The returned
         items are automatically logged.
 
-        By default, the file and directory names are returned relative to the
-        given path (e.g. ``'file.txt'``). If you want them be returned in the
-        absolute format (e.g. ``'/home/robot/file.txt'``), set the ``absolute``
-        argument to any non-empty string.
+        File and directory names are returned relative to the given path
+        (e.g. ``'file.txt'``) by default. If you want them be returned in
+        absolute format (e.g. ``'/home/robot/file.txt'``), give the ``absolute``
+        argument a true value (see `Boolean arguments`).
 
         If ``pattern`` is given, only items matching it are returned. The pattern
         matching syntax is explained in `introduction`, and in this case
@@ -1406,7 +1443,7 @@ class OperatingSystem(object):
         items = sorted(unic(item) for item in os.listdir(path))
         if pattern:
             items = [i for i in items if fnmatch.fnmatchcase(i, pattern)]
-        if absolute:
+        if is_truthy(absolute):
             path = os.path.normpath(path)
             items = [os.path.join(path,item) for item in items]
         return items
