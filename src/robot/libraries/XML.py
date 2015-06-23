@@ -390,9 +390,9 @@ class XML(object):
 
     Some keywords accept arguments that are handled as Boolean values.
     If such an argument is given as a string, it is considered false if it
-    is either empty or case-insensitively equal to ``false``. Other strings
-    are considered true regardless what they contain, and other argument
-    types are tested using same
+    is either empty or case-insensitively equal to ``false`` or ``no``. Other
+    strings are considered true regardless what they contain, and other
+    argument types are tested using same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
