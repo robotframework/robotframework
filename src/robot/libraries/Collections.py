@@ -877,6 +877,8 @@ class Collections(_List, _Dictionary):
 
 def _verify_condition(condition, default_msg, msg, values=False):
     if isinstance(values, basestring) and values.upper() == 'NO VALUES':
+        logger.warn("Disabling values in error message with '%s' is deprecated."
+                    " Use 'false' or 'no' instead." % values)
         values = False
     if condition:
         return

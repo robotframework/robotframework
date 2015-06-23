@@ -289,8 +289,7 @@ Lists Should Be Equal With Named Indices As Dictionary
     ...    Index 0 (a): 11 != 10
     ...    Index 1 (b): 12 (integer) != 12 (string)
     ...    Index 2 (c): 13 != 14
-    ${names} =    Create Dictionary    0    a    1    b    2
-    ...    c    42    ignored
+    ${names} =    Create Dictionary    0=a    1=b    2=c    42=ignored
     Lists Should Be Equal    ${L3}    ${L3B}    names=${names}
 
 Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
@@ -298,7 +297,7 @@ Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
     ...    Index 0 (a): 11 != 10
     ...    Index 1: 12 (integer) != 12 (string)
     ...    Index 2 (c): 13 != 14
-    ${names} =    Create Dictionary    0    a    2    c
+    ${names} =    Create Dictionary    0=a    2=c
     Lists Should Be Equal    ${L3}    ${L3B}    names=${names}
 
 List Should Contain Sub List

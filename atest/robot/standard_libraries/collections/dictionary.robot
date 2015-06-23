@@ -147,3 +147,8 @@ Log Dictionary With Different Dictionaries
     Check Log Message    ${tc.kws[0].msgs[0]}    Dictionary is empty.
     Check Log Message    ${tc.kws[1].msgs[0]}    Dictionary has one item:\na: 1
     Check Log Message    ${tc.kws[3].msgs[0]}    Dictionary size is 3 and it contains following items:\nTrue: xxx\nfoo: []\n(1, 2, 3): 3.14
+
+Using 'No Values' to Disable Values From Error Messages is Deprecated
+    ${tc} =    Check Test Case    Dictionaries Should Be Equal With Different Keys And Own Error Message
+    Check Log Message   ${tc.kws[0].msgs[0]}    Disabling values in error message with 'NO values' is deprecated. Use 'false' or 'no' instead.    WARN
+    Check Log Message   ${ERRORS[0]}    Disabling values in error message with 'NO values' is deprecated. Use 'false' or 'no' instead.    WARN

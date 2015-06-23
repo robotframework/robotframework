@@ -130,7 +130,7 @@ Dictionaries Should Equal With Both Dictionaries Missing Keys
 
 Dictionaries Should Be Equal With Different Keys And Own Error Message
     [Documentation]    FAIL My error message!
-    Dictionaries Should Be Equal    ${D2}    ${D3}    My error message!    No Values
+    Dictionaries Should Be Equal    ${D2}    ${D3}    My error message!    NO values
 
 Dictionaries Should Be Equal With Different Keys And Own And Default Error Messages
     [Documentation]    FAIL
@@ -211,14 +211,13 @@ Log Dictionary With Different Dictionaries
 Create Dictionaries For Testing
     ${D0}    Create Dictionary
     Set Test Variable    \${D0}
-    ${D1} =    Create Dictionary    a    ${1}
+    ${D1} =    Create Dictionary    a=${1}
     Set Test Variable    \${D1}
-    ${D2} =    Create Dictionary    a    ${1}    b    ${2}
+    ${D2} =    Create Dictionary    a=${1}    b=${2}
     Set Test Variable    \${D2}
-    ${D2B} =    Create Dictionary    a    1    b    x
+    ${D2B} =    Create Dictionary    a=1    b=x
     Set Test Variable    \${D2B}
-    ${D3}    Create Dictionary    a    ${1}    b    ${2}    ${3}
-    ...    ${None}
+    ${D3}    Create Dictionary    a=${1}    b=${2}    ${3}=${None}
     Set Test Variable    \${D3}
     ${BIG} =    Evaluate    {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
     Set Test Variable    \${BIG}
