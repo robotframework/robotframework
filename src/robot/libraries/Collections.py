@@ -22,7 +22,7 @@ from robot.version import get_version
 class _List:
 
     def convert_to_list(self, item):
-        """Converts the given ``item`` to a list.
+        """Converts the given ``item`` to a Python ``list`` type.
 
         Mainly useful for converting tuples and other iterable to lists.
         Use `Create List` from the BuiltIn library for constructing new lists.
@@ -427,6 +427,17 @@ class _List:
 
 
 class _Dictionary:
+
+    def convert_to_dictionary(self, item):
+        """Converts the given ``item`` to a Python ``dict`` type.
+
+        Mainly useful for converting other mappings to dictionaries. Use
+        `Create Dictionary` from the BuiltIn library for constructing new
+        dictionaries.
+
+        New in Robot Framework 2.9.
+        """
+        return dict(item)
 
     def set_to_dictionary(self, dictionary, *key_value_pairs, **items):
         """Adds the given ``key_value_pairs`` and ``items`` to the ``dictionary``.

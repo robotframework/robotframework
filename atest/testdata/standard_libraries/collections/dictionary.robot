@@ -4,6 +4,13 @@ Resource          collections_resources.robot
 Library           CollectionsHelperLibrary.py
 
 *** Test Cases ***
+Convert To Dictionary
+    ${dotted} =    Create Dictionary    a=1    b=2
+    Should Be True    type(dotted) is not dict
+    ${normal} =    Convert To Dictionary    ${dotted}
+    Should Be True    type(normal) is dict
+    Should Be Equal    ${dotted}    ${normal}
+
 Set To Dictionary
     Set To Dictionary    ${D0}    a    ${1}
     Should Be Equal    ${D0}    ${D1}
