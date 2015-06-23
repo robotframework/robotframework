@@ -41,9 +41,9 @@ Ignore millis         [Template]         Time conversion without millis should s
 
 Number is float regardless are millis included or not
                       [Template]    Number format should be
-                      ${1000.123}        1000.123
-                      ${1000}            1000.0
-                      ${1000.123}        1000.0       no millis
+                      ${1000.123}        1000.123     no
+                      ${1000}            1000.0       ${0}
+                      ${1000.123}        1000.0       ${1}
                       ${1000}            1000.0       no millis
 
 Invalid format        [Documentation]    FAIL ValueError: Unknown format 'invalid'.
@@ -61,6 +61,6 @@ Time conversion without millis should succeed
     Should Be Equal    ${result}    ${expected}
 
 Number format should be
-    [Arguments]    ${input}    ${expected}    ${millis}=
+    [Arguments]    ${input}    ${expected}    ${millis}
     ${result} =    Convert Time    ${input}    result_format=number    exclude_millis=${millis}
     Should Be Equal As Strings    ${result}    ${expected}
