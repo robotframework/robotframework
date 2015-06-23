@@ -6,6 +6,9 @@ Default Tags      jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
+Convert To Dictionary
+    Check Test Case    ${TEST NAME}
+
 Set To Dictionary
     Check Test Case    ${TEST NAME}
 
