@@ -224,25 +224,25 @@ class Process(object):
 
     = Boolean arguments =
 
-    Some keywords accept arguments that are handled as Boolean values.
-    If such an argument is given as a string, it is considered false if it
-    is either empty or case-insensitively equal to ``false`` or ``no``. Other
-    strings are considered true regardless what they contain, and other
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Other strings are considered true regardless their value, and other
     argument types are tested using same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
     True examples:
     | `Terminate Process` | kill=True     | # Strings are generally true.    |
-    | `Terminate Process` | kill=yes      | # Same as above.                 |
-    | `Terminate Process` | kill=${TRUE}  | # Python True is true.           |
+    | `Terminate Process` | kill=yes      | # Same as the above.             |
+    | `Terminate Process` | kill=${TRUE}  | # Python ``True`` is true.       |
     | `Terminate Process` | kill=${42}    | # Numbers other than 0 are true. |
 
     False examples:
-    | `Terminate Process` | kill=False    | # String False is false.     |
-    | `Terminate Process` | kill=${EMPTY} | # Empty string is false.     |
-    | `Terminate Process` | kill=${FALSE} | # Python False is false.     |
-    | `Terminate Process` | kill=${0}     | # Number 0 is false.         |
+    | `Terminate Process` | kill=False    | # String ``false`` is false.   |
+    | `Terminate Process` | kill=no       | # Also string ``no`` is false. |
+    | `Terminate Process` | kill=${EMPTY} | # Empty string is false.       |
+    | `Terminate Process` | kill=${FALSE} | # Python ``False`` is false.   |
 
     Note that prior to Robot Framework 2.8 all non-empty strings, including
     ``false``, were considered true. Additionally, ``no`` is considered false
