@@ -388,28 +388,28 @@ class XML(object):
 
     = Boolean arguments =
 
-    Some keywords accept arguments that are handled as Boolean values.
-    If such an argument is given as a string, it is considered false if it
-    is either empty or case-insensitively equal to ``false`` or ``no``. Other
-    strings are considered true regardless what they contain, and other
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Other strings are considered true regardless their value, and other
     argument types are tested using same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
     True examples:
     | `Parse XML` | ${XML} | keep_clark_notation=True    | # Strings are generally true.    |
-    | `Parse XML` | ${XML} | keep_clark_notation=yes     | # Same as above.                 |
-    | `Parse XML` | ${XML} | keep_clark_notation=${TRUE} | # Python True is true.           |
+    | `Parse XML` | ${XML} | keep_clark_notation=yes     | # Same as the above.             |
+    | `Parse XML` | ${XML} | keep_clark_notation=${TRUE} | # Python ``True`` is true.       |
     | `Parse XML` | ${XML} | keep_clark_notation=${42}   | # Numbers other than 0 are true. |
 
     False examples:
-    | `Parse XML` | ${XML} | keep_clark_notation=False    | # String False is false.     |
-    | `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.     |
-    | `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python False is false.     |
-    | `Parse XML` | ${XML} | keep_clark_notation=${0}     | # Number 0 is false.         |
+    | `Parse XML` | ${XML} | keep_clark_notation=False    | # String ``false`` is false.   |
+    | `Parse XML` | ${XML} | keep_clark_notation=no       | # Also string ``no`` is false. |
+    | `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |
+    | `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |
 
     Note that prior to Robot Framework 2.9, all non-empty strings, including
-    ``False``, were considered true.
+    ``false`` and ``no``, were considered true.
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
