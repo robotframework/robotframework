@@ -67,7 +67,7 @@ List And Count Directory
 
 List And Count Directory With Pattern
     [Arguments]    ${pattern}    @{expected}
-    @{items} =    List Directory    ${BASE}    ${pattern}
+    @{items} =    List Directory    ${BASE}    ${pattern}    absolute=no
     ${count} =    Count Items In Directory    ${BASE}    ${pattern}
     Lists Should Be Equal    ${items}    ${expected}
     Length Should Be    ${items}    ${count}
@@ -81,7 +81,7 @@ List And Count Files In Directory
 
 List And Count Files In Directory With Pattern
     [Arguments]    ${pattern}    @{expected}
-    ${items} =    List Files In Directory    ${BASE}    ${pattern}
+    ${items} =    List Files In Directory    ${BASE}    ${pattern}    absolute=${FALSE}
     ${count} =    Count Files In Directory    ${BASE}    ${pattern}
     Lists Should Be Equal    ${items}    ${expected}
     Length Should Be    ${items}    ${count}
