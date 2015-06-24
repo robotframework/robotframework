@@ -111,8 +111,11 @@
     background-color: #ccc;
 }
 /* Messages and errors */
-.messages {
+.messages, #errors {
     font-family: monospace;
+    font-size: 1.2em;
+}
+.messages {
     font-size: 1.1em;
 }
 .message-row {
@@ -122,7 +125,7 @@
     width: 8em;
 }
 .error-time {
-    width: 11em;
+    width: 12em;
     white-space: nowrap;
 }
 .level {
