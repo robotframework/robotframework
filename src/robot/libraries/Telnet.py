@@ -13,12 +13,11 @@
 #  limitations under the License.
 
 from contextlib import contextmanager
+import inspect
+import re
+import struct
 import telnetlib
 import time
-import re
-import inspect
-import struct
-
 
 try:
     import pyte
@@ -26,11 +25,12 @@ except ImportError:
     pyte = None
 
 from robot.api import logger
+from robot.utils import (ConnectionCache, secs_to_timestr, seq2str,
+                         timestr_to_secs)
 from robot.version import get_version
-from robot import utils
 
 
-class Telnet:
+class Telnet(object):
     """A test library providing communication over Telnet connections.
 
     ``Telnet`` is Robot Framework's standard library that makes it possible to
@@ -301,7 +301,7 @@ class Telnet:
         self._terminal_emulation = self._parse_terminal_emulation(terminal_emulation)
         self._terminal_type = terminal_type
         self._default_telnetlib_log_level = telnetlib_log_level
-        self._cache = utils.ConnectionCache()
+        self._cache = ConnectionCache()
         self._conn = None
         self._conn_kws = self._lib_kws = None
 
@@ -506,10 +506,10 @@ class TelnetConnection(telnetlib.Telnet):
         self._verify_connection()
         old = self._timeout
         self._set_timeout(timeout)
-        return utils.secs_to_timestr(old)
+        return secs_to_timestr(old)
 
     def _set_timeout(self, timeout):
-        self._timeout = utils.timestr_to_secs(timeout)
+        self._timeout = timestr_to_secs(timeout)
 
     def set_newline(self, newline):
         """Sets the newline used by `Write` keyword in the current connection.
@@ -729,7 +729,7 @@ class TelnetConnection(telnetlib.Telnet):
         return output
 
     def _verify_login_without_prompt(self, delay, incorrect):
-        time.sleep(utils.timestr_to_secs(delay))
+        time.sleep(timestr_to_secs(delay))
         output = self.read('TRACE')
         success = incorrect not in output
         return success, output
@@ -791,8 +791,8 @@ class TelnetConnection(telnetlib.Telnet):
         seconds and the keyword fails if ``myprocess`` does not appear in
         the output in 5 seconds.
         """
-        timeout = utils.timestr_to_secs(timeout)
-        retry_interval = utils.timestr_to_secs(retry_interval)
+        timeout = timestr_to_secs(timeout)
+        retry_interval = timestr_to_secs(retry_interval)
         maxtime = time.time() + timeout
         while time.time() < maxtime:
             self.write_bare(text)
@@ -995,7 +995,7 @@ class TelnetConnection(telnetlib.Telnet):
             prompt, regexp = self._prompt
             raise AssertionError("Prompt '%s' not found in %s."
                     % (prompt if not regexp else prompt.pattern,
-                       utils.secs_to_timestr(self._timeout)))
+                       secs_to_timestr(self._timeout)))
         if strip_prompt:
             output = self._strip_prompt(output)
         return output
@@ -1190,14 +1190,14 @@ class NoMatchError(AssertionError):
 
     def __init__(self, expected, timeout, output=None):
         self.expected = expected
-        self.timeout = utils.secs_to_timestr(timeout)
+        self.timeout = secs_to_timestr(timeout)
         self.output = output
         AssertionError.__init__(self, self._get_message())
 
     def _get_message(self):
         expected = "'%s'" % self.expected \
                    if isinstance(self.expected, basestring) \
-                   else utils.seq2str(self.expected, lastsep=' or ')
+                   else seq2str(self.expected, lastsep=' or ')
         msg = "No match found for %s in %s." % (expected, self.timeout)
         if self.output is not None:
             msg += ' Output:\n%s' % self.output
