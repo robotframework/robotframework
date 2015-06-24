@@ -125,7 +125,7 @@ th {
     background-color: #ccc;
 }
 #test-details > tbody > tr:hover {
-    background: #F4F4FF;
+    background: #eee;
     cursor: pointer;
 }
 #test-details th, #test-details td {
@@ -140,7 +140,7 @@ th {
 }
 .details-col-toggle {
     float: left;
-    color: #808080;
+    color: #6c6c6c; /* same as in sort icon */
     cursor: pointer;
 }
 .details-col-toggle:hover {
