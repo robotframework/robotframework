@@ -37,7 +37,7 @@
 .element-header-toggle {
     position: absolute;
     left: 3px;
-    top: 4px;
+    top: 5px;
     background-repeat: no-repeat;
     background-position: center;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAQAAABKxSfDAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfeCR0JChSkZz20AAAAGklEQVQI12NgQAKMDKzInP8IDhOqMk4G7AAANQwBE427PYUAAAAASUVORK5CYII=);
@@ -111,25 +111,27 @@
     background-color: #ccc;
 }
 /* Messages and errors */
-.messages, #errors {
+.messages .time, .messages .message {
+    font-family: monospace;
+    font-size: 1.1em;
+}
+#errors .message {
     font-family: monospace;
     font-size: 1.2em;
-}
-.messages {
-    font-size: 1.1em;
 }
 .message-row {
     height: 20px;
 }
 .time {
-    width: 8em;
+    width: 7em;
 }
 .error-time {
-    width: 12em;
+    width: 11em;
+    font-size: 0.9em;
     white-space: nowrap;
 }
 .level {
-    width: 4.5em;
+    width: 5em;
     text-align: center;
 }
 .select-message {

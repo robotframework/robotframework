@@ -186,7 +186,7 @@ function addTestExecutionLog(main) {
       ${date} ${time}
       {{/if}}
     </td>
-    <td class="${level.toLowerCase()} level">${level}</td>
+    <td class="${level.toLowerCase()} level"><span class="label ${level.toLowerCase()}">${level}</span></td>
     <td class="message">{{html text}}</td>
     <td class="select-message" onclick="javascript:selectMessage('${id}')" title="Select message text">
       <div></div>
@@ -199,7 +199,7 @@ function addTestExecutionLog(main) {
     <div class="element-header closed" onclick="toggleSuite('${id}')">
       <div class="element-header-left" title="{{html fullName}}">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
-        <span class="${status.toLowerCase()}">TEST SUITE: </span>
+        <span class="label ${status.toLowerCase()}">SUITE</span>
         <span class="name">{{html name}}</span>
       </div>
       <div class="element-header-right" onclick="stopPropagation(event)" title="">
@@ -261,7 +261,7 @@ function addTestExecutionLog(main) {
     <div class="element-header closed" onclick="toggleTest('${id}')">
       <div class="element-header-left" title="{{html fullName}}">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
-        <span class="${status.toLowerCase()}">TEST CASE: </span>
+        <span class="label ${status.toLowerCase()}">TEST</span>
         <span class="name">{{html name}}</span>
         {{if !isCritical}}(non-critical){{/if}}
       </div>
@@ -302,7 +302,7 @@ function addTestExecutionLog(main) {
         </tr>
         <tr>
           <th>Status:</th>
-          <td><span class="${status.toLowerCase()}">${status}</span> ({{if isCritical}}critical{{else}}non-critical{{/if}})</td>
+          <td><span class="label ${status.toLowerCase()}">${status}</span> ({{if isCritical}}critical{{else}}non-critical{{/if}})</td>
         </tr>
         {{if message()}}
         <tr>
@@ -320,7 +320,7 @@ function addTestExecutionLog(main) {
     <div class="element-header closed" onclick="toggleKeyword('${id}')">
       <div class="element-header-left" title="{{html name}}">
         <span class="elapsed" title="Elapsed time">${times.elapsedTime}</span>
-        <span class="${status.toLowerCase()}">${type}: </span>
+        <span class="label keyword ${status.toLowerCase()}">${type}</span>
         <span>{{html assign}}</span>
         <span class="name"><span class="parent-name">{{html libname}}{{if libname}} . {{/if}}</span>{{html name}}</span>
         <span class="arg">{{html arguments}}</span>
@@ -365,7 +365,7 @@ function addTestExecutionLog(main) {
   <table id="${id}" class="messages ${level.toLowerCase()}-message">
     <tr class="message-row">
       <td class="time">${time}</td>
-      <td class="${level.toLowerCase()} level">${level}</td>
+      <td class="${level.toLowerCase()} level"><span class="label ${level.toLowerCase()}">${level}</span></td>
       <td class="message">{{html text}}</td>
       <td class="select-message" onclick="javascript:selectMessage('${id}')" title="Select message text">
         <div></div>
