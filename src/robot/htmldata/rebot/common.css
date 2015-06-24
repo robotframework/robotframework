@@ -68,18 +68,18 @@ h2 {
 }
 /* Status text colors -- !important allows using them in links */
 .error, .fail {
-    color: red !important;
+    color: #f33 !important;
     font-weight: bold;
 }
 .pass {
-    color: #009900 !important;
+    color: #393 !important;
 }
 .warn {
-    color: #FFCC00 !important;
+    color: #fc0 !important;
     font-weight: bold;
 }
 .not-run {
-    color: #444444 !important;
+    color: #444 !important;
 }
 /* Top right header */
 #top-right-header {
@@ -165,17 +165,17 @@ th.stats-col-graph:hover {
     width: auto;
     height: 7px;
     padding: 0;
-    background: red;
+    background: #f33;
 }
 .empty-graph {
-    background: #E9E9E9;
+    background: #eee;
 }
 .pass-bar, .fail-bar {
     float: left;
     height: 100%;
 }
 .pass-bar {
-    background: #00F000;
+    background: #1d4;
 }
 /* Tablesorter - adapted from provided Blue Skin */
 .tablesorter-header {
