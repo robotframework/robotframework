@@ -125,7 +125,7 @@ th {
     background-color: #ccc;
 }
 #test-details > tbody > tr:hover {
-    background: #eee;
+    background: #f4f4f4;
     cursor: pointer;
 }
 #test-details th, #test-details td {
