@@ -44,19 +44,19 @@ a:hover, a:active {
     letter-spacing: 0 !important;
 }
 .keywords {
-    border: 2px solid black;
+    border: 1px solid #ccc;
     border-collapse: collapse;
     empty-cells: show;
     margin: 0.3em 0;
     width: 100%;
 }
 .keywords th, .keywords td {
-    border: 2px solid black;
+    border: 1px solid #ccc;
     padding: 0.2em;
     vertical-align: top;
 }
 .keywords th {
-    background: #bbb;
+    background: #ddd;
     color: black;
 }
 .kw, .args, .tags {
@@ -95,7 +95,7 @@ td.kw {
     display: none;
 }
 #open-search {
-    border: 2px solid black;
+    border: 2px solid #ccc;
     border-radius: 4px;
     width: 40px;
     height: 40px;
@@ -107,16 +107,16 @@ td.kw {
     background-size: 24px 24px;
 }
 #open-search:hover {
-    background-color: yellow;
+    background-color: #ccc;
 }
 fieldset {
     background: white;
-    border: 2px solid black;
+    border: 2px solid #ccc;
     border-radius: 4px;
     padding: 6px 8px;
 }
 fieldset fieldset {
-    border: 1px solid black;
+    border: 1px solid #ccc;
     margin: 4px 0;
 }
 #search-title {
