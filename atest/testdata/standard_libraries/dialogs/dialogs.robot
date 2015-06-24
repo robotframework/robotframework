@@ -38,7 +38,8 @@ Get Hidden Value From User
 
 Get Value From User Cancelled
     [Documentation]  FAIL No value provided by user.
-    Get Value From User    Press Cancel.
+    Get Value From User    Press Cancel.\n\nAlso verify that the default value below is not hidded.
+    ...    Default value.    hidden=no
 
 Get Value From User Exited
     [Documentation]  FAIL No value provided by user.
