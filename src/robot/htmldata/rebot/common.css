@@ -20,14 +20,14 @@ br {
 }
 a, a:link, a:visited {
     text-decoration: none;
-    color: blue;
+    color: #15c;
 }
 a > img {
-    border: 1px solid blue !important;
+    border: 1px solid #15c !important;
 }
 a:hover, a:active {
     text-decoration: underline;
-    color: purple;
+    color: #61c;
 }
 .parent-name {
     font-size: 0.7em;
@@ -95,18 +95,19 @@ h2 {
     background: black;
     color: white;
     text-decoration: none;
+    font-weight: bold;
     letter-spacing: 0.1em;
     padding: 0.3em 0;
     border-bottom-left-radius: 4px;
 }
 #report-or-log-link a:hover {
-    color: yellow;
+    color: #ddd;
 }
 #log-level-selector {
     padding: 0.3em 0;
     font-size: 0.9em;
     border-bottom-left-radius: 4px;
-    background: lightgray;
+    background: #ddd;
 }
 /* Statistics table */
 .statistics {
