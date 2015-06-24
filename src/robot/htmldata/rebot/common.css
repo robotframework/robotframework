@@ -116,15 +116,15 @@ h2 {
     margin-bottom: 1em;
 }
 .statistics tr:hover {
-    background: #ECECF7;
+    background: #eee;
     cursor: pointer;
 }
 .statistics th, .statistics td {
-    border: 1px solid black;
+    border: 1px solid #ccc;
     padding: 0.1em 0.3em;
 }
 .statistics th {
-    background-color: #DCDCF0;
+    background-color: #ddd;
     padding: 0.2em 0.3em;
 }
 .statistics td {
@@ -160,7 +160,7 @@ th.stats-col-graph:hover {
 }
 /* Statistics graph */
 .graph, .empty-graph {
-    border: 1px solid black;
+    border: 1px solid #ccc;
     width: auto;
     height: 7px;
     padding: 0;
@@ -184,20 +184,20 @@ th.stats-col-graph:hover {
     cursor: pointer;
 }
 .tablesorter-header:hover {
-    background-color: #B8C8E3;
+    background-color: #ccc;
 }
 .tablesorter-headerAsc {
     background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlBWnFr3cnIr0WQOyBmvzp13CpxQAOw==);
-    background-color: #B8C8E3 !important;
+    background-color: #ccc !important;
 }
 .tablesorter-headerDesc {
     background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlAWnBr3cnIr0WROyDmvzp13CpxQAOw==);
-    background-color: #B8C8E3 !important;
+    background-color: #ccc !important;
 }
 .sorter-false {
     background-image: none;
     cursor: default;
 }
 .sorter-false:hover {
-    background-color: #DCDCF0;
+    background-color: #ddd;
 }
