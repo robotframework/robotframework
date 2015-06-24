@@ -28,22 +28,18 @@ The library has following two limitations:
 - It cannot be used with timeouts on Python.
 """
 
-import sys
+from robot.version import get_version
+from robot.utils import JYTHON, IRONPYTHON
 
-if sys.platform.startswith('java'):
-    from dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
-elif sys.platform == 'cli':
-    from dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+if JYTHON:
+    from .dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+elif IRONPYTHON:
+    from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 else:
-    from dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 
-try:
-    from robot.version import get_version
-except ImportError:
-    __version__ = '<unknown>'
-else:
-    __version__ = get_version()
 
+__version__ = get_version()
 __all__ = ['execute_manual_step', 'get_value_from_user',
            'get_selection_from_user', 'pause_execution']
 
