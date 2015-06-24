@@ -91,13 +91,13 @@ h2 {
     font-weight: bold;
 }
 .label.error, .label.fail {
-    background-color: #f33;
+    background-color: #d9534f;
 }
 .label.pass {
-    background-color: #393;
+    background-color: #5cb85c;
 }
 .label.warn {
-    background-color: #eb5;
+    background-color: #ec971f;
 }
 /* Top right header */
 #top-right-header {
