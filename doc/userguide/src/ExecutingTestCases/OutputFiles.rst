@@ -212,9 +212,9 @@ non-critical tests have failed.
 The specified colors are used as a value for the `body`
 element's `background` CSS property. The value is used as-is and
 can be a HTML color name (e.g. `red`), a hexadecimal value
-(e.g. `#F00` or `#FF0000`), or an RGB value
+(e.g. `#f00` or `#ff0000`), or an RGB value
 (e.g. `rgb(255,0,0)`). The default green and red colors are
-specified using hexadecimal values `#9F6` and `#F33`,
+specified using hexadecimal values `#9e9` and `#f66`,
 respectively.
 
 Log levels
