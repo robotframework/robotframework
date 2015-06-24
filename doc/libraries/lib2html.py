@@ -15,14 +15,16 @@ Libraries:
   XML (xm)
 """
 
+from os.path import abspath, dirname, join
 import sys
-import os
 import re
 
-ROOT = os.path.normpath(os.path.join(os.path.abspath(__file__),'..','..','..'))
-sys.path.insert(0, os.path.join(ROOT,'src'))
+
+ROOT = dirname(dirname(dirname(abspath(__file__))))
+sys.path.insert(0, join(ROOT, 'src'))
 
 from robot.libdoc import libdoc
+
 
 LIBRARIES = {}
 for line in __doc__.splitlines():
@@ -33,9 +35,7 @@ for line in __doc__.splitlines():
 
 
 def create_libdoc(name):
-    ipath = os.path.join(ROOT,'src','robot','libraries',name+'.py')
-    opath = os.path.join(ROOT,'doc','libraries',name+'.html')
-    libdoc(ipath, opath)
+    libdoc(name, join(ROOT, 'doc', 'libraries', name+'.html'))
 
 
 def create_all():
