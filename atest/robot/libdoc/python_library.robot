@@ -54,7 +54,7 @@ Keyword Documentation
     ...    This keyword requires the prompt to be [#Configuration|configured]\n
     ...    either in `importing` or with `Open Connection` or `Set Prompt` keyword.\n\n
     ...    This is a convenience keyword that uses `Write` and `Read Until Prompt`\n
-    ...    internally Following two examples are thus functionally identical:\n\n
+    ...    internally. Following two examples are thus functionally identical:\n\n
     ...    | \${out} = | `Execute Command`${SPACE*3}| pwd |\n\n
     ...    | `Write`${SPACE*2}| pwd${SPACE*17}|\n
     ...    | \${out} = | `Read Until Prompt` |\n\n
