@@ -21,7 +21,8 @@ Command line options for test execution
   -t, --test <name>       `Selects the test cases by name`_.
   -s, --suite <name>      `Selects the test suites`_ by name.
   -R, --rerunfailed <file>  `Selects failed tests`_ from an earlier `output file`_ to be re-executed.
-  --runfailed <file>      Deprecated since RF 2.8.4. Use :option:`--rerunfailed` instead.
+  --runfailed <file>      Deprecated since Robot Framework 2.8.4.
+                          Use :option:`--rerunfailed` instead.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
@@ -71,11 +72,20 @@ Command line options for test execution
   --prerunmodifier <name:args>    Activate `programmatic modification of test data`_.
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
   --randomize <all|suites|tests|none>  `Randomizes`_ test execution order.
-  -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
-  -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used on the console.
-  -K, --monitormarkers <on|off|force>  Specifies are `console markers`_
-                          (`.` and `F`) used.
-  -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
+  --console <verbose|dotted|quiet|none>  `Console output type`_.
+  --dotted                Shortcut for `--console dotted`.
+  --quiet                 Shortcut for `--console quiet`.
+  -W, --consolewidth <width>  `Sets the width`_ of the console output.
+  -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
+  -K, --consolemarkers <auto|on|off>  Show `markers on the console`_ when top level
+                                      keywords in a test case end.
+  --monitorwidth <width>              Deprecated since Robot Framework 2.9.
+                                      Use :option:`--consolewidth` instead.
+  --monitorcolors <auto|on|ansi|off>  Deprecated since Robot Framework 2.9.
+                                      Use :option:`--consolecolors` instead.
+  --monitormarkers <auto|on|off>      Deprecated since Robot Framework 2.9.
+                                      Use :option:`--consolemarkers` instead.
+  -P, --pythonpath <path>  Additional locations to add to the `module search path`_.
   -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
@@ -85,7 +95,8 @@ Command line options for post-processing outputs
 ------------------------------------------------
 
   -R, --merge             Changes result combining behavior to `merging <merging outputs_>`__.
-  --rerunmerge            Deprecated since RF 2.8.6. Use :option:`--merge` instead.
+  --rerunmerge            Deprecated since Robot Framework 2.8.6.
+                          Use :option:`--merge` instead.
   -N, --name <name>       `Sets the name`_ of the top level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.
@@ -130,6 +141,9 @@ Command line options for post-processing outputs
   --processemptysuite     Processes output files even if files contain
                           `empty test suites`_.
   --prerebotmodifier <name:args>  Activate `programmatic modification of results`_.
+  -C, --consolecolors <auto|on|ansi|off>  `Specifies are colors`_ used on the console.
+  --monitorcolors <auto|on|ansi|off>  Deprecated since Robot Framework 2.9.
+                                      Use :option:`--consolecolors` instead.
   -P, --pythonpath <path>   Additional locations to add to the `module search path`_.
   -E, --escape <what:with>  `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
@@ -174,6 +188,7 @@ Command line options for post-processing outputs
 .. _empty test suites: `test suites are empty`_
 .. _Sets the width: `Console width`_
 .. _Specifies are colors: `Console colors`_
+.. _markers on the console: `Console markers`_
 .. _Escapes characters: `Escaping complicated characters`_
 .. _read more arguments: `Argument files`_
 .. _usage instructions: `Getting help and version information`_

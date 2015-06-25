@@ -13,3 +13,9 @@ Continue
 
 Reserved in User Keyword
     Check testcase    Reserved In User Keyword
+
+Else should be capitalized
+    Check testcase    Else should be capitalized
+
+Else If should be capitalized
+    Check testcase    Else If should be capitalized

@@ -32,14 +32,17 @@ Variable File
 Test Case Variable
     Check test Case    ${TEST NAME}
 
-Set Variable in User Keyword
-    Check test Case    ${TEST NAME}
-
-Local Variables in Test Case Leak
+Local Variables in Test Case do not Leak
     Check test Case    ${TEST NAME}
 
 Variables Are Returned as NormalizedDict
     Check test Case    ${TEST NAME}
 
 Modifying Returned Variables Has No Effect On Real Variables
+    Check test Case    ${TEST NAME}
+
+Getting variables without decoration
+    Check test Case    ${TEST NAME}
+
+Getting variables without decoration has no effect on real variables
     Check test Case    ${TEST NAME}

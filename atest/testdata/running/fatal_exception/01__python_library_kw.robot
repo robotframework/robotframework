@@ -6,6 +6,7 @@ Suite Teardown  Log  Suite Teardown
 Exit From Python Keyword
     [Documentation]  FAIL  FatalCatastrophyException
     [Teardown]  Log  This should be executed
+    [Tags]    some tag
     Exit On Failure
 
 Test That Should Not Be Run 1

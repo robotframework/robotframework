@@ -2,7 +2,8 @@ import unittest
 
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
-from robot.output.logger import Logger, CommandLineMonitor
+from robot.output.logger import Logger
+from robot.output.console.verbose import VerboseOutput
 
 
 class MessageMock:
@@ -125,9 +126,9 @@ class TestLogger(unittest.TestCase):
                 getattr(self.logger, stend + '_' + name)(name)
                 assert_equals(getattr(logger, stend + 'ed_' + name), name)
 
-    def test_console_logger_is_automatically_registered(self):
+    def test_verbose_console_output_is_automatically_registered(self):
         logger = Logger()
-        assert_true(logger._loggers.all_loggers()[0].start_suite.im_class is CommandLineMonitor)
+        assert_true(logger._loggers.all_loggers()[0].start_suite.im_class is VerboseOutput)
 
     def test_loggercollection_is_iterable(self):
         logger = Logger()

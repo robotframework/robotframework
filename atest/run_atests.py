@@ -34,6 +34,7 @@ if sys.version_info < (2, 6):
 CURDIR = dirname(abspath(__file__))
 RUNNER = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
 ARGUMENTS = ' '.join('''
+--console dotted
 --doc RobotSPFrameworkSPacceptanceSPtests
 --reporttitle RobotSPFrameworkSPTestSPReport
 --logtitle RobotSPFrameworkSPTestSPLog

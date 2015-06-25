@@ -49,7 +49,7 @@ Run Tests Helper
     [Arguments]  ${user options}  @{data list}
     ${data string} =  Set Variables And Get Datasources  @{data list}
     ${options} =  Catenate
-    ...    --MonitorMarkers OFF    # AUTO (default) doesn't work with IronPython
+    ...    --ConsoleMarkers OFF    # AUTO (default) doesn't work with IronPython
     ...    ${user options}
     ...    --variable interpreter:${INTERPRETER}
     ...    --pythonpath ${LIBPATH1}
@@ -73,7 +73,7 @@ Run Rebot Without Processing Output
 Run Helper
     [Arguments]  ${runner}  ${options}  ${data string}
     Remove Files  ${OUTFILE}  ${OUTDIR}/*.xml  ${OUTDIR}/*.html
-    ${cmd} =  Catenate  ${runner}  --monitorcolors OFF  --outputdir ${OUTDIR}  --output ${OUTFILE}  --report NONE  --log NONE
+    ${cmd} =  Catenate  ${runner}  --consolecolors OFF  --outputdir ${OUTDIR}  --output ${OUTFILE}  --report NONE  --log NONE
     ...  ${options}  ${data string}  1>${STDOUTFILE}  2>${STDERRFILE}
     ${rc} =  Run And Return RC  ${cmd}
     Log  <a href="file://${OUTDIR}">${OUTDIR}</a>  HTML

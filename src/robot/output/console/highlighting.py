@@ -16,12 +16,65 @@
 # Andre Burgaud, licensed under the MIT License, and available here:
 # http://www.burgaud.com/bring-colors-to-the-windows-console-with-python/
 
+from contextlib import contextmanager
 import os
 import sys
 try:
     from ctypes import windll, Structure, c_short, c_ushort, byref
 except ImportError:  # Not on Windows or using Jython
     windll = None
+
+from robot.errors import DataError
+from robot.utils import encode_output, isatty
+
+
+class HighlightingStream(object):
+
+    def __init__(self, stream, colors='AUTO'):
+        self.stream = stream
+        self._highlighter = self._get_highlighter(stream, colors)
+
+    def _get_highlighter(self, stream, colors):
+        options = {'AUTO': Highlighter if isatty(stream) else NoHighlighting,
+                   'ON': Highlighter,
+                   'OFF': NoHighlighting,
+                   'ANSI': AnsiHighlighter}
+        try:
+            highlighter = options[colors.upper()]
+        except KeyError:
+            raise DataError("Invalid console color value '%s'. Available "
+                            "'AUTO', 'ON', 'OFF' and 'ANSI'." % colors)
+        return highlighter(stream)
+
+    def write(self, text, flush=True):
+        self.stream.write(encode_output(text))
+        if flush:
+            self.flush()
+
+    def flush(self):
+        self.stream.flush()
+
+    def highlight(self, text, status=None, flush=True):
+        with self._highlighting(status or text):
+            self.write(text, flush)
+
+    def error(self, message, level):
+        self.write('[ ', flush=False)
+        self.highlight(level, flush=False)
+        self.write(' ] %s\n' % message)
+
+    @contextmanager
+    def _highlighting(self, status):
+        highlighter = self._highlighter
+        start = {'PASS': highlighter.green,
+                 'FAIL': highlighter.red,
+                 'ERROR': highlighter.red,
+                 'WARN': highlighter.yellow}[status]
+        start()
+        try:
+            yield
+        finally:
+            highlighter.reset()
 
 
 def Highlighter(stream):
@@ -31,7 +84,7 @@ def Highlighter(stream):
 
 
 class AnsiHighlighter(object):
-    _ANSI_GREEN  = '\033[32m'
+    _ANSI_GREEN = '\033[32m'
     _ANSI_RED = '\033[31m'
     _ANSI_YELLOW = '\033[33m'
     _ANSI_RESET = '\033[0m'

@@ -60,7 +60,8 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         get_time, get_timestamp, secs_to_timestamp,
                         secs_to_timestr, timestamp_to_secs, timestr_to_secs,
                         parse_time)
-from .robottypes import is_dict_like, is_list_like, is_str_like, type_name
+from .robottypes import (is_dict_like, is_falsy, is_list_like, is_str_like,
+                         is_truthy, type_name)
 from .setter import setter
 from .text import (cut_long_message, format_assign_message,
                    pad_console_length, get_console_length, split_tags_from_doc,

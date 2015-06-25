@@ -100,27 +100,32 @@ class UserKeywordHandler(object):
             self.timeout = KeywordTimeout()
 
     def run(self, context, arguments):
-        context.start_user_keyword(self)
-        try:
-            return self._run(context, arguments)
-        finally:
-            context.end_user_keyword()
+        arguments = self._resolve_arguments(context, arguments)
+        with context.user_keyword(self):
+            args, kwargs = self._map_arguments(context, arguments)
+            if context.dry_run:
+                return self._dry_run(context, args, kwargs)
+            return self._normal_run(context, args, kwargs)
 
-    def _run(self, context, arguments):
-        if context.dry_run:
-            return self._dry_run(context, arguments)
-        return self._normal_run(context, arguments)
+    def _resolve_arguments(self, context, arguments):
+        variables = context.variables if not context.dry_run else None
+        resolver = ArgumentResolver(self.arguments)
+        return resolver.resolve(arguments, variables)
 
-    def _dry_run(self, context, arguments):
-        positional, kwargs = self._resolve_arguments(arguments)
-        error, return_ = self._execute(context, positional, kwargs)
+    def _map_arguments(self, context, arguments):
+        positional, named = arguments
+        variables = context.variables if not context.dry_run else None
+        mapper = ArgumentMapper(self.arguments)
+        return mapper.map(positional, named, variables)
+
+    def _dry_run(self, context, args, kwargs):
+        error, return_ = self._execute(context, args, kwargs)
         if error:
             raise error
         return None
 
-    def _normal_run(self, context, arguments):
-        positional, kwargs = self._resolve_arguments(arguments, context.variables)
-        error, return_ = self._execute(context, positional, kwargs)
+    def _normal_run(self, context, args, kwargs):
+        error, return_ = self._execute(context, args, kwargs)
         if error and not error.can_continue(context.in_teardown):
             raise error
         return_value = self._get_return_value(context.variables, return_)
@@ -128,13 +133,6 @@ class UserKeywordHandler(object):
             error.return_value = return_value
             raise error
         return return_value
-
-    def _resolve_arguments(self, arguments, variables=None):
-        resolver = ArgumentResolver(self.arguments)
-        mapper = ArgumentMapper(self.arguments)
-        positional, named = resolver.resolve(arguments, variables)
-        positional, kwargs = mapper.map(positional, named, variables)
-        return positional, kwargs
 
     def _execute(self, context, positional, kwargs):
         self._set_variables(positional, kwargs, context.variables)
@@ -248,10 +246,16 @@ class EmbeddedArgs(UserKeywordHandler):
         self.name = name
         self.orig_name = template.name
 
-    def _run(self, context, args):
+    def _resolve_arguments(self, context, arguments):
+        variables = context.variables if not context.dry_run else None
+        # Validates that no arguments given.
+        ArgumentResolver(self.arguments).resolve(arguments, variables)
+        if not variables:
+            return self.embedded_args
+        return [(n, variables.replace_scalar(v)) for n, v in self.embedded_args]
+
+    def _map_arguments(self, context, arguments):
         if not context.dry_run:
-            variables = context.variables
-            self._resolve_arguments(args, variables)  # validates no args given
-            for name, value in self.embedded_args:
-                variables['${%s}' % name] = variables.replace_scalar(value)
-        return UserKeywordHandler._run(self, context, args)
+            for name, value in arguments:
+                context.variables['${%s}' % name] = value
+        return [], {}

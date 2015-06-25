@@ -7,12 +7,12 @@ tr {
     background: white;
 }
 th {
-    background: #DCDCF0;
+    background: #ddd;
     color: black;
 }
 /* Summary and total/tag/suite details */
 .details {
-    border: 1px solid black;
+    border: 1px solid #ccc;
     border-collapse: collapse;
     clear: both;
     width: 65em;
@@ -58,8 +58,8 @@ th {
 #search-help div {
     margin: 0.5em 0.5em 0.7em 0;
     padding: 0.7em;
-    background: #ECECF7;
-    border: 1px solid #BCBCD7;
+    background: #eee;
+    border: 1px solid #ccc;
     border-radius: 3px;
 }
 #search-help h3, #search-help p {
@@ -94,15 +94,15 @@ th {
 }
 .detail-tab {
     float: left;
-    background: #DCDCF0;
-    border: 1px solid black;
+    background: #ddd;
+    border: 1px solid #ccc;
     border-bottom-width: 0;
     margin: 0 0.5em 0 0;
     padding-top: 0.1em;
     border-radius: 3px 3px 0 0;
 }
 .detail-tab:hover {
-    background: yellow;
+    background: #ccc;
 }
 .detail-tab a {
     color: black;
@@ -122,10 +122,10 @@ th {
 #test-details {
     width: 100%;
     border-spacing: 1px;
-    background-color: black;
+    background-color: #ccc;
 }
 #test-details > tbody > tr:hover {
-    background: #F4F4FF;
+    background: #f4f4f4;
     cursor: pointer;
 }
 #test-details th, #test-details td {
@@ -140,7 +140,7 @@ th {
 }
 .details-col-toggle {
     float: left;
-    color: #808080;
+    color: #6c6c6c; /* same as in sort icon */
     cursor: pointer;
 }
 .details-col-toggle:hover {
@@ -185,5 +185,5 @@ th {
     background-image: none;
 }
 th.hidden:hover {
-    background-color: #DCDCF0;
+    background-color: #ccc;
 }

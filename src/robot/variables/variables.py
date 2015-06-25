@@ -12,21 +12,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import is_list_like
+
 from .filesetter import VariableFileSetter
 from .finders import VariableFinder
 from .replacer import VariableReplacer
 from .store import VariableStore
 from .tablesetter import VariableTableSetter
 
-from robot.utils import is_list_like
-
 
 class Variables(object):
-    """Represents a set of variables including both ${scalars} and @{lists}.
+    """Represents a set of variables.
 
     Contains methods for replacing variables from list, scalars, and strings.
-    On top of ${scalar} and @{list} variables these methods handle also
-    %{environment} variables.
+    On top of ${scalar}, @{list} and &{dict} variables, these methods handle
+    also %{environment} variables.
     """
 
     def __init__(self):
@@ -39,6 +39,9 @@ class Variables(object):
 
     def __getitem__(self, name):
         return self._finder.find(name)
+
+    def __contains__(self, name):
+        return name in self.store
 
     def resolve_delayed(self):
         self.store.resolve_delayed()
@@ -62,25 +65,16 @@ class Variables(object):
         setter = VariableTableSetter(self.store)
         setter.set(variables, overwrite)
 
-    # TODO: Try to get rid of all/most of the methods below.
-    # __iter__ and __len__ may be useful.
-
     def clear(self):
         self.store.clear()
 
     def copy(self):
-        # TODO: This is fugly!
         variables = Variables()
         variables.store.data = self.store.data.copy()
         return variables
 
     def update(self, variables):
-        # TODO: Fugly!
-        self.store.data.update(variables.store.data)
+        self.store.update(variables.store)
 
-    def __iter__(self):
-        # TODO: Returns names w/o decoration -- cannot be used w/ __getitem__
-        return iter(self.store)
-
-    def __len__(self):
-        return len(self.store)
+    def as_dict(self, decoration=True):
+        return self.store.as_dict(decoration=decoration)

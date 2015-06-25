@@ -22,7 +22,7 @@ except ImportError:
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import asserts, ET, ETSource, plural_or_not as s
+from robot.utils import asserts, ET, ETSource, is_truthy, plural_or_not as s
 from robot.version import get_version
 
 
@@ -63,6 +63,7 @@ class XML(object):
     - `Finding elements with xpath`
     - `Element attributes`
     - `Handling XML namespaces`
+    - `Boolean arguments`
     - `Shortcuts`
     - `Keywords`
 
@@ -384,6 +385,31 @@ class XML(object):
     | ${root} = | `Parse XML` | <root id="1" ns:id="2" xmlns:ns="http://my.ns"/> |
     | `Element Attribute Should Be` | ${root} | id | 1 |
     | `Element Attribute Should Be` | ${root} | {http://my.ns}id | 2 |
+
+    = Boolean arguments =
+
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Other strings are considered true regardless their value, and other
+    argument types are tested using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
+
+    True examples:
+    | `Parse XML` | ${XML} | keep_clark_notation=True    | # Strings are generally true.    |
+    | `Parse XML` | ${XML} | keep_clark_notation=yes     | # Same as the above.             |
+    | `Parse XML` | ${XML} | keep_clark_notation=${TRUE} | # Python ``True`` is true.       |
+    | `Parse XML` | ${XML} | keep_clark_notation=${42}   | # Numbers other than 0 are true. |
+
+    False examples:
+    | `Parse XML` | ${XML} | keep_clark_notation=False    | # String ``false`` is false.   |
+    | `Parse XML` | ${XML} | keep_clark_notation=no       | # Also string ``no`` is false. |
+    | `Parse XML` | ${XML} | keep_clark_notation=${EMPTY} | # Empty string is false.       |
+    | `Parse XML` | ${XML} | keep_clark_notation=${FALSE} | # Python ``False`` is false.   |
+
+    Note that prior to Robot Framework 2.9, all non-empty strings, including
+    ``false`` and ``no``, were considered true.
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -396,10 +422,9 @@ class XML(object):
 
         By default this library uses Python's standard
         [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree]
-        module for parsing XML. If ``use_lxml`` argument is given any true
-        value (e.g. any non-empty string), the library will use
-        [http://lxml.de|lxml] instead. See `introduction` for benefits
-        provided by lxml.
+        module for parsing XML. If ``use_lxml`` argument is given a true value
+        (see `Boolean arguments`), the library will use [http://lxml.de|lxml]
+        instead. See `introduction` for benefits provided by lxml.
 
         Using lxml requires that the lxml module is installed on the system.
         If lxml mode is enabled but the module is not installed, this library
@@ -407,6 +432,7 @@ class XML(object):
 
         The support for lxml is new in Robot Framework 2.8.5.
         """
+        use_lxml = is_truthy(use_lxml)
         if use_lxml and lxml_etree:
             self.etree = lxml_etree
             self.modern_etree = True
@@ -433,8 +459,7 @@ class XML(object):
         considerably. If you do not want that to happen, or want to avoid
         the small overhead of going through the element structure when your
         XML does not have namespaces, you can disable this feature by giving
-        ``keep_clark_notation`` argument a true value (e.g. any non-empty
-        string).
+        ``keep_clark_notation`` argument a true value (see `Boolean arguments`).
 
         Examples:
         | ${root} = | Parse XML | <root><child/></root> |
@@ -450,7 +475,7 @@ class XML(object):
             root = self.etree.parse(source).getroot()
         if self.lxml_etree:
             self._remove_comments(root)
-        if not keep_clark_notation:
+        if not is_truthy(keep_clark_notation):
             NameSpaceStripper().strip(root)
         return root
 
@@ -605,8 +630,8 @@ class XML(object):
         always the same as the `text` attribute of the element.
 
         Be default all whitespace, including newlines and indentation, inside
-        the element is returned as-is. If ``normalize_whitespace`` is given any
-        true value (e.g. any non-empty string), then leading and trailing
+        the element is returned as-is. If ``normalize_whitespace`` is given
+        a true value (see `Boolean arguments`), then leading and trailing
         whitespace is stripped, newlines and tabs converted to spaces, and
         multiple spaces collapsed into one. This is especially useful when
         dealing with HTML data.
@@ -625,7 +650,7 @@ class XML(object):
         """
         element = self.get_element(source, xpath)
         text = ''.join(self._yield_texts(element))
-        if normalize_whitespace:
+        if is_truthy(normalize_whitespace):
             text = self._normalize_whitespace(text)
         return text
 
@@ -832,12 +857,12 @@ class XML(object):
         The keyword passes if the ``source`` element and ``expected`` element
         are equal. This includes testing the tag names, texts, and attributes
         of the elements. By default also child elements are verified the same
-        way, but this can be disabled by setting ``exclude_children`` to any
-        true value (e.g. any non-empty string).
+        way, but this can be disabled by setting ``exclude_children`` to a
+        true value (see `Boolean arguments`).
 
         All texts inside the given elements are verified, but possible text
         outside them is not. By default texts must match exactly, but setting
-        ``normalize_whitespace`` to any true value makes text verification
+        ``normalize_whitespace`` to a true value makes text verification
         independent on newlines, tabs, and the amount of spaces. For more
         details about handling text see `Get Element Text` keyword and
         discussion about elements' `text` and `tail` attributes in the
@@ -882,7 +907,8 @@ class XML(object):
 
     def _compare_elements(self, source, expected, comparator, exclude_children,
                           normalize_whitespace):
-        normalizer = self._normalize_whitespace if normalize_whitespace else None
+        normalizer = self._normalize_whitespace \
+            if is_truthy(normalize_whitespace) else None
         comparator = ElementComparator(comparator, normalizer, exclude_children)
         comparator.compare(self.get_element(source), self.get_element(expected))
 
@@ -1128,8 +1154,8 @@ class XML(object):
         Use `Remove Elements` to remove all matched elements.
 
         Element's tail text is not removed by default, but that can be changed
-        by giving ``remove_tail`` a true value (e.g. any non-empty string).
-        See ``Element attributes`` section for more information about `tail` in
+        by giving ``remove_tail`` a true value (see `Boolean arguments`). See
+        `Element attributes` section for more information about `tail` in
         general.
 
         Examples using ``${XML}`` structure from `Example`:
@@ -1172,7 +1198,7 @@ class XML(object):
 
     def _remove_element(self, root, element, remove_tail=False):
         parent = self._find_parent(root, element)
-        if not remove_tail:
+        if not is_truthy(remove_tail):
             self._preserve_tail(element, parent)
         parent.remove(element)
 
@@ -1203,8 +1229,8 @@ class XML(object):
 
         Clearing the element means removing its text, attributes, and children.
         Element's tail text is not removed by default, but that can be changed
-        by giving ``clear_tail`` a true value (e.g. any non-empty string).
-        See `Element attributes` section for more information about tail in
+        by giving ``clear_tail`` a true value (see `Boolean arguments`). See
+        `Element attributes` section for more information about tail in
         general.
 
         Examples using ``${XML}`` structure from `Example`:
@@ -1224,7 +1250,7 @@ class XML(object):
         element = self.get_element(source, xpath)
         tail = element.tail
         element.clear()
-        if not clear_tail:
+        if not is_truthy(clear_tail):
             element.tail = tail
         return source
 
@@ -1390,7 +1416,7 @@ class ElementComparator(object):
     def __init__(self, comparator, normalizer=None, exclude_children=False):
         self._comparator = comparator
         self._normalizer = normalizer or (lambda text: text)
-        self._exclude_children = exclude_children
+        self._exclude_children = is_truthy(exclude_children)
 
     def compare(self, actual, expected, location=None):
         if not location:

@@ -19,8 +19,8 @@ import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
-                         decode_output, secs_to_timestr, timestr_to_secs,
-                         IRONPYTHON, JYTHON)
+                         decode_output, is_truthy, secs_to_timestr,
+                         timestr_to_secs, IRONPYTHON, JYTHON)
 from robot.version import get_version
 from robot.api import logger
 
@@ -224,28 +224,29 @@ class Process(object):
 
     = Boolean arguments =
 
-    Some keywords accept arguments that are handled as Boolean values.
-    If such an argument is given as a string, it is considered false if it
-    is either empty or case-insensitively equal to ``false``. Other strings
-    are considered true regardless what they contain, and other argument
-    types are tested using same
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Other strings are considered true regardless their value, and other
+    argument types are tested using same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
     as in Python].
 
     True examples:
     | `Terminate Process` | kill=True     | # Strings are generally true.    |
-    | `Terminate Process` | kill=yes      | # Same as above.                 |
-    | `Terminate Process` | kill=${TRUE}  | # Python True is true.           |
+    | `Terminate Process` | kill=yes      | # Same as the above.             |
+    | `Terminate Process` | kill=${TRUE}  | # Python ``True`` is true.       |
     | `Terminate Process` | kill=${42}    | # Numbers other than 0 are true. |
 
     False examples:
-    | `Terminate Process` | kill=False    | # String False is false.     |
-    | `Terminate Process` | kill=${EMPTY} | # Empty string is false.     |
-    | `Terminate Process` | kill=${FALSE} | # Python False is false.     |
-    | `Terminate Process` | kill=${0}     | # Number 0 is false.         |
+    | `Terminate Process` | kill=False    | # String ``false`` is false.   |
+    | `Terminate Process` | kill=no       | # Also string ``no`` is false. |
+    | `Terminate Process` | kill=${EMPTY} | # Empty string is false.       |
+    | `Terminate Process` | kill=${FALSE} | # Python ``False`` is false.   |
 
     Note that prior to Robot Framework 2.8 all non-empty strings, including
-    ``False``, were considered true.
+    ``false``, were considered true. Additionally, ``no`` is considered false
+    only in Robot Framework 2.9 and newer.
 
     = Using with OperatingSystem library =
 
@@ -511,7 +512,7 @@ class Process(object):
         if not hasattr(process, 'terminate'):
             raise RuntimeError('Terminating processes is not supported '
                                'by this Python version.')
-        terminator = self._kill if is_true(kill) else self._terminate
+        terminator = self._kill if is_truthy(kill) else self._terminate
         try:
             terminator(process)
         except OSError:
@@ -599,7 +600,7 @@ class Process(object):
         process = self._processes[handle]
         signum = self._get_signal_number(signal)
         logger.info('Sending signal %s (%d).' % (signal, signum))
-        if is_true(group) and hasattr(os, 'killpg'):
+        if is_truthy(group) and hasattr(os, 'killpg'):
             os.killpg(process.pid, signum)
         elif hasattr(process, 'send_signal'):
             process.send_signal(signum)
@@ -695,7 +696,7 @@ class Process(object):
     def _get_result_attributes(self, result, *includes):
         attributes = (result.rc, result.stdout, result.stderr,
                       result.stdout_path, result.stderr_path)
-        includes = (is_true(incl) for incl in includes)
+        includes = (is_truthy(incl) for incl in includes)
         return tuple(attr for attr, incl in zip(attributes, includes) if incl)
 
     def switch_process(self, handle):
@@ -803,7 +804,7 @@ class ProcessConfig(object):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
-        self.shell = is_true(shell)
+        self.shell = is_truthy(shell)
         self.alias = alias
         self.env = self._construct_env(env, rest)
 
@@ -866,9 +867,3 @@ shell = %r
 alias = %s
 env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
                self.shell, self.alias, self.env))
-
-
-def is_true(argument):
-    if isinstance(argument, basestring) and argument.upper() == 'FALSE':
-        return False
-    return bool(argument)

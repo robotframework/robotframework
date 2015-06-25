@@ -10,6 +10,6 @@ Suite4 First
     [Documentation]    FAIL Expected
     [Tags]    t1
     Log    Suite4_First
-    Sleep    0.1
+    Sleep    0.01    Make sure elapsed time > 0
     Fail    Expected
     [Teardown]    Log    Huhuu

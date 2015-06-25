@@ -18,7 +18,7 @@ from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
-from robot.utils import unic, lower
+from robot.utils import is_truthy, lower, unic
 from robot.version import get_version
 
 
@@ -175,10 +175,14 @@ class String(object):
     def get_lines_containing_string(self, string, pattern, case_insensitive=False):
         """Returns lines of the given ``string`` that contain the ``pattern``.
 
-        The ``pattern`` is always considered to be a normal string and a
-        line matches if the ``pattern`` is found anywhere in it. By
-        default the match is case-sensitive, but setting
-        ``case_insensitive`` to any value makes it case-insensitive.
+        The ``pattern`` is always considered to be a normal string, not a glob
+        or regexp pattern. A line matches if the ``pattern`` is found anywhere
+        on it.
+
+        The match is case-sensitive by default, but giving ``case_insensitive``
+        a true value makes it case-insensitive. The value is considered true
+        if it is a non-empty string that is not equal to ``false`` or ``no``.
+        If the value is not a string, its truth value is got directly in Python.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -191,7 +195,7 @@ class String(object):
         See `Get Lines Matching Pattern` and `Get Lines Matching Regexp`
         if you need more complex pattern matching.
         """
-        if case_insensitive:
+        if is_truthy(case_insensitive):
             pattern = pattern.lower()
             contains = lambda line: pattern in line.lower()
         else:
@@ -207,9 +211,12 @@ class String(object):
         | ``[chars]``  | matches any character inside square brackets (e.g. ``[abc]`` matches either ``a``, ``b`` or ``c``) |
         | ``[!chars]`` | matches any character not inside square brackets |
 
-        A line matches only if it matches the ``pattern`` fully.  By
-        default the match is case-sensitive, but setting
-        ``case_insensitive`` to any value makes it case-insensitive.
+        A line matches only if it matches the ``pattern`` fully.
+
+        The match is case-sensitive by default, but giving ``case_insensitive``
+        a true value makes it case-insensitive. The value is considered true
+        if it is a non-empty string that is not equal to ``false`` or ``no``.
+        If the value is not a string, its truth value is got directly in Python.
 
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
@@ -217,13 +224,13 @@ class String(object):
 
         Examples:
         | ${lines} = | Get Lines Matching Pattern | ${result} | Wild???? example |
-        | ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | case-insensitive |
+        | ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | case_insensitive=true |
 
         See `Get Lines Matching Regexp` if you need more complex
         patterns and `Get Lines Containing String` if searching
         literal strings is enough.
         """
-        if case_insensitive:
+        if is_truthy(case_insensitive):
             pattern = pattern.lower()
             matches = lambda line: fnmatchcase(line.lower(), pattern)
         else:

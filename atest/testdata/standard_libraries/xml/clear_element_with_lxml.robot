@@ -22,6 +22,7 @@ Tail Text Is Not Cleared By Default
     Elements Should Be Equal    ${root}    <root a="v"><child/>tail</root>
 
 Tail Text Can Be Cleared
+    ${root} =    Clear Element    ${WITH TAIL}    child    clear_tail=false
+    Elements Should Be Equal    ${root}    <root a="v"><child/>tail</root>
     ${root} =    Clear Element    ${WITH TAIL}    child    clear_tail=yes
     Elements Should Be Equal    ${root}    <root a="v"><child/></root>
-

@@ -36,7 +36,7 @@ Show whole library
     ...   ``message`` is the message shown in the dialog.
 
 Show intro only
-    ${output}=    Run Libdoc    Telnet SHOW intro
+    Run Libdoc and set output    Telnet SHOW intro
     Should Contain Intro    Telnet    Version:
     ${args} =    Catenate    SEPARATOR=\n${SPACE*12}
     ...    timeout=3 seconds, newline=CRLF, prompt=None,
@@ -50,7 +50,7 @@ Show intro only
     Should Not Contain Keyword    Write
 
 Show intro and keywords
-    ${output}=    Run Libdoc    ${TESTDATADIR}/resource.robot SHOW NONASC* INTRO
+    Run Libdoc and set output    ${TESTDATADIR}/resource.robot SHOW NONASC* INTRO
     Should Contain Intro    resource    Named arguments:${SPACE*2}supported
     Should Contain Keyword    non ascii doc    ${EMPTY}
     ...    Hyvää yötä.

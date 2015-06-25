@@ -242,12 +242,13 @@ Options
                           in test cases. Error codes are returned normally.
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating outputs.
- -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
+ -C --consolecolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
+    --monitorcolors colors  Deprecated. Use --consolecolors instead.
  -P --pythonpath path *   Additional locations to add to the module search path
                           that is used when importing Python based extensions.
  -E --escape what:with *  Escape characters which are problematic in console.
@@ -343,7 +344,7 @@ class Rebot(RobotFramework):
 
     def main(self, datasources, **options):
         settings = RebotSettings(options)
-        LOGGER.register_console_logger(**settings.console_logger_config)
+        LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.disable_message_cache()
         rc = ResultWriter(*datasources).write_results(settings)
         if rc < 0:

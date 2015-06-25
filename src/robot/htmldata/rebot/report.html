@@ -692,8 +692,11 @@ function hideHiddenDetailsColumns(elem) {
               </tr>
               <tr>
                 <td>NOT</td>
-                <td>Matches if pattern before matches and pattern after does not.</td>
-                <td>foo NOT bar<br>* NOT id-* AND smoke</td>
+                <td>
+                    Matches if (optional) pattern before matches and pattern
+                    after does not.
+                </td>
+                <td>foo NOT bar<br>* NOT id-* AND smoke<br>NOT bar</td>
               </tr>
             </table>
           </div>
@@ -827,7 +830,7 @@ function hideHiddenDetailsColumns(elem) {
     <td class="details-col-doc"><div class="doc details-limited">{{html doc()}}</div></td>
     <td class="details-col-tags"><div>{{html tags.join(', ')}}</div></td>
     <td class="details-col-crit"><div>{{if isCritical}}yes{{else}}no{{/if}}</div></td>
-    <td class="details-col-status"><div class="${status.toLowerCase()}">${status}</div></td>
+    <td class="details-col-status"><div><span class="label ${status.toLowerCase()}">${status}</span></div></td>
     <td class="details-col-msg"><div class="message details-limited">{{html message()}}</div></td>
     <td class="details-col-elapsed"><div>${times.elapsedTime}</div></td>
     <td class="details-col-times"><div>${times.startTime}<br>${times.endTime}</div></td>

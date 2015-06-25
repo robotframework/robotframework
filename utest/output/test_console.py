@@ -2,22 +2,22 @@ import unittest
 import sys
 
 from robot.utils.asserts import assert_equals
-from robot.output.monitor import CommandLineMonitor
+from robot.output.console.verbose import VerboseOutput
 
 # Overwrite IronPython's special utils.isatty with version using stream.isatty.
 # Otherwise our StreamStub.isatty would not really work.
 if sys.platform == 'cli':
-    from robot import utils
-    utils.isatty = lambda stream: hasattr(stream, 'isatty') and stream.isatty()
+    from robot.output.console import verbose
+    verbose.isatty = lambda stream: hasattr(stream, 'isatty') and stream.isatty()
 
 
 class TestKeywordNotification(unittest.TestCase):
 
     def setUp(self, markers='AUTO', isatty=True):
         self.stream = StreamStub(isatty)
-        self.monitor = CommandLineMonitor(width=16, colors='off', markers=markers,
-                                          stdout=self.stream, stderr=self.stream)
-        self.monitor.start_test(Stub())
+        self.console = VerboseOutput(width=16, colors='off', markers=markers,
+                                     stdout=self.stream, stderr=self.stream)
+        self.console.start_test(Stub())
 
     def test_write_pass_marker(self):
         self._write_marker()
@@ -46,12 +46,12 @@ class TestKeywordNotification(unittest.TestCase):
 
     def test_clear_markers_when_test_status_is_written(self):
         self._write_marker(count=5)
-        self.monitor.end_test(Stub())
-        self._verify('| PASS |\n%s\n' % ('-'*self.monitor._writer._width))
+        self.console.end_test(Stub())
+        self._verify('| PASS |\n%s\n' % ('-'*self.console._writer._width))
 
     def test_clear_markers_when_there_are_warnings(self):
         self._write_marker(count=5)
-        self.monitor.message(MessageStub())
+        self.console.message(MessageStub())
         self._verify(before='[ WARN ] Message\n')
         self._write_marker(count=2)
         self._verify(before='[ WARN ] Message\n', after='..')
@@ -76,8 +76,8 @@ class TestKeywordNotification(unittest.TestCase):
 
     def _write_marker(self, status='PASS', count=1):
         for i in range(count):
-            self.monitor.start_keyword(Stub())
-            self.monitor.end_keyword(Stub(status=status))
+            self.console.start_keyword(Stub())
+            self.console.end_keyword(Stub(status=status))
 
     def _verify(self, after='', before=''):
         assert_equals(str(self.stream), '%sX :: D  %s' % (before, after))

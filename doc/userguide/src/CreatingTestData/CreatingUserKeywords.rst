@@ -123,8 +123,14 @@ where the keywords can also be searched based on tags. The `--removekeywords`__
 and `--flattenkeywords`__ commandline options also support selecting keywords by
 tag, and new usages for keywords tags are possibly added in later releases.
 
+Similarly as with `test case tags`_, user keyword tags with a `robot-` prefix
+are reserved__ for special features by Robot Framework itself. Users should
+thus not use any tag with a `robot-` prefix unless actually activating
+the special functionality.
+
 __ `Removing keywords`_
 __ `Flattening keywords`_
+__ `Reserved tags`_
 
 User keyword arguments
 ----------------------

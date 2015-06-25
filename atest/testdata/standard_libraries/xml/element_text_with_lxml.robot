@@ -3,7 +3,7 @@ Suite Setup       Set lxml availability to suite metadata
 Library           XML    use_lxml=yes
 Resource          xml_resource.robot
 
-*** Test cases ***
+*** Test Cases ***
 Get text of current element
     ${text}=     Get Element Text    <tag>text</tag>
     Should Be Equal    ${text}    text
@@ -20,6 +20,8 @@ Get text of element with no text
 
 Get text with whitespace
     ${text}=     Get Element Text    <tag>\nfoo \ bar\n</tag>
+    Should Be Equal    ${text}     \nfoo \ bar\n
+    ${text}=     Get Element Text    <tag>\nfoo \ bar\n</tag>    normalize_whitespace=False
     Should Be Equal    ${text}     \nfoo \ bar\n
 
 Get text with whitespace normalized

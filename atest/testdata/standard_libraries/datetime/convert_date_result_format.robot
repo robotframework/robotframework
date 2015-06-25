@@ -71,9 +71,9 @@ Should exclude milliseconds
 
 Epoch time is float regardless are millis included or not
                       [Template]    Epoch time format should be
-                      ${1000.123}                1000.123
-                      ${1000}                    1000.0
-                      ${1000.123}                1000.0               no millis
+                      ${1000.123}                1000.123             false
+                      ${1000}                    1000.0               ${EMPTY}
+                      ${1000.123}                1000.0               true
                       ${1000}                    1000.0               no millis
 
 Formatted with %f in middle
@@ -96,6 +96,6 @@ Date Conversion Should Succeed Without Milliseconds
     Should Be Equal    ${ts}    ${expected}
 
 Epoch time format should be
-    [Arguments]    ${input}    ${expected}    ${millis}=
+    [Arguments]    ${input}    ${expected}    ${millis}
     ${result} =    Convert Date    ${input}    result_format=epoch    exclude_millis=${millis}
     Should Be Equal As Strings    ${result}    ${expected}

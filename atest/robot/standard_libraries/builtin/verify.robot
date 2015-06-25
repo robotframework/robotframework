@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/verify.robot
+Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/builtin/verify.robot
 Force Tags        regression
 Default Tags      jybot    pybot
 Resource          atest_resource.robot
@@ -26,6 +26,9 @@ Should Be True With Invalid Expression
 Should (Not) Be True is evaluated with os- and sys-modules
     Check test case    ${TESTNAME}
 
+Should (Not) Be True is evaluated with robot's variables
+    Check test case    ${TESTNAME}
+
 Should Not Be Equal
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    unicode    unicode
@@ -44,6 +47,12 @@ Should Be Equal
     Verify argument type message    ${tc.kws[1].msgs[0]}    int    int
     Verify argument type message    ${tc.kws[2].msgs[0]}    str    str
     Verify argument type message    ${tc.kws[3].msgs[0]}    unicode    unicode
+
+Should Be Equal fails with values
+    Check test case    ${TESTNAME}
+
+Should Be Equal fails without values
+    Check test case    ${TESTNAME}
 
 Should Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
@@ -101,10 +110,16 @@ Should Not Start With
 Should Start With
     Check test case    ${TESTNAME}
 
+Should Start With without values
+    Check test case    ${TESTNAME}
+
 Should Not End With
     Check test case    ${TESTNAME}
 
 Should End With
+    Check test case    ${TESTNAME}
+
+Should End With without values
     Check test case    ${TESTNAME}
 
 Should Not Contain
@@ -153,7 +168,8 @@ Length Should Be
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[-1].msgs[0]}    Length is 2
     Check Log Message    ${tc.kws[-1].msgs[1]}    Length of '*' should be 3 but is 2.    FAIL    pattern=yep
-    Length Should Be    ${tc.kws[-1].msgs}    2
+    Check Log Message    ${tc.kws[-1].msgs[2]}    Traceback*    DEBUG    pattern=yep
+    Length Should Be    ${tc.kws[-1].msgs}    3
 
 Length Should Be With Non Default Message
     Check Test Case    ${TESTNAME}
@@ -234,7 +250,7 @@ Verify argument type message
     [Arguments]    ${msg}    ${type1}    ${type2}
     ${type1} =    Str Type to Unicode On IronPython    ${type1}
     ${type2} =    Str Type to Unicode On IronPython    ${type2}
-    Check log message    ${msg}    Argument types are:\n<type '${type1}'>\n<type '${type2}'>
+    Check log message    ${msg}    Argument types are:\n<type '${type1}'>\n<type '${type2}'>    DEBUG
 
 Str Type to Unicode On IronPython
     [Arguments]    ${type}

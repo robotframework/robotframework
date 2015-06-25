@@ -103,7 +103,7 @@ same example could be written like this:
 No automatic newline is added if a line already ends with a newline or
 if it ends with and an `escaping backslash`__. Notice also that if
 documentation or metadata is defined in multiple cells in a same row,
-these cells are catenated together with spaces. All these cases are
+these cells are concatenated together with spaces. All these cases are
 illustrated in the examples below where all test cases end up having
 the same two line documentation.
 
@@ -402,10 +402,19 @@ The above documentation is formatted like this:
   <p>After block.</p>
   </div>
 
+When documenting suites, tests or keywords in Robot Framework test data,
+having multiple spaces requires escaping with a backslash to `prevent
+ignoring spaces`_. The example above would thus be written like this::
+
+  Doc before block:
+  | inside block
+  | \ \ \ some \ \ additional whitespace
+  After block.
+
 Horizontal ruler
 ----------------
 
-Horizontal rulers (the <hr> tag) make it possible to separate larger
+Horizontal rulers (the `<hr>` tag) make it possible to separate larger
 sections from each others, and they can be created by having three or more
 hyphens alone on a line::
 

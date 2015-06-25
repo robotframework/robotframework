@@ -20,29 +20,26 @@ from robot.errors import DataError
 from robot.libraries import STDLIBS, STDLIB_TO_DEPRECATED_MAP
 from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
-from robot.variables import GLOBAL_VARIABLES
 
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
 from .importer import Importer, ImportCache
 from .runkwregister import RUN_KW_REGISTER
-from .context import EXECUTION_CONTEXTS
 
 
 IMPORTER = Importer()
 
 
-class Namespace:
+class Namespace(object):
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, suite, parent_variables, user_keywords,
-                 imports):
+    def __init__(self, variables, suite, user_keywords, imports):
         LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.suite = suite
         self.test = None
         self.uk_handlers = []
-        self.variables = _VariableScopes(parent_variables)
+        self.variables = variables
         self._imports = imports
         self._kw_store = KeywordStore(user_keywords)
         self._imported_variable_files = ImportCache()
@@ -103,7 +100,7 @@ class Namespace:
         path = self._resolve_name(import_setting)
         args = self._resolve_args(import_setting)
         if overwrite or (path, args) not in self._imported_variable_files:
-            self._imported_variable_files.add((path,args))
+            self._imported_variable_files.add((path, args))
             self.variables.set_from_file(path, args, overwrite)
         else:
             msg = "Variable file '%s'" % path
@@ -174,6 +171,9 @@ class Namespace:
         for lib in self.libraries:
             lib.end_test()
 
+    def start_suite(self):
+        self.variables.start_suite()
+
     def end_suite(self):
         self.suite = None
         self.variables.end_suite()
@@ -181,11 +181,11 @@ class Namespace:
             lib.end_suite()
 
     def start_user_keyword(self, handler):
-        self.variables.start_uk()
+        self.variables.start_keyword()
         self.uk_handlers.append(handler)
 
     def end_user_keyword(self):
-        self.variables.end_uk()
+        self.variables.end_keyword()
         self.uk_handlers.pop()
 
     def get_library_instance(self, libname):
@@ -430,104 +430,3 @@ class KeywordRecommendationFinder(object):
                      for handler in library.handlers))
         # sort handlers to ensure consistent ordering between Jython and Python
         return sorted(handlers)
-
-
-class _VariableScopes:
-
-    def __init__(self, parent_variables):
-        variables = GLOBAL_VARIABLES.copy()
-        self._suite = self.current = variables
-        self._parents = []
-        if parent_variables is not None:
-            self._parents.append(parent_variables.current)
-            self._parents.extend(parent_variables._parents)
-        self._test = None
-        self._uk_handlers = []
-
-    def __len__(self):
-        return len(self.current)
-
-    def replace_list(self, items, replace_until=None):
-        return self.current.replace_list(items, replace_until)
-
-    def replace_scalar(self, items):
-        return self.current.replace_scalar(items)
-
-    def replace_string(self, string, ignore_errors=False):
-        return self.current.replace_string(string, ignore_errors=ignore_errors)
-
-    def set_from_file(self, path, args, overwrite=False):
-        variables = self._suite.set_from_file(path, args, overwrite)
-        if self._test is not None:
-            self._test.set_from_file(variables, overwrite=True)
-        for varz in self._uk_handlers:
-            varz.set_from_file(variables, overwrite=True)
-        if self._uk_handlers:
-            self.current.set_from_file(variables, overwrite=True)
-
-    def set_from_variable_table(self, rawvariables, overwrite=False):
-        self._suite.set_from_variable_table(rawvariables, overwrite)
-        if self._test is not None:
-            self._test.set_from_variable_table(rawvariables, overwrite)
-        for varz in self._uk_handlers:
-            varz.set_from_variable_table(rawvariables, overwrite)
-        if self._uk_handlers:
-            self.current.set_from_variable_table(rawvariables, overwrite)
-
-    def resolve_delayed(self):
-        self.current.resolve_delayed()
-
-    def __getitem__(self, name):
-        return self.current[name]
-
-    def __setitem__(self, name, value):
-        self.current[name] = value
-
-    def end_suite(self):
-        self._suite = self._test = self.current = None
-
-    def start_test(self):
-        self._test = self.current = self._suite.copy()
-
-    def end_test(self):
-        self.current = self._suite
-
-    def start_uk(self):
-        self._uk_handlers.append(self.current)
-        self.current = self.current.copy()
-
-    def end_uk(self):
-        self.current = self._uk_handlers.pop()
-
-    def set_global(self, name, value):
-        name, value = self._set_global_suite_or_test(GLOBAL_VARIABLES, name, value)
-        for ns in EXECUTION_CONTEXTS.namespaces:
-            ns.variables.set_suite(name, value)
-
-    def set_suite(self, name, value):
-        name, value = self._set_global_suite_or_test(self._suite, name, value)
-        self.set_test(name, value, False)
-
-    def set_test(self, name, value, fail_if_no_test=True):
-        if self._test is not None:
-            name, value = self._set_global_suite_or_test(self._test, name, value)
-        elif fail_if_no_test:
-            raise DataError("Cannot set test variable when no test is started")
-        for varz in self._uk_handlers:
-            varz.__setitem__(name, value)
-        self.current.__setitem__(name, value)
-
-    def _set_global_suite_or_test(self, variables, name, value):
-        variables[name] = value
-        # Avoid creating new list/dict objects in different scopes.
-        if name[0] != '$':
-            name = '$' + name[1:]
-            value = variables[name]
-        return name, value
-
-    def __iter__(self):
-        return iter(self.current)
-
-    @property
-    def store(self):
-        return self.current.store

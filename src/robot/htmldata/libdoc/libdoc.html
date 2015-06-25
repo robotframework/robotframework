@@ -112,7 +112,7 @@
         var include = {name: name.prop('checked'),
                        args: args.prop('checked'),
                        doc: doc.prop('checked'),
-                       tags: tags.prop('checked')};
+                       tags: !!tags.prop('checked')};
         if ((!include.name) && (!include.args) && (!include.doc)) {
             tags.prop('disabled', true);
         } else if ((!include.name) && (!include.args) && (!include.tags)) {
@@ -151,7 +151,9 @@
         });
         renderTemplate('shortcuts', result);
         renderTemplate('keywords', result);
-        renderTemplate('tags', libdoc);
+        if (libdoc.contains_tags) {
+            renderTemplate('tags', libdoc);
+        }
         var ending = matchCount != 1 ? 's.' : '.';
         $('#match-count').show().text(matchCount + ' matched keyword' + ending);
         $('#altogether-count').hide();
@@ -207,8 +209,10 @@
 
     function resetKeywords() {
         renderTemplate('shortcuts', libdoc);
-        renderTemplate('tags', libdoc);
         renderTemplate('keywords', libdoc);
+        if (libdoc.contains_tags) {
+            renderTemplate('tags', libdoc);
+        }
         $('#match-count').hide();
         $('#altogether-count').show();
     }
@@ -285,7 +289,11 @@
         </tr>
         {{each inits}}
         <tr class="kw-row">
-            <td class="args">${$value.args}</td>
+            <td class="args">
+            {{each args}}
+              <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
+            {{/each}}
+            </td>
             <td class="doc">{{html $value.doc}}</td>
         </tr>
         {{/each}}

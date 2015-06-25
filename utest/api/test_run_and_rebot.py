@@ -10,9 +10,11 @@ from os.path import abspath, dirname, join, exists, curdir
 from os import chdir
 from StringIO import StringIO
 
-from robot.utils.asserts import assert_equals, assert_true
-from robot.running import namespace
 from robot import run, rebot
+from robot.model import SuiteVisitor
+from robot.running import namespace
+from robot.utils.asserts import assert_equals, assert_true
+
 from resources.runningtestcase import RunningTestCase
 from resources.Listener import Listener
 
@@ -80,14 +82,14 @@ class TestRun(RunningTestCase):
     def test_custom_stderr(self):
         stderr = StringIO()
         assert_equals(run_without_outputs(self.warn, stderr=stderr), 0)
-        self._assert_output(stderr, [('[ WARN ]', 4), ('[ ERROR ]', 1)])
+        self._assert_output(stderr, [('[ WARN ]', 4), ('[ ERROR ]', 2)])
         self._assert_outputs([('Warnings And Errors', 2), ('Output:', 1),
                               ('Log:', 0), ('Report:', 0)])
 
     def test_custom_stdout_and_stderr_with_minimal_implementation(self):
         output = StreamWithOnlyWriteAndFlush()
         assert_equals(run_without_outputs(self.warn, stdout=output, stderr=output), 0)
-        self._assert_output(output, [('[ WARN ]', 4), ('[ ERROR ]', 1),
+        self._assert_output(output, [('[ WARN ]', 4), ('[ ERROR ]', 2),
                                      ('Warnings And Errors', 3), ('Output:', 1),
                                      ('Log:', 0), ('Report:', 0)])
         self._assert_outputs()
@@ -106,24 +108,49 @@ class TestRun(RunningTestCase):
                                      ('[listener close]', 1)])
 
     def test_pass_listener_as_instance(self):
-        assert_equals(run(self.data, outputdir=TEMP, report='none', listener=Listener(1)), 1)
+        assert_equals(run_without_outputs(self.data, listener=Listener(1)), 1)
         self._assert_outputs([("[from listener 1]", 1)])
 
     def test_pass_listener_as_string(self):
         module_file = join(ROOT, 'utest', 'resources', 'Listener.py')
-        assert_equals(run(self.data, outputdir=TEMP, report='none', listener=module_file+":1"), 1)
+        assert_equals(run_without_outputs(self.data, listener=module_file+":1"), 1)
         self._assert_outputs([("[from listener 1]", 1)])
 
     def test_pass_listener_as_list(self):
         module_file = join(ROOT, 'utest', 'resources', 'Listener.py')
-        assert_equals(run(self.data, outputdir=TEMP, report='none', listener=[module_file+":1", Listener(2)]), 1)
+        assert_equals(run_without_outputs(self.data, listener=[module_file+":1", Listener(2)]), 1)
         self._assert_outputs([("[from listener 1]", 1), ("[from listener 2]", 1)])
+
+    def test_pre_run_modifier_as_instance(self):
+        class Modifier(SuiteVisitor):
+            def start_suite(self, suite):
+                suite.tests = [t for t in suite.tests if t.tags.match('pass')]
+        assert_equals(run_without_outputs(self.data, prerunmodifier=Modifier()), 0)
+        self._assert_outputs([('Pass       ', 1), ('Fail :: FAIL', 0)])
+
+    def test_pre_rebot_modifier_as_instance(self):
+        class Modifier(SuiteVisitor):
+            def __init__(self):
+                self.tests = []
+            def visit_test(self, test):
+                self.tests.append(test.name)
+        modifier = Modifier()
+        assert_equals(run(self.data, log=LOG_PATH, prerebotmodifier=modifier), 1)
+        assert_equals(modifier.tests, ['Pass', 'Fail'])
+        self._assert_outputs([('Pass       ', 1), ('Fail :: FAIL', 1)])
+
+    def test_invalid_modifier(self):
+        assert_equals(run_without_outputs(self.data, prerunmodifier=42), 1)
+        self._assert_outputs([('Pass       ', 1), ('Fail :: FAIL', 1)],
+                             [("[ ERROR ] Executing model modifier 'integer' "
+                               "failed: AttributeError: ", 1)])
+
 
 
 class TestRebot(RunningTestCase):
     data = join(ROOT, 'atest', 'testdata', 'rebot', 'created_normal.xml')
     nonex = join(TEMP, 'non-existing-file-this-is.xml')
-    remove_files = [LOG_PATH]
+    remove_files = [LOG_PATH, REPORT_PATH]
 
     def test_run_once(self):
         assert_equals(rebot(self.data, outputdir=TEMP, report='NONE'), 1)
@@ -158,6 +185,18 @@ class TestRebot(RunningTestCase):
         self._assert_output(output, [('[ ERROR ] No outputs created', 1),
                                      ('--help', 1), ('Log:', 1), ('Report:', 0)])
         self._assert_outputs()
+
+    def test_pre_rebot_modifier_as_instance(self):
+        class Modifier(SuiteVisitor):
+            def __init__(self):
+                self.tests = []
+            def visit_test(self, test):
+                self.tests.append(test.name)
+                test.status = 'FAIL'
+        modifier = Modifier()
+        assert_equals(rebot(self.data, outputdir=TEMP,
+                            prerebotmodifier=modifier), 3)
+        assert_equals(modifier.tests, ['Test 1.1', 'Test 1.2', 'Test 2.1'])
 
 
 class TestStateBetweenTestRuns(RunningTestCase):

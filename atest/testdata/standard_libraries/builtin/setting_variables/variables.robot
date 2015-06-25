@@ -9,6 +9,7 @@ Library           Collections
 ${SCALAR}         Hi tellus
 @{LIST}           Hello    world
 &{DICT}           key=value    foo=bar
+${PARENT SUITE SETUP CHILD SUITE VAR 1}    This is overridden by __init__
 ${SCALAR LIST ERROR}
 ...               Setting list value to scalar variable '\${SCALAR}' is not
 ...               supported anymore. Create list variable '\@{SCALAR}' instead.
@@ -108,7 +109,7 @@ Set Test Variable Needing Escaping
     Should Be True    &{var5} == {'this=is=key': 'value', 'path': 'c:\\\\temp', 'not var': '\${nv}'}
 
 Set Test Variable In User Keyword
-    ${new_var} =    Set Variable    Value of new var
+    ${local} =    Set Variable    Does no leak to keywords
     Variable Should Not Exist    $uk_var_1
     Variable Should Not Exist    $uk_var_2
     Variable Should Not Exist    @uk_var_3
@@ -164,6 +165,21 @@ Set Suite Variable 2
     Check Suite Variables Available In UK
     Set Suite Variable    invalid
 
+Set Child Suite Variable 1
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
+    Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 2} == ['Set in', '__init__']
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen in this suite
+    Set Global Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
+    Set Suite Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite    children=${TRUE}
+
+Set Child Suite Variable 2
+    [Documentation]    FAIL Variable '${NON EXISTING}' not found.
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite
+    Set Suite Variable    ${VAR}    value    children=${NON EXISTING}
+
 Set Global Variable 1
     [Documentation]    FAIL Variable '\@{non_existing}' not found.
     Should Be Equal    ${parent_suite_setup_global_var}    Set in __init__
@@ -209,7 +225,7 @@ Set Test/Suite/Global Variables With Normal Variable Syntax 2
     Should Be Equal    @{new global var 1}[0]    global with \ escapes \\
     Should Be Equal    @{new global var 1}[1]    /home/peke/Devel/robotframework/atest/testdata/standard_libraries/builtin/setting_variables ${TEMPDIR} \${escaped and not a var}
 
-It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 1
+Set Test/Suite/Global Variable Using Empty List Variable 1
     @{empty list} =    Create List
     Set Test Variable    @{new test var 2}    @{empty list}
     Set Suite Variable    @{new suite var 2}    @{empty list}
@@ -218,11 +234,11 @@ It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variabl
     Should Be True    @{new suite var 2} == []
     Should Be True    ${new global var 2} == []
 
-It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 2
+Set Test/Suite/Global Variable Using Empty List Variable 2
     Should Be True    @{new suite var 2} == []
     Should Be True    ${new global var 2} == []
 
-It Should Be Possible To Set Test/Suite/Global Variable Using Empty Dict Variable 1
+Set Test/Suite/Global Variable Using Empty Dict Variable 1
     Set Test Variable    &{new test var 3}    &{EMPTY}
     Set Suite Variable    ${new suite var 3}    &{EMPTY}
     Set Global Variable    &{new global var 3}    &{EMPTY}
@@ -230,7 +246,7 @@ It Should Be Possible To Set Test/Suite/Global Variable Using Empty Dict Variabl
     Should Be True    @{new suite var 3} == []
     Should Be True    &{new global var 3} == {}
 
-It Should Be Possible To Set Test/Suite/Global Variable Using Empty Dict Variable 2
+Set Test/Suite/Global Variable Using Empty Dict Variable 2
     Should Be True    &{new suite var 3} == {}
     Should Be True    &{new global var 3} == {}
 
@@ -242,10 +258,15 @@ Scopes And Overriding 1
     Set Suite Variable    $cli_var_2    New value 2
     Set Global Variable    $cli_var_3    New value 3
     Set Global Variable    $parent_suite_setup_global_var_to_reset    Set in test!
+    Set Global Variable    $parent_suite_var_to_reset    Set using Set Global Variable
+    Set Suite Variable    $parent_suite_var_to_reset    This has no effect to parent suite
+    Set Global Variable    $NEW GLOBAL VAR    ${42}
     Should Be Equal    ${cli_var_1}    New value 1
     Should Be Equal    ${cli_var_2}    New value 2
     Should Be Equal    ${cli_var_3}    New value 3
     Should Be Equal    ${parent_suite_setup_global_var_to_reset}    Set in test!
+    Should Be Equal    ${parent_suite_var_to_reset}    This has no effect to parent suite
+    Should Be Equal    ${NEW GLOBAL VAR}    ${42}
 
 Scopes And Overriding 2
     Should Be Equal    ${cli_var_1}    CLI1
@@ -451,7 +472,12 @@ My Suite Setup
     Should Be Equal    ${suite_setup_global_var}    Global var set in suite setup
     Should Be True    @{suite_setup_global_var_list} == [ 'Global var set in', 'suite setup' ]
     Variable Should Not Exist    $parent_suite_setup_suite_var
+    Variable Should Not Exist    $parent_suite_setup_suite_var_2
     Should Be Equal    ${parent_suite_setup_global_var}    Set in __init__
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
+    Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 2} == ['Set in', '__init__']
+    Should Be True    ${PARENT SUITE SETUP CHILD SUITE VAR 3} == {'Set': 'in __init__'}
+    Set Suite Variable    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen in this suite    children=true
 
 My Suite Teardown
     Set Suite Variable    $suite_teardown_suite_var    Suite var set in suite teardown
@@ -468,10 +494,13 @@ My Suite Teardown
     Should Be Equal    ${suite_teardown_global_var}    Global var set in suite teardown
     Check Suite Variables Available In UK
     Check Global Variables Available In UK
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 1}    Set in __init__
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 2}    Overridden by global
+    Should Be Equal    ${PARENT SUITE SETUP CHILD SUITE VAR 3}    Only seen, and overridden, in this suite
 
 Set Test Variables In UK
+    Variable Should Not Exist    ${local}
     Should Be Equal    ${scalar}    Hi tellus
-    Should Be Equal    ${new_var}    Value of new var
     Set Test Variable    \${uk_var_1}    Value of uk var 1
     ${uk_var_2} =    Set Variable    Value of uk var 2
     Set Test Variable    $uk_var_2
@@ -479,8 +508,8 @@ Set Test Variables In UK
     ${uk_var_4} =    Set Variable    This is a private variable for this user keyword
 
 Check Test Variables Available In UK
+    Variable Should Not Exist    ${local}
     Should Be Equal    ${scalar}    Hi tellus
-    Should Be Equal    ${new_var}    Value of new var
     Should Be Equal    ${uk_var_1}    Value of uk var 1
     Should Be Equal    ${uk_var_2}    Value of uk var 2
     Should Be True    @{uk_var_3} == ['Value of', 'uk var 3']

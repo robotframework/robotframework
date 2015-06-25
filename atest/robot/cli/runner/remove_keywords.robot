@@ -16,7 +16,6 @@ ${REMOVED BY PATTERN MESSAGE}    -BYPATTERN -ALL
 ${KEPT BY PATTERN MESSAGE}    +BYPATTERN -ALL
 
 *** Test Cases ***
-
 PASSED option when test passes
     Log should not contain    ${PASS MESSAGE}
     Output should contain pass message
@@ -49,8 +48,12 @@ TAGged keywords
     Log should contain     This is not removed by TAG
     Log should not contain    This is removed by TAG
 
-*** Keywords ***
+Warnings and errors are preserved
+    Output should contain warning and error
+    Log should contain    Keywords with warnings are not removed
+    Log should contain    Keywords with errors are not removed
 
+*** Keywords ***
 Run tests and remove keywords
     ${opts} =    Catenate
     ...    --removekeywords passed
@@ -138,3 +141,8 @@ Test should contain NAME messages with ? pattern
     Check log message    ${tc.kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
     Check log message    ${tc.kws[1].kws[0].kws[0].msgs[0]}    ${REMOVED BY PATTERN MESSAGE}
     Check log message    ${tc.kws[1].kws[1].msgs[0]}    ${KEPT BY PATTERN MESSAGE}
+
+Output should contain warning and error
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Keywords with warnings are not removed    WARN
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Keywords with errors are not removed    ERROR

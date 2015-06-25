@@ -7,6 +7,10 @@ ${STR1}           1
 ${INT0}           ${0}
 ${INT1}           ${1}
 @{LIST}           a    b    cee    b    ${42}
+${LONG}           This is a bit longer sentence and it even has a friend here.
+...               This is the friend of the previous sentence and it is also
+...               quite long, actually even longer than its friend.
+
 
 *** Test Cases ***
 Should Not Be True
@@ -46,6 +50,11 @@ Should (Not) Be True is evaluated with os- and sys-modules
     Should Not Be True    'os.sep' == 'wrong'
     Should Not Be True    'sys.platform' == 'hurd'    # let's see when this starts failing
 
+Should (Not) Be True is evaluated with robot's variables
+    ${lst} =    Create list   foo    bar
+    Should Be True    lst[0] == 'foo'
+    Should Not Be True   len(lst) == 3
+
 Should Not Be Equal
     [Documentation]    FAIL 1 == 1
     [Template]    Should Not Be Equal
@@ -65,7 +74,22 @@ Should Be Equal
     ${STR1}    1
     ${INT1}    ${1}
     ${BYTES WITHOUT NON ASCII}    ${BYTES WITHOUT NON ASCII}
-    A    B    Error message
+    A    B    Error message    values=yes
+
+Should Be Equal fails with values
+    [Documentation]    FAIL Several failures occurred:\n\n 1) 3: 1 != 2\n\n 2) c: a != b\n\n 3) z: x != y
+    [Template]    Should Be Equal
+    1    2    3
+    a    b    c    values=true
+    x    y    z    values=${42}
+
+Should Be Equal fails without values
+    [Documentation]    FAIL Several failures occurred:\n\n 1) 3\n\n 2) c\n\n 3) z\n\n 4) -
+    [Template]    Should Be Equal
+    1    2    3    values=FALSE
+    a    b    c    No Values
+    x    y    z    values=no
+    .    ,    -    ${NONE}
 
 Should Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} != ${BYTES WITHOUT NON ASCII}
@@ -168,17 +192,25 @@ Should Not Start With
     Hello, world!    Hello
 
 Should Start With
-    [Documentation]    FAIL My message: 'This is a big longer sentence and it even has a friend here. This is the friend of the previous sentence -- also this is quite long, actually even longer than its friend.' does not start with 'Whatever'
+    [Documentation]    FAIL My message: '${LONG}' does not start with 'Does not start'
     [Template]    Should Start With
     Hello, world!    Hello
     Hello, world!    Hello, world!
-    This is a big longer sentence and it even has a friend here. This is the friend of the previous sentence -- also this is quite long, actually even longer than its friend.    Whatever    My message
+    ${LONG}    Does not start    My message    values=true
+
+Should Start With without values
+    [Documentation]    FAIL My message
+    Should Start With    ${LONG}    Nope    My message    values=No values
 
 Should Not End With
     [Documentation]    FAIL Message only
     [Template]    Should Not End With
     Hello!    Hello
     Hillo!    !    Message only    No Values
+
+Should End With without values
+    [Documentation]    FAIL My message
+    Should End With    ${LONG}    Nope    My message    values=No values
 
 Should End With
     [Documentation]    FAIL 'Hello, world!' does not end with '?'

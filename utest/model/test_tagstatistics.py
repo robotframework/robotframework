@@ -119,7 +119,32 @@ class TestTagStatistics(unittest.TestCase):
                 ('tNOTs*NOTr', ['t','s'], 0),
                 ('tNOTs*NOTr', ['S','T'], 0),
                 ('tNOTs*NOTr', ['R','T','s'], 0),
+                ('*NOTt', ['t'], 0),
+                ('*NOTt', ['e'], 1),
+                ('*NOTt', [], 0),
                ]:
+            self._verify_combined_statistics(comb_tags, test_tags, expected_count)
+
+    def test_starting_with_not(self):
+        for comb_tags, test_tags, expected_count in [
+            ('NOTt', ['t'], 0),
+            ('NOTt', ['e'], 1),
+            ('NOTt', [], 1),
+            ('NOTtORe', ['e'], 0),
+            ('NOTtORe', ['e', 't'], 0),
+            ('NOTtORe', ['h'], 1),
+            ('NOTtORe', [], 1),
+            ('NOTtANDe', [], 1),
+            ('NOTtANDe', ['t'], 1),
+            ('NOTtANDe', ['t', 'e'], 0),
+            ('NOTtNOTe', ['t', 'e'], 0),
+            ('NOTtNOTe', ['t'], 0),
+            ('NOTtNOTe', ['e'], 0),
+            ('NOTtNOTe', ['d'], 1),
+            ('NOTtNOTe', [], 1),
+            ('NOT*', ['t'], 0),
+            ('NOT*', [], 1),
+            ]:
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
     def test_combine_with_same_name_as_existing_tag(self):

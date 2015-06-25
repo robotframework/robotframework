@@ -8,4 +8,5 @@ Exit From Java Keyword
 
 Test That Should Not Be Run 3
     [Documentation]  FAIL  Test execution stopped due to a fatal error.
+    [Tags]    foo
     Fail  This should not be executed

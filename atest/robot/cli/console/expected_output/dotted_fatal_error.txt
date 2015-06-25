@@ -1,0 +1,14 @@
+Running suite 'Fatal Exception' with 6 tests.
+==============================================================================
+Fxxxxx
+------------------------------------------------------------------------------
+FAIL: Fatal Exception.Python Library Kw.Exit From Python Keyword
+FatalCatastrophyException
+==============================================================================
+Run suite 'Fatal Exception' with 6 tests in *.
+
+FAILED
+6 critical tests, 0 passed, 6 failed
+6 tests total, 0 passed, 6 failed
+
+Output:*

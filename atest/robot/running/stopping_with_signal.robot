@@ -7,7 +7,6 @@ Test Teardown   Run Keyword If Test Failed    Log Stdout And Stderr
 *** Variables ***
 ${TEST FILE}    %{TEMPDIR}${/}signal-tests.txt
 
-
 *** Test Cases ***
 SIGINT Signal Should Stop Test Execution Gracefully
     Start And Send Signal  without_any_timeout.robot  One SIGINT
@@ -107,8 +106,8 @@ Start Run
     ProcessManager.start process    @{command}
 
 Check Test Cases Have Failed Correctly
-    Check Test Case    Test    FAIL    Execution terminated by signal
-    Check Test Case    Test2    FAIL    Test execution stopped due to a fatal error.
+    Check Test Tags    Test
+    Check Test Tags    Test2    robot-exit
 
 Check Tests Have Been Forced To Shutdown
     ${stderr} =    ProcessManager.Get Stderr

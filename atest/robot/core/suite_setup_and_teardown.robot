@@ -72,6 +72,7 @@ Failing Higher Level Suite Setup
     Check Suite Status    ${SUITE.suites[1]}    FAIL
     ...    Parent suite setup failed:\nExpected failure in higher level setup\n\n${1 FAIL MSG}
     ...    Test 2
+    Stderr Should Be Empty
 
 Failing Suite Teardown When All Tests Pass
     Run Tests    ${EMPTY}    core/failing_suite_teardown.robot

@@ -604,9 +604,9 @@ allows communication between different keywords even in different test
 libraries.
 
 Variables set in this manner are otherwise similar to any other
-variables, but they are available only within the scope of the test
-case or keyword where they are created. Thus it is not possible, for
-example, to set a variable in one test case and use it in another. This is
+variables, but they are available only in the `local scope`_
+where they are created. Thus it is not possible, for example, to set
+a variable like this in one test case and use it in another. This is
 because, in general, automated test cases should not depend on each
 other, and accidentally setting a variable that is used elsewhere
 could cause hard-to-debug errors. If there is a genuine need for
@@ -627,20 +627,13 @@ As illustrated by the example below, the required syntax is very simple.
    ============  ===============  ============  ============
    Returning     ${x} =           Get X         an argument
    \             Log              We got ${x}!
-   Set Variable  ${var} =         Set Variable  example
-   \             Should Be Equal  ${var}        example
    ============  ===============  ============  ============
 
-In the first example above, the value returned by the :name:`Get X` keyword
+In the above example the value returned by the :name:`Get X` keyword
 is first set into the variable `${x}` and then used by the :name:`Log`
 keyword. Having the equals sign `=` after the variable name is
-not obligatory, but it makes the assignment more explicit.
-
-The second example above shows how to set a predefined `test case
-scope`_ variable using BuiltIn_ :name:`Set Variable` keyword. Same
-approach obviously works also with variables in the `user keyword scope`_.
-If all tests share the same predefined variable, it is recommended to create
-it in the `Variable table`_ instead.
+not obligatory, but it makes the assignment more explicit. Creating
+local variables like this works both in test case and user keyword level.
 
 Notice that although a value is assigned to a scalar variable, it can
 be used as a `list variable`_ if it has a list-like value and as a `dictionary
@@ -1120,7 +1113,7 @@ Variable scopes
 ~~~~~~~~~~~~~~~
 
 Depending on where and how they are created, variables can have a
-global, test suite, test case or user keyword scope.
+global, test suite, test case or local scope.
 
 Global scope
 ''''''''''''
@@ -1154,21 +1147,33 @@ they are used, it is recommended to use capital letters also with them.
 Test case scope
 '''''''''''''''
 
-Variables created in test cases from the `return values from keywords`_
-have a test case scope and they are available only in that test
-case. Another possibility to create them is using the BuiltIn_ keyword
-:name:`Set Test Variable` anywhere in that particular test case. Test
-case variables are local and should use lower-case letters.
+Variables with the test case scope are visible in a test case and in
+all user keywords the test uses. Initially there are no variables in
+this scope, but it is possible to create them by using the BuiltIn_
+keyword :name:`Set Test Variable` anywhere in a test case.
 
-User keyword scope
-''''''''''''''''''
+Also variables in the test case scope are to some extend global. It is
+thus generally recommended to use capital letters with them too.
 
-User keywords get their own variables from `arguments passed to them`__
-and `return values from keywords`_ they use. Also these variables
-are local and should use lower-case letters.
+Local scope
+'''''''''''
+
+Test cases and user keywords have a local variable scope that is not
+seen by other tests or keywords. Local variables can be created using
+`return values`__ from executed keywords and user keywords also get
+them as arguments__.
+
+It is recommended to use lower-case letters with local variables.
+
+.. note:: Prior to Robot Framework 2.9 variables in the local scope
+          `leaked to lower level user keywords`__. This was never an
+          intended feature, and variables should be set or passed
+          explicitly also with earlier versions.
 
 __ `Setting variables in command line`_
+__ `Return values from keywords`_
 __ `User keyword arguments`_
+__ https://github.com/robotframework/robotframework/issues/532
 
 Advanced variable features
 --------------------------

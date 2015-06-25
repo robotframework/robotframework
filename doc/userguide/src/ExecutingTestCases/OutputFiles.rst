@@ -212,9 +212,9 @@ non-critical tests have failed.
 The specified colors are used as a value for the `body`
 element's `background` CSS property. The value is used as-is and
 can be a HTML color name (e.g. `red`), a hexadecimal value
-(e.g. `#F00` or `#FF0000`), or an RGB value
+(e.g. `#f00` or `#ff0000`), or an RGB value
 (e.g. `rgb(255,0,0)`). The default green and red colors are
-specified using hexadecimal values `#9F6` and `#F33`,
+specified using hexadecimal values `#9e9` and `#f66`,
 respectively.
 
 Log levels
@@ -462,8 +462,8 @@ Removing keywords
 
 The :option:`--removekeywords` option removes keywords and their messages
 altogether. It has the following modes of operation, and it can be used
-multiple times to enable multiple modes. Keywords that contain warnings_
-are not removed except when using the `ALL` mode.
+multiple times to enable multiple modes. Keywords that contain `errors
+or warnings`__ are not removed except when using the `ALL` mode.
 
 `ALL`
    Remove data from all keywords unconditionally.
@@ -506,6 +506,7 @@ Removing keywords is done after parsing the `output file`_ and generating
 an internal model based on it. Thus it does not reduce memory usage as much
 as `flattening keywords`_.
 
+__ `Errors and warnings`_
 __ `Keyword tags`_
 
 .. note:: The support for using :option:`--removekeywords` when executing tests

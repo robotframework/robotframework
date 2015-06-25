@@ -4,7 +4,6 @@ Force Tags       regression    pybot    jybot
 Resource         xml_resource.robot
 
 *** Test Cases ***
-
 Get text of current element
     Check Test Case    ${TESTNAME}
 

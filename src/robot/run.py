@@ -286,16 +286,28 @@ Options
                           structure before execution.
     --prerebotmodifier class *  Class to programmatically modify the result
                           model before creating reports and logs.
- -W --monitorwidth chars  Width of the monitor output. Default is 78.
- -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
+    --console type        How to report execution on the console.
+                          verbose:  report every suite and test (default)
+                          dotted:   only show `.` for passed test, `f` for
+                                    failed non-critical tests, and `F` for
+                                    failed critical tests
+                          quiet:    no output except for errors and warnings
+                          none:     no output whatsoever
+ -. --dotted              Shortcut for `--console dotted`.
+    --quiet               Shortcut for `--console quiet`.
+ -W --consolewidth chars  Width of the monitor output. Default is 78.
+ -C --consolecolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
- -K --monitormarkers auto|on|off  Show `.` (success) or `F` (failure) on
-                          console when top level keywords in test cases end.
-                          Values have same semantics as with --monitorcolors.
+ -K --consolemarkers auto|on|off  Show markers on the console when top level
+                          keywords in a test case end. Values have same
+                          semantics as with --consolecolors.
+    --monitorwidth chars  Deprecated. Use --consolewidth instead.
+    --monitorcolors colors  Deprecated. Use --consolecolors instead.
+    --monitormarkers value  Deprecated. Use --consolemarkers instead.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries and other extensions when
                           they are imported. Multiple paths can be given by
@@ -411,7 +423,7 @@ class RobotFramework(Application):
 
     def main(self, datasources, **options):
         settings = RobotSettings(options)
-        LOGGER.register_console_logger(**settings.console_logger_config)
+        LOGGER.register_console_logger(**settings.console_output_config)
         LOGGER.info('Settings:\n%s' % unicode(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped']).build(*datasources)
@@ -467,8 +479,9 @@ def run(*datasources, **options):
     passed as lists like `include=['tag1', 'tag2']`. If such option is used
     only once, it can be given also as a single string like `include='tag'`.
 
-    Additionally listener option allows passing object directly instead of
-    listener name, e.g. `run('tests.robot', listener=Listener())`.
+    Additionally listener, prerunmodifier and prerebotmodifier options support
+    passing values as instances in addition to module names. For example,
+    `run('tests.robot', listener=Listener(), prerunmodifier=Modifier())`.
 
     To capture stdout and/or stderr streams, pass open file objects in as
     special keyword arguments `stdout` and `stderr`, respectively.

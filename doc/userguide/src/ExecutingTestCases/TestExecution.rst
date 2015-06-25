@@ -252,6 +252,13 @@ have finished, but so that logs and reports are created. Different ways how
 to accomplish this are explained below. In all these cases the remaining
 test cases are marked failed.
 
+Starting from Robot Framework 2.9 the tests that are automatically failed get
+`robot-exit` tag and the generated report will include `NOT robot-exit`
+`combined tag pattern`__ to easily see those tests that were not skipped. Note
+that the test in which the exit happened does not get the `robot-exit` tag.
+
+__ `Generating combined tag statistics`_
+
 Pressing `Ctrl-C`
 ~~~~~~~~~~~~~~~~~
 

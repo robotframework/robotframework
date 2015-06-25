@@ -1,20 +1,21 @@
 *** Settings ***
-Library  Library.py
-Library  OperatingSystem
-Suite Teardown  Sleep  ${TEARDOWN SLEEP}
+Suite Teardown    Sleep    ${TEARDOWN SLEEP}
+Library           Library.py
+Library           OperatingSystem
 
 *** Test Case ***
 Test
-  Create File  ${TESTSIGNALFILE}
-  Timeout In UK
-  No operation
+    [Documentation]    FAIL Execution terminated by signal
+    Create File    ${TESTSIGNALFILE}
+    Timeout In UK
+    Fail    Should not be executed
 
 Test 2
-  No operation
+    [Documentation]    FAIL Test execution stopped due to a fatal error.
+    Fail    Should not be executed
 
 *** Keywords ***
 Timeout In UK
-  [Timeout]  3 seconds
-  Busy Sleep  2
-  No operation
-
+    [Timeout]    3 seconds
+    Busy Sleep    2
+    Fail    Should not be executed

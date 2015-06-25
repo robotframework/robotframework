@@ -498,19 +498,64 @@ __ `Specifying library to import`_
 Controlling console output
 --------------------------
 
+There are various command line options to control how test execution is
+reported on the console.
+
+Console output type
+~~~~~~~~~~~~~~~~~~~
+
+The overall console output type is set with the :option:`--console` option.
+It supports the following case-insensitive values:
+
+`verbose`
+    Every test suite and test case is reported individually. This is
+    the default.
+
+`dotted`
+    Only show `.` for passed test, `f` for failed non-critical tests, `F`
+    for failed critical tests, and `x` for tests which are skipped because
+    `test execution exit`__. Failed critical tests are listed separately
+    after execution. This output type makes it easy to see are there any
+    failures during execution even if there would be a lot of tests.
+
+`quiet`
+    No output except for `errors and warnings`_.
+
+`none`
+    No output whatsoever. Useful when creating a custom output using,
+    for example, listeners_.
+
+__ `Stopping test execution gracefully`_
+
+Separate convenience options :option:`--dotted (-.)` and :option:`--quiet`
+are shortcuts for `--console dotted` and `--console quiet`, respectively.
+
+Examples::
+
+    pybot --console quiet tests.robot
+    jybot --dotted tests.robot
+
+.. note:: :option:`--console`, :option:`--dotted` and :option:`--quiet`
+          are new options in Robot Framework 2.9. Prior to that the output
+          was always the same as in the current `verbose` mode.
+
 Console width
 ~~~~~~~~~~~~~
 
 The width of the test execution output in the console can be set using
-the option :option:`--monitorwidth (-W)`. The default width is 78 characters.
+the option :option:`--consolewidth (-W)`. The default width is 78 characters.
 
 .. tip:: On many UNIX-like machines you can use handy `$COLUMNS`
-         variable like `--monitorwidth $COLUMNS`.
+         environment variable like `--consolewidth $COLUMNS`.
+
+.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
+          :option:`--monitorwidth` option that is nowadays deprecated.
+          The short option :option:`-W` works the same way in all versions.
 
 Console colors
 ~~~~~~~~~~~~~~
 
-The :option:`--monitorcolors (-C)` option is used to control whether
+The :option:`--consolecolors (-C)` option is used to control whether
 colors should be used in the console output. Colors are implemented
 using `ANSI colors`__ except on Windows where, by default, Windows
 APIs are used instead. Accessing these APIs from Jython is not possible,
@@ -533,18 +578,22 @@ This option supports the following case-insensitive values:
 `off`
     Colors are disabled.
 
+.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
+          :option:`--monitorcolors` option that is nowadays deprecated.
+          The short option :option:`-C` works the same way in all versions.
+
 __ http://en.wikipedia.org/wiki/ANSI_escape_code
 
 Console markers
 ~~~~~~~~~~~~~~~
 
 Starting from Robot Framework 2.7, special markers `.` (success) and
-`F` (failure) are shown on the console when top level keywords in
-test cases end. The markers allow following the test execution in high level,
-and they are erased when test cases end.
+`F` (failure) are shown on the console when using the `verbose output`__
+and top level keywords in test cases end. The markers allow following
+the test execution in high level, and they are erased when test cases end.
 
 Starting from Robot Framework 2.7.4, it is possible to configure when markers
-are used with :option:`--monitormarkers (-K)` option. It supports the following
+are used with :option:`--consolemarkers (-K)` option. It supports the following
 case-insensitive values:
 
 `auto`
@@ -556,6 +605,12 @@ case-insensitive values:
 
 `off`
     Markers are disabled.
+
+.. note:: Prior to Robot Framework 2.9 this functionality was enabled with
+          :option:`--monitormarkers` option that is nowadays deprecated.
+          The short option :option:`-K` works the same way in all versions.
+
+__ `Console output type`_
 
 Setting listeners
 -----------------

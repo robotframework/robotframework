@@ -40,6 +40,46 @@ Evaluate With Namespace
     ${result} =    Evaluate    math.pow(b, 3)    math    ${ns}
     Should Be Equal    ${result}    ${8}
 
+Evaluate with Get Variables Namespace
+    ${foo} =    Set variable    value
+    ${ns} =    Get variables    no_decoration=Yes
+    ${res} =    Evaluate     foo == 'value'    namespace=${ns}
+    Should be Equal    ${res}    ${True}
+
+Evaluate with Non-dict Namespace
+    ${ns} =    Evaluate    UserDict.UserDict(foo='value')    modules=UserDict
+    ${res} =    Evaluate     foo == 'value'    namespace=${ns}
+    Should be Equal    ${res}    ${True}
+
+Evaluate gets Variables automatically
+    ${foo} =    Set variable    value
+    ${res} =    Evaluate     foo == 'value'
+    Should be Equal    ${res}    ${True}
+
+Variables don't override python builtins
+    ${len} =    Set variable    value
+    ${bar} =    Set variable    something
+    ${res} =    Evaluate     len(bar)
+    Should be Equal    ${res}    ${9}
+
+Variables don't override custom namespace
+    ${ns} =    Create Dictionary    a=VISIBLE
+    ${a} =    Set variable    NOT VISIBLE
+    ${res} =    Evaluate     a == 'VISIBLE'   namespace=${ns}
+    Should be Equal    ${res}    ${True}
+
+Variables don't override modules
+    ${posixpath} =    Set variable    NOT VISIBLE
+    ${sys} =    Set variable    VISIBLE
+    ${res} =    Evaluate    posixpath.join(sys, sys)    modules=posixpath
+    Should be Equal    ${res}    VISIBLE/VISIBLE
+
+Variables are case and underscore insensitive
+    ${foo} =    Set variable    value
+    ${foo with space} =    Set variable    value with space
+    ${res} =    Evaluate     FOO == 'value' and FOO_with_SPACE == 'value with space'
+    Should be Equal    ${res}    ${True}
+
 Evaluate Empty
     [Documentation]    FAIL Evaluating expression '' failed: ValueError: Expression cannot be empty.
     Evaluate    ${EMPTY}

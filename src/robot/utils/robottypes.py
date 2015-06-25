@@ -46,3 +46,13 @@ def is_list_like(item):
 
 def is_dict_like(item):
     return isinstance(item, (Mapping, UserDict))
+
+
+def is_truthy(item):
+    if isinstance(item, basestring):
+        return item.upper() not in ('FALSE', 'NO', '')
+    return bool(item)
+
+
+def is_falsy(item):
+    return not is_truthy(item)

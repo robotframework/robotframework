@@ -1,15 +1,18 @@
-*** Setting ***
-Documentation     These tests are somewhat related to tests in variable_priorities.robot
-Suite Setup       Run Tests    ${EMPTY}    variables/variable_scopes.robot
-Force Tags        pybot    jybot    regression
-Resource          atest_resource.robot
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    variables/variable_scopes.robot
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.robot
 
-*** Test Case ***
-Variables Set In Test Case Are Seen By User Keywords
-    Check Test Case    Variables Set In Test Case Are Seen By User Keywords
-
+*** Test Cases ***
 Variables Set In One Test Are Not Visible In Another
-    Check Test Case    Variables Set In One Test Are Not Visible In Another
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
-Variables Set In User Keyword Are Seen Only By Lower Level User Keywords
-    Check Test Case    Variables Set In User Keyword Are Seen Only By Lower Level User Keywords
+Variables do not leak
+    Check Test Case    ${TESTNAME}
+
+Variables can be passed as arguments
+    Check Test Case    ${TESTNAME}
+
+Set test variable
+    Check Test Case    ${TESTNAME}

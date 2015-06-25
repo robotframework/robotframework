@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import __builtin__
 import re
 import time
 
@@ -19,16 +20,20 @@ from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           PassExecution, ReturnFromKeyword)
-from robot import utils
-from robot.utils import asserts
-from robot.variables import (is_list_var, is_var, DictVariableTableValue,
-                             VariableTableValue, VariableSplitter)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
+from robot.utils import (asserts, DotDict, escape, format_assign_message,
+                         get_error_message, get_time, is_falsy, is_truthy,
+                         JYTHON, Matcher, normalize, parse_time, prepr,
+                         RERAISED_EXCEPTIONS, plural_or_not as s,
+                         secs_to_timestr, seq2str, split_from_equals,
+                         timestr_to_secs, type_name, unic)
+from robot.variables import (is_list_var, is_var, DictVariableTableValue,
+                             VariableTableValue, VariableSplitter)
 from robot.version import get_version
 
-if utils.JYTHON:
+if JYTHON:
     from java.lang import String, Number
 
 
@@ -48,7 +53,48 @@ def run_keyword_variant(resolve):
     return decorator
 
 
-class _Converter:
+class _BuiltInBase(object):
+
+    @property
+    def _context(self):
+        if EXECUTION_CONTEXTS.current is None:
+            raise RobotNotRunningError('Cannot access execution context')
+        return EXECUTION_CONTEXTS.current
+
+    @property
+    def _namespace(self):
+        return self._context.namespace
+
+    def _get_namespace(self, top=False):
+        ctx = EXECUTION_CONTEXTS.top if top else EXECUTION_CONTEXTS.current
+        return ctx.namespace
+
+    @property
+    def _variables(self):
+        return self._namespace.variables
+
+    def _matches(self, string, pattern):
+        # Must use this instead of fnmatch when string may contain newlines.
+        matcher = Matcher(pattern, caseless=False, spaceless=False)
+        return matcher.match(string)
+
+    def _is_true(self, condition):
+        if isinstance(condition, basestring):
+            condition = self.evaluate(condition, modules='os,sys')
+        return bool(condition)
+
+    def _log_types(self, *args):
+        msg = ["Argument types are:"] + [self._get_type(a) for a in args]
+        self.log('\n'.join(msg), 'DEBUG')
+
+    def _get_type(self, arg):
+        # In IronPython type(u'x') is str. We want to report unicode anyway.
+        if isinstance(arg, unicode):
+            return "<type 'unicode'>"
+        return str(type(arg))
+
+
+class _Converter(_BuiltInBase):
 
     def convert_to_integer(self, item, base=None):
         """Converts the given item to an integer number.
@@ -88,13 +134,13 @@ class _Converter:
             return int(item)
         except:
             raise RuntimeError("'%s' cannot be converted to an integer: %s"
-                               % (orig, utils.get_error_message()))
+                               % (orig, get_error_message()))
 
     def _handle_java_numbers(self, item):
-        if not utils.JYTHON:
+        if not JYTHON:
             return item
         if isinstance(item, String):
-            return utils.unic(item)
+            return unic(item)
         if isinstance(item, Number):
             return item.doubleValue()
         return item
@@ -102,7 +148,7 @@ class _Converter:
     def _get_base(self, item, base):
         if not isinstance(item, basestring):
             return item, base
-        item = utils.normalize(item)
+        item = normalize(item)
         if item.startswith(('-', '+')):
             sign = item[0]
             item = item[1:]
@@ -171,9 +217,9 @@ class _Converter:
         possible minus sign). If the value is initially shorter than
         the required length, it is padded with zeros.
 
-        By default the value is returned as an upper case string, but
-        giving any non-empty value to the ``lowercase`` argument turns
-        the value (but not the prefix) to lower case.
+        By default the value is returned as an upper case string, but the
+        ``lowercase`` argument a true value (see `Boolean arguments`) turns
+        the value (but not the given prefix) to lower case.
 
         Examples:
         | ${result} = | Convert To Hex | 255 |           |              | # Result is FF    |
@@ -198,7 +244,7 @@ class _Converter:
             ret = ret[prefix_length:]
         if length:
             ret = ret.rjust(self._convert_to_integer(length), '0')
-        if lowercase:
+        if is_truthy(lowercase):
             ret = ret.lower()
         return prefix + ret
 
@@ -237,11 +283,11 @@ class _Converter:
 
     def _convert_to_number_without_precision(self, item):
         try:
-            if utils.JYTHON:
+            if JYTHON:
                 item = self._handle_java_numbers(item)
             return float(item)
         except:
-            error = utils.get_error_message()
+            error = get_error_message()
             try:
                 return float(self._convert_to_integer(item))
             except RuntimeError:
@@ -263,7 +309,7 @@ class _Converter:
         return self._convert_to_string(item)
 
     def _convert_to_string(self, item):
-        return utils.unic(item)
+        return unic(item)
 
     def convert_to_boolean(self, item):
         """Converts the given item to Boolean true or false.
@@ -275,9 +321,9 @@ class _Converter:
         """
         self._log_types(item)
         if isinstance(item, basestring):
-            if utils.eq(item, 'True'):
+            if item.upper() == 'TRUE':
                 return True
-            if utils.eq(item, 'False'):
+            if item.upper() == 'FALSE':
                 return False
         return bool(item)
 
@@ -333,8 +379,7 @@ class _Converter:
                 raise RuntimeError("Invalid input type '%s'." % input_type)
             return ''.join(chr(o) for o in ordinals(input))
         except:
-            raise RuntimeError("Creating bytes failed: %s"
-                               % utils.get_error_message())
+            raise RuntimeError("Creating bytes failed: %s" % get_error_message())
 
     def _get_ordinals_from_text(self, input):
         for char in input:
@@ -422,14 +467,14 @@ class _Converter:
                      level='WARN')
         separate = self._format_separate_dict_items(separate)
         combined = DictVariableTableValue(combined).resolve(self._variables)
-        result = utils.DotDict(separate)
+        result = DotDict(separate)
         result.update(combined)
         return result
 
     def _split_dict_items(self, items):
         separate = []
         for item in items:
-            name, value = utils.split_from_equals(item)
+            name, value = split_from_equals(item)
             if value is not None or VariableSplitter(item).is_dict_variable():
                 break
             separate.append(item)
@@ -443,7 +488,7 @@ class _Converter:
         return [separate[i:i+2] for i in range(0, len(separate), 2)]
 
 
-class _Verify:
+class _Verify(_BuiltInBase):
 
     def _set_and_remove_tags(self, tags):
         set_tags = [tag for tag in tags if not tag.startswith('-')]
@@ -509,9 +554,9 @@ class _Verify:
         """Fails if the given condition is not true.
 
         If ``condition`` is a string (e.g. ``${rc} < 10``), it is evaluated as
-        a Python expression using the built-in ``eval`` function and the keyword
-        status is decided based on the result. If a non-string item is given,
-        the status is got directly from its
+        a Python expression using the `Evaluate` keyword internally and the
+        keyword status is decided based on the result. If a non-string item is
+        given, the status is got directly from its
         [http://docs.python.org/2/library/stdtypes.html#truth|truth value].
 
         The default error message (``<condition> should be true``) is not very
@@ -520,8 +565,16 @@ class _Verify:
         Examples:
         | Should Be True | ${rc} < 10  |
         | Should Be True | '${status}' == 'PASS' | # Strings must be quoted |
+        | Should Be True | 'foo' in '''${multiline text}''' | # Multiline strings must be in triple quotes |
         | Should Be True | ${number}   | # Passes if ${number} is not zero |
         | Should Be True | ${list}     | # Passes if ${list} is not empty  |
+
+        Starting from Robot Framework 2.9, all current variables are available
+        in the evaluation namespace automatically without the ``${}``
+        decoration:
+
+        | Should Be True | rc < 10  | # Passes if ${rc} is a number less than 10 |
+        | Should Be True | status == 'PASS' | # Expected string must be quoted |
 
         Starting from Robot Framework 2.8, `Should Be True` automatically
         imports Python's [http://docs.python.org/2/library/os.html|os] and
@@ -540,11 +593,18 @@ class _Verify:
     def should_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are unequal.
 
+        Optional ``msg`` and ``values`` arguments specify how to construct
+        the error message if this keyword fails:
+
         - If ``msg`` is not given, the error message is ``<first> != <second>``.
-        - If ``msg`` is given and ``values`` is either Boolean ``False`` or
-          string ``'False'`` or ``'No Values'``, the error message is simply
-          ``<msg>``.
-        - Otherwise the error message is ``<msg>: <first> != <second>``.
+        - If ``msg`` is given and ``values`` gets a true value, the error
+          message is ``<msg>: <first> != <second>``.
+        - If ``msg`` is given and ``values`` gets a false value, the error
+          message is simply ``<msg>``.
+
+        ``values`` is true by default, but can be turned to false by using,
+        for example, string ``false`` or ``no values``. See `Boolean arguments`
+        section for more details.
         """
         self._log_types(first, second)
         self._should_be_equal(first, second, msg, values)
@@ -553,20 +613,8 @@ class _Verify:
         asserts.fail_unless_equal(first, second, msg,
                                   self._include_values(values))
 
-    def _log_types(self, *args):
-        msg = ["Argument types are:"] + [self._get_type(a) for a in args]
-        self.log('\n'.join(msg))
-
-    def _get_type(self, arg):
-        # In IronPython type(u'x') is str. We want to report unicode anyway.
-        if isinstance(arg, unicode):
-            return "<type 'unicode'>"
-        return str(type(arg))
-
     def _include_values(self, values):
-        if isinstance(values, basestring):
-            return values.lower() not in ['no values', 'false']
-        return bool(values)
+        return is_truthy(values) and str(values).upper() != 'NO VALUES'
 
     def should_not_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are equal.
@@ -766,9 +814,7 @@ class _Verify:
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
-                    % (utils.unic(item1), utils.unic(item2),
-                       x, utils.plural_or_not(x),
-                       count, utils.plural_or_not(count))
+                    % (unic(item1), unic(item2), x, s(x), count, s(count))
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
     def get_count(self, item1, item2):
@@ -786,10 +832,9 @@ class _Verify:
                 item1 = list(item1)
             except:
                 raise RuntimeError("Converting '%s' to list failed: %s"
-                                % (item1, utils.get_error_message()))
+                                   % (item1, get_error_message()))
         count = item1.count(item2)
-        self.log('Item found from the first item %d time%s'
-                 % (count, utils.plural_or_not(count)))
+        self.log('Item found from the first item %d time%s' % (count, s(count)))
         return count
 
     def should_not_match(self, string, pattern, msg=None, values=True):
@@ -870,7 +915,7 @@ class _Verify:
         """
         msg = self._get_string_msg(string, pattern, msg, values, 'does not match')
         res = re.search(pattern, string)
-        asserts.fail_if_none(res, msg, False)
+        asserts.fail_if_none(res, msg, values=False)
         match = res.group(0)
         groups = res.groups()
         if groups:
@@ -883,7 +928,7 @@ class _Verify:
         See `Should Match Regexp` for more information about arguments.
         """
         msg = self._get_string_msg(string, pattern, msg, values, 'matches')
-        asserts.fail_unless_none(re.search(pattern, string), msg, False)
+        asserts.fail_unless_none(re.search(pattern, string), msg, values=False)
 
     def get_length(self, item):
         """Returns and logs the length of the given item as an integer.
@@ -911,17 +956,25 @@ class _Verify:
         return length
 
     def _get_length(self, item):
-        try: return len(item)
-        except utils.RERAISED_EXCEPTIONS: raise
+        try:
+            return len(item)
+        except RERAISED_EXCEPTIONS:
+            raise
         except:
-            try: return item.length()
-            except utils.RERAISED_EXCEPTIONS: raise
+            try:
+                return item.length()
+            except RERAISED_EXCEPTIONS:
+                raise
             except:
-                try: return item.size()
-                except utils.RERAISED_EXCEPTIONS: raise
+                try:
+                    return item.size()
+                except RERAISED_EXCEPTIONS:
+                    raise
                 except:
-                    try: return item.length
-                    except utils.RERAISED_EXCEPTIONS: raise
+                    try:
+                        return item.length
+                    except RERAISED_EXCEPTIONS:
+                        raise
                     except:
                         raise RuntimeError("Could not get length of '%s'." % item)
 
@@ -956,17 +1009,17 @@ class _Verify:
             raise AssertionError(msg or "'%s' should not be empty." % item)
 
     def _get_string_msg(self, str1, str2, msg, values, delim):
-        default = "'%s' %s '%s'" % (utils.unic(str1), delim, utils.unic(str2))
+        default = "'%s' %s '%s'" % (unic(str1), delim, unic(str2))
         if not msg:
             msg = default
-        elif values is True:
+        elif self._include_values(values):
             msg = '%s: %s' % (msg, default)
         return msg
 
 
-class _Variables:
+class _Variables(_BuiltInBase):
 
-    def get_variables(self):
+    def get_variables(self, no_decoration=False):
         """Returns a dictionary containing all variables in the current scope.
 
         Variables are returned as a special dictionary that allows accessing
@@ -977,6 +1030,12 @@ class _Variables:
         returned dictionary has no effect on the variables available in the
         current scope.
 
+        By default variables are returned with ``${}``, ``@{}`` or ``&{}``
+        decoration based on variable types. Giving a true value (see `Boolean
+        arguments`) to the optional argument ``no_decoration`` will return
+        the variables without the decoration. This option is new in Robot
+        Framework 2.9.
+
         Example:
         | ${example_variable} =         | Set Variable | example value         |
         | ${variables} =                | Get Variables |                      |
@@ -984,21 +1043,13 @@ class _Variables:
         | Dictionary Should Contain Key | ${variables} | \\${ExampleVariable}  |
         | Set To Dictionary             | ${variables} | \\${name} | value     |
         | Variable Should Not Exist     | \\${name}    |           |           |
+        | ${no decoration} =            | Get Variables | no_decoration=Yes |
+        | Dictionary Should Contain Key | ${no decoration} | example_variable |
 
         Note: Prior to Robot Framework 2.7.4 variables were returned as
         a custom object that did not support all dictionary methods.
         """
-        # TODO: Support also returning variables w/o decoration
-        variables = ((self._decorate_variable(name, value), value)
-                     for name, value in self._variables.store.data.items())
-        return utils.NormalizedDict(variables, ignore='_')
-
-    def _decorate_variable(self, name, value):
-        if utils.is_dict_like(value):
-            return '&{%s}' % name
-        if utils.is_list_like(value):
-            return '@{%s}' % name
-        return '${%s}' % name
+        return self._variables.as_dict(decoration=is_falsy(no_decoration))
 
     @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):
@@ -1028,8 +1079,7 @@ class _Variables:
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
         for name in sorted(variables, key=lambda s: s[2:-1].lower()):
-            msg = utils.format_assign_message(name, variables[name],
-                                              cut_long=False)
+            msg = format_assign_message(name, variables[name], cut_long=False)
             self.log(msg, level)
 
     @run_keyword_variant(resolve=0)
@@ -1145,8 +1195,13 @@ class _Variables:
         scope of the currently executed test suite. Setting variables with this
         keyword thus has the same effect as creating them using the Variable
         table in the test data file or importing them from variable files.
-        Other test suites, including possible child test suites, will not see
-        variables set with this keyword.
+
+        Possible child test suites do not see variables set with this keyword
+        by default. Starting from Robot Framework 2.9, that can be controlled
+        by using ``children=<option>`` as the last argument. If the specified
+        ``<option>`` is a non-empty string or any other value considered true
+        in Python, the variable is set also to the child suites. Parent and
+        sibling suites will never see variables set with this keyword.
 
         The name of the variable can be given either as a normal variable name
         (e.g. ``${NAME}``) or in escaped format as ``\\${NAME}`` or ``$NAME``.
@@ -1160,8 +1215,9 @@ class _Variables:
 
         Examples:
         | Set Suite Variable | ${SCALAR} | Hello, world! |
-        | Set Suite Variable | @{LIST}   | First item    | Second item |
-        | Set Suite Variable | &{DICT}   | key=value     | foo=bar     |
+        | Set Suite Variable | ${SCALAR} | Hello, world! | children=true |
+        | Set Suite Variable | @{LIST}   | First item    | Second item   |
+        | Set Suite Variable | &{DICT}   | key=value     | foo=bar       |
         | ${ID} =            | Get ID    |
         | Set Suite Variable | ${ID}     |
 
@@ -1169,8 +1225,8 @@ class _Variables:
         variables ``${EMPTY}``, ``@{EMPTY}`` or ``&{EMPTY}``:
 
         | Set Suite Variable | ${SCALAR} | ${EMPTY} |
-        | Set Suite Variable | @{LIST}  | @{EMPTY} | # New in RF 2.7.4 |
-        | Set Suite Variable | &{DICT}  | &{EMPTY} | # New in RF 2.9   |
+        | Set Suite Variable | @{LIST}   | @{EMPTY} | # New in RF 2.7.4 |
+        | Set Suite Variable | &{DICT}   | &{EMPTY} | # New in RF 2.9   |
 
         *NOTE:* If the variable has value which itself is a variable (escaped
         or not), you must always use the escaped format to set the variable:
@@ -1185,8 +1241,15 @@ class _Variables:
         `Get Variable Value` keywords.
         """
         name = self._get_var_name(name)
+        if (values and isinstance(values[-1], basestring) and
+                values[-1].startswith('children=')):
+            children = self._variables.replace_scalar(values[-1][9:])
+            children = is_truthy(children)
+            values = values[:-1]
+        else:
+            children = False
         value = self._get_var_value(name, values)
-        self._variables.set_suite(name, value)
+        self._variables.set_suite(name, value, children=children)
         self._log_set_variable(name, value)
 
     @run_keyword_variant(resolve=0)
@@ -1251,10 +1314,10 @@ class _Variables:
         return VariableTableValue(values, name).resolve(self._variables)
 
     def _log_set_variable(self, name, value):
-        self.log(utils.format_assign_message(name, value))
+        self.log(format_assign_message(name, value))
 
 
-class _RunKeyword:
+class _RunKeyword(_BuiltInBase):
 
     # If you use any of these run keyword variants from another library, you
     # should register those keywords with 'register_run_keyword' method. See
@@ -1553,7 +1616,7 @@ class _RunKeyword:
         self._run_keywords(self._yield_repeated_keywords(times, name, args))
 
     def _get_times_to_repeat(self, times, require_postfix=False):
-        times = utils.normalize(str(times))
+        times = normalize(str(times))
         if times.endswith('times'):
             times = times[:-5]
         elif times.endswith('x'):
@@ -1609,14 +1672,14 @@ class _RunKeyword:
         try:
             count = self._get_times_to_repeat(retry, require_postfix=True)
         except ValueError:
-            timeout = utils.timestr_to_secs(retry)
+            timeout = timestr_to_secs(retry)
             maxtime = time.time() + timeout
-            message = 'for %s' % utils.secs_to_timestr(timeout)
+            message = 'for %s' % secs_to_timestr(timeout)
         else:
             if count <= 0:
                 raise ValueError('Retry count %d is not positive.' % count)
-            message = '%d time%s' % (count, utils.plural_or_not(count))
-        retry_interval = utils.timestr_to_secs(retry_interval)
+            message = '%d time%s' % (count, s(count))
+        retry_interval = timestr_to_secs(retry_interval)
         while True:
             try:
                 return self.run_keyword(name, *args)
@@ -1683,8 +1746,7 @@ class _RunKeyword:
                 return [None]
             raise RuntimeError('At least one value is required')
         if is_list_var(values[0]):
-            values[:1] = [utils.escape(item) for item in
-                          self._variables[values[0]]]
+            values[:1] = [escape(item) for item in self._variables[values[0]]]
             return self._verify_values_for_set_variable_if(values)
         return values
 
@@ -1801,7 +1863,7 @@ class _RunKeyword:
         return self._context.suite
 
 
-class _Control:
+class _Control(_BuiltInBase):
 
     def continue_for_loop(self):
         """Skips the current for loop iteration and continues from the next.
@@ -1973,7 +2035,7 @@ class _Control:
         New in Robot Framework 2.8.2.
         """
         ret = self.run_keyword(name, *args)
-        self.return_from_keyword(utils.escape(ret))
+        self.return_from_keyword(escape(ret))
 
     @run_keyword_variant(resolve=2)
     def run_keyword_and_return_if(self, condition, name, *args):
@@ -2071,7 +2133,7 @@ class _Control:
             self.pass_execution(message, *tags)
 
 
-class _Misc:
+class _Misc(_BuiltInBase):
 
     def no_operation(self):
         """Does absolutely nothing."""
@@ -2091,12 +2153,12 @@ class _Misc:
         | Sleep | 2 minutes 10 seconds |
         | Sleep | 10s                  | Wait for a reply |
         """
-        seconds = utils.timestr_to_secs(time_)
+        seconds = timestr_to_secs(time_)
         # Python hangs with negative values
         if seconds < 0:
             seconds = 0
         self._sleep_in_parts(seconds)
-        self.log('Slept %s' % utils.secs_to_timestr(seconds))
+        self.log('Slept %s' % secs_to_timestr(seconds))
         if reason:
             self.log(reason)
 
@@ -2129,7 +2191,7 @@ class _Misc:
         """
         if not items:
             return ''
-        items = [utils.unic(item) for item in items]
+        items = [unic(item) for item in items]
         if items[0].startswith('SEPARATOR='):
             sep = items[0][len('SEPARATOR='):]
             items = items[1:]
@@ -2145,17 +2207,21 @@ class _Misc:
         `Set Log Level` keyword and ``--loglevel`` command line option
         for more details about setting the level.
 
-        Messages logged with the WARN or ERROR levels will be automatically visible
-        also in the console and in the Test Execution Errors section in
-        the log file.
+        Messages logged with the WARN or ERROR levels will be automatically
+        visible also in the console and in the Test Execution Errors section
+        in the log file.
 
-        If the ``html`` argument is given any true value (e.g. any non-empty
-        string), the message will be considered HTML and special characters
-        such as ``<`` in it are not escaped. For example, logging
-        ``<img src="image.png">`` creates an image when ``html`` is true, but
-        otherwise the message is that exact string. An alternative to using
-        the ``html`` argument is using the ``HTML`` pseudo log level. It logs
-        the message as HTML using the INFO level.
+        Logging can be configured using optional ``html``, ``console`` and
+        ``repr`` arguments. They are off by default, but can be enabled
+        by giving them a true value. See `Boolean arguments` section for more
+        information about true and false values.
+
+        If the ``html`` argument is given a true value, the message will be
+        considered HTML and special characters such as ``<`` in it are not
+        escaped. For example, logging ``<img src="image.png">`` creates an
+        image when ``html`` is true, but otherwise the message is that exact
+        string. An alternative to using the ``html`` argument is using the HTML
+        pseudo log level. It logs the message as HTML using the INFO level.
 
         If the ``console`` argument is true, the message will be written to
         the console where test execution was started from in addition to
@@ -2190,10 +2256,10 @@ class _Misc:
         and it was changed to drop the ``u`` prefix and add the ``b`` prefix
         in Robot Framework 2.9.
         """
-        if repr:
-            message = utils.prepr(message, width=80)
-        logger.write(message, level, html)
-        if console:
+        if is_truthy(repr):
+            message = prepr(message, width=80)
+        logger.write(message, level, is_truthy(html))
+        if is_truthy(console):
             logger.console(message)
 
     @run_keyword_variant(resolve=0)
@@ -2233,8 +2299,8 @@ class _Misc:
         (case-insensitive).
 
         By default appends a newline to the logged message. This can be
-        disabled by giving the ``no_newline`` argument any true value (e.g.
-        any non-empty string).
+        disabled by giving the ``no_newline`` argument a true value (see
+        `Boolean arguments`).
 
         Examples:
         | Log To Console | Hello, console!             |                 |
@@ -2247,7 +2313,7 @@ class _Misc:
 
         New in Robot Framework 2.8.2.
         """
-        logger.console(message, newline=not no_newline, stream=stream)
+        logger.console(message, newline=is_falsy(no_newline), stream=stream)
 
     @run_keyword_variant(resolve=0)
     def comment(self, *messages):
@@ -2428,6 +2494,10 @@ class _Misc:
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.
 
+        *NOTE:* DateTime library added in Robot Framework 2.8.5 contains
+        much more flexible keywords for getting the current date and time
+        and for date and time handling in general.
+
         How time is returned is determined based on the given ``format``
         string as follows. Note that all checks are case-insensitive.
 
@@ -2507,7 +2577,7 @@ class _Misc:
         Support for UTC time was added in Robot Framework 2.7.5 but it did not
         work correctly until 2.7.7.
         """
-        return utils.get_time(format, utils.parse_time(time_))
+        return get_time(format, parse_time(time_))
 
     def evaluate(self, expression, modules=None, namespace=None):
         """Evaluates the given expression in Python and returns the results.
@@ -2519,8 +2589,15 @@ class _Misc:
         ``namespace`` argument can be used to pass a custom namespace as
         a dictionary. Possible ``modules`` are added to this namespace.
 
+        When variables are used in the expression with the normal variable
+        decoration (e.g. ``${var}``), they will be replaced by their string
+        representation before evaluation. Variables that are to be evaluated
+        as strings must thus be quoted with single or double quotes (e.g.
+        ``"${var}"``). If the variable may contain newlines or quotes, Python's
+        triple quoting can be used instead (e.g. ``'''${var}'''``).
+
         Examples (expecting ``${result}`` is 3.14):
-        | ${status} = | Evaluate | 0 < ${result} < 10    |
+        | ${status} = | Evaluate | 0 < ${result} < 10    | # Would also work with string '3.14' |
         | ${down} =   | Evaluate | int(${result})        |
         | ${up} =     | Evaluate | math.ceil(${result})  | math                |
         | ${random} = | Evaluate | random.randint(0, sys.maxint) | random, sys |
@@ -2533,24 +2610,45 @@ class _Misc:
         | ${random} = <random integer>
         | ${result} = 42
 
+        All current variables are available in the evaluation namespace
+        automatically also without the ``${}`` decoration (e.g. ``var``).
+        When used like this, variables are evaluated within the expression
+        with their actual value. They must not be quoted even if they would
+        contain strings. Variables do not override Python built-ins
+        (e.g. ``len``) nor the given ``modules`` or ``namespace``.
+
+        Examples (expecting ``${text}`` is ``'Hello Kitty'``):
+        | ${length} = | Evaluate | len(text)    |
+        | @{parts} =  | Evaluate | text.split() |
+        | ${comp} =   | Evaluate | text == '${text}' |
+        =>
+        | ${length} = 11
+        | ${parts} = ['Hello', 'Kitty']
+        | ${comp} = True
+
         Notice that instead of creating complicated expressions, it is
         recommended to move the logic into a test library.
 
-        Support for ``namespace`` is a new feature in Robot Framework 2.8.4.
+        Support for ``namespace`` is new in Robot Framework 2.8.4 and
+        variables without decoration in the evaluation namespace in 2.9.
         """
-        namespace = namespace or {}
+        namespace = dict(namespace) if namespace else {}
         modules = modules.replace(' ', '').split(',') if modules else []
         namespace.update((m, __import__(m)) for m in modules if m)
+        variables = self._variables.as_dict(decoration=False)
+        for key in dir(__builtin__) + list(namespace):
+            if key in variables:
+                variables.pop(key)
         try:
             if not isinstance(expression, basestring):
                 raise TypeError("Expression must be string, got %s."
-                                % utils.type_name(expression))
+                                % type_name(expression))
             if not expression:
                 raise ValueError("Expression cannot be empty.")
-            return eval(expression, namespace)
+            return eval(expression, namespace, variables)
         except:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
-                               % (expression, utils.get_error_message()))
+                               % (expression, get_error_message()))
 
     def call_method(self, object, method_name, *args, **kwargs):
         """Calls the named method of the given object with the provided arguments.
@@ -2582,7 +2680,7 @@ class _Misc:
             return method(*args, **kwargs)
         except:
             raise RuntimeError("Calling method '%s' failed: %s"
-                               % (method_name, utils.get_error_message()))
+                               % (method_name, get_error_message()))
 
     def regexp_escape(self, *patterns):
         """Returns each argument string escaped for use as a regular expression.
@@ -2605,10 +2703,9 @@ class _Misc:
     def set_test_message(self, message, append=False):
         """Sets message for the current test case.
 
-        If the optional ``append`` argument is given any value considered true
-        in Python, for example, any non-empty string, the given ``message`` is
-        added after the possible earlier message by joining the messages with
-        a space.
+        If the optional ``append`` argument is given a true value (see `Boolean
+        arguments`), the given ``message`` is added after the possible earlier
+        message by joining the messages with a space.
 
         In test teardown this keyword can alter the possible failure message,
         but otherwise failures override messages set by this keyword. Notice
@@ -2633,14 +2730,17 @@ class _Misc:
         if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown.")
-        test.message = self._get_possibly_appended_value(test.message, message, append)
+        test.message = self._get_possibly_appended_value(test.message, message,
+                                                         append)
         message, level = self._get_logged_test_message_and_level(test.message)
         self.log('Set test message to:\n%s' % message, level)
 
     def _get_possibly_appended_value(self, initial, new, append):
         if not isinstance(new, unicode):
-            new = utils.unic(new)
-        return '%s %s' % (initial, new) if append and initial else new
+            new = unic(new)
+        if is_truthy(append) and initial:
+            return '%s %s' % (initial, new)
+        return new
 
     def _get_logged_test_message_and_level(self, message):
         if message.startswith('*HTML*'):
@@ -2676,9 +2776,9 @@ class _Misc:
         as with `Set Test Message` keyword.
 
         This keyword sets the documentation of the current suite by default.
-        If the optional ``top`` argument is given any value considered
-        true in Python, for example, any non-empty string, the documentation
-        of the top level suite is altered instead.
+        If the optional ``top`` argument is given a true value (see `Boolean
+        arguments`), the documentation of the top level suite is altered
+        instead.
 
         The documentation of the current suite is available as a built-in
         variable ``${SUITE DOCUMENTATION}``.
@@ -2686,10 +2786,10 @@ class _Misc:
         New in Robot Framework 2.7. Support for ``append`` and ``top`` were
         added in 2.7.7.
         """
-        ns = self._get_namespace(top)
-        suite = ns.suite
+        top = is_truthy(top)
+        suite = self._get_namespace(top).suite
         suite.doc = self._get_possibly_appended_value(suite.doc, doc, append)
-        ns.variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc)
+        self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc, top)
         self.log('Set suite documentation to:\n%s' % suite.doc)
 
     def set_suite_metadata(self, name, value, append=False, top=False):
@@ -2700,9 +2800,8 @@ class _Misc:
         as with `Set Test Message` keyword.
 
         This keyword sets the metadata of the current suite by default.
-        If the optional ``top`` argument is given any value considered
-        true in Python, for example, any non-empty string, the metadata
-        of the top level suite is altered instead.
+        If the optional ``top`` argument is given a true value (see `Boolean
+        arguments`), the metadata of the top level suite is altered instead.
 
         The metadata of the current suite is available as a built-in variable
         ``${SUITE METADATA}`` in a Python dictionary. Notice that modifying this
@@ -2711,12 +2810,13 @@ class _Misc:
         New in Robot Framework 2.7.4. Support for ``append`` and ``top`` were
         added in 2.7.7.
         """
+        top = is_truthy(top)
         if not isinstance(name, unicode):
-            name = utils.unic(name)
-        ns = self._get_namespace(top)
-        metadata = ns.suite.metadata
-        metadata[name] = self._get_possibly_appended_value(metadata.get(name, ''), value, append)
-        ns.variables.set_suite('${SUITE_METADATA}', metadata.copy())
+            name = unic(name)
+        metadata = self._get_namespace(top).suite.metadata
+        original = metadata.get(name, '')
+        metadata[name] = self._get_possibly_appended_value(original, value, append)
+        self._variables.set_suite('${SUITE_METADATA}', metadata.copy(), top)
         self.log("Set suite metadata '%s' to value '%s'." % (name, metadata[name]))
 
     def set_tags(self, *tags):
@@ -2742,8 +2842,7 @@ class _Misc:
             ctx.suite.set_tags(tags, persist=True)
         else:
             raise RuntimeError("'Set Tags' cannot be used in suite teardown.")
-        self.log('Set tag%s %s.' % (utils.plural_or_not(tags),
-                                    utils.seq2str(tags)))
+        self.log('Set tag%s %s.' % (s(tags), seq2str(tags)))
 
     def remove_tags(self, *tags):
         """Removes given ``tags`` from the current test or all tests in a suite.
@@ -2770,8 +2869,7 @@ class _Misc:
             ctx.suite.set_tags(remove=tags, persist=True)
         else:
             raise RuntimeError("'Remove Tags' cannot be used in suite teardown.")
-        self.log('Removed tag%s %s.' % (utils.plural_or_not(tags),
-                                        utils.seq2str(tags)))
+        self.log('Removed tag%s %s.' % (s(tags), seq2str(tags)))
 
     def get_library_instance(self, name):
         """Returns the currently active instance of the specified test library.
@@ -2810,42 +2908,45 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     conversions (e.g. `Convert To Integer`) and for various other purposes
     (e.g. `Log`, `Sleep`, `Run Keyword If`, `Set Global Variable`).
 
+    = HTML error messages =
+
     Many of the keywords accept an optional error message to use if the keyword
     fails. Starting from Robot Framework 2.8, it is possible to use HTML in
     these messages by prefixing them with ``*HTML*``. See `Fail` keyword for
     a usage example. Notice that using HTML in messages is not limited to
     BuiltIn library but works with any error message.
+
+    = Boolean arguments =
+
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Keywords verifying something that allow dropping actual and expected values
+    from the possible error message also consider string ``no values`` as false.
+    Other strings are considered true regardless their value, and other
+    argument types are tested using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
+
+    True examples:
+    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=True    | # Strings are generally true.    |
+    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=yes     | # Same as the above.             |
+    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${TRUE} | # Python ``True`` is true.       |
+    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${42}   | # Numbers other than 0 are true. |
+
+
+    False examples:
+    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=False     | # String ``false`` is false.   |
+    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=no        | # Also string ``no`` is false. |
+    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${EMPTY}  | # Empty string is false.       |
+    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=${FALSE}  | # Python ``False`` is false.   |
+    | `Should Be Equal` | ${x} | ${y}  | Custom error | values=no values | # ``no values`` works with ``values`` argument |
+
+    Note that prior to Robot Framework 2.9 some keywords considered all
+    non-empty strings, including ``false`` and ``no``, to be true.
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
-
-    @property
-    def _context(self):
-        if EXECUTION_CONTEXTS.current is None:
-            raise RobotNotRunningError('Cannot access execution context')
-        return EXECUTION_CONTEXTS.current
-
-    @property
-    def _namespace(self):
-        return self._context.namespace
-
-    def _get_namespace(self, top=False):
-        ctx = EXECUTION_CONTEXTS.top if top else EXECUTION_CONTEXTS.current
-        return ctx.namespace
-
-    @property
-    def _variables(self):
-        return self._namespace.variables
-
-    def _matches(self, string, pattern):
-        # Must use this instead of fnmatch when string may contain newlines.
-        matcher = utils.Matcher(pattern, caseless=False, spaceless=False)
-        return matcher.match(string)
-
-    def _is_true(self, condition):
-        if isinstance(condition, basestring):
-            condition = self.evaluate(condition, modules='os,sys')
-        return bool(condition)
 
 
 class RobotNotRunningError(AttributeError):
@@ -2918,6 +3019,5 @@ def register_run_keyword(library, keyword, args_to_process=None):
     RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process)
 
 
-for name in [attr for attr in dir(_RunKeyword) if not attr.startswith('_')]:
-    register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
-del name, attr
+[register_run_keyword('BuiltIn', getattr(_RunKeyword, a))
+ for a in dir(_RunKeyword) if a[0] != '_']
