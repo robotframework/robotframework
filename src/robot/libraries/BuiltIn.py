@@ -85,7 +85,7 @@ class _BuiltInBase(object):
 
     def _log_types(self, *args):
         msg = ["Argument types are:"] + [self._get_type(a) for a in args]
-        self.log('\n'.join(msg))
+        self.log('\n'.join(msg), 'DEBUG')
 
     def _get_type(self, arg):
         # In IronPython type(u'x') is str. We want to report unicode anyway.
