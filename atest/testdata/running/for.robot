@@ -360,13 +360,13 @@ For In Zip With Other Iterables
     Should Be Equal    ${result}    ${expected}
 
 For In Zip Rejects Strings as iterable
-    [Documentation]    FAIL    FOR IN ZIP items must all be List-like, got string.
+    [Documentation]    FAIL    FOR IN ZIP items must all be list-like, got string.
     @{things}=    Create List    e    f    g    h
     : FOR    ${item}    ${thing}    IN ZIP    NotAListButStillPythonIterable    ${things}
     \    Fail    This test case should die before running this.
 
 For In Zip With Non-list
-    [Documentation]    FAIL    FOR IN ZIP items must all be List-like, got integer.
+    [Documentation]    FAIL    FOR IN ZIP items must all be list-like, got integer.
     ${items}=    Set Variable    ${42}
     @{things}=    Create List    e    f    g    h
     : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
