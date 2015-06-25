@@ -53,7 +53,48 @@ def run_keyword_variant(resolve):
     return decorator
 
 
-class _Converter:
+class _BuiltInBase(object):
+
+    @property
+    def _context(self):
+        if EXECUTION_CONTEXTS.current is None:
+            raise RobotNotRunningError('Cannot access execution context')
+        return EXECUTION_CONTEXTS.current
+
+    @property
+    def _namespace(self):
+        return self._context.namespace
+
+    def _get_namespace(self, top=False):
+        ctx = EXECUTION_CONTEXTS.top if top else EXECUTION_CONTEXTS.current
+        return ctx.namespace
+
+    @property
+    def _variables(self):
+        return self._namespace.variables
+
+    def _matches(self, string, pattern):
+        # Must use this instead of fnmatch when string may contain newlines.
+        matcher = Matcher(pattern, caseless=False, spaceless=False)
+        return matcher.match(string)
+
+    def _is_true(self, condition):
+        if isinstance(condition, basestring):
+            condition = self.evaluate(condition, modules='os,sys')
+        return bool(condition)
+
+    def _log_types(self, *args):
+        msg = ["Argument types are:"] + [self._get_type(a) for a in args]
+        self.log('\n'.join(msg))
+
+    def _get_type(self, arg):
+        # In IronPython type(u'x') is str. We want to report unicode anyway.
+        if isinstance(arg, unicode):
+            return "<type 'unicode'>"
+        return str(type(arg))
+
+
+class _Converter(_BuiltInBase):
 
     def convert_to_integer(self, item, base=None):
         """Converts the given item to an integer number.
@@ -447,7 +488,7 @@ class _Converter:
         return [separate[i:i+2] for i in range(0, len(separate), 2)]
 
 
-class _Verify:
+class _Verify(_BuiltInBase):
 
     def _set_and_remove_tags(self, tags):
         set_tags = [tag for tag in tags if not tag.startswith('-')]
@@ -564,16 +605,6 @@ class _Verify:
     def _should_be_equal(self, first, second, msg, values):
         asserts.fail_unless_equal(first, second, msg,
                                   self._include_values(values))
-
-    def _log_types(self, *args):
-        msg = ["Argument types are:"] + [self._get_type(a) for a in args]
-        self.log('\n'.join(msg))
-
-    def _get_type(self, arg):
-        # In IronPython type(u'x') is str. We want to report unicode anyway.
-        if isinstance(arg, unicode):
-            return "<type 'unicode'>"
-        return str(type(arg))
 
     def _include_values(self, values):
         if isinstance(values, basestring):
@@ -981,7 +1012,7 @@ class _Verify:
         return msg
 
 
-class _Variables:
+class _Variables(_BuiltInBase):
 
     def get_variables(self, no_decoration=False):
         """Returns a dictionary containing all variables in the current scope.
@@ -1286,7 +1317,7 @@ class _Variables:
         self.log(format_assign_message(name, value))
 
 
-class _RunKeyword:
+class _RunKeyword(_BuiltInBase):
 
     # If you use any of these run keyword variants from another library, you
     # should register those keywords with 'register_run_keyword' method. See
@@ -1832,7 +1863,7 @@ class _RunKeyword:
         return self._context.suite
 
 
-class _Control:
+class _Control(_BuiltInBase):
 
     def continue_for_loop(self):
         """Skips the current for loop iteration and continues from the next.
@@ -2102,7 +2133,7 @@ class _Control:
             self.pass_execution(message, *tags)
 
 
-class _Misc:
+class _Misc(_BuiltInBase):
 
     def no_operation(self):
         """Does absolutely nothing."""
@@ -2458,6 +2489,10 @@ class _Misc:
 
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.
+
+        *NOTE:* DateTime library added in Robot Framework 2.8.5 contains
+        much more flexible keywords for getting the current date and time
+        and for date and time handling in general.
 
         How time is returned is determined based on the given ``format``
         string as follows. Note that all checks are case-insensitive.
@@ -2875,34 +2910,6 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    @property
-    def _context(self):
-        if EXECUTION_CONTEXTS.current is None:
-            raise RobotNotRunningError('Cannot access execution context')
-        return EXECUTION_CONTEXTS.current
-
-    @property
-    def _namespace(self):
-        return self._context.namespace
-
-    def _get_namespace(self, top=False):
-        ctx = EXECUTION_CONTEXTS.top if top else EXECUTION_CONTEXTS.current
-        return ctx.namespace
-
-    @property
-    def _variables(self):
-        return self._namespace.variables
-
-    def _matches(self, string, pattern):
-        # Must use this instead of fnmatch when string may contain newlines.
-        matcher = Matcher(pattern, caseless=False, spaceless=False)
-        return matcher.match(string)
-
-    def _is_true(self, condition):
-        if isinstance(condition, basestring):
-            condition = self.evaluate(condition, modules='os,sys')
-        return bool(condition)
-
 
 class RobotNotRunningError(AttributeError):
     """Used when something cannot be done because Robot is not running.
@@ -2974,6 +2981,5 @@ def register_run_keyword(library, keyword, args_to_process=None):
     RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process)
 
 
-for name in [attr for attr in dir(_RunKeyword) if not attr.startswith('_')]:
-    register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
-del name, attr
+[register_run_keyword('BuiltIn', getattr(_RunKeyword, a))
+ for a in dir(_RunKeyword) if a[0] != '_']
