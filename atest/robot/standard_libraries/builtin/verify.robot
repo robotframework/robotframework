@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/verify.robot
+Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/builtin/verify.robot
 Force Tags        regression
 Default Tags      jybot    pybot
 Resource          atest_resource.robot
@@ -168,7 +168,8 @@ Length Should Be
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[-1].msgs[0]}    Length is 2
     Check Log Message    ${tc.kws[-1].msgs[1]}    Length of '*' should be 3 but is 2.    FAIL    pattern=yep
-    Length Should Be    ${tc.kws[-1].msgs}    2
+    Check Log Message    ${tc.kws[-1].msgs[2]}    Traceback*    DEBUG    pattern=yep
+    Length Should Be    ${tc.kws[-1].msgs}    3
 
 Length Should Be With Non Default Message
     Check Test Case    ${TESTNAME}
@@ -249,7 +250,7 @@ Verify argument type message
     [Arguments]    ${msg}    ${type1}    ${type2}
     ${type1} =    Str Type to Unicode On IronPython    ${type1}
     ${type2} =    Str Type to Unicode On IronPython    ${type2}
-    Check log message    ${msg}    Argument types are:\n<type '${type1}'>\n<type '${type2}'>
+    Check log message    ${msg}    Argument types are:\n<type '${type1}'>\n<type '${type2}'>    DEBUG
 
 Str Type to Unicode On IronPython
     [Arguments]    ${type}

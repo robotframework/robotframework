@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/converter.robot
+Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/builtin/converter.robot
 Force Tags        regression
 Default Tags      jybot    pybot
 Resource          atest_resource.robot
@@ -71,4 +71,4 @@ Create List
 *** Keywords ***
 Verify argument type message
     [Arguments]    ${msg}    ${type1}
-    Check log message    ${msg}    Argument types are:\n<type '${type1}'>
+    Check log message    ${msg}    Argument types are:\n<type '${type1}'>    DEBUG
