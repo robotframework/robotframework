@@ -597,14 +597,13 @@ class UserKeyword(TestCase):
 
 
 class ForLoop(_WithSteps):
-    """
-    py:class:: ForLoop(declaration, comment=None)
+    """The parsed representation of a for-loop.
 
     :param list declaration: The literal cell values that declare the loop
                              (excluding ":FOR").
     :param str comment: A comment, default None.
     :ivar str flavor: The value of the 'IN' item, uppercased.
-                      Typically 'IN', 'IN RANGE', 'IN ZIP', or 'IN EUMERATE'.
+                      Typically 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
     :ivar list vars: Variables set per-iteration by this loop.
     :ivar list items: Loop values that come after the 'IN' item.
     :ivar str comment: A comment, or None.

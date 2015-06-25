@@ -415,9 +415,9 @@ That index variable has a value of `0` for the first loop, `1` for the second, e
 
 For example, the following two test cases do the same thing:
 
-
 .. table:: For in enumerate comparison
    :class: example
+
    =================  ================  ===============  =============  ===================  ========
    Test Case          Action            Argument         Argument       Argument             Argument
    =================  ================  ===============  =============  ===================  ========
@@ -439,6 +439,7 @@ loop-variables (excluding the first, `index` variable).
 
 .. table:: For in enumerate examples
    :class: example
+
    ================= ================ ============ ========= ========= ============= ========
    Test Case         Action           Argument     Argument  Argument  Argument      Argument
    ================= ================ ============ ========= ========= ============= ========
@@ -464,6 +465,7 @@ This may be easiest to show with an example:
 
 .. table:: For in zip examples
    :class: example
+
    ================ ======================= ======================= =================== ================= =========== ========
    Test Case        Action                  Argument                Argument            Argument          Argument    Argument
    ================ ======================= ======================= =================== ================= =========== ========

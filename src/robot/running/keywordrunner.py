@@ -17,8 +17,8 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           HandlerExecutionFailed)
 from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import (format_assign_message, frange, get_error_message,
-                         get_timestamp, plural_or_not as s, type_name,
-                         is_list_like, type_name)
+                         get_timestamp, is_list_like, plural_or_not as s,
+                         type_name)
 from robot.variables import is_scalar_var, VariableAssigner
 
 
@@ -125,8 +125,7 @@ def ForRunner(context, templated=False, flavor='IN'):
     if flavor_key in for_loop_flavors:
         runner_class = for_loop_flavors[flavor_key]
         return runner_class(context, templated)
-    else:
-        return InvalidForRunner(context, flavor_key, flavor, for_loop_flavors.keys())
+    return InvalidForRunner(context, flavor_key, flavor, for_loop_flavors.keys())
 
 
 class ForInRunner(object):
@@ -205,7 +204,7 @@ class ForInRunner(object):
 
     def _replace_variables_error_message(self, data, values):
         return ('Number of FOR loop values should be multiple of '
-                + 'its variables. Got %d variables but %d value%s.'
+                'its variables. Got %d variables but %d value%s.'
                 % (len(data.variables), len(values), s(values)))
 
     def _run_one_round(self, data, values):
@@ -283,7 +282,7 @@ class ForInZipRunner(ForInRunner):
                 # Usually one would expect validation to happen in _validate(),
                 # but this particular validation relies on information that is
                 # not available to _validate().
-                raise DataError("FOR IN ZIP items must all be List-like, got %s."
+                raise DataError("FOR IN ZIP items must all be list-like, got %s."
                     % type_name(item))
         for zipped_item in zip(*[list(item) for item in items]):
             answer.extend(zipped_item)
@@ -317,12 +316,10 @@ class ForInEnumerateRunner(ForInRunner):
 
 
 class InvalidForRunner(ForInRunner):
-    """
-    Used to send an error from ForRunner() if it sees an unexpected error.
+    """Used to send an error from ForRunner() if it sees an unexpected error.
 
     We can't simply throw a DataError from ForRunner() because that happens
     outside the "with StatusReporter(...)" blocks.
-
     """
     def __init__(self, context, flavor, pretty_flavor, expected):
         super(InvalidForRunner, self).__init__(context, False)

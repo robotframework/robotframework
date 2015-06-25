@@ -352,9 +352,9 @@ For In Zip With Other Iterables
     [Documentation]    Handling non-lists. Should accept anything iterable
     ...    except strings and fail with a clear error message if invalid
     ...    data given. You can use utils.is_list_like to verify inputs.
-    @{range}=    Evaluate    (i for i in range(10))
-    @{range2}=    Evaluate    (10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
-    : FOR     ${x}    ${y}    IN ZIP    ${range}    ${range2}
+    ${generator}=    Evaluate    (i for i in range(10))
+    ${tuple}=    Evaluate    (10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+    : FOR     ${x}    ${y}    IN ZIP    ${generator}    ${tuple}
     \    @{result}=    Create List    @{result}    ${x}:${y}
     ${expected}=    Create List    0:10    1:11    2:12    3:13    4:14    5:15    6:16    7:17    8:18    9:19
     Should Be Equal    ${result}    ${expected}

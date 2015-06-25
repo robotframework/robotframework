@@ -364,7 +364,7 @@ Should Be For In Range Keyword
 Should Be For In Zip Keyword
     [Arguments]    ${kw}    ${subcount}
     Should Be For Keyword    ${kw}    ${subcount}
-    Should Contain    ${kw.name}    IN ZIP    Not FOR IN RANGE keyword
+    Should Contain    ${kw.name}    IN ZIP    Not FOR IN ZIP keyword
 
 Should Be For Item
     [Arguments]    ${kw}    ${name}
