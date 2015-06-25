@@ -312,8 +312,3 @@ List Should Not Contain Value, Value Found and Own Error Message Regexp
 
 List Should Not Contain Value, Value Found and Own Error Message Glob
     Check Test Case    ${TEST NAME}
-
-Using 'No Values' to Disable Values From Error Messages is Deprecated
-    ${tc} =    Check Test Case    List Should Contain Sub List With Missing Values And Own Error Message
-    Check Log Message   ${tc.kws[0].msgs[0]}    Disabling values in error message with 'No Values' is deprecated. Use 'false' or 'no' instead.    WARN
-    Check Log Message   ${ERRORS[0]}    Disabling values in error message with 'No Values' is deprecated. Use 'false' or 'no' instead.    WARN

@@ -19,7 +19,7 @@ from robot.utils.asserts import assert_equals
 from robot.version import get_version
 
 
-class _List:
+class _List(object):
 
     def convert_to_list(self, item):
         """Converts the given ``item`` to a Python ``list`` type.
@@ -426,7 +426,7 @@ class _List:
                          % (index, len(list_)-1))
 
 
-class _Dictionary:
+class _Dictionary(object):
 
     def convert_to_dictionary(self, item):
         """Converts the given ``item`` to a Python ``dict`` type.
@@ -743,6 +743,8 @@ class Collections(_List, _Dictionary):
     Some keywords accept arguments that are handled as Boolean values true or
     false. If such an argument is given as a string, it is considered false if
     it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Keywords verifying something that allow dropping actual and expected values
+    from the possible error message also consider string ``no values`` as false.
     Other strings are considered true regardless their value, and other
     argument types are tested using same
     [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
@@ -759,6 +761,7 @@ class Collections(_List, _Dictionary):
     | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=no       | # Also string ``no`` is false. |
     | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${EMPTY} | # Empty string is false.       |
     | `Should Contain Match` | ${list} | ${pattern} | case_insensitive=${FALSE} | # Python ``False`` is false.   |
+    | `Lists Should Be Equal` | ${x}   | ${y} | Custom error | values=no values | # ``no values`` works with ``values`` argument |
 
     Note that prior to Robot Framework 2.9 some keywords considered all
     non-empty strings, including ``False``, to be true.
@@ -876,15 +879,11 @@ class Collections(_List, _Dictionary):
 
 
 def _verify_condition(condition, default_msg, msg, values=False):
-    if isinstance(values, basestring) and values.upper() == 'NO VALUES':
-        logger.warn("Disabling values in error message with '%s' is deprecated."
-                    " Use 'false' or 'no' instead." % values)
-        values = False
     if condition:
         return
     if not msg:
         msg = default_msg
-    elif is_truthy(values):
+    elif is_truthy(values) and str(values).upper() != 'NO VALUES':
         msg += '\n' + default_msg
     raise AssertionError(msg)
 
