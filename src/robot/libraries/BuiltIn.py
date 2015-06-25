@@ -20,16 +20,20 @@ from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, ExecutionPassed, ExitForLoop,
                           PassExecution, ReturnFromKeyword)
-from robot import utils
-from robot.utils import asserts
-from robot.variables import (is_list_var, is_var, DictVariableTableValue,
-                             VariableTableValue, VariableSplitter)
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
+from robot.utils import (asserts, DotDict, escape, format_assign_message,
+                         get_error_message, get_time, is_truthy, JYTHON,
+                         Matcher, normalize, parse_time, prepr,
+                         RERAISED_EXCEPTIONS, plural_or_not as s,
+                         secs_to_timestr, seq2str, split_from_equals,
+                         timestr_to_secs, type_name, unic)
+from robot.variables import (is_list_var, is_var, DictVariableTableValue,
+                             VariableTableValue, VariableSplitter)
 from robot.version import get_version
 
-if utils.JYTHON:
+if JYTHON:
     from java.lang import String, Number
 
 
@@ -89,13 +93,13 @@ class _Converter:
             return int(item)
         except:
             raise RuntimeError("'%s' cannot be converted to an integer: %s"
-                               % (orig, utils.get_error_message()))
+                               % (orig, get_error_message()))
 
     def _handle_java_numbers(self, item):
-        if not utils.JYTHON:
+        if not JYTHON:
             return item
         if isinstance(item, String):
-            return utils.unic(item)
+            return unic(item)
         if isinstance(item, Number):
             return item.doubleValue()
         return item
@@ -103,7 +107,7 @@ class _Converter:
     def _get_base(self, item, base):
         if not isinstance(item, basestring):
             return item, base
-        item = utils.normalize(item)
+        item = normalize(item)
         if item.startswith(('-', '+')):
             sign = item[0]
             item = item[1:]
@@ -238,11 +242,11 @@ class _Converter:
 
     def _convert_to_number_without_precision(self, item):
         try:
-            if utils.JYTHON:
+            if JYTHON:
                 item = self._handle_java_numbers(item)
             return float(item)
         except:
-            error = utils.get_error_message()
+            error = get_error_message()
             try:
                 return float(self._convert_to_integer(item))
             except RuntimeError:
@@ -264,7 +268,7 @@ class _Converter:
         return self._convert_to_string(item)
 
     def _convert_to_string(self, item):
-        return utils.unic(item)
+        return unic(item)
 
     def convert_to_boolean(self, item):
         """Converts the given item to Boolean true or false.
@@ -276,9 +280,9 @@ class _Converter:
         """
         self._log_types(item)
         if isinstance(item, basestring):
-            if utils.eq(item, 'True'):
+            if item.upper() == 'TRUE':
                 return True
-            if utils.eq(item, 'False'):
+            if item.upper() == 'FALSE':
                 return False
         return bool(item)
 
@@ -334,8 +338,7 @@ class _Converter:
                 raise RuntimeError("Invalid input type '%s'." % input_type)
             return ''.join(chr(o) for o in ordinals(input))
         except:
-            raise RuntimeError("Creating bytes failed: %s"
-                               % utils.get_error_message())
+            raise RuntimeError("Creating bytes failed: %s" % get_error_message())
 
     def _get_ordinals_from_text(self, input):
         for char in input:
@@ -423,14 +426,14 @@ class _Converter:
                      level='WARN')
         separate = self._format_separate_dict_items(separate)
         combined = DictVariableTableValue(combined).resolve(self._variables)
-        result = utils.DotDict(separate)
+        result = DotDict(separate)
         result.update(combined)
         return result
 
     def _split_dict_items(self, items):
         separate = []
         for item in items:
-            name, value = utils.split_from_equals(item)
+            name, value = split_from_equals(item)
             if value is not None or VariableSplitter(item).is_dict_variable():
                 break
             separate.append(item)
@@ -775,9 +778,7 @@ class _Verify:
         x = self.get_count(item1, item2)
         if not msg:
             msg = "'%s' contains '%s' %d time%s, not %d time%s." \
-                    % (utils.unic(item1), utils.unic(item2),
-                       x, utils.plural_or_not(x),
-                       count, utils.plural_or_not(count))
+                    % (unic(item1), unic(item2), x, s(x), count, s(count))
         self.should_be_equal_as_integers(x, count, msg, values=False)
 
     def get_count(self, item1, item2):
@@ -795,10 +796,9 @@ class _Verify:
                 item1 = list(item1)
             except:
                 raise RuntimeError("Converting '%s' to list failed: %s"
-                                % (item1, utils.get_error_message()))
+                                   % (item1, get_error_message()))
         count = item1.count(item2)
-        self.log('Item found from the first item %d time%s'
-                 % (count, utils.plural_or_not(count)))
+        self.log('Item found from the first item %d time%s' % (count, s(count)))
         return count
 
     def should_not_match(self, string, pattern, msg=None, values=True):
@@ -920,17 +920,25 @@ class _Verify:
         return length
 
     def _get_length(self, item):
-        try: return len(item)
-        except utils.RERAISED_EXCEPTIONS: raise
+        try:
+            return len(item)
+        except RERAISED_EXCEPTIONS:
+            raise
         except:
-            try: return item.length()
-            except utils.RERAISED_EXCEPTIONS: raise
+            try:
+                return item.length()
+            except RERAISED_EXCEPTIONS:
+                raise
             except:
-                try: return item.size()
-                except utils.RERAISED_EXCEPTIONS: raise
+                try:
+                    return item.size()
+                except RERAISED_EXCEPTIONS:
+                    raise
                 except:
-                    try: return item.length
-                    except utils.RERAISED_EXCEPTIONS: raise
+                    try:
+                        return item.length
+                    except RERAISED_EXCEPTIONS:
+                        raise
                     except:
                         raise RuntimeError("Could not get length of '%s'." % item)
 
@@ -965,7 +973,7 @@ class _Verify:
             raise AssertionError(msg or "'%s' should not be empty." % item)
 
     def _get_string_msg(self, str1, str2, msg, values, delim):
-        default = "'%s' %s '%s'" % (utils.unic(str1), delim, utils.unic(str2))
+        default = "'%s' %s '%s'" % (unic(str1), delim, unic(str2))
         if not msg:
             msg = default
         elif values is True:
@@ -1040,8 +1048,7 @@ class _Variables:
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
         for name in sorted(variables, key=lambda s: s[2:-1].lower()):
-            msg = utils.format_assign_message(name, variables[name],
-                                              cut_long=False)
+            msg = format_assign_message(name, variables[name], cut_long=False)
             self.log(msg, level)
 
     @run_keyword_variant(resolve=0)
@@ -1206,7 +1213,7 @@ class _Variables:
         if (values and isinstance(values[-1], basestring) and
                 values[-1].startswith('children=')):
             children = self._variables.replace_scalar(values[-1][9:])
-            children = utils.is_truthy(children)
+            children = is_truthy(children)
             values = values[:-1]
         else:
             children = False
@@ -1276,7 +1283,7 @@ class _Variables:
         return VariableTableValue(values, name).resolve(self._variables)
 
     def _log_set_variable(self, name, value):
-        self.log(utils.format_assign_message(name, value))
+        self.log(format_assign_message(name, value))
 
 
 class _RunKeyword:
@@ -1578,7 +1585,7 @@ class _RunKeyword:
         self._run_keywords(self._yield_repeated_keywords(times, name, args))
 
     def _get_times_to_repeat(self, times, require_postfix=False):
-        times = utils.normalize(str(times))
+        times = normalize(str(times))
         if times.endswith('times'):
             times = times[:-5]
         elif times.endswith('x'):
@@ -1634,14 +1641,14 @@ class _RunKeyword:
         try:
             count = self._get_times_to_repeat(retry, require_postfix=True)
         except ValueError:
-            timeout = utils.timestr_to_secs(retry)
+            timeout = timestr_to_secs(retry)
             maxtime = time.time() + timeout
-            message = 'for %s' % utils.secs_to_timestr(timeout)
+            message = 'for %s' % secs_to_timestr(timeout)
         else:
             if count <= 0:
                 raise ValueError('Retry count %d is not positive.' % count)
-            message = '%d time%s' % (count, utils.plural_or_not(count))
-        retry_interval = utils.timestr_to_secs(retry_interval)
+            message = '%d time%s' % (count, s(count))
+        retry_interval = timestr_to_secs(retry_interval)
         while True:
             try:
                 return self.run_keyword(name, *args)
@@ -1708,8 +1715,7 @@ class _RunKeyword:
                 return [None]
             raise RuntimeError('At least one value is required')
         if is_list_var(values[0]):
-            values[:1] = [utils.escape(item) for item in
-                          self._variables[values[0]]]
+            values[:1] = [escape(item) for item in self._variables[values[0]]]
             return self._verify_values_for_set_variable_if(values)
         return values
 
@@ -1998,7 +2004,7 @@ class _Control:
         New in Robot Framework 2.8.2.
         """
         ret = self.run_keyword(name, *args)
-        self.return_from_keyword(utils.escape(ret))
+        self.return_from_keyword(escape(ret))
 
     @run_keyword_variant(resolve=2)
     def run_keyword_and_return_if(self, condition, name, *args):
@@ -2116,12 +2122,12 @@ class _Misc:
         | Sleep | 2 minutes 10 seconds |
         | Sleep | 10s                  | Wait for a reply |
         """
-        seconds = utils.timestr_to_secs(time_)
+        seconds = timestr_to_secs(time_)
         # Python hangs with negative values
         if seconds < 0:
             seconds = 0
         self._sleep_in_parts(seconds)
-        self.log('Slept %s' % utils.secs_to_timestr(seconds))
+        self.log('Slept %s' % secs_to_timestr(seconds))
         if reason:
             self.log(reason)
 
@@ -2154,7 +2160,7 @@ class _Misc:
         """
         if not items:
             return ''
-        items = [utils.unic(item) for item in items]
+        items = [unic(item) for item in items]
         if items[0].startswith('SEPARATOR='):
             sep = items[0][len('SEPARATOR='):]
             items = items[1:]
@@ -2216,7 +2222,7 @@ class _Misc:
         in Robot Framework 2.9.
         """
         if repr:
-            message = utils.prepr(message, width=80)
+            message = prepr(message, width=80)
         logger.write(message, level, html)
         if console:
             logger.console(message)
@@ -2532,7 +2538,7 @@ class _Misc:
         Support for UTC time was added in Robot Framework 2.7.5 but it did not
         work correctly until 2.7.7.
         """
-        return utils.get_time(format, utils.parse_time(time_))
+        return get_time(format, parse_time(time_))
 
     def evaluate(self, expression, modules=None, namespace=None):
         """Evaluates the given expression in Python and returns the results.
@@ -2597,13 +2603,13 @@ class _Misc:
         try:
             if not isinstance(expression, basestring):
                 raise TypeError("Expression must be string, got %s."
-                                % utils.type_name(expression))
+                                % type_name(expression))
             if not expression:
                 raise ValueError("Expression cannot be empty.")
             return eval(expression, namespace, variables)
         except:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
-                               % (expression, utils.get_error_message()))
+                               % (expression, get_error_message()))
 
     def call_method(self, object, method_name, *args, **kwargs):
         """Calls the named method of the given object with the provided arguments.
@@ -2635,7 +2641,7 @@ class _Misc:
             return method(*args, **kwargs)
         except:
             raise RuntimeError("Calling method '%s' failed: %s"
-                               % (method_name, utils.get_error_message()))
+                               % (method_name, get_error_message()))
 
     def regexp_escape(self, *patterns):
         """Returns each argument string escaped for use as a regular expression.
@@ -2692,7 +2698,7 @@ class _Misc:
 
     def _get_possibly_appended_value(self, initial, new, append):
         if not isinstance(new, unicode):
-            new = utils.unic(new)
+            new = unic(new)
         return '%s %s' % (initial, new) if append and initial else new
 
     def _get_logged_test_message_and_level(self, message):
@@ -2764,7 +2770,7 @@ class _Misc:
         added in 2.7.7.
         """
         if not isinstance(name, unicode):
-            name = utils.unic(name)
+            name = unic(name)
         metadata = self._get_namespace(top).suite.metadata
         original = metadata.get(name, '')
         metadata[name] = self._get_possibly_appended_value(original, value, append)
@@ -2794,8 +2800,7 @@ class _Misc:
             ctx.suite.set_tags(tags, persist=True)
         else:
             raise RuntimeError("'Set Tags' cannot be used in suite teardown.")
-        self.log('Set tag%s %s.' % (utils.plural_or_not(tags),
-                                    utils.seq2str(tags)))
+        self.log('Set tag%s %s.' % (s(tags), seq2str(tags)))
 
     def remove_tags(self, *tags):
         """Removes given ``tags`` from the current test or all tests in a suite.
@@ -2822,8 +2827,7 @@ class _Misc:
             ctx.suite.set_tags(remove=tags, persist=True)
         else:
             raise RuntimeError("'Remove Tags' cannot be used in suite teardown.")
-        self.log('Removed tag%s %s.' % (utils.plural_or_not(tags),
-                                        utils.seq2str(tags)))
+        self.log('Removed tag%s %s.' % (s(tags), seq2str(tags)))
 
     def get_library_instance(self, name):
         """Returns the currently active instance of the specified test library.
@@ -2891,7 +2895,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     def _matches(self, string, pattern):
         # Must use this instead of fnmatch when string may contain newlines.
-        matcher = utils.Matcher(pattern, caseless=False, spaceless=False)
+        matcher = Matcher(pattern, caseless=False, spaceless=False)
         return matcher.match(string)
 
     def _is_true(self, condition):
