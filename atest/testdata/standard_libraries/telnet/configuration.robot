@@ -1,7 +1,7 @@
 *** Setting ***
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
-Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG     window_size=95x95
+Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG     window_size=95x95   terminal_emulation=NO
 Library           String
 Resource          telnet_resource.robot
 
@@ -18,7 +18,7 @@ Set Window Size
     Window Size Should Be    100    100
 
 Set Invalid Window Size
-    [Documentation]    FAIL Invalid window size '100yx100'. Should be <rows>x<columns>
+    [Documentation]    FAIL ValueError: Invalid window size '100yx100'. Should be <rows>x<columns>.
     [setup]
     Open Connection    ${HOST}    prompt=${PROMPT}    window_size=100yx100
 
