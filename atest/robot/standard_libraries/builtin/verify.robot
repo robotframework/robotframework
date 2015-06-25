@@ -48,6 +48,12 @@ Should Be Equal
     Verify argument type message    ${tc.kws[2].msgs[0]}    str    str
     Verify argument type message    ${tc.kws[3].msgs[0]}    unicode    unicode
 
+Should Be Equal fails with values
+    Check test case    ${TESTNAME}
+
+Should Be Equal fails without values
+    Check test case    ${TESTNAME}
+
 Should Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    str    str
@@ -104,10 +110,16 @@ Should Not Start With
 Should Start With
     Check test case    ${TESTNAME}
 
+Should Start With without values
+    Check test case    ${TESTNAME}
+
 Should Not End With
     Check test case    ${TESTNAME}
 
 Should End With
+    Check test case    ${TESTNAME}
+
+Should End With without values
     Check test case    ${TESTNAME}
 
 Should Not Contain

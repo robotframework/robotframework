@@ -45,7 +45,7 @@ FAIL is not valid log level
 
 Log also to console
     [Setup]    Set Log Level    DEBUG
-    Log    Hello, console!    console=yepyep
+    Log    Hello, console!    console=yepyep    repr=no    html=false
     Log    ${HTML}    debug    enable both html    and console
 
 Log repr
@@ -53,19 +53,19 @@ Log repr
     Log    Hyvää yötä \u2603!    repr=True
     Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
     ${bytes} =    Evaluate    chr(0) + chr(255)
-    Log    ${bytes}    repr=yes
+    Log    ${bytes}    repr=${42}
     ${list} =    Create List    Hyvä    \u2603    ${42}    ${bytes}
     Log    ${list}    repr=yes    console=please
 
 Log pprint
     ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']}
-    Log    ${dict}    repr=yes    console=please
+    Log    ${dict}    repr=true    console=please
     ${list} =    Evaluate    ['One', u'Two', 3]
     Log    ${list}    repr=yes    console=please
     ${list} =    Evaluate    ['a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']
-    Log    ${list}    repr=yes    console=please
+    Log    ${list}    repr=${1}    console=please
     ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', u'a longer string!', u'a much, much, much, much, much, much longer string']}
-    Log    ${dict}    repr=yes
+    Log    ${dict}    repr=yes    console=no    html=NO
     ${list} =    Evaluate    [u'One', 'Two', 3]
     Log    ${list}    repr=yes
     ${dict} =    Evaluate    {u'a long string': 1, u'a longer string!': 2, u'a much, much, much, much, much, much longer string': 3, u'list': [u'a long string', ${42}, u'Hyvää yötä \u2603!', u'a much, much, much, much, much, much longer string', '\\x00\\xff']}
