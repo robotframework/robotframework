@@ -1,7 +1,7 @@
 *** Setting ***
 Test Setup        Login and set prompt
 Test Teardown     Close All Connections
-Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG    terminal_emulation=True   terminal_type=vt100
+Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG    terminal_emulation=yes   terminal_type=vt100
 Library           String
 Resource          telnet_resource.robot
 
