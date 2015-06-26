@@ -155,7 +155,7 @@ def sdist(deploy=False, remove_dist=False):
         remove_dist:  Control is 'dist' directory initially removed or not.
     """
     clean(remove_dist, create_dirs=True)
-    run('python setup.py sdist --force-manifest'
+    run('python setup.py sdist'
         + (' register upload' if deploy else ''))
     announce()
 
