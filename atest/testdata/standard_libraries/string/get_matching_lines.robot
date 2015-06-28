@@ -72,7 +72,7 @@ Get Lines Containing Regexp Matching Two Words
 
 Get Lines Containing Regexp Matching One Line
     Test Get Lines Containing Regexp    ${INPUT}    One    One more row here
-    Test Get Lines Containing Regexp    ${INPUT}    .*here    One more row here
+    Test Get Lines Containing Regexp    ${INPUT}    here    One more row here
     Test Get Lines Containing Regexp    ${INPUT}    1    Line 1
 
 Get Lines Containing Regexp Matching Some Lines
@@ -84,9 +84,9 @@ Get Lines Containing Regexp Matching Some Lines
     Test Get Lines Containing Regexp    ${INPUT}    .*    ${INPUT}
 
 Get Lines Containing Regexp With Case-Insensitive
-    Test Get Lines Containing Regexp    ${INPUT}    (?i).*line.*    Line 1\nLine 2\nThird line
-    Test Get Lines Containing Regexp    ${INPUT}    (?i).*LINE    Line 1\nLine 2\nThird line
-    Test Get Lines Containing Regexp    ${INPUT}    .*LINE.*    ${EMPTY}
+    Test Get Lines Containing Regexp    ${INPUT}    (?i)line    Line 1\nLine 2\nThird line
+    Test Get Lines Containing Regexp    ${INPUT}    (?i)LINE    Line 1\nLine 2\nThird line
+    Test Get Lines Containing Regexp    ${INPUT}    LINE    ${EMPTY}
 
 *** Keywords ***
 Test Get Lines Containing String
@@ -106,5 +106,5 @@ Test Get Lines Matching Regexp
 
 Test Get Lines Containing Regexp
     [Arguments]    ${input}    ${pattern}    ${expected}
-    ${actual} =    Get Lines Containing Regexp    ${input}    ${pattern}
+    ${actual} =    Get Lines Matching Regexp    ${input}    ${pattern}    exact_match=False
     Should Be Equal    ${actual}    ${expected}
