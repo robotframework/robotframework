@@ -26,9 +26,9 @@ from robot.version import get_version
 from robot.api import logger
 from robot.utils import (abspath, ConnectionCache, decode_output, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
-                         parse_time, plural_or_not, secs_to_timestamp,
-                         secs_to_timestr, seq2str, set_env_var,
-                         timestr_to_secs, unic)
+                         is_unicode, parse_time, plural_or_not,
+                         secs_to_timestamp, secs_to_timestr, seq2str,
+                         set_env_var, timestr_to_secs, unic)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes')
@@ -709,7 +709,7 @@ class OperatingSystem(object):
 
         New in Robot Framework 2.8.5.
         """
-        if isinstance(content, unicode):
+        if is_unicode(content):
             content = ''.join(chr(ord(c)) for c in content)
         path = self._write_to_file(path, content)
         self._link("Created binary file '%s'", path)

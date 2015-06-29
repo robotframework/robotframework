@@ -14,11 +14,13 @@
 
 from codecs import BOM_UTF8
 
+from .robottypes import is_string
+
 
 class Utf8Reader(object):
 
     def __init__(self, path_or_file):
-        if isinstance(path_or_file, basestring):
+        if is_string(path_or_file):
             self._file = open(path_or_file, 'rb')
             self._close = True
         else:

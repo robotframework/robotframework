@@ -26,9 +26,10 @@ from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (asserts, DotDict, escape, format_assign_message,
-                         get_error_message, get_time, is_falsy, is_truthy,
-                         JYTHON, Matcher, normalize, NormalizedDict, parse_time,
-                         prepr, RERAISED_EXCEPTIONS, plural_or_not as s,
+                         get_error_message, get_time, is_falsy, is_integer,
+                         is_string, is_truthy, is_unicode, JYTHON, Matcher,
+                         normalize, NormalizedDict, parse_time, prepr,
+                         RERAISED_EXCEPTIONS, plural_or_not as s,
                          secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
@@ -82,7 +83,7 @@ class _BuiltInBase(object):
         return matcher.match(string)
 
     def _is_true(self, condition):
-        if isinstance(condition, basestring):
+        if is_string(condition):
             condition = self.evaluate(condition, modules='os,sys')
         return bool(condition)
 
@@ -92,7 +93,7 @@ class _BuiltInBase(object):
 
     def _get_type(self, arg):
         # In IronPython type(u'x') is str. We want to report unicode anyway.
-        if isinstance(arg, unicode):
+        if is_unicode(arg):
             return "<type 'unicode'>"
         return str(type(arg))
 
@@ -149,7 +150,7 @@ class _Converter(_BuiltInBase):
         return item
 
     def _get_base(self, item, base):
-        if not isinstance(item, basestring):
+        if not is_string(item):
             return item, base
         item = normalize(item)
         if item.startswith(('-', '+')):
@@ -323,7 +324,7 @@ class _Converter(_BuiltInBase):
         using Python's ``bool()`` method.
         """
         self._log_types(item)
-        if isinstance(item, basestring):
+        if is_string(item):
             if item.upper() == 'TRUE':
                 return True
             if item.upper() == 'FALSE':
@@ -395,9 +396,9 @@ class _Converter(_BuiltInBase):
                            % (type, original))
 
     def _get_ordinals_from_int(self, input):
-        if isinstance(input, basestring):
+        if is_string(input):
             input = input.split()
-        elif isinstance(input, (int, long)):
+        elif is_integer(input):
             input = [input]
         for integer in input:
             ordinal = self._convert_to_integer(integer)
@@ -414,7 +415,7 @@ class _Converter(_BuiltInBase):
             yield self._test_ordinal(ordinal, token, 'Binary value')
 
     def _input_to_tokens(self, input, length):
-        if not isinstance(input, basestring):
+        if not is_string(input):
             return input
         input = ''.join(input.split())
         if len(input) % length != 0:
@@ -1244,7 +1245,7 @@ class _Variables(_BuiltInBase):
         `Get Variable Value` keywords.
         """
         name = self._get_var_name(name)
-        if (values and isinstance(values[-1], basestring) and
+        if (values and is_string(values[-1]) and
                 values[-1].startswith('children=')):
             children = self._variables.replace_scalar(values[-1][9:])
             children = is_truthy(children)
@@ -1335,7 +1336,7 @@ class _RunKeyword(_BuiltInBase):
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
-        if not isinstance(name, basestring):
+        if not is_string(name):
             raise RuntimeError('Keyword name must be string.')
         kw = Keyword(name, args=args)
         return kw.run(self._context)
@@ -2640,7 +2641,7 @@ class _Misc(_BuiltInBase):
         namespace = self._create_evaluation_namespace(namespace, modules)
         variables = self._decorate_variables_for_evaluation(variables)
         try:
-            if not isinstance(expression, basestring):
+            if not is_string(expression):
                 raise TypeError("Expression must be string, got %s."
                                 % type_name(expression))
             if not expression:
@@ -2770,7 +2771,7 @@ class _Misc(_BuiltInBase):
         self.log('Set test message to:\n%s' % message, level)
 
     def _get_possibly_appended_value(self, initial, new, append):
-        if not isinstance(new, unicode):
+        if not is_unicode(new):
             new = unic(new)
         if is_truthy(append) and initial:
             return '%s %s' % (initial, new)
@@ -2845,7 +2846,7 @@ class _Misc(_BuiltInBase):
         added in 2.7.7.
         """
         top = is_truthy(top)
-        if not isinstance(name, unicode):
+        if not is_unicode(name):
             name = unic(name)
         metadata = self._get_namespace(top).suite.metadata
         original = metadata.get(name, '')

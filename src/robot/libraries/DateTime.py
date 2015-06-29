@@ -298,8 +298,9 @@ import time
 import re
 
 from robot.version import get_version
-from robot.utils import (elapsed_time_to_string, is_falsy, secs_to_timestr,
-                         timestr_to_secs, type_name, IRONPYTHON)
+from robot.utils import (elapsed_time_to_string, is_falsy, is_number,
+                         is_string, secs_to_timestr, timestr_to_secs,
+                         type_name, IRONPYTHON)
 
 __version__ = get_version()
 __all__ = ['convert_time', 'convert_date', 'subtract_date_from_date',
@@ -509,11 +510,11 @@ class Date(object):
         self.seconds = self._convert_date_to_seconds(date, input_format)
 
     def _convert_date_to_seconds(self, date, input_format):
-        if isinstance(date, basestring):
+        if is_string(date):
             return self._string_to_epoch(date, input_format)
         elif isinstance(date, datetime):
             return self._mktime_with_millis(date)
-        elif isinstance(date, (int, long, float)):
+        elif is_number(date):
             return float(date)
         raise ValueError("Unsupported input '%s'." % date)
 

@@ -12,10 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from .robottypes import is_integer, is_string
+
 
 def frange(*args):
     """Like ``range()`` but accepts float arguments."""
-    if all(isinstance(arg, (int, long)) for arg in args):
+    if all(is_integer(arg) for arg in args):
         return range(*args)
     start, stop, step = _get_start_stop_step(args)
     digits = max(_digits(start), _digits(stop), _digits(step))
@@ -36,7 +38,7 @@ def _get_start_stop_step(args):
 
 
 def _digits(number):
-    if not isinstance(number, str):
+    if not is_string(number):
         number = repr(number)
     if 'e' in number:
         return _digits_with_exponent(number)

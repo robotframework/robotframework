@@ -12,9 +12,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
+PY3 = sys.version_info[0] == 3
+
+from .platform import IRONPYTHON
 from collections import Mapping
-from UserDict import UserDict
-from UserString import UserString
+if PY3:
+    from collections import UserList, UserDict, UserString
+else:
+    from UserList import UserList
+    from UserDict import UserDict
+    from UserString import UserString, MutableString
+if PY3:
+    long = int
+    bytes = bytes
+    unicode = str
+else:
+    long = long
+    bytes = str if not IRONPYTHON else bytes
+    unicode = unicode
 try:
     from java.lang import String
 except ImportError:
@@ -31,6 +48,50 @@ def type_name(item):
 
 def is_str_like(item):
     return isinstance(item, (basestring, UserString, String))
+
+
+if PY3:
+    _integer = int
+    _number = int, float
+    _bytes = bytes
+    _bytes_like = bytes, bytearray
+    _string = str
+    _string_like = str, UserString
+else:
+    _integer = int, long
+    _number = int, long, float
+    _bytes = str
+    _bytes_like = str, bytearray, UserString, MutableString, String
+    _string = basestring
+    _string_like = basestring, UserString, MutableString, String
+
+
+def is_integer(item):
+    return isinstance(item, _integer)
+
+def is_number(item):
+    return isinstance(item, _number)
+
+def is_bytes(item):
+    return isinstance(item, _bytes)
+
+def is_bytes_like(item):
+    return isinstance(item, _bytes_like)
+
+def is_string(item):
+    return isinstance(item, _string)
+
+def is_string_like(item):
+    return isinstance(item, _string_like)
+
+if PY3:
+    is_unicode = is_string
+    is_unicode_like = is_string_like
+else:
+    def is_unicode(item):
+        return isinstance(item, unicode)
+
+    is_unicode_like = is_unicode
 
 
 def is_list_like(item):

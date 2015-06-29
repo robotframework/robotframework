@@ -26,6 +26,7 @@ from robot.version import get_full_version
 from .misc import plural_or_not
 from .encoding import decode_output, decode_from_system
 from .utf8reader import Utf8Reader
+from .robottypes import is_string
 
 
 ESCAPES = dict(
@@ -288,7 +289,7 @@ class ArgumentParser(object):
             self._raise_option_multiple_times_in_usage('--' + opt)
 
     def _get_pythonpath(self, paths):
-        if isinstance(paths, basestring):
+        if is_string(paths):
             paths = [paths]
         temp = []
         for path in self._split_pythonpath(paths):

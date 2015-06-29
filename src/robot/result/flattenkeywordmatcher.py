@@ -14,7 +14,7 @@
 
 from robot.errors import DataError
 from robot.model import TagPatterns
-from robot.utils import MultiMatcher
+from robot.utils import MultiMatcher, is_list_like
 
 
 def validate_flatten_keyword(options):
@@ -30,7 +30,7 @@ def validate_flatten_keyword(options):
 class FlattenByTypeMatcher(object):
 
     def __init__(self, flatten):
-        if isinstance(flatten, basestring):
+        if not is_list_like(flatten):
             flatten = [flatten]
         flatten = [f.lower() for f in flatten]
         self._types = [f for f in flatten if f in ('for', 'foritem')]
@@ -45,7 +45,7 @@ class FlattenByTypeMatcher(object):
 class FlattenByNameMatcher(object):
 
     def __init__(self, flatten):
-        if isinstance(flatten, basestring):
+        if not is_list_like(flatten):
             flatten = [flatten]
         names = [n[5:] for n in flatten if n[:5].lower() == 'name:']
         self._matcher = MultiMatcher(names)
@@ -61,7 +61,7 @@ class FlattenByNameMatcher(object):
 class FlattenByTagMatcher(object):
 
     def __init__(self, flatten):
-        if isinstance(flatten, basestring):
+        if not is_list_like(flatten):
             flatten = [flatten]
         patterns = [p[4:] for p in flatten if p[:4].lower() == 'tag:']
         self._matcher = TagPatterns(patterns)

@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot import utils
+from robot.utils import is_string
 from robot import model
 
 
@@ -44,7 +45,7 @@ class SuiteConfigurer(model.SuiteConfigurer):
     def _get_remove_keywords(self, value):
         if value is None:
             return []
-        if isinstance(value, basestring):
+        if is_string(value):
             return [value]
         return value
 

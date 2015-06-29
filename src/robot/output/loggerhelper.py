@@ -15,6 +15,7 @@
 from robot import utils
 from robot.errors import DataError
 from robot.model import Message as BaseMessage
+from robot.utils import is_unicode
 
 
 LEVELS = {
@@ -77,7 +78,7 @@ class Message(BaseMessage):
     def _normalize_message(self, msg):
         if callable(msg):
             return msg
-        if not isinstance(msg, unicode):
+        if not is_unicode(msg):
             msg = utils.unic(msg)
         if '\r\n' in msg:
             msg = msg.replace('\r\n', '\n')

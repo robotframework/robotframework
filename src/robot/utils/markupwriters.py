@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from .markuputils import html_escape, xml_escape, attribute_escape
+from .robottypes import is_string
 
 
 class _MarkupWriter(object):
@@ -28,7 +29,7 @@ class _MarkupWriter(object):
             output file. If `None`, text will not be encoded.
         :param write_empty: Whether to write empty elements and attributes.
         """
-        if isinstance(output, basestring):
+        if is_string(output):
             output = open(output, 'w')
         self.output = output
         self._line_separator = line_separator

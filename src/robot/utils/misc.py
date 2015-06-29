@@ -17,6 +17,7 @@ import sys
 
 from .unic import unic
 from .platform import IRONPYTHON
+from .robottypes import is_integer, is_unicode
 
 
 def printable_name(string, code_style=False):
@@ -73,7 +74,7 @@ def _isWordBoundary(prev, char, next):
 
 
 def plural_or_not(item):
-    count = item if isinstance(item, (int, long)) else len(item)
+    count = item if is_integer(item) else len(item)
     return '' if count == 1 else 's'
 
 
@@ -98,7 +99,7 @@ def seq2str2(sequence):
 
 def getdoc(item):
     doc = inspect.getdoc(item) or u''
-    if isinstance(doc, unicode):
+    if is_unicode(doc):
         return doc
     try:
         return doc.decode('UTF-8')

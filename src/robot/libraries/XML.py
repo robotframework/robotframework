@@ -22,7 +22,8 @@ except ImportError:
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import asserts, ET, ETSource, is_truthy, plural_or_not as s
+from robot.utils import (asserts, ET, ETSource, is_string, is_truthy,
+                         plural_or_not as s)
 from robot.version import get_version
 
 
@@ -546,7 +547,7 @@ class XML(object):
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
         """
-        if isinstance(source, basestring):
+        if is_string(source):
             source = self.parse_xml(source)
         finder = ElementFinder(self.etree, self.modern_etree, self.lxml_etree)
         return finder.find_all(source, xpath)

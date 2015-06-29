@@ -13,12 +13,13 @@
 #  limitations under the License.
 
 from robot.errors import DataError
+from robot.utils import is_string
 
 from .splitter import VariableIterator
 
 
 def is_var(string, identifiers='$@&'):
-    if not isinstance(string, basestring):
+    if not is_string(string):
         return False
     length = len(string)
     return (length > 3 and
@@ -40,7 +41,7 @@ def is_dict_var(string):
 
 
 def contains_var(string, identifiers='$@&'):
-    return (isinstance(string, basestring) and
+    return (is_string(string) and
             any(i in string for i in identifiers) and
             '{' in string and '}' in string and
             bool(VariableIterator(string, identifiers)))
