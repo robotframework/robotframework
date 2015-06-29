@@ -12,8 +12,7 @@ try:
 except ImportError:
     pass
 
-from robot.utils import (is_dict_like, is_list_like, is_str_like, type_name,
-                         JYTHON)
+from robot.utils import is_dict_like, is_list_like, type_name, JYTHON
 from robot.utils.asserts import assert_equals
 
 
@@ -84,23 +83,6 @@ class TestDictLike(unittest.TestCase):
         def test_java_maps(self):
             assert_equals(is_dict_like(HashMap()), True)
             assert_equals(is_dict_like(Hashtable()), True)
-
-
-class TestStringLike(unittest.TestCase):
-
-    def test_string_likes(self):
-        for thing in ['', 'a', u'\xe4', UserString('us'), MutableString('ms')]:
-            assert_equals(is_str_like(thing), True, thing)
-
-    def test_others(self):
-        for thing in [1, None, True, object(), [], (), {}]:
-            assert_equals(is_str_like(thing), False, thing)
-
-    if JYTHON:
-
-        def test_java_string(self):
-            assert_equals(is_str_like(String()), True)
-            assert_equals(is_str_like(String('xxx')), True)
 
 
 class TestTypeName(unittest.TestCase):

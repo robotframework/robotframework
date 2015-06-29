@@ -12,90 +12,37 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-
-PY3 = sys.version_info[0] == 3
-
-from .platform import IRONPYTHON
 from collections import Mapping
-if PY3:
-    from collections import UserList, UserDict, UserString
-else:
-    from UserList import UserList
-    from UserDict import UserDict
-    from UserString import UserString, MutableString
-if PY3:
-    long = int
-    bytes = bytes
-    unicode = str
-else:
-    long = long
-    bytes = str if not IRONPYTHON else bytes
-    unicode = unicode
+from UserDict import UserDict
+from UserString import UserString
 try:
     from java.lang import String
 except ImportError:
     String = ()
 
 
-def type_name(item):
-    cls = item.__class__ if hasattr(item, '__class__') else type(item)
-    named_types = {str: 'string', unicode: 'string', bool: 'boolean',
-                   int: 'integer', long: 'integer', type(None): 'None',
-                   dict: 'dictionary'}
-    return named_types.get(cls, cls.__name__)
-
-
-def is_str_like(item):
-    return isinstance(item, (basestring, UserString, String))
-
-
-if PY3:
-    _integer = int
-    _number = int, float
-    _bytes = bytes
-    _bytes_like = bytes, bytearray
-    _string = str
-    _string_like = str, UserString
-else:
-    _integer = int, long
-    _number = int, long, float
-    _bytes = str
-    _bytes_like = str, bytearray, UserString, MutableString, String
-    _string = basestring
-    _string_like = basestring, UserString, MutableString, String
-
-
 def is_integer(item):
-    return isinstance(item, _integer)
+    return isinstance(item, (int, long))
+
 
 def is_number(item):
-    return isinstance(item, _number)
+    return isinstance(item, (int, long, float))
+
 
 def is_bytes(item):
-    return isinstance(item, _bytes)
+    return isinstance(item, str)
 
-def is_bytes_like(item):
-    return isinstance(item, _bytes_like)
 
 def is_string(item):
-    return isinstance(item, _string)
+    return isinstance(item, basestring)
 
-def is_string_like(item):
-    return isinstance(item, _string_like)
 
-if PY3:
-    is_unicode = is_string
-    is_unicode_like = is_string_like
-else:
-    def is_unicode(item):
-        return isinstance(item, unicode)
-
-    is_unicode_like = is_unicode
+def is_unicode(item):
+    return isinstance(item, unicode)
 
 
 def is_list_like(item):
-    if is_str_like(item):
+    if isinstance(item, (basestring, UserString, String)):
         return False
     try:
         iter(item)
@@ -117,3 +64,11 @@ def is_truthy(item):
 
 def is_falsy(item):
     return not is_truthy(item)
+
+
+def type_name(item):
+    cls = item.__class__ if hasattr(item, '__class__') else type(item)
+    named_types = {str: 'string', unicode: 'string', bool: 'boolean',
+                   int: 'integer', long: 'integer', type(None): 'None',
+                   dict: 'dictionary'}
+    return named_types.get(cls, cls.__name__)
