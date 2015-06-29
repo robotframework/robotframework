@@ -17,8 +17,8 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           HandlerExecutionFailed)
 from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import (ErrorDetails, format_assign_message, frange,
-                         get_error_message, get_timestamp, is_number,
-                         plural_or_not as s, type_name)
+                         get_error_message, get_timestamp, is_list_like,
+                         is_number, plural_or_not as s, type_name)
 from robot.variables import is_scalar_var, VariableAssigner
 
 
@@ -47,7 +47,7 @@ class KeywordRunner(object):
 
     def run_keyword(self, kw, name=None):
         if kw.type == kw.FOR_LOOP_TYPE:
-            runner = ForLoopRunner(self._context, self._templated)
+            runner = ForRunner(self._context, self._templated, kw.flavor)
         else:
             runner = NormalRunner(self._context)
         return runner.run(kw, name=name)
@@ -114,8 +114,21 @@ class NormalRunner(object):
         return failure
 
 
-class ForLoopRunner(object):
+def ForRunner(context, templated=False, flavor='IN'):
+    for_loop_flavors = dict(
+            IN=ForInRunner,
+            INRANGE=ForInRangeRunner,
+            INZIP=ForInZipRunner,
+            INENUMERATE=ForInEnumerateRunner,
+            )
+    flavor_key = flavor.upper().replace(' ', '')
+    if flavor_key in for_loop_flavors:
+        runner_class = for_loop_flavors[flavor_key]
+        return runner_class(context, templated)
+    return InvalidForRunner(context, flavor_key, flavor, for_loop_flavors.keys())
 
+
+class ForInRunner(object):
     def __init__(self, context, templated=False):
         self._context = context
         self._templated = templated
@@ -130,8 +143,11 @@ class ForLoopRunner(object):
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.variables),
-                                 'IN' if not data.range else 'IN RANGE',
+                                 self._flavor_name(),
                                  ' | '.join(data.values))
+
+    def _flavor_name(self):
+        return 'IN'
 
     def _validate(self, data):
         if not data.variables:
@@ -172,7 +188,7 @@ class ForLoopRunner(object):
     def _get_values_for_one_round(self, data):
         if not self._context.dry_run:
             values = self._replace_variables(data)
-            var_count = len(data.variables)
+            var_count = self._original_values_per_iteration(data.variables)
             for i in range(0, len(values), var_count):
                 yield values[i:i+var_count]
         else:
@@ -180,19 +196,54 @@ class ForLoopRunner(object):
 
     def _replace_variables(self, data):
         values = self._context.variables.replace_list(data.values)
-        if data.range:
-            values = self._get_range_items(values)
-        if len(values) % len(data.variables) == 0:
+        values = self._transform_items(values)
+        values_per_iteration = self._original_values_per_iteration(data.variables)
+        if len(values) % values_per_iteration == 0:
             return values
-        raise DataError('Number of FOR loop values should be multiple of '
-                        'variables. Got %d variables but %d value%s.'
-                        % (len(data.variables), len(values), s(values)))
+        raise DataError(self._replace_variables_error_message(data, values))
 
-    def _get_range_items(self, items):
+    def _replace_variables_error_message(self, data, values):
+        return ('Number of FOR loop values should be multiple of '
+                'its variables. Got %d variables but %d value%s.'
+                % (len(data.variables), len(values), s(values)))
+
+    def _run_one_round(self, data, values):
+        name = ', '.join(format_assign_message(var, item)
+                         for var, item in zip(data.variables, values))
+        result = KeywordResult(kwname=name,
+                               type=data.FOR_ITEM_TYPE)
+        for var, value in zip(data.variables, values):
+            self._context.variables[var] = value
+        runner = KeywordRunner(self._context, self._templated)
+        with StatusReporter(self._context, result):
+            runner.run_keywords(data.keywords)
+
+    def _transform_items(self, items):
+        return items
+
+    def _original_values_per_iteration(self, values):
+        """
+        The number of values per iteration;
+        used to check if we have (a multiple of this) values.
+
+        This is its own method to support loops like ForInEnumerate
+        which add/remove items to the pool.
+        """
+        return len(values)
+
+
+class ForInRangeRunner(ForInRunner):
+    def __init__(self, context, templated=False):
+        super(ForInRangeRunner, self).__init__(context, templated)
+
+    def _flavor_name(self):
+        return 'IN RANGE'
+
+    def _transform_items(self, items):
         try:
             items = [self._to_number_with_arithmetics(item) for item in items]
         except:
-            raise DataError('Converting argument of FOR IN RANGE failed: %s'
+            raise DataError('Converting argument of FOR IN RANGE failed: %s.'
                             % get_error_message())
         if not 1 <= len(items) <= 3:
             raise DataError('FOR IN RANGE expected 1-3 arguments, got %d.'
@@ -207,16 +258,79 @@ class ForLoopRunner(object):
             raise TypeError("Expected number, got %s." % type_name(item))
         return number
 
-    def _run_one_round(self, data, values):
-        name = ', '.join(format_assign_message(var, item)
-                         for var, item in zip(data.variables, values))
-        result = KeywordResult(kwname=name,
-                               type=data.FOR_ITEM_TYPE)
-        for var, value in zip(data.variables, values):
-            self._context.variables[var] = value
-        runner = KeywordRunner(self._context, self._templated)
-        with StatusReporter(self._context, result):
-            runner.run_keywords(data.keywords)
+
+class ForInZipRunner(ForInRunner):
+    def __init__(self, context, templated=False):
+        super(ForInZipRunner, self).__init__(context, templated)
+
+    def _flavor_name(self):
+        return 'IN ZIP'
+
+    def _replace_variables(self, data):
+        values = super(ForInZipRunner, self)._replace_variables(data)
+        if len(data.variables) == len(data.values):
+            return values
+        raise DataError('FOR IN ZIP expects an equal number of variables and'
+                + ' iterables. Got %d variable%s and %d iterable%s.'
+                % (len(data.variables), s(data.variables),
+                    len(data.values), s(data.values)))
+
+    def _transform_items(self, items):
+        answer = list()
+        for item in items:
+            if not is_list_like(item):
+                # Usually one would expect validation to happen in _validate(),
+                # but this particular validation relies on information that is
+                # not available to _validate().
+                raise DataError("FOR IN ZIP items must all be list-like, got %s."
+                    % type_name(item))
+        for zipped_item in zip(*[list(item) for item in items]):
+            answer.extend(zipped_item)
+        return answer
+
+
+class ForInEnumerateRunner(ForInRunner):
+    def __init__(self, context, templated=False):
+        super(ForInEnumerateRunner, self).__init__(context, templated)
+
+    def _flavor_name(self):
+        return 'IN ENUMERATE'
+
+    def _original_values_per_iteration(self, values):
+        if len(values) < 2:
+            raise DataError('FOR IN ENUMERATE expected 2 or more loop variables, got %d.'
+                    % len(values))
+        return len(values) - 1
+
+    def _get_values_for_one_round(self, data):
+        for idx, values in enumerate(super(ForInEnumerateRunner, self)
+                ._get_values_for_one_round(data)):
+            yield [idx] + values
+
+    def _replace_variables_error_message(self, data, values):
+        return ('Number of FOR IN ENUMERATE loop values (excluding the counter)'
+                + ' should be multiple of its variables.'
+                + ' Got %d non-counting variable%s but %d value%s.'
+                % (len(data.variables), s(data.variables),
+                    len(values), s(values)))
+
+
+class InvalidForRunner(ForInRunner):
+    """Used to send an error from ForRunner() if it sees an unexpected error.
+
+    We can't simply throw a DataError from ForRunner() because that happens
+    outside the "with StatusReporter(...)" blocks.
+    """
+    def __init__(self, context, flavor, pretty_flavor, expected):
+        super(InvalidForRunner, self).__init__(context, False)
+        self.flavor = flavor
+        self.pretty_flavor = pretty_flavor
+        self.expected = repr(sorted(expected))
+
+    def _run(self, data, *args, **kwargs):
+        raise DataError(
+            "Invalid FOR loop type '%s'." % self.pretty_flavor
+            + " Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.")
 
 
 class StatusReporter(object):

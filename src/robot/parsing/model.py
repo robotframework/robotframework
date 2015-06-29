@@ -598,20 +598,32 @@ class UserKeyword(TestCase):
 
 
 class ForLoop(_WithSteps):
+    """The parsed representation of a for-loop.
+
+    :param list declaration: The literal cell values that declare the loop
+                             (excluding ":FOR").
+    :param str comment: A comment, default None.
+    :ivar str flavor: The value of the 'IN' item, uppercased.
+                      Typically 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
+    :ivar list vars: Variables set per-iteration by this loop.
+    :ivar list items: Loop values that come after the 'IN' item.
+    :ivar str comment: A comment, or None.
+    :ivar list steps: A list of steps in the loop.
+    """
 
     def __init__(self, declaration, comment=None):
-        self.range, index = self._get_range_and_index(declaration)
+        self.flavor, index = self._get_flavors_and_index(declaration)
         self.vars = declaration[:index]
         self.items = declaration[index+1:]
         self.comment = Comment(comment)
         self.steps = []
 
-    def _get_range_and_index(self, declaration):
+    def _get_flavors_and_index(self, declaration):
         for index, item in enumerate(declaration):
-            item = item.upper().replace(' ', '')
-            if item in ['IN', 'INRANGE']:
-                return item == 'INRANGE', index
-        return False, len(declaration)
+            item = item.upper()
+            if item.replace(' ', '').startswith('IN'):
+                return item, index
+        return 'IN', len(declaration)
 
     def is_comment(self):
         return False
@@ -620,9 +632,8 @@ class ForLoop(_WithSteps):
         return True
 
     def as_list(self, indent=False, include_comment=True):
-        IN = ['IN RANGE' if self.range else 'IN']
         comments = self.comment.as_list() if include_comment else []
-        return  [': FOR'] + self.vars + IN + self.items + comments
+        return  [': FOR'] + self.vars + [self.flavor] + self.items + comments
 
     def __iter__(self):
         return iter(self.steps)

@@ -349,9 +349,11 @@ class TestForLoop(unittest.TestCase):
         self._test(['whatever', 'here'], ['whatever', 'here'], [])
 
     def test_in_range(self):
-        self._test(['${i}', 'IN RANGE', '100'], ['${i}'], ['100'], range=True)
+        self._test(['${i}', 'IN RANGE', '100'], ['${i}'], ['100'],
+                flavor='IN RANGE')
         self._test(['what', 'ever', 'in range', 'IN', 'whatever'],
-                   ['what', 'ever'], ['IN', 'whatever'], range=True)
+                   ['what', 'ever'], ['IN', 'whatever'],
+                   flavor='IN RANGE')
 
     def test_representation(self):
         assert_equals(ForLoop(['${var}', 'IN', 'value1', 'value2']).as_list(),
@@ -359,11 +361,16 @@ class TestForLoop(unittest.TestCase):
         assert_equals(ForLoop(['${v2}', '${v2}', 'IN RANGE', '100']).as_list(),
                       [': FOR', '${v2}', '${v2}', 'IN RANGE', '100'])
 
-    def _test(self, content, vars, items, range=False):
+    def test_in_zip(self):
+        self._test(['${i}', '${item}', 'in zip', '${list1}', '${list2}'],
+                   ['${i}', '${item}'], ['${list1}', '${list2}'],
+                   flavor='IN ZIP')
+
+    def _test(self, content, vars, items, flavor='IN'):
         loop = ForLoop(content)
         assert_equal(loop.vars, vars)
         assert_equal(loop.items, items)
-        assert_equal(loop.range, range)
+        assert_equal(loop.flavor, flavor)
 
 
 class TestSettings(unittest.TestCase):
