@@ -220,7 +220,7 @@ class KeywordStore(object):
 
     def get_library(self, name_or_instance):
         try:
-            if isinstance(name_or_instance, basestring):
+            if is_string(name_or_instance):
                 return self.libraries[name_or_instance.replace(' ', '')]
             else:
                 return self._get_lib_by_instance(name_or_instance)

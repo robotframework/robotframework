@@ -17,8 +17,8 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           HandlerExecutionFailed)
 from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import (ErrorDetails, format_assign_message, frange,
-                         get_error_message, get_timestamp, plural_or_not as s,
-                         type_name)
+                         get_error_message, get_timestamp, is_number,
+                         plural_or_not as s, type_name)
 from robot.variables import is_scalar_var, VariableAssigner
 
 
@@ -200,10 +200,10 @@ class ForLoopRunner(object):
         return frange(*items)
 
     def _to_number_with_arithmetics(self, item):
-        if isinstance(item, (int, long, float)):
+        if is_number(item):
             return item
         number = eval(str(item), {})
-        if not isinstance(number, (int, long, float)):
+        if not is_number(number):
             raise TypeError("Expected number, got %s." % type_name(item))
         return number
 

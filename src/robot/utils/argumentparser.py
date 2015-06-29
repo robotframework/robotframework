@@ -26,7 +26,7 @@ from robot.version import get_full_version
 from .misc import plural_or_not
 from .encoding import decode_output, decode_from_system
 from .utf8reader import Utf8Reader
-from .robottypes import is_string
+from .robottypes import is_integer, is_list_like, is_string
 
 
 ESCAPES = dict(
@@ -204,7 +204,7 @@ class ArgumentParser(object):
     def _unescape(self, value, escapes):
         if value in [None, True, False]:
             return value
-        if isinstance(value, list):
+        if is_list_like(value):
             return [self._unescape(item, escapes) for item in value]
         for esc_name, esc_value in escapes.items():
             if esc_name in value:
@@ -352,7 +352,7 @@ class ArgLimitValidator(object):
     def _parse_arg_limits(self, arg_limits):
         if arg_limits is None:
             return 0, sys.maxint
-        if isinstance(arg_limits, int):
+        if is_integer(arg_limits):
             return arg_limits, arg_limits
         if len(arg_limits) == 1:
             return arg_limits[0], sys.maxint

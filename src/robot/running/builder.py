@@ -15,7 +15,7 @@
 from robot.errors import DataError
 from robot.parsing import TestData, ResourceFile as ResourceData
 from robot.running.defaults import TestDefaults
-from robot.utils import abspath
+from robot.utils import abspath, is_string
 from robot.variables import VariableIterator
 
 from .model import ForLoop, ResourceFile, TestSuite
@@ -121,7 +121,7 @@ class ResourceFileBuilder(object):
         return target
 
     def _import_resource_if_needed(self, path_or_data):
-        if not isinstance(path_or_data, basestring):
+        if not is_string(path_or_data):
             return path_or_data, path_or_data.source
         return ResourceData(path_or_data).populate(), path_or_data
 

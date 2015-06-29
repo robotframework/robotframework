@@ -15,9 +15,10 @@
 import inspect
 import os.path
 
-from robot import utils
 from robot.errors import DataError
-from robot.model import Tags
+from robot.utils import (get_error_details, is_string, is_list_like,
+                         is_dict_like, split_args_from_name_or_path,
+                         type_name, Importer)
 
 from .loggerhelper import AbstractLoggerProxy
 from .logger import LOGGER
@@ -68,8 +69,8 @@ class Listeners(object):
             try:
                 listeners.append(ListenerProxy(listener))
             except DataError as err:
-                if not isinstance(listener, basestring):
-                    listener = utils.type_name(listener)
+                if not is_string(listener):
+                    listener = type_name(listener)
                 LOGGER.error("Taking listener '%s' into use failed: %s"
                              % (listener, unicode(err)))
         return listeners
@@ -209,9 +210,9 @@ class Listeners(object):
         return self._take_copy_of_mutable_value(value)
 
     def _take_copy_of_mutable_value(self, value):
-        if isinstance(value, (dict, utils.NormalizedDict)):
+        if is_dict_like(value):
             return dict(value)
-        if isinstance(value, (list, tuple, Tags)):
+        if is_list_like(value):
             return list(value)
         return value
 
@@ -223,11 +224,11 @@ class ListenerProxy(AbstractLoggerProxy):
                 'xunit_file', 'close']
 
     def __init__(self, listener):
-        if isinstance(listener, basestring):
-            name, args = utils.split_args_from_name_or_path(listener)
+        if is_string(listener):
+            name, args = split_args_from_name_or_path(listener)
             listener = self._import_listener(name, args)
         else:
-            name = utils.type_name(listener)
+            name = type_name(listener)
         AbstractLoggerProxy.__init__(self, listener)
         self.name = name
         self.version = self._get_version(listener)
@@ -236,7 +237,7 @@ class ListenerProxy(AbstractLoggerProxy):
                         "Switch to API version 2 instead." % self.name)
 
     def _import_listener(self, name, args):
-        importer = utils.Importer('listener')
+        importer = Importer('listener')
         return importer.import_class_or_module(os.path.normpath(name),
                                                instantiate_with_args=args)
 
@@ -250,7 +251,7 @@ class ListenerProxy(AbstractLoggerProxy):
         try:
             method(*args)
         except:
-            message, details = utils.get_error_details()
+            message, details = get_error_details()
             LOGGER.error("Calling listener method '%s' of listener '%s' "
                          "failed: %s" % (method.__name__, self.name, message))
             LOGGER.info("Details:\n%s" % details)

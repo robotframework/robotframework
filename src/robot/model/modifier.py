@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import (get_error_details, split_args_from_name_or_path,
-                         type_name, Importer)
+from robot.utils import (get_error_details, is_string,
+                         split_args_from_name_or_path, type_name, Importer)
 
 from .visitor import SuiteVisitor
 
@@ -42,7 +42,7 @@ class ModelModifier(SuiteVisitor):
         importer = Importer('model modifier')
         for visitor in visitors:
             try:
-                if not isinstance(visitor, basestring):
+                if not is_string(visitor):
                     yield visitor
                 else:
                     name, args = split_args_from_name_or_path(visitor)

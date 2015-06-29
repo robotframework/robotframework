@@ -25,8 +25,8 @@ except ImportError:   # No expat in IronPython 2.7
         pass
 
 from robot.errors import RemoteError
-from robot.utils import (is_list_like, is_dict_like, timestr_to_secs, unic,
-                         is_number, is_string, DotDict, IRONPYTHON)
+from robot.utils import (is_bytes, is_dict_like, is_list_like, is_number,
+                         is_string, timestr_to_secs, unic, DotDict, IRONPYTHON)
 
 
 class Remote(object):
@@ -115,7 +115,7 @@ class ArgumentCoercer(object):
 
     def _contains_binary(self, arg):
         return (self.binary.search(arg) or
-                isinstance(arg, str) and not IRONPYTHON and
+                is_bytes(arg) and not IRONPYTHON and
                 self.non_ascii.search(arg))
 
     def _handle_binary(self, arg):
