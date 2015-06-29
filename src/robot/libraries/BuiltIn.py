@@ -12,9 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import __builtin__
 import re
 import time
+import token
+from tokenize import generate_tokens, untokenize
+from StringIO import StringIO
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -25,12 +27,13 @@ from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (asserts, DotDict, escape, format_assign_message,
                          get_error_message, get_time, is_falsy, is_truthy,
-                         JYTHON, Matcher, normalize, parse_time, prepr,
-                         RERAISED_EXCEPTIONS, plural_or_not as s,
+                         JYTHON, Matcher, normalize, NormalizedDict, parse_time,
+                         prepr, RERAISED_EXCEPTIONS, plural_or_not as s,
                          secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
-                             VariableTableValue, VariableSplitter)
+                             VariableTableValue, VariableSplitter,
+                             variable_not_found)
 from robot.version import get_version
 
 if JYTHON:
@@ -2632,13 +2635,10 @@ class _Misc(_BuiltInBase):
         Support for ``namespace`` is new in Robot Framework 2.8.4 and
         variables without decoration in the evaluation namespace in 2.9.
         """
-        namespace = dict(namespace) if namespace else {}
-        modules = modules.replace(' ', '').split(',') if modules else []
-        namespace.update((m, __import__(m)) for m in modules if m)
         variables = self._variables.as_dict(decoration=False)
-        for key in dir(__builtin__) + list(namespace):
-            if key in variables:
-                variables.pop(key)
+        expression = self._handle_variables_in_expression(expression, variables)
+        namespace = self._create_evaluation_namespace(namespace, modules)
+        variables = self._decorate_variables_for_evaluation(variables)
         try:
             if not isinstance(expression, basestring):
                 raise TypeError("Expression must be string, got %s."
@@ -2649,6 +2649,40 @@ class _Misc(_BuiltInBase):
         except:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
                                % (expression, get_error_message()))
+
+    def _handle_variables_in_expression(self, expression, variables):
+        tokens = []
+        variable_started = seen_variable = False
+        generated = generate_tokens(StringIO(expression).readline)
+        for toknum, tokval, _, _, _ in generated:
+            if variable_started:
+                if toknum == token.NAME:
+                    if tokval not in variables:
+                        variable_not_found('$%s' % tokval, variables,
+                                           deco_braces=False)
+                    tokval = 'RF_VAR_' + tokval
+                    seen_variable = True
+                else:
+                    tokens.append((token.ERRORTOKEN, '$'))
+                variable_started = False
+            if toknum == token.ERRORTOKEN and tokval == '$':
+                variable_started = True
+            else:
+                tokens.append((toknum, tokval))
+        if seen_variable:
+            return untokenize(tokens).strip()
+        return expression
+
+    def _create_evaluation_namespace(self, namespace, modules):
+        namespace = dict(namespace or {})
+        modules = modules.replace(' ', '').split(',') if modules else []
+        namespace.update((m, __import__(m)) for m in modules if m)
+        return namespace
+
+    def _decorate_variables_for_evaluation(self, variables):
+        decorated = [('RF_VAR_' + name, value)
+                     for name, value in variables.items()]
+        return NormalizedDict(decorated, ignore='_')
 
     def call_method(self, object, method_name, *args, **kwargs):
         """Calls the named method of the given object with the provided arguments.
