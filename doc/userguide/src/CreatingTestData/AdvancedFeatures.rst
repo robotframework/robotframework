@@ -246,10 +246,10 @@ Normal for loop
 ~~~~~~~~~~~~~~~
 
 In a normal for loop, one variable is assigned from a list of values,
-one value per iteration. The syntax starts with :name:`:FOR`, where
+one value per iteration. The syntax starts with `:FOR`, where
 colon is required to separate the syntax from normal keywords. The
 next cell contains the loop variable, the subsequent cell must have
-:name:`IN`, and the final cells contain values over which to iterate.
+`IN`, and the final cells contain values over which to iterate.
 These values can contain variables_, including `list variables`_.
 
 The keywords used in the for loop are on the next rows and they must
@@ -315,7 +315,7 @@ Using several loop variables
 
 It is also possible to use several loop variables. The syntax is the
 same as with the normal for loop, but all loop variables are listed in
-the cells between :name:`:FOR` and :name:`IN`. There can be any number of loop
+the cells between `:FOR` and `IN`. There can be any number of loop
 variables, but the number of values must be evenly dividable by the number of
 variables.
 
@@ -338,8 +338,8 @@ them below the loop variables, as in the first loop of the example below:
    \                      Create       ${name}     ${id}
    ===========  ========  ===========  ==========  ==========  ============
 
-For in range
-~~~~~~~~~~~~
+For-in-range loop
+~~~~~~~~~~~~~~~~~
 
 Earlier for loops always iterated over a sequence, and this is also the most
 common use case. Sometimes it is still convenient to have a for loop
@@ -347,10 +347,10 @@ that is executed a certain number of times, and Robot Framework has a
 special `FOR index IN RANGE limit` syntax for this purpose. This
 syntax is derived from the similar Python idiom.
 
-Similarly as other for loops, the for in range loop starts with
-:name:`:FOR` and the loop variable is in the next cell. In this format
+Similarly as other for loops, the for-in-range loop starts with
+`:FOR` and the loop variable is in the next cell. In this format
 there can be only one loop variable and it contains the current loop
-index. The next cell must contain :name:`IN RANGE` and the subsequent
+index. The next cell must contain `IN RANGE` and the subsequent
 cells loop limits.
 
 In the simplest case, only the upper limit of the loop is
@@ -399,8 +399,8 @@ lower limit, upper limit and step.
    \                                  Log          ${index}
    ================  ===============  ===========  =========  ===========  ========  ========
 
-For in enumerate
-~~~~~~~~~~~~~~~~
+For-in-enumerate loop
+~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes it is useful to loop over a list and also keep track of your location
 inside the list.  Robot Framework has a special
@@ -408,14 +408,15 @@ inside the list.  Robot Framework has a special
 This syntax is derived from the
 `Python built-in function <https://docs.python.org/2/library/functions.html#enumerate>`_.
 
-:name:`:FOR IN ENUMERATE` loops work just like regular :name:`:FOR` loops,
-except the cell after its loop variables must say :name:`IN ENUMERATE`,
+For-in-enumerate loops work just like regular for loops,
+except the cell after its loop variables must say `IN ENUMERATE`,
 and they must have an additional index variable before any other loop-variables.
-That index variable has a value of `0` for the first loop, `1` for the second, etc.
+That index variable has a value of `0` for the first iteration, `1` for the
+second, etc.
 
 For example, the following two test cases do the same thing:
 
-.. table:: For in enumerate comparison
+.. table:: For-in-enumerate comparison
    :class: example
 
    =================  ================  ===============  =============  ===================  ========
@@ -433,11 +434,11 @@ For example, the following two test cases do the same thing:
    \                                    My Keyword       ${index}       ${item}
    =================  ================  ===============  =============  ===================  ========
 
-Just like with regular For-loops, you can loop over multiple values per loop iteration
-as long as the number of values in your list evenly is divisible by the number of
-loop-variables (excluding the first, `index` variable).
+Just like with regular for loops, you can loop over multiple values per loop
+iteration as long as the number of values in your list is evenly divisible by
+the number of loop-variables (excluding the first, index variable).
 
-.. table:: For in enumerate examples
+.. table:: For-in-enumerate with multiple values per iteration
    :class: example
 
    ================= ================ ============ ========= ========= ============= ========
@@ -451,10 +452,10 @@ loop-variables (excluding the first, `index` variable).
 
 The above test case will log `0,a,b` and `1,c,d`.
 
-For In Enumerate loops are new in Robot Framework 2.9.
+For-in-enumerate loops are new in Robot Framework 2.9.
 
-For in zip
-~~~~~~~~~~
+For-in-zip loop
+~~~~~~~~~~~~~~~
 
 Some tests build up several related lists, then loop over them together.
 Robot Framework has a shortcut for this case: `FOR ... IN ZIP ...`, which
@@ -463,7 +464,7 @@ is derived from the
 
 This may be easiest to show with an example:
 
-.. table:: For in zip examples
+.. table:: For-in-zip examples
    :class: example
 
    ================ ======================= ======================= =================== ================= =========== ========
@@ -486,17 +487,18 @@ This may be easiest to show with an example:
    \                                        Number Should Be Named  ${number}           ${name}
    ================ ======================= ======================= =================== ================= =========== ========
 
-Like `IN RANGE` and `IN ENUMERATE` loops, this type of loop requires
-the `IN` cell to read `IN ZIP`.
+Similarly as for-in-range and for-in-enumerate loops, for-in-zip loops require
+the cell after the loop variables to read `IN ZIP`.
 
-Note that any lists or other iterables appearing after `IN ZIP` should usually be
-prefixed with `$` instead of `@` because For-In-Zip needs to keep track of each
-list separately.
+Values used with for-in-zip loops must be lists or list-like objects, and
+there must be same number of loop variables as lists to loop over. Looping
+will stop when the shortest list is exhausted.
 
-`IN ZIP` loops require the same number of loop variables as lists to loop over,
-and will stop after the shortest list is complete.
+Note that any lists used with for-in-zip should usually be given as `scalar
+variables`_ like `${list}`. A `list variable`_ only works if its items
+themselves are lists.
 
-For In Zip loops are new in Robot Framework 2.9.
+For-in-zip loops are new in Robot Framework 2.9.
 
 Exiting for loop
 ~~~~~~~~~~~~~~~~
