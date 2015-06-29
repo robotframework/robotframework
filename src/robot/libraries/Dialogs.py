@@ -28,22 +28,18 @@ The library has following two limitations:
 - It cannot be used with timeouts on Python.
 """
 
-import sys
+from robot.version import get_version
+from robot.utils import IRONPYTHON, JYTHON, is_truthy
 
-if sys.platform.startswith('java'):
-    from dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
-elif sys.platform == 'cli':
-    from dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+if JYTHON:
+    from .dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+elif IRONPYTHON:
+    from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 else:
-    from dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 
-try:
-    from robot.version import get_version
-except ImportError:
-    __version__ = '<unknown>'
-else:
-    __version__ = get_version()
 
+__version__ = get_version()
 __all__ = ['execute_manual_step', 'get_value_from_user',
            'get_selection_from_user', 'pause_execution']
 
@@ -80,15 +76,22 @@ def get_value_from_user(message, default_value='', hidden=False):
     ``message`` is the instruction shown in the dialog and ``default_value`` is
     the possible default value shown in the input field.
 
-    If ``hidden`` is given any true value, such as any non-empty string,
-    the value typed by the user is hidden. This is a new feature in Robot
-    Framework 2.8.4.
+    If ``hidden`` is given a true value, the value typed by the user is hidden.
+    ``hidden`` is considered true if it is a non-empty string not equal to
+    ``false`` or ``no``, case-insensitively. If it is not a string, its truth
+    value is got directly using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
 
     Example:
     | ${username} = | Get Value From User | Input user name | default    |
     | ${password} = | Get Value From User | Input password  | hidden=yes |
+
+    Possibility to hide the typed in value is new in Robot Framework 2.8.4.
+    Considering strings ``false`` and ``no`` to be false is new in 2.9.
     """
-    return _validate_user_input(InputDialog(message, default_value, hidden))
+    return _validate_user_input(InputDialog(message, default_value,
+                                            is_truthy(hidden)))
 
 
 def get_selection_from_user(message, *values):

@@ -19,14 +19,14 @@ from robot.utils import (is_dict_like, is_list_like, normalize,
                          RecommendationFinder)
 
 
-def raise_not_found(name, candidates, msg=None):
+def variable_not_found(name, candidates, msg=None, deco_braces=True):
     """Raise DataError for missing variable name.
 
     Return recommendations for similar variable names if any are found.
     """
     if msg is None:
         msg = "Variable '%s' not found." % name
-    candidates = _decorate_candidates(name[0], candidates)
+    candidates = _decorate_candidates(name[0], candidates, deco_braces)
     normalizer = partial(normalize, ignore='$@%&*{}_', caseless=True,
                          spaceless=True)
     finder = RecommendationFinder(normalizer)
@@ -35,10 +35,11 @@ def raise_not_found(name, candidates, msg=None):
     raise DataError(msg)
 
 
-def _decorate_candidates(identifier, candidates):
+def _decorate_candidates(identifier, candidates, deco_braces=True):
+    template = '%s{%s}' if deco_braces else '%s%s'
     is_included = {'$': lambda value: True,
                    '@': is_list_like,
                    '&': is_dict_like,
                    '%': lambda value: True}[identifier]
-    return ['%s{%s}' % (identifier, name)
+    return [template % (identifier, name)
             for name in candidates if is_included(candidates[name])]

@@ -66,12 +66,12 @@ Get Lines Matching Regexp With Case-Insensitive
 
 *** Keywords ***
 Test Get Lines Containing String
-    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=${False}
+    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=false
     ${actual} =    Get Lines Containing String    ${input}    ${pattern}    ${case-insensitive}
     Should Be Equal    ${actual}    ${expected}
 
 Test Get Lines Matching Pattern
-    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=${False}
+    [Arguments]    ${input}    ${pattern}    ${expected}    ${case-insensitive}=no
     ${actual} =    Get Lines Matching Pattern    ${input}    ${pattern}    ${case-insensitive}
     Should Be Equal    ${actual}    ${expected}
 

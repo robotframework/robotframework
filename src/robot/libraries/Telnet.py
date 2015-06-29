@@ -13,12 +13,11 @@
 #  limitations under the License.
 
 from contextlib import contextmanager
+import inspect
+import re
+import struct
 import telnetlib
 import time
-import re
-import inspect
-import struct
-
 
 try:
     import pyte
@@ -26,11 +25,12 @@ except ImportError:
     pyte = None
 
 from robot.api import logger
+from robot.utils import (ConnectionCache, is_truthy, secs_to_timestr, seq2str,
+                         timestr_to_secs)
 from robot.version import get_version
-from robot import utils
 
 
-class Telnet:
+class Telnet(object):
     """A test library providing communication over Telnet connections.
 
     ``Telnet`` is Robot Framework's standard library that makes it possible to
@@ -44,6 +44,7 @@ class Telnet:
     - `Terminal emulation`
     - `Logging`
     - `Time string format`
+    - `Boolean arguments`
     - `Importing`
     - `Shortcuts`
     - `Keywords`
@@ -125,7 +126,13 @@ class Telnet:
 
     Prompt can be specified either as a normal string or a regular expression.
     The latter is especially useful if the prompt changes as a result of
-    the executed commands.
+    the executed commands. Prompt can be set to be a regular expression
+    by giving ``prompt_is_regexp`` argument a true value (see `Boolean
+    arguments`).
+
+    Examples:
+    | `Open Connection` | lolcathost | prompt=$              |
+    | `Set Prompt`      | (> |# )    | prompt_is_regexp=true |
 
     == Encoding ==
 
@@ -209,8 +216,9 @@ class Telnet:
     would have on a normal terminal screen. For example the sequence
     ``acdc\\x1b[3Dbba`` will result in output ``abba``.
 
-    Terminal emulation is taken into use with option terminal_emulation=True,
-    either in the library initialization, or as a option to `Open Connection`.
+    Terminal emulation is taken into use by giving ``terminal_emulation``
+    argument a true value (see `Boolean arguments`) either in the library
+    initialization or with `Open Connection`.
 
     As Pyte approximates vt-style terminal, you may also want to set the
     terminal type as ``vt100``. We also recommend that you increase the window
@@ -220,9 +228,9 @@ class Telnet:
     When terminal emulation is used, the `newline` and `encoding` can not be
     changed anymore after opening the connection.
 
-    As a prequisite for using terminal emulation you need to have [https://github.com/selectel/pyte|Pyte]
-    installed. This is easiest done with [http://pip-installer.org|pip] by
-    running ``pip install pyte``.
+    As a prerequisite for using terminal emulation you need to have
+    [https://github.com/selectel/pyte|Pyte] installed. This is easiest done
+    with [http://pip-installer.org|pip] by running ``pip install pyte``.
 
     Examples:
     | `Open Connection` | lolcathost | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 |
@@ -253,6 +261,31 @@ class Telnet:
     a number, for example, ``10`` or ``1.5``, it is considered to be seconds.
     The time string format is described in more detail in an appendix of
     [http://robotframework.org/robotframework/#user-guide|Robot Framework User Guide].
+
+    = Boolean arguments =
+
+    Some keywords accept arguments that are handled as Boolean values true or
+    false. If such an argument is given as a string, it is considered false if
+    it is either empty or case-insensitively equal to ``false`` or ``no``.
+    Other strings are considered true regardless their value, and other
+    argument types are tested using same
+    [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
+    as in Python].
+
+    True examples:
+    | `Open Connection` | lolcathost | terminal_emulation=True    | # Strings are generally true.    |
+    | `Open Connection` | lolcathost | terminal_emulation=yes     | # Same as the above.             |
+    | `Open Connection` | lolcathost | terminal_emulation=${TRUE} | # Python ``True`` is true.       |
+    | `Open Connection` | lolcathost | terminal_emulation=${42}   | # Numbers other than 0 are true. |
+
+    False examples:
+    | `Open Connection` | lolcathost | terminal_emulation=False    | # String ``false`` is false.   |
+    | `Open Connection` | lolcathost | terminal_emulation=no       | # Also string ``no`` is false. |
+    | `Open Connection` | lolcathost | terminal_emulation=${EMPTY} | # Empty string is false.       |
+    | `Open Connection` | lolcathost | terminal_emulation=${FALSE} | # Python ``False`` is false.   |
+
+    Note that prior to Robot Framework 2.9 some keywords considered all
+    non-empty strings, including ``false`` and ``no``, to be true.
     """
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -267,41 +300,37 @@ class Telnet:
 
         Configuration parameters are used as default values when new
         connections are opened with `Open Connection` keyword. They can also be
-        overridden after opening the connection using the `Set Timeout`,
-        `Set Newline`, `Set Prompt`, `Set Encoding`, and `Set Default Log Level`
-        keywords. See these keywords as well as `Configuration` and
-        `Terminal emulation` sections above for more information about these
-        parameters and their possible values. Starting with Robot Framework 2.8.7
-        the parameter ``telnetlib_log_level`` is added. With this parameter the
-        log level of the used Python telnetlib can be configured.
+        overridden after opening the connection using the `Set ...` `keywords`.
+        See these keywords as well as `Configuration`, `Terminal emulation` and
+        `Logging` sections above for more information about these parameters
+        and their possible values.
 
-        See `Logging` section for more information about log levels.
+        See `Time string format` and `Boolean arguments` sections for
+        information about using arguments accepting times and Boolean values,
+        respectively.
 
         Examples (use only one of these):
-
-        | *Setting* | *Value* | *Value* | *Value* | *Value* | *Value* | *Comment* |
-        | Library | Telnet |     |    |     |    | # default values                |
-        | Library | Telnet | 0.5 |    |     |    | # set only timeout              |
-        | Library | Telnet |     | LF |     |    | # set only newline              |
-        | Library | Telnet | newline=LF | encoding=ISO-8859-1 | | | # set newline and encoding using named arguments |
-        | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
-        | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
-        | Library | Telnet | 2.0 | LF | (> |# ) | True | # set prompt as a regular expression |
-        | Library | Telnet | terminal_emulation=True | terminal_type=vt100 | window_size=400x100 | | # use terminal emulation with defined window size and terminal type |
-        | Library | Telnet | telnetlib_log_level=NONE |   |     |    | # disable the logging of the underlying telnetlib |
+        | = Setting = | = Value = | = Value =                | = Value =            | = Value =           | = Comment = |
+        | Library     | Telnet    |                          |                      |                     | # default values |
+        | Library     | Telnet    | 5 seconds                |                      |                     | # set only timeout |
+        | Library     | Telnet    | newline=LF               | encoding=ISO-8859-1  |                     | # set newline and encoding using named arguments |
+        | Library     | Telnet    | prompt=$                 |                      |                     | # set prompt |
+        | Library     | Telnet    | prompt=(> |# )           | prompt_is_regexp=yes |                     | # set prompt as a regular expression |
+        | Library     | Telnet    | terminal_emulation=True  | terminal_type=vt100  | window_size=400x100 | # use terminal emulation with defined window size and terminal type |
+        | Library     | Telnet    | telnetlib_log_level=NONE |                      |                     | # disable logging messages from the underlying telnetlib |
         """
         self._timeout = timeout or 3.0
         self._newline = newline or 'CRLF'
-        self._prompt = (prompt, bool(prompt_is_regexp))
+        self._prompt = (prompt, prompt_is_regexp)
         self._encoding = encoding
         self._encoding_errors = encoding_errors
         self._default_log_level = default_log_level
-        self._window_size = self._parse_window_size(window_size)
+        self._window_size = window_size
         self._environ_user = environ_user
-        self._terminal_emulation = self._parse_terminal_emulation(terminal_emulation)
+        self._terminal_emulation = terminal_emulation
         self._terminal_type = terminal_type
-        self._default_telnetlib_log_level = telnetlib_log_level
-        self._cache = utils.ConnectionCache()
+        self._telnetlib_log_level = telnetlib_log_level
+        self._cache = ConnectionCache()
         self._conn = None
         self._conn_kws = self._lib_kws = None
 
@@ -343,7 +372,7 @@ class Telnet:
                         newline=None, prompt=None, prompt_is_regexp=False,
                         encoding=None, encoding_errors=None,
                         default_log_level=None, window_size=None,
-                        environ_user=None, terminal_emulation=False,
+                        environ_user=None, terminal_emulation=None,
                         terminal_type=None, telnetlib_log_level=None):
         """Opens a new Telnet connection to the given host and port.
 
@@ -352,7 +381,8 @@ class Telnet:
         ``terminal_emulation``, ``terminal_type`` and ``telnetlib_log_level``
         arguments get default values when the library is [#Importing|imported].
         Setting them here overrides those values for the opened connection.
-        See `Configuration` and `Terminal emulation` sections for more information.
+        See `Configuration`, `Terminal emulation` and `Logging` sections for
+        more information about these parameters and their possible values.
 
         Possible already opened connections are cached and it is possible to
         switch back to them using `Switch Connection` keyword. It is possible to
@@ -365,44 +395,36 @@ class Telnet:
         encoding = encoding or self._encoding
         encoding_errors = encoding_errors or self._encoding_errors
         default_log_level = default_log_level or self._default_log_level
-        window_size = self._parse_window_size(window_size) or self._window_size
+        window_size = self._parse_window_size(window_size or self._window_size)
         environ_user = environ_user or self._environ_user
-        terminal_emulation = self._get_terminal_emulation_with_default(terminal_emulation)
+        if terminal_emulation is None:
+            terminal_emulation = self._terminal_emulation
         terminal_type = terminal_type or self._terminal_type
-        telnetlib_log_level = telnetlib_log_level or self._default_telnetlib_log_level
+        telnetlib_log_level = telnetlib_log_level or self._telnetlib_log_level
         if not prompt:
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
                     % (host, port, prompt))
         self._conn = self._get_connection(host, port, timeout, newline,
-                                          prompt, prompt_is_regexp,
+                                          prompt, is_truthy(prompt_is_regexp),
                                           encoding, encoding_errors,
-                                          default_log_level, window_size,
-                                          environ_user, terminal_emulation,
-                                          terminal_type, telnetlib_log_level)
+                                          default_log_level,
+                                          window_size,
+                                          environ_user,
+                                          is_truthy(terminal_emulation),
+                                          terminal_type,
+                                          telnetlib_log_level)
         return self._cache.register(self._conn, alias)
-
-    def _get_terminal_emulation_with_default(self, terminal_emulation):
-        if terminal_emulation is None or terminal_emulation == '':
-            return self._terminal_emulation
-        return self._parse_terminal_emulation(terminal_emulation)
-
-    def _parse_terminal_emulation(self, terminal_emulation):
-        if not terminal_emulation:
-            return False
-        if isinstance(terminal_emulation, basestring):
-            return terminal_emulation.lower() == 'true'
-        return bool(terminal_emulation)
 
     def _parse_window_size(self, window_size):
         if not window_size:
             return None
         try:
-            cols, rows = window_size.split('x')
-            cols, rows = (int(cols), int(rows))
-        except:
-            raise AssertionError("Invalid window size '%s'. Should be <rows>x<columns>" % window_size)
-        return cols, rows
+            cols, rows = window_size.split('x', 1)
+            return int(cols), int(rows)
+        except ValueError:
+            raise ValueError("Invalid window size '%s'. Should be "
+                             "<rows>x<columns>." % window_size)
 
     def _get_connection(self, *args):
         """Can be overridden to use a custom connection."""
@@ -459,7 +481,6 @@ class Telnet:
 
 
 class TelnetConnection(telnetlib.Telnet):
-
     NEW_ENVIRON_IS = chr(0)
     NEW_ENVIRON_VAR = chr(0)
     NEW_ENVIRON_VALUE = chr(1)
@@ -506,10 +527,10 @@ class TelnetConnection(telnetlib.Telnet):
         self._verify_connection()
         old = self._timeout
         self._set_timeout(timeout)
-        return utils.secs_to_timestr(old)
+        return secs_to_timestr(old)
 
     def _set_timeout(self, timeout):
-        self._timeout = utils.timestr_to_secs(timeout)
+        self._timeout = timestr_to_secs(timeout)
 
     def set_newline(self, newline):
         """Sets the newline used by `Write` keyword in the current connection.
@@ -531,13 +552,14 @@ class TelnetConnection(telnetlib.Telnet):
         return old
 
     def _set_newline(self, newline):
-        self._newline = str(newline).upper().replace('LF','\n').replace('CR','\r')
+        newline = str(newline).upper()
+        self._newline = newline.replace('LF', '\n').replace('CR', '\r')
 
     def set_prompt(self, prompt, prompt_is_regexp=False):
         """Sets the prompt used by `Read Until Prompt` and `Login` in the current connection.
 
-        If ``prompt_is_regexp`` is given any true value, including any non-empty
-        string, the given ``prompt`` is considered to be a regular expression.
+        If ``prompt_is_regexp`` is given a true value (see `Boolean arguments`),
+        the given ``prompt`` is considered to be a regular expression.
 
         The old prompt is returned and can be used to restore the prompt later.
 
@@ -563,7 +585,7 @@ class TelnetConnection(telnetlib.Telnet):
         return old
 
     def _set_prompt(self, prompt, prompt_is_regexp):
-        if prompt_is_regexp:
+        if is_truthy(prompt_is_regexp):
             self._prompt = (re.compile(prompt), True)
         else:
             self._prompt = (prompt, False)
@@ -729,7 +751,7 @@ class TelnetConnection(telnetlib.Telnet):
         return output
 
     def _verify_login_without_prompt(self, delay, incorrect):
-        time.sleep(utils.timestr_to_secs(delay))
+        time.sleep(timestr_to_secs(delay))
         output = self.read('TRACE')
         success = incorrect not in output
         return success, output
@@ -746,8 +768,8 @@ class TelnetConnection(telnetlib.Telnet):
         causes a problem.
 
         *Note:* This keyword does not return the possible output of the executed
-        command. To get the output, one of the `Read ...` keywords must be used.
-        See `Writing and reading` section for more details.
+        command. To get the output, one of the `Read ...` `keywords` must be
+        used. See `Writing and reading` section for more details.
 
         See `Logging` section for more information about log levels.
         """
@@ -791,8 +813,8 @@ class TelnetConnection(telnetlib.Telnet):
         seconds and the keyword fails if ``myprocess`` does not appear in
         the output in 5 seconds.
         """
-        timeout = utils.timestr_to_secs(timeout)
-        retry_interval = utils.timestr_to_secs(retry_interval)
+        timeout = timestr_to_secs(timeout)
+        retry_interval = timestr_to_secs(retry_interval)
         maxtime = time.time() + timeout
         while time.time() < maxtime:
             self.write_bare(text)
@@ -978,7 +1000,7 @@ class TelnetConnection(telnetlib.Telnet):
         output depends on the [#Configuration|configured timeout].
 
         If you want to exclude the prompt from the returned output, set
-        ``strip_prompt`` to any true value, such as a non-empty string. If your
+        ``strip_prompt`` to a true value (see `Boolean arguments`). If your
         prompt is a regular expression, make sure that the expression spans the
         whole prompt, because only the part of the output that matches the
         regular expression is stripped away.
@@ -994,9 +1016,9 @@ class TelnetConnection(telnetlib.Telnet):
         if not success:
             prompt, regexp = self._prompt
             raise AssertionError("Prompt '%s' not found in %s."
-                    % (prompt if not regexp else prompt.pattern,
-                       utils.secs_to_timestr(self._timeout)))
-        if strip_prompt:
+                                 % (prompt if not regexp else prompt.pattern,
+                                    secs_to_timestr(self._timeout)))
+        if is_truthy(strip_prompt):
             output = self._strip_prompt(output)
         return output
 
@@ -1021,7 +1043,7 @@ class TelnetConnection(telnetlib.Telnet):
         either in `importing` or with `Open Connection` or `Set Prompt` keyword.
 
         This is a convenience keyword that uses `Write` and `Read Until Prompt`
-        internally Following two examples are thus functionally identical:
+        internally. Following two examples are thus functionally identical:
 
         | ${out} = | `Execute Command`   | pwd |
 
@@ -1190,14 +1212,14 @@ class NoMatchError(AssertionError):
 
     def __init__(self, expected, timeout, output=None):
         self.expected = expected
-        self.timeout = utils.secs_to_timestr(timeout)
+        self.timeout = secs_to_timestr(timeout)
         self.output = output
         AssertionError.__init__(self, self._get_message())
 
     def _get_message(self):
         expected = "'%s'" % self.expected \
                    if isinstance(self.expected, basestring) \
-                   else utils.seq2str(self.expected, lastsep=' or ')
+                   else seq2str(self.expected, lastsep=' or ')
         msg = "No match found for %s in %s." % (expected, self.timeout)
         if self.output is not None:
             msg += ' Output:\n%s' % self.output

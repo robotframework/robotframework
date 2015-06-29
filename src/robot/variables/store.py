@@ -17,7 +17,7 @@ from robot.utils import (DotDict, is_dict_like, is_list_like, NormalizedDict,
                          type_name)
 
 from .isvar import validate_var
-from .notfound import raise_not_found
+from .notfound import variable_not_found
 from .tablesetter import VariableTableValueBase
 
 
@@ -44,8 +44,8 @@ class VariableStore(object):
             if name in self:
                 self.remove(name)
                 value.report_error(err)
-            raise_not_found('${%s}' % name, self.data,
-                            "Variable '${%s}' not found." % name)
+            variable_not_found('${%s}' % name, self.data,
+                               "Variable '${%s}' not found." % name)
         return self.data[name]
 
     def __getitem__(self, name):

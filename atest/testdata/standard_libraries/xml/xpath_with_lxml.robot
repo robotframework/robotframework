@@ -92,7 +92,6 @@ Advanced xpath supported by lxml
 
 Advanced xpath supported by lxml matching multiple elements
     [Template]    Xpath should match elements
-    //child[last()]            ${EMPTY}    nöŋ-äŝĉíï tëxt
     (child | another | xxx)    child 1 text    child 2 text grand child text more text    ${EMPTY}    nöŋ-äŝĉíï tëxt
     child[starts-with(normalize-space(text()), 'child')]
     ...                        child 1 text    child 2 text grand child text more text
