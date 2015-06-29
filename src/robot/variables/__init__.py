@@ -19,6 +19,7 @@ This package is mainly for internal usage.
 
 from .assigner import VariableAssigner
 from .isvar import contains_var, is_var, is_scalar_var, is_list_var, is_dict_var
+from .notfound import variable_not_found
 from .scopes import VariableScopes
 from .splitter import VariableSplitter, VariableIterator
 from .tablesetter import VariableTableValue, DictVariableTableValue
