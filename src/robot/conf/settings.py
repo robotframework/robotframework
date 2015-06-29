@@ -17,12 +17,13 @@ import random
 import sys
 import time
 
-from robot import utils
 from robot.errors import DataError, FrameworkError
-from robot.utils import split_args_from_name_or_path
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
+from robot.utils import (abspath, escape, format_time, get_link_path,
+                         html_escape, is_list_like,
+                         split_args_from_name_or_path)
 
 from .gatherfailed import gather_failed_tests
 
@@ -40,7 +41,7 @@ class _BaseSettings(object):
                  'Exclude'          : ('exclude', []),
                  'Critical'         : ('critical', None),
                  'NonCritical'      : ('noncritical', None),
-                 'OutputDir'        : ('outputdir', utils.abspath('.')),
+                 'OutputDir'        : ('outputdir', abspath('.')),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
                  'XUnit'            : ('xunit', None),
@@ -68,7 +69,7 @@ class _BaseSettings(object):
     _output_opts = ['Output', 'Log', 'Report', 'XUnit', 'DebugFile']
 
     def __init__(self, options=None, **extra_options):
-        self.start_timestamp = utils.format_time(time.time(), '', '-', '')
+        self.start_timestamp = format_time(time.time(), '', '-', '')
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
         self._cli_opts.update(self._extra_cli_opts)
@@ -77,7 +78,7 @@ class _BaseSettings(object):
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             value = opts[cli_name] if cli_name in opts else default
-            if default == [] and not utils.is_list_like(value):
+            if default == [] and not is_list_like(value):
                 value = [value]
             self[name] = self._process_value(name, value)
         self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
@@ -115,7 +116,7 @@ class _BaseSettings(object):
         if name in self._output_opts and (not value or value.upper() == 'NONE'):
             return None
         if name == 'OutputDir':
-            return utils.abspath(value)
+            return abspath(value)
         if name in ['MonitorWidth', 'MonitorColors', 'MonitorMarkers']:
             option = '--' + name.lower()
             LOGGER.warn("Option '%s' is deprecated. Use '%s' instead."
@@ -203,7 +204,7 @@ class _BaseSettings(object):
             LOGGER.error('Log file is not created if output.xml is disabled.')
             return None
         name = self._process_output_name(option, name)
-        path = utils.abspath(os.path.join(self['OutputDir'], name))
+        path = abspath(os.path.join(self['OutputDir'], name))
         self._create_output_dir(os.path.dirname(path), option)
         return path
 
@@ -419,7 +420,7 @@ class RobotSettings(_BaseSettings):
         return self.output is None
 
     def _escape_as_data(self, value):
-        return utils.escape(value)
+        return escape(value)
 
     @property
     def debug_file(self):
@@ -550,7 +551,7 @@ class RebotSettings(_BaseSettings):
         if not self.log:
             return {}
         return {
-            'title': utils.html_escape(self['LogTitle'] or ''),
+            'title': html_escape(self['LogTitle'] or ''),
             'reportURL': self._url_from_path(self.log, self.report),
             'splitLogBase': os.path.basename(os.path.splitext(self.log)[0]),
             'defaultLevel': self['VisibleLogLevel']
@@ -561,7 +562,7 @@ class RebotSettings(_BaseSettings):
         if not self.report:
             return {}
         return {
-            'title': utils.html_escape(self['ReportTitle'] or ''),
+            'title': html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
             'background' : self._resolve_background_colors(),
         }
@@ -569,7 +570,7 @@ class RebotSettings(_BaseSettings):
     def _url_from_path(self, source, destination):
         if not destination:
             return None
-        return utils.get_link_path(destination, os.path.dirname(source))
+        return get_link_path(destination, os.path.dirname(source))
 
     def _resolve_background_colors(self):
         colors = self['ReportBackground']

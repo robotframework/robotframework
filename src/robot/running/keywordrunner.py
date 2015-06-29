@@ -16,8 +16,9 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
                           ExitForLoop, ContinueForLoop, DataError,
                           HandlerExecutionFailed)
 from robot.result.keyword import Keyword as KeywordResult
-from robot.utils import (format_assign_message, frange, get_error_message,
-                         get_timestamp, plural_or_not as s, type_name)
+from robot.utils import (ErrorDetails, format_assign_message, frange,
+                         get_error_message, get_timestamp, plural_or_not as s,
+                         type_name)
 from robot.variables import is_scalar_var, VariableAssigner
 
 
@@ -104,7 +105,7 @@ class NormalRunner(object):
         return return_value, exception
 
     def _get_and_report_failure(self):
-        failure = HandlerExecutionFailed()
+        failure = HandlerExecutionFailed(ErrorDetails())
         if failure.timeout:
             self._context.timeout_occurred = True
         self._context.fail(failure.full_message)

@@ -12,10 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
 from robot.errors import DataError
 from robot.model import Message as BaseMessage
-from robot.utils import is_unicode
+from robot.utils import get_timestamp, is_unicode, unic
 
 
 LEVELS = {
@@ -72,14 +71,14 @@ class Message(BaseMessage):
     def __init__(self, message, level='INFO', html=False, timestamp=None):
         message = self._normalize_message(message)
         level, html = self._get_level_and_html(level, html)
-        timestamp = timestamp or utils.get_timestamp()
+        timestamp = timestamp or get_timestamp()
         BaseMessage.__init__(self, message, level, html, timestamp)
 
     def _normalize_message(self, msg):
         if callable(msg):
             return msg
         if not is_unicode(msg):
-            msg = utils.unic(msg)
+            msg = unic(msg)
         if '\r\n' in msg:
             msg = msg.replace('\r\n', '\n')
         return msg

@@ -12,8 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import utils
-
 # Return codes from Robot and Rebot.
 # RC below 250 is the number of failed critical tests and exactly 250
 # means that number or more such failures.
@@ -28,6 +26,7 @@ class RobotError(Exception):
 
     Do not raise this method but use more specific errors instead.
     """
+
     def __init__(self, message='', details=''):
         Exception.__init__(self, message)
         self.details = details
@@ -76,7 +75,8 @@ class ExecutionFailed(RobotError):
                  continue_on_failure=False, return_value=None):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
-        RobotError.__init__(self, utils.cut_long_message(message))
+        from robot.utils import cut_long_message
+        RobotError.__init__(self, cut_long_message(message))
         self.timeout = timeout
         self.syntax = syntax
         self.exit = exit
@@ -116,8 +116,7 @@ class ExecutionFailed(RobotError):
 
 class HandlerExecutionFailed(ExecutionFailed):
 
-    def __init__(self):
-        details = utils.ErrorDetails()
+    def __init__(self, details):
         timeout = isinstance(details.error, TimeoutError)
         syntax = isinstance(details.error, DataError)
         exit_on_failure = self._get(details.error, 'EXIT_ON_FAILURE')
@@ -191,8 +190,9 @@ class ExecutionPassed(ExecutionFailed):
         self._earlier_failures = []
 
     def _get_message(self):
+        from robot.utils import printable_name
         return "Invalid '%s' usage." \
-               % utils.printable_name(self.__class__.__name__, code_style=True)
+               % printable_name(self.__class__.__name__, code_style=True)
 
     def set_earlier_failures(self, failures):
         if failures:

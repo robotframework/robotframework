@@ -12,9 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
-from robot.utils import is_string
 from robot import model
+from robot.utils import is_string, secs_to_timestamp, timestamp_to_secs
 
 
 class SuiteConfigurer(model.SuiteConfigurer):
@@ -53,10 +52,10 @@ class SuiteConfigurer(model.SuiteConfigurer):
         if not timestamp:
             return None
         try:
-            secs = utils.timestamp_to_secs(timestamp, seps=' :.-_')
+            secs = timestamp_to_secs(timestamp, seps=' :.-_')
         except ValueError:
             return None
-        return utils.secs_to_timestamp(secs, millis=True)
+        return secs_to_timestamp(secs, millis=True)
 
     def visit_suite(self, suite):
         model.SuiteConfigurer.visit_suite(self, suite)

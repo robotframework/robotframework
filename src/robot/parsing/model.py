@@ -18,14 +18,14 @@ import copy
 from robot.errors import DataError
 from robot.variables import is_var
 from robot.output import LOGGER
-from robot import utils
 from robot.writer import DataFileWriter
-from robot.utils import is_string
+from robot.utils import abspath, is_string, normalize, NormalizedDict
 
 from .comments import Comment
 from .populators import FromFilePopulator, FromDirectoryPopulator
-from .settings import (Documentation, Fixture, Timeout, Tags, Metadata, Library,
-    Resource, Variables, Arguments, Return, Template, MetadataList, ImportList)
+from .settings import (Documentation, Fixture, Timeout, Tags, Metadata,
+                       Library, Resource, Variables, Arguments, Return,
+                       Template, MetadataList, ImportList)
 
 
 def TestData(parent=None, source=None, include_suites=None,
@@ -51,9 +51,9 @@ class _TestData(object):
 
     def __init__(self, parent=None, source=None):
         self.parent = parent
-        self.source = utils.abspath(source) if source else None
+        self.source = abspath(source) if source else None
         self.children = []
-        self._tables = utils.NormalizedDict(self._get_tables())
+        self._tables = NormalizedDict(self._get_tables())
 
     def _get_tables(self):
         for names, table in [(self._setting_table_names, self.setting_table),
@@ -286,7 +286,7 @@ class _WithSettings(object):
         return self.normalize(setting_name) in self._setters
 
     def normalize(self, setting):
-        result = utils.normalize(setting)
+        result = normalize(setting)
         return result[0:-1] if result and result[-1]==':' else result
 
 
