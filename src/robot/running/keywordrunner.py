@@ -188,7 +188,7 @@ class ForInRunner(object):
     def _get_values_for_one_round(self, data):
         if not self._context.dry_run:
             values = self._replace_variables(data)
-            var_count = self._original_values_per_iteration(data.variables)
+            var_count = self._values_per_iteration(data.variables)
             for i in range(0, len(values), var_count):
                 yield values[i:i+var_count]
         else:
@@ -197,15 +197,15 @@ class ForInRunner(object):
     def _replace_variables(self, data):
         values = self._context.variables.replace_list(data.values)
         values = self._transform_items(values)
-        values_per_iteration = self._original_values_per_iteration(data.variables)
+        values_per_iteration = self._values_per_iteration(data.variables)
         if len(values) % values_per_iteration == 0:
             return values
-        raise DataError(self._replace_variables_error_message(data, values))
+        self._raise_wrong_variable_count(values_per_iteration, len(values))
 
-    def _replace_variables_error_message(self, data, values):
-        return ('Number of FOR loop values should be multiple of '
-                'its variables. Got %d variables but %d value%s.'
-                % (len(data.variables), len(values), s(values)))
+    def _raise_wrong_variable_count(self, variables, values):
+        raise DataError('Number of FOR loop values should be multiple of '
+                        'its variables. Got %d variables but %d value%s.'
+                        % (variables, values, s(values)))
 
     def _run_one_round(self, data, values):
         name = ', '.join(format_assign_message(var, item)
@@ -221,7 +221,7 @@ class ForInRunner(object):
     def _transform_items(self, items):
         return items
 
-    def _original_values_per_iteration(self, values):
+    def _values_per_iteration(self, variables):
         """
         The number of values per iteration;
         used to check if we have (a multiple of this) values.
@@ -229,7 +229,7 @@ class ForInRunner(object):
         This is its own method to support loops like ForInEnumerate
         which add/remove items to the pool.
         """
-        return len(values)
+        return len(variables)
 
 
 class ForInRangeRunner(ForInRunner):
@@ -270,20 +270,17 @@ class ForInZipRunner(ForInRunner):
         values = super(ForInZipRunner, self)._replace_variables(data)
         if len(data.variables) == len(data.values):
             return values
-        raise DataError('FOR IN ZIP expects an equal number of variables and'
-                + ' iterables. Got %d variable%s and %d iterable%s.'
-                % (len(data.variables), s(data.variables),
-                    len(data.values), s(data.values)))
+        raise DataError('FOR IN ZIP expects an equal number of variables and '
+                        'iterables. Got %d variable%s and %d iterable%s.'
+                        % (len(data.variables), s(data.variables),
+                           len(data.values), s(data.values)))
 
     def _transform_items(self, items):
         answer = list()
         for item in items:
             if not is_list_like(item):
-                # Usually one would expect validation to happen in _validate(),
-                # but this particular validation relies on information that is
-                # not available to _validate().
-                raise DataError("FOR IN ZIP items must all be list-like, got %s."
-                    % type_name(item))
+                raise DataError('FOR IN ZIP items must all be list-like, '
+                                'got %s.' % type_name(item))
         for zipped_item in zip(*[list(item) for item in items]):
             answer.extend(zipped_item)
         return answer
@@ -296,23 +293,22 @@ class ForInEnumerateRunner(ForInRunner):
     def _flavor_name(self):
         return 'IN ENUMERATE'
 
-    def _original_values_per_iteration(self, values):
-        if len(values) < 2:
-            raise DataError('FOR IN ENUMERATE expected 2 or more loop variables, got %d.'
-                    % len(values))
-        return len(values) - 1
+    def _values_per_iteration(self, variables):
+        if len(variables) < 2:
+            raise DataError('FOR IN ENUMERATE expected 2 or more loop '
+                            'variables, got %d.' % len(variables))
+        return len(variables) - 1
 
     def _get_values_for_one_round(self, data):
         for idx, values in enumerate(super(ForInEnumerateRunner, self)
                 ._get_values_for_one_round(data)):
             yield [idx] + values
 
-    def _replace_variables_error_message(self, data, values):
-        return ('Number of FOR IN ENUMERATE loop values (excluding the counter)'
-                + ' should be multiple of its variables.'
-                + ' Got %d non-counting variable%s but %d value%s.'
-                % (len(data.variables), s(data.variables),
-                    len(values), s(values)))
+    def _raise_wrong_variable_count(self, variables, values):
+        raise DataError('Number of FOR IN ENUMERATE loop values should be '
+                        'multiple of its variables (excluding the index). '
+                        'Got %d variable%s but %d value%s.'
+                        % (variables, s(variables), values, s(values)))
 
 
 class InvalidForRunner(ForInRunner):
@@ -328,9 +324,9 @@ class InvalidForRunner(ForInRunner):
         self.expected = repr(sorted(expected))
 
     def _run(self, data, *args, **kwargs):
-        raise DataError(
-            "Invalid FOR loop type '%s'." % self.pretty_flavor
-            + " Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.")
+        raise DataError("Invalid FOR loop type '%s'. Expected 'IN', "
+                        "'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'."
+                        % self.pretty_flavor)
 
 
 class StatusReporter(object):

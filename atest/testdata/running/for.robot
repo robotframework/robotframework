@@ -420,7 +420,7 @@ For In Enumerate With 4 Variables
     Should Be True    @{result} == ['0:a:b:c', '1:d:e:f', '2:g:h:i']
 
 For In Enumerate With not the right number of variables
-    [Documentation]    FAIL    Number of FOR IN ENUMERATE loop values (excluding the counter) should be multiple of its variables. Got 3 non-counting variables but 7 values.
+    [Documentation]    FAIL    Number of FOR IN ENUMERATE loop values should be multiple of its variables (excluding the index). Got 2 variables but 7 values.
     @{items}=    Create List    a    b    c    d    e    f    g
     : FOR    ${index}    ${item}    ${another_item}    IN ENUMERATE    @{items}
     \    Should Be Equal    @{items}[${index* 2 }]    ${item}    Loop value ${item} should be item ${index} of ${items}
