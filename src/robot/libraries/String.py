@@ -272,11 +272,13 @@ class String(object):
         | ${no_group} | Get Regexp Matches | abcdefg123abcdefg123 | abcdefg |
         | ${group_regexp} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) |
         | ${with_group_name} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | name |
+        | ${with_group_index} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | 2 |
         =>
         | ${no_match} = []
         | ${no_group} = ['abcdefg', 'abcdefg']
         | ${group_regexp} = ['abcdefg', 'abcdefg']
         | ${with_group_name} = ['cd', 'cd']
+        | ${with_group_index} = ['fg', 'fg']
         """
         regexp = re.compile(pattern)
         groups = [self._parse_group(g) for g in groups]
