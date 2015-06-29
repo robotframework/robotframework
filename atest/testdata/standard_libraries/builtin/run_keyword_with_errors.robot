@@ -67,6 +67,21 @@ Ignore Error When Syntax Error In For Loop
     [Documentation]    FAIL  Variable '\${nonexisting}' not found.
     Run Keyword And Ignore Error    For Loop With Syntax Error
 
+Ignore Error When Access To Nonexisting Variable
+    Run Keyword And Ignore Error   Access To Nonexisting Variable
+
+Ignore Error When Access To List Variable Nonexisting Index Syntax 1
+    Run Keyword And Ignore Error   Access To List Variable Nonexisting Index Syntax 1
+
+Ignore Error When Access To List Variable Nonexisting Index Syntax 2
+    Run Keyword And Ignore Error   Access To List Variable Nonexisting Index Syntax 2
+
+Ignore Error When Access To Dictionary Nonexisting Key Syntax 1
+    Run Keyword And Ignore Error   Access To Dictionary Variable Nonexisting Key Syntax 1
+
+Ignore Error When Access To Dictionary Nonexisting Key Syntax 2
+    Run Keyword And Ignore Error   Access To Dictionary Variable Nonexisting Key Syntax 2
+
 Expect Error When Error Occurs
     Run Keyword And Expect Error    ${ERROR MESSAGE}    ${FAIL KW}    ${ERROR MESSAGE}
 
@@ -134,6 +149,25 @@ Expect Error When Syntax Error In For Loop
     [Documentation]    FAIL  Variable '\${nonexisting}' not found.
     Run Keyword And Expect Error    *    For Loop With Syntax Error
 
+Expect Error When Access To Nonexisting Variable
+    Run Keyword And Expect Error    Variable '\${nonexisting}' not found.    Access To Nonexisting Variable
+
+Expect Error When Access To List Variable Nonexisting Index Syntax 1
+    ${expected_err_msg} =  Set Variable    Resolving variable '\${list[2]}' failed: IndexError:*
+    Run Keyword And Expect Error    ${expected_err_msg}    Access To List Variable Nonexisting Index Syntax 1
+
+Expect Error When Access To List Variable Nonexisting Index Syntax 2
+    ${expected_err_msg} =  Set Variable    List variable '\@{list}' has no item in index 2.
+    Run Keyword And Expect Error    ${expected_err_msg}    Access To List Variable Nonexisting Index Syntax 2
+
+Expect Error When Access To Dictionary Nonexisting Key Syntax 1
+    ${expected_err_msg} =  Set Variable   Resolving variable '\${dict[c]}' failed: NameError: name 'c' is not defined
+    Run Keyword And Expect Error    ${expected_err_msg}    Access To Dictionary Variable Nonexisting Key Syntax 1
+
+Expect Error When Access To Dictionary Nonexisting Key Syntax 2
+    ${expected_err_msg} =  Set Variable    Dictionary variable '\&{dict}' has no key 'c'.
+    Run Keyword And Expect Error    ${expected_err_msg}    Access To Dictionary Variable Nonexisting Key Syntax 2
+
 *** Keywords ***
 Passing UK
     Log    Hello world
@@ -159,3 +193,22 @@ For Loop With Syntax Error
 
 Broken User Keyword
     ${x}
+
+Access To Nonexisting Variable
+    Log    ${nonexisting}
+
+Access To List Variable Nonexisting Index Syntax 1
+    ${list} =    Create list    1    2
+    Log    ${list[2]}
+
+Access To List Variable Nonexisting Index Syntax 2
+    ${list} =    Create list    1    2
+    Log    @{list}[2]
+
+Access To Dictionary Variable Nonexisting Key Syntax 1
+    ${dict} =    Create dictionary    a=1    b=2
+    Log    ${dict[c]}
+
+Access To Dictionary Variable Nonexisting Key Syntax 2
+    ${dict} =    Create dictionary    a=1    b=2
+    Log    &{dict}[c]

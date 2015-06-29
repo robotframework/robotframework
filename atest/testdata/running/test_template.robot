@@ -169,10 +169,8 @@ Templates, timeouts, and for loops
     \    0.05 seconds
 
 Templates and syntax errors
-    [Documentation]  FAIL  Variable '\${nonexisting}' not found.
-    [Template]  Should be equal
-    ${nonexisting}      something
-    not compared  anymore
+    [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 5.
+    syntax    error    makes    test    end
 
 Templates and fatal errors 1
     [Documentation]  FAIL  Several failures occurred:\n\n

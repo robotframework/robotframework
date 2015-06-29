@@ -1526,6 +1526,7 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword. Otherwise this keyword itself never fails.
+        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
@@ -1567,6 +1568,7 @@ class _RunKeyword(_BuiltInBase):
 
         The execution is not continued if the failure is caused by invalid syntax,
         timeout, or fatal exception.
+        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         try:
             return self.run_keyword(name, *args)
@@ -1595,6 +1597,7 @@ class _RunKeyword(_BuiltInBase):
 
         Errors caused by invalid syntax, timeouts, or fatal exceptions are not
         caught by this keyword.
+        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         try:
             self.run_keyword(name, *args)
@@ -1682,6 +1685,7 @@ class _RunKeyword(_BuiltInBase):
 
         Support for specifying ``retry`` as a number of times to retry is
         a new feature in Robot Framework 2.9.
+        Since Robot Framework 2.9, variable errors are caught by this keyword.
         """
         maxtime = count = -1
         try:

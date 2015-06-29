@@ -104,6 +104,14 @@ Keyword Not Found Inside Wait Until Keyword Succeeds
     [Documentation]    FAIL No keyword with name 'Non Existing KW' found.
     Wait Until Keyword Succeeds    1 second    0.1s    Non Existing KW
 
+Fail With Nonexisting Variable Inside Wait Until Keyword Succeeds
+    [Documentation]    FAIL  GLOB:Keyword 'Get Length Nonexisting Variable' failed after retrying 3 times. * Variable '${nonexisting}' not found.
+    Wait Until Keyword Succeeds    3 times    0s    Get Length Nonexisting Variable
+
+Pass With Initially Nonexisting Variable Inside Wait Until Keyword Succeeds
+    Wait Until Keyword Succeeds    3 times    0s    Get Length Initially Nonexisting Variable
+
+
 *** Keywords ***
 User Keyword
     ${value} =    Fail Until Retried Often Enough    From User Keyword
@@ -115,3 +123,12 @@ Wait Until Inside User Keyword
 Timeouted UK with Wait Until KW
     [Timeout]    ${timeout}
     Wait Until Keyword Succeeds    100ms    10ms    Fail    Error in timeouted UK
+
+Get Length Nonexisting Variable
+    Get Length    ${nonexisting}
+    Fail    Should NEVER be executed
+
+Get Length Initially Nonexisting Variable
+    Get Length    ${dynamically created variable}
+    [Teardown]    Set Test Variable    ${dynamically created variable}    dynamic_variable_value
+

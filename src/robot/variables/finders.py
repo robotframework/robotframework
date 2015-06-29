@@ -21,7 +21,7 @@ except ImportError:
     get_java_property = lambda name: None
     get_java_properties = lambda: {}
 
-from robot.errors import DataError
+from robot.errors import DataError, VariableError
 from robot.utils import (get_env_var, get_env_vars, get_error_message,
                          is_dict_like, is_list_like, normalize, DotDict,
                          NormalizedDict)
@@ -55,13 +55,13 @@ class VariableFinder(object):
     def _validate_value(self, value, identifier, name):
         if identifier == '@':
             if not is_list_like(value):
-                raise DataError("Value of variable '%s' is not list or "
-                                "list-like." % name)
+                raise VariableError("Value of variable '%s' is not list or "
+                                    "list-like." % name)
             return list(value)
         if identifier == '&':
             if not is_dict_like(value):
-                raise DataError("Value of variable '%s' is not dictionary "
-                                "or dictionary-like." % name)
+                raise VariableError("Value of variable '%s' is not dictionary "
+                                    "or dictionary-like." % name)
             return DotDict(value)
         return value
 
@@ -117,13 +117,13 @@ class ExtendedFinder(object):
         try:
             variable = self._find_variable('${%s}' % base_name)
         except DataError as err:
-            raise DataError("Resolving variable '%s' failed: %s"
-                            % (name, unicode(err)))
+            raise VariableError("Resolving variable '%s' failed: %s"
+                                % (name, unicode(err)))
         try:
             return eval('_BASE_VAR_' + extended, {'_BASE_VAR_': variable})
         except:
-            raise DataError("Resolving variable '%s' failed: %s"
-                            % (name, get_error_message()))
+            raise VariableError("Resolving variable '%s' failed: %s"
+                                % (name, get_error_message()))
 
 
 class EnvironmentFinder(object):

@@ -30,6 +30,12 @@ Run Keyword And Continue On Failure With Syntax Error
 Run Keyword And Continue On Failure With Timeout
     Check Test Case    ${TESTNAME}
 
+Run Keyword And Continue On Failure With Nonexisting Variable
+    Check Test Case    ${TESTNAME}
+
+Run Keyword And Continue On Failure With Nonexisting Extended Variable
+    Check Test Case    ${TESTNAME}
+
 Run Keyword And Continue On Failure With Fatal Error
     Check Test Case    ${TESTNAME}
     Check Test Case    ${TESTNAME} 2

@@ -79,6 +79,18 @@ Invalid Keyword Inside Wait Until Keyword Succeeds
 Keyword Not Found Inside Wait Until Keyword Succeeds
     Check Test Case    ${TESTNAME}
 
+Fail With Nonexisting Variable Inside Wait Until Keyword Succeeds
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Variable '\${nonexisting}' not found.    FAIL
+    Check Log Message    ${tc.kws[0].kws[1].kws[0].msgs[0]}    Variable '\${nonexisting}' not found.    FAIL
+    Check Log Message    ${tc.kws[0].kws[2].kws[0].msgs[0]}    Variable '\${nonexisting}' not found.    FAIL
+    Length Should Be    ${tc.kws[0].kws}    3
+
+Pass With Initially Nonexisting Variable Inside Wait Until Keyword Succeeds
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Variable '\${dynamically created variable}' not found.    FAIL
+    Length Should Be    ${tc.kws[0].kws}    2
+
 Variable Values Should Not Be Visible In Keyword Arguments
     ${tc} =    Check Test Case    Pass With First Try
     Check KW Arguments    ${tc.kws[0].kws[0]}    \${HELLO}

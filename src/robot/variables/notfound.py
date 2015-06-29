@@ -14,7 +14,7 @@
 
 from functools import partial
 
-from robot.errors import DataError
+from robot.errors import VariableError
 from robot.utils import (is_dict_like, is_list_like, normalize,
                          RecommendationFinder)
 
@@ -32,7 +32,7 @@ def variable_not_found(name, candidates, msg=None, deco_braces=True):
     finder = RecommendationFinder(normalizer)
     recommendations = finder.find_recommendations(name, candidates)
     msg = finder.format_recommendations(msg, recommendations)
-    raise DataError(msg)
+    raise VariableError(msg)
 
 
 def _decorate_candidates(identifier, candidates, deco_braces=True):

@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
+from robot.errors import DataError, VariableError
 from robot.output import LOGGER
 from robot.utils import escape, unescape, unic, is_string
 
@@ -142,13 +142,13 @@ class VariableReplacer(object):
         try:
             index = int(index)
         except ValueError:
-            raise DataError("List variable '%s' used with invalid index '%s'."
-                            % (name, index))
+            raise VariableError("List variable '%s' used with invalid index '%s'."
+                                % (name, index))
         try:
             return variable[index]
         except IndexError:
-            raise DataError("List variable '%s' has no item in index %d."
-                            % (name, index))
+            raise VariableError("List variable '%s' has no item in index %d."
+                                % (name, index))
 
     def _get_dict_variable_item(self, splitter):
         name = splitter.get_replaced_variable(self)
@@ -157,8 +157,8 @@ class VariableReplacer(object):
         try:
             return variable[key]
         except KeyError:
-            raise DataError("Dictionary variable '%s' has no key '%s'."
-                            % (name, key))
+            raise VariableError("Dictionary variable '%s' has no key '%s'."
+                                % (name, key))
         except TypeError as err:
-            raise DataError("Dictionary variable '%s' used with invalid key: %s"
-                            % (name, err))
+            raise VariableError("Dictionary variable '%s' used with invalid key: %s"
+                                % (name, err))

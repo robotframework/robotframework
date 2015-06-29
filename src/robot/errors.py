@@ -53,6 +53,13 @@ class DataError(RobotError):
     this exception with care.
     """
 
+class VariableError(DataError):
+    """Used when variable syntax or evaluation is invalid.
+
+    VariableErrors are caught by keywords that run other keywords
+    (e.g. `Run Keyword And Expect Error`).
+    """
+
 
 class TimeoutError(RobotError):
     """Used when a test or keyword timeout occurs.
@@ -118,7 +125,8 @@ class HandlerExecutionFailed(ExecutionFailed):
 
     def __init__(self, details):
         timeout = isinstance(details.error, TimeoutError)
-        syntax = isinstance(details.error, DataError)
+        syntax = isinstance(details.error, DataError) \
+                 and not isinstance(details.error, VariableError)
         exit_on_failure = self._get(details.error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
         ExecutionFailed.__init__(self, details.message, timeout, syntax,
