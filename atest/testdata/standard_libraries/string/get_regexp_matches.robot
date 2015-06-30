@@ -35,8 +35,8 @@ Get Regexp Matches Insert Group Regex With Group Name
 
 Get Regexp Matches Insert Group Regex With Group Names
     @{result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    group_name    group_name2
-    ${expect_result}=    Evaluate    [(u'${GROUP MATCH}', u'${SECOND GROUP MATCH}') for i in range(${TEXT REPEAT COUNT})]
-    Should Be True    ${result} == ${expect_result}
+    ${expect_result}=    Evaluate    [('${GROUP MATCH}', '${SECOND GROUP MATCH}') for i in range(${TEXT REPEAT COUNT})]
+    Should be Equal    ${result}    ${expect_result}
 
 Get Regexp Matches Insert Group Regex With Group Index
     ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    2
@@ -44,11 +44,11 @@ Get Regexp Matches Insert Group Regex With Group Index
     Should be Equal    ${result}    ${expect_result}
 
 Get Regexp Matches Insert Group Regex With Group Indexes
-    ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    2    1
-    ${expect_result}=    Evaluate    [(u'${SECOND GROUP MATCH}', u'${GROUP MATCH}') for i in range(${TEXT REPEAT COUNT})]
-    Should Be True    ${result} == ${expect_result}
+    ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    ${2}    ${1.0}
+    ${expect_result}=    Evaluate    [('${SECOND GROUP MATCH}', '${GROUP MATCH}') for i in range(${TEXT REPEAT COUNT})]
+    Should be Equal    ${result}    ${expect_result}
 
 Get Regexp Matches Insert Group Regex With Group Name And Index
     ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    2    group_name
-    ${expect_result}=    Evaluate    [(u'${SECOND GROUP MATCH}', u'${GROUP MATCH}') for i in range(${TEXT REPEAT COUNT})]
-    Should Be True    ${result} == ${expect_result}
+    ${expect_result}=    Evaluate    [('${SECOND GROUP MATCH}', '${GROUP MATCH}') for i in range(${TEXT REPEAT COUNT})]
+    Should be Equal    ${result}    ${expect_result}
