@@ -21,17 +21,17 @@ Get Regexp Matches Without Group
     ${expect_result}=    Create List    ${MATCH}    ${MATCH}    ${MATCH}    ${MATCH}
     Should be Equal    ${result}    ${expect_result}
 
-Get Regexp Matches Group Regex Without Groups
+Get Regexp Matches Insert Group Regex Without Groups
     ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}
     ${expect_result}=    Create List    ${MATCH}    ${MATCH}    ${MATCH}    ${MATCH}
     Should be Equal    ${result}    ${expect_result}
 
-Get Regexp Matches Group Regex With Group Name
+Get Regexp Matches Insert Group Regex With Group Name
     ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    group_name
     ${expect_result}=    Create List    ${GROUP MATCH}    ${GROUP MATCH}    ${GROUP MATCH}    ${GROUP MATCH}
     Should be Equal    ${result}    ${expect_result}
 
-Get Regexp Matches Group Regex With Group Index
+Get Regexp Matches Insert Group Regex With Group Index
     ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    2
     ${expect_result}=    Create List    ${SECOND INDEX GROUP}    ${SECOND INDEX GROUP}    ${SECOND INDEX GROUP}    ${SECOND INDEX GROUP}
     Should be Equal    ${result}    ${expect_result}

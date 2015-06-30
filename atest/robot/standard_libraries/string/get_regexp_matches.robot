@@ -10,11 +10,11 @@ Get Regexp Matches With No Match
 Get Regexp Matches Without Group
     Check Test Case    ${TESTNAME}
 
-Get Regexp Matches Group Regex Without Groups
+Get Regexp Matches Insert Group Regex Without Groups
     Check Test Case    ${TESTNAME}
 
-Get Regexp Matches Group Regex With Group Name
+Get Regexp Matches Insert Group Regex With Group Name
     Check Test Case    ${TESTNAME}
 
-Get Regexp Matches Group Regex With Group Index
+Get Regexp Matches Insert Group Regex With Group Index
     Check Test Case    ${TESTNAME}
