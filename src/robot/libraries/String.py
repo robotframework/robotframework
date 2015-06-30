@@ -261,6 +261,39 @@ class String(object):
         regexp = re.compile('^%s$' % pattern)
         return self._get_matching_lines(string, regexp.match)
 
+    def get_regexp_matches(self, string, pattern, *groups):
+        """Returns multiple match results of the given ``string`` that match the ``pattern``.
+
+        This keyword returns all matches(don't return on first match) and support group.
+        See the `Should Match Regexp` check how to use regex in Robot Framework.
+        If regexp doesn't match anything, return empty array. (Always Pass)
+        This will help you find in high volatility string.
+
+        Examples:
+        | ${no_match} | Get Regexp Matches | abcdefg123abcdefg123 | hijk |
+        | ${no_group} | Get Regexp Matches | abcdefg123abcdefg123 | abcdefg |
+        | ${with_group_name} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | name |
+        | ${with_group_index} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | 2 |
+        | ${with_group_name_and_index} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | 2 | name |
+        =>
+        | ${no_match} = []
+        | ${no_group} = ['abcdefg', 'abcdefg']
+        | ${with_group_name} = ['cd', 'cd']
+        | ${with_group_index} = ['fg', 'fg']
+        | ${with_group_name_and_index} = [('fg','cd'), ('fg','cd')]
+
+        New in Robot Framework 2.9.
+        """
+        regexp = re.compile(pattern)
+        groups = [self._parse_group(g) for g in groups]
+        return [m.group(*groups) for m in regexp.finditer(string)]
+
+    def _parse_group(self, group):
+        try:
+            return int(group)
+        except ValueError:
+            return group
+
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
         matching = [line for line in lines if matches(line)]
