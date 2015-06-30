@@ -558,7 +558,7 @@ class _Verify(_BuiltInBase):
         """Fails if the given condition is not true.
 
         If ``condition`` is a string (e.g. ``${rc} < 10``), it is evaluated as
-        a Python expression using the `Evaluate` keyword internally and the
+        a Python expression as explained in `Evaluating expressions` and the
         keyword status is decided based on the result. If a non-string item is
         given, the status is got directly from its
         [http://docs.python.org/2/library/stdtypes.html#truth|truth value].
@@ -567,18 +567,20 @@ class _Verify(_BuiltInBase):
         informative, but it can be overridden with the ``msg`` argument.
 
         Examples:
-        | Should Be True | ${rc} < 10  |
+        | Should Be True | ${rc} < 10            |
         | Should Be True | '${status}' == 'PASS' | # Strings must be quoted |
-        | Should Be True | 'foo' in '''${multiline text}''' | # Multiline strings must be in triple quotes |
         | Should Be True | ${number}   | # Passes if ${number} is not zero |
         | Should Be True | ${list}     | # Passes if ${list} is not empty  |
 
-        Starting from Robot Framework 2.9, all current variables are available
-        in the evaluation namespace automatically without the ``${}``
-        decoration:
+        Variables used like ``${variable}``, as in the examples above, are
+        replaced in the expression before evaluation. Variables are also
+        available in the evaluation namespace and can be accessed using special
+        syntax ``$variable``. This is a new feature in Robot Framework 2.9
+        and it is explained more thoroughly in `Evaluating expressions`.
 
-        | Should Be True | rc < 10  | # Passes if ${rc} is a number less than 10 |
-        | Should Be True | status == 'PASS' | # Expected string must be quoted |
+        Examples:
+        | Should Be True | $rc < 10          |
+        | Should Be True | $status == 'PASS' | # Expected string must be quoted |
 
         Starting from Robot Framework 2.8, `Should Be True` automatically
         imports Python's [http://docs.python.org/2/library/os.html|os] and
@@ -1415,9 +1417,9 @@ class _RunKeyword(_BuiltInBase):
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if ``condition`` is true.
 
-        The given ``condition`` is evaluated similarly as with `Should Be
-        True` keyword, and ``name`` and ``*args`` have same semantics as with
-        `Run Keyword`.
+        The given ``condition`` is evaluated in Python as explained in
+        `Evaluating expressions`, and ``name`` and ``*args`` have same
+        semantics as with `Run Keyword`.
 
         Example, a simple if/else construct:
         | ${status} | ${value} = | `Run Keyword And Ignore Error` | `My Keyword` |
@@ -1427,6 +1429,15 @@ class _RunKeyword(_BuiltInBase):
         In this example, only either `Some Action` or `Another Action` is
         executed, based on the status of `My Keyword`. Instead of `Run Keyword
         And Ignore Error` you can also use `Run Keyword And Return Status`.
+
+        Variables used like ``${variable}``, as in the examples above, are
+        replaced in the expression before evaluation. Variables are also
+        available in the evaluation namespace and can be accessed using special
+        syntax ``$variable``. This is a new feature in Robot Framework 2.9
+        and it is explained more thoroughly in `Evaluating expressions`.
+
+        Example:
+        | `Run Keyword If` | $result is None or $result == 'FAIL' | `Keyword` |
 
         Starting from Robot version 2.7.4, this keyword supports also optional
         ELSE and ELSE IF branches. Both of these are defined in ``*args`` and
@@ -2586,55 +2597,33 @@ class _Misc(_BuiltInBase):
     def evaluate(self, expression, modules=None, namespace=None):
         """Evaluates the given expression in Python and returns the results.
 
+        ``expression`` is evaluated in Python as explained in `Evaluating
+        expressions`.
+
         ``modules`` argument can be used to specify a comma separated
-        list of Python modules to be imported and added to the
-        namespace of the evaluated ``expression``.
+        list of Python modules to be imported and added to the evaluation
+        namespace.
 
-        ``namespace`` argument can be used to pass a custom namespace as
-        a dictionary. Possible ``modules`` are added to this namespace.
+        ``namespace`` argument can be used to pass a custom evaluation
+        namespace as a dictionary. Possible ``modules`` are added to this
+        namespace. This is a new feature in Robot Framework 2.8.4.
 
-        When variables are used in the expression with the normal variable
-        decoration (e.g. ``${var}``), they will be replaced by their string
-        representation before evaluation. Variables that are to be evaluated
-        as strings must thus be quoted with single or double quotes (e.g.
-        ``"${var}"``). If the variable may contain newlines or quotes, Python's
-        triple quoting can be used instead (e.g. ``'''${var}'''``).
+        Variables used like ``${variable}`` are replaced in the expression
+        before evaluation. Variables are also available in the evaluation
+        namespace and can be accessed using special syntax ``$variable``.
+        This is a new feature in Robot Framework 2.9 and it is explained more
+        thoroughly in `Evaluating expressions`.
 
         Examples (expecting ``${result}`` is 3.14):
-        | ${status} = | Evaluate | 0 < ${result} < 10    | # Would also work with string '3.14' |
-        | ${down} =   | Evaluate | int(${result})        |
-        | ${up} =     | Evaluate | math.ceil(${result})  | math                |
-        | ${random} = | Evaluate | random.randint(0, sys.maxint) | random, sys |
-        | ${ns} =     | Create Dictionary | x=${4}       | y=${2}              |
-        | ${result} = | Evaluate | x*10 + y              | namespace=${ns}     |
+        | ${status} = | Evaluate | 0 < ${result} < 10 | # Would also work with string '3.14' |
+        | ${status} = | Evaluate | 0 < $result < 10   | # Using variable itself, not string representation |
+        | ${random} = | Evaluate | random.randint(0, sys.maxint) | modules=random, sys |
+        | ${ns} =     | Create Dictionary | x=${4}    | y=${2}              |
+        | ${result} = | Evaluate | x*10 + y           | namespace=${ns}     |
         =>
         | ${status} = True
-        | ${down} = 3
-        | ${up} = 4.0
         | ${random} = <random integer>
         | ${result} = 42
-
-        All current variables are available in the evaluation namespace
-        automatically also without the ``${}`` decoration (e.g. ``var``).
-        When used like this, variables are evaluated within the expression
-        with their actual value. They must not be quoted even if they would
-        contain strings. Variables do not override Python built-ins
-        (e.g. ``len``) nor the given ``modules`` or ``namespace``.
-
-        Examples (expecting ``${text}`` is ``'Hello Kitty'``):
-        | ${length} = | Evaluate | len(text)    |
-        | @{parts} =  | Evaluate | text.split() |
-        | ${comp} =   | Evaluate | text == '${text}' |
-        =>
-        | ${length} = 11
-        | ${parts} = ['Hello', 'Kitty']
-        | ${comp} = True
-
-        Notice that instead of creating complicated expressions, it is
-        recommended to move the logic into a test library.
-
-        Support for ``namespace`` is new in Robot Framework 2.8.4 and
-        variables without decoration in the evaluation namespace in 2.9.
         """
         variables = self._variables.as_dict(decoration=False)
         expression = self._handle_variables_in_expression(expression, variables)
@@ -2943,6 +2932,14 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     conversions (e.g. `Convert To Integer`) and for various other purposes
     (e.g. `Log`, `Sleep`, `Run Keyword If`, `Set Global Variable`).
 
+    == Table of contents ==
+
+    - `HTML error messages`
+    - `Evaluating expressions`
+    - `Boolean arguments`
+    - `Shortcuts`
+    - `Keywords`
+
     = HTML error messages =
 
     Many of the keywords accept an optional error message to use if the keyword
@@ -2950,6 +2947,52 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     these messages by prefixing them with ``*HTML*``. See `Fail` keyword for
     a usage example. Notice that using HTML in messages is not limited to
     BuiltIn library but works with any error message.
+
+    = Evaluating expressions =
+
+    Many keywords, such as `Evaluate`, `Run Keyword If` and `Should Be True`,
+    accept an expression that is evaluated in Python. These expressions are
+    evaluated using Python's
+    [https://docs.python.org/2/library/functions.html#eval|eval] function so
+    that all Python built-ins like ``len()`` and ``int()`` are available.
+    `Evaluate` allows configuring the execution namespace with custom modules,
+    and other keywords have [https://docs.python.org/2/library/os.html|os]
+    and [https://docs.python.org/2/library/sys.html|sys] modules available
+    automatically.
+
+    Examples:
+    | `Run Keyword If` | os.sep == '/' | Log                  | Not on Windows |
+    | ${random int} =  | `Evaluate`    | random.randint(0, 5) | modules=random |
+
+    When a variable is used in the expressing using the normal ``${variable}``
+    syntax, its value is replaces before the expression is evaluated. This
+    means that the value used in the expression will be the string
+    representation of the variable value, not the variable value itself.
+    This is not a problem with numbers and other objects that have a string
+    representation that can be evaluated directly, but with other objects
+    the behavior depends on the string representation. Most importantly,
+    strings must always be quoted, and if they can contain newlines, they must
+    be triple quoted.
+
+    Examples:
+    | `Should Be True` | ${rc} < 10                | Return code greater than 10 |
+    | `Run Keyword If` | '${status}' == 'PASS'     | Log | Passed                |
+    | `Run Keyword If` | 'FAIL' in '''${output}''' | Log | Output contains FAIL  |
+
+    Starting from Robot Framework 2.9, variables themselves are automatically
+    available in the evaluation namespace. They can be accessed using special
+    variable syntax without the curly braces like ``$variable``. These
+    variables should never be quoted, and in fact they are not even replaced
+    inside strings.
+
+    Examples:
+    | `Should Be True` | $rc < 10          | Return code greater than 10  |
+    | `Run Keyword If` | $status == 'PASS' | `Log` | Passed               |
+    | `Run Keyword If` | 'FAIL' in $output | `Log` | Output contains FAIL |
+    | `Should Be True` | len($result) > 1 and $result[1] == 'OK' |
+
+    Notice that instead of creating complicated expressions, it is often better
+    to move the logic into a test library.
 
     = Boolean arguments =
 
