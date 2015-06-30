@@ -47,9 +47,17 @@ Get Regexp Matches Insert Group Regex With Group Index
     Should be Equal    ${result}    ${expect_result}
 
 Get Regexp Matches Insert Group Regex With Group Indexes
-    ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    1    2
+    ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    2    1
     Length Should Be    ${result}    ${TEXT REPEAT COUNT}
-    ${expect_result}=    Create List    ${GROUP MATCH}    ${SECOND GROUP MATCH}
+    ${expect_result}=    Create List    ${SECOND GROUP MATCH}    ${GROUP MATCH}
+    : FOR    ${match}    IN    @{result}
+    \    ${match}=    Convert To List    ${match}
+    \    Should be Equal    ${match}    ${expect_result}
+
+Get Regexp Matches Insert Group Regex With Group Name And Index
+    ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    2    group_name
+    Length Should Be    ${result}    ${TEXT REPEAT COUNT}
+    ${expect_result}=    Create List    ${SECOND GROUP MATCH}    ${GROUP MATCH}
     : FOR    ${match}    IN    @{result}
     \    ${match}=    Convert To List    ${match}
     \    Should be Equal    ${match}    ${expect_result}
