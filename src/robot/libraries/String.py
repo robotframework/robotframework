@@ -268,25 +268,31 @@ class String(object):
         return '\n'.join(matching)
 
     def get_regexp_matches(self, string, pattern, *groups):
-        """Returns multiple match results of the given ``string`` that match the ``pattern``.
+        """Returns a list of all non-overlapping matches in the given string.
 
-        This keyword returns all matches(don't return on first match) and support group.
-        See the `Should Match Regexp` check how to use regex in Robot Framework.
-        If regexp doesn't match anything, return empty array. (Always Pass)
-        This will help you find in high volatility string.
+        ``string`` is the string to find matches from and ``pattern`` is the
+        regular expression. See `BuiltIn.Should Match Regexp` for more
+        information about Python regular expression syntax in general and how
+        to use it in Robot Framework test data in particular.
+
+        If no groups are used, the returned list contains full matches. If one
+        group is used, the list contains only contents of that group. If
+        multiple groups are used, the list contains tuples that contain
+        individual group contents. All groups can be given as indexes (starting
+        from 1) and named groups also as names.
 
         Examples:
-        | ${no_match} | Get Regexp Matches | abcdefg123abcdefg123 | hijk |
-        | ${no_group} | Get Regexp Matches | abcdefg123abcdefg123 | abcdefg |
-        | ${with_group_name} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | name |
-        | ${with_group_index} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | 2 |
-        | ${with_group_name_and_index} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | 2 | name |
+        | ${no match} =    | Get Regexp Matches | the string | xxx     |
+        | ${matches} =     | Get Regexp Matches | the string | t..     |
+        | ${one group} =   | Get Regexp Matches | the string | t(..)   | 1 |
+        | ${named group} = | Get Regexp Matches | the string | t(?P<name>..) | name |
+        | ${two groups} =  | Get Regexp Matches | the string | t(.)(.) | 1 | 2 |
         =>
-        | ${no_match} = []
-        | ${no_group} = ['abcdefg', 'abcdefg']
-        | ${with_group_name} = ['cd', 'cd']
-        | ${with_group_index} = ['fg', 'fg']
-        | ${with_group_name_and_index} = [('fg','cd'), ('fg','cd')]
+        | ${no match} = []
+        | ${matches} = ['the', 'tri']
+        | ${one group} = ['he', 'ri']
+        | ${named group} = ['he', 'ri']
+        | ${two groups} = [('h', 'e'), ('r', 'i')]
 
         New in Robot Framework 2.9.
         """
