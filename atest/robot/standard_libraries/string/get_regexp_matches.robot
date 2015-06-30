@@ -16,5 +16,11 @@ Get Regexp Matches Insert Group Regex Without Groups
 Get Regexp Matches Insert Group Regex With Group Name
     Check Test Case    ${TESTNAME}
 
+Get Regexp Matches Insert Group Regex With Group Names
+    Check Test Case    ${TESTNAME}
+
 Get Regexp Matches Insert Group Regex With Group Index
+    Check Test Case    ${TESTNAME}
+
+Get Regexp Matches Insert Group Regex With Group Indexes
     Check Test Case    ${TESTNAME}
