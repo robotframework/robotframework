@@ -1,14 +1,16 @@
 *** Settings ***
-Library           String
+Library    String
+Library    Collections
 
 *** Variables ***
 ${TEXT IN COLUMNS}    abcdefg123\tabcdefg123\nabcdefg123\tabcdefg123
+${TEXT REPEAT COUNT}    4
 ${REGULAR EXPRESSION}    abcdefg
 ${REGULAR EXPRESSION WITH GROUP}    ab(?P<group_name>cd)e(?P<group_name2>fg)
 ${UNMATCH REGULAR EXPRESSION}    hijk
 ${MATCH}    abcdefg
 ${GROUP MATCH}    cd
-${SECOND INDEX GROUP}    fg
+${SECOND GROUP MATCH}    fg
 
 *** Test Cases ***
 Get Regexp Matches With No Match
@@ -33,16 +35,21 @@ Get Regexp Matches Insert Group Regex With Group Name
 
 Get Regexp Matches Insert Group Regex With Group Names
     @{result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    group_name    group_name2
-    ${expect_result}=    Create List    ${GROUP MATCH}    ${GROUP MATCH}    ${GROUP MATCH}    ${GROUP MATCH}
-    : FOR    ${first}    ${second}    IN ZIP    @{result}
-    \    Should be Equal    ${first}    ${expect_result}
+    Length Should Be    ${result}    ${TEXT REPEAT COUNT}
+    ${expect_result}=    Create List    ${GROUP MATCH}    ${SECOND GROUP MATCH}
+    : FOR    ${match}    IN    @{result}
+    \    ${match}=    Convert To List    ${match}
+    \    Should be Equal    ${match}    ${expect_result}
 
 Get Regexp Matches Insert Group Regex With Group Index
     ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    2
-    ${expect_result}=    Create List    ${SECOND INDEX GROUP}    ${SECOND INDEX GROUP}    ${SECOND INDEX GROUP}    ${SECOND INDEX GROUP}
+    ${expect_result}=    Create List    ${SECOND GROUP MATCH}    ${SECOND GROUP MATCH}    ${SECOND GROUP MATCH}    ${SECOND GROUP MATCH}
     Should be Equal    ${result}    ${expect_result}
 
 Get Regexp Matches Insert Group Regex With Group Indexes
     ${result}=    Get Regexp Matches    ${TEXT IN COLUMNS}    ${REGULAR EXPRESSION WITH GROUP}    1    2
-    ${expect_result}=    Create List    ${SECOND INDEX GROUP}    ${SECOND INDEX GROUP}    ${SECOND INDEX GROUP}    ${SECOND INDEX GROUP}
-    Should be Equal    ${result}    ${expect_result}
+    Length Should Be    ${result}    ${TEXT REPEAT COUNT}
+    ${expect_result}=    Create List    ${GROUP MATCH}    ${SECOND GROUP MATCH}
+    : FOR    ${match}    IN    @{result}
+    \    ${match}=    Convert To List    ${match}
+    \    Should be Equal    ${match}    ${expect_result}
