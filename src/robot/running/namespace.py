@@ -15,11 +15,12 @@
 import os
 import copy
 
-from robot import utils
 from robot.errors import DataError
 from robot.libraries import STDLIBS, STDLIB_TO_DEPRECATED_MAP
 from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
+from robot.utils import (eq, find_file, is_string, printable_name, seq2str2,
+                         RecommendationFinder)
 
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
@@ -105,7 +106,7 @@ class Namespace(object):
         else:
             msg = "Variable file '%s'" % path
             if args:
-                msg += " with arguments %s" % utils.seq2str2(args)
+                msg += " with arguments %s" % seq2str2(args)
             LOGGER.info("%s already imported by suite '%s'"
                         % (msg, self.suite.longname))
 
@@ -142,7 +143,7 @@ class Namespace(object):
     def _get_name(self, name, basedir, import_type):
         if import_type == 'Library' and not self._is_library_by_path(name):
             return name.replace(' ', '')
-        return utils.find_file(name, basedir, file_type=import_type)
+        return find_file(name, basedir, file_type=import_type)
 
     def _is_library_by_path(self, path):
         return path.lower().endswith(self._library_import_by_path_endings)
@@ -219,7 +220,7 @@ class KeywordStore(object):
 
     def get_library(self, name_or_instance):
         try:
-            if isinstance(name_or_instance, basestring):
+            if is_string(name_or_instance):
                 return self.libraries[name_or_instance.replace(' ', '')]
             else:
                 return self._get_lib_by_instance(name_or_instance)
@@ -253,7 +254,7 @@ class KeywordStore(object):
         handler = None
         if not name:
             raise DataError('Keyword name cannot be empty.')
-        if not isinstance(name, basestring):
+        if not is_string(name):
             raise DataError('Keyword name must be a string.')
         if '.' in name:
             handler = self._get_explicit_handler(name)
@@ -315,7 +316,7 @@ class KeywordStore(object):
     def _get_handler_based_on_search_order(self, handlers):
         for libname in self.search_order:
             for handler in handlers:
-                if utils.eq(libname, handler.libname):
+                if eq(libname, handler.libname):
                     return [handler]
         return handlers
 
@@ -373,7 +374,7 @@ class KeywordStore(object):
     def _find_keywords(self, owner_name, name):
         return [owner.handlers[name]
                 for owner in self.libraries.values() + self.resources.values()
-                if utils.eq(owner.name, owner_name) and name in owner.handlers]
+                if eq(owner.name, owner_name) and name in owner.handlers]
 
     def _raise_multiple_keywords_found(self, name, found, implicit=True):
         error = "Multiple keywords with name '%s' found" % name
@@ -395,12 +396,12 @@ class KeywordRecommendationFinder(object):
         candidates = self._get_candidates('.' in name)
         normalizer = lambda name: candidates.get(name, name).lower().replace(
             '_', ' ')
-        finder = utils.RecommendationFinder(normalizer)
+        finder = RecommendationFinder(normalizer)
         return finder.find_recommendations(name, candidates)
 
     @staticmethod
     def format_recommendations(msg, recommendations):
-        return utils.RecommendationFinder.format_recommendations(
+        return RecommendationFinder.format_recommendations(
             msg, recommendations)
 
     def _get_candidates(self, use_full_name):
@@ -420,13 +421,13 @@ class KeywordRecommendationFinder(object):
         """
         excluded = ['DeprecatedBuiltIn', 'DeprecatedOperatingSystem',
                     'Reserved']
-        handlers = [(None, utils.printable_name(handler.name, True))
+        handlers = [(None, printable_name(handler.name, True))
                     for handler in self.user_keywords.handlers]
         for library in (self.libraries.values() + self.resources.values()):
             if library.name not in excluded:
                 handlers.extend(
                     ((library.name,
-                      utils.printable_name(handler.name, code_style=True))
+                      printable_name(handler.name, code_style=True))
                      for handler in library.handlers))
         # sort handlers to ensure consistent ordering between Jython and Python
         return sorted(handlers)

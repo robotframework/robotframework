@@ -51,9 +51,10 @@ Should (Not) Be True is evaluated with os- and sys-modules
     Should Not Be True    'sys.platform' == 'hurd'    # let's see when this starts failing
 
 Should (Not) Be True is evaluated with robot's variables
-    ${lst} =    Create list   foo    bar
-    Should Be True    lst[0] == 'foo'
-    Should Not Be True   len(lst) == 3
+    ${list} =    Create list   foo    bar
+    Should Be True    $list[0] == 'foo'
+    Should Be True   len($list) == 2
+    Should Not Be True   len($list) == 3
 
 Should Not Be Equal
     [Documentation]    FAIL 1 == 1

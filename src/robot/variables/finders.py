@@ -27,7 +27,7 @@ from robot.utils import (get_env_var, get_env_vars, get_error_message,
                          NormalizedDict)
 
 from .isvar import validate_var
-from .notfound import raise_not_found
+from .notfound import variable_not_found
 
 
 class VariableFinder(object):
@@ -50,7 +50,7 @@ class VariableFinder(object):
                 except (KeyError, ValueError):
                     continue
                 return self._validate_value(value, identifier, name)
-        raise_not_found(name, self._store.data)
+        variable_not_found(name, self._store.data)
 
     def _validate_value(self, value, identifier, name):
         if identifier == '@':
@@ -134,8 +134,8 @@ class EnvironmentFinder(object):
             value = getter(name[2:-1])
             if value is not None:
                 return value
-        raise_not_found(name, self._get_candidates(),
-                        "Environment variable '%s' not found." % name)
+        variable_not_found(name, self._get_candidates(),
+                           "Environment variable '%s' not found." % name)
 
     def _get_candidates(self):
         candidates = dict(get_java_properties())

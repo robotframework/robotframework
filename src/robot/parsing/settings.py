@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import is_string
+
 from .comments import Comment
 
 
@@ -58,7 +60,7 @@ class Setting(object):
         self.parent.report_invalid_syntax(message, level)
 
     def _string_value(self, value):
-        return value if isinstance(value, basestring) else ' '.join(value)
+        return value if is_string(value) else ' '.join(value)
 
     def _concat_string_with_value(self, string, value):
         if string:
@@ -95,7 +97,7 @@ class StringValueJoiner(object):
         return self.string_value(value)
 
     def string_value(self, value):
-        if isinstance(value, basestring):
+        if is_string(value):
             return value
         return self._separator.join(value)
 
@@ -109,7 +111,7 @@ class Documentation(Setting):
         self.value = self._concat_string_with_value(self.value, value)
 
     def _string_value(self, value):
-        return value if isinstance(value, basestring) else ''.join(value)
+        return value if is_string(value) else ''.join(value)
 
     def _data_as_list(self):
         return [self.setting_name, self.value]
@@ -275,7 +277,7 @@ class Library(_Import):
         _Import.__init__(self, parent, name, args, alias, comment)
 
     def _split_alias(self, args):
-        if len(args) >= 2 and isinstance(args[-2], basestring) \
+        if len(args) >= 2 and is_string(args[-2]) \
                 and args[-2].upper() == 'WITH NAME':
             return args[:-2], args[-1]
         return args, None

@@ -31,13 +31,13 @@ class Keyword(model.Keyword):
 
 
 class ForLoop(Keyword):
-    __slots__ = ['range']
+    __slots__ = ['flavor']
     keyword_class = Keyword
 
-    def __init__(self, variables, values, range):
+    def __init__(self, variables, values, flavor):
         Keyword.__init__(self, assign=variables, args=values,
                          type=Keyword.FOR_LOOP_TYPE)
-        self.range = range
+        self.flavor = flavor
 
     @property
     def variables(self):

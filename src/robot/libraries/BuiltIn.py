@@ -12,9 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import __builtin__
 import re
 import time
+import token
+from tokenize import generate_tokens, untokenize
+from StringIO import StringIO
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -24,13 +26,15 @@ from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (asserts, DotDict, escape, format_assign_message,
-                         get_error_message, get_time, is_falsy, is_truthy,
-                         JYTHON, Matcher, normalize, parse_time, prepr,
+                         get_error_message, get_time, is_falsy, is_integer,
+                         is_string, is_truthy, is_unicode, JYTHON, Matcher,
+                         normalize, NormalizedDict, parse_time, prepr,
                          RERAISED_EXCEPTIONS, plural_or_not as s,
                          secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
-                             VariableTableValue, VariableSplitter)
+                             VariableTableValue, VariableSplitter,
+                             variable_not_found)
 from robot.version import get_version
 
 if JYTHON:
@@ -79,7 +83,7 @@ class _BuiltInBase(object):
         return matcher.match(string)
 
     def _is_true(self, condition):
-        if isinstance(condition, basestring):
+        if is_string(condition):
             condition = self.evaluate(condition, modules='os,sys')
         return bool(condition)
 
@@ -89,7 +93,7 @@ class _BuiltInBase(object):
 
     def _get_type(self, arg):
         # In IronPython type(u'x') is str. We want to report unicode anyway.
-        if isinstance(arg, unicode):
+        if is_unicode(arg):
             return "<type 'unicode'>"
         return str(type(arg))
 
@@ -146,7 +150,7 @@ class _Converter(_BuiltInBase):
         return item
 
     def _get_base(self, item, base):
-        if not isinstance(item, basestring):
+        if not is_string(item):
             return item, base
         item = normalize(item)
         if item.startswith(('-', '+')):
@@ -320,7 +324,7 @@ class _Converter(_BuiltInBase):
         using Python's ``bool()`` method.
         """
         self._log_types(item)
-        if isinstance(item, basestring):
+        if is_string(item):
             if item.upper() == 'TRUE':
                 return True
             if item.upper() == 'FALSE':
@@ -392,9 +396,9 @@ class _Converter(_BuiltInBase):
                            % (type, original))
 
     def _get_ordinals_from_int(self, input):
-        if isinstance(input, basestring):
+        if is_string(input):
             input = input.split()
-        elif isinstance(input, (int, long)):
+        elif is_integer(input):
             input = [input]
         for integer in input:
             ordinal = self._convert_to_integer(integer)
@@ -411,7 +415,7 @@ class _Converter(_BuiltInBase):
             yield self._test_ordinal(ordinal, token, 'Binary value')
 
     def _input_to_tokens(self, input, length):
-        if not isinstance(input, basestring):
+        if not is_string(input):
             return input
         input = ''.join(input.split())
         if len(input) % length != 0:
@@ -1241,7 +1245,7 @@ class _Variables(_BuiltInBase):
         `Get Variable Value` keywords.
         """
         name = self._get_var_name(name)
-        if (values and isinstance(values[-1], basestring) and
+        if (values and is_string(values[-1]) and
                 values[-1].startswith('children=')):
             children = self._variables.replace_scalar(values[-1][9:])
             children = is_truthy(children)
@@ -1332,7 +1336,7 @@ class _RunKeyword(_BuiltInBase):
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
-        if not isinstance(name, basestring):
+        if not is_string(name):
             raise RuntimeError('Keyword name must be string.')
         kw = Keyword(name, args=args)
         return kw.run(self._context)
@@ -2632,15 +2636,12 @@ class _Misc(_BuiltInBase):
         Support for ``namespace`` is new in Robot Framework 2.8.4 and
         variables without decoration in the evaluation namespace in 2.9.
         """
-        namespace = dict(namespace) if namespace else {}
-        modules = modules.replace(' ', '').split(',') if modules else []
-        namespace.update((m, __import__(m)) for m in modules if m)
         variables = self._variables.as_dict(decoration=False)
-        for key in dir(__builtin__) + list(namespace):
-            if key in variables:
-                variables.pop(key)
+        expression = self._handle_variables_in_expression(expression, variables)
+        namespace = self._create_evaluation_namespace(namespace, modules)
+        variables = self._decorate_variables_for_evaluation(variables)
         try:
-            if not isinstance(expression, basestring):
+            if not is_string(expression):
                 raise TypeError("Expression must be string, got %s."
                                 % type_name(expression))
             if not expression:
@@ -2649,6 +2650,40 @@ class _Misc(_BuiltInBase):
         except:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
                                % (expression, get_error_message()))
+
+    def _handle_variables_in_expression(self, expression, variables):
+        tokens = []
+        variable_started = seen_variable = False
+        generated = generate_tokens(StringIO(expression).readline)
+        for toknum, tokval, _, _, _ in generated:
+            if variable_started:
+                if toknum == token.NAME:
+                    if tokval not in variables:
+                        variable_not_found('$%s' % tokval, variables,
+                                           deco_braces=False)
+                    tokval = 'RF_VAR_' + tokval
+                    seen_variable = True
+                else:
+                    tokens.append((token.ERRORTOKEN, '$'))
+                variable_started = False
+            if toknum == token.ERRORTOKEN and tokval == '$':
+                variable_started = True
+            else:
+                tokens.append((toknum, tokval))
+        if seen_variable:
+            return untokenize(tokens).strip()
+        return expression
+
+    def _create_evaluation_namespace(self, namespace, modules):
+        namespace = dict(namespace or {})
+        modules = modules.replace(' ', '').split(',') if modules else []
+        namespace.update((m, __import__(m)) for m in modules if m)
+        return namespace
+
+    def _decorate_variables_for_evaluation(self, variables):
+        decorated = [('RF_VAR_' + name, value)
+                     for name, value in variables.items()]
+        return NormalizedDict(decorated, ignore='_')
 
     def call_method(self, object, method_name, *args, **kwargs):
         """Calls the named method of the given object with the provided arguments.
@@ -2736,7 +2771,7 @@ class _Misc(_BuiltInBase):
         self.log('Set test message to:\n%s' % message, level)
 
     def _get_possibly_appended_value(self, initial, new, append):
-        if not isinstance(new, unicode):
+        if not is_unicode(new):
             new = unic(new)
         if is_truthy(append) and initial:
             return '%s %s' % (initial, new)
@@ -2811,7 +2846,7 @@ class _Misc(_BuiltInBase):
         added in 2.7.7.
         """
         top = is_truthy(top)
-        if not isinstance(name, unicode):
+        if not is_unicode(name):
             name = unic(name)
         metadata = self._get_namespace(top).suite.metadata
         original = metadata.get(name, '')

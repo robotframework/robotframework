@@ -33,6 +33,9 @@ For Without Value Fails
 For Loop Over Empty List Variable Is Ok
     Check Test Case    ${TEST NAME}
 
+For Loop Over Generator
+    Check Test Case    ${TEST NAME}
+
 For Failing
     ${tc} =    Check Test Case    ${TEST NAME} 1
     Should Be For Keyword    ${tc.kws[0]}    1
@@ -254,6 +257,75 @@ For In Range With Multiple Variables
     Should Be For Item    ${tc.kws[0].kws[2]}    \${i} = 5, \${j} = 6, \${k} = 7
     Should Be For Item    ${tc.kws[0].kws[3]}    \${i} = 8, \${j} = 9, \${k} = 10
 
+For In Zip
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${for_loop}=    Set Variable    ${tc.kws[2]}
+    Should Be For In Zip Keyword    ${for_loop}    4
+    Should Be For Item    ${for_loop.kws[0]}    \${item} = a, \${thing} = e
+    Should Be For Item    ${for_loop.kws[1]}    \${item} = b, \${thing} = f
+    Should Be For Item    ${for_loop.kws[2]}    \${item} = c, \${thing} = g
+    Should Be For Item    ${for_loop.kws[3]}    \${item} = d, \${thing} = h
+
+For In Zip With Uneven Lists
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${for_loop}=    Set Variable    ${tc.kws[2]}
+    Should Be For In Zip Keyword    ${for_loop}    3
+    Should Be For Item    ${for_loop.kws[0]}    \${item} = a, \${thing} = d
+    Should Be For Item    ${for_loop.kws[1]}    \${item} = b, \${thing} = e
+    Should Be For Item    ${for_loop.kws[2]}    \${item} = c, \${thing} = f
+
+For In Zip With 3 Lists
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${for_loop}=    Set Variable    ${tc.kws[3]}
+    Should Be For In Zip Keyword    ${for_loop}    4
+    Should Be For Item    ${for_loop.kws[0]}    \${item} = a, \${thing} = e, \${stuff} = 1
+    Should Be For Item    ${for_loop.kws[1]}    \${item} = b, \${thing} = f, \${stuff} = 2
+    Should Be For Item    ${for_loop.kws[2]}    \${item} = c, \${thing} = g, \${stuff} = 3
+    Should Be For Item    ${for_loop.kws[3]}    \${item} = d, \${thing} = h, \${stuff} = 4
+
+For In Zip With Other Iterables
+    ${tc} =    Check Test Case    ${TEST NAME}
+
+For In Zip Rejects Strings as iterable
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${for_loop}=    Set Variable    ${tc.kws[1]}
+    Should Be For In Zip Keyword    ${for_loop}    0
+    Should Be Equal    ${for_loop.status}    FAIL
+
+For In Zip With Non-list
+    ${tc} =    Check Test Case    ${TEST NAME}
+    ${for_loop}=    Set Variable    ${tc.kws[2]}
+    Should Be For In Zip Keyword    ${for_loop}    0
+    Should Be Equal    ${for_loop.status}    FAIL
+
+For In Zip With Too Few Variables
+    Check Test Case    ${TEST NAME}
+
+For In Zip With Too Many Variables
+    Check Test Case    ${TEST NAME}
+
+For In Enumerate
+    Check Test Case    ${TEST NAME} (with 4 items)
+    Check Test Case    ${TEST NAME} (with 5 items)
+
+For In Enumerate With 3 Variables
+    Check Test Case    ${TEST NAME}
+
+For In Enumerate With 4 Variables
+    Check Test Case    ${TEST NAME}
+
+For In Enumerate With not the right number of variables
+    Check Test Case    ${TEST NAME}
+
+For In Enumerate With Too Few Variables
+    Check Test Case    ${TEST NAME}
+
+For In Enumerate With Other Iterables
+    Check Test Case    ${TEST NAME}
+
+For Loop Of Unexpected Name
+    Check Test Case    ${TEST NAME}
+
 For In Range With Too Many Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
     Should Be For In Range Keyword    ${tc.kws[0]}    0
@@ -288,6 +360,11 @@ Should Be For In Range Keyword
     [Arguments]    ${kw}    ${subcount}
     Should Be For Keyword    ${kw}    ${subcount}
     Should Contain    ${kw.name}    IN RANGE    Not FOR IN RANGE keyword
+
+Should Be For In Zip Keyword
+    [Arguments]    ${kw}    ${subcount}
+    Should Be For Keyword    ${kw}    ${subcount}
+    Should Contain    ${kw.name}    IN ZIP    Not FOR IN ZIP keyword
 
 Should Be For Item
     [Arguments]    ${kw}    ${name}

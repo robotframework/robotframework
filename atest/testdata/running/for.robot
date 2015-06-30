@@ -8,7 +8,7 @@ Variables   binary_list.py
 ${NO VALUES}      FOR loop has no loop values.
 ${NO KEYWORDS}    FOR loop contains no keywords.
 ${NO VARIABLES}   FOR loop has no loop variables.
-${WRONG VALUES}   Number of FOR loop values should be multiple of variables.
+${WRONG VALUES}   Number of FOR loop values should be multiple of its variables.
 
 *** Test Cases ***
 Simple For
@@ -39,6 +39,13 @@ For Loop Over Empty List Variable Is Ok
     : FOR    ${var}    IN    @{EMPTY}
     \    Fail    not executed
     Variable Should Not Exist    ${var}
+
+For Loop Over Generator
+    ${range}=    Evaluate    (i for i in '0123456789')
+    ${answer}=    Set Variable    ${EMPTY}
+    : FOR     ${x}    IN    @{range}
+    \    ${answer}=    CATENATE    SEPARATOR=    ${answer}    ${x}
+    Should Be Equal    ${answer}    0123456789
 
 For Failing 1
     [Documentation]    FAIL    Here we fail!
@@ -316,6 +323,128 @@ For In Range With Expressions Containing Floats
     : FOR    ${i}    IN RANGE    3 + 0.14    1.5 - 2.5    2 * -1
     \    @{result} =    Create List    @{result}    ${i}
     Should Be True    @{result} == [3.14, 1.14, -0.86]
+
+For In Zip
+    @{items}=    Create List    a    b    c    d
+    @{things}=    Create List    e    f    g    h
+    : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
+    \    @{result} =    Create List    @{result}    ${item}:${thing}
+    Should Be True    @{result} == ['a:e', 'b:f', 'c:g', 'd:h']
+
+For In Zip With Uneven Lists
+    [Documentation]    This will ignore any elements after the shortest
+    ...    list ends, just like with Python's zip()
+    @{items}=    Create List    a    b    c
+    @{things}=    Create List    d    e    f    g    h
+    : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
+    \    @{result} =    Create List    @{result}    ${item}:${thing}
+    Should Be True    @{result} == ['a:d', 'b:e', 'c:f']
+
+For In Zip With 3 Lists
+    @{items}=    Create List    a    b    c    d
+    @{things}=    Create List    e    f    g    h
+    @{stuffs}=    Create List    1    2    3    4    5
+    : FOR    ${item}    ${thing}    ${stuff}    IN ZIP    ${items}    ${things}    ${stuffs}
+    \    @{result} =    Create List    @{result}    ${item}:${thing}:${stuff}
+    Should Be True    @{result} == ['a:e:1', 'b:f:2', 'c:g:3', 'd:h:4']
+
+For In Zip With Other Iterables
+    [Documentation]    Handling non-lists. Should accept anything iterable
+    ...    except strings and fail with a clear error message if invalid
+    ...    data given. You can use utils.is_list_like to verify inputs.
+    ${generator}=    Evaluate    (i for i in range(10))
+    ${tuple}=    Evaluate    (10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+    : FOR     ${x}    ${y}    IN ZIP    ${generator}    ${tuple}
+    \    @{result}=    Create List    @{result}    ${x}:${y}
+    ${expected}=    Create List    0:10    1:11    2:12    3:13    4:14    5:15    6:16    7:17    8:18    9:19
+    Should Be Equal    ${result}    ${expected}
+
+For In Zip Rejects Strings as iterable
+    [Documentation]    FAIL    FOR IN ZIP items must all be list-like, got string.
+    @{things}=    Create List    e    f    g    h
+    : FOR    ${item}    ${thing}    IN ZIP    NotAListButStillPythonIterable    ${things}
+    \    Fail    This test case should die before running this.
+
+For In Zip With Non-list
+    [Documentation]    FAIL    FOR IN ZIP items must all be list-like, got integer.
+    ${items}=    Set Variable    ${42}
+    @{things}=    Create List    e    f    g    h
+    : FOR    ${item}    ${thing}    IN ZIP    ${items}    ${things}
+    \    Fail    This test case should die before running this.
+
+For In Zip With Too Few Variables
+    [Documentation]    FAIL    FOR IN ZIP expects an equal number of variables and iterables. Got 1 variable and 3 iterables.
+    @{items}=    Create List    a    b    c    d
+    @{things}=    Create List    e    f    g    h
+    @{stuffs}=    Create List    1    2    3    4    5
+    : FOR    ${item}    IN ZIP    ${items}    ${things}    ${stuffs}
+    \    Fail    This test case should die before running this.
+
+For In Zip With Too Many Variables
+    [Documentation]    FAIL    FOR IN ZIP expects an equal number of variables and iterables. Got 4 variables and 3 iterables.
+    @{items}=    Create List    a    b    c    d
+    @{things}=    Create List    e    f    g    h
+    @{stuffs}=    Create List    1    2    3    4    5
+    : FOR    ${item}    ${thing}    ${flotsam}    ${jetsam}    IN ZIP    ${items}    ${things}    ${stuffs}
+    \    Fail    This test case should die before running this.
+
+For In Enumerate (with 4 items)
+    @{items}=    Create List    a    b    c    d
+    : FOR    ${index}    ${item}    IN ENUMERATE    @{items}
+    \    Should Be Equal    @{items}[${index}]    ${item}    Loop value ${item} should be item ${index} of ${items}
+    \    @{result}=     Create List    @{result}    ${index}:${item}
+    Should Be True    @{result} == ['0:a', '1:b', '2:c', '3:d']
+
+For In Enumerate (with 5 items)
+    @{items}=    Create List    a    b    c    d    e
+    : FOR    ${index}    ${item}    IN ENUMERATE    @{items}
+    \    Should Be Equal    @{items}[${index}]    ${item}    Loop value ${item} should be item ${index} of ${items}
+    \    @{result}=     Create List    @{result}    ${index}:${item}
+    Should Be True    @{result} == ['0:a', '1:b', '2:c', '3:d', '4:e']
+
+For In Enumerate With 3 Variables
+    @{items}=    Create List    a    b    c    d    e    f
+    : FOR    ${index}    ${item}    ${another_item}    IN ENUMERATE    @{items}
+    \    Should Be Equal    @{items}[${index* 2 }]    ${item}    Loop value ${item} should be item ${index} of ${items}
+    \    Should Be Equal    @{items}[${index * 2 + 1}]    ${another_item}    Loop value ${another_item} should be item ${index} of ${items}
+    \    @{result}=     Create List    @{result}    ${index}:${item}:${another_item}
+    Should Be True    @{result} == ['0:a:b', '1:c:d', '2:e:f']
+
+For In Enumerate With 4 Variables
+    @{items}=    Create List    a    b    c    d    e    f    g    h    i
+    : FOR    ${index}    ${item}    ${another_item}    ${third}    IN ENUMERATE    @{items}
+    \    Should Be Equal    @{items}[${index* 3}]    ${item}    Loop value ${item} should be item ${index} of ${items}
+    \    Should Be Equal    @{items}[${index * 3 + 1}]    ${another_item}    Loop value ${another_item} should be item ${index} of ${items}
+    \    Should Be Equal    @{items}[${index * 3 + 2}]    ${third}    Loop value ${another_item} should be item ${index} of ${items}
+    \    @{result}=     Create List    @{result}    ${index}:${item}:${another_item}:${third}
+    Should Be True    @{result} == ['0:a:b:c', '1:d:e:f', '2:g:h:i']
+
+For In Enumerate With not the right number of variables
+    [Documentation]    FAIL    Number of FOR IN ENUMERATE loop values should be multiple of its variables (excluding the index). Got 2 variables but 7 values.
+    @{items}=    Create List    a    b    c    d    e    f    g
+    : FOR    ${index}    ${item}    ${another_item}    IN ENUMERATE    @{items}
+    \    Should Be Equal    @{items}[${index* 2 }]    ${item}    Loop value ${item} should be item ${index} of ${items}
+    \    Should Be Equal    @{items}[${index * 2 + 1}]    ${another_item}    Loop value ${another_item} should be item ${index} of ${items}
+    \    @{result}=     Create List    @{result}    ${index}:${item}:${another_item}
+    Should Be True    @{result} == ['0:a:b', '1:c:d', '2:e:f']
+
+For In Enumerate With Too Few Variables
+    [Documentation]    FAIL    FOR IN ENUMERATE expected 2 or more loop variables, got 1.
+    : FOR    ${index}    IN ENUMERATE    a    b    c    d    e    f
+    \    Fail    Should not reach this line.
+
+For In Enumerate With Other Iterables
+    ${range}=    Evaluate    (i for i in range(10))
+    ${answer}=    Set Variable    ${EMPTY}
+    : FOR     ${i}    ${x}    IN ENUMERATE    @{range}
+    \    ${answer}=    CATENATE    SEPARATOR=    ${answer}    ${x}
+    \    Should Be Equal    ${i}    ${x}
+    Should Be Equal    ${answer}    0123456789
+
+For Loop Of Unexpected Name
+    [Documentation]    FAIL    Invalid FOR loop type 'IN FANCY PANTS'. Expected 'IN', 'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'.
+    : FOR    ${i}    In Fancy Pants    Mr. Fancypants
+    \    Fail    This shouldn't ever execute.
 
 For In Range With Multiple Variables
     : FOR    ${i}    ${j}    ${k}    IN RANGE    -1    11

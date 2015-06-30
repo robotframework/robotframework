@@ -13,7 +13,8 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import get_error_message, unic, is_java_method
+from robot.utils import (get_error_message, unic, is_java_method,
+                         is_string, is_unicode)
 
 from .arguments import JavaArgumentParser, PythonArgumentParser
 
@@ -55,9 +56,9 @@ class _DynamicMethod(object):
         raise NotImplementedError
 
     def _to_string(self, value):
-        if not isinstance(value, basestring):
+        if not is_string(value):
             raise DataError('Return value must be string.')
-        return value if isinstance(value, unicode) else unic(value, 'UTF-8')
+        return value if is_unicode(value) else unic(value, 'UTF-8')
 
     def _to_list_of_strings(self, value):
         try:

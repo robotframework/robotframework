@@ -6,9 +6,9 @@ Library           CollectionsHelperLibrary.py
 *** Test Cases ***
 Convert To Dictionary
     ${dotted} =    Create Dictionary    a=1    b=2
-    Should Be True    type(dotted) is not dict
+    Should Be True    type($dotted) is not dict
     ${normal} =    Convert To Dictionary    ${dotted}
-    Should Be True    type(normal) is dict
+    Should Be True    type($normal) is dict
     Should Be Equal    ${dotted}    ${normal}
 
 Set To Dictionary

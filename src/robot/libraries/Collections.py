@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 from robot.api import logger
-from robot.utils import (is_truthy, plural_or_not, seq2str, seq2str2,
-                         type_name, unic, Matcher)
+from robot.utils import (is_dict_like, is_string, is_truthy, plural_or_not,
+                         seq2str, seq2str2, type_name, unic, Matcher)
 from robot.utils.asserts import assert_equals
 from robot.version import get_version
 
@@ -368,7 +368,7 @@ class _List(object):
     def _get_list_index_name_mapping(self, names, list_length):
         if not names:
             return {}
-        if isinstance(names, dict):
+        if is_dict_like(names):
             return dict((int(index), names[index]) for index in names)
         return dict(zip(range(list_length), names))
 
@@ -890,7 +890,7 @@ def _verify_condition(condition, default_msg, msg, values=False):
 
 def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
                              whitespace_insensitive=False):
-    if not isinstance(pattern, basestring):
+    if not is_string(pattern):
         raise TypeError("Pattern must be string, got '%s'." % type_name(pattern))
     regexp = False
     if pattern.startswith('regexp='):
@@ -903,4 +903,4 @@ def _get_matches_in_iterable(iterable, pattern, case_insensitive=False,
                       spaceless=is_truthy(whitespace_insensitive),
                       regexp=regexp)
     return [string for string in iterable
-            if isinstance(string, basestring) and matcher.match(string)]
+            if is_string(string) and matcher.match(string)]

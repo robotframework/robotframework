@@ -21,20 +21,28 @@ except ImportError:
     String = ()
 
 
-def type_name(item):
-    cls = item.__class__ if hasattr(item, '__class__') else type(item)
-    named_types = {str: 'string', unicode: 'string', bool: 'boolean',
-                   int: 'integer', long: 'integer', type(None): 'None',
-                   dict: 'dictionary'}
-    return named_types.get(cls, cls.__name__)
+def is_integer(item):
+    return isinstance(item, (int, long))
 
 
-def is_str_like(item):
-    return isinstance(item, (basestring, UserString, String))
+def is_number(item):
+    return isinstance(item, (int, long, float))
+
+
+def is_bytes(item):
+    return isinstance(item, str)
+
+
+def is_string(item):
+    return isinstance(item, basestring)
+
+
+def is_unicode(item):
+    return isinstance(item, unicode)
 
 
 def is_list_like(item):
-    if is_str_like(item):
+    if isinstance(item, (basestring, UserString, String)):
         return False
     try:
         iter(item)
@@ -56,3 +64,11 @@ def is_truthy(item):
 
 def is_falsy(item):
     return not is_truthy(item)
+
+
+def type_name(item):
+    cls = item.__class__ if hasattr(item, '__class__') else type(item)
+    named_types = {str: 'string', unicode: 'string', bool: 'boolean',
+                   int: 'integer', long: 'integer', type(None): 'None',
+                   dict: 'dictionary'}
+    return named_types.get(cls, cls.__name__)

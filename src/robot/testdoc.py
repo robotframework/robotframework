@@ -88,20 +88,22 @@ import time
 if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
-from robot import utils
 from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 from robot.parsing import disable_curdir_processing
 from robot.running import TestSuiteBuilder
+from robot.utils import (abspath, Application, format_time, get_link_path,
+                         html_escape, html_format, is_string,
+                         secs_to_timestr, seq2str2, timestr_to_secs, unescape)
 
 
-class TestDoc(utils.Application):
+class TestDoc(Application):
 
     def __init__(self):
-        utils.Application.__init__(self, USAGE, arg_limits=(2,))
+        Application.__init__(self, USAGE, arg_limits=(2,))
 
     def main(self, datasources, title=None, **options):
-        outfile = utils.abspath(datasources.pop())
+        outfile = abspath(datasources.pop())
         suite = TestSuiteFactory(datasources, **options)
         self._write_test_doc(suite, outfile, title)
         self.console(outfile)
@@ -115,7 +117,7 @@ class TestDoc(utils.Application):
 @disable_curdir_processing
 def TestSuiteFactory(datasources, **options):
     settings = RobotSettings(options)
-    if isinstance(datasources, basestring):
+    if is_string(datasources):
         datasources = [datasources]
     suite = TestSuiteBuilder().build(*datasources)
     suite.configure(**settings.suite_config)
@@ -140,7 +142,7 @@ class TestdocModelWriter(ModelWriter):
         model = {
             'suite': JsonConverter(self._output_path).convert(self._suite),
             'title': self._title,
-            'generated': utils.format_time(generated_time, gmtsep=' '),
+            'generated': format_time(generated_time, gmtsep=' '),
             'generatedMillis': long(time.mktime(generated_time) * 1000)
         }
         JsonWriter(self._output).write_json('testdoc = ', model)
@@ -173,13 +175,13 @@ class JsonConverter(object):
     def _get_relative_source(self, source):
         if not source or not self._output_path:
             return ''
-        return utils.get_link_path(source, os.path.dirname(self._output_path))
+        return get_link_path(source, os.path.dirname(self._output_path))
 
     def _escape(self, item):
-        return utils.html_escape(item)
+        return html_escape(item)
 
     def _html(self, item):
-        return utils.html_format(utils.unescape(item))
+        return html_format(unescape(item))
 
     def _convert_suites(self, suite):
         return [self._convert_suite(s) for s in suite.suites]
@@ -229,14 +231,14 @@ class JsonConverter(object):
         return kw.name
 
     def _get_for_loop(self, kw):
-        joiner = ' IN RANGE ' if kw.range else ' IN '
-        return ', '.join(kw.variables) + joiner + utils.seq2str2(kw.values)
+        joiner = ' %s ' % kw.flavor
+        return ', '.join(kw.variables) + joiner + seq2str2(kw.values)
 
     def _get_timeout(self, timeout):
         if timeout is None:
             return ''
         try:
-            tout = utils.secs_to_timestr(utils.timestr_to_secs(timeout.value))
+            tout = secs_to_timestr(timestr_to_secs(timeout.value))
         except ValueError:
             tout = timeout.value
         if timeout.message:

@@ -64,14 +64,13 @@ def ErrorDetails(exclude_robot_traces=EXCLUDE_ROBOT_TRACES):
 
 
 class _ErrorDetails(object):
-    _generic_exceptions = ('AssertionError', 'AssertionFailedError', 'Exception',
-                           'Error', 'RuntimeError', 'RuntimeException',
-                           'DataError', 'TimeoutError', 'RemoteError')
+    _generic_exception_names = ('AssertionError', 'AssertionFailedError',
+                                'Exception', 'Error', 'RuntimeError',
+                                'RuntimeException')
 
     def __init__(self, exc_type, exc_value, exc_traceback,
                  exclude_robot_traces=True):
         self.error = exc_value
-        self._exc_value = exc_value
         self._exc_type = exc_type
         self._exc_traceback = exc_traceback
         self._exclude_robot_traces = exclude_robot_traces
@@ -84,11 +83,17 @@ class _ErrorDetails(object):
             self._message = self._get_message()
         return self._message
 
+    def _get_message(self):
+        raise NotImplementedError
+
     @property
     def traceback(self):
         if self._traceback is None:
             self._traceback = self._get_details()
         return self._traceback
+
+    def _get_details(self):
+        raise NotImplementedError
 
     def _get_name(self, exc_type):
         try:
@@ -102,10 +107,14 @@ class _ErrorDetails(object):
         name = name.split('.')[-1]  # Use only last part of the name
         if not message:
             return name
-        if name in self._generic_exceptions or \
-                getattr(self.error, 'ROBOT_SUPPRESS_NAME', False):
+        if self._is_generic_exception(name):
             return message
         return '%s: %s' % (name, message)
+
+    def _is_generic_exception(self, name):
+        return (name in self._generic_exception_names or
+                isinstance(self.error, RobotError) or
+                getattr(self.error, 'ROBOT_SUPPRESS_NAME', False))
 
     def _clean_up_message(self, message, name):
         return message
@@ -115,18 +124,18 @@ class PythonErrorDetails(_ErrorDetails):
 
     def _get_message(self):
         # If exception is a "string exception" without a message exc_value is None
-        if self._exc_value is None:
+        if self.error is None:
             return unic(self._exc_type)
         name = self._get_name(self._exc_type)
         try:
-            msg = unicode(self._exc_value)
+            msg = unicode(self.error)
         except UnicodeError:  # Happens if message is Unicode and version < 2.6
-            msg = ' '.join(unic(a) for a in self._exc_value.args)
+            msg = ' '.join(unic(a) for a in self.error.args)
         return self._format_message(name, msg)
 
     def _get_details(self):
-        if isinstance(self._exc_value, RobotError):
-            return self._exc_value.details
+        if isinstance(self.error, RobotError):
+            return self.error.details
         return 'Traceback (most recent call last):\n' + self._get_traceback()
 
     def _get_traceback(self):
@@ -151,9 +160,9 @@ class JavaErrorDetails(_ErrorDetails):
         exc_name = self._get_name(self._exc_type)
         # OOME.getMessage and even toString seem to throw NullPointerException
         if not self._is_out_of_memory_error(self._exc_type):
-            exc_msg = self._exc_value.getMessage()
+            exc_msg = self.error.getMessage()
         else:
-            exc_msg = str(self._exc_value)
+            exc_msg = str(self.error)
         return self._format_message(exc_name, exc_msg)
 
     def _is_out_of_memory_error(self, exc_type):
@@ -164,10 +173,10 @@ class JavaErrorDetails(_ErrorDetails):
         if self._is_out_of_memory_error(self._exc_type):
             return ''
         output = StringWriter()
-        self._exc_value.printStackTrace(PrintWriter(output))
+        self.error.printStackTrace(PrintWriter(output))
         details = '\n'.join(line for line in output.toString().splitlines()
                             if not self._is_ignored_stack_trace_line(line))
-        msg = unic(self._exc_value.getMessage() or '')
+        msg = unic(self.error.getMessage() or '')
         if msg:
             details = details.replace(msg, '', 1)
         return details
