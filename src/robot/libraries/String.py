@@ -272,13 +272,19 @@ class String(object):
         | ${no_group} | Get Regexp Matches | abcdefg123abcdefg123 | abcdefg |
         | ${group_regexp} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) |
         | ${with_group_name} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | name |
+        | ${with_group_names} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(?P<second_name>fg) | name | second_name |
         | ${with_group_index} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | 2 |
+        | ${with_group_indexes} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | 1 | 2 |
+        | ${with_group_name_and_index} | Get Regexp Matches | abcdefg123abcdefg123 | ab(?P<name>cd)e(fg) | 2 | name |
         =>
         | ${no_match} = []
         | ${no_group} = ['abcdefg', 'abcdefg']
         | ${group_regexp} = ['abcdefg', 'abcdefg']
         | ${with_group_name} = ['cd', 'cd']
+        | ${with_group_names} = [('cd','fg'),('cd','fg')]
         | ${with_group_index} = ['fg', 'fg']
+        | ${with_group_indexes} = [('fg','cd'), ('fg','cd')]
+        | ${with_group_name_and_index} = [('fg','cd'), ('fg','cd')]
         """
         regexp = re.compile(pattern)
         groups = [self._parse_group(g) for g in groups]
