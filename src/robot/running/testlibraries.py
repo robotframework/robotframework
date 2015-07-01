@@ -42,9 +42,10 @@ def TestLibrary(name, args=None, variables=None, create_handlers=True):
         import_name = name
     with OutputCapturer(library_import=True):
         importer = Importer('test library')
-        libcode = importer.import_class_or_module(import_name)
+        libcode, source = importer.import_class_or_module(import_name,
+                                                          return_source=True)
     libclass = _get_lib_class(libcode)
-    lib = libclass(libcode, name, args or [], variables)
+    lib = libclass(libcode, name, args or [], source, variables)
     if create_handlers:
         lib.create_handlers()
     return lib
@@ -64,12 +65,13 @@ def _get_lib_class(libcode):
 class _BaseTestLibrary(object):
     _failure_level = 'INFO'
 
-    def __init__(self, libcode, name, args, variables):
+    def __init__(self, libcode, name, args, source, variables):
         if os.path.exists(name):
             name = os.path.splitext(os.path.basename(os.path.abspath(name)))[0]
         self.version = self._get_version(libcode)
         self.name = name
         self.orig_name = name  # Stores original name when importing WITH NAME
+        self.source = source
         self.handlers = HandlerStore(self.name)
         self._instance_cache = []
         self.has_listener = None  # Set when first instance is created
@@ -333,8 +335,8 @@ class _HybridLibrary(_BaseTestLibrary):
 class _DynamicLibrary(_BaseTestLibrary):
     _failure_level = 'ERROR'
 
-    def __init__(self, libcode, name, args, variables=None):
-        _BaseTestLibrary.__init__(self, libcode, name, args, variables)
+    def __init__(self, libcode, name, args, source, variables=None):
+        _BaseTestLibrary.__init__(self, libcode, name, args, source, variables)
 
     @property
     def doc(self):
