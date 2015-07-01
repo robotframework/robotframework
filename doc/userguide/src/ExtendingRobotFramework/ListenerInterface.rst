@@ -89,164 +89,160 @@ synonym to `start_suite`.
 .. table:: Available methods in the listener interface
    :class: tabular
 
-   +---------------+------------------+--------------------------------------------------+
-   |    Method     |    Arguments     |             Attributes / Explanation             |
-   +===============+==================+==================================================+
-   | start_suite   | name, attributes | Keys in the attribute dictionary:                |
-   |               |                  |                                                  |
-   |               |                  | * id: suite id. 's1' for top level suite, 's1-s1'|
-   |               |                  |   for its first child suite, 's1-s2' for second  |
-   |               |                  |   child, and so on. (new in 2.8.5)               |
-   |               |                  | * longname: suite name including parent suites   |
-   |               |                  | * doc: test suite documentation                  |
-   |               |                  | * metadata: dictionary/map containing `free test |
-   |               |                  |   suite metadata`_                               |
-   |               |                  | * source: absolute path of the file/directory    |
-   |               |                  |   test suite was created from (new in 2.7)       |
-   |               |                  | * suites: names of suites directly in this suite |
-   |               |                  |   as a list of strings                           |
-   |               |                  | * tests: names of tests directly in this suite   |
-   |               |                  |   as a list of strings                           |
-   |               |                  | * totaltests: total number of tests in this suite|
-   |               |                  |   and all its sub-suites as an integer           |
-   |               |                  | * starttime: execution start time                |
-   +---------------+------------------+--------------------------------------------------+
-   | end_suite     | name, attributes | Keys in the attribute dictionary:                |
-   |               |                  |                                                  |
-   |               |                  | * id: suite id. 's1' for top level suite, 's1-s1'|
-   |               |                  |   for its first child suite, 's1-s2' for second  |
-   |               |                  |   child, and so on. (new in 2.8.5)               |
-   |               |                  | * longname: test suite name including parents    |
-   |               |                  | * doc: test suite documentation                  |
-   |               |                  | * metadata: dictionary/map containing `free test |
-   |               |                  |   suite metadata`_                               |
-   |               |                  | * source: absolute path of the file/directory    |
-   |               |                  |   test suite was created from (new in 2.7)       |
-   |               |                  | * starttime: execution start time                |
-   |               |                  | * endtime: execution end time                    |
-   |               |                  | * elapsedtime: execution time in milliseconds    |
-   |               |                  |   as an integer                                  |
-   |               |                  | * status: either `PASS` or `FAIL`                |
-   |               |                  | * statistics: suite statistics (number of passed |
-   |               |                  |   and failed tests in the suite) as a string     |
-   |               |                  | * message: error message if the suite setup or   |
-   |               |                  |   teardown has failed, empty otherwise           |
-   +---------------+------------------+--------------------------------------------------+
-   | start_test    | name, attributes | Keys in the attribute dictionary:                |
-   |               |                  |                                                  |
-   |               |                  | * id: test id in format like 's1-s2-t2', where   |
-   |               |                  |   beginning is parent suite id and last part     |
-   |               |                  |   shows test index in that suite (new in 2.8.5)  |
-   |               |                  | * longname: test name including parent suites    |
-   |               |                  | * doc: test case documentation                   |
-   |               |                  | * tags: test case tags as a list of strings      |
-   |               |                  | * critical: `yes` or `no` depending              |
-   |               |                  |   is test considered critical or not             |
-   |               |                  | * template: contains the name of the template    |
-   |               |                  |   used for the test. If the test is not templated|
-   |               |                  |   it will be an empty string                     |
-   |               |                  | * starttime: execution start time                |
-   +---------------+------------------+--------------------------------------------------+
-   | end_test      | name, attributes | Keys in the attribute dictionary:                |
-   |               |                  |                                                  |
-   |               |                  | * id: test id in format like 's1-s2-t2', where   |
-   |               |                  |   beginning is parent suite id and last part     |
-   |               |                  |   shows test index in that suite (new in 2.8.5)  |
-   |               |                  | * longname: test name including parent suites    |
-   |               |                  | * doc: test case documentation                   |
-   |               |                  | * tags: test case tags as a list of strings      |
-   |               |                  | * critical: `yes` or `no` depending              |
-   |               |                  |   is test considered critical or not             |
-   |               |                  | * template: contains the name of the template    |
-   |               |                  |   used for the test. If the test is not templated|
-   |               |                  |   it will be an empty string                     |
-   |               |                  | * starttime: execution start time                |
-   |               |                  | * endtime: execution end time                    |
-   |               |                  | * elapsedtime: execution time in milliseconds    |
-   |               |                  |   as an integer                                  |
-   |               |                  | * status: either `PASS` or `FAIL`                |
-   |               |                  | * message: status message, normally an error     |
-   |               |                  |   message or an empty string                     |
-   +---------------+------------------+--------------------------------------------------+
-   | start_keyword | name, attributes | `name` is the full keyword name containing       |
-   |               |                  | possible library or resource name as a prefix.   |
-   |               |                  | For example, `MyLibrary.Example Keyword`.        |
-   |               |                  |                                                  |
-   |               |                  | Keys in the attribute dictionary:                |
-   |               |                  |                                                  |
-   |               |                  | * type: string `Keyword` for normal              |
-   |               |                  |   keywords and `Test Setup`, `Test               |
-   |               |                  |   Teardown`, `Suite Setup` or `Suite             |
-   |               |                  |   Teardown` for keywords used in suite/test      |
-   |               |                  |   setup/teardown                                 |
-   |               |                  | * kwname: name of the keyword without library or |
-   |               |                  |   resource prefix (new in 2.9)                   |
-   |               |                  | * libname: name of the library or resource the   |
-   |               |                  |   keyword belongs to, or an empty string when    |
-   |               |                  |   the keyword is in a test case file (new in 2.9)|
-   |               |                  | * doc: keyword documentation                     |
-   |               |                  | * args: keyword's arguments as a list of strings |
-   |               |                  | * assign: list of variable names that keyword's  |
-   |               |                  |   return value is assigned to (new in 2.9)       |
-   |               |                  | * starttime: execution start time                |
-   +---------------+------------------+--------------------------------------------------+
-   | end_keyword   | name, attributes | `name` is the full keyword name containing       |
-   |               |                  | possible library or resource name as a prefix.   |
-   |               |                  | For example, `MyLibrary.Example Keyword`.        |
-   |               |                  |                                                  |
-   |               |                  | Keys in the attribute dictionary:                |
-   |               |                  |                                                  |
-   |               |                  | * type: same as with `start_keyword`             |
-   |               |                  | * kwname: name of the keyword without library or |
-   |               |                  |   resource prefix (new in 2.9)                   |
-   |               |                  | * libname: name of the library or resource the   |
-   |               |                  |   keyword belongs to, or an empty string when    |
-   |               |                  |   the keyword is in a test case file (new in 2.9)|
-   |               |                  | * doc: keyword documentation                     |
-   |               |                  | * args: keyword's arguments as a list of strings |
-   |               |                  | * assign: list of variable names that keyword's  |
-   |               |                  |   return value is assigned to (new in 2.9)       |
-   |               |                  | * starttime: execution start time                |
-   |               |                  | * endtime: execution end time                    |
-   |               |                  | * elapsedtime: execution time in milliseconds    |
-   |               |                  |   as an integer                                  |
-   |               |                  | * status: either `PASS` or `FAIL`                |
-   +---------------+------------------+--------------------------------------------------+
-   | log_message   | message          | Called when an executed keyword writes a log     |
-   |               |                  | message. `message` is a dictionary with          |
-   |               |                  | the following keys:                              |
-   |               |                  |                                                  |
-   |               |                  | * message: the content of the message            |
-   |               |                  | * level: `log level`_ used in logging the message|
-   |               |                  | * timestamp: message creation time, format is    |
-   |               |                  |   `YYYY-MM-DD hh:mm:ss.mil`                      |
-   |               |                  | * html: string `yes` or `no` denoting            |
-   |               |                  |   whether the message should be interpreted as   |
-   |               |                  |   HTML or not                                    |
-   +---------------+------------------+--------------------------------------------------+
-   | message       | message          | Called when the framework itself writes a syslog_|
-   |               |                  | message. `message` is a dictionary with          |
-   |               |                  | same keys as with `log_message` method.          |
-   +---------------+------------------+--------------------------------------------------+
-   | output_file   | path             | Called when writing to an output file is         |
-   |               |                  | finished. The path is an absolute path to the    |
-   |               |                  | file.                                            |
-   +---------------+------------------+--------------------------------------------------+
-   | log_file      | path             | Called when writing to a log file is             |
-   |               |                  | finished. The path is an absolute path to the    |
-   |               |                  | file.                                            |
-   +---------------+------------------+--------------------------------------------------+
-   | report_file   | path             | Called when writing to a report file is          |
-   |               |                  | finished. The path is an absolute path to the    |
-   |               |                  | file.                                            |
-   +---------------+------------------+--------------------------------------------------+
-   | debug_file    | path             | Called when writing to a debug file is           |
-   |               |                  | finished. The path is an absolute path to the    |
-   |               |                  | file.                                            |
-   +---------------+------------------+--------------------------------------------------+
-   | close         |                  | Called after all test suites, and test cases in  |
-   |               |                  | them, have been executed.                        |
-   +---------------+------------------+--------------------------------------------------+
+   +------------------+------------------+----------------------------------------------------------------+
+   |    Method        |    Arguments     |                     Attributes / Explanation                   |
+   +==================+==================+================================================================+
+   | start_suite      | name, attributes | Keys in the attribute dictionary:                              |
+   |                  |                  |                                                                |
+   |                  |                  | * id: suite id. 's1' for top level suite, 's1-s1'              |
+   |                  |                  |   for its first child suite, 's1-s2' for second                |
+   |                  |                  |   child, and so on. (new in 2.8.5)                             |
+   |                  |                  | * longname: suite name including parent suites                 |
+   |                  |                  | * doc: test suite documentation                                |
+   |                  |                  | * metadata: dictionary/map containing `free test               |
+   |                  |                  |   suite metadata`_                                             |
+   |                  |                  | * source: absolute path of the file/directory                  |
+   |                  |                  |   test suite was created from (new in 2.7)                     |
+   |                  |                  | * suites: names of suites directly in this suite               |
+   |                  |                  |   as a list of strings                                         |
+   |                  |                  | * tests: names of tests directly in this suite                 |
+   |                  |                  |   as a list of strings                                         |
+   |                  |                  | * totaltests: total number of tests in this suite              |
+   |                  |                  |   and all its sub-suites as an integer                         |
+   |                  |                  | * starttime: execution start time                              |
+   +------------------+------------------+----------------------------------------------------------------+
+   | end_suite        | name, attributes | Keys in the attribute dictionary:                              |
+   |                  |                  |                                                                |
+   |                  |                  | * id: suite id. 's1' for top level suite, 's1-s1'              |
+   |                  |                  |   for its first child suite, 's1-s2' for second                |
+   |                  |                  |   child, and so on. (new in 2.8.5)                             |
+   |                  |                  | * longname: test suite name including parents                  |
+   |                  |                  | * doc: test suite documentation                                |
+   |                  |                  | * metadata: dictionary/map containing `free test               |
+   |                  |                  |   suite metadata`_                                             |
+   |                  |                  | * source: absolute path of the file/directory                  |
+   |                  |                  |   test suite was created from (new in 2.7)                     |
+   |                  |                  | * starttime: execution start time                              |
+   |                  |                  | * endtime: execution end time                                  |
+   |                  |                  | * elapsedtime: execution time in milliseconds                  |
+   |                  |                  |   as an integer                                                |
+   |                  |                  | * status: either `PASS` or `FAIL`                              |
+   |                  |                  | * statistics: suite statistics (number of passed               |
+   |                  |                  |   and failed tests in the suite) as a string                   |
+   |                  |                  | * message: error message if the suite setup or                 |
+   |                  |                  |   teardown has failed, empty otherwise                         |
+   +------------------+------------------+----------------------------------------------------------------+
+   | start_test       | name, attributes | Keys in the attribute dictionary:                              |
+   |                  |                  |                                                                |
+   |                  |                  | * id: test id in format like 's1-s2-t2', where                 |
+   |                  |                  |   beginning is parent suite id and last part                   |
+   |                  |                  |   shows test index in that suite (new in 2.8.5)                |
+   |                  |                  | * longname: test name including parent suites                  |
+   |                  |                  | * doc: test case documentation                                 |
+   |                  |                  | * tags: test case tags as a list of strings                    |
+   |                  |                  | * critical: `yes` or `no` depending                            |
+   |                  |                  |   is test considered critical or not                           |
+   |                  |                  | * template: contains the name of the template                  |
+   |                  |                  |   used for the test. If the test is not templated              |
+   |                  |                  |   it will be an empty string                                   |
+   |                  |                  | * starttime: execution start time                              |
+   +------------------+------------------+----------------------------------------------------------------+
+   | end_test         | name, attributes | Keys in the attribute dictionary:                              |
+   |                  |                  |                                                                |
+   |                  |                  | * id: test id in format like 's1-s2-t2', where                 |
+   |                  |                  |   beginning is parent suite id and last part                   |
+   |                  |                  |   shows test index in that suite (new in 2.8.5)                |
+   |                  |                  | * longname: test name including parent suites                  |
+   |                  |                  | * doc: test case documentation                                 |
+   |                  |                  | * tags: test case tags as a list of strings                    |
+   |                  |                  | * critical: `yes` or `no` depending                            |
+   |                  |                  |   is test considered critical or not                           |
+   |                  |                  | * template: contains the name of the template                  |
+   |                  |                  |   used for the test. If the test is not templated              |
+   |                  |                  |   it will be an empty string                                   |
+   |                  |                  | * starttime: execution start time                              |
+   |                  |                  | * endtime: execution end time                                  |
+   |                  |                  | * elapsedtime: execution time in milliseconds                  |
+   |                  |                  |   as an integer                                                |
+   |                  |                  | * status: either `PASS` or `FAIL`                              |
+   |                  |                  | * message: status message, normally an error                   |
+   |                  |                  |   message or an empty string                                   |
+   +------------------+------------------+----------------------------------------------------------------+
+   | start_keyword    | name, attributes | `name` is the full keyword name containing                     |
+   |                  |                  | possible library or resource name as a prefix.                 |
+   |                  |                  | For example, `MyLibrary.Example Keyword`.                      |
+   |                  |                  |                                                                |
+   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  |                                                                |
+   |                  |                  | * type: string `Keyword` for normal                            |
+   |                  |                  |   keywords and `Test Setup`, `Test                             |
+   |                  |                  |   Teardown`, `Suite Setup` or `Suite                           |
+   |                  |                  |   Teardown` for keywords used in suite/test                    |
+   |                  |                  |   setup/teardown                                               |
+   |                  |                  | * kwname: name of the keyword without library or               |
+   |                  |                  |   resource prefix (new in 2.9)                                 |
+   |                  |                  | * libname: name of the library or resource the                 |
+   |                  |                  |   keyword belongs to, or an empty string when                  |
+   |                  |                  |   the keyword is in a test case file (new in 2.9)              |
+   |                  |                  | * doc: keyword documentation                                   |
+   |                  |                  | * args: keyword's arguments as a list of strings               |
+   |                  |                  | * assign: list of variable names that keyword's                |
+   |                  |                  |   return value is assigned to (new in 2.9)                     |
+   |                  |                  | * starttime: execution start time                              |
+   +------------------+------------------+----------------------------------------------------------------+
+   | end_keyword      | name, attributes | `name` is the full keyword name containing                     |
+   |                  |                  | possible library or resource name as a prefix.                 |
+   |                  |                  | For example, `MyLibrary.Example Keyword`.                      |
+   |                  |                  |                                                                |
+   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  |                                                                |
+   |                  |                  | * type: same as with `start_keyword`                           |
+   |                  |                  | * kwname: name of the keyword without library or               |
+   |                  |                  |   resource prefix (new in 2.9)                                 |
+   |                  |                  | * libname: name of the library or resource the                 |
+   |                  |                  |   keyword belongs to, or an empty string when                  |
+   |                  |                  |   the keyword is in a test case file (new in 2.9)              |
+   |                  |                  | * doc: keyword documentation                                   |
+   |                  |                  | * args: keyword's arguments as a list of strings               |
+   |                  |                  | * assign: list of variable names that keyword's                |
+   |                  |                  |   return value is assigned to (new in 2.9)                     |
+   |                  |                  | * starttime: execution start time                              |
+   |                  |                  | * endtime: execution end time                                  |
+   |                  |                  | * elapsedtime: execution time in milliseconds                  |
+   |                  |                  |   as an integer                                                |
+   |                  |                  | * status: either `PASS` or `FAIL`                              |
+   +------------------+------------------+----------------------------------------------------------------+
+   | log_message      | message          | Called when an executed keyword writes a log                   |
+   |                  |                  | message. `message` is a dictionary with                        |
+   |                  |                  | the following keys:                                            |
+   |                  |                  |                                                                |
+   |                  |                  | * message: the content of the message                          |
+   |                  |                  | * level: `log level`_ used in logging the message              |
+   |                  |                  | * timestamp: message creation time, format is                  |
+   |                  |                  |   `YYYY-MM-DD hh:mm:ss.mil`                                    |
+   |                  |                  | * html: string `yes` or `no` denoting                          |
+   |                  |                  |   whether the message should be interpreted as                 |
+   |                  |                  |   HTML or not                                                  |
+   +------------------+------------------+----------------------------------------------------------------+
+   | message          | message          | Called when the framework itself writes a syslog_              |
+   |                  |                  | message. `message` is a dictionary with                        |
+   |                  |                  | same keys as with `log_message` method.                        |
+   +------------------+------------------+----------------------------------------------------------------+
+   | output_file      | path             | Called when writing to an output file is                       |
+   |                  |                  | finished. The path is an absolute path to the file.            |
+   +------------------+------------------+----------------------------------------------------------------+
+   | log_file         | path             | Called when writing to a log file is                           |
+   |                  |                  | finished. The path is an absolute path to the file.            |
+   +------------------+------------------+----------------------------------------------------------------+
+   | report_file      | path             | Called when writing to a report file is                        |
+   |                  |                  | finished. The path is an absolute path to the file.            |
+   +------------------+------------------+----------------------------------------------------------------+
+   | debug_file       | path             | Called when writing to a debug file is                         |
+   |                  |                  | finished. The path is an absolute path to the file.            |
+   +------------------+------------------+----------------------------------------------------------------+
+   | close            |                  | Called after all test suites, and test cases in                |
+   |                  |                  | them, have been executed.                                      |
+   +------------------+------------------+----------------------------------------------------------------+
 
 The available methods and their arguments are also shown in a formal Java
 interface specification below. Contents of the `java.util.Map attributes` are
