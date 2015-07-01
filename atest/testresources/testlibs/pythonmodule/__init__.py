@@ -3,3 +3,6 @@ class SomeObject:
 
 some_object = SomeObject()
 some_string = 'Hello, World!'
+
+def keyword():
+    pass

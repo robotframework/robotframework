@@ -132,10 +132,10 @@ class Logger(AbstractLogger):
     def disable_library_import_logging(self):
         self.log_message = self._prev_log_message_handlers.pop()
 
-    def output_file(self, name, path):
+    def output_file(self, file_type, path):
         """Finished output, report, log, debug, or xunit file"""
         for logger in self._loggers.all_loggers():
-            logger.output_file(name, path)
+            logger.output_file(file_type, path)
 
     def close(self):
         for logger in self._loggers.all_loggers():
@@ -171,6 +171,10 @@ class Logger(AbstractLogger):
             logger.end_keyword(keyword)
         if not self._started_keywords:
             self.log_message = self.message
+
+    def imported(self, import_type, name, **attrs):
+        for logger in self._loggers.all_loggers():
+            logger.imported(import_type, name, attrs)
 
     def __iter__(self):
         return iter(self._loggers)
@@ -223,7 +227,7 @@ class LoggerCollection(object):
 class _LoggerProxy(AbstractLoggerProxy):
     _methods = ['message', 'log_message', 'output_file', 'close',
                 'start_suite', 'end_suite', 'start_test', 'end_test',
-                'start_keyword', 'end_keyword']
+                'start_keyword', 'end_keyword', 'imported']
 
 
 LOGGER = Logger()

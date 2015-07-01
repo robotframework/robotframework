@@ -55,7 +55,7 @@ class Namespace(object):
 
     def _import_default_libraries(self):
         for name in self._default_libraries:
-            self.import_library(name)
+            self.import_library(name, notify=name == 'BuiltIn')
 
     def _handle_imports(self, import_settings):
         for item in import_settings:
@@ -81,9 +81,12 @@ class Namespace(object):
         if overwrite or path not in self._kw_store.resources:
             resource = IMPORTER.import_resource(path)
             self.variables.set_from_variable_table(resource.variables, overwrite)
-            self._kw_store.resources[path] = UserLibrary(resource.keywords,
-                                                         resource.source)
+            user_library = UserLibrary(resource.keywords, resource.source)
+            self._kw_store.resources[path] = user_library
             self._handle_imports(resource.imports)
+            LOGGER.imported("Resource", user_library.name,
+                            importer=import_setting.source,
+                            source=path)
         else:
             LOGGER.info("Resource file '%s' already imported by suite '%s'"
                         % (path, self.suite.longname))
@@ -103,6 +106,10 @@ class Namespace(object):
         if overwrite or (path, args) not in self._imported_variable_files:
             self._imported_variable_files.add((path, args))
             self.variables.set_from_file(path, args, overwrite)
+            LOGGER.imported("Variables", os.path.basename(path),
+                            args=list(args),
+                            importer=import_setting.source,
+                            source=path)
         else:
             msg = "Variable file '%s'" % path
             if args:
@@ -110,10 +117,11 @@ class Namespace(object):
             LOGGER.info("%s already imported by suite '%s'"
                         % (msg, self.suite.longname))
 
-    def import_library(self, name, args=None, alias=None):
-        self._import_library(Library(None, name, args=args, alias=alias))
+    def import_library(self, name, args=None, alias=None, notify=True):
+        self._import_library(Library(None, name, args=args, alias=alias),
+                             notify=notify)
 
-    def _import_library(self, import_setting):
+    def _import_library(self, import_setting, notify=True):
         name = self._resolve_name(import_setting)
         lib = IMPORTER.import_library(name, import_setting.args,
                                       import_setting.alias, self.variables)
@@ -121,12 +129,18 @@ class Namespace(object):
             LOGGER.info("Test library '%s' already imported by suite '%s'"
                         % (lib.name, self.suite.longname))
             return
+        if notify:
+            LOGGER.imported("Library", lib.name,
+                            args=list(import_setting.args),
+                            original_name=lib.orig_name,
+                            importer=import_setting.source,
+                            source=lib.source)
         self._kw_store.libraries[lib.name] = lib
         lib.start_suite()
         if self.test:
             lib.start_test()
         if name in STDLIB_TO_DEPRECATED_MAP:
-            self.import_library(STDLIB_TO_DEPRECATED_MAP[name])
+            self.import_library(STDLIB_TO_DEPRECATED_MAP[name], notify=False)
 
     def _resolve_name(self, import_setting):
         name = import_setting.name
