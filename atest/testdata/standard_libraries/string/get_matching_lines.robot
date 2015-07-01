@@ -48,8 +48,9 @@ Get Lines Matching Regexp When Input Is Empty
 
 Get Lines Matching Regexp When Pattern Is Empty
     Test Get Lines Matching Regexp    ${INPUT}    ${EMPTY}    ${EMPTY}
+    Test Get Lines Matching Regexp    3 empty\n\n\n\n    ${EMPTY}    \n\n
 
-Get Lines Matching Regexp Matching Two Words
+Get Lines Matching Regexp Requires Exact Match By Default
     Test Get Lines Matching Regexp    ${INPUT}    more|row    ${EMPTY}
 
 Get Lines Matching Regexp Matching One Line
@@ -67,15 +68,15 @@ Get Lines Matching Regexp With Case-Insensitive
     Test Get Lines Matching Regexp    ${INPUT}    (?i).*LINE    Third line
     Test Get Lines Matching Regexp    ${INPUT}    .*LINE.*    ${EMPTY}
 
-Get Lines Containing Regexp Matching Two Words
+Get Lines Matching Regexp With Partial Match
     Test Get Lines Containing Regexp    ${INPUT}    more|row    One more row here
 
-Get Lines Containing Regexp Matching One Line
+Get Lines Matching Regexp With Partial Match Matching One Line
     Test Get Lines Containing Regexp    ${INPUT}    One    One more row here
     Test Get Lines Containing Regexp    ${INPUT}    here    One more row here
     Test Get Lines Containing Regexp    ${INPUT}    1    Line 1
 
-Get Lines Containing Regexp Matching Some Lines
+Get Lines Matching Regexp With Partial Match Matching Some Lines
     Test Get Lines Containing Regexp    ${INPUT}    .* \\d    Line 1\nLine 2
     Test Get Lines Containing Regexp    ${INPUT}    (Line|Wine) [1-9]    Line 1\nLine 2
     Test Get Lines Containing Regexp    ${INPUT}    1|2    Line 1\nLine 2
@@ -83,10 +84,14 @@ Get Lines Containing Regexp Matching Some Lines
     Test Get Lines Containing Regexp    ${INPUT}    .{6}    Line 1\nLine 2\nThird line\nOne more row here
     Test Get Lines Containing Regexp    ${INPUT}    .*    ${INPUT}
 
-Get Lines Containing Regexp With Case-Insensitive
+Get Lines Matching Regexp With Partial Match And Case-Insensitive
     Test Get Lines Containing Regexp    ${INPUT}    (?i)line    Line 1\nLine 2\nThird line
     Test Get Lines Containing Regexp    ${INPUT}    (?i)LINE    Line 1\nLine 2\nThird line
     Test Get Lines Containing Regexp    ${INPUT}    LINE    ${EMPTY}
+
+Get Lines Matching Regexp With Partial Match When Pattern Is Empty
+    Test Get Lines Containing Regexp    ${INPUT}    ${EMPTY}    ${INPUT}
+    Test Get Lines Containing Regexp    3 empty\n\n\n\n    ${EMPTY}    3 empty\n\n\n
 
 *** Keywords ***
 Test Get Lines Containing String
@@ -106,5 +111,5 @@ Test Get Lines Matching Regexp
 
 Test Get Lines Containing Regexp
     [Arguments]    ${input}    ${pattern}    ${expected}
-    ${actual} =    Get Lines Matching Regexp    ${input}    ${pattern}    exact_match=False
+    ${actual} =    Get Lines Matching Regexp    ${input}    ${pattern}    partial_match=true
     Should Be Equal    ${actual}    ${expected}

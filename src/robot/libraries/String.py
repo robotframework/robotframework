@@ -237,58 +237,44 @@ class String(object):
             matches = lambda line: fnmatchcase(line, pattern)
         return self._get_matching_lines(string, matches)
 
-    def get_lines_matching_regexp(self, string, pattern, exact_match=True):
+    def get_lines_matching_regexp(self, string, pattern, partial_match=False):
         """Returns lines of the given ``string`` that match the regexp ``pattern``.
 
         See `BuiltIn.Should Match Regexp` for more information about
         Python regular expression syntax in general and how to use it
-        in Robot Framework test data in particular. By default ``exact_match``
-        is enforced causing line matches only if it matches the ``pattern`` fully.
-        When passing ``exact_match`` as False, this keyword uses the matching
-        pattern without the '^' and '$' positional markers, searching content
-        within the input lines. 
-        
-        The ``exact_match`` value is considered true if it is a non-empty string
-        that is not equal to ``false`` or ``no``. If the value is not a string,
-        its truth value is got directly in Python.
+        in Robot Framework test data in particular.
 
-        Notice that to make the match case-insensitive,
-        you need to embed case-insensitive flag into the pattern.
+        By default lines match only if they match the pattern fully, but
+        partial matching can be enabled by giving the ``partial_match``
+        argument a true value. The value is considered true if it is a
+        non-empty string that is not equal to ``false`` or ``no``. If the
+        value is not a string, its truth value is got directly in Python.
+
+        If the pattern is empty, it matches only empty lines by default.
+        When partial matching is enabled, empty pattern matches all lines.
+
+        Notice that to make the match case-insensitive, you need to prefix
+        the pattern with case-insensitive flag ``(?i)``.
 
         Lines are returned as one string concatenated back together with
         newlines. Possible trailing newline is never returned. The
         number of matching lines is automatically logged.
 
         Examples:
-        | ${lines1} = | Get Lines Matching Regexp | 'RegExp example\\nFail: Test\\n' | Reg\\\\w{3} example |   |
-        | ${lines2} = | Get Lines Matching Regexp | 'RegExp example\\nFail: Test\\n' | Reg\\\\w{3} example | exact_match=false |
-        | ${res} = | Get Lines Matching Regexp | 'RegExp example\\nFail: Test\\n' | (?i)FAIL: .* |   |
-        | ${result1} = | Get Lines Matching Regexp | 'one and two\\nnone\\nABCD\\n' | ABC.* |   |
-        | ${result2} = | Get Lines Matching Regexp | 'one and two\\nnone\\nABCD\\n' | ABC | exact_match=false |
-        | ${result3} = | Get Lines Matching Regexp | 'one and two\\nnone\\nABCD\\n' | one|two |   |
-        | ${result4} = | Get Lines Matching Regexp | 'one and two\\nnone\\nABCD\\n' | one|two | exact_match=false |
-        =>
-        | ${lines1} = ${EMPTY}
-        | ${lines2} = 'RegExp example'
-        | ${res} = 'Fail: Test'
-        | ${result1} = 'ABCD'
-        | ${result2} = 'ABCD'
-        | ${result3} = ${EMPTY}
-        | ${result4} = 'one and two\\nnone'
-        
+        | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |
+        | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example | partial_match=true |
+        | ${ret} =   | Get Lines Matching Regexp | ${ret}    | (?i)FAIL: .* |
+
         See `Get Lines Matching Pattern` and `Get Lines Containing
         String` if you do not need full regular expression powers (and
         complexity).
-        
-        ``exact_match`` argument is new in Robot Framework 2.9. In earlier
+
+        ``partial_match`` argument is new in Robot Framework 2.9. In earlier
          versions exact match was always required.
         """
-        if is_truthy(exact_match):
-            regexp = re.compile('^%s$' % pattern)
-            return self._get_matching_lines(string, regexp.match)
-        else:
-            regexp = re.compile('%s' % pattern)
-            return self._get_matching_lines(string, regexp.search)
+        if not is_truthy(partial_match):
+            pattern = '^%s$' % pattern
+        return self._get_matching_lines(string, re.compile(pattern).search)
 
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
