@@ -164,9 +164,11 @@ class _Importer(object):
         klass = getattr(module, name or module.__name__, None)
         return klass if inspect.isclass(klass) else None
 
-    def _get_source(self, module):
-        source = getattr(module, '__file__', None)
-        return abspath(source) if source else None
+    def _get_source(self, imported):
+        try:
+            return abspath(inspect.getfile(imported))
+        except TypeError:
+            return None
 
 
 class ByPathImporter(_Importer):
@@ -240,7 +242,7 @@ class NonDottedImporter(_Importer):
     def import_(self, name):
         module = self._import(name)
         imported = self._get_class_from_module(module) or module
-        return self._verify_type(imported), self._get_source(module)
+        return self._verify_type(imported), self._get_source(imported)
 
 
 class DottedImporter(_Importer):
@@ -257,4 +259,4 @@ class DottedImporter(_Importer):
             raise DataError("Module '%s' does not contain '%s'."
                             % (parent_name, lib_name))
         imported = self._get_class_from_module(imported, lib_name) or imported
-        return self._verify_type(imported), self._get_source(parent)
+        return self._verify_type(imported), self._get_source(imported)
