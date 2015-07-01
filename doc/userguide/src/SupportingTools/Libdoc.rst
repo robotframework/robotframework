@@ -1,14 +1,14 @@
 .. _libdoc:
 
-Library documentation tool (``libdoc``)
-=======================================
+Library documentation tool (Libdoc)
+===================================
 
 .. contents::
    :depth: 1
    :local:
 
-Libdoc is a tool for generating keyword documentation for test
-libraries and resource files in HTML and XML formats. The former
+Libdoc is Robot Framework's built-in tool for generating keyword documentation
+for test libraries and resource files in HTML and XML formats. The former
 format is suitable for humans and the latter for RIDE_ and other
 tools. Libdoc also has few special commands to show library or
 resource information on the console.
@@ -23,16 +23,9 @@ Documentation can be created for:
 Additionally it is possible to use XML spec created by Libdoc
 earlier as an input.
 
-Libdoc is built-in into Robot Framework and automatically included
-in the installation starting from version 2.7. With earlier versions you
-need to download `libdoc.py script`__ separately. The command line usage
-has changed slightly between these versions but the documentation syntax
-is still the same.
-
 __ `Python libraries`_
 __ `Java libraries`_
 __ `Dynamic libraries`_
-__ http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool
 
 General usage
 -------------
@@ -571,7 +564,7 @@ custom sections:
 
 .. sourcecode:: python
 
-   """Library for libdoc demonstration purposes.
+   """Library for Libdoc demonstration purposes.
 
    This library does not do anything useful.
 

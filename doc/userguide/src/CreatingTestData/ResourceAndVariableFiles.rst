@@ -80,7 +80,7 @@ Keywords created in a resource file can be documented__ using
 :setting:`Documentation` in the Setting table similarly as
 `test suites`__.
 
-Both `libdoc`_ and `RIDE`_ use these documentations, and they
+Both Libdoc_ and RIDE_ use these documentations, and they
 are naturally available for anyone opening resource files.  The
 first line of the documentation of a keyword is logged when it is run,
 but otherwise resource file documentations are ignored during the test

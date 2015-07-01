@@ -237,7 +237,7 @@ returned as a list of strings in the `same format as with dynamic
 libraries`__, and documentation must be returned `as a string`__.
 
 Remote servers can also provide `general library documentation`__ to
-be used when generating documenation with `libdoc`_ tool
+be used when generating documentation with the Libdoc_ tool.
 
 __ `Getting keyword arguments`_
 __ `Getting keyword documentation`_
