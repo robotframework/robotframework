@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests With Listeners
+Suite Setup       Run Tests    --listener ListenImports:${IMPORTS FILE}    output/listeners/imports/imports.robot
 Suite Teardown    Remove Listener Files
 Force Tags        regression
 Default Tags      pybot    jybot
@@ -9,8 +9,10 @@ Resource          listener_resource.robot
 ${IMPORTS FILE}    %{TEMPDIR}/listener_imports.txt
 
 *** Test Cases ***
+All imports are usable
+    Check Test Case    ${TEST NAME}
+
 Listen Imports
-    Check Test Case   Do dynamic imports and check all imports are usable
     Init Expect
     Expect    Library    BuiltIn    args: []    importer: None    original_name: BuiltIn    source: //BuiltIn.py
     Expect    Resource    another_resource    importer: //resource_with_imports.robot    source: //another_resource.robot
@@ -25,23 +27,29 @@ Listen Imports
     Expect    Library    OperatingSystem    args: []    importer: None    original_name: OperatingSystem    source: //OperatingSystem.py
     Expect    Resource    dynamically_imported_resource    importer: None    source: //dynamically_imported_resource.robot
     Expect    Variables    vars.py    args: [new, args]    importer: None    source: //vars.py
-    Check Listener File    listener_imports.txt    @{expected}
-    Check Syslog Contains    Resource file 'resource that does not exist and fails' does not exist.
-    Check Syslog Contains    Importing test library 'librarythatdoesnotexist' failed:
-    Check Syslog Contains    Variable file 'variables which dont exist' does not exist.
+    Verify Expected
+
+Failed Impors Are Listed In Errors
+    ${path} =    Normalize Path    ${DATADIR}/output/listeners/imports/imports.robot
+    Check Syslog Contains    | ERROR | Error in file '${path}':
+    ...    Resource file 'resource that does not exist and fails' does not exist.
+    Check Syslog Contains    | ERROR | Error in file '${path}':
+    ...    Importing test library 'librarythatdoesnotexist' failed:
+    Check Syslog Contains    | ERROR | Error in file '${path}':
+    ...    Variable file 'variables which dont exist' does not exist.
 
 *** Keywords ***
-Run Tests With Listeners
-    Run Tests    --listener ListenImports:${IMPORTS FILE}    output/listeners/imports/imports.robot
-
 Init expect
-    Set test variable    @{expected}    @{EMPTY}
+    Set test variable    @{EXPECTED}    @{EMPTY}
 
 Expect
     [Arguments]    ${type}    ${name}    @{attrs}
     ${entry} =    Catenate    SEPARATOR=\n\t    Imported ${type}    name: ${name}    @{attrs}
-    Set test variable    @{expected}    @{expected}    ${entry}
+    Set test variable    @{EXPECTED}    @{EXPECTED}    ${entry}
 
 Java Expect
     [Arguments]    ${type}    ${name}    @{attrs}
     Run keyword if    $JYTHON    Expect    ${type}    ${name}    @{attrs}
+
+Verify Expected
+    Check Listener File    listener_imports.txt    @{EXPECTED}

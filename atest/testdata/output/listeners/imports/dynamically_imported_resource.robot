@@ -1,4 +1,3 @@
 *** Keywords ***
 Dyn
-    Log   goo
-
+    Log    goo

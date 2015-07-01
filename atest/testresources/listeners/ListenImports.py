@@ -1,5 +1,6 @@
 import os
 
+
 class ListenImports(object):
     ROBOT_LISTENER_API_VERSION = 2
 
@@ -18,9 +19,9 @@ class ListenImports(object):
     def _imported(self, import_type, name, attrs):
         self.imports.write("Imported %s\n\tname: %s\n" % (import_type, name))
         for name in sorted(attrs):
-            self.imports.write("\t%s: %s\n" % (name, self._pretty_print(attrs[name])))
+            self.imports.write("\t%s: %s\n" % (name, self._pretty(attrs[name])))
 
-    def _pretty_print(self, entry):
+    def _pretty(self, entry):
         if isinstance(entry, list):
             return '[%s]' % ', '.join(entry)
         if isinstance(entry, basestring) and os.path.isabs(entry):
@@ -32,4 +33,3 @@ class ListenImports(object):
 
     def close(self):
         self.imports.close()
-        self.errors.close()

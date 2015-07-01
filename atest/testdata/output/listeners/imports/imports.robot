@@ -12,10 +12,12 @@ Library           library that does not exist
 Variables         variables which dont exist
 
 *** Test Cases ***
-Do dynamic imports and check all imports are usable
+Dynamic imports
     Import library    OperatingSystem
     Import Resource    ${CURDIR}/dynamically_imported_resource.robot
     Import Variables    ${CURDIR}/vars.py    new    args
+
+All imports are usable
     resource_with_imports.Foo
     another_resource.Ploo
     Process.Terminate All Processes
@@ -25,4 +27,3 @@ Do dynamic imports and check all imports are usable
     OperatingSystem.Get file    ${CURDIR}/vars.py
     dynamically_imported_resource.Dyn
     Log   Check variables exist: ${name} ${new} ${my var}
-
