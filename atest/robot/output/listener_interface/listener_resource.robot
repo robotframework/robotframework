@@ -45,7 +45,7 @@ Check Listener File
     [Arguments]  ${file}  @{expected}
     ${content} =  Get Listener File  ${file}
     ${exp} =  Catenate  SEPARATOR=\n  @{expected}
-    Should Be Equal  ${content}  ${exp}\n
+    Should Be Equal  '${content}'  '${exp}\n'
 
 Get Listener FIle
     [Arguments]  ${file}

@@ -164,6 +164,11 @@ class Listeners(object):
         return '%s %s' % (('Test' if self._running_test else 'Suite'),
                           kw.type.title())
 
+    def imported(self, import_type, name, attrs):
+        for listener in self._listeners:
+            method = getattr(listener, '%s_import' % import_type.lower())
+            listener.call_method(method, name, attrs)
+
     def log_message(self, msg):
         for listener in self._listeners:
             if listener.version == 2:
@@ -178,9 +183,10 @@ class Listeners(object):
         return {'timestamp': msg.timestamp, 'message': msg.message,
                 'level': msg.level, 'html': 'yes' if msg.html else 'no'}
 
-    def output_file(self, name, path):
+    def output_file(self, file_type, path):
         for listener in self._listeners:
-            listener.call_method(getattr(listener, '%s_file' % name.lower()), path)
+            method = getattr(listener, '%s_file' % file_type.lower())
+            listener.call_method(method, path)
 
     def close(self):
         for listener in self._listeners:
@@ -221,7 +227,8 @@ class ListenerProxy(AbstractLoggerProxy):
     _methods = ['start_suite', 'end_suite', 'start_test', 'end_test',
                 'start_keyword', 'end_keyword', 'log_message', 'message',
                 'output_file', 'report_file', 'log_file', 'debug_file',
-                'xunit_file', 'close']
+                'xunit_file', 'close', 'library_import', 'resource_import',
+                'variables_import']
 
     def __init__(self, listener):
         if is_string(listener):
