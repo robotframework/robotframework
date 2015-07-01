@@ -228,6 +228,51 @@ synonym to `start_suite`.
    |                  |                  | message. `message` is a dictionary with                        |
    |                  |                  | same keys as with `log_message` method.                        |
    +------------------+------------------+----------------------------------------------------------------+
+   | library_import   | name, attributes | Called when a library has been imported. `name` is the name of |
+   |                  |                  | the imported library. If the library has been imported using   |
+   |                  |                  | the `WITH NAME syntax`_, `name` is the specified alias.        |
+   |                  |                  |                                                                |
+   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  |                                                                |
+   |                  |                  | * `args`: Arguments passed to the library as a list.           |
+   |                  |                  | * `original_name`: The original library name when using the    |
+   |                  |                  |   WITH NAME syntax, otherwise same as `name`.                  |
+   |                  |                  | * `source`: An absolute path to the library source. `None`     |
+   |                  |                  |   with libraries implemented with Java or if getting the       |
+   |                  |                  |   source of the library failed for some reason.                |
+   |                  |                  | * `importer`: An absolute path to the file importing the       |
+   |                  |                  |   library. `None` when BuiltIn_ is imported well as when       |
+   |                  |                  |   using the :name:`Import Library` keyword.                    |
+   |                  |                  |                                                                |
+   |                  |                  | New in Robot Framework 2.9.                                    |
+   +------------------+------------------+----------------------------------------------------------------+
+   | resource_import  | name, attributes | Called when a resource file has been imported. `name` is       |
+   |                  |                  | the name of the imported resource file without the file        |
+   |                  |                  | extension.                                                     |
+   |                  |                  |                                                                |
+   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  |                                                                |
+   |                  |                  | * `source`: An absolute path to the imported resource file.    |
+   |                  |                  | * `importer`: An absolute path to the file importing the       |
+   |                  |                  |   resource file. `None` when using the :name:`Import Resource` |
+   |                  |                  |   keyword.                                                     |
+   |                  |                  |                                                                |
+   |                  |                  | New in Robot Framework 2.9.                                    |
+   +------------------+------------------+----------------------------------------------------------------+
+   | variables_import | name, attributes | Called when a variable file has been imported. `name` is       |
+   |                  |                  | the name of the imported variable file with the file           |
+   |                  |                  | extension.                                                     |
+   |                  |                  |                                                                |
+   |                  |                  | Keys in the attribute dictionary:                              |
+   |                  |                  |                                                                |
+   |                  |                  | * `args`: Arguments passed to the variable file as a list.     |
+   |                  |                  | * `source`: An absolute path to the imported variable file.    |
+   |                  |                  | * `importer`: An absolute path to the file importing the       |
+   |                  |                  |   resource file. `None` when using the :name:`Import           |
+   |                  |                  |   Variables` keyword.                                          |
+   |                  |                  |                                                                |
+   |                  |                  | New in Robot Framework 2.9.                                    |
+   +------------------+------------------+----------------------------------------------------------------+
    | output_file      | path             | Called when writing to an output file is                       |
    |                  |                  | finished. The path is an absolute path to the file.            |
    +------------------+------------------+----------------------------------------------------------------+
