@@ -9,6 +9,7 @@ Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_normal.robot
 *** Test Cases ***
 Normal Library Import
     Check Test Case  ${TESTNAME}
+    Check Syslog Contains  | INFO \ |  Imported library 'OperatingSystem' with arguments [ ] (version
 
 Library Import With Spaces In Name
     ${test} =  Check Test Case  ${TESTNAME}
@@ -16,20 +17,20 @@ Library Import With Spaces In Name
     Check Log Message  ${test.kws[1].messages[0]}  It really workz!!
 
 Importing Library Class Should Have Been Syslogged
+    ${source} =    Normalize Path    ${CURDIR}/../../../src/robot/libraries/OperatingSystem.py
+    Check Syslog Contains  | INFO \ | Imported test library class 'robot.libraries.OperatingSystem' from '${source}
     ${base} =  Normalize Path  ${CURDIR}/../../testresources/testlibs
-    Check Syslog Contains  Imported test library class 'ExampleLibrary'
-    ...    from '${base}${/}ExampleLibrary
-    ${path} =  Normalize Path  ${CURDIR}/../../testresources/testlibs/libmodule
-    Check Syslog Contains  Imported test library module 'libmodule'
-    ...    from '${base}${/}libmodule
+    Check Syslog Contains  | INFO \ | Imported test library class 'ExampleLibrary' from '${base}${/}ExampleLibrary.py
+    Check Syslog Contains  | INFO \ | Imported test library module 'libmodule' from '${base}${/}libmodule.py
+    Check Syslog Contains  | INFO \ | Imported test library class 'libmodule.LibClass2' from '${base}${/}libmodule.py
 
 Number Of Keywords In Imported Library Is Reported In Syslog
-    Check Syslog Contains  | INFO \ |  Imported library 'ExampleLibrary' with arguments [ ] (version <unknown>, class type, testcase scope, 30 keywords)
-    Check Syslog Contains  | INFO \ |  Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
+    Check Syslog Contains  | INFO \ | Imported library 'ExampleLibrary' with arguments [ ] (version <unknown>, class type, testcase scope, 30 keywords)
+    Check Syslog Contains  | INFO \ | Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
 
 Warning Should Be Written To Syslog If Library Contains No Keywords
-    Check Syslog Contains  | INFO \ |  Imported library 'libmodule' with arguments [ ] (version <unknown>, module type, global scope, 0 keywords)
-    Check Syslog Contains  | WARN \ |  Imported library 'libmodule' contains no keywords
+    Check Syslog Contains  | INFO \ | Imported library 'libmodule' with arguments [ ] (version <unknown>, module type, global scope, 0 keywords)
+    Check Syslog Contains  | WARN \ | Imported library 'libmodule' contains no keywords
 
 Importing Python Class From Module
     Check Test Case  ${TESTNAME}
@@ -52,4 +53,3 @@ Arguments To Library
     Check Test Case  Two Default Parameters
     Check Test Case  One Default and One Set Parameter
     Check Test Case  Two Set Parameters
-
