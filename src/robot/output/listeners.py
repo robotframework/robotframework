@@ -75,6 +75,10 @@ class Listeners(object):
                              % (listener, unicode(err)))
         return listeners
 
+    def imported(self, name, import_type):
+        for listener in self._listeners:
+            listener.call_method(listener.imported, name, import_type)
+
     def start_suite(self, suite):
         for listener in self._listeners:
             if listener.version == 1:
@@ -221,7 +225,7 @@ class ListenerProxy(AbstractLoggerProxy):
     _methods = ['start_suite', 'end_suite', 'start_test', 'end_test',
                 'start_keyword', 'end_keyword', 'log_message', 'message',
                 'output_file', 'report_file', 'log_file', 'debug_file',
-                'xunit_file', 'close']
+                'xunit_file', 'close', 'imported']
 
     def __init__(self, listener):
         if is_string(listener):

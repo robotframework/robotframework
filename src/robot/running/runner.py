@@ -63,6 +63,10 @@ class Runner(SuiteVisitor):
                                          self._settings.skip_teardown_on_exit)
         ns = Namespace(self._variables, result, suite.resource.keywords,
                        suite.resource.imports)
+
+        for imported_item in suite.resource.imports:
+            self._output.imported(imported_item.name, imported_item.type)
+
         ns.start_suite()
         ns.variables.set_from_variable_table(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
