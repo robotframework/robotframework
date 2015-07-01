@@ -52,6 +52,10 @@ Get Lines Matching Regexp When Pattern Is Empty
     ${tc} =    Check Test Case    Get Lines Matching Regexp When Pattern Is Empty
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    1 out of 5 lines matched
 
+Get Lines Matching Regexp Matching Two Words
+    ${tc} =    Check Test Case    Get Lines Matching Regexp Matching Two Words
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    0 out of 5 lines matched
+
 Get Lines Matching Regexp Matching One Line
     ${tc} =    Check Test Case    Get Lines Matching Regexp Matching One Line
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    1 out of 5 lines matched
@@ -64,3 +68,18 @@ Get Lines Matching Regexp With Case-Insensitive
     ${tc} =    Check Test Case    Get Lines Matching Regexp With Case-Insensitive
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    3 out of 5 lines matched
 
+Get Lines Containing Regexp Matching Two Words
+    ${tc} =    Check Test Case    Get Lines Containing Regexp Matching Two Words
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    1 out of 5 lines matched
+
+Get Lines Containing Regexp Matching One Line
+    ${tc} =    Check Test Case    Get Lines Containing Regexp Matching One Line
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    1 out of 5 lines matched
+
+Get Lines Containing Regexp Matching Some Lines
+    ${tc} =    Check Test Case    Get Lines Containing Regexp Matching Some Lines
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    2 out of 5 lines matched
+
+Get Lines Containing Regexp With Case-Insensitive
+    ${tc} =    Check Test Case    Get Lines Containing Regexp With Case-Insensitive
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    3 out of 5 lines matched
