@@ -430,7 +430,7 @@ For example, the following two test cases do the same thing:
    \                                    My Keyword       ${index}       ${item}
    For In Enumerate   [Documentation]   How to do this   with           `FOR IN ENUMERATE`
    \                  @{list}=          Create List      a              b                    c
-   \                  :FOR              ${index}         ${item}        IN ENUMERAGE         @{list}
+   \                  :FOR              ${index}         ${item}        IN ENUMERATE         @{list}
    \                                    My Keyword       ${index}       ${item}
    =================  ================  ===============  =============  ===================  ========
 
