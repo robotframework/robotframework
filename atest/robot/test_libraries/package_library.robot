@@ -53,7 +53,7 @@ Set PYTHONPATH and run tests
     [Teardown]    Reset PYTHONPATH
 
 Import message should be syslogged
-    [Arguments]    ${name}    ${file}=__init__.py    ${type}=class
+    [Arguments]    ${name}    ${file}=__init__    ${type}=class
     ${base} =    Normalize Path    ${DATADIR}/test_libraries/MyLibDir
     Check Syslog Contains    | INFO \ |
     ...    Imported test library ${type} '${name}' from '${base}${/}${file}
