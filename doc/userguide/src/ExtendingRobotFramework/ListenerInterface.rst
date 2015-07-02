@@ -219,7 +219,7 @@ synonym to `start_suite`.
    |                  |                  | Keys in the attribute dictionary:                              |
    |                  |                  |                                                                |
    |                  |                  | * `args`: Arguments passed to the library as a list.           |
-   |                  |                  | * `original_name`: The original library name when using the    |
+   |                  |                  | * `originalname`: The original library name when using the    |
    |                  |                  |   WITH NAME syntax, otherwise same as `name`.                  |
    |                  |                  | * `source`: An absolute path to the library source. `None`     |
    |                  |                  |   with libraries implemented with Java or if getting the       |

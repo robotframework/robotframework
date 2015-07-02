@@ -132,7 +132,7 @@ class Namespace(object):
         if notify:
             LOGGER.imported("Library", lib.name,
                             args=list(import_setting.args),
-                            original_name=lib.orig_name,
+                            originalname=lib.orig_name,
                             importer=import_setting.source,
                             source=lib.source)
         self._kw_store.libraries[lib.name] = lib
