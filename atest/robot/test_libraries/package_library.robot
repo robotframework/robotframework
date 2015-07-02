@@ -27,11 +27,11 @@ Sub-module itself as library
 
 Class in sub-package as library implicitly
     Check Test Case    ${TESTNAME}
-    Import message should be syslogged    MyLibDir.SubPackage    SubPackage${/}__init__.py
+    Import message should be syslogged    MyLibDir.SubPackage    SubPackage${/}__init__
 
 Class in sub-package as library explicitly
     Check Test Case    ${TESTNAME}
-    Import message should be syslogged    MyLibDir.SubPackage.SubPackage    SubPackage${/}__init__.py
+    Import message should be syslogged    MyLibDir.SubPackage.SubPackage    SubPackage${/}__init__
 
 Sub-package itself as library
     Check Test Case    ${TESTNAME}
