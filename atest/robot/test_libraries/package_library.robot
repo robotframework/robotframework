@@ -23,7 +23,7 @@ Class in sub-module as library explicitly
 
 Sub-module itself as library
     Check Test Case    ${TESTNAME}
-    Import message should be syslogged    MyLibDir.SubModuleLib    SubModuleLib.py    module
+    Import message should be syslogged    MyLibDir.SubModuleLib    SubModuleLib    module
 
 Class in sub-package as library implicitly
     Check Test Case    ${TESTNAME}
