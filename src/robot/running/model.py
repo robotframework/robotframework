@@ -75,6 +75,9 @@ class TestSuite(model.TestSuite):
 
     def __init__(self,  name='', doc='', metadata=None, source=None):
         model.TestSuite.__init__(self, name, doc, metadata, source)
+        #: :class:`ResourceFile` instance containing imports, variables and
+        #: keywords the suite owns. When data is parsed from the file system,
+        #: this data comes from the same test case file that creates the suite.
         self.resource = ResourceFile(source=source)
 
     def configure(self, randomize_suites=False, randomize_tests=False,
