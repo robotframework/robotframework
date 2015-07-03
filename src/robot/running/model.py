@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import warnings
+
 from robot import model
 from robot.conf import RobotSettings
 from robot.output import LOGGER, Output, pyloggingconf
@@ -79,6 +81,29 @@ class TestSuite(model.TestSuite):
         #: keywords the suite owns. When data is parsed from the file system,
         #: this data comes from the same test case file that creates the suite.
         self.resource = ResourceFile(source=source)
+
+    # TODO: Remote deprecated propertys below in RF 3.0.
+
+    @property
+    def imports(self):
+        warnings.warn("'TestSuite.imports' is deprecated. Use "
+                      "'TestSuite.resource.imports' instead.",
+                      DeprecationWarning)
+        return self.resource.imports
+
+    @property
+    def variables(self):
+        warnings.warn("'TestSuite.variables' is deprecated. Use "
+                      "'TestSuite.resource.variables' instead.",
+                      DeprecationWarning)
+        return self.resource.variables
+
+    @property
+    def user_keywords(self):
+        warnings.warn("'TestSuite.user_keywords' is deprecated. Use"
+                      "'TestSuite.resource.keywords' instead.",
+                      DeprecationWarning)
+        return self.resource.keywords
 
     def configure(self, randomize_suites=False, randomize_tests=False,
                   randomize_seed=None, **options):
