@@ -5,13 +5,22 @@ Resource         atest_resource.robot
 
 *** Test Cases ***
 Fail Because Timeout exceeded
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    # Cannot test exactly how many times kw is run because it depends on interpreter speed.
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Still 2 times to fail!    FAIL
+    Should Be True    len($tc.kws[0].kws) < 4
 
 Pass with first Try
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Used to test that variable name, not value, is shown in arguments
+    Length Should Be    ${tc.kws[0].kws}    1
 
 Pass With Some Medium Try
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    Still 2 times to fail!    FAIL
+    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    Still 1 times to fail!    FAIL
+    Check Log Message    ${tc.kws[0].kws[2].msgs[0]}    Still 0 times to fail!    FAIL
+    Length Should Be    ${tc.kws[0].kws}    4
 
 Pass With Last Possible Try
     Check Test Case    ${TESTNAME}

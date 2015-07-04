@@ -7,14 +7,14 @@ ${HELLO}          Used to test that variable name, not value, is shown in argume
 
 *** Test Cases ***
 Fail Because Timeout exceeded
-    [Documentation]    FAIL Keyword 'Fail Until Retried Often Enough' failed after retrying for 1 second 100 milliseconds. The last error was: Still 0 times to fail!
-    Wait Until Keyword Succeeds    1.1 seconds    555 ms    Fail Until Retried Often Enough
+    [Documentation]    FAIL GLOB: Keyword 'Fail Until Retried Often Enough' failed after retrying for 100 milliseconds. The last error was: Still ? times to fail!
+    Wait Until Keyword Succeeds    0.1 seconds    50ms    Fail Until Retried Often Enough
 
 Pass with first Try
     Wait Until Keyword Succeeds    2 minutes    30 seconds    Log    ${HELLO}
 
 Pass With Some Medium Try
-    Wait Until Keyword Succeeds    ${42}    200 milliseconds    Fail Until Retried Often Enough
+    Wait Until Keyword Succeeds    ${42}    2 milliseconds    Fail Until Retried Often Enough
 
 Pass With Last Possible Try
     Wait Until Keyword Succeeds    1.1 seconds    0.3 seconds    Fail Until Retried Often Enough
