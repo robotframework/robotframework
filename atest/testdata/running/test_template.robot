@@ -168,9 +168,18 @@ Templates, timeouts, and for loops
     :FOR  ${i}  IN RANGE  10
     \    0.05 seconds
 
-Templates and syntax errors
+Templated test ends after syntax errors
     [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 5.
     syntax    error    makes    test    end
+    not compared    anymore
+
+Templated test continues after variable error
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) Variable '\${this does not exist}' not found.\n\n
+    ...  2) compared and not equal != fails
+    ${this does not exist}    ${this does not exist either}
+    compared and equal        compared and equal
+    compared and not equal    fails
 
 Templates and fatal errors 1
     [Documentation]  FAIL  Several failures occurred:\n\n

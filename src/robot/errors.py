@@ -12,6 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""Exceptions and return codes used internally.
+
+External libraries should not used exceptions defined here.
+"""
+
+
 # Return codes from Robot and Rebot.
 # RC below 250 is the number of failed critical tests and exactly 250
 # means that number or more such failures.
@@ -48,13 +54,13 @@ class FrameworkError(RobotError):
 class DataError(RobotError):
     """Used when the provided test data is invalid.
 
-    DataErrors are not be caught by keywords that run other keywords
-    (e.g. `Run Keyword And Expect Error`). Libraries should thus use
-    this exception with care.
+    DataErrors are not caught by keywords that run other keywords
+    (e.g. `Run Keyword And Expect Error`).
     """
 
+
 class VariableError(DataError):
-    """Used when variable syntax or evaluation is invalid.
+    """Used when variable does not exist.
 
     VariableErrors are caught by keywords that run other keywords
     (e.g. `Run Keyword And Expect Error`).
@@ -67,7 +73,7 @@ class TimeoutError(RobotError):
     This exception is handled specially so that execution of the
     current test is always stopped immediately and it is not caught by
     keywords executing other keywords (e.g. `Run Keyword And Expect
-    Error`). Libraries should thus NOT use this exception themselves.
+    Error`).
     """
 
 

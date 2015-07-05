@@ -70,7 +70,10 @@ Templates and timeouts
 Templates, timeouts, and for loops
     Check Test Case  ${TESTNAME}
 
-Templates and syntax errors
+Templated test ends after syntax errors
+    Check Test Case  ${TESTNAME}
+
+Templated test continues after variable error
     Check Test Case  ${TESTNAME}
 
 Templates and fatal errors
