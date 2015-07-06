@@ -22,70 +22,14 @@ __ `Documenting libraries`_
 Representing newlines
 ---------------------
 
-Adding newlines manually in test data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The documentation of test suites, test cases and keywords as well as
-the test suite metadata are subject to `general parsing rules`__ of the
-test data. This means that normal newlines are not preserved and
-dividing documentation into lines and paragraphs generally requires
-using a `literal newline character sequence`__ (`\n`). This is
-shown in the example below.
-
-__ `Test data syntax`_
-__ `Handling whitespace`_
-
-.. raw:: html
-
-   <table class="example docutils">
-     <caption>Adding newlines manually</caption>
-     <tr>
-       <th>Setting</th>
-       <th>Value</th>
-       <th>Value</th>
-     </tr>
-     <tr>
-       <td>Documentation</td>
-       <td>
-         First line.\n<br>\n<br>
-         Second paragraph, this time\n<br>with multiple lines.
-       </td>
-       <td>&nbsp;</td>
-     </tr>
-     <tr>
-       <td>Metadata</td>
-       <td>Example</td>
-       <td>Value\n<br>in two lines</td>
-     </tr>
-   </table>
-
 Automatic newlines in test data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Adding newlines manually to a long documentation takes some effort and
-extra characters also make the documentation in the test data slightly
-harder to read. Starting from Robot Framework 2.7, this is not always
-required as newlines are inserted automatically between `continued
-documentation and metadata lines`__. In practice this means that the
-above example could be written also as follows.
-
-.. table:: Automatic newlines
-   :class: example
-
-   =============  ===========================
-      Setting                Value
-   =============  ===========================
-   Documentation  First line.
-   ...
-   ...            Second paragraph, this time
-   ...            with multiple lines.
-   Metadata       Example
-   ...            Value
-   ...            in two lines
-   =============  ===========================
-
-This style works especially well in the `plain text format`_ where the
-same example could be written like this:
+Adding newlines in the documentation of test suites, test cases and
+keywords as well as the test suite metadata can be done using a literal
+newline character sequence (`\n`). Starting from Robot Framework 2.7, 
+newlines are inserted automatically between `continued documentation 
+and metadata lines`__  as illustrated in the following examples.
 
 .. sourcecode:: robotframework
 
@@ -110,22 +54,21 @@ the same two line documentation.
 __ `Dividing test data to several rows`_
 __ Escaping_
 
-.. table:: Multiline documentation examples
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===============  ================  ==============  ==============
-   Test Case      Action           Argument         Argument       Argument
-   =========  ===============  ================  ==============  ==============
-   Example 1  [Documentation]  First line\\n     Second line in  multiple parts
-   \          No Operation
-   Example 2  [Documentation]  First line
-   \          ...              Second line in    multiple parts
-   \          No Operation
-   Example 3  [Documentation]  First line\\n
-   \          ...              Second line in\\
-   \          ...              multiple parts
-   \          No Operation
-   =========  ===============  ================  ==============  ==============
+  *** Test Cases ***
+   Example 1  
+       [Documentation]    First line\n    Second line in    multiple parts
+       No Operation
+   Example 2
+       [Documentation]   First line
+       ...               Second line in    multiple parts
+       No Operation
+   Example 3 
+       [Documentation]    First line\n
+       ...                Second line in\n
+       ...                multiple parts
+       No Operation
 
 Documentation in test libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

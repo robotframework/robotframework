@@ -315,39 +315,22 @@ documentation similarly as with test libraries.
 Also the resource file itself can have :setting:`Documentation` in the
 Setting table for documenting the whole resource file.
 
-Possible variables in resource files are not documented.
+Possible variables in resource files can not be documented.
 
-.. table:: An example resource file
-   :class: example
+.. sourcecode:: robotframework
 
-   +---------------+-----------------------------------------+-----------------------------------+
-   |    Setting    |                  Value                  |               Value               |
-   +===============+=========================================+===================================+
-   | Documentation | Resource file for demo purposes.        |                                   |
-   +---------------+-----------------------------------------+-----------------------------------+
-   | ...           | This resource is only used in an example| and it doesn't do anything useful.|
-   +---------------+-----------------------------------------+-----------------------------------+
+   *** Settings ***
+   Documentation    Resource file for demo purposes.
+   ...              This resource is only used in an example and it doesn't do anything useful
 
-.. table::
-   :class: example
-
-   +--------------+------------------+------------------------+-------------------------------+
-   |    Keyword   |      Action      |         Argument       |            Argument           |
-   +==============+==================+========================+===============================+
-   | My Keyword   | [Documentation]  | Does nothing           |                               |
-   +--------------+------------------+------------------------+-------------------------------+
-   |              | No Operation     |                        |                               |
-   +--------------+------------------+------------------------+-------------------------------+
-   |              |                  |                        |                               |
-   +--------------+------------------+------------------------+-------------------------------+
-   | Your Keyword | [Arguments]      | ${arg}                 |                               |
-   +--------------+------------------+------------------------+-------------------------------+
-   |              | [Documentation]  | Takes one argument and | | Example:\\n                 |
-   |              |                  | \*does nothing\* with  | | \| Your Keyword \| xxx \|\\n|
-   |              |                  | it.\\n                 | | \| Your Keyword \| yyy \|\\n|
-   +--------------+------------------+------------------------+-------------------------------+
-   |              | No Operation     |                        |                               |
-   +--------------+------------------+------------------------+-------------------------------+
+   *** Keywords ***
+   My Keyword
+       [Documentation]   Does nothing
+       No Operation
+   Your Keyword
+       [Arguments]  ${arg}
+       [Documentation]   Takes one argument and *does nothing* with it.\n Examples:\n Your Keyword   xxx\n Your Keyword   yyy  
+       No Operation
 
 __ `Automatic newlines in test data`_
 

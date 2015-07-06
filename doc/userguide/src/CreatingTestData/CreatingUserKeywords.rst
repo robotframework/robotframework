@@ -27,19 +27,17 @@ from keywords in test libraries or other user keywords. Keyword names
 are normally in the second column, but when setting variables from
 keyword return values, they are in the subsequent columns.
 
-.. table:: User keyword examples
-   :class: example
+.. sourcecode:: robotframework
 
-   =======================  =================  =======================  ===========
-           Keyword               Action               Argument           Argument
-   =======================  =================  =======================  ===========
-   Open Login Page          Open Browser       \http://host/login.html
-   \                        Title Should Be    Login Page
-   \
-   Title Should Start With  [Arguments]        ${expected}
-   \                        ${title} =         Get Title
-   \                        Should Start With  ${title}                 ${expected}
-   =======================  =================  =======================  ===========
+   *** Keywords ***
+   Open Login Page
+       Open Browser    http://host/login.html
+       Title Should Be    Login Page
+   
+   Title Should Start With
+       [Arguments]    ${expected}
+       ${title} =    Get Title
+       Should Start With    ${title}    ${expected}
 
 Most user keywords take some arguments. This important feature is used
 already in the second example above, and it is explained in detail
@@ -158,20 +156,18 @@ be as descriptive as possible. It is recommended
 to use lower-case letters in variable names, either as
 `${my_arg}`, `${my arg}` or `${myArg}`.
 
-.. table:: User keyword taking different number of arguments
-   :class: example
+.. sourcecode:: robotframework
 
-   ===============  ===========  ========================  ==========  ==========
-       Keyword        Action             Argument           Argument    Argument
-   ===============  ===========  ========================  ==========  ==========
-   One Argument     [Arguments]  ${arg_name}
-   \                Log          Got argument ${arg_name}
-   \
-   Three Arguments  [Arguments]  ${arg1}                   ${arg2}     ${arg3}
-   \                Log          1st argument: ${arg1}
-   \                Log          2nd argument: ${arg2}
-   \                Log          3rd argument: ${arg3}
-   ===============  ===========  ========================  ==========  ==========
+   *** Keywords ***
+   One Argument
+       [Arguments]    ${arg_name}
+       Log    Got argument ${arg_name}
+   
+   Three Arguments
+       [Arguments]    ${arg1}    ${arg2}    ${arg3}
+       Log    1st argument: ${arg1}
+       Log    2nd argument: ${arg2}
+       Log    3rd argument: ${arg3}
 
 Default values with user keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -192,26 +188,25 @@ created on `suite or global scope`__.
           before the `=` sign are not allowed, and possible spaces
           after it are considered part of the default value itself.
 
-.. table:: User keyword with default values for arguments
-   :class: example
+.. sourcecode:: robotframework
 
-   =================================  ===============  =====================  ===================
-                 Keyword                   Action             Argument              Argument
-   =================================  ===============  =====================  ===================
-   One Argument With Default Value    [Arguments]      ${arg}=default value
-   \                                  [Documentation]  This keyword takes     0-1 arguments
-   \                                  Log              Got argument ${arg}
-   \
-   Two Arguments With Defaults        [Arguments]      ${arg1}=default 1      ${arg2}=${VARIABLE}
-   \                                  [Documentation]  This keyword takes     0-2 arguments
-   \                                  Log              1st argument ${arg1}
-   \                                  Log              2nd argument ${arg2}
-   \
-   One Required And One With Default  [Arguments]      ${required}            ${optional}=default
-   \                                  [Documentation]  This keyword takes     1-2 arguments
-   \                                  Log              Required: ${required}
-   \                                  Log              Optional: ${optional}
-   =================================  ===============  =====================  ===================
+   *** Keywords ***
+   One Argument With Default Value
+       [Arguments]    ${arg}=default value
+       [Documentation]    This keyword takes 0-1 arguments
+       Log    Got argument ${arg}
+   
+   Two Arguments With Defaults
+       [Arguments]    ${arg1}=default 1    ${arg2}=${VARIABLE}
+       [Documentation]    This keyword takes    0-2 arguments
+       Log    1st argument ${arg1}
+       Log    2nd argument ${arg2}
+   
+   One Required And One With Default
+       [Arguments]    ${required}    ${optional}=default
+       [Documentation]    This keyword takes    1-2 arguments
+       Log    Required: ${required}
+       Log    Optional: ${optional}
 
 When a keyword accepts several arguments with default values and only
 some of them needs to be overridden, it is often handy to use the
@@ -220,14 +215,11 @@ keywords, the arguments are specified without the `${}`
 decoration. For example, the second keyword above could be used like
 below and `${arg1}` would still get its default value.
 
-.. table:: User keyword and named arguments syntax
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ===========================  ==============  ============
-     Test Case               Action               Argument       Argument
-   =============  ===========================  ==============  ============
-   Example        Two Arguments With Defaults  arg2=new value
-   =============  ===========================  ==============  ============
+   *** Test Cases ***
+   Example
+       Two Arguments With Defaults    arg2=new value
 
 As all Pythonistas must have already noticed, the syntax for
 specifying default arguments is heavily inspired by Python syntax for
@@ -246,25 +238,24 @@ This syntax can be combined with the previously described default values, and
 at the end the list variable gets all the leftover arguments that do not match
 other arguments. The list variable can thus have any number of items, even zero.
 
-.. table:: User keywords accepting variable number of arguments
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========================  =============  ================  ============  ============
-              Keyword               Action         Argument        Argument      Argument
-   ===========================  =============  ================  ============  ============
-   Any Number Of Arguments      [Arguments]    @{varargs}
-   \                            Log Many       @{varargs}
-   \
-   One Or More Arguments        [Arguments]    ${required}       @{rest}
-   \                            Log Many       ${required}       @{rest}
-   \
-   Required, Default, Varargs   [Arguments]    ${req}            ${opt}=42     @{others}
-   \                            Log            Required: ${req}
-   \                            Log            Optional: ${opt}
-   \                            Log            Others:
-   \                            : FOR          ${item}           IN            @{others}
-   \                                           Log               ${item}
-   ===========================  =============  ================  ============  ============
+   *** Keywords ***
+   Any Number Of Arguments
+       [Arguments]    @{varargs}
+       Log Many    @{varargs}
+   
+   One Or More Arguments
+       [Arguments]    ${required}    @{rest}
+       Log Many    ${required}    @{rest}
+   
+   Required, Default, Varargs
+       [Arguments]    ${req}    ${opt}=42    @{others}
+       Log    Required: ${req}
+       Log    Optional: ${opt}
+       Log    Others:
+       : FOR    ${item}    IN    @{others}
+       \    Log    ${item}
 
 Notice that if the last keyword above is used with more than one
 argument, the second argument `${opt}` always gets the given
@@ -288,22 +279,21 @@ arguments and varargs. When the keyword is called, this variable will get all
 `named arguments`_ that do not match any positional argument in the keyword
 signature.
 
-.. table:: User keywords accepting free keyword arguments
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========================  =============  ============  ============  ============
-              Keyword               Action       Argument      Argument      Argument
-   ===========================  =============  ============  ============  ============
-   Kwargs Only                  [Arguments]    &{kwargs}
-   \                            Log            ${kwargs}
-   \                            Log Many       @{kwargs}
-   \
-   Positional And Kwargs        [Arguments]    ${required}   &{extra}
-   \                            Log Many       ${required}   @{extra}
-   \
-   Run Program                  [Arguments]    @{varargs}    &{kwargs}
-   \                            Run Process    program.py    @{varargs}    &{kwargs}
-   ===========================  =============  ============  ============  ============
+   *** Keywords ***
+   Kwargs Only
+       [Arguments]    &{kwargs}
+       Log         ${kwargs}
+       Log Many    @{kwargs}
+   
+   Positional And Kwargs
+       [Arguments]    ${required}    &{extra}
+       Log Many    ${required}    @{extra}
+   
+   Run Program
+       [Arguments]    @{varargs}    &{kwargs}
+       Run Process    program.py    @{varargs}    &{kwargs}
 
 The last example above shows how to create a wrapper keyword that
 accepts any positional or named argument and passes them forward.
@@ -333,15 +323,12 @@ must have been implemented separately. The idea of embedding arguments
 into the keyword name is that all you need is a keyword with name like
 :name:`Select ${animal} from list`.
 
-.. table:: An example keyword with arguments embedded into its name
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========================  =====================  =============  ============
-              Keyword                   Action            Argument      Argument
-   ===========================  =====================  =============  ============
-   Select ${animal} from list   Open Page              Pet Selection
-   \                            Select Item From List  animal_list    ${animal}
-   ===========================  =====================  =============  ============
+   *** Keywords ***
+   Select ${animal} from list
+       Open Page    Pet Selection
+       Select Item From List    animal_list    ${animal}
 
 Keywords using embedded arguments cannot take any "normal" arguments
 (specified with :setting:`[Arguments]` setting) but otherwise they are
@@ -406,25 +393,18 @@ text can help but, for example, the test below fails because keyword
 :name:`I execute "ls" with "-lh"` matches both of the defined
 keywords.
 
-.. table:: Embedded arguments match too much
-   :class: example
+.. sourcecode:: robotframework
 
-   ============================  ===============================
-             Test Case                         Step
-   ============================  ===============================
-   Example                       I execute "ls"
-   \                             I execute "ls" with "-lh"
-   ============================  ===============================
+   *** Test Cases ***   
+   Example
+       I execute "ls"
+       I execute "ls" with "-lh"
 
-.. table::
-   :class: example
-
-   =================================  ==========  ==============  ==========
-                Keyword                  Action      Argument      Argument
-   =================================  ==========  ==============  ==========
-   I execute "${cmd}"                 Run         ${cmd}
-   I execute "${cmd}" with "${opts}"  Run         ${cmd} ${opts}
-   =================================  ==========  ==============  ==========
+   *** Keywords ***
+   I execute "${cmd}"
+       Run    ${cmd}
+   I execute "${cmd}" with "${opts}"
+       Run    ${cmd}    ${opts}
 
 A solution to this problem is using a custom regular expression that
 makes sure that the keyword matches only what it should in that
@@ -438,30 +418,25 @@ separated with a colon. For example, an argument that should match
 only numbers can be defined like `${arg:\d+}`. Using custom
 regular expressions is illustrated by the examples below.
 
-.. table:: Using custom regular expressions with embedded arguments
-   :class: example
+.. sourcecode:: robotframework
 
-   ============================  ===============================
-             Test Case                         Step
-   ============================  ===============================
-   Example                       I execute "ls"
-   \                             I execute "ls" with "-lh"
-   \                             I type 1 + 2
-   \                             I type 53 - 11
-   \                             Today is 2011-06-27
-   ============================  ===============================
+   *** Test Cases ***   
+   Example
+       I execute "ls"
+       I execute "ls" with "-lh"
+       I type 1 + 2
+       I type 53 - 11
+       Today is 2011-06-27
 
-.. table::
-   :class: example
-
-   ===========================================  ============  ==============  ===========  ==========
-                Keyword                            Action        Argument      Argument     Argument
-   ===========================================  ============  ==============  ===========  ==========
-   I execute "${cmd:[^"]+}"                     Run           ${cmd}
-   I execute "${cmd}" with "${opts}"            Run           ${cmd} ${opts}
-   I type ${a:\\d+} ${operator:[+-]} ${b:\\d+}  Calculate     ${a}            ${operator}  ${b}
-   Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}  Log           ${date}
-   ===========================================  ============  ==============  ===========  ==========
+   *** Keywords ***
+   I execute "${cmd:[^"]+}"
+       Run    ${cmd}
+   I execute "${cmd}" with "${opts}"
+       Run    ${cmd}    ${opts}
+   I type ${a:\\d+} ${operator:[+-]} ${b:\\d+}
+       Calculate    ${a}    ${operator}    ${b}
+   Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}
+       Log    ${date}
 
 In the above example keyword :name:`I execute "ls" with "-lh"` matches
 only :name:`I execute "${cmd}" with "${opts}"`. That is guaranteed
@@ -517,24 +492,15 @@ means that it is always possible to use variables with keywords having
 embedded arguments. For example, the following test case would pass
 using the keywords from the earlier example.
 
-.. table:: Using variables with custom regular expressions
-   :class: example
+.. sourcecode:: robotframework
 
-   =================  =================
-        Variable            Value
-   =================  =================
-   ${DATE}            2011-06-27
-   =================  =================
+   *** Variables ***   
+   ${DATE}    2011-06-27
 
-.. table::
-   :class: example
-
-   ============================  ===============================
-             Test Case                         Step
-   ============================  ===============================
-   Example                       I type ${1} + ${2}
-   \                             Today is ${DATE}
-   ============================  ===============================
+   *** Test Cases ***
+   Example
+       I type ${1} + ${2}
+       Today is ${DATE}
 
 A drawback of variables automatically matching custom regular
 expressions is that it is possible that the value the keyword gets
@@ -557,37 +523,32 @@ cases in `behavior-driven style`_. The example below illustrates this. Notice
 also that prefixes :name:`Given`, :name:`When` and :name:`Then` are `left out
 of the keyword definitions`__.
 
-.. table:: Embedded arguments used by BDD style tests
-   :class: example
+.. sourcecode:: robotframework
 
-   ============================  ===============================
-             Test Case                         Step
-   ============================  ===============================
-   Add two numbers               Given I have Calculator open
-   \                             When I add 2 and 40
-   \                             Then result should be 42
-   \
-   Add negative numbers          Given I have Calculator open
-   \                             When I add 1 and -2
-   \                             Then result should be -1
-   ============================  ===============================
+   *** Test Cases ***
+   Add two numbers
+       Given I have Calculator open
+       When I add 2 and 40
+       Then result should be 42
+   
+   Add negative numbers
+       Given I have Calculator open
+       When I add 1 and -2
+       Then result should be -1
 
-.. table::
-   :class: example
-
-   ======================================  ===============  ============  ============
-                  Keyword                       Action        Argument      Argument
-   ======================================  ===============  ============  ============
-   I have ${program} open                  Start Program    ${program}
-   \
-   I add ${number 1} and ${number 2}       Input Number     ${number 1}
-   \                                       Push Button      \+
-   \                                       Input Number     ${number 2}
-   \                                       Push Button      \=
-   \
-   Result should be ${expected}            ${result} =      Get Result
-   \                                       Should Be Equal  ${result}     ${expected}
-   ======================================  ===============  ============  ============
+   *** Keywords ***
+   I have ${program} open
+       Start Program    ${program}
+   
+   I add ${number 1} and ${number 2}
+       Input Number    ${number 1}
+       Push Button     +
+       Input Number    ${number 2}
+       Push Button     =
+   
+   Result should be ${expected}
+       ${result} =    Get Result
+       Should Be Equal    ${result}    ${expected}
 
 .. note:: Embedded arguments feature in Robot Framework is inspired by
           how *step definitions* are created in a popular BDD tool Cucumber__.
@@ -619,33 +580,27 @@ several scalar variables at once, to a list variable, or to scalar variables
 and a list variable. Several values can be returned simply by
 specifying those values in different cells after the :setting:`[Return]` setting.
 
-.. table:: User keywords returning values using :setting:`[Return]` setting
-   :class: example
+.. sourcecode:: robotframework
 
-   ================  ============  ===================  ===================  ===================
-       Test Case        Action         Argument              Argument            Argument
-   ================  ============  ===================  ===================  ===================
-   One Return Value  ${ret} =      Return One Value     argument
-   \                 Some Keyword  ${ret}
-   \
-   Multiple Values   ${a}          ${b}                 ${c} =               Return Three Values
-   \                 @{list} =     Return Three Values
-   \                 ${scalar}     @{rest} =            Return Three Values
-   ================  ============  ===================  ===================  ===================
+   *** Test Cases ***
+   One Return Value
+       ${ret} =    Return One Value    argument
+       Some Keyword    ${ret}
+   
+   Multiple Values
+       ${a}    ${b}    ${c} =    Return Three Values
+       @{list} =    Return Three Values
+       ${scalar}    @{rest} =    Return Three Values
 
-.. table::
-   :class: example
-
-   ===================  ============  ==============  ===========  ==========
-         Keyword           Action        Argument       Argument    Argument
-   ===================  ============  ==============  ===========  ==========
-   Return One Value     [Arguments]   ${arg}
-   \                    Do Something  ${arg}
-   \                    ${value} =    Get Some Value
-   \                    [Return]      ${value}
-   \
-   Return Three Values  [Return]      foo             bar          zap
-   ===================  ============  ==============  ===========  ==========
+   *** Keywords ***
+   Return One Value
+       [Arguments]    ${arg}
+       Do Something    ${arg}
+       ${value} =    Get Some Value
+       [Return]    ${value}
+   
+   Return Three Values
+       [Return]    foo    bar    zap
 
 Using special keywords to return
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -659,41 +614,35 @@ The first example below is functionally identical to the previous
 :setting:`[Return]` setting example. The second, and more advanced, example
 demonstrates returning conditionally inside a `for loop`_.
 
-.. table:: User keywords returning values using special keywords
-   :class: example
+.. sourcecode:: robotframework
 
-   ================  ===============  ================  ============  ========
-      Test Case          Action           Argument        Argument    Argument
-   ================  ===============  ================  ============  ========
-   One Return Value  ${ret} =         Return One Value  argument
-   \                 Some Keyword     ${ret}
-   \
-   Advanced          @{list} =        Create List       foo           baz
-   \                 ${index} =       Find Index        baz           @{list}
-   \                 Should Be Equal  ${index}          ${1}
-   \                 ${index} =       Find Index        non existing  @{list}
-   \                 Should Be Equal  ${index}          ${-1}
-   ================  ===============  ================  ============  ========
+   *** Test Cases ***
+   One Return Value
+       ${ret} =    Return One Value  argument
+       Some Keyword    ${ret}
+   
+   Advanced
+       @{list} =    Create List    foo    baz
+       ${index} =    Find Index    baz    @{list}
+       Should Be Equal    ${index}    ${1}
+       ${index} =    Find Index    non existing    @{list}
+       Should Be Equal    ${index}    ${-1}
 
-.. table::
-   :class: example
-
-   ================  ===================  ======================  =========================  ============
-        Keyword             Action                Argument                 Argument           Argument
-   ================  ===================  ======================  =========================  ============
-   Return One Value  [Arguments]          ${arg}
-   \                 Do Something         ${arg}
-   \                 ${value} =           Get Some Value
-   \                 Return From Keyword  ${value}
-   \                 Fail                 This is not executed
-   \
-   Find Index        [Arguments]          ${element}              @{items}
-   \                 ${index}=            Set Variable            ${0}
-   \                 :FOR                 ${item}                 IN                         @{items}
-   \                                      Return From Keyword If  '${item}' == '${element}'  ${index}
-   \                                      ${index}=               Set Variable               ${index + 1}
-   \                 Return From Keyword  ${-1}                   # Could also use [Return]
-   ================  ===================  ======================  =========================  ============
+   *** Keywords ***
+   Return One Value
+       [Arguments]    ${arg}
+       Do Something    ${arg}
+       ${value} =    Get Some Value
+       Return From Keyword    ${value}
+       Fail    This is not executed
+   
+   Find Index
+       [Arguments]    ${element}    @{items}
+       ${index} =    Set Variable    ${0}
+       :FOR    ${item}    IN    @{items}
+       \    Return From Keyword If    '${item}' == '${element}'    ${index}
+       \    ${index} =    Set Variable    ${index + 1}
+       \    Return From Keyword    ${-1}  # Could also use [Return]
 
 .. note:: Both :name:`Return From Keyword` and :name:`Return From Keyword If`
           are available since Robot Framework 2.8.
@@ -712,18 +661,16 @@ keyword teardown will fail the test case and subsequent steps in the
 test are not run. The name of the keyword to be executed as a teardown
 can also be a variable.
 
-.. table::
-   :class: example
+.. sourcecode:: robotframework
 
-   ==================  ===============  ===================  ==================
-     User Keyword           Action            Argument            Argument
-   ==================  ===============  ===================  ==================
-   With Teardown       Do Something
-   \                   [Teardown]       Log                  keyword teardown
-   \
-   Using variables     [Documentation]  Teardown given as    variable
-   \                   Do Something
-   \                   [Teardown]       ${TEARDOWN}
-   ==================  ===============  ===================  ==================
+   *** Keywords ***
+   With Teardown
+       Do Something
+       [Teardown]    Log    keyword teardown
+   
+   Using variables
+       [Documentation]    Teardown given as variable
+       Do Something
+       [Teardown]    ${TEARDOWN}
 
 __ `test setup and teardown`_

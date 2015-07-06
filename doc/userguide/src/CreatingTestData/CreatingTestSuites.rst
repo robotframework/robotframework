@@ -111,38 +111,23 @@ initialization files is explained below.
    Robot Framework 2.7.
 `Default Tags`:setting:, `Test Template`:setting:
    Not supported in initialization files.
+   
+.. sourcecode:: robotframework
 
-.. table:: An example test suite initialization file
-   :class: example
-
-   =============  =============  =============
-      Setting         Value          Value
-   =============  =============  =============
-   Documentation  Example suite
+   *** Settings ***
+   Documentation    Example suite
    Suite Setup    Do Something   ${MESSAGE}
-   Force Tags     example
-   Library        SomeLibrary
-   =============  =============  =============
+   Force Tags    example
+   Library    SomeLibrary
+   
+   *** Variables ***
+   ${MESSAGE}    Hello, world!
 
-.. table::
-   :class: example
-
-   =============  =============  =============
-      Variable        Value          Value
-   =============  =============  =============
-   ${MESSAGE}     Hello, world!
-   =============  =============  =============
-
-.. table::
-   :class: example
-
-   =============  ===============  ================  ================
-      Keyword          Action          Argument          Argument
-   =============  ===============  ================  ================
-   Do Something   [Arguments]      ${arg}
-   \              Some Keyword     ${arg}
-   \              Another Keyword
-   =============  ===============  ================  ================
+   *** Keywords ***
+   Do Something
+       [Arguments]    ${args}
+       Some Keyword    ${arg}
+       Another Keyword
 
 __ `Test case related settings in the Setting table`_
 
@@ -170,15 +155,11 @@ suite documentation has exactly the same characteristics regarding to where
 it is shown and how it can be created as `test case
 documentation`_.
 
-.. table:: Test suite documentation example
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ======================  ======================  ======================
-      Setting             Value                   Value                   Value
-   =============  ======================  ======================  ======================
-   Documentation  An example test suite   documentation with      \*some\* _formatting_.
-   ...            See test documentation  for more documentation  examples.
-   =============  ======================  ======================  ======================
+   *** Settings ***
+   Documentation    An example test suite documentation with *some* _formatting_.
+   ...              See test documentation for more documentation examples.
 
 Both the name and documentation of the top-level test suite can be
 overridden in test execution. This can be done with the command line
@@ -201,16 +182,12 @@ simple `HTML formatting`_ works and even variables_ can be used.
 __ `Dividing test data to several rows`_
 __ `Automatic newlines in test data`_
 
-.. table:: Metadata examples
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===========  ====================  =========================  ==============================
-    Setting      Value            Value                   Value                          Value
-   =========  ===========  ====================  =========================  ==============================
-   Metadata   Version      2.0
-   Metadata   More Info    For more information  about \*Robot Framework\*  see \http://robotframework.org
-   Metadata   Executed At  ${HOST}
-   =========  ===========  ====================  =========================  ==============================
+   *** Settings ***
+   Metadata    Version        2.0
+   Metadata    More Info      For more information about *Robot Framework* see http://robotframework.org
+   Metadata    Executed At    ${HOST}
 
 For top-level test suites, it is possible to set metadata also with the
 :option:`--metadata` command line option. This is discussed in more

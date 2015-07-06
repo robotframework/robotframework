@@ -96,17 +96,15 @@ that the variables `${GREET}` and `${NAME}` are available
 and assigned to strings `Hello` and `world`, respectively,
 both the example test cases are equivalent.
 
-.. table:: Scalar variables with string values
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ========  ====================  ==========
-    Test Case     Action        Argument          Argument
-   ============  ========  ====================  ==========
-   Constants     Log       Hello
-   \             Log       Hello, world!!
-   Variables     Log       ${GREET}
-   \             Log       ${GREET}, ${NAME}!!
-   ============  ========  ====================  ==========
+   *** Test Cases ***
+   Constants
+       Log    Hello
+       Log    Hello, world!!
+   Variables
+       Log    ${GREET}
+       Log    ${GREET}, ${NAME}!!
 
 When a scalar variable is used as the only value in a test data cell,
 the scalar variable is replaced with the value it has. The value may
@@ -138,17 +136,14 @@ object:
 
 With these two variables set, we then have the following test data:
 
-.. table:: Scalar variables with objects as values
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ========  =================  ==========
-    Test Case    Action        Argument       Argument
-   ===========  ========  =================  ==========
-   Objects      KW 1      ${STR}
-   \            KW 2      ${OBJ}
-   \            KW 3      I said "${STR}"
-   \            KW 4      You said "${OBJ}"
-   ===========  ========  =================  ==========
+   *** Test Cases ***
+   Objects
+       KW 1    ${STR}
+       KW 2    ${OBJ}
+       KW 3    I said "${STR}"
+       KW 4    You said "${OBJ}"
 
 Finally, when this test data is executed, different keywords receive
 the arguments as explained below:
@@ -178,15 +173,13 @@ items are passed in as arguments separately. This is easiest to explain with
 an example. Assuming that a variable `@{USER}` has value `['robot','secret']`,
 the following two test cases are equivalent:
 
-.. table:: Using list variables
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ========  ===========  ==========
-     Test Case     Action    User Name    Password
-   =============  ========  ===========  ==========
-   Constants      Login     robot        secret
-   List Variable  Login     @{USER}
-   =============  ========  ===========  ==========
+   *** Test Cases ***
+   Constants
+       Login    robot    secret
+   List Variable
+       Login    @{USER}
 
 Robot Framework stores its own variables in one internal storage and allows
 using them as scalars, lists or dictionaries. Using a variable as a list
@@ -205,16 +198,13 @@ Using list variables with other data
 It is possible to use list variables with other arguments, including
 other list variables.
 
-.. table:: Using list variables with other data
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ==========  ==========  ==========  ===========
-     Test Case      Action     Argument    Argument    Argument
-   =============  ==========  ==========  ==========  ===========
-   Example        Keyword     @{LIST}     more        args
-   \              Keyword     ${SCALAR}   @{LIST}     constant
-   \              Keyword     @{LIST}     @{ANOTHER}  @{ONE MORE}
-   =============  ==========  ==========  ==========  ===========
+   *** Test Cases ***
+   Example
+       Keyword    @{LIST}      more          args
+       Keyword    ${SCALAR}    @{LIST}       constant
+       Keyword    @{LIST}      @{ANOTHER}    @{ONE MORE}
 
 If a list variable is used in a cell with other data (constant strings or other
 variables), the final value will contain a string representation of the
@@ -231,18 +221,17 @@ with too large an index causes an error. Indices are automatically converted
 to integers, and it is also possible to use variables as indices.
 List items accessed in this manner can be used similarly as scalar variables.
 
-.. table:: Accessing list variable items
-   :class: example
+.. sourcecode:: robotframework
 
-   ===============  ===============  ===================  ==========
-      Test Case         Action            Argument         Argument
-   ===============  ===============  ===================  ==========
-   Constants        Login            robot                secret
-   \                Title Should Be  Welcome robot!
-   List Variable    Login            @{USER}
-   \                Title Should Be  Welcome @{USER}[0]!
-   Variable Index   Log              @{LIST}[${INDEX}]
-   ===============  ===============  ===================  ==========
+   *** Test Cases ***
+   Constants
+       Login    robot    secret
+       Title Should Be    Welcome robot!
+   List Variable
+       Login    @{USER}
+       Title Should Be    Welcome @{USER}[0]!
+   Variable Index
+       Log    @{LIST}[${INDEX}]
 
 Using list variables with settings
 ''''''''''''''''''''''''''''''''''
@@ -255,20 +244,16 @@ as the name of the keyword, but can be used in arguments. With tag related
 settings they can be used freely. Using scalar variables is possible in
 those places where list variables are not supported.
 
-.. table:: Using list variables with settings
-   :class: example
+.. sourcecode:: robotframework
 
-   ==============  ================  ===============  ====================
-      Settings          Value            Value             Comment
-   ==============  ================  ===============  ====================
-   Library         ExampleLibrary    @{LIB ARGS}      # This works
-   Library         ${LIBRARY}        @{LIB ARGS}      # This works
-   Library         @{NAME AND ARGS}                   # This does not work
-   Suite Setup     Some Keyword      @{KW ARGS}       # This works
-   Suite Setup     ${KEYWORD}        @{KW ARGS}       # This works
-   Suite Setup     @{KEYWORD}                         # This does not work
-   Default Tags    @{TAGS}                            # This works
-   ==============  ================  ===============  ====================
+   *** Settings ***
+   Library         ExampleLibrary    @{LIB ARGS}    # This works
+   Library         ${LIBRARY}        @{LIB ARGS}    # This works
+   Library         @{NAME AND ARGS}                 # This does not work
+   Suite Setup     Some Keyword      @{KW ARGS}     # This works
+   Suite Setup     ${KEYWORD}        @{KW ARGS}     # This works
+   Suite Setup     @{KEYWORD}                       # This does not work
+   Default Tags    @{TAGS}                          # This works
 
 __ `All available settings in test data`_
 
@@ -286,15 +271,12 @@ this means that individual items of the dictionary are passed as
 value `{'name': 'robot', 'password': 'secret'}`, the following two test cases
 are equivalent.
 
-.. table:: Using dictionary variables
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ========  ===========  ===============
-     Test Case     Action    User Name      Password
-   =============  ========  ===========  ===============
-   Strings        Login     name=robot   password=secret
-   List Variable  Login     &{USER}
-   =============  ========  ===========  ===============
+   *** Test Cases ***
+   Strings
+       Login    name=robot    password=secret
+       List Variable    Login    &{USER}
 
 Dictionary variables are new in Robot Framework 2.9.
 
@@ -306,16 +288,13 @@ other dictionary variables. Because `named argument syntax`_ requires positional
 arguments to be before named argument, dictionaries can only be followed by
 named arguments or other dictionaries.
 
-.. table:: Using dictionary variables with other data
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ==========  ==========  ==========  ===========
-     Test Case      Action     Argument    Argument    Argument
-   =============  ==========  ==========  ==========  ===========
-   Example        Keyword     &{DICT}     named=arg
-   \              Keyword     positional  @{LIST}     &{DICT}
-   \              Keyword     &{DICT}     &{ANOTHER}  &{ONE MORE}
-   =============  ==========  ==========  ==========  ===========
+   *** Test Cases ***
+   Example
+       Keyword    &{DICT}       named=arg
+       Keyword    positional    @{LIST}       &{DICT}
+       Keyword    &{DICT}       &{ANOTHER}    &{ONE MORE}
 
 If a dictionary variable is used in a cell with other data (constant strings or
 other variables), the final value will contain a string representation of the
@@ -331,18 +310,17 @@ selected value. Keys are considered to be strings, but non-strings
 keys can be used as variables. Dictionary items accessed in this
 manner can be used similarly as scalar variables:
 
-.. table:: Accessing dictionary variable items
-   :class: example
+.. sourcecode:: robotframework
 
-   ===============  ===============  ======================  ===============
-      Test Case         Action              Argument             Argument
-   ===============  ===============  ======================  ===============
-   Constants        Login            name=robot              password=secret
-   \                Title Should Be  Welcome robot!
-   Dict Variable    Login            &{USER}
-   \                Title Should Be  Welcome &{USER}[name]!
-   Variable Key     Log Many         &{DICT}[${KEY}]         &{DICT}[${42}]
-   ===============  ===============  ======================  ===============
+   *** Test Cases ***
+   Constants
+       Login    name=robot    password=secret
+       Title Should Be    Welcome robot!
+   Dict Variable
+       Login    &{USER}
+       Title Should Be    Welcome &{USER}[name]!
+   Variable Key
+       Log Many    &{DICT}[${KEY}]    &{DICT}[${42}]
 
 Using dictionary variables with settings
 ''''''''''''''''''''''''''''''''''''''''
@@ -350,15 +328,11 @@ Using dictionary variables with settings
 Dictionary variables cannot generally be used with settings. The only exception
 are imports, setups and teardowns where dictionaries can be used as arguments.
 
-.. table:: Using list variables with settings
-   :class: example
+.. sourcecode:: robotframework
 
-   ==============  ================  =============  =============
-      Settings          Value            Value          Value
-   ==============  ================  =============  =============
-   Library         ExampleLibrary    &{LIB ARGS}
-   Suite Setup     Some Keyword      &{KW ARGS}     named=arg
-   ==============  ================  =============  =============
+   *** Settings ***
+   Library        ExampleLibrary    &{LIB ARGS}
+   Suite Setup    Some Keyword      &{KW ARGS}    named=arg
 
 .. _environment variable:
 
@@ -378,15 +352,12 @@ environment variables set in one test case can be used in other test
 cases executed after it. However, changes to environment variables are
 not effective after the test execution.
 
-.. table:: Using environment variables
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ========  =====================  ==========
-     Test Case     Action          Argument         Argument
-   =============  ========  =====================  ==========
-   Env Variables  Log       Current user: %{USER}
-   \              Run       %{JAVA_HOME}${/}javac
-   =============  ========  =====================  ==========
+   *** Test Cases ***
+   Env Variables
+       Log    Current user: %{USER}
+       Run    %{JAVA_HOME}${/}javac
 
 Java system properties
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -395,14 +366,11 @@ When running tests with Jython, it is possible to access `Java system properties
 using same syntax as `environment variables`_. If an environment variable and a
 system property with same name exist, the environment variable will be used.
 
-.. table:: Using Java system properties
-   :class: example
+.. sourcecode:: robotframework
 
-   =================  ========  ========================================  ==========
-     Test Case         Action          Argument                            Argument
-   =================  ========  ========================================  ==========
-   System Properties   Log      %{user.name} running tests on %{os.name}
-   =================  ========  ========================================  ==========
+   *** Test Cases ***
+   System Properties
+       Log    %{user.name} running tests on %{os.name}
 
 __ http://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
@@ -430,45 +398,33 @@ scalar variable. This is done by giving the variable name (including
 the second one. If the second column is empty, an empty string is set
 as a value. Also an already defined variable can be used in the value.
 
-.. table:: Creating scalar variables
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ==================  =========
-     Variable           Value          Value
-   ============  ==================  =========
+   *** Variables ***
    ${NAME}       Robot Framework
    ${VERSION}    2.0
    ${ROBOT}      ${NAME} ${VERSION}
-   ============  ==================  =========
 
 It is also possible, but not obligatory,
 to use the equals sign `=` after the variable name to make assigning
 variables slightly more explicit.
 
-.. table:: Creating scalar variables using the equals sign
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ===============  =========
-     Variable         Value         Value
-   ============  ===============  =========
-   ${NAME} =     Robot Framework
-   ${VERSION} =  2.0
-   ============  ===============  =========
+   *** Variables ***
+   ${NAME} =       Robot Framework
+   ${VERSION} =    2.0
 
 If a scalar variable has a long value, it can be split to multiple columns and
 rows__. By default cells are catenated together using a space, but this
 can be changed by having `SEPARATOR=<sep>` in the first cell.
 
-.. table:: Creating long scalar variables
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ====================  =====================
-     Variable           Value                  Value
-   ============  ====================  =====================
-   ${EXAMPLE}    This value is joined  together with a space
-   ${MULTILINE}  SEPARATOR=\\n         First line
-   ...           Second line           Third line
-   ============  ====================  =====================
+   *** Variables ***
+   ${EXAMPLE}      This value is joined    together with a space
+   ${MULTILINE}    SEPARATOR=\\n    First line
+   ...             Second line      Third line
 
 Joining long values like above is a new feature in Robot Framework 2.9.
 Creating a scalar variable with multiple values was a syntax error in
@@ -488,19 +444,15 @@ can be `split into several rows`__.
 
 __ `Dividing test data to several rows`_
 
-.. table:: Creating list variables
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  =========  =========  =========
-     Variable      Value      Value      Value
-   ============  =========  =========  =========
-   @{NAMES}      Matti      Teppo
-   @{NAMES2}     @{NAMES}   Seppo
+   *** Variables ***
+   @{NAMES}     Matti       Teppo
+   @{NAMES2}    @{NAMES}    Seppo
    @{NOTHING}
-   @{MANY}       one        two        three
-   ...           four       five       six
-   ...           seven
-   ============  =========  =========  =========
+   @{MANY}      one     two     three
+   ...          four    five    six
+   ...          seven
 
 Creating dictionary variables
 '''''''''''''''''''''''''''''
@@ -511,18 +463,14 @@ list variables. The difference is that items need to be created using
 items with same name, the last value has precedence. If a name contains
 an equal sign, it can be escaped__ with a backslash like `\=`.
 
-.. table:: Creating dictionary variables
-   :class: example
+.. sourcecode:: robotframework
 
-   ===============  ===============  ================  ===============
-       Variable          Value             Value            Value
-   ===============  ===============  ================  ===============
-   &{USER 1}        name=Matti       address=xxx       phone=123
-   &{USER 2}        name=Teppo       address=yyy       phone=456
-   &{MANY}          first=1          second=${2}       ${3}=third
-   &{EVEN MORE}     &{MANY}          first=override    empty=
-   ...              =empty           key\\=here=value
-   ===============  ===============  ================  ===============
+   *** Variables ***
+   &{USER 1}       name=Matti    address=xxx       phone=123
+   &{USER 2}       name=Teppo    address=yyy       phone=456
+   &{MANY}         first=1       second=${2}       ${3}=third
+   &{EVEN MORE}    &{MANY}       first=override    empty=
+   ...              =empty       key\\=here=value
 
 Dictionary variables created in variable table have two extra properties
 compared to normal Python dictionaries. First of all, values of these
@@ -639,16 +587,13 @@ Notice that although a value is assigned to a scalar variable, it can
 be used as a `list variable`_ if it has a list-like value and as a `dictionary
 variable`_ if it has a dictionary-like value.
 
-.. table:: Assigning list to scalar variable
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ================  ============  ==========  ==========  ==========
-     Test Case        Action         Argument     Argument    Argument    Argument
-   ============  ================  ============  ==========  ==========  ==========
-   Example       ${list} =         Create List   first       second      third
-   \             Length Should Be  ${list}       3
-   \             Log Many          @{list}
-   ============  ================  ============  ==========  ==========  ==========
+   *** Test Cases ***
+   Example
+       ${list} =    Create List    first    second    third
+       Length Should Be    ${list}    3
+       Log Many    @{list}
 
 Assigning list variables
 ''''''''''''''''''''''''
@@ -656,16 +601,13 @@ Assigning list variables
 If a keyword returns a list or any list-like object, it is possible to
 assign it to a `list variable`_.
 
-.. table:: Assigning list variable
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ================  ============  ==========  ==========  ==========
-     Test Case        Action         Argument     Argument    Argument    Argument
-   ============  ================  ============  ==========  ==========  ==========
-   Example       @{list} =         Create List   first       second      third
-   \             Length Should Be  ${list}       3
-   \             Log Many          @{list}
-   ============  ================  ============  ==========  ==========  ==========
+   *** Test Cases ***
+   Example       
+       @{list} =    Create List    first    second    third
+       Length Should Be    ${list}    3
+       Log Many    @{list}
 
 Because all Robot Framework variables are stored in same namespace, there is
 not much difference between assigning a value to a scalar variable or list
@@ -680,17 +622,14 @@ Assigning dictionary variables
 If a keyword returns a dictionary or any dictionary-like object, it is possible
 to assign it to a `dictionary variable`_.
 
-.. table:: Assigning dictionary variable
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ================  =================  ==========  ===========  ==========
-     Test Case        Action            Argument       Argument    Argument     Argument
-   ============  ================  =================  ==========  ===========  ==========
-   Example       &{dict} =         Create Dictionary  first=1     second=${2}  ${3}=third
-   \             Length Should Be  ${dict}            3
-   \             Do Something      &{dict}
-   \             Log               ${dict.first}
-   ============  ================  =================  ==========  ===========  ==========
+   *** Test Cases ***
+   Example
+       &{dict} =    Create Dictionary    first=1    second=${2}    ${3}=third
+       Length Should Be    ${dict}    3
+       Do Something    &{dict}
+       Log    ${dict.first}
 
 Because all Robot Framework variables are stored in same namespace, it would
 also be possible to assign a dictionary into a scalar variable and use it
@@ -710,17 +649,14 @@ If a keyword returns a list or a list-like object, it is possible to assign
 individual values into multiple scalar variables or into scalar variables and
 a list variable.
 
-.. table:: Assigning multiple values at once
-   :class: example
+.. sourcecode:: robotframework
 
-   ===============  ============  ==========  ==========  ==========
-      Test Case        Action      Argument    Argument    Argument
-   ===============  ============  ==========  ==========  ==========
-   Assign Multiple  ${a}          ${b}        ${c} =      Get Three
-   \                ${first}      @{rest} =   Get Three
-   \                @{before}     ${last} =   Get Three
-   \                ${begin}      @{middle}   ${end} =    Get Three
-   ===============  ============  ==========  ==========  ==========
+   *** Test Cases ***
+   Assign Multiple
+       ${a}    ${b}    ${c} =    Get Three
+       ${first}    @{rest} =    Get Three
+       @{before}    ${last} =    Get Three
+       ${begin}    @{middle}    ${end} =    Get Three
 
 Assuming that the keyword :name:`Get Three` returns a list `[1, 2, 3]`,
 the following variables are created:
@@ -822,15 +758,12 @@ operating-system-agnostic.
    |            | :codesc:`\\r\\n` in Windows. New in version 2.7.5.               |
    +------------+------------------------------------------------------------------+
 
-.. table:: Using operating-system-related built-in variables
-   :class: example
+.. sourcecode:: robotframework
 
-   =============  ========================  =======================  ==================================
-     Test Case             Action                   Argument                       Argument
-   =============  ========================  =======================  ==================================
-   Example        Create Binary File        ${CURDIR}${/}input.data  Some text here${\\n}on two lines
-   \              Set Environment Variable  CLASSPATH                ${TEMPDIR}${:}${CURDIR}${/}foo.jar
-   =============  ========================  =======================  ==================================
+   *** Test Cases ***
+   Example
+       Create Binary File    ${CURDIR}${/}input.data    Some text here${\\n}on two lines
+       Set Environment Variable    CLASSPATH    ${TEMPDIR}${:}${CURDIR}${/}foo.jar
 
 Number variables
 ~~~~~~~~~~~~~~~~
@@ -840,32 +773,28 @@ floating point numbers, as illustrated in the example below. This is
 useful when a keyword expects to get an actual number, and not a
 string that just looks like a number, as an argument.
 
-.. table:: Using number variables
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ========  ===========  ==========  ===================================================
-    Test Case    Action    Argument     Argument                   Comment
-   ===========  ========  ===========  ==========  ===================================================
-   Example 1A   Connect   example.com  80          # Connect gets two strings as arguments
-   Example 1B   Connect   example.com  ${80}       # Connect gets a string and an integer
-   Example 2    Do X      ${3.14}      ${-1e-4}    # Do X gets floating point numbers 3.14 and -0.0001
-   ===========  ========  ===========  ==========  ===================================================
+   *** Test Cases ***
+   Example 1A
+       Connect    example.com    80     # Connect gets two strings as arguments
+   Example 1B
+       Connect    example.com    ${80}  # Connect gets a string and an integer
+   Example 2
+       Do X    ${3.14}    ${-1e-4}      # Do X gets floating point numbers 3.14 and -0.0001
 
 It is possible to create integers also from binary, octal, and
 hexadecimal values using `0b`, `0o` and `0x` prefixes, respectively.
 The syntax is case insensitive.
 
-.. table:: Using integer variables with base
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ===============  ==========  ==========
-    Test Case        Action       Argument    Argument
-   ===========  ===============  ==========  ==========
-   Example      Should Be Equal  ${0b1011}   ${11}
-   \            Should Be Equal  ${0o10}     ${8}
-   \            Should Be Equal  ${0xff}     ${255}
-   \            Should Be Equal  ${0B1010}   ${0XA}
-   ===========  ===============  ==========  ==========
+   *** Test Cases ***
+   Example
+       Should Be Equal    ${0b1011}    ${11}
+       Should Be Equal    ${0o10}      ${8}
+       Should Be Equal    ${0xff}      ${255}
+       Should Be Equal    ${0B1010}    ${0XA}
 
 Boolean and None/null variables
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -873,18 +802,17 @@ Boolean and None/null variables
 Also Boolean values and Python `None` and Java `null` can
 be created using the variable syntax similarly as numbers.
 
-.. table:: Using Boolean and None/null variables
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ===============  ==========  ==========  =============================================
-    Test Case        Action       Argument    Argument                      Comment
-   ===========  ===============  ==========  ==========  =============================================
-   Boolean      Set Status       ${true}                 # Set Status gets Boolean true as an argument
-   \            Create Y         something   ${false}    # Create Y gets a string and Boolean false
-   None         Do XYZ           ${None}                 # Do XYZ gets Python None as an argument
-   Null         ${ret} =         Get Value   arg         # Checking that Get Value returns Java null
-   \            Should Be Equal  ${ret}      ${null}
-   ===========  ===============  ==========  ==========  =============================================
+   *** Test Cases ***
+   Boolean 
+       Set Status    ${true}               # Set Status gets Boolean true as an argument
+       Create Y    something   ${false}    # Create Y gets a string and Boolean false
+   None
+       Do XYZ    ${None}                   # Do XYZ gets Python None as an argument
+   Null
+       ${ret} =    Get Value    arg        # Checking that Get Value returns Java null
+       Should Be Equal    ${ret}    ${null}
 
 These variables are case-insensitive, so for example `${True}` and
 `${true}` are equivalent. Additionally, `${None}` and
@@ -904,19 +832,21 @@ needed, it is possible to use the `extended variable syntax`_ like
 Equal` keyword gets identical arguments but those using variables are
 easier to understand than those using backslashes.
 
-.. table:: Using `${SPACE}` and `${EMPTY}` variables
-   :class: example
+.. sourcecode:: robotframework
 
-   =============   =================  ================  ================================
-     Test Case          Action            Argument                Argument
-   =============   =================  ================  ================================
-   One Space       Should Be Equal    ${SPACE}          \\ \\
-   Four Spaces     Should Be Equal    ${SPACE * 4}      \\ \\ \\ \\ \\
-   Ten Spaces      Should Be Equal    ${SPACE * 10}     \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\
-   Quoted Space    Should Be Equal    "${SPACE}"        " "
-   Quoted Spaces   Should Be Equal    "${SPACE * 2}"    " \\ "
-   Empty           Should Be Equal    ${EMPTY}          \\
-   =============   =================  ================  ================================
+   *** Test Cases ***
+   One Space       
+       Should Be Equal    ${SPACE}          \\ \\
+   Four Spaces    
+       Should Be Equal    ${SPACE * 4}      \\ \\ \\ \\ \\
+   Ten Spaces      
+       Should Be Equal    ${SPACE * 10}     \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\
+   Quoted Space    
+       Should Be Equal    "${SPACE}"        " "
+   Quoted Spaces   
+       Should Be Equal    "${SPACE * 2}"    " \\ "
+   Empty
+       Should Be Equal    ${EMPTY}          \\
 
 There is also an empty `list variable`_ `@{EMPTY}` and an empty `dictionary
 variable`_ `&{EMPTY}`. Because they have no content, they basically
@@ -925,18 +855,16 @@ with `test templates`_ when the `template keyword is used without
 arguments`__ or when overriding list or dictionary variables in different
 scopes. Modifying the value of `@{EMPTY}` or `&{EMPTY}` is not possible.
 
-.. table:: Using `@{EMPTY}` and `&{EMPTY}` variable
-   :class: example
+.. sourcecode:: robotframework
 
-   =============   ===================  ============  ============
-     Test Case           Action           Argument      Argument
-   =============   ===================  ============  ============
-   Template        [Template]           Some keyword
-   \               @{EMPTY}
-   \
-   Override        Set Global Variable  @{LIST}       @{EMPTY}
-                   Set Suite Variable   &{DICT}       &{EMPTY}
-   =============   ===================  ============  ============
+   *** Test Cases ***
+   Template        
+       [Template]    Some keyword
+       @{EMPTY}
+   
+   Override
+       Set Global Variable    @{LIST}    @{EMPTY}
+       Set Suite Variable     &{DICT}    &{EMPTY}
 
 .. note:: `@{EMPTY}` is new in Robot Framework 2.7.4 and `&{EMPTY}` in
           Robot Framework 2.9.
@@ -1214,16 +1142,13 @@ and test case:
    OBJECT = MyObject('Robot')
    DICTIONARY = {1: 'one', 2: 'two', 3: 'three'}
 
-.. table::
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ========  =========================  ==========
-    Test Case    Action          Argument             Argument
-   ===========  ========  =========================  ==========
-   Example      KW 1      ${OBJECT.name}
-   \            KW 2      ${OBJECT.eat('Cucumber')}
-   \            KW 3      ${DICTIONARY[2]}
-   ===========  ========  =========================  ==========
+   *** Test Cases ***
+   Example
+       KW 1    ${OBJECT.name}
+       KW 2    ${OBJECT.eat('Cucumber')}
+       KW 3    ${DICTIONARY[2]}
 
 When this test data is executed, the keywords get the arguments as
 explained below:
@@ -1295,19 +1220,17 @@ reduce the need for setting temporary variables, but it is also easy
 to overuse it and create really cryptic test data. Following examples
 show few pretty good usages.
 
-.. table:: Using methods of strings and numbers
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ============  ===================  ===============
-    Test Case      Action           Argument          Argument
-   ===========  ============  ===================  ===============
-   String       ${string} =   Set Variable         abc
-   \            Log           ${string.upper()}    # Logs 'ABC'
-   \            Log           ${string * 2}        # Logs 'abcabc'
-   Number       ${number} =   Set Variable         ${-2}
-   \            Log           ${number * 10}       # Logs -20
-   \            Log           ${number.__abs__()}  # Logs 2
-   ===========  ============  ===================  ===============
+   *** Test Cases ***
+   String
+       ${string} =    Set Variable    abc
+       Log    ${string.upper()}    # Logs 'ABC'
+       Log    ${string * 2}        # Logs 'abcabc'
+   Number       
+       ${number} =   Set Variable    ${-2}
+       Log    ${number * 10}       # Logs -20
+       Log    ${number.__abs__()}  # Logs 2
 
 Note that even though `abs(number)` is recommended over
 `number.__abs__()` in normal Python code, using
@@ -1332,15 +1255,12 @@ be set to it like in the example below.
 
 __ `Return values from keywords`_
 
-.. table:: Extended variable assignment
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ====================  ==============  ===============
-    Test Case          Action            Argument         Argument
-   ===========  ====================  ==============  ===============
-   Example      ${OBJECT.name} =      Set Variable    New name
-   \            ${OBJECT.new_attr} =  Set Variable    New attribute
-   ===========  ====================  ==============  ===============
+   *** Test Cases ***
+   Example
+       ${OBJECT.name} =        Set Variable    New name
+       ${OBJECT.new_attr} =    Set Variable    New attribute
 
 The extended variable assignment syntax is evaluated using the
 following rules:
@@ -1405,22 +1325,13 @@ or `${JANE HOME}`, depending on if :name:`Get Name` returns
 `john` or `jane`. If it returns something else, resolving
 `${${name} HOME}` fails.
 
-.. table:: Using a variable inside another variable
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ==========  =======  =======
-     Variable       Value     Value    Value
-   ============  ==========  =======  =======
-   ${JOHN HOME}  /home/john
-   ${JANE HOME}  /home/jane
-   ============  ==========  =======  =======
+   *** Variables ***
+   ${JOHN HOME}    /home/john
+   ${JANE HOME}    /home/jane
 
-.. table::
-   :class: example
-
-   ===========  ============  ========================  ==========
-    Test Case      Action             Argument           Argument
-   ===========  ============  ========================  ==========
-   Example      ${name} =     Get Name
-   \            Do X          ${${name} HOME}
-   ===========  ============  ========================  ==========
+   *** Test Cases ***
+   Example
+       ${name} =    Get Name
+       Do X    ${${name} HOME}

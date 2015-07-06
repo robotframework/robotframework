@@ -38,18 +38,14 @@ library name and arguments can be set using variables.
 
 __ `Using arguments`_
 
-.. table:: Importing test libraries
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===================  =======  =======
-    Setting          Value          Value    Value
-   =========  ===================  =======  =======
-   Library    OperatingSystem      \        \
-   Library    com.company.TestLib  \        \
-   Library    MyLibrary            arg1     arg2
-   Library    ${LIBRARY}           \        \
-   =========  ===================  =======  =======
-
+   *** Settings ***
+   Library    OperatingSystem 
+   Library    com.company.TestLib
+   Library    MyLibrary    arg1    arg2
+   Library    ${LIBRARY}
+   
 It is possible to import test libraries in `test case files`_,
 `resource files`_ and `test suite initialization files`_. In all these
 cases, all the keywords in the imported library are available in that
@@ -68,16 +64,13 @@ used. This approach is useful in cases where the library is not
 available when the test execution starts and only some other keywords
 make it available.
 
-.. table:: Using Import Library keyword
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  =================  ==========  ==========  ==========
-    Test Case       Action          Argument    Argument    Argument
-   ===========  =================  ==========  ==========  ==========
-   Example      Do Something       \           \           \
-   \            Import Library     MyLibrary   arg1        arg2
-   \            KW From MyLibrary  \           \           \
-   ===========  =================  ==========  ==========  ==========
+   *** Test Cases ***
+   Example
+       Do Something 
+       Import Library    MyLibrary    arg1    arg2
+       KW From MyLibrary
 
 Specifying library to import
 ----------------------------
@@ -120,17 +113,14 @@ class file must always be available. If Python library is implemented
 as a directory, the path to it must have a trailing forward slash (`/`).
 Following examples demonstrate these different usages.
 
-.. table:: Importing test libraries using physical paths to them
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===========================  ========  =========
-    Setting               Value             Value      Value
-   =========  ===========================  ========  =========
-   Library    PythonLib.py                 \         \
-   Library    /absolute/path/JavaLib.java  \         \
-   Library    relative/path/PythonDirLib/  possible  arguments
-   Library    ${RESOURCES}/Example.class   \         \
-   =========  ===========================  ========  =========
+   *** Settings ***
+   Library    PythonLib.py
+   Library    /absolute/path/JavaLib.java
+   Library    relative/path/PythonDirLib/    possible    arguments
+   Library    ${RESOURCES}/Example.class
+
 
 A limitation of this approach is that libraries implemented as Python classes `must
 be in a module with the same name as the class`__. Additionally, importing
@@ -168,41 +158,28 @@ having the new name in the next cell. The specified name is shown in
 logs and must be used in the test data when using keywords' full name
 (:name:`LibraryName.Keyword Name`).
 
-.. table:: Importing libraries with custom names
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===================  =========  =========
-    Setting          Value           Value      Value
-   =========  ===================  =========  =========
-   Library    com.company.TestLib  WITH NAME  TestLib
-   Library    ${LIBRARY}           WITH NAME  MyName
-   =========  ===================  =========  =========
+   *** Settings ***
+   Library    com.company.TestLib    WITH NAME    TestLib
+   Library    ${LIBRARY}             WITH NAME    MyName
 
 Possible arguments to the library are placed into cells between the
 original library name and the `WITH NAME` text. The following example
 illustrates how the same library can be imported several times with
 different arguments:
 
-.. table:: Importing the same library several times with a different name
-   :class: example
+.. sourcecode:: robotframework
 
-   =========  ===========  =============  =======  =========  =========
-    Setting      Value          Value      Value     Value      Value
-   =========  ===========  =============  =======  =========  =========
-   Library    SomeLibrary  localhost      1234     WITH NAME  LocalLib
-   Library    SomeLibrary  server.domain  8080     WITH NAME  RemoteLib
-   =========  ===========  =============  =======  =========  =========
+   *** Settings ***
+   Library    SomeLibrary    localhost        1234    WITH NAME    LocalLib
+   Library    SomeLibrary    server.domain    8080    WITH NAME    RemoteLib
 
-.. table::
-   :class: example
-
-   ===========  ========================  ===========  ==========
-    Test Case             Action           Argument     Argument
-   ===========  ========================  ===========  ==========
-   My Test      LocalLib.Some Keyword     some arg     second arg
-   \            RemoteLib.Some Keyword    another arg  whatever
-   \            LocalLib.Another Keyword  \            \
-   ===========  ========================  ===========  ==========
+   *** Test Cases ***
+   My Test
+       LocalLib.Some Keyword     some arg       second arg
+       RemoteLib.Some Keyword    another arg    whatever
+       LocalLib.Another Keyword
 
 Setting a custom name to a test library works both when importing a
 library in the Setting table and when using the :name:`Import Library` keyword.

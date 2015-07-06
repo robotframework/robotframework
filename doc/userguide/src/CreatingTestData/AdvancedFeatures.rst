@@ -144,44 +144,40 @@ occurs, because they are normally engaged in important clean-up
 activities. If necessary, it is possible to interrupt also these
 keywords with `user keyword timeouts`_.
 
-.. table:: Test timeout examples
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  =========  =======  =======
-     Setting       Value     Value    Value
-   ============  =========  =======  =======
-   Test Timeout  2 minutes
-   ============  =========  =======  =======
+   *** Settings ***
+   Test Timeout    2 minutes
 
-.. table::
-   :class: example
+   *** Test Cases ***
+   Default Timeout
+       [Documentation]    Timeout from the Setting table is used
+       Some Keyword    argument
 
-   ===============  ===============  ========================================  ==========================  ==================
-      Test Case         Action                      Argument                           Argument                 Argument
-   ===============  ===============  ========================================  ==========================  ==================
-   Default Timeout  [Documentation]  Timeout from the Setting table is used
-   \                Some Keyword     argument
-   \
-   Override         [Documentation]  Override default, use 10 seconds timeout
-   \                [Timeout]        10
-   \                Some Keyword     argument
-   \
-   Custom Message   [Documentation]  Override default and use custom message
-   \                [Timeout]        1min 10s                                  This is my custom error.    It continues here.
-   \                Some Keyword     argument
-   \
-   Variables        [Documentation]  It is possible to use variables too
-   \                [Timeout]        ${TIMEOUT}
-   \                Some Keyword     argument
-   \
-   No Timeout       [Documentation]  Empty timeout means no timeout even when  Test Timeout has been used
-   \                [Timeout]
-   \                Some Keyword     argument
-   \
-   No Timeout 2     [Documentation]  Empty timeout using NONE, works           as well
-   \                [Timeout]        NONE
-   \                Some Keyword     argument
-   ===============  ===============  ========================================  ==========================  ==================
+   Override
+       [Documentation]    Override default, use 10 seconds timeout
+       [Timeout]    10
+       Some Keyword    argument
+
+   Custom Message
+       [Documentation]    Override default and use custom message
+       [Timeout]    1min 10s    This is my custom error
+       Some Keyword    argument
+
+   Variables
+       [Documentation]    It is possible to use variables too
+       [Timeout]    ${TIMEOUT}
+       Some Keyword    argument
+
+   No Timeout
+       [Documentation]    Empty timeout means no timeout even when Test Timeout has been used
+       [Timeout]
+       Some Keyword    argument
+
+   No Timeout 2
+       [Documentation]    Empty timeout using NONE, works as well
+       [Timeout]    NONE
+       Some Keyword    argument
 
 User keyword timeout
 ~~~~~~~~~~~~~~~~~~~~
@@ -193,22 +189,20 @@ identical to the syntax used with `test case timeouts`_. If no custom
 message is provided, the default error message `Keyword timeout
 <time> exceeded` is used if a timeout occurs.
 
-.. table:: User keyword timeout examples
-   :class: example
+.. sourcecode:: robotframework
 
-   =================  =================  ==========================  ===========================================
-        Keyword             Action                 Argument                           Argument
-   =================  =================  ==========================  ===========================================
-   Timed Keyword      [Documentation]    Set only the timeout value  and not the custom message.
-   \                  [Timeout]          1 minute 42 seconds
-   \                  Do Something
-   \                  Do Something Else
-   \
-   Timed-out Wrapper  [Arguments]        @{args}
-   \                  [Documentation]    This keyword is a wrapper   that adds a timeout to another keyword.
-   \                  [Timeout]          2 minutes                   Original Keyword didn't finish in 2 minutes
-   \                  Original Keyword   @{args}
-   =================  =================  ==========================  ===========================================
+   *** Keywords ***
+   Timed Keyword
+       [Documentation]    Set only the timeout value and not the custom message.
+       [Timeout]    1 minute 42 seconds
+       Do Something
+       Do Something Else
+
+   Timed-out Wrapper
+       [Arguments]    @{args}
+       [Documentation]    This keyword is a wrapper that adds a timeout to another keyword.
+       [Timeout]    2 minutes    Original Keyword didn't finish in 2 minutes
+       Original Keyword    @{args}
 
 A user keyword timeout is applicable during the execution of that user
 keyword. If the total time of the whole keyword is longer than the
@@ -253,26 +247,25 @@ next cell contains the loop variable, the subsequent cell must have
 These values can contain variables_, including `list variables`_.
 
 The keywords used in the for loop are on the next rows and they must
-be indented one cell to the right. The for loop ends when the indentation
-returns back to normal or the table ends. Having nested for loops
-directly is not supported, but it is possible to use a user keyword
-inside a for loop and have another for loop there.
+be indented one cell to the right (remember to escape__ the indented
+cell using a backslash). The for loop ends when the indentation returns
+back to normal or the table ends. Having nested for loops directly is
+not supported, but it is possible to use a user keyword inside a for
+loop and have another for loop there.
 
-.. table:: Simple for loops
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ========  ============  ===========  ==========  ===========
-    Test Case    Action     Argument     Argument     Argument    Arguments
-   ===========  ========  ============  ===========  ==========  ===========
-   Example 1    :FOR      ${animal}     IN           cat         dog
-   \                      Log           ${animal}
-   \                      Log           2nd keyword
-   \            Log       Outside loop
-   \
-   Example 2    :FOR      ${var}        IN           one         two
-   \            ...       ${3}          four         ${last}
-   \                      Log           ${var}
-   ===========  ========  ============  ===========  ==========  ===========
+   *** Test Cases ***
+   Example 1
+       :FOR    ${animal}    IN    cat    dog
+       \    Log    ${animal}
+       \    Log    2nd keyword
+       Log    Outside loop
+
+   Example 2
+       :FOR    ${var}    IN    one    two
+       ...     ${3}    four    ${last}
+       \    Log    ${var}
 
 The for loop in :name:`Example 1` above is executed twice, so that first
 the loop variable `${animal}` has the value `cat` and then
@@ -280,32 +273,17 @@ the loop variable `${animal}` has the value `cat` and then
 second example, loop values are `split into two rows`__ and the
 loop is run altogether five times.
 
-.. tip:: If you use for loops in `plain text format`_ files, remember to
-         escape__ the indented cell using a backslash:
-
-         .. sourcecode:: robotframework
-
-              *** Test Case ***
-              Example 1
-                  :FOR    ${animal}    IN    cat    dog
-                  \    Log    ${animal}
-                  \    Log    2nd keyword
-                  Log    Outside loop
-
 It is often convenient to use for loops with `list variables`_. This is
 illustrated by the example below, where `@{ELEMENTS}` contains
 an arbitrarily long list of elements and keyword :name:`Start Element` is
 used with all of them one by one.
 
-.. table:: For loop with a list variable
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ========  =============  ==========  ===========  ===========
-    Test Case    Action     Argument      Argument    Argument     Arguments
-   ===========  ========  =============  ==========  ===========  ===========
-   Example      :FOR      ${element}     IN          @{ELEMENTS}
-   \                      Start Element  ${element}
-   ===========  ========  =============  ==========  ===========  ===========
+   *** Test Cases ***
+   Example
+       :FOR    ${element}    IN    @{ELEMENTS}
+       \    Start Element  ${element}
 
 __ `Dividing test data to several rows`_
 __ Escaping_
@@ -322,21 +300,18 @@ variables.
 If there are lot of values to iterate, it is often convenient to organize
 them below the loop variables, as in the first loop of the example below:
 
-.. table:: Using multiple loop variables
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ========  ===========  ==========  ==========  ============
-    Test Case    Action     Argument    Argument    Argument    Arguments
-   ===========  ========  ===========  ==========  ==========  ============
-   Example      :FOR      ${index}     ${english}  ${finnish}  IN
-   \            ...       1            cat         kissa
-   \            ...       2            dog         koira
-   \            ...       3            horse       hevonen
-   \                      Do X         ${english}
-   \                      Y Should Be  ${finnish}  ${index}
-   \            :FOR      ${name}      ${id}       IN          @{EMPLOYERS}
-   \                      Create       ${name}     ${id}
-   ===========  ========  ===========  ==========  ==========  ============
+   *** Test Cases ***
+   Example
+       :FOR    ${index}    ${english}    ${finnish}    IN
+       ...     1           cat           kissa
+       ...     2           dog           koira
+       ...     3           horse         hevonen
+       \    Do X    ${english}
+       \    Y Should Be    ${finnish}    ${index}
+       :FOR    ${name}    ${id}    IN    @{EMPLOYERS}
+       \    Create    ${name}    ${id}
 
 For-in-range loop
 ~~~~~~~~~~~~~~~~~
@@ -368,36 +343,38 @@ specified with variables.
 Starting from Robot Framework 2.8.7, it is possible to use float values for
 lower limit, upper limit and step.
 
-.. table:: For in range examples
-   :class: example
+.. sourcecode:: robotframework
 
-   ================  ===============  ===========  =========  ===========  ========  ========
-      Test Case          Action        Argument     Argument    Argument   Argument  Argument
-   ================  ===============  ===========  =========  ===========  ========  ========
-   Only upper limit  [Documentation]  Loops over   values     from 0       to 9
-   \                 :FOR             ${index}     IN RANGE   10
-   \                                  Log          ${index}
-   \
-   Start and end     [Documentation]  Loops over   values     from 1       to 10
-   \                 :FOR             ${index}     IN RANGE   1            11
-   \                                  Log          ${index}
-   \
-   Also step given   [Documentation]  Loops over   values     5, 15,       and 25
-   \                 :FOR             ${index}     IN RANGE   5            26        10
-   \                                  Log          ${index}
-   \
-   Negative step     [Documentation]  Loops over   values     13, 3,       and -7
-   \                 :FOR             ${index}     IN RANGE   13           -13       -10
-   \                                  Log          ${index}
-   \
-   Arithmetics       [Documentation]  Arithmetics  with       variable
-   \                 :FOR             ${index}     IN RANGE   ${var}+1
-   \                                  Log          ${index}
-   \
-   Float parameters  [Documentation]  Loops over   values     3.14, 4.34,  and 5.34
-   \                 :FOR             ${index}     IN RANGE   3.14         6.09      1.2
-   \                                  Log          ${index}
-   ================  ===============  ===========  =========  ===========  ========  ========
+   *** Test Cases ***
+   Only upper limit
+       [Documentation]    Loops over values from 0 to 9
+       :FOR    ${index}    IN RANGE    10
+       \    Log    ${index}
+
+   Start and end
+       [Documentation]  Loops over values from 1 to 10
+       :FOR    ${index}    IN RANGE    1    11
+       \    Log    ${index}
+
+   Also step given
+       [Documentation]  Loops over values 5, 15, and 25
+       :FOR    ${index}    IN RANGE    5    26    10
+       \    Log    ${index}
+
+   Negative step
+       [Documentation]  Loops over values 13, 3, and -7
+       :FOR    ${index}    IN RANGE    13    -13    -10
+       \    Log    ${index}
+
+   Arithmetics
+       [Documentation]  Arithmetics with variable
+       :FOR    ${index}    IN RANGE    ${var}+1
+       \    Log    ${index}
+
+   Float parameters
+       [Documentation]  Loops over values 3.14, 4.34, and 5.34
+       :FOR    ${index}    IN RANGE    3.14    6.09    1.2
+       \    Log    ${index}
 
 For-in-enumerate loop
 ~~~~~~~~~~~~~~~~~~~~~
@@ -514,25 +491,22 @@ directly inside a for loop or in a keyword that the loop uses. In both cases
 test execution continues after the loop. It is an error to use these keywords
 outside a for loop.
 
-.. table:: Exit for loop example
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ===============  ==============  =================  =============  ========
-     Test Case     Action           Argument        Argument          Argument      Argument
-   ============  ===============  ==============  =================  =============  ========
-   Exit Example  ${text}=         Set Variable    ${EMPTY}
-   \             :FOR             ${var}          IN                 one            two
-   \                              Run Keyword If  '${var}' == 'two'  Exit For Loop
-   \                              ${text}=        Set Variable       ${text}${var}
-   \             Should Be Equal  ${text}         one
-   ============  ===============  ==============  =================  =============  ========
+   *** Test Cases ***
+   Exit Example
+       ${text} =    Set Variable    ${EMPTY}
+       :FOR    ${var}    IN    one    two
+       \    Run Keyword If    '${var}' == 'two'    Exit For Loop
+       \    ${text} =    Set Variable    ${text}${var}
+       Should Be Equal    ${text}    one
 
 In the above example it would be possible to use :name:`Exit For Loop If`
 instead of using :name:`Exit For Loop` with :name:`Run Keyword If`.
 For more information about these keywords, including more usage examples,
 see their documentation in the BuiltIn_ library.
 
-.. note:: :name:`Exit For Loop If` keyword was added Robot Framework 2.8.
+.. note:: :name:`Exit For Loop If` keyword was added in Robot Framework 2.8.
 
 Continuing for loop
 ~~~~~~~~~~~~~~~~~~~
@@ -550,18 +524,15 @@ from the next iteration. If these keywords are used on the last iteration,
 execution continues after the loop. It is an error to use these keywords
 outside a for loop.
 
-.. table:: Continue for loop example
-   :class: example
+.. sourcecode:: robotframework
 
-   ================  ===============  ====================  =================  =============  ========  ========
-       Test Case         Action             Argument             Argument        Argument     Argument  Argument
-   ================  ===============  ====================  =================  =============  ========  ========
-   Continue Example  ${text}=         Set Variable          ${EMPTY}
-   \                 :FOR             ${var}                IN                 one            two       three
-   \                                  Continue For Loop If  '${var}' == 'two'
-   \                                  ${text} =             Set Variable       ${text}${var}
-   \                 Should Be Equal  ${text}               onethree
-   ================  ===============  ====================  =================  =============  ========  ========
+   *** Test Cases ***
+   Continue Example
+       ${text} =    Set Variable    ${EMPTY}
+       :FOR    ${var}    IN    one    two    three
+       \    Continue For Loop If    '${var}' == 'two'
+       \    ${text} =    Set Variable    ${text}${var}
+       Should Be Equal    ${text}    onethree
 
 For more information about these keywords, including usage examples, see their
 documentation in the BuiltIn_ library.
@@ -590,16 +561,13 @@ keyword and how many times to repeat it as arguments. The times to
 repeat the keyword can have an optional postfix `times` or `x`
 to make the syntax easier to read.
 
-.. table:: Repeat Keyword examples
-   :class: example
+.. sourcecode:: robotframework
 
-   ===========  ==============  ============  ============  ========  ========
-    Test Case       Action        Argument      Argument    Argument  Argument
-   ===========  ==============  ============  ============  ========  ========
-   Example      Repeat Keyword  5             Some Keyword  arg1      arg2
-   \            Repeat Keyword  42 times      My Keyword
-   \            Repeat Keyword  ${var}        Another KW    argument
-   ===========  ==============  ============  ============  ========  ========
+   *** Test Cases ***
+   Example
+       Repeat Keyword    5    Some Keyword    arg1    arg2
+       Repeat Keyword    42 times    My Keyword
+       Repeat Keyword    ${var}    Another Keyword    argument
 
 Conditional execution
 ---------------------
