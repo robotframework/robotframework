@@ -321,13 +321,12 @@ them below the loop variables, as in the first loop of the example below:
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example
+   Three loop variables
        :FOR    ${index}    ${english}    ${finnish}    IN
        ...     1           cat           kissa
        ...     2           dog           koira
        ...     3           horse         hevonen
-       \    Do X    ${english}
-       \    Y Should Be    ${finnish}    ${index}
+       \    Add to dictionary    ${english}    ${finnish}    ${index}
        :FOR    ${name}    ${id}    IN    @{EMPLOYERS}
        \    Create    ${name}    ${id}
 
@@ -411,41 +410,35 @@ second, etc.
 
 For example, the following two test cases do the same thing:
 
-.. table:: For-in-enumerate comparison
-   :class: example
+.. sourcecode:: robotframework
 
-   =================  ================  ===============  =============  ===================  ========
-   Test Case          Action            Argument         Argument       Argument             Argument
-   =================  ================  ===============  =============  ===================  ========
-   Manual Enumerate   [Documentation]   How to do this   the old way
-   \                  @{list}=          Create List      a              b                    c
-   \                  ${index}=         Set Variable     ${-1}
-   \                  :FOR              ${item}          IN             @{list}
-   \                                    ${index}=        Set Variable   ${index} + 1
-   \                                    My Keyword       ${index}       ${item}
-   For In Enumerate   [Documentation]   How to do this   with           `FOR IN ENUMERATE`
-   \                  @{list}=          Create List      a              b                    c
-   \                  :FOR              ${index}         ${item}        IN ENUMERATE         @{list}
-   \                                    My Keyword       ${index}       ${item}
-   =================  ================  ===============  =============  ===================  ========
+   *** Variables ***
+   @{LIST}         a    b    c
+
+   *** Test Cases ***
+   Manage index manually
+       ${index} =    Set Variable    -1
+       : FOR    ${item}    IN    @{LIST}
+       \    ${index} =    Evaluate    ${index} + 1
+       \    My Keyword    ${index}    ${item}
+
+   For-in-enumerate
+       : FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}
+       \    My Keyword    ${index}    ${item}
 
 Just like with regular for loops, you can loop over multiple values per loop
 iteration as long as the number of values in your list is evenly divisible by
 the number of loop-variables (excluding the first, index variable).
 
-.. table:: For-in-enumerate with multiple values per iteration
-   :class: example
+.. sourcecode:: robotframework
 
-   ================= ================ ============ ========= ========= ============= ========
-   Test Case         Action           Argument     Argument  Argument  Argument      Argument
-   ================= ================ ============ ========= ========= ============= ========
-   For In Enumerate  [Documentation]  Two values   at once
-   \                 @{list}=         Create List  a         b         c             d
-   \                 :FOR             ${index}     ${item}   ${thing}  IN ENUMERAGE  @{list}
-   \                                  Log Many     ${index}  ${item}   $[thing}
-   ================= ================ ============ ========= ========= ============= ========
-
-The above test case will log `0,a,b` and `1,c,d`.
+   *** Test Case ***
+   For-in-enumerate with two values per iteration
+       :FOR    ${index}    ${english}    ${finnish}    IN ENUMERATE
+       ...    cat      kissa
+       ...    dog      koira
+       ...    horse    hevonen
+       \    Add to dictionary    ${english}    ${finnish}    ${index}
 
 For-in-enumerate loops are new in Robot Framework 2.9.
 
@@ -459,28 +452,21 @@ is derived from the
 
 This may be easiest to show with an example:
 
-.. table:: For-in-zip examples
-   :class: example
+.. sourcecode:: robotframework
 
-   ================ ======================= ======================= =================== ================= =========== ========
-   Test Case        Action                  Argument                Argument            Argument          Argument    Argument
-   ================ ======================= ======================= =================== ================= =========== ========
-   Flat             [Documentation]         Doing it without any    loops at all
-   \                Number Should Be Named  ${1}                    one
-   \                Number Should Be Named  ${2}                    two
-   \                Number Should Be Named  ${5}                    five
-   Old Style        [Documentation]         Before Version 2.9
-   \                ${numbers}=             Create List             ${1}                ${2}              ${5}
-   \                ${names}=               Create List             one                 two               five
-   \                ${length}=              Get Length              ${numbers}
-   \                :FOR                    ${idx}                  IN RANGE            ${length}
-   \                                        Number Should Be Named  ${numbers}[${idx}]  ${names}[${idx}]
-   With Zip         [Documentation]         Robot Framework 2.9     and after
-   \                ${numbers}=             Create List             ${1}                ${2}              ${5}
-   \                ${names}=               Create List             one                 two               five
-   \                :FOR                    ${number}               ${name}             IN ZIP            ${numbers}  ${names}
-   \                                        Number Should Be Named  ${number}           ${name}
-   ================ ======================= ======================= =================== ================= =========== ========
+   *** Variables ***
+   @{NUMBERS}      ${1}    ${2}    ${5}
+   @{NAMES}        one     two     five
+
+   *** Test Cases ***
+   Iterate over two lists manually
+       ${length}=    Get Length    ${NUMBERS}
+       : FOR    ${idx}    IN RANGE    ${length}
+       \    Number Should Be Named    ${NUMBERS}[${idx}]    ${NAMES}[${idx}]
+
+   For-in-zip
+       : FOR    ${number}    ${name}    IN ZIP    ${NUMBERS}    ${NAMES}
+       \    Number Should Be Named    ${number}    ${name}
 
 Similarly as for-in-range and for-in-enumerate loops, for-in-zip loops require
 the cell after the loop variables to read `IN ZIP`.
