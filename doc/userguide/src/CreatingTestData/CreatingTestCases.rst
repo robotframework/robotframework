@@ -42,15 +42,15 @@ contain possible arguments to the specified keyword.
    *** Test Cases ***
    Valid Login
        Open Login Page
-       Input Name        demo
+       Input Username    demo
        Input Password    mode
        Submit Credentials
        Welcome Page Should Be Open
-  
+
    Setting Variables
        Do Something    first argument    second argument
        ${value} =    Get Some Value
-       Should Be Equal    ${value}    Expected value 
+       Should Be Equal    ${value}    Expected value
 
 Settings in the Test Case table
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -191,17 +191,14 @@ three arguments would not work.
 Variable number of arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is also possible to create keywords that accept any number of
-arguments. These arguments can be combined with mandatory arguments
-and arguments with default values, but the so called *varargs* are
-always the last ones. In the documentation they typically have an
-asterisk before the argument name like `*varargs` , but there
-are again `differences with Java libraries`__.
+It is also possible that a keyword accepts any number of arguments.
+These so called *varargs* can be combined with mandatory arguments
+and arguments with default values, but they are always given after
+them. In the documentation they have an asterisk before the argument
+name like `*varargs`.
 
-__ `Variable number of arguments with Java`_
-
-:name:`Remove Files` and :name:`Join Paths` keywords used in the
-example below have arguments `*paths` and `base, *parts`,
+For example, :name:`Remove Files` and :name:`Join Paths` keywords from
+the OperatingSystem_ library have arguments `*paths` and `base, *parts`,
 respectively. The former can be used with any number of arguments, but
 the latter requires at least one argument.
 
@@ -210,8 +207,7 @@ the latter requires at least one argument.
    *** Test Cases ***
    Example
        Remove Files    ${TEMPDIR}/f1.txt    ${TEMPDIR}/f2.txt    ${TEMPDIR}/f3.txt
-       @{paths} =    Join Paths    ${TEMPDIR}    f1.txt
-       ...           f2.txt    f3.txt    f4.txt
+       @{paths} =    Join Paths    ${TEMPDIR}    f1.txt    f2.txt    f3.txt    f4.txt
 
 .. _Named argument syntax:
 
@@ -282,11 +278,11 @@ This is illustrated by the example below.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example        
+   Example
        Run Program    shell=True    # This will not come as a named argument to Run Process
 
    *** Keywords ***
-   Run Program    
+   Run Program
        [Arguments]    @{args}
        Run Process    program.py    @{args}    # Named arguments are not recognized from inside @{args}
 
@@ -391,7 +387,7 @@ syntax`__.
 
    *** Test Cases ***
    Using Kwargs
-       Run Process    program.py    arg1        arg2          cwd=/home/user
+       Run Process    program.py    arg1    arg2    cwd=/home/user
        Run Process    program.py    argument    shell=True    env=${ENVIRON}
 
 See `Free keyword arguments (**kwargs)`_ section under `Creating test
@@ -407,7 +403,7 @@ accepts any number of arguments and kwargs, and passes them forward for
 
    *** Test Cases ***
    Using Kwargs
-       Run Program    arg1        arg2          cwd=/home/user
+       Run Program    arg1    arg2    cwd=/home/user
        Run Program    argument    shell=True    env=${ENVIRON}
 
    *** Keywords ***
@@ -463,10 +459,10 @@ and logs. Using HTML in a custom message is shown in the second example below.
    *** Test Cases ***
    Normal Error
        Fail    This is a rather boring example...
-       
+
    HTML Error
        ${number} =    Get Number
-       Should Be Equal    ${number}    42    \*HTML\* Number is not my <b>MAGIC</b> number.
+       Should Be Equal    ${number}    42    *HTML* Number is not my <b>MAGIC</b> number.
 
 __ `Continue on failure`_
 __ `HTML in error messages`_
@@ -485,17 +481,18 @@ and the test teardown.
 The :setting:`[Documentation]` setting allows you to set a free
 documentation for a test case. That text is shown in the command line
 output, as well as the resulting test logs and test reports.
+It is possible to use simple `HTML formatting`_ in documentation and
+variables_ can be used to make the documentation dynamic.
 
-If the documentation is long, it can be `split into several cells`__
-that are catenated together with spaces. It is possible to use simple
-`HTML formatting`_ and variables_ can be used to make the
-documentation dynamic. Starting from Robot Framework 2.7, if
-documentation is split in multiple lines, the lines themselves are
-`catenated using newlines`__. Newlines are not added if the line already ends
-with a newline or it ends with an `escaping backslash`__.
+If documentation is split into multiple columns, cells in one row are
+concatenated together with spaces. This is mainly be useful when using
+the `HTML format`_ and columns are narrow. If documentation is `split
+into multiple rows`__, the created documentation lines themselves are
+`concatenated using newlines`__. Newlines are not added if a line
+already ends with a newline or an `escaping backslash`__.
 
 __ `Dividing test data to several rows`_
-__ `Automatic newlines in test data`_
+__ `Newlines in test data`_
 __ `Escaping`_
 
 .. sourcecode:: robotframework
@@ -505,23 +502,22 @@ __ `Escaping`_
        [Documentation]    Simple documentation
        No Operation
 
-   Splitting
-       [Documentation]    This documentation is a bit longer and    it has been split into several parts.
-       No Operation
-
-   Many lines
-       [Documentation]    Here we have 
-       ...                an automatic newline
-       No Operation
-
    Formatting
        [Documentation]    *This is bold*, _this is italic_  and here is a link: http://robotframework.org
        No Operation
 
    Variables
-       [Documentation]    Executed at ${HOST} by ${USER} 
+       [Documentation]    Executed at ${HOST} by ${USER}
        No Operation
 
+   Splitting
+       [Documentation]    This documentation    is split    into multiple columns
+       No Operation
+
+   Many lines
+       [Documentation]    Here we have
+       ...                an automatic newline
+       No Operation
 
 It is important that test cases have clear and descriptive names, and
 in that case they normally do not need any documentation. If the logic
@@ -590,30 +586,30 @@ can be created using variables, assuming that those variables exist.
    Default Tags    owner-john    smoke
 
    *** Variables ***
-   ${HOST}    10.0.1.42
+   ${HOST}         10.0.1.42
 
    *** Test Cases ***
    No own tags
-       [Documentation]    This test has tags    owner-john, smoke, req-42
+       [Documentation]    This test has tags owner-john, smoke and req-42.
        No Operation
 
    With own tags
-       [Documentation]    This test has tags    not_ready, owner-mrx, req-42
+       [Documentation]    This test has tags not_ready, owner-mrx and req-42.
        [Tags]    owner-mrx    not_ready
        No Operation
 
    Own tags with variables
-       [Documentation]    This test has tags    host-10.0.1.42, req-42
+       [Documentation]    This test has tags host-10.0.1.42 and req-42.
        [Tags]    host-${HOST}
        No Operation
 
    Empty own tags
-       [Documentation]    This test has tags    req-42
+       [Documentation]    This test has only tag req-42.
        [Tags]
        No Operation
 
    Set Tags and Remove Tags Keywords
-       [Documentation]    This test has tags    mytag, owner-john
+       [Documentation]    This test has tags mytag and owner-john.
        Set Tags    mytag
        Remove Tags    smoke    req-*
 
@@ -666,7 +662,7 @@ a test has no setup/teardown.
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Test Setup    Open Application    App A
+   Test Setup       Open Application    App A
    Test Teardown    Close Application
 
    *** Test Cases ***
@@ -685,12 +681,12 @@ a test has no setup/teardown.
        [Teardown]
 
    No teardown 2
-       [Documentation]    Using special NONE, works as well
+       [Documentation]    Setup and teardown can be disabled also with special value NONE
        Do Something
        [Teardown]    NONE
 
    Using variables
-       [Documentation]    Setup and teardown  given as variables
+       [Documentation]    Setup and teardown specified using variables
        [Setup]    ${SETUP}
        Do Something
        [Teardown]    ${TEARDOWN}
@@ -856,10 +852,10 @@ all the looped elements even if there are failures.
    *** Test Cases ***
    Template and for
        [Template]    Example keyword
-       :FOR    ${item}     IN    @{ITEMS}
-       \       ${item}     2nd arg
+       :FOR    ${item}    IN    @{ITEMS}
+       \    ${item}    2nd arg
        :FOR    ${index}    IN RANGE    42
-       \       1st arg     ${index}
+       \    1st arg    ${index}
 
 Different test case styles
 --------------------------
@@ -899,13 +895,17 @@ allows specifying the keyword to use only once.
    *** Settings ***
    Test Template    Login with invalid credentials should fail
 
-   *** Test Cases ***
-   Invalid User Name                 invalid          ${VALID_PASSWORD}
-   Invalid Password                  ${VALID_USER}    invalid
+   *** Test Cases ***                USERNAME         PASSWORD
+   Invalid User Name                 invalid          ${VALID PASSWORD}
+   Invalid Password                  ${VALID USER}    invalid
    Invalid User Name and Password    invalid          invalid
-   Empty User Name                   ${EMPTY}         ${VALID_PASSWORD}
-   Empty Password                    ${VALID_USER}    ${EMPTY}
+   Empty User Name                   ${EMPTY}         ${VALID PASSWORD}
+   Empty Password                    ${VALID USER}    ${EMPTY}
    Empty User Name and Password      ${EMPTY}         ${EMPTY}
+
+.. tip:: Naming columns like in the example above makes tests easier to
+         understand. This is possible because on the header row other
+         cells except the first one `are ignored`__.
 
 The above example has six separate tests, one for each invalid
 user/password combination, and the example below illustrates how to
@@ -922,12 +922,14 @@ context and personal preferences.
    *** Test Cases ***
    Invalid Password
        [Template]    Login with invalid credentials should fail
-       invalid          ${VALID PASSWORD} 
-       ${VALID USER}    invalid   
+       invalid          ${VALID PASSWORD}
+       ${VALID USER}    invalid
        invalid          whatever
-       ${EMPTY}         ${VALID PASSWORD} 
-       ${VALID USER}    ${EMPTY}       
+       ${EMPTY}         ${VALID PASSWORD}
+       ${VALID USER}    ${EMPTY}
        ${EMPTY}         ${EMPTY}
+
+__ `Ignored data`_
 
 Behavior-driven style
 ~~~~~~~~~~~~~~~~~~~~~

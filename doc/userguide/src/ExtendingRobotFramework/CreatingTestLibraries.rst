@@ -719,14 +719,12 @@ be combined with other ways of specifying arguments:
    Varargs
        Any Arguments
        Any Arguments    argument
-       Any Arguments    arg 1    arg 2    arg 3
-       ...              arg 4    arg 5
+       Any Arguments    arg 1    arg 2    arg 3    arg 4    arg 5
        One Required     required arg
        One Required     required arg    another arg    yet another
        Also Defaults    required
        Also Defaults    required    these two    have defaults
-       Also Defaults    1    2    3
-       ...              4    5    6
+       Also Defaults    1    2    3    4    5    6
 
 Variable number of arguments with Java
 ''''''''''''''''''''''''''''''''''''''
@@ -811,8 +809,8 @@ below shows the basic functionality:
 
    *** Test Cases ***
    Keyword Arguments
-       Example Keyword    hello=world      # Logs 'hello world'.
-       Example Keyword    foo=1    bar=42  # Logs 'foo 1' and 'bar 42'.
+       Example Keyword    hello=world        # Logs 'hello world'.
+       Example Keyword    foo=1    bar=42    # Logs 'foo 1' and 'bar 42'.
 
 Basically, all arguments at the end of the keyword call that use the
 `named argument syntax`_ `name=value`, and that do not match any
@@ -836,17 +834,21 @@ work together:
 
    *** Test Cases ***
    Positional
-       Various Args    hello    world             # Logs 'arg: hello' and 'vararg: world'.
+       Various Args    hello    world                # Logs 'arg: hello' and 'vararg: world'.
+
    Named
-       Various Args    arg=value                  # Logs 'arg: value'.
+       Various Args    arg=value                     # Logs 'arg: value'.
+
    Kwargs
-       Various Args    a=1    b=2    c=3          # Logs 'kwarg: a 1', 'kwarg: b 2' and 'kwarg: c 3'.
-       Various Args    c=3    a=1    b=2          # Same as above. Order does not matter.
+       Various Args    a=1    b=2    c=3             # Logs 'kwarg: a 1', 'kwarg: b 2' and 'kwarg: c 3'.
+       Various Args    c=3    a=1    b=2             # Same as above. Order does not matter.
+
    Positional and kwargs
-       Various Args    1    2    kw=3              # Logs 'arg: 1', 'vararg: 2' and 'kwarg: kw 3'.
+       Various Args    1    2    kw=3                # Logs 'arg: 1', 'vararg: 2' and 'kwarg: kw 3'.
+
    Named and kwargs
-       Various Args    arg=value      hello=world  # Logs 'arg: value' and 'kwarg: hello world'.
-       Various Args    hello=world    arg=value    # Same as above. Order does not matter.
+       Various Args    arg=value      hello=world    # Logs 'arg: value' and 'kwarg: hello world'.
+       Various Args    hello=world    arg=value      # Same as above. Order does not matter.
 
 For a real world example of using a signature exactly like in the above
 example, see :name:`Run Process` and :name:`Start Keyword` keywords in the
@@ -955,13 +957,13 @@ conflicting signatures.
    *** Test Cases ***
    Coercion
        Double Argument     3.14
-       Double Argument     2e16  # scientific notation
+       Double Argument     2e16
        Compatible Types    Hello, world!    1234
        Compatible Types    Hi again!    -10    true
-   
-   No Coercion  
+
+   No Coercion
        Double Argument    ${3.14}
-       Conflicting Types    1       ${2}  # must use variables
+       Conflicting Types    1       ${2}    # must use variables
        Conflicting Types    ${1}    2
 
 Starting from Robot Framework 2.8, argument type coercion works also with
@@ -1554,7 +1556,6 @@ logged to Robot's log.
 
 __ https://github.com/robotframework/robotbackgroundlogger
 
-
 Distributing test libraries
 ---------------------------
 
@@ -2022,18 +2023,19 @@ The comment shows the arguments that the keyword is actually called with.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Only positional    
+   Only positional
        Dynamic    a                             # [a]
        Dynamic    a         b                   # [a, b]
        Dynamic    a         b         c         # [a, b, c]
+
    Named
        Dynamic    a         arg2=b              # [a, b]
        Dynamic    a         b         arg3=c    # [a, b, c]
        Dynamic    a         arg2=b    arg3=c    # [a, b, c]
        Dynamic    arg1=a    arg2=b    arg3=c    # [a, b, c]
+
    Fill skipped
        Dynamic    a         arg3=c              # [a, xxx, c]
-   
 
 __ `Getting keyword arguments`_
 
@@ -2061,15 +2063,19 @@ The comment shows the arguments that the keyword is actually called with.
    *** Test Cases ***
    No arguments
        Dynamic                            # [], {}
+
    Only positional
        Dynamic    a                       # [a], {}
        Dynamic    a         b             # [a, b], {}
+
    Only kwargs
        Dynamic    a=1                     # [], {a: 1}
        Dynamic    a=1       b=2    c=3    # [], {a: 1, b: 2, c: 3}
+
    Positional and kwargs
        Dynamic    a         b=2           # [a], {b: 2}
        Dynamic    a         b=2    c=3    # [a], {b: 2, c: 3}
+
    Named and kwargs
        Dynamic    arg1=a    b=2           # [a], {b: 2}
        Dynamic    arg2=a    b=2    c=3    # [xxx, a], {b: 2, c: 3}
@@ -2322,7 +2328,7 @@ library in Java code the same way.
    class ExtendedSeleniumLibrary(SeleniumLibrary):
 
        def title_should_start_with(self, expected):
-       	   title = self.get_title()
+           title = self.get_title()
            if not title.startswith(expected):
                raise AssertionError("Title '%s' did not start with '%s'"
                                     % (title, expected))

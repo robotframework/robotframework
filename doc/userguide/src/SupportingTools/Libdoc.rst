@@ -207,7 +207,7 @@ chapter containing also an example of the generated documentation.
         def your_keyword(self, arg):
             """Takes one argument and *does nothing* with it.
 
-            Example:
+            Examples:
             | Your Keyword | xxx |
             | Your Keyword | yyy |
             """
@@ -254,7 +254,7 @@ than the earlier Python example.
         /**
          * Takes one argument and *does nothing* with it.
          *
-         * Example:
+         * Examples:
          * | Your Keyword | xxx |
          * | Your Keyword | yyy |
          */
@@ -321,18 +321,23 @@ Possible variables in resource files can not be documented.
 
    *** Settings ***
    Documentation    Resource file for demo purposes.
-   ...              This resource is only used in an example and it doesn't do anything useful
+   ...              This resource is only used in an example and it doesn't do anything useful.
 
    *** Keywords ***
    My Keyword
        [Documentation]   Does nothing
        No Operation
+
    Your Keyword
        [Arguments]  ${arg}
-       [Documentation]   Takes one argument and *does nothing* with it.\n Examples:\n Your Keyword   xxx\n Your Keyword   yyy  
+       [Documentation]   Takes one argument and *does nothing* with it.
+       ...
+       ...    Examples:
+       ...    | Your Keyword | xxx |
+       ...    | Your Keyword | yyy |
        No Operation
 
-__ `Automatic newlines in test data`_
+__ `Newlines in test data`_
 
 Documentation syntax
 --------------------

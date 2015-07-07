@@ -33,7 +33,7 @@ keyword return values, they are in the subsequent columns.
    Open Login Page
        Open Browser    http://host/login.html
        Title Should Be    Login Page
-   
+
    Title Should Start With
        [Arguments]    ${expected}
        ${title} =    Get Title
@@ -162,7 +162,7 @@ to use lower-case letters in variable names, either as
    One Argument
        [Arguments]    ${arg_name}
        Log    Got argument ${arg_name}
-   
+
    Three Arguments
        [Arguments]    ${arg1}    ${arg2}    ${arg3}
        Log    1st argument: ${arg1}
@@ -195,16 +195,16 @@ created on `suite or global scope`__.
        [Arguments]    ${arg}=default value
        [Documentation]    This keyword takes 0-1 arguments
        Log    Got argument ${arg}
-   
+
    Two Arguments With Defaults
        [Arguments]    ${arg1}=default 1    ${arg2}=${VARIABLE}
-       [Documentation]    This keyword takes    0-2 arguments
+       [Documentation]    This keyword takes 0-2 arguments
        Log    1st argument ${arg1}
        Log    2nd argument ${arg2}
-   
+
    One Required And One With Default
        [Arguments]    ${required}    ${optional}=default
-       [Documentation]    This keyword takes    1-2 arguments
+       [Documentation]    This keyword takes 1-2 arguments
        Log    Required: ${required}
        Log    Optional: ${optional}
 
@@ -244,11 +244,11 @@ other arguments. The list variable can thus have any number of items, even zero.
    Any Number Of Arguments
        [Arguments]    @{varargs}
        Log Many    @{varargs}
-   
+
    One Or More Arguments
        [Arguments]    ${required}    @{rest}
        Log Many    ${required}    @{rest}
-   
+
    Required, Default, Varargs
        [Arguments]    ${req}    ${opt}=42    @{others}
        Log    Required: ${req}
@@ -284,13 +284,13 @@ signature.
    *** Keywords ***
    Kwargs Only
        [Arguments]    &{kwargs}
-       Log         ${kwargs}
+       Log    ${kwargs}
        Log Many    @{kwargs}
-   
+
    Positional And Kwargs
        [Arguments]    ${required}    &{extra}
        Log Many    ${required}    @{extra}
-   
+
    Run Program
        [Arguments]    @{varargs}    &{kwargs}
        Run Process    program.py    @{varargs}    &{kwargs}
@@ -395,16 +395,17 @@ keywords.
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***   
+   *** Test Cases ***
    Example
        I execute "ls"
        I execute "ls" with "-lh"
 
    *** Keywords ***
    I execute "${cmd}"
-       Run    ${cmd}
+       Run Process    ${cmd}    shell=True
+
    I execute "${cmd}" with "${opts}"
-       Run    ${cmd}    ${opts}
+       Run Process    ${cmd} ${opts}    shell=True
 
 A solution to this problem is using a custom regular expression that
 makes sure that the keyword matches only what it should in that
@@ -420,7 +421,7 @@ regular expressions is illustrated by the examples below.
 
 .. sourcecode:: robotframework
 
-   *** Test Cases ***   
+   *** Test Cases ***
    Example
        I execute "ls"
        I execute "ls" with "-lh"
@@ -430,12 +431,15 @@ regular expressions is illustrated by the examples below.
 
    *** Keywords ***
    I execute "${cmd:[^"]+}"
-       Run    ${cmd}
+       Run Process    ${cmd}    shell=True
+
    I execute "${cmd}" with "${opts}"
-       Run    ${cmd}    ${opts}
-   I type ${a:\\d+} ${operator:[+-]} ${b:\\d+}
+       Run Process    ${cmd} ${opts}    shell=True
+
+   I type ${a:\d+} ${operator:[+-]} ${b:\d+}
        Calculate    ${a}    ${operator}    ${b}
-   Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}
+
+   Today is ${date:\d{4\}-\d{2\}-\d{2\}}
        Log    ${date}
 
 In the above example keyword :name:`I execute "ls" with "-lh"` matches
@@ -494,7 +498,7 @@ using the keywords from the earlier example.
 
 .. sourcecode:: robotframework
 
-   *** Variables ***   
+   *** Variables ***
    ${DATE}    2011-06-27
 
    *** Test Cases ***
@@ -530,7 +534,7 @@ of the keyword definitions`__.
        Given I have Calculator open
        When I add 2 and 40
        Then result should be 42
-   
+
    Add negative numbers
        Given I have Calculator open
        When I add 1 and -2
@@ -539,13 +543,13 @@ of the keyword definitions`__.
    *** Keywords ***
    I have ${program} open
        Start Program    ${program}
-   
+
    I add ${number 1} and ${number 2}
        Input Number    ${number 1}
        Push Button     +
        Input Number    ${number 2}
        Push Button     =
-   
+
    Result should be ${expected}
        ${result} =    Get Result
        Should Be Equal    ${result}    ${expected}
@@ -586,7 +590,7 @@ specifying those values in different cells after the :setting:`[Return]` setting
    One Return Value
        ${ret} =    Return One Value    argument
        Some Keyword    ${ret}
-   
+
    Multiple Values
        ${a}    ${b}    ${c} =    Return Three Values
        @{list} =    Return Three Values
@@ -598,7 +602,7 @@ specifying those values in different cells after the :setting:`[Return]` setting
        Do Something    ${arg}
        ${value} =    Get Some Value
        [Return]    ${value}
-   
+
    Return Three Values
        [Return]    foo    bar    zap
 
@@ -620,7 +624,7 @@ demonstrates returning conditionally inside a `for loop`_.
    One Return Value
        ${ret} =    Return One Value  argument
        Some Keyword    ${ret}
-   
+
    Advanced
        @{list} =    Create List    foo    baz
        ${index} =    Find Index    baz    @{list}
@@ -635,14 +639,14 @@ demonstrates returning conditionally inside a `for loop`_.
        ${value} =    Get Some Value
        Return From Keyword    ${value}
        Fail    This is not executed
-   
+
    Find Index
        [Arguments]    ${element}    @{items}
        ${index} =    Set Variable    ${0}
        :FOR    ${item}    IN    @{items}
        \    Return From Keyword If    '${item}' == '${element}'    ${index}
        \    ${index} =    Set Variable    ${index + 1}
-       \    Return From Keyword    ${-1}  # Could also use [Return]
+       Return From Keyword    ${-1}    # Could also use [Return]
 
 .. note:: Both :name:`Return From Keyword` and :name:`Return From Keyword If`
           are available since Robot Framework 2.8.
@@ -667,7 +671,7 @@ can also be a variable.
    With Teardown
        Do Something
        [Teardown]    Log    keyword teardown
-   
+
    Using variables
        [Documentation]    Teardown given as variable
        Do Something

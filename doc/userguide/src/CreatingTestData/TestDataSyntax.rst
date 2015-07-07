@@ -787,7 +787,7 @@ In the first three tables test data has not been split, and
 the following three illustrate how fewer columns are needed after
 splitting the data to several rows.
 
-__ `Automatic newlines in test data`_
+__ `Newlines in test data`_
 
 .. table:: Test data that has not been split
    :class: example

@@ -22,14 +22,26 @@ __ `Documenting libraries`_
 Representing newlines
 ---------------------
 
-Automatic newlines in test data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Newlines in test data
+~~~~~~~~~~~~~~~~~~~~~
 
-Adding newlines in the documentation of test suites, test cases and
-keywords as well as the test suite metadata can be done using a literal
-newline character sequence (`\n`). Starting from Robot Framework 2.7, 
-newlines are inserted automatically between `continued documentation 
-and metadata lines`__  as illustrated in the following examples.
+When documenting test suites, test cases and keywords or adding metadata
+to test suites, newlines can be added manually using the `literal newline
+character sequence`__ (`\n`).
+
+__ `Handling whitespace`_
+
+.. sourcecode:: robotframework
+
+  *** Settings ***
+  Documentation    First line.\n\nSecond paragraph, this time\nwith multiple lines.
+  Metadata         Example    Value\nin two lines
+
+Adding newlines manually to a long documentation takes some effort and extra
+characters also make the documentation harder to read. Starting from Robot
+Framework 2.7, this is not required as newlines are inserted automatically
+between `continued documentation and metadata lines`__. In practice this
+means that the above example could be written also as follows.
 
 .. sourcecode:: robotframework
 
@@ -44,12 +56,13 @@ and metadata lines`__  as illustrated in the following examples.
   ...    Value
   ...    in two lines
 
-No automatic newline is added if a line already ends with a newline or
-if it ends with and an `escaping backslash`__. Notice also that if
-documentation or metadata is defined in multiple cells in a same row,
-these cells are concatenated together with spaces. All these cases are
-illustrated in the examples below where all test cases end up having
-the same two line documentation.
+No automatic newline is added if a line already ends with a literal newline
+or if it ends with an `escaping backslash`__. If documentation or metadata
+is defined in multiple columns, cells in a same row are concatenated together
+with spaces. This kind of splitting can be a good idea especially when
+using the `HTML format`_ and columns are narrow. Different ways to split
+documentation are illustrated in the examples below where all test cases
+end up having the same two line documentation.
 
 __ `Dividing test data to several rows`_
 __ Escaping_
@@ -57,16 +70,18 @@ __ Escaping_
 .. sourcecode:: robotframework
 
   *** Test Cases ***
-   Example 1  
+   Example 1
        [Documentation]    First line\n    Second line in    multiple parts
        No Operation
+
    Example 2
        [Documentation]   First line
        ...               Second line in    multiple parts
        No Operation
-   Example 3 
+
+   Example 3
        [Documentation]    First line\n
-       ...                Second line in\n
+       ...                Second line in\
        ...                multiple parts
        No Operation
 

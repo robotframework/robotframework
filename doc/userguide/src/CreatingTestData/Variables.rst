@@ -102,6 +102,7 @@ both the example test cases are equivalent.
    Constants
        Log    Hello
        Log    Hello, world!!
+
    Variables
        Log    ${GREET}
        Log    ${GREET}, ${NAME}!!
@@ -178,6 +179,7 @@ the following two test cases are equivalent:
    *** Test Cases ***
    Constants
        Login    robot    secret
+
    List Variable
        Login    @{USER}
 
@@ -202,9 +204,9 @@ other list variables.
 
    *** Test Cases ***
    Example
-       Keyword    @{LIST}      more          args
-       Keyword    ${SCALAR}    @{LIST}       constant
-       Keyword    @{LIST}      @{ANOTHER}    @{ONE MORE}
+       Keyword    @{LIST}    more    args
+       Keyword    ${SCALAR}    @{LIST}    constant
+       Keyword    @{LIST}    @{ANOTHER}    @{ONE MORE}
 
 If a list variable is used in a cell with other data (constant strings or other
 variables), the final value will contain a string representation of the
@@ -227,9 +229,11 @@ List items accessed in this manner can be used similarly as scalar variables.
    Constants
        Login    robot    secret
        Title Should Be    Welcome robot!
+
    List Variable
        Login    @{USER}
        Title Should Be    Welcome @{USER}[0]!
+
    Variable Index
        Log    @{LIST}[${INDEX}]
 
@@ -247,13 +251,13 @@ those places where list variables are not supported.
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Library         ExampleLibrary    @{LIB ARGS}    # This works
-   Library         ${LIBRARY}        @{LIB ARGS}    # This works
-   Library         @{NAME AND ARGS}                 # This does not work
-   Suite Setup     Some Keyword      @{KW ARGS}     # This works
-   Suite Setup     ${KEYWORD}        @{KW ARGS}     # This works
-   Suite Setup     @{KEYWORD}                       # This does not work
-   Default Tags    @{TAGS}                          # This works
+   Library         ExampleLibrary      @{LIB ARGS}    # This works
+   Library         ${LIBRARY}          @{LIB ARGS}    # This works
+   Library         @{NAME AND ARGS}                   # This does not work
+   Suite Setup     Some Keyword        @{KW ARGS}     # This works
+   Suite Setup     ${KEYWORD}          @{KW ARGS}     # This works
+   Suite Setup     @{KEYWORD}                         # This does not work
+   Default Tags    @{TAGS}                            # This works
 
 __ `All available settings in test data`_
 
@@ -292,9 +296,9 @@ named arguments or other dictionaries.
 
    *** Test Cases ***
    Example
-       Keyword    &{DICT}       named=arg
-       Keyword    positional    @{LIST}       &{DICT}
-       Keyword    &{DICT}       &{ANOTHER}    &{ONE MORE}
+       Keyword    &{DICT}    named=arg
+       Keyword    positional    @{LIST}    &{DICT}
+       Keyword    &{DICT}    &{ANOTHER}    &{ONE MORE}
 
 If a dictionary variable is used in a cell with other data (constant strings or
 other variables), the final value will contain a string representation of the
@@ -316,9 +320,11 @@ manner can be used similarly as scalar variables:
    Constants
        Login    name=robot    password=secret
        Title Should Be    Welcome robot!
+
    Dict Variable
        Login    &{USER}
        Title Should Be    Welcome &{USER}[name]!
+
    Variable Key
        Log Many    &{DICT}[${KEY}]    &{DICT}[${42}]
 
@@ -332,7 +338,7 @@ are imports, setups and teardowns where dictionaries can be used as arguments.
 
    *** Settings ***
    Library        ExampleLibrary    &{LIB ARGS}
-   Suite Setup    Some Keyword      &{KW ARGS}    named=arg
+   Suite Setup    Some Keyword      &{KW ARGS}     named=arg
 
 .. _environment variable:
 
@@ -401,9 +407,9 @@ as a value. Also an already defined variable can be used in the value.
 .. sourcecode:: robotframework
 
    *** Variables ***
-   ${NAME}       Robot Framework
-   ${VERSION}    2.0
-   ${ROBOT}      ${NAME} ${VERSION}
+   ${NAME}         Robot Framework
+   ${VERSION}      2.0
+   ${ROBOT}        ${NAME} ${VERSION}
 
 It is also possible, but not obligatory,
 to use the equals sign `=` after the variable name to make assigning
@@ -423,8 +429,8 @@ can be changed by having `SEPARATOR=<sep>` in the first cell.
 
    *** Variables ***
    ${EXAMPLE}      This value is joined    together with a space
-   ${MULTILINE}    SEPARATOR=\\n    First line
-   ...             Second line      Third line
+   ${MULTILINE}    SEPARATOR=\n    First line
+   ...             Second line     Third line
 
 Joining long values like above is a new feature in Robot Framework 2.9.
 Creating a scalar variable with multiple values was a syntax error in
@@ -447,12 +453,11 @@ __ `Dividing test data to several rows`_
 .. sourcecode:: robotframework
 
    *** Variables ***
-   @{NAMES}     Matti       Teppo
-   @{NAMES2}    @{NAMES}    Seppo
+   @{NAMES}        Matti       Teppo
+   @{NAMES2}       @{NAMES}    Seppo
    @{NOTHING}
-   @{MANY}      one     two     three
-   ...          four    five    six
-   ...          seven
+   @{MANY}         one         two      three      four
+   ...             five        six      seven
 
 Creating dictionary variables
 '''''''''''''''''''''''''''''
@@ -466,11 +471,11 @@ an equal sign, it can be escaped__ with a backslash like `\=`.
 .. sourcecode:: robotframework
 
    *** Variables ***
-   &{USER 1}       name=Matti    address=xxx       phone=123
-   &{USER 2}       name=Teppo    address=yyy       phone=456
-   &{MANY}         first=1       second=${2}       ${3}=third
-   &{EVEN MORE}    &{MANY}       first=override    empty=
-   ...              =empty       key\\=here=value
+   &{USER 1}       name=Matti    address=xxx         phone=123
+   &{USER 2}       name=Teppo    address=yyy         phone=456
+   &{MANY}         first=1       second=${2}         ${3}=third
+   &{EVEN MORE}    &{MANY}       first=override      empty=
+   ...             =empty        key\\=here=value
 
 Dictionary variables created in variable table have two extra properties
 compared to normal Python dictionaries. First of all, values of these
@@ -567,15 +572,12 @@ Assigning scalar variables
 Any value returned by a keyword can be assigned to a `scalar variable`_.
 As illustrated by the example below, the required syntax is very simple.
 
-.. table:: Assigning return value to scalar variable
-   :class: example
+.. sourcecode:: robotframework
 
-   ============  ===============  ============  ============
-     Test Case        Action        Argument      Argument
-   ============  ===============  ============  ============
-   Returning     ${x} =           Get X         an argument
-   \             Log              We got ${x}!
-   ============  ===============  ============  ============
+   *** Test Cases ***
+   Returning
+       ${x} =    Get X    an argument
+       Log    We got ${x}!
 
 In the above example the value returned by the :name:`Get X` keyword
 is first set into the variable `${x}` and then used by the :name:`Log`
@@ -604,17 +606,19 @@ assign it to a `list variable`_.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Example       
+   Example
        @{list} =    Create List    first    second    third
        Length Should Be    ${list}    3
        Log Many    @{list}
 
 Because all Robot Framework variables are stored in same namespace, there is
-not much difference between assigning a value to a scalar variable or list
-variable. This can be seen by comparing the above example with the example at
-the end of the previous section. Actually the only difference is that when
-creating a list variable, Robot Framework automatically verifies that the value
-is a list or list-like.
+not much difference between assigning a value to a scalar variable or a list
+variable. This can be seen by comparing the last two examples above. The main
+differences are that when creating a list variable, Robot Framework
+automatically verifies that the value is a list or list-like, and the stored
+variable value will be a new list created from the return value. When
+assigning to a scalar variable, the return value is not verified and the
+stored value will be the exact same object that was returned.
 
 Assigning dictionary variables
 ''''''''''''''''''''''''''''''
@@ -777,11 +781,13 @@ string that just looks like a number, as an argument.
 
    *** Test Cases ***
    Example 1A
-       Connect    example.com    80     # Connect gets two strings as arguments
+       Connect    example.com    80       # Connect gets two strings as arguments
+
    Example 1B
-       Connect    example.com    ${80}  # Connect gets a string and an integer
+       Connect    example.com    ${80}    # Connect gets a string and an integer
+
    Example 2
-       Do X    ${3.14}    ${-1e-4}      # Do X gets floating point numbers 3.14 and -0.0001
+       Do X    ${3.14}    ${-1e-4}        # Do X gets floating point numbers 3.14 and -0.0001
 
 It is possible to create integers also from binary, octal, and
 hexadecimal values using `0b`, `0o` and `0x` prefixes, respectively.
@@ -805,11 +811,13 @@ be created using the variable syntax similarly as numbers.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Boolean 
+   Boolean
        Set Status    ${true}               # Set Status gets Boolean true as an argument
        Create Y    something   ${false}    # Create Y gets a string and Boolean false
+
    None
        Do XYZ    ${None}                   # Do XYZ gets Python None as an argument
+
    Null
        ${ret} =    Get Value    arg        # Checking that Get Value returns Java null
        Should Be Equal    ${ret}    ${null}
@@ -835,18 +843,23 @@ easier to understand than those using backslashes.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   One Space       
-       Should Be Equal    ${SPACE}          \\ \\
-   Four Spaces    
-       Should Be Equal    ${SPACE * 4}      \\ \\ \\ \\ \\
-   Ten Spaces      
-       Should Be Equal    ${SPACE * 10}     \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\
-   Quoted Space    
+   One Space
+       Should Be Equal    ${SPACE}          \ \
+
+   Four Spaces
+       Should Be Equal    ${SPACE * 4}      \ \ \ \ \
+
+   Ten Spaces
+       Should Be Equal    ${SPACE * 10}     \ \ \ \ \ \ \ \ \ \ \
+
+   Quoted Space
        Should Be Equal    "${SPACE}"        " "
-   Quoted Spaces   
-       Should Be Equal    "${SPACE * 2}"    " \\ "
+
+   Quoted Spaces
+       Should Be Equal    "${SPACE * 2}"    " \ "
+
    Empty
-       Should Be Equal    ${EMPTY}          \\
+       Should Be Equal    ${EMPTY}          \
 
 There is also an empty `list variable`_ `@{EMPTY}` and an empty `dictionary
 variable`_ `&{EMPTY}`. Because they have no content, they basically
@@ -858,10 +871,10 @@ scopes. Modifying the value of `@{EMPTY}` or `&{EMPTY}` is not possible.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Template        
+   Template
        [Template]    Some keyword
        @{EMPTY}
-   
+
    Override
        Set Global Variable    @{LIST}    @{EMPTY}
        Set Suite Variable     &{DICT}    &{EMPTY}
@@ -1225,12 +1238,13 @@ show few pretty good usages.
    *** Test Cases ***
    String
        ${string} =    Set Variable    abc
-       Log    ${string.upper()}    # Logs 'ABC'
-       Log    ${string * 2}        # Logs 'abcabc'
-   Number       
-       ${number} =   Set Variable    ${-2}
-       Log    ${number * 10}       # Logs -20
-       Log    ${number.__abs__()}  # Logs 2
+       Log    ${string.upper()}      # Logs 'ABC'
+       Log    ${string * 2}          # Logs 'abcabc'
+
+   Number
+       ${number} =    Set Variable    ${-2}
+       Log    ${number * 10}         # Logs -20
+       Log    ${number.__abs__()}    # Logs 2
 
 Note that even though `abs(number)` is recommended over
 `number.__abs__()` in normal Python code, using
@@ -1259,7 +1273,7 @@ __ `Return values from keywords`_
 
    *** Test Cases ***
    Example
-       ${OBJECT.name} =        Set Variable    New name
+       ${OBJECT.name} =    Set Variable    New name
        ${OBJECT.new_attr} =    Set Variable    New attribute
 
 The extended variable assignment syntax is evaluated using the

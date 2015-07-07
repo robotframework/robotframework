@@ -111,17 +111,17 @@ initialization files is explained below.
    Robot Framework 2.7.
 `Default Tags`:setting:, `Test Template`:setting:
    Not supported in initialization files.
-   
+
 .. sourcecode:: robotframework
 
    *** Settings ***
    Documentation    Example suite
-   Suite Setup    Do Something   ${MESSAGE}
-   Force Tags    example
-   Library    SomeLibrary
-   
+   Suite Setup      Do Something    ${MESSAGE}
+   Force Tags       example
+   Library          SomeLibrary
+
    *** Variables ***
-   ${MESSAGE}    Hello, world!
+   ${MESSAGE}       Hello, world!
 
    *** Keywords ***
    Do Something
@@ -180,7 +180,7 @@ or `into several rows`__ (joined together with newlines),
 simple `HTML formatting`_ works and even variables_ can be used.
 
 __ `Dividing test data to several rows`_
-__ `Automatic newlines in test data`_
+__ `Newlines in test data`_
 
 .. sourcecode:: robotframework
 

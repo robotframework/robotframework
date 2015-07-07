@@ -175,7 +175,7 @@ keywords with `user keyword timeouts`_.
        Some Keyword    argument
 
    No Timeout 2
-       [Documentation]    Empty timeout using NONE, works as well
+       [Documentation]    Disabling timeout with NONE works too and is more explicit.
        [Timeout]    NONE
        Some Keyword    argument
 
@@ -246,12 +246,11 @@ next cell contains the loop variable, the subsequent cell must have
 `IN`, and the final cells contain values over which to iterate.
 These values can contain variables_, including `list variables`_.
 
-The keywords used in the for loop are on the next rows and they must
-be indented one cell to the right (remember to escape__ the indented
-cell using a backslash). The for loop ends when the indentation returns
-back to normal or the table ends. Having nested for loops directly is
-not supported, but it is possible to use a user keyword inside a for
-loop and have another for loop there.
+The keywords used in the for loop are on the following rows and they must
+be indented one cell to the right. When using the `plain text format`_,
+the indented cells must be `escaped with a backslash`__, but with other
+data formats the cells can be just left empty. The for loop ends
+when the indentation returns back to normal or the table ends.
 
 .. sourcecode:: robotframework
 
@@ -284,6 +283,25 @@ used with all of them one by one.
    Example
        :FOR    ${element}    IN    @{ELEMENTS}
        \    Start Element  ${element}
+
+Nested for loops
+~~~~~~~~~~~~~~~~
+
+Having nested for loops is not supported directly, but it is possible to use
+a user keyword inside a for loop and have another for loop there.
+
+.. sourcecode:: robotframework
+
+   *** Keywords ***
+   Handle Table
+       [Arguments]    @{table}
+       :FOR    ${row}    IN    @{table}
+       \    Handle Row    @{row}
+
+   Handle Row
+       [Arguments]    @{row}
+       :FOR    ${cell}    IN    @{row}
+       \    Handle Cell    ${cell}
 
 __ `Dividing test data to several rows`_
 __ Escaping_

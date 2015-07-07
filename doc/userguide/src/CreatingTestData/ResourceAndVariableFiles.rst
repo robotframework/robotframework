@@ -91,26 +91,26 @@ Example resource file
 .. sourcecode:: robotframework
 
    *** Settings ***
-   Documentation    An example resource file
-   Library     SeleniumLibrary
-   Resource    ${RESOURCES}/common.html
+   Documentation     An example resource file
+   Library           Selenium2Library
+   Resource          ${RESOURCES}/common.robot
 
    *** Variables ***
    ${HOST}           localhost:7272
-   ${LOGIN_URL}      http://${HOST}/
-   ${WELCOME_URL}    http://${HOST}/welcome.html
+   ${LOGIN URL}      http://${HOST}/
+   ${WELCOME URL}    http://${HOST}/welcome.html
    ${BROWSER}        Firefox
 
    *** Keywords ***
    Open Login Page
        [Documentation]    Opens browser to login page
-       Open Browser    ${LOGIN_URL}    ${BROWSER}
+       Open Browser    ${LOGIN URL}    ${BROWSER}
        Title Should Be    Login Page
-   
+
    Input Name
        [Arguments]    ${name}
        Input Text    username_field    ${name}
-   
+
    Input Password
        [Arguments]    ${password}
        Input Text    password_field    ${password}
@@ -272,13 +272,13 @@ Variable table below.
 
    *** Variables ***
    ${VARIABLE}            An example string
-   ${ANOTHER_VARIABLE}    This is pretty easy!
+   ${ANOTHER VARIABLE}    This is pretty easy!
    ${INTEGER}             ${42}
-   @{STRINGS}             one         two           kolme    four
-   @{NUMBERS}             ${1}        ${INTEGER}    ${3.14}
-   &{MAPPING}             one=${1}    two=${2}      three=${3}
-   @{ANIMALS}             cat         dog
-   &{FINNISH}             cat=kissa   dog=koira
+   @{STRINGS}             one          two           kolme         four
+   @{NUMBERS}             ${1}         ${INTEGER}    ${3.14}
+   &{MAPPING}             one=${1}     two=${2}      three=${3}
+   @{ANIMALS}             cat          dog
+   &{FINNISH}             cat=kissa    dog=koira
 
 .. note:: Variables are not replaced in strings got from variable files.
           For example, `VAR = "an ${example}"` would create
@@ -425,7 +425,7 @@ identical to the first `creating variables directly`_ example.
 
     def get_variables():
         variables = {"VARIABLE ": "An example string",
-                     "ANOTHER_VARIABLE": "This is pretty easy!",
+                     "ANOTHER VARIABLE": "This is pretty easy!",
                      "INTEGER": 42,
                      "STRINGS": ["one", "two", "kolme", "four"],
                      "NUMBERS": [1, 42, 3.14],
