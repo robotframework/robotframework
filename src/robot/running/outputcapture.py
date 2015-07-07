@@ -53,6 +53,15 @@ class OutputCapturer(object):
         return stdout, stderr
 
 
+class StreamIO(StringIO):
+
+    def __getattr__(self, name):
+        # Take care about missed attributes
+        if hasattr(sys.__stdout__, name):
+            return getattr(sys.__stdout__, name)
+        raise AttributeError(name)
+
+
 class PythonCapturer(object):
 
     def __init__(self, stdout=True):
@@ -62,7 +71,7 @@ class PythonCapturer(object):
         else:
             self._original = sys.stderr
             self._set_stream = self._set_stderr
-        self._stream = StringIO()
+        self._stream = StreamIO()
         self._set_stream(self._stream)
 
     def _set_stdout(self, stream):
