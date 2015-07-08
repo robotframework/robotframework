@@ -316,10 +316,11 @@
     <h2 id="Tags">Tags</h2>
     <div class='shortcuts'>
         {{each all_tags}}
-        <a href="javascript:tagSearch('${$value}')">${$value}</a> &middot;
+        <a href="javascript:tagSearch('${$value}')"
+           title="Show tests with this tag">${$value}</a> &middot;
         {{/each}}
         <a href="javascript:resetKeywords()" class="normal-first-letter"
-           title="Reset search">[Reset]</a>
+           title="Show all tests">[Reset]</a>
     </div>
 </script>
 
@@ -342,7 +343,10 @@
 
 <script type="text/x-jquery-tmpl" id="keyword-template">
     <tr class="kw-row {{if matched === false}}no-{{/if}}match">
-        <td class="kw"><a name="${encodeURIComponent(name)}"></a>${name}</td>
+        <td class="kw">
+            <a name="${encodeURIComponent(name)}" href="#${encodeURIComponent(name)}"
+               title="Link to this keyword">${name}</a>
+        </td>
         <td class="args">
             {{each args}}
             <span>${$value}</span>{{if $index < args.length-1}}, {{/if}}
@@ -351,7 +355,8 @@
         {{if libdoc.contains_tags}}
         <td class="tags">
             {{each tags}}
-            <a href="javascript:tagSearch('${$value}')">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
+            <a href="javascript:tagSearch('${$value}')"
+               title="Show tests with this tag">${$value}</a>{{if $index < tags.length-1}}, {{/if}}
             {{/each}}
         </td>
         {{/if}}
