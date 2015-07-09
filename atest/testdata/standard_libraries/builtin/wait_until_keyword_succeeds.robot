@@ -96,7 +96,7 @@ Invalid Number Of Arguments Inside Wait Until Keyword Succeeds
     Wait Until Keyword Succeeds    1 second    0.1s    No Operation    No    args    accepted
 
 Invalid Keyword Inside Wait Until Keyword Succeeds
-    [Documentation]    FAIL Keyword name must be string.
+    [Documentation]    FAIL Keyword name must be a string.
     ${list} =    Create List    1    2
     Wait Until Keyword Succeeds    1 second    0.1s    ${list}
 

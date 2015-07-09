@@ -1339,25 +1339,23 @@ class _RunKeyword(_BuiltInBase):
         another keyword or from the command line.
         """
         if not is_string(name):
-            raise RuntimeError('Keyword name must be string.')
+            raise RuntimeError('Keyword name must be a string.')
         kw = Keyword(name, args=args)
         return kw.run(self._context)
 
     def run_keywords(self, *keywords):
         """Executes all the given keywords in a sequence.
 
-        This keyword is mainly useful in setups and teardowns when they need to
-        take care of multiple actions and creating a new higher level user
+        This keyword is mainly useful in setups and teardowns when they need
+        to take care of multiple actions and creating a new higher level user
         keyword would be an overkill.
+
+        By default all arguments are expected to be keywords to be executed.
 
         Examples:
         | Run Keywords | Initialize database | Start servers | Clear logs |
         | Run Keywords | ${KW 1} | ${KW 2} |
         | Run Keywords | @{KEYWORDS} |
-
-        In this example, we call `Run Keywords` with three different combination
-        of arguments. Keyword names and arguments can come from variables, as
-        demonstrated in the second and third row.
 
         Starting from Robot Framework 2.7.6, keywords can also be run with
         arguments using upper case ``AND`` as a separator between keywords.
@@ -1371,7 +1369,7 @@ class _RunKeyword(_BuiltInBase):
         | Run Keywords | Initialize database | ${DB NAME} | AND | Start servers | @{SERVERS} | AND | Clear logs |
         | Run Keywords | ${KW} | AND | @{KW WITH ARGS} |
 
-        Notice that the ``AND`` control argument must be used explicitly and thus
+        Notice that the ``AND`` control argument must be used explicitly and
         cannot itself come from a variable. If you need to use literal ``AND``
         string as argument, you can either use variables or escape it with
         a backslash like ``\\AND``.
