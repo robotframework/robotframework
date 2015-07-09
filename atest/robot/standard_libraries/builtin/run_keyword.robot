@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword.robot
+Suite Setup       Run Tests    --listener ${CURDIR}${/}listener_printing_start_end_kw.py    standard_libraries/builtin/run_keyword.robot
 Force Tags        regression      jybot    pybot
 Resource          atest_resource.robot
 
@@ -54,6 +54,19 @@ Run Keyword With KW Timeout
 
 Run Keyword With Invalid Keyword Name
     Check Test Case    ${TEST NAME}
+
+Stdout and stderr are not captured when running Run Keyword
+    ${expected} =    Catenate    SEPARATOR=\n
+    ...    start keyword BuiltIn.Run Keyword
+    ...    start keyword My UK
+    ...    start keyword BuiltIn.Run Keyword
+    ...    start keyword BuiltIn.Log
+    ...    end keyword BuiltIn.Log
+    ...    end keyword BuiltIn.Run Keyword
+    ...    end keyword My UK
+    ...    end keyword BuiltIn.Run Keyword
+    Check Stdout Contains    ${expected}
+    Check Stderr Contains    ${expected}
 
 *** Keywords ***
 Check Run Keyword

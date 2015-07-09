@@ -348,6 +348,9 @@ class _RunKeywordHandler(_PythonHandler):
         index = list(self.arguments.positional).index('name')
         return [Keyword(name=given_args[index], args=given_args[index+1:])]
 
+    def _run_with_output_captured_and_signal_monitor(self, runner, context):
+        return self._run_with_signal_monitoring(runner, context)
+
 
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
     _parse_arguments = _RunKeywordHandler._parse_arguments
