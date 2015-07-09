@@ -115,20 +115,19 @@ class NormalRunner(object):
 
 
 def ForRunner(context, templated=False, flavor='IN'):
-    for_loop_flavors = dict(
-            IN=ForInRunner,
-            INRANGE=ForInRangeRunner,
-            INZIP=ForInZipRunner,
-            INENUMERATE=ForInEnumerateRunner,
-            )
-    flavor_key = flavor.upper().replace(' ', '')
-    if flavor_key in for_loop_flavors:
-        runner_class = for_loop_flavors[flavor_key]
-        return runner_class(context, templated)
-    return InvalidForRunner(context, flavor_key, flavor, for_loop_flavors.keys())
+    runners = dict(IN=ForInRunner,
+                   INRANGE=ForInRangeRunner,
+                   INZIP=ForInZipRunner,
+                   INENUMERATE=ForInEnumerateRunner)
+    try:
+        runner = runners[flavor.upper().replace(' ', '')]
+    except KeyError:
+        return InvalidForRunner(context, flavor)
+    return runner(context, templated)
 
 
 class ForInRunner(object):
+
     def __init__(self, context, templated=False):
         self._context = context
         self._templated = templated
@@ -233,6 +232,7 @@ class ForInRunner(object):
 
 
 class ForInRangeRunner(ForInRunner):
+
     def __init__(self, context, templated=False):
         super(ForInRangeRunner, self).__init__(context, templated)
 
@@ -260,6 +260,7 @@ class ForInRangeRunner(ForInRunner):
 
 
 class ForInZipRunner(ForInRunner):
+
     def __init__(self, context, templated=False):
         super(ForInZipRunner, self).__init__(context, templated)
 
@@ -287,6 +288,7 @@ class ForInZipRunner(ForInRunner):
 
 
 class ForInEnumerateRunner(ForInRunner):
+
     def __init__(self, context, templated=False):
         super(ForInEnumerateRunner, self).__init__(context, templated)
 
@@ -300,9 +302,9 @@ class ForInEnumerateRunner(ForInRunner):
         return len(variables) - 1
 
     def _get_values_for_one_round(self, data):
-        for idx, values in enumerate(super(ForInEnumerateRunner, self)
-                ._get_values_for_one_round(data)):
-            yield [idx] + values
+        parent = super(ForInEnumerateRunner, self)
+        for index, values in enumerate(parent._get_values_for_one_round(data)):
+            yield [index] + values
 
     def _raise_wrong_variable_count(self, variables, values):
         raise DataError('Number of FOR IN ENUMERATE loop values should be '
@@ -317,16 +319,15 @@ class InvalidForRunner(ForInRunner):
     We can't simply throw a DataError from ForRunner() because that happens
     outside the "with StatusReporter(...)" blocks.
     """
-    def __init__(self, context, flavor, pretty_flavor, expected):
+
+    def __init__(self, context, flavor):
         super(InvalidForRunner, self).__init__(context, False)
         self.flavor = flavor
-        self.pretty_flavor = pretty_flavor
-        self.expected = repr(sorted(expected))
 
     def _run(self, data, *args, **kwargs):
         raise DataError("Invalid FOR loop type '%s'. Expected 'IN', "
                         "'IN RANGE', 'IN ZIP', or 'IN ENUMERATE'."
-                        % self.pretty_flavor)
+                        % self.flavor)
 
 
 class StatusReporter(object):
