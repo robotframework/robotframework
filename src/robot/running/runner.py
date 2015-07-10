@@ -123,7 +123,7 @@ class Runner(SuiteVisitor):
                                % unicode(err))
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(result, test))
-        if status.exit.fatal:
+        if status.exit:
             self._add_exit_combine()
             result.tags.add('robot-exit')
         self._run_setup(test.keywords.setup, status, result)
