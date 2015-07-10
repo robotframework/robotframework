@@ -9,10 +9,12 @@ Suite Teardown    Comment     S1
 Suite Teardown    Log Many    S2
 Test Setup        Log Many    T1
 Test Setup        Comment     T2
+Test Teardown
 Test Teardown     Comment     T1
 Test Teardown     Log Many    T2
 Test Template     Sle
 Test Template     ep
+Force Tags
 Force Tags        F1
 Force Tags        F2
 Default Tags      D1
@@ -29,10 +31,12 @@ Use Defaults
 Test Settings
     [Documentation]    T1
     [Documentation]    FAIL 2 s
+    [Tags]
     [Tags]    T1
     [Tags]    T2
     [Setup]    Log Many    Own
     [Setup]    stuff    here
+    [Teardown]
     [Teardown]    Log Many    And
     [Teardown]    also    here
     [Template]    S
@@ -49,14 +53,18 @@ Keyword Settings
 
 *** Keywords ***
 Keyword Settings
-    [Arguments]    ${arg 1}
-    [Arguments]    ${arg 2}
+    [Arguments]
+    [Arguments]    ${a1}    ${a2}    ${a3}
+    [Arguments]    ${arg}
+    [Documentation]
     [Documentation]    K1
     [Documentation]    K2
     [Tags]    K1
     [Tags]    K2
+    [Timeout]
     [Timeout]    1s
     [Timeout]    2s
+    [Return]
     [Return]    R1
     [Return]    R2
     [Return]    R3

@@ -24,6 +24,7 @@ class Setting(object):
         self.parent = parent
         self._set_initial_value()
         self._set_comment(comment)
+        self._populated = False
 
     def _set_initial_value(self):
         self.value = []
@@ -44,10 +45,11 @@ class Setting(object):
 
     def populate(self, value, comment=None):
         """Mainly used at parsing time, later attributes can be set directly."""
-        if self.is_set():
+        if self._populated:
             self._using_setting_multiple_times_is_deprecated()
         self._populate(value)
         self._set_comment(comment)
+        self._populated = True
 
     def _using_setting_multiple_times_is_deprecated(self):
         msg = "Using %s setting multiple times is deprecated."

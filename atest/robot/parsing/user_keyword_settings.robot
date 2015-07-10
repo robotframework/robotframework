@@ -84,9 +84,9 @@ Multiple settings
 Invalid setting
     Check Test Case    ${TEST NAME}
     ${PATH} =    Normalize Path    ${DATADIR}/parsing/user_keyword_settings.robot
-    Check Log Message    ${ERRORS[0]}
-    ...    Error in file '${path}': Invalid syntax in keyword 'Invalid passing': Non-existing setting 'Invalid Setting'.    ERROR
     Check Log Message    ${ERRORS[1]}
+    ...    Error in file '${path}': Invalid syntax in keyword 'Invalid passing': Non-existing setting 'Invalid Setting'.    ERROR
+    Check Log Message    ${ERRORS[2]}
     ...    Error in file '${path}': Invalid syntax in keyword 'Invalid failing': Non-existing setting 'invalid'.    ERROR
 
 *** Keywords ***
