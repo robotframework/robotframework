@@ -1,5 +1,5 @@
 *** Settings ***
-Resource  resources.robot
+Resource  ../core/resources.robot
 
 Metadata  Name  Value
 MetadatA  Multiple columns  Value in  multiple  columns

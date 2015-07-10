@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     Tests for --metadata are located in robot/cli/runner and
 ...               for other suite settings in suite_settings.robot.
-Suite Setup       Run Tests    --variable meta_value_from_cli:my_metadata    core/suite_metadata.robot
+Suite Setup       Run Tests    --variable meta_value_from_cli:my_metadata    parsing/suite_metadata.robot
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.robot
 
