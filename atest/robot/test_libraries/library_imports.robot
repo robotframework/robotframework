@@ -16,12 +16,12 @@ Library Import With Spaces In Name
     Check Log Message    ${test.kws[1].messages[0]}    It really workz!!
 
 Importing Library Class Should Have Been Syslogged
-    ${source} =    Normalize Path    ${CURDIR}/../../../src/robot/libraries/OperatingSystem
-    Check Syslog Contains    | INFO \ |    Imported test library class 'robot.libraries.OperatingSystem' from '${source}
-    ${base} =    Normalize Path    ${CURDIR}/../../testresources/testlibs
-    Check Syslog Contains    | INFO \ |    Imported test library class 'ExampleLibrary' from '${base}${/}ExampleLibrary
-    Check Syslog Contains    | INFO \ |    Imported test library module 'libmodule' from '${base}${/}libmodule
-    Check Syslog Contains    | INFO \ |    Imported test library class 'libmodule.LibClass2' from '${base}${/}libmodule
+    ${source} =    Normalize Path And Ignore Drive    ${CURDIR}/../../../src/robot/libraries/OperatingSystem
+    Syslog Should Contain Match    | INFO \ |    Imported test library class 'robot.libraries.OperatingSystem' from '${source}*'
+    ${base} =    Normalize Path And Ignore Drive    ${CURDIR}/../../testresources/testlibs
+    Syslog Should Contain Match    | INFO \ |    Imported test library class 'ExampleLibrary' from '${base}${/}ExampleLibrary*'
+    Syslog Should Contain Match    | INFO \ |    Imported test library module 'libmodule' from '${base}${/}libmodule*'
+    Syslog Should Contain Match    | INFO \ |    Imported test library class 'libmodule.LibClass2' from '${base}${/}libmodule*'
 
 Number Of Keywords In Imported Library Is Reported In Syslog
     Check Syslog Contains    | INFO \ |    Imported library 'ExampleLibrary' with arguments [ ] (version <unknown>, class type, testcase scope, 30 keywords)
@@ -55,3 +55,10 @@ Arguments To Library
     Check Test Case    Two Default Parameters
     Check Test Case    One Default and One Set Parameter
     Check Test Case    Two Set Parameters
+
+*** Keywords ***
+Normalize Path And Ignore Drive
+    [Arguments]    ${path}
+    ${path} =    Normalize Path    ${path}
+    Return From Keyword If    os.sep == '/'    ${path}
+    Return From Keyword    ?${path[1:]}

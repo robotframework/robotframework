@@ -211,6 +211,12 @@ File Should Match
     ${exp} =  Catenate  @{expected}
     Should Match  ${content}  ${exp}
 
+File Should Contain Match
+    [Arguments]  ${path}  @{expected}
+    ${content} =  Get Output File  ${path}
+    ${exp} =  Catenate  @{expected}
+    Should Match  ${content}  *${exp}*
+
 Stderr Should Be Equal To
     [Arguments]  @{expected}
     File Should Be Equal To  ${STDERR FILE}  @{expected}
@@ -266,6 +272,10 @@ Get Stderr
 Get Stdout
     ${file} =  Get Output File  ${STDOUT_FILE}
     [Return]  ${file}
+
+Syslog Should Contain Match
+    [Arguments]  @{expected}
+    File Should Contain Match    ${SYSLOG FILE}    @{expected}
 
 Check Syslog Contains
     [Arguments]  @{expected}
