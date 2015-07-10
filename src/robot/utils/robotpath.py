@@ -44,9 +44,6 @@ def normpath(path, case_normalize=False):
     if not is_unicode(path):
         path = decode_from_system(path)
     path = os.path.normpath(path)
-    if not is_unicode(path):
-        # http://bugs.jython.org/issue2274
-        path = unicode(path)
     if case_normalize and CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()
     if WINDOWS and len(path) == 2 and path[1] == ':':
