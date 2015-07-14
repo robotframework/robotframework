@@ -15,9 +15,14 @@ CURDIR = dirname(abspath(__file__))
 execfile(join(CURDIR, 'src', 'robot', 'version.py'))
 VERSION = get_version()
 with open(join(CURDIR, 'README.rst')) as readme:
-    install = 'https://github.com/robotframework/robotframework/blob/master/INSTALL.rst'
-    LONG_DESCRIPTION = readme.read().replace(
-        '`<INSTALL.rst>`__', '`INSTALL.rst <%s>`__' % install)
+    LONG_DESCRIPTION = readme.read()
+    base_url = 'https://github.com/robotframework/robotframework/blob/master'
+    for text in 'INSTALL', 'CONTRIBUTING':
+        search = '`<{0}.rst>`__'.format(text)
+        replace = '`{0}.rst <{1}/{0}.rst>`__'.format(text, base_url)
+        if search not in LONG_DESCRIPTION:
+            raise RuntimeError('{} not found from README.rst'.format(search))
+        LONG_DESCRIPTION = LONG_DESCRIPTION.replace(search, replace)
 CLASSIFIERS = """
 Development Status :: 5 - Production/Stable
 License :: OSI Approved :: Apache Software License
