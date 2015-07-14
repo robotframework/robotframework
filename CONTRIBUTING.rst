@@ -1,107 +1,265 @@
-How to contribute
-=================
+Contributing to Robot Framework
+===============================
 
-Creating issues: reporting bugs and requesting enhancements
------------------------------------------
+These guidelines instruct how to submit issues and contribute code to the
+`Robot Framework project <https://github.com/robotframework/robotframework>`_.
+There are also many other projects in the larger `Robot Framework ecosystem
+<http://robotframework.org>`_ that you can contribute to. If you notice
+a library to tool missing, there is hardly any better way to contribute
+than creating your own project.
 
-Bugs and enhancements are tracked in `Github's issue
-tracker <https://github.com/robotframework/robotframework/issues>`__.
-You can try asking first in IRC (#robotframework on irc.freenode.net) or
-in the `user
-group <https://groups.google.com/forum/#!forum/robotframework-users>`__.
-Make sure to look through the list of open issues first so that you
-don't create a duplicate. When reporting a bug, provide as much
-information about the bug as possible: a stack trace or error message,
-an example test case or keyword, a log file, and so on. When requesting
-an enhancement, describe your use case in as much detail as possible.
+.. contents::
+   :depth: 2
+   :local:
+
+Submitting issues
+-----------------
+
+Bugs and enhancements are tracked in the `issue tracker
+<https://github.com/robotframework/robotframework/issues>`_. If you are
+unsure is something a bug or is a feature worth implementing, you can
+first ask on `robotframework-users
+<https://groups.google.com/forum/#!forum/robotframework-users>`_ mailing
+list or IRC (#robotframework on irc.freenode.net). These and other
+similar forums, not the issue tracker, are also places where to ask general
+questions.
+
+Before submitting a new issue, it is always a good idea to check is the
+same bug or enhancement already reported. If it is, please add your comments
+to the existing issue instead of creating a new one.
+
+Reporting bugs
+~~~~~~~~~~~~~~
+
+Explain the bug you have encountered so that others can understand it
+and preferably also reproduce it. Key things to have in good bug report:
+
+1. Version information
+
+   - Robot Framework version
+   - Python interpreter type (Python, Jython or IronPython) and version
+   - Operating system name and version
+
+2. Steps to reproduce the problem. With more complex problems it is often
+   a good idea to create a `short, self contained, correct example (SSCCE)
+   <http://sscce.org>`_.
+
+3. Possible error message and traceback.
+
+Notice that all information in the issue tracker is public. Do not include
+any confidential information there.
+
+Enhancement requests
+~~~~~~~~~~~~~~~~~~~~
+
+Describe the new feature and use cases for it in as much detail as possible.
+Especially with larger enhancements, be prepared to contribute the code
+in form of a pull request as explained below or to pay someone for the work.
+Consider also would it be better to implement this functionality as a separate
+tool outside the core framework.
+
+Code contributions
+------------------
+
+If you have fixed a bug or implemented an enhancement, you can contribute
+your changes via GitHub's pull requests. This is no restricted to code,
+on the contrary, fixes and enhancements to documentation_ and tests_ alone
+are also very valuable.
 
 Choosing something to work on
------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Look through the `issue
-tracker <https://github.com/robotframework/robotframework/issues>`__ to
-find bugs and enhancements to work on. The issues vary significantly in
-complexity and difficulty, so you can try to find something that matches
-your skill level and knowledge.
+Often you already have a bug or an enhancement you want to work on in your
+mind, but you can also look at the `issue tracker`_ to find bugs and
+enhancements submitted by others. The issues vary significantly in complexity
+and difficulty, so you can try to find something that matches your skill level
+and knowledge.
 
-Creating a pull request
------------------------
+Pull requests
+~~~~~~~~~~~~~
 
-Github has a `good article describing pull
-requests <https://help.github.com/articles/using-pull-requests/>`__.
+On GitHub pull requests are the main mechanism to contribute code. They
+are easy to use both for the contributor and for per person accepting
+the contribution, and with more complex contributions it is easy also
+for others to join the discussion. Preconditions for creating a pull
+requests are having a `GitHub account <https://github.com/>`_,
+installing `Git <https://git-scm.com>`_ and forking the
+`Robot Framework project`_.
+
+GitHub has a good articles explaining how to
+`set up Git <https://help.github.com/articles/set-up-git/>`_,
+`fork a repository <https://help.github.com/articles/fork-a-repo/>`_ and
+`use pull requests <https://help.github.com/articles/using-pull-requests>`_
+so we do not need to go through them in more detail here. We do, however,
+recommend to create dedicated branches for pull requests instead of creating
+them based on the master branch. This is especially important if you plan to
+work on multiple pull requests at the same time.
 
 Style guidelines
 ~~~~~~~~~~~~~~~~
 
-As with most Python projects, Robot Framework mostly follows
-`PEP-8 <https://www.python.org/dev/peps/pep-0008/>`__. When possible,
-write code that's easy to understand without requiring comments. Any new
-files you add should include the Apache License header.
+Robot Framework uses the general Python code conventions defined in `PEP-8
+<https://www.python.org/dev/peps/pep-0008/>`_. In addition to that, we try
+to write `idiomatic Python
+<http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html>`_
+and follow the `SOLID principles
+<https://en.wikipedia.org/wiki/SOLID_(object-oriented_design)>`_ with all
+new code. An important guideline is that the code should be clear enough that
+comments are generally not needed.
 
-Testing your changes
-~~~~~~~~~~~~~~~~~~~~
+Docstrings should be added to public APIs but are not needed in internal
+code. When docstrings are added, they should follow `PEP-257
+<https://www.python.org/dev/peps/pep-0257/>`_. See `API documentation`_
+section below for more details about documentation syntax, generating
+API docs, etc.
 
-There are two sets of tests within Robot Framework: ``atest`` and
-``utest``. When submitting a pull request, you should always include
-tests for your changes. These tests prove that your changes work, help
-prevent bugs in the future, and help document what your changes do. Make
-sure to run all of the tests before submitting a pull request to be sure
-that your changes don't break anything. If you can, test in multiple
-environments and interpreters (Windows, Linux, OS X, python, jython,
-ironpython, etc).
+We are pretty picky about using whitespace. We use blank lines and whitespace
+in expressions as dictated by `PEP-8`_, but we also follow these rules:
 
-Acceptance tests (atest)
-^^^^^^^^^^^^^^^^^^^^^^^^
+- Indentation using spaces, not tabs.
+- No trailing spaces.
+- No extra empty lines at the end of the file.
+- Files must end with a newline.
 
-This is a set of tests for Robot Framework written using Robot
-Framework. See the `README <atest/README.rst>`__ for more details. If
-possible, the tests for your pull request should be acceptance tests.
+The above rules are good with most other code too. Any good editor or IDE
+can be configured to automatically format files according to them.
 
-Unit tests (utest)
-^^^^^^^^^^^^^^^^^^
+Documentation
+~~~~~~~~~~~~~
 
-This is a set of tests for Robot Framework written using Python's
-``unittest`` module. See the `README <utest/README.rst>`__ for more
-details.
+With new features adequate documentation is as important as the actual
+functionality. Different documentation is needed depending on the issue.
+
+User Guide
+''''''''''
+
+Robot Framework's features are explained in the `User Guide
+<http://robotframework.org/robotframework/#user-guide>`_. It is generated
+using a custom script based on the source in `reStructuredText
+<http://docutils.sourceforge.net/rst.html>`_ format. For more details about
+editing and generating it see `<doc/userguide/README.rst>`_.
+
+Libraries
+'''''''''
+
+If `standard libraries
+<http://robotframework.org/robotframework/#standard-libraries>`_ distributed
+with Robot Framework are enhanced, also their documentation needs to
+be updated. Keyword documentation is created using docstrings and it must
+use Robot's own `documentation formatting
+<http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#documentation-formatting>`_.
+
+Examples are recommend whenever the new keyword or enhanced functionality is
+not trivial. All new enhancements or changes should have a note like
+``New in Robot Framework 2.9.`` somewhere in the documentation. Existing
+documentation can be used as an example.
+
+Library documentation can be created using `<doc/libraries/lib2html.py>`_
+script and should be verified before the code is committed.
+
+API documentation
+'''''''''''''''''
+
+Modules and classes defined to be public should have API documentation.
+We do not generally use API docs with internal code because it is so hard
+to keep the docs in sync with the code. Instead we try to keep the code
+as clean and easy to understand as possible.
+
+API docs are created using docstrings following guidelines defined in
+`PEP-257`_. They are converted to HTML using `Sphinx <http://sphinx-doc.org/>`_
+and its `autodoc <http://sphinx-doc.org/ext/autodoc.html>`_ extension.
+Documentation can be created locally using `<doc/api/generate.py>`_ script
+that unfortunately creates a lot of errors on the console. Releases API docs
+are visible at https://robot-framework.readthedocs.org/.
+
+.. note:: Robot Framework's public API docs are lacking in many ways.
+          Documentation improvements are highly appreciated!
+
+Tests
+~~~~~
+
+When submitting a pull request with a new feature or a fix, you should
+always include tests for your changes. These tests prove that your changes
+work, help prevent bugs in the future, and help document what your changes
+do. Depending an the change, you may need `acceptance tests`_, `unit tests`_
+or both.
+
+Make sure to run all of the tests before submitting a pull request to be sure
+that your changes do not break anything. If you can, test in multiple
+environments and interpreters (Windows, Linux, OS X, Python, Jython,
+IronPython, etc). Pull requests are also automatically tested on `continuous
+integration`_.
+
+Acceptance tests
+''''''''''''''''
+
+Most of Robot Framework's testing is done using acceptance tests that
+naturally use Robot Framework itself for testing. Every new functionality
+or fix affecting should generally get one or more acceptance tests.
+See `<atest/README.rst>`_ for more details for more details about creating
+and executing them.
+
+Unit tests
+''''''''''
+
+Unit tests are great for testing internal logic and should be added when
+appropriate. For more details see `<utest/README.rst>`_.
 
 Continuous integration
-~~~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''''
+
+Robot Framework's continuous integration (CI) servers are visible through
+http://robot.radiaatto.ri.fi/. They automatically test all new commits
+to the repository both on Linux and on Windows, and pull requests can be
+tested there too.
 
 When a new pull request comes in, the CI will ask if one of the admins
 can verify the pull request. The admins are currently @jussimalinen and
 @pekkaklarck. The commands are:
 
 -  ``robotci: once`` (run once)
--  ``robotci: enable`` (run when ever this pull request changes)
+-  ``robotci: enable`` (run whenever this pull request changes)
 -  ``robotci: whitelist user`` (enable CI for all pull requests coming
    from this user)
 
 The commands can be anywhere on the comment. Adding the skip statement
 (``[skip ci]``, with the square brackets) to the pull request body will
-cause the job not to run.
+cause the job not to executed.
+
+Finalizing pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Once you have code, documentation and tests ready, it is time to finalize
+the pull request.
 
 AUTHORS.txt
-~~~~~~~~~~~
+'''''''''''
 
-Add yourself to ``AUTHORS.txt`` if you'd like credit for your changes.
+If you have done any non-trivial change and would like to be credited,
+add yourself to `<AUTHORS.txt>`_ file.
 
-Documentation
-~~~~~~~~~~~~~
+Resolving conflicts
+'''''''''''''''''''
 
-If your changes modify Robot Framework's behavior in any way, or if
-you're contributing documentation, see the `documentation
-README <doc/userguide/README.rst>`__. The libraries that come with Robot
-Framework (``BuiltIn``, ``Collections``, etc.) have keyword docstrings
-that serve as their documentation. Make sure to update these if
-necessary. Functions and methods intended for internal use only
-generally do not require docstrings as long as they are written clearly
-enough that their purpose can be understood by reading their code.
+Conflicts can occur if there are mew changes to the master that touch the
+same code as your changes. In that case you should `sync your fork
+<https://help.github.com/articles/syncing-a-fork>`_ and `resolve conflicts
+<https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line>`_
+to allow for an easy merge.
 
-Squashing and resolving conflicts
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The most common conflicting file is the aforementioned `AUTHORS.txt`_, but
+luckily fixing those conflicts is typically easy.
 
-When your pull request has been accepted for merging by the project
-owners, if you have a lot of commits, you should `squash your
-commits <http://eli.thegreenplace.net/2014/02/19/squashing-github-pull-requests-into-a-single-commit>`__.
-If your pull request has conflicts with master, rebase your changes with
-master to allow for an easy merge.
+Squashing commits
+'''''''''''''''''
+
+If the pull request contains multiple commits, it is recommended that you
+squash them into a single commit before the pull request is merged.
+See `Squashing Github pull requests into a single commit
+<http://eli.thegreenplace.net/2014/02/19/squashing-github-pull-requests-into-a-single-commit>`_
+article for more details about why and how.
+
+Squashing is especially important if the pull request contains lof ot
+temporary commits and changes that have been later reverted or redone.
+Squashing is not needed if the commit history is clean and individual
+commits are meaningful alone.
