@@ -1,12 +1,16 @@
-Contributing to Robot Framework
-===============================
+Contribution guidelines
+=======================
 
 These guidelines instruct how to submit issues and contribute code to the
 `Robot Framework project <https://github.com/robotframework/robotframework>`_.
 There are also many other projects in the larger `Robot Framework ecosystem
 <http://robotframework.org>`_ that you can contribute to. If you notice
 a library or tool missing, there is hardly any better way to contribute
-than creating your own project.
+than creating your own project. Other great ways to contribute include
+answering questions and participating discussion on `robotframework-users
+<https://groups.google.com/forum/#!forum/robotframework-users>`_ mailing list
+and other forums as well as spreading the word about the framework one way or
+the other.
 
 .. contents::
    :depth: 2
@@ -18,11 +22,10 @@ Submitting issues
 Bugs and enhancements are tracked in the `issue tracker
 <https://github.com/robotframework/robotframework/issues>`_. If you are
 unsure if something is a bug or is a feature worth implementing, you can
-first ask on `robotframework-users
-<https://groups.google.com/forum/#!forum/robotframework-users>`_ mailing
-list or IRC (#robotframework on irc.freenode.net). These and other
-similar forums, not the issue tracker, are also places where to ask general
-questions.
+first ask on `robotframework-users`_ list or `IRC
+<http://webchat.freenode.net/?channels=robotframework&prompt=1>`_
+(#robotframework on irc.freenode.net). These and other similar forums,
+not the issue tracker, are also places where to ask general questions.
 
 Before submitting a new issue, it is always a good idea to check is the
 same bug or enhancement already reported. If it is, please add your comments
@@ -95,8 +98,8 @@ recommend to create dedicated branches for pull requests instead of creating
 them based on the master branch. This is especially important if you plan to
 work on multiple pull requests at the same time.
 
-Style guidelines
-~~~~~~~~~~~~~~~~
+Coding conventions
+~~~~~~~~~~~~~~~~~~
 
 Robot Framework uses the general Python code conventions defined in `PEP-8
 <https://www.python.org/dev/peps/pep-0008/>`_. In addition to that, we try
@@ -145,17 +148,27 @@ Libraries
 If `standard libraries
 <http://robotframework.org/robotframework/#standard-libraries>`_ distributed
 with Robot Framework are enhanced, also their documentation needs to
-be updated. Keyword documentation is created using docstrings and it must
-use Robot's own `documentation formatting
-<http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#documentation-formatting>`_.
+be updated. Keyword documentation is created from docstrings using the `Libdoc
+<http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#libdoc>`_
+tool. Documentation must use Robot Framework's own `documentation formatting
+<http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#documentation-formatting>`_
+and follow these guidelines:
 
-Examples are recommend whenever the new keyword or enhanced functionality is
-not trivial. All new enhancements or changes should have a note like
-``New in Robot Framework 2.9.`` somewhere in the documentation. Existing
-documentation can be used as an example.
+- Other keywords and sections in the library introduction can be referenced
+  with internal links created with backticks like ```Example Keyword```
 
-Library documentation can be created using `<doc/libraries/lib2html.py>`_
-script and should be verified before the code is committed.
+- When referring to arguments, argument names must use in inline code style
+  created with double backticks like ````argument````.
+
+- Examples are recommend whenever the new keyword or enhanced functionality is
+  not trivial.
+
+- All new enhancements or changes should have a note telling when the change
+  was introduced. Often adding something like ``New in Robot Framework 2.9.``
+  is enough.
+
+Library documentation can be easily created using `<doc/libraries/lib2html.py>`_
+script. Resulting docs should be verified before the code is committed.
 
 API documentation
 '''''''''''''''''
