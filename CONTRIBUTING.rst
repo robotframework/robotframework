@@ -5,7 +5,7 @@ These guidelines instruct how to submit issues and contribute code to the
 `Robot Framework project <https://github.com/robotframework/robotframework>`_.
 There are also many other projects in the larger `Robot Framework ecosystem
 <http://robotframework.org>`_ that you can contribute to. If you notice
-a library to tool missing, there is hardly any better way to contribute
+a library or tool missing, there is hardly any better way to contribute
 than creating your own project.
 
 .. contents::
@@ -17,7 +17,7 @@ Submitting issues
 
 Bugs and enhancements are tracked in the `issue tracker
 <https://github.com/robotframework/robotframework/issues>`_. If you are
-unsure is something a bug or is a feature worth implementing, you can
+unsure if something is a bug or is a feature worth implementing, you can
 first ask on `robotframework-users
 <https://groups.google.com/forum/#!forum/robotframework-users>`_ mailing
 list or IRC (#robotframework on irc.freenode.net). These and other
@@ -62,7 +62,7 @@ Code contributions
 ------------------
 
 If you have fixed a bug or implemented an enhancement, you can contribute
-your changes via GitHub's pull requests. This is no restricted to code,
+your changes via GitHub's pull requests. This is not restricted to code,
 on the contrary, fixes and enhancements to documentation_ and tests_ alone
 are also very valuable.
 
@@ -86,7 +86,7 @@ requests are having a `GitHub account <https://github.com/>`_,
 installing `Git <https://git-scm.com>`_ and forking the
 `Robot Framework project`_.
 
-GitHub has a good articles explaining how to
+GitHub has good articles explaining how to
 `set up Git <https://help.github.com/articles/set-up-git/>`_,
 `fork a repository <https://help.github.com/articles/fork-a-repo/>`_ and
 `use pull requests <https://help.github.com/articles/using-pull-requests>`_
@@ -172,8 +172,10 @@ Documentation can be created locally using `<doc/api/generate.py>`_ script
 that unfortunately creates a lot of errors on the console. Releases API docs
 are visible at https://robot-framework.readthedocs.org/.
 
-.. note:: Robot Framework's public API docs are lacking in many ways.
-          Documentation improvements are highly appreciated!
+Robot Framework's public API docs are lacking in many ways. All public
+classes are not yet documented, existing documentation is somewhat scarce,
+and there could be more examples. Documentation improvements are highly
+appreciated!
 
 Tests
 ~~~~~
@@ -224,7 +226,7 @@ can verify the pull request. The admins are currently @jussimalinen and
 
 The commands can be anywhere on the comment. Adding the skip statement
 (``[skip ci]``, with the square brackets) to the pull request body will
-cause the job not to executed.
+cause the job not to be executed.
 
 Finalizing pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,7 +243,7 @@ add yourself to `<AUTHORS.txt>`_ file.
 Resolving conflicts
 '''''''''''''''''''
 
-Conflicts can occur if there are mew changes to the master that touch the
+Conflicts can occur if there are new changes to the master that touch the
 same code as your changes. In that case you should `sync your fork
 <https://help.github.com/articles/syncing-a-fork>`_ and `resolve conflicts
 <https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line>`_
@@ -259,7 +261,7 @@ See `Squashing Github pull requests into a single commit
 <http://eli.thegreenplace.net/2014/02/19/squashing-github-pull-requests-into-a-single-commit>`_
 article for more details about why and how.
 
-Squashing is especially important if the pull request contains lof ot
+Squashing is especially important if the pull request contains lots of
 temporary commits and changes that have been later reverted or redone.
 Squashing is not needed if the commit history is clean and individual
 commits are meaningful alone.
