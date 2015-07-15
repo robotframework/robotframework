@@ -160,7 +160,7 @@ and follow these guidelines:
 - When referring to arguments, argument names must use in inline code style
   created with double backticks like ````argument````.
 
-- Examples are recommend whenever the new keyword or enhanced functionality is
+- Examples are recommended whenever the new keyword or enhanced functionality is
   not trivial.
 
 - All new enhancements or changes should have a note telling when the change
@@ -210,7 +210,7 @@ Acceptance tests
 
 Most of Robot Framework's testing is done using acceptance tests that
 naturally use Robot Framework itself for testing. Every new functionality
-or fix affecting should generally get one or more acceptance tests.
+or fix should generally get one or more acceptance tests.
 See `<atest/README.rst>`_ for more details for more details about creating
 and executing them.
 
