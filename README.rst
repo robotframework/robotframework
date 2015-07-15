@@ -24,10 +24,9 @@ For more information about Robot Framework and the ecosystem, see
 http://robotframework.org.
 
 Robot Framework project is hosted on GitHub_ where you can find source code,
-an issue tracker, and some further documentation. If you are interested to
-contribute, see `<CONTRIBUTING.rst>`__ for instructions. Downloads are hosted
-at PyPI_, except for the standalone JAR distribution that is in `Maven
-central`_.
+an issue tracker, and some further documentation. See `<CONTRIBUTING.rst>`__
+if you are interested to contribute. Downloads are hosted on PyPI_, except
+for the standalone JAR distribution that is on `Maven central`_.
 
 .. _GitHub: https://github.com/robotframework/robotframework
 .. _PyPI: https://pypi.python.org/pypi/robotframework
@@ -76,7 +75,7 @@ http://robotframework.org.
     ...
     ...               This test has a workflow that is created using keywords in
     ...               the imported resource file.
-    Resource          resource.txt
+    Resource          resource.robot
 
     *** Test Cases ***
     Valid Login
@@ -97,7 +96,7 @@ an argument with possible command line options before the path. Additionally
 there is ``rebot`` tool for combining results and otherwise post-processing
 outputs::
 
-    pybot tests.txt
+    pybot tests.robot
     jybot --variable HOST:example.com --outputdir results path/to/tests/
     rebot --name Example output1.xml output2.xml
 
