@@ -121,6 +121,17 @@ Documentation
 - `General documentation and demos
   <http://robotframework.org/#documentation>`_
 
+Support and contact
+-------------------
+
+- `robotframework-users
+  <groups.google.com/group/robotframework-users/>`_ mailing list
+- `Slack <https://robotframework-slack.herokuapp.com>`_ community
+- `#robotframework <http://webchat.freenode.net/?channels=robotframework&prompt=1>`_
+  IRC channel on freenode
+- `@robotframework <https://twitter.com/robotframework>`_ on Twitter
+- `Other forums <http://robotframework.org/#support-contact>`_
+
 License
 -------
 
