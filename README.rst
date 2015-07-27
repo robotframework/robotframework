@@ -32,18 +32,18 @@ for the standalone JAR distribution that is on `Maven central`_.
 .. _PyPI: https://pypi.python.org/pypi/robotframework
 .. _Maven central: http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework
 
-.. image:: https://img.shields.io/pypi/v/robotframework.svg
+.. image:: https://img.shields.io/pypi/v/robotframework.svg?label=version
    :target: https://pypi.python.org/pypi/robotframework
-   :alt: Version badge
-   
-.. image:: https://img.shields.io/pypi/l/robotframework.svg
-   :target: http://www.apache.org/licenses/LICENSE-2.0.html
-   :alt: License
+   :alt: Latest version
 
 .. image:: https://img.shields.io/pypi/dm/robotframework.svg
    :target: https://pypi.python.org/pypi/robotframework
    :alt: Number of downloads
-   
+
+.. image:: https://img.shields.io/pypi/l/robotframework.svg
+   :target: http://www.apache.org/licenses/LICENSE-2.0.html
+   :alt: License
+
 .. image:: https://robotframework-slack.herokuapp.com/badge.svg
    :target: https://robotframework-slack.herokuapp.com
    :alt: Slack channel
