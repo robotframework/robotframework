@@ -10,14 +10,14 @@ Heikki Hulkko                  2007 - 2009
 Anna Tevaniemi                 2008
 Kari Husa                      2009 - 2011
 Jussi Malinen                  2010 -
-Mikko Korpela                  2010 -
+Mikko Korpela                  2010 - 2014
 Ismo Aro                       2010 - 2012
 Ilmari Kontulainen             2010 - 2013
 Tommi Asiala                   2012
 Mika Hänninen                  2012 - 2013
-Tatu Kairi                     2012 -
-Anssi Syrjäsalo                2013 -
-Janne Piironen                 2013 -
+Tatu Kairi                     2012 - 2014
+Anssi Syrjäsalo                2013
+Janne Piironen                 2013 - 2014
 
 Other contributors:
 Elisabeth Hendrickson          Quick Start Guide (2.0)
