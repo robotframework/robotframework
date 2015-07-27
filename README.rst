@@ -125,7 +125,7 @@ Support and contact
 -------------------
 
 - `robotframework-users
-  <groups.google.com/group/robotframework-users/>`_ mailing list
+  <https://groups.google.com/group/robotframework-users/>`_ mailing list
 - `Slack <https://robotframework-slack.herokuapp.com>`_ community
 - `#robotframework <http://webchat.freenode.net/?channels=robotframework&prompt=1>`_
   IRC channel on freenode
