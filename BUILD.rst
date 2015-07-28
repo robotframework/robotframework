@@ -164,7 +164,7 @@ Release notes
 
 - Generate a template for the release notes::
 
-   invoke release_notes --login <github login> --password <github password>
+   invoke release_notes --version $VERSION --login <github login> --password <github password>
 
 - Create a new release at https://github.com/robotframework/robotframework/releases
 
