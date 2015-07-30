@@ -437,8 +437,8 @@ with it like:
 
 .. sourcecode:: bash
 
-  java -jar robotframework-2.8.5.jar mytests.txt
-  java -jar robotframework-2.8.5.jar --variable name:value mytests.txt
+  java -jar robotframework-2.9.jar mytests.robot
+  java -jar robotframework-2.9.jar --variable name:value mytests.robot
 
 If you want to `post-process outputs`_ using Rebot or use other built-in
 `supporting tools`_, you need to give the command name ``rebot``, ``libdoc``,
@@ -446,8 +446,8 @@ If you want to `post-process outputs`_ using Rebot or use other built-in
 
 .. sourcecode:: bash
 
-  java -jar robotframework-2.8.5.jar rebot output.xml
-  java -jar robotframework-2.8.5.jar libdoc MyLibrary list
+  java -jar robotframework-2.9.jar rebot output.xml
+  java -jar robotframework-2.9.jar libdoc MyLibrary list
 
 For more information about the different commands, execute the JAR without
 arguments.
@@ -478,13 +478,13 @@ interpreter versions as a result:
 .. sourcecode:: bash
 
    $ pybot --version
-   Robot Framework 2.8.5 (Python 2.7.3 on linux2)
+   Robot Framework 2.9 (Python 2.7.10 on linux2)
 
    $ rebot --version
-   Rebot 2.8.5 (Python 2.7.3 on linux2)
+   Rebot 2.9 (Python 2.7.10 on linux2)
 
    $ jybot --version
-   Robot Framework 2.8.5 (Jython 2.5.3 on java1.7.0_60)
+   Robot Framework 2.9 (Jython 2.7 on java1.7.0_60)
 
 If running the runner scripts fails with a message saying that the command is
 not found or recognized, a good first step is double-checking the PATH_
