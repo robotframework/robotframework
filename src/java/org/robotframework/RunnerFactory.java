@@ -27,13 +27,14 @@ import org.python.util.PythonInterpreter;
 public class RunnerFactory {
 
     private PyObject runnerClass;
+    public PythonInterpreter interpreter;
 
     public RunnerFactory() {
+        interpreter = new PythonInterpreter();
         runnerClass = importRunnerClass();
     }
 
     private PyObject importRunnerClass() {
-        PythonInterpreter interpreter = new PythonInterpreter();
         interpreter.exec("import robot; from robot.jarrunner import JarRunner");
         return interpreter.get("JarRunner");
     }
@@ -45,5 +46,12 @@ public class RunnerFactory {
     public RobotRunner createRunner() {
         PyObject runnerObject = runnerClass.__call__();
         return (RobotRunner) runnerObject.__tojava__(RobotRunner.class);
+    }
+
+    /**
+     * Cleans up the interpreter used for creating runners.
+     */
+    public void cleanup() {
+        interpreter.cleanup();
     }
 }

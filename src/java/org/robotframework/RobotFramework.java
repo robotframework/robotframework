@@ -59,7 +59,12 @@ public class RobotFramework {
      *              for meaning of different return codes.
      */
     public static int run(String[] args) {
-        RobotRunner runner = new RunnerFactory().createRunner();
-        return runner.run(args);
+        RunnerFactory context = new RunnerFactory();
+        RobotRunner runner = context.createRunner();
+        try {
+            return runner.run(args);
+        } finally {
+            context.cleanup();
+        }
     }
 }
