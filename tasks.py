@@ -193,7 +193,7 @@ def jar(jython_version='2.7.0', remove_dist=False):
     """
     clean(remove_dist, create_dirs=True)
     jython_jar = get_jython_jar(jython_version)
-    print 'Using {}'.format(jython_jar)
+    print 'Using {0}'.format(jython_jar)
     compile_java_files(jython_jar)
     unzip_jar(jython_jar)
     copy_robot_files()
@@ -204,12 +204,12 @@ def jar(jython_version='2.7.0', remove_dist=False):
 
 def get_jython_jar(version):
     lib = 'ext-lib'
-    jar = os.path.join(lib, 'jython-standalone-{}.jar'.format(version))
+    jar = os.path.join(lib, 'jython-standalone-{0}.jar'.format(version))
     if os.path.exists(jar):
         return jar
     url = ('http://search.maven.org/remotecontent?filepath=org/python/'
            'jython-standalone/{0}/jython-standalone-{0}.jar').format(version)
-    print 'Jython not found, downloading it from {}.'.format(url)
+    print 'Jython not found, downloading it from {0}.'.format(url)
     if not os.path.exists(lib):
         os.mkdir(lib)
     urllib.urlretrieve(url, jar)
@@ -219,7 +219,7 @@ def compile_java_files(jython_jar, build_dir='build'):
     root = os.path.join('src', 'java', 'org', 'robotframework')
     files = [os.path.join(root, name) for name in os.listdir(root)
              if name.endswith('.java')]
-    print 'Compiling {} Java files.'.format(len(files))
+    print 'Compiling {0} Java files.'.format(len(files))
     run('javac -d {target} -target 1.5 -source 1.5 -cp {cp} {files}'.format(
         target=build_dir, cp=jython_jar, files=' '.join(files)))
 
@@ -233,7 +233,7 @@ def copy_robot_files(build_dir='build'):
     shutil.rmtree(os.path.join(target, 'htmldata', 'testdata'))
 
 def compile_python_files(jython_jar, build_dir='build'):
-    run('java -jar {} -m compileall {}'.format(jython_jar, build_dir))
+    run('java -jar {0} -m compileall {1}'.format(jython_jar, build_dir))
     # Jython will not work without its py-files, but robot will
     for directory, _, files in os.walk(os.path.join(build_dir, 'Lib', 'robot')):
         for name in files:
@@ -242,8 +242,8 @@ def compile_python_files(jython_jar, build_dir='build'):
 
 def create_robot_jar(version, source='build'):
     write_manifest(version, source)
-    target = os.path.join('dist', 'robotframework-{}.jar'.format(version))
-    run('jar cvfM {} -C {} .'.format(target, source))
+    target = os.path.join('dist', 'robotframework-{0}.jar'.format(version))
+    run('jar cvfM {0} -C {1} .'.format(target, source))
     return target
 
 def write_manifest(version, build_dir='build'):
