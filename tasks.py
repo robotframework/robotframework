@@ -198,8 +198,9 @@ def jar(jython_version='2.7.0', remove_dist=False):
     unzip_jar(jython_jar)
     copy_robot_files()
     compile_python_files(jython_jar)
-    create_robot_jar(get_version_from_file())
+    filename = create_robot_jar(get_version_from_file())
     announce()
+    return os.path.abspath(filename)
 
 def get_jython_jar(version):
     lib = 'ext-lib'
@@ -243,6 +244,7 @@ def create_robot_jar(version, source='build'):
     write_manifest(version, source)
     target = os.path.join('dist', 'robotframework-{}.jar'.format(version))
     run('jar cvfM {} -C {} .'.format(target, source))
+    return target
 
 def write_manifest(version, build_dir='build'):
     with open(os.path.join(build_dir, 'META-INF', 'MANIFEST.MF'), 'w') as mf:

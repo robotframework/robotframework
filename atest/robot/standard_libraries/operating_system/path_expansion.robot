@@ -10,5 +10,4 @@ Tilde in path
 
 Tilde and username in path
     [Tags]  pybot
-    Run on python 2.5     Remove tags   regression
     Check testcase  ${TESTNAME}

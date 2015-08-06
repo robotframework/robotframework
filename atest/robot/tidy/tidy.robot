@@ -54,7 +54,8 @@ Custom headers are preserved and tables aligned accordingly
     Run tidy and check result    ${EMPTY}     golden_with_headers.robot
 
 Running Tidy as a script
-    Run tidy as a script and check result    ${EMPTY}    golden.robot
+    [Tags]   x-no-standalone
+    Run tidy as a script and check result    ${INTERPRETER}   ${EMPTY}    golden.robot
 
 Tidy tests and keywords containing ELSE and ELSE IF
     [Setup]    Copy File    ${DATA}/else_untidy.robot    ${TEMP}/else_untidy.robot

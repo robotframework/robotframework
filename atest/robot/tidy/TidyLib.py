@@ -15,9 +15,8 @@ TEMP_FILE = join(os.getenv('TEMPDIR'), 'tidy-test-dir', 'tidy-test-file.txt')
 
 class TidyLib(object):
 
-    def __init__(self, interpreter):
-        self._tidy = [interpreter, '-m', 'robot.tidy']
-        self._interpreter = interpreter
+    def __init__(self, command):
+        self._tidy = command.split()
 
     def run_tidy(self, options, input, output=None, tidy=None):
         """Runs tidy in the operating system and returns output."""
@@ -43,10 +42,10 @@ class TidyLib(object):
         result = self.run_tidy(options, input, output)
         return self.compare_tidy_results(output or result, expected or input)
 
-    def run_tidy_as_a_script_and_check_result(self, options, input,
+    def run_tidy_as_a_script_and_check_result(self, interpreter, options, input,
                                               output=TEMP_FILE, expected=None):
         """Runs tidy and checks that output matches content of file `expected`."""
-        tidy = [self._interpreter, join(ROBOT_SRC, 'robot', 'tidy.py')]
+        tidy = [interpreter, join(ROBOT_SRC, 'robot', 'tidy.py')]
         result = self.run_tidy(options, input, output, tidy)
         return self.compare_tidy_results(output or result, expected or input)
 

@@ -1,5 +1,4 @@
 *** Settings ***
-Suite Setup     Set Runners
 Default Tags    regression  pybot  jybot
 Resource        cli_resource.robot
 Test Template   Run Tests and Verify RC

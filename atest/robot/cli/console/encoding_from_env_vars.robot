@@ -15,7 +15,6 @@ Invalid Encoding In Environment Variables
 
 *** Keywords ***
 Run Some Tests With Std Streams Redirected
-  Set Runners
   ${cmd} =  Catenate
   ...  echo "redirect stdin" |
   ...  LANG=invalid LC_TYPE=invalid LANGUAGE=invalid LC_ALL=invalid

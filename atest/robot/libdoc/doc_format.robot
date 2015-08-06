@@ -77,5 +77,5 @@ Format should be
 
 Fail test non-critically if docutils is not installed
     ${output} =  Run  ${INTERPRETER} -c "import docutils; print 'OK'"
-    Run Keyword If    """${output}""" != "OK"
+    Run Keyword If    $output != 'OK' or $STANDALONE_JAR
     ...    Fail    This test requires `docutils` to be installed   -regression

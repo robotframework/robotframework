@@ -23,7 +23,7 @@ Send other well-known signals
     \    Killer signal    ${signal}
 
 By default signal is not sent to process running in shell
-    Check Precondition    sys.platform != "darwin"
+    Precondition not OSX
     Start Countdown    shell=yes
     Send Signal To Process    TERM
     Countdown should not have stopped

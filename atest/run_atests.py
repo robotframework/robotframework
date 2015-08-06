@@ -11,9 +11,15 @@ See its help (e.g. `pybot --help`) for more information.
 
 The specified interpreter is used by acceptance tests under `robot` to
 run test cases under `testdata`. It can be simply `python` or `jython`
-(if they are in PATH) or to a path a selected interpreter (e.g.
-`/usr/bin/python26`). Note that this script itself must always be
-executed with Python 2.6 or newer.
+(if they are in PATH) or a path to a selected interpreter (e.g.
+`/usr/bin/python26`) or a path to a robotframework standalone jar (e.g.
+/tmp/robotframework-2.9dev234.jar).
+
+As a special case the interpreter value `standalone` will compile a new
+standalone jar from the current sources and execute the acceptance tests with
+it.
+
+Note that this script itself must always be executed with Python 2.6 or newer.
 
 Examples:
 $ atest/run_atests.py python --test example atest/robot
@@ -32,9 +38,17 @@ if sys.version_info < (2, 6):
     sys.exit('Running this script requires Python 2.6 or newer.')
 
 CURDIR = dirname(abspath(__file__))
-RUNNER = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
-ARGUMENTS = ' '.join('''
---console dotted
+SRC = join(CURDIR, '..', 'src', 'robot')
+RUNNER = normpath(join(SRC, 'run.py'))
+REBOT = normpath(join(SRC, 'rebot.py'))
+TESTDOC = normpath(join(SRC, 'testdoc.py'))
+LIBDOC = normpath(join(SRC, 'libdoc.py'))
+TIDY = normpath(join(SRC, 'tidy.py'))
+
+sys.path.append(join(CURDIR, '..'))
+from tasks import jar
+
+ARGUMENTS = '''
 --doc RobotSPFrameworkSPacceptanceSPtests
 --reporttitle RobotSPFrameworkSPTestSPReport
 --logtitle RobotSPFrameworkSPTestSPLog
@@ -44,7 +58,12 @@ ARGUMENTS = ' '.join('''
 --variable PYTHON:%(PYTHON)s
 --variable JYTHON:%(JYTHON)s
 --variable IRONPYTHON:%(IRONPYTHON)s
---variable STANDALONE_JYTHON:NO
+--variable ROBOT:%(ROBOT)s
+--variable REBOT:%(REBOT)s
+--variable LIBDOC:%(LIBDOC)s
+--variable TESTDOC:%(TESTDOC)s
+--variable TIDY:%(TIDY)s
+--variable STANDALONE_JAR:%(STANDALONE_JAR)s
 --pythonpath %(PYTHONPATH)s
 --include %(INCLUDE)s
 --outputdir %(OUTPUTDIR)s
@@ -52,6 +71,7 @@ ARGUMENTS = ' '.join('''
 --report report.html
 --log log.html
 --splitlog
+--console dotted
 --escape space:SP
 --escape star:STAR
 --escape paren1:PAR1
@@ -64,13 +84,19 @@ ARGUMENTS = ' '.join('''
 --TagStatExclude pybot
 --TagStatExclude jybot
 --TagStatExclude x-*
-'''.strip().split())
-
+'''.strip().split()
 
 def atests(interpreter_path, *params):
+    if interpreter_path == 'standalone':
+        interpreter_path = jar()
+    if '.jar' in interpreter_path:
+        return exec_standalone(interpreter_path, *params)
+    return exec_interpreter(interpreter_path, *params)
+
+def exec_interpreter(interpreter_path, *params):
     interpreter = _get_interpreter_basename(interpreter_path)
     resultdir, tempdir = _get_result_and_temp_dirs(interpreter)
-    args = ARGUMENTS % {
+    env = {
         'PYTHONPATH' : join(CURDIR, 'resources'),
         'OUTPUTDIR' : resultdir,
         'INTERPRETER': interpreter_path,
@@ -78,24 +104,63 @@ def atests(interpreter_path, *params):
         'JYTHON': interpreter_path if 'jython' in interpreter else '',
         'IRONPYTHON': interpreter_path if 'ipy' in interpreter else '',
         'PLATFORM': sys.platform,
-        'INCLUDE': 'jybot' if 'jython' in interpreter else 'pybot'
+        'INCLUDE': 'jybot' if 'jython' in interpreter else 'pybot',
+        'ROBOT': '%s %s' % (interpreter_path, RUNNER),
+        'REBOT': '%s %s' % (interpreter_path, REBOT),
+        'LIBDOC': '%s %s' % (interpreter_path, LIBDOC),
+        'TESTDOC': '%s %s' % (interpreter_path, TESTDOC),
+        'TIDY': '%s %s' % (interpreter_path, TIDY),
+        'STANDALONE_JAR': ''
     }
-    if os.name == 'nt':
-        args += ' --exclude x-exclude-on-windows'
+    args = [arg % env for arg in ARGUMENTS]
     if sys.platform == 'darwin' and 'python' in interpreter:
-        args += ' --exclude x-exclude-on-osx-python'
+        args += ['--exclude', 'x-exclude-on-osx-python']
     if 'ipy' in interpreter:
-        args += ' --noncritical x-fails-on-ipy'
-    command = '%s %s %s %s' % (sys.executable, RUNNER, args, ' '.join(params))
+        args += ['--noncritical', 'x-fails-on-ipy']
+    return _run(args, tempdir, *params)
+
+def exec_standalone(standalone_path, *params):
+    resultdir, tempdir = _get_result_and_temp_dirs('jython_standalone')
+    tools_path = _get_bootclasspath()
+    env = {
+        'PYTHONPATH' : join(CURDIR, 'resources'),
+        'OUTPUTDIR' : resultdir,
+        'INTERPRETER': 'jython',
+        'PYTHON': '',
+        'JYTHON': '',
+        'IRONPYTHON': '',
+        'PLATFORM': sys.platform,
+        'INCLUDE': 'jybot',
+        'ROBOT': 'java %s -jar %s' % (tools_path, standalone_path),
+        'REBOT': 'java %s -jar %s rebot' % (tools_path, standalone_path),
+        'LIBDOC': 'java %s -jar %s libdoc' % (tools_path, standalone_path),
+        'TESTDOC': 'java %s -jar %s testdoc' % (tools_path, standalone_path),
+        'TIDY': 'java %s -jar %s tidy' % (tools_path, standalone_path),
+        'STANDALONE_JAR': 'True'
+    }
+    args = [arg % env for arg in ARGUMENTS]
+    args += ['--exclude', 'x-no-standalone']
+    return _run(args, tempdir, *params)
+
+def _get_bootclasspath():
+    classpath = os.environ.get('CLASSPATH', '')
+    if classpath:
+        return '-Xbootclasspath/a:%s' % classpath
+    return ''
+
+def _run(args, tempdir, *params):
+    if os.name == 'nt':
+        args += ['--exclude', 'x-exclude-on-windows']
+    command = [sys.executable, RUNNER]+args+list(params)
     environ = dict(os.environ, TEMPDIR=tempdir)
-    print 'Running command\n%s\n' % command
+    print 'Running command\n%s\n' % ' '.join(command)
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
-    return subprocess.call(command.split(), env=environ)
+    return subprocess.call(command, env=environ)
 
 def _get_interpreter_basename(interpreter):
     interpreter = basename(interpreter)
-    base, ext  = splitext(interpreter)
+    base, ext = splitext(interpreter)
     if ext.lower() in ('.sh', '.bat', '.cmd', '.exe'):
         return base
     return interpreter

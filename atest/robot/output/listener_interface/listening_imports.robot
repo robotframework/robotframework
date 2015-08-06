@@ -49,7 +49,7 @@ Expect
 
 Java Expect
     [Arguments]    ${type}    ${name}    @{attrs}
-    Run keyword if    $JYTHON    Expect    ${type}    ${name}    @{attrs}
+    Run keyword if    $JYTHON or $STANDALONE_JAR    Expect    ${type}    ${name}    @{attrs}
 
 Verify Expected
     Check Listener File    listener_imports.txt    @{EXPECTED}

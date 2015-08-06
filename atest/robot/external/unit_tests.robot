@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Robot unit tests
 Suite Setup     Set Variables  unit
-Force Tags      smoke  regression
+Force Tags      smoke  regression    x-no-standalone
 Resource        atest_resource.robot
 
 *** Variables ***

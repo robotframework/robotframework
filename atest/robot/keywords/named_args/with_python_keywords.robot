@@ -87,7 +87,6 @@ List variable with multiple values for same variable
     Check Test Case    ${TESTNAME}
 
 Nön äscii allowed in keyword argument names
-    Run on Python 2.5    Remove tags    Regression
     Check Test Case    ${TESTNAME}
 
 Empty string is allowed in kwargs names

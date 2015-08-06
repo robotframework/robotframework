@@ -16,6 +16,7 @@ Library Import With Spaces In Name
     Check Log Message    ${test.kws[1].messages[0]}    It really workz!!
 
 Importing Library Class Should Have Been Syslogged
+    [tags]    x-no-standalone
     ${source} =    Normalize Path And Ignore Drive    ${CURDIR}/../../../src/robot/libraries/OperatingSystem
     Syslog Should Contain Match    | INFO \ |    Imported test library class 'robot.libraries.OperatingSystem' from '${source}*'
     ${base} =    Normalize Path And Ignore Drive    ${CURDIR}/../../testresources/testlibs

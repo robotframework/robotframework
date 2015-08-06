@@ -14,7 +14,6 @@ Kwargs with variables in names
     Check Test Case    ${TESTNAME}
 
 Kwargs with variables with non-ASCII value in names
-    Run on Python 2.5    Remove tags    Regression
     Check Test Case    ${TESTNAME}
 
 Escaping variable syntax in kwarg names

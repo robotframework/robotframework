@@ -29,7 +29,6 @@ Empty output directory
 Run rebot and return outputs
     [Arguments]  ${arguments}
     Empty output directory
-    Set Runners
     Run  ${REBOT} --outputdir ${MYOUTDIR} ${arguments} ${MYINPUT}
     @{outputs} =  List Directory  ${MYOUTDIR}
     [Return]  @{outputs}

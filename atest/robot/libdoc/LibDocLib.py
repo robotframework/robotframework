@@ -12,9 +12,8 @@ ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 
 class LibDocLib(object):
 
-    def __init__(self, interpreter):
-        self._interpreter = interpreter
-        self._cmd = [interpreter, '-m', 'robot.libdoc']
+    def __init__(self, command):
+        self._cmd = command.split()
 
     def run_libdoc(self, args):
         cmd = self._cmd + [a for a in args.split(' ') if a]

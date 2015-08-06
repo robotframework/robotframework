@@ -3,9 +3,8 @@ Default Tags    regression  pybot  jybot
 Resource        cli_resource.robot
 
 *** Test Cases ***
-
 Help
-    Set Runners
+    [Tags]    x-no-standalone
     ${rc}  ${help} =  Run And Return Rc And Output  ${ROBOT} --help
     Should Be Equal  ${rc}  ${251}
     Log  ${help.replace(' ','_')}
@@ -28,7 +27,6 @@ Help
     Should Be Equal  ${help}  ${help2}
 
 Version
-    Set Runners
     ${rc}  ${output} =  Run And Return Rc And Output  ${ROBOT} --version
     Should Be Equal  ${rc}  ${251}
     Log  ${output}

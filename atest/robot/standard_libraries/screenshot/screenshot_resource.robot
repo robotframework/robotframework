@@ -17,6 +17,7 @@ Are Screenshot dependencies available
     ${lib} =    Normalize Path    ${ROBOT PATH}/libraries/Screenshot.py
     ${jpg} =    Normalize Path    %{TEMPDIR}/test-screenshot.jpg
     ${ppath}    ${_} =    Split Path    ${ROBOT PATH}
+    Return from keyword if    $STANDALONE_JAR    ${True}
     ${result} =    Run Process   ${INTERPRETER}    ${lib}    test    ${jpg}    stderr=STDOUT
     ...    env:JYTHONPATH=${ppath}    env:IRONPYTHONPATH=${ppath}    shell=true
     Log    ${result.stdout}

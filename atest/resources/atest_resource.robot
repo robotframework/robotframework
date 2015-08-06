@@ -29,7 +29,6 @@ ${TESTNAME}     ${EMPTY}    # Used when not running test
 *** Keywords ***
 Run Robot Directly
     [Arguments]  ${opts and args}
-    Set Runners
     ${output} =  Run  ${ROBOT} --outputdir %{TEMPDIR} ${opts and args}
     Log  ${output}
     [Return]  ${output}
@@ -102,13 +101,6 @@ Set Variables
     Set Suite Variable  $STDERR_FILE  ${OUTDIR}${/}stderr.txt
     Set Suite Variable  $SYSLOG_FILE  ${OUTDIR}${/}syslog.txt
     Set Environment Variable  ROBOT_SYSLOG_FILE  ${SYSLOG_FILE}
-    Set Runners
-
-Set Runners
-    ${robot} =  Join Path  ${ROBOTPATH}  run.py
-    Set Suite Variable  $ROBOT  ${INTERPRETER} ${robot}
-    ${rebot} =  Join Path  ${ROBOTPATH}  rebot.py
-    Set Suite Variable  $REBOT  ${INTERPRETER} ${rebot}
 
 Check Test Case
     [Arguments]  ${name}=${TESTNAME}  ${status}=${NONE}  ${message}=${NONE}
@@ -359,12 +351,6 @@ Run on python 2.5 and 2.6
     ${is 27} =   is 27    ${interpreter}
     Run keyword unless    ${is 27}    ${kw}   @{args}
 
-Run on python 2.5
-    [arguments]     ${kw}   @{args}
-    ${interpreter} =    Get interpreter    ${OUTFILE}
-    ${is 25} =   is 25    ${interpreter}
-    Run keyword if    ${is 25}    ${kw}   @{args}
-
 Make test non-critical if
     [Arguments]    ${condition}
     Run Keyword If    ${condition}    Remove Tags    regression
@@ -376,11 +362,11 @@ Make test non-critical on IronPython
 Set PYTHONPATH
     [Arguments]    @{values}
     ${value} =    Catenate    SEPARATOR=${:}    @{values}
-    Run Keyword If    "${PYTHON}"        Set Environment Variable    PYTHONPATH        ${value}
-    Run Keyword If    "${JYTHON}"        Set Environment Variable    JYTHONPATH        ${value}
-    Run Keyword If    "${IRONPYTHON}"    Set Environment Variable    IRONPYTHONPATH    ${value}
+    Run Keyword If    $PYTHON    Set Environment Variable    PYTHONPATH    ${value}
+    Run Keyword If    $JYTHON or $STANDALONE_JAR    Set Environment Variable    JYTHONPATH    ${value}
+    Run Keyword If    $IRONPYTHON    Set Environment Variable    IRONPYTHONPATH    ${value}
 
 Reset PYTHONPATH
-    Run Keyword If    "${PYTHON}"        Remove Environment Variable    PYTHONPATH
-    Run Keyword If    "${JYTHON}"        Remove Environment Variable    JYTHONPATH
-    Run Keyword If    "${IRONPYTHON}"    Remove Environment Variable    IRONPYTHONPATH
+    Run Keyword If    $PYTHON    Remove Environment Variable    PYTHONPATH
+    Run Keyword If    $JYTHON or $STANDALONE_JAR    Remove Environment Variable    JYTHONPATH
+    Run Keyword If    $IRONPYTHON    Remove Environment Variable    IRONPYTHONPATH

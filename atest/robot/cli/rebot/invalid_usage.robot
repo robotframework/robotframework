@@ -50,7 +50,6 @@ Invalid --RemoveKeywords
 
 Rebot Should Fail
     [Arguments]    ${options}    ${exp msg}
-    Set Runners
     ${rc}    ${output} =    Run And Return RC and Output    ${REBOT} ${options}
     Log    ${output}
     Should Be Equal As Integers    ${rc}    252

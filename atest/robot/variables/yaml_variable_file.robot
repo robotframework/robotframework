@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    --variablefile ${VARDIR}/cli.yaml --pythonpath ${VARDIR}    variables/yaml_variable_file.robot
-Force Tags       regression    pybot    jybot
+Force Tags       regression    pybot    jybot   x-no-standalone
 Resource         atest_resource.robot
 
 *** Variables ***
