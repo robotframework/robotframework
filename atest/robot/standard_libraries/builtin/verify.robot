@@ -54,6 +54,15 @@ Should Be Equal fails with values
 Should Be Equal fails without values
     Check test case    ${TESTNAME}
 
+Should be equal with multiline text uses diff
+    Check test case    ${TESTNAME}
+
+Should be equal with multiline diff text requires both multiline
+    Check test case    ${TESTNAME}
+
+Should be equal with multiline text will not use diff if values are not included
+    Check test case    ${TESTNAME}
+
 Should Be Equal with bytes containing non-ascii characters
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    str    str

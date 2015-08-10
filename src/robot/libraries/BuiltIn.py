@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import difflib
 import re
 import time
 import token
@@ -616,8 +617,25 @@ class _Verify(_BuiltInBase):
         self._should_be_equal(first, second, msg, values)
 
     def _should_be_equal(self, first, second, msg, values):
-        asserts.fail_unless_equal(first, second, msg,
-                                  self._include_values(values))
+        include_values = self._include_values(values)
+        if include_values and self._is_failing_multiline_comparison(first, second):
+            self._raise_multi_diff(first, second)
+        asserts.fail_unless_equal(first, second, msg, include_values)
+
+    def _is_failing_multiline_comparison(self, first, second):
+        return (isinstance(first, basestring) and
+                isinstance(second, basestring) and
+                '\n' in first and '\n' in second and
+                first != second)
+
+    def _raise_multi_diff(self, first, second):
+        self.log("%s\n!=\n%s" % (first, second))
+        err = 'Diff:\n'
+        for line in difflib.context_diff(first.splitlines(),
+                                         second.splitlines(), fromfile='first',
+                                         tofile='second'):
+            err += line + '\n'
+        raise AssertionError(err)
 
     def _include_values(self, values):
         return is_truthy(values) and str(values).upper() != 'NO VALUES'

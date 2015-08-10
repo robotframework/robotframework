@@ -92,6 +92,28 @@ Should Be Equal fails without values
     x    y    z    values=no
     .    ,    -    ${NONE}
 
+Should be equal with multiline text uses diff
+    [Documentation]    FAIL Diff:\n
+                       ...    *** first\n\n
+                       ...    --- second\n\n
+                       ...    ***************\n\n
+                       ...    *** 1,3 ****\n\n
+                       ...    --- 1,4 ----\n\n
+                       ...    ${SPACE*2}foo\n
+                       ...    ${SPACE*2}bar\n
+                       ...    + gar\n
+                       ...    ${SPACE*2}dar\n
+    Should be equal    foo\nbar\ndar    foo\nbar\ngar\ndar
+
+Should be equal with multiline diff text requires both multiline
+    [Documentation]    FAIL foo\nbar\ndar != foobar
+    Should be equal    foo\nbar\ndar    foobar
+
+Should be equal with multiline text will not use diff if values are not included
+    [Documentation]    FAIL Custom message
+    Should be equal    foo\nbar\ndar    foo\nbar\ngar\ndar   Custom message    values=FALSE
+
+
 Should Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} != ${BYTES WITHOUT NON ASCII}
     Should be equal    ${BYTES WITH NON ASCII}    ${BYTES WITH NON ASCII}
