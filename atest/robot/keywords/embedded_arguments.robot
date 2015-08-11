@@ -84,9 +84,11 @@ Embedded Arguments Syntax Is Case Insensitive
     Keyword data should be    ${tc.kws[2]}    x GETS y from the z
     Keyword data should be    ${tc.kws[3]}    x gets y FROM THE z
 
-Embedded Arguments Syntax is Space and Underscore Sensitive
-    Check Test Case    Embedded Arguments Syntax is Space Sensitive
-    Check Test Case    Embedded Arguments Syntax is Underscore Sensitive
+Embedded Arguments Syntax is Space Sensitive
+    Check Test Case    ${TEST NAME}
+
+Embedded Arguments Syntax is Underscore Sensitive
+    Check Test Case    ${TEST NAME}
 
 Embedded Arguments In Resource File
     ${tc} =    Check Test Case    ${TEST NAME}

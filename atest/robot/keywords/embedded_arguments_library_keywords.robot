@@ -51,9 +51,11 @@ Custom Regexp Matching Variables
 Custom Regexp Matching Variables When Regexp Does No Match Them
     Check Test Case    ${TEST NAME}
 
-Embedded Arguments Syntax is Space and Underscore Sensitive
-    Check Test Case    Embedded Arguments Syntax is Space Sensitive
-    Check Test Case    Embedded Arguments Syntax is Underscore Sensitive
+Embedded Arguments Syntax is Space Sensitive
+    Check Test Case    ${TEST NAME}
+
+Embedded Arguments Syntax is Underscore Sensitive
+    Check Test Case    ${TEST NAME}
 
 Keyword matching multiple keywords in library file
     ${tc} =    Check Test Case    ${TEST NAME}
