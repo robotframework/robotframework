@@ -68,10 +68,9 @@ class TestUserLibrary(unittest.TestCase):
 
     def test_creating_duplicate_embedded_arg_keyword_in_resource_file(self):
         lib = self._get_userlibrary('Embedded ${arg}', 'kw', 'Embedded ${arg}')
-        assert_equals(len(lib.handlers), 2)
-        assert_equals(lib.handlers['Embedded ${arg}'].error,
-                      "Keyword with same name defined multiple times.")
+        assert_equals(len(lib.handlers), 3)
         assert_true(not hasattr(lib.handlers['kw'], 'error'))
+        self._lib_has_embedded_arg_keyword(lib, count=2)
 
     def test_creating_duplicate_keyword_in_resource_file(self):
         lib = self._get_userlibrary('kw', 'kw', 'kw 2')
@@ -109,11 +108,12 @@ class TestUserLibrary(unittest.TestCase):
         return userkeyword.UserLibrary([UserKeyword(None, name)
                                         for name in keyword_names])
 
-    def _lib_has_embedded_arg_keyword(self, lib):
+    def _lib_has_embedded_arg_keyword(self, lib, count=1):
         assert_true('Embedded ${arg}' in lib.handlers)
         embedded = lib.handlers._embedded
-        assert_equals(len(embedded), 1)
-        assert_equals(embedded[0].name, 'Embedded ${arg}')
+        assert_equals(len(embedded), count)
+        for template in embedded:
+            assert_equals(template.name, 'Embedded ${arg}')
 
 
 if __name__ == '__main__':
