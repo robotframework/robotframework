@@ -62,20 +62,25 @@ User Keyword Name Ending With Dot
 
 Name Set Using 'robot_name' Attribute
     ${tc} =    Check Test Case    ${TESTNAME}
-     Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot_name' attribute!
+    Should Be Equal    ${tc.kws[0].name}    MyLibrary1.Name set using 'robot_name' attribute
+    Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot_name' attribute!
 
 Name Set Using 'robot.api.deco.keyword' Decorator
     ${tc} =    Check Test Case    ${TESTNAME}
-     Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot.api.deco.keyword' decorator!
+    Should Be Equal    ${tc.kws[0].name}    MyLibrary1.Name set using 'robot.api.deco.keyword' decorator
+    Check Log Message    ${tc.kws[0].msgs[0]}    My name was set using 'robot.api.deco.keyword' decorator!
 
 Custom non-ASCII name
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].name}    MyLibrary1.Custom nön-ÄSCII name
 
 Old Name Doesn't Work If Name Set Using 'robot_name'
     Check Test Case    ${TESTNAME}
 
 Keyword can just be marked without changing its name
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Equal    ${tc.kws[0].name}    MyLibrary1.No Custom Name Given 1
+    Should Be Equal    ${tc.kws[1].name}    MyLibrary1.No Custom Name Given 2
 
 Assignment is not part of name
     ${tc} =    Check Test Case    ${TESTNAME}

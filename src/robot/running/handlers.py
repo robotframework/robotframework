@@ -56,8 +56,7 @@ class _RunnableHandler(object):
 
     def __init__(self, library, handler_name, handler_method, doc=''):
         self.library = library
-        name = getattr(handler_method, 'robot_name', None) or handler_name
-        self.name = utils.printable_name(name, code_style=True)
+        self.name = self._get_name(handler_name, handler_method)
         self.arguments = self._parse_arguments(handler_method)
         self.pre_run_messages = None
         self._handler_name = handler_name
@@ -68,11 +67,15 @@ class _RunnableHandler(object):
         self._doc = doc
         self.tags = self._get_tags_from_attribute(handler_method) + tags
 
+    def _get_name(self, handler_name, handler_method):
+        robot_name = getattr(handler_method, 'robot_name', None)
+        return robot_name or utils.printable_name(handler_name, code_style=True)
+
     def _parse_arguments(self, handler_method):
         raise NotImplementedError
 
     def _get_tags_from_attribute(self, handler_method):
-        tags =  getattr(handler_method, 'robot_tags', ())
+        tags = getattr(handler_method, 'robot_tags', ())
         if not utils.is_list_like(tags):
             raise DataError("Expected tags to list like, got %s."
                             % utils.type_name(tags))

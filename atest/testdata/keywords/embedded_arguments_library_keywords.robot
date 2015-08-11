@@ -140,13 +140,13 @@ Same name with different regexp works
 Same name with different regexp matching multiple fails
     [Documentation]    FAIL
     ...    Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is a cat':
-    ...    ${INDENT}It Is ${animal:a (cat|cow)}
-    ...    ${INDENT}It Is ${animal:a (dog|cat)}
+    ...    ${INDENT}It is ${animal:a (cat|cow)}
+    ...    ${INDENT}It is ${animal:a (dog|cat)}
     It is a cat
 
 Same name with same regexp fails
     [Documentation]    FAIL
     ...    Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is totally same':
-    ...    ${INDENT}It Is Totally ${same}
-    ...    ${INDENT}It Is Totally ${same}
+    ...    ${INDENT}It is totally ${same}
+    ...    ${INDENT}It is totally ${same}
     It is totally same
