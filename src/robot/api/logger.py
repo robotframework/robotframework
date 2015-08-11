@@ -33,21 +33,24 @@ using logger named ``RobotFramework``. This feature was added in RF 2.8.7.
 Log levels
 ----------
 
-It is possible to log messages using levels ``TRACE``, ``DEBUG``, ``INFO``, ``WARN`` 
-and ``ERROR`` either using the ``write`` method or, more commonly, with the
-log level specific ``trace``, ``debug``, ``info``,``warn``,``error`` methods.
+It is possible to log messages using levels ``TRACE``, ``DEBUG``, ``INFO``,
+``WARN`` and ``ERROR`` either using the :func:`write` function or, more
+commonly, with the log level specific :func:`trace`, :func:`debug`,
+:func:`info`, :func:`warn`, :func:`error` functions. The support for the
+error level and function is new in RF 2.9.
 
 By default the trace and debug messages are not logged but that can be
-changed with the ``--loglevel`` command line option. Warnings are
-automatically written also to the `Test Execution Errors` section in
-the log file and to the console.
+changed with the ``--loglevel`` command line option. Warnings and errors are
+automatically written also to the console and to the *Test Execution Errors*
+section in the log file.
 
 Logging HTML
 ------------
 
 All methods that are used for writing messages to the log file have an
 optional ``html`` argument. If a message to be logged is supposed to be
-shown as HTML, this argument should be set to ``True``.
+shown as HTML, this argument should be set to ``True``. Alternatively,
+:func:`write` accepts a pseudo log level ``HTML``.
 
 Example
 -------
@@ -67,12 +70,17 @@ from robot.output import librarylogger
 from robot.running.context import EXECUTION_CONTEXTS
 
 
-def write(msg, level, html=False):
+def write(msg, level='INFO', html=False):
     """Writes the message to the log file using the given level.
 
-    Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` and ``WARN``.
+    Valid log levels are ``TRACE``, ``DEBUG``, ``INFO`` (default since RF
+    2.9.1), ``WARN``, and ``ERROR`` (new in RF 2.9). Additionally it is
+    possible to use ``HTML`` pseudo log level that logs the message as HTML
+    using the ``INFO`` level.
+
     Instead of using this method, it is generally better to use the level
-    specific methods such as ``info`` and ``debug``.
+    specific methods such as ``info`` and ``debug`` that have separate
+    ``html`` argument to control the message format.
     """
     if EXECUTION_CONTEXTS.current is not None:
         librarylogger.write(msg, level, html)
@@ -114,7 +122,10 @@ def warn(msg, html=False):
 
 
 def error(msg, html=False):
-    """Writes the message to the log file using the ``ERROR`` level."""
+    """Writes the message to the log file using the ``ERROR`` level.
+
+    New in Robot Framework 2.9.
+    """
     write(msg, 'ERROR', html)
 
 
