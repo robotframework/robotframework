@@ -14,9 +14,9 @@ Using keyword defined thrice fails as well
     Creating keyword should have failed    2    DEFINED THRICE
 
 Keyword with embedded arguments defined twice
-    Check Test Case    ${TESTNAME}: Cannot be called with embedded args
-    Check Test Case    ${TESTNAME}: Can be called with exact name
-    Creating keyword should have failed    3    Embedded \${arguments match} TWICE
+    Check Test Case    ${TESTNAME}: Called with embedded args
+    Check Test Case    ${TESTNAME}: Called with exact name
+    Length Should Be    ${ERRORS}    3
 
 *** Keywords ***
 Creating keyword should have failed

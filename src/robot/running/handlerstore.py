@@ -19,6 +19,8 @@ from robot.errors import DataError
 from robot.parsing import VALID_EXTENSIONS as RESOURCE_EXTENSIONS
 from robot.utils import NormalizedDict
 
+from .usererrorhandler import UserErrorHandler
+
 
 class HandlerStore(object):
 
@@ -30,13 +32,12 @@ class HandlerStore(object):
     def add(self, handler, embedded=False):
         if embedded:
             self._embedded.append(handler)
-        else:
+        elif handler.name not in self._normal:
             self._normal[handler.name] = handler
-
-    def remove(self, name):
-        if name in self._normal:
-            self._normal.pop(name)
-        self._embedded = [e for e in self._embedded if not e.matches(name)]
+        else:
+            error = 'Keyword with same name defined multiple times.'
+            self._normal[handler.name] = UserErrorHandler(handler.name, error)
+            raise DataError(error)
 
     def __iter__(self):
         return iter(sorted(self._normal.values() + self._embedded,

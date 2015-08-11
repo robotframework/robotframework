@@ -37,28 +37,27 @@ class UserLibrary(object):
         self.handlers = HandlerStore(basename)
         for kw in user_keywords:
             try:
-                handler, embedded = self._create_handler(kw)
-                self._validate_not_duplicate(handler)
+                handler = self._create_handler(kw)
             except DataError as err:
-                LOGGER.error("Creating user keyword '%s' failed: %s"
-                             % (kw.name, unicode(err)))
                 handler = UserErrorHandler(kw.name, unicode(err))
-                embedded = False
-            self.handlers.add(handler, embedded)
+                self._log_creating_failed(kw.name, unicode(err))
+            embedded = isinstance(handler, EmbeddedArgsTemplate)
+            try:
+                self.handlers.add(handler, embedded)
+            except DataError as err:
+                self._log_creating_failed(kw.name, unicode(err))
 
     def _create_handler(self, kw):
         embedded = EmbeddedArguments(kw.name)
-        if embedded:
-            if kw.args:
-                raise DataError('Keyword cannot have both normal and embedded '
-                                'arguments.')
-            return EmbeddedArgsTemplate(kw, self.name, embedded), True
-        return UserKeywordHandler(kw, self.name), False
+        if not embedded:
+            return UserKeywordHandler(kw, self.name)
+        if kw.args:
+            raise DataError('Keyword cannot have both normal and embedded '
+                            'arguments.')
+        return EmbeddedArgsTemplate(kw, self.name, embedded)
 
-    def _validate_not_duplicate(self, handler):
-        if handler.name in self.handlers:
-            self.handlers.remove(handler.name)
-            raise DataError('Keyword with same name defined multiple times.')
+    def _log_creating_failed(self, name, message):
+        LOGGER.error("Creating user keyword '%s' failed: %s" % (name, message))
 
 
 class UserKeywordHandler(object):

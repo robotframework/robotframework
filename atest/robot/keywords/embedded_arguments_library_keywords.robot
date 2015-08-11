@@ -84,3 +84,15 @@ Optional Non-Embedded Args Are Okay
 
 Star Args With Embedded Args Are Okay
     Check Test Case    ${TESTNAME}
+
+Same name with different regexp works
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    a car
+    Check Log Message    ${tc.kws[1].msgs[0]}    a dog
+    Check Log Message    ${tc.kws[2].msgs[0]}    a cow
+
+Same name with different regexp matching multiple fails
+    Check Test Case    ${TEST NAME}
+
+Same name with same regexp fails
+    Check Test Case    ${TEST NAME}

@@ -129,6 +129,18 @@ Keyword matching multiple keywords in different resource files
 Keyword matching multiple keywords in one and different resource files
     Check Test Case    ${TEST NAME}
 
+Same name with different regexp works
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    a car
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    a dog
+    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    a cow
+
+Same name with different regexp matching multiple fails
+    Check Test Case    ${TEST NAME}
+
+Same name with same regexp fails
+    Check Test Case    ${TEST NAME}
+
 *** Keywords ***
 Creating Keyword Failed
     [Arguments]    ${index}    ${name}    ${error}    ${pattern}=

@@ -1,3 +1,6 @@
+*** Variables ***
+${INDENT}         ${SPACE * 4}
+
 *** Test Cases ***
 Using keyword defined twice fails
     [Documentation]    FAIL Keyword with same name defined multiple times.
@@ -7,12 +10,18 @@ Using keyword defined thrice fails as well
     [Documentation]    FAIL Keyword with same name defined multiple times.
     Defined thrice
 
-Keyword with embedded arguments defined twice: Cannot be called with embedded args
-    [Documentation]    FAIL No keyword with name 'Embedded arguments twice' found.
+Keyword with embedded arguments defined twice: Called with embedded args
+    [Documentation]    FAIL
+    ...    Test case file contains multiple keywords matching name 'Embedded arguments twice':
+    ...    ${INDENT}Embedded \${arguments match} TWICE
+    ...    ${INDENT}Embedded \${arguments} twice
     Embedded arguments twice
 
-Keyword with embedded arguments defined twice: Can be called with exact name
-    [Documentation]    FAIL Keyword with same name defined multiple times.
+Keyword with embedded arguments defined twice: Called with exact name
+    [Documentation]    FAIL
+    ...    Test case file contains multiple keywords matching name 'Embedded ${arguments match} twice':
+    ...    ${INDENT}Embedded \${arguments match} TWICE
+    ...    ${INDENT}Embedded \${arguments} twice
     Embedded ${arguments match} twice
 
 *** Keywords ***

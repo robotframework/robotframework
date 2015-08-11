@@ -96,3 +96,23 @@ def optional_args_are_okay(nonembedded=1, okay=2, indeed=3):
 @keyword(name="Star Args With ${embedded} Args Are ${okay}")
 def star_args_are_okay(*args):
     return args
+
+@keyword('It is ${vehicle:a (car|ship)}')
+def same_name_1(vehicle):
+    log(vehicle)
+
+@keyword('It is ${animal:a (dog|cat)}')
+def same_name_2(animal):
+    log(animal)
+
+@keyword('It is ${animal:a (cat|cow)}')
+def same_name_3(animal):
+    log(animal)
+
+@keyword('It is totally ${same}')
+def totally_same_1(arg):
+    raise Exception('Not executed')
+
+@keyword('It is totally ${same}')
+def totally_same_2(arg):
+    raise Exception('Not executed')

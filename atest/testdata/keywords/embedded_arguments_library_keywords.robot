@@ -131,3 +131,22 @@ Star Args With Embedded Args Are Okay
     @{ret} =    Star Args With Embedded Args are Okay
     @{args} =    Create List    Embedded    Okay
     Should Be Equal    ${ret}    ${args}
+
+Same name with different regexp works
+    It is a car
+    It is a dog
+    It is a cow
+
+Same name with different regexp matching multiple fails
+    [Documentation]    FAIL
+    ...    Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is a cat':
+    ...    ${INDENT}It Is ${animal:a (cat|cow)}
+    ...    ${INDENT}It Is ${animal:a (dog|cat)}
+    It is a cat
+
+Same name with same regexp fails
+    [Documentation]    FAIL
+    ...    Test library 'embedded_args_in_lk_1' contains multiple keywords matching name 'It is totally same':
+    ...    ${INDENT}It Is Totally ${same}
+    ...    ${INDENT}It Is Totally ${same}
+    It is totally same
