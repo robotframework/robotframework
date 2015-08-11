@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    keywords/user_keyword_defined_multiple_times.robot
+Suite Setup      Run Tests    ${EMPTY}    keywords/duplicate_user_keywords.robot
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
@@ -13,7 +13,7 @@ Using keyword defined thrice fails as well
     Creating keyword should have failed    1    Defined Thrice
     Creating keyword should have failed    2    DEFINED THRICE
 
-Keyword with embedded arguments defined twice
+Keyword with embedded arguments defined twice fails at run-time
     Check Test Case    ${TESTNAME}: Called with embedded args
     Check Test Case    ${TESTNAME}: Called with exact name
     Length Should Be    ${ERRORS}    3

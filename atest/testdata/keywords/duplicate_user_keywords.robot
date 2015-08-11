@@ -10,14 +10,14 @@ Using keyword defined thrice fails as well
     [Documentation]    FAIL Keyword with same name defined multiple times.
     Defined thrice
 
-Keyword with embedded arguments defined twice: Called with embedded args
+Keyword with embedded arguments defined twice fails at run-time: Called with embedded args
     [Documentation]    FAIL
     ...    Test case file contains multiple keywords matching name 'Embedded arguments twice':
     ...    ${INDENT}Embedded \${arguments match} TWICE
     ...    ${INDENT}Embedded \${arguments} twice
     Embedded arguments twice
 
-Keyword with embedded arguments defined twice: Called with exact name
+Keyword with embedded arguments defined twice fails at run-time: Called with exact name
     [Documentation]    FAIL
     ...    Test case file contains multiple keywords matching name 'Embedded ${arguments match} twice':
     ...    ${INDENT}Embedded \${arguments match} TWICE
