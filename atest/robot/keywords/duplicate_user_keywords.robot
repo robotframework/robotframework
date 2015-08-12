@@ -16,7 +16,15 @@ Using keyword defined thrice fails as well
 Keyword with embedded arguments defined twice fails at run-time
     Check Test Case    ${TESTNAME}: Called with embedded args
     Check Test Case    ${TESTNAME}: Called with exact name
-    Length Should Be    ${ERRORS}    3
+    Length Should Be    ${ERRORS}    4
+
+Using keyword defined multiple times in resource fails
+    Check Test Case    ${TESTNAME}
+    Creating keyword should have failed    3    dupe_keywords.Defined Twice In Resource
+
+Keyword with embedded arguments defined multiple times in resource fails at run-time
+    Check Test Case    ${TESTNAME}
+    Length Should Be    ${ERRORS}    4
 
 *** Keywords ***
 Creating keyword should have failed

@@ -38,14 +38,14 @@ class UserLibrary(object):
         for kw in user_keywords:
             try:
                 handler = self._create_handler(kw)
-            except DataError as err:
-                handler = UserErrorHandler(kw.name, unicode(err))
-                self._log_creating_failed(kw.name, unicode(err))
+            except DataError as error:
+                handler = UserErrorHandler(kw.name, error, self.name)
+                self._log_creating_failed(handler, error)
             embedded = isinstance(handler, EmbeddedArgsTemplate)
             try:
                 self.handlers.add(handler, embedded)
-            except DataError as err:
-                self._log_creating_failed(kw.name, unicode(err))
+            except DataError as error:
+                self._log_creating_failed(handler, error)
 
     def _create_handler(self, kw):
         embedded = EmbeddedArguments(kw.name)
@@ -56,8 +56,9 @@ class UserLibrary(object):
                             'arguments.')
         return EmbeddedArgsTemplate(kw, self.name, embedded)
 
-    def _log_creating_failed(self, name, message):
-        LOGGER.error("Creating user keyword '%s' failed: %s" % (name, message))
+    def _log_creating_failed(self, handler, error):
+        LOGGER.error("Creating user keyword '%s' failed: %s"
+                     % (handler.longname, unicode(error)))
 
 
 class UserKeywordHandler(object):

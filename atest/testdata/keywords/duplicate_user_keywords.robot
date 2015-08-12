@@ -1,3 +1,6 @@
+*** Settings ***
+Resource          dupe_keywords.robot
+
 *** Variables ***
 ${INDENT}         ${SPACE * 4}
 
@@ -23,6 +26,17 @@ Keyword with embedded arguments defined twice fails at run-time: Called with exa
     ...    ${INDENT}Embedded \${arguments match} TWICE
     ...    ${INDENT}Embedded \${arguments} twice
     Embedded ${arguments match} twice
+
+Using keyword defined multiple times in resource fails
+    [Documentation]    FAIL Keyword with same name defined multiple times.
+    Defined twice in resource
+
+Keyword with embedded arguments defined multiple times in resource fails at run-time
+    [Documentation]    FAIL
+    ...    Resource file 'dupe_keywords.robot' contains multiple keywords matching name 'Embedded arguments twice in resource':
+    ...    ${INDENT}Embedded \${arguments match} TWICE IN RESOURCE
+    ...    ${INDENT}Embedded \${arguments} twice in resource
+    Embedded arguments twice in resource
 
 *** Keywords ***
 Defined twice
