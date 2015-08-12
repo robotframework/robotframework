@@ -191,8 +191,14 @@ class _BaseTestLibrary(object):
             if method:
                 handler, embedded = self._try_to_create_handler(name, method)
                 if handler:
-                    self.handlers.add(handler, embedded)
-                    LOGGER.debug("Created keyword '%s'" % handler.name)
+                    try:
+                        self.handlers.add(handler, embedded)
+                    except DataError as err:
+                        LOGGER.error("Error in test library '%s': "
+                                     "Creating keyword '%s' failed: %s"
+                                     % (self.name, handler.name, unicode(err)))
+                    else:
+                        LOGGER.debug("Created keyword '%s'" % handler.name)
 
     def _get_handler_names(self, libcode):
         return [name for name in dir(libcode)
