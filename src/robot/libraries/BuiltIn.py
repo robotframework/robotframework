@@ -16,8 +16,10 @@ import difflib
 import re
 import time
 import token
+from collections import Mapping
 from tokenize import generate_tokens, untokenize
 from StringIO import StringIO
+from UserDict import UserDict
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -37,6 +39,7 @@ from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
                              variable_not_found)
 from robot.version import get_version
+from robot.libraries.Collections import Collections
 
 if JYTHON:
     from java.lang import String, Number
@@ -618,8 +621,13 @@ class _Verify(_BuiltInBase):
 
     def _should_be_equal(self, first, second, msg, values):
         include_values = self._include_values(values)
-        if include_values and self._is_failing_multiline_comparison(first, second):
-            self._raise_multi_diff(first, second)
+        if include_values:
+            if self._is_failing_multiline_comparison(first, second):
+                self._raise_multi_diff(first, second)
+            elif self._is_failing_list_comparison(first, second):
+                Collections().lists_should_be_equal(first, second, msg)
+            elif self._is_failing_dict_comparison(first, second):
+                Collections().dictionaries_should_be_equal(first, second, msg)
         asserts.fail_unless_equal(first, second, msg, include_values)
 
     def _is_failing_multiline_comparison(self, first, second):
@@ -628,9 +636,19 @@ class _Verify(_BuiltInBase):
                 '\n' in first and '\n' in second and
                 first != second)
 
+    def _is_failing_list_comparison(self, first, second):
+        return (isinstance(first, list) and
+                isinstance(second, list) and
+                first != second)
+
+    def _is_failing_dict_comparison(self, first, second):
+        return (isinstance(first, (Mapping, UserDict)) and
+                isinstance(second, (Mapping, UserDict)) and
+                first != second)
+
     def _raise_multi_diff(self, first, second):
         self.log("%s\n!=\n%s" % (first, second))
-        err = 'Diff:\n'
+        err = 'Multiline strings are different:\n'
         for line in difflib.context_diff(first.splitlines(),
                                          second.splitlines(), fromfile='first',
                                          tofile='second'):

@@ -10,7 +10,12 @@ ${INT1}           ${1}
 ${LONG}           This is a bit longer sentence and it even has a friend here.
 ...               This is the friend of the previous sentence and it is also
 ...               quite long, actually even longer than its friend.
-
+&{D1}             a=${1}    b=${2}
+&{D2}             a=${1}    b=${2}    ${3}=${None}
+@{L1}             1
+@{L2}             41    ${42}    43    44
+@{L3}             11    ${12}    13
+@{L3B}            10    12    14
 
 *** Test Cases ***
 Should Not Be True
@@ -93,7 +98,7 @@ Should Be Equal fails without values
     .    ,    -    ${NONE}
 
 Should be equal with multiline text uses diff
-    [Documentation]    FAIL Diff:\n
+    [Documentation]    FAIL Multiline strings are different:\n
                        ...    *** first\n\n
                        ...    --- second\n\n
                        ...    ***************\n\n
@@ -113,6 +118,38 @@ Should be equal with multiline text will not use diff if values are not included
     [Documentation]    FAIL Custom message
     Should be equal    foo\nbar\ndar    foo\nbar\ngar\ndar   Custom message    values=FALSE
 
+Should Be Equal Lists With Different Lengths And Own And Default Error Messages
+    [Documentation]    FAIL My error message!
+    ...    Lengths are different: 1 != 4
+    Should be equal    ${L1}    ${L2}    My error message!
+
+Should Be Equal Lists with no values
+    [Documentation]    FAIL My error message!
+    Should be equal    ${L1}    ${L2}    My error message!   values=FALSE
+
+Should Be Equal Lists With Different Values
+    [Documentation]    FAIL Lists are different:
+    ...    Index 0: 11 != 10
+    ...    Index 1: 12 (integer) != 12 (string)
+    ...    Index 2: 13 != 14
+    Should be equal    ${L3}    ${L3B}
+
+Should Equal Dictionaries With Both Dictionaries Missing Keys
+    [Documentation]    FAIL
+    ...    Following keys missing from first dictionary: b
+    ...    Following keys missing from second dictionary: , B, d, ()
+    ${BIG} =    Evaluate    {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
+    Should Be Equal    ${BIG}    ${D2}
+
+Should Be Equal Dictionaries With Different Keys And Own Error Message
+    [Documentation]    FAIL
+    ...    My error message!
+    ...    Following keys missing from first dictionary: 3
+    Should Be Equal    ${D1}    ${D2}    My error message!
+
+Should Be Equal Dictionaries With Different Keys And No Values
+    [Documentation]    FAIL My error message!
+    Should Be Equal    ${D1}    ${D2}    My error message!    NO values
 
 Should Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} != ${BYTES WITHOUT NON ASCII}
