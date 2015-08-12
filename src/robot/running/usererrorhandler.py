@@ -25,13 +25,17 @@ class UserErrorHandler:
     """
     type = 'error'
 
-    def __init__(self, name, error):
-        self.name = self.longname = name
-        self.libname = ''
+    def __init__(self, name, error, libname=None):
+        self.name = name
+        self.libname = libname
         self.doc = self.shortdoc = ''
-        self.error = error
+        self.error = unicode(error)
         self.timeout = ''
         self.tags = Tags()
+
+    @property
+    def longname(self):
+        return '%s.%s' % (self.libname, self.name) if self.libname else self.name
 
     def init_keyword(self, varz):
         pass

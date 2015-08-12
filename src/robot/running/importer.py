@@ -74,12 +74,14 @@ class Importer(object):
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
 
     def _copy_library(self, lib, newname):
-        # TODO: This won't work if lib.handlers has kws w/ embedded args.
+        # FIXME: This won't work if lib.handlers has kws w/ embedded args.
         # Need better way to re-initialize libs when imported using WITH NAME.
+        # This is also fugly.
         libcopy = copy.copy(lib)
         libcopy.name = newname
         libcopy.init_scope_handling()
-        libcopy.handlers = HandlerStore(lib.handlers._source)
+        libcopy.handlers = HandlerStore(lib.handlers.source,
+                                        lib.handlers.source_type)
         for handler in lib.handlers:
             handcopy = copy.copy(handler)
             handcopy.library = libcopy

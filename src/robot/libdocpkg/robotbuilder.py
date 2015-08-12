@@ -73,10 +73,11 @@ class ResourceDocBuilder(object):
 
     def _find_resource_file(self, path):
         if os.path.isfile(path):
-            return path
+            return os.path.normpath(path)
         for dire in [item for item in sys.path if os.path.isdir(item)]:
-            if os.path.isfile(os.path.join(dire, path)):
-                return os.path.join(dire, path)
+            candidate = os.path.normpath(os.path.join(dire, path))
+            if os.path.isfile(candidate):
+                return candidate
         raise DataError("Resource file '%s' does not exist." % path)
 
     def _get_doc(self, res):

@@ -75,7 +75,13 @@ Non-existing keyword name
 
 Invalid syntax in UK
     Check Test Case  ${TESTNAME}
-    Check Log Message  ${ERRORS[0]}  Creating user keyword 'Invalid Syntax UK' failed: Invalid argument specification: Invalid argument syntax '${arg'.  ERROR
+    ${source} =    Normalize Path    ${DATADIR}/cli/dryrun/dryrun.robot
+    ${message} =    Catenate
+    ...    Error in test case file '${source}':
+    ...    Creating keyword 'Invalid Syntax UK' failed:
+    ...    Invalid argument specification:
+    ...    Invalid argument syntax '${arg'.
+    Check Log Message  ${ERRORS[0]}    ${message}    ERROR
 
 Multiple Failures
     Check Test Case  ${TESTNAME}

@@ -72,7 +72,7 @@ class _BaseTestLibrary(object):
         self.name = name
         self.orig_name = name  # Stores original name when importing WITH NAME
         self.source = source
-        self.handlers = HandlerStore(self.name)
+        self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
         self._instance_cache = []
         self.has_listener = None  # Set when first instance is created
         self._doc = None
@@ -110,7 +110,7 @@ class _BaseTestLibrary(object):
         self.init_scope_handling()
 
     def reload(self):
-        self.handlers = HandlerStore(self.name)
+        self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
         self._create_handlers(self.get_instance())
 
     def start_suite(self):
@@ -191,8 +191,14 @@ class _BaseTestLibrary(object):
             if method:
                 handler, embedded = self._try_to_create_handler(name, method)
                 if handler:
-                    self.handlers.add(handler, embedded)
-                    LOGGER.debug("Created keyword '%s'" % handler.name)
+                    try:
+                        self.handlers.add(handler, embedded)
+                    except DataError as err:
+                        LOGGER.error("Error in test library '%s': "
+                                     "Creating keyword '%s' failed: %s"
+                                     % (self.name, handler.name, unicode(err)))
+                    else:
+                        LOGGER.debug("Created keyword '%s'" % handler.name)
 
     def _get_handler_names(self, libcode):
         return [name for name in dir(libcode)
