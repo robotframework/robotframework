@@ -13,19 +13,21 @@
 #  limitations under the License.
 
 from operator import attrgetter
-from os.path import splitext
 
 from robot.errors import DataError
-from robot.parsing import VALID_EXTENSIONS as RESOURCE_EXTENSIONS
 from robot.utils import NormalizedDict
 
 from .usererrorhandler import UserErrorHandler
 
 
 class HandlerStore(object):
+    TEST_LIBRARY_TYPE = 'Test library'
+    TEST_CASE_FILE_TYPE = 'Test case file'
+    RESOURCE_FILE_TYPE = 'Resource file'
 
-    def __init__(self, source):
-        self._source = source
+    def __init__(self, source, source_type):
+        self.source = source
+        self.source_type = source_type
         self._normal = NormalizedDict(ignore='_')
         self._embedded = []
 
@@ -66,20 +68,14 @@ class HandlerStore(object):
         self._raise_no_single_match(name, embedded)
 
     def _raise_no_single_match(self, name, found):
-        if self._source is None:
-            where = "Test case file"
-        elif self._is_resource(self._source):
-            where = "Resource file '%s'" % self._source
+        if self.source_type == self.TEST_CASE_FILE_TYPE:
+            source = self.source_type
         else:
-            where = "Test library '%s'" % self._source
+            source = "%s '%s'" % (self.source_type, self.source)
         if not found:
             raise DataError("%s contains no keywords matching name '%s'."
-                            % (where, name))
+                            % (source, name))
         error = ["%s contains multiple keywords matching name '%s':"
-                 % (where, name)]
+                 % (source, name)]
         names = sorted(handler.orig_name for handler in found)
         raise DataError('\n    '.join(error + names))
-
-    def _is_resource(self, source):
-        extension = splitext(source)[1][1:].lower()
-        return extension in RESOURCE_EXTENSIONS

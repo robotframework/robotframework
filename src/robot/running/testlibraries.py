@@ -72,7 +72,7 @@ class _BaseTestLibrary(object):
         self.name = name
         self.orig_name = name  # Stores original name when importing WITH NAME
         self.source = source
-        self.handlers = HandlerStore(self.name)
+        self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
         self._instance_cache = []
         self.has_listener = None  # Set when first instance is created
         self._doc = None
@@ -110,7 +110,7 @@ class _BaseTestLibrary(object):
         self.init_scope_handling()
 
     def reload(self):
-        self.handlers = HandlerStore(self.name)
+        self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
         self._create_handlers(self.get_instance())
 
     def start_suite(self):

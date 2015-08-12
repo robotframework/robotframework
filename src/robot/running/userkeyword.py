@@ -17,9 +17,9 @@ import os
 from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
                           PassExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed)
-from robot.variables import is_list_var
 from robot.output import LOGGER
-from robot import utils
+from robot.utils import prepr, split_tags_from_doc
+from robot.variables import is_list_var
 
 from .arguments import (ArgumentMapper, ArgumentResolver,
                         EmbeddedArguments, UserKeywordArgumentParser)
@@ -30,11 +30,16 @@ from .usererrorhandler import UserErrorHandler
 
 
 class UserLibrary(object):
+    TEST_CASE_FILE_TYPE = HandlerStore.TEST_CASE_FILE_TYPE
+    RESOURCE_FILE_TYPE = HandlerStore.RESOURCE_FILE_TYPE
 
-    def __init__(self, user_keywords, path=None):
-        basename = os.path.basename(path) if path else None
-        self.name = os.path.splitext(basename)[0] if path else None
-        self.handlers = HandlerStore(basename)
+    def __init__(self, user_keywords, source, source_type=RESOURCE_FILE_TYPE):
+        basename = os.path.basename(source) if source else None
+        self.name = os.path.splitext(basename)[0] \
+            if source_type == self.RESOURCE_FILE_TYPE else None
+        self.handlers = HandlerStore(basename, source_type)
+        self.source = source
+        self.source_type = source_type
         for kw in user_keywords:
             try:
                 handler = self._create_handler(kw)
@@ -57,8 +62,9 @@ class UserLibrary(object):
         return EmbeddedArgsTemplate(kw, self.name, embedded)
 
     def _log_creating_failed(self, handler, error):
-        LOGGER.error("Creating user keyword '%s' failed: %s"
-                     % (handler.longname, unicode(error)))
+        LOGGER.error("Error in %s '%s': Creating keyword '%s' failed: %s"
+                     % (self.source_type.lower(), self.source,
+                        handler.name, unicode(error)))
 
 
 class UserKeywordHandler(object):
@@ -88,7 +94,7 @@ class UserKeywordHandler(object):
         # TODO: Should use runner and not change internal state like this.
         # Timeouts should also be cleaned up in general.
         doc = variables.replace_string(self._doc, ignore_errors=True)
-        doc, tags = utils.split_tags_from_doc(doc)
+        doc, tags = split_tags_from_doc(doc)
         self.doc = doc
         self.tags = [variables.replace_string(tag, ignore_errors=True)
                      for tag in self._tags] + tags
@@ -178,7 +184,7 @@ class UserKeywordHandler(object):
             args.append('@{%s}' % self.arguments.varargs)
         if self.arguments.kwargs:
             args.append('&{%s}' % self.arguments.kwargs)
-        args = ['%s=%s' % (name, utils.prepr(variables[name]))
+        args = ['%s=%s' % (name, prepr(variables[name]))
                 for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 

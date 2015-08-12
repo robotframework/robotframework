@@ -42,7 +42,7 @@ class Namespace(object):
         self.uk_handlers = []
         self.variables = variables
         self._imports = imports
-        self._kw_store = KeywordStore(user_keywords)
+        self._kw_store = KeywordStore(user_keywords, suite.source)
         self._imported_variable_files = ImportCache()
 
     @property
@@ -226,8 +226,9 @@ class Namespace(object):
 
 class KeywordStore(object):
 
-    def __init__(self, user_keywords):
-        self.user_keywords = UserLibrary(user_keywords)
+    def __init__(self, suite_keywords, suite_source):
+        self.user_keywords = UserLibrary(suite_keywords, suite_source,
+                                         UserLibrary.TEST_CASE_FILE_TYPE)
         self.libraries = {}
         self.resources = ImportCache()
         self.search_order = ()

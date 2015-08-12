@@ -144,5 +144,8 @@ Same name with same regexp fails
 *** Keywords ***
 Creating Keyword Failed
     [Arguments]    ${index}    ${name}    ${error}    ${pattern}=
-    Check Log Message    ${ERRORS.msgs[${index}]}
-    ...    Creating user keyword '${name}' failed: ${error}    ERROR    pattern=${pattern}
+    ${source} =    Normalize Path    ${DATADIR}/keywords/embedded_arguments.robot
+    ${message} =    Catenate
+    ...    Error in test case file '${source}':
+    ...    Creating keyword '${name}' failed: ${error}
+    Check Log Message    ${ERRORS[${index}]}    ${message}    ERROR    pattern=${pattern}

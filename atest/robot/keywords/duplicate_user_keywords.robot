@@ -20,7 +20,8 @@ Keyword with embedded arguments defined twice fails at run-time
 
 Using keyword defined multiple times in resource fails
     Check Test Case    ${TESTNAME}
-    Creating keyword should have failed    3    dupe_keywords.Defined Twice In Resource
+    Creating keyword should have failed    3    Defined Twice In Resource
+    ...    dupe_keywords.robot    resource
 
 Keyword with embedded arguments defined multiple times in resource fails at run-time
     Check Test Case    ${TESTNAME}
@@ -28,7 +29,10 @@ Keyword with embedded arguments defined multiple times in resource fails at run-
 
 *** Keywords ***
 Creating keyword should have failed
-    [Arguments]    ${index}    ${name}
-    Check Log Message    ${ERRORS[${index}]}
-    ...    Creating user keyword '${name}' failed: Keyword with same name defined multiple times.
-    ...    ERROR
+    [Arguments]    ${index}    ${name}    ${source}=duplicate_user_keywords.robot    ${source type}=test case
+    ${source} =    Normalize Path    ${DATADIR}/keywords/${source}
+    ${message} =    Catenate
+    ...    Error in ${source type} file '${source}':
+    ...    Creating keyword '${name}' failed:
+    ...    Keyword with same name defined multiple times.
+    Check Log Message    ${ERRORS[${index}]}    ${message}    ERROR

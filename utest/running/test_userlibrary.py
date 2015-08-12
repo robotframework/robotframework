@@ -2,6 +2,7 @@ import unittest
 import os
 
 from robot.running import userkeyword
+from robot.running.userkeyword import UserLibrary
 from robot.errors import DataError
 from robot.parsing.model import UserKeyword
 from robot.utils.asserts import (assert_equals, assert_none,
@@ -12,6 +13,7 @@ class UserHandlerStub:
 
     def __init__(self, kwdata, library):
         self.name = kwdata.name
+        self.libname = library
         if kwdata.name == 'FAIL':
             raise Exception('Expected failure')
 
@@ -43,7 +45,7 @@ class TestUserLibrary(unittest.TestCase):
         for source, exp in [('resources.html', 'resources'),
                             (os.path.join('..','res','My Res.HTM'), 'My Res'),
                             (os.path.abspath('my_res.xhtml'), 'my_res')]:
-            lib = userkeyword.UserLibrary([], source)
+            lib = UserLibrary([], source)
             assert_equals(lib.name, exp)
 
     def test_name_from_test_case_file(self):
@@ -105,8 +107,8 @@ class TestUserLibrary(unittest.TestCase):
         assert_true(isinstance(handler, UserHandlerStub))
 
     def _get_userlibrary(self, *keyword_names):
-        return userkeyword.UserLibrary([UserKeyword(None, name)
-                                        for name in keyword_names])
+        return UserLibrary([UserKeyword(None, name) for name in keyword_names],
+                           'source', UserLibrary.TEST_CASE_FILE_TYPE)
 
     def _lib_has_embedded_arg_keyword(self, lib, count=1):
         assert_true('Embedded ${arg}' in lib.handlers)
