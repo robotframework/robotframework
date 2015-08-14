@@ -41,6 +41,11 @@ No Arguments
     Keyword Data Should Be    ${tc.kws[1]}    OS.Should Exist    args=*
     Check Syslog Contains    Imported library 'OperatingSystem' with name 'OS'
 
+Embedded Arguments
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    arg
+    Check Log Message    ${tc.kws[1].msgs[0]}    --args--
+
 Arguments Containing Variables And Import Same Library Twice
     ${tc} =    Check Test Case    ${TEST NAME}
     Keyword Data Should Be    ${tc.kws[0]}    Param1.Parameters    \${a1}, \${a2}
