@@ -82,7 +82,7 @@ Pull requests
 ~~~~~~~~~~~~~
 
 On GitHub pull requests are the main mechanism to contribute code. They
-are easy to use both for the contributor and for per person accepting
+are easy to use both for the contributor and for person accepting
 the contribution, and with more complex contributions it is easy also
 for others to join the discussion. Preconditions for creating a pull
 requests are having a `GitHub account <https://github.com/>`_,
@@ -93,7 +93,7 @@ GitHub has good articles explaining how to
 `set up Git <https://help.github.com/articles/set-up-git/>`_,
 `fork a repository <https://help.github.com/articles/fork-a-repo/>`_ and
 `use pull requests <https://help.github.com/articles/using-pull-requests>`_
-so we do not need to go through them in more detail here. We do, however,
+and we do not go through them in more detail. We do, however,
 recommend to create dedicated branches for pull requests instead of creating
 them based on the master branch. This is especially important if you plan to
 work on multiple pull requests at the same time.
@@ -110,8 +110,8 @@ and follow the `SOLID principles
 new code. An important guideline is that the code should be clear enough that
 comments are generally not needed.
 
-Docstrings should be added to public APIs but are not needed in internal
-code. When docstrings are added, they should follow `PEP-257
+Docstrings should be added to public APIs but are not generally needed in
+internal code. When docstrings are added, they should follow `PEP-257
 <https://www.python.org/dev/peps/pep-0257/>`_. See `API documentation`_
 section below for more details about documentation syntax, generating
 API docs, etc.
@@ -210,9 +210,8 @@ Acceptance tests
 
 Most of Robot Framework's testing is done using acceptance tests that
 naturally use Robot Framework itself for testing. Every new functionality
-or fix should generally get one or more acceptance tests.
-See `<atest/README.rst>`_ for more details for more details about creating
-and executing them.
+or fix should generally get one or more acceptance tests. See
+`<atest/README.rst>`_ for more details about creating and executing them.
 
 Unit tests
 ''''''''''
