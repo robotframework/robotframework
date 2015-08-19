@@ -616,6 +616,9 @@ class _Verify(_BuiltInBase):
         ``values`` is true by default, but can be turned to false by using,
         for example, string ``false`` or ``no values``. See `Boolean arguments`
         section for more details.
+
+        If both arguments are multiline strings, the comparison is done using
+        `multiline string comparisons`.
         """
         self._log_types_at_info_if_different(first, second)
         self._should_be_equal(first, second, msg, values)
@@ -773,6 +776,9 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
+
+        If both arguments are multiline strings, the comparison is done using
+        `multiline string comparisons`.
         """
         self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in first, second]
@@ -2976,6 +2982,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     - `HTML error messages`
     - `Evaluating expressions`
     - `Boolean arguments`
+    - `Multiline string comparisons`
     - `Shortcuts`
     - `Keywords`
 
@@ -3061,6 +3068,40 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     Note that prior to Robot Framework 2.9 some keywords considered all
     non-empty strings, including ``false`` and ``no``, to be true.
+
+    = Multiline string comparisons =
+
+    `Should Be Equal` and `Should Be Equal As Strings` report the failures using
+    [https://docs.python.org/2/library/difflib.html#difflib.context_diff|diff
+    format] if both strings have newlines in them. New in Robot Framework 2.9.1.
+
+    Example:
+    | ${first} =        | `Set variable`       | NotInSecond \\n Same \\n Differs \\n Same |
+    | ${second} =       | `Set variable`       | Same \\n Differs2 \\n Same \\n NotInFirst |
+    | `Should Be Equal` | ${first} | ${second} |
+
+    Results in the following error message:
+
+    | Multiline strings are different:
+    | *** first
+    |
+    | --- second
+    |
+    | ***************
+    |
+    | *** 1,4 ****
+    |
+    | - NotInSecond
+    |   Same
+    | ! Differs
+    |   Same
+    | --- 1,4 ----
+    |
+    |   Same
+    | ! Differs2
+    |   Same
+    | + NotInFirst
+
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
