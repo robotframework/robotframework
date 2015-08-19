@@ -72,7 +72,19 @@ Should Be Equal Lists with no values
 Should Be Equal Lists With Different Values
     Check test case    ${TESTNAME}
 
+Should Be Equal Tuples With Different Values
+    Check test case    ${TESTNAME}
+
+Should Be Equal Tuple and List With Different Values
+    Check test case    ${TESTNAME}
+
+Should Be Equal Tuple and List With Same Values Does Not Work
+    Check test case    ${TESTNAME}
+
 Should Equal Dictionaries With Both Dictionaries Missing Keys
+    Check test case    ${TESTNAME}
+
+Should Equal Dictionaries Of Different Type With Same Keys Works
     Check test case    ${TESTNAME}
 
 Should Be Equal Dictionaries With Different Keys And Own Error Message
@@ -130,6 +142,9 @@ Should Not Be Equal As Strings
 Should Be Equal As Strings
     ${tc}=    Check test case    ${TESTNAME}
     Verify argument type message    ${tc.kws[0].msgs[0]}    int    unicode
+
+Should Be Equal As Strings Multiline
+    Check test case    ${TESTNAME}
 
 Should Not Start With
     Check test case    ${TESTNAME}
@@ -275,9 +290,10 @@ Get Count
 *** Keywords ***
 Verify argument type message
     [Arguments]    ${msg}    ${type1}    ${type2}
+    ${level} =    Evaluate   'DEBUG' if $type1 == $type2 else 'INFO'
     ${type1} =    Str Type to Unicode On IronPython    ${type1}
     ${type2} =    Str Type to Unicode On IronPython    ${type2}
-    Check log message    ${msg}    Argument types are:\n<type '${type1}'>\n<type '${type2}'>    DEBUG
+    Check log message    ${msg}    Argument types are:\n<type '${type1}'>\n<type '${type2}'>    ${level}
 
 Str Type to Unicode On IronPython
     [Arguments]    ${type}

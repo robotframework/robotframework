@@ -16,10 +16,8 @@ import difflib
 import re
 import time
 import token
-from collections import Mapping
 from tokenize import generate_tokens, untokenize
 from StringIO import StringIO
-from UserDict import UserDict
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -30,11 +28,11 @@ from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (asserts, DotDict, escape, format_assign_message,
                          get_error_message, get_time, is_falsy, is_integer,
-                         is_string, is_truthy, is_unicode, JYTHON, Matcher,
-                         normalize, NormalizedDict, parse_time, prepr,
-                         RERAISED_EXCEPTIONS, plural_or_not as s,
-                         secs_to_timestr, seq2str, split_from_equals,
-                         timestr_to_secs, type_name, unic)
+                         is_list_like, is_dict_like, is_string, is_truthy,
+                         is_unicode, JYTHON, Matcher, normalize, NormalizedDict,
+                         parse_time, prepr, RERAISED_EXCEPTIONS,
+                         plural_or_not as s, secs_to_timestr, seq2str,
+                         split_from_equals, timestr_to_secs, type_name, unic)
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
                              variable_not_found)
@@ -92,8 +90,11 @@ class _BuiltInBase(object):
         return bool(condition)
 
     def _log_types(self, *args):
+        self._log_types_at_level('DEBUG', *args)
+
+    def _log_types_at_level(self, level, *args):
         msg = ["Argument types are:"] + [self._get_type(a) for a in args]
-        self.log('\n'.join(msg), 'DEBUG')
+        self.log('\n'.join(msg), level)
 
     def _get_type(self, arg):
         # In IronPython type(u'x') is str. We want to report unicode anyway.
@@ -616,35 +617,35 @@ class _Verify(_BuiltInBase):
         for example, string ``false`` or ``no values``. See `Boolean arguments`
         section for more details.
         """
-        self._log_types(first, second)
+        self._log_types_at_info_if_different(first, second)
         self._should_be_equal(first, second, msg, values)
 
     def _should_be_equal(self, first, second, msg, values):
+        if first == second:
+            return
         include_values = self._include_values(values)
         if include_values:
             if self._is_failing_multiline_comparison(first, second):
                 self._raise_multi_diff(first, second)
-            elif self._is_failing_list_comparison(first, second):
-                Collections().lists_should_be_equal(first, second, msg)
             elif self._is_failing_dict_comparison(first, second):
                 Collections().dictionaries_should_be_equal(first, second, msg)
+            elif self._is_failing_list_comparison(first, second):
+                Collections().lists_should_be_equal(first, second, msg)
         asserts.fail_unless_equal(first, second, msg, include_values)
 
+    def _log_types_at_info_if_different(self, first, second):
+        level = 'DEBUG' if type(first) == type(second) else 'INFO'
+        self._log_types_at_level(level, first, second)
+
     def _is_failing_multiline_comparison(self, first, second):
-        return (isinstance(first, basestring) and
-                isinstance(second, basestring) and
-                '\n' in first and '\n' in second and
-                first != second)
+        return (is_string(first) and is_string(second) and
+                '\n' in first and '\n' in second)
 
     def _is_failing_list_comparison(self, first, second):
-        return (isinstance(first, list) and
-                isinstance(second, list) and
-                first != second)
+        return is_list_like(first) and is_list_like(second)
 
     def _is_failing_dict_comparison(self, first, second):
-        return (isinstance(first, (Mapping, UserDict)) and
-                isinstance(second, (Mapping, UserDict)) and
-                first != second)
+        return is_dict_like(first) and is_dict_like(second)
 
     def _raise_multi_diff(self, first, second):
         self.log("%s\n!=\n%s" % (first, second))
@@ -664,7 +665,7 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        self._log_types(first, second)
+        self._log_types_at_info_if_different(first, second)
         self._should_not_be_equal(first, second, msg, values)
 
     def _should_not_be_equal(self, first, second, msg, values):
@@ -682,7 +683,7 @@ class _Verify(_BuiltInBase):
 
         See `Should Be Equal As Integers` for some usage examples.
         """
-        self._log_types(first, second)
+        self._log_types_at_info_if_different(first, second)
         self._should_not_be_equal(self._convert_to_integer(first, base),
                                   self._convert_to_integer(second, base),
                                   msg, values)
@@ -702,7 +703,7 @@ class _Verify(_BuiltInBase):
         | Should Be Equal As Integers | ABCD | abcd  | base=16 |
         | Should Be Equal As Integers | 0b1011 | 11  |
         """
-        self._log_types(first, second)
+        self._log_types_at_info_if_different(first, second)
         self._should_be_equal(self._convert_to_integer(first, base),
                               self._convert_to_integer(second, base),
                               msg, values)
@@ -719,7 +720,7 @@ class _Verify(_BuiltInBase):
         `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        self._log_types(first, second)
+        self._log_types_at_info_if_different(first, second)
         first = self._convert_to_number(first, precision)
         second = self._convert_to_number(second, precision)
         self._should_not_be_equal(first, second, msg, values)
@@ -752,7 +753,7 @@ class _Verify(_BuiltInBase):
         keyword and `Should Be Equal` for an explanation on how to override
         the default error message with ``msg`` and ``values``.
         """
-        self._log_types(first, second)
+        self._log_types_at_info_if_different(first, second)
         first = self._convert_to_number(first, precision)
         second = self._convert_to_number(second, precision)
         self._should_be_equal(first, second, msg, values)
@@ -763,7 +764,7 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        self._log_types(first, second)
+        self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in first, second]
         self._should_not_be_equal(first, second, msg, values)
 
@@ -773,7 +774,7 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        self._log_types(first, second)
+        self._log_types_at_info_if_different(first, second)
         first, second = [self._convert_to_string(i) for i in first, second]
         self._should_be_equal(first, second, msg, values)
 

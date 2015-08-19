@@ -134,6 +134,32 @@ Should Be Equal Lists With Different Values
     ...    Index 2: 13 != 14
     Should be equal    ${L3}    ${L3B}
 
+Should Be Equal Tuples With Different Values
+    [Documentation]    FAIL Lists are different:
+    ...    Index 0: 11 != 10
+    ...    Index 1: 12 (integer) != 12 (string)
+    ...    Index 2: 13 != 14
+    ${t1} =   Evaluate   tuple($L3)
+    ${t2} =   Evaluate   tuple($L3B)
+    Should be equal    ${t1}    ${t2}
+
+Should Be Equal Tuple and List With Different Values
+    [Documentation]    FAIL Lists are different:
+    ...    Index 0: 11 != 10
+    ...    Index 1: 12 (integer) != 12 (string)
+    ...    Index 2: 13 != 14
+    ${t1} =   Evaluate   tuple($L3)
+    Should be equal    ${t1}    ${L3B}
+
+Should Be Equal Tuple and List With Same Values Does Not Work
+    [Documentation]    FAIL (u'11', 12, u'13') != [u'11', 12, u'13']
+    ${t1} =   Evaluate   tuple($L3)
+    Should be equal    ${t1}    ${L3}
+
+Should Equal Dictionaries Of Different Type With Same Keys Works
+    ${D2B} =    Evaluate    dict($D2)
+    Should Be Equal    ${D2}    ${D2B}
+
 Should Equal Dictionaries With Both Dictionaries Missing Keys
     [Documentation]    FAIL
     ...    Following keys missing from first dictionary: b
@@ -243,6 +269,19 @@ Should Be Equal As Strings
     ${1}    1
     ${None}    None
     foo    bar
+
+Should Be Equal As Strings Multiline
+    [Documentation]    FAIL Multiline strings are different:\n
+                       ...    *** first\n\n
+                       ...    --- second\n\n
+                       ...    ***************\n\n
+                       ...    *** 1,3 ****\n\n
+                       ...    --- 1,4 ----\n\n
+                       ...    ${SPACE*2}foo\n
+                       ...    ${SPACE*2}bar\n
+                       ...    + gar\n
+                       ...    ${SPACE*2}dar\n
+    Should Be Equal As Strings    foo\nbar\ndar    foo\nbar\ngar\ndar
 
 Should Not Start With
     [Documentation]    FAIL 'Hello, world!' starts with 'Hello'
