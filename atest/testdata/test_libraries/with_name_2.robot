@@ -27,6 +27,10 @@ No Arguments
     Should Exist  ${CURDIR}
     OperatingSystem.Should Exist  ${CURDIR}
 
+Embedded Arguments
+    Keyword with embedded arg in MyLibFile
+    Params.Keyword With Embedded --args-- in MyLibFile
+
 Arguments Containing Variables And Import Same Library Twice
     ${a1}  ${a2} =  Param1.parameters
     BuiltIn.Should Be Equal  ${a1}  1

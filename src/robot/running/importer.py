@@ -73,20 +73,24 @@ class Importer(object):
         if not lib and not lib.has_listener:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
 
-    def _copy_library(self, lib, newname):
-        # FIXME: This won't work if lib.handlers has kws w/ embedded args.
-        # Need better way to re-initialize libs when imported using WITH NAME.
-        # This is also fugly.
-        libcopy = copy.copy(lib)
-        libcopy.name = newname
-        libcopy.init_scope_handling()
-        libcopy.handlers = HandlerStore(lib.handlers.source,
-                                        lib.handlers.source_type)
-        for handler in lib.handlers:
-            handcopy = copy.copy(handler)
-            handcopy.library = libcopy
-            libcopy.handlers.add(handcopy)
-        return libcopy
+    def _copy_library(self, orig, name):
+        # This is pretty ugly. Hopefully we can remove cache altogether in 3.0
+        # and always just re-import libraries.
+        # https://github.com/robotframework/robotframework/issues/2106
+        lib = copy.copy(orig)
+        lib.name = name
+        lib.init_scope_handling()
+        lib.handlers = HandlerStore(orig.handlers.source,
+                                    orig.handlers.source_type)
+        for handler in orig.handlers._normal.values():
+            handler = copy.copy(handler)
+            handler.library = lib
+            lib.handlers.add(handler)
+        for handler in orig.handlers._embedded:
+            handler = copy.copy(handler)
+            handler.library = lib
+            lib.handlers.add(handler, embedded=True)
+        return lib
 
 
 class ImportCache:
