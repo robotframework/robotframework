@@ -55,6 +55,7 @@ Should Be Equal fails without values
     Check test case    ${TESTNAME}
 
 Should be equal with multiline text uses diff
+    Run on python 2.5 and 2.6    Remove tags   regression   # diff contains extra spaces on python 2.6
     Check test case    ${TESTNAME}
 
 Should be equal with multiline diff text requires both multiline
@@ -144,6 +145,7 @@ Should Be Equal As Strings
     Verify argument type message    ${tc.kws[0].msgs[0]}    int    unicode
 
 Should Be Equal As Strings Multiline
+    Run on python 2.5 and 2.6    Remove tags   regression   # diff contains extra spaces on python 2.6
     Check test case    ${TESTNAME}
 
 Should Not Start With
