@@ -235,6 +235,10 @@ Lists Should Be Equal
     Lists Should Be Equal    ${L2}    ${L2}
     Lists Should Be Equal    ${L0}    ${L0}
 
+List and Tuple should be equal
+    ${t0}=    Evaluate    tuple($L0)
+    Lists Should Be Equal    ${t0}    ${L0}
+
 Lists Should Be Equal With Different Lengths
     [Documentation]    FAIL Lengths are different: 1 != 4
     Lists Should Be Equal    ${L1}    ${L4}

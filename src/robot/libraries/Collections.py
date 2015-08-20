@@ -320,7 +320,7 @@ class _List(object):
         if dupes:
             raise AssertionError(msg or
                                  '%s found multiple times.' % seq2str(dupes))
-    # TODO: test tuple == list and dict == UserDict
+
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
                               names=None):
         """Fails if given lists are unequal.
@@ -520,7 +520,7 @@ class _Dictionary(object):
         | ${keys} = ['a', 'b', 'c']
         """
         # TODO: Possibility to disable sorting. Can be handy with OrderedDicts.
-        return sorted(dictionary)
+        return sorted(dictionary.keys())
 
     def get_dictionary_values(self, dictionary):
         """Returns values of the given dictionary.

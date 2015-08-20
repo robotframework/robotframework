@@ -84,6 +84,9 @@ Dictionary Should Not Contain Value With Existing Value
 Dictionaries Should Be Equal
     Check Test Case    ${TEST NAME}
 
+Dictionaries Of Different Type Should Be Equal
+    Check Test Case    ${TEST NAME}
+
 Dictionaries Should Equal With First Dictionary Missing Keys
     Check Test Case    ${TEST NAME}
 
