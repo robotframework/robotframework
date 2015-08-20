@@ -3059,9 +3059,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     = Multiline string comparisons =
 
     `Should Be Equal` and `Should Be Equal As Strings` report the failures using
-    [https://docs.python.org/2/library/difflib.html#difflib.unified_diff|unified
-    diff format] if both strings have more than two lines. New in Robot
-    Framework 2.9.1.
+    [https://en.wikipedia.org/wiki/Diff_utility#Unified_format|unified diff
+    format] if both strings have more than two lines. New in Robot Framework
+    2.9.1.
 
     Example:
     | ${first} =  | `Catenate` | SEPARATOR=\\n | Not in second | Same | Differs | Same |
