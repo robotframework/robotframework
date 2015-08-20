@@ -320,7 +320,7 @@ class _List(object):
         if dupes:
             raise AssertionError(msg or
                                  '%s found multiple times.' % seq2str(dupes))
-
+    # TODO: test tuple == list and dict == UserDict
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
                               names=None):
         """Fails if given lists are unequal.
@@ -328,7 +328,9 @@ class _List(object):
         The keyword first verifies that the lists have equal lengths, and then
         it checks are all their values equal. Possible differences between the
         values are listed in the default error message like ``Index 4: ABC !=
-        Abc``.
+        Abc``. The types of the lists do not need to be the same. For example,
+        Python tuple and list with same content are considered equal.
+
 
         The error message can be configured using ``msg`` and ``values``
         arguments:
@@ -625,7 +627,8 @@ class _Dictionary(object):
 
         First the equality of dictionaries' keys is checked and after that all
         the key value pairs. If there are differences between the values, those
-        are listed in the error message.
+        are listed in the error message. The types of the dictionaries do not
+        need to be same.
 
         See `Lists Should Be Equal` for more information about configuring
         the error message with ``msg`` and ``values`` arguments.

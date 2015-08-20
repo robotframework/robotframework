@@ -28,16 +28,15 @@ from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (asserts, DotDict, escape, format_assign_message,
                          get_error_message, get_time, is_falsy, is_integer,
-                         is_list_like, is_dict_like, is_string, is_truthy,
-                         is_unicode, JYTHON, Matcher, normalize, NormalizedDict,
-                         parse_time, prepr, RERAISED_EXCEPTIONS,
-                         plural_or_not as s, secs_to_timestr, seq2str,
-                         split_from_equals, timestr_to_secs, type_name, unic)
+                         is_string, is_truthy, is_unicode, JYTHON, Matcher,
+                         normalize, NormalizedDict, parse_time, prepr,
+                         RERAISED_EXCEPTIONS, plural_or_not as s,
+                         secs_to_timestr, seq2str, split_from_equals,
+                         timestr_to_secs, type_name, unic)
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
                              variable_not_found)
 from robot.version import get_version
-from robot.libraries.Collections import Collections
 
 if JYTHON:
     from java.lang import String, Number
@@ -627,35 +626,22 @@ class _Verify(_BuiltInBase):
         if first == second:
             return
         include_values = self._include_values(values)
-        if include_values:
-            if self._is_failing_multiline_comparison(first, second):
-                self._raise_multi_diff(first, second)
-            elif self._is_failing_dict_comparison(first, second):
-                Collections().dictionaries_should_be_equal(first, second, msg)
-            elif self._is_failing_list_comparison(first, second):
-                Collections().lists_should_be_equal(first, second, msg)
+        if include_values and is_string(first) and is_string(second):
+            self._raise_multi_diff(first, second)
         asserts.fail_unless_equal(first, second, msg, include_values)
 
     def _log_types_at_info_if_different(self, first, second):
         level = 'DEBUG' if type(first) == type(second) else 'INFO'
         self._log_types_at_level(level, first, second)
 
-    def _is_failing_multiline_comparison(self, first, second):
-        return (is_string(first) and is_string(second) and
-                '\n' in first and '\n' in second)
-
-    def _is_failing_list_comparison(self, first, second):
-        return is_list_like(first) and is_list_like(second)
-
-    def _is_failing_dict_comparison(self, first, second):
-        return is_dict_like(first) and is_dict_like(second)
-
     def _raise_multi_diff(self, first, second):
+        first_lines, second_lines = first.splitlines(), second.splitlines()
+        if len(first_lines) < 3 or len(second_lines) < 3:
+            return
         self.log("%s\n!=\n%s" % (first, second))
         err = 'Multiline strings are different:\n'
-        for line in difflib.context_diff(first.splitlines(),
-                                         second.splitlines(), fromfile='first',
-                                         tofile='second'):
+        for line in difflib.context_diff(first_lines, second_lines,
+                                         fromfile='first', tofile='second'):
             err += line + '\n'
         raise AssertionError(err)
 
@@ -3073,34 +3059,35 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
 
     `Should Be Equal` and `Should Be Equal As Strings` report the failures using
     [https://docs.python.org/2/library/difflib.html#difflib.context_diff|diff
-    format] if both strings have newlines in them. New in Robot Framework 2.9.1.
+    format] if both strings have more than two lines. New in Robot Framework
+    2.9.1.
 
     Example:
-    | ${first} =        | `Set variable`       | NotInSecond \\n Same \\n Differs \\n Same |
-    | ${second} =       | `Set variable`       | Same \\n Differs2 \\n Same \\n NotInFirst |
+    | ${first} =  | `Catenate` | SEPARATOR=\\n | Not in second | Same | Differs | Same |
+    | ${second} = | `Catenate` | SEPARATOR=\\n | Same | Differs2 | Same | Not in first |
     | `Should Be Equal` | ${first} | ${second} |
 
     Results in the following error message:
 
     | Multiline strings are different:
-    | *** first
+    | ***** first
     |
-    | --- second
+    | *---* second
     |
-    | ***************
+    | *****************
     |
-    | *** 1,4 ****
+    | ***** 1,4 ******
     |
-    | - NotInSecond
+    | *-* Not in second
     |   Same
-    | ! Differs
+    | *!* Differs
     |   Same
-    | --- 1,4 ----
+    | *---* 1,4 *----*
     |
     |   Same
-    | ! Differs2
+    | *!* Differs2
     |   Same
-    | + NotInFirst
+    | *+* Not in first
 
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
