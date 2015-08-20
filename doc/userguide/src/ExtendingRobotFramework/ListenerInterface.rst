@@ -41,7 +41,7 @@ quotes on UNIX-like operating systems::
 
    pybot --listener listener.py:arg1:arg2 tests.robot
    pybot --listener "listener.py;arg:with:colons" tests.robot
-   pybot --listener C:\\Path\\Listener.py;D:\\data;E:\\extra tests.robot
+   pybot --listener C:\Path\Listener.py;D:\data;E:\extra tests.robot
 
 __ `Using physical path to library`_
 

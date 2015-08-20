@@ -196,7 +196,7 @@ variable files imported in the Setting table.
 If a variable file is given as an absolute Windows path, the colon after the
 drive letter is not considered a separator::
 
-   --variablefile C:\\path\\variables.py
+   --variablefile C:\path\variables.py
 
 Starting from Robot Framework 2.8.7, it is also possible to use a semicolon
 (`;`) as an argument separator. This is useful if variable file arguments
@@ -204,7 +204,7 @@ themselves contain colons, but requires surrounding the whole value with
 quotes on UNIX-like operating systems::
 
    --variablefile "myvariables.py;argument:with:colons"
-   --variablefile C:\\path\\variables.py;D:\\data.xls
+   --variablefile C:\path\variables.py;D:\data.xls
 
 Variables in these variable files are globally available in all test data
 files, similarly as `individual variables`__ set with the

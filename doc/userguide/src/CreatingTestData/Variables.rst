@@ -216,25 +216,25 @@ variable as a scalar with other data in the same cell.
 Accessing individual list items
 '''''''''''''''''''''''''''''''
 
-It is possible to access a certain value of a list variable
-with the syntax `@{NAME}[index]`, where `index` is the index of the
-selected value. Indexes start from zero, and trying to access a value
-with too large an index causes an error. Indices are automatically converted
-to integers, and it is also possible to use variables as indices.
-List items accessed in this manner can be used similarly as scalar variables.
+It is possible to access a certain value of a list variable with the syntax
+`@{NAME}[index]`, where `index` is the index of the selected value. Indices
+start from zero, negative indices can be used to access items from the end,
+and trying to access a value with too large an index causes an error.
+Indices are automatically converted to integers, and it is also possible to
+use variables as indices. List items accessed in this manner can be used
+similarly as scalar variables.
 
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Constants
-       Login    robot    secret
-       Title Should Be    Welcome robot!
-
-   List Variable
+   List Variable Item
        Login    @{USER}
        Title Should Be    Welcome @{USER}[0]!
 
-   Variable Index
+   Negative Index
+       Log    @{LIST}[-1]
+
+   Index As Variable
        Log    @{LIST}[${INDEX}]
 
 Using list variables with settings
@@ -278,9 +278,11 @@ are equivalent.
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Strings
+   Constants
        Login    name=robot    password=secret
-       List Variable    Login    &{USER}
+
+   Dict Variable
+       Login    &{USER}
 
 Dictionary variables are new in Robot Framework 2.9.
 
@@ -317,11 +319,7 @@ manner can be used similarly as scalar variables:
 .. sourcecode:: robotframework
 
    *** Test Cases ***
-   Constants
-       Login    name=robot    password=secret
-       Title Should Be    Welcome robot!
-
-   Dict Variable
+   Dict Variable Item
        Login    &{USER}
        Title Should Be    Welcome &{USER}[name]!
 
@@ -475,7 +473,7 @@ an equal sign, it can be escaped__ with a backslash like `\=`.
    &{USER 2}       name=Teppo    address=yyy         phone=456
    &{MANY}         first=1       second=${2}         ${3}=third
    &{EVEN MORE}    &{MANY}       first=override      empty=
-   ...             =empty        key\\=here=value
+   ...             =empty        key\=here=value
 
 Dictionary variables created in variable table have two extra properties
 compared to normal Python dictionaries. First of all, values of these
@@ -766,7 +764,7 @@ operating-system-agnostic.
 
    *** Test Cases ***
    Example
-       Create Binary File    ${CURDIR}${/}input.data    Some text here${\\n}on two lines
+       Create Binary File    ${CURDIR}${/}input.data    Some text here${\n}on two lines
        Set Environment Variable    CLASSPATH    ${TEMPDIR}${:}${CURDIR}${/}foo.jar
 
 Number variables
