@@ -64,34 +64,10 @@ Should be equal with multiline diff text requires both multiline
 Should be equal with multiline text will not use diff if values are not included
     Check test case    ${TESTNAME}
 
-Should Be Equal Lists With Different Lengths And Own And Default Error Messages
-    Check test case    ${TESTNAME}
-
-Should Be Equal Lists with no values
-    Check test case    ${TESTNAME}
-
-Should Be Equal Lists With Different Values
-    Check test case    ${TESTNAME}
-
-Should Be Equal Tuples With Different Values
-    Check test case    ${TESTNAME}
-
-Should Be Equal Tuple and List With Different Values
-    Check test case    ${TESTNAME}
-
 Should Be Equal Tuple and List With Same Values Does Not Work
     Check test case    ${TESTNAME}
 
-Should Equal Dictionaries With Both Dictionaries Missing Keys
-    Check test case    ${TESTNAME}
-
 Should Equal Dictionaries Of Different Type With Same Keys Works
-    Check test case    ${TESTNAME}
-
-Should Be Equal Dictionaries With Different Keys And Own Error Message
-    Check test case    ${TESTNAME}
-
-Should Be Equal Dictionaries With Different Keys And No Values
     Check test case    ${TESTNAME}
 
 Should Be Equal with bytes containing non-ascii characters

@@ -98,16 +98,14 @@ Should Be Equal fails without values
     .    ,    -    ${NONE}
 
 Should be equal with multiline text uses diff
-    [Documentation]    FAIL Multiline strings are different:\n
-                       ...    *** first\n\n
-                       ...    --- second\n\n
-                       ...    ***************\n\n
-                       ...    *** 1,3 ****\n\n
-                       ...    --- 1,4 ----\n\n
-                       ...    ${SPACE*2}foo\n
-                       ...    ${SPACE*2}bar\n
-                       ...    + gar\n
-                       ...    ${SPACE*2}dar\n
+    [Documentation]    FAIL Multiline strings are different:
+                       ...    --- first
+                       ...    +++ second
+                       ...    @@ -1,3 +1,4 @@
+                       ...    \ foo
+                       ...    \ bar
+                       ...    +gar
+                       ...    \ dar\n
     Should be equal    foo\nbar\ndar    foo\nbar\ngar\ndar
 
 Should be equal with multiline diff text requires both multiline
@@ -118,39 +116,6 @@ Should be equal with multiline text will not use diff if values are not included
     [Documentation]    FAIL Custom message
     Should be equal    foo\nbar\ndar    foo\nbar\ngar\ndar   Custom message    values=FALSE
 
-Should Be Equal Lists With Different Lengths And Own And Default Error Messages
-    [Documentation]    FAIL My error message!
-    ...    Lengths are different: 1 != 4
-    Should be equal    ${L1}    ${L2}    My error message!
-
-Should Be Equal Lists with no values
-    [Documentation]    FAIL My error message!
-    Should be equal    ${L1}    ${L2}    My error message!   values=FALSE
-
-Should Be Equal Lists With Different Values
-    [Documentation]    FAIL Lists are different:
-    ...    Index 0: 11 != 10
-    ...    Index 1: 12 (integer) != 12 (string)
-    ...    Index 2: 13 != 14
-    Should be equal    ${L3}    ${L3B}
-
-Should Be Equal Tuples With Different Values
-    [Documentation]    FAIL Lists are different:
-    ...    Index 0: 11 != 10
-    ...    Index 1: 12 (integer) != 12 (string)
-    ...    Index 2: 13 != 14
-    ${t1} =   Evaluate   tuple($L3)
-    ${t2} =   Evaluate   tuple($L3B)
-    Should be equal    ${t1}    ${t2}
-
-Should Be Equal Tuple and List With Different Values
-    [Documentation]    FAIL Lists are different:
-    ...    Index 0: 11 != 10
-    ...    Index 1: 12 (integer) != 12 (string)
-    ...    Index 2: 13 != 14
-    ${t1} =   Evaluate   tuple($L3)
-    Should be equal    ${t1}    ${L3B}
-
 Should Be Equal Tuple and List With Same Values Does Not Work
     [Documentation]    FAIL (u'11', 12, u'13') != [u'11', 12, u'13']
     ${t1} =   Evaluate   tuple($L3)
@@ -159,23 +124,6 @@ Should Be Equal Tuple and List With Same Values Does Not Work
 Should Equal Dictionaries Of Different Type With Same Keys Works
     ${D2B} =    Evaluate    dict($D2)
     Should Be Equal    ${D2}    ${D2B}
-
-Should Equal Dictionaries With Both Dictionaries Missing Keys
-    [Documentation]    FAIL
-    ...    Following keys missing from first dictionary: b
-    ...    Following keys missing from second dictionary: , B, d, ()
-    ${BIG} =    Evaluate    {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
-    Should Be Equal    ${BIG}    ${D2}
-
-Should Be Equal Dictionaries With Different Keys And Own Error Message
-    [Documentation]    FAIL
-    ...    My error message!
-    ...    Following keys missing from first dictionary: 3
-    Should Be Equal    ${D1}    ${D2}    My error message!
-
-Should Be Equal Dictionaries With Different Keys And No Values
-    [Documentation]    FAIL My error message!
-    Should Be Equal    ${D1}    ${D2}    My error message!    NO values
 
 Should Be Equal with bytes containing non-ascii characters
     [Documentation]    FAIL ${BYTES WITH NON ASCII} != ${BYTES WITHOUT NON ASCII}
@@ -271,16 +219,14 @@ Should Be Equal As Strings
     foo    bar
 
 Should Be Equal As Strings Multiline
-    [Documentation]    FAIL Multiline strings are different:\n
-                       ...    *** first\n\n
-                       ...    --- second\n\n
-                       ...    ***************\n\n
-                       ...    *** 1,3 ****\n\n
-                       ...    --- 1,4 ----\n\n
-                       ...    ${SPACE*2}foo\n
-                       ...    ${SPACE*2}bar\n
-                       ...    + gar\n
-                       ...    ${SPACE*2}dar\n
+    [Documentation]    FAIL Multiline strings are different:
+                      ...    --- first
+                      ...    +++ second
+                      ...    @@ -1,3 +1,4 @@
+                      ...    \ foo
+                      ...    \ bar
+                      ...    +gar
+                      ...    \ dar\n
     Should Be Equal As Strings    foo\nbar\ndar    foo\nbar\ngar\ndar
 
 Should Not Start With

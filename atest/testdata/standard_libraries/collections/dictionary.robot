@@ -114,6 +114,10 @@ Dictionaries Should Be Equal
     Dictionaries Should Be Equal    ${D3}    ${D3}
     Dictionaries Should Be Equal    ${BIG}    ${BIG}
 
+Dictionaries Of Different Type Should Be Equal
+    ${big2}=    Evaluate    UserDict.UserDict($BIG)    modules=UserDict
+    Dictionaries Should Be Equal    ${BIG}    ${big2}
+
 Dictionaries Should Equal With First Dictionary Missing Keys
     [Documentation]    FAIL Following keys missing from first dictionary: 3
     Dictionaries Should Be Equal    ${D2}    ${D3}

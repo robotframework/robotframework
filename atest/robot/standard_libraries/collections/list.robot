@@ -159,6 +159,9 @@ List Should Not Contain Duplicates With Custom Error Message
 Lists Should Be Equal
     Check Test Case    ${TEST NAME}
 
+List and Tuple should be equal
+    Check Test Case    ${TEST NAME}
+
 Lists Should Be equal With Different Lengths
     Check Test Case    ${TEST NAME}
 
