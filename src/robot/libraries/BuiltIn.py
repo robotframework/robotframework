@@ -640,8 +640,9 @@ class _Verify(_BuiltInBase):
             return
         self.log("%s\n!=\n%s" % (first, second))
         err = 'Multiline strings are different:\n'
-        for line in difflib.context_diff(first_lines, second_lines,
-                                         fromfile='first', tofile='second'):
+        for line in difflib.unified_diff(first_lines, second_lines,
+                                         fromfile='first', tofile='second',
+                                         lineterm=''):
             err += line + '\n'
         raise AssertionError(err)
 
@@ -3058,9 +3059,9 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     = Multiline string comparisons =
 
     `Should Be Equal` and `Should Be Equal As Strings` report the failures using
-    [https://docs.python.org/2/library/difflib.html#difflib.context_diff|diff
-    format] if both strings have more than two lines. New in Robot Framework
-    2.9.1.
+    [https://docs.python.org/2/library/difflib.html#difflib.unified_diff|unified
+    diff format] if both strings have more than two lines. New in Robot
+    Framework 2.9.1.
 
     Example:
     | ${first} =  | `Catenate` | SEPARATOR=\\n | Not in second | Same | Differs | Same |
@@ -3070,24 +3071,15 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):
     Results in the following error message:
 
     | Multiline strings are different:
-    | ***** first
-    |
-    | *---* second
-    |
-    | *****************
-    |
-    | ***** 1,4 ******
-    |
-    | *-* Not in second
-    |   Same
-    | *!* Differs
-    |   Same
-    | *---* 1,4 *----*
-    |
-    |   Same
-    | *!* Differs2
-    |   Same
-    | *+* Not in first
+    | --- first
+    | +++ second
+    | @@ -1,4 +1,4 @@
+    | -Not in second
+    |  Same
+    | -Differs
+    | +Differs2
+    |  Same
+    | +Not in first
 
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'

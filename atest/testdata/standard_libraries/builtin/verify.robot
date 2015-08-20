@@ -98,16 +98,14 @@ Should Be Equal fails without values
     .    ,    -    ${NONE}
 
 Should be equal with multiline text uses diff
-    [Documentation]    FAIL Multiline strings are different:\n
-                       ...    *** first\n\n
-                       ...    --- second\n\n
-                       ...    ***************\n\n
-                       ...    *** 1,3 ****\n\n
-                       ...    --- 1,4 ----\n\n
-                       ...    ${SPACE*2}foo\n
-                       ...    ${SPACE*2}bar\n
-                       ...    + gar\n
-                       ...    ${SPACE*2}dar\n
+    [Documentation]    FAIL Multiline strings are different:
+                       ...    --- first
+                       ...    +++ second
+                       ...    @@ -1,3 +1,4 @@
+                       ...    \ foo
+                       ...    \ bar
+                       ...    +gar
+                       ...    \ dar\n
     Should be equal    foo\nbar\ndar    foo\nbar\ngar\ndar
 
 Should be equal with multiline diff text requires both multiline
@@ -221,16 +219,14 @@ Should Be Equal As Strings
     foo    bar
 
 Should Be Equal As Strings Multiline
-    [Documentation]    FAIL Multiline strings are different:\n
-                       ...    *** first\n\n
-                       ...    --- second\n\n
-                       ...    ***************\n\n
-                       ...    *** 1,3 ****\n\n
-                       ...    --- 1,4 ----\n\n
-                       ...    ${SPACE*2}foo\n
-                       ...    ${SPACE*2}bar\n
-                       ...    + gar\n
-                       ...    ${SPACE*2}dar\n
+    [Documentation]    FAIL Multiline strings are different:
+                      ...    --- first
+                      ...    +++ second
+                      ...    @@ -1,3 +1,4 @@
+                      ...    \ foo
+                      ...    \ bar
+                      ...    +gar
+                      ...    \ dar\n
     Should Be Equal As Strings    foo\nbar\ndar    foo\nbar\ngar\ndar
 
 Should Not Start With
