@@ -60,6 +60,14 @@ Run Keyword If Test Passed When Teardown Fails
 Run Keyword If Test Failed When Teardown Fails
     Check Test Case    ${TEST NAME}
 
+Run Keyword If Test Passed/Failed With Earlier Ignored Failures
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${tc.teardown.kws[0].kws[0].status}    FAIL
+    Should Be Equal    ${tc.teardown.kws[0].status}           PASS
+    Should Be Equal    ${tc.teardown.kws[1].kws[0].status}    FAIL
+    Should Be Equal    ${tc.teardown.kws[1].status}           PASS
+    Should Be Equal    ${tc.teardown.status}                  PASS
+
 Continuable Failure In Teardown
     Check Test Case    ${TEST NAME}
 

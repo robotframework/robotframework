@@ -336,8 +336,11 @@ class StatusReporter(object):
         self._context = context
         self._result = result
         self._pass_status = 'PASS' if not dry_run_lib_kw else 'NOT_RUN'
+        self._test_passed = None
 
     def __enter__(self):
+        if self._context.test:
+            self._test_passed = self._context.test.passed
         self._result.starttime = get_timestamp()
         self._context.start_keyword(self._result)
 
@@ -348,6 +351,8 @@ class StatusReporter(object):
             self._result.status = exc_val.status
             if self._result.type == self._result.TEARDOWN_TYPE:
                 self._result.message = unicode(exc_val)
+        if self._context.test:
+            self._context.test.passed = self._test_passed and self._result.passed
         self._result.endtime = get_timestamp()
         self._context.end_keyword(self._result)
 

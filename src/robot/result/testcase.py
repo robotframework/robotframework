@@ -44,6 +44,10 @@ class TestCase(model.TestCase):
         """``True`` if the test case did pass, ``False`` otherwise."""
         return self.status == 'PASS'
 
+    @passed.setter
+    def passed(self, passed):
+        self.status = 'PASS' if passed else 'FAIL'
+
     @property
     def critical(self):
         """``True`` if the test case is marked as critical,

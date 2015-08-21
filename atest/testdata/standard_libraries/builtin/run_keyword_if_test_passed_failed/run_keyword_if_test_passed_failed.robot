@@ -80,6 +80,10 @@ Run Keyword If Test Failed When Teardown Fails
     No Operation
     [Teardown]    Run Keyword If Test Failed When Teardown Fails
 
+Run Keyword If Test Passed/Failed With Earlier Ignored Failures
+    No Operation
+    [Teardown]    Run Keyword If Test Passed/Failed With Earlier Ignored Failures
+
 Continuable Failure In Teardown
     [Documentation]    FAIL Teardown failed:
     ...    Several failures occurred:
@@ -109,6 +113,24 @@ Failure deeper
 
 Failure even deeper
     Fail    Deep failure
+
+Run Keyword If Test Passed/Failed With Earlier Ignored Failures
+    Run Keyword And Ignore Error    Fail    Ignored
+    Wait Until Keyword Succeeds    10s    0.1s    Fail Once
+    ${error1} =
+    ...    Run Keyword If Test Passed
+    ...    Run Keyword And Expect Error    *
+    ...    Fail    Expected 1
+    ${error2} =
+    ...    Run Keyword And Expect Error    *
+    ...    Run Keyword If Test Passed
+    ...    Fail    Expected 2
+    Should Be Equal    ${error1} - ${error2}    Expected 1 - Expected 2
+    Run Keyword If Test Failed    Fail    Not executed
+
+Fail Once
+    Log    ${NOT AVAILABLE ON FIRST ROUND}
+    [Teardown]    Set Test Variable    ${NOT AVAILABLE ON FIRST ROUND}    xxx
 
 Continuable Failure In Teardown
     Run Keyword And Continue On Failure    Fail    Continuable

@@ -1810,7 +1810,7 @@ class _RunKeyword(_BuiltInBase):
         not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Failed')
-        if not test.passed or self._context.failure_in_test_teardown:
+        if not test.passed:
             return self.run_keyword(name, *args)
 
     def run_keyword_if_test_passed(self, name, *args):
@@ -1826,7 +1826,7 @@ class _RunKeyword(_BuiltInBase):
         not detected by this keyword.
         """
         test = self._get_test_in_teardown('Run Keyword If Test Passed')
-        if test.passed and not self._context.failure_in_test_teardown:
+        if test.passed:
             return self.run_keyword(name, *args)
 
     def run_keyword_if_timeout_occurred(self, name, *args):
