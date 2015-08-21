@@ -87,7 +87,7 @@ class Process(object):
     listed below and discussed further in sections afterwards.
 
     |  = Name =  |                  = Explanation =                      |
-    | shell      | Specifies whether to run the command in shell or not  |
+    | shell      | Specifies whether to run the command in shell or not. |
     | cwd        | Specifies the working directory.                      |
     | env        | Specifies environment variables given to the process. |
     | env:<name> | Overrides the named environment variable(s) only.     |
@@ -103,13 +103,17 @@ class Process(object):
     == Running processes in shell ==
 
     The ``shell`` argument specifies whether to run the process in a shell or
-    not. By default shell is not used, which means that shell specific
-    commands, like ``copy`` and ``dir`` on Windows, are not available.
+    not. By default shell is not used, which means that shell specific commands,
+    like ``copy`` and ``dir`` on Windows, are not available. You can, however,
+    run shell scripts and batch files without using a shell.
 
     Giving the ``shell`` argument any non-false value, such as ``shell=True``,
     changes the program to be executed in a shell. It allows using the shell
     capabilities, but can also make the process invocation operating system
-    dependent.
+    dependent. Having a shell between the actually started process and this
+    library can also interfere communication with the process such as stopping
+    it and reading its outputs. Because of these problems, it is recommended
+    to use the shell only when absolutely necessary.
 
     When using a shell it is possible to give the whole command to execute
     as a single string. See `Specifying command and arguments` section for
