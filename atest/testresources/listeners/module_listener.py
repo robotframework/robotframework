@@ -21,7 +21,8 @@ def start_keyword(name, attrs):
         assign = '%s = ' % ', '.join(attrs['assign'])
     else:
         assign = ''
-    OUTFILE.write("KW START: %s%s %s\n" % (assign, name, args))
+    OUTFILE.write("KW START: %s%s (%s) %s\n"
+                  % (assign, name, attrs['id'], args))
 
 def log_message(message):
     msg, level = message['message'], message['level']

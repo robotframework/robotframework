@@ -28,7 +28,8 @@ class ListenAll:
             assign = '%s = ' % ', '.join(attrs['assign'])
         else:
             assign = ''
-        self.outfile.write("KW START: %s%s %s\n" % (assign, name, args))
+        self.outfile.write("KW START: %s%s (%s) %s\n"
+                           % (assign, name, attrs['id'], args))
 
     def log_message(self, message):
         msg, level = self._check_message_validity(message)

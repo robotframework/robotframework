@@ -5,7 +5,7 @@ ROBOT_LISTENER_API_VERSION = '2'
 OUTFILE = open(os.path.join(os.getenv('TEMPDIR'), 'listener_attrs.txt'), 'w')
 START_ATTRS = 'doc starttime '
 END_ATTRS = START_ATTRS + 'endtime elapsedtime status '
-KW_ATTRS = 'args assign kwname libname type'
+KW_ATTRS = 'id args assign kwname libname type'
 EXPECTED_TYPES = {'elapsedtime': (int, long), 'tags': list, 'args': list,
                   'assign': list, 'metadata': dict, 'tests': list,
                   'suites': list, 'totaltests': int}
