@@ -46,3 +46,8 @@ Not Created Before Timeout With Pattern
 Invalid Create Timeout
     Check Test Case  Invalid Create Timeout
 
+Wait Until File With Glob Like Name
+    Check Test Case  ${TEST NAME}
+
+Wait Until Removed File With Glob Like Name
+    Check Test Case  ${TEST NAME}

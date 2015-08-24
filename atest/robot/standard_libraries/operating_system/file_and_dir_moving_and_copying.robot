@@ -63,3 +63,6 @@ Move Directory Using Just Dir Name
 
 Moving Non-Existing Directory Fails
     Check Test Case    ${TESTNAME}
+
+Name Contains Glob
+    Check Test Case    ${TESTNAME}

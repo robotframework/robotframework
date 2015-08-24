@@ -13,6 +13,18 @@ Should Exist With Non Default Message
 Should Exist With Pattern
     Check testcase  Should Exist With Pattern
 
+Glob In Name
+    Check testcase  ${TEST NAME}
+
+Glob In Name Should Not Exist
+    Check testcase  ${TEST NAME}
+
+Glob In Name File Should Not Exist
+    Check testcase  ${TEST NAME}
+
+Glob In Name Directory Should Not Exist
+    Check testcase  ${TEST NAME}
+
 Should Not Exist
     Check testcase  Should Not Exist
 

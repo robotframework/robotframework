@@ -30,6 +30,29 @@ Should Exist With Pattern
     Should Exist  ${BASE}${/}[abcd]i[rst]
     Should Exist  *non*existing*
 
+Glob In Name
+    Create File  ${BASE}/[bar]foo.txt
+    Create Directory  ${BASE}/[go]mo
+    Should Exist  ${BASE}/[bar]foo.txt
+    Should Exist  ${BASE}/[go]mo
+    File Should Exist  ${BASE}/[bar]foo.txt
+    Directory Should Exist  ${BASE}/[go]mo
+
+Glob In Name Should Not Exist
+    [Documentation]  FAIL Path '${BASE}${/}[not]not.txt' matches '${BASE}${/}[not]not.txt'
+    Create File  ${BASE}/[not]not.txt
+    Should Not Exist  ${BASE}/[not]not.txt
+
+Glob In Name File Should Not Exist
+    [Documentation]  FAIL Path '${BASE}${/}[not]not2.txt' matches file '${BASE}${/}[not]not2.txt'
+    Create File  ${BASE}/[not]not2.txt
+    File Should Not Exist  ${BASE}/[not]not2.txt
+
+Glob In Name Directory Should Not Exist
+    [Documentation]  FAIL Path '${BASE}${/}[not]not3' matches directory '${BASE}${/}[not]not3'
+    Create Directory  ${BASE}/[not]not3
+    Directory Should Not Exist  ${BASE}/[not]not3
+
 Should Not Exist
     [Documentation]  FAIL Path '${CURDIR}' exists
     Should Not Exist  ${TESTFILE}

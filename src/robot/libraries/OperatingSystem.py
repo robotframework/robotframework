@@ -70,7 +70,7 @@ class OperatingSystem(object):
     Notice that the automatic path separator conversion does not work if
     the path is only a part of an argument like with `Run` and `Start Process`
     keywords. In these cases the built-in variable ``${/}`` that contains
-    ``\\`` or ``/``, dependiong on the operationg system, can be used instead.
+    ``\\`` or ``/``, depending on the operating system, can be used instead.
 
     = Pattern matching =
 
@@ -85,6 +85,9 @@ class OperatingSystem(object):
     case-insensitive operating systems such as Windows. Pattern
     matching is implemented using
     [http://docs.python.org/library/fnmatch.html|fnmatch module].
+
+    Starting from Robot Framework 2.9.1, globbing is not done if the given path
+    matches an existing file even if it would contain a glob pattern.
 
     = Tilde expansion =
 
@@ -463,7 +466,7 @@ class OperatingSystem(object):
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
-        if not glob.glob(path):
+        if not self._glob(path):
             self._fail(msg, "Path '%s' does not match any file or directory" % path)
         self._link("Path '%s' exists", path)
 
@@ -475,7 +478,7 @@ class OperatingSystem(object):
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
-        matches = glob.glob(path)
+        matches = self._glob(path)
         if not matches:
             self._link("Path '%s' does not exist", path)
             return
@@ -495,10 +498,13 @@ class OperatingSystem(object):
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
-        matches = [p for p in glob.glob(path) if os.path.isfile(p)]
+        matches = [p for p in self._glob(path) if os.path.isfile(p)]
         if not matches:
             self._fail(msg, "Path '%s' does not match any file" % path)
         self._link("File '%s' exists", path)
+
+    def _glob(self, path):
+        return glob.glob(path) if not os.path.exists(path) else [path]
 
     def file_should_not_exist(self, path, msg=None):
         """Fails if the given path points to an existing file.
@@ -508,7 +514,7 @@ class OperatingSystem(object):
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
-        matches = [p for p in glob.glob(path) if os.path.isfile(p)]
+        matches = [p for p in self._glob(path) if os.path.isfile(p)]
         if not matches:
             self._link("File '%s' does not exist", path)
             return
@@ -529,7 +535,7 @@ class OperatingSystem(object):
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
-        matches = [p for p in glob.glob(path) if os.path.isdir(p)]
+        matches = [p for p in self._glob(path) if os.path.isdir(p)]
         if not matches:
             self._fail(msg, "Path '%s' does not match any directory" % path)
         self._link("Directory '%s' exists", path)
@@ -542,7 +548,7 @@ class OperatingSystem(object):
         The default error message can be overridden with the ``msg`` argument.
         """
         path = self._absnorm(path)
-        matches = [p for p in glob.glob(path) if os.path.isdir(p)]
+        matches = [p for p in self._glob(path) if os.path.isdir(p)]
         if not matches:
             self._link("Directory '%s' does not exist", path)
             return
@@ -579,7 +585,7 @@ class OperatingSystem(object):
         path = self._absnorm(path)
         timeout = timestr_to_secs(timeout)
         maxtime = time.time() + timeout
-        while glob.glob(path):
+        while self._glob(path):
             time.sleep(0.1)
             if timeout >= 0 and time.time() > maxtime:
                 raise AssertionError("'%s' was not removed in %s"
@@ -605,7 +611,7 @@ class OperatingSystem(object):
         path = self._absnorm(path)
         timeout = timestr_to_secs(timeout)
         maxtime = time.time() + timeout
-        while not glob.glob(path):
+        while not self._glob(path):
             time.sleep(0.1)
             if timeout >= 0 and time.time() > maxtime:
                 raise AssertionError("'%s' was not created in %s"
@@ -745,7 +751,7 @@ class OperatingSystem(object):
         If the path is a pattern, all files matching it are removed.
         """
         path = self._absnorm(path)
-        matches = glob.glob(path)
+        matches = self._glob(path)
         if not matches:
             self._link("File '%s' does not exist", path)
         for match in matches:
@@ -917,7 +923,7 @@ class OperatingSystem(object):
     def _glob_files(self, patterns):
         files = []
         for pattern in patterns:
-            files.extend(glob.glob(self._absnorm(pattern)))
+            files.extend(self._glob(self._absnorm(pattern)))
         return files
 
     def _prepare_for_move_or_copy(self, source, dest):

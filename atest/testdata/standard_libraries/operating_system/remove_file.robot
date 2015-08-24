@@ -57,3 +57,8 @@ Removing Directory As A File Fails
     [Documentation]  FAIL Path '${CURDIR}' is not a file
     Remove File  ${CURDIR}
 
+Remove file containing glob pattern
+    Create File  ${BASE}/[foo]bar.txt
+    File Should Exist  ${BASE}/[foo]bar.txt
+    Remove File  ${BASE}/[foo]bar.txt
+    Should Not Exist  ${BASE}/[foo]bar.txt

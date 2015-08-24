@@ -31,3 +31,6 @@ Remove Non-Existing File
 Removing Directory As A File Fails
     Check Test Case  ${TESTNAME}
 
+Remove file containing glob pattern
+    Check Test Case  ${TESTNAME}
+

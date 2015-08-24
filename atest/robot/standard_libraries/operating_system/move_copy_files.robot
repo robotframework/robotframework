@@ -69,3 +69,9 @@ Copying Non-existing Files
 
 Copying And Moving With backslash in glob pattern
     Check Test Case    ${TESTNAME}
+
+Copying From Name With Glob
+    Check Test Case    ${TESTNAME}
+
+Moving From Name With Glob
+    Check Test Case    ${TESTNAME}

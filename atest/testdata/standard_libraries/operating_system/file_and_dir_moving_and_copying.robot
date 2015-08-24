@@ -144,6 +144,16 @@ Moving Non-Existing Directory Fails
     [Documentation]  FAIL REGEXP: Source directory '${ANYDIR}non-existing-dir' does not exist
     Move Directory  non-existing-dir  whatever
 
+Name Contains Glob
+    Create File  ${BASE}/[ke]kkonen.txt
+    Copy File  ${BASE}/[ke]kkonen.txt  ${BASE}/[ke]kkonen-2.txt
+    Should Exist  ${BASE}/[ke]kkonen.txt
+    Should Exist  ${BASE}/[ke]kkonen-2.txt
+    Move File  ${BASE}/[ke]kkonen.txt  ${BASE}/[ke]kkonen-3.txt
+    Should Not Exist  ${BASE}/[ke]kkonen.txt
+    Should Exist  ${BASE}/[ke]kkonen-2.txt
+    Should Exist  ${BASE}/[ke]kkonen-3.txt
+
 ***Keywords***
 Remove Just Name Dirs
     Remove Directory  rf_test_1  recursive

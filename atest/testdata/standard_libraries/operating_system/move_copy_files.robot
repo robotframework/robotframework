@@ -7,6 +7,8 @@ Resource        os_resource.robot
 ${SOURCE}=      ${BASE}${/}move_from
 ${SOURCE2}=     ${BASE}${/}move_from_dir1
 ${SOURCE3}=     ${BASE}${/}move_from_dir2
+${SOURCE GLOB}=  ${BASE}${/}[move]_from_dir_glob
+${GLOB FILE}=    foo[bar].txt
 ${DEST}=        ${BASE}${/}move_to
 
 *** Test Cases ***
@@ -174,12 +176,20 @@ Copying And Moving With backslash in glob pattern
     ...    movecopy_list_pattern2-3.txt
     ...    movecopy_list_pattern2-4.txt
 
+Copying From Name With Glob
+    Copy Files    ${SOURCE GLOB}/${GLOB FILE}   ${DEST}
+    Directory Should Have Items    ${DEST}    ${GLOB FILE}
+
+Moving From Name With Glob
+    Move Files    ${SOURCE GLOB}/${GLOB FILE}   ${DEST}
+    Directory Should Have Items    ${DEST}    ${GLOB FILE}
 
 *** Keywords ***
 Create Test Files For Multi-file Operations
     Create Directory    ${SOURCE}
     Create Directory    ${SOURCE2}
     Create Directory    ${SOURCE3}
+    Create Directory    ${SOURCE GLOB}
     Create Directory    ${DEST}
     Set Test Variable    @{SOURCE FILES}
     ...    movecopy-one.txt
@@ -213,3 +223,4 @@ Create Test Files For Multi-file Operations
     \    Create File    ${SOURCE2}/${file}
     :FOR    ${file}    IN    @{SOURCE FILES 3}
     \    Create File    ${SOURCE3}/${file}
+    Create File    ${SOURCE GLOB}/${GLOB FILE}

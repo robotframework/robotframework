@@ -11,6 +11,7 @@ ${DIR}  ${CURDIR}${/}ROBOTEST-D
 ${FILE PATTERN}  ${CURDIR}${/}ROBOTEST-*.txt
 ${DIR PATTERN}  ${CURDIR}${/}ROBOTEST-?
 ${BOTH PATTERN}  ${CURDIR}${/}ROBOTEST-*
+${FILE WITH GLOB}  ${CURDIR}${/}ROBOTEST[glob].txt
 
 *** Test Cases ***
 File And Dir Already Removed
@@ -88,13 +89,24 @@ Invalid Create Timeout
     [Documentation]  FAIL ValueError: Invalid time string 'invalid timeout'.
     Wait Until Created  ${CURDIR}  invalid timeout
 
+Wait Until File With Glob Like Name
+    Create Items
+    Wait Until Created  ${FILE WITH GLOB}  1ms
+
+Wait Until Removed File With Glob Like Name
+    [Documentation]  FAIL '${FILE WITH GLOB}' was not removed in 42 milliseconds
+    Create Items
+    Wait Until Removed  ${FILE WITH GLOB}  0.042
+
 *** Keywords ***
 Remove Items
+    Remove File  ${FILE WITH GLOB}
     Remove File  ${FILE}
     Remove File  ${FILE 2}
     Remove Directory  ${DIR}
 
 Create Items
+    Create File  ${FILE WITH GLOB}
     Create File  ${FILE}
     Create File  ${FILE 2}
     Create Directory  ${DIR}
