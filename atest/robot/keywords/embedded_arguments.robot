@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    keywords/embedded_arguments.robot
+Suite Setup       Run Tests    ${EMPTY}    keywords/embedded_arguments.robot    keywords/embedded_arguments_match_all.robot
 Force Tags        regression    pybot    jybot
 Resource          atest_resource.robot
 
@@ -139,6 +139,9 @@ Same name with different regexp matching multiple fails
     Check Test Case    ${TEST NAME}
 
 Same name with same regexp fails
+    Check Test Case    ${TEST NAME}
+
+Match all allowed
     Check Test Case    ${TEST NAME}
 
 *** Keywords ***
