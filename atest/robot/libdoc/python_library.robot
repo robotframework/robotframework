@@ -37,7 +37,7 @@ Init Arguments
     ...    prompt=None    prompt_is_regexp=False    encoding=UTF-8
     ...    encoding_errors=ignore    default_log_level=INFO     window_size=None
     ...    environ_user=None    terminal_emulation=False    terminal_type=None
-    ...    telnetlib_log_level=TRACE
+    ...    telnetlib_log_level=TRACE    connection_timeout=None
 
 Keyword Names
     Keyword Name Should Be     0    Close All Connections

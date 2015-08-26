@@ -43,7 +43,7 @@ Show intro only
     ...    prompt_is_regexp=False, encoding=UTF-8, encoding_errors=ignore,
     ...    default_log_level=INFO, window_size=None, environ_user=None,
     ...    terminal_emulation=False, terminal_type=None,
-    ...    telnetlib_log_level=TRACE
+    ...    telnetlib_log_level=TRACE, connection_timeout=None
     Should Contain Importing    ${args}
     ...    Telnet library can be imported with optional configuration parameters.
     Should Not Contain Keyword    Open Connection
