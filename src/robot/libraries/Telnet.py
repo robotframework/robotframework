@@ -15,6 +15,7 @@
 from contextlib import contextmanager
 import inspect
 import re
+import socket
 import struct
 import telnetlib
 import time
@@ -105,6 +106,12 @@ class Telnet(object):
     Timeout defines how long is the maximum time to wait when reading
     output. It is used internally by `Read Until`, `Read Until Regexp`,
     `Read Until Prompt`, and `Login` keywords. The default value is 3 seconds.
+
+    == Connection Timeout ==
+
+    Connection Timeout defines how long is the maximum time to wait when
+    opening the telnet connection. It is used internally by `Open Connection`.
+    The default value is the system global default timeout.
 
     == Newline ==
 
@@ -290,7 +297,8 @@ class Telnet(object):
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, timeout='3 seconds', newline='CRLF',
+    def __init__(self, timeout='3 seconds', connection_timeout='2 minutes',
+                 newline='CRLF',
                  prompt=None, prompt_is_regexp=False,
                  encoding='UTF-8', encoding_errors='ignore',
                  default_log_level='INFO', window_size=None,
@@ -320,6 +328,8 @@ class Telnet(object):
         | Library     | Telnet    | telnetlib_log_level=NONE |                      |                     | # disable logging messages from the underlying telnetlib |
         """
         self._timeout = timeout or 3.0
+        self._connection_timeout = (connection_timeout or
+                                    socket._GLOBAL_DEFAULT_TIMEOUT)
         self._newline = newline or 'CRLF'
         self._prompt = (prompt, prompt_is_regexp)
         self._encoding = encoding
@@ -369,7 +379,8 @@ class Telnet(object):
         return getattr(self._conn or self._get_connection(), name)
 
     def open_connection(self, host, alias=None, port=23, timeout=None,
-                        newline=None, prompt=None, prompt_is_regexp=False,
+                        connection_timeout=None, newline=None,
+                        prompt=None, prompt_is_regexp=False,
                         encoding=None, encoding_errors=None,
                         default_log_level=None, window_size=None,
                         environ_user=None, terminal_emulation=None,
@@ -391,6 +402,7 @@ class Telnet(object):
         `Close All Connections` keyword.
         """
         timeout = timeout or self._timeout
+        connection_timeout = connection_timeout or self._connection_timeout
         newline = newline or self._newline
         encoding = encoding or self._encoding
         encoding_errors = encoding_errors or self._encoding_errors
@@ -405,7 +417,8 @@ class Telnet(object):
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
                     % (host, port, prompt))
-        self._conn = self._get_connection(host, port, timeout, newline,
+        self._conn = self._get_connection(host, port, timeout,
+                                          connection_timeout, newline,
                                           prompt, is_truthy(prompt_is_regexp),
                                           encoding, encoding_errors,
                                           default_log_level,
@@ -486,13 +499,20 @@ class TelnetConnection(telnetlib.Telnet):
     NEW_ENVIRON_VALUE = chr(1)
     INTERNAL_UPDATE_FREQUENCY = 0.03
 
-    def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
-                 prompt=None, prompt_is_regexp=False,
-                 encoding='UTF-8', encoding_errors='ignore',
-                 default_log_level='INFO', window_size=None, environ_user=None,
+    def __init__(self, host=None, port=23, timeout=3.0,
+                 connection_timeout=None, newline='CRLF', prompt=None,
+                 prompt_is_regexp=False, encoding='UTF-8',
+                 encoding_errors='ignore', default_log_level='INFO',
+                 window_size=None, environ_user=None,
                  terminal_emulation=False, terminal_type=None,
                  telnetlib_log_level='TRACE'):
-        telnetlib.Telnet.__init__(self, host, int(port) if port else 23)
+        connection_timeout = (timestr_to_secs(connection_timeout)
+                              if connection_timeout
+                              else socket._GLOBAL_DEFAULT_TIMEOUT)
+        telnetlib.Telnet.__init__(self,
+                                  host,
+                                  int(port) if port else 23,
+                                  connection_timeout)
         self._set_timeout(timeout)
         self._set_newline(newline)
         self._set_prompt(prompt, prompt_is_regexp)

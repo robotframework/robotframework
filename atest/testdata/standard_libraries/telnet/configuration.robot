@@ -1,7 +1,7 @@
 *** Setting ***
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
-Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG     window_size=95x95   terminal_emulation=NO
+Library           Telnet    3.142    60    CRLF    $    REGEXP    ASCII    strict    DeBuG     window_size=95x95   terminal_emulation=NO
 Library           String
 Resource          telnet_resource.robot
 
@@ -40,7 +40,7 @@ Prompt Set In Init
 Prompt Set In Open Connection
     [setup]    Open Connection    ${HOST}    prompt=xxx
     Prompt Should Be    xxx    ${FALSE}
-    Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}
+    Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}
     ...    prompt    regexp
     Prompt Should Be    prompt    ${TRUE}
 
@@ -72,7 +72,7 @@ Newline Set In Init
 Newline Set In Open Connection
     [setup]    Open Connection    ${HOST}    newline=LF
     Newline Should Be    \n
-    Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    ${EMPTY}    CR
+    Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    CR
     Newline Should Be    \r
 
 Set Newline Keyword
