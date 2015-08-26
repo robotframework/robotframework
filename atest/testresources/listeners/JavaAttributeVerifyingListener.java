@@ -55,12 +55,12 @@ public class JavaAttributeVerifyingListener {
 
     public void startKeyword(String name, Map attrs) {
         verifyAttributes("START KEYWORD", attrs,
-                         new String[] {"doc", "starttime", "args", "assign", "kwname", "libname", "type"});
+                         new String[] {"id", "doc", "starttime", "args", "assign", "kwname", "libname", "type"});
     }
 
     public void endKeyword(String name, Map attrs) {
         verifyAttributes("END KEYWORD", attrs,
-                         new String[] {"doc", "starttime", "args", "assign", "kwname", "libname", "type", "endtime", "elapsedtime", "status"});
+                         new String[] {"id", "doc", "starttime", "args", "assign", "kwname", "libname", "type", "endtime", "elapsedtime", "status"});
     }
 
     public void close() throws IOException {

@@ -163,6 +163,9 @@ synonym to `start_suite`.
    |                  |                  |                                                                |
    |                  |                  | Keys in the attribute dictionary:                              |
    |                  |                  |                                                                |
+   |                  |                  | * `id`: Keyword id in format like `s1-s2-t2-k1`, where         |
+   |                  |                  |   the beginning is the parent test/keyword id and the last     |
+   |                  |                  |   part shows keyword index. New in RF 2.9.1.                   |
    |                  |                  | * `type`: String `Keyword` for normal                          |
    |                  |                  |   keywords and `Test Setup`, `Test                             |
    |                  |                  |   Teardown`, `Suite Setup` or `Suite                           |
@@ -185,6 +188,9 @@ synonym to `start_suite`.
    |                  |                  |                                                                |
    |                  |                  | Keys in the attribute dictionary:                              |
    |                  |                  |                                                                |
+   |                  |                  | * `id`: Keyword id in format like `s1-s2-t2-k1`, where         |
+   |                  |                  |   the beginning is the parent test/keyword id and the last     |
+   |                  |                  |   part shows keyword index. New in RF 2.9.1.                   |
    |                  |                  | * `type`: Same as with `start_keyword`.                        |
    |                  |                  | * `kwname`: Same as with `start_keyword`.                      |
    |                  |                  | * `libname`: Same as with `start_keyword`.                     |

@@ -114,43 +114,43 @@ Check Listen All File
     [Arguments]  ${filename}
     @{expected}=  Create List  Got settings on level: INFO
     ...  SUITE START: Pass And Fail (s1) 'Some tests here' [ListenerMeta: Hello]
-    ...  KW START: My Keyword ['Suite Setup']
-    ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
+    ...  KW START: My Keyword (s1-k1) ['Suite Setup']
+    ...  KW START: BuiltIn.Log (s1-k1-k1) ['Hello says "\${who}"!', '\${LEVEL1}']
     ...  LOG MESSAGE: [INFO] Hello says "Suite Setup"!
     ...  KW END: PASS
-    ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
+    ...  KW START: BuiltIn.Log (s1-k1-k2) ['Debug message', '\${LEVEL2}']
     ...  LOG MESSAGE: [DEBUG] Debug message
     ...  KW END: PASS
-    ...  KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
+    ...  KW START: \${assign} = BuiltIn.Set Variable (s1-k1-k3) ['Just testing...']
     ...  LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...  KW END: PASS
     ...  KW END: PASS
     ...  TEST START: Pass (s1-t1) '' ['force', 'pass'] crit: yes
-    ...  KW START: My Keyword ['Pass']
-    ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
+    ...  KW START: My Keyword (s1-t1-k1) ['Pass']
+    ...  KW START: BuiltIn.Log (s1-t1-k1-k1) ['Hello says "\${who}"!', '\${LEVEL1}']
     ...  LOG MESSAGE: [INFO] Hello says "Pass"!
     ...  KW END: PASS
-    ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
+    ...  KW START: BuiltIn.Log (s1-t1-k1-k2) ['Debug message', '\${LEVEL2}']
     ...  LOG MESSAGE: [DEBUG] Debug message
     ...  KW END: PASS
-    ...  KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
+    ...  KW START: \${assign} = BuiltIn.Set Variable (s1-t1-k1-k3) ['Just testing...']
     ...  LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...  KW END: PASS
     ...  KW END: PASS
     ...  TEST END: PASS crit: yes
     ...  TEST START: Fail (s1-t2) 'FAIL Expected failure' ['fail', 'force'] crit: no
-    ...  KW START: My Keyword ['Fail']
-    ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
+    ...  KW START: My Keyword (s1-t2-k1) ['Fail']
+    ...  KW START: BuiltIn.Log (s1-t2-k1-k1) ['Hello says "\${who}"!', '\${LEVEL1}']
     ...  LOG MESSAGE: [INFO] Hello says "Fail"!
     ...  KW END: PASS
-    ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
+    ...  KW START: BuiltIn.Log (s1-t2-k1-k2) ['Debug message', '\${LEVEL2}']
     ...  LOG MESSAGE: [DEBUG] Debug message
     ...  KW END: PASS
-    ...  KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
+    ...  KW START: \${assign} = BuiltIn.Set Variable (s1-t2-k1-k3) ['Just testing...']
     ...  LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...  KW END: PASS
     ...  KW END: PASS
-    ...  KW START: BuiltIn.Fail ['Expected failure']
+    ...  KW START: BuiltIn.Fail (s1-t2-k2) ['Expected failure']
     ...  LOG MESSAGE: [FAIL] Expected failure
     ...  KW END: FAIL
     ...  TEST END: FAIL Expected failure crit: no
