@@ -57,6 +57,19 @@ Preparation
 
      VERSION=x.y.z
 
+
+Release notes
+-------------
+
+- Generate a template for the release notes::
+
+   python doc/releasenotes/generate.py $VERSION [github login] [github password] >> rf-$VERSION.rst
+
+- Fill the missing details from the template and commit it::
+
+   git commit -m "release notes $VERSION" rf-$VERSION.rst
+   git push
+
 Tagging
 -------
 
@@ -159,12 +172,8 @@ __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Us
         invoke add_docs $VERSION --push
         git checkout master
 
-Release notes
--------------
-
-- Generate a template for the release notes::
-
-   invoke release_notes --version $VERSION --login <github login> --password <github password>
+Make a release
+--------------
 
 - Create a new release at https://github.com/robotframework/robotframework/releases
 
