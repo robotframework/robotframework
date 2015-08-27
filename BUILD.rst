@@ -53,21 +53,24 @@ Preparation
 
        invoke clean
 
-4. Set ``$VERSION`` shell variable to ease copy-pasting further commands::
+4. Set version and GitHub login related shell variable to ease copy-pasting further commands::
 
-     VERSION=x.y.z
+     VERSION=<x.y.z>
+     LOGIN=<GitHub Login>
+     PASSWORD=<GitHub Password>
 
+   GitHub login details are needed only when generating release notes.
 
 Release notes
 -------------
 
 - Generate a template for the release notes::
 
-   python doc/releasenotes/generate.py $VERSION [github login] [github password] >> doc/releasenotes/rf-$VERSION.rst
+   doc/releasenotes/generate.py $VERSION $LOGIN $PASSWORD >> doc/releasenotes/rf-$VERSION.rst
 
 - Fill the missing details from the template and commit it::
 
-   git commit -m "release notes $VERSION" doc/releasenotes/rf-$VERSION.rst
+   git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
    git push
 
 Tagging
