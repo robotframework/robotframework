@@ -1,4 +1,15 @@
-from os.path import abspath, dirname
+#!/usr/bin/env python
+
+"""Create release notes template based on issues on GitHub.
+
+Usage: ./generate.py version [login] [password]
+
+Template is written to the standard output. Redirect it to a file if needed.
+
+Requires PyGithub <https://github.com/jacquev6/PyGithub>.
+"""
+
+import re
 import sys
 import time
 
@@ -9,22 +20,17 @@ try:
 except ImportError:
     raise ImportError('Required PyGitHub module missing: pip install PyGithub')
 
-sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))
-from tasks import get_version_from_file, VERSION_RE
+
+VERSION_RE = re.compile('^((2\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
 
 
 class ReleaseNoteGenerator(object):
-    """Create release notes template based on issues on GitHub.
-
-    Requires PyGithub <https://github.com/jacquev6/PyGithub>.
-    """
     repository = 'robotframework/robotframework'
 
     def __init__(self, stream=sys.stdout):
         self._stream = stream
 
-    def generate(self, version=get_version_from_file(), login=None,
-                 password=None):
+    def generate(self, version, login=None, password=None):
         milestone, preview, preview_number = self._split_version(version)
         issues = self._get_issues(milestone, preview, preview_number, login,
                                   password)
@@ -209,4 +215,7 @@ class PreviewMatcher(object):
 
 if __name__ == '__main__':
     generator = ReleaseNoteGenerator()
-    generator.generate(*sys.argv[1:])
+    try:
+        generator.generate(*sys.argv[1:])
+    except TypeError:
+        sys.exit(__doc__)
