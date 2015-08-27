@@ -122,7 +122,9 @@ instructions <../../INSTALL.rst>`_.
     def _write_header(self, header, level=2):
         if level > 1:
             self._write()
-        underline = {1: '=', 2: '-', 3: '~', 4: "'"}[level] * len(header)
+        underline = {1: '=', 2: '=', 3: '-', 4: "~"}[level] * len(header)
+        if level == 1:
+            self._write(underline)
         self._write(header)
         self._write(underline, newlines=2)
 
