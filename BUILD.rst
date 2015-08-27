@@ -68,10 +68,11 @@ Release notes
 
      doc/releasenotes/generate.py $VERSION $LOGIN $PASSWORD >> doc/releasenotes/rf-$VERSION.rst
 
-2. Fill the missing details from the template and commit it::
+2. Fill the missing details in the template.
 
-     git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
-     git push
+3. Add, commit and push::
+
+     git add doc/releasenotes/rf-$VERSION.rst && git commit -m "Release notes for $VERSION" && git push
 
 Tagging
 -------
