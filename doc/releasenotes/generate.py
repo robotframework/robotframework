@@ -69,6 +69,8 @@ class ReleaseNoteGenerator(object):
     def _write_intro(self, version, milestone):
         self._write_header("Robot Framework {}".format(version), level=1)
         intro = '''
+.. default-role:: code'
+
 Robot Framework {version} is a new release with **UPDATE** enhancements and bug
 fixes. All issues targeted for RF {milestone} can be found from the `issue tracker
 <https://github.com/robotframework/robotframework/issues?q=milestone%3A{milestone}>`_.
@@ -79,12 +81,16 @@ and possible bugs `submitted to the issue tracker
 <https://github.com/robotframework/robotframework/issues>`__.
 
 If you have `pip <http://pip-installer.org>`_ installed, just run
-``pip install --upgrade robotframework`` to install or upgrade to the latest
-version or use ``pip install robotframework=={version}`` to install exactly
+`pip install --upgrade robotframework` to install or upgrade to the latest
+version or use `pip install robotframework=={version}` to install exactly
 this version.  For more details and other installation approaches, see
 `installation instructions <../../INSTALL.rst>`_.
 
 Robot Framework {version} was released on **CHECK** {date}.
+
+.. contents::
+   :depth: 2
+   :local:
 '''.strip()
         self._write(intro, version=version, milestone=milestone,
                     date=time.strftime("%A %B %d, %Y"))
