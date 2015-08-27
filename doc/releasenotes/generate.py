@@ -34,7 +34,7 @@ class ReleaseNoteGenerator(object):
         milestone, preview, preview_number = self._split_version(version)
         issues = self._get_issues(milestone, preview, preview_number, login,
                                   password)
-        self._write_intro(version)
+        self._write_intro(version, milestone)
         self._write_most_important_enhancements(issues)
         self._write_backwards_incompatible_changes(issues)
         self._write_deprecated_features(issues)
@@ -66,22 +66,27 @@ class ReleaseNoteGenerator(object):
         raise ValueError("Milestone '{}' not found from repository '{}'!"
                          .format(milestone, repo.name))
 
-    def _write_intro(self, version):
+    def _write_intro(self, version, milestone):
         self._write_header("Robot Framework {}".format(version), level=1)
         intro = '''
 Robot Framework {version} is a new release with **UPDATE** enhancements and bug
-fixes. It was released on {date}.
+fixes. All issues targeted for RF {milestone} can be found from the `issue tracker
+<https://github.com/robotframework/robotframework/issues?q=milestone%3A{milestone}>`_.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users <http://groups.google.com/group/robotframework-users>`_
-and possible bugs submitted to the
-`issue tracker <https://github.com/robotframework/robotframework/issues>`__.
+and possible bugs `submitted to the issue tracker
+<https://github.com/robotframework/robotframework/issues>`__.
 
 If you have `pip <http://pip-installer.org>`_ installed, just run
-``pip install --update robotframework``. Otherwise see `installation
-instructions <../../INSTALL.rst>`_.
+``pip install --upgrade robotframework`` to install or upgrade to the latest
+version or use ``pip install robotframework=={version}`` to install exactly
+this version.  For more details and other installation approaches, see
+`installation instructions <../../INSTALL.rst>`_.
+
+Robot Framework {version} was released on **CHECK** {date}.
 '''.strip()
-        self._write(intro, version=version, underline='=' * len(version),
+        self._write(intro, version=version, milestone=milestone,
                     date=time.strftime("%A %B %d, %Y"))
 
     def _write_most_important_enhancements(self, issues):
