@@ -40,6 +40,7 @@ class ReleaseNoteGenerator(object):
         self._write_deprecated_features(issues)
         self._write_acknowledgements(issues)
         self._write_issue_table(issues, milestone, preview)
+        self._write_targets(issues)
 
     def _split_version(self, version):
         match = VERSION_RE.match(version)
@@ -69,7 +70,7 @@ class ReleaseNoteGenerator(object):
     def _write_intro(self, version, milestone):
         self._write_header("Robot Framework {}".format(version), level=1)
         intro = '''
-.. default-role:: code'
+.. default-role:: code
 
 Robot Framework {version} is a new release with **UPDATE** enhancements and bug
 fixes. All issues targeted for RF {milestone} can be found from the `issue tracker
@@ -136,6 +137,13 @@ Robot Framework {version} was released on **CHECK** {date}.
                     '<https://github.com/{}/issues?q=milestone%3A{}>`__.',
                     len(issues), self.repository, milestone)
 
+    def _write_targets(self, issues):
+        self._write()
+        self._write('.. _User Guide: http://robotframework.org/robotframework/#user-guide')
+        for issue in issues:
+            self._write('.. _{}: https://github.com/robotframework/robotframework/issues/{}',
+                        issue.id, issue.id[1:], link_issues=False)
+
     def _write_header(self, header, level=2):
         if level > 1:
             self._write()
@@ -161,8 +169,11 @@ Robot Framework {version} was released on **CHECK** {date}.
 
     def _write(self, message='', *args, **kwargs):
         message += ('\n' * kwargs.pop('newlines', 1))
+        link_issues = kwargs.pop('link_issues', True)
         if args or kwargs:
             message = message.format(*args, **kwargs)
+        if link_issues:
+            message = re.sub(r'(#\d+)', r'`\1`_', message)
         self._stream.write(message)
 
 
