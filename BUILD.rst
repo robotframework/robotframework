@@ -64,14 +64,14 @@ Preparation
 Release notes
 -------------
 
-- Generate a template for the release notes::
+1. Generate a template for the release notes::
 
-   doc/releasenotes/generate.py $VERSION $LOGIN $PASSWORD >> doc/releasenotes/rf-$VERSION.rst
+     doc/releasenotes/generate.py $VERSION $LOGIN $PASSWORD >> doc/releasenotes/rf-$VERSION.rst
 
-- Fill the missing details from the template and commit it::
+2. Fill the missing details from the template and commit it::
 
-   git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
-   git push
+     git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
+     git push
 
 Tagging
 -------
@@ -183,9 +183,11 @@ Make a release
 Announcements
 -------------
 
-- Twitter http://twitter.com/robotframework
+- Twitter:
+  http://twitter.com/robotframework
 - Users and announcements mailing lists
-- Robot Framework LinkedIn group https://www.linkedin.com/groups/Robot-Framework-3710899
+- Robot Framework LinkedIn group:
+  https://www.linkedin.com/groups/Robot-Framework-3710899
 - With major releases can also consider:
 
   - http://opensourcetesting.org
