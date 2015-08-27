@@ -72,7 +72,9 @@ Release notes
 
 3. Add, commit and push::
 
-     git add doc/releasenotes/rf-$VERSION.rst && git commit -m "Release notes for $VERSION" && git push
+     git add doc/releasenotes/rf-$VERSION.rst
+     git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
+     git push
 
 Tagging
 -------
