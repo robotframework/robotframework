@@ -63,11 +63,11 @@ Release notes
 
 - Generate a template for the release notes::
 
-   python doc/releasenotes/generate.py $VERSION [github login] [github password] >> rf-$VERSION.rst
+   python doc/releasenotes/generate.py $VERSION [github login] [github password] >> doc/releasenotes/rf-$VERSION.rst
 
 - Fill the missing details from the template and commit it::
 
-   git commit -m "release notes $VERSION" rf-$VERSION.rst
+   git commit -m "release notes $VERSION" doc/releasenotes/rf-$VERSION.rst
    git push
 
 Tagging
