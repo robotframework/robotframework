@@ -415,6 +415,10 @@ class EmbeddedArgsTemplate(object):
         args = self._name_regexp.match(name).groups()
         return EmbeddedArgs(name, self.name, args, self._orig_handler)
 
+    def __copy__(self):
+        # Needed due to https://github.com/IronLanguages/main/issues/1192
+        return EmbeddedArgsTemplate(self._name_regexp, self._orig_handler)
+
 
 class EmbeddedArgs(object):
 

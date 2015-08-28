@@ -74,9 +74,12 @@ class Importer(object):
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
 
     def _copy_library(self, orig, name):
-        # This is pretty ugly. Hopefully we can remove cache altogether in 3.0
-        # and always just re-import libraries.
+        # This is pretty ugly. Hopefully we can remove cache and copying
+        # altogether in 3.0 and always just re-import libraries:
         # https://github.com/robotframework/robotframework/issues/2106
+        # Could then also remove __copy__ methods added to some handlers as
+        # a workaround for this IronPython bug:
+        # https://github.com/IronLanguages/main/issues/1192
         lib = copy.copy(orig)
         lib.name = name
         lib.init_scope_handling()
