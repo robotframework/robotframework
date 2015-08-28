@@ -4,7 +4,7 @@ Robot Framework 2.9.1
 
 .. default-role:: code
 
-Robot Framework 2.9.1 is bug fix release that fixes few high priority bugs in
+Robot Framework 2.9.1 is a bug fix release that fixes few high priority bugs in
 `Robot Framework 2.9 <rf-2.9.rst>`_. Most important fixes are explained below
 and all issues listed in the table at the end.
 
@@ -32,7 +32,7 @@ If you have `pip <http://pip-installer.org>`_ installed, just run
 version or use `pip install robotframework==2.9.1` to install exactly
 this version.
 
-For more details and other installation approaches, see
+For more details and other installation approaches, see the
 `full installation instructions <../../INSTALL.rst>`_.
 
 Most important fixes
