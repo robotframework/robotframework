@@ -21,11 +21,11 @@ Source distribution and Windows installers are available at `PyPI
 with Jython 2.7 at `Maven central
 <http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework>`_.
 
-If you have pip installed, just run `pip install --upgrade robotframework`
-to install or upgrade to the latest version or use
-`pip install robotframework==2.9` to install exactly this version. For more
-details and other installation approaches, see `installation instructions
-<../../INSTALL.rst>`_.
+If you have `pip <http://pip-installer.org>`_ installed, just run
+`pip install --upgrade robotframework` to install or upgrade to the latest
+version or use `pip install robotframework==2.9` to install exactly this
+version. For more details and other installation approaches, see
+`installation instructions <../../INSTALL.rst>`_.
 
 Robot Framework 2.9 was released on Friday July 31, 2015.
 
@@ -39,9 +39,9 @@ Compatibility with other projects
 Robot Framework 2.9 should, for most parts, be compatible with other projects
 in the larger Robot Framework ecosystem. It may, however, take some time before
 tools support new syntax like dictionary variables and keyword tags.
-Additionally, big internal changes may affect tools that have used the internal
-APIs. Libraries and tools know not to be compatible with Robot Framework 2.9
-will be listed here.
+Additionally, big internal changes may affect libraries and tools that have
+used the internal APIs. Libraries and tools know not to be compatible with
+Robot Framework 2.9 will be listed here.
 
 - RIDE 1.4 and older are not compatible with new syntax added in Robot
   Framework 2.9. Updated version is to be released shortly.
@@ -59,9 +59,6 @@ will be listed here.
 - Robot Framework Jenkins plugin 1.6.0 and older `can not parse the new
   output.xml <https://issues.jenkins-ci.org/browse/JENKINS-29178>`__.
   Jenkins plugin 1.6.1 and newer are compatible with Robot Framework 2.9.
-
-Most important enhancements
-===========================
 
 Most important enhancements
 ===========================
@@ -158,9 +155,10 @@ of documentation.
         ...                Tags: tag1, tag2
         No Operation
 
-Library keywords can also use documentation to specify their tags or they can
-be added to `robot_tags`attribute for each method. The `keyword` decorator
-provides a handy shortcut for specifying tags for each method.
+Library keywords can also use the last line of their documentation to specify
+tag. Alternatively the method or function implementing a keyword can itself
+have `robot_tags` attribute that contains a list of tags. The `keyword`
+decorator provides a handy shortcut to set `robot_tags` attribute:
 
 .. code:: python
 
@@ -181,7 +179,7 @@ It is now possible to specify modifiers to pre-process the test data before
 the test run and to modify the results before generation of log and report.
 The modifiers can be taken into use with `--prerunmodifier` and
 `--prerebotmodifier`. See the issue `#1976`_ and the `User Guide`_ for examples
-and more details.
+and more details about these very powerful new extension APIs.
 
 Lighter and more neutral colors for logs and reports
 ----------------------------------------------------
@@ -224,12 +222,12 @@ New for loop syntax allows use of for-in-zip and for-in-enumerate loops
 .. code:: robotframework
 
     *** Keywords ***
-        For in zip example    # take elements from both lists
-            :FOR    ${number}    ${name}    IN ZIP    ${NUMBERS}    ${NAMES}
-                \     Number Should Be Named    ${number}    ${name}
-        For in enumerate example    # take an item and an increasing index number
-            :FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}
-             \     My Keyword    ${index}    ${item}
+    For in zip example    # take elements from both lists
+        :FOR    ${number}    ${name}    IN ZIP    ${NUMBERS}    ${NAMES}
+            \     Number Should Be Named    ${number}    ${name}
+    For in enumerate example    # take an item and an increasing index number
+        :FOR    ${index}    ${item}    IN ENUMERATE    @{LIST}
+         \     My Keyword    ${index}    ${item}
 
 See the `User Guide`_ for more details and examples.
 
@@ -340,8 +338,8 @@ module search path (`#2019`_). If it is needed, `PYTHONPATH`, `JYTHONPATH`
 or `IRONPYTHONPATH` environment variable can be explicitly set to `.` before
 execution.
 
-Standard libraries not importable in Python without the `robot.libraries` prefix
---------------------------------------------------------------------------------
+Standard libraries not importable in Python without `robot.libraries` prefix
+----------------------------------------------------------------------------
 
 It used to be possible to import Robot Framework's standard libraries in Python
 code by just using the library name like `import DateTime`. This caused
@@ -393,13 +391,13 @@ issues for more details if you think you may be affected.
 - Possibility to set scalar variables with lists value using
   `Set Test/Suite/Global Variable` keyword removed (`#1919`_)
 - Variable assignment is not anymore part of the keyword name in logs, in
-  listener interface, or when using --removekeywords (`#1611`_)
+  listener interface, or when using `--removekeywords` (`#1611`_)
 - Deprecated syntax for repeating single keyword removed (`#1775`_)
 - Deprecated `--runmode` option removed (`#1923`_)
 - Deprecated `--xunitfile` option removed in favor of `--xunit` (`#1925`_)
 - Deprecated way to exit for loops using custom exception with
   `ROBOT_EXIT_FOR_LOOP` attribute has been removed (`#1440`_)
-- Run Keyword If Test (Failed / Passed) detects failures also in teardown
+- `Run Keyword If Test (Failed / Passed)` detects failures also in teardown
   (`#1270`_)
 - DateTime: DST fixes when calculating with dates (`#2018`_)
 - `FAIL` is no longer usable as a normal log level (`#2016`_)
@@ -451,8 +449,8 @@ release!
 - Jean-Charles Deville (@jcdevil) made variable errors not exit `runner
   keywords` (`#1869`_).
 - Guy Kisel (@guykisel) wrote the initial contribution guidelines (`#1805`_).
-- Laurent Bristiel (@laurentbristiel) converted examples in User Guide to plain
-  text format (`#1972`_).
+- Laurent Bristiel (@laurentbristiel) converted examples in `User Guide`_ to
+  plain text format (`#1972`_).
 
 Full list of fixes and enhancements
 ===================================
