@@ -76,7 +76,8 @@ Release notes
      git commit -m "Release notes for $VERSION" doc/releasenotes/rf-$VERSION.rst
      git push
 
-4. Add short release notes to GitHub's [releases page](https://github.com/robotframework/robotframework/releases)
+4. Add short release notes to GitHub's `releases page
+   <https://github.com/robotframework/robotframework/releases>`_
    with a link to the full release notes.
 
 Tagging
