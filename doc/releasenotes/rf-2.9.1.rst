@@ -4,11 +4,9 @@ Robot Framework 2.9.1
 
 .. default-role:: code
 
-Robot Framework 2.9.1 is a new release with bug fixes to embedded arguments handling 
-(`#2095`_, `#2098`_, `#2105`_), `Run Keyword If Test Failed/Passed` and ignored failures (`#2108`_), 
-and java integration (`#2088`_). It was released on Thursday August 27, 2015.
-All issues targeted for RF 2.9.1 can be found from the `issue tracker
-<https://github.com/robotframework/robotframework/issues?q=milestone%3A2.9.1>`_.
+Robot Framework 2.9.1 is bug fix release that fixes few high priority bugs in
+`Robot Framework 2.9 <rf-2.9.rst>`_. Most important fixes are explained below
+and all issues listed in the table at the end.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users <http://groups.google.com/group/robotframework-users>`_
@@ -27,38 +25,42 @@ Robot Framework 2.9.1 was released on Friday August 28, 2015.
    :depth: 2
    :local:
 
-Most important enhancements
-===========================
+Most important fixes
+====================
 
 Embedded arguments fixes
 ------------------------
 
-There was a regression in embedded arguments handling, which caused keywords with same name, 
-but different regular expression to fail (`#2095`_). The same issue also prevented creating keywords
-with a name that matched the name of an earlier embedded arguments keyword (`#2098`_).
+There was a regression in embedded arguments handling, which caused keywords
+with same name, but different regular expression to fail (`#2095`_). The same
+issue also prevented creating keywords with a name that matched the name of
+an earlier embedded arguments keyword (`#2098`_).
 
-There was also a bug which prevented using library keyword with embedded arguments when a library 
-was imported with a custom name (`#2105`_).
+Another bug prevented using library keyword with embedded arguments when the
+library was imported with a custom name (`#2105`_).
 
-Java integration cleanup
-------------------------
+Java integration fixes
+----------------------
 
-There was a bug in the Robot Framework Java API which sometimes caused stack traces to be printed
-on standard output (`#2088`_).
+There was a bug in the Robot Framework Java API that manifested itself with
+Jython 2.7 and caused problems with Maven (`#2088`_). This bug has prevented
+creating RF 2.9 compatible `Maven plugin
+<https://github.com/robotframework/MavenPlugin>`__.
 
 `Run Keyword If Test Failed/Passed` and ignored failures
 --------------------------------------------------------
 
-There was a bug which caused ignored errors to show as a
-test failure with `Run Keyword If Test Failed/Passed` (`#2108`_).
+There was a bug which caused ignored errors to be considered test failures
+with `Run Keyword If Test Failed/Passed` keywods (`#2108`_). For example,
+the test below would fail with a message `Test should have passed`:
 
 .. code:: robotframework
-    
+
     *** Test Cases ***
     Example
         No Operation
         [Teardown]    Teardown bug
-        
+
     *** Keywords ***
     Teardown bug
         Run Keyword And Ignore Error
@@ -69,10 +71,14 @@ test failure with `Run Keyword If Test Failed/Passed` (`#2108`_).
 Backwards incompatible changes
 ==============================
 
-Warning if test library has multiple functions resulting same keyword
----------------------------------------------------------------------
+Creating keywords with same name in test libraries fails
+--------------------------------------------------------
 
-There is now a warning if a library has multiple functions result in the same keyword (`#2097`_).
+Earlier it has been possible that a test library contains multiple functions
+that create keywords with same name (e.g. `example_keyword` and
+`exampleKeyword`) and it was ambiguous which implementation was actually used.
+Nowadays such usage causes errors and trying to use the keyword fails
+(`#2097`_).
 
 Full list of fixes and enhancements
 ===================================
@@ -87,7 +93,7 @@ Full list of fixes and enhancements
     * - `#2088`_
       - bug
       - high
-      - Cleanup Jython Interpreter when executing Robot Framework though Java API
+      - Cleanup Jython Interpreter after executing Robot Framework though Java API
     * - `#2095`_
       - bug
       - high
@@ -107,11 +113,15 @@ Full list of fixes and enhancements
     * - `#2097`_
       - bug
       - medium
-      - No warning if test library has multiple functions resulting same keyword
+      - No error if test library has multiple functions resulting same keyword
     * - `#2110`_
       - bug
       - medium
-      - Libdoc HTML - Shortcuts/links to keywords (having spaces) are not working with Internet Explorer (11 and others). 
+      - Libdoc HTML - Shortcuts/links to keywords (having spaces) are not working with Internet Explorer (11 and others).
+    * - `#2113`_
+      - bug
+      - medium
+      - `OperatingSystem`: Path looking like glob pattern not always handled correctly
     * - `#2074`_
       - enhancement
       - medium
@@ -124,10 +134,6 @@ Full list of fixes and enhancements
       - bug
       - low
       - Explicitly given library keyword name should not be altered
-    * - `#2113`_
-      - bug
-      - low
-      - `OperatingSystem`: Path looking like glob pattern not always handled correctly
     * - `#2109`_
       - enhancement
       - low
