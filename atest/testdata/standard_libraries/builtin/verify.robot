@@ -117,9 +117,9 @@ Should be equal with multiline text will not use diff if values are not included
     Should be equal    foo\nbar\ndar    foo\nbar\ngar\ndar   Custom message    values=FALSE
 
 Should Be Equal Tuple and List With Same Values Does Not Work
-    [Documentation]    FAIL (u'11', 12, u'13') != [u'11', 12, u'13']
+    [Documentation]    FAIL not same
     ${t1} =   Evaluate   tuple($L3)
-    Should be equal    ${t1}    ${L3}
+    Should be equal    ${t1}    ${L3}    not same    values=false
 
 Should Equal Dictionaries Of Different Type With Same Keys Works
     ${D2B} =    Evaluate    dict($D2)
