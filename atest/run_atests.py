@@ -34,8 +34,6 @@ import sys
 import tempfile
 from os.path import abspath, basename, dirname, exists, join, normpath, splitext
 
-if sys.version_info < (2, 6):
-    sys.exit('Running this script requires Python 2.6 or newer.')
 
 CURDIR = dirname(abspath(__file__))
 SRC = join(CURDIR, '..', 'src', 'robot')
@@ -45,8 +43,14 @@ TESTDOC = normpath(join(SRC, 'testdoc.py'))
 LIBDOC = normpath(join(SRC, 'libdoc.py'))
 TIDY = normpath(join(SRC, 'tidy.py'))
 
+
 sys.path.append(join(CURDIR, '..'))
-from tasks import jar
+try:
+    from tasks import jar
+except ImportError:
+    def jar(*args, **kwargs):
+        raise RuntimeError("Craeting jar distribution requires 'invoke'.")
+
 
 ARGUMENTS = '''
 --doc RobotSPFrameworkSPacceptanceSPtests
