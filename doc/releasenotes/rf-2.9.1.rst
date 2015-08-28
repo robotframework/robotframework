@@ -13,17 +13,27 @@ Questions and comments related to the release can be sent to the
 and possible bugs `submitted to the issue tracker
 <https://github.com/robotframework/robotframework/issues>`__.
 
-If you have `pip <http://pip-installer.org>`_ installed, just run
-`pip install --upgrade robotframework` to install or upgrade to the latest
-version or use `pip install robotframework==2.9.1` to install exactly
-this version.  For more details and other installation approaches, see
-`installation instructions <../../INSTALL.rst>`_.
-
 Robot Framework 2.9.1 was released on Friday August 28, 2015.
 
 .. contents::
    :depth: 2
    :local:
+
+Installation
+============
+
+Source distribution and Windows installers are available at `PyPI
+<https://pypi.python.org/pypi/robotframework/2.9.1>`_ and the standalone JAR
+with Jython 2.7 at `Maven central
+<http://search.maven.org/#search%7Cga%7C1%7Ca%3Arobotframework>`_.
+
+If you have `pip <http://pip-installer.org>`_ installed, just run
+`pip install --upgrade robotframework` to install or upgrade to the latest
+version or use `pip install robotframework==2.9.1` to install exactly
+this version.
+
+For more details and other installation approaches, see
+`full installation instructions <../../INSTALL.rst>`_.
 
 Most important fixes
 ====================
