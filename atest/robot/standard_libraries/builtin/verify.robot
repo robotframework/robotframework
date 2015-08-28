@@ -268,9 +268,9 @@ Get Count
 *** Keywords ***
 Verify argument type message
     [Arguments]    ${msg}    ${type1}    ${type2}
-    ${level} =    Evaluate   'DEBUG' if $type1 == $type2 else 'INFO'
     ${type1} =    Str Type to Unicode On IronPython    ${type1}
     ${type2} =    Str Type to Unicode On IronPython    ${type2}
+    ${level} =    Evaluate   'DEBUG' if $type1 == $type2 else 'INFO'
     Check log message    ${msg}    Argument types are:\n<type '${type1}'>\n<type '${type2}'>    ${level}
 
 Str Type to Unicode On IronPython
