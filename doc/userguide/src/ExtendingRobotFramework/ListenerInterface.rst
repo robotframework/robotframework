@@ -104,7 +104,7 @@ synonym to `start_suite`.
    |                  |                  |   was created from. New in RF 2.7.                             |
    |                  |                  | * `suites`: Names of the direct child suites this suite has    |
    |                  |                  |   as a list.                                                   |
-   |                  |                  | * `tests`: Names of the tests this suite has as a list.ding    |
+   |                  |                  | * `tests`: Names of the tests this suite has as a listing.     |
    |                  |                  |   Does not include tests of the possible child suites.         |
    |                  |                  | * `totaltests`: The total number of tests in this suite.       |
    |                  |                  |   and all its sub-suites as an integer.                        |
