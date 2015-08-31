@@ -16,16 +16,17 @@
 
 ``Dialogs`` is Robot Framework's standard library that provides means
 for pausing the test execution and getting input from users. The
-dialogs are slightly different depending on are tests run on Python or
-Jython but they provide the same functionality.
+dialogs are slightly different depending on whether tests are run on
+Python, IronPython or Jython but they provide the same functionality.
 
 Long lines in the provided messages are wrapped automatically since
 Robot Framework 2.8. If you want to wrap lines manually, you can add
 newlines using the ``\\n`` character sequence.
 
-The library has following two limitations:
-- It is not compatible with IronPython.
-- It cannot be used with timeouts on Python.
+Support for IronPython was added in 2.9.2.
+
+The library has a known limitation that it cannot be used with timeouts
+on Python.
 """
 
 from robot.version import get_version
