@@ -30,6 +30,8 @@ from .runkwregister import RUN_KW_REGISTER
 
 IMPORTER = Importer()
 
+BDD_STYLE_IGNORED_PREFIXES = ('given ', 'when ', 'then ', 'and ', 'but ') 
+
 
 class Namespace(object):
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
@@ -280,7 +282,7 @@ class KeywordStore(object):
         return handler
 
     def _get_bdd_style_handler(self, name):
-        for prefix in ['given ', 'when ', 'then ', 'and ', 'but ']:
+        for prefix in BDD_STYLE_IGNORED_PREFIXES:
             if name.lower().startswith(prefix):
                 handler = self._get_handler(name[len(prefix):])
                 if handler:
