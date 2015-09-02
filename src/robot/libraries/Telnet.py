@@ -743,7 +743,7 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _submit_credentials(self, username, password, login_prompt, password_prompt):
         # Using write_bare here instead of write because don't want to wait for
-        # newline: http://code.google.com/p/robotframework/issues/detail?id=1371
+        # newline: https://github.com/robotframework/robotframework/issues/1371
         output = self.read_until(login_prompt, 'TRACE')
         self.write_bare(username + self._newline)
         output += self.read_until(password_prompt, 'TRACE')

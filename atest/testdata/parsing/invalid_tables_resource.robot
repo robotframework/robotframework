@@ -1,6 +1,6 @@
 *** ***
 This kind of tables caused bug
-http://code.google.com/p/robotframework/issues/detail?id=793
+https://github.com/robotframework/robotframework/issues/793
 
 ***Keywords***
 Keyword in valid plain text table in resource

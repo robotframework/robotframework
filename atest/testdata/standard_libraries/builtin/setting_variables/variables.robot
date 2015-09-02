@@ -305,7 +305,7 @@ Setting Test/Suite/Global Variable Which Value Is In Variable Syntax
 
 Set Test/Suite/Global Variable With Internal Variables In Name
     [Documentation]    This obscure test is here to prevent this bug from reappearing:
-    ...                http://code.google.com/p/robotframework/issues/detail?id=397\
+    ...                https://github.com/robotframework/robotframework/issues/397
     ...                FAIL    Variable '\${nonexisting}' not found.
     ${x} =    Set Variable    bar
     Set Test Variable    \${foo ${x}}    value

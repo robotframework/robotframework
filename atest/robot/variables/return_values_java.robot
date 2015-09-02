@@ -61,7 +61,7 @@ Set List To Scalar And List Variables Using Array
     Check Log Message    ${tc.kws[0].msgs[2]}    \@{c} = [ 42 ]
 
 Return Unrepresentable Object
-    [Documentation]    See http://code.google.com/p/robotframework/issues/detail?id=967
+    [Documentation]    See https://github.com/robotframework/robotframework/issues/967
     Check Test Case    ${TEST NAME}
 
 *** Keywords ***

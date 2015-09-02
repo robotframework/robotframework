@@ -23,7 +23,7 @@ Non-ASCII characters in test data directory name
   ...  ${ROOT}.Työ.§Test§.Non-ASCII Directory (€ÅÄÖ§)
 
 Creating logs and reports should succeed
-  [Documentation]  http://code.google.com/p/robotframework/issues/detail?id=530
+  [Documentation]  https://github.com/robotframework/robotframework/issues/530
   File Should Not Be Empty  ${OUTDIR}/ulog.html
   File Should Not Be Empty  ${OUTDIR}/ureport.html
   Stderr should be empty

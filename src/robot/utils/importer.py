@@ -143,7 +143,7 @@ class _Importer(object):
                 return __import__(name, fromlist=fromlist)
             except ImportError:
                 # Hack to support standalone Jython. For more information, see:
-                # http://code.google.com/p/robotframework/issues/detail?id=515
+                # https://github.com/robotframework/robotframework/issues/515
                 # http://bugs.jython.org/issue1778514
                 if JYTHON and fromlist and retry:
                     __import__('%s.%s' % (name, fromlist[0]))

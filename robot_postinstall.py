@@ -36,7 +36,7 @@ def windows_install():
         print 'Robot Framework start-up scripts may not work correctly.'
         return
     # Avoid "close failed in file object destructor" error when UAC disabled
-    # http://code.google.com/p/robotframework/issues/detail?id=1331
+    # https://github.com/robotframework/robotframework/issues/1331
     if sys.stdout.fileno() != -2:
         print SUCCESS
 

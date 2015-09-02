@@ -324,7 +324,7 @@ $ jython path/robot/rebot.py -N Project_X -l none -r x.html output.xml
 import sys
 
 # Allows running as a script. __name__ check needed with multiprocessing:
-# http://code.google.com/p/robotframework/issues/detail?id=1137
+# https://github.com/robotframework/robotframework/issues/1137
 if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 

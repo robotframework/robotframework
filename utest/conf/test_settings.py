@@ -14,7 +14,7 @@ class SettingWrapper(_BaseSettings):
 class TestRobotAndRebotSettings(unittest.TestCase):
 
     def test_robot_and_rebot_settings_are_independent(self):
-        # http://code.google.com/p/robotframework/issues/detail?id=881
+        # https://github.com/robotframework/robotframework/issues/881
         orig_opts = RobotSettings()._opts
         RebotSettings()
         assert_equals(RobotSettings()._opts, orig_opts)

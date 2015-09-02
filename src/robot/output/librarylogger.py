@@ -34,7 +34,7 @@ LOGGING_THREADS = ('MainThread', 'RobotFrameworkTimeoutThread')
 def write(msg, level, html=False):
     # Callable messages allow lazy logging internally, but we don't want to
     # expose this functionality publicly. See the following issue for details:
-    # http://code.google.com/p/robotframework/issues/detail?id=1505
+    # https://github.com/robotframework/robotframework/issues/1505
     if callable(msg):
         msg = unic(msg)
     if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):

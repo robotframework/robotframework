@@ -971,7 +971,7 @@ class OperatingSystem(object):
         # This is done by first copying the source to a temporary directory on the same drive as the destination is
         # and then moving (that is almost always in every platform an atomic operation) that temporary file to
         # the destination.
-        # See http://code.google.com/p/robotframework/issues/detail?id=1502 for details
+        # See https://github.com/robotframework/robotframework/issues/1502 for details
         temp_directory = tempfile.mkdtemp(dir=destination_parent) # Temporary directory can be atomically created
         temp_file = os.path.join(temp_directory, os.path.basename(source))
         shutil.copy(source, temp_file)
