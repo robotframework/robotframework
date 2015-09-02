@@ -47,7 +47,7 @@ Robot Framework 2.9 will be listed here.
   Framework 2.9. Updated version is to be released shortly.
 
 - Selenium2Library 1.7.0 and older `use an internal API
-  <https://github.com/rtomac/robotframework-selenium2library/issues/429>`__
+  <https://github.com/robotframework/Selenium2Library/issues/429>`__
   that has been removed. Selenium2Library 1.7.1 and newer are compatible with
   Robot Framework 2.9.
 

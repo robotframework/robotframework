@@ -161,8 +161,8 @@ __ http://creativecommons.org/licenses/by/3.0/
 .. _library keyword: `test libraries`_
 .. _library keywords: `library keyword`_
 .. _`With Name syntax`: `Setting custom name to test library`_
-.. _SeleniumLibrary: http://code.google.com/p/robotframework-seleniumlibrary
-.. _Selenium2Library: https://github.com/rtomac/robotframework-selenium2library/wiki
+.. _SeleniumLibrary: https://github.com/robotframework/SeleniumLibrary
+.. _Selenium2Library: https://github.com/robotframework/Selenium2Library
 .. _SwingLibrary: https://github.com/robotframework/SwingLibrary
 
 .. 3. Executing test cases
