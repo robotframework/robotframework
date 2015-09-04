@@ -63,3 +63,16 @@ Scalar dicts can be used as dicts
 
 Scalar dicts are not converted to DotDicts
     Variable Should Not Exist    ${SCALAR DICT.a}
+
+Failing list
+    [Documentation]    FAIL STARTS: Resolving variable '\@{FAILING GENERATOR()}' failed: ZeroDivisionError:
+    Log Many   @{FAILING GENERATOR()}
+
+Failing list in for loop
+    [Documentation]    FAIL STARTS: Resolving variable '\@{FAILING GENERATOR()}' failed: ZeroDivisionError:
+    :FOR    ${i}    IN    @{FAILING GENERATOR()}
+    \    Fail    Not executed
+
+Failing dict
+    [Documentation]    FAIL STARTS: Resolving variable '\&{FAILING DICT}' failed: ZeroDivisionError:
+    Log Many   &{FAILING DICT}

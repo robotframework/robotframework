@@ -41,6 +41,13 @@ Scalar dicts can be used as dicts
 Scalar dicts are not converted to DotDicts
     Check Test Case    ${TESTNAME}
 
+Failing list
+    Check Test Case    ${TESTNAME}
+    Check Test Case    ${TESTNAME} in for loop
+
+Failing dict
+    Check Test Case    ${TESTNAME}
+
 *** Keywords ***
 Verify Error
     [Arguments]    ${index}    ${args}    ${var}    ${error}

@@ -16,4 +16,21 @@ def get_variables(*args):
             'scalar_list': list_,
             'scalar_tuple': tuple_,
             'scalar_generator': (i for i in range(5)),
-            'scalar_dict': dict_}
+            'scalar_dict': dict_,
+            'failing_generator': failing_generator,
+            'failing_dict': FailingDict({1: 2})}
+
+
+def failing_generator():
+    for i in [2, 1, 0]:
+        yield 1/i
+
+
+class FailingDict(dict):
+
+    def __iter__(self):
+        1/0
+        raise Exception('Bang!!')
+
+    def keys(self):
+        return list(self)

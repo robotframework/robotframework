@@ -49,7 +49,13 @@ class VariableFinder(object):
                     value = finder.find(name)
                 except (KeyError, ValueError):
                     continue
-                return self._validate_value(value, identifier, name)
+                try:
+                    return self._validate_value(value, identifier, name)
+                except VariableError:
+                    raise
+                except:
+                    raise VariableError("Resolving variable '%s' failed: %s"
+                                        % (name, get_error_message()))
         variable_not_found(name, self._store.data)
 
     def _validate_value(self, value, identifier, name):
