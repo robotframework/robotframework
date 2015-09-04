@@ -14,7 +14,7 @@ Time subtraction from date should succeed
     23:47:13 2014.04.24    01:02:01.000            22:45:12 2014.04.24     %H:%M:%S %Y.%m.%d    %H:%M:%S %Y.%m.%d
     23:47:13 2014.04.24    00:00:00.100            23:47:12 2014.04.24     %H:%M:%S %Y.%m.%d    %H:%M:%S %Y.%m.%d
 
-Time subtraction over DTS boundary
+Time subtraction over DST boundary
     2015-10-26                1 day                    2015-10-25 00:00:00.000    timestamp
     ${datetime(2015,11,1)}    ${timedelta(days=31)}    ${datetime(2015,10,1)}     datetime
 

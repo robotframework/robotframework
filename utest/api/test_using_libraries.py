@@ -1,7 +1,8 @@
 import unittest
 
-from robot.utils.asserts import assert_raises_with_msg
+from robot.utils.asserts import assert_equals, assert_raises_with_msg
 from robot.libraries.BuiltIn import BuiltIn, RobotNotRunningError
+from robot.libraries.DateTime import Date
 
 
 class TestBuiltInWhenRobotNotRunning(unittest.TestCase):
@@ -23,6 +24,13 @@ class TestBuiltInWhenRobotNotRunning(unittest.TestCase):
         assert_raises_with_msg(RobotNotRunningError,
                                'Cannot access execution context',
                                BuiltIn().set_suite_metadata, 'name', 'value')
+
+
+class TestDateTime(unittest.TestCase):
+
+    def test_date_seconds(self):
+        secs = 1234567890
+        assert_equals(Date(secs).seconds, secs)
 
 
 if __name__ == '__main__':
