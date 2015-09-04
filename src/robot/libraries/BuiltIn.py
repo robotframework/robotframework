@@ -62,17 +62,20 @@ class _BuiltInBase(object):
 
     @property
     def _context(self):
-        if EXECUTION_CONTEXTS.current is None:
+        return self._get_context()
+
+    def _get_context(self, top=False):
+        ctx = EXECUTION_CONTEXTS.current if not top else EXECUTION_CONTEXTS.top
+        if ctx is None:
             raise RobotNotRunningError('Cannot access execution context')
-        return EXECUTION_CONTEXTS.current
+        return ctx
 
     @property
     def _namespace(self):
-        return self._context.namespace
+        return self._get_context().namespace
 
     def _get_namespace(self, top=False):
-        ctx = EXECUTION_CONTEXTS.top if top else EXECUTION_CONTEXTS.current
-        return ctx.namespace
+        return self._get_context(top).namespace
 
     @property
     def _variables(self):
