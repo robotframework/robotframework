@@ -23,10 +23,8 @@ Long lines in the provided messages are wrapped automatically since
 Robot Framework 2.8. If you want to wrap lines manually, you can add
 newlines using the ``\\n`` character sequence.
 
-Support for IronPython was added in 2.9.2.
-
 The library has a known limitation that it cannot be used with timeouts
-on Python.
+on Python. Support for IronPython was added in Robot Framework 2.9.2.
 """
 
 from robot.version import get_version

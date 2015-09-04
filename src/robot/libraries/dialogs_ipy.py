@@ -12,9 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import wpf    # Loads required .NET Assemblies behind the scenes
 
-# Loads required .NET Assemblies behind the scenes
-import wpf
 from System.Windows import (GridLength, SizeToContent, TextWrapping, Thickness,
                             Window, WindowStartupLocation)
 from System.Windows.Controls import (Button, ColumnDefinition, Grid, Label, ListBox,
@@ -73,10 +72,12 @@ class _WpfDialog(Window):
         return None
 
     def _create_buttons(self):
-        self.left_button = self._create_button(self._left_button, self._left_button_clicked)
+        self.left_button = self._create_button(self._left_button,
+                                               self._left_button_clicked)
         self.left_button.SetValue(Grid.ColumnProperty, 0)
         self.left_button.IsDefault = True
-        self.right_button = self._create_button(self._right_button, self._right_button_clicked)
+        self.right_button = self._create_button(self._right_button,
+                                                self._right_button_clicked)
         if self.right_button:
             self.right_button.SetValue(Grid.ColumnProperty, 1)
             self.Content.AddChild(self.right_button)
