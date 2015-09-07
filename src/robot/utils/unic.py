@@ -14,7 +14,6 @@
 
 from pprint import PrettyPrinter
 
-from .dotdict import DotDict
 from .platform import IRONPYTHON, JYTHON
 from .robottypes import is_bytes, is_unicode
 

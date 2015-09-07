@@ -25,8 +25,8 @@ from .tags import Tags
 
 class Keyword(ModelObject):
     """Base model for single keyword."""
-    __slots__ = ['parent', '_name', 'doc', 'args', 'assign', 'tags', 'timeout',
-                 'type', '_sort_key', '_next_child_sort_key']
+    __slots__ = ['_name', 'doc', 'args', 'assign', 'timeout', 'type',
+                 '_sort_key', '_next_child_sort_key']
     KEYWORD_TYPE = 'kw'
     SETUP_TYPE = 'setup'
     TEARDOWN_TYPE = 'teardown'

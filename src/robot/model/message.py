@@ -24,7 +24,7 @@ class Message(ModelObject):
     The message can be a log message triggered by a keyword, or a warning
     or an error occurred during the test execution.
     """
-    __slots__ = ['message', 'level', 'html', 'timestamp', 'parent', '_sort_key']
+    __slots__ = ['message', 'level', 'html', 'timestamp', '_sort_key']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  parent=None):

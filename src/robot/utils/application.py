@@ -12,8 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import print_function
+
 import sys
-from contextlib import contextmanager
 
 from robot.errors import (INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER,
                           FRAMEWORK_ERROR, Information, DataError)
@@ -46,7 +47,7 @@ class Application(object):
 
     def console(self, msg):
         if msg:
-            print encode_output(msg)
+            print(encode_output(msg))
 
     def _parse_arguments(self, cli_args):
         try:
@@ -114,7 +115,7 @@ class DefaultLogger(object):
         pass
 
     def error(self, message):
-        print encode_output(message)
+        print(encode_output(message))
 
     def close(self):
         pass
