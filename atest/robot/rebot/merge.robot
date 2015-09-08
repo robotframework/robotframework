@@ -45,6 +45,12 @@ Add nested suite
     Run merge
     Suite add should have been successful
 
+Merge warnings
+    Re-run tests    --variable LEVEL:WARN --variable MESSAGE:Override
+    Run merge
+    Test merge should have been successful
+    Warnings should have been merged
+
 Non-matching root suite
     Run incompatible suite
     Run incompatible merge
@@ -69,7 +75,7 @@ Using other options
 
 *** Keywords ***
 Run original tests
-    Create Output With Robot    ${ORIGINAL}    --variable FAIL:YES    ${SUITES}
+    Create Output With Robot    ${ORIGINAL}    --variable FAIL:YES --variable LEVEL:WARN    ${SUITES}
     Verify original tests
 
 Verify original tests
@@ -81,7 +87,8 @@ Verify original tests
     ...    SubSuite1 First=FAIL:This test was doomed to fail: YES != NO
 
 Re-run tests
-    Create Output With Robot    ${MERGE 1}    --rerunfailed ${ORIGINAL}    ${SUITES}
+    [Arguments]    ${options}=
+    Create Output With Robot    ${MERGE 1}    --rerunfailed ${ORIGINAL} ${options}    ${SUITES}
     Should Be Equal    ${SUITE.name}    Suites
     Should Contain Suites    ${SUITE}    @{RERUN SUITES}
     Should Contain Suites    ${SUITE.suites[1]}    @{SUB SUITES 1}[0]
@@ -189,6 +196,13 @@ Suite add should have been successful
     ...    ${SUITE.suites[4]}
     ...    ${SUITE.suites[5]}
     ...    ${SUITE.suites[6]}
+
+Warnings should have been merged
+    Length Should Be    ${ERRORS}    2
+    Check Log Message    ${ERRORS[0]}    Original message    WARN
+    Check Log Message    ${ERRORS[1]}    Override    WARN
+    ${tc} =    Check Test Case    SubSuite1 First
+    Check Log Message    ${tc.kws[0].msgs[0]}    Override    WARN
 
 Merge should have failed
     Stderr Should Be Equal To
