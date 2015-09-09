@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Check is docutils installed
 Test Setup      Make test non-critical and fail it if docutils is not installed
-Force Tags      regression  jybot  pybot
+Force Tags      regression
 Resource        formats_resource.robot
 
 *** Test Cases ***

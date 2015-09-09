@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/newlines_and_encoding.robot
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         process_resource.robot
 
 *** Test Cases ***

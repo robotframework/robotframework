@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Testing that possible long error messages are truncated
 Suite Setup     Run Tests  ${EMPTY}  running/long_error_messages.robot
-Force Tags      regression  jybot  pybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

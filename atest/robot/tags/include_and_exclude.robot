@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags        regression    jybot    pybot
+Force Tags        regression
 Test Template     Run And Check Include And Exclude
 Resource          atest_resource.robot
 

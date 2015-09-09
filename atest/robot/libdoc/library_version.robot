@@ -1,6 +1,5 @@
 *** Settings ***
 Force Tags        regression
-Default Tags      pybot    jybot
 Resource          libdoc_resource.robot
 Test Template     Run Libdoc And Verify Version
 
@@ -17,11 +16,11 @@ No version defined in Python library
     NewStyleNoInit.py    ${EMPTY}
 
 Version defined with ROBOT_LIBRARY_VERSION in Java library
-    [Tags]    jybot
+    [Tags]    only-jython
     Example.java    1.0 <alpha>
 
 No version defined in Java library
-    [Tags]    jybot
+    [Tags]    only-jython
     NoConstructor.java    ${EMPTY}
 
 

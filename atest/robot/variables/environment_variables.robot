@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/environment_variables.robot
 Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -9,7 +8,7 @@ Environment Variables In Keyword Argument
     Check Test Case  ${TESTNAME}
 
 Java System Properties Can Be Used
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TESTNAME}
 
 Non-ASCII Environment Variable

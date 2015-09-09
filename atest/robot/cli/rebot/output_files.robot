@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup      Empty output directory
-Force Tags      pybot  jybot  regression
+Force Tags      regression
 Test Template   Correct outputs should be created
 Resource        rebot_cli_resource.robot
 

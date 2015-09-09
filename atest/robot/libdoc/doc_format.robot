@@ -1,6 +1,5 @@
 *** Settings ***
 Force Tags       regression
-Default Tags     pybot    jybot
 Resource         libdoc_resource.robot
 Test Setup       Remove Output Files
 Test Template    Test Format in HTML
@@ -36,7 +35,7 @@ Format from CLI overrides format from library
     <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    -F robot    DocFormatHtml.py
 
 Format from Java library
-    [Tags]    jybot
+    [Tags]    only-jython
     *bold* or <b>bold</b> ${EXAMPLE URL}                      ${EMPTY}    DocFormatHtml.java
     <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    -F robot    DocFormatHtml.java
 

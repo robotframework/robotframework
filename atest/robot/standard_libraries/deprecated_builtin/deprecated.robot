@@ -1,6 +1,6 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/deprecated_builtin/verify.robot
-Force Tags        regression    jybot    pybot
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

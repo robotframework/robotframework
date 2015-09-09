@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     Tests for logging using stdout/stderr
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/print_logging.robot
-Force Tags        regression    pybot    jybot
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -43,14 +43,14 @@ Logging Non-ASCII As Unicode
     Check Stderr Contains    Hyvää päivää stderr!
 
 Logging Non-ASCII As Bytes
-    [Tags]    x-fails-on-ipy
+    [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[2].msgs[0]}    Hyvää päivää!
     Check Log Message    ${tc.kws[3].msgs[0]}    Hyvää päivää!
     Check Stderr Contains    Hyvää päivää!
 
 Logging Mixed Non-ASCII Unicode And Bytes
-    [Tags]    x-fails-on-ipy
+    [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[2].msgs[0]}    Hyvä byte! Hyvä Unicode!
 

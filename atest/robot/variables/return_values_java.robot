@@ -4,7 +4,7 @@ Documentation     Tests for return values from keywords. Tests include e.g.
 ...               messages that are automatically logged when variables are set.
 ...               See also return_values.robot
 Suite Setup       Run Tests    ${EMPTY}    variables/return_values_java.robot
-Force Tags        regression    jybot
+Force Tags        regression    only-jython
 Resource          atest_resource.robot
 
 *** Test Cases ***

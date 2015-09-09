@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/copy_element.robot
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         xml_resource.robot
 
 *** Test Cases ***

@@ -2,7 +2,6 @@
 Documentation   Importing test libraries using relative and absolute path.
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_by_path.robot
 Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -26,12 +25,12 @@ Importing Python Library By Path With Variables
     Keyword Data Should Be  ${test.kws[0]}  MyLibDir2.Keyword In My Lib Dir 2  \${sum}  1, 2, 3, 4, 5
 
 Importing Java Library File By Path With .java Extension
-    [Tags]  jybot
+    [Tags]  only-jython
     ${test} =  Check Test Case  Importing Java Library File By Path With .java Extension
     Keyword Data Should Be  ${test.kws[0]}  MyJavaLib.Keyword In My Java Lib  \${ret}  tellus
 
 Importing Java Library File By Path With .class Extension
-    [Tags]  jybot
+    [Tags]  only-jython
     ${test} =  Check Test Case  Importing Java Library File By Path With .class Extension
     Keyword Data Should Be  ${test.kws[0]}  MyJavaLib2.Keyword In My Java Lib 2  \${ret}  maailma
 

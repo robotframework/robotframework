@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  keywords/embedded_arguments_library_keywords.robot
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

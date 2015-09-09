@@ -1,10 +1,10 @@
 *** Settings ***
-Default Tags    regression  pybot  jybot
+Force Tags      regression
 Resource        cli_resource.robot
 
 *** Test Cases ***
 Help
-    [Tags]    x-no-standalone
+    [Tags]    no-standalone
     ${rc}  ${help} =  Run And Return Rc And Output  ${ROBOT} --help
     Should Be Equal  ${rc}  ${251}
     Log  ${help.replace(' ','_')}

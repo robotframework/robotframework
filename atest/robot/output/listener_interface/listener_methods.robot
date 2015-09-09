@@ -2,7 +2,6 @@
 Suite Setup  Run Tests With Listeners
 Suite Teardown  Remove Listener Files
 Force Tags  regression
-Default Tags  pybot  jybot
 Resource  listener_resource.robot
 
 *** Test Cases ***
@@ -23,7 +22,7 @@ Listen Some
 
 Java Listener
     [Documentation]  Listener listening all methods implemented with Java
-    [Tags]  jybot
+    [Tags]  only-jython
     @{expected} =  Create List  Got settings on level: INFO
     ...  START SUITE: Pass And Fail 'Some tests here' [ListenerMeta: Hello]
     ...  START KW: My Keyword [Suite Setup]
@@ -65,7 +64,7 @@ Correct Attributes To Listener Methods
     Should Contain X Times  ${status}  PASSED  280
 
 Correct Attributes To Java Listener Methods
-    [Tags]  jybot
+    [Tags]  only-jython
     ${status} =  Log File  %{TEMPDIR}/${JAVA_ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  JavaAttributeVerifyingListener
     Should Not Contain  ${status}  FAILED
@@ -84,7 +83,7 @@ Keyword Type
     Stderr Should Be Empty
 
 Suite And Test Counts With Java
-    [Tags]  jybot
+    [Tags]  only-jython
     Run Tests  --listener JavaSuiteAndTestCountListener  misc/suites/sub*
     Stderr Should Be Empty
 

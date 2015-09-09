@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/start_process_preferences.robot
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         process_resource.robot
 
 *** Variables ***

@@ -1,5 +1,5 @@
 *** Settings ***
-Default Tags    regression  pybot  jybot
+Force Tags      regression
 Resource        cli_resource.robot
 Test Template   Run Tests and Verify RC
 

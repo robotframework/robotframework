@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/should_be.robot
-Force Tags        pybot    jybot    regression
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -20,14 +20,14 @@ Should Be Unicode String Positive
     Check Test Case    ${TESTNAME}
 
 Should Be Unicode String Negative
-    [Tags]    x-fails-on-ipy
+    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Should Be Byte String Positive
     Check Test Case    ${TESTNAME}
 
 Should Be Byte String Negative
-    [Tags]    x-fails-on-ipy
+    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Should Be Lowercase Positive

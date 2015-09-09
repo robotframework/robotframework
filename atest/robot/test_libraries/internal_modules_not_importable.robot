@@ -4,7 +4,7 @@ Suite Setup       Run Keywords
 ...    Create Directory    ${TESTDIR}${/}robot    AND
 ...    Run Tests    --pythonpath ${TESTDIR}    test_libraries/internal_modules_not_importable.robot
 Suite Teardown    Remove Directory    ${TESTDIR}    recursively
-Force Tags        regression    jybot    pybot
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Variable ***

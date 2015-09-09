@@ -1,6 +1,6 @@
 *** Setting ***
 Test Teardown     Remove File    ${OUTDIR}/${OUTFILE}
-Force Tags        pybot    jybot    regression
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

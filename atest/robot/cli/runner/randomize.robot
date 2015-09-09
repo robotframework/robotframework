@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Check That Default Orders Are Correct
-Force Tags      pybot  jybot  regression
+Force Tags      regression
 Resource        cli_resource.robot
 
 *** Variables ***

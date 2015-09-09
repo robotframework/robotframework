@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         libdoc_resource.robot
 Test Setup       Remove File    ${OUT HTML}
 Test Template    Run libdoc and verify error

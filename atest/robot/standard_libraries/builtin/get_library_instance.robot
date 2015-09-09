@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/get_library_instance.robot
 Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -13,7 +12,7 @@ Module library
     Check Test Case  ${TESTNAME}
 
 Java library
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TESTNAME}
 
 Library with alias

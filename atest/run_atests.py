@@ -69,7 +69,6 @@ ARGUMENTS = '''
 --variable TIDY:%(TIDY)s
 --variable STANDALONE_JAR:%(STANDALONE_JAR)s
 --pythonpath %(PYTHONPATH)s
---include %(INCLUDE)s
 --outputdir %(OUTPUTDIR)s
 --output output.xml
 --report report.html
@@ -89,6 +88,8 @@ ARGUMENTS = '''
 --TagStatExclude jybot
 --TagStatExclude x-*
 '''.strip().split()
+# FIXME: --TagStatXXX above use old tag names
+
 
 def atests(interpreter_path, *params):
     if interpreter_path == 'standalone':
@@ -98,17 +99,16 @@ def atests(interpreter_path, *params):
     return exec_interpreter(interpreter_path, *params)
 
 def exec_interpreter(interpreter_path, *params):
-    interpreter = _get_interpreter_basename(interpreter_path)
+    interpreter, version = _get_interpreter_name_and_version(interpreter_path)
     resultdir, tempdir = _get_result_and_temp_dirs(interpreter)
     env = {
         'PYTHONPATH' : join(CURDIR, 'resources'),
         'OUTPUTDIR' : resultdir,
         'INTERPRETER': interpreter_path,
-        'PYTHON': interpreter_path if 'python' in interpreter else '',
-        'JYTHON': interpreter_path if 'jython' in interpreter else '',
-        'IRONPYTHON': interpreter_path if 'ipy' in interpreter else '',
+        'PYTHON': interpreter_path if interpreter == 'Python' else '',
+        'JYTHON': interpreter_path if interpreter == 'Jython' else '',
+        'IRONPYTHON': interpreter_path if interpreter == 'IronPython' else '',
         'PLATFORM': sys.platform,
-        'INCLUDE': 'jybot' if 'jython' in interpreter else 'pybot',
         'ROBOT': '%s %s' % (interpreter_path, RUNNER),
         'REBOT': '%s %s' % (interpreter_path, REBOT),
         'LIBDOC': '%s %s' % (interpreter_path, LIBDOC),
@@ -117,11 +117,25 @@ def exec_interpreter(interpreter_path, *params):
         'STANDALONE_JAR': ''
     }
     args = [arg % env for arg in ARGUMENTS]
-    if sys.platform == 'darwin' and 'python' in interpreter:
-        args += ['--exclude', 'x-exclude-on-osx-python']
-    if 'ipy' in interpreter:
-        args += ['--noncritical', 'x-fails-on-ipy']
+    for exclude in _get_excludes(interpreter, version):
+        args += ['--exclude', exclude]
     return _run(args, tempdir, *params)
+
+def _get_excludes(interpreter, version):
+    if interpreter == 'IronPython':
+        yield 'no-ipy'
+    if interpreter == 'Jython':
+        yield 'no-jython'
+    else:
+        yield 'only-jython'
+    if interpreter == 'Python':
+        if sys.platform == 'darwin':
+            yield 'no-osx-python'
+        if version == '2.6':
+            yield 'no-python26'
+    if os.name == 'nt':
+        yield 'no-windows'
+
 
 def exec_standalone(standalone_path, *params):
     resultdir, tempdir = _get_result_and_temp_dirs('jython_standalone')
@@ -134,7 +148,6 @@ def exec_standalone(standalone_path, *params):
         'JYTHON': '',
         'IRONPYTHON': '',
         'PLATFORM': sys.platform,
-        'INCLUDE': 'jybot',
         'ROBOT': 'java %s -jar %s' % (tools_path, standalone_path),
         'REBOT': 'java %s -jar %s rebot' % (tools_path, standalone_path),
         'LIBDOC': 'java %s -jar %s libdoc' % (tools_path, standalone_path),
@@ -143,7 +156,9 @@ def exec_standalone(standalone_path, *params):
         'STANDALONE_JAR': 'True'
     }
     args = [arg % env for arg in ARGUMENTS]
-    args += ['--exclude', 'x-no-standalone']
+    args += ['--exclude', 'no-standalone', '--exclude', 'no-jython']
+    if os.name == 'nt':
+        args += ['--exclude', 'no-windows']
     return _run(args, tempdir, *params)
 
 def _get_bootclasspath():
@@ -153,8 +168,6 @@ def _get_bootclasspath():
     return ''
 
 def _run(args, tempdir, *params):
-    if os.name == 'nt':
-        args += ['--exclude', 'x-exclude-on-windows']
     command = [sys.executable, RUNNER]+args+list(params)
     environ = dict(os.environ, TEMPDIR=tempdir)
     print 'Running command\n%s\n' % ' '.join(command)
@@ -162,14 +175,18 @@ def _run(args, tempdir, *params):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     return subprocess.call(command, env=environ)
 
-def _get_interpreter_basename(interpreter):
-    interpreter = basename(interpreter)
-    base, ext = splitext(interpreter)
-    if ext.lower() in ('.sh', '.bat', '.cmd', '.exe'):
-        return base
-    return interpreter
+def _get_interpreter_name_and_version(interpreter):
+    try:
+        output = subprocess.check_output([interpreter, '-V'],
+                                         stderr=subprocess.STDOUT)
+    except OSError:
+        sys.exit('Invalid interpreter: %s' % interpreter)
+    name, version = output.split()[:2]
+    version = '.'.join(version.split('.')[:2])
+    return name, version
 
 def _get_result_and_temp_dirs(interpreter):
+    interpreter = interpreter.lower()
     resultdir = join(CURDIR, 'results', interpreter)
     tempdir = join(tempfile.gettempdir(), 'robottests', interpreter)
     if exists(resultdir):

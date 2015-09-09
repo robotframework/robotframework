@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run And Rebot Flattened
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  parsing/table_names.robot
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

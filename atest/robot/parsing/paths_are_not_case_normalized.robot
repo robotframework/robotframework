@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags      regression    pybot    jybot
+Force Tags      regression
 Suite Setup     Run tests    -l LOG -r RaP    misc/multiple_suites/suiTe_8.robot
 Resource        atest_resource.robot
 

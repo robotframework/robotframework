@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Tests for --test and --suite options
-Force Tags      regression  jybot  pybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Verify that stat information is written correctly to log/report
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 Library         html_output_stats.py
 Suite Setup     Run tests with stat related options

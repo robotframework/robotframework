@@ -1,6 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/telnet/login.robot
-Force Tags        jybot    pybot
 Resource          telnet_resource.robot
 
 *** Test Case ***

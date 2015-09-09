@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  --exclude jybot_only  standard_libraries/dialogs/dialogs.robot
 Force Tags      regression  manual
-Default Tags    jybot  pybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -48,6 +47,6 @@ Multiple dialogs in a row
     Check Test Case  ${TESTNAME}
 
 Dialog and timeout
-    [Tags]    jybot
+    [Tags]    only-jython
     Run Tests  --include jybot_only  standard_libraries/dialogs/dialogs.robot
     Check Test Case  ${TESTNAME}  FAIL  Test timeout 1 second exceeded.

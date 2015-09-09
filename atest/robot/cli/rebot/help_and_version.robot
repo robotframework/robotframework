@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup      Empty Output Directory
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 Resource        rebot_cli_resource.robot
 

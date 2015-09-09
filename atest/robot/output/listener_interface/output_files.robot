@@ -3,7 +3,6 @@ Documentation   Testing that listener gets information about different output fi
 Suite Setup     Run Some Tests
 Suite Teardown  Remove Listener Files
 Force Tags      regression
-Default Tags    pybot  jybot
 Resource        listener_resource.robot
 
 *** Variables ***
@@ -17,7 +16,7 @@ Output Files
     Should End With  ${file}  ${exp}
 
 Output Files With Java
-    [Tags]  jybot
+    [Tags]  only-jython
     ${file} =  Get Listener File  ${JAVA_FILE}
     ${exp} =  Catenate  SEPARATOR=\n  Debug (java): mydeb.txt  Output (java): myout.xml  Log (java): mylog.html  Report (java): myrep.html  The End\n
     Should End With  ${file}  ${exp}

@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Check is docutils installed
-Force Tags      regression  jybot  pybot
+Force Tags      regression
 Resource        formats_resource.robot
 
 *** Variables ***

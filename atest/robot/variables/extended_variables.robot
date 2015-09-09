@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/extended_variables.robot
 Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -21,19 +20,19 @@ Multiply
     Check Test Case  ${TESTNAME}
 
 Using Public Java Attribute
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TESTNAME}
 
 Using Java Attribute With Bean Properties
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TESTNAME}
 
 Calling Java Method
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TESTNAME}
 
 Accessing Java Lists and Maps
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TESTNAME}
 
 Failing When Base Name Does Not Exist
@@ -69,10 +68,10 @@ Failing For Syntax Error
     Check Test Case  ${TESTNAME}
 
 Failing When Java Attribute Does Not Exist
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TESTNAME}
 
 Failing When Java Method Throws Exception
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TESTNAME}
 

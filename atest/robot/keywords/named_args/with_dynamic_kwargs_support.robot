@@ -6,7 +6,7 @@ Suite Setup       Run Tests
 ...    --variable DynamicLibrary:DynamicLibraryWithKwargsSupport
 ...    keywords/named_args/with_dynamic_keywords.robot
 ...    keywords/named_args/with_dynamic_kwargs_support.robot
-Force Tags        pybot    jybot    regression
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

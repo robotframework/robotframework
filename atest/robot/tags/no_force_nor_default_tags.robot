@@ -1,6 +1,6 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    tags/no_force_no_default_tags.robot
-Force Tags        regression    jybot    pybot
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

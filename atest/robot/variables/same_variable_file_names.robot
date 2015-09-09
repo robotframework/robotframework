@@ -1,11 +1,10 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/same_variable_file_names
-Force Tags      regression  jybot  pybot  smoke
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***
 ${6 TESTS}    6 critical tests, 6 passed, 0 failed\n6 tests total, 6 passed, 0 failed
-
 
 *** Test Cases ***
 Different Variable Files Are Imported Correctly
@@ -16,4 +15,3 @@ Different Variable Files Are Imported Correctly
 
 Same Variable File Is Not Re-Imported
     Check Test Case   Importing Same Variable File Does Not Re-Import Module
-

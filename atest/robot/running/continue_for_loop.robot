@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    running/continue_for_loop.robot
 Force Tags        regression
-Default Tags      pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Cases ***

@@ -2,7 +2,7 @@
 Documentation     Testing rebot's include/exclude functionality. Tests also include/exclude first during test execution and then with rebot.
 Suite Setup       Create Input Files
 Suite Teardown    Remove File    ${INPUT FILE}
-Default Tags      regression    pybot    jybot
+Force Tags        regression
 Test Template     Run And Check Include And Exclude
 Resource          rebot_resource.robot
 

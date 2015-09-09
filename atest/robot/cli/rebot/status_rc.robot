@@ -2,7 +2,7 @@
 Suite Setup     Generate input files
 Suite Teardown  Remove input files
 Test Template   Run Rebot and Verify RC
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        rebot_cli_resource.robot
 
 *** Variables ***

@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Remote Tests    dict_result.robot    dictresult.py
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         remote_resource.robot
 
 *** Test Cases ***

@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Remote Tests And Libdoc
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         remote_resource.robot
 Resource         ../../libdoc/libdoc_resource.robot
 Test Template    Verify executed short doc and full Libdoc
@@ -16,7 +16,7 @@ Multi
     Multi    Multi\nline\ndocumentation    1
 
 Nön-ÄSCII
-    [Setup]    Make test non-critical on IronPython
+    [Tags]    no-ipy
     Nön-ÄSCII documentation    Nön-ÄSCII documentation    2
 
 Intro documentation

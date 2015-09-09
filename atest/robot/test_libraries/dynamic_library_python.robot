@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_python.robot
-Force Tags      regression  jybot  pybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -18,11 +18,11 @@ Non-ASCII keyword name works when Unicode
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name works when UTF-8 bytes
-    [Setup]    Make test non-critical on IronPython
+    [Tags]    no-ipy
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name fails when other bytes
-    [Setup]    Make test non-critical on IronPython
+    [Tags]    no-ipy
     Check Test Case  ${TESTNAME}
 
 Run Keyword in Static Library

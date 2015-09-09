@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/sending_signal.robot
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Test Setup       Check Precondition
 Resource         process_resource.robot
 

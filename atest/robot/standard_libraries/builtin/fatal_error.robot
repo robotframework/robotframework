@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/fatal_error.robot
 

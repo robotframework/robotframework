@@ -2,7 +2,6 @@
 Documentation     Importing test libraries normally, using variable in library name, and importing libraries accepting arguments.
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/library_import_normal.robot
 Force Tags        regression
-Default Tags      pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -16,7 +15,7 @@ Library Import With Spaces In Name
     Check Log Message    ${test.kws[1].messages[0]}    It really workz!!
 
 Importing Library Class Should Have Been Syslogged
-    [tags]    x-no-standalone
+    [Tags]    no-standalone
     ${source} =    Normalize Path And Ignore Drive    ${CURDIR}/../../../src/robot/libraries/OperatingSystem
     Syslog Should Contain Match    | INFO \ |    Imported test library class 'robot.libraries.OperatingSystem' from '${source}*'
     ${base} =    Normalize Path And Ignore Drive    ${CURDIR}/../../testresources/testlibs

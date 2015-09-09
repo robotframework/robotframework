@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/keyword_status_and_message.robot
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

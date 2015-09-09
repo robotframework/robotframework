@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags      regression    pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 Library         ProcessManager.py
 Test Teardown   Run Keyword If Test Failed    Log Stdout And Stderr
@@ -14,7 +14,7 @@ SIGINT Signal Should Stop Test Execution Gracefully
     Check Test Cases Have Failed Correctly
 
 SIGTERM Signal Should Stop Test Execution Gracefully
-    [Tags]  x-exclude-on-windows
+    [Tags]  no-windows
     Start And Send Signal  without_any_timeout.robot  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
@@ -46,7 +46,7 @@ Two SIGINT Signals Should Stop Test Execution Forcefully
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
-    [Tags]  x-exclude-on-windows
+    [Tags]  no-windows
     Start And Send Signal  without_any_timeout.robot  Two SIGTERMs  2s
     Check Tests Have Been Forced To Shutdown
 

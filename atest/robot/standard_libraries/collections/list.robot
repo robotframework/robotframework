@@ -2,7 +2,6 @@
 Documentation     Tests for Collections library's list functionality
 Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/collections/list.robot
 Force Tags        regression
-Default Tags      jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Cases ***

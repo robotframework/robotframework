@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     My Setup
 Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -10,7 +9,7 @@ Python Library From A Zip File
     Check Syslog Contains  Imported library 'ZipLib' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
 
 Java Library From A Jar File
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  Java Library From a Jar File
     Check Syslog Contains  Imported library 'org.robotframework.JarLib' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
 

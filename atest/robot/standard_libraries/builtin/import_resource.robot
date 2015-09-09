@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  --variable WINDOWS:${WINDOWS}  standard_libraries/builtin/import_resource.robot
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

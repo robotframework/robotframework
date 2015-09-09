@@ -1,5 +1,5 @@
 *** Settings ***
-Default Tags      regression    jybot    pybot
+Force Tags        regression
 Suite Setup       Create Input File
 Test Setup        Empty Directory     ${MYOUTDIR}
 Suite Teardown    Remove Temps

@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Tests for automatic variables \${OUTPUT_FILE}, \${LOG_FILE} and \${REPORT_FILE}
-Force Tags      regression  jybot  pybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation     Running multiple suites together.
-Force Tags        regression    pybot    jybot
+Force Tags        regression
 Resource          cli_resource.robot
 
 *** Test Cases ***

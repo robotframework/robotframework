@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     Handling valid and invalid user keyword arguments.
 Suite Setup       Run Tests    ${EMPTY}    keywords/user_keyword_arguments.robot
-Force Tags        regression    pybot    jybot
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

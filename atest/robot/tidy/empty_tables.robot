@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags        pybot    jybot   regression
+Force Tags        regression
 Resource          tidy_resource.robot
 Suite Setup       Create Directory     ${TEMP}
 Suite Teardown    Remove Directory     ${TEMP}    recursive=True

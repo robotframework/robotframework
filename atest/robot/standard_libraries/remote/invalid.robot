@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Remote Tests    invalid.robot    invalid.py
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         remote_resource.robot
 
 *** Test Cases ***
@@ -11,7 +11,7 @@ Invalid result dict
     Check Test Case    ${TESTNAME}
 
 Invalid char in XML
-    [Tags]    x-fails-on-ipy
+    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Exception

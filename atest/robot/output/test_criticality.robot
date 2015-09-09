@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags  pybot  jybot  regression
+Force Tags  regression
 Resource  atest_resource.robot
 Suite Setup  Run some tests and parse XML
 

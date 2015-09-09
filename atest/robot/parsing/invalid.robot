@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags      regression  jybot  pybot
+Force Tags      regression
 Resource        data_formats/formats_resource.robot
 
 *** Variables ***

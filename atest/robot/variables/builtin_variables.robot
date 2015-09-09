@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  --variable FALSE:CLI --variable 77:CLI  variables/builtin_variables.robot
-Force Tags      pybot  jybot  regression
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

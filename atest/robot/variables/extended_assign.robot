@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/extended_assign.robot
 Force Tags       regression
-Default Tags     pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***
@@ -12,7 +11,7 @@ Set attributes to Python object
     Check Log Message    ${tc.kws[1].msgs[0]}    \${ v a r . attr2 } = nv2
 
 Setting attribute to Java object
-    [Tags]    jybot
+    [Tags]    only-jython
     Check Test Case    ${TESTNAME}
 
 Set attribute not directly in base

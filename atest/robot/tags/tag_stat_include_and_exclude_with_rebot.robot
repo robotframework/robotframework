@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${DATA SOURCE}
 Suite Teardown  Remove File  ${INPUT FILE}
-Default Tags    regression  pybot  jybot
+Force Tags      regression
 Resource        rebot_resource.robot
 Test Template   Run And Check Include And Exclude
 

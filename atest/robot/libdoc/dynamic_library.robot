@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/DynamicLibrary.py::required
-Force Tags        regression    pybot    jybot
+Force Tags        regression
 Resource          libdoc_resource.robot
 
 *** Test Cases ***

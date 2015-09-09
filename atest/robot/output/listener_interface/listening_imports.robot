@@ -2,7 +2,6 @@
 Suite Setup       Run Tests    --listener "ListenImports;${IMPORTS FILE}"    output/listeners/imports/imports.robot
 Suite Teardown    Remove Listener Files
 Force Tags        regression
-Default Tags      pybot    jybot
 Resource          listener_resource.robot
 
 *** Variables ***

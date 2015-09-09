@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run if dependencies are available  -l log.html -L debug  standard_libraries/screenshot/take_screenshot.robot
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        screenshot_resource.robot
 
 *** Test Cases ***

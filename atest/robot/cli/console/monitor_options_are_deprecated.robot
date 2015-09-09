@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests     --monitorwidth 50 --monitorc off --MonitorMarkers off    misc/pass_and_fail.robot
-Force Tags        regression    pybot    jybot
+Force Tags        regression
 Resource          console_resource.robot
 
 *** Test Cases ***

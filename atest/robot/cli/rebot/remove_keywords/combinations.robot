@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Create Output
-Force Tags        regression    pybot    jybot
+Force Tags        regression
 Test Template     Run Rebot With RemoveKeywords
 Resource          remove_keywords_resource.robot
 

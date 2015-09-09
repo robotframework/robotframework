@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup      Create Output Directory
-Default Tags    regression  pybot  jybot
+Force Tags      regression
 Resource        cli_resource.robot
 
 *** Variables ***

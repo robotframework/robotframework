@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Tests for libraries writes binary data into STDOUT and raising exceptions containing it.
 Suite Setup     My Run Tests
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 Variables       ../../resources/unicode_vars.py
 

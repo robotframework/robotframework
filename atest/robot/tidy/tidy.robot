@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags        pybot    jybot   regression
+Force Tags        regression
 Resource          tidy_resource.robot
 Test Setup        Create Directory     ${TEMP}
 Test Teardown     Remove Directory     ${TEMP}    recursive=True
@@ -54,7 +54,7 @@ Custom headers are preserved and tables aligned accordingly
     Run tidy and check result    ${EMPTY}     golden_with_headers.robot
 
 Running Tidy as a script
-    [Tags]   x-no-standalone
+    [Tags]   no-standalone
     Run tidy as a script and check result    ${INTERPRETER}   ${EMPTY}    golden.robot
 
 Tidy tests and keywords containing ELSE and ELSE IF

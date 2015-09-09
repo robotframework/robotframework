@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  --variable config:NONE  core/overriding_default_settings_with_none.robot
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

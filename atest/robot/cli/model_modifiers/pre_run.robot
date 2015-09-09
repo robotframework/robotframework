@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags         pybot    jybot    regression
+Force Tags         regression
 Resource           modifier_resource.robot
 
 *** Test Cases ***

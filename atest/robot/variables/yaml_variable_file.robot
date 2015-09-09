@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    --variablefile ${VARDIR}/cli.yaml --pythonpath ${VARDIR}    variables/yaml_variable_file.robot
-Force Tags       regression    pybot    jybot   x-no-standalone
+Force Tags       regression    no-standalone
 Resource         atest_resource.robot
 
 *** Variables ***
@@ -11,7 +11,7 @@ Valid YAML file
     Check Test Case    ${TESTNAME}
 
 Non-ASCII strings
-    Make test non-critical on IronPython
+    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Dictionary is dot-accessible

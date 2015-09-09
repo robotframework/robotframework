@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup      Run Tests And Remove Keywords
-Default Tags    regression  pybot  jybot
+Suite Setup     Run Tests And Remove Keywords
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

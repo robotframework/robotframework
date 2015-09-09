@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Create Inputs For Rebot
 Suite Teardown  Remove Temp Files
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        rebot_resource.robot
 
 *** Variables ***

@@ -5,9 +5,8 @@ Resource        atest_resource.robot
 
 *** Test Cases ***
 Tilde in path
-    [Tags]  pybot  jybot
     Check testcase  ${TESTNAME}
 
 Tilde and username in path
-    [Tags]  pybot
+    [Tags]  no-jython
     Check testcase  ${TESTNAME}

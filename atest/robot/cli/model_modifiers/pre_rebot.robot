@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags        pybot    jybot    regression
+Force Tags        regression
 Suite Setup       Create Output With Robot    ${MODIFIED OUTPUT}    ${EMPTY}    ${TEST DATA}
 Suite Teardown    Remove File    ${MODIFIED OUTPUT}
 Resource          modifier_resource.robot

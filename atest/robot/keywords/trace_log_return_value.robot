@@ -1,6 +1,6 @@
 ﻿*** Settings ***
 Suite Setup     Run Tests  --loglevel TRACE  keywords/trace_log_return_value.robot
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

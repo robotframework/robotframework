@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup      Create Output Directory and Dymmy Library
-Default Tags    regression  pybot  jybot
+Force Tags      regression
 Resource        cli_resource.robot
 
 *** Variables ***

@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/call_method.robot
 Force Tags      regression
-Default Tags    jybot  pybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -28,9 +27,9 @@ Call Non Existing Method
     Check Test Case  ${TEST NAME}
 
 Call Java Method
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TEST NAME}
 
 Call Non Existing Java Method
-    [Tags]  jybot
+    [Tags]  only-jython
     Check Test Case  ${TEST NAME}

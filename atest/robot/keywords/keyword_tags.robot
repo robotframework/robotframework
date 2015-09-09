@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/keyword_tags.robot
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         atest_resource.robot
 Test template    Keyword tags should be
 
@@ -18,7 +18,6 @@ Library keyword tags with documentation and attribute
     2    one    two words
 
 Invalid library keyword tags
-    [Tags]    not ready
     [Template]    NONE
     Check Test Case    ${TESTNAME}
     Check log message    ${ERRORS[0]}

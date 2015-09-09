@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_args_and_docs.robot
 Force Tags      regression
-Default Tags    pybot  jybot
 Test Template   Check test case and its doc
 Resource        atest_resource.robot
 
@@ -38,33 +37,33 @@ Keyword Not Created And Warning Shown When Getting Arguments Fails
     [Teardown]  Check Log Message  ${ERRORS.msgs[11]}   Imported library 'classes.InvalidGetArgsDynamicLibrary' contains no keywords  WARN
 
 Documentation And Argument Boundaries Work With No Args In Java
-    [Tags]  jybot
+    [Tags]  only-jython
     Keyword documentation for Java No Arg
 
 Documentation And Argument Boundaries Work With Mandatory Args In Java
-    [Tags]  jybot
+    [Tags]  only-jython
     Keyword documentation for Java One Arg
 
 Documentation And Argument Boundaries Work With Default Args In Java
-    [Tags]  jybot
+    [Tags]  only-jython
     Keyword documentation for Java One or Two Args
 
 Documentation And Argument Boundaries Work With Varargs In Java
-    [Tags]  jybot
+    [Tags]  only-jython
     Keyword documentation for Java Many Args
 
 Keyword With Kwargs Not Created And Warning Shown When No Run Keyword With Kwargs Support In Java
-    [Tags]  jybot
+    [Tags]  only-jython
     [Template]  NONE
     Check Log Message  ${ERRORS.msgs[12]}  Adding keyword 'Unsupported Java Kwargs' to library 'ArgDocDynamicJavaLibrary' failed: Too few 'runKeyword' method parameters for **kwargs support.  ERROR
 
 Keyword Not Created And Warning Shown When Getting Documentation Fails In Java
-    [Tags]  jybot
+    [Tags]  only-jython
     [Template]  NONE
     Check Log Message  ${ERRORS.msgs[13]}  Adding keyword 'Invalid Java Args' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordArguments' failed: Get args failure  ERROR
 
 Keyword Not Created And Warning Shown When Getting Arguments Fails In Java
-    [Tags]  jybot
+    [Tags]  only-jython
     [Template]  NONE
     Check Log Message  ${ERRORS.msgs[14]}  Adding keyword 'Invalid Java Doc' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordDocumentation' failed: Get doc failure  ERROR
 

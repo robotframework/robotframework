@@ -3,7 +3,7 @@ Documentation   Tests for --test and --suite options for Rebot
 Suite Setup     Create Input File
 Suite Teardown  Remove Temps
 Test Setup      Empty Directory  ${MYOUTDIR}
-Default Tags    regression  jybot  pybot
+Force Tags      regression
 Resource        rebot_resource.robot
 
 *** Variables ***

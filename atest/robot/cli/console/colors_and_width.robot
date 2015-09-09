@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     On Windows colors are never actually written to output.
 ...               Testing colors thus really works only on other platforms
-Force Tags        regression    pybot    jybot
+Force Tags        regression
 Resource          console_resource.robot
 
 *** Test Cases ***

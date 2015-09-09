@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/builtin/verify.robot
 Force Tags        regression
-Default Tags      jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -55,7 +54,7 @@ Should Be Equal fails without values
     Check test case    ${TESTNAME}
 
 Should be equal with multiline text uses diff
-    Run on python 2.5 and 2.6    Remove tags   regression   # diff contains extra spaces on python 2.6
+    [Tags]    no-python26    # diff contains extra spaces on python 2.6
     Check test case    ${TESTNAME}
 
 Should be equal with multiline diff text requires both multiline
@@ -121,7 +120,7 @@ Should Be Equal As Strings
     Verify argument type message    ${tc.kws[0].msgs[0]}    int    unicode
 
 Should Be Equal As Strings Multiline
-    Run on python 2.5 and 2.6    Remove tags   regression   # diff contains extra spaces on python 2.6
+    [Tags]    no-python26    # diff contains extra spaces on python 2.6
     Check test case    ${TESTNAME}
 
 Should Not Start With
@@ -220,7 +219,7 @@ Length With Length Attribute
 
 Length Of Java Types
     [Documentation]    Tests that it's possible to get the lenght of String, Vector, Hashtable and array
-    [Tags]    jybot
+    [Tags]    only-jython
     Check test case    ${TESTNAME}
 
 Should Contain X Times With String
@@ -239,7 +238,7 @@ Should Contain X Times With Tuple
     Check test case    ${TESTNAME}
 
 Should Contain X With Java Array And Vector
-    [Tags]    jybot
+    [Tags]    only-jython
     Check test case    ${TESTNAME}
 
 Should Contain X With Invalid Item

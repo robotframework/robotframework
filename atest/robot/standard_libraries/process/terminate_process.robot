@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/terminate_process.robot
 Test Setup       Check Precondition
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         process_resource.robot
 
 *** Test Cases ***

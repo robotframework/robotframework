@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_failing.robot
 Force Tags      regression
-Default Tags    pybot  jybot
 Resource        atest_resource.robot
 
 *** Test Cases ***
@@ -46,7 +45,7 @@ Library Import Without Name
     ...  Library setting requires a name
 
 Initializing Java Library Fails
-    [Tags]  jybot
+    [Tags]  only-jython
     Import Should Have Failed  9
     ...  Initializing test library 'InitializationFailJavaLibrary' with no arguments failed: Initialization failed!
     ...  at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)

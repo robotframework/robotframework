@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  --dryrun  cli/dryrun/run_keyword_variants.robot
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

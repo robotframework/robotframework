@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup  Run Tests With Failing Listener
-Force Tags  regression  pybot  jybot
+Force Tags  regression
 Resource  listener_resource.robot
 
 *** Test Cases ***

@@ -1,7 +1,6 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/deprecated_builtin/misc.robot
 Force Tags        regression
-Default Tags      jybot    pybot
 Resource          atest_resource.robot
 
 *** Test Case ***

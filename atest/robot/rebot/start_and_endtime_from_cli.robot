@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Create Input Files
 Suite Teardown  Remove Files  ${INPUT1}  ${INPUT2}
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        rebot_resource.robot
 
 *** Variables ***

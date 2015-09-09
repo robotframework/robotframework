@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  --dryrun  cli/dryrun/run_keyword_variants_in_suite_teardown.robot
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 

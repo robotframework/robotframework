@@ -345,19 +345,9 @@ All Keywords Should Have Passed
     \    Should Be Equal    ${kw.status}    PASS
     \    All Keywords Should Have Passed    ${kw}
 
-Run on python 2.5 and 2.6
-    [arguments]     ${kw}   @{args}
-    ${interpreter} =    Get interpreter    ${OUTFILE}
-    ${is 27} =   is 27    ${interpreter}
-    Run keyword unless    ${is 27}    ${kw}   @{args}
-
 Make test non-critical if
     [Arguments]    ${condition}
     Run Keyword If    ${condition}    Remove Tags    regression
-
-Make test non-critical on IronPython
-    # This test isn't 100% safe. Should come up with better.
-    Make test non-critical if    os.sep != '/' and 'ipy' in '${INTERPRETER}'
 
 Set PYTHONPATH
     [Arguments]    @{values}

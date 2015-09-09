@@ -2,7 +2,6 @@
 Suite Setup     Run Tests With Listeners
 Suite Teardown  Remove Listener Files
 Force Tags      regression
-Default Tags    pybot  jybot
 Resource        listener_resource.robot
 Test Template   Listener Import Message Should Be In Syslog
 
@@ -43,17 +42,17 @@ Non Existing Listener
     ...    ImportError: No module named NonExistingListener${EMPTY TB}
 
 Java Listener
-    [Tags]  jybot
+    [Tags]  only-jython
     class    JavaListener
 
 Java Listener With Arguments
-    [Tags]  jybot
+    [Tags]  only-jython
     class    JavaListenerWithArgs    count=3
     [Teardown]    Check Listener File      ${JAVA_ARGS_FILE}
     ...    I got arguments 'Hello' and 'world'
 
 Java Listener With Wrong Number Of Arguments
-    [Tags]  jybot
+    [Tags]  only-jython
     [Template]    Check Syslog Contains
     Taking listener 'JavaListenerWithArgs' into use failed:
     ...    Importing listener 'JavaListenerWithArgs' failed:

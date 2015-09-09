@@ -1,7 +1,6 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_if_unless.robot
 Force Tags        regression
-Default Tags      jybot    pybot
 Resource          atest_resource.robot
 
 *** Variable ***

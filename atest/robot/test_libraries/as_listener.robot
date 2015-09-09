@@ -4,7 +4,7 @@ Suite Setup     Run Tests  ${EMPTY}
 ...      test_libraries/as_listener/test_scope.robot
 ...      test_libraries/as_listener/global_scope.robot
 ...      test_libraries/as_listener/multiple_listeners.robot
-Force Tags      regression  jybot  pybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

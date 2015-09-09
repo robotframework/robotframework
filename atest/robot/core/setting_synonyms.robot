@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Testing pre/post condition is synonym to setup/teardown
 Suite Setup     Run Tests  ${EMPTY}  core/setting_synonyms.robot
-Force Tags      regression  jybot  pybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup       Suite initialization
 Suite Teardown    Remove Directory    ${RERUN DIR}    recursive
-Force Tags        regression    pybot    jybot
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Variables ***

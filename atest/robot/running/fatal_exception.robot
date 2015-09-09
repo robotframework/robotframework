@@ -1,6 +1,5 @@
 *** Settings ***
 Force Tags        regression
-Default Tags      pybot    jybot
 Resource          atest_resource.robot
 
 *** Test Cases ***
@@ -11,7 +10,7 @@ Exit From Python Keyword
     Check Test Case    Test That Should Not Be Run 1
 
 Exit From Java Keyword
-    [Tags]    jybot
+    [Tags]    only-jython
     Run Tests    ${EMPTY}    running/fatal_exception/03__java_library_kw.robot
     Check Test Case    ${TESTNAME}
     Check Test Case    Test That Should Not Be Run 3

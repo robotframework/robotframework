@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/documentation/
-Force Tags        regression    jybot    pybot
+Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

@@ -1,6 +1,5 @@
 *** Settings ***
 Force Tags        regression
-Default Tags      pybot    jybot
 Resource          libdoc_resource.robot
 Test Template     Library Should Have No Init
 
@@ -12,11 +11,11 @@ Old Style Python Class With No Argument Init
     no_arg_init.py
 
 Java Class With No Constructor
-    [Tags]    jybot
+    [Tags]    only-jython
     NoConstructor.java
 
 Java Class With Default and Private Constructors
-    [Tags]    jybot
+    [Tags]    only-jython
     NoArgConstructor.java
 
 

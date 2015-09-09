@@ -1,10 +1,9 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/remove_file.robot
-Force Tags      regression  pybot  jybot
+Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Remove File
     Check Test Case  ${TESTNAME}
 
@@ -22,7 +21,7 @@ Remove Files Using Glob Pattern
 
 Remove Non-ASCII Files Using Glob Pattern
     # On OSX python glob does not handle NFD characters.
-    [Tags]  x-exclude-on-osx-python
+    [Tags]  no-osx-python
     Check Test Case  ${TESTNAME}
 
 Remove Non-Existing File
@@ -33,4 +32,3 @@ Removing Directory As A File Fails
 
 Remove file containing glob pattern
     Check Test Case  ${TESTNAME}
-

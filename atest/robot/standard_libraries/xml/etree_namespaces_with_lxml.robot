@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/etree_namespaces_with_lxml.robot
 Test Teardown    Make test non-critical if lxml not available
-Force Tags       regression    pybot    jybot
+Force Tags       regression
 Resource         xml_resource.robot
 
 *** Test Cases ***

@@ -2,7 +2,6 @@
 Suite Setup     Run Tests  --listener OldListenAll --listener OldListenAll:%{TEMPDIR}${/}${ALL_FILE2} --listener old_module_listener --listener old_listeners.ListenSome --listener OldJavaListener --listener old_listeners.InvalidMethods  misc/pass_and_fail.robot
 Suite Teardown  Remove Listener Files
 Force Tags      regression
-Default Tags    pybot  jybot
 Resource        listener_resource.robot
 
 *** Test Cases ***
@@ -23,7 +22,7 @@ Listen Some
 
 Java Listener
     [Documentation]  Listener listening all methods implemented with Java
-    [Tags]  jybot
+    [Tags]  only-jython
     @{expected} =  Create List
     ...  START SUITE: Pass And Fail 'Some tests here'
     ...  START KW: My Keyword [Suite Setup]
