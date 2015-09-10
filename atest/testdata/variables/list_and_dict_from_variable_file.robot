@@ -74,5 +74,5 @@ Failing list in for loop
     \    Fail    Not executed
 
 Failing dict
-    [Documentation]    FAIL STARTS: Resolving variable '\&{FAILING DICT}' failed: ZeroDivisionError:
+    [Documentation]    FAIL Resolving variable '\&{FAILING DICT}' failed: Bang
     Log Many   &{FAILING DICT}

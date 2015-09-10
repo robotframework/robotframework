@@ -28,9 +28,5 @@ def failing_generator():
 
 class FailingDict(dict):
 
-    def __iter__(self):
-        1/0
-        raise Exception('Bang!!')
-
-    def keys(self):
-        return list(self)
+    def __getattribute__(self, item):
+        raise Exception('Bang')
