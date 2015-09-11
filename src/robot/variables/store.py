@@ -35,7 +35,7 @@ class VariableStore(object):
                 pass
 
     def _resolve_delayed(self, name, value):
-        if not isinstance(value, VariableTableValueBase):
+        if not self._is_resolvable(value):
             return value
         try:
             self.data[name] = value.resolve(self._variables)
@@ -47,6 +47,12 @@ class VariableStore(object):
             variable_not_found('${%s}' % name, self.data,
                                "Variable '${%s}' not found." % name)
         return self.data[name]
+
+    def _is_resolvable(self, value):
+        try: # isinstance can throw an exception in ironpython and jython
+            return isinstance(value, VariableTableValueBase)
+        except Exception:
+            return False
 
     def __getitem__(self, name):
         return self._resolve_delayed(name, self.data[name])

@@ -94,7 +94,7 @@ ARGUMENTS = '''
 def atests(interpreter_path, *params):
     if interpreter_path == 'standalone':
         interpreter_path = jar()
-    if '.jar' in interpreter_path:
+    if interpreter_path.endswith('.jar'):
         return exec_standalone(interpreter_path, *params)
     return exec_interpreter(interpreter_path, *params)
 
