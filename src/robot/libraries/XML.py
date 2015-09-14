@@ -74,7 +74,8 @@ class XML(object):
     XML can be parsed into an element structure using `Parse XML` keyword.
     It accepts both paths to XML files and strings that contain XML. The
     keyword returns the root element of the structure, which then contains
-    other elements as its children and their children.
+    other elements as its children and their children. Possible comments in
+    the source XML are removed.
 
     The element structure returned by `Parse XML`, as well as elements
     returned by keywords such as `Get Element`, can be used as the ``source``
@@ -82,7 +83,7 @@ class XML(object):
     structure, other keywords also accept paths to XML files and strings
     containing XML similarly as `Parse XML`. Notice that keywords that modify
     XML do not write those changes back to disk even if the source would be
-    given as a path to a fike. Changes must always saved explicitly using
+    given as a path to a file. Changes must always saved explicitly using
     `Save XML` keyword.
 
     When the source is given as a path to a file, the forward slash character
@@ -453,7 +454,8 @@ class XML(object):
         The ``source`` can either be a path to an XML file or a string
         containing XML. In both cases the XML is parsed into ElementTree
         [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|element structure]
-        and the root element is returned.
+        and the root element is returned. Possible comments in the source XML
+        are removed.
 
         As discussed in `Handling XML namespaces` section, this keyword, by
         default, strips possible namespaces added by ElementTree into tag names.
@@ -484,7 +486,7 @@ class XML(object):
     def _remove_comments(self, node):
         for comment in node.xpath('//comment()'):
             parent = comment.getparent()
-            if parent:
+            if parent is not None:
                 self._preserve_tail(comment, parent)
                 parent.remove(comment)
 

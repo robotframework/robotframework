@@ -4,9 +4,9 @@
     <!-- comment -->
     <child>child 1 text</child>
     <child id="2">
-        child 2 text
+        child 2 te<!---->xt
         <grandchild>grand child text</grandchild>
-        more text
+        more t<!---->e<!---->x<!---->t<!---->
     </child>
     <child id="3" a2="xxx" a3="y"><grandchild><!-- c --><ggc/></grandchild></child>
     <another attr="value">
