@@ -6,7 +6,10 @@ Resource         xml_resource.robot
 
 *** Test Cases ***
 Save XML Element
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    ${path} =    Normalize Path    %{TEMPDIR}/xmllib.xml
+    Check Log Message    ${tc.kws[1].msgs[0]}
+    ...    XML saved to <a href="file://${path}">${path}</a>.    html=True
 
 Save XML String
     Check Test Case    ${TESTNAME}

@@ -14,6 +14,7 @@
 
 import copy
 import re
+import os
 
 try:
     from lxml import etree as lxml_etree
@@ -1321,6 +1322,7 @@ class XML(object):
 
         New in Robot Framework 2.7.5.
         """
+        path = os.path.abspath(path.replace('/', os.sep))
         elem = self.get_element(source)
         if self.lxml_etree:
             NameSpaceStripper().unstrip(elem)
@@ -1330,6 +1332,8 @@ class XML(object):
         # close files they open and Jython/IPY don't close them implicitly.
         with open(path, 'w') as output:
             tree.write(output, encoding=encoding, **xml_declaration)
+        logger.info('XML saved to <a href="file://%s">%s</a>.' % (path, path),
+                    html=True)
 
     def evaluate_xpath(self, source, expression, context='.'):
         """Evaluates the given xpath expression and returns results.
