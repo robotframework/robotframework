@@ -417,7 +417,7 @@ class XML(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
     _whitespace = re.compile('\s+')
-    _xml_declaration = re.compile('^<\?xml .*\?>\n')
+    _xml_declaration = re.compile('^<\?xml .*\?>')
 
     def __init__(self, use_lxml=False):
         """Import library with optionally lxml mode enabled.
@@ -1279,20 +1279,25 @@ class XML(object):
         """
         return copy.deepcopy(self.get_element(source, xpath))
 
-    def element_to_string(self, source, xpath='.'):
+    def element_to_string(self, source, xpath='.', encoding=None):
         """Returns the string representation of the specified element.
 
         The element to convert to a string is specified using ``source`` and
         ``xpath``. They have exactly the same semantics as with `Get Element`
         keyword.
 
-        The returned string is in Unicode format and it does not contain any
-        XML declaration.
+        By default the string is returned as Unicode. If ``encoding`` argument
+        is given any value, the string is returned as bytes in the specified
+        encoding. The resulting string never contains the XML declaration.
 
         See also `Log Element` and `Save XML`.
         """
-        string = self.etree.tostring(self.get_element(source, xpath), encoding='UTF-8')
-        return self._xml_declaration.sub('', string.decode('UTF-8')).strip()
+        source = self.get_element(source, xpath)
+        string = self.etree.tostring(source, encoding='UTF-8').decode('UTF-8')
+        string = self._xml_declaration.sub('', string).strip()
+        if encoding:
+            string = string.encode(encoding)
+        return string
 
     def log_element(self, source, level='INFO', xpath='.'):
         """Logs the string representation of the specified element.
@@ -1314,11 +1319,11 @@ class XML(object):
         semantics as with `Get Element` keyword.
 
         The file where the element is saved is denoted with ``path`` and the
-        encoding to use with ``encoding``. The resulting file contains an XML
-        declaration.
+        encoding to use with ``encoding``. The resulting file always contains
+        the XML declaration.
 
         Use `Element To String` if you just need a string representation of
-        the element,
+        the element.
 
         New in Robot Framework 2.7.5.
         """

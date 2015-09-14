@@ -13,9 +13,17 @@ Element to string
     ${string}=    Element To String    ${TEST}
     Elements Should Be Equal    ${string}    ${TEST}
 
+Element to string with encoding
+    ${string}=    Element To String    ${TÄG}    encoding=latin-1
+    ${expected}=    Encode String To Bytes    ${TÄG}    encoding=latin-1
+    Should Be Equal    ${string}    ${expected}
+
 Child element to string
     ${string}=    Element To String    ${XML}    xpath=täg
     Should Be Equal    ${string}    ${TÄG}
+    ${string}=    Element To String    ${XML}    täg    latin-1
+    ${expected}=    Encode String To Bytes    ${TÄG}    encoding=latin-1
+    Should Be Equal    ${string}    ${expected}
 
 Log element
     ${string}=    Log Element    ${XML}

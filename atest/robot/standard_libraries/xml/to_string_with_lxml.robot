@@ -8,6 +8,9 @@ Resource         xml_resource.robot
 Element to string
     Check Test Case    ${TESTNAME}
 
+Element to string with encoding
+    Check Test Case    ${TESTNAME}
+
 Child element to string
     Check Test Case    ${TESTNAME}
 

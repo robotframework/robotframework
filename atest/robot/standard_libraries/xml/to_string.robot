@@ -4,8 +4,10 @@ Force Tags       regression
 Resource         xml_resource.robot
 
 *** Test Cases ***
-
 Element to string
+    Check Test Case    ${TESTNAME}
+
+Element to string with encoding
     Check Test Case    ${TESTNAME}
 
 Child element to string
