@@ -23,9 +23,8 @@ Parse XML To Test Variable
     Set Test Variable    ${var}    ${result}
 
 Element Should Have Attributes
-    [Arguments]    ${source}    ${xpath}    @{attributes}
+    [Arguments]    ${source}    ${xpath}    &{expected}
     ${elem} =    Get Element    ${source}    ${xpath}
-    ${expected} =    Create Dictionary    @{attributes}
     Dictionaries Should Be Equal    ${elem.attrib}    ${expected}
 
 Saved XML Should Equal
