@@ -135,6 +135,12 @@ def _get_excludes(interpreter, version):
             yield 'no-python26'
     if os.name == 'nt':
         yield 'no-windows'
+        if version == '2.6':
+            yield 'no-windows-python26'
+        if interpreter == 'Jython':
+            yield 'no-windows-jython'
+    if sys.platform == 'darwin':
+        yield 'no-osx'
 
 
 def exec_standalone(standalone_path, *params):
@@ -159,6 +165,8 @@ def exec_standalone(standalone_path, *params):
     args += ['--exclude', 'no-standalone', '--exclude', 'no-jython']
     if os.name == 'nt':
         args += ['--exclude', 'no-windows']
+    if sys.platform == 'darwin':
+        args += ['--exclude', 'no-osx']
     return _run(args, tempdir, *params)
 
 def _get_bootclasspath():

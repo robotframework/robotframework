@@ -18,8 +18,7 @@ Timeouted Test Fails Before Timeout
     Check Test Case    Failing Before Timeout
 
 Show Correct Trace Back When Failing Before Timeout
-    [Documentation]    For some reason IronPython loses the traceback in this case.
-    Run Keyword If    "${IRONPYTHON}"    Remove Tags    regression
+    [Tags]    no-ipy    # For some reason IronPython loses the traceback in this case.
     ${tc} =   Check Test Case    ${TEST NAME}
     ${expected} =    Catenate    SEPARATOR=\n
     ...    Traceback (most recent call last):

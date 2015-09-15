@@ -34,7 +34,7 @@ Get File with 'ignore' Error Handler
     Check testcase    ${TESTNAME}
 
 Get File with 'replace' Error Handler
-    Make test non-critical if    "${IRONPYTHON}"
+    [Tags]    no-ipy
     Check testcase    ${TESTNAME}
 
 Log File
@@ -50,7 +50,7 @@ Log File with 'ignore' Error Handler
     Check Log Message     ${tc.kws[0].kws[0].msgs[1]}    Hyv t
 
 Log File with 'replace' Error Handler
-    Make test non-critical if    "${IRONPYTHON}"
+    [Tags]    no-ipy
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message     ${tc.kws[0].kws[0].msgs[1]}    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
 
@@ -91,12 +91,12 @@ Grep File with UTF-16 files
     Check Log Message    ${tc.kws[3].kws[0].msgs[1]}   2 out of 3 lines matched
 
 Grep File with 'ignore' Error Handler
-    Make test non-critical if    "${IRONPYTHON}"
+    [Tags]    no-ipy
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
 
 Grep File with 'replace' Error Handler
-    Make test non-critical if    "${IRONPYTHON}"
+    [Tags]    no-ipy
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[1]}    1 out of 5 lines matched
 

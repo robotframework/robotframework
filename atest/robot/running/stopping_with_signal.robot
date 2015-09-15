@@ -20,8 +20,7 @@ SIGTERM Signal Should Stop Test Execution Gracefully
     Check Test Cases Have Failed Correctly
 
 Execution Is Stopped Even If Keyword Swallows Exception
-    [Documentation]  This only works with Python.
-    Run Keyword If    not "${PYTHON}"    Remove Tags    regression
+    [Tags]    no-ipy    no-jython
     Start And Send Signal  swallow_exception.robot  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
