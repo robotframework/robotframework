@@ -34,3 +34,9 @@ Save Using Invalid Encoding
 
 Save Non-ASCII Using ASCII
     Check Test Case    ${TESTNAME}
+
+Doctype is preserved
+    Check Test Case    ${TESTNAME}
+
+Comments and processing instructions are removed
+    Check Test Case    ${TESTNAME}

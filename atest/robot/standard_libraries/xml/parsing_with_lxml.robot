@@ -14,6 +14,9 @@ Parse file using system path separator
 Parse string
     Check Test Case    ${TESTNAME}
 
+Comments and processing instructions are removed
+    Check Test Case    ${TESTNAME}
+
 Parse invalid file
     Check Test Case    ${TESTNAME}
 

@@ -51,16 +51,10 @@ class XML(object):
     - Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`
       and `Save XML`).
 
-    By default this library uses ElementTree module for parsing XML, but it
-    can be configured to use [http://lxml.de|lxml] instead when `importing`
-    the library. The main benefit of using lxml is that it supports richer
-    xpath syntax than the standard ElementTree. It also enables using
-    `Evaluate Xpath` keyword and preserves possible namespace prefixes when
-    saving XML. The lxml support is new in Robot Framework 2.8.5.
-
     == Table of contents ==
 
     - `Parsing XML`
+    - `Using lxml`
     - `Example`
     - `Finding elements with xpath`
     - `Element attributes`
@@ -74,8 +68,8 @@ class XML(object):
     XML can be parsed into an element structure using `Parse XML` keyword.
     It accepts both paths to XML files and strings that contain XML. The
     keyword returns the root element of the structure, which then contains
-    other elements as its children and their children. Possible comments in
-    the source XML are removed.
+    other elements as its children and their children. Possible comments and
+    processing instructions in the source XML are removed.
 
     The element structure returned by `Parse XML`, as well as elements
     returned by keywords such as `Get Element`, can be used as the ``source``
@@ -91,6 +85,21 @@ class XML(object):
     On Windows also the backslash works, but it the test data it needs to be
     escaped by doubling it (``\\\\``). Using the built-in variable ``${/}``
     naturally works too.
+
+    = Using lxml =
+
+    By default this library uses Python's standard
+    [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree]
+    module for parsing XML, but it can be configured to use
+    [http://lxml.de|lxml] module instead when `importing` the library.
+    The resulting element structure has same API regardless which module
+    is used for parsing.
+
+    The main benefits of using lxml is that it supports richer xpath syntax
+    than the standard ElementTree and enables using `Evaluate Xpath` keyword.
+    It also preserves the doctype and possible namespace prefixes saving XML.
+
+    The lxml support is new in Robot Framework 2.8.5.
 
     = Example =
 
@@ -367,11 +376,11 @@ class XML(object):
     Also this output is semantically same as the original. If the original XML
     had only default namespaces, the output would also look identical.
 
-    == Namespaces with lxml ==
+    == Namespaces when using lxml ==
 
-    Namespaces are handled the same way also if lxml mode is enabled when
-    `importing` the library. The only difference is that lxml stores information
-    about namespace prefixes and thus they are preserved if XML is saved.
+    Namespaces are handled the same way also when `using lxml`. The only
+    difference is that lxml stores information about namespace prefixes and
+    thus they are preserved if XML is saved.
 
     == Attribute namespaces ==
 
@@ -427,7 +436,7 @@ class XML(object):
         [https://docs.python.org/2/library/xml.etree.elementtree.html|ElementTree]
         module for parsing XML. If ``use_lxml`` argument is given a true value
         (see `Boolean arguments`), the library will use [http://lxml.de|lxml]
-        instead. See `introduction` for benefits provided by lxml.
+        module instead. See `Using lxml` section for benefits provided by lxml.
 
         Using lxml requires that the lxml module is installed on the system.
         If lxml mode is enabled but the module is not installed, this library
@@ -454,8 +463,8 @@ class XML(object):
         The ``source`` can either be a path to an XML file or a string
         containing XML. In both cases the XML is parsed into ElementTree
         [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|element structure]
-        and the root element is returned. Possible comments in the source XML
-        are removed.
+        and the root element is returned. Possible comments and processing
+        instructions in the source XML are removed.
 
         As discussed in `Handling XML namespaces` section, this keyword, by
         default, strips possible namespaces added by ElementTree into tag names.
@@ -476,19 +485,14 @@ class XML(object):
         Stripping namespaces is a new feature in Robot Framework 2.7.5.
         """
         with ETSource(source) as source:
-            root = self.etree.parse(source).getroot()
+            tree = self.etree.parse(source)
         if self.lxml_etree:
-            self._remove_comments(root)
+            strip = (lxml_etree.Comment, lxml_etree.ProcessingInstruction)
+            lxml_etree.strip_elements(tree, *strip, **dict(with_tail=False))
+        root = tree.getroot()
         if not is_truthy(keep_clark_notation):
             NameSpaceStripper().strip(root)
         return root
-
-    def _remove_comments(self, node):
-        for comment in node.xpath('//comment()'):
-            parent = comment.getparent()
-            if parent is not None:
-                self._preserve_tail(comment, parent)
-                parent.remove(comment)
 
     def get_element(self, source, xpath='.'):
         """Returns an element in the ``source`` matching the ``xpath``.
@@ -1323,6 +1327,13 @@ class XML(object):
         The file where the element is saved is denoted with ``path`` and the
         encoding to use with ``encoding``. The resulting file always contains
         the XML declaration.
+
+        The resulting XML file may not be exactly the same as the original:
+        - Comments and processing instructions are always stripped.
+        - Possible doctype and namespace prefixes are only preserved when
+          `using lxml`.
+        - Other small differences are possible depending on the ElementTree
+          or lxml version.
 
         Use `Element To String` if you just need a string representation of
         the element.

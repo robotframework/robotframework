@@ -34,7 +34,7 @@ Save Non-ASCII XML
 
 Save Non-ASCII XML Using Custom Encoding
     Save XML    ${NON-ASCII}    ${OUTPUT}    iso-8859-1
-    XML Content Should Be    ${NON-ASCII}    iso-8859-1
+    XML Content Should Be    ${NON-ASCII}    ISO-8859-1
 
 Save to Invalid File
     [Documentation]    FAIL STARTS: IOError:
@@ -48,8 +48,14 @@ Save Non-ASCII Using ASCII
     Save XML    ${NON-ASCII}    ${OUTPUT}    ASCII
     XML Content Should Be    ${NON-ASCII SAVED}   ASCII
 
-*** Keywords ***
-XML Content Should Be
-    [Arguments]    ${expected}    ${encoding}=UTF-8
-    ${actual} =    Get File    ${OUTPUT}    ${encoding}
-    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding.upper()}'?>\n${expected}
+Doctype is preserved
+    Save XML    <!DOCTYPE foo><foo/>    ${OUTPUT}
+    XML Content Should Be    <!DOCTYPE foo>\n<foo/>
+    Save XML    <!DOCTYPE bar SYSTEM "bar.dtd">\n<bar>baari</bar>    ${OUTPUT}
+    XML Content Should Be    <!DOCTYPE bar SYSTEM "bar.dtd">\n<bar>baari</bar>
+
+Comments and processing instructions are removed
+    ${xml} =    Replace String    ${SIMPLE}    <    <!--c--><?p?><
+    ${xml} =    Replace String    ${xml}    >    ><!--c--><?p?>
+    Save XML    ${xml}    ${OUTPUT}
+    XML Content Should Be    ${SIMPLE SAVED}

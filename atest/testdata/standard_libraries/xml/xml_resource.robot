@@ -76,3 +76,8 @@ Test Attribute Namespace Parsing With lxml
 Set lxml availability to suite metadata
      ${lib} =    Get Library Instance    XML
      Set Suite Metadata    lxml    ${lib.lxml_etree}
+
+XML Content Should Be
+    [Arguments]    ${expected}    ${encoding}=UTF-8
+    ${actual} =    Get File    ${OUTPUT}    ${encoding}
+    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding}'?>\n${expected}

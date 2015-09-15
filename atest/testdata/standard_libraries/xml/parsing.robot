@@ -16,6 +16,16 @@ Parse string
     Should be equal     ${root.tag}     simple
     Should be equal     ${root.text}     päivää
 
+Comments and processing instructions are removed
+    ${xml} =    Catenate    SEPARATOR=\n
+    ...    <!-- comment node -->
+    ...    <?pi node?>
+    ...    <root><!--c-->
+    ...    <child id="1"/><?p?><child id="2"/>
+    ...    </root>
+    ...    <!--c--><?x?>
+    Elements should be equal     ${xml}    <root>\n<child id="1"/><child id="2"/>\n</root>
+
 Parse invalid file
     [Documentation]    FAIL GLOB: *Error: *
     Parse XML    ${CURDIR}${/}parsing.txt

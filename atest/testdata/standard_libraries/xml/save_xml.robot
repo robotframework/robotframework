@@ -45,8 +45,14 @@ Save Non-ASCII Using ASCII
     [Documentation]    FAIL STARTS: UnicodeEncodeError:
     Save XML    ${NON-ASCII}    ${OUTPUT}    ASCII
 
-*** Keywords ***
-XML Content Should Be
-    [Arguments]    ${expected}    ${encoding}=UTF-8
-    ${actual} =    Get File    ${OUTPUT}    ${encoding}
-    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding}'?>\n${expected}
+Doctype is not preserved
+    Save XML    <!DOCTYPE foo><foo/>    ${OUTPUT}
+    XML Content Should Be    <foo />
+    Save XML    <!DOCTYPE bar SYSTEM "bar.dtd">\n<bar>baari</bar>    ${OUTPUT}
+    XML Content Should Be    <bar>baari</bar>
+
+Comments and processing instructions are removed
+    ${xml} =    Replace String    ${SIMPLE}    <    <!--c--><?p?><
+    ${xml} =    Replace String    ${xml}    >    ><!--c--><?p?>
+    Save XML    ${xml}    ${OUTPUT}
+    XML Content Should Be    ${SIMPLE}

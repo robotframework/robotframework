@@ -1,12 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- comments are ignored -->
+<!DOCTYPE test>
+<?ProcessingInstrucions Some content?>
+<!-- multiline comment
+<? with pi like content ?>
+-->
+<?multiline pi
+<!-- with comment like content -->
+?>
 <test name="root">
     <!-- comment -->
     <child>child 1 text</child>
+    <?pi?>
     <child id="2">
         child 2 te<!---->xt
         <grandchild>grand child text</grandchild>
-        more t<!---->e<!---->x<!---->t<!---->
+        mo<?pi?>re t<!---->e<!---->x<!---->t<!---->
     </child>
     <child id="3" a2="xxx" a3="y"><grandchild><!-- c --><ggc/></grandchild></child>
     <another attr="value">
