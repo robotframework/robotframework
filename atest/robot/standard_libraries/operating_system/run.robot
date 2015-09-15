@@ -41,5 +41,5 @@ Trailing Newline Is Removed Automatically
     Check Test Case    ${TESTNAME}
 
 It Is Possible To Start Background Processes
-    Run Keyword If    $JYTHON or $STANDALONE_JAR    Remove Tags    regression
+    [Tags]    no-jython
     Check Test Case    ${TESTNAME}

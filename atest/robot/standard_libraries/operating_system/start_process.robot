@@ -14,7 +14,7 @@ Stderr Is Redirected To Stdout
     Check Test Case  Stderr Is Redirected To Stdout
 
 It Should Be Possble To Start Background Process
-    Run Keyword If    $JYTHON or $STANDALONE_JAR    Remove Tags    regression
+    [Tags]    no-jython
     Check Test Case  It should Be Possble To Start Background Process
 
 Start Writable Process

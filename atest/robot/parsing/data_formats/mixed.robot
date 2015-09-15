@@ -1,5 +1,4 @@
 *** Settings ***
-Suite Setup     Check is docutils installed
 Force Tags      regression
 Resource        formats_resource.robot
 
@@ -15,7 +14,7 @@ HTML Suite With TSV Resource
     Check Test Case  TSV Resource
 
 HTML Suite With ReST Resource
-    [Setup]  Make test non-critical and fail it if docutils is not installed
+    [Tags]  require-docutils    no-standalone
     Previous Run Should Have Been Successful
     Check Test Case  ReST Resource
 
@@ -28,7 +27,7 @@ TSV Suite With HTML Resource
     Check Test Case  HTML Resource
 
 TSV Suite With ReST Resource
-    [Setup]  Make test non-critical and fail it if docutils is not installed
+    [Tags]  require-docutils    no-standalone
     Previous Run Should Have Been Successful
     Check Test Case  ReST Resource
 
@@ -37,17 +36,17 @@ TSV Suite With TXT Resource
     Check Test Case  TXT Resource
 
 ReST Suite With HTML Resource
-    [Setup]  Make test non-critical and fail it if docutils is not installed
+    [Tags]  require-docutils    no-standalone
     Run Tests And Verify Status  ${MIXEDDIR}${/}REST.rest
     Check Test Case  HTML Resource
 
 ReST Suite With TSV Resource
-    [Setup]  Make test non-critical and fail it if docutils is not installed
+    [Tags]  require-docutils    no-standalone
     Previous Run Should Have Been Successful
     Check Test Case  TSV Resource
 
 ReST Suite With TXT Resource
-    [Setup]  Make test non-critical and fail it if docutils is not installed
+    [Tags]  require-docutils    no-standalone
     Previous Run Should Have Been Successful
     Check Test Case  TXT Resource
 
@@ -56,7 +55,7 @@ TXT Suite With HTML Resource
     Check Test Case  HTML Resource
 
 TXT Suite With ReST Resource
-    [Setup]  Make test non-critical and fail it if docutils is not installed
+    [Tags]  require-docutils    no-standalone
     Previous Run Should Have Been Successful
     Check Test Case  ReST Resource
 
@@ -65,15 +64,16 @@ TXT Suite With TSV Resource
     Check Test Case  TSV Resource
 
 Directory With Mixed Data
+    [Tags]  require-docutils    no-standalone
     Run Tests And Verify Status  ${MIXEDDIR}
-    Run Keyword If/Unless Docutils Installed  Verify Directory with Mixed Data With ReST  Verify Directory with Mixed Data Without ReST
+    Verify Directory with Mixed Data With ReST
 
 Multiple Data Sources Without reST
     Run Tests And Verify Status  ${HTMLDIR}${/}sample.html  ${TSVDIR}${/}sample.tsv  ${TXTDIR}${/}sample.txt  ${MIXEDDIR}
     Verify Multiple Data Sources Without ReST
 
 Multiple Data Sources With reST
-    [Setup]  Make test non-critical and fail it if docutils is not installed
+    [Tags]  require-docutils    no-standalone
     Run Tests And Verify Status  ${HTMLDIR}${/}sample.html  ${TSVDIR}${/}sample.tsv  ${RESTDIR}${/}sample.rst  ${TXTDIR}${/}sample.txt  ${MIXEDDIR}
     Verify Multiple Data Sources With ReST
 
@@ -89,13 +89,6 @@ Verify Directory With Mixed Data With ReST
     Should Contain Tests  ${SUITE.suites[1]}  @{REST TESTS}
     Should Contain Tests  ${SUITE.suites[2]}  @{TSV TESTS}
     Should Contain Tests  ${SUITE.suites[3]}  @{TXT TESTS}
-
-Verify Directory With Mixed Data Without ReST
-    Should Be Equal  ${SUITE.name}  Mixed Data
-    Should Contain Suites  ${SUITE}    HTML  TSV  TXT
-    Should Be Equal  ${SUITE.suites[0].doc}  Test suite in HTML file
-    Should Be Equal  ${SUITE.suites[1].doc}  Test suite in TSV file
-    Should Be Equal  ${SUITE.suites[2].doc}  Test suite in TXT file
 
 Verify Multiple Data Sources With ReST
     Should Be Equal  ${SUITE.name}  Sample & Sample & Sample & Sample & Mixed Data

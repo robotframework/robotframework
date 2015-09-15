@@ -13,13 +13,11 @@ File name with spaces
     Check Test Case    ${TESTNAME}
 
 Non-ASCII file name with ordinals < 255
-    [Documentation]    Fails on OSX because python's glob pattern handling bug
-    Make test non-critical if    sys.platform=='darwin'
+    [Tags]    no-osx-python    # Fails on OSX because python's glob pattern handling bug
     Check Test Case    ${TESTNAME}
 
 Non-ASCII file name with ordinals > 255
-    [Documentation]    Fails on OSX because python's glob pattern handling bug
-    Make test non-critical if    sys.platform=='darwin'
+    [Tags]    no-osx-python    # Fails on OSX because python's glob pattern handling bug
     Check Test Case    ${TESTNAME}
 
 ASCII only directory name

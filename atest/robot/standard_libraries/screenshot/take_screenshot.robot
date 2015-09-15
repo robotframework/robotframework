@@ -1,7 +1,7 @@
 *** Settings ***
-Suite Setup     Run if dependencies are available  -l log.html -L debug  standard_libraries/screenshot/take_screenshot.robot
-Force Tags      regression
-Resource        screenshot_resource.robot
+Suite Setup     Run tests  -l log.html -L debug  standard_libraries/screenshot/take_screenshot.robot
+Force Tags      regression  screenshot
+Resource        atest_resource.robot
 
 *** Test Cases ***
 
@@ -10,7 +10,7 @@ Screenshot Is Embedded in Log File
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  screenshot_1.jpg
 
 Each Screenshot Gets Separate Index
-    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Test Case  ${TESTNAME}
 
 Basename May Be Defined
     ${tc}=  Check Test Case  ${TESTNAME}

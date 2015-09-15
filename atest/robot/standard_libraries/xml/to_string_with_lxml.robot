@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    --loglevel debug    standard_libraries/xml/to_string_with_lxml.robot
-Test Teardown    Make test non-critical if lxml not available
-Force Tags       regression
+Force Tags       regression    no-ipy    no-jython    requires-lxml
 Resource         xml_resource.robot
 
 *** Test Cases ***

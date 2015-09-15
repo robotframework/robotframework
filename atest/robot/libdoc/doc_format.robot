@@ -22,7 +22,7 @@ HTML format
 
 reST format
     [Template]    NONE
-    [Setup]    Fail test non-critically if docutils is not installed
+    [Tags]    require-docutils    no-standalone
     Test Format in HTML    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a
     ...    --docformat rest    expected2=Link to <cite>Keyword</cite>.
     Doc Should Contain In HTML    ${MODEL['keywords'][2]}

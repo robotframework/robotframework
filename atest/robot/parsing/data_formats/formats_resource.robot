@@ -70,21 +70,3 @@ Check Suite With Init
     Should Be Equal  ${suite.teardown}  ${None}
     Should Contain Suites  ${suite}   Sub Suite1  Sub Suite2
     Should Contain Tests  ${suite}  @{SUBSUITE_TESTS}
-
-Check Is Docutils Installed
-    Run keyword if   $STANDALONE_JAR    Set Suite Variable  $DOCUTILS_INSTALLED   NO
-    ...   ELSE    Set docutils installed if found
-
-Set docutils installed if found
-    ${output} =  Run  ${INTERPRETER} -c "import docutils"
-    ${DOCUTILS INSTALLED} =  Set Variable If  $output == ""  YES  NO
-    Set Suite Variable  $DOCUTILS_INSTALLED
-
-Make Test Non-critical And Fail It If Docutils Is Not Installed
-    Run Keyword If  $DOCUTILS_INSTALLED != "YES"  Remove Tags  regression
-    Run Keyword If  $DOCUTILS_INSTALLED != "YES"  Fail  This test is made non-critical and not executed because docutils module is not installed.
-
-Run Keyword If/Unless Docutils Installed
-    [Arguments]  ${if kw}  ${unless kw}
-    Run Keyword If  $DOCUTILS_INSTALLED == "YES"  ${if kw}
-    Run Keyword Unless  $DOCUTILS_INSTALLED == "YES"  ${unless kw}
