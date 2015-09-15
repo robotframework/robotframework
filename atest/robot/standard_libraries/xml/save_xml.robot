@@ -35,6 +35,7 @@ Save Non-ASCII Using ASCII
     Check Test Case    ${TESTNAME}
 
 Doctype is not preserved
+    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Comments and processing instructions are removed

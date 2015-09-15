@@ -1,7 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- comments are ignored -->
-<!DOCTYPE test>
-<?ProcessingInstrucions Some content?>
+<?ProcessingInstrucions Are ignored too?>
 <!-- multiline comment
 <? with pi like content ?>
 -->

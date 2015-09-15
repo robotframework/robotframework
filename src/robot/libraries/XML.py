@@ -71,6 +71,12 @@ class XML(object):
     other elements as its children and their children. Possible comments and
     processing instructions in the source XML are removed.
 
+    XML is not validated during parsing even if has a schema defined. How
+    possible doctype elements are handled otherwise depends on the used XML
+    module and on the platform. The standard ElementTree strips doctypes
+    altogether but when `using lxml` they are preserved when XML is saved.
+    With IronPython parsing XML with a doctype is not supported at all.
+
     The element structure returned by `Parse XML`, as well as elements
     returned by keywords such as `Get Element`, can be used as the ``source``
     argument with other keywords. In addition to an already parsed XML
