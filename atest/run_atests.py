@@ -197,12 +197,28 @@ def _get_result_and_temp_dirs(interpreter):
     interpreter = interpreter.lower()
     resultdir = join(CURDIR, 'results', interpreter)
     tempdir = join(tempfile.gettempdir(), 'robottests', interpreter)
+    resultdir = dos_to_long(resultdir)
+    tempdir = dos_to_long(tempdir)
     if exists(resultdir):
         shutil.rmtree(resultdir)
     if exists(tempdir):
         shutil.rmtree(tempdir)
     os.makedirs(tempdir)
     return resultdir, tempdir
+
+
+def dos_to_long(path):
+    """Convert Windows paths in DOS format (e.g. exampl~1.txt) to long format.
+
+    This is done to avoid problems when later comparing paths. Especially
+    IronPython handles DOS paths inconsistently.
+    """
+    if not (os.name == 'nt' and '~' in path and os.path.exists(path)):
+        return path
+    from ctypes import create_unicode_buffer, windll
+    buf = create_unicode_buffer(500)
+    windll.kernel32.GetLongPathNameW(path.decode('mbcs'), buf, 500)
+    return buf.value.encode('mbcs')
 
 
 if __name__ == '__main__':
