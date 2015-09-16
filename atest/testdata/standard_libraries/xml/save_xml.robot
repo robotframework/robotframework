@@ -30,8 +30,8 @@ Save Non-ASCII XML
     XML Content Should Be    ${NON-ASCII}
 
 Save Non-ASCII XML Using Custom Encoding
-    Save XML    ${NON-ASCII}    ${OUTPUT}    iso-8859-1
-    XML Content Should Be    ${NON-ASCII}    iso-8859-1
+    Save XML    ${NON-ASCII}    ${OUTPUT}    ISO-8859-1
+    XML Content Should Be    ${NON-ASCII}    ISO-8859-1
 
 Save to Invalid File
     [Documentation]    FAIL STARTS: IOError:
