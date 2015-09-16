@@ -15,6 +15,7 @@
 from __future__ import print_function
 
 import os
+import subprocess
 import sys
 if sys.platform.startswith('java'):
     from java.awt import Toolkit, Robot, Rectangle
@@ -256,6 +257,8 @@ class ScreenshotTaker(object):
             return self._java_screenshot
         if sys.platform == 'cli':
             return self._cli_screenshot
+        if sys.platform == 'darvin':
+            return self._osx_screenshot
         if module_name:
             method_name = '_%s_screenshot' % module_name.lower()
             if hasattr(self, method_name):
@@ -285,6 +288,10 @@ class ScreenshotTaker(object):
         finally:
             graphics.Dispose()
             bmp.Save(path, Imaging.ImageFormat.Jpeg)
+
+    def _osx_screenshot(self, path):
+        if subprocess.check_call(['screencapture', '-t', 'jpg', path]) != 0:
+            raise RuntimeError('Taking screenshot failed.')
 
     def _wx_screenshot(self, path):
         if not self._wx_app_reference:
