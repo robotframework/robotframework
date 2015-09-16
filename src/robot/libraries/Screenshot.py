@@ -55,8 +55,11 @@ class Screenshot(object):
 
     = Using with Python =
 
-    With Python you need to have one of the following modules installed to be
-    able to use this library. The first module that is found will be used.
+    How screenshots are taken when using Python depends on the operating
+    system and available external modules. On OSX screenshots are taken using
+    ``screencapture`` utility. On other operating systems you need to have one
+    of the following modules installed to be able to use this library. The
+    first module that is found will be used.
 
     - wxPython :: http://wxpython.org :: Required also by RIDE so many Robot
       Framework users already have this module installed.
@@ -64,6 +67,8 @@ class Screenshot(object):
       Linux distributions.
     - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
       This module can take screenshots only on Windows.
+
+    Using ``screencapture`` on OSX is new in Robot Framework 2.9.2.
 
     = Using with Jython and IronPython =
 
