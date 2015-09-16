@@ -122,7 +122,7 @@ def _get_excludes(interpreter, version):
         yield 'no-ipy'
         yield 'require-et13'
         yield 'require-lxml'
-        yield 'require-docutils'
+        yield 'require-docutils'  # https://github.com/IronLanguages/main/issues/1230
     if interpreter == 'Jython':
         yield 'no-jython'
         yield 'require-lxml'
