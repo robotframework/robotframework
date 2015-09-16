@@ -12,7 +12,7 @@ Convert To Integer
     Verify argument type message    ${tc.kws[0].kws[0].msgs[0]}    unicode
 
 Convert To Integer With Java Objects
-    [Tags]    only-jython
+    [Tags]    require-jython
     ${tc}=    Check Test Case    ${TEST NAME}
     Verify argument type message    ${tc.kws[0].kws[0].msgs[0]}    java.lang.String
 
@@ -26,7 +26,7 @@ Convert To Integer With Embedded Base
     Check Test Case    ${TEST NAME}
 
 Convert To Integer With Base And Java Objects
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TEST NAME}
 
 Convert To Binary
@@ -46,7 +46,7 @@ Convert To Number
     Verify argument type message    ${tc.kws[0].kws[0].msgs[0]}    unicode
 
 Convert To Number With Java Objects
-    [Tags]    only-jython
+    [Tags]    require-jython
     ${tc}=    Check Test Case    ${TEST NAME}
     Verify argument type message    ${tc.kws[0].kws[0].msgs[0]}    java.lang.String
 

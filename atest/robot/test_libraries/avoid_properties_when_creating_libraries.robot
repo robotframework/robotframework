@@ -8,11 +8,11 @@ Resource          atest_resource.robot
 
 *** Test Case ***
 Java Bean Property
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TEST NAME}
 
 Java Bean Property In Class Extended In Python
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TEST NAME}
 
 Python Property

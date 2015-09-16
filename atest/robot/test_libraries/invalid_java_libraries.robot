@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    test_libraries/invalid_java_libraries.robot
-Force Tags       regression    only-jython
+Force Tags       regression    require-jython
 Resource         atest_resource.robot
 
 *** Test Cases ***

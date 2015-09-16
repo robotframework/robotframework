@@ -11,7 +11,7 @@ Set attributes to Python object
     Check Log Message    ${tc.kws[1].msgs[0]}    \${ v a r . attr2 } = nv2
 
 Setting attribute to Java object
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Set attribute not directly in base

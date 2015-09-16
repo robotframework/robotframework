@@ -16,7 +16,7 @@ Output Files
     Should End With  ${file}  ${exp}
 
 Output Files With Java
-    [Tags]  only-jython
+    [Tags]  require-jython
     ${file} =  Get Listener File  ${JAVA_FILE}
     ${exp} =  Catenate  SEPARATOR=\n  Debug (java): mydeb.txt  Output (java): myout.xml  Log (java): mylog.html  Report (java): myrep.html  The End\n
     Should End With  ${file}  ${exp}

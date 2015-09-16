@@ -20,5 +20,5 @@ Variables From My UserDict Should Be Loaded
     Check Test Case  ${TEST NAME}
 
 Variables From Java Map Should Be Loaded
-    [tags]  only-jython
+    [tags]  require-jython
     Check Test Case  ${TEST NAME}

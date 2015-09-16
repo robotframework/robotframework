@@ -22,7 +22,7 @@ HTML format
 
 reST format
     [Template]    NONE
-    [Tags]    require-docutils    no-standalone
+    [Tags]    require-docutils
     Test Format in HTML    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a
     ...    --docformat rest    expected2=Link to <cite>Keyword</cite>.
     Doc Should Contain In HTML    ${MODEL['keywords'][2]}
@@ -35,7 +35,7 @@ Format from CLI overrides format from library
     <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    -F robot    DocFormatHtml.py
 
 Format from Java library
-    [Tags]    only-jython
+    [Tags]    require-jython
     *bold* or <b>bold</b> ${EXAMPLE URL}                      ${EMPTY}    DocFormatHtml.java
     <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}    -F robot    DocFormatHtml.java
 

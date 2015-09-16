@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    keywords/java_argument_type_coercion.robot
-Force Tags        regression    only-jython
+Force Tags        regression    require-jython
 Resource          atest_resource.robot
 
 *** Test Cases ***

@@ -40,17 +40,17 @@ Non Existing Listener
     ...    ImportError: No module named NonExistingListener${EMPTY TB}
 
 Java Listener
-    [Tags]  only-jython
+    [Tags]  require-jython
     class    OldJavaListener    deprecated=8
 
 Java Listener With Arguments
-    [Tags]  only-jython
+    [Tags]  require-jython
     class    OldJavaListenerWithArgs    count=3    deprecated=9
     [Teardown]    Check Listener File    ${JAVA_ARGS_FILE}
     ...    I got arguments 'Hello' and 'world'
 
 Java Listener With Wrong Number Of Arguments
-    [Tags]  only-jython
+    [Tags]  require-jython
     [Template]    Check Syslog contains
     Taking listener 'OldJavaListenerWithArgs' into use failed:
     ...    Importing listener 'OldJavaListenerWithArgs' failed:

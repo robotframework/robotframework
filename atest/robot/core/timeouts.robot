@@ -27,7 +27,7 @@ Show Correct Trace Back When Failing Before Timeout
     Check Log Message    ${tc.kws[0].msgs[-1]}    ${expected}    pattern=yes    level=DEBUG
 
 Show Correct Trace Back When Failing In Java Before Timeout
-    [tags]  only-jython
+    [tags]  require-jython
     ${tc} =   Check Test Case    ${TEST NAME}
     Should Contain    ${tc.kws[0].msgs[-1].message}    at ExampleJavaLibrary.exception(
 
@@ -121,7 +121,7 @@ Output Capture With Timeouts
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    Testing outputcapture in timeouted keyword
 
 It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
-    [Tags]  only-jython
+    [Tags]  require-jython
     ${tc} =   Check Test Case    ${TEST NAME}
     Check Log message    ${tc.kws[0].msgs[0]}    My message from java lib
 

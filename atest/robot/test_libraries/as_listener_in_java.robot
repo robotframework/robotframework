@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  ${EMPTY}
 ...   test_libraries/as_listener/suite_scope_java.robot
 ...   test_libraries/as_listener/multiple_listeners_java.robot
-Force Tags      regression  only-jython
+Force Tags      regression  require-jython
 Resource        atest_resource.robot
 
 *** Test Cases ***

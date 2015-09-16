@@ -45,7 +45,7 @@ Library Import Without Name
     ...  Library setting requires a name
 
 Initializing Java Library Fails
-    [Tags]  only-jython
+    [Tags]  require-jython
     Import Should Have Failed  9
     ...  Initializing test library 'InitializationFailJavaLibrary' with no arguments failed: Initialization failed!
     ...  at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)

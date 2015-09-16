@@ -9,7 +9,7 @@ Python Library From A Zip File
     Check Syslog Contains  Imported library 'ZipLib' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
 
 Java Library From A Jar File
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  Java Library From a Jar File
     Check Syslog Contains  Imported library 'org.robotframework.JarLib' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
 

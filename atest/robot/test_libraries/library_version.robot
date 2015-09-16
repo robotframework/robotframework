@@ -14,9 +14,9 @@ Module Library Version
     Check Syslog Contains    Imported library 'module_library' with arguments [ ] (version test, module type,
 
 Java Library Version
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Syslog Contains    Imported library 'JavaVersionLibrary' with arguments [ ] (version 1.0, class type,
 
 Version Undefined In Java Library
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Syslog Contains    Imported library 'ExampleJavaLibrary' with arguments [ ] (version <unknown>, class type,

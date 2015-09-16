@@ -12,7 +12,7 @@ Module library
     Check Test Case  ${TESTNAME}
 
 Java library
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TESTNAME}
 
 Library with alias

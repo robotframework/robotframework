@@ -38,7 +38,7 @@ Python library logging in import via logging API
     Check stderr contains  [ WARN ] Warning via API in init 2\n
 
 Java library logging in constructor via stdout and stderr
-    [Tags]  only-jython
+    [Tags]  require-jython
     ${tc} =  Check test case  No import/init time messages in Java either
     Should be empty  ${tc.kws[0].msgs}
     Check syslog contains  | WARN \ | Warning via stdout in constructor 1\n

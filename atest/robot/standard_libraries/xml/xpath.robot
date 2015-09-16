@@ -27,34 +27,34 @@ Path matching multiple elements
     Check Test Case    ${TESTNAME}
 
 '..'
-    [Tags]    no-python26
+    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 '[@attrib]'
-    [Tags]    no-python26
+    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 '[@attrib="value"]'
-    [Tags]    no-python26
+    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 '[tag]'
-    [Tags]    no-python26
+    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 '[position]'
-    [Tags]    no-python26
+    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 Stacked predicates
-    [Tags]    no-python26
+    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 Non-ASCII tag names
     Check Test Case    ${TESTNAME}
 
 More complex non-ASCII xpath
-    [Tags]    no-python26
+    [Tags]    require-et13
     Check Test Case    ${TESTNAME}
 
 Warning when using more complex non-ASCII xpath with interpreter < 2.7

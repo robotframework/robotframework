@@ -12,7 +12,7 @@ Library adds timestamp as float
     Test's timestamps should be correct
 
 Java library adds timestamp
-    [Tags]  only-jython
+    [Tags]  require-jython
     Test's timestamps should be correct
 
 

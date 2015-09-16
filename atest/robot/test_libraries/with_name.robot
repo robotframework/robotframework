@@ -76,14 +76,14 @@ Module Library
     Check Syslog Contains    Imported library 'pythonmodule.library' with name 'mod 2'
 
 Java Library
-    [Tags]    only-jython
+    [Tags]    require-jython
     ${tc} =    Check Test Case    ${TEST NAME}
     Keyword Data Should Be    ${tc.kws[0]}    Java Lib.Return String From Library    \${s}    whatever
     Keyword Data Should Be    ${tc.kws[2]}    Java Lib.Get Java Object    \${obj}    My Name
     Check Syslog Contains    Imported library 'ExampleJavaLibrary' with name 'Java Lib'
 
 Java Library In Package
-    [Tags]    only-jython
+    [Tags]    require-jython
     ${tc} =    Check Test Case    ${TEST NAME}
     Keyword Data Should Be    ${tc.kws[0]}    Java Pkg.Return Value    \${s1}
     Keyword Data Should Be    ${tc.kws[1]}    Java Pkg.Return Value    \${s2}    Returned string value
@@ -103,7 +103,7 @@ Dynamic Library
     Check Test Case    ${TEST NAME}
 
 Dynamic Java Library
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TEST NAME}
 
 Global Scope

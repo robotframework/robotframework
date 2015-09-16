@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Tests for using libraries implemented with Java. This stuff is tested also in keywords/java_arguments.robot and these files should be combined.
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/java_libraries.robot
-Force Tags      regression  only-jython
+Force Tags      regression  require-jython
 Resource        atest_resource.robot
 
 *** Test Cases ***

@@ -22,7 +22,7 @@ Listen Some
 
 Java Listener
     [Documentation]  Listener listening all methods implemented with Java
-    [Tags]  only-jython
+    [Tags]  require-jython
     @{expected} =  Create List
     ...  START SUITE: Pass And Fail 'Some tests here'
     ...  START KW: My Keyword [Suite Setup]

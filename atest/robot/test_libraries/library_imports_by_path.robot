@@ -25,12 +25,12 @@ Importing Python Library By Path With Variables
     Keyword Data Should Be  ${test.kws[0]}  MyLibDir2.Keyword In My Lib Dir 2  \${sum}  1, 2, 3, 4, 5
 
 Importing Java Library File By Path With .java Extension
-    [Tags]  only-jython
+    [Tags]  require-jython
     ${test} =  Check Test Case  Importing Java Library File By Path With .java Extension
     Keyword Data Should Be  ${test.kws[0]}  MyJavaLib.Keyword In My Java Lib  \${ret}  tellus
 
 Importing Java Library File By Path With .class Extension
-    [Tags]  only-jython
+    [Tags]  require-jythonhon
     ${test} =  Check Test Case  Importing Java Library File By Path With .class Extension
     Keyword Data Should Be  ${test.kws[0]}  MyJavaLib2.Keyword In My Java Lib 2  \${ret}  maailma
 

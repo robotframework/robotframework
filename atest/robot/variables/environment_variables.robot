@@ -8,7 +8,7 @@ Environment Variables In Keyword Argument
     Check Test Case  ${TESTNAME}
 
 Java System Properties Can Be Used
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TESTNAME}
 
 Non-ASCII Environment Variable

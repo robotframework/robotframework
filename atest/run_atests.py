@@ -80,13 +80,8 @@ ARGUMENTS = '''
 --escape paren1:PAR1
 --escape paren2:PAR2
 --critical regression
---noncritical not_ready
 --SuiteStatLevel 3
---TagStatCombine jybotNOTpybot
---TagStatCombine pybotNOTjybot
---TagStatExclude pybot
---TagStatExclude jybot
---TagStatExclude x-*
+--TagStatExclude no-*
 '''.strip().split()
 # FIXME: --TagStatXXX above use old tag names
 
@@ -121,18 +116,24 @@ def exec_interpreter(interpreter_path, *params):
         args += ['--exclude', exclude]
     return _run(args, tempdir, *params)
 
+#FIXME: Clean this horror up.
 def _get_excludes(interpreter, version):
     if interpreter == 'IronPython':
         yield 'no-ipy'
+        yield 'require-et13'
+        yield 'require-lxml'
+        yield 'require-docutils'
     if interpreter == 'Jython':
         yield 'no-jython'
+        yield 'require-lxml'
     else:
-        yield 'only-jython'
+        yield 'require-jython'
     if interpreter == 'Python':
         if sys.platform == 'darwin':
             yield 'no-osx-python'
         if version == '2.6':
             yield 'no-python26'
+            yield 'require-et13'
     if os.name == 'nt':
         yield 'no-windows'
         if version == '2.6':
@@ -162,7 +163,9 @@ def exec_standalone(standalone_path, *params):
         'STANDALONE_JAR': 'True'
     }
     args = [arg % env for arg in ARGUMENTS]
-    args += ['--exclude', 'no-standalone', '--exclude', 'no-jython']
+    args += ['--exclude', 'no-standalone', '--exclude', 'no-jython',
+             '--exclude', 'require-lxml', '--exclude', 'require-docutils',
+             '--exclude', 'require-yaml']
     if os.name == 'nt':
         args += ['--exclude', 'no-windows']
     if sys.platform == 'darwin':

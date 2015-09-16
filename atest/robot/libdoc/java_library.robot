@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/Example.java
-Force Tags        regression    only-jython
+Force Tags        regression    require-jython
 Resource          libdoc_resource.robot
 
 *** Test Cases ***

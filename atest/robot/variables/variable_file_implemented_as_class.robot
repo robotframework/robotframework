@@ -18,19 +18,19 @@ Dynamic Python Class
     Check Test Case    ${TESTNAME}
 
 Java Class
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Methods in Java Class Do Not Create Variables
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Properties in Java Class
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Dynamic Java Class
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Instantiating Fails

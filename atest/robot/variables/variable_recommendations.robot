@@ -40,7 +40,7 @@ Misspelled Env Var
     Check Test Case    ${TESTNAME}
 
 Misspelled Java System Property
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check Test Case    ${TESTNAME}
 
 Misspelled Env Var With Internal Variables

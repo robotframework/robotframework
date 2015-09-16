@@ -27,9 +27,9 @@ Call Non Existing Method
     Check Test Case  ${TEST NAME}
 
 Call Java Method
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TEST NAME}
 
 Call Non Existing Java Method
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TEST NAME}

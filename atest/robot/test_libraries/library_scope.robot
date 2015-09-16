@@ -15,7 +15,7 @@ Python Library Scopes
 
 Java Library Scopes
     [Documentation]    Same as Python Library Scopes but with Java libraries
-    [Tags]    only-jython
+    [Tags]    require-jython
     Run Tests    \    test_libraries${/}library_scope_java
     Check Test Case    Test 1.1
     Check Test Case    Test 1.2

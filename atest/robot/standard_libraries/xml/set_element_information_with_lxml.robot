@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/set_element_information_with_lxml.robot
-Force Tags       regression    no-ipy    no-jython    require-lxml
+Force Tags       regression    require-lxml
 Resource         xml_resource.robot
 
 *** Test Cases ***

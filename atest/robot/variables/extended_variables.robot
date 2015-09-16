@@ -20,19 +20,19 @@ Multiply
     Check Test Case  ${TESTNAME}
 
 Using Public Java Attribute
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TESTNAME}
 
 Using Java Attribute With Bean Properties
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TESTNAME}
 
 Calling Java Method
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TESTNAME}
 
 Accessing Java Lists and Maps
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TESTNAME}
 
 Failing When Base Name Does Not Exist
@@ -68,10 +68,10 @@ Failing For Syntax Error
     Check Test Case  ${TESTNAME}
 
 Failing When Java Attribute Does Not Exist
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TESTNAME}
 
 Failing When Java Method Throws Exception
-    [Tags]  only-jython
+    [Tags]  require-jython
     Check Test Case  ${TESTNAME}
 

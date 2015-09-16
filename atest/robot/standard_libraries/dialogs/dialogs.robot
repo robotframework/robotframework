@@ -47,6 +47,6 @@ Multiple dialogs in a row
     Check Test Case  ${TESTNAME}
 
 Dialog and timeout
-    [Tags]    only-jython
+    [Tags]    require-jython
     Run Tests  --include jybot_only  standard_libraries/dialogs/dialogs.robot
     Check Test Case  ${TESTNAME}  FAIL  Test timeout 1 second exceeded.

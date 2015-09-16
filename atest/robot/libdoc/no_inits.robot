@@ -11,11 +11,11 @@ Old Style Python Class With No Argument Init
     no_arg_init.py
 
 Java Class With No Constructor
-    [Tags]    only-jython
+    [Tags]    require-jython
     NoConstructor.java
 
 Java Class With Default and Private Constructors
-    [Tags]    only-jython
+    [Tags]    require-jython
     NoArgConstructor.java
 
 

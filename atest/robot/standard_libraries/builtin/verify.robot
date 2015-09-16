@@ -219,7 +219,7 @@ Length With Length Attribute
 
 Length Of Java Types
     [Documentation]    Tests that it's possible to get the lenght of String, Vector, Hashtable and array
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check test case    ${TESTNAME}
 
 Should Contain X Times With String
@@ -238,7 +238,7 @@ Should Contain X Times With Tuple
     Check test case    ${TESTNAME}
 
 Should Contain X With Java Array And Vector
-    [Tags]    only-jython
+    [Tags]    require-jython
     Check test case    ${TESTNAME}
 
 Should Contain X With Invalid Item
