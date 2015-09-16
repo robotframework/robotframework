@@ -257,7 +257,7 @@ class ScreenshotTaker(object):
             return self._java_screenshot
         if sys.platform == 'cli':
             return self._cli_screenshot
-        if sys.platform == 'darvin':
+        if sys.platform == 'darwin':
             return self._osx_screenshot
         if module_name:
             method_name = '_%s_screenshot' % module_name.lower()
