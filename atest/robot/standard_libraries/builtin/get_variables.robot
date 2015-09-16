@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    --variable cmd_line:cmd_value    standard_libraries/builtin/get_variables.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

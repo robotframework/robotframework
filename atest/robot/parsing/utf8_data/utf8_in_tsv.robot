@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  parsing/utf8_data.tsv
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

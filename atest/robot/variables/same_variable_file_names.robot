@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/same_variable_file_names
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

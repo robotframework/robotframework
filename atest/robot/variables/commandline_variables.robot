@@ -1,7 +1,6 @@
 *** Setting ***
 Documentation     How variables from CLI override other variables is tested in variable_priorities.robot
 Suite Setup       Run Test Data
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

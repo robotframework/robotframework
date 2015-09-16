@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    --listener ${CURDIR}${/}listener_printing_start_end_kw.py    standard_libraries/builtin/run_keyword.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

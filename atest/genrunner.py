@@ -40,7 +40,6 @@ with open(OUTPATH, 'wb') as output:
     output.write("""\
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    %(path)s
-Force Tags       regression    pybot    jybot
 Resource         atest_resource.robot
 
 *** Test Cases ***

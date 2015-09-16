@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    --loglevel debug    standard_libraries/xml/to_string_with_lxml.robot
-Force Tags       regression    require-lxml
+Force Tags       require-lxml
 Resource         xml_resource.robot
 
 *** Test Cases ***

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  --log set_log_level_log.html  standard_libraries/builtin/set_log_level.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

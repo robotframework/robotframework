@@ -1,5 +1,4 @@
 ﻿*** Settings ***
-Force Tags  regression
 Suite Setup  Create input data and run tests
 Suite Teardown   Revert input data
 Resource  atest_resource.robot

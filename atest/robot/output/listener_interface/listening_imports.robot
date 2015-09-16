@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    --listener "ListenImports;${IMPORTS FILE}"    output/listeners/imports/imports.robot
 Suite Teardown    Remove Listener Files
-Force Tags        regression
 Resource          listener_resource.robot
 
 *** Variables ***

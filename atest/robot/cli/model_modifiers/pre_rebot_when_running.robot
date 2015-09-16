@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Test Teardown     Remove File    ${LOG}
 Resource          ./modifier_resource.robot
 

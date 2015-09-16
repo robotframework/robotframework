@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/duplicate_user_keywords.robot
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

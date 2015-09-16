@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags     regression
 Resource       console_resource.robot
 Suite Setup    Run Tests Without Processing Output   --consolemarkers on    ${TEST FILE}
 

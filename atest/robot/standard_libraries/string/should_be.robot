@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/should_be.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

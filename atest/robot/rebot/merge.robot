@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Suite Setup       Run original tests
 Test Teardown     Remove Files    ${MERGE 1}    ${MERGE 2}
 Suite Teardown    Remove Files    ${ORIGINAL}

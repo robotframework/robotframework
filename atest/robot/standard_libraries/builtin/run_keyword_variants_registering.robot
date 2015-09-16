@@ -1,7 +1,6 @@
 *** Setting ***
 Documentation     Tests for registering own run keyword variant
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_variants_registering.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

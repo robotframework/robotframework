@@ -2,7 +2,6 @@
 Documentation   Testing that listener gets information about different output files. Tests also that the listener can be taken into use with path.
 Suite Setup     Run Some Tests
 Suite Teardown  Remove Listener Files
-Force Tags      regression
 Resource        listener_resource.robot
 
 *** Variables ***

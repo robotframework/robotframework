@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Tests for libraries using getKeywordNames and runKeyword with **kwargs functionality. In these tests libraries are implemented with Java.
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_kwargs_support_java.robot
-Force Tags      regression  require-jython
+Force Tags      require-jython
 Resource        atest_resource.robot
 
 *** Test Cases ***

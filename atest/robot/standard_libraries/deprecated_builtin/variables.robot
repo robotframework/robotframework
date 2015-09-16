@@ -1,7 +1,6 @@
 *** Setting ***
 Documentation     Tests for variable related functionality in BuiltIn
 Suite Setup       Run Tests    ${EMPTY}    standard_libraries/deprecated_builtin/variables.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

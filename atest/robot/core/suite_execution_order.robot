@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  misc/multiple_suites
-Force Tags      regression
 Resource        atest_resource.robot
 
 

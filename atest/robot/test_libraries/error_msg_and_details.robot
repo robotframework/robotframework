@@ -1,6 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/error_msg_and_details.robot
-Force Tags        regression
 Resource          atest_resource.robot
 Test Template     Verify Test Case And Error In Log
 

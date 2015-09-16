@@ -2,7 +2,6 @@
 Documentation    Tests for different file and directory names.
 ...              These are, for most parts, tested also elsewhere.
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/special_names.robot
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

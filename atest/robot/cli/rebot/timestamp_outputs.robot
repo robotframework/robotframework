@@ -1,6 +1,5 @@
 *** Settings ***
 Test Setup      Empty output directory
-Force Tags      regression
 Resource        rebot_cli_resource.robot
 
 *** Test Cases ***

@@ -1,6 +1,5 @@
 *** Settings ***
 Test Setup      Empty Directory  ${MYOUTDIR}
-Force Tags      regression
 Resource        atest_resource.robot
 Resource        rebot_cli_resource.robot
 

@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/start_process_preferences.robot
-Force Tags       regression
-Resource         process_resource.robot
+Resource         atest_resource.robot
 
 *** Variables ***
 ${COMMAND}       python -c "import os; print os.path.abspath(os.curdir);"

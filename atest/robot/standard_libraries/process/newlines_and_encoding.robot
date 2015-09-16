@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/newlines_and_encoding.robot
-Force Tags       regression
-Resource         process_resource.robot
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Non-ASCII command and output

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/keyword_should_exist.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

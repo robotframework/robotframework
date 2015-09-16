@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation   Empty test cases and user keywords
 Suite Setup     Run Tests  ${EMPTY}  core/empty_testcase_and_uk.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

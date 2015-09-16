@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/get_library_instance.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

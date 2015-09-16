@@ -1,7 +1,6 @@
 *** Setting ***
 Suite Setup       Run Tests And Read Outputs
 Suite Teardown    Remove Files    ${INFILE1}    ${INFILE2}
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Variable ***

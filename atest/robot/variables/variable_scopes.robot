@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/variable_scopes.robot
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

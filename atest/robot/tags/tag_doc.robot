@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests With Tag Docs
-Force Tags      regression
 Resource        atest_resource.robot
 Test Template   Tag doc should be correct in output
 

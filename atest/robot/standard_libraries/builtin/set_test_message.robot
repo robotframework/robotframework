@@ -2,7 +2,6 @@
 Suite Setup       Run Tests    ${EMPTY}
 ...    standard_libraries/builtin/set_test_message.robot
 ...    standard_libraries/builtin/set_test_message_in_suite_level.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

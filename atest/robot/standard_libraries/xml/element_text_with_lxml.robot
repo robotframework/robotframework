@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/element_text_with_lxml.robot
-Force Tags       regression    require-lxml
+Force Tags       require-lxml
 Resource         xml_resource.robot
 
 *** Test Cases ***

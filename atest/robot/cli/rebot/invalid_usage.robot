@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Resource          rebot_cli_resource.robot
 Suite Setup       Run tests to create input file for Rebot
 Test Template     Rebot Should Fail

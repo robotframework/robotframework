@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  parsing/multirow.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

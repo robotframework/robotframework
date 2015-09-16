@@ -2,7 +2,6 @@
 Documentation     Validating parsing of test case settings. Using tags,
 ...               setups, teardowns and timeouts are tested elsewhere.
 Suite Setup       Run Tests    ${EMPTY}    parsing/test_case_settings.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

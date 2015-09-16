@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    parsing/user_keyword_settings.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

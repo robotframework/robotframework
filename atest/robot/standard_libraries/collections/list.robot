@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation     Tests for Collections library's list functionality
 Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/collections/list.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/is_process_alive.robot
-Force Tags       regression
-Resource         process_resource.robot
+Resource         atest_resource.robot
 
 *** Test Cases ***
 No Process Should Fail

@@ -5,7 +5,6 @@ Documentation     Tests for finding keywords from test case file, resource files
 ...               same name existing is tested too. Non-existing keywords are
 ...               tested in keyword_not_found.robot.
 Suite Setup       Run Tests    ${EMPTY}    keywords/keyword_namespaces.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

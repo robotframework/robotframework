@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation     Handling valid and invalid arguments with Python keywords.
 Suite Setup       Run Tests    ${EMPTY}    keywords/python_arguments.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

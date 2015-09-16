@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags       regression
 Resource         libdoc_resource.robot
 Suite Setup      Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/InternalLinking.py
 Test Template    Doc Should Contain Link

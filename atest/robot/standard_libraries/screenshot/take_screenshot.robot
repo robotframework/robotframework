@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run tests  -l log.html -L debug  standard_libraries/screenshot/take_screenshot.robot
-Force Tags      regression  screenshot
+Force Tags      screenshot
 Resource        atest_resource.robot
 
 *** Test Cases ***

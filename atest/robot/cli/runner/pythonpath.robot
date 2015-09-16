@@ -1,6 +1,5 @@
 *** Settings ***
 Test Setup      Create Output Directory and Dymmy Library
-Force Tags      regression
 Resource        cli_resource.robot
 
 *** Variables ***

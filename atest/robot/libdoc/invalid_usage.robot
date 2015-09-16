@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags       regression
 Resource         libdoc_resource.robot
 Test Setup       Remove File    ${OUT HTML}
 Test Template    Run libdoc and verify error
@@ -50,7 +49,6 @@ Non-XML spec
 
 Invalid resource
     ${CURDIR}/invalid_usage.robot ${OUT HTML}
-    ...   [ ERROR ] *: Non-existing setting 'Force Tags'.
     ...   [ ERROR ] *: Non-existing setting 'Test Setup'.
     ...   [ ERROR ] *: Non-existing setting 'Test Template'.
     ...   [ ERROR ] *: Non-existing setting 'Test Teardown'.

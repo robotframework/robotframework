@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/non_main_threads_logging.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Resource          rebot_cli_resource.robot
 Suite Setup       Run Keywords
 ...               Run tests to create input file for Rebot    ${TESTS}    ${INPUT}    AND

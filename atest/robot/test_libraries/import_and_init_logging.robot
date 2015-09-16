@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation   Tests for libs logging during import and in init/constructor.
 Suite Setup     Run Tests  --PYTHONPATH "${DATADIR}/test_libraries"  test_libraries/import_and_init_logging.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

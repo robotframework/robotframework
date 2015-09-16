@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    keywords/keyword_tags.robot
-Force Tags       regression
 Resource         atest_resource.robot
 Test template    Keyword tags should be
 

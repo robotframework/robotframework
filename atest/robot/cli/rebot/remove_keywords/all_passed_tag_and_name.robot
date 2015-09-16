@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup       Run Some Tests
 Suite Teardown    Remove File    ${INPUTFILE}
-Force Tags        regression
 Resource          remove_keywords_resource.robot
 
 *** Test Cases ***

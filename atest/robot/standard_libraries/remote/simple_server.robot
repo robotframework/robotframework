@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Remote Tests    simple_server.robot    simpleserver.py
-Force Tags       regression
 Resource         remote_resource.robot
 
 *** Test Cases ***

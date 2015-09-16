@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation     Tests for logging using stdout/stderr
 Suite Setup       Run Tests    --loglevel DEBUG    test_libraries/print_logging_java.robot
-Force Tags        regression    require-jython
+Force Tags        require-jython
 Resource          atest_resource.robot
 
 *** Test Cases ***

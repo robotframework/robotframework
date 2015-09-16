@@ -79,7 +79,6 @@ ARGUMENTS = '''
 --escape star:STAR
 --escape paren1:PAR1
 --escape paren2:PAR2
---critical regression
 --SuiteStatLevel 3
 --TagStatExclude no-*
 '''.strip().split()

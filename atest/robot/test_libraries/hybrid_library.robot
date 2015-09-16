@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/hybrid_library.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

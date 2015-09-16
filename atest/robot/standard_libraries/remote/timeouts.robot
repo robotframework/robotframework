@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Remote Tests    timeouts.robot    timeouts.py
-Force Tags       regression
 Resource         remote_resource.robot
 
 *** Test Cases ***

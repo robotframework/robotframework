@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_failing.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

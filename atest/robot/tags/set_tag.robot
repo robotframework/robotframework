@@ -1,6 +1,5 @@
 *** Setting ***
 Test Teardown     Remove File    ${OUTDIR}/${OUTFILE}
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

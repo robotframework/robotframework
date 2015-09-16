@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    running/prevent_recursion.robot
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

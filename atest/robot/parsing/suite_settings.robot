@@ -3,7 +3,6 @@ Documentation     Tests for suite settings except for Metadata that is tested
 ...               in 'suite_metadate.robot' file.
 Suite Setup       Run Tests    --variable suite_doc_from_cli:doc_from_cli --variable suite_fixture_from_cli:Log
 ...               parsing/suite_settings.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

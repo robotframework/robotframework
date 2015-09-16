@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    --variablefile ${VARDIR}/cli.yaml --pythonpath ${VARDIR}    variables/yaml_variable_file.robot
-Force Tags       regression    no-standalone    require-yaml
+Force Tags       require-yaml
 Resource         atest_resource.robot
 
 *** Variables ***

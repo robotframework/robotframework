@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_empty_or_not.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/convert_time_input_format.robot
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

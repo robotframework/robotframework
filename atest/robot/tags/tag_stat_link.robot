@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests With Tag Stat Links
-Force Tags      regression
 Resource        atest_resource.robot
 Test Template   Tag link should be correct in output
 

@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Resource          tidy_resource.robot
 Suite Setup       Create Directory     ${TEMP}
 Suite Teardown    Remove Directory     ${TEMP}    recursive=True

@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Test Template     Run And Check Include And Exclude
 Resource          atest_resource.robot
 

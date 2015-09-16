@@ -1,6 +1,5 @@
 *** Settings ***
 Documentation   Tests for xunit-compatible xml-output.
-Force Tags      regression
 Resource        atest_resource.robot
 Variables       unicode_vars.py
 Suite Setup     Run Tests  -x xunit.xml -l log.html  ${TESTDATA}

@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Resource          formats_resource.robot
 
 *** Test Cases ***

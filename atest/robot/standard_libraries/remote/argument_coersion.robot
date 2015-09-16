@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Remote Tests    argument_coersion.robot    arguments.py
-Force Tags       regression
 Resource         remote_resource.robot
 
 *** Test Cases ***

@@ -1,6 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    \    variables/variables_in_import_settings
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Variable ***

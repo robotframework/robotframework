@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/module.py
-Force Tags        regression
 Resource          libdoc_resource.robot
 
 *** Test Cases ***

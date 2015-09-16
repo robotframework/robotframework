@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Remote Tests    invalid.robot    invalid.py
-Force Tags       regression
 Resource         remote_resource.robot
 
 *** Test Cases ***

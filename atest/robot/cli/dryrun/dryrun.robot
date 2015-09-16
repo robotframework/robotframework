@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  --dryrun  cli/dryrun/dryrun.robot  cli/dryrun/more_tests.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

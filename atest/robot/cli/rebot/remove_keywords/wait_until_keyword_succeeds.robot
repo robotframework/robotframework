@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Remove Wait Until Keyword Succeeds with Rebot
-Force Tags        regression
 Resource          remove_keywords_resource.robot
 
 *** Variables ***

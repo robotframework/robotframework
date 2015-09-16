@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    --dryrun    cli/dryrun/executed_builtin_keywords.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

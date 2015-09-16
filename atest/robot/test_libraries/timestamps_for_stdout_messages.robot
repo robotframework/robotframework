@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/timestamps_for_stdout_messages.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

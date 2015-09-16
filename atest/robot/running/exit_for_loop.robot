@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}    running/exit_for_loop.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

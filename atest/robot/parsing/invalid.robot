@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags      regression
 Resource        data_formats/formats_resource.robot
 
 *** Variables ***

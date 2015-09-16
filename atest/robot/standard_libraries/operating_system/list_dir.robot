@@ -1,6 +1,5 @@
 ﻿*** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/list_dir.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

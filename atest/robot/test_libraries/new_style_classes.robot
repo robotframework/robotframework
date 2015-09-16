@@ -1,6 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/${/}new_style_class_libraries.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

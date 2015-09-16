@@ -4,7 +4,6 @@ Documentation     Test for using non-existing keywords.
 ...               Tests for existing keywords and too many matching keywords
 ...               are in keyword_namespaces.robot.
 Suite Setup       Run Tests    ${EMPTY}    keywords/keyword_not_found.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

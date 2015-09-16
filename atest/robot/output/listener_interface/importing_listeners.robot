@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests With Listeners
 Suite Teardown  Remove Listener Files
-Force Tags      regression
 Resource        listener_resource.robot
 Test Template   Listener Import Message Should Be In Syslog
 

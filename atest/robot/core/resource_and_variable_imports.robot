@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests With Non-ASCII Items In PYTHONPATH
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

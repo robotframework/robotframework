@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    variables/catenate_scalars_in_variable_table.robot
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

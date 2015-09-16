@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/time_calculations.robot
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

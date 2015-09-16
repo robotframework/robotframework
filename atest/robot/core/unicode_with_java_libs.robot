@@ -1,6 +1,6 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    core/unicode_with_java_libs.robot
-Force Tags        regression    require-jython
+Force Tags        require-jython
 Resource          atest_resource.robot
 Variables         ../../resources/unicode_vars.py
 

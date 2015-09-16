@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags      regression
 Resource        cli_resource.robot
 Test Template   Run Tests and Verify RC
 

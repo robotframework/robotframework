@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_args_and_docs.robot
-Force Tags      regression
 Test Template   Check test case and its doc
 Resource        atest_resource.robot
 

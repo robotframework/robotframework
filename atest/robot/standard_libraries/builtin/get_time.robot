@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation   Tests for BuiltIn library's keyword Get Time
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/get_time.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

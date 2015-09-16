@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags      regression
 Resource        rebot_cli_resource.robot
 Suite Setup     Create empty input file
 Suite Teardown  Remove file    ${EMPTY INPUT}

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/libraries_extending_existing_classes.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

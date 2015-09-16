@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation   Verify that even if __init__ file fails, the documentation from that file is available in the suite
 Suite Setup     Run Tests  ${EMPTY}  parsing/failing_init/
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

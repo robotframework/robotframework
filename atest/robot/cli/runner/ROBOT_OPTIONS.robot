@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Resource          cli_resource.robot
 Suite Setup       Set Environment Variable    ROBOT_OPTIONS    --name Default --settag default --dryrun
 Suite Teardown    Remove Environment Variable    ROBOT_OPTIONS

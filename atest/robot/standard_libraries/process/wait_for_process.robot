@@ -1,8 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/wait_for_process.robot
-Test Setup       Check Precondition
-Force Tags       regression
-Resource         process_resource.robot
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Wait For Process

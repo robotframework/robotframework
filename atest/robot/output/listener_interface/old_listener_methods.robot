@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  --listener OldListenAll --listener OldListenAll:%{TEMPDIR}${/}${ALL_FILE2} --listener old_module_listener --listener old_listeners.ListenSome --listener OldJavaListener --listener old_listeners.InvalidMethods  misc/pass_and_fail.robot
 Suite Teardown  Remove Listener Files
-Force Tags      regression
 Resource        listener_resource.robot
 
 *** Test Cases ***

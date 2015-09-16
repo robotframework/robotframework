@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Resource          rebot_resource.robot
 
 *** Test Cases ***

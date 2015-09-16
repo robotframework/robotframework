@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    --loglevel TRACE    keywords/trace_log_keyword_arguments.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Variables ***

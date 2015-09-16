@@ -1,6 +1,5 @@
 *** Settings ***
 Resource     atest_resource.robot
-Force Tags   regression
 Suite Setup  Run Tests  ${EMPTY}  core/keyword_teardown.robot
 
 *** Test Cases ***

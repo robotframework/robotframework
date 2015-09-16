@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  core/timeouts.robot
 Suite Teardown  Remove Directory  ${TIMEOUT TEMP}  recursive
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

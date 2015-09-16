@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation     Importing test libraries normally, using variable in library name, and importing libraries accepting arguments.
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/library_import_normal.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

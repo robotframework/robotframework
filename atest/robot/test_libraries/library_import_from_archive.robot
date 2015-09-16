@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     My Setup
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

@@ -4,7 +4,6 @@ Documentation   These tests log, raise, and return messages containing byte
 ...             Except for IronPython where byte strings and Unicode strings
 ...             are the same thing.
 Suite Setup     Run Tests  ${EMPTY}  core/bytedata.robot
-Force Tags      regression
 Resource        atest_resource.robot
 Variables       ${DATADIR}/core/expbytevalues.py  ${INTERPRETER}
 

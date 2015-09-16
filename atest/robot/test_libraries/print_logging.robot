@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation     Tests for logging using stdout/stderr
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/print_logging.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Cases ***

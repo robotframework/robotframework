@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/set_library_search_order
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

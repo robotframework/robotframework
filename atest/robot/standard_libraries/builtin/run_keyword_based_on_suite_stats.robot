@@ -1,6 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    --critical critical    standard_libraries/builtin/run_keyword_based_on_suite_stats
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

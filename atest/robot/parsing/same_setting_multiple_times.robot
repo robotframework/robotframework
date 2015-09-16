@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    -L TRACE    parsing/same_setting_multiple_times.robot
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

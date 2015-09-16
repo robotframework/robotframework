@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation  Verify that byte order mark (BOM) is igored in TXT and TSV files
 Suite Setup    Run Tests  --include bomelo  parsing/bom.tsv  parsing/bom.robot
-Force Tags     regression
 Resource       atest_resource.robot
 
 *** Test Cases ***

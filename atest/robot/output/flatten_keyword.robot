@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run And Rebot Flattened
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

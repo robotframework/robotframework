@@ -1,2 +1,2 @@
 *** Settings ***
-Force tags    regression    no-ci    telnet
+Force tags    no-ci    telnet

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/save_xml.robot
-Force Tags       regression
 Resource         xml_resource.robot
 
 *** Test Cases ***

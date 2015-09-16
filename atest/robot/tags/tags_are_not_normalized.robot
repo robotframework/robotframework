@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  --include upper --include onespace --include HYP-HENandD.O.T.S. --include A? --include HeLLo --include TAG --exclude exclude --exclude EXCLUDE2 --critical HELLO  tags/tags_are_not_normalized.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

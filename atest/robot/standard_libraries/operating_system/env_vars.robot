@@ -1,6 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests With Environment Variables
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

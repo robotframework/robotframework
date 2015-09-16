@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  --critical *remove*  standard_libraries/builtin/tags
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

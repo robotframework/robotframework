@@ -3,7 +3,6 @@ Documentation   These tests mainly verify that using BuiltIn externally does not
 ...             https://github.com/robotframework/robotframework/issues/654.
 ...             There are separate tests for creating and registering Run Keyword variants.
 Suite Setup     Run Tests  --listener ${CURDIR}${/}listener_using_builtin.py  standard_libraries/builtin/used_in_custom_libs_and_listeners.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

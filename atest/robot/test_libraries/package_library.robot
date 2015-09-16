@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Set PYTHONPATH and run tests
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

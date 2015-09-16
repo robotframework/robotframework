@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation   Tests for checking that library initialization arguments are handled correctly. Taking libraries without arguments is not tested here, because almost every other suite does that.
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_imports_with_args.robot
-Force Tags      regression
 Resource        resource_for_importing_libs_with_args.robot
 Test Template   Library import should have been successful
 

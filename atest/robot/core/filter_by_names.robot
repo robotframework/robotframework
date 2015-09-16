@@ -1,6 +1,5 @@
 *** Settings ***
 Documentation   Tests for --test and --suite options
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Variables ***

@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  misc/unicode.robot  core/unicode_failure_in_suite_setup_and_teardown.robot
-Force Tags      regression
 Resource        atest_resource.robot
 Variables       unicode_vars.py
 

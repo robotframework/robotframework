@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation    Tests for using ElementTree's default namespace handling
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/etree_namespaces.robot
-Force Tags       regression
 Resource         xml_resource.robot
 
 *** Test Cases ***

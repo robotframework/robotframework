@@ -1,8 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/sending_signal.robot
-Force Tags       regression    no-windows
-Test Setup       Check Precondition
-Resource         process_resource.robot
+Force Tags       no-windows
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Sending INT signal

@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  --exclude jybot_only  standard_libraries/dialogs/dialogs.robot
-Force Tags      regression  manual  no-ci
+Force Tags      manual  no-ci
 Resource        atest_resource.robot
 
 *** Test Cases ***

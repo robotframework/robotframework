@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/dynamic_variable_files/getting_vars_from_dynamic_var_file.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

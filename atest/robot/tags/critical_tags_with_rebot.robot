@@ -2,7 +2,6 @@
 Documentation     Setting critical and non-critical tags with Rebot.
 Suite Setup       Run Test To Create Output
 Suite Teardown    Remove File    ${INPUT FILE}
-Force Tags        regression
 Resource          atest_resource.robot
 Test Template     Test Criticality
 

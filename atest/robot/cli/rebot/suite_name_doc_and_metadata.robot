@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags      regression
 Resource        rebot_cli_resource.robot
 
 

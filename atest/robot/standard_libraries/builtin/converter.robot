@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/builtin/converter.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Variables ***

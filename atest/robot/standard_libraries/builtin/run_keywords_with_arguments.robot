@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/run_keywords_with_arguments.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

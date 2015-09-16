@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_libraries_with_invalid_argspec.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

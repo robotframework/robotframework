@@ -1,5 +1,4 @@
 *** Settings ***
-Force Tags        regression
 Resource          libdoc_resource.robot
 Test Template     Library Should Have No Init
 

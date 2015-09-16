@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/datetime/get_current_date.robot
-Force Tags       regression
 Resource         atest_resource.robot
 
 *** Test Cases ***

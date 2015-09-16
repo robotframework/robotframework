@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup    Run Tests  ${EMPTY}  misc/timeouts.robot
 Resource  atest_resource.robot
-Force Tags   regression
 Test Template    Element Should Have Timeout
 
 *** Test Cases ***

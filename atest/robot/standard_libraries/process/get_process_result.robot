@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/get_process_result.robot
-Force Tags       regression
-Resource         process_resource.robot
+Resource         atest_resource.robot
 
 *** Test Cases ***
 Get whole result object

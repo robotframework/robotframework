@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/no_active_process.robot
-Force Tags       regression
-Resource         process_resource.robot
+Resource         atest_resource.robot
 
 *** Test Cases ***
 No active process

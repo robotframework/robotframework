@@ -1,7 +1,6 @@
 *** Settings ***
 Test Setup      Create Output Directory
 Suite Teardown  Remove Environment Variable  ROBOT_SYSLOG_FILE
-Force Tags      regression
 Resource        cli_resource.robot
 
 

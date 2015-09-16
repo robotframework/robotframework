@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    --dryrun    keywords/java_arguments.robot
-Force Tags       regression    require-jython
+Force Tags       require-jython
 Resource         atest_resource.robot
 
 *** Test Cases ***

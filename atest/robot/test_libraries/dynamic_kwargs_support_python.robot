@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_kwargs_support_python.robot
-Force Tags      regression
 Resource        atest_resource.robot
 
 *** Test Cases ***

@@ -4,7 +4,6 @@ Documentation   Test case and user keyword names needing escaping because they c
 ...    2) special characters in Robot test data.
 ...    In latter case special chars actually aren't that special because they aren't escaped.
 Suite Setup     Run Tests  ${EMPTY}  output/names_needing_escaping.robot
-Force Tags      regression
 Resource        atest_resource.robot
 Test Template   Check TC And UK Name
 

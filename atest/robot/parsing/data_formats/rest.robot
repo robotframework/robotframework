@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags      regression    require-docutils
+Force Tags      require-docutils
 Resource        formats_resource.robot
 
 *** Test Cases ***

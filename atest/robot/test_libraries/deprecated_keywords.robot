@@ -1,6 +1,5 @@
 *** Setting ***
 Suite Setup       Run Tests    ${EMPTY}    test_libraries/deprecated_keywords.robot
-Force Tags        regression
 Resource          atest_resource.robot
 
 *** Test Case ***

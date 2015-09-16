@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Remote Tests    binary_result.robot    binaryresult.py
-Force Tags       regression
 Resource         remote_resource.robot
 
 *** Test Cases ***
