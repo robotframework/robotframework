@@ -61,29 +61,9 @@ results/
 Running acceptance tests
 ------------------------
 
-Robot Framework's acceptance tests are run using `<run_atests.py>`__. Its
-usage is displayed with ``--help`` and also shown below::
-
-    A script for running Robot Framework's acceptance tests.
-
-    Usage:  run_atests.py interpreter [options] datasource(s)
-
-    Data sources are paths to directories or files under `robot` folder.
-
-    Available options are the same that can be used with Robot Framework.
-    See its help (e.g. `pybot --help`) for more information.
-
-    The specified interpreter is used by acceptance tests under `robot` to
-    run test cases under `testdata`. It can be simply `python` or `jython`
-    (if they are in PATH) or to a path a selected interpreter (e.g.
-    `/usr/bin/python26`). Note that this script itself must always be
-    executed with Python 2.6 or newer.
-
-    Examples:
-    $ atest/run_atests.py python --test example atest/robot
-    $ atest/run_atests.py /usr/bin/jython25 atest/robot/tags/tag_doc.txt
-
-To run all the acceptance tests, execute the ``atest/robot`` folder entirely::
+Robot Framework's acceptance tests are run using `<run_atests.py>`__. See its
+documentation our run it with ``--help`` to see the usage. To run all the
+acceptance tests, execute the ``atest/robot`` folder entirely::
 
     python atest/run_atests.py python atest/robot
 
@@ -102,6 +82,8 @@ lot time, it is sometimes a good idea to run only those tests that are not
 executed with Python with it::
 
     python atest/run_atests.py jython --exclude pybot atest/robot
+
+**FIXME:** We don't anymore have pybot/jybot tags!! Should explain tags we have.
 
 The results of the test execution are written to ``results`` folder. The
 directory contains output, log and report files of the execution as

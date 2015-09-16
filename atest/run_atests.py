@@ -19,7 +19,7 @@ As a special case the interpreter value `standalone` will compile a new
 standalone jar from the current sources and execute the acceptance tests with
 it.
 
-Note that this script itself must always be executed with Python 2.6 or newer.
+Note that this script itself must always be executed with Python 2.7.
 
 Examples:
 $ atest/run_atests.py python --test example atest/robot
@@ -32,7 +32,7 @@ import signal
 import subprocess
 import sys
 import tempfile
-from os.path import abspath, basename, dirname, exists, join, normpath, splitext
+from os.path import abspath, dirname, exists, join, normpath
 
 
 CURDIR = dirname(abspath(__file__))
@@ -49,7 +49,7 @@ try:
     from tasks import jar
 except ImportError:
     def jar(*args, **kwargs):
-        raise RuntimeError("Craeting jar distribution requires 'invoke'.")
+        raise RuntimeError("Creating jar distribution requires 'invoke'.")
 
 
 ARGUMENTS = '''
@@ -80,9 +80,8 @@ ARGUMENTS = '''
 --escape paren1:PAR1
 --escape paren2:PAR2
 --SuiteStatLevel 3
---TagStatExclude no-*
+--TagStatExclude no-STAR
 '''.strip().split()
-# FIXME: --TagStatXXX above use old tag names
 
 
 def atests(interpreter_path, *params):
