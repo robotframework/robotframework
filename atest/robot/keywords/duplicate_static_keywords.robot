@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    keywords/duplicate_python_keywords.robot
+Suite Setup      Run Tests    ${EMPTY}    keywords/duplicate_static_keywords.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
