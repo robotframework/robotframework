@@ -5,12 +5,12 @@ Resource          libdoc_resource.robot
 *** Test Cases ***
 Invalid arg spec
     Keyword Name Should Be    0    Invalid arg spec
-    Keyword Doc Should Be     0    *Creating keyword failed: Invalid argument specification: Positional argument after varargs.*
+    Keyword Doc Should Be     0    *Creating keyword failed:* Invalid argument specification: Positional argument after varargs.
     Stdout should contain error    Invalid arg spec    Invalid argument specification: Positional argument after varargs.
 
 Dublicate name
     Keyword Name Should Be    3    Same twice
-    Keyword Doc Should Be     3    *Creating keyword failed: Keyword with same name defined multiple times.*
+    Keyword Doc Should Be     3    *Creating keyword failed:* Keyword with same name defined multiple times.
     Stdout should contain error    Same twice    Keyword with same name defined multiple times
 
 Dublicate name with embedded arguments

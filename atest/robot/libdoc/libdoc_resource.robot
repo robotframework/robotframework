@@ -132,5 +132,10 @@ Get Keyword Arguments
     ${args}=    Get Elements Texts   ${kws[${index}]}    arguments/arg
     [Return]    ${args}
 
+Keyword Count Should Be
+    [Arguments]    ${expected}   ${type}=kw
+    ${kws}=    Get Elements    ${LIBDOC}    ${type}
+    Length Should Be    ${kws}    ${expected}
+
 Remove Output Files
     Remove Files    ${OUTPREFIX}*

@@ -119,8 +119,5 @@ def UserLibrary(path):
     for handler in ret.handlers:
         if handler.type != 'error':
             handler.doc = utils.unescape(handler._doc)
-        else:
-            handler.arguments = ArgumentSpec(handler.longname)
-            handler.doc = '*Creating keyword failed: %s*' % handler.error
     ret.doc = utils.unescape(resource.doc)
     return ret

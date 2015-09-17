@@ -15,8 +15,10 @@
 from robot.errors import DataError
 from robot.model import Tags
 
+from .arguments import ArgumentSpec
 
-class UserErrorHandler:
+
+class UserErrorHandler(object):
     """Created if creating handlers fail -- running raises DataError.
 
     The idea is not to raise DataError at processing time and prevent all
@@ -28,14 +30,22 @@ class UserErrorHandler:
     def __init__(self, name, error, libname=None):
         self.name = name
         self.libname = libname
-        self.doc = self.shortdoc = ''
         self.error = unicode(error)
+        self.arguments = ArgumentSpec()
         self.timeout = ''
         self.tags = Tags()
 
     @property
     def longname(self):
         return '%s.%s' % (self.libname, self.name) if self.libname else self.name
+
+    @property
+    def doc(self):
+        return '*Creating keyword failed:* %s' % self.error
+
+    @property
+    def shortdoc(self):
+        return self.doc.splitlines()[0]
 
     def init_keyword(self, varz):
         pass
