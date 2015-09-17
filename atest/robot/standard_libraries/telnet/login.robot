@@ -21,7 +21,7 @@ Verify successful login
     ${tc} =    Check Test Case    ${TEST NAME}
     ${output} =    Set Variable    ${tc.kws[1].kws[0].msgs[0].message}
     Should Contain Once    ${output}    login: test\n
-    Should Contain Once    ${output}    Password: \n
+    Should Contain Once    ${output}    Password: 
     Should Contain Once    ${output}    ${FULL PROMPT.strip()}
     Should End With        ${output}    ${FULL PROMPT.strip()}
 
@@ -34,7 +34,7 @@ Verify failed login
     ${tc} =    Check Test Case    ${TEST NAME}
     ${output} =    Set Variable    ${tc.kws[1].msgs[0].message}
     Should Contain Once    ${output}    login: ${user}\n
-    Should Contain Once    ${output}    Password: \n
+    Should Contain Once    ${output}    Password: 
     Should Contain Once    ${output}    Login incorrect
     Should End With        ${output}    login:
     Should Not Contain     ${output}    ${PROMPT START}

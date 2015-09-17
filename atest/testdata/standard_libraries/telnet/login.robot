@@ -16,11 +16,11 @@ Successful login with prompt
 Failed login without prompt
     [Documentation]    FAIL Login incorrect
     Open Connection    ${HOST}
-    Login    invalid    password    login_timeout=4 seconds
+    Login    invalid    password    login_timeout=5 seconds
 
 Failed login with prompt
     [Documentation]    FAIL Login incorrect
-    Open Connection    ${HOST}    timeout=4 seconds    prompt=${PROMPT}
+    Open Connection    ${HOST}    timeout=5 seconds    prompt=${PROMPT}
     Login    ${USERNAME}    ${EMPTY}    login_prompt=:    password_prompt=:
     ...    login_timeout=Not used    login_incorrect=This is not used
 
