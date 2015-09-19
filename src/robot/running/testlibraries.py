@@ -186,7 +186,7 @@ class _BaseTestLibrary(object):
                 self._raise_creating_instance_failed()
 
     def _create_handlers(self, libcode):
-        for name in sorted(set(self._get_handler_names(libcode))):
+        for name in self._get_handler_names(libcode):
             method = self._try_to_get_handler_method(libcode, name)
             if method:
                 handler, embedded = self._try_to_create_handler(name, method)
@@ -332,10 +332,7 @@ class _HybridLibrary(_BaseTestLibrary):
     _failure_level = 'ERROR'
 
     def _get_handler_names(self, instance):
-        try:
-            return instance.get_keyword_names()
-        except AttributeError:
-            return instance.getKeywordNames()
+        return GetKeywordNames(instance)()
 
 
 class _DynamicLibrary(_BaseTestLibrary):

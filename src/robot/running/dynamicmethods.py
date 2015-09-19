@@ -74,7 +74,15 @@ class GetKeywordNames(_DynamicMethod):
     _underscore_name = 'get_keyword_names'
 
     def _handle_return_value(self, value):
-        return self._to_list_of_strings(value or [])
+        names = self._to_list_of_strings(value or [])
+        return list(name for name in self._remove_duplicates(names))
+
+    def _remove_duplicates(self, names):
+        seen = set()
+        for name in names:
+            if name not in seen:
+                seen.add(name)
+                yield name
 
 
 class RunKeyword(_DynamicMethod):

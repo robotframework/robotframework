@@ -5,8 +5,8 @@ Resource         atest_resource.robot
 *** Test Cases ***
 Using keyword defined multiple times fails
     ${tc} =    Check Test Case    ${TESTNAME}
-    Should Be Equal    ${tc.kws[0].name}    DupeHybridKeywords.Defined Twice
-    Creating keyword should have failed    0    Defined Twice
+    Should Be Equal    ${tc.kws[0].name}    DupeHybridKeywords.DEFINED TWICE
+    Creating keyword should have failed    0    DEFINED TWICE
 
 Keyword with embedded arguments defined multiple times fails at run-time
     ${tc} =    Check Test Case    ${TESTNAME}
