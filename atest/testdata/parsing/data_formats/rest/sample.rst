@@ -221,3 +221,20 @@ Library    OperatingSystem
 +---------------------+-----------------+---------------+------------------+--+
 |                     |                 |               |                  |  |
 +---------------------+-----------------+---------------+------------------+--+
+
+
+
+The following are non-standard docutils directives, and we should ignore
+errors when parsing this.
+
+Testing also a :term:`test` as it should generate an error.
+
+.. highlight:: robotframework
+
+.. todo::
+   This is not really a todo so you have to do nothing.
+
+.. automodule:: some_module
+    :members:
+    :undoc-members:
+    :show-inheritance:
