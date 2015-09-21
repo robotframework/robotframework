@@ -218,7 +218,7 @@ def compile_java_files(jython_jar, build_dir='build'):
     files = [os.path.join(root, name) for name in os.listdir(root)
              if name.endswith('.java')]
     print 'Compiling {0} Java files.'.format(len(files))
-    run('javac -d {target} -target 1.5 -source 1.5 -cp {cp} {files}'.format(
+    run('javac -d {target} -target 1.7 -source 1.7 -cp {cp} {files}'.format(
         target=build_dir, cp=jython_jar, files=' '.join(files)))
 
 def unzip_jar(path, target='build'):
