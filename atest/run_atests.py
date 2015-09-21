@@ -4,16 +4,16 @@
 
 Usage:  run_atests.py interpreter [options] datasource(s)
 
-Data sources are paths to directories or files under `robot` folder.
+Data sources are paths to directories or files under the `atest/robot` folder.
 
 Available options are the same that can be used with Robot Framework.
 See its help (e.g. `pybot --help`) for more information.
 
-The specified interpreter is used by acceptance tests under `robot` to
-run test cases under `testdata`. It can be simply `python` or `jython`
+The specified interpreter is used by acceptance tests under `atest/robot` to
+run test cases under `atest/testdata`. It can be simply `python` or `jython`
 (if they are in PATH) or a path to a selected interpreter (e.g.
 `/usr/bin/python26`) or a path to a robotframework standalone jar (e.g.
-/tmp/robotframework-2.9dev234.jar).
+`dist/robotframework-2.9dev234.jar`).
 
 As a special case the interpreter value `standalone` will compile a new
 standalone jar from the current sources and execute the acceptance tests with
@@ -23,7 +23,7 @@ Note that this script itself must always be executed with Python 2.7.
 
 Examples:
 $ atest/run_atests.py python --test example atest/robot
-$ atest/run_atests.py /usr/bin/jython25 atest/robot/tags/tag_doc.txt
+$ atest/run_atests.py /opt/jython27/bin/jython atest/robot/tags/tag_doc.robot
 """
 
 import os
@@ -36,12 +36,12 @@ from os.path import abspath, dirname, exists, join, normpath
 
 
 CURDIR = dirname(abspath(__file__))
-SRC = join(CURDIR, '..', 'src', 'robot')
-RUNNER = normpath(join(SRC, 'run.py'))
-REBOT = normpath(join(SRC, 'rebot.py'))
-TESTDOC = normpath(join(SRC, 'testdoc.py'))
-LIBDOC = normpath(join(SRC, 'libdoc.py'))
-TIDY = normpath(join(SRC, 'tidy.py'))
+SRC = normpath(join(CURDIR, '..', 'src', 'robot'))
+RUNNER = join(SRC, 'run.py')
+REBOT = join(SRC, 'rebot.py')
+TESTDOC = join(SRC, 'testdoc.py')
+LIBDOC = join(SRC, 'libdoc.py')
+TIDY = join(SRC, 'tidy.py')
 
 
 sys.path.append(join(CURDIR, '..'))
@@ -53,35 +53,26 @@ except ImportError:
 
 
 ARGUMENTS = '''
---doc RobotSPFrameworkSPacceptanceSPtests
---reporttitle RobotSPFrameworkSPTestSPReport
---logtitle RobotSPFrameworkSPTestSPLog
---metadata Interpreter:%(INTERPRETER)s
---metadata Platform:%(PLATFORM)s
---variable INTERPRETER:%(INTERPRETER)s
---variable PYTHON:%(PYTHON)s
---variable JYTHON:%(JYTHON)s
---variable IRONPYTHON:%(IRONPYTHON)s
---variable ROBOT:%(ROBOT)s
---variable REBOT:%(REBOT)s
---variable LIBDOC:%(LIBDOC)s
---variable TESTDOC:%(TESTDOC)s
---variable TIDY:%(TIDY)s
---variable STANDALONE_JAR:%(STANDALONE_JAR)s
---pythonpath %(PYTHONPATH)s
---outputdir %(OUTPUTDIR)s
---output output.xml
---report report.html
---log log.html
+--doc Robot Framework acceptance tests
+--metadata Interpreter:{interpreter_name} {interpreter_version}
+--metadata Platform:{platform}
+--variable INTERPRETER:{interpreter}
+--variable PYTHON:{python}
+--variable JYTHON:{jython}
+--variable IRONPYTHON:{ironpython}
+--variable ROBOT:{robot}
+--variable REBOT:{rebot}
+--variable LIBDOC:{libdoc}
+--variable TESTDOC:{testdoc}
+--variable TIDY:{tidy}
+--variable STANDALONE_JAR:{standalone_jar}
+--pythonpath {pythonpath}
+--outputdir {outputdir}
 --splitlog
 --console dotted
---escape space:SP
---escape star:STAR
---escape paren1:PAR1
---escape paren2:PAR2
 --SuiteStatLevel 3
---TagStatExclude no-STAR
-'''.strip().split()
+--TagStatExclude no-*
+'''.strip()
 
 
 def atests(interpreter_path, *params):
@@ -91,28 +82,39 @@ def atests(interpreter_path, *params):
         return exec_standalone(interpreter_path, *params)
     return exec_interpreter(interpreter_path, *params)
 
-def exec_interpreter(interpreter_path, *params):
-    interpreter, version = _get_interpreter_name_and_version(interpreter_path)
-    resultdir, tempdir = _get_result_and_temp_dirs(interpreter)
-    env = {
-        'PYTHONPATH' : join(CURDIR, 'resources'),
-        'OUTPUTDIR' : resultdir,
-        'INTERPRETER': interpreter_path,
-        'PYTHON': interpreter_path if interpreter == 'Python' else '',
-        'JYTHON': interpreter_path if interpreter == 'Jython' else '',
-        'IRONPYTHON': interpreter_path if interpreter == 'IronPython' else '',
-        'PLATFORM': sys.platform,
-        'ROBOT': '%s %s' % (interpreter_path, RUNNER),
-        'REBOT': '%s %s' % (interpreter_path, REBOT),
-        'LIBDOC': '%s %s' % (interpreter_path, LIBDOC),
-        'TESTDOC': '%s %s' % (interpreter_path, TESTDOC),
-        'TIDY': '%s %s' % (interpreter_path, TIDY),
-        'STANDALONE_JAR': ''
-    }
-    args = [arg % env for arg in ARGUMENTS]
-    for exclude in _get_excludes(interpreter, version):
+
+def exec_interpreter(interpreter, *params):
+    interpreter_name, interpreter_version = _get_name_and_version(interpreter)
+    outputdir, tempdir = _get_directories(interpreter_name)
+    args = list(_get_arguments(interpreter, interpreter_name,
+                               interpreter_version, outputdir))
+    for exclude in _get_excludes(interpreter_name, interpreter_version):
         args += ['--exclude', exclude]
     return _run(args, tempdir, *params)
+
+
+def _get_arguments(interpreter, interpreter_name, interpreter_version, outputdir):
+    arguments = ARGUMENTS.format(
+        pythonpath=join(CURDIR, 'resources'),
+        outputdir=outputdir,
+        interpreter=interpreter,
+        interpreter_name=interpreter_name,
+        interpreter_version=interpreter_version,
+        python=interpreter if interpreter_name == 'Python' else '',
+        jython=interpreter if interpreter_name == 'Jython' else '',
+        ironpython=interpreter if interpreter_name == 'IronPython' else '',
+        platform=sys.platform,
+        robot=' '.join([interpreter, RUNNER]),
+        rebot=' '.join([interpreter, REBOT]),
+        libdoc=' '.join([interpreter, LIBDOC]),
+        testdoc=' '.join([interpreter, TESTDOC]),
+        tidy=' '.join([interpreter, TIDY]),
+        standalone_jar=''
+    )
+    for line in arguments.splitlines():
+        for part in line.split(' ', 1):
+            yield part
+
 
 #FIXME: Clean this horror up.
 def _get_excludes(interpreter, version):
@@ -143,24 +145,8 @@ def _get_excludes(interpreter, version):
 
 
 def exec_standalone(standalone_path, *params):
-    resultdir, tempdir = _get_result_and_temp_dirs('jython_standalone')
-    tools_path = _get_bootclasspath()
-    env = {
-        'PYTHONPATH' : join(CURDIR, 'resources'),
-        'OUTPUTDIR' : resultdir,
-        'INTERPRETER': 'jython',
-        'PYTHON': '',
-        'JYTHON': '',
-        'IRONPYTHON': '',
-        'PLATFORM': sys.platform,
-        'ROBOT': 'java %s -jar %s' % (tools_path, standalone_path),
-        'REBOT': 'java %s -jar %s rebot' % (tools_path, standalone_path),
-        'LIBDOC': 'java %s -jar %s libdoc' % (tools_path, standalone_path),
-        'TESTDOC': 'java %s -jar %s testdoc' % (tools_path, standalone_path),
-        'TIDY': 'java %s -jar %s tidy' % (tools_path, standalone_path),
-        'STANDALONE_JAR': 'True'
-    }
-    args = [arg % env for arg in ARGUMENTS]
+    outputdir, tempdir = _get_directories('jython_standalone')
+    args = list(_get_standalone_arguments(standalone_path, outputdir))
     args += ['--exclude', 'no-standalone', '--exclude', 'no-jython',
              '--exclude', 'require-lxml', '--exclude', 'require-docutils',
              '--exclude', 'require-yaml']
@@ -169,6 +155,29 @@ def exec_standalone(standalone_path, *params):
     if sys.platform == 'darwin':
         args += ['--exclude', 'no-osx']
     return _run(args, tempdir, *params)
+
+def _get_standalone_arguments(standalone_path, outputdir):
+    tools_path = _get_bootclasspath()
+    arguments = ARGUMENTS.format(
+        pythonpath=join(CURDIR, 'resources'),
+        outputdir=outputdir,
+        interpreter='jython',   # ???
+        interpreter_name='standalone',
+        interpreter_version='',
+        python='',
+        jython='',
+        ironpython='',
+        platform=sys.platform,
+        robot='java %s -jar %s' % (tools_path, standalone_path),
+        rebot='java %s -jar %s rebot' % (tools_path, standalone_path),
+        libdoc='java %s -jar %s libdoc' % (tools_path, standalone_path),
+        testdoc='java %s -jar %s testdoc' % (tools_path, standalone_path),
+        tidy='java %s -jar %s tidy' % (tools_path, standalone_path),
+        standalone_jar='True'
+    )
+    for line in arguments.splitlines():
+        for part in line.split(' ', 1):
+            yield part
 
 def _get_bootclasspath():
     classpath = os.environ.get('CLASSPATH', '')
@@ -184,7 +193,7 @@ def _run(args, tempdir, *params):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     return subprocess.call(command, env=environ)
 
-def _get_interpreter_name_and_version(interpreter):
+def _get_name_and_version(interpreter):
     try:
         output = subprocess.check_output([interpreter, '-V'],
                                          stderr=subprocess.STDOUT)
@@ -194,7 +203,7 @@ def _get_interpreter_name_and_version(interpreter):
     version = '.'.join(version.split('.')[:2])
     return name, version
 
-def _get_result_and_temp_dirs(interpreter):
+def _get_directories(interpreter):
     interpreter = interpreter.lower()
     resultdir = join(CURDIR, 'results', interpreter)
     tempdir = join(tempfile.gettempdir(), 'robottests', interpreter)
