@@ -37,14 +37,12 @@ Return Object With Unicode Repr
 Return Object with Invalid Unicode Repr
     [Documentation]  How the return value is logged depends on the interpreter.
     ${test} =    Check Test Case  ${TESTNAME}
-    ${path}    ${base} =    Split Path    ${INTERPRETER}
-    ${ret} =    Set Variable If    'python' in '${base}'
+    ${ret} =    Set Variable If    $PYTHON
     ...    <Unrepresentable object InvalidRepr. Error: UnicodeEncodeError: *    Hyv*
     Check Log Message    ${test.kws[0].msgs[1]}    Return: ${ret}    TRACE    pattern=yes
 
 Return Object with Non Ascii String from Repr
     [Documentation]  How the return value is logged depends on the interpreter.
     ${test} =    Check Test Case    ${TESTNAME}
-    ${path}    ${base} =    Split Path    ${INTERPRETER}
-    ${ret} =    Set Variable If    'ipy' in '${base}'    Hyvä    Hyv\\xe4
+    ${ret} =    Set Variable If    $IRONPYTHON    Hyvä    Hyv\\xe4
     Check Log Message    ${test.kws[0].msgs[1]}    Return: ${ret}    TRACE

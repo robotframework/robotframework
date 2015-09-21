@@ -50,8 +50,7 @@ Valid non-ASCII
     Keyword Doc Should Be    6    Hyvää yötä.
 
 Invalid non-ASCII
-    ${path}    ${base} =    Split Path    ${INTERPRETER}
-    ${expected} =   Set Variable If    'ipy' not in '${base}'
+    ${expected} =   Set Variable If    not $IRONPYTHON
     ...    Hyv\\xe4\\xe4 y\\xf6t\\xe4.    Hyvää yötä.
     Keyword Doc Should Be    5    ${expected}
 
