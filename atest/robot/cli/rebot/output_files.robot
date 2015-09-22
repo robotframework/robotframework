@@ -25,7 +25,7 @@ Outputs Without Extensions
 
 Outputs Into Different Directories
     [Template]  NONE
-    Run  ${REBOT} --outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r ${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html ${MYINPUT}
+    Run  ${INTERPRETER.rebot} --outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r ${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html ${MYINPUT}
     Directory Should Contain  ${MYOUTDIR}${/}o  o.xml
     Directory Should Contain  ${MYOUTDIR}${/}r  r.html
     Directory Should Contain  ${MYOUTDIR}${/}l  l.html
@@ -34,7 +34,7 @@ Outputs Into Different Directories
 Non-writable Output File
     [Template]  NONE
     Create Directory  ${MYOUTDIR}/diréctöry.xml
-    ${output} =  Run  ${REBOT} -d ${MYOUTDIR} -o diréctöry.xml -r r.html -l l.html ${MYINPUT}
+    ${output} =  Run  ${INTERPRETER.rebot} -d ${MYOUTDIR} -o diréctöry.xml -r r.html -l l.html ${MYINPUT}
     Directory Should Contain  ${MYOUTDIR}  diréctöry.xml  l.html  r.html
     ${error}=  Catenate  SEPARATOR=\n
     ...  \\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: .*

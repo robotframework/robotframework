@@ -36,7 +36,7 @@ Invalid usage
 *** Keyword ***
 Run TestDoc
     [Arguments]    ${args}    ${expected rc}=0
-    ${rc}    ${output}=   Run And Return Rc And Output  ${TESTDOC} ${args} ${OUTFILE}
+    ${rc}    ${output}=   Run And Return Rc And Output  ${INTERPRETER.testdoc} ${args} ${OUTFILE}
     Should Be Equal As Numbers   ${rc}    ${expected rc}
     [Return]    ${output}
 

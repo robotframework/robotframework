@@ -4,7 +4,7 @@ Resource        cli_resource.robot
 *** Test Cases ***
 Help
     [Tags]    no-standalone
-    ${rc}  ${help} =  Run And Return Rc And Output  ${ROBOT} --help
+    ${rc}  ${help} =  Run And Return Rc And Output  ${INTERPRETER.runner} --help
     Should Be Equal  ${rc}  ${251}
     Log  ${help.replace(' ','_')}
     Should Not Contain  ${help}  \t
@@ -22,11 +22,11 @@ Help
     @{long} =  Evaluate  [ line for line in ${help.splitlines()} if len(line) - line.count('\\\\') >= 80 ]
     Log Many  @{long}
     Should Be True  len(@{long}) == 0  Too long (>= 80) help line(s)
-    ${help2} =  Run  ${ROBOT} -h
+    ${help2} =  Run  ${INTERPRETER.runner} -h
     Should Be Equal  ${help}  ${help2}
 
 Version
-    ${rc}  ${output} =  Run And Return Rc And Output  ${ROBOT} --version
+    ${rc}  ${output} =  Run And Return Rc And Output  ${INTERPRETER.runner} --version
     Should Be Equal  ${rc}  ${251}
     Log  ${output}
     Should Match Regexp  ${output}  ^Robot Framework 2\\.\\d+(\\.\\d+)?((a|b|rc|.dev)\\d+)? \\((Python|Jython|IronPython) 2\\.[\\d.]+.* on .+\\)$

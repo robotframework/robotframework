@@ -38,6 +38,6 @@ Tests Should Pass Without Errors
 
 Run Should Fail
     [Arguments]    ${options}    ${exp error}
-    ${rc}    ${output} =    Run And Return RC and Output    ${ROBOT} ${options}
+    ${rc}    ${output} =    Run And Return RC and Output    ${INTERPRETER.runner} ${options}
     Should Be Equal As Integers    ${rc}    252
     Should Match Regexp    ${output}    ^\\[ .*ERROR.* \\] ${exp error}${USAGETIP}$

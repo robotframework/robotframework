@@ -273,5 +273,5 @@ Verify argument type message
 
 Str Type to Unicode On IronPython
     [Arguments]    ${type}
-    ${type} =    Set Variable If    "${IRONPYTHON}" and "${type}" == "str"    unicode    ${type}
-    [Return]    ${type}
+    Return From Keyword If    $INTERPRETER.is_ironpython and $type == "str"    unicode
+    Return From Keyword    ${type}

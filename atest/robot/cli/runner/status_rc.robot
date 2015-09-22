@@ -34,5 +34,5 @@ Zero RC when critical tests fail with --NoStatusRC
 *** Keywords ***
 Run Tests and Verify RC
     [Arguments]    ${options & source}    ${rc}
-    ${returned}=    Run And Return Rc    ${ROBOT} -o NONE -l NONE -r NONE ${options & source}
+    ${returned}=    Run And Return Rc    ${INTERPRETER.runner} -o NONE -l NONE -r NONE ${options & source}
     Should Be Equal As Integers    ${returned}    ${rc}

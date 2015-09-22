@@ -55,14 +55,14 @@ Log repr
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
     Check Log Message    ${tc.kws[1].msgs[0]}    42    DEBUG
-    ${bytes} =    Set Variable If    not "${IRONPYTHON}"    b'\\x00\\xff'    '\\x00\\xff'
+    ${bytes} =    Set Variable If    not $INTERPRETER.is_ironpython    b'\\x00\\xff'    '\\x00\\xff'
     Check Log Message    ${tc.kws[3].msgs[0]}    ${bytes}
     Check Log Message    ${tc.kws[5].msgs[0]}    ['Hyv\\xe4', '\\u2603', 42, ${bytes}]
     Check Stdout Contains    ['Hyv\\xe4', '\\u2603', 42, ${bytes}]
 
 Log pprint
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${b} =    Set Variable If    not "${IRONPYTHON}"    b    ${EMPTY}
+    ${b} =    Set Variable If    not $INTERPRETER.is_ironpython    b    ${EMPTY}
     Check Log Message    ${tc.kws[1].msgs[0]}    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
     Check Stdout Contains    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
     Check Log Message    ${tc.kws[3].msgs[0]}    [${b}'One', 'Two', 3]

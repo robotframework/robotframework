@@ -11,10 +11,7 @@ Library         read_interpreter.py
 Variables       atest_variables.py
 
 *** Variables ***
-${INTERPRETER}  Set in run_atests.py
-${ROBOT}        Set in Set Variables
-${REBOT}        -- ;; --
-${OUTDIR}       -- ;; --
+${OUTDIR}       Set in Set Variables
 ${OUTFILE}      -- ;; --
 ${SYSLOG FILE}  -- ;; --
 ${STDERR FILE}  -- ;; --
@@ -29,7 +26,7 @@ ${TESTNAME}     ${EMPTY}    # Used when not running test
 *** Keywords ***
 Run Robot Directly
     [Arguments]  ${opts and args}
-    ${output} =  Run  ${ROBOT} --outputdir %{TEMPDIR} ${opts and args}
+    ${output} =  Run  ${INTERPRETER.runner} --outputdir %{TEMPDIR} ${opts and args}
     Log  ${output}
     [Return]  ${output}
 
@@ -50,23 +47,22 @@ Run Tests Helper
     ${options} =  Catenate
     ...    --ConsoleMarkers OFF    # AUTO (default) doesn't work with IronPython
     ...    ${user options}
-    ...    --variable interpreter:${INTERPRETER}
     ...    --pythonpath ${LIBPATH1}
     ...    --pythonpath ${LIBPATH2}
-    ${rc} =  Run Helper  ${ROBOT}  ${options}  ${data string}
+    ${rc} =  Run Helper  ${INTERPRETER.runner}  ${options}  ${data string}
     [Return]  ${rc}
 
 Run Rebot
     [Arguments]  ${options}  @{data list}
     ${data string} =  Set Variables And Get Datasources  @{data list}
-    ${rc} =  Run Helper  ${REBOT}  ${options}  ${data string}
+    ${rc} =  Run Helper  ${INTERPRETER.rebot}  ${options}  ${data string}
     Process Output  ${OUTFILE}
     [Return]  ${rc}
 
 Run Rebot Without Processing Output
     [Arguments]  ${options}  @{data list}
     ${data string} =  Set Variables And Get Datasources  @{data list}
-    ${rc} =  Run Helper  ${REBOT}  ${options}  ${data string}
+    ${rc} =  Run Helper  ${INTERPRETER.rebot}  ${options}  ${data string}
     [Return]  ${rc}
 
 Run Helper
@@ -352,11 +348,11 @@ Make test non-critical if
 Set PYTHONPATH
     [Arguments]    @{values}
     ${value} =    Catenate    SEPARATOR=${:}    @{values}
-    Run Keyword If    $PYTHON    Set Environment Variable    PYTHONPATH    ${value}
-    Run Keyword If    $JYTHON or $STANDALONE_JAR    Set Environment Variable    JYTHONPATH    ${value}
-    Run Keyword If    $IRONPYTHON    Set Environment Variable    IRONPYTHONPATH    ${value}
+    Set Environment Variable    PYTHONPATH    ${value}
+    Set Environment Variable    JYTHONPATH    ${value}
+    Set Environment Variable    IRONPYTHONPATH    ${value}
 
 Reset PYTHONPATH
-    Run Keyword If    $PYTHON    Remove Environment Variable    PYTHONPATH
-    Run Keyword If    $JYTHON or $STANDALONE_JAR    Remove Environment Variable    JYTHONPATH
-    Run Keyword If    $IRONPYTHON    Remove Environment Variable    IRONPYTHONPATH
+    Remove Environment Variable    PYTHONPATH
+    Remove Environment Variable    JYTHONPATH
+    Remove Environment Variable    IRONPYTHONPATH

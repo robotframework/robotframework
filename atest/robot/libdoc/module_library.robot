@@ -50,7 +50,7 @@ Valid non-ASCII
     Keyword Doc Should Be    6    Hyvää yötä.
 
 Invalid non-ASCII
-    ${expected} =   Set Variable If    not $IRONPYTHON
+    ${expected} =   Set Variable If    not $INTERPRETER.is_ironpython
     ...    Hyv\\xe4\\xe4 y\\xf6t\\xe4.    Hyvää yötä.
     Keyword Doc Should Be    5    ${expected}
 

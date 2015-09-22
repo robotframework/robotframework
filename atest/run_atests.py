@@ -34,14 +34,10 @@ import sys
 import tempfile
 from os.path import abspath, dirname, exists, join, normpath
 
+from interpreter import InterpreterFactory
+
 
 CURDIR = dirname(abspath(__file__))
-SRC = normpath(join(CURDIR, '..', 'src', 'robot'))
-RUNNER = join(SRC, 'run.py')
-REBOT = join(SRC, 'rebot.py')
-TESTDOC = join(SRC, 'testdoc.py')
-LIBDOC = join(SRC, 'libdoc.py')
-TIDY = join(SRC, 'tidy.py')
 
 
 sys.path.append(join(CURDIR, '..'))
@@ -54,18 +50,8 @@ except ImportError:
 
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
---metadata Interpreter:{interpreter_name} {interpreter_version}
---metadata Platform:{platform}
---variable INTERPRETER:{interpreter}
---variable PYTHON:{python}
---variable JYTHON:{jython}
---variable IRONPYTHON:{ironpython}
---variable ROBOT:{robot}
---variable REBOT:{rebot}
---variable LIBDOC:{libdoc}
---variable TESTDOC:{testdoc}
---variable TIDY:{tidy}
---variable STANDALONE_JAR:{standalone_jar}
+--metadata interpreter:{interpreter.name} {interpreter.version} on {interpreter.os}
+--variablefile {variable_file}:{interpreter.path}:{interpreter.name}:{interpreter.version}
 --pythonpath {pythonpath}
 --outputdir {outputdir}
 --splitlog
@@ -75,146 +61,51 @@ ARGUMENTS = '''
 '''.strip()
 
 
-def atests(interpreter_path, *params):
-    if interpreter_path == 'standalone':
-        interpreter_path = jar()
-    if interpreter_path.endswith('.jar'):
-        return exec_standalone(interpreter_path, *params)
-    return exec_interpreter(interpreter_path, *params)
-
-
-def exec_interpreter(interpreter, *params):
-    interpreter_name, interpreter_version = _get_name_and_version(interpreter)
-    outputdir, tempdir = _get_directories(interpreter_name)
-    args = list(_get_arguments(interpreter, interpreter_name,
-                               interpreter_version, outputdir))
-    for exclude in _get_excludes(interpreter_name, interpreter_version):
-        args += ['--exclude', exclude]
-    return _run(args, tempdir, *params)
-
-
-def _get_arguments(interpreter, interpreter_name, interpreter_version, outputdir):
-    arguments = ARGUMENTS.format(
-        pythonpath=join(CURDIR, 'resources'),
-        outputdir=outputdir,
-        interpreter=interpreter,
-        interpreter_name=interpreter_name,
-        interpreter_version=interpreter_version,
-        python=interpreter if interpreter_name == 'Python' else '',
-        jython=interpreter if interpreter_name == 'Jython' else '',
-        ironpython=interpreter if interpreter_name == 'IronPython' else '',
-        platform=sys.platform,
-        robot=' '.join([interpreter, RUNNER]),
-        rebot=' '.join([interpreter, REBOT]),
-        libdoc=' '.join([interpreter, LIBDOC]),
-        testdoc=' '.join([interpreter, TESTDOC]),
-        tidy=' '.join([interpreter, TIDY]),
-        standalone_jar=''
-    )
-    for line in arguments.splitlines():
-        for part in line.split(' ', 1):
-            yield part
-
-
-#FIXME: Clean this horror up.
-def _get_excludes(interpreter, version):
-    if interpreter == 'IronPython':
-        yield 'no-ipy'
-        yield 'require-et13'
-        yield 'require-lxml'
-        yield 'require-docutils'  # https://github.com/IronLanguages/main/issues/1230
-    if interpreter == 'Jython':
-        yield 'no-jython'
-        yield 'require-lxml'
-    else:
-        yield 'require-jython'
-    if interpreter == 'Python':
-        if sys.platform == 'darwin':
-            yield 'no-osx-python'
-        if version == '2.6':
-            yield 'no-python26'
-            yield 'require-et13'
-    if os.name == 'nt':
-        yield 'no-windows'
-        if version == '2.6':
-            yield 'no-windows-python26'
-        if interpreter == 'Jython':
-            yield 'no-windows-jython'
-    if sys.platform == 'darwin':
-        yield 'no-osx'
-
-
-def exec_standalone(standalone_path, *params):
-    outputdir, tempdir = _get_directories('jython_standalone')
-    args = list(_get_standalone_arguments(standalone_path, outputdir))
-    args += ['--exclude', 'no-standalone', '--exclude', 'no-jython',
-             '--exclude', 'require-lxml', '--exclude', 'require-docutils',
-             '--exclude', 'require-yaml']
-    if os.name == 'nt':
-        args += ['--exclude', 'no-windows']
-    if sys.platform == 'darwin':
-        args += ['--exclude', 'no-osx']
-    return _run(args, tempdir, *params)
-
-def _get_standalone_arguments(standalone_path, outputdir):
-    tools_path = _get_bootclasspath()
-    arguments = ARGUMENTS.format(
-        pythonpath=join(CURDIR, 'resources'),
-        outputdir=outputdir,
-        interpreter='jython',   # ???
-        interpreter_name='standalone',
-        interpreter_version='',
-        python='',
-        jython='',
-        ironpython='',
-        platform=sys.platform,
-        robot='java %s -jar %s' % (tools_path, standalone_path),
-        rebot='java %s -jar %s rebot' % (tools_path, standalone_path),
-        libdoc='java %s -jar %s libdoc' % (tools_path, standalone_path),
-        testdoc='java %s -jar %s testdoc' % (tools_path, standalone_path),
-        tidy='java %s -jar %s tidy' % (tools_path, standalone_path),
-        standalone_jar='True'
-    )
-    for line in arguments.splitlines():
-        for part in line.split(' ', 1):
-            yield part
-
-def _get_bootclasspath():
-    classpath = os.environ.get('CLASSPATH', '')
-    if classpath:
-        return '-Xbootclasspath/a:%s' % classpath
-    return ''
-
-def _run(args, tempdir, *params):
-    command = [sys.executable, RUNNER]+args+list(params)
-    environ = dict(os.environ, TEMPDIR=tempdir)
-    print 'Running command\n%s\n' % ' '.join(command)
-    sys.stdout.flush()
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
-    return subprocess.call(command, env=environ)
-
-def _get_name_and_version(interpreter):
+def atests(interpreter, *arguments):
+    if interpreter == 'standalone':
+        interpreter = jar()
     try:
-        output = subprocess.check_output([interpreter, '-V'],
-                                         stderr=subprocess.STDOUT)
-    except OSError:
-        sys.exit('Invalid interpreter: %s' % interpreter)
-    name, version = output.split()[:2]
-    version = '.'.join(version.split('.')[:2])
-    return name, version
+        interpreter = InterpreterFactory(interpreter)
+    except ValueError as err:
+        sys.exit(err)
+    outputdir, tempdir = _get_directories(interpreter)
+    arguments = list(_get_arguments(interpreter, outputdir)) + list(arguments)
+    return _run(arguments, tempdir)
+
 
 def _get_directories(interpreter):
-    interpreter = interpreter.lower()
-    resultdir = join(CURDIR, 'results', interpreter)
-    tempdir = join(tempfile.gettempdir(), 'robottests', interpreter)
-    resultdir = dos_to_long(resultdir)
-    tempdir = dos_to_long(tempdir)
-    if exists(resultdir):
-        shutil.rmtree(resultdir)
+    name = interpreter.name.lower().replace(' ', '_')
+    outputdir = dos_to_long(join(CURDIR, 'results', name))
+    tempdir = dos_to_long(join(tempfile.gettempdir(), 'robottests', name))
+    if exists(outputdir):
+        shutil.rmtree(outputdir)
     if exists(tempdir):
         shutil.rmtree(tempdir)
     os.makedirs(tempdir)
-    return resultdir, tempdir
+    return outputdir, tempdir
+
+
+def _get_arguments(interpreter, outputdir):
+    arguments = ARGUMENTS.format(interpreter=interpreter,
+                                 variable_file=join(CURDIR, 'interpreter.py'),
+                                 pythonpath=join(CURDIR, 'resources'),
+                                 outputdir=outputdir)
+    for line in arguments.splitlines():
+        for part in line.split(' ', 1):
+            yield part
+    for exclude in interpreter.excludes:
+        yield '--exclude'
+        yield exclude
+
+
+def _run(args, tempdir):
+    runner = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
+    command = [sys.executable, runner] + args
+    environ = dict(os.environ, TEMPDIR=tempdir)
+    print 'Running command:\n%s\n' % ' '.join(command)
+    sys.stdout.flush()
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    return subprocess.call(command, env=environ)
 
 
 def dos_to_long(path):

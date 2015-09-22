@@ -91,7 +91,7 @@ Start And Send Signal
 Start Run
     [Arguments]    ${datasource}    ${sleep}    @{extra options}
     ${datasource} =    Set Variables And Get Datasources    running/stopping_with_signal/${datasource}
-    @{runner} =    Split String    ${ROBOT}
+    @{runner} =    Split String    ${INTERPRETER.runner}
     @{command} =    Create List
     ...    @{runner}
     ...    --output    ${OUTFILE}    --report    NONE    --log    NONE

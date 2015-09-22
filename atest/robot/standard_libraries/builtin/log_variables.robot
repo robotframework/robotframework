@@ -17,7 +17,6 @@ Log Variables In Suite Setup
     Check Variable Message    \&{DICT} = { key=value | two=2 }
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
-    Check Variable Message    \${interpreter} = *    pattern=yes
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \${LOG_FILE} = NONE
     Check Variable Message    \${LOG_LEVEL} = INFO
@@ -42,7 +41,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${SUITE_SOURCE} = *    pattern=yes
     Check Variable Message    \${TEMPDIR} = *    pattern=yes
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    35    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    34    Wrong total message count
 
 Log Variables In Test
     ${test} =    Check Test Case    Log Variables
@@ -58,7 +57,6 @@ Log Variables In Test
     Check Variable Message    \&{DICT} = { key=value | two=2 }
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
-    Check Variable Message    \${interpreter} = *    pattern=yes
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \${LOG_FILE} = NONE
     Check Variable Message    \${LOG_LEVEL} = TRACE
@@ -85,7 +83,7 @@ Log Variables In Test
     Check Variable Message    \${TEST_NAME} = Log Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
-    Should Be Equal As Integers    ${kw.message_count}    39    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    38    Wrong total message count
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
@@ -103,7 +101,6 @@ Log Variables After Setting New Variables
     Check Variable Message    \${False} = *    DEBUG    pattern=yes
     Check Variable Message    \@{int_list_1} = [ 0 | 1 | 2 | 3 ]    DEBUG
     Check Variable Message    \@{int_list_2} = [ 0 | 1 | 2 | 3 ]    DEBUG
-    Check Variable Message    \${interpreter} = *    DEBUG    pattern=yes
     Check Variable Message    \@{LIST} = [ Hello | world ]    DEBUG
     Check Variable Message    \${LOG_FILE} = NONE    DEBUG
     Check Variable Message    \${LOG_LEVEL} = TRACE    DEBUG
@@ -131,7 +128,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \@{TEST_TAGS} = [ ]    DEBUG
     Check Variable Message    \${True} = *    DEBUG    pattern=yes
     Check Variable Message    \${var} = Hello    DEBUG
-    Should Be Equal As Integers    ${kw.message_count}    42    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    41    Wrong total message count
 
 Log Variables In User Keyword
     ${test} =    Check Test Case    Log Variables
@@ -147,7 +144,6 @@ Log Variables In User Keyword
     Check Variable Message    \&{DICT} = { key=value | two=2 }
     Check Variable Message    \${EXECDIR} = *    pattern=yes
     Check Variable Message    \${False} = *    pattern=yes
-    Check Variable Message    \${interpreter} = *    pattern=yes
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \${LOG_FILE} = NONE
     Check Variable Message    \${LOG_LEVEL} = TRACE
@@ -175,7 +171,7 @@ Log Variables In User Keyword
     Check Variable Message    \@{TEST_TAGS} = [ ]
     Check Variable Message    \${True} = *    pattern=yes
     Check Variable Message    \${ukvar} = Value of an uk variable
-    Should Be Equal As Integers    ${kw.message_count}    40    Wrong total message count
+    Should Be Equal As Integers    ${kw.message_count}    39    Wrong total message count
 
 *** Keywords ***
 Check Variable Message

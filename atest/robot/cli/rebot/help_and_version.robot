@@ -5,7 +5,7 @@ Resource        rebot_cli_resource.robot
 
 *** Test Cases ***
 Help
-    ${rc}  ${help} =  Run And Return Rc And Output  ${REBOT} --help 2>&1
+    ${rc}  ${help} =  Run And Return Rc And Output  ${INTERPRETER.rebot} --help 2>&1
     Should Be Equal  ${rc}  ${251}
     Log  ${help.replace(' ','_').replace('\\t','_'*8)}
     Should Start With  ${help}  Rebot -- Robot Framework report and log generator\n\nVersion: \
@@ -17,11 +17,11 @@ Help
     @{long} =  Evaluate  [ line for line in ${help.splitlines()} if len(line) - line.count('\\\\') >= 80 ]
     Log Many  @{long}
     Should Be True  len(@{long}) == 0  Too long (>= 80) help line(s)
-    ${help2} =  Run  ${REBOT} -h 2>&1
+    ${help2} =  Run  ${INTERPRETER.rebot} -h 2>&1
     Should Be Equal  ${help}  ${help2}
 
 Version
-    ${rc}  ${output} =  Run And Return Rc And Output  ${REBOT} --version 2>&1
+    ${rc}  ${output} =  Run And Return Rc And Output  ${INTERPRETER.rebot} --version 2>&1
     Should Be Equal  ${rc}  ${251}
     Log  ${output}
     Should Match Regexp  ${output}  ^Rebot 2\\.\\d+(\\.\\d+)?((a|b|rc|.dev)\\d+)? \\((Python|Jython|IronPython) 2\\.[\\d.]+.* on .+\\)$

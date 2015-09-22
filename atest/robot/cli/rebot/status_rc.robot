@@ -49,6 +49,6 @@ Remove input files
 Run Rebot and Verify RC
     [Arguments]  ${options & source}  ${rc}=  ${output}=  ${report}=${REPORT}
     ${returned rc}  ${returned output} =  Run And Return RC And Output
-    ...  ${REBOT} --log NONE --report ${report} ${options & source}
+    ...  ${INTERPRETER.rebot} --log NONE --report ${report} ${options & source}
     Should Be Equal As Integers  ${returned rc}  ${rc}
     Run Keyword If  """${output}"""  Should Be Equal  ${returned output}  ${output}

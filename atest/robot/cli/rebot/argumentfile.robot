@@ -11,7 +11,7 @@ Argument File
     ...    --log=none    -r=none    -o myout.xml    --outputdir ${MYOUTDIR}
     ...    ${MYINPUT}
     Create File  ${MYOUTDIR}${/}a.txt  ${content}
-    ${output} =  Run  ${REBOT} --log disable_me.html --argumentfile ${MYOUTDIR}${/}a.txt 2>&1
+    ${output} =  Run  ${INTERPRETER.rebot} --log disable_me.html --argumentfile ${MYOUTDIR}${/}a.txt 2>&1
     Should Not Contain  ${output}  ERROR
     Directory Should Contain  ${MYOUTDIR}  a.txt  myout.xml
     Process Output  ${MYOUTDIR}${/}myout.xml

@@ -5,7 +5,7 @@ Documentation   These tests log, raise, and return messages containing byte
 ...             are the same thing.
 Suite Setup     Run Tests  ${EMPTY}  core/bytedata.robot
 Resource        atest_resource.robot
-Variables       ${DATADIR}/core/expbytevalues.py  ${INTERPRETER}
+Variables       ${DATADIR}/core/expbytevalues.py    ${INTERPRETER}
 
 *** Test Cases ***
 In Message
