@@ -12,8 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+from __future__ import print_function
+
 import os
+import subprocess
+import sys
 if sys.platform.startswith('java'):
     from java.awt import Toolkit, Robot, Rectangle
     from javax.imageio import ImageIO
@@ -52,8 +55,12 @@ class Screenshot(object):
 
     = Using with Python =
 
-    With Python you need to have one of the following modules installed to be
-    able to use this library. The first module that is found will be used.
+    How screenshots are taken when using Python depends on the operating
+    system and available external modules. On OSX screenshots are taken using
+    ``screencapture`` utility. On other operating systems you need to have one
+    of the following modules installed to be able to use this library. You can
+    specify the module to use when `importing` the library. If no module is
+    specified, the first module that is found will be used.
 
     - wxPython :: http://wxpython.org :: Required also by RIDE so many Robot
       Framework users already have this module installed.
@@ -61,6 +68,9 @@ class Screenshot(object):
       Linux distributions.
     - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
       This module can take screenshots only on Windows.
+
+    Using ``screencapture`` on OSX and specifying explicit screenshot module
+    are new in Robot Framework 2.9.2.
 
     = Using with Jython and IronPython =
 
@@ -77,7 +87,7 @@ class Screenshot(object):
     into the directory where the XML output file is written.
 
     It is possible to specify a custom location for screenshots using
-   ``screenshot_directory`` argument when `importing` the library and
+    ``screenshot_directory`` argument when `importing` the library and
     using `Set Screenshot Directory` keyword during execution. It is also
     possible to save screenshots using an absolute path.
     """
@@ -85,21 +95,29 @@ class Screenshot(object):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, screenshot_directory=None):
+    def __init__(self, screenshot_directory=None, screenshot_module=None):
         """Configure where screenshots are saved.
 
         If ``screenshot_directory`` is not given, screenshots are saved into
         same directory as the log file. The directory can also be set using
         `Set Screenshot Directory` keyword.
 
-        Examples (use only one of these):
+        ``screenshot_module`` specifies the module to use when using this
+        library on Python outside OSX. Possible values are ``wxPython``,
+        ``PyGTK`` and ``PIL``, case-insensitively. If no value is given,
+        the first module found is used in that order. See `Using with Python`
+        for more information about the available modules.
 
-        | =Setting= |  =Value=   |  =Value=   |      =Value=       |
-        | Library   | Screenshot |            | # Default location |
-        | Library   | Screenshot | ${TEMPDIR} | # System temp      |
+        Examples (use only one of these):
+        | =Setting= |  =Value=   |  =Value=   |
+        | Library   | Screenshot |            |
+        | Library   | Screenshot | ${TEMPDIR} |
+        | Library   | Screenshot | screenshot_module=PyGTK |
+
+        Specifying explicit screenshot module is new in Robot Framework 2.9.2.
         """
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
-        self._screenshot_taker = ScreenshotTaker()
+        self._screenshot_taker = ScreenshotTaker(screenshot_module)
 
     def _norm_path(self, path):
         if not path:
@@ -232,32 +250,44 @@ class ScreenshotTaker(object):
         return self.module != 'no'
 
     def test(self, path=None):
-        print "Using '%s' module." % self.module
         if not self:
+            print("Cannot take screenshots.")
             return False
+        print("Using '%s' to take screenshot." % self.module)
         if not path:
-            print "Not taking test screenshot."
+            print("Not taking test screenshot.")
             return True
-        print "Taking test screenshot to '%s'." % path
+        print("Taking test screenshot to '%s'." % path)
         try:
             self(path)
         except:
-            print "Failed: %s" % utils.get_error_message()
+            print("Failed: %s" % utils.get_error_message())
             return False
         else:
-            print "Success!"
+            print("Success!")
             return True
 
-    def _get_screenshot_taker(self, module_name):
+    def _get_screenshot_taker(self, module_name=None):
         if sys.platform.startswith('java'):
             return self._java_screenshot
         if sys.platform == 'cli':
             return self._cli_screenshot
+        if sys.platform == 'darwin':
+            return self._osx_screenshot
         if module_name:
-            method_name = '_%s_screenshot' % module_name.lower()
-            if hasattr(self, method_name):
-                return getattr(self, method_name)
+            return self._get_named_screenshot_taker(module_name.lower())
         return self._get_default_screenshot_taker()
+
+    def _get_named_screenshot_taker(self, name):
+        screenshot_takers = {'wxpython': (wx, self._wx_screenshot),
+                             'pygtk': (gdk, self._gtk_screenshot),
+                             'pil': (ImageGrab, self._pil_screenshot)}
+        if name not in screenshot_takers:
+            raise RuntimeError("Invalid screenshot module '%s'." % name)
+        module, screenshot_taker = screenshot_takers[name]
+        if not module:
+            raise RuntimeError("Screenshot module '%s' not installed." % name)
+        return screenshot_taker
 
     def _get_default_screenshot_taker(self):
         for module, screenshot_taker in [(wx, self._wx_screenshot),
@@ -283,6 +313,10 @@ class ScreenshotTaker(object):
             graphics.Dispose()
             bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
+    def _osx_screenshot(self, path):
+        if subprocess.check_call(['screencapture', '-t', 'jpg', path]) != 0:
+            raise RuntimeError('Taking screenshot failed.')
+
     def _wx_screenshot(self, path):
         if not self._wx_app_reference:
             self._wx_app_reference = wx.App(False)
@@ -298,13 +332,13 @@ class ScreenshotTaker(object):
     def _gtk_screenshot(self, path):
         window = gdk.get_default_root_window()
         if not window:
-            raise RuntimeError('Taking screenshot failed')
+            raise RuntimeError('Taking screenshot failed.')
         width, height = window.get_size()
         pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, width, height)
         pb = pb.get_from_drawable(window, window.get_colormap(),
                                   0, 0, 0, 0, width, height)
         if not pb:
-            raise RuntimeError('Taking screenshot failed')
+            raise RuntimeError('Taking screenshot failed.')
         pb.save(path, 'jpeg')
 
     def _pil_screenshot(self, path):
@@ -317,12 +351,7 @@ class ScreenshotTaker(object):
 
 if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
-        sys.exit("Usage: %s <path> [wx|gtk|pil] OR test [<path>]" % os.path.basename(sys.argv[0]))
-    if sys.argv[1] == 'test':
-        sys.exit(0 if ScreenshotTaker().test(*sys.argv[2:]) else 1)
-    path = utils.abspath(sys.argv[1])
-    module = sys.argv[2] if len(sys.argv) == 3 else None
-    shooter = ScreenshotTaker(module)
-    print 'Using %s modules' % shooter.module
-    shooter(path)
-    print path
+        sys.exit("Usage: %s <path>|test [wx|gtk|pil]" % os.path.basename(sys.argv[0]))
+    path = sys.argv[1] if sys.argv[1] != 'test' else None
+    module = sys.argv[2] if len(sys.argv) > 2 else None
+    ScreenshotTaker(module).test(path)
