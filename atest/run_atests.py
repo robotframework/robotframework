@@ -51,7 +51,7 @@ except ImportError:
 ARGUMENTS = '''
 --doc Robot Framework acceptance tests
 --metadata interpreter:{interpreter.name} {interpreter.version} on {interpreter.os}
---variablefile {variable_file}:{interpreter.path}:{interpreter.name}:{interpreter.version}
+--variablefile {variable_file};{interpreter.path};{interpreter.name};{interpreter.version}
 --pythonpath {pythonpath}
 --outputdir {outputdir}
 --splitlog
