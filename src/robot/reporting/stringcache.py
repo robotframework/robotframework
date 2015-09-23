@@ -17,6 +17,7 @@ from operator import itemgetter
 from robot.utils import compress_text
 
 
+# TODO: Could we inherit from int nowadays?
 class StringIndex(long):
     pass
 

@@ -27,7 +27,7 @@ def ExecutionResult(*sources, **options):
     """Factory method to constructs :class:`~.executionresult.Result` objects.
 
     :param sources: Path(s) to output XML file(s).
-    :param options: Configuration options. `rerun_merge` with True value causes
+    :param options: Configuration options. ``merge`` with True value causes
                     multiple results to be combined so that tests in the latter
                     results replace the ones in the original. Other options
                     are passed further to :py:class:`~ExecutionResultBuilder`.
