@@ -847,8 +847,20 @@ class OperatingSystem(object):
 
         See also `Copy Files`, `Move File`, and `Move Files`.
         """
-        source, destination = self._copy_file(source, destination)
-        self._link("Copied file from '%s' to '%s'", source, destination)
+        if not self._are_source_and_destination_same_file(destination, source):
+            source, destination = self._copy_file(source, destination)
+            self._link("Copied file from '%s' to '%s'", source, destination)
+
+    def _are_source_and_destination_same_file(self, destination, source):
+        source = os.path.realpath(self.normalize_path(source))
+        destination = os.path.realpath(self.normalize_path(destination))
+        if source == destination:
+            self._link("Source '%s' and destination '%s' point to the same file.", source, destination)
+            return True
+        if os.path.dirname(source) == destination and os.path.isdir(destination):
+            self._link("Source '%s' and destination '%s' point to the same file.", source, destination)
+            return True
+        return False
 
     def move_file(self, source, destination):
         """Moves the source file into the destination.
@@ -861,9 +873,10 @@ class OperatingSystem(object):
 
         See also `Move Files`, `Copy File`, and `Copy Files`.
         """
-        source, destination, _ = self._prepare_for_move_or_copy(source, destination)
-        shutil.move(source, destination)
-        self._link("Moved file from '%s' to '%s'", source, destination)
+        if not self._are_source_and_destination_same_file(destination, source):
+            source, destination, _ = self._prepare_for_move_or_copy(source, destination)
+            shutil.move(source, destination)
+            self._link("Moved file from '%s' to '%s'", source, destination)
 
     def copy_files(self, *sources_and_destination):
         """Copies specified files to the target directory.

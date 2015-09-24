@@ -184,6 +184,18 @@ Moving From Name With Glob
     Move Files    ${SOURCE GLOB}/${GLOB FILE}   ${DEST}
     Directory Should Have Items    ${DEST}    ${GLOB FILE}
 
+Copying To The Same Path
+    Copy File    ${SOURCE}/movecopy-one.txt    ${SOURCE}/movecopy-one.txt
+
+Moving To The Same Path
+    Move File    ${SOURCE}/movecopy-one.txt    ${SOURCE}/movecopy-one.txt
+
+Copying To The Same Directory
+    Copy File    ${SOURCE}/movecopy-one.txt    ${SOURCE}
+
+Moving To The Same Directory
+    Move File    ${SOURCE}/movecopy-one.txt    ${SOURCE}
+
 *** Keywords ***
 Create Test Files For Multi-file Operations
     Create Directory    ${SOURCE}
