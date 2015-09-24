@@ -3,7 +3,7 @@ Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/start_p
 Resource        atest_resource.robot
 
 *** Variables ***
-${DEPRECATED}   Keyword 'OperatingSystem.Start Process' is deprecated. Use `Process.Start Process` instead.
+${DEPRECATED}   Keyword 'OperatingSystem.*Process*' is deprecated. Use keywords in the `Process library` instead.
 
 *** Test Cases ***
 Start Process
@@ -48,7 +48,7 @@ Reading Output With Lot Of Data In Stdout And Stderr
 
 Start Process keyword is deprecated
     ${tc} =    Check Test Case    Start Process
-    Check Log Message    ${tc.kws[0].msgs[0]}    ${DEPRECATED}    WARN
-    Length Should Be    ${ERRORS}    22
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${DEPRECATED}    WARN    pattern=yes
+    Length Should Be    ${ERRORS}    58
     :FOR    ${error}    IN    @{ERRORS}
-    \    Check Log Message    ${error}    ${DEPRECATED}    WARN
+    \    Check Log Message    ${error}    ${DEPRECATED}    WARN    pattern=yes

@@ -107,8 +107,11 @@ class OperatingSystem(object):
     flexible keywords than this library for running processes in general and
     for starting processes on background in particular. Keywords provided
     by the Process library are thus recommended instead of `Run`, `Start
-    Process`, and other related keywords in this library. `Start Process` was
-    even deprecated in Robot Framework 2.9 and will be removed in the future.
+    Process`, and other related keywords in this library.
+
+    `Start Process`, `Read Process Output`, `Switch Process`, `Stop Process`,
+    and `Stop All Processes` were officially deprecated in Robot Framework 2.9.
+    They will be removed altogether in the future.
 
     = Boolean arguments =
 
@@ -244,13 +247,7 @@ class OperatingSystem(object):
         return rc, stdout
 
     def start_process(self, command, stdin=None, alias=None):
-        """*DEPRECATED.* Use `Process.Start Process` instead.
-
-        Also related keywords `Read Process Output`, `Switch Process`, `Stop
-        Process`, and `Stop All Processes` have been deprecated in favor of
-        more flexible keywords in the Process library.
-
-        ---
+        """*DEPRECATED.* Use keywords in the `Process library` instead.
 
         Starts the given command as a background process.
 
@@ -288,9 +285,7 @@ class OperatingSystem(object):
         return PROCESSES.register(process, alias)
 
     def switch_process(self, index_or_alias):
-        """*Deprecated.* See `Start Process` for details.
-
-        ---
+        """*DEPRECATED.* Use keywords in the `Process library` instead.
 
         Switches the active process to the specified process.
 
@@ -311,9 +306,7 @@ class OperatingSystem(object):
         PROCESSES.switch(index_or_alias)
 
     def read_process_output(self):
-        """*Deprecated.* See `Start Process` for details.
-
-        ---
+        """*DEPRECATED.* Use keywords in the `Process library` instead.
 
         Waits for a process to finish and returns its output.
 
@@ -334,9 +327,7 @@ class OperatingSystem(object):
         return output
 
     def stop_process(self):
-        """*Deprecated.* See `Start Process` for details.
-
-        ---
+        """*DEPRECATED.* Use keywords in the `Process library` instead.
 
         Closes the standard output stream of the process.
 
@@ -352,9 +343,7 @@ class OperatingSystem(object):
         PROCESSES.current.close()
 
     def stop_all_processes(self):
-        """*Deprecated.* See `Start Process` for details.
-
-        ---
+        """*DEPRECATED.* Use keywords in the `Process library` instead.
 
         Closes the standard output of all the processes and resets the process
         list.
