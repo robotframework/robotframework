@@ -13,10 +13,10 @@
 #  limitations under the License.
 
 from contextlib import contextmanager
-import os.path
+from os.path import exists, dirname
 
 from robot.output.loggerhelper import LEVELS
-from robot.utils import (get_link_path, html_attr_escape, html_escape,
+from robot.utils import (attribute_escape, get_link_path, html_escape,
                          html_format, is_string, is_unicode, timestamp_to_secs)
 
 from .stringcache import StringCache
@@ -26,8 +26,7 @@ class JsBuildingContext(object):
 
     def __init__(self, log_path=None, split_log=False, prune_input=False):
         # log_path can be a custom object in unit tests
-        self._log_dir = os.path.dirname(log_path) \
-                if is_string(log_path) else None
+        self._log_dir = dirname(log_path) if is_string(log_path) else None
         self._split_log = split_log
         self._prune_input = prune_input
         self._strings = self._top_level_strings = StringCache()
@@ -40,8 +39,7 @@ class JsBuildingContext(object):
         if escape and string:
             if not is_unicode(string):
                 string = unicode(string)
-            escaper = html_escape if not attr else html_attr_escape
-            string = escaper(string)
+            string = (html_escape if not attr else attribute_escape)(string)
         return self._strings.add(string)
 
     def html(self, string):
@@ -49,7 +47,7 @@ class JsBuildingContext(object):
 
     def relative_source(self, source):
         rel_source = get_link_path(source, self._log_dir) \
-            if self._log_dir and source and os.path.exists(source) else ''
+            if self._log_dir and source and exists(source) else ''
         return self.string(rel_source)
 
     def timestamp(self, time):
