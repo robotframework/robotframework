@@ -29,24 +29,24 @@ Move File With Glob Pattern
     Should Not Exist  ${BASE}/somefile.txt
 
 Move File With Glob Pattern With Multiple Matches Fails
-    [Documentation]  FAIL REGEXP: Multiple matches with source pattern '.*file\\*\\.txt'
+    [Documentation]  FAIL Multiple matches with source pattern '${BASE}${/}file*.txt'.
     Create File  ${BASE}/file1.txt  contents
     Create File  ${BASE}/file2.txt  contents
     Move File   ${BASE}/file*.txt   somewhere
 
 Copy File With Glob Pattern With Multiple Matches Fails
-    [Documentation]  FAIL REGEXP: Multiple matches with source pattern '.*file\\*\\.txt'
+    [Documentation]  FAIL Multiple matches with source pattern '${BASE}${/}file*.txt'.
     Create File  ${BASE}/file1.txt  contents
     Create File  ${BASE}/file2.txt  contents
     Copy File   ${BASE}/file*.txt   somewhere
 
 Copy File With Glob Pattern With No Matches Fails
-    [Documentation]  FAIL Source file 'zoo*bar*not*here' does not exist
-    Copy File   zoo*bar*not*here    somewhere
+    [Documentation]  FAIL Source file '${EXECDIR}${/}zoo*bar?not*here' does not exist.
+    Copy File   zoo*bar?not*here    somewhere
 
 Move File With Glob Pattern With No Matches Fails
-    [Documentation]  FAIL Source file 'foo*bar?zoo*not*here' does not exist
-    Move File   foo*bar?zoo*not*here    somewhere
+    [Documentation]  FAIL Source file '${EXECDIR}${/}zoo*bar?not*here' does not exist.
+    Move File   zoo*bar?not*here    somewhere
 
 Copy File when destination exists should be ok
     Create File  ${TESTFILE}  contents
@@ -102,7 +102,7 @@ Move File Using Just File Name
     [Teardown]  Remove Files  rf_test.1  rf_test.2
 
 Moving Non-Existing File Fails
-    [Documentation]  FAIL REGEXP: Source file 'non-existing-file.txt' does not exist
+    [Documentation]  FAIL Source file '${EXECDIR}${/}non-existing-file.txt' does not exist.
     Move File  non-existing-file.txt  whatever.txt
 
 Move Directory
@@ -141,7 +141,7 @@ Move Directory Using Just Dir Name
     [Teardown]  Remove Just Name Dirs
 
 Moving Non-Existing Directory Fails
-    [Documentation]  FAIL REGEXP: Source directory '${ANYDIR}non-existing-dir' does not exist
+    [Documentation]  FAIL Source directory '${EXECDIR}${/}non-existing-dir' does not exist
     Move Directory  non-existing-dir  whatever
 
 Name Contains Glob
@@ -153,6 +153,42 @@ Name Contains Glob
     Should Not Exist  ${BASE}/[ke]kkonen.txt
     Should Exist  ${BASE}/[ke]kkonen-2.txt
     Should Exist  ${BASE}/[ke]kkonen-3.txt
+
+Copy File to same path
+    Create File    ${BASE}/file.txt
+    Copy File    ${BASE}/file.txt    ${BASE}/file.txt
+    Directory Should Have Items    ${BASE}    file.txt
+
+Move File to same path
+    Create File    ${BASE}/file.txt
+    Move File    ${BASE}/file.txt    ${BASE}/./file.txt
+    Directory Should Have Items    ${BASE}    file.txt
+
+Copy File to same directory
+    Create File    ${BASE}/file.txt
+    Copy File    ${BASE}/file.txt    ${BASE}/./
+    Directory Should Have Items    ${BASE}    file.txt
+
+Move File to same directory
+    Create File    ${BASE}/file.txt
+    Move File    ${BASE}/dir/../file.txt    ${BASE}
+    Directory Should Have Items    ${BASE}    file.txt
+
+Copy File to same path with different case on Windows
+    Create File    ${BASE}/file.txt
+    Copy File    ${BASE}/file.txt    ${BASE}/FILE.TXT
+
+Move File to same path with different case on Windows
+    Create File    ${BASE}/file.txt
+    Move File    ${BASE}/file.txt    ${BASE}/FILE.TXT
+
+Copy File to same path when file doesn't exist
+    [Documentation]    FAIL Source file '${EXECDIR}${/}non-existing.file' does not exist.
+    Copy File    non-existing.file    non-existing.file
+
+Move File to same path when file doesn't exist
+    [Documentation]    FAIL Source file '${EXECDIR}${/}path${/}non-existing.file' does not exist.
+    Move File    path/non-existing.file    path/non-existing.file
 
 ***Keywords***
 Remove Just Name Dirs

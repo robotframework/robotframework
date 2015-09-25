@@ -26,7 +26,7 @@ from robot.version import get_version
 from robot.api import logger
 from robot.utils import (abspath, ConnectionCache, decode_output, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
-                         is_unicode, parse_time, plural_or_not,
+                         is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
                          set_env_var, timestr_to_secs, unic)
 
@@ -836,20 +836,84 @@ class OperatingSystem(object):
 
         See also `Copy Files`, `Move File`, and `Move Files`.
         """
-        if not self._are_source_and_destination_same_file(destination, source):
-            source, destination = self._copy_file(source, destination)
-            self._link("Copied file from '%s' to '%s'", source, destination)
+        source, destination = \
+            self._normalize_copy_and_move_files(source, destination)
+        if not self._are_source_and_destination_same_file(source, destination):
+            source, destination = self._atomic_copy(source, destination)
+            self._link("Copied file from '%s' to '%s'.", source, destination)
 
-    def _are_source_and_destination_same_file(self, destination, source):
-        source = os.path.realpath(self.normalize_path(source))
-        destination = os.path.realpath(self.normalize_path(destination))
-        if source == destination:
-            self._link("Source '%s' and destination '%s' point to the same file.", source, destination)
-            return True
-        if os.path.dirname(source) == destination and os.path.isdir(destination):
-            self._link("Source '%s' and destination '%s' point to the same file.", source, destination)
+    def _normalize_copy_and_move_files(self, source, destination):
+        source = self._normalize_copy_and_move_source(source)
+        destination = self._normalize_copy_and_move_destination(destination)
+        if os.path.isdir(destination):
+            destination = os.path.join(destination, os.path.basename(source))
+        return source, destination
+
+    def _normalize_copy_and_move_source(self, source):
+        source = self._absnorm(source)
+        sources = self._glob(source)
+        if len(sources) > 1:
+            raise RuntimeError("Multiple matches with source pattern '%s'."
+                               % source)
+        if sources:
+            source = sources[0]
+        if not os.path.exists(source):
+            raise RuntimeError("Source file '%s' does not exist." % source)
+        if not os.path.isfile(source):
+            raise RuntimeError("Source file '%s' is not a regular file." % source)
+        return source
+
+    def _normalize_copy_and_move_destination(self, destination):
+        is_dir = os.path.isdir(destination) or destination.endswith(('/', '\\'))
+        destination = self._absnorm(destination)
+        directory = destination if is_dir else os.path.dirname(destination)
+        self._ensure_destination_directory_exists(directory)
+        return destination
+
+    def _ensure_destination_directory_exists(self, path):
+        if not os.path.exists(path):
+            os.makedirs(path)
+        elif not os.path.isdir(path):
+            raise RuntimeError("Destination '%s' exists and is not a directory."
+                               % path)
+
+    def _are_source_and_destination_same_file(self, source, destination):
+        if self._force_normalize(source) == self._force_normalize(destination):
+            self._link("Source '%s' and destination '%s' point to the same "
+                       "file.", source, destination)
             return True
         return False
+
+    def _force_normalize(self, path):
+        # TODO: Should normalize_path also support case and link normalization?
+        # TODO: Should we handle dos paths like 'exampl~1.txt'?
+        return os.path.realpath(normpath(path, case_normalize=True))
+
+    def _atomic_copy(self, source, destination):
+        """Copy file atomically (or at least try to).
+
+        This method tries to ensure that a file copy operation will not fail
+        if the destination file is removed during copy operation. The problem
+        is that copying a file is typically not an atomic operation.
+
+        Luckily moving files is atomic in almost every platform, assuming files
+        are on the same filesystem, and we can use that as a workaround:
+        - First move the source to a temporary directory that is ensured to
+          be on the same filesystem as the destination.
+        - Move the temporary file over the real destination.
+
+        See also https://github.com/robotframework/robotframework/issues/1502
+        """
+        temp_directory = tempfile.mkdtemp(dir=os.path.dirname(destination))
+        temp_file = os.path.join(temp_directory, os.path.basename(source))
+        try:
+            shutil.copy(source, temp_file)
+            if os.path.exists(destination):
+                os.remove(destination)
+            shutil.move(temp_file, destination)
+        finally:
+            shutil.rmtree(temp_directory)
+        return source, destination
 
     def move_file(self, source, destination):
         """Moves the source file into the destination.
@@ -862,10 +926,11 @@ class OperatingSystem(object):
 
         See also `Move Files`, `Copy File`, and `Copy Files`.
         """
+        source, destination = \
+            self._normalize_copy_and_move_files(source, destination)
         if not self._are_source_and_destination_same_file(destination, source):
-            source, destination, _ = self._prepare_for_move_or_copy(source, destination)
             shutil.move(source, destination)
-            self._link("Moved file from '%s' to '%s'", source, destination)
+            self._link("Moved file from '%s' to '%s'.", source, destination)
 
     def copy_files(self, *sources_and_destination):
         """Copies specified files to the target directory.
@@ -885,9 +950,25 @@ class OperatingSystem(object):
 
         New in Robot Framework 2.8.4.
         """
-        source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
-        for source in source_files:
-            self.copy_file(source, dest_dir)
+        sources, destination \
+            = self._parse_sources_and_destination(sources_and_destination)
+        for source in sources:
+            self.copy_file(source, destination)
+
+    def _parse_sources_and_destination(self, items):
+        if len(items) < 2:
+            raise RuntimeError('Must contain destination and at least one '
+                               'source.')
+        sources = self._glob_files(items[:-1])
+        destination = self._absnorm(items[-1])
+        self._ensure_destination_directory_exists(destination)
+        return sources, destination
+
+    def _glob_files(self, patterns):
+        files = []
+        for pattern in patterns:
+            files.extend(self._glob(self._absnorm(pattern)))
+        return files
 
     def move_files(self, *sources_and_destination):
         """Moves specified files to the target directory.
@@ -898,88 +979,10 @@ class OperatingSystem(object):
 
         New in Robot Framework 2.8.4.
         """
-        source_files, dest_dir = self._parse_sources_and_destination(sources_and_destination)
-        for source in source_files:
-            self.move_file(source, dest_dir)
-
-    def _parse_sources_and_destination(self, items):
-        if len(items) < 2:
-            raise RuntimeError("Must contain destination and at least one source")
-        sources, destination = items[:-1], items[-1]
-        self._ensure_destination_directory(destination)
-        return self._glob_files(sources), destination
-
-    def _normalize_dest(self, dest):
-        dest = dest.replace('/', os.sep)
-        dest_is_dir = dest.endswith(os.sep) or os.path.isdir(dest)
-        dest = self._absnorm(dest)
-        return dest, dest_is_dir
-
-    def _ensure_destination_directory(self, destination):
-        destination, _ = self._normalize_dest(destination)
-        if not os.path.exists(destination):
-            os.makedirs(destination)
-        elif not os.path.isdir(destination):
-            raise RuntimeError("Destination '%s' exists and is not a directory" % destination)
-
-    def _glob_files(self, patterns):
-        files = []
-        for pattern in patterns:
-            files.extend(self._glob(self._absnorm(pattern)))
-        return files
-
-    def _prepare_for_move_or_copy(self, source, dest):
-        source, dest, dest_is_dir = self._normalize_source_and_dest(source, dest)
-        self._verify_that_source_is_a_file(source)
-        parent = self._ensure_directory_exists(dest, dest_is_dir)
-        self._ensure_dest_file_does_not_exist(source, dest, dest_is_dir)
-        return source, dest, parent
-
-    def _ensure_dest_file_does_not_exist(self, source, dest, dest_is_dir):
-        if dest_is_dir:
-            dest = os.path.join(dest, os.path.basename(source))
-        if os.path.isfile(dest):
-            os.remove(dest)
-
-    def _copy_file(self, source, dest):
-        source, dest, parent = self._prepare_for_move_or_copy(source, dest)
-        return self._atomic_copy(source, dest, parent)
-
-    def _normalize_source_and_dest(self, source, dest):
-        sources = self._glob_files([source])
-        if len(sources) > 1:
-            raise RuntimeError("Multiple matches with source pattern '%s'" % source)
-        source = sources[0] if sources else source
-        dest, dest_is_dir = self._normalize_dest(dest)
-        return source, dest, dest_is_dir
-
-    def _verify_that_source_is_a_file(self, source):
-        if not os.path.exists(source):
-            raise RuntimeError("Source file '%s' does not exist" % source)
-        if not os.path.isfile(source):
-            raise RuntimeError("Source file '%s' is not a regular file" % source)
-
-    def _ensure_directory_exists(self, dest, dest_is_dir):
-        parent = dest if dest_is_dir else os.path.dirname(dest)
-        if not os.path.exists(dest) and not os.path.exists(parent):
-            os.makedirs(parent)
-        return parent
-
-    def _atomic_copy(self, source, destination, destination_parent):
-        # This method tries to ensure that a file copy operation will not fail if the destination file is removed during
-        # copy operation.
-        # This has been an issue for at least some of the users that had a mechanism that polled and removed
-        # the destination - their test cases sometimes failed because the copy file failed.
-        # This is done by first copying the source to a temporary directory on the same drive as the destination is
-        # and then moving (that is almost always in every platform an atomic operation) that temporary file to
-        # the destination.
-        # See https://github.com/robotframework/robotframework/issues/1502 for details
-        temp_directory = tempfile.mkdtemp(dir=destination_parent) # Temporary directory can be atomically created
-        temp_file = os.path.join(temp_directory, os.path.basename(source))
-        shutil.copy(source, temp_file)
-        shutil.move(temp_file, destination)
-        os.rmdir(temp_directory)
-        return source, destination
+        sources, destination \
+            = self._parse_sources_and_destination(sources_and_destination)
+        for source in sources:
+            self.move_file(source, destination)
 
     def copy_directory(self, source, destination):
         """Copies the source directory into the destination.

@@ -21,11 +21,11 @@ Move One File With Move Files
     Directory Should Have Items    ${SOURCE}    @{SOURCE FILES}
 
 Move Files fails when no destination
-    [Documentation]  FAIL Must contain destination and at least one source
+    [Documentation]  FAIL Must contain destination and at least one source.
     Move Files    ${source}movecopy-*.txt
 
 Move Files without arguments fails
-    [Documentation]  FAIL Must contain destination and at least one source
+    [Documentation]  FAIL Must contain destination and at least one source.
     Move Files
 
 Move Multiple Files
@@ -96,19 +96,19 @@ Copy One File To Dir With Copy Files
     Directory Should Have Items    ${SOURCE}    @{SOURCE FILES}
 
 Copy Files fails when no destination
-    [Documentation]    FAIL Must contain destination and at least one source
+    [Documentation]    FAIL Must contain destination and at least one source.
     Copy Files    ${SOURCE}/movecopy-*.txt
 
 Copy Files without arguments fails
-    [Documentation]    FAIL Must contain destination and at least one source
+    [Documentation]    FAIL Must contain destination and at least one source.
     Copy Files
 
 Copy Files destination can not be an existing file
-    [Documentation]    FAIL Destination '${SOURCE}${/}movecopy_list-1.txt' exists and is not a directory
+    [Documentation]    FAIL Destination '${SOURCE}${/}movecopy_list-1.txt' exists and is not a directory.
     Copy Files    ${SOURCE}/movecopy_list-2.txt    ${SOURCE}/movecopy_list-1.txt
 
 Move Files destination can not be an existing file
-    [Documentation]    FAIL Destination '${SOURCE}${/}movecopy_list-1.txt' exists and is not a directory
+    [Documentation]    FAIL Destination '${SOURCE}${/}movecopy_list-1.txt' exists and is not a directory.
     Move Files    ${SOURCE}/movecopy_list-2.txt    ${SOURCE}/movecopy_list-1.txt
 
 Copy Files directory will be created if it does not exist
@@ -184,17 +184,6 @@ Moving From Name With Glob
     Move Files    ${SOURCE GLOB}/${GLOB FILE}   ${DEST}
     Directory Should Have Items    ${DEST}    ${GLOB FILE}
 
-Copying To The Same Path
-    Copy File    ${SOURCE}/movecopy-one.txt    ${SOURCE}/movecopy-one.txt
-
-Moving To The Same Path
-    Move File    ${SOURCE}/movecopy-one.txt    ${SOURCE}/movecopy-one.txt
-
-Copying To The Same Directory
-    Copy File    ${SOURCE}/movecopy-one.txt    ${SOURCE}
-
-Moving To The Same Directory
-    Move File    ${SOURCE}/movecopy-one.txt    ${SOURCE}
 
 *** Keywords ***
 Create Test Files For Multi-file Operations

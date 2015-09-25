@@ -74,19 +74,3 @@ Copying From Name With Glob
 
 Moving From Name With Glob
     Check Test Case    ${TESTNAME}
-
-Copying To The Same Path
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Source '*' and destination '*' point to the same file.    pattern=True    html=True
-
-Moving To The Same Path
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Source '*' and destination '*' point to the same file.    pattern=True    html=True
-
-Copying To The Same Directory
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Source '*' and destination '*' point to the same file.    pattern=True    html=True
-
-Moving To The Same Directory
-    ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Source '*' and destination '*' point to the same file.    pattern=True    html=True
