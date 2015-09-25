@@ -1,31 +1,29 @@
 *** Settings ***
-Test Setup      Create Test Files For Multi-file Operations
-Test Teardown   Remove Base Test Directory
-Resource        os_resource.robot
+Test Setup        Create Test Files For Multi-file Operations
+Test Teardown     Remove Base Test Directory
+Resource          os_resource.robot
 
 *** Variables ***
-${SOURCE}=      ${BASE}${/}move_from
-${SOURCE2}=     ${BASE}${/}move_from_dir1
-${SOURCE3}=     ${BASE}${/}move_from_dir2
-${SOURCE GLOB}=  ${BASE}${/}[move]_from_dir_glob
-${GLOB FILE}=    foo[bar].txt
-${DEST}=        ${BASE}${/}move_to
+${SOURCE}         ${BASE}${/}move_from
+${SOURCE2}        ${BASE}${/}move_from_dir1
+${SOURCE3}        ${BASE}${/}move_from_dir2
+${SOURCE GLOB}    ${BASE}${/}[move]_from_dir_glob
+${GLOB FILE}      foo[bar].txt
+${DEST}           ${BASE}${/}move_to
 
 *** Test Cases ***
 Move One File With Move Files
     Move Files    ${SOURCE}/movecopy-*.txt    ${DEST}
-    Directory Should Have Items    ${DEST}
-    ...    movecopy-one.txt
-    Remove Values From List    ${SOURCE FILES}
-    ...    movecopy-one.txt
+    Directory Should Have Items    ${DEST}    movecopy-one.txt
+    Remove Values From List    ${SOURCE FILES}    movecopy-one.txt
     Directory Should Have Items    ${SOURCE}    @{SOURCE FILES}
 
 Move Files fails when no destination
-    [Documentation]  FAIL Must contain destination and at least one source.
+    [Documentation]    FAIL Must contain destination and at least one source.
     Move Files    ${source}movecopy-*.txt
 
 Move Files without arguments fails
-    [Documentation]  FAIL Must contain destination and at least one source.
+    [Documentation]    FAIL Must contain destination and at least one source.
     Move Files
 
 Move Multiple Files
@@ -90,9 +88,8 @@ Moving Non-existing Files
     Directory Should Have Items    ${SOURCE}    @{SOURCE FILES}
 
 Copy One File To Dir With Copy Files
-    Copy Files    ${SOURCE}/movecopy-*.txt      ${DEST}
-    Directory Should Have Items    ${DEST}
-    ...    movecopy-one.txt
+    Copy Files    ${SOURCE}/movecopy-*.txt    ${DEST}
+    Directory Should Have Items    ${DEST}    movecopy-one.txt
     Directory Should Have Items    ${SOURCE}    @{SOURCE FILES}
 
 Copy Files fails when no destination
@@ -112,28 +109,25 @@ Move Files destination can not be an existing file
     Move Files    ${SOURCE}/movecopy_list-2.txt    ${SOURCE}/movecopy_list-1.txt
 
 Copy Files directory will be created if it does not exist
-    Copy Files    ${SOURCE}/movecopy_list-1.txt   ${DEST}/copieddir
-    Directory Should Have Items   ${DEST}/copieddir      movecopy_list-1.txt
+    Copy Files    ${SOURCE}/movecopy_list-1.txt    ${DEST}/copieddir
+    Directory Should Have Items    ${DEST}/copieddir    movecopy_list-1.txt
 
 Move Files directory will be created if it does not exist
-    Move Files    ${SOURCE}/movecopy_list-1.txt   ${DEST}/moveddir
-    Directory Should Have Items   ${DEST}/moveddir      movecopy_list-1.txt
+    Move Files    ${SOURCE}/movecopy_list-1.txt    ${DEST}/moveddir
+    Directory Should Have Items    ${DEST}/moveddir    movecopy_list-1.txt
 
 Copy One File To File With Copy Files
     Copy Files    ${SOURCE}/movecopy-*.txt    ${DEST}/copied-movecopy.txt
-    Directory Should Have Items    ${DEST}
-    ...    copied-movecopy.txt
+    Directory Should Have Items    ${DEST}    copied-movecopy.txt
     Directory Should Have Items    ${SOURCE}    @{SOURCE FILES}
 
 Copy Multiple Files
-    Copy Files    ${SOURCE}/movecopy_multi-*.txt     ${DEST}
-    Directory Should Have Items    ${DEST}
-    ...    movecopy_multi-1.txt
-    ...    movecopy_multi-2.txt
+    Copy Files    ${SOURCE}/movecopy_multi-*.txt    ${DEST}
+    Directory Should Have Items    ${DEST}    movecopy_multi-1.txt    movecopy_multi-2.txt
     Directory Should Have Items    ${SOURCE}    @{SOURCE FILES}
 
 Copy Multiple Files From Multiple Directories
-    Copy Files    ${BASE}/*dir[12]${/}movecopy_multi_dir-*.txt     ${DEST}
+    Copy Files    ${BASE}/*dir[12]${/}movecopy_multi_dir-*.txt    ${DEST}
     Directory Should Have Items    ${DEST}
     ...    movecopy_multi_dir-1.txt
     ...    movecopy_multi_dir-2.txt
@@ -143,7 +137,7 @@ Copy Multiple Files From Multiple Directories
     Directory Should Have Items    ${SOURCE3}    @{SOURCE FILES 3}
 
 Copy List of Files
-    Copy Files    ${SOURCE}/movecopy_list-1.txt    ${SOURCE}/movecopy_list-2.txt     ${DEST}
+    Copy Files    ${SOURCE}/movecopy_list-1.txt    ${SOURCE}/movecopy_list-2.txt    ${DEST}
     Directory Should Have Items    ${DEST}
     ...    movecopy_list-1.txt
     ...    movecopy_list-2.txt
@@ -168,8 +162,8 @@ Copying Non-existing Files
     Directory Should Have Items    ${SOURCE}    @{SOURCE FILES}
 
 Copying And Moving With backslash in glob pattern
-    Copy Files    ${BASE}/move_from//movecopy_list_pattern-*.txt   ${DEST}
-    Move Files    ${BASE}/move_from//movecopy_list_pattern2-*.txt  ${DEST}
+    Copy Files    ${BASE}/move_from//movecopy_list_pattern-*.txt    ${DEST}
+    Move Files    ${BASE}/move_from//movecopy_list_pattern2-*.txt    ${DEST}
     Directory Should Have Items    ${DEST}
     ...    movecopy_list_pattern-1.txt
     ...    movecopy_list_pattern-2.txt
@@ -177,13 +171,12 @@ Copying And Moving With backslash in glob pattern
     ...    movecopy_list_pattern2-4.txt
 
 Copying From Name With Glob
-    Copy Files    ${SOURCE GLOB}/${GLOB FILE}   ${DEST}
+    Copy Files    ${SOURCE GLOB}/${GLOB FILE}    ${DEST}
     Directory Should Have Items    ${DEST}    ${GLOB FILE}
 
 Moving From Name With Glob
-    Move Files    ${SOURCE GLOB}/${GLOB FILE}   ${DEST}
+    Move Files    ${SOURCE GLOB}/${GLOB FILE}    ${DEST}
     Directory Should Have Items    ${DEST}    ${GLOB FILE}
-
 
 *** Keywords ***
 Create Test Files For Multi-file Operations
@@ -218,10 +211,10 @@ Create Test Files For Multi-file Operations
     ...    movecopy_multi_dir-3.txt
     ...    movecopy_multi_dir-4.txt
     # All the files possibly used in the test are created
-    :FOR    ${file}    IN    @{SOURCE FILES}
+    : FOR    ${file}    IN    @{SOURCE FILES}
     \    Create File    ${SOURCE}/${file}
-    :FOR    ${file}    IN    @{SOURCE FILES 2}
+    : FOR    ${file}    IN    @{SOURCE FILES 2}
     \    Create File    ${SOURCE2}/${file}
-    :FOR    ${file}    IN    @{SOURCE FILES 3}
+    : FOR    ${file}    IN    @{SOURCE FILES 3}
     \    Create File    ${SOURCE3}/${file}
     Create File    ${SOURCE GLOB}/${GLOB FILE}

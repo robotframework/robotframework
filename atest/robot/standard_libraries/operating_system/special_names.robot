@@ -1,8 +1,8 @@
 *** Settings ***
-Documentation    Tests for different file and directory names.
-...              These are, for most parts, tested also elsewhere.
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/special_names.robot
-Resource         atest_resource.robot
+Documentation     Tests for different file and directory names.
+...               These are, for most parts, tested also elsewhere.
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/special_names.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 ASCII only file name
@@ -30,4 +30,3 @@ Non-ASCII directory name with ordinals < 255
 
 Non-ASCII directory name with ordinals > 255
     Check Test Case    ${TESTNAME}
-

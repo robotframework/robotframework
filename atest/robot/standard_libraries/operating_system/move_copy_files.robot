@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/move_copy_files.robot
-Resource         atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/move_copy_files.robot
+Resource          atest_resource.robot
 
 *** Test Cases ***
 Move One File With Move Files

@@ -1,7 +1,7 @@
 *** Settings ***
-Test Setup      Create Base Test Directory
-Suite Teardown  Remove Base Test Directory
-Resource        os_resource.robot
+Suite Teardown    Remove Base Test Directory
+Test Setup        Create Base Test Directory
+Resource          os_resource.robot
 
 *** Test Cases ***
 Create File With Default Content
