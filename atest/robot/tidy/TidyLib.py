@@ -2,7 +2,9 @@ import os
 import re
 from os.path import abspath, dirname, join
 from subprocess import call, STDOUT
+from shlex import split
 import tempfile
+
 
 from robot.utils.asserts import assert_equals, assert_true
 from robot.utils import decode_output
@@ -15,14 +17,14 @@ TEMP_FILE = join(os.getenv('TEMPDIR'), 'tidy-test-dir', 'tidy-test-file.txt')
 
 class TidyLib(object):
 
-    def __init__(self, command):
-        self._tidy = command.split()
+    def __init__(self, *command):
+        self._tidy = list(command)
 
     def run_tidy(self, options, input, output=None, tidy=None):
         """Runs tidy in the operating system and returns output."""
         command = (tidy or self._tidy)[:]
         if options:
-            command.extend(options.split(' '))
+            command.extend([e.decode('utf8') for e in split(options.encode('utf8'))])
         command.append(self._path(input))
         if output:
             command.append(output)

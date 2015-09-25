@@ -17,9 +17,9 @@ Run Some Tests With Std Streams Redirected
   ${cmd} =  Catenate
   ...  echo "redirect stdin" |
   ...  LANG=invalid LC_TYPE=invalid LANGUAGE=invalid LC_ALL=invalid
-  ...  ${INTERPRETER.runner} --consolecolors off ${TESTFILE}
-  ...  > ${STDOUT FILE} 2> ${STDERR FILE}
-  Run  ${cmd}
+  ...  @{INTERPRETER.runner}
+  ...  --consolecolors off ${TESTFILE}
+  Run Process  ${cmd}  shell=True  stdout=${STDOUT FILE}  stderr=${STDERR FILE}
   ${stdout} =  Log File  ${STDOUT FILE}
   ${stderr} =  Log File  ${STDERR FILE}
   [Return]  ${stdout}  ${stderr}

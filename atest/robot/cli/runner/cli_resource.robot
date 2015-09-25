@@ -26,9 +26,9 @@ Output Directory Should Be Empty
 Run Some Tests
     [Arguments]    ${options}=-l none -r none
     ${path} =    Join Path    ${CURDIR}/../../..    testdata    ${TESTFILE}
-    ${output} =    Run Robot Directly    -d ${CLI OUTDIR} ${options} ${path}
-    Should Contain    ${output}    Output:    message=Running tests failed for some reason
-    [Return]    ${output}
+    ${result} =    Run Robot Directly    -d ${CLI OUTDIR} ${options} ${path}
+    Should Contain    ${result.stdout}    Output:    message=Running tests failed for some reason
+    [Return]    ${result.stdout}
 
 Tests Should Pass Without Errors
     [Arguments]    ${options}    ${datasource}
@@ -38,6 +38,6 @@ Tests Should Pass Without Errors
 
 Run Should Fail
     [Arguments]    ${options}    ${exp error}
-    ${rc}    ${output} =    Run And Return RC and Output    ${INTERPRETER.runner} ${options}
-    Should Be Equal As Integers    ${rc}    252
-    Should Match Regexp    ${output}    ^\\[ .*ERROR.* \\] ${exp error}${USAGETIP}$
+    ${result} =    Run Robot Directly  ${options}
+    Should Be Equal As Integers    ${result.rc}    252
+    Should Match Regexp    ${result.stdout}    ^\\[ .*ERROR.* \\] ${exp error}${USAGETIP}$

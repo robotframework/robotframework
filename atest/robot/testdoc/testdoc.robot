@@ -36,9 +36,10 @@ Invalid usage
 *** Keyword ***
 Run TestDoc
     [Arguments]    ${args}    ${expected rc}=0
-    ${rc}    ${output}=   Run And Return Rc And Output  ${INTERPRETER.testdoc} ${args} ${OUTFILE}
-    Should Be Equal As Numbers   ${rc}    ${expected rc}
-    [Return]    ${output}
+    ${args} =    Split shell   ${args}
+    ${result}=   Run Process  @{INTERPRETER.testdoc}  @{args}  ${OUTFILE}
+    Should Be Equal As Numbers   ${result.rc}    ${expected rc}
+    [Return]    ${result.stdout}
 
 Testdoc Should Contain
     [Arguments]    @{expected}

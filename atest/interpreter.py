@@ -101,29 +101,25 @@ class Interpreter(object):
                 return name
         return sys.platform
 
-
-    # FIXME: Properties below should return a list of arguments that is
-    # executed with Run Process
-
     @property
     def runner(self):
-        return '%s %s' % (self.path, join(self._robot_path, 'run.py'))
+        return [self.path, join(self._robot_path, 'run.py')]
 
     @property
     def rebot(self):
-        return '%s %s' % (self.path, join(self._robot_path, 'rebot.py'))
+        return [self.path, join(self._robot_path, 'rebot.py')]
 
     @property
     def libdoc(self):
-        return '%s %s' % (self.path, join(self._robot_path, 'libdoc.py'))
+        return [self.path, join(self._robot_path, 'libdoc.py')]
 
     @property
     def testdoc(self):
-        return '%s %s' % (self.path, join(self._robot_path, 'testdoc.py'))
+        return [self.path, join(self._robot_path, 'testdoc.py')]
 
     @property
     def tidy(self):
-        return '%s %s' % (self.path, join(self._robot_path, 'tidy.py'))
+        return [self.path, join(self._robot_path, 'tidy.py')]
 
 
 class StandaloneInterpreter(Interpreter):
@@ -159,26 +155,22 @@ class StandaloneInterpreter(Interpreter):
     def is_ironpython(self):
         return False
 
-
-    # FIXME: Properties below should return a list of arguments that is
-    # executed with Run Process
-
     @property
     def runner(self):
-        return 'java %s -jar %s' % (self._bootclasspath, self.path)
+        return ['java', self._bootclasspath, '-jar', self.path]
 
     @property
     def rebot(self):
-        return 'java %s -jar %s rebot' % (self._bootclasspath, self.path)
+        return ['java', self._bootclasspath, '-jar', self.path, 'rebot']
 
     @property
     def libdoc(self):
-        return 'java %s -jar %s libdoc' % (self._bootclasspath, self.path)
+        return ['java', self._bootclasspath, '-jar', self.path, 'libdoc']
 
     @property
     def testdoc(self):
-        return 'java %s -jar %s testdoc' % (self._bootclasspath, self.path)
+        return ['java', self._bootclasspath, '-jar', self.path, 'testdoc']
 
     @property
     def tidy(self):
-        return 'java %s -jar %s tidy' % (self._bootclasspath, self.path)
+        return ['java', self._bootclasspath, '-jar', self.path, 'tidy']

@@ -49,7 +49,7 @@ Invalid --RemoveKeywords
 
 Rebot Should Fail
     [Arguments]    ${options}    ${exp msg}
-    ${rc}    ${output} =    Run And Return RC and Output    ${INTERPRETER.rebot} ${options}
-    Log    ${output}
-    Should Be Equal As Integers    ${rc}    252
-    Should Match Regexp    ${output}    ^\\[ .*ERROR.* \\] ${exp msg}${USAGETIP}$
+    ${result} =    Run Rebot Directly  ${options}
+    Log    ${result.stdout}
+    Should Be Equal As Integers   ${result.rc}    252
+    Should Match Regexp    ${result.stdout}    ^\\[ .*ERROR.* \\] ${exp msg}${USAGETIP}$

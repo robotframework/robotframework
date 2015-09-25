@@ -1,5 +1,5 @@
 *** Settings ***
-Library           TidyLib.py    ${INTERPRETER.tidy}
+Library           TidyLib.py    @{INTERPRETER.tidy}
 Resource          atest_resource.robot
 
 *** Variables ***

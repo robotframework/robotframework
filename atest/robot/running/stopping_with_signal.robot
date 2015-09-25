@@ -91,14 +91,13 @@ Start And Send Signal
 Start Run
     [Arguments]    ${datasource}    ${sleep}    @{extra options}
     ${datasource} =    Set Variables And Get Datasources    running/stopping_with_signal/${datasource}
-    @{runner} =    Split String    ${INTERPRETER.runner}
     @{command} =    Create List
-    ...    @{runner}
+    ...    @{INTERPRETER.runner}
     ...    --output    ${OUTFILE}    --report    NONE    --log    NONE
     ...    --variable    TESTSIGNALFILE:${TEST FILE}
     ...    --variable    TEARDOWNSLEEP:${sleep}
     ...    @{extra options}
-    ...    ${datasource}
+    ...    @{datasource}
     Log Many    @{command}
     ProcessManager.start process    @{command}
 

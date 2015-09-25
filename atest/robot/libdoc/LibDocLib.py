@@ -3,6 +3,7 @@ import os
 import pprint
 import tempfile
 from os.path import join, dirname, abspath
+from shlex import split
 from subprocess import call, STDOUT
 
 from robot.api import logger
@@ -12,11 +13,11 @@ ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 
 class LibDocLib(object):
 
-    def __init__(self, command):
-        self._cmd = command.split()
+    def __init__(self, *command):
+        self._cmd = list(command)
 
     def run_libdoc(self, args):
-        cmd = self._cmd + [a for a in args.split(' ') if a]
+        cmd = self._cmd + [a.decode('utf8') for a in split(args.encode('utf8'))]
         cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
         stdout = tempfile.TemporaryFile()

@@ -38,4 +38,4 @@ Remove syslog environment variables
     Remove Environment Variable  ROBOT_SYSLOG_LEVEL
 
 Rebot Something
-    Run  ${INTERPRETER.rebot} --outputdir ${MYOUTDIR} ${MYINPUT}
+    Run Rebot Directly  --outputdir ${MYOUTDIR} ${MYINPUT}

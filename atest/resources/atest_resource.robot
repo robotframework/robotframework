@@ -26,9 +26,17 @@ ${TESTNAME}     ${EMPTY}    # Used when not running test
 *** Keywords ***
 Run Robot Directly
     [Arguments]  ${opts and args}
-    ${output} =  Run  ${INTERPRETER.runner} --outputdir %{TEMPDIR} ${opts and args}
-    Log  ${output}
-    [Return]  ${output}
+    ${opts and args} =   Split shell   ${opts and args}
+    ${result} =  Run Process  @{INTERPRETER.runner}  --outputdir  %{TEMPDIR}  @{opts and args}  stderr=STDOUT
+    Log  ${result.stdout}
+    [Return]  ${result}
+
+Run Rebot Directly
+    [Arguments]  ${opts and args}
+    ${opts and args} =   Split shell   ${opts and args}
+    ${result} =  Run Process  @{INTERPRETER.rebot}  --outputdir  %{TEMPDIR}  @{opts and args}  stderr=STDOUT
+    Log  ${result.stdout}
+    [Return]  ${result}
 
 Run Tests
     [Arguments]  ${options}  @{data list}
@@ -43,40 +51,48 @@ Run Tests Without Processing Output
 
 Run Tests Helper
     [Arguments]  ${user options}  @{data list}
-    ${data string} =  Set Variables And Get Datasources  @{data list}
-    ${options} =  Catenate
-    ...    --ConsoleMarkers OFF    # AUTO (default) doesn't work with IronPython
-    ...    ${user options}
-    ...    --pythonpath ${LIBPATH1}
-    ...    --pythonpath ${LIBPATH2}
-    ${rc} =  Run Helper  ${INTERPRETER.runner}  ${options}  ${data string}
-    [Return]  ${rc}
+    @{data list} =  Set Variables And Get Datasources  @{data list}
+    @{user options} =   Split shell  ${user options}
+    ${result} =  Run Helper  ${INTERPRETER.runner}
+    ...    --ConsoleMarkers    OFF    # AUTO (default) doesn't work with IronPython
+    ...    @{user options}
+    ...    --pythonpath    ${LIBPATH1}
+    ...    --pythonpath    ${LIBPATH2}
+    ...    @{data list}
+    [Return]  ${result.rc}
 
 Run Rebot
     [Arguments]  ${options}  @{data list}
-    ${data string} =  Set Variables And Get Datasources  @{data list}
-    ${rc} =  Run Helper  ${INTERPRETER.rebot}  ${options}  ${data string}
+    @{data list} =  Set Variables And Get Datasources  @{data list}
+    @{options} =   Split shell  ${options}
+    ${result} =  Run Helper  ${INTERPRETER.rebot}  @{options}  @{data list}
     Process Output  ${OUTFILE}
-    [Return]  ${rc}
+    [Return]  ${result.rc}
 
 Run Rebot Without Processing Output
     [Arguments]  ${options}  @{data list}
-    ${data string} =  Set Variables And Get Datasources  @{data list}
-    ${rc} =  Run Helper  ${INTERPRETER.rebot}  ${options}  ${data string}
-    [Return]  ${rc}
+    @{data list} =  Set Variables And Get Datasources  @{data list}
+    @{options} =   Split shell  ${options}
+    ${result} =  Run Helper  ${INTERPRETER.rebot}  @{options}  @{data list}
+    [Return]  ${result.rc}
 
 Run Helper
-    [Arguments]  ${runner}  ${options}  ${data string}
+    [Arguments]  ${runner}  @{arguments}
     Remove Files  ${OUTFILE}  ${OUTDIR}/*.xml  ${OUTDIR}/*.html
-    ${cmd} =  Catenate  ${runner}  --consolecolors OFF  --outputdir ${OUTDIR}  --output ${OUTFILE}  --report NONE  --log NONE
-    ...  ${options}  ${data string}  1>${STDOUTFILE}  2>${STDERRFILE}
-    ${rc} =  Run And Return RC  ${cmd}
+    ${cmd} =  Create list  @{runner}
+    ...  --consolecolors  OFF
+    ...  --outputdir  ${OUTDIR}
+    ...  --output  ${OUTFILE}
+    ...  --report  NONE
+    ...  --log  NONE
+    ...  @{arguments}
+    ${result} =  Run Process  @{cmd}   stdout=${STDOUTFILE}  stderr=${STDERRFILE}
     Log  <a href="file://${OUTDIR}">${OUTDIR}</a>  HTML
     Log  <a href="file://${OUTFILE}">${OUTFILE}</a>  HTML
     Log  <a href="file://${STDOUTFILE}">${STDOUTFILE}</a>  HTML
     Log  <a href="file://${STDERRFILE}">${STDERRFILE}</a>  HTML
     Log  <a href="file://${SYSLOGFILE}">${SYSLOGFILE}</a>  HTML
-    [Return]  ${rc}
+    [Return]  ${result}
 
 Set Variables And Get Datasources
     [Arguments]  @{data list}
@@ -84,8 +100,7 @@ Set Variables And Get Datasources
     ${name} =  Get Output Name  @{data list}
     Set Variables  ${name}
     @{data list} =  Join Paths  ${DATADIR}  @{data list}
-    ${data string} =  Catenate  @{data list}
-    [Return]  ${data string}
+    [Return]  @{data list}
 
 Set Variables
     [Arguments]  ${name}

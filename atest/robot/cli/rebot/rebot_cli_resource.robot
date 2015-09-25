@@ -29,6 +29,6 @@ Empty output directory
 Run rebot and return outputs
     [Arguments]  ${arguments}
     Empty output directory
-    Run  ${INTERPRETER.rebot} --outputdir ${MYOUTDIR} ${arguments} ${MYINPUT}
+    Run Rebot Directly  --outputdir ${MYOUTDIR} ${arguments} ${MYINPUT}
     @{outputs} =  List Directory  ${MYOUTDIR}
     [Return]  @{outputs}

@@ -38,7 +38,7 @@ Default format is got from output file
 
 Tidying directory
     [Setup]    Copy Directory    ${DATA}/tests    ${TEMP}/tests
-    ${output_before}=    Run Robot Directly    ${DATA}/tests
+    ${result_before}=    Run Robot Directly    ${DATA}/tests
     Run Tidy    --recursive --format TSV    ${TEMP}/tests
     Check file count    ${TEMP}/tests    *.tsv    2
     Check file count    ${TEMP}/tests/sub    *.tsv    1
@@ -46,8 +46,8 @@ Tidying directory
     Check file count    ${TEMP}/tests/sub    *.txt    0
     Files Should Have $CURDIR    ${TEMP}/tests
     Files Should Have $CURDIR    ${TEMP}/tests/sub
-    ${output_after}=    Run Robot Directly    ${TEMP}/tests
-    Should Be Equal    ${output_before}    ${output_after}
+    ${result_after}=    Run Robot Directly    ${TEMP}/tests
+    Should Be Equal    ${result_before.stdout}    ${result_after.stdout}
 
 Custom headers are preserved and tables aligned accordingly
     Run tidy and check result    ${EMPTY}     golden_with_headers.robot

@@ -33,18 +33,22 @@ Argument File with Non-ASCII Characters
     Copy File  ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.robot  %{TEMPDIR}/testäö.txt
     ${path} =  Normalize Path  %{TEMPDIR}/testäö.txt
     Create Argument File  ${ARGFILE 3}  -D äëïöüÿ  -C off  ${path}
-    ${output} =  Run Robot Directly  --argumentfile ${ARGFILE 3}
-    Should Not Contain  ${output.upper()}  ERROR
-    Should Contain  ${output}  Testäö :: äëïöüÿ
+    ${result} =  Run Robot Directly  --argumentfile ${ARGFILE 3}
+    Should Not Contain  ${result.stdout.upper()}  ERROR
+    Should Contain  ${result.stdout}  Testäö :: äëïöüÿ
 
 Arguments From Stdin
     ${test dir} =  Normalize Path  ${DATADIR}/misc/
     Create Argument File Without BOM  ${ARG FILE}  --name My Name with Nön Äscii  ${test dir}${/}normal.robot
-    ${output}=  Run Robot Directly  --doc from_command_line --argumentfile stdin ${test dir}${/}pass_and_fail.robot < ${ARG FILE}
-    Should Contain  ${output}  Normal
-    Should Contain  ${output}  Pass And Fail
-    Should Contain  ${output}  My Name with N
-    Should Contain  ${output}  from command line
+    ${cmd}=  Catenate  @{INTERPRETER.runner}
+    ...  --doc  from_command_line
+    ...  --argumentfile  stdin
+    ...  ${test dir}${/}pass_and_fail.robot
+    ${result}=  Run Process  ${cmd} < ${ARG FILE}  shell=True  stderr=STDOUT
+    Should Contain  ${result.stdout}  Normal
+    Should Contain  ${result.stdout}  Pass And Fail
+    Should Contain  ${result.stdout}  My Name with N
+    Should Contain  ${result.stdout}  from command line
 
 Option And Argument File Together
     Create Argument File  ${ARGFILE}  --name My name

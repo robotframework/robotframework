@@ -1,6 +1,6 @@
 *** Settings ***
 Resource          atest_resource.robot
-Library           LibDocLib.py    ${INTERPRETER.libdoc}
+Library           LibDocLib.py    @{INTERPRETER.libdoc}
 Library           OperatingSystem
 
 *** Variables ***
