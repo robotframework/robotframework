@@ -1,9 +1,9 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/operating_system/file_and_dir_moving_and_copying.robot
-Resource         atest_resource.robot
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/move_copy_file.robot
+Resource          atest_resource.robot
 
 *** Variables ***
-${SAME FILE}     Source '*' and destination '*' point to the same file.
+${SAME FILE}      Source '*' and destination '*' point to the same file.
 
 *** Test Cases ***
 Move File
@@ -39,31 +39,16 @@ Copy File when destination is a directory
 Copy File when destination is a directory and file with same name exists
     Check Test Case    ${TESTNAME}
 
-Move File To Existing Dir
+Move File To Existing Directory
     Check Test Case    ${TESTNAME}
 
-Move File To Non-Existing Dir
+Move File To Non-Existing Directory
     Check Test Case    ${TESTNAME}
 
 Move File Using Just File Name
     Check Test Case    ${TESTNAME}
 
 Moving Non-Existing File Fails
-    Check Test Case    ${TESTNAME}
-
-Move Directory
-    Check Test Case    ${TESTNAME}
-
-Move Directory To Existing Dir
-    Check Test Case    ${TESTNAME}
-
-Move Directory To Non-Existing Dir Tree
-    Check Test Case    ${TESTNAME}
-
-Move Directory Using Just Dir Name
-    Check Test Case    ${TESTNAME}
-
-Moving Non-Existing Directory Fails
     Check Test Case    ${TESTNAME}
 
 Name Contains Glob
