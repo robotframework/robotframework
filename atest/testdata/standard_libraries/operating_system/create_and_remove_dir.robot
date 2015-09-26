@@ -12,7 +12,7 @@ Create Directory
     Directory Should Exist    ${TESTDIR}${/}sub${/}dirs${/}here
 
 Creating Directory Over Existing File Fails
-    [Documentation]    FAIL Path '${TESTFILE}' already exists but is not a directory
+    [Documentation]    FAIL Path '${TESTFILE}' is not a directory.
     Create File    ${TESTFILE}
     Create Directory    ${TESTFILE}
 
@@ -45,11 +45,11 @@ Empty Directory
     Directory Should Be Empty    ${BASE}
 
 Emptying Non-Existing Directory Fails
-    [Documentation]    FAIL Directory '${BASE}${/}nonexisting' does not exist
+    [Documentation]    FAIL Directory '${BASE}${/}nonexisting' does not exist.
     Empty Directory    ${BASE}/nonexisting
 
 Emptying Dir When Directory Is File Fails
-    [Documentation]    FAIL Directory '${TESTFILE}' does not exist
+    [Documentation]    FAIL Directory '${TESTFILE}' does not exist.
     Create File    ${TESTFILE}
     Empty Directory    ${TESTFILE}
 

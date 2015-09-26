@@ -34,7 +34,7 @@ Start Writable Process
     Should Be Equal    ${output}    HELLO WORLD
 
 Cannot Read From A Stopped Process
-    [Documentation]    FAIL Cannot read from a closed process
+    [Documentation]    FAIL Cannot read from a closed process.
     Start Process    ${PROG} 0 hello
     ${output} =    Read Process Output
     ${output} =    Read Process Output
@@ -73,7 +73,7 @@ Lives Between Tests
     Should Be Equal    ${output}    from_test_case
 
 Stop All
-    [Documentation]    FAIL No active processes
+    [Documentation]    FAIL No active processes.
     ${index} =    Start Process    ${PROG} 0 hello
     Start Process    ${PROG} 0 hello
     Stop All Processes

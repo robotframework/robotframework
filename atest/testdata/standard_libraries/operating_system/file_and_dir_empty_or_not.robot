@@ -5,19 +5,19 @@ Resource          os_resource.robot
 
 *** Test Cases ***
 Directory Should Be Empty
-    [Documentation]    FAIL Directory '${BASE}' is not empty. Contents: 'dir', 'file.txt', 'nöẗ önlÿ äscïï'
+    [Documentation]    FAIL Directory '${BASE}' is not empty. Contents: 'dir', 'file.txt', 'nöẗ önlÿ äscïï'.
     Test Directory Should Be Empty    ${BASE}
 
 Non-ASCII Directory Should Be Empty
-    [Documentation]    FAIL Directory '${NON ASCII}' is not empty. Contents: 'dir', 'file.txt', 'nöẗ önlÿ äscïï'
+    [Documentation]    FAIL Directory '${NON ASCII}' is not empty. Contents: 'dir', 'file.txt', 'nöẗ önlÿ äscïï'.
     Test Directory Should Be Empty    ${NON ASCII}
 
 Directory With Space Should Be Empty
-    [Documentation]    FAIL Directory '${WITH SPACE}' is not empty. Contents: 'dir', 'file.txt', 'nöẗ önlÿ äscïï'
+    [Documentation]    FAIL Directory '${WITH SPACE}' is not empty. Contents: 'dir', 'file.txt', 'nöẗ önlÿ äscïï'.
     Test Directory Should Be Empty    ${WITH SPACE}
 
 Directory Should Be Empty When Directory Does Not Exist
-    [Documentation]    FAIL Directory '${NON ASCII}' does not exist
+    [Documentation]    FAIL Directory '${NON ASCII}' does not exist.
     Directory Should Be Empty    ${NON ASCII}
 
 Directory Should Not Be Empty
@@ -33,23 +33,23 @@ Directory With Space Should Not Be Empty
     Test Directory Should Not Be Empty    ${WITH SPACE}
 
 Directory Should Not Be Empty When Directory Does Not Exist
-    [Documentation]    FAIL Directory '${NON ASCII}' does not exist
+    [Documentation]    FAIL Directory '${NON ASCII}' does not exist.
     Directory Should Not Be Empty    ${NON ASCII}
 
 File Should Be Empty
-    [Documentation]    FAIL File '${TESTFILE}' is not empty. Size: 12 bytes
+    [Documentation]    FAIL File '${TESTFILE}' is not empty. Size: 12 bytes.
     Test File Should Be Empty    ${TESTFILE}
 
 Non-ASCII File Should Be Empty
-    [Documentation]    FAIL File '${NON ASCII}' is not empty. Size: 12 bytes
+    [Documentation]    FAIL File '${NON ASCII}' is not empty. Size: 12 bytes.
     Test File Should Be Empty    ${NON ASCII}
 
 File With Space Should Be Empty
-    [Documentation]    FAIL File '${WITH SPACE}' is not empty. Size: 12 bytes
+    [Documentation]    FAIL File '${WITH SPACE}' is not empty. Size: 12 bytes.
     Test File Should Be Empty    ${WITH SPACE}
 
 File Should Be Empty When File Does Not Exist
-    [Documentation]    FAIL File '${NON ASCII}' does not exist
+    [Documentation]    FAIL File '${NON ASCII}' does not exist.
     File Should Be Empty    ${NON ASCII}
 
 File Should Not Be Empty
@@ -65,7 +65,7 @@ File With Space Should Not Be Empty
     Test File Should Not Be Empty    ${WITH SPACE}
 
 File Should Not Be Empty When File Does Not Exist
-    [Documentation]    FAIL File '${NON ASCII}' does not exist
+    [Documentation]    FAIL File '${NON ASCII}' does not exist.
     File Should Not Be Empty    ${NON ASCII}
 
 *** Keywords ***

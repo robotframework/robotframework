@@ -3,7 +3,6 @@ Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/get_library_inst
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Library imported normally
     Check Test Case  ${TESTNAME}
 
@@ -26,4 +25,3 @@ Non-existing library should cause catchable error
 Library scopes
     Check Test Case  ${TESTNAME} 1
     Check Test Case  ${TESTNAME} 2
-

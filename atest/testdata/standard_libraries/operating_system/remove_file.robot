@@ -53,7 +53,7 @@ Remove Non-Existing File
     Remove File    non-existing.txt
 
 Removing Directory As A File Fails
-    [Documentation]    FAIL Path '${CURDIR}' is not a file
+    [Documentation]    FAIL Path '${CURDIR}' is not a file.
     Remove File    ${CURDIR}
 
 Remove file containing glob pattern

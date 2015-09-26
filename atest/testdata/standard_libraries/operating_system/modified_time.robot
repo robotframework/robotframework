@@ -33,11 +33,11 @@ Get Modified Time As Parts
     Should Be True    0 <= int('@{time}[3]') <= 59
 
 Get Modified Time Fails When Path Does Not Exist
-    [Documentation]    FAIL Getting modified time of '${CURDIR}${/}does_not_exist' failed: Path does not exist
+    [Documentation]    FAIL Path '${CURDIR}${/}does_not_exist' does not exist.
     Get Modified Time    ${CURDIR}/does_not_exist
 
 Set Modified Time Using Epoch
-    [Documentation]    FAIL Setting modified time of '${TESTFILE}' failed: Epoch time must be positive (got -1)
+    [Documentation]    FAIL ValueError: Epoch time must be positive (got -1).
     Create File    ${TESTFILE}
     ${epoch} =    Evaluate    1177586540 + time.altzone    modules=time
     Set Modified Time    ${TESTFILE}    ${epoch}
@@ -55,15 +55,14 @@ Set Modified Time Using Timestamp
     \    Should Be Equal    ${mtime}    ${expected}
 
 Set Modified Time Using Invalid Timestamp
-    [Documentation]    FAIL Setting modified time of '${TESTFILE}' failed: Invalid time format 'invalid'
+    [Documentation]    FAIL ValueError: Invalid time format 'invalid time'.
     Create File    ${TESTFILE}
-    Set Modified Time    ${TESTFILE}    invalid
+    Set Modified Time    ${TESTFILE}    invalid time
 
 Set Modified Time Using NOW
-    [Documentation]    FAIL Setting modified time of '${TESTFILE}' failed: Invalid time string 'invalid'.
     Create File    ${TESTFILE}
     ${t0} =    Get Modified Time    ${TESTFILE}    epoch
-    Sleep    2.5 s
+    Sleep    1.1 seconds
     Set Modified Time    ${TESTFILE}    NOW
     ${t1} =    Get Modified Time    ${TESTFILE}    epoch
     Should Be True    ${t0} < ${t1} < ${t0}+5
@@ -73,7 +72,6 @@ Set Modified Time Using NOW
     Set Modified Time    ${TESTFILE}    now + 1 day 2 hour 3 min 4 seconds 10 ms
     ${t3} =    Get Modified Time    ${TESTFILE}    epoch
     Should Be True    ${t3}-9 <= ${t1} + (24*60*60 + 2*60*60 + 3*60 + 4) <= ${t3}
-    Set Modified Time    ${TESTFILE}    NOW + invalid
 
 Set Modified Time Using UTC
     Create File    ${TESTFILE}
@@ -86,12 +84,16 @@ Set Modified Time Using UTC
     ${mtime} =    Get Modified Time    ${TESTFILE}    epoch
     Should Be True    ${now} <= ${mtime} <= ${now} + 4
 
+Set Modified Time Using NOW + invalid
+    [Documentation]    FAIL ValueError: Invalid time string 'invalid'.
+    Set Modified Time    ${TESTFILE}    NOW + invalid
+
 Set Modified Time Fails When Path Does Not Exist
-    [Documentation]    FAIL Setting modified time of '${CURDIR}${/}does_not_exist' failed: File does not exist
+    [Documentation]    FAIL File '${CURDIR}${/}does_not_exist' does not exist.
     Set Modified Time    ${CURDIR}/does_not_exist    0
 
 Set Modified Time Fails When Path Is Directory
-    [Documentation]    FAIL Setting modified time of '${CURDIR}' failed: Modified time can only be set to regular files
+    [Documentation]    FAIL Path '${CURDIR}' is not a regular file.
     Set Modified Time    ${CURDIR}    0
 
 Set And Get Modified Time Of Non-ASCII File

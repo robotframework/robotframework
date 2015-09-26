@@ -3,9 +3,9 @@ Library           OperatingSystem
 
 *** Variables ***
 @{NEEDS ESCAPING}    c:\\temp\\foo\\not_new_line    \${notvar}
-${MESSAGE}        My message
-${ERROR MESSAGE}    My error message
-${FAIL KW}        Fail
+${MESSAGE}           My message
+${ERROR MESSAGE}     My error message
+${FAIL KW}           Fail
 
 *** Test Cases ***
 Ignore Error When Keyword Passes
@@ -121,7 +121,7 @@ Expect Error With User Keyword When Keyword Fails
 
 Expect Error With Arguments That Needs To Be Escaped
     [Documentation]    FAIL Expected error 'There are no errors' did not occur.
-    Run Keyword And Expect Error    Directory '%{TEMPDIR}' exists    Directory Should Not Exist    %{TEMPDIR}
+    Run Keyword And Expect Error    Directory '%{TEMPDIR}' exists.    Directory Should Not Exist    %{TEMPDIR}
     Run Keyword And Expect Error    There are no errors    Log Many    @{NEEDS ESCAPING}
 
 Expect Error When Timeout Occurs

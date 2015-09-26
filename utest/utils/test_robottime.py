@@ -313,13 +313,13 @@ class TestTime(unittest.TestCase):
             assert_true(expected <= parsed <= expected + 1),
 
     def test_parse_modified_time_with_invalid_times(self):
-        for value, msg in [("-100", "Epoch time must be positive (got -100)"),
+        for value, msg in [("-100", "Epoch time must be positive (got -100)."),
                            ("YYYY-MM-DD hh:mm:ss",
-                            "Invalid time format 'YYYY-MM-DD hh:mm:ss'"),
+                            "Invalid time format 'YYYY-MM-DD hh:mm:ss'."),
                            ("now + foo", "Invalid time string 'foo'."),
                            ("now -    2a ", "Invalid time string '2a'."),
                            ("now+", "Invalid time string ''."),
-                           ("nowadays", "Invalid time format 'nowadays'")]:
+                           ("nowadays", "Invalid time format 'nowadays'.")]:
             assert_raises_with_msg(ValueError, msg, parse_time, value)
 
     def test_parse_time_and_get_time_must_round_seconds_down(self):

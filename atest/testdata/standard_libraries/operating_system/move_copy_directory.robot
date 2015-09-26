@@ -40,7 +40,7 @@ Move Directory Using Just Directory Name
     [Teardown]    Remove Just Name Dirs
 
 Moving Non-Existing Directory Fails
-    [Documentation]    FAIL Source directory '${EXECDIR}${/}non-existing-dir' does not exist
+    [Documentation]    FAIL Source '${EXECDIR}${/}non-existing-dir' does not exist.
     Move Directory    non-existing-dir    whatever
 
 *** Keywords ***

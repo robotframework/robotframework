@@ -11,7 +11,7 @@ ${NON ASCII}      HYVÄÄ_YÖTÄ
 
 *** Test Case ***
 Get Environment Variable
-    [Documentation]    FAIL Environment variable 'non_existing_2' does not exist
+    [Documentation]    FAIL Environment variable 'non_existing_2' does not exist.
     ${var} =    Get Environment Variable    PATH
     Should Contain    ${var}    ${:}
     ${var} =    Get Environment Variable    non_existing    default value
@@ -58,7 +58,7 @@ Remove Multiple Environment Variables
     Environment Variable Should Not Be Set    ${NAME}_3
 
 Environment Variable Should Be Set
-    [Documentation]    FAIL Environment variable 'not_set_var' is not set
+    [Documentation]    FAIL Environment variable 'not_set_var' is not set.
     Set Environment Variable    ${NAME}    Hello
     Environment Variable Should Be Set    ${NAME}
     Environment Variable Should Be Set    not_set_var
@@ -70,16 +70,16 @@ Environment Variable Should Be Set With Non Default Error
     Environment Variable Should Be Set    NON_EXISTING    My error message
 
 Environment Variable Should Not Be Set
-    [Documentation]    FAIL Environment variable '${NAME}' is set to 'Hello'
+    [Documentation]    FAIL Environment variable '${NAME}' is set to 'Hello'.
     Environment Variable Should Not Be Set    ${NAME}
     Set Environment Variable    ${NAME}    Hello
     Environment Variable Should Not Be Set    ${NAME}
 
 Environment Variable Should Not Be Set With Non Default Error
-    [Documentation]    FAIL My error message
+    [Documentation]    FAIL My error message!!
     Environment Variable Should Not Be Set    ${NAME}    This does not fail
     Set Environment Variable    ${NAME}    Hello
-    Environment Variable Should Not Be Set    ${NAME}    My error message
+    Environment Variable Should Not Be Set    ${NAME}    My error message!!
 
 Set Environment Variable In One Test And Use In Another, Part 1
     Set Environment Variable    ${NAME}    Hello another test case!

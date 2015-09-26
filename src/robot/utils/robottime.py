@@ -122,6 +122,7 @@ def secs_to_timestr(secs, compact=False):
     """
     return _SecsToTimestrHelper(secs, compact).get_value()
 
+
 class _SecsToTimestrHelper:
 
     def __init__(self, float_secs, compact):
@@ -258,7 +259,7 @@ def parse_time(timestr):
         seconds = method(timestr)
         if seconds is not None:
             return int(seconds)
-    raise ValueError("Invalid time format '%s'" % timestr)
+    raise ValueError("Invalid time format '%s'." % timestr)
 
 def _parse_time_epoch(timestr):
     try:
@@ -266,7 +267,7 @@ def _parse_time_epoch(timestr):
     except ValueError:
         return None
     if ret < 0:
-        raise ValueError("Epoch time must be positive (got %s)" % timestr)
+        raise ValueError("Epoch time must be positive (got %s)." % timestr)
     return ret
 
 def _parse_time_timestamp(timestr):
@@ -309,7 +310,7 @@ def timestamp_to_secs(timestamp, seps=None):
     try:
         secs = _timestamp_to_millis(timestamp, seps) / 1000.0
     except (ValueError, OverflowError):
-        raise ValueError("Invalid timestamp '%s'" % timestamp)
+        raise ValueError("Invalid timestamp '%s'." % timestamp)
     else:
         return round(secs, 3)
 

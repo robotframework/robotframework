@@ -10,7 +10,6 @@ Library  libraryscope.Global
 
 
 *** Test Cases ***
-
 Library imported normally
     ${lib} =  Get Library Instance  BuiltIn
     Should Be Equal  ${lib.convert_to_integer('42')}  ${42}

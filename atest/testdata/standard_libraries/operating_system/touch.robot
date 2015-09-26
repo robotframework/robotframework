@@ -28,11 +28,11 @@ Touch File With Space
     File Should Be Empty    ${WITHSPACE}
 
 Touching Directory Fails
-    [Documentation]    FAIL Cannot touch '${CURDIR}' because it is a directory
+    [Documentation]    FAIL Cannot touch '${CURDIR}' because it is a directory.
     Touch    ${CURDIR}
 
 Touch When Parent Does Not Exist Fails
-    [Documentation]    FAIL Cannot touch '${TESTDIR}${/}file.txt' because its parent directory does not exist
+    [Documentation]    FAIL Cannot touch '${TESTDIR}${/}file.txt' because its parent directory does not exist.
     Directory Should Not Exist    ${TESTDIR}
     Touch    ${TESTDIR}/file.txt
 

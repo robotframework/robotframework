@@ -6,7 +6,7 @@ Resource          atest_resource.robot
 Get File
     ${tc} =    Check testcase    ${TESTNAME}
     ${path} =    Join Path    %{TEMPDIR}    robot-os-tests    f1.txt
-    Check Log Message    ${tc.kws[1].msgs[0]}    Getting file '<a href="file://${path}">${path}</a>'    HTML
+    Check Log Message    ${tc.kws[1].msgs[0]}    Getting file '<a href="file://${path}">${path}</a>'.    HTML
 
 Get File With Non-ASCII Name
     Check testcase    ${TESTNAME}

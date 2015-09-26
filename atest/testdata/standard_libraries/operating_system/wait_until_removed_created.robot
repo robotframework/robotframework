@@ -38,17 +38,17 @@ File And Dir Removed With Pattern
     Wait Until Removed    ${BOTH PATTERN}
 
 File Not Removed Before Timeout
-    [Documentation]    FAIL '${FILE}' was not removed in 111 milliseconds
+    [Documentation]    FAIL '${FILE}' was not removed in 111 milliseconds.
     Create Items
     Wait Until Removed    ${FILE}    0.111
 
 Dir Not Removed Before Timeout
-    [Documentation]    FAIL '${DIR}' was not removed in 123 milliseconds
+    [Documentation]    FAIL '${DIR}' was not removed in 123 milliseconds.
     Create Items
     Wait Until Removed    ${DIR}    0day 0sec 123 millis
 
 Not Removed Before Timeout With Pattern
-    [Documentation]    FAIL '${BOTH PATTERN}' was not removed in 42 milliseconds
+    [Documentation]    FAIL '${BOTH PATTERN}' was not removed in 42 milliseconds.
     Create Items
     Wait Until Removed    ${BOTH PATTERN}    0.042
 
@@ -74,15 +74,15 @@ File And Dir Created With Pattern
     Wait Until Created    ${DIR PATTERN}
 
 File Not Created Before Timeout
-    [Documentation]    FAIL '${FILE}' was not created in 1 second 1 millisecond
+    [Documentation]    FAIL '${FILE}' was not created in 1 second 1 millisecond.
     Wait Until Created    ${FILE}    1.001
 
 Dir Not Created Before Timeout
-    [Documentation]    FAIL '${DIR}' was not created in 42 milliseconds
+    [Documentation]    FAIL '${DIR}' was not created in 42 milliseconds.
     Wait Until Created    ${DIR}    0 s 42 ms
 
 Not Created Before Timeout With Pattern
-    [Documentation]    FAIL '${BOTH PATTERN}' was not created in 22 milliseconds
+    [Documentation]    FAIL '${BOTH PATTERN}' was not created in 22 milliseconds.
     Wait Until Created    ${BOTH PATTERN}    0.022
 
 Invalid Create Timeout
@@ -94,7 +94,7 @@ Wait Until File With Glob Like Name
     Wait Until Created    ${FILE WITH GLOB}    1ms
 
 Wait Until Removed File With Glob Like Name
-    [Documentation]    FAIL '${FILE WITH GLOB}' was not removed in 42 milliseconds
+    [Documentation]    FAIL '${FILE WITH GLOB}' was not removed in 42 milliseconds.
     Create Items
     Wait Until Removed    ${FILE WITH GLOB}    0.042
 
