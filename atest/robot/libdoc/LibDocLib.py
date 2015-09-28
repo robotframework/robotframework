@@ -1,9 +1,9 @@
 import json
 import os
 import pprint
+import shlex
 import tempfile
 from os.path import join, dirname, abspath
-from shlex import split
 from subprocess import call, STDOUT
 
 from robot.api import logger
@@ -11,21 +11,28 @@ from robot.utils import decode_output
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 
+
 class LibDocLib(object):
 
     def __init__(self, *command):
         self._cmd = list(command)
 
     def run_libdoc(self, args):
-        cmd = self._cmd + [a.decode('utf8') for a in split(args.encode('utf8'))]
+        cmd = self._cmd + self._split_args(args)
         cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
         stdout = tempfile.TemporaryFile()
-        call(cmd, cwd=ROBOT_SRC, stdout=stdout, stderr=STDOUT, shell=os.sep=='\\')
+        call(cmd, cwd=ROBOT_SRC, stdout=stdout, stderr=STDOUT)
         stdout.seek(0)
         output = stdout.read().replace('\r\n', '\n')
         logger.info(output)
         return decode_output(output)
+
+    def _split_args(self, args):
+        lexer = shlex.shlex(args.encode('UTF-8'), posix=True)
+        lexer.escape = ''
+        lexer.whitespace_split = True
+        return [token.decode('UTF-8') for token in lexer]
 
     def get_libdoc_model_from_html(self, path):
         with open(path) as html_file:

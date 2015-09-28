@@ -11,11 +11,15 @@ Library         read_interpreter.py
 Variables       atest_variables.py
 
 *** Variables ***
-${OUTDIR}       Set in Set Variables
-${OUTFILE}      -- ;; --
-${SYSLOG FILE}  -- ;; --
-${STDERR FILE}  -- ;; --
-${STDOUT FILE}  -- ;; --
+# FIXME: Variables below are currently only used as defaults and overridden in
+# "Set Variables". Should rather use same values always but should also decide
+# what are good values.
+${OUTDIR}       %{TEMPDIR}
+${OUTFILE}      %{TEMPDIR}${/}output.xml
+${SYSLOG FILE}  %{TEMPDIR}${/}syslog.txt
+${STDERR FILE}  %{TEMPDIR}${/}stdout.txt
+${STDOUT FILE}  %{TEMPDIR}${/}stderr.txt
+
 ${SUITE}        Set in Run Helper
 ${ERRORS}       -- ;; --
 ${LIBPATH1}     ${CURDIR}${/}..${/}testresources${/}testlibs
@@ -26,15 +30,17 @@ ${TESTNAME}     ${EMPTY}    # Used when not running test
 *** Keywords ***
 Run Robot Directly
     [Arguments]  ${opts and args}
-    ${opts and args} =   Split shell   ${opts and args}
-    ${result} =  Run Process  @{INTERPRETER.runner}  --outputdir  %{TEMPDIR}  @{opts and args}  stderr=STDOUT
+    ${opts and args} =   Command line to list   ${opts and args}
+    ${result} =  Run Process  @{INTERPRETER.runner}  --outputdir  %{TEMPDIR}  @{opts and args}
+    ...    stdout=${STDOUT FILE}    stderr=STDOUT    timeout=5min    on_timeout=terminate
     Log  ${result.stdout}
     [Return]  ${result}
 
 Run Rebot Directly
     [Arguments]  ${opts and args}
-    ${opts and args} =   Split shell   ${opts and args}
-    ${result} =  Run Process  @{INTERPRETER.rebot}  --outputdir  %{TEMPDIR}  @{opts and args}  stderr=STDOUT
+    ${opts and args} =   Command line to list    ${opts and args}
+    ${result} =  Run Process  @{INTERPRETER.rebot}  --outputdir  %{TEMPDIR}  @{opts and args}
+    ...    stdout=${STDOUT FILE}    stderr=STDOUT    timeout=5min    on_timeout=terminate
     Log  ${result.stdout}
     [Return]  ${result}
 
@@ -52,7 +58,7 @@ Run Tests Without Processing Output
 Run Tests Helper
     [Arguments]  ${user options}  @{data list}
     @{data list} =  Set Variables And Get Datasources  @{data list}
-    @{user options} =   Split shell  ${user options}
+    @{user options} =   Command line to list  ${user options}
     ${result} =  Run Helper  ${INTERPRETER.runner}
     ...    --ConsoleMarkers    OFF    # AUTO (default) doesn't work with IronPython
     ...    @{user options}
@@ -64,7 +70,7 @@ Run Tests Helper
 Run Rebot
     [Arguments]  ${options}  @{data list}
     @{data list} =  Set Variables And Get Datasources  @{data list}
-    @{options} =   Split shell  ${options}
+    @{options} =   Command line to list  ${options}
     ${result} =  Run Helper  ${INTERPRETER.rebot}  @{options}  @{data list}
     Process Output  ${OUTFILE}
     [Return]  ${result.rc}
@@ -72,7 +78,7 @@ Run Rebot
 Run Rebot Without Processing Output
     [Arguments]  ${options}  @{data list}
     @{data list} =  Set Variables And Get Datasources  @{data list}
-    @{options} =   Split shell  ${options}
+    @{options} =   Command line to list  ${options}
     ${result} =  Run Helper  ${INTERPRETER.rebot}  @{options}  @{data list}
     [Return]  ${result.rc}
 
@@ -87,6 +93,7 @@ Run Helper
     ...  --log  NONE
     ...  @{arguments}
     ${result} =  Run Process  @{cmd}   stdout=${STDOUTFILE}  stderr=${STDERRFILE}
+    ...    timeout=5min    on_timeout=terminate
     Log  <a href="file://${OUTDIR}">${OUTDIR}</a>  HTML
     Log  <a href="file://${OUTFILE}">${OUTFILE}</a>  HTML
     Log  <a href="file://${STDOUTFILE}">${STDOUTFILE}</a>  HTML

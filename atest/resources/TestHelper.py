@@ -1,5 +1,4 @@
 import os
-import shlex
 from stat import S_IREAD, S_IWRITE
 
 from robot.api import logger
@@ -22,9 +21,6 @@ class TestHelper:
 
     def _get_name(self, path):
         return os.path.splitext(os.path.basename(path))[0]
-
-    def split_shell(self, args):
-        return [a.decode('utf8') for a in shlex.split(args.encode('utf8'))]
 
     def file_should_have_correct_line_separators(self, output, sep=os.linesep):
         if os.path.isfile(output):
