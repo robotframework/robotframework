@@ -135,7 +135,7 @@ class TestRun(RunningTestCase):
             def visit_test(self, test):
                 self.tests.append(test.name)
         modifier = Modifier()
-        assert_equals(run(self.data, log=LOG_PATH, prerebotmodifier=modifier), 1)
+        assert_equals(run(self.data, outputdir=TEMP, log=LOG_PATH, prerebotmodifier=modifier), 1)
         assert_equals(modifier.tests, ['Pass', 'Fail'])
         self._assert_outputs([('Pass       ', 1), ('Fail :: FAIL', 1)])
 
