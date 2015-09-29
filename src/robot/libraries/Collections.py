@@ -19,6 +19,9 @@ from robot.utils.asserts import assert_equals
 from robot.version import get_version
 
 
+NOT_SET = object()
+
+
 class _List(object):
 
     def convert_to_list(self, item):
@@ -486,6 +489,11 @@ class _Dictionary(object):
                 logger.info("Removed item with key '%s' and value '%s'." % (key, value))
             else:
                 logger.info("Key '%s' not found." % key)
+
+    def pop_from_dictionary(self, dictionary, name, default=NOT_SET):
+        if default is NOT_SET:
+            return dictionary.pop(name)
+        return dictionary.pop(name, default)
 
     def keep_in_dictionary(self, dictionary, *keys):
         """Keeps the given ``keys`` in the ``dictionary`` and removes all other.
