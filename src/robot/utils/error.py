@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
 import re
 import sys
 import traceback
@@ -22,7 +23,7 @@ from .platform import JYTHON
 from .unic import unic
 
 
-EXCLUDE_ROBOT_TRACES = True    # Exclude internal traceback by default or not.
+EXCLUDE_ROBOT_TRACES = not os.getenv('ROBOT_INTERNAL_TRACES')
 RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
 if JYTHON:
     from java.io import StringWriter, PrintWriter
