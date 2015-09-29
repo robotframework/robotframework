@@ -30,7 +30,7 @@ All the content in ``atest`` folder is the under following copyright::
 Directory contents
 ------------------
 
-run_atests.py
+run.py
     A script for running acceptance tests. See below for further instructions.
 
 genrunner.py
@@ -61,11 +61,11 @@ results/
 Running acceptance tests
 ------------------------
 
-Robot Framework's acceptance tests are run using `<run_atests.py>`__. See its
+Robot Framework's acceptance tests are run using `<run.py>`__. See its
 documentation our run it with ``--help`` to see the usage. To run all the
 acceptance tests, execute the ``atest/robot`` folder entirely::
 
-    python atest/run_atests.py python atest/robot
+    python atest/run.py python atest/robot
 
 A sub test suite can be executed simply by running the folder or file
 containing it. On modern machines running all acceptance tests ought to
@@ -81,7 +81,7 @@ on different operating systems. Since running tests on Jython takes quite a
 lot time, it is sometimes a good idea to run only those tests that are not
 executed with Python with it::
 
-    python atest/run_atests.py jython --exclude pybot atest/robot
+    python atest/run.py jython --exclude pybot atest/robot
 
 **FIXME:** We don't anymore have pybot/jybot tags!! Should explain tags we have.
 

@@ -38,17 +38,17 @@ All the content in the ``utest`` directory is under following copyright::
 Running unit tests
 ------------------
 
-All unit tests can be run with script ``run_utests.py``. To get more
-information run ``python run_utests.py --help``. It can be executed with
+All unit tests can be run with script ``run.py``. To get more
+information run ``python run.py --help``. It can be executed with
 Python, Jython and IronPython to verify interoperability with all supported
 interpreters.
 
 Unit test files should always start with prefix ``test_``. This is the
-mechanism the unit tests are found by the ``run_utests.py`` script.
+mechanism the unit tests are found by the ``run.py`` script.
 
 To run only certain unit tests you need to set the Robot Framework's ``src``
 folder to ``PYTHONPATH`` and run the test like ``python path/test_xxx.py``.
 There are also some unit tests that need some other modules i.e. libraries
 used also in acceptance tests. The full list of paths needed to run all
-the unit tests can be found from the beginning of the ``run_utests.py`` file.
+the unit tests can be found from the beginning of the ``run.py`` file.
 Often it is just easier to run all the unit tests.

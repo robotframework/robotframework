@@ -2,7 +2,7 @@
 
 """A script for running Robot Framework's acceptance tests.
 
-Usage:  run_atests.py interpreter [options] datasource(s)
+Usage:  run.py interpreter [options] datasource(s)
 
 Data sources are paths to directories or files under the `atest/robot` folder.
 
@@ -22,8 +22,8 @@ it.
 Note that this script itself must always be executed with Python 2.7.
 
 Examples:
-$ atest/run_atests.py python --test example atest/robot
-$ atest/run_atests.py /opt/jython27/bin/jython atest/robot/tags/tag_doc.robot
+$ atest/run.py python --test example atest/robot
+$ atest/run.py /opt/jython27/bin/jython atest/robot/tags/tag_doc.robot
 """
 
 import os

@@ -4,7 +4,7 @@ Force Tags      no-standalone
 Resource        atest_resource.robot
 
 *** Variables ***
-${TESTPATH}     ${CURDIR}${/}..${/}..${/}..${/}utest${/}run_utests.py
+${TESTPATH}     ${CURDIR}${/}..${/}..${/}..${/}utest${/}run.py
 
 *** Test Cases ***
 Unit Tests
