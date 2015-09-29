@@ -32,7 +32,8 @@ Run Tests And Rebot With Tag Doc
     ...  --tagdoc _d_?_:Doc_for_many_rebot_tags
     ...  --tagdoc D2:More_doc
     ...  --tagstatcombine d*:DX
-    Run Rebot  ${opts}  ${OUTFILE}
+    Copy Previous Outfile
+    Run Rebot  ${opts}  ${OUTFILE COPY}
 
 Tag doc should be correct in output
     [Arguments]  ${index}  ${tag}  ${doc}

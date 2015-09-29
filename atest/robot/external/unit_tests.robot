@@ -1,5 +1,4 @@
 *** Settings ***
-Suite Setup     Set Variables    unit
 Force Tags      no-standalone
 Resource        atest_resource.robot
 

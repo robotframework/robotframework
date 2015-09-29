@@ -6,6 +6,7 @@ Resource        rebot_resource.robot
 *** Variables ***
 ${INPUT1}       %{TEMPDIR}${/}rebot-test-a.xml
 ${INPUT2}       %{TEMPDIR}${/}rebot-test-b.xml
+${COMBINED}     %{TEMPDIR}${/}combined.xml
 
 *** Test Cases ***
 Combine With Both Starttime and endtime should Set Correct Elapsed Time
@@ -28,8 +29,8 @@ Combine With Only Endtime Should Only Affect Endtime
     Should Be Equal  ${SUITE.elapsedtime}  ${ORIG_ELAPSED}
 
 Recombining Should Work
-    Run Rebot Without Processing Output  --starttime 2007:09:25:21:51 --endtime 2007:09:26:01:12:30:200 --output once_combined.xml  ${INPUT1}  ${INPUT2}
-    Run Rebot  ${EMPTY}  ${INPUT1}  ${INPUT2}  ${OUTDIR}${/}once_combined.xml
+    Run Rebot Without Processing Output  --starttime 2007:09:25:21:51 --endtime 2007:09:26:01:12:30:200 --output ${COMBINED}  ${INPUT1}  ${INPUT2}
+    Run Rebot  ${EMPTY}  ${INPUT1}  ${INPUT2}  ${COMBINED}
     Should Be True  '${SUITE.elapsedtime}' > '03:21:30.200'
 
 It should Be possible to Omit Time Altogether

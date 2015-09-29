@@ -135,7 +135,8 @@ Elapsed Time
     Check Times    ${SUITE}    20061227 11:59:59.000    20061227 12:00:08.999    9999
     Length Should Be    ${SUITE.tests}    6
     Comment    2) Filter ouput created in earlier step and check    that times are set accordingly.
-    Run Rebot    --include incl2 --include excl3 ${ESCAPES}    ${OUTFILE}
+    Copy Previous Outfile
+    Run Rebot    --include incl2 --include excl3 ${ESCAPES}    ${OUTFILE COPY}
     Check Times    ${SUITE}    ${NONE}    ${NONE}    6004
     Check Times    ${SUITE.tests[0]}    20061227 12:00:01.000    20061227 12:00:03.000    2000
     Check Times    ${SUITE.tests[1]}    20061227 12:00:03.000    20061227 12:00:07.000    4000

@@ -11,21 +11,21 @@ Library         read_interpreter.py
 Variables       atest_variables.py
 
 *** Variables ***
-# FIXME: Variables below are currently only used as defaults and overridden in
-# "Set Variables". Should rather use same values always but should also decide
-# what are good values.
-${OUTDIR}       %{TEMPDIR}
-${OUTFILE}      %{TEMPDIR}${/}output.xml
-${SYSLOG FILE}  %{TEMPDIR}${/}syslog.txt
-${STDERR FILE}  %{TEMPDIR}${/}stdout.txt
-${STDOUT FILE}  %{TEMPDIR}${/}stderr.txt
-
+${OUTDIR}       %{TEMPDIR}/output
+${OUTFILE}      ${OUTDIR}${/}output.xml
+${SYSLOG FILE}  ${OUTDIR}${/}syslog.txt
+${STDERR FILE}  ${OUTDIR}${/}stdout.txt
+${STDOUT FILE}  ${OUTDIR}${/}stderr.txt
+${OUTFILE COPY}  %{TEMPDIR}/output-copy.xml
 ${SUITE}        Set in Run Helper
 ${ERRORS}       -- ;; --
-${LIBPATH1}     ${CURDIR}${/}..${/}testresources${/}testlibs
-${LIBPATH2}     ${CURDIR}${/}..${/}testresources${/}listeners
 ${USAGE_TIP}    \n\nTry --help for usage information.
 ${TESTNAME}     ${EMPTY}    # Used when not running test
+${RUNNER DEFAULTS}
+...             --ConsoleMarkers OFF
+...             --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}testlibs"
+...             --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}listeners"
+${REBOT DEFAULTS}    ${EMPTY}
 
 *** Keywords ***
 Run Robot Directly
@@ -45,80 +45,61 @@ Run Rebot Directly
     [Return]  ${result}
 
 Run Tests
-    [Arguments]  ${options}  @{data list}
-    ${rc} =  Run Tests Helper  ${options}  @{data list}
-    Process Output  ${OUTFILE}
-    [Return]  ${rc}
+    [Arguments]  ${options}  @{datasources}  &{config}
+    [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
+    @{arguments} =    Get Execution Arguments    ${options}    ${config}
+    ...    ${RUNNER DEFAULTS}    @{datasources}
+    ${result} =  Run Process  @{INTERPRETER.runner}    @{arguments}
+    ...    stdout=${STDOUTFILE}  stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
+    Process Output    ${OUTFILE}    ${config.pop('process_output', True)}
+    Log    ${result.stdout}
+    Log    ${result.stderr}
+    [Return]  ${result.rc}   # TODO: Return result, not only rc. Also elsewhere.
 
-Run Tests Without Processing Output
-    [Arguments]  ${options}  @{data list}
-    ${rc} =  Run Tests Helper  ${options}  @{data list}
-    [Return]  ${rc}
-
-Run Tests Helper
-    [Arguments]  ${user options}  @{data list}
-    @{data list} =  Set Variables And Get Datasources  @{data list}
-    @{user options} =   Command line to list  ${user options}
-    ${result} =  Run Helper  ${INTERPRETER.runner}
-    ...    --ConsoleMarkers    OFF    # AUTO (default) doesn't work with IronPython
-    ...    @{user options}
-    ...    --pythonpath    ${LIBPATH1}
-    ...    --pythonpath    ${LIBPATH2}
-    ...    @{data list}
-    [Return]  ${result.rc}
-
-Run Rebot
-    [Arguments]  ${options}  @{data list}
-    @{data list} =  Set Variables And Get Datasources  @{data list}
-    @{options} =   Command line to list  ${options}
-    ${result} =  Run Helper  ${INTERPRETER.rebot}  @{options}  @{data list}
-    Process Output  ${OUTFILE}
-    [Return]  ${result.rc}
-
-Run Rebot Without Processing Output
-    [Arguments]  ${options}  @{data list}
-    @{data list} =  Set Variables And Get Datasources  @{data list}
-    @{options} =   Command line to list  ${options}
-    ${result} =  Run Helper  ${INTERPRETER.rebot}  @{options}  @{data list}
-    [Return]  ${result.rc}
-
-Run Helper
-    [Arguments]  ${runner}  @{arguments}
-    Remove Files  ${OUTFILE}  ${OUTDIR}/*.xml  ${OUTDIR}/*.html
-    ${cmd} =  Create list  @{runner}
+Get Execution Arguments
+    [Arguments]    ${options}     ${config}    ${defaults}    @{sources}
+    ${defaults} =    Catenate
     ...  --consolecolors  OFF
     ...  --outputdir  ${OUTDIR}
     ...  --output  ${OUTFILE}
     ...  --report  NONE
     ...  --log  NONE
-    ...  @{arguments}
-    ${result} =  Run Process  @{cmd}   stdout=${STDOUTFILE}  stderr=${STDERRFILE}
-    ...    timeout=5min    on_timeout=terminate
-    Log  <a href="file://${OUTDIR}">${OUTDIR}</a>  HTML
-    Log  <a href="file://${OUTFILE}">${OUTFILE}</a>  HTML
-    Log  <a href="file://${STDOUTFILE}">${STDOUTFILE}</a>  HTML
-    Log  <a href="file://${STDERRFILE}">${STDERRFILE}</a>  HTML
-    Log  <a href="file://${SYSLOGFILE}">${SYSLOGFILE}</a>  HTML
-    [Return]  ${result}
+    ...  ${defaults}
+    ${defaults} =    Pop From Dictionary    ${config}    default_options    ${defaults}
+    @{options} =   Command line to list    ${defaults} ${options}
+    @{sources} =  Join Paths  ${DATADIR}  @{sources}
+    Setup Execution Environment
+    [Return]    @{options}    @{sources}
 
-Set Variables And Get Datasources
-    [Arguments]  @{data list}
-    Set Suite Variable  $SUITE  ${NONE}
-    ${name} =  Get Output Name  @{data list}
-    Set Variables  ${name}
-    @{data list} =  Join Paths  ${DATADIR}  @{data list}
-    [Return]  @{data list}
+Setup Execution Environment
+    Remove Directory    ${OUTDIR}    recursive
+    Create Directory    ${OUTDIR}
+    Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG_FILE}
 
-Set Variables
-    [Arguments]  ${name}
-    ${OUTDIR} =  Join Path  ${OUTPUTDIR}  output  ${name}
-    Set Global Variable  $OUTDIR  ${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}
-    Create Directory  ${OUTDIR}
-    Set Suite Variable  $OUTFILE  ${OUTDIR}${/}output.xml
-    Set Suite Variable  $STDOUT_FILE  ${OUTDIR}${/}stdout.txt
-    Set Suite Variable  $STDERR_FILE  ${OUTDIR}${/}stderr.txt
-    Set Suite Variable  $SYSLOG_FILE  ${OUTDIR}${/}syslog.txt
-    Set Environment Variable  ROBOT_SYSLOG_FILE  ${SYSLOG_FILE}
+Run Tests Without Processing Output
+    [Arguments]  ${options}  @{datasources}
+    ${rc} =    Run Tests    ${options}    @{datasources}    process_output=False
+    [Return]  ${rc}
+
+Run Rebot
+    [Arguments]  ${options}  @{datasources}  &{config}
+    [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
+    @{arguments} =    Get Execution Arguments    ${options}    ${config}
+    ...    ${REBOT DEFAULTS}    @{datasources}
+    ${result} =  Run Process  @{INTERPRETER.rebot}    @{arguments}
+    ...    stdout=${STDOUTFILE}  stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
+    Process Output    ${OUTFILE}    ${config.pop('process_output', True)}
+    Log    ${result.stdout}
+    Log    ${result.stderr}
+    [Return]  ${result.rc}   # TODO: Return result, not only rc. Also elsewhere.
+
+Run Rebot Without Processing Output
+    [Arguments]  ${options}  @{datasources}
+    ${rc} =    Run Rebot    ${options}    @{datasources}    process_output=False
+    [Return]  ${rc}
+
+Copy Previous Outfile
+    Copy File    ${OUTFILE}    ${OUTFILE COPY}
 
 Check Test Case
     [Arguments]  ${name}=${TESTNAME}  ${status}=${NONE}  ${message}=${NONE}

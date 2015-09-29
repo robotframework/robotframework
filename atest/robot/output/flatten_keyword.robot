@@ -56,7 +56,7 @@ Flattened in log after execution
     Should Contain    ${LOG}    *<p>Logs the given message with the given level.\\x3c/p>\\n${FLAT HTML}
 
 Flatten for loops
-    Run Rebot    --flatten For    ${ORIG OUTFILE}
+    Run Rebot    --flatten For    ${OUTFILE COPY}
     ${tc} =    Check Test Case    For loop
     Should Be Equal    ${tc.kws[0].type}    for
     Should Be Equal    ${tc.kws[0].doc}    ${FLAT TEXT}
@@ -71,7 +71,7 @@ Flatten for loops
     \    Check Log Message    ${tc.kws[0].msgs[${index * 6 + 5}]}    1
 
 Flatten for loop items
-    Run Rebot    --flatten ForItem    ${ORIG OUTFILE}
+    Run Rebot    --flatten ForItem    ${OUTFILE COPY}
     ${tc} =    Check Test Case    For loop
     Should Be Equal    ${tc.kws[0].type}    for
     Should Be Empty    ${tc.kws[0].doc}
@@ -90,7 +90,7 @@ Flatten for loop items
     \    Check Log Message    ${tc.kws[0].kws[${index}].msgs[5]}    1
 
 Invalid usage
-    Run Rebot Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   ${ORIG OUTFILE}
+    Run Rebot Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   ${OUTFILE COPY}
     Stderr Should Be Equal To    ${ERROR}
     Run Tests Without Processing Output    ${FLATTEN} --FlattenKeywords invalid   output/flatten_keywords.robot
     Stderr Should Be Equal To    ${ERROR}
@@ -100,7 +100,7 @@ Run And Rebot Flattened
     Run Tests Without Processing Output     ${FLATTEN}    output/flatten_keywords.robot
     ${LOG} =    Get File    ${OUTDIR}/log.html
     Set Suite Variable    $LOG
-    Set Suite Variable    $ORIG OUTFILE    ${OUTFILE}
-    Run Rebot    ${FLATTEN}    ${OUTFILE}
+    Copy Previous Outfile
+    Run Rebot    ${FLATTEN}    ${OUTFILE COPY}
     ${TC} =    Check Test Case    Flatten stuff
     Set Suite Variable    $TC

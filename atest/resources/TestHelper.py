@@ -12,16 +12,6 @@ class TestHelper:
     def set_read_write(self, path):
         os.chmod(path, S_IREAD | S_IWRITE)
 
-    def get_output_name(self, *datasources):
-        if not datasources:
-            raise RuntimeError('One or more data sources must be given!')
-        if len(datasources) == 1:
-            return self._get_name(datasources[0])
-        return '_'.join(self._get_name(source) for source in datasources)
-
-    def _get_name(self, path):
-        return os.path.splitext(os.path.basename(path))[0]
-
     def file_should_have_correct_line_separators(self, output, sep=os.linesep):
         if os.path.isfile(output):
             with open(output, 'rb') as infile:

@@ -7,7 +7,8 @@ Ids in output after test run
     Suite And Test Ids Should Be Correct
 
 Ids in output after rebot
-    Run Rebot    ${EMPTY}    ${OUTFILE}
+    Copy Previous Outfile
+    Run Rebot    ${EMPTY}    ${OUTFILE COPY}
     Suite And Test Ids Should Be Correct
 
 *** Keywords ***

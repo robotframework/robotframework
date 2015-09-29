@@ -148,8 +148,9 @@ Failed teardown is noticed when generating only report with Rebot
     ${rc} =    Run Tests Without Processing Output
     ...    --report report.html    core/failing_suite_teardown.robot
     Should Be Equal As Integers    ${rc}    2
+    Copy Previous Outfile
     ${rc} =    Run Rebot Without Processing Output
-    ...    --report report.html --output NONE    ${OUTFILE}
+    ...    --report report.html --output NONE    ${OUTFILE COPY}
     Should Be Equal As Integers    ${rc}    2
 
 Long Error Messages

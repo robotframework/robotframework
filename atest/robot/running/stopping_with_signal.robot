@@ -1,7 +1,6 @@
 *** Settings ***
 Resource        atest_resource.robot
 Library         ProcessManager.py
-Test Teardown   Run Keyword If Test Failed    Log Stdout And Stderr
 
 *** Variables ***
 ${TEST FILE}    %{TEMPDIR}${/}signal-tests.txt
@@ -90,14 +89,13 @@ Start And Send Signal
 
 Start Run
     [Arguments]    ${datasource}    ${sleep}    @{extra options}
-    ${datasource} =    Set Variables And Get Datasources    running/stopping_with_signal/${datasource}
     @{command} =    Create List
     ...    @{INTERPRETER.runner}
     ...    --output    ${OUTFILE}    --report    NONE    --log    NONE
     ...    --variable    TESTSIGNALFILE:${TEST FILE}
     ...    --variable    TEARDOWNSLEEP:${sleep}
     ...    @{extra options}
-    ...    @{datasource}
+    ...    ${DATADIR}${/}running${/}stopping_with_signal${/}${datasource}
     Log Many    @{command}
     ProcessManager.start process    @{command}
 

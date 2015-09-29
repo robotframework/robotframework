@@ -13,7 +13,8 @@ Generate output with Robot
     Run keyword and return    Parse output file
 
 Generate output with Rebot
-    Run rebot    -c fail    ${OUTFILE}
+    Copy Previous Outfile
+    Run rebot    -c fail    ${OUTFILE COPY}
     Run keyword and return    Parse output file
 
 Parse output file

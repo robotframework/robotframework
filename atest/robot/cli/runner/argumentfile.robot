@@ -53,7 +53,7 @@ Arguments From Stdin
 Option And Argument File Together
     Create Argument File  ${ARGFILE}  --name My name
     Create Argument File  ${ARGFILE2}  --doc My docu
-    Run Tests  --argumentfile=${ARGFILE} -A${ARGFILE2}  ${TESTFILE}
+    Run Tests  --argumentfile\=${ARGFILE} -A${ARGFILE2}  ${TESTFILE}
     Should Be Equal  ${SUITE.name}  My name
     Should Be Equal  ${SUITE.doc}  My docu
 

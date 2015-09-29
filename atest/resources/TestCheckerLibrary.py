@@ -24,19 +24,24 @@ class NoSlotsTestSuite(TestSuite):
 
 class TestCheckerLibrary:
 
-    def process_output(self, path):
+    def process_output(self, path, process=True):
+        set_suite_variable = BuiltIn().set_suite_variable
+        if not utils.is_truthy(process):
+            set_suite_variable('$SUITE', None)
+            print "Not processing output."
+            return
         path = path.replace('/', os.sep)
         try:
             print "Processing output '%s'" % path
             result = Result(root_suite=NoSlotsTestSuite())
             ExecutionResultBuilder(path).build(result)
         except:
+            set_suite_variable('$SUITE', None)
             raise RuntimeError('Processing output failed: %s'
                                % utils.get_error_message())
-        setter = BuiltIn().set_suite_variable
-        setter('$SUITE', process_suite(result.suite))
-        setter('$STATISTICS', result.statistics)
-        setter('$ERRORS', process_errors(result.errors))
+        set_suite_variable('$SUITE', process_suite(result.suite))
+        set_suite_variable('$STATISTICS', result.statistics)
+        set_suite_variable('$ERRORS', process_errors(result.errors))
 
     def get_test_from_suite(self, suite, name):
         tests = self.get_tests_from_suite(suite, name)

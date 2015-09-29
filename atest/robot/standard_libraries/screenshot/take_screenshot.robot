@@ -4,7 +4,6 @@ Force Tags      screenshot
 Resource        atest_resource.robot
 
 *** Test Cases ***
-
 Screenshot Is Embedded in Log File
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  screenshot_1.jpg
@@ -32,7 +31,6 @@ Without Embedding
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Linking In Log  ${tc.kws[0].msgs[1]}  no_embed.jpeg
 
-
 *** Keywords ***
 Check Embedding In Log
     [Arguments]  ${message}  ${path}  ${width}=800px
@@ -40,5 +38,5 @@ Check Embedding In Log
 
 Check Linking In Log
     [Arguments]  ${message}  ${file}
-    ${path} =  Normalize Path  ${OUTPUTDIR}/output/take_screenshot/${file}
+    ${path} =  Normalize Path  ${OUTDIR}/${file}
     Check Log Message  ${message}  Screenshot saved to '<a href="${file}">${path}</a>'.  HTML

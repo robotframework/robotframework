@@ -45,7 +45,8 @@ Minimal hand-created output
 My Run Robot And Rebot
     [Arguments]  ${params}  @{paths}
     Run Tests Without Processing Output  ${params}  @{paths}
-    Run Rebot  ${EMPTY}  ${OUTFILE}
+    Copy Previous Outfile
+    Run Rebot  ${EMPTY}  ${OUTFILE COPY}
 
 Check Normal Suite Defaults
     [Arguments]  ${mysuite}  ${message}=  ${tests}=[]  ${setup}=${None}  ${teardown}=${None}
@@ -98,4 +99,3 @@ Check Suite Got From Misc/suites/ Directory
     Check Normal Suite Defaults  ${SUITE.suites[2].suites[0]}
     Check Normal Suite Defaults  ${SUITE.suites[3]}
     Check Normal Suite Defaults  ${SUITE.suites[4]}
-
