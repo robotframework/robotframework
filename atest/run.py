@@ -2,7 +2,7 @@
 
 """A script for running Robot Framework's acceptance tests.
 
-Usage:  run.py interpreter [options] datasource(s)
+Usage:  atest/run.py interpreter [options] datasource(s)
 
 Data sources are paths to directories or files under the `atest/robot` folder.
 

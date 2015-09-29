@@ -2,7 +2,7 @@
 
 """Helper script to run all Robot Framework's unit tests.
 
-usage: run_utest.py [options]
+usage: utest/run.py [options]
 
 options:
     -q, --quiet     Minimal output
