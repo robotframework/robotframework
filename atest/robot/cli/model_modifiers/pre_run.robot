@@ -39,10 +39,10 @@ Invalid modifier
     Log should not be modified
 
 Error if all tests removed
-    ${rc} =    Run Tests Without Processing Output    --prerun ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${TEST DATA}
+    ${result} =    Run Tests Without Processing Output    --prerun ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${TEST DATA}
     Stderr Should Match
     ...    [ ERROR ] Suite 'Pass And Fail' contains no tests after model modifiers.${USAGE TIP}
-    Should Be Equal    ${rc}    ${252}
+    Should Be Equal    ${result.rc}    ${252}
 
 --RunEmptySuite when all tests removed
     Run Tests    --RunEmptySuite --PreRun ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${TEST DATA}
@@ -50,7 +50,7 @@ Error if all tests removed
     Length Should Be    ${SUITE.tests}    0
 
 Modifiers are used after normal configuration
-    ${rc} =    Run Tests Without Processing Output    --include nonex --name Custom --prerun ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${TEST DATA}
+    ${result} =    Run Tests Without Processing Output    --include nonex --name Custom --prerun ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${TEST DATA}
     Stderr Should Match
     ...    [ ERROR ] Suite 'Custom' contains no tests with tag 'nonex'.${USAGE TIP}
-    Should Be Equal    ${rc}    ${252}
+    Should Be Equal    ${result.rc}    ${252}

@@ -54,12 +54,11 @@ Run Tests
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     @{arguments} =    Get Execution Arguments
     ...    ${options}    ${sources}   ${defaults options}    ${RUNNER DEFAULTS}
-    ${result} =  Run Process  @{INTERPRETER.runner}    @{arguments}
-    ...    stdout=${STDOUTFILE}  stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
+    ${result} =  Execute    @{INTERPRETER.runner}    @{arguments}
     Process Output    ${OUTFILE}    ${process output}
     Log    ${result.stdout}
     Log    ${result.stderr}
-    [Return]  ${result.rc}   # TODO: Return result, not only rc. Also elsewhere.
+    [Return]  ${result}
 
 Get Execution Arguments
     [Arguments]    ${options}     ${sources}    ${use defaults}    ${extra defaults}=
@@ -68,35 +67,37 @@ Get Execution Arguments
     @{options} =   Command line to list    ${defaults} ${options}
     @{sources} =   Command line to list    ${sources}
     @{sources} =  Join Paths  ${DATADIR}  @{sources}
-    Setup Execution Environment
     [Return]    @{options}    @{sources}
 
-Setup Execution Environment
+Execute
+    [Arguments]    @{command}
     Remove Directory    ${OUTDIR}    recursive
     Create Directory    ${OUTDIR}
     Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG_FILE}
+    ${result} =  Run Process    @{command}
+    ...    stdout=${STDOUTFILE}  stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
+    [Return]    ${result}
 
 Run Tests Without Processing Output
     [Arguments]  ${options}  ${sources}
-    ${rc} =    Run Tests    ${options}    ${sources}    process output=False
-    [Return]  ${rc}
+    ${result} =    Run Tests    ${options}    ${sources}    process output=False
+    [Return]  ${result}
 
 Run Rebot
     [Arguments]  ${options}  ${sources}  ${process output}=True  ${defaults options}=True
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     @{arguments} =    Get Execution Arguments
     ...    ${options}    ${sources}   ${defaults options}
-    ${result} =  Run Process  @{INTERPRETER.rebot}    @{arguments}
-    ...    stdout=${STDOUTFILE}  stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
+    ${result} =  Execute  @{INTERPRETER.rebot}    @{arguments}
     Process Output    ${OUTFILE}    ${process output}
     Log    ${result.stdout}
     Log    ${result.stderr}
-    [Return]  ${result.rc}   # TODO: Return result, not only rc. Also elsewhere.
+    [Return]  ${result}
 
 Run Rebot Without Processing Output
     [Arguments]  ${options}  ${sources}
-    ${rc} =    Run Rebot    ${options}    ${sources}    process output=False
-    [Return]  ${rc}
+    ${result} =    Run Rebot    ${options}    ${sources}    process output=False
+    [Return]  ${result}
 
 Copy Previous Outfile
     Copy File    ${OUTFILE}    ${OUTFILE COPY}

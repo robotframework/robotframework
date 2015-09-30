@@ -46,10 +46,10 @@ Invalid modifier
     Log should not be modified
 
 Error if all tests removed
-    ${rc} =    Run Rebot Without Processing Output    --prerebot ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${MODIFIED OUTPUT}
+    ${result} =    Run Rebot Without Processing Output    --prerebot ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${MODIFIED OUTPUT}
     Stderr Should Match
     ...    [ ERROR ] Suite 'Pass And Fail' contains no tests after model modifiers.${USAGE TIP}
-    Should Be Equal    ${rc}    ${252}
+    Should Be Equal    ${result.rc}    ${252}
 
 --ProcessmptySuite when all tests removed
     Run Rebot    --ProcessEmptySuite --PreRebot ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${MODIFIED OUTPUT}
@@ -57,7 +57,7 @@ Error if all tests removed
     Length Should Be    ${SUITE.tests}    0
 
 Modifiers are used after normal configuration
-    ${rc} =    Run Rebot Without Processing Output    --include nonex --name Custom --prereb ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${MODIFIED OUTPUT}
+    ${result} =    Run Rebot Without Processing Output    --include nonex --name Custom --prereb ${CURDIR}/ModelModifier.py:REMOVE:ALL:TESTS    ${MODIFIED OUTPUT}
     Stderr Should Match
     ...    [ ERROR ] Suite 'Custom' contains no tests with tag 'nonex'.${USAGE TIP}
-    Should Be Equal    ${rc}    ${252}
+    Should Be Equal    ${result.rc}    ${252}
