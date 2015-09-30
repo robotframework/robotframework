@@ -151,6 +151,23 @@ Move File to same path when file doesn't exist
     [Documentation]    FAIL Source file '${EXECDIR}${/}path${/}non-existing.file' does not exist.
     Move File    path/non-existing.file    path/non-existing.file
 
+Move File returns destination path
+    Create File    ${BASE}/f1.txt
+    Create File    ${BASE}/f2.txt
+    Create Directory    ${BASE}/dir
+    ${path} =    Move File    ${BASE}/f1.txt    ${BASE}/./new.txt
+    Should Be Equal    ${path}    ${BASE}${/}new.txt
+    ${path} =    Move File    ${BASE}/f*.txt    ${BASE}/dir
+    Should Be Equal    ${path}    ${BASE}${/}dir${/}f2.txt
+
+Copy File returns destination path
+    Create File    ${BASE}/file.txt
+    Create Directory    ${BASE}/dir
+    ${path} =    Copy File    ${BASE}/file.txt    ${BASE}/./new.txt
+    Should Be Equal    ${path}    ${BASE}${/}new.txt
+    ${path} =    Copy File    ${BASE}/f*.txt    ${BASE}/dir
+    Should Be Equal    ${path}    ${BASE}${/}dir${/}file.txt
+
 *** Keywords ***
 Remove Just Name Dirs
     Remove Directory    rf_test_1    recursive

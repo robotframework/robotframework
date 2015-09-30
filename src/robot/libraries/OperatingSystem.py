@@ -819,6 +819,8 @@ class OperatingSystem(object):
         separator, it is considered a file. If the path to the file does not
         exist, it is created.
 
+        The resulting destination path is returned since Robot Framework 2.9.2.
+
         See also `Copy Files`, `Move File`, and `Move Files`.
         """
         source, destination = \
@@ -826,6 +828,7 @@ class OperatingSystem(object):
         if not self._are_source_and_destination_same_file(source, destination):
             source, destination = self._atomic_copy(source, destination)
             self._link("Copied file from '%s' to '%s'.", source, destination)
+        return destination
 
     def _prepare_copy_and_move_file(self, source, destination):
         source = self._normalize_copy_and_move_source(source)
@@ -902,6 +905,7 @@ class OperatingSystem(object):
         """Moves the source file into the destination.
 
         Arguments have exactly same semantics as with `Copy File` keyword.
+        Destination file path is returned since Robot Framework 2.9.2.
 
         If the source and destination are on the same filesystem, rename
         operation is used. Otherwise file is copied to the destination
@@ -914,6 +918,7 @@ class OperatingSystem(object):
         if not self._are_source_and_destination_same_file(destination, source):
             shutil.move(source, destination)
             self._link("Moved file from '%s' to '%s'.", source, destination)
+        return destination
 
     def copy_files(self, *sources_and_destination):
         """Copies specified files to the target directory.

@@ -85,3 +85,9 @@ Copy File to same path when file doesn't exist
 
 Move File to same path when file doesn't exist
     Check Test Case    ${TESTNAME}
+
+Move File returns destination path
+    Check Test Case    ${TESTNAME}
+
+Copy File returns destination path
+    Check Test Case    ${TESTNAME}
