@@ -35,49 +35,46 @@ ${RUNNER DEFAULTS}
 
 *** Keywords ***
 Run Tests
-    [Arguments]    ${options}=    ${sources}=    ${process output}=True    ${default options}=True
+    [Arguments]    ${options}=    ${sources}=    ${output}=${OUTFILE}    ${default options}=TRUE
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    # TODO: Pass ${output} instead of ${process output} to enable processing custom output
     @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}    ${RUNNER DEFAULTS}
     ${result} =    Execute    @{INTERPRETER.runner}    @{arguments}
-    Process Output    ${OUTFILE}    ${process output}
-    Log    ${result.stdout}
-    Log    ${result.stderr}
+    Process Output    ${output}
+    Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     [Return]    ${result}
 
 Run Tests Without Processing Output
     [Arguments]    ${options}=    ${sources}=
-    ${result} =    Run Tests    ${options}    ${sources}    process output=False
+    ${result} =    Run Tests    ${options}    ${sources}    output=NONE
     [Return]    ${result}
 
 Run Tests Without Defaults
     [Arguments]    ${options}=    ${sources}=
-    ${result} =    Run Tests    ${options}    ${sources}    process output=False    default options=False
+    ${result} =    Run Tests    ${options}    ${sources}    output=NONE    default options=FALSE
     [Return]    ${result}
 
 Run Rebot
-    [Arguments]    ${options}=    ${sources}=    ${process output}=True    ${default options}=True
+    [Arguments]    ${options}=    ${sources}=    ${output}=${OUTFILE}    ${default options}=True
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}
     ${result} =    Execute    @{INTERPRETER.rebot}    @{arguments}
-    Process Output    ${OUTFILE}    ${process output}
-    Log    ${result.stdout}
-    Log    ${result.stderr}
+    Process Output    ${output}
+    Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     [Return]    ${result}
 
 Run Rebot Without Processing Output
     [Arguments]    ${options}=    ${sources}=
-    ${result} =    Run Rebot    ${options}    ${sources}    process output=False
-    Log Many    STDOUT:\n${result.stdout}    STDERR:\n${result.stderr}
+    ${result} =    Run Rebot    ${options}    ${sources}    output=NONE
     [Return]    ${result}
 
 Run Rebot Without Defaults
     [Arguments]    ${options}=    ${sources}=
-    ${result} =    Run Rebot    ${options}    ${sources}    process output=False    default options=False
+    ${result} =    Run Rebot    ${options}    ${sources}    output=NONE    default options=FALSE
     [Return]    ${result}
 
 Get Execution Arguments
     [Arguments]    ${options}    ${sources}    ${use defaults}    ${extra defaults}=
+    ${use defaults} =    Convert To Boolean    ${use defaults}
     ${defaults} =    Set Variable If    ${use defaults}    ${COMMON DEFAULTS} ${extra defaults}    ${EMPTY}
     @{options} =    Command line to list    --outputdir ${OUTDIR} ${defaults} ${options}
     @{sources} =    Command line to list    ${sources}

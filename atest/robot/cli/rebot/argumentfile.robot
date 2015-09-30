@@ -19,11 +19,10 @@ Argument File
     ...    --outputdir ${CLI OUTDIR}
     ...    ${INPUT FILE}
     Create File    ${ARG FILE}    ${content}
-    ${result} =  Run Rebot Without Processing Output
-    ...    --log disable_me.html --argumentfile ${ARG FILE}
+    ${result} =  Run Rebot    --log disable_me.html --argumentfile ${ARG FILE}
+    ...    output=${CLI OUTDIR}/myout.xml
     Should Be Empty    ${result.stderr}
     Directory Should Contain    ${CLI OUTDIR}    myout.xml
-    Process Output      ${CLI OUTDIR}//myout.xml
     Should Be Equal    ${SUITE.name}    From Arg File
     Should Be Equal    ${SUITE.doc}    ${SPACE}Leading space
     Should Be Equal    ${SUITE.metadata['No']}    Spaces

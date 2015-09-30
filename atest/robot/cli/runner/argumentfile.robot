@@ -23,10 +23,9 @@ Argument File
     ...    -l=none
     ...    --report=none
     ...    -o${SPACE*5}output.xml
-    ${result} =    Run Tests Without Processing Output
-    ...    -M Meta1:Overwritten -A ${ARGFILE} -M Meta2:cli    ${TESTFILE}
+    ${result} =    Run Tests    -M Meta1:Overwritten -A ${ARGFILE} -M Meta2:cli    ${TESTFILE}
+    ...    output=${CLI OUTDIR}/output.xml
     Execution Should Have Succeeded    ${result}
-    Process Output    ${CLI OUTDIR}/output.xml
     Should Be Equal    ${SUITE.name}    From Argfile With Spaces
     Should Be Equal as Strings    ${SUITE.metadata}    {Meta1: From AF, Meta2: cli, Something: My Value}
 

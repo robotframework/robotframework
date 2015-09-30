@@ -38,6 +38,5 @@ Run Some Tests
     ...    --report myrep.html
     ...    --output myout.xml
     ...    --debugfile mydeb.txt
-    Run Tests Without Processing Output    ${options}    misc/pass_and_fail.robot
-    Process Output    ${OUTDIR}${/}myout.xml
+    Run Tests    ${options}    misc/pass_and_fail.robot    output=${OUTDIR}/myout.xml
     Should Be Equal    ${SUITE.name}    Pass And Fail

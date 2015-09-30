@@ -24,15 +24,15 @@ class NoSlotsTestSuite(TestSuite):
 
 class TestCheckerLibrary:
 
-    def process_output(self, path, process=True):
+    def process_output(self, path):
         set_suite_variable = BuiltIn().set_suite_variable
-        if not utils.is_truthy(process):
+        if not path or path.upper() == 'NONE':
             set_suite_variable('$SUITE', None)
             print "Not processing output."
             return
         path = path.replace('/', os.sep)
         try:
-            print "Processing output '%s'" % path
+            print "Processing output '%s'." % path
             result = Result(root_suite=NoSlotsTestSuite())
             ExecutionResultBuilder(path).build(result)
         except:
