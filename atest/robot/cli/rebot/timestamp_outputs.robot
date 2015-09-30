@@ -1,5 +1,4 @@
 *** Settings ***
-Test Setup      Empty output directory
 Resource        rebot_cli_resource.robot
 
 *** Test Cases ***

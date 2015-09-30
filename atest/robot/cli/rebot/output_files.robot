@@ -1,5 +1,4 @@
 *** Settings ***
-Test Setup        Empty output directory
 Test Template     Correct outputs should be created
 Resource          rebot_cli_resource.robot
 
@@ -24,19 +23,31 @@ Outputs Without Extensions
 
 Outputs Into Different Directories
     [Template]    NONE
-    Run Rebot Directly    --outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r ${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html ${MYINPUT}
-    Directory Should Contain    ${MYOUTDIR}${/}o    o.xml
-    Directory Should Contain    ${MYOUTDIR}${/}r    r.html
-    Directory Should Contain    ${MYOUTDIR}${/}l    l.html
-    Directory Should Contain    ${MYOUTDIR}    l    o    r
+    ${options} =    Catenate
+    ...    --outputdir ::invalid::
+    ...    --output ${OUTDIR}/out/o/o
+    ...    --report ${OUTDIR}/out/r/r
+    ...    --log ${OUTDIR}/out/l/l.html
+    ${result} =    Run Rebot Without Defaults    ${options}    ${INPUT FILE}
+    Should Be Equal    ${result.rc}    ${0}
+    Directory Should Contain    ${OUTDIR}/out/o    o.xml
+    Directory Should Contain    ${OUTDIR}/out/r    r.html
+    Directory Should Contain    ${OUTDIR}/out/l    l.html
+    Directory Should Contain    ${OUTDIR}/out/    l    o    r
 
 Non-writable Output File
     [Template]    NONE
-    Create Directory    ${MYOUTDIR}/diréctöry.xml
-    ${result} =    Run Rebot Directly    -d ${MYOUTDIR} -o diréctöry.xml -r r.html -l l.html ${MYINPUT}
-    Directory Should Contain    ${MYOUTDIR}    diréctöry.xml    l.html    r.html
-    ${error}=    Catenate    SEPARATOR=\n    \\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: .*    Log: .*    Report: .*
-    Should Match Regexp    ${result.stdout}    ^${error}$
+    Create Directory    %{TEMPDIR}/diréctöry.xml
+    ${options} =    Catenate
+    ...    -d ${OUTDIR}/out
+    ...    -o %{TEMPDIR}/diréctöry.xml
+    ...    -r r.html
+    ...    -l l
+    ${result} =    Run Rebot Without Defaults    ${options}    ${INPUT FILE}
+    Should Be Equal    ${result.rc}    ${0}
+    Directory Should Contain    ${OUTDIR}/out    l.html    r.html
+    Should Match Regexp    ${result.stdout}    ^Log: .*\nReport: .*$
+    Should Match Regexp    ${result.stderr}    ^\\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: .*$
 
 *** Keywords ***
 Correct outputs should be created

@@ -1,9 +1,9 @@
 *** Settings ***
-Resource          atest_resource.robot
+Resource           atest_resource.robot
 
 *** Variables ***
-${CLI OUTDIR}     %{TEMPDIR}${/}cli
-${TEST FILE}      misc${/}normal.robot
+${CLI OUTDIR}      %{TEMPDIR}${/}cli
+${TEST FILE}       misc${/}normal.robot
 ${UNICODE TEST}    misc${/}unicode.robot
 
 *** Keywords ***
@@ -25,19 +25,20 @@ Output Directory Should Be Empty
 
 Run Some Tests
     [Arguments]    ${options}=-l none -r none
-    ${path} =    Join Path    ${CURDIR}/../../..    testdata    ${TESTFILE}
-    ${result} =    Run Robot Directly    -d ${CLI OUTDIR} ${options} ${path}
-    Should Contain    ${result.stdout}    Output:    message=Running tests failed for some reason
-    [Return]    ${result.stdout}
+    ${result} =    Run Tests Without Defaults    -d ${CLI OUTDIR} ${options}   ${TEST FILE}
+    Should Be Equal    ${result.rc}    ${0}
+    [Return]    ${result}
 
 Tests Should Pass Without Errors
     [Arguments]    ${options}    ${datasource}
-    Run Tests    ${options}    ${datasource}
+    ${result} =    Run Tests    ${options}    ${datasource}
     Should Be Equal    ${SUITE.status}    PASS
-    File Should Be Empty    ${STDERR FILE}
+    Should Be Empty    ${result.stderr}
+    [Return]    ${result}
 
 Run Should Fail
-    [Arguments]    ${options}    ${exp error}
-    ${result} =    Run Robot Directly  ${options}
+    [Arguments]    ${options}    ${error}
+    ${result} =    Run Tests Without Defaults    ${options}
     Should Be Equal As Integers    ${result.rc}    252
-    Should Match Regexp    ${result.stdout}    ^\\[ .*ERROR.* \\] ${exp error}${USAGETIP}$
+    Should Be Empty    ${result.stdout}
+    Should Match Regexp    ${result.stderr}    ^\\[ .*ERROR.* \\] ${error}${USAGETIP}$

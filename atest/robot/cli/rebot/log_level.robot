@@ -2,10 +2,9 @@
 Resource        rebot_cli_resource.robot
 
 *** Variables ***
-${LOG NAME}   logfile.html
+${LOG NAME}     logfile.html
 
 *** Test Cases ***
-
 By default all messages are included
     ${tc} =  Rebot
     Check Log Message  ${tc.kws[0].msgs[0]}  Arguments: [ 'Test 1' ]  TRACE
@@ -39,8 +38,8 @@ Configure visible log level
 
 *** Keywords ***
 Rebot
-    [Arguments]  ${arguments}=${EMPTY}
-    Run Rebot  ${arguments} --log ${LOGNAME}  ${MYINPUT}
+    [Arguments]  ${options}=${EMPTY}
+    Run Rebot  ${options} --log ${LOGNAME}  ${INPUT FILE}
     [Return]  ${SUITE.tests[0]}
 
 Min level should be '${min}' and default '${default}'

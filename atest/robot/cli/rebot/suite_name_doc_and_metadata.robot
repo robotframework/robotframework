@@ -3,8 +3,8 @@ Resource          rebot_cli_resource.robot
 
 *** Test Cases ***
 Default Name, Doc & Metadata
-    [Documentation]    Using default values (read from xml) for name, doc and metadata. Tests are run together to have less Rebot runs with same input i.e. to have faster execution.
-    Run Rebot    ${EMPTY}    ${MYINPUT}
+    [Documentation]    Using default values (read from xml) for name, doc and metadata.
+    Run Rebot    ${EMPTY}    ${INPUT FILE}
     Check Names    ${SUITE}    Normal
     Check Names    ${SUITE.tests[0]}    First One    Normal.
     Check Names    ${SUITE.tests[1]}    Second One    Normal.
@@ -12,7 +12,7 @@ Default Name, Doc & Metadata
     Should Be Equal    ${SUITE.metadata['Something']}    My Value
 
 Overriding Name, Doc & Metadata And Escaping
-    [Documentation]    Overriding name, doc and metadata. Also testing escaping values. Tests are run together to have less Rebot runs with same input i.e. to have faster execution.
+    [Documentation]    Overriding name, doc and metadata. Also tests escaping values.
     ${options} =    Catenate
     ...    -N this_is_overridden_next
     ...    --name my_COOL_NameEXEX
@@ -28,7 +28,7 @@ Overriding Name, Doc & Metadata And Escaping
     ...    -E hash:HA
     ...    -E exclam:EX
     ...    --escape bslash:BS
-    Run Rebot    ${options}    ${MYINPUT}
+    Run Rebot    ${options}    ${INPUT FILE}
     Check Names    ${SUITE}    my COOL Name!!
     Check Names    ${SUITE.tests[0]}    First One    my COOL Name!!.
     Check Names    ${SUITE.tests[1]}    Second One    my COOL Name!!.

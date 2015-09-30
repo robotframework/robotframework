@@ -1,20 +1,29 @@
 *** Settings ***
-Test Setup      Empty Output Directory
-Resource        atest_resource.robot
+Test Setup      Create Output Directory
 Resource        rebot_cli_resource.robot
+
+*** Variables ***
+${ARG FILE}     %{TEMPDIR}/arguments.txt
 
 *** Test Cases ***
 Argument File
     ${content} =    Catenate    SEPARATOR=\n
-    ...    --name From_Arg File    -D= Leading space    -M${SPACE*5}No:Spaces
-    ...    \# comment line    ${EMPTY}
-    ...    --log=none    -r=none    -o myout.xml    --outputdir ${MYOUTDIR}
-    ...    ${MYINPUT}
-    Create File  ${MYOUTDIR}${/}a.txt  ${content}
-    ${result} =  Run Rebot Directly  --log disable_me.html --argumentfile ${MYOUTDIR}${/}a.txt
-    Should Not Contain  ${result.stdout}  ERROR
-    Directory Should Contain  ${MYOUTDIR}  a.txt  myout.xml
-    Process Output  ${MYOUTDIR}${/}myout.xml
-    Should Be Equal  ${SUITE.name}  From Arg File
-    Should Be Equal  ${SUITE.doc}  ${SPACE}Leading space
-    Should Be Equal  ${SUITE.metadata['No']}  Spaces
+    ...    --name From_Arg File
+    ...    -D= Leading space
+    ...    -M${SPACE*5}No:Spaces
+    ...    \# comment line
+    ...    ${EMPTY}
+    ...    --log=none
+    ...    -r=none
+    ...    -o myout.xml
+    ...    --outputdir ${CLI OUTDIR}
+    ...    ${INPUT FILE}
+    Create File    ${ARG FILE}    ${content}
+    ${result} =  Run Rebot Without Processing Output
+    ...    --log disable_me.html --argumentfile ${ARG FILE}
+    Should Be Empty    ${result.stderr}
+    Directory Should Contain    ${CLI OUTDIR}    myout.xml
+    Process Output      ${CLI OUTDIR}//myout.xml
+    Should Be Equal    ${SUITE.name}    From Arg File
+    Should Be Equal    ${SUITE.doc}    ${SPACE}Leading space
+    Should Be Equal    ${SUITE.metadata['No']}    Spaces

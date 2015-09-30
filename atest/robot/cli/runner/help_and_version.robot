@@ -4,8 +4,9 @@ Resource        cli_resource.robot
 *** Test Cases ***
 Help
     [Tags]    no-standalone
-    ${result} =  Run Robot Directly  --help
+    ${result} =  Run Tests Without Defaults  --help
     Should Be Equal  ${result.rc}  ${251}
+    Should Be Empty  ${result.stderr}
     Log  ${result.stdout.replace(' ','_')}
     Should Not Contain  ${result.stdout}  \t
     Should Start With  ${result.stdout}  Robot Framework -- A generic test automation framework\n\nVersion: \
@@ -22,12 +23,10 @@ Help
     @{long} =  Evaluate  [ line for line in $result.stdout.splitlines() if len(line) - line.count('\\\\') >= 80 ]
     Log Many  @{long}
     Should Be True  len(@{long}) == 0  Too long (>= 80) help line(s)
-    ${result2} =  Run Robot Directly  -h
-    Should Be Equal  ${result.stdout}  ${result2.stdout}
 
 Version
-    ${result} =  Run Robot Directly  --version
+    ${result} =  Run Tests Without Defaults  --version
     Should Be Equal  ${result.rc}  ${251}
-    Log  ${result.stdout}
+    Should Be Empty  ${result.stderr}
     Should Match Regexp  ${result.stdout}  ^Robot Framework 2\\.\\d+(\\.\\d+)?((a|b|rc|.dev)\\d+)? \\((Python|Jython|IronPython) 2\\.[\\d.]+.* on .+\\)$
     Should Be True  len($result.stdout) < 80  Too long version line

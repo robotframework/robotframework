@@ -13,47 +13,33 @@ Variables       atest_variables.py
 *** Variables ***
 ${OUTDIR}       %{TEMPDIR}/output
 ${OUTFILE}      ${OUTDIR}${/}output.xml
+${SET SYSLOG}   True
 ${SYSLOG FILE}  ${OUTDIR}${/}syslog.txt
-${STDERR FILE}  ${OUTDIR}${/}stdout.txt
-${STDOUT FILE}  ${OUTDIR}${/}stderr.txt
+${SYSLOG LEVEL}  INFO
+${STDOUT FILE}  ${OUTDIR}${/}stdout.txt
+${STDERR FILE}  ${OUTDIR}${/}stderr.txt
 ${OUTFILE COPY}  %{TEMPDIR}/output-copy.xml
 ${SUITE}        Set in Run Helper
 ${ERRORS}       -- ;; --
 ${USAGE_TIP}    \n\nTry --help for usage information.
 ${TESTNAME}     ${EMPTY}    # Used when not running test
 ${COMMON DEFAULTS}
-...             --ConsoleColors  OFF
-...             --outputdir  ${OUTDIR}
-...             --output  ${OUTFILE}
-...             --report  NONE
-...             --log  NONE
+...             --ConsoleColors OFF
+...             --output ${OUTFILE}
+...             --report NONE
+...             --log NONE
 ${RUNNER DEFAULTS}
 ...             --ConsoleMarkers OFF
 ...             --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}testlibs"
 ...             --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}listeners"
 
 *** Keywords ***
-Run Robot Directly
-    [Arguments]  ${opts and args}
-    ${opts and args} =   Command line to list   ${opts and args}
-    ${result} =  Run Process  @{INTERPRETER.runner}  --outputdir  %{TEMPDIR}  @{opts and args}
-    ...    stdout=${STDOUT FILE}    stderr=STDOUT    timeout=5min    on_timeout=terminate
-    Log  ${result.stdout}
-    [Return]  ${result}
-
-Run Rebot Directly
-    [Arguments]  ${opts and args}
-    ${opts and args} =   Command line to list    ${opts and args}
-    ${result} =  Run Process  @{INTERPRETER.rebot}  --outputdir  %{TEMPDIR}  @{opts and args}
-    ...    stdout=${STDOUT FILE}    stderr=STDOUT    timeout=5min    on_timeout=terminate
-    Log  ${result.stdout}
-    [Return]  ${result}
-
 Run Tests
-    [Arguments]  ${options}  ${sources}  ${process output}=True  ${defaults options}=True
+    [Arguments]  ${options}=  ${sources}=  ${process output}=True  ${default options}=True
+    # TODO: Pass ${output} instead of ${process output} to enable processing custom output
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     @{arguments} =    Get Execution Arguments
-    ...    ${options}    ${sources}   ${defaults options}    ${RUNNER DEFAULTS}
+    ...    ${options}    ${sources}   ${default options}    ${RUNNER DEFAULTS}
     ${result} =  Execute    @{INTERPRETER.runner}    @{arguments}
     Process Output    ${OUTFILE}    ${process output}
     Log    ${result.stdout}
@@ -64,30 +50,40 @@ Get Execution Arguments
     [Arguments]    ${options}     ${sources}    ${use defaults}    ${extra defaults}=
     ${defaults} =    Set Variable If    ${use defaults}
     ...    ${COMMON DEFAULTS} ${extra defaults}    ${EMPTY}
-    @{options} =   Command line to list    ${defaults} ${options}
+    @{options} =   Command line to list    --outputdir ${OUTDIR} ${defaults} ${options}
     @{sources} =   Command line to list    ${sources}
     @{sources} =  Join Paths  ${DATADIR}  @{sources}
     [Return]    @{options}    @{sources}
 
 Execute
     [Arguments]    @{command}
-    Remove Directory    ${OUTDIR}    recursive
-    Create Directory    ${OUTDIR}
-    Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG_FILE}
+    Set Execution Environment
     ${result} =  Run Process    @{command}
     ...    stdout=${STDOUTFILE}  stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
     [Return]    ${result}
 
+Set Execution Environment
+    Remove Directory    ${OUTDIR}    recursive
+    Create Directory    ${OUTDIR}
+    Return From Keyword If    not ${SET SYSLOG}
+    Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG FILE}
+    Set Environment Variable    ROBOT_SYSLOG_LEVEL    ${SYSLOG LEVEL}
+
 Run Tests Without Processing Output
-    [Arguments]  ${options}  ${sources}
+    [Arguments]  ${options}=  ${sources}=
     ${result} =    Run Tests    ${options}    ${sources}    process output=False
     [Return]  ${result}
 
+Run Tests Without Defaults
+    [Arguments]  ${options}=  ${sources}=
+    ${result} =    Run Tests    ${options}    ${sources}    process output=False    default options=False
+    [Return]  ${result}
+
 Run Rebot
-    [Arguments]  ${options}  ${sources}  ${process output}=True  ${defaults options}=True
+    [Arguments]  ${options}=  ${sources}=  ${process output}=True  ${default options}=True
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
     @{arguments} =    Get Execution Arguments
-    ...    ${options}    ${sources}   ${defaults options}
+    ...    ${options}    ${sources}   ${default options}
     ${result} =  Execute  @{INTERPRETER.rebot}    @{arguments}
     Process Output    ${OUTFILE}    ${process output}
     Log    ${result.stdout}
@@ -95,8 +91,14 @@ Run Rebot
     [Return]  ${result}
 
 Run Rebot Without Processing Output
-    [Arguments]  ${options}  ${sources}
+    [Arguments]  ${options}=  ${sources}=
     ${result} =    Run Rebot    ${options}    ${sources}    process output=False
+    Log Many    STDOUT:\n${result.stdout}    STDERR:\n${result.stderr}
+    [Return]  ${result}
+
+Run Rebot Without Defaults
+    [Arguments]  ${options}=  ${sources}=
+    ${result} =    Run Rebot    ${options}    ${sources}    process output=False    default options=False
     [Return]  ${result}
 
 Copy Previous Outfile

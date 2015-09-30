@@ -2,9 +2,7 @@
 Test Setup      Create Output Directory
 Resource        cli_resource.robot
 
-
 *** Test Cases ***
-
 Output Only
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --output myoutput.xml --report none --log none    ${TESTFILE}
     Output Directory Should Contain  myoutput.xml
@@ -24,7 +22,7 @@ Disabling output XML only disables log with a warning
 
 All output files disabled
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o nOnE -r NONE -l none    ${TESTFILE}
-    Directory Should Be Empty    ${CLI OUTDIR}
+    Output Directory Should Be Empty
 
 Debug, Xunit And Report File Can Be Created When Output Is NONE
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o NONE -r myreport.html -b mydebug.txt -x myxunit.xml    ${TESTFILE}
@@ -35,7 +33,7 @@ All Outputs
     Output Directory Should Contain  mylog.html  myoutput.xml  myreport.html
 
 All Outputs With Default Names
-    Run Robot Directly  --outputdir ${CLI OUTDIR} ${DATADIR}${/}${TESTFILE}
+    Run Tests Without Defaults  --outputdir ${CLI OUTDIR} ${DATADIR}/${TESTFILE}
     Output Directory Should Contain  log.html  output.xml  report.html
 
 All Outputs Without Extensions
@@ -77,4 +75,3 @@ Non-writable Split Log
     Check Stdout Contains  Output:
     Check Stdout Does Not Contain  Log:
     Check Stdout Contains  Report:
-
