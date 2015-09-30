@@ -1,10 +1,10 @@
 *** Settings ***
-Resource        rebot_cli_resource.robot
-Test Setup      Reset syslog
-Suite Teardown  Reset syslog
+Suite Teardown    Reset syslog
+Test Setup        Reset syslog
+Resource          rebot_cli_resource.robot
 
 *** Variables ***
-${SYSLOG}       %{TEMPDIR}${/}syslog.txt
+${SYSLOG}         %{TEMPDIR}${/}syslog.txt
 
 *** Test Cases ***
 Setting Syslog File
@@ -29,7 +29,7 @@ Setting Syslog Level
     Set Environment Variable    ROBOT_SYSLOG_LEVEL    DEBUG
     Rebot Something
     ${size2} =    Get File Size    ${SYSLOG}
-    Should Be True  0 < ${size1} <= ${size2}
+    Should Be True    0 < ${size1} <= ${size2}
     Set Environment Variable    ROBOT_SYSLOG_LEVEL    warn
     Rebot Something
     File Should Be Empty    ${SYSLOG}
