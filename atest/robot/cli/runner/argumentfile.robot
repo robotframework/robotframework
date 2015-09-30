@@ -41,6 +41,8 @@ Arguments From Stdin
     ${test dir} =  Normalize Path  ${DATADIR}/misc/
     Create Argument File Without BOM  ${ARG FILE}  --name My Name with Nön Äscii  ${test dir}${/}normal.robot
     ${cmd}=  Catenate  @{INTERPRETER.runner}
+    ...  --output NONE
+    ...  --report NONE
     ...  --doc  from_command_line
     ...  --argumentfile  stdin
     ...  ${test dir}${/}pass_and_fail.robot

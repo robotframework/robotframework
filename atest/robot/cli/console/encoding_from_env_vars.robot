@@ -18,6 +18,8 @@ Run Some Tests With Std Streams Redirected
   ...  echo "redirect stdin" |
   ...  LANG=invalid LC_TYPE=invalid LANGUAGE=invalid LC_ALL=invalid
   ...  @{INTERPRETER.runner}
+  ...  --output NONE
+  ...  --report NONE
   ...  --consolecolors off ${TESTFILE}
   Run Process  ${cmd}  shell=True  stdout=${STDOUT FILE}  stderr=${STDERR FILE}
   ${stdout} =  Log File  ${STDOUT FILE}
