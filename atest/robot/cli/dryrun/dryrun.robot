@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --dryrun  cli/dryrun/dryrun.robot  cli/dryrun/more_tests.robot
+Suite Setup     Run Tests  --dryrun  cli/dryrun/dryrun.robot cli/dryrun/more_tests.robot
 Resource        atest_resource.robot
 
 *** Test Cases ***

@@ -4,7 +4,7 @@ Resource          cli_resource.robot
 
 *** Test Cases ***
 Default Name
-    Run Tests    ${EMPTY}    misc/pass_and_fail.robot    misc/normal.robot
+    Run Tests    ${EMPTY}    misc/pass_and_fail.robot misc/normal.robot
     Check Names    ${SUITE}    Pass And Fail & Normal
     Should Contain Suites    ${SUITE}    Pass And Fail    Normal
     Check Names    ${SUITE.suites[0]}    Pass And Fail    Pass And Fail & Normal.
@@ -17,7 +17,7 @@ Default Name
     Check Names    ${SUITE.suites[1].tests[1]}    Second One    Pass And Fail & Normal.Normal.
 
 Overridden Name
-    Run Tests    --name My_Name    misc/pass_and_fail.robot    misc/normal.robot
+    Run Tests    --name My_Name    misc/pass_and_fail.robot misc/normal.robot
     Check Names    ${SUITE}    My Name
     Should Contain Suites    ${SUITE}    Pass And Fail    Normal
     Check Names    ${SUITE.suites[0]}    Pass And Fail    My Name.
@@ -46,12 +46,12 @@ Wildcards
     Check Names    ${SUITE.suites[2].tests[0]}    Suite3 First    Tsuite1 & Tsuite2 & Tsuite3.Tsuite3.
 
 Failure When Parsing Any Data Source Fails
-    Run Tests Without Processing Output    ${EMPTY}    nönex    misc/pass_and_fail.robot
+    Run Tests Without Processing Output    ${EMPTY}    nönex misc/pass_and_fail.robot
     ${nönex} =    Normalize Path    ${DATADIR}/nönex
     Check Stderr Contains    [ ERROR ] Parsing '${nönex}' failed: Data source does not exist.
     File Should Not Exist    ${OUTDIR}${/}output.xml
 
 Warnings And Error When Parsing All Data Sources Fail
-    Run Tests Without Processing Output    ${EMPTY}    nönex1    nönex2
+    Run Tests Without Processing Output    ${EMPTY}    nönex1 nönex2
     ${nönex} =    Normalize Path    ${DATADIR}/nönex
     Check Stderr Contains    [ ERROR ] Parsing '${nönex}1' failed: Data source does not exist.

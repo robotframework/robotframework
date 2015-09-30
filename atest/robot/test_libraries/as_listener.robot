@@ -1,10 +1,12 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}
-...    test_libraries/as_listener/suite_scope.robot
-...    test_libraries/as_listener/test_scope.robot
-...    test_libraries/as_listener/global_scope.robot
-...    test_libraries/as_listener/multiple_listeners.robot
-Resource          atest_resource.robot
+Suite Setup     Run Tests    ${EMPTY}    ${SOURCES}
+Resource        atest_resource.robot
+
+*** Variables ***
+${SOURCES}      test_libraries/as_listener/suite_scope.robot
+...             test_libraries/as_listener/test_scope.robot
+...             test_libraries/as_listener/global_scope.robot
+...             test_libraries/as_listener/multiple_listeners.robot
 
 *** Test Cases ***
 Test scope library gets events

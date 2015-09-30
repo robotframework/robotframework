@@ -66,7 +66,7 @@ Using other options
 
 --rerunmerge is deprecated
     Re-run tests
-    Run Rebot    --rerunmerge    ${ORIGINAL}    ${MERGE 1}
+    Run Rebot    --rerunmerge    ${ORIGINAL} ${MERGE 1}
     Test merge should have been successful
     Stderr Should Be Equal To    [ WARN ]
     ...    Option --rerunmerge is deprecated and will be removed in the future.
@@ -107,15 +107,15 @@ Run incompatible suite
 
 Run merge
     [Arguments]    ${options}=
-    Run Rebot    --merge ${options}    ${ORIGINAL}    ${MERGE 1}
+    Run Rebot    --merge ${options}    ${ORIGINAL} ${MERGE 1}
     Stderr Should Be Empty
 
 Run multi-merge
-    Run Rebot    -R    ${ORIGINAL}    ${MERGE 1}    ${MERGE 2}
+    Run Rebot    -R    ${ORIGINAL} ${MERGE 1} ${MERGE 2}
     Stderr Should Be Empty
 
 Run incompatible merge
-    Run Rebot Without Processing Output    --merge    ${ORIGINAL}    ${MERGE 1}
+    Run Rebot Without Processing Output    --merge    ${ORIGINAL} ${MERGE 1}
 
 Test merge should have been successful
     [Arguments]    ${suite name}=Suites    ${status 1}=FAIL    ${message 1}=

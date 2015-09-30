@@ -15,7 +15,7 @@ Directory Suite
     Check Test Tags    SubSuite2 First    CmdLineTag    f1
 
 Multi-source Suite
-    Run Tests    --settag cmdlinetag    misc/normal.robot    misc/pass_and_fail.robot
+    Run Tests    --settag cmdlinetag    misc/normal.robot misc/pass_and_fail.robot
     Check Test Tags    First One    cmdlinetag    f1    t1    t2
     Check Test Tags    Pass    cmdlinetag    force    pass
 

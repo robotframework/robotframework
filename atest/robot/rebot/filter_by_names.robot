@@ -60,10 +60,10 @@ No matching tests
 No matching tests when reboting multiple inputs
     Failing Rebot
     ...    Suite 'Many Tests & Suites & Many Tests & Suites' contains no tests named 'nonex'.
-    ...    --test nonex    ${INPUT FILE}    ${INPUT FILE}
+    ...    --test nonex    ${INPUT FILE} ${INPUT FILE}
     Failing Rebot
     ...    Suite 'My Name' contains no tests named 'nonex'.
-    ...    --test nonex -N My_Name    ${INPUT FILE}    ${INPUT FILE}
+    ...    --test nonex -N My_Name    ${INPUT FILE} ${INPUT FILE}
 
 No matching suites
     Failing Rebot
@@ -73,10 +73,10 @@ No matching suites
 No matching suites when reboting multiple inputs
     Failing Rebot
     ...    Suite 'Many Tests & Suites & Many Tests & Suites' contains no tests in suite 'nonex'.
-    ...    --suite nonex    ${INPUT FILE}    ${INPUT FILE}
+    ...    --suite nonex    ${INPUT FILE} ${INPUT FILE}
     Failing Rebot
     ...    Suite 'CustomName' contains no tests in suite 'nonex'.
-    ...    --name CustomName --suite nonex    ${INPUT FILE}    ${INPUT FILE}
+    ...    --name CustomName --suite nonex    ${INPUT FILE} ${INPUT FILE}
 
 No Matching Tests In Matching Suites
     Failing Rebot
@@ -107,7 +107,7 @@ Elapsed Time
 
 *** Keywords ***
 Create Input File
-    Create Output With Robot    ${INPUT FILE}    ${EMPTY}    ${SUITE FILE}    ${SUITE DIR}
+    Create Output With Robot    ${INPUT FILE}    ${EMPTY}    ${SUITE FILE} ${SUITE DIR}
     Create Directory    ${MYOUTDIR}
 
 Remove Temps
@@ -150,11 +150,11 @@ Run And Check Suites and Tests
     Check Stats
 
 Run Suites
-    [Arguments]    ${params}
-    Run Rebot    ${params} ${ESCAPES}    ${INPUT FILE}
+    [Arguments]    ${options}
+    Run Rebot    ${options} ${ESCAPES}    ${INPUT FILE}
     Stderr Should Be Empty
 
 Failing Rebot
-    [Arguments]    ${error}    ${params}    @{inputs}
-    Run Rebot Without Processing Output    ${params} ${ESCAPES}    @{inputs}
+    [Arguments]    ${error}    ${options}    ${sources}
+    Run Rebot Without Processing Output    ${options} ${ESCAPES}    ${sources}
     Stderr Should Be Equal To    [ ERROR ] ${error}${USAGE TIP}\n

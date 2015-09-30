@@ -128,8 +128,9 @@ With Name When Library Arguments Are Not Strings
 
 *** Keywords ***
 Run 'With Name' Tests
-    Run Tests    ${EMPTY}
+    ${sources} =    Catenate
     ...    test_libraries/with_name_1.robot
     ...    test_libraries/with_name_2.robot
     ...    test_libraries/with_name_3.robot
+    Run Tests    ${EMPTY}    ${sources}
     Should Be Equal    ${SUITE.name}    With Name 1 & With Name 2 & With Name 3

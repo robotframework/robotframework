@@ -132,7 +132,7 @@ Errors Are Not Removed In Tag Mode
 
 *** Keywords ***
 Run Some Tests
-    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    misc/pass_and_fail.robot    misc/warnings_and_errors.robot
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    misc/pass_and_fail.robot misc/warnings_and_errors.robot
 
 Run Rebot And Set My Suite
     [Arguments]    ${rebot params}    ${suite index}

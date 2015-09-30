@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    keywords/embedded_arguments.robot    keywords/embedded_arguments_match_all.robot
+Suite Setup       Run Tests    ${EMPTY}    keywords/embedded_arguments.robot keywords/embedded_arguments_match_all.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***

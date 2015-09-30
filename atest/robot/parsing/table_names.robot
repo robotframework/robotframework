@@ -25,7 +25,7 @@ Keyword Table
 
 Invalid Tables
     [Documentation]  Check that tables with non-matching names, including empty names, are ignored.\nEmpty names used to cause issue 793.
-    [Setup]  Run Tests  ${EMPTY}  parsing/invalid_table_names.robot  parsing/invalid_table_names.html
+    [Setup]  Run Tests  ${EMPTY}  parsing/invalid_table_names.robot parsing/invalid_table_names.html
     ${tc} =  Check test case  Test in valid plain text table
     Check log message  ${tc.kws[0].kws[0].msgs[0]}  Keyword in valid plain text table
     Check log message  ${tc.kws[1].kws[0].msgs[0]}  Keyword in valid plain text table in resource

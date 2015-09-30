@@ -29,10 +29,10 @@ Non-Existing Test
 Non-Existing Test When Running Multiple Suites
     Run Failing Test
     ...    Suite 'Many Tests & Suites' contains no tests named 'notexists'.
-    ...    --test notexists    ${SUITE FILE}    ${SUITE DIR}
+    ...    --test notexists    ${SUITE FILE} ${SUITE DIR}
     Run Failing Test
     ...    Suite 'My Name' contains no tests named 'notexists'.
-    ...    --name My_Name --test notexists    ${SUITE FILE}    ${SUITE DIR}
+    ...    --name My_Name --test notexists    ${SUITE FILE} ${SUITE DIR}
 
 Two Calls To Test With One Nonexisting Test Name
     Run And Check Tests    --test notexists --test First    First
@@ -86,10 +86,10 @@ Non-Existing Suite
 Non-Existing Suite When Running Multiple Suites
     Run Failing Test
     ...    Suite 'Suites & Many Tests' contains no tests in suite 'notexists'.
-    ...    --suite notexists    ${SUITE DIR}    ${SUITE FILE}
+    ...    --suite notexists    ${SUITE DIR} ${SUITE FILE}
     Run Failing Test
     ...    Suite 'Custom' contains no tests in suite 'xxx'.
-    ...    --suite xxx -N Custom    ${SUITE DIR}    ${SUITE FILE}
+    ...    --suite xxx -N Custom    ${SUITE DIR} ${SUITE FILE}
 
 Suite With Matching And NonMatching Args
     Run Suites    --suite tsuite1 --suite notexists
@@ -176,11 +176,11 @@ Run And Check Suites Within Subdirs
     Should Contain Suites    ${SUITE.suites[0]}    @{suites}
 
 Run Suites
-    [Arguments]    ${params}    ${testdata}=${SUITE DIR}
-    Run Tests    ${params} ${ESCAPES}    ${testdata}
+    [Arguments]    ${options}    ${testdata}=${SUITE DIR}
+    Run Tests    ${options} ${ESCAPES}    ${testdata}
     Stderr Should Be Empty
 
 Run Failing Test
-    [Arguments]    ${error}    ${params}    @{inputs}
-    Run Tests Without Processing Output    ${params} ${ESCAPES}    @{inputs}
+    [Arguments]    ${error}    ${options}    ${sources}
+    Run Tests Without Processing Output    ${options} ${ESCAPES}    ${sources}
     Stderr Should Be Equal To    [ ERROR ] ${error}${USAGE TIP}\n

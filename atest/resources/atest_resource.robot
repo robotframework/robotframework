@@ -21,11 +21,16 @@ ${SUITE}        Set in Run Helper
 ${ERRORS}       -- ;; --
 ${USAGE_TIP}    \n\nTry --help for usage information.
 ${TESTNAME}     ${EMPTY}    # Used when not running test
+${COMMON DEFAULTS}
+...             --ConsoleColors  OFF
+...             --outputdir  ${OUTDIR}
+...             --output  ${OUTFILE}
+...             --report  NONE
+...             --log  NONE
 ${RUNNER DEFAULTS}
 ...             --ConsoleMarkers OFF
 ...             --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}testlibs"
 ...             --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}listeners"
-${REBOT DEFAULTS}    ${EMPTY}
 
 *** Keywords ***
 Run Robot Directly
@@ -45,28 +50,23 @@ Run Rebot Directly
     [Return]  ${result}
 
 Run Tests
-    [Arguments]  ${options}  @{datasources}  &{config}
+    [Arguments]  ${options}  ${sources}  ${process output}=True  ${defaults options}=True
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    @{arguments} =    Get Execution Arguments    ${options}    ${config}
-    ...    ${RUNNER DEFAULTS}    @{datasources}
+    @{arguments} =    Get Execution Arguments
+    ...    ${options}    ${sources}   ${defaults options}    ${RUNNER DEFAULTS}
     ${result} =  Run Process  @{INTERPRETER.runner}    @{arguments}
     ...    stdout=${STDOUTFILE}  stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
-    Process Output    ${OUTFILE}    ${config.pop('process_output', True)}
+    Process Output    ${OUTFILE}    ${process output}
     Log    ${result.stdout}
     Log    ${result.stderr}
     [Return]  ${result.rc}   # TODO: Return result, not only rc. Also elsewhere.
 
 Get Execution Arguments
-    [Arguments]    ${options}     ${config}    ${defaults}    @{sources}
-    ${defaults} =    Catenate
-    ...  --consolecolors  OFF
-    ...  --outputdir  ${OUTDIR}
-    ...  --output  ${OUTFILE}
-    ...  --report  NONE
-    ...  --log  NONE
-    ...  ${defaults}
-    ${defaults} =    Pop From Dictionary    ${config}    default_options    ${defaults}
+    [Arguments]    ${options}     ${sources}    ${use defaults}    ${extra defaults}=
+    ${defaults} =    Set Variable If    ${use defaults}
+    ...    ${COMMON DEFAULTS} ${extra defaults}    ${EMPTY}
     @{options} =   Command line to list    ${defaults} ${options}
+    @{sources} =   Command line to list    ${sources}
     @{sources} =  Join Paths  ${DATADIR}  @{sources}
     Setup Execution Environment
     [Return]    @{options}    @{sources}
@@ -77,25 +77,25 @@ Setup Execution Environment
     Set Environment Variable    ROBOT_SYSLOG_FILE    ${SYSLOG_FILE}
 
 Run Tests Without Processing Output
-    [Arguments]  ${options}  @{datasources}
-    ${rc} =    Run Tests    ${options}    @{datasources}    process_output=False
+    [Arguments]  ${options}  ${sources}
+    ${rc} =    Run Tests    ${options}    ${sources}    process output=False
     [Return]  ${rc}
 
 Run Rebot
-    [Arguments]  ${options}  @{datasources}  &{config}
+    [Arguments]  ${options}  ${sources}  ${process output}=True  ${defaults options}=True
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    @{arguments} =    Get Execution Arguments    ${options}    ${config}
-    ...    ${REBOT DEFAULTS}    @{datasources}
+    @{arguments} =    Get Execution Arguments
+    ...    ${options}    ${sources}   ${defaults options}
     ${result} =  Run Process  @{INTERPRETER.rebot}    @{arguments}
     ...    stdout=${STDOUTFILE}  stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
-    Process Output    ${OUTFILE}    ${config.pop('process_output', True)}
+    Process Output    ${OUTFILE}    ${process output}
     Log    ${result.stdout}
     Log    ${result.stderr}
     [Return]  ${result.rc}   # TODO: Return result, not only rc. Also elsewhere.
 
 Run Rebot Without Processing Output
-    [Arguments]  ${options}  @{datasources}
-    ${rc} =    Run Rebot    ${options}    @{datasources}    process_output=False
+    [Arguments]  ${options}  ${sources}
+    ${rc} =    Run Rebot    ${options}    ${sources}    process output=False
     [Return]  ${rc}
 
 Copy Previous Outfile

@@ -26,7 +26,7 @@ File Containing No Test Cases
     Check Stderr Contains    [ ERROR ] Suite 'Empty Testcase Table' contains no tests.${USAGE_TIP}
 
 Multisource Containing No Test Cases
-    Run Tests Without Processing Output    ${EMPTY}    ${HTMLDIR}/empty.html    ${TSVDIR}/empty.tsv
+    Run Tests Without Processing Output    ${EMPTY}    ${HTMLDIR}/empty.html ${TSVDIR}/empty.tsv
     ${html} =    Normalize Path    ${DATADIR}/${HTMLDIR}/empty.html
     ${tsv} =    Normalize Path    ${DATADIR}/${TSVDIR}/empty.tsv
     Check Stderr Contains    [ ERROR ] Parsing '${html}' failed: ${NO TC TABLE MSG}
@@ -52,6 +52,6 @@ Run Suite Dir And Warn On Skipped
 
 *** Keywords ***
 Check Parsing Error
-    [Arguments]    ${file}    ${error}    @{paths}
-    Run Tests Without Processing Output    ${EMPTY}    @{paths}
+    [Arguments]    ${file}    ${error}    ${paths}
+    Run Tests Without Processing Output    ${EMPTY}    ${paths}
     Check Stderr Matches Regexp    \\[ ERROR \\] Parsing '.*[/\\\\]${file}' failed: ${error}${USAGE_TIP}

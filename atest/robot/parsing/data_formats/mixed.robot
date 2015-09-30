@@ -62,11 +62,11 @@ Directory With Mixed Data
     Verify Directory with Mixed Data With ReST
 
 Multiple Data Sources Without reST
-    Run Tests And Verify Status    ${HTMLDIR}/sample.html    ${TSVDIR}/sample.tsv    ${TXTDIR}/sample.txt    ${MIXEDDIR}
+    Run Tests And Verify Status    ${HTMLDIR}/sample.html ${TSVDIR}/sample.tsv ${TXTDIR}/sample.txt ${MIXEDDIR}
     Verify Multiple Data Sources Without ReST
 
 Multiple Data Sources With reST
-    Run Tests And Verify Status    ${HTMLDIR}/sample.html    ${TSVDIR}/sample.tsv    ${RESTDIR}/sample.rst    ${TXTDIR}/sample.txt    ${MIXEDDIR}
+    Run Tests And Verify Status    ${HTMLDIR}/sample.html ${TSVDIR}/sample.tsv ${RESTDIR}/sample.rst ${TXTDIR}/sample.txt ${MIXEDDIR}
     Verify Multiple Data Sources With ReST
 
 *** Keywords ***

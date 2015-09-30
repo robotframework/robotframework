@@ -6,7 +6,7 @@ ${EXIT ON FAILURE}          Critical failure occurred and exit-on-failure mode i
 
 *** Test Cases ***
 Exit On Failure
-    [Setup]    Run Tests    --exitonfailure    misc/pass_and_fail.robot    misc/suites    running/fatal_exception/02__irrelevant.robot
+    [Setup]    Run Tests    --exitonfailure    misc/pass_and_fail.robot misc/suites running/fatal_exception/02__irrelevant.robot
     Check Test Case    Pass
     Check Test Case    Fail
     Test Should Have Been Skipped    SubSuite1 First
@@ -49,7 +49,7 @@ Test teardown fails
     Test Should Have Been Skipped    Failing test with failing teardown
 
 Suite setup fails
-    [Setup]    Run Tests    --ExitOnFail --variable SUITE_SETUP:Fail    misc/setups_and_teardowns.robot    misc/pass_and_fail.robot
+    [Setup]    Run Tests    --ExitOnFail --variable SUITE_SETUP:Fail    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
     Check Test Case    Test with setup and teardown    FAIL    Parent suite setup failed:\nAssertionError
     Test Should Have Been Skipped    Test with failing setup
     Test Should Have Been Skipped    Test with failing teardown
@@ -59,7 +59,7 @@ Suite setup fails
 
 Suite teardown fails
     [Setup]    Run Tests    --ExitOnFail --variable SUITE_TEARDOWN:Fail --test TestWithSetupAndTeardown --test Pass --test Fail
-    ...    misc/setups_and_teardowns.robot    misc/pass_and_fail.robot
+    ...    misc/setups_and_teardowns.robot misc/pass_and_fail.robot
     Check Test Case    Test with setup and teardown    FAIL    Parent suite teardown failed:\nAssertionError
     Test Should Have Been Skipped    Pass
     Test Should Have Been Skipped    Fail

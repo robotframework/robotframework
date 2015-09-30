@@ -74,7 +74,7 @@ Suite And Test Counts
     Stderr Should Be Empty
 
 Suite Source
-    Run Tests  --listener listeners.SuiteSource --name Root  misc/suites/subsuites  misc/pass_and_fail.robot
+    Run Tests  --listener listeners.SuiteSource --name Root  misc/suites/subsuites misc/pass_and_fail.robot
     Stderr Should Be Empty
 
 Keyword Type

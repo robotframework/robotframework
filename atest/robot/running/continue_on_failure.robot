@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    running/continue_on_failure.robot    running/continue_on_failure_in_suite_setup.robot
+Suite Setup       Run Tests    ${EMPTY}    running/continue_on_failure.robot running/continue_on_failure_in_suite_setup.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***

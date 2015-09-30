@@ -175,7 +175,7 @@ Create second input for Rebot
     Set Suite Variable    $MILLIS2    ${ORIG ELAPSED}
 
 Combine without options
-    Run Rebot    ${EMPTY}    ${TEMP OUT 1}    ${TEMP OUT 2}
+    Run Rebot    ${EMPTY}    ${TEMP OUT 1} ${TEMP OUT 2}
     Set Suite Variable    $SUITE1    ${SUITE}
     Copy File    ${OUT FILE}    ${COMB OUT 1}
 
@@ -187,17 +187,17 @@ Combine with options
     ...    -M Other_Meta:AnotherSPvalue
     ...    --critical force
     ...    --escape space:SP
-    Run Rebot    ${options}    ${TEMP OUT 1}    ${TEMP OUT 2}
+    Run Rebot    ${options}    ${TEMP OUT 1} ${TEMP OUT 2}
     Set Suite Variable    $SUITE2    ${SUITE}
     Copy File    ${OUT FILE}    ${COMB OUT 2}
 
 Combine with output with known times
-    Run Rebot    ${EMPTY}    ${TEMP OUT 1}    ${TEMP OUT 2}    rebot/times.xml
+    Run Rebot    ${EMPTY}    ${TEMP OUT 1} ${TEMP OUT 2} rebot/times.xml
     Copy File    ${OUT FILE}    ${COMB OUT 3}
     Set Suite Variable    $SUITE3    ${SUITE}
 
 Recombine
-    Run Rebot    --noncritical f1    rebot/times.xml    ${COMB OUT 2}
+    Run Rebot    --noncritical f1    rebot/times.xml ${COMB OUT 2}
     Set Suite Variable    $SUITE4    ${SUITE}
     Copy File    ${OUT FILE}    ${COMB OUT 4}
 

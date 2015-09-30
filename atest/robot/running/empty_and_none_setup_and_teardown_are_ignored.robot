@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}
-...               running/empty_setup_and_teardown_are_ignored.robot
-...               running/none_setup_and_teardown_are_ignored.robot
+...               running/empty_setup_and_teardown_are_ignored.robot running/none_setup_and_teardown_are_ignored.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***

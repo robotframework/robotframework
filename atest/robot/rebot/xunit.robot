@@ -53,7 +53,7 @@ Invalid XUnit File
 
 *** Keywords ***
 Create Input File
-    Create Output With Robot    ${INPUT FILE}    ${EMPTY}    misc/unicode.robot    misc/suites
+    Create Output With Robot    ${INPUT FILE}    ${EMPTY}    misc/unicode.robot misc/suites
     Create Directory    ${MYOUTDIR}
 
 Remove Temps

@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup       Run Tests    ${EMPTY}
-...    standard_libraries/builtin/set_test_message.robot
-...    standard_libraries/builtin/set_test_message_in_suite_level.robot
+...    standard_libraries/builtin/set_test_message.robot standard_libraries/builtin/set_test_message_in_suite_level.robot
 Resource          atest_resource.robot
 
 *** Test Cases ***

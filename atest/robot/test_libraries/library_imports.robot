@@ -47,10 +47,11 @@ Library Import With Variables From Resource File
     Check Test Case    Verify Library Import With List Variable
 
 Arguments To Library
-    Run Tests    ${EMPTY}
+    ${sources} =    Catenate
     ...    test_libraries/library_with_0_parameters.robot
     ...    test_libraries/library_with_1_parameters.robot
     ...    test_libraries/library_with_2_parameters.robot
+    Run Tests    ${EMPTY}    ${sources}
     Check Test Case    Two Default Parameters
     Check Test Case    One Default and One Set Parameter
     Check Test Case    Two Set Parameters

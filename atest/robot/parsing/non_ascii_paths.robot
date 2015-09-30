@@ -36,7 +36,7 @@ Failures processing files are handled gracefully
 
 Create input data and run tests
   Create input data
-  Run Tests  --log ulog.html --report ureport.html  parsing/non_ascii_paths/testäö.txt  parsing/non_ascii_paths/Työ
+  Run Tests  --log ulog.html --report ureport.html  parsing/non_ascii_paths/testäö.txt parsing/non_ascii_paths/Työ
 
 Create input data
   [Documentation]  Mercurial doesn't seem to handle non-ASCII file names too well.

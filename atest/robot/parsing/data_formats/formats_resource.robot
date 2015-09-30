@@ -19,9 +19,9 @@ Previous Run Should Have Been Successful
     Should Not Be Equal    ${SUITE}    ${None}    Running tests failed.    No Values
 
 Run Tests And Verify Status
-    [Arguments]    @{paths}
+    [Arguments]    ${paths}
     Set Suite Variable    $SUITE    ${None}
-    Run Tests    ${EMPTY}    @{paths}
+    Run Tests    ${EMPTY}    ${paths}
     Previous Run Should Have Been Successful
 
 Run Sample File And Check Tests

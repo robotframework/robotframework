@@ -8,8 +8,8 @@ ${ORIG_ELAPSED}   -- ;; --
 
 *** Keyword ***
 Create Output With Robot
-    [Arguments]    ${outputname}    ${arguments}    @{datasource}
-    Run Tests    ${arguments}    @{datasource}
+    [Arguments]    ${outputname}    ${options}    ${sources}
+    Run Tests    ${options}    ${sources}
     Is Valid Timestamp    ${SUITE.starttime}
     Is Valid Timestamp    ${SUITE.endtime}
     Is Valid Elapsed Time    ${SUITE.elapsedtime}
