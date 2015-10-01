@@ -4,13 +4,17 @@ Resource         atest_resource.robot
 
 *** Test Cases ***
 Command and arguments in system
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}
+    ...    Starting process:\npython *script.py "my stdout" "my stderr"    pattern=true
 
 Command and arguments in shell as separate arguments
     Check Test Case    ${TESTNAME}
 
 Command and arguments in shell as single argument
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}
+    ...    Starting process:\npython *script.py my args    pattern=true
 
 Arguments are converted to strings automatically
     Check Test Case    ${TESTNAME}

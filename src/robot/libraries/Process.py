@@ -353,22 +353,27 @@ class Process(object):
         Jython in general nor by Python versions prior to 2.7 on Windows.
         """
         config = ProcessConfig(**configuration)
-        executable_command = self._cmd(command, arguments, config.shell)
-        logger.info('Starting process:\n%s' % executable_command)
-        logger.debug('Process configuration:\n%s' % config)
-        process = subprocess.Popen(executable_command, **config.full_config)
+        command = self._get_command(command, arguments, config.shell)
+        self._log_start(command, config)
+        process = subprocess.Popen(command, **config.full_config)
         self._results[process] = ExecutionResult(process,
                                                  config.stdout_stream,
                                                  config.stderr_stream)
         return self._processes.register(process, alias=config.alias)
 
-    def _cmd(self, command, args, use_shell):
+    def _get_command(self, command, args, use_shell):
         command = [encode_to_system(item) for item in [command] + list(args)]
         if not use_shell:
             return command
         if args:
             return subprocess.list2cmdline(command)
         return command[0]
+
+    def _log_start(self, command, config):
+        if is_list_like(command):
+            command = self.list_to_command_line(command)
+        logger.info('Starting process:\n%s' % command)
+        logger.debug('Process configuration:\n%s' % config)
 
     def is_process_running(self, handle=None):
         """Checks is the process running or not.
