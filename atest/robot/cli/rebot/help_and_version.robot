@@ -3,7 +3,7 @@ Resource          rebot_cli_resource.robot
 
 *** Test Cases ***
 Help
-    ${result} =    Run Rebot Without Defaults    --help
+    ${result} =    Run Rebot    --help    output=NONE
     Should Be Equal    ${result.rc}    ${251}
     Should Be Empty    ${result.stderr}
     ${help} =    Set variable    ${result.stdout}
@@ -18,7 +18,7 @@ Help
     Should Be True    len($long) == 0    Too long (>= 80) help line(s)
 
 Version
-    ${result} =    Run Rebot Without Defaults    --version
+    ${result} =    Run Rebot    --version    output=NONE
     Should Be Equal    ${result.rc}    ${251}
     Should Be Empty    ${result.stderr}
     Should Match Regexp    ${result.stdout}    ^Rebot 2\\.\\d+(\\.\\d+)?((a|b|rc|.dev)\\d+)? \\((Python|Jython|IronPython) 2\\.[\\d.]+.* on .+\\)$

@@ -33,7 +33,7 @@ All Outputs
     Output Directory Should Contain    mylog.html    myoutput.xml    myreport.html
 
 All Outputs With Default Names
-    Run Tests Without Defaults    --outputdir ${CLI OUTDIR} ${DATADIR}/${TESTFILE}
+    Run Tests Without Processing Output    --outputdir ${CLI OUTDIR}    ${DATADIR}/${TESTFILE}    default options=
     Output Directory Should Contain    log.html    output.xml    report.html
 
 All Outputs Without Extensions

@@ -28,7 +28,7 @@ Outputs Into Different Directories
     ...    --output ${OUTDIR}/out/o/o
     ...    --report ${OUTDIR}/out/r/r
     ...    --log ${OUTDIR}/out/l/l.html
-    ${result} =    Run Rebot Without Defaults    ${options}    ${INPUT FILE}
+    ${result} =    Run Rebot    ${options}    ${INPUT FILE}    output=${OUTDIR}/out/o/o.xml
     Should Be Equal    ${result.rc}    ${0}
     Directory Should Contain    ${OUTDIR}/out/o    o.xml
     Directory Should Contain    ${OUTDIR}/out/r    r.html
@@ -43,7 +43,7 @@ Non-writable Output File
     ...    -o %{TEMPDIR}/diréctöry.xml
     ...    -r r.html
     ...    -l l
-    ${result} =    Run Rebot Without Defaults    ${options}    ${INPUT FILE}
+    ${result} =    Run Rebot    ${options}    ${INPUT FILE}    output=NONE
     Should Be Equal    ${result.rc}    ${0}
     Directory Should Contain    ${OUTDIR}/out    l.html    r.html
     Should Match Regexp    ${result.stdout}    ^Log: .*\nReport: .*$

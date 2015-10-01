@@ -36,60 +36,46 @@ ${RUNNER DEFAULTS}
 
 *** Keywords ***
 Run Tests
-    [Arguments]    ${options}=    ${sources}=    ${output}=${OUTFILE}
+    [Arguments]    ${options}=    ${sources}=    ${default options}=${RUNNER DEFAULTS}    ${output}=${OUTFILE}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${RUNNER DEFAULTS}
+    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     Process Output    ${output}
     [Return]    ${result}
 
 Run Tests Without Processing Output
-    [Arguments]    ${options}=    ${sources}=
+    [Arguments]    ${options}=    ${sources}=    ${default options}=${RUNNER DEFAULTS}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${RUNNER DEFAULTS}
-    Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
-    [Return]    ${result}
-
-Run Tests Without Defaults
-    [Arguments]    ${options}=    ${sources}=
-    [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    defaults=${EMPTY}
+    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     [Return]    ${result}
 
 Run Rebot
-    [Arguments]    ${options}=    ${sources}=    ${output}=${OUTFILE}
+    [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}    ${output}=${OUTFILE}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}
+    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     Process Output    ${output}
     [Return]    ${result}
 
 Run Rebot Without Processing Output
-    [Arguments]    ${options}=    ${sources}=
+    [Arguments]    ${options}=    ${sources}=    ${default options}=${COMMON DEFAULTS}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}
-    Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
-    [Return]    ${result}
-
-Run Rebot Without Defaults
-    [Arguments]    ${options}=    ${sources}=
-    [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    defaults=${EMPTY}
+    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    ${default options}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     [Return]    ${result}
 
 Execute
-    [Arguments]    ${executor}    ${options}    ${sources}    ${defaults}=${COMMON DEFAULTS}
+    [Arguments]    ${executor}    ${options}    ${sources}    ${default options}=
     Set Execution Environment
-    @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${defaults}
+    @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}
     ${result} =    Run Process    @{executor}    @{arguments}
     ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
     [Return]    ${result}
 
 Get Execution Arguments
-    [Arguments]    ${options}    ${sources}    ${defaults}
-    @{options} =    Command line to list    --outputdir ${OUTDIR} ${defaults} ${options}
+    [Arguments]    ${options}    ${sources}    ${default options}
+    @{options} =    Command line to list    --outputdir ${OUTDIR} ${default options} ${options}
     @{sources} =    Command line to list    ${sources}
     @{sources} =    Join Paths    ${DATADIR}    @{sources}
     [Return]    @{options}    @{sources}

@@ -4,7 +4,7 @@ Resource          cli_resource.robot
 *** Test Cases ***
 Help
     [Tags]    no-standalone
-    ${result} =    Run Tests Without Defaults    --help
+    ${result} =    Run Tests    --help    output=NONE
     Should Be Equal    ${result.rc}    ${251}
     Should Be Empty    ${result.stderr}
     Log    ${result.stdout.replace(' ','_')}
@@ -25,7 +25,7 @@ Help
     Should Be True    len(@{long}) == 0    Too long (>= 80) help line(s)
 
 Version
-    ${result} =    Run Tests Without Defaults    --version
+    ${result} =    Run Tests    --version    output=NONE
     Should Be Equal    ${result.rc}    ${251}
     Should Be Empty    ${result.stderr}
     Should Match Regexp    ${result.stdout}    ^Robot Framework 2\\.\\d+(\\.\\d+)?((a|b|rc|.dev)\\d+)? \\((Python|Jython|IronPython) 2\\.[\\d.]+.* on .+\\)$

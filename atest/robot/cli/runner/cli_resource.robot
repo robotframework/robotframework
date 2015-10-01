@@ -25,7 +25,7 @@ Output Directory Should Be Empty
 
 Run Some Tests
     [Arguments]    ${options}=-l none -r none
-    ${result} =    Run Tests Without Defaults    -d ${CLI OUTDIR} ${options}   ${TEST FILE}
+    ${result} =    Run Tests    -d ${CLI OUTDIR} ${options}   ${TEST FILE}    default options=    output=
     Should Be Equal    ${result.rc}    ${0}
     [Return]    ${result}
 
@@ -38,7 +38,7 @@ Tests Should Pass Without Errors
 
 Run Should Fail
     [Arguments]    ${options}    ${error}
-    ${result} =    Run Tests Without Defaults    ${options}
+    ${result} =    Run Tests    ${options}    default options=    output=
     Should Be Equal As Integers    ${result.rc}    252
     Should Be Empty    ${result.stdout}
     Should Match Regexp    ${result.stderr}    ^\\[ .*ERROR.* \\] ${error}${USAGETIP}$

@@ -18,7 +18,7 @@ Run tests to create input file for Rebot
 Run rebot and return outputs
     [Arguments]    ${options}
     Create Output Directory
-    ${result} =    Run Rebot Without Defaults    --outputdir ${CLI OUTDIR} ${options}    ${INPUT FILE}
+    ${result} =    Run Rebot    --outputdir ${CLI OUTDIR} ${options}    ${INPUT FILE}    default options=    output=
     Should Be Equal    ${result.rc}    ${0}
     @{outputs} =    List Directory    ${CLI OUTDIR}
     [Return]    @{outputs}

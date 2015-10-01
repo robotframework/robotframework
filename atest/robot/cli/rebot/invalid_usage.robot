@@ -49,8 +49,7 @@ Invalid --RemoveKeywords
 *** Keywords ***
 Rebot Should Fail
     [Arguments]    ${error}    ${options}=    ${source}=${INPUTFILE}
-    ${result} =    Run Rebot Without Defaults    ${options}    ${source}
-    Log    ${result.stdout}
+    ${result} =    Run Rebot    ${options}    ${source}    default options=    output=
     Should Be Equal As Integers   ${result.rc}    252
     Should Be Empty    ${result.stdout}
     Should Match Regexp    ${result.stderr}    ^\\[ .*ERROR.* \\] ${error}${USAGETIP}$
