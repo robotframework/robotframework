@@ -57,14 +57,14 @@ Arguments From Stdin
     Create Argument File Without BOM    ${ARG FILE}
     ...    --name My Name with Nön Äscii
     ...    ${test dir}${/}normal.robot
-    ${cmd} =    Create List
+    ${cmd} =    List To CommandLine
     ...    @{INTERPRETER.runner}
-    ...    --output    ${OUTFILE}
+    ...    --output    NONE
     ...    --report    NONE
+    ...    --log       NONE
     ...    --doc    from command line
     ...    --argumentfile    stdin
     ...    ${test dir}${/}pass_and_fail.robot
-    ${cmd} =    List To Command Line    ${cmd}
     ${result} =    Run Process    ${cmd} < ${ARG FILE}    shell=True
     ...    stdout=${STDOUT FILE}    stderr=${STDERR FILE}
     Execution Should Have Succeeded    ${result}    rc=1
