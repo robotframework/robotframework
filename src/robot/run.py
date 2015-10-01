@@ -370,11 +370,13 @@ ROBOT_OPTIONS             Space separated list of default options to be placed
 ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
                           information about parsing test case files and running
                           tests. Can be useful when debugging problems. If not
-                          set, or set to special value `NONE`, writing to the
+                          set, or set to a special value `NONE`, writing to the
                           syslog file is disabled.
 ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
-                          Available levels are the same as for --loglevel
+                          Available levels are the same as with --loglevel
                           command line option and the default is INFO.
+ROBOT_INTERNAL_TRACES     When set to any non-empty value, Robot Framework's
+                          internal methods are included in error tracebacks.
 
 Examples
 ========

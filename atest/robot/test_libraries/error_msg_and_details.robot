@@ -88,6 +88,17 @@ No Details For Non Existing Variables
     Non Existing Scalar Variable    Variable '\${non existing}' not found.
     Non Existing List Variable    Variable '\@{non existing}' not found.
 
+Include internal traces when ROBOT_INTERNAL_TRACE is set
+    [Template]    NONE
+    Set Environment Variable    ROBOT_INTERNAL_TRACES    show, please
+    Run Tests    -L DEBUG -t "Generic Failure"    test_libraries/error_msg_and_details.robot
+    ${tc} =    Check Test Case    Generic Failure
+    ${tb} =    Set Variable    ${tc.kws[0].msgs[1].message}
+    Should Start With    ${tb}    Traceback (most recent call last):
+    Should End With    ${tb}    raise exception(msg)
+    Should Be True    len($tb.splitlines()) > 8
+    [Teardown]    Remove Environment Variable    ROBOT_INTERNAL_TRACES
+
 *** Keyword ***
 Verify Test Case And Error In Log
     [Arguments]    ${name}    ${error}    ${index}=0    ${msg}=0
@@ -117,4 +128,3 @@ Verify Java Stack Trace
     \    ${exp} =    Set Variable    ${exp}\n \\s+at ${func}.+
     Should Match Regexp    ${msg.message}    ${exp}
     Should Be Equal    ${msg.level}    DEBUG
-

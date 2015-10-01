@@ -12,6 +12,8 @@ __ `Post-processing outputs`_
    :depth: 2
    :local:
 
+.. _executing test cases:
+
 Starting test execution
 -----------------------
 
@@ -630,7 +632,13 @@ If the log file does not provide enough information by default, it is
 possible to execute tests with a lower `log level`_. For example
 tracebacks showing where in the code the failure occurred are logged
 using the `DEBUG` level, and this information is invaluable when
-the problem is in an individual keyword.
+the problem is in an individual library keyword.
+
+Logged tracebacks do not contain information about methods inside Robot
+Framework itself. If you suspect an error is caused by a bug in the framework,
+you can enable showing internal traces by setting environment variable
+``ROBOT_INTERNAL_TRACES`` to any non-empty value. This functionality is
+new in Robot Framework 2.9.2.
 
 If the log file still does not have enough information, it is a good
 idea to enable the syslog_ and see what information it provides. It is

@@ -2,10 +2,9 @@ All command line options
 ========================
 
 This appendix lists all the command line options that are available
-when `executing test cases`__ with ``pybot`` or ``jybot``, and when
-`post-processing outputs`_ with ``rebot``.
-
-__ `Starting test execution`_
+when `executing test cases`_  and when `post-processing outputs`_.
+Also environment variables affecting execution and post-processing
+are listed.
 
 .. contents::
    :depth: 2
@@ -198,3 +197,26 @@ Command line options for post-processing outputs
 .. _Flattens keywords: `Removes keyword data`_
 .. _starting time: `Setting start and end time of execution`_
 .. _ending time: `starting time`_
+
+
+Environment variables for execution and post-processing
+-------------------------------------------------------
+
+``ROBOT_OPTIONS`` and ``REBOT_OPTIONS``
+    Space separated list of default options to be placed
+    `in front of any explicit options`__ on the command line.
+
+``ROBOT_SYSLOG_FILE``
+    Path to a syslog_ file where Robot Framework writes internal
+    information about parsing test case files and running
+    tests.
+
+``ROBOT_SYSLOG_LEVEL``
+    Log level to use when writing to the syslog_ file.
+
+``ROBOT_INTERNAL_TRACES``
+    When set to any non-empty value, Robot Framework's
+    internal methods are included in `error tracebacks`__.
+
+__ `ROBOT_OPTIONS and REBOT_OPTIONS environment variables`_
+__ `Debugging problems`_
