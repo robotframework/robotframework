@@ -1,5 +1,4 @@
 *** Settings ***
-Test Setup        Check Precondition         sys.version_info >= (2,6)
 Test Teardown     Terminate All Processes    kill=True
 Library           Process
 Library           DateTime

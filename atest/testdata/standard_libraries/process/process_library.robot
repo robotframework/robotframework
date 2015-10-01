@@ -42,7 +42,6 @@ Input things to process
     Should Match    ${result.stdout}    *inp some input*
 
 Get process id
-    Check Precondition    not (sys.platform.startswith('java') and sys.version_info < (2, 7))
     ${handle}=    Some process
     ${pid}=    Get Process Id    ${handle}
     Should Not Be Equal   ${pid}   ${None}

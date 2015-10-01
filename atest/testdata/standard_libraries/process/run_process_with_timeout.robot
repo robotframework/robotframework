@@ -11,23 +11,19 @@ Finish before timeout
     Should not be terminated    ${result}
 
 On timeout process is terminated by default (w/ default streams)
-    [Setup]    Check Precondition    sys.version_info >= (2,6)
     ${result} =    Run Process    @{COMMAND}    timeout=200ms
     Should be terminated    ${result}    empty output=os.sep == '/' and sys.platform.startswith('java')
 
 On timeout process is terminated by default (w/ custom streams)
-    [Setup]    Check Precondition    sys.version_info >= (2,6)
     ${result} =    Run Process    @{COMMAND}    timeout=200ms
     ...    stdout=${STDOUT}    stderr=${STDERR}
     Should be terminated    ${result}
 
 On timeout process can be killed (w/ default streams)
-    [Setup]    Check Precondition    sys.version_info >= (2,6)
     ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=kill
     Should be terminated    ${result}    empty output=os.sep == '/' and sys.platform.startswith('java1.8')
 
 On timeout process can be killed (w/ custom streams)
-    [Setup]    Check Precondition    sys.version_info >= (2,6)
     ${result} =    Run Process    @{COMMAND}    timeout=0.2    on_timeout=KiLL
     ...    stdout=${STDOUT}    stderr=${STDERR}
     Should be terminated    ${result}
