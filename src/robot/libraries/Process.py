@@ -738,7 +738,7 @@ class Process(object):
         except ValueError as err:
             raise ValueError("Parsing '%s' failed: %s" % (args, err))
 
-    def list_to_command_line(self, args):
+    def list_to_command_line(self, *args):
         return subprocess.list2cmdline(args)
 
 

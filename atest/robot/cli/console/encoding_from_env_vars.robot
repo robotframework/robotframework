@@ -14,15 +14,19 @@ Invalid Encoding In Environment Variables
 
 *** Keywords ***
 Run Some Tests With Std Streams Redirected
-  ${cmd} =  Catenate
-  ...  echo "redirect stdin" |
-  ...  LANG=invalid LC_TYPE=invalid LANGUAGE=invalid LC_ALL=invalid
+  ${cmd} =  List to commandline
+  ...  LANG=invalid
+  ...  LC_TYPE=invalid
+  ...  LANGUAGE=invalid
+  ...  LC_ALL=invalid
   ...  @{INTERPRETER.runner}
-  ...  --output NONE
-  ...  --report NONE
-  ...  --log NONE
-  ...  --consolecolors off ${TESTFILE}
-  Run Process  ${cmd}  shell=True  stdout=${STDOUT FILE}  stderr=${STDERR FILE}
+  ...  --output    NONE
+  ...  --report    NONE
+  ...  --log    NONE
+  ...  --consolecolors    off
+  ...  ${TESTFILE}
+  Run Process  echo "redirect stdin" | ${cmd}
+  ...  shell=True  stdout=${STDOUT FILE}  stderr=${STDERR FILE}
   ${stdout} =  Log File  ${STDOUT FILE}
   ${stderr} =  Log File  ${STDERR FILE}
   [Return]  ${stdout}  ${stderr}
