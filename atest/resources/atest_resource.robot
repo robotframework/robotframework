@@ -29,64 +29,70 @@ ${COMMON DEFAULTS}
 ...               --report NONE
 ...               --log NONE
 ${RUNNER DEFAULTS}
+...               ${COMMON DEFAULTS}
 ...               --ConsoleMarkers OFF
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}testlibs"
 ...               --PYTHONPATH "${CURDIR}${/}..${/}testresources${/}listeners"
 
 *** Keywords ***
 Run Tests
-    [Arguments]    ${options}=    ${sources}=    ${output}=${OUTFILE}    ${default options}=TRUE
+    [Arguments]    ${options}=    ${sources}=    ${output}=${OUTFILE}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}    ${RUNNER DEFAULTS}
-    ${result} =    Execute    @{INTERPRETER.runner}    @{arguments}
-    Process Output    ${output}
+    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${RUNNER DEFAULTS}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
+    Process Output    ${output}
     [Return]    ${result}
 
 Run Tests Without Processing Output
     [Arguments]    ${options}=    ${sources}=
-    ${result} =    Run Tests    ${options}    ${sources}    output=NONE
+    [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
+    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    ${RUNNER DEFAULTS}
+    Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     [Return]    ${result}
 
 Run Tests Without Defaults
     [Arguments]    ${options}=    ${sources}=
-    ${result} =    Run Tests    ${options}    ${sources}    output=NONE    default options=FALSE
+    [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
+    ${result} =    Execute    ${INTERPRETER.runner}   ${options}    ${sources}    defaults=${EMPTY}
+    Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     [Return]    ${result}
 
 Run Rebot
-    [Arguments]    ${options}=    ${sources}=    ${output}=${OUTFILE}    ${default options}=True
+    [Arguments]    ${options}=    ${sources}=    ${output}=${OUTFILE}
     [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
-    @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}
-    ${result} =    Execute    @{INTERPRETER.rebot}    @{arguments}
-    Process Output    ${output}
+    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}
     Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
+    Process Output    ${output}
     [Return]    ${result}
 
 Run Rebot Without Processing Output
     [Arguments]    ${options}=    ${sources}=
-    ${result} =    Run Rebot    ${options}    ${sources}    output=NONE
+    [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
+    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}
+    Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
     [Return]    ${result}
 
 Run Rebot Without Defaults
     [Arguments]    ${options}=    ${sources}=
-    ${result} =    Run Rebot    ${options}    ${sources}    output=NONE    default options=FALSE
+    [Documentation]    *OUTDIR:* file://${OUTDIR} (regenerated for every run)
+    ${result} =    Execute    ${INTERPRETER.rebot}   ${options}    ${sources}    defaults=${EMPTY}
+    Log Many    RC: ${result.rc}    STDERR:\n${result.stderr}    STDOUT:\n${result.stdout}
+    [Return]    ${result}
+
+Execute
+    [Arguments]    ${executor}    ${options}    ${sources}    ${defaults}=${COMMON DEFAULTS}
+    Set Execution Environment
+    @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${defaults}
+    ${result} =    Run Process    @{executor}    @{arguments}
+    ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
     [Return]    ${result}
 
 Get Execution Arguments
-    [Arguments]    ${options}    ${sources}    ${use defaults}    ${extra defaults}=
-    ${use defaults} =    Convert To Boolean    ${use defaults}
-    ${defaults} =    Set Variable If    ${use defaults}    ${COMMON DEFAULTS} ${extra defaults}    ${EMPTY}
+    [Arguments]    ${options}    ${sources}    ${defaults}
     @{options} =    Command line to list    --outputdir ${OUTDIR} ${defaults} ${options}
     @{sources} =    Command line to list    ${sources}
     @{sources} =    Join Paths    ${DATADIR}    @{sources}
     [Return]    @{options}    @{sources}
-
-Execute
-    [Arguments]    @{command}
-    Set Execution Environment
-    ${result} =    Run Process    @{command}    stdout=${STDOUTFILE}    stderr=${STDERRFILE}
-    ...    timeout=5min    on_timeout=terminate
-    [Return]    ${result}
 
 Set Execution Environment
     Remove Directory    ${OUTDIR}    recursive
