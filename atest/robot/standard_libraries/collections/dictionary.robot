@@ -148,3 +148,9 @@ Log Dictionary With Different Dictionaries
     Check Log Message    ${tc.kws[0].msgs[0]}    Dictionary is empty.
     Check Log Message    ${tc.kws[1].msgs[0]}    Dictionary has one item:\na: 1
     Check Log Message    ${tc.kws[3].msgs[0]}    Dictionary size is 3 and it contains following items:\nTrue: xxx\nfoo: []\n(1, 2, 3): 3.14
+
+Pop From Dictionary Without Default
+    Check Test Case    ${TEST NAME}
+
+Pop From Dictionary With Default
+    Check Test Case    ${TEST NAME}
