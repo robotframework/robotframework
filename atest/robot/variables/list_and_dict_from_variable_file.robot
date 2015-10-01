@@ -47,6 +47,12 @@ Failing list
 Failing dict
     Check Test Case    ${TESTNAME}
 
+Open files are not lists
+    Check Test Case    ${TESTNAME}
+
+Closed files are not lists
+    Check Test Case    ${TESTNAME}
+
 *** Keywords ***
 Verify Error
     [Arguments]    ${index}    ${args}    ${var}    ${error}

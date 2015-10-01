@@ -8,6 +8,9 @@ def get_variables(*args):
     tuple_ = tuple(list_)
     dict_ = {'a': 1, 2: 'b'}
     ordered = OrderedDict((chr(o), o) for o in range(97, 107))
+    open_file = open(__file__)
+    closed_file = open(__file__)
+    closed_file.close()
     return {'LIST__list': list_,
             'LIST__tuple': tuple_,
             'LIST__generator': (i for i in range(5)),
@@ -18,7 +21,9 @@ def get_variables(*args):
             'scalar_generator': (i for i in range(5)),
             'scalar_dict': dict_,
             'failing_generator': failing_generator,
-            'failing_dict': FailingDict({1: 2})}
+            'failing_dict': FailingDict({1: 2}),
+            'open_file': open_file,
+            'closed_file': closed_file}
 
 
 def failing_generator():

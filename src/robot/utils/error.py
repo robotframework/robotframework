@@ -19,16 +19,14 @@ import traceback
 
 from robot.errors import RobotError
 
-from .platform import JYTHON
+from .platform import JYTHON, RERAISED_EXCEPTIONS
 from .unic import unic
 
 
 EXCLUDE_ROBOT_TRACES = not os.getenv('ROBOT_INTERNAL_TRACES')
-RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
 if JYTHON:
     from java.io import StringWriter, PrintWriter
     from java.lang import Throwable, OutOfMemoryError
-    RERAISED_EXCEPTIONS += (OutOfMemoryError,)
 else:
     Throwable = ()
 

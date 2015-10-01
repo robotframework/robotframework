@@ -285,3 +285,8 @@ Optional Assign Mark With Multiple Variables
 Assign Mark Can Be Used Only With The Last Variable
     [Documentation]    FAIL Assign mark '=' can be used only with the last variable.
     ${v1} =    ${v2} =    Set Variable    a    b
+
+Files are not lists
+   [Documentation]    FAIL Cannot set variable '\@{works not}': Expected list-like value, got file.
+   ${works} =    Evaluate    open('${CURDIR}${/}return_values.robot')
+   @{works not} =    Evaluate    open('${CURDIR}${/}return_values.robot')
