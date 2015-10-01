@@ -20,6 +20,7 @@ Run Some Tests With Std Streams Redirected
   ...  @{INTERPRETER.runner}
   ...  --output NONE
   ...  --report NONE
+  ...  --log NONE
   ...  --consolecolors off ${TESTFILE}
   Run Process  ${cmd}  shell=True  stdout=${STDOUT FILE}  stderr=${STDERR FILE}
   ${stdout} =  Log File  ${STDOUT FILE}

@@ -59,8 +59,9 @@ Arguments From Stdin
     ...    ${test dir}${/}normal.robot
     ${cmd} =    Create List
     ...    @{INTERPRETER.runner}
-    ...    --output    ${OUTFILE}
+    ...    --output    NONE
     ...    --report    NONE
+    ...    --log       NONE
     ...    --doc    from command line
     ...    --argumentfile    stdin
     ...    ${test dir}${/}pass_and_fail.robot
