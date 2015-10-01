@@ -36,7 +36,7 @@ Invalid usage
 *** Keyword ***
 Run TestDoc
     [Arguments]    ${args}    ${expected rc}=0
-    @{args} =    Command line to list    ${args}
+    @{args} =    Split Command line    ${args}
     ${result}=   Run Process  @{INTERPRETER.testdoc}  @{args}  ${OUTFILE}
     Should Be Equal As Numbers   ${result.rc}    ${expected rc}
     [Return]    ${result.stdout}

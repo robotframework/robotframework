@@ -75,8 +75,8 @@ Execute
 
 Get Execution Arguments
     [Arguments]    ${options}    ${sources}    ${default options}
-    @{options} =    Command line to list    --outputdir ${OUTDIR} ${default options} ${options}
-    @{sources} =    Command line to list    ${sources}
+    @{options} =    Split command line    --outputdir ${OUTDIR} ${default options} ${options}
+    @{sources} =    Split command line    ${sources}
     @{sources} =    Join Paths    ${DATADIR}    @{sources}
     [Return]    @{options}    @{sources}
 

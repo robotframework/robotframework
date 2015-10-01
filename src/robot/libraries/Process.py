@@ -371,7 +371,7 @@ class Process(object):
 
     def _log_start(self, command, config):
         if is_list_like(command):
-            command = self.list_to_command_line(command)
+            command = self.join_command_line(command)
         logger.info('Starting process:\n%s' % command)
         logger.debug('Process configuration:\n%s' % config)
 
@@ -731,10 +731,39 @@ class Process(object):
             time.sleep(min(0.1, timeout))
         return stopped()
 
-    def command_line_to_list(self, args, escaping=False):
+    def split_command_line(self, args, escaping=False):
+        """Splits command line string into a list of arguments.
+
+        String is split from spaces, but argument surrounded in quotes may
+        contain spaces in them. If ``escaping`` is given a true value, then
+        backslash is treated as an escape character. It can escape unquoted
+        spaces, quotes inside quotes, and so on, but it also requires using
+        double backslashes when using Windows paths.
+
+        Examples:
+        | @{cmd} = | Split Command Line | --option "value with spaces" |
+        | Should Be True | $cmd == ['--option', 'value with spaces'] |
+
+        New in Robot Framework 2.9.2.
+        """
         return cmdline2list(args, escaping=escaping)
 
-    def list_to_command_line(self, *args):
+    def join_command_line(self, *args):
+        """Joins arguments into one command line string.
+
+        In resulting command line string arguments are delimited with a space,
+        arguments containing spaces are surrounded with quotes, and possible
+        quotes are escaped with a backslash.
+
+        If this keyword is given only one argument and that is a list like
+        object, then the values of that list are joined instead.
+
+        Example:
+        | ${cmd} = | Join Command Line | --option | value with spaces |
+        | Should Be Equal | ${cmd} | --option "value with spaces" |
+
+        New in Robot Framework 2.9.2.
+        """
         if len(args) == 1 and is_list_like(args[0]):
             args = args[0]
         return subprocess.list2cmdline(args)

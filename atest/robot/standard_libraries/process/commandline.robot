@@ -3,23 +3,23 @@ Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/commandline
 Resource         atest_resource.robot
 
 *** Test Cases ***
-Command line to list basics
+Split command line basics
     Check Test Case    ${TESTNAME}
 
-Command line to list with internal quotes
+Split command line with internal quotes
     Check Test Case    ${TESTNAME}
 
-Command line to list with unbalanced quotes
+Split command line with unbalanced quotes
     Check Test Case    ${TESTNAME}
 
-Command line to list with escaping
+Split command line with escaping
     Check Test Case    ${TESTNAME}
 
-List to commandline basics
+Join command line basics
     Check Test Case    ${TESTNAME}
 
-List to commandline with internal quotes
+Join command line with internal quotes
     Check Test Case    ${TESTNAME}
 
-List to commandline with escaping
+Join command line with escaping
     Check Test Case    ${TESTNAME}

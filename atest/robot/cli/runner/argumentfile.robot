@@ -57,7 +57,7 @@ Arguments From Stdin
     Create Argument File Without BOM    ${ARG FILE}
     ...    --name My Name with Nön Äscii
     ...    ${test dir}${/}normal.robot
-    ${cmd} =    List To CommandLine
+    ${cmd} =    Join Command Line
     ...    @{INTERPRETER.runner}
     ...    --output    NONE
     ...    --report    NONE

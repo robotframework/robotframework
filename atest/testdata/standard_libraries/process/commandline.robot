@@ -25,28 +25,28 @@ ${C9}            "" ''
 ${BASICS}        10
 
 *** Test Cases ***
-Command line to list basics
-    [Template]    Command line to list should succeed
+Split command line basics
+    [Template]    Split command line should succeed
     :FOR    ${i}    IN RANGE    ${BASICS}
     \    ${C${i}}    @{L${i}}
     "justone"    justone
 
-Command line to list with internal quotes
-    [Template]    Command line to list should succeed
+Split command line with internal quotes
+    [Template]    Split command line should succeed
     "inter'nal quotes"               inter'nal quotes
     'can be "surrounded"'            can be "surrounded"
     "with ''other'' quotes" '"""'    with ''other'' quotes    """
 
-Command line to list with unbalanced quotes
-    [Template]    Command line to list should fail
+Split command line with unbalanced quotes
+    [Template]    Split command line should fail
     "oo
     "
     '
     "foo"bar"
     foo'bar
 
-Command line to list with escaping
-    [Template]    Command line to list should succeed
+Split command line with escaping
+    [Template]    Split command line should succeed
     c:\\temp                          c:temp                       escaping=True
     c:\\\\temp                        c:\\temp                     escaping=True
     "c:\\temp"                        c:\\temp                     escaping=True
@@ -63,37 +63,37 @@ Command line to list with escaping
     \\\\\\"\\\\                       \\"\\                        escaping=True
     "\\\\\\"\\\\"                     \\"\\                        escaping=True
 
-List to commandline basics
-    [Template]    List to command line should succeed
+Join command line basics
+    [Template]    Join command line should succeed
     :FOR    ${i}    IN RANGE    ${BASICS}
     \    ${C${i}.replace("'", '"')}    @{L${i}}
 
-List to commandline with internal quotes
-    [Template]    List to command line should succeed
+Join command line with internal quotes
+    [Template]    Join command line should succeed
     "internal \\"double' quotes"       internal "double' quotes
     "will be \\"'escaped'\\"" ' \\"    will be "'escaped'"    '    "
 
-List to commandline with escaping
-    [Template]    List to command line should succeed
+Join command line with escaping
+    [Template]    Join command line should succeed
     c:\\temp                          c:\\temp
     "C:\\Program Files\\Blaah"        C:\\Program Files\\Blaah
     \\\\\\"                           \\"
     \\\\\\\\\\"                       \\\\"
 
 *** Keywords ***
-Command line to list should succeed
+Split command line should succeed
     [Arguments]    ${input}    @{expected}    &{config}
-    ${result} =    Command line to list    ${input}    &{config}
+    ${result} =    Split command line    ${input}    &{config}
     Should be equal    ${result}    ${expected}
 
-Command line to list should fail
+Split command line should fail
     [Arguments]    ${input}    ${error}=No closing quotation
     Run keyword and expect error    ValueError: Parsing '${input}' failed: ${error}
-    ...    Command line to list    ${input}
+    ...    Split command line    ${input}
 
-List to command line should succeed
+Join command line should succeed
     [Arguments]    ${expected}    @{input}
-    ${result} =    List to command line    @{input}
+    ${result} =    Join command line    @{input}
     Should be equal    ${result}    ${expected}
-    ${result} =    List to command line    ${input}
+    ${result} =    Join command line    ${input}
     Should be equal    ${result}    ${expected}

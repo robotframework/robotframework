@@ -60,8 +60,8 @@ Keyword Documentation
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output    Process
-    Keyword Name Should Be         8    Run Process
-    Keyword Arguments Should Be    8    command    *arguments    **configuration
+    Keyword Name Should Be         7    Run Process
+    Keyword Arguments Should Be    7    command    *arguments    **configuration
 
 Documentation set in __init__
     Run Libdoc And Parse Output    ${TESTDATADIR}/DocSetInInit.py

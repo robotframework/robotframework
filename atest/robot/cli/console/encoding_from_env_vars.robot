@@ -14,7 +14,7 @@ Invalid Encoding In Environment Variables
 
 *** Keywords ***
 Run Some Tests With Std Streams Redirected
-    ${cmd} =    List to commandline
+    ${cmd} =    Join command line
     ...    LANG=invalid
     ...    LC_TYPE=invalid
     ...    LANGUAGE=invalid
