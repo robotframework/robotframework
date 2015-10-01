@@ -211,6 +211,23 @@ Log Dictionary With Different Dictionaries
     ${dict} =    Evaluate    {(1, 2, 3): 3.14, True: 'xxx', 'foo': []}
     Log Dictionary    ${dict}
 
+Pop From Dictionary Without Default
+    [Documentation]   FAIL Dictionary does not contain key 'a'.
+    ${dict} =    Create Dictionary    a=val    b=val2
+    ${a} =    Pop From Dictionary    ${dict}    a
+    Should be equal    ${a}    val
+    Should be True   $dict == {'b': 'val2'}
+    Pop From Dictionary    ${dict}    a
+
+Pop From Dictionary With Default
+    ${dict} =    Create Dictionary    a=val    b=val2
+    ${a} =    Pop From Dictionary    ${dict}    a   foo
+    Should be equal    ${a}    val
+    Should be True   $dict == {'b': 'val2'}
+    ${a} =    Pop From Dictionary    ${dict}    a   foo
+    Should be equal    ${a}    foo
+    Should be True   $dict == {'b': 'val2'}
+
 *** Keywords ***
 Create Dictionaries For Testing
     ${D0}    Create Dictionary

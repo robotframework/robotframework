@@ -51,6 +51,17 @@ class TestListLike(unittest.TestCase):
             assert_equals(is_list_like(HashMap()), True)
             assert_equals(is_list_like(Hashtable()), True)
 
+    def test_files_are_not_list_like(self):
+        with open(__file__) as f:
+            assert_equals(is_list_like(f), False)
+        assert_equals(is_list_like(f), False)
+
+    def test_object_raising_exception_are_not_list_like(self):
+        class O(object):
+            def __iter__(self):
+                1/0
+        assert_equals(is_list_like(O()), False)
+
     def test_other_iterables_are_list_like(self):
         for thing in [[], (), set(), xrange(1), generator(), array('i'), UserList()]:
             assert_equals(is_list_like(thing), True, thing)

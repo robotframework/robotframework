@@ -19,7 +19,10 @@ from robot.utils.asserts import assert_equals
 from robot.version import get_version
 
 
-NOT_SET = object()
+class NotSet(object):
+    def __repr__(self):
+        return ""
+NOT_SET = NotSet()
 
 
 class _List(object):
@@ -490,10 +493,26 @@ class _Dictionary(object):
             else:
                 logger.info("Key '%s' not found." % key)
 
-    def pop_from_dictionary(self, dictionary, name, default=NOT_SET):
+    def pop_from_dictionary(self, dictionary, key, default=NOT_SET):
+        """Removes the given ``key`` from the ``dictionary`` and returns its
+        value.
+
+        By default the keyword fails if the given ``key`` cannot be found from
+        the ``dictionary``. If optional ``default`` value is given, it will be
+        returned instead of failing.
+
+        New in Robot Framework 2.9.2.
+
+        Example:
+        | ${val}= | Pop From Dictionary | ${D3} | b |
+        =>
+        | ${val} = 2
+        | ${D3} = {'a': 1, 'c': 3}
+        """
         if default is NOT_SET:
-            return dictionary.pop(name)
-        return dictionary.pop(name, default)
+            self.dictionary_should_contain_key(dictionary, key)
+            return dictionary.pop(key)
+        return dictionary.pop(key, default)
 
     def keep_in_dictionary(self, dictionary, *keys):
         """Keeps the given ``keys`` in the ``dictionary`` and removes all other.

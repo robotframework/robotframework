@@ -20,6 +20,8 @@ try:
 except ImportError:
     String = ()
 
+from .platform import RERAISED_EXCEPTIONS
+
 
 def is_integer(item):
     return isinstance(item, (int, long))
@@ -42,11 +44,13 @@ def is_unicode(item):
 
 
 def is_list_like(item):
-    if isinstance(item, (basestring, UserString, String)):
+    if isinstance(item, (basestring, UserString, String, file)):
         return False
     try:
         iter(item)
-    except TypeError:
+    except RERAISED_EXCEPTIONS:
+        raise
+    except:
         return False
     else:
         return True

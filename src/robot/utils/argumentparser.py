@@ -15,6 +15,7 @@
 import getopt     # optparse was not supported by Jython 2.2
 import os
 import re
+import shlex
 import sys
 import glob
 import string
@@ -26,7 +27,7 @@ from robot.version import get_full_version
 from .misc import plural_or_not
 from .encoding import decode_output, decode_from_system
 from .utf8reader import Utf8Reader
-from .robottypes import is_integer, is_list_like, is_string
+from .robottypes import is_falsy, is_integer, is_list_like, is_string, is_unicode
 
 
 ESCAPES = dict(
@@ -36,6 +37,24 @@ ESCAPES = dict(
     percent = '%', at      = '@', exclam = '!', paren1 = '(', paren2 = ')',
     square1 = '[', square2 = ']', curly1 = '{', curly2 = '}', bslash = '\\'
 )
+
+
+def cmdline2list(args, escaping=False):
+    if is_unicode(args):
+        args = args.encode('UTF-8')
+        decode = lambda item: item.decode('UTF-8')
+    else:
+        decode = lambda item: item
+    lexer = shlex.shlex(args, posix=True)
+    if is_falsy(escaping):
+        lexer.escape = ''
+    lexer.escapedquotes = '"\''
+    lexer.commenters = ''
+    lexer.whitespace_split = True
+    try:
+        return [decode(token) for token in lexer]
+    except ValueError as err:
+        raise ValueError("Parsing '%s' failed: %s" % (args, err))
 
 
 class ArgumentParser(object):
@@ -123,7 +142,7 @@ class ArgumentParser(object):
         are wrapped to Information exception.
         """
         if self._env_options:
-            args = os.getenv(self._env_options, '').split() + list(args)
+            args = cmdline2list(os.getenv(self._env_options, '')) + list(args)
         args = [decode_from_system(a) for a in args]
         if self._auto_argumentfile:
             args = self._process_possible_argfile(args)

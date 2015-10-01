@@ -32,15 +32,14 @@ or::
     assert Matcher('H?llo').match('Hillo')
 """
 
-from .argumentparser import ArgumentParser
+from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict, OrderedDict
 from .encoding import (decode_output, encode_output,
                        decode_from_system, encode_to_system)
-from .error import (get_error_message, get_error_details, ErrorDetails,
-                    RERAISED_EXCEPTIONS)
+from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource
 from .frange import frange
@@ -51,7 +50,8 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import (isatty, getdoc, plural_or_not, printable_name,
                    seq2str, seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
-from .platform import IRONPYTHON, JYTHON, PYTHON, UNIXY, WINDOWS
+from .platform import (IRONPYTHON, JYTHON, PYTHON, UNIXY, WINDOWS,
+                       RERAISED_EXCEPTIONS)
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotinspect import is_java_init, is_java_method

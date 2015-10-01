@@ -16,12 +16,12 @@ import ctypes
 import os
 import subprocess
 import time
-import shlex
 import signal as signal_module
 
-from robot.utils import (ConnectionCache, abspath, encode_to_system,
-                         decode_output, is_falsy, is_list_like, is_truthy,
-                         secs_to_timestr, timestr_to_secs, IRONPYTHON, JYTHON)
+from robot.utils import (ConnectionCache, abspath, cmdline2list,
+                         encode_to_system, decode_output, is_list_like,
+                         is_truthy, secs_to_timestr, timestr_to_secs,
+                         IRONPYTHON, JYTHON)
 from robot.version import get_version
 from robot.api import logger
 
@@ -732,16 +732,7 @@ class Process(object):
         return stopped()
 
     def command_line_to_list(self, args, escaping=False):
-        lexer = shlex.shlex(args.encode('UTF-8'), posix=True)
-        if is_falsy(escaping):
-            lexer.escape = ''
-        lexer.escapedquotes = '"\''
-        lexer.commenters = ''
-        lexer.whitespace_split = True
-        try:
-            return [token.decode('UTF-8') for token in lexer]
-        except ValueError as err:
-            raise ValueError("Parsing '%s' failed: %s" % (args, err))
+        return cmdline2list(args, escaping=escaping)
 
     def list_to_command_line(self, *args):
         if len(args) == 1 and is_list_like(args[0]):

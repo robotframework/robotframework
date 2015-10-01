@@ -21,3 +21,8 @@ IRONPYTHON = sys.platform == 'cli'
 PYTHON = not (JYTHON or IRONPYTHON)
 UNIXY = os.sep == '/'
 WINDOWS = not UNIXY
+
+RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
+if JYTHON:
+    from java.lang import OutOfMemoryError
+    RERAISED_EXCEPTIONS += (OutOfMemoryError,)
