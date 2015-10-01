@@ -223,13 +223,16 @@ avoid the need to repeat them every time tests are run or ``rebot`` used.
 
 .. sourcecode:: bash
 
-   export ROBOT_OPTIONS="--critical regression --tagdoc mytag:Example_doc"
+   export ROBOT_OPTIONS="--critical regression --tagdoc 'mytag:Example doc with spaces'"
    pybot tests.txt
    export REBOT_OPTIONS="--reportbackground green:yellow:red"
    rebot --name example output.xml
 
 .. note:: Support for ``ROBOT_OPTIONS`` and ``REBOT_OPTIONS`` environment
           variables was added in Robot Framework 2.8.2.
+
+          Possibility to have spaces in values by surrounding them in quotes
+          is new in Robot Framework 2.9.2.
 
 __ `Post-processing outputs`_
 

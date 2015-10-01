@@ -32,7 +32,7 @@ or::
     assert Matcher('H?llo').match('Hillo')
 """
 
-from .argumentparser import ArgumentParser
+from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
 from .compress import compress_text
 from .connectioncache import ConnectionCache
