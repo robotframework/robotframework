@@ -95,3 +95,5 @@ List to command line should succeed
     [Arguments]    ${expected}    @{input}
     ${result} =    List to command line    @{input}
     Should be equal    ${result}    ${expected}
+    ${result} =    List to command line    ${input}
+    Should be equal    ${result}    ${expected}

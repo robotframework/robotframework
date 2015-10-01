@@ -20,8 +20,8 @@ import shlex
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, encode_to_system,
-                         decode_output, is_falsy, is_truthy, secs_to_timestr,
-                         timestr_to_secs, IRONPYTHON, JYTHON)
+                         decode_output, is_falsy, is_list_like, is_truthy,
+                         secs_to_timestr, timestr_to_secs, IRONPYTHON, JYTHON)
 from robot.version import get_version
 from robot.api import logger
 
@@ -739,6 +739,8 @@ class Process(object):
             raise ValueError("Parsing '%s' failed: %s" % (args, err))
 
     def list_to_command_line(self, *args):
+        if len(args) == 1 and is_list_like(args[0]):
+            args = args[0]
         return subprocess.list2cmdline(args)
 
 
