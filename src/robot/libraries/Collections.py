@@ -494,20 +494,19 @@ class _Dictionary(object):
                 logger.info("Key '%s' not found." % key)
 
     def pop_from_dictionary(self, dictionary, key, default=NOT_SET):
-        """Removes the given ``key`` from the ``dictionary`` and returns its
-        value.
+        """Pops the given ``key`` from the ``dictionary`` and returns its value.
 
         By default the keyword fails if the given ``key`` cannot be found from
         the ``dictionary``. If optional ``default`` value is given, it will be
         returned instead of failing.
-
-        New in Robot Framework 2.9.2.
 
         Example:
         | ${val}= | Pop From Dictionary | ${D3} | b |
         =>
         | ${val} = 2
         | ${D3} = {'a': 1, 'c': 3}
+
+        New in Robot Framework 2.9.2.
         """
         if default is NOT_SET:
             self.dictionary_should_contain_key(dictionary, key)
