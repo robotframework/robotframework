@@ -2,6 +2,7 @@
 Documentation     NO RIDE because it would sanitize formatting too much.
 Library           ExampleLibrary
 Library           Collections
+Library           get_file_lib.py
 
 *** Variables ***
 &{DICT}           foo=bar    muu=mi
@@ -288,5 +289,5 @@ Assign Mark Can Be Used Only With The Last Variable
 
 Files are not lists
    [Documentation]    FAIL Cannot set variable '\@{works not}': Expected list-like value, got file.
-   ${works} =    Evaluate    open('${CURDIR}${/}return_values.robot')
-   @{works not} =    Evaluate    open('${CURDIR}${/}return_values.robot')
+   ${works} =    Get open file
+   @{works not} =    Get open file
