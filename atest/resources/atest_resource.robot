@@ -1,11 +1,12 @@
 *** Settings ***
-Documentation     This resource file contains, or imports, all general variables and keywords used by the running side of Robot Framework acceptance tests.
+Documentation     General variables and keywords used by the execution side of
+...               Robot Framework acceptance tests.
 Library           OperatingSystem
 Library           Process
 Library           Collections
 Library           String
 Library           TestCheckerLibrary
-Library           TestHelper
+Library           TestHelper           # TODO: Combine with TestCheckerLibrary?
 Library           XML
 Library           read_interpreter.py
 Variables         atest_variables.py
@@ -21,7 +22,7 @@ ${STDERR FILE}    ${OUTDIR}${/}stderr.txt
 ${OUTFILE COPY}   %{TEMPDIR}${/}output-copy.xml
 ${SUITE}          Set by TestCheckerLibrary.Process Output
 ${ERRORS}         -- ;; --
-${USAGE_TIP}      \n\nTry --help for usage information.
+${USAGE TIP}      \n\nTry --help for usage information.
 ${TESTNAME}       ${EMPTY}    # Used when not running test
 ${COMMON DEFAULTS}
 ...               --ConsoleColors OFF
@@ -90,6 +91,7 @@ Set Execution Environment
 Copy Previous Outfile
     Copy File    ${OUTFILE}    ${OUTFILE COPY}
 
+# TODO: Move next two kws to TestCheckerLibrary? It could keep a reference to ${SUITE} itself.
 Check Test Case
     [Arguments]    ${name}=${TESTNAME}    ${status}=${NONE}    ${message}=${NONE}
     ${test} =    Get Test From Suite    ${SUITE}    ${name}
@@ -103,6 +105,7 @@ Check Test Suite
     Should Be Equal    ${suite.full_message}    ${message}
     [Return]    ${suite}
 
+# TODO: Are next two keywords used somewhere?
 Get Test Case
     [Arguments]    ${name}
     ${test} =    Get Test From Suite    ${SUITE}    ${name}
@@ -114,22 +117,24 @@ Get Test Suite
     [Return]    ${suite}
 
 Check Test Doc
-    [Arguments]    ${test_name}    @{expected_doc}
-    ${test} =    Check Test Case    ${test_name}
-    ${expected} =    Catenate    @{expected_doc}
-    Should Be Equal    ${test.doc}    ${expected}
-    [Return]    ${test}
+    [Arguments]    ${name}    @{expected}
+    ${tc} =    Check Test Case    ${name}
+    ${expected} =    Catenate    @{expected}
+    Should Be Equal    ${tc.doc}    ${expected}
+    [Return]    ${tc}
 
 Check Test Tags
-    [Arguments]    ${test_name}    @{expected_tags}
-    ${test} =    Check Test Case    ${test_name}
-    Should Contain Tags    ${test}    @{expected_tags}
-    [Return]    ${test}
+    [Arguments]    ${name}    @{expected}
+    ${tc} =    Check Test Case    ${name}
+    Should Contain Tags    ${tc}    @{expected}
+    [Return]    ${tc}
 
+# TODO: 'KW' -> 'Keyword'. Consider removing in favor of the following kw.
 Check KW Arguments
     [Arguments]    ${kw}    @{expected args}
     Lists Should Be Equal    ${kw.args}    ${expected args}
 
+# TODO: Rename to "Check keyword data" for consistency?
 Keyword data should be
     [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=
     Should be equal    ${kw.name}    ${name}
@@ -138,6 +143,7 @@ Keyword data should be
     ${kwargs}=    Catenate    SEPARATOR=,${SPACE}    @{kw.args}
     Should match    ${kwargs}    ${args}
 
+# TODO: Move to TestCheckerLibrary to simplify implementation and reduce amount of kws in output.xml.
 Check Log Message
     [Arguments]    ${item}    ${msg}    ${level}=INFO    ${html}=${False}    ${pattern}=
     ${html} =    Set Variable If    ${html} or '${level}' == 'HTML'    ${True}    ${False}
@@ -155,6 +161,7 @@ Get Output File
     ${file} =    Log File    ${path}    ${encoding}
     [Return]    ${file}
 
+# TODO: Rename to "File Should Contain". Same with other file kws too.
 Check File Contains
     [Arguments]    ${path}    @{expected}
     ${exp} =    Catenate    @{expected}
@@ -273,11 +280,13 @@ Check Syslog Contains Regexp
     [Arguments]    @{expected}
     Check File Contains Regexp    ${SYSLOG_FILE}    @{expected}
 
+# TODO: Where used? If only one/few places, could be moved there.
 Check Names
     [Arguments]    ${item}    ${name}    ${longprefix}=
     Should Be Equal    ${item.name}    ${name}
     Should Be Equal    ${item.longname}    ${longprefix}${name}
 
+# TODO: Rename next two kws to use "should format".
 Is Valid Timestamp
     [Arguments]    ${time}
     Log    ${time}
@@ -295,23 +304,22 @@ Previous test should have passed
     Should be equal    ${PREV TEST STATUS}    PASS
 
 Get Stat Nodes
-    [Arguments]    ${type}    ${output}=
-    ${output} =    Set Variable If    "${output}"    ${output}    ${OUTFILE}
+    [Arguments]    ${type}    ${output}=${OUTFILE}
     ${nodes} =    Get Elements    ${output}    statistics/${type}/stat
     [Return]    ${nodes}
 
 Get Tag Stat Nodes
-    [Arguments]    ${output}=
+    [Arguments]    ${output}=${OUTFILE}
     ${nodes} =    Get Stat Nodes    tag    ${output}
     [Return]    ${nodes}
 
 Get Total Stat Nodes
-    [Arguments]    ${output}=
+    [Arguments]    ${output}=${OUTFILE}
     ${nodes} =    Get Stat Nodes    total    ${output}
     [Return]    ${nodes}
 
 Get Suite Stat Nodes
-    [Arguments]    ${output}=
+    [Arguments]    ${output}=${OUTFILE}
     ${nodes} =    Get Stat Nodes    suite    ${output}
     [Return]    ${nodes}
 
@@ -321,6 +329,7 @@ Tag Statistics Should Be
     Should Be Equal As Integers    ${tag.attrib['pass']}    ${pass}
     Should Be Equal As Integers    ${tag.attrib['fail']}    ${fail}
 
+# TODO: Move next two closer to other test/kw status related kws
 Test And All Keywords Should Have Passed
     [Arguments]    ${name}=${TESTNAME}
     ${tc} =    Check Test Case    ${name}
@@ -328,11 +337,11 @@ Test And All Keywords Should Have Passed
 
 All Keywords Should Have Passed
     [Arguments]    ${tc or kw}
-    @{kws} =    Set Variable    ${tc or kw.kws}
-    : FOR    ${kw}    IN    @{kws}
+    : FOR    ${kw}    IN    @{tc or kw.kws}
     \    Should Be Equal    ${kw.status}    PASS
     \    All Keywords Should Have Passed    ${kw}
 
+# TODO: Is this still used somewhere?
 Make test non-critical if
     [Arguments]    ${condition}
     Run Keyword If    ${condition}    Remove Tags    regression
