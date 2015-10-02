@@ -13,7 +13,7 @@ ${UNREPR UNIC}    <Unrepresentable object FailiningUnicode. Error: *>
 *** Test Cases ***
 Simple Scalar Variable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    BuiltIn.Set Variable    \${setvar}    this value is set
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Set Variable    \${setvar}    this value is set
     Check Log Message    ${tc.kws[0].msgs[0]}    \${setvar} = this value is set
 
 Empty Scalar Variable
@@ -38,7 +38,7 @@ None To Scalar Variable
 
 Multible Scalar Variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    BuiltIn.Create List    \${var1}, \${var2}    one, \${2}
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Create List    \${var1}, \${var2}    one, \${2}
     Check Log Message    ${tc.kws[0].msgs[0]}    \${var1} = one
     Check Log Message    ${tc.kws[0].msgs[1]}    \${var2} = 2
 
@@ -64,17 +64,17 @@ Multiple Scalars When No List Returned
 
 List Variable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    BuiltIn.Create List    \@{listvar}    h, e, ll, o
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Create List    \@{listvar}    h, e, ll, o
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{listvar} = [ h | e | ll | o ]
 
 List Variable From Consumable Iterable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    ExampleLibrary.Return Consumable Iterable    \@{listvar}    Keijo, Mela
+    Check Keyword Data    ${tc.kws[0]}    ExampleLibrary.Return Consumable Iterable    \@{listvar}    Keijo, Mela
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{listvar} = [ Keijo | Mela ]
 
 List Variable From List Subclass
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    ExampleLibrary.Return List Subclass    \@{listvar}    Keijo, Mela
+    Check Keyword Data    ${tc.kws[0]}    ExampleLibrary.Return List Subclass    \@{listvar}    Keijo, Mela
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{listvar} = [ Keijo | Mela ]
 
 List Variable From Dictionary
@@ -104,23 +104,23 @@ Only One List Variable Allowed
 
 List After Scalars
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    BuiltIn.Evaluate    \${first}, \@{rest}    range(5)
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Evaluate    \${first}, \@{rest}    range(5)
     Check Log Message    ${tc.kws[0].msgs[0]}    \${first} = 0
     Check Log Message    ${tc.kws[0].msgs[1]}    \@{rest} = [ 1 | 2 | 3 | 4 ]
-    Keyword Data Should Be    ${tc.kws[3]}    BuiltIn.Create List    \${a}, \${b}, \@{c}    1, 2, c, d, e, f
+    Check Keyword Data    ${tc.kws[3]}    BuiltIn.Create List    \${a}, \${b}, \@{c}    1, 2, c, d, e, f
     Check Log Message    ${tc.kws[3].msgs[0]}    \${a} = 1
     Check Log Message    ${tc.kws[3].msgs[1]}    \${b} = 2
     Check Log Message    ${tc.kws[3].msgs[2]}    \@{c} = [ c | d | e | f ]
 
 List Before Scalars
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    BuiltIn.Set Variable    \@{list}, \${scalar}    \${1}, 2
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Set Variable    \@{list}, \${scalar}    \${1}, 2
     Check Log Message    ${tc.kws[0].msgs[0]}    \@{list} = [ 1 ]
     Check Log Message    ${tc.kws[0].msgs[1]}    \${scalar} = 2
 
 List Between Scalars
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    BuiltIn.Set Variable    \${first}, \@{list}, \${last}    1, 2, 3, 4
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Set Variable    \${first}, \@{list}, \${last}    1, 2, 3, 4
     Check Log Message    ${tc.kws[0].msgs[0]}    \${first} = 1
     Check Log Message    ${tc.kws[0].msgs[1]}    \@{list} = [ 2 | 3 ]
     Check Log Message    ${tc.kws[0].msgs[2]}    \${last} = 4
@@ -182,11 +182,11 @@ Big Items In Dictionary
 
 No Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    ${EMPTY}    \${nokeyword}
+    Check Keyword Data    ${tc.kws[0]}    ${EMPTY}    \${nokeyword}
 
 Failing Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword Data Should Be    ${tc.kws[0]}    BuiltIn.Fail    \${ret}    Failing instead of returning
+    Check Keyword Data    ${tc.kws[0]}    BuiltIn.Fail    \${ret}    Failing instead of returning
 
 Failing Keyword And Teardown
     Check Test Case    ${TESTNAME}

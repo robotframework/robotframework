@@ -61,9 +61,9 @@ Check Minimal Suite Defaults
 
 Check Normal Suite Times
     [Arguments]    ${mysuite}
-    Is Valid Timestamp    ${mysuite.starttime}
-    Is Valid Timestamp    ${mysuite.endtime}
-    Is Valid Elapsed Time    ${mysuite.elapsedtime}
+    Timestamp Should Be Valid    ${mysuite.starttime}
+    Timestamp Should Be Valid    ${mysuite.endtime}
+    Elapsed Time Should Be Valid    ${mysuite.elapsedtime}
     Should Be True    ${mysuite.elapsedtime} >= 1
 
 Check Minimal Suite Times

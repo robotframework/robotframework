@@ -47,7 +47,7 @@ Run Keyword If Test Passed Can't Be used In Test
 Run Keyword If Test Passes Uses User Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.teardown.kws[0].kws[0].msgs[0]}    Teardown message
-    Check KW Arguments    ${tc.teardown.kws[0].kws[0]}    \${message}
+    Check Keyword Data    ${tc.teardown.kws[0].kws[0]}    BuiltIn.Log    args=\${message}
 
 Run Keyword If Test Passed Fails
     Check Test Case    ${TEST NAME}
@@ -76,6 +76,6 @@ Run Keyword If test Passed Can't Be Used In Suite Setup or Teardown
 
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Run Keyword If Test Failed Uses User Keyword
-    Check KW Arguments    ${tc.teardown}    Teardown UK    \${TEARDOWN MESSAGE}
-    Check KW Arguments    ${tc.teardown.kws[0]}    \${TEARDOWN MESSAGE}
-    Check KW Arguments    ${tc.teardown.kws[0].kws[0]}    \${message}
+    Check Keyword Data    ${tc.teardown}    BuiltIn.Run Keyword If Test Failed    args=Teardown UK, \${TEARDOWN MESSAGE}
+    Check Keyword Data    ${tc.teardown.kws[0]}    Teardown UK    args=\${TEARDOWN MESSAGE}
+    Check Keyword Data    ${tc.teardown.kws[0].kws[0]}    BuiltIn.Log    args=\${message}

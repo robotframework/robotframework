@@ -217,8 +217,8 @@ Timestamps should be cleared
 Timestamps should be set
     [Arguments]    @{suites}
     :FOR    ${suite}    IN    @{suites}
-    \    Is Valid Timestamp    ${suite.starttime}
-    \    Is Valid Timestamp    ${suite.endtime}
+    \    Timestamp Should Be Valid    ${suite.starttime}
+    \    Timestamp Should Be Valid    ${suite.endtime}
 
 Create expected merge message
     [Arguments]    ${message}    ${new status}    ${new message}    ${old status}    ${old message}

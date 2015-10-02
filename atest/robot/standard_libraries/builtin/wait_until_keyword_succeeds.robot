@@ -93,4 +93,4 @@ Pass With Initially Nonexisting Variable Inside Wait Until Keyword Succeeds
 
 Variable Values Should Not Be Visible In Keyword Arguments
     ${tc} =    Check Test Case    Pass With First Try
-    Check KW Arguments    ${tc.kws[0].kws[0]}    \${HELLO}
+    Check Keyword Data    ${tc.kws[0].kws[0]}    BuiltIn.Log    args=\${HELLO}

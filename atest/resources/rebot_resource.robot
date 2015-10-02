@@ -10,9 +10,9 @@ ${ORIG_ELAPSED}   -- ;; --
 Create Output With Robot
     [Arguments]    ${outputname}    ${options}    ${sources}
     Run Tests    ${options}    ${sources}
-    Is Valid Timestamp    ${SUITE.starttime}
-    Is Valid Timestamp    ${SUITE.endtime}
-    Is Valid Elapsed Time    ${SUITE.elapsedtime}
+    Timestamp Should Be Valid    ${SUITE.starttime}
+    Timestamp Should Be Valid    ${SUITE.endtime}
+    Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
     Set Suite Variable    $ORIG_START    ${SUITE.starttime}
     Set Suite Variable    $ORIG_END    ${SUITE.endtime}
     Set Suite Variable    $ORIG_ELAPSED    ${SUITE.elapsedtime}

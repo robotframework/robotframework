@@ -99,15 +99,15 @@ Critical/Non-Critical Tags Can Be Given
 Suite Times
     Should Be Equal    ${SUITE3.starttime}    ${NONE}
     Should Be Equal    ${SUITE3.endtime}    ${NONE}
-    Is Valid Elapsed Time    ${SUITE3.elapsedtime}
+    Elapsed Time Should Be Valid    ${SUITE3.elapsedtime}
     Should Be True    ${SUITE3.elapsedtime} == ${MILLIS1} + ${MILLIS2} + 9999
-    Is Valid Timestamp    ${SUITE3.suites[0].starttime}
-    Is Valid Timestamp    ${SUITE3.suites[0].endtime}
-    Is Valid Elapsed Time    ${SUITE3.suites[0].elapsedtime}
+    Timestamp Should Be Valid    ${SUITE3.suites[0].starttime}
+    Timestamp Should Be Valid    ${SUITE3.suites[0].endtime}
+    Elapsed Time Should Be Valid    ${SUITE3.suites[0].elapsedtime}
     Should Be Equal    ${SUITE3.suites[0].elapsedtime}    ${MILLIS1}
-    Is Valid Timestamp    ${SUITE3.suites[1].starttime}
-    Is Valid Timestamp    ${SUITE3.suites[1].endtime}
-    Is Valid Elapsed Time    ${SUITE3.suites[1].elapsedtime}
+    Timestamp Should Be Valid    ${SUITE3.suites[1].starttime}
+    Timestamp Should Be Valid    ${SUITE3.suites[1].endtime}
+    Elapsed Time Should Be Valid    ${SUITE3.suites[1].elapsedtime}
     Should Be Equal    ${SUITE3.suites[1].elapsedtime}    ${MILLIS2}
     Should Be Equal    ${SUITE3.suites[2].starttime}    20061227 11:59:59.000
     Should Be Equal    ${SUITE3.suites[2].endtime}    20061227 12:00:08.999
@@ -122,13 +122,13 @@ Suite Times In Recombine
     Should Be Equal    ${SUITE4.suites[0].elapsedtime}    ${9999}
     Should Be Equal    ${SUITE4.suites[1].starttime}    ${NONE}
     Should Be Equal    ${SUITE4.suites[1].endtime}    ${NONE}
-    Is Valid Timestamp    ${SUITE4.suites[1].suites[0].starttime}
-    Is Valid Timestamp    ${SUITE4.suites[1].suites[0].endtime}
-    Is Valid Elapsed Time    ${SUITE4.suites[1].suites[0].elapsedtime}
+    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[0].starttime}
+    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[0].endtime}
+    Elapsed Time Should Be Valid    ${SUITE4.suites[1].suites[0].elapsedtime}
     Should Be Equal    ${SUITE4.suites[1].suites[0].elapsedtime}    ${MILLIS1}
-    Is Valid Timestamp    ${SUITE4.suites[1].suites[1].starttime}
-    Is Valid Timestamp    ${SUITE4.suites[1].suites[1].endtime}
-    Is Valid Elapsed Time    ${SUITE4.suites[1].suites[1].elapsedtime}
+    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[1].starttime}
+    Timestamp Should Be Valid    ${SUITE4.suites[1].suites[1].endtime}
+    Elapsed Time Should Be Valid    ${SUITE4.suites[1].suites[1].elapsedtime}
     Should Be Equal    ${SUITE4.suites[1].suites[1].elapsedtime}    ${MILLIS2}
 
 Elapsed Time Should Be Written To Output When Start And End Time Are Not Known

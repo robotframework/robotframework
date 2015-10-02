@@ -24,7 +24,7 @@ Debugfile
     Check Syslog Contains  DebugFile: DeBug.TXT
     ${path} =  Set Variable  [:.\\w /\\\\~+-]*DeBug\\.TXT
     Check Stdout Matches Regexp  (?s).*Debug: {3}${path}.*
-    Check Syslog Matches Regexp  (?s).*Debug: ${path}.*
+    Syslog Should Match Regexp  (?s).*Debug: ${path}.*
 
 Debugfile Log Level Should Always Be Debug
     [Documentation]  --loglevel option should not affect what's written to debugfile

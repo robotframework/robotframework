@@ -159,7 +159,7 @@ Run And Check Include And Exclude
     ${exp end} =    Set Variable If    "${params}"    ${NONE}    ${ORIG END}
     Should Be Equal    ${SUITE.starttime}    ${exp start}
     Should Be Equal    ${SUITE.endtime}    ${exp end}
-    Is Valid Elapsed Time    ${SUITE.elapsedtime}
+    Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
     Should Be True    ${SUITE.elapsedtime} <= ${ORIG ELAPSED}
 
 Run And Check Error

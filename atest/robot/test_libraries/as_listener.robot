@@ -46,4 +46,4 @@ Check closing
     ...    CLOSING GLOBAL
 
 Library listener should be in syslog
-    Check Syslog Contains RegExp    Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, testsuite scope, 4 keywords, with listener\\)
+    Syslog Should Contain Regexp    Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, testsuite scope, 4 keywords, with listener\\)

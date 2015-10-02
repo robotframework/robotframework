@@ -95,7 +95,7 @@ Copy Previous Outfile
 Check Test Case
     [Arguments]    ${name}=${TESTNAME}    ${status}=${NONE}    ${message}=${NONE}
     ${test} =    Get Test From Suite    ${SUITE}    ${name}
-    Check Test Status    ${test}    ${status}    ${message}
+    Check Test Status    ${test}    ${status}    ${message}    # directly
     [Return]    ${test}
 
 Check Test Suite
@@ -113,7 +113,7 @@ Get Test Case
 
 Get Test Suite
     [Arguments]    ${name}
-    ${suite} =    Get Suite From Suite    ${SUITE}    ${name}
+    ${suite} =    Get Suite From Suite    ${SUITE}    ${name}  #move
     [Return]    ${suite}
 
 Check Test Doc
@@ -129,13 +129,7 @@ Check Test Tags
     Should Contain Tags    ${tc}    @{expected}
     [Return]    ${tc}
 
-# TODO: 'KW' -> 'Keyword'. Consider removing in favor of the following kw.
-Check KW Arguments
-    [Arguments]    ${kw}    @{expected args}
-    Lists Should Be Equal    ${kw.args}    ${expected args}
-
-# TODO: Rename to "Check keyword data" for consistency?
-Keyword data should be
+Check Keyword Data
     [Arguments]    ${kw}    ${name}    ${assign}=    ${args}=
     Should be equal    ${kw.name}    ${name}
     ${kwassign}=    Catenate    SEPARATOR=,${SPACE}    @{kw.assign}
@@ -161,14 +155,13 @@ Get Output File
     ${file} =    Log File    ${path}    ${encoding}
     [Return]    ${file}
 
-# TODO: Rename to "File Should Contain". Same with other file kws too.
-Check File Contains
+File Should Contain
     [Arguments]    ${path}    @{expected}
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
     Should Contain    ${file}    ${exp}
 
-Check File Does Not Contain
+File Should Not Contain
     [Arguments]    ${path}    @{expected}
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
@@ -180,7 +173,7 @@ Check File Matches Regexp
     ${file} =    Get Output File    ${path}
     Should Match Regexp    ${file.strip()}    ^${exp}$
 
-Check File Contains Regexp
+File Should Contain Regexp
     [Arguments]    ${path}    @{expected}
     ${exp} =    Catenate    @{expected}
     ${file} =    Get Output File    ${path}
@@ -218,11 +211,11 @@ Stderr Should Be Empty
 
 Check Stderr Contains
     [Arguments]    @{expected}
-    Check File Contains    ${STDERR_FILE}    @{expected}
+    File Should Contain    ${STDERR_FILE}    @{expected}
 
 Check Stderr Does Not Contain
     [Arguments]    @{expected}
-    Check File Does Not Contain    ${STDERR_FILE}    @{expected}
+    File Should Not Contain    ${STDERR_FILE}    @{expected}
 
 Check Stderr Matches Regexp
     [Arguments]    @{expected}
@@ -230,15 +223,15 @@ Check Stderr Matches Regexp
 
 Check Stderr Contains Regexp
     [Arguments]    @{expected}
-    Check File Contains Regexp    ${STDERR_FILE}    @{expected}
+    File Should Contain Regexp    ${STDERR_FILE}    @{expected}
 
 Check Stdout Contains
     [Arguments]    @{expected}
-    Check File Contains    ${STDOUT_FILE}    @{expected}
+    File Should Contain    ${STDOUT_FILE}    @{expected}
 
 Check Stdout Does Not Contain
     [Arguments]    @{expected}
-    Check File Does Not Contain    ${STDOUT_FILE}    @{expected}
+    File Should Not Contain    ${STDOUT_FILE}    @{expected}
 
 Check Stdout Matches Regexp
     [Arguments]    @{expected}
@@ -246,7 +239,7 @@ Check Stdout Matches Regexp
 
 Check Stdout Contains Regexp
     [Arguments]    @{expected}
-    Check File Contains Regexp    ${STDOUT_FILE}    @{expected}
+    File Should Contain Regexp    ${STDOUT_FILE}    @{expected}
 
 Get Syslog
     ${file} =    Get Output File    ${SYSLOG_FILE}
@@ -266,34 +259,32 @@ Syslog Should Contain Match
 
 Check Syslog Contains
     [Arguments]    @{expected}
-    Check File Contains    ${SYSLOG_FILE}    @{expected}
+    File Should Contain    ${SYSLOG_FILE}    @{expected}
 
 Check Syslog Does Not Contain
     [Arguments]    @{expected}
-    Check File Does Not Contain    ${SYSLOG_FILE}    @{expected}
+    File Should Not Contain    ${SYSLOG_FILE}    @{expected}
 
-Check Syslog Matches Regexp
+Syslog Should Match Regexp
     [Arguments]    @{expected}
     Check File Matches Regexp    ${SYSLOG_FILE}    @{expected}
 
-Check Syslog Contains Regexp
+Syslog Should Contain Regexp
     [Arguments]    @{expected}
-    Check File Contains Regexp    ${SYSLOG_FILE}    @{expected}
+    File Should Contain Regexp    ${SYSLOG_FILE}    @{expected}
 
-# TODO: Where used? If only one/few places, could be moved there.
 Check Names
     [Arguments]    ${item}    ${name}    ${longprefix}=
     Should Be Equal    ${item.name}    ${name}
     Should Be Equal    ${item.longname}    ${longprefix}${name}
 
-# TODO: Rename next two kws to use "should format".
-Is Valid Timestamp
+Timestamp Should Be Valid
     [Arguments]    ${time}
     Log    ${time}
     Should Not Be Equal    ${time}    ${None}
     Should Match Regexp    ${time}    20\\d{6} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}    Not valid timestamp
 
-Is Valid Elapsed Time
+Elapsed Time Should Be Valid
     [Arguments]    ${time}
     Log    ${time}
     Should Be True    isinstance(${time}, int) and ${time} >= 0    Not valid elapsed time
@@ -340,11 +331,6 @@ All Keywords Should Have Passed
     : FOR    ${kw}    IN    @{tc or kw.kws}
     \    Should Be Equal    ${kw.status}    PASS
     \    All Keywords Should Have Passed    ${kw}
-
-# TODO: Is this still used somewhere?
-Make test non-critical if
-    [Arguments]    ${condition}
-    Run Keyword If    ${condition}    Remove Tags    regression
 
 Set PYTHONPATH
     [Arguments]    @{values}

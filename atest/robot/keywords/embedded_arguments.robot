@@ -6,9 +6,9 @@ Resource          atest_resource.robot
 Embedded Arguments In User Keyword Name
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    This is always executed
-    Keyword data should be    ${tc.kws[0]}    User Peke Selects Advanced Python From Webshop    \${name}, \${book}
+    Check Keyword Data    ${tc.kws[0]}    User Peke Selects Advanced Python From Webshop    \${name}, \${book}
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    This is always executed
-    Keyword data should be    ${tc.kws[2]}    User Juha Selects Playboy From Webshop    \${name}, \${book}
+    Check Keyword Data    ${tc.kws[2]}    User Juha Selects Playboy From Webshop    \${name}, \${book}
 
 Complex Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -18,21 +18,21 @@ Complex Embedded Arguments
 
 Embedded Arguments with BDD Prefixes
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword data should be    ${tc.kws[0]}    Given user x selects y from webshop
-    Keyword data should be    ${tc.kws[1]}    When user x selects y from webshop
-    Keyword data should be    ${tc.kws[2]}    Then user x selects y from webshop    \${x}, \${y}
+    Check Keyword Data    ${tc.kws[0]}    Given user x selects y from webshop
+    Check Keyword Data    ${tc.kws[1]}    When user x selects y from webshop
+    Check Keyword Data    ${tc.kws[2]}    Then user x selects y from webshop    \${x}, \${y}
 
 Argument Namespaces with Embedded Arguments
     Check Test Case    ${TEST NAME}
 
 Embedded Arguments as Variables
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword data should be    ${tc.kws[0]}    User \${42} Selects \${EMPTY} From Webshop    \${name}, \${item}
-    Keyword data should be    ${tc.kws[2]}    User \${name} Selects \${SPACE * 10} From Webshop    \${name}, \${item}
+    Check Keyword Data    ${tc.kws[0]}    User \${42} Selects \${EMPTY} From Webshop    \${name}, \${item}
+    Check Keyword Data    ${tc.kws[2]}    User \${name} Selects \${SPACE * 10} From Webshop    \${name}, \${item}
 
 Non-Existing Variable in Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword data should be    ${tc.kws[0]}    User \${non existing} Selects \${variables} From Webshop
+    Check Keyword Data    ${tc.kws[0]}    User \${non existing} Selects \${variables} From Webshop
 
 Non-Existing Variable in Embedded Arguments and Positional Arguments
     Check Test Case    ${TEST NAME}
@@ -73,15 +73,15 @@ Invalid Custom Regexp
 
 Escaping Values Given As Embedded Arguments
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword data should be    ${tc.kws[0]}    User \\\${nonex} Selects \\\\ From Webshop    \${name}, \${item}
-    Keyword data should be    ${tc.kws[2]}    User \\ Selects \\ \\ From Webshop    \${name}, \${item}
+    Check Keyword Data    ${tc.kws[0]}    User \\\${nonex} Selects \\\\ From Webshop    \${name}, \${item}
+    Check Keyword Data    ${tc.kws[2]}    User \\ Selects \\ \\ From Webshop    \${name}, \${item}
 
 Embedded Arguments Syntax Is Case Insensitive
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword data should be    ${tc.kws[0]}    x Gets y From The z
-    Keyword data should be    ${tc.kws[1]}    x gets y from the z
-    Keyword data should be    ${tc.kws[2]}    x GETS y from the z
-    Keyword data should be    ${tc.kws[3]}    x gets y FROM THE z
+    Check Keyword Data    ${tc.kws[0]}    x Gets y From The z
+    Check Keyword Data    ${tc.kws[1]}    x gets y from the z
+    Check Keyword Data    ${tc.kws[2]}    x GETS y from the z
+    Check Keyword Data    ${tc.kws[3]}    x gets y FROM THE z
 
 Embedded Arguments Syntax is Space Sensitive
     Check Test Case    ${TEST NAME}
@@ -91,11 +91,11 @@ Embedded Arguments Syntax is Underscore Sensitive
 
 Embedded Arguments In Resource File
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword data should be    ${tc.kws[0]}    embedded_args_in_uk_1.Juha Uses Resource File    \${ret}
+    Check Keyword Data    ${tc.kws[0]}    embedded_args_in_uk_1.Juha Uses Resource File    \${ret}
 
 Embedded Arguments In Resource File Used Explicitly
     ${tc} =    Check Test Case    ${TEST NAME}
-    Keyword data should be    ${tc.kws[0]}    embedded_args_in_uk_1.peke uses resource file    \${ret}
+    Check Keyword Data    ${tc.kws[0]}    embedded_args_in_uk_1.peke uses resource file    \${ret}
 
 Embedded And Positional Arguments Do Not Work Together
     Check Test Case    ${TEST NAME}

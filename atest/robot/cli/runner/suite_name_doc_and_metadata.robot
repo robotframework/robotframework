@@ -36,5 +36,5 @@ Overriding Name, Doc & Metadata And Escaping
     Should Be Equal    ${SUITE.metadata['Two Parts']}    three part VALUE
     Should Be Equal    ${SUITE.metadata['path']}    c:\\temp\\new.txt
     Should Be Equal    ${SUITE.metadata['esc']}    *?$&#!!
-    Check File Contains    ${OUTDIR}/log.html    Something
-    Check File Does Not Contain    ${OUTDIR}/log.html    something
+    File Should Contain    ${OUTDIR}/log.html    Something
+    File Should Not Contain    ${OUTDIR}/log.html    something

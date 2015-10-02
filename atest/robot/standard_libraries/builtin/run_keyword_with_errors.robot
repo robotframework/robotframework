@@ -22,7 +22,7 @@ Ignore Error Returns When Keyword Fails
 Ignore Error With User Keyword When Keywords Pass
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Keyword data should be    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
+    Check Keyword Data    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
 
 Ignore Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -88,7 +88,7 @@ Expected Error Should Be Returned
 Expect Error With User Keyword When Keywords Pass
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Hello world
-    Keyword data should be    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
+    Check Keyword Data    ${tc.kws[0].kws[0].kws[2]}    BuiltIn.Evaluate    \${ret}   1+2
 
 Expect Error With User Keyword When Keyword Fails
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -133,4 +133,4 @@ Expect Error When Access To Dictionary Nonexisting Key Syntax
 
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Ignore Error With Arguments That Needs To be Escaped
-    Check KW Arguments    ${tc.kws[3].kws[0]}    \@{NEEDS ESCAPING}
+    Check Keyword Data    ${tc.kws[3].kws[0]}    BuiltIn.Create List    args=\@{NEEDS ESCAPING}

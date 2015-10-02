@@ -11,11 +11,11 @@ Suite Metadata
     Should Be Equal    ${SUITE.metadata['Foo']}    M2
 
 Suite Setup
-    Keyword data should be     ${SUITE.setup}    BuiltIn.Log Many    args=S1, Comment, S2
+    Check Keyword Data     ${SUITE.setup}    BuiltIn.Log Many    args=S1, Comment, S2
     Setting multiple times deprecated    1    Suite Setup
 
 Suite Teardown
-    Keyword data should be     ${SUITE.teardown}    BuiltIn.Comment    args=S1, Log Many, S2
+    Check Keyword Data     ${SUITE.teardown}    BuiltIn.Comment    args=S1, Log Many, S2
     Setting multiple times deprecated    2    Suite Teardown
 
 Force and Default Tags
@@ -27,17 +27,17 @@ Force and Default Tags
 
 Test Setup
     ${tc} =    Check Test Case    Use Defaults
-    Keyword data should be     ${tc.setup}    BuiltIn.Log Many    args=T1, Comment, T2
+    Check Keyword Data     ${tc.setup}    BuiltIn.Log Many    args=T1, Comment, T2
     Setting multiple times deprecated    3    Test Setup
 
 Test Teardown
     ${tc} =    Check Test Case    Use Defaults
-    Keyword data should be     ${tc.teardown}    BuiltIn.Comment    args=T1, Log Many, T2
+    Check Keyword Data     ${tc.teardown}    BuiltIn.Comment    args=T1, Log Many, T2
     Setting multiple times deprecated    4    Test Teardown
 
 Test Template
     ${tc} =    Check Test Case    Use Defaults
-    Keyword data should be     ${tc.kws[0]}    BuiltIn.Sleep    args=1 s
+    Check Keyword Data     ${tc.kws[0]}    BuiltIn.Sleep    args=1 s
     Setting multiple times deprecated    6    Test Template
 
 Test Timeout
@@ -57,18 +57,18 @@ Test [Tags]
 
 Test [Setup]
     ${tc} =    Check Test Case    Test Settings
-    Keyword data should be     ${tc.setup}    BuiltIn.Log Many    args=Own, stuff, here
+    Check Keyword Data     ${tc.setup}    BuiltIn.Log Many    args=Own, stuff, here
     Setting multiple times deprecated in test case table    15    [Setup]
 
 Test [Teardown]
     ${tc} =    Check Test Case    Test Settings
-    Keyword data should be     ${tc.teardown}    BuiltIn.Log Many    args=And, also, here
+    Check Keyword Data     ${tc.teardown}    BuiltIn.Log Many    args=And, also, here
     Setting multiple times deprecated in test case table    16    [Teardown]
     Setting multiple times deprecated in test case table    17    [Teardown]
 
 Test [Template]
     ${tc} =    Check Test Case    Test Settings
-    Keyword data should be     ${tc.kws[0]}    BuiltIn.Sleep   args=1 s
+    Check Keyword Data     ${tc.kws[0]}    BuiltIn.Sleep   args=1 s
     Setting multiple times deprecated in test case table    18    [Template]
 
 Test [Timeout]
@@ -78,7 +78,7 @@ Test [Timeout]
 
 Keyword [Arguments]
     ${tc} =    Check Test Case    Keyword Settings
-    Keyword data should be    ${tc.kws[0]}    Keyword Settings    assign=\${ret}    args=arg
+    Check Keyword Data    ${tc.kws[0]}    Keyword Settings    assign=\${ret}    args=arg
     Check Log Message    ${tc.kws[0].msgs[0]}    Arguments: [ \${arg}='arg' ]    TRACE
     Setting multiple times deprecated in keyword table    20    [Arguments]    continuation=no
     Setting multiple times deprecated in keyword table    21    [Arguments]    continuation=no

@@ -126,7 +126,7 @@ Check Stats
     Should Be True    ${SUITE.statistics.all.failed} == 0
     Should Be Equal    ${SUITE.starttime}    ${NONE}
     Should Be Equal    ${SUITE.endtime}    ${NONE}
-    Is Valid Elapsed Time    ${SUITE.elapsedtime}
+    Elapsed Time Should Be Valid    ${SUITE.elapsedtime}
     Should Be True    ${SUITE.elapsedtime} <= ${ORIGELAPSED}
 
 Run and Check Suites

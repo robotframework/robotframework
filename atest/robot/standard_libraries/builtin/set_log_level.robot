@@ -23,7 +23,7 @@ Invalid Log Level Failure Is Catchable
     Check Test Case  ${TESTNAME}
 
 Log Level Goes To HTML
-    Check File Contains    ${OUTDIR}${/}set_log_level_log.html    KW Info to log
-    Check File Contains    ${OUTDIR}${/}set_log_level_log.html    KW Trace to log
-    Check File Contains    ${OUTDIR}${/}set_log_level_log.html    TC Info to log
-    Check File Contains    ${OUTDIR}${/}set_log_level_log.html    TC Trace to log
+    File Should Contain    ${OUTDIR}${/}set_log_level_log.html    KW Info to log
+    File Should Contain    ${OUTDIR}${/}set_log_level_log.html    KW Trace to log
+    File Should Contain    ${OUTDIR}${/}set_log_level_log.html    TC Info to log
+    File Should Contain    ${OUTDIR}${/}set_log_level_log.html    TC Trace to log
