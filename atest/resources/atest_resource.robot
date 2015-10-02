@@ -137,16 +137,6 @@ Check Keyword Data
     ${kwargs}=    Catenate    SEPARATOR=,${SPACE}    @{kw.args}
     Should match    ${kwargs}    ${args}
 
-# TODO: Move to TestCheckerLibrary to simplify implementation and reduce amount of kws in output.xml.
-Check Log Message
-    [Arguments]    ${item}    ${msg}    ${level}=INFO    ${html}=${False}    ${pattern}=
-    ${html} =    Set Variable If    ${html} or '${level}' == 'HTML'    ${True}    ${False}
-    ${level} =    Set Variable If    '${level}' == 'HTML'    INFO    ${level}
-    ${checker} =    Set Variable If    '${pattern}'    Should Match    Should Be Equal
-    Run Keyword    ${checker}    ${item.message.rstrip()}    ${msg.rstrip()}    Wrong log message
-    Should Be Equal    ${item.level}    ${level}    Wrong log level
-    Should Be Equal    ${item.html}    ${html}    Wrong HTML status
-
 Get Output File
     [Arguments]    ${path}
     [Documentation]    Output encoding avare helper

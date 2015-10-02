@@ -199,6 +199,12 @@ class TestCheckerLibrary:
         self.should_contain_keywords(test.keywords[kw_index], *kw_names)
         return test
 
+    def check_log_message(self, item, msg, level='INFO', html=False, pattern=''):
+        b = BuiltIn()
+        matcher = b.should_match if pattern else b.should_be_equal
+        matcher(item.message.rstrip(), msg.rstrip(), 'Wrong log message')
+        b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
+        b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 
 def process_suite(suite):
     for subsuite in suite.suites:
