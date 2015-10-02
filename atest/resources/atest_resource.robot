@@ -91,13 +91,6 @@ Set Execution Environment
 Copy Previous Outfile
     Copy File    ${OUTFILE}    ${OUTFILE COPY}
 
-# TODO: Move next two kws to TestCheckerLibrary? It could keep a reference to ${SUITE} itself.
-Check Test Case
-    [Arguments]    ${name}=${TESTNAME}    ${status}=${NONE}    ${message}=${NONE}
-    ${test} =    Get Test From Suite    ${SUITE}    ${name}
-    Check Test Status    ${test}    ${status}    ${message}    # directly
-    [Return]    ${test}
-
 Check Test Suite
     [Arguments]    ${name}    ${message}    ${status}=${None}
     ${suite} =    Get Test Suite    ${name}

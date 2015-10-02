@@ -72,6 +72,11 @@ class TestCheckerLibrary:
             suites.extend(self.get_suites_from_suite(subsuite, name))
         return suites
 
+    def check_test_case(self, testname, status=None, message=None):
+        test = self.get_test_from_suite(BuiltIn().get_variable_value('${SUITE}'), testname)
+        self.check_test_status(test, status=status, message=message)
+        return test
+
     def check_test_status(self, test, status=None, message=None):
         """Verifies that test's status and message are as expected.
 
