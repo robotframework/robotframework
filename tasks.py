@@ -188,10 +188,8 @@ def jar(jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
         remove_dist:  Control is 'dist' directory initially removed or not.
         jython_version: Jython version to use as a base. Must match version in
             `jython-standalone-<version>.jar` found from Maven central.
-            Currently `2.7.0` by default.
         pyyaml_version: Version of PyYAML that will be included in the
-            standalone jar. The version must be available from Pypi.
-            Currently `3.11` by default.
+            standalone jar. The version must be available from PyPI.
     """
     clean(remove_dist, create_dirs=True)
     jython_jar = get_jython_jar(jython_version)
@@ -207,15 +205,15 @@ def jar(jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
     return os.path.abspath(filename)
 
 def get_jython_jar(version):
-    return get_extlib_file('jython-standalone-{0}.jar'.format(version),
-                            ('http://search.maven.org/remotecontent?filepath=org/'
-                             'python/jython-standalone/{0}/jython-standalone-{0}.jar')
-                            .format(version))
+    filename = 'jython-standalone-{0}.jar'.format(version)
+    url = ('http://search.maven.org/remotecontent?filepath=org/python/'
+           'jython-standalone/{0}/{1}').format(version, filename)
+    return get_extlib_file(filename, url)
 
 def get_pyyaml(version):
-    return get_extlib_file(('PyYAML-{0}.tar.gz').format(version),
-                            ('https://pypi.python.org/packages/source/P'
-                             '/PyYAML/PyYAML-{0}.tar.gz').format(version))
+    filename = 'PyYAML-{0}.tar.gz'.format(version)
+    url = 'https://pypi.python.org/packages/source/P/PyYAML/{0}'.format(filename)
+    return get_extlib_file(filename, url)
 
 def get_extlib_file(filename, url):
     lib = 'ext-lib'
