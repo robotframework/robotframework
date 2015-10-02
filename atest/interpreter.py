@@ -138,7 +138,7 @@ class StandaloneInterpreter(Interpreter):
     @property
     def excludes(self):
         for exclude in ['no-standalone', 'no-jython', 'require-lxml',
-                        'require-docutils', 'require-yaml']:
+                        'require-docutils']:
             yield exclude
         for exclude in self._os_excludes:
             yield exclude

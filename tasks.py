@@ -7,9 +7,10 @@ See BUILD.rst for packaging and releasing instructions.
 """
 
 import os
-import os.path
 import re
 import shutil
+import tarfile
+import tempfile
 import time
 import urllib
 import zipfile
@@ -178,16 +179,19 @@ def wininst(remove_dist=False):
 
 
 @task
-def jar(jython_version='2.7.0', remove_dist=False):
+def jar(jython_version='2.7.0', pyyaml_version='3.11', remove_dist=False):
     """Create JAR distribution.
 
-    Downloads Jython JAR if needed.
+    Downloads Jython JAR and PyYAML if needed.
 
     Args:
         remove_dist:  Control is 'dist' directory initially removed or not.
         jython_version: Jython version to use as a base. Must match version in
             `jython-standalone-<version>.jar` found from Maven central.
             Currently `2.7.0` by default.
+        pyyaml_version: Version of PyYAML that will be included in the
+            standalone jar. The version must be available from Pypi.
+            Currently `3.11` by default.
     """
     clean(remove_dist, create_dirs=True)
     jython_jar = get_jython_jar(jython_version)
@@ -195,23 +199,45 @@ def jar(jython_version='2.7.0', remove_dist=False):
     compile_java_files(jython_jar)
     unzip_jar(jython_jar)
     copy_robot_files()
+    pyaml_archive = get_pyyaml(pyyaml_version)
+    extract_and_copy_pyyaml_files(pyyaml_version, pyaml_archive)
     compile_python_files(jython_jar)
     filename = create_robot_jar(get_version_from_file())
     announce()
     return os.path.abspath(filename)
 
 def get_jython_jar(version):
+    return get_extlib_file('jython-standalone-{0}.jar'.format(version),
+                            ('http://search.maven.org/remotecontent?filepath=org/'
+                             'python/jython-standalone/{0}/jython-standalone-{0}.jar')
+                            .format(version))
+
+def get_pyyaml(version):
+    return get_extlib_file(('PyYAML-{0}.tar.gz').format(version),
+                            ('https://pypi.python.org/packages/source/P'
+                             '/PyYAML/PyYAML-{0}.tar.gz').format(version))
+
+def get_extlib_file(filename, url):
     lib = 'ext-lib'
-    jar = os.path.join(lib, 'jython-standalone-{0}.jar'.format(version))
-    if os.path.exists(jar):
-        return jar
-    url = ('http://search.maven.org/remotecontent?filepath=org/python/'
-           'jython-standalone/{0}/jython-standalone-{0}.jar').format(version)
-    print 'Jython not found, downloading it from {0}.'.format(url)
+    path = os.path.join(lib, filename)
+    if os.path.exists(path):
+        return path
+    print '{0} not found, downloading it from {1}.'.format(filename, url)
     if not os.path.exists(lib):
         os.mkdir(lib)
-    urllib.urlretrieve(url, jar)
-    return jar
+    urllib.urlretrieve(url, path)
+    return path
+
+def extract_and_copy_pyyaml_files(version, filename, build_dir='build'):
+    t = tarfile.open(filename)
+    extracted = os.path.join(tempfile.gettempdir(), 'pyyaml-for-robot')
+    if os.path.isdir(extracted):
+        shutil.rmtree(extracted)
+    print 'Extracting {0} to {1}'.format(filename, extracted)
+    t.extractall(extracted)
+    source = os.path.join(extracted, 'PyYAML-{0}'.format(version), 'lib', 'yaml')
+    target = os.path.join(build_dir, 'Lib', 'yaml')
+    shutil.copytree(source, target, ignore=shutil.ignore_patterns('*.pyc'))
 
 def compile_java_files(jython_jar, build_dir='build'):
     root = os.path.join('src', 'java', 'org', 'robotframework')

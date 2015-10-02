@@ -562,7 +562,9 @@ The following example demonstrates a simple YAML file:
           pip_ installed, you can install it simply by running
           `pip install pyyaml`.
 
-          YAML support is new in Robot Framework 2.9.
+          YAML support is new in Robot Framework 2.9. Starting from
+          version 2.9.2, the `standalone JAR distribution`_ has
+          PyYAML included by default.
 
 YAML variable files can be used exactly like normal variable files
 from the command line using :option:`--variablefile` option, in the settings
