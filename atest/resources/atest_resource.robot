@@ -11,14 +11,14 @@ Library           read_interpreter.py
 Variables         atest_variables.py
 
 *** Variables ***
-${OUTDIR}         %{TEMPDIR}/output
+${OUTDIR}         %{TEMPDIR}${/}output
 ${OUTFILE}        ${OUTDIR}${/}output.xml
 ${SET SYSLOG}     True
 ${SYSLOG FILE}    ${OUTDIR}${/}syslog.txt
 ${SYSLOG LEVEL}   INFO
 ${STDOUT FILE}    ${OUTDIR}${/}stdout.txt
 ${STDERR FILE}    ${OUTDIR}${/}stderr.txt
-${OUTFILE COPY}   %{TEMPDIR}/output-copy.xml
+${OUTFILE COPY}   %{TEMPDIR}${/}output-copy.xml
 ${SUITE}          Set by TestCheckerLibrary.Process Output
 ${ERRORS}         -- ;; --
 ${USAGE_TIP}      \n\nTry --help for usage information.
