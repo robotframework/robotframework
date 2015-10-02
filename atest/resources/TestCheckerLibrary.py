@@ -43,7 +43,11 @@ class TestCheckerLibrary:
         set_suite_variable('$STATISTICS', result.statistics)
         set_suite_variable('$ERRORS', process_errors(result.errors))
 
-    def get_test_from_suite(self, suite, name):
+    def get_test_case(self, name):
+        suite = BuiltIn().get_variable_value('${SUITE}')
+        return self._get_test_from_suite(suite, name)
+
+    def _get_test_from_suite(self, suite, name):
         tests = self.get_tests_from_suite(suite, name)
         if len(tests) == 1:
             return tests[0]
@@ -58,26 +62,27 @@ class TestCheckerLibrary:
             tests.extend(self.get_tests_from_suite(subsuite, name))
         return tests
 
-    def get_suite_from_suite(self, suite, name):
-        suites = self.get_suites_from_suite(suite, name)
+    def get_test_suite(self, name):
+        suite = BuiltIn().get_variable_value('${SUITE}')
+        suites = self._get_suites_from_suite(suite, name)
         if len(suites) == 1:
             return suites[0]
         err = "No suite '%s' found from suite '%s'" if not suites \
             else "More than one suite '%s' found from suite '%s'"
         raise RuntimeError(err % (name, suite.name))
 
-    def get_suites_from_suite(self, suite, name):
+    def _get_suites_from_suite(self, suite, name):
         suites = [suite] if utils.eq(suite.name, name) else []
         for subsuite in suite.suites:
-            suites.extend(self.get_suites_from_suite(subsuite, name))
+            suites.extend(self._get_suites_from_suite(subsuite, name))
         return suites
 
     def check_test_case(self, testname, status=None, message=None):
-        test = self.get_test_from_suite(BuiltIn().get_variable_value('${SUITE}'), testname)
-        self.check_test_status(test, status=status, message=message)
+        test = self._get_test_from_suite(BuiltIn().get_variable_value('${SUITE}'), testname)
+        self._check_test_status(test, status=status, message=message)
         return test
 
-    def check_test_status(self, test, status=None, message=None):
+    def _check_test_status(self, test, status=None, message=None):
         """Verifies that test's status and message are as expected.
 
         Expected status and message can be given as parameters. If expected
@@ -152,7 +157,7 @@ class TestCheckerLibrary:
                 status, message = status.split(':', 1)
             else:
                 message = None
-            self.check_test_status(test, status, message)
+            self._check_test_status(test, status, message)
         assert not expected
 
     def _find_expected_status(self, test, expected):
@@ -199,8 +204,8 @@ class TestCheckerLibrary:
         suite = get_var('${SUITE}')
         name = config.get('name', get_var('${TEST NAME}'))
         kw_index = int(config.get('kw_index', 0))
-        test = self.get_test_from_suite(suite, name)
-        self.check_test_status(test)
+        test = self._get_test_from_suite(suite, name)
+        self._check_test_status(test)
         self.should_contain_keywords(test.keywords[kw_index], *kw_names)
         return test
 

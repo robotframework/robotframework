@@ -98,17 +98,6 @@ Check Test Suite
     Should Be Equal    ${suite.full_message}    ${message}
     [Return]    ${suite}
 
-# TODO: Are next two keywords used somewhere?
-Get Test Case
-    [Arguments]    ${name}
-    ${test} =    Get Test From Suite    ${SUITE}    ${name}
-    [Return]    ${test}
-
-Get Test Suite
-    [Arguments]    ${name}
-    ${suite} =    Get Suite From Suite    ${SUITE}    ${name}  #move
-    [Return]    ${suite}
-
 Check Test Doc
     [Arguments]    ${name}    @{expected}
     ${tc} =    Check Test Case    ${name}
