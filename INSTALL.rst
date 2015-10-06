@@ -452,6 +452,10 @@ If you want to `post-process outputs`_ using Rebot or use other built-in
 For more information about the different commands, execute the JAR without
 arguments.
 
+In addition to the Python standard library and Robot Framework modules, the
+standalone JAR versions starting from 2.9.2 also contain the PyYAML dependency
+needed to handle yaml variable files.
+
 Manual installation
 ~~~~~~~~~~~~~~~~~~~
 
