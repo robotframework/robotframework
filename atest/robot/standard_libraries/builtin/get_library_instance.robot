@@ -25,3 +25,9 @@ Non-existing library should cause catchable error
 Library scopes
     Check Test Case  ${TESTNAME} 1
     Check Test Case  ${TESTNAME} 2
+
+Get all libraries
+    Check Test Case  ${TESTNAME}
+
+Get all libraries gets a copy
+    Check Test Case  ${TESTNAME}

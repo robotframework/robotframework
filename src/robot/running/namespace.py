@@ -206,6 +206,10 @@ class Namespace(object):
     def get_library_instance(self, libname):
         return self._kw_store.get_library(libname).get_instance()
 
+    def get_libraries(self):
+        return dict((k, v.get_instance())
+                    for k, v in self._kw_store.libraries.items())
+
     def reload_library(self, libname_or_instance):
         library = self._kw_store.get_library(libname_or_instance)
         library.reload()

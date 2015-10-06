@@ -2930,7 +2930,7 @@ class _Misc(_BuiltInBase):
             raise RuntimeError("'Remove Tags' cannot be used in suite teardown.")
         self.log('Removed tag%s %s.' % (s(tags), seq2str(tags)))
 
-    def get_library_instance(self, name):
+    def get_library_instance(self, name=None, all=False):
         """Returns the currently active instance of the specified test library.
 
         This keyword makes it easy for test libraries to interact with
@@ -2950,7 +2950,16 @@ class _Misc(_BuiltInBase):
         pass the returned library instance to another keyword. If a
         library is imported with a custom name, the ``name`` used to get
         the instance must be that name and not the original library name.
+
+        If the optional argument ``all`` is given a true value, then a
+        dictionary mapping all library names to instances will be returned.
+        This feature is new in Robot Framework 2.9.2.
+
+        Example:
+        | &{all libs} = | Get library instance | all=True |
         """
+        if all:
+            return self._namespace.get_libraries()
         try:
             return self._namespace.get_library_instance(name)
         except DataError as err:

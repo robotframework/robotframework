@@ -7,6 +7,7 @@ Library  ParameterLibrary  second  WITH NAME  2nd
 Library  libraryscope.Test
 Library  libraryscope.Suite
 Library  libraryscope.Global
+Library  Collections
 
 
 *** Test Cases ***
@@ -64,3 +65,31 @@ Library scopes 2
     Log  ${test.should_be_registered('Test 2')}
     Log  ${suite.should_be_registered('Suite 1', 'Suite 2')}
     Log  ${global.should_be_registered('Global 1', 'Global 2')}
+
+Get all libraries
+    &{lib dict} =  Get library instance   all=True
+    Should contain keys  ${lib dict}
+    ...  OperatingSystem
+    ...  module_library
+    ...  1st
+    ...  2nd
+    ...  libraryscope.Test
+    ...  libraryscope.Suite
+    ...  libraryscope.Global
+    ...  Collections
+    ...  BuiltIn
+    ...  String
+    Should Be Equal  ${lib_dict.String.replace_string('Hello', 'e', 'i')}  Hillo
+
+Get all libraries gets a copy
+    &{lib_dict} =  Get library instance   all=True
+    set to dictionary  ${lib_dict}   foo=bar
+    Dictionary should contain key   ${lib_dict}   foo
+    &{lib_dict} =  Get library instance   all=True
+    Dictionary should not contain key   ${lib_dict}   foo
+
+*** Keywords ***
+Should contain keys
+    [Arguments]  ${dict}  @{keys}
+    :FOR  ${key}  IN  @{keys}
+    \   Dictionary should contain key  ${dict}  ${key}
