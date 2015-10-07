@@ -69,7 +69,7 @@ acceptance tests, execute the ``atest/robot`` folder entirely::
 
 The command above will execute all tests, but often you may want to skip
 for example `telnet tests`_ and tests requiring manual interaction. These
-tests are marked with the ``no-ci`` tag and can be excluded from the test run:
+tests are marked with the ``no-ci`` tag and can be excluded from the test run::
 
     python atest/run.py python --exclude no-ci atest/robot
 
