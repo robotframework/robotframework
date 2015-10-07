@@ -101,10 +101,10 @@ The tests are using the following tags:
 - ``telnet`` require a telnet server with test account running at localhost (see `Telnet tests`_)
 - ``no-ci`` tests which are not executed at continuous integration (for example if they have ``manual`` or ``telnet`` tags)
 - ``screenshot`` tests for the screenshot library
-- ``require-jython`` require the interpreter to be jython
-- ``require-windows`` require the operating system to be windows
+- ``require-jython`` require the interpreter to be Jython
+- ``require-windows`` require the operating system to be Windows
 - ``require-lxml`` require lxml dependency to be installed
-- ``require-et13`` require element tree version 1.3
+- ``require-et13`` require ElementTree version 1.3
 - ``require-docutils`` require docutils to be installed
 
 In addition to these, there are various tags starting with prefix ``no-``.
