@@ -67,6 +67,12 @@ acceptance tests, execute the ``atest/robot`` folder entirely::
 
     python atest/run.py python atest/robot
 
+The command above will execute all tests, but often you may want to skip
+for example `telnet tests`_ and tests requiring manual interaction. These
+tests are marked with the ``no-ci`` tag and can be excluded from the test run:
+
+    python atest/run.py python --exclude no-ci atest/robot
+
 A sub test suite can be executed simply by running the folder or file
 containing it. On modern machines running all acceptance tests ought to
 take less than ten minutes with Python, but with Jython the execution time
@@ -81,13 +87,30 @@ on different operating systems. Since running tests on Jython takes quite a
 lot time, it is sometimes a good idea to run only those tests that are not
 executed with Python with it::
 
-    python atest/run.py jython --exclude pybot atest/robot
-
-**FIXME:** We don't anymore have pybot/jybot tags!! Should explain tags we have.
+    python atest/run.py jython --include require-jython atest/robot
 
 The results of the test execution are written to ``results`` folder. The
 directory contains output, log and report files of the execution as
 well as a separate directory for other outputs.
+
+Test tags
+---------
+The tests are using the following tags:
+
+- ``manual`` require manual interaction from user (for example clicking dialogs)
+- ``telnet`` require a telnet server with test account running at localhost (see `Telnet tests`_)
+- ``no-ci`` tests which are not executed at continuous integration (for example if they have ``manual`` or ``telnet`` tags)
+- ``screenshot`` tests for the screenshot library
+- ``require-jython`` require the interpreter to be jython
+- ``require-windows`` require the operating system to be windows
+- ``require-lxml`` require lxml dependency to be installed
+- ``require-et13`` require element tree version 1.3
+- ``require-docutils`` require docutils to be installed
+
+In addition to these, there are various tags starting with prefix ``no-``.
+(For example ``no-jython``) These tags are set to be excluded based on the
+environment by the ``run.py`` script and they are excluded from the tag
+statistics in the generated report.
 
 Test data
 ---------
@@ -125,19 +148,27 @@ Tests related to YAML variable files require `PyYAML <http://pyyaml.org/>`_
 module. You should be able to install it with ``pip install pyyaml``.
 The Python version of the module is enough so it is not a problem if
 installing the C version fails due to a missing compiler or otherwise.
+These tests are tagged with ``require-yaml`` and can be skipped by excluding
+them:
+
+    python atest/run.py python --exclude require-yaml atest/robot
 
 XML library tests verifying using `lxml <http://lxml.de/>`_ module naturally
-require having that module installed. Because installing it is not always
-trivial, these tests are not considered critical if it is not installed.
+require having that module installed. Tests requiring lxml are tagged with
+``require-lxml``
 
 Tests related to parsing reStructuredText test data files require
 `docutils <http://docutils.sourceforge.net/>`_ module. You can install it
-with ``pip install docutils``, but also these tests are non-critical if
-the module is not installed.
+with ``pip install docutils``, but you can also skip these tests by excluding
+the tag ``require-docutils``.
+
+All dependencies can be installed on a single step using the
+`<requirements.txt>`_ file with ``pip install -r atest/requirements.txt``
 
 Telnet tests
 ------------
 
-Telnet test are not critical by default and running them requires some
-extra setup. Instructions how to run them can be found from
-`<testdata/standard_libraries/telnet/README.rst>`_.
+Running telnet tests requires some extra setup. Instructions how to run them
+can be found from `<testdata/standard_libraries/telnet/README.rst>`_.
+If you dont want to run unprotected telnet server on your machine, you can
+always skip these tests by excluding the tag ``telnet`` or ``no-ci``.
