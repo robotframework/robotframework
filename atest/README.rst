@@ -80,37 +80,14 @@ is considerably longer. This is due to Jython being somewhat slower than
 Python in general, but the main reason is that the JVM is started by
 acceptance dozens of times and it always takes few seconds.
 
-When acceptance tests are run, both Python and Jython interpreter should be
-used to verify interoperability with both supported interpreters. Tests
-can (and should) also be run using different Python and Jython versions and
-on different operating systems. Since running tests on Jython takes quite a
-lot time, it is sometimes a good idea to run only those tests that are not
-executed with Python with it::
-
-    python atest/run.py jython --include require-jython atest/robot
+When acceptance tests are run, Python, Jython, and IronPython interpreters
+should be used to verify interoperability with all supported interpreters.
+Tests can (and should) also be run using different interpreter versions and
+on different operating systems.
 
 The results of the test execution are written to ``results`` folder. The
 directory contains output, log and report files of the execution as
 well as a separate directory for other outputs.
-
-Test tags
----------
-The tests are using the following tags:
-
-- ``manual`` require manual interaction from user (for example clicking dialogs)
-- ``telnet`` require a telnet server with test account running at localhost (see `Telnet tests`_)
-- ``no-ci`` tests which are not executed at continuous integration (for example if they have ``manual`` or ``telnet`` tags)
-- ``screenshot`` tests for the screenshot library
-- ``require-jython`` require the interpreter to be Jython
-- ``require-windows`` require the operating system to be Windows
-- ``require-lxml`` require lxml dependency to be installed
-- ``require-et13`` require ElementTree version 1.3
-- ``require-docutils`` require docutils to be installed
-
-In addition to these, there are various tags starting with prefix ``no-``.
-(For example ``no-jython``) These tags are set to be excluded based on the
-environment by the ``run.py`` script and they are excluded from the tag
-statistics in the generated report.
 
 Test data
 ---------
@@ -141,34 +118,98 @@ structure of ``robot`` and ``testdata`` folders. Their current structure
 follows Robot Framework's old internal module structure and it is far
 from ideal nowadays.
 
-Additional modules
-------------------
+Test tags
+---------
 
-Tests related to YAML variable files require `PyYAML <http://pyyaml.org/>`_
-module. You should be able to install it with ``pip install pyyaml``.
-The Python version of the module is enough so it is not a problem if
-installing the C version fails due to a missing compiler or otherwise.
-These tests are tagged with ``require-yaml`` and can be skipped by excluding
-them:
+The tests on the running side (``atest/robot``) contains tags that are used
+to include or exclude them based on the platform and required dependencies.
+Selecting tests based on the platform is done automatically by the `<run.py>`__
+script, but additional selection can be done by the user to avoid running
+tests that require dependencies that are not available.
 
-    python atest/run.py python --exclude require-yaml atest/robot
+``manual``
+  Require manual interaction from user. Used with Dialogs library tests.
 
-XML library tests verifying using `lxml <http://lxml.de/>`_ module naturally
-require having that module installed. Tests requiring lxml are tagged with
-``require-lxml``
+``telnet``
+  Require a telnet server with test account running at localhost. See
+  `Telnet tests`_ for details.
 
-Tests related to parsing reStructuredText test data files require
-`docutils <http://docutils.sourceforge.net/>`_ module. You can install it
-with ``pip install docutils``, but you can also skip these tests by excluding
-the tag ``require-docutils``.
+``screenshot``
+  Tests for the screenshot library. May require extra modules depending
+  on the platform.
 
-All dependencies can be installed on a single step using the
-`<requirements.txt>`_ file with ``pip install -r atest/requirements.txt``
+``no-ci``
+  Tests which are not executed at continuous integration. Contains all tests
+  tagged with ``manual`` or ``telnet``.
+
+``require-jython``
+  Require the interpreter to be Jython. Mainly used with tests related to
+  Java integration.
+
+``require-windows``
+  Require the operating system to be Windows.
+
+``require-yaml``, ``require-docutils``, ``require-lxml``
+  Require lxml, docutils or PyYAML module to be installed, respectively.
+  See `Required modules`_ for details.
+
+``require-et13``
+  Require ElementTree version 1.3. Automatically set when running with
+  Python 2.6 or IronPython.
+
+``no-windows``, ``no-osx``, ``no-jython``, ``no-ipy``,  ...
+  Tests to be excluded on different operating systems or Python interpreter
+  versions. Set automatically.
+
+Examples::
+
+    # Exclude tests requiring manual interaction or running telnet server.
+    python atest/run.py python --exclude no-ci atest/robot
+
+    # Same as the above but also exclude tests requiring docutils.
+    python atest/run.py python -e no-ci -e require-docutils atest/robot
+
+    # Run only tests related to Java integration. This is considerably faster
+    # than running all tests on Jython.
+    python atest/run.py jython --include require-jython atest/robot
+
+Required modules
+----------------
+
+Certain Robot Framework features require optional external modules to be
+installed, and naturally tests related to these features require same modules
+as well:
+
+- `docutils <http://docutils.sourceforge.net/>`_ is needed with tests related
+  to parsing test data in reStructuredText format.
+- `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
+   variable files.
+- `lxml <http://lxml.de/>`__ is needed with XML library tests.
+
+All of the above modules can be installed using ``pip``. It is possible to
+install them individually or in a one go by using the provided
+`<requirements.txt>`__ file::
+
+    # Install individually
+    pip install 'docutils>=0.9'
+    pip install pyyaml
+    pip install lxml
+
+    # Install using requirements.txt
+    pip install -r atest/requirements.txt
+
+Notice that the lxml module requires compilation on Linux. You can also install
+it using a system package manager like ``apt-get install python-lxml``.
+Additionally lxml is not compatible with Jython or IronPython.
+
+If a required module is not installed, it is possible to exclude tests
+from the execution by using tags as explained in the `Test tags`_ section.
+The lxml related tests are excluded with Jython and IronPython automatically.
 
 Telnet tests
 ------------
 
 Running telnet tests requires some extra setup. Instructions how to run them
 can be found from `<testdata/standard_libraries/telnet/README.rst>`_.
-If you dont want to run unprotected telnet server on your machine, you can
-always skip these tests by excluding the tag ``telnet`` or ``no-ci``.
+If you don't want to run an unprotected telnet server on your machine, you can
+always skip these tests by excluding tests with a tag ``telnet`` or ``no-ci``.
