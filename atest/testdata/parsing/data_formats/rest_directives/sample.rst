@@ -21,6 +21,20 @@ We have a devious plan to rule the world with robots.
    | Variables  | ../resources/variables.py
    | Library    | OperatingSystem | | | | | | | | | | | | | | | |
 
+The following are non-standard docutils directives, and we should ignore
+errors when parsing this.
+
+Testing also a :term:`test` as it should generate an error.
+
+.. highlight:: robotframework
+
+.. todo::
+   This is not really a todo so you have to do nothing.
+
+.. automodule:: some_module
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Please ignore me and the non-robotframework code blocks below.
 
