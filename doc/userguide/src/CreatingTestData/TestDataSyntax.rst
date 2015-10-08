@@ -531,9 +531,10 @@ file. When executing a single reST file, Robot Framework will show the error
 on the console. When executing a directory, such parsing errors will
 generally be ignored.
 
-Starting from Robot Framework 2.9.2 errors below level `SEVERE` are ignored when
-running tests to avoid noise about non-standard directives. These errors can be
-seen when processing files without robot if needed.
+Starting from Robot Framework 2.9.2, errors below level `SEVERE` are ignored
+when running tests to avoid noise about non-standard directives and other such
+markup. This may hide also real errors, but they can be seen when processing
+files normally.
 
 Test data tables
 ----------------
