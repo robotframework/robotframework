@@ -27,7 +27,10 @@ def RestReader():
         def read(self, rstfile, rawdata):
             doctree = publish_doctree(
                 rstfile.read(), source_path=rstfile.name,
-                settings_overrides={'input_encoding': 'UTF-8'})
+                settings_overrides={
+                    'input_encoding': 'UTF-8',
+                    'report_level': 4  # only severe messages
+                })
             store = RobotDataStorage(doctree)
             if store.has_data():
                 return self._read_text(store.get_data(), rawdata)
