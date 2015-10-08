@@ -39,24 +39,23 @@ genrunner.py
     Usage:  genrunner.py testdata/path/data.robot [robot/path/runner.robot]
 
 robot/
-    Contains actual acceptance test cases.
+    Contains actual acceptance test cases. See `Test data`_ section for details.
 
 resources/
-    Resources needed by acceptance tests in ``robot`` folder.
+    Resources needed by acceptance tests in the ``robot`` folder.
 
 testdata/
-    Contains test data used by acceptance tests. This test data consists
-    mainly of test cases that are run by actual acceptance tests in
-    the ``robot`` folder.
+    Contains test cases that are run by actual acceptance tests in the
+    ``robot`` folder. See `Test data`_ section for details.
 
 testresources/
-    Contains resources needed by test cases in ``testdata`` folder.
+    Contains resources needed by test cases in the ``testdata`` folder.
     Some of these resources are also used by unit tests.
 
 results/
-    The place for test execution results like reports, logs and outputs.
-    This directory is generated when acceptance tests are executed. It
-    is in ``.gitignore`` and can be safely deleted any time.
+    The place for test execution results. This directory is generated when
+    acceptance tests are executed. It is in ``.gitignore`` and can be safely
+    deleted any time.
 
 Running acceptance tests
 ------------------------
@@ -80,20 +79,20 @@ is considerably longer. This is due to Jython being somewhat slower than
 Python in general, but the main reason is that the JVM is started by
 acceptance dozens of times and it always takes few seconds.
 
-When acceptance tests are run, Python, Jython, and IronPython interpreters
-should be used to verify interoperability with all supported interpreters.
-Tests can (and should) also be run using different interpreter versions and
+Before a release tests should be executed separately using  Python, Jython, and
+IronPython to verify interoperability with all supported interpreters. Tests
+should also be run using different interpreter versions (when applicable) and
 on different operating systems.
 
-The results of the test execution are written to ``results`` folder. The
-directory contains output, log and report files of the execution as
-well as a separate directory for other outputs.
+The results of the test execution are written into an interpreter specific
+directory under the ``atest/results`` directory. Temporary outputs created
+during the execution are created under the system temporary directory.
 
 Test data
 ---------
 
-The test data is divided to two, test data part (``testdata`` folder) and
-running part (``robot`` folder). Test data side contains test cases for
+The test data is divided to two, test data part (``atest/testdata`` folder) and
+running part (``atest/robot`` folder). Test data side contains test cases for
 different features. Running side contains the actual acceptance test cases
 that run the test cases on the test data side and verify their results.
 
@@ -107,16 +106,6 @@ error exactly. If the error message starts with ``REGEXP:``, ``GLOB:`` or
 ``STARTS:``, the expected error is considered to be a regexp or glob pattern
 matching the actual error, or to contain the beginning of the error. All
 other details can be tested also, but that logic is in the running side.
-
-These acceptance tests are in general *not* good examples of
-well-written test cases. This is mainly due to us learning how to
-write good test cases with Robot Framework while developing it, and so
-far there has not been time for refactoring them. With better tools
-refactoring is getting easier and hopefully we can do something for
-these tests in the future. The first step would be reorganizing the
-structure of ``robot`` and ``testdata`` folders. Their current structure
-follows Robot Framework's old internal module structure and it is far
-from ideal nowadays.
 
 Test tags
 ---------
@@ -135,7 +124,7 @@ tests that require dependencies that are not available.
   `Telnet tests`_ for details.
 
 ``screenshot``
-  Tests for the screenshot library. May require extra modules depending
+  Tests for the Screenshot library. May require extra modules depending
   on the platform.
 
 ``no-ci``
