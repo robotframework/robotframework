@@ -2958,8 +2958,8 @@ class _Misc(_BuiltInBase):
         Example:
         | &{all libs} = | Get library instance | all=True |
         """
-        if all:
-            return self._namespace.get_libraries()
+        if is_truthy(all):
+            return self._namespace.get_library_instances()
         try:
             return self._namespace.get_library_instance(name)
         except DataError as err:

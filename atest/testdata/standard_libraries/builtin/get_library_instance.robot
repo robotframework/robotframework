@@ -9,7 +9,6 @@ Library  libraryscope.Suite
 Library  libraryscope.Global
 Library  Collections
 
-
 *** Test Cases ***
 Library imported normally
     ${lib} =  Get Library Instance  BuiltIn
@@ -57,8 +56,8 @@ Library scopes 1
 
 Library scopes 2
     ${test} =  Get Library Instance  libraryscope.Test
-    ${suite} =  Get Library Instance  libraryscope.Suite
-    ${global} =  Get Library Instance  libraryscope.Global
+    ${suite} =  Get Library Instance  libraryscope.Suite  all=False
+    ${global} =  Get Library Instance  libraryscope.Global  all=
     Log  ${test.register('Test 2')}
     Log  ${suite.register('Suite 2')}
     Log  ${global.register('Global 2')}
@@ -67,8 +66,8 @@ Library scopes 2
     Log  ${global.should_be_registered('Global 1', 'Global 2')}
 
 Get all libraries
-    &{lib dict} =  Get library instance   all=True
-    Should contain keys  ${lib dict}
+    &{libs} =  Get library instance   all=True
+    Should contain keys  ${libs}
     ...  OperatingSystem
     ...  module_library
     ...  1st
@@ -79,14 +78,14 @@ Get all libraries
     ...  Collections
     ...  BuiltIn
     ...  String
-    Should Be Equal  ${lib_dict.String.replace_string('Hello', 'e', 'i')}  Hillo
+    Should Be Equal  ${libs.String.replace_string('Hello', 'e', 'i')}  Hillo
 
 Get all libraries gets a copy
-    &{lib_dict} =  Get library instance   all=True
-    set to dictionary  ${lib_dict}   foo=bar
-    Dictionary should contain key   ${lib_dict}   foo
-    &{lib_dict} =  Get library instance   all=True
-    Dictionary should not contain key   ${lib_dict}   foo
+    &{libs} =  Get library instance  name is ignored when all is true  all=True
+    Set to dictionary  ${libs}   foo=bar
+    Dictionary should contain key   ${libs}   foo
+    &{libs} =  Get library instance   all=True
+    Dictionary should not contain key   ${libs}   foo
 
 *** Keywords ***
 Should contain keys
