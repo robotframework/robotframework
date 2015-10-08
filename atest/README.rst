@@ -159,7 +159,7 @@ tests that require dependencies that are not available.
 
 ``no-windows``, ``no-osx``, ``no-jython``, ``no-ipy``,  ...
   Tests to be excluded on different operating systems or Python interpreter
-  versions. Set automatically.
+  versions. Excluded automatically.
 
 Examples::
 
