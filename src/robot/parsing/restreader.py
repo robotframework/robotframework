@@ -29,7 +29,7 @@ def RestReader():
                 rstfile.read(), source_path=rstfile.name,
                 settings_overrides={
                     'input_encoding': 'UTF-8',
-                    'report_level': 4  # only severe messages
+                    'report_level': 'SEVERE'
                 })
             store = RobotDataStorage(doctree)
             if store.has_data():
