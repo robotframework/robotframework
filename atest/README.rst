@@ -154,7 +154,7 @@ tests that require dependencies that are not available.
   See `Required modules`_ for details.
 
 ``require-et13``
-  Require ElementTree version 1.3. Automatically set when running with
+  Require ElementTree version 1.3. Automatically excluded when running with
   Python 2.6 or IronPython.
 
 ``no-windows``, ``no-osx``, ``no-jython``, ``no-ipy``,  ...
