@@ -3,7 +3,9 @@ Library           OperatingSystem
 Library           module_library
 Library           ExampleJavaLibrary
 Library           ParameterLibrary    first    WITH NAME    1st
-Library           ParameterLibrary    second    WITH NAME    2nd
+Library           ParameterLibrary    second    WITH NAME    2nd has spaces
+Library           ParameterLibrary    same1    WITH NAME    Same when normalized
+Library           ParameterLibrary    same2    WITH NAME    samewhen N O R M A L ized
 Library           libraryscope.Test
 Library           libraryscope.Suite
 Library           libraryscope.Global
@@ -30,9 +32,25 @@ Library with alias
     [Documentation]    FAIL No library 'ParameterLibrary' found.
     ${lib} =    Get Library Instance    1st
     Should Be Equal    ${lib.parameters()[0]}    first
-    ${lib} =    Get Library Instance    2nd
+    ${lib} =    Get Library Instance    2nd has spaces
     Should Be Equal    ${lib.parameters()[0]}    second
     Get Library Instance    ParameterLibrary
+
+Non-exact name
+    ${lib} =    Get Library Instance    1 S T
+    Should Be Equal    ${lib.parameters()[0]}    first
+    ${lib} =    Get Library Instance    2NDHASSPACES
+    Should Be Equal    ${lib.parameters()[0]}    second
+
+Same name when normalized matching exactly
+    ${lib} =    Get Library Instance    Same when normalized
+    Should Be Equal    ${lib.parameters()[0]}    same1
+    ${lib} =    Get Library Instance    samewhen N O R M A L ized
+    Should Be Equal    ${lib.parameters()[0]}    same2
+
+Same name when normalized matching multiple
+    [Documentation]    FAIL Multiple libraries matching 'Same When Normalized' found.
+    Get Library Instance    Same When Normalized
 
 `Import Library` keyword
     Import Library    String
@@ -70,7 +88,7 @@ Get all libraries
     ...    OperatingSystem
     ...    module_library
     ...    1st
-    ...    2nd
+    ...    2nd has spaces
     ...    libraryscope.Test
     ...    libraryscope.Suite
     ...    libraryscope.Global

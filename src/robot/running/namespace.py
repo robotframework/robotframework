@@ -238,21 +238,28 @@ class KeywordStore(object):
         self.search_order = ()
 
     def get_library(self, name_or_instance):
-        try:
-            if is_string(name_or_instance):
-                return self.libraries[name_or_instance.replace(' ', '')]
-            else:
-                return self._get_lib_by_instance(name_or_instance)
-        except KeyError:
-            raise DataError("No library '%s' found." % name_or_instance)
+        if is_string(name_or_instance):
+            return self._get_lib_by_name(name_or_instance)
+        return self._get_lib_by_instance(name_or_instance)
+
+    def _get_lib_by_name(self, name):
+        if name in self.libraries:
+            return self.libraries[name]
+        matches = [lib for lib in self.libraries.values() if eq(lib.name, name)]
+        if len(matches) == 1:
+            return matches[0]
+        self._no_library_found(name, multiple=bool(matches))
+
+    def _no_library_found(self, name, multiple=False):
+        if multiple:
+            raise DataError("Multiple libraries matching '%s' found." % name)
+        raise DataError("No library '%s' found." % name)
 
     def _get_lib_by_instance(self, instance):
-        if instance is None:
-            raise KeyError
         for lib in self.libraries.values():
-            if lib.get_instance(create=False) == instance:
+            if lib.get_instance(create=False) is instance:
                 return lib
-        raise KeyError
+        self._no_library_found(instance)
 
     def get_handler(self, name):
         handler = self._get_handler(name)

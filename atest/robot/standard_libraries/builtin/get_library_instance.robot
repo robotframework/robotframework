@@ -16,6 +16,15 @@ Java library
 Library with alias
     Check Test Case    ${TESTNAME}
 
+Non-exact name
+    Check Test Case    ${TESTNAME}
+
+Same name when normalized matching exactly
+    Check Test Case    ${TESTNAME}
+
+Same name when normalized matching multiple
+    Check Test Case    ${TESTNAME}
+
 `Import Library` keyword
     Check Test Case    ${TESTNAME}
 
