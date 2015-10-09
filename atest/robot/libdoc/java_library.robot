@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/Example.java
-Force Tags        require-jython
+Force Tags        require-jython    require-tools.jar
 Resource          libdoc_resource.robot
 
 *** Test Cases ***

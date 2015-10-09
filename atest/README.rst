@@ -146,6 +146,10 @@ tests that require dependencies that are not available.
   Require ElementTree version 1.3. Automatically excluded when running with
   Python 2.6 or IronPython.
 
+``require-tools.jar``
+  Require the tools.jar from JVM to be in ``CLASSPATH`` environment variable.
+  This is only needed on some libdoc tests on jython.
+
 ``no-windows``, ``no-osx``, ``no-jython``, ``no-ipy``,  ...
   Tests to be excluded on different operating systems or Python interpreter
   versions. Excluded automatically.
