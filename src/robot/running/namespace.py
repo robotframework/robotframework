@@ -238,6 +238,8 @@ class KeywordStore(object):
         self.search_order = ()
 
     def get_library(self, name_or_instance):
+        if name_or_instance is None:
+            raise DataError("Library can not be None.")
         if is_string(name_or_instance):
             return self._get_lib_by_name(name_or_instance)
         return self._get_lib_by_instance(name_or_instance)

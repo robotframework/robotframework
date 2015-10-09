@@ -46,7 +46,7 @@ Reloading non-existing instance
     Reload library    ${1}
 
 Reloading None fails
-    [Documentation]   FAIL No library 'None' found.
+    [Documentation]   FAIL Library can not be None.
     Reload library    ${None}
 
 Static library
