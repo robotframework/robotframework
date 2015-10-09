@@ -116,41 +116,43 @@ Selecting tests based on the platform is done automatically by the `<run.py>`__
 script, but additional selection can be done by the user to avoid running
 tests that require dependencies that are not available.
 
-``manual``
+manual
   Require manual interaction from user. Used with Dialogs library tests.
 
-``telnet``
+telnet
   Require a telnet server with test account running at localhost. See
   `Telnet tests`_ for details.
 
-``no-ci``
+no-ci
   Tests which are not executed at continuous integration. Contains all tests
   tagged with ``manual`` or ``telnet``.
 
-``require-jython``
+require-jython
   Require the interpreter to be Jython. Mainly used with tests related to
   Java integration.
 
-``require-windows``
+require-windows
   Require the operating system to be Windows.
 
-``require-yaml``, ``require-docutils``, ``require-lxml``, ``require-screenshot``
+require-yaml, require-docutils, require-lxml, require-screenshot
   Require lxml, docutils, PyYAML, or platform specific screenshot module to
   be installed, respectively. See `Required modules`_ for details.
 
-``require-et13``
+require-et13
   Require ElementTree version 1.3. Automatically excluded when running with
   Python 2.6 or IronPython.
 
-``require-tools.jar``
+require-tools.jar
   Require the tools.jar from JVM to be in ``CLASSPATH`` environment variable.
-  This is only needed on some libdoc tests on jython.
+  This is only needed on some Libdoc tests on Jython.
 
-``no-windows``, ``no-osx``, ``no-jython``, ``no-ipy``,  ...
+no-windows, no-osx, no-jython, no-ipy,  ...
   Tests to be excluded on different operating systems or Python interpreter
   versions. Excluded automatically.
 
-Examples::
+Examples:
+
+.. code:: bash
 
     # Exclude tests requiring manual interaction or running telnet server.
     python atest/run.py python --exclude no-ci atest/robot
@@ -172,7 +174,7 @@ as well:
 - `docutils <http://docutils.sourceforge.net/>`_ is needed with tests related
   to parsing test data in reStructuredText format.
 - `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
-   variable files.
+  variable files.
 - `lxml <http://lxml.de/>`__ is needed with XML library tests.
 - Screenshot library tests require a platform dependent module that can take
   screenshots. See `Screenshot library documentation`__ for details.
@@ -180,7 +182,9 @@ as well:
 __ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
 
 It is possible to install docutils, PyYAML and lxml using using ``pip`` either
-individually or by using the provided `<requirements.txt>`__ file::
+individually or by using the provided `<requirements.txt>`__ file:
+
+.. code:: bash
 
     # Install individually
     pip install 'docutils>=0.9'
