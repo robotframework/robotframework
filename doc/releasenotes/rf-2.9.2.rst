@@ -4,11 +4,9 @@ Robot Framework 2.9.2
 
 .. default-role:: code
 
-Robot Framework 2.9.2 is a new release that fixes broken `AutoItLibrary`
-support, adds IronPython support to the `Dialogs` library, and contains
-several other fixes and enhancements. All issues targeted for RF 2.9.2 can
-be found from the `issue tracker
-<https://github.com/robotframework/robotframework/issues?q=milestone%3A2.9.2>`_.
+Robot Framework 2.9.2 is a new release that fixes broken AutoItLibrary
+support, adds IronPython support to the Dialogs library, and contains
+several other fixes and enhancements.
 
 Questions and comments related to the release can be sent to the
 `robotframework-users <http://groups.google.com/group/robotframework-users>`_
