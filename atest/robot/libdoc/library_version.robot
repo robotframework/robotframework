@@ -15,11 +15,11 @@ No version defined in Python library
     NewStyleNoInit.py    ${EMPTY}
 
 Version defined with ROBOT_LIBRARY_VERSION in Java library
-    [Tags]    require-jython
+    [Tags]    require-jython    require-tools.jar
     Example.java    1.0 <alpha>
 
 No version defined in Java library
-    [Tags]    require-jython
+    [Tags]    require-jython    require-tools.jar
     NoConstructor.java    ${EMPTY}
 
 
