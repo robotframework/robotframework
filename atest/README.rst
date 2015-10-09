@@ -123,10 +123,6 @@ tests that require dependencies that are not available.
   Require a telnet server with test account running at localhost. See
   `Telnet tests`_ for details.
 
-``screenshot``
-  Tests for the Screenshot library. May require extra modules depending
-  on the platform.
-
 ``no-ci``
   Tests which are not executed at continuous integration. Contains all tests
   tagged with ``manual`` or ``telnet``.
@@ -138,9 +134,9 @@ tests that require dependencies that are not available.
 ``require-windows``
   Require the operating system to be Windows.
 
-``require-yaml``, ``require-docutils``, ``require-lxml``
-  Require lxml, docutils or PyYAML module to be installed, respectively.
-  See `Required modules`_ for details.
+``require-yaml``, ``require-docutils``, ``require-lxml``, ``require-screenshot``
+  Require lxml, docutils, PyYAML, or platform specific screenshot module to
+  be installed, respectively. See `Required modules`_ for details.
 
 ``require-et13``
   Require ElementTree version 1.3. Automatically excluded when running with
@@ -159,8 +155,8 @@ Examples::
     # Exclude tests requiring manual interaction or running telnet server.
     python atest/run.py python --exclude no-ci atest/robot
 
-    # Same as the above but also exclude tests requiring docutils.
-    python atest/run.py python -e no-ci -e require-docutils atest/robot
+    # Same as the above but also exclude tests requiring docutils and lxml
+    python atest/run.py python -e no-ci -e require-docutils -e require-lxml atest/robot
 
     # Run only tests related to Java integration. This is considerably faster
     # than running all tests on Jython.
@@ -178,10 +174,13 @@ as well:
 - `PyYAML <http://pyyaml.org/>`__ is required with tests related to YAML
    variable files.
 - `lxml <http://lxml.de/>`__ is needed with XML library tests.
+- Screenshot library tests require a platform dependent module that can take
+  screenshots. See `Screenshot library documentation`__ for details.
 
-All of the above modules can be installed using ``pip``. It is possible to
-install them individually or in a one go by using the provided
-`<requirements.txt>`__ file::
+__ http://robotframework.org/robotframework/latest/libraries/Screenshot.html
+
+It is possible to install docutils, PyYAML and lxml using using ``pip`` either
+individually or by using the provided `<requirements.txt>`__ file::
 
     # Install individually
     pip install 'docutils>=0.9'
@@ -193,7 +192,7 @@ install them individually or in a one go by using the provided
 
 Notice that the lxml module requires compilation on Linux. You can also install
 it using a system package manager like ``apt-get install python-lxml``.
-Additionally lxml is not compatible with Jython or IronPython.
+Additionally, lxml is not compatible with Jython or IronPython.
 
 If a required module is not installed, it is possible to exclude tests
 from the execution by using tags as explained in the `Test tags`_ section.
