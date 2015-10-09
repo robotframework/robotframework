@@ -5,9 +5,9 @@ Robot Framework 2.9.2
 .. default-role:: code
 
 Robot Framework 2.9.2 is a new release that fixes broken `AutoItLibrary`
-support and adds `Dialogs` library for IronPython amongst other bug fixes
-and enhancements. All issues targeted for RF 2.9.2 can be found from the 
-`issue tracker
+support, adds IronPython support to the `Dialogs` library, and contains
+several other fixes and enhancements. All issues targeted for RF 2.9.2 can
+be found from the `issue tracker
 <https://github.com/robotframework/robotframework/issues?q=milestone%3A2.9.2>`_.
 
 Questions and comments related to the release can be sent to the
@@ -30,10 +30,10 @@ Robot Framework 2.9.2 was released on Friday October 09, 2015.
 Most important enhancements
 ===========================
 
-The most important new enhancement is the support for `Dialogs` library on 
-IronPython (`#1235`_). Robot Framework 2.9.2 also fixes the `AutoItLibrary`
+The most important new enhancement is the support for the Dialogs library on
+IronPython (`#1235`_). Robot Framework 2.9.2 also fixes the AutoItLibrary
 compatibility that was broken in 2.9.1 (`#2147`_) and invalid list and dict
-variables no longer crash the framework (`#2131`_).
+variables no longer crash the whole test execution (`#2131`_).
 
 Backwards incompatible changes
 ==============================
@@ -42,8 +42,10 @@ It used to be possible to access file objects as Robot Framework lists:
 
 .. code:: robotframework
 
-    ${file} =    Evaluate    open('foo.txt')
-    Log many    @{file}    # logs each row of file
+    *** Test Cases ***
+    Example
+        ${file} =    Evaluate    open('foo.txt')
+        Log many    @{file}    # logs each row of file
 
 This was never intentional and is now removed in 2.9.2 (`#2162`_). It is 
 still possible to access all lines of a file object using extended variable
@@ -51,22 +53,25 @@ syntax:
 
 .. code:: robotframework
 
-    ${file} =    Evaluate    open('foo.txt')
-    Log many    @{file.readlines()}    # logs each row of file
+    *** Test Cases ***
+    Example
+        ${file} =    Evaluate    open('foo.txt')
+        Log many    @{file.readlines()}    # logs each row of file
 
 Deprecated features
 ===================
 
-The old `Start Process` keywords in OperatingSytem library have been deprecated
-in favour of the new Process library (`#2158`_).
+All keywords operating with started processes in the OperatingSystem library,
+have been deprecated (`#2158`_). Previously only `Start Process` keyword itself
+was deprecated. The Process library should be used instead.
 
 Acknowledgements
 ================
 
-Many thanks to Tim Orling for implementing the support for `Dialogs` library on
-IronPython (`#1235`_) and to Vinicius K. Ruoso for allowing control over connection
-timeout in `Telnet` library (`#2079`_) and supressing docutils warnings with reST
-format (`#2093`_).
+Many thanks to Tim Orling for implementing the support for Dialogs library on
+IronPython (`#1235`_) and to Vinicius K. Ruoso for allowing control over
+connection timeout in Telnet library (`#2079`_) and suppressing docutils
+warnings when using the reStructuredText format (`#2093`_).
 
 Full list of fixes and enhancements
 ===================================
@@ -113,7 +118,7 @@ Full list of fixes and enhancements
     * - `#2156`_
       - bug
       - medium
-      - "Get Library Instance" doesn't work if library has space in name
+      - `Get Library Instance` doesn't work if library has space in name
     * - `#2162`_
       - bug
       - medium
@@ -133,7 +138,7 @@ Full list of fixes and enhancements
     * - `#2093`_
       - enhancement
       - medium
-      - Supress docutils errors/warnings with reST format
+      - Suppress docutils errors/warnings with reST format
     * - `#2141`_
       - enhancement
       - medium
