@@ -92,8 +92,8 @@ from robot.conf import RobotSettings
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 from robot.parsing import disable_curdir_processing
 from robot.running import TestSuiteBuilder
-from robot.utils import (abspath, Application, format_time, get_link_path,
-                         html_escape, html_format, is_string,
+from robot.utils import (abspath, Application, file_writer, format_time,
+                         get_link_path, html_escape, html_format, is_string,
                          secs_to_timestr, seq2str2, timestr_to_secs, unescape)
 
 
@@ -109,7 +109,7 @@ class TestDoc(Application):
         self.console(outfile)
 
     def _write_test_doc(self, suite, outfile, title):
-        with open(outfile, 'w') as output:
+        with file_writer(outfile) as output:
             model_writer = TestdocModelWriter(output, suite, title)
             HtmlFileWriter(output, model_writer).write(TESTDOC)
 

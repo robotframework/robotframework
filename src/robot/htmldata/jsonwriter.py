@@ -77,13 +77,13 @@ class StringDumper(_Dumper):
                            ('\n', '\\n'), ('\r', '\\r'), ('</', '\\x3c/')]
 
     def dump(self, data, mapping):
-        self._write('"%s"' % (self._encode(data) if data else ''))
+        self._write('"%s"' % (self._escape(data) if data else ''))
 
-    def _encode(self, string):
+    def _escape(self, string):
         for search, replace in self._search_and_replace:
             if search in string:
                 string = string.replace(search, replace)
-        return string.encode('UTF-8')
+        return string
 
 
 class IntegerDumper(_Dumper):

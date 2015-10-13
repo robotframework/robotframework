@@ -104,13 +104,6 @@ class TestXmlWriter(unittest.TestCase):
     def test_ioerror_when_file_is_invalid(self):
         assert_raises(IOError, XmlWriter, os.path.dirname(__file__))
 
-    def test_custom_encoding(self):
-        self.writer.close()
-        self.writer = XmlWriter(PATH, encoding='ISO-8859-1')
-        self.writer.element('test', u'hyv\xe4')
-        self._verify_content('encoding="ISO-8859-1"')
-        self._verify_node(None, 'test', u'hyv\xe4')
-
     def test_dont_write_empty(self):
         self.tearDown()
         class NoPreamble(XmlWriter):

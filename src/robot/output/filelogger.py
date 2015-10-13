@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
+from robot.utils import file_writer
 
 from .loggerhelper import AbstractLogger
 
@@ -25,7 +26,7 @@ class FileLogger(AbstractLogger):
 
     def _get_writer(self, path):
         try:
-            return open(path, 'w')
+            return file_writer(path)
         except EnvironmentError as err:
             raise DataError(err.strerror)
 
@@ -33,7 +34,7 @@ class FileLogger(AbstractLogger):
         if self._is_logged(msg.level) and not self._writer.closed:
             entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5),
                                         msg.message)
-            self._writer.write(entry.encode('UTF-8'))
+            self._writer.write(entry)
 
     def start_suite(self, suite):
         self.info("Started test suite '%s'" % suite.name)

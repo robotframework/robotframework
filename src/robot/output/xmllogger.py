@@ -32,7 +32,7 @@ class XmlLogger(ResultVisitor):
         if not path:
             return NullMarkupWriter()
         try:
-            writer = XmlWriter(path, encoding='UTF-8', write_empty=False)
+            writer = XmlWriter(path, write_empty=False)
         except EnvironmentError as err:
             raise DataError("Opening output file '%s' failed: %s" %
                             (path, err.strerror))

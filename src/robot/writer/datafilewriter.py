@@ -15,6 +15,7 @@
 import os
 
 from robot.errors import DataError
+from robot.utils import binary_file_writer, file_writer
 
 from .filewriters import FileWriter
 
@@ -42,7 +43,6 @@ class DataFileWriter(object):
 
 class WritingContext(object):
     """Contains configuration used in writing a test data file to disk."""
-    encoding = 'UTF-8'
     txt_format = 'txt'
     html_format = 'html'
     tsv_format = 'tsv'
@@ -92,7 +92,11 @@ class WritingContext(object):
 
     def __enter__(self):
         if not self.output:
-            self.output = open(self._output_path(), 'wb')
+            path = self._output_path()
+            if self.format == self.tsv_format:
+                self.output = binary_file_writer(path)
+            else:
+                self.output = file_writer(path, newline=self.line_separator)
         return self
 
     def __exit__(self, *exc_info):

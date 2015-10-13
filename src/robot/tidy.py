@@ -113,7 +113,6 @@ http://robotframework.org/robotframework/#built-in-tools.
 
 import os
 import sys
-from StringIO import StringIO
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # https://github.com/robotframework/robotframework/issues/1137
@@ -123,7 +122,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 from robot.errors import DataError
 from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
                            disable_curdir_processing)
-from robot.utils import Application
+from robot.utils import Application, binary_file_writer, file_writer
 
 
 class Tidy(object):
@@ -150,13 +149,19 @@ class Tidy(object):
         Use :func:`inplace` to tidy files in-place.
         """
         data = self._parse_data(path)
-        outfile = open(output, 'wb') if output else StringIO()
-        try:
-            self._save_file(data, outfile)
+        with self._get_writer(path, output) as writer:
+            self._save_file(data, writer)
             if not output:
-                return outfile.getvalue().replace('\r\n', '\n').decode('UTF-8')
-        finally:
-            outfile.close()
+                return writer.getvalue()
+
+    def _get_writer(self, inpath, outpath):
+        if self._is_tsv(inpath):
+            return binary_file_writer(outpath)
+        return file_writer(outpath, newline=self._options['line_separator'])
+
+    def _is_tsv(self, path):
+        format = self._options['format'] or os.path.splitext(path)[1][1:]
+        return format.upper() == 'TSV'
 
     def inplace(self, *paths):
         """Tidy file(s) in-place.

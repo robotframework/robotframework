@@ -12,9 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-
-from robot.result.visitor import ResultVisitor
+from robot.result import ResultVisitor
 from robot.utils import XmlWriter
 
 
@@ -25,7 +23,7 @@ class XUnitWriter(object):
         self._skip_noncritical = skip_noncritical
 
     def write(self, output):
-        writer = XUnitFileWriter(XmlWriter(output, encoding='UTF-8'), self._skip_noncritical)
+        writer = XUnitFileWriter(XmlWriter(output), self._skip_noncritical)
         self._execution_result.visit(writer)
 
 
