@@ -12,6 +12,7 @@ options:
     -h, --help      Show help
 """
 
+from __future__ import print_function
 import unittest
 import os
 import sys
@@ -21,7 +22,7 @@ import getopt
 
 base = os.path.abspath(os.path.normpath(os.path.split(sys.argv[0])[0]))
 for path in ['../src', '../src/robot/libraries', '../src/robot',
-             '../atest/testresources/testlibs' ]:
+             '../atest/testresources/testlibs']:
     path = os.path.join(base, path.replace('/', os.sep))
     if path not in sys.path:
         sys.path.insert(0, path)
@@ -42,10 +43,10 @@ def get_tests(directory=None):
         elif testfile.match(name):
             modname = os.path.splitext(name)[0]
             if modname in imported:
-                sys.stderr.write("Test module '%s' imported both as '%s' and "
-                                 "'%s'.\nRename one or fix test discovery.\n"
-                                 % (modname, imported[modname],
-                                    os.path.join(directory, name)))
+                print("Test module '%s' imported both as '%s' and '%s'. "
+                      "Rename one or fix test discovery."
+                      % (modname, imported[modname],
+                         os.path.join(directory, name)), file=sys.stderr)
                 sys.exit(1)
             module = __import__(modname)
             imported[modname] = module.__file__
@@ -77,11 +78,11 @@ def parse_args(argv):
 
 
 def usage_exit(msg=None):
-    print __doc__
+    print(__doc__)
     if msg is None:
         rc = 251
     else:
-        print '\nError:', msg
+        print('\nError:', msg)
         rc = 252
     sys.exit(rc)
 
@@ -93,5 +94,6 @@ if __name__ == '__main__':
     runner = unittest.TextTestRunner(descriptions=docs, verbosity=vrbst)
     result = runner.run(suite)
     rc = len(result.failures) + len(result.errors)
-    if rc > 250: rc = 250
+    if rc > 250:
+        rc = 250
     sys.exit(rc)

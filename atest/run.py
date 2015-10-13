@@ -26,6 +26,7 @@ $ atest/run.py python --test example atest/robot
 $ atest/run.py /opt/jython27/bin/jython atest/robot/tags/tag_doc.robot
 """
 
+from __future__ import print_function
 import os
 import shutil
 import signal
@@ -102,7 +103,7 @@ def _run(args, tempdir):
     runner = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
     command = [sys.executable, runner] + args
     environ = dict(os.environ, TEMPDIR=tempdir)
-    print 'Running command:\n%s\n' % ' '.join(command)
+    print('Running command:\n%s\n' % ' '.join(command))
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     return subprocess.call(command, env=environ)
@@ -124,7 +125,7 @@ def dos_to_long(path):
 
 if __name__ == '__main__':
     if len(sys.argv) == 1 or '--help' in sys.argv:
-        print __doc__
+        print(__doc__)
         rc = 251
     else:
         rc = atests(*sys.argv[1:])
