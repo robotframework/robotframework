@@ -152,7 +152,7 @@ class Tidy(object):
         with self._get_writer(path, output) as writer:
             self._save_file(data, writer)
             if not output:
-                return writer.getvalue()
+                return writer.getvalue().replace('\r\n', '\n')
 
     def _get_writer(self, inpath, outpath):
         if self._is_tsv(inpath):
