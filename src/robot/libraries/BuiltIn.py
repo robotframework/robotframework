@@ -1564,7 +1564,7 @@ class _RunKeyword(_BuiltInBase):
         except ExecutionFailed as err:
             if err.dont_continue:
                 raise
-            return 'FAIL', unicode(err)
+            return 'FAIL', unic(err)
 
     def run_keyword_and_return_status(self, name, *args):
         """Runs the given keyword with given arguments and returns the status as a Boolean value.
@@ -1638,10 +1638,10 @@ class _RunKeyword(_BuiltInBase):
         else:
             raise AssertionError("Expected error '%s' did not occur."
                                  % expected_error)
-        if not self._matches(unicode(err), expected_error):
+        if not self._matches(unic(err), expected_error):
             raise AssertionError("Expected error '%s' but got '%s'."
                                  % (expected_error, err))
-        return unicode(err)
+        return unic(err)
 
     def repeat_keyword(self, times, name, *args):
         """Executes the specified keyword multiple times.
@@ -2390,7 +2390,7 @@ class _Misc(_BuiltInBase):
         try:
             old = self._context.output.set_log_level(level)
         except DataError as err:
-            raise RuntimeError(unicode(err))
+            raise RuntimeError(unic(err))
         self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
@@ -2438,7 +2438,7 @@ class _Misc(_BuiltInBase):
         try:
             self._namespace.import_library(name, list(args))
         except DataError as err:
-            raise RuntimeError(unicode(err))
+            raise RuntimeError(unic(err))
 
     @run_keyword_variant(resolve=0)
     def import_variables(self, path, *args):
@@ -2460,7 +2460,7 @@ class _Misc(_BuiltInBase):
         try:
             self._namespace.import_variables(path, list(args), overwrite=True)
         except DataError as err:
-            raise RuntimeError(unicode(err))
+            raise RuntimeError(unic(err))
 
     @run_keyword_variant(resolve=0)
     def import_resource(self, path):
@@ -2480,7 +2480,7 @@ class _Misc(_BuiltInBase):
         try:
             self._namespace.import_resource(path)
         except DataError as err:
-            raise RuntimeError(unicode(err))
+            raise RuntimeError(unic(err))
 
     def set_library_search_order(self, *search_order):
         """Sets the resolution order to use when a name matches multiple keywords.
@@ -2539,7 +2539,7 @@ class _Misc(_BuiltInBase):
             if isinstance(handler, UserErrorHandler):
                 handler.run()
         except DataError as err:
-            raise AssertionError(msg or unicode(err))
+            raise AssertionError(msg or unic(err))
 
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.
@@ -2963,7 +2963,7 @@ class _Misc(_BuiltInBase):
         try:
             return self._namespace.get_library_instance(name)
         except DataError as err:
-            raise RuntimeError(unicode(err))
+            raise RuntimeError(unic(err))
 
 
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Control, _Misc):

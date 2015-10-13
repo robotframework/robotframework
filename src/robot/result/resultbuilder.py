@@ -14,7 +14,7 @@
 
 from robot.errors import DataError
 from robot.model import SuiteVisitor
-from robot.utils import ET, ETSource, get_error_message
+from robot.utils import ET, ETSource, get_error_message, unic
 
 from .executionresult import Result, CombinedResult
 from .flattenkeywordmatcher import (FlattenByNameMatcher, FlattenByTypeMatcher,
@@ -65,7 +65,7 @@ def _single_result(source, options):
         error = err.strerror
     except:
         error = get_error_message()
-    raise DataError("Reading XML source '%s' failed: %s" % (unicode(ets), error))
+    raise DataError("Reading XML source '%s' failed: %s" % (unic(ets), error))
 
 
 class ExecutionResultBuilder(object):

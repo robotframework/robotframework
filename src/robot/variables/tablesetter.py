@@ -15,7 +15,7 @@
 from contextlib import contextmanager
 
 from robot.errors import DataError
-from robot.utils import split_from_equals, unic, is_string, DotDict
+from robot.utils import DotDict, is_string, split_from_equals, unic
 
 from .isvar import validate_var
 from .splitter import VariableSplitter
@@ -85,7 +85,7 @@ class VariableTableValueBase(object):
 
     def report_error(self, error):
         if self._error_reporter:
-            self._error_reporter(unicode(error))
+            self._error_reporter(unic(error))
 
 
 class ScalarVariableTableValue(VariableTableValueBase):

@@ -122,16 +122,8 @@ class _ErrorDetails(object):
 class PythonErrorDetails(_ErrorDetails):
 
     def _get_message(self):
-        # TODO: Remove support for "string exceptions" and other < 2.6 stuff
-        # If exception is a "string exception" without a message exc_value is None
-        if self.error is None:
-            return unic(self._exc_type)
         name = self._get_name(self._exc_type)
-        try:
-            msg = unicode(self.error)
-        except UnicodeError:  # Happens if message is Unicode and version < 2.6
-            msg = ' '.join(unic(a) for a in self.error.args)
-        return self._format_message(name, msg)
+        return self._format_message(name, unic(self.error))
 
     def _get_details(self):
         if isinstance(self.error, RobotError):

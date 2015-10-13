@@ -624,7 +624,7 @@ class _Dictionary(object):
         The given dictionary is never altered by this keyword.
         """
         self.dictionary_should_contain_key(dictionary, key, msg)
-        actual, expected = unicode(dictionary[key]), unicode(value)
+        actual, expected = unic(dictionary[key]), unic(value)
         default = "Value of dictionary key '%s' does not match: %s != %s" % (key, actual, expected)
         _verify_condition(actual == expected, default, msg)
 

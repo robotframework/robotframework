@@ -54,7 +54,7 @@ class _Timeout(object):
         except (DataError, ValueError) as err:
             self.secs = 0.000001 # to make timeout active
             self.error = 'Setting %s timeout failed: %s' \
-                    % (self.type.lower(), unicode(err))
+                    % (self.type.lower(), err.message)
 
     def start(self):
         if self.secs > 0:

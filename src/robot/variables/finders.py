@@ -124,7 +124,7 @@ class ExtendedFinder(object):
             variable = self._find_variable('${%s}' % base_name)
         except DataError as err:
             raise VariableError("Resolving variable '%s' failed: %s"
-                                % (name, unicode(err)))
+                                % (name, err.message))
         try:
             return eval('_BASE_VAR_' + extended, {'_BASE_VAR_': variable})
         except:

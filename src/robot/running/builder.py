@@ -15,7 +15,7 @@
 from robot.errors import DataError
 from robot.parsing import TestData, ResourceFile as ResourceData
 from robot.running.defaults import TestDefaults
-from robot.utils import abspath, is_string
+from robot.utils import abspath, is_string, unic
 from robot.variables import VariableIterator
 
 from .model import ForLoop, ResourceFile, TestSuite
@@ -55,13 +55,13 @@ class TestSuiteBuilder(object):
                             include_suites=self.include_suites,
                             warn_on_skipped=self.warn_on_skipped)
         except DataError as err:
-            raise DataError("Parsing '%s' failed: %s" % (path, unicode(err)))
+            raise DataError("Parsing '%s' failed: %s" % (path, err.message))
 
     def _build_suite(self, data, parent_defaults=None):
         defaults = TestDefaults(data.setting_table, parent_defaults)
         suite = TestSuite(name=data.name,
                           source=data.source,
-                          doc=unicode(data.setting_table.doc),
+                          doc=unic(data.setting_table.doc),
                           metadata=self._get_metadata(data.setting_table))
         self._create_setup(suite, data.setting_table.suite_setup)
         self._create_teardown(suite, data.setting_table.suite_teardown)
@@ -79,7 +79,7 @@ class TestSuiteBuilder(object):
     def _create_test(self, suite, data, defaults):
         values = defaults.get_test_values(data)
         test = suite.tests.create(name=data.name,
-                                  doc=unicode(data.doc),
+                                  doc=unic(data.doc),
                                   tags=values.tags.value,
                                   template=self._get_template(values.template),
                                   timeout=self._get_timeout(values.timeout))
@@ -92,7 +92,7 @@ class TestSuiteBuilder(object):
         return (timeout.value, timeout.message) if timeout else None
 
     def _get_template(self, template):
-        return unicode(template) if template.is_active() else None
+        return unic(template) if template.is_active() else None
 
     def _create_setup(self, parent, data):
         if data.is_active():
@@ -138,7 +138,7 @@ class ResourceFileBuilder(object):
     def _create_keyword(self, target, data):
         kw = target.keywords.create(name=data.name,
                                     args=tuple(data.args),
-                                    doc=unicode(data.doc),
+                                    doc=unic(data.doc),
                                     tags=tuple(data.tags),
                                     return_=tuple(data.return_),
                                     timeout=self._get_timeout(data.timeout))
@@ -168,7 +168,7 @@ class StepBuilder(object):
 
     def _create_templated(self, parent, data, template):
         args = data.as_list(include_comment=False)
-        template, args = self._format_template(unicode(template), args)
+        template, args = self._format_template(unic(template), args)
         parent.keywords.create(name=template, args=tuple(args))
 
     def _format_template(self, template, args):

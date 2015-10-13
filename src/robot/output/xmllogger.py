@@ -70,7 +70,7 @@ class XmlLogger(ResultVisitor):
         if kw.type != 'kw':
             attrs['type'] = kw.type
         if kw.timeout:
-            attrs['timeout'] = unicode(kw.timeout)
+            attrs['timeout'] = unic(kw.timeout)
         self._writer.start('kw', attrs)
         self._write_list('tags', 'tag', [unic(t) for t in kw.tags])
         self._writer.element('doc', kw.doc)
@@ -84,7 +84,7 @@ class XmlLogger(ResultVisitor):
     def start_test(self, test):
         attrs = {'id': test.id, 'name': test.name}
         if test.timeout:
-            attrs['timeout'] = unicode(test.timeout)
+            attrs['timeout'] = unic(test.timeout)
         self._writer.start('test', attrs)
 
     def end_test(self, test):

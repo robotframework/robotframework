@@ -84,7 +84,7 @@ class ResultWriter(object):
         try:
             writer(path, *args)
         except DataError as err:
-            LOGGER.error(unicode(err))
+            LOGGER.error(err.message)
         except EnvironmentError as err:
             # `err.filename` can be different than `path` at least if reading
             # log/report templates or writing split log fails.

@@ -64,7 +64,7 @@ class Namespace(object):
                     raise DataError('%s setting requires a name' % item.type)
                 self._import(item)
             except DataError as err:
-                item.report_invalid_syntax(unicode(err))
+                item.report_invalid_syntax(err.message)
 
     def _import(self, import_setting):
         action = {'Library': self._import_library,
@@ -152,7 +152,7 @@ class Namespace(object):
 
     def _raise_replacing_vars_failed(self, import_setting, err):
         raise DataError("Replacing variables from setting '%s' failed: %s"
-                        % (import_setting.type, unicode(err)))
+                        % (import_setting.type, err.message))
 
     def _get_name(self, name, basedir, import_type):
         if import_type == 'Library' and not self._is_library_by_path(name):
@@ -219,7 +219,7 @@ class Namespace(object):
         try:
             handler = self._kw_store.get_handler(name)
         except DataError as err:
-            handler = UserErrorHandler(name, unicode(err))
+            handler = UserErrorHandler(name, err.message)
         self._replace_variables_from_user_handlers(handler)
         return handler
 

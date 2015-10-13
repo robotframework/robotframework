@@ -17,7 +17,8 @@ from os.path import exists, dirname
 
 from robot.output.loggerhelper import LEVELS
 from robot.utils import (attribute_escape, get_link_path, html_escape,
-                         html_format, is_string, is_unicode, timestamp_to_secs)
+                         html_format, is_string, is_unicode, timestamp_to_secs,
+                         unic)
 
 from .stringcache import StringCache
 
@@ -38,7 +39,7 @@ class JsBuildingContext(object):
     def string(self, string, escape=True, attr=False):
         if escape and string:
             if not is_unicode(string):
-                string = unicode(string)
+                string = unic(string)
             string = (html_escape if not attr else attribute_escape)(string)
         return self._strings.add(string)
 
