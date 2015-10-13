@@ -119,7 +119,7 @@ class FromDirectoryPopulator(object):
         try:
             FromFilePopulator(datadir).populate(init_file)
         except DataError as err:
-            LOGGER.error(unicode(err))
+            LOGGER.error(err.message)
 
     def _populate_children(self, datadir, children, include_suites, warn_on_skipped):
         for child in children:
@@ -127,7 +127,7 @@ class FromDirectoryPopulator(object):
                 datadir.add_child(child, include_suites)
             except DataError as err:
                 self._log_failed_parsing("Parsing data source '%s' failed: %s"
-                            % (child, unicode(err)), warn_on_skipped)
+                                         % (child, err.message), warn_on_skipped)
 
     def _log_failed_parsing(self, message, warn):
         if warn:

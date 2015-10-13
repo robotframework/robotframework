@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import ExecutionFailed, PassExecution
+from robot.utils import unic
 
 
 class Failure(object):
@@ -68,13 +69,13 @@ class _ExecutionStatus(object):
 
     def setup_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
-            self.failure.setup = unicode(failure)
+            self.failure.setup = unic(failure)
             self.exit.failure_occurred(failure)
         self._teardown_allowed = True
 
     def teardown_executed(self, failure=None):
         if failure and not isinstance(failure, PassExecution):
-            self.failure.teardown = unicode(failure)
+            self.failure.teardown = unic(failure)
             self.exit.failure_occurred(failure)
 
     def critical_failure_occurred(self):
@@ -135,7 +136,7 @@ class TestStatus(_ExecutionStatus):
         self._critical = critical
 
     def test_failed(self, failure):
-        self.failure.test = unicode(failure)
+        self.failure.test = unic(failure)
         self.exit.failure_occurred(failure, self._critical)
 
     def _my_message(self):

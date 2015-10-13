@@ -72,7 +72,7 @@ class Listeners(object):
                 if not is_string(listener):
                     listener = type_name(listener)
                 LOGGER.error("Taking listener '%s' into use failed: %s"
-                             % (listener, unicode(err)))
+                             % (listener, err.message))
         return listeners
 
     def start_suite(self, suite):

@@ -15,7 +15,7 @@
 from robot.errors import ExecutionFailed, DataError, PassExecution
 from robot.model import SuiteVisitor
 from robot.result import TestSuite, Result
-from robot.utils import get_timestamp, NormalizedDict
+from robot.utils import get_timestamp, NormalizedDict, unic
 from robot.variables import VariableScopes
 
 from .context import EXECUTION_CONTEXTS
@@ -92,7 +92,7 @@ class Runner(SuiteVisitor):
         with self._context.suite_teardown():
             failure = self._run_teardown(suite.keywords.teardown, self._suite_status)
             if failure:
-                self._suite.suite_teardown_failed(unicode(failure))
+                self._suite.suite_teardown_failed(unic(failure))
                 if self._suite.statistics.critical.failed:
                     self._suite_status.critical_failure_occurred()
         self._suite.endtime = get_timestamp()
@@ -120,7 +120,7 @@ class Runner(SuiteVisitor):
             result.tags = self._context.variables.replace_list(result.tags)
         except DataError as err:
             status.test_failed('Replacing variables from test tags failed: %s'
-                               % unicode(err))
+                               % err.message)
         self._context.start_test(result)
         self._output.start_test(ModelCombiner(result, test))
         if status.exit:

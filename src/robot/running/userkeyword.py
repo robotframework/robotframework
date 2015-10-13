@@ -18,7 +18,7 @@ from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
                           PassExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed)
 from robot.output import LOGGER
-from robot.utils import prepr, split_tags_from_doc
+from robot.utils import prepr, split_tags_from_doc, unic
 from robot.variables import is_list_var
 
 from .arguments import (ArgumentMapper, ArgumentResolver,
@@ -64,7 +64,7 @@ class UserLibrary(object):
     def _log_creating_failed(self, handler, error):
         LOGGER.error("Error in %s '%s': Creating keyword '%s' failed: %s"
                      % (self.source_type.lower(), self.source,
-                        handler.name, unicode(error)))
+                        handler.name, error.message))
 
 
 class UserKeywordHandler(object):
@@ -76,7 +76,7 @@ class UserKeywordHandler(object):
         self.return_value = tuple(keyword.return_)
         self.teardown = keyword.keywords.teardown
         self.libname = libname
-        self.doc = self._doc = unicode(keyword.doc)
+        self.doc = self._doc = unic(keyword.doc)
         self.tags = self._tags = keyword.tags
         self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
                                                            self.longname)
@@ -194,7 +194,7 @@ class UserKeywordHandler(object):
         try:
             name = context.variables.replace_string(self.teardown.name)
         except DataError as err:
-            return ExecutionFailed(unicode(err), syntax=True)
+            return ExecutionFailed(err.message, syntax=True)
         if name.upper() in ('', 'NONE'):
             return None
         runner = KeywordRunner(context)
@@ -220,7 +220,7 @@ class UserKeywordHandler(object):
             ret = variables.replace_list(ret)
         except DataError as err:
             raise DataError('Replacing variables from keyword return value '
-                            'failed: %s' % unicode(err))
+                            'failed: %s' % err.message)
         if len(ret) != 1 or contains_list_var:
             return ret
         return ret[0]

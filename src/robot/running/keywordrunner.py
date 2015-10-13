@@ -18,7 +18,7 @@ from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
 from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import (ErrorDetails, format_assign_message, frange,
                          get_error_message, get_timestamp, is_list_like,
-                         is_number, plural_or_not as s, type_name)
+                         is_number, plural_or_not as s, type_name, unic)
 from robot.variables import is_scalar_var, VariableAssigner
 
 
@@ -350,7 +350,7 @@ class StatusReporter(object):
         elif isinstance(exc_val, ExecutionFailed):
             self._result.status = exc_val.status
             if self._result.type == self._result.TEARDOWN_TYPE:
-                self._result.message = unicode(exc_val)
+                self._result.message = unic(exc_val)
         if self._context.test:
             self._context.test.passed = self._test_passed and self._result.passed
         self._result.endtime = get_timestamp()
@@ -367,6 +367,6 @@ class SyntaxErrorReporter(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if isinstance(exc_val, DataError):
-            msg = unicode(exc_val)
+            msg = exc_val.message
             self._context.fail(msg)
             raise ExecutionFailed(msg, syntax=True)

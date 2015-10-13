@@ -12,8 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import (elapsed_time_to_string, html_escape, normalize,
-                         is_string)
+from robot.utils import (elapsed_time_to_string, html_escape, is_string,
+                         normalize, unic)
 
 from .tags import TagPatterns
 
@@ -41,7 +41,7 @@ class Stat(object):
     def get_attributes(self, include_label=False, include_elapsed=False,
                        exclude_empty=False, values_as_strings=False,
                        html_escape=False):
-        attrs =  {'pass': self.passed, 'fail': self.failed}
+        attrs = {'pass': self.passed, 'fail': self.failed}
         attrs.update(self._get_custom_attrs())
         if include_label:
             attrs['label'] = self.name
@@ -51,7 +51,7 @@ class Stat(object):
         if exclude_empty:
             attrs = dict((k, v) for k, v in attrs.items() if v != '')
         if values_as_strings:
-            attrs = dict((k, unicode(v)) for k, v in attrs.items())
+            attrs = dict((k, unic(v)) for k, v in attrs.items())
         if html_escape:
             attrs = dict((k, self._html_escape(v)) for k, v in attrs.items())
         return attrs

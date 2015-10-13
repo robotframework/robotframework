@@ -414,7 +414,7 @@ from robot.model import ModelModifier
 from robot.output import LOGGER, pyloggingconf
 from robot.reporting import ResultWriter
 from robot.running import TestSuiteBuilder
-from robot.utils import Application
+from robot.utils import Application, unic
 
 
 class RobotFramework(Application):
@@ -426,7 +426,7 @@ class RobotFramework(Application):
     def main(self, datasources, **options):
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_output_config)
-        LOGGER.info('Settings:\n%s' % unicode(settings))
+        LOGGER.info('Settings:\n%s' % unic(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped']).build(*datasources)
         suite.configure(**settings.suite_config)

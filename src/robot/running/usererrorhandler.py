@@ -14,6 +14,7 @@
 
 from robot.errors import DataError
 from robot.model import Tags
+from robot.utils import unic
 
 from .arguments import ArgumentSpec
 
@@ -30,7 +31,7 @@ class UserErrorHandler(object):
     def __init__(self, name, error, libname=None):
         self.name = name
         self.libname = libname
-        self.error = unicode(error)
+        self.error = unic(error)
         self.arguments = ArgumentSpec()
         self.timeout = ''
         self.tags = Tags()

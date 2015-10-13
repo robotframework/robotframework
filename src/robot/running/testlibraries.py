@@ -196,7 +196,7 @@ class _BaseTestLibrary(object):
                     except DataError as err:
                         LOGGER.error("Error in test library '%s': "
                                      "Creating keyword '%s' failed: %s"
-                                     % (self.name, handler.name, unicode(err)))
+                                     % (self.name, handler.name, err.message))
                     else:
                         LOGGER.debug("Created keyword '%s'" % handler.name)
 
@@ -230,7 +230,7 @@ class _BaseTestLibrary(object):
         try:
             handler = self._create_handler(name, method)
         except DataError as err:
-            self._report_adding_keyword_failed(name, unicode(err), level='ERROR')
+            self._report_adding_keyword_failed(name, err.message, level='ERROR')
             return None, False
         except:
             self._report_adding_keyword_failed(name)
@@ -238,7 +238,7 @@ class _BaseTestLibrary(object):
         try:
             return self._get_possible_embedded_args_handler(handler)
         except DataError as err:
-            self._report_adding_keyword_failed(handler.name, unicode(err),
+            self._report_adding_keyword_failed(handler.name, err.message,
                                                level='ERROR')
             return None, False
 
