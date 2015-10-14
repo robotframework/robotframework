@@ -96,7 +96,7 @@ Pagination
 
 Lots and lots of pages
     Set timeout    20
-    ${out}=       Execute command     python -c "print 'abba\\x1b[3Dcdc\\n'*20000"
+    ${out}=       Execute command     python -c "print('abba\\x1b[3Dcdc\\n'*20000)"
     Should contain x times    ${out}    acdc\r\n    20000
 
 Write & Read Non-ASCII

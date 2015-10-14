@@ -1,11 +1,9 @@
 import unittest
-from StringIO import StringIO
 
 from robot.result import ExecutionResult
 from robot.reporting.outputwriter import OutputWriter
-from robot.utils import XmlWriter
+from robot.utils import ET, ETSource, StringIO, XmlWriter
 from robot.utils.asserts import assert_equals
-from robot.utils import ET, ETSource
 
 from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
 

@@ -214,7 +214,7 @@ class UnicodeRepr(UnRepr):
     def __init__(self):
         try:
             repr(self)
-        except UnicodeEncodeError, err:
+        except UnicodeEncodeError as err:
             self.error = 'UnicodeEncodeError: %s' % err
 
     def __repr__(self):
@@ -226,7 +226,7 @@ class NonAsciiRepr(UnRepr):
     def __init__(self):
         try:
             repr(self)
-        except UnicodeEncodeError, err:
+        except UnicodeEncodeError as err:
             self.error = 'UnicodeEncodeError: %s' % err
 
     def __repr__(self):

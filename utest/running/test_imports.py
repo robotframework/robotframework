@@ -1,7 +1,7 @@
 import unittest
-from StringIO import StringIO
 
 from robot.running import TestSuite
+from robot.utils import StringIO
 from robot.utils.asserts import assert_equals, assert_raises_with_msg
 
 

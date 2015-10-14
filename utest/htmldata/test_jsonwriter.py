@@ -1,4 +1,3 @@
-from StringIO import StringIO
 try:
     import json
 except ImportError:
@@ -8,6 +7,7 @@ except ImportError:
         json = None
 import unittest
 
+from robot.utils import StringIO, long
 from robot.utils.asserts import assert_equals, assert_raises
 from robot.htmldata.jsonwriter import JsonDumper
 
@@ -47,8 +47,8 @@ class TestJsonDumper(unittest.TestCase):
         self._test(1, '1')
 
     def test_dump_long(self):
-        self._test(12345678901234567890L, '12345678901234567890')
-        self._test(0L, '0')
+        self._test(long(12345678901234567890), '12345678901234567890')
+        self._test(long(0), '0')
 
     def test_dump_list(self):
         self._test([1, 2, True, 'hello', 'world'], '[1,2,true,"hello","world"]')
@@ -60,7 +60,7 @@ class TestJsonDumper(unittest.TestCase):
 
     def test_dump_dictionary(self):
         self._test({'key': 1}, '{"key":1}')
-        self._test({'nested': [-1L, {42: None}]}, '{"nested":[-1,{42:null}]}')
+        self._test({'nested': [-1, {42: None}]}, '{"nested":[-1,{42:null}]}')
 
     def test_dictionaries_are_sorted(self):
         self._test({'key': 1, 'hello': ['wor', 'ld'], 'z': 'a', 'a': 'z'},

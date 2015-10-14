@@ -1,11 +1,9 @@
-import os
 import unittest
-from StringIO import StringIO
 
 from robot.parsing import TestCaseFile
 from robot.parsing.model import TestCaseTable
+from robot.utils import ET, ETSource, StringIO
 from robot.utils.asserts import assert_equals
-from robot.utils import ET, ETSource
 
 
 def create_test_case_file():

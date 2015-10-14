@@ -2,11 +2,12 @@ import logging
 import signal
 import sys
 import unittest
-from StringIO import StringIO
-from os.path import abspath, dirname, normpath, join
+from os.path import abspath, dirname, join
 
-from robot.utils.asserts import assert_equals
 from robot.running import TestSuite, TestSuiteBuilder
+from robot.utils import StringIO
+from robot.utils.asserts import assert_equals
+
 from resources.runningtestcase import RunningTestCase
 from resources.Listener import Listener
 

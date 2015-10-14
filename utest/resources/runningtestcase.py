@@ -1,9 +1,10 @@
 import sys
+import unittest
+from glob import glob
 from os import remove
 from os.path import exists
-import unittest
-from StringIO import StringIO
-from glob import glob
+
+from robot.utils import StringIO
 
 
 class RunningTestCase(unittest.TestCase):

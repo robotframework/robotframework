@@ -1,10 +1,9 @@
-from codecs import BOM_UTF8
-from StringIO import StringIO
 import os
 import tempfile
 import unittest
+from codecs import BOM_UTF8
 
-from robot.utils import Utf8Reader
+from robot.utils import StringIO, Utf8Reader
 from robot.utils.asserts import assert_equals, assert_raises
 
 

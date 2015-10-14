@@ -1,11 +1,11 @@
 import unittest
-from StringIO import StringIO
 
-from robot.parsing.tsvreader import TsvReader
+import robot.parsing.populators
 from robot.parsing.model import TestCaseFile
 from robot.parsing.populators import FromFilePopulator
+from robot.parsing.tsvreader import TsvReader
+from robot.utils import StringIO
 from robot.utils.asserts import assert_equals
-import robot.parsing.populators
 
 
 class TestTsvReader(unittest.TestCase):

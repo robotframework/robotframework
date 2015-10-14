@@ -1,11 +1,10 @@
 import unittest
-from StringIO import StringIO
-
-from robot.parsing.populators import FromFilePopulator, DataRow, FromDirectoryPopulator
-from robot.parsing.model import TestCaseFile
-from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 from robot.output import LOGGER
+from robot.parsing.model import TestCaseFile
+from robot.parsing.populators import FromFilePopulator, DataRow, FromDirectoryPopulator
+from robot.utils import StringIO
+from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 
 LOGGER.unregister_console_logger()

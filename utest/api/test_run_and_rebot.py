@@ -8,11 +8,11 @@ import signal
 import logging
 from os.path import abspath, dirname, join, exists, curdir
 from os import chdir
-from StringIO import StringIO
 
 from robot import run, rebot
 from robot.model import SuiteVisitor
 from robot.running import namespace
+from robot.utils import StringIO
 from robot.utils.asserts import assert_equals, assert_true
 
 from resources.runningtestcase import RunningTestCase
