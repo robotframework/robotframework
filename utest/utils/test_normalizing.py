@@ -167,8 +167,14 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(cd._data, {'a': 1, 'b': 2})
 
     def test_str(self):
-        nd = NormalizedDict({'a': 1, 'B': 1})
-        assert_true(str(nd) in ("{'a': 1, 'B': 1}", "{'B': 1, 'a': 1}"))
+        nd = NormalizedDict({'a': 1, 'B': 1, 'c': 3, 'd': 4, 'E': 5, 'F': 6})
+        expected = "{'a': 1, 'B': 1, 'c': 3, 'd': 4, 'E': 5, 'F': 6}"
+        assert_equals(str(nd), expected)
+        assert_equals(unicode(nd), expected)
+
+    def test_unicode(self):
+        nd = NormalizedDict({'a': u'\xe4', u'\xe4': 'a'})
+        assert_equals(unicode(nd), "{'a': u'\\xe4', u'\\xe4': 'a'}")
 
     def test_update(self):
         nd = NormalizedDict({'a': 1, 'b': 1, 'c': 1})

@@ -21,7 +21,7 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import validate_flatten_keyword
-from robot.utils import (abspath, escape, format_time, get_link_path,
+from robot.utils import (__str__, abspath, escape, format_time, get_link_path,
                          html_escape, is_list_like,
                          split_args_from_name_or_path)
 
@@ -306,6 +306,9 @@ class _BaseSettings(object):
     def __unicode__(self):
         return '\n'.join('%s: %s' % (name, self._opts[name])
                          for name in sorted(self._opts))
+
+    def __str__(self):
+        return __str__(self)
 
     @property
     def output_directory(self):

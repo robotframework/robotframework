@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import Matcher, NormalizedDict, is_string, setter, unic
+from robot.utils import (Matcher, NormalizedDict, is_string, setter, unic,
+                         __str__)
 
 
 class Tags(object):
@@ -57,11 +58,11 @@ class Tags(object):
     def __unicode__(self):
         return u'[%s]' % ', '.join(self)
 
+    def __str__(self):
+        return __str__(self)
+
     def __repr__(self):
         return repr(list(self))
-
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
 
     def __getitem__(self, index):
         item = self._tags[index]
@@ -111,8 +112,13 @@ class _SingleTagPattern(object):
     def match(self, tags):
         return self._matcher.match_any(tags)
 
+    # FIXME: Why only this class methods below??
+
     def __unicode__(self):
         return self._matcher.pattern
+
+    def __str__(self):
+        return __str__(self)
 
     def __nonzero__(self):
         return bool(self._matcher)

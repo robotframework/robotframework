@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import __str__
+
 
 class ItemList(object):
     __slots__ = ['_item_class', '_common_attrs', '_items']
@@ -81,5 +83,4 @@ class ItemList(object):
     def __unicode__(self):
         return u'[%s]' % ', '.join(unicode(item) for item in self)
 
-    def __str__(self):
-        return unicode(self).encode('ASCII', 'replace')
+    __str__ = __str__

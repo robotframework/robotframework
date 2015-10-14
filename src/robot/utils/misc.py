@@ -107,6 +107,10 @@ def getdoc(item):
         return unic(doc)
 
 
+def __str__(instance):
+    return instance.__unicode__().encode('UTF-8')
+
+
 # On IronPython sys.stdxxx.isatty() always returns True
 if not IRONPYTHON:
 

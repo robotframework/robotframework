@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import html_escape, setter
+from robot.utils import __str__, html_escape, setter
 
 from .itemlist import ItemList
 from .modelobject import ModelObject
@@ -57,6 +57,8 @@ class Message(ModelObject):
 
     def __unicode__(self):
         return self.message
+
+    __str__ = __str__
 
 
 class Messages(ItemList):

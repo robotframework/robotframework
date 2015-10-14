@@ -35,7 +35,7 @@ class TestStringRepresentation(unittest.TestCase):
     def test_str(self):
         assert_equal(str(self.empty), '')
         assert_equal(str(self.ascii), 'Kekkonen')
-        assert_equal(str(self.non_ascii), 'hyv? nimi')
+        assert_equal(str(self.non_ascii), u'hyv\xe4 nimi'.encode('UTF-8'))
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Message(), 'attr', 'value')

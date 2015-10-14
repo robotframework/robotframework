@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import NormalizedDict
+from robot.utils import NormalizedDict, __str__
 
 
 class Metadata(NormalizedDict):
@@ -23,5 +23,4 @@ class Metadata(NormalizedDict):
     def __unicode__(self):
         return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)
 
-    def __str__(self):
-        return unicode(self).encode('ASCII', 'replace')
+    __str__ = __str__

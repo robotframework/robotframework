@@ -47,8 +47,8 @@ from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
-from .misc import (isatty, getdoc, plural_or_not, printable_name,
-                   seq2str, seq2str2)
+from .misc import (getdoc, isatty, plural_or_not, printable_name, seq2str,
+                   seq2str2, __str__)
 from .normalizing import lower, normalize, NormalizedDict
 from .platform import (IRONPYTHON, JYTHON, PYTHON, UNIXY, WINDOWS,
                        RERAISED_EXCEPTIONS)
@@ -64,7 +64,7 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
 from .robottypes import (is_bytes, is_dict_like, is_falsy, is_integer,
                          is_list_like, is_number, is_string, is_truthy,
                          is_unicode, type_name)
-from .setter import setter
+from .setter import setter, SetterAwareType
 from .text import (cut_long_message, format_assign_message,
                    pad_console_length, get_console_length, split_tags_from_doc,
                    split_args_from_name_or_path)

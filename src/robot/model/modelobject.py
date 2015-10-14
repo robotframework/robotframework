@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils.setter import SetterAwareType
+from robot.utils import SetterAwareType, __str__
 
 
 class ModelObject(object):
@@ -23,7 +23,7 @@ class ModelObject(object):
         return self.name
 
     def __str__(self):
-        return unicode(self).encode('ASCII', 'replace')
+        return __str__(self)
 
     def __repr__(self):
         return repr(str(self))

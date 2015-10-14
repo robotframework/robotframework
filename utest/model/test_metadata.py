@@ -18,7 +18,8 @@ class TestMetadata(unittest.TestCase):
     def test_str(self):
         assert_equal(str(Metadata()), '{}')
         d = {'a': 1, 'B': 'two', u'\xe4': u'nelj\xe4'}
-        assert_equal(str(Metadata(d)), '{a: 1, B: two, ?: nelj?}')
+        assert_equal(str(Metadata(d)),
+                     u'{a: 1, B: two, \xe4: nelj\xe4}'.encode('UTF-8'))
 
 
 if __name__ == '__main__':
