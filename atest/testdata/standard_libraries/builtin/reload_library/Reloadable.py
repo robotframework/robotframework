@@ -22,7 +22,7 @@ class Reloadable(object):
         return 'Doc for %s with args %s' % (name, ', '.join(KEYWORDS[name]))
 
     def run_keyword(self, name, args):
-        print "Running keyword '%s' with arguments %s." % (name, args)
+        print("Running keyword '%s' with arguments %s." % (name, args))
         assert name in KEYWORDS
         if name == 'add_keyword':
             KEYWORDS[args[0]] = args[1:]

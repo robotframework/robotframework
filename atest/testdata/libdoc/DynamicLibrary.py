@@ -1,4 +1,6 @@
 # coding=UTF-8
+from __future__ import print_function
+
 
 class DynamicLibrary(object):
     """This is overwritten and not shown in docs"""
@@ -13,7 +15,7 @@ class DynamicLibrary(object):
                 'Em${bed}ed ${args} 2']
 
     def run_keyword(self, name, args, kwargs):
-        print name, args
+        print(name, args)
 
     def get_keyword_arguments(self, name):
         if name == 'no arg spec':

@@ -15,7 +15,7 @@ ${CWD}            %{TEMPDIR}/process-cwd
 *** Keywords ***
 Some process
     [Arguments]    ${alias}=${null}    ${stderr}=STDOUT
-    ${handle}=    Start Python Process    print raw_input()    alias=${alias}    stderr=${stderr}
+    ${handle}=    Start Python Process    print(raw_input())    alias=${alias}    stderr=${stderr}
     Process should be running
     [Return]    ${handle}
 

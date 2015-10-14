@@ -1,19 +1,19 @@
 class RecLibrary1(object):
 
     def keyword_only_in_library_1(self):
-        print "Keyword from library 1"
+        print("Keyword from library 1")
 
     def keyword_in_both_libraries(self):
-        print "Keyword from library 1"
-        
+        print("Keyword from library 1")
+
     def keyword_in_all_resources_and_libraries(self):
-        print "Keyword from library 1"
+        print("Keyword from library 1")
 
     def keyword_everywhere(self):
-        print "Keyword from library 1"
- 
+        print("Keyword from library 1")
+
     def no_operation(self):
-        print "Overrides keyword from BuiltIn library"
+        print("Overrides keyword from BuiltIn library")
 
     def similar_kw_3(self):
         pass
