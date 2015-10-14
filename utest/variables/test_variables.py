@@ -203,7 +203,7 @@ class TestVariables(unittest.TestCase):
         assert_equal(self.varz.replace_scalar('${${1}+${2}}'), 3)
         assert_equal(self.varz.replace_scalar('${${1}-${2}}'), -1)
         assert_equal(self.varz.replace_scalar('${${1}*${2}}'), 2)
-        assert_equal(self.varz.replace_scalar('${${1}/${2}}'), 0)
+        assert_equal(self.varz.replace_scalar('${${1}//${2}}'), 0)
 
     def test_math_with_internal_vars_with_spaces(self):
         assert_equal(self.varz.replace_scalar('${${1} + ${2.5}}'), 3.5)

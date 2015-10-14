@@ -1,8 +1,6 @@
-import os
 import unittest
-from StringIO import StringIO
 
-from robot.utils import HtmlWriter
+from robot.utils import HtmlWriter, StringIO
 from robot.utils.asserts import assert_equals
 
 

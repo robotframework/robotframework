@@ -1,5 +1,6 @@
 import unittest
 
+from robot.utils import long
 from robot.utils.asserts import *
 
 
@@ -63,7 +64,7 @@ class TestAsserts(unittest.TestCase):
 
     def test_fail_unless_equal_with_values_having_same_string_repr(self):
         for val, type_ in [(1, 'integer'),
-                           (1L, 'integer'),
+                           (long(1), 'integer'),
                            (MyEqual(1), 'MyEqual')]:
             assert_raises_with_msg(AE, '1 (string) != 1 (%s)' % type_,
                                    fail_unless_equal, '1', val)

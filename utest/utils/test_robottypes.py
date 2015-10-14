@@ -2,9 +2,13 @@ import unittest
 
 from collections import Mapping
 from array import array
-from UserDict import UserDict
-from UserList import UserList
-from UserString import UserString, MutableString
+try :
+    from UserDict import UserDict
+    from UserList import UserList
+    from UserString import UserString
+except ImportError:
+    from collections import UserDict, UserList, UserString
+
 try:
     import java
     from java.lang import String
@@ -12,7 +16,7 @@ try:
 except ImportError:
     pass
 
-from robot.utils import is_dict_like, is_list_like, type_name, JYTHON
+from robot.utils import is_dict_like, is_list_like, long, type_name, JYTHON
 from robot.utils.asserts import assert_equals
 
 
@@ -100,7 +104,7 @@ class TestTypeName(unittest.TestCase):
 
     def test_base_types(self):
         for item, exp in [('bytes', 'string'), (u'unicode', 'string'),
-                          (1, 'integer'), (1L, 'integer'), (1.0, 'float'),
+                          (1, 'integer'), (long(1), 'integer'), (1.0, 'float'),
                           (True, 'boolean'), (None, 'None'), (set(), 'set'),
                           ([], 'list'), ((), 'tuple'), ({}, 'dictionary')]:
             assert_equals(type_name(item), exp)

@@ -1,9 +1,9 @@
-from os.path import join, dirname
 import unittest
-from StringIO import StringIO
-from robot.errors import DataError
+from os.path import join, dirname
 
+from robot.errors import DataError
 from robot.result import ExecutionResult
+from robot.utils import StringIO
 from robot.utils.asserts import assert_equals, assert_true, assert_raises
 
 

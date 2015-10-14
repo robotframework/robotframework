@@ -1,12 +1,12 @@
-from StringIO import StringIO
 import os
 import unittest
 
-from robot.reporting.resultwriter import ResultWriter, Results
 from robot.output import LOGGER
+from robot.reporting.resultwriter import ResultWriter, Results
 from robot.result.executionresult import Result
 from robot.result.executionerrors import ExecutionErrors
 from robot.result.testsuite import TestSuite
+from robot.utils import StringIO
 from robot.utils.asserts import assert_true, assert_equals
 
 
