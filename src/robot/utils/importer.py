@@ -148,10 +148,10 @@ class _Importer(object):
                 if JYTHON and fromlist and retry:
                     __import__('%s.%s' % (name, fromlist[0]))
                     return self._import(name, fromlist, retry=False)
-                # FIXME: find a solution. illegal syntax in python 3
-                #if IRONPYTHON:
-                #    # https://github.com/IronLanguages/main/issues/989
-                #    raise sys.exc_type, sys.exc_value, sys.exc_traceback
+                # IronPython loses traceback when using plain raise.
+                # https://github.com/IronLanguages/main/issues/989
+                if IRONPYTHON:
+                    exec('raise sys.exc_type, sys.exc_value, sys.exc_traceback')
                 raise
         except:
             raise DataError(*get_error_details())
