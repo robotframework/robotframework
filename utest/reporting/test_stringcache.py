@@ -61,12 +61,6 @@ class TestStringIndex(unittest.TestCase):
         value = StringIndex(42)
         assert_equals(str(value), '42')
 
-    def test_long_values(self):
-        target = sys.maxint + 42
-        value = StringIndex(target)
-        assert_equals(str(value), str(target))
-        assert_false(str(value).endswith('L'))
-
     def test_truth(self):
         assert_true(StringIndex(1))
         assert_true(StringIndex(-42))

@@ -22,12 +22,11 @@ from .tags import TagPatterns
 
 
 class TagStatistics(object):
-    """Container for tag statistics.
-    """
+    """Container for tag statistics."""
 
     def __init__(self, combined_stats):
-         #: Dictionary, where key is the name of the tag as a string and value
-         #: is an instance of :class:`~robot.model.stats.TagStat`.
+        #: Dictionary, where key is the name of the tag as a string and value
+        #: is an instance of :class:`~robot.model.stats.TagStat`.
         self.tags = NormalizedDict(ignore=['_'])
         #: Dictionary, where key is the name of the created tag as a string
         # and value is an instance of :class:`~robot.model.stats.TagStat`.
@@ -37,7 +36,8 @@ class TagStatistics(object):
         visitor.visit_tag_statistics(self)
 
     def __iter__(self):
-        return iter(sorted(self.tags.values() + self.combined))
+        stats = list(self.tags.values()) + self.combined
+        return iter(sorted(stats))
 
 
 class TagStatisticsBuilder(object):

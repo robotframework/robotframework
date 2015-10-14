@@ -111,7 +111,7 @@ class DocFormatter(object):
 
     def _escape_and_encode_targets(self, targets):
         return NormalizedDict((html_escape(key), self._encode_uri_component(value))
-                              for key, value in targets.iteritems())
+                              for key, value in targets.items())
 
     def _encode_uri_component(self, value):
         # Emulates encodeURIComponent javascript function

@@ -12,13 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import (elapsed_time_to_string, html_escape, is_string,
+from robot.utils import (Sortable, elapsed_time_to_string, html_escape, is_string,
                          normalize, unic)
 
 from .tags import TagPatterns
 
 
-class Stat(object):
+class Stat(Sortable):
     """Generic statistic object used for storing all the statistic values."""
 
     def __init__(self, name):
@@ -79,11 +79,14 @@ class Stat(object):
     def _update_elapsed(self, test):
         self.elapsed += test.elapsedtime
 
-    def __cmp__(self, other):
-        return cmp(self._norm_name, other._norm_name)
+    @property
+    def _sort_key(self):
+        return self._norm_name
 
     def __nonzero__(self):
         return not self.failed
+
+    __bool__ = __nonzero__
 
     def visit(self, visitor):
         visitor.visit_stat(self)
@@ -162,11 +165,12 @@ class TagStat(Stat):
     def _get_links_as_string(self):
         return ':::'.join('%s:%s' % (title, url) for url, title in self.links)
 
-    def __cmp__(self, other):
-        return cmp(other.critical, self.critical) \
-            or cmp(other.non_critical, self.non_critical) \
-            or cmp(bool(other.combined), bool(self.combined)) \
-            or Stat.__cmp__(self, other)
+    @property
+    def _sort_key(self):
+        return (not self.critical,
+                not self.non_critical,
+                not self.combined,
+                self._norm_name)
 
 
 class CombinedTagStat(TagStat):

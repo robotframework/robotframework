@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 import sys
-from StringIO import StringIO
+from robot.utils import StringIO
 
 from robot.output import LOGGER
 from robot.utils import decode_output, encode_output, JYTHON

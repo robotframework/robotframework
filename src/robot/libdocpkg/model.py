@@ -15,7 +15,7 @@
 from itertools import chain
 
 from robot.model import Tags
-from robot.utils import setter
+from robot.utils import Sortable, setter
 
 from .writer import LibdocWriter
 from .output import LibdocOutput
@@ -58,7 +58,7 @@ class LibraryDoc(object):
             LibdocWriter(format).write(self, outfile)
 
 
-class KeywordDoc(object):
+class KeywordDoc(Sortable):
 
     def __init__(self, name='', args=(), doc='', tags=()):
         self.name = name
@@ -70,5 +70,6 @@ class KeywordDoc(object):
     def shortdoc(self):
         return self.doc.splitlines()[0] if self.doc else ''
 
-    def __cmp__(self, other):
-        return cmp(self.name.lower(), other.name.lower())
+    @property
+    def _sort_key(self):
+        return self.name.lower()

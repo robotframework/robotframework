@@ -85,7 +85,7 @@ class _BaseSettings(object):
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
-            raise KeyError("Non-existing settings '%s'" % name)
+            raise KeyError("Non-existing option '%s'." % name)
         self._opts[name] = value
 
     def _process_value(self, name, value):
@@ -169,7 +169,7 @@ class _BaseSettings(object):
         if ':' in value:
             value, seed = value.split(':', 1)
         else:
-            seed = random.randint(0, sys.maxint)
+            seed = random.randint(0, sys.maxsize)
         if value in ('test', 'suite'):
             value += 's'
         if value not in ('tests', 'suites', 'none', 'all'):
@@ -186,7 +186,7 @@ class _BaseSettings(object):
 
     def __getitem__(self, name):
         if name not in self._opts:
-            raise KeyError("Non-existing setting '%s'" % name)
+            raise KeyError("Non-existing option '%s'." % name)
         if name in self._output_opts:
             return self._get_output_file(name)
         return self._opts[name]

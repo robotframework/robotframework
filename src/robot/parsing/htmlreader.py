@@ -12,8 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from HTMLParser import HTMLParser
-from htmlentitydefs import entitydefs
+try:
+    from htmlentitydefs import entitydefs
+    from HTMLParser import HTMLParser
+except ImportError:
+    from html.entities import entitydefs
+    from html.parser import HTMLParser
 
 
 NON_BREAKING_SPACE = u'\xA0'

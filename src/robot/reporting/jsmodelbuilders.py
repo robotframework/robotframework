@@ -89,7 +89,7 @@ class SuiteBuilder(_Builder):
                     stats)
 
     def _yield_metadata(self, suite):
-        for name, value in suite.metadata.iteritems():
+        for name, value in suite.metadata.items():
             yield self._string(name)
             yield self._html(value)
 

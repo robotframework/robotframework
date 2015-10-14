@@ -26,6 +26,7 @@ from robot.version import get_full_version
 
 from .misc import plural_or_not
 from .encoding import decode_output, decode_from_system
+from .platform import PY2
 from .utf8reader import Utf8Reader
 from .robottypes import is_falsy, is_integer, is_list_like, is_string, is_unicode
 
@@ -40,7 +41,7 @@ ESCAPES = dict(
 
 
 def cmdline2list(args, escaping=False):
-    if is_unicode(args):
+    if PY2 and is_unicode(args):
         args = args.encode('UTF-8')
         decode = lambda item: item.decode('UTF-8')
     else:
@@ -141,8 +142,7 @@ class ArgumentParser(object):
         amount of horizontal space as <---ESCAPES--->. Both help and version
         are wrapped to Information exception.
         """
-        if self._env_options:
-            args = cmdline2list(os.getenv(self._env_options, '')) + list(args)
+        args = self._get_env_options() + list(args)
         args = [decode_from_system(a) for a in args]
         if self._auto_argumentfile:
             args = self._process_possible_argfile(args)
@@ -152,6 +152,13 @@ class ArgumentParser(object):
         if self._validator:
             opts, args = self._validator(opts, args)
         return opts, args
+
+    def _get_env_options(self):
+        if self._env_options:
+            options = os.getenv(self._env_options)
+            if options:
+                return cmdline2list(options)
+        return []
 
     def _handle_special_options(self, opts, args):
         if self._auto_escape and opts.get('escape'):

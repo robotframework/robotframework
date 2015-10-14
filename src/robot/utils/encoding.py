@@ -16,7 +16,7 @@ from .robottypes import is_unicode
 
 from .encodingsniffer import get_output_encoding, get_system_encoding
 from .unic import unic
-from .platform import JYTHON, IRONPYTHON
+from .platform import JYTHON, IRONPYTHON, PY3
 
 
 OUTPUT_ENCODING = get_output_encoding()
@@ -38,13 +38,13 @@ def decode_output(string, force=False):
 def encode_output(string, errors='replace'):
     """Encodes Unicode to bytes in console encoding."""
     # http://ironpython.codeplex.com/workitem/29487
-    if IRONPYTHON:
+    if PY3 or IRONPYTHON:
         return string
     return string.encode(OUTPUT_ENCODING, errors)
 
 
-# Jython and IronPython handle communication with system APIs using Unicode.
-if JYTHON or IRONPYTHON:
+# These interpreters handle communication with system APIs using Unicode.
+if PY3 or JYTHON or IRONPYTHON:
 
     def decode_from_system(string):
         return string if is_unicode(string) else unic(string)

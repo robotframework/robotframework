@@ -15,13 +15,21 @@
 import os
 import os.path
 import sys
-import urllib
+try:
+    from urllib import pathname2url
+except ImportError:
+    from urllib.request import pathname2url
 
 from robot.errors import DataError
 
 from .encoding import decode_from_system
 from .platform import WINDOWS
 from .robottypes import is_unicode
+
+if sys.version_info < (2,7):
+    _abspath = lambda path: os.path.join(os.getcwdu(), path)
+else:
+    _abspath = os.path.abspath
 
 
 if WINDOWS:
@@ -64,7 +72,7 @@ def abspath(path, case_normalize=False):
     path = normpath(path, case_normalize)
     if os.path.isabs(path):
         return path
-    return normpath(os.path.join(os.getcwdu(), path), case_normalize)
+    return normpath(_abspath(path), case_normalize)
 
 
 # TODO: Investigate could this be replaced with os.path.relpath in RF 2.9.
@@ -77,7 +85,7 @@ def get_link_path(target, base):
     Rationale: os.path.relpath is not available before Python 2.6
     """
     path =  _get_pathname(target, base)
-    url = urllib.pathname2url(path.encode('UTF-8'))
+    url = pathname2url(path.encode('UTF-8'))
     if os.path.isabs(path):
         url = 'file:' + url
     # At least Jython seems to use 'C|/Path' and not 'C:/Path'

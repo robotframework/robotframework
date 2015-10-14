@@ -20,7 +20,7 @@ from robot.errors import DataError
 
 from .encoding import decode_from_system
 from .error import get_error_details
-from .platform import JYTHON
+from .platform import JYTHON, IRONPYTHON
 from .robotpath import abspath, normpath
 from .robottypes import type_name, is_unicode
 
@@ -148,9 +148,11 @@ class _Importer(object):
                 if JYTHON and fromlist and retry:
                     __import__('%s.%s' % (name, fromlist[0]))
                     return self._import(name, fromlist, retry=False)
-                # Cannot use plain raise due to
-                # http://ironpython.codeplex.com/workitem/32332
-                raise sys.exc_type, sys.exc_value, sys.exc_traceback
+                # FIXME: find a solution. illegal syntax in python 3
+                #if IRONPYTHON:
+                #    # https://github.com/IronLanguages/main/issues/989
+                #    raise sys.exc_type, sys.exc_value, sys.exc_traceback
+                raise
         except:
             raise DataError(*get_error_details())
 

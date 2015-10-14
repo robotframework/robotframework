@@ -50,7 +50,7 @@ from .match import eq, Matcher, MultiMatcher
 from .misc import (getdoc, isatty, plural_or_not, printable_name, seq2str,
                    seq2str2, __str__)
 from .normalizing import lower, normalize, NormalizedDict
-from .platform import (IRONPYTHON, JYTHON, PYTHON, UNIXY, WINDOWS,
+from .platform import (IRONPYTHON, JYTHON, PY2, PY3, PYTHON, UNIXY, WINDOWS,
                        RERAISED_EXCEPTIONS)
 from .recommendations import RecommendationFinder
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
@@ -63,8 +63,9 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         parse_time)
 from .robottypes import (is_bytes, is_dict_like, is_falsy, is_integer,
                          is_list_like, is_number, is_string, is_truthy,
-                         is_unicode, type_name)
+                         is_unicode, long, type_name, unicode, StringIO)
 from .setter import setter, SetterAwareType
+from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,
                    pad_console_length, get_console_length, split_tags_from_doc,
                    split_args_from_name_or_path)

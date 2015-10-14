@@ -26,6 +26,8 @@ class Failure(object):
     def __nonzero__(self):
         return bool(self.setup or self.test or self.teardown)
 
+    __bool__ = __nonzero__
+
 
 class Exit(object):
 
@@ -54,6 +56,8 @@ class Exit(object):
 
     def __nonzero__(self):
         return self.failure or self.error or self.fatal
+
+    __bool__ = __nonzero__
 
 
 class _ExecutionStatus(object):

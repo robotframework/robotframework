@@ -14,12 +14,16 @@
 
 import io
 
+from .platform import PY3
+
 
 def file_writer(path=None, encoding='UTF-8', newline=None):
     if path:
         f = io.open(path, 'w', encoding=encoding, newline=newline)
     else:
         f = io.StringIO(newline=newline)
+    if PY3:
+        return f
     write = f.write
     f.write = lambda text: write(unicode(text))
     return f

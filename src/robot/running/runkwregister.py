@@ -40,9 +40,9 @@ class _RunKeywordRegister:
 
     def _get_args_from_method(self, method):
         if inspect.ismethod(method):
-            return method.im_func.func_code.co_argcount - 1
+            return method.__code__.co_argcount - 1
         elif inspect.isfunction(method):
-            return method.func_code.co_argcount
+            return method.__code__.co_argcount
         raise ValueError('Needs function or method')
 
 

@@ -133,6 +133,8 @@ class ConnectionCache(object):
     def __nonzero__(self):
         return self.current is not self._no_current
 
+    __bool__ = __nonzero__
+
     def _resolve_alias_or_index(self, alias_or_index):
         try:
             return self._resolve_alias(alias_or_index)
@@ -172,3 +174,5 @@ class NoConnection(object):
 
     def __nonzero__(self):
         return False
+
+    __bool__ = __nonzero__

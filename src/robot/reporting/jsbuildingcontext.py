@@ -17,8 +17,8 @@ from os.path import exists, dirname
 
 from robot.output.loggerhelper import LEVELS
 from robot.utils import (attribute_escape, get_link_path, html_escape,
-                         html_format, is_string, is_unicode, timestamp_to_secs,
-                         unic)
+                         html_format, is_string, is_unicode, long,
+                         timestamp_to_secs, unic)
 
 from .stringcache import StringCache
 

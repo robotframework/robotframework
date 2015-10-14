@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import long, unicode
+
 
 class JsonWriter(object):
 
@@ -51,7 +53,7 @@ class JsonDumper(object):
             if dumper.handles(data, mapping):
                 dumper.dump(data, mapping)
                 return
-        raise ValueError('Dumping %s not supported' % type(data))
+        raise ValueError('Dumping %s not supported.' % type(data))
 
     def write(self, data):
         self._output.write(data)
@@ -72,7 +74,7 @@ class _Dumper(object):
 
 
 class StringDumper(_Dumper):
-    _handled_types = basestring
+    _handled_types = (str, unicode)
     _search_and_replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
                            ('\n', '\\n'), ('\r', '\\r'), ('</', '\\x3c/')]
 

@@ -178,8 +178,10 @@ class VariableIterator(object):
 
     def __nonzero__(self):
         try:
-            iter(self).next()
+            next(iter(self))
         except StopIteration:
             return False
         else:
             return True
+
+    __bool__ = __nonzero__

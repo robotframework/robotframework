@@ -41,6 +41,8 @@ class FlattenByTypeMatcher(object):
     def __nonzero__(self):
         return bool(self._types)
 
+    __bool__ = __nonzero__
+
 
 class FlattenByNameMatcher(object):
 
@@ -57,6 +59,8 @@ class FlattenByNameMatcher(object):
     def __nonzero__(self):
         return bool(self._matcher)
 
+    __bool__ = __nonzero__
+
 
 class FlattenByTagMatcher(object):
 
@@ -71,3 +75,5 @@ class FlattenByTagMatcher(object):
 
     def __nonzero__(self):
         return bool(self._matcher)
+
+    __bool__ = __nonzero__

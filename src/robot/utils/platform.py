@@ -1,3 +1,4 @@
+
 #  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +20,8 @@ import sys
 JYTHON = sys.platform.startswith('java')
 IRONPYTHON = sys.platform == 'cli'
 PYTHON = not (JYTHON or IRONPYTHON)
+PY2 = sys.version_info[0] == 2
+PY3 = not PY2
 UNIXY = os.sep == '/'
 WINDOWS = not UNIXY
 

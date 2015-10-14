@@ -94,7 +94,8 @@ from robot.parsing import disable_curdir_processing
 from robot.running import TestSuiteBuilder
 from robot.utils import (abspath, Application, file_writer, format_time,
                          get_link_path, html_escape, html_format, is_string,
-                         secs_to_timestr, seq2str2, timestr_to_secs, unescape)
+                         long, secs_to_timestr, seq2str2, timestr_to_secs,
+                         unescape)
 
 
 class TestDoc(Application):

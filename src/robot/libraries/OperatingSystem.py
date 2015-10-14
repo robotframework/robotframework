@@ -1501,10 +1501,7 @@ class OperatingSystem(object):
         self._log(msg, 'WARN')
 
     def _log(self, msg, level):
-        if logger:
-            logger.write(msg, level)
-        else:
-            print '*%s* %s' % (level, msg)
+        logger.write(msg, level)
 
 
 class _Process:

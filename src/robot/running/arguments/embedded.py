@@ -30,6 +30,8 @@ class EmbeddedArguments(object):
     def __nonzero__(self):
         return self.name is not None
 
+    __bool__ = __nonzero__
+
 
 class EmbeddedArgumentParser(object):
     _regexp_extension = re.compile(r'(?<!\\)\(\?.+\)')

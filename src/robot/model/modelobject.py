@@ -12,18 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import SetterAwareType, __str__
+from robot.utils import PY2
 
+if PY2:
+    from .modelobject2 import ModelObject
+else:
+    from .modelobject3 import ModelObject
 
-class ModelObject(object):
-    __slots__ = []
-    __metaclass__ = SetterAwareType
-
-    def __unicode__(self):
-        return self.name
-
-    def __str__(self):
-        return __str__(self)
-
-    def __repr__(self):
-        return repr(str(self))

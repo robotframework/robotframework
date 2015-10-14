@@ -17,6 +17,11 @@
 External libraries should not used exceptions defined here.
 """
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 
 # Return codes from Robot and Rebot.
 # RC below 250 is the number of failed critical tests and exactly 250
@@ -39,7 +44,7 @@ class RobotError(Exception):
 
     @property
     def message(self):
-        return self.__unicode__()
+        return unicode(self)
 
 
 class FrameworkError(RobotError):

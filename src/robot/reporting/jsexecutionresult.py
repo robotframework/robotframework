@@ -14,7 +14,7 @@
 
 import time
 
-from robot import utils
+from robot.utils import format_time, long
 
 from .stringcache import StringIndex
 
@@ -36,7 +36,7 @@ class JsExecutionResult(object):
             'errors': errors,
             'baseMillis': basemillis,
             'generatedMillis': long(time.mktime(gentime) * 1000) - basemillis,
-            'generatedTimestamp': utils.format_time(gentime, gmtsep=' ')
+            'generatedTimestamp': format_time(gentime, gmtsep=' ')
         }
 
     def remove_data_not_needed_in_report(self):

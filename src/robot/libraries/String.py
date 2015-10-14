@@ -507,7 +507,7 @@ class String(object):
                             ('[NUMBERS]', digits)]:
             chars = chars.replace(name, value)
         maxi = len(chars) - 1
-        return ''.join(chars[randint(0, maxi)] for _ in xrange(length))
+        return ''.join(chars[randint(0, maxi)] for _ in range(length))
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from ``start`` index to ``end`` index.

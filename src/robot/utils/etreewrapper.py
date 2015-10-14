@@ -13,9 +13,8 @@
 #  limitations under the License.
 
 import os.path
-from StringIO import StringIO
 
-from .robottypes import is_string
+from .robottypes import is_string, StringIO
 from .platform import IRONPYTHON
 
 

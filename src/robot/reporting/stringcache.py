@@ -12,13 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from operator import itemgetter
-
-from robot.utils import compress_text
+from robot.utils import OrderedDict, compress_text
 
 
-# TODO: Could we inherit from int nowadays?
-class StringIndex(long):
+class StringIndex(int):
     pass
 
 
@@ -28,7 +25,7 @@ class StringCache(object):
     _zero_index = StringIndex(0)
 
     def __init__(self):
-        self._cache = {'*': self._zero_index}
+        self._cache = OrderedDict({'*': self._zero_index})
 
     def add(self, text):
         if not text:
@@ -44,12 +41,11 @@ class StringCache(object):
             return raw
         compressed = compress_text(text)
         if len(compressed) * self._use_compressed_threshold < len(raw):
-            return compressed
+            return str(compressed)
         return raw
 
     def _raw(self, text):
         return '*'+text
 
     def dump(self):
-        return tuple(item[0] for item in sorted(self._cache.iteritems(),
-                                                key=itemgetter(1)))
+        return tuple(self._cache)

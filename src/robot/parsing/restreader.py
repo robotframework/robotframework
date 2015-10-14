@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from cStringIO import StringIO
+from robot.utils import StringIO
 
 from .htmlreader import HtmlReader
 from .txtreader import TxtReader

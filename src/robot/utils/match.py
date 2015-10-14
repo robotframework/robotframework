@@ -58,6 +58,8 @@ class Matcher(object):
     def __nonzero__(self):
         return bool(self._normalize(self.pattern))
 
+    __bool__ = __nonzero__
+
 
 class MultiMatcher(object):
 

@@ -174,7 +174,7 @@ class FromDirectoryPopulator(object):
     def _list_dir(self, path):
         # os.listdir returns Unicode entries when path is Unicode
         names = os.listdir(unic(path))
-        for name in sorted(names, key=unicode.lower):
+        for name in sorted(names, key=lambda item: item.lower()):
             # unic needed to handle nfc/nfd normalization on OSX
             yield unic(name), unic(os.path.join(path, name))
 

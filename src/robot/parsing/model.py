@@ -270,6 +270,8 @@ class _Table(object):
     def __nonzero__(self):
         return bool(self._header or len(self))
 
+    __bool__ = __nonzero__
+
     def __len__(self):
         return sum(1 for item in self)
 
@@ -441,6 +443,7 @@ class TestCaseTable(_Table):
     def __nonzero__(self):
         return True
 
+    __bool__ = __nonzero__
 
 class KeywordTable(_Table):
     type = 'keyword'
@@ -489,6 +492,8 @@ class Variable(object):
 
     def __nonzero__(self):
         return self.has_data()
+
+    __bool__ = __nonzero__
 
     def report_invalid_syntax(self, message, level='ERROR'):
         self.parent.report_invalid_syntax("Setting variable '%s' failed: %s"

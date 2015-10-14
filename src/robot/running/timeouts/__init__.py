@@ -14,7 +14,7 @@
 
 import time
 
-from robot.utils import (secs_to_timestr, timestr_to_secs,
+from robot.utils import (Sortable, secs_to_timestr, timestr_to_secs,
                          IRONPYTHON, JYTHON, WINDOWS)
 from robot.errors import TimeoutError, DataError, FrameworkError
 
@@ -28,7 +28,7 @@ else:
     from .posix import Timeout
 
 
-class _Timeout(object):
+class _Timeout(Sortable):
 
     def __init__(self, timeout=None, message='', variables=None):
         self.string = timeout or ''
@@ -77,12 +77,14 @@ class _Timeout(object):
     def __unicode__(self):
         return self.string
 
-    def __cmp__(self, other):
-        return cmp(not self.active, not other.active) \
-            or cmp(self.time_left(), other.time_left())
+    @property
+    def _sort_key(self):
+        return (not self.active, self.time_left())
 
     def __nonzero__(self):
         return bool(self.string and self.string.upper() != 'NONE')
+
+    __bool__ = __nonzero__
 
     def run(self, runnable, args=None, kwargs=None):
         if self.error:

@@ -111,3 +111,5 @@ class DataRow(object):
 
     def __nonzero__(self):
         return bool(self.cells or self.comments)
+
+    __bool__ = __nonzero__

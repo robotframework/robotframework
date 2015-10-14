@@ -17,7 +17,7 @@ import re
 import time
 import token
 from tokenize import generate_tokens, untokenize
-from StringIO import StringIO
+from robot.utils import StringIO
 
 from robot.api import logger
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
@@ -427,7 +427,7 @@ class _Converter(_BuiltInBase):
         input = ''.join(input.split())
         if len(input) % length != 0:
             raise RuntimeError('Expected input to be multiple of %d.' % length)
-        return (input[i:i+length] for i in xrange(0, len(input), length))
+        return (input[i:i+length] for i in range(0, len(input), length))
 
     def create_list(self, *items):
         """Returns a list containing given items.
@@ -758,7 +758,7 @@ class _Verify(_BuiltInBase):
         error message with ``msg`` and ``values``.
         """
         self._log_types_at_info_if_different(first, second)
-        first, second = [self._convert_to_string(i) for i in first, second]
+        first, second = [self._convert_to_string(i) for i in (first, second)]
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True):
@@ -771,7 +771,7 @@ class _Verify(_BuiltInBase):
         `multiline string comparisons`.
         """
         self._log_types_at_info_if_different(first, second)
-        first, second = [self._convert_to_string(i) for i in first, second]
+        first, second = [self._convert_to_string(i) for i in (first, second)]
         self._should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):
@@ -1677,7 +1677,7 @@ class _RunKeyword(_BuiltInBase):
     def _yield_repeated_keywords(self, times, name, args):
         if times <= 0:
             self.log("Keyword '%s' repeated zero times." % name)
-        for i in xrange(times):
+        for i in range(times):
             self.log("Repeating keyword, round %d/%d." % (i+1, times))
             yield name, args
 

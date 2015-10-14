@@ -12,56 +12,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from collections import Mapping
-from UserDict import UserDict
-from UserString import UserString
-try:
-    from java.lang import String
-except ImportError:
-    String = ()
-
-from .platform import RERAISED_EXCEPTIONS
+from .platform import PY2
 
 
-def is_integer(item):
-    return isinstance(item, (int, long))
+if PY2:
+    from StringIO import StringIO
+    from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_list_like,
+                              is_number, is_string, is_unicode)
+    long = long
+    unicode = unicode
 
-
-def is_number(item):
-    return isinstance(item, (int, long, float))
-
-
-def is_bytes(item):
-    return isinstance(item, str)
-
-
-def is_string(item):
-    return isinstance(item, basestring)
-
-
-def is_unicode(item):
-    return isinstance(item, unicode)
-
-
-def is_list_like(item):
-    if isinstance(item, (basestring, UserString, String, file)):
-        return False
-    try:
-        iter(item)
-    except RERAISED_EXCEPTIONS:
-        raise
-    except:
-        return False
-    else:
-        return True
-
-
-def is_dict_like(item):
-    return isinstance(item, (Mapping, UserDict))
+else:
+    from io import StringIO
+    from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_list_like,
+                              is_number, is_string, is_unicode)
+    long = int
+    unicode = str
 
 
 def is_truthy(item):
-    if isinstance(item, basestring):
+    if is_string(item):
         return item.upper() not in ('FALSE', 'NO', '')
     return bool(item)
 

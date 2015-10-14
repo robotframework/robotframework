@@ -16,7 +16,7 @@ import inspect
 import sys
 
 from .unic import unic
-from .platform import IRONPYTHON
+from .platform import IRONPYTHON, PY2
 from .robottypes import is_integer, is_unicode
 
 
@@ -106,9 +106,12 @@ def getdoc(item):
     except UnicodeDecodeError:
         return unic(doc)
 
-
-def __str__(instance):
-    return instance.__unicode__().encode('UTF-8')
+if PY2:
+    def __str__(instance):
+        return instance.__unicode__().encode('UTF-8')
+else:
+    def __str__(instance):
+        return instance.__unicode__()
 
 
 # On IronPython sys.stdxxx.isatty() always returns True

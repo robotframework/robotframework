@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string
+from robot.utils import is_string, unicode, __str__
 
 from .comments import Comment
 
@@ -89,11 +89,15 @@ class Setting(object):
     def __nonzero__(self):
         return self.is_set()
 
+    __bool__ = __nonzero__
+
     def __iter__(self):
         return iter(self.value or ())
 
     def __unicode__(self):
         return unicode(self.value or '')
+
+    __str__ = __str__
 
 
 class StringValueJoiner(object):

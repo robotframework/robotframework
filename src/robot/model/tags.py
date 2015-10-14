@@ -123,6 +123,8 @@ class _SingleTagPattern(object):
     def __nonzero__(self):
         return bool(self._matcher)
 
+    __bool__ = __nonzero__
+
 
 class _AndTagPattern(object):
 

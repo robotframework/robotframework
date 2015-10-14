@@ -12,26 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .visitor import SuiteVisitor
+from robot.utils import SetterAwareType
 
 
-class TagSetter(SuiteVisitor):
+class ModelObject(object):
+    __slots__ = []
+    __metaclass__ = SetterAwareType
 
-    def __init__(self, add=None, remove=None):
-        self.add = add
-        self.remove = remove
+    def __unicode__(self):
+        return self.name
 
-    def start_suite(self, suite):
-        return bool(self)
+    def __str__(self):
+        return unicode(self).encode('UTF-8')
 
-    def visit_test(self, test):
-        test.tags.add(self.add)
-        test.tags.remove(self.remove)
-
-    def visit_keyword(self, keyword):
-        pass
-
-    def __nonzero__(self):
-        return bool(self.add or self.remove)
-
-    __bool__ = __nonzero__
+    def __repr__(self):
+        return repr(str(self))

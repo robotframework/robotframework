@@ -63,6 +63,8 @@ class Listeners(object):
     def __nonzero__(self):
         return bool(self._listeners)
 
+    __bool__ = __nonzero__
+
     def _import_listeners(self, listener_data):
         listeners = []
         for listener in listener_data:

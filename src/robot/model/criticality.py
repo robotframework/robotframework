@@ -37,3 +37,5 @@ class Criticality(object):
 
     def __nonzero__(self):
         return bool(self.critical_tags or self.non_critical_tags)
+
+    __bool__ = __nonzero__

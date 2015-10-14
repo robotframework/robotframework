@@ -15,7 +15,7 @@
 from pprint import PrettyPrinter
 
 from .platform import IRONPYTHON, JYTHON
-from .robottypes import is_bytes, is_unicode
+from .robottypes import is_bytes, is_unicode, unicode
 
 
 def unic(item, *args):

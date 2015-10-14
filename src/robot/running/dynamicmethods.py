@@ -69,6 +69,8 @@ class _DynamicMethod(object):
     def __nonzero__(self):
         return self.method is not no_dynamic_method
 
+    __bool__ = __nonzero__
+
 
 class GetKeywordNames(_DynamicMethod):
     _underscore_name = 'get_keyword_names'
