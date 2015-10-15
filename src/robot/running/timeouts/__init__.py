@@ -53,9 +53,9 @@ class _Timeout(Sortable):
             self.string = secs_to_timestr(self.secs)
             self.message = variables.replace_string(self.message)
         except (DataError, ValueError) as err:
-            self.secs = 0.000001 # to make timeout active
-            self.error = 'Setting %s timeout failed: %s' \
-                    % (self.type.lower(), err.message)
+            self.secs = 0.000001  # to make timeout active
+            self.error = (u'Setting %s timeout failed: %s'
+                          % (self.type.lower(), err))
 
     def start(self):
         if self.secs > 0:
