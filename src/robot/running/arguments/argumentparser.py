@@ -40,7 +40,7 @@ class PythonArgumentParser(_ArgumentParser):
 
     def _get_arg_spec(self, handler):
         args, varargs, kwargs, defaults = inspect.getargspec(handler)
-        if inspect.ismethod(handler):
+        if inspect.ismethod(handler) or handler.__name__ == '__init__':
             args = args[1:]  # drop 'self'
         defaults = list(defaults) if defaults else []
         return args, defaults, varargs, kwargs

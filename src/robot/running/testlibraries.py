@@ -150,7 +150,9 @@ class _BaseTestLibrary(object):
         return init_method if self._valid_init(init_method) else lambda: None
 
     def _valid_init(self, method):
-        return inspect.ismethod(method) or is_java_init(method)
+        return (inspect.ismethod(method) or     # PY2
+                inspect.isfunction(method) or   # PY3
+                is_java_init(method))           # TODO: Is this still needed
 
     def init_scope_handling(self):
         if self.scope == 'GLOBAL':
