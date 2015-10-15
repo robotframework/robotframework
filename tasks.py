@@ -255,7 +255,7 @@ def copy_robot_files(build_dir='build'):
     shutil.rmtree(os.path.join(target, 'htmldata', 'testdata'))
 
 def compile_python_files(jython_jar, build_dir='build'):
-    run('java -jar {0} -m compileall {1}'.format(jython_jar, build_dir))
+    run("java -jar {0} -m compileall -x '.*3.py' {1}".format(jython_jar, build_dir))
     # Jython will not work without its py-files, but robot will
     for directory, _, files in os.walk(os.path.join(build_dir, 'Lib', 'robot')):
         for name in files:
