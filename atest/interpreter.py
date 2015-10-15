@@ -126,8 +126,11 @@ class StandaloneInterpreter(Interpreter):
 
     def __init__(self, path, name=None, version=None):
         Interpreter.__init__(self, abspath(path), name or 'Standalone JAR',
-                          version or '2.7')
-        self._bootclasspath = self._get_bootclasspath()
+                             version or '2.7')
+        self._command = ['java', '-jar', self.path]
+        bootclasspath = self._get_bootclasspath()
+        if bootclasspath:
+            self._command.insert(1, bootclasspath)
 
     def _get_bootclasspath(self):
         classpath = os.environ.get('CLASSPATH')
@@ -157,20 +160,20 @@ class StandaloneInterpreter(Interpreter):
 
     @property
     def runner(self):
-        return ['java', self._bootclasspath, '-jar', self.path]
+        return self._command + ['run']
 
     @property
     def rebot(self):
-        return ['java', self._bootclasspath, '-jar', self.path, 'rebot']
+        return self._command + ['rebot']
 
     @property
     def libdoc(self):
-        return ['java', self._bootclasspath, '-jar', self.path, 'libdoc']
+        return self._command + ['libdoc']
 
     @property
     def testdoc(self):
-        return ['java', self._bootclasspath, '-jar', self.path, 'testdoc']
+        return self._command + ['testdoc']
 
     @property
     def tidy(self):
-        return ['java', self._bootclasspath, '-jar', self.path, 'tidy']
+        return self._command + ['tidy']
