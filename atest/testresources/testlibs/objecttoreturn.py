@@ -7,5 +7,5 @@ class ObjectToReturn:
         return self.name
 
     def exception(self, name, msg=""):
-        exception = getattr(__builtins__, name)
+        exception = __builtins__[name]
         raise exception(msg)

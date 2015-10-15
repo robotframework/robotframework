@@ -50,7 +50,7 @@ class ExampleLibrary:
 
     def exception(self, name, msg="", class_only=False):
         """Raise exception with given name and message"""
-        exception = getattr(__builtins__, name)
+        exception = __builtins__[name]
         if class_only:
             raise exception
         raise exception(msg)
