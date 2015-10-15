@@ -13,7 +13,10 @@
 #  limitations under the License.
 
 import re
-import urllib
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
 
 from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
@@ -115,7 +118,7 @@ class DocFormatter(object):
 
     def _encode_uri_component(self, value):
         # Emulates encodeURIComponent javascript function
-        return urllib.quote(value.encode('UTF-8'), safe="-_.!~*'()")
+        return quote(value.encode('UTF-8'), safe="-_.!~*'()")
 
     def html(self, doc, intro=False):
         doc = self._doc_to_html(doc)

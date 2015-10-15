@@ -81,6 +81,14 @@ class Interpreter(object):
         return self.name == 'IronPython'
 
     @property
+    def is_py2(self):
+        return self.version[0] == '2'
+
+    @property
+    def is_py3(self):
+        return self.version[0] == '3'
+
+    @property
     def is_linux(self):
         return 'linux' in sys.platform
 
