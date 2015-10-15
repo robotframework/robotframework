@@ -12,12 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import __str__, html_escape, setter
+from robot.utils import html_escape, py2to3, setter
 
 from .itemlist import ItemList
 from .modelobject import ModelObject
 
 
+@py2to3
 class Message(ModelObject):
     """A message outputted during the test execution.
 
@@ -57,8 +58,6 @@ class Message(ModelObject):
 
     def __unicode__(self):
         return self.message
-
-    __str__ = __str__
 
 
 class Messages(ItemList):

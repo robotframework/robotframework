@@ -14,7 +14,7 @@
 
 from robot.errors import DataError
 from robot.model import TagPatterns
-from robot.utils import MultiMatcher, is_list_like
+from robot.utils import MultiMatcher, is_list_like, py2to3
 
 
 def validate_flatten_keyword(options):
@@ -27,6 +27,7 @@ def validate_flatten_keyword(options):
                             "'NAME:<pattern>' but got '%s'." % opt)
 
 
+@py2to3
 class FlattenByTypeMatcher(object):
 
     def __init__(self, flatten):
@@ -41,9 +42,8 @@ class FlattenByTypeMatcher(object):
     def __nonzero__(self):
         return bool(self._types)
 
-    __bool__ = __nonzero__
 
-
+@py2to3
 class FlattenByNameMatcher(object):
 
     def __init__(self, flatten):
@@ -59,9 +59,8 @@ class FlattenByNameMatcher(object):
     def __nonzero__(self):
         return bool(self._matcher)
 
-    __bool__ = __nonzero__
 
-
+@py2to3
 class FlattenByTagMatcher(object):
 
     def __init__(self, flatten):
@@ -75,5 +74,3 @@ class FlattenByTagMatcher(object):
 
     def __nonzero__(self):
         return bool(self._matcher)
-
-    __bool__ = __nonzero__

@@ -12,9 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import py2to3
+
 from .tags import TagPatterns
 
-
+@py2to3
 class Criticality(object):
 
     def __init__(self, critical_tags=None, non_critical_tags=None):
@@ -37,5 +39,3 @@ class Criticality(object):
 
     def __nonzero__(self):
         return bool(self.critical_tags or self.non_critical_tags)
-
-    __bool__ = __nonzero__

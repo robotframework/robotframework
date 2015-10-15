@@ -106,12 +106,20 @@ def getdoc(item):
     except UnicodeDecodeError:
         return unic(doc)
 
+
 if PY2:
-    def __str__(instance):
-        return instance.__unicode__().encode('UTF-8')
+    def py2to3(cls):
+        if hasattr(cls, '__unicode__'):
+            cls.__str__ = lambda self: unicode(self).encode('UTF-8')
+        return cls
+
 else:
-    def __str__(instance):
-        return instance.__unicode__()
+    def py2to3(cls):
+        if hasattr(cls, '__unicode__'):
+            cls.__str__ = lambda self: self.__unicode__()
+        if hasattr(cls, '__nonzero__'):
+            cls.__bool__ = lambda self: self.__nonzero__()
+        return cls
 
 
 # On IronPython sys.stdxxx.isatty() always returns True

@@ -12,10 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from .misc import py2to3
 from .normalizing import NormalizedDict
 from .robottypes import is_string
 
 
+@py2to3
 class ConnectionCache(object):
     """Cache for test libs to use with concurrent connections, processes, etc.
 
@@ -133,8 +135,6 @@ class ConnectionCache(object):
     def __nonzero__(self):
         return self.current is not self._no_current
 
-    __bool__ = __nonzero__
-
     def _resolve_alias_or_index(self, alias_or_index):
         try:
             return self._resolve_alias(alias_or_index)
@@ -159,6 +159,7 @@ class ConnectionCache(object):
         return index
 
 
+@py2to3
 class NoConnection(object):
 
     def __init__(self, message):
@@ -174,5 +175,3 @@ class NoConnection(object):
 
     def __nonzero__(self):
         return False
-
-    __bool__ = __nonzero__

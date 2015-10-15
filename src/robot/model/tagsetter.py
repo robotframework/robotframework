@@ -12,9 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import py2to3
+
 from .visitor import SuiteVisitor
 
 
+@py2to3
 class TagSetter(SuiteVisitor):
 
     def __init__(self, add=None, remove=None):
@@ -33,5 +36,3 @@ class TagSetter(SuiteVisitor):
 
     def __nonzero__(self):
         return bool(self.add or self.remove)
-
-    __bool__ = __nonzero__

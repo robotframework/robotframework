@@ -17,7 +17,7 @@ import os.path
 
 from robot.errors import DataError
 from robot.utils import (get_error_details, is_string, is_list_like,
-                         is_dict_like, split_args_from_name_or_path,
+                         is_dict_like, py2to3, split_args_from_name_or_path,
                          type_name, Importer)
 
 from .loggerhelper import AbstractLoggerProxy
@@ -48,6 +48,7 @@ class _RecursionAvoidingMetaclass(type):
         return wrapped
 
 
+@py2to3
 class Listeners(object):
     __metaclass__ = _RecursionAvoidingMetaclass
     _start_attrs = ('id', 'doc', 'starttime', 'longname')
@@ -62,8 +63,6 @@ class Listeners(object):
 
     def __nonzero__(self):
         return bool(self._listeners)
-
-    __bool__ = __nonzero__
 
     def _import_listeners(self, listener_data):
         listeners = []

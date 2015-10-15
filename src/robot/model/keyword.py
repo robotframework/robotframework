@@ -15,7 +15,7 @@
 from itertools import chain
 from operator import attrgetter
 
-from robot.utils import setter, unic
+from robot.utils import setter
 
 from .itemlist import ItemList
 from .message import Message, Messages

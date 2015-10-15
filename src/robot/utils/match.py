@@ -15,6 +15,7 @@
 import re
 from functools import partial
 
+from .misc import py2to3
 from .normalizing import normalize
 from .robottypes import is_string
 
@@ -25,6 +26,7 @@ def eq(str1, str2, ignore=(), caseless=True, spaceless=True):
     return str1 == str2
 
 
+@py2to3
 class Matcher(object):
     _pattern_tokenizer = re.compile('(\*|\?)')
     _wildcards = {'*': '.*', '?': '.'}
@@ -57,8 +59,6 @@ class Matcher(object):
 
     def __nonzero__(self):
         return bool(self._normalize(self.pattern))
-
-    __bool__ = __nonzero__
 
 
 class MultiMatcher(object):

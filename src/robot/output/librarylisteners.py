@@ -12,10 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import py2to3
+
 from .listeners import Listeners, ListenerProxy
 from .loggerhelper import AbstractLoggerProxy
 
 
+@py2to3
 class LibraryListeners(Listeners):
 
     def __init__(self):
@@ -25,8 +28,6 @@ class LibraryListeners(Listeners):
 
     def __nonzero__(self):
         return True
-
-    __bool__ = __nonzero__
 
     def _notify_end_test(self, listener, test):
         Listeners._notify_end_test(self, listener, test)

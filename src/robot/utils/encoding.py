@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 from .robottypes import is_unicode
-
 from .encodingsniffer import get_output_encoding, get_system_encoding
 from .unic import unic
 from .platform import JYTHON, IRONPYTHON, PY3

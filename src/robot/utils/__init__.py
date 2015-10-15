@@ -47,8 +47,8 @@ from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
-from .misc import (getdoc, isatty, plural_or_not, printable_name, seq2str,
-                   seq2str2, __str__)
+from .misc import (getdoc, isatty, plural_or_not, printable_name, py2to3,
+                   seq2str, seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
 from .platform import (IRONPYTHON, JYTHON, PY2, PY3, PYTHON, UNIXY, WINDOWS,
                        RERAISED_EXCEPTIONS)

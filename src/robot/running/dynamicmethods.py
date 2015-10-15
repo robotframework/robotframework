@@ -14,7 +14,7 @@
 
 from robot.errors import DataError
 from robot.utils import (get_error_message, unic, is_java_method,
-                         is_string, is_unicode)
+                         is_string, is_unicode, py2to3)
 
 from .arguments import JavaArgumentParser, PythonArgumentParser
 
@@ -23,6 +23,7 @@ def no_dynamic_method(*args):
     pass
 
 
+@py2to3
 class _DynamicMethod(object):
     _underscore_name = NotImplemented
 
@@ -68,8 +69,6 @@ class _DynamicMethod(object):
 
     def __nonzero__(self):
         return self.method is not no_dynamic_method
-
-    __bool__ = __nonzero__
 
 
 class GetKeywordNames(_DynamicMethod):

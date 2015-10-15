@@ -65,6 +65,7 @@ class ETSource(object):
         if self._opened:
             self._opened.close()
 
+    # FIXME: should this be __unicode__?
     def __str__(self):
         if self._source_is_file_name():
             return self._source

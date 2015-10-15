@@ -15,8 +15,10 @@
 import re
 
 from robot.output import LOGGER
+from robot.utils import py2to3
 
 
+@py2to3
 class DataRow(object):
     _row_continuation_marker = '...'
     _whitespace_regexp = re.compile('\s+')
@@ -111,5 +113,3 @@ class DataRow(object):
 
     def __nonzero__(self):
         return bool(self.cells or self.comments)
-
-    __bool__ = __nonzero__

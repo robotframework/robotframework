@@ -14,6 +14,8 @@
 
 import re
 
+from robot.utils import py2to3
+
 from .comments import CommentCache, Comments
 from .settings import Documentation, MetadataList
 
@@ -28,6 +30,7 @@ class Populator(object):
         raise NotImplementedError
 
 
+@py2to3
 class NullPopulator(Populator):
 
     def add(self, row):
@@ -38,8 +41,6 @@ class NullPopulator(Populator):
 
     def __nonzero__(self):
         return False
-
-    __bool__ = __nonzero__
 
 
 class _TablePopulator(Populator):

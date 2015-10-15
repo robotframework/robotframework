@@ -12,9 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import NormalizedDict, __str__
+from robot.utils import NormalizedDict, py2to3
 
 
+@py2to3
 class Metadata(NormalizedDict):
 
     def __init__(self, initial=None):
@@ -22,5 +23,3 @@ class Metadata(NormalizedDict):
 
     def __unicode__(self):
         return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)
-
-    __str__ = __str__

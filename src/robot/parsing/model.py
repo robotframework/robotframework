@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.variables import is_var
 from robot.output import LOGGER
 from robot.writer import DataFileWriter
-from robot.utils import abspath, is_string, normalize, NormalizedDict
+from robot.utils import abspath, is_string, normalize, py2to3, NormalizedDict
 
 from .comments import Comment
 from .populators import FromFilePopulator, FromDirectoryPopulator
@@ -232,6 +232,7 @@ class TestDataDirectory(_TestData):
             yield table
 
 
+@py2to3
 class _Table(object):
 
     def __init__(self, parent):
@@ -269,8 +270,6 @@ class _Table(object):
 
     def __nonzero__(self):
         return bool(self._header or len(self))
-
-    __bool__ = __nonzero__
 
     def __len__(self):
         return sum(1 for item in self)
@@ -443,7 +442,6 @@ class TestCaseTable(_Table):
     def __nonzero__(self):
         return True
 
-    __bool__ = __nonzero__
 
 class KeywordTable(_Table):
     type = 'keyword'
@@ -464,6 +462,7 @@ class KeywordTable(_Table):
         return iter(self.keywords)
 
 
+@py2to3
 class Variable(object):
 
     def __init__(self, parent, name, value, comment=None):
@@ -492,8 +491,6 @@ class Variable(object):
 
     def __nonzero__(self):
         return self.has_data()
-
-    __bool__ = __nonzero__
 
     def report_invalid_syntax(self, message, level='ERROR'):
         self.parent.report_invalid_syntax("Setting variable '%s' failed: %s"

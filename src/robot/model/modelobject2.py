@@ -12,18 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import SetterAwareType
+from robot.utils import SetterAwareType, py2to3
 
 
+@py2to3
 class ModelObject(object):
     __slots__ = []
     __metaclass__ = SetterAwareType
 
     def __unicode__(self):
         return self.name
-
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
 
     def __repr__(self):
         return repr(str(self))

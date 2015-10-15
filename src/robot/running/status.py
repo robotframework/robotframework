@@ -13,9 +13,10 @@
 #  limitations under the License.
 
 from robot.errors import ExecutionFailed, PassExecution
-from robot.utils import unic
+from robot.utils import py2to3, unic
 
 
+@py2to3
 class Failure(object):
 
     def __init__(self):
@@ -26,9 +27,8 @@ class Failure(object):
     def __nonzero__(self):
         return bool(self.setup or self.test or self.teardown)
 
-    __bool__ = __nonzero__
 
-
+@py2to3
 class Exit(object):
 
     def __init__(self, failure_mode=False, error_mode=False,
@@ -56,8 +56,6 @@ class Exit(object):
 
     def __nonzero__(self):
         return self.failure or self.error or self.fatal
-
-    __bool__ = __nonzero__
 
 
 class _ExecutionStatus(object):

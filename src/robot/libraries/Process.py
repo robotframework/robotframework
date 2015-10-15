@@ -905,6 +905,7 @@ class ProcessConfig(object):
         if hasattr(subprocess, 'CREATE_NEW_PROCESS_GROUP'):
             config['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
 
+    # FIXME: to __unicode__
     def __str__(self):
         return encode_to_system("""\
 cwd = %s

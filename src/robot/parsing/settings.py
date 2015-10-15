@@ -12,11 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string, unicode, __str__
+from robot.utils import is_string, py2to3, unicode
 
 from .comments import Comment
 
 
+@py2to3
 class Setting(object):
 
     def __init__(self, setting_name, parent=None, comment=None):
@@ -89,15 +90,11 @@ class Setting(object):
     def __nonzero__(self):
         return self.is_set()
 
-    __bool__ = __nonzero__
-
     def __iter__(self):
         return iter(self.value or ())
 
     def __unicode__(self):
         return unicode(self.value or '')
-
-    __str__ = __str__
 
 
 class StringValueJoiner(object):

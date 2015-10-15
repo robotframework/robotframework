@@ -14,7 +14,7 @@
 
 import time
 
-from robot.utils import (Sortable, secs_to_timestr, timestr_to_secs,
+from robot.utils import (Sortable, py2to3, secs_to_timestr, timestr_to_secs,
                          IRONPYTHON, JYTHON, WINDOWS)
 from robot.errors import TimeoutError, DataError, FrameworkError
 
@@ -28,6 +28,7 @@ else:
     from .posix import Timeout
 
 
+@py2to3
 class _Timeout(Sortable):
 
     def __init__(self, timeout=None, message='', variables=None):
@@ -71,9 +72,6 @@ class _Timeout(Sortable):
     def timed_out(self):
         return self.active and self.time_left() <= 0
 
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         return self.string
 
@@ -83,8 +81,6 @@ class _Timeout(Sortable):
 
     def __nonzero__(self):
         return bool(self.string and self.string.upper() != 'NONE')
-
-    __bool__ = __nonzero__
 
     def run(self, runnable, args=None, kwargs=None):
         if self.error:
