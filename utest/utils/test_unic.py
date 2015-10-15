@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from robot.utils import unic, prepr, DotDict, JYTHON, IRONPYTHON
+from robot.utils import __str__, unic, prepr, DotDict, JYTHON, IRONPYTHON, PY3
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -64,8 +64,10 @@ class TestUnic(unittest.TestCase):
         if JYTHON:
             # This is actually wrong behavior
             assert_equals(result, '[Hyv\\xe4, Hyv\\xe4]')
-        elif IRONPYTHON:
+        elif IRONPYTHON or PY3:
             # And so is this.
+            assert_equals(result, '[Hyv\xe4, Hyv\xe4]')
+        elif PY3:
             assert_equals(result, '[Hyv\xe4, Hyv\xe4]')
         else:
             expected = UnRepr.format('list', 'UnicodeEncodeError: ')[:-1]
@@ -74,7 +76,7 @@ class TestUnic(unittest.TestCase):
     def test_bytes_below_128(self):
         assert_equals(unic('\x00-\x01-\x02-\x7f'), u'\x00-\x01-\x02-\x7f')
 
-    if not IRONPYTHON:
+    if not (IRONPYTHON or PY3):
 
         def test_bytes_above_128(self):
             assert_equals(unic('hyv\xe4'), u'hyv\\xe4')
@@ -134,7 +136,7 @@ class TestPrettyRepr(unittest.TestCase):
         invalid = UnicodeRepr()
         if JYTHON:
             expected = 'Hyv\\xe4'
-        elif IRONPYTHON:
+        elif IRONPYTHON or PY3:
             expected = u'Hyv\xe4'
         else:
             expected = invalid.unrepr  # This is correct.
@@ -142,7 +144,7 @@ class TestPrettyRepr(unittest.TestCase):
 
     def test_non_ascii_repr(self):
         non_ascii = NonAsciiRepr()
-        if IRONPYTHON:
+        if IRONPYTHON or PY3:
             expected = u'Hyv\xe4'
         else:
             expected = 'Hyv\\xe4'  # This is correct.
@@ -171,10 +173,10 @@ class TestPrettyRepr(unittest.TestCase):
         assert_true(match is not None)
 
     def test_split_big_collections(self):
-        self._verify(range(100))
+        self._verify(list(range(100)))
         self._verify([u'Hello, world!'] * 10,
                      '[%s]' % ', '.join(["'Hello, world!'"] * 10))
-        self._verify(range(300),
+        self._verify(list(range(300)),
                      '[%s]' % ',\n '.join(str(i) for i in range(300)))
         self._verify([u'Hello, world!'] * 30,
                      '[%s]' % ',\n '.join(["'Hello, world!'"] * 30))
@@ -195,7 +197,7 @@ class UnRepr(object):
 class UnicodeFails(UnRepr):
     def __unicode__(self):
         raise RuntimeError(self.error)
-
+    __str__ = __str__
 
 class StrFails(UnRepr):
     def __unicode__(self):
