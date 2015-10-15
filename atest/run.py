@@ -75,7 +75,7 @@ def atests(interpreter, *arguments):
 
 
 def _get_directories(interpreter):
-    name = interpreter.name.lower().replace(' ', '_')
+    name = '{i.name}-{i.version}-{i.os}'.format(i=interpreter).replace(' ', '')
     outputdir = dos_to_long(join(CURDIR, 'results', name))
     tempdir = dos_to_long(join(tempfile.gettempdir(), 'robottests', name))
     if exists(outputdir):
