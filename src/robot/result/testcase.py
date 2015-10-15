@@ -49,6 +49,11 @@ class TestCase(model.TestCase):
         self.status = 'PASS' if passed else 'FAIL'
 
     @property
+    def skipped(self):
+        """``True`` if the test case did skip, ``False`` otherwise."""
+        return self.status == 'SKIP'
+
+    @property
     def critical(self):
         """``True`` if the test case is marked as critical,
         ``False`` otherwise.

@@ -45,13 +45,28 @@ class TestSuite(model.TestSuite):
 
     @property
     def passed(self):
-        """``True`` if all critical tests succeeded, ``False`` otherwise."""
-        return not self.statistics.critical.failed
+        """``True`` if all critical tests passed, ``False`` otherwise."""
+        return ((not self.statistics.critical.failed and
+                 not self.statistics.critical.skipped)
+                or
+                (self.statistics.critical.passed and
+                 self.statistics.critical.skipped))
+
+    @property
+    def skipped(self):
+        """``True`` if all critical tests skipped, ``False`` otherwise."""
+        return self.statistics.critical.skipped
 
     @property
     def status(self):
-        """``'PASS'`` if all critical tests succeeded, ``'FAIL'`` otherwise."""
-        return 'PASS' if self.passed else 'FAIL'
+        """``'PASS'`` if all critical tests passed, ``'PASS'`` if all critical
+        tests skipped, ``'FAIL'`` otherwise."""
+        if self.passed:
+            return 'PASS'
+        elif self.skipped:
+            return 'SKIP'
+        else:
+            return 'FAIL'
 
     @property
     def statistics(self):

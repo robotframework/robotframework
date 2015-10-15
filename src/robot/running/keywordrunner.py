@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExitForLoop, ContinueForLoop, DataError,
-                          HandlerExecutionFailed)
+                          ExecutionSkipped, ExitForLoop, ContinueForLoop,
+                          DataError, HandlerExecutionFailed)
 from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import (ErrorDetails, format_assign_message, frange,
                          get_error_message, get_timestamp, is_list_like,
@@ -34,6 +34,9 @@ class KeywordRunner(object):
             try:
                 self.run_keyword(kw)
             except ExecutionPassed as exception:
+                exception.set_earlier_failures(errors)
+                raise exception
+            except ExecutionSkipped, exception:
                 exception.set_earlier_failures(errors)
                 raise exception
             except ExecutionFailed as exception:
@@ -173,6 +176,9 @@ class ForInRunner(object):
                     errors.extend(exception.earlier_failures.get_errors())
                 continue
             except ExecutionPassed as exception:
+                exception.set_earlier_failures(errors)
+                raise exception
+            except ExecutionSkipped, exception:
                 exception.set_earlier_failures(errors)
                 raise exception
             except ExecutionFailed as exception:

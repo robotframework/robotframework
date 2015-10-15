@@ -74,6 +74,9 @@ h2 {
 .pass {
     color: #393 !important;
 }
+.skip {
+    color: #30EEEE !important;
+}
 .label {
     padding: 2px 5px;
     font-size: 0.75em;
@@ -188,12 +191,15 @@ th.stats-col-graph:hover {
 .empty-graph {
     background: #eee;
 }
-.pass-bar, .fail-bar {
+.pass-bar, .fail-bar, .skip-bar {
     float: left;
     height: 100%;
 }
 .pass-bar {
     background: #1d4;
+}
+.skip-bar {
+    background: #30EEEE;
 }
 /* Tablesorter - adapted from provided Blue Skin */
 .tablesorter-header {

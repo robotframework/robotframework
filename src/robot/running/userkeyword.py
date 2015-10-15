@@ -15,7 +15,8 @@
 import os
 
 from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
-                          PassExecution, ReturnFromKeyword,
+                          PassExecution, ExecutionSkipped,
+                          SkipExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed)
 from robot.output import LOGGER
 from robot.utils import prepr, split_tags_from_doc, unic
@@ -153,6 +154,9 @@ class UserKeywordHandler(object):
             return_ = exception
             error = exception.earlier_failures
         except ExecutionPassed as exception:
+            pass_ = exception
+            error = exception.earlier_failures
+        except ExecutionSkipped, exception:
             pass_ = exception
             error = exception.earlier_failures
         except ExecutionFailed as exception:
