@@ -248,7 +248,7 @@ class EmbeddedArgs(UserKeywordHandler):
         if not match:
             raise ValueError('Does not match given name')
         UserKeywordHandler.__init__(self, template.keyword, template.libname)
-        self.embedded_args = zip(template.embedded_args, match.groups())
+        self.embedded_args = list(zip(template.embedded_args, match.groups()))
         self.name = name
         self.orig_name = template.name
 

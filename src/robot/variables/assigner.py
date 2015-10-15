@@ -179,7 +179,7 @@ class ScalarsOnlyReturnValueResolver(_MultiReturnValueResolver):
                         % (self._min_count, return_count))
 
     def _resolve(self, return_value):
-        return zip(self._variables, return_value)
+        return list(zip(self._variables, return_value))
 
 
 class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
@@ -198,9 +198,9 @@ class ScalarsAndListReturnValueResolver(_MultiReturnValueResolver):
             = self._split_variables(self._variables)
         before_items, list_items, after_items \
             = self._split_return(return_value, before_vars, after_vars)
-        return (zip(before_vars, before_items) +
-                [(list_var, list_items)] +
-                zip(after_vars, after_items))
+        before = list(zip(before_vars, before_items))
+        after = list(zip(after_vars, after_items))
+        return before + [(list_var, list_items)] + after
 
     def _split_variables(self, variables):
         list_index = [v[0] for v in variables].index('@')
