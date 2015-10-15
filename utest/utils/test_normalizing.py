@@ -114,22 +114,22 @@ class TestNormalizedDict(unittest.TestCase):
     def test_original_keys_are_preserved(self):
         nd = NormalizedDict({'low': 1, 'UP': 2})
         nd['up'] = nd['Spa Ce'] = 3
-        assert_equals(nd.keys(), ['low', 'Spa Ce', 'UP'])
-        assert_equals(nd.items(), [('low', 1), ('Spa Ce', 3), ('UP', 3)])
+        assert_equals(list(nd.keys()), ['low', 'Spa Ce', 'UP'])
+        assert_equals(list(nd.items()), [('low', 1), ('Spa Ce', 3), ('UP', 3)])
 
     def test_deleting_items(self):
         nd = NormalizedDict({'A': 1, 'b': 2})
         del nd['A']
         del nd['B']
         assert_equals(nd._data, {})
-        assert_equals(nd.keys(), [])
+        assert_equals(list(nd.keys()), [])
 
     def test_pop(self):
         nd = NormalizedDict({'A': 1, 'b': 2})
         assert_equals(nd.pop('A'), 1)
         assert_equals(nd.pop('B'), 2)
         assert_equals(nd._data, {})
-        assert_equals(nd.keys(), [])
+        assert_equals(list(nd.keys()), [])
 
     def test_pop_with_default(self):
         assert_equals(NormalizedDict().pop('nonex', 'default'), 'default')
@@ -140,7 +140,7 @@ class TestNormalizedDict(unittest.TestCase):
         for i in range(9):
             assert_equals(nd.popitem(), items[i])
         assert_equals(nd._data, {})
-        assert_equals(nd.keys(), [])
+        assert_equals(list(nd.keys()), [])
 
     def test_popitem_empty(self):
         assert_raises(KeyError, NormalizedDict().popitem)
@@ -222,7 +222,7 @@ class TestNormalizedDict(unittest.TestCase):
 
     def test_keys_are_sorted(self):
         nd = NormalizedDict((c, None) for c in 'aBcDeFg123XyZ___')
-        assert_equals(nd.keys(), list('123_aBcDeFgXyZ'))
+        assert_equals(list(nd.keys()), list('123_aBcDeFgXyZ'))
 
     def test_iterkeys_and_keys(self):
         nd = NormalizedDict({'A': 1, 'b': 3, 'C': 2})
@@ -253,8 +253,8 @@ class TestNormalizedDict(unittest.TestCase):
         for i, c in enumerate('abcdefghijklmnopqrstuvwxyz0123456789!"#%&/()=?'):
             nd[c.upper()] = i
             nd[c+str(i)] = 1
-        assert_equals(nd.items(), zip(nd.keys(), nd.values()))
-        assert_equals(list(nd.iteritems()), zip(nd.iterkeys(), nd.itervalues()))
+        assert_equals(list(nd.items()), list(zip(nd.keys(), nd.values())))
+        assert_equals(list(nd.iteritems()), list(zip(nd.iterkeys(), nd.itervalues())))
 
     def test_eq(self):
         self._verify_eq(NormalizedDict(), NormalizedDict())
