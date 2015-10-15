@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from robot.utils import __str__, unic, prepr, DotDict, JYTHON, IRONPYTHON, PY3
+from robot.utils import unic, prepr, DotDict, JYTHON, IRONPYTHON, PY3
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -197,7 +197,9 @@ class UnRepr(object):
 class UnicodeFails(UnRepr):
     def __unicode__(self):
         raise RuntimeError(self.error)
-    __str__ = __str__
+    def __str__(self):
+        raise RuntimeError(self.error)
+
 
 class StrFails(UnRepr):
     def __unicode__(self):
