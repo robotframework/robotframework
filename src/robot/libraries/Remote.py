@@ -12,12 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import httplib
+try:
+    import httplib
+    import xmlrpclib
+except ImportError:  # Py3
+    import http.client as httplib
+    import xmlrpc.client as xmlrpclib
 import re
 import socket
 import sys
 import time
-import xmlrpclib
+
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:   # No expat in IronPython 2.7
