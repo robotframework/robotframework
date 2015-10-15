@@ -1,5 +1,3 @@
-import exceptions
-
 class ObjectToReturn:
 
     def __init__(self, name):
@@ -9,5 +7,5 @@ class ObjectToReturn:
         return self.name
 
     def exception(self, name, msg=""):
-        exception = getattr(exceptions, name)
+        exception = getattr(__builtins__, name)
         raise exception(msg)

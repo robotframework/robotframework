@@ -1,7 +1,6 @@
 from __future__ import print_function
 import sys
 import time
-import exceptions
 
 from robot import utils
 
@@ -51,7 +50,7 @@ class ExampleLibrary:
 
     def exception(self, name, msg="", class_only=False):
         """Raise exception with given name and message"""
-        exception = getattr(exceptions, name)
+        exception = getattr(__builtins__, name)
         if class_only:
             raise exception
         raise exception(msg)
