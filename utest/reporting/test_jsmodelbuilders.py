@@ -11,6 +11,12 @@ from robot.model import Statistics
 from robot.reporting.jsmodelbuilders import *
 from robot.reporting.stringcache import StringIndex
 
+
+try:
+    long
+except NameError:
+    long = int
+
 CURDIR = dirname(abspath(__file__))
 
 
