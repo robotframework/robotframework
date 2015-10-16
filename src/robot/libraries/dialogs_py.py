@@ -56,8 +56,8 @@ class _TkDialog(Toplevel):
         self._bring_to_front()
 
     def _get_center_location(self):
-        x = (self.winfo_screenwidth() - self.winfo_reqwidth()) / 2
-        y = (self.winfo_screenheight() - self.winfo_reqheight()) / 2
+        x = (self.winfo_screenwidth() - self.winfo_reqwidth()) // 2
+        y = (self.winfo_screenheight() - self.winfo_reqheight()) // 2
         return x, y
 
     def _bring_to_front(self):

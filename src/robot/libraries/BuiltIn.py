@@ -1635,13 +1635,14 @@ class _RunKeyword(_BuiltInBase):
         except ExecutionFailed as err:
             if err.dont_continue:
                 raise
+            error = err
         else:
             raise AssertionError("Expected error '%s' did not occur."
                                  % expected_error)
-        if not self._matches(unic(err), expected_error):
+        if not self._matches(unic(error), expected_error):
             raise AssertionError("Expected error '%s' but got '%s'."
-                                 % (expected_error, err))
-        return unic(err)
+                                 % (expected_error, error))
+        return unic(error)
 
     def repeat_keyword(self, times, name, *args):
         """Executes the specified keyword multiple times.

@@ -157,10 +157,10 @@ class _SecsToTimestrHelper:
         else:
             sign = ''
         int_secs, millis = _float_secs_to_secs_and_millis(float_secs)
-        secs  = int_secs % 60
-        mins  = int(int_secs / 60) % 60
-        hours = int(int_secs / (60*60)) % 24
-        days  = int(int_secs / (60*60*24))
+        secs = int_secs % 60
+        mins = int_secs // 60 % 60
+        hours = int_secs // (60 * 60) % 24
+        days = int_secs // (60 * 60 * 24)
         return sign, millis, secs, mins, hours, days
 
 
@@ -357,7 +357,7 @@ def _elapsed_time_to_string(elapsed):
     return '%02d:%02d:%02d.%03d' % (hours, mins, secs, millis)
 
 def _elapsed_time_to_string_without_millis(elapsed):
-    secs = int(round(elapsed, -3)) / 1000
+    secs = int(round(elapsed, -3)) // 1000
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
     return '%02d:%02d:%02d' % (hours, mins, secs)
