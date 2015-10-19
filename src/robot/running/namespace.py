@@ -335,8 +335,6 @@ class KeywordStore(object):
         if len(found) > 1:
             found = self._get_handler_based_on_search_order(found)
         if len(found) == 2:
-            found = self._prefer_process_over_operatingsystem(*found)
-        if len(found) == 2:
             found = self._filter_stdlib_handler(*found)
         if len(found) == 1:
             return found[0]
@@ -348,13 +346,6 @@ class KeywordStore(object):
                 if eq(libname, handler.libname):
                     return [handler]
         return handlers
-
-    def _prefer_process_over_operatingsystem(self, handler1, handler2):
-        handlers = {handler1.library.orig_name: handler1,
-                    handler2.library.orig_name: handler2}
-        if set(handlers) == set(['Process', 'OperatingSystem']):
-            return [handlers['Process']]
-        return [handler1, handler2]
 
     def _filter_stdlib_handler(self, handler1, handler2):
         stdlibs_without_remote = STDLIBS - set(['Remote'])

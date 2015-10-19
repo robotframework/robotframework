@@ -52,7 +52,6 @@ class Process(object):
     - `Active process`
     - `Result object`
     - `Boolean arguments`
-    - `Using with OperatingSystem library`
     - `Example`
     - `Shortcuts`
     - `Keywords`
@@ -252,23 +251,6 @@ class Process(object):
     Note that prior to Robot Framework 2.8 all non-empty strings, including
     ``false``, were considered true. Additionally, ``no`` is considered false
     only in Robot Framework 2.9 and newer.
-
-    = Using with OperatingSystem library =
-
-    The OperatingSystem library also contains keywords for running processes.
-    They are not as flexible as the keywords provided by this library, and
-    thus not recommended to be used anymore. They may eventually even be
-    deprecated.
-
-    There is a name collision because both of these libraries have
-    `Start Process` and `Switch Process` keywords. This is handled so that
-    if both libraries are imported, the keywords in the Process library are
-    used by default. If there is a need to use the OperatingSystem variants,
-    it is possible to use `OperatingSystem.Start Process` syntax or use
-    the BuiltIn keyword `Set Library Search Order` to change the priority.
-
-    Other keywords in the OperatingSystem library can be used freely with
-    keywords in the Process library.
 
     = Example =
 

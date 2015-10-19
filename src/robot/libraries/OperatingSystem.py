@@ -17,7 +17,6 @@ import glob
 import io
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 import time
@@ -51,7 +50,6 @@ class OperatingSystem(object):
     - `Path separators`
     - `Pattern matching`
     - `Tilde expansion`
-    - `Process library`
     - `Boolean arguments`
     - `Example`
     - `Shortcuts`
@@ -99,19 +97,6 @@ class OperatingSystem(object):
 
     Tilde expansion is a new feature in Robot Framework 2.8. The ``~username``
     form does not work on Jython
-
-    = Process library =
-
-    [http://robotframework.org/robotframework/latest/libraries/Process.html|
-    Process library] that was added in Robot Framework 2.8 provides much more
-    flexible keywords than this library for running processes in general and
-    for starting processes on background in particular. Keywords provided
-    by the Process library are thus recommended instead of `Run`, `Start
-    Process`, and other related keywords in this library.
-
-    `Start Process`, `Read Process Output`, `Switch Process`, `Stop Process`,
-    and `Stop All Processes` were officially deprecated in Robot Framework 2.9.
-    They will be removed altogether in the future.
 
     = Boolean arguments =
 
@@ -186,9 +171,10 @@ class OperatingSystem(object):
         | Should Be Equal    | ${stdout} | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
 
-        *TIP:* `Run Process` keyword provided by the `Process library` supports
-        better process configuration and is generally recommended as a
-        replacement for this keyword.
+        *TIP:* `Run Process` keyword provided by the
+        [http://robotframework.org/robotframework/latest/libraries/Process.html|
+        Process library] supports better process configuration and is generally
+        recommended as a replacement for this keyword.
         """
         return self._run(command)[1]
 
@@ -212,9 +198,10 @@ class OperatingSystem(object):
         See `Run` and `Run And Return RC And Output` if you need to get the
         output of the executed command.
 
-        *TIP:* `Run Process` keyword provided by the `Process library` supports
-        better process configuration and is generally recommended as a
-        replacement for this keyword.
+        *TIP:* `Run Process` keyword provided by the
+        [http://robotframework.org/robotframework/latest/libraries/Process.html|
+        Process library] supports better process configuration and is generally
+        recommended as a replacement for this keyword.
         """
         return self._run(command)[0]
 
@@ -233,9 +220,10 @@ class OperatingSystem(object):
         | Should Be Equal      | ${stdout}       | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
 
-        *TIP:* `Run Process` keyword provided by the `Process library` supports
-        better process configuration and is generally recommended as a
-        replacement for this keyword.
+        *TIP:* `Run Process` keyword provided by the
+        [http://robotframework.org/robotframework/latest/libraries/Process.html|
+        Process library] supports better process configuration and is generally
+        recommended as a replacement for this keyword.
         """
         return self._run(command)
 
@@ -245,117 +233,6 @@ class OperatingSystem(object):
         stdout = process.read()
         rc = process.close()
         return rc, stdout
-
-    def start_process(self, command, stdin=None, alias=None):
-        """*DEPRECATED.* Use keywords in the `Process library` instead.
-
-        Starts the given command as a background process.
-
-        Starts the process in background and sets it as the active process.
-        `Read Process Output` or `Stop Process` keywords affect this process
-        unless `Switch Process` is used in between.
-
-        If the command needs input through the standard input stream,
-        it can be defined with the ``stdin`` argument.  It is not
-        possible to give input to the command later. Possible command
-        line arguments must be given as part of the command like
-        ``/tmp/script.sh arg1 arg2``.
-
-        Returns the index of this process. Indexing starts from 1, and indices
-        can be used to switch between processes using `Switch Process` keyword.
-        `Stop All Processes` can be used to reset indexing.
-
-        The optional ``alias`` is a name for this process that may be used with
-        `Switch Process` instead of the returned index.
-
-        The standard error stream is redirected to the standard input
-        stream automatically. This is done for the same reasons as with `Run`
-        keyword, but redirecting is done when the process is started and not
-        by adding ``2>&1`` to the command.
-
-        Example:
-        | Start Process  | /path/longlasting.sh |
-        | Do Something   |                      |
-        | ${output} =    | Read Process Output  |
-        | Should Contain | ${output}            | Expected text |
-        | [Teardown]     | Stop All Processes   |
-        """
-        process = _Process2(command, stdin)
-        self._info("Running command '%s'." % process)
-        return PROCESSES.register(process, alias)
-
-    def switch_process(self, index_or_alias):
-        """*DEPRECATED.* Use keywords in the `Process library` instead.
-
-        Switches the active process to the specified process.
-
-        New active process can be specified either using an index or an alias.
-        Indices are return values from `Start Process` and aliases can be
-        given to that keyword.
-
-        Example:
-        | Start Process  | /path/script.sh arg  | alias=1st process |
-        | ${2nd} =       | Start Process        | /path/script2.sh |
-        | Switch Process | 1st process          |
-        | ${out1} =      | Read Process Output  |
-        | Switch Process | ${2nd}               |
-        | ${out2} =      | Read Process Output  |
-        | Log Many       | 1st process: ${out1} | 2nd process: ${out1} |
-        | [Teardown]     | Stop All Processes   |
-        """
-        PROCESSES.switch(index_or_alias)
-
-    def read_process_output(self):
-        """*DEPRECATED.* Use keywords in the `Process library` instead.
-
-        Waits for a process to finish and returns its output.
-
-        This keyword waits for a process started with `Start Process` to end
-        and then returns all output it has produced. The returned output
-        contains everything the process has written into the standard output
-        and error streams.
-
-        There is no need to use `Stop Process` after using this keyword.
-        Trying to read from an already stopped process fails.
-
-        Note that although the process is finished, it still stays as the
-        active process. Use `Switch Process` to switch the active process or
-        `Stop All Processes` to reset the list of started processes.
-        """
-        output = PROCESSES.current.read()
-        PROCESSES.current.close()
-        return output
-
-    def stop_process(self):
-        """*DEPRECATED.* Use keywords in the `Process library` instead.
-
-        Closes the standard output stream of the process.
-
-        This keyword does not actually stop the process nor even wait for it
-        to terminate. Only thing it does is closing the standard output stream
-        of the process. Depending on the process that may terminate it but
-        that is not guaranteed. Use `Read Process Output` instead if you need
-        to wait for the process to complete.
-
-        This keyword operates the active process similarly as `Read Process
-        Output`. Stopping an already stopped process is not an error.
-        """
-        PROCESSES.current.close()
-
-    def stop_all_processes(self):
-        """*DEPRECATED.* Use keywords in the `Process library` instead.
-
-        Closes the standard output of all the processes and resets the process
-        list.
-
-        Exactly like `Stop Process`, this keyword does not actually stop
-        processes nor even wait for them to terminate.
-
-        This keyword resets the indexing that `Start Process` uses. All aliases
-        are also deleted. It does not matter have some of the processes
-        already been closed or not.
-        """
-        PROCESSES.close_all()
 
     def get_file(self, path, encoding='UTF-8', encoding_errors='strict'):
         """Returns the contents of a specified file.
@@ -1557,27 +1434,3 @@ class _Process:
         if output.endswith('\n'):
             output = output[:-1]
         return decode_output(output, force=True)
-
-
-class _Process2(_Process):
-
-    def __init__(self, command, input_):
-        self._command = self._process_command(command)
-        p = subprocess.Popen(self._command, shell=True, stdin=subprocess.PIPE,
-                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             close_fds=os.sep=='/')
-        stdin, self.stdout = p.stdin, p.stdout
-        if input_:
-            stdin.write(input_)
-        stdin.close()
-        self.closed = False
-
-    def read(self):
-        if self.closed:
-            raise RuntimeError('Cannot read from a closed process.')
-        return self._process_output(self.stdout.read())
-
-    def close(self):
-        if not self.closed:
-            self.stdout.close()
-            self.closed = True
