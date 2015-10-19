@@ -9,10 +9,10 @@ ${LIST OUT OF RANGE}    IndexError: Given index 10 is out of the range 0-2.
 *** Test Cases ***
 Convert To List
     ${string list} =    Convert To List    hello
-    Compare To Expected String    ${string list}    [ 'h', 'e', 'l', 'l', 'o' ]
+    Compare To Expected String    ${string list}    ['h', 'e', 'l', 'l', 'o']
     ${tuple} =    Evaluate    (1, 2, 3)
     ${tuple list} =    Convert To List    ${tuple}
-    Compare To Expected String    ${tuple list}    [ 1, 2, 3 ]
+    Compare To Expected String    ${tuple list}    [1, 2, 3]
 
 Convert To List With Invalid Type
     [Documentation]    FAIL STARTS: TypeError:
@@ -22,7 +22,7 @@ Append To List
     Append To List    ${L0}    1
     Compare To Expected String    ${L0}    ['1']
     Append To List    ${L0}    2    3    4
-    Compare To Expected String    ${L0}    [ '1', '2', '3', '4' ]
+    Compare To Expected String    ${L0}    ['1', '2', '3', '4']
 
 Insert Into List With String Index
     Insert Into List And Compare    ${L2}    1    value    ['1', 'value', 2]
@@ -63,21 +63,21 @@ Set List Value With Invalid Index
 
 Remove Values From List
     Remove Values From List    ${LONG}    ${42}
-    Compare To Expected String    ${LONG}    [ '1', '1', 2, '41', '43', '44', '1', 2]
+    Compare To Expected String    ${LONG}    ['1', '1', 2, '41', '43', '44', '1', 2]
     Remove Values From List    ${LONG}    ${2}    ${42}    1
-    Compare To Expected String    ${LONG}    [ '41', '43', '44' ]
+    Compare To Expected String    ${LONG}    ['41', '43', '44']
 
 Remove Non Existing Values From List
     Remove Values From List    ${L3}    1234
-    Compare To Expected String    ${L3}    [ '11', 12, '13' ]
+    Compare To Expected String    ${L3}    ['11', 12, '13']
 
 Remove From List
     ${removed value} =    Remove From List    ${L3}    1
     Should Be Equal    ${removed value}    ${12}
-    Compare To Expected String    ${L3}    [ '11', '13' ]
+    Compare To Expected String    ${L3}    ['11', '13']
     ${removed value} =    Remove From List    ${L3}    -2
     Should Be Equal    ${removed value}    11
-    Compare To Expected String    ${L3}    [ '13' ]
+    Compare To Expected String    ${L3}    ['13']
 
 Remove From List Index Out Of List
     [Documentation]    FAIL ${LIST OUT OF RANGE}
@@ -144,7 +144,7 @@ Reserve List
 
 Sort List
     Sort List    ${LONG}
-    Compare To Expected String    ${LONG}    [ 2, 2, 42, '1', '1' , '1', '41', '43', '44']
+    Compare To Expected String    ${LONG}    [2, 2, 42, '1', '1' , '1', '41', '43', '44']
 
 Get From List
     ${value} =    Get From List    ${L4}    1
