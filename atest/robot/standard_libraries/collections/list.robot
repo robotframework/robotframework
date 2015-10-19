@@ -93,6 +93,9 @@ Reserve List
 Sort List
     Check Test Case    ${TEST NAME}
 
+Sorting Unsortable List Fails
+    Check Test Case    ${TEST NAME}
+
 Get From List
     Check Test Case    ${TEST NAME}
 

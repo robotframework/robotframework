@@ -37,6 +37,9 @@ Get Dictionary Values
 Get Dictionary Items
     Check Test Case    ${TEST NAME}
 
+Get Dictionary Keys/Values/Items When Keys Are Unorderable
+    Check Test Case    ${TEST NAME}
+
 Get From Dictionary
     Check Test Case    ${TEST NAME}
 
@@ -134,9 +137,9 @@ Log Dictionary With Different Log Levels
     ${tc} =    Check Test Case    ${TEST NAME}
     ${expected} =    Catenate    SEPARATOR=\n
     ...    Dictionary size is 3 and it contains following items:
-    ...    3: None
     ...    a: 1
     ...    b: 2
+    ...    c:
     Check Log Message    ${tc.kws[0].msgs[0]}    ${expected}    INFO
     Should Be Empty    ${tc.kws[1].msgs}
     Check Log Message    ${tc.kws[2].msgs[0]}    ${expected}    WARN

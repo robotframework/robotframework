@@ -537,8 +537,8 @@ class _Dictionary(object):
     def get_dictionary_keys(self, dictionary):
         """Returns keys of the given ``dictionary``.
 
-        Keys are returned in sorted order. The given ``dictionary`` is never
-        altered by this keyword.
+        If keys are sortable, they are returned in sorted order. The given
+        ``dictionary`` is never altered by this keyword.
 
         Example:
         | ${keys} = | Get Dictionary Keys | ${D3} |
@@ -546,7 +546,11 @@ class _Dictionary(object):
         | ${keys} = ['a', 'b', 'c']
         """
         # TODO: Possibility to disable sorting. Can be handy with OrderedDicts.
-        return sorted(dictionary.keys())
+        keys = dictionary.keys()
+        try:
+            return sorted(keys)
+        except TypeError:
+            return list(keys)
 
     def get_dictionary_values(self, dictionary):
         """Returns values of the given dictionary.

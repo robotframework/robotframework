@@ -143,8 +143,18 @@ Reserve List
     Compare To Expected String    ${LONG}    [2, '1', '44', '43', 42, '41', 2, '1', '1']
 
 Sort List
-    Sort List    ${LONG}
-    Compare To Expected String    ${LONG}    [2, 2, 42, '1', '1' , '1', '41', '43', '44']
+    ${empty}    ${ints}    ${chars} =    Evaluate    [], [3, -1, 0.1, 0, 42], list('Hello World!')
+    Sort List    ${empty}
+    Compare To Expected String    ${empty}    []
+    Sort List    ${ints}
+    Compare To Expected String    ${ints}    [-1, 0, 0.1, 3, 42]
+    Sort List    ${chars}
+    Compare To Expected String    ${chars}    sorted('Hello World!')
+
+Sorting Unsortable List Fails
+    [Documentation]    FAIL STARTS: TypeError:
+    ${unsortable} =    Evaluate    [complex(1), complex(2)]
+    Sort List    ${unsortable}
 
 Get From List
     ${value} =    Get From List    ${L4}    1
@@ -205,9 +215,8 @@ List Should Not Contain Value, Value Found And Own Error Message
     List Should Not Contain Value    ${L1}    1    My error message!
 
 List Should Not Contain Duplicates With No Duplicates
-    ${iterable}    ${tuple} =    Evaluate    xrange(100), (0, 1, 2, '0', '1', '2')
-    : FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}
-    ...    ${L4}    ${iterable}    ${tuple}
+    ${generator}    ${tuple} =    Evaluate    (c for c in 'abcABC'), (0, 1, 2, '0', '1', '2')
+    : FOR    ${list}    IN    ${L0}    ${L1}    ${L2}    ${L3}    ${L4}    ${generator}    ${tuple}
     \    List Should Not Contain Duplicates    ${list}
 
 List Should Not Contain Duplicates Is Case And Space Sensitive

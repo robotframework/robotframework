@@ -40,22 +40,25 @@ Copy Dictionary
     Compare To Expected String    ${D3}    {'a': 1, 'b': 2, 3: None}
 
 Get Dictionary Keys
-    ${keys} =    Get Dictionary Keys    ${D3}
-    Compare To Expected String    ${keys}    [3, 'a', 'b']
-    ${keys} =    Get Dictionary Keys    ${BIG}
-    Compare To Expected String    ${keys}    [3, '', 'B', 'a', 'd', ()]
+    ${keys} =    Get Dictionary Keys    ${D3B}
+    Compare To Expected String    ${keys}    ['a', 'b', 'c']
 
 Get Dictionary Values
-    ${values} =    Get Dictionary Values    ${D3}
-    Compare To Expected String    ${values}    [None, 1, 2]
-    ${values} =    Get Dictionary Values    ${BIG}
-    Compare To Expected String    ${values}    [[42], 'e', 2, 1, '', {}]
+    ${values} =    Get Dictionary Values    ${D3B}
+    Compare To Expected String    ${values}    [1, 2, '']
 
 Get Dictionary Items
-    ${items} =    Get Dictionary Items    ${D3}
-    Compare To Expected String    ${items}    [3, None, 'a', 1, 'b', 2]
-    ${items} =    Get Dictionary Items    ${BIG}
-    Compare To Expected String    ${items}    [3, [42], '', 'e', 'B', 2, 'a', 1, 'd', '', (), {}]
+    ${items} =    Get Dictionary Items    ${D3B}
+    Compare To Expected String    ${items}    ['a', 1, 'b', 2, 'c', '']
+
+Get Dictionary Keys/Values/Items When Keys Are Unorderable
+    ${unorderable} =    Evaluate    {complex(1): 1, complex(2): 2, complex(3): 3}
+    ${keys} =    Get Dictionary Keys    ${unorderable}
+    Compare To Expected String    ${keys}    list(d)    d=${unorderable}
+    ${values} =    Get Dictionary Values    ${unorderable}
+    Compare To Expected String    ${values}    list(d.values())    d=${unorderable}
+    ${items} =    Get Dictionary Items    ${unorderable}
+    Compare To Expected String    ${items}    [i for item in d.items() for i in item]    d=${unorderable}
 
 Get From Dictionary
     ${value} =    Get From Dictionary    ${D3}    b
@@ -115,7 +118,7 @@ Dictionaries Should Be Equal
     Dictionaries Should Be Equal    ${BIG}    ${BIG}
 
 Dictionaries Of Different Type Should Be Equal
-    ${big2}=    Evaluate    UserDict.UserDict($BIG)    modules=UserDict
+    ${big2}=    Evaluate    robot.utils.OrderedDict($BIG)    modules=robot
     Dictionaries Should Be Equal    ${BIG}    ${big2}
 
 Dictionaries Should Equal With First Dictionary Missing Keys
@@ -128,9 +131,10 @@ Dictionaries Should Equal With Second Dictionary Missing Keys
 
 Dictionaries Should Equal With Both Dictionaries Missing Keys
     [Documentation]    FAIL
-    ...    Following keys missing from first dictionary: b
-    ...    Following keys missing from second dictionary: , B, d, ()
-    Dictionaries Should Be Equal    ${BIG}    ${D3}
+    ...    Following keys missing from first dictionary: c, d
+    ...    Following keys missing from second dictionary: b
+    ${x}    ${y} =    Evaluate    dict(a=1, b=2), dict(a=0, c=3, d=4)
+    Dictionaries Should Be Equal    ${x}    ${y}
 
 Dictionaries Should Be Equal With Different Keys And Own Error Message
     [Documentation]    FAIL My error message!
@@ -199,11 +203,11 @@ Dictionary Should Contain Sub Dictionary With Different Value And Own And Defaul
     Dictionary Should Contain Sub Dictionary    ${D3}    ${D2B}    My error message!
 
 Log Dictionary With Different Log Levels
-    Log Dictionary    ${D3}
-    Log Dictionary    ${D3}    tRAce
-    Log Dictionary    ${D3}    warn
-    Log Dictionary    ${D3}    DEbug
-    Log Dictionary    ${D3}    INFO
+    Log Dictionary    ${D3B}
+    Log Dictionary    ${D3B}    tRAce
+    Log Dictionary    ${D3B}    warn
+    Log Dictionary    ${D3B}    DEbug
+    Log Dictionary    ${D3B}    INFO
 
 Log Dictionary With Different Dictionaries
     Log Dictionary    ${D0}
@@ -240,5 +244,7 @@ Create Dictionaries For Testing
     Set Test Variable    \${D2B}
     ${D3}    Create Dictionary    a=${1}    b=${2}    ${3}=${None}
     Set Test Variable    \${D3}
+    ${D3B}    Create Dictionary    a=${1}    b=${2}    c=
+    Set Test Variable    \${D3B}
     ${BIG} =    Evaluate    {'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}
     Set Test Variable    \${BIG}
