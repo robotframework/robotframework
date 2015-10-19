@@ -12,9 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import codecs
 import fnmatch
 import glob
+import io
 import os
 import shutil
 import subprocess
@@ -28,7 +28,7 @@ from robot.utils import (abspath, ConnectionCache, decode_output, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
-                         set_env_var, timestr_to_secs, unic)
+                         set_env_var, timestr_to_secs, unic, IRONPYTHON)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
@@ -379,8 +379,14 @@ class OperatingSystem(object):
 
         ``encoding_errors`` argument is new in Robot Framework 2.8.5.
         """
-        content = self.get_binary_file(path)
-        return unicode(content, encoding, encoding_errors).replace('\r\n', '\n')
+        path = self._absnorm(path)
+        self._link("Getting file '%s'.", path)
+        if IRONPYTHON:
+            # https://github.com/IronLanguages/main/issues/1233
+            with open(path) as f:
+                return f.read().decode(encoding, encoding_errors)
+        with io.open(path, encoding=encoding, errors=encoding_errors) as f:
+            return f.read()
 
     def get_binary_file(self, path):
         """Returns the contents of a specified file.
@@ -423,7 +429,7 @@ class OperatingSystem(object):
         lines = []
         total_lines = 0
         self._link("Reading file '%s'.", path)
-        with codecs.open(path, encoding=encoding, errors=encoding_errors) as f:
+        with io.open(path, encoding=encoding, errors=encoding_errors) as f:
             for line in f.readlines():
                 total_lines += 1
                 line = line.rstrip('\r\n')

@@ -29,7 +29,7 @@ def decode_output(string, force=False):
     on IronPython where all strings are `unicode` and caller knows decoding
     is needed.
     """
-    if is_unicode(string) and not force:
+    if is_unicode(string) and not (IRONPYTHON and force):
         return string
     return unic(string, OUTPUT_ENCODING)
 
