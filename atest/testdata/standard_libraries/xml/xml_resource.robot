@@ -74,7 +74,7 @@ Set lxml availability to suite metadata
      Set Suite Metadata    lxml    ${lib.lxml_etree}
 
 XML Content Should Be
-    [Arguments]    ${expected rows}    ${encoding}=UTF-8
+    [Arguments]    ${expected}    ${encoding}=UTF-8
     ${actual} =    Get File    ${OUTPUT}    ${encoding}
     @{actual} =    Split To Lines    ${actual}
     ${expected} =    Split To Lines    ${expected}
