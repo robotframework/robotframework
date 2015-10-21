@@ -24,7 +24,8 @@ class CommentCache(object):
         self._comments.append(comment)
 
     def consume_with(self, function):
-        map(function, self._comments)
+        for comment in self._comments:
+            function(comment)
         self.__init__()
 
 

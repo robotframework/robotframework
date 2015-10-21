@@ -15,7 +15,7 @@
 import os
 
 from robot.errors import DataError
-from robot.utils import binary_file_writer, file_writer
+from robot.utils import binary_file_writer, file_writer, PY2
 
 from .filewriters import FileWriter
 
@@ -93,7 +93,7 @@ class WritingContext(object):
     def __enter__(self):
         if not self.output:
             path = self._output_path()
-            if self.format == self.tsv_format:
+            if PY2 and self.format == self.tsv_format:
                 self.output = binary_file_writer(path)
             else:
                 self.output = file_writer(path, newline=self.line_separator)

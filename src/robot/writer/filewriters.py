@@ -18,7 +18,7 @@ except ImportError:
     # csv module is missing from IronPython < 2.7.1
     csv = None
 
-from robot import utils
+from robot.utils import HtmlWriter, PY2
 
 from .formatters import TsvFormatter, TxtFormatter, PipeFormatter
 from .htmlformatter import HtmlFormatter
@@ -112,11 +112,13 @@ class TsvFileWriter(_DataFileWriter):
         # Custom dialect needed as a workaround for
         # http://ironpython.codeplex.com/workitem/33627
         dialect = csv.excel_tab()
-        dialect.lineterminator = configuration.line_separator
+        dialect.lineterminator = configuration.line_separator if PY2 else '\n'
         return csv.writer(configuration.output, dialect=dialect)
 
     def _write_row(self, row):
-        self._writer.writerow([c.encode('UTF-8') for c in row])
+        if PY2:
+            row = [c.encode('UTF-8') for c in row]
+        self._writer.writerow(row)
 
 
 class HtmlFileWriter(_DataFileWriter):
@@ -125,7 +127,7 @@ class HtmlFileWriter(_DataFileWriter):
         formatter = HtmlFormatter(configuration.html_column_count)
         _DataFileWriter.__init__(self, formatter, configuration)
         self._name = configuration.datafile.name
-        self._writer = utils.HtmlWriter(configuration.output)
+        self._writer = HtmlWriter(configuration.output)
 
     def write(self, datafile):
         self._writer.content(TEMPLATE_START % {'NAME': self._name}, escape=False)

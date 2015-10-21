@@ -122,7 +122,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 from robot.errors import DataError
 from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
                            disable_curdir_processing)
-from robot.utils import Application, binary_file_writer, file_writer
+from robot.utils import Application, binary_file_writer, file_writer, PY2
 
 
 class Tidy(object):
@@ -155,7 +155,7 @@ class Tidy(object):
                 return writer.getvalue().replace('\r\n', '\n')
 
     def _get_writer(self, inpath, outpath):
-        if self._is_tsv(inpath):
+        if PY2 and self._is_tsv(inpath):
             return binary_file_writer(outpath)
         return file_writer(outpath, newline=self._options['line_separator'])
 
