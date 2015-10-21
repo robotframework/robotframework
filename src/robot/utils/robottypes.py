@@ -18,14 +18,14 @@ from .platform import PY2
 if PY2:
     from StringIO import StringIO
     from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_list_like,
-                              is_number, is_string, is_unicode)
+                              is_number, is_string, is_unicode, type_name)
     long = long
     unicode = unicode
 
 else:
     from io import StringIO
     from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_list_like,
-                              is_number, is_string, is_unicode)
+                              is_number, is_string, is_unicode, type_name)
     long = int
     unicode = str
 
@@ -38,11 +38,3 @@ def is_truthy(item):
 
 def is_falsy(item):
     return not is_truthy(item)
-
-
-def type_name(item):
-    cls = item.__class__ if hasattr(item, '__class__') else type(item)
-    named_types = {str: 'string', unicode: 'string', bool: 'boolean',
-                   int: 'integer', long: 'integer', type(None): 'None',
-                   dict: 'dictionary'}
-    return named_types.get(cls, cls.__name__)

@@ -106,7 +106,11 @@ class NormalizedDict(MutableMapping):
         copy._normalize = self._normalize
         return copy
 
+    # Speed-ups. Following methods are faster than default implementations.
+
+    def __contains__(self, key):
+        return self._normalize(key) in self._data
+
     def clear(self):
-        # Faster than default implementation of MutableMapping.clear
         self._data.clear()
         self._keys.clear()

@@ -18,7 +18,7 @@ Integer Variables
     Should Be Equal  ${1}  ${one}
     Should Be Equal  ${ - 2 }  ${minus_two}
     Should Be True  repr(${12345}) == '12345'
-    Should Be True  repr(${123456789012345678901234567890}).endswith('L')
+    Should Be True  repr(${123456789012345678901234567890}).strip('L') == '123456789012345678901234567890'
     Log  No automatic hex conversion ${FF}
 
 Integer Variables With Base

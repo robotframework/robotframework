@@ -53,3 +53,12 @@ def is_list_like(item):
 
 def is_dict_like(item):
     return isinstance(item, Mapping)
+
+
+def type_name(item):
+    if isinstance(item, IOBase):
+        return 'file'
+    cls = item.__class__ if hasattr(item, '__class__') else type(item)
+    named_types = {str: 'string', bool: 'boolean', int: 'integer',
+                   type(None): 'None', dict: 'dictionary'}
+    return named_types.get(cls, cls.__name__)

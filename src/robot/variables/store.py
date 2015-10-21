@@ -28,7 +28,7 @@ class VariableStore(object):
         self._variables = variables
 
     def resolve_delayed(self):
-        for name, value in self.data.items():
+        for name, value in list(self.data.items()):
             try:
                 self._resolve_delayed(name, value)
             except DataError:

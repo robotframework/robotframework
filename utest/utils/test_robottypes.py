@@ -109,6 +109,10 @@ class TestTypeName(unittest.TestCase):
                           ([], 'list'), ((), 'tuple'), ({}, 'dictionary')]:
             assert_equals(type_name(item), exp)
 
+    def test_file(self):
+        with open(__file__) as f:
+            assert_equals(type_name(f), 'file')
+
     def test_custom_objects(self):
         class NewStyle(object): pass
         class OldStyle: pass

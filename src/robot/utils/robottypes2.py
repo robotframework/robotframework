@@ -59,3 +59,11 @@ def is_list_like(item):
 
 def is_dict_like(item):
     return isinstance(item, (Mapping, UserDict))
+
+
+def type_name(item):
+    cls = item.__class__ if hasattr(item, '__class__') else type(item)
+    named_types = {str: 'string', unicode: 'string', bool: 'boolean',
+                   int: 'integer', long: 'integer', type(None): 'None',
+                   dict: 'dictionary'}
+    return named_types.get(cls, cls.__name__)

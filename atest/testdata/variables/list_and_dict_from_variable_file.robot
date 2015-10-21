@@ -31,7 +31,8 @@ Dict is dotted
 Dict is ordered
     Should Be Equal    @{ORDERED}[0]    a
     Should Be Equal    @{ORDERED}[-1]    j
-    Should Be Equal    ${ORDERED.keys()}    ${EXP KEYS}
+    ${keys} =    Create List    @{ORDERED}
+    Should Be Equal    ${keys}    ${EXP KEYS}
 
 Invalid list
     Variable Should Not Exist    ${INV LIST}

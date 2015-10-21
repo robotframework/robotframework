@@ -160,6 +160,8 @@ class ExampleLibrary:
                 self.identifier = identifier
             def __unicode__(self):
                 raise ValueError
+            if sys.version_info[0] > 2:
+                __str__ = __unicode__
         if just_one:
             return FailiningStr()
         return FailiningStr(), FailiningUnicode()

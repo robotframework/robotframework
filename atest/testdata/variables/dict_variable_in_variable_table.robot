@@ -75,24 +75,24 @@ Dict from variable table should be ordered 1
     @{expected keys} =    Evaluate    list('abcd123efgXYZhijklmn.')
     @{expected values} =    Evaluate    [str(i+1) for i in range(21)]
     ${keys} =    Create List    @{MANY ITEMS}
+    ${values} =    Create List    @{MANY ITEMS.values()}
     Should Be Equal    ${keys}    ${expected keys}
-    Should Be Equal    ${MANY ITEMS.values()}    ${expected values}
+    Should Be Equal    ${values}    ${expected values}
     Set To Dictionary    ${MANY ITEMS}    a    new value
     Set To Dictionary    ${MANY ITEMS}    z    new item
     Append To List    ${expected keys}    z
     Set List Value    ${expected values}    0    new value
     Append To List    ${expected values}    new item
-    Should Be Equal    ${MANY ITEMS.keys()}    ${expected keys}
-    Should Be Equal    ${MANY ITEMS.values()}    ${expected values}
+    ${keys} =    Create List    @{MANY ITEMS.keys()}
+    ${values} =    Create List    @{MANY ITEMS.values()}
+    Should Be Equal    ${keys}    ${expected keys}
+    Should Be Equal    ${values}    ${expected values}
 
 Dict from variable table should be ordered 2
     [Template]    NONE
     Should Be Equal    @{MANY ITEMS}[0]     a
     Should Be Equal    @{MANY ITEMS}[1]     b
     Should Be Equal    @{MANY ITEMS}[-1]    z
-    Should Be Equal    ${MANY ITEMS.values()[0]}     new value
-    Should Be Equal    ${MANY ITEMS.values()[1]}     2
-    Should Be Equal    ${MANY ITEMS.values()[-1]}    new item
 
 Dict from variable table should be dot-accessible
     [Template]    NONE
