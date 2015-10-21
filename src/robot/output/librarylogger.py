@@ -20,6 +20,8 @@ here to avoid cyclic imports.
 
 import sys
 import threading
+import re
+import multiprocessing
 
 from robot.errors import DataError
 from robot.utils import unic, encode_output
@@ -27,8 +29,12 @@ from robot.utils import unic, encode_output
 from .logger import LOGGER
 from .loggerhelper import Message
 
+MESSAGES = multiprocessing.Manager().dict()
+M_LOCK = multiprocessing.Manager().RLock()
+BACKGROUND_LOGGING = False
+COUNT = 0
 
-LOGGING_THREADS = ('MainThread', 'RobotFrameworkTimeoutThread')
+LOGGING_THREADS = ('MainThread', 'MainProcess', 'RobotFrameworkTimeoutThread')
 
 
 def write(msg, level, html=False):
@@ -39,8 +45,30 @@ def write(msg, level, html=False):
         msg = unic(msg)
     if level.upper() not in ('TRACE', 'DEBUG', 'INFO', 'HTML', 'WARN', 'ERROR'):
         raise DataError("Invalid log level '%s'." % level)
-    if threading.currentThread().getName() in LOGGING_THREADS:
-        LOGGER.log_message(Message(msg, level, html))
+            
+    with M_LOCK:
+        thread  = threading.currentThread().getName()
+        process = multiprocessing.current_process().name
+        
+        if thread not in LOGGING_THREADS: 
+            name = thread
+        elif process not in LOGGING_THREADS:
+            name = process
+        else:
+            LOGGER.log_message(Message(msg, level, html))
+            return    
+  
+        # Only log background messages if enabled. If disabled, empty any
+        # stored messages
+        if not BACKGROUND_LOGGING:
+            return
+        
+        if name not in MESSAGES.keys():
+            MESSAGES[name] = [[msg, level, html]]
+        else:
+            a = MESSAGES[name]
+            a.append([msg, level, html])
+            MESSAGES[name] = a
 
 
 def trace(msg, html=False):
@@ -72,3 +100,49 @@ def console(msg, newline=True, stream='stdout'):
     stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
     stream.write(encode_output(msg))
     stream.flush()
+
+    
+def log_background_messages(name=None):
+    """Forwards messages logged on background to Robot Framework log.
+
+    By default forwards all messages logged by all threads, but can be
+    limited to a certain thread by passing thread's name as an argument.
+    This method must be called from the main thread.
+
+    Logged messages are removed from the message storage.
+    """
+    global MESSAGES
+    
+    # This tries to implement some kind of ordering based thread/process name
+    # to ensure that the buffered messages are written to the log in the
+    # correct order. Generally it seems to work OK but it can be a
+    # bit hit and miss with poolworkers (they're not always ordered correctly).
+    convert  = lambda text: int(text) if text.isdigit() else text
+    alphanum = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    
+    thread  = threading.currentThread().getName()
+    process = multiprocessing.current_process().name
+
+    if thread not in LOGGING_THREADS and process not in LOGGING_THREADS:
+        raise RuntimeError('Logging background messages is only allowed from '
+                           'main thread. Current thread name: {},{}'.
+                           format(thread, process))
+        
+    if not BACKGROUND_LOGGING:
+        raise RuntimeError('Logging background messages is currently disabled')
+    
+    if name:
+        if name not in MESSAGES.keys():
+            raise KeyError('Process/thread name \'{}\' not found in background '
+                           'logger dictionary'.format(name))
+        
+        for message in MESSAGES[name]:
+            write(message[0], message[1], message[2])
+            
+        MESSAGES.pop(name, None)
+        return
+    
+    for name in sorted(MESSAGES.keys(), key=alphanum):
+        for message in MESSAGES[name]:
+            write(message[0], message[1], message[2])
+        MESSAGES.pop(name, None)
