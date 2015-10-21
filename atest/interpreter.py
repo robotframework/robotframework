@@ -50,11 +50,15 @@ class Interpreter(object):
             yield 'require-et13'
             yield 'require-lxml'
             yield 'require-docutils'  # https://github.com/IronLanguages/main/issues/1230
-        for exclude in self._os_excludes:
+        for exclude in self._platform_excludes:
             yield exclude
 
     @property
-    def _os_excludes(self):
+    def _platform_excludes(self):
+        if self.is_py3:
+            yield 'no-py3'
+        else:
+            yield 'no-py2'
         if self.is_windows:
             yield 'no-windows'
             if self.is_jython:
@@ -151,7 +155,7 @@ class StandaloneInterpreter(Interpreter):
         for exclude in ['no-standalone', 'no-jython', 'require-lxml',
                         'require-docutils']:
             yield exclude
-        for exclude in self._os_excludes:
+        for exclude in self._platform_excludes:
             yield exclude
 
     @property

@@ -30,7 +30,12 @@ Save to Invalid File
 Save Using Invalid Encoding
     Check Test Case    ${TESTNAME}
 
-Save Non-ASCII Using ASCII
+Save Non-ASCII Using ASCII On Python 2
+    [Tags]    no-py3
+    Check Test Case    ${TESTNAME}
+
+Save Non-ASCII Using ASCII On Python 3
+    [Tags]    no-py2
     Check Test Case    ${TESTNAME}
 
 Doctype is not preserved

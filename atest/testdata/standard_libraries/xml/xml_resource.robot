@@ -30,12 +30,8 @@ Element Should Have Attributes
 Saved XML Should Equal
     [Arguments]    ${tree}    @{expected}
     Save XML    ${tree}    ${OUTPUT}
-    ${content} =    Get File    ${OUTPUT}
-    ${content} =    Split To Lines    ${content}
-    ${expected} =    Catenate    SEPARATOR=\n
-    ...    <?xml version='1.0' encoding='UTF-8'?>    @{expected}
-    ${expected} =    Split To Lines    ${expected}
-    Lists Should Be Equal    ${content}    ${expected}
+    ${expected} =    Catenate    SEPARATOR=\n    @{expected}
+    XML Content Should Be    ${expected}
 
 Saved XML Should Equal File
     [Arguments]    ${tree}    ${expected}
@@ -78,6 +74,9 @@ Set lxml availability to suite metadata
      Set Suite Metadata    lxml    ${lib.lxml_etree}
 
 XML Content Should Be
-    [Arguments]    ${expected}    ${encoding}=UTF-8
+    [Arguments]    ${expected rows}    ${encoding}=UTF-8
     ${actual} =    Get File    ${OUTPUT}    ${encoding}
-    Should Be Equal    ${actual}    <?xml version='1.0' encoding='${encoding}'?>\n${expected}
+    @{actual} =    Split To Lines    ${actual}
+    ${expected} =    Split To Lines    ${expected}
+    Should Be Equal    ${actual[0].lower()}    <?xml version='1.0' encoding='${encoding.lower()}'?>
+    Lists Should Be Equal    ${actual[1:]}    ${expected}

@@ -1352,9 +1352,8 @@ class XML(object):
             NameSpaceStripper().unstrip(elem)
         tree = self.etree.ElementTree(elem)
         xml_declaration = {'xml_declaration': True} if self.modern_etree else {}
-        # Need to explicitly open/close files because older ET versions don't
-        # close files they open and Jython/IPY don't close them implicitly.
-        with open(path, 'w') as output:
+        # Need to open/close output due to http://bugs.jython.org/issue2413
+        with open(path, 'wb') as output:
             tree.write(output, encoding=encoding, **xml_declaration)
         logger.info('XML saved to <a href="file://%s">%s</a>.' % (path, path),
                     html=True)

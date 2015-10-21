@@ -35,5 +35,5 @@ Parse invalid string
     Parse XML    <kekkonen>urho
 
 Parse non-existing file
-    [Documentation]    FAIL STARTS: IOError:
+    [Documentation]    FAIL REGEXP: (IOError|FileNotFoundError): .*
     Parse XML    non-existing.xml
