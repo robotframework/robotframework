@@ -12,9 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
+from io import BytesIO
 
-from .robottypes import is_string, StringIO
+from .robottypes import is_string
+
 from .platform import IRONPYTHON
 
 
@@ -44,6 +45,7 @@ else:
         from elementtree import ElementTree as ET
     except ImportError:
         raise ImportError(_ERROR)
+    from StringIO import StringIO
 
 
 # cElementTree.VERSION seems to always be 1.0.6. We want real API version.
@@ -78,33 +80,8 @@ class ETSource(object):
                 and not self._source.lstrip().startswith('<')
 
     def _open_source_if_necessary(self):
-        if self._source_is_file_name():
-            return self._open_file(self._source)
-        if is_string(self._source):
-            return self._open_string_io(self._source)
-        return None
-
-    if not IRONPYTHON:
-
-        # File is opened, and later closed, because ElementTree had a bug that
-        # it didn't close files it had opened. This caused problems with Jython
-        # especially on Windows: http://bugs.jython.org/issue1598
-        # The bug has now been fixed in ET and worked around in Jython 2.5.2.
-        def _open_file(self, source):
-            return open(source, 'rb')
-
-        def _open_string_io(self, source):
-            return StringIO(source.encode('UTF-8'))
-
-    else:
-
-        # File cannot be opened on IronPython, however, as ET does not seem to
-        # handle non-ASCII characters correctly in that case. We want to check
-        # that the file exists even in that case, though.
-        def _open_file(self, source):
-            if not os.path.exists(source):
-                raise IOError(2, 'No such file', source)
+        if self._source_is_file_name() or not is_string(self._source):
             return None
-
-        def _open_string_io(self, source):
-            return StringIO(source)
+        if IRONPYTHON:
+            return StringIO(self._source)
+        return BytesIO(self._source.encode('UTF-8'))
