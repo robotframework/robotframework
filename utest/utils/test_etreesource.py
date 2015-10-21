@@ -14,15 +14,9 @@ class TestETSource(unittest.TestCase):
     def test_path_to_file(self):
         source = ETSource(PATH)
         with source as src:
-            if IRONPYTHON:
-                assert_equals(src, PATH)
-            else:
-                assert_true(src.read().startswith('import os'))
+            assert_equals(src, PATH)
         self._verify_string_representation(source, PATH)
-        if IRONPYTHON:
-            assert_true(source._opened is None)
-        else:
-            assert_true(source._opened.closed)
+        assert_true(source._opened is None)
 
     def test_opened_file_object(self):
         source = ETSource(open(PATH))
@@ -49,12 +43,6 @@ class TestETSource(unittest.TestCase):
         assert_true(source._opened.closed)
         with ETSource(xml) as src:
             assert_equals(ET.parse(src).getroot().tag, 'tag')
-
-    def test_path_is_validated(self):
-        def use(src):
-            with src:
-                pass
-        assert_raises(IOError, use, ETSource('nonex.xml'))
 
     def test_non_ascii_string_repr(self):
         self._verify_string_representation(ETSource(u'\xe4'), u'\xe4')
