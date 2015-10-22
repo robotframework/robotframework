@@ -2,6 +2,8 @@ import logging
 import time
 import sys
 
+from robot.utils import py2to3
+
 logging.getLogger().addHandler(logging.StreamHandler())
 
 
@@ -17,16 +19,16 @@ nonprop.propagate = False
 nonprop.addHandler(CustomHandler())
 
 
+@py2to3
 class Message(object):
     def __init__(self, msg=''):
         self.msg = msg
     def __unicode__(self):
         return self.msg
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
     def __repr__(self):
         return repr(str(self))
 
+@py2to3
 class InvalidMessage(Message):
     def __unicode__(self):
         raise AssertionError('Should not have been logged')
