@@ -9,7 +9,7 @@ Library         ${MYVAR}/MyLibDir2/
 Library         MyJavaLib.java
 Library         MyJavaLib2.class
 Library         MyInvalidLibFile.py
-Library         java_libraries.html
+Library         library_import_by_path.robot
 Library         library_scope/
 Library         spaces in path/SpacePathLib.py
 Library         this_does_not_exist.py

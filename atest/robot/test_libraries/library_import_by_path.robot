@@ -41,10 +41,10 @@ Importing Invalid Python File Fails
     Check Stderr Contains  Importing test library '${path}' failed:  ImportError: I'm not really a library!
 
 Importing Dir Library Without Trailing "/" Fails
-    Check Stderr Contains  Importing test library 'MyLibDir' failed:  ImportError: No module named MyLibDir
+    Check Stderr Contains  Importing test library 'MyLibDir' failed:  ImportError:
 
 Importing Non Python File Fails
-    Check Stderr Contains  Importing test library 'java_libraries.html' failed:  ImportError: No module named java_libraries
+    Check Stderr Contains  Importing test library 'library_import_by_path.robot' failed: ImportError:
 
 Importing Non Python Dir Fails
     Check Stderr Contains  Test library 'library_scope' does not exist.
