@@ -17,7 +17,7 @@ import copy
 from itertools import chain
 
 from robot.errors import DataError
-from robot.libraries import STDLIBS, STDLIB_TO_DEPRECATED_MAP
+from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
 from robot.utils import (eq, find_file, is_string, printable_name, seq2str2,
@@ -140,8 +140,6 @@ class Namespace(object):
         lib.start_suite()
         if self.test:
             lib.start_test()
-        if name in STDLIB_TO_DEPRECATED_MAP:
-            self.import_library(STDLIB_TO_DEPRECATED_MAP[name], notify=False)
 
     def _resolve_name(self, import_setting):
         name = import_setting.name
