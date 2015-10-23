@@ -5,7 +5,7 @@ Suite Teardown    No Operation
 Test Setup        No Operation
 Test Teardown     No Operation
 
-*** TestCases ***
+*** Test Cases ***
 Few Pass Markers
     No Operation
     No Operation
