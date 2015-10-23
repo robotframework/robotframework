@@ -124,8 +124,8 @@ Get Output File
     [Documentation]    Output encoding avare helper
     ${encoding} =    Evaluate    __import__('robot').utils.encoding.OUTPUT_ENCODING
     ${encoding} =    Set Variable If    r'${path}' in [r'${STDERR FILE}',r'${STDOUT FILE}']    ${encoding}    UTF-8
-    ${file} =    Get File    ${path}    ${encoding}
-    [Return]    ${file}
+    ${file} =    Get File    ${path}    ${encoding}    newline=
+    [Return]    ${file.replace('\r\n', '\n')}
 
 File Should Contain
     [Arguments]    ${path}    @{expected}

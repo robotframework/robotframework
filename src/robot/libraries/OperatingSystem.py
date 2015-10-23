@@ -234,7 +234,8 @@ class OperatingSystem(object):
         rc = process.close()
         return rc, stdout
 
-    def get_file(self, path, encoding='UTF-8', encoding_errors='strict'):
+    def get_file(self, path, encoding='UTF-8', encoding_errors='strict',
+                 newline=None):
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents.
@@ -262,7 +263,8 @@ class OperatingSystem(object):
             # https://github.com/IronLanguages/main/issues/1233
             with open(path) as f:
                 return f.read().decode(encoding, encoding_errors)
-        with io.open(path, encoding=encoding, errors=encoding_errors) as f:
+        with io.open(path, encoding=encoding, errors=encoding_errors,
+                     newline=newline) as f:
             return f.read()
 
     def get_binary_file(self, path):
