@@ -234,6 +234,8 @@ class OperatingSystem(object):
         rc = process.close()
         return rc, stdout
 
+    # FIXME: Either document and test `newline` or remove it and fix \r problem
+    # otherwise.  https://github.com/robotframework/robotframework/issues/2183
     def get_file(self, path, encoding='UTF-8', encoding_errors='strict',
                  newline=None):
         """Returns the contents of a specified file.
