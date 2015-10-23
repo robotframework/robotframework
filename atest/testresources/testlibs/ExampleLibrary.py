@@ -11,8 +11,7 @@ class ExampleLibrary:
 
     def print_(self, msg, stream='stdout'):
         """Print given message to selected stream (stdout or stderr)"""
-        out_stream = getattr(sys, stream)
-        out_stream.write(msg)
+        print(msg, file=getattr(sys, stream))
 
     def print_n_times(self, msg, count, delay=0):
         """Print given message n times"""
@@ -27,8 +26,8 @@ class ExampleLibrary:
         print()
 
     def print_to_stdout_and_stderr(self, msg):
-        sys.stdout.write('stdout: ' + msg)
-        sys.stderr.write('stderr: ' + msg)
+        print('stdout: ' + msg, file=sys.stdout)
+        print('stderr: ' + msg, file=sys.stderr)
 
     def print_to_python_and_java_streams(self):
         import ExampleJavaLibrary

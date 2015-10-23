@@ -45,7 +45,7 @@ class OutputCapturer(object):
             LOGGER.log_output(stdout)
         if stderr:
             LOGGER.log_output(stderr)
-            sys.__stderr__.write(encode_output(stderr+'\n'))
+            sys.__stderr__.write(encode_output(stderr))
 
     def _release(self):
         stdout = self._python_out.release() + self._java_out.release()
