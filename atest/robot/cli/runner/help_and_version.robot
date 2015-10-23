@@ -28,5 +28,5 @@ Version
     ${result} =    Run Tests    --version    output=NONE
     Should Be Equal    ${result.rc}    ${251}
     Should Be Empty    ${result.stderr}
-    Should Match Regexp    ${result.stdout}    ^Robot Framework 2\\.\\d+(\\.\\d+)?((a|b|rc|.dev)\\d+)? \\((Python|Jython|IronPython) 2\\.[\\d.]+.* on .+\\)$
+    Should Match Regexp    ${result.stdout}    ^Robot Framework [23]\\.\\d+(\\.\\d+)?((a|b|rc|.dev)\\d+)? \\((Python|Jython|IronPython) [23]\\.[\\d.]+.* on .+\\)$
     Should Be True    len($result.stdout) < 80    Too long version line

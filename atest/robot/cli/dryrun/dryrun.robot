@@ -85,7 +85,7 @@ Multiple Failures
     Check Test Case    ${TESTNAME}
 
 Invalid imports
-    Check Stderr Contains    Importing test library 'DoesNotExist' failed: ImportError: No module named DoesNotExist
+    Check Stderr Contains    Importing test library 'DoesNotExist' failed: ImportError:
     Check Stderr Contains    Variable file 'wrong_path.py' does not exist
     Check Stderr Contains    Resource file 'NonExisting.tsv' does not exist
 
