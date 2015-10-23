@@ -22,15 +22,16 @@ class TraceLogArgsLibrary(object):
         return InvalidRepr()
 
     def return_object_with_non_ascii_string_repr(self):
-        return ByteRepr()
+        return NonAsciiRepr()
 
 
-class InvalidRepr:
+class InvalidRepr(object):
 
     def __repr__(self):
         return u'Hyv\xe4'
 
-class ByteRepr:
+
+class NonAsciiRepr(object):
 
     def __repr__(self):
         return 'Hyv\xe4'
