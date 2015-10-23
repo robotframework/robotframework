@@ -4,7 +4,7 @@ from glob import glob
 from os import remove
 from os.path import exists
 
-from robot.utils import StringIO
+from robot.utils import StringIO, is_integer
 
 
 class RunningTestCase(unittest.TestCase):
@@ -54,9 +54,15 @@ class RunningTestCase(unittest.TestCase):
             raise AssertionError('Expected output to be empty:\n%s' % output)
 
     def _assert_output_contains(self, output, content, count):
-        if output.count(content) != count:
-            raise AssertionError("'%s' not %d times in output:\n%s"
-                                 % (content, count, output))
+        if is_integer(count):
+            if output.count(content) != count:
+                raise AssertionError("'%s' not %d times in output:\n%s"
+                                     % (content, count, output))
+        else:
+            min_count, max_count = count
+            if not (min_count <= output.count(content) <= max_count):
+                raise AssertionError("'%s' not %d-%d times in output:\n%s"
+                                     % (content, min_count,max_count, output))
 
     def _remove_files(self):
         for pattern in self.remove_files:
