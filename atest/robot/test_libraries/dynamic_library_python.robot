@@ -17,11 +17,10 @@ Non-ASCII keyword name works when Unicode
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name works when UTF-8 bytes
-    [Tags]    no-ipy
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name fails when other bytes
-    [Tags]    no-ipy
+    Check Stderr Contains    Calling dynamic method 'get_keyword_names' failed: UnicodeDecodeError:
     Check Test Case  ${TESTNAME}
 
 Run Keyword in Static Library

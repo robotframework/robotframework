@@ -31,7 +31,10 @@ def decode_output(string, force=False):
     """
     if is_unicode(string) and not (IRONPYTHON and force):
         return string
-    return unic(string, OUTPUT_ENCODING)
+    try:
+        return string.decode(OUTPUT_ENCODING)
+    except UnicodeError:
+        return unic(string)
 
 
 def encode_output(string, errors='replace'):
@@ -55,7 +58,10 @@ else:
 
     def decode_from_system(string):
         """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
-        return unic(string, SYSTEM_ENCODING)
+        try:
+            return string.decode(OUTPUT_ENCODING)
+        except UnicodeError:
+            return unic(string)
 
     def encode_to_system(string, errors='replace'):
         """Encodes Unicode to system encoding (e.g. cli args and env vars).

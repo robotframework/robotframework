@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import (get_error_message, unic, is_java_method, is_bytes,
-                         is_string, is_unicode, py2to3)
+from robot.utils import (get_error_message, is_java_method, is_bytes,
+                         is_unicode, py2to3)
 
 from .arguments import JavaArgumentParser, PythonArgumentParser
 
@@ -57,9 +57,11 @@ class _DynamicMethod(object):
         raise NotImplementedError
 
     def _to_string(self, value):
-        if not (is_string(value) or is_bytes(value)):
-            raise DataError('Return value must be string.')
-        return value if is_unicode(value) else unic(value, 'UTF-8')
+        if is_unicode(value):
+            return value
+        if is_bytes(value):
+            return value.decode('UTF-8')
+        raise DataError('Return value must be string.')
 
     def _to_list_of_strings(self, value):
         try:
@@ -76,7 +78,7 @@ class GetKeywordNames(_DynamicMethod):
 
     def _handle_return_value(self, value):
         names = self._to_list_of_strings(value or [])
-        return list(name for name in self._remove_duplicates(names))
+        return list(self._remove_duplicates(names))
 
     def _remove_duplicates(self, names):
         seen = set()

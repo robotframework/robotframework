@@ -27,6 +27,7 @@ def is_number(item):
 
 
 def is_bytes(item):
+    # FIXME: Should we add also bytearray?
     return isinstance(item, bytes)
 
 

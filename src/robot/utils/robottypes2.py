@@ -33,7 +33,8 @@ def is_number(item):
 
 
 def is_bytes(item):
-    return isinstance(item, str)
+    # FIXME: Should we add also bytearray?
+    return isinstance(item, bytes)
 
 
 def is_string(item):

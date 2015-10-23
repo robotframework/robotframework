@@ -4,6 +4,7 @@ Library         RunKeywordLibrary.RunKeywordButNoGetKeywordNamesLibrary
 Library         RunKeywordLibrary.GlobalRunKeywordLibrary
 Library         dynamic_libraries/DynamicLibraryWithoutArgspec.py
 Library         dynamic_libraries/NonAsciiKeywordNames.py
+Library         dynamic_libraries/NonAsciiKeywordNames.py    include_latin1=True
 Library         dynamic_libraries/EmbeddedArgs.py
 
 
