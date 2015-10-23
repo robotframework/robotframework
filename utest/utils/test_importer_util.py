@@ -262,8 +262,8 @@ class TestImportClassOrModule(unittest.TestCase):
         assert_prefix(error, "Importing 'nonex.item' failed: ImportError:")
 
     def test_import_file_by_path(self):
-        import bytelib as expected
-        module = self._import_module(join(LIBDIR, 'bytelib.py'))
+        import module_library as expected
+        module = self._import_module(join(LIBDIR, 'module_library.py'))
         assert_equals(module.__name__, expected.__name__)
         assert_equals(dirname(normpath(module.__file__)),
                       dirname(normpath(expected.__file__)))
