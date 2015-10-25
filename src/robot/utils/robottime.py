@@ -17,7 +17,7 @@ import time
 import re
 
 from .normalizing import normalize
-from .misc import plural_or_not
+from .misc import plural_or_not, roundup
 from .robottypes import is_number, is_string
 
 
@@ -344,20 +344,20 @@ def elapsed_time_to_string(elapsed, include_millis=True):
     """
     prefix = ''
     if elapsed < 0:
-        elapsed = abs(elapsed)
         prefix = '-'
+        elapsed = abs(elapsed)
     if include_millis:
         return prefix + _elapsed_time_to_string(elapsed)
     return prefix + _elapsed_time_to_string_without_millis(elapsed)
 
 def _elapsed_time_to_string(elapsed):
-    secs, millis = divmod(int(round(elapsed)), 1000)
+    secs, millis = divmod(roundup(elapsed), 1000)
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
     return '%02d:%02d:%02d.%03d' % (hours, mins, secs, millis)
 
 def _elapsed_time_to_string_without_millis(elapsed):
-    secs = int(round(elapsed, -3)) // 1000
+    secs = roundup(elapsed, precision=1000) // 1000
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
     return '%02d:%02d:%02d' % (hours, mins, secs)

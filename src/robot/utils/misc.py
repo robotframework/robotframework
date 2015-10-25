@@ -12,12 +12,30 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
+
 import inspect
 import sys
 
 from .unic import unic
 from .platform import IRONPYTHON, PY2
 from .robottypes import is_integer, is_unicode
+
+
+def roundup(number, precision=1):
+    """Rounds number to the given precision.
+
+    Numbers equally close to the precision are always rounded away from zero.
+    Return value is int when rounding to a full integer and float otherwise.
+
+    With the built-in round() rounding equally close numbers as well as the
+    return type depends on the Python version.
+    """
+    sign = 1 if number >= 0 else -1
+    quotient, remainder = divmod(abs(number), precision)
+    if remainder >= precision / 2:
+        quotient += 1
+    return sign * type(precision)(quotient * precision)
 
 
 def printable_name(string, code_style=False):
