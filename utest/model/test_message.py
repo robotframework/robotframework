@@ -2,6 +2,11 @@ import unittest
 
 from robot.model import Message
 from robot.utils.asserts import assert_equal, assert_raises
+from robot.utils import PY2, PY3
+
+
+if PY3:
+    unicode = str
 
 
 class TestHtmlMessage(unittest.TestCase):
@@ -32,10 +37,11 @@ class TestStringRepresentation(unittest.TestCase):
         assert_equal(unicode(self.ascii), 'Kekkonen')
         assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
 
-    def test_str(self):
-        assert_equal(str(self.empty), '')
-        assert_equal(str(self.ascii), 'Kekkonen')
-        assert_equal(str(self.non_ascii), u'hyv\xe4 nimi'.encode('UTF-8'))
+    if PY2:
+        def test_str(self):
+            assert_equal(str(self.empty), '')
+            assert_equal(str(self.ascii), 'Kekkonen')
+            assert_equal(str(self.non_ascii), u'hyv\xe4 nimi'.encode('UTF-8'))
 
     def test_slots(self):
         assert_raises(AttributeError, setattr, Message(), 'attr', 'value')

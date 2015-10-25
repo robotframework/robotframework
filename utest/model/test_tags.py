@@ -1,9 +1,12 @@
 import unittest
-import sys
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
-from robot import utils
+from robot.utils import seq2str, IRONPYTHON, PY2, PY3
 from robot.model.tags import *
+
+
+if PY3:
+    unicode = str
 
 
 class TestTags(unittest.TestCase):
@@ -93,10 +96,11 @@ class TestTags(unittest.TestCase):
         assert_equal(unicode(Tags(['y', "X'X", 'Y'])), "[X'X, y]")
         assert_equal(unicode(Tags([u'\xe4', 'a'])), u'[a, \xe4]')
 
-    def test_str(self):
-        assert_equal(str(Tags()), '[]')
-        assert_equal(str(Tags(['y', "X'X"])), "[X'X, y]")
-        assert_equal(str(Tags([u'\xe4', 'a'])), '[a, \xc3\xa4]')
+    if PY2:
+        def test_str(self):
+            assert_equal(str(Tags()), '[]')
+            assert_equal(str(Tags(['y', "X'X"])), "[X'X, y]")
+            assert_equal(str(Tags([u'\xe4', 'a'])), '[a, \xc3\xa4]')
 
     def test_repr(self):
         for tags in ([], [u'y', u"X'X"], [u'\xe4', u'a']):
@@ -222,7 +226,7 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(['x', 'y']))
         assert_true(patterns.match(['x', 'Y', 'z']))
 
-    if not utils.IRONPYTHON:  # eval below sometimes fails on IronPython
+    if not IRONPYTHON:  # eval below sometimes fails on IronPython
 
         def test_ands_and_ors(self):
             for pattern in AndOrPatternGenerator(max_length=5):
@@ -306,7 +310,7 @@ class TestTagPatterns(unittest.TestCase):
 
     def test_seq2str(self):
         patterns = TagPatterns([u'is\xe4', u'\xe4iti'])
-        assert_equal(utils.seq2str(patterns), u"'is\xe4' and '\xe4iti'")
+        assert_equal(seq2str(patterns), u"'is\xe4' and '\xe4iti'")
 
 
 class AndOrPatternGenerator(object):

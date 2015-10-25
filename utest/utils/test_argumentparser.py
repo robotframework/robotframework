@@ -409,7 +409,7 @@ class TestPrintHelpAndVersion(unittest.TestCase):
     def test_print_version_when_version_not_set(self):
         ap = ArgumentParser(' --version', name='Kekkonen')
         msg = assert_raises(Information, ap.parse_args, ['--version'])
-        assert_equals(unicode(msg), 'Kekkonen %s' % get_full_version())
+        assert_equals(str(msg), 'Kekkonen %s' % get_full_version())
 
     def test_version_is_replaced_in_help(self):
         assert_raises_with_msg(Information, USAGE.replace('<VERSION>', '1.0 alpha'),

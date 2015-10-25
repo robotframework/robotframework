@@ -60,7 +60,7 @@ class TestMinLogLevel(unittest.TestCase):
         self._context = JsBuildingContext()
 
     def test_trace_is_identified_as_smallest_log_level(self):
-        self._messages(LEVELS.keys())
+        self._messages(list(LEVELS))
         assert_equals('TRACE', self._context.min_level)
 
     def test_debug_is_identified_when_no_trace(self):

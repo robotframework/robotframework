@@ -25,8 +25,8 @@ class TestFrange(unittest.TestCase):
 
     def test_compatibility_with_range(self):
         for input in [(10,), (-10,), (1, 10), (1, 10, 2), (10, -5, -2)]:
-            assert_equals(frange(*input), range(*input))
-            assert_equals(frange(*(float(i) for i in input)), range(*input))
+            assert_equals(frange(*input), list(range(*input)))
+            assert_equals(frange(*(float(i) for i in input)), list(range(*input)))
 
     def test_preserve_type(self):
         for input in [(2,), (0, 2), (0, 2, 1)]:

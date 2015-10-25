@@ -4,7 +4,7 @@ try:
 except ImportError:
     from collections import UserDict
 
-from robot.utils import normalize, NormalizedDict
+from robot.utils import normalize, NormalizedDict, PY2
 from robot.utils.asserts import (assert_equals, assert_true, assert_false,
                                  assert_raises)
 
@@ -173,11 +173,13 @@ class TestNormalizedDict(unittest.TestCase):
         nd = NormalizedDict({'a': 1, 'B': 1, 'c': 3, 'd': 4, 'E': 5, 'F': 6})
         expected = "{'a': 1, 'B': 1, 'c': 3, 'd': 4, 'E': 5, 'F': 6}"
         assert_equals(str(nd), expected)
-        assert_equals(unicode(nd), expected)
 
     def test_unicode(self):
         nd = NormalizedDict({'a': u'\xe4', u'\xe4': 'a'})
-        assert_equals(unicode(nd), "{'a': u'\\xe4', u'\\xe4': 'a'}")
+        if PY2:
+            assert_equals(unicode(nd), "{'a': u'\\xe4', u'\\xe4': 'a'}")
+        else:
+            assert_equals(str(nd), u"{'a': '\xe4', '\xe4': 'a'}")
 
     def test_update(self):
         nd = NormalizedDict({'a': 1, 'b': 1, 'c': 1})
@@ -224,29 +226,31 @@ class TestNormalizedDict(unittest.TestCase):
         nd = NormalizedDict((c, None) for c in 'aBcDeFg123XyZ___')
         assert_equals(list(nd.keys()), list('123_aBcDeFgXyZ'))
 
-    def test_iterkeys_and_keys(self):
-        nd = NormalizedDict({'A': 1, 'b': 3, 'C': 2})
-        iterator = nd.iterkeys()
-        assert_false(isinstance(iterator, list))
-        assert_equals(list(iterator), ['A', 'b', 'C'])
-        assert_equals(list(iterator), [])
-        assert_equals(list(nd.iterkeys()), nd.keys())
+    if PY2:
 
-    def test_itervalues_and_values(self):
-        nd = NormalizedDict({'A': 1, 'b': 3, 'C': 2})
-        iterator = nd.itervalues()
-        assert_false(isinstance(iterator, list))
-        assert_equals(list(iterator), [1, 3, 2])
-        assert_equals(list(iterator), [])
-        assert_equals(list(nd.itervalues()), nd.values())
+        def test_iterkeys_and_keys(self):
+            nd = NormalizedDict({'A': 1, 'b': 3, 'C': 2})
+            iterator = nd.iterkeys()
+            assert_false(isinstance(iterator, list))
+            assert_equals(list(iterator), ['A', 'b', 'C'])
+            assert_equals(list(iterator), [])
+            assert_equals(list(nd.iterkeys()), nd.keys())
 
-    def test_iteritems_and_items(self):
-        nd = NormalizedDict({'A': 1, 'b': 2, 'C': 3})
-        iterator = nd.iteritems()
-        assert_false(isinstance(iterator, list))
-        assert_equals(list(iterator), [('A', 1), ('b', 2), ('C', 3)])
-        assert_equals(list(iterator), [])
-        assert_equals(list(nd.iteritems()), nd.items())
+        def test_itervalues_and_values(self):
+            nd = NormalizedDict({'A': 1, 'b': 3, 'C': 2})
+            iterator = nd.itervalues()
+            assert_false(isinstance(iterator, list))
+            assert_equals(list(iterator), [1, 3, 2])
+            assert_equals(list(iterator), [])
+            assert_equals(list(nd.itervalues()), nd.values())
+
+        def test_iteritems_and_items(self):
+            nd = NormalizedDict({'A': 1, 'b': 2, 'C': 3})
+            iterator = nd.iteritems()
+            assert_false(isinstance(iterator, list))
+            assert_equals(list(iterator), [('A', 1), ('b', 2), ('C', 3)])
+            assert_equals(list(iterator), [])
+            assert_equals(list(nd.iteritems()), nd.items())
 
     def test_keys_values_and_items_are_returned_in_same_order(self):
         nd = NormalizedDict()
@@ -254,7 +258,8 @@ class TestNormalizedDict(unittest.TestCase):
             nd[c.upper()] = i
             nd[c+str(i)] = 1
         assert_equals(list(nd.items()), list(zip(nd.keys(), nd.values())))
-        assert_equals(list(nd.iteritems()), list(zip(nd.iterkeys(), nd.itervalues())))
+        if PY2:
+            assert_equals(list(nd.iteritems()), list(zip(nd.iterkeys(), nd.itervalues())))
 
     def test_eq(self):
         self._verify_eq(NormalizedDict(), NormalizedDict())

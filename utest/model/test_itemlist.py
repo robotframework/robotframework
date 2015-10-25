@@ -3,6 +3,11 @@ from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
                                  assert_raises_with_msg)
 
 from robot.model.itemlist import ItemList
+from robot.utils import PY3
+
+
+if PY3:
+    unicode = str
 
 
 class Object(object):
@@ -79,11 +84,11 @@ class TestItemLists(unittest.TestCase):
         items = ItemList(int, items=range(10))
         sub = items[:5]
         assert_true(isinstance(sub, ItemList))
-        assert_equal(list(sub), range(0, 5))
-        assert_equal(list(items), range(10))
+        assert_equal(list(sub), list(range(5)))
+        assert_equal(list(items), list(range(10)))
         sub.append(5)
-        assert_equal(list(sub), range(0, 6))
-        assert_equal(list(items), range(10))
+        assert_equal(list(sub), list(range(6)))
+        assert_equal(list(items), list(range(10)))
         backwards = items[::-1]
         assert_true(isinstance(backwards, ItemList))
         assert_equal(list(backwards), list(reversed(items)))

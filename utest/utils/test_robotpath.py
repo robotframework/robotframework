@@ -2,9 +2,13 @@ import unittest
 import os
 import os.path
 
-from robot.utils import abspath, normpath, get_link_path, WINDOWS
+from robot.utils import abspath, normpath, get_link_path, WINDOWS, PY3
 from robot.utils.robotpath import CASE_INSENSITIVE_FILESYSTEM
 from robot.utils.asserts import assert_equal, assert_true
+
+
+if PY3:
+    unicode = str
 
 
 class TestAbspathNormpath(unittest.TestCase):

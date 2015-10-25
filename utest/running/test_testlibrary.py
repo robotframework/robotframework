@@ -4,7 +4,7 @@ import sys
 from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
                                          _ModuleLibrary, _DynamicLibrary)
 from robot.utils.asserts import *
-from robot.utils import JYTHON, normalize
+from robot.utils import normalize, JYTHON, PY2
 from robot.errors import DataError
 
 from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
@@ -79,11 +79,14 @@ class TestImports(unittest.TestCase):
                          [("keyword from submodule", None)])
 
     def test_import_non_existing_module(self):
-        msg = "Importing test library '%s' failed: ImportError: No module named %s"
+        msg = ("Importing test library '{libname}' failed: "
+               "ImportError: No module named {quote}{modname}{quote}")
+        quote = '' if PY2 else "'"
         for name in 'nonexisting', 'nonexi.sting':
             error = assert_raises(DataError, TestLibrary, name)
-            assert_equals(unicode(error).splitlines()[0],
-                          msg % (name, name.split('.')[0]))
+            expected = msg.format(libname=name, modname=name.split('.')[0],
+                                  quote=quote)
+            assert_equals(str(error).splitlines()[0], expected)
 
     def test_import_non_existing_class_from_existing_module(self):
         assert_raises_with_msg(DataError,

@@ -3,7 +3,7 @@ import unittest
 from robot.output import LOGGER
 from robot.parsing.model import TestCaseFile
 from robot.parsing.populators import FromFilePopulator, DataRow, FromDirectoryPopulator
-from robot.utils import StringIO
+from robot.utils import StringIO, is_string
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 
@@ -50,13 +50,13 @@ class _PopulatorTest(unittest.TestCase):
         assert_true(self._logger.value() == '', self._logger.value())
 
     def _start_table(self, name):
-        if isinstance(name, basestring):
+        if is_string(name):
             name = [name]
         return self._populator.start_table(name)
 
     def _create_table(self, name, rows, eof=True):
         self._start_table(name)
-        for r  in rows:
+        for r in rows:
             self._populator.add(r)
         if eof:
             self._populator.eof()

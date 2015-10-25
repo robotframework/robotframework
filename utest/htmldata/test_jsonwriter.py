@@ -81,7 +81,7 @@ class TestJsonDumper(unittest.TestCase):
 
     if json:
         def test_against_standard_json(self):
-            data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in xrange(32, 127)),
+            data = ['\\\'\"\r\t\n' + ''.join(chr(i) for i in range(32, 127)),
                     {'A': 1, 'b': 2, 'C': ()}, None, (1, 2, 3)]
             try:
                 expected = json.dumps(data, sort_keys=True,

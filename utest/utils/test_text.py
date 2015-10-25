@@ -4,9 +4,14 @@ from os.path import abspath
 
 from robot.utils.asserts import *
 
-from robot.utils.text import cut_long_message, _count_line_lengths, \
-    _MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN,\
-    get_console_length, pad_console_length, split_tags_from_doc, split_args_from_name_or_path
+from robot.utils.text import (cut_long_message, get_console_length,
+                              pad_console_length, split_tags_from_doc,
+                              split_args_from_name_or_path,
+                              _count_line_lengths, _MAX_ERROR_LINES,
+                              _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN)
+
+
+_HALF_ERROR_LINES = _MAX_ERROR_LINES // 2
 
 
 class NoCutting(unittest.TestCase):
@@ -30,9 +35,9 @@ class NoCutting(unittest.TestCase):
 class TestCutting(unittest.TestCase):
 
     def setUp(self):
-        self.lines = [ 'my error message %d' % i for i in range(_MAX_ERROR_LINES+1) ]
+        self.lines = ['my error message %d' % i for i in range(_MAX_ERROR_LINES+1)]
         self.result = cut_long_message('\n'.join(self.lines)).splitlines()
-        self.limit = _MAX_ERROR_LINES/2
+        self.limit = _HALF_ERROR_LINES
 
     def test_more_than_max_number_of_lines(self):
         assert_equal(len(self.result), _MAX_ERROR_LINES+1)
@@ -55,7 +60,7 @@ class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
 
     def setUp(self):
         self.lines = ['line %d' % i for i in range(_MAX_ERROR_LINES-1)]
-        self.lines.append('x' * (_MAX_ERROR_LINE_LENGTH+1) )
+        self.lines.append('x' * (_MAX_ERROR_LINE_LENGTH+1))
         self.result = cut_long_message('\n'.join(self.lines)).splitlines()
 
     def test_cut_message_present(self):
@@ -65,9 +70,9 @@ class TestCuttingWithLinesLongerThanMax(unittest.TestCase):
         assert_equal(sum(_count_line_lengths(self.result)), _MAX_ERROR_LINES+1)
 
     def test_correct_lines(self):
-        excpected = self.lines[:_MAX_ERROR_LINES/2] + [_ERROR_CUT_EXPLN] \
-                + self.lines[-_MAX_ERROR_LINES/2+1:]
-        assert_equal(self.result, excpected)
+        expected = self.lines[:_HALF_ERROR_LINES] + [_ERROR_CUT_EXPLN] \
+                + self.lines[-_HALF_ERROR_LINES+1:]
+        assert_equal(self.result, expected)
 
     def test_every_line_longer_than_limit(self):
         # sanity check
@@ -83,7 +88,7 @@ class TestCutHappensInsideLine(unittest.TestCase):
 
     def test_long_line_cut_before_cut_message(self):
         lines = ['line %d' % i for i in range(_MAX_ERROR_LINES)]
-        index = _MAX_ERROR_LINES/2-1
+        index = _HALF_ERROR_LINES - 1
         lines[index] = 'abcdefgh' * _MAX_ERROR_LINE_LENGTH
         result = cut_long_message('\n'.join(lines)).splitlines()
         self._assert_basics(result, lines)
@@ -92,7 +97,7 @@ class TestCutHappensInsideLine(unittest.TestCase):
 
     def test_long_line_cut_after_cut_message(self):
         lines = ['line %d' % i for i in range(_MAX_ERROR_LINES)]
-        index = _MAX_ERROR_LINES/2
+        index = _HALF_ERROR_LINES
         lines[index] = 'abcdefgh' * _MAX_ERROR_LINE_LENGTH
         result = cut_long_message('\n'.join(lines)).splitlines()
         self._assert_basics(result, lines)
@@ -268,6 +273,7 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
             assert_equals(self.method(path), (abspath(path), []))
         finally:
             os.rmdir(path)
+
 
 if __name__ == '__main__':
     unittest.main()

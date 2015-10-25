@@ -1,12 +1,14 @@
 import os
 import unittest
 
-from robot.utils.asserts import assert_equals, assert_raises, assert_true
+from robot.utils.asserts import assert_equals, assert_true
 from robot.utils.etreewrapper import ETSource, ET
-from robot.utils import IRONPYTHON
+from robot.utils import IRONPYTHON, PY3
 
 
 PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
+if PY3:
+    unicode = str
 
 
 class TestETSource(unittest.TestCase):

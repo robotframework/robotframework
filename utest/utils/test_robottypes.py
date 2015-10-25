@@ -67,6 +67,10 @@ class TestListLike(unittest.TestCase):
         assert_equals(is_list_like(O()), False)
 
     def test_other_iterables_are_list_like(self):
+        try:
+            xrange
+        except NameError:
+            xrange = range
         for thing in [[], (), set(), xrange(1), generator(), array('i'), UserList()]:
             assert_equals(is_list_like(thing), True, thing)
 

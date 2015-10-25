@@ -2,10 +2,15 @@ import time
 import random
 import string
 import unittest
-import sys
 
 from robot.reporting.stringcache import StringCache, StringIndex
 from robot.utils.asserts import assert_equals, assert_true, assert_false
+
+
+try:
+    long
+except NameError:
+    long = int
 
 
 class TestStringCache(unittest.TestCase):

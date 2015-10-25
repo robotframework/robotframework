@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils.asserts import assert_equals, assert_true
+from robot.utils.asserts import assert_equals
 from robot.model.statistics import Statistics
 from robot.result.testsuite import TestSuite
 from robot.result.testcase import TestCase
@@ -19,8 +19,10 @@ def verify_stat(stat, name, passed, failed, critical=None, non_crit=None,
         assert_equals(stat.id, id)
     assert_equals(stat.elapsed, elapsed)
 
+
 def verify_suite(suite, name, id, passed, failed):
     verify_stat(suite.stat, name, passed, failed, id=id)
+
 
 def generate_suite():
     suite = TestSuite(name='Root Suite')
@@ -214,7 +216,7 @@ class TestElapsedTime(unittest.TestCase):
                               endtime='20120817 ' + time)
             stat = Statistics(suite).suite.stat
             elapsed = stat.get_attributes(include_elapsed=True)['elapsed']
-            assert_equals(elapsed, expected)
+            assert_equals(elapsed, expected, time)
 
 
 if __name__ == "__main__":

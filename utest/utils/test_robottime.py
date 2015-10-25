@@ -48,7 +48,7 @@ class TestTime(unittest.TestCase):
                          ('1e2', 100),
                          ('-1.5e3', -1500)]:
             assert_equal(timestr_to_secs(inp), exp, inp)
-            if not isinstance(inp, basestring):
+            if not isinstance(inp, str):
                 assert_equal(timestr_to_secs(str(inp)), exp, inp)
 
     def test_timestr_to_secs_with_time_string(self):

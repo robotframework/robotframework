@@ -1,4 +1,11 @@
 import os
+import sys
+
+
+if sys.version_info[0] > 2:
+    long = int
+    basestring = str
+
 
 ROBOT_LISTENER_API_VERSION = '2'
 
