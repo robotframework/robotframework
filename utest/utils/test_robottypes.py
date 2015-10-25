@@ -117,7 +117,7 @@ class TestTypeName(unittest.TestCase):
         class NewStyle(object): pass
         class OldStyle: pass
         for item, exp in [(NewStyle(), 'NewStyle'), (OldStyle(), 'OldStyle'),
-                          (NewStyle, 'type'), (OldStyle, 'classobj')]:
+                          (NewStyle, 'class'), (OldStyle, 'class')]:
             assert_equals(type_name(item), exp)
 
     if JYTHON:

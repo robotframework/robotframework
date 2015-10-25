@@ -15,6 +15,7 @@
 from collections import Mapping
 from UserDict import UserDict
 from UserString import UserString
+from types import ClassType, NoneType
 
 try:
     from java.lang import String
@@ -65,6 +66,6 @@ def is_dict_like(item):
 def type_name(item):
     cls = item.__class__ if hasattr(item, '__class__') else type(item)
     named_types = {str: 'string', unicode: 'string', bool: 'boolean',
-                   int: 'integer', long: 'integer', type(None): 'None',
-                   dict: 'dictionary'}
+                   int: 'integer', long: 'integer', NoneType: 'None',
+                   dict: 'dictionary', type: 'class', ClassType: 'class'}
     return named_types.get(cls, cls.__name__)

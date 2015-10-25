@@ -61,5 +61,5 @@ def type_name(item):
         return 'file'
     cls = item.__class__ if hasattr(item, '__class__') else type(item)
     named_types = {str: 'string', bool: 'boolean', int: 'integer',
-                   type(None): 'None', dict: 'dictionary'}
+                   type(None): 'None', dict: 'dictionary', type: 'class'}
     return named_types.get(cls, cls.__name__)
