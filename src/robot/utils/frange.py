@@ -18,7 +18,7 @@ from .robottypes import is_integer, is_string
 def frange(*args):
     """Like ``range()`` but accepts float arguments."""
     if all(is_integer(arg) for arg in args):
-        return range(*args)
+        return list(range(*args))
     start, stop, step = _get_start_stop_step(args)
     digits = max(_digits(start), _digits(stop), _digits(step))
     factor = pow(10, digits)
