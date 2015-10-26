@@ -110,9 +110,11 @@ Dictionary with non-ASCII values
     {'1': u'\\xe4'}
     {'2': u'\\u2603'}
 
-Dictionary with non-ASCII byte keys and values
-    {b'\\x80': b'\\x80'}    {'\\\\x80': '\\x80'}    binary=yes
-    {b'\\xe4': b'\\xe4'}    {'\\\\xe4': '\\xe4'}    binary=yes
+Dictionary with non-ASCII byte keys
+    {b'\\x80': 'xx'}    {'\\\\x80': 'xx'}
+
+Dictionary with non-ASCII byte values
+    {'xx': b'\\xe4'}    binary=yes
 
 Dictionary with binary keys is not supported
     [Documentation]    FAIL GLOB: TypeError: unhashable *

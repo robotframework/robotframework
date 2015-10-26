@@ -53,7 +53,6 @@ List with non-ASCII values
     Check Test Case    ${TESTNAME}
 
 List with non-ASCII byte values
-    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 List with binary values
@@ -78,8 +77,11 @@ Dictionary with non-ASCII keys
 Dictionary with non-ASCII values
     Check Test Case    ${TESTNAME}
 
-Dictionary with non-ASCII byte keys and values
+Dictionary with non-ASCII byte keys
     [Tags]    no-ipy
+    Check Test Case    ${TESTNAME}
+
+Dictionary with non-ASCII byte values
     Check Test Case    ${TESTNAME}
 
 Dictionary with binary keys is not supported
