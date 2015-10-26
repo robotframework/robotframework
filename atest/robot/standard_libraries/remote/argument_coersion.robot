@@ -13,7 +13,6 @@ Binary
     Check Test Case    ${TESTNAME}
 
 Binary in non-ASCII range
-    [Tags]    no-ipy
     Check Test Case    ${TESTNAME}
 
 Binary with too big Unicode characters

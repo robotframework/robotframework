@@ -388,7 +388,7 @@ class _Converter(_BuiltInBase):
                 ordinals = getattr(self, '_get_ordinals_from_%s' % input_type)
             except AttributeError:
                 raise RuntimeError("Invalid input type '%s'." % input_type)
-            return ''.join(chr(o) for o in ordinals(input))
+            return bytes(bytearray(o for o in ordinals(input)))
         except:
             raise RuntimeError("Creating bytes failed: %s" % get_error_message())
 

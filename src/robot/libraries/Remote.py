@@ -99,35 +99,36 @@ class ArgumentCoercer(object):
     non_ascii = re.compile('[\x80-\xff]')
 
     def coerce(self, argument):
-        for handles, handle in [(self._is_string, self._handle_string),
-                                (self._is_number, self._pass_through),
-                                (is_dict_like, self._coerce_dict),
-                                (is_list_like, self._coerce_list),
-                                (lambda arg: True, self._to_string)]:
+        for handles, handler in [(is_string, self._handle_string),
+                                 (is_bytes, self._handle_bytes),
+                                 (is_number, self._pass_through),
+                                 (is_dict_like, self._coerce_dict),
+                                 (is_list_like, self._coerce_list),
+                                 (lambda arg: True, self._to_string)]:
             if handles(argument):
-                return handle(argument)
-
-    def _is_string(self, arg):
-        return is_string(arg)
-
-    def _is_number(self, arg):
-        return is_number(arg)
+                return handler(argument)
 
     def _handle_string(self, arg):
-        if self._contains_binary(arg):
-            return self._handle_binary(arg)
+        if self._string_contains_binary(arg):
+            return self._handle_binary_in_string(arg)
         return arg
 
-    def _contains_binary(self, arg):
+    def _string_contains_binary(self, arg):
         return (self.binary.search(arg) or
-                is_bytes(arg) and not IRONPYTHON and
-                self.non_ascii.search(arg))
+                is_bytes(arg) and self.non_ascii.search(arg))
 
-    def _handle_binary(self, arg):
+    def _handle_binary_in_string(self, arg):
         try:
-            arg = str(arg)
+            # FIXME: This doesn't currently handle bytearray correctly
+            if not is_bytes(arg):
+                arg = arg.encode('ASCII')
         except UnicodeError:
             raise ValueError('Cannot represent %r as binary.' % arg)
+        return xmlrpclib.Binary(arg)
+
+    def _handle_bytes(self, arg):
+        if IRONPYTHON:
+            arg = str(arg)
         return xmlrpclib.Binary(arg)
 
     def _pass_through(self, arg):
@@ -163,10 +164,10 @@ class RemoteResult(object):
         if not (is_dict_like(result) and 'status' in result):
             raise RuntimeError('Invalid remote result dictionary: %s' % result)
         self.status = result['status']
-        self.output = self._get(result, 'output')
+        self.output = unic(self._get(result, 'output'))
         self.return_ = self._get(result, 'return')
-        self.error = self._get(result, 'error')
-        self.traceback = self._get(result, 'traceback')
+        self.error = unic(self._get(result, 'error'))
+        self.traceback = unic(self._get(result, 'traceback'))
         self.fatal = bool(self._get(result, 'fatal', False))
         self.continuable = bool(self._get(result, 'continuable', False))
 
@@ -176,7 +177,7 @@ class RemoteResult(object):
 
     def _convert(self, value):
         if isinstance(value, xmlrpclib.Binary):
-            return str(value)
+            return bytes(value.data)
         if is_dict_like(value):
             return DotDict((k, self._convert(v)) for k, v in value.items())
         if is_list_like(value):

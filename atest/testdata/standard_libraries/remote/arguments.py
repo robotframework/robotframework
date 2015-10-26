@@ -21,12 +21,12 @@ class Arguments(object):
         return str(arg) if isinstance(arg, Binary) else arg
 
     def _handle_binary_in_list(self, arg):
-        assert any(isinstance(a, Binary) for a in arg)
+        assert any(isinstance(a, Binary) for a in arg), 'No binary in list'
         return [self._handle_binary(a, required=False) for a in arg]
 
     def _handle_binary_in_dict(self, arg):
         assert any(isinstance(key, Binary) or isinstance(value, Binary)
-                   for key, value in arg.items())
+                   for key, value in arg.items()), 'No binary in dict'
         return dict((self._handle_binary(key, required=False),
                      self._handle_binary(value, required=False))
                     for key, value in arg.items())
