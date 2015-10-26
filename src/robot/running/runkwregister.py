@@ -14,7 +14,7 @@
 
 import inspect
 
-from robot.utils import NormalizedDict
+from robot.utils import NormalizedDict, PY3
 
 
 class _RunKeywordRegister:
@@ -39,6 +39,10 @@ class _RunKeywordRegister:
         return self.get_args_to_process(libname, kwname) >= 0
 
     def _get_args_from_method(self, method):
+        # TODO: This whole functionality should be deprecated/removed.
+        if PY3:
+            raise RuntimeError('Cannot determine arguments to process '
+                               'automatically in Python 3.')
         if inspect.ismethod(method):
             return method.__code__.co_argcount - 1
         elif inspect.isfunction(method):

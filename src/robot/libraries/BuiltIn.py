@@ -1364,6 +1364,7 @@ class _RunKeyword(_BuiltInBase):
     # other run keyword variant keywords in BuiltIn which can also be seen
     # at the end of this file.
 
+    @run_keyword_variant(resolve=1)
     def run_keyword(self, name, *args):
         """Executes the given keyword with the given arguments.
 
@@ -1376,6 +1377,7 @@ class _RunKeyword(_BuiltInBase):
         kw = Keyword(name, args=args)
         return kw.run(self._context)
 
+    @run_keyword_variant(resolve=0)
     def run_keywords(self, *keywords):
         """Executes all the given keywords in a sequence.
 
@@ -1445,6 +1447,7 @@ class _RunKeyword(_BuiltInBase):
             raise DataError('Incorrect use of AND')
         return kw_call[0], kw_call[1:]
 
+    @run_keyword_variant(resolve=2)
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if ``condition`` is true.
 
@@ -1535,6 +1538,7 @@ class _RunKeyword(_BuiltInBase):
             raise DataError('%s requires %s.' % (control_word, required_error))
         return args[:index], branch
 
+    @run_keyword_variant(resolve=2)
     def run_keyword_unless(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if ``condition`` is false.
 
@@ -1543,6 +1547,7 @@ class _RunKeyword(_BuiltInBase):
         if not self._is_true(condition):
             return self.run_keyword(name, *args)
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_and_ignore_error(self, name, *args):
         """Runs the given keyword with the given arguments and ignores possible error.
 
@@ -1566,6 +1571,7 @@ class _RunKeyword(_BuiltInBase):
                 raise
             return 'FAIL', unic(err)
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_and_return_status(self, name, *args):
         """Runs the given keyword with given arguments and returns the status as a Boolean value.
 
@@ -1588,6 +1594,7 @@ class _RunKeyword(_BuiltInBase):
         status, _ = self.run_keyword_and_ignore_error(name, *args)
         return status == 'PASS'
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_and_continue_on_failure(self, name, *args):
         """Runs the keyword and continues execution even if a failure occurs.
 
@@ -1608,6 +1615,7 @@ class _RunKeyword(_BuiltInBase):
                 err.continue_on_failure = True
             raise err
 
+    @run_keyword_variant(resolve=2)
     def run_keyword_and_expect_error(self, expected_error, name, *args):
         """Runs the keyword and checks that the expected error occurred.
 
@@ -1644,6 +1652,7 @@ class _RunKeyword(_BuiltInBase):
                                  % (expected_error, error))
         return unic(error)
 
+    @run_keyword_variant(resolve=2)
     def repeat_keyword(self, times, name, *args):
         """Executes the specified keyword multiple times.
 
@@ -1682,6 +1691,7 @@ class _RunKeyword(_BuiltInBase):
             self.log("Repeating keyword, round %d/%d." % (i+1, times))
             yield name, args
 
+    @run_keyword_variant(resolve=3)
     def wait_until_keyword_succeeds(self, retry, retry_interval, name, *args):
         """Runs the specified keyword and retries if it fails.
 
@@ -1744,6 +1754,7 @@ class _RunKeyword(_BuiltInBase):
                                          % (name, message, err))
                 self._sleep_in_parts(retry_interval)
 
+    @run_keyword_variant(resolve=1)
     def set_variable_if(self, condition, *values):
         """Sets variable based on the given condition.
 
@@ -1801,6 +1812,7 @@ class _RunKeyword(_BuiltInBase):
             return self._verify_values_for_set_variable_if(values)
         return values
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_if_test_failed(self, name, *args):
         """Runs the given keyword with the given arguments, if the test failed.
 
@@ -1817,6 +1829,7 @@ class _RunKeyword(_BuiltInBase):
         if not test.passed:
             return self.run_keyword(name, *args)
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_if_test_passed(self, name, *args):
         """Runs the given keyword with the given arguments, if the test passed.
 
@@ -1833,6 +1846,7 @@ class _RunKeyword(_BuiltInBase):
         if test.passed:
             return self.run_keyword(name, *args)
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_if_timeout_occurred(self, name, *args):
         """Runs the given keyword if either a test or a keyword timeout has occurred.
 
@@ -1853,6 +1867,7 @@ class _RunKeyword(_BuiltInBase):
         raise RuntimeError("Keyword '%s' can only be used in test teardown."
                            % kwname)
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_if_all_critical_tests_passed(self, name, *args):
         """Runs the given keyword with the given arguments, if all critical tests passed.
 
@@ -1867,6 +1882,7 @@ class _RunKeyword(_BuiltInBase):
         if suite.statistics.critical.failed == 0:
             return self.run_keyword(name, *args)
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_if_any_critical_tests_failed(self, name, *args):
         """Runs the given keyword with the given arguments, if any critical tests failed.
 
@@ -1881,6 +1897,7 @@ class _RunKeyword(_BuiltInBase):
         if suite.statistics.critical.failed > 0:
             return self.run_keyword(name, *args)
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_if_all_tests_passed(self, name, *args):
         """Runs the given keyword with the given arguments, if all tests passed.
 
@@ -1894,6 +1911,7 @@ class _RunKeyword(_BuiltInBase):
         if suite.statistics.all.failed == 0:
             return self.run_keyword(name, *args)
 
+    @run_keyword_variant(resolve=1)
     def run_keyword_if_any_tests_failed(self, name, *args):
         """Runs the given keyword with the given arguments, if one or more tests failed.
 
@@ -3167,7 +3185,3 @@ def register_run_keyword(library, keyword, args_to_process=None):
     register_run_keyword('MyLibrary', 'my_run_keyword_if', 2)
     """
     RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process)
-
-
-[register_run_keyword('BuiltIn', getattr(_RunKeyword, a))
- for a in dir(_RunKeyword) if a[0] != '_']
