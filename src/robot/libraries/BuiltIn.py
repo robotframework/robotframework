@@ -2695,6 +2695,8 @@ class _Misc(_BuiltInBase):
                                % (expression, get_error_message()))
 
     def _handle_variables_in_expression(self, expression, variables):
+        if not is_string(expression):
+            return expression
         tokens = []
         variable_started = seen_variable = False
         generated = generate_tokens(StringIO(expression).readline)

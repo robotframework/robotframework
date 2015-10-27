@@ -1,5 +1,6 @@
 *** Settings ***
 Library           Collections
+Library           get_user_dict.py
 
 *** Variables ***
 @{HELLO}          Hello    world
@@ -24,11 +25,11 @@ Evaluate
     Evaluate    INVALID
 
 Evaluate With Modules
-    [Documentation]    FAIL REGEXP: ImportError: [Nn]o module named nonex_module
+    [Documentation]    FAIL REGEXP: ImportError: [Nn]o module named .*
     ${ceil} =    Evaluate    math.ceil(1.001)    math
     Should Be Equal    ${ceil}    ${2}
-    ${random} =    Evaluate    random.randint(0, sys.maxint)    modules=random,sys
-    ${maxint}    ${sep}    ${x}    ${y} =    Evaluate    sys.maxint, os.sep, re.escape('+'), '\\+'    sys, re,,,,, glob, os,robot,,,
+    ${random} =    Evaluate    random.randint(0, sys.maxsize)    modules=random,sys
+    ${maxint}    ${sep}    ${x}    ${y} =    Evaluate    sys.maxsize, os.sep, re.escape('+'), '\\+'    sys, re,,,,, glob, os,robot,,,
     Should Be True    0 <= ${random} <= ${maxint}
     Should Be Equal    ${x}    ${y}
     Evaluate    1    nonex_module
@@ -47,7 +48,7 @@ Evaluate with Get Variables Namespace
     Should be Equal    ${res}    ${True}
 
 Evaluate with Non-dict Namespace
-    ${ns} =    Evaluate    UserDict.UserDict(foo='value')    modules=UserDict
+    ${ns} =    Get user dict   foo=value
     ${res} =    Evaluate     foo == 'value'    namespace=${ns}
     Should be Equal    ${res}    ${True}
 
