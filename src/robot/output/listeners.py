@@ -24,21 +24,12 @@ from .loggerhelper import AbstractLoggerProxy
 from .logger import LOGGER
 
 
-class _RecursionAvoidingMetaclass(type):
-    """Metaclass to wrap listener methods so that they cannot cause recursion.
+def no_recursion(cls):
+    """Class decorator to wrap methods so that they cannot cause recursion.
 
     Recursion would otherwise happen if one listener logs something and that
     message is received and logged again by log_message or message method.
     """
-
-    def __new__(cls, name, bases, dct):
-        for attr, value in dct.items():
-            if not attr.startswith('_') and inspect.isroutine(value):
-                dct[attr] = cls._wrap_listener_method(value)
-        dct['_calling_method'] = False
-        return type.__new__(cls, name, bases, dct)
-
-    @staticmethod
     def _wrap_listener_method(method):
         def wrapped(self, *args):
             if not self._calling_method:
@@ -46,11 +37,15 @@ class _RecursionAvoidingMetaclass(type):
                 method(self, *args)
                 self._calling_method = False
         return wrapped
+    for attr, value in cls.__dict__.items():
+        if not attr.startswith('_') and inspect.isroutine(value):
+            setattr(cls, attr, _wrap_listener_method(value))
+    cls._calling_method = False
+    return cls
 
-
+@no_recursion
 @py2to3
 class Listeners(object):
-    __metaclass__ = _RecursionAvoidingMetaclass
     _start_attrs = ('id', 'doc', 'starttime', 'longname')
     _end_attrs = _start_attrs + ('endtime', 'elapsedtime', 'status', 'message')
     _kw_extra_attrs = ('args', 'assign', 'kwname', 'libname',
