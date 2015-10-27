@@ -36,7 +36,7 @@ Non Existing Listener
     [Template]    Check Syslog contains
     Taking listener 'NonExistingListener' into use failed:
     ...    Importing listener 'NonExistingListener' failed:
-    ...    ImportError: No module named NonExistingListener${EMPTY TB}
+    ...    ImportError: No module named
 
 Java Listener
     [Tags]  require-jython
