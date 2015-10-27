@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import StringIO
+from io import BytesIO
 
 from .htmlreader import HtmlReader
 from .txtreader import TxtReader
@@ -29,7 +29,7 @@ def RestReader():
                 rstfile.read(), source_path=rstfile.name,
                 settings_overrides={
                     'input_encoding': 'UTF-8',
-                    'report_level': 'SEVERE'
+                    'report_level': 4
                 })
             store = RobotDataStorage(doctree)
             if store.has_data():
@@ -37,11 +37,11 @@ def RestReader():
             return self._read_html(doctree, rawdata)
 
         def _read_text(self, data, rawdata):
-            txtfile = StringIO(data.encode('UTF-8'))
+            txtfile = BytesIO(data.encode('UTF-8'))
             return TxtReader().read(txtfile, rawdata)
 
         def _read_html(self, doctree, rawdata):
-            htmlfile = StringIO()
+            htmlfile = BytesIO()
             htmlfile.write(publish_from_doctree(
                 doctree, writer_name='html',
                 settings_overrides={'output_encoding': 'UTF-8'}))
