@@ -266,12 +266,12 @@ Get Count
 *** Keywords ***
 Verify argument type message
     [Arguments]    ${msg}    ${type1}    ${type2}
-    ${type1} =    Str Type to Unicode On IronPython    ${type1}
-    ${type2} =    Str Type to Unicode On IronPython    ${type2}
+    ${type1} =    Str Type to Unicode On IronPython and Py3    ${type1}
+    ${type2} =    Str Type to Unicode On IronPython and Py3    ${type2}
     ${level} =    Evaluate   'DEBUG' if $type1 == $type2 else 'INFO'
-    Check log message    ${msg}    Argument types are:\n<type '${type1}'>\n<type '${type2}'>    ${level}
+    Check log message    ${msg}    Argument types are:\n<* '${type1}'>\n<* '${type2}'>    ${level}    pattern=True
 
-Str Type to Unicode On IronPython
+Str Type to Unicode On IronPython and Py3
     [Arguments]    ${type}
-    Return From Keyword If    $INTERPRETER.is_ironpython and $type == "str"    unicode
+    Return From Keyword If    ($INTERPRETER.is_ironpython or $INTERPRETER.is_py3) and $type == "str"    unicode
     Return From Keyword    ${type}
