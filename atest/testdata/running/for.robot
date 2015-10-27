@@ -270,7 +270,7 @@ For In Range
     : FOR    ${i}    IN RANGE    100
     \    @{result} =    Create List    @{result}    ${i}
     \    Log    i: ${i}
-    Should Be True    @{result} == range(100)
+    Should Be True    @{result} == list(range(100))
 
 For In Range With Start And Stop
     : FOR    ${item}    IN RANGE    1    5
