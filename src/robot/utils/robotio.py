@@ -24,6 +24,8 @@ def file_writer(path=None, encoding='UTF-8', newline=None):
         f = io.StringIO(newline=newline)
     if PY3:
         return f
+    # TODO: Consider removing this and using u'' or `from __future__ import
+    # unicode_literals` everywhere.
     write = f.write
     f.write = lambda text: write(unicode(text))
     return f
