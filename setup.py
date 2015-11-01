@@ -12,12 +12,13 @@ except ImportError:
 
 CURDIR = dirname(abspath(__file__))
 
-execfile(join(CURDIR, 'src', 'robot', 'version.py'))
-VERSION = get_version()
-with open(join(CURDIR, 'README.rst')) as readme:
-    LONG_DESCRIPTION = readme.read()
+with open(join(CURDIR, 'src', 'robot', 'version.py')) as f:
+    exec(f.read())
+    VERSION = get_version()
+with open(join(CURDIR, 'README.rst')) as f:
+    LONG_DESCRIPTION = f.read()
     base_url = 'https://github.com/robotframework/robotframework/blob/master'
-    for text in 'INSTALL', 'CONTRIBUTING':
+    for text in ('INSTALL', 'CONTRIBUTING'):
         search = '`<{0}.rst>`__'.format(text)
         replace = '`{0}.rst <{1}/{0}.rst>`__'.format(text, base_url)
         if search not in LONG_DESCRIPTION:
@@ -48,8 +49,8 @@ PACKAGES = ['robot', 'robot.api', 'robot.conf', 'robot.htmldata',
             'robot.running.arguments', 'robot.running.timeouts',
             'robot.utils', 'robot.variables', 'robot.writer']
 PACKAGE_DATA = [join('htmldata', directory, pattern)
-                for directory in 'rebot', 'libdoc', 'testdoc', 'lib', 'common'
-                for pattern in '*.html', '*.css', '*.js']
+                for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
+                for pattern in ('*.html', '*.css', '*.js')]
 if sys.platform.startswith('java'):
     SCRIPTS = ['jybot', 'jyrebot']
 elif sys.platform == 'cli':
