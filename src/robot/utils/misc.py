@@ -15,10 +15,8 @@
 from __future__ import division
 
 import inspect
-import sys
 
 from .unic import unic
-from .platform import IRONPYTHON, PY2
 from .robottypes import is_integer, is_unicode
 
 
@@ -123,41 +121,3 @@ def getdoc(item):
         return doc.decode('UTF-8')
     except UnicodeDecodeError:
         return unic(doc)
-
-
-if PY2:
-    def py2to3(cls):
-        if hasattr(cls, '__unicode__'):
-            cls.__str__ = lambda self: unicode(self).encode('UTF-8')
-        return cls
-
-else:
-    def py2to3(cls):
-        if hasattr(cls, '__unicode__'):
-            cls.__str__ = lambda self: self.__unicode__()
-        if hasattr(cls, '__nonzero__'):
-            cls.__bool__ = lambda self: self.__nonzero__()
-        return cls
-
-
-# On IronPython sys.stdxxx.isatty() always returns True
-if not IRONPYTHON:
-
-    def isatty(stream):
-        # first check if buffer was detached
-        if hasattr(stream, 'buffer') and stream.buffer is None:
-            return False
-        return hasattr(stream, 'isatty') and stream.isatty()
-
-else:
-
-    from ctypes import windll
-
-    _HANDLE_IDS = {sys.__stdout__ : -11, sys.__stderr__ : -12}
-    _CONSOLE_TYPE = 2
-
-    def isatty(stream):
-        if stream not in _HANDLE_IDS:
-            return False
-        handle = windll.kernel32.GetStdHandle(_HANDLE_IDS[stream])
-        return windll.kernel32.GetFileType(handle) == _CONSOLE_TYPE

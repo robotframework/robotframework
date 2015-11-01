@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .misc import py2to3
+from .compat import py2to3
 from .normalizing import NormalizedDict
 from .robottypes import is_string
 

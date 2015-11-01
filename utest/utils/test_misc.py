@@ -1,10 +1,8 @@
-import io
-import sys
 import unittest
 
-from robot.utils import IRONPYTHON, PYTHON, PY2
-from robot.utils.asserts import assert_equals, assert_false, assert_raises
-from robot.utils.misc import getdoc, isatty, printable_name, seq2str, roundup
+from robot.utils import IRONPYTHON, PY2
+from robot.utils.asserts import assert_equals
+from robot.utils.misc import getdoc, printable_name, seq2str, roundup
 
 
 class TestRoundup(unittest.TestCase):
@@ -93,31 +91,6 @@ class TestMiscUtils(unittest.TestCase):
                          ('foo-bar', 'Foo-bar'),
                          ('', '')]:
             assert_equals(printable_name(inp, code_style=True), exp)
-
-
-class TestIsATty(unittest.TestCase):
-
-    def test_with_stdout(self):
-        # file class based in PY2, io module based in PY3
-        assert_equals(isatty(sys.__stdout__), sys.__stdout__.isatty())
-
-    def test_with_io(self):
-        with io.StringIO() as stream:
-            assert_false(isatty(stream))
-            wrapper = io.TextIOWrapper(stream, 'UTF-8')
-            assert_false(isatty(wrapper))
-
-    def test_with_detached_io_buffer(self):
-        with io.StringIO() as stream:
-            wrapper = io.TextIOWrapper(stream, 'UTF-8')
-            if sys.version_info >= (2, 7):
-                wrapper.detach()
-                exc_type = ValueError if PYTHON else AttributeError
-            else:
-                wrapper.buffer = None
-                exc_type = AttributeError
-            assert_raises(exc_type, wrapper.isatty)
-            assert_false(isatty(wrapper))
 
 
 class TestGetdoc(unittest.TestCase):

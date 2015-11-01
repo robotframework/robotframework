@@ -15,7 +15,7 @@
 import re
 from functools import partial
 
-from .misc import py2to3
+from .compat import py2to3
 from .normalizing import normalize
 from .robottypes import is_string
 

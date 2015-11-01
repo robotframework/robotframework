@@ -34,6 +34,7 @@ or::
 
 from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
+from .compat import isatty, py2to3
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict, OrderedDict
@@ -47,8 +48,8 @@ from .markuputils import html_format, html_escape, xml_escape, attribute_escape
 from .markupwriters import HtmlWriter, XmlWriter, NullMarkupWriter
 from .importer import Importer
 from .match import eq, Matcher, MultiMatcher
-from .misc import (getdoc, isatty, plural_or_not, printable_name, py2to3,
-                   roundup, seq2str, seq2str2)
+from .misc import (getdoc, plural_or_not, printable_name, roundup, seq2str,
+                   seq2str2)
 from .normalizing import lower, normalize, NormalizedDict
 from .platform import (IRONPYTHON, JYTHON, PY2, PY3, PYTHON, UNIXY, WINDOWS,
                        RERAISED_EXCEPTIONS)
