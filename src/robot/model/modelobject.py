@@ -12,10 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import PY2
+from robot.utils import SetterAwareType, py2to3, with_metaclass
 
-if PY2:
-    from .modelobject2 import ModelObject
-else:
-    from .modelobject3 import ModelObject
+
+@py2to3
+class ModelObject(with_metaclass(SetterAwareType, object)):
+    __slots__ = []
+
+    def __unicode__(self):
+        return self.name
+
+    def __repr__(self):
+        return repr(str(self))
+
 

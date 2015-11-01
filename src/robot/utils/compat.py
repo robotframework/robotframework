@@ -32,6 +32,19 @@ else:
         return cls
 
 
+# Copied from Jinja2, released under the BSD license.
+# https://github.com/mitsuhiko/jinja2/blob/743598d788528921df825479d64f492ef60bef82/jinja2/_compat.py#L88
+def with_metaclass(meta, *bases):
+    """Create a base class with a metaclass."""
+    # This requires a bit of explanation: the basic idea is to make a
+    # dummy metaclass for one level of class instantiation that replaces
+    # itself with the actual metaclass.
+    class metaclass(type):
+        def __new__(cls, name, this_bases, d):
+            return meta(name, bases, d)
+    return type.__new__(metaclass, 'temporary_class', (), {})
+
+
 # On IronPython sys.stdxxx.isatty() always returns True
 if not IRONPYTHON:
 
