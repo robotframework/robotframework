@@ -2789,8 +2789,10 @@ class _Misc(_BuiltInBase):
 
         In test teardown this keyword can alter the possible failure message,
         but otherwise failures override messages set by this keyword. Notice
-        that in teardown the initial message is available as a built-in variable
-        ``${TEST MESSAGE}``.
+        that in teardown the test message is available as a built-in
+        variable ``${TEST MESSAGE}`` which will be equal to the initial test
+        message at the start of the test teardown (before the first use of
+        this keyword).
 
         It is possible to use HTML format in the message by starting the message
         with ``*HTML*``.
@@ -2812,6 +2814,7 @@ class _Misc(_BuiltInBase):
                                "suite setup or teardown.")
         test.message = self._get_possibly_appended_value(test.message, message,
                                                          append)
+        self._variables.set_suite("${TEST_MESSAGE}", test.message)
         message, level = self._get_logged_test_message_and_level(test.message)
         self.log('Set test message to:\n%s' % message, level)
 
