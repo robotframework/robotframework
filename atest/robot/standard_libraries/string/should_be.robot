@@ -9,6 +9,14 @@ Should Be String Positive
 Should Be String Negative
     Check Test Case    ${TESTNAME}
 
+Bytes are strings in python 2
+    [Tags]    no-py3
+    Check Test Case    ${TESTNAME}
+
+Bytes are not strings in python 3
+    [Tags]    no-py2
+    Check Test Case    ${TESTNAME}
+
 Should Not Be String Positive
     Check Test Case    ${TESTNAME}
 

@@ -9,7 +9,14 @@ ${BYTES}          <set by suite setup>
 Should Be String Positive
     Should be String    Robot
     Should be String    ${EMPTY}
+
+Bytes are strings in python 2
     Should be String    ${BYTES}
+    Run keyword and expect error    '${BYTES}' is a string.    Should not be string    ${BYTES}
+
+Bytes are not strings in python 3
+    Run Keyword And Expect Error   '${BYTES}' is not a string.    Should Be String    ${BYTES}
+    Should not be string    ${BYTES}
 
 Should Be String Negative
     [Template]     Run Keyword And Expect Error
@@ -21,9 +28,7 @@ Should Not Be String Positive
     Should Not Be String    ${TRUE}
 
 Should Not Be String Negative
-    [Template]    Run Keyword And Expect Error
-    '${BYTES}' is a string.    Should not be string    ${BYTES}
-    My error message    Should not be string    Hello    My error message
+    Run Keyword And Expect Error    My error message    Should not be string    Hello    My error message
 
 Should Be Unicode String Positive
     Should be Unicode String    Robot
@@ -70,5 +75,5 @@ Should Be Titlecase Negative
 
 *** Keywords ***
 Create Byte String Variables
-    ${BYTES} =    Evaluate    "Hyv\\xe4"
+    ${BYTES} =    Evaluate    b"Hyv\\xe4"
     Set Suite Variable    ${BYTES}
