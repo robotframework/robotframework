@@ -31,4 +31,4 @@ class MyLibrary2:
     def run_keyword_if(self, expression, name, *args):
         return BuiltIn().run_keyword_if(expression, name, *args)
 
-register_run_keyword('MyLibrary2', MyLibrary2.run_keyword_if)
+register_run_keyword('MyLibrary2', 'run_keyword_if', 2)
