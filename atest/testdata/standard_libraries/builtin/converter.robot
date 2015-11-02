@@ -207,6 +207,6 @@ Test Convert To Number
 
 Numeric conversions with long types
     [Arguments]    ${keyword}    ${input}    ${expected}
-    ${input} =    Evaluate    long(${input})
+    ${input} =    Evaluate    (long if sys.version_info[0] == 2 else int)(${input})    modules=sys
     ${result} =    Run Keyword    ${keyword}    ${input}
     Should Be Equal As Strings    ${result}    ${expected}

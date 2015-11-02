@@ -30,7 +30,7 @@ from robot.utils import (asserts, DotDict, escape, format_assign_message,
                          get_error_message, get_time, is_falsy, is_integer,
                          is_string, is_truthy, is_unicode, JYTHON, Matcher,
                          normalize, NormalizedDict, parse_time, prepr,
-                         RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
+                         RERAISED_EXCEPTIONS, plural_or_not as s, PY3, roundup,
                          secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
@@ -250,14 +250,20 @@ class _Converter(_BuiltInBase):
         if ret[0] == '-':
             prefix = '-' + prefix
             ret = ret[1:]
-        if len(ret) > 1:  # oct(0) -> '0' (i.e. has no prefix)
-            prefix_length = {bin: 2, oct: 1, hex: 2}[method]
-            ret = ret[prefix_length:]
+        ret = self._strip_bin_oct_hex_prefix(ret, method)
         if length:
             ret = ret.rjust(self._convert_to_integer(length), '0')
         if is_truthy(lowercase):
             ret = ret.lower()
         return prefix + ret
+
+    def _strip_bin_oct_hex_prefix(self, value, converter):
+        if PY3:
+            return value[2:]
+        if len(value) < 2:  # oct(0) -> '0' (i.e. has no prefix)
+            return value
+        prefix_length = {bin: 2, oct: 1, hex: 2}[converter]
+        return value[prefix_length:]
 
     def convert_to_number(self, item, precision=None):
         """Converts the given item to a floating point number.
