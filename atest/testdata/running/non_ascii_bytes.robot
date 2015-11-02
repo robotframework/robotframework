@@ -3,17 +3,17 @@ Library           NonAsciiByteLibrary.py
 Variables         expbytevalues.py
 
 *** Test Cases ***
-In Return Value
-    [Documentation]    Return value is not altered by the framework and thus it
-    ...    contains the exact same bytes that the keyword returned.
-    ${retval} =    In Return Value
-    Should Be Equal    ${retval}    ${exp_return_value}
-
 In Message
     In Message
 
 In Multiline Message
     In Multiline Message
+
+In Return Value
+    [Documentation]    Return value is not altered by the framework and thus it
+    ...    contains the exact same bytes that the keyword returned.
+    ${retval} =    In Return Value
+    Should Be Equal    ${retval}    ${exp_return_value}
 
 In Exception
     [Documentation]    FAIL ${exp_error_msg}
