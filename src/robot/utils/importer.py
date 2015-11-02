@@ -20,10 +20,14 @@ from robot.errors import DataError
 
 from .encoding import decode_from_system
 from .error import get_error_details
-from .platform import JYTHON, IRONPYTHON
+from .platform import JYTHON, IRONPYTHON, PY3
 from .robotpath import abspath, normpath
 from .robottypes import type_name, is_unicode
 
+if PY3:
+    from importlib import invalidate_caches as invalidate_import_caches
+else:
+    invalidate_import_caches = lambda: None
 if JYTHON:
     from java.lang.System import getProperty
 
@@ -138,6 +142,7 @@ class _Importer(object):
         self._logger = logger
 
     def _import(self, name, fromlist=None, retry=True):
+        invalidate_import_caches()
         try:
             try:
                 return __import__(name, fromlist=fromlist)
