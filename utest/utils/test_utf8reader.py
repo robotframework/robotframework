@@ -2,8 +2,9 @@ import os
 import tempfile
 import unittest
 from codecs import BOM_UTF8
+from io import BytesIO
 
-from robot.utils import StringIO, Utf8Reader
+from robot.utils import Utf8Reader
 from robot.utils.asserts import assert_equals, assert_raises
 
 
@@ -19,7 +20,8 @@ class TestUtf8ReaderWithBom(unittest.TestCase):
 
     def _create(self, content=STRING, encoding='UTF-8'):
         with open(PATH, 'wb') as f:
-            f.write(self.BOM + content.encode(encoding))
+            inn = self.BOM + content.encode(encoding)
+            f.write(inn)
 
     def tearDown(self):
         os.remove(PATH)
@@ -41,7 +43,7 @@ class TestUtf8ReaderWithBom(unittest.TestCase):
             assert_raises(ValueError, Utf8Reader, f)
 
     def test_stringio_is_ok(self):
-        f = StringIO(self.BOM + STRING.encode('UTF-8'))
+        f = BytesIO(self.BOM + STRING.encode('UTF-8'))
         with Utf8Reader(f) as reader:
             assert_equals(reader.read(), STRING)
         assert_equals(f.closed, False)
@@ -57,7 +59,7 @@ class TestUtf8ReaderWithBom(unittest.TestCase):
 
 
 class TestUtf8ReaderWithoutBom(TestUtf8ReaderWithBom):
-    BOM = ''
+    BOM = b''
 
 
 if __name__ == '__main__':

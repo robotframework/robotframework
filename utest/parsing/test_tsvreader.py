@@ -1,10 +1,10 @@
 import unittest
+from io import BytesIO
 
 import robot.parsing.populators
 from robot.parsing.model import TestCaseFile
 from robot.parsing.populators import FromFilePopulator
 from robot.parsing.tsvreader import TsvReader
-from robot.utils import StringIO
 from robot.utils.asserts import assert_equals
 
 
@@ -19,7 +19,7 @@ class TestTsvReader(unittest.TestCase):
         robot.parsing.populators.PROCESS_CURDIR = self._orig_curdir
 
     def test_start_table(self):
-        tsv = StringIO('''*SettING*\t*  Value  *\t*V*
+        tsv = BytesIO(b'''*SettING*\t*  Value  *\t*V*
 ***Variable
 
 *Not*Table*
@@ -33,7 +33,7 @@ Keyword*\tNot a table because doesn't start with '*'
         assert_equals(self.tcf.setting_table.header, ['SettING','Value','V'])
 
     def test_rows(self):
-        tsv = StringIO('''Ignored text before tables...
+        tsv = BytesIO(b'''Ignored text before tables...
 Mote\tignored\text
 *Setting*\t*Value*\t*Value*
 Document\tWhatever\t\t\\\t
@@ -51,7 +51,7 @@ Default Tags\tt1\tt2\tt3\t\t
 
 
     def test_quotes(self):
-        tsv = StringIO('''*Variable*\t*Value*
+        tsv = BytesIO(b'''*Variable*\t*Value*
 ${v}\tHello
 ${v}\t"Hello"
 ${v}\t"""Hello"""
