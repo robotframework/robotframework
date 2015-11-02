@@ -39,7 +39,8 @@ class _RunKeywordRegister:
         return self.get_args_to_process(libname, kwname) >= 0
 
     def _get_args_from_method(self, method):
-        # TODO: This whole functionality should be deprecated/removed.
+        # FIXME: This functionality should be deprecated/removed.
+        # Consider also the future of the whole run keyword variant system.
         if PY3:
             raise RuntimeError('Cannot determine arguments to process '
                                'automatically in Python 3.')

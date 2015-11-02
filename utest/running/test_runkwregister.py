@@ -3,6 +3,7 @@ import unittest
 from robot.utils.asserts import *
 
 from robot.running.runkwregister import _RunKeywordRegister as Register
+from robot.utils import PY2, PY3
 
 
 class Lib:
@@ -35,8 +36,9 @@ class TestRunKeywordRegister(unittest.TestCase):
     def test_register_run_keyword_method_with_kw_name_and_arg_count(self):
         self._verify_reg('My Lib', 'myKeyword', 'My Keyword', 3, 3)
 
-    def test_register_run_keyword_method_with_kw_name_without_arg_count(self):
-        assert_raises(ValueError, self.reg.register_run_keyword, 'My Lib', 'my_keyword')
+    if PY2:
+        def test_register_run_keyword_method_with_kw_name_without_arg_count(self):
+            assert_raises(ValueError, self.reg.register_run_keyword, 'My Lib', 'my_keyword')
         
     def test_register_run_keyword_method_with_function_without_arg(self):
         self._verify_reg('My Lib', function_without_arg, 'Function Without Arg', 0)
@@ -56,8 +58,9 @@ class TestRunKeywordRegister(unittest.TestCase):
     def test_register_run_keyword_method_with_method_with_default_arg(self):
         self._verify_reg('My Lib', Lib().method_with_default, 'Method With Default', 3)
 
-    def test_register_run_keyword_method_with_invalid_keyword_type(self):
-        assert_raises(ValueError, self.reg.register_run_keyword, 'My Lib', 1)
+    if PY2:
+        def test_register_run_keyword_method_with_invalid_keyword_type(self):
+            assert_raises(ValueError, self.reg.register_run_keyword, 'My Lib', 1)
     
     def test_get_arg_count_with_non_existing_keyword(self):
         assert_equal(self.reg.get_args_to_process('My Lib', 'No Keyword'), -1)
@@ -66,22 +69,26 @@ class TestRunKeywordRegister(unittest.TestCase):
         self._verify_reg('My Lib', 'get_arg', 'Get Arg', 3, 3)
         assert_equal(self.reg.get_args_to_process('No Lib', 'Get Arg'), -1)
 
-    def test_is_run_keyword_when_library_does_not_match(self):
-        self.reg.register_run_keyword('SomeLib', function_without_arg)
-        assert_false(self.reg.is_run_keyword('Non Existing Lib', 'whatever'))
+    if PY2:
 
-    def test_is_run_keyword_when_keyword_does_not_match(self):
-        self.reg.register_run_keyword('SomeLib', function_without_arg)
-        assert_false(self.reg.is_run_keyword('SomeLib', 'non_existing'))
+        def test_is_run_keyword_when_library_does_not_match(self):
+            self.reg.register_run_keyword('SomeLib', function_without_arg)
+            assert_false(self.reg.is_run_keyword('Non Existing Lib', 'whatever'))
 
-    def test_is_run_keyword_matches(self):
-        self.reg.register_run_keyword('SomeLib', function_without_arg)
-        self.reg.register_run_keyword('AnotherLib', Lib().method_with_default)
-        assert_true(self.reg.is_run_keyword('SomeLib', 'Function Without Arg'))
-        assert_true(self.reg.is_run_keyword('AnotherLib', 'Method With Default'))
+        def test_is_run_keyword_when_keyword_does_not_match(self):
+            self.reg.register_run_keyword('SomeLib', function_without_arg)
+            assert_false(self.reg.is_run_keyword('SomeLib', 'non_existing'))
+
+        def test_is_run_keyword_matches(self):
+            self.reg.register_run_keyword('SomeLib', function_without_arg)
+            self.reg.register_run_keyword('AnotherLib', Lib().method_with_default)
+            assert_true(self.reg.is_run_keyword('SomeLib', 'Function Without Arg'))
+            assert_true(self.reg.is_run_keyword('AnotherLib', 'Method With Default'))
 
     def _verify_reg(self, lib_name, keyword, keyword_name, arg_count, given_count=None):
         if given_count is None:
+            if PY3:
+                return
             self.reg.register_run_keyword(lib_name, keyword)
         else:
             self.reg.register_run_keyword(lib_name, keyword, given_count)
