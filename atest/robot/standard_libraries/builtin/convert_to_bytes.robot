@@ -24,6 +24,9 @@ Characters as a list
 Byte string
     Check Test Case    ${TESTNAME}
 
+Bytearray
+    Check Test Case    ${TESTNAME}
+
 Integers
     Check Test Case    ${TESTNAME}
 

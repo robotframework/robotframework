@@ -46,6 +46,13 @@ Byte string
     ${b2} =    Convert To Bytes    ${b1}
     Should Be Equal    ${b1}    ${b2}
 
+Bytearray
+    [Template]    NONE
+    ${bytearray} =    Evaluate    bytearray([0, 1, 2, 255])
+    ${bytes} =    Convert To Bytes    ${bytearray}
+    ${expected} =    Convert To Bytes    \x00\x01\x02\xff
+    Should Be Equal    ${bytes}    ${expected}
+
 Integers
     4                      int    4
     0 255                  int    0, 255
