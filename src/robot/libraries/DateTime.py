@@ -306,7 +306,7 @@ import re
 
 from robot.version import get_version
 from robot.utils import (elapsed_time_to_string, is_falsy, is_number,
-                         is_string, secs_to_timestr, timestr_to_secs,
+                         is_string, roundup, secs_to_timestr, timestr_to_secs,
                          type_name, IRONPYTHON)
 
 __version__ = get_version()
@@ -625,7 +625,7 @@ class Date(object):
 class Time(object):
 
     def __init__(self, time):
-        self.seconds = self._convert_time_to_seconds(time)
+        self.seconds = float(self._convert_time_to_seconds(time))
 
     def _convert_time_to_seconds(self, time):
         if isinstance(time, timedelta):
@@ -644,7 +644,7 @@ class Time(object):
             result_converter = getattr(self, '_convert_to_%s' % format.lower())
         except AttributeError:
             raise ValueError("Unknown format '%s'." % format)
-        seconds = self.seconds if millis else round(self.seconds)
+        seconds = self.seconds if millis else float(roundup(self.seconds))
         return result_converter(seconds, millis)
 
     def _convert_to_number(self, seconds, millis=True):

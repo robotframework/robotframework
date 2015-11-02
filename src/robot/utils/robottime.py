@@ -43,7 +43,7 @@ def timestr_to_secs(timestr, round_to=3):
         for converter in _number_to_secs, _timer_to_secs, _time_string_to_secs:
             secs = converter(timestr)
             if secs is not None:
-                return secs if round_to is None else round(secs, round_to)
+                return secs if round_to is None else roundup(secs, round_to)
     raise ValueError("Invalid time string '%s'." % timestr)
 
 def _number_to_secs(number):

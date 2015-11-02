@@ -51,6 +51,11 @@ class TestTime(unittest.TestCase):
             if not isinstance(inp, str):
                 assert_equal(timestr_to_secs(str(inp)), exp, inp)
 
+    def test_timestr_to_secs_rounds_up(self):
+        assert_equal(timestr_to_secs(0.5, 0), 1)
+        assert_equal(timestr_to_secs(0.9, 0), 1)
+        assert_equal(timestr_to_secs(0.1, 0), 0)
+
     def test_timestr_to_secs_with_time_string(self):
         for inp, exp in [('1s', 1),
                          ('0 day 1 MINUTE 2 S 42 millis', 62.042),
