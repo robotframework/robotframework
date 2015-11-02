@@ -53,11 +53,14 @@ Log also to console
 
 Log repr
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'
-    Check Log Message    ${tc.kws[1].msgs[0]}    42    DEBUG
-    Check Log Message    ${tc.kws[3].msgs[0]}    b'\\x00\\xff'
-    Check Log Message    ${tc.kws[5].msgs[0]}    ['Hyv\\xe4', '\\u2603', 42, b'\\x00\\xff']
-    Check Stdout Contains    ['Hyv\\xe4', '\\u2603', 42, b'\\x00\\xff']
+    Check Log Message    ${tc.kws[0].msgs[0]}    'Nothing special here'
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}    'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!'    'Hyv\xe4\xe4 y\xf6t\xe4 \u2603!'
+    Check Log Message    ${tc.kws[1].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[2].msgs[0]}    42    DEBUG
+    Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00\\xff'
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}    ['Hyv\\xe4', '\\u2603', 42, b'\\x00\\xff']    ['Hyv\xe4', '\u2603', 42, b'\\x00\\xff']
+    Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
+    Check Stdout Contains    ${expected}
 
 Log pprint
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -69,12 +72,16 @@ Log pprint
     Check Stdout Contains    [b'a long string',\n${SPACE}'a longer string!',\n${SPACE}'a much, much, much, much, much, much longer string']
     Check Log Message    ${tc.kws[7].msgs[0]}    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}'a longer string!',\n${SPACE * 10}'a much, much, much, much, much, much longer string']}
     Check Log Message    ${tc.kws[9].msgs[0]}    ['One', b'Two', 3]
-    Check Log Message    ${tc.kws[11].msgs[0]}    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
-    Check Stdout Contains    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2}
+    ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
+    ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\xe4\xe4 y\xf6t\xe4 \u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
+    Check Log Message    ${tc.kws[11].msgs[0]}    ${expected}
+    Check Stdout Contains    ${expected}
 
 Log callable
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    objects_for_call_method.MyObject
+    Check Log Message    ${tc.kws[0].msgs[0]}    *objects_for_call_method.MyObject*    pattern=yes
+    Check Log Message    ${tc.kws[2].msgs[0]}    <function <lambda> at *>    pattern=yes
 
 Log Many
     ${tc} =    Check Test Case    ${TEST NAME}

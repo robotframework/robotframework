@@ -50,6 +50,7 @@ Log also to console
 
 Log repr
     [Setup]    Set Log Level    DEBUG
+    Log    Nothing special here    repr=yes
     Log    Hyvää yötä \u2603!    repr=True
     Log    ${42}    DEBUG    ${FALSE}    ${FALSE}    ${TRUE}
     ${bytes} =    Evaluate    b'\\x00\\xff'
@@ -73,6 +74,8 @@ Log pprint
 
 Log callable
     Log    ${MyObject}
+    ${lambda} =    Evaluate    lambda: None
+    Log    ${lambda}
 
 Log Many
     Log Many    Log Many says:    1    2    ${3}    ${OBJ}
