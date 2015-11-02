@@ -11,4 +11,4 @@ class DynamicRegisteredLibrary:
 def dynamic_run_keyword(name, *args):
     return BuiltIn().run_keyword(name, *args)
 
-register_run_keyword('DynamicRegisteredLibrary', dynamic_run_keyword)
+register_run_keyword('DynamicRegisteredLibrary', 'dynamic_run_keyword', 1)
