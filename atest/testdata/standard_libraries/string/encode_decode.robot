@@ -28,7 +28,7 @@ Encode Non-ASCII String To Bytes Using Incompatible Encoding And Error Handler
     Byte Strings Should Be Equal    ${bytes}    Hyv?
 
 Decode ASCII Bytes To String
-    ${string} =    Decode Bytes To String    Hello, world!    UTF-8
+    ${string} =    Decode Bytes To String    ${ASCII}    UTF-8
     Should Be Equal    ${string}    Hello, world!
 
 Decode Non-ASCII Bytes To String
@@ -48,15 +48,25 @@ Decode Non-ASCII Bytes To String Using Incompatible Encoding And Error Handler
     # Cannot compare exactly because replacement character is different in IronPython than elsewhere
     Should Match    ${string}    Hyv??
 
+Decode String on Python 3 Fails
+    [Documentation]    FAIL TypeError: Can not decode strings on Python 3.
+    Decode Bytes To String    hello    ASCII
+
+Decode string on Python 2 Works
+    ${string} =   Decode Bytes To String    hello    ASCII
+    Should Be Equal    ${string}    hello
+
 *** Keywords ***
 Create Byte String Variables
-    ${ISO-8859-1} =    Evaluate    "Hyv\\xe4"
-    ${UTF-8} =    Evaluate    "Hyv\\xc3\\xa4"
+    ${ASCII}=    Evaluate    b"Hello, world!"
+    ${ISO-8859-1} =    Evaluate    b"Hyv\\xe4"
+    ${UTF-8} =    Evaluate    b"Hyv\\xc3\\xa4"
+    Set Suite Variable    ${ASCII}
     Set Suite Variable    ${ISO-8859-1}
     Set Suite Variable    ${UTF-8}
 
 Byte Strings Should Be Equal
     [Arguments]    ${bytes}    ${expected}
     Should Be Byte String    ${bytes}
-    ${expected} =    Evaluate    "${expected}"
+    ${expected} =    Evaluate    b"${expected}"
     Should Be Equal    ${bytes}    ${expected}

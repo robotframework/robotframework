@@ -18,7 +18,8 @@ from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
-from robot.utils import is_bytes, is_string, is_truthy, is_unicode, lower, unic
+from robot.utils import (is_bytes, is_string, is_truthy, is_unicode, lower,
+                         unic, PY3)
 from robot.version import get_version
 
 
@@ -121,6 +122,8 @@ class String(object):
 
         New in Robot Framework 2.7.7.
         """
+        if PY3 and is_unicode(bytes):
+            raise TypeError('Can not decode strings on Python 3.')
         return bytes.decode(encoding, errors)
 
     def get_line_count(self, string):
