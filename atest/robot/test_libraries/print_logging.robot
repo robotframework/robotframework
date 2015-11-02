@@ -44,14 +44,18 @@ Logging Non-ASCII As Unicode
 Logging Non-ASCII As Bytes
     [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[2].msgs[0]}    Hyvää päivää!
-    Check Log Message    ${tc.kws[3].msgs[0]}    Hyvää päivää!
-    Check Stderr Contains    Hyvää päivää!
+    ${expected} =    Set variable if    ${INTERPRETER.is_py3}
+    ...    b'Hyv\\xc3\\xa4\\xc3\\xa4 p\\xc3\\xa4iv\\xc3\\xa4\\xc3\\xa4!'    Hyvää päivää!
+    Check Log Message    ${tc.kws[2].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[3].msgs[0]}    ${expected}
+    Check Stderr Contains    ${expected}
 
 Logging Mixed Non-ASCII Unicode And Bytes
     [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[2].msgs[0]}    Hyvä byte! Hyvä Unicode!
+    ${expected} =    Set variable if    ${INTERPRETER.is_py3}
+    ...    b'Hyv\\xc3\\xa4 byte!' Hyvä Unicode!    Hyvä byte! Hyvä Unicode!
+    Check Log Message    ${tc.kws[2].msgs[0]}    ${expected}
 
 Logging HTML
     ${tc} =    Check Test Case    ${TEST NAME}
