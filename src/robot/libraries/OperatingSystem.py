@@ -584,7 +584,7 @@ class OperatingSystem(object):
         New in Robot Framework 2.8.5.
         """
         if is_unicode(content):
-            content = ''.join(chr(ord(c)) for c in content)
+            content = bytes(bytearray(ord(c) for c in content))
         path = self._write_to_file(path, content)
         self._link("Created binary file '%s'.", path)
 
