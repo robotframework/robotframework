@@ -172,11 +172,11 @@ Should Be Equal As Integers With Base
     0x1    0o1
 
 Should Not Be Equal As Numbers
-    [Documentation]    FAIL Fails again: 1.1 == 1.1
+    [Documentation]    FAIL Fails again: 1.0 == 1.0
     [Template]    Should Not Be Equal As Numbers
     ${STR1}.${STR1}    1.2
     ${STR1}.${STR1}    ${1.2}
-    ${STR1}.${STR1}    1.1    Fails again
+    ${STR1}.0    1.0    Fails again
 
 Should Not Be Equal As Numbers With Precision
     [Documentation]    FAIL Failing: 1.0 == 1.0

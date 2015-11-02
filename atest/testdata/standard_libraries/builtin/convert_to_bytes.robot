@@ -1,5 +1,5 @@
 *** Settings ***
-Test template    Correct bytes should be created
+Test Template    Correct bytes should be created
 Library          String
 
 *** Variables ***
@@ -153,7 +153,7 @@ Correct bytes should be created
 
 Bytes should be equal to
     [Arguments]    ${bytes}    ${expected}
-    ${expected} =    Evaluate    ''.join(chr(int(i)) for i in [${expected}])
+    ${expected} =    Evaluate    bytes(bytearray(int(i) for i in [${expected}]))
     Should Be Equal    ${bytes}   ${expected}
     Should Be Byte String    ${bytes}
 
