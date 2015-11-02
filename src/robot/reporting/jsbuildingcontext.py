@@ -17,8 +17,8 @@ from os.path import exists, dirname
 
 from robot.output.loggerhelper import LEVELS
 from robot.utils import (attribute_escape, get_link_path, html_escape,
-                         html_format, is_string, is_unicode, long,
-                         timestamp_to_secs, unic)
+                         html_format, is_string, is_unicode, timestamp_to_secs,
+                         unic)
 
 from .stringcache import StringCache
 
@@ -54,8 +54,7 @@ class JsBuildingContext(object):
     def timestamp(self, time):
         if not time:
             return None
-        # Must use `long` due to http://ironpython.codeplex.com/workitem/31549
-        millis = long(round(timestamp_to_secs(time) * 1000))
+        millis = int(timestamp_to_secs(time) * 1000)
         if self.basemillis is None:
             self.basemillis = millis
         return millis - self.basemillis

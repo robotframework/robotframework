@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from .misc import roundup
 from .robottypes import is_integer, is_string
 
 
@@ -22,9 +23,9 @@ def frange(*args):
     start, stop, step = _get_start_stop_step(args)
     digits = max(_digits(start), _digits(stop), _digits(step))
     factor = pow(10, digits)
-    return [x/float(factor) for x in range(int(round(start*factor)),
-                                           int(round(stop*factor)),
-                                           int(round(step*factor)))]
+    return [x/float(factor) for x in range(roundup(start*factor),
+                                           roundup(stop*factor),
+                                           roundup(step*factor))]
 
 
 def _get_start_stop_step(args):

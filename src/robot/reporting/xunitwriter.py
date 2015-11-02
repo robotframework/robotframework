@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.result import ResultVisitor
-from robot.utils import XmlWriter
+from robot.utils import roundup, XmlWriter
 
 
 class XUnitWriter(object):
@@ -84,7 +84,7 @@ class XUnitFileWriter(ResultVisitor):
                                                'type': 'AssertionError'})
 
     def _time_as_seconds(self, millis):
-        return str(int(round(millis, -3) / 1000))
+        return str(roundup(millis, -3) // 1000)
 
     def visit_keyword(self, kw):
         pass

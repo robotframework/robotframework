@@ -19,6 +19,7 @@ Formatted strings     2014-04-24 21:45:12.123                         2014-04-24
 
 Epoch                 ${EPOCH}                                        2014-04-24 21:45:12.000
                       ${EPOCH + 0.123}                                2014-04-24 21:45:12.123
+                      ${EPOCH + 0.5}                                  2014-04-24 21:45:12.500
 
 Datetime object       ${datetime(2014, 4, 24, 21, 45, 12, 123000)}    2014-04-24 21:45:12.123
                       ${datetime(2014, 4, 24, 21, 45, 12, 123456)}    2014-04-24 21:45:12.123
@@ -38,7 +39,8 @@ Rounding milliseconds
                       2014-04-24T21:45:12.1235                        2014-04-24 21:45:12.124    %Y-%m-%dT%H:%M:%S.%f
                       ${EPOCH + 0.123456}                             2014-04-24 21:45:12.123
                       ${EPOCH + 0.1234}                               2014-04-24 21:45:12.123
-                      ${EPOCH + 0.1235}                               2014-04-24 21:45:12.124
+                      ${EPOCH + 0.5}                                  2014-04-24 21:45:13        exclude_millis=True
+                      ${EPOCH - 0.5}                                  2014-04-24 21:45:12        exclude_millis=True
                       ${datetime(2014, 4, 24, 21, 45, 12, 123456)}    2014-04-24 21:45:12.123
                       ${datetime(2014, 4, 24, 21, 45, 12, 123400)}    2014-04-24 21:45:12.123
                       ${datetime(2014, 4, 24, 21, 45, 12, 123500)}    2014-04-24 21:45:12.124
@@ -62,8 +64,8 @@ Invalid input
 
 *** Keywords ***
 Date Conversion Should Succeed
-    [Arguments]    ${input}    ${expected}    ${input_format}=${NONE}
-    ${ts} =    Convert Date    ${input}    date_format=${input_format}
+    [Arguments]    ${input}    ${expected}    ${input_format}=${NONE}    &{config}
+    ${ts} =    Convert Date    ${input}    date_format=${input_format}    &{config}
     Should Be Equal    ${ts}    ${expected}
 
 Date Conversion Should Fail

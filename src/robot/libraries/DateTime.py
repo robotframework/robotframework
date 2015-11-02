@@ -535,7 +535,7 @@ class Date(object):
         # https://github.com/IronLanguages/main/issues/1170
         # Also Jython had similar problems, but they seem to be fixed in 2.7.
         dt = datetime.fromtimestamp(secs)
-        return dt.replace(microsecond=int(round(secs % 1 * 1e6)))
+        return dt.replace(microsecond=roundup(secs % 1 * 1e6))
 
     def _string_to_datetime(self, ts, input_format):
         if not input_format:
@@ -599,7 +599,7 @@ class Date(object):
     def _convert_to_timestamp(self, dt, millis=True):
         if not millis:
             return dt.strftime('%Y-%m-%d %H:%M:%S')
-        ms = int(round(dt.microsecond / 1000.0))
+        ms = roundup(dt.microsecond / 1000.0)
         if ms == 1000:
             dt += timedelta(seconds=1)
             ms = 0

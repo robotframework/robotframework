@@ -33,7 +33,7 @@ def _get_timetuple(epoch_secs=None):
 
 def _float_secs_to_secs_and_millis(secs):
     isecs = int(secs)
-    millis = int(round((secs - isecs) * 1000))
+    millis = roundup((secs - isecs) * 1000)
     return (isecs, millis) if millis < 1000 else (isecs+1, 0)
 
 
@@ -312,7 +312,7 @@ def timestamp_to_secs(timestamp, seps=None):
     except (ValueError, OverflowError):
         raise ValueError("Invalid timestamp '%s'." % timestamp)
     else:
-        return round(secs, 3)
+        return roundup(secs, 3)
 
 
 def secs_to_timestamp(secs, seps=None, millis=False):
@@ -321,7 +321,7 @@ def secs_to_timestamp(secs, seps=None, millis=False):
     ttuple = time.localtime(secs)[:6]
     if millis:
         millis = (secs - int(secs)) * 1000
-        ttuple = ttuple + (int(round(millis)),)
+        ttuple = ttuple + (roundup(millis),)
     return format_time(ttuple, *seps)
 
 
@@ -368,7 +368,7 @@ def _timestamp_to_millis(timestamp, seps=None):
         timestamp = _normalize_timestamp(timestamp, seps)
     Y, M, D, h, m, s, millis = _split_timestamp(timestamp)
     secs = time.mktime(datetime.datetime(Y, M, D, h, m, s).timetuple())
-    return int(round(1000*secs + millis))
+    return roundup(1000*secs + millis)
 
 def _normalize_timestamp(ts, seps):
     for sep in seps:
