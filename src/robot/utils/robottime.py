@@ -357,7 +357,7 @@ def _elapsed_time_to_string(elapsed):
     return '%02d:%02d:%02d.%03d' % (hours, mins, secs, millis)
 
 def _elapsed_time_to_string_without_millis(elapsed):
-    secs = roundup(elapsed, precision=1000) // 1000
+    secs = roundup(elapsed, ndigits=-3) // 1000
     mins, secs = divmod(secs, 60)
     hours, mins = divmod(mins, 60)
     return '%02d:%02d:%02d' % (hours, mins, secs)

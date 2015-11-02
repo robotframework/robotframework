@@ -22,37 +22,38 @@ class TestRoundup(unittest.TestCase):
                 assert_equals(roundup(number + extra), number)
                 assert_equals(roundup(number - extra), number)
 
-    def test_precision(self):
-        assert_equals(roundup(7, 10), 10)
-        assert_equals(roundup(77, 10), 80)
-        assert_equals(roundup(123, 100), 100)
-        assert_equals(roundup(-1234, 100), -1200)
-        assert_equals(roundup(9999, 100), 10000)
+    def test_ndigits_below_zero(self):
+        assert_equals(roundup(7, -1), 10)
+        assert_equals(roundup(77, -1), 80)
+        assert_equals(roundup(123, -2), 100)
+        assert_equals(roundup(-1234, -2), -1200)
+        assert_equals(roundup(9999, -2), 10000)
 
-    def test_precision_below_zero(self):
-        assert_equals(roundup(0.1234, 0.1), 0.1)
-        assert_equals(roundup(0.9999, 0.1), 1.0)
-        assert_equals(roundup(0.9876, 0.001), 0.988)
+    def test_ndigits_above_zero(self):
+        assert_equals(roundup(0.1234, 1), 0.1)
+        assert_equals(roundup(0.9999, 1), 1.0)
+        assert_equals(roundup(0.9876, 3), 0.988)
 
     def test_round_even_up(self):
         assert_equals(roundup(0.5), 1)
-        assert_equals(roundup(5, 10), 10)
-        assert_equals(roundup(500, 1000), 1000)
-        assert_equals(roundup(0.05, 0.1), 0.1)
-        assert_equals(roundup(0.49951, 0.001), 0.5)
+        assert_equals(roundup(5, -1), 10)
+        assert_equals(roundup(500, -3), 1000)
+        assert_equals(roundup(0.05, 1), 0.1)
+        assert_equals(roundup(0.49951, 3), 0.5)
 
     def test_round_even_down_when_negative(self):
         assert_equals(roundup(-0.5), -1)
-        assert_equals(roundup(-5, 10), -10)
-        assert_equals(roundup(-500, 1000), -1000)
-        assert_equals(roundup(-0.05, 0.1), -0.1)
-        assert_equals(roundup(-0.49951, 0.001), -0.5)
+        assert_equals(roundup(-5, -1), -10)
+        assert_equals(roundup(-500, -3), -1000)
+        assert_equals(roundup(-0.05, 1), -0.1)
+        assert_equals(roundup(-0.49951, 3), -0.5)
 
-    def test_return_int_when_precision_is_int(self):
-        numbers = [1, 1000, 0.1, 0.001]
-        for precision in numbers:
-            for number in numbers:
-                assert_equals(type(roundup(number, precision)), type(precision))
+    def test_return_type(self):
+        for n in [1, 1000, 0.1, 0.001]:
+            for d in [-3, -2, -1, 0, 1, 2, 3]:
+                assert_equals(type(roundup(n, d)), float if d > 0 else int)
+                assert_equals(type(roundup(n, d, return_type=int)), int)
+                assert_equals(type(roundup(n, d, return_type=float)), float)
 
 
 class TestMiscUtils(unittest.TestCase):

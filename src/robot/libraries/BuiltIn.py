@@ -30,7 +30,7 @@ from robot.utils import (asserts, DotDict, escape, format_assign_message,
                          get_error_message, get_time, is_falsy, is_integer,
                          is_string, is_truthy, is_unicode, JYTHON, Matcher,
                          normalize, NormalizedDict, parse_time, prepr,
-                         RERAISED_EXCEPTIONS, plural_or_not as s,
+                         RERAISED_EXCEPTIONS, plural_or_not as s, roundup,
                          secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
@@ -265,7 +265,8 @@ class _Converter(_BuiltInBase):
         If the optional ``precision`` is positive or zero, the returned number
         is rounded to that number of decimal digits. Negative precision means
         that the number is rounded to the closest multiple of 10 to the power
-        of the absolute precision.
+        of the absolute precision. If a number is equally close to a certain
+        precision, it is always rounded away from zero.
 
         Examples:
         | ${result} = | Convert To Number | 42.512 |    | # Result is 42.512 |
@@ -289,7 +290,8 @@ class _Converter(_BuiltInBase):
     def _convert_to_number(self, item, precision=None):
         number = self._convert_to_number_without_precision(item)
         if precision:
-            number = round(number, self._convert_to_integer(precision))
+            number = roundup(number, self._convert_to_integer(precision),
+                             return_type=float)
         return number
 
     def _convert_to_number_without_precision(self, item):
