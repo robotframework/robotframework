@@ -14,7 +14,7 @@
 
 import time
 
-from robot.utils import format_time, long
+from robot.utils import format_time, long, OrderedDict
 
 from .stringcache import StringIndex
 
@@ -31,13 +31,13 @@ class JsExecutionResult(object):
 
     def _get_data(self, statistics, errors, basemillis):
         gentime = time.localtime()
-        return {
-            'stats': statistics,
-            'errors': errors,
-            'baseMillis': basemillis,
-            'generatedMillis': long(time.mktime(gentime) * 1000) - basemillis,
-            'generatedTimestamp': format_time(gentime, gmtsep=' ')
-        }
+        return OrderedDict([
+            ('stats', statistics),
+            ('errors', errors),
+            ('baseMillis', basemillis),
+            ('generatedMillis', long(time.mktime(gentime) * 1000) - basemillis),
+            ('generatedTimestamp', format_time(gentime, gmtsep=' '))
+            ])
 
     def remove_data_not_needed_in_report(self):
         self.data.pop('errors')
