@@ -14,4 +14,4 @@ def set_secret_variable():
 
 def use_run_keyword_with_non_unicode_values():
     BuiltIn().run_keyword('Log', 42)
-    BuiltIn().run_keyword('Log', '\xff')
+    BuiltIn().run_keyword('Log', b'\xff')

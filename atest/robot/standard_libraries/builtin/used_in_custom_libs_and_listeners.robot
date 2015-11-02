@@ -17,5 +17,4 @@ Listener Using BuiltIn
 Use 'Run Keyword' with non-Unicode values
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    42
-    ${expected} =    Set Variable If    not $INTERPRETER.is_ironpython    \\xff    ÿ
-    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    ${expected}
+    Check Log Message    ${tc.kws[0].kws[1].msgs[0]}    \\xff
