@@ -175,14 +175,12 @@ class TestEncoding(unittest.TestCase):
         reader.feed('<?xml encoding=US-ASCII version="1.0"?>')
         assert_equals(reader._encoding, 'US-ASCII')
 
-    def test_encoding_and_entityrefs(self):
+    def test_entityrefs(self):
         reader = HtmlReader()
         reader.populator = PopulatorMock()
         reader.feed('<meta content="text/html; charset=utf-8" />')
         reader.feed('<table><tr><td>Setting</td></tr>')
-        reader.feed('<tr><td>&auml;iti')
-        assert_equals(reader.current_cell, [u'\xe4', u'iti'])
-        reader.feed('</tr>')
+        reader.feed('<tr><td>&auml;iti</tr>')
         assert_equals(reader.populator.tables['Setting'][0], [u'\xe4iti'])
 
 
