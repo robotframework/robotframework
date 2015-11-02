@@ -5,7 +5,7 @@ Library           TraceLogArgsLibrary.py
 
 *** Variables ***
 @{VALUES}         a    b    c    d
-${NON ASCII}      Hyvää Päivää
+${NON ASCII}      Hyvää 'Päivää'\n
 &{DICT}           a=1    c=3
 
 *** Test Cases ***

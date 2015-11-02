@@ -19,12 +19,12 @@ Return None
     No Operation
 
 Return Non Ascii String
-    Set Variable    Hyvää Päivää
+    Set Variable    Hyvää 'Päivää'\n
 
 Return Object With Unicode Repr
     Print and Return Unicode Object
 
-Return Object with Invalid Unicode Repr
+Return Object with Unicode Repr With Non Ascii Chars
     Return Object With Invalid Repr
 
 Return Object with Non Ascii String from Repr

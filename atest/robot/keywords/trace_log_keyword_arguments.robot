@@ -3,9 +3,11 @@ Suite Setup       Run Tests    --loglevel TRACE    keywords/trace_log_keyword_ar
 Resource          atest_resource.robot
 
 *** Variables ***
-${NON ASCII}      'Hyv\\xe4\\xe4 P\\xe4iv\\xe4\\xe4'
-${OBJECT REPR}    u'Circle is 360\\xb0, Hyv\\xe4\\xe4 \\xfc\\xf6t\\xe4,
+${NON ASCII PY 2}      "Hyv\\xe4\\xe4 'P\\xe4iv\\xe4\\xe4'\\n"
+${NON ASCII PY 3}      "Hyvää 'Päivää'\\n"
+${OBJECT REPR PY 2}    u'Circle is 360\\xb0, Hyv\\xe4\\xe4 \\xfc\\xf6t\\xe4,
 ...               \\u0989\\u09c4 \\u09f0 \\u09fa \\u099f \\u09eb \\u09ea \\u09b9'
+${OBJECT REPR PY 3}    'Circle is 360°, Hyvää üötä, \u0989\u09c4 \u09f0 \u09fa \u099f \u09eb \u09ea \u09b9'
 
 *** Test Cases ***
 Only Mandatory Arguments
@@ -65,10 +67,14 @@ None as Argument
     Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs    None
 
 Non Ascii String as Argument
-    Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs    ${NON ASCII}
+    ${expected} =    Set variable if   ${INTERPRETER.is_py2}
+    ...    ${NON ASCII PY 2}    ${NON ASCII PY 3}
+    Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs    ${expected}
 
 Object With Unicode Repr as Argument
-    Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs    ${OBJECT REPR}
+    ${expected} =    Set variable if   ${INTERPRETER.is_py2}
+    ...    ${OBJECT REPR PY 2}    ${OBJECT REPR PY 3}
+    Check UKW Default, LKW Default, UKW Varargs, and LKW Varargs    ${expected}
 
 Arguments With Run Keyword
     ${tc}=    Check Test Case    ${TEST NAME}
