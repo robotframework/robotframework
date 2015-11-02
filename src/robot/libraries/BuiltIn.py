@@ -348,7 +348,8 @@ class _Converter(_BuiltInBase):
         - ``text:`` Converts text to bytes character by character. All
           characters with ordinal below 256 can be used and are converted to
           bytes with same values. Many characters are easiest to represent
-          using escapes like ``\\x00`` or ``\\xff``.
+          using escapes like ``\\x00`` or ``\\xff``. Supports both Unicode
+          strings and bytes.
 
         - ``int:`` Converts integers separated by spaces to bytes. Similarly as
           with `Convert To Integer`, it is possible to use binary, octal, or
@@ -396,7 +397,8 @@ class _Converter(_BuiltInBase):
 
     def _get_ordinals_from_text(self, input):
         for char in input:
-            yield self._test_ordinal(ord(char), char, 'Character')
+            ordinal = char if is_integer(char) else ord(char)
+            yield self._test_ordinal(ordinal, char, 'Character')
 
     def _test_ordinal(self, ordinal, original, type):
         if 0 <= ordinal <= 255:
