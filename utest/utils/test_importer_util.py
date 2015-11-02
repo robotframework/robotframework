@@ -8,7 +8,7 @@ import re
 from os.path import basename, dirname, exists, join, normpath
 
 from robot.errors import DataError
-from robot.utils import abspath, JYTHON, WINDOWS
+from robot.utils import abspath, JYTHON, WINDOWS, PY3
 from robot.utils.importer import Importer, ByPathImporter
 from robot.utils.asserts import (assert_equals, assert_true, assert_raises,
                                  assert_raises_with_msg)
@@ -33,8 +33,11 @@ def create_temp_file(name, attr=42, extra_content=''):
         os.mkdir(TESTDIR)
     path = join(TESTDIR, name)
     with open(path, 'w') as file:
-        file.write('attr = %r\n' % attr)
-        file.write('def func():\n  return attr\n')
+        file.write('''
+attr = %r
+def func():
+    return attr
+''' % attr)
         file.write(extra_content)
     return path
 
@@ -105,12 +108,16 @@ class TestImportByPath(unittest.TestCase):
         self._assert_imported_message('test', path3, index=1)
 
     def test_import_class_from_file(self):
-        path = create_temp_file('test.py', extra_content='class test:\n def m(s): return 1')
+        path = create_temp_file('test.py', extra_content='''
+class test:
+    def method(self):
+        return 42
+''')
         klass = self._import(path, remove='test')
         self._assert_imported_message('test', path, type='class')
         assert_true(inspect.isclass(klass))
         assert_equals(klass.__name__, 'test')
-        assert_equals(klass().m(), 1)
+        assert_equals(klass().method(), 42)
 
     def test_invalid_python_file(self):
         path = create_temp_file('test.py', extra_content='invalid content')
@@ -154,7 +161,7 @@ class TestImportByPath(unittest.TestCase):
 
     def _import(self, path, name=None, remove=None):
         if remove and remove in sys.modules:
-            del sys.modules[remove]
+            sys.modules.pop(remove)
         self.logger = LoggerStub()
         importer = Importer(name, self.logger)
         sys_path_before = sys.path[:]
@@ -353,7 +360,7 @@ class TestErrorDetails(unittest.TestCase):
             shutil.rmtree(TESTDIR)
         assert_equals(self._get_traceback(error),
                       'Traceback (most recent call last):\n'
-                      '  File "%s", line 4, in <module>\n'
+                      '  File "%s", line 5, in <module>\n'
                       '    import nonex' % path)
 
     def test_pythonpath(self):
@@ -383,7 +390,8 @@ class TestErrorDetails(unittest.TestCase):
 
     def test_structure(self):
         error = self._failing_import('NoneExisting')
-        message = "Importing 'NoneExisting' failed: ImportError: No module named NoneExisting"
+        message = ("Importing 'NoneExisting' failed: ImportError: No module "
+                   "named {q}NoneExisting{q}".format(q="'" if PY3 else ""))
         expected = (message, self._get_traceback(error),
                     self._get_pythonpath(error), self._get_classpath(error))
         assert_equals(str(error), '\n'.join(expected).strip())
