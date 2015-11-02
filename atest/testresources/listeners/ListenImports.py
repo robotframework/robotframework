@@ -1,5 +1,10 @@
 import os
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
 
 class ListenImports(object):
     ROBOT_LISTENER_API_VERSION = 2
