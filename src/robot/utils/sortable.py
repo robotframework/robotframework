@@ -12,36 +12,38 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from operator import eq, ne, lt, le, gt, ge
+
 
 class Sortable(object):
     """Base class for sorting based self._sort_key"""
 
     _sort_key = NotImplemented
 
+    def __test(self, operator, other, result_if_unsortable=None):
+        if isinstance(other, Sortable):
+            return operator(self._sort_key, other._sort_key)
+        if result_if_unsortable is not None:
+            return result_if_unsortable
+        raise TypeError("Cannot sort %s and %s." % (type(self), type(other)))
+
     def __eq__(self, other):
-        if not isinstance(other, Sortable):
-            return False
-        return self._sort_key == other._sort_key
+        return self.__test(eq, other, result_if_unsortable=False)
+
+    def __ne__(self, other):
+        return self.__test(ne, other, result_if_unsortable=True)
 
     def __lt__(self, other):
-        self.__verify_type(other)
-        return self._sort_key < other._sort_key
+        return self.__test(lt, other)
 
     def __le__(self, other):
-        self.__verify_type(other)
-        return self._sort_key <= other._sort_key
+        return self.__test(le, other)
 
     def __gt__(self, other):
-        self.__verify_type(other)
-        return self._sort_key > other._sort_key
+        return self.__test(gt, other)
 
     def __ge__(self, other):
-        self.__verify_type(other)
-        return self._sort_key >= other._sort_key
+        return self.__test(ge, other)
 
     def __hash__(self):
         return hash(self._sort_key)
-
-    def __verify_type(self, other):
-        if not isinstance(other, Sortable):
-            raise TypeError("Cannot compare %s and %s." % (type(self), type(other)))
