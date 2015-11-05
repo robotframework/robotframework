@@ -61,7 +61,7 @@ else:
     def decode_from_system(string):
         """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
         try:
-            return string.decode(OUTPUT_ENCODING)
+            return string.decode(SYSTEM_ENCODING)
         except UnicodeError:
             return unic(string)
 
