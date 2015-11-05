@@ -17,6 +17,7 @@ import time
 from threading import Timer, current_thread
 
 from robot.errors import TimeoutError
+from robot.utils import py2to3
 
 
 class Timeout(object):
@@ -28,9 +29,8 @@ class Timeout(object):
         self._timeout_occurred = False
 
     def _create_timeout_error_class(self, timeout_error):
-        return type(TimeoutError.__name__,
-                   (TimeoutError,),
-                   {'__unicode__': lambda self: timeout_error})
+        return py2to3(type(TimeoutError.__name__, (TimeoutError,),
+                           {'__unicode__': lambda self: timeout_error}))
 
     def execute(self, runnable):
         self._start_timer()
