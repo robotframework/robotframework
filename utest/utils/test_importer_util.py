@@ -19,10 +19,12 @@ LIBDIR = normpath(join(CURDIR, '..', '..', 'atest', 'testresources', 'testlibs')
 TEMPDIR = tempfile.gettempdir()
 TESTDIR = join(TEMPDIR, 'robot-importer-testing')
 WINDOWS_PATH_IN_ERROR = re.compile(r"'\w:\\")
+if PY3:
+    unicode = str
 
 
 def assert_prefix(error, expected):
-    message = str(error)
+    message = unicode(error)
     count = 3 if WINDOWS_PATH_IN_ERROR.search(message) else 2
     prefix = ':'.join(message.split(':')[:count]) + ':'
     assert_equals(prefix, expected)
@@ -394,7 +396,7 @@ class TestErrorDetails(unittest.TestCase):
                    "named {q}NoneExisting{q}".format(q="'" if PY3 else ""))
         expected = (message, self._get_traceback(error),
                     self._get_pythonpath(error), self._get_classpath(error))
-        assert_equals(str(error), '\n'.join(expected).strip())
+        assert_equals(unicode(error), '\n'.join(expected).strip())
 
     def _failing_import(self, name):
         importer = Importer().import_class_or_module
@@ -412,7 +414,7 @@ class TestErrorDetails(unittest.TestCase):
 
     def _block(self, error, start, end=None):
         include = False
-        for line in str(error).splitlines():
+        for line in unicode(error).splitlines():
             if line == end:
                 return
             if line == start:
@@ -472,8 +474,8 @@ class TestInstantiation(unittest.TestCase):
     def test_instantiate_failure(self):
         err = assert_raises(DataError, Importer().import_class_or_module,
                             'ExampleLibrary', ['accepts', 'no', 'args'])
-        assert_true(str(err).startswith("Importing 'ExampleLibrary' failed: "
-                                        "Creating instance failed: TypeError:"))
+        assert_true(unicode(err).startswith("Importing 'ExampleLibrary' failed: "
+                                            "Creating instance failed: TypeError:"))
 
     def test_modules_do_not_take_arguments(self):
         path = create_temp_file('no_args_allowed.py')
