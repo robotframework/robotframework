@@ -40,6 +40,8 @@ def decode_output(string, force=False):
 def encode_output(string, errors='replace'):
     """Encodes Unicode to bytes in console encoding."""
     # http://ironpython.codeplex.com/workitem/29487
+    if PY3 and OUTPUT_ENCODING != 'UTF-8':
+        return string.encode(OUTPUT_ENCODING, errors).decode(OUTPUT_ENCODING)
     if PY3 or IRONPYTHON:
         return string
     return string.encode(OUTPUT_ENCODING, errors)

@@ -15,22 +15,26 @@
 import os
 import os.path
 import sys
-try:
-    from urllib import pathname2url
-except ImportError:
-    from urllib.request import pathname2url
 
 from robot.errors import DataError
 
 from .encoding import decode_from_system
-from .platform import WINDOWS
+from .platform import WINDOWS, PY2
 from .robottypes import is_unicode
+
 
 if sys.version_info < (2,7):
     _abspath = lambda path: os.path.join(os.getcwdu(), path)
 else:
     _abspath = os.path.abspath
 
+if PY2:
+    from urllib import pathname2url
+
+    def path_to_url(path):
+        return pathname2url(path.encode('UTF-8'))
+else:
+    from urllib.request import pathname2url as path_to_url
 
 if WINDOWS:
     CASE_INSENSITIVE_FILESYSTEM = True
@@ -84,8 +88,8 @@ def get_link_path(target, base):
 
     Rationale: os.path.relpath is not available before Python 2.6
     """
-    path =  _get_pathname(target, base)
-    url = pathname2url(path.encode('UTF-8'))
+    path = _get_pathname(target, base)
+    url = path_to_url(path)
     if os.path.isabs(path):
         url = 'file:' + url
     # At least Jython seems to use 'C|/Path' and not 'C:/Path'
