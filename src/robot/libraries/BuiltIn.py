@@ -2239,27 +2239,6 @@ class _Control(_BuiltInBase):
         self.log('Execution skipped with message:\n%s' % log_message, level)
         raise SkipExecution(message)
 
-    @run_keyword_variant(resolve=1)
-    def skip_execution_if(self, condition, message, *tags):
-        """Conditionally skips rest of the current test, setup, or teardown with SKIP status.
-
-        A wrapper for `Skip Execution` to skip rest of the current test,
-        setup or teardown based the given `condition`. The condition is
-        evaluated similarly as with `Should Be True` keyword, and `message`
-        and `*tags` have same semantics as with `Pass Execution`.
-
-        Example:
-        | :FOR | ${var}            | IN                     | @{VALUES}               |
-        |      | Skip Execution If | '${var}' == 'EXPECTED' | Correct value was found |
-        |      | Do Something      | ${var}                 |
-
-        New in Robot Framework 2.9.
-        """
-        if self._is_true(condition):
-            message = self._variables.replace_string(message)
-            tags = [self._variables.replace_string(tag) for tag in tags]
-            self.skip_execution(message, *tags)
-
 class _Misc(_BuiltInBase):
 
     def no_operation(self):
