@@ -10,7 +10,7 @@ Library Namespace should be global
 
 Error in exit code and stderr output
     ${result}=    Run Python Process    1/0
-    Result should match    ${result}    stderr=*ZeroDivisionError: integer division or modulo by zero*    rc=1
+    Result should match    ${result}    stderr=*ZeroDivisionError:*    rc=1
 
 Start And Wait Process
     ${handle}=    Start Python Process    import time;time.sleep(0.1)
@@ -34,12 +34,12 @@ Running a process in a shell
     Run Keyword And Expect Error    *    Run Process    python -c "print('hello')"    shell=false
 
 Input things to process
-    Start Process    python -c "print('inp %s' % raw_input())"    shell=True
+    Start Process    python -c "print('inp %s' % input())"    shell=True
     ${process}=    Get Process Object
-    Log   ${process.stdin.write("some input\n")}
+    Log   ${process.stdin.write("42\n")}
     Log   ${process.stdin.flush()}
     ${result}=    Wait For Process
-    Should Match    ${result.stdout}    *inp some input*
+    Should Match    ${result.stdout}    *inp 42*
 
 Get process id
     ${handle}=    Some process

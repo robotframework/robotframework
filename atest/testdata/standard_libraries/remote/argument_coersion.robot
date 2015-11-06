@@ -20,9 +20,9 @@ Newline and tab
     '\\t\\n\\r'    '\\t\\n\\n'
 
 Binary
-    '\\x00\\x01\\x02'    binary=yes
-    'foo\\x00bar'        binary=yes
-    u'\\x00\\x01'        binary=yes
+    '\\x00\\x01\\x02'    b'\\x00\\x01\\x02'    binary=yes
+    'foo\\x00bar'        b'foo\\x00bar'        binary=yes
+    u'\\x00\\x01'        b'\\x00\\x01'         binary=yes
 
 Binary in non-ASCII range
     b'\\x00\\x01\\xe4'    binary=yes
@@ -65,7 +65,7 @@ Custom object with non-ASCII representation
     MyObject(u'hyv\\xe4')    u'hyv\\xe4'
 
 Custom object with binary representation
-    MyObject('\\x00\\x01')    '\\x00\\x01'
+    MyObject('\\x00\\x01')    b'\\x00\\x01'    binary=yes
 
 List
     \[]
@@ -82,7 +82,7 @@ List with non-ASCII byte values
     \[b'\\x80', b'\\xe4']    binary=yes
 
 List with binary values
-    \['\\x00', u'\\x01']
+    \['\\x00', u'\\x01']    \[b'\\x00', b'\\x01']    binary=yes
 
 Nested list
     \[['a', 'b'], 3, [[[4], True]]]
@@ -121,14 +121,14 @@ Dictionary with binary keys is not supported
     {'\\x00': 'value'}
 
 Dictionary with binary values
-    {0: '\\x00', 1: u'\\x01'}    {'0': '\\x00', '1': '\\x01'}
+    {0: '\\x00', 1: u'\\x01'}    {'0': b'\\x00', '1': b'\\x01'}    binary=yes
 
 Nested dictionary
     {'a': 0, 'b': True, 'c': {'x': [1, 2, 3]}, '\\x7f': '\\x7f'}
 
 Mapping
     MyMapping()    {}
-    MyMapping(a=1, b='\\x01')    {'a': 1, 'b': '\\x01'}
+    MyMapping(a=1, b='\\x01')    {'a': 1, 'b': b'\\x01'}
     MyMapping(a='one', b=2, c=[None, True])    {'a': 'one', 'b': 2, 'c': ['', True]}
 
 *** Keywords ***

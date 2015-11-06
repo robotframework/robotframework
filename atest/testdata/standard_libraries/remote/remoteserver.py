@@ -1,6 +1,9 @@
 import inspect
 import sys
-from SimpleXMLRPCServer import SimpleXMLRPCServer
+try:
+    from SimpleXMLRPCServer import SimpleXMLRPCServer
+except ImportError:
+    from xmlrpc.server import SimpleXMLRPCServer
 
 
 class RemoteServer(SimpleXMLRPCServer):

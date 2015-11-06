@@ -212,7 +212,7 @@ Log Dictionary With Different Log Levels
 Log Dictionary With Different Dictionaries
     Log Dictionary    ${D0}
     Log Dictionary    ${D1}
-    ${dict} =    Evaluate    {(1, 2, 3): 3.14, True: 'xxx', 'foo': []}
+    ${dict} =    Evaluate    robot.utils.OrderedDict(((True, 'xxx'), ('foo', []), ((1, 2, 3), 3.14)))   modules=robot
     Log Dictionary    ${dict}
 
 Pop From Dictionary Without Default

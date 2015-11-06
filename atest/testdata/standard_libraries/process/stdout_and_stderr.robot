@@ -63,8 +63,8 @@ Run multiple times using custom streams
 
 Read standard streams when they are already closed externally
     Some Process    stderr=${NONE}
-    ${stdout} =    Stop Some Process    message=hello
-    Should Be Equal    ${stdout}    hello
+    ${stdout} =    Stop Some Process    message=42
+    Should Be Equal    ${stdout}    42
     ${process} =    Get Process Object
     Run Keyword If    not ${process.stdout.closed}
     ...    Call Method    ${process.stdout}    close

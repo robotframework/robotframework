@@ -12,8 +12,7 @@ Non-ASCII command and output with custom stream
     [Teardown]   Safe Remove File    ${STDOUT}
 
 Non-ASCII in environment variables
-    ${result}=   Run Process    python    -c
-    ...    import os, sys; print(os.getenv('X_X').decode(sys.getfilesystemencoding()) \=\= u'hyv\\xe4')
+    ${result}=   Run Process    python    ${CURDIR}${/}print_env.py
     ...    env:X_X=hyvä    stderr=STDOUT
     Result should equal    ${result}    stdout=True
 

@@ -4,18 +4,18 @@ Resource          process_resource.robot
 *** Test Cases ***
 Implicit handle
     Some process
-    ${stdout} =    Stop some process    message=my message
-    Should Be Equal    ${stdout}    my message
+    ${stdout} =    Stop some process    message=42
+    Should Be Equal    ${stdout}    42
 
 Explicit handle
     ${handle} =    Some process
-    ${stdout} =    Stop some process    ${handle}    my message
-    Should Be Equal    ${stdout}    my message
+    ${stdout} =    Stop some process    ${handle}    42
+    Should Be Equal    ${stdout}    42
 
 Alias
     Some process    alias=saila
-    ${stdout} =    Stop some process    saila    my message
-    Should Be Equal    ${stdout}    my message
+    ${stdout} =    Stop some process    saila    42
+    Should Be Equal    ${stdout}    42
 
 Implicit handle, explicit handle, and alias are equivalent
     ${handle}=    Some process    alias=saila

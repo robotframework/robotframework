@@ -1,5 +1,10 @@
 import sys
-from xmlrpclib import Binary
+
+try:
+    from xmlrpclib import Binary
+except ImportError:
+    from xmlrpc.client import Binary
+    basestring = str
 
 from remoteserver import RemoteServer
 
@@ -18,7 +23,7 @@ class Arguments(object):
         if isinstance(arg, dict):
             return self._handle_binary_in_dict(arg)
         assert isinstance(arg, Binary) or not required, 'Non-binary argument'
-        return str(arg) if isinstance(arg, Binary) else arg
+        return arg.data if isinstance(arg, Binary) else arg
 
     def _handle_binary_in_list(self, arg):
         assert any(isinstance(a, Binary) for a in arg), 'No binary in list'
