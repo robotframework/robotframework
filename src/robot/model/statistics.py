@@ -25,13 +25,14 @@ class Statistics(object):
     options.
     """
     def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
-                 tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
-                 tag_stat_link=None):
+                 tag_stat_exclude=None, tag_stat_skip=None,
+                 tag_stat_combine=None, tag_doc=None, tag_stat_link=None):
         total_builder = TotalStatisticsBuilder()
         suite_builder = SuiteStatisticsBuilder(suite_stat_level)
         tag_builder = TagStatisticsBuilder(suite.criticality, tag_stat_include,
-                                           tag_stat_exclude, tag_stat_combine,
-                                           tag_doc, tag_stat_link)
+                                           tag_stat_exclude, tag_stat_skip,
+                                           tag_stat_combine, tag_doc,
+                                           tag_stat_link)
         suite.visit(StatisticsBuilder(total_builder, suite_builder, tag_builder))
         #: Instance of :class:`~robot.model.totalstatistics.TotalStatistics`.
         self.total = total_builder.stats

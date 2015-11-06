@@ -85,11 +85,13 @@ Options
                           pattern where `*` matches anything and `?` matches
                           any char. If using `*` and `?` in the console is
                           problematic, see --escape and --argumentfile.
- -s --suite name *        Select test suites by name. When this option is used
-                          with --test, --include or --exclude, only test cases
-                          in matching suites and also matching other filtering
-                          criteria are selected. Given name can be a simple
-                          pattern similarly as with --test.
+ -s --suite name *        Select test suites to run by name. When this option
+                          is used with --test, --include, --exclude or --skip,
+                          only test cases in matching suites and also matching
+                          other filtering criteria are selected. Name can be a
+                          simple pattern similarly as with --test and it can
+                          contain parent name separated with a dot. For example
+                          `-s X.Y` selects suite `Y` only if its parent is `X`.
  -i --include tag *       Select test cases to by tag. Similarly as name with
                           --test, tag is case and space insensitive and it is
                           possible to use patterns with `*` and `?` as
@@ -101,9 +103,14 @@ Options
                           tests are not selected even if included with
                           --include. Tags are matched using the rules explained
                           with --include.
+ -S --skip tag *          Select test cases to skip by tag. These tests are
+                          not run (they are skipped) even if included with
+                          --include. Tags are matched using the rules explained
+                          with --include.
     --processemptysuite   Processes output also if the top level test suite is
-                          empty. Useful e.g. with --include/--exclude when it
-                          is not an error that no test matches the condition.
+                          empty. Useful e.g. with --include/--exclude/--skip
+                          when it is not an error that no test matches the
+                          condition.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
                           can be given as a pattern like  with --include.
@@ -156,6 +163,10 @@ Options
                           tags set in test cases are shown. Given `tag` can
                           also be a simple pattern (see e.g. --test).
     --tagstatexclude tag *  Exclude matching tags from `Statistics by Tag` and
+                          `Test Details`. This option can be used with
+                          --tagstatinclude similarly as --exclude is used with
+                          --include.
+    --tagstatskip tag *   Skip matching tags from `Statistics by Tag` and
                           `Test Details`. This option can be used with
                           --tagstatinclude similarly as --exclude is used with
                           --include.

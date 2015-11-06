@@ -62,22 +62,27 @@ flexible.
 By tag names
 ~~~~~~~~~~~~
 
-It is possible to include and exclude test cases by tag_ names with the
-:option:`--include (-i)` and :option:`--exclude (-e)` options, respectively.
-If the :option:`--include` option is used, only test cases having a matching
-tag are selected, and with the :option:`--exclude` option test cases having a
-matching tag are not. If both are used, only tests with a tag
-matching the former option, and not with a tag matching the latter,
-are selected.
+It is possible to include, exclude and skip test cases by tag_ names with the
+:option:`--include (-i)`, :option:`--exclude (-e)` and :option:`--skip (-S)`
+options, respectively. If the :option:`--include` option is used, only test
+cases having a matching tag are selected. If the :option:`--exclude` is used,
+test cases having a matching tag are not selected. If the :option:`--skip` is
+used, test cases having a matching tag are not selected. The :option:`--skip`
+works like the :option:`--exclude` but differs in that tests are shown in the
+statistics. If :option:`--include` and :option:`--exclude` are used, or if
+:option:`--include` and :option:`--exclude` and :option:`--skip` are used, then
+only tests with a tag matching the former option, and not with a tag matching
+the latter, are selected.
 
 ::
 
    --include example
    --exclude not_ready
-   --include regression --exclude long_lasting
+   --skip release_x
+   --include regression --exclude long_lasting --skip sanity
 
-Both :option:`--include` and :option:`--exclude` can be used several
-times to match multiple tags. In that case a test is selected
+Options :option:`--include`, :option:`--exclude` and :option:`--skip` can be
+used several times to match multiple tags. In that case a test is selected
 if it has a tag that matches any included tags, and also has no tag
 that matches any excluded tags.
 
@@ -91,6 +96,7 @@ combining individual tags or patterns together::
    --include fooANDbar
    --exclude xxORyyORzz
    --include fooNOTbar
+   --skip aaORbbORcc
 
 Selecting test cases by tags is a very flexible mechanism and allows
 many interesting possibilities:
@@ -124,7 +130,7 @@ iteratively fix failing test cases.
 Behind the scenes this option selects the failed tests as they would have been
 selected individually with the :option:`--test` option. It is possible to further
 fine-tune the list of selected tests by using :option:`--test`, :option:`--suite`,
-:option:`--include` and :option:`--exclude` options.
+:option:`--include`, :option:`--exclude` and :option:`--skip` options.
 
 Using an output not originating from executing the same tests that are run
 now causes undefined results. Additionally, it is an error if the output
@@ -176,8 +182,8 @@ fail and the overall status is still considered passed.
 All test cases are considered critical by default, but this can be changed
 with the :option:`--critical (-c)` and :option:`--noncritical (-n)`
 options. These options specify which tests are critical
-based on tags_, similarly as :option:`--include` and
-:option:`--exclude` are used to `select tests by tags`__.
+based on tags_, similarly as :option:`--include`, :option:`--exclude` and
+:option:`--skip` are used to `select tests by tags`__.
 If only :option:`--critical` is used, test cases with a
 matching tag are critical. If only :option:`--noncritical` is used,
 tests without a matching tag are critical. Finally, if both are
@@ -185,10 +191,10 @@ used, only test with a critical tag but without a non-critical tag are
 critical.
 
 Both :option:`--critical` and :option:`--noncritical` also support same `tag
-patterns`_ as :option:`--include` and :option:`--exclude`. This means that pattern
-matching is case, space, and underscore insensitive, `*` and `?`
-are supported as wildcards, and `AND`, `OR` and `NOT`
-operators can be used to create combined patterns.
+patterns`_ as :option:`--include`, :option:`--exclude` and :option:`--skip`.
+This means that pattern matching is case, space, and underscore insensitive,
+`*` and `?` are supported as wildcards, and `AND`, `OR` and `NOT` operators can
+be used to create combined patterns.
 
 ::
 
@@ -199,8 +205,8 @@ operators can be used to create combined patterns.
 The most common use case for setting criticality is having test cases
 that are not ready or test features still under development in the
 test execution. These tests could also be excluded from the
-test execution altogether with the :option:`--exclude` option, but
-including them as non-critical tests enables you to see when
+test execution altogether with the :option:`--exclude` or :option:`--skip`
+options, but including them as non-critical tests enables you to see when
 they start to pass.
 
 Criticality set when tests are

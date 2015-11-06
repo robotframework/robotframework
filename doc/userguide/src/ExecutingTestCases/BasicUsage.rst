@@ -173,12 +173,14 @@ used for combining two or more individual tags or patterns together.
 
       --include fooANDbar     # Matches tests containing tags 'foo' and 'bar'.
       --exclude xx&yy&zz      # Matches tests containing tags 'xx', 'yy', and 'zz'.
+      --skip aa&bb&cc         # Matches tests containing tags 'aa', 'bb', and 'cc'.
 
 `OR`
    The whole pattern matches if any individual pattern matches::
 
       --include fooORbar      # Matches tests containing either tag 'foo' or tag 'bar'.
       --exclude xxORyyORzz    # Matches tests containing any of tags 'xx', 'yy', or 'zz'.
+      --skip aaORbbORcc       # Matches tests containing any of tags 'aa', 'bb', or 'cc'.
 
 `NOT`
    The whole pattern matches if the pattern on the left side matches but
@@ -187,6 +189,7 @@ used for combining two or more individual tags or patterns together.
 
       --include fooNOTbar     # Matches tests containing tag 'foo' but not tag 'bar'.
       --exclude xxNOTyyNOTzz  # Matches tests containing tag 'xx' but not tag 'yy' or tag 'zz'.
+      --skip aaNOTbbNOTcc     # Matches tests containing tag 'aa' but not tag 'bb' or tag 'cc'.
 
    Starting from Robot Framework 2.9 the pattern can also start with `NOT`
    in which case the pattern matches if the pattern after `NOT` does not match::
@@ -209,6 +212,7 @@ using lower case letters to avoid accidental operator usage::
     --include port          # Matches tests containing tag 'port', case-insensitively
     --include PORT          # Matches tests containing tag 'P' or 'T', case-insensitively
     --exclude handoverORportNOTnotification
+    --skip majorORmionorNOTpath
 
 .. note:: `OR` operator is new in Robot Framework 2.8.4.
 

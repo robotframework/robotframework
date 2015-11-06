@@ -86,7 +86,7 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         verify_stat(tags.tags['smoke'], 'smoke', 2, 2, True, False)
         verify_stat(tags.tags['t1'], 't1', 3, 2, False, False)
         verify_stat(tags.tags['t2'], 't2', 2, 1, False, False)
-        expected = [('smoke', 4), ('a title', 0), ('t? & smoke', 4), ('t1', 5), ('t2', 3)]
+        expected = [(u'smoke', 4), (u't1', 5), (u't2', 3)]
         assert_equals([(t.name, t.total) for t in tags], expected)
 
 

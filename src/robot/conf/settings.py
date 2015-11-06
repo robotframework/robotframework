@@ -40,6 +40,7 @@ class _BaseSettings(object):
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
                  'Exclude'          : ('exclude', []),
+                 'Skip'             : ('skip', []),
                  'Critical'         : ('critical', None),
                  'NonCritical'      : ('noncritical', None),
                  'OutputDir'        : ('outputdir', abspath('.')),
@@ -55,6 +56,7 @@ class _BaseSettings(object):
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),
+                 'TagStatSkip'      : ('tagstatskip', []),
                  'TagStatCombine'   : ('tagstatcombine', []),
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
@@ -112,7 +114,7 @@ class _BaseSettings(object):
             if name == 'Metadata':
                 value = [self._escape_as_data(v) for v in value]
             return [self._process_metadata_or_tagdoc(v) for v in value]
-        if name in ['Include', 'Exclude']:
+        if name in ['Include', 'Exclude', 'Skip']:
             return [self._format_tag_patterns(v) for v in value]
         if name in self._output_opts and (not value or value.upper() == 'NONE'):
             return None
@@ -350,6 +352,7 @@ class _BaseSettings(object):
             'suite_stat_level': self['SuiteStatLevel'],
             'tag_stat_include': self['TagStatInclude'],
             'tag_stat_exclude': self['TagStatExclude'],
+            'tag_stat_skip': self['TagStatSkip'],
             'tag_stat_combine': self['TagStatCombine'],
             'tag_stat_link': self['TagStatLink'],
             'tag_doc': self['TagDoc'],
@@ -408,7 +411,7 @@ class RobotSettings(_BaseSettings):
         settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
             del(settings._opts[name])
-        for name in ['Include', 'Exclude', 'TestNames', 'SuiteNames', 'Metadata']:
+        for name in ['Include', 'Exclude', 'Skip', 'TestNames', 'SuiteNames', 'Metadata']:
             settings._opts[name] = []
         for name in ['Name', 'Doc']:
             settings._opts[name] = None
@@ -436,6 +439,7 @@ class RobotSettings(_BaseSettings):
             'set_tags': self['SetTag'],
             'include_tags': self['Include'],
             'exclude_tags': self['Exclude'],
+            'skip_tags': self['Skip'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
             'empty_suite_ok': self.run_empty_suite,
@@ -536,6 +540,7 @@ class RebotSettings(_BaseSettings):
             'set_tags': self['SetTag'],
             'include_tags': self['Include'],
             'exclude_tags': self['Exclude'],
+            'skip_tags': self['Skip'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
             'empty_suite_ok': self.process_empty_suite,

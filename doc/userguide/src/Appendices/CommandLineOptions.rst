@@ -24,6 +24,7 @@ Command line options for test execution
                           Use :option:`--rerunfailed` instead.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
+  -S, --skip <tag>        `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_.
   -v, --variable <name:value>   Sets `individual variables`_.
@@ -48,6 +49,7 @@ Command line options for test execution
                            *Statistics by Suite* table in outputs.
   --tagstatinclude <tag>  `Includes only these tags`_ in the *Statistics by Tag* table.
   --tagstatexclude <tag>  `Excludes these tags`_ from the *Statistics by Tag* table.
+  --tagstatskip <tag>     `Skips these tags`_ from the *Statistics by Tag* table.
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
@@ -104,6 +106,7 @@ Command line options for post-processing outputs
   -s, --suite <name>      `Selects the test suites`_ by name.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
+  -s, --skip <tag>        `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_.
   -d, --outputdir <dir>   Defines where to `create output files`_.
@@ -125,6 +128,7 @@ Command line options for post-processing outputs
                            *Statistics by Suite* table in outputs.
   --tagstatinclude <tag>  `Includes only these tags`_ in the *Statistics by Tag* table.
   --tagstatexclude <tag>  `Excludes these tags`_ from the *Statistics by Tag* table.
+  --tagstatskip <tag>     `Skips these tags`_ from the *Statistics by Tag* table.
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the *Statistics by Tag* table.
@@ -176,7 +180,8 @@ Command line options for post-processing outputs
 .. _Sets the threshold level: `Setting log level`_
 .. _levels to show: `Configuring displayed suite statistics`_
 .. _Includes only these tags: `Including and excluding tag statistics`_
-.. _Excludes these tags: `Includes only these tags`_
+.. _Excludes these tags: `Excludes only these tags`_
+.. _Skips these tags: `Skips only these tags`_
 .. _combined statistics based on tags: `Generating combined tag statistics`_
 .. _documentation to the specified tags: `Adding documentation to tags`_
 .. _external links: `Creating links from tag names`_

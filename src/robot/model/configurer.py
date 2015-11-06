@@ -21,14 +21,15 @@ from .visitor import SuiteVisitor
 class SuiteConfigurer(SuiteVisitor):
 
     def __init__(self, name=None, doc=None, metadata=None, set_tags=None,
-                 include_tags=None, exclude_tags=None, include_suites=None,
-                 include_tests=None, empty_suite_ok=False):
+                 include_tags=None, exclude_tags=None, skip_tags=None,
+                 include_suites=None, include_tests=None, empty_suite_ok=False):
         self.name = name
         self.doc = doc
         self.metadata = metadata
         self.set_tags = set_tags or []
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
+        self.skip_tags = skip_tags
         self.include_suites = include_suites
         self.include_tests = include_tests
         self.empty_suite_ok = empty_suite_ok
@@ -57,7 +58,7 @@ class SuiteConfigurer(SuiteVisitor):
     def _filter(self, suite):
         name = suite.name
         suite.filter(self.include_suites, self.include_tests,
-                     self.include_tags, self.exclude_tags)
+                     self.include_tags, self.exclude_tags, self.skip_tags)
         if not (suite.test_count or self.empty_suite_ok):
             self._raise_no_tests_error(name)
 
@@ -71,6 +72,7 @@ class SuiteConfigurer(SuiteVisitor):
         parts = []
         for explanation, selector in [('with tags', self.include_tags),
                                       ('without tags', self.exclude_tags),
+                                      ('without tags', self.skip_tags),
                                       ('named', self.include_tests)]:
             if selector:
                 parts.append(self._format_selector_msg(explanation, selector))

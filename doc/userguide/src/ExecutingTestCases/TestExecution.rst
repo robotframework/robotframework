@@ -20,8 +20,9 @@ created from a `test case file`_ has tests directly, whereas suites
 created from directories__ have child test suites which either have
 tests or their own child suites. By default all the tests in an
 executed suite are run, but it is possible to `select tests`__ using
-options :option:`--test`, :option:`--suite`, :option:`--include` and
-:option:`--exclude`. Suites containing no tests are ignored.
+options :option:`--test`, :option:`--suite`, :option:`--include`,
+:option:`--exclude` and :option:`--skip`. Suites containing no tests
+are ignored.
 
 The execution starts from the top-level test suite. If the suite has
 tests they are executed one-by-one, and if it has suites they are

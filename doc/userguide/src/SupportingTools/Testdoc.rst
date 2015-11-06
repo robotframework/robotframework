@@ -37,6 +37,7 @@ Options
  -s, --suite <name>            Include suites by name.
  -i, --include <tag>           Include tests by tags.
  -e, --exclude <tag>           Exclude tests by tags.
+ -S, --skip <tag>              Skip tests by tags.
  -h, --help                    Print this help in the console.
 
 All options except :option:`--title` have exactly the same semantics as same

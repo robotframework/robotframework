@@ -59,6 +59,7 @@ ARGUMENTS = '''
 --console dotted
 --SuiteStatLevel 3
 --TagStatExclude no-*
+--TagStatSkip no-*
 '''.strip()
 
 
@@ -97,6 +98,9 @@ def _get_arguments(interpreter, outputdir):
     for exclude in interpreter.excludes:
         yield '--exclude'
         yield exclude
+    for skip in interpreter.skips:
+        yield '--skip'
+        yield skip
 
 
 def _run(args, tempdir):

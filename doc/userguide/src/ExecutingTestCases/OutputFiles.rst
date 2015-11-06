@@ -343,18 +343,24 @@ takes the level of suites to show as an argument::
 
     --suitestatlevel 3
 
-Including and excluding tag statistics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Including excluding and skipping tag statistics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When many tags are used, the :name:`Statistics by Tag` table can become
 quite congested. If this happens, the command line options
-:option:`--tagstatinclude` and :option:`--tagstatexclude` can be
-used to select which tags to display, similarly as
-:option:`--include` and :option:`--exclude` are used to `select test
+:option:`--tagstatinclude`
+:option:`--tagstatexclude`
+:option:`--tagstatskip`
+can be used to select which tags to display, similarly as
+:option:`--include`
+:option:`--exclude`
+:option:`--skip`
+are used to `select test
 cases`__::
 
    --tagstatinclude some-tag --tagstatinclude another-tag
    --tagstatexclude owner-*
+   --tagstatskip version-*
    --tagstatinclude prefix-* --tagstatexclude prefix-13
 
 __ `By tag names`_

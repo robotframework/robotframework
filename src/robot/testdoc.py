@@ -53,6 +53,7 @@ Options
   -s --suite name *      Include suites by name.
   -i --include tag *     Include tests by tags.
   -e --exclude tag *     Exclude tests by tags.
+  -S --skip tag *        Skip tests by tags.
   -h -? --help           Print this help.
 
 All options except --title have exactly same semantics as same options have

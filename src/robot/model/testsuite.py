@@ -120,13 +120,13 @@ class TestSuite(ModelObject):
             self._my_visitors.append(setter)
 
     def filter(self, included_suites=None, included_tests=None,
-               included_tags=None, excluded_tags=None):
+               included_tags=None, excluded_tags=None, skipped_tags=None):
         """Select test cases and remove others from this suite.
 
         Parameters have the same semantics as ``--suite``, ``--test``,
-        ``--include``, and ``--exclude`` command line options. All of them
-        can be given as a list of strings, or when selecting only one, as
-        a single string.
+        ``--include``, ``--exclude``, and ``--skip`` command line options. All
+        of them can be given as a list of strings, or when selecting only one,
+        as a single string.
 
         Child suites that contain no tests after filtering are automatically
         removed.
@@ -137,7 +137,7 @@ class TestSuite(ModelObject):
                          included_tags='priority-1')
         """
         self.visit(Filter(included_suites, included_tests,
-                          included_tags, excluded_tags))
+                          included_tags, excluded_tags, skipped_tags))
 
     def configure(self, **options):
         self.visit(SuiteConfigurer(**options))

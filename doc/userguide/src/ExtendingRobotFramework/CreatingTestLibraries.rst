@@ -1134,6 +1134,31 @@ Java:
         public static final boolean ROBOT_CONTINUE_ON_FAILURE = true;
     }
 
+    __ `Continue on failure`_
+    
+Skipping test execution despite of failures
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to `skip test execution even when there are failures`__.
+The way to signal this from test libraries is adding a special
+`ROBOT_SKIP_ON_FAILURE` attribute with `True` value to the exception
+used to communicate the failure. This is demonstrated by the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MySkippableError(RuntimeError):
+        ROBOT_SKIP_ON_FAILURE = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MySkippableError extends RuntimeException {
+        public static final boolean ROBOT_SKIP_ON_FAILURE = true;
+    }
+
 __ `Continue on failure`_
 
 Logging information

@@ -35,11 +35,12 @@ class EmptySuiteRemover(SuiteVisitor):
 class Filter(EmptySuiteRemover):
 
     def __init__(self, include_suites=None, include_tests=None,
-                 include_tags=None, exclude_tags=None):
+                 include_tags=None, exclude_tags=None, skip_tags=None):
         self.include_suites = include_suites
         self.include_tests = include_tests
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
+        self.skip_tags = skip_tags
 
     @setter
     def include_suites(self, suites):
@@ -59,6 +60,10 @@ class Filter(EmptySuiteRemover):
     def exclude_tags(self, tags):
         return TagPatterns(tags) if not isinstance(tags, TagPatterns) else tags
 
+    @setter
+    def skip_tags(self, tags):
+        return TagPatterns(tags) if not isinstance(tags, TagPatterns) else tags
+
     def start_suite(self, suite):
         if not self:
             return False
@@ -72,6 +77,8 @@ class Filter(EmptySuiteRemover):
             suite.tests = self._filter(suite, self._included_by_tags)
         if self.exclude_tags:
             suite.tests = self._filter(suite, self._not_excluded_by_tags)
+        if self.skip_tags:
+            suite.tests = self._filter(suite, self._not_skipped_by_tags)
         return bool(suite.suites)
 
     def _filter_by_suite_name(self, suite):
@@ -79,7 +86,8 @@ class Filter(EmptySuiteRemover):
             suite.visit(Filter(include_suites=[],
                                include_tests=self.include_tests,
                                include_tags=self.include_tags,
-                               exclude_tags=self.exclude_tags))
+                               exclude_tags=self.exclude_tags,
+                               skip_tags=self.skip_tags))
             return False
         suite.tests = []
         return True
@@ -96,6 +104,9 @@ class Filter(EmptySuiteRemover):
     def _not_excluded_by_tags(self, test):
         return not self.exclude_tags.match(test.tags)
 
+    def _not_skipped_by_tags(self, test):
+        return not self.skip_tags.match(test.tags)
+
     def __nonzero__(self):
         return bool(self.include_suites or self.include_tests or
-                    self.include_tags or self.exclude_tags)
+                    self.include_tags or self.exclude_tags or self.skip_tags)
