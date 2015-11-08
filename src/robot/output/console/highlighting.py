@@ -25,7 +25,7 @@ except ImportError:  # Not on Windows or using Jython
     windll = None
 
 from robot.errors import DataError
-from robot.utils import encode_output, isatty
+from robot.utils import encode_output, isatty, WINDOWS
 
 
 class HighlightingStream(object):
@@ -55,8 +55,17 @@ class HighlightingStream(object):
         self.stream.flush()
 
     def highlight(self, text, status=None, flush=True):
+        if self._must_flush_before_and_after_highlighting():
+            self.flush()
+            flush = True
         with self._highlighting(status or text):
             self.write(text, flush)
+
+    def _must_flush_before_and_after_highlighting(self):
+        # Must flush on Windows before and after highlighting to make sure set
+        # console colors only affect the actual highlighted text. Problems
+        # only encountered with Python 3, but better to be safe than sorry.
+        return WINDOWS and not isinstance(self._highlighter, NoHighlighting)
 
     def error(self, message, level):
         self.write('[ ', flush=False)
