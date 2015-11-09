@@ -60,6 +60,7 @@ Log repr
     Check Log Message    ${tc.kws[4].msgs[0]}    b'\\x00\\xff'
     ${expected} =    Set Variable If    ${INTERPRETER.is_py2}    ['Hyv\\xe4', '\\u2603', 42, b'\\x00\\xff']    ['Hyv\xe4', '\u2603', 42, b'\\x00\\xff']
     Check Log Message    ${tc.kws[6].msgs[0]}    ${expected}
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2} or not ${INTERPRETER.is_windows}    ${expected}    ['Hyv\xe4', '?', 42, b'\\x00\\xff']
     Check Stdout Contains    ${expected}
 
 Log pprint
@@ -76,6 +77,8 @@ Log pprint
     ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\\xe4\\xe4 y\\xf6t\\xe4 \\u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
     ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\xe4\xe4 y\xf6t\xe4 \u2603!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
     Check Log Message    ${tc.kws[11].msgs[0]}    ${expected}
+    ${expected} =    Set Variable If    ${INTERPRETER.is_py2} or not ${INTERPRETER.is_windows}    ${expected}
+    ...    {'a long string': 1,\n${SPACE}'a longer string!': 2,\n${SPACE}'a much, much, much, much, much, much longer string': 3,\n${SPACE}'list': ['a long string',\n${SPACE * 10}42,\n${SPACE * 10}'Hyv\xe4\xe4 y\xf6t\xe4 ?!',\n${SPACE * 10}'a much, much, much, much, much, much longer string',\n${SPACE * 10}b'\\x00\\xff']}
     Check Stdout Contains    ${expected}
 
 Log callable

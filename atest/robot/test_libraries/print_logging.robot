@@ -44,8 +44,7 @@ Logging Non-ASCII As Unicode
 Logging Non-ASCII As Bytes
     [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${expected} =    Set variable if    ${INTERPRETER.is_py3}
-    ...    b'Hyv\\xc3\\xa4\\xc3\\xa4 p\\xc3\\xa4iv\\xc3\\xa4\\xc3\\xa4!'    Hyvää päivää!
+    ${expected} =    Get Expected Bytes    Hyvää päivää!
     Check Log Message    ${tc.kws[2].msgs[0]}    ${expected}
     Check Log Message    ${tc.kws[3].msgs[0]}    ${expected}
     Check Stderr Contains    ${expected}
@@ -53,9 +52,8 @@ Logging Non-ASCII As Bytes
 Logging Mixed Non-ASCII Unicode And Bytes
     [Tags]    no-ipy
     ${tc} =    Check Test Case    ${TEST NAME}
-    ${expected} =    Set variable if    ${INTERPRETER.is_py3}
-    ...    b'Hyv\\xc3\\xa4 byte!' Hyvä Unicode!    Hyvä byte! Hyvä Unicode!
-    Check Log Message    ${tc.kws[2].msgs[0]}    ${expected}
+    ${bytes} =    Get Expected Bytes    Hyvä byte!
+    Check Log Message    ${tc.kws[2].msgs[0]}    ${bytes} Hyvä Unicode!
 
 Logging HTML
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -69,3 +67,11 @@ Logging HTML
 FAIL is not valid log level
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    *FAIL* is not failure    INFO
+
+*** Keywords ***
+Get Expected Bytes
+    [Arguments]    ${string}
+    Return From Keyword If    ${INTERPRETER.is_py2}    ${string}
+    ${encoding} =    Evaluate    robot.utils.encoding.SYSTEM_ENCODING    modules=robot
+    ${bytes} =    Encode String To Bytes    ${string}    ${encoding}
+    [Return]    b'${bytes}'
