@@ -70,5 +70,5 @@ def console(msg, newline=True, stream='stdout'):
     if newline:
         msg += '\n'
     stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
-    stream.write(encode_output(msg))
+    stream.write(encode_output(msg, stream=stream))
     stream.flush()

@@ -70,8 +70,8 @@ def _get_unixy_encoding():
 
 
 def _get_stream_output_encoding():
-    # Stream may not have encoding attribute if it is intercepted outside RF
-    # in Python. Encoding is None if process's outputs are redirected.
+    # Stream may not have encoding attribute if it is intercepted outside RF in
+    # Python. Encoding is None if process output is redirected and Python < 3.
     for stream in sys.__stdout__, sys.__stderr__, sys.__stdin__:
         encoding = getattr(stream, 'encoding', None)
         if _is_valid(encoding):
@@ -91,9 +91,9 @@ def _get_code_page(method_name):
     from ctypes import cdll
     try:
         method = getattr(cdll.kernel32, method_name)
-    except TypeError:       # Sometimes occurs w/ IronPython (mainly on CI)
+    except TypeError:       # Occurred few times with IronPython (mainly on CI).
         return None
-    method.argtypes = ()    # Needed w/ Jython (at least 2.5)
+    method.argtypes = ()    # Needed with Jython.
     return 'cp%s' % method()
 
 

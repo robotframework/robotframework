@@ -12,11 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .robottypes import is_unicode
-from .encodingsniffer import get_output_encoding, get_system_encoding
-from .unic import unic
-from .platform import JYTHON, IRONPYTHON, PY3
+import sys
 
+from .encodingsniffer import get_output_encoding, get_system_encoding
+from .compat import isatty
+from .platform import JYTHON, IRONPYTHON, PY3
+from .robottypes import is_unicode
+from .unic import unic
+
+
+# TODO: Rename OUTPUT_ENCODING, decode_output, etc. to CONSOLE_ENCODING,
+# decode_to_console, etc.
 
 OUTPUT_ENCODING = get_output_encoding()
 SYSTEM_ENCODING = get_system_encoding()
@@ -37,14 +43,14 @@ def decode_output(string, force=False):
         return unic(string)
 
 
-def encode_output(string, errors='replace'):
+def encode_output(string, errors='replace', stream=sys.__stdout__):
     """Encodes Unicode to bytes in console encoding."""
-    # http://ironpython.codeplex.com/workitem/29487
-    if PY3 and OUTPUT_ENCODING != 'UTF-8':
-        return string.encode(OUTPUT_ENCODING, errors).decode(OUTPUT_ENCODING)
+    encoding = OUTPUT_ENCODING if isatty(stream) else SYSTEM_ENCODING
+    if PY3 and encoding != 'UTF-8':
+        return string.encode(encoding, errors).decode(encoding)
     if PY3 or IRONPYTHON:
         return string
-    return string.encode(OUTPUT_ENCODING, errors)
+    return string.encode(encoding, errors)
 
 
 # These interpreters handle communication with system APIs using Unicode.

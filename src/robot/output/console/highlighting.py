@@ -47,7 +47,7 @@ class HighlightingStream(object):
         return highlighter(stream)
 
     def write(self, text, flush=True):
-        self.stream.write(encode_output(text))
+        self.stream.write(encode_output(text, stream=self.stream))
         if flush:
             self.flush()
 
