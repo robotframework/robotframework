@@ -65,6 +65,11 @@ Get File with 'replace' Error Handler
     ${UTF-16 BE FILE}    replace    \x00H\x00y\x00v\x00\ufffd\x00\ufffd\x00 \x00\ufffd\x00\ufffd\x00t\x00\ufffd\x00\n\x00f\x00\ufffd\x00\ufffd\x00 \x00b\x00a\x00r
     ${LATIN-1 FILE}    replace    Hyv\ufffd\ufffd \ufffd\ufffdt\ufffd
 
+Get file converts CRLF to LF
+    Create Binary File    ${TESTFILE}    .\r.\n.\r\n
+    ${file}=    Get File    ${TESTFILE}
+    Should Be Equal    ${file}    .\r.\n.\n
+
 Log File
     Create File    ${TESTFILE}    hello world\nwith two lines
     ${file}=    Log File    ${TESTFILE}

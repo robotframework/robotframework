@@ -234,10 +234,7 @@ class OperatingSystem(object):
         rc = process.close()
         return rc, stdout
 
-    # FIXME: Either document and test `newline` or remove it and fix \r problem
-    # otherwise.  https://github.com/robotframework/robotframework/issues/2183
-    def get_file(self, path, encoding='UTF-8', encoding_errors='strict',
-                 newline=None):
+    def get_file(self, path, encoding='UTF-8', encoding_errors='strict'):
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents.
@@ -264,10 +261,12 @@ class OperatingSystem(object):
         if IRONPYTHON:
             # https://github.com/IronLanguages/main/issues/1233
             with open(path) as f:
-                return f.read().decode(encoding, encoding_errors)
-        with io.open(path, encoding=encoding, errors=encoding_errors,
-                     newline=newline) as f:
-            return f.read()
+                content = f.read().decode(encoding, encoding_errors)
+        else:
+            with io.open(path, encoding=encoding, errors=encoding_errors,
+                         newline='') as f:
+                content = f.read()
+        return content.replace('\r\n', '\n')
 
     def get_binary_file(self, path):
         """Returns the contents of a specified file.

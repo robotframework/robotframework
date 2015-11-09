@@ -36,6 +36,9 @@ Get File with 'replace' Error Handler
     [Tags]    no-ipy
     Check testcase    ${TESTNAME}
 
+Get file converts CRLF to LF
+    Check testcase    ${TESTNAME}
+
 Log File
     ${tc}=    Check testcase    ${TESTNAME}
     Check Log Message    ${tc.kws[1].msgs[1]}    hello world\nwith two lines
