@@ -334,26 +334,12 @@ class Process(object):
         terminating also possible child processes. This is not supported by
         Jython in general nor by Python versions prior to 2.7 on Windows.
         """
-        config = ProcessConfig(**configuration)
-        command = self._get_command(command, arguments, config.shell)
-        self._log_start(command, config)
-        # TODO: config.full_config -> popen_config, add result_config
-        process = subprocess.Popen(command, **config.full_config)
-        self._results[process] = ExecutionResult(
-            process,
-            config.stdout_stream,
-            config.stderr_stream,
-            output_encoding=config.output_encoding
-        )
-        return self._processes.register(process, alias=config.alias)
-
-    def _get_command(self, command, args, use_shell):
-        command = [encode_to_system(item) for item in [command] + list(args)]
-        if not use_shell:
-            return command
-        if args:
-            return subprocess.list2cmdline(command)
-        return command[0]
+        conf = ProcessConfiguration(**configuration)
+        command = conf.get_command(command, list(arguments))
+        self._log_start(command, conf)
+        process = subprocess.Popen(command, **conf.popen_config)
+        self._results[process] = ExecutionResult(process, **conf.result_config)
+        return self._processes.register(process, alias=conf.alias)
 
     def _log_start(self, command, config):
         if is_list_like(command):
@@ -834,7 +820,7 @@ class ExecutionResult(object):
         return '<result object with rc %d>' % self.rc
 
 
-class ProcessConfig(object):
+class ProcessConfiguration(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
                  output_encoding='CONSOLE', alias=None, env=None, **rest):
@@ -877,8 +863,16 @@ class ProcessConfig(object):
             env[encode_to_system(key[4:])] = encode_to_system(extra[key])
         return env
 
+    def get_command(self, command, arguments):
+        command = [encode_to_system(item) for item in [command] + arguments]
+        if not self.shell:
+            return command
+        if arguments:
+            return subprocess.list2cmdline(command)
+        return command[0]
+
     @property
-    def full_config(self):
+    def popen_config(self):
         config = {'stdout': self.stdout_stream,
                   'stderr': self.stderr_stream,
                   'stdin': subprocess.PIPE,
@@ -894,6 +888,12 @@ class ProcessConfig(object):
             config['preexec_fn'] = os.setsid
         if hasattr(subprocess, 'CREATE_NEW_PROCESS_GROUP'):
             config['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
+
+    @property
+    def result_config(self):
+        return {'stdout': self.stdout_stream,
+                'stderr': self.stderr_stream,
+                'output_encoding': self.output_encoding}
 
     # FIXME: Convert to __unicode__ or at least remove encode_to_system.
     # Also add tests!!
