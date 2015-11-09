@@ -1,13 +1,14 @@
 import unittest
 import zlib
 
-from robot.utils.compress import _compress
-from robot.utils.asserts import assert_equals
+from robot.utils.compress import compress_text, _compress
+from robot.utils.asserts import assert_equals, assert_true
 
 
 class TestCompress(unittest.TestCase):
 
     def _test(self, text):
+        assert_true(isinstance(compress_text(text), str))
         text = text.encode('UTF-8')
         assert_equals(_compress(text), zlib.compress(text, 9))
 
@@ -21,3 +22,7 @@ class TestCompress(unittest.TestCase):
     def test_non_ascii(self):
         self._test(u'hyv\xe4')
         self._test(u'\u4e2d\u6587')
+
+
+if __name__ == '__main__':
+    unittest.main()

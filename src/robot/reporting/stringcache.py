@@ -41,7 +41,7 @@ class StringCache(object):
             return raw
         compressed = compress_text(text)
         if len(compressed) * self._use_compressed_threshold < len(raw):
-            return str(compressed)
+            return compressed
         return raw
 
     def _raw(self, text):

@@ -15,9 +15,12 @@
 import base64
 import sys
 
+from .platform import PY2
+
 
 def compress_text(text):
-    return base64.b64encode(_compress(text.encode('UTF-8')))
+    result = base64.b64encode(_compress(text.encode('UTF-8')))
+    return result if PY2 else result.decode('ASCII')
 
 
 if not sys.platform.startswith('java'):
