@@ -16,8 +16,9 @@ from __future__ import division
 
 import inspect
 
-from .unic import unic
+from .platform import IRONPYTHON
 from .robottypes import is_integer, is_unicode
+from .unic import unic
 
 
 def roundup(number, ndigits=0, return_type=None):
@@ -35,7 +36,9 @@ def roundup(number, ndigits=0, return_type=None):
     if not return_type:
         return_type = float if ndigits > 0 else int
     quotient, remainder = divmod(abs(number), precision)
-    if remainder >= precision / 2:
+    # https://github.com/IronLanguages/main/issues/1236
+    if (not (IRONPYTHON and (quotient * precision + remainder > abs(number)))
+        and remainder >= precision / 2):
         quotient += 1
     return sign * return_type(quotient * precision)
 
