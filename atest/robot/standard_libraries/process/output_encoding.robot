@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/encoding.robot
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/output_encoding.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***

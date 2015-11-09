@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/newlines_and_encoding.robot
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/newlines.robot
 Resource         atest_resource.robot
 
 *** Test Cases ***
