@@ -36,7 +36,7 @@ Running a process in a shell
 Input things to process
     Start Process    python -c "print('inp %s' % input())"    shell=True
     ${process}=    Get Process Object
-    Log   ${process.stdin.write("42\n")}
+    Log   ${process.stdin.write(b"42\n")}
     Log   ${process.stdin.flush()}
     ${result}=    Wait For Process
     Should Match    ${result.stdout}    *inp 42*

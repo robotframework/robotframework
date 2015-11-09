@@ -337,6 +337,7 @@ class Process(object):
         config = ProcessConfig(**configuration)
         command = self._get_command(command, arguments, config.shell)
         self._log_start(command, config)
+        # TODO: config.full_config -> popen_config, add result_config
         process = subprocess.Popen(command, **config.full_config)
         self._results[process] = ExecutionResult(
             process,
@@ -793,24 +794,27 @@ class ExecutionResult(object):
 
     def _read_stream(self, stream_path, stream):
         if stream_path:
-            stream = open(stream_path, 'r')
+            stream = open(stream_path, 'rb')
         elif not self._is_open(stream):
             return ''
         try:
-            return self._format_output(stream.read())
+            content = stream.read()
         except IOError:  # http://bugs.jython.org/issue2218
             return ''
         finally:
             if stream_path:
                 stream.close()
+        return self._format_output(content)
 
     def _is_open(self, stream):
         return stream and not stream.closed
 
     def _format_output(self, output):
+        output = decode_output(output, self._output_encoding, force=True)
+        output = output.replace('\r\n', '\n')
         if output.endswith('\n'):
             output = output[:-1]
-        return decode_output(output, encoding=self._output_encoding, force=True)
+        return output
 
     def close_streams(self):
         standard_streams = self._get_and_read_standard_streams(self._process)
@@ -880,8 +884,7 @@ class ProcessConfig(object):
                   'stdin': subprocess.PIPE,
                   'shell': self.shell,
                   'cwd': self.cwd,
-                  'env': self.env,
-                  'universal_newlines': True}
+                  'env': self.env}
         if not JYTHON:
             self._add_process_group_config(config)
         return config

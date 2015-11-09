@@ -20,13 +20,12 @@ Some process
     [Return]    ${handle}
 
 Stop some process
-    [Arguments]    ${handle}=${null}    ${message}=
+    [Arguments]    ${handle}=${NONE}    ${message}=
     ${running}=    Is Process Running    ${handle}
-    Return From Keyword If    not ${running}
+    Return From Keyword If    not $running
     ${process}=    Get Process Object    ${handle}
-    ${stdout}    ${_} =    Call Method    ${process}    communicate    ${message}\n
-    # Python 2.5 adds null bytes
-    [Return]    ${stdout.replace('\x00', '').rstrip()}
+    ${stdout}    ${_} =    Call Method    ${process}    communicate    ${message.encode('ASCII') + b'\n'}
+    [Return]    ${stdout.decode('ASCII').rstrip()}
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${rc}=0
@@ -49,7 +48,7 @@ Result should match
 
 Custom stream should contain
     [Arguments]    ${path}    ${expected}
-    Return From Keyword If    not "${path}"    ${NONE}
+    Return From Keyword If    not $path
     ${path} =    Normalize Path    ${path}
     ${encoding} =    Evaluate    robot.utils.encoding.OUTPUT_ENCODING    robot
     ${content} =    Get File    ${path}    encoding=${encoding}
