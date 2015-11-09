@@ -586,7 +586,8 @@ variables as the following variable table:
 YAML files used as variable files must always be mappings in the top level.
 As the above example demonstrates, keys and values in the mapping become
 variable names and values, respectively. Variable values can be any data
-types supported by YAML syntax.
+types supported by YAML syntax. If names or values contain non-ASCII
+characters, YAML variables files must be UTF-8 encoded.
 
 Mappings used as values are automatically converted to special dictionaries
 that are used also when `creating dictionary variables`_ in the variable table.

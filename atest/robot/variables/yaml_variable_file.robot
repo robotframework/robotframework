@@ -43,6 +43,10 @@ Non-existing YAML file
     Importing should have failed    3
     ...    Variable file 'non_existing.Yaml' does not exist.
 
+YAML with invalid encoding
+    Processing should have failed    4    invalid_encoding.yaml
+    ...    ${EMPTY}    UnicodeDecodeError: *
+
 *** Keywords ***
 Processing should have failed
     [Arguments]    ${index}    ${file}    ${arguments}    ${error}

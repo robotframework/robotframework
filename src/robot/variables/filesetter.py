@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import inspect
+import io
 try:
     import yaml
 except ImportError:
@@ -71,7 +72,7 @@ class YamlImporter(object):
                 for name, value in variables]
 
     def _import(self, path):
-        with open(path) as stream:
+        with io.open(path, encoding='UTF-8') as stream:
             variables = yaml.load(stream)
         if not is_dict_like(variables):
             raise DataError('YAML variable file must be a mapping, got %s.'

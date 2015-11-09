@@ -5,6 +5,7 @@ Variables        ./invalid.YAML
 Variables        ..${/}variables${/}non_dict.yaml
 Variables        valid.yaml    arguments    not    accepted
 Variables        non_existing.Yaml
+Variables        invalid_encoding.yaml
 Test Template    Should Be Equal
 
 *** Variables ***
