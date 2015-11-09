@@ -2,20 +2,6 @@
 Resource          process_resource.robot
 
 *** Test Cases ***
-Non-ASCII command and output
-    ${result}=   Run Process    echo hyvä   shell=True
-    Result should equal    ${result}    stdout=hyvä
-
-Non-ASCII command and output with custom stream
-    ${result}=   Run Process    echo hyvä   shell=True    stdout=${STDOUT}
-    Result should equal    ${result}    stdout=hyvä    stdout_path=${STDOUT}
-    [Teardown]   Safe Remove File    ${STDOUT}
-
-Non-ASCII in environment variables
-    ${result}=   Run Process    python    ${CURDIR}${/}print_env.py
-    ...    env:X_X=hyvä    stderr=STDOUT
-    Result should equal    ${result}    stdout=True
-
 Trailing newline is removed
     ${result}=   Run Process    python    -c    import sys; sys.stdout.write('nothing to remove')
     Result should equal    ${result}    stdout=nothing to remove

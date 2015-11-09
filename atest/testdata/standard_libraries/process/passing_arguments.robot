@@ -1,4 +1,5 @@
 *** Settings ***
+Suite Setup       Set Robot To PYTHONPATH
 Resource          process_resource.robot
 
 *** Test Cases ***
@@ -13,6 +14,21 @@ Command and arguments in shell as separate arguments
 Command and arguments in shell as single argument
     ${result} =    Run Process    python ${SCRIPT} my args    shell=joo
     Script result should equal    ${result}    stdout=my    stderr=args
+
+Non-ASCII arguments separately
+    ${result} =    Run Process    python    ${ENCODING SCRIPT}    stdout:hyvää    stderr:päivää    encoding:UTF-8
+    ...    output_encoding=UTF-8
+    Result should equal    ${result}    stdout=hyvää    stderr=päivää
+
+Non-ASCII arguments separately when using shell
+    ${result} =    Run Process    python    ${ENCODING SCRIPT}    stdout:hyvää    stderr:päivää    encoding:UTF-8
+    ...    output_encoding=UTF-8    shell=True
+    Result should equal    ${result}    stdout=hyvää    stderr=päivää
+
+Non-ASCII arguments in as string when using shell
+    ${result} =    Run Process    python ${ENCODING SCRIPT} stdout:hyvää stderr:päivää encoding:UTF-8
+    ...    output_encoding=UTF-8    shell=True
+    Result should equal    ${result}    stdout=hyvää    stderr=päivää
 
 Arguments are converted to strings automatically
     ${result} =    Run Process    python    ${SCRIPT}    ${1}    ${2}    ${3}

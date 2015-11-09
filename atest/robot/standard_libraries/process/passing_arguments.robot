@@ -16,6 +16,15 @@ Command and arguments in shell as single argument
     Check Log Message    ${tc.kws[0].msgs[0]}
     ...    Starting process:\npython *script.py my args    pattern=true
 
+Non-ASCII arguments separately
+    Check Test Case    ${TESTNAME}
+
+Non-ASCII arguments separately when using shell
+    Check Test Case    ${TESTNAME}
+
+Non-ASCII arguments in as string when using shell
+    Check Test Case    ${TESTNAME}
+
 Arguments are converted to strings automatically
     Check Test Case    ${TESTNAME}
 

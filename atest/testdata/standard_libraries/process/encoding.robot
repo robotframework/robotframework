@@ -1,6 +1,7 @@
 *** Settings ***
 Suite Setup       Set Robot To PYTHONPATH
 Test Template     Output Encoding Should Work Correctly
+Test Teardown     Safe Remove File    ${STDOUT}    ${STDERR}
 Resource          process_resource.robot
 
 *** Test Cases ***
@@ -26,10 +27,6 @@ Invalid encoding
     Latin-1    ASCII    stdout=${STDOUT}    stderr=${STDERR}
 
 *** Keywords ***
-Set Robot To PYTHONPATH
-    ${path} =    Normalize Path    ${CURDIR}/../../../../src
-    Set Environment Variable    PYTHONPATH    ${path}
-
 Output Encoding Should Work Correctly
     [Arguments]    ${encoding}    ${stdout}=${NONE}    ${stderr}=${NONE}
     ${result} =    Run Process With Output Encoding    ${encoding}
@@ -48,16 +45,7 @@ Invalid Output Encoding Should Work Correctly
 Run Process With Output Encoding
     [Arguments]    ${encoding}    ${output_encoding}=${NONE}
     ...    ${stdout}=${NONE}    ${stderr}=${NONE}
-    ${code} =    Catenate    SEPARATOR=;
-    ...    import sys
-    ...    from robot.utils.encoding import OUTPUT_ENCODING, SYSTEM_ENCODING
-    ...    py2 = sys.version_info[0] < 3
-    ...    encoding = '${encoding}'
-    ...    encoding = {'CONSOLE': OUTPUT_ENCODING, 'SYSTEM': SYSTEM_ENCODING}.get(encoding, encoding)
-    ...    output = u'hyv\\xe4'.encode(encoding)
-    ...    (sys.stdout if py2 else sys.stdout.buffer).write(output)
-    ...    (sys.stderr if py2 else sys.stderr.buffer).write(output)
     ${output_encoding} =    Evaluate    $output_encoding or $encoding
-    ${result} =    Run Process    python    -c    ${code}
+    ${result} =    Run Process    python    ${ENCODING SCRIPT}    encoding:${encoding}
     ...    stdout=${stdout}    stderr=${stderr}    output_encoding=${output encoding}
     [Return]    ${result}

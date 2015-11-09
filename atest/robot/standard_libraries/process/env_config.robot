@@ -20,3 +20,6 @@ Invividually given overrides system variable
 
 Invividually given overrides value in given environ
     Check Test Case    ${TESTNAME}
+
+Non-ASCII value
+    Check Test Case    ${TESTNAME}

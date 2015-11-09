@@ -32,6 +32,16 @@ Invividually given overrides value in given environ
     ${result} =    Run Process    @{COMMAND}    env:v3=new    env=${env}    env:v1=override
     Should Be Equal    ${result.stdout}    override environ2 new
 
+Non-ASCII value
+    ${code} =    Catenate    SEPARATOR=;
+    ...    import os, sys
+    ...    py2 = sys.version_info[0] < 3
+    ...    xxx = os.getenv('XXX')
+    ...    xxx = xxx.decode(sys.getfilesystemencoding()) if py2 else xxx
+    ...    print('PASS' if xxx == u'hyv\\xe4' else 'FAIL')
+    ${result} =   Run Process    python    -c    ${code}    env:XXX=hyvä    stderr=STDOUT
+    Result should equal    ${result}    stdout=PASS
+
 *** Keywords ***
 Create environ
     [Arguments]    @{environ}
