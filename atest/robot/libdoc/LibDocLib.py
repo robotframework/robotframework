@@ -26,7 +26,7 @@ class LibDocLib(object):
         stdout.seek(0)
         output = stdout.read().replace('\r\n', '\n')
         logger.info(output)
-        return decode_output(output)
+        return decode_output(output, encoding='SYSTEM')
 
     def _split_args(self, args):
         lexer = shlex.shlex(args.encode('UTF-8'), posix=True)

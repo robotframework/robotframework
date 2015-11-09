@@ -71,7 +71,8 @@ Execute
     Set Execution Environment
     @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}
     ${result} =    Run Process    @{executor}    @{arguments}
-    ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    timeout=5min    on_timeout=terminate
+    ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    output_encoding=SYSTEM
+    ...    timeout=5min    on_timeout=terminate
     [Return]    ${result}
 
 Get Execution Arguments

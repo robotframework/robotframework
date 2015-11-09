@@ -338,9 +338,12 @@ class Process(object):
         command = self._get_command(command, arguments, config.shell)
         self._log_start(command, config)
         process = subprocess.Popen(command, **config.full_config)
-        self._results[process] = ExecutionResult(process,
-                                                 config.stdout_stream,
-                                                 config.stderr_stream)
+        self._results[process] = ExecutionResult(
+            process,
+            config.stdout_stream,
+            config.stderr_stream,
+            output_encoding=config.output_encoding
+        )
         return self._processes.register(process, alias=config.alias)
 
     def _get_command(self, command, args, use_shell):
@@ -753,11 +756,12 @@ class Process(object):
 
 class ExecutionResult(object):
 
-    def __init__(self, process, stdout, stderr, rc=None):
+    def __init__(self, process, stdout, stderr, rc=None, output_encoding=None):
         self._process = process
         self.stdout_path = self._get_path(stdout)
         self.stderr_path = self._get_path(stderr)
         self.rc = rc
+        self._output_encoding = output_encoding
         self._stdout = None
         self._stderr = None
         self._custom_streams = [stream for stream in (stdout, stderr)
@@ -806,7 +810,7 @@ class ExecutionResult(object):
     def _format_output(self, output):
         if output.endswith('\n'):
             output = output[:-1]
-        return decode_output(output, force=True)
+        return decode_output(output, encoding=self._output_encoding, force=True)
 
     def close_streams(self):
         standard_streams = self._get_and_read_standard_streams(self._process)
@@ -829,12 +833,13 @@ class ExecutionResult(object):
 class ProcessConfig(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
-                 alias=None, env=None, **rest):
+                 output_encoding='CONSOLE', alias=None, env=None, **rest):
         self.cwd = self._get_cwd(cwd)
         self.stdout_stream = self._new_stream(stdout)
         self.stderr_stream = self._get_stderr(stderr, stdout, self.stdout_stream)
         self.shell = is_truthy(shell)
         self.alias = alias
+        self.output_encoding = output_encoding
         self.env = self._construct_env(env, rest)
 
     def _get_cwd(self, cwd):

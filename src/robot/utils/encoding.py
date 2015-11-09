@@ -28,23 +28,34 @@ OUTPUT_ENCODING = get_output_encoding()
 SYSTEM_ENCODING = get_system_encoding()
 
 
-def decode_output(string, force=False):
+def decode_output(string, encoding=OUTPUT_ENCODING, force=False):
     """Decodes bytes from console encoding to Unicode.
 
-    By default returns Unicode strings as-is. `force` argument can be used
+    By default uses the system console encoding, but that can be configured
+    using the `encoding` argument. In addition to the normal encodings,
+    it is possible to use case-insensitive values `CONSOLE` and `SYSTEM` to
+    use the system console and system encoding, respectively.
+
+    By default returns Unicode strings as-is. The `force` argument can be used
     on IronPython where all strings are `unicode` and caller knows decoding
     is needed.
     """
     if is_unicode(string) and not (IRONPYTHON and force):
         return string
+    encoding = {'CONSOLE': OUTPUT_ENCODING,
+                'SYSTEM': SYSTEM_ENCODING}.get(encoding.upper(), encoding)
     try:
-        return string.decode(OUTPUT_ENCODING)
+        return string.decode(encoding)
     except UnicodeError:
         return unic(string)
 
 
 def encode_output(string, errors='replace', stream=sys.__stdout__):
-    """Encodes Unicode to bytes in console encoding."""
+    """Encodes Unicode to bytes in console or system encoding.
+
+    Uses console encoding if the given `stream` is a console and system
+    encoding otherwise.
+    """
     encoding = OUTPUT_ENCODING if isatty(stream) else SYSTEM_ENCODING
     if PY3 and encoding != 'UTF-8':
         return string.encode(encoding, errors).decode(encoding)
