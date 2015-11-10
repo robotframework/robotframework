@@ -28,8 +28,8 @@ from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
 from robot.utils import (asserts, DotDict, escape, format_assign_message,
                          get_error_message, get_time, is_falsy, is_integer,
-                         is_string, is_truthy, is_unicode, JYTHON, Matcher,
-                         normalize, NormalizedDict, parse_time, prepr,
+                         is_string, is_truthy, is_unicode, IRONPYTHON, JYTHON,
+                         Matcher, normalize, NormalizedDict, parse_time, prepr,
                          RERAISED_EXCEPTIONS, plural_or_not as s, PY3, roundup,
                          secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
@@ -402,6 +402,9 @@ class _Converter(_BuiltInBase):
             raise RuntimeError("Creating bytes failed: %s" % get_error_message())
 
     def _get_ordinals_from_text(self, input):
+        # https://github.com/IronLanguages/main/issues/1237
+        if IRONPYTHON and isinstance(input, bytearray):
+            input = bytes(input)
         for char in input:
             ordinal = char if is_integer(char) else ord(char)
             yield self._test_ordinal(ordinal, char, 'Character')
