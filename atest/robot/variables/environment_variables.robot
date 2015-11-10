@@ -38,10 +38,10 @@ Environment Variables In Variable Table
 
 Environment Variables In Settings Table
     Check Test Case  ${TESTNAME}
-    Should Be Equal  ${SUITE.doc}  %{PATH} used in suite documentation
-    Should Be Equal  ${SUITE.metadata['PATH']}  %{PATH}
-    Should Contain  ${SUITE.doc}  ${:}  Make sure %{PATH} is ...
-    Should Contain  ${SUITE.metadata['PATH']}  ${:}  ... actually resolved
+    Should Be Equal  ${SUITE.doc}  %{TEMPDIR} used in suite documentation
+    Should Be Equal  ${SUITE.metadata['TEMPDIR']}  %{TEMPDIR}
+    Should Contain  ${SUITE.doc}  ${/}  Make sure %{TEMPDIR} is ...
+    Should Contain  ${SUITE.metadata['TEMPDIR']}  ${/}  ... actually resolved
 
 Environment Variables In Test Metadata
     ${tc} =  Check Test Case  ${TESTNAME}

@@ -1,18 +1,18 @@
 *** Settings ***
-Documentation   %{PATH} used in suite documentation
+Documentation   %{TEMPDIR} used in suite documentation
 Suite Setup     Set Environment Variable  THIS_ENV_VAR_IS_SET  Env var value
-Default Tags    %{PATH}
-Metadata        PATH    %{PATH}
+Default Tags    %{TEMPDIR}
+Metadata        TEMPDIR    %{TEMPDIR}
 Library         OperatingSystem
 
 *** Variables ***
-${SCALAR PATH}  %{PATH}
-@{LIST PATH}    %{PATH}
+${SCALAR TEMPDIR}  %{TEMPDIR}
+@{LIST TEMPDIR}    %{TEMPDIR}
 
 *** Test Cases ***
 Environment Variables In Keyword Argument
     Should Be Equal  %{THIS_ENV_VAR_IS_SET}  Env var value
-    Should Be Equal  %{THIS_ENV_VAR_IS_SET} can be catenated. PATH: %{PATH}  Env var value can be catenated. PATH: %{PATH}
+    Should Be Equal  %{THIS_ENV_VAR_IS_SET} can be catenated. TEMPDIR: %{TEMPDIR}  Env var value can be catenated. TEMPDIR: %{TEMPDIR}
 
 Java System Properties Can Be Used
     Should Be Equal  %{file.separator}  ${/}
@@ -61,14 +61,14 @@ Environment Variables Are Underscore Sensitive
     Log  %{TH_IS_ENVVAR_IS_SET}
 
 Environment Variables In Variable Table
-    Should Contain  ${SCALAR PATH}  ${:}
-    Should Contain  @{LIST PATH}[0]  ${:}
-    Should Be Equal  ${SCALAR PATH}  %{PATH}
-    Should Be Equal  @{LIST PATH}[0]  %{PATH}
+    Should Contain  ${SCALAR TEMPDIR}  ${/}
+    Should Contain  @{LIST TEMPDIR}[0]  ${/}
+    Should Be Equal  ${SCALAR TEMPDIR}  %{TEMPDIR}
+    Should Be Equal  @{LIST TEMPDIR}[0]  %{TEMPDIR}
 
 Environment Variables In Settings Table
-    Should Contain  @{TEST_TAGS}[0]  ${:}
-    Should Be Equal  @{TEST_TAGS}[0]  %{PATH}
+    Should Contain  @{TEST_TAGS}[0]  ${/}
+    Should Be Equal  @{TEST_TAGS}[0]  %{TEMPDIR}
 
 Environment Variables In Test Metadata
     [Documentation]  %{THIS_ENV_VAR_IS_SET} in a test doc
@@ -88,7 +88,7 @@ Empty Environment Variable
 
 *** Keywords ***
 UK With Environment Variables In Metadata
-    [Arguments]  ${mypath}=%{PATH}
+    [Arguments]  ${mypath}=%{TEMPDIR}
     [Documentation]  %{THIS_ENV_VAR_IS_SET} in a uk doc
-    Should Contain  ${mypath}  ${:}
+    Should Contain  ${mypath}  ${/}
     [Return]  %{THIS_ENV_VAR_IS_SET}
