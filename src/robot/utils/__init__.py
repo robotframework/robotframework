@@ -72,10 +72,3 @@ from .text import (cut_long_message, format_assign_message,
                    split_args_from_name_or_path)
 from .unic import prepr, unic
 from .utf8reader import Utf8Reader
-
-# Used by the old SeleniumLibrary until version 2.9.2.
-# https://github.com/robotframework/SeleniumLibrary/issues/261
-# TODO: Remove in RF 3.0.
-def html_attr_escape(attr):
-    """Deprecated!! Use attribute_escape instead."""
-    return attribute_escape(attr)
