@@ -50,6 +50,8 @@ class Interpreter(object):
             yield 'require-et13'
             yield 'require-lxml'
             yield 'require-docutils'  # https://github.com/IronLanguages/main/issues/1230
+        else:
+            yield 'require-ipy'
         for exclude in self._platform_excludes:
             yield exclude
 
@@ -153,7 +155,7 @@ class StandaloneInterpreter(Interpreter):
     @property
     def excludes(self):
         for exclude in ['no-standalone', 'no-jython', 'require-lxml',
-                        'require-docutils']:
+                        'require-docutils', 'require-ipy']:
             yield exclude
         for exclude in self._platform_excludes:
             yield exclude

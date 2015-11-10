@@ -9,13 +9,17 @@ Should Be String Positive
 Should Be String Negative
     Check Test Case    ${TESTNAME}
 
-Bytes are strings in python 2
-    [Tags]    no-py3
+Bytes are strings in Python 2
+    [Tags]    no-py3    no-ipy
     Check Test Case    ${TESTNAME}
 
-Bytes are not strings in python 3
+Bytes are not strings in Python 3
     [Tags]    no-py2
-    Check Test Case    ${TESTNAME}
+    Check Test Case    Bytes are not strings in Python 3 and IronPython
+
+Bytes are not strings in IronPython
+    [Tags]    require-ipy
+    Check Test Case    Bytes are not strings in Python 3 and IronPython
 
 Should Not Be String Positive
     Check Test Case    ${TESTNAME}

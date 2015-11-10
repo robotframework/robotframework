@@ -98,7 +98,7 @@ class String(object):
 
         New in Robot Framework 2.7.7.
         """
-        return string.encode(encoding, errors)
+        return bytes(string.encode(encoding, errors))
 
     def decode_bytes_to_string(self, bytes, encoding, errors='strict'):
         """Decodes the given ``bytes`` to a Unicode string using the given ``encoding``.

@@ -14,7 +14,7 @@ Bytes are strings in python 2
     Should be String    ${BYTES}
     Run keyword and expect error    '${BYTES}' is a string.    Should not be string    ${BYTES}
 
-Bytes are not strings in python 3
+Bytes are not strings in python 3 and ironpython
     Run Keyword And Expect Error   '${BYTES}' is not a string.    Should Be String    ${BYTES}
     Should not be string    ${BYTES}
 
