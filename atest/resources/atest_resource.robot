@@ -70,8 +70,9 @@ Execute
     [Arguments]    ${executor}    ${options}    ${sources}    ${default options}=
     Set Execution Environment
     @{arguments} =    Get Execution Arguments    ${options}    ${sources}    ${default options}
+    ${encoding} =    Set Variable If    ${INTERPRETER.is_ironpython}    CONSOLE    SYSTEM
     ${result} =    Run Process    @{executor}    @{arguments}
-    ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    output_encoding=SYSTEM
+    ...    stdout=${STDOUTFILE}    stderr=${STDERRFILE}    output_encoding=${encoding}
     ...    timeout=5min    on_timeout=terminate
     [Return]    ${result}
 
