@@ -14,7 +14,7 @@
 
 import os
 
-from .encoding import decode_from_system as decode, encode_to_system as encode
+from .encoding import system_decode as decode, system_encode as encode
 
 
 def get_env_var(name, default=None):

@@ -20,7 +20,7 @@ from robot.errors import (INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER,
                           FRAMEWORK_ERROR, Information, DataError)
 
 from .argumentparser import ArgumentParser
-from .encoding import encode_output
+from .encoding import console_encode
 from .error import get_error_details
 
 
@@ -47,7 +47,7 @@ class Application(object):
 
     def console(self, msg):
         if msg:
-            print(encode_output(msg))
+            print(console_encode(msg))
 
     def _parse_arguments(self, cli_args):
         try:
@@ -115,7 +115,7 @@ class DefaultLogger(object):
         pass
 
     def error(self, message):
-        print(encode_output(message))
+        print(console_encode(message))
 
     def close(self):
         pass

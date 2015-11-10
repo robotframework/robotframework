@@ -25,7 +25,7 @@ except ImportError:  # Not on Windows or using Jython
     windll = None
 
 from robot.errors import DataError
-from robot.utils import encode_output, isatty, WINDOWS
+from robot.utils import console_encode, isatty, WINDOWS
 
 
 class HighlightingStream(object):
@@ -47,7 +47,7 @@ class HighlightingStream(object):
         return highlighter(stream)
 
     def write(self, text, flush=True):
-        self.stream.write(encode_output(text, stream=self.stream))
+        self.stream.write(console_encode(text, stream=self.stream))
         if flush:
             self.flush()
 

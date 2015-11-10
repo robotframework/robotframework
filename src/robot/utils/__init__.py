@@ -38,8 +38,8 @@ from .compat import isatty, py2to3, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict, OrderedDict
-from .encoding import (decode_output, encode_output,
-                       decode_from_system, encode_to_system)
+from .encoding import (console_decode, console_encode,
+                       system_decode, system_encode)
 from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource

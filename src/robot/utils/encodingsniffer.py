@@ -19,11 +19,11 @@ from .platform import JYTHON, WINDOWS, UNIXY
 
 
 if UNIXY:
+    DEFAULT_CONSOLE_ENCODING = 'UTF-8'
     DEFAULT_SYSTEM_ENCODING = 'UTF-8'
-    DEFAULT_OUTPUT_ENCODING = 'UTF-8'
 else:
+    DEFAULT_CONSOLE_ENCODING = 'cp437'
     DEFAULT_SYSTEM_ENCODING = 'cp1252'
-    DEFAULT_OUTPUT_ENCODING = 'cp437'
 
 
 def get_system_encoding():
@@ -34,11 +34,11 @@ def get_system_encoding():
     return _get_encoding(platform_getters, DEFAULT_SYSTEM_ENCODING)
 
 
-def get_output_encoding():
+def get_console_encoding():
     platform_getters = [(True, _get_stream_output_encoding),
                         (UNIXY, _get_unixy_encoding),
                         (WINDOWS, _get_windows_output_encoding)]
-    return _get_encoding(platform_getters, DEFAULT_OUTPUT_ENCODING)
+    return _get_encoding(platform_getters, DEFAULT_CONSOLE_ENCODING)
 
 
 def _get_encoding(platform_getters, default):

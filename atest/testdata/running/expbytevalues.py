@@ -1,6 +1,6 @@
 import sys
 
-from robot.utils import decode_output
+from robot.utils import console_decode
 
 
 VARIABLES = dict(exp_return_value=b'ty\xf6paikka',
@@ -22,8 +22,8 @@ def get_variables(interpreter=None):
                          exp_log_msg="b'\\xe4iti'",
                          exp_log_multiline_msg="b'\\xe4iti\\nis\\xe4'")
     elif _high_bytes_ok():
-        variables.update(exp_log_msg=decode_output('\xe4iti'),
-                         exp_log_multiline_msg=decode_output('\xe4iti\nis\xe4'))
+        variables.update(exp_log_msg=console_decode('\xe4iti'),
+                         exp_log_multiline_msg=console_decode('\xe4iti\nis\xe4'))
     return variables
 
 
@@ -38,4 +38,4 @@ def _running_on_py3(interpreter=None):
     return sys.version_info[0] == 3
 
 def _high_bytes_ok():
-    return decode_output('\xe4') != '\\xe4'
+    return console_decode('\xe4') != '\\xe4'

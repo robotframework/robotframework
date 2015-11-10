@@ -14,7 +14,7 @@
 
 import textwrap
 
-from robot.utils import MultiMatcher, encode_output
+from robot.utils import MultiMatcher, console_encode
 from robot.errors import DataError
 
 
@@ -55,7 +55,7 @@ class ConsoleViewer(object):
         self._console(self._libdoc.version or 'N/A')
 
     def _console(self, msg):
-        print(encode_output(msg))
+        print(console_encode(msg))
 
     def _show_intro(self, lib):
         self._header(lib.name, underline='=')

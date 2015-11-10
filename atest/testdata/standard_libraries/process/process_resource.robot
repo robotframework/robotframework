@@ -55,7 +55,7 @@ Custom stream should contain
     [Arguments]    ${path}    ${expected}
     Return From Keyword If    not $path
     ${path} =    Normalize Path    ${path}
-    ${encoding} =    Evaluate    robot.utils.encoding.OUTPUT_ENCODING    robot
+    ${encoding} =    Evaluate    robot.utils.encoding.CONSOLE_ENCODING    robot
     ${content} =    Get File    ${path}    encoding=${encoding}
     Should Be Equal    ${content.rstrip()}    ${expected}
     [Return]    ${path}

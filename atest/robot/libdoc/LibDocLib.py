@@ -7,7 +7,7 @@ from os.path import join, dirname, abspath
 from subprocess import call, STDOUT
 
 from robot.api import logger
-from robot.utils import decode_output
+from robot.utils import console_decode
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 
@@ -26,7 +26,7 @@ class LibDocLib(object):
         stdout.seek(0)
         output = stdout.read().replace('\r\n', '\n')
         logger.info(output)
-        return decode_output(output, encoding='SYSTEM')
+        return console_decode(output, encoding='SYSTEM')
 
     def _split_args(self, args):
         lexer = shlex.shlex(args.encode('UTF-8'), posix=True)

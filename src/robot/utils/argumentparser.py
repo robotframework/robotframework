@@ -25,7 +25,7 @@ from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
 
 from .misc import plural_or_not
-from .encoding import decode_output, decode_from_system
+from .encoding import console_decode, system_decode
 from .platform import PY2
 from .utf8reader import Utf8Reader
 from .robottypes import is_falsy, is_integer, is_list_like, is_string, is_unicode
@@ -143,7 +143,7 @@ class ArgumentParser(object):
         are wrapped to Information exception.
         """
         args = self._get_env_options() + list(args)
-        args = [decode_from_system(a) for a in args]
+        args = [system_decode(a) for a in args]
         if self._auto_argumentfile:
             args = self._process_possible_argfile(args)
         opts, args = self._parse_args(args)
@@ -440,7 +440,7 @@ class ArgFileParser(object):
                             % (path, err))
 
     def _read_from_stdin(self):
-        return decode_output(sys.__stdin__.read())
+        return console_decode(sys.__stdin__.read())
 
     def _process_file(self, content):
         args = []

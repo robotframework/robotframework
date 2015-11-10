@@ -18,7 +18,7 @@ import inspect
 
 from robot.errors import DataError
 
-from .encoding import decode_from_system
+from .encoding import system_decode
 from .error import get_error_details
 from .platform import JYTHON, IRONPYTHON, PY3
 from .robotpath import abspath, normpath
@@ -111,7 +111,7 @@ class Importer(object):
         for item in items:
             if item:
                 yield '  %s' % (item if is_unicode(item)
-                                else decode_from_system(item))
+                                else system_decode(item))
 
     def _instantiate_if_needed(self, imported, args):
         if args is None:

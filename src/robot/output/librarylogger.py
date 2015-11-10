@@ -22,7 +22,7 @@ import sys
 import threading
 
 from robot.errors import DataError
-from robot.utils import unic, encode_output
+from robot.utils import unic, console_encode
 
 from .logger import LOGGER
 from .loggerhelper import Message
@@ -70,5 +70,5 @@ def console(msg, newline=True, stream='stdout'):
     if newline:
         msg += '\n'
     stream = sys.__stdout__ if stream.lower() != 'stderr' else sys.__stderr__
-    stream.write(encode_output(msg, stream=stream))
+    stream.write(console_encode(msg, stream=stream))
     stream.flush()

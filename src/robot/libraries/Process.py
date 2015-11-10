@@ -19,7 +19,7 @@ import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, cmdline2list,
-                         encode_to_system, decode_output, is_list_like,
+                         system_encode, console_decode, is_list_like,
                          is_truthy, secs_to_timestr, timestr_to_secs,
                          IRONPYTHON, JYTHON)
 from robot.version import get_version
@@ -820,7 +820,7 @@ class ExecutionResult(object):
         return stream and not stream.closed
 
     def _format_output(self, output):
-        output = decode_output(output, self._output_encoding, force=True)
+        output = console_decode(output, self._output_encoding, force=True)
         output = output.replace('\r\n', '\n')
         if output.endswith('\n'):
             output = output[:-1]
@@ -876,7 +876,7 @@ class ProcessConfiguration(object):
 
     def _construct_env(self, env, extra):
         if env:
-            env = dict((encode_to_system(k), encode_to_system(v))
+            env = dict((system_encode(k), system_encode(v))
                        for k, v in env.items())
         for key in extra:
             if not key.startswith('env:'):
@@ -884,11 +884,11 @@ class ProcessConfiguration(object):
                                    "this keyword." % key)
             if env is None:
                 env = os.environ.copy()
-            env[encode_to_system(key[4:])] = encode_to_system(extra[key])
+            env[system_encode(key[4:])] = system_encode(extra[key])
         return env
 
     def get_command(self, command, arguments):
-        command = [encode_to_system(item) for item in [command] + arguments]
+        command = [system_encode(item) for item in [command] + arguments]
         if not self.shell:
             return command
         if arguments:
@@ -919,10 +919,10 @@ class ProcessConfiguration(object):
                 'stderr': self.stderr_stream,
                 'output_encoding': self.output_encoding}
 
-    # FIXME: Convert to __unicode__ or at least remove encode_to_system.
+    # FIXME: Convert to __unicode__ or at least remove system_encode.
     # Also add tests!!
     def __str__(self):
-        return encode_to_system("""\
+        return system_encode("""\
 cwd = %s
 stdout_stream = %s
 stderr_stream = %s

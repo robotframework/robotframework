@@ -23,7 +23,7 @@ import time
 
 from robot.version import get_version
 from robot.api import logger
-from robot.utils import (abspath, ConnectionCache, decode_output, del_env_var,
+from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
@@ -1436,4 +1436,4 @@ class _Process:
             output = output.replace('\r\n', '\n')
         if output.endswith('\n'):
             output = output[:-1]
-        return decode_output(output, force=True)
+        return console_decode(output, force=True)

@@ -7,7 +7,7 @@ import tempfile
 
 
 from robot.utils.asserts import assert_equals, assert_true
-from robot.utils import decode_output
+from robot.utils import console_decode
 
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
@@ -33,7 +33,7 @@ class TidyLib(object):
             rc = call(command, stdout=stdout, stderr=STDOUT,
                       cwd=ROBOT_SRC, shell=os.sep=='\\')
             stdout.seek(0)
-            content = decode_output(stdout.read().strip())
+            content = console_decode(stdout.read().strip())
             if rc:
                 raise RuntimeError(content)
             return content
