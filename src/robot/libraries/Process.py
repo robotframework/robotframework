@@ -93,6 +93,7 @@ class Process(object):
     | env:<name> | Overrides the named environment variable(s) only.     |
     | stdout     | Path of a file where to write standard output.        |
     | stderr     | Path of a file where to write standard error.         |
+    | output_encoding | Encoding to use when reading command outputs.    |
     | alias      | Alias given to the process.                           |
 
     Note that because ``**configuration`` is passed using ``name=value`` syntax,
@@ -169,7 +170,9 @@ class Process(object):
     the standard output by using ``stderr=STDOUT``.
 
     Regardless are outputs redirected to files or not, they are accessible
-    through the `result object` returned when the process ends.
+    through the `result object` returned when the process ends. Commands are
+    expected to write outputs using the console encoding, but `output encoding`
+    can be configured using the ``output_encoding`` argument if needed.
 
     Examples:
     | ${result} = | `Run Process` | program | stdout=${TEMPDIR}/stdout.txt | stderr=${TEMPDIR}/stderr.txt |
@@ -179,6 +182,27 @@ class Process(object):
 
     Note that the created output files are not automatically removed after
     the test run. The user is responsible to remove them if needed.
+
+    == Output encoding ==
+
+    Executed commands are, by default, expected to write outputs to the
+    `standard output and error streams` using the encoding used by the
+    system console. If the command uses some other encoding, that can be
+    configured using the ``output_encoding`` argument. This is especially
+    useful on Windows where the console uses a different encoding than rest
+    of the system, and many commands use the general system encoding instead
+    of the console encoding.
+
+    The value used with the ``output_encoding`` argument must be a valid
+    encoding and must match the encoding actually used by the command. As a
+    convenience, it is possible to use strings ``CONSOLE`` and ``SYSTEM``
+    to specify that the console or system encoding is used, respectively.
+    If produced outputs use different encoding then configured, values got
+    through the `result object` will be invalid.
+
+    Examples:
+    | `Start Process` | program | output_encoding=UTF-8 |
+    | `Run Process`   | program | stdout=${path} | output_encoding=SYSTEM |
 
     == Alias ==
 
@@ -327,7 +351,7 @@ class Process(object):
         for related examples.
 
         Makes the started process new `active process`. Returns an identifier
-        that can be used as a handle to active the started process if needed.
+        that can be used as a handle to activate the started process if needed.
 
         Starting from Robot Framework 2.8.5, processes are started so that
         they create a new process group. This allows sending signals to and
