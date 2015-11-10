@@ -84,7 +84,7 @@ Log pprint
 Log callable
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    *objects_for_call_method.MyObject*    pattern=yes
-    Check Log Message    ${tc.kws[2].msgs[0]}    <function <lambda> at *>    pattern=yes
+    Check Log Message    ${tc.kws[2].msgs[0]}    <function <lambda*> at *>    pattern=yes
 
 Log Many
     ${tc} =    Check Test Case    ${TEST NAME}
