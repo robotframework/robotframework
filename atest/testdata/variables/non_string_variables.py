@@ -5,6 +5,7 @@ def get_variables(interpreter=None):
     variables = {'integer': 42,
                  'float': 3.14,
                  'byte_string': b'hyv\xe4',
+                 'byte_string_str': 'hyv\\xe4',
                  'boolean': True,
                  'none': None,
                  'module': sys,
@@ -17,16 +18,13 @@ def get_variables(interpreter=None):
 
 def _get_interpreter_specific_strs(interpreter):
     if _python3(interpreter):
-        return {'byte_string_str': 'hyv\\xe4',
-                'list_str': u"[1, b'\\xe4', '\xe4']",
+        return {'list_str': u"[1, b'\\xe4', '\xe4']",
                 'dict_str': u"{b'\\xe4': '\xe4'}"}
     elif _ironpython(interpreter):
-        return {'byte_string_str': u'hyv\xe4',
-                'list_str': "[1, b'\\xe4', u'\\xe4']",
+        return {'list_str': "[1, b'\\xe4', u'\\xe4']",
                 'dict_str': "{b'\\xe4': u'\\xe4'}"}
     else:
-        return {'byte_string_str': 'hyv\\xe4',
-                'list_str': "[1, '\\xe4', u'\\xe4']",
+        return {'list_str': "[1, '\\xe4', u'\\xe4']",
                 'dict_str': "{'\\xe4': u'\\xe4'}"}
 
 
