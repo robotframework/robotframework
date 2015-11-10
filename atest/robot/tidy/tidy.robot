@@ -52,9 +52,9 @@ Tidying directory
 Custom headers are preserved and tables aligned accordingly
     Run tidy and check result    ${EMPTY}     golden_with_headers.robot
 
-Running Tidy as a script
+Running Tidy as script
     [Tags]   no-standalone
-    Run tidy as a script and check result    ${INTERPRETER.path}   ${EMPTY}    golden.robot
+    Run tidy as script and check result    ${EMPTY}    golden.robot
 
 Tidy tests and keywords containing ELSE and ELSE IF
     [Setup]    Copy File    ${DATA}/else_untidy.robot    ${TEMP}/else_untidy.robot

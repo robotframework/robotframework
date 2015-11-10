@@ -18,19 +18,23 @@ class Interpreter(object):
 
     def __init__(self, path, name=None, version=None):
         self.path = path
+        self.interpreter = self._get_interpreter(path)
         if not name:
-            name, version = self._get_name_and_version(path)
+            name, version = self._get_name_and_version()
         self.name = name
         self.version = version
         self._robot_path = normpath(join(dirname(abspath(__file__)),
                                          '..', 'src', 'robot'))
 
-    def _get_name_and_version(self, path):
+    def _get_interpreter(self, path):
+        return [path] if os.path.exists(path) else path.split()
+
+    def _get_name_and_version(self):
         try:
-            output = subprocess.check_output([path, '-V'],
+            output = subprocess.check_output(self.interpreter + ['-V'],
                                              stderr=subprocess.STDOUT)
-        except OSError:
-            raise ValueError('Invalid interpreter: %s' % path)
+        except (subprocess.CalledProcessError, OSError):
+            raise ValueError('Invalid interpreter: %s' % self.path)
         name, version = output.split()[:2]
         version = '.'.join(version.split('.')[:2])
         return name, version
@@ -117,23 +121,23 @@ class Interpreter(object):
 
     @property
     def runner(self):
-        return [self.path, join(self._robot_path, 'run.py')]
+        return self.interpreter + [join(self._robot_path, 'run.py')]
 
     @property
     def rebot(self):
-        return [self.path, join(self._robot_path, 'rebot.py')]
+        return self.interpreter + [join(self._robot_path, 'rebot.py')]
 
     @property
     def libdoc(self):
-        return [self.path, join(self._robot_path, 'libdoc.py')]
+        return self.interpreter + [join(self._robot_path, 'libdoc.py')]
 
     @property
     def testdoc(self):
-        return [self.path, join(self._robot_path, 'testdoc.py')]
+        return self.interpreter + [join(self._robot_path, 'testdoc.py')]
 
     @property
     def tidy(self):
-        return [self.path, join(self._robot_path, 'tidy.py')]
+        return self.interpreter + [join(self._robot_path, 'tidy.py')]
 
 
 class StandaloneInterpreter(Interpreter):
@@ -141,16 +145,13 @@ class StandaloneInterpreter(Interpreter):
     def __init__(self, path, name=None, version=None):
         Interpreter.__init__(self, abspath(path), name or 'Standalone JAR',
                              version or '2.7')
-        self._command = ['java', '-jar', self.path]
-        bootclasspath = self._get_bootclasspath()
-        if bootclasspath:
-            self._command.insert(1, bootclasspath)
 
-    def _get_bootclasspath(self):
+    def _get_interpreter(self, path):
+        interpreter = ['java', '-jar', path]
         classpath = os.environ.get('CLASSPATH')
         if classpath:
-            return '-Xbootclasspath/a:%s' % classpath
-        return ''
+            interpreter.insert(1, '-Xbootclasspath/a:%s' % classpath)
+        return interpreter
 
     @property
     def excludes(self):
@@ -174,20 +175,20 @@ class StandaloneInterpreter(Interpreter):
 
     @property
     def runner(self):
-        return self._command + ['run']
+        return self.interpreter + ['run']
 
     @property
     def rebot(self):
-        return self._command + ['rebot']
+        return self.interpreter + ['rebot']
 
     @property
     def libdoc(self):
-        return self._command + ['libdoc']
+        return self.interpreter + ['libdoc']
 
     @property
     def testdoc(self):
-        return self._command + ['testdoc']
+        return self.interpreter + ['testdoc']
 
     @property
     def tidy(self):
-        return self._command + ['tidy']
+        return self.interpreter + ['tidy']

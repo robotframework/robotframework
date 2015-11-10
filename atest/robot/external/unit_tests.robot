@@ -8,7 +8,7 @@ ${TESTPATH}     ${CURDIR}${/}..${/}..${/}..${/}utest${/}run.py
 
 *** Test Cases ***
 Unit Tests
-    ${result} =    Run Process    ${INTERPRETER.path}     ${TESTPATH}   --quiet
+    ${result} =    Run Process    @{INTERPRETER.interpreter}     ${TESTPATH}   --quiet
     ...    stdout=${STDOUT FILE}    stderr=STDOUT
     Log    ${result.stdout}
     Should Be Equal As Integers  ${result.rc}    0

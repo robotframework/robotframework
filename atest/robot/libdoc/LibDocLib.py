@@ -15,11 +15,11 @@ ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 class LibDocLib(object):
 
     def __init__(self, interpreter):
-        self._cmd = list(interpreter.libdoc)
+        self._libdoc = interpreter.libdoc
         self._encoding = 'CONSOLE' if interpreter.is_ironpython else 'SYSTEM'
 
     def run_libdoc(self, args):
-        cmd = self._cmd + self._split_args(args)
+        cmd = self._libdoc + self._split_args(args)
         cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
         stdout = tempfile.TemporaryFile()
