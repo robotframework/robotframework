@@ -42,11 +42,11 @@ Copy File With Glob Pattern With Multiple Matches Fails
 
 Copy File With Glob Pattern With No Matches Fails
     [Documentation]    FAIL Source file '${EXECDIR}${/}zoo*bar?not*here' does not exist.
-    Copy File    zoo*bar?not*here    somewhere
+    Copy File    ${EXECDIR}/zoo*bar?not*here    somewhere
 
 Move File With Glob Pattern With No Matches Fails
     [Documentation]    FAIL Source file '${EXECDIR}${/}zoo*bar?not*here' does not exist.
-    Move File    zoo*bar?not*here    somewhere
+    Move File    ${EXECDIR}/zoo*bar?not*here    somewhere
 
 Copy File when destination exists should be ok
     Create File    ${TESTFILE}    contents

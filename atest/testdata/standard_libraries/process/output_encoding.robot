@@ -39,8 +39,9 @@ Invalid Output Encoding Should Work Correctly
     ...    ${stdout}=${NONE}    ${stderr}=${NONE}
     ${result} =    Run Process With Output Encoding    ${encoding}    ${output_encoding}
     ...    stdout=${stdout}    stderr=${stderr}
-    Should Be Equal    ${result.stderr}    hyv\\xe4
-    Should Be Equal    ${result.stdout}    hyv\\xe4
+    ${expected} =    Set Variable If    sys.platform != 'cli'    hyv\\xe4    hyvä
+    Should Be Equal    ${result.stderr}    ${expected}
+    Should Be Equal    ${result.stdout}    ${expected}
 
 Run Process With Output Encoding
     [Arguments]    ${encoding}    ${output_encoding}=${NONE}

@@ -28,7 +28,7 @@ Should Exist With Pattern
     Should Exist    ${BASE}${/}f*
     Should Exist    ${BASE}${/}d??
     Should Exist    ${BASE}${/}[abcd]i[rst]
-    Should Exist    *non*existing*
+    Should Exist    ${EXECDIR}/*non*existing*
 
 Glob In Name
     Create File    ${BASE}/[bar]foo.txt
