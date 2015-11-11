@@ -18,10 +18,10 @@ import subprocess
 import time
 import signal as signal_module
 
-from robot.utils import (ConnectionCache, abspath, cmdline2list,
-                         system_encode, console_decode, is_list_like,
-                         is_truthy, secs_to_timestr, timestr_to_secs,
-                         IRONPYTHON, JYTHON)
+from robot.utils import (ConnectionCache, abspath, cmdline2list, console_decode,
+                         is_list_like, is_truthy, NormalizedDict,
+                         secs_to_timestr, system_encode, timestr_to_secs,
+                         IRONPYTHON, JYTHON, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
 
@@ -875,17 +875,29 @@ class ProcessConfiguration(object):
         return self._new_stream(stderr)
 
     def _construct_env(self, env, extra):
+        env = self._get_initial_env(env, extra)
+        if env is None:
+            return None
+        if WINDOWS:
+            env = NormalizedDict(env, spaceless=False)
+        self._add_to_env(env, extra)
+        if WINDOWS:
+            env = dict((key.upper(), env[key]) for key in env)
+        return env
+
+    def _get_initial_env(self, env, extra):
         if env:
-            env = dict((system_encode(k), system_encode(v))
-                       for k, v in env.items())
+            return dict((system_encode(k), system_encode(env[k])) for k in env)
+        if extra:
+            return os.environ.copy()
+        return None
+
+    def _add_to_env(self, env, extra):
         for key in extra:
             if not key.startswith('env:'):
                 raise RuntimeError("Keyword argument '%s' is not supported by "
                                    "this keyword." % key)
-            if env is None:
-                env = os.environ.copy()
             env[system_encode(key[4:])] = system_encode(extra[key])
-        return env
 
     def get_command(self, command, arguments):
         command = [system_encode(item) for item in [command] + arguments]

@@ -45,7 +45,6 @@ Non-ASCII value
 *** Keywords ***
 Create environ
     [Arguments]    @{environ}
-    ${comspec} =    Get Environment Variable    COMSPEC    default=.
     ${path} =    Get Environment Variable    PATH    default=.
     ${systemroot} =    Get Environment Variable    SYSTEMROOT    default=.
     ${environ} =    Create Dictionary    @{environ}    PATH=${path}    SYSTEMROOT=${SYSTEMROOT}
