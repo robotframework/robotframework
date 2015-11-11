@@ -1,4 +1,7 @@
 import sys
+import os
+# Make sure local robot is used over isntalled
+sys.path.insert(0, os.environ['PYTHONPATH'])
 from robot.utils.encoding import CONSOLE_ENCODING, SYSTEM_ENCODING
 
 PY2 = sys.version_info[0] < 3
