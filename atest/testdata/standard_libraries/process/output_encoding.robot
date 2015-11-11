@@ -1,5 +1,4 @@
 *** Settings ***
-Suite Setup       Set Robot To PYTHONPATH
 Test Template     Output Encoding Should Work Correctly
 Test Teardown     Safe Remove File    ${STDOUT}    ${STDERR}
 Resource          process_resource.robot

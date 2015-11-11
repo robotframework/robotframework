@@ -1,10 +1,13 @@
+from os.path import abspath, dirname, join, normpath
 import sys
-import os
-# Make sure local robot is used over isntalled
-sys.path.insert(0, os.environ['PYTHONPATH'])
-from robot.utils.encoding import CONSOLE_ENCODING, SYSTEM_ENCODING
 
 PY2 = sys.version_info[0] < 3
+curdir = dirname(abspath(__file__))
+src = normpath(join(curdir, '..', '..', '..', '..', '..', 'src'))
+sys.path.insert(0, src)
+
+from robot.utils.encoding import CONSOLE_ENCODING, SYSTEM_ENCODING
+
 
 config = dict(arg.split(':') for arg in sys.argv[1:])
 stdout = config.get('stdout', u'hyv\xe4')

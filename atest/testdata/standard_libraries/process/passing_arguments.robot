@@ -1,5 +1,4 @@
 *** Settings ***
-Suite Setup       Set Robot To PYTHONPATH
 Resource          process_resource.robot
 
 *** Test Cases ***

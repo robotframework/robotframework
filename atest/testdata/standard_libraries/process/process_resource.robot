@@ -6,7 +6,7 @@ Library           PlatformLib.py
 
 *** Variables ***
 ${SCRIPT}         ${CURDIR}${/}files${/}script.py
-${ENCODING SCRIPT}    ${CURDIR}${/}files${/}encoding.py    # Requires `Set Robot To PYTHONPATH`
+${ENCODING SCRIPT}    ${CURDIR}${/}files${/}encoding.py
 ${COUNTDOWN}      ${CURDIR}${/}files${/}countdown.py
 ${TEMPFILE}       %{TEMPDIR}${/}terminate-process-temp.txt
 ${STDOUT}         %{TEMPDIR}/process-stdout-file.txt
@@ -14,10 +14,6 @@ ${STDERR}         %{TEMPDIR}/process-stderr-file.txt
 ${CWD}            %{TEMPDIR}/process-cwd
 
 *** Keywords ***
-Set Robot To PYTHONPATH
-    ${path} =    Normalize Path    ${CURDIR}/../../../../src
-    Set Environment Variable    PYTHONPATH    ${path}
-
 Some process
     [Arguments]    ${alias}=${null}    ${stderr}=STDOUT
     ${handle}=    Start Python Process    print(input())    alias=${alias}    stderr=${stderr}
