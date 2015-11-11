@@ -35,7 +35,6 @@ class _BaseSettings(object):
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
                  'ReRunFailed'      : ('rerunfailed', 'NONE'),
-                 'DeprecatedRunFailed': ('runfailed', 'NONE'),  # TODO: Remove in RF 3.0
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -63,7 +62,6 @@ class _BaseSettings(object):
                  'PreRebotModifiers': ('prerebotmodifier', []),
                  'StatusRC'         : ('statusrc', True),
                  'ConsoleColors'    : ('consolecolors', 'AUTO'),
-                 'MonitorColors'    : ('monitorcolors', None),  # TODO: Remove in RF 3.0
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None),
                  'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
@@ -82,7 +80,7 @@ class _BaseSettings(object):
             if default == [] and not is_list_like(value):
                 value = [value]
             self[name] = self._process_value(name, value)
-        self['TestNames'] += self['ReRunFailed'] or self['DeprecatedRunFailed']
+        self['TestNames'] += self['ReRunFailed']
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
@@ -92,14 +90,6 @@ class _BaseSettings(object):
     def _process_value(self, name, value):
         if name == 'ReRunFailed':
             return gather_failed_tests(value)
-        if name == 'DeprecatedRunFailed':
-            if value.upper() != 'NONE':
-                LOGGER.warn('Option --runfailed is deprecated and will be '
-                            'removed in the future. Use --rerunfailed instead.')
-            return gather_failed_tests(value)
-        if name == 'DeprecatedMerge' and value is True:
-            LOGGER.warn('Option --rerunmerge is deprecated and will be '
-                        'removed in the future. Use --merge instead.')
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):
@@ -118,11 +108,7 @@ class _BaseSettings(object):
             return None
         if name == 'OutputDir':
             return abspath(value)
-        if name in ['MonitorWidth', 'MonitorColors', 'MonitorMarkers']:
-            option = '--' + name.lower()
-            LOGGER.warn("Option '%s' is deprecated. Use '%s' instead."
-                        % (option, option.replace('monitor', 'console')))
-        if name in ['SuiteStatLevel', 'MonitorWidth', 'ConsoleWidth']:
+        if name in ['SuiteStatLevel', 'ConsoleWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
         if name == 'VariableFiles':
             return [split_args_from_name_or_path(item) for item in value]
@@ -377,7 +363,7 @@ class _BaseSettings(object):
 
     @property
     def console_colors(self):
-        return self['MonitorColors'] or self['ConsoleColors']
+        return self['ConsoleColors']
 
 
 class RobotSettings(_BaseSettings):
@@ -398,9 +384,7 @@ class RobotSettings(_BaseSettings):
                        'ConsoleTypeDotted'  : ('dotted', False),
                        'ConsoleTypeQuiet'   : ('quiet', False),
                        'ConsoleWidth'       : ('consolewidth', 78),
-                       'MonitorWidth'       : ('monitorwidth', 0),  # TODO: Remove in RF 3.0
                        'ConsoleMarkers'     : ('consolemarkers', 'AUTO'),
-                       'MonitorMarkers'     : ('monitormarkers', None),  # TODO: Remove in RF 3.0
                        'DebugFile'          : ('debugfile', None)}
 
     def get_rebot_settings(self):
@@ -492,11 +476,11 @@ class RobotSettings(_BaseSettings):
 
     @property
     def console_width(self):
-        return self['MonitorWidth'] or self['ConsoleWidth']
+        return self['ConsoleWidth']
 
     @property
     def console_markers(self):
-        return self['MonitorMarkers'] or self['ConsoleMarkers']
+        return self['ConsoleMarkers']
 
     @property
     def pre_run_modifiers(self):
@@ -521,8 +505,7 @@ class RebotSettings(_BaseSettings):
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
                        'EndTime'           : ('endtime', None),
-                       'Merge'             : ('merge', False),
-                       'DeprecatedMerge'   : ('rerunmerge', False)}
+                       'Merge'             : ('merge', False)}
 
     def _output_disabled(self):
         return False
@@ -579,7 +562,7 @@ class RebotSettings(_BaseSettings):
 
     @property
     def merge(self):
-        return self['Merge'] or self['DeprecatedMerge']
+        return self['Merge']
 
     @property
     def console_output_config(self):

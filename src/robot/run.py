@@ -109,7 +109,6 @@ Options
  -R --rerunfailed output  Select failed tests from an earlier output file to be
                           re-executed. Equivalent to selecting same tests
                           individually using --test option.
-    --runfailed output    Deprecated since RF 2.8.4. Use --rerunfailed instead.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
                           can be given as a pattern like with --include.
@@ -305,9 +304,6 @@ Options
  -K --consolemarkers auto|on|off  Show markers on the console when top level
                           keywords in a test case end. Values have same
                           semantics as with --consolecolors.
-    --monitorwidth chars  Deprecated. Use --consolewidth instead.
-    --monitorcolors colors  Deprecated. Use --consolecolors instead.
-    --monitormarkers value  Deprecated. Use --consolemarkers instead.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries and other extensions when
                           they are imported. Multiple paths can be given by

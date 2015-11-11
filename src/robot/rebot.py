@@ -67,7 +67,6 @@ Options
  -R --merge               When combining results, merge outputs together
                           instead of putting them under a new top level suite.
                           Example: rebot --merge orig.xml rerun.xml
-    --rerunmerge          Deprecated since RF 2.8.6. Use --merge instead.
  -N --name name           Set the name of the top level test suite. Underscores
                           in the name are converted to spaces. Default name is
                           created from the name of the executed data source.
@@ -248,7 +247,6 @@ Options
                           ansi: like `on` but use ANSI colors also on Windows
                           off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
-    --monitorcolors colors  Deprecated. Use --consolecolors instead.
  -P --pythonpath path *   Additional locations to add to the module search path
                           that is used when importing Python based extensions.
  -E --escape what:with *  Escape characters which are problematic in console.

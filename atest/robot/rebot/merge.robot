@@ -64,14 +64,6 @@ Using other options
     Test merge should have been successful    suite name=Custom
     Log should have been created with all Log keywords flattened
 
---rerunmerge is deprecated
-    Re-run tests
-    Run Rebot    --rerunmerge    ${ORIGINAL} ${MERGE 1}
-    Test merge should have been successful
-    Stderr Should Be Equal To    [ WARN ]
-    ...    Option --rerunmerge is deprecated and will be removed in the future.
-    ...    Use --merge instead.\n
-
 *** Keywords ***
 Run original tests
     Create Output With Robot    ${ORIGINAL}    --variable FAIL:YES --variable LEVEL:WARN    ${SUITES}
