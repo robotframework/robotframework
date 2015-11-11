@@ -28,7 +28,8 @@ CLASSIFIERS = """
 Development Status :: 5 - Production/Stable
 License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
-Programming Language :: Python
+Programming Language :: Python :: 2
+Programming Language :: Python :: 3
 Topic :: Software Development :: Testing
 """.strip().splitlines()
 KEYWORDS = 'robotframework testing testautomation acceptancetesting atdd bdd'
