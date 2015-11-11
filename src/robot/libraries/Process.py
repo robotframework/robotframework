@@ -204,6 +204,8 @@ class Process(object):
     | `Start Process` | program | output_encoding=UTF-8 |
     | `Run Process`   | program | stdout=${path} | output_encoding=SYSTEM |
 
+    The support to set output encoding is new in Robot Framework 3.0.
+
     == Alias ==
 
     A custom name given to the process that can be used when selecting the
