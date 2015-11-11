@@ -57,6 +57,9 @@ Set Message In Setup
 Check Message From Previous Test
     Check Test Case    ${TEST NAME}
 
+Test Message Variable Reacts On Set Test Message
+    Check Test Case    ${TEST NAME}
+
 Not Allowed In Suite Setup or Teardown
     ${error}=    Catenate    SEPARATOR=\n
     ...    Suite setup failed:

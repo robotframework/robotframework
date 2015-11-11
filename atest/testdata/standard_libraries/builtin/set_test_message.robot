@@ -78,6 +78,11 @@ Set Message In Setup
 Check Message From Previous Test
     Should Be Equal    ${PREV TEST MESSAGE}    Message set in setup
 
+Test Message Variable Reacts On Set Test Message
+    [Documentation]    PASS Other Second
+    Pass_Execution    Initial Test Message
+    [Teardown]    Check Test Message Variable Behavior Is Correct
+
 *** Keywords ***
 Set Message In Teardown And Fail Afterwards
     Set Test Message    My message before failure
@@ -86,3 +91,12 @@ Set Message In Teardown And Fail Afterwards
 Fail In Teardown And Set Message Afterwards
     Fail    My failure before message
     Set Test Message    My message after failure
+
+Check Test Message Variable Behavior Is Correct
+    Should Be Equal    ${TEST_MESSAGE}    Initial Test Message
+    Set Test Message    First    True
+    Should Be Equal    ${TEST_MESSAGE}    Initial Test Message First
+    Set Test Message    Other
+    Should Be Equal    ${TEST_MESSAGE}    Other
+    Set Test Message    Second    True
+    Should Be Equal    ${TEST_MESSAGE}    Other Second
