@@ -98,8 +98,8 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_content('Me, Myself &amp; I &gt; you')
 
     def test_remove_illegal_chars(self):
-        assert_equals(self.writer._escape(u'\x1b[31m'), '[31m')
-        assert_equals(self.writer._escape(u'\x00'), '')
+        assert_equal(self.writer._escape(u'\x1b[31m'), '[31m')
+        assert_equal(self.writer._escape(u'\x00'), '')
 
     def test_ioerror_when_file_is_invalid(self):
         assert_raises(IOError, XmlWriter, os.path.dirname(__file__))
@@ -113,15 +113,15 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.element('foo1', content='', attrs={})
         self.writer.element('foo2', attrs={'bar': '', 'None': None})
         self.writer.element('foo3', attrs={'bar': '', 'value': 'value'})
-        assert_equals(self._get_content(), '<foo3 value="value"></foo3>\n')
+        assert_equal(self._get_content(), '<foo3 value="value"></foo3>\n')
 
     def _verify_node(self, node, name, text=None, attrs={}):
         if node is None:
             node = self._get_root()
-        assert_equals(node.tag, name)
+        assert_equal(node.tag, name)
         if text is not None:
-            assert_equals(node.text, text)
-        assert_equals(node.attrib, attrs)
+            assert_equal(node.text, text)
+        assert_equal(node.attrib, attrs)
 
     def _verify_content(self, expected):
         content = self._get_content()

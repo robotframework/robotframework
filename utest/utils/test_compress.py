@@ -2,7 +2,7 @@ import unittest
 import zlib
 
 from robot.utils.compress import compress_text, _compress
-from robot.utils.asserts import assert_equals, assert_true
+from robot.utils.asserts import assert_equal, assert_true
 
 
 class TestCompress(unittest.TestCase):
@@ -10,7 +10,7 @@ class TestCompress(unittest.TestCase):
     def _test(self, text):
         assert_true(isinstance(compress_text(text), str))
         text = text.encode('UTF-8')
-        assert_equals(_compress(text), zlib.compress(text, 9))
+        assert_equal(_compress(text), zlib.compress(text, 9))
 
     def test_empty_string(self):
         self._test('')

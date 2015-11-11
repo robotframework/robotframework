@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils.asserts import assert_equals, assert_true, assert_false
+from robot.utils.asserts import assert_equal, assert_true, assert_false
 
 from robot.output.logger import Logger
 from robot.output.console.verbose import VerboseOutput
@@ -20,8 +20,8 @@ class LoggerMock:
 
     def message(self, msg):
         exp_msg, exp_level = self.expected.pop(0)
-        assert_equals(msg.level, exp_level)
-        assert_equals(msg.message, exp_msg)
+        assert_equal(msg.level, exp_level)
+        assert_equal(msg.message, exp_msg)
         self.msg = msg
 
     def copy(self):
@@ -68,15 +68,15 @@ class TestLogger(unittest.TestCase):
         self.logger.register_logger(logger)
         for msg, level in msgs:
             self.logger.write(msg, level)
-            assert_equals(logger.msg.message, msg)
-            assert_equals(logger.msg.level, level)
+            assert_equal(logger.msg.message, msg)
+            assert_equal(logger.msg.level, level)
 
     def test_all_methods(self):
         logger = LoggerMock2(('Hello, world!', 'INFO'))
         self.logger.register_logger(logger)
         self.logger.output_file('name', 'path')
         self.logger.close()
-        assert_equals(logger.output_file, ('name', 'path'))
+        assert_equal(logger.output_file, ('name', 'path'))
         assert_true(logger.closed)
 
     def test_registered_logger_does_not_need_all_methods(self):
@@ -90,11 +90,11 @@ class TestLogger(unittest.TestCase):
         logger2 = LoggerMock2(('Hello, world!', 'INFO'))
         self.logger.register_logger(logger, logger2)
         self.logger.close()
-        assert_equals(self.logger._loggers.all_loggers(), [])
+        assert_equal(self.logger._loggers.all_loggers(), [])
 
     def test_registering_file_logger_with_none_path_does_nothing(self):
         self.logger.register_file_logger('None')
-        assert_equals(self.logger._loggers.all_loggers(), [])
+        assert_equal(self.logger._loggers.all_loggers(), [])
 
     def test_cached_messages_are_given_to_registered_writers(self):
         self.logger.write('This is a cached message', 'INFO')
@@ -102,7 +102,7 @@ class TestLogger(unittest.TestCase):
         logger = LoggerMock(('This is a cached message', 'INFO'),
                             ('Another cached message', 'TRACE'))
         self.logger.register_logger(logger)
-        assert_equals(logger.msg.message, 'Another cached message')
+        assert_equal(logger.msg.message, 'Another cached message')
 
     def test_message_cache_can_be_turned_off(self):
         self.logger.disable_message_cache()
@@ -124,7 +124,7 @@ class TestLogger(unittest.TestCase):
         for name in 'suite', 'test', 'keyword':
             for stend in 'start', 'end':
                 getattr(self.logger, stend + '_' + name)(name)
-                assert_equals(getattr(logger, stend + 'ed_' + name), name)
+                assert_equal(getattr(logger, stend + 'ed_' + name), name)
 
     def test_verbose_console_output_is_automatically_registered(self):
         logger = Logger()
@@ -140,12 +140,12 @@ class TestLogger(unittest.TestCase):
         logger = Logger()
         for log in logger:
             assert_true(log)
-        assert_equals(list(logger), list(logger._loggers))
+        assert_equal(list(logger), list(logger._loggers))
 
     def test_automatic_console_logger_can_be_disabled(self):
         logger = Logger()
         logger.unregister_console_logger()
-        assert_equals(logger._loggers.all_loggers(), [])
+        assert_equal(logger._loggers.all_loggers(), [])
 
     def test_automatic_console_logger_can_be_disabled_after_registering_logger(self):
         logger = Logger()
@@ -170,7 +170,7 @@ class TestLogger(unittest.TestCase):
         logger = Logger()
         logger.register_console_logger(width=42)
         self._number_of_registered_loggers_should_be(1, logger)
-        assert_equals(logger._loggers.all_loggers()[0].start_suite.__self__._writer._width, 42)
+        assert_equal(logger._loggers.all_loggers()[0].start_suite.__self__._writer._width, 42)
 
     def test_unregister_logger(self):
         logger1, logger2, logger3 = LoggerMock(), LoggerMock(), LoggerMock()
@@ -203,9 +203,9 @@ class TestLogger(unittest.TestCase):
             def start_keyword(self, kw): self.kw = kw
         class SecondLogger:
             def __init__(self, logger): self._reference = logger
-            def start_suite(self, suite): assert_equals(suite, self._reference.suite)
-            def start_test(self, test): assert_equals(test, self._reference.test)
-            def start_keyword(self, kw): assert_equals(kw, self._reference.kw)
+            def start_suite(self, suite): assert_equal(suite, self._reference.suite)
+            def start_test(self, test): assert_equal(test, self._reference.test)
+            def start_keyword(self, kw): assert_equal(kw, self._reference.kw)
         log1 = FirstLogger()
         log2 = SecondLogger(log1)
         self.logger.register_logger(log2)
@@ -221,9 +221,9 @@ class TestLogger(unittest.TestCase):
             def end_keyword(self, kw): self.kw = kw
         class SecondLogger:
             def __init__(self, logger): self._reference = logger
-            def end_suite(self, suite): self.suite = suite; assert_equals(suite, self._reference.suite)
-            def end_test(self, test): assert_equals(test, self._reference.test)
-            def end_keyword(self, kw): assert_equals(kw, self._reference.kw)
+            def end_suite(self, suite): self.suite = suite; assert_equal(suite, self._reference.suite)
+            def end_test(self, test): assert_equal(test, self._reference.test)
+            def end_keyword(self, kw): assert_equal(kw, self._reference.kw)
         log1 = FirstLogger()
         log2 = SecondLogger(log1)
         self.logger.register_logger(log1)
@@ -235,7 +235,7 @@ class TestLogger(unittest.TestCase):
 
     def _number_of_registered_loggers_should_be(self, number, logger=None):
         logger = logger or self.logger
-        assert_equals(len(logger._loggers.all_loggers()), number)
+        assert_equal(len(logger._loggers.all_loggers()), number)
 
 
 if __name__ == "__main__":

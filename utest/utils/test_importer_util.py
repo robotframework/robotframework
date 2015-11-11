@@ -10,7 +10,7 @@ from os.path import basename, dirname, exists, join, normpath
 from robot.errors import DataError
 from robot.utils import abspath, JYTHON, WINDOWS, PY3
 from robot.utils.importer import Importer, ByPathImporter
-from robot.utils.asserts import (assert_equals, assert_true, assert_raises,
+from robot.utils.asserts import (assert_equal, assert_true, assert_raises,
                                  assert_raises_with_msg)
 
 
@@ -27,7 +27,7 @@ def assert_prefix(error, expected):
     message = unicode(error)
     count = 3 if WINDOWS_PATH_IN_ERROR.search(message) else 2
     prefix = ':'.join(message.split(':')[:count]) + ':'
-    assert_equals(prefix, expected)
+    assert_equal(prefix, expected)
 
 
 def create_temp_file(name, attr=42, extra_content=''):
@@ -57,7 +57,7 @@ class LoggerStub(object):
         self.messages.append(self._normalize_drive_letter(msg))
 
     def assert_message(self, msg, index=0):
-        assert_equals(self.messages[index], self._normalize_drive_letter(msg))
+        assert_equal(self.messages[index], self._normalize_drive_letter(msg))
 
     def _normalize_drive_letter(self, msg):
         if not WINDOWS:
@@ -118,8 +118,8 @@ class test:
         klass = self._import(path, remove='test')
         self._assert_imported_message('test', path, type='class')
         assert_true(inspect.isclass(klass))
-        assert_equals(klass.__name__, 'test')
-        assert_equals(klass().method(), 42)
+        assert_equal(klass.__name__, 'test')
+        assert_equal(klass().method(), 42)
 
     def test_invalid_python_file(self):
         path = create_temp_file('test.py', extra_content='invalid content')
@@ -156,10 +156,10 @@ class test:
     def _import_and_verify(self, path, attr=42, directory=TESTDIR,
                            name=None, remove=None):
         module = self._import(path, name, remove)
-        assert_equals(module.attr, attr)
-        assert_equals(module.func(), attr)
+        assert_equal(module.attr, attr)
+        assert_equal(module.func(), attr)
         if hasattr(module, '__file__'):
-            assert_equals(dirname(abspath(module.__file__)), directory)
+            assert_equal(dirname(abspath(module.__file__)), directory)
 
     def _import(self, path, name=None, remove=None):
         if remove and remove in sys.modules:
@@ -170,7 +170,7 @@ class test:
         try:
             return importer.import_class_or_module_by_path(path)
         finally:
-            assert_equals(sys.path, sys_path_before)
+            assert_equal(sys.path, sys_path_before)
 
     def _assert_imported_message(self, name, source, type='module', index=0):
         msg = "Imported %s '%s' from '%s'." % (type, name, source)
@@ -216,11 +216,11 @@ class TestImportClassOrModule(unittest.TestCase):
 
     def test_import_module_file(self):
         module = self._import_module('classes')
-        assert_equals(module.__version__, 'N/A')
+        assert_equal(module.__version__, 'N/A')
 
     def test_import_module_directory(self):
         module = self._import_module('pythonmodule')
-        assert_equals(module.some_string, 'Hello, World!')
+        assert_equal(module.some_string, 'Hello, World!')
 
     def test_import_non_existing(self):
         error = assert_raises(DataError, self._import, 'NonExisting')
@@ -228,23 +228,23 @@ class TestImportClassOrModule(unittest.TestCase):
 
     def test_import_sub_module(self):
         module = self._import_module('pythonmodule.library')
-        assert_equals(module.keyword_from_submodule('Kitty'), 'Hello, Kitty!')
+        assert_equal(module.keyword_from_submodule('Kitty'), 'Hello, Kitty!')
         module = self._import_module('pythonmodule.submodule')
-        assert_equals(module.attribute, 42)
+        assert_equal(module.attribute, 42)
         module = self._import_module('pythonmodule.submodule.sublib')
-        assert_equals(module.keyword_from_deeper_submodule(), 'hi again')
+        assert_equal(module.keyword_from_deeper_submodule(), 'hi again')
 
     def test_import_class_with_same_name_as_module(self):
         klass = self._import_class('ExampleLibrary')
-        assert_equals(klass().return_string_from_library('xxx'), 'xxx')
+        assert_equal(klass().return_string_from_library('xxx'), 'xxx')
 
     def test_import_class_from_module(self):
         klass = self._import_class('ExampleLibrary.ExampleLibrary')
-        assert_equals(klass().return_string_from_library('yyy'), 'yyy')
+        assert_equal(klass().return_string_from_library('yyy'), 'yyy')
 
     def test_import_class_from_sub_module(self):
         klass = self._import_class('pythonmodule.submodule.sublib.Sub')
-        assert_equals(klass().keyword_from_class_in_deeper_submodule(), 'bye')
+        assert_equal(klass().keyword_from_class_in_deeper_submodule(), 'bye')
 
     def test_import_non_existing_item_from_existing_module(self):
         assert_raises_with_msg(DataError,
@@ -273,14 +273,14 @@ class TestImportClassOrModule(unittest.TestCase):
     def test_import_file_by_path(self):
         import module_library as expected
         module = self._import_module(join(LIBDIR, 'module_library.py'))
-        assert_equals(module.__name__, expected.__name__)
-        assert_equals(dirname(normpath(module.__file__)),
+        assert_equal(module.__name__, expected.__name__)
+        assert_equal(dirname(normpath(module.__file__)),
                       dirname(normpath(expected.__file__)))
-        assert_equals(dir(module), dir(expected))
+        assert_equal(dir(module), dir(expected))
 
     def test_import_class_from_file_by_path(self):
         klass = self._import_class(join(LIBDIR, 'ExampleLibrary.py'))
-        assert_equals(klass().return_string_from_library('test'), 'test')
+        assert_equal(klass().return_string_from_library('test'), 'test')
 
     def test_invalid_file_by_path(self):
         path = join(TEMPDIR, 'robot_import_invalid_test_file.py')
@@ -308,18 +308,18 @@ class TestImportClassOrModule(unittest.TestCase):
 
         def test_import_java_class(self):
             klass = self._import_class('ExampleJavaLibrary')
-            assert_equals(klass().getCount(), 1)
+            assert_equal(klass().getCount(), 1)
 
         def test_import_java_class_in_package(self):
             klass = self._import_class('javapkg.JavaPackageExample')
-            assert_equals(klass().returnValue('xmas'), 'xmas')
+            assert_equal(klass().returnValue('xmas'), 'xmas')
 
         def test_import_java_file_by_path(self):
             import ExampleJavaLibrary as expected
             klass = self._import_class(join(LIBDIR, 'ExampleJavaLibrary.java'))
-            assert_equals(klass().getCount(), 1)
-            assert_equals(klass.__name__, expected.__name__)
-            assert_equals(dir(klass), dir(expected))
+            assert_equal(klass().getCount(), 1)
+            assert_equal(klass.__name__, expected.__name__)
+            assert_equal(dir(klass), dir(expected))
 
         def test_importing_java_package_fails(self):
             assert_raises_with_msg(DataError,
@@ -351,7 +351,7 @@ class TestErrorDetails(unittest.TestCase):
 
     def test_no_traceback(self):
         error = self._failing_import('NoneExisting')
-        assert_equals(self._get_traceback(error),
+        assert_equal(self._get_traceback(error),
                       'Traceback (most recent call last):\n  None')
 
     def test_traceback(self):
@@ -360,7 +360,7 @@ class TestErrorDetails(unittest.TestCase):
             error = self._failing_import(path)
         finally:
             shutil.rmtree(TESTDIR)
-        assert_equals(self._get_traceback(error),
+        assert_equal(self._get_traceback(error),
                       'Traceback (most recent call last):\n'
                       '  File "%s", line 5, in <module>\n'
                       '    import nonex' % path)
@@ -368,7 +368,7 @@ class TestErrorDetails(unittest.TestCase):
     def test_pythonpath(self):
         error = self._failing_import('NoneExisting')
         lines = self._get_pythonpath(error).splitlines()
-        assert_equals(lines[0], 'PYTHONPATH:')
+        assert_equal(lines[0], 'PYTHONPATH:')
         for line in lines[1:]:
             assert_true(line.startswith('  '))
 
@@ -386,7 +386,7 @@ class TestErrorDetails(unittest.TestCase):
         def test_classpath(self):
             error = self._failing_import('NoneExisting')
             lines = self._get_classpath(error).splitlines()
-            assert_equals(lines[0], 'CLASSPATH:')
+            assert_equal(lines[0], 'CLASSPATH:')
             for line in lines[1:]:
                 assert_true(line.startswith('  '))
 
@@ -396,7 +396,7 @@ class TestErrorDetails(unittest.TestCase):
                    "named {q}NoneExisting{q}".format(q="'" if PY3 else ""))
         expected = (message, self._get_traceback(error),
                     self._get_pythonpath(error), self._get_classpath(error))
-        assert_equals(unicode(error), '\n'.join(expected).strip())
+        assert_equal(unicode(error), '\n'.join(expected).strip())
 
     def _failing_import(self, name):
         importer = Importer().import_class_or_module
@@ -428,7 +428,7 @@ class TestSplitPathToModule(unittest.TestCase):
     def _verify(self, file_name, expected_name):
         path = abspath(file_name)
         actual = ByPathImporter(None)._split_path_to_module(path)
-        assert_equals(actual, (dirname(path), expected_name))
+        assert_equal(actual, (dirname(path), expected_name))
 
     def test_normal_file(self):
         self._verify('hello.py', 'hello')
@@ -462,14 +462,14 @@ class TestInstantiation(unittest.TestCase):
 
     def test_with_arguments(self):
         lib = Importer().import_class_or_module('libswithargs.Mixed', range(5))
-        assert_equals(lib.get_args(), (0, 1, '2 3 4'))
+        assert_equal(lib.get_args(), (0, 1, '2 3 4'))
 
     def test_when_importing_by_path(self):
         path = create_temp_file('args.py', extra_content='class args: a=1')
         lib = Importer().import_class_or_module_by_path(path, ())
         assert_true(not inspect.isclass(lib))
-        assert_equals(lib.__class__.__name__, 'args')
-        assert_equals(lib.a, 1)
+        assert_equal(lib.__class__.__name__, 'args')
+        assert_equal(lib.a, 1)
 
     def test_instantiate_failure(self):
         err = assert_raises(DataError, Importer().import_class_or_module,

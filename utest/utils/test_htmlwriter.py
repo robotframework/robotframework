@@ -1,7 +1,7 @@
 import unittest
 
 from robot.utils import HtmlWriter, StringIO
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 
 
 class TestHtmlWriter(unittest.TestCase):
@@ -100,7 +100,7 @@ class TestHtmlWriter(unittest.TestCase):
         writer.start('b')
         writer.end('b')
         writer.element('i')
-        assert_equals(repr(output.getvalue()), repr('<b>\n</b>\n<i></i>\n'))
+        assert_equal(repr(output.getvalue()), repr('<b>\n</b>\n<i></i>\n'))
 
     def test_non_ascii(self):
         self.output = StringIO()
@@ -112,7 +112,7 @@ class TestHtmlWriter(unittest.TestCase):
         self._verify(u'<p name="hyv\xe4\xe4">y\xf6<i>t\xe4</i></p>')
 
     def _verify(self, expected):
-        assert_equals(self.output.getvalue(), expected)
+        assert_equal(self.output.getvalue(), expected)
 
 
 if __name__ == '__main__':

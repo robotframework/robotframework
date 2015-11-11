@@ -56,11 +56,11 @@ class TestAsserts(unittest.TestCase):
         fail_unless_equal('str', 'str')
         fail_unless_equal(42, 42, 'hello', True)
         assert_equal(MyEqual('hello'), MyEqual('hello'))
-        assert_equals(None, None)
+        assert_equal(None, None)
         assert_raises(AE, fail_unless_equal, 'str', 'STR')
         assert_raises(AE, fail_unless_equal, 42, 43)
         assert_raises(AE, assert_equal, MyEqual('hello'), MyEqual('world'))
-        assert_raises(AE, assert_equals, None, True)
+        assert_raises(AE, assert_equal, None, True)
 
     def test_fail_unless_equal_with_values_having_same_string_repr(self):
         for val, type_ in [(1, 'integer'),
@@ -77,7 +77,7 @@ class TestAsserts(unittest.TestCase):
         fail_if_equal('abc', 'ABC')
         fail_if_equal(42, -42, 'hello', True)
         assert_not_equal(MyEqual('cat'), MyEqual('dog'))
-        assert_not_equals(None, True)
+        assert_not_equal(None, True)
         raise_msg = assert_raises_with_msg  # shorter to use here
         raise_msg(AE, "str == str", fail_if_equal, 'str', 'str')
         raise_msg(AE, "hello: 42 == 42", fail_if_equal, 42, 42, 'hello')

@@ -8,7 +8,7 @@ except ImportError:
 from robot.result import ExecutionResult
 from robot.reporting.outputwriter import OutputWriter
 from robot.utils import ET, ETSource, XmlWriter
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 
 from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
 
@@ -47,9 +47,9 @@ class TestResultSerializer(unittest.TestCase):
         return output.getvalue().splitlines()
 
     def _assert_xml_content(self, actual, expected):
-        assert_equals(len(actual), len(expected))
+        assert_equal(len(actual), len(expected))
         for index, (act, exp) in enumerate(list(zip(actual, expected))[2:]):
-            assert_equals(act, exp.strip(), 'Different values on line %d' % index)
+            assert_equal(act, exp.strip(), 'Different values on line %d' % index)
 
     def test_combining_results(self):
         output = StringIO()

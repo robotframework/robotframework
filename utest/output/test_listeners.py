@@ -177,8 +177,8 @@ class _BaseListenerTest:
 
     def _assert_output(self, expected):
         stdout, stderr = self.capturer._release()
-        assert_equals(stderr, '')
-        assert_equals(stdout.rstrip(), expected)
+        assert_equal(stderr, '')
+        assert_equal(stdout.rstrip(), expected)
 
 
 class TestOldStyleListeners(_BaseListenerTest, unittest.TestCase):
@@ -186,7 +186,7 @@ class TestOldStyleListeners(_BaseListenerTest, unittest.TestCase):
     stat_message = 'full message'
 
     def test_importing(self):
-        assert_equals(self.listener.version, 1)
+        assert_equal(self.listener.version, 1)
 
 
 class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
@@ -194,7 +194,7 @@ class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
     stat_message = 'stat message'
 
     def test_importing(self):
-        assert_equals(self.listener.version, 2)
+        assert_equal(self.listener.version, 2)
 
 
 class TestInvalidOldStyleListener(unittest.TestCase):
@@ -219,7 +219,7 @@ if JYTHON:
         stat_message = 'stat message'
 
         def test_importing(self):
-            assert_equals(self.listener.version, 2)
+            assert_equal(self.listener.version, 2)
 
 
 if __name__ == '__main__':

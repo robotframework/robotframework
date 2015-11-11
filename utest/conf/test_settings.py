@@ -2,7 +2,7 @@ import unittest
 
 from robot.conf.settings import _BaseSettings, RobotSettings, RebotSettings
 from robot.errors import DataError
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 
 
 class SettingWrapper(_BaseSettings):
@@ -17,31 +17,31 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         # https://github.com/robotframework/robotframework/issues/881
         orig_opts = RobotSettings()._opts
         RebotSettings()
-        assert_equals(RobotSettings()._opts, orig_opts)
+        assert_equal(RobotSettings()._opts, orig_opts)
 
     def test_extra_options(self):
-        assert_equals(RobotSettings(name='My Name')['Name'], 'My Name')
-        assert_equals(RobotSettings({'name': 'Override'}, name='Set')['Name'],'Set')
+        assert_equal(RobotSettings(name='My Name')['Name'], 'My Name')
+        assert_equal(RobotSettings({'name': 'Override'}, name='Set')['Name'],'Set')
 
     def test_multi_options_as_single_string(self):
-        assert_equals(RobotSettings({'test': 'one'})['TestNames'], ['one'])
-        assert_equals(RebotSettings({'exclude': 'two'})['Exclude'], ['two'])
+        assert_equal(RobotSettings({'test': 'one'})['TestNames'], ['one'])
+        assert_equal(RebotSettings({'exclude': 'two'})['Exclude'], ['two'])
 
     def test_output_files_as_none_string(self):
         for name in 'Output', 'Report', 'Log', 'XUnit', 'DebugFile':
             attr = (name[:-4] if name.endswith('File') else name).lower()
             settings = RobotSettings({name.lower(): 'NoNe'})
-            assert_equals(settings[name], None)
+            assert_equal(settings[name], None)
             if hasattr(settings, attr):
-                assert_equals(getattr(settings, attr), None)
+                assert_equal(getattr(settings, attr), None)
 
     def test_output_files_as_none_object(self):
         for name in 'Output', 'Report', 'Log', 'XUnit', 'DebugFile':
             attr = (name[:-4] if name.endswith('File') else name).lower()
             settings = RobotSettings({name.lower(): None})
-            assert_equals(settings[name], None)
+            assert_equal(settings[name], None)
             if hasattr(settings, attr):
-                assert_equals(getattr(settings, attr), None)
+                assert_equal(getattr(settings, attr), None)
 
     def test_log_levels(self):
         self._verify_log_level('TRACE')
@@ -61,8 +61,8 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         self._verify_log_levels(RebotSettings({'loglevel': input}), level, default)
 
     def _verify_log_levels(self, settings, level, default=None):
-        assert_equals(settings['LogLevel'], level)
-        assert_equals(settings['VisibleLogLevel'], default or level)
+        assert_equal(settings['LogLevel'], level)
+        assert_equal(settings['VisibleLogLevel'], default or level)
 
     def test_log_levels_with_default(self):
         self._verify_log_level('TRACE:INFO', level='TRACE', default='INFO')

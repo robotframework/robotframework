@@ -2,7 +2,7 @@ import unittest
 
 from robot.errors import DataError
 from robot.variables import VariableAssigner
-from robot.utils.asserts import assert_equals, assert_raises
+from robot.utils.asserts import assert_equal, assert_raises
 
 
 class TestResolveAssignment(unittest.TestCase):
@@ -44,7 +44,7 @@ class TestResolveAssignment(unittest.TestCase):
         assigner = VariableAssigner(assign)
         assigner.validate_assignment()
         expected = [a.rstrip('= ') for a in assign]
-        assert_equals(assigner.assignment, expected)
+        assert_equal(assigner.assignment, expected)
 
     def _verify_invalid(self, assign):
         assert_raises(DataError, VariableAssigner(assign).validate_assignment)

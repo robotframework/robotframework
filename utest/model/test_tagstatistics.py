@@ -1,7 +1,7 @@
 import unittest
 
 from robot.model import Criticality
-from robot.utils.asserts import assert_equals, assert_none
+from robot.utils.asserts import assert_equal, assert_none
 from robot.model.tagstatistics import TagStatisticsBuilder, TagStatLink
 from robot.model import Tags
 from robot.result.testcase import TestCase
@@ -26,7 +26,7 @@ class TestTagStatistics(unittest.TestCase):
             builder.add_test(TestCase(status='PASS', tags=tags))
             matcher = MultiMatcher(incl, match_if_no_patterns=True)
             expected = [tag for tag in tags if matcher.match(tag)]
-            assert_equals([s.name for s in builder.stats], sorted(expected))
+            assert_equal([s.name for s in builder.stats], sorted(expected))
 
     def test_exclude(self):
         for excl, tags in self._incl_excl_data:
@@ -34,7 +34,7 @@ class TestTagStatistics(unittest.TestCase):
             builder.add_test(TestCase(status='PASS', tags=tags))
             matcher = MultiMatcher(excl)
             expected = [tag for tag in tags if not matcher.match(tag)]
-            assert_equals([s.name for s in builder.stats], sorted(expected))
+            assert_equal([s.name for s in builder.stats], sorted(expected))
 
     def test_include_and_exclude(self):
         for incl, excl, tags, exp in [
@@ -48,23 +48,23 @@ class TestTagStatistics(unittest.TestCase):
               ]:
             builder = TagStatisticsBuilder(Criticality(), incl, excl)
             builder.add_test(TestCase(status='PASS', tags=tags))
-            assert_equals([s.name for s in builder.stats], exp),
+            assert_equal([s.name for s in builder.stats], exp),
 
     def test_iter(self):
         builder = TagStatisticsBuilder(Criticality())
-        assert_equals(list(builder.stats), [])
+        assert_equal(list(builder.stats), [])
         builder.add_test(TestCase())
-        assert_equals(list(builder.stats), [])
+        assert_equal(list(builder.stats), [])
         builder.add_test(TestCase(tags=['a']))
-        assert_equals(len(list(builder.stats)), 1)
+        assert_equal(len(list(builder.stats)), 1)
         builder.add_test(TestCase(tags=['A', 'B']))
-        assert_equals(len(list(builder.stats)), 2)
+        assert_equal(len(list(builder.stats)), 2)
 
     def test_iter_with_combine(self):
         builder = TagStatisticsBuilder(Criticality(), combined=[('x*', 'title')])
-        assert_equals(len(list(builder.stats)), 1)
+        assert_equal(len(list(builder.stats)), 1)
         builder.add_test(TestCase(tags=['xxx', 'yyy']))
-        assert_equals(len(list(builder.stats)), 3)
+        assert_equal(len(list(builder.stats)), 3)
 
     def test_combine_with_name(self):
         for comb_tags, expected_name in [
@@ -76,9 +76,9 @@ class TestTagStatistics(unittest.TestCase):
                 ([('4NOT5', 'Some new name')], 'Some new name')
                ]:
             builder = TagStatisticsBuilder(Criticality(), combined=comb_tags)
-            assert_equals(bool(list(builder.stats)), expected_name != '')
+            assert_equal(bool(list(builder.stats)), expected_name != '')
             if expected_name:
-                assert_equals([s.name for s in builder.stats], [expected_name])
+                assert_equal([s.name for s in builder.stats], [expected_name])
 
     def test_is_combined_with_and_statements(self):
         for comb_tags, test_tags, expected_count in [
@@ -97,7 +97,7 @@ class TestTagStatistics(unittest.TestCase):
     def _verify_combined_statistics(self, comb_tags, test_tags, expected_count):
         builder = TagStatisticsBuilder(Criticality(), combined=[(comb_tags, 'name')])
         builder._add_to_combined_statistics(TestCase(tags=test_tags))
-        assert_equals([s.total for s in builder.stats if s.combined], [expected_count])
+        assert_equal([s.total for s in builder.stats if s.combined], [expected_count])
 
     def test_is_combined_with_not_statements(self):
         for comb_tags, test_tags, expected_count in [
@@ -150,7 +150,7 @@ class TestTagStatistics(unittest.TestCase):
     def test_combine_with_same_name_as_existing_tag(self):
         builder = TagStatisticsBuilder(Criticality(), combined=[('x*', 'name')])
         builder.add_test(TestCase(tags=['name', 'another']))
-        assert_equals([(s.name, s.combined) for s in builder.stats],
+        assert_equal([(s.name, s.combined) for s in builder.stats],
                       [('name', 'x*'), ('another', ''), ('name', '')])
 
     def test_combine(self):
@@ -185,7 +185,7 @@ class TestTagStatistics(unittest.TestCase):
                     exp_noncr.append(tag)
             exp_names = exp_crit + sorted(comb_tags) + exp_noncr
             # 4) Verify names (match counts were already verified)
-            assert_equals(names, exp_names)
+            assert_equal(names, exp_names)
 
     def test_sorting(self):
         builder = TagStatisticsBuilder(Criticality(['c2', 'c1'], ['n*']),
@@ -193,7 +193,7 @@ class TestTagStatistics(unittest.TestCase):
         builder.add_test(TestCase(tags=['c1', 'c2', 't1']))
         builder.add_test(TestCase(tags=['c1', 'n2', 't2']))
         builder.add_test(TestCase(tags=['n1', 'n2', 't1', 't3']))
-        assert_equals([(s.name, s.info, s.total) for s in builder.stats],
+        assert_equal([(s.name, s.info, s.total) for s in builder.stats],
                        [('c1', 'critical', 2), ('c2', 'critical', 1),
                         ('n1', 'non-critical', 1), ('n2', 'non-critical', 2),
                         ('a title', 'combined', 0), ('c*', 'combined', 2),
@@ -224,9 +224,9 @@ class TestTagStatDoc(unittest.TestCase):
         self._verify_stats(builder.stats.tags['t2'], 'd2', 1)
 
     def _verify_stats(self, stat, doc, failed, passed=0):
-        assert_equals(stat.doc, doc)
-        assert_equals(stat.failed, failed)
-        assert_equals(stat.passed, passed)
+        assert_equal(stat.doc, doc)
+        assert_equal(stat.failed, failed)
+        assert_equal(stat.passed, passed)
 
 
 class TestTagStatLink(unittest.TestCase):
@@ -239,9 +239,9 @@ class TestTagStatLink(unittest.TestCase):
                           ('^hello$', 'gopher://hello.world:8090/hello.html',
                            'Hello World'))]:
             link = TagStatLink(*arg)
-            assert_equals(exp[0], link._regexp.pattern)
-            assert_equals(exp[1], link._link)
-            assert_equals(exp[2], link._title)
+            assert_equal(exp[0], link._regexp.pattern)
+            assert_equal(exp[1], link._link)
+            assert_equal(exp[2], link._title)
 
     def test_valid_string_containing_patterns_is_parsed_correctly(self):
         for arg, exp_pattern in [('*', '^(.*)$'), ('f*r', '^f(.*)r$'),
@@ -249,11 +249,11 @@ class TestTagStatLink(unittest.TestCase):
                                  ('??', '^(..)$'), ('f???ar', '^f(...)ar$'),
                                  ('F*B?R*?', '^F(.*)B(.)R(.*)(.)$')]:
             link = TagStatLink(arg, 'some_url', 'some_title')
-            assert_equals(exp_pattern, link._regexp.pattern)
+            assert_equal(exp_pattern, link._regexp.pattern)
 
     def test_underscores_in_title_are_converted_to_spaces(self):
         link = TagStatLink('', '', 'my_name')
-        assert_equals(link._title, 'my name')
+        assert_equal(link._title, 'my name')
 
     def test_get_link_returns_correct_link_when_matches(self):
         for arg, exp in [(('smoke', 'http://tobacco.com', 'Lung_cancer'),
@@ -261,7 +261,7 @@ class TestTagStatLink(unittest.TestCase):
                          (('tag', 'ftp://foo:809/bar.zap', 'Foo_in a Bar'),
                           ('ftp://foo:809/bar.zap', 'Foo in a Bar'))]:
             link = TagStatLink(*arg)
-            assert_equals(exp, link.get_link(arg[0]))
+            assert_equal(exp, link.get_link(arg[0]))
 
     def test_get_link_returns_none_when_no_match(self):
         link = TagStatLink('smoke', 'http://tobacco.com', 'Lung cancer')
@@ -272,38 +272,38 @@ class TestTagStatLink(unittest.TestCase):
         exp = 'http://tobacco.com', 'Lung cancer'
         link = TagStatLink('smoke', *exp)
         for tag in ['Smoke', 'SMOKE', 'smoke']:
-            assert_equals(exp, link.get_link(tag))
+            assert_equal(exp, link.get_link(tag))
 
     def test_pattern_matches_when_spaces(self):
         exp = 'http://tobacco.com', 'Lung cancer'
         link = TagStatLink('smoking kills', *exp)
         for tag in ['Smoking Kills', 'SMOKING KILLS']:
-            assert_equals(exp, link.get_link(tag))
+            assert_equal(exp, link.get_link(tag))
 
     def test_pattern_match(self):
         link = TagStatLink('f?o*r', 'http://foo/bar.html', 'FooBar')
         for tag in ['foobar', 'foor', 'f_ofoobarfoobar', 'fOoBAr']:
-            assert_equals(link.get_link(tag), ('http://foo/bar.html', 'FooBar'))
+            assert_equal(link.get_link(tag), ('http://foo/bar.html', 'FooBar'))
 
     def test_pattern_substitution_with_one_match(self):
         link = TagStatLink('tag-*', 'http://tracker/?id=%1', 'Tracker')
         for id in ['1', '23', '456']:
             exp = ('http://tracker/?id=%s' % id, 'Tracker')
-            assert_equals(exp, link.get_link('tag-%s' % id))
+            assert_equal(exp, link.get_link('tag-%s' % id))
 
     def test_pattern_substitution_with_multiple_matches(self):
         link = TagStatLink('?-*', 'http://tracker/?id=%1-%2', 'Tracker')
         for id1, id2 in [('1', '2'), ('3', '45'), ('f', 'bar')]:
             exp = ('http://tracker/?id=%s-%s' % (id1, id2), 'Tracker')
-            assert_equals(exp, link.get_link('%s-%s' % (id1, id2)))
+            assert_equal(exp, link.get_link('%s-%s' % (id1, id2)))
 
     def test_pattern_substitution_with_multiple_substitutions(self):
         link = TagStatLink('??-?-*', '%3-%3-%1-%2-%3', 'Tracker')
-        assert_equals(link.get_link('aa-b-XXX'), ('XXX-XXX-aa-b-XXX', 'Tracker'))
+        assert_equal(link.get_link('aa-b-XXX'), ('XXX-XXX-aa-b-XXX', 'Tracker'))
 
     def test_matches_are_ignored_in_pattern_substitution(self):
         link = TagStatLink('???-*-*-?', '%4-%2-%2-%4', 'Tracker')
-        assert_equals(link.get_link('AAA-XXX-ABC-B'), ('B-XXX-XXX-B', 'Tracker'))
+        assert_equal(link.get_link('AAA-XXX-ABC-B'), ('B-XXX-XXX-B', 'Tracker'))
 
 
 if __name__ == "__main__":

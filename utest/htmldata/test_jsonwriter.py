@@ -8,7 +8,7 @@ except ImportError:
 import unittest
 
 from robot.utils import StringIO, long
-from robot.utils.asserts import assert_equals, assert_raises
+from robot.utils.asserts import assert_equal, assert_raises
 from robot.htmldata.jsonwriter import JsonDumper
 
 
@@ -20,7 +20,7 @@ class TestJsonDumper(unittest.TestCase):
         return output.getvalue()
 
     def _test(self, data, expected):
-        assert_equals(self._dump(data), expected)
+        assert_equal(self._dump(data), expected)
 
     def test_dump_string(self):
         self._test('', '""')
@@ -76,7 +76,7 @@ class TestJsonDumper(unittest.TestCase):
         mapped2 = 'string'
         dumper.dump([mapped1, [mapped2, {mapped2: mapped1}]],
                     mapping={mapped1: '1', mapped2: 'a'})
-        assert_equals(output.getvalue(), '[1,[a,{a:1}]]')
+        assert_equal(output.getvalue(), '[1,[a,{a:1}]]')
         assert_raises(ValueError, dumper.dump, [mapped1])
 
     if json:

@@ -6,7 +6,7 @@ from os.path import abspath, dirname, join
 
 from robot.running import TestSuite, TestSuiteBuilder
 from robot.utils import StringIO
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 
 from resources.runningtestcase import RunningTestCase
 from resources.Listener import Listener
@@ -30,17 +30,17 @@ def build(path):
 
 
 def assert_suite(suite, name, status, message='', tests=1):
-    assert_equals(suite.name, name)
-    assert_equals(suite.status, status)
-    assert_equals(suite.message, message)
-    assert_equals(len(suite.tests), tests)
+    assert_equal(suite.name, name)
+    assert_equal(suite.status, status)
+    assert_equal(suite.message, message)
+    assert_equal(len(suite.tests), tests)
 
 
 def assert_test(test, name, status, tags=(), msg=''):
-    assert_equals(test.name, name)
-    assert_equals(test.status, status)
-    assert_equals(test.message, msg)
-    assert_equals(tuple(test.tags), tags)
+    assert_equal(test.name, name)
+    assert_equal(test.status, status)
+    assert_equal(test.message, msg)
+    assert_equal(tuple(test.tags), tags)
 
 
 class TestRunning(unittest.TestCase):
@@ -246,20 +246,20 @@ class TestPreservingSignalHandlers(unittest.TestCase):
         suite = TestSuite(name='My Suite')
         suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
         run(suite)
-        assert_equals(signal.getsignal(signal.SIGINT), self.orig_sigint)
-        assert_equals(signal.getsignal(signal.SIGTERM), my_sigterm)
+        assert_equal(signal.getsignal(signal.SIGINT), self.orig_sigint)
+        assert_equal(signal.getsignal(signal.SIGTERM), my_sigterm)
 
 
 class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_reset_logging_conf(self):
-        assert_equals(logging.getLogger().handlers, [])
-        assert_equals(logging.raiseExceptions, 1)
+        assert_equal(logging.getLogger().handlers, [])
+        assert_equal(logging.raiseExceptions, 1)
         suite = TestSuite(name='My Suite')
         suite.tests.create(name='My Test').keywords.create('Log', args=['Hi!'])
         run(suite)
-        assert_equals(logging.getLogger().handlers, [])
-        assert_equals(logging.raiseExceptions, 1)
+        assert_equal(logging.getLogger().handlers, [])
+        assert_equal(logging.raiseExceptions, 1)
 
 
 class TestListeners(RunningTestCase):

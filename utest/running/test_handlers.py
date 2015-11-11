@@ -37,14 +37,14 @@ class TestPythonHandler(unittest.TestCase):
     def test_name(self):
         for method in _get_handler_methods(NameLibrary()):
             handler = _PythonHandler(LibraryMock('mylib'), method.__name__, method)
-            assert_equals(handler.name, method.__doc__)
-            assert_equals(handler.longname, 'mylib.'+method.__doc__)
+            assert_equal(handler.name, method.__doc__)
+            assert_equal(handler.longname, 'mylib.'+method.__doc__)
 
     def test_docs(self):
         for method in _get_handler_methods(DocLibrary()):
             handler = _PythonHandler(LibraryMock(), method.__name__, method)
-            assert_equals(handler.doc, method.expected_doc)
-            assert_equals(handler.shortdoc, method.expected_shortdoc)
+            assert_equal(handler.doc, method.expected_doc)
+            assert_equal(handler.shortdoc, method.expected_shortdoc)
 
     def test_arguments(self):
         for method in _get_handler_methods(ArgInfoLibrary()):
@@ -52,22 +52,22 @@ class TestPythonHandler(unittest.TestCase):
             args = handler.arguments
             argspec = (args.positional, args.defaults, args.varargs, args.kwargs)
             expected = eval(method.__doc__)
-            assert_equals(argspec, expected, method.__name__)
+            assert_equal(argspec, expected, method.__name__)
 
     def test_arg_limits(self):
         for method in _get_handler_methods(ArgumentsPython()):
             handler = _PythonHandler(LibraryMock(), method.__name__, method)
             exp_mina, exp_maxa = eval(method.__doc__)
-            assert_equals(handler.arguments.minargs, exp_mina)
-            assert_equals(handler.arguments.maxargs, exp_maxa)
+            assert_equal(handler.arguments.minargs, exp_mina)
+            assert_equal(handler.arguments.maxargs, exp_maxa)
 
     def test_getarginfo_getattr(self):
         handlers = TestLibrary('classes.GetattrLibrary').handlers
-        assert_equals(len(handlers), 3)
+        assert_equal(len(handlers), 3)
         for handler in handlers:
             assert_true(handler.name in ['Foo','Bar','Zap'])
-            assert_equals(handler.arguments.minargs, 0)
-            assert_equals(handler.arguments.maxargs, sys.maxsize)
+            assert_equal(handler.arguments.minargs, 0)
+            assert_equal(handler.arguments.maxargs, sys.maxsize)
 
 
 class TestDynamicHandlerCreation(unittest.TestCase):
@@ -163,7 +163,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
 
     def _assert_doc(self, doc, expected=None):
         expected = doc if expected is None else expected
-        assert_equals(self._create_handler(doc=doc).doc, expected)
+        assert_equal(self._create_handler(doc=doc).doc, expected)
 
     def _assert_spec(self, argspec, minargs=0, maxargs=0, positional=[],
                      defaults=[], vararg=None, kwarg=None):
@@ -178,12 +178,12 @@ class TestDynamicHandlerCreation(unittest.TestCase):
             arguments = self._create_handler(argspec,
                                              kwargs_support=kwargs_support
                                              ).arguments
-            assert_equals(arguments.minargs, minargs)
-            assert_equals(arguments.maxargs, maxargs)
-            assert_equals(arguments.positional, positional)
-            assert_equals(arguments.defaults, defaults)
-            assert_equals(arguments.varargs, vararg)
-            assert_equals(arguments.kwargs, kwarg)
+            assert_equal(arguments.minargs, minargs)
+            assert_equal(arguments.maxargs, maxargs)
+            assert_equal(arguments.positional, positional)
+            assert_equal(arguments.defaults, defaults)
+            assert_equal(arguments.varargs, vararg)
+            assert_equal(arguments.kwargs, kwarg)
 
     def _assert_fails(self, error, argspec=None, doc=None):
         assert_raises_with_msg(DataError, error,
@@ -212,23 +212,23 @@ if utils.JYTHON:
             for count in [0, 1, 3]:
                 method = handlers['a_%d' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equals(handler.arguments.minargs, count)
-                assert_equals(handler.arguments.maxargs, count)
+                assert_equal(handler.arguments.minargs, count)
+                assert_equal(handler.arguments.maxargs, count)
 
         def test_arg_limits_with_varargs(self):
             for count in [0, 1]:
                 method = handlers['a_%d_n' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equals(handler.arguments.minargs, count)
-                assert_equals(handler.arguments.maxargs, sys.maxsize)
+                assert_equal(handler.arguments.minargs, count)
+                assert_equal(handler.arguments.maxargs, sys.maxsize)
 
         def test_arg_limits_with_defaults(self):
             # defaults i.e. multiple signatures
             for mina, maxa in [(0, 1), (1, 3)]:
                 method = handlers['a_%d_%d' % (mina, maxa)]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equals(handler.arguments.minargs, mina)
-                assert_equals(handler.arguments.maxargs, maxa)
+                assert_equal(handler.arguments.minargs, mina)
+                assert_equal(handler.arguments.maxargs, maxa)
 
 
     class TestArgumentCoercer(unittest.TestCase):
@@ -238,8 +238,8 @@ if utils.JYTHON:
 
         def test_coercion_in_constructor(self):
             instance = self.lib.get_instance()
-            assert_equals(instance.myInt, 42)
-            assert_equals(instance.myBool, True)
+            assert_equal(instance.myInt, 42)
+            assert_equal(instance.myBool, True)
 
         def test_coercing_to_integer(self):
             self._test_coercion(self._handler_named('intArgument'),
@@ -295,7 +295,7 @@ if utils.JYTHON:
             return self.lib.handlers[name]
 
         def _test_coercion(self, handler, args, expected):
-            assert_equals(handler._arg_coercer.coerce(args, {}), expected)
+            assert_equal(handler._arg_coercer.coerce(args, {}), expected)
 
         def _test_coercion_fails(self, handler, expected_message):
             assert_raises_with_msg(ValueError, expected_message,

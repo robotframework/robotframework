@@ -4,7 +4,7 @@ import string
 import unittest
 
 from robot.reporting.stringcache import StringCache, StringIndex
-from robot.utils.asserts import assert_equals, assert_true, assert_false
+from robot.utils.asserts import assert_equal, assert_true, assert_false
 
 
 try:
@@ -23,7 +23,7 @@ class TestStringCache(unittest.TestCase):
 
     def _verify_text(self, string, expected):
         self.cache.add(string)
-        assert_equals(('*', expected), self.cache.dump())
+        assert_equal(('*', expected), self.cache.dump())
 
     def _compress(self, text):
         return self.cache._encode(text)
@@ -46,7 +46,7 @@ class TestStringCache(unittest.TestCase):
         for i in range(30):
             value = self._generate_random_string(300)
             id = self.cache.add(value)
-            assert_equals(self._compress(value), self.cache.dump()[id],
+            assert_equal(self._compress(value), self.cache.dump()[id],
                           msg='Did not compress [test seed = %s]' % self._seed)
 
     def _generate_random_string(self, length):
@@ -64,7 +64,7 @@ class TestStringIndex(unittest.TestCase):
 
     def test_to_string(self):
         value = StringIndex(42)
-        assert_equals(str(value), '42')
+        assert_equal(str(value), '42')
 
     def test_truth(self):
         assert_true(StringIndex(1))

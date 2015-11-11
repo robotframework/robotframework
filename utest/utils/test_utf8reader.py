@@ -5,7 +5,7 @@ from codecs import BOM_UTF8
 from io import BytesIO
 
 from robot.utils import Utf8Reader
-from robot.utils.asserts import assert_equals, assert_raises
+from robot.utils.asserts import assert_equal, assert_raises
 
 
 PATH = os.path.join(tempfile.gettempdir(), 'test_utf8reader.xml')
@@ -29,14 +29,14 @@ class TestUtf8ReaderWithBom(unittest.TestCase):
     def test_read(self):
         with Utf8Reader(PATH) as reader:
             f = reader._file
-            assert_equals(reader.read(), STRING)
-        assert_equals(f.closed, True)
+            assert_equal(reader.read(), STRING)
+        assert_equal(f.closed, True)
 
     def test_read_open_file(self):
         with open(PATH, 'rb') as f:
             with Utf8Reader(f) as reader:
-                assert_equals(reader.read(), STRING)
-            assert_equals(f.closed, False)
+                assert_equal(reader.read(), STRING)
+            assert_equal(f.closed, False)
 
     def test_must_open_in_binary_mode(self):
         with open(PATH, 'r') as f:
@@ -45,12 +45,12 @@ class TestUtf8ReaderWithBom(unittest.TestCase):
     def test_stringio_is_ok(self):
         f = BytesIO(self.BOM + STRING.encode('UTF-8'))
         with Utf8Reader(f) as reader:
-            assert_equals(reader.read(), STRING)
-        assert_equals(f.closed, False)
+            assert_equal(reader.read(), STRING)
+        assert_equal(f.closed, False)
 
     def test_readlines(self):
         with Utf8Reader(PATH) as reader:
-            assert_equals(list(reader.readlines()), STRING.splitlines(True))
+            assert_equal(list(reader.readlines()), STRING.splitlines(True))
 
     def test_invalid_encoding(self):
         self._create(STRING.splitlines()[-1], 'ISO-8859-5')

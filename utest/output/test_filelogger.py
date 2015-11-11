@@ -51,7 +51,7 @@ class TestFileLogger(unittest.TestCase):
         self._verify_message('20060613 08:37:42.123 | DEBUG | msg\n')
 
     def _verify_message(self, expected):
-        assert_equals(self.logger._writer.getvalue(), expected)
+        assert_equal(self.logger._writer.getvalue(), expected)
 
 
 if __name__ == "__main__":

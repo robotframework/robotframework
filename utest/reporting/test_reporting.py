@@ -7,7 +7,7 @@ from robot.result.executionresult import Result
 from robot.result.executionerrors import ExecutionErrors
 from robot.result.testsuite import TestSuite
 from robot.utils import StringIO
-from robot.utils.asserts import assert_true, assert_equals
+from robot.utils.asserts import assert_true, assert_equal
 
 
 LOGGER.unregister_console_logger()
@@ -69,17 +69,17 @@ class TestReporting(unittest.TestCase):
     def test_js_generation_prunes_read_result(self):
         result = self._get_execution_result()
         results = Results(StubSettings(), 'output.xml')
-        assert_equals(results._result, None)
+        assert_equal(results._result, None)
         results._result = result  # Fake reading results
         _ = results.js_result
         for test in result.suite.tests:
-            assert_equals(len(test.keywords), 0)
+            assert_equal(len(test.keywords), 0)
 
     def _write_results(self, **settings):
         result = self._get_execution_result()
         settings = StubSettings(**settings)
         rc = ResultWriter(result).write_results(settings)
-        assert_equals(rc, 1)
+        assert_equal(rc, 1)
 
     def _get_execution_result(self):
         suite = TestSuite(name=self.EXPECTED_SUITE_NAME)

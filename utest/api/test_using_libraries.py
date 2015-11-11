@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils.asserts import assert_equals, assert_raises_with_msg
+from robot.utils.asserts import assert_equal, assert_raises_with_msg
 from robot.libraries.BuiltIn import BuiltIn, RobotNotRunningError
 from robot.libraries.DateTime import Date
 
@@ -30,7 +30,7 @@ class TestDateTime(unittest.TestCase):
 
     def test_date_seconds(self):
         secs = 1234567890
-        assert_equals(Date(secs).seconds, secs)
+        assert_equal(Date(secs).seconds, secs)
 
 
 if __name__ == '__main__':

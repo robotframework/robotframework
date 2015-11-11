@@ -5,7 +5,7 @@ from robot.running import userkeyword
 from robot.running.userkeyword import UserLibrary
 from robot.errors import DataError
 from robot.parsing.model import UserKeyword
-from robot.utils.asserts import (assert_equals, assert_none,
+from robot.utils.asserts import (assert_equal, assert_none,
                                  assert_raises_with_msg, assert_true)
 
 
@@ -46,14 +46,14 @@ class TestUserLibrary(unittest.TestCase):
                             (os.path.join('..','res','My Res.HTM'), 'My Res'),
                             (os.path.abspath('my_res.xhtml'), 'my_res')]:
             lib = UserLibrary([], source)
-            assert_equals(lib.name, exp)
+            assert_equal(lib.name, exp)
 
     def test_name_from_test_case_file(self):
         assert_none(self._get_userlibrary().name)
 
     def test_creating_keyword(self):
         lib = self._get_userlibrary('kw 1', 'kw 2')
-        assert_equals(len(lib.handlers), 2)
+        assert_equal(len(lib.handlers), 2)
         assert_true('kw 1' in lib.handlers)
         assert_true('kw 2' in lib.handlers)
 
@@ -63,30 +63,30 @@ class TestUserLibrary(unittest.TestCase):
 
     def test_creating_keywords_when_normal_and_embedded_arg_kws(self):
         lib = self._get_userlibrary('kw1', 'Embedded ${arg}', 'kw2')
-        assert_equals(len(lib.handlers), 3)
+        assert_equal(len(lib.handlers), 3)
         assert_true('kw1' in lib.handlers)
         assert_true('kw 2' in lib.handlers)
         self._lib_has_embedded_arg_keyword(lib)
 
     def test_creating_duplicate_embedded_arg_keyword_in_resource_file(self):
         lib = self._get_userlibrary('Embedded ${arg}', 'kw', 'Embedded ${arg}')
-        assert_equals(len(lib.handlers), 3)
+        assert_equal(len(lib.handlers), 3)
         assert_true(not hasattr(lib.handlers['kw'], 'error'))
         self._lib_has_embedded_arg_keyword(lib, count=2)
 
     def test_creating_duplicate_keyword_in_resource_file(self):
         lib = self._get_userlibrary('kw', 'kw', 'kw 2')
-        assert_equals(len(lib.handlers), 2)
+        assert_equal(len(lib.handlers), 2)
         assert_true('kw' in lib.handlers)
         assert_true('kw 2' in lib.handlers)
-        assert_equals(lib.handlers['kw'].error,
+        assert_equal(lib.handlers['kw'].error,
                       "Keyword with same name defined multiple times.")
 
     def test_creating_duplicate_keyword_in_test_case_file(self):
         lib = self._get_userlibrary('MYKW', 'my kw')
-        assert_equals(len(lib.handlers), 1)
+        assert_equal(len(lib.handlers), 1)
         assert_true('mykw' in lib.handlers)
-        assert_equals(lib.handlers['mykw'].error,
+        assert_equal(lib.handlers['mykw'].error,
                       "Keyword with same name defined multiple times.")
 
     def test_handlers_contains(self):
@@ -113,9 +113,9 @@ class TestUserLibrary(unittest.TestCase):
     def _lib_has_embedded_arg_keyword(self, lib, count=1):
         assert_true('Embedded ${arg}' in lib.handlers)
         embedded = lib.handlers._embedded
-        assert_equals(len(embedded), count)
+        assert_equal(len(embedded), count)
         for template in embedded:
-            assert_equals(template.name, 'Embedded ${arg}')
+            assert_equal(template.name, 'Embedded ${arg}')
 
 
 if __name__ == '__main__':

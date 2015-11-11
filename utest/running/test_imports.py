@@ -2,7 +2,7 @@ import unittest
 
 from robot.running import TestSuite
 from robot.utils import StringIO
-from robot.utils.asserts import assert_equals, assert_raises_with_msg
+from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 
 def run(suite, **config):
@@ -11,16 +11,16 @@ def run(suite, **config):
     return result.suite
 
 def assert_suite(suite, name, status, message='', tests=1):
-    assert_equals(suite.name, name)
-    assert_equals(suite.status, status)
-    assert_equals(suite.message, message)
-    assert_equals(len(suite.tests), tests)
+    assert_equal(suite.name, name)
+    assert_equal(suite.status, status)
+    assert_equal(suite.message, message)
+    assert_equal(len(suite.tests), tests)
 
 def assert_test(test, name, status, tags=(), msg=''):
-    assert_equals(test.name, name)
-    assert_equals(test.status, status)
-    assert_equals(test.message, msg)
-    assert_equals(tuple(test.tags), tags)
+    assert_equal(test.name, name)
+    assert_equal(test.status, status)
+    assert_equal(test.message, msg)
+    assert_equal(tuple(test.tags), tags)
 
 
 class TestImports(unittest.TestCase):
@@ -47,7 +47,7 @@ class TestImports(unittest.TestCase):
         suite = TestSuite(name='Suite')
         suite.resource.imports.resource('test_resource.txt')
         suite.tests.create(name='Test').keywords.create('My Test Keyword')
-        assert_equals(suite.tests[0].keywords[0].name, 'My Test Keyword')
+        assert_equal(suite.tests[0].keywords[0].name, 'My Test Keyword')
         result = run(suite)
         assert_suite(result, 'Suite', 'PASS')
         assert_test(result.tests[0], 'Test', 'PASS')

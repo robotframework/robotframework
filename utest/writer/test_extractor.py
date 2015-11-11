@@ -1,7 +1,7 @@
 import unittest
 
 from robot.parsing.model import VariableTable, TestCaseTable
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 from robot.writer.dataextractor import DataExtractor
 
 var_table = VariableTable(None)
@@ -35,19 +35,19 @@ test_table_rows = [['A test case'],
 class DataExtractorTest(unittest.TestCase):
 
     def test_extracting_from_simple_table(self):
-        assert_equals(list(DataExtractor().rows_from_table(var_table)),
+        assert_equal(list(DataExtractor().rows_from_table(var_table)),
                       var_table_rows)
 
     def test_extracting_from_indented_table(self):
         for idx, row in enumerate(DataExtractor()._rows_from_indented_table(test_table)):
-            assert_equals(row, test_table_rows[idx])
+            assert_equal(row, test_table_rows[idx])
 
     def test_names_on_first_content_row(self):
         table = TestCaseTable(None)
         t = table.add('Test')
         t.add_step(['No op'])
         extractor = DataExtractor(lambda t,n: True)
-        assert_equals(list(extractor._rows_from_indented_table(table)),
+        assert_equal(list(extractor._rows_from_indented_table(table)),
                       [['Test', 'No op']])
 
 

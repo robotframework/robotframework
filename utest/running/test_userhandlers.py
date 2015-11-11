@@ -5,7 +5,7 @@ from robot.model import Keywords
 from robot.running.userkeyword import (EmbeddedArgs, EmbeddedArgsTemplate,
                                        UserKeywordHandler)
 from robot.running.arguments import EmbeddedArguments, UserKeywordArgumentParser
-from robot.utils.asserts import assert_equals, assert_true, assert_raises
+from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
 
 class Fake(object):
@@ -64,14 +64,14 @@ class TestEmbeddedArgs(unittest.TestCase):
         assert_true(EmbeddedArguments('${Yes} embedded args here'))
 
     def test_get_embedded_arg_and_regexp(self):
-        assert_equals(self.tmp1.embedded_args, ['item'])
-        assert_equals(self.tmp1.embedded_name.pattern,
+        assert_equal(self.tmp1.embedded_args, ['item'])
+        assert_equal(self.tmp1.embedded_name.pattern,
                       '^User\\ selects\\ (.*?)\\ from\\ list$')
-        assert_equals(self.tmp1.name, 'User selects ${item} from list')
+        assert_equal(self.tmp1.name, 'User selects ${item} from list')
 
     def test_get_multiple_embedded_args_and_regexp(self):
-        assert_equals(self.tmp2.embedded_args, ['x', 'y', 'z'])
-        assert_equals(self.tmp2.embedded_name.pattern,
+        assert_equal(self.tmp2.embedded_args, ['x', 'y', 'z'])
+        assert_equal(self.tmp2.embedded_name.pattern,
                       '^(.*?)\\ \\*\\ (.*?)\\ from\\ \\"(.*?)\\"$')
 
     def test_create_handler_when_no_match(self):
@@ -79,44 +79,44 @@ class TestEmbeddedArgs(unittest.TestCase):
 
     def test_create_handler_with_one_embedded_arg(self):
         handler = EmbeddedArgs('User selects book from list', self.tmp1)
-        assert_equals(handler.embedded_args, [('item', 'book')])
-        assert_equals(handler.name, 'User selects book from list')
-        assert_equals(handler.longname, 'resource.User selects book from list')
+        assert_equal(handler.embedded_args, [('item', 'book')])
+        assert_equal(handler.name, 'User selects book from list')
+        assert_equal(handler.longname, 'resource.User selects book from list')
         handler = EmbeddedArgs('User selects radio from list', self.tmp1)
-        assert_equals(handler.embedded_args, [('item', 'radio')])
-        assert_equals(handler.name, 'User selects radio from list')
-        assert_equals(handler.longname, 'resource.User selects radio from list')
+        assert_equal(handler.embedded_args, [('item', 'radio')])
+        assert_equal(handler.name, 'User selects radio from list')
+        assert_equal(handler.longname, 'resource.User selects radio from list')
 
     def test_create_handler_with_many_embedded_args(self):
         handler = EmbeddedArgs('User * book from "list"', self.tmp2)
-        assert_equals(handler.embedded_args,
+        assert_equal(handler.embedded_args,
                       [('x', 'User'), ('y', 'book'), ('z', 'list')])
 
     def test_create_handler_with_empty_embedded_arg(self):
         handler = EmbeddedArgs('User selects  from list', self.tmp1)
-        assert_equals(handler.embedded_args, [('item', '')])
+        assert_equal(handler.embedded_args, [('item', '')])
 
     def test_create_handler_with_special_characters_in_embedded_args(self):
         handler = EmbeddedArgs('Janne & Heikki * "enjoy" from """', self.tmp2)
-        assert_equals(handler.embedded_args,
+        assert_equal(handler.embedded_args,
                       [('x', 'Janne & Heikki'), ('y', '"enjoy"'), ('z', '"')])
 
     def test_embedded_args_without_separators(self):
         template = EAT('This ${does}${not} work so well')
         handler = EmbeddedArgs('This doesnot work so well', template)
-        assert_equals(handler.embedded_args, [('does', ''), ('not', 'doesnot')])
+        assert_equal(handler.embedded_args, [('does', ''), ('not', 'doesnot')])
 
     def test_embedded_args_with_separators_in_values(self):
         template = EAT('This ${could} ${work}-${OK}')
         handler = EmbeddedArgs("This doesn't really work---", template)
-        assert_equals(handler.embedded_args,
+        assert_equal(handler.embedded_args,
                       [('could', "doesn't"), ('work', 'really work'), ('OK', '--')])
 
     def test_creating_handlers_is_case_insensitive(self):
         handler = EmbeddedArgs('User SELECts book frOm liST', self.tmp1)
-        assert_equals(handler.embedded_args, [('item', 'book')])
-        assert_equals(handler.name, 'User SELECts book frOm liST')
-        assert_equals(handler.longname, 'resource.User SELECts book frOm liST')
+        assert_equal(handler.embedded_args, [('item', 'book')])
+        assert_equal(handler.name, 'User SELECts book frOm liST')
+        assert_equal(handler.longname, 'resource.User SELECts book frOm liST')
 
     def test_embedded_args_handler_has_all_needed_attributes(self):
         normal = UserKeywordHandler(HandlerDataMock('My name'), None)
@@ -151,9 +151,9 @@ class TestGetArgSpec(unittest.TestCase):
 
     def _verify(self, in_args, exp_args=[], exp_defaults=[], exp_varargs=None):
         argspec = self._parse(in_args)
-        assert_equals(argspec.positional, exp_args)
-        assert_equals(argspec.defaults, exp_defaults)
-        assert_equals(argspec.varargs, exp_varargs)
+        assert_equal(argspec.positional, exp_args)
+        assert_equal(argspec.defaults, exp_defaults)
+        assert_equal(argspec.varargs, exp_varargs)
 
     def _parse(self, in_args):
         return UserKeywordArgumentParser().parse(in_args.split())

@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 from robot.output.console.verbose import VerboseOutput
 
 # Overwrite IronPython's special utils.isatty with version using stream.isatty.
@@ -80,7 +80,7 @@ class TestKeywordNotification(unittest.TestCase):
             self.console.end_keyword(Stub(status=status))
 
     def _verify(self, after='', before=''):
-        assert_equals(str(self.stream), '%sX :: D  %s' % (before, after))
+        assert_equal(str(self.stream), '%sX :: D  %s' % (before, after))
 
 
 class Stub(object):

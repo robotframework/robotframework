@@ -1,7 +1,7 @@
 import unittest
 from os.path import abspath, dirname, join, normpath
 
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 from robot.testdoc import JsonConverter, TestSuiteFactory
 
 DATADIR = join(dirname(abspath(__file__)), '..', '..', 'atest', 'testdata', 'misc')
@@ -9,7 +9,7 @@ DATADIR = join(dirname(abspath(__file__)), '..', '..', 'atest', 'testdata', 'mis
 
 def test_convert(item, **expected):
     for name in expected:
-        assert_equals(item[name], expected[name])
+        assert_equal(item[name], expected[name])
 
 
 class TestJsonConverter(unittest.TestCase):

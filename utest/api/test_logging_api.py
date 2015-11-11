@@ -2,7 +2,7 @@ import unittest
 import sys
 import logging
 
-from robot.utils.asserts import assert_equals, assert_true
+from robot.utils.asserts import assert_equal, assert_true
 from robot.api import logger
 
 
@@ -47,8 +47,8 @@ class TestConsole(unittest.TestCase):
         self._verify('to stdout\nto stdout too\n', 'to stderr\n')
 
     def _verify(self, stdout='', stderr=''):
-        assert_equals(self.stdout.text, stdout)
-        assert_equals(self.stderr.text, stderr)
+        assert_equal(self.stdout.text, stdout)
+        assert_equal(self.stderr.text, stderr)
 
 
 class MockHandler(logging.Handler):

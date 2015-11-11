@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils.asserts import assert_true, assert_equals
+from robot.utils.asserts import assert_true, assert_equal
 from test_jsmodelbuilders import remap
 from robot.reporting.jsexecutionresult import (JsExecutionResult,
                                                _KeywordRemover, StringIndex)
@@ -14,7 +14,7 @@ class TestRemoveDataNotNeededInReport(unittest.TestCase):
         model = self._create_suite_model()
         expected = self._get_expected_suite_model(model)
         result = _KeywordRemover().remove_keywords(model)
-        assert_equals(result, expected)
+        assert_equal(result, expected)
         self._verify_model_contains_no_keywords(result)
 
     def _create_suite_model(self):
@@ -57,16 +57,16 @@ class TestRemoveDataNotNeededInReport(unittest.TestCase):
         strings = ('', 'hei', 'hoi')
         model = (1, StringIndex(0), 42, StringIndex(2), -1, None)
         model, strings = _KeywordRemover().remove_unused_strings(model, strings)
-        assert_equals(strings, ('', 'hoi'))
-        assert_equals(model, (1, 0, 42, 1, -1, None))
+        assert_equal(strings, ('', 'hoi'))
+        assert_equal(model, (1, 0, 42, 1, -1, None))
 
     def test_remove_unused_strings_nested(self):
         strings = tuple(' abcde')
         model = (StringIndex(0), StringIndex(1), 2, 3, StringIndex(4), 5,
                  (0, StringIndex(1), 2, StringIndex(3), 4, 5))
         model, strings = _KeywordRemover().remove_unused_strings(model, strings)
-        assert_equals(strings, tuple(' acd'))
-        assert_equals(model, (0, 1, 2, 3, 3, 5, (0, 1, 2, 2, 4, 5)))
+        assert_equal(strings, tuple(' acd'))
+        assert_equal(model, (0, 1, 2, 3, 3, 5, (0, 1, 2, 2, 4, 5)))
 
     def test_through_jsexecutionresult(self):
         suite = (0, StringIndex(1), 2, 3, 4, StringIndex(5),
@@ -82,11 +82,11 @@ class TestRemoveDataNotNeededInReport(unittest.TestCase):
         result = JsExecutionResult(suite=suite, strings=tuple(' ABCDEF'),
                                    errors=(1, 2), statistics={}, basemillis=0,
                                    min_level='DEBUG')
-        assert_equals(result.data['errors'], (1, 2))
+        assert_equal(result.data['errors'], (1, 2))
         result.remove_data_not_needed_in_report()
-        assert_equals(result.strings, tuple('ACE'))
-        assert_equals(result.suite, exp_s)
-        assert_equals(result.min_level, 'DEBUG')
+        assert_equal(result.strings, tuple('ACE'))
+        assert_equal(result.suite, exp_s)
+        assert_equal(result.min_level, 'DEBUG')
         assert_true('errors' not in result.data)
 
 

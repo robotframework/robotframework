@@ -5,7 +5,7 @@ import os
 
 from robot.errors import TimeoutError
 from robot.running.timeouts import TestTimeout, KeywordTimeout
-from robot.utils.asserts import (assert_equals, assert_false, assert_true,
+from robot.utils.asserts import (assert_equal, assert_false, assert_true,
                                  assert_raises, assert_raises_with_msg)
 from robot.utils import JYTHON
 
@@ -41,9 +41,9 @@ class TestInit(unittest.TestCase):
 
     def _verify_tout(self, tout, str='', secs=-1, err=None):
         tout.replace_variables(VariableMock())
-        assert_equals(tout.string, str)
-        assert_equals(tout.secs, secs)
-        assert_equals(tout.error, err)
+        assert_equal(tout.string, str)
+        assert_equal(tout.secs, secs)
+        assert_equal(tout.error, err)
 
 
 class TestTimer(unittest.TestCase):
@@ -78,24 +78,24 @@ class TestComparisons(unittest.TestCase):
 
     def test_compare_when_none_timeouted(self):
         touts = self._create_timeouts([''] * 10)
-        assert_equals(min(touts).string, '')
-        assert_equals(max(touts).string, '')
+        assert_equal(min(touts).string, '')
+        assert_equal(max(touts).string, '')
 
     def test_compare_when_all_timeouted(self):
         touts = self._create_timeouts(['1min','42seconds','43','1h1min','99'])
-        assert_equals(min(touts).string, '42 seconds')
-        assert_equals(max(touts).string, '1 hour 1 minute')
+        assert_equal(min(touts).string, '42 seconds')
+        assert_equal(max(touts).string, '1 hour 1 minute')
 
     def test_compare_with_timeouted_and_non_timeouted(self):
         touts = self._create_timeouts(['','1min','42sec','','43','1h1m','99',''])
-        assert_equals(min(touts).string, '42 seconds')
-        assert_equals(max(touts).string, '')
+        assert_equal(min(touts).string, '42 seconds')
+        assert_equal(max(touts).string, '')
 
     def test_that_compare_uses_starttime(self):
         touts = self._create_timeouts(['1min','42seconds','43','1h1min','99'])
         touts[2].starttime -= 2
-        assert_equals(min(touts).string, '43 seconds')
-        assert_equals(max(touts).string, '1 hour 1 minute')
+        assert_equal(min(touts).string, '43 seconds')
+        assert_equal(max(touts).string, '1 hour 1 minute')
 
     def _create_timeouts(self, tout_strs):
         touts = []
@@ -112,12 +112,12 @@ class TestRun(unittest.TestCase):
         self.tout.start()
 
     def test_passing(self):
-        assert_equals(self.tout.run(passing), None)
+        assert_equal(self.tout.run(passing), None)
 
     def test_returning(self):
         for arg in [ 10, 'hello', ['l','i','s','t'], unittest]:
             ret = self.tout.run(returning, args=(arg,))
-            assert_equals(ret, arg)
+            assert_equal(ret, arg)
 
     def test_failing(self):
         assert_raises_with_msg(MyException, 'hello world',
@@ -132,12 +132,12 @@ class TestRun(unittest.TestCase):
                                    self.tout.run, java_failing, ('hi tellus',))
 
     def test_sleeping(self):
-        assert_equals(self.tout.run(sleeping, args=(0.01,)), 0.01)
+        assert_equal(self.tout.run(sleeping, args=(0.01,)), 0.01)
 
     def test_method_executed_normally_if_no_timeout(self):
         os.environ['ROBOT_THREAD_TESTING'] = 'initial value'
         self.tout.run(sleeping, (0.05,))
-        assert_equals(os.environ['ROBOT_THREAD_TESTING'], '0.05')
+        assert_equal(os.environ['ROBOT_THREAD_TESTING'], '0.05')
 
     def test_method_stopped_if_timeout(self):
         os.environ['ROBOT_THREAD_TESTING'] = 'initial value'
@@ -150,7 +150,7 @@ class TestRun(unittest.TestCase):
         # timeout exception occurs
         assert_raises_with_msg(TimeoutError, 'Test timeout 1 second exceeded.',
                                self.tout.run, sleeping, (5,))
-        assert_equals(os.environ['ROBOT_THREAD_TESTING'], 'initial value')
+        assert_equal(os.environ['ROBOT_THREAD_TESTING'], 'initial value')
 
     def test_zero_and_negative_timeout(self):
         for tout in [0, 0.0, -0.01, -1, -1000]:
@@ -169,7 +169,7 @@ class TestRun(unittest.TestCase):
 class TestMessage(unittest.TestCase):
 
     def test_non_active(self):
-        assert_equals(TestTimeout().get_message(), 'Test timeout not active.')
+        assert_equal(TestTimeout().get_message(), 'Test timeout not active.')
 
     def test_active(self):
         tout = KeywordTimeout('42s', variables=VariableMock())
@@ -181,12 +181,12 @@ class TestMessage(unittest.TestCase):
     def test_failed_default(self):
         tout = TestTimeout('1s', variables=VariableMock())
         tout.starttime = time.time() - 2
-        assert_equals(tout.get_message(), 'Test timeout 1 second exceeded.')
+        assert_equal(tout.get_message(), 'Test timeout 1 second exceeded.')
 
     def test_failed_custom(self):
         tout = KeywordTimeout('1s', 'Custom message', VariableMock())
         tout.starttime = time.time() - 2
-        assert_equals(tout.get_message(), 'Custom message')
+        assert_equal(tout.get_message(), 'Custom message')
 
 
 if __name__ == '__main__':
