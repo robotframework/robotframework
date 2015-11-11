@@ -26,11 +26,6 @@ Metadata With Variable From Commandline
 Using Same Name Twice
     Should be Equal    ${SUITE.metadata['Overridden']}    This overrides first value
 
-Old Style Metadata
-    Should be Equal    ${SUITE.metadata['old style meta']}    some value
-    Length Should Be    ${ERRORS}    1
-    Check Log Message    @{ERRORS}[0]    Setting suite metadata using 'Meta: old style meta' syntax is deprecated. Use 'Metadata' setting with name and value in separate cells instead.    WARN
-
 Unescaping Metadata In Setting Table
     ${stderr} =    Get File    ${STDERR FILE}
     Should Not Contain    ${stderr}    \${non-existing-in-suite-doc}

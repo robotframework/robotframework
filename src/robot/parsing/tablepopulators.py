@@ -88,7 +88,6 @@ class _TablePopulator(Populator):
 class SettingTablePopulator(_TablePopulator):
 
     def _get_populator(self, row):
-        row.handle_old_style_metadata()
         setter = self._table.get_setter(row.head)
         if not setter:
             return NullPopulator()

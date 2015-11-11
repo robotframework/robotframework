@@ -11,7 +11,6 @@ Metadata  Value from CLI  ${META_VALUE_FROM_CLI}
 Metadata  Escaping   Three backslashes \\\\\\
 Metadata  Overridden  first value
 Metadata  over ridden  This overrides first value
-Meta: old style meta  some value
 
 *** Variables ***
 ${version}  1.2
