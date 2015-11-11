@@ -12,8 +12,8 @@ Test Setup        Comment     T2
 Test Teardown
 Test Teardown     Comment     T1
 Test Teardown     Log Many    T2
-Test Template     Sle
-Test Template     ep
+Test Template     Log
+Test Template     Many
 Force Tags
 Force Tags        F1
 Force Tags        F2
@@ -21,12 +21,11 @@ Default Tags      D1
 Default Tags      D2
 Default Tags      D3
 Test Timeout      1 ms
-Test Timeout      2 s
+Test Timeout      0.001 s
 
 *** Test Cases ***
 Use Defaults
-    [Documentation]    FAIL 2 s
-    1 s
+    Sleep    0.1s
 
 Test Settings
     [Documentation]    T1
@@ -43,17 +42,14 @@ Test Settings
     [Template]    leep
     [Timeout]    2 ms
     [Timeout]    2 s
-    1 s
+    No Operation
 
 Keyword Settings
-    [Template]    NONE
-    [Timeout]    NONE
-    ${ret} =    Keyword Settings    arg
-    Should Be Equal    ${ret}    R3
+    ${ret} =    Keyword Settings
+    Should Be Equal    ${ret}    ${NONE}
 
 *** Keywords ***
 Keyword Settings
-    [Arguments]
     [Arguments]    ${a1}    ${a2}    ${a3}
     [Arguments]    ${arg}
     [Documentation]
@@ -64,6 +60,7 @@ Keyword Settings
     [Timeout]
     [Timeout]    1s
     [Timeout]    2s
+    No Operation
     [Return]
     [Return]    R1
     [Return]    R2

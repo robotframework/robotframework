@@ -203,26 +203,25 @@ class SettingTablePopulatingTest(_PopulatorTest):
         more_tags = 'more tagness'
         even_more_tags = 'even more'
         default_tags = 'default'
-        setup_name, setup_args = 'Keyword Name', ['a1', 'a2']
-        table = [['Documentation', doc],
-                 ['S  uite Tear Down'] + [setup_name],
-                 ['S  uite SeTUp'] + [setup_name] + setup_args,
-                 ['S  uite teardown'] + setup_args,
-                 ['Doc um entati on', more_doc],
-                 ['force tags', force_tags],
-                 ['Default tags', default_tags],
-                 ['FORCETAGS', more_tags],
-                 ['test timeout', '1s'],
-                 ['De Fault TAGS', more_tags, even_more_tags],
-                 ['test timeout', 'timeout message'],
-                 ['test timeout', more_doc],
-                 ['test template', template]
-                ]
-        self._postfix_settings(table, postfix)
+        name, args = 'Keyword Name', ('a1', 'a2')
+        table = [('Documentation', doc),
+                 ('...', more_doc),
+                 ('S  uite Tear Down', name),
+                 ('...',) + args,
+                 ('S  uite SeTUp', name) + args,
+                 ('force tags', force_tags),
+                 ('...', more_tags),
+                 ('De Fault TAGS', default_tags),
+                 ('...', more_tags, even_more_tags),
+                 ('test timeout', '1s'),
+                 ('...', 'timeout message'),
+                 ('...', more_doc),
+                 ('test template', template)]
+        table = list(self._postfix_settings(table, postfix))
         self._create_table('Settings', table)
-        self._assert_setting('doc', doc + ' ' + more_doc)
-        self._assert_fixture('suite_setup', setup_name, setup_args)
-        self._assert_fixture('suite_teardown', setup_name, setup_args)
+        self._assert_setting('doc', doc + '\\n' + more_doc)
+        self._assert_fixture('suite_setup', name, list(args))
+        self._assert_fixture('suite_teardown', name, list(args))
         self._assert_tags('default_tags', [default_tags, more_tags, even_more_tags])
         self._assert_tags('force_tags', [force_tags, more_tags])
         timeout = self._setting_with('test_timeout')
@@ -231,8 +230,9 @@ class SettingTablePopulatingTest(_PopulatorTest):
         self._assert_setting('test_template', template)
 
     def _postfix_settings(self, table, postfix):
-        for setting in table:
-            setting[0] = setting[0]+postfix
+        for row in table:
+            first = row[0] + postfix if row[0] != '...' else row[0]
+            yield (first,) + row[1:]
 
     def test_imports(self):
         self._create_table('settings', [['Library', 'FooBarness'],
@@ -246,7 +246,7 @@ class SettingTablePopulatingTest(_PopulatorTest):
         self._assert_import(3, 'varzors.py', [])
 
     def test_free_suite_metadata(self):
-        self._create_table('settings', [['Meta: Foon:ess', 'Barness'],
+        self._create_table('settings', [['Meta Data', 'Foon:ess', 'Barness'],
                                         ['Metadata', 'Quux', 'Value']])
         self._assert_meta(0, 'Foon:ess', 'Barness')
         self._assert_meta(1, 'Quux', 'Value')
@@ -299,12 +299,6 @@ class DocumentationCatenationTest(_PopulatorTest):
         self._assert_doc([['doc\\\\'], ['in multiple\\\\\\', 'lines']],
                           'doc\\\\\\nin multiple\\\\\\ lines')
 
-    def test_documentation_defined_multiple_times(self):
-        self._create_table('Settings', [['Documentation', 'some doc'],
-                                        ['Documentation', 'other doc'],
-                                         ['...', 'third line']])
-        self._assert_setting('doc', 'some doc other doc\\nthird line')
-
     def _assert_doc(self, doc_lines, expected):
         doc_lines = [['...'] + line for line in doc_lines]
         self._create_table('Settings', [['Documentation']] + doc_lines)
@@ -348,7 +342,6 @@ class VariableTablePopulatingTest(_PopulatorTest):
     def test_continuing_in_the_begining_of_the_table(self):
         self._create_table('Variables', [['...', 'val']])
         self._assert_variable(0, '...',  ['val'])
-
 
 
 class TestCaseTablePopulatingTest(_PopulatorTest):
@@ -516,7 +509,6 @@ class ForLoopPopulatingTest(_PopulatorTest):
         test = self._first_test()
         assert_equal(len(test.steps), 2)
         assert_equal(test.steps[0].steps, [])
-
 
 
 class TestPopulatingComments(_PopulatorTest):

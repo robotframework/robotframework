@@ -38,13 +38,6 @@ Documentation in multiple rows
     ...                in    multiple    rows.
     No Operation
 
-Documentation multiple times
-    [DOCUMENTATION]    This functionality should be deprecated.
-    [DOCUMENT]         Documentation for this test case
-    ...                multiple
-    No Operation
-    [DOCUMENTATION]    times.
-
 Documentation with variables
     [Documentation]    Variables work in documentation since Robot ${VERSION}.
     No Operation
@@ -78,12 +71,6 @@ Tags in multiple rows
     ...    test-4    TEST-0
     ...    \    test-5
     No Operation
-
-Tags multiple times
-    [Tags]    Should    deprecate
-    No Operation
-    [Tags]
-    [Tags]    this
 
 No own tags
     No Operation

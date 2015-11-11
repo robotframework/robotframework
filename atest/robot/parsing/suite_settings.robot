@@ -18,8 +18,6 @@ Suite Documentation
     ...    Variables work since Robot 1.2 and doc_from_cli works too.
     ...    Starting from RF 2.1 \${nonexisting} variables are left unchanged.
     ...    Escaping (e.g. '\${non-existing}', 'c:\\temp', '\\n') works too.
-    ...    For backwards compatibility reasons we still support 'Document'
-    ...    setting name and continuing the doc by just repeating the setting multiple times.
     Should Be Equal    ${SUITE.doc}    ${doc}
 
 Suite Name And Documentation On Console
@@ -34,6 +32,9 @@ Test Teardown
     ${test} =    Check Test Case    Test Case
     Verify Teardown    ${test}    BuiltIn.Log    Default test teardown
 
+Force and Default Tags
+    Check Test Tags    Test Case    f1    F2    default
+
 Suite Setup
     Verify Setup    ${SUITE}    BuiltIn.Log    Default suite setup
 
@@ -42,7 +43,7 @@ Suite Teardown
 
 Invalid Setting
     ${path} =    Normalize Path    ${DATADIR}/parsing/suite_settings.robot
-    Check Log Message    ${ERRORS[4]}
+    Check Log Message    ${ERRORS[0]}
     ...    Error in file '${path}': Non-existing setting 'Invalid Setting'.    ERROR
 
 *** Keywords ***

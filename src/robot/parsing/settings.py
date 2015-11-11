@@ -46,17 +46,15 @@ class Setting(object):
 
     def populate(self, value, comment=None):
         """Mainly used at parsing time, later attributes can be set directly."""
-        if self._populated:
-            self._using_setting_multiple_times_is_deprecated()
-        self._populate(value)
-        self._set_comment(comment)
-        self._populated = True
-
-    def _using_setting_multiple_times_is_deprecated(self):
-        msg = "Using %s setting multiple times is deprecated."
-        if self.setting_name not in ['[Arguments]', '[Return]']:
-            msg += " Use '...' syntax for line continuation instead."
-        self.report_invalid_syntax(msg % self.setting_name, 'WARN')
+        if not self._populated:
+            self._populate(value)
+            self._set_comment(comment)
+            self._populated = True
+        else:
+            self._set_initial_value()
+            self._set_comment(None)
+            self.report_invalid_syntax("Setting '%s' used multiple times."
+                                       % self.setting_name, 'ERROR')
 
     def _populate(self, value):
         self.value = value

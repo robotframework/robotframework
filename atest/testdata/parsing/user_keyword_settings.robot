@@ -110,7 +110,7 @@ Documentation in multiple columns
 Documentation in multiple rows
     [DOCUMENTATION]    ${1}st line is shortdoc.
     ...                Documentation for this user keyword
-    [DOCUMENT]         in\nmultiple\nlines
+    ...                in\nmultiple\nlines
     No Operation
 
 Documentation with variables
