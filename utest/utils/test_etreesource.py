@@ -51,7 +51,7 @@ class TestETSource(unittest.TestCase):
 
     def _verify_string_representation(self, source, expected):
         assert_equal(unicode(source), expected)
-        assert_equal('-%s-' % source, '-%s-' % expected)
+        assert_equal(u'-%s-' % source, '-%s-' % expected)
 
 
 if __name__ == '__main__':

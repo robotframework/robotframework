@@ -14,9 +14,9 @@
 
 from io import BytesIO
 
-from .robottypes import is_string
-
+from .compat import py2to3
 from .platform import IRONPYTHON
+from .robottypes import is_string
 
 
 _ERROR = 'No valid ElementTree XML parser module found'
@@ -53,6 +53,7 @@ if ET.VERSION < '1.3' and hasattr(ET, 'tostringlist'):
     ET.VERSION = '1.3'
 
 
+@py2to3
 class ETSource(object):
 
     def __init__(self, source):
@@ -67,8 +68,7 @@ class ETSource(object):
         if self._opened:
             self._opened.close()
 
-    # FIXME: should this be __unicode__?
-    def __str__(self):
+    def __unicode__(self):
         if self._source_is_file_name():
             return self._source
         if hasattr(self._source, 'name'):
