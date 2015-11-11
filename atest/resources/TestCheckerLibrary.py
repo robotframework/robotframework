@@ -2,7 +2,7 @@ import os
 import re
 
 from robot import utils
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 from robot.result.resultbuilder import ExecutionResultBuilder
 from robot.result.executionresult import Result
 from robot.result.testsuite import TestSuite
@@ -188,16 +188,16 @@ class TestCheckerLibrary:
 
     def should_contain_tags(self, test, *tags):
         print 'Test has tags', test.tags
-        assert_equals(len(test.tags), len(tags), 'Wrong number of tags')
+        assert_equal(len(test.tags), len(tags), 'Wrong number of tags')
         tags = sorted(tags, key=lambda s: s.lower().replace('_', '').replace(' ', ''))
         for act, exp in zip(test.tags, tags):
-            assert_equals(act, exp)
+            assert_equal(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
         actual_names = [kw.name for kw in item.keywords]
-        assert_equals(len(actual_names), len(kw_names), 'Wrong number of keywords')
+        assert_equal(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
-            assert_equals(act, exp)
+            assert_equal(act, exp)
 
     def test_should_have_correct_keywords(self, *kw_names, **config):
         get_var = BuiltIn().get_variable_value
@@ -216,6 +216,7 @@ class TestCheckerLibrary:
         b.should_be_equal(item.level, 'INFO' if level == 'HTML' else level, 'Wrong log level')
         b.should_be_equal(str(item.html), str(html or level == 'HTML'), 'Wrong HTML status')
 
+
 def process_suite(suite):
     for subsuite in suite.suites:
         process_suite(subsuite)
@@ -226,6 +227,7 @@ def process_suite(suite):
     suite.setup = suite.keywords.setup
     suite.teardown = suite.keywords.teardown
     return suite
+
 
 def process_test(test):
     if 'FAIL' in test.doc:
@@ -241,6 +243,7 @@ def process_test(test):
     test.keywords = test.kws = list(test.keywords.normal)
     test.keyword_count = test.kw_count = len(test.keywords)
 
+
 def process_keyword(kw):
     if kw is None:
         return
@@ -250,6 +253,7 @@ def process_keyword(kw):
     kw.keyword_count = kw.kw_count = len(list(kw.keywords.normal))
     for subkw in kw.keywords:
         process_keyword(subkw)
+
 
 def process_errors(errors):
     errors.msgs = errors.messages

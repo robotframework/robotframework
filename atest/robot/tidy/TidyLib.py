@@ -6,7 +6,7 @@ from shlex import split
 import tempfile
 
 
-from robot.utils.asserts import assert_equals, assert_true
+from robot.utils.asserts import assert_equal, assert_true
 from robot.utils import console_decode
 
 
@@ -62,11 +62,11 @@ class TidyLib(object):
         msg = "Actual:\n%s\n\nExpected:\n%s\n\n" \
               % (repr(result).replace('\\n', '\\n\n'),
                  repr(expected).replace('\\n', '\\n\n'))
-        assert_equals(len(result_lines), len(expected_lines), msg)
+        assert_equal(len(result_lines), len(expected_lines), msg)
         for res, exp in zip(result_lines, expected_lines):
             filter = self._filter_matches(filters, exp)
             if not filter:
-                assert_equals(repr(unicode(res)), repr(unicode(exp)), msg)
+                assert_equal(repr(unicode(res)), repr(unicode(exp)), msg)
             else:
                 assert_true(filter.match(res),
                             '%s: %r does not match %r' % (msg, res, filter.pattern))

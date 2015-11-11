@@ -26,13 +26,14 @@ from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
 from robot.running import Keyword, RUN_KW_REGISTER
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.usererrorhandler import UserErrorHandler
-from robot.utils import (asserts, DotDict, escape, format_assign_message,
+from robot.utils import (DotDict, escape, format_assign_message,
                          get_error_message, get_time, is_falsy, is_integer,
                          is_string, is_truthy, is_unicode, IRONPYTHON, JYTHON,
                          Matcher, normalize, NormalizedDict, parse_time, prepr,
                          RERAISED_EXCEPTIONS, plural_or_not as s, PY3, roundup,
                          secs_to_timestr, seq2str, split_from_equals,
                          timestr_to_secs, type_name, unic)
+from robot.utils.asserts import assert_equal, assert_not_equal
 from robot.variables import (is_list_var, is_var, DictVariableTableValue,
                              VariableTableValue, VariableSplitter,
                              variable_not_found)
@@ -570,9 +571,8 @@ class _Verify(_BuiltInBase):
         See `Should Be True` for details about how ``condition`` is evaluated
         and how ``msg`` can be used to override the default error message.
         """
-        if not msg:
-            msg = "'%s' should not be true." % condition
-        asserts.fail_if(self._is_true(condition), msg)
+        if self._is_true(condition):
+            raise AssertionError(msg or "'%s' should not be true." % condition)
 
     def should_be_true(self, condition, msg=None):
         """Fails if the given condition is not true.
@@ -612,9 +612,8 @@ class _Verify(_BuiltInBase):
         | Should Be True | sys.platform == 'darwin'        | # OS X    |
         | Should Be True | sys.platform.startswith('java') | # Jython  |
         """
-        if not msg:
-            msg = "'%s' should be true." % condition
-        asserts.fail_unless(self._is_true(condition), msg)
+        if not self._is_true(condition):
+            raise AssertionError(msg or "'%s' should be true." % condition)
 
     def should_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are unequal.
@@ -644,7 +643,7 @@ class _Verify(_BuiltInBase):
         include_values = self._include_values(values)
         if include_values and is_string(first) and is_string(second):
             self._raise_multi_diff(first, second)
-        asserts.fail_unless_equal(first, second, msg, include_values)
+        assert_equal(first, second, msg, include_values)
 
     def _log_types_at_info_if_different(self, first, second):
         level = 'DEBUG' if type(first) == type(second) else 'INFO'
@@ -675,7 +674,7 @@ class _Verify(_BuiltInBase):
         self._should_not_be_equal(first, second, msg, values)
 
     def _should_not_be_equal(self, first, second, msg, values):
-        asserts.fail_if_equal(first, second, msg, self._include_values(values))
+        assert_not_equal(first, second, msg, self._include_values(values))
 
     def should_not_be_equal_as_integers(self, first, second, msg=None,
                                         values=True, base=None):
@@ -793,8 +792,9 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        msg = self._get_string_msg(str1, str2, msg, values, 'starts with')
-        asserts.fail_if(str1.startswith(str2), msg)
+        if str1.startswith(str2):
+            raise AssertionError(self._get_string_msg(str1, str2, msg, values,
+                                                      'starts with'))
 
     def should_start_with(self, str1, str2, msg=None, values=True):
         """Fails if the string ``str1`` does not start with the string ``str2``.
@@ -802,8 +802,9 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        msg = self._get_string_msg(str1, str2, msg, values, 'does not start with')
-        asserts.fail_unless(str1.startswith(str2), msg)
+        if not str1.startswith(str2):
+            raise AssertionError(self._get_string_msg(str1, str2, msg, values,
+                                                      'does not start with'))
 
     def should_not_end_with(self, str1, str2, msg=None, values=True):
         """Fails if the string ``str1`` ends with the string ``str2``.
@@ -811,8 +812,9 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        msg = self._get_string_msg(str1, str2, msg, values, 'ends with')
-        asserts.fail_if(str1.endswith(str2), msg)
+        if str1.endswith(str2):
+            raise AssertionError(self._get_string_msg(str1, str2, msg, values,
+                                                      'ends with'))
 
     def should_end_with(self, str1, str2, msg=None, values=True):
         """Fails if the string ``str1`` does not end with the string ``str2``.
@@ -820,11 +822,12 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        msg = self._get_string_msg(str1, str2, msg, values, 'does not end with')
-        asserts.fail_unless(str1.endswith(str2), msg)
+        if not str1.endswith(str2):
+            raise AssertionError(self._get_string_msg(str1, str2, msg, values,
+                                                      'does not end with'))
 
-    def should_not_contain(self, item1, item2, msg=None, values=True):
-        """Fails if ``item1`` contains ``item2`` one or more times.
+    def should_not_contain(self, container, item, msg=None, values=True):
+        """Fails if ``container`` contains ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
         operator. See `Should Be Equal` for an explanation on how to override
@@ -832,24 +835,26 @@ class _Verify(_BuiltInBase):
 
         Examples:
         | Should Not Contain | ${output}    | FAILED |
-        | Should Not Contain | ${some_list} | value  |
+        | Should Not Contain | ${some list} | value  |
         """
-        msg = self._get_string_msg(item1, item2, msg, values, 'contains')
-        asserts.fail_if(item2 in item1, msg)
+        if item in container:
+            raise AssertionError(self._get_string_msg(container, item, msg,
+                                                      values, 'contains'))
 
-    def should_contain(self, item1, item2, msg=None, values=True):
-        """Fails if ``item1`` does not contain ``item2`` one or more times.
+    def should_contain(self, container, item, msg=None, values=True):
+        """Fails if ``container`` does not contain ``item`` one or more times.
 
         Works with strings, lists, and anything that supports Python's ``in``
         operator. See `Should Be Equal` for an explanation on how to override
         the default error message with ``msg`` and ``values``.
 
         Examples:
-        | Should Contain | ${output}    | PASS |
-        | Should Contain | ${some_list} | value  |
+        | Should Contain | ${output}    | PASS  |
+        | Should Contain | ${some list} | value |
         """
-        msg = self._get_string_msg(item1, item2, msg, values, 'does not contain')
-        asserts.fail_unless(item2 in item1, msg)
+        if item not in container:
+            raise AssertionError(self._get_string_msg(container, item, msg,
+                                                      values, 'does not contain'))
 
     def should_contain_x_times(self, item1, item2, count, msg=None):
         """Fails if ``item1`` does not contain ``item2`` ``count`` times.
@@ -899,8 +904,9 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        msg = self._get_string_msg(string, pattern, msg, values, 'matches')
-        asserts.fail_if(self._matches(string, pattern), msg)
+        if self._matches(string, pattern):
+            raise AssertionError(self._get_string_msg(string, pattern, msg,
+                                                      values, 'matches'))
 
     def should_match(self, string, pattern, msg=None, values=True):
         """Fails unless the given ``string`` matches the given ``pattern``.
@@ -912,9 +918,9 @@ class _Verify(_BuiltInBase):
         See `Should Be Equal` for an explanation on how to override the default
         error message with ``msg`` and ``values``.
         """
-        msg = self._get_string_msg(string, pattern, msg, values,
-                                   'does not match')
-        asserts.fail_unless(self._matches(string, pattern), msg)
+        if not self._matches(string, pattern):
+            raise AssertionError(self._get_string_msg(string, pattern, msg,
+                                                      values, 'does not match'))
 
     def should_match_regexp(self, string, pattern, msg=None, values=True):
         """Fails if ``string`` does not match ``pattern`` as a regular expression.
@@ -965,9 +971,10 @@ class _Verify(_BuiltInBase):
         | ${group1} = 'Bar'
         | ${group2} = '43'
         """
-        msg = self._get_string_msg(string, pattern, msg, values, 'does not match')
         res = re.search(pattern, string)
-        asserts.fail_if_none(res, msg, values=False)
+        if res is None:
+            raise AssertionError(self._get_string_msg(string, pattern, msg,
+                                                      values, 'does not match'))
         match = res.group(0)
         groups = res.groups()
         if groups:
@@ -979,8 +986,9 @@ class _Verify(_BuiltInBase):
 
         See `Should Match Regexp` for more information about arguments.
         """
-        msg = self._get_string_msg(string, pattern, msg, values, 'matches')
-        asserts.fail_unless_none(re.search(pattern, string), msg, values=False)
+        if re.search(pattern, string) is not None:
+            raise AssertionError(self._get_string_msg(string, pattern, msg,
+                                                      values, 'matches'))
 
     def get_length(self, item):
         """Returns and logs the length of the given item as an integer.

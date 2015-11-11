@@ -15,7 +15,7 @@
 from robot.api import logger
 from robot.utils import (is_dict_like, is_string, is_truthy, plural_or_not,
                          seq2str, seq2str2, type_name, unic, Matcher)
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equal
 from robot.version import get_version
 
 
@@ -384,7 +384,7 @@ class _List(object):
         for index, (item1, item2) in enumerate(zip(list1, list2)):
             name = ' (%s)' % names[index] if index in names else ''
             try:
-                assert_equals(item1, item2, msg='Index %d%s' % (index, name))
+                assert_equal(item1, item2, msg='Index %d%s' % (index, name))
             except AssertionError as err:
                 yield unic(err)
 
@@ -727,7 +727,7 @@ class _Dictionary(object):
     def _yield_dict_diffs(self, keys, dict1, dict2):
         for key in keys:
             try:
-                assert_equals(dict1[key], dict2[key], msg='Key %s' % (key,))
+                assert_equal(dict1[key], dict2[key], msg='Key %s' % (key,))
             except AssertionError as err:
                 yield unic(err)
 

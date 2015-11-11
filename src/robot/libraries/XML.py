@@ -28,7 +28,7 @@ from robot.utils import (asserts, ET, ETSource, is_string, is_truthy,
 from robot.version import get_version
 
 
-should_be_equal = asserts.assert_equals
+should_be_equal = asserts.assert_equal
 should_match = BuiltIn().should_match
 
 
