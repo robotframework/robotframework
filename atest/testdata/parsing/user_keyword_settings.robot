@@ -18,9 +18,6 @@ Names are not formatted
 Documentation
     Documentation
 
-Documentaion using old [Document] setting
-    Documentaion using old [Document] setting
-
 Documentation in multiple columns
     Documentation in multiple columns
 
@@ -97,10 +94,6 @@ user_keyword nameS _are_not_ FORmatted
 
 Documentation
     [Documentation]    Documentation for this user keyword
-    No Operation
-
-Documentaion using old [Document] setting
-    [Document]    This should be deprecated...
     No Operation
 
 Documentation in multiple columns

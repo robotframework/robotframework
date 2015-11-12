@@ -14,9 +14,6 @@ Name
 Documentation
     Verify Documentation    Documentation for this test case
 
-Documentaion using old [Document] setting
-    Verify Documentation    This should be deprecated...
-
 Documentation in multiple columns
     Verify Documentation    Documentation for this test case in multiple columns
 

@@ -276,19 +276,34 @@ class _Table(object):
 
 
 class _WithSettings(object):
+    _deprecated = {'document': 'Documentation',
+                   'suiteprecondition': 'Suite Setup',
+                   'suitepostcondition': 'Suite Teardown',
+                   'testprecondition': 'Test Setup',
+                   'testpostcondition': 'Test Teardown',
+                   'precondition': 'Setup',
+                   'postcondition': 'Teardown'}
 
     def get_setter(self, setting_name):
         normalized = self.normalize(setting_name)
+        if normalized in self._deprecated:
+            self._report_deprecated(setting_name, self._deprecated[normalized])
+            normalized = self.normalize(self._deprecated[normalized])
         if normalized in self._setters:
             return self._setters[normalized](self)
         self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
+
+    def _report_deprecated(self, deprecated, use_instead):
+         self.report_invalid_syntax(
+             "Setting '%s' is deprecated. Use '%s' instead."
+             % (deprecated.rstrip(':'), use_instead), level='WARN')
 
     def is_setting(self, setting_name):
         return self.normalize(setting_name) in self._setters
 
     def normalize(self, setting):
         result = normalize(setting)
-        return result[0:-1] if result and result[-1]==':' else result
+        return result[:-1] if result[-1:] == ':' else result
 
 
 class _SettingTable(_Table, _WithSettings):
@@ -335,15 +350,10 @@ class _SettingTable(_Table, _WithSettings):
 class TestCaseFileSettingTable(_SettingTable):
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'suitesetup': lambda s: s.suite_setup.populate,
-                'suiteprecondition': lambda s: s.suite_setup.populate,
                 'suiteteardown': lambda s: s.suite_teardown.populate,
-                'suitepostcondition': lambda s: s.suite_teardown.populate,
                 'testsetup': lambda s: s.test_setup.populate,
-                'testprecondition': lambda s: s.test_setup.populate,
                 'testteardown': lambda s: s.test_teardown.populate,
-                'testpostcondition': lambda s: s.test_teardown.populate,
                 'forcetags': lambda s: s.force_tags.populate,
                 'defaulttags': lambda s: s.default_tags.populate,
                 'testtemplate': lambda s: s.test_template.populate,
@@ -364,7 +374,6 @@ class TestCaseFileSettingTable(_SettingTable):
 class ResourceFileSettingTable(_SettingTable):
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'library': lambda s: s.imports.populate_library,
                 'resource': lambda s: s.imports.populate_resource,
                 'variables': lambda s: s.imports.populate_variables}
@@ -377,15 +386,10 @@ class ResourceFileSettingTable(_SettingTable):
 class InitFileSettingTable(_SettingTable):
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'suitesetup': lambda s: s.suite_setup.populate,
-                'suiteprecondition': lambda s: s.suite_setup.populate,
                 'suiteteardown': lambda s: s.suite_teardown.populate,
-                'suitepostcondition': lambda s: s.suite_teardown.populate,
                 'testsetup': lambda s: s.test_setup.populate,
-                'testprecondition': lambda s: s.test_setup.populate,
                 'testteardown': lambda s: s.test_teardown.populate,
-                'testpostcondition': lambda s: s.test_teardown.populate,
                 'testtimeout': lambda s: s.test_timeout.populate,
                 'forcetags': lambda s: s.force_tags.populate,
                 'library': lambda s: s.imports.populate_library,
@@ -524,12 +528,9 @@ class TestCase(_WithSteps, _WithSettings):
         self.steps = []
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'template': lambda s: s.template.populate,
                 'setup': lambda s: s.setup.populate,
-                'precondition': lambda s: s.setup.populate,
                 'teardown': lambda s: s.teardown.populate,
-                'postcondition': lambda s: s.teardown.populate,
                 'tags': lambda s: s.tags.populate,
                 'timeout': lambda s: s.timeout.populate}
 
@@ -579,7 +580,6 @@ class UserKeyword(TestCase):
         self.steps = []
 
     _setters = {'documentation': lambda s: s.doc.populate,
-                'document': lambda s: s.doc.populate,
                 'arguments': lambda s: s.args.populate,
                 'return': lambda s: s.return_.populate,
                 'timeout': lambda s: s.timeout.populate,

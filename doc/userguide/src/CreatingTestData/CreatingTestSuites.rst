@@ -28,8 +28,7 @@ test suite:
    Used for setting `free test suite metadata`_ as name-value
    pairs.
 `Suite Setup`:setting:, `Suite Teardown`:setting:
-   Specify `suite setup and teardown`_. Have also synonyms
-   :setting:`Suite Precondition` and :setting:`Suite Postcondition`, respectively.
+   Specify `suite setup and teardown`_.
 
 .. note:: All setting names can optionally include a colon at the end, for
       example :setting:`Documentation:`. This can make reading the settings easier
@@ -208,9 +207,7 @@ __ `Test setup and teardown`_
 Similarly as with test cases, a suite setup and teardown are keywords
 that may take arguments. They are defined in the Setting table with
 :setting:`Suite Setup` and :setting:`Suite Teardown` settings,
-respectively. They also have similar synonyms, :setting:`Suite
-Precondition` and :setting:`Suite Postcondition`, as a test case setup
-and teardown have. Keyword names and possible arguments are located in
+respectively. Keyword names and possible arguments are located in
 the columns after the setting name.
 
 If a suite setup fails, all test cases in it and its child test suites

@@ -24,10 +24,6 @@ Documentation
     [Documentation]    Documentation for this test case
     No Operation
 
-Documentaion using old [Document] setting
-    [Document]    This should be deprecated...
-    No Operation
-
 Documentation in multiple columns
     [Documentation]    Documentation    for this test case    in multiple columns
     No Operation

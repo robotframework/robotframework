@@ -68,9 +68,7 @@ below and explained later in this section.
     Used for `tagging test cases`_.
 
 `[Setup]`:setting:, `[Teardown]`:setting:
-   Specify `test setup and teardown`_. Have also synonyms
-   :setting:`[Precondition]` and :setting:`[Postcondition]`,
-   respectively.
+   Specify `test setup and teardown`_.
 
 `[Template]`:setting:
    Specifies the `template keyword`_ to use. The test itself will contain only
@@ -101,9 +99,7 @@ test case specific settings listed earlier.
    The forced and default values for tags_.
 
 `Test Setup`:setting:, `Test Teardown`:setting:
-   The default values for `test setup and teardown`_. Have also synonyms
-   :setting:`Test Precondition` and :setting:`Test Postcondition`,
-   respectively.
+   The default values for `test setup and teardown`_.
 
 `Test Template`:setting:
    The default `template keyword`_ to use.
@@ -690,22 +686,6 @@ a test has no setup/teardown.
        [Setup]    ${SETUP}
        Do Something
        [Teardown]    ${TEARDOWN}
-
-Often when creating use-case-like test cases, the terms *precondition*
-and *postcondition* are preferred over the terms setup and
-teardown. Robot Framework supports also this terminology, so that a
-precondition is a synonym to a setup and a postcondition to a
-teardown.
-
-.. table:: Setup and teardown synonyms
-   :class: tabular
-
-   =================  ===================
-   Test Setup         Test Precondition
-   Test Teardown      Test Postcondition
-   [Setup]            [Precondition]
-   [Teardown]         [Postcondition]
-   =================  ===================
 
 The name of the keyword to be executed as a setup or a teardown can be a
 variable. This facilitates having different setups or teardowns in

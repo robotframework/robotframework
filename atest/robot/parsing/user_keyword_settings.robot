@@ -13,9 +13,6 @@ Name
 Documentation
     Verify Documentation    Documentation for this user keyword
 
-Documentaion using old [Document] setting
-    Verify Documentation    This should be deprecated...
-
 Documentation in multiple columns
     Verify Documentation    Documentation for this user keyword in multiple columns
 

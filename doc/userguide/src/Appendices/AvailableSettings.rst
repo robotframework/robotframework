@@ -35,12 +35,6 @@ importing libraries, resources, and variables.
    +-----------------+--------------------------------------------------------+
    | Suite Teardown  | Used for specifying the `suite teardown`_.             |
    +-----------------+--------------------------------------------------------+
-   | Suite           | A synonym for Suite Setup.                             |
-   | Precondition    |                                                        |
-   +-----------------+--------------------------------------------------------+
-   | Suite           | A synonym for Suite Teardown.                          |
-   | Postcondition   |                                                        |
-   +-----------------+--------------------------------------------------------+
    | Force Tags      | Used for specifying forced values for tags when        |
    |                 | `tagging test cases`_.                                 |
    +-----------------+--------------------------------------------------------+
@@ -50,12 +44,6 @@ importing libraries, resources, and variables.
    | Test Setup      | Used for specifying a default `test setup`_.           |
    +-----------------+--------------------------------------------------------+
    | Test Teardown   | Used for specifying a default `test teardown`_.        |
-   +-----------------+--------------------------------------------------------+
-   | Test            | A synonym for Test Setup.                              |
-   | Precondition    |                                                        |
-   +-----------------+--------------------------------------------------------+
-   | Test            | A synonym for Test Teardown.                           |
-   | Postcondition   |                                                        |
    +-----------------+--------------------------------------------------------+
    | Test Template   | Used for specifying a default `template keyword`_      |
    |                 | for test cases.                                        |
@@ -90,10 +78,6 @@ default values defined in the Settings table.
    | [Setup]         | Used for specifying a `test setup`_.                   |
    +-----------------+--------------------------------------------------------+
    | [Teardown]      | Used for specifying a `test teardown`_.                |
-   +-----------------+--------------------------------------------------------+
-   | [Precondition]  | A synonym for [Setup].                                 |
-   +-----------------+--------------------------------------------------------+
-   | [Postcondition] | A synonym for [Teardown].                              |
    +-----------------+--------------------------------------------------------+
    | [Template]      | Used for specifying a `template keyword`_.             |
    +-----------------+--------------------------------------------------------+
