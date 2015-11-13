@@ -11,8 +11,6 @@ ${TESTFILE 2}     ${BASE}${/}${TESTFILE 2 SHORT NAME}
 ${TESTDIR}        ${BASE}${/}d1
 ${NON ASCII}      ${BASE}${/}nön-äscïï
 ${WITH SPACE}     ${BASE}${/}with space
-${SYSTEM ENCODING FILE}     ${BASE}${/}${/}system_encoding.txt
-${CONSOLE ENCODING FILE}    ${BASE}${/}console_encoding.txt
 
 *** Keywords ***
 Verify File

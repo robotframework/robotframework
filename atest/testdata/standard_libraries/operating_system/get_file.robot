@@ -48,15 +48,15 @@ Get Latin-1 With Default Encoding
     Get File    ${LATIN-1 FILE}
 
 Get file with system encoding
-    ${system encoding} =    Evaluate    robot.utils.SYSTEM_ENCODING    modules=robot
-    Create File    ${SYSTEM ENCODING FILE}    ${RESULT}    encoding=${system encoding}
-    ${file} =    Get file    ${SYSTEM ENCODING FILE}    encoding=SYSTEM
+    ${encoding} =    Evaluate    robot.utils.SYSTEM_ENCODING    modules=robot
+    Create File    ${TEST FILE}    ${RESULT}    encoding=${encoding}
+    ${file} =    Get file    ${TEST FILE}    encoding=SYStem
     Should Be Equal    ${file}    ${RESULT}
 
 Get file with console encoding
-    ${console encoding} =    Evaluate    robot.utils.CONSOLE_ENCODING    modules=robot
-    Create File    ${CONSOLE ENCODING FILE}    ${RESULT}     encoding=${console encoding}
-    ${file} =    Get file    ${CONSOLE ENCODING FILE}    encoding=CONSOLE
+    ${encoding} =    Evaluate    robot.utils.CONSOLE_ENCODING    modules=robot
+    Create File    ${TEST FILE}    ${RESULT}     encoding=${encoding}
+    ${file} =    Get file    ${TEST FILE}    encoding=COnsoLE
     Should Be Equal    ${file}    ${RESULT}
 
 Get Latin-1 With Latin-1 Encoding

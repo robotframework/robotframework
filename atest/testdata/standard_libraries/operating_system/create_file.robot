@@ -27,7 +27,9 @@ Create File With Encoding
     Спасибо        UTF-8
     Спасибо        ISO-8859-5
     Hyvää yötä!    SYSTEM
-    Hyvää yötä!    CONSOLE
+    Hyvää yötä!    sysTEM
+    Hyvää yötä!    console
+    Hyvää yötä!    CONsole
 
 Create File With Non-ASCII Name
     [Template]    Create and Verify File

@@ -243,22 +243,26 @@ class OperatingSystem(object):
         See also `Get Binary File`.
 
         ``encoding`` defines the encoding of the file. The default value is
-        UTF-8, which means that UTF-8 and ASCII-encoded files are read
-        correctly. As special cases, the encoding can take values SYSTEM and
-        CONSOLE for the underlying operating system's system encoding and
-        console encoding respectively. SYSTEM and CONSOLE encodings are new
-        in Robot Framework 3.0.
+        ``UTF-8``, which means that UTF-8 and ASCII encoded files are read
+        correctly. In addition to the encodings supported by the underlying
+        Python implementation, the following special encoding values can be
+        used:
+
+        - ``SYSTEM``: Use the default system encoding.
+        - ``CONSOLE``: Use the console encoding. Outside Windows this is same
+          as the system encoding.
 
         ``encoding_errors`` argument controls what to do if decoding some bytes
         fails. All values accepted by ``decode`` method in Python are valid, but
         in practice the following values are most useful:
 
-        - ``strict``: fail if characters cannot be decoded (default)
-        - ``ignore``: ignore characters that cannot be decoded
-        - ``replace``: replace characters that cannot be decoded with
-          a replacement character
+        - ``strict``: Fail if characters cannot be decoded (default).
+        - ``ignore``: Ignore characters that cannot be decoded.
+        - ``replace``: Replace characters that cannot be decoded with
+          a replacement character.
 
-        ``encoding_errors`` argument is new in Robot Framework 2.8.5.
+        ``encoding_errors`` argument was added in Robot Framework 2.8.5 and the
+        support for ``SYSTEM`` and ``CONSOLE`` encodings in Robot Framework 3.0.
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
@@ -274,11 +278,8 @@ class OperatingSystem(object):
         return content.replace('\r\n', '\n')
 
     def _map_encoding(self, encoding):
-        if encoding == 'SYSTEM':
-            return SYSTEM_ENCODING
-        if encoding == 'CONSOLE':
-            return CONSOLE_ENCODING
-        return encoding
+        return {'SYSTEM': SYSTEM_ENCODING,
+                'CONSOLE': CONSOLE_ENCODING}.get(encoding.upper(), encoding)
 
     def get_binary_file(self, path):
         """Returns the contents of a specified file.
@@ -336,6 +337,9 @@ class OperatingSystem(object):
         The file is logged with the INFO level. If you want something else,
         just use `Get File` and the built-in keyword `Log` with the desired
         level.
+
+        See `Get File` for more information about ``encoding`` and
+        ``encoding_errors`` arguments.
 
         ``encoding_errors`` argument is new in Robot Framework 2.8.5.
         """
@@ -548,20 +552,21 @@ class OperatingSystem(object):
         If the directory where to create file does not exist it, and possible
         intermediate missing directories, are created.
 
-        As special cases, the encoding can take values SYSTEM and CONSOLE
-        for the underlying operating system's system encoding and console
-        encoding respectively. SYSTEM and CONSOLE encodings are new in Robot
-        Framework 3.0.
+        See `Get File` for more information about possible ``encoding`` values,
+        including special values ``SYSTEM`` and ``CONSOLE``.
 
         Examples:
         | Create File | ${dir}/example.txt | Hello, world!      |         |
-        | Create File | ${path}            | Hyv\\xe4 esimerkki | latin-1 |
+        | Create File | ${path}            | Hyv\\xe4 esimerkki | Latin-1 |
         | Create File | /tmp/foo.txt       | ${content}         | SYSTEM  |
 
         Use `Append To File` if you want to append to an existing file
         and `Create Binary File` if you need to write bytes without encoding.
         `File Should Not Exist` can be used to avoid overwriting existing
         files.
+
+        The support for ``SYSTEM`` and ``CONSOLE`` encodings is new in Robot
+        Framework 3.0.
         """
         path = self._write_to_file(path, content, self._map_encoding(encoding))
         self._link("Created file '%s'.", path)
