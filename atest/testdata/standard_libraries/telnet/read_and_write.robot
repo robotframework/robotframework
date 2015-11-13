@@ -108,6 +108,25 @@ Read Until Regexp Requires At Least One Pattern
     [Documentation]    FAIL At least one pattern required
     Read Until Regexp
 
+Read Binary Data
+    # default is off (no binary transmission mode)
+    Write    echo -e He\\\\x00llo
+    ${out} =    Read Until Prompt
+    Should Be Equal    ${out}    Hello\r\n${FULL PROMPT}
+
+    # In binary transmission mode both \r and \n is interpreted as line termination, thus
+    # we must only use one of them.
+    Set Newline    LF
+    Enable Binary Transmission Mode
+    Write    echo -e He\\\\x00llo
+    ${out} =    Read Until Prompt
+    Should Be Equal    ${out}    He\x00llo\r\n${FULL PROMPT}
+
+    Disable Binary Transmission Mode
+    Write    echo -e He\\\\x00llo
+    ${out} =    Read Until Prompt
+    Should Be Equal    ${out}    Hello\r\n${FULL PROMPT}
+
 Read Until Prompt
     [Documentation]    FAIL Prompt '$$' not found in ${TIMEOUT}.
     Write    pwd

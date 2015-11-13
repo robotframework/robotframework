@@ -530,7 +530,9 @@ class TelnetConnection(telnetlib.Telnet):
         self._terminal_type = self._encode(terminal_type) if terminal_type else None
         self.set_option_negotiation_callback(self._negotiate_options)
         self._set_telnetlib_log_level(telnetlib_log_level)
-        self._opt_responses = list()
+        self._opt_responses = set()
+        self._allow_binary = False
+        self._binary_enabled = False
 
     def set_timeout(self, timeout):
         """Sets the timeout used for waiting output in the current connection.
@@ -726,6 +728,28 @@ class TelnetConnection(telnetlib.Telnet):
         output = self._decode(self.read_all())
         self._log(output, loglevel)
         return output
+
+    def _binary_transmission_mode(self, enable):
+        # both directions should be affected
+        if enable:
+            self.sock.sendall(telnetlib.IAC + telnetlib.DO + telnetlib.BINARY)
+            self.sock.sendall(telnetlib.IAC + telnetlib.WILL + telnetlib.BINARY)
+        else:
+            self.sock.sendall(telnetlib.IAC + telnetlib.DONT + telnetlib.BINARY)
+            self.sock.sendall(telnetlib.IAC + telnetlib.WONT + telnetlib.BINARY)
+
+        # XXX: this is rather hacky. Because we may have a state transision for
+        # the BINARY option, we have to remove it from our option responses
+        for cmd in (telnetlib.DO, telnetlib.DONT, telnetlib.WILL, telnetlib.WONT):
+            self._opt_responses.discard((cmd, telnetlib.BINARY))
+
+        self._allow_binary = enable
+
+    def enable_binary_transmission_mode(self):
+        self._binary_transmission_mode(enable=True)
+
+    def disable_binary_transmission_mode(self):
+        self._binary_transmission_mode(enable=False)
 
     def login(self, username, password, login_prompt='login: ',
               password_prompt='Password: ', login_timeout='1 second',
@@ -1128,22 +1152,33 @@ class TelnetConnection(telnetlib.Telnet):
             if (cmd, opt) in self._opt_responses:
                 return
             else:
-                self._opt_responses.append((cmd, opt))
+                self._opt_responses.add((cmd, opt))
 
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
             self._opt_echo_on(opt)
+        elif opt == telnetlib.BINARY and cmd in (telnetlib.WILL, telnetlib.WONT):
+            self._binary_enabled = self._allow_binary and cmd == telnetlib.WILL
         elif cmd == telnetlib.DO and opt == telnetlib.TTYPE and self._terminal_type:
             self._opt_terminal_type(opt, self._terminal_type)
         elif cmd == telnetlib.DO and opt == telnetlib.NEW_ENVIRON and self._environ_user:
             self._opt_environ_user(opt, self._environ_user)
         elif cmd == telnetlib.DO and opt == telnetlib.NAWS and self._window_size:
             self._opt_window_size(opt, *self._window_size)
+        elif cmd == telnetlib.DO and opt == telnetlib.BINARY:
+            self._opt_binary_on(opt)
         elif opt != telnetlib.NOOPT:
             self._opt_dont_and_wont(cmd, opt)
 
     def _opt_echo_on(self, opt):
         return self.sock.sendall(telnetlib.IAC + telnetlib.DO + opt)
+
+    def _opt_binary_on(self, opt):
+        if self._allow_binary:
+            cmd = telnetlib.WILL
+        else:
+            cmd = telnetlib.WONT
+        return self.sock.sendall(telnetlib.IAC + cmd + opt)
 
     def _opt_terminal_type(self, opt, terminal_type):
         self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
@@ -1184,6 +1219,79 @@ class TelnetConnection(telnetlib.Telnet):
         return TerminalEmulator(window_size=self._window_size,
                                 newline=self._newline, encoding=self._encoding)
 
+    def process_rawq(self):
+        if not self._binary_enabled:
+            return telnetlib.Telnet.process_rawq(self)
+        # If binary mode is enabled, we must not skip '\000' and '\021' bytes.
+        # Unfortunately, there seems to be no better way to do this, than
+        # copying most of the original function and comment out some lines
+        # after rawq_getchar(), see below.
+        # See also: http://bugs.python.org/issue25334
+        buf = [b'', b'']
+        try:
+            while self.rawq:
+                c = self.rawq_getchar()
+                if not self.iacseq:
+                    #if c == telnetlib.theNULL:
+                    #    continue
+                    #if c == b"\021":
+                    #    continue
+                    if c != telnetlib.IAC:
+                        buf[self.sb] = buf[self.sb] + c
+                        continue
+                    else:
+                        self.iacseq += c
+                elif len(self.iacseq) == 1:
+                    # 'IAC: IAC CMD [OPTION only for WILL/WONT/DO/DONT]'
+                    if c in (telnetlib.DO, telnetlib.DONT, telnetlib.WILL,
+                            telnetlib.WONT):
+                        self.iacseq += c
+                        continue
+
+                    self.iacseq = b''
+                    if c == telnetlib.IAC:
+                        buf[self.sb] = buf[self.sb] + c
+                    else:
+                        if c == telnetlib.SB: # SB ... SE start.
+                            self.sb = 1
+                            self.sbdataq = ''
+                        elif c == telnetlib.SE:
+                            self.sb = 0
+                            self.sbdataq = self.sbdataq + buf[1]
+                            buf[1] = b''
+                        if self.option_callback:
+                            # Callback is supposed to look into
+                            # the sbdataq
+                            self.option_callback(self.sock, c, telnetlib.NOOPT)
+                        else:
+                            # We can't offer automatic processing of
+                            # suboptions. Alas, we should not get any
+                            # unless we did a WILL/DO before.
+                            self.msg('IAC %d not recognized' % ord(c))
+                elif len(self.iacseq) == 2:
+                    cmd = self.iacseq[1:2]
+                    self.iacseq = b''
+                    opt = c
+                    if cmd in (telnetlib.DO, telnetlib.DONT):
+                        self.msg('IAC %s %d',
+                            cmd == telnetlib.DO and 'DO' or 'DONT', ord(opt))
+                        if self.option_callback:
+                            self.option_callback(self.sock, cmd, opt)
+                        else:
+                            self.sock.sendall(telnetlib.IAC + telnetlib.WONT + opt)
+                    elif cmd in (telnetlib.WILL, telnetlib.WONT):
+                        self.msg('IAC %s %d',
+                            cmd == telnetlib.WILL and 'WILL' or 'WONT', ord(opt))
+                        if self.option_callback:
+                            self.option_callback(self.sock, cmd, opt)
+                        else:
+                            self.sock.sendall(telnetlib.IAC + telnetlib.DONT + opt)
+        except EOFError: # raised by self.rawq_getchar()
+            self.iacseq = b'' # Reset on EOF
+            self.sb = 0
+            pass
+        self.cookedq = self.cookedq + buf[0]
+        self.sbdataq = self.sbdataq + buf[1]
 
 class TerminalEmulator(object):
 
