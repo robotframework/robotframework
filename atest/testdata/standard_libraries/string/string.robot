@@ -86,3 +86,27 @@ Get Substring With Invalid Start
 Get Substring With Invalid End
     [Documentation]    FAIL ValueError: Cannot convert 'end' argument 'invalid' to an integer.
     Get Substring    Hello Robot    2    invalid
+
+Strip String
+    ${result} =    Strip String    ${SPACE}${SPACE}Hello${SPACE}
+    Should be equal    ${result}    Hello
+
+Strip String Left
+    ${result} =    Strip String    ${SPACE}${SPACE}Hello${SPACE}    mode=left
+    Should be equal    ${result}    Hello${SPACE}
+
+Strip String Right
+    ${result} =    Strip String    ${SPACE}${SPACE}Hello${SPACE}    mode=RiGht
+    Should be equal    ${result}    ${SPACE}${SPACE}Hello
+
+Strip String None
+    ${result} =    Strip String    ${SPACE}${SPACE}Hello${SPACE}    mode=none
+    Should be equal    ${result}    ${SPACE}${SPACE}Hello${SPACE}
+
+Strip String With Invalid Mode
+    [Documentation]    FAIL ValueError: Invalid mode 'invalid'.
+    Strip String  Hello  invalid
+
+Strip String With Given Characters
+    ${result} =    Strip String    aabaHelloeee    characters=abe
+    Should be equal    ${result}    Hello

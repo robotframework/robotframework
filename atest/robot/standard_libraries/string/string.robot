@@ -52,4 +52,20 @@ Get Substring With Invalid Start
 Get Substring With Invalid End
     Check Test Case    ${TESTNAME}
 
+Strip String
+    Check Test Case    ${TESTNAME}
 
+Strip String Left
+    Check Test Case    ${TESTNAME}
+
+Strip String Right
+    Check Test Case    ${TESTNAME}
+
+Strip String None
+    Check Test Case    ${TESTNAME}
+
+Strip String With Invalid Mode
+    Check Test Case    ${TESTNAME}
+
+Strip String With Given Characters
+    Check Test Case    ${TESTNAME}
