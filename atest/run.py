@@ -10,10 +10,11 @@ Available options are the same that can be used with Robot Framework.
 See its help (e.g. `pybot --help`) for more information.
 
 The specified interpreter is used by acceptance tests under `atest/robot` to
-run test cases under `atest/testdata`. It can be simply `python` or `jython`
-(if they are in PATH) or a path to a selected interpreter (e.g.
-`/usr/bin/python26`) or a path to a robotframework standalone jar (e.g.
-`dist/robotframework-2.9dev234.jar`).
+run test cases under `atest/testdata`. It can be the name of the interpreter
+like (e.g. `python` or `jython`, a path to the selected interpreter like
+`/usr/bin/python26`, or a path to the standalone jar distribution (e.g.
+`dist/robotframework-2.9dev234.jar`). If the interpreter itself needs
+arguments, the interpreter and arguments need to be quoted like `"py -3"`.
 
 As a special case the interpreter value `standalone` will compile a new
 standalone jar from the current sources and execute the acceptance tests with
@@ -24,6 +25,7 @@ Note that this script itself must always be executed with Python 2.7.
 Examples:
 $ atest/run.py python --test example atest/robot
 $ atest/run.py /opt/jython27/bin/jython atest/robot/tags/tag_doc.robot
+> atest\\run.py "py -3" -e no-ci atest\\robot
 """
 
 from __future__ import print_function
