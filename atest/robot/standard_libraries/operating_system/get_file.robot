@@ -26,6 +26,12 @@ Get Latin-1 With Default Encoding
 Get Latin-1 With Latin-1 Encoding
     Check testcase    ${TESTNAME}
 
+Get file with system encoding
+    Check testcase    ${TESTNAME}
+
+Get file with console encoding
+    Check testcase    ${TESTNAME}
+
 Get Utf-16 File with Default Encoding
     Check testcase    ${TESTNAME}
 

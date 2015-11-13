@@ -15,6 +15,8 @@ ${UTF-16 BE FILE}           ${CURDIR}${/}files${/}utf-16BE.txt       # Big Endia
 ${UTF-16 LE W/ BOM FILE}    ${CURDIR}${/}files${/}utf-16LEBOM.txt    # Little Endian with Byte Order Marker
 ${UTF-16 BE W/ BOM FILE}    ${CURDIR}${/}files${/}utf-16BEBOM.txt    # Big Endian with BOM
 ${UTF-8 WINDOWS FILE}       ${CURDIR}${/}files${/}utf-8_windows_line_endings.txt
+${SYSTEM ENCODING FILE}     ${CURDIR}${/}files${/}system_encoding.txt
+${CONSOLE ENCODING FILE}    ${CURDIR}${/}files${/}console_encoding.txt
 ${RESULT}                   Hyvää üötä
 
 *** Test Cases ***
@@ -46,6 +48,18 @@ Get Ascii File With Default Encoding
 Get Latin-1 With Default Encoding
     [Documentation]    FAIL REGEXP: (UnicodeDecodeError|UnicodeError): .*
     Get File    ${LATIN-1 FILE}
+
+Get file with system encoding
+    ${system encoding} =    Evaluate    robot.utils.SYSTEM_ENCODING    modules=robot
+    Create File    ${SYSTEM ENCODING FILE}    ${RESULT}
+    ${file} =    Get file    ${SYSTEM ENCODING FILE}    encoding=SYSTEM
+    Should Be Equal    ${file}    ${RESULT}
+
+Get file with console encoding
+    ${system encoding} =    Evaluate    robot.utils.CONSOLE_ENCODING    modules=robot
+    Create File    ${CONSOLE ENCODING FILE}    ${RESULT}
+    ${file} =    Get file    ${CONSOLE ENCODING FILE}    encoding=CONSOLE
+    Should Be Equal    ${file}    ${RESULT}
 
 Get Latin-1 With Latin-1 Encoding
     ${file} =    Get File    ${LATIN-1 FILE}    Latin-1

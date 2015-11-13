@@ -39,7 +39,8 @@ from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict, OrderedDict
 from .encoding import (console_decode, console_encode,
-                       system_decode, system_encode)
+                       system_decode, system_encode, CONSOLE_ENCODING,
+                       SYSTEM_ENCODING)
 from .error import (get_error_message, get_error_details, ErrorDetails)
 from .escaping import escape, unescape, split_from_equals
 from .etreewrapper import ET, ETSource

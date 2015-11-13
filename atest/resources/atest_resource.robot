@@ -124,8 +124,7 @@ Check Keyword Data
 Get Output File
     [Arguments]    ${path}
     [Documentation]    Output encoding avare helper
-    ${system}    ${console} =    Evaluate    robot.utils.encoding.SYSTEM_ENCODING, robot.utils.encoding.CONSOLE_ENCODING    modules=robot
-    ${encoding} =    Set Variable If    ${INTERPRETER.is_ironpython}    ${console}    ${system}
+    ${encoding} =    Set Variable If    ${INTERPRETER.is_ironpython}    CONSOLE    SYSTEM
     ${encoding} =    Set Variable If    r'${path}' in [r'${STDERR FILE}',r'${STDOUT FILE}']    ${encoding}    UTF-8
     ${file} =    Get File    ${path}    ${encoding}
     [Return]    ${file}

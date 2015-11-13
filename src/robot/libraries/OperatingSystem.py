@@ -27,7 +27,8 @@ from robot.utils import (abspath, ConnectionCache, console_decode, del_env_var,
                          get_env_var, get_env_vars, get_time, is_truthy,
                          is_unicode, normpath, parse_time, plural_or_not,
                          secs_to_timestamp, secs_to_timestr, seq2str,
-                         set_env_var, timestr_to_secs, unic, IRONPYTHON, PY2)
+                         set_env_var, timestr_to_secs, unic, CONSOLE_ENCODING,
+                         IRONPYTHON, PY2, SYSTEM_ENCODING)
 
 __version__ = get_version()
 PROCESSES = ConnectionCache('No active processes.')
@@ -243,7 +244,10 @@ class OperatingSystem(object):
 
         ``encoding`` defines the encoding of the file. The default value is
         UTF-8, which means that UTF-8 and ASCII-encoded files are read
-        correctly.
+        correctly. As special cases, the encoding can take values SYSTEM and
+        CONSOLE for the underlying operating system's system encoding and
+        console encoding respectively. SYSTEM and CONSOLE encodings are new
+        in Robot Framework 3.0.
 
         ``encoding_errors`` argument controls what to do if decoding some bytes
         fails. All values accepted by ``decode`` method in Python are valid, but
@@ -258,6 +262,7 @@ class OperatingSystem(object):
         """
         path = self._absnorm(path)
         self._link("Getting file '%s'.", path)
+        encoding = self._map_encoding(encoding)
         if IRONPYTHON:
             # https://github.com/IronLanguages/main/issues/1233
             with open(path) as f:
@@ -267,6 +272,13 @@ class OperatingSystem(object):
                          newline='') as f:
                 content = f.read()
         return content.replace('\r\n', '\n')
+
+    def _map_encoding(self, encoding):
+        if encoding == 'SYSTEM':
+            return SYSTEM_ENCODING
+        if encoding == 'CONSOLE':
+            return CONSOLE_ENCODING
+        return encoding
 
     def get_binary_file(self, path):
         """Returns the contents of a specified file.
@@ -536,16 +548,22 @@ class OperatingSystem(object):
         If the directory where to create file does not exist it, and possible
         intermediate missing directories, are created.
 
+        As special cases, the encoding can take values SYSTEM and CONSOLE
+        for the underlying operating system's system encoding and console
+        encoding respectively. SYSTEM and CONSOLE encodings are new in Robot
+        Framework 3.0.
+
         Examples:
         | Create File | ${dir}/example.txt | Hello, world!      |         |
         | Create File | ${path}            | Hyv\\xe4 esimerkki | latin-1 |
+        | Create File | /tmp/foo.txt       | ${content}         | SYSTEM  |
 
         Use `Append To File` if you want to append to an existing file
         and `Create Binary File` if you need to write bytes without encoding.
         `File Should Not Exist` can be used to avoid overwriting existing
         files.
         """
-        path = self._write_to_file(path, content, encoding)
+        path = self._write_to_file(path, content, self._map_encoding(encoding))
         self._link("Created file '%s'.", path)
 
     def _write_to_file(self, path, content, encoding=None, mode='w'):
