@@ -19,9 +19,9 @@ import time
 import signal as signal_module
 
 from robot.utils import (ConnectionCache, abspath, cmdline2list, console_decode,
-                         is_list_like, is_truthy, NormalizedDict,
-                         secs_to_timestr, system_encode, timestr_to_secs,
-                         IRONPYTHON, JYTHON, WINDOWS)
+                         is_list_like, is_truthy, NormalizedDict, py2to3,
+                         secs_to_timestr, system_decode, system_encode,
+                         timestr_to_secs, IRONPYTHON, JYTHON, WINDOWS)
 from robot.version import get_version
 from robot.api import logger
 
@@ -370,8 +370,8 @@ class Process(object):
     def _log_start(self, command, config):
         if is_list_like(command):
             command = self.join_command_line(command)
-        logger.info('Starting process:\n%s' % command)
-        logger.debug('Process configuration:\n%s' % config)
+        logger.info(u'Starting process:\n%s' % system_decode(command))
+        logger.debug(u'Process configuration:\n%s' % config)
 
     def is_process_running(self, handle=None):
         """Checks is the process running or not.
@@ -846,6 +846,7 @@ class ExecutionResult(object):
         return '<result object with rc %d>' % self.rc
 
 
+@py2to3
 class ProcessConfiguration(object):
 
     def __init__(self, cwd=None, shell=False, stdout=None, stderr=None,
@@ -933,14 +934,18 @@ class ProcessConfiguration(object):
                 'stderr': self.stderr_stream,
                 'output_encoding': self.output_encoding}
 
-    # FIXME: Convert to __unicode__ or at least remove system_encode.
-    # Also add tests!!
-    def __str__(self):
-        return system_encode("""\
-cwd = %s
-stdout_stream = %s
-stderr_stream = %s
-shell = %r
-alias = %s
-env = %r""" % (self.cwd, self.stdout_stream, self.stderr_stream,
-               self.shell, self.alias, self.env))
+    def __unicode__(self):
+        return """\
+cwd:     %s
+shell:   %s
+stdout:  %s
+stderr:  %s
+alias:   %s
+env:     %s""" % (self.cwd, self.shell, self._stream_name(self.stdout_stream),
+                  self._stream_name(self.stderr_stream), self.alias, self.env)
+
+    def _stream_name(self, stream):
+        if hasattr(stream, 'name'):
+            return stream.name
+        return {subprocess.PIPE: 'PIPE',
+                subprocess.STDOUT: 'STDOUT'}.get(stream, stream)

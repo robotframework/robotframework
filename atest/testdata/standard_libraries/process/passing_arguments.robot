@@ -45,3 +45,7 @@ Unsupported kwargs cause error
     ...    Run Process    command    shell=True   invalid=argument
     Keyword argument 'shellx' is not supported by this keyword.
     ...    Run Process    command    arg    shellx=True
+
+Log process config
+    Run Process    python -c pass    shell=yes    stdout=%{TEMPDIR}/stdout    cwd=%{TEMPDIR}    alias=äliäs
+    Run Process    python    -c    pass    stderr=STDOUT    cwd=${CURDIR}
