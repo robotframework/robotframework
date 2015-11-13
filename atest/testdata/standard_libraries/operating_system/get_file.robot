@@ -15,8 +15,6 @@ ${UTF-16 BE FILE}           ${CURDIR}${/}files${/}utf-16BE.txt       # Big Endia
 ${UTF-16 LE W/ BOM FILE}    ${CURDIR}${/}files${/}utf-16LEBOM.txt    # Little Endian with Byte Order Marker
 ${UTF-16 BE W/ BOM FILE}    ${CURDIR}${/}files${/}utf-16BEBOM.txt    # Big Endian with BOM
 ${UTF-8 WINDOWS FILE}       ${CURDIR}${/}files${/}utf-8_windows_line_endings.txt
-${SYSTEM ENCODING FILE}     ${CURDIR}${/}files${/}system_encoding.txt
-${CONSOLE ENCODING FILE}    ${CURDIR}${/}files${/}console_encoding.txt
 ${RESULT}                   Hyvää üötä
 
 *** Test Cases ***
