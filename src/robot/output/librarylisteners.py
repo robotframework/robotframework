@@ -12,9 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import py2to3
+from robot.utils import py2to3, type_name
+from robot.errors import DataError
 
 from .listeners import Listeners, ListenerProxy
+from .logger import LOGGER
 from .loggerhelper import AbstractLoggerProxy
 
 
@@ -51,22 +53,35 @@ class LibraryListeners(Listeners):
         from robot.running import EXECUTION_CONTEXTS
         if not EXECUTION_CONTEXTS.current:
             return []
-        listeners = [_LibraryListenerProxy(library, listener)
-                     for library in EXECUTION_CONTEXTS.current.namespace.libraries
-                     if library.has_listener
-                     for listener in library.listeners]
+        listeners = []
+        for library in EXECUTION_CONTEXTS.current.namespace.libraries:
+            if library.has_listener:
+                listeners.extend(self._import_listeners(library))
         for listener in listeners:
             if listener.library_scope == 'GLOBAL':
                 self._global_listeners[listener.logger] = listener
+        return listeners
+
+    def _import_listeners(self, library):
+        listeners = []
+        for listener in library.listeners:
+            try:
+                listeners.append(_LibraryListenerProxy(library, listener))
+            except DataError as err:
+                LOGGER.error("Taking listener '%s' into use for library '%s' failed: %s\n"
+                             "Listeners are disabled for this library."
+                             % (type_name(listener), library.name, err.message))
+                library.has_listener = False
+                return []
         return listeners
 
 
 class _LibraryListenerProxy(ListenerProxy):
 
     def __init__(self, library, listener):
-        AbstractLoggerProxy.__init__(self, listener)
         self.name = listener.__class__.__name__
         self.version = self._get_version(listener)
+        AbstractLoggerProxy.__init__(self, listener)
         self.library_scope = library.scope
 
     def _get_method_names(self, name):

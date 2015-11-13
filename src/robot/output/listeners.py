@@ -73,12 +73,9 @@ class Listeners(object):
 
     def start_suite(self, suite):
         for listener in self._listeners:
-            if listener.version == 1:
-                listener.call_method(listener.start_suite, suite.name, suite.doc)
-            else:
-                attrs = self._get_start_attrs(suite, 'metadata')
-                attrs.update(self._get_suite_attrs(suite))
-                listener.call_method(listener.start_suite, suite.name, attrs)
+            attrs = self._get_start_attrs(suite, 'metadata')
+            attrs.update(self._get_suite_attrs(suite))
+            listener.call_method(listener.start_suite, suite.name, attrs)
 
     def _get_suite_attrs(self, suite):
         return {
@@ -93,26 +90,18 @@ class Listeners(object):
             self._notify_end_suite(listener, suite)
 
     def _notify_end_suite(self, listener, suite):
-        if listener.version == 1:
-            listener.call_method(listener.end_suite, suite.status,
-                           suite.full_message)
-        else:
-            attrs = self._get_end_attrs(suite, 'metadata')
-            attrs['statistics'] = suite.stat_message
-            attrs.update(self._get_suite_attrs(suite))
-            listener.call_method(listener.end_suite, suite.name, attrs)
+        attrs = self._get_end_attrs(suite, 'metadata')
+        attrs['statistics'] = suite.stat_message
+        attrs.update(self._get_suite_attrs(suite))
+        listener.call_method(listener.end_suite, suite.name, attrs)
 
     def start_test(self, test):
         self._running_test = True
         for listener in self._listeners:
-            if listener.version == 1:
-                listener.call_method(listener.start_test, test.name, test.doc,
-                                     list(test.tags))
-            else:
-                attrs = self._get_start_attrs(test, 'tags')
-                attrs['critical'] = 'yes' if test.critical else 'no'
-                attrs['template'] = test.template or ''
-                listener.call_method(listener.start_test, test.name, attrs)
+            attrs = self._get_start_attrs(test, 'tags')
+            attrs['critical'] = 'yes' if test.critical else 'no'
+            attrs['template'] = test.template or ''
+            listener.call_method(listener.start_test, test.name, attrs)
 
     def end_test(self, test):
         self._running_test = False
@@ -120,31 +109,22 @@ class Listeners(object):
             self._notify_end_test(listener, test)
 
     def _notify_end_test(self, listener, test):
-        if listener.version == 1:
-            listener.call_method(listener.end_test, test.status, test.message)
-        else:
-            attrs = self._get_end_attrs(test, 'tags')
-            attrs['critical'] = 'yes' if test.critical else 'no'
-            attrs['template'] = test.template or ''
-            listener.call_method(listener.end_test, test.name, attrs)
+        attrs = self._get_end_attrs(test, 'tags')
+        attrs['critical'] = 'yes' if test.critical else 'no'
+        attrs['template'] = test.template or ''
+        listener.call_method(listener.end_test, test.name, attrs)
 
     def start_keyword(self, kw):
         for listener in self._listeners:
-            if listener.version == 1:
-                listener.call_method(listener.start_keyword, kw.name, kw.args)
-            else:
-                attrs = self._get_start_attrs(kw, *self._kw_extra_attrs)
-                attrs['type'] = self._get_keyword_type(kw, start=True)
-                listener.call_method(listener.start_keyword, kw.name, attrs)
+            attrs = self._get_start_attrs(kw, *self._kw_extra_attrs)
+            attrs['type'] = self._get_keyword_type(kw, start=True)
+            listener.call_method(listener.start_keyword, kw.name, attrs)
 
     def end_keyword(self, kw):
         for listener in self._listeners:
-            if listener.version == 1:
-                listener.call_method(listener.end_keyword, kw.status)
-            else:
-                attrs = self._get_end_attrs(kw, *self._kw_extra_attrs)
-                attrs['type'] = self._get_keyword_type(kw, start=False)
-                listener.call_method(listener.end_keyword, kw.name, attrs)
+            attrs = self._get_end_attrs(kw, *self._kw_extra_attrs)
+            attrs['type'] = self._get_keyword_type(kw, start=False)
+            listener.call_method(listener.end_keyword, kw.name, attrs)
 
     def _get_keyword_type(self, kw, start=True):
         # When running setup or teardown, only the top level keyword has type
@@ -167,13 +147,11 @@ class Listeners(object):
 
     def log_message(self, msg):
         for listener in self._listeners:
-            if listener.version == 2:
-                listener.call_method(listener.log_message, self._create_msg_dict(msg))
+            listener.call_method(listener.log_message, self._create_msg_dict(msg))
 
     def message(self, msg):
         for listener in self._listeners:
-            if listener.version == 2:
-                listener.call_method(listener.message, self._create_msg_dict(msg))
+            listener.call_method(listener.message, self._create_msg_dict(msg))
 
     def _create_msg_dict(self, msg):
         return {'timestamp': msg.timestamp, 'message': msg.message,
@@ -232,12 +210,9 @@ class ListenerProxy(AbstractLoggerProxy):
             listener = self._import_listener(name, args)
         else:
             name = type_name(listener)
-        AbstractLoggerProxy.__init__(self, listener)
         self.name = name
         self.version = self._get_version(listener)
-        if self.version == 1:
-            LOGGER.warn("Listener '%s' uses deprecated API version 1. "
-                        "Switch to API version 2 instead." % self.name)
+        AbstractLoggerProxy.__init__(self, listener)
 
     def _import_listener(self, name, args):
         importer = Importer('listener')
@@ -246,9 +221,13 @@ class ListenerProxy(AbstractLoggerProxy):
 
     def _get_version(self, listener):
         try:
-            return int(getattr(listener, 'ROBOT_LISTENER_API_VERSION', 1))
+            version = int(getattr(listener, 'ROBOT_LISTENER_API_VERSION', 1))
         except ValueError:
-            return 1
+            version = 1
+        if version == 1:
+            raise DataError("Listener '%s' uses unsupported API version 1. "
+                            "Switch to API version 2 instead." % self.name)
+        return version
 
     def call_method(self, method, *args):
         try:

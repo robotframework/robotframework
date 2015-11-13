@@ -61,30 +61,6 @@ class ListenOutputs(object):
         print('%s: %s' % (name, path))
 
 
-class ListenAllOldStyle(ListenOutputs):
-
-    def start_suite(self, name, doc):
-        print("SUITE START: %s '%s'" % (name, doc))
-    def start_test(self, name, doc, tags):
-        tags = ', '.join([ str(tag) for tag in tags ])
-        print("TEST START: %s '%s' %s" % (name, doc, tags))
-    def start_keyword(self, name, args):
-        args = [ str(arg) for arg in args ]
-        print("KW START: %s %s" % (name, args))
-    def end_keyword(self, status):
-        print("KW END: %s" % (status))
-    def end_test(self, status, message):
-        if status == 'PASS':
-            print('TEST END: PASS')
-        else:
-            print("TEST END: %s %s" % (status, message))
-    def end_suite(self, status, message):
-        print('SUITE END: %s %s' % (status, message))
-
-    def close(self):
-        print('Closing...')
-
-
 class ListenAllNewStyle(ListenOutputs):
 
     ROBOT_LISTENER_API_VERSION = '2'
@@ -108,15 +84,6 @@ class ListenAllNewStyle(ListenOutputs):
         print('SUITE END: %s %s' % (attrs['status'], attrs['statistics']))
     def close(self):
         print('Closing...')
-
-
-class InvalidListenerOldStyle:
-
-    def start_suite(self, wrong, number, of, args):
-        pass
-
-    end_suite = start_test = end_test = start_keyword = end_keyword =\
-    log_file = close = lambda self, *args: 1/0
 
 
 class _BaseListenerTest:
@@ -181,35 +148,12 @@ class _BaseListenerTest:
         assert_equal(stdout.rstrip(), expected)
 
 
-class TestOldStyleListeners(_BaseListenerTest, unittest.TestCase):
-    listener_name = 'test_listeners.ListenAllOldStyle'
-    stat_message = 'full message'
-
-    def test_importing(self):
-        assert_equal(self.listener.version, 1)
-
-
 class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
     listener_name = 'test_listeners.ListenAllNewStyle'
     stat_message = 'stat message'
 
     def test_importing(self):
         assert_equal(self.listener.version, 2)
-
-
-class TestInvalidOldStyleListener(unittest.TestCase):
-
-    def test_calling_listener_methods_fails(self):
-        listenres = Listeners([('test_listeners.InvalidListenerOldStyle', [])])
-        for name, args in [('start_suite', [SuiteMock()]),
-                          ('end_suite', [SuiteMock()]),
-                          ('start_test', [TestMock()]),
-                          ('end_test', [TestMock()]),
-                          ('start_keyword', [KwMock()]),
-                          ('end_keyword', [KwMock()]),
-                          ('output_file', ['log', '/path']),
-                          ('close', [])]:
-            getattr(listenres, name)(*args)
 
 
 if JYTHON:

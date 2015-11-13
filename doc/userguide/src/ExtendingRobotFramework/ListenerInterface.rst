@@ -63,16 +63,8 @@ The signatures of methods related to test execution progress were changed in
 Robot Framework 2.1. This change was made to allow new information to be added
 to the listener interface without breaking existing listeners.
 A listener must have attribute `ROBOT_LISTENER_API_VERSION` with value 2,
-either as a string or as an integer, to be recognized as a new style listener.
-The old listener interface has been deprecated in Robot Framework 2.9 and
-will be removed in the next major release.
-
-All new listeners should be implemented as new style listeners with method
-signatures described in the next section. Also all following examples
-are implemented as new style listeners. Documentation of the old listener
-interface API can be found from `Robot Framework User Guide`__ version 2.0.4.
-
-__ http://robotframework.org/robotframework/#user-guide
+either as a string or as an integer, to be recognized as a listener.
+The old listener interface has been removed in Robot Framework 3.0.
 
 Listener interface method signatures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -482,6 +474,7 @@ acting as a listener itself:
    public class JavaLibraryWithExternalListener {
        public static final Listener ROBOT_LIBRARY_LISTENER = new Listener();
        public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
+       public static final int ROBOT_LISTENER_API_VERSION = 2;
 
        // actual library code here ...
    }
@@ -500,7 +493,7 @@ acting as a listener itself:
 
        # actual library code here ...
 
-As the seconds example above already demonstrated, library listeners can
+As the seconds example above already demonstrated, library listeners have to
 specify `listener interface versions`_ using `ROBOT_LISTENER_API_VERSION`
 attribute exactly like any other listener.
 
