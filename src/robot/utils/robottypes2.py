@@ -46,7 +46,8 @@ def is_unicode(item):
 
 
 def is_list_like(item):
-    if isinstance(item, (basestring, bytearray, UserString, String, file)):
+    if isinstance(item, (basestring, bytes, bytearray, UserString, String,
+                         file)):
         return False
     try:
         iter(item)
