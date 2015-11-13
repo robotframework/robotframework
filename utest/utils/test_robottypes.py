@@ -2,7 +2,7 @@ import unittest
 
 from collections import Mapping
 from array import array
-try :
+try:
     from UserDict import UserDict
     from UserList import UserList
     from UserString import UserString
@@ -16,7 +16,8 @@ try:
 except ImportError:
     pass
 
-from robot.utils import is_dict_like, is_list_like, long, type_name, JYTHON
+from robot.utils import (is_bytes, is_dict_like, is_list_like, is_string, long,
+                         type_name, JYTHON)
 from robot.utils.asserts import assert_equal
 
 
@@ -36,10 +37,27 @@ def generator():
     yield 'generated'
 
 
+class TestStringsAndBytes(unittest.TestCase):
+
+    def test_strings(self):
+        for thing in ['string', u'unicode', '', u'']:
+            assert_equal(is_string(thing), True, thing)
+            assert_equal(is_bytes(thing), isinstance(thing, bytes))
+
+    def test_bytes(self):
+        for thing in [b'bytes', bytearray(b'ba'), b'', bytearray()]:
+            assert_equal(is_bytes(thing), True, thing)
+            assert_equal(is_string(thing), isinstance(thing, str))
+
+
 class TestListLike(unittest.TestCase):
 
     def test_strings_are_not_list_like(self):
         for thing in ['str', u'unicode', UserString('user')]:
+            assert_equal(is_list_like(thing), False, thing)
+
+    def test_bytes_are_not_list_like(self):
+        for thing in [b'bytes', bytearray(b'bytes')]:
             assert_equal(is_list_like(thing), False, thing)
 
     def test_dict_likes_are_list_like(self):
@@ -108,6 +126,8 @@ class TestTypeName(unittest.TestCase):
 
     def test_base_types(self):
         for item, exp in [('bytes', 'string'), (u'unicode', 'string'),
+                          (b'real bytes', 'string' if bytes is str else 'bytes'),
+                          (bytearray(), 'bytearray'),
                           (1, 'integer'), (long(1), 'integer'), (1.0, 'float'),
                           (True, 'boolean'), (None, 'None'), (set(), 'set'),
                           ([], 'list'), ((), 'tuple'), ({}, 'dictionary')]:

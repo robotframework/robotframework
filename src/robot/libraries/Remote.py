@@ -31,7 +31,8 @@ except ImportError:   # No expat in IronPython 2.7
 
 from robot.errors import RemoteError
 from robot.utils import (is_bytes, is_dict_like, is_list_like, is_number,
-                         is_string, timestr_to_secs, unic, DotDict, IRONPYTHON)
+                         is_string, timestr_to_secs, unic, DotDict, IRONPYTHON,
+                         JYTHON)
 
 
 class Remote(object):
@@ -119,7 +120,6 @@ class ArgumentCoercer(object):
 
     def _handle_binary_in_string(self, arg):
         try:
-            # FIXME: This doesn't currently handle bytearray correctly
             if not is_bytes(arg):
                 arg = arg.encode('ASCII')
         except UnicodeError:
@@ -127,7 +127,8 @@ class ArgumentCoercer(object):
         return xmlrpclib.Binary(arg)
 
     def _handle_bytes(self, arg):
-        if IRONPYTHON:
+        # http://bugs.jython.org/issue2429
+        if IRONPYTHON or JYTHON:
             arg = str(arg)
         return xmlrpclib.Binary(arg)
 

@@ -27,8 +27,7 @@ def is_number(item):
 
 
 def is_bytes(item):
-    # FIXME: Should we add also bytearray?
-    return isinstance(item, bytes)
+    return isinstance(item, (bytes, bytearray))
 
 
 def is_string(item):
@@ -40,7 +39,7 @@ def is_unicode(item):
 
 
 def is_list_like(item):
-    if isinstance(item, (bytes, str, UserString, IOBase)):
+    if isinstance(item, (str, bytes, bytearray, UserString, IOBase)):
         return False
     try:
         iter(item)
