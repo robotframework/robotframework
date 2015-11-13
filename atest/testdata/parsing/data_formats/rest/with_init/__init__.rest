@@ -10,7 +10,7 @@ Suite Setup    Suite Setup    \               \
 =============  =============  ==============  =====
 
 +----------+---------------------+
-| Variable |	    Value        |
+| Variable |        Value        |
 +----------+---------------------+
 | ${msg}   | Running suite setup |
 +----------+---------------------+
@@ -18,7 +18,7 @@ Suite Setup    Suite Setup    \               \
 .. table:: One more table
 
    ============ === ======
-   User Keyword \   \
+     Keywords   \   \
    ============ === ======
-   Suite Setup  Log ${msg}		
+   Suite Setup  Log ${msg}
    ============ === ======

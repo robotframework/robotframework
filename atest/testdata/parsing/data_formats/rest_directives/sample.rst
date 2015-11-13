@@ -135,7 +135,7 @@ We support also `code-block` and `sourcecode` directives as alias for `code`.
 
 .. code:: robotframework
 
-   *User Keywords*   *Action*   *Argument*   *Argument*   *Argument*
+   *Keywords*   *Action*   *Argument*   *Argument*   *Argument*
 
    My Keyword With Arg   [Arguments]   ${arg1}
       Keyword with no arguments

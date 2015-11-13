@@ -9,7 +9,7 @@ This text should be ignored.
 .. Warning:: We have a devious plan to rule the world with robots.
 
 =============  =========  ==============  ===============
-  Metadata       Value         Value           Value
+  Settings       Value         Value           Value
 =============  =========  ==============  ===============
 Documentation  A complex  testdata file   in rst format.
 # Default      Tags       are in          include.rst
@@ -190,7 +190,7 @@ Library    OperatingSystem
 
 
 +---------------------+-----------------+---------------+------------------+--+
-|    User Keywords    |     Action      |   Argument    |     Argument     |  |
+|    Keywords         |     Action      |   Argument    |     Argument     |  |
 +=====================+=================+===============+==================+==+
 |                     |                 |               |                  |  |
 +---------------------+-----------------+---------------+------------------+--+

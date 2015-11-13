@@ -48,6 +48,9 @@ class _TestData(object):
     _variable_table_names = 'Variable', 'Variables'
     _testcase_table_names = 'Test Case', 'Test Cases'
     _keyword_table_names = 'Keyword', 'Keywords', 'User Keyword', 'User Keywords'
+    _deprecated = NormalizedDict({'Metadata': 'Settings',
+                                  'User Keyword': 'Keywords',
+                                  'User Keywords': 'Keywords'})
 
     def __init__(self, parent=None, source=None):
         self.parent = parent
@@ -65,13 +68,20 @@ class _TestData(object):
 
     def start_table(self, header_row):
         try:
-            table = self._tables[header_row[0]]
+            name = header_row[0]
+            table = self._tables[name]
+            if name in self._deprecated:
+                self._report_deprecated(name)
         except (KeyError, IndexError):
             return None
         if not self._table_is_allowed(table):
             return None
         table.set_header(header_row)
         return table
+
+    def _report_deprecated(self, name):
+        self.report_invalid_syntax("Table name '%s' is deprecated. Please use '%s' instead." %
+                                   (name, self._deprecated[name]), level='WARN')
 
     @property
     def name(self):

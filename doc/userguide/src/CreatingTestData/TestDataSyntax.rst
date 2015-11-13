@@ -550,8 +550,8 @@ used as a table name.
    +--------------+-------------------------------------------+-------------------+
    |  Table name  |                 Used for                  |      Aliases      |
    +==============+===========================================+===================+
-   | Setting      | | 1) Importing `test libraries`_,         | Setting, Settings,|
-   | table        |   `resource files`_ and `variable files`_ | Metadata          |
+   | Setting      | | 1) Importing `test libraries`_,         | Setting, Settings |
+   | table        |   `resource files`_ and `variable files`_ |                   |
    |              | | 2) Defining metadata for `test suites`_ |                   |
    |              |   and `test cases`_                       |                   |
    +--------------+-------------------------------------------+-------------------+
@@ -561,9 +561,9 @@ used as a table name.
    | Test case    | `Creating test cases`_ from available     | Test Case,        |
    | table        | keywords                                  | Test Cases        |
    +--------------+-------------------------------------------+-------------------+
-   | Keyword      | `Creating user keywords`_ from existing   | Keyword, Keywords,|
-   | table        | lower-level keywords                      | User Keyword,     |
-   |              |                                           | User Keywords     |
+   | Keyword      | `Creating user keywords`_ from existing   | Keyword, Keywords |
+   | table        | lower-level keywords                      |                   |
+   |              |                                           |                   |
    +--------------+-------------------------------------------+-------------------+
 
 Rules for parsing the data
