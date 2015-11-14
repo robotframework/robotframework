@@ -70,6 +70,7 @@ class Tags(object):
         return Tags(tuple(self) + tuple(Tags(other)))
 
 
+@py2to3
 class TagPatterns(object):
 
     def __init__(self, patterns):
@@ -91,19 +92,23 @@ class TagPatterns(object):
     def __getitem__(self, index):
         return self._patterns[index]
 
+    def __unicode__(self):
+        return u'[%s]' % u', '.join(unicode(pattern) for pattern in self)
+
 
 def TagPattern(pattern):
+    pattern = pattern.replace(' ', '')
     if 'NOT' in pattern:
-        return _NotTagPattern(*pattern.split('NOT'))
+        return NotTagPattern(*pattern.split('NOT'))
     if 'OR' in pattern:
-        return _OrTagPattern(pattern.split('OR'))
+        return OrTagPattern(pattern.split('OR'))
     if 'AND' in pattern or '&' in pattern:
-        return _AndTagPattern(pattern.replace('&', 'AND').split('AND'))
-    return _SingleTagPattern(pattern)
+        return AndTagPattern(pattern.replace('&', 'AND').split('AND'))
+    return SingleTagPattern(pattern)
 
 
 @py2to3
-class _SingleTagPattern(object):
+class SingleTagPattern(object):
 
     def __init__(self, pattern):
         self._matcher = Matcher(pattern, ignore='_')
@@ -111,7 +116,9 @@ class _SingleTagPattern(object):
     def match(self, tags):
         return self._matcher.match_any(tags)
 
-    # FIXME: Why only this class methods below??
+    def __iter__(self):
+        yield self
+
     def __unicode__(self):
         return self._matcher.pattern
 
@@ -119,7 +126,8 @@ class _SingleTagPattern(object):
         return bool(self._matcher)
 
 
-class _AndTagPattern(object):
+@py2to3
+class AndTagPattern(object):
 
     def __init__(self, patterns):
         self._patterns = tuple(TagPattern(p) for p in patterns)
@@ -127,8 +135,15 @@ class _AndTagPattern(object):
     def match(self, tags):
         return all(p.match(tags) for p in self._patterns)
 
+    def __iter__(self):
+        return iter(self._patterns)
 
-class _OrTagPattern(object):
+    def __unicode__(self):
+        return ' AND '.join(unicode(pattern) for pattern in self)
+
+
+@py2to3
+class OrTagPattern(object):
 
     def __init__(self, patterns):
         self._patterns = tuple(TagPattern(p) for p in patterns)
@@ -136,14 +151,29 @@ class _OrTagPattern(object):
     def match(self, tags):
         return any(p.match(tags) for p in self._patterns)
 
+    def __iter__(self):
+        return iter(self._patterns)
 
-class _NotTagPattern(object):
+    def __unicode__(self):
+        return ' OR '.join(unicode(pattern) for pattern in self)
+
+
+@py2to3
+class NotTagPattern(object):
 
     def __init__(self, must_match, *must_not_match):
         self._first = TagPattern(must_match)
-        self._rest = _OrTagPattern(must_not_match)
+        self._rest = OrTagPattern(must_not_match)
 
     def match(self, tags):
         if not self._first:
             return not self._rest.match(tags)
         return self._first.match(tags) and not self._rest.match(tags)
+
+    def __iter__(self):
+        yield self._first
+        for pattern in self._rest:
+            yield pattern
+
+    def __unicode__(self):
+        return ' NOT '.join(unicode(pattern) for pattern in self).lstrip()

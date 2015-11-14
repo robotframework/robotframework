@@ -308,6 +308,31 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(all(not patterns.match(['a', 'b', c]) for c in 'cdef'))
         assert_true(patterns.match(['a', 'x']))
 
+    def test_starts_with_not(self):
+        patterns = TagPatterns('NOTe')
+        assert_true(patterns.match('d'))
+        assert_false(patterns.match('e'))
+        patterns = TagPatterns('NOT e OR f')
+        assert_true(patterns.match('d'))
+        assert_false(patterns.match('e'))
+        assert_false(patterns.match('f'))
+
+    def test_str(self):
+        for pattern in ['a', 'NOT a', 'a NOT b', 'a AND b', 'a OR b', 'a*',
+                        'a OR b NOT c OR d AND e OR ??']:
+            assert_equal(str(TagPatterns(pattern)),
+                         '[%s]' % pattern)
+            assert_equal(str(TagPatterns(pattern.replace(' ', ''))),
+                         '[%s]' % pattern)
+            assert_equal(str(TagPatterns([pattern, 'x', pattern, 'y'])),
+                         '[%s, x, y]' % pattern)
+
+    def test_unicode(self):
+        pattern = u'\xe4 OR \xe5 NOT \xe6 AND \u2603 OR ??'
+        expected = '[%s]' % pattern
+        assert_equal(unicode(TagPatterns(pattern)), expected)
+        assert_equal(unicode(TagPatterns(pattern.replace(' ', ''))), expected)
+
     def test_seq2str(self):
         patterns = TagPatterns([u'is\xe4', u'\xe4iti'])
         assert_equal(seq2str(patterns), u"'is\xe4' and '\xe4iti'")
