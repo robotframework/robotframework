@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.utils import (Matcher, NormalizedDict, is_string, py2to3, setter,
-                         unic)
+                         unic, unicode)
 
 
 @py2to3
