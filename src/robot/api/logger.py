@@ -64,6 +64,7 @@ Example
         do_something()
         logger.info('<i>This</i> is a boring example.', html=True)
 """
+
 import logging
 
 from robot.output import librarylogger
