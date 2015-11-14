@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 #  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +28,21 @@ This module is also used by the installed ``rebot``, ``jyrebot`` and
 This module also provides :func:`rebot` and :func:`rebot_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
+
+import sys
+
+# Allows running as a script. __name__ check needed with multiprocessing:
+# https://github.com/robotframework/robotframework/issues/1137
+if 'robot' not in sys.modules and __name__ == '__main__':
+    import pythonpathsetter
+
+from robot.conf import RebotSettings
+from robot.errors import DataError
+from robot.reporting import ResultWriter
+from robot.output import LOGGER
+from robot.utils import Application
+from robot.run import RobotFramework
+
 
 USAGE = """Rebot -- Robot Framework report and log generator
 
@@ -318,20 +332,6 @@ $ python -m robot.rebot outputs/*.xml
 # Running `robot/rebot.py` script with Jython.
 $ jython path/robot/rebot.py -N Project_X -l none -r x.html output.xml
 """
-
-import sys
-
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
-    import pythonpathsetter
-
-from robot.conf import RebotSettings
-from robot.errors import DataError
-from robot.reporting import ResultWriter
-from robot.output import LOGGER
-from robot.utils import Application
-from robot.run import RobotFramework
 
 
 class Rebot(RobotFramework):

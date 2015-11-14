@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 #  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +28,21 @@ This module is also used by the installed ``pybot``, ``jybot`` and
 This module also provides :func:`run` and :func:`run_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
+
+import sys
+
+# Allows running as a script. __name__ check needed with multiprocessing:
+# https://github.com/robotframework/robotframework/issues/1137
+if 'robot' not in sys.modules and __name__ == '__main__':
+    import pythonpathsetter
+
+from robot.conf import RobotSettings
+from robot.model import ModelModifier
+from robot.output import LOGGER, pyloggingconf
+from robot.reporting import ResultWriter
+from robot.running import TestSuiteBuilder
+from robot.utils import Application, unic
+
 
 USAGE = """Robot Framework -- A generic test automation framework
 
@@ -397,20 +411,6 @@ $ export ROBOT_OPTIONS="--critical regression --suitestatlevel 2"
 $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
 $ pybot tests.tsv
 """
-
-import sys
-
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
-    import pythonpathsetter
-
-from robot.conf import RobotSettings
-from robot.model import ModelModifier
-from robot.output import LOGGER, pyloggingconf
-from robot.reporting import ResultWriter
-from robot.running import TestSuiteBuilder
-from robot.utils import Application, unic
 
 
 class RobotFramework(Application):

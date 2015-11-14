@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 #  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +26,20 @@ Instead of ``python`` it is possible to use also other Python interpreters.
 This module also provides :class:`Tidy` class and :func:`tidy_cli` function
 that can be used programmatically. Other code is for internal usage.
 """
+
+import os
+import sys
+
+# Allows running as a script. __name__ check needed with multiprocessing:
+# https://github.com/robotframework/robotframework/issues/1137
+if 'robot' not in sys.modules and __name__ == '__main__':
+    import pythonpathsetter
+
+from robot.errors import DataError
+from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
+                           disable_curdir_processing)
+from robot.utils import Application, binary_file_writer, file_writer, PY2
+
 
 USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
@@ -110,19 +123,6 @@ can also be run as a script like `python path/robot/tidy.py`.
 For more information about Tidy and other built-in tools, see
 http://robotframework.org/robotframework/#built-in-tools.
 """
-
-import os
-import sys
-
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
-    import pythonpathsetter
-
-from robot.errors import DataError
-from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
-                           disable_curdir_processing)
-from robot.utils import Application, binary_file_writer, file_writer, PY2
 
 
 class Tidy(object):

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 #  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +26,25 @@ Instead of ``python`` it is possible to use also other Python interpreters.
 This module also provides :func:`testdoc` and :func:`testdoc_cli` functions
 that can be used programmatically. Other code is for internal usage.
 """
+
+import os.path
+import sys
+import time
+
+# Allows running as a script. __name__ check needed with multiprocessing:
+# https://github.com/robotframework/robotframework/issues/1137
+if 'robot' not in sys.modules and __name__ == '__main__':
+    import pythonpathsetter
+
+from robot.conf import RobotSettings
+from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
+from robot.parsing import disable_curdir_processing
+from robot.running import TestSuiteBuilder
+from robot.utils import (abspath, Application, file_writer, format_time,
+                         get_link_path, html_escape, html_format, is_string,
+                         long, secs_to_timestr, seq2str2, timestr_to_secs,
+                         unescape)
+
 
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool
 
@@ -78,24 +96,6 @@ Examples:
 For more information about Testdoc and other built-in tools, see
 http://robotframework.org/robotframework/#built-in-tools.
 """
-
-import os.path
-import sys
-import time
-
-# Allows running as a script. __name__ check needed with multiprocessing:
-# https://github.com/robotframework/robotframework/issues/1137
-if 'robot' not in sys.modules and __name__ == '__main__':
-    import pythonpathsetter
-
-from robot.conf import RobotSettings
-from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
-from robot.parsing import disable_curdir_processing
-from robot.running import TestSuiteBuilder
-from robot.utils import (abspath, Application, file_writer, format_time,
-                         get_link_path, html_escape, html_format, is_string,
-                         long, secs_to_timestr, seq2str2, timestr_to_secs,
-                         unescape)
 
 
 class TestDoc(Application):
