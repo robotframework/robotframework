@@ -432,6 +432,7 @@ class VariableTable(_Table):
         return iter(self.variables)
 
 
+@py2to3
 class TestCaseTable(_Table):
     type = 'test case'
 
