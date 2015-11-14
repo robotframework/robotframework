@@ -41,10 +41,10 @@ else:
     except ImportError:
         ImageGrab = None
 
-from robot import utils
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
 from robot.version import get_version
+from robot.utils import abspath, get_error_message, get_link_path, py2to3
 
 
 class Screenshot(object):
@@ -203,12 +203,12 @@ class Screenshot(object):
             self._screenshot_taker(path)
         except:
             logger.warn('Taking screenshot failed: %s\n'
-                        'Make sure tests are run with a physical or virtual display.'
-                        % utils.get_error_message())
+                        'Make sure tests are run with a physical or virtual '
+                        'display.' % get_error_message())
         return path
 
     def _validate_screenshot_path(self, path):
-        path = utils.abspath(self._norm_path(path))
+        path = abspath(self._norm_path(path))
         if not os.path.exists(os.path.dirname(path)):
             raise RuntimeError("Directory '%s' where to save the screenshot "
                                "does not exist" % os.path.dirname(path))
@@ -226,16 +226,17 @@ class Screenshot(object):
                 return path
 
     def _embed_screenshot(self, path, width):
-        link = utils.get_link_path(path, self._log_dir)
+        link = get_link_path(path, self._log_dir)
         logger.info('<a href="%s"><img src="%s" width="%s"></a>'
                     % (link, link, width), html=True)
 
     def _link_screenshot(self, path):
-        link = utils.get_link_path(path, self._log_dir)
+        link = get_link_path(path, self._log_dir)
         logger.info("Screenshot saved to '<a href=\"%s\">%s</a>'."
                     % (link, path), html=True)
 
 
+@py2to3
 class ScreenshotTaker(object):
 
     def __init__(self, module_name=None):
@@ -261,7 +262,7 @@ class ScreenshotTaker(object):
         try:
             self(path)
         except:
-            print("Failed: %s" % utils.get_error_message())
+            print("Failed: %s" % get_error_message())
             return False
         else:
             print("Success!")
