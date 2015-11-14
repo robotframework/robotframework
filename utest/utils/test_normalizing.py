@@ -286,7 +286,16 @@ class TestNormalizedDict(unittest.TestCase):
     def test_eq_with_other_objects(self):
         nd = NormalizedDict()
         for other in ['string', 2, None, [], self.test_clear]:
+            assert_false(nd == other, other)
             assert_true(nd != other, other)
+
+    def test_ne(self):
+        assert_false(NormalizedDict() != NormalizedDict())
+        assert_false(NormalizedDict({'a': 1}) != NormalizedDict({'a': 1}))
+        assert_false(NormalizedDict({'a': 1}) != NormalizedDict({'A': 1}))
+
+    def test_hash(self):
+        assert_raises(TypeError, hash, NormalizedDict())
 
     def test_clear(self):
         nd = NormalizedDict({'a': 1, 'B': 2})

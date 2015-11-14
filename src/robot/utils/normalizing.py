@@ -99,6 +99,9 @@ class NormalizedDict(MutableMapping):
             other = NormalizedDict(other)
         return self._data == other._data
 
+    def __ne__(self, other):
+        return not self == other
+
     def copy(self):
         copy = NormalizedDict()
         copy._data = self._data.copy()

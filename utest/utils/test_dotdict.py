@@ -1,6 +1,7 @@
 import unittest
 
-from robot.utils.asserts import assert_equal, assert_not_equal, assert_raises
+from robot.utils.asserts import (assert_equal, assert_false, assert_not_equal,
+                                 assert_raises, assert_true)
 from robot.utils import DotDict, OrderedDict, IRONPYTHON
 
 
@@ -15,8 +16,19 @@ class TestDotDict(unittest.TestCase):
         assert_raises(KeyError, self.dd.__getitem__, 'nonex')
         assert_raises(AttributeError, self.dd.__getattr__, 'nonex')
 
+    def test_equality(self):
+        assert_true(self.dd == self.dd)
+        assert_false(self.dd != self.dd)
+        assert_true(self.dd == DotDict(self.dd))
+        assert_false(self.dd != DotDict(self.dd))
+        assert_false(self.dd == DotDict())
+        assert_true(self.dd != DotDict())
+
     def test_equality_with_normal_dict(self):
         assert_equal(self.dd, {'z': 1, 2: 'y', 'x': 3})
+
+    def test_hash(self):
+        assert_raises(TypeError, hash, self.dd)
 
     def test_set(self):
         self.dd.x = 42
