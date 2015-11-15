@@ -39,7 +39,7 @@ class TestSpaceSeparatedWriter(_WriterTestCase):
 *** test case ***     some    and other
 A test                A kw    an arg
 '''
-        assert_equal(repr(expected), repr(output.getvalue()))
+        assert_equal(output.getvalue(), expected)
 
     def test_rows_are_not_split_if_there_are_headers(self):
         self._test_rows_are_not_split_if_there_are_headers()
@@ -51,7 +51,7 @@ A test                A kw    an arg
 *** test case ***         some        and other
 A test                    A kw        an arg
 '''
-        assert_equal(repr(expected), repr(output.getvalue()))
+        assert_equal(output.getvalue(), expected)
 
 
 class TestTsvWriter(_WriterTestCase):

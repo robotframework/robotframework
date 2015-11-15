@@ -100,7 +100,7 @@ class TestHtmlWriter(unittest.TestCase):
         writer.start('b')
         writer.end('b')
         writer.element('i')
-        assert_equal(repr(output.getvalue()), repr('<b>\n</b>\n<i></i>\n'))
+        assert_equal(output.getvalue(), '<b>\n</b>\n<i></i>\n')
 
     def test_non_ascii(self):
         self.output = StringIO()
