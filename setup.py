@@ -4,6 +4,7 @@ import sys
 import os
 from os.path import abspath, join, dirname
 from distutils.core import setup
+from distutils.command.install_scripts import install_scripts
 
 try:
     import setuptools    # use setuptools when available
@@ -52,18 +53,43 @@ PACKAGES = ['robot', 'robot.api', 'robot.conf', 'robot.htmldata',
 PACKAGE_DATA = [join('htmldata', directory, pattern)
                 for directory in ('rebot', 'libdoc', 'testdoc', 'lib', 'common')
                 for pattern in ('*.html', '*.css', '*.js')]
+WINDOWS = os.sep == '\\'
 if sys.platform.startswith('java'):
-    SCRIPTS = ['jybot', 'jyrebot']
+    SCRIPTS = ['jybot', 'jyrebot', 'robot', 'rebot']
+    INTERPRETER = 'jython'
 elif sys.platform == 'cli':
-    SCRIPTS = ['ipybot', 'ipyrebot']
+    SCRIPTS = ['ipybot', 'ipyrebot', 'robot', 'rebot']
+    INTERPRETER = 'ipy'
 else:
-    SCRIPTS = ['pybot', 'rebot']
+    SCRIPTS = ['pybot', 'rebot', 'robot']
+    INTERPRETER = 'python'
 SCRIPTS = [join('src', 'bin', s) for s in SCRIPTS]
-if os.sep == '\\':
+if WINDOWS:
     SCRIPTS = [s+'.bat' for s in SCRIPTS]
 if 'bdist_wininst' in sys.argv:
     SCRIPTS.append('robot_postinstall.py')
     LONG_DESCRIPTION = WINDOWS_DESCRIPTION
+
+
+def replace_interpreter(filepath):
+    with open(filepath, 'r') as input:
+        replaced = input.read().replace('python', INTERPRETER)
+    with open(filepath, 'w') as output:
+        output.write(replaced)
+
+
+class install_scripts_and_replace_bat_interpreter(install_scripts):
+    def run(self):
+        install_scripts.run(self)
+        if not WINDOWS or INTERPRETER == 'python':
+            return
+        print("replacing interpreter in robot.bat and rebot.bat.")
+        for filepath in self.get_outputs():
+            if filepath.endswith('robot.bat'):
+                replace_interpreter(filepath)
+            if filepath.endswith('rebot.bat'):
+                replace_interpreter(filepath)
+
 
 setup(
     name         = 'robotframework',
@@ -78,6 +104,7 @@ setup(
     keywords     = KEYWORDS,
     platforms    = 'any',
     classifiers  = CLASSIFIERS,
+    cmdclass = {'install_scripts': install_scripts_and_replace_bat_interpreter},
     package_dir  = {'': 'src'},
     package_data = {'robot': PACKAGE_DATA},
     packages     = PACKAGES,
