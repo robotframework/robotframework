@@ -21,7 +21,7 @@ except ImportError:
     raise ImportError('Required PyGitHub module missing: pip install PyGithub')
 
 
-VERSION_RE = re.compile('^((2\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
+VERSION_RE = re.compile('^(((?:2|3)\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
 
 
 class ReleaseNoteGenerator(object):

@@ -20,7 +20,7 @@ from invoke import task, run
 
 assert os.getcwd() == os.path.dirname(os.path.abspath(__file__))
 
-VERSION_RE = re.compile('^((2\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
+VERSION_RE = re.compile('^(((?:2|3)\.\d+)(\.\d+)?)((a|b|rc|.dev)(\d+))?$')
 VERSION_FILE = os.path.join('src', 'robot', 'version.py')
 
 
