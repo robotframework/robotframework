@@ -24,8 +24,10 @@ def file_writer(path=None, encoding='UTF-8', newline=None):
         f = io.StringIO(newline=newline)
     if PY3:
         return f
-    # TODO: Consider removing this and using u'' or `from __future__ import
-    # unicode_literals` everywhere.
+    # These streams require written text to be Unicode. We don't want to add
+    # `u` prefix to all our strings in Python 2, and cannot really use
+    # `unicode_literals` either because many other Python 2 APIs accept only
+    # byte strings.
     write = f.write
     f.write = lambda text: write(unicode(text))
     return f
