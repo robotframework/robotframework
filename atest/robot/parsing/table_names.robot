@@ -24,12 +24,11 @@ Keyword Table
     Check Log Message  ${tc.kws[1].kws[0].kws[0].kws[0].kws[0].msgs[0]}  'User Keywords' was executed
 
 Metadata table name is deprecated
-   Check Log Message      @{ERRORS}[0]    Error in file '*${/}atest${/}testdata${/}parsing${/}table_names.robot': Table name 'Metadata' is deprecated. Please use 'Settings' instead.    level=WARN    pattern=True
+    Table Name Should Be Deprecated    0    Metadata    Settings
 
 User keyword and User keywords table names are deprecated
-   Check Log Message      @{ERRORS}[1]    Error in file '*${/}atest${/}testdata${/}parsing${/}table_names.robot': Table name 'UserKeyword' is deprecated. Please use 'Keywords' instead.    level=WARN    pattern=True
-   Check Log Message      @{ERRORS}[2]    Error in file '**${/}atest${/}testdata${/}parsing${/}table_names.robot': Table name 'US er key words' is deprecated. Please use 'Keywords' instead.    level=WARN    pattern=True
-
+    Table Name Should Be Deprecated    1    UserKeyword    Keywords
+    Table Name Should Be Deprecated    2    US er key words    Keywords
 
 Invalid Tables
     [Documentation]  Check that tables with non-matching names, including empty names, are ignored.\nEmpty names used to cause issue 793.
@@ -48,3 +47,9 @@ Check First Log Entry
     ${tc} =  Check Test Case  ${test case name}
     Check Log Message  ${tc.kws[0].msgs[0]}  ${expected}
 
+Table Name Should Be Deprecated
+    [Arguments]    ${index}    ${deprecated}    ${instead}
+    ${path} =    Normalize Path    ${DATADIR}/parsing/table_names.robot
+    Check Log Message    @{ERRORS}[${index}]
+    ...    Error in file '${path}': Table name '${deprecated}' is deprecated. Please use '${instead}' instead.
+    ...    level=WARN
