@@ -487,6 +487,7 @@ class _Converter(_BuiltInBase):
         """
         separate, combined = self._split_dict_items(items)
         if separate:
+            # TODO: Deprecated in 2.9. Remove support for this in 3.1.
             self.log("Giving keys and values separately to 'Create Dictionary' "
                      "keyword is deprecated. Use 'key=value' syntax instead.",
                      level='WARN')
