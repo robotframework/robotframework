@@ -22,8 +22,7 @@ approaches::
     python path/to/robot/run.py
 
 Instead of ``python`` it is possible to use also other Python interpreters.
-This module is also used by the installed ``pybot``, ``jybot`` and
-``ipybot`` start-up scripts.
+This module is also used by the installed ``robot`` start-up script.
 
 This module also provides :func:`run` and :func:`run_cli` functions
 that can be used programmatically. Other code is for internal usage.
@@ -469,7 +468,7 @@ def run(*datasources, **options):
     """Executes given Robot Framework data sources with given options.
 
     Data sources are paths to files and directories, similarly as when running
-    `pybot` command from the command line. Options are given as keyword
+    `robot` command from the command line. Options are given as keyword
     arguments and their names are same as long command line options except
     without hyphens.
 
@@ -496,8 +495,8 @@ def run(*datasources, **options):
 
     Equivalent command line usage::
 
-        pybot --include tag1 --include tag2 path/to/tests.html
-        pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
+        robot --include tag1 --include tag2 path/to/tests.html
+        robot --report r.html --log NONE t1.txt t2.txt > stdout.txt
     """
     return RobotFramework().execute(*datasources, **options)
 

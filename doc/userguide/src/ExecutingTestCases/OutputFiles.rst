@@ -169,7 +169,7 @@ the extension and the base name of each file. The example below would,
 for example, create such output files as
 :file:`output-20080604-163225.xml` and :file:`mylog-20080604-163225.html`::
 
-   pybot --timestampoutputs --log mylog.html --report NONE tests.html
+   robot --timestampoutputs --log mylog.html --report NONE tests.html
 
 Setting titles
 ~~~~~~~~~~~~~~
@@ -183,7 +183,7 @@ automatically.
 
 Example::
 
-   pybot --logtitle Smoke_Test_Log --reporttitle Smoke_Test_Report --include smoke my_tests/
+   robot --logtitle Smoke_Test_Log --reporttitle Smoke_Test_Report --include smoke my_tests/
 
 Setting background colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -498,9 +498,9 @@ or warnings`__ are not removed except when using the `ALL` mode.
 Examples::
 
    rebot --removekeywords all --output removed.xml output.xml
-   pybot --removekeywords passed --removekeywords for tests.txt
-   pybot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.txt
-   pybot --removekeywords tag:huge tests.txt
+   robot --removekeywords passed --removekeywords for tests.txt
+   robot --removekeywords name:HugeKeyword --removekeywords name:resource.* tests.txt
+   robot --removekeywords tag:huge tests.txt
 
 Removing keywords is done after parsing the `output file`_ and generating
 an internal model based on it. Thus it does not reduce memory usage as much
@@ -540,7 +540,7 @@ supports the following modes:
 
 Examples::
 
-   pybot --flattenkeywords name:HugeKeyword --flattenkeywords name:resource.* tests.txt
+   robot --flattenkeywords name:HugeKeyword --flattenkeywords name:resource.* tests.txt
    rebot --flattenkeywords foritem --output flattened.xml original.xml
 
 Flattening keywords is done already when the `output file`_ is parsed
@@ -610,7 +610,7 @@ If the above modifier would be in file :file:`ExecutionTimeChecker.py`, it
 could be used, for example, like this::
 
     # Specify modifier as a path when running tests. Maximum time is 42 seconds.
-    pybot --prerebotmodifier path/to/ExecutionTimeChecker.py:42 tests.robot
+    robot --prerebotmodifier path/to/ExecutionTimeChecker.py:42 tests.robot
 
     # Specify modifier as a name when using Rebot. Maximum time is 3.14 seconds.
     # ExecutionTimeChecker.py must be in the module search path.
@@ -653,6 +653,6 @@ log file.
    export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
    export ROBOT_SYSLOG_LEVEL=DEBUG
 
-   pybot --name Syslog_example path/to/tests
+   robot --name Syslog_example path/to/tests
 
 __ `Errors and warnings during execution`_

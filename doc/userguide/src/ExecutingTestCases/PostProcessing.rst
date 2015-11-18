@@ -131,8 +131,8 @@ means that tests from the latter test runs replace tests in the original.
 The usage is best illustrated by a practical example using
 :option:`--rerunfailed` and :option:`--merge` together::
 
-  pybot --output original.xml tests                          # first execute all tests
-  pybot --rerunfailed original.xml --output rerun.xml tests  # then re-execute failing
+  robot --output original.xml tests                          # first execute all tests
+  robot --rerunfailed original.xml --output rerun.xml tests  # then re-execute failing
   rebot --merge original.xml rerun.xml                       # finally merge results
 
 The message of the merged tests contains a note that results have been
@@ -155,8 +155,8 @@ Another important use case for the :option:`--merge` option is merging results
 got when running a test suite in pieces using, for example, :option:`--include`
 and :option:`--exclude` options::
 
-    pybot --include smoke --output smoke.xml tests   # first run some tests
-    pybot --exclude smoke --output others.xml tests  # then run others
+    robot --include smoke --output smoke.xml tests   # first run some tests
+    robot --exclude smoke --output others.xml tests  # then run others
     rebot --merge smoke.xml others.xml               # finally merge results
 
 When merging outputs like this, the resulting output contains all tests and

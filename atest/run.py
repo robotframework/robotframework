@@ -7,7 +7,7 @@ Usage:  atest/run.py interpreter [options] datasource(s)
 Data sources are paths to directories or files under the `atest/robot` folder.
 
 Available options are the same that can be used with Robot Framework.
-See its help (e.g. `pybot --help`) for more information.
+See its help (e.g. `robot --help`) for more information.
 
 The specified interpreter is used by acceptance tests under `atest/robot` to
 run test cases under `atest/testdata`. It can be the name of the interpreter

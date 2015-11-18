@@ -118,8 +118,8 @@ iteratively fix failing test cases.
 
 ::
 
-  pybot tests                             # first execute all tests
-  pybot --rerunfailed output.xml tests    # then re-execute failing
+  robot tests                             # first execute all tests
+  robot --rerunfailed output.xml tests    # then re-execute failing
 
 Behind the scenes this option selects the failed tests as they would have been
 selected individually with the :option:`--test` option. It is possible to further
@@ -209,11 +209,11 @@ when `post-processing outputs`_ with ``rebot``, you need to
 use :option:`--critical` and/or :option:`--noncritical` also with it::
 
   # Use rebot to create new log and report from the output created during execution
-  pybot --critical regression --outputdir all my_tests.html
+  robot --critical regression --outputdir all my_tests.html
   rebot --name Smoke --include smoke --critical regression --outputdir smoke all/output.xml
 
   # No need to use --critical/--noncritical when no log or report is created
-  jybot --log NONE --report NONE my_tests.html
+  robot --log NONE --report NONE my_tests.html
   rebot --critical feature1 output.xml
 
 __ `By tag names`_
@@ -353,7 +353,7 @@ either in Jython's normal module search path or in `Java classpath`__. The most
 common way to alter classpath is setting the ``CLASSPATH`` environment variable
 similarly as ``PYTHONPATH``, ``JYTHONPATH`` or ``IRONPYTHONPATH``.
 Alternatively it is possible to use Java's :option:`-cp` command line option.
-This option is not exposed to the ``jybot`` `runner script`_, but it is
+This option is not exposed to the ``robot`` `runner script`_, but it is
 possible to use it with Jython by adding :option:`-J` prefix like
 `jython -J-cp example.jar -m robot.run tests.robot`.
 
@@ -439,8 +439,8 @@ what was randomized and what seed was used.
 
 Examples::
 
-    pybot --randomize tests my_test.txt
-    pybot --randomize all:12345 path/to/tests
+    robot --randomize tests my_test.txt
+    robot --randomize all:12345 path/to/tests
 
 __ `Free test suite metadata`_
 
@@ -481,11 +481,11 @@ For example, if the above model modifier would be in a file
 :file:`SelectEveryXthTest.py`, it could be used like this::
 
     # Specify the modifier as a path. Run every second test.
-    pybot --prerunmodifier path/to/SelectEveryXthTest.py:2 tests.robot
+    robot --prerunmodifier path/to/SelectEveryXthTest.py:2 tests.robot
 
     # Specify the modifier as a name. Run every third test, starting from the second.
     # SelectEveryXthTest.py must be in the module search path.
-    pybot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
+    robot --prerunmodifier SelectEveryXthTest:3:1 tests.robot
 
 If more than one model modifier is needed, they can be specified by using
 the :option:`--prerunmodifier` option multiple times. If similar modifying
@@ -532,8 +532,8 @@ are shortcuts for `--console dotted` and `--console quiet`, respectively.
 
 Examples::
 
-    pybot --console quiet tests.robot
-    jybot --dotted tests.robot
+    robot --console quiet tests.robot
+    robot --dotted tests.robot
 
 .. note:: :option:`--console`, :option:`--dotted` and :option:`--quiet`
           are new options in Robot Framework 2.9. Prior to that the output

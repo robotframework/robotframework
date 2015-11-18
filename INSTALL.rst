@@ -28,7 +28,8 @@ Introduction
 <http://python.org>`_ and also runs on `Jython <http://jython.org>`_ (JVM) and
 `IronPython <http://ironpython.net>`_ (.NET). Before installing the framework,
 an obvious precondition_ is installing at least one of these interpreters. Note
-that Python 3 is not yet supported, but there is an `un-official Python 3 port
+that Python 3 will be supported by the upcoming Robot Framework 3.0, and there
+is also an `un-official Python 3 port
 <https://pypi.python.org/pypi/robotframework-python3>`_ available.
 
 Different ways to install Robot Framework itself are listed below and explained
@@ -52,7 +53,8 @@ more thoroughly in subsequent sections.
 
 `Using Windows installer`_
     There are graphical installers for both 32 bit and 64 bit Windows systems,
-    both available on PyPI_.
+    both available on PyPI_. They will not created for upcoming Robot Framework
+    3.0 anymore.
 
 `Standalone JAR distribution`_
     If running tests with Jython is enough, the easiest approach is downloading
@@ -94,11 +96,11 @@ a good place to start is http://python.org. There you can download a suitable
 installer and get more information about the installation process and Python
 in general.
 
-Robot Framework 2.9 supports Python 2.6 and 2.7, and the plan is to support
-also Python 3 in the near future. If you need Python 3 support earlier, you
-can use the `un-official Python 3 port`_. If you need to use older Python
-versions, Robot Framework 2.5-2.8 support Python 2.5 and Robot Framework
-2.0-2.1 support Python 2.3 and 2.4.
+Robot Framework 2.9 supports Python 2.6 and 2.7, and upcoming Robot Framework
+3.0 supports those and also Python versions 3.3 and up. If you need Python 3
+support earlier, you can use the `un-official Python 3 port`_. If you need to
+use older Python versions, Robot Framework 2.5-2.8 support Python 2.5 and Robot
+Framework 2.0-2.1 support Python 2.3 and 2.4.
 
 On Windows it is recommended to install Python to all users and to run the
 installer as an administrator. Additionally, environment variable
@@ -126,8 +128,8 @@ package, which you can run from the command line like `java -jar
 jython_installer-<version>.jar`. Depending on the  system configuration,
 it may also be possible to just double-click the installer.
 
-Robot Framework 2.9 supports Jython 2.7 which requires Java 7 or newer. If
-older Jython or Java versions are needed, Robot Framework 2.5-2.8 support
+Robot Framework 2.9 and 3.0 support Jython 2.7 which requires Java 7 or newer.
+If older Jython or Java versions are needed, Robot Framework 2.5-2.8 support
 Jython 2.5 (requires Java 5 or newer) and Robot Framework 2.0-2.1 support
 Jython 2.2.
 
@@ -340,6 +342,9 @@ and examples.
     # Uninstall
     pip uninstall robotframework
 
+    # Install a local file (works without network connection)
+    pip install robotframework-2.9.tar.gz
+
 Notice that pip 1.4 and newer will only install stable releases by default.
 If you want to install an alpha, beta or release candidate, you need to either
 specify the version explicitly or use :option:`--pre` option:
@@ -422,6 +427,11 @@ containing them and the appropriate interpreters need to be in PATH_.
 Installing Robot Framework may require administrator privileges. In that case
 select `Run as administrator` from the context menu when starting the
 installer.
+
+.. note:: Windows installers will no longer be created for upcoming Robot
+   Framework 3.0. Please see `using pip`_ or `installing from source`_ for
+   alternatives.
+
 
 Standalone JAR distribution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -579,8 +589,15 @@ Runner scripts
 ~~~~~~~~~~~~~~
 
 Robot Framework has different runner scripts for executing test cases and for
-post-processing outputs based on earlier test results. In addition to that,
-these scripts are different depending on the interpreter that is used:
+post-processing outputs based on earlier test results. Starting from upcoming
+Robot Framework 3.0, the scripts are always the same regardless of the
+interpreter that was used for installation:
+
+ - Test execution script ``robot``
+ - Post-processing script ``rebot``
+
+In addition to those, there are also interpreter specific version of the
+scripts:
 
 .. table:: Different runner scripts
    :class: tabular

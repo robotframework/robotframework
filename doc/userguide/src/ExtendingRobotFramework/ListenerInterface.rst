@@ -25,10 +25,10 @@ option is to give an absolute or a relative path to the listener file
 `similarly as with test libraries`__. It is possible to take multiple listeners
 into use by using this option several times::
 
-   pybot --listener MyListener tests.robot
-   jybot --listener com.company.package.Listener tests.robot
-   pybot --listener path/to/MyListener.py tests.robot
-   pybot --listener module.Listener --listener AnotherListener tests.robot
+   robot --listener MyListener tests.robot
+   robot --listener com.company.package.Listener tests.robot
+   robot --listener path/to/MyListener.py tests.robot
+   robot --listener module.Listener --listener AnotherListener tests.robot
 
 It is also possible to give arguments to listener classes from the command
 line. Arguments are specified after the listener name (or path) using a colon
@@ -39,9 +39,9 @@ alternative argument separator. This is useful if listener arguments
 themselves contain colons, but requires surrounding the whole value with
 quotes on UNIX-like operating systems::
 
-   pybot --listener listener.py:arg1:arg2 tests.robot
-   pybot --listener "listener.py;arg:with:colons" tests.robot
-   pybot --listener C:\Path\Listener.py;D:\data;E:\extra tests.robot
+   robot --listener listener.py:arg1:arg2 tests.robot
+   robot --listener "listener.py;arg:with:colons" tests.robot
+   robot --listener C:\Path\Listener.py;D:\data;E:\extra tests.robot
 
 __ `Using physical path to library`_
 
