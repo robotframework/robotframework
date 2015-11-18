@@ -13,10 +13,13 @@
 #  limitations under the License.
 
 from org.robotframework import RobotRunner
-from robot import run_cli, rebot_cli
+
+from robot.errors import INFO_PRINTED
 from robot.libdoc import libdoc_cli
-from robot.tidy import tidy_cli
+from robot.run import run_cli
+from robot.rebot import rebot_cli
 from robot.testdoc import testdoc_cli
+from robot.tidy import tidy_cli
 
 
 USAGE = """robotframework.jar - Robot Framework runner.
@@ -34,15 +37,15 @@ Run `java -jar robotframework.jar command --help` for more information about
 an individual command.
 
 Examples:
-  java -jar robotframework.jar mytests.txt
-  java -jar robotframework.jar run mytests.txt
+  java -jar robotframework.jar mytests.robot
+  java -jar robotframework.jar run mytests.robot
   java -jar robotframework.jar rebot --log mylog.html out.xml
-  java -jar robotframework.jar tidy --format txt mytests.html
+  java -jar robotframework.jar tidy --format robot mytests.html
 """
 
 
 class JarRunner(RobotRunner):
-    """Used for Java-Jython interop when RF is executed from .jar file"""
+    """Used for Java-Jython interop when RF is executed from .jar file."""
     _commands = {'run': run_cli, 'rebot': rebot_cli, 'tidy': tidy_cli,
                  'libdoc': libdoc_cli, 'testdoc': testdoc_cli}
 
@@ -54,13 +57,12 @@ class JarRunner(RobotRunner):
 
     def _run(self, args):
         if not args or args[0] in ('-h', '--help'):
-            print USAGE
-            raise SystemExit(0)
+            print(USAGE)
+            raise SystemExit(INFO_PRINTED)
         command, args = self._parse_command_line(args)
-        command(args) # Always calls sys.exit()
+        command(args)  # Always calls sys.exit()
 
     def _parse_command_line(self, args):
-        try:
+        if args[0] in self._commands:
             return self._commands[args[0]], args[1:]
-        except KeyError:
-            return run_cli, args
+        return run_cli, args
