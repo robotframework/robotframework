@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 #  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,23 +48,24 @@ USAGE = """Robot Framework -- A generic test automation framework
 
 Version:  <VERSION>
 
-Usage:  pybot|jybot|ipybot [options] data_sources
-   or:  python|jython|ipy -m robot.run [options] data_sources
-   or:  python|jython|ipy path/to/robot/run.py [options] data_sources
-   or:  java -jar robotframework.jar run [options] data_sources
+Usage:  robot [options] data_sources
+   or:  python -m robot [options] data_sources
+   or:  python path/to/robot [options] data_sources
+   or:  java -jar robotframework.jar [options] data_sources
 
 Robot Framework is a Python-based keyword-driven test automation framework for
 acceptance level testing and acceptance test-driven development (ATDD). It has
 an easy-to-use tabular syntax for creating test cases and its testing
 capabilities can be extended by test libraries implemented either with Python
-or Java. Users can also create new keywords from existing ones using the same
-simple syntax that is used for creating test cases.
+or Java. Users can also create new higher level keywords from existing ones
+using the same simple syntax that is used for creating test cases.
 
-Depending is Robot Framework installed using Python, Jython, or IronPython
-interpreter, it has a start-up script, `pybot`, `jybot` or `ipybot`,
-respectively. Alternatively, it is possible to directly execute `robot.run`
-module (e.g. `python -m robot.run`) or `robot/run.py` script using a selected
-interpreter. Finally, there is also a standalone JAR distribution.
+The easiest way to execute tests is using the `robot` script created as part
+of the normal installation. Alternatively it is possible to execute the `robot`
+module directly using `python -m robot`, where `python` can be replaced with
+any supported Python interpreter like `jython`, `ipy` or `python3`. Yet another
+alternative is running the `robot` directory like `python path/to/robot`.
+Finally, there is a standalone JAR distribution.
 
 Data sources given to Robot Framework are either test case files or directories
 containing them and/or other directories. Single test case file creates a test
@@ -390,25 +392,25 @@ ROBOT_INTERNAL_TRACES     When set to any non-empty value, Robot Framework's
 Examples
 ========
 
-# Simple test run with `pybot` without options.
-$ pybot tests.html
+# Simple test run with `robot` without options.
+$ robot tests.robot
 
-# Using options and running with `jybot`.
-$ jybot --include smoke --name Smoke_Tests path/to/tests.txt
+# Using options.
+$ robot --include smoke --name Smoke_Tests path/to/tests.robot
 
-# Executing `robot.run` module using Python.
-$ python -m robot.run --test test1 --test test2 test_directory
+# Executing `robot` module using Python.
+$ python -m robot test_directory
 
-# Running `robot/run.py` script with Jython.
-$ jython /path/to/robot/run.py tests.robot
+# Running `robot` directory with Jython.
+$ jython /opt/robot tests.robot
 
 # Executing multiple test case files and using case-insensitive long options.
-$ pybot --SuiteStatLevel 2 /my/tests/*.html /your/tests.html
+$ robot --SuiteStatLevel 2 --Metadata Version:3 tests/*.robot more/tests.robot
 
 # Setting default options and syslog file before running tests.
 $ export ROBOT_OPTIONS="--critical regression --suitestatlevel 2"
 $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
-$ pybot tests.tsv
+$ robot tests.robot
 """
 
 
