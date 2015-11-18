@@ -1352,9 +1352,11 @@ class _Variables(_BuiltInBase):
     def _get_var_value(self, name, values):
         if not values:
             return self._variables[name]
-        # TODO: In RF 2.10/3.0 the if branch below can be removed and
-        # VariableTableValue used with all variables. See issue #1919.
         if name[0] == '$':
+            # We could consider catenating values similarly as when creating
+            # scalar variables in the variable table, but that would require
+            # handling non-string values somehow. For details see
+            # https://github.com/robotframework/robotframework/issues/1919
             if len(values) != 1 or VariableSplitter(values[0]).is_list_variable():
                 raise DataError("Setting list value to scalar variable '%s' "
                                 "is not supported anymore. Create list "
