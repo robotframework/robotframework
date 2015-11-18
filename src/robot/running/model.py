@@ -82,27 +82,31 @@ class TestSuite(model.TestSuite):
         #: this data comes from the same test case file that creates the suite.
         self.resource = ResourceFile(source=source)
 
-    # TODO: Remote deprecated propertys below in RF 3.0.
+    # TODO: Remote deprecated propertys below in RF 3.1.
+    # `TestSuite`.resource was introduced already in RF 2.9.
 
     @property
     def imports(self):
-        warnings.warn("'TestSuite.imports' is deprecated. Use "
-                      "'TestSuite.resource.imports' instead.",
-                      DeprecationWarning)
+        """Deprecated. Use ``TestSuite.resource.imports`` instead."""
+        warnings.warn("'TestSuite.imports' is deprecated since RF 2.9. "
+                      "Use 'TestSuite.resource.imports' instead.",
+                      UserWarning)
         return self.resource.imports
 
     @property
     def variables(self):
-        warnings.warn("'TestSuite.variables' is deprecated. Use "
-                      "'TestSuite.resource.variables' instead.",
-                      DeprecationWarning)
+        """Deprecated. Use ``TestSuite.resource.variables`` instead."""
+        warnings.warn("'TestSuite.variables' is deprecated since RF 2.9. "
+                      "Use 'TestSuite.resource.variables' instead.",
+                      UserWarning)
         return self.resource.variables
 
     @property
     def user_keywords(self):
-        warnings.warn("'TestSuite.user_keywords' is deprecated. Use"
-                      "'TestSuite.resource.keywords' instead.",
-                      DeprecationWarning)
+        """Deprecated. Use ``TestSuite.resource.keywords`` instead."""
+        warnings.warn("'TestSuite.user_keywords' is deprecated since RF 2.9. "
+                      "Use 'TestSuite.resource.keywords' instead.",
+                      UserWarning)
         return self.resource.keywords
 
     def configure(self, randomize_suites=False, randomize_tests=False,

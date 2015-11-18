@@ -50,6 +50,13 @@ class TestAbspathNormpath(unittest.TestCase):
             finally:
                 os.chdir(orig)
 
+        def test_add_drive(self):
+            drive = os.path.abspath(__file__)[:2]
+            for path in ['.', os.path.basename(__file__), r'\abs\path']:
+                abs = abspath(path)
+                assert_equal(abs, os.path.abspath(path))
+                assert_true(abs.startswith(drive))
+
     def test_normpath(self):
         for inp, exp in self._get_inputs():
             path = normpath(inp)
@@ -116,18 +123,38 @@ class TestAbspathNormpath(unittest.TestCase):
 
 class TestGetLinkPath(unittest.TestCase):
 
-    def test_get_link_path(self):
-        inputs = self._posix_inputs if os.sep == '/' else self._windows_inputs
-        for basedir, target, expected in inputs():
-            assert_equal(get_link_path(target, basedir).replace('R:', 'r:'),
-                         expected, '%s -> %s' % (target, basedir))
+    def test_basics(self):
+        for base, target, expected in self._get_basic_inputs():
+            assert_equal(get_link_path(target, base).replace('R:', 'r:'),
+                         expected, '%s -> %s' % (target, base))
 
-    def test_get_link_path_to_non_existing_path(self):
-        assert_equal(get_link_path('/non-ex/foo.txt', '/non-ex/nothing_here.txt'),
-                     '../foo.txt')
+    def test_base_is_existing_file(self):
+        assert_equal(get_link_path(__file__, __file__), os.path.basename(__file__))
+        assert_equal(get_link_path(os.path.dirname(__file__), __file__), '.')
 
-    def test_get_non_ascii_link_path(self):
+    def test_non_existing_paths(self):
+        assert_equal(get_link_path('/nonex/target', '/nonex/base'), '../target')
+        assert_equal(get_link_path('/nonex/t.ext', '/nonex/b.ext'), '../t.ext')
+        assert_equal(get_link_path('/nonex', __file__),
+                     os.path.relpath('/nonex', os.path.dirname(__file__)).replace(os.sep, '/'))
+
+    def test_non_ascii_paths(self):
         assert_equal(get_link_path(u'\xe4\xf6.txt', ''), '%C3%A4%C3%B6.txt')
+        assert_equal(get_link_path(u'\xe4/\xf6.txt', u'\xe4'), '%C3%B6.txt')
+
+    def _get_basic_inputs(self):
+        directory = os.path.dirname(__file__)
+        inputs = [(directory, __file__, os.path.basename(__file__)),
+                  (directory, directory, '.'),
+                  (directory, directory + '/Non/Ex', 'Non/Ex'),
+                  (directory, directory + '/..', '..'),
+                  (directory, directory + '/../X', '../X'),
+                  (directory, directory + '/./.././..', '../..'),
+                  (directory, '.',
+                   os.path.relpath('.', directory).replace(os.sep, '/'))]
+        platform_inputs = (self._posix_inputs() if os.sep == '/' else
+                           self._windows_inputs())
+        return inputs + platform_inputs
 
     def _posix_inputs(self):
         return [('/tmp/', '/tmp/bar.txt', 'bar.txt'),
@@ -151,7 +178,7 @@ class TestGetLinkPath(unittest.TestCase):
                  '../../../../no/depth/limitation'),
                 ('/etc/hosts', '/path/to/existing/file',
                  '../path/to/existing/file'),
-                ('/path/to/identity', '/path/to/identity', 'identity')]
+                ('/path/to/identity', '/path/to/identity', '.')]
 
     def _windows_inputs(self):
         return [('c:\\temp\\', 'c:\\temp\\bar.txt', 'bar.txt'),
@@ -177,7 +204,7 @@ class TestGetLinkPath(unittest.TestCase):
                 ('c:\\windows\\explorer.exe',
                  'c:\\windows\\path\\to\\existing\\file',
                  'path/to/existing/file'),
-                ('c:\\path\\2\\identity', 'c:\\path\\2\\identity', 'identity')]
+                ('c:\\path\\2\\identity', 'c:\\path\\2\\identity', '.')]
 
 
 if __name__ == '__main__':
