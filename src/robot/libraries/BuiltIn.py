@@ -191,7 +191,7 @@ class _Converter(_BuiltInBase):
 
         See also `Convert To Integer`, `Convert To Octal` and `Convert To Hex`.
         """
-        return self._convert_to_bin_oct_hex(bin, item, base, prefix, length)
+        return self._convert_to_bin_oct_hex(item, base, prefix, length, 'b')
 
     def convert_to_octal(self, item, base=None, prefix=None, length=None):
         """Converts the given item to an octal string.
@@ -213,7 +213,7 @@ class _Converter(_BuiltInBase):
 
         See also `Convert To Integer`, `Convert To Binary` and `Convert To Hex`.
         """
-        return self._convert_to_bin_oct_hex(oct, item, base, prefix, length)
+        return self._convert_to_bin_oct_hex(item, base, prefix, length, 'o')
 
     def convert_to_hex(self, item, base=None, prefix=None, length=None,
                        lowercase=False):
@@ -240,31 +240,19 @@ class _Converter(_BuiltInBase):
 
         See also `Convert To Integer`, `Convert To Binary` and `Convert To Octal`.
         """
-        return self._convert_to_bin_oct_hex(hex, item, base, prefix, length,
-                                            lowercase)
+        spec = 'x' if is_truthy(lowercase) else 'X'
+        return self._convert_to_bin_oct_hex(item, base, prefix, length, spec)
 
-    def _convert_to_bin_oct_hex(self, method, item, base, prefix, length,
-                                lowercase=False):
+    def _convert_to_bin_oct_hex(self, item, base, prefix, length, format_spec):
         self._log_types(item)
-        ret = method(self._convert_to_integer(item, base)).upper().rstrip('L')
+        ret = format(self._convert_to_integer(item, base), format_spec)
         prefix = prefix or ''
         if ret[0] == '-':
             prefix = '-' + prefix
             ret = ret[1:]
-        ret = self._strip_bin_oct_hex_prefix(ret, method)
         if length:
             ret = ret.rjust(self._convert_to_integer(length), '0')
-        if is_truthy(lowercase):
-            ret = ret.lower()
         return prefix + ret
-
-    def _strip_bin_oct_hex_prefix(self, value, converter):
-        if PY3:
-            return value[2:]
-        if len(value) < 2:  # oct(0) -> '0' (i.e. has no prefix)
-            return value
-        prefix_length = {bin: 2, oct: 1, hex: 2}[converter]
-        return value[prefix_length:]
 
     def convert_to_number(self, item, precision=None):
         """Converts the given item to a floating point number.
