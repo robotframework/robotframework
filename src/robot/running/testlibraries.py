@@ -152,7 +152,7 @@ class _BaseTestLibrary(object):
     def _valid_init(self, method):
         return (inspect.ismethod(method) or     # PY2
                 inspect.isfunction(method) or   # PY3
-                is_java_init(method))           # TODO: Is this still needed
+                is_java_init(method))
 
     def init_scope_handling(self):
         if self.scope == 'GLOBAL':
