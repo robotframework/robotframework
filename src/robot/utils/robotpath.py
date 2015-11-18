@@ -24,7 +24,10 @@ from .robottypes import is_unicode
 
 
 if sys.version_info < (2,7):
-    _abspath = lambda path: os.path.join(os.getcwdu(), path)
+    def _abspath(path):
+        if WINDOWS and os.path.splitunc(path)[0]:
+            return os.path.abspath(path)
+        return os.path.abspath(os.path.join(os.getcwdu(), path))
 else:
     _abspath = os.path.abspath
 
@@ -74,38 +77,33 @@ def abspath(path, case_normalize=False):
        http://bugs.python.org/issue3426
     """
     path = normpath(path, case_normalize)
-    if os.path.isabs(path):
-        return path
     return normpath(_abspath(path), case_normalize)
 
 
-# TODO: Investigate could this be replaced with os.path.relpath in RF 2.9.
 def get_link_path(target, base):
-    """Returns a relative path to a target from a base.
+    """Returns a relative path to ``target`` from ``base``.
 
-    If base is an existing file, then its parent directory is considered.
-    Otherwise, base is assumed to be a directory.
+    If ``base`` is an existing file, then its parent directory is considered to
+    be the base. Otherwise ``base`` is assumed to be a directory.
 
-    Rationale: os.path.relpath is not available before Python 2.6
+    The returned path is URL encoded. On Windows returns an absolute path with
+    ``file:`` prefix if the target is on a different drive.
     """
-    path = _get_pathname(target, base)
+    path = _get_link_path(target, base)
     url = path_to_url(path)
     if os.path.isabs(path):
         url = 'file:' + url
-    # At least Jython seems to use 'C|/Path' and not 'C:/Path'
-    if os.sep == '\\' and '|/' in url:
-        url = url.replace('|/', ':/', 1)
-    return url.replace('%5C', '/').replace('%3A', ':').replace('|', ':')
+    return url
 
-def _get_pathname(target, base):
+def _get_link_path(target, base):
     target = abspath(target)
     base = abspath(base)
     if os.path.isfile(base):
         base = os.path.dirname(base)
     if base == target:
-        return os.path.basename(target)
+        return '.'
     base_drive, base_path = os.path.splitdrive(base)
-    # if in Windows and base and link on different drives
+    # Target and base on different drives
     if os.path.splitdrive(target)[0] != base_drive:
         return target
     common_len = len(_common_path(base, target))
@@ -114,7 +112,8 @@ def _get_pathname(target, base):
     if common_len == len(base_drive) + len(os.sep):
         common_len -= len(os.sep)
     dirs_up = os.sep.join([os.pardir] * base[common_len:].count(os.sep))
-    return os.path.join(dirs_up, target[common_len + len(os.sep):])
+    path = os.path.join(dirs_up, target[common_len + len(os.sep):])
+    return os.path.normpath(path)
 
 def _common_path(p1, p2):
     """Returns the longest path common to p1 and p2.
