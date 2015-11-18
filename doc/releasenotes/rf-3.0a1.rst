@@ -39,7 +39,8 @@ Python 3 support
 Robot Framework 3.0 supports Python versions 2.6, 2.7, and Python 3 versions
 from 3.3 up (`#1506`_). Installation on Python 3 works exactly as it does for
 Python 2, and the recommended installation method is with pip:
-`pip install --pre robotframework`.
+`pip install --pre robotframework`. Note that there will be `no more Windows
+installers`_.
 
 There is no separate runner script for running Robot Framework on Python 3, but
 along the usual `pybot` and `rebot` scripts, there now also a new runner script
@@ -88,8 +89,18 @@ which was introduced already back in Robot Framework 2.1 (`#88`_). 3.0 finally
 removes the version 1 of the API (`#2206`_). From now on you will always need
 to specify the API version in your listener with `ROBOT_LISTENER_API_VERSION`.
 
-Other backwards incompatible changes:
+No more Windows installers
+--------------------------
 
+Earlier Robot Framework versions have been distributed also as Windows
+installers, but we have decided not to continue making them in Robot Framework
+3.0 (`#2218`_). The ways to install Robot Framework 3.0 are:
+
+- Using pip online `pip install --pre robotframework`
+- Using pip with local file `pip install robotframework-3.0a1.tar.gz`
+- By extracting the tar file and installing manually: `python setup.py install`
+
+Other backwards incompatible changes:
 - `#2184`_ Remove `DeprecatedBuiltIn` and `DeprecatedOperatingSystem` libraries (alpha 1)
 - `#2197`_ Write redirected console output using system encoding, not console encoding (alpha 1)
 - `#2200`_ Changes to internal utility functions and classes (alpha 1)
@@ -238,4 +249,4 @@ Altogether 17 issues. View on `issue tracker <https://github.com/robotframework/
 .. _#2206: https://github.com/robotframework/robotframework/issues/2206
 .. _#2207: https://github.com/robotframework/robotframework/issues/2207
 .. _#2208: https://github.com/robotframework/robotframework/issues/2208
-
+.. _#2218: https://github.com/robotframework/robotframework/issues/2218
