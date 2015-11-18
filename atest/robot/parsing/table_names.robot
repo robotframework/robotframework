@@ -24,11 +24,11 @@ Keyword Table
     Check Log Message  ${tc.kws[1].kws[0].kws[0].kws[0].kws[0].msgs[0]}  'User Keywords' was executed
 
 Metadata table name is deprecated
-   Check Log Message      @{ERRORS}[0]    Error in file '*/atest/testdata/parsing/table_names.robot': Table name 'Metadata' is deprecated. Please use 'Settings' instead.    level=WARN    pattern=True
+   Check Log Message      @{ERRORS}[0]    Error in file '*${/}atest${/}testdata${/}parsing${/}table_names.robot': Table name 'Metadata' is deprecated. Please use 'Settings' instead.    level=WARN    pattern=True
 
 User keyword and User keywords table names are deprecated
-   Check Log Message      @{ERRORS}[1]    Error in file '*/atest/testdata/parsing/table_names.robot': Table name 'UserKeyword' is deprecated. Please use 'Keywords' instead.    level=WARN    pattern=True
-   Check Log Message      @{ERRORS}[2]    Error in file '*/atest/testdata/parsing/table_names.robot': Table name 'US er key words' is deprecated. Please use 'Keywords' instead.    level=WARN    pattern=True
+   Check Log Message      @{ERRORS}[1]    Error in file '*${/}atest${/}testdata${/}parsing${/}table_names.robot': Table name 'UserKeyword' is deprecated. Please use 'Keywords' instead.    level=WARN    pattern=True
+   Check Log Message      @{ERRORS}[2]    Error in file '**${/}atest${/}testdata${/}parsing${/}table_names.robot': Table name 'US er key words' is deprecated. Please use 'Keywords' instead.    level=WARN    pattern=True
 
 
 Invalid Tables
