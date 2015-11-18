@@ -58,13 +58,13 @@ using the :class:`~robot.running.model.TestSuite` class::
     from robot.api import TestSuite
 
     suite = TestSuite('Activate Skynet')
-    suite.imports.library('OperatingSystem')
+    suite.resource.imports.library('OperatingSystem')
     test = suite.tests.create('Should Activate Skynet', tags=['smoke'])
     test.keywords.create('Set Environment Variable', args=['SKYNET', 'activated'], type='setup')
     test.keywords.create('Environment Variable Should Be Set', args=['SKYNET'])
 
 Not that complicated either, especially considering the flexibility. Notice
-that the suite created based on the file could be edited further using
+that the suite created based on the file could also be edited further using
 the same API.
 
 Now that we have a test suite ready, let's
