@@ -122,16 +122,22 @@ Other backwards incompatible changes:
 Deprecated features
 ===================
 
-Deprecated synonyms for settings and table names
-------------------------------------------------
+Deprecated synonyms for settings
+--------------------------------
 
 Setting names `Document` and `Suite/Test Pre/Post Condition` have been
 deprecated in favour of `Documentation` and `Suite/Test Setup/Teardown`
-(`#2207`_) and table names `Metadata` and `User Keyword` in favour or
-`Settings` and `Keywords` (`#2208`_). None of examples in the user guide or the
-demo projects have used these deprecated forms, so we are assuming that they are
-not widely used. If however some of these are in common use, we can still
-consider removing the deprecation warning and supporting them in the future.
+(`#2207`_). None of examples in the user guide or the demo projects have used
+these deprecated forms, so we are assuming that they are not widely used. If
+however some of these are in common use, we can still consider removing the
+deprecation warning and supporting them in the future.
+
+Deprecated synonyms for tables
+------------------------------
+
+Table names `Metadata` and `User Keyword` have been deprecated in favour of
+`Settings` and `Keywords` (`#2208`_). See `deprecated synonyms for settings`_
+above for more information.
 
 Acknowledgements
 ================
