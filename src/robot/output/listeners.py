@@ -221,12 +221,16 @@ class ListenerProxy(AbstractLoggerProxy):
 
     def _get_version(self, listener):
         try:
-            version = int(getattr(listener, 'ROBOT_LISTENER_API_VERSION', 1))
-        except ValueError:
-            version = 1
-        if version == 1:
-            raise DataError("Listener '%s' uses unsupported API version 1. "
-                            "Switch to API version 2 instead." % self.name)
+            version = int(listener.ROBOT_LISTENER_API_VERSION)
+            if version == 1:
+                raise ValueError
+        except (ValueError, TypeError):
+            raise DataError("Unsupported API version '%s' in listener '%s'." %
+                            (listener.ROBOT_LISTENER_API_VERSION, self.name))
+        except AttributeError:
+            raise DataError("Listener '%s' does not specify API version. "
+                            "Attribute 'ROBOT_LISTENER_API_VERSION' is required." %
+                            self.name)
         return version
 
     def call_method(self, method, *args):

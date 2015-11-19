@@ -9,9 +9,10 @@ class multiple_listenerlibrary(object):
             listenerlibrary(),
         ]
         if fail:
-            foo = lambda: 1
-            foo.events_should_be_empty = lambda: True
-            self.instances.append(foo)
+            class V1Listener(object):
+                def events_should_be_empty(self):
+                    return True
+            self.instances.append(V1Listener())
         self.ROBOT_LIBRARY_LISTENER = self.instances
 
     def events_should_be(self, *expected):
