@@ -16,7 +16,7 @@ import os
 
 from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
                           PassExecution, ReturnFromKeyword,
-                          UserKeywordExecutionFailed)
+                          UserKeywordExecutionFailed, VariableError)
 from robot.output import LOGGER
 from robot.utils import prepr, split_tags_from_doc, unic
 from robot.variables import is_list_var
@@ -219,8 +219,8 @@ class UserKeywordHandler(object):
         try:
             ret = variables.replace_list(ret)
         except DataError as err:
-            raise DataError('Replacing variables from keyword return value '
-                            'failed: %s' % err.message)
+            raise VariableError('Replacing variables from keyword return value '
+                                'failed: %s' % err.message)
         if len(ret) != 1 or contains_list_var:
             return ret
         return ret[0]

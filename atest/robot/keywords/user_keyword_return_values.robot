@@ -29,3 +29,6 @@ Return List Variable Containing Multiple Items
 
 Return Non-Existing Variable
     Check Test Case  ${TESTNAME}
+
+Error About Non-Existing Variable In Return Value Can Be Caught
+    Check Test Case  ${TESTNAME}
