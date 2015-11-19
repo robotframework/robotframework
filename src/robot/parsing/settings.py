@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import is_string, py2to3, unicode
+from robot.utils import is_string, py2to3, PY2
 
 from .comments import Comment
 
@@ -92,7 +92,7 @@ class Setting(object):
         return iter(self.value or ())
 
     def __unicode__(self):
-        return unicode(self.value or '')
+        return (unicode if PY2 else str)(self.value or '')
 
 
 class StringValueJoiner(object):

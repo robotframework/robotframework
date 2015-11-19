@@ -1,6 +1,6 @@
 import unittest
 
-from robot.utils import long
+from robot.utils import PY3
 from robot.utils.asserts import (assert_almost_equal, assert_equal,
                                  assert_false, assert_none,
                                  assert_not_almost_equal, assert_not_equal,
@@ -9,6 +9,9 @@ from robot.utils.asserts import (assert_almost_equal, assert_equal,
 
 
 AE = AssertionError
+
+if PY3:
+    long = int
 
 
 class MyExc(Exception):

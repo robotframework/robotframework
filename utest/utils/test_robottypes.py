@@ -16,9 +16,13 @@ try:
 except ImportError:
     pass
 
-from robot.utils import (is_bytes, is_dict_like, is_list_like, is_string, long,
-                         type_name, JYTHON)
+from robot.utils import (is_bytes, is_dict_like, is_list_like, is_string,
+                         type_name, JYTHON, PY3)
 from robot.utils.asserts import assert_equal
+
+
+if PY3:
+    long = int
 
 
 class MyMapping(Mapping):

@@ -12,11 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import time
 
-from robot.utils import format_time, long, OrderedDict
+from robot.utils import format_time, OrderedDict, IRONPYTHON
 
 from .stringcache import StringIndex
+
+
+# http://ironpython.codeplex.com/workitem/31549
+if IRONPYTHON and sys.version_info < (2, 7, 2):
+    int = long
 
 
 class JsExecutionResult(object):
@@ -35,7 +41,7 @@ class JsExecutionResult(object):
             ('stats', statistics),
             ('errors', errors),
             ('baseMillis', basemillis),
-            ('generatedMillis', long(time.mktime(gentime) * 1000) - basemillis),
+            ('generatedMillis', int(time.mktime(gentime) * 1000 - basemillis)),
             ('generatedTimestamp', format_time(gentime, gmtsep=' '))
             ])
 

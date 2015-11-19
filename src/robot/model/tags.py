@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.utils import (Matcher, NormalizedDict, is_string, py2to3, setter,
-                         unic, unicode)
+                         unic)
 
 
 @py2to3
@@ -93,7 +93,7 @@ class TagPatterns(object):
         return self._patterns[index]
 
     def __unicode__(self):
-        return u'[%s]' % u', '.join(unicode(pattern) for pattern in self)
+        return u'[%s]' % u', '.join(pattern.__unicode__() for pattern in self)
 
 
 def TagPattern(pattern):
@@ -139,7 +139,7 @@ class AndTagPattern(object):
         return iter(self._patterns)
 
     def __unicode__(self):
-        return ' AND '.join(unicode(pattern) for pattern in self)
+        return ' AND '.join(pattern.__unicode__() for pattern in self)
 
 
 @py2to3
@@ -155,7 +155,7 @@ class OrTagPattern(object):
         return iter(self._patterns)
 
     def __unicode__(self):
-        return ' OR '.join(unicode(pattern) for pattern in self)
+        return ' OR '.join(pattern.__unicode__() for pattern in self)
 
 
 @py2to3
@@ -176,4 +176,4 @@ class NotTagPattern(object):
             yield pattern
 
     def __unicode__(self):
-        return ' NOT '.join(unicode(pattern) for pattern in self).lstrip()
+        return ' NOT '.join(pattern.__unicode__() for pattern in self).lstrip()

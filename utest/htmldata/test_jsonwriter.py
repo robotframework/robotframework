@@ -7,9 +7,13 @@ except ImportError:
         json = None
 import unittest
 
-from robot.utils import StringIO, long
+from robot.utils import StringIO, PY3
 from robot.utils.asserts import assert_equal, assert_raises
 from robot.htmldata.jsonwriter import JsonDumper
+
+
+if PY3:
+    long = int
 
 
 class TestJsonDumper(unittest.TestCase):

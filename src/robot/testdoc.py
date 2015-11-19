@@ -43,8 +43,13 @@ from robot.parsing import disable_curdir_processing
 from robot.running import TestSuiteBuilder
 from robot.utils import (abspath, Application, file_writer, format_time,
                          get_link_path, html_escape, html_format, is_string,
-                         long, secs_to_timestr, seq2str2, timestr_to_secs,
-                         unescape)
+                         secs_to_timestr, seq2str2, timestr_to_secs, unescape,
+                         IRONPYTHON)
+
+
+# http://ironpython.codeplex.com/workitem/31549
+if IRONPYTHON and sys.version_info < (2, 7, 2):
+    int = long
 
 
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool
@@ -145,7 +150,7 @@ class TestdocModelWriter(ModelWriter):
             'suite': JsonConverter(self._output_path).convert(self._suite),
             'title': self._title,
             'generated': format_time(generated_time, gmtsep=' '),
-            'generatedMillis': long(time.mktime(generated_time) * 1000)
+            'generatedMillis': int(time.mktime(generated_time) * 1000)
         }
         JsonWriter(self._output).write_json('testdoc = ', model)
 

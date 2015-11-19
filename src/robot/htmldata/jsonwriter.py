@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import long, unicode
+from robot.utils import PY2
 
 
 class JsonWriter(object):
@@ -74,7 +74,7 @@ class _Dumper(object):
 
 
 class StringDumper(_Dumper):
-    _handled_types = (str, unicode)
+    _handled_types = (str, unicode) if PY2 else str
     _search_and_replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
                            ('\n', '\\n'), ('\r', '\\r'), ('</', '\\x3c/')]
 
@@ -89,7 +89,8 @@ class StringDumper(_Dumper):
 
 
 class IntegerDumper(_Dumper):
-    _handled_types = (int, long, bool)
+    # Handles also bool
+    _handled_types = (int, long) if PY2 else int
 
     def dump(self, data, mapping):
         self._write(str(data).lower())
