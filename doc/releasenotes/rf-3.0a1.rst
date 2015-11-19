@@ -39,16 +39,22 @@ Python 3 support
 Robot Framework 3.0 supports Python versions 2.6, 2.7, and Python 3 versions
 from 3.3 up (`#1506`_). Installation on Python 3 works exactly as it does for
 Python 2, and the recommended installation method is with pip:
-`pip install --pre robotframework`. Note that there will be `no more Windows
-installers`_.
+`pip install --pre robotframework`.
+
+Note that while the standard libraries distributed with Robot Framework do work
+with Python 3, most other external libraries currently do not.
+
+Enhanced runner scripts
+-----------------------
 
 There is no separate runner script for running Robot Framework on Python 3, but
 along the usual `pybot` and `rebot` scripts, there now also a new runner script
 `robot` (`#2216`_), which executes Robot Framework for the interpreter that was
-used for the installation.
+used for the installation. In some future version we plan to deprecate the old
+runner scripts.
 
-Note that while the standard libraries distributed with Robot Framework do work
-with Python 3, most other external libraries currently do not.
+It is also now possible to execute the robot package directly: `python -m robot`
+(`#2223`_).
 
 Backwards incompatible changes
 ==============================
@@ -137,7 +143,7 @@ Full list of fixes and enhancements
 ===================================
 
 .. list-table::
-:header-rows: 1
+    :header-rows: 1
 
     * - ID
       - Type
