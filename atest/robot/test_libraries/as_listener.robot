@@ -44,7 +44,7 @@ Check closing
     ...    *CLOSING TEST SUITE
     ...    CLOSING TEST CASE
     ...    CLOSING TEST CASE
-    ...    [ ERROR ] Taking listener 'function' into use for library 'lib_not_works' failed: Listener 'function' uses unsupported API version 1. Switch to API version 2 instead.
+    ...    [ ERROR ] Taking listener 'V1Listener' into use for library 'lib_not_works' failed: Listener 'V1Listener' uses unsupported API version 1. Switch to API version 2 instead.
     ...    Listeners are disabled for this library.
     ...    CLOSING TEST CASE
     ...    CLOSING TEST CASE
