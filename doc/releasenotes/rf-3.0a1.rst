@@ -53,6 +53,17 @@ with Python 3, most other external libraries currently do not.
 Backwards incompatible changes
 ==============================
 
+No more Windows installers
+--------------------------
+
+Earlier Robot Framework versions have been distributed also as Windows
+installers, but we have decided not to continue making them in Robot Framework
+3.0 (`#2218`_). The ways to install Robot Framework 3.0 are:
+
+- Using pip online `pip install --pre robotframework`
+- Using pip with local file `pip install robotframework-3.0a1.tar.gz`
+- By extracting the tar file and installing manually: `python setup.py install`
+
 `OperatingSystem.Start Process` and related keywords removed
 ------------------------------------------------------------
 
@@ -89,17 +100,6 @@ which was introduced already back in Robot Framework 2.1 (`#88`_). 3.0 finally
 removes the version 1 of the API (`#2206`_). From now on you will always need
 to specify the API version in your listener with `ROBOT_LISTENER_API_VERSION`.
 
-No more Windows installers
---------------------------
-
-Earlier Robot Framework versions have been distributed also as Windows
-installers, but we have decided not to continue making them in Robot Framework
-3.0 (`#2218`_). The ways to install Robot Framework 3.0 are:
-
-- Using pip online `pip install --pre robotframework`
-- Using pip with local file `pip install robotframework-3.0a1.tar.gz`
-- By extracting the tar file and installing manually: `python setup.py install`
-
 Other backwards incompatible changes:
 - `#2184`_ Remove `DeprecatedBuiltIn` and `DeprecatedOperatingSystem` libraries (alpha 1)
 - `#2197`_ Write redirected console output using system encoding, not console encoding (alpha 1)
@@ -130,13 +130,14 @@ consider removing the deprecation warning and supporting them in the future.
 Acknowledgements
 ================
 
-**UPDATE** based on AUTHORS.txt.
+Many thanks to Jozef Behran for fixing `${TEST_MESSAGE}` to reflect current test
+message (`#2188`_).
 
 Full list of fixes and enhancements
 ===================================
 
 .. list-table::
-    :header-rows: 1
+:header-rows: 1
 
     * - ID
       - Type
@@ -148,10 +149,30 @@ Full list of fixes and enhancements
       - critical
       - Python 3 support
       - alpha 1
+    * - `#2216`_
+      - enhancement
+      - high
+      - New `robot` start-up script to replace `pybot`, `jybot` and `ipybot`
+      - alpha 1
+    * - `#2218`_
+      - enhancement
+      - high
+      - No more binary installers for Windows
+      - alpha 1
+    * - `#2223`_
+      - enhancement
+      - high
+      - Support executing tests with `python -m robot`
+      - alpha 1
     * - `#2188`_
       - bug
       - medium
       - `${TEST_MESSAGE}` is not updated by `Set Test Message` keyword
+      - alpha 1
+    * - `#2217`_
+      - bug
+      - medium
+      - Error about non-existing variable in keyword return value cannot be caught
       - alpha 1
     * - `#2181`_
       - enhancement
@@ -177,11 +198,6 @@ Full list of fixes and enhancements
       - enhancement
       - medium
       - Process: Allow configuring output encoding
-      - alpha 1
-    * - `#2216`_
-      - enhancement
-      - medium
-      - New `robot` starter script
       - alpha 1
     * - `#2180`_
       - bug
@@ -228,18 +244,26 @@ Full list of fixes and enhancements
       - low
       - Deprecate `Metadata` and `User Keyword` table names
       - alpha 1
+    * - `#2219`_
+      - enhancement
+      - low
+      - Loudly deprecate `robot.running.TestSuite.(imports|variables|user_keywords)` propertys
+      - alpha 1
 
-Altogether 17 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0>`__.
+Altogether 21 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0>`__.
 
 .. _User Guide: http://robotframework.org/robotframework/#user-guide
 .. _#1506: https://github.com/robotframework/robotframework/issues/1506
+.. _#2216: https://github.com/robotframework/robotframework/issues/2216
+.. _#2218: https://github.com/robotframework/robotframework/issues/2218
+.. _#2223: https://github.com/robotframework/robotframework/issues/2223
 .. _#2188: https://github.com/robotframework/robotframework/issues/2188
+.. _#2217: https://github.com/robotframework/robotframework/issues/2217
 .. _#2181: https://github.com/robotframework/robotframework/issues/2181
 .. _#2184: https://github.com/robotframework/robotframework/issues/2184
 .. _#2196: https://github.com/robotframework/robotframework/issues/2196
 .. _#2197: https://github.com/robotframework/robotframework/issues/2197
 .. _#2198: https://github.com/robotframework/robotframework/issues/2198
-.. _#2216: https://github.com/robotframework/robotframework/issues/2216
 .. _#2180: https://github.com/robotframework/robotframework/issues/2180
 .. _#2200: https://github.com/robotframework/robotframework/issues/2200
 .. _#2202: https://github.com/robotframework/robotframework/issues/2202
@@ -249,4 +273,4 @@ Altogether 17 issues. View on `issue tracker <https://github.com/robotframework/
 .. _#2206: https://github.com/robotframework/robotframework/issues/2206
 .. _#2207: https://github.com/robotframework/robotframework/issues/2207
 .. _#2208: https://github.com/robotframework/robotframework/issues/2208
-.. _#2218: https://github.com/robotframework/robotframework/issues/2218
+.. _#2219: https://github.com/robotframework/robotframework/issues/2219
