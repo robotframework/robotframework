@@ -129,8 +129,9 @@ class TestGetLinkPath(unittest.TestCase):
                          expected, '%s -> %s' % (target, base))
 
     def test_base_is_existing_file(self):
-        assert_equal(get_link_path(__file__, __file__), os.path.basename(__file__))
         assert_equal(get_link_path(os.path.dirname(__file__), __file__), '.')
+        assert_equal(get_link_path(__file__, __file__),
+                     self._expected_basename(__file__))
 
     def test_non_existing_paths(self):
         assert_equal(get_link_path('/nonex/target', '/nonex/base'), '../target')
@@ -144,7 +145,7 @@ class TestGetLinkPath(unittest.TestCase):
 
     def _get_basic_inputs(self):
         directory = os.path.dirname(__file__)
-        inputs = [(directory, __file__, os.path.basename(__file__)),
+        inputs = [(directory, __file__, self._expected_basename(__file__)),
                   (directory, directory, '.'),
                   (directory, directory + '/Non/Ex', 'Non/Ex'),
                   (directory, directory + '/..', '..'),
@@ -155,6 +156,9 @@ class TestGetLinkPath(unittest.TestCase):
         platform_inputs = (self._posix_inputs() if os.sep == '/' else
                            self._windows_inputs())
         return inputs + platform_inputs
+
+    def _expected_basename(self, path):
+        return os.path.basename(path).replace('$py.class', '%24py.class')
 
     def _posix_inputs(self):
         return [('/tmp/', '/tmp/bar.txt', 'bar.txt'),
