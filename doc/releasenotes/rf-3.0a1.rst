@@ -177,107 +177,107 @@ Full list of fixes and enhancements
       - enhancement
       - critical
       - Python 3 support
-      - alpha 1
+      - alpha 1
     * - `#2216`_
       - enhancement
       - high
       - New `robot` start-up script to replace `pybot`, `jybot` and `ipybot`
-      - alpha 1
+      - alpha 1
     * - `#2218`_
       - enhancement
       - high
       - No more binary installers for Windows
-      - alpha 1
+      - alpha 1
     * - `#2223`_
       - enhancement
       - high
       - Support executing tests with `python -m robot`
-      - alpha 1
+      - alpha 1
     * - `#2188`_
       - bug
       - medium
       - `${TEST_MESSAGE}` is not updated by `Set Test Message` keyword
-      - alpha 1
+      - alpha 1
     * - `#2217`_
       - bug
       - medium
       - Error about non-existing variable in keyword return value cannot be caught
-      - alpha 1
+      - alpha 1
     * - `#2181`_
       - enhancement
       - medium
       - Remove deprecated `OperatingSystem.Start Process` and related keywords
-      - alpha 1
+      - alpha 1
     * - `#2184`_
       - enhancement
       - medium
       - Remove `DeprecatedBuiltIn` and `DeprecatedOperatingSystem` libraries
-      - alpha 1
+      - alpha 1
     * - `#2196`_
       - enhancement
       - medium
       - OperatingSystem: `Get File` and `Create File` should support native encodings
-      - alpha 1
+      - alpha 1
     * - `#2197`_
       - enhancement
       - medium
       - Write redirected console output using system encoding, not console encoding
-      - alpha 1
+      - alpha 1
     * - `#2198`_
       - enhancement
       - medium
       - Process: Allow configuring output encoding
-      - alpha 1
+      - alpha 1
     * - `#2180`_
       - bug
       - low
       - Collections: Multiple dictionary keywords fail if keys are unorderable
-      - alpha 1
+      - alpha 1
     * - `#2200`_
       - enhancement
       - low
       - Changes to internal utility functions and classes
-      - alpha 1
+      - alpha 1
     * - `#2202`_
       - enhancement
       - low
       - Remove aliases from `robot.utils.asserts`
-      - alpha 1
+      - alpha 1
     * - `#2203`_
       - enhancement
       - low
       - Remove deprecated command line options
-      - alpha 1
+      - alpha 1
     * - `#2204`_
       - enhancement
       - low
       - Make it an error if same setting is used multiple times
-      - alpha 1
+      - alpha 1
     * - `#2205`_
       - enhancement
       - low
       - Remove old `Meta: Name` syntax for specifying test suite metadata
-      - alpha 1
+      - alpha 1
     * - `#2206`_
       - enhancement
       - low
       - Remove deprecated listener API version 1
-      - alpha 1
+      - alpha 1
     * - `#2207`_
       - enhancement
       - low
       - Deprecate `Document` and `Suite/Test Pre/Post Condition` synonym settings
-      - alpha 1
+      - alpha 1
     * - `#2208`_
       - enhancement
       - low
       - Deprecate `Metadata` and `User Keyword` table names
-      - alpha 1
+      - alpha 1
     * - `#2219`_
       - enhancement
       - low
       - Loudly deprecate `robot.running.TestSuite.(imports|variables|user_keywords)` propertys
-      - alpha 1
+      - alpha 1
 
 Altogether 21 issues. View on `issue tracker <https://github.com/robotframework/robotframework/issues?q=milestone%3A3.0>`__.
 
