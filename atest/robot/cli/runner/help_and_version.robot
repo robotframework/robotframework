@@ -14,7 +14,7 @@ Help
     ...    \# Setting default options and syslog file before running tests.
     ...    $ export ROBOT_OPTIONS="--critical regression --suitestatlevel 2"
     ...    $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
-    ...    $ pybot tests.tsv
+    ...    $ robot tests.robot
     Should End With    ${result.stdout}    \n\n${end}\n
     Should Not Contain    ${result.stdout}    [ ERROR ]
     Should Not Contain    ${result.stdout}    [ WARN \ ]
