@@ -34,7 +34,7 @@ or::
 
 from .argumentparser import ArgumentParser, cmdline2list
 from .application import Application
-from .compat import isatty, py2to3, with_metaclass
+from .compat import isatty, py2to3, StringIO, with_metaclass
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .dotdict import DotDict, OrderedDict
@@ -65,7 +65,7 @@ from .robottime import (elapsed_time_to_string, format_time, get_elapsed_time,
                         parse_time)
 from .robottypes import (is_bytes, is_dict_like, is_falsy, is_integer,
                          is_list_like, is_number, is_string, is_truthy,
-                         is_unicode, long, type_name, unicode, StringIO)
+                         is_unicode, long, type_name, unicode)
 from .setter import setter, SetterAwareType
 from .sortable import Sortable
 from .text import (cut_long_message, format_assign_message,

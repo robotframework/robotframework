@@ -16,14 +16,12 @@ from .platform import PY2
 
 
 if PY2:
-    from StringIO import StringIO
     from .robottypes2 import (is_bytes, is_dict_like, is_integer, is_list_like,
                               is_number, is_string, is_unicode, type_name)
     long = long
     unicode = unicode
 
 else:
-    from io import StringIO
     from .robottypes3 import (is_bytes, is_dict_like, is_integer, is_list_like,
                               is_number, is_string, is_unicode, type_name)
     long = int

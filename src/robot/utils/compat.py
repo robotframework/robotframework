@@ -18,12 +18,19 @@ from .platform import IRONPYTHON, PY2
 
 
 if PY2:
+    # io.StringIO only accepts u'foo' with Python 2.
+    from StringIO import StringIO
+
+
     def py2to3(cls):
         if hasattr(cls, '__unicode__'):
             cls.__str__ = lambda self: unicode(self).encode('UTF-8')
         return cls
 
 else:
+    from io import StringIO
+
+
     def py2to3(cls):
         if hasattr(cls, '__unicode__'):
             cls.__str__ = lambda self: self.__unicode__()
