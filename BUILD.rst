@@ -39,14 +39,14 @@ Preparation
 
      doc/api/generate.py
      git diff doc/api
-     git commit doc/api -m "Regenerated"   # if needed
+     git commit doc/api -m "Regenerated API docs"   # if needed
 
 3. Repository status
 
    - Check that you have nothing left to commit, pull, or push::
 
        git status
-       git pull
+       git pull --rebase
        git push
 
    - Clean up::
