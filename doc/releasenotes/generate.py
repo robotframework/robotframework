@@ -131,7 +131,7 @@ Robot Framework {version} was released on **CHECK** {date}.
             for item in (issue.type, issue.priority, issue.summary):
                 self._write(prefix2 + item)
             if preview:
-                self._write(prefix2 + issue.preview)
+                self._write(prefix2 + issue.preview.replace(' ', u'\xa0'))
         self._write()
         self._write('Altogether {} issues. View on `issue tracker '
                     '<https://github.com/{}/issues?q=milestone%3A{}>`__.',
