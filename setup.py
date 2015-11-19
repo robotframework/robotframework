@@ -3,6 +3,7 @@
 import sys
 import os
 from os.path import abspath, join, dirname
+from subprocess import list2cmdline
 from distutils.core import setup
 from distutils.command.install_scripts import install_scripts
 
@@ -55,15 +56,12 @@ PACKAGE_DATA = [join('htmldata', directory, pattern)
                 for pattern in ('*.html', '*.css', '*.js')]
 WINDOWS = os.sep == '\\'
 if sys.platform.startswith('java'):
-    SCRIPTS = ['jybot', 'jyrebot', 'robot', 'rebot']
-    INTERPRETER = 'jython'
+    SCRIPTS = ['jybot', 'jyrebot']
 elif sys.platform == 'cli':
-    SCRIPTS = ['ipybot', 'ipyrebot', 'robot', 'rebot']
-    INTERPRETER = 'ipy'
+    SCRIPTS = ['ipybot', 'ipyrebot']
 else:
-    SCRIPTS = ['pybot', 'rebot', 'robot']
-    INTERPRETER = 'python'
-SCRIPTS = [join('src', 'bin', s) for s in SCRIPTS]
+    SCRIPTS = ['pybot']
+SCRIPTS = [join('src', 'bin', s) for s in SCRIPTS + ['robot', 'rebot']]
 if WINDOWS:
     SCRIPTS = [s+'.bat' for s in SCRIPTS]
 if 'bdist_wininst' in sys.argv:
@@ -71,24 +69,22 @@ if 'bdist_wininst' in sys.argv:
     LONG_DESCRIPTION = WINDOWS_DESCRIPTION
 
 
-def replace_interpreter(filepath):
-    with open(filepath, 'r') as input:
-        replaced = input.read().replace('python', INTERPRETER)
-    with open(filepath, 'w') as output:
-        output.write(replaced)
+class custom_install_scripts(install_scripts):
 
-
-class install_scripts_and_replace_bat_interpreter(install_scripts):
     def run(self):
         install_scripts.run(self)
-        if not WINDOWS or INTERPRETER == 'python':
-            return
+        if WINDOWS:
+            self._replace_interpreter_in_bat_files()
+
+    def _replace_interpreter_in_bat_files(self):
         print("replacing interpreter in robot.bat and rebot.bat.")
-        for filepath in self.get_outputs():
-            if filepath.endswith('robot.bat'):
-                replace_interpreter(filepath)
-            if filepath.endswith('rebot.bat'):
-                replace_interpreter(filepath)
+        interpreter = list2cmdline([sys.executable])
+        for path in self.get_outputs():
+            if path.endswith(('robot.bat', 'rebot.bat')):
+                with open(path, 'r') as input:
+                    replaced = input.read().replace('python', interpreter)
+                with open(path, 'w') as output:
+                    output.write(replaced)
 
 
 setup(
@@ -104,9 +100,9 @@ setup(
     keywords     = KEYWORDS,
     platforms    = 'any',
     classifiers  = CLASSIFIERS,
-    cmdclass = {'install_scripts': install_scripts_and_replace_bat_interpreter},
     package_dir  = {'': 'src'},
     package_data = {'robot': PACKAGE_DATA},
     packages     = PACKAGES,
     scripts      = SCRIPTS,
+    cmdclass     = {'install_scripts': custom_install_scripts}
 )
