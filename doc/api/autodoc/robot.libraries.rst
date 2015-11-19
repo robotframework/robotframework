@@ -28,22 +28,6 @@ robot.libraries.DateTime module
     :undoc-members:
     :show-inheritance:
 
-robot.libraries.DeprecatedBuiltIn module
-----------------------------------------
-
-.. automodule:: robot.libraries.DeprecatedBuiltIn
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-robot.libraries.DeprecatedOperatingSystem module
-------------------------------------------------
-
-.. automodule:: robot.libraries.DeprecatedOperatingSystem
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 robot.libraries.Dialogs module
 ------------------------------
 

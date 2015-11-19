@@ -36,6 +36,14 @@ robot.utils.charwidth module
     :undoc-members:
     :show-inheritance:
 
+robot.utils.compat module
+-------------------------
+
+.. automodule:: robot.utils.compat
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.utils.compress module
 ---------------------------
 
@@ -204,6 +212,14 @@ robot.utils.robotinspect module
     :undoc-members:
     :show-inheritance:
 
+robot.utils.robotio module
+--------------------------
+
+.. automodule:: robot.utils.robotio
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.utils.robotpath module
 ----------------------------
 
@@ -228,10 +244,34 @@ robot.utils.robottypes module
     :undoc-members:
     :show-inheritance:
 
+robot.utils.robottypes2 module
+------------------------------
+
+.. automodule:: robot.utils.robottypes2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.utils.robottypes3 module
+------------------------------
+
+.. automodule:: robot.utils.robottypes3
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 robot.utils.setter module
 -------------------------
 
 .. automodule:: robot.utils.setter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+robot.utils.sortable module
+---------------------------
+
+.. automodule:: robot.utils.sortable
     :members:
     :undoc-members:
     :show-inheritance:
