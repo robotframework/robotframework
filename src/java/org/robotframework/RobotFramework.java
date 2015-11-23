@@ -15,9 +15,6 @@
 
 package org.robotframework;
 
-import org.robotframework.RunnerFactory;
-import org.robotframework.RobotRunner;
-
 /**
  *
  * Entry point for using Robot Framework from Java programs.
@@ -59,12 +56,8 @@ public class RobotFramework {
      *              for meaning of different return codes.
      */
     public static int run(String[] args) {
-        RunnerFactory context = new RunnerFactory();
-        RobotRunner runner = context.createRunner();
-        try {
+        try (RobotRunner runner = new RobotRunner()) {
             return runner.run(args);
-        } finally {
-            context.cleanup();
         }
     }
 }

@@ -15,12 +15,68 @@
 
 package org.robotframework;
 
+import org.python.core.PyObject;
+import org.python.util.PythonInterpreter;
+
 /**
- * An interface class that is used for creating a Jython object capable of
- * running Robot Framework.
+ * AutoCloseable Interface class that internally creates a Jython interpreter,
+ * allows running Robot tests with it, and cleans up the interpreter afterwards
+ * in close.<p>
+ *
+ * Example:
+ * <pre>
+ *
+ * {@code
+ * try (RobotRunner runner = new RobotRunner()) {
+ *     runner.run(new String[] {"mytests.txt"});
+ * }
+ * }
+ * </pre>
  */
-public interface RobotRunner {
+public class RobotRunner implements AutoCloseable {
 
-    public int run(String[] args);
+    private RobotPythonRunner runner;
+    private PythonInterpreter interpreter;
 
+    public RobotRunner() {
+        interpreter = new PythonInterpreter();
+        runner = createRunner();
+    }
+
+    /**
+     * Creates and returns an instance of the robot.JarRunner (implemented in
+     * Python), which can be used to execute tests.
+     */
+    private RobotPythonRunner createRunner() {
+        PyObject runnerClass = importRunnerClass();
+        PyObject runnerObject = runnerClass.__call__();
+        return (RobotPythonRunner) runnerObject.__tojava__(RobotPythonRunner.class);
+    }
+
+    private PyObject importRunnerClass() {
+        interpreter.exec("import robot; from robot.jarrunner import JarRunner");
+        return interpreter.get("JarRunner");
+    }
+
+    /**
+     * Runs the tests, but does not cleanup the interpreter afterwards.
+     *
+     * @param args
+     *              The command line options to Robot Framework.
+     *
+     * @return      Robot Framework return code. See
+     *              <a href="http://robotframework.org/robotframework/#user-guide"
+     *                 target="_top">Robot Framework User Guide</a>
+     *              for meaning of different return codes.
+     */
+    public int run(String[] args) {
+        return runner.run(args);
+    }
+
+    /**
+     * Cleans up the Jython interpreter.
+     */
+    public void close() {
+        interpreter.cleanup();
+    }
 }

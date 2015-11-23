@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from org.robotframework import RobotRunner
+from org.robotframework import RobotPythonRunner
 
 from robot.errors import INFO_PRINTED
 from robot.libdoc import libdoc_cli
@@ -44,7 +44,7 @@ Examples:
 """
 
 
-class JarRunner(RobotRunner):
+class JarRunner(RobotPythonRunner):
     """Used for Java-Jython interop when RF is executed from .jar file."""
     _commands = {'run': run_cli, 'rebot': rebot_cli, 'tidy': tidy_cli,
                  'libdoc': libdoc_cli, 'testdoc': testdoc_cli}
