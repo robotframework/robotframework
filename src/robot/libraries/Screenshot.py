@@ -323,8 +323,11 @@ class ScreenshotTaker(object):
             raise RuntimeError("Using 'screencapture' failed.")
 
     def _call(self, *command):
-        return subprocess.call(command, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
+        try:
+            return subprocess.call(command, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT)
+        except OSError:
+            return -1
 
     @property
     def _scrot(self):
