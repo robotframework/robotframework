@@ -11,5 +11,6 @@ dict:
   a: '1'
   b: 2
   3: [one, 2]
+  key with spaces: value with spaces
 nested dict:
   dict: *alias

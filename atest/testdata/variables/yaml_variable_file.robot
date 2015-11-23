@@ -10,7 +10,7 @@ Test Template    Should Be Equal
 
 *** Variables ***
 @{EXPECTED LIST}      one    ${2}
-&{EXPECTED DICT}      a=1    b=${2}    ${3}=${EXPECTED LIST}
+&{EXPECTED DICT}      a=1    b=${2}    ${3}=${EXPECTED LIST}    key with spaces=value with spaces
 
 *** Test Cases ***
 Valid YAML file

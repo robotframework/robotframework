@@ -556,6 +556,7 @@ The following example demonstrates a simple YAML file:
     dict:
       one: yksi
       two: kaksi
+      with spaces: kolme
 
 .. note:: Using YAML files with Robot Framework requires `PyYAML
           <http://pyyaml.org>`_ module to be installed. If you have
@@ -591,6 +592,9 @@ characters, YAML variables files must be UTF-8 encoded.
 
 Mappings used as values are automatically converted to special dictionaries
 that are used also when `creating dictionary variables`_ in the variable table.
-Values of these dictionaries are accessible as attributes like `${DICT.one}`.
-These dictionaries are also ordered, but with YAML files the original source
-order is unfortunately not preserved.
+Most importantly, values of these dictionaries are accessible as attributes
+like `${DICT.one}`, assuming their names are valid as Python attribute names.
+If the name contains spaces or is otherwise not a valid attribute name, it is
+always possible to access dictionary values using syntax like
+`&{DICT}[with spaces]` syntax. The created dictionaries are also ordered, but
+unfortunately the original source order of in the YAML file is not preserved.
