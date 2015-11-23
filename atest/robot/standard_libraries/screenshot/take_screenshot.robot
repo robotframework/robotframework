@@ -18,7 +18,7 @@ Basename May Be Defined
 Basename With Extension Turns Off Index Generation
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Embedding In Log  ${tc.kws[0].kws[0].msgs[1]}  xxx.jpg
-    Check Embedding In Log  ${tc.kws[1].kws[0].msgs[1]}  yyy.jpEg
+    Check Embedding In Log  ${tc.kws[1].kws[0].msgs[1]}  yyy.jpeg
 
 Screenshot Width Can Be Given
     ${tc}=  Check Test Case  ${TESTNAME}

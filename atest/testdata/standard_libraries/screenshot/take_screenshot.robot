@@ -27,8 +27,8 @@ Basename May Be Defined
 
 Basename With Extension Turns Off Index Generation
     Repeat Keyword  3  Take Screenshot  xxx.jpg
-    Repeat Keyword  2  Take Screenshot  yyy.jpEg
-    Screenshots Should Exist  ${OUTPUTDIR}  ${OUTPUTDIR}${/}xxx.jpg  ${OUTPUTDIR}${/}yyy.jpEg
+    Repeat Keyword  2  Take Screenshot  yyy.jpeg
+    Screenshots Should Exist  ${OUTPUTDIR}  ${OUTPUTDIR}${/}xxx.jpg  ${OUTPUTDIR}${/}yyy.jpeg
 
 Screenshot Width Can Be Given
     Take Screenshot  width=300px

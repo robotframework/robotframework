@@ -56,29 +56,30 @@ class Screenshot(object):
     = Using with Python =
 
     How screenshots are taken when using Python depends on the operating
-    system and available external modules. On OSX screenshots are taken using
-    ``screencapture`` utility. On other operating systems you need to have one
-    of the following modules installed to be able to use this library. You can
-    specify the module to use when `importing` the library. If no module is
-    specified, the first module that is found will be used.
+    system. On OSX screenshots are taken using the built-in ``screencapture``
+    utility. On other operating systems you need to have one of the following
+    tools or Python modules installed. You can specify the tool/module to use
+    when `importing` the library. If no tool or module is specified, the first
+    one found will be used.
 
     - wxPython :: http://wxpython.org :: Required also by RIDE so many Robot
       Framework users already have this module installed.
     - PyGTK :: http://pygtk.org :: This module is available by default on most
       Linux distributions.
     - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
-      This module can take screenshots only on Windows.
+      Only works on Windows.
+    - Scrot :: https://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
+      Install with ``apt-get install scrot`` or similar.
 
     Using ``screencapture`` on OSX and specifying explicit screenshot module
-    are new in Robot Framework 2.9.2.
+    are new in Robot Framework 2.9.2. The support for using ``scrot`` is new
+    in Robot Framework 3.0.
 
     = Using with Jython and IronPython =
 
     With Jython and IronPython this library uses APIs provided by JVM and .NET
     platforms, respectively. These APIs are always available and thus no
     external modules are needed.
-
-    IronPython support was added in Robot Framework 2.7.5.
 
     = Where screenshots are saved =
 
@@ -102,11 +103,11 @@ class Screenshot(object):
         same directory as the log file. The directory can also be set using
         `Set Screenshot Directory` keyword.
 
-        ``screenshot_module`` specifies the module to use when using this
-        library on Python outside OSX. Possible values are ``wxPython``,
-        ``PyGTK`` and ``PIL``, case-insensitively. If no value is given,
-        the first module found is used in that order. See `Using with Python`
-        for more information about the available modules.
+        ``screenshot_module`` specifies the module or tool to use when using
+        this library on Python outside OSX. Possible values are ``wxPython``,
+        ``PyGTK``, ``PIL`` and ``scrot``, case-insensitively. If no value is
+        given, the first module/tool found is used in that order. See `Using
+        with Python` for more information.
 
         Examples (use only one of these):
         | =Setting= |  =Value=   |  =Value=   |
@@ -197,7 +198,7 @@ class Screenshot(object):
 
     def _screenshot_to_file(self, path):
         path = self._validate_screenshot_path(path)
-        logger.debug('Using %s modules for taking screenshot.'
+        logger.debug('Using %s module/tool for taking screenshot.'
                      % self._screenshot_taker.module)
         try:
             self._screenshot_taker(path)
@@ -282,18 +283,21 @@ class ScreenshotTaker(object):
     def _get_named_screenshot_taker(self, name):
         screenshot_takers = {'wxpython': (wx, self._wx_screenshot),
                              'pygtk': (gdk, self._gtk_screenshot),
-                             'pil': (ImageGrab, self._pil_screenshot)}
+                             'pil': (ImageGrab, self._pil_screenshot),
+                             'scrot': (self._scrot, self._scrot_screenshot)}
         if name not in screenshot_takers:
-            raise RuntimeError("Invalid screenshot module '%s'." % name)
-        module, screenshot_taker = screenshot_takers[name]
-        if not module:
-            raise RuntimeError("Screenshot module '%s' not installed." % name)
+            raise RuntimeError("Invalid screenshot module or tool '%s'." % name)
+        supported, screenshot_taker = screenshot_takers[name]
+        if not supported:
+            raise RuntimeError("Screenshot module or tool '%s' not installed."
+                               % name)
         return screenshot_taker
 
     def _get_default_screenshot_taker(self):
         for module, screenshot_taker in [(wx, self._wx_screenshot),
                                          (gdk, self._gtk_screenshot),
                                          (ImageGrab, self._pil_screenshot),
+                                         (self._scrot, self._scrot_screenshot),
                                          (True, self._no_screenshot)]:
             if module:
                 return screenshot_taker
@@ -315,8 +319,23 @@ class ScreenshotTaker(object):
             bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
     def _osx_screenshot(self, path):
-        if subprocess.check_call(['screencapture', '-t', 'jpg', path]) != 0:
-            raise RuntimeError('Taking screenshot failed.')
+        if self._call('screencapture', '-t', 'jpg', path) != 0:
+            raise RuntimeError("Using 'screencapture' failed.")
+
+    def _call(self, *command):
+        return subprocess.call(command, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+
+    @property
+    def _scrot(self):
+        return os.sep == '/' and self._call('scrot', '--version') == 0
+
+    def _scrot_screenshot(self, path):
+        if not path.endswith(('.jpg', '.jpeg')):
+            raise RuntimeError("Scrot requires extension to be '.jpg' or "
+                               "'.jpeg', got '%s'." % os.path.splitext(path)[1])
+        if self._call('scrot', '--silent', path) != 0:
+            raise RuntimeError("Using 'scrot' failed.")
 
     def _wx_screenshot(self, path):
         if not self._wx_app_reference:
@@ -352,7 +371,8 @@ class ScreenshotTaker(object):
 
 if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
-        sys.exit("Usage: %s <path>|test [wx|gtk|pil]" % os.path.basename(sys.argv[0]))
+        sys.exit("Usage: %s <path>|test [wx|pygtk|pil|scrot]"
+                 % os.path.basename(sys.argv[0]))
     path = sys.argv[1] if sys.argv[1] != 'test' else None
     module = sys.argv[2] if len(sys.argv) > 2 else None
     ScreenshotTaker(module).test(path)
