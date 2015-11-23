@@ -1,5 +1,6 @@
 *** Settings ***
 Library         GetKeywordNamesLibrary
+Library         dynamic_libraries/InvalidKeywordNames.py    hybrid=True
 
 *** Test Cases ***
 Passing, Logging And Returning

@@ -20,8 +20,10 @@ Non-ASCII keyword name works when UTF-8 bytes
     Check Test Case  ${TESTNAME}
 
 Non-ASCII keyword name fails when other bytes
-    Check Stderr Contains    Calling dynamic method 'get_keyword_names' failed: UnicodeDecodeError:
     Check Test Case  ${TESTNAME}
+    Error should have occurred    0
+    ...    Getting keyword names from library 'NonAsciiKeywordNames' failed:
+    ...    Calling dynamic method 'get_keyword_names' failed: UnicodeDecodeError: *
 
 Run Keyword in Static Library
     [Documentation]  Verify that library having run_keyword method but no get_keyword_names method is not considered dynamic
@@ -42,3 +44,17 @@ Dynamic libraries should match named arguments same way as with user keywords
 
 Embedded Keyword Arguments
     Check Test Case  ${TESTNAME}
+
+Invalid get_keyword_names
+    Error should have occurred    1
+    ...    Getting keyword names from library 'InvalidKeywordNames' failed:
+    ...    Calling dynamic method 'get_keyword_names' failed:
+    ...    Return value must be list of strings.
+
+*** Keywords ***
+Error should have occurred
+    [Arguments]    ${index}    @{error}
+    ${path} =    Normalize Path    ${DATADIR}/test_libraries/dynamic_library_python.robot
+    ${error} =    Catenate    @{error}
+    Check Log Message    @{ERRORS}[${index}]    Error in file '${path}': ${error}
+    ...    level=ERROR    pattern=yes

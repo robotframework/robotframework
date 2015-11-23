@@ -6,7 +6,7 @@ Library         dynamic_libraries/DynamicLibraryWithoutArgspec.py
 Library         dynamic_libraries/NonAsciiKeywordNames.py
 Library         dynamic_libraries/NonAsciiKeywordNames.py    include_latin1=True
 Library         dynamic_libraries/EmbeddedArgs.py
-
+Library         dynamic_libraries/InvalidKeywordNames.py
 
 *** Test Cases ***
 Passing, Logging and Returning
