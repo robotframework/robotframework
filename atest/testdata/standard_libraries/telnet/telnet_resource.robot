@@ -7,9 +7,12 @@ Login and set prompt
     ${index} =    Open Connection    ${HOST}    prompt=${PROMPT}
     ...    alias=${alias}    encoding=${encoding}    terminal_emulation=${terminal_emulation}
     ...    window_size=${window_size}     terminal_type=${terminal_type}
+    Login and wait
+    [Return]    ${index}
+
+Login and wait
     Login    ${USERNAME}    ${PASSWORD}
     Set Timeout    0.3 seconds    # Must set after login to give login time to succeed
-    [Return]    ${index}
 
 Should fail because no connection
     [Arguments]    ${kw}    @{args}

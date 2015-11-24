@@ -12,6 +12,12 @@ Read Until Regex
 Read Until Multiple Regexp
     Check Test Case    ${TEST NAME}
 
+Read Until Precompiled Regexp
+    Check Test Case    ${TEST NAME}
+
+Read Until Non-ASCII Regexp
+    Check Test Case    ${TEST NAME}
+
 Reads Only the Necessary Amount
     Check Test Case    ${TEST NAME}
 

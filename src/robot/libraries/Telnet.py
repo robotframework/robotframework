@@ -417,8 +417,8 @@ class Telnet(object):
         telnetlib_log_level = telnetlib_log_level or self._telnetlib_log_level
         if not prompt:
             prompt, prompt_is_regexp = self._prompt
-        logger.info('Opening connection to %s:%s with prompt: %s'
-                    % (host, port, prompt))
+        logger.info('Opening connection to %s:%s with prompt: %s%s'
+                    % (host, port, prompt, ' (regexp)' if prompt_is_regexp else ''))
         self._conn = self._get_connection(host, port, timeout, newline,
                                           prompt, is_truthy(prompt_is_regexp),
                                           encoding, encoding_errors,
@@ -501,9 +501,9 @@ class Telnet(object):
 
 
 class TelnetConnection(telnetlib.Telnet):
-    NEW_ENVIRON_IS = chr(0)
-    NEW_ENVIRON_VAR = chr(0)
-    NEW_ENVIRON_VALUE = chr(1)
+    NEW_ENVIRON_IS = b'\x00'
+    NEW_ENVIRON_VAR = b'\x00'
+    NEW_ENVIRON_VALUE = b'\x01'
     INTERNAL_UPDATE_FREQUENCY = 0.03
 
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
@@ -523,9 +523,9 @@ class TelnetConnection(telnetlib.Telnet):
         self._set_encoding(encoding, encoding_errors)
         self._set_default_log_level(default_log_level)
         self._window_size = window_size
-        self._environ_user = environ_user
+        self._environ_user = self._encode(environ_user) if environ_user else None
         self._terminal_emulator = self._check_terminal_emulation(terminal_emulation)
-        self._terminal_type = str(terminal_type) if terminal_type else None
+        self._terminal_type = self._encode(terminal_type) if terminal_type else None
         self.set_option_negotiation_callback(self._negotiate_options)
         self._set_telnetlib_log_level(telnetlib_log_level)
         self._opt_responses = list()
@@ -653,7 +653,7 @@ class TelnetConnection(telnetlib.Telnet):
         if is_bytes(text):
             return text
         if self._encoding[0] == 'NONE':
-            return str(text)
+            return text.encode('ASCII')
         return text.encode(*self._encoding)
 
     def _decode(self, bytes):
@@ -797,12 +797,18 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Logging` section for more information about log levels.
         """
-        if self._newline in text:
+        newline = self._get_newline_for(text)
+        if newline in text:
             raise RuntimeError("'Write' keyword cannot be used with strings "
                                "containing newlines. Use 'Write Bare' instead.")
-        self.write_bare(text + self._newline)
+        self.write_bare(text + newline)
         # Can't read until 'text' because long lines are cut strangely in the output
         return self.read_until(self._newline, loglevel)
+
+    def _get_newline_for(self, text):
+        if is_bytes(text):
+            return self._encode(self._newline)
+        return self._newline
 
     def write_bare(self, text):
         """Writes the given text, and nothing else, into the connection.
@@ -853,7 +859,7 @@ class TelnetConnection(telnetlib.Telnet):
     def write_control_character(self, character):
         """Writes the given control character into the connection.
 
-        The control character is preprended with an IAC (interpret as command)
+        The control character is prepended with an IAC (interpret as command)
         character.
 
         The following control character names are supported: BRK, IP, AO, AYT,
@@ -938,7 +944,7 @@ class TelnetConnection(telnetlib.Telnet):
         if out:
             return True, out
         while time.time() < max_time:
-            input_bytes = telnetlib.Telnet.read_until(self, expected,
+            input_bytes = telnetlib.Telnet.read_until(self, self._encode(expected),
                                                       self._terminal_frequency)
             self._terminal_emulator.feed(input_bytes)
             out = self._terminal_emulator.read_until(expected)
@@ -956,24 +962,37 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _terminal_read_until_regexp(self, expected_list):
         max_time = time.time() + self._timeout
-        regexp_list = [re.compile(rgx) for rgx in expected_list]
-        out = self._terminal_emulator.read_until_regexp(regexp_list)
+        regexps_bytes = [self._to_byte_regexp(rgx) for rgx in expected_list]
+        regexps_unicode = [re.compile(self._decode(rgx.pattern))
+                               for rgx in regexps_bytes]
+        out = self._terminal_emulator.read_until_regexp(regexps_unicode)
         if out:
             return True, out
         while time.time() < max_time:
-            output = self.expect(regexp_list, self._terminal_frequency)[-1]
+            output = self.expect(regexps_bytes, self._terminal_frequency)[-1]
             self._terminal_emulator.feed(output)
-            out = self._terminal_emulator.read_until_regexp(regexp_list)
+            out = self._terminal_emulator.read_until_regexp(regexps_unicode)
             if out:
                 return True, out
         return False, self._terminal_emulator.read()
 
     def _telnet_read_until_regexp(self, expected_list):
+        expected = [self._to_byte_regexp(exp) for exp in expected_list]
         try:
-            index, _, output = self.expect(expected_list, self._timeout)
+            index, _, output = self.expect(expected, self._timeout)
         except TypeError:
-            index, output = -1, ''
+            index, output = -1, b''
         return index != -1, self._decode(output)
+
+    def _to_byte_regexp(self, exp):
+        if is_bytes(exp):
+            return re.compile(exp)
+        if is_string(exp):
+            return re.compile(self._encode(exp))
+        pattern = exp.pattern
+        if is_bytes(pattern):
+            return exp
+        return re.compile(self._encode(pattern))
 
     def read_until_regexp(self, *expected):
         """Reads output until any of the ``expected`` regular expressions match.
@@ -1132,7 +1151,7 @@ class TelnetConnection(telnetlib.Telnet):
         self.sock.sendall(telnetlib.IAC + telnetlib.WILL + opt)
         self.sock.sendall(telnetlib.IAC + telnetlib.SB + telnetlib.NEW_ENVIRON
                           + self.NEW_ENVIRON_IS + self.NEW_ENVIRON_VAR
-                          + "USER" + self.NEW_ENVIRON_VALUE + environ_user
+                          + b"USER" + self.NEW_ENVIRON_VALUE + environ_user
                           + telnetlib.IAC + telnetlib.SE)
 
     def _opt_window_size(self, opt, window_x, window_y):
@@ -1200,7 +1219,7 @@ class TerminalEmulator(object):
 
     def feed(self, input_bytes):
         self._stream.feed(input_bytes)
-        self._whitespace_after_last_feed = input_bytes[len(input_bytes.rstrip()):]
+        self._whitespace_after_last_feed = input_bytes[len(input_bytes.rstrip()):].decode('ASCII')
 
     def read(self):
         current_out = self.current_output

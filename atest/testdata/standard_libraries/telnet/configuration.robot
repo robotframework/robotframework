@@ -1,7 +1,7 @@
 *** Setting ***
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
-Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG     window_size=95x95   terminal_emulation=NO
+Library           Telnet    3.142    CRLF    $    False    ASCII    strict    DeBuG     window_size=95x95   terminal_emulation=NO
 Library           String
 Resource          telnet_resource.robot
 
@@ -35,7 +35,7 @@ Set terminal type
     Environment variable should be    $TERM    vt100
 
 Prompt Set In Init
-    Prompt Should Be    $    ${TRUE}
+    Prompt Should Be    $    ${False}
 
 Prompt Set In Open Connection
     [setup]    Open Connection    ${HOST}    prompt=xxx
@@ -136,24 +136,28 @@ Set Default Log Level Keyword
     Set Default log Level    Invalid
 
 Default Telnetlib Log Level In Init
+    [setup]   Login and set prompt
     Telnetlib Log Level Should Be    TRACE
     Write    pwd
     Read Until Prompt
 
 Default Telnetlib Log Level In Open Connection
     [setup]   Open Connection    ${HOST}
+    Login and wait
     Telnetlib Log Level Should Be    TRACE
     Write    pwd
     Read Until Prompt
 
 Telnetlib Log Level NONE In Open Connection
     [setup]   Open Connection    ${HOST}  telnetlib_log_level=NONE
+    Login and wait
     Telnetlib Log Level Should Be    NONE
     Write    pwd
     Read Until Prompt
 
 Telnetlib Log Level DEBUG In Open Connection
     [setup]   Open Connection    ${HOST}  telnetlib_log_level=DEBUG
+    Login and wait
     Telnetlib Log Level Should Be    DEBUG
     Write    pwd
     Read Until Prompt

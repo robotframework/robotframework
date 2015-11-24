@@ -9,7 +9,6 @@ Resource          telnet_resource.robot
 ${=}=    =
 
 *** Test Cases ***
-
 Execute command
     ${output}=    Execute Command    echo -e "abba\\x1b[3Dcdc"
     Should Match   ${output}    acdc\r\n*
@@ -21,6 +20,17 @@ Read Until Regex
 Read Until Multiple Regexp
     Write    echo -e "abba\\x1b[3Dcdc"
     Read Until Regexp    foo    acdc    bar
+
+Read Until Precompiled Regexp
+    ${regexps} =    Evaluate    (re.compile(b'foo'), re.compile('acdc'))     modules=re
+    Write    echo -e "abba\\x1b[3Dcdc"
+    Read Until Regexp    bar   @{regexps}
+
+Read Until Non-ASCII Regexp
+    [Setup]    Login and set prompt   terminal_emulation=True   terminal_type=vt100  encoding=UTF-8
+    ${regexps} =    Evaluate    (re.compile(b'foo'), re.compile(u'\\xe4iti'))     modules=re
+    Write    echo -e "moikka ämpäri\\x1b[5Diti"
+    Read Until Regexp    isä   @{regexps}
 
 Reads Only the Necessary Amount
     Write    echo -e "abba\\x1b[3Dcdc_foo_bar_dar"
