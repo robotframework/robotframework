@@ -6,16 +6,19 @@ from robot.result.testsuite import TestSuite
 from robot.result.testcase import TestCase
 
 
-def verify_stat(stat, name, passed, failed, critical=None, non_crit=None,
+def verify_stat(stat, name, passed, failed, critical=None, combined=None,
                 id=None, elapsed=0):
     assert_equal(stat.name, name, 'stat.name')
     assert_equal(stat.passed, passed)
     assert_equal(stat.failed, failed)
-    if critical is not None:
-        assert_equal(stat.critical, critical)
-    if non_crit is not None:
-        assert_equal(stat.non_critical, non_crit)
-    if id:
+    assert_equal(stat.total, passed + failed)
+    if hasattr(stat, 'critical'):
+        assert_equal(stat.critical,
+                     False if critical is None else bool(critical))
+        assert_equal(stat.non_critical,
+                     False if critical is None else not bool(critical))
+        assert_equal(stat.combined, combined)
+    if hasattr(stat, 'id'):
         assert_equal(stat.id, id)
     assert_equal(stat.elapsed, elapsed)
 
@@ -85,11 +88,17 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
     def test_tags(self):
         # Tag stats are tested more thoroughly in test_tagstatistics.py
         tags = self.statistics.tags
-        verify_stat(tags.tags['smoke'], 'smoke', 2, 2, True, False)
-        verify_stat(tags.tags['t1'], 't1', 3, 2, False, False)
-        verify_stat(tags.tags['t2'], 't2', 2, 1, False, False)
-        expected = [('smoke', 4), ('a title', 0), ('t? & smoke', 4), ('t1', 5), ('t2', 3)]
-        assert_equal([(t.name, t.total) for t in tags], expected)
+        verify_stat(tags.tags['smoke'], 'smoke', 2, 2)
+        verify_stat(tags.tags['t1'], 't1', 3, 2)
+        verify_stat(tags.tags['t2'], 't2', 2, 1)
+        expected = [('smoke', 2, 2, True),
+                    ('a title', 0, 0, None, 'none NOT t1'),
+                    ('t? & smoke', 2, 2, None, 't? & smoke'),
+                    ('t1', 3, 2),
+                    ('t2', 2, 1)]
+        assert_equal(len(list(tags)), len(expected))
+        for t, e in zip(tags, expected):
+            verify_stat(t, *e)
 
 
 class TestSuiteStatistics(unittest.TestCase):
@@ -183,7 +192,7 @@ class TestElapsedTime(unittest.TestCase):
 
     def test_combined_tag_stats(self):
         combined = self.stats.tags.combined[0]
-        verify_stat(combined, 'combined', 0, 2, elapsed=11000)
+        verify_stat(combined, 'combined', 0, 2, combined='?2', elapsed=11000)
 
     def test_suite_stats(self):
         assert_equal(self.stats.suite.stat.elapsed, 59999)

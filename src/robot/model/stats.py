@@ -13,9 +13,13 @@
 #  limitations under the License.
 
 from robot.utils import (Sortable, elapsed_time_to_string, html_escape,
-                         is_string, normalize, py2to3, unic)
+                         is_string, normalize, py2to3, PY3)
 
-from .tags import TagPatterns
+from .tags import TagPattern
+
+
+if PY3:
+    unicode = str
 
 
 @py2to3
@@ -40,7 +44,7 @@ class Stat(Sortable):
         self._norm_name = normalize(name, ignore='_')
 
     def get_attributes(self, include_label=False, include_elapsed=False,
-                       exclude_empty=False, values_as_strings=False,
+                       exclude_empty=True, values_as_strings=False,
                        html_escape=False):
         attrs = {'pass': self.passed, 'fail': self.failed}
         attrs.update(self._get_custom_attrs())
@@ -50,9 +54,10 @@ class Stat(Sortable):
             attrs['elapsed'] = elapsed_time_to_string(self.elapsed,
                                                       include_millis=False)
         if exclude_empty:
-            attrs = dict((k, v) for k, v in attrs.items() if v != '')
+            attrs = dict((k, v) for k, v in attrs.items() if v not in ('', None))
         if values_as_strings:
-            attrs = dict((k, unic(v)) for k, v in attrs.items())
+            attrs = dict((k, unicode(v if v is not None else ''))
+                         for k, v in attrs.items())
         if html_escape:
             attrs = dict((k, self._html_escape(v)) for k, v in attrs.items())
         return attrs
@@ -125,7 +130,7 @@ class TagStat(Stat):
     type = 'tag'
 
     def __init__(self, name, doc='', links=None, critical=False,
-                 non_critical=False, combined=''):
+                 non_critical=False, combined=None):
         Stat.__init__(self, name)
         #: Documentation of tag as a string.
         self.doc = doc
@@ -136,8 +141,7 @@ class TagStat(Stat):
         self.critical = critical
         #: ``True`` if tag is considered non-critical, ``False`` otherwise.
         self.non_critical = non_critical
-        #: Pattern as a string if the tag is combined,
-        #: an empty string otherwise.
+        #: Pattern as a string if the tag is combined, ``None`` otherwise.
         self.combined = combined
 
     @property
@@ -173,7 +177,19 @@ class CombinedTagStat(TagStat):
 
     def __init__(self, pattern, name=None, doc='', links=None):
         TagStat.__init__(self, name or pattern, doc, links, combined=pattern)
-        self._matcher = TagPatterns(pattern)
+        self.pattern = TagPattern(pattern)
 
     def match(self, tags):
-        return self._matcher.match(tags)
+        return self.pattern.match(tags)
+
+
+class CriticalTagStat(TagStat):
+
+    def __init__(self, tag_pattern, name=None, critical=True, doc='',
+                 links=None):
+        TagStat.__init__(self, name or unicode(tag_pattern), doc, links,
+                         critical=critical, non_critical=not critical)
+        self.pattern = tag_pattern
+
+    def match(self, tags):
+        return self.pattern.match(tags)
