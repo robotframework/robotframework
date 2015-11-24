@@ -16,6 +16,7 @@ from robot.utils import py2to3
 
 from .tags import TagPatterns
 
+
 @py2to3
 class Criticality(object):
 

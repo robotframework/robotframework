@@ -93,13 +93,11 @@ class Stat(Sortable):
 
 class TotalStat(Stat):
     """Stores statistic values for a test run."""
-    #: Always string `total`
     type = 'total'
 
 
 class SuiteStat(Stat):
     """Stores statistics values for a single suite."""
-    #: Always string `suite`
     type = 'suite'
 
     def __init__(self, suite):
@@ -124,7 +122,6 @@ class SuiteStat(Stat):
 
 class TagStat(Stat):
     """Stores statistic values for a single tag."""
-    #: Always string `tag`.
     type = 'tag'
 
     def __init__(self, name, doc='', links=None, critical=False,
