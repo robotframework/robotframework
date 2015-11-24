@@ -13,13 +13,15 @@ SRC = normpath(join(BASEDIR, '..', '..', '..'))
 
 sys.path.insert(0, SRC)
 
-import robot
+from robot import run
 from robot.conf.settings import RebotSettings
 from robot.reporting.resultwriter import Results
 from robot.reporting.jswriter import JsResultWriter
+from robot.utils import file_writer
+
 
 def run_robot(testdata, outxml):
-    robot.run(testdata, loglevel='DEBUG', log='NONE', report='NONE', output=outxml)
+    run(testdata, loglevel='DEBUG', output=outxml, log=None, report=None)
 
 
 def create_jsdata(outxml, target):
@@ -49,7 +51,7 @@ def create_jsdata(outxml, target):
               'defaultLevel': 'DEBUG',
               'reportURL': 'report.html',
               'background': {'fail': 'DeepPink'}}
-    with open(target, 'wb') as output:
+    with file_writer(target) as output:
         writer = JsResultWriter(output, start_block='', end_block='')
         writer.write(result, config)
     print 'Log:    ', normpath(join(BASEDIR, '..', 'rebot', 'log.html'))
