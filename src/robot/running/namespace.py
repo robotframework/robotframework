@@ -216,15 +216,9 @@ class Namespace(object):
 
     def get_handler(self, name):
         try:
-            handler = self._kw_store.get_handler(name)
+            return self._kw_store.get_handler(name)
         except DataError as err:
-            handler = UserErrorHandler(name, err.message)
-        self._replace_variables_from_user_handlers(handler)
-        return handler
-
-    def _replace_variables_from_user_handlers(self, handler):
-        if hasattr(handler, 'replace_variables'):
-            handler.replace_variables(self.variables)
+            return UserErrorHandler(name, err.message)
 
 
 class KeywordStore(object):
