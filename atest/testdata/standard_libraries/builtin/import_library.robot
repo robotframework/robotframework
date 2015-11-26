@@ -54,3 +54,8 @@ Import Library With Named Arguments
 Import Library Failure Is Catchable
     Run Keyword And Expect Error  Importing test library 'NonExistingLib' failed: ImportError: *
     ...  Import Library  NonExistingLib
+
+Import Library From Path
+    Run Keyword And Expect Error    *    Keyword should exist    Print
+    Import Library    ExampleLibrary.py
+    Print   hello

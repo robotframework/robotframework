@@ -63,6 +63,11 @@ Import Variables Arguments Are Resolved Only Once
 Import Variables Failure Is Catchable
     Run Keyword And Expect Error  Variable file 'non_existing.py' does not exist.  Import Variables  non_existing.py
 
+Import Variables from Path
+    Variable Should Not Exist    ${PPATH_VARFILE}
+    Import Variables    variables_in_pythonpath.py
+    Should Be Equal    ${PPATH_VARFILE}     Variable from variable file in PYTHONPATH
+
 *** Keywords ***
 Import Variables In User Keyword
     [Arguments]  @{value}

@@ -45,6 +45,11 @@ Import Resource Failure Is Catchable
     Run Keyword And Expect Error  Initialization file '${path}' cannot be imported as a resource file.
     ...  Import Resource  ${path}
 
+Import Resource From Pythonpath
+    Run Keyword And Expect Error    *    Keyword should exist    PPATH KW
+    Import Resource    resource_in_pythonpath.robot
+    PPATH KW
+
 *** User Keywords ***
 Import Resource In User Keyword
     Import Resource  ${CURDIR}/import_resource_resource_3.robot

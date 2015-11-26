@@ -29,3 +29,6 @@ Import Library With Named Arguments
 
 Import Library Failure Is Catchable
     Check Test Case  ${TESTNAME}
+
+Import Library From Path
+    Check Test Case  ${TESTNAME}

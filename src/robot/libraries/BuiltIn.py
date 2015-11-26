@@ -2454,8 +2454,10 @@ class _Misc(_BuiltInBase):
 
         This keyword supports importing libraries both using library
         names and physical paths. When paths are used, they must be
-        given in absolute format. Forward slashes can be used as path
-        separators in all operating systems.
+        given in absolute format or found from
+        [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pythonpath-jythonpath-and-ironpythonpath|
+        search path]. Forward slashes can be used as path separators in all
+        operating systems.
 
         It is possible to pass arguments to the imported library and also
         named argument syntax works if the library supports it. ``WITH NAME``
@@ -2481,12 +2483,15 @@ class _Misc(_BuiltInBase):
         the same names. This functionality can thus be used to import new
         variables, for example, for each test in a test suite.
 
-        The given path must be absolute. Forward slashes can be used as path
-        separator regardless the operating system.
+        The given path must be absolute or found from
+        [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pythonpath-jythonpath-and-ironpythonpath|
+        search path]. Forward slashes can be used as path separator regardless
+        the operating system.
 
         Examples:
         | Import Variables | ${CURDIR}/variables.py   |      |      |
         | Import Variables | ${CURDIR}/../vars/env.py | arg1 | arg2 |
+        | Import Variables | file_from_pythonpath.py  |      |      |
         """
         try:
             self._namespace.import_variables(path, list(args), overwrite=True)
@@ -2501,12 +2506,15 @@ class _Misc(_BuiltInBase):
         similarly when importing them in the Setting table using the Resource
         setting.
 
-        The given path must be absolute. Forward slashes can be used as path
-        separator regardless the operating system.
+        The given path must be absolute or found from
+        [http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pythonpath-jythonpath-and-ironpythonpath|
+        search path]. Forward slashes can be used as path separator regardless
+        the operating system.
 
         Examples:
         | Import Resource | ${CURDIR}/resource.txt |
         | Import Resource | ${CURDIR}/../resources/resource.html |
+        | Import Resource | found_from_pythonpath.robot |
         """
         try:
             self._namespace.import_resource(path)
