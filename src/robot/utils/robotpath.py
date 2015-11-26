@@ -134,20 +134,37 @@ def _common_path(p1, p2):
 
 def find_file(path, basedir='.', file_type=None):
     path = os.path.normpath(path.replace('/', os.sep))
-    if os.path.isabs(path) and os.path.exists(path):
+    if os.path.isabs(path):
+        ret = _find_absolute_path(path)
+    else:
+        ret = _find_relative_path(path, basedir)
+    if ret:
+        return ret
+    default = file_type or 'File'
+    file_type = {'Library': 'Test library',
+                 'Variables': 'Variable file',
+                 'Resource': 'Resource file'}.get(file_type, default)
+    raise DataError("%s '%s' does not exist." % (file_type, path))
+
+
+def _find_absolute_path(path):
+    if _is_valid_file(path):
         return path
+    return None
+
+
+def _find_relative_path(path, basedir):
     for base in [basedir] + sys.path:
         if not (base and os.path.isdir(base)):
             continue
         if not is_unicode(base):
             base = system_decode(base)
         ret = os.path.abspath(os.path.join(base, path))
-        if os.path.isfile(ret):
+        if _is_valid_file(ret):
             return ret
-        if os.path.isdir(ret) and os.path.isfile(os.path.join(ret, '__init__.py')):
-            return ret
-    default = file_type or 'File'
-    file_type = {'Library': 'Test library',
-                 'Variables': 'Variable file',
-                 'Resource': 'Resource file'}.get(file_type, default)
-    raise DataError("%s '%s' does not exist." % (file_type, path))
+    return None
+
+
+def _is_valid_file(path):
+    return os.path.isfile(path) or \
+        (os.path.isdir(path) and os.path.isfile(os.path.join(path, '__init__.py')))
