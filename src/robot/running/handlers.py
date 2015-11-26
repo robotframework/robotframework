@@ -168,14 +168,7 @@ class _RunnableHandler(object):
         return getattr(lib_instance, handler_name)
 
     def _get_timeout(self, context):
-        timeouts = self._get_timeouts(context)
-        return None if not timeouts else min(timeouts)
-
-    def _get_timeouts(self, context):
-        timeouts = [kw.timeout for kw in context.keywords]
-        if context.test and not context.in_test_teardown:
-            timeouts.append(context.test.timeout)
-        return [timeout for timeout in timeouts if timeout]
+        return min(context.timeouts) if context.timeouts else None
 
 
 class _PythonHandler(_RunnableHandler):

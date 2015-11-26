@@ -629,7 +629,7 @@ class _FakeContext:
         self.dry_run = False
         self.in_teardown = False
         self.variables = _FakeVariableScope()
-        self.keywords = []
+        self.timeouts = set()
         self.test = None
 
 

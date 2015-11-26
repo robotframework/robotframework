@@ -57,7 +57,7 @@ class _ExecutionContext(object):
     def __init__(self, suite, namespace, output, dry_run=False):
         self.suite = suite
         self.test = None
-        self.keywords = []
+        self.timeouts = set()
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
@@ -80,6 +80,7 @@ class _ExecutionContext(object):
         self.variables.set_test('${TEST_STATUS}', test.status)
         self.variables.set_test('${TEST_MESSAGE}', test.message)
         self.in_test_teardown = True
+        self._remove_timeout(test.timeout)
         try:
             yield
         finally:
@@ -97,13 +98,13 @@ class _ExecutionContext(object):
 
     @contextmanager
     def user_keyword(self, kw):
-        self.keywords.append(kw)
         self.namespace.start_user_keyword()
+        self._add_timeout(kw.timeout)
         try:
             yield
         finally:
             self.namespace.end_user_keyword()
-            self.keywords.pop()
+            self._remove_timeout(kw.timeout)
 
     @property
     def in_teardown(self):
@@ -138,20 +139,29 @@ class _ExecutionContext(object):
 
     def start_test(self, test):
         self.test = test
+        self._add_timeout(test.timeout)
         self.namespace.start_test()
         self.variables.set_test('${TEST_NAME}', test.name)
         self.variables.set_test('${TEST_DOCUMENTATION}', test.doc)
         self.variables.set_test('@{TEST_TAGS}', list(test.tags))
 
+    def _add_timeout(self, timeout):
+        if timeout:
+            timeout.start()
+            self.timeouts.add(timeout)
+
+    def _remove_timeout(self, timeout):
+        if timeout in self.timeouts:
+            self.timeouts.remove(timeout)
+
     def end_test(self, test):
         self.test = None
+        self._remove_timeout(test.timeout)
         self.namespace.end_test()
         self.variables.set_suite('${PREV_TEST_NAME}', test.name)
         self.variables.set_suite('${PREV_TEST_STATUS}', test.status)
         self.variables.set_suite('${PREV_TEST_MESSAGE}', test.message)
         self.timeout_occurred = False
-
-    # Should not need separate start/end_keyword and start/end_user_keyword
 
     def start_keyword(self, keyword):
         self._started_keywords += 1

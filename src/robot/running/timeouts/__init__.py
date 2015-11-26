@@ -72,16 +72,6 @@ class _Timeout(Sortable):
     def timed_out(self):
         return self.active and self.time_left() <= 0
 
-    def __unicode__(self):
-        return self.string
-
-    @property
-    def _sort_key(self):
-        return (not self.active, self.time_left())
-
-    def __nonzero__(self):
-        return bool(self.string and self.string.upper() != 'NONE')
-
     def run(self, runnable, args=None, kwargs=None):
         if self.error:
             raise DataError(self.error)
@@ -106,6 +96,19 @@ class _Timeout(Sortable):
         if self.message:
             return self.message
         return '%s timeout %s exceeded.' % (self.type, self.string)
+
+    def __unicode__(self):
+        return self.string
+
+    def __nonzero__(self):
+        return bool(self.string and self.string.upper() != 'NONE')
+
+    @property
+    def _sort_key(self):
+        return not self.active, self.time_left()
+
+    def __hash__(self):
+        return id(self)
 
 
 class TestTimeout(_Timeout):

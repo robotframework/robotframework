@@ -103,7 +103,7 @@ class UserKeywordHandler(object):
                                           self._timeout.message,
                                           variables)
         else:
-            self.timeout = KeywordTimeout()
+            self.timeout = None
 
     def run(self, context, arguments):
         arguments = self._resolve_arguments(context, arguments)
@@ -144,7 +144,6 @@ class UserKeywordHandler(object):
         self._set_variables(positional, kwargs, context.variables)
         context.output.trace(lambda: self._log_args(context.variables))
         self._verify_keyword_is_valid()
-        self.timeout.start()
         error = return_ = pass_ = None
         runner = KeywordRunner(context)
         try:
