@@ -43,6 +43,7 @@ def no_recursion(cls):
     cls._calling_method = False
     return cls
 
+
 @no_recursion
 @py2to3
 class Listeners(object):
@@ -52,24 +53,23 @@ class Listeners(object):
                        '-id', '-longname', '-message')
 
     def __init__(self, listeners):
-        self._listeners = self._import_listeners(listeners)
+        if listeners is not None:
+            self._listeners = list(self._import_listeners(listeners))
         self._running_test = False
         self._setup_or_teardown_type = None
 
     def __nonzero__(self):
         return bool(self._listeners)
 
-    def _import_listeners(self, listener_data):
-        listeners = []
-        for listener in listener_data:
+    def _import_listeners(self, listeners):
+        for listener in listeners:
             try:
-                listeners.append(ListenerProxy(listener))
+                yield ListenerProxy(listener)
             except DataError as err:
                 if not is_string(listener):
                     listener = type_name(listener)
                 LOGGER.error("Taking listener '%s' into use failed: %s"
                              % (listener, err.message))
-        return listeners
 
     def start_suite(self, suite):
         for listener in self._listeners:
@@ -198,26 +198,26 @@ class Listeners(object):
 
 
 class ListenerProxy(AbstractLoggerProxy):
-    _methods = ['start_suite', 'end_suite', 'start_test', 'end_test',
+    _methods = ('start_suite', 'end_suite', 'start_test', 'end_test',
                 'start_keyword', 'end_keyword', 'log_message', 'message',
                 'output_file', 'report_file', 'log_file', 'debug_file',
                 'xunit_file', 'close', 'library_import', 'resource_import',
-                'variables_import']
+                'variables_import')
 
     def __init__(self, listener):
-        if is_string(listener):
-            name, args = split_args_from_name_or_path(listener)
-            listener = self._import_listener(name, args)
-        else:
-            name = type_name(listener)
+        listener, name = self._import_listener(listener)
+        AbstractLoggerProxy.__init__(self, listener)
         self.name = name
         self.version = self._get_version(listener)
-        AbstractLoggerProxy.__init__(self, listener)
 
-    def _import_listener(self, name, args):
+    def _import_listener(self, listener):
+        if not is_string(listener):
+            return listener, type_name(listener)
+        name, args = split_args_from_name_or_path(listener)
         importer = Importer('listener')
-        return importer.import_class_or_module(os.path.normpath(name),
-                                               instantiate_with_args=args)
+        listener = importer.import_class_or_module(os.path.normpath(name),
+                                                   instantiate_with_args=args)
+        return listener, name
 
     def _get_version(self, listener):
         try:

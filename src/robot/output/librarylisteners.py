@@ -12,20 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import py2to3, type_name
 from robot.errors import DataError
+from robot.utils import py2to3, type_name
 
 from .listeners import Listeners, ListenerProxy
 from .logger import LOGGER
-from .loggerhelper import AbstractLoggerProxy
 
 
 @py2to3
 class LibraryListeners(Listeners):
 
     def __init__(self):
-        self._running_test = False
-        self._setup_or_teardown_type = None
+        Listeners.__init__(self, listeners=None)
         self._global_listeners = {}
 
     def __nonzero__(self):
@@ -33,12 +31,12 @@ class LibraryListeners(Listeners):
 
     def _notify_end_test(self, listener, test):
         Listeners._notify_end_test(self, listener, test)
-        if listener.library_scope == 'TESTCASE':
+        if listener.scope == 'TESTCASE':
             listener.call_method(listener.close)
 
     def _notify_end_suite(self, listener, suite):
         Listeners._notify_end_suite(self, listener, suite)
-        if listener.library_scope == 'TESTSUITE':
+        if listener.scope == 'TESTSUITE':
             listener.call_method(listener.close)
 
     def end_suite(self, suite):
@@ -50,23 +48,26 @@ class LibraryListeners(Listeners):
 
     @property
     def _listeners(self):
+        # TODO: This is ugly and somewhat slow.
+        # - Should rather pass context to LibraryListeners.
+        # - Could re-wrapping listeners be avoided?
         from robot.running import EXECUTION_CONTEXTS
         if not EXECUTION_CONTEXTS.current:
             return []
         listeners = []
         for library in EXECUTION_CONTEXTS.current.namespace.libraries:
             if library.has_listener:
-                listeners.extend(self._import_listeners(library))
+                listeners.extend(self._wrap_listeners(library))
         for listener in listeners:
-            if listener.library_scope == 'GLOBAL':
+            if listener.scope == 'GLOBAL':
                 self._global_listeners[listener.logger] = listener
         return listeners
 
-    def _import_listeners(self, library):
+    def _wrap_listeners(self, library):
         listeners = []
         for listener in library.listeners:
             try:
-                listeners.append(_LibraryListenerProxy(library, listener))
+                listeners.append(LibraryListenerProxy(listener, library.scope))
             except DataError as err:
                 LOGGER.error("Taking listener '%s' into use for library '%s' failed: %s\n"
                              "Listeners are disabled for this library."
@@ -76,13 +77,11 @@ class LibraryListeners(Listeners):
         return listeners
 
 
-class _LibraryListenerProxy(ListenerProxy):
+class LibraryListenerProxy(ListenerProxy):
 
-    def __init__(self, library, listener):
-        self.name = listener.__class__.__name__
-        self.version = self._get_version(listener)
-        AbstractLoggerProxy.__init__(self, listener)
-        self.library_scope = library.scope
+    def __init__(self, listener, scope):
+        ListenerProxy.__init__(self, listener)
+        self.scope = scope
 
     def _get_method_names(self, name):
         names = ListenerProxy._get_method_names(self, name)
