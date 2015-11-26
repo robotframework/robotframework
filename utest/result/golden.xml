@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot generated="20111024 13:41:20.873" generator="Robot trunk 20111007 (Python 2.7.2 on linux2)">
 <suite id="s1" source="normal.html" name="Normal">
-<kw type="setup" name="my setup" timeout="1 year">
+<kw type="setup" name="my setup">
+<timeout value="1 year"></timeout>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-t1" name="First One">

@@ -23,8 +23,8 @@ class Keyword(model.Keyword):
     message_class = Message
 
     def __init__(self, kwname='', libname='', doc='', args=(), assign=(),
-                 tags=(), timeout='', type='kw',  status='FAIL', starttime=None,
-                 endtime=None):
+                 tags=(), timeout=None, type='kw',  status='FAIL',
+                 starttime=None, endtime=None):
         model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
         #: Name of the keyword without library or resource name.
         self.kwname = kwname

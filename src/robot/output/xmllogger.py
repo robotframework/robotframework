@@ -69,8 +69,6 @@ class XmlLogger(ResultVisitor):
         attrs = {'name': kw.kwname, 'library': kw.libname}
         if kw.type != 'kw':
             attrs['type'] = kw.type
-        if kw.timeout:
-            attrs['timeout'] = unic(kw.timeout)
         self._writer.start('kw', attrs)
         self._write_list('tags', 'tag', [unic(t) for t in kw.tags])
         self._writer.element('doc', kw.doc)
@@ -78,18 +76,19 @@ class XmlLogger(ResultVisitor):
         self._write_list('assign', 'var', kw.assign)
 
     def end_keyword(self, kw):
+        if kw.timeout:
+            self._writer.element('timeout', attrs={'value': unic(kw.timeout)})
         self._write_status(kw)
         self._writer.end('kw')
 
     def start_test(self, test):
-        attrs = {'id': test.id, 'name': test.name}
-        if test.timeout:
-            attrs['timeout'] = unic(test.timeout)
-        self._writer.start('test', attrs)
+        self._writer.start('test', {'id': test.id, 'name': test.name})
 
     def end_test(self, test):
         self._writer.element('doc', test.doc)
         self._write_list('tags', 'tag', test.tags)
+        if test.timeout:
+            self._writer.element('timeout', attrs={'value': unic(test.timeout)})
         self._write_status(test, {'critical': 'yes' if test.critical else 'no'})
         self._writer.end('test')
 

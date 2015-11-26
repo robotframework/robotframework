@@ -2,7 +2,8 @@
 <robot generated="20111027 10:11:57.563" generator="Rebot trunk 20111007 (Python 2.7.2+ on linux2)">
 <suite id="s1" name="Normal &amp; Normal">
 <suite id="s1-s1" source="normal.html" name="Normal">
-<kw type="setup" name="my setup" timeout="1 year">
+<kw type="setup" name="my setup">
+<timeout value="1 year"></timeout>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-s1-t1" name="First One">
@@ -44,7 +45,8 @@
 <status status="PASS" endtime="20111024 13:41:20.952" starttime="20111024 13:41:20.873"></status>
 </suite>
 <suite id="s1-s2" source="normal.html" name="Normal">
-<kw type="setup" name="my setup" timeout="1 year">
+<kw type="setup" name="my setup">
+<timeout value="1 year"></timeout>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-s2-t1" name="First One">
