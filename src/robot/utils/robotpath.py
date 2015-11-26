@@ -134,6 +134,8 @@ def _common_path(p1, p2):
 
 def find_file(path, basedir='.', file_type=None):
     path = os.path.normpath(path.replace('/', os.sep))
+    if os.path.isabs(path) and os.path.exists(path):
+        return path
     for base in [basedir] + sys.path:
         if not (base and os.path.isdir(base)):
             continue
