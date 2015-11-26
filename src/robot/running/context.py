@@ -38,9 +38,10 @@ class ExecutionContexts(object):
     def namespaces(self):
         return (context.namespace for context in self)
 
-    def start_suite(self, namespace, output, dry_run=False):
-        self._contexts.append(_ExecutionContext(namespace, output, dry_run))
-        return self.current
+    def start_suite(self, suite, namespace, output, dry_run=False):
+        ctx = _ExecutionContext(suite, namespace, output, dry_run)
+        self._contexts.append(ctx)
+        return ctx
 
     def end_suite(self):
         self._contexts.pop()
@@ -53,7 +54,10 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 class _ExecutionContext(object):
     _started_keywords_threshold = 42  # Jython on Windows don't work with higher
 
-    def __init__(self, namespace, output, dry_run=False):
+    def __init__(self, suite, namespace, output, dry_run=False):
+        self.suite = suite
+        self.test = None
+        self.keywords = []
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
@@ -62,20 +66,6 @@ class _ExecutionContext(object):
         self.in_keyword_teardown = 0
         self._started_keywords = 0
         self.timeout_occurred = False
-
-    # TODO: namespace should not have suite, test, or uk_handlers.
-
-    @property
-    def suite(self):
-        return self.namespace.suite
-
-    @property
-    def test(self):
-        return self.namespace.test
-
-    @property
-    def keywords(self):
-        return self.namespace.uk_handlers
 
     @contextmanager
     def suite_teardown(self):
@@ -107,11 +97,13 @@ class _ExecutionContext(object):
 
     @contextmanager
     def user_keyword(self, kw):
-        self.namespace.start_user_keyword(kw)
+        self.keywords.append(kw)
+        self.namespace.start_user_keyword()
         try:
             yield
         finally:
             self.namespace.end_user_keyword()
+            self.keywords.pop()
 
     @property
     def in_teardown(self):
@@ -145,12 +137,14 @@ class _ExecutionContext(object):
         self.variables['${SUITE_MESSAGE}'] = message
 
     def start_test(self, test):
-        self.namespace.start_test(test)
+        self.test = test
+        self.namespace.start_test()
         self.variables.set_test('${TEST_NAME}', test.name)
         self.variables.set_test('${TEST_DOCUMENTATION}', test.doc)
         self.variables.set_test('@{TEST_TAGS}', list(test.tags))
 
     def end_test(self, test):
+        self.test = None
         self.namespace.end_test()
         self.variables.set_suite('${PREV_TEST_NAME}', test.name)
         self.variables.set_suite('${PREV_TEST_STATUS}', test.status)

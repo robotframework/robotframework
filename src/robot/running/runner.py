@@ -65,7 +65,8 @@ class Runner(SuiteVisitor):
                        suite.resource.imports)
         ns.start_suite()
         ns.variables.set_from_variable_table(suite.resource.variables)
-        EXECUTION_CONTEXTS.start_suite(ns, self._output, self._settings.dry_run)
+        EXECUTION_CONTEXTS.start_suite(result, ns, self._output,
+                                       self._settings.dry_run)
         self._context.set_suite_variables(result)
         if not self._suite_status.failures:
             ns.handle_imports()

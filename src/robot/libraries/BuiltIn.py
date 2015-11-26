@@ -75,9 +75,6 @@ class _BuiltInBase(object):
     def _namespace(self):
         return self._get_context().namespace
 
-    def _get_namespace(self, top=False):
-        return self._get_context(top).namespace
-
     @property
     def _variables(self):
         return self._namespace.variables
@@ -2826,7 +2823,7 @@ class _Misc(_BuiltInBase):
         Support for ``append`` was added in Robot Framework 2.7.7 and support
         for HTML format in 2.8.
         """
-        test = self._namespace.test
+        test = self._context.test
         if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown.")
@@ -2862,7 +2859,7 @@ class _Misc(_BuiltInBase):
 
         New in Robot Framework 2.7. Support for ``append`` was added in 2.7.7.
         """
-        test = self._namespace.test
+        test = self._context.test
         if not test:
             raise RuntimeError("'Set Test Documentation' keyword cannot be "
                                "used in suite setup or teardown.")
@@ -2889,7 +2886,7 @@ class _Misc(_BuiltInBase):
         added in 2.7.7.
         """
         top = is_truthy(top)
-        suite = self._get_namespace(top).suite
+        suite = self._get_context(top).suite
         suite.doc = self._get_possibly_appended_value(suite.doc, doc, append)
         self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc, top)
         self.log('Set suite documentation to:\n%s' % suite.doc)
@@ -2915,7 +2912,7 @@ class _Misc(_BuiltInBase):
         top = is_truthy(top)
         if not is_unicode(name):
             name = unic(name)
-        metadata = self._get_namespace(top).suite.metadata
+        metadata = self._get_context(top).suite.metadata
         original = metadata.get(name, '')
         metadata[name] = self._get_possibly_appended_value(original, value, append)
         self._variables.set_suite('${SUITE_METADATA}', metadata.copy(), top)

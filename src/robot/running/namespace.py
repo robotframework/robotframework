@@ -38,13 +38,12 @@ class Namespace(object):
 
     def __init__(self, variables, suite, user_keywords, imports):
         LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
-        self.suite = suite
-        self.test = None
-        self.uk_handlers = []
         self.variables = variables
         self._imports = imports
         self._kw_store = KeywordStore(user_keywords, suite.source)
         self._imported_variable_files = ImportCache()
+        self._suite_name = suite.longname
+        self._running_test = False
 
     @property
     def libraries(self):
@@ -90,7 +89,7 @@ class Namespace(object):
                             source=path)
         else:
             LOGGER.info("Resource file '%s' already imported by suite '%s'"
-                        % (path, self.suite.longname))
+                        % (path, self._suite_name))
 
     def _validate_not_importing_init_file(self, path):
         name = os.path.splitext(os.path.basename(path))[0]
@@ -116,7 +115,7 @@ class Namespace(object):
             if args:
                 msg += " with arguments %s" % seq2str2(args)
             LOGGER.info("%s already imported by suite '%s'"
-                        % (msg, self.suite.longname))
+                        % (msg, self._suite_name))
 
     def import_library(self, name, args=None, alias=None, notify=True):
         self._import_library(Library(None, name, args=args, alias=alias),
@@ -128,7 +127,7 @@ class Namespace(object):
                                       import_setting.alias, self.variables)
         if lib.name in self._kw_store.libraries:
             LOGGER.info("Test library '%s' already imported by suite '%s'"
-                        % (lib.name, self.suite.longname))
+                        % (lib.name, self._suite_name))
             return
         if notify:
             LOGGER.imported("Library", lib.name,
@@ -138,7 +137,7 @@ class Namespace(object):
                             source=lib.source)
         self._kw_store.libraries[lib.name] = lib
         lib.start_suite()
-        if self.test:
+        if self._running_test:
             lib.start_test()
 
     def _resolve_name(self, import_setting):
@@ -172,35 +171,31 @@ class Namespace(object):
         self._kw_store.search_order = new_order
         return old_order
 
-    def start_test(self, test):
-        self.test = test
+    def start_test(self):
+        self._running_test = True
         self.variables.start_test()
         for lib in self.libraries:
             lib.start_test()
 
     def end_test(self):
-        self.test = None
         self.variables.end_test()
-        self.uk_handlers = []
         for lib in self.libraries:
             lib.end_test()
+        self._running_test = True
 
     def start_suite(self):
         self.variables.start_suite()
 
     def end_suite(self):
-        self.suite = None
         self.variables.end_suite()
         for lib in self.libraries:
             lib.end_suite()
 
-    def start_user_keyword(self, handler):
+    def start_user_keyword(self):
         self.variables.start_keyword()
-        self.uk_handlers.append(handler)
 
     def end_user_keyword(self):
         self.variables.end_keyword()
-        self.uk_handlers.pop()
 
     def get_library_instance(self, libname):
         return self._kw_store.get_library(libname).get_instance()
