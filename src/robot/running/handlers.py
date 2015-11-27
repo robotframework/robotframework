@@ -23,7 +23,7 @@ from .arguments import (ArgumentResolver, ArgumentSpec, ArgumentMapper,
                         DynamicArgumentParser, JavaArgumentCoercer,
                         JavaArgumentParser, PythonArgumentParser)
 from .model import Keyword
-from .keywordrunner import KeywordRunner
+from .keywordrunner import KeywordRunner, LibraryKeywordRunner
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
 from .signalhandler import STOP_SIGNAL_MONITOR
@@ -111,16 +111,11 @@ class _RunnableHandler(object):
     def create(self, name):
         return self
 
-    def init_keyword(self, varz):
-        pass
-
-    def run(self, context, args):
+    def run(self, kw, context):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
-        if context.dry_run:
-            return self._dry_run(context, args)
-        return self._run(context, args)
+        return LibraryKeywordRunner(self).run(kw, context)
 
     def _dry_run(self, context, args):
         if self.longname in self._executed_in_dry_run:

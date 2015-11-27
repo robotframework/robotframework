@@ -59,58 +59,66 @@ class NormalRunner(object):
         self._context = context
 
     def run(self, kw, name=None):
-        handler = self._context.get_handler(name or kw.name)
-        handler.init_keyword(self._context.variables)
+        ctx = self._context
+        runner = ctx.get_handler(name or kw.name)
+        return runner.run(kw, ctx)
+
+
+class LibraryKeywordRunner(object):
+
+    def __init__(self, handler):
+        self._handler = handler
+
+    def run(self, kw, context):
         assigner = VariableAssigner(kw.assign)
+        handler = self._handler
         result = KeywordResult(kwname=handler.name or '',
                                libname=handler.libname or '',
                                doc=handler.shortdoc,
                                args=kw.args,
                                assign=assigner.assignment,
                                tags=handler.tags,
-                               timeout=getattr(handler, 'timeout', ''),
                                type=kw.type)
-        dry_run_lib_kw = self._context.dry_run and handler.type == 'library'
-        with StatusReporter(self._context, result, dry_run_lib_kw):
-            self._warn_if_deprecated(result.name, result.doc)
-            return self._run_and_assign(handler, kw.args, assigner)
+        with StatusReporter(context, result, context.dry_run):
+            self._warn_if_deprecated(result.name, result.doc, context)
+            return self._run_and_assign(context, kw.args, assigner)
 
-    def _warn_if_deprecated(self, name, doc):
+    def _warn_if_deprecated(self, name, doc, context):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
             message = ' ' + doc.split('*', 2)[-1].strip()
-            self._context.warn("Keyword '%s' is deprecated.%s" % (name, message))
+            context.warn("Keyword '%s' is deprecated.%s" % (name, message))
 
-    def _run_and_assign(self, handler, args, assigner):
-        syntax_error_reporter = SyntaxErrorReporter(self._context)
+    def _run_and_assign(self, context, args, assigner):
+        syntax_error_reporter = SyntaxErrorReporter(context)
         with syntax_error_reporter:
             assigner.validate_assignment()
-        return_value, exception = self._run(handler, args)
-        if not exception or exception.can_continue(self._context.in_teardown):
+        return_value, exception = self._run(context, args)
+        if not exception or exception.can_continue(context.in_teardown):
             with syntax_error_reporter:
-                assigner.assign(self._context, return_value)
+                assigner.assign(context, return_value)
         if exception:
             raise exception
         return return_value
 
-    def _run(self, handler, args):
+    def _run(self, context, args):
         return_value = exception = None
         try:
-            return_value = handler.run(self._context, args)
+            return_value = self._handler._run(context, args)
         except ExecutionFailed as err:
             exception = err
         except:
-            exception = self._get_and_report_failure()
+            exception = self._get_and_report_failure(context)
         if exception:
             return_value = exception.return_value
         return return_value, exception
 
-    def _get_and_report_failure(self):
+    def _get_and_report_failure(self, context):
         failure = HandlerExecutionFailed(ErrorDetails())
         if failure.timeout:
-            self._context.timeout_occurred = True
-        self._context.fail(failure.full_message)
+            context.timeout_occurred = True
+        context.fail(failure.full_message)
         if failure.traceback:
-            self._context.debug(failure.traceback)
+            context.debug(failure.traceback)
         return failure
 
 
