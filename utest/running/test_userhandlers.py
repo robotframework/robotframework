@@ -118,12 +118,6 @@ class TestEmbeddedArgs(unittest.TestCase):
         assert_equal(handler.name, 'User SELECts book frOm liST')
         assert_equal(handler.longname, 'resource.User SELECts book frOm liST')
 
-    def test_embedded_args_handler_has_all_needed_attributes(self):
-        normal = UserKeywordHandler(HandlerDataMock('My name'), None)
-        embedded = EmbeddedArgs('My name', EAT('My ${name}'))
-        for attr in dir(normal):
-            assert_true(hasattr(embedded, attr), "'%s' missing" % attr)
-
 
 class TestGetArgSpec(unittest.TestCase):
 

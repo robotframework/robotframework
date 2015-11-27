@@ -72,15 +72,39 @@ class UserKeywordHandler(object):
 
     def __init__(self, keyword, libname):
         self.name = keyword.name
+        self.libname = libname
+        self.doc = unic(keyword.doc)
+        self.tags = keyword.tags
+        self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
+                                                           self.longname)
+        self._kw = keyword
+
+    @property
+    def longname(self):
+        return '%s.%s' % (self.libname, self.name) if self.libname else self.name
+
+    @property
+    def shortdoc(self):
+        return self.doc.splitlines()[0] if self.doc else ''
+
+    def create(self, name):
+        return UserKeywordCall(self._kw, self.libname)
+
+
+class UserKeywordCall(object):
+    type = 'user'
+
+    def __init__(self, keyword, libname):
+        self.name = keyword.name
         self.keywords = keyword.keywords.normal
         self.return_value = tuple(keyword.return_)
         self.teardown = keyword.keywords.teardown
         self.libname = libname
-        self.doc = self._doc = unic(keyword.doc)
-        self.tags = self._tags = keyword.tags
+        self.doc = unic(keyword.doc)
+        self.tags = keyword.tags
         self.arguments = UserKeywordArgumentParser().parse(tuple(keyword.args),
                                                            self.longname)
-        self._timeout = keyword.timeout
+        self.timeout = keyword.timeout
 
     @property
     def longname(self):
@@ -93,14 +117,14 @@ class UserKeywordHandler(object):
     def init_keyword(self, variables):
         # TODO: Should use runner and not change internal state like this.
         # Timeouts should also be cleaned up in general.
-        doc = variables.replace_string(self._doc, ignore_errors=True)
+        doc = variables.replace_string(self.doc, ignore_errors=True)
         doc, tags = split_tags_from_doc(doc)
         self.doc = doc
         self.tags = [variables.replace_string(tag, ignore_errors=True)
-                     for tag in self._tags] + tags
-        if self._timeout:
-            self.timeout = KeywordTimeout(self._timeout.value,
-                                          self._timeout.message,
+                     for tag in self.tags] + tags
+        if self.timeout:
+            self.timeout = KeywordTimeout(self.timeout.value,
+                                          self.timeout.message,
                                           variables)
         else:
             self.timeout = None
@@ -240,16 +264,15 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
         return EmbeddedArgs(name, self)
 
 
-class EmbeddedArgs(UserKeywordHandler):
+class EmbeddedArgs(UserKeywordCall):
 
     def __init__(self, name, template):
         match = template.embedded_name.match(name)
         if not match:
             raise ValueError('Does not match given name')
-        UserKeywordHandler.__init__(self, template.keyword, template.libname)
+        UserKeywordCall.__init__(self, template.keyword, template.libname)
         self.embedded_args = list(zip(template.embedded_args, match.groups()))
         self.name = name
-        self.orig_name = template.name
 
     def _resolve_arguments(self, context, arguments):
         variables = context.variables if not context.dry_run else None

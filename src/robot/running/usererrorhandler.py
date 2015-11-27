@@ -48,6 +48,9 @@ class UserErrorHandler(object):
     def shortdoc(self):
         return self.doc.splitlines()[0]
 
+    def create(self, name):
+        return self
+
     def init_keyword(self, varz):
         pass
 

@@ -118,6 +118,6 @@ def UserLibrary(path):
     ret = RuntimeUserLibrary(resource.keywords, path)
     for handler in ret.handlers:
         if handler.type != 'error':
-            handler.doc = utils.unescape(handler._doc)
+            handler.doc = utils.unescape(handler.doc)
     ret.doc = utils.unescape(resource.doc)
     return ret

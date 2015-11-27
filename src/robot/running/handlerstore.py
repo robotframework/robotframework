@@ -56,12 +56,12 @@ class HandlerStore(object):
 
     def __getitem__(self, name):
         try:
-            return self._normal[name]
+            return self._normal[name].create(name)
         except KeyError:
-            return self._find_embedded(name)
+            return self._find_embedded(name).create(name)
 
     def _find_embedded(self, name):
-        embedded = [template.create(name) for template in self._embedded
+        embedded = [template for template in self._embedded
                     if template.matches(name)]
         if len(embedded) == 1:
             return embedded[0]
@@ -77,5 +77,5 @@ class HandlerStore(object):
                             % (source, name))
         error = ["%s contains multiple keywords matching name '%s':"
                  % (source, name)]
-        names = sorted(handler.orig_name for handler in found)
+        names = sorted(handler.name for handler in found)
         raise DataError('\n    '.join(error + names))

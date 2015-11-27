@@ -108,6 +108,9 @@ class _RunnableHandler(object):
     def libname(self):
         return self.library.name
 
+    def create(self, name):
+        return self
+
     def init_keyword(self, varz):
         pass
 
@@ -406,7 +409,7 @@ class EmbeddedArgsTemplate(object):
 
     def create(self, name):
         args = self._name_regexp.match(name).groups()
-        return EmbeddedArgs(name, self.name, args, self._orig_handler)
+        return EmbeddedArgs(name, args, self._orig_handler)
 
     def __copy__(self):
         # Needed due to https://github.com/IronLanguages/main/issues/1192
@@ -415,9 +418,8 @@ class EmbeddedArgsTemplate(object):
 
 class EmbeddedArgs(object):
 
-    def __init__(self, name, orig_name, embedded_args, orig_handler):
+    def __init__(self, name, embedded_args, orig_handler):
         self.name = name
-        self.orig_name = orig_name
         self._embedded_args = embedded_args
         self._orig_handler = orig_handler
 
@@ -436,5 +438,5 @@ class EmbeddedArgs(object):
 
     def __copy__(self):
         # Needed due to https://github.com/IronLanguages/main/issues/1192
-        return EmbeddedArgs(self.name, self.orig_name, self._embedded_args,
+        return EmbeddedArgs(self.name, self._embedded_args,
                             copy.copy(self._orig_handler))
