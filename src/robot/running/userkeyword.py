@@ -24,7 +24,7 @@ from robot.variables import is_list_var
 from .arguments import (ArgumentMapper, ArgumentResolver,
                         EmbeddedArguments, UserKeywordArgumentParser)
 from .handlerstore import HandlerStore
-from .keywordrunner import KeywordRunner
+from .keywordrunner import KeywordRunner, UserKeywordRunner
 from .timeouts import KeywordTimeout
 from .usererrorhandler import UserErrorHandler
 
@@ -114,7 +114,7 @@ class UserKeywordCall(object):
     def shortdoc(self):
         return self.doc.splitlines()[0] if self.doc else ''
 
-    def init_keyword(self, variables):
+    def _init_keyword(self, variables):
         # TODO: Should use runner and not change internal state like this.
         # Timeouts should also be cleaned up in general.
         doc = variables.replace_string(self.doc, ignore_errors=True)
@@ -129,12 +129,14 @@ class UserKeywordCall(object):
         else:
             self.timeout = None
 
-    def run(self, context, arguments):
-        arguments = self._resolve_arguments(context, arguments)
+    def run(self, kw, context):
+        self._init_keyword(context.variables)
+        return UserKeywordRunner(self).run(kw, context)
+
+    def _run(self, context, args):
+        arguments = self._resolve_arguments(context, args)
         with context.user_keyword(self):
             args, kwargs = self._map_arguments(context, arguments)
-            if context.dry_run:
-                return self._dry_run(context, args, kwargs)
             return self._normal_run(context, args, kwargs)
 
     def _resolve_arguments(self, context, arguments):
@@ -148,11 +150,14 @@ class UserKeywordCall(object):
         mapper = ArgumentMapper(self.arguments)
         return mapper.map(positional, named, variables)
 
-    def _dry_run(self, context, args, kwargs):
-        error, return_ = self._execute(context, args, kwargs)
-        if error:
-            raise error
-        return None
+    def _dry_run(self, context, args):
+        arguments = self._resolve_arguments(context, args)
+        with context.user_keyword(self):
+            args, kwargs = self._map_arguments(context, arguments)
+            error, return_ = self._execute(context, args, kwargs)
+            if error:
+                raise error
+            return None
 
     def _normal_run(self, context, args, kwargs):
         error, return_ = self._execute(context, args, kwargs)

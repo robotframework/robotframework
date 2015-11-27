@@ -17,7 +17,7 @@ from robot.model import Tags
 from robot.utils import unic
 
 from .arguments import ArgumentSpec
-
+from .keywordrunner import LibraryKeywordRunner
 
 class UserErrorHandler(object):
     """Created if creating handlers fail -- running raises DataError.
@@ -51,8 +51,11 @@ class UserErrorHandler(object):
     def create(self, name):
         return self
 
-    def init_keyword(self, varz):
-        pass
+    def run(self, kw, context):
+        # TODO: should have own runner
+        return LibraryKeywordRunner(self).run(kw, context)
 
-    def run(self, *args):
+    def _run(self, *args):
         raise DataError(self.error)
+
+    _dry_run = _run

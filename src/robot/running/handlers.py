@@ -112,9 +112,6 @@ class _RunnableHandler(object):
         return self
 
     def run(self, kw, context):
-        if self.pre_run_messages:
-            for message in self.pre_run_messages:
-                context.output.message(message)
         return LibraryKeywordRunner(self).run(kw, context)
 
     def _dry_run(self, context, args):
@@ -124,6 +121,9 @@ class _RunnableHandler(object):
         return None
 
     def _run(self, context, args):
+        if self.pre_run_messages:
+            for message in self.pre_run_messages:
+                context.output.message(message)
         positional, named = \
             self.resolve_arguments(args, context.variables)
         context.output.trace(lambda: self._log_args(positional, named))
@@ -425,11 +425,14 @@ class EmbeddedArgs(object):
     def __getattr__(self, item):
         return getattr(self._orig_handler, item)
 
-    def run(self, context, args):
+    def run(self, kw, context):
+        return LibraryKeywordRunner(self).run(kw, context)
+
+    def _run(self, context, args):
         if args:
             raise DataError("Positional arguments are not allowed when using "
                             "embedded arguments.")
-        return self._orig_handler.run(context, self._embedded_args)
+        return self._orig_handler._run(context, self._embedded_args)
 
     def __copy__(self):
         # Needed due to https://github.com/IronLanguages/main/issues/1192

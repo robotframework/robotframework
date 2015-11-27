@@ -2573,7 +2573,8 @@ class _Misc(_BuiltInBase):
         try:
             handler = self._namespace.get_handler(name)
             if isinstance(handler, UserErrorHandler):
-                handler.run()
+                # FIXME: perhaps dataerror could be raised always
+                handler._run()
         except DataError as err:
             raise AssertionError(msg or unic(err))
 

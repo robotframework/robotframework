@@ -22,6 +22,7 @@ from robot.utils import (ErrorDetails, format_assign_message, frange,
 from robot.variables import is_scalar_var, VariableAssigner
 
 
+# TODO: Rename to StepRunner or similar. Also rename methods.
 class KeywordRunner(object):
 
     def __init__(self, context, templated=False):
@@ -77,11 +78,16 @@ class LibraryKeywordRunner(object):
                                doc=handler.shortdoc,
                                args=kw.args,
                                assign=assigner.assignment,
+                               # TODO: only do this for userkeywords
+                               timeout=getattr(handler, 'timeout', None),
                                tags=handler.tags,
                                type=kw.type)
-        with StatusReporter(context, result, context.dry_run):
+        with StatusReporter(context, result, self._dry_run_libkw(context)):
             self._warn_if_deprecated(result.name, result.doc, context)
             return self._run_and_assign(context, kw.args, assigner)
+
+    def _dry_run_libkw(self, ctx):
+        return ctx.dry_run
 
     def _warn_if_deprecated(self, name, doc, context):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
@@ -103,7 +109,10 @@ class LibraryKeywordRunner(object):
     def _run(self, context, args):
         return_value = exception = None
         try:
-            return_value = self._handler._run(context, args)
+            if not context.dry_run:
+                return_value = self._handler._run(context, args)
+            else:
+                return_value = self._handler._dry_run(context, args)
         except ExecutionFailed as err:
             exception = err
         except:
@@ -120,6 +129,12 @@ class LibraryKeywordRunner(object):
         if failure.traceback:
             context.debug(failure.traceback)
         return failure
+
+
+class UserKeywordRunner(LibraryKeywordRunner):
+
+    def _dry_run_libkw(self, ctx):
+        return False
 
 
 def ForRunner(context, templated=False, flavor='IN'):
