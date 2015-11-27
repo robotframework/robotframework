@@ -59,7 +59,7 @@ class NamedArgumentResolver(object):
         return positional, named
 
     def _is_dict_var(self, arg):
-        return (is_string(arg) and
+        return (is_string(arg) and arg[:2] == '&{' and arg[-1] == '}' and
                 VariableSplitter(arg).is_dict_variable())
 
     def _is_named(self, arg, variables=None):
@@ -110,14 +110,16 @@ class VariableReplacer(object):
         self._resolve_until = resolve_until
 
     def replace(self, positional, named, variables=None):
-        # `variables` is None in dry-run mode and when using Libdoc
+        # `variables` is None in dry-run mode and when using Libdoc.
         if variables:
             positional = variables.replace_list(positional, self._resolve_until)
-            named = DotDict(self._replace_named(named, variables.replace_scalar))
+            named = list(self._replace_named(named, variables.replace_scalar))
         else:
             positional = list(positional)
-            named = DotDict(item for item in named if isinstance(item, tuple))
-        return positional, named
+            named = [item for item in named if isinstance(item, tuple)]
+        # FIXME: DotDict is somewhat slow and not generally needed.
+        # Either use normal dict by default or return list of tuples.
+        return positional, DotDict(named)
 
     def _replace_named(self, named, replace_scalar):
         for item in named:

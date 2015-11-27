@@ -46,10 +46,10 @@ class _MarkupWriter(object):
     def _format_attrs(self, attrs):
         if not attrs:
             return ''
-        if not self._write_empty:
-            attrs = dict((k, v) for k, v in attrs.items() if v)
-        return ' '.join('%s="%s"' % (name, attribute_escape(attrs[name] or ''))
-                        for name in self._order_attrs(attrs))
+        attrs = [(k, attribute_escape(attrs[k] or ''))
+                 for k in self._order_attrs(attrs)]
+        write_empty = self._write_empty
+        return ' '.join('%s="%s"' % a for a in attrs if write_empty or a[1])
 
     def _order_attrs(self, attrs):
         return attrs

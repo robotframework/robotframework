@@ -416,7 +416,7 @@ class TimestampCache(object):
 
     def _cached_timestamp(self, millis, millissep):
         if millissep:
-            return '%s%s%03d' % (self._previous_timestamp, millissep, millis)
+            return self._previous_timestamp + millissep + format(millis, '03d')
         return self._previous_timestamp
 
     def _cache_timestamp(self, secs, timestamp, daysep, daytimesep, timesep, millissep):

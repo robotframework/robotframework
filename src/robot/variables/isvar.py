@@ -19,13 +19,12 @@ from .splitter import VariableIterator
 
 
 def is_var(string, identifiers='$@&'):
-    if not is_string(string):
+    if not string or not is_string(string) or len(string) < 4:
         return False
-    length = len(string)
-    return (length > 3 and
-            string[0] in identifiers and
-            string.rfind('{') == 1 and
-            string.find('}') == length - 1)
+    if string[0] not in identifiers or string[1] != '{' or string[-1] != '}':
+        return False
+    body = string[2:-1]
+    return '{' not in body and '}' not in body
 
 
 def is_scalar_var(string):

@@ -12,15 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-
 from robot.utils import py2to3
 
 
 @py2to3
 class DataRow(object):
     _row_continuation_marker = '...'
-    _whitespace_regexp = re.compile('\s+')
 
     def __init__(self, cells):
         self.cells, self.comments = self._parse(cells)
@@ -37,7 +34,7 @@ class DataRow(object):
         return self._purge_empty_cells(data), self._purge_empty_cells(comments)
 
     def _collapse_whitespace(self, cell):
-        return self._whitespace_regexp.sub(' ', cell).strip()
+        return ' '.join(cell.split())
 
     def _purge_empty_cells(self, row):
         while row and not row[-1]:

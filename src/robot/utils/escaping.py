@@ -43,7 +43,6 @@ def unescape(item):
 
 
 class Unescaper(object):
-    _escaped = re.compile(r'(\\+)([^\\]*)')
 
     def unescape(self, string):
         return ''.join(self._yield_unescaped(string))

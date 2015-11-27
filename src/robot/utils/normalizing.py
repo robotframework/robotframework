@@ -12,14 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
 import sys
 from collections import MutableMapping
 
 from .robottypes import is_dict_like
-
-
-_WHITESPACE_REGEXP = re.compile('\s+')
 
 
 def normalize(string, ignore=(), caseless=True, spaceless=True):
@@ -29,7 +25,7 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     Additional characters can be removed by giving them in `ignore` list.
     """
     if spaceless:
-        string = _WHITESPACE_REGEXP.sub('', string)
+        string = ''.join(string.split())
     if caseless:
         string = lower(string)
         ignore = [lower(i) for i in ignore]

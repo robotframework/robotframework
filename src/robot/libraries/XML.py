@@ -432,7 +432,6 @@ class XML(object):
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
-    _whitespace = re.compile('\s+')
     _xml_declaration = re.compile('^<\?xml .*\?>')
 
     def __init__(self, use_lxml=False):
@@ -678,7 +677,7 @@ class XML(object):
             yield element.tail
 
     def _normalize_whitespace(self, text):
-        return self._whitespace.sub(' ', text.strip())
+        return ' '.join(text.split())
 
     def get_elements_texts(self, source, xpath, normalize_whitespace=False):
         """Returns text of all elements matching ``xpath`` as a list.
