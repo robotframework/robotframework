@@ -107,6 +107,9 @@ class _Timeout(Sortable):
     def _sort_key(self):
         return not self.active, self.time_left()
 
+    def __eq__(self, other):
+        return self is other
+
     def __hash__(self):
         return id(self)
 

@@ -12,7 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from operator import eq, ne, lt, le, gt, ge
+from operator import eq, lt, le, gt, ge
+
+from .robottypes import type_name
 
 
 class Sortable(object):
@@ -20,18 +22,19 @@ class Sortable(object):
 
     _sort_key = NotImplemented
 
-    def __test(self, operator, other, result_if_unsortable=None):
+    def __test(self, operator, other, require_sortable=True):
         if isinstance(other, Sortable):
             return operator(self._sort_key, other._sort_key)
-        if result_if_unsortable is not None:
-            return result_if_unsortable
-        raise TypeError("Cannot sort %s and %s." % (type(self), type(other)))
+        if not require_sortable:
+            return False
+        raise TypeError("Cannot sort '%s' and '%s'."
+                        % (type_name(self), type_name(other)))
 
     def __eq__(self, other):
-        return self.__test(eq, other, result_if_unsortable=False)
+        return self.__test(eq, other, require_sortable=False)
 
     def __ne__(self, other):
-        return self.__test(ne, other, result_if_unsortable=True)
+        return not self == other
 
     def __lt__(self, other):
         return self.__test(lt, other)
