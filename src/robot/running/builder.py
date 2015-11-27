@@ -18,7 +18,7 @@ from robot.running.defaults import TestDefaults
 from robot.utils import abspath, is_string, unic
 from robot.variables import VariableIterator
 
-from .model import ForLoop, ResourceFile, TestSuite
+from .model import ForLoop, Keyword, ResourceFile, TestSuite
 
 
 class TestSuiteBuilder(object):
@@ -33,7 +33,9 @@ class TestSuiteBuilder(object):
         """
         self.include_suites = include_suites
         self.warn_on_skipped = warn_on_skipped
-        self._build_step = StepBuilder().build
+        builder = StepBuilder()
+        self._build_steps = builder.build_steps
+        self._build_step = builder.build_step
 
     def build(self, *paths):
         if not paths:
@@ -64,8 +66,8 @@ class TestSuiteBuilder(object):
                           source=data.source,
                           doc=unic(data.setting_table.doc),
                           metadata=self._get_metadata(data.setting_table))
-        self._create_setup(suite, data.setting_table.suite_setup)
-        self._create_teardown(suite, data.setting_table.suite_teardown)
+        self._build_setup(suite, data.setting_table.suite_setup)
+        self._build_teardown(suite, data.setting_table.suite_teardown)
         for test_data in data.testcase_table.tests:
             self._build_test(suite, test_data, defaults)
         for child in data.children:
@@ -79,15 +81,15 @@ class TestSuiteBuilder(object):
 
     def _build_test(self, suite, data, defaults):
         values = defaults.get_test_values(data)
+        template = self._get_template(values.template)
         test = suite.tests.create(name=data.name,
                                   doc=unic(data.doc),
                                   tags=values.tags.value,
-                                  template=self._get_template(values.template),
+                                  template=template,
                                   timeout=self._get_timeout(values.timeout))
-        self._create_setup(test, values.setup)
-        for step_data in data.steps:
-            self._build_step(test, step_data, template=values.template)
-        self._create_teardown(test, values.teardown)
+        self._build_setup(test, values.setup)
+        self._build_steps(test, data, template)
+        self._build_teardown(test, values.teardown)
 
     def _get_timeout(self, timeout):
         return (timeout.value, timeout.message) if timeout else None
@@ -95,11 +97,11 @@ class TestSuiteBuilder(object):
     def _get_template(self, template):
         return unic(template) if template.is_active() else None
 
-    def _create_setup(self, parent, data):
+    def _build_setup(self, parent, data):
         if data.is_active():
             self._build_step(parent, data, kw_type='setup')
 
-    def _create_teardown(self, parent, data):
+    def _build_teardown(self, parent, data):
         if data.is_active():
             self._build_step(parent, data, kw_type='teardown')
 
@@ -107,7 +109,9 @@ class TestSuiteBuilder(object):
 class ResourceFileBuilder(object):
 
     def __init__(self):
-        self._build_step = StepBuilder().build
+        builder = StepBuilder()
+        self._build_steps = builder.build_steps
+        self._build_step = builder.build_step
 
     def build(self, path_or_data, target=None):
         data, source = self._import_resource_if_needed(path_or_data)
@@ -143,8 +147,7 @@ class ResourceFileBuilder(object):
                                     tags=tuple(data.tags),
                                     return_=tuple(data.return_),
                                     timeout=self._get_timeout(data.timeout))
-        for step_data in data.steps:
-            self._build_step(kw, step_data)
+        self._build_steps(kw, data)
         if data.teardown.is_active():
             self._build_step(kw, data.teardown, kw_type='teardown')
 
@@ -154,41 +157,48 @@ class ResourceFileBuilder(object):
 
 class StepBuilder(object):
 
-    def build(self, parent, data, template=None, kw_type='kw'):
-        if not data or data.is_comment():
-            return
+    def build_steps(self, parent, data, template=None, kw_type='kw'):
+        steps = [self._build(step, template, kw_type) for step in data.steps
+                 if step and not step.is_comment()]
+        parent.keywords.extend(steps)
+
+    def build_step(self, parent, data, template=None, kw_type='kw'):
+        if data and not data.is_comment():
+            step = self._build(data, template, kw_type)
+            parent.keywords.append(step)
+
+    def _build(self, data, template=None, kw_type='kw'):
         if data.is_for_loop():
-            self._build_for_loop(parent, data, template)
-        elif template and template.is_active():
-            self._build_templated_step(parent, data, template)
-        else:
-            self._build_normal_step(parent, data, kw_type)
+            return self._build_for_loop(data, template)
+        if template:
+            return self._build_templated_step(data, template)
+        return self._build_normal_step(data, kw_type)
 
-    def _build_for_loop(self, parent, data, template):
-        loop = parent.keywords.append(ForLoop(variables=data.vars,
-                                              values=data.items,
-                                              flavor=data.flavor))
-        for step in data.steps:
-            self.build(loop, step, template=template)
+    def _build_for_loop(self, data, template):
+        loop = ForLoop(variables=data.vars,
+                       values=data.items,
+                       flavor=data.flavor)
+        self.build_steps(loop, data, template)
+        return loop
 
-    def _build_templated_step(self, parent, data, template):
+    def _build_templated_step(self, data, template):
         args = data.as_list(include_comment=False)
-        template, args = self._format_template(unic(template), args)
-        parent.keywords.create(name=template, args=tuple(args))
+        template, args = self._format_template(template, args)
+        return Keyword(name=template, args=args)
 
     def _format_template(self, template, args):
         iterator = VariableIterator(template, identifiers='$')
         variables = len(iterator)
         if not variables or variables != len(args):
-            return template, args
+            return template, tuple(args)
         temp = []
         for before, variable, after in iterator:
             temp.extend([before, args.pop(0)])
         temp.append(after)
         return ''.join(temp), ()
 
-    def _build_normal_step(self, parent, data, kw_type):
-        parent.keywords.create(name=data.name,
-                               args=tuple(data.args),
-                               assign=tuple(data.assign),
-                               type=kw_type)
+    def _build_normal_step(self, data, kw_type):
+        return Keyword(name=data.name,
+                       args=tuple(data.args),
+                       assign=tuple(data.assign),
+                       type=kw_type)
