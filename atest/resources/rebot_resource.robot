@@ -16,7 +16,7 @@ Create Output With Robot
     Set Suite Variable    $ORIG_START    ${SUITE.starttime}
     Set Suite Variable    $ORIG_END    ${SUITE.endtime}
     Set Suite Variable    $ORIG_ELAPSED    ${SUITE.elapsedtime}
-    Run Keyword If    "${outputname}"    Move File    ${OUTFILE}    ${outputname}
+    Run Keyword If    $outputname    Move File    ${OUTFILE}    ${outputname}
 
 Check times
     [Arguments]    ${item}    ${start}    ${end}    ${elapsed}
