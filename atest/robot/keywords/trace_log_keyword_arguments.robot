@@ -49,7 +49,7 @@ Kwargs
     ...    \&{kwargs}={}
     ...    ${EMPTY}
     ...    \&{kwargs}={'a': '1', 'b': 2, 'c': '3'}
-    ...    a='1' | b=2 | c='3'
+    ...    a='override' | b=2 | a='1' | c='3'
 
 All args
     Check Argument Value Trace

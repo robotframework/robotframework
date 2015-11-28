@@ -183,7 +183,7 @@ class _BaseTestLibrary(object):
     def _get_instance(self, libcode):
         with OutputCapturer(library_import=True):
             try:
-                return libcode(*self.positional_args, **self.named_args)
+                return libcode(*self.positional_args, **dict(self.named_args))
             except:
                 self._raise_creating_instance_failed()
 
@@ -269,7 +269,7 @@ class _BaseTestLibrary(object):
         msg, details = get_error_details()
         if self.positional_args or self.named_args:
             args = self.positional_args \
-                + ['%s=%s' % item for item in self.named_args.items()]
+                + ['%s=%s' % item for item in self.named_args]
             args_text = 'arguments %s' % seq2str2(args)
         else:
             args_text = 'no arguments'

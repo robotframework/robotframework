@@ -130,13 +130,13 @@ class _RunnableHandler(object):
             self.resolve_arguments(args, context.variables)
         context.output.trace(lambda: self._log_args(positional, named))
         runner = self._runner_for(self._current_handler(), context, positional,
-                                  named, self._get_timeout(context))
+                                  dict(named), self._get_timeout(context))
         return self._run_with_output_captured_and_signal_monitor(runner, context)
 
     def _log_args(self, positional, named):
         positional = [utils.prepr(arg) for arg in positional]
         named = ['%s=%s' % (utils.unic(name), utils.prepr(value))
-                 for name, value in named.items()]
+                 for name, value in named]
         return 'Arguments: [ %s ]' % ' | '.join(positional + named)
 
     def _runner_for(self, handler, context, positional, named, timeout):
@@ -203,7 +203,7 @@ class _JavaHandler(_RunnableHandler):
         positional, named = self._argument_resolver.resolve(args, variables)
         arguments = self._arg_coercer.coerce(positional, named,
                                              dryrun=not variables)
-        return arguments, {}
+        return arguments, []
 
 
 class _DynamicHandler(_RunnableHandler):

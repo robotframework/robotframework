@@ -30,7 +30,7 @@ class JavaArgumentCoercer(object):
         arguments = [c.coerce(a, dryrun)
                      for c, a in zip(self._coercers, arguments)]
         if self._argspec.kwargs:
-            arguments.append(named)
+            arguments.append(dict(named))
         return arguments
 
 

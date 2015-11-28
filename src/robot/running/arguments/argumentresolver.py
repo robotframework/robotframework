@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import is_string, is_dict_like, split_from_equals, DotDict
+from robot.utils import is_string, is_dict_like, split_from_equals
 from robot.variables import VariableSplitter
 
 from .argumentvalidator import ArgumentValidator
@@ -95,7 +95,7 @@ class DictToKwargs(object):
 
     def handle(self, positional, named):
         if self._enabled and self._extra_arg_has_kwargs(positional, named):
-            named = positional.pop()
+            named = positional.pop().items()
         return positional, named
 
     def _extra_arg_has_kwargs(self, positional, named):
@@ -117,9 +117,7 @@ class VariableReplacer(object):
         else:
             positional = list(positional)
             named = [item for item in named if isinstance(item, tuple)]
-        # FIXME: DotDict is somewhat slow and not generally needed.
-        # Either use normal dict by default or return list of tuples.
-        return positional, DotDict(named)
+        return positional, named
 
     def _replace_named(self, named, replace_scalar):
         for item in named:

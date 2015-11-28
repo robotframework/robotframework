@@ -25,6 +25,7 @@ class ArgumentValidator(object):
     def validate(self, positional, named, dryrun=False):
         if dryrun and any(is_list_var(arg) for arg in positional):
             return
+        named = set(name for name, value in named)
         self._validate_no_multiple_values(positional, named, self._argspec)
         self._validate_limits(positional, named, self._argspec)
         self._validate_no_mandatory_missing(positional, named, self._argspec)
@@ -53,10 +54,11 @@ class ArgumentValidator(object):
                         % (spec.type, spec.name, expected, count))
 
     def _validate_no_multiple_values(self, positional, named, spec):
-        for name in spec.positional[:len(positional)]:
-            if name in named and spec.supports_named:
-                raise DataError("%s '%s' got multiple values for argument '%s'."
-                                % (spec.type, spec.name, name))
+        if named and spec.supports_named:
+            for name in spec.positional[:len(positional)]:
+                if name in named:
+                    raise DataError("%s '%s' got multiple values for argument "
+                                    "'%s'." % (spec.type, spec.name, name))
 
     def _validate_no_mandatory_missing(self, positional, named, spec):
         for name in spec.positional[len(positional):spec.minargs]:

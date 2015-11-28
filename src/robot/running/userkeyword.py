@@ -18,7 +18,7 @@ from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
                           PassExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed, VariableError)
 from robot.output import LOGGER
-from robot.utils import prepr, split_tags_from_doc, unic
+from robot.utils import DotDict, prepr, split_tags_from_doc, unic
 from robot.variables import is_list_var
 
 from .arguments import (ArgumentMapper, ArgumentResolver,
@@ -169,7 +169,7 @@ class UserKeywordHandler(object):
         if self.arguments.varargs:
             variables['@{%s}' % self.arguments.varargs] = varargs
         if self.arguments.kwargs:
-            variables['&{%s}' % self.arguments.kwargs] = kwargs
+            variables['&{%s}' % self.arguments.kwargs] = DotDict(kwargs)
 
     def _split_args_and_varargs(self, args):
         if not self.arguments.varargs:
@@ -183,8 +183,7 @@ class UserKeywordHandler(object):
             args.append('@{%s}' % self.arguments.varargs)
         if self.arguments.kwargs:
             args.append('&{%s}' % self.arguments.kwargs)
-        args = ['%s=%s' % (name, prepr(variables[name]))
-                for name in args]
+        args = ['%s=%s' % (name, prepr(variables[name])) for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
     def _run_teardown(self, context):
