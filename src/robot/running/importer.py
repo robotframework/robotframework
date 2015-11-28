@@ -52,7 +52,7 @@ class Importer(object):
         return self._resource_cache[path]
 
     def _import_library(self, name, positional, named, lib):
-        args = positional + ['%s=%s' % arg for arg in sorted(named.items())]
+        args = positional + ['%s=%s' % arg for arg in named]
         key = (name, positional, named)
         if key in self._library_cache:
             LOGGER.info("Found test library '%s' with arguments %s from cache"

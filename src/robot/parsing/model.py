@@ -658,19 +658,16 @@ class ForLoop(_WithSteps):
 class Step(object):
 
     def __init__(self, content, comment=None):
-        self.assign = list(self._get_assigned_vars(content))
-        try:
-            self.name = content[len(self.assign)]
-        except IndexError:
-            self.name = None
-        self.args = content[len(self.assign)+1:]
+        self.assign = self._get_assign(content)
+        self.name = content.pop(0) if content else None
+        self.args = content
         self.comment = Comment(comment)
 
-    def _get_assigned_vars(self, content):
-        for item in content:
-            if not is_var(item.rstrip('= ')):
-                return
-            yield item
+    def _get_assign(self, content):
+        assign = []
+        while content and is_var(content[0].rstrip('= ')):
+            assign.append(content.pop(0))
+        return assign
 
     def is_comment(self):
         return not (self.assign or self.name or self.args)

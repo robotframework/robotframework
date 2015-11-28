@@ -27,7 +27,7 @@ class DataRow(object):
         comments = []
         for cell in row:
             cell = self._collapse_whitespace(cell)
-            if cell.startswith('#') or comments:
+            if cell and cell[0] == '#' or comments:
                 comments.append(cell)
             else:
                 data.append(cell)

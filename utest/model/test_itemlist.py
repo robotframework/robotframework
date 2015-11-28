@@ -49,6 +49,11 @@ class TestItemLists(unittest.TestCase):
         items.extend((3, 4))
         assert_equal(list(items), [1, 2, 3, 4])
 
+    def test_extend_with_generator(self):
+        items = ItemList(str)
+        items.extend((c for c in 'Hello, world!'))
+        assert_equal(list(items), list('Hello, world!'))
+
     def test_only_matching_types_can_be_added(self):
         assert_raises_with_msg(TypeError,
                                'Only int objects accepted, got str.',

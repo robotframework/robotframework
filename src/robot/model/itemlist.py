@@ -49,8 +49,9 @@ class ItemList(object):
                 setattr(item, attr, common_attrs[attr])
 
     def extend(self, items):
+        items = tuple(items)
         self._check_type_and_set_attrs(*items)
-        self._items += tuple(items)
+        self._items += items
 
     def index(self, item, *start_and_end):
         return self._items.index(item, *start_and_end)
