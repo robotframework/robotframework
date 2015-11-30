@@ -30,17 +30,17 @@ def no_recursion(cls):
     Recursion would otherwise happen if one listener logs something and that
     message is received and logged again by log_message or message method.
     """
-    def _wrap_listener_method(method):
-        def wrapped(self, *args):
-            if not self._calling_method:
-                self._calling_method = True
+    def avoid_recursion_wrapper(method):
+        def avoid_recursion(self, *args):
+            if not self._recursion:
+                self._recursion = True
                 method(self, *args)
-                self._calling_method = False
-        return wrapped
+                self._recursion = False
+        return avoid_recursion
     for attr, value in cls.__dict__.items():
         if not attr.startswith('_') and inspect.isroutine(value):
-            setattr(cls, attr, _wrap_listener_method(value))
-    cls._calling_method = False
+            setattr(cls, attr, avoid_recursion_wrapper(value))
+    cls._recursion = False
     return cls
 
 
@@ -222,15 +222,15 @@ class ListenerProxy(AbstractLoggerProxy):
     def _get_version(self, listener):
         try:
             version = int(listener.ROBOT_LISTENER_API_VERSION)
-            if version == 1:
+            if version != 2:
                 raise ValueError
-        except (ValueError, TypeError):
-            raise DataError("Unsupported API version '%s' in listener '%s'." %
-                            (listener.ROBOT_LISTENER_API_VERSION, self.name))
         except AttributeError:
-            raise DataError("Listener '%s' does not specify API version. "
-                            "Attribute 'ROBOT_LISTENER_API_VERSION' is required." %
-                            self.name)
+            raise DataError("Listener '%s' does not have mandatory "
+                            "'ROBOT_LISTENER_API_VERSION' attribute."
+                            % self.name)
+        except (ValueError, TypeError):
+            raise DataError("Listener '%s' uses unsupported API version '%s'."
+                            % (self.name, listener.ROBOT_LISTENER_API_VERSION))
         return version
 
     def call_method(self, method, *args):
@@ -238,6 +238,6 @@ class ListenerProxy(AbstractLoggerProxy):
             method(*args)
         except:
             message, details = get_error_details()
-            LOGGER.error("Calling listener method '%s' of listener '%s' "
-                         "failed: %s" % (method.__name__, self.name, message))
+            LOGGER.error("Calling method '%s' of listener '%s' failed: %s"
+                         % (method.__name__, self.name, message))
             LOGGER.info("Details:\n%s" % details)
