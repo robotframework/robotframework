@@ -71,7 +71,8 @@ class TestCases(ItemList):
         ItemList.__init__(self, test_class, {'parent': parent}, tests)
 
     def _check_type_and_set_attrs(self, *tests):
-        ItemList._check_type_and_set_attrs(self, *tests)
+        tests = ItemList._check_type_and_set_attrs(self, *tests)
         for test in tests:
             for visitor in test.parent._visitors:
                 test.visit(visitor)
+        return tests
