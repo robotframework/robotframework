@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import unittest
 
 from robot.output.listeners import Listeners
@@ -11,11 +12,14 @@ from robot.running.outputcapture import OutputCapturer
 LOGGER.unregister_console_logger()
 
 
-class _Mock:
+class Mock(object):
+
     def __getattr__(self, name):
         return ''
 
-class SuiteMock(_Mock):
+
+class SuiteMock(Mock):
+
     def __init__(self):
         self.name = 'suitemock'
         self.doc = 'somedoc'
@@ -25,7 +29,9 @@ class SuiteMock(_Mock):
     stat_message = 'stat message'
     full_message = 'full message'
 
-class TestMock(_Mock):
+
+class TestMock(Mock):
+
     def __init__(self):
         self.name = 'testmock'
         self.doc = 'cod'
@@ -33,7 +39,9 @@ class TestMock(_Mock):
         self.message = 'Expected failure'
         self.status = 'FAIL'
 
-class KwMock(_Mock):
+
+class KwMock(Mock):
+
     def __init__(self):
         self.name = 'kwmock'
         self.args = ['a1', 'a2']
@@ -62,37 +70,49 @@ class ListenOutputs(object):
 
 
 class ListenAllNewStyle(ListenOutputs):
-
     ROBOT_LISTENER_API_VERSION = '2'
 
     def start_suite(self, name, attrs):
         print("SUITE START: %s '%s'" % (name, attrs['doc']))
+
     def start_test(self, name, attrs):
         print("TEST START: %s '%s' %s" % (name, attrs['doc'],
                                           ', '.join(attrs['tags'])))
+
     def start_keyword(self, name, attrs):
-        args = [ str(arg) for arg in attrs['args'] ]
+        args = [str(arg) for arg in attrs['args']]
         print("KW START: %s %s" % (name, args))
+
     def end_keyword(self, name, attrs):
         print("KW END: %s" % attrs['status'])
+
     def end_test(self, name, attrs):
         if attrs['status'] == 'PASS':
             print('TEST END: PASS')
         else:
             print("TEST END: %s %s" % (attrs['status'], attrs['message']))
+
     def end_suite(self, name, attrs):
         print('SUITE END: %s %s' % (attrs['status'], attrs['statistics']))
+
     def close(self):
         print('Closing...')
 
 
-class _BaseListenerTest:
-    stat_message = ''
+class TestListeners(unittest.TestCase):
+    listener_name = 'test_listeners.ListenAllNewStyle'
+    stat_message = 'stat message'
 
     def setUp(self):
         self.listeners = Listeners([self.listener_name])
-        self.listener = self.listeners._listeners[0]
         self.capturer = OutputCapturer()
+
+    @property
+    def listener(self):
+        return self.listeners._start_suite._methods[0][1]
+
+    def test_version(self):
+        assert_equal(self.listener.version, 2)
 
     def test_start_suite(self):
         self.listeners.start_suite(SuiteMock())
@@ -148,22 +168,11 @@ class _BaseListenerTest:
         assert_equal(stdout.rstrip(), expected)
 
 
-class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
-    listener_name = 'test_listeners.ListenAllNewStyle'
-    stat_message = 'stat message'
-
-    def test_importing(self):
-        assert_equal(self.listener.version, 2)
-
-
 if JYTHON:
 
-    class TestJavaListener(_BaseListenerTest, unittest.TestCase):
+    class TestJavaListeners(TestListeners):
         listener_name = 'NewStyleJavaListener'
         stat_message = 'stat message'
-
-        def test_importing(self):
-            assert_equal(self.listener.version, 2)
 
 
 if __name__ == '__main__':
