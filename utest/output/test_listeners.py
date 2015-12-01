@@ -69,7 +69,7 @@ class ListenOutputs(object):
         print('%s: %s' % (name, path))
 
 
-class ListenAllNewStyle(ListenOutputs):
+class ListenAll(ListenOutputs):
     ROBOT_LISTENER_API_VERSION = '2'
 
     def start_suite(self, name, attrs):
@@ -100,7 +100,7 @@ class ListenAllNewStyle(ListenOutputs):
 
 
 class TestListeners(unittest.TestCase):
-    listener_name = 'test_listeners.ListenAllNewStyle'
+    listener_name = 'test_listeners.ListenAll'
     stat_message = 'stat message'
 
     def setUp(self):
@@ -173,6 +173,31 @@ if JYTHON:
     class TestJavaListeners(TestListeners):
         listener_name = 'NewStyleJavaListener'
         stat_message = 'stat message'
+
+
+class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
+
+    def setUp(self):
+        self.listeners = Listeners([])
+
+    def test_start_and_end_methods(self):
+        for name in dir(self.listeners):
+            if name.startswith(('start_', 'end_')):
+                method = getattr(self.listeners, name)
+                method(None)
+
+    def test_message_methods(self):
+        self.listeners.log_message(None)
+        self.listeners.message(None)
+
+    def test_some_methods_implemented(self):
+        class MyListener(object):
+            ROBOT_LISTENER_API_VERSION = 2
+            def end_suite(self, suite):
+                pass
+        listeners = Listeners([MyListener()])
+        listeners.start_suite(None)
+        assert_raises(AttributeError, listeners.end_suite, None)
 
 
 if __name__ == '__main__':

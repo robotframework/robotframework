@@ -23,7 +23,7 @@ from .logger import LOGGER
 class LibraryListeners(Listeners):
 
     def __init__(self):
-        Listeners.__init__(self, listeners=None)
+        Listeners.__init__(self, listeners=())
         self._global_listeners = {}
 
     def __nonzero__(self):
