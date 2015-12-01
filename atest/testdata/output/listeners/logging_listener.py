@@ -1,7 +1,9 @@
 import logging
 from robot.api import logger
 
+
 ROBOT_LISTENER_API_VERSION = 2
+
 
 def get_logging_listener_method(name):
     def listener_method(*args):
@@ -13,6 +15,7 @@ def get_logging_listener_method(name):
         logging.info(message)
         logger.warn(message)
     return listener_method
+
 
 for name in ['start_suite', 'end_suite', 'start_test', 'end_test',
              'start_keyword', 'end_keyword', 'log_message', 'message',
