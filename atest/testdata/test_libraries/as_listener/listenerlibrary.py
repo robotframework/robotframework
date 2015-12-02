@@ -1,7 +1,7 @@
 import sys
 
-class listenerlibrary(object):
 
+class listenerlibrary(object):
     ROBOT_LISTENER_API_VERSION = 2
     ROBOT_LIBRARY_SCOPE = "TEST CASE"
 
@@ -13,30 +13,38 @@ class listenerlibrary(object):
         return self.events[:]
 
     def _start_suite(self, name, attrs):
-        self.events.append('start suite %s' % name)
+        self.events.append('Start suite: %s' % name)
+
+    def endSuite(self, name, attrs):
+        self.events.append('End suite: %s' % name)
 
     def _start_test(self, name, attrs):
-        self.events.append('start test %s' % name)
+        self.events.append('Start test: %s' % name)
 
     def end_test(self, name, attrs):
-        self.events.append('end test %s' % name)
+        self.events.append('End test: %s' % name)
 
     def _start_keyword(self, name, attrs):
-        self.events.append('start kw %s' % name)
+        self.events.append('Start kw: %s' % name)
 
     def _end_keyword(self, name, attrs):
-        self.events.append('end kw %s' % name)
+        self.events.append('End kw: %s' % name)
 
     def _close(self):
-        self.events.append('close %s' % self.ROBOT_LIBRARY_SCOPE)
+        self.events.append('Close: %s' % self.ROBOT_LIBRARY_SCOPE)
         sys.__stderr__.write("CLOSING %s\n" % self.ROBOT_LIBRARY_SCOPE)
 
     def events_should_be(self, *expected):
-        assert self._format(self.events) == self._format(expected), 'Expected events\n %s\n actual\n %s' % (self._format(expected), self._format(self.events))
+        self._assert(self.events == list(expected),
+                     'Expected events:\n%s\n\nActual events:\n%s'
+                     % (self._format(expected), self._format(self.events)))
 
     def events_should_be_empty(self):
-        assert not self.events, 'Expected empty events, has %s' % self._format(self.events)
+        self._assert(not self.events,
+                     'Expected no events, got:\n%s' % self._format(self.events))
+
+    def _assert(self, condition, message):
+        assert condition, message
 
     def _format(self, events):
-        return ' | '.join(events)
-
+        return '\n'.join(events)

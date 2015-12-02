@@ -1,30 +1,30 @@
 *** Settings ***
 Library           suite_listenerlibrary.py
-Suite Setup       Events should be    Start suite: Suite Scope
+Suite Setup       Events should be    Start suite: Suite Scope 2
                   ...                 Start kw: suite_listenerlibrary.Events Should Be
-Suite Teardown    Events should be    Start suite: Suite Scope
-                  ...                 Start kw: suite_listenerlibrary.Events Should Be
-                  ...                 End kw: suite_listenerlibrary.Events Should Be
-                  ...                 Start test: Suite scope library gets events
+Suite Teardown    Events should be    Start suite: Suite Scope 2
                   ...                 Start kw: suite_listenerlibrary.Events Should Be
                   ...                 End kw: suite_listenerlibrary.Events Should Be
-                  ...                 End test: Suite scope library gets events
-                  ...                 Start test: Suite scope library gets previous events in suite
+                  ...                 Start test: Suite scope library gets events 2
                   ...                 Start kw: suite_listenerlibrary.Events Should Be
                   ...                 End kw: suite_listenerlibrary.Events Should Be
-                  ...                 End test: Suite scope library gets previous events in suite
+                  ...                 End test: Suite scope library gets events 2
+                  ...                 Start test: Suite scope library gets previous events in suite 2
+                  ...                 Start kw: suite_listenerlibrary.Events Should Be
+                  ...                 End kw: suite_listenerlibrary.Events Should Be
+                  ...                 End test: Suite scope library gets previous events in suite 2
                   ...                 Start kw: suite_listenerlibrary.Events Should Be
 
 *** Test Cases ***
-Suite scope library gets events
-    Events should be    Start suite: Suite Scope
+Suite scope library gets events 2
+    Events should be    Start suite: Suite Scope 2
     ...                 Start kw: suite_listenerlibrary.Events Should Be
     ...                 End kw: suite_listenerlibrary.Events Should Be
     ...                 Start test: ${TEST NAME}
     ...                 Start kw: suite_listenerlibrary.Events Should Be
 
-Suite scope library gets previous events in suite
-    Events should be    Start suite: Suite Scope
+Suite scope library gets previous events in suite 2
+    Events should be    Start suite: Suite Scope 2
     ...                 Start kw: suite_listenerlibrary.Events Should Be
     ...                 End kw: suite_listenerlibrary.Events Should Be
     ...                 Start test: ${PREV TEST NAME}
