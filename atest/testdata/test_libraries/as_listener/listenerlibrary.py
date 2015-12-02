@@ -1,5 +1,6 @@
 import sys
 
+
 class listenerlibrary(object):
 
     ROBOT_LISTENER_API_VERSION = 2
@@ -32,11 +33,16 @@ class listenerlibrary(object):
         sys.__stderr__.write("CLOSING %s\n" % self.ROBOT_LIBRARY_SCOPE)
 
     def events_should_be(self, *expected):
-        assert self._format(self.events) == self._format(expected), 'Expected events\n %s\n actual\n %s' % (self._format(expected), self._format(self.events))
+        self._assert(self.events == list(expected),
+                     'Expected events:\n%s\n\nActual events:\n%s'
+                     % (self._format(expected), self._format(self.events)))
 
     def events_should_be_empty(self):
-        assert not self.events, 'Expected empty events, has %s' % self._format(self.events)
+        self._assert(not self.events,
+                     'Expected no events, got:\n%s' % self._format(self.events))
+
+    def _assert(self, condition, message):
+        assert condition, message
 
     def _format(self, events):
-        return ' | '.join(events)
-
+        return '\n'.join(events)

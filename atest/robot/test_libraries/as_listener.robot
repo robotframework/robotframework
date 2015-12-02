@@ -44,7 +44,7 @@ Check closing
     ...    *CLOSING TEST SUITE
     ...    CLOSING TEST CASE
     ...    CLOSING TEST CASE
-    ...    [ ERROR ] Taking listener 'V1Listener' into use for library 'lib_not_works' failed: Listener 'V1Listener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
+    ...    [ ERROR ] Taking listener 'NoVersionListener' into use for library 'lib_not_works' failed: Listener 'NoVersionListener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
     ...    Listeners are disabled for this library.
     ...    CLOSING TEST CASE
     ...    CLOSING TEST CASE
