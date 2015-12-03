@@ -65,8 +65,8 @@ class TestImports(unittest.TestCase):
         self._verify_lib(lib, "BuiltIn", default_keywords)
 
     def test_import_python_class_from_module(self):
-        lib = TestLibrary("BuiltIn.BuiltIn")
-        self._verify_lib(lib, "BuiltIn.BuiltIn", default_keywords)
+        lib = TestLibrary("robot.libraries.BuiltIn.BuiltIn")
+        self._verify_lib(lib, "robot.libraries.BuiltIn.BuiltIn", default_keywords)
 
     def test_import_python_module(self):
         lib = TestLibrary("module_library")
@@ -105,7 +105,8 @@ class TestImports(unittest.TestCase):
 
     def test_import_with_unicode_name(self):
         self._verify_lib(TestLibrary(u"BuiltIn"), "BuiltIn", default_keywords)
-        self._verify_lib(TestLibrary(u"BuiltIn.BuiltIn"), "BuiltIn.BuiltIn", default_keywords)
+        self._verify_lib(TestLibrary(u"robot.libraries.BuiltIn.BuiltIn"),
+                         "robot.libraries.BuiltIn.BuiltIn", default_keywords)
         self._verify_lib(TestLibrary(u"pythonmodule.library"), "pythonmodule.library",
                          [("keyword from submodule", None)])
 
