@@ -23,11 +23,14 @@ from robot.utils import (getdoc, get_error_details, Importer, is_java_init,
                          is_list_like)
 
 from .arguments import EmbeddedArguments
+from .context import EXECUTION_CONTEXTS
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              GetKeywordNames, RunKeyword)
 from .handlers import Handler, InitHandler, DynamicHandler, EmbeddedArgsTemplate
 from .handlerstore import HandlerStore
+from .libraryscopes import LibraryScope
 from .outputcapture import OutputCapturer
+
 
 if JYTHON:
     from java.lang import Object
@@ -73,11 +76,10 @@ class _BaseTestLibrary(object):
         self.orig_name = name  # Stores original name when importing WITH NAME
         self.source = source
         self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
-        self._instance_cache = []
         self.has_listener = None  # Set when first instance is created
         self._doc = None
         self.doc_format = self._get_doc_format(libcode)
-        self.scope = self._get_scope(libcode)
+        self.scope = LibraryScope(libcode, self)
         self.init = self._create_init_handler(libcode)
         self.positional_args, self.named_args \
             = self.init.resolve_arguments(args, variables)
@@ -93,37 +95,25 @@ class _BaseTestLibrary(object):
             self._doc = getdoc(self.get_instance())
         return self._doc
 
-    @property
-    def listeners(self):
-        if self.has_listener:
-            return self._get_listeners(self.get_instance())
-        return None
-
-    def _get_listeners(self, inst):
-        if not hasattr(inst, 'ROBOT_LIBRARY_LISTENER'):
-            return None
-        listeners = inst.ROBOT_LIBRARY_LISTENER
-        return listeners if is_list_like(listeners) else [listeners]
-
     def create_handlers(self):
         self._create_handlers(self.get_instance())
-        self.init_scope_handling()
+        self.reset_instance()
 
     def reload(self):
         self.handlers = HandlerStore(self.name, HandlerStore.TEST_LIBRARY_TYPE)
         self._create_handlers(self.get_instance())
 
     def start_suite(self):
-        pass
+        self.scope.start_suite()
 
     def end_suite(self):
-        pass
+        self.scope.end_suite()
 
     def start_test(self):
-        pass
+        self.scope.start_test()
 
     def end_test(self):
-        pass
+        self.scope.end_test()
 
     def _get_version(self, libcode):
         return self._get_attr(libcode, 'ROBOT_LIBRARY_VERSION') \
@@ -138,10 +128,6 @@ class _BaseTestLibrary(object):
     def _get_doc_format(self, libcode):
         return self._get_attr(libcode, 'ROBOT_LIBRARY_DOC_FORMAT', upper=True)
 
-    def _get_scope(self, libcode):
-        scope = self._get_attr(libcode, 'ROBOT_LIBRARY_SCOPE', upper=True)
-        return scope if scope in ['GLOBAL','TESTSUITE'] else 'TESTCASE'
-
     def _create_init_handler(self, libcode):
         return InitHandler(self, self._resolve_init_method(libcode))
 
@@ -154,22 +140,11 @@ class _BaseTestLibrary(object):
                 inspect.isfunction(method) or   # PY3
                 is_java_init(method))
 
-    def init_scope_handling(self):
-        if self.scope == 'GLOBAL':
-            return
-        self._libinst = None
-        self.start_suite = self._caching_start
-        self.end_suite = self._restoring_end
-        if self.scope == 'TESTCASE':
-            self.start_test = self._caching_start
-            self.end_test = self._restoring_end
-
-    def _caching_start(self):
-        self._instance_cache.append(self._libinst)
-        self._libinst = None
-
-    def _restoring_end(self):
-        self._libinst = self._instance_cache.pop()
+    def reset_instance(self, instance=None):
+        prev = self._libinst
+        if not self.scope.is_global:
+            self._libinst = instance
+        return prev
 
     def get_instance(self, create=True):
         if not create:
@@ -177,7 +152,7 @@ class _BaseTestLibrary(object):
         if self._libinst is None:
             self._libinst = self._get_instance(self._libcode)
         if self.has_listener is None:
-            self.has_listener = self._get_listeners(self._libinst) is not None
+            self.has_listener = bool(self.get_listeners(self._libinst))
         return self._libinst
 
     def _get_instance(self, libcode):
@@ -186,6 +161,41 @@ class _BaseTestLibrary(object):
                 return libcode(*self.positional_args, **dict(self.named_args))
             except:
                 self._raise_creating_instance_failed()
+
+    def get_listeners(self, libinst=None):
+        if not libinst:
+            libinst = self.get_instance()
+        listeners = getattr(libinst, 'ROBOT_LIBRARY_LISTENER', None)
+        if listeners is None:
+            return []
+        if is_list_like(listeners):
+            return listeners
+        return [listeners]
+
+    def register_listeners(self):
+        if self.has_listener:
+            try:
+                listeners = EXECUTION_CONTEXTS.current.output.library_listeners
+                listeners.register(self.get_listeners(), self)
+            except DataError as err:
+                self.has_listener = False
+                # TODO: Error should have information about suite where the
+                # problem occurred but we don't have such info here.
+                LOGGER.error("Registering listeners for library '%s' failed: %s"
+                             % (self.name, err))
+
+    def unregister_listeners(self, close=False):
+        if self.has_listener:
+            listeners = EXECUTION_CONTEXTS.current.output.library_listeners
+            listeners.unregister(self, close)
+
+    def close_global_listeners(self):
+        if self.scope.is_global:
+            for listener in self.get_listeners():
+                if hasattr(listener, 'close'):
+                    listener.close()
+                elif hasattr(listener, '_close'):
+                    listener._close()
 
     def _create_handlers(self, libcode):
         try:
@@ -210,7 +220,7 @@ class _BaseTestLibrary(object):
 
     def _get_handler_names(self, libcode):
         return [name for name in dir(libcode)
-                if not name.startswith(('_', 'ROBOT_LIBRARY_'))]
+                if not name.startswith(('_', 'ROBOT_'))]
 
     def _try_to_get_handler_method(self, libcode, name):
         try:
@@ -316,9 +326,6 @@ class _ClassLibrary(_BaseTestLibrary):
 
 class _ModuleLibrary(_BaseTestLibrary):
 
-    def _get_scope(self, libcode):
-        return 'GLOBAL'
-
     def _get_handler_method(self, libcode, name):
         method = _BaseTestLibrary._get_handler_method(self, libcode, name)
         if hasattr(libcode, '__all__') and name not in libcode.__all__:
@@ -329,7 +336,7 @@ class _ModuleLibrary(_BaseTestLibrary):
         if not create:
             return self._libcode
         if self.has_listener is None:
-            self.has_listener = self._get_listeners(self._libcode) is not None
+            self.has_listener = bool(self.get_listeners(self._libcode))
         return self._libcode
 
     def _create_init_handler(self, libcode):

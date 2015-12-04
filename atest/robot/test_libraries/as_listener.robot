@@ -33,6 +33,7 @@ Global scope library gets events
     Check Test Case    ${TESTNAME} 2
 
 Global scope library gets all previous events
+    [Documentation]    They don't, however, get events from suites where they are not used.
     Check Test Case    ${TESTNAME}
     Check Test Case    ${TESTNAME} 2
 
@@ -50,21 +51,37 @@ All listeners are disabled if one fails
 
 Check closing
     Stderr Should Be Equal To    SEPARATOR=\n
-    ...    CLOSING TEST CASE
-    ...    CLOSING TEST CASE
-    ...    CLOSING TEST CASE
-    ...    CLOSING TEST CASE
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (suite)
     ...    CLOSING TEST SUITE
-    ...    CLOSING TEST CASE
-    ...    CLOSING TEST CASE
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (suite)
     ...    CLOSING TEST SUITE
-    ...    [ ERROR ] Taking listener 'NoVersionListener' into use for library 'lib_not_works' failed: Listener 'NoVersionListener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
-    ...    Listeners are disabled for this library.
-    ...    CLOSING TEST CASE
-    ...    CLOSING TEST CASE
-    ...    CLOSING TEST CASE
-    ...    CLOSING TEST CASE
+    ...    [ ERROR ] Registering listeners for library 'lib_not_works' failed: Taking listener 'NoVersionListener' into use failed: Listener 'NoVersionListener' does not have mandatory 'ROBOT_LISTENER_API_VERSION' attribute.
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (suite)
+    ...    CLOSING TEST CASE (suite)
     ...    CLOSING GLOBAL\n
 
 Library listener should be in syslog
-    Syslog Should Contain Regexp    Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, testsuite scope, 5 keywords, with listener\\)
+    Syslog Should Contain Regexp    Imported library '.*suite_listenerlibrary.py' with arguments \\[ \\] \\(version <unknown>, class type, test suite scope, 5 keywords, with listener\\)
+
+Nested scopes
+    Run Tests    sources=test_libraries/as_listener/nested_scopes
+    Check Test Case    No Listener 1
+    Check Test Case    Yes Listener
+    Check Test Case    No Listener 2
+    Stderr Should Be Equal To    SEPARATOR=\n
+    ...    CLOSING TEST CASE (test)
+    ...    CLOSING TEST CASE (suite)
+    ...    CLOSING TEST SUITE
+    ...    CLOSING TEST CASE (suite)
+    ...    CLOSING TEST SUITE
+    ...    CLOSING GLOBAL\n

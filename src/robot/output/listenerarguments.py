@@ -20,6 +20,17 @@ class ListenerArguments(object):
     def get_arguments(self, *arguments):
         return arguments
 
+    @classmethod
+    def by_method_name(cls, name):
+        return {'start_suite': StartSuiteArguments,
+                'end_suite': EndSuiteArguments,
+                'start_test': StartTestArguments,
+                'end_test': EndTestArguments,
+                'start_keyword': StartKeywordArguments,
+                'end_keyword': EndKeywordArguments,
+                'log_message': MessageArguments,
+                'message': MessageArguments}.get(name, ListenerArguments)()
+
 
 class MessageArguments(ListenerArguments):
 

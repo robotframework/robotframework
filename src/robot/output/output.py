@@ -14,8 +14,7 @@
 
 from . import pyloggingconf
 from .debugfile import DebugFile
-from .librarylisteners import LibraryListeners
-from .listeners import Listeners
+from .listeners import LibraryListeners, Listeners
 from .logger import LOGGER
 from .loggerhelper import AbstractLogger
 from .xmllogger import XmlLogger
@@ -26,12 +25,16 @@ class Output(AbstractLogger):
     def __init__(self, settings):
         AbstractLogger.__init__(self)
         self._xmllogger = XmlLogger(settings['Output'], settings['LogLevel'])
-        self._register_loggers(settings['Listeners'], settings['DebugFile'])
+        self.library_listeners = LibraryListeners()
+        self._register_loggers(self._xmllogger,
+                               Listeners(settings['Listeners']),
+                               self.library_listeners,
+                               DebugFile(settings['DebugFile']))
         self._settings = settings
 
-    def _register_loggers(self, listeners, debugfile):
-        LOGGER.register_context_changing_logger(self._xmllogger)
-        for logger in (Listeners(listeners), LibraryListeners(), DebugFile(debugfile)):
+    def _register_loggers(self, xml_logger, *others):
+        LOGGER.register_context_changing_logger(xml_logger)
+        for logger in others:
             if logger:
                 LOGGER.register_logger(logger)
         LOGGER.disable_message_cache()

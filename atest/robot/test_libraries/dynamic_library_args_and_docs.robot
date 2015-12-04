@@ -25,7 +25,7 @@ Keyword Not Created And Warning Shown When Getting Documentation Fails
     1  No Arg
     3  One Arg
     4  One or Two Args
-    [Teardown]  Check Log Message  ${ERRORS.msgs[5]}   Imported library 'classes.InvalidGetDocDynamicLibrary' contains no keywords  WARN
+    [Teardown]  Check Log Message  ${ERRORS.msgs[5]}   Imported library 'classes.InvalidGetDocDynamicLibrary' contains no keywords.  WARN
 
 Keyword Not Created And Warning Shown When Getting Arguments Fails
     [Template]  Check Creating Keyword Failed Due To Invalid Args Message
@@ -33,7 +33,7 @@ Keyword Not Created And Warning Shown When Getting Arguments Fails
     7  No Arg
     9  One Arg
     10  One or Two Args
-    [Teardown]  Check Log Message  ${ERRORS.msgs[11]}   Imported library 'classes.InvalidGetArgsDynamicLibrary' contains no keywords  WARN
+    [Teardown]  Check Log Message  ${ERRORS.msgs[11]}   Imported library 'classes.InvalidGetArgsDynamicLibrary' contains no keywords.  WARN
 
 Documentation And Argument Boundaries Work With No Args In Java
     [Tags]  require-jython

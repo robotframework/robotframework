@@ -107,13 +107,6 @@ class TestListeners(unittest.TestCase):
         self.listeners = Listeners([self.listener_name])
         self.capturer = OutputCapturer()
 
-    @property
-    def listener(self):
-        return self.listeners._start_suite._methods[0][1]
-
-    def test_version(self):
-        assert_equal(self.listener.version, 2)
-
     def test_start_suite(self):
         self.listeners.start_suite(SuiteMock())
         self._assert_output("SUITE START: suitemock 'somedoc'")

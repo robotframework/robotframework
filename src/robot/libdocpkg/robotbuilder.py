@@ -32,7 +32,7 @@ class LibraryDocBuilder(object):
         libdoc = LibraryDoc(name=lib.name,
                             doc=self._get_doc(lib),
                             version=lib.version,
-                            scope=lib.scope,
+                            scope=str(lib.scope),
                             doc_format=lib.doc_format)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)

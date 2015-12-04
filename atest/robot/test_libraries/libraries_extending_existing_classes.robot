@@ -16,7 +16,7 @@ Keyword In Python Class Using Method From Parent Class
     Check Test Case  Keyword In Python Class Using Method From Parent Class
 
 Message Of Importing Library Should Be In Syslog
-    Check Syslog Contains  Imported library 'ExtendPythonLib' with arguments [ ] (version <unknown>, class type, testcase scope, 32 keywords)
+    Check Syslog Contains  Imported library 'ExtendPythonLib' with arguments [ ] (version <unknown>, class type, test case scope, 32 keywords)
 
 Keyword From Java Class Extended By Python Class
     [Tags]  require-jython

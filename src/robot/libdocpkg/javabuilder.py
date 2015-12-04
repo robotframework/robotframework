@@ -42,12 +42,14 @@ class JavaDocBuilder(object):
         return self._get_attr(doc, 'VERSION')
 
     def _get_scope(self, doc):
-        return self._get_attr(doc, 'SCOPE', default='TESTCASE', upper=True)
+        scope = self._get_attr(doc, 'SCOPE', upper=True)
+        return {'TESTSUITE': 'test suite',
+                'GLOBAL': 'global'}.get(scope, 'test suite')
 
     def _get_doc_format(self, doc):
         return self._get_attr(doc, 'DOC_FORMAT', upper=True)
 
-    def _get_attr(self, doc, name, default='', upper=False):
+    def _get_attr(self, doc, name, upper=False):
         name = 'ROBOT_LIBRARY_' + name
         for field in doc.fields():
             if field.name() == name and field.isPublic():
@@ -55,7 +57,7 @@ class JavaDocBuilder(object):
                 if upper:
                     value = utils.normalize(value, ignore='_').upper()
                 return value
-        return default
+        return ''
 
     def _initializers(self, doc):
         inits = [self._keyword_doc(init) for init in doc.constructors()]

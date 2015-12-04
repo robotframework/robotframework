@@ -20,7 +20,7 @@ from robot.variables import VariableScopes
 
 from .context import EXECUTION_CONTEXTS
 from .keywordrunner import KeywordRunner
-from .namespace import Namespace
+from .namespace import IMPORTER, Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
 
@@ -43,6 +43,7 @@ class Runner(SuiteVisitor):
         return EXECUTION_CONTEXTS.current
 
     def start_suite(self, suite):
+        self._output.library_listeners.xxx_suite()
         result = TestSuite(source=suite.source,
                            name=suite.name,
                            doc=suite.doc,
@@ -101,6 +102,9 @@ class Runner(SuiteVisitor):
         self._context.end_suite(self._suite)
         self._suite = self._suite.parent
         self._suite_status = self._suite_status.parent
+        self._output.library_listeners.yyy_suite()
+        if not suite.parent:
+            IMPORTER.close_global_library_listeners()
 
     def visit_test(self, test):
         if test.name in self._executed_tests:
