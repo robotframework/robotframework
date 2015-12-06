@@ -155,11 +155,11 @@ synonym to `start_suite`.
    |                  |                  |                                                                |
    |                  |                  | Keys in the attribute dictionary:                              |
    |                  |                  |                                                                |
-   |                  |                  | * `type`: String `Keyword` for normal                          |
-   |                  |                  |   keywords and `Test Setup`, `Test                             |
-   |                  |                  |   Teardown`, `Suite Setup` or `Suite                           |
-   |                  |                  |   Teardown` for keywords used in suite/test                    |
-   |                  |                  |   setup/teardown.                                              |
+   |                  |                  | * `type`: String `Keyword` for normal keywords, `Setup` or     |
+   |                  |                  |   `Teardown` for the top level keyword used as setup/teardown, |
+   |                  |                  |   `For` for for loops, and `For Item` for individual for loop  |
+   |                  |                  |   iterations. **NOTE:** Keyword type reporting was changed in  |
+   |                  |                  |   RF 3.0. See issue `#2248`__ for details.                     |
    |                  |                  | * `kwname`: Name of the keyword without library or             |
    |                  |                  |   resource prefix. New in RF 2.9.                              |
    |                  |                  | * `libname`: Name of the library or resource the               |
@@ -290,6 +290,7 @@ to implement any explicit interface or have all these methods.
        void close();
    }
 
+__ https://github.com/robotframework/robotframework/issues/2248
 __ `Test libraries as listeners`_
 
 Listeners logging

@@ -46,6 +46,7 @@ class KwMock(Mock):
         self.name = 'kwmock'
         self.args = ['a1', 'a2']
         self.status = 'PASS'
+        self.type = 'kw'
 
 
 class ListenOutputs(object):

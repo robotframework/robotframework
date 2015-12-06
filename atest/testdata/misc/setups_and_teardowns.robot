@@ -41,16 +41,21 @@ Failing test with failing teardown
 
 *** Keywords ***
 Suite Setup
-    Log    Suite Setup
+    Log    Keyword
+    Keyword
 
 Suite Teardown
-    Log    Suite Teardown
+    Log    Keyword
+    Keyword
 
 Test Setup
-    Log    Test Setup
+    Log    Keyword
+    Keyword
 
 Test Teardown
-    Log    Test Teardown
+    Log    Keyword
+    Keyword
 
 Keyword
     Log    Keyword
+    [Teardown]    Log    Keyword Teardown

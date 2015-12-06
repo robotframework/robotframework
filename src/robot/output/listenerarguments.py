@@ -103,12 +103,13 @@ class StartKeywordArguments(_ListenerArgumentsFromItem):
     # TODO: Add kw tags!
     _attribute_names = ('doc', 'args', 'assign', 'kwname', 'libname',
                         'starttime')
+    _types = {'kw': 'Keyword', 'setup': 'Setup', 'teardown': 'Teardown',
+              'for': 'For', 'foritem': 'For Item'}
 
     def _get_extra_attributes(self, kw):
-        return {'type': 'Keyword' if kw.type == kw.KEYWORD_TYPE else kw.type.title()}
+        return {'type': self._types[kw.type]}
 
 
 class EndKeywordArguments(StartKeywordArguments):
     _attribute_names = ('doc', 'args', 'assign', 'kwname', 'libname',
                         'starttime', 'endtime', 'elapsedtime', 'status')
-

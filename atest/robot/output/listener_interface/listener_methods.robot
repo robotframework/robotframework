@@ -78,7 +78,7 @@ Suite Source
     Stderr Should Be Empty
 
 Keyword Type
-    Run Tests    --listener listeners.KeywordType    misc/setups_and_teardowns.robot
+    Run Tests    --listener listeners.KeywordType    misc/setups_and_teardowns.robot misc/for_loops.robot
     Stderr Should Be Empty
 
 Suite And Test Counts With Java
@@ -97,7 +97,6 @@ Test Template
     File Should Exist    ${listener}
     Run Tests    --listener ${listener}    output/listeners/test_template.robot
     Stderr Should Be Empty
-
 
 *** Keywords ***
 Run Tests With Listeners
