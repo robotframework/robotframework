@@ -19,7 +19,7 @@ from robot.utils import (Importer, is_string, py2to3,
                          split_args_from_name_or_path, type_name)
 
 from .listenermethods import ListenerMethod, LibraryListenerMethod
-from .loggerhelper import AbstractLoggerProxy
+from .loggerhelper import AbstractLoggerProxy, IsLogged
 from .logger import LOGGER
 
 
@@ -31,14 +31,22 @@ class Listeners(object):
                      'xunit_file', 'library_import', 'resource_import',
                      'variables_import', 'close')
 
-    def __init__(self, listeners):
+    def __init__(self, listeners, log_level='INFO'):
+        self._is_logged = IsLogged(log_level)
         listeners = ListenerProxy.import_listeners(listeners,
                                                    self._method_names)
         for name in self._method_names:
             method = ListenerMethod(name, listeners)
-            if name.endswith(('_file', '_import')):
+            if name.endswith(('_file', '_import', 'log_message')):
                 name = '_' + name
-            self.__dict__[name] = method
+            setattr(self, name, method)
+
+    def set_log_level(self, level):
+        self._is_logged.set_level(level)
+
+    def log_message(self, msg):
+        if self._is_logged(msg.level):
+            self._log_message(msg)
 
     def imported(self, import_type, name, attrs):
         method = getattr(self, '_%s_import' % import_type.lower())
@@ -58,13 +66,13 @@ class LibraryListeners(object):
                      'start_keyword', 'end_keyword', 'log_message', 'message',
                      'close')
 
-    def __init__(self):
+    def __init__(self, log_level='INFO'):
+        self._is_logged = IsLogged(log_level)
         for name in self._method_names:
-            self.__dict__[name] = LibraryListenerMethod(name)
-
-    def _listener_methods(self):
-        return [method for method in self.__dict__.values()
-                if isinstance(method, LibraryListenerMethod)]
+            method = LibraryListenerMethod(name)
+            if name == 'log_message':
+                name = '_' + name
+            setattr(self, name, method)
 
     def register(self, listeners, library):
         listeners = ListenerProxy.import_listeners(listeners,
@@ -73,6 +81,10 @@ class LibraryListeners(object):
                                                    raise_on_error=True)
         for method in self._listener_methods():
             method.register(listeners, library)
+
+    def _listener_methods(self):
+        return [method for method in self.__dict__.values()
+                if isinstance(method, LibraryListenerMethod)]
 
     def unregister(self, library, close=False):
         if close:
@@ -89,6 +101,13 @@ class LibraryListeners(object):
     def yyy_suite(self):
         for method in self._listener_methods():
             method.end_suite()
+
+    def set_log_level(self, level):
+        self._is_logged.set_level(level)
+
+    def log_message(self, msg):
+        if self._is_logged(msg.level):
+            self._log_message(msg)
 
     def imported(self, import_type, name, attrs):
         pass

@@ -181,8 +181,10 @@ class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
                 method(None)
 
     def test_message_methods(self):
-        self.listeners.log_message(None)
-        self.listeners.message(None)
+        class Message(object):
+            level = 'INFO'
+        self.listeners.log_message(Message)
+        self.listeners.message(Message)
 
     def test_some_methods_implemented(self):
         class MyListener(object):

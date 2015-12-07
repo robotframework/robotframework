@@ -24,12 +24,13 @@ class Output(AbstractLogger):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
-        self._xmllogger = XmlLogger(settings['Output'], settings['LogLevel'])
-        self.library_listeners = LibraryListeners()
+        self._xmllogger = XmlLogger(settings.output, settings.log_level)
+        self.listeners = Listeners(settings.listeners, settings.log_level)
+        self.library_listeners = LibraryListeners(settings.log_level)
         self._register_loggers(self._xmllogger,
-                               Listeners(settings['Listeners']),
+                               self.listeners,
                                self.library_listeners,
-                               DebugFile(settings['DebugFile']))
+                               DebugFile(settings.debug_file))
         self._settings = settings
 
     def _register_loggers(self, xml_logger, *others):
@@ -71,4 +72,6 @@ class Output(AbstractLogger):
 
     def set_log_level(self, level):
         pyloggingconf.set_level(level)
+        self.listeners.set_log_level(level)
+        self.library_listeners.set_log_level(level)
         return self._xmllogger.set_log_level(level)

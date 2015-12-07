@@ -124,3 +124,16 @@ class SuiteSource(object):
             raise AssertionError("Wrong number of started (%d) or ended (%d) "
                                  "suites. Expected 5."
                                  % (self._started, self._ended))
+
+
+class Messages(object):
+    ROBOT_LISTENER_API_VERSION = '2'
+
+    def __init__(self, path):
+        self.output = open(path, 'w')
+
+    def log_message(self, msg):
+        self.output.write('%s: %s\n' % (msg['level'], msg['message']))
+
+    def close(self):
+        self.output.close()

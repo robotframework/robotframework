@@ -189,9 +189,8 @@ synonym to `start_suite`.
    |                  |                  |   an integer                                                   |
    |                  |                  | * `status`: Keyword status as string `PASS` or `FAIL`.         |
    +------------------+------------------+----------------------------------------------------------------+
-   | log_message      | message          | Called when an executed keyword writes a log                   |
-   |                  |                  | message. `message` is a dictionary with                        |
-   |                  |                  | the following keys:                                            |
+   | log_message      | message          | Called when an executed keyword writes a log message.          |
+   |                  |                  | `message` is a dictionary with the following keys:             |
    |                  |                  |                                                                |
    |                  |                  | * `message`: The content of the message.                       |
    |                  |                  | * `level`: `Log level`_ used in logging the message.           |
@@ -199,6 +198,9 @@ synonym to `start_suite`.
    |                  |                  |   `YYYY-MM-DD hh:mm:ss.mil`.                                   |
    |                  |                  | * `html`: String `yes` or `no` denoting whether the message    |
    |                  |                  |   should be interpreted as HTML or not.                        |
+   |                  |                  |                                                                |
+   |                  |                  | Starting from RF 3.0, this method is not called if the message |
+   |                  |                  | has level below the current `threshold level`__.               |
    +------------------+------------------+----------------------------------------------------------------+
    | message          | message          | Called when the framework itself writes a syslog_              |
    |                  |                  | message. `message` is a dictionary with                        |
@@ -291,6 +293,7 @@ to implement any explicit interface or have all these methods.
    }
 
 __ https://github.com/robotframework/robotframework/issues/2248
+__ `Setting log level`_
 __ `Test libraries as listeners`_
 
 Listeners logging

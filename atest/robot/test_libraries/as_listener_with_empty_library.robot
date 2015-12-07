@@ -6,9 +6,7 @@ Resource        atest_resource.robot
 Empty library should not cause warning when it is listener
     Stderr Should Be Equal To    SEPARATOR=\n
     ...     START TEST
-    ...     MESSAGE Arguments: [ 'We do nothing' ]
     ...     MESSAGE We do nothing
-    ...     MESSAGE Return: None
     ...     END TEST
     ...     CLOSE (test)
     ...     CLOSE (suite)\n

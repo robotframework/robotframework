@@ -28,7 +28,6 @@ Java Listener
     ...    START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...    LOG MESSAGE: [INFO] Hello says "Suite Setup"!
     ...    START KW: BuiltIn.Log [Debug message\${LEVEL2}]
-    ...    LOG MESSAGE: [DEBUG] Debug message
     ...    START KW: BuiltIn.Set Variable [Just testing...]
     ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...    START TEST: Pass '' [forcepass]
@@ -36,7 +35,6 @@ Java Listener
     ...    START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
     ...    START KW: BuiltIn.Log [Debug message\${LEVEL2}]
-    ...    LOG MESSAGE: [DEBUG] Debug message
     ...    START KW: BuiltIn.Set Variable [Just testing...]
     ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...    END TEST: PASS
@@ -45,7 +43,6 @@ Java Listener
     ...    START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
     ...    START KW: BuiltIn.Log [Debug message\${LEVEL2}]
-    ...    LOG MESSAGE: [DEBUG] Debug message
     ...    START KW: BuiltIn.Set Variable [Just testing...]
     ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
     ...    START KW: BuiltIn.Fail [Expected failure]
@@ -116,7 +113,6 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] Hello says "Suite Setup"!
     ...    KW END: PASS
     ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
-    ...    LOG MESSAGE: [DEBUG] Debug message
     ...    KW END: PASS
     ...    KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
     ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
@@ -128,7 +124,6 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] Hello says "Pass"!
     ...    KW END: PASS
     ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
-    ...    LOG MESSAGE: [DEBUG] Debug message
     ...    KW END: PASS
     ...    KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
     ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
@@ -141,7 +136,6 @@ Check Listen All File
     ...    LOG MESSAGE: [INFO] Hello says "Fail"!
     ...    KW END: PASS
     ...    KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
-    ...    LOG MESSAGE: [DEBUG] Debug message
     ...    KW END: PASS
     ...    KW START: \${assign} = BuiltIn.Set Variable ['Just testing...']
     ...    LOG MESSAGE: [INFO] \${assign} = Just testing...
