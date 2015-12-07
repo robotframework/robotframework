@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import unittest
 
-from robot.output.listeners import Listeners
+from robot.output.listeners import Listeners, LibraryListeners
 from robot.output import LOGGER
 from robot.utils.asserts import *
 from robot.utils import JYTHON
@@ -171,29 +171,31 @@ if JYTHON:
 
 class TestAttributesAreNotAccessedUnnecessarily(unittest.TestCase):
 
-    def setUp(self):
-        self.listeners = Listeners([])
-
     def test_start_and_end_methods(self):
-        for name in dir(self.listeners):
-            if name.startswith(('start_', 'end_')):
-                method = getattr(self.listeners, name)
-                method(None)
+        for listeners in [Listeners([]), LibraryListeners()]:
+            for name in dir(listeners):
+                if name.startswith(('start_', 'end_')):
+                    method = getattr(listeners, name)
+                    method(None)
 
     def test_message_methods(self):
         class Message(object):
             level = 'INFO'
-        self.listeners.log_message(Message)
-        self.listeners.message(Message)
+        for listeners in [Listeners([]), LibraryListeners()]:
+            listeners.log_message(Message)
+            listeners.message(Message)
 
     def test_some_methods_implemented(self):
         class MyListener(object):
             ROBOT_LISTENER_API_VERSION = 2
             def end_suite(self, suite):
                 pass
-        listeners = Listeners([MyListener()])
-        listeners.start_suite(None)
-        assert_raises(AttributeError, listeners.end_suite, None)
+        libs = LibraryListeners()
+        libs.new_suite_scope()
+        libs.register([MyListener()], None)
+        for listeners in [Listeners([MyListener()]), libs]:
+            listeners.start_suite(None)
+            assert_raises(AttributeError, listeners.end_suite, None)
 
 
 if __name__ == '__main__':
