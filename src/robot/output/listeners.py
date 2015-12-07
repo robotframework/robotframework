@@ -18,7 +18,7 @@ from robot.errors import DataError
 from robot.utils import (Importer, is_string, py2to3,
                          split_args_from_name_or_path, type_name)
 
-from .listenermethods import ListenerMethod, LibraryListenerMethod
+from .listenermethods import ListenerMethods, LibraryListenerMethods
 from .loggerhelper import AbstractLoggerProxy, IsLogged
 from .logger import LOGGER
 
@@ -36,7 +36,7 @@ class Listeners(object):
         listeners = ListenerProxy.import_listeners(listeners,
                                                    self._method_names)
         for name in self._method_names:
-            method = ListenerMethod(name, listeners)
+            method = ListenerMethods(name, listeners)
             if name.endswith(('_file', '_import', 'log_message')):
                 name = '_' + name
             setattr(self, name, method)
@@ -57,7 +57,7 @@ class Listeners(object):
         method(path)
 
     def __nonzero__(self):
-        return any(isinstance(method, ListenerMethod) and method
+        return any(isinstance(method, ListenerMethods) and method
                    for method in self.__dict__.values())
 
 
@@ -69,7 +69,7 @@ class LibraryListeners(object):
     def __init__(self, log_level='INFO'):
         self._is_logged = IsLogged(log_level)
         for name in self._method_names:
-            method = LibraryListenerMethod(name)
+            method = LibraryListenerMethods(name)
             if name == 'log_message':
                 name = '_' + name
             setattr(self, name, method)
@@ -84,7 +84,7 @@ class LibraryListeners(object):
 
     def _listener_methods(self):
         return [method for method in self.__dict__.values()
-                if isinstance(method, LibraryListenerMethod)]
+                if isinstance(method, LibraryListenerMethods)]
 
     def unregister(self, library, close=False):
         if close:
@@ -92,15 +92,13 @@ class LibraryListeners(object):
         for method in self._listener_methods():
             method.unregister(library)
 
-    # FIXME: Better names needed....
-
-    def xxx_suite(self):
+    def new_suite_scope(self):
         for method in self._listener_methods():
-            method.start_suite()
+            method.new_suite_scope()
 
-    def yyy_suite(self):
+    def discard_suite_scope(self):
         for method in self._listener_methods():
-            method.end_suite()
+            method.discard_suite_scope()
 
     def set_log_level(self, level):
         self._is_logged.set_level(level)
