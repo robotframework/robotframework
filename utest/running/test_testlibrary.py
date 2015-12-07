@@ -140,26 +140,22 @@ class TestImports(unittest.TestCase):
             self._verify_lib(lib, "javapkg.JavaPackageExample", java_keywords)
 
         def test_set_global_scope_java(self):
-            lib = TestLibrary('javalibraryscope.Global')
-            assert_equal(lib.scope, 'GLOBAL')
+            self._verify_scope(TestLibrary('javalibraryscope.Global'), 'global')
 
         def test_set_suite_scope_java(self):
-            lib = TestLibrary('javalibraryscope.Suite')
-            assert_equal(lib.scope, 'TESTSUITE')
+            self._verify_scope(TestLibrary('javalibraryscope.Suite'), 'test suite')
 
         def test_set_test_scope_java(self):
-            lib = TestLibrary('javalibraryscope.Test')
-            assert_equal(lib.scope, 'TESTCASE')
+            self._verify_scope(TestLibrary('javalibraryscope.Test'), 'test case')
 
         def test_set_invalid_scope_java(self):
-            for libname in [ 'javalibraryscope.InvalidEmpty',
-                             'javalibraryscope.InvalidMethod',
-                             'javalibraryscope.InvalidNull',
-                             'javalibraryscope.InvalidPrivate',
-                             'javalibraryscope.InvalidProtected',
-                             'javalibraryscope.InvalidValue' ]:
-                lib = TestLibrary(libname)
-                assert_equal(lib.scope, 'TESTCASE')
+            for libname in ['javalibraryscope.InvalidEmpty',
+                            'javalibraryscope.InvalidMethod',
+                            'javalibraryscope.InvalidNull',
+                            'javalibraryscope.InvalidPrivate',
+                            'javalibraryscope.InvalidProtected',
+                            'javalibraryscope.InvalidValue']:
+                self._verify_scope(TestLibrary(libname), 'test case')
 
     def _verify_lib(self, lib, libname, keywords):
         assert_equal(libname, lib.name)
