@@ -131,12 +131,6 @@ class LibraryKeywordRunner(object):
         return failure
 
 
-class UserKeywordRunner(LibraryKeywordRunner):
-
-    def _dry_run_libkw(self, ctx):
-        return False
-
-
 def ForRunner(context, templated=False, flavor='IN'):
     runners = dict(IN=ForInRunner,
                    INRANGE=ForInRangeRunner,
