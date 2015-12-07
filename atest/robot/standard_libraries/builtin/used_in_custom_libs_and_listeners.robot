@@ -8,7 +8,7 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Keywords Using BuiltIn
     ${tc} =    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Log level changed from INFO to DEBUG
+    Check Log Message    ${tc.kws[0].msgs[0]}    Log level changed from INFO to DEBUG.
     Check Log Message    ${tc.kws[0].msgs[1]}    Hello, debug world!    DEBUG
 
 Listener Using BuiltIn

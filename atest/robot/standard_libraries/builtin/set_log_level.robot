@@ -5,6 +5,7 @@ Resource          atest_resource.robot
 *** Test Cases ***
 Set Log Level
     ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Log level changed from INFO to TRACE.
     Check Log Message    ${tc.kws[1].msgs[1]}    This is logged    TRACE
     Check Log Message    ${tc.kws[2].msgs[1]}    This is logged    DEBUG
     Check Log Message    ${tc.kws[3].msgs[1]}    This is logged    INFO
