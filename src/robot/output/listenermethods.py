@@ -19,7 +19,7 @@ from .logger import LOGGER
 
 
 @py2to3
-class ListenerMethod(object):
+class ListenerMethods(object):
 
     def __init__(self, method_name, listeners):
         self._methods = []
@@ -32,7 +32,7 @@ class ListenerMethod(object):
         for listener in listeners:
             method = getattr(listener, method_name)
             if method:
-                self._methods.append(ListenerMethodInfo(method, listener.name))
+                self._methods.append(ListenerMethod(method, listener.name))
 
     def __call__(self, *args):
         if self._methods:
@@ -44,7 +44,7 @@ class ListenerMethod(object):
         return bool(self._methods)
 
 
-class LibraryListenerMethod(object):
+class LibraryListenerMethods(object):
 
     def __init__(self, method_name):
         self._method_stack = []
@@ -52,10 +52,10 @@ class LibraryListenerMethod(object):
         argument_handler = ListenerArguments.by_method_name(method_name)
         self._get_arguments = argument_handler.get_arguments
 
-    def start_suite(self):
+    def new_suite_scope(self):
         self._method_stack.append([])
 
-    def end_suite(self):
+    def discard_suite_scope(self):
         self._method_stack.pop()
 
     def register(self, listeners, library):
@@ -63,7 +63,7 @@ class LibraryListenerMethod(object):
         for listener in listeners:
             method = getattr(listener, self._method_name)
             if method:
-                info = ListenerMethodInfo(method, listener.name, library)
+                info = ListenerMethod(method, listener.name, library)
                 methods.append(info)
 
     def unregister(self, library):
@@ -86,7 +86,7 @@ class LibraryListenerMethod(object):
         return methods
 
 
-class ListenerMethodInfo(object):
+class ListenerMethod(object):
     # Flag to avoid recursive listener calls.
     called = False
 
@@ -99,7 +99,7 @@ class ListenerMethodInfo(object):
         if self.called:
             return
         try:
-            ListenerMethodInfo.called = True
+            ListenerMethod.called = True
             self.method(*args)
         except:
             message, details = get_error_details()
@@ -107,4 +107,4 @@ class ListenerMethodInfo(object):
                          % (self.method.__name__, self.listener_name, message))
             LOGGER.info("Details:\n%s" % details)
         finally:
-            ListenerMethodInfo.called = False
+            ListenerMethod.called = False

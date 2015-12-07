@@ -43,7 +43,7 @@ class Runner(SuiteVisitor):
         return EXECUTION_CONTEXTS.current
 
     def start_suite(self, suite):
-        self._output.library_listeners.xxx_suite()
+        self._output.library_listeners.new_suite_scope()
         result = TestSuite(source=suite.source,
                            name=suite.name,
                            doc=suite.doc,
@@ -102,7 +102,7 @@ class Runner(SuiteVisitor):
         self._context.end_suite(self._suite)
         self._suite = self._suite.parent
         self._suite_status = self._suite_status.parent
-        self._output.library_listeners.yyy_suite()
+        self._output.library_listeners.discard_suite_scope()
         if not suite.parent:
             IMPORTER.close_global_library_listeners()
 
