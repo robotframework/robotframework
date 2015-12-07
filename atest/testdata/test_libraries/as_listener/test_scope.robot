@@ -1,17 +1,29 @@
 *** Settings ***
-Library    listenerlibrary.py
-Suite setup     Events should be    start suite Test Scope
-                ...                 start kw listenerlibrary.Events Should Be
-Suite teardown  Events should be    start suite Test Scope
-                ...                 start kw listenerlibrary.Events Should Be
-                ...                 end kw listenerlibrary.Events Should Be
-                ...                 start kw listenerlibrary.Events Should Be
+Library           listenerlibrary.py
+Suite Setup       Events should be    Start suite: Test Scope
+                  ...                 Start kw: listenerlibrary.Events Should Be
+Suite Teardown    Events should be    Start suite: Test Scope
+                  ...                 Start kw: listenerlibrary.Events Should Be
+                  ...                 End kw: listenerlibrary.Events Should Be
+                  ...                 Start kw: listenerlibrary.Events Should Be
 
 *** Test Cases ***
 Test scope library gets events
-    Events should be    start test Test scope library gets events
-        ...             start kw listenerlibrary.Events Should Be
+    Events should be    Start test: ${TEST NAME}
+    ...                 Start kw: listenerlibrary.Events Should Be
 
-New test gets empty events
-    Events should be    start test New test gets empty events
-        ...             start kw listenerlibrary.Events Should Be
+Test scope library gets no previous events
+    Events should be    Start test: ${TEST NAME}
+    ...                 Start kw: listenerlibrary.Events Should Be
+
+Listener methods in library are keywords
+    End test    foo    zap
+    Events should be    Start test: ${TEST NAME}
+    ...                 Start kw: listenerlibrary.End Test
+    ...                 End test: foo
+    ...                 End kw: listenerlibrary.End Test
+    ...                 Start kw: listenerlibrary.Events Should Be
+
+Listener methods starting with underscore are not keywords
+    [Documentation]    FAIL No keyword with name 'End keyword' found.
+    End keyword    bar    zap

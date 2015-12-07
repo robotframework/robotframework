@@ -8,12 +8,12 @@ Import Library Normally Before Importing With Name In Another Suite
     Check Keyword Data    ${tc.kws[0]}    OperatingSystem.Should Exist    args=*
     Check Keyword Data    ${tc.kws[1]}    ParameterLibrary.Parameters    \${p1}, \${p2}
     Check Syslog Contains    Imported library 'OperatingSystem' with arguments [ ] (version ${ROBOT VERSION}, class type, global scope,
-    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ before1 | before2 ] (version <unknown>, class type, testcase scope,
+    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ before1 | before2 ] (version <unknown>, class type, test case scope,
 
 Import Library With Name Before Importing With Name In Another Suite
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    Params.Parameters    \${p1}, \${p2}
-    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ after1 | after2 ] (version <unknown>, class type, testcase scope,
+    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ after1 | after2 ] (version <unknown>, class type, test case scope,
 
 Import Library Normally After Importing With Name In Another Suite
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -48,9 +48,9 @@ Arguments Containing Variables And Import Same Library Twice
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    Param1.Parameters    \${a1}, \${a2}
     Check Keyword Data    ${tc.kws[3]}    Param2.Parameters    \${a1}, \${a2}
-    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ 1 | 2 ] (version <unknown>, class type, testcase scope,
+    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ 1 | 2 ] (version <unknown>, class type, test case scope,
     Check Syslog Contains    Imported library 'ParameterLibrary' with name 'Param1'
-    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ VAR | 42 ] (version <unknown>, class type, testcase scope,
+    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ VAR | 42 ] (version <unknown>, class type, test case scope,
     Check Syslog Contains    Imported library 'ParameterLibrary' with name 'Param2'
 
 Alias Containing Variable
@@ -59,7 +59,7 @@ Alias Containing Variable
 With Name Has No Effect If Not Second Last
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Keyword Data    ${tc.kws[0]}    ParameterLibrary.Parameters    \${a1}, \${a2}
-    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ whatever | with name ] (version <unknown>, class type, testcase scope,
+    Check Syslog Contains    Imported library 'ParameterLibrary' with arguments [ whatever | with name ] (version <unknown>, class type, test case scope,
 
 With Name After Normal Import
     ${tc} =    Check Test Case    ${TEST NAME}

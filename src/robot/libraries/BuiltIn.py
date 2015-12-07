@@ -2420,7 +2420,7 @@ class _Misc(_BuiltInBase):
         except DataError as err:
             raise RuntimeError(unic(err))
         self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
-        self.log('Log level changed from %s to %s' % (old, level.upper()))
+        self.log('Log level changed from %s to %s.' % (old, level.upper()))
         return old
 
     def reload_library(self, name_or_instance):

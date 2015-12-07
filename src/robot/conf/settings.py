@@ -408,6 +408,10 @@ class RobotSettings(_BaseSettings):
         return escape(value)
 
     @property
+    def listeners(self):
+        return self['Listeners']
+
+    @property
     def debug_file(self):
         return self['DebugFile']
 

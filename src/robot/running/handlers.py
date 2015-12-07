@@ -85,7 +85,7 @@ class _RunnableHandler(object):
         return ArgumentResolver(argspec)
 
     def _get_initial_handler(self, library, name, method):
-        if library.scope == 'GLOBAL':
+        if library.scope.is_global:
             return self._get_global_handler(method, name)
         return None
 

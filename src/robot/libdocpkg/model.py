@@ -36,12 +36,6 @@ class LibraryDoc(object):
         self.keywords = []
 
     @setter
-    def scope(self, scope):
-        return {'TESTCASE': 'test case',
-                'TESTSUITE': 'test suite',
-                'GLOBAL': 'global'}.get(scope, scope)
-
-    @setter
     def doc_format(self, format):
         return format or 'ROBOT'
 

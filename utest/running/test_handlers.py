@@ -5,7 +5,7 @@ import inspect
 from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
 from robot import utils
 from robot.utils.asserts import *
-from robot.running.testlibraries import TestLibrary
+from robot.running.testlibraries import TestLibrary, LibraryScope
 from robot.running.dynamicmethods import (
     GetKeywordArguments, GetKeywordDocumentation, RunKeyword)
 from robot.errors import DataError
@@ -26,10 +26,13 @@ def _get_java_handler_methods(lib):
     return [a for a in _get_handler_methods(lib) if a.__name__.startswith('a_') ]
 
 
-class LibraryMock:
+class LibraryMock(object):
+
     def __init__(self, name='MyLibrary', scope='GLOBAL'):
         self.name = self.orig_name = name
-        self.scope = scope
+        self.scope = LibraryScope(scope, self)
+
+    register_listeners = unregister_listeners = reset_instance = lambda *args: None
 
 
 class TestPythonHandler(unittest.TestCase):

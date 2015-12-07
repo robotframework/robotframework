@@ -124,22 +124,25 @@ class IsLogged(object):
 
 
 class AbstractLoggerProxy(object):
-    _methods = NotImplemented
+    _methods = None
     _no_method = lambda *args: None
 
-    def __init__(self, logger):
+    def __init__(self, logger, method_names=None, prefix=None):
         self.logger = logger
-        for name in self._methods:
-            setattr(self, name, self._get_method(logger, name))
+        for name in method_names or self._methods:
+            setattr(self, name, self._get_method(logger, name, prefix))
 
-    def _get_method(self, logger, name):
-        for method_name in self._get_method_names(name):
+    def _get_method(self, logger, name, prefix):
+        for method_name in self._get_method_names(name, prefix):
             if hasattr(logger, method_name):
                 return getattr(logger, method_name)
         return self._no_method
 
-    def _get_method_names(self, name):
-        return [name, self._toCamelCase(name)]
+    def _get_method_names(self, name, prefix):
+        names = [name, self._toCamelCase(name)] if '_' in name else [name]
+        if prefix:
+            names += [prefix + name for name in names]
+        return names
 
     def _toCamelCase(self, name):
         parts = name.split('_')

@@ -126,8 +126,8 @@ class TestBuildTestSuite(unittest.TestCase):
         suite.tests = [TestCase(), TestCase(status='PASS')]
         S1 = self._verify_suite(suite.suites[0],
                                 status=0, tests=(t,), stats=(1, 0, 1, 0))
-        suite.tests[0].keywords = [Keyword(type='for'), Keyword()]
-        suite.tests[0].keywords[0].keywords = [Keyword(type='foritem')]
+        suite.tests[0].keywords = [Keyword(type=Keyword.FOR_LOOP_TYPE), Keyword()]
+        suite.tests[0].keywords[0].keywords = [Keyword(type=Keyword.FOR_ITEM_TYPE)]
         suite.tests[0].keywords[0].messages = [Message()]
         k = self._verify_keyword(suite.tests[0].keywords[0].keywords[0], type=4)
         m = self._verify_message(suite.tests[0].keywords[0].messages[0])

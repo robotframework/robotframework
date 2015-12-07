@@ -1,10 +1,10 @@
-***Settings***
-Documentation   This suite was initially created for testing keyword types with
-...             listeners but can be used for other purposes too.
-Suite Setup     ${SUITE SETUP}
-Suite Teardown  ${SUITE TEARDOWN}
-Test Setup      ${TEST SETUP}
-Test Teardown   ${TEST TEARDOWN}
+*** Settings ***
+Documentation     This suite was initially created for testing keyword types
+...               with listeners but can be used for other purposes too.
+Suite Setup       ${SUITE SETUP}
+Suite Teardown    ${SUITE TEARDOWN}
+Test Setup        ${TEST SETUP}
+Test Teardown     ${TEST TEARDOWN}
 
 *** Variables ***
 ${SUITE SETUP}       Suite Setup
@@ -41,16 +41,21 @@ Failing test with failing teardown
 
 *** Keywords ***
 Suite Setup
-    Log    Suite Setup
+    Log    Keyword
+    Keyword
 
 Suite Teardown
-    Log    Suite Teardown
+    Log    Keyword
+    Keyword
 
 Test Setup
-    Log    Test Setup
+    Log    Keyword
+    Keyword
 
 Test Teardown
-    Log    Test Teardown
+    Log    Keyword
+    Keyword
 
 Keyword
     Log    Keyword
+    [Teardown]    Log    Keyword Teardown

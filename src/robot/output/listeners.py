@@ -12,201 +12,116 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import inspect
 import os.path
 
 from robot.errors import DataError
-from robot.utils import (get_error_details, is_string, is_list_like,
-                         is_dict_like, py2to3, split_args_from_name_or_path,
-                         type_name, Importer)
+from robot.utils import (Importer, is_string, py2to3,
+                         split_args_from_name_or_path, type_name)
 
-from .loggerhelper import AbstractLoggerProxy
+from .listenermethods import ListenerMethod, LibraryListenerMethod
+from .loggerhelper import AbstractLoggerProxy, IsLogged
 from .logger import LOGGER
 
 
-def no_recursion(cls):
-    """Class decorator to wrap methods so that they cannot cause recursion.
-
-    Recursion would otherwise happen if one listener logs something and that
-    message is received and logged again by log_message or message method.
-    """
-    def _wrap_listener_method(method):
-        def wrapped(self, *args):
-            if not self._calling_method:
-                self._calling_method = True
-                method(self, *args)
-                self._calling_method = False
-        return wrapped
-    for attr, value in cls.__dict__.items():
-        if not attr.startswith('_') and inspect.isroutine(value):
-            setattr(cls, attr, _wrap_listener_method(value))
-    cls._calling_method = False
-    return cls
-
-
-@no_recursion
 @py2to3
 class Listeners(object):
-    _start_attrs = ('id', 'doc', 'starttime', 'longname')
-    _end_attrs = _start_attrs + ('endtime', 'elapsedtime', 'status', 'message')
-    _kw_extra_attrs = ('args', 'assign', 'kwname', 'libname',
-                       '-id', '-longname', '-message')
+    _method_names = ('start_suite', 'end_suite', 'start_test', 'end_test',
+                     'start_keyword', 'end_keyword', 'log_message', 'message',
+                     'output_file', 'report_file', 'log_file', 'debug_file',
+                     'xunit_file', 'library_import', 'resource_import',
+                     'variables_import', 'close')
 
-    def __init__(self, listeners):
-        if listeners is not None:
-            self._listeners = list(self._import_listeners(listeners))
-        self._running_test = False
-        self._setup_or_teardown_type = None
+    def __init__(self, listeners, log_level='INFO'):
+        self._is_logged = IsLogged(log_level)
+        listeners = ListenerProxy.import_listeners(listeners,
+                                                   self._method_names)
+        for name in self._method_names:
+            method = ListenerMethod(name, listeners)
+            if name.endswith(('_file', '_import', 'log_message')):
+                name = '_' + name
+            setattr(self, name, method)
 
-    def __nonzero__(self):
-        return bool(self._listeners)
-
-    def _import_listeners(self, listeners):
-        for listener in listeners:
-            try:
-                yield ListenerProxy(listener)
-            except DataError as err:
-                if not is_string(listener):
-                    listener = type_name(listener)
-                LOGGER.error("Taking listener '%s' into use failed: %s"
-                             % (listener, err.message))
-
-    def start_suite(self, suite):
-        for listener in self._listeners:
-            attrs = self._get_start_attrs(suite, 'metadata')
-            attrs.update(self._get_suite_attrs(suite))
-            listener.call_method(listener.start_suite, suite.name, attrs)
-
-    def _get_suite_attrs(self, suite):
-        return {
-            'tests' : [t.name for t in suite.tests],
-            'suites': [s.name for s in suite.suites],
-            'totaltests': suite.test_count,
-            'source': suite.source or ''
-        }
-
-    def end_suite(self, suite):
-        for listener in self._listeners:
-            self._notify_end_suite(listener, suite)
-
-    def _notify_end_suite(self, listener, suite):
-        attrs = self._get_end_attrs(suite, 'metadata')
-        attrs['statistics'] = suite.stat_message
-        attrs.update(self._get_suite_attrs(suite))
-        listener.call_method(listener.end_suite, suite.name, attrs)
-
-    def start_test(self, test):
-        self._running_test = True
-        for listener in self._listeners:
-            attrs = self._get_start_attrs(test, 'tags')
-            attrs['critical'] = 'yes' if test.critical else 'no'
-            attrs['template'] = test.template or ''
-            listener.call_method(listener.start_test, test.name, attrs)
-
-    def end_test(self, test):
-        self._running_test = False
-        for listener in self._listeners:
-            self._notify_end_test(listener, test)
-
-    def _notify_end_test(self, listener, test):
-        attrs = self._get_end_attrs(test, 'tags')
-        attrs['critical'] = 'yes' if test.critical else 'no'
-        attrs['template'] = test.template or ''
-        listener.call_method(listener.end_test, test.name, attrs)
-
-    def start_keyword(self, kw):
-        for listener in self._listeners:
-            attrs = self._get_start_attrs(kw, *self._kw_extra_attrs)
-            attrs['type'] = self._get_keyword_type(kw, start=True)
-            listener.call_method(listener.start_keyword, kw.name, attrs)
-
-    def end_keyword(self, kw):
-        for listener in self._listeners:
-            attrs = self._get_end_attrs(kw, *self._kw_extra_attrs)
-            attrs['type'] = self._get_keyword_type(kw, start=False)
-            listener.call_method(listener.end_keyword, kw.name, attrs)
-
-    def _get_keyword_type(self, kw, start=True):
-        # When running setup or teardown, only the top level keyword has type
-        # set to setup/teardown but we want to pass that type also to all
-        # start/end_keyword listener methods called below that keyword.
-        if kw.type == 'kw':
-            return self._setup_or_teardown_type or 'Keyword'
-        kw_type = self._get_setup_or_teardown_type(kw)
-        self._setup_or_teardown_type = kw_type if start else None
-        return kw_type
-
-    def _get_setup_or_teardown_type(self, kw):
-        return '%s %s' % (('Test' if self._running_test else 'Suite'),
-                          kw.type.title())
-
-    def imported(self, import_type, name, attrs):
-        for listener in self._listeners:
-            method = getattr(listener, '%s_import' % import_type.lower())
-            listener.call_method(method, name, attrs)
+    def set_log_level(self, level):
+        self._is_logged.set_level(level)
 
     def log_message(self, msg):
-        for listener in self._listeners:
-            listener.call_method(listener.log_message, self._create_msg_dict(msg))
+        if self._is_logged(msg.level):
+            self._log_message(msg)
 
-    def message(self, msg):
-        for listener in self._listeners:
-            listener.call_method(listener.message, self._create_msg_dict(msg))
-
-    def _create_msg_dict(self, msg):
-        return {'timestamp': msg.timestamp, 'message': msg.message,
-                'level': msg.level, 'html': 'yes' if msg.html else 'no'}
+    def imported(self, import_type, name, attrs):
+        method = getattr(self, '_%s_import' % import_type.lower())
+        method(name, attrs)
 
     def output_file(self, file_type, path):
-        for listener in self._listeners:
-            method = getattr(listener, '%s_file' % file_type.lower())
-            listener.call_method(method, path)
+        method = getattr(self, '_%s_file' % file_type.lower())
+        method(path)
 
-    def close(self):
-        for listener in self._listeners:
-            listener.call_method(listener.close)
+    def __nonzero__(self):
+        return any(isinstance(method, ListenerMethod) and method
+                   for method in self.__dict__.values())
 
-    def _get_start_attrs(self, item, *extra):
-        return self._get_attrs(item, self._start_attrs, extra)
 
-    def _get_end_attrs(self, item, *extra):
-        return self._get_attrs(item, self._end_attrs, extra)
+class LibraryListeners(object):
+    _method_names = ('start_suite', 'end_suite', 'start_test', 'end_test',
+                     'start_keyword', 'end_keyword', 'log_message', 'message',
+                     'close')
 
-    def _get_attrs(self, item, default, extra):
-        names = self._get_attr_names(default, extra)
-        return dict((n, self._get_attr_value(item, n)) for n in names)
+    def __init__(self, log_level='INFO'):
+        self._is_logged = IsLogged(log_level)
+        for name in self._method_names:
+            method = LibraryListenerMethod(name)
+            if name == 'log_message':
+                name = '_' + name
+            setattr(self, name, method)
 
-    def _get_attr_names(self, default, extra):
-        names = list(default)
-        for name in extra:
-            if not name.startswith('-'):
-                names.append(name)
-            elif name[1:] in names:
-                names.remove(name[1:])
-        return names
+    def register(self, listeners, library):
+        listeners = ListenerProxy.import_listeners(listeners,
+                                                   self._method_names,
+                                                   prefix='_',
+                                                   raise_on_error=True)
+        for method in self._listener_methods():
+            method.register(listeners, library)
 
-    def _get_attr_value(self, item, name):
-        value = getattr(item, name)
-        return self._take_copy_of_mutable_value(value)
+    def _listener_methods(self):
+        return [method for method in self.__dict__.values()
+                if isinstance(method, LibraryListenerMethod)]
 
-    def _take_copy_of_mutable_value(self, value):
-        if is_dict_like(value):
-            return dict(value)
-        if is_list_like(value):
-            return list(value)
-        return value
+    def unregister(self, library, close=False):
+        if close:
+            self.close(library=library)
+        for method in self._listener_methods():
+            method.unregister(library)
+
+    # FIXME: Better names needed....
+
+    def xxx_suite(self):
+        for method in self._listener_methods():
+            method.start_suite()
+
+    def yyy_suite(self):
+        for method in self._listener_methods():
+            method.end_suite()
+
+    def set_log_level(self, level):
+        self._is_logged.set_level(level)
+
+    def log_message(self, msg):
+        if self._is_logged(msg.level):
+            self._log_message(msg)
+
+    def imported(self, import_type, name, attrs):
+        pass
+
+    def output_file(self, file_type, path):
+        pass
 
 
 class ListenerProxy(AbstractLoggerProxy):
-    _methods = ('start_suite', 'end_suite', 'start_test', 'end_test',
-                'start_keyword', 'end_keyword', 'log_message', 'message',
-                'output_file', 'report_file', 'log_file', 'debug_file',
-                'xunit_file', 'close', 'library_import', 'resource_import',
-                'variables_import')
+    _no_method = None
 
-    def __init__(self, listener):
+    def __init__(self, listener, method_names, prefix=None):
         listener, name = self._import_listener(listener)
-        AbstractLoggerProxy.__init__(self, listener)
+        AbstractLoggerProxy.__init__(self, listener, method_names, prefix)
         self.name = name
         self.version = self._get_version(listener)
 
@@ -222,22 +137,28 @@ class ListenerProxy(AbstractLoggerProxy):
     def _get_version(self, listener):
         try:
             version = int(listener.ROBOT_LISTENER_API_VERSION)
-            if version == 1:
+            if version != 2:
                 raise ValueError
-        except (ValueError, TypeError):
-            raise DataError("Unsupported API version '%s' in listener '%s'." %
-                            (listener.ROBOT_LISTENER_API_VERSION, self.name))
         except AttributeError:
-            raise DataError("Listener '%s' does not specify API version. "
-                            "Attribute 'ROBOT_LISTENER_API_VERSION' is required." %
-                            self.name)
+            raise DataError("Listener '%s' does not have mandatory "
+                            "'ROBOT_LISTENER_API_VERSION' attribute."
+                            % self.name)
+        except (ValueError, TypeError):
+            raise DataError("Listener '%s' uses unsupported API version '%s'."
+                            % (self.name, listener.ROBOT_LISTENER_API_VERSION))
         return version
 
-    def call_method(self, method, *args):
-        try:
-            method(*args)
-        except:
-            message, details = get_error_details()
-            LOGGER.error("Calling listener method '%s' of listener '%s' "
-                         "failed: %s" % (method.__name__, self.name, message))
-            LOGGER.info("Details:\n%s" % details)
+    @classmethod
+    def import_listeners(cls, listeners, method_names, prefix=None,
+                         raise_on_error=False):
+        imported = []
+        for listener in listeners:
+            try:
+                imported.append(cls(listener, method_names, prefix))
+            except DataError as err:
+                name = listener if is_string(listener) else type_name(listener)
+                msg = "Taking listener '%s' into use failed: %s" % (name, err)
+                if raise_on_error:
+                    raise DataError(msg)
+                LOGGER.error(msg)
+        return imported

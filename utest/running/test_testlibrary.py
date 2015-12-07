@@ -65,8 +65,8 @@ class TestImports(unittest.TestCase):
         self._verify_lib(lib, "BuiltIn", default_keywords)
 
     def test_import_python_class_from_module(self):
-        lib = TestLibrary("BuiltIn.BuiltIn")
-        self._verify_lib(lib, "BuiltIn.BuiltIn", default_keywords)
+        lib = TestLibrary("robot.libraries.BuiltIn.BuiltIn")
+        self._verify_lib(lib, "robot.libraries.BuiltIn.BuiltIn", default_keywords)
 
     def test_import_python_module(self):
         lib = TestLibrary("module_library")
@@ -105,26 +105,29 @@ class TestImports(unittest.TestCase):
 
     def test_import_with_unicode_name(self):
         self._verify_lib(TestLibrary(u"BuiltIn"), "BuiltIn", default_keywords)
-        self._verify_lib(TestLibrary(u"BuiltIn.BuiltIn"), "BuiltIn.BuiltIn", default_keywords)
+        self._verify_lib(TestLibrary(u"robot.libraries.BuiltIn.BuiltIn"),
+                         "robot.libraries.BuiltIn.BuiltIn", default_keywords)
         self._verify_lib(TestLibrary(u"pythonmodule.library"), "pythonmodule.library",
                          [("keyword from submodule", None)])
 
     def test_set_global_scope(self):
-        assert_equal(TestLibrary('libraryscope.Global').scope, 'GLOBAL')
+        self._verify_scope(TestLibrary('libraryscope.Global'), 'global')
+
+    def _verify_scope(self, lib, expected):
+        assert_equal(str(lib.scope), expected)
 
     def test_set_suite_scope(self):
-        assert_equal(TestLibrary('libraryscope.Suite').scope, 'TESTSUITE')
+        self._verify_scope(TestLibrary('libraryscope.Suite'), 'test suite')
 
     def test_set_test_scope(self):
-        assert_equal(TestLibrary('libraryscope.Test').scope, 'TESTCASE')
+        self._verify_scope(TestLibrary('libraryscope.Test'), 'test case')
 
     def test_set_invalid_scope(self):
         for libname in ['libraryscope.InvalidValue',
                         'libraryscope.InvalidEmpty',
                         'libraryscope.InvalidMethod',
                         'libraryscope.InvalidNone']:
-            lib = TestLibrary(libname)
-            assert_equal(lib.scope, 'TESTCASE')
+            self._verify_scope(TestLibrary(libname), 'test case')
 
     if JYTHON:
 
@@ -259,7 +262,7 @@ class _TestScopes(unittest.TestCase):
 
     def _get_lib_and_instance(self, name):
         lib = TestLibrary(name)
-        if lib.scope == 'GLOBAL':
+        if lib.scope.is_global:
             assert_not_none(lib._libinst)
         else:
             assert_none(lib._libinst)
@@ -413,6 +416,7 @@ class TestHandlers(unittest.TestCase):
 
     def test_global_handlers_are_created_only_once(self):
         lib = TestLibrary('classes.RecordingLibrary')
+        assert_true(lib.scope.is_global)
         instance = lib._libinst
         assert_true(instance is not None)
         assert_equal(instance.kw_accessed, 1)

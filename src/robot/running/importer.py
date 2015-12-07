@@ -33,6 +33,10 @@ class Importer(object):
     def reset(self):
         self.__init__()
 
+    def close_global_library_listeners(self):
+        for lib in self._library_cache.values():
+            lib.close_global_listeners()
+
     def import_library(self, name, args, alias, variables):
         lib = TestLibrary(name, args, variables, create_handlers=False)
         positional, named = lib.positional_args, lib.named_args
@@ -69,9 +73,9 @@ class Importer(object):
         LOGGER.info("Imported library '%s' with arguments %s "
                     "(version %s, %s type, %s scope, %d keywords%s)"
                     % (name, seq2str2(args), lib.version or '<unknown>',
-                       type, lib.scope.lower(), len(lib), listener))
+                       type, lib.scope, len(lib), listener))
         if not lib and not lib.has_listener:
-            LOGGER.warn("Imported library '%s' contains no keywords" % name)
+            LOGGER.warn("Imported library '%s' contains no keywords." % name)
 
     def _copy_library(self, orig, name):
         # This is pretty ugly. Hopefully we can remove cache and copying
@@ -82,7 +86,8 @@ class Importer(object):
         # https://github.com/IronLanguages/main/issues/1192
         lib = copy.copy(orig)
         lib.name = name
-        lib.init_scope_handling()
+        lib.scope = type(lib.scope)(lib)
+        lib.reset_instance()
         lib.handlers = HandlerStore(orig.handlers.source,
                                     orig.handlers.source_type)
         for handler in orig.handlers._normal.values():
@@ -96,7 +101,7 @@ class Importer(object):
         return lib
 
 
-class ImportCache:
+class ImportCache(object):
     """Keeps track on and optionally caches imported items.
 
     Handles paths in keys case-insensitively on case-insensitive OSes.
