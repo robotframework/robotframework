@@ -20,8 +20,8 @@ from robot.errors import DataError
 from robot.libraries import STDLIBS
 from robot.output import LOGGER, Message
 from robot.parsing.settings import Library, Variables, Resource
-from robot.utils import (eq, find_file, is_string, printable_name, seq2str2,
-                         RecommendationFinder)
+from robot.utils import (eq, find_file, is_string, OrderedDict, printable_name,
+                         seq2str2, RecommendationFinder)
 
 from .usererrorhandler import UserErrorHandler
 from .userkeyword import UserLibrary
@@ -221,7 +221,7 @@ class KeywordStore(object):
     def __init__(self, suite_keywords, suite_source):
         self.user_keywords = UserLibrary(suite_keywords, suite_source,
                                          UserLibrary.TEST_CASE_FILE_TYPE)
-        self.libraries = {}
+        self.libraries = OrderedDict()
         self.resources = ImportCache()
         self.search_order = ()
 
