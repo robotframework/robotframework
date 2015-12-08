@@ -2572,11 +2572,10 @@ class _Misc(_BuiltInBase):
         """
         try:
             handler = self._namespace.get_handler(name)
-            if isinstance(handler, UserErrorHandler):
-                # FIXME: perhaps dataerror could be raised always
-                handler._run()
         except DataError as err:
             raise AssertionError(msg or unic(err))
+        if isinstance(handler, UserErrorHandler):
+            raise AssertionError(msg or handler.error)
 
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.

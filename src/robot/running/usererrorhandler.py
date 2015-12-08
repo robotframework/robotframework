@@ -12,12 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
+from robot.errors import ExecutionFailed
 from robot.model import Tags
+from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import unic
 
 from .arguments import ArgumentSpec
-from .keywordrunner import LibraryKeywordRunner
+from .keywordrunner import StatusReporter
+
 
 class UserErrorHandler(object):
     """Created if creating handlers fail -- running raises DataError.
@@ -52,10 +54,21 @@ class UserErrorHandler(object):
         return self
 
     def run(self, kw, context):
-        # TODO: should have own runner
-        return LibraryKeywordRunner(self).run(kw, context)
+        return UserErrorRunner(self).run(kw, context)
 
-    def _run(self, *args):
-        raise DataError(self.error)
 
-    _dry_run = _run
+class UserErrorRunner(object):
+
+    def __init__(self, handler):
+        self._handler = handler
+
+    def run(self, kw, context):
+        handler = self._handler
+        result = KeywordResult(kwname=handler.name or '',
+                               libname=handler.libname or '',
+                               args=kw.args,
+                               assign=kw.assign,
+                               type=kw.type)
+        with StatusReporter(context, result):
+            context.fail(handler.error)
+            raise ExecutionFailed(handler.error, syntax=True)

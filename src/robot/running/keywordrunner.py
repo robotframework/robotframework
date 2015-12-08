@@ -13,13 +13,12 @@
 #  limitations under the License.
 
 from robot.errors import (ExecutionFailed, ExecutionFailures, ExecutionPassed,
-                          ExitForLoop, ContinueForLoop, DataError,
-                          HandlerExecutionFailed)
+                          ExitForLoop, ContinueForLoop, DataError)
 from robot.result.keyword import Keyword as KeywordResult
-from robot.utils import (ErrorDetails, format_assign_message, frange,
-                         get_error_message, get_timestamp, is_list_like,
-                         is_number, plural_or_not as s, type_name, unic)
-from robot.variables import is_scalar_var, VariableAssigner
+from robot.utils import (format_assign_message, frange, get_error_message,
+                         get_timestamp, is_list_like, is_number,
+                         plural_or_not as s, type_name, unic)
+from robot.variables import is_scalar_var
 
 
 # TODO: Rename to StepRunner or similar. Also rename methods.
@@ -63,72 +62,6 @@ class NormalRunner(object):
         ctx = self._context
         runner = ctx.get_handler(name or kw.name)
         return runner.run(kw, ctx)
-
-
-class LibraryKeywordRunner(object):
-
-    def __init__(self, handler):
-        self._handler = handler
-
-    def run(self, kw, context):
-        assigner = VariableAssigner(kw.assign)
-        handler = self._handler
-        result = KeywordResult(kwname=handler.name or '',
-                               libname=handler.libname or '',
-                               doc=handler.shortdoc,
-                               args=kw.args,
-                               assign=assigner.assignment,
-                               # TODO: only do this for userkeywords
-                               timeout=getattr(handler, 'timeout', None),
-                               tags=handler.tags,
-                               type=kw.type)
-        with StatusReporter(context, result, self._dry_run_libkw(context)):
-            self._warn_if_deprecated(result.name, result.doc, context)
-            return self._run_and_assign(context, kw.args, assigner)
-
-    def _dry_run_libkw(self, ctx):
-        return ctx.dry_run
-
-    def _warn_if_deprecated(self, name, doc, context):
-        if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
-            message = ' ' + doc.split('*', 2)[-1].strip()
-            context.warn("Keyword '%s' is deprecated.%s" % (name, message))
-
-    def _run_and_assign(self, context, args, assigner):
-        syntax_error_reporter = SyntaxErrorReporter(context)
-        with syntax_error_reporter:
-            assigner.validate_assignment()
-        return_value, exception = self._run(context, args)
-        if not exception or exception.can_continue(context.in_teardown):
-            with syntax_error_reporter:
-                assigner.assign(context, return_value)
-        if exception:
-            raise exception
-        return return_value
-
-    def _run(self, context, args):
-        return_value = exception = None
-        try:
-            if not context.dry_run:
-                return_value = self._handler._run(context, args)
-            else:
-                return_value = self._handler._dry_run(context, args)
-        except ExecutionFailed as err:
-            exception = err
-        except:
-            exception = self._get_and_report_failure(context)
-        if exception:
-            return_value = exception.return_value
-        return return_value, exception
-
-    def _get_and_report_failure(self, context):
-        failure = HandlerExecutionFailed(ErrorDetails())
-        if failure.timeout:
-            context.timeout_occurred = True
-        context.fail(failure.full_message)
-        if failure.traceback:
-            context.debug(failure.traceback)
-        return failure
 
 
 def ForRunner(context, templated=False, flavor='IN'):

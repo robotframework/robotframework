@@ -16,17 +16,15 @@ import copy
 
 from robot import utils
 from robot.errors import DataError
-from robot.model import Keywords, Tags
-from robot.variables import contains_var, is_list_var
+from robot.model import Tags
+
 
 from .arguments import (ArgumentResolver, ArgumentSpec, ArgumentMapper,
                         DynamicArgumentParser, JavaArgumentCoercer,
                         JavaArgumentParser, PythonArgumentParser)
-from .model import Keyword
-from .keywordrunner import KeywordRunner, LibraryKeywordRunner
-from .outputcapture import OutputCapturer
+from .librarykeywordrunner import (EmbeddedArgumentsRunner,
+                                   LibraryKeywordRunner, RunKeywordRunner)
 from .runkwregister import RUN_KW_REGISTER
-from .signalhandler import STOP_SIGNAL_MONITOR
 
 
 def Handler(library, name, method):
@@ -51,8 +49,6 @@ def InitHandler(library, method, docgetter=None):
 
 class _RunnableHandler(object):
     type = 'library'
-    _executed_in_dry_run = ('BuiltIn.Import Library',
-                            'BuiltIn.Set Library Search Order')
 
     def __init__(self, library, handler_name, handler_method, doc=''):
         self.library = library
@@ -114,47 +110,7 @@ class _RunnableHandler(object):
     def run(self, kw, context):
         return LibraryKeywordRunner(self).run(kw, context)
 
-    def _dry_run(self, context, args):
-        if self.longname in self._executed_in_dry_run:
-            return self._run(context, args)
-        self.resolve_arguments(args)
-        return None
-
-    def _run(self, context, args):
-        if self.pre_run_messages:
-            for message in self.pre_run_messages:
-                context.output.message(message)
-        positional, named = \
-            self.resolve_arguments(args, context.variables)
-        context.output.trace(lambda: self._log_args(positional, named))
-        runner = self._runner_for(self._current_handler(), context, positional,
-                                  dict(named), self._get_timeout(context))
-        return self._run_with_output_captured_and_signal_monitor(runner, context)
-
-    def _log_args(self, positional, named):
-        positional = [utils.prepr(arg) for arg in positional]
-        named = ['%s=%s' % (utils.unic(name), utils.prepr(value))
-                 for name, value in named]
-        return 'Arguments: [ %s ]' % ' | '.join(positional + named)
-
-    def _runner_for(self, handler, context, positional, named, timeout):
-        if timeout and timeout.active:
-            context.output.debug(timeout.get_message)
-            return lambda: timeout.run(handler, args=positional, kwargs=named)
-        return lambda: handler(*positional, **named)
-
-    def _run_with_output_captured_and_signal_monitor(self, runner, context):
-        with OutputCapturer():
-            return self._run_with_signal_monitoring(runner, context)
-
-    def _run_with_signal_monitoring(self, runner, context):
-        try:
-            STOP_SIGNAL_MONITOR.start_running_keyword(context.in_teardown)
-            return runner()
-        finally:
-            STOP_SIGNAL_MONITOR.stop_running_keyword()
-
-    def _current_handler(self):
+    def current_handler(self):
         if self._method:
             return self._method
         return self._get_handler(self.library.get_instance(), self._handler_name)
@@ -164,9 +120,6 @@ class _RunnableHandler(object):
 
     def _get_handler(self, lib_instance, handler_name):
         return getattr(lib_instance, handler_name)
-
-    def _get_timeout(self, context):
-        return min(context.timeouts) if context.timeouts else None
 
 
 class _PythonHandler(_RunnableHandler):
@@ -249,10 +202,8 @@ class _RunKeywordHandler(_PythonHandler):
         _PythonHandler.__init__(self, library, handler_name, handler_method)
         self._handler_method = handler_method
 
-    def _run_with_signal_monitoring(self, runner, context):
-        # With run keyword variants, only the keyword to be run can fail
-        # and therefore monitoring should not raise exception yet.
-        return runner()
+    def run(self, kw, context):
+        return RunKeywordRunner(self).run(kw, context)
 
     def _get_argument_resolver(self, argspec):
         resolve_until = self._get_args_to_process()
@@ -263,92 +214,11 @@ class _RunKeywordHandler(_PythonHandler):
         return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
                                                    self.name)
 
-    def _get_timeout(self, namespace):
-        return None
 
-    def _dry_run(self, context, args):
-        _RunnableHandler._dry_run(self, context, args)
-        keywords = self._get_runnable_dry_run_keywords(args)
-        KeywordRunner(context).run_keywords(keywords)
-
-    def _get_runnable_dry_run_keywords(self, args):
-        keywords = Keywords()
-        for keyword in self._get_dry_run_keywords(args):
-            if contains_var(keyword.name):
-                continue
-            keywords.append(keyword)
-        return keywords
-
-    def _get_dry_run_keywords(self, args):
-        if self._handler_name == 'run_keyword_if':
-            return list(self._get_run_kw_if_keywords(args))
-        if self._handler_name == 'run_keywords':
-            return list(self._get_run_kws_keywords(args))
-        if 'name' in self.arguments.positional and self._get_args_to_process() > 0:
-            return self._get_default_run_kw_keywords(args)
-        return []
-
-    def _get_run_kw_if_keywords(self, given_args):
-        for kw_call in self._get_run_kw_if_calls(given_args):
-            if kw_call:
-                yield Keyword(name=kw_call[0], args=kw_call[1:])
-
-    def _get_run_kw_if_calls(self, given_args):
-        while 'ELSE IF' in given_args:
-            kw_call, given_args = self._split_run_kw_if_args(given_args, 'ELSE IF', 2)
-            yield kw_call
-        if 'ELSE' in given_args:
-            kw_call, else_call = self._split_run_kw_if_args(given_args, 'ELSE', 1)
-            yield kw_call
-            yield else_call
-        elif self._validate_kw_call(given_args):
-            expr, kw_call = given_args[0], given_args[1:]
-            if not is_list_var(expr):
-                yield kw_call
-
-    def _split_run_kw_if_args(self, given_args, control_word, required_after):
-        index = list(given_args).index(control_word)
-        expr_and_call = given_args[:index]
-        remaining = given_args[index+1:]
-        if not (self._validate_kw_call(expr_and_call) and
-                self._validate_kw_call(remaining, required_after)):
-            raise DataError("Invalid 'Run Keyword If' usage.")
-        if is_list_var(expr_and_call[0]):
-            return (), remaining
-        return expr_and_call[1:], remaining
-
-    def _validate_kw_call(self, kw_call, min_length=2):
-        if len(kw_call) >= min_length:
-            return True
-        return any(is_list_var(item) for item in kw_call)
-
-    def _get_run_kws_keywords(self, given_args):
-        for kw_call in self._get_run_kws_calls(given_args):
-            yield Keyword(name=kw_call[0], args=kw_call[1:])
-
-    def _get_run_kws_calls(self, given_args):
-        if 'AND' not in given_args:
-            for kw_call in given_args:
-                yield [kw_call,]
-        else:
-            while 'AND' in given_args:
-                index = list(given_args).index('AND')
-                kw_call, given_args = given_args[:index], given_args[index + 1:]
-                yield kw_call
-            if given_args:
-                yield given_args
-
-    def _get_default_run_kw_keywords(self, given_args):
-        index = list(self.arguments.positional).index('name')
-        return [Keyword(name=given_args[index], args=given_args[index+1:])]
-
-    def _run_with_output_captured_and_signal_monitor(self, runner, context):
-        return self._run_with_signal_monitoring(runner, context)
 
 
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
     _parse_arguments = _RunKeywordHandler._parse_arguments
-    _get_timeout = _RunKeywordHandler._get_timeout
     _get_argument_resolver = _RunKeywordHandler._get_argument_resolver
 
 
@@ -426,13 +296,7 @@ class EmbeddedArgs(object):
         return getattr(self._orig_handler, item)
 
     def run(self, kw, context):
-        return LibraryKeywordRunner(self).run(kw, context)
-
-    def _run(self, context, args):
-        if args:
-            raise DataError("Positional arguments are not allowed when using "
-                            "embedded arguments.")
-        return self._orig_handler._run(context, self._embedded_args)
+        return EmbeddedArgumentsRunner(self).run(kw, context)
 
     def __copy__(self):
         # Needed due to https://github.com/IronLanguages/main/issues/1192
