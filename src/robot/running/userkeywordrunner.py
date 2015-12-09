@@ -19,7 +19,6 @@ from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
 
-from .arguments import ArgumentMapper, ArgumentResolver
 from .keywordrunner import KeywordRunner
 from .timeouts import KeywordTimeout
 from .statusreporter import StatusReporter
@@ -89,14 +88,15 @@ class UserKeywordRunner(object):
         result.timeout = str(timeout)
         return timeout
 
-    def _resolve_arguments(self, args, variables=None):
-        return ArgumentResolver(self.arguments).resolve(args, variables)
+    def _resolve_arguments(self, arguments, variables=None):
+        return self.arguments.resolve(arguments, variables)
 
-    def _set_arguments(self, args, context):
-        positional, named = args
-        positional, kwargs = ArgumentMapper(self.arguments).map(positional, named, context.variables)
-        self._set_variables(positional, kwargs, context.variables)
-        context.output.trace(lambda: self._log_args(context.variables))
+    def _set_arguments(self, arguments, context):
+        positional, named = arguments
+        variables = context.variables
+        args, kwargs = self.arguments.map(positional, named, variables)
+        self._set_variables(args, kwargs, variables)
+        context.output.trace(lambda: self._log_args(variables))
 
     def _set_variables(self, positional, kwargs, variables):
         before_varargs, varargs = self._split_args_and_varargs(positional)
@@ -202,7 +202,7 @@ class EmbeddedArgsUserKeywordRunner(UserKeywordRunner):
 
     def _resolve_arguments(self, args, variables=None):
         # Validates that no arguments given.
-        ArgumentResolver(self.arguments).resolve(args, variables)
+        self.arguments.resolve(args, variables)
         if not variables:
             return []
         return [(n, variables.replace_scalar(v)) for n, v in self.embedded_args]

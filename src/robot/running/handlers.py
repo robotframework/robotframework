@@ -12,16 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import copy
-
 from robot import utils
 from robot.errors import DataError
 from robot.model import Tags
 
 
-from .arguments import (ArgumentResolver, ArgumentSpec, ArgumentMapper,
-                        DynamicArgumentParser, JavaArgumentCoercer,
-                        JavaArgumentParser, PythonArgumentParser)
+from .arguments import (ArgumentSpec, DynamicArgumentParser,
+                        JavaArgumentCoercer, JavaArgumentParser,
+                        PythonArgumentParser)
 from .librarykeywordrunner import (EmbeddedArgumentsRunner,
                                    LibraryKeywordRunner, RunKeywordRunner)
 from .runkwregister import RUN_KW_REGISTER
@@ -57,7 +55,6 @@ class _RunnableHandler(object):
         self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
-        self._argument_resolver = self._get_argument_resolver(self.arguments)
         doc, tags = utils.split_tags_from_doc(doc)
         self._doc = doc
         self.tags = self._get_tags_from_attribute(handler_method) + tags
@@ -76,16 +73,13 @@ class _RunnableHandler(object):
                             % utils.type_name(tags))
         return Tags(tags)
 
-    def _get_argument_resolver(self, argspec):
-        return ArgumentResolver(argspec)
-
     def _get_initial_handler(self, library, name, method):
         if library.scope.is_global:
             return self._get_global_handler(method, name)
         return None
 
     def resolve_arguments(self, args, variables=None):
-        return self._argument_resolver.resolve(args, variables)
+        return self.arguments.resolve(args, variables)
 
     @property
     def doc(self):
@@ -135,9 +129,6 @@ class _JavaHandler(_RunnableHandler):
         signatures = self._get_signatures(handler_method)
         self._arg_coercer = JavaArgumentCoercer(signatures, self.arguments)
 
-    def _get_argument_resolver(self, argspec):
-        return ArgumentResolver(argspec, dict_to_kwargs=True)
-
     def _parse_arguments(self, handler_method):
         signatures = self._get_signatures(handler_method)
         return JavaArgumentParser().parse(signatures, self.longname)
@@ -147,7 +138,8 @@ class _JavaHandler(_RunnableHandler):
         return code_object.argslist[:code_object.nargs]
 
     def resolve_arguments(self, args, variables=None):
-        positional, named = self._argument_resolver.resolve(args, variables)
+        positional, named = self.arguments.resolve(args, variables,
+                                                   dict_to_kwargs=True)
         arguments = self._arg_coercer.coerce(positional, named,
                                              dryrun=not variables)
         return arguments, []
@@ -171,9 +163,9 @@ class _DynamicHandler(_RunnableHandler):
         return DynamicArgumentParser().parse(self._argspec, self.longname)
 
     def resolve_arguments(self, arguments, variables=None):
-        positional, named = _RunnableHandler.resolve_arguments(self, arguments, variables)
-        mapper = ArgumentMapper(self.arguments)
-        arguments, kwargs = mapper.map(positional, named, prune_trailing_defaults=True)
+        positional, named = self.arguments.resolve(arguments, variables)
+        arguments, kwargs = self.arguments.map(positional, named,
+                                               prune_trailing_defaults=True)
         return arguments, kwargs
 
     def _get_handler(self, lib_instance, handler_name):
@@ -194,28 +186,25 @@ class _DynamicHandler(_RunnableHandler):
 
 class _RunKeywordHandler(_PythonHandler):
 
-    def __init__(self, library, handler_name, handler_method):
-        _PythonHandler.__init__(self, library, handler_name, handler_method)
-        self._handler_method = handler_method
-
     def create_runner(self, name):
-        return RunKeywordRunner(self)
+        default_dry_run_keywords = ('name' in self.arguments.positional and
+                                    self._args_to_process)
+        return RunKeywordRunner(self, default_dry_run_keywords)
 
-    def _get_argument_resolver(self, argspec):
-        resolve_until = self._get_args_to_process()
-        return ArgumentResolver(argspec, resolve_named=False,
-                                resolve_variables_until=resolve_until)
-
-    def _get_args_to_process(self):
+    @property
+    def _args_to_process(self):
         return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
                                                    self.name)
 
-
+    def resolve_arguments(self, args, variables=None):
+        args_to_process = self._args_to_process
+        return self.arguments.resolve(args, variables, resolve_named=False,
+                                      resolve_variables_until=args_to_process)
 
 
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
     _parse_arguments = _RunKeywordHandler._parse_arguments
-    _get_argument_resolver = _RunKeywordHandler._get_argument_resolver
+    resolve_arguments = _RunKeywordHandler.resolve_arguments
 
 
 class _PythonInitHandler(_PythonHandler):
@@ -275,4 +264,3 @@ class EmbeddedArgsTemplate(object):
     def __copy__(self):
         # Needed due to https://github.com/IronLanguages/main/issues/1192
         return EmbeddedArgsTemplate(self.name_regexp, self._orig_handler)
-

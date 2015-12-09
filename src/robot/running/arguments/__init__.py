@@ -12,16 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+from robot.utils import JYTHON
 
-from .argumentmapper import ArgumentMapper
 from .argumentparser import (PythonArgumentParser, UserKeywordArgumentParser,
                              DynamicArgumentParser, JavaArgumentParser)
-from .argumentresolver import ArgumentResolver
 from .argumentspec import ArgumentSpec
-from .argumentvalidator import ArgumentValidator
 from .embedded import EmbeddedArguments
-if sys.platform.startswith('java'):
+if JYTHON:
     from .javaargumentcoercer import JavaArgumentCoercer
 else:
-    JavaArgumentCoercer = lambda *args: None
+    JavaArgumentCoercer = None

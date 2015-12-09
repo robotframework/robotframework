@@ -132,6 +132,10 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
 class RunKeywordRunner(LibraryKeywordRunner):
 
+    def __init__(self, handler, default_dry_run_keywords=False):
+        LibraryKeywordRunner.__init__(self, handler)
+        self._default_dry_run_keywords = default_dry_run_keywords
+
     # TODO: Should this be removed altogether?
     # - Doesn't seem to be really needed.
     # - Not used with dynamic run kws in the new design (at least currently)
@@ -155,13 +159,11 @@ class RunKeywordRunner(LibraryKeywordRunner):
         return keywords
 
     def _get_dry_run_keywords(self, args):
-        # TODO: _handler._handler_name is fugly. Pass handler_name to __init__?
-        # Also _handler._get_args_to_process
-        if self._handler._handler_name == 'run_keyword_if':
+        if self.name == 'Run Keyword If':
             return list(self._get_run_kw_if_keywords(args))
-        if self._handler._handler_name == 'run_keywords':
+        if self.name == 'Run Keywords':
             return list(self._get_run_kws_keywords(args))
-        if 'name' in self._handler.arguments.positional and self._handler._get_args_to_process() > 0:
+        if self._default_dry_run_keywords:
             return self._get_default_run_kw_keywords(args)
         return []
 

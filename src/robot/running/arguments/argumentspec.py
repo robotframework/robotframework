@@ -14,6 +14,9 @@
 
 import sys
 
+from .argumentmapper import ArgumentMapper
+from .argumentresolver import ArgumentResolver
+
 
 class ArgumentSpec(object):
 
@@ -34,3 +37,14 @@ class ArgumentSpec(object):
     @property
     def maxargs(self):
         return len(self.positional) if not self.varargs else sys.maxsize
+
+    def resolve(self, arguments, variables=None, resolve_named=True,
+                resolve_variables_until=None, dict_to_kwargs=False):
+        resolver = ArgumentResolver(self, resolve_named,
+                                    resolve_variables_until, dict_to_kwargs)
+        return resolver.resolve(arguments, variables)
+
+    def map(self, positional, named, variables=None,
+            prune_trailing_defaults=False):
+        mapper = ArgumentMapper(self)
+        return mapper.map(positional, named, variables, prune_trailing_defaults)
