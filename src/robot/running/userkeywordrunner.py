@@ -58,8 +58,8 @@ class UserKeywordRunner(object):
         doc, tags = split_tags_from_doc(doc)
         tags = [variables.replace_string(tag, ignore_errors=True)
                 for tag in handler.tags] + tags
-        return KeywordResult(kwname=self.name or '',
-                             libname=handler.libname or '',
+        return KeywordResult(kwname=self.name,
+                             libname=handler.libname,
                              doc=doc.splitlines()[0] if doc else '',
                              args=kw.args,
                              assign=tuple(assignment),

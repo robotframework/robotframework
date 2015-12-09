@@ -25,6 +25,8 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 from .statusreporter import StatusReporter
 
 
+# TODO: Consistent Runner and Handler names. Including Embedded runners/handlers.
+
 class LibraryKeywordRunner(object):
     _executed_in_dry_run = ('BuiltIn.Import Library',
                             'BuiltIn.Set Library Search Order')
@@ -57,7 +59,7 @@ class LibraryKeywordRunner(object):
     def _get_result(self, kw, assignment):
         handler = self._handler
         return KeywordResult(kwname=self.name,
-                             libname=handler.libname or '',
+                             libname=handler.libname,
                              doc=handler.shortdoc,
                              args=kw.args,
                              assign=tuple(assignment),

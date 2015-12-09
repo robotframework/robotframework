@@ -16,7 +16,6 @@ from robot import utils
 from robot.errors import DataError
 from robot.model import Tags
 
-
 from .arguments import (ArgumentSpec, DynamicArgumentParser,
                         JavaArgumentCoercer, JavaArgumentParser,
                         PythonArgumentParser)

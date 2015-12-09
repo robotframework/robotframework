@@ -27,9 +27,9 @@ class Keyword(model.Keyword):
                  starttime=None, endtime=None):
         model.Keyword.__init__(self, '', doc, args, assign, tags, timeout, type)
         #: Name of the keyword without library or resource name.
-        self.kwname = kwname
+        self.kwname = kwname or ''
         #: Name of library or resource containing this keyword.
-        self.libname = libname
+        self.libname = libname or ''
         #: String 'PASS' or 'FAIL'.
         self.status = status
         #: Keyword execution start time in format ``%Y%m%d %H:%M:%S.%f``.
