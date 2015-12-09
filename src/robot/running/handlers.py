@@ -54,7 +54,6 @@ class _RunnableHandler(object):
         self.library = library
         self.name = self._get_name(handler_name, handler_method)
         self.arguments = self._parse_arguments(handler_method)
-        self.pre_run_messages = None
         self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
@@ -104,11 +103,8 @@ class _RunnableHandler(object):
     def libname(self):
         return self.library.name
 
-    def create(self, name):
-        return self
-
-    def run(self, kw, context):
-        return LibraryKeywordRunner(self).run(kw, context)
+    def create_runner(self, name):
+        return LibraryKeywordRunner(self)
 
     def current_handler(self):
         if self._method:
@@ -202,8 +198,8 @@ class _RunKeywordHandler(_PythonHandler):
         _PythonHandler.__init__(self, library, handler_name, handler_method)
         self._handler_method = handler_method
 
-    def run(self, kw, context):
-        return RunKeywordRunner(self).run(kw, context)
+    def create_runner(self, name):
+        return RunKeywordRunner(self)
 
     def _get_argument_resolver(self, argspec):
         resolve_until = self._get_args_to_process()
@@ -259,46 +255,24 @@ class _JavaInitHandler(_JavaHandler):
         return parser.parse(signatures, self.library.name)
 
 
+# TODO: Rename to Handler
 class EmbeddedArgsTemplate(object):
 
     def __init__(self, name_regexp, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
         self._orig_handler = orig_handler
-        self._name_regexp = name_regexp
+        self.name_regexp = name_regexp
 
     def __getattr__(self, item):
         return getattr(self._orig_handler, item)
 
     def matches(self, name):
-        return self._name_regexp.match(name) is not None
+        return self.name_regexp.match(name) is not None
 
-    def create(self, name):
-        args = self._name_regexp.match(name).groups()
-        return EmbeddedArgs(name, args, self._orig_handler)
-
-    def __copy__(self):
-        # Needed due to https://github.com/IronLanguages/main/issues/1192
-        return EmbeddedArgsTemplate(self._name_regexp, self._orig_handler)
-
-
-class EmbeddedArgs(object):
-
-    def __init__(self, name, embedded_args, orig_handler):
-        self.name = name
-        self._embedded_args = embedded_args
-        self._orig_handler = orig_handler
-
-    @property
-    def longname(self):
-        return '%s.%s' % (self.library.name, self.name)
-
-    def __getattr__(self, item):
-        return getattr(self._orig_handler, item)
-
-    def run(self, kw, context):
-        return EmbeddedArgumentsRunner(self).run(kw, context)
+    def create_runner(self, name):
+        return EmbeddedArgumentsRunner(self, name)
 
     def __copy__(self):
         # Needed due to https://github.com/IronLanguages/main/issues/1192
-        return EmbeddedArgs(self.name, self._embedded_args,
-                            copy.copy(self._orig_handler))
+        return EmbeddedArgsTemplate(self.name_regexp, self._orig_handler)
+

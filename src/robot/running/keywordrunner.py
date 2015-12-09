@@ -60,7 +60,9 @@ class NormalRunner(object):
 
     def run(self, kw, name=None):
         ctx = self._context
-        runner = ctx.get_handler(name or kw.name)
+        runner = ctx.get_runner(name or kw.name)
+        if ctx.dry_run:
+            return runner.dry_run(kw, ctx)
         return runner.run(kw, ctx)
 
 

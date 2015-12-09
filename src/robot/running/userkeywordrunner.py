@@ -16,17 +16,28 @@ from robot.errors import (ExecutionFailed, ReturnFromKeyword, ExecutionPassed,
                           UserKeywordExecutionFailed, DataError,
                           HandlerExecutionFailed, VariableError, PassExecution)
 from robot.result.keyword import Keyword as KeywordResult
-from robot.utils import (ErrorDetails, DotDict, prepr)
-from robot.variables import is_list_var, is_scalar_var, VariableAssigner
+from robot.utils import (ErrorDetails, DotDict, prepr, split_tags_from_doc)
+from robot.variables import is_list_var, VariableAssigner
 
 from .arguments import ArgumentMapper, ArgumentResolver
 from .keywordrunner import KeywordRunner, StatusReporter, SyntaxErrorReporter
+from .timeouts import KeywordTimeout
 
 
 class UserKeywordRunner(object):
 
-    def __init__(self, handler):
+    def __init__(self, handler, name=None):
         self._handler = handler
+        self.name = name or handler.name
+
+    @property
+    def longname(self):
+        libname = self._handler.libname
+        return '%s.%s' % (libname, self.name) if libname else self.name
+
+    @property
+    def libname(self):
+        return self._handler.libname
 
     @property
     def arguments(self):
@@ -35,17 +46,34 @@ class UserKeywordRunner(object):
     def run(self, kw, context):
         assigner = VariableAssigner(kw.assign)
         handler = self._handler
-        result = KeywordResult(kwname=handler.name or '',
+        variables = context.variables
+        doc = variables.replace_string(handler.doc, ignore_errors=True)
+        doc, tags = split_tags_from_doc(doc)
+        tags = [variables.replace_string(tag, ignore_errors=True)
+                for tag in handler.tags] + tags
+        # TODO: Pass KeywordTimeout object only to context. Result needs just
+        # its string repr.
+        if handler.timeout:
+            timeout = KeywordTimeout(handler.timeout.value,
+                                     handler.timeout.message,
+                                        variables)
+        else:
+            timeout = None
+        result = KeywordResult(kwname=self.name or '',
                                libname=handler.libname or '',
-                               doc=handler.shortdoc,
+                               doc=doc.splitlines()[0] if doc else '',
                                args=kw.args,
                                assign=assigner.assignment,
-                               timeout=handler.timeout,
-                               tags=handler.tags,
+                               timeout=timeout,
+                               tags=tags,
                                type=kw.type)
+        self.result = result
         with StatusReporter(context, result):
             self._warn_if_deprecated(result.name, result.doc, context)
             return self._run_and_assign(context, kw.args, assigner)
+
+    def dry_run(self, kw, context):
+        return UserKeywordDryRunner(self._handler, self.name).run(kw, context)
 
     def _warn_if_deprecated(self, name, doc, context):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
@@ -78,7 +106,7 @@ class UserKeywordRunner(object):
 
     def _handler_run(self, context, args):
         positional, named = ArgumentResolver(self.arguments).resolve(args, context.variables)
-        with context.user_keyword(self._handler):
+        with context.user_keyword(self.result):
             args, kwargs = ArgumentMapper(self.arguments).map(positional, named, context.variables)
             return self._normal_run(context, args, kwargs)
 
@@ -181,17 +209,22 @@ class UserKeywordRunner(object):
 
     def _verify_keyword_is_valid(self):
         if not (self._handler.keywords or self._handler.return_value):
-            raise DataError("User keyword '%s' contains no keywords."
-                            % self._handler.name)
+            raise DataError("User keyword '%s' contains no keywords." % self.name)
 
 
 class EmbeddedArgsUserKeywordRunner(UserKeywordRunner):
 
+    def __init__(self, handler, name):
+        UserKeywordRunner.__init__(self, handler, name)
+        match = handler.embedded_name.match(name)
+        if not match:
+            raise ValueError('Does not match given name')
+        self.embedded_args = list(zip(handler.embedded_args, match.groups()))
 
     def _handler_run(self, context, args):
         # Validates that no arguments given.
         ArgumentResolver(self.arguments).resolve(args, context.variables)
-        arguments = [(n, context.variables.replace_scalar(v)) for n, v in self._handler.embedded_args]
+        arguments = [(n, context.variables.replace_scalar(v)) for n, v in self.embedded_args]
         with context.user_keyword(self._handler):
             for name, value in arguments:
                 context.variables['${%s}' % name] = value
@@ -200,7 +233,8 @@ class EmbeddedArgsUserKeywordRunner(UserKeywordRunner):
 
 class UserKeywordDryRunner(object):
 
-    def __init__(self, handler):
+    def __init__(self, handler, name):
+        self.name = name
         self._handler = handler
 
     @property
@@ -210,7 +244,7 @@ class UserKeywordDryRunner(object):
     def run(self, kw, context):
         assigner = VariableAssigner(kw.assign)
         handler = self._handler
-        result = KeywordResult(kwname=handler.name or '',
+        result = KeywordResult(kwname=self.name,
                                libname=handler.libname or '',
                                doc=handler.shortdoc,
                                args=kw.args,

@@ -173,8 +173,8 @@ class _ExecutionContext(object):
         self.output.end_keyword(keyword)
         self._started_keywords -= 1
 
-    def get_handler(self, name):
-        return self.namespace.get_handler(name)
+    def get_runner(self, name):
+        return self.namespace.get_runner(name)
 
     def trace(self, message):
         self.output.trace(message)

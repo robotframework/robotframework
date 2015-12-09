@@ -209,9 +209,9 @@ class Namespace(object):
         library.reload()
         return library
 
-    def get_handler(self, name):
+    def get_runner(self, name):
         try:
-            return self._kw_store.get_handler(name)
+            return self._kw_store.get_runner(name)
         except DataError as err:
             return UserErrorHandler(name, err.message)
 
@@ -251,11 +251,11 @@ class KeywordStore(object):
                 return lib
         self._no_library_found(instance)
 
-    def get_handler(self, name):
-        handler = self._get_handler(name)
-        if handler is None:
+    def get_runner(self, name):
+        runner = self._get_runner(name)
+        if runner is None:
             self._raise_no_keyword_found(name)
-        return handler
+        return runner
 
     def _raise_no_keyword_found(self, name):
         msg = "No keyword with name '%s' found." % name
@@ -266,82 +266,83 @@ class KeywordStore(object):
         msg = finder.format_recommendations(msg, recommendations)
         raise DataError(msg)
 
-    def _get_handler(self, name):
-        handler = None
+    def _get_runner(self, name):
+        runner = None
         if not name:
             raise DataError('Keyword name cannot be empty.')
         if not is_string(name):
             raise DataError('Keyword name must be a string.')
         if '.' in name:
-            handler = self._get_explicit_handler(name)
-        if not handler:
-            handler = self._get_implicit_handler(name)
-        if not handler:
-            handler = self._get_bdd_style_handler(name)
-        return handler
+            runner = self._get_explicit_runner(name)
+        if not runner:
+            runner = self._get_implicit_runner(name)
+        if not runner:
+            runner = self._get_bdd_style_runner(name)
+        return runner
 
-    def _get_bdd_style_handler(self, name):
+    def _get_bdd_style_runner(self, name):
         for prefix in ['given ', 'when ', 'then ', 'and ', 'but ']:
             if name.lower().startswith(prefix):
-                handler = self._get_handler(name[len(prefix):])
-                if handler:
-                    handler = copy.copy(handler)
-                    handler.name = name
-                return handler
+                runner = self._get_runner(name[len(prefix):])
+                if runner:
+                    runner = copy.copy(runner)
+                    runner.name = name
+                return runner
         return None
 
-    def _get_implicit_handler(self, name):
-        for method in [self._get_handler_from_test_case_file_user_keywords,
-                       self._get_handler_from_resource_file_user_keywords,
-                       self._get_handler_from_library_keywords]:
-            handler = method(name)
-            if handler:
-                return handler
+    def _get_implicit_runner(self, name):
+        for method in [self._get_runner_from_test_case_file_user_keywords,
+                       self._get_runner_from_resource_file_user_keywords,
+                       self._get_runner_from_library_keywords]:
+            runner = method(name)
+            if runner:
+                return runner
         return None
 
-    def _get_handler_from_test_case_file_user_keywords(self, name):
+    def _get_runner_from_test_case_file_user_keywords(self, name):
         if name in self.user_keywords.handlers:
-            return self.user_keywords.handlers[name]
+            return self.user_keywords.handlers.create_runner(name)
 
-    def _get_handler_from_resource_file_user_keywords(self, name):
-        found = [lib.handlers[name] for lib in self.resources.values()
+    def _get_runner_from_resource_file_user_keywords(self, name):
+        found = [lib.handlers.create_runner(name)
+                 for lib in self.resources.values()
                  if name in lib.handlers]
         if not found:
             return None
         if len(found) > 1:
-            found = self._get_handler_based_on_search_order(found)
+            found = self._get_runner_based_on_search_order(found)
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
 
-    def _get_handler_from_library_keywords(self, name):
-        found = [lib.handlers[name] for lib in self.libraries.values()
+    def _get_runner_from_library_keywords(self, name):
+        found = [lib.handlers.create_runner(name) for lib in self.libraries.values()
                  if name in lib.handlers]
         if not found:
             return None
         if len(found) > 1:
-            found = self._get_handler_based_on_search_order(found)
+            found = self._get_runner_based_on_search_order(found)
         if len(found) == 2:
-            found = self._filter_stdlib_handler(*found)
+            found = self._filter_stdlib_runner(*found)
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
 
-    def _get_handler_based_on_search_order(self, handlers):
+    def _get_runner_based_on_search_order(self, runners):
         for libname in self.search_order:
-            for handler in handlers:
-                if eq(libname, handler.libname):
-                    return [handler]
-        return handlers
+            for runner in runners:
+                if eq(libname, runner.libname):
+                    return [runner]
+        return runners
 
-    def _filter_stdlib_handler(self, handler1, handler2):
+    def _filter_stdlib_runner(self, runner1, runner2):
         stdlibs_without_remote = STDLIBS - set(['Remote'])
-        if handler1.library.orig_name in stdlibs_without_remote:
-            standard, custom = handler1, handler2
-        elif handler2.library.orig_name in stdlibs_without_remote:
-            standard, custom = handler2, handler1
+        if runner1.library.orig_name in stdlibs_without_remote:
+            standard, custom = runner1, runner2
+        elif runner2.library.orig_name in stdlibs_without_remote:
+            standard, custom = runner2, runner1
         else:
-            return [handler1, handler2]
+            return [runner1, runner2]
         if not RUN_KW_REGISTER.is_run_keyword(custom.library.orig_name, custom.name):
             self._custom_and_standard_keyword_conflict_warning(custom, standard)
         return [custom]
@@ -365,7 +366,7 @@ class KeywordStore(object):
         else:
             custom.pre_run_messages = [warning]
 
-    def _get_explicit_handler(self, name):
+    def _get_explicit_runner(self, name):
         found = []
         for owner_name, kw_name in self._yield_owner_and_kw_names(name):
             found.extend(self._find_keywords(owner_name, kw_name))
@@ -379,7 +380,7 @@ class KeywordStore(object):
             yield '.'.join(tokens[:i]), '.'.join(tokens[i:])
 
     def _find_keywords(self, owner_name, name):
-        return [owner.handlers[name]
+        return [owner.handlers.create_runner(name)
                 for owner in chain(self.libraries.values(), self.resources.values())
                 if eq(owner.name, owner_name) and name in owner.handlers]
 
@@ -387,7 +388,7 @@ class KeywordStore(object):
         error = "Multiple keywords with name '%s' found" % name
         if implicit:
             error += ". Give the full name of the keyword you want to use"
-        names = sorted(handler.longname for handler in found)
+        names = sorted(runner.longname for runner in found)
         raise DataError('\n    '.join([error+':'] + names))
 
 

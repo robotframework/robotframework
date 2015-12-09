@@ -54,11 +54,14 @@ class HandlerStore(object):
             return True
         return any(template.matches(name) for template in self._embedded)
 
+    def create_runner(self, name):
+        return self[name].create_runner(name)
+
     def __getitem__(self, name):
         try:
-            return self._normal[name].create(name)
+            return self._normal[name]
         except KeyError:
-            return self._find_embedded(name).create(name)
+            return self._find_embedded(name)
 
     def _find_embedded(self, name):
         embedded = [template for template in self._embedded

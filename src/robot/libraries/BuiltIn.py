@@ -2571,11 +2571,11 @@ class _Misc(_BuiltInBase):
         See also `Variable Should Exist`.
         """
         try:
-            handler = self._namespace.get_handler(name)
+            runner = self._namespace.get_runner(name)
         except DataError as err:
             raise AssertionError(msg or unic(err))
-        if isinstance(handler, UserErrorHandler):
-            raise AssertionError(msg or handler.error)
+        if isinstance(runner, UserErrorHandler):
+            raise AssertionError(msg or runner.error)
 
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.

@@ -50,25 +50,17 @@ class UserErrorHandler(object):
     def shortdoc(self):
         return self.doc.splitlines()[0]
 
-    def create(self, name):
+    def create_runner(self, name):
         return self
 
     def run(self, kw, context):
-        return UserErrorRunner(self).run(kw, context)
-
-
-class UserErrorRunner(object):
-
-    def __init__(self, handler):
-        self._handler = handler
-
-    def run(self, kw, context):
-        handler = self._handler
-        result = KeywordResult(kwname=handler.name or '',
-                               libname=handler.libname or '',
+        result = KeywordResult(kwname=self.name,
+                               libname=self.libname,
                                args=kw.args,
                                assign=kw.assign,
                                type=kw.type)
         with StatusReporter(context, result):
-            context.fail(handler.error)
-            raise ExecutionFailed(handler.error, syntax=True)
+            context.fail(self.error)
+            raise ExecutionFailed(self.error, syntax=True)
+
+    dry_run = run

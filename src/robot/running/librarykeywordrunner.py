@@ -29,13 +29,27 @@ class LibraryKeywordRunner(object):
     _executed_in_dry_run = ('BuiltIn.Import Library',
                             'BuiltIn.Set Library Search Order')
 
-    def __init__(self, handler):
+    def __init__(self, handler, name=None):
         self._handler = handler
+        self.name = name or handler.name
+        self.pre_run_messages = None
+
+    @property
+    def library(self):
+        return self._handler.library
+
+    @property
+    def libname(self):
+        return self._handler.library.name
+
+    @property
+    def longname(self):
+        return '%s.%s' % (self.library.name, self.name)
 
     def run(self, kw, context):
         assigner = VariableAssigner(kw.assign)
         handler = self._handler
-        result = KeywordResult(kwname=handler.name or '',
+        result = KeywordResult(kwname=self.name,
                                libname=handler.libname or '',
                                doc=handler.shortdoc,
                                args=kw.args,
@@ -45,6 +59,8 @@ class LibraryKeywordRunner(object):
         with StatusReporter(context, result, context.dry_run):
             self._warn_if_deprecated(result.name, result.doc, context)
             return self._run_and_assign(context, kw.args, assigner)
+
+    dry_run = run
 
     def _warn_if_deprecated(self, name, doc, context):
         if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
@@ -94,8 +110,8 @@ class LibraryKeywordRunner(object):
         return None
 
     def _handler_run(self, context, args):
-        if self._handler.pre_run_messages:
-            for message in self._handler.pre_run_messages:
+        if self.pre_run_messages:
+            for message in self.pre_run_messages:
                 context.output.message(message)
         positional, named = \
             self._handler.resolve_arguments(args, context.variables)
@@ -133,12 +149,16 @@ class LibraryKeywordRunner(object):
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
 
+    def __init__(self, handler, name):
+        LibraryKeywordRunner.__init__(self, handler, name)
+        self._embedded_args = handler.name_regexp.match(name).groups()
+
     def _handler_run(self, context, args):
         if args:
             raise DataError("Positional arguments are not allowed when using "
                             "embedded arguments.")
         return LibraryKeywordRunner._handler_run(self, context,
-                                                 self._handler._embedded_args)
+                                                 self._embedded_args)
 
 
 class RunKeywordRunner(LibraryKeywordRunner):
