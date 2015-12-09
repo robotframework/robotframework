@@ -2,9 +2,9 @@ import unittest
 import os
 
 from robot.running import userkeyword
+from robot.running.model import ResourceFile, UserKeyword
 from robot.running.userkeyword import UserLibrary
 from robot.errors import DataError
-from robot.parsing.model import UserKeyword
 from robot.utils.asserts import (assert_equal, assert_none,
                                  assert_raises_with_msg, assert_true)
 
@@ -45,7 +45,7 @@ class TestUserLibrary(unittest.TestCase):
         for source, exp in [('resources.html', 'resources'),
                             (os.path.join('..','res','My Res.HTM'), 'My Res'),
                             (os.path.abspath('my_res.xhtml'), 'my_res')]:
-            lib = UserLibrary([], source)
+            lib = self._get_userlibrary(source=source)
             assert_equal(lib.name, exp)
 
     def test_name_from_test_case_file(self):
@@ -106,9 +106,12 @@ class TestUserLibrary(unittest.TestCase):
         handler = lib.handlers['kw']
         assert_true(isinstance(handler, UserHandlerStub))
 
-    def _get_userlibrary(self, *keyword_names):
-        return UserLibrary([UserKeyword(None, name) for name in keyword_names],
-                           'source', UserLibrary.TEST_CASE_FILE_TYPE)
+    def _get_userlibrary(self, *keywords, **conf):
+        resource = ResourceFile(**conf)
+        resource.keywords = [UserKeyword(name) for name in keywords]
+        resource_type = UserLibrary.TEST_CASE_FILE_TYPE \
+                if 'source' not in conf else UserLibrary.RESOURCE_FILE_TYPE
+        return UserLibrary(resource, resource_type)
 
     def _lib_has_embedded_arg_keyword(self, lib, count=1):
         assert_true('Embedded ${arg}' in lib.handlers)

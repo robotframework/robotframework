@@ -62,8 +62,7 @@ class Runner(SuiteVisitor):
                                          self._settings.exit_on_failure,
                                          self._settings.exit_on_error,
                                          self._settings.skip_teardown_on_exit)
-        ns = Namespace(self._variables, result, suite.resource.keywords,
-                       suite.resource.imports)
+        ns = Namespace(self._variables, result, suite.resource)
         ns.start_suite()
         ns.variables.set_from_variable_table(suite.resource.variables)
         EXECUTION_CONTEXTS.start_suite(result, ns, self._output,

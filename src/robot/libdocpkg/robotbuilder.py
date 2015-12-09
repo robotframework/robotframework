@@ -16,9 +16,9 @@ import os
 import sys
 
 from robot.errors import DataError
-from robot.running import TestLibrary, UserLibrary
 from robot.parsing import disable_curdir_processing
-from robot import utils
+from robot.running import TestLibrary, UserLibrary, UserErrorHandler
+from robot.utils import split_tags_from_doc, unescape
 
 from .model import LibraryDoc, KeywordDoc
 
@@ -50,7 +50,7 @@ class LibraryDocBuilder(object):
         return library
 
     def _get_doc(self, lib):
-        return lib.doc or "Documentation for test library `%s`." % lib.name
+        return lib.doc or "Documentation for test library ``%s``." % lib.name
 
     def _get_initializers(self, lib):
         if lib.init.arguments.maxargs:
@@ -64,7 +64,7 @@ class ResourceDocBuilder(object):
         res = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name, doc=self._get_doc(res),
                             type='resource')
-        libdoc.keywords = KeywordDocBuilder().build_keywords(res)
+        libdoc.keywords = KeywordDocBuilder(resource=True).build_keywords(res)
         return libdoc
 
     @disable_curdir_processing
@@ -81,18 +81,33 @@ class ResourceDocBuilder(object):
         raise DataError("Resource file '%s' does not exist." % path)
 
     def _get_doc(self, res):
-        return res.doc or "Documentation for resource file `%s`." % res.name
+        if res.doc:
+            return unescape(res.doc)
+        return "Documentation for resource file ``%s``." % res.name
 
 
 class KeywordDocBuilder(object):
+
+    def __init__(self, resource=False):
+        self._resource = resource
 
     def build_keywords(self, lib):
         return [self.build_keyword(kw) for kw in lib.handlers]
 
     def build_keyword(self, kw):
-        doc, tags = utils.split_tags_from_doc(kw.doc)
+        doc, tags = self._get_doc_and_tags(kw)
         return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),
-                          doc=doc, tags=kw.tags+tags)
+                          doc=doc, tags=tags)
+
+    def _get_doc_and_tags(self, kw):
+        doc = self._get_doc(kw)
+        doc, tags = split_tags_from_doc(doc)
+        return doc, kw.tags + tags
+
+    def _get_doc(self, kw):
+        if self._resource and not isinstance(kw, UserErrorHandler):
+            return unescape(kw.doc)
+        return kw.doc
 
     def _get_args(self, argspec):
         required = argspec.positional[:argspec.minargs]

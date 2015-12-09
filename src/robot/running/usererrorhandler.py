@@ -26,7 +26,6 @@ class UserErrorHandler(object):
     tests in affected test case file from executing. Instead UserErrorHandler
     is created and if it is ever run DataError is raised then.
     """
-    type = 'error'
 
     def __init__(self, name, error, libname=None):
         self.name = name

@@ -102,22 +102,6 @@ from .builder import TestSuiteBuilder, ResourceFileBuilder
 from .context import EXECUTION_CONTEXTS
 from .model import Keyword, TestCase, TestSuite
 from .testlibraries import TestLibrary
+from .usererrorhandler import UserErrorHandler
+from .userkeyword import UserLibrary
 from .runkwregister import RUN_KW_REGISTER
-
-
-def UserLibrary(path):
-    """Create a user library instance from given resource file.
-
-    This is used by Libdoc.
-    """
-    from robot import utils
-    from .arguments import ArgumentSpec
-    from .userkeyword import UserLibrary as RuntimeUserLibrary
-
-    resource = ResourceFileBuilder().build(path)
-    ret = RuntimeUserLibrary(resource.keywords, path)
-    for handler in ret.handlers:
-        if handler.type != 'error':
-            handler.doc = utils.unescape(handler._doc)
-    ret.doc = utils.unescape(resource.doc)
-    return ret

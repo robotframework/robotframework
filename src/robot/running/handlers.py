@@ -50,7 +50,6 @@ def InitHandler(library, method, docgetter=None):
 
 
 class _RunnableHandler(object):
-    type = 'library'
     _executed_in_dry_run = ('BuiltIn.Import Library',
                             'BuiltIn.Set Library Search Order')
 

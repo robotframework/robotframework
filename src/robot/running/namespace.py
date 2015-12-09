@@ -36,11 +36,11 @@ class Namespace(object):
     _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, variables, suite, user_keywords, imports):
+    def __init__(self, variables, suite, resource):
         LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.variables = variables
-        self._imports = imports
-        self._kw_store = KeywordStore(user_keywords, suite.source)
+        self._imports = resource.imports
+        self._kw_store = KeywordStore(resource)
         self._imported_variable_files = ImportCache()
         self._suite_name = suite.longname
         self._running_test = False
@@ -81,7 +81,7 @@ class Namespace(object):
         if overwrite or path not in self._kw_store.resources:
             resource = IMPORTER.import_resource(path)
             self.variables.set_from_variable_table(resource.variables, overwrite)
-            user_library = UserLibrary(resource.keywords, resource.source)
+            user_library = UserLibrary(resource)
             self._kw_store.resources[path] = user_library
             self._handle_imports(resource.imports)
             LOGGER.imported("Resource", user_library.name,
@@ -218,8 +218,8 @@ class Namespace(object):
 
 class KeywordStore(object):
 
-    def __init__(self, suite_keywords, suite_source):
-        self.user_keywords = UserLibrary(suite_keywords, suite_source,
+    def __init__(self, resource):
+        self.user_keywords = UserLibrary(resource,
                                          UserLibrary.TEST_CASE_FILE_TYPE)
         self.libraries = OrderedDict()
         self.resources = ImportCache()

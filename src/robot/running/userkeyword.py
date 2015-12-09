@@ -18,11 +18,12 @@ from robot.errors import (DataError, ExecutionFailed, ExecutionPassed,
                           PassExecution, ReturnFromKeyword,
                           UserKeywordExecutionFailed, VariableError)
 from robot.output import LOGGER
-from robot.utils import DotDict, prepr, split_tags_from_doc, unic
+from robot.utils import DotDict, is_string, prepr, split_tags_from_doc, unic
 from robot.variables import is_list_var
 
 from .arguments import (ArgumentMapper, ArgumentResolver,
                         EmbeddedArguments, UserKeywordArgumentParser)
+from .builder import ResourceFileBuilder
 from .handlerstore import HandlerStore
 from .keywordrunner import KeywordRunner
 from .timeouts import KeywordTimeout
@@ -33,14 +34,20 @@ class UserLibrary(object):
     TEST_CASE_FILE_TYPE = HandlerStore.TEST_CASE_FILE_TYPE
     RESOURCE_FILE_TYPE = HandlerStore.RESOURCE_FILE_TYPE
 
-    def __init__(self, user_keywords, source, source_type=RESOURCE_FILE_TYPE):
+    def __init__(self, source, source_type=RESOURCE_FILE_TYPE):
+        if is_string(source):
+            resource = ResourceFileBuilder().build(source)
+        else:
+            resource = source
+        source = resource.source
         basename = os.path.basename(source) if source else None
         self.name = os.path.splitext(basename)[0] \
             if source_type == self.RESOURCE_FILE_TYPE else None
+        self.doc = resource.doc
         self.handlers = HandlerStore(basename, source_type)
         self.source = source
         self.source_type = source_type
-        for kw in user_keywords:
+        for kw in resource.keywords:
             try:
                 handler = self._create_handler(kw)
             except DataError as error:
@@ -68,7 +75,6 @@ class UserLibrary(object):
 
 
 class UserKeywordHandler(object):
-    type = 'user'
 
     def __init__(self, keyword, libname):
         self.name = keyword.name
