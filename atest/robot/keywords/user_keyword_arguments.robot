@@ -41,6 +41,9 @@ Too Few Arguments With Defaults And Varargs
 Default With Variable
     Check Test Case    ${TESTNAME}
 
+Default With Non-Existing Variable
+    Check Test Case    ${TESTNAME}
+
 Local Variable Does Not Affect Variable In Default Value
     Check Test Case    ${TESTNAME}
 
@@ -51,6 +54,18 @@ Default With Automatic Variable
     Check Test Case    ${TESTNAME}
 
 Default With Extended Variable Syntax
+    Check Test Case    ${TESTNAME}
+
+Default With List Variable
+    Check Test Case    ${TESTNAME}
+
+Default With Invalid List Variable
+    Check Test Case    ${TESTNAME}
+
+Default With Dict Variable
+    Check Test Case    ${TESTNAME}
+
+Default With Invalid Dict Variable
     Check Test Case    ${TESTNAME}
 
 Calling Using List Variables
