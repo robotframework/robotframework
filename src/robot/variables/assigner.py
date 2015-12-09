@@ -74,7 +74,8 @@ class VariableAssigner(object):
 
     def _normal_assign(self, name, value, variables):
         variables[name] = value
-        return variables[name]
+        # Always weturn the actually assigned value.
+        return value if name[0] == '$' else variables[name]
 
 
 class AssignmentValidator(object):
