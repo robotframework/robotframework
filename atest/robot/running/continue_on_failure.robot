@@ -42,11 +42,15 @@ Several continuable failures and regular failure in nested UK
 
 Continue when setting variables
     ${tc}=    Check Test Case    ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[1]}    \${ret} = None
-    Check Log Message    ${tc.kws[2].msgs[1]}    \${r1} = None
-    Check Log Message    ${tc.kws[2].msgs[2]}    \${r2} = None
-    Check Log Message    ${tc.kws[2].msgs[3]}    \${r3} = None
-    Check Log Message    ${tc.kws[4].msgs[1]}    \@{list} = [ ]
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${ret} = None
+    Check Log Message    ${tc.kws[0].msgs[1]}    ContinuableApocalypseException: Can be continued    FAIL
+    Check Log Message    ${tc.kws[2].msgs[0]}    \${r1} = None
+    Check Log Message    ${tc.kws[2].msgs[1]}    \${r2} = None
+    Check Log Message    ${tc.kws[2].msgs[2]}    \${r3} = None
+    Check Log Message    ${tc.kws[2].msgs[3]}    ContinuableApocalypseException: Can be continued    FAIL
+    Check Log Message    ${tc.kws[4].msgs[0]}    \@{list} = [ ]
+    Check Log Message    ${tc.kws[4].msgs[1]}    ContinuableApocalypseException: Can be continued    FAIL
+    Check Log Message    ${tc.kws[6].msgs[0]}    No jokes    FAIL
     Length Should Be     ${tc.kws[6].msgs}     1
 
 Continuable failure in user keyword returning value

@@ -1,7 +1,7 @@
 import unittest
 
 from robot.errors import DataError
-from robot.variables import VariableAssigner
+from robot.variables import VariableAssignment
 from robot.utils.asserts import assert_equal, assert_raises
 
 
@@ -41,13 +41,13 @@ class TestResolveAssignment(unittest.TestCase):
         self._verify_invalid(['${v1} =','@{v2} ='])
 
     def _verify_valid(self, assign):
-        assigner = VariableAssigner(assign)
-        assigner.validate_assignment()
+        assignment = VariableAssignment(assign)
+        assignment.validate_assignment()
         expected = [a.rstrip('= ') for a in assign]
-        assert_equal(assigner.assignment, expected)
+        assert_equal(assignment.assignment, expected)
 
     def _verify_invalid(self, assign):
-        assert_raises(DataError, VariableAssigner(assign).validate_assignment)
+        assert_raises(DataError, VariableAssignment(assign).validate_assignment)
 
 
 if __name__ == '__main__':

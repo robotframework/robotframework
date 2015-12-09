@@ -12,19 +12,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError, ExecutionFailed, HandlerExecutionFailed
+from robot.errors import DataError
 from robot.model import Keywords
 from robot.result.keyword import Keyword as KeywordResult
-from robot.utils import ErrorDetails, prepr, unic
-from robot.variables import VariableAssigner, contains_var, is_list_var
+from robot.utils import prepr, unic
+from robot.variables import VariableAssignment, contains_var, is_list_var
 
-from .keywordrunner import KeywordRunner, StatusReporter, SyntaxErrorReporter
+from .keywordrunner import KeywordRunner
 from .model import Keyword
 from .outputcapture import OutputCapturer
 from .signalhandler import STOP_SIGNAL_MONITOR
+from .statusreporter import StatusReporter
 
 
-# FIXME: cleanup helper method names
 class LibraryKeywordRunner(object):
     _executed_in_dry_run = ('BuiltIn.Import Library',
                             'BuiltIn.Set Library Search Order')
@@ -47,90 +47,50 @@ class LibraryKeywordRunner(object):
         return '%s.%s' % (self.library.name, self.name)
 
     def run(self, kw, context):
-        assigner = VariableAssigner(kw.assign)
+        assignment = VariableAssignment(kw.assign)
+        with StatusReporter(context, self._get_result(kw, assignment)):
+            with assignment.assigner(context) as assigner:
+                return_value = self._run(context, kw.args)
+                assigner.assign(return_value)
+                return return_value
+
+    def _get_result(self, kw, assignment):
         handler = self._handler
-        result = KeywordResult(kwname=self.name,
-                               libname=handler.libname or '',
-                               doc=handler.shortdoc,
-                               args=kw.args,
-                               assign=assigner.assignment,
-                               tags=handler.tags,
-                               type=kw.type)
-        with StatusReporter(context, result, context.dry_run):
-            self._warn_if_deprecated(result.name, result.doc, context)
-            return self._run_and_assign(context, kw.args, assigner)
-
-    dry_run = run
-
-    def _warn_if_deprecated(self, name, doc, context):
-        if doc.startswith('*DEPRECATED') and '*' in doc[1:]:
-            message = ' ' + doc.split('*', 2)[-1].strip()
-            context.warn("Keyword '%s' is deprecated.%s" % (name, message))
-
-    def _run_and_assign(self, context, args, assigner):
-        syntax_error_reporter = SyntaxErrorReporter(context)
-        with syntax_error_reporter:
-            assigner.validate_assignment()
-        return_value, exception = self._run(context, args)
-        if not exception or exception.can_continue(context.in_teardown):
-            with syntax_error_reporter:
-                assigner.assign(context, return_value)
-        if exception:
-            raise exception
-        return return_value
+        return KeywordResult(kwname=self.name,
+                             libname=handler.libname or '',
+                             doc=handler.shortdoc,
+                             args=kw.args,
+                             assign=tuple(assignment),
+                             tags=handler.tags,
+                             type=kw.type)
 
     def _run(self, context, args):
-        return_value = exception = None
-        try:
-            if not context.dry_run:
-                return_value = self._handler_run(context, args)
-            else:
-                return_value = self._handler_dry_run(context, args)
-        except ExecutionFailed as err:
-            exception = err
-        except:
-            exception = self._get_and_report_failure(context)
-        if exception:
-            return_value = exception.return_value
-        return return_value, exception
-
-    def _get_and_report_failure(self, context):
-        failure = HandlerExecutionFailed(ErrorDetails())
-        if failure.timeout:
-            context.timeout_occurred = True
-        context.fail(failure.full_message)
-        if failure.traceback:
-            context.debug(failure.traceback)
-        return failure
-
-    def _handler_dry_run(self, context, args):
-        if self._handler.longname in self._executed_in_dry_run:
-            return self._handler_run(context, args)
-        self._handler.resolve_arguments(args)
-        return None
-
-    def _handler_run(self, context, args):
         if self.pre_run_messages:
             for message in self.pre_run_messages:
                 context.output.message(message)
         positional, named = \
             self._handler.resolve_arguments(args, context.variables)
-        context.output.trace(lambda: self._log_args(positional, named))
-        runner = self._runner_for(self._handler.current_handler(), context, positional,
-                                  dict(named), self._get_timeout(context))
+        context.output.trace(self._log_args(positional, named))
+        runner = self._runner_for(context, self._handler.current_handler(),
+                                  positional, dict(named))
         return self._run_with_output_captured_and_signal_monitor(runner, context)
 
     def _log_args(self, positional, named):
-        positional = [prepr(arg) for arg in positional]
-        named = ['%s=%s' % (unic(name), prepr(value))
-                 for name, value in named]
-        return 'Arguments: [ %s ]' % ' | '.join(positional + named)
+        def logger():
+            args = [prepr(arg) for arg in positional]
+            args += ['%s=%s' % (unic(n), prepr(v)) for n, v in named]
+            return 'Arguments: [ %s ]' % ' | '.join(args)
+        return logger
 
-    def _runner_for(self, handler, context, positional, named, timeout):
+    def _runner_for(self, context, handler, positional, named):
+        timeout = self._get_timeout(context)
         if timeout and timeout.active:
             context.output.debug(timeout.get_message)
             return lambda: timeout.run(handler, args=positional, kwargs=named)
         return lambda: handler(*positional, **named)
+
+    def _get_timeout(self, context):
+        return min(context.timeouts) if context.timeouts else None
 
     def _run_with_output_captured_and_signal_monitor(self, runner, context):
         with OutputCapturer():
@@ -143,8 +103,18 @@ class LibraryKeywordRunner(object):
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
 
-    def _get_timeout(self, context):
-        return min(context.timeouts) if context.timeouts else None
+    def dry_run(self, kw, context):
+        assignment = VariableAssignment(kw.assign)
+        result = self._get_result(kw, assignment)
+        with StatusReporter(context, result, dry_run_lib_kw=True):
+            assignment.validate_assignment()
+            self._dry_run(context, kw.args)
+
+    def _dry_run(self, context, args):
+        if self._handler.longname in self._executed_in_dry_run:
+            self._run(context, args)
+        else:
+            self._handler.resolve_arguments(args)
 
 
 class EmbeddedArgumentsRunner(LibraryKeywordRunner):
@@ -153,12 +123,11 @@ class EmbeddedArgumentsRunner(LibraryKeywordRunner):
         LibraryKeywordRunner.__init__(self, handler, name)
         self._embedded_args = handler.name_regexp.match(name).groups()
 
-    def _handler_run(self, context, args):
+    def _run(self, context, args):
         if args:
             raise DataError("Positional arguments are not allowed when using "
                             "embedded arguments.")
-        return LibraryKeywordRunner._handler_run(self, context,
-                                                 self._embedded_args)
+        return LibraryKeywordRunner._run(self, context, self._embedded_args)
 
 
 class RunKeywordRunner(LibraryKeywordRunner):
@@ -172,8 +141,8 @@ class RunKeywordRunner(LibraryKeywordRunner):
     def _run_with_output_captured_and_signal_monitor(self, runner, context):
         return self._run_with_signal_monitoring(runner, context)
 
-    def _handler_dry_run(self, context, args):
-        LibraryKeywordRunner._handler_dry_run(self, context, args)
+    def _dry_run(self, context, args):
+        LibraryKeywordRunner._dry_run(self, context, args)
         keywords = self._get_runnable_dry_run_keywords(args)
         KeywordRunner(context).run_keywords(keywords)
 
@@ -186,7 +155,8 @@ class RunKeywordRunner(LibraryKeywordRunner):
         return keywords
 
     def _get_dry_run_keywords(self, args):
-        # FIXME: _handler._handler_name is fugly. Pass handler_name to __init__?
+        # TODO: _handler._handler_name is fugly. Pass handler_name to __init__?
+        # Also _handler._get_args_to_process
         if self._handler._handler_name == 'run_keyword_if':
             return list(self._get_run_kw_if_keywords(args))
         if self._handler._handler_name == 'run_keywords':
