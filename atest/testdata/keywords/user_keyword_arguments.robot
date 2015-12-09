@@ -4,6 +4,7 @@ Library           Collections
 *** Variables ***
 ${VAR}            Variable value
 @{LIST}           With    three    values
+&{DICT}           a=1    b=${2}
 
 *** Test Cases ***
 Correct Number Of Arguments When No Defaults Or Varargs
@@ -94,6 +95,10 @@ Default With Variable
     ${ret} =    Default With Variable
     Should Be Equal    ${ret}    Variable value
 
+Default With Non-Existing Variable
+    [Documentation]    FAIL Resolving argument default values failed: Variable '\${NON EXISTING}' not found.
+    Default With Non-Existing Variable
+
 Local Variable Does Not Affect Variable In Default Value
     ${var} =    Set Variable    not used as default
     ${ret} =    Default With Variable
@@ -113,6 +118,32 @@ Default With Automatic Variable
 Default With Extended Variable Syntax
     ${ret} =    Default With Extended Variable Syntax
     Should Be Equal    ${ret}    VARIABLE VALUE
+
+Default With List Variable
+    ${result} =    Default With List Variable
+    Should Be True    $result == ['foo']
+    Length Should Be    ${LIST}    3
+    ${arg} =    Create List
+    ${result} =    Default With List Variable    ${arg}
+    Should Be True    $result == ['foo']
+    Should Be True    $result is $arg
+
+Default With Invalid List Variable
+    [Documentation]    FAIL Resolving argument default values failed: Value of variable '\@{VAR}' is not list or list-like.
+    Default With Invalid List Variable
+
+Default With Dict Variable
+    ${result} =    Default With Dict Variable
+    Should Be True    $result == {'new': 'value'}
+    Length Should Be    ${LIST}    3
+    ${arg} =    Create Dictionary
+    ${result} =    Default With Dict Variable    ${arg}
+    Should Be True    $result == {'new': 'value'}
+    Should Be True    $result is $arg
+
+Default With Invalid Dict Variable
+    [Documentation]    FAIL Resolving argument default values failed: Value of variable '\&{VAR}' is not dictionary or dictionary-like.
+    Default With Invalid Dict Variable
 
 Calling Using List Variables
     [Documentation]    FAIL Keyword 'A 0 1' expected 0 to 1 arguments, got 3.
@@ -195,6 +226,9 @@ Default With Variable
     [Arguments]    ${arg}=${VAR}
     [Return]    ${arg}
 
+Default With Non-Existing Variable
+    [Arguments]    ${arg}=${NON EXISTING}
+
 Default With None Variable
     [Arguments]    ${arg}=${None}
     [Return]    ${arg}
@@ -206,6 +240,33 @@ Default With Number Variable
 Default With Extended Variable Syntax
     [Arguments]    ${arg}=${VAR.upper()}
     [Return]    ${arg}
+
+Default With List Variable
+    [Arguments]    ${a}=@{EMPTY}    ${b}=@{LIST}
+    Should Be True    $a == []
+    Should Be True    $b == ['With', 'three', 'values'] == $LIST
+    Append To List    ${a}    foo
+    Append To List    ${b}    foo
+    Should Be True    $a == ['foo']
+    Should Be True    $b == ['With', 'three', 'values', 'foo'] != $LIST
+    [Return]    ${a}
+
+Default With Invalid List Variable
+    [Arguments]    ${invalid}=@{VAR}
+
+Default With Dict Variable
+    [Arguments]    ${a}=&{EMPTY}    ${b}=&{DICT}
+    Should Be True    $a == {}
+    Should Be True    $b == {'a': '1', 'b': 2} == $DICT
+    ${a.new} =    Set Variable    value
+    ${b.a} =    Set Variable    override
+    ${b.c} =    Set Variable    value
+    Should Be True    $a == {'new': 'value'}
+    Should Be True    $b == {'a': 'override', 'b': 2, 'c': 'value'} != $DICT
+    [Return]    ${a}
+
+Default With Invalid Dict Variable
+    [Arguments]    ${invalid}=&{VAR}
 
 Mutate Lists
     [Arguments]    ${list1}    @{list2}

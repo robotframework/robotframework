@@ -35,7 +35,10 @@ class KeywordCallTemplate(object):
     def __init__(self, argspec, variables):
         defaults = argspec.defaults
         if variables:
-            defaults = variables.replace_list(defaults)
+            try:
+                defaults = [variables.replace_scalar(d) for d in defaults]
+            except DataError as err:
+                raise DataError(u'Resolving argument default values failed: %s' % err)
         self._positional = argspec.positional
         self._supports_kwargs = bool(argspec.kwargs)
         self._supports_named = argspec.supports_named
