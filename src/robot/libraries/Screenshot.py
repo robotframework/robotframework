@@ -66,8 +66,8 @@ class Screenshot(object):
       Framework users already have this module installed.
     - PyGTK :: http://pygtk.org :: This module is available by default on most
       Linux distributions.
-    - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
-      Only works on Windows.
+    - Pillow :: https://python-pillow.github.io ::
+      Only works on Windows. Also the original PIL package is supported.
     - Scrot :: https://en.wikipedia.org/wiki/Scrot :: Not used on Windows.
       Install with ``apt-get install scrot`` or similar.
 
