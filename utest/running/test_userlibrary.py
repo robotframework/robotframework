@@ -21,7 +21,7 @@ class UserHandlerStub:
         return self
 
 
-class EmbeddedArgsTemplateStub:
+class EmbeddedArgsHandlerStub:
 
     def __init__(self, kwdata, library, embedded):
         self.name = kwdata.name
@@ -35,14 +35,14 @@ class EmbeddedArgsTemplateStub:
 class TestUserLibrary(unittest.TestCase):
 
     def setUp(self):
-        self._orig_userhandler = userkeyword.UserKeywordHandler
-        self._orig_embeddedargstemplate = userkeyword.EmbeddedArgsTemplate
+        self._orig_user_handler = userkeyword.UserKeywordHandler
+        self._orig_embedded_handler = userkeyword.EmbeddedArgumentsHandler
         userkeyword.UserKeywordHandler = UserHandlerStub
-        userkeyword.EmbeddedArgsTemplate = EmbeddedArgsTemplateStub
+        userkeyword.EmbeddedArgumentsHandler = EmbeddedArgsHandlerStub
 
     def tearDown(self):
-        userkeyword.UserKeywordHandler = self._orig_userhandler
-        userkeyword.EmbeddedArgsTemplate = self._orig_embeddedargstemplate
+        userkeyword.UserKeywordHandler = self._orig_user_handler
+        userkeyword.EmbeddedArgumentsHandler = self._orig_embedded_handler
 
     def test_name_from_resource(self):
         for source, exp in [('resources.html', 'resources'),

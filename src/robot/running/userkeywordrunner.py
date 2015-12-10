@@ -191,7 +191,7 @@ class UserKeywordRunner(object):
                 raise error
 
 
-class EmbeddedArgsUserKeywordRunner(UserKeywordRunner):
+class EmbeddedArgumentsRunner(UserKeywordRunner):
 
     def __init__(self, handler, name):
         UserKeywordRunner.__init__(self, handler, name)

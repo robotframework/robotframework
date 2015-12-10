@@ -242,8 +242,7 @@ class _JavaInitHandler(_JavaHandler):
         return parser.parse(signatures, self.library.name)
 
 
-# TODO: Rename to Handler
-class EmbeddedArgsTemplate(object):
+class EmbeddedArgumentsHandler(object):
 
     def __init__(self, name_regexp, orig_handler):
         self.arguments = ArgumentSpec()  # Show empty argument spec for Libdoc
@@ -261,4 +260,4 @@ class EmbeddedArgsTemplate(object):
 
     def __copy__(self):
         # Needed due to https://github.com/IronLanguages/main/issues/1192
-        return EmbeddedArgsTemplate(self.name_regexp, self._orig_handler)
+        return EmbeddedArgumentsHandler(self.name_regexp, self._orig_handler)

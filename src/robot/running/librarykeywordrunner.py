@@ -25,8 +25,6 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 from .statusreporter import StatusReporter
 
 
-# TODO: Consistent Runner and Handler names. Including Embedded runners/handlers.
-
 class LibraryKeywordRunner(object):
     _executed_in_dry_run = ('BuiltIn.Import Library',
                             'BuiltIn.Set Library Search Order')

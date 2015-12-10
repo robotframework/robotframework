@@ -21,7 +21,7 @@ from robot.utils import is_string, unic
 from .builder import ResourceFileBuilder
 from .arguments import EmbeddedArguments, UserKeywordArgumentParser
 from .handlerstore import HandlerStore
-from .userkeywordrunner import UserKeywordRunner, EmbeddedArgsUserKeywordRunner
+from .userkeywordrunner import UserKeywordRunner, EmbeddedArgumentsRunner
 from .usererrorhandler import UserErrorHandler
 
 
@@ -48,7 +48,7 @@ class UserLibrary(object):
             except DataError as error:
                 handler = UserErrorHandler(kw.name, error, self.name)
                 self._log_creating_failed(handler, error)
-            embedded = isinstance(handler, EmbeddedArgsTemplate)
+            embedded = isinstance(handler, EmbeddedArgumentsHandler)
             try:
                 self.handlers.add(handler, embedded)
             except DataError as error:
@@ -61,7 +61,7 @@ class UserLibrary(object):
         if kw.args:
             raise DataError('Keyword cannot have both normal and embedded '
                             'arguments.')
-        return EmbeddedArgsTemplate(kw, self.name, embedded)
+        return EmbeddedArgumentsHandler(kw, self.name, embedded)
 
     def _log_creating_failed(self, handler, error):
         LOGGER.error("Error in %s '%s': Creating keyword '%s' failed: %s"
@@ -96,7 +96,7 @@ class UserKeywordHandler(object):
         return UserKeywordRunner(self)
 
 
-class EmbeddedArgsTemplate(UserKeywordHandler):
+class EmbeddedArgumentsHandler(UserKeywordHandler):
 
     def __init__(self, keyword, libname, embedded):
         UserKeywordHandler.__init__(self, keyword, libname)
@@ -108,4 +108,4 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
         return self.embedded_name.match(name) is not None
 
     def create_runner(self, name):
-        return EmbeddedArgsUserKeywordRunner(self, name)
+        return EmbeddedArgumentsRunner(self, name)

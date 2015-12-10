@@ -26,7 +26,7 @@ from .arguments import EmbeddedArguments
 from .context import EXECUTION_CONTEXTS
 from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
                              GetKeywordNames, RunKeyword)
-from .handlers import Handler, InitHandler, DynamicHandler, EmbeddedArgsTemplate
+from .handlers import Handler, InitHandler, DynamicHandler, EmbeddedArgumentsHandler
 from .handlerstore import HandlerStore
 from .libraryscopes import LibraryScope
 from .outputcapture import OutputCapturer
@@ -267,7 +267,7 @@ class _BaseTestLibrary(object):
         embedded = EmbeddedArguments(handler.name)
         if embedded:
             self._validate_embedded_count(embedded, handler.arguments)
-            return EmbeddedArgsTemplate(embedded.name, handler), True
+            return EmbeddedArgumentsHandler(embedded.name, handler), True
         return handler, False
 
     def _validate_embedded_count(self, embedded, arguments):

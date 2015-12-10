@@ -2,7 +2,7 @@ import unittest
 
 from robot.errors import DataError
 from robot.model import Keywords
-from robot.running.userkeyword import EmbeddedArgsTemplate
+from robot.running.userkeyword import EmbeddedArgumentsHandler
 from robot.running.arguments import EmbeddedArguments, UserKeywordArgumentParser
 from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
@@ -49,7 +49,7 @@ class HandlerDataMock:
 def EAT(name, args=[]):
     handler = HandlerDataMock(name, args)
     embedded = EmbeddedArguments(name)
-    return EmbeddedArgsTemplate(handler, 'resource', embedded)
+    return EmbeddedArgumentsHandler(handler, 'resource', embedded)
 
 
 class TestEmbeddedArgs(unittest.TestCase):
