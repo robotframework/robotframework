@@ -182,11 +182,6 @@ __ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Us
         invoke add_docs $VERSION --push
         git checkout master
 
-Make a release
---------------
-
-- Create a new release at https://github.com/robotframework/robotframework/releases
-
 Announcements
 -------------
 
