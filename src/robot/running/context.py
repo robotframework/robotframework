@@ -116,8 +116,6 @@ class _ExecutionContext(object):
     def variables(self):
         return self.namespace.variables
 
-    # TODO: Move start_suite here from EXECUTION_CONTEXT
-
     def end_suite(self, suite):
         for name in ['${PREV_TEST_NAME}',
                      '${PREV_TEST_STATUS}',

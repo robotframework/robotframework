@@ -6,7 +6,7 @@ Library           Process
 Library           Collections
 Library           String
 Library           TestCheckerLibrary
-Library           TestHelper           # TODO: Combine with TestCheckerLibrary?
+Library           TestHelper           # Combine with TestCheckerLibrary?
 Library           XML
 Library           read_interpreter.py
 Variables         atest_variables.py

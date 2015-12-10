@@ -25,7 +25,7 @@ from .randomizer import Randomizer
 class Keyword(model.Keyword):
     """Running model for single keyword."""
     __slots__ = []
-    message_class = None  # TODO: Remove from base model?
+    message_class = None
 
     def run(self, context):
         from .keywordrunner import KeywordRunner
@@ -193,7 +193,6 @@ class TestSuite(model.TestSuite):
 class Variable(object):
 
     def __init__(self, name, value, source=None):
-        # TODO: check name and value
         self.name = name
         self.value = value
         self.source = source

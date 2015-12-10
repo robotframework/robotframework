@@ -105,7 +105,6 @@ class TestBuilding(unittest.TestCase):
         assert_equal(tests[2].timeout.message, '')
 
     def test_keyword_timeout(self):
-        # TODO: Tests and uks have inconsistent timeout types.
         kw = build('timeouts.robot').resource.keywords[0]
         assert_equal(kw.timeout.value, '42')
         assert_equal(kw.timeout.message, 'My message')

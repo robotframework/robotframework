@@ -25,7 +25,7 @@ from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
 
 
-# TODO: Some 'extract method' love needed here. Perhaps even 'extract class'.
+# Some 'extract method' love needed here. Perhaps even 'extract class'.
 
 class Runner(SuiteVisitor):
 

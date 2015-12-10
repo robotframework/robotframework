@@ -179,7 +179,7 @@ class _BaseTestLibrary(object):
                 listeners.register(self.get_listeners(), self)
             except DataError as err:
                 self.has_listener = False
-                # TODO: Error should have information about suite where the
+                # Error should have information about suite where the
                 # problem occurred but we don't have such info here.
                 LOGGER.error("Registering listeners for library '%s' failed: %s"
                              % (self.name, err))
