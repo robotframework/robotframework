@@ -19,9 +19,10 @@ from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
 
+from .arguments import DefaultValue
+from .statusreporter import StatusReporter
 from .steprunner import StepRunner
 from .timeouts import KeywordTimeout
-from .statusreporter import StatusReporter
 
 
 class UserKeywordRunner(object):
@@ -97,13 +98,16 @@ class UserKeywordRunner(object):
     def _set_arguments(self, arguments, context):
         positional, named = arguments
         variables = context.variables
-        args, kwargs = self.arguments.map(positional, named, variables)
+        args, kwargs = self.arguments.map(positional, named,
+                                          replace_defaults=False)
         self._set_variables(args, kwargs, variables)
         context.output.trace(lambda: self._log_args(variables))
 
     def _set_variables(self, positional, kwargs, variables):
         before_varargs, varargs = self._split_args_and_varargs(positional)
         for name, value in zip(self.arguments.positional, before_varargs):
+            if isinstance(value, DefaultValue):
+                value = value.resolve(variables)
             variables['${%s}' % name] = value
         if self.arguments.varargs:
             variables['@{%s}' % self.arguments.varargs] = varargs

@@ -162,8 +162,7 @@ class _DynamicHandler(_RunnableHandler):
 
     def resolve_arguments(self, arguments, variables=None):
         positional, named = self.arguments.resolve(arguments, variables)
-        arguments, kwargs = self.arguments.map(positional, named,
-                                               prune_trailing_defaults=True)
+        arguments, kwargs = self.arguments.map(positional, named)
         return arguments, kwargs
 
     def _get_handler(self, lib_instance, handler_name):

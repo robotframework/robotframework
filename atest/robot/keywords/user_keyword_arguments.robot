@@ -56,6 +56,9 @@ Default With Automatic Variable
 Default With Extended Variable Syntax
     Check Test Case    ${TESTNAME}
 
+Default With Variable Based On Earlier Argument
+    Check Test Case    ${TESTNAME}
+
 Default With List Variable
     Check Test Case    ${TESTNAME}
 

@@ -119,6 +119,16 @@ Default With Extended Variable Syntax
     ${ret} =    Default With Extended Variable Syntax
     Should Be Equal    ${ret}    VARIABLE VALUE
 
+Default With Variable Based On Earlier Argument
+    Default With Variable Based On Earlier Argument
+    Default With Variable Based On Earlier Argument    foo
+    Default With Variable Based On Earlier Argument    foo    bar
+    Default With Variable Based On Earlier Argument    foo    bar    foo+bar
+    Default With Variable Based On Earlier Argument    a    b    a+b    A+B
+    Default With Variable Based On Earlier Argument    b=x
+    Default With Variable Based On Earlier Argument    c=a+x    b=x    d=A+X
+    Default With Variable Based On Earlier Argument    d\=on't c:\\escape \${us}
+
 Default With List Variable
     ${result} =    Default With List Variable
     Should Be True    $result == ['foo']
@@ -240,6 +250,12 @@ Default With Number Variable
 Default With Extended Variable Syntax
     [Arguments]    ${arg}=${VAR.upper()}
     [Return]    ${arg}
+
+Default With Variable Based On Earlier Argument
+    [Arguments]    ${a}=a    ${b}=b    ${c}=${a}+${b}    ${d}=${c.upper()}    ${e}=\${d}on\\t escape (\\${a})
+    Should Be Equal    ${a}+${b}    ${c}
+    Should Be Equal    ${c.upper()}    ${d}
+    Should Be Equal    ${e}    \${d}on\\t escape (\\${a})
 
 Default With List Variable
     [Arguments]    ${a}=@{EMPTY}    ${b}=@{LIST}

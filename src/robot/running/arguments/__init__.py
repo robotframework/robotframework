@@ -14,6 +14,7 @@
 
 from robot.utils import JYTHON
 
+from .argumentmapper import DefaultValue
 from .argumentparser import (PythonArgumentParser, UserKeywordArgumentParser,
                              DynamicArgumentParser, JavaArgumentParser)
 from .argumentspec import ArgumentSpec

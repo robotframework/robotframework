@@ -182,7 +182,9 @@ In short, default values are added to arguments, so that first there is
 the equals sign (`=`) and then the value, for example `${arg}=default`.
 There can be many arguments with defaults, but they all must be given after
 the normal positional arguments. The default value can contain a variable_
-created on `suite or global scope`__.
+created on `test, suite or global scope`__, but local variables of the keyword
+executor cannot be used. Starting from Robot Framework 3.0, default value can
+also be defined based on earlier arguments accepted by the keyword.
 
 .. note:: The syntax for default values is space sensitive. Spaces
           before the `=` sign are not allowed, and possible spaces
@@ -207,6 +209,11 @@ created on `suite or global scope`__.
        [Documentation]    This keyword takes 1-2 arguments
        Log    Required: ${required}
        Log    Optional: ${optional}
+
+    Default Based On Earlier Argument
+       [Arguments]    ${a}    ${b}=${a}    ${c}=${a} and ${b}
+       Should Be Equal    ${a}    ${b}
+       Should Be Equal    ${c}    ${a} and ${b}
 
 When a keyword accepts several arguments with default values and only
 some of them needs to be overridden, it is often handy to use the

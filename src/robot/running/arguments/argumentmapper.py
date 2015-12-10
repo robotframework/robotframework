@@ -20,29 +20,23 @@ class ArgumentMapper(object):
     def __init__(self, argspec):
         self._argspec = argspec
 
-    def map(self, positional, named, variables=None, prune_trailing_defaults=False):
-        template = KeywordCallTemplate(self._argspec, variables)
+    def map(self, positional, named, replace_defaults=True):
+        template = KeywordCallTemplate(self._argspec)
         template.fill_positional(positional)
         template.fill_named(named)
-        if prune_trailing_defaults:
-            template.prune_trailing_defaults()
-        template.fill_defaults()
+        if replace_defaults:
+            template.replace_defaults()
         return template.args, template.kwargs
 
 
 class KeywordCallTemplate(object):
 
-    def __init__(self, argspec, variables):
-        defaults = argspec.defaults
-        if variables:
-            try:
-                defaults = [variables.replace_scalar(d) for d in defaults]
-            except DataError as err:
-                raise DataError(u'Resolving argument default values failed: %s' % err)
+    def __init__(self, argspec):
         self._positional = argspec.positional
         self._supports_kwargs = bool(argspec.kwargs)
         self._supports_named = argspec.supports_named
-        self.args = [None] * argspec.minargs + [Default(d) for d in defaults]
+        self.args = [None] * argspec.minargs \
+                    + [DefaultValue(d) for d in argspec.defaults]
         self.kwargs = []
 
     def fill_positional(self, positional):
@@ -58,16 +52,21 @@ class KeywordCallTemplate(object):
             else:
                 raise DataError("Non-existing named argument '%s'." % name)
 
-    def prune_trailing_defaults(self):
-        while self.args and isinstance(self.args[-1], Default):
+    def replace_defaults(self):
+        while self.args and isinstance(self.args[-1], DefaultValue):
             self.args.pop()
-
-    def fill_defaults(self):
-        self.args = [arg if not isinstance(arg, Default) else arg.value
+        self.args = [arg if not isinstance(arg, DefaultValue) else arg.value
                      for arg in self.args]
 
 
-class Default(object):
+class DefaultValue(object):
 
     def __init__(self, value):
         self.value = value
+
+    def resolve(self, variables):
+        try:
+            return variables.replace_scalar(self.value)
+        except DataError as err:
+            raise DataError('Resolving argument default values failed: %s'
+                            % err.message)
