@@ -19,7 +19,7 @@ from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import DotDict, prepr, split_tags_from_doc
 from robot.variables import is_list_var, VariableAssignment
 
-from .keywordrunner import KeywordRunner
+from .steprunner import StepRunner
 from .timeouts import KeywordTimeout
 from .statusreporter import StatusReporter
 
@@ -117,9 +117,8 @@ class UserKeywordRunner(object):
         if not (self._handler.keywords or self._handler.return_value):
             raise DataError("User keyword '%s' contains no keywords." % self.name)
         error = return_ = pass_ = None
-        runner = KeywordRunner(context)
         try:
-            runner.run_keywords(self._handler.keywords)
+            StepRunner(context).run_steps(self._handler.keywords)
         except ReturnFromKeyword as exception:
             return_ = exception
             error = exception.earlier_failures
@@ -166,9 +165,8 @@ class UserKeywordRunner(object):
             return ExecutionFailed(err.message, syntax=True)
         if name.upper() in ('', 'NONE'):
             return None
-        runner = KeywordRunner(context)
         try:
-            runner.run_keyword(self._handler.teardown, name)
+            StepRunner(context).run_step(self._handler.teardown, name)
         except PassExecution:
             return None
         except ExecutionFailed as err:

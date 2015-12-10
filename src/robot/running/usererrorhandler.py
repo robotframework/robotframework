@@ -18,7 +18,7 @@ from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import unic
 
 from .arguments import ArgumentSpec
-from .keywordrunner import StatusReporter
+from .statusreporter import StatusReporter
 
 
 class UserErrorHandler(object):

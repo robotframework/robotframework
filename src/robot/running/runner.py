@@ -19,7 +19,7 @@ from robot.utils import get_timestamp, NormalizedDict, unic
 from robot.variables import VariableScopes
 
 from .context import EXECUTION_CONTEXTS
-from .keywordrunner import KeywordRunner
+from .steprunner import StepRunner
 from .namespace import IMPORTER, Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
@@ -133,8 +133,8 @@ class Runner(SuiteVisitor):
         self._run_setup(test.keywords.setup, status, result)
         try:
             if not status.failures:
-                runner = KeywordRunner(self._context, bool(test.template))
-                runner.run_keywords(test.keywords.normal)
+                StepRunner(self._context,
+                           test.template).run_steps(test.keywords.normal)
             else:
                 status.test_failed(status.message)
         except PassExecution as exception:
@@ -197,9 +197,8 @@ class Runner(SuiteVisitor):
             return err
         if name.upper() in ('', 'NONE'):
             return None
-        runner = KeywordRunner(self._context)
         try:
-            runner.run_keyword(data, name=name)
+            StepRunner(self._context).run_step(data, name=name)
         except ExecutionFailed as err:
             return err
 

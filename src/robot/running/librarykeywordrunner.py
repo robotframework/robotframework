@@ -18,7 +18,7 @@ from robot.result.keyword import Keyword as KeywordResult
 from robot.utils import prepr, unic
 from robot.variables import VariableAssignment, contains_var, is_list_var
 
-from .keywordrunner import KeywordRunner
+from .steprunner import StepRunner
 from .model import Keyword
 from .outputcapture import OutputCapturer
 from .signalhandler import STOP_SIGNAL_MONITOR
@@ -148,7 +148,7 @@ class RunKeywordRunner(LibraryKeywordRunner):
     def _dry_run(self, context, args):
         LibraryKeywordRunner._dry_run(self, context, args)
         keywords = self._get_runnable_dry_run_keywords(args)
-        KeywordRunner(context).run_keywords(keywords)
+        StepRunner(context).run_steps(keywords)
 
     def _get_runnable_dry_run_keywords(self, args):
         keywords = Keywords()

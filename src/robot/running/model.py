@@ -19,6 +19,7 @@ from robot.conf import RobotSettings
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.utils import setter
 
+from .steprunner import StepRunner
 from .randomizer import Randomizer
 
 
@@ -28,8 +29,7 @@ class Keyword(model.Keyword):
     message_class = None
 
     def run(self, context):
-        from .keywordrunner import KeywordRunner
-        return KeywordRunner(context).run_keyword(self)
+        return StepRunner(context).run_step(self)
 
 
 class ForLoop(Keyword):

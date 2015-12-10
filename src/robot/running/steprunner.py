@@ -22,18 +22,17 @@ from robot.variables import is_scalar_var
 from .statusreporter import StatusReporter
 
 
-# TODO: Rename to StepRunner or similar. Also rename methods.
-class KeywordRunner(object):
+class StepRunner(object):
 
     def __init__(self, context, templated=False):
         self._context = context
-        self._templated = templated
+        self._templated = bool(templated)
 
-    def run_keywords(self, keywords):
+    def run_steps(self, steps):
         errors = []
-        for kw in keywords:
+        for step in steps:
             try:
-                self.run_keyword(kw)
+                self.run_step(step)
             except ExecutionPassed as exception:
                 exception.set_earlier_failures(errors)
                 raise exception
@@ -46,25 +45,15 @@ class KeywordRunner(object):
         if errors:
             raise ExecutionFailures(errors)
 
-    def run_keyword(self, kw, name=None):
-        if kw.type == kw.FOR_LOOP_TYPE:
-            runner = ForRunner(self._context, self._templated, kw.flavor)
-        else:
-            runner = NormalRunner(self._context)
-        return runner.run(kw, name=name)
-
-
-class NormalRunner(object):
-
-    def __init__(self, context):
-        self._context = context
-
-    def run(self, kw, name=None):
-        ctx = self._context
-        runner = ctx.get_runner(name or kw.name)
-        if ctx.dry_run:
-            return runner.dry_run(kw, ctx)
-        return runner.run(kw, ctx)
+    def run_step(self, step, name=None):
+        context = self._context
+        if step.type == step.FOR_LOOP_TYPE:
+            runner = ForRunner(context, self._templated, step.flavor)
+            return runner.run(step)
+        runner = context.get_runner(name or step.name)
+        if context.dry_run:
+            return runner.dry_run(step, context)
+        return runner.run(step, context)
 
 
 def ForRunner(context, templated=False, flavor='IN'):
@@ -165,9 +154,9 @@ class ForInRunner(object):
                                type=data.FOR_ITEM_TYPE)
         for var, value in zip(data.variables, values):
             self._context.variables[var] = value
-        runner = KeywordRunner(self._context, self._templated)
+        runner = StepRunner(self._context, self._templated)
         with StatusReporter(self._context, result):
-            runner.run_keywords(data.keywords)
+            runner.run_steps(data.keywords)
 
     def _transform_items(self, items):
         return items
